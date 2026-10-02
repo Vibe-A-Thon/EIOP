@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir --no-deps .
 COPY apps ./apps
 COPY config ./config
 COPY examples ./examples
+COPY schemas ./schemas
 COPY scripts ./scripts
 RUN git -C examples/demo-repo init -b main && \
     git -C examples/demo-repo add . && \

@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "packages"))
 from eoip.audit.sink import AuditSink
 from eoip.contracts.audit import AuditEvent
 from eoip.demo import load_demo
-from eoip.runtime import api_token, create_store, data_root
+from eoip.runtime import create_store, data_root
 
 
 def main():

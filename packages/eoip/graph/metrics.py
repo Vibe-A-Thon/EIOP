@@ -9,7 +9,7 @@ from eoip.graph.store import GraphStore
 
 
 class BlastRadiusResult:
-    __slots__ = ("target_id", "total_affected", "by_depth", "by_type", "risk", "affected_ids")
+    __slots__ = ("affected_ids", "by_depth", "by_type", "risk", "target_id", "total_affected")
 
     def __init__(self, target_id: str, total_affected: int, by_depth: dict[int, int],
                  by_type: dict[str, int], risk: str, affected_ids: list[str]):
@@ -32,8 +32,15 @@ class BlastRadiusResult:
 
 
 class CentralityMetrics:
-    __slots__ = ("canonical_id", "degree", "in_degree", "out_degree",
-                 "betweenness", "closeness", "page_rank")
+    __slots__ = (
+        "betweenness",
+        "canonical_id",
+        "closeness",
+        "degree",
+        "in_degree",
+        "out_degree",
+        "page_rank",
+    )
 
     def __init__(self, canonical_id: str, degree: int = 0, in_degree: int = 0,
                  out_degree: int = 0, betweenness: float = 0.0,
@@ -173,7 +180,7 @@ class GraphMetricsEngine:
         return results
 
     def graph_statistics(self) -> dict[str, Any]:
-        from eoip.ontology.manifest import VERTEX_LABELS, EDGE_LABELS
+        from eoip.ontology.manifest import EDGE_LABELS, VERTEX_LABELS
         vertex_count = self._store.count_vertices()
         edge_count = self._store.count_edges()
         max_possible_edges = vertex_count * (vertex_count - 1) if vertex_count > 1 else 1
@@ -189,8 +196,13 @@ class GraphMetricsEngine:
 
     def graph_schema(self) -> dict[str, Any]:
         from eoip.ontology.manifest import (
-            VERTEX_LABELS, EDGE_LABELS, PROPERTY_KEYS,
-            INDEXES, ONTOLOGY_VERSION, SCHEMA_VERSION, DOMAINS,
+            DOMAINS,
+            EDGE_LABELS,
+            INDEXES,
+            ONTOLOGY_VERSION,
+            PROPERTY_KEYS,
+            SCHEMA_VERSION,
+            VERTEX_LABELS,
         )
         vertex_schemas = {}
         for label, (domain, required, optional) in VERTEX_LABELS.items():

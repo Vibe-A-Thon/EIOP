@@ -75,7 +75,8 @@ def test_metrics_empty_for_unknown():
 
 
 def test_schema_endpoint():
-    client = TestClient(create_app(MemoryGraphStore()))
+    store = _demo_store()
+    client = TestClient(create_app(store))
     r = client.get("/api/v1/graph/schema")
     assert r.status_code == 200
     data = r.json()
@@ -84,7 +85,13 @@ def test_schema_endpoint():
     assert "vertex_labels" in data
     assert "edge_labels" in data
     assert "domains" in data
-    assert len(data["vertex_labels"]) > 0
+    assert data["vertex_labels"]["CodeSymbol"]["domain"]
+    assert data["vertex_labels"]["CodeSymbol"]["required_properties"]
+    assert data["vertex_labels"]["WorkItem"]["instance_count"] == 1
+    assert data["edge_labels"]["DECLARES"]["source_labels"]
+    assert data["edge_labels"]["DECLARES"]["target_labels"]
+    assert data["indexes"]
+    assert all(index["name"] and index["fields"] for index in data["indexes"])
 
 
 def test_statistics_endpoint():

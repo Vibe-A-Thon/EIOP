@@ -259,6 +259,38 @@ function AuditTable({items}) {
   return <div className="table-wrap"><table><thead><tr><th>Time</th><th>Operation</th><th>Actor</th><th>Outcome</th><th>Summary</th></tr></thead><tbody>{items.map((event, index) => <tr key={event.audit_id || index}><td>{formatTime(event.timestamp)}</td><td>{event.event_type}</td><td>{event.actor}</td><td><StatusPill status={event.outcome}/></td><td>{event.safe_summary || '—'}</td></tr>)}</tbody></table></div>;
 }
 
+function DeadLetterTable({items, onReplay, busy}) {
+  if (!items.length) return <EmptyState icon="check" title="Dead-letter queue is clear">No rejected records were returned by the API.</EmptyState>;
+  return <div className="table-wrap"><table><thead><tr><th>Source</th><th>Failure</th><th>Record</th><th>Payload hash</th><th>Recovery</th></tr></thead><tbody>{items.map((item, index) => {
+    const replayable = ['jira', 'gitlab'].includes(item.source_system);
+    return <tr key={item.event_id || index}>
+      <td><strong>{item.source_system || 'Unknown source'}</strong><small>{item.error_category || item.stage || 'Unknown category'}</small></td>
+      <td>{item.error || item.error_message || 'Rejected record'}</td>
+      <td><code title={item.event_id || ''}>{shortId(item.source_record_id || item.event_id || '', 24)}</code></td>
+      <td><code title={item.payload_hash || ''}>{shortId(item.payload_hash || '', 20)}</code></td>
+      <td>{replayable && item.event_id ? <button className="table-action" onClick={() => onReplay(item.event_id)} disabled={busy}>Replay</button> : <span className="subtle">Not supported</span>}</td>
+    </tr>;
+  })}</tbody></table></div>;
+}
+
+function AdminOntology({schema}) {
+  if (!schema) return <EmptyState icon="layers" title="Ontology schema is not loaded">Load the authoritative graph schema to inspect entity types, relationship constraints, and indexes.</EmptyState>;
+  const labels = Object.entries(schema.vertex_labels || {});
+  const edges = Object.entries(schema.edge_labels || {});
+  return <div className="kgr-ontology-view">
+    <div className="ontology-summary"><span className="section-icon violet"><Icon name="layers"/></span><strong>Ontology {schema.ontology_version}</strong><small>Schema {schema.schema_version} · {(schema.domains || []).length} domains · {labels.length} entity types · {edges.length} relationship types</small></div>
+    <section><div className="panel-heading"><div><span className="eyebrow">ENTITY TYPES</span><h3>Vertex labels ({labels.length})</h3></div></div><div className="schema-grid">{labels.map(([name, info]) =>
+      <article key={name} className="schema-card"><div className="schema-card-header"><span className="type-dot" style={{background: palette[name] || '#94a3b8'}}/><strong>{name}</strong><span className="badge">{info.instance_count} instances</span></div><small className="schema-domain">{info.domain}</small><div className="schema-props"><strong>Required:</strong> {(info.required_properties || []).join(', ') || 'None'}</div>{(info.optional_properties || []).length > 0 && <div className="schema-props"><strong>Optional:</strong> {info.optional_properties.join(', ')}</div>}</article>
+    )}</div></section>
+    <section><div className="panel-heading"><div><span className="eyebrow">RELATIONSHIP TYPES</span><h3>Edge labels ({edges.length})</h3></div></div><div className="schema-grid">{edges.map(([name, info]) =>
+      <article key={name} className="schema-card"><div className="schema-card-header"><Icon name="link" size={14}/><strong>{name}</strong></div><div className="schema-props"><strong>From:</strong> {(info.source_labels || []).join(', ')}</div><div className="schema-props"><strong>To:</strong> {(info.target_labels || []).join(', ')}</div>{(info.properties || []).length > 0 && <div className="schema-props"><strong>Properties:</strong> {info.properties.join(', ')}</div>}</article>
+    )}</div></section>
+    <section><div className="panel-heading"><div><span className="eyebrow">INDEXES</span><h3>Index coverage ({(schema.indexes || []).length})</h3></div></div><div className="index-list">{(schema.indexes || []).map(index =>
+      <div key={index.name} className="index-row"><Icon name="check" size={14}/><strong>{index.name}</strong><span className="badge">{index.type}</span><small>{index.label || 'global'} · {(index.fields || []).join(', ')}</small></div>
+    )}</div></section>
+  </div>;
+}
+
 function Admin({stats, system, jobs, api, run, refresh, busy}) {
   const [validation, setValidation] = useState(null);
   const [upload, setUpload] = useState(null);
@@ -266,6 +298,7 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
   const [audit, setAudit] = useState(null);
   const [dlq, setDlq] = useState(null);
   const [ontology, setOntology] = useState(null);
+  const [ontologySchema, setOntologySchema] = useState(null);
   const [section, setSection] = useState('overview');
   const [checkpoint, setCheckpoint] = useState('');
   const [dryRun, setDryRun] = useState(true);
@@ -292,11 +325,11 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
     </div>}
     {section === 'quality' && <div className="admin-grid">
       <section className="panel span-2"><div className="panel-heading"><div><span className="eyebrow">GRAPH VALIDATION</span><h2>Knowledge quality</h2><p>Metrics are computed from persisted entities, relationships, and findings.</p></div><button className="primary-button" onClick={() => run(async () => setValidation(await api('/api/v1/admin/validation', {})))} disabled={busy}><Icon name="shield"/>Run validation</button></div>{validation ? <><div className={`validation-banner ${validation.valid ? 'success' : 'danger'}`}><Icon name={validation.valid ? 'check' : 'warning'}/><div><strong>{validation.valid ? 'No findings in the checked graph.' : `${validation.findings.length} findings require review.`}</strong><small>Checked {validation.vertices_checked} entities and {validation.edges_checked} relationships · {formatTime(validation.finished_at)}</small></div></div><div className="quality-grid"><QualityRing label="Evidence coverage" value={validation.quality?.evidence_coverage} tone="violet"/><QualityRing label="Provenance coverage" value={validation.quality?.provenance_coverage} tone="mint"/><div className="finding-count"><strong>{validation.quality?.error_count || 0}</strong><span>Errors</span><small>{validation.quality?.warning_count || 0} warnings</small></div></div><FindingsTable findings={validation.findings || []}/></> : <EmptyState icon="shield" title="Validation has not run in this session">Run validation to compute current quality coverage and inspect first-class findings.</EmptyState>}</section>
-      <section className="panel"><div className="panel-heading"><div><span className="eyebrow">SEMANTIC MODEL</span><h2>Ontology schema</h2></div></div><div className="ontology-summary"><span className="section-icon violet"><Icon name="layers"/></span><strong>Ontology {stats?.schema?.ontology_version || '—'}</strong><small>Schema {stats?.schema?.schema_version || '—'}</small></div><dl className="compact-list"><div><dt>Vertex labels</dt><dd>{Object.keys(stats?.labels || {}).length}</dd></div><div><dt>Storage backend</dt><dd>{stats?.backend || '—'}</dd></div><div><dt>Initialization</dt><dd><StatusPill status={stats?.schema ? 'READY' : 'UNKNOWN'}/></dd></div></dl><button className="secondary-button wide" onClick={() => run(async () => setOntology(await api('/api/v1/ontology/export?limit=1')))} disabled={busy}><Icon name="code"/>Inspect JSON-LD context</button>{ontology && <pre className="code-panel">{JSON.stringify(ontology['@context'] || {}, null, 2)}</pre>}</section>
+      <section className="panel"><div className="panel-heading"><div><span className="eyebrow">SEMANTIC MODEL</span><h2>Ontology schema</h2></div></div><div className="ontology-summary"><span className="section-icon violet"><Icon name="layers"/></span><strong>Ontology {stats?.schema?.ontology_version || '—'}</strong><small>Schema {stats?.schema?.schema_version || '—'}</small></div><dl className="compact-list"><div><dt>Vertex labels</dt><dd>{Object.keys(stats?.labels || {}).length}</dd></div><div><dt>Storage backend</dt><dd>{stats?.backend || '—'}</dd></div><div><dt>Initialization</dt><dd><StatusPill status={stats?.schema ? 'READY' : 'UNKNOWN'}/></dd></div></dl><button className="secondary-button wide" onClick={() => run(async () => setOntologySchema(await api('/api/v1/graph/schema')))} disabled={busy}><Icon name="layers"/>Load ontology schema</button>{ontologySchema && <AdminOntology schema={ontologySchema}/>}<button className="secondary-button wide" onClick={() => run(async () => setOntology(await api('/api/v1/ontology/export?limit=1')))} disabled={busy}><Icon name="code"/>Inspect JSON-LD context</button>{ontology && <pre className="code-panel">{JSON.stringify(ontology['@context'] || {}, null, 2)}</pre>}</section>
     </div>}
     {section === 'operations' && <div className="admin-grid">
       <section className="panel span-2"><div className="panel-heading"><div><span className="eyebrow">AUDIT TRAIL</span><h2>Security-relevant activity</h2><p>Safe summaries only; secrets and payload content are excluded.</p></div><button className="secondary-button" onClick={() => run(async () => setAudit(await api('/api/v1/admin/audit?limit=50')))} disabled={busy}><Icon name="refresh"/>Load audit events</button></div>{audit ? <AuditTable items={audit}/> : <EmptyState icon="terminal" title="Audit events are not loaded">Load the latest events to inspect operations, outcomes, actors, and correlation-safe summaries.</EmptyState>}</section>
-      <section className="panel"><div className="panel-heading"><div><span className="eyebrow">RECOVERY</span><h2>Dead-letter queue</h2><p>Rejected records remain inspectable for safe replay.</p></div><button className="secondary-button" onClick={() => run(async () => setDlq(await api('/api/v1/admin/dlq?limit=25')))} disabled={busy}>Load DLQ</button></div>{dlq ? dlq.length ? <div className="dlq-list">{dlq.map((item, index) => <div key={item.event_id || index}><span className="service-icon coral"><Icon name="warning"/></span><span><strong>{item.error || item.error_message || 'Rejected record'}</strong><small>{item.stage || item.error_category || 'Unknown stage'} · {item.source_system || 'Unknown source'}</small></span>{item.event_id && ['jira', 'gitlab'].includes(item.source_system) && <button className="table-action" onClick={() => replayDlq(item.event_id)} disabled={busy}>Replay</button>}</div>)}</div> : <EmptyState icon="check" title="Dead-letter queue is clear">No rejected records were returned by the API.</EmptyState> : <EmptyState icon="warning" title="DLQ is not loaded">Load the queue to inspect rejected records and failure stages.</EmptyState>}</section>
+      <section className="panel span-3"><div className="panel-heading"><div><span className="eyebrow">RECOVERY</span><h2>Dead-letter queue</h2><p>Inspect rejection context and payload identity without exposing captured payloads.</p></div><button className="secondary-button" onClick={() => run(async () => setDlq(await api('/api/v1/admin/dlq?limit=25')))} disabled={busy}>Load DLQ</button></div>{dlq ? <DeadLetterTable items={dlq} onReplay={replayDlq} busy={busy}/> : <EmptyState icon="warning" title="DLQ is not loaded">Load the queue to inspect rejected records and their recovery actions.</EmptyState>}</section>
     </div>}
   </>;
 }
