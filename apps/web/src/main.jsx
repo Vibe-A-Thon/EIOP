@@ -120,7 +120,8 @@ function GraphCanvas({elements, selectedId, onSelect}) {
     }
   }, [selectedId]);
 
-  return <div ref={containerRef} className="graph-canvas" role="img" aria-label="Knowledge graph"/>;
+  const relationshipTypes = [...new Set(elements.filter(element => element.data.source).map(element => element.data.label))];
+  return <div ref={containerRef} className="graph-canvas" role="img" aria-label={`Knowledge graph. Relationship types: ${relationshipTypes.join(', ') || 'none'}.`}/>;
 }
 
 function App() {

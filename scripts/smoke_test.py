@@ -36,15 +36,17 @@ def main():
             == 422
         )
         print("PASS: readiness, authentication, query limits", flush=True)
-        for attempt in range(120):
-            jobs = get("/api/v1/admin/jobs")
-            if any(j["kind"] == "DEMO" and j["status"] == "SUCCEEDED" for j in jobs):
-                break
-            if any(j["kind"] == "DEMO" and j["status"] == "FAILED" for j in jobs):
-                raise AssertionError(f"Demo ingestion failed: {jobs}")
-            time.sleep(2)
-        else:
-            raise AssertionError("Demo worker did not finish")
+        jobs = get("/api/v1/admin/jobs")
+        if any(j["kind"] == "DEMO" for j in jobs):
+            for attempt in range(120):
+                jobs = get("/api/v1/admin/jobs")
+                if any(j["kind"] == "DEMO" and j["status"] == "SUCCEEDED" for j in jobs):
+                    break
+                if any(j["kind"] == "DEMO" and j["status"] == "FAILED" for j in jobs):
+                    raise AssertionError(f"Demo ingestion failed: {jobs}")
+                time.sleep(2)
+            else:
+                raise AssertionError("Demo worker did not finish")
         issue = "urn:eoip:work:item:jira:EOIP-1"
         symbols = get("/api/v1/search", params={"q": "compute_impact", "label": "CodeSymbol"})["nodes"]
         assert symbols, "Code symbol was not ingested"
@@ -91,10 +93,17 @@ async def check_mcp(headers, symbol):
             "entity",
             "path",
             "impact",
+            "lineage",
             "trace_impact",
         }
         result = await session.call_tool("search", {"q": "EOIP-1"})
         assert not result.isError
+        result = await session.call_tool(
+            "lineage", {"canonical_id": "urn:eoip:work:item:jira:EOIP-1"}
+        )
+        assert not result.isError
+        envelope = result.structuredContent or json.loads(result.content[0].text)
+        assert envelope["nodes"] and envelope["evidence"]
         result = await session.call_tool(
             "path", {"source_id": "urn:eoip:work:item:jira:EOIP-1", "target_id": symbol}
         )

@@ -9,12 +9,17 @@ from time import perf_counter
 from uuid import uuid4
 
 import httpx
+from eoip.agents.runtime import AgentRegistry, AgentRuntime
+from eoip.agents.trace_impact import TraceImpactAgent
+from eoip.audit.sink import AuditSink
+from eoip.contracts.agent import AgentRequest
 from eoip.contracts.audit import AuditEvent
 from eoip.jobs import JobQueue, write_json
 from eoip.observability import configure_json_logging
 from eoip.ontology.manifest import EDGE_LABELS, VERTEX_LABELS, edge_endpoints_valid
 from eoip.ontology.rdf import export_jsonld
 from eoip.runtime import api_token, create_store, data_root
+from eoip.validation.engine import ValidationEngine
 from fastapi import Depends, HTTPException, Query, Request
 from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPBearer
@@ -90,6 +95,11 @@ def create_app():
     token = api_token()
     store = create_store()
     queue = JobQueue(data_root())
+    audit_sink = AuditSink(data_root() / "audit")
+    validator = ValidationEngine(store)
+    agent_registry = AgentRegistry()
+    agent_registry.register(TraceImpactAgent())
+    agent_runtime = AgentRuntime(store, agent_registry)
     app = query_app(store, dependencies=[Depends(HTTPBearer(auto_error=False))])
     registry = CollectorRegistry()
     requests = Counter(
@@ -210,6 +220,8 @@ def create_app():
             operation_duration.labels(operation).observe(duration)
             if status_code >= 400:
                 failures.labels(operation, status).inc()
+            if audit is not None:
+                audit_sink.emit(audit, operation=operation, path=request.url.path)
             if response is not None:
                 response.headers["X-Correlation-ID"] = correlation_id
                 if operation != "other":
@@ -377,69 +389,29 @@ def create_app():
 
     @app.post("/api/v1/admin/validation")
     def validate():
-        findings = []
-        vertices = store.find_vertices(limit=10_001)
-        for vertex in vertices:
-            missing = [
-                key for key in VERTEX_LABELS[vertex["label"]][1] if vertex["properties"].get(key) is None
-            ]
-            if missing:
-                findings.append(
-                    {
-                        "canonical_id": vertex["canonical_id"],
-                        "rule": "required_properties",
-                        "missing": missing,
-                    }
-                )
-        edges = store.find_edges(limit=10_001)
-        for edge in edges:
-            out_node, in_node = store.get_vertex(edge["out_v"]), store.get_vertex(edge["in_v"])
-            if edge["label"] not in EDGE_LABELS or not edge_endpoints_valid(
-                edge["label"], out_node["label"], in_node["label"]
-            ):
-                findings.append({"edge_id": edge["eid"], "rule": "endpoint_types"})
-            if edge["label"] in {
-                "IMPLEMENTS",
-                "REFERENCES",
-                "DOCUMENTS",
-                "MODIFIES",
-                "DECLARES",
-            } and not edge["properties"].get("evidence_key"):
-                findings.append({"edge_id": edge["eid"], "rule": "missing_evidence"})
-        result = {
-            "findings": findings,
-            "valid": not findings,
-            "partial": len(vertices) > 10_000 or len(edges) > 10_000,
-            "vertices_checked": len(vertices),
-            "edges_checked": len(edges),
-        }
+        result = validator.run()
         write_json(data_root() / "state/validation.json", result)
         return result
 
     @app.post("/api/v1/agents/trace-impact")
     def trace(payload: TraceRequest):
-        from eoip.graph.traversal import GraphTraversal
-
-        result = GraphTraversal(store, max_results=100).impact(
-            payload.canonical_id, max_depth=payload.max_depth
+        request = AgentRequest(
+            request_id=str(uuid4()),
+            agent_id="TraceImpact",
+            goal=f"Trace impact of {payload.canonical_id}",
+            context_refs=[payload.canonical_id],
+            budgets={"max_depth": payload.max_depth},
         )
-        if not result["source"]:
+        result = agent_runtime.run(request)
+        if result.status == "FAILED" and "not found" in result.summary.lower():
             raise HTTPException(404, "Entity not found")
-        refs = sorted(
-            {
-                e["properties"]["source_ref"]
-                for item in result["impacted"]
-                for e in item["path"]["edges"]
-                if e["properties"].get("source_ref")
-            }
-        )
         return {
-            "agent_id": "TraceImpact",
-            "summary": f"Found {len(result['impacted'])} connected entities within {payload.max_depth} hops.",
-            "evidence_refs": refs,
-            "result": result,
+            "agent_id": result.request_id,
+            "summary": result.summary,
+            "evidence_refs": result.evidence_refs,
+            "tool_calls": result.tool_calls,
             "generation": "deterministic",
-            "partial": result["truncated"],
+            "partial": result.status == "PARTIAL",
         }
 
     @app.post("/api/v1/rag")
@@ -450,5 +422,9 @@ def create_app():
             return retrieve(store, payload.canonical_id, payload.question, synthesize=payload.synthesize)
         except ValueError as exc:
             raise HTTPException(404, str(exc)) from exc
+
+    @app.get("/api/v1/admin/audit")
+    def audit_log(limit: int = Query(default=50, ge=1, le=500)):
+        return audit_sink.read(limit=limit)
 
     return app

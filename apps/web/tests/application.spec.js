@@ -12,8 +12,10 @@ test('login, search, trace graph evidence, and administer persisted data', async
   await page.locator('.entity-list button').first().click();
   await expect(page.getByRole('button', {name: 'Explore impact'})).toBeVisible();
   await page.getByRole('button', {name: 'Find path'}).click();
-  await expect(page.locator('svg')).toContainText('IMPLEMENTS');
-  await expect(page.locator('svg')).toContainText('DECLARES');
+  const graph = page.getByRole('img', {name: /Knowledge graph/});
+  await expect(graph).toBeVisible();
+  await expect(graph).toHaveAttribute('aria-label', /IMPLEMENTS/);
+  await expect(graph).toHaveAttribute('aria-label', /DECLARES/);
   await page.getByRole('button', {name: 'Run TraceImpact'}).click();
   await expect(page.getByRole('heading', {name: 'TraceImpact result'})).toBeVisible();
   await expect(page.getByText('connected entities within', {exact: false})).toBeVisible();

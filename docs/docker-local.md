@@ -153,6 +153,9 @@ eoip-api:/data/backups/FILE.json ./FILE.json` as a single command.
 container, checks vertex/edge counts and the Jira-to-symbol evidence path, then
 removes that test graph container. The main deployment and its volumes remain
 available. Run backup before this command.
+Because snapshots omit worker job history, the smoke test validates the restored
+graph directly before submitting an idempotent demo replay to verify worker
+processing.
 
 For restore, create a separate Compose project with separate ports and
 `EOIP_LOAD_DEMO=false`. Start HugeGraph and schema-init, leave the worker stopped,
