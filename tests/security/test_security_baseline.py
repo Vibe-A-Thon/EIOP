@@ -5,11 +5,11 @@ query policy enforcement, and read-only MCP tool registration.
 """
 
 import pytest
+from eoip.agents.runtime import READ_TOOLS, AgentRegistry
 from eoip.audit.redaction import redact_secrets
-from eoip.graph.memory import MemoryGraphStore
-from eoip.query.policy import DEFAULT_POLICY, QueryPolicy
 from eoip.contracts.query_plan import QueryPlan
-from eoip.agents.runtime import AgentRegistry, READ_TOOLS
+from eoip.graph.memory import MemoryGraphStore
+from eoip.query.policy import QueryPolicy
 
 
 def test_path_traversal_rejection():
@@ -25,7 +25,8 @@ def test_path_traversal_rejection():
             "raw_files": {"../../etc/passwd": {"content": "root:x:0:0"}},
         },
     }
-    import json, tempfile
+    import json
+    import tempfile
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(malicious_archive, f)
         f.flush()
@@ -91,6 +92,7 @@ def test_read_tools_allowlist():
 def test_oversized_input_rejection():
     """Oversized canonical IDs are rejected by Pydantic validation."""
     from pydantic import ValidationError
+
     from apps.api.main import TraceRequest
     with pytest.raises(ValidationError):
         TraceRequest(canonical_id="x" * 513)

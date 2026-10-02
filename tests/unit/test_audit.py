@@ -1,7 +1,6 @@
 """Tests for audit sink and secret redaction."""
 
 import tempfile
-from pathlib import Path
 
 from eoip.audit.redaction import redact_secrets
 from eoip.audit.sink import AuditSink

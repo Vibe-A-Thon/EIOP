@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from uuid import uuid4
 
+from eoip.config import load_query_policy
 from eoip.contracts.graph_result import GraphResult
 from eoip.contracts.query_plan import QueryPlan
 from eoip.graph.store import GraphStore
 from eoip.query.executor import PolicyViolation, QueryExecutor, QueryTimeout
-from eoip.config import load_query_policy
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from pydantic import BaseModel, Field
 
@@ -179,5 +179,12 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         if not result.nodes:
             raise HTTPException(status_code=404, detail="Entity not found")
         return result
+
+    @app.post("/api/v1/query", response_model=GraphResult)
+    def query_plan(payload: QueryPlan) -> GraphResult:
+        try:
+            return executor.execute(payload)
+        except PolicyViolation as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return app

@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 
-from eoip.contracts.source_event import SourceEvent, utc_now_iso
+from eoip.contracts.source_event import SourceEvent
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 

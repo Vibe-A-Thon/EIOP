@@ -106,6 +106,11 @@ def create_app():
             json={"canonical_id": canonical_id, "max_depth": 2, "result_limit": 50},
         )
 
+    @mcp.tool()
+    async def query(plan: dict) -> dict:
+        """Execute a validated QueryPlan against the graph."""
+        return await call("POST", "/api/v1/query", json=plan)
+
     app = mcp.streamable_http_app()
 
     class TokenBoundary(BaseHTTPMiddleware):

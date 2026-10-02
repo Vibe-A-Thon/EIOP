@@ -20,6 +20,12 @@ Open [the explorer](http://localhost:8080/app) or
 generated, Git-ignored `deploy/.env`. API documentation is at
 [localhost:8000/docs](http://localhost:8000/docs).
 
+The explorer uses Cytoscape.js for graph visualization. The API supports
+QueryPlan execution (`POST /api/v1/query`), provenance lineage
+(`POST /api/v1/lineage`), GraphRAG retrieval (`POST /api/v1/rag`), and
+ingestion/validation run history (`GET /api/v1/ingestion/runs`,
+`GET /api/v1/validation/runs`).
+
 The demo worker loads Jira fixtures, a real Git repository, Python/TypeScript
 symbols, documentation, merge-request metadata, and pipeline metadata.
 

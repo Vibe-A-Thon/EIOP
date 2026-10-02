@@ -9,10 +9,8 @@ from __future__ import annotations
 import logging
 from time import monotonic
 from typing import Protocol
-from uuid import uuid4
 
 from eoip.contracts.agent import AgentRequest, AgentResult
-from eoip.contracts.audit import AuditEvent
 from eoip.contracts.source_event import utc_now_iso
 from eoip.graph.store import GraphStore
 

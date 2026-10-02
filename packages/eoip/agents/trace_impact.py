@@ -6,8 +6,6 @@ trace and impact requests. Returns decision summary and evidence refs.
 
 from __future__ import annotations
 
-from uuid import uuid4
-
 from eoip.contracts.agent import AgentRequest, AgentResult
 from eoip.graph.store import GraphStore
 from eoip.graph.traversal import GraphTraversal

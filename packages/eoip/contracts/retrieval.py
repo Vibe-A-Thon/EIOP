@@ -19,3 +19,9 @@ class RetrievalResult(BaseModel):
     contexts: list[RetrievalContext] = []
     evidence_refs: list[str]
     metrics: dict | None = None
+    answer: str | None = None
+    warnings: list[str] | None = None
+    generation: str | None = None
+    partial: bool | None = None
+    facts: list[dict] | None = None
+    graph: dict | None = None

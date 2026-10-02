@@ -8,7 +8,6 @@ from __future__ import annotations
 from eoip.graph.store import GraphStore
 from eoip.graph.traversal import GraphTraversal
 
-
 LINEAGE_EDGES = frozenset({"EVIDENCED_BY", "INGESTED_IN"})
 
 

@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 
 import yaml
-
 from eoip.query.policy import QueryPolicy
 
 

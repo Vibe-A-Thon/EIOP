@@ -110,7 +110,7 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/v1/ontology/exp
 
 ## 6. MCP demonstration
 
-The MCP server exposes 6 read-only tools at http://localhost:8001/mcp:
+The MCP server exposes read-only tools at http://localhost:8001/mcp, including:
 
 - `search` — search entities by identifier or name
 - `entity` — read entity with relationships
@@ -118,6 +118,8 @@ The MCP server exposes 6 read-only tools at http://localhost:8001/mcp:
 - `impact` — bounded impact analysis
 - `lineage` — trace to source evidence
 - `trace_impact` — run the TraceImpact agent
+- `code_symbol` / `jira_issue` — look up code or Jira context
+- `evidence` / `query` — retrieve evidence or execute a QueryPlan
 
 No write tools are advertised.
 

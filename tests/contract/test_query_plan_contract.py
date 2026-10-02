@@ -1,6 +1,5 @@
 """Contract tests: QueryPlan and policy validation."""
 
-import pytest
 from eoip.contracts.query_plan import QueryPlan
 from eoip.query.policy import DEFAULT_POLICY, QueryPolicy
 

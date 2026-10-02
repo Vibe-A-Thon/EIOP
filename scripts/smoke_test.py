@@ -72,7 +72,9 @@ def main():
             time.sleep(2)
         assert job["status"] == "SUCCEEDED", job
         after = get("/api/v1/admin/stats")["labels"]
-        assert all(after[k] == v for k, v in before.items() if k != "IngestionRun")
+        diff = {k: (before.get(k), after.get(k)) for k in set(before) | set(after) if k != "IngestionRun" and before.get(k) != after.get(k)}
+        assert not diff, f"Logical entity counts changed after replay: {diff}"
+        assert after.get("IngestionRun", 0) > before.get("IngestionRun", 0), "Replay did not create a new IngestionRun"
         print("PASS: durable worker replay preserves logical entity counts", flush=True)
     response = httpx.get("http://eoip-web:8080/app", trust_env=False)
     assert response.status_code == 200 and '<div id="root"></div>' in response.text
@@ -95,6 +97,10 @@ async def check_mcp(headers, symbol):
             "impact",
             "lineage",
             "trace_impact",
+            "code_symbol",
+            "jira_issue",
+            "evidence",
+            "query",
         }
         result = await session.call_tool("search", {"q": "EOIP-1"})
         assert not result.isError

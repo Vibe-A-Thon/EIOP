@@ -6,7 +6,7 @@ The policy enforces depth, result, timeout, and relationship bounds.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from eoip.contracts.query_plan import QueryPlan
 from eoip.ontology.manifest import EDGE_LABELS

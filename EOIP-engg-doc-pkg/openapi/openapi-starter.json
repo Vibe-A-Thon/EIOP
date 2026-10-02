@@ -6,17 +6,20 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8088"
+      "url": "http://localhost:8000"
     }
   ],
   "paths": {
     "/api/v1/search": {
-      "post": {
+      "get": {
         "summary": "Search canonical entities",
+        "parameters": [
+          {"name": "q", "in": "query", "required": true, "schema": {"type": "string"}},
+          {"name": "label", "in": "query", "schema": {"type": "string"}},
+          {"name": "limit", "in": "query", "schema": {"type": "integer", "default": 25}}
+        ],
         "responses": {
-          "200": {
-            "description": "Search results"
-          }
+          "200": {"description": "Search results"}
         }
       }
     },
@@ -24,12 +27,8 @@
       "post": {
         "summary": "Execute a validated QueryPlan",
         "responses": {
-          "200": {
-            "description": "Graph result"
-          },
-          "422": {
-            "description": "Invalid/policy-denied plan"
-          }
+          "200": {"description": "Graph result"},
+          "422": {"description": "Invalid/policy-denied plan"}
         }
       }
     },
@@ -37,9 +36,7 @@
       "post": {
         "summary": "Find bounded graph paths",
         "responses": {
-          "200": {
-            "description": "Paths + evidence"
-          }
+          "200": {"description": "Paths + evidence"}
         }
       }
     },
@@ -47,9 +44,7 @@
       "post": {
         "summary": "Compute bounded impact/blast radius",
         "responses": {
-          "200": {
-            "description": "Impact result + evidence"
-          }
+          "200": {"description": "Impact result + evidence"}
         }
       }
     },
@@ -57,9 +52,15 @@
       "post": {
         "summary": "Resolve provenance/lineage",
         "responses": {
-          "200": {
-            "description": "Lineage result"
-          }
+          "200": {"description": "Lineage result"}
+        }
+      }
+    },
+    "/api/v1/rag": {
+      "post": {
+        "summary": "GraphRAG retrieval with optional local synthesis",
+        "responses": {
+          "200": {"description": "Retrieval result"}
         }
       }
     },
@@ -67,9 +68,7 @@
       "get": {
         "summary": "List validation runs",
         "responses": {
-          "200": {
-            "description": "Validation run list"
-          }
+          "200": {"description": "Validation run list"}
         }
       }
     },
@@ -77,9 +76,7 @@
       "get": {
         "summary": "List ingestion runs",
         "responses": {
-          "200": {
-            "description": "Ingestion run list"
-          }
+          "200": {"description": "Ingestion run list"}
         }
       }
     },
@@ -87,9 +84,7 @@
       "post": {
         "summary": "Start Jira JSON ingestion",
         "responses": {
-          "202": {
-            "description": "Job accepted"
-          }
+          "202": {"description": "Job accepted"}
         }
       }
     },
@@ -97,9 +92,15 @@
       "post": {
         "summary": "Run read-only TraceImpactAgent",
         "responses": {
-          "200": {
-            "description": "Agent result"
-          }
+          "200": {"description": "Agent result"}
+        }
+      }
+    },
+    "/api/v1/ontology/export": {
+      "get": {
+        "summary": "Export ontology as JSON-LD",
+        "responses": {
+          "200": {"description": "JSON-LD document"}
         }
       }
     },
@@ -107,9 +108,7 @@
       "get": {
         "summary": "Liveness",
         "responses": {
-          "200": {
-            "description": "Alive"
-          }
+          "200": {"description": "Alive"}
         }
       }
     },
@@ -117,12 +116,8 @@
       "get": {
         "summary": "Readiness",
         "responses": {
-          "200": {
-            "description": "Ready"
-          },
-          "503": {
-            "description": "Not ready"
-          }
+          "200": {"description": "Ready"},
+          "503": {"description": "Not ready"}
         }
       }
     }

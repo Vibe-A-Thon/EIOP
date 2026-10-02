@@ -6,10 +6,10 @@ Docker-level benchmarks run separately via the smoke test suite.
 
 import time
 
+from eoip.contracts.query_plan import QueryPlan
 from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.traversal import GraphTraversal
 from eoip.query.executor import QueryExecutor
-from eoip.contracts.query_plan import QueryPlan
 
 
 def _build_graph(n_vertices=200, branching=3):

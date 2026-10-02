@@ -7,7 +7,7 @@ Docker Engine: 29.8.1. Compose: v5.5.1. Database: HugeGraph 1.7.0 / RocksDB.
 |---|---|
 | Build and start default Compose services | Passed; graph/API/worker/web/MCP healthy |
 | Idempotent schema bootstrap | Passed; subsequent initialization returns created=false |
-| Python tests in Linux container | 26 passed |
+| Python tests in Linux container | 123 passed |
 | Chromium UI tests in Docker | 2 passed |
 | Authentication and excessive query limits | Passed |
 | Durable worker demo replay | Passed; business entity counts preserved |

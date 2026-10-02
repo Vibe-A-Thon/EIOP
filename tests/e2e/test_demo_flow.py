@@ -4,20 +4,18 @@ Validates the complete evidence path:
 Jira Story -> Merge Request -> Commit -> Source File -> Function -> Dependency -> Pipeline/Build -> Documentation
 """
 
-import json
-from pathlib import Path
 
-from eoip.demo import load_demo
-from eoip.graph.memory import MemoryGraphStore
-from eoip.graph.traversal import GraphTraversal
-from eoip.query.executor import QueryExecutor
-from eoip.contracts.query_plan import QueryPlan
-from eoip.validation.engine import ValidationEngine
-from eoip.provenance.lineage import LineageService
 from eoip.agents.runtime import AgentRegistry, AgentRuntime
 from eoip.agents.trace_impact import TraceImpactAgent
 from eoip.contracts.agent import AgentRequest
+from eoip.contracts.query_plan import QueryPlan
+from eoip.demo import load_demo
+from eoip.graph.memory import MemoryGraphStore
+from eoip.graph.traversal import GraphTraversal
+from eoip.provenance.lineage import LineageService
+from eoip.query.executor import QueryExecutor
 from eoip.snapshot import backup, restore
+from eoip.validation.engine import ValidationEngine
 
 
 def _demo_environment(tmp_path):

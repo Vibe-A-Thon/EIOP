@@ -1,16 +1,14 @@
 """Tests for new API endpoints: neighborhood, traceability, DLQ, GitLab ingestion."""
 
 import json
-from pathlib import Path
 
-import pytest
 from eoip.graph.memory import MemoryGraphStore
 from fastapi.testclient import TestClient
 
 
 def _make_api_app(store, tmp_path):
     import os
-    os.environ.setdefault("EOIP_API_TOKEN", "test-token-minimum-24-characters!!")
+    os.environ["EOIP_API_TOKEN"] = "test-token-minimum-24-characters!!"
     os.environ["EOIP_DATA_DIR"] = str(tmp_path)
 
     from apps.api import main as api_main
