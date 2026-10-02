@@ -20,11 +20,12 @@ Open [the explorer](http://localhost:8080/app) or
 generated, Git-ignored `deploy/.env`. API documentation is at
 [localhost:8000/docs](http://localhost:8000/docs).
 
-The explorer uses an on-demand Cytoscape.js canvas with Graph, Impact, and
-Evidence lenses, typed legends, bounded expansion, relationship evidence, and
+The explorer uses an on-demand Cytoscape.js canvas with Search, Graph, Impact,
+Evidence, and Architecture lenses, typed legends, bounded expansion,
+relationship/trust filters, highlighted paths, exported local context, and
 responsive inspection panels. Administration includes live source/job,
-validation/quality, ontology, audit, and dead-letter views; operational values
-are always read from the API. The API supports
+validation/quality, ontology, model/backup health, audit, and dead-letter
+views; operational values are always read from the API. The API supports
 QueryPlan execution (`POST /api/v1/query`), provenance lineage
 (`POST /api/v1/lineage`), GraphRAG retrieval (`POST /api/v1/rag`), and
 ingestion/validation run history (`GET /api/v1/ingestion/runs`,

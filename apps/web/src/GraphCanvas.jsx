@@ -11,7 +11,7 @@ const palette = {
 
 const safeClass = name => String(name).toLowerCase().replace(/[^a-z0-9]/g, '');
 
-export default function GraphCanvas({nodes = [], edges = [], selectedId, selectedEdgeId, onSelectNode, onSelectEdge, onExpand}) {
+export default function GraphCanvas({nodes = [], edges = [], paths = [], selectedId, selectedEdgeId, onSelectNode, onSelectEdge, onExpand}) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
   const [ready, setReady] = useState(false);
@@ -31,8 +31,13 @@ export default function GraphCanvas({nodes = [], edges = [], selectedId, selecte
     })),
     ...edges.map(edge => ({
       data: {id: edge.id, source: edge.from_id, target: edge.to_id, label: edge.type, edge},
+      classes: [
+        edge.creation_status?.toLowerCase() === 'inferred' ? 'inferred' : '',
+        edge.properties?.source_ref || edge.properties?.evidence_key ? 'evidenced' : '',
+        paths.some(path => path.edge_ids?.includes(edge.id)) ? 'path-edge' : '',
+      ].filter(Boolean).join(' '),
     })),
-  ], [nodes, edges]);
+  ], [nodes, edges, paths]);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,12 +74,17 @@ export default function GraphCanvas({nodes = [], edges = [], selectedId, selecte
           {selector: 'edge:selected, edge.selected', style: {
             'width': 3, 'line-color': '#7c5cff', 'target-arrow-color': '#7c5cff', 'color': '#5b3fd6',
           }},
+          {selector: 'edge.inferred', style: {'line-style': 'dashed', 'line-color': '#f59e0b', 'target-arrow-color': '#f59e0b'}},
+          {selector: 'edge.evidenced', style: {'width': 2.2}},
+          {selector: 'edge.path-edge', style: {'width': 4, 'line-color': '#7c5cff', 'target-arrow-color': '#7c5cff', 'z-index': 10}},
           {selector: '.labels-off', style: {'label': ''}},
+          {selector: '.semantic-compact', style: {'label': ''}},
         ],
       });
       instance.on('tap', 'node', event => onSelectNode?.(event.target.data('node')));
       instance.on('tap', 'edge', event => onSelectEdge?.(event.target.data('edge')));
       instance.on('dbltap', 'node', event => onExpand?.(event.target.data('node')));
+      instance.on('zoom', () => instance.nodes().toggleClass('semantic-compact', instance.zoom() < .52));
       cyRef.current = instance;
       setReady(true);
     });

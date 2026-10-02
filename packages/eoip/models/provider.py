@@ -35,6 +35,11 @@ class LocalModelProvider:
     def available(self) -> bool:
         return bool(self._model)
 
+    @property
+    def model_name(self) -> str | None:
+        """Configured local model identifier without exposing its service URL."""
+        return self._model or None
+
     def generate(
         self,
         system_prompt: str,
@@ -75,7 +80,7 @@ class LocalModelProvider:
         if not self._model:
             return False
         try:
-            with httpx.Client(timeout=5, trust_env=False) as client:
+            with httpx.Client(timeout=min(self._timeout, 5), trust_env=False) as client:
                 response = client.get(f"{self._url}/api/tags")
                 return response.status_code == 200
         except httpx.HTTPError:

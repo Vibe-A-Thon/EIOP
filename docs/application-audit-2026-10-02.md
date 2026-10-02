@@ -29,7 +29,10 @@ The previous client exposed the required APIs but was a dense single view with m
 
 - a polished local-workspace connection experience with readiness and privacy guidance;
 - persistent explorer context across Graph, Impact, and Evidence lenses;
+- dedicated Search and Architecture lenses, plus a complete 20-lens catalog that clearly distinguishes API-backed experiences from later backend-dependent roadmap work;
+- exportable local knowledge-context definitions containing the active lens, query, root entity, domains, and bounded result summary;
 - a richer Cytoscape canvas with lazy loading, layout choice, zoom/fit/label controls, typed color legend, domain filtering, bounded-result warnings, node inspection, edge explanation, and progressive neighborhood expansion;
+- relationship-type and deterministic/inferred trust filters, semantic zoom, evidence-aware edge styling, and highlighted query paths;
 - API-backed search, path, impact, TraceImpact, lineage, and local GraphRAG retrieval flows;
 - a structured admin control center for live jobs, connector imports/sync options, graph inventory, worker/schema state, validation coverage, findings, ontology context, audit events, and DLQ records;
 - explicit loading, empty, unavailable, partial, and correlation-aware error states;
@@ -38,6 +41,8 @@ The previous client exposed the required APIs but was a dense single view with m
 - dynamic Cytoscape loading, reducing the initial production JavaScript bundle from the graph-heavy monolith to a separate on-demand chunk.
 
 All displayed operational counts, statuses, quality percentages, jobs, findings, and audit/DLQ records come from platform APIs. The UI does not invent health values or silently substitute demo data when the API fails.
+
+The admin system-status endpoint also reports live graph readiness, optional local-model configuration/health, connector checkpoint count, and checksummed backup inventory. It returns safe file metadata rather than host paths or credentials.
 
 ## Code-quality findings closed
 
@@ -49,7 +54,7 @@ All displayed operational counts, statuses, quality percentages, jobs, findings,
 
 | Check | Result |
 |---|---|
-| `python -m pytest -q` | 136 tests passed |
+| `python -m pytest -q` | 137 tests passed |
 | `python -m ruff check packages apps tests` | All checks passed |
 | `npm run build` in `apps/web` | Production build passed; application and graph engine emitted as separate chunks |
 | `git diff --check` | No whitespace errors |
@@ -59,4 +64,3 @@ The integrated Docker/Playwright run could not be executed in this workstation s
 ## Honest completion boundary
 
 Phase 1/MVP is the current implementation and acceptance boundary. Later roadmap items in `gaps-requirements.md`, `gaps2-requirements.md`, `gaps2-implementation.md`, and `knowgridflow-product-architecture.md` require new domain contracts, event/revision services, storage behavior, and acceptance tests before their GUI lenses can be truthfully enabled. They must not be represented as completed merely through placeholder screens.
-

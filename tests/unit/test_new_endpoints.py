@@ -67,3 +67,21 @@ def test_ontology_export_returns_jsonld(tmp_path):
     data = r.json()
     assert "@context" in data
     assert "@graph" in data
+
+
+def test_admin_system_status_reports_real_local_state(tmp_path, monkeypatch):
+    monkeypatch.delenv("EOIP_OLLAMA_MODEL", raising=False)
+    store = MemoryGraphStore()
+    app = _make_api_app(store, tmp_path)
+    client = TestClient(app)
+    response = client.get(
+        "/api/v1/admin/system",
+        headers={"Authorization": "Bearer test-token-minimum-24-characters!!"},
+    )
+    assert response.status_code == 200
+    assert response.json() == {
+        "graph": {"status": "ready"},
+        "model": {"status": "disabled", "configured": False, "name": None},
+        "backup": {"status": "not_created", "count": 0, "latest": None},
+        "connectors": {"checkpoint_count": 0},
+    }

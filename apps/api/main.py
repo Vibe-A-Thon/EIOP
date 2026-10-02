@@ -16,6 +16,7 @@ from eoip.config import load_agent_config
 from eoip.contracts.agent import AgentRequest
 from eoip.contracts.audit import AuditEvent
 from eoip.jobs import JobQueue, write_json
+from eoip.models.provider import LocalModelProvider
 from eoip.observability import configure_json_logging
 from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.ontology.rdf import export_jsonld
@@ -354,6 +355,55 @@ def create_app():
 
         path = data_root() / "state/worker.json"
         return json.loads(path.read_text()) if path.exists() else {"status": "starting"}
+
+    @app.get("/api/v1/admin/system")
+    def system_status():
+        """Return real local-operability state used by the admin experience."""
+        backup_dir = data_root() / "backups"
+        backup_items = []
+        for path in sorted(
+            backup_dir.glob("*.json") if backup_dir.exists() else [],
+            key=lambda item: item.stat().st_mtime,
+            reverse=True,
+        ):
+            try:
+                archive = json.loads(path.read_text(encoding="utf-8"))
+                payload = archive.get("payload", {})
+                backup_items.append(
+                    {
+                        "file": path.name,
+                        "created_at": payload.get("created_at"),
+                        "schema_version": payload.get("schema_version"),
+                        "vertices": len(payload.get("vertices", [])),
+                        "edges": len(payload.get("edges", [])),
+                        "sha256": archive.get("sha256"),
+                        "size_bytes": path.stat().st_size,
+                    }
+                )
+            except (OSError, ValueError, TypeError):
+                continue
+
+        model = LocalModelProvider(timeout=2)
+        model_status = "disabled"
+        if model.available:
+            model_status = "ready" if model.health() else "unavailable"
+
+        connector_state = data_root() / "state/connectors"
+        checkpoints = len(list(connector_state.glob("*.json"))) if connector_state.exists() else 0
+        return {
+            "graph": {"status": "ready" if store.health() else "unavailable"},
+            "model": {
+                "status": model_status,
+                "configured": model.available,
+                "name": model.model_name,
+            },
+            "backup": {
+                "status": "available" if backup_items else "not_created",
+                "count": len(backup_items),
+                "latest": backup_items[0] if backup_items else None,
+            },
+            "connectors": {"checkpoint_count": checkpoints},
+        }
 
     @app.get("/api/v1/admin/jobs")
     def jobs():
