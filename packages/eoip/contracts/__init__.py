@@ -9,7 +9,9 @@ from eoip.contracts.memory import MemoryRecord
 from eoip.contracts.normalized import NormalizedEntity, NormalizedRelationship
 from eoip.contracts.query_plan import QueryPlan
 from eoip.contracts.retrieval import RetrievalResult
-from eoip.contracts.source_event import SourceEvent
+from eoip.contracts.revision import GraphRevision, RelationshipRevision, RevisionMetadata
+from eoip.contracts.source_event import PermissionMetadata, SourceEvent, SourceEventV2, upgrade_source_event
+from eoip.contracts.source_registry import SourceCapabilities, SourceCheckpoint, SourceRegistryEntry
 from eoip.contracts.tool import ToolRequest, ToolResult
 
 __all__ = [
@@ -22,12 +24,21 @@ __all__ = [
     "GraphNode",
     "GraphPath",
     "GraphResult",
+    "GraphRevision",
     "MemoryRecord",
     "NormalizedEntity",
     "NormalizedRelationship",
+    "PermissionMetadata",
     "QueryPlan",
+    "RelationshipRevision",
     "RetrievalResult",
+    "RevisionMetadata",
+    "SourceCapabilities",
+    "SourceCheckpoint",
     "SourceEvent",
+    "SourceEventV2",
+    "SourceRegistryEntry",
     "ToolRequest",
     "ToolResult",
+    "upgrade_source_event",
 ]

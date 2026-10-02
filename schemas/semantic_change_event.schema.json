@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:semantic_change_event:1.0",
+  "title": "SemanticChangeEvent v1",
+  "type": "object",
+  "required": ["schema_version", "cursor", "graph_version", "change_kind", "target_kind", "target_id", "source_event_id", "observed_at", "details", "entry_hash"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "cursor": {"type": "integer", "minimum": 1},
+    "graph_version": {"type": "string", "minLength": 1},
+    "change_kind": {"enum": ["CREATE", "UPDATE", "DELETE", "LATE_EVENT"]},
+    "target_kind": {"enum": ["ENTITY", "RELATIONSHIP"]},
+    "target_id": {"type": "string", "minLength": 1},
+    "source_event_id": {"type": "string", "minLength": 1},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "details": {"type": "object"},
+    "previous_hash": {"type": ["string", "null"]},
+    "entry_hash": {"type": "string", "minLength": 64, "maxLength": 64}
+  },
+  "additionalProperties": false
+}

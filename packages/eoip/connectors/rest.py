@@ -12,7 +12,7 @@ from uuid import uuid4
 
 import httpx
 from eoip.connectors.errors import ConnectorError
-from eoip.contracts.source_event import SourceEvent, utc_now_iso
+from eoip.contracts.source_event import SourceEventV2, utc_now_iso
 
 logger = logging.getLogger(__name__)
 
@@ -132,19 +132,23 @@ class RestConnector:
         source_record_id: str,
         payload: dict,
         source_version: str | int | None,
-    ) -> SourceEvent:
+    ) -> SourceEventV2:
         payload_json = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
         payload_hash = hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
         event_id = hashlib.sha256(
             f"{self.source_system}:{record_kind}:{source_record_id}:{payload_hash}".encode()
         ).hexdigest()
-        return SourceEvent(
+        captured_at = utc_now_iso()
+        return SourceEventV2(
             event_id=event_id,
             source_system=self.source_system,
+            source_instance_id=self.instance_id,
             source_record_id=source_record_id,
+            operation="UPSERT",
             source_version=str(source_version) if source_version is not None else payload_hash,
-            captured_at=utc_now_iso(),
-            payload_hash=payload_hash,
+            event_time=captured_at,
+            captured_at=captured_at,
+            content_hash=payload_hash,
             payload=payload,
             metadata={
                 "mapper_version": self.mapper_version,

@@ -9,7 +9,7 @@ from threading import Lock
 from uuid import uuid4
 
 from eoip.connectors.jira_json import JiraJsonConnector
-from eoip.contracts.source_event import SourceEvent, utc_now_iso
+from eoip.contracts.source_event import SourceEvent, SourceEventV2, utc_now_iso
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
@@ -19,7 +19,7 @@ class FileEventCapture:
         self.root = Path(root)
         self._lock = Lock()
 
-    def capture(self, event: SourceEvent) -> Path:
+    def capture(self, event: SourceEvent | SourceEventV2) -> Path:
         event_dir = self.root / event.source_system
         event_dir.mkdir(parents=True, exist_ok=True)
         destination = event_dir / f"{event.event_id}.json"
@@ -32,7 +32,8 @@ class FileEventCapture:
                     os.fsync(raw_file.fileno())
             except FileExistsError:
                 existing = json.loads(destination.read_text(encoding="utf-8"))
-                if existing.get("payload_hash") != event.payload_hash:
+                existing_hash = existing.get("payload_hash") or existing.get("content_hash")
+                if existing_hash != event.payload_hash:
                     raise RuntimeError("captured event ID conflicts with existing immutable payload")
         return destination
 

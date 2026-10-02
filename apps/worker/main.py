@@ -5,6 +5,7 @@ import logging
 import os
 import signal
 import time
+from pathlib import Path
 from threading import Thread
 from uuid import uuid4
 
@@ -12,12 +13,17 @@ import httpx
 from eoip.connectors.errors import ConnectorError
 from eoip.connectors.gitlab_json import GitLabJsonConnector
 from eoip.connectors.jira_json import JiraJsonConnector
+from eoip.connectors.registry import SourceRegistry
 from eoip.contracts.audit import AuditEvent
 from eoip.contracts.source_event import utc_now_iso
 from eoip.demo import load_demo
+from eoip.graph.consumers import run_default_consumers
+from eoip.ingestion.github import GitHubIngestionService, run_registered_github_operation
 from eoip.ingestion.gitlab import GitLabIngestionService
+from eoip.ingestion.gitlab_rest import GitLabTemporalIngestionService, run_registered_gitlab_operation
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
-from eoip.ingestion.source_sync import run_configured_source_sync
+from eoip.ingestion.jira_rest import JiraTemporalIngestionService, run_registered_jira_operation
+from eoip.ingestion.source_sync import run_configured_source_sync, run_registered_source_operation
 from eoip.jobs import JobQueue, write_json
 from eoip.observability import configure_json_logging, log_audit_event
 from eoip.runtime import create_store, data_root
@@ -54,6 +60,82 @@ def execute_job(store, root, job):
             str(root),
             job["correlation_id"],
         )
+    if job["kind"] == "SOURCE_OPERATION":
+        registry = SourceRegistry(root / "state" / "source-registry.json")
+        entry = registry.get(payload["source_id"])
+        if entry.source_type == "github":
+            return run_registered_github_operation(
+                entry, payload, store, str(root), job["correlation_id"]
+            )
+        if entry.source_type == "gitlab":
+            return run_registered_gitlab_operation(
+                entry, payload, store, str(root), job["correlation_id"]
+            )
+        if entry.source_type == "jira":
+            return run_registered_jira_operation(
+                entry, payload, store, str(root), job["correlation_id"]
+            )
+        return run_registered_source_operation(
+            entry,
+            payload,
+            store,
+            str(root),
+            job["correlation_id"],
+        )
+    if job["kind"] == "SOURCE_WEBHOOK":
+        registry = SourceRegistry(root / "state" / "source-registry.json")
+        entry = registry.get(payload["source_id"])
+        receipt_path = root / "receipts" / entry.source_id
+        candidate = Path(payload["receipt_ref"]).resolve()
+        if receipt_path.resolve() not in candidate.parents:
+            raise ValueError("webhook receipt path escapes source receipt directory")
+        receipt = json.loads(candidate.read_text(encoding="utf-8"))
+        document = receipt["payload"]
+        if entry.source_type == "jira":
+            from eoip.connectors.config import connector_from_registry
+            from eoip.connectors.jira import JiraConnector
+
+            connector = connector_from_registry(entry, correlation_id=job["correlation_id"])
+            if not isinstance(connector, JiraConnector):
+                raise TypeError("registered Jira source did not create a Jira connector")
+            try:
+                service = JiraTemporalIngestionService(
+                    store, connector, FileEventCapture(root / "raw"), root / "dlq"
+                )
+                return service.ingest(list(connector.handle_event(document)))
+            finally:
+                connector.close()
+        if entry.source_type == "gitlab":
+            from eoip.connectors.config import connector_from_registry
+            from eoip.connectors.gitlab import GitLabConnector
+
+            connector = connector_from_registry(entry, correlation_id=job["correlation_id"])
+            if not isinstance(connector, GitLabConnector):
+                raise TypeError("registered GitLab source did not create a GitLab connector")
+            try:
+                document["_event_name"] = receipt.get("metadata", {}).get("event_name")
+                service = GitLabTemporalIngestionService(
+                    store, connector, FileEventCapture(root / "raw"), root / "dlq"
+                )
+                return service.ingest(list(connector.handle_event(document)))
+            finally:
+                connector.close()
+        if entry.source_type == "github":
+            from eoip.connectors.config import connector_from_registry
+            from eoip.connectors.github import GitHubConnector
+
+            connector = connector_from_registry(entry, correlation_id=job["correlation_id"])
+            if not isinstance(connector, GitHubConnector):
+                raise TypeError("registered GitHub source did not create a GitHub connector")
+            try:
+                document["_event_name"] = receipt.get("metadata", {}).get("event_name")
+                service = GitHubIngestionService(
+                    store, connector, FileEventCapture(root / "raw"), root / "dlq"
+                )
+                return service.ingest(list(connector.handle_event(document)))
+            finally:
+                connector.close()
+        raise ValueError("No webhook mapper is available for this source type")
     raise ValueError("Unknown job kind")
 
 
@@ -100,6 +182,7 @@ def main():
             write_json(path, job)
             try:
                 result = execute_job(store, root, job)
+                result["semantic_consumers"] = run_default_consumers(store, root)
                 partial = result.get("run_status") == "PARTIAL" or any(
                     value.get("run_status") == "PARTIAL"
                     for value in result.values()

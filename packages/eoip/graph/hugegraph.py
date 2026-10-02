@@ -282,18 +282,41 @@ class HugeGraphStore:
         )
         props.setdefault("creation_status", "DETERMINISTIC")
         physical_label = f"{label}__{source['label']}__{target['label']}"
-        raw = self._request(
-            "POST",
-            "/graph/edges",
-            json={
-                "label": physical_label,
-                "outV": out_v,
-                "inV": in_v,
-                "outVLabel": source["label"],
-                "inVLabel": target["label"],
-                "properties": props,
-            },
-        )
+        with self._lock:
+            existing = next(
+                (
+                    edge
+                    for edge in self.find_edges(
+                        label=label,
+                        out_v=out_v,
+                        in_v=in_v,
+                        limit=10_000,
+                        include_historical=True,
+                    )
+                    if edge["properties"].get("edge_key") == props["edge_key"]
+                ),
+                None,
+            )
+            if existing:
+                raw = self._request(
+                    "PUT",
+                    "/graph/edges/" + self._id_path(existing["eid"]),
+                    params={"action": "append"},
+                    json={"properties": props},
+                )
+            else:
+                raw = self._request(
+                    "POST",
+                    "/graph/edges",
+                    json={
+                        "label": physical_label,
+                        "outV": out_v,
+                        "inV": in_v,
+                        "outVLabel": source["label"],
+                        "inVLabel": target["label"],
+                        "properties": props,
+                    },
+                )
         return self._edge(raw)
 
     def get_edge(self, eid):
@@ -304,7 +327,7 @@ class HugeGraphStore:
                 return None
             raise
 
-    def find_edges(self, label=None, out_v=None, in_v=None, limit=500):
+    def find_edges(self, label=None, out_v=None, in_v=None, limit=500, include_historical=False):
         params = {}
         if out_v or in_v:
             params = {"vertex_id": json.dumps(out_v or in_v), "direction": "OUT" if out_v else "IN"}
@@ -314,19 +337,26 @@ class HugeGraphStore:
                 continue
             if out_v and raw["outV"] != out_v or in_v and raw["inV"] != in_v:
                 continue
+            if not include_historical and raw["properties"].get("is_current") is False:
+                continue
             result.append(self._edge(raw))
             if len(result) >= limit:
                 break
         return result
 
-    def edges_from(self, vid, labels=None, limit=500):
-        return [e for e in self.find_edges(out_v=vid, limit=limit) if not labels or e["label"] in labels]
+    def edges_from(self, vid, labels=None, limit=500, include_historical=False):
+        return [e for e in self.find_edges(out_v=vid, limit=limit, include_historical=include_historical) if not labels or e["label"] in labels]
 
-    def edges_to(self, vid, labels=None, limit=500):
-        return [e for e in self.find_edges(in_v=vid, limit=limit) if not labels or e["label"] in labels]
+    def edges_to(self, vid, labels=None, limit=500, include_historical=False):
+        return [e for e in self.find_edges(in_v=vid, limit=limit, include_historical=include_historical) if not labels or e["label"] in labels]
 
     def count_edges(self, label=None):
-        return sum(1 for raw in self._pages("edges") if not label or raw["label"].split("__")[0] == label)
+        return sum(
+            1
+            for raw in self._pages("edges")
+            if (not label or raw["label"].split("__")[0] == label)
+            and raw["properties"].get("is_current") is not False
+        )
 
     def tombstone_vertex(self, canonical_id):
         vertex = self.get_vertex_by_canonical_id(canonical_id)

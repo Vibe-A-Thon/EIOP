@@ -153,6 +153,7 @@ class MemoryGraphStore:
         out_v: str | None = None,
         in_v: str | None = None,
         limit: int = 500,
+        include_historical: bool = False,
     ) -> list[dict]:
         out = []
         for rec in self._edges.values():
@@ -162,27 +163,33 @@ class MemoryGraphStore:
                 continue
             if in_v and rec["in_v"] != in_v:
                 continue
-            out.append(rec)
-            if len(out) >= limit:
-                break
-        return out
-
-    def edges_from(self, vid: str, labels: list[str] | None = None, limit: int = 500) -> list[dict]:
-        out = []
-        for eid in self._adj_out.get(vid, []):
-            rec = self._edges[eid]
-            if labels and rec["label"] not in labels:
+            if not include_historical and rec["properties"].get("is_current") is False:
                 continue
             out.append(rec)
             if len(out) >= limit:
                 break
         return out
 
-    def edges_to(self, vid: str, labels: list[str] | None = None, limit: int = 500) -> list[dict]:
+    def edges_from(self, vid: str, labels: list[str] | None = None, limit: int = 500, include_historical: bool = False) -> list[dict]:
+        out = []
+        for eid in self._adj_out.get(vid, []):
+            rec = self._edges[eid]
+            if labels and rec["label"] not in labels:
+                continue
+            if not include_historical and rec["properties"].get("is_current") is False:
+                continue
+            out.append(rec)
+            if len(out) >= limit:
+                break
+        return out
+
+    def edges_to(self, vid: str, labels: list[str] | None = None, limit: int = 500, include_historical: bool = False) -> list[dict]:
         out = []
         for eid in self._adj_in.get(vid, []):
             rec = self._edges[eid]
             if labels and rec["label"] not in labels:
+                continue
+            if not include_historical and rec["properties"].get("is_current") is False:
                 continue
             out.append(rec)
             if len(out) >= limit:
@@ -190,9 +197,7 @@ class MemoryGraphStore:
         return out
 
     def count_edges(self, label: str | None = None) -> int:
-        if label is None:
-            return len(self._edges)
-        return sum(1 for rec in self._edges.values() if rec["label"] == label)
+        return len(self.find_edges(label=label, limit=1_000_000))
 
     # -- maintenance -----------------------------------------------------------
     def tombstone_vertex(self, canonical_id: str) -> bool:

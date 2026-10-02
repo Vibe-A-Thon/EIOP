@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import logging
+import re
+from pathlib import Path
 from typing import Any
 from urllib.parse import urljoin
 from uuid import uuid4
@@ -11,7 +13,8 @@ from uuid import uuid4
 from eoip.connectors.confluence import ConfluenceConnector
 from eoip.connectors.servicenow import ServiceNowConnector
 from eoip.connectors.sync import SyncBatch
-from eoip.contracts.source_event import SourceEvent, utc_now_iso
+from eoip.contracts.source_event import SourceEvent, SourceEventV2, upgrade_source_event, utc_now_iso
+from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
 from eoip.graph.store import GraphStore
 from eoip.ingestion.jira import FileEventCapture
 from eoip.jobs import write_json
@@ -27,11 +30,18 @@ class SourceSyncIngestionService:
         connector: ConfluenceConnector | ServiceNowConnector,
         capture: FileEventCapture,
         dlq_root: str,
+        on_stage=None,
+        registry_source_id: str | None = None,
     ) -> None:
         self.store = store
         self.connector = connector
         self.capture = capture
         self.dlq_root = dlq_root
+        self.on_stage = on_stage or (lambda _stage: None)
+        self.registry_source_id = registry_source_id or connector.source_system
+        self.evolution = GraphEvolutionEngine(
+            store, ChangeJournal(Path(dlq_root).parent / "journal" / "semantic-changes.ndjson")
+        )
 
     def sync(
         self,
@@ -41,6 +51,7 @@ class SourceSyncIngestionService:
         dry_run: bool = False,
         correlation_id: str | None = None,
     ) -> dict:
+        self.on_stage("FETCHING")
         batch = self.connector.sync(
             checkpoint=checkpoint, watermark=watermark, correlation_id=correlation_id
         )
@@ -56,7 +67,8 @@ class SourceSyncIngestionService:
         run_id = str(uuid4())
         correlation_id = correlation_id or str(uuid4())
         started_at = utc_now_iso()
-        accepted: list[tuple[SourceEvent, dict[str, Any]]] = []
+        self.on_stage("MAPPING")
+        accepted: list[tuple[SourceEvent | SourceEventV2, dict[str, Any]]] = []
         rejected: list[dict[str, str]] = []
 
         # Capture every source record before any canonical graph mutation.
@@ -88,8 +100,11 @@ class SourceSyncIngestionService:
                         },
                     )
 
+        self.on_stage("VALIDATING")
+        self.on_stage("MUTATING")
         if not dry_run:
             self._write_graph(accepted, run_id, started_at, len(rejected))
+        self.on_stage("VERIFYING")
         return {
             "run_id": run_id,
             "run_status": "DRY_RUN" if dry_run else ("PARTIAL" if rejected else "SUCCEEDED"),
@@ -101,7 +116,7 @@ class SourceSyncIngestionService:
             "correlation_id": correlation_id,
         }
 
-    def _map_event(self, event: SourceEvent) -> dict[str, Any]:
+    def _map_event(self, event: SourceEvent | SourceEventV2) -> dict[str, Any]:
         mapped = self.connector.map_event(event)
         source = event.source_system
         instance = (event.metadata or {}).get("source_instance_id", "default")
@@ -206,7 +221,7 @@ class SourceSyncIngestionService:
 
     def _write_graph(
         self,
-        accepted: list[tuple[SourceEvent, dict[str, Any]]],
+        accepted: list[tuple[SourceEvent | SourceEventV2, dict[str, Any]]],
         run_id: str,
         started_at: str,
         rejected_count: int,
@@ -255,9 +270,33 @@ class SourceSyncIngestionService:
                 "valid_from": event.captured_at,
                 "modified_at": event.captured_at,
             }
+            semantic_properties = {
+                **mapped["properties"],
+                "source_system": source_system,
+                "source_id": event.source_record_id,
+                "registry_source_id": self.registry_source_id,
+                "source_version": event.source_version,
+                "mapper_version": self.connector.mapper_version,
+                "ontology_version": ONTOLOGY_VERSION,
+                "schema_version": SCHEMA_VERSION,
+                "first_seen": shared["first_seen"],
+            }
+            self.evolution.evolve_entity(
+                mapped["label"],
+                mapped["canonical_id"],
+                semantic_properties,
+                upgrade_source_event(event),
+            )
+            node = self.store.get_vertex_by_canonical_id(mapped["canonical_id"])
+            if node is None:
+                raise RuntimeError("graph evolution did not produce the expected current entity")
             node = self.store.upsert_vertex(
                 mapped["label"],
-                {**shared, **mapped["properties"], "canonical_id": mapped["canonical_id"]},
+                {
+                    **node["properties"],
+                    "ingestion_run_id": run_id,
+                    "last_seen": event.captured_at,
+                },
             )
             evidence = self.store.upsert_vertex(
                 "Evidence",
@@ -315,7 +354,7 @@ class SourceSyncIngestionService:
                         },
                     )
 
-    def _write_dlq(self, event: SourceEvent, error: str, correlation_id: str) -> None:
+    def _write_dlq(self, event: SourceEvent | SourceEventV2, error: str, correlation_id: str) -> None:
         from pathlib import Path
 
         root = Path(self.dlq_root)
@@ -383,5 +422,163 @@ def run_configured_source_sync(
                 },
             )
         return result
+    finally:
+        connector.close()
+
+
+def run_registered_source_operation(
+    entry,
+    payload: dict[str, Any],
+    store: GraphStore,
+    data_root: str,
+    correlation_id: str,
+) -> dict:
+    """Execute an admitted registry operation through the common capture/map pipeline."""
+
+    from pathlib import Path
+
+    from eoip.connectors.acquisition import BaselineController
+    from eoip.connectors.config import connector_from_registry
+    from eoip.connectors.reconciliation import SourceReconciler
+
+    operation = payload.get("operation")
+    if operation not in {"BASELINE", "POLL", "RECONCILE", "REPLAY"}:
+        raise ValueError(f"unsupported registered source operation: {operation}")
+    connector = connector_from_registry(entry, correlation_id=correlation_id)
+    try:
+        root = Path(data_root)
+        checkpoint_path = root / "state" / "connectors" / f"{entry.source_id}.json"
+        checkpoint_state = (
+            json.loads(checkpoint_path.read_text(encoding="utf-8"))
+            if checkpoint_path.exists()
+            else {}
+        )
+        checkpoint = None if operation == "BASELINE" else (
+            payload.get("checkpoint") or checkpoint_state.get("checkpoint")
+        )
+        baseline = None
+        if operation == "BASELINE":
+            baseline = BaselineController(
+                root / "state" / "baselines" / entry.source_id / f"{correlation_id}.json",
+                entry.source_id,
+                {
+                    "source_type": entry.source_type,
+                    "capabilities": entry.capabilities.model_dump(),
+                    "mapper_version": connector.mapper_version,
+                    "ontology_version": ONTOLOGY_VERSION,
+                    "schema_version": SCHEMA_VERSION,
+                },
+            )
+            baseline.transition("DISCOVERING")
+        service = SourceSyncIngestionService(
+            store,
+            connector,
+            FileEventCapture(root / "raw"),
+            str(root / "dlq"),
+            on_stage=baseline.transition if baseline else None,
+            registry_source_id=entry.source_id,
+        )
+        if operation == "RECONCILE":
+            batch = connector.sync(checkpoint=None, correlation_id=correlation_id)
+            canonical_ids = {
+                event.event_id: service._map_event(event)["canonical_id"] for event in batch.events
+            }
+            current_vertices = store.find_vertices(
+                filters={"registry_source_id": entry.source_id}, limit=100_000
+            )
+
+            def repair(events):
+                repair_result = service.ingest(
+                    SyncBatch(events=list(events), next_checkpoint=batch.next_checkpoint),
+                    dry_run=False,
+                    correlation_id=correlation_id,
+                )
+                rejected_ids = {item["event_id"] for item in repair_result["rejected"]}
+                return [canonical_ids[event.event_id] for event in events if event.event_id not in rejected_ids]
+
+            report = SourceReconciler().reconcile(
+                source_id=entry.source_id,
+                events=batch.events,
+                current_vertices=current_vertices,
+                canonical_id=lambda event: canonical_ids[event.event_id],
+                repair=None if payload.get("dry_run", False) else repair,
+                checkpoint=batch.next_checkpoint,
+            )
+            write_json(
+                root / "state" / "reconciliation" / entry.source_id / f"{report.reconciliation_id}.json",
+                report.model_dump(mode="json"),
+            )
+            result = {
+                "run_id": report.reconciliation_id,
+                "run_status": "PARTIAL" if report.status == "PARTIAL" else "SUCCEEDED",
+                "records_seen": report.source_records,
+                "records_accepted": len(report.repaired),
+                "records_rejected": 0,
+                "rejected": [],
+                "next_checkpoint": batch.next_checkpoint,
+                "reconciliation": report.model_dump(mode="json"),
+            }
+        elif operation == "REPLAY":
+            events = []
+            for event_id in payload.get("event_ids", []):
+                if not re.fullmatch(r"[a-f0-9]{64}", event_id):
+                    raise ValueError("replay event IDs must be lowercase SHA-256 values")
+                event_path = root / "raw" / entry.source_type / f"{event_id}.json"
+                if not event_path.exists():
+                    raise ValueError(f"captured source event is unavailable: {event_id}")
+                document = json.loads(event_path.read_text(encoding="utf-8"))
+                event_model = SourceEventV2 if document.get("schema_version") == "2.0" else SourceEvent
+                event = event_model.model_validate(document)
+                if event.event_id != event_id:
+                    raise ValueError("captured source event identity mismatch")
+                events.append(event)
+            result = service.ingest(
+                SyncBatch(events=events, next_checkpoint=checkpoint or ""),
+                dry_run=payload.get("dry_run", False),
+                correlation_id=correlation_id,
+            )
+        else:
+            result = service.sync(
+                checkpoint=checkpoint,
+                dry_run=payload.get("dry_run", False),
+                correlation_id=correlation_id,
+            )
+        result.update(source_id=entry.source_id, operation=operation)
+        if baseline:
+            baseline.transition(
+                "COMPLETE",
+                checkpoint=result.get("next_checkpoint"),
+                counts={
+                    "seen": result.get("records_seen", 0),
+                    "accepted": result.get("records_accepted", 0),
+                    "rejected": result.get("records_rejected", 0),
+                },
+                failures=result.get("rejected", []),
+            )
+        if (
+            operation != "REPLAY"
+            and result["run_status"] == "SUCCEEDED"
+            and not payload.get("dry_run", False)
+        ):
+            write_json(
+                checkpoint_path,
+                {
+                    "schema_version": "1.0",
+                    "source_id": entry.source_id,
+                    "source_system": entry.source_type,
+                    "checkpoint": result["next_checkpoint"],
+                    "baseline_complete": operation == "BASELINE"
+                    or checkpoint_state.get("baseline_complete", False),
+                    "updated_at": utc_now_iso(),
+                },
+            )
+        return result
+    except Exception as exc:
+        if "baseline" in locals() and baseline and baseline.read()["stage"] not in {"COMPLETE", "FAILED"}:
+            baseline.transition(
+                "FAILED",
+                failures=[{"error_category": type(exc).__name__, "message": str(exc)}],
+            )
+        raise
     finally:
         connector.close()

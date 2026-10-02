@@ -158,9 +158,10 @@ class ValidationEngine:
             referenced_vids.add(edge["out_v"])
             referenced_vids.add(edge["in_v"])
 
-        meta_labels = {"IngestionRun", "GraphDomain", "OntologyVersion", "ValidationRun", "ValidationFinding", "DataSource"}
         for vertex in vertices:
-            if vertex["label"] not in meta_labels and vertex["vid"] not in referenced_vids:
+            definition = VERTEX_LABELS.get(vertex["label"])
+            is_meta = definition is not None and definition[0] == "META"
+            if not is_meta and vertex["vid"] not in referenced_vids:
                 findings.append(
                     {
                         "canonical_id": vertex["canonical_id"],

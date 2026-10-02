@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:source_event:2.0",
+  "title": "SourceEvent v2",
+  "type": "object",
+  "required": ["schema_version", "event_id", "source_system", "source_instance_id", "source_record_id", "operation", "event_time", "captured_at", "content_hash", "payload_hash", "permissions", "metadata"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "event_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "source_system": {"type": "string", "minLength": 1, "maxLength": 128},
+    "source_instance_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "source_record_id": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "operation": {"enum": ["CREATE", "UPDATE", "UPSERT", "DELETE", "RELATIONSHIP_UPDATE", "PERMISSION_UPDATE"]},
+    "source_version": {"type": ["string", "null"], "maxLength": 512},
+    "event_time": {"type": "string", "format": "date-time"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "content_hash": {"type": "string", "minLength": 1, "maxLength": 128},
+    "payload_hash": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Deprecated v1 compatibility copy of content_hash"},
+    "cursor": {"type": ["string", "null"], "maxLength": 4096},
+    "permissions": {
+      "type": "object",
+      "required": ["visibility", "principal_refs"],
+      "properties": {
+        "visibility": {"enum": ["PUBLIC", "INTERNAL", "RESTRICTED", "UNKNOWN"]},
+        "principal_refs": {"type": "array", "maxItems": 10000, "items": {"type": "string"}},
+        "inherited_from": {"type": ["string", "null"], "maxLength": 2048},
+        "acl_hash": {"type": ["string", "null"], "maxLength": 128}
+      },
+      "additionalProperties": false
+    },
+    "payload": {"type": ["object", "null"]},
+    "payload_ref": {"type": ["string", "null"], "maxLength": 4096},
+    "metadata": {"type": "object"}
+  },
+  "additionalProperties": false
+}

@@ -93,3 +93,44 @@ def test_hugegraph_request_timeout_uses_active_traversal_deadline():
         store._request("GET", "/vertices/1")
 
     assert 0 < store.client.timeout <= 10.0
+
+
+@pytest.mark.req("FR-INGEST-003")
+def test_hugegraph_edge_upsert_updates_matching_edge_key_instead_of_duplicating():
+    store = HugeGraphStore.__new__(HugeGraphStore)
+    store._lock = RLock()
+    vertices = {
+        "out": {"vid": "out", "canonical_id": "project-1", "label": "Project", "properties": {}},
+        "in": {"vid": "in", "canonical_id": "item-1", "label": "WorkItem", "properties": {}},
+    }
+    store.get_vertex = vertices.get
+    store.find_edges = lambda **kwargs: [
+        {
+            "eid": "edge-1",
+            "label": "CONTAINS",
+            "out_v": "out",
+            "in_v": "in",
+            "properties": {"edge_key": "stable-key"},
+        }
+    ]
+    requests = []
+
+    def request(method, path, **kwargs):
+        requests.append((method, path, kwargs))
+        return {
+            "id": "edge-1",
+            "label": "CONTAINS__Project__WorkItem",
+            "outV": "out",
+            "inV": "in",
+            "properties": kwargs["json"]["properties"],
+        }
+
+    store._request = request
+
+    edge = store.upsert_edge(
+        "CONTAINS", "out", "in", {"edge_key": "stable-key", "fact_key": "contains-1"}
+    )
+
+    assert edge["eid"] == "edge-1"
+    assert requests[0][0:2] == ("PUT", "/graph/edges/edge-1")
+    assert requests[0][2]["params"] == {"action": "append"}

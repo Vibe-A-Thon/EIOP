@@ -3,6 +3,7 @@
 import hmac
 import json
 import logging
+import os
 import re
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -14,9 +15,18 @@ from eoip.agents.runtime import AgentRegistry, AgentRuntime
 from eoip.agents.trace_impact import TraceImpactAgent
 from eoip.audit.sink import AuditSink
 from eoip.config import load_agent_config
+from eoip.connectors.acquisition import AcquisitionPolicy, AcquisitionScheduler
+from eoip.connectors.registry import (
+    SourceAlreadyExistsError,
+    SourceNotFoundError,
+    SourceRegistry,
+)
+from eoip.connectors.webhook import WebhookGateway
 from eoip.contracts.agent import AgentRequest
 from eoip.contracts.audit import AuditEvent
 from eoip.contracts.source_event import SourceEvent
+from eoip.contracts.source_registry import SourceCapabilities, SourceRegistryEntry, SourceType
+from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
 from eoip.jobs import JobQueue, write_json
 from eoip.models.provider import LocalModelProvider
 from eoip.observability import configure_json_logging
@@ -67,9 +77,10 @@ def _operation(path: str, body: bytes) -> str:
         "/api/v1/graph/metrics",
         "/api/v1/graph/schema",
         "/api/v1/graph/statistics",
-    } or path.startswith("/api/v1/entities/"):
+        "/api/v1/change-journal",
+    } or path.startswith(("/api/v1/entities/", "/api/v1/graph/")):
         return "query"
-    if path.startswith("/api/v1/admin/"):
+    if path.startswith(("/api/v1/admin/", "/api/v1/sources")):
         return "admin"
     return "other"
 
@@ -115,11 +126,32 @@ class RetrievalRequest(BaseModel):
     synthesize: bool = False
 
 
+class SourceRegistryPatch(BaseModel):
+    source_type: SourceType | None = None
+    name: str | None = Field(default=None, min_length=1, max_length=256)
+    base_url: str | None = Field(default=None, max_length=2048)
+    enabled: bool | None = None
+    capabilities: SourceCapabilities | None = None
+    config: dict | None = None
+    secret_refs: dict[str, str] | None = None
+
+
+class SourceOperationRequest(BaseModel):
+    checkpoint: str | None = Field(default=None, max_length=4096)
+    event_ids: list[str] = Field(default_factory=list, max_length=1000)
+    dry_run: bool = False
+
+
 def create_app():
     configure_json_logging()
     token = api_token()
     store = create_store()
     queue = JobQueue(data_root())
+    source_registry = SourceRegistry(data_root() / "state" / "source-registry.json")
+    acquisition_scheduler = AcquisitionScheduler(data_root(), source_registry, queue)
+    webhook_gateway = WebhookGateway(data_root())
+    change_journal = ChangeJournal(data_root() / "journal" / "semantic-changes.ndjson")
+    evolution = GraphEvolutionEngine(store, change_journal)
     audit_sink = AuditSink(data_root() / "audit")
     validator = ValidationEngine(store)
     agent_registry = AgentRegistry()
@@ -270,6 +302,7 @@ def create_app():
                 extra=fields,
             )
 
+        webhook_request = re.fullmatch(r"/api/v1/sources/[A-Za-z0-9][A-Za-z0-9._-]*/webhooks", request.url.path)
         if request.url.path not in {
             "/health/live",
             "/health/ready",
@@ -277,7 +310,7 @@ def create_app():
             "/docs",
             "/openapi.json",
             "/docs/oauth2-redirect",
-        }:
+        } and webhook_request is None:
             supplied = request.headers.get("authorization", "").removeprefix("Bearer ")
             if not hmac.compare_digest(supplied, token):
                 record(401)
@@ -372,6 +405,23 @@ def create_app():
         path = data_root() / "state/worker.json"
         return json.loads(path.read_text()) if path.exists() else {"status": "starting"}
 
+    @app.get("/api/v1/admin/event-consumers")
+    def event_consumers():
+        root = data_root() / "state" / "event-consumers"
+        if not root.exists():
+            return []
+        return [
+            json.loads(path.read_text(encoding="utf-8"))
+            for path in sorted(root.glob("*.json"))
+        ]
+
+    @app.get("/api/v1/admin/timeline")
+    def admin_timeline(limit: int = Query(default=100, ge=1, le=500)):
+        path = data_root() / "state" / "admin-timeline.json"
+        if not path.exists():
+            return []
+        return json.loads(path.read_text(encoding="utf-8")).get("events", [])[-limit:]
+
     @app.get("/api/v1/admin/system")
     def system_status():
         """Return real local-operability state used by the admin experience."""
@@ -424,6 +474,222 @@ def create_app():
     @app.get("/api/v1/admin/jobs")
     def jobs():
         return queue.list()
+
+    @app.get("/api/v1/graph/versions")
+    def graph_versions(limit: int = Query(default=100, ge=1, le=1000)):
+        return evolution.versions(limit=limit)
+
+    @app.get("/api/v1/graph/as-of")
+    def graph_as_of(at: str = Query(min_length=1, max_length=64), limit: int = Query(default=500, ge=1, le=5000)):
+        try:
+            datetime.fromisoformat(at)
+            return evolution.as_of(at, limit=limit)
+        except ValueError as exc:
+            raise HTTPException(422, "at must be an ISO-8601 timestamp") from exc
+
+    @app.get("/api/v1/graph/diff")
+    def graph_diff(
+        from_at: str = Query(alias="from", min_length=1, max_length=64),
+        to_at: str = Query(alias="to", min_length=1, max_length=64),
+        limit: int = Query(default=500, ge=1, le=5000),
+    ):
+        try:
+            datetime.fromisoformat(from_at)
+            datetime.fromisoformat(to_at)
+            return evolution.diff(from_at, to_at, limit=limit)
+        except ValueError as exc:
+            raise HTTPException(422, "from and to must be ISO-8601 timestamps") from exc
+
+    @app.get("/api/v1/change-journal")
+    def semantic_change_journal(
+        after: int = Query(default=0, ge=0), limit: int = Query(default=100, ge=1, le=1000)
+    ):
+        return [event.model_dump() for event in change_journal.read(after=after, limit=limit)]
+
+    @app.post("/api/v1/sources", response_model=SourceRegistryEntry, status_code=201)
+    def create_source(entry: SourceRegistryEntry):
+        try:
+            return source_registry.create(entry)
+        except SourceAlreadyExistsError as exc:
+            raise HTTPException(409, "Source already exists") from exc
+
+    @app.get("/api/v1/sources", response_model=list[SourceRegistryEntry])
+    def list_sources():
+        return source_registry.list()
+
+    @app.get("/api/v1/sources/{source_id}", response_model=SourceRegistryEntry)
+    def get_source(source_id: str):
+        try:
+            return source_registry.get(source_id)
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+
+    @app.patch("/api/v1/sources/{source_id}", response_model=SourceRegistryEntry)
+    def update_source(source_id: str, patch: SourceRegistryPatch):
+        changes = patch.model_dump(exclude_unset=True)
+        if not changes:
+            raise HTTPException(422, "At least one source field is required")
+        try:
+            return source_registry.update(source_id, changes)
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @app.delete("/api/v1/sources/{source_id}", status_code=204)
+    def delete_source(source_id: str):
+        try:
+            source_registry.delete(source_id)
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+        return Response(status_code=204)
+
+    def submit_source_operation(
+        source_id: str,
+        operation: str,
+        payload: SourceOperationRequest,
+        request: Request,
+    ):
+        try:
+            return acquisition_scheduler.submit(
+                source_id,
+                operation,
+                checkpoint=payload.checkpoint,
+                event_ids=payload.event_ids,
+                dry_run=payload.dry_run,
+                correlation_id=request.state.correlation_id,
+            )
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+        except RuntimeError as exc:
+            raise HTTPException(409, str(exc)) from exc
+
+    @app.post("/api/v1/sources/{source_id}/baseline", status_code=202)
+    def baseline_source(source_id: str, payload: SourceOperationRequest, request: Request):
+        return submit_source_operation(source_id, "BASELINE", payload, request)
+
+    @app.post("/api/v1/sources/{source_id}/sync", status_code=202)
+    def sync_source(source_id: str, payload: SourceOperationRequest, request: Request):
+        return submit_source_operation(source_id, "POLL", payload, request)
+
+    @app.post("/api/v1/sources/{source_id}/reconcile", status_code=202)
+    def reconcile_source(source_id: str, payload: SourceOperationRequest, request: Request):
+        return submit_source_operation(source_id, "RECONCILE", payload, request)
+
+    @app.get("/api/v1/sources/{source_id}/reconciliations")
+    def reconciliation_runs(source_id: str, limit: int = Query(default=50, ge=1, le=500)):
+        try:
+            source_registry.get(source_id)
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+        root = data_root() / "state" / "reconciliation" / source_id
+        if not root.exists():
+            return []
+        paths = sorted(root.glob("*.json"), key=lambda item: item.stat().st_mtime, reverse=True)
+        return [json.loads(path.read_text(encoding="utf-8")) for path in paths[:limit]]
+
+    @app.post("/api/v1/sources/{source_id}/replay", status_code=202)
+    def replay_source(source_id: str, payload: SourceOperationRequest, request: Request):
+        return submit_source_operation(source_id, "REPLAY", payload, request)
+
+    @app.get("/api/v1/sources/{source_id}/schedule", response_model=AcquisitionPolicy)
+    def source_schedule(source_id: str):
+        try:
+            return acquisition_scheduler.policy(source_id)
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+
+    @app.put("/api/v1/sources/{source_id}/schedule", response_model=AcquisitionPolicy)
+    def update_source_schedule(source_id: str, policy: AcquisitionPolicy):
+        try:
+            return acquisition_scheduler.set_policy(source_id, policy)
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+
+    @app.post("/api/v1/sources/{source_id}/pause", response_model=AcquisitionPolicy)
+    def pause_source(source_id: str):
+        try:
+            return acquisition_scheduler.pause(source_id)
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+
+    @app.post("/api/v1/sources/{source_id}/resume", response_model=AcquisitionPolicy)
+    def resume_source(source_id: str):
+        try:
+            return acquisition_scheduler.resume(source_id)
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+
+    @app.post("/api/v1/sources/{source_id}/webhooks", status_code=202)
+    async def receive_source_webhook(source_id: str, request: Request):
+        try:
+            source = source_registry.get(source_id)
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+        if not source.enabled or not source.capabilities.webhooks:
+            raise HTTPException(409, "Source webhook capability is not enabled")
+        if source.source_type not in {"jira", "gitlab", "github"}:
+            raise HTTPException(422, "No webhook mapper is available for this source type")
+        gitlab_standard = source.source_type == "gitlab" and bool(
+            request.headers.get("webhook-signature")
+        )
+        secret_name = "webhook_signing" if gitlab_standard else "webhook_hmac"
+        secret_ref = source.secret_refs.get(secret_name)
+        if not secret_ref or not secret_ref.startswith("env://"):
+            raise HTTPException(409, f"An env:// {secret_name} secret reference is required")
+        secret = os.getenv(secret_ref.removeprefix("env://"), "")
+        if not secret:
+            raise HTTPException(503, "Webhook verification secret is unavailable")
+        try:
+            receipt = webhook_gateway.receive(
+                source_id,
+                await request.body(),
+                signature=(
+                    request.headers.get("webhook-signature", "")
+                    if gitlab_standard
+                    else request.headers.get("X-Gitlab-Token", "")
+                    if source.source_type == "gitlab"
+                    else request.headers.get("X-EOIP-Signature")
+                    or request.headers.get("X-Hub-Signature-256", "")
+                ),
+                secret=secret,
+                delivery_id=(
+                    request.headers.get("webhook-id")
+                    or request.headers.get("Idempotency-Key")
+                    or request.headers.get("X-EOIP-Delivery")
+                    or request.headers.get("X-GitHub-Delivery")
+                ),
+                metadata={
+                    "event_name": request.headers.get("X-GitHub-Event")
+                    or request.headers.get("X-Gitlab-Event")
+                },
+                verification=(
+                    "standard_webhooks"
+                    if gitlab_standard
+                    else "plain_token"
+                    if source.source_type == "gitlab"
+                    else "sha256"
+                ),
+                timestamp=request.headers.get("webhook-timestamp"),
+            )
+        except PermissionError as exc:
+            raise HTTPException(401, "Invalid webhook signature") from exc
+        except (TypeError, ValueError, json.JSONDecodeError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+        if receipt.duplicate:
+            return receipt
+        queued = queue.submit(
+            "SOURCE_WEBHOOK",
+            {
+                "source_id": source_id,
+                "delivery_id": receipt.delivery_id,
+                "receipt_ref": receipt.payload_ref,
+            },
+            correlation_id=request.state.correlation_id,
+        )
+        return {**receipt.model_dump(), "job_id": queued["job_id"]}
 
     @app.get("/api/v1/admin/jobs/{job_id}")
     def job(job_id: str):
