@@ -10,6 +10,7 @@ import logging
 from time import monotonic
 from typing import Protocol
 
+import httpx
 from eoip.contracts.agent import AgentRequest, AgentResult
 from eoip.contracts.source_event import utc_now_iso
 from eoip.graph.store import GraphStore
@@ -77,7 +78,7 @@ class AgentRuntime:
         start = monotonic()
         try:
             result = agent.execute(request, self._store)
-        except Exception as exc:
+        except (httpx.HTTPError, RuntimeError, ValueError) as exc:
             elapsed = monotonic() - start
             log.error(
                 "agent.failed",
@@ -89,7 +90,7 @@ class AgentRuntime:
                     "error_type": type(exc).__name__,
                 },
             )
-            return AgentResult(
+            result = AgentResult(
                 request_id=request.request_id,
                 status="FAILED",
                 summary=f"Agent execution failed: {type(exc).__name__}",
@@ -111,10 +112,18 @@ class AgentRuntime:
                 update={"status": "PARTIAL", "warnings": warnings}
             )
 
-        self._persist_run(request, result, elapsed)
+        if not self._persist_run(request, result, elapsed):
+            warnings = list(result.warnings or [])
+            warnings.append("Agent run could not be persisted")
+            result = result.model_copy(
+                update={
+                    "status": "PARTIAL" if result.status == "SUCCEEDED" else result.status,
+                    "warnings": warnings,
+                }
+            )
         return result
 
-    def _persist_run(self, request: AgentRequest, result: AgentResult, elapsed: float) -> None:
+    def _persist_run(self, request: AgentRequest, result: AgentResult, elapsed: float) -> bool:
         try:
             self._store.upsert_vertex(
                 "AgentRun",
@@ -128,5 +137,15 @@ class AgentRuntime:
                     "budgets": str({"elapsed": round(elapsed, 3)}),
                 },
             )
-        except Exception:
-            pass
+        except (httpx.HTTPError, OSError, ValueError) as exc:
+            log.error(
+                "agent.run.persist_failed",
+                extra={
+                    "event": "agent.run.persist_failed",
+                    "agent_id": request.agent_id,
+                    "request_id": request.request_id,
+                    "error_type": type(exc).__name__,
+                },
+            )
+            return False
+        return True

@@ -30,11 +30,20 @@ class TraceImpactAgent:
         canonical_id = request.context_refs[0] if request.context_refs else request.goal
         budgets = request.budgets or {}
         max_depth = min(budgets.get("max_depth", 4), 8)
+        max_seconds = min(budgets.get("max_seconds", self.max_seconds), self.max_seconds)
 
-        traversal = GraphTraversal(store, max_results=100)
+        traversal = GraphTraversal(store, max_results=100, timeout_seconds=max_seconds)
         result = traversal.impact(canonical_id, max_depth=max_depth)
 
         if not result["source"]:
+            if result["truncated"]:
+                return AgentResult(
+                    request_id=request.request_id,
+                    status="PARTIAL",
+                    summary="Traversal time budget expired before the source entity could be resolved.",
+                    evidence_refs=[],
+                    warnings=["Traversal stopped before source resolution"],
+                )
             return AgentResult(
                 request_id=request.request_id,
                 status="FAILED",

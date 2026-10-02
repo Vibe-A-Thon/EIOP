@@ -64,6 +64,7 @@ The golden demo path traces: **Jira Story -> Merge Request -> Commit -> Source F
 1. Select any entity and click **Run TraceImpact**
 2. The agent returns a summary with evidence references and source citations
 3. This uses deterministic graph traversal — no LLM required
+4. Traversal enforces a cooperative deadline and applies the remaining time to graph-store requests; expiration returns a partial result. Network timeout semantics and scheduler latency mean an in-flight request is not forcibly interrupted at an exact wall-clock instant.
 
 ### 4d. Administration
 

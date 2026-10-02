@@ -1,6 +1,10 @@
 from threading import RLock
+from time import monotonic
 
+import httpx
+import pytest
 from eoip.graph.hugegraph import HugeGraphStore
+from eoip.graph.store import GraphQueryTimeout, graph_query_deadline
 from eoip.ontology.manifest import EDGE_LABELS, PROPERTY_KEYS, VERTEX_LABELS
 
 
@@ -68,3 +72,24 @@ def test_schema_bootstrap_appends_new_properties_to_existing_labels():
         and kwargs["json"]["name"] == "KnowledgeSpace"
         for method, path, kwargs in requests
     )
+
+
+def test_hugegraph_request_timeout_uses_active_traversal_deadline():
+    store = HugeGraphStore.__new__(HugeGraphStore)
+    store.base = "/graph"
+
+    class TimeoutClient:
+        timeout = None
+
+        def request(self, method, path, **kwargs):
+            self.timeout = kwargs["timeout"]
+            raise httpx.ReadTimeout("request timed out")
+
+    store.client = TimeoutClient()
+
+    with graph_query_deadline(monotonic() + 10.0), pytest.raises(
+        GraphQueryTimeout, match="time budget"
+    ):
+        store._request("GET", "/vertices/1")
+
+    assert 0 < store.client.timeout <= 10.0

@@ -15,6 +15,7 @@ from urllib.parse import quote
 import httpx
 from eoip.contracts.source_event import utc_now_iso
 from eoip.graph.memory import edge_key
+from eoip.graph.store import GraphQueryTimeout, remaining_query_seconds
 from eoip.ontology.manifest import (
     EDGE_LABELS,
     INDEXES,
@@ -40,7 +41,19 @@ class HugeGraphStore:
         self.client.close()
 
     def _request(self, method, path, **kwargs):
-        response = self.client.request(method, self.base + path, **kwargs)
+        remaining = remaining_query_seconds()
+        if remaining is not None:
+            configured_timeout = kwargs.pop("timeout", None)
+            kwargs["timeout"] = max(
+                0.001,
+                min(remaining, configured_timeout) if configured_timeout is not None else remaining,
+            )
+        try:
+            response = self.client.request(method, self.base + path, **kwargs)
+        except httpx.TimeoutException as exc:
+            if remaining is None:
+                raise
+            raise GraphQueryTimeout("Graph store request exceeded the traversal time budget") from exc
         response.raise_for_status()
         return response.json() if response.content else None
 

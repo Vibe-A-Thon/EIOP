@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 from collections import deque
+from math import isfinite
 from time import monotonic
 from typing import Literal
 
-from eoip.graph.store import Edge, GraphStore
+from eoip.graph.store import Edge, GraphQueryTimeout, GraphStore, graph_query_deadline
 
 Direction = Literal["outgoing", "incoming", "both"]
+
 
 DEFAULT_TRAVERSAL_EDGES = frozenset(
     {
@@ -36,15 +38,18 @@ class GraphTraversal:
         allowed_edges: frozenset[str] = DEFAULT_TRAVERSAL_EDGES,
         max_depth: int = 8,
         max_results: int = 100,
+        timeout_seconds: float = 20.0,
     ) -> None:
         if max_depth < 1 or max_results < 1:
             raise ValueError("max_depth and max_results must be positive")
+        if not isfinite(timeout_seconds) or timeout_seconds <= 0:
+            raise ValueError("timeout_seconds must be a positive finite number")
         self._store = store
         self._allowed_edges = allowed_edges
         self._max_depth = max_depth
         self._max_results = max_results
         self._max_visited = 1000
-        self._timeout = 20
+        self._timeout = timeout_seconds
 
     def find_path(
         self,
@@ -58,8 +63,13 @@ class GraphTraversal:
         if direction not in {"outgoing", "incoming", "both"}:
             raise ValueError("direction must be outgoing, incoming, or both")
         depth_limit = self._depth_limit(max_depth)
-        source = self._store.get_vertex_by_canonical_id(source_id)
-        target = self._store.get_vertex_by_canonical_id(target_id)
+        deadline = monotonic() + self._timeout
+        with graph_query_deadline(deadline):
+            source = self._store.get_vertex_by_canonical_id(source_id)
+        self._check_deadline(deadline)
+        with graph_query_deadline(deadline):
+            target = self._store.get_vertex_by_canonical_id(target_id)
+        self._check_deadline(deadline)
         if (
             source is None
             or target is None
@@ -72,17 +82,20 @@ class GraphTraversal:
 
         queue = deque([(source["vid"], [source], [])])
         visited = {source["vid"]}
-        deadline = monotonic() + self._timeout
         while queue:
-            if len(visited) >= self._max_visited or monotonic() > deadline:
+            self._check_deadline(deadline)
+            if len(visited) >= self._max_visited:
                 raise ValueError("Path query exceeded the traversal budget; narrow the endpoints or depth")
             current_id, vertices, edges = queue.popleft()
             if len(edges) >= depth_limit:
                 continue
-            for edge, neighbor_id in self._neighbors(current_id, direction):
+            for edge, neighbor_id in self._neighbors(current_id, direction, deadline):
+                self._check_deadline(deadline)
                 if neighbor_id in visited:
                     continue
-                neighbor = self._store.get_vertex(neighbor_id)
+                with graph_query_deadline(deadline):
+                    neighbor = self._store.get_vertex(neighbor_id)
+                self._check_deadline(deadline)
                 if neighbor is None or neighbor["properties"].get("deleted_at"):
                     continue
                 next_vertices = [*vertices, neighbor]
@@ -104,7 +117,13 @@ class GraphTraversal:
         if direction not in {"outgoing", "incoming", "both"}:
             raise ValueError("direction must be outgoing, incoming, or both")
         depth_limit = self._depth_limit(max_depth)
-        source = self._store.get_vertex_by_canonical_id(canonical_id)
+        deadline = monotonic() + self._timeout
+        try:
+            with graph_query_deadline(deadline):
+                source = self._store.get_vertex_by_canonical_id(canonical_id)
+            self._check_deadline(deadline)
+        except GraphQueryTimeout:
+            return {"source": None, "impacted": [], "truncated": True}
         if source is None or source["properties"].get("deleted_at"):
             return {"source": None, "impacted": [], "truncated": False}
 
@@ -112,21 +131,39 @@ class GraphTraversal:
         visited = {source["vid"]}
         impacted = []
         truncated = False
-        deadline = monotonic() + self._timeout
         while queue:
-            if len(visited) >= self._max_visited or monotonic() > deadline:
+            try:
+                self._check_deadline(deadline)
+            except GraphQueryTimeout:
+                return {"source": source, "impacted": impacted, "truncated": True}
+            if len(visited) >= self._max_visited:
                 return {"source": source, "impacted": impacted, "truncated": True}
             current_id, vertices, edges = queue.popleft()
             if len(edges) >= depth_limit:
-                if any(
-                    neighbor_id not in visited for _, neighbor_id in self._neighbors(current_id, direction)
-                ):
+                try:
+                    neighbors = self._neighbors(current_id, direction, deadline)
+                except GraphQueryTimeout:
+                    return {"source": source, "impacted": impacted, "truncated": True}
+                if any(neighbor_id not in visited for _, neighbor_id in neighbors):
                     truncated = True
                 continue
-            for edge, neighbor_id in self._neighbors(current_id, direction):
+            try:
+                neighbors = self._neighbors(current_id, direction, deadline)
+            except GraphQueryTimeout:
+                return {"source": source, "impacted": impacted, "truncated": True}
+            for edge, neighbor_id in neighbors:
+                try:
+                    self._check_deadline(deadline)
+                except GraphQueryTimeout:
+                    return {"source": source, "impacted": impacted, "truncated": True}
                 if neighbor_id in visited:
                     continue
-                neighbor = self._store.get_vertex(neighbor_id)
+                try:
+                    with graph_query_deadline(deadline):
+                        neighbor = self._store.get_vertex(neighbor_id)
+                    self._check_deadline(deadline)
+                except GraphQueryTimeout:
+                    return {"source": source, "impacted": impacted, "truncated": True}
                 if neighbor is None or neighbor["properties"].get("deleted_at"):
                     continue
                 if len(impacted) >= self._max_results:
@@ -148,11 +185,28 @@ class GraphTraversal:
             raise ValueError(f"max_depth must be between 1 and {self._max_depth}")
         return requested
 
-    def _neighbors(self, vid: str, direction: Direction) -> list[tuple[Edge, str]]:
+    def _check_deadline(self, deadline: float) -> None:
+        if monotonic() >= deadline:
+            raise GraphQueryTimeout("Traversal query exceeded the traversal budget")
+
+    def _neighbors(
+        self,
+        vid: str,
+        direction: Direction,
+        deadline: float,
+    ) -> list[tuple[Edge, str]]:
         neighbors: list[tuple[Edge, str]] = []
         labels = list(self._allowed_edges)
         if direction in {"outgoing", "both"}:
-            neighbors.extend((edge, edge["in_v"]) for edge in self._store.edges_from(vid, labels=labels))
+            self._check_deadline(deadline)
+            with graph_query_deadline(deadline):
+                outgoing = self._store.edges_from(vid, labels=labels)
+            self._check_deadline(deadline)
+            neighbors.extend((edge, edge["in_v"]) for edge in outgoing)
         if direction in {"incoming", "both"}:
-            neighbors.extend((edge, edge["out_v"]) for edge in self._store.edges_to(vid, labels=labels))
+            self._check_deadline(deadline)
+            with graph_query_deadline(deadline):
+                incoming = self._store.edges_to(vid, labels=labels)
+            self._check_deadline(deadline)
+            neighbors.extend((edge, edge["out_v"]) for edge in incoming)
         return neighbors

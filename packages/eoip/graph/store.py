@@ -10,7 +10,30 @@ Implementations:
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+from contextvars import ContextVar
+from time import monotonic
 from typing import Any, Protocol
+
+_query_deadline: ContextVar[float | None] = ContextVar("eoip_graph_query_deadline", default=None)
+
+
+class GraphQueryTimeout(ValueError):
+    """A graph operation exceeded the caller's cooperative deadline."""
+
+
+@contextmanager
+def graph_query_deadline(deadline: float):
+    token = _query_deadline.set(deadline)
+    try:
+        yield
+    finally:
+        _query_deadline.reset(token)
+
+
+def remaining_query_seconds() -> float | None:
+    deadline = _query_deadline.get()
+    return None if deadline is None else max(0.0, deadline - monotonic())
 
 
 class Vertex(dict):

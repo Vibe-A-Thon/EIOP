@@ -47,3 +47,51 @@ def test_query_limits_cannot_exceed_configured_depth() -> None:
 
     with pytest.raises(ValueError, match="max_depth"):
         traversal.find_path("missing", "also-missing", max_depth=4)
+
+
+def test_impact_stops_when_configured_time_budget_expires(monkeypatch) -> None:
+    store = MemoryGraphStore()
+    root = _vertex(store, "CodeSymbol", "symbol:root")
+    child = _vertex(store, "CodeSymbol", "symbol:child")
+    store.upsert_edge("CALLS", root["vid"], child["vid"], {})
+    clock = [0.0]
+    monkeypatch.setattr("eoip.graph.traversal.monotonic", lambda: clock[0])
+    traversal = GraphTraversal(store, timeout_seconds=1.0)
+    original_neighbors = traversal._neighbors
+
+    def slow_neighbors(vid, direction, deadline):
+        clock[0] += 2.0
+        return original_neighbors(vid, direction, deadline)
+
+    monkeypatch.setattr(traversal, "_neighbors", slow_neighbors)
+
+    result = traversal.impact(root["canonical_id"])
+
+    assert result["truncated"] is True
+    assert result["impacted"] == []
+
+
+def test_path_stops_when_configured_time_budget_expires(monkeypatch) -> None:
+    store = MemoryGraphStore()
+    root = _vertex(store, "CodeSymbol", "symbol:root")
+    child = _vertex(store, "CodeSymbol", "symbol:child")
+    store.upsert_edge("CALLS", root["vid"], child["vid"], {})
+    clock = [0.0]
+    monkeypatch.setattr("eoip.graph.traversal.monotonic", lambda: clock[0])
+    traversal = GraphTraversal(store, timeout_seconds=1.0)
+    original_neighbors = traversal._neighbors
+
+    def slow_neighbors(vid, direction, deadline):
+        clock[0] += 2.0
+        return original_neighbors(vid, direction, deadline)
+
+    monkeypatch.setattr(traversal, "_neighbors", slow_neighbors)
+
+    with pytest.raises(ValueError, match="traversal budget"):
+        traversal.find_path(root["canonical_id"], child["canonical_id"])
+
+
+@pytest.mark.parametrize("timeout_seconds", [0, -1, float("inf"), float("nan")])
+def test_timeout_budget_must_be_a_positive_finite_number(timeout_seconds) -> None:
+    with pytest.raises(ValueError, match="timeout_seconds"):
+        GraphTraversal(MemoryGraphStore(), timeout_seconds=timeout_seconds)
