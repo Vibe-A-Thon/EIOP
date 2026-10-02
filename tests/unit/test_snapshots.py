@@ -1,0 +1,66 @@
+import json
+
+import pytest
+from eoip.graph.memory import MemoryGraphStore
+from eoip.jobs import JobQueue
+from eoip.snapshot import backup, digest, restore
+
+
+def graph():
+    store = MemoryGraphStore()
+    issue = store.upsert_vertex(
+        "WorkItem", {"canonical_id": "issue:1", "issue_key": "EOIP-1", "summary": "Trace"}
+    )
+    commit = store.upsert_vertex("Commit", {"canonical_id": "commit:1", "commit_sha": "abc"})
+    store.upsert_edge(
+        "IMPLEMENTS", commit["vid"], issue["vid"], {"source_ref": "git://demo/abc", "evidence_key": "event:1"}
+    )
+    return store
+
+
+def test_snapshot_restores_graph_relationships_and_evidence(tmp_path):
+    source = graph()
+    raw = tmp_path / "raw/jira/event.json"
+    raw.parent.mkdir(parents=True)
+    raw.write_text('{"event_id": "event:1"}')
+    backup(source, tmp_path, tmp_path / "snapshot.json")
+    target = MemoryGraphStore()
+    result = restore(target, tmp_path / "restored", tmp_path / "snapshot.json")
+    assert result == {"vertices": 2, "edges": 1, "raw_files": 1}
+    assert target.find_edges()[0]["properties"]["evidence_key"] == "event:1"
+    assert json.loads((tmp_path / "restored/raw/jira/event.json").read_text())["event_id"] == "event:1"
+
+
+def test_corrupted_snapshot_rejected_before_mutation(tmp_path):
+    backup(graph(), tmp_path, tmp_path / "snapshot.json")
+    archive = json.loads((tmp_path / "snapshot.json").read_text())
+    archive["payload"]["vertices"][0]["properties"]["summary"] = "changed"
+    (tmp_path / "snapshot.json").write_text(json.dumps(archive))
+    target = MemoryGraphStore()
+    with pytest.raises(ValueError, match="checksum"):
+        restore(target, tmp_path, tmp_path / "snapshot.json")
+    assert target.count_vertices() == 0
+
+
+def test_restore_rejects_path_traversal_and_nonempty_graph(tmp_path):
+    backup(graph(), tmp_path, tmp_path / "snapshot.json")
+    with pytest.raises(ValueError, match="empty graph"):
+        restore(graph(), tmp_path, tmp_path / "snapshot.json")
+    archive = json.loads((tmp_path / "snapshot.json").read_text())
+    archive["payload"]["raw_files"] = {"raw/../../escape.json": {}}
+    archive["sha256"] = digest(archive["payload"])
+    (tmp_path / "snapshot.json").write_text(json.dumps(archive))
+    target = MemoryGraphStore()
+    with pytest.raises(ValueError, match="evidence path"):
+        restore(target, tmp_path, tmp_path / "snapshot.json")
+    assert target.count_vertices() == 0
+
+
+def test_queue_is_persistent_and_rejects_invalid_job_ids(tmp_path):
+    job = JobQueue(tmp_path).submit("JIRA_JSON", {"document": {"issues": []}})
+    fresh = JobQueue(tmp_path)
+    assert fresh.get(job["job_id"])["payload"]["document"] == {"issues": []}
+    assert fresh.list()[0]["status"] == "PENDING"
+    assert "payload" not in fresh.list()[0]
+    with pytest.raises(ValueError):
+        fresh.get("../../outside")

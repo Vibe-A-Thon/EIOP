@@ -1,0 +1,25 @@
+{
+  "issues": [
+    {
+      "key": "EOIP-1",
+      "fields": {
+        "summary": "Trace a requirement to its implementation",
+        "description": "The demo story links a Jira work item to repository code and supporting evidence.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "In Progress"},
+        "project": {"key": "EOIP", "name": "Enterprise Ontology Intelligence Platform"},
+        "assignee": {"accountId": "demo-engineer", "displayName": "Demo Engineer", "emailAddress": "engineer@example.invalid"}
+      }
+    },
+    {
+      "key": "EOIP-2",
+      "fields": {
+        "summary": "Show evidence for graph relationships",
+        "description": "Each cross-domain relationship must be traceable to captured source data.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "To Do"},
+        "project": {"key": "EOIP", "name": "Enterprise Ontology Intelligence Platform"}
+      }
+    }
+  ]
+}

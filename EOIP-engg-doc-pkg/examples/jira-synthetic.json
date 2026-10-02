@@ -1,0 +1,28 @@
+{
+  "schema_note": "Synthetic configurable MVP fixture; replace field mapping when actual Jira JSON is supplied.",
+  "projects": [
+    {
+      "id": "10000",
+      "key": "EOIP",
+      "name": "EOIP Demo"
+    }
+  ],
+  "issues": [
+    {
+      "id": "10001",
+      "key": "EOIP-123",
+      "projectKey": "EOIP",
+      "issueType": "Story",
+      "summary": "Add dependency impact endpoint",
+      "status": "Done",
+      "assignee": {
+        "accountId": "u-1",
+        "displayName": "Demo Developer",
+        "emailAddress": "demo.developer@example.invalid"
+      },
+      "created": "2026-09-01T09:00:00Z",
+      "updated": "2026-09-15T12:00:00Z",
+      "description": "Implement bounded impact analysis for a code symbol and return evidence paths."
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MemoryRecord",
+  "type": "object",
+  "required": [
+    "memory_id",
+    "kind",
+    "scope",
+    "owner",
+    "source",
+    "created_at",
+    "provenance_refs",
+    "classification"
+  ],
+  "properties": {
+    "memory_id": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "ttl_seconds": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "provenance_refs": {
+      "type": "array"
+    },
+    "confidence": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "classification": {
+      "type": "string"
+    },
+    "deletion_policy": {
+      "type": "string"
+    },
+    "content": {}
+  }
+}

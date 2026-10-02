@@ -1,0 +1,22 @@
+{
+  "merge_requests": [
+    {
+      "id": 501,
+      "iid": 42,
+      "title": "EOIP-123 add impact endpoint",
+      "source_branch": "feature/EOIP-123-impact",
+      "target_branch": "main",
+      "merge_commit_sha": "abc123demo",
+      "author_email": "demo.developer@example.invalid"
+    }
+  ],
+  "pipelines": [
+    {
+      "id": 9001,
+      "sha": "abc123demo",
+      "ref": "main",
+      "status": "success",
+      "name": "build-and-test"
+    }
+  ]
+}

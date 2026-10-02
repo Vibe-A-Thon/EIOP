@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentRequest",
+  "type": "object",
+  "required": [
+    "request_id",
+    "agent_id",
+    "goal"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "agent_id": {
+      "type": "string"
+    },
+    "goal": {
+      "type": "string"
+    },
+    "context_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "budgets": {
+      "type": "object"
+    }
+  }
+}

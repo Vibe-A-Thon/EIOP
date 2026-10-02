@@ -1,0 +1,82 @@
+requirement,title,phase,architecture_component,implementation_work_package,test,test_method,acceptance,acceptance_criterion
+FR-CONN-001,Connector SDK,P1-MVP,Connector SDK,WP-CONNECTORS,TEST-FR-CONN-001,Contract tests against a fake source.,AC-FR-CONN-001,A new connector can be added without editing ingestion core.
+FR-CONN-002,Jira JSON connector,P1-MVP,Connector SDK,WP-CONNECTORS,TEST-FR-CONN-002,"Fixture, malformed, duplicate, resume tests.",AC-FR-CONN-002,Repeat import is idempotent and creates expected graph.
+FR-CONN-003,Git repository connector,P1-MVP,Connector SDK,WP-CONNECTORS,TEST-FR-CONN-003,Temporary repository integration tests.,AC-FR-CONN-003,"Repository, branch and commit nodes plus modifications exist."
+FR-CONN-004,GitLab metadata adapter,P1-MVP,Connector SDK,WP-CONNECTORS,TEST-FR-CONN-004,Mock API and fixture contract tests.,AC-FR-CONN-004,MR and pipeline records link to commits and work items.
+FR-CONN-005,Connector resiliency,P1-MVP,Connector SDK,WP-CONNECTORS,TEST-FR-CONN-005,Fault-injection restart tests.,AC-FR-CONN-005,Restart resumes without duplicate canonical nodes.
+FR-CONN-006,Dry run and replay,P1-MVP,Connector SDK,WP-CONNECTORS,TEST-FR-CONN-006,Golden-event replay tests.,AC-FR-CONN-006,Same input/version produces same canonical mutations.
+FR-CONN-007,Source deletion semantics,P1-MVP,Connector SDK,WP-CONNECTORS,TEST-FR-CONN-007,Deletion/reappearance tests.,AC-FR-CONN-007,Deleted source is queryable historically and excluded from current views.
+FR-CONF-001,Confluence connector,P2,Platform,WP-CONNECTORS,TEST-FR-CONF-001,Contract tests in P2.,AC-FR-CONF-001,Incremental sync and provenance pass.
+FR-SNOW-001,ServiceNow connector,P2,Platform,WP-CONNECTORS,TEST-FR-SNOW-001,Contract tests in P2.,AC-FR-SNOW-001,Incremental sync and mappings pass.
+FR-INGEST-001,Raw capture,P1-MVP,Ingestion,WP-INGESTION,TEST-FR-INGEST-001,Hash/replay/restart tests.,AC-FR-INGEST-001,Every graph mutation references a captured event.
+FR-INGEST-002,Canonicalization,P1-MVP,Ingestion,WP-INGESTION,TEST-FR-INGEST-002,Golden mapping tests.,AC-FR-INGEST-002,Same source record maps deterministically for same mapper version.
+FR-INGEST-003,Idempotent mutation,P1-MVP,Ingestion,WP-INGESTION,TEST-FR-INGEST-003,Double-ingest E2E.,AC-FR-INGEST-003,Second identical run does not increase logical entity/edge counts.
+FR-INGEST-004,Ingestion job lifecycle,P1-MVP,Ingestion,WP-INGESTION,TEST-FR-INGEST-004,State-transition tests.,AC-FR-INGEST-004,Admin UI reflects actual backend run state.
+FR-INGEST-005,Dead-letter processing,P1-MVP,Ingestion,WP-INGESTION,TEST-FR-INGEST-005,Malformed fixtures.,AC-FR-INGEST-005,Rejected records are inspectable and replayable.
+FR-GRAPH-001,HugeGraph authoritative store,P1-MVP,Graph Core,WP-FOUNDATION,TEST-FR-GRAPH-001,Startup and persistence tests.,AC-FR-GRAPH-001,All demo graph paths survive service restart.
+FR-GRAPH-002,Logical graph domains,P1-MVP,Graph Core,WP-FOUNDATION,TEST-FR-GRAPH-002,Domain integrity tests.,AC-FR-GRAPH-002,Every business vertex/edge belongs to a valid domain.
+FR-GRAPH-003,Schema bootstrap,P1-MVP,Graph Core,WP-FOUNDATION,TEST-FR-GRAPH-003,Fresh/repeat/incompatible schema tests.,AC-FR-GRAPH-003,Fresh stack auto-initializes and second run is no-op.
+FR-GRAPH-004,Canonical identifiers,P1-MVP,Graph Core,WP-FOUNDATION,TEST-FR-GRAPH-004,Collision/idempotency tests.,AC-FR-GRAPH-004,Every canonical entity has unique stable canonical_id.
+FR-GRAPH-005,Meta graph,P1-MVP,Graph Core,WP-ONTOLOGY-GRAPH,TEST-FR-GRAPH-005,Meta traversal tests.,AC-FR-GRAPH-005,Admin statistics are derived from graph/meta records.
+FR-GRAPH-006,Cross-domain bridge edges,P1-MVP,Graph Core,WP-ONTOLOGY-GRAPH,TEST-FR-GRAPH-006,Synthetic E2E path assertions.,AC-FR-GRAPH-006,Jira→MR→Commit→File→Function→Dependency→Pipeline→Doc path is traversable.
+FR-GRAPH-007,Gremlin repository,P1-MVP,Graph Core,WP-QUERY,TEST-FR-GRAPH-007,Policy and traversal-bound tests.,AC-FR-GRAPH-007,No UI/agent endpoint can execute arbitrary mutation Gremlin.
+FR-GRAPH-008,Index strategy,P1-MVP,Graph Core,WP-ONTOLOGY-GRAPH,TEST-FR-GRAPH-008,Query-plan benchmark tests.,AC-FR-GRAPH-008,Benchmark-critical lookup paths use planned indexes.
+FR-GRAPH-009,Graph version journal,P1-MVP,Graph Core,WP-ONTOLOGY-GRAPH,TEST-FR-GRAPH-009,Replay/version tests.,AC-FR-GRAPH-009,Each changed fact can be attributed to a run/version.
+FR-GRAPH-010,RDF/OWL interoperability,P2,Graph Core,WP-ONTOLOGY-GRAPH,TEST-FR-GRAPH-010,Round-trip fixtures where possible.,AC-FR-GRAPH-010,No documentation claims native SPARQL support.
+FR-ONTO-001,Enterprise ontology vocabulary,P1-MVP,Ontology,WP-ONTOLOGY-GRAPH,TEST-FR-ONTO-001,Ontology conformance tests.,AC-FR-ONTO-001,MVP entities/edges reference ontology version and valid terms.
+FR-ONTO-002,Relationship semantics,P1-MVP,Ontology,WP-ONTOLOGY-GRAPH,TEST-FR-ONTO-002,Edge domain/range tests.,AC-FR-ONTO-002,No MVP business relationship relies on untyped generic edge.
+FR-PROV-001,Evidence model,P1-MVP,Provenance,WP-ONTOLOGY-GRAPH,TEST-FR-PROV-001,Provenance coverage tests.,AC-FR-PROV-001,MVP evidence coverage is 100% for cross-domain bridge edges.
+FR-PROV-002,Provenance traversal,P1-MVP,Provenance,WP-ONTOLOGY-GRAPH,TEST-FR-PROV-002,Lineage API E2E.,AC-FR-PROV-002,User can trace demo answer to source fixture/commit metadata.
+FR-ID-001,Deterministic identity resolution,P1-MVP,Identity,WP-ONTOLOGY-GRAPH,TEST-FR-ID-001,Alias/conflict tests.,AC-FR-ID-001,Exact aliases merge predictably and retain source aliases.
+FR-ID-002,Ambiguous identity candidates,P1-MVP,Identity,WP-ONTOLOGY-GRAPH,TEST-FR-ID-002,Fuzzy boundary tests.,AC-FR-ID-002,No fuzzy-only match produces same canonical_id automatically.
+FR-TEMP-001,Bitemporal-ready fields,P1-MVP,Temporal,WP-ONTOLOGY-GRAPH,TEST-FR-TEMP-001,Temporal validation tests.,AC-FR-TEMP-001,MVP schema is ready for P5 without ID rewrite.
+FR-CODE-001,Deterministic code parser,P1-MVP,Code Graph,WP-CODEGRAPH,TEST-FR-CODE-001,Golden parser fixtures.,AC-FR-CODE-001,Supported files yield stable symbol graph and exact source ranges.
+FR-CODE-002,Python and TypeScript MVP parsing,P1-MVP,Code Graph,WP-CODEGRAPH,TEST-FR-CODE-002,Language-specific fixtures.,AC-FR-CODE-002,Demo repo symbols and imports/calls are queryable.
+FR-CODE-003,Commit-to-symbol linking,P1-MVP,Code Graph,WP-CODEGRAPH,TEST-FR-CODE-003,Rename/diff tests.,AC-FR-CODE-003,Demo commit connects to relevant function(s).
+FR-CODE-004,Call/import/dependency edges,P1-MVP,Code Graph,WP-CODEGRAPH,TEST-FR-CODE-004,Static-call fixtures.,AC-FR-CODE-004,Blast radius traverses only validated edge classes.
+FR-CODE-005,Source navigation,P1-MVP,Code Graph,WP-CODEGRAPH,TEST-FR-CODE-005,Navigation contract tests.,AC-FR-CODE-005,Extension opens demo symbol at correct range.
+FR-QUERY-001,Structured QueryPlan,P1-MVP,Query Engine,WP-QUERY,TEST-FR-QUERY-001,Schema/property-based tests.,AC-FR-QUERY-001,All NL and structured requests compile to validated QueryPlan.
+FR-QUERY-002,Path query,P1-MVP,Query Engine,WP-QUERY,TEST-FR-QUERY-002,Known/unknown/over-depth tests.,AC-FR-QUERY-002,Demo Jira-to-function path returns expected ordered edges.
+FR-QUERY-003,Impact analysis,P1-MVP,Query Engine,WP-QUERY,TEST-FR-QUERY-003,Cyclic graph and golden blast-radius tests.,AC-FR-QUERY-003,Demo function change returns expected dependents with paths.
+FR-QUERY-004,Entity search,P1-MVP,Query Engine,WP-QUERY,TEST-FR-QUERY-004,Search relevance/limit tests.,AC-FR-QUERY-004,"Demo Jira issue, commit and symbol are discoverable."
+FR-QUERY-005,Natural-language query interpretation,P1-MVP,Query Engine,WP-QUERY,TEST-FR-QUERY-005,Adversarial prompt/query tests.,AC-FR-QUERY-005,Prompt injection cannot bypass QueryPlan policy.
+FR-QUERY-006,Query safety policy,P1-MVP,Query Engine,WP-QUERY,TEST-FR-QUERY-006,Boundary/fuzz tests.,AC-FR-QUERY-006,All exposed query endpoints pass policy conformance suite.
+FR-QUERY-007,Query evidence envelope,P1-MVP,Query Engine,WP-QUERY,TEST-FR-QUERY-007,Evidence completeness tests.,AC-FR-QUERY-007,GraphRAG/UI/MCP consume same evidence format.
+FR-QUERY-008,Raw Gremlin admin boundary,P1-MVP,Query Engine,WP-QUERY,TEST-FR-QUERY-008,Endpoint exposure tests.,AC-FR-QUERY-008,No public OpenAPI/MCP tool accepts free-form Gremlin in MVP.
+FR-VALID-001,Graph validation rules,P1-MVP,Validation,WP-VALIDATION,TEST-FR-VALID-001,Seeded-invalid-graph tests.,AC-FR-VALID-001,Admin UI shows real findings from demo data.
+FR-VALID-002,Validation gates,P1-MVP,Validation,WP-VALIDATION,TEST-FR-VALID-002,Hard/soft rule tests.,AC-FR-VALID-002,Invalid endpoint edge cannot silently enter graph.
+FR-VALID-003,Graph quality metrics,P1-MVP,Validation,WP-VALIDATION,TEST-FR-VALID-003,Metric fixture tests.,AC-FR-VALID-003,Dashboard values reconcile with fixture counts.
+FR-RAG-001,Retrieval router,P1-MVP,Retrieval/RAG,WP-RAG,TEST-FR-RAG-001,Router table tests.,AC-FR-RAG-001,Known MVP questions route without external service.
+FR-RAG-002,GraphRAG evidence retrieval,P1-MVP,Retrieval/RAG,WP-RAG,TEST-FR-RAG-002,Golden question/evidence tests.,AC-FR-RAG-002,Demo GraphRAG answer cites graph/source references.
+FR-RAG-003,Local model abstraction,P1-MVP,Retrieval/RAG,WP-RAG,TEST-FR-RAG-003,No-egress/model-down tests.,AC-FR-RAG-003,Core search/path/impact remains usable with model service stopped.
+FR-RAG-004,No mandatory vector DB in MVP,P1-MVP,Retrieval/RAG,WP-RAG,TEST-FR-RAG-004,Model-off tests.,AC-FR-RAG-004,MVP starts and demos without vector database.
+FR-RAG-005,RAG evaluation harness,P1-MVP,Retrieval/RAG,WP-RAG,TEST-FR-RAG-005,Automated evaluation tests.,AC-FR-RAG-005,Baseline report is reproducible locally.
+FR-RAG-006,Adaptive RAG strategy framework,P3,Retrieval/RAG,WP-RAG,TEST-FR-RAG-006,Strategy contract tests.,AC-FR-RAG-006,P3 can add strategy plugin without changing callers.
+FR-AGENT-001,Agent contract,P1-MVP,Agent Runtime,WP-AGENT-MEMORY,TEST-FR-AGENT-001,Schema tests.,AC-FR-AGENT-001,Every enabled agent has a validated contract.
+FR-AGENT-002,Bounded agent runtime,P1-MVP,Agent Runtime,WP-AGENT-MEMORY,TEST-FR-AGENT-002,Loop/budget tests.,AC-FR-AGENT-002,Agent cannot exceed configured execution envelope.
+FR-AGENT-003,TraceImpact agent,P1-MVP,Agent Runtime,WP-AGENT-MEMORY,TEST-FR-AGENT-003,Golden E2E agent tests.,AC-FR-AGENT-003,Same demo question works via UI/API/MCP context.
+FR-AGENT-004,Write/action approval boundary,P1-MVP,Agent Runtime,WP-AGENT-MEMORY,TEST-FR-AGENT-004,Negative policy tests.,AC-FR-AGENT-004,No MVP agent can mutate source systems or code.
+FR-AGENT-005,Controlled self-modification,P8+,Agent Runtime,WP-AGENT-MEMORY,TEST-FR-AGENT-005,Policy tests.,AC-FR-AGENT-005,No production self-modification path exists before P8+.
+FR-MEM-001,Scoped memory records,P1-MVP,Memory,WP-AGENT-MEMORY,TEST-FR-MEM-001,TTL/scope tests.,AC-FR-MEM-001,No uncontrolled accumulation in MVP.
+FR-MCP-001,MCP read server,P1-MVP,MCP,WP-MCP,TEST-FR-MCP-001,MCP contract/E2E tests.,AC-FR-MCP-001,MCP returns same graph evidence as REST for demo case.
+FR-MCP-002,MCP action separation,P1-MVP,MCP,WP-MCP,TEST-FR-MCP-002,Capability-list tests.,AC-FR-MCP-002,MVP MCP surface is read-only.
+FR-UI-001,User web application,P1-MVP,Web UI,WP-EXPERIENCE,TEST-FR-UI-001,Component + Playwright E2E.,AC-FR-UI-001,Demo flow works from persisted data.
+FR-UI-002,Graph explorer,P1-MVP,Web UI,WP-EXPERIENCE,TEST-FR-UI-002,Visual E2E + API bounds.,AC-FR-UI-002,Demo path is highlighted with evidence access.
+FR-ADMIN-001,Admin ingestion UI,P1-MVP,Admin UI,WP-EXPERIENCE,TEST-FR-ADMIN-001,Admin E2E.,AC-FR-ADMIN-001,Run state reconciles with backend/meta graph.
+FR-ADMIN-002,Admin graph quality UI,P1-MVP,Admin UI,WP-EXPERIENCE,TEST-FR-ADMIN-002,Fixture reconciliation tests.,AC-FR-ADMIN-002,No dashboard KPI is hardcoded.
+FR-VSCODE-001,VS Code context extension,P1-MVP,VS Code,WP-EXPERIENCE,TEST-FR-VSCODE-001,Extension host tests.,AC-FR-VSCODE-001,Opening demo function retrieves correct graph context.
+FR-VSCODE-002,VS Code trace/impact commands,P1-MVP,VS Code,WP-EXPERIENCE,TEST-FR-VSCODE-002,Command E2E.,AC-FR-VSCODE-002,Demo command returns Jira→code path and impact.
+NFR-SEC-001,No outbound enterprise-data egress,P1-MVP,Security,WP-SECURITY-OPS,TEST-NFR-SEC-001,Egress test with deny network.,AC-NFR-SEC-001,Demo succeeds with external network disabled.
+NFR-SEC-002,Secret isolation,P1-MVP,Security,WP-SECURITY-OPS,TEST-NFR-SEC-002,Secret scan/log redaction tests.,AC-NFR-SEC-002,Repository and logs contain no test secret plaintext.
+NFR-SEC-003,Input/file safety,P1-MVP,Security,WP-SECURITY-OPS,TEST-NFR-SEC-003,Traversal/zip-bomb/oversize tests.,AC-NFR-SEC-003,Security suite rejects malicious fixtures.
+NFR-SEC-004,Prompt/tool injection defenses,P1-MVP,Security,WP-SECURITY-OPS,TEST-NFR-SEC-004,Adversarial evals.,AC-NFR-SEC-004,Known injection cases remain read-only/bounded.
+NFR-SEC-005,Authentication without MVP RBAC,P1-MVP,Security,WP-SECURITY-OPS,TEST-NFR-SEC-005,Profile/auth tests.,AC-NFR-SEC-005,/admin route presence is never claimed as authorization boundary.
+NFR-SEC-006,Container hardening,P1-MVP,Security,WP-SECURITY-OPS,TEST-NFR-SEC-006,Container inspection tests.,AC-NFR-SEC-006,HugeGraph/model not exposed externally by default.
+NFR-SEC-007,Audit events,P1-MVP,Security,WP-SECURITY-OPS,TEST-NFR-SEC-007,Audit coverage tests.,AC-NFR-SEC-007,Sensitive operation has traceable audit ID.
+NFR-REL-001,Restart-safe processing,P1-MVP,Reliability,WP-SECURITY-OPS,TEST-NFR-REL-001,Kill/restart E2E.,AC-NFR-REL-001,No duplicates or silent skipped records after restart.
+NFR-REL-002,Backup and restore,P1-MVP,Reliability,WP-SECURITY-OPS,TEST-NFR-REL-002,Backup/restore E2E.,AC-NFR-REL-002,Restored demo reproduces expected counts/path queries.
+NFR-OPS-001,Structured logging and health,P1-MVP,Observability,WP-SECURITY-OPS,TEST-NFR-OPS-001,Health/log tests.,AC-NFR-OPS-001,Failure can be followed by correlation ID.
+NFR-OPS-002,Local metrics,P1-MVP,Observability,WP-SECURITY-OPS,TEST-NFR-OPS-002,Metric scrape tests.,AC-NFR-OPS-002,Key MVP metrics are machine-readable.
+NFR-PERF-001,Benchmark-defined objectives,P1-MVP,Performance,WP-SECURITY-OPS,TEST-NFR-PERF-001,Automated benchmark smoke + manual full run.,AC-NFR-PERF-001,Published numbers identify dataset/hardware/version.
+NFR-MAINT-001,Modular monolith boundary,P1-MVP,Architecture,WP-FOUNDATION,TEST-NFR-MAINT-001,Dependency/lint tests.,AC-NFR-MAINT-001,Core can later split without changing external contracts.
+NFR-PRIV-001,Data minimization and classification,P1-MVP,Privacy,WP-SECURITY-OPS,TEST-NFR-PRIV-001,Redaction fixtures.,AC-NFR-PRIV-001,Audit/log exports contain no prohibited content.

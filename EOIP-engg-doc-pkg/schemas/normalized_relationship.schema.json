@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NormalizedRelationship",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "relationship_id",
+    "relationship_type",
+    "from_id",
+    "to_id",
+    "evidence_refs",
+    "creation_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "relationship_id": {
+      "type": "string"
+    },
+    "relationship_type": {
+      "type": "string"
+    },
+    "from_id": {
+      "type": "string"
+    },
+    "to_id": {
+      "type": "string"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "creation_status": {
+      "enum": [
+        "DETERMINISTIC",
+        "INFERRED",
+        "HUMAN_CONFIRMED"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "properties": {
+      "type": "object"
+    }
+  }
+}

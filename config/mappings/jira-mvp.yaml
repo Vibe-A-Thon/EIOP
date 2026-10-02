@@ -1,0 +1,14 @@
+version: "1.0"
+mapper_version: jira-json/1.0
+fields:
+  issue_key: key
+  summary: fields.summary
+  description: fields.description
+  issue_type: fields.issuetype.name
+  status: fields.status.name
+  project_key: fields.project.key
+  project_name: fields.project.name
+  assignee_id: fields.assignee.accountId
+  assignee_name: fields.assignee.displayName
+  assignee_email: fields.assignee.emailAddress
+  parent_key: fields.parent.key

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QueryPlan",
+  "type": "object",
+  "required": [
+    "intent",
+    "anchors",
+    "max_depth",
+    "result_limit",
+    "evidence_mode"
+  ],
+  "properties": {
+    "intent": {
+      "enum": [
+        "SEARCH",
+        "PATH",
+        "IMPACT",
+        "NEIGHBORHOOD",
+        "LINEAGE",
+        "TRACEABILITY"
+      ]
+    },
+    "anchors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relationship_allowlist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "max_depth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8
+    },
+    "result_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 500
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 50,
+      "maximum": 30000
+    },
+    "evidence_mode": {
+      "enum": [
+        "NONE",
+        "SUMMARY",
+        "FULL"
+      ]
+    },
+    "filters": {
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RetrievalResult",
+  "type": "object",
+  "required": [
+    "retrieval_id",
+    "strategy",
+    "contexts",
+    "evidence_refs"
+  ],
+  "properties": {
+    "retrieval_id": {
+      "type": "string"
+    },
+    "strategy": {
+      "type": "string"
+    },
+    "contexts": {
+      "type": "array"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metrics": {
+      "type": "object"
+    }
+  }
+}

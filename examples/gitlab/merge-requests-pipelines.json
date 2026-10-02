@@ -1,0 +1,24 @@
+{
+  "merge_requests": [
+    {
+      "iid": 17,
+      "title": "EOIP-1 Add requirement trace endpoint",
+      "state": "merged",
+      "source_branch": "EOIP-1-trace-endpoint",
+      "target_branch": "main",
+      "merge_commit_sha": "0123456789abcdef0123456789abcdef01234567",
+      "description": "Implements the Jira story EOIP-1.",
+      "work_item_keys": ["EOIP-1"]
+    }
+  ],
+  "pipelines": [
+    {
+      "id": 204,
+      "name": "test-and-build",
+      "status": "success",
+      "ref": "main",
+      "sha": "0123456789abcdef0123456789abcdef01234567",
+      "work_item_keys": ["EOIP-1"]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GraphResult",
+  "type": "object",
+  "required": [
+    "query_id",
+    "nodes",
+    "edges",
+    "evidence",
+    "partial"
+  ],
+  "properties": {
+    "query_id": {
+      "type": "string"
+    },
+    "nodes": {
+      "type": "array"
+    },
+    "edges": {
+      "type": "array"
+    },
+    "paths": {
+      "type": "array"
+    },
+    "evidence": {
+      "type": "array"
+    },
+    "partial": {
+      "type": "boolean"
+    },
+    "warnings": {
+      "type": "array"
+    }
+  }
+}
