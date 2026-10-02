@@ -11,6 +11,7 @@ from uuid import uuid4
 import httpx
 from eoip.agents.runtime import AgentRegistry, AgentRuntime
 from eoip.agents.trace_impact import TraceImpactAgent
+from eoip.config import load_agent_config
 from eoip.audit.sink import AuditSink
 from eoip.contracts.agent import AgentRequest
 from eoip.contracts.audit import AuditEvent
@@ -50,6 +51,8 @@ def _operation(path: str, body: bytes) -> str:
         "/api/v1/path",
         "/api/v1/impact",
         "/api/v1/lineage",
+        "/api/v1/neighborhood",
+        "/api/v1/traceability",
         "/api/v1/ontology/export",
     } or path.startswith("/api/v1/entities/"):
         return "query"
@@ -98,7 +101,7 @@ def create_app():
     audit_sink = AuditSink(data_root() / "audit")
     validator = ValidationEngine(store)
     agent_registry = AgentRegistry()
-    agent_registry.register(TraceImpactAgent())
+    agent_registry.register(TraceImpactAgent(load_agent_config("trace-impact")))
     agent_runtime = AgentRuntime(store, agent_registry)
     app = query_app(store, dependencies=[Depends(HTTPBearer(auto_error=False))])
     registry = CollectorRegistry()
@@ -367,6 +370,14 @@ def create_app():
             correlation_id=request.state.correlation_id,
         )
 
+    @app.post("/api/v1/admin/ingestion/gitlab", status_code=202)
+    def ingest_gitlab(payload: IngestionRequest, request: Request):
+        return queue.submit(
+            "GITLAB_JSON",
+            payload.model_dump(),
+            correlation_id=request.state.correlation_id,
+        )
+
     @app.post("/api/v1/admin/ingestion/confluence", status_code=202)
     def ingest_confluence(payload: IncrementalSyncRequest, request: Request):
         return queue.submit(
@@ -422,6 +433,16 @@ def create_app():
             return retrieve(store, payload.canonical_id, payload.question, synthesize=payload.synthesize)
         except ValueError as exc:
             raise HTTPException(404, str(exc)) from exc
+
+    @app.get("/api/v1/admin/dlq")
+    def dlq_list(limit: int = Query(default=50, ge=1, le=500)):
+        dlq_dir = data_root() / "dlq"
+        if not dlq_dir.exists():
+            return []
+        items = []
+        for path in sorted(dlq_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)[:limit]:
+            items.append(json.loads(path.read_text(encoding="utf-8")))
+        return items
 
     @app.get("/api/v1/admin/audit")
     def audit_log(limit: int = Query(default=50, ge=1, le=500)):

@@ -19,6 +19,15 @@ class TraceImpactAgent:
     max_steps = 10
     max_seconds = 30.0
 
+    def __init__(self, config: dict | None = None) -> None:
+        if config:
+            budgets = config.get("budgets", {})
+            self.max_steps = budgets.get("max_steps", self.max_steps)
+            self.max_seconds = budgets.get("max_seconds", self.max_seconds)
+            tools = config.get("allowed_tools")
+            if tools:
+                self.allowed_tools = frozenset(tools)
+
     def execute(self, request: AgentRequest, store: GraphStore) -> AgentResult:
         canonical_id = request.context_refs[0] if request.context_refs else request.goal
         budgets = request.budgets or {}

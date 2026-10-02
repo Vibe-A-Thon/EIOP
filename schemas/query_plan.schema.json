@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:query_plan:1.0",
+  "title": "QueryPlan v1",
+  "type": "object",
+  "required": ["intent", "anchors"],
+  "properties": {
+    "intent": { "type": ["string", "null"], "enum": ["SEARCH", "PATH", "IMPACT", "NEIGHBORHOOD", "LINEAGE", "TRACEABILITY", null] },
+    "anchors": { "type": "array", "items": { "type": "string" } },
+    "max_depth": { "type": "integer", "minimum": 1, "default": 1 },
+    "result_limit": { "type": "integer", "minimum": 1, "default": 1 },
+    "evidence_mode": { "type": ["string", "null"], "enum": ["NONE", "SUMMARY", "FULL", null] },
+    "relationship_allowlist": { "type": ["array", "null"], "items": { "type": "string" } },
+    "label_filter": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:retrieval_result:1.0",
+  "title": "RetrievalResult v1",
+  "type": "object",
+  "required": ["retrieval_id", "strategy", "evidence_refs"],
+  "properties": {
+    "retrieval_id": { "type": "string", "minLength": 1 },
+    "strategy": { "type": "string", "minLength": 1 },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "ref", "text"],
+        "properties": {
+          "kind": { "type": "string" },
+          "ref": { "type": "string" },
+          "text": { "type": "string" },
+          "citations": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "evidence_refs": { "type": "array", "items": { "type": "string" } },
+    "metrics": { "type": ["object", "null"] }
+  },
+  "additionalProperties": false
+}

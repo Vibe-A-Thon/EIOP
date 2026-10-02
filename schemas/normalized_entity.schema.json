@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:normalized_entity:1.0",
+  "title": "NormalizedEntity v1",
+  "type": "object",
+  "required": ["schema_version", "canonical_id", "entity_type", "graph_domain", "source_refs", "properties"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "canonical_id": { "type": "string", "minLength": 1 },
+    "entity_type": { "type": "string", "minLength": 1 },
+    "graph_domain": { "type": "string", "minLength": 1 },
+    "source_refs": { "type": "array", "items": { "type": "string" } },
+    "creation_status": { "type": ["string", "null"], "enum": ["DETERMINISTIC", "INFERRED", "HUMAN_CONFIRMED", null] },
+    "confidence": { "type": ["number", "null"], "minimum": 0.0, "maximum": 1.0 },
+    "properties": { "type": "object" }
+  },
+  "additionalProperties": false
+}

@@ -138,7 +138,7 @@ EDGE_LABELS: dict[str, tuple[list[str], list[str], list[str]]] = {
     "DECLARES": (["File"], ["CodeSymbol"], []),
     "CALLS": (["CodeSymbol"], ["CodeSymbol"], []),
     "IMPORTS": (["File", "CodeSymbol"], ["Dependency"], []),
-    "DEPENDS_ON": (["CodeSymbol", "File"], ["Dependency", "CodeSymbol"], []),
+    "DEPENDS_ON": (["CodeSymbol", "File"], ["Dependency", "CodeSymbol", "File"], []),
     "IMPLEMENTS": (["MergeRequest", "Commit"], ["WorkItem"], []),
     "REFERENCES": (["MergeRequest", "Commit", "Document", "DocumentSection", "WorkItem", "PipelineRun"], ["WorkItem", "Commit", "CodeSymbol", "Dependency", "File"], []),
     "DOCUMENTS": (["Document", "DocumentSection"], ["CodeSymbol", "WorkItem", "File"], []),

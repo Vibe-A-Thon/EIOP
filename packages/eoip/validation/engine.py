@@ -170,15 +170,38 @@ class ValidationEngine:
 
     def _persist_run(self, result: dict) -> None:
         try:
-            self._store.upsert_vertex(
+            run_cid = f"urn:eoip:meta:validation-run:{result['run_id']}"
+            run_vertex = self._store.upsert_vertex(
                 "ValidationRun",
                 {
-                    "canonical_id": f"urn:eoip:meta:validation-run:{result['run_id']}",
+                    "canonical_id": run_cid,
                     "run_status": "PASSED" if result["valid"] else "FINDINGS",
                     "started_at": result["started_at"],
                     "finished_at": result["finished_at"],
                     "counts": str(len(result["findings"])),
                 },
             )
+            for i, finding in enumerate(result["findings"]):
+                finding_cid = f"urn:eoip:meta:validation-finding:{result['run_id']}:{i}"
+                self._store.upsert_vertex(
+                    "ValidationFinding",
+                    {
+                        "canonical_id": finding_cid,
+                        "severity": finding["severity"],
+                        "rule_id": finding["rule"],
+                        "description": finding.get("detail", ""),
+                        "remediation": finding.get("remediation"),
+                    },
+                )
+                entity_cid = finding.get("canonical_id")
+                if entity_cid:
+                    entity = self._store.get_vertex_by_canonical_id(entity_cid)
+                    if entity:
+                        self._store.upsert_edge(
+                            "VALIDATED_BY",
+                            entity["vid"],
+                            run_vertex["vid"],
+                            {"fact_key": f"validation:{result['run_id']}:{entity_cid}"},
+                        )
         except Exception:
             pass

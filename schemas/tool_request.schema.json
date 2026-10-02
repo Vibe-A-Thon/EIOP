@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:tool_request:1.0",
+  "title": "ToolRequest v1",
+  "type": "object",
+  "required": ["tool_call_id", "tool_name", "arguments"],
+  "properties": {
+    "tool_call_id": { "type": "string", "minLength": 1 },
+    "tool_name": { "type": "string", "minLength": 1 },
+    "arguments": { "type": "object" },
+    "risk_level": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

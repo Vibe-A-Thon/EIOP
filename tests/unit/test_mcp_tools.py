@@ -56,7 +56,7 @@ def test_mcp_exposes_read_only_lineage_using_the_shared_api(monkeypatch):
     monkeypatch.setattr(mcp_main.httpx, "AsyncClient", Client)
     mcp_main.create_app()
 
-    assert {"search", "entity", "path", "impact", "lineage", "trace_impact"} == set(tools)
+    assert {"search", "entity", "path", "impact", "lineage", "trace_impact", "code_symbol", "jira_issue", "evidence"} == set(tools)
     result = asyncio.run(
         tools["lineage"](
             canonical_id="urn:eoip:work:item:jira:EOIP-1",

@@ -68,6 +68,13 @@ class AgentRuntime:
             budgets.get("max_seconds", agent.max_seconds),
             agent.max_seconds,
         )
+        max_steps = min(
+            budgets.get("max_steps", agent.max_steps),
+            agent.max_steps,
+        )
+        request = request.model_copy(
+            update={"budgets": {**(request.budgets or {}), "max_steps": max_steps, "max_seconds": max_seconds}}
+        )
 
         start = monotonic()
         try:
@@ -93,12 +100,17 @@ class AgentRuntime:
             )
 
         elapsed = monotonic() - start
+        warnings = list(result.warnings or [])
+        downgrade = False
         if elapsed > max_seconds:
+            warnings.append("Execution exceeded time budget")
+            downgrade = True
+        if result.tool_calls and len(result.tool_calls) > max_steps:
+            warnings.append(f"Execution exceeded step budget ({len(result.tool_calls)} > {max_steps})")
+            downgrade = True
+        if downgrade:
             result = result.model_copy(
-                update={
-                    "status": "PARTIAL",
-                    "warnings": (result.warnings or []) + ["Execution exceeded time budget"],
-                }
+                update={"status": "PARTIAL", "warnings": warnings}
             )
 
         self._persist_run(request, result, elapsed)

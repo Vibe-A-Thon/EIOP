@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from uuid import uuid4
 
-from eoip.contracts.graph_result import GraphEdge, GraphNode, GraphPath, GraphResult
+from eoip.contracts.graph_result import GraphResult
+from eoip.contracts.query_plan import QueryPlan
 from eoip.graph.store import GraphStore
-from eoip.graph.traversal import GraphTraversal
+from eoip.query.executor import PolicyViolation, QueryExecutor, QueryTimeout
+from eoip.config import load_query_policy
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from pydantic import BaseModel, Field
 
@@ -27,12 +29,21 @@ class LineageRequest(BaseModel):
     result_limit: int = Field(default=100, ge=1, le=500)
 
 
-LINEAGE_EDGES = frozenset({"EVIDENCED_BY", "INGESTED_IN"})
+class NeighborhoodRequest(BaseModel):
+    canonical_id: str = Field(min_length=1, max_length=512)
+    max_depth: int = Field(default=1, ge=1, le=4)
+    result_limit: int = Field(default=50, ge=1, le=500)
+
+
+class TraceabilityRequest(BaseModel):
+    canonical_id: str = Field(min_length=1, max_length=512)
+    max_depth: int = Field(default=6, ge=1, le=8)
+    result_limit: int = Field(default=100, ge=1, le=500)
 
 
 def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> FastAPI:
     app = FastAPI(title="EOIP API", version="1.0.0", dependencies=dependencies or [])
-    traversal = GraphTraversal(store, max_depth=max_depth)
+    executor = QueryExecutor(store, load_query_policy())
     app.state.graph_store = store
 
     @app.middleware("http")
@@ -45,6 +56,14 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         response = await call_next(request)
         response.headers["X-Correlation-ID"] = correlation_id
         return response
+
+    @app.exception_handler(QueryTimeout)
+    async def handle_query_timeout(request, exc):
+        return Response(
+            content='{"detail":"' + str(exc) + '"}',
+            status_code=504,
+            media_type="application/json",
+        )
 
     @app.get("/health/live")
     def live() -> dict[str, str]:
@@ -63,152 +82,102 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         label: str | None = Query(default=None, max_length=64),
         limit: int = Query(default=25, ge=1, le=100),
     ) -> GraphResult:
-        query = q.strip().casefold()
+        query = q.strip()
         if not query:
             raise HTTPException(status_code=422, detail="Search query must not be blank")
-        try:
-            candidates = store.find_vertices(label=label, limit=5000)
-        except ValueError as exc:
-            raise HTTPException(status_code=422, detail=str(exc)) from exc
-        matches = [
-            vertex
-            for vertex in candidates
-            if any(
-                query in str(value).casefold()
-                for key, value in vertex["properties"].items()
-                if key in {"canonical_id", "name", "display_name", "summary", "issue_key", "path", "qualified_name", "commit_sha"}
-            )
-        ]
-        matches.sort(
-            key=lambda vertex: (
-                query != str(vertex["canonical_id"]).casefold(),
-                str(vertex["properties"].get("name", "")).casefold(),
-            )
+        plan = QueryPlan(
+            intent="SEARCH",
+            anchors=[query],
+            max_depth=1,
+            result_limit=limit,
+            evidence_mode="NONE",
+            label_filter=label,
         )
-        nodes = [_to_node(vertex) for vertex in matches[:limit]]
-        return GraphResult(query_id=str(uuid4()), nodes=nodes, edges=[], partial=len(matches) > limit or len(candidates) == 5000, evidence=[])
+        try:
+            return executor.execute(plan)
+        except PolicyViolation as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     @app.post("/api/v1/path", response_model=GraphResult)
     def find_path(payload: PathRequest) -> GraphResult:
-        try:
-            result = traversal.find_path(payload.source_id, payload.target_id, max_depth=payload.max_depth)
-        except ValueError as exc:
-            raise HTTPException(status_code=422, detail=str(exc)) from exc
-        if result is None:
-            return GraphResult(query_id=str(uuid4()), partial=False)
-        path_id = str(uuid4())
-        return GraphResult(
-            query_id=str(uuid4()),
-            nodes=[_to_node(vertex) for vertex in result["vertices"]],
-            edges=[_to_edge(edge) for edge in result["edges"]],
-            paths=[
-                GraphPath(
-                    path_id=path_id,
-                    node_ids=[vertex["canonical_id"] for vertex in result["vertices"]],
-                    edge_ids=[edge["eid"] for edge in result["edges"]],
-                )
-            ],
-            evidence=_edge_evidence(result["edges"]),
-            partial=False,
+        plan = QueryPlan(
+            intent="PATH",
+            anchors=[payload.source_id, payload.target_id],
+            max_depth=payload.max_depth,
+            result_limit=100,
+            evidence_mode="SUMMARY",
         )
+        try:
+            return executor.execute(plan)
+        except PolicyViolation as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     @app.post("/api/v1/impact", response_model=GraphResult)
     def impact(payload: ImpactRequest) -> GraphResult:
-        limited_traversal = GraphTraversal(
-            store,
-            max_depth=max_depth,
-            max_results=payload.result_limit,
+        plan = QueryPlan(
+            intent="IMPACT",
+            anchors=[payload.canonical_id],
+            max_depth=payload.max_depth,
+            result_limit=payload.result_limit,
+            evidence_mode="SUMMARY",
         )
         try:
-            result = limited_traversal.impact(payload.canonical_id, max_depth=payload.max_depth)
-        except ValueError as exc:
+            result = executor.execute(plan)
+        except PolicyViolation as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
-        if result["source"] is None:
+        if not result.nodes:
             raise HTTPException(status_code=404, detail="Entity not found")
-        return _traversal_result(result)
+        return result
 
     @app.post("/api/v1/lineage", response_model=GraphResult)
     def lineage(payload: LineageRequest) -> GraphResult:
-        provenance_traversal = GraphTraversal(
-            store,
-            allowed_edges=LINEAGE_EDGES,
-            max_depth=max_depth,
-            max_results=payload.result_limit,
+        plan = QueryPlan(
+            intent="LINEAGE",
+            anchors=[payload.canonical_id],
+            max_depth=payload.max_depth,
+            result_limit=payload.result_limit,
+            evidence_mode="SUMMARY",
         )
         try:
-            result = provenance_traversal.impact(
-                payload.canonical_id,
-                max_depth=payload.max_depth,
-                direction="outgoing",
-            )
-        except ValueError as exc:
+            result = executor.execute(plan)
+        except PolicyViolation as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
-        if result["source"] is None:
+        if not result.nodes:
             raise HTTPException(status_code=404, detail="Entity not found")
-        return _traversal_result(result)
+        return result
+
+    @app.post("/api/v1/neighborhood", response_model=GraphResult)
+    def neighborhood(payload: NeighborhoodRequest) -> GraphResult:
+        plan = QueryPlan(
+            intent="NEIGHBORHOOD",
+            anchors=[payload.canonical_id],
+            max_depth=payload.max_depth,
+            result_limit=payload.result_limit,
+            evidence_mode="SUMMARY",
+        )
+        try:
+            result = executor.execute(plan)
+        except PolicyViolation as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        if not result.nodes:
+            raise HTTPException(status_code=404, detail="Entity not found")
+        return result
+
+    @app.post("/api/v1/traceability", response_model=GraphResult)
+    def traceability(payload: TraceabilityRequest) -> GraphResult:
+        plan = QueryPlan(
+            intent="TRACEABILITY",
+            anchors=[payload.canonical_id],
+            max_depth=payload.max_depth,
+            result_limit=payload.result_limit,
+            evidence_mode="FULL",
+        )
+        try:
+            result = executor.execute(plan)
+        except PolicyViolation as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        if not result.nodes:
+            raise HTTPException(status_code=404, detail="Entity not found")
+        return result
 
     return app
-
-
-def _traversal_result(result: dict) -> GraphResult:
-    vertices = {result["source"]["canonical_id"]: result["source"]}
-    edges = {}
-    paths = []
-    for item in result["impacted"]:
-        path = item["path"]
-        vertices.update({vertex["canonical_id"]: vertex for vertex in path["vertices"]})
-        edges.update({edge["eid"]: edge for edge in path["edges"]})
-        paths.append(
-            GraphPath(
-                path_id=str(uuid4()),
-                node_ids=[vertex["canonical_id"] for vertex in path["vertices"]],
-                edge_ids=[edge["eid"] for edge in path["edges"]],
-            )
-        )
-    return GraphResult(
-        query_id=str(uuid4()),
-        nodes=[_to_node(vertex) for vertex in vertices.values()],
-        edges=[_to_edge(edge) for edge in edges.values()],
-        paths=paths,
-        evidence=_edge_evidence(list(edges.values())),
-        partial=result["truncated"],
-    )
-
-
-def _to_node(vertex: dict) -> GraphNode:
-    properties = vertex["properties"]
-    return GraphNode(
-        id=vertex["canonical_id"],
-        label=vertex["label"],
-        domain=properties.get("graph_domain"),
-        properties=properties,
-    )
-
-
-def _to_edge(edge: dict) -> GraphEdge:
-    properties = edge["properties"]
-    return GraphEdge(
-        id=edge["eid"],
-        type=edge["label"],
-        from_id=edge["out_cid"],
-        to_id=edge["in_cid"],
-        creation_status=properties.get("creation_status"),
-        properties=properties,
-    )
-
-
-def _edge_evidence(edges: list[dict]) -> list[dict]:
-    evidence = []
-    for edge in edges:
-        properties = edge["properties"]
-        if properties.get("evidence_key") or properties.get("source_ref"):
-            evidence.append(
-                {
-                    "edge_id": edge["eid"],
-                    "evidence_key": properties.get("evidence_key"),
-                    "source_ref": properties.get("source_ref"),
-                    "source_system": properties.get("source_system"),
-                    "ingestion_run_id": properties.get("ingestion_run_id"),
-                }
-            )
-    return evidence

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:graph_mutation:1.0",
+  "title": "GraphMutation v1",
+  "type": "object",
+  "required": ["mutation_id", "operation", "target_kind", "payload", "ingestion_run_id"],
+  "properties": {
+    "mutation_id": { "type": "string", "minLength": 1 },
+    "operation": { "type": "string", "enum": ["UPSERT", "TOMBSTONE"] },
+    "target_kind": { "type": "string", "enum": ["VERTEX", "EDGE"] },
+    "payload": { "type": "object" },
+    "ingestion_run_id": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

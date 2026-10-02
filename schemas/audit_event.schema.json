@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:audit_event:1.0",
+  "title": "AuditEvent v1",
+  "type": "object",
+  "required": ["audit_id", "timestamp", "event_type", "actor", "correlation_id", "outcome"],
+  "properties": {
+    "audit_id": { "type": "string", "minLength": 1 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "event_type": { "type": "string", "minLength": 1 },
+    "actor": { "type": "string", "minLength": 1 },
+    "correlation_id": { "type": "string", "minLength": 1 },
+    "resource_refs": { "type": ["array", "null"], "items": { "type": "string" } },
+    "outcome": { "type": "string", "minLength": 1 },
+    "reason_code": { "type": ["string", "null"] },
+    "safe_summary": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

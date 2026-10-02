@@ -1,0 +1,42 @@
+{
+  "name": "eoip-explorer",
+  "displayName": "EOIP Explorer",
+  "description": "Enterprise Ontology & Intelligence Platform — graph context for code",
+  "version": "0.1.0",
+  "publisher": "eoip",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "eoip.showContext", "title": "EOIP: Show Graph Context" },
+      { "command": "eoip.traceImpact", "title": "EOIP: Trace Impact" },
+      { "command": "eoip.findPath", "title": "EOIP: Find Path to Jira" }
+    ],
+    "configuration": {
+      "title": "EOIP Explorer",
+      "properties": {
+        "eoip.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:8000",
+          "description": "EOIP API base URL"
+        },
+        "eoip.apiToken": {
+          "type": "string",
+          "default": "",
+          "description": "Bearer token for API authentication"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0"
+  }
+}

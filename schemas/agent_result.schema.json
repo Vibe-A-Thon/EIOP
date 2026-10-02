@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:agent_result:1.0",
+  "title": "AgentResult v1",
+  "type": "object",
+  "required": ["request_id", "summary", "evidence_refs"],
+  "properties": {
+    "request_id": { "type": "string", "minLength": 1 },
+    "status": { "type": ["string", "null"], "enum": ["SUCCEEDED", "PARTIAL", "FAILED", null] },
+    "summary": { "type": "string" },
+    "evidence_refs": { "type": "array", "items": { "type": "string" } },
+    "tool_calls": { "type": ["array", "null"], "items": { "type": "object" } }
+  },
+  "additionalProperties": false
+}

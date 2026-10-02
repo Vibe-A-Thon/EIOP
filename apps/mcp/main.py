@@ -1,4 +1,4 @@
-"""Read-only MCP façade using the same authenticated REST/query API."""
+"""Read-only MCP facade using the same authenticated REST/query API (FR-MCP-001, FR-MCP-002)."""
 
 import hmac
 import os
@@ -85,6 +85,25 @@ def create_app():
         """Run the deterministic, read-only TraceImpact agent."""
         return await call(
             "POST", "/api/v1/agents/trace-impact", json={"canonical_id": canonical_id, "max_depth": max_depth}
+        )
+
+    @mcp.tool()
+    async def code_symbol(qualified_name: str) -> dict:
+        """Look up a code symbol by qualified name and return graph context."""
+        return await call("GET", "/api/v1/search", params={"q": qualified_name, "limit": 5})
+
+    @mcp.tool()
+    async def jira_issue(issue_key: str) -> dict:
+        """Look up a Jira issue by key and return graph context with linked entities."""
+        return await call("GET", "/api/v1/search", params={"q": issue_key, "limit": 5})
+
+    @mcp.tool()
+    async def evidence(canonical_id: str) -> dict:
+        """Retrieve source evidence and provenance for a specific entity."""
+        return await call(
+            "POST",
+            "/api/v1/lineage",
+            json={"canonical_id": canonical_id, "max_depth": 2, "result_limit": 50},
         )
 
     app = mcp.streamable_http_app()

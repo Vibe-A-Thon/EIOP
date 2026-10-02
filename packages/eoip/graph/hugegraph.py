@@ -17,6 +17,7 @@ from eoip.contracts.source_event import utc_now_iso
 from eoip.graph.memory import edge_key
 from eoip.ontology.manifest import (
     EDGE_LABELS,
+    INDEXES,
     PROPERTY_KEYS,
     VERTEX_LABELS,
     edge_endpoints_valid,
@@ -137,19 +138,27 @@ class HugeGraphStore:
                             }
                         )
             ensure("edgelabels", edges)
-            ensure(
-                "indexlabels",
-                [
-                    {
-                        "name": f"idx_{name}_canonical_id",
+            index_defs = []
+            for idx in INDEXES:
+                if idx["label"] is not None:
+                    index_defs.append({
+                        "name": idx["name"],
                         "base_type": "VERTEX_LABEL",
-                        "base_value": name,
-                        "index_type": "SECONDARY",
-                        "fields": ["canonical_id"],
-                    }
-                    for name in VERTEX_LABELS
-                ],
-            )
+                        "base_value": idx["label"],
+                        "index_type": idx["type"],
+                        "fields": idx["fields"],
+                    })
+                else:
+                    for vl in VERTEX_LABELS:
+                        if all(f in PROPERTY_KEYS for f in idx["fields"]):
+                            index_defs.append({
+                                "name": f"{idx['name']}_{vl}",
+                                "base_type": "VERTEX_LABEL",
+                                "base_value": vl,
+                                "index_type": idx["type"],
+                                "fields": idx["fields"],
+                            })
+            ensure("indexlabels", index_defs)
         return {"created": created, "initialized": True}
 
     def _properties(self, properties):

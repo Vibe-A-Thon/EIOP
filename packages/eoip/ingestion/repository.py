@@ -55,6 +55,8 @@ class RepositoryIngestionService:
         )
         self._evidence(repo, event, edge_props["source_ref"])
         self._evidence(branch_node, event, edge_props["source_ref"])
+        author_name = git("log", "-1", "--format=%aN").strip()
+        author_email = git("log", "-1", "--format=%aE").strip()
         commit = self.store.upsert_vertex(
             "Commit",
             {
@@ -62,6 +64,8 @@ class RepositoryIngestionService:
                 "canonical_id": f"urn:eoip:code:commit:{repo_id}:{sha}",
                 "commit_sha": sha,
                 "message": message,
+                "author_name": author_name,
+                "author_email": author_email,
             },
         )
         self._evidence(commit, event, edge_props["source_ref"])
@@ -69,10 +73,25 @@ class RepositoryIngestionService:
         self.store.upsert_edge("HAS_BRANCH", repo["vid"], branch_node["vid"], edge_props)
         self.store.upsert_edge("HAS_COMMIT", branch_node["vid"], commit["vid"], edge_props)
         self._issue_links(commit, message, "IMPLEMENTS", edge_props)
+
+        if author_email:
+            person = self.store.upsert_vertex(
+                "Person",
+                {
+                    **shared,
+                    "canonical_id": f"urn:eoip:identity:person:email:{author_email}",
+                    "display_name": author_name or author_email,
+                    "email": author_email,
+                },
+            )
+            ingested_nodes.append(person)
+            self.store.upsert_edge("AUTHORED_BY", commit["vid"], person["vid"], edge_props)
         changed = set(git("diff-tree", "--root", "--no-commit-id", "--name-only", "-r", "HEAD").splitlines())
         files = symbols = 0
         errors = []
         parser = CodeParser()
+        file_nodes = {}
+        file_imports = {}
         for name in git("ls-files", "-z").split("\0"):
             if not name:
                 continue
@@ -125,6 +144,8 @@ class RepositoryIngestionService:
             self.store.upsert_edge("CONTAINS", repo["vid"], file["vid"], props)
             if name in changed:
                 self.store.upsert_edge("MODIFIES", commit["vid"], file["vid"], props)
+            file_nodes[name] = file
+            file_imports[name] = parsed.imports
             files += 1
             symbol_nodes = {}
             for symbol in parsed.symbols:
@@ -160,6 +181,20 @@ class RepositoryIngestionService:
                 )
                 ingested_nodes.append(dependency)
                 self.store.upsert_edge("IMPORTS", file["vid"], dependency["vid"], props)
+        path_to_file = {}
+        for fname, fnode in file_nodes.items():
+            mod = fname.replace("\\", "/")
+            if mod.endswith(".py"):
+                mod_key = mod[:-3].replace("/", ".")
+                path_to_file[mod_key] = fnode
+                if mod_key.endswith(".__init__"):
+                    path_to_file[mod_key[: -len(".__init__")]] = fnode
+        for fname, imports in file_imports.items():
+            src = file_nodes[fname]
+            for imp in imports:
+                target = path_to_file.get(imp)
+                if target and target["vid"] != src["vid"]:
+                    self.store.upsert_edge("DEPENDS_ON", src["vid"], target["vid"], edge_props)
         if metadata:
             ingested_nodes.extend(self._gitlab(repo, commit, metadata, shared, sha))
         result = {

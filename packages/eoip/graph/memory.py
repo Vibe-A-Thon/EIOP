@@ -9,10 +9,13 @@ from __future__ import annotations
 
 import hashlib
 import itertools
+import logging
 import threading
 from typing import Any
 
 from eoip.ontology.manifest import EDGE_LABELS, VERTEX_LABELS, edge_endpoints_valid
+
+log = logging.getLogger("eoip.graph")
 
 
 def edge_key(label: str, out_cid: str, in_cid: str, fact_key: str = "") -> str:
@@ -53,7 +56,13 @@ class MemoryGraphStore:
         with self._lock:
             if label not in VERTEX_LABELS:
                 raise ValueError(f"unknown vertex label: {label}")
-            cid = properties["canonical_id"]
+            cid = properties.get("canonical_id")
+            if not cid:
+                raise ValueError(f"canonical_id is required for {label}")
+            _domain, required, _optional = VERTEX_LABELS[label]
+            missing = [k for k in required if k != "canonical_id" and properties.get(k) is None]
+            if missing:
+                log.warning("missing required properties for %s: %s (canonical_id=%s)", label, missing, cid)
             existing = self._vids.get(cid)
             now = properties.get("modified_at")
             if existing is not None:

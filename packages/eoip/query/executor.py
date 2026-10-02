@@ -6,6 +6,7 @@ validated against schema + policy, then executed via a named bounded template.
 
 from __future__ import annotations
 
+import concurrent.futures
 from uuid import uuid4
 
 from eoip.contracts.graph_result import GraphEdge, GraphNode, GraphPath, GraphResult
@@ -32,13 +33,25 @@ class QueryExecutor:
         handler = _TEMPLATES.get(plan.intent)
         if handler is None:
             raise PolicyViolation([f"No template registered for intent '{plan.intent}'"])
-        return handler(self._store, plan)
+        timeout_s = plan.timeout_ms / 1000.0
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+            future = pool.submit(handler, self._store, plan)
+            try:
+                return future.result(timeout=timeout_s)
+            except concurrent.futures.TimeoutError:
+                raise QueryTimeout(plan.timeout_ms)
 
 
 class PolicyViolation(Exception):
     def __init__(self, violations: list[str]) -> None:
         self.violations = violations
         super().__init__("; ".join(violations))
+
+
+class QueryTimeout(Exception):
+    def __init__(self, timeout_ms: int) -> None:
+        self.timeout_ms = timeout_ms
+        super().__init__(f"Query exceeded {timeout_ms}ms timeout")
 
 
 def _search(store: GraphStore, plan: QueryPlan) -> GraphResult:
@@ -131,11 +144,27 @@ def _lineage(store: GraphStore, plan: QueryPlan) -> GraphResult:
 
 
 def _neighborhood(store: GraphStore, plan: QueryPlan) -> GraphResult:
-    return _impact(store, plan)
+    kwargs: dict = {"max_depth": 1, "max_results": plan.result_limit}
+    if plan.relationship_allowlist:
+        kwargs["allowed_edges"] = frozenset(plan.relationship_allowlist)
+    traversal = GraphTraversal(store, **kwargs)
+    result = traversal.impact(plan.anchors[0], max_depth=1)
+    if result["source"] is None:
+        return GraphResult(query_id=str(uuid4()), partial=False)
+    return _traversal_result(result)
 
 
 def _traceability(store: GraphStore, plan: QueryPlan) -> GraphResult:
-    return _impact(store, plan)
+    traversal = GraphTraversal(
+        store,
+        allowed_edges=frozenset({"IMPLEMENTS", "REFERENCES", "DOCUMENTS"}),
+        max_depth=plan.max_depth,
+        max_results=plan.result_limit,
+    )
+    result = traversal.impact(plan.anchors[0], max_depth=plan.max_depth)
+    if result["source"] is None:
+        return GraphResult(query_id=str(uuid4()), partial=False)
+    return _traversal_result(result)
 
 
 _TEMPLATES = {

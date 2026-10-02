@@ -78,3 +78,36 @@ def test_query_api_sets_correlation_id_and_rejects_excessive_limits() -> None:
     assert health.headers["x-correlation-id"] == "trace-123"
     assert invalid.status_code == 422
     assert unknown.status_code == 404
+
+
+def test_neighborhood_and_traceability_endpoints() -> None:
+    client = TestClient(create_app(_demo_store()))
+
+    neighborhood = client.post(
+        "/api/v1/neighborhood",
+        json={"canonical_id": "commit:abc123"},
+    )
+    traceability = client.post(
+        "/api/v1/traceability",
+        json={"canonical_id": "commit:abc123"},
+    )
+
+    assert neighborhood.status_code == 200
+    node_ids = {n["id"] for n in neighborhood.json()["nodes"]}
+    assert "commit:abc123" in node_ids
+
+    assert traceability.status_code == 200
+    edge_types = {e["type"] for e in traceability.json()["edges"]}
+    assert not edge_types or edge_types <= {"IMPLEMENTS", "REFERENCES", "DOCUMENTS"}
+
+
+def test_neighborhood_returns_404_for_unknown_entity() -> None:
+    client = TestClient(create_app(_demo_store()))
+    r = client.post("/api/v1/neighborhood", json={"canonical_id": "unknown:x"})
+    assert r.status_code == 404
+
+
+def test_traceability_returns_404_for_unknown_entity() -> None:
+    client = TestClient(create_app(_demo_store()))
+    r = client.post("/api/v1/traceability", json={"canonical_id": "unknown:x"})
+    assert r.status_code == 404
