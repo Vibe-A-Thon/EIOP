@@ -30,7 +30,7 @@ def _demo_environment(tmp_path):
 
 
 def test_full_demo_ingestion(tmp_path):
-    store, data_dir, result = _demo_environment(tmp_path)
+    store, _data_dir, result = _demo_environment(tmp_path)
     assert result["jira"]["records_accepted"] >= 2
     assert result["git"]["files"] >= 1
     assert result["git"]["symbols"] >= 1
@@ -130,12 +130,11 @@ def test_backup_restore_cycle(tmp_path):
 
 
 def test_idempotent_re_ingestion(tmp_path):
-    store, data_dir, first = _demo_environment(tmp_path)
+    store, data_dir, _first = _demo_environment(tmp_path)
     vertices_before = store.count_vertices()
 
     from eoip.demo import load_demo
-    second = load_demo(store, str(data_dir))
+    load_demo(store, str(data_dir))
     vertices_after = store.count_vertices()
 
-    work_items_before = store.count_vertices("WorkItem")
     assert vertices_after - vertices_before <= 2, "Re-ingestion should not create duplicate business entities"

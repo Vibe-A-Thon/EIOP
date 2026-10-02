@@ -76,7 +76,7 @@ function Login({token, setToken, onSubmit, busy, health}) {
         <form onSubmit={onSubmit}>
           <label htmlFor="token">Access token <Tip text="Find EOIP_API_TOKEN in the generated deploy/.env file"><span className="help-dot">?</span></Tip></label>
           <div className="input-with-icon"><Icon name="shield" size={17}/><input id="token" type="password" autoComplete="current-password" value={token} onChange={event => setToken(event.target.value)} placeholder="Paste EOIP_API_TOKEN" required/></div>
-          <button className="primary-button wide" disabled={busy} title="Authenticate with the local EOIP API">{busy ? <><span className="spinner small"/>Connecting…</> : <>Enter workspace <Icon name="arrow" size={17}/></>}</button>
+          <button className="primary-button wide" disabled={busy} title="Authenticate with the local EOIP API">{busy ? <><span className="spinner small"/>Connecting…</> : <>Connect <Icon name="arrow" size={17}/></>}</button>
         </form>
         <div className="local-note"><Icon name="shield" size={15}/><span>Your token is stored only in this browser tab and is never sent outside the local deployment.</span></div>
       </div>
@@ -159,7 +159,7 @@ function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDet
     setDetail(await api(`/api/v1/entities/${encodeURIComponent(node.id)}`));
   }
   const executeSearch = event => {event?.preventDefault(); run(async () => {setGraph(await api(`/api/v1/search?q=${encodeURIComponent(query)}`)); setSelected(null); setSelectedEdge(null); setTrace(null);});};
-  const impact = () => run(async () => {const result = await api('/api/v1/impact', {canonical_id: selected.id, max_depth: 4}); setGraph(result); setLens('graph');});
+  const impact = () => run(async () => {const result = await api('/api/v1/impact', {canonical_id: selected.id, max_depth: 4}); setGraph(result); setLens('impact');});
   const traceImpact = () => run(async () => {setTrace(await api('/api/v1/agents/trace-impact', {canonical_id: selected.id})); setLens('impact');});
   const traceLineage = event => {event?.preventDefault(); run(async () => {setLineage(await api('/api/v1/lineage', {canonical_id: selected?.id || source, max_depth: 4})); setLens('evidence');});};
   const findPath = event => {event.preventDefault(); run(async () => {setGraph(await api('/api/v1/path', {source_id: source, target_id: target})); setLens('graph');});};
@@ -176,4 +176,107 @@ function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDet
   </>;
 }
 
-// Administration and application composition components follow below.
+function ConnectorCard({icon, name, description, status = 'Available', children, tone}) {
+  return <article className={`connector-card ${tone || ''}`}><div className="connector-top"><span className="connector-icon"><Icon name={icon}/></span><StatusPill status={status}/></div><h3>{name}</h3><p>{description}</p>{children}</article>;
+}
+
+function JobsTable({jobs, jobSummary}) {
+  if (!jobs.length) return <EmptyState icon="clock" title="No ingestion jobs yet">Load the demo or import a source to create the first durable job.</EmptyState>;
+  return <div className="table-wrap"><table><thead><tr><th>Source</th><th>Status</th><th>Created</th><th>Result</th></tr></thead><tbody>{jobs.map(job => <tr key={job.job_id}><td><div className="table-primary"><span className="service-icon mini"><Icon name={job.kind === 'DEMO' ? 'spark' : 'upload'} size={15}/></span><span><strong>{job.kind.replaceAll('_', ' ')}</strong><small title={job.job_id}>{shortId(job.job_id, 18)}</small></span></div></td><td><StatusPill status={job.status}/></td><td>{formatTime(job.created_at)}</td><td>{job.error || (job.result ? jobSummary(job) : 'Waiting for worker')}</td></tr>)}</tbody></table></div>;
+}
+
+function FindingsTable({findings}) {
+  if (!findings.length) return null;
+  return <div className="table-wrap"><table><thead><tr><th>Severity</th><th>Rule</th><th>Affected fact</th><th>Detail</th></tr></thead><tbody>{findings.map((finding, index) => <tr key={`${finding.rule}-${index}`}><td><StatusPill status={finding.severity}/></td><td>{finding.rule}</td><td><code>{shortId(finding.canonical_id || finding.edge_id || '', 26)}</code></td><td>{finding.detail}</td></tr>)}</tbody></table></div>;
+}
+
+function AuditTable({items}) {
+  if (!items.length) return <EmptyState icon="check" title="No audit events returned">The current audit store contains no readable events.</EmptyState>;
+  return <div className="table-wrap"><table><thead><tr><th>Time</th><th>Operation</th><th>Actor</th><th>Outcome</th><th>Summary</th></tr></thead><tbody>{items.map((event, index) => <tr key={event.audit_id || index}><td>{formatTime(event.timestamp)}</td><td>{event.event_type}</td><td>{event.actor}</td><td><StatusPill status={event.outcome}/></td><td>{event.safe_summary || '—'}</td></tr>)}</tbody></table></div>;
+}
+
+function Admin({stats, jobs, api, run, refresh, busy}) {
+  const [validation, setValidation] = useState(null);
+  const [upload, setUpload] = useState(null);
+  const [gitlabUpload, setGitlabUpload] = useState(null);
+  const [audit, setAudit] = useState(null);
+  const [dlq, setDlq] = useState(null);
+  const [ontology, setOntology] = useState(null);
+  const [section, setSection] = useState('overview');
+  const [checkpoint, setCheckpoint] = useState('');
+  const [dryRun, setDryRun] = useState(true);
+  const finishedJobs = jobs.filter(job => ['SUCCEEDED', 'PARTIAL', 'FAILED'].includes(job.status));
+  const successRate = finishedJobs.length ? Math.round(finishedJobs.filter(job => job.status === 'SUCCEEDED').length / finishedJobs.length * 100) : null;
+  const jobSummary = job => {const result = job.result || {}; return job.kind === 'DEMO' ? `${result.jira?.records_accepted || 0} Jira · ${result.git?.files || 0} files · ${result.git?.symbols || 0} symbols` : `${result.records_accepted || 0} accepted · ${result.records_rejected || 0} rejected`;};
+  async function importFile(file, endpoint) {if (!file) return; if (file.size > 3_000_000) throw new Error('Select a JSON file smaller than 3 MB'); await api(endpoint, {document: JSON.parse(await file.text())}); await refresh();}
+  const submitSync = source => run(async () => {await api(`/api/v1/admin/ingestion/${source}`, {checkpoint: checkpoint || null, watermark: null, dry_run: dryRun}); await refresh();});
+  return <>
+    <div className="admin-summary"><div><span className="eyebrow"><i/>OPERATIONS OVERVIEW</span><h2>Keep enterprise knowledge trustworthy.</h2><p>Monitor source ingestion, graph quality, ontology state, and auditable platform activity from one control plane.</p></div><div className="admin-summary-actions"><button className="secondary-button" onClick={() => run(async () => {setValidation(await api('/api/v1/admin/validation', {})); setSection('quality');})} disabled={busy} title="Validate current graph facts and open quality results"><Icon name="shield"/>Run validation</button><button className="primary-button" onClick={() => run(async () => {await api('/api/v1/admin/demo', {}); await refresh();})} disabled={busy} title="Queue an idempotent demo ingestion run"><Icon name="spark"/>Load / replay demo</button></div></div>
+    <div className="metrics-grid admin-metrics"><MetricCard icon="database" eyebrow="GRAPH ENTITIES" value={stats?.vertices ?? '—'} caption="Authoritative HugeGraph" tone="violet"/><MetricCard icon="graph" eyebrow="RELATIONSHIPS" value={stats?.edges ?? '—'} caption="Across all graph domains" tone="blue"/><MetricCard icon="activity" eyebrow="JOB SUCCESS" value={successRate === null ? '—' : `${successRate}%`} caption={`${finishedJobs.length} completed runs`} tone="mint" tooltip="Success rate calculated from completed jobs returned by the API"/><MetricCard icon="shield" eyebrow="SCHEMA" value={stats?.schema?.schema_version || '—'} caption={`Ontology ${stats?.schema?.ontology_version || 'unavailable'}`} tone="gold"/></div>
+    <div className="admin-tabs" role="tablist">{[['overview', 'Overview', 'layers'], ['sources', 'Sources & jobs', 'upload'], ['quality', 'Quality & ontology', 'shield'], ['operations', 'Audit & recovery', 'terminal']].map(([id, label, icon]) => <button key={id} role="tab" aria-selected={section === id} className={section === id ? 'active' : ''} onClick={() => setSection(id)} title={`Open ${label}`}><Icon name={icon}/>{label}</button>)}</div>
+    {section === 'overview' && <div className="admin-grid">
+      <section className="panel span-2"><div className="panel-heading"><div><span className="eyebrow">RECENT ACTIVITY</span><h2>Ingestion jobs</h2><p>Durable worker jobs and their latest reported state.</p></div><button className="secondary-button" onClick={() => run(refresh)} disabled={busy}><Icon name="refresh"/>Refresh jobs</button></div><JobsTable jobs={jobs} jobSummary={jobSummary}/></section>
+      <section className="panel"><div className="panel-heading"><div><span className="eyebrow">PLATFORM</span><h2>Service health</h2></div></div><div className="service-list"><div><span className="service-icon violet"><Icon name="database"/></span><span><strong>HugeGraph</strong><small>Authoritative graph store</small></span><StatusPill status={stats ? 'READY' : 'CHECKING'}/></div><div><span className="service-icon mint"><Icon name="activity"/></span><span><strong>Ingestion worker</strong><small>Background job processor</small></span><StatusPill status={stats?.worker?.status || 'STARTING'}/></div><div><span className="service-icon blue"><Icon name="shield"/></span><span><strong>Schema bootstrap</strong><small>Idempotent ontology schema</small></span><StatusPill status={stats?.schema ? 'READY' : 'CHECKING'}/></div></div></section>
+      <section className="panel span-3"><div className="panel-heading"><div><span className="eyebrow">ENTITY DISTRIBUTION</span><h2>Graph inventory</h2><p>Live counts by ontology label; zero-count types are intentionally visible.</p></div><span className="count-badge">{Object.keys(stats?.labels || {}).length} types</span></div><div className="inventory-grid">{Object.entries(stats?.labels || {}).map(([key, value]) => <Tip text={`${value} ${key} entities persisted`} key={key}><div className={value ? '' : 'zero'} tabIndex="0"><span className="type-dot" style={{background: palette[key] || '#94a3b8'}}/><span>{key}</span><strong>{value}</strong></div></Tip>)}</div></section>
+    </div>}
+    {section === 'sources' && <div className="admin-section">
+      <div className="connector-grid"><ConnectorCard icon="spark" name="Demo dataset" description="Synthetic Jira, Git, code, pipeline, and documentation evidence." status="Ready" tone="violet"><button onClick={() => run(async () => {await api('/api/v1/admin/demo', {}); await refresh();})} disabled={busy}>Load dataset <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="upload" name="Jira JSON" description="Import a configurable Jira export with record-level validation." status="File import" tone="blue"><label className="file-picker"><input type="file" accept="application/json,.json" onChange={event => setUpload(event.target.files?.[0] || null)}/><Icon name="document"/><span>{upload?.name || 'Choose JSON file'}</span></label><button onClick={() => run(() => importFile(upload, '/api/v1/admin/ingestion/jira'))} disabled={busy || !upload}>Import Jira <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="code" name="GitLab metadata" description="Import merge request and pipeline metadata from JSON." status="File import" tone="coral"><label className="file-picker"><input type="file" accept="application/json,.json" onChange={event => setGitlabUpload(event.target.files?.[0] || null)}/><Icon name="document"/><span>{gitlabUpload?.name || 'Choose JSON file'}</span></label><button onClick={() => run(() => importFile(gitlabUpload, '/api/v1/admin/ingestion/gitlab'))} disabled={busy || !gitlabUpload}>Import GitLab <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="document" name="Confluence" description="Queue incremental Data Center content synchronization." status="Configured externally" tone="mint"><button onClick={() => submitSync('confluence')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="settings" name="ServiceNow" description="Queue incremental knowledge article synchronization." status="Configured externally" tone="gold"><button onClick={() => submitSync('servicenow')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard></div>
+      <section className="panel sync-options"><div><h2>Incremental sync options</h2><p>Applies to Confluence and ServiceNow jobs. Credentials remain in worker configuration.</p></div><label>Checkpoint<input value={checkpoint} onChange={event => setCheckpoint(event.target.value)} placeholder="Optional ISO-8601 checkpoint"/></label><label className="toggle"><input type="checkbox" checked={dryRun} onChange={event => setDryRun(event.target.checked)}/><span/>Dry run only</label></section>
+      <section className="panel"><div className="panel-heading"><div><span className="eyebrow">DURABLE QUEUE</span><h2>Ingestion jobs</h2></div><button className="secondary-button" onClick={() => run(refresh)} disabled={busy}><Icon name="refresh"/>Refresh counts</button></div><JobsTable jobs={jobs} jobSummary={jobSummary}/></section>
+    </div>}
+    {section === 'quality' && <div className="admin-grid">
+      <section className="panel span-2"><div className="panel-heading"><div><span className="eyebrow">GRAPH VALIDATION</span><h2>Knowledge quality</h2><p>Metrics are computed from persisted entities, relationships, and findings.</p></div><button className="primary-button" onClick={() => run(async () => setValidation(await api('/api/v1/admin/validation', {})))} disabled={busy}><Icon name="shield"/>Run validation</button></div>{validation ? <><div className={`validation-banner ${validation.valid ? 'success' : 'danger'}`}><Icon name={validation.valid ? 'check' : 'warning'}/><div><strong>{validation.valid ? 'No findings in the checked graph.' : `${validation.findings.length} findings require review.`}</strong><small>Checked {validation.vertices_checked} entities and {validation.edges_checked} relationships · {formatTime(validation.finished_at)}</small></div></div><div className="quality-grid"><QualityRing label="Evidence coverage" value={validation.quality?.evidence_coverage} tone="violet"/><QualityRing label="Provenance coverage" value={validation.quality?.provenance_coverage} tone="mint"/><div className="finding-count"><strong>{validation.quality?.error_count || 0}</strong><span>Errors</span><small>{validation.quality?.warning_count || 0} warnings</small></div></div><FindingsTable findings={validation.findings || []}/></> : <EmptyState icon="shield" title="Validation has not run in this session">Run validation to compute current quality coverage and inspect first-class findings.</EmptyState>}</section>
+      <section className="panel"><div className="panel-heading"><div><span className="eyebrow">SEMANTIC MODEL</span><h2>Ontology schema</h2></div></div><div className="ontology-summary"><span className="section-icon violet"><Icon name="layers"/></span><strong>Ontology {stats?.schema?.ontology_version || '—'}</strong><small>Schema {stats?.schema?.schema_version || '—'}</small></div><dl className="compact-list"><div><dt>Vertex labels</dt><dd>{Object.keys(stats?.labels || {}).length}</dd></div><div><dt>Storage backend</dt><dd>{stats?.backend || '—'}</dd></div><div><dt>Initialization</dt><dd><StatusPill status={stats?.schema ? 'READY' : 'UNKNOWN'}/></dd></div></dl><button className="secondary-button wide" onClick={() => run(async () => setOntology(await api('/api/v1/ontology/export?limit=1')))} disabled={busy}><Icon name="code"/>Inspect JSON-LD context</button>{ontology && <pre className="code-panel">{JSON.stringify(ontology['@context'] || {}, null, 2)}</pre>}</section>
+    </div>}
+    {section === 'operations' && <div className="admin-grid">
+      <section className="panel span-2"><div className="panel-heading"><div><span className="eyebrow">AUDIT TRAIL</span><h2>Security-relevant activity</h2><p>Safe summaries only; secrets and payload content are excluded.</p></div><button className="secondary-button" onClick={() => run(async () => setAudit(await api('/api/v1/admin/audit?limit=50')))} disabled={busy}><Icon name="refresh"/>Load audit events</button></div>{audit ? <AuditTable items={audit}/> : <EmptyState icon="terminal" title="Audit events are not loaded">Load the latest events to inspect operations, outcomes, actors, and correlation-safe summaries.</EmptyState>}</section>
+      <section className="panel"><div className="panel-heading"><div><span className="eyebrow">RECOVERY</span><h2>Dead-letter queue</h2><p>Rejected records remain inspectable for safe replay.</p></div><button className="secondary-button" onClick={() => run(async () => setDlq(await api('/api/v1/admin/dlq?limit=25')))} disabled={busy}>Load DLQ</button></div>{dlq ? dlq.length ? <div className="dlq-list">{dlq.map((item, index) => <div key={item.event_id || index}><span className="service-icon coral"><Icon name="warning"/></span><span><strong>{item.error || item.error_message || 'Rejected record'}</strong><small>{item.stage || item.error_category || 'Unknown stage'} · {item.source_system || 'Unknown source'}</small></span></div>)}</div> : <EmptyState icon="check" title="Dead-letter queue is clear">No rejected records were returned by the API.</EmptyState> : <EmptyState icon="warning" title="DLQ is not loaded">Load the queue to inspect rejected records and failure stages.</EmptyState>}</section>
+    </div>}
+  </>;
+}
+
+export default function App() {
+  const [token, setToken] = useState(sessionStorage.getItem('eoip-token') || '');
+  const [authenticated, setAuthenticated] = useState(false);
+  const [mode, setMode] = useState(location.pathname.startsWith('/admin') ? 'admin' : 'app');
+  const [lens, setLens] = useState('graph');
+  const [collapsed, setCollapsed] = useState(false);
+  const [stats, setStats] = useState(null);
+  const [jobs, setJobs] = useState([]);
+  const [graph, setGraph] = useState(emptyGraph);
+  const [selected, setSelected] = useState(null);
+  const [selectedEdge, setSelectedEdge] = useState(null);
+  const [detail, setDetail] = useState(null);
+  const [error, setError] = useState('');
+  const [errorMeta, setErrorMeta] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [health, setHealth] = useState('checking');
+
+  async function api(path, body) {
+    const response = await fetch(path, {method: body === undefined ? 'GET' : 'POST', headers: {'Authorization': `Bearer ${token}`, ...(body !== undefined ? {'Content-Type': 'application/json'} : {})}, ...(body !== undefined ? {body: JSON.stringify(body)} : {})});
+    const contentType = response.headers.get('content-type') || '';
+    const data = contentType.includes('json') ? await response.json() : await response.text();
+    if (!response.ok) {
+      const message = typeof data?.detail === 'string' ? data.detail : typeof data === 'string' && data ? data : `Request failed (${response.status})`;
+      const exception = new Error(message);
+      exception.correlationId = response.headers.get('X-Correlation-ID');
+      throw exception;
+    }
+    return data;
+  }
+  async function run(action) {
+    setBusy(true); setError(''); setErrorMeta('');
+    try {await action();} catch (exception) {setError(exception.message || 'The operation could not be completed.'); setErrorMeta(exception.correlationId ? `Correlation ID: ${exception.correlationId}` : 'Check that the local API and graph services are available.');} finally {setBusy(false);}
+  }
+  async function refresh() {const [nextStats, nextJobs] = await Promise.all([api('/api/v1/admin/stats'), api('/api/v1/admin/jobs')]); setStats(nextStats); setJobs(nextJobs);}
+  async function login(event) {event.preventDefault(); await run(async () => {await refresh(); setGraph(await api('/api/v1/search?q=EOIP-1')); sessionStorage.setItem('eoip-token', token); setAuthenticated(true);});}
+  function disconnect() {sessionStorage.removeItem('eoip-token'); setToken(''); setAuthenticated(false); setStats(null); setGraph(emptyGraph); setSelected(null);}
+  function navigate(value) {setMode(value); history.pushState({}, '', `/${value}`);}
+
+  useEffect(() => {fetch('/health/ready').then(response => setHealth(response.ok ? 'ready' : 'unavailable')).catch(() => setHealth('unavailable'));}, []);
+  useEffect(() => {if (!authenticated) return; const timer = setInterval(() => refresh().catch(() => {}), 15000); return () => clearInterval(timer);}, [authenticated, token]);
+  useEffect(() => {const onPop = () => setMode(location.pathname.startsWith('/admin') ? 'admin' : 'app'); addEventListener('popstate', onPop); return () => removeEventListener('popstate', onPop);}, []);
+
+  if (!authenticated) return <><Login token={token} setToken={setToken} onSubmit={login} busy={busy} health={health}/>{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</>;
+  return <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''}`}><Sidebar mode={mode} onNavigate={navigate} collapsed={collapsed} onToggle={() => setCollapsed(value => !value)} stats={stats}/><div className="workspace"><Topbar mode={mode} stats={stats} onRefresh={() => run(refresh)} onDisconnect={disconnect} busy={busy}/><main>{mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy}/> : <Admin stats={stats} jobs={jobs} api={api} run={run} refresh={refresh} busy={busy}/>}</main><footer><span>EOIP · Evidence-backed enterprise intelligence</span><span>Local-first · Read-only graph experience · Policy bounded</span></footer></div>{busy && <div className="busy-bar" aria-label="Operation in progress"><span/></div>}{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</div>;
+}

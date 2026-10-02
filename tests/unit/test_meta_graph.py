@@ -51,7 +51,7 @@ def test_demo_creates_belongs_to_domain_edges(tmp_path):
     store = MemoryGraphStore()
     data_dir = tmp_path / "data"
     data_dir.mkdir()
-    result = load_demo(store, str(data_dir))
+    load_demo(store, str(data_dir))
 
     domain_v = store.get_vertex_by_canonical_id("urn:eoip:meta:domain:work")
     assert domain_v is not None

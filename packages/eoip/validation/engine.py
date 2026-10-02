@@ -6,12 +6,15 @@ Findings are persisted with the validation run.
 
 from __future__ import annotations
 
+import logging
 from uuid import uuid4
 
 from eoip.contracts.source_event import utc_now_iso
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import EDGE_LABELS, VERTEX_LABELS, edge_endpoints_valid
 from eoip.validation.quality import QualityMetrics
+
+log = logging.getLogger(__name__)
 
 
 class ValidationEngine:
@@ -204,4 +207,7 @@ class ValidationEngine:
                             {"fact_key": f"validation:{result['run_id']}:{entity_cid}"},
                         )
         except Exception:
-            pass
+            log.exception(
+                "validation.persistence_failed",
+                extra={"event": "validation.persistence_failed", "run_id": result["run_id"]},
+            )

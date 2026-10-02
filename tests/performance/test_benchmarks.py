@@ -67,6 +67,6 @@ def test_query_executor_search_under_1s():
     executor = QueryExecutor(store)
     start = time.perf_counter()
     plan = QueryPlan(intent="SEARCH", anchors=["BENCH-42"], max_depth=1, result_limit=25, evidence_mode="NONE")
-    result = executor.execute(plan)
+    executor.execute(plan)
     elapsed = time.perf_counter() - start
     assert elapsed < 1.0, f"Search took {elapsed:.2f}s, exceeds 1s target"

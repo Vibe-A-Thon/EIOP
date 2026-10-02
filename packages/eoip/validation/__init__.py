@@ -3,4 +3,4 @@
 from eoip.validation.engine import ValidationEngine
 from eoip.validation.quality import QualityMetrics
 
-__all__ = ["ValidationEngine", "QualityMetrics"]
+__all__ = ["QualityMetrics", "ValidationEngine"]

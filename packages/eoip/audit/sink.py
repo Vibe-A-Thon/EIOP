@@ -36,9 +36,8 @@ class AuditSink:
 
         line = json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n"
         path = self._dir / "audit.jsonl"
-        with self._lock:
-            with path.open("a", encoding="utf-8") as f:
-                f.write(line)
+        with self._lock, path.open("a", encoding="utf-8") as f:
+            f.write(line)
 
     def read(self, *, limit: int = 100) -> list[dict]:
         path = self._dir / "audit.jsonl"

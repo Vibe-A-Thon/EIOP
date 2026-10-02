@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-from eoip.contracts.source_event import utc_now_iso
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import DOMAINS, ONTOLOGY_VERSION, SCHEMA_VERSION
 
 
 def bootstrap_meta_graph(store: GraphStore) -> dict:
-    now = utc_now_iso()
     created = {"domains": 0, "ontology_version": 0}
 
     for domain in DOMAINS:
