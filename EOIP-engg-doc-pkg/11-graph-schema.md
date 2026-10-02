@@ -20,10 +20,12 @@ All externally ingested facts first become immutable `SourceEvent` envelopes wit
 ## MVP HugeGraph schema
 
 ### Shared property keys
-`canonical_id`, `source_system`, `source_id`, `source_uri`, `graph_domain`, `entity_type`, `name`, `display_name`, `content_hash`, `creation_status`, `confidence`, `first_seen`, `last_seen`, `created_at`, `modified_at`, `deleted_at`, `valid_from`, `valid_to`, `source_version`, `ingestion_run_id`, `ontology_version`, `schema_version`, `repo_id`, `path`, `qualified_name`, `symbol_kind`, `start_line`, `end_line`, `issue_key`, `commit_sha`, `evidence_key`.
+`canonical_id`, `source_system`, `source_id`, `source_uri`, `graph_domain`, `entity_type`, `name`, `display_name`, `content_hash`, `creation_status`, `confidence`, `first_seen`, `last_seen`, `created_at`, `modified_at`, `deleted_at`, `valid_from`, `valid_to`, `source_version`, `ingestion_run_id`, `ontology_version`, `schema_version`, `repo_id`, `path`, `qualified_name`, `symbol_kind`, `start_line`, `end_line`, `issue_key`, `commit_sha`, `evidence_key`, `description`, `doc_format`, `space_key`, `media_type`, `file_size`.
 
 ### MVP vertex labels
-`DataSource`, `IngestionRun`, `GraphDomain`, `OntologyVersion`, `Evidence`, `ValidationRun`, `ValidationFinding`, `Project`, `WorkItem`, `Person`, `Repository`, `Branch`, `Commit`, `MergeRequest`, `PipelineRun`, `File`, `CodeSymbol`, `Dependency`, `Document`, `DocumentSection`, `AgentRun`.
+`DataSource`, `IngestionRun`, `GraphDomain`, `OntologyVersion`, `Evidence`, `ValidationRun`, `ValidationFinding`, `Project`, `WorkItem`, `Person`, `Repository`, `Branch`, `Commit`, `MergeRequest`, `PipelineRun`, `File`, `CodeSymbol`, `Dependency`, `Document`, `KnowledgeSpace`, `DocumentSection`, `AgentRun`.
+
+`Document.description` stores extracted text for Confluence pages and ServiceNow knowledge articles. Attachment records remain metadata-only. Existing HugeGraph deployments append newly required property keys to existing vertex/edge labels during the idempotent schema bootstrap; the bootstrap does not drop labels or properties. This additive ontology vocabulary is versioned as ontology `0.2.0`; the snapshot envelope remains schema `1.0`.
 
 ### MVP edge labels
 `CONTAINS`, `PARENT_OF`, `ASSIGNED_TO`, `AUTHORED_BY`, `HAS_BRANCH`, `HAS_COMMIT`, `HAS_MERGE_REQUEST`, `MODIFIES`, `DECLARES`, `CALLS`, `IMPORTS`, `DEPENDS_ON`, `IMPLEMENTS`, `REFERENCES`, `DOCUMENTS`, `EVIDENCED_BY`, `INGESTED_IN`, `BELONGS_TO_DOMAIN`, `VALIDATED_BY`, `PRODUCED_BY`.

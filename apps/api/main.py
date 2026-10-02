@@ -13,8 +13,9 @@ from eoip.contracts.audit import AuditEvent
 from eoip.jobs import JobQueue, write_json
 from eoip.observability import configure_json_logging
 from eoip.ontology.manifest import EDGE_LABELS, VERTEX_LABELS, edge_endpoints_valid
+from eoip.ontology.rdf import export_jsonld
 from eoip.runtime import api_token, create_store, data_root
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, HTTPException, Query, Request
 from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPBearer
 from prometheus_client import CollectorRegistry, Counter, Histogram, generate_latest
@@ -39,9 +40,13 @@ def _operation(path: str, body: bytes) -> str:
         except (ValueError, AttributeError):
             pass
         return "query"
-    if path in {"/api/v1/search", "/api/v1/path", "/api/v1/impact", "/api/v1/lineage"} or path.startswith(
-        "/api/v1/entities/"
-    ):
+    if path in {
+        "/api/v1/search",
+        "/api/v1/path",
+        "/api/v1/impact",
+        "/api/v1/lineage",
+        "/api/v1/ontology/export",
+    } or path.startswith("/api/v1/entities/"):
         return "query"
     if path.startswith("/api/v1/admin/"):
         return "admin"
@@ -58,6 +63,12 @@ def _safe_path(path: str) -> str:
 
 class IngestionRequest(BaseModel):
     document: dict | list
+    dry_run: bool = False
+
+
+class IncrementalSyncRequest(BaseModel):
+    checkpoint: str | None = Field(default=None, max_length=128)
+    watermark: str | None = Field(default=None, max_length=128)
     dry_run: bool = False
 
 
@@ -298,6 +309,14 @@ def create_app():
             "incoming": store.edges_to(result["vid"]),
         }
 
+    @app.get("/api/v1/ontology/export")
+    def ontology_export(limit: int = Query(default=5000, ge=1, le=10_000)):
+        document = export_jsonld(store, limit=limit)
+        return Response(
+            content=json.dumps(document, ensure_ascii=False),
+            media_type="application/ld+json",
+        )
+
     @app.get("/api/v1/admin/stats")
     def stats():
         return {
@@ -332,6 +351,22 @@ def create_app():
     def ingest(payload: IngestionRequest, request: Request):
         return queue.submit(
             "JIRA_JSON",
+            payload.model_dump(),
+            correlation_id=request.state.correlation_id,
+        )
+
+    @app.post("/api/v1/admin/ingestion/confluence", status_code=202)
+    def ingest_confluence(payload: IncrementalSyncRequest, request: Request):
+        return queue.submit(
+            "CONFLUENCE",
+            payload.model_dump(),
+            correlation_id=request.state.correlation_id,
+        )
+
+    @app.post("/api/v1/admin/ingestion/servicenow", status_code=202)
+    def ingest_servicenow(payload: IncrementalSyncRequest, request: Request):
+        return queue.submit(
+            "SERVICENOW",
             payload.model_dump(),
             correlation_id=request.state.correlation_id,
         )

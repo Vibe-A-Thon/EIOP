@@ -75,11 +75,29 @@ class HugeGraphStore:
 
             def ensure(kind, items):
                 nonlocal created
-                existing = {item["name"] for item in self._request("GET", f"/schema/{kind}")[kind]}
+                existing_items = self._request("GET", f"/schema/{kind}")[kind]
+                existing = {item["name"]: item for item in existing_items}
                 for item in items:
-                    if item["name"] not in existing:
+                    current = existing.get(item["name"])
+                    if current is None:
                         self._request("POST", f"/schema/{kind}", json=item)
                         created = True
+                    elif kind in {"vertexlabels", "edgelabels"}:
+                        missing_properties = sorted(
+                            set(item["properties"]) - set(current.get("properties", []))
+                        )
+                        if missing_properties:
+                            self._request(
+                                "PUT",
+                                f"/schema/{kind}/{quote(item['name'], safe='')}",
+                                params={"action": "append"},
+                                json={
+                                    "name": item["name"],
+                                    "properties": missing_properties,
+                                    "nullable_keys": missing_properties,
+                                },
+                            )
+                            created = True
 
             ensure(
                 "propertykeys",

@@ -6,7 +6,7 @@ are enumerated here; namespaces for Organization, Work, Code, CI/CD,
 Operations, Knowledge and AI/Agent concepts are preserved.
 """
 
-ONTOLOGY_VERSION = "0.1.1"
+ONTOLOGY_VERSION = "0.2.0"
 SCHEMA_VERSION = "1.0"
 
 # Graph domains (one physical graph, multiple logical domains — ADR-1)
@@ -83,10 +83,14 @@ PROPERTY_KEYS: dict[str, str] = {
     "method": "TEXT",
     "source_ref": "TEXT",
     "doc_format": "TEXT",
+    "content": "TEXT",
     "section_index": "INT",
     "agent_id": "TEXT",
     "goal": "TEXT",
     "budgets": "TEXT",
+    "space_key": "TEXT",
+    "media_type": "TEXT",
+    "file_size": "LONG",
 }
 
 # Vertex labels -> (graph_domain, required properties, optional properties)
@@ -109,7 +113,8 @@ VERTEX_LABELS: dict[str, tuple[str, list[str], list[str]]] = {
     "File": ("CODE", ["canonical_id", "repo_id", "path"], ["language", "content_hash"]),
     "CodeSymbol": ("CODE", ["canonical_id", "qualified_name", "symbol_kind"], ["name", "repo_id", "path", "start_line", "end_line", "start_column", "end_column", "language", "parser_version"]),
     "Dependency": ("CODE", ["canonical_id", "name"], ["resolved", "language"]),
-    "Document": ("KNOWLEDGE", ["canonical_id", "name", "path"], ["doc_format", "content_hash", "repo_id"]),
+    "Document": ("KNOWLEDGE", ["canonical_id", "name", "path"], ["doc_format", "content_hash", "description", "repo_id"]),
+    "KnowledgeSpace": ("KNOWLEDGE", ["canonical_id", "name", "space_key"], ["description"]),
     "DocumentSection": ("KNOWLEDGE", ["canonical_id", "name"], ["path", "section_index", "content_hash", "start_line", "end_line"]),
     "AgentRun": ("AGENT", ["canonical_id", "agent_id", "goal"], ["run_status", "budgets", "started_at", "finished_at"]),
 }
@@ -118,7 +123,11 @@ VERTEX_LABELS: dict[str, tuple[str, list[str], list[str]]] = {
 # Endpoint/domain-range validation uses these constraints (FR-ONTO-002,
 # FR-VALID-002). RELATED_TO is deliberately absent (forbidden).
 EDGE_LABELS: dict[str, tuple[list[str], list[str], list[str]]] = {
-    "CONTAINS": (["Project", "Repository", "Document", "DataSource"], ["WorkItem", "File", "DocumentSection", "Project"], []),
+    "CONTAINS": (
+        ["Project", "Repository", "Document", "DataSource", "KnowledgeSpace"],
+        ["WorkItem", "File", "DocumentSection", "Project", "Document"],
+        [],
+    ),
     "PARENT_OF": (["WorkItem"], ["WorkItem"], []),
     "ASSIGNED_TO": (["WorkItem"], ["Person"], []),
     "AUTHORED_BY": (["Commit", "MergeRequest"], ["Person"], []),
@@ -133,9 +142,9 @@ EDGE_LABELS: dict[str, tuple[list[str], list[str], list[str]]] = {
     "IMPLEMENTS": (["MergeRequest", "Commit"], ["WorkItem"], []),
     "REFERENCES": (["MergeRequest", "Commit", "Document", "DocumentSection", "WorkItem", "PipelineRun"], ["WorkItem", "Commit", "CodeSymbol", "Dependency", "File"], []),
     "DOCUMENTS": (["Document", "DocumentSection"], ["CodeSymbol", "WorkItem", "File"], []),
-    "EVIDENCED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Dependency", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch"], ["Evidence"], []),
-    "INGESTED_IN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency"], ["IngestionRun"], []),
-    "BELONGS_TO_DOMAIN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "Evidence"], ["GraphDomain"], []),
+    "EVIDENCED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Dependency", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "KnowledgeSpace"], ["Evidence"], []),
+    "INGESTED_IN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "KnowledgeSpace"], ["IngestionRun"], []),
+    "BELONGS_TO_DOMAIN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "Evidence", "KnowledgeSpace"], ["GraphDomain"], []),
     "VALIDATED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Repository", "Project"], ["ValidationRun"], []),
     "PRODUCED_BY": (["PipelineRun", "Document", "DocumentSection"], ["Commit", "PipelineRun", "MergeRequest"], []),
 }

@@ -241,11 +241,15 @@
 ### FR-GRAPH-010 — RDF/OWL interoperability
 **WHAT:** Export platform ontology/data through explicit adapters rather than claiming native RDF/SPARQL.  
 **WHY:** Interoperability is useful but HugeGraph is a property graph.  
-**HOW:** P2 export maps canonical vocabulary to RDF/OWL; SPARQL, if added, targets an adapter, not raw HugeGraph.  
-**DATA / INTERFACES:** RDF/OWL mapping  
-**FAILURE:** Unsupported construct reports mapping loss.  
-**TEST:** Round-trip fixtures where possible.  
-**COMPLETE WHEN:** No documentation claims native SPARQL support.  
+**HOW:** The authenticated `GET /api/v1/ontology/export` adapter emits JSON-LD 1.1. Graph labels map to OWL classes, edge labels to OWL object properties, scalar properties to datatype properties, and relationship instances to direct triples plus reified assertions so edge attributes remain available. The export includes ontology version/domain/required-property metadata, is bounded by a caller-selected limit, and reports truncation and mapping losses. HugeGraph remains a property graph; SPARQL, if added, targets an adapter, not raw HugeGraph.
+
+**DATA / INTERFACES:** JSON-LD 1.1 mapping document and machine-readable export metadata
+
+**FAILURE:** Unsupported labels and edges without included endpoints are retained where possible and reported in `export.mapping_losses`; over-limit results set `export.partial` and identify which record kinds were truncated.
+
+**TEST:** Fixtures verify vocabulary, entity and relationship mapping, preservation of relationship attributes, nested JSON properties, authentication, and bounded/truncated output.
+
+**COMPLETE WHEN:** No documentation claims native SPARQL support.
 **TARGET PHASE:** P2
 
 ### FR-ONTO-001 — Enterprise ontology vocabulary

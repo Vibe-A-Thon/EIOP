@@ -90,6 +90,30 @@ operation remains available. Raw events are captured before graph mutation;
 invalid Jira records are retained in the DLQ. A job result with rejected records
 is PARTIAL. File imports are limited to 3 MB in the web UI and 4 MB at the API.
 
+## Confluence and ServiceNow ingestion
+
+The single worker can run incremental Confluence Data Center and ServiceNow
+Table API jobs. Supply source credentials to the worker through environment
+secrets (do not put them in API requests or job payloads):
+
+| Source | Required URL | Authentication |
+|---|---|---|
+| Confluence | `EOIP_CONFLUENCE_URL` | `EOIP_CONFLUENCE_TOKEN`, or both `EOIP_CONFLUENCE_USERNAME` and `EOIP_CONFLUENCE_PASSWORD` |
+| ServiceNow | `EOIP_SERVICENOW_URL` | `EOIP_SERVICENOW_TOKEN`, or both `EOIP_SERVICENOW_USERNAME` and `EOIP_SERVICENOW_PASSWORD` |
+
+The API uses the same local `EOIP_API_TOKEN` boundary as other admin operations.
+Submit `POST /api/v1/admin/ingestion/confluence` or
+`POST /api/v1/admin/ingestion/servicenow` with JSON such as
+`{"checkpoint":"2026-10-01T00:00:00Z","watermark":"2026-10-02T12:00:00Z","dry_run":false}`.
+Omit `checkpoint` to resume from `/data/state/connectors/{source}.json`;
+successful non-dry runs store their next checkpoint there. A partial ingestion
+does not advance the checkpoint, so rejected records can be retried after
+correction. `dry_run:true` maps and reports records without graph/raw/DLQ writes
+or checkpoint advancement. Confluence attachment handling imports metadata, not
+binary content. Confluence page and ServiceNow knowledge article text is stored
+in the document description. The connectors capture source events before graph
+mutation and link the resulting canonical records to evidence and ingestion runs.
+
 ## Automated checks
 
 ```powershell

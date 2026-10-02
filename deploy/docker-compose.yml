@@ -60,6 +60,16 @@ services:
   eoip-worker:
     <<: *application
     command: [python, -m, apps.worker.main]
+    environment:
+      <<: *environment
+      EOIP_CONFLUENCE_URL: ${EOIP_CONFLUENCE_URL:-}
+      EOIP_CONFLUENCE_TOKEN: ${EOIP_CONFLUENCE_TOKEN:-}
+      EOIP_CONFLUENCE_USERNAME: ${EOIP_CONFLUENCE_USERNAME:-}
+      EOIP_CONFLUENCE_PASSWORD: ${EOIP_CONFLUENCE_PASSWORD:-}
+      EOIP_SERVICENOW_URL: ${EOIP_SERVICENOW_URL:-}
+      EOIP_SERVICENOW_TOKEN: ${EOIP_SERVICENOW_TOKEN:-}
+      EOIP_SERVICENOW_USERNAME: ${EOIP_SERVICENOW_USERNAME:-}
+      EOIP_SERVICENOW_PASSWORD: ${EOIP_SERVICENOW_PASSWORD:-}
     depends_on:
       schema-init: {condition: service_completed_successfully}
     restart: unless-stopped

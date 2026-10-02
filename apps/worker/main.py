@@ -9,11 +9,13 @@ from threading import Thread
 from uuid import uuid4
 
 import httpx
+from eoip.connectors.errors import ConnectorError
 from eoip.connectors.jira_json import JiraJsonConnector
 from eoip.contracts.audit import AuditEvent
 from eoip.contracts.source_event import utc_now_iso
 from eoip.demo import load_demo
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
+from eoip.ingestion.source_sync import run_configured_source_sync
 from eoip.jobs import JobQueue, write_json
 from eoip.observability import configure_json_logging, log_audit_event
 from eoip.runtime import create_store, data_root
@@ -74,6 +76,15 @@ def main():
                     result = service.ingest(
                         job["payload"]["document"], dry_run=job["payload"].get("dry_run", False)
                     )
+                elif job["kind"] in {"CONFLUENCE", "SERVICENOW"}:
+                    source_system = job["kind"].lower()
+                    result = run_configured_source_sync(
+                        source_system,
+                        job.get("payload") or {},
+                        store,
+                        str(root),
+                        job["correlation_id"],
+                    )
                 else:
                     raise ValueError("Unknown job kind")
                 partial = result.get("run_status") == "PARTIAL" or any(
@@ -83,6 +94,34 @@ def main():
                 )
                 job.update(
                     status="PARTIAL" if partial else "SUCCEEDED", result=result, finished_at=utc_now_iso()
+                )
+            except ConnectorError as exc:
+                attempts = job.get("attempts", 0) + 1
+                retryable = exc.category in {
+                    "timeout",
+                    "transport_error",
+                    "rate_limited",
+                    "remote_error",
+                }
+                retry = retryable and attempts < 3
+                job.update(
+                    status="PENDING" if retry else "FAILED",
+                    attempts=attempts,
+                    next_attempt=time.time() + 2**attempts,
+                    error=exc.category,
+                    finished_at=None if retry else utc_now_iso(),
+                )
+                logger.error(
+                    "job.connector_failed",
+                    extra={
+                        "event": "job.connector_failed",
+                        "operation": job["kind"].lower(),
+                        "correlation_id": exc.correlation_id,
+                        "job_id": job["job_id"],
+                        "source_system": exc.source_system,
+                        "error_category": exc.category,
+                        "attempt": attempts,
+                    },
                 )
             except (httpx.HTTPError, OSError) as exc:
                 attempts = job.get("attempts", 0) + 1
