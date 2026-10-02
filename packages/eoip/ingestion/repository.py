@@ -53,6 +53,8 @@ class RepositoryIngestionService:
             "Branch",
             {**shared, "canonical_id": f"urn:eoip:code:branch:{repo_id}:{branch}", "branch_name": branch},
         )
+        self._evidence(repo, event, edge_props["source_ref"])
+        self._evidence(branch_node, event, edge_props["source_ref"])
         commit = self.store.upsert_vertex(
             "Commit",
             {
@@ -63,6 +65,7 @@ class RepositoryIngestionService:
             },
         )
         self._evidence(commit, event, edge_props["source_ref"])
+        ingested_nodes = [repo, branch_node, commit]
         self.store.upsert_edge("HAS_BRANCH", repo["vid"], branch_node["vid"], edge_props)
         self.store.upsert_edge("HAS_COMMIT", branch_node["vid"], commit["vid"], edge_props)
         self._issue_links(commit, message, "IMPLEMENTS", edge_props)
@@ -101,6 +104,7 @@ class RepositoryIngestionService:
                         "doc_format": "markdown",
                     },
                 )
+                ingested_nodes.append(doc)
                 self._evidence(doc, file_event, props["source_ref"])
                 self._issue_links(doc, source, "DOCUMENTS", props)
                 continue
@@ -116,6 +120,7 @@ class RepositoryIngestionService:
                     "language": parsed.language,
                 },
             )
+            ingested_nodes.append(file)
             self._evidence(file, file_event, props["source_ref"])
             self.store.upsert_edge("CONTAINS", repo["vid"], file["vid"], props)
             if name in changed:
@@ -130,6 +135,7 @@ class RepositoryIngestionService:
                     {**common, **fields, "language": parsed.language, "parser_version": PARSER_VERSION},
                 )
                 symbol_nodes[symbol.canonical_id] = node
+                ingested_nodes.append(node)
                 self.store.upsert_edge("DECLARES", file["vid"], node["vid"], props)
                 self._evidence(node, file_event, props["source_ref"])
                 symbols += 1
@@ -152,9 +158,10 @@ class RepositoryIngestionService:
                         "resolved": False,
                     },
                 )
+                ingested_nodes.append(dependency)
                 self.store.upsert_edge("IMPORTS", file["vid"], dependency["vid"], props)
         if metadata:
-            self._gitlab(repo, commit, metadata, shared, sha)
+            ingested_nodes.extend(self._gitlab(repo, commit, metadata, shared, sha))
         result = {
             "run_id": run_id,
             "run_status": "PARTIAL" if errors else "SUCCEEDED",
@@ -163,7 +170,7 @@ class RepositoryIngestionService:
             "errors": errors,
             "commit_sha": sha,
         }
-        self.store.upsert_vertex(
+        run = self.store.upsert_vertex(
             "IngestionRun",
             {
                 "canonical_id": f"urn:eoip:meta:ingestion-run:{run_id}",
@@ -173,6 +180,17 @@ class RepositoryIngestionService:
                 "finished_at": utc_now_iso(),
             },
         )
+        for node in {item["canonical_id"]: item for item in ingested_nodes}.values():
+            self.store.upsert_edge(
+                "INGESTED_IN",
+                node["vid"],
+                run["vid"],
+                {
+                    "fact_key": f"repository-run:{run_id}:{node['canonical_id']}",
+                    "source_system": "git",
+                    "ingestion_run_id": run_id,
+                },
+            )
         return result
 
     def _capture(self, repo_id, source_id, payload):
@@ -216,6 +234,7 @@ class RepositoryIngestionService:
 
     def _gitlab(self, repo, commit, metadata, shared, sha):
         event = self._capture(shared["repo_id"], "gitlab-metadata", metadata)
+        ingested_nodes = []
         props = {
             "evidence_key": event.event_id,
             "source_ref": f"fixture://gitlab/{event.event_id}",
@@ -233,6 +252,7 @@ class RepositoryIngestionService:
                     "target_branch": mr.get("target_branch"),
                 },
             )
+            ingested_nodes.append(node)
             self._evidence(node, event, props["source_ref"])
             self.store.upsert_edge("HAS_MERGE_REQUEST", repo["vid"], node["vid"], props)
             self._issue_links(node, mr["title"], "IMPLEMENTS", props)
@@ -249,6 +269,8 @@ class RepositoryIngestionService:
                     "commit_sha": sha if pipeline.get("sha") == "HEAD" else pipeline.get("sha"),
                 },
             )
+            ingested_nodes.append(node)
             self._evidence(node, event, props["source_ref"])
             if pipeline.get("sha") in {sha, "HEAD"}:
                 self.store.upsert_edge("PRODUCED_BY", node["vid"], commit["vid"], props)
+        return ingested_nodes

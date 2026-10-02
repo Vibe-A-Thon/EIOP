@@ -78,6 +78,12 @@ class CodeIngestionService:
                 "valid_from": started_at,
             },
         )
+        self.store.upsert_edge(
+            "INGESTED_IN",
+            repository["vid"],
+            run["vid"],
+            {"fact_key": f"code-repository-run:{run_id}:{repo_id}", "ingestion_run_id": run_id},
+        )
         counts = {"files": 0, "symbols": 0, "dependencies": 0, "calls": 0}
         for event, parsed_file in parsed:
             now = event.captured_at
@@ -208,6 +214,21 @@ class CodeIngestionService:
                     file_vertex["vid"],
                     dependency["vid"],
                     {"fact_key": f"imports:{parsed_file.path}:{imported_module}", **evidence_props},
+                )
+                self.store.upsert_edge(
+                    "EVIDENCED_BY",
+                    dependency["vid"],
+                    evidence["vid"],
+                    {
+                        "fact_key": f"dependency-evidence:{event.event_id}:{dependency_cid}",
+                        **evidence_props,
+                    },
+                )
+                self.store.upsert_edge(
+                    "INGESTED_IN",
+                    dependency["vid"],
+                    run["vid"],
+                    {"fact_key": f"code-dependency-run:{run_id}:{dependency_cid}", **evidence_props},
                 )
                 counts["dependencies"] += 1
             for call in parsed_file.calls:

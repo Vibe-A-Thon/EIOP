@@ -3,7 +3,8 @@
 Read-only context from your local Docker deployment. Run **EOIP: Set Access Token**
 and enter `EOIP_API_TOKEN` from `deploy/.env`. The token is kept in VS Code
 SecretStorage. Then use **Search Knowledge Graph**, **Context for Active File**,
-**Explore Impact**, or **Trace Requirement to Code** from the command palette.
+**Explore Impact**, **Trace Requirement to Code**, **Trace Provenance / Lineage**,
+or **GraphRAG Retrieval** from the command palette.
 
 For **Open Symbol Source**, set `eoip.repositoryRoot` to the local ingested
 repository, for example `F:\code\EOIP\EIOP\examples\demo-repo`.

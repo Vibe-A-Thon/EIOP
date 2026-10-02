@@ -34,9 +34,14 @@ def test_jira_import_captures_evidence_and_is_idempotent(tmp_path) -> None:
     assert store.count_vertices("WorkItem") == 1
     assert store.count_vertices("Evidence") == 1
     assert store.count_edges("CONTAINS") == 1
-    assert store.count_edges("EVIDENCED_BY") == 2
+    assert store.count_edges("EVIDENCED_BY") == 3
     assert store.count_vertices("Person") == 1
     assert store.count_edges("ASSIGNED_TO") == 1
+    project = store.get_vertex_by_canonical_id("urn:eoip:work:project:jira:EOIP")
+    run = store.get_vertex_by_canonical_id(f"urn:eoip:meta:ingestion-run:{first['run_id']}")
+    assert project is not None and run is not None
+    assert any(edge["in_v"] == run["vid"] for edge in store.edges_from(project["vid"], ["INGESTED_IN"]))
+    assert store.edges_from(project["vid"], ["EVIDENCED_BY"])
     raw_files = list((tmp_path / "raw" / "jira").glob("*.json"))
     assert len(raw_files) == 1
     assert json.loads(raw_files[0].read_text(encoding="utf-8"))["payload_hash"]

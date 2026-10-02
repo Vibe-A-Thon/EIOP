@@ -155,6 +155,24 @@ class JiraIngestionService:
                     "schema_version": SCHEMA_VERSION,
                 },
             )
+            self.store.upsert_edge(
+                "EVIDENCED_BY",
+                project["vid"],
+                evidence["vid"],
+                {
+                    "fact_key": f"jira-project-evidence:{event.event_id}:{issue['project_key']}",
+                    "evidence_key": event.event_id,
+                    "source_ref": evidence["properties"]["source_ref"],
+                    "source_system": "jira",
+                    **run_edge_props,
+                },
+            )
+            self.store.upsert_edge(
+                "INGESTED_IN",
+                project["vid"],
+                run["vid"],
+                {"fact_key": f"jira-project-run:{run_id}:{issue['project_key']}", **run_edge_props},
+            )
             person = None
             if issue["assignee_name"]:
                 identity = issue["assignee_id"] or issue["assignee_email"] or f"{event.source_record_id}:{issue['assignee_name']}"

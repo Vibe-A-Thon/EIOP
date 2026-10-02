@@ -6,7 +6,7 @@ are enumerated here; namespaces for Organization, Work, Code, CI/CD,
 Operations, Knowledge and AI/Agent concepts are preserved.
 """
 
-ONTOLOGY_VERSION = "0.1.0"
+ONTOLOGY_VERSION = "0.1.1"
 SCHEMA_VERSION = "1.0"
 
 # Graph domains (one physical graph, multiple logical domains — ADR-1)
@@ -133,7 +133,7 @@ EDGE_LABELS: dict[str, tuple[list[str], list[str], list[str]]] = {
     "IMPLEMENTS": (["MergeRequest", "Commit"], ["WorkItem"], []),
     "REFERENCES": (["MergeRequest", "Commit", "Document", "DocumentSection", "WorkItem", "PipelineRun"], ["WorkItem", "Commit", "CodeSymbol", "Dependency", "File"], []),
     "DOCUMENTS": (["Document", "DocumentSection"], ["CodeSymbol", "WorkItem", "File"], []),
-    "EVIDENCED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Dependency", "Document", "DocumentSection", "Person", "Project"], ["Evidence"], []),
+    "EVIDENCED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Dependency", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch"], ["Evidence"], []),
     "INGESTED_IN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency"], ["IngestionRun"], []),
     "BELONGS_TO_DOMAIN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "Evidence"], ["GraphDomain"], []),
     "VALIDATED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Repository", "Project"], ["ValidationRun"], []),

@@ -56,7 +56,7 @@ docker compose --env-file .env up --build -d --wait --wait-timeout 420
 |---|---|
 | hugegraph-server | HugeGraph 1.7.0 with RocksDB; no host port |
 | schema-init | One-time, idempotent property/vertex/edge/index bootstrap |
-| eoip-api | Search, entities, bounded path/impact, graph retrieval, admin jobs/validation, metrics |
+| eoip-api | Search, QueryPlan execution, entities, bounded path/impact/lineage, GraphRAG retrieval, agent contracts, admin jobs/validation/ingestion, metrics |
 | eoip-worker | Single-worker durable filesystem queue; capture-first ingestion and demo loading |
 | eoip-web | Built React SPA served by Nginx; same-origin API proxy |
 | eoip-mcp | Authenticated, read-only MCP façade over the application API |
@@ -162,6 +162,8 @@ inside VS Code, not as a web container.
 
 The `ai` profile runs Ollama; the `observability` profile runs Prometheus on
 localhost:9090. Neither is needed for graph search or traversal.
+The API's `/metrics` endpoint includes request/operation counts and latency,
+as well as durable ingestion-job status transitions and processing runtimes.
 
 ```powershell
 cd deploy

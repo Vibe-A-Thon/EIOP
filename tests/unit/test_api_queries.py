@@ -14,9 +14,27 @@ def _demo_store() -> MemoryGraphStore:
     commit = _vertex(store, "Commit", "commit:abc123", commit_sha="abc123")
     file = _vertex(store, "File", "file:src/service.py", path="src/service.py")
     symbol = _vertex(store, "CodeSymbol", "symbol:src/service.py:run", qualified_name="service.run")
+    evidence = _vertex(
+        store,
+        "Evidence",
+        "evidence:commit:abc123",
+        source_system="git",
+        source_ref="git://demo/commit/abc123",
+        method="SOURCE_EVENT",
+        evidence_key="evidence:commit:abc123",
+    )
+    run = _vertex(
+        store,
+        "IngestionRun",
+        "run:git:abc123",
+        run_kind="GIT",
+        run_status="SUCCEEDED",
+    )
     store.upsert_edge("IMPLEMENTS", commit["vid"], issue["vid"], {"evidence_key": "evidence:commit:abc123"})
     store.upsert_edge("MODIFIES", commit["vid"], file["vid"], {})
     store.upsert_edge("DECLARES", file["vid"], symbol["vid"], {})
+    store.upsert_edge("EVIDENCED_BY", symbol["vid"], evidence["vid"], {"source_ref": "git://demo/commit/abc123"})
+    store.upsert_edge("INGESTED_IN", symbol["vid"], run["vid"], {"ingestion_run_id": "abc123"})
     return store
 
 
@@ -29,6 +47,10 @@ def test_search_path_and_impact_use_graph_store_data() -> None:
         json={"source_id": "issue:EOIP-1", "target_id": "symbol:src/service.py:run"},
     )
     impact = client.post("/api/v1/impact", json={"canonical_id": "issue:EOIP-1", "max_depth": 3})
+    lineage = client.post(
+        "/api/v1/lineage",
+        json={"canonical_id": "symbol:src/service.py:run"},
+    )
 
     assert search.status_code == 200
     assert search.json()["nodes"][0]["id"] == "issue:EOIP-1"
@@ -37,6 +59,10 @@ def test_search_path_and_impact_use_graph_store_data() -> None:
     assert path.json()["evidence"][0]["evidence_key"] == "evidence:commit:abc123"
     assert impact.status_code == 200
     assert len(impact.json()["paths"]) == 3
+    assert lineage.status_code == 200
+    assert {node["label"] for node in lineage.json()["nodes"]} == {"CodeSymbol", "Evidence", "IngestionRun"}
+    assert {edge["type"] for edge in lineage.json()["edges"]} == {"EVIDENCED_BY", "INGESTED_IN"}
+    assert {item["source_ref"] for item in lineage.json()["evidence"]} == {"git://demo/commit/abc123"}
 
 
 def test_query_api_sets_correlation_id_and_rejects_excessive_limits() -> None:
@@ -47,6 +73,8 @@ def test_query_api_sets_correlation_id_and_rejects_excessive_limits() -> None:
         "/api/v1/path",
         json={"source_id": "a", "target_id": "b", "max_depth": 9},
     )
+    unknown = client.post("/api/v1/lineage", json={"canonical_id": "unknown:entity"})
 
     assert health.headers["x-correlation-id"] == "trace-123"
     assert invalid.status_code == 422
+    assert unknown.status_code == 404

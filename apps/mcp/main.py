@@ -64,6 +64,23 @@ def create_app():
         )
 
     @mcp.tool()
+    async def lineage(
+        canonical_id: str,
+        max_depth: int = 4,
+        result_limit: int = 100,
+    ) -> dict:
+        """Trace an entity to its source evidence and ingestion run."""
+        return await call(
+            "POST",
+            "/api/v1/lineage",
+            json={
+                "canonical_id": canonical_id,
+                "max_depth": max_depth,
+                "result_limit": result_limit,
+            },
+        )
+
+    @mcp.tool()
     async def trace_impact(canonical_id: str, max_depth: int = 4) -> dict:
         """Run the deterministic, read-only TraceImpact agent."""
         return await call(

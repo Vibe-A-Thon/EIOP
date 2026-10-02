@@ -6,13 +6,16 @@ import os
 import signal
 import time
 from threading import Thread
+from uuid import uuid4
 
 import httpx
 from eoip.connectors.jira_json import JiraJsonConnector
+from eoip.contracts.audit import AuditEvent
 from eoip.contracts.source_event import utc_now_iso
 from eoip.demo import load_demo
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
 from eoip.jobs import JobQueue, write_json
+from eoip.observability import configure_json_logging, log_audit_event
 from eoip.runtime import create_store, data_root
 
 logger = logging.getLogger("eoip.worker")
@@ -20,8 +23,16 @@ running = True
 
 
 def main():
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    configure_json_logging()
     logging.getLogger("httpx").setLevel(logging.WARNING)
+    logger.info(
+        "worker.started",
+        extra={
+            "event": "worker.started",
+            "operation": "startup",
+            "correlation_id": str(uuid4()),
+        },
+    )
 
     def stop(*_):
         global running
@@ -49,6 +60,7 @@ def main():
             job = json.loads(path.read_text())
             if job["status"] not in {"PENDING", "RUNNING"} or job.get("next_attempt", 0) > time.time():
                 continue
+            job.setdefault("correlation_id", str(uuid4()))
             job.update(status="RUNNING", started_at=utc_now_iso())
             write_json(path, job)
             try:
@@ -80,14 +92,60 @@ def main():
                     next_attempt=time.time() + 2**attempts,
                     error=type(exc).__name__,
                 )
-                logger.error("job=%s retry=%s type=%s", job["job_id"], attempts, type(exc).__name__)
+                logger.error(
+                    "job.retry_scheduled",
+                    extra={
+                        "event": "job.retry_scheduled",
+                        "operation": job["kind"].lower(),
+                        "correlation_id": job["correlation_id"],
+                        "job_id": job["job_id"],
+                        "attempt": attempts,
+                        "error_type": type(exc).__name__,
+                    },
+                )
             except Exception as exc:  # noqa: BLE001 - persist unexpected job failures and keep the worker alive
-                logger.error("job=%s failed type=%s", job["job_id"], type(exc).__name__)
+                logger.error(
+                    "job.failed",
+                    extra={
+                        "event": "job.failed",
+                        "operation": job["kind"].lower(),
+                        "correlation_id": job["correlation_id"],
+                        "job_id": job["job_id"],
+                        "error_type": type(exc).__name__,
+                    },
+                )
                 job.update(status="FAILED", error=type(exc).__name__, finished_at=utc_now_iso())
             write_json(path, job)
-            logger.info("job=%s status=%s", job["job_id"], job["status"])
+            audit = AuditEvent(
+                audit_id=str(uuid4()),
+                event_type="ingestion",
+                actor="worker",
+                correlation_id=job["correlation_id"],
+                outcome="success" if job["status"] == "SUCCEEDED" else job["status"].lower(),
+                reason_code=job.get("error"),
+                safe_summary=f"{job['kind']} job completed with status {job['status']}",
+            )
+            log_audit_event(logger, audit, operation="ingestion", job_id=job["job_id"])
+            logger.info(
+                "job.completed",
+                extra={
+                    "event": "job.completed",
+                    "operation": job["kind"].lower(),
+                    "correlation_id": job["correlation_id"],
+                    "job_id": job["job_id"],
+                    "status_code": job["status"],
+                },
+            )
         time.sleep(2)
     store.close()
+    logger.info(
+        "worker.stopped",
+        extra={
+            "event": "worker.stopped",
+            "operation": "shutdown",
+            "correlation_id": str(uuid4()),
+        },
+    )
 
 
 if __name__ == "__main__":

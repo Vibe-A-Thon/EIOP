@@ -21,6 +21,15 @@ class ImpactRequest(BaseModel):
     result_limit: int = Field(default=100, ge=1, le=500)
 
 
+class LineageRequest(BaseModel):
+    canonical_id: str = Field(min_length=1, max_length=512)
+    max_depth: int = Field(default=4, ge=1, le=8)
+    result_limit: int = Field(default=100, ge=1, le=500)
+
+
+LINEAGE_EDGES = frozenset({"EVIDENCED_BY", "INGESTED_IN"})
+
+
 def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> FastAPI:
     app = FastAPI(title="EOIP API", version="1.0.0", dependencies=dependencies or [])
     traversal = GraphTraversal(store, max_depth=max_depth)
@@ -29,7 +38,9 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
     @app.middleware("http")
     async def add_correlation_id(request: Request, call_next):
         supplied = request.headers.get("X-Correlation-ID", "")
-        correlation_id = supplied if 0 < len(supplied) <= 128 else str(uuid4())
+        correlation_id = getattr(request.state, "correlation_id", None) or (
+            supplied if 0 < len(supplied) <= 128 else str(uuid4())
+        )
         request.state.correlation_id = correlation_id
         response = await call_next(request)
         response.headers["X-Correlation-ID"] = correlation_id
@@ -114,30 +125,54 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         if result["source"] is None:
             raise HTTPException(status_code=404, detail="Entity not found")
-        vertices = {result["source"]["canonical_id"]: result["source"]}
-        edges = {}
-        paths = []
-        for item in result["impacted"]:
-            path = item["path"]
-            vertices.update({vertex["canonical_id"]: vertex for vertex in path["vertices"]})
-            edges.update({edge["eid"]: edge for edge in path["edges"]})
-            paths.append(
-                GraphPath(
-                    path_id=str(uuid4()),
-                    node_ids=[vertex["canonical_id"] for vertex in path["vertices"]],
-                    edge_ids=[edge["eid"] for edge in path["edges"]],
-                )
-            )
-        return GraphResult(
-            query_id=str(uuid4()),
-            nodes=[_to_node(vertex) for vertex in vertices.values()],
-            edges=[_to_edge(edge) for edge in edges.values()],
-            paths=paths,
-            evidence=_edge_evidence(list(edges.values())),
-            partial=result["truncated"],
+        return _traversal_result(result)
+
+    @app.post("/api/v1/lineage", response_model=GraphResult)
+    def lineage(payload: LineageRequest) -> GraphResult:
+        provenance_traversal = GraphTraversal(
+            store,
+            allowed_edges=LINEAGE_EDGES,
+            max_depth=max_depth,
+            max_results=payload.result_limit,
         )
+        try:
+            result = provenance_traversal.impact(
+                payload.canonical_id,
+                max_depth=payload.max_depth,
+                direction="outgoing",
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        if result["source"] is None:
+            raise HTTPException(status_code=404, detail="Entity not found")
+        return _traversal_result(result)
 
     return app
+
+
+def _traversal_result(result: dict) -> GraphResult:
+    vertices = {result["source"]["canonical_id"]: result["source"]}
+    edges = {}
+    paths = []
+    for item in result["impacted"]:
+        path = item["path"]
+        vertices.update({vertex["canonical_id"]: vertex for vertex in path["vertices"]})
+        edges.update({edge["eid"]: edge for edge in path["edges"]})
+        paths.append(
+            GraphPath(
+                path_id=str(uuid4()),
+                node_ids=[vertex["canonical_id"] for vertex in path["vertices"]],
+                edge_ids=[edge["eid"] for edge in path["edges"]],
+            )
+        )
+    return GraphResult(
+        query_id=str(uuid4()),
+        nodes=[_to_node(vertex) for vertex in vertices.values()],
+        edges=[_to_edge(edge) for edge in edges.values()],
+        paths=paths,
+        evidence=_edge_evidence(list(edges.values())),
+        partial=result["truncated"],
+    )
 
 
 def _to_node(vertex: dict) -> GraphNode:

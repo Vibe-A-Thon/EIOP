@@ -23,13 +23,14 @@ class JobQueue:
         self.root = Path(root) / "jobs"
         self.root.mkdir(parents=True, exist_ok=True)
 
-    def submit(self, kind, payload=None):
+    def submit(self, kind, payload=None, *, correlation_id=None):
         job_id = str(uuid4())
         job = {
             "job_id": job_id,
             "kind": kind,
             "status": "PENDING",
             "created_at": utc_now_iso(),
+            "correlation_id": correlation_id or str(uuid4()),
             "payload": payload,
         }
         write_json(self.root / f"{job_id}.json", job)

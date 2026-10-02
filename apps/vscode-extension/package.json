@@ -15,6 +15,8 @@
       {"command": "eoip.context", "title": "EOIP: Context for Active File"},
       {"command": "eoip.impact", "title": "EOIP: Explore Impact"},
       {"command": "eoip.path", "title": "EOIP: Trace Requirement to Code"},
+      {"command": "eoip.lineage", "title": "EOIP: Trace Provenance / Lineage"},
+      {"command": "eoip.retrieval", "title": "EOIP: GraphRAG Retrieval"},
       {"command": "eoip.openSource", "title": "EOIP: Open Symbol Source"}
     ],
     "configuration": {"title": "EOIP", "properties": {"eoip.apiUrl": {"type": "string", "default": "http://localhost:8000", "description": "URL of your local EOIP API."}, "eoip.repositoryRoot": {"type": "string", "default": "", "description": "Local root matching the ingested repository (for example eoip/examples/demo-repo)."}}}
