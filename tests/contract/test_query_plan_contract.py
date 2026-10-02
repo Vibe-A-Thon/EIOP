@@ -1,7 +1,11 @@
 """Contract tests: QueryPlan and policy validation."""
 
+import json
+from pathlib import Path
+
 from eoip.contracts.query_plan import QueryPlan
 from eoip.query.policy import DEFAULT_POLICY, QueryPolicy
+from jsonschema import Draft202012Validator
 
 
 def test_valid_query_plan():
@@ -43,3 +47,19 @@ def test_policy_clamp():
     assert clamped.max_depth == 4
     assert clamped.result_limit == 50
     assert clamped.timeout_ms == 5000
+
+
+def test_runtime_query_plan_matches_checked_in_json_schema():
+    plan = QueryPlan(
+        intent="SEARCH",
+        anchors=["EOIP-1"],
+        max_depth=1,
+        result_limit=25,
+        timeout_ms=5000,
+        evidence_mode="NONE",
+        filters={"label": "WorkItem"},
+    )
+    schema_path = Path(__file__).resolve().parents[2] / "schemas" / "query_plan.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+
+    Draft202012Validator(schema).validate(plan.model_dump(mode="json"))

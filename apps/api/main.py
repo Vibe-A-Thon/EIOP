@@ -3,6 +3,7 @@
 import hmac
 import json
 import logging
+import re
 from contextlib import asynccontextmanager
 from datetime import datetime
 from time import perf_counter
@@ -15,6 +16,7 @@ from eoip.audit.sink import AuditSink
 from eoip.config import load_agent_config
 from eoip.contracts.agent import AgentRequest
 from eoip.contracts.audit import AuditEvent
+from eoip.contracts.source_event import SourceEvent
 from eoip.jobs import JobQueue, write_json
 from eoip.models.provider import LocalModelProvider
 from eoip.observability import configure_json_logging
@@ -78,6 +80,15 @@ def _safe_path(path: str) -> str:
 class IngestionRequest(BaseModel):
     document: dict | list
     dry_run: bool = False
+
+
+class GitLabIngestionRequest(IngestionRequest):
+    repository_id: str = Field(
+        default="demo",
+        min_length=1,
+        max_length=128,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._/-]*$",
+    )
 
 
 class IncrementalSyncRequest(BaseModel):
@@ -147,7 +158,7 @@ def create_app():
     observed_job_states: dict[str, str] = {}
 
     def observe_ingestion_jobs() -> None:
-        terminal_statuses = {"SUCCEEDED", "PARTIAL", "FAILED"}
+        terminal_statuses = {"SUCCEEDED", "PARTIAL", "FAILED", "CANCELLED"}
         for path in queue.root.glob("*.json"):
             job = json.loads(path.read_text(encoding="utf-8"))
             if not isinstance(job, dict):
@@ -417,6 +428,15 @@ def create_app():
         except (ValueError, FileNotFoundError):
             raise HTTPException(404, "Job not found")
 
+    @app.post("/api/v1/admin/jobs/{job_id}/cancel")
+    def cancel_job(job_id: str):
+        try:
+            return queue.cancel(job_id)
+        except (ValueError, FileNotFoundError):
+            raise HTTPException(404, "Job not found")
+        except RuntimeError as exc:
+            raise HTTPException(409, str(exc)) from exc
+
     @app.post("/api/v1/admin/ingestion/jira", status_code=202)
     def ingest(payload: IngestionRequest, request: Request):
         return queue.submit(
@@ -426,7 +446,7 @@ def create_app():
         )
 
     @app.post("/api/v1/admin/ingestion/gitlab", status_code=202)
-    def ingest_gitlab(payload: IngestionRequest, request: Request):
+    def ingest_gitlab(payload: GitLabIngestionRequest, request: Request):
         return queue.submit(
             "GITLAB_JSON",
             payload.model_dump(),
@@ -498,6 +518,39 @@ def create_app():
         for path in sorted(dlq_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)[:limit]:
             items.append(json.loads(path.read_text(encoding="utf-8")))
         return items
+
+    @app.post("/api/v1/admin/dlq/{event_id}/replay", status_code=202)
+    def replay_dlq(event_id: str, request: Request):
+        if not re.fullmatch(r"[a-f0-9]{64}", event_id):
+            raise HTTPException(404, "Dead-letter record not found")
+        record_path = data_root() / "dlq" / f"{event_id}.json"
+        if not record_path.exists():
+            raise HTTPException(404, "Dead-letter record not found")
+        record = json.loads(record_path.read_text(encoding="utf-8"))
+        source_system = record.get("source_system")
+        if source_system not in {"jira", "gitlab"}:
+            raise HTTPException(422, "This dead-letter source does not support replay")
+        raw_path = data_root() / "raw" / source_system / f"{event_id}.json"
+        if not raw_path.exists():
+            raise HTTPException(409, "Captured source event is unavailable")
+        source_event = SourceEvent.model_validate_json(raw_path.read_text(encoding="utf-8"))
+        if source_event.event_id != event_id or source_event.payload_hash != record.get("payload_hash"):
+            raise HTTPException(409, "Captured source event does not match the dead-letter record")
+        if source_system == "jira":
+            kind = "JIRA_JSON"
+            payload = {"document": [source_event.payload], "dry_run": False}
+        else:
+            record_kind = (source_event.metadata or {}).get("record_kind")
+            if record_kind not in {"merge_request", "pipeline"}:
+                raise HTTPException(409, "Captured GitLab event has no supported record kind")
+            collection = "merge_requests" if record_kind == "merge_request" else "pipelines"
+            kind = "GITLAB_JSON"
+            payload = {
+                "document": {collection: [source_event.payload]},
+                "dry_run": False,
+                "repository_id": record.get("repository_id", "demo"),
+            }
+        return queue.submit(kind, payload, correlation_id=request.state.correlation_id)
 
     @app.get("/api/v1/admin/audit")
     def audit_log(limit: int = Query(default=50, ge=1, le=500)):

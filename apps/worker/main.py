@@ -10,10 +10,12 @@ from uuid import uuid4
 
 import httpx
 from eoip.connectors.errors import ConnectorError
+from eoip.connectors.gitlab_json import GitLabJsonConnector
 from eoip.connectors.jira_json import JiraJsonConnector
 from eoip.contracts.audit import AuditEvent
 from eoip.contracts.source_event import utc_now_iso
 from eoip.demo import load_demo
+from eoip.ingestion.gitlab import GitLabIngestionService
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
 from eoip.ingestion.source_sync import run_configured_source_sync
 from eoip.jobs import JobQueue, write_json
@@ -22,6 +24,37 @@ from eoip.runtime import create_store, data_root
 
 logger = logging.getLogger("eoip.worker")
 running = True
+
+
+def execute_job(store, root, job):
+    """Execute one durable job using the same services as the synchronous test surface."""
+    payload = job.get("payload") or {}
+    if job["kind"] == "DEMO":
+        return load_demo(store, root)
+    if job["kind"] == "JIRA_JSON":
+        connector = JiraJsonConnector.from_yaml("config/mappings/jira-mvp.yaml")
+        service = JiraIngestionService(
+            store, connector, FileEventCapture(root / "raw"), root / "dlq"
+        )
+        return service.ingest(payload["document"], dry_run=payload.get("dry_run", False))
+    if job["kind"] == "GITLAB_JSON":
+        service = GitLabIngestionService(
+            store,
+            payload.get("repository_id", "demo"),
+            GitLabJsonConnector(),
+            FileEventCapture(root / "raw"),
+            root / "dlq",
+        )
+        return service.ingest(payload["document"], dry_run=payload.get("dry_run", False))
+    if job["kind"] in {"CONFLUENCE", "SERVICENOW"}:
+        return run_configured_source_sync(
+            job["kind"].lower(),
+            payload,
+            store,
+            str(root),
+            job["correlation_id"],
+        )
+    raise ValueError("Unknown job kind")
 
 
 def main():
@@ -66,27 +99,7 @@ def main():
             job.update(status="RUNNING", started_at=utc_now_iso())
             write_json(path, job)
             try:
-                if job["kind"] == "DEMO":
-                    result = load_demo(store, root)
-                elif job["kind"] == "JIRA_JSON":
-                    connector = JiraJsonConnector.from_yaml("config/mappings/jira-mvp.yaml")
-                    service = JiraIngestionService(
-                        store, connector, FileEventCapture(root / "raw"), root / "dlq"
-                    )
-                    result = service.ingest(
-                        job["payload"]["document"], dry_run=job["payload"].get("dry_run", False)
-                    )
-                elif job["kind"] in {"CONFLUENCE", "SERVICENOW"}:
-                    source_system = job["kind"].lower()
-                    result = run_configured_source_sync(
-                        source_system,
-                        job.get("payload") or {},
-                        store,
-                        str(root),
-                        job["correlation_id"],
-                    )
-                else:
-                    raise ValueError("Unknown job kind")
+                result = execute_job(store, root, job)
                 partial = result.get("run_status") == "PARTIAL" or any(
                     value.get("run_status") == "PARTIAL"
                     for value in result.values()

@@ -11,7 +11,8 @@
     "result_limit": { "type": "integer", "minimum": 1, "default": 1 },
     "evidence_mode": { "type": ["string", "null"], "enum": ["NONE", "SUMMARY", "FULL", null] },
     "relationship_allowlist": { "type": ["array", "null"], "items": { "type": "string" } },
-    "label_filter": { "type": ["string", "null"] }
+    "timeout_ms": { "type": "integer", "minimum": 50, "maximum": 30000, "default": 5000 },
+    "filters": { "type": ["object", "null"] }
   },
   "additionalProperties": false
 }

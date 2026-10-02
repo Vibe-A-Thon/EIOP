@@ -17,11 +17,18 @@
           "ref": { "type": "string" },
           "text": { "type": "string" },
           "citations": { "type": "array", "items": { "type": "string" } }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "evidence_refs": { "type": "array", "items": { "type": "string" } },
-    "metrics": { "type": ["object", "null"] }
+    "metrics": { "type": ["object", "null"] },
+    "answer": { "type": ["string", "null"] },
+    "warnings": { "type": ["array", "null"], "items": { "type": "string" } },
+    "generation": { "type": ["string", "null"] },
+    "partial": { "type": ["boolean", "null"] },
+    "facts": { "type": ["array", "null"], "items": { "type": "object" } },
+    "graph": { "type": ["object", "null"] }
   },
   "additionalProperties": false
 }

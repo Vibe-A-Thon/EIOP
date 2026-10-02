@@ -122,3 +122,41 @@ def test_metrics_include_ingestion_job_status_and_runtime(monkeypatch, tmp_path)
     assert 'eoip_ingestion_job_duration_seconds_count{kind="JIRA_JSON"} 1.0' in completed_metrics
     repeated_metrics = api.get("/metrics").text
     assert 'eoip_ingestion_job_duration_seconds_count{kind="JIRA_JSON"} 1.0' in repeated_metrics
+
+
+def test_pending_ingestion_job_can_be_cancelled(monkeypatch, tmp_path):
+    api = client(monkeypatch, tmp_path)
+    headers = {"Authorization": "Bearer test-token-with-at-least-24-characters"}
+    submitted = api.post(
+        "/api/v1/admin/ingestion/jira",
+        headers=headers,
+        json={"document": {"issues": []}},
+    ).json()
+
+    cancelled = api.post(f"/api/v1/admin/jobs/{submitted['job_id']}/cancel", headers=headers)
+
+    assert cancelled.status_code == 200
+    assert cancelled.json()["status"] == "CANCELLED"
+    assert "payload" not in cancelled.json()
+    persisted = json.loads((tmp_path / "jobs" / f"{submitted['job_id']}.json").read_text())
+    assert persisted["status"] == "CANCELLED"
+    assert persisted["finished_at"].endswith("Z")
+
+
+def test_running_ingestion_job_cannot_be_cancelled(monkeypatch, tmp_path):
+    api = client(monkeypatch, tmp_path)
+    headers = {"Authorization": "Bearer test-token-with-at-least-24-characters"}
+    submitted = api.post(
+        "/api/v1/admin/ingestion/jira",
+        headers=headers,
+        json={"document": {"issues": []}},
+    ).json()
+    job_path = tmp_path / "jobs" / f"{submitted['job_id']}.json"
+    job = json.loads(job_path.read_text())
+    job["status"] = "RUNNING"
+    write_json(job_path, job)
+
+    response = api.post(f"/api/v1/admin/jobs/{submitted['job_id']}/cancel", headers=headers)
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Running jobs cannot be cancelled safely"

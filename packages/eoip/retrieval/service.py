@@ -93,15 +93,12 @@ def _build_contexts(
         selected_nodes = [
             n for n in nodes if n["label"] in _CODE_LABELS or n["label"] == "WorkItem"
         ]
-        selected_labels = _CODE_LABELS | {"WorkItem"}
     elif strategy == RetrievalStrategy.DOCUMENT_CONTEXT:
         selected_nodes = [
             n for n in nodes if n["label"] in _DOC_LABELS or n["label"] == "WorkItem"
         ]
-        selected_labels = _DOC_LABELS | {"WorkItem"}
     else:
         selected_nodes = nodes
-        selected_labels = frozenset()
     selected_ids = {n["canonical_id"] for n in selected_nodes}
     for node in selected_nodes:
         contexts.append(
@@ -113,8 +110,6 @@ def _build_contexts(
             )
         )
     for edge in edges:
-        if selected_labels and edge["label"] not in selected_labels:
-            continue
         if edge["out_cid"] not in selected_ids or edge["in_cid"] not in selected_ids:
             continue
         props = edge["properties"]

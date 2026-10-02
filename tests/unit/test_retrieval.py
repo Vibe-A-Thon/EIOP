@@ -42,6 +42,38 @@ def test_retrieval_router_selects_code_context_for_code_question():
     )
 
 
+def test_code_context_preserves_relationship_evidence():
+    store = MemoryGraphStore()
+    source = store.upsert_vertex(
+        "CodeSymbol",
+        {
+            "canonical_id": "sym:source",
+            "qualified_name": "svc.source",
+            "symbol_kind": "function",
+        },
+    )
+    target = store.upsert_vertex(
+        "CodeSymbol",
+        {
+            "canonical_id": "sym:target",
+            "qualified_name": "svc.target",
+            "symbol_kind": "function",
+        },
+    )
+    store.upsert_edge(
+        "CALLS",
+        source["vid"],
+        target["vid"],
+        {"source_ref": "file://service.py#L10", "evidence_key": "call:10"},
+    )
+
+    result = retrieve(store, "sym:source", "How is this code implemented?")
+
+    relationships = [context for context in result.contexts if context.kind == "relationship"]
+    assert len(relationships) == 1
+    assert relationships[0].citations == ["file://service.py#L10", "call:10"]
+
+
 def test_retrieval_returns_empty_result_without_canonical_id():
     store = MemoryGraphStore()
     result = retrieve(store, "", "question")

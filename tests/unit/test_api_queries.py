@@ -65,6 +65,20 @@ def test_search_path_and_impact_use_graph_store_data() -> None:
     assert {item["source_ref"] for item in lineage.json()["evidence"]} == {"git://demo/commit/abc123"}
 
 
+def test_search_applies_vertex_label_filter() -> None:
+    store = _demo_store()
+    _vertex(store, "Document", "document:EOIP-1", name="EOIP-1 design")
+    client = TestClient(create_app(store))
+
+    response = client.get("/api/v1/search", params={"q": "EOIP-1", "label": "WorkItem"})
+
+    assert response.status_code == 200
+    assert [node["label"] for node in response.json()["nodes"]] == ["WorkItem"]
+    assert client.get(
+        "/api/v1/search", params={"q": "EOIP-1", "label": "UnknownType"}
+    ).status_code == 422
+
+
 def test_query_api_sets_correlation_id_and_rejects_excessive_limits() -> None:
     client = TestClient(create_app(_demo_store()))
 

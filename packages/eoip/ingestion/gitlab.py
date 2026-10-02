@@ -234,6 +234,7 @@ class GitLabIngestionService:
             "event_id": event.event_id,
             "source_system": event.source_system,
             "source_record_id": event.source_record_id,
+            "repository_id": self.repo_id,
             "payload_hash": event.payload_hash,
             "error": error,
             "replay_ref": str(self.capture.root / event.source_system / f"{event.event_id}.json"),

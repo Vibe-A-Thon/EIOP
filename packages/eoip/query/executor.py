@@ -56,7 +56,9 @@ class QueryTimeout(Exception):
 
 def _search(store: GraphStore, plan: QueryPlan) -> GraphResult:
     query = plan.anchors[0].strip().casefold()
-    candidates = store.find_vertices(limit=5000)
+    filters = dict(plan.filters or {})
+    label = filters.pop("label", None)
+    candidates = store.find_vertices(label=label, filters=filters or None, limit=5000)
     matches = [
         v
         for v in candidates

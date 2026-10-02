@@ -40,6 +40,15 @@ class JobQueue:
         UUID(job_id)
         return json.loads((self.root / f"{job_id}.json").read_text(encoding="utf-8"))
 
+    def cancel(self, job_id):
+        job = self.get(job_id)
+        if job["status"] == "RUNNING":
+            raise RuntimeError("Running jobs cannot be cancelled safely")
+        if job["status"] == "PENDING":
+            job.update(status="CANCELLED", finished_at=utc_now_iso())
+            write_json(self.root / f"{job_id}.json", job)
+        return {key: value for key, value in job.items() if key != "payload"}
+
     def list(self):
         jobs = [json.loads(p.read_text(encoding="utf-8")) for p in self.root.glob("*.json")]
         return [

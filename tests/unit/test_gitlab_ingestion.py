@@ -4,6 +4,8 @@ from eoip.graph.memory import MemoryGraphStore
 from eoip.ingestion.gitlab import GitLabIngestionService
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
 
+from apps.worker.main import execute_job
+
 
 def test_gitlab_metadata_links_only_existing_issue_and_commit_anchors(tmp_path) -> None:
     store = MemoryGraphStore()
@@ -84,3 +86,26 @@ def test_gitlab_metadata_links_only_existing_issue_and_commit_anchors(tmp_path) 
     }
     assert store.get_vertex(commit["vid"]) is not None
     assert store.get_vertex(repo["vid"]) is not None
+
+
+def test_worker_executes_queued_gitlab_ingestion(tmp_path) -> None:
+    store = MemoryGraphStore()
+    job = {
+        "kind": "GITLAB_JSON",
+        "correlation_id": "test-correlation",
+        "payload": {
+            "repository_id": "platform/api",
+            "document": {
+                "merge_requests": [{"iid": 7, "title": "Implement EOIP-7"}],
+                "pipelines": [{"id": 9, "name": "test", "status": "success"}],
+            },
+        },
+    }
+
+    result = execute_job(store, tmp_path, job)
+
+    assert result["run_status"] == "SUCCEEDED"
+    assert result["records_accepted"] == 2
+    assert store.get_vertex_by_canonical_id("urn:eoip:code:repository:platform/api")
+    assert store.count_vertices("MergeRequest") == 1
+    assert store.count_vertices("PipelineRun") == 1
