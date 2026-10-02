@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import GraphCanvas, {palette} from './GraphCanvas.jsx';
 import {Icon, Tip} from './icons.jsx';
+import KGRExplorer from './kgr/KGRExplorer.jsx';
 
 const emptyGraph = {nodes: [], edges: [], paths: [], evidence: [], warnings: [], partial: false};
 const lenses = [
@@ -9,6 +10,7 @@ const lenses = [
   {id: 'impact', label: 'Impact', icon: 'activity', hint: 'Trace the blast radius of a change'},
   {id: 'evidence', label: 'Evidence', icon: 'shield', hint: 'Inspect provenance and GraphRAG context'},
   {id: 'architecture', label: 'Architecture', icon: 'layers', hint: 'Understand graph domains, types, and structural coverage'},
+  {id: 'kgr', label: 'KGR', icon: 'graph', hint: 'Knowledge Graph Renderer — multi-graph explorer with blast radius, impact analysis, and node intelligence'},
 ];
 
 const lensCatalog = [
@@ -233,6 +235,7 @@ function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDet
     {lens === 'impact' && <ImpactView source={source} setSource={setSource} target={target} setTarget={setTarget} selected={selected} graph={graph} trace={trace} onPath={findPath} onImpact={impact} onTrace={traceImpact} busy={busy}/>} 
     {lens === 'evidence' && <EvidenceView source={source} setSource={setSource} selected={selected} lineage={lineage} rag={rag} question={question} setQuestion={setQuestion} onLineage={traceLineage} onRag={retrieve} onInspect={node => run(() => inspect(node))} busy={busy}/>} 
     {lens === 'architecture' && <ArchitectureView stats={stats} graph={graph}/>}
+    {lens === 'kgr' && <KGRExplorer graph={graph} setGraph={setGraph} api={api} run={run} busy={busy} stats={stats}/>}
     <LensLibrary open={libraryOpen} onClose={() => setLibraryOpen(false)} onSelect={openCatalogLens}/>
   </>;
 }

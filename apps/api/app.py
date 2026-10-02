@@ -5,6 +5,7 @@ from uuid import uuid4
 from eoip.config import load_query_policy
 from eoip.contracts.graph_result import GraphResult
 from eoip.contracts.query_plan import QueryPlan
+from eoip.graph.metrics import GraphMetricsEngine
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.query.executor import PolicyViolation, QueryExecutor, QueryTimeout
@@ -40,6 +41,15 @@ class TraceabilityRequest(BaseModel):
     canonical_id: str = Field(min_length=1, max_length=512)
     max_depth: int = Field(default=6, ge=1, le=8)
     result_limit: int = Field(default=100, ge=1, le=500)
+
+
+class BlastRadiusRequest(BaseModel):
+    canonical_id: str = Field(min_length=1, max_length=512)
+    max_depth: int = Field(default=4, ge=1, le=8)
+
+
+class MetricsRequest(BaseModel):
+    canonical_ids: list[str] = Field(min_length=1, max_length=50)
 
 
 def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> FastAPI:
@@ -189,5 +199,34 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             return executor.execute(payload)
         except PolicyViolation as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    metrics_engine = GraphMetricsEngine(store)
+
+    @app.post("/api/v1/graph/blast-radius")
+    def blast_radius(payload: BlastRadiusRequest):
+        result = metrics_engine.blast_radius(payload.canonical_id, payload.max_depth)
+        if result.total_affected == 0 and not store.get_vertex_by_canonical_id(payload.canonical_id):
+            raise HTTPException(404, "Entity not found")
+        return result.to_dict()
+
+    @app.post("/api/v1/graph/reverse-impact")
+    def reverse_impact(payload: BlastRadiusRequest):
+        result = metrics_engine.reverse_impact(payload.canonical_id, payload.max_depth)
+        if result.total_affected == 0 and not store.get_vertex_by_canonical_id(payload.canonical_id):
+            raise HTTPException(404, "Entity not found")
+        return result.to_dict()
+
+    @app.post("/api/v1/graph/metrics")
+    def graph_metrics(payload: MetricsRequest):
+        results = metrics_engine.centrality(payload.canonical_ids)
+        return {cid: m.to_dict() for cid, m in results.items()}
+
+    @app.get("/api/v1/graph/schema")
+    def graph_schema():
+        return metrics_engine.graph_schema()
+
+    @app.get("/api/v1/graph/statistics")
+    def graph_statistics():
+        return metrics_engine.graph_statistics()
 
     return app

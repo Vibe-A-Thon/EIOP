@@ -62,6 +62,11 @@ def _operation(path: str, body: bytes) -> str:
         "/api/v1/neighborhood",
         "/api/v1/traceability",
         "/api/v1/ontology/export",
+        "/api/v1/graph/blast-radius",
+        "/api/v1/graph/reverse-impact",
+        "/api/v1/graph/metrics",
+        "/api/v1/graph/schema",
+        "/api/v1/graph/statistics",
     } or path.startswith("/api/v1/entities/"):
         return "query"
     if path.startswith("/api/v1/admin/"):
