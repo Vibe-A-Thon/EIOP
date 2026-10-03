@@ -12,6 +12,7 @@ from eoip.connectors.reconciliation import SourceReconciler
 from eoip.contracts.source_event import SourceEventV2, utc_now_iso
 from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
 from eoip.graph.store import GraphStore
+from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
 from eoip.jobs import write_json
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
@@ -678,27 +679,15 @@ class JiraTemporalIngestionService:
         return f"urn:eoip:work:sprint:jira:{self.connector.source_id}:{project}:{value}"
 
     def _write_dlq(self, event: SourceEventV2, error: str) -> None:
-        self.dlq_root.mkdir(parents=True, exist_ok=True)
-        path = self.dlq_root / f"{event.event_id}.json"
-        if path.exists():
-            return
-        path.write_text(
-            json.dumps(
-                {
-                    "event_id": event.event_id,
-                    "source_system": "jira",
-                    "source_record_id": event.source_record_id,
-                    "payload_hash": event.payload_hash,
-                    "error_category": "mapping_error",
-                    "error": error,
-                    "replay_ref": str(self.capture.root / "jira" / f"{event.event_id}.json"),
-                },
-                indent=2,
-                sort_keys=True,
-            ),
-            encoding="utf-8",
+        write_dlq_record(
+            self.dlq_root,
+            event,
+            error,
+            stage="mapping",
+            error_category="mapping_error",
+            replay_ref=str(self.capture.root / "jira" / f"{event.event_id}.json"),
+            extra={"registry_source_id": self.connector.source_id},
         )
-
 
 def run_registered_jira_operation(entry, payload, store, data_root, correlation_id) -> dict:
     from eoip.connectors.config import connector_from_registry

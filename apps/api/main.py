@@ -11,6 +11,7 @@ from time import perf_counter
 from uuid import uuid4
 
 import httpx
+from eoip.events.emitter import GraphEventEmitter
 from eoip.agents.catalog import build_agent_registry
 from eoip.agents.runtime import AgentRuntime
 from eoip.audit.sink import AuditSink
@@ -24,7 +25,7 @@ from eoip.connectors.registry import (
 from eoip.connectors.webhook import WebhookGateway
 from eoip.contracts.agent import AgentRequest
 from eoip.contracts.audit import AuditEvent
-from eoip.contracts.source_event import SourceEvent
+from eoip.contracts.source_event import SourceEvent, SourceEventV2
 from eoip.contracts.source_registry import SourceCapabilities, SourceRegistryEntry, SourceType
 from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
 from eoip.jobs import JobQueue, write_json
@@ -34,7 +35,7 @@ from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.ontology.rdf import export_jsonld
 from eoip.runtime import api_token, create_store, data_root
 from eoip.validation.engine import ValidationEngine
-from fastapi import Depends, HTTPException, Query, Request
+from fastapi import Depends, HTTPException, Query, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPBearer
 from prometheus_client import CollectorRegistry, Counter, Histogram, generate_latest
@@ -89,6 +90,8 @@ def _operation(path: str, body: bytes) -> str:
 def _safe_path(path: str) -> str:
     if path.startswith("/api/v1/entities/"):
         return "/api/v1/entities/{canonical_id:path}"
+    if path.startswith("/api/v1/admin/entities/"):
+        return "/api/v1/admin/entities/{canonical_id:path}/delete"
     if path.startswith("/api/v1/admin/jobs/"):
         return "/api/v1/admin/jobs/{job_id}"
     return path
@@ -111,6 +114,18 @@ class GitLabIngestionRequest(IngestionRequest):
 class IncrementalSyncRequest(BaseModel):
     checkpoint: str | None = Field(default=None, max_length=128)
     watermark: str | None = Field(default=None, max_length=128)
+    dry_run: bool = False
+
+
+class ReplayRequest(BaseModel):
+    source_system: str = Field(pattern=r"^(jira|gitlab|git)$")
+    event_ids: list[str] = Field(default_factory=list, max_length=1000)
+    repository_id: str = Field(
+        default="demo",
+        min_length=1,
+        max_length=128,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._/-]*$",
+    )
     dry_run: bool = False
 
 
@@ -169,7 +184,9 @@ def create_app():
     validator = ValidationEngine(store)
     agent_registry = build_agent_registry(load_agent_config("trace-impact"))
     agent_runtime = AgentRuntime(store, agent_registry)
+    event_emitter = GraphEventEmitter(buffer_size=1000)
     app = query_app(store, dependencies=[Depends(HTTPBearer(auto_error=False))])
+    app.state.event_emitter = event_emitter
     registry = CollectorRegistry()
     requests = Counter(
         "eoip_http_requests_total", "Completed HTTP requests", ["method", "status"], registry=registry
@@ -274,7 +291,7 @@ def create_app():
             status = str(status_code)
             audit = None
             if operation != "other":
-                denied = status_code in {401, 403, 413}
+                denied = status_code in {401, 403, 413, 422}
                 audit = AuditEvent(
                     audit_id=request.state.audit_id,
                     event_type="policy_denial" if denied else operation,
@@ -335,6 +352,49 @@ def create_app():
                 return JSONResponse({"detail": "Request body too large"}, status_code=413)
         request._body = bytes(body)
         operation = _operation(request.url.path, request._body)
+        high_risk_admin = request.url.path.startswith(
+            ("/api/v1/admin/", "/api/v1/sources")
+        ) and request.method in {"POST", "PUT", "PATCH", "DELETE"}
+        if high_risk_admin:
+            try:
+                audit_sink.emit(
+                    AuditEvent(
+                        audit_id=str(uuid4()),
+                        event_type="admin_intent",
+                        actor="local-user",
+                        correlation_id=correlation_id,
+                        outcome="authorized",
+                        safe_summary="Authorized admin mutation accepted for execution",
+                    ),
+                    operation=operation,
+                    path=request.url.path,
+                )
+            except Exception as exc:  # noqa: BLE001 - audit availability is a policy boundary
+                status = "503"
+                requests.labels(request.method, status).inc()
+                operations.labels(operation, status).inc()
+                failures.labels(operation, status).inc()
+                operation_duration.labels(operation).observe(perf_counter() - started)
+                log.error(
+                    "audit.preflight_failed",
+                    extra={
+                        "event": "audit.preflight_failed",
+                        "operation": operation,
+                        "correlation_id": correlation_id,
+                        "audit_id": request.state.audit_id,
+                        "method": request.method,
+                        "path": _safe_path(request.url.path),
+                        "status_code": 503,
+                        "error_type": type(exc).__name__,
+                    },
+                )
+                response = JSONResponse(
+                    {"detail": "Audit service unavailable; admin mutation was not executed"},
+                    status_code=503,
+                )
+                response.headers["X-Correlation-ID"] = correlation_id
+                response.headers["X-Audit-ID"] = request.state.audit_id
+                return response
         try:
             response = await call_next(request)
         except Exception as exc:
@@ -381,14 +441,34 @@ def create_app():
         return Response(generate_latest(registry), media_type="text/plain; version=0.0.4")
 
     @app.get("/api/v1/entities/{canonical_id:path}")
-    def entity(canonical_id: str):
+    def entity(canonical_id: str, include_deleted: bool = Query(default=False)):
         result = store.get_vertex_by_canonical_id(canonical_id)
-        if result is None:
+        if result is None or (result["properties"].get("deleted_at") and not include_deleted):
             raise HTTPException(404, "Entity not found")
         return {
             "entity": result,
             "outgoing": store.edges_from(result["vid"]),
             "incoming": store.edges_to(result["vid"]),
+        }
+
+    @app.post("/api/v1/admin/entities/{canonical_id:path}/delete")
+    def delete_entity(canonical_id: str):
+        entity = store.get_vertex_by_canonical_id(canonical_id)
+        if entity is None:
+            raise HTTPException(404, "Entity not found")
+        if entity["properties"].get("deleted_at"):
+            return {
+                "canonical_id": canonical_id,
+                "status": "ALREADY_DELETED",
+                "deleted_at": entity["properties"]["deleted_at"],
+            }
+        if not store.tombstone_vertex(canonical_id):
+            raise HTTPException(409, "Entity could not be tombstoned")
+        deleted = store.get_vertex_by_canonical_id(canonical_id)
+        return {
+            "canonical_id": canonical_id,
+            "status": "DELETED",
+            "deleted_at": deleted["properties"]["deleted_at"],
         }
 
     @app.get("/api/v1/ontology/export")
@@ -890,29 +970,58 @@ def create_app():
             raise HTTPException(404, "Dead-letter record not found")
         record = json.loads(record_path.read_text(encoding="utf-8"))
         source_system = record.get("source_system")
-        if source_system not in {"jira", "gitlab"}:
+        if source_system not in {"jira", "gitlab", "git", "github", "confluence", "servicenow"}:
             raise HTTPException(422, "This dead-letter source does not support replay")
         raw_path = data_root() / "raw" / source_system / f"{event_id}.json"
         if not raw_path.exists():
             raise HTTPException(409, "Captured source event is unavailable")
-        source_event = SourceEvent.model_validate_json(raw_path.read_text(encoding="utf-8"))
+        event_document = json.loads(raw_path.read_text(encoding="utf-8"))
+        event_model = SourceEventV2 if event_document.get("schema_version") == "2.0" else SourceEvent
+        source_event = event_model.model_validate(event_document)
         if source_event.event_id != event_id or source_event.payload_hash != record.get("payload_hash"):
             raise HTTPException(409, "Captured source event does not match the dead-letter record")
-        if source_system == "jira":
-            kind = "JIRA_JSON"
-            payload = {"document": [source_event.payload], "dry_run": False}
-        else:
+        if source_event.source_system != source_system:
+            raise HTTPException(409, "Captured source event source does not match the dead-letter record")
+        if isinstance(source_event, SourceEventV2):
+            source_id = record.get("registry_source_id") or source_event.source_instance_id
+            try:
+                entry = source_registry.get(source_id)
+            except SourceNotFoundError as exc:
+                raise HTTPException(409, "Registered replay source is unavailable") from exc
+            if entry.source_type != source_system:
+                raise HTTPException(409, "Registered replay source type does not match the event")
+            return queue.submit(
+                "SOURCE_OPERATION",
+                {
+                    "source_id": source_id,
+                    "operation": "REPLAY",
+                    "event_ids": [event_id],
+                    "dry_run": False,
+                },
+                correlation_id=request.state.correlation_id,
+            )
+        if source_system == "gitlab":
             record_kind = (source_event.metadata or {}).get("record_kind")
             if record_kind not in {"merge_request", "pipeline"}:
                 raise HTTPException(409, "Captured GitLab event has no supported record kind")
-            collection = "merge_requests" if record_kind == "merge_request" else "pipelines"
-            kind = "GITLAB_JSON"
-            payload = {
-                "document": {collection: [source_event.payload]},
-                "dry_run": False,
-                "repository_id": record.get("repository_id", "demo"),
-            }
-        return queue.submit(kind, payload, correlation_id=request.state.correlation_id)
+        payload = {
+            "source_system": source_system,
+            "event_ids": [event_id],
+            "dry_run": False,
+            "repository_id": record.get("repository_id", "demo"),
+        }
+        return queue.submit("REPLAY", payload, correlation_id=request.state.correlation_id)
+
+    @app.post("/api/v1/admin/ingestion/replay", status_code=202)
+    def replay_ingestion(payload: ReplayRequest, request: Request):
+        invalid = [event_id for event_id in payload.event_ids if not re.fullmatch(r"[a-f0-9]{64}", event_id)]
+        if invalid:
+            raise HTTPException(422, "Replay event IDs must be lowercase SHA-256 values")
+        return queue.submit(
+            "REPLAY",
+            payload.model_dump(),
+            correlation_id=request.state.correlation_id,
+        )
 
     @app.get("/api/v1/admin/audit")
     def audit_log(limit: int = Query(default=50, ge=1, le=500)):
@@ -961,5 +1070,30 @@ def create_app():
             payload.model_dump(),
             correlation_id=request.state.correlation_id,
         )
+
+    @app.websocket("/ws/graph/events")
+    async def graph_events(websocket: WebSocket):
+        await websocket.accept()
+        queue_ws = event_emitter.subscribe()
+        try:
+            while True:
+                event = await queue_ws.get()
+                await websocket.send_json(event.to_dict())
+        except WebSocketDisconnect:
+            pass
+        finally:
+            event_emitter.unsubscribe(queue_ws)
+
+    @app.get("/api/v1/graph/events")
+    def poll_events(
+        since: str = Query(default="", max_length=64),
+        since_id: int = Query(default=0, ge=0),
+        limit: int = Query(default=100, ge=1, le=1000),
+    ):
+        if since_id > 0:
+            return {"events": event_emitter.events_since_id(since_id, limit=limit)}
+        if since:
+            return {"events": event_emitter.events_since(since, limit=limit)}
+        return {"events": event_emitter.recent_events(limit=limit)}
 
     return app

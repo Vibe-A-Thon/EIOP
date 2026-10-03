@@ -7,8 +7,9 @@ from pathlib import Path
 
 from eoip.codegraph.parser import PARSER_VERSION, CodeParser
 from eoip.connectors.local_code import LocalCodeConnector
-from eoip.contracts.source_event import utc_now_iso
+from eoip.contracts.source_event import SourceEvent, utc_now_iso
 from eoip.graph.store import GraphStore
+from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
@@ -30,18 +31,53 @@ class CodeIngestionService:
 
     def ingest(self, source_root: str | Path, repo_id: str) -> dict:
         root = Path(source_root).resolve(strict=True)
-        events = self.connector.events(root, repo_id)
+        return self.ingest_events(
+            self.connector.events(root, repo_id),
+            repo_id,
+            repository_name=root.name or "repository",
+        )
+
+    def ingest_events(
+        self,
+        events: list[SourceEvent],
+        repo_id: str,
+        *,
+        repository_name: str | None = None,
+        dry_run: bool = False,
+    ) -> dict:
+        """Parse captured code events without reading the source tree again."""
         parsed = []
         rejected = []
         for event in events:
-            self.capture.capture(event)
+            event_repo_id = event.payload.get("repo_id")
+            if event.source_system != "git" or event_repo_id != repo_id:
+                raise ValueError("captured code event does not match the requested repository")
+            if not dry_run:
+                self.capture.capture(event)
             source = event.payload["content"]
             result = self.parser.parse(repo_id, event.payload["path"], source)
             if result.parse_errors:
                 rejected.append({"event_id": event.event_id, "path": result.path, "errors": result.parse_errors})
-                self._write_dlq(event, result.parse_errors)
+                if not dry_run:
+                    self._write_dlq(event, result.parse_errors)
             else:
                 parsed.append((event, result))
+
+        if dry_run:
+            return {
+                "run_id": None,
+                "run_status": "DRY_RUN",
+                "records_seen": len(events),
+                "records_accepted": len(parsed),
+                "records_rejected": len(rejected),
+                "counts": {
+                    "files": len(parsed),
+                    "symbols": sum(len(result.symbols) for _event, result in parsed),
+                    "dependencies": sum(len(result.imports) for _event, result in parsed),
+                    "calls": sum(len(result.calls) for _event, result in parsed),
+                },
+                "rejected": rejected,
+            }
 
         run_id = __import__("uuid").uuid4().hex
         started_at = utc_now_iso()
@@ -60,7 +96,33 @@ class CodeIngestionService:
                 "schema_version": SCHEMA_VERSION,
             },
         )
-        root_name = root.name or "repository"
+        existing_repository = self.store.get_vertex_by_canonical_id(
+            f"urn:eoip:code:repository:{repo_id}"
+        )
+        root_name = (
+            existing_repository["properties"].get("name")
+            if existing_repository
+            else repository_name or repo_id
+        )
+        captured_times = sorted(event.captured_at for event in events)
+        initial_observed = captured_times[0] if captured_times else started_at
+        first_observed = (
+            existing_repository["properties"].get("first_seen")
+            if existing_repository
+            else None
+        ) or initial_observed
+        last_observed = max(
+            [
+                value
+                for value in (
+                    existing_repository["properties"].get("last_seen")
+                    if existing_repository
+                    else None,
+                    captured_times[-1] if captured_times else started_at,
+                )
+                if value
+            ]
+        )
         repository = self.store.upsert_vertex(
             "Repository",
             {
@@ -73,9 +135,9 @@ class CodeIngestionService:
                 "ontology_version": ONTOLOGY_VERSION,
                 "schema_version": SCHEMA_VERSION,
                 "ingestion_run_id": run_id,
-                "first_seen": started_at,
-                "last_seen": started_at,
-                "valid_from": started_at,
+                "first_seen": first_observed,
+                "last_seen": last_observed,
+                "valid_from": first_observed,
             },
         )
         self.store.upsert_edge(
@@ -246,19 +308,18 @@ class CodeIngestionService:
         return {
             "run_id": run_id,
             "run_status": "PARTIAL" if rejected else "SUCCEEDED",
+            "records_seen": len(events),
+            "records_accepted": len(parsed),
+            "records_rejected": len(rejected),
             "counts": counts,
             "rejected": rejected,
         }
 
     def _write_dlq(self, event, errors: list[str]) -> None:
-        self.dlq_root.mkdir(parents=True, exist_ok=True)
-        record = {
-            "event_id": event.event_id,
-            "source_system": event.source_system,
-            "source_record_id": event.source_record_id,
-            "payload_hash": event.payload_hash,
-            "errors": errors,
-        }
-        destination = self.dlq_root / f"{event.event_id}.json"
-        if not destination.exists():
-            destination.write_text(json.dumps(record, sort_keys=True, indent=2), encoding="utf-8")
+        write_dlq_record(
+            self.dlq_root,
+            event,
+            errors,
+            stage="parsing",
+            error_category="parse_error",
+        )

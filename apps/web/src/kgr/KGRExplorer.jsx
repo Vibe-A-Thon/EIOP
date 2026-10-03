@@ -5,6 +5,13 @@ import CentralityRadar from './components/CentralityRadar.jsx';
 import ContextMenu from './components/ContextMenu.jsx';
 import ExplorationHistoryBar, {createHistory, pushState, undo, redo} from './components/ExplorationHistory.jsx';
 import GraphBookmarks from './components/GraphBookmarks.jsx';
+import SigmaRenderer from './renderers/SigmaRenderer.jsx';
+import VirtualEntityList from './components/VirtualEntityList.jsx';
+import EventFeed from './components/EventFeed.jsx';
+import GraphDiff from './components/GraphDiff.jsx';
+import GraphHealth from './components/GraphHealth.jsx';
+import EdgeInspector from './components/EdgeInspector.jsx';
+import Minimap from './components/Minimap.jsx';
 
 const graphTypes = [
   {id: 'knowledge', label: 'Knowledge', icon: 'graph', hint: 'Entity-centric knowledge graph with relationships and evidence'},
@@ -15,6 +22,8 @@ const graphTypes = [
   {id: 'provenance', label: 'Provenance', icon: 'shield', hint: 'Evidence chains, ingestion lineage, and trust propagation'},
   {id: 'impact', label: 'Impact', icon: 'activity', hint: 'Blast radius, centrality analysis, and what-if simulation'},
   {id: 'similarity', label: 'Similarity', icon: 'users', hint: 'Node similarity scores, common neighbors, and structural equivalence'},
+  {id: 'diff', label: 'Diff', icon: 'activity', hint: 'Compare graph snapshots and visualize structural changes'},
+  {id: 'health', label: 'Health', icon: 'check', hint: 'Graph health dashboard: completeness, connectivity, anomalies'},
 ];
 
 function GraphTypeSelector({active, onSelect}) {
@@ -31,6 +40,7 @@ function FilterBar({filters, onChange, schema}) {
   const labels = Object.keys(schema?.vertex_labels || {});
   const edgeTypes = Object.keys(schema?.edge_labels || {});
   const domains = schema?.domains || [];
+  const hasActiveFilters = filters.domain !== 'ALL' || filters.label !== 'ALL' || filters.edgeType !== 'ALL' || filters.trust !== 'ALL' || filters.source !== 'ALL' || filters.evidence !== 'ALL' || filters.searchText || filters.minDegree > 0 || (filters.temporal && (filters.temporal.from || filters.temporal.to)) || (filters.community && filters.community !== 'ALL');
   return <div className="kgr-filter-bar">
     <div className="kgr-filter-group">
       <label className="select-control" title="Filter by domain"><Icon name="layers" size={14}/>
@@ -58,6 +68,13 @@ function FilterBar({filters, onChange, schema}) {
           <option value="INFERRED">Inferred</option>
         </select>
       </label>
+      <label className="select-control" title="Filter by evidence"><Icon name="shield" size={14}/>
+        <select value={filters.evidence} onChange={e => onChange({...filters, evidence: e.target.value})} aria-label="Evidence filter">
+          <option value="ALL">All evidence</option>
+          <option value="EVIDENCED">Evidenced only</option>
+          <option value="UNEVIDENCED">Unevidenced only</option>
+        </select>
+      </label>
       <label className="select-control" title="Filter by source connector"><Icon name="database" size={14}/>
         <select value={filters.source} onChange={e => onChange({...filters, source: e.target.value})} aria-label="Source filter">
           <option value="ALL">All sources</option>
@@ -75,13 +92,46 @@ function FilterBar({filters, onChange, schema}) {
           <option value="api_portal">API Portal</option>
         </select>
       </label>
+      <label className="filter-range" title="Min degree threshold">
+        <Icon name="graph" size={14}/>
+        <input type="number" min="0" max="100" value={filters.minDegree || 0} placeholder="Min degree"
+          onChange={e => onChange({...filters, minDegree: parseInt(e.target.value) || 0})} aria-label="Min degree"/>
+      </label>
+      <label className="filter-date" title="Temporal filter (from)">
+        <Icon name="clock" size={14}/>
+        <input type="date" value={(filters.temporal || {}).from || ''}
+          onChange={e => onChange({...filters, temporal: {...(filters.temporal || {}), from: e.target.value}})} aria-label="From date"/>
+      </label>
+      <label className="filter-date" title="Temporal filter (to)">
+        <input type="date" value={(filters.temporal || {}).to || ''}
+          onChange={e => onChange({...filters, temporal: {...(filters.temporal || {}), to: e.target.value}})} aria-label="To date"/>
+      </label>
+      <label className="select-control" title="Filter by community"><Icon name="users" size={14}/>
+        <select value={filters.community || 'ALL'} onChange={e => onChange({...filters, community: e.target.value})} aria-label="Community filter">
+          <option value="ALL">All communities</option>
+        </select>
+      </label>
+      <label className="filter-search" title="Search within visible nodes">
+        <Icon name="focus" size={14}/>
+        <input type="text" placeholder="Search nodes..." value={filters.searchText || ''}
+          onChange={e => onChange({...filters, searchText: e.target.value})} aria-label="Search within view"/>
+      </label>
+      {hasActiveFilters && <button className="filter-reset" onClick={() => onChange(defaultFilters)} title="Reset all filters">
+        <Icon name="close" size={12}/>Reset
+      </button>}
     </div>
     <div className="kgr-filter-chips">
       {filters.domain !== 'ALL' && <span className="filter-chip" onClick={() => onChange({...filters, domain: 'ALL'})}>{filters.domain} <Icon name="close" size={11}/></span>}
       {filters.label !== 'ALL' && <span className="filter-chip" onClick={() => onChange({...filters, label: 'ALL'})}>{filters.label} <Icon name="close" size={11}/></span>}
       {filters.edgeType !== 'ALL' && <span className="filter-chip" onClick={() => onChange({...filters, edgeType: 'ALL'})}>{filters.edgeType} <Icon name="close" size={11}/></span>}
       {filters.trust !== 'ALL' && <span className="filter-chip" onClick={() => onChange({...filters, trust: 'ALL'})}>{filters.trust} <Icon name="close" size={11}/></span>}
+      {filters.evidence !== 'ALL' && <span className="filter-chip" onClick={() => onChange({...filters, evidence: 'ALL'})}>{filters.evidence} <Icon name="close" size={11}/></span>}
       {filters.source !== 'ALL' && <span className="filter-chip" onClick={() => onChange({...filters, source: 'ALL'})}>{filters.source} <Icon name="close" size={11}/></span>}
+      {(filters.minDegree || 0) > 0 && <span className="filter-chip" onClick={() => onChange({...filters, minDegree: 0})}>degree≥{filters.minDegree} <Icon name="close" size={11}/></span>}
+      {filters.searchText && <span className="filter-chip" onClick={() => onChange({...filters, searchText: ''})}>"{filters.searchText}" <Icon name="close" size={11}/></span>}
+      {filters.temporal?.from && <span className="filter-chip" onClick={() => onChange({...filters, temporal: {...filters.temporal, from: ''}})}>from {filters.temporal.from} <Icon name="close" size={11}/></span>}
+      {filters.temporal?.to && <span className="filter-chip" onClick={() => onChange({...filters, temporal: {...filters.temporal, to: ''}})}>to {filters.temporal.to} <Icon name="close" size={11}/></span>}
+      {filters.community && filters.community !== 'ALL' && <span className="filter-chip" onClick={() => onChange({...filters, community: 'ALL'})}>community {filters.community} <Icon name="close" size={11}/></span>}
     </div>
   </div>;
 }
@@ -603,7 +653,7 @@ function BlastRadiusView({data, onClose}) {
   </div>;
 }
 
-const defaultFilters = {domain: 'ALL', label: 'ALL', edgeType: 'ALL', trust: 'ALL', source: 'ALL'};
+const defaultFilters = {domain: 'ALL', label: 'ALL', edgeType: 'ALL', trust: 'ALL', evidence: 'ALL', source: 'ALL', minDegree: 0, searchText: '', temporal: {from: '', to: ''}, community: 'ALL'};
 
 export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
   const [graphType, setGraphType] = useState('knowledge');
@@ -624,6 +674,13 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
   const [contextMenu, setContextMenu] = useState(null);
   const [history, setHistory] = useState(() => createHistory());
   const [showFilters, setShowFilters] = useState(true);
+  const [renderProgress, setRenderProgress] = useState(null);
+  const [renderedCount, setRenderedCount] = useState(0);
+  const [showEntityList, setShowEntityList] = useState(false);
+  const [structureAnalysis, setStructureAnalysis] = useState(null);
+  const [eventFeedCollapsed, setEventFeedCollapsed] = useState(true);
+  const [graphEvents, setGraphEvents] = useState([]);
+  const [wsStatus, setWsStatus] = useState('disconnected');
   const explorerRef = useRef(null);
 
   useEffect(() => {run(async () => setSchema(await api('/api/v1/graph/schema')));}, []);
@@ -673,9 +730,12 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
         if (searchInput) searchInput.focus();
       }
       const digit = parseInt(e.key);
-      if (digit >= 1 && digit <= 8 && !e.ctrlKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
-        const types = ['knowledge', 'relationship', 'metadata', 'ontology', 'temporal', 'provenance', 'impact', 'similarity'];
+      if (digit >= 1 && digit <= 9 && !e.ctrlKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        const types = ['knowledge', 'relationship', 'metadata', 'ontology', 'temporal', 'provenance', 'impact', 'similarity', 'diff', 'health'];
         if (types[digit - 1]) setGraphType(types[digit - 1]);
+      }
+      if (e.key === '0' && !e.ctrlKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        setGraphType('health');
       }
       if (e.key === 'z' && (e.ctrlKey || e.metaKey) && !e.shiftKey) handleUndo();
       if (e.key === 'z' && (e.ctrlKey || e.metaKey) && e.shiftKey) handleRedo();
@@ -808,33 +868,99 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
     });
   }, [api, run, setGraph, inspect]);
 
-  const visibleNodes = useMemo(() => (graph.nodes || []).filter(n =>
-    (filters.domain === 'ALL' || n.domain === filters.domain) &&
-    (filters.label === 'ALL' || n.label === filters.label) &&
-    (filters.source === 'ALL' || n.properties?.source_connector === filters.source)
-  ), [graph.nodes, filters]);
-  const nodeIds = useMemo(() => new Set(visibleNodes.map(n => n.id)), [visibleNodes]);
+  const computeStructureAnalysis = useCallback(() => {
+    run(async () => {
+      const [kcore, components, degDist] = await Promise.all([
+        api('/api/v1/graph/k-core', {min_k: 1}).catch(() => null),
+        api('/api/v1/graph/components', {limit: 20}).catch(() => null),
+        api('/api/v1/graph/degree-distribution').catch(() => null),
+      ]);
+      setStructureAnalysis({kcore, components, degDist});
+    });
+  }, [api, run]);
+
+  const SIGMA_THRESHOLD = 5000;
+  const PROGRESSIVE_THRESHOLD = 1000;
+  const BATCH_SIZE = 100;
+
+  const visibleNodes = useMemo(() => {
+    const search = (filters.searchText || '').toLowerCase();
+    return (graph.nodes || []).filter(n => {
+      if (filters.domain !== 'ALL' && n.domain !== filters.domain) return false;
+      if (filters.label !== 'ALL' && n.label !== filters.label) return false;
+      if (filters.source !== 'ALL' && n.properties?.source_connector !== filters.source) return false;
+      if (search && !displayLabel(n).toLowerCase().includes(search) && !(n.id || '').toLowerCase().includes(search)) return false;
+      return true;
+    });
+  }, [graph.nodes, filters]);
+  const progressiveNodes = useMemo(() => {
+    if (visibleNodes.length <= PROGRESSIVE_THRESHOLD) return visibleNodes;
+    const sorted = [...visibleNodes].sort((a, b) => (b.degree || 0) - (a.degree || 0));
+    return sorted;
+  }, [visibleNodes]);
+
+  useEffect(() => {
+    if (visibleNodes.length <= PROGRESSIVE_THRESHOLD) {
+      setRenderedCount(visibleNodes.length);
+      setRenderProgress(null);
+      return;
+    }
+    setRenderedCount(200);
+    setRenderProgress(`Rendering 200/${visibleNodes.length} nodes...`);
+    let frame;
+    let count = 200;
+    const step = () => {
+      count = Math.min(count + BATCH_SIZE, progressiveNodes.length);
+      setRenderedCount(count);
+      if (count < progressiveNodes.length) {
+        setRenderProgress(`Rendering ${count}/${progressiveNodes.length} nodes...`);
+        frame = requestAnimationFrame(step);
+      } else {
+        setRenderProgress(null);
+      }
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [visibleNodes.length, progressiveNodes.length]);
+
+  const displayedNodes = useMemo(() => progressiveNodes.slice(0, renderedCount), [progressiveNodes, renderedCount]);
+  const nodeIds = useMemo(() => new Set(displayedNodes.map(n => n.id)), [displayedNodes]);
   const visibleEdges = useMemo(() => (graph.edges || []).filter(e =>
     nodeIds.has(e.from_id) && nodeIds.has(e.to_id) &&
     (filters.edgeType === 'ALL' || e.type === filters.edgeType) &&
     (filters.trust === 'ALL' || String(e.creation_status || e.properties?.creation_status || 'DETERMINISTIC').toUpperCase() === filters.trust)
   ), [graph.edges, nodeIds, filters]);
 
-  return <div className="kgr-explorer">
+  return <div className="kgr-explorer" ref={explorerRef}>
     <GraphTypeSelector active={graphType} onSelect={setGraphType}/>
-    <FilterBar filters={filters} onChange={setFilters} schema={schema}/>
+    <ExplorationHistoryBar history={history} onUndo={handleUndo} onRedo={handleRedo}/>
+    {showFilters && <FilterBar filters={filters} onChange={setFilters} schema={schema}/>}
+    <GraphBookmarks currentState={bookmarkState} onRestore={restoreBookmark}/>
 
     <div className="kgr-content">
       {graphType === 'knowledge' && <div className="explorer-grid">
         <section className="panel graph-panel">
           <div className="panel-heading"><div><span className="eyebrow">KGR · KNOWLEDGE GRAPH</span><h2>Interactive entity-relationship map</h2></div>
-            <span className="count-badge">{visibleNodes.length} entities · {visibleEdges.length} relationships</span>
+            <div className="panel-heading-right">
+              <span className="count-badge">{displayedNodes.length}{displayedNodes.length < visibleNodes.length ? `/${visibleNodes.length}` : ''} entities · {visibleEdges.length} relationships</span>
+              {visibleNodes.length >= SIGMA_THRESHOLD && <span className="renderer-badge">WebGL</span>}
+              <button className="icon-button" onClick={() => setShowEntityList(v => !v)} title="Toggle entity list"><Icon name="database" size={14}/></button>
+              <button className="icon-button" onClick={computeStructureAnalysis} title="Structure analysis" disabled={busy}><Icon name="layers" size={14}/></button>
+            </div>
           </div>
-          <GraphCanvas nodes={visibleNodes} edges={visibleEdges} paths={graph.paths || []}
-            selectedId={selected?.id} selectedEdgeId={selectedEdge?.id}
-            onSelectNode={n => run(() => inspect(n))} onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}}
-            onExpand={expand}/>
+          {renderProgress && <div className="render-progress-bar"><div className="render-progress-fill" style={{width: `${(renderedCount / Math.max(visibleNodes.length, 1)) * 100}%`}}/><span>{renderProgress}</span></div>}
+          {visibleNodes.length >= SIGMA_THRESHOLD
+            ? <SigmaRenderer nodes={displayedNodes} edges={visibleEdges}
+                selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))}
+                onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}} onExpand={expand}/>
+            : <GraphCanvas nodes={displayedNodes} edges={visibleEdges} paths={graph.paths || []}
+                selectedId={selected?.id} selectedEdgeId={selectedEdge?.id}
+                onSelectNode={n => run(() => inspect(n))} onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}}
+                onExpand={expand}/>
+          }
         </section>
+        {showEntityList && <VirtualEntityList nodes={visibleNodes} selectedId={selected?.id}
+          onSelect={n => run(() => inspect(n))} onExpand={expand} palette={palette}/>}
         <NodeInspector node={selected} detail={detail} metrics={metrics} blastRadius={blastRadius}
           reverseImpact={reverseImpact} fullCentrality={fullCentrality} similarNodes={similarNodes}
           whatIfResult={whatIfResult} allCentrality={allCentrality} graphNodeCount={(graph.nodes || []).length}
@@ -864,8 +990,12 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
       {graphType === 'temporal' && <div className="explorer-grid">
         <section className="panel graph-panel">
           <div className="panel-heading"><div><span className="eyebrow">KGR · TEMPORAL VIEW</span><h2>Time-filtered graph</h2></div></div>
-          <GraphCanvas nodes={visibleNodes} edges={visibleEdges} paths={graph.paths || []}
-            selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))} onExpand={expand}/>
+          {visibleNodes.length >= SIGMA_THRESHOLD
+            ? <SigmaRenderer nodes={displayedNodes} edges={visibleEdges}
+                selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))} onExpand={expand}/>
+            : <GraphCanvas nodes={displayedNodes} edges={visibleEdges} paths={graph.paths || []}
+                selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))} onExpand={expand}/>
+          }
         </section>
         <NodeInspector node={selected} detail={detail} metrics={metrics} blastRadius={blastRadius}
           reverseImpact={reverseImpact} fullCentrality={fullCentrality} similarNodes={similarNodes}
@@ -879,11 +1009,66 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
 
       {graphType === 'provenance' && <ProvenanceGraphView graph={graph} onInspect={n => run(() => inspect(n))} selected={selected}/>}
 
-      {graphType === 'impact' && <ImpactGraphView api={api} run={run} busy={busy} graph={graph} setGraph={setGraph}/>}
+      {graphType === 'impact' && <>
+        <ImpactGraphView api={api} run={run} busy={busy} graph={graph} setGraph={setGraph}/>
+        {structureAnalysis && <div className="kgr-structure-analysis">
+          {structureAnalysis.components && <section className="panel">
+            <div className="panel-heading"><div><span className="eyebrow">COMPONENTS</span>
+              <h2>{structureAnalysis.components.total_components} connected components</h2></div></div>
+            <div className="cluster-grid">{(structureAnalysis.components.components || []).slice(0, 10).map(c =>
+              <div key={c.id} className="cluster-card">
+                <div className="cluster-header"><strong>Component {c.id}</strong><span className="badge">{c.size}</span></div>
+                <div className="cluster-members">{(c.members || []).slice(0, 3).map(m =>
+                  <span key={m} className="cluster-member" title={m}>{shortId(m, 20)}</span>
+                )}{c.members?.length > 3 && <span className="cluster-more">+{c.members.length - 3}</span>}</div>
+              </div>
+            )}</div>
+          </section>}
+          {structureAnalysis.degDist && <section className="panel">
+            <div className="panel-heading"><div><span className="eyebrow">DEGREE DISTRIBUTION</span>
+              <h2>{structureAnalysis.degDist.total_nodes} nodes</h2></div></div>
+            <div className="degree-histogram">{Object.entries(structureAnalysis.degDist.distribution || {}).slice(0, 20).map(([deg, cnt]) =>
+              <div key={deg} className="degree-bar-row">
+                <span className="degree-label">deg {deg}</span>
+                <span className="degree-bar"><i style={{width: `${Math.min(100, (cnt / Math.max(...Object.values(structureAnalysis.degDist.distribution))) * 100)}%`}}/></span>
+                <strong>{cnt}</strong>
+              </div>
+            )}</div>
+          </section>}
+          {structureAnalysis.kcore && <section className="panel">
+            <div className="panel-heading"><div><span className="eyebrow">K-CORE</span>
+              <h2>Max k-core: {structureAnalysis.kcore.max_k}</h2></div></div>
+            <div className="kcore-summary">{Object.entries(structureAnalysis.kcore.cores || {}).sort((a, b) => Number(b[0]) - Number(a[0])).slice(0, 8).map(([k, members]) =>
+              <div key={k} className="kcore-row">
+                <span className="badge">{k}-core</span><strong>{members.length} nodes</strong>
+              </div>
+            )}</div>
+          </section>}
+        </div>}
+      </>}
 
       {graphType === 'similarity' && <SimilarityGraphView api={api} run={run} busy={busy} graph={graph} onHighlightPath={setHighlightedPath}/>}
+
+      {graphType === 'diff' && <GraphDiff api={api} run={run} busy={busy}/>}
+      {graphType === 'health' && <GraphHealth api={api} run={run} busy={busy}/>}
     </div>
 
+    {selectedEdge && !selected && <EdgeInspector edge={selectedEdge}
+      sourceNode={(graph.nodes || []).find(n => n.id === selectedEdge.from_id)}
+      targetNode={(graph.nodes || []).find(n => n.id === selectedEdge.to_id)}
+      onClose={() => setSelectedEdge(null)}
+      onNavigate={n => { if (n) { setSelectedEdge(null); inspect(n); }}}/>}
+    <Minimap nodes={displayedNodes} selectedId={selected?.id}/>
     {showBlast && blastRadius && <BlastRadiusView data={blastRadius} onClose={() => setShowBlast(false)}/>}
+    {contextMenu && <ContextMenu x={contextMenu.x} y={contextMenu.y} items={contextMenu.items} onClose={() => setContextMenu(null)}/>}
+    <EventFeed events={graphEvents} status={wsStatus}
+      onPause={() => {}} onResume={() => {}} onClear={() => setGraphEvents([])}
+      onNavigate={(e) => {
+        if (e.data?.canonical_id) {
+          const node = (graph.nodes || []).find(n => n.id === e.data.canonical_id);
+          if (node) run(() => inspect(node));
+        }
+      }}
+      collapsed={eventFeedCollapsed} onToggle={() => setEventFeedCollapsed(v => !v)}/>
   </div>;
 }

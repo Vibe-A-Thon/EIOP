@@ -56,6 +56,7 @@ async def test_mcp_streamable_http_searches_the_authenticated_api(monkeypatch, t
         "search", "entity", "path", "impact", "lineage", "trace_impact",
         "code_symbol", "jira_issue", "evidence", "query",
         "run_agent", "list_agents", "agent_explanation",
+        "neighbors", "document",
     }
     assert expected_tools == {tool.name for tool in listed_tools.tools}
     assert not result.isError

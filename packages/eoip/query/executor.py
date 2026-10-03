@@ -81,6 +81,7 @@ def _search(store: GraphStore, plan: QueryPlan) -> GraphResult:
     raw_query = plan.anchors[0].strip()
     filters = dict(plan.filters or {})
     label = filters.pop("label", None)
+    include_deleted = bool(filters.pop("include_deleted", False))
     if (
         len(raw_query) < 2
         and not _ISSUE_KEY_EXACT.fullmatch(raw_query)
@@ -94,10 +95,15 @@ def _search(store: GraphStore, plan: QueryPlan) -> GraphResult:
                 )
             ]
         )
-    exact = _exact_matches(store, raw_query, label)
+    exact = _exact_matches(store, raw_query, label, include_deleted=include_deleted)
     seen = {v["canonical_id"] for v in exact}
     query = raw_query.casefold()
-    candidates = store.find_vertices(label=label, filters=filters or None, limit=5000)
+    candidates = store.find_vertices(
+        label=label,
+        filters=filters or None,
+        limit=5000,
+        include_deleted=include_deleted,
+    )
     matches = [
         v
         for v in candidates
@@ -125,19 +131,32 @@ def _search(store: GraphStore, plan: QueryPlan) -> GraphResult:
     )
 
 
-def _exact_matches(store: GraphStore, raw_query: str, label: str | None) -> list[dict]:
+def _exact_matches(
+    store: GraphStore,
+    raw_query: str,
+    label: str | None,
+    *,
+    include_deleted: bool = False,
+) -> list[dict]:
     found: list[dict] = []
     seen: set[str] = set()
     for item_label, key in _EXACT_PROPERTY_LOOKUPS:
         if label is not None and label != item_label:
             continue
-        for vertex in store.find_vertex_by_property(item_label, key, raw_query):
-            if vertex["canonical_id"] not in seen and not vertex["properties"].get("deleted_at"):
+        for vertex in store.find_vertex_by_property(
+            item_label, key, raw_query, include_deleted=include_deleted
+        ):
+            if vertex["canonical_id"] not in seen:
                 seen.add(vertex["canonical_id"])
                 found.append(vertex)
     if "/" in raw_query and label in (None, "File"):
-        for vertex in store.find_vertices(label="File", filters={"path": raw_query}, limit=10):
-            if vertex["canonical_id"] not in seen and not vertex["properties"].get("deleted_at"):
+        for vertex in store.find_vertices(
+            label="File",
+            filters={"path": raw_query},
+            limit=10,
+            include_deleted=include_deleted,
+        ):
+            if vertex["canonical_id"] not in seen:
                 seen.add(vertex["canonical_id"])
                 found.append(vertex)
     return found

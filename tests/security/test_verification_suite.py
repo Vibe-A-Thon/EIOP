@@ -28,7 +28,7 @@ INJECTION_TEXT = (
 
 EXPECTED_MCP_TOOLS = frozenset(
     {"search", "entity", "path", "impact", "lineage", "trace_impact", "code_symbol", "jira_issue", "evidence", "query",
-     "run_agent", "list_agents", "agent_explanation"}
+     "run_agent", "list_agents", "agent_explanation", "neighbors", "document"}
 )
 FORBIDDEN_TOOL_PREFIXES = ("create", "update", "delete", "write", "mutate")
 

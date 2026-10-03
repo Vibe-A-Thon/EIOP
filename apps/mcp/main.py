@@ -25,14 +25,33 @@ def create_app():
     )
 
     async def call(method, path, **kwargs):
+        from mcp.shared.exceptions import McpError
+        from mcp.types import ErrorData
+
         async with httpx.AsyncClient(
             base_url=os.getenv("EOIP_API_URL", "http://eoip-api:8000"),
             timeout=60,
             headers={"Authorization": f"Bearer {token}"},
             trust_env=False,
         ) as client:
-            response = await client.request(method, path, **kwargs)
-            response.raise_for_status()
+            try:
+                response = await client.request(method, path, **kwargs)
+                response.raise_for_status()
+            except httpx.HTTPStatusError as exc:
+                try:
+                    detail = exc.response.json().get("detail", exc.response.text)
+                except ValueError:
+                    detail = exc.response.text
+                raise McpError(
+                    ErrorData(
+                        code=exc.response.status_code,
+                        message=f"EOIP API error {exc.response.status_code}: {detail}",
+                    )
+                ) from exc
+            except httpx.HTTPError as exc:
+                raise McpError(
+                    ErrorData(code=503, message=f"EOIP API unavailable: {type(exc).__name__}")
+                ) from exc
             return response.json()
 
     @mcp.tool()
@@ -123,6 +142,30 @@ def create_app():
             "GET",
             "/api/v1/agents/runs/" + quote(run_id, safe="") + "/explanation",
         )
+
+    @mcp.tool()
+    async def neighbors(
+        canonical_id: str,
+        max_depth: int = 1,
+        result_limit: int = 50,
+    ) -> dict:
+        """Return the bounded direct neighborhood of an entity with evidence."""
+        return await call(
+            "POST",
+            "/api/v1/neighborhood",
+            json={
+                "canonical_id": canonical_id,
+                "max_depth": max_depth,
+                "result_limit": result_limit,
+            },
+        )
+
+    @mcp.tool()
+    async def document(canonical_id: str) -> dict:
+        """Read a knowledge document/space entity and its contained sections."""
+        from urllib.parse import quote
+
+        return await call("GET", "/api/v1/entities/" + quote(canonical_id, safe=""))
 
     @mcp.tool()
     async def code_symbol(qualified_name: str) -> dict:

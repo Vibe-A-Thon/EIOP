@@ -60,7 +60,7 @@ test('login, search, trace graph evidence, and administer persisted data', async
   await page.getByRole('button', {name: 'Load DLQ'}).click();
   await expect(page.getByText('Issue key is required')).toBeVisible();
   await expect(page.getByText('missing-key-record')).toBeVisible();
-  await expect(page.getByRole('button', {name: 'Replay'})).toBeVisible();
+  await expect(page.getByRole('button', {name: 'Replay', exact: true})).toBeVisible();
   await expect(page.getByText('b'.repeat(64))).toHaveCount(0);
   expect(errors).toEqual([]);
 });

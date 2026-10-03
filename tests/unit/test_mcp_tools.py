@@ -60,6 +60,7 @@ def test_mcp_exposes_read_only_lineage_using_the_shared_api(monkeypatch):
         "search", "entity", "path", "impact", "lineage", "trace_impact",
         "code_symbol", "jira_issue", "evidence", "query",
         "run_agent", "list_agents", "agent_explanation",
+        "neighbors", "document",
     }
     assert expected_tools == set(tools)
     result = asyncio.run(

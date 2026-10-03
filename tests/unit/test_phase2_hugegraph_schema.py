@@ -95,6 +95,29 @@ def test_hugegraph_request_timeout_uses_active_traversal_deadline():
     assert 0 < store.client.timeout <= 10.0
 
 
+def test_hugegraph_exact_property_lookup_serializes_json_filter():
+    store = HugeGraphStore.__new__(HugeGraphStore)
+    vertex = {
+        "id": "eoip-work-item",
+        "label": "WorkItem",
+        "properties": {"canonical_id": "urn:eoip:work:item:jira:EOIP-1", "issue_key": "EOIP-1"},
+    }
+    requests = []
+
+    def pages(kind, params=None):
+        requests.append((kind, params))
+        yield vertex
+
+    store._pages = pages
+
+    result = store.find_vertex_by_property("WorkItem", "issue_key", "EOIP-1")
+
+    assert result == [store._vertex(vertex)]
+    assert requests == [
+        ("vertices", {"label": "WorkItem", "properties": '{"issue_key":"EOIP-1"}'})
+    ]
+
+
 @pytest.mark.req("FR-INGEST-003")
 def test_hugegraph_edge_upsert_updates_matching_edge_key_instead_of_duplicating():
     store = HugeGraphStore.__new__(HugeGraphStore)

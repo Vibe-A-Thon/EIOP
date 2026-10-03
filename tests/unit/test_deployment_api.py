@@ -188,3 +188,106 @@ def test_running_ingestion_job_cannot_be_cancelled(monkeypatch, tmp_path):
 
     assert response.status_code == 409
     assert response.json()["detail"] == "Running jobs cannot be cancelled safely"
+
+
+def test_entity_tombstone_is_hidden_searchable_on_request_and_reactivated(
+    monkeypatch, tmp_path
+):
+    store = MemoryGraphStore()
+    store.close = lambda: None
+    canonical_id = "urn:test:item:tombstone-1"
+    store.upsert_vertex(
+        "WorkItem",
+        {
+            "canonical_id": canonical_id,
+            "issue_key": "TEST-DEL-1",
+            "summary": "Tombstone lifecycle",
+        },
+    )
+    monkeypatch.setenv("EOIP_API_TOKEN", "test-token-with-at-least-24-characters")
+    monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
+    monkeypatch.setattr(main, "create_store", lambda: store)
+    api = TestClient(main.create_app())
+    headers = {"Authorization": "Bearer test-token-with-at-least-24-characters"}
+
+    deleted = api.post(
+        f"/api/v1/admin/entities/{canonical_id}/delete",
+        headers=headers,
+    )
+    assert deleted.status_code == 200
+    assert deleted.json()["status"] == "DELETED"
+    assert deleted.json()["deleted_at"].endswith("Z")
+
+    assert api.get(f"/api/v1/entities/{canonical_id}", headers=headers).status_code == 404
+    visible_deleted = api.get(
+        f"/api/v1/entities/{canonical_id}?include_deleted=true",
+        headers=headers,
+    )
+    assert visible_deleted.status_code == 200
+    assert visible_deleted.json()["entity"]["properties"]["deleted_at"]
+
+    normal_search = api.get("/api/v1/search?q=TEST-DEL-1", headers=headers)
+    deleted_search = api.get(
+        "/api/v1/search?q=TEST-DEL-1&include_deleted=true",
+        headers=headers,
+    )
+    assert normal_search.status_code == 200
+    assert normal_search.json()["nodes"] == []
+    assert [node["id"] for node in deleted_search.json()["nodes"]] == [canonical_id]
+
+    repeated = api.post(
+        f"/api/v1/admin/entities/{canonical_id}/delete",
+        headers=headers,
+    )
+    assert repeated.status_code == 200
+    assert repeated.json()["status"] == "ALREADY_DELETED"
+
+    store.upsert_vertex(
+        "WorkItem",
+        {
+            "canonical_id": canonical_id,
+            "issue_key": "TEST-DEL-1",
+            "summary": "Reappeared source record",
+        },
+    )
+    reappeared = api.get(f"/api/v1/entities/{canonical_id}", headers=headers)
+    assert reappeared.status_code == 200
+    assert "deleted_at" not in reappeared.json()["entity"]["properties"]
+    assert reappeared.json()["entity"]["properties"]["summary"] == "Reappeared source record"
+
+
+def test_admin_mutation_fails_closed_when_audit_sink_is_unavailable(monkeypatch, tmp_path):
+    def fail_audit(*_args, **_kwargs):
+        raise OSError("audit volume unavailable")
+
+    monkeypatch.setattr(main.AuditSink, "emit", fail_audit)
+    api = client(monkeypatch, tmp_path)
+
+    response = api.post(
+        "/api/v1/admin/demo",
+        headers={"Authorization": "Bearer test-token-with-at-least-24-characters"},
+    )
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == (
+        "Audit service unavailable; admin mutation was not executed"
+    )
+    assert not list((tmp_path / "jobs").glob("*.json"))
+
+
+def test_validation_refusal_is_persisted_as_policy_denial(monkeypatch, tmp_path):
+    api = client(monkeypatch, tmp_path)
+
+    response = api.post(
+        "/api/v1/admin/ingestion/replay",
+        headers={"Authorization": "Bearer test-token-with-at-least-24-characters"},
+        json={"source_system": "jira", "event_ids": ["not-a-hash"]},
+    )
+
+    assert response.status_code == 422
+    records = [
+        json.loads(line)
+        for line in (tmp_path / "audit" / "audit.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    assert records[-1]["event_type"] == "policy_denial"
+    assert records[-1]["reason_code"] == "http_422"

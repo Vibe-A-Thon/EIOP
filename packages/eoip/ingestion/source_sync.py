@@ -16,6 +16,7 @@ from eoip.connectors.sync import SyncBatch
 from eoip.contracts.source_event import SourceEvent, SourceEventV2, upgrade_source_event, utc_now_iso
 from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
 from eoip.graph.store import GraphStore
+from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
 from eoip.jobs import write_json
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
@@ -355,33 +356,18 @@ class SourceSyncIngestionService:
                     )
 
     def _write_dlq(self, event: SourceEvent | SourceEventV2, error: str, correlation_id: str) -> None:
-        from pathlib import Path
-
-        root = Path(self.dlq_root)
-        root.mkdir(parents=True, exist_ok=True)
-        destination = root / f"{event.event_id}.json"
-        if destination.exists():
-            return
-        destination.write_text(
-            json.dumps(
-                {
-                    "event_id": event.event_id,
-                    "source_system": event.source_system,
-                    "source_record_id": event.source_record_id,
-                    "payload_hash": event.payload_hash,
-                    "error_category": "mapping_error",
-                    "error": error,
-                    "correlation_id": correlation_id,
-                    "replay_ref": str(
-                        self.capture.root / event.source_system / f"{event.event_id}.json"
-                    ),
-                },
-                sort_keys=True,
-                indent=2,
+        write_dlq_record(
+            self.dlq_root,
+            event,
+            error,
+            stage="mapping",
+            error_category="mapping_error",
+            correlation_id=correlation_id,
+            replay_ref=str(
+                self.capture.root / event.source_system / f"{event.event_id}.json"
             ),
-            encoding="utf-8",
+            extra={"registry_source_id": self.registry_source_id},
         )
-
 
 def run_configured_source_sync(
     source_system: str,

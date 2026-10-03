@@ -21,7 +21,6 @@ from eoip.ontology.manifest import (
     INDEXES,
     PROPERTY_KEYS,
     VERTEX_LABELS,
-    edge_endpoints_valid,
 )
 
 
@@ -223,8 +222,9 @@ class HugeGraphStore:
         return self.get_vertex(self.vertex_id(canonical_id))
 
     def upsert_vertex(self, label, properties):
-        if label not in VERTEX_LABELS:
-            raise ValueError(f"Unknown vertex label: {label}")
+        from eoip.validation.gate import check_vertex
+
+        check_vertex(label, properties)
         required = VERTEX_LABELS[label][1]
         if any(properties.get(k) is None for k in required):
             raise ValueError(f"Missing required properties for {label}: {required}")
@@ -239,6 +239,8 @@ class HugeGraphStore:
                     raise ValueError("Canonical identity cannot change vertex type")
                 if "first_seen" in existing["properties"]:
                     props["first_seen"] = existing["properties"]["first_seen"]
+                if existing["properties"].get("deleted_at") and "deleted_at" not in properties:
+                    props["deleted_at"] = ""
                 raw = self._request(
                     "PUT",
                     "/graph/vertices/" + self._id_path(vid, vertex=True),
@@ -262,26 +264,31 @@ class HugeGraphStore:
             if not page:
                 break
 
-    def find_vertex_by_property(self, label, key, value, limit=10):
+    def find_vertex_by_property(
+        self, label, key, value, limit=10, include_deleted=False
+    ):
         if label not in VERTEX_LABELS:
             raise ValueError("Unknown vertex label")
         result = []
-        for raw in self._pages("vertices", {"label": label, "properties": f"{key}:{value}"}):
+        property_filter = json.dumps({key: value}, separators=(",", ":"))
+        for raw in self._pages("vertices", {"label": label, "properties": property_filter}):
             props = raw["properties"]
-            if props.get("deleted_at") or props.get(key) != value:
+            if (not include_deleted and props.get("deleted_at")) or props.get(key) != value:
                 continue
             result.append(self._vertex(raw))
             if len(result) >= limit:
                 break
         return result
 
-    def find_vertices(self, label=None, filters=None, limit=100):
+    def find_vertices(self, label=None, filters=None, limit=100, include_deleted=False):
         if label is not None and label not in VERTEX_LABELS:
             raise ValueError("Unknown vertex label")
         result = []
         for raw in self._pages("vertices", {"label": label} if label else None):
             props = raw["properties"]
-            if props.get("deleted_at") or (filters and any(props.get(k) != v for k, v in filters.items())):
+            if (not include_deleted and props.get("deleted_at")) or (
+                filters and any(props.get(k) != v for k, v in filters.items())
+            ):
                 continue
             result.append(self._vertex(raw))
             if len(result) >= limit:
@@ -296,9 +303,12 @@ class HugeGraphStore:
         )
 
     def upsert_edge(self, label, out_v, in_v, properties):
+        from eoip.validation.gate import check_edge
+
         source, target = self.get_vertex(out_v), self.get_vertex(in_v)
-        if not source or not target or not edge_endpoints_valid(label, source["label"], target["label"]):
+        if not source or not target:
             raise ValueError(f"Invalid endpoint types for {label}")
+        check_edge(label, source["label"], target["label"], properties)
         props = self._properties(properties)
         props.setdefault(
             "edge_key",
@@ -313,7 +323,7 @@ class HugeGraphStore:
                     "PUT",
                     "/graph/edges/" + self._id_path(existing["eid"]),
                     params={"action": "append"},
-                    json={"properties": props},
+                    json={"properties": {key: value for key, value in props.items() if key != "edge_key"}},
                 )
             else:
                 raw = self._request(

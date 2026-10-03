@@ -62,7 +62,12 @@ class GraphStore(Protocol):
     def get_vertex_by_canonical_id(self, canonical_id: str) -> Vertex | None: ...
 
     def find_vertex_by_property(
-        self, label: str, key: str, value: Any, limit: int = 10
+        self,
+        label: str,
+        key: str,
+        value: Any,
+        limit: int = 10,
+        include_deleted: bool = False,
     ) -> list[Vertex]: ...
 
     def find_vertices(
@@ -70,6 +75,7 @@ class GraphStore(Protocol):
         label: str | None = None,
         filters: dict[str, Any] | None = None,
         limit: int = 100,
+        include_deleted: bool = False,
     ) -> list[Vertex]: ...
 
     def count_vertices(self, label: str | None = None) -> int: ...

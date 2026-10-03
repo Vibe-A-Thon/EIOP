@@ -407,6 +407,74 @@ class GraphMetricsEngine:
             "edge_label_count": len(EDGE_LABELS),
         }
 
+    def k_core_decomposition(self) -> dict[int, list[str]]:
+        """Find k-core subgraphs. Returns {k: [canonical_ids]}."""
+        out_adj, in_adj, node_map = self._build_adjacency()
+        all_nodes = set(out_adj.keys()) | set(in_adj.keys()) | set(node_map.keys())
+        if not all_nodes:
+            return {}
+        degree: dict[str, int] = {}
+        for n in all_nodes:
+            degree[n] = len(set(out_adj.get(n, [])) | set(in_adj.get(n, [])))
+        removed: set[str] = set()
+        core_number: dict[str, int] = {}
+        max_deg = max(degree.values()) if degree else 0
+        for k in range(max_deg + 1):
+            changed = True
+            while changed:
+                changed = False
+                for n in list(all_nodes - removed):
+                    live_neighbors = (set(out_adj.get(n, [])) | set(in_adj.get(n, []))) - removed
+                    if len(live_neighbors) < k:
+                        removed.add(n)
+                        core_number[n] = max(k - 1, 0)
+                        changed = True
+        for n in all_nodes - removed:
+            core_number[n] = max_deg
+        result: dict[int, list[str]] = {}
+        for node, k in core_number.items():
+            if k not in result:
+                result[k] = []
+            result[k].append(node)
+        return result
+
+    def connected_components(self) -> list[list[str]]:
+        """BFS component detection on undirected view. Returns list of components."""
+        out_adj, in_adj, node_map = self._build_adjacency()
+        all_nodes = set(out_adj.keys()) | set(in_adj.keys()) | set(node_map.keys())
+        if not all_nodes:
+            return []
+        visited: set[str] = set()
+        components: list[list[str]] = []
+        for start in all_nodes:
+            if start in visited:
+                continue
+            component: list[str] = []
+            queue = deque([start])
+            visited.add(start)
+            while queue:
+                node = queue.popleft()
+                component.append(node)
+                for nbr in set(out_adj.get(node, [])) | set(in_adj.get(node, [])):
+                    if nbr not in visited:
+                        visited.add(nbr)
+                        queue.append(nbr)
+            components.append(component)
+        components.sort(key=len, reverse=True)
+        return components
+
+    def degree_distribution(self) -> dict[int, int]:
+        """Histogram of degree values. Returns {degree: count}."""
+        out_adj, in_adj, node_map = self._build_adjacency()
+        all_nodes = set(out_adj.keys()) | set(in_adj.keys()) | set(node_map.keys())
+        if not all_nodes:
+            return {}
+        dist: dict[int, int] = {}
+        for n in all_nodes:
+            deg = len(set(out_adj.get(n, [])) | set(in_adj.get(n, [])))
+            dist[deg] = dist.get(deg, 0) + 1
+        return dict(sorted(dist.items()))
+
     def graph_schema(self) -> dict[str, Any]:
         from eoip.ontology.manifest import (
             DOMAINS,

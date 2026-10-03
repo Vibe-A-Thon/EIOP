@@ -187,3 +187,59 @@ class AnomalyDetector:
 
         results.sort(key=lambda r: -r.score)
         return results
+
+    def missing_expected_edges(self) -> list[AnomalyResult]:
+        """Detect entity pairs that share neighbours but lack a direct edge.
+
+        Uses common-neighbour count: if two nodes share >= 3 neighbours
+        yet are not directly connected, the missing edge is flagged.
+        """
+        vertices = self._store.find_vertices(limit=50_000)
+        if not vertices:
+            return []
+
+        vid_to_cid: dict[str, str] = {}
+        adj: dict[str, set[str]] = defaultdict(set)
+
+        for v in vertices:
+            vid_to_cid[v["vid"]] = v["properties"]["canonical_id"]
+
+        for v in vertices:
+            for edge in self._store.edges_from(v["vid"]):
+                tgt = edge["in_v"]
+                if tgt in vid_to_cid:
+                    adj[v["vid"]].add(tgt)
+                    adj[tgt].add(v["vid"])
+
+        results: list[AnomalyResult] = []
+        vids = list(vid_to_cid.keys())
+        seen: set[tuple[str, str]] = set()
+
+        for i, u in enumerate(vids):
+            for j in range(i + 1, len(vids)):
+                w = vids[j]
+                if w in adj.get(u, set()):
+                    continue
+                common = adj.get(u, set()) & adj.get(w, set())
+                if len(common) >= 3:
+                    pair = tuple(sorted([vid_to_cid[u], vid_to_cid[w]]))
+                    if pair in seen:
+                        continue
+                    seen.add(pair)
+                    results.append(
+                        AnomalyResult(
+                            canonical_id=vid_to_cid[u],
+                            anomaly_type="missing_edge",
+                            score=float(len(common)),
+                            details={
+                                "other_entity": vid_to_cid[w],
+                                "common_neighbor_count": len(common),
+                                "common_neighbors": sorted(
+                                    vid_to_cid.get(v, v) for v in common
+                                ),
+                            },
+                        )
+                    )
+
+        results.sort(key=lambda r: -r.score)
+        return results

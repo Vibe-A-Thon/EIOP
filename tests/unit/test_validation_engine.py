@@ -49,6 +49,25 @@ def test_orphan_vertex_detected():
     assert orphans
 
 
+def test_tombstoned_vertex_with_active_edge_reports_deletion_conflict():
+    store = _seeded_store()
+    assert store.tombstone_vertex("urn:test:item:1")
+
+    result = ValidationEngine(store).run()
+
+    conflicts = [f for f in result["findings"] if f["rule"] == "deletion_conflict"]
+    assert conflicts == [
+        {
+            "canonical_id": "urn:test:item:1",
+            "rule": "deletion_conflict",
+            "severity": "WARNING",
+            "detail": "Tombstoned entity is still referenced by an active relationship",
+        }
+    ]
+    assert result["valid"] is True
+    assert result["vertices_checked"] == 2
+
+
 def test_quality_metrics_computation():
     vertices = [
         {"canonical_id": "v1", "label": "WorkItem", "vid": "1", "properties": {"ingestion_run_id": "run-1"}},

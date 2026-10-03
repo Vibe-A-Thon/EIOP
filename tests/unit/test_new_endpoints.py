@@ -3,6 +3,9 @@
 import json
 
 from eoip.connectors.jira_json import JiraJsonConnector
+from eoip.connectors.registry import SourceRegistry
+from eoip.contracts.source_event import SourceEventV2
+from eoip.contracts.source_registry import SourceRegistryEntry
 from eoip.graph.memory import MemoryGraphStore
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
 from fastapi.testclient import TestClient
@@ -63,8 +66,9 @@ def test_dlq_replay_queues_the_captured_source_event(tmp_path):
 
     assert response.status_code == 202
     job = json.loads((tmp_path / "jobs" / f"{response.json()['job_id']}.json").read_text())
-    assert job["kind"] == "JIRA_JSON"
-    assert job["payload"]["document"] == [{"fields": {"summary": "Missing key"}}]
+    assert job["kind"] == "REPLAY"
+    assert job["payload"]["source_system"] == "jira"
+    assert job["payload"]["event_ids"] == [event_id]
 
 
 def test_dlq_replay_rejects_invalid_or_missing_event_ids(tmp_path):
@@ -74,6 +78,96 @@ def test_dlq_replay_rejects_invalid_or_missing_event_ids(tmp_path):
 
     assert client.post("/api/v1/admin/dlq/../escape/replay", headers=headers).status_code == 404
     assert client.post(f"/api/v1/admin/dlq/{'0' * 64}/replay", headers=headers).status_code == 404
+
+
+def test_admin_replay_endpoint_queues_replay_job(tmp_path):
+    app = _make_api_app(MemoryGraphStore(), tmp_path)
+    client = TestClient(app)
+    headers = {"Authorization": "Bearer test-token-minimum-24-characters!!"}
+
+    response = client.post(
+        "/api/v1/admin/ingestion/replay",
+        headers=headers,
+        json={"source_system": "jira", "event_ids": ["a" * 64]},
+    )
+
+    assert response.status_code == 202
+    job = json.loads(
+        (tmp_path / "jobs" / f"{response.json()['job_id']}.json").read_text(encoding="utf-8")
+    )
+    assert job["kind"] == "REPLAY"
+    assert job["payload"]["event_ids"] == ["a" * 64]
+
+
+def test_admin_replay_endpoint_rejects_malformed_event_id(tmp_path):
+    app = _make_api_app(MemoryGraphStore(), tmp_path)
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/v1/admin/ingestion/replay",
+        headers={"Authorization": "Bearer test-token-minimum-24-characters!!"},
+        json={"source_system": "jira", "event_ids": ["not-a-hash"]},
+    )
+
+    assert response.status_code == 422
+
+
+def test_v2_dlq_replay_routes_through_registered_source(tmp_path):
+    event = SourceEventV2(
+        event_id="b" * 64,
+        source_system="confluence",
+        source_instance_id="confluence-prod",
+        source_record_id="page:broken",
+        event_time="2026-10-03T00:00:00Z",
+        content_hash="c" * 64,
+        payload={"id": "broken"},
+    )
+    raw_dir = tmp_path / "raw" / "confluence"
+    dlq_dir = tmp_path / "dlq"
+    raw_dir.mkdir(parents=True)
+    dlq_dir.mkdir(parents=True)
+    (raw_dir / f"{event.event_id}.json").write_text(
+        event.model_dump_json(), encoding="utf-8"
+    )
+    (dlq_dir / f"{event.event_id}.json").write_text(
+        json.dumps(
+            {
+                "event_id": event.event_id,
+                "source_system": "confluence",
+                "payload_hash": event.payload_hash,
+                "registry_source_id": "confluence-prod",
+                "stage": "mapping",
+                "error_category": "mapping_error",
+            }
+        ),
+        encoding="utf-8",
+    )
+    SourceRegistry(tmp_path / "state" / "source-registry.json").create(
+        SourceRegistryEntry(
+            source_id="confluence-prod",
+            source_type="confluence",
+            name="Production Confluence",
+            base_url="https://confluence.example.test",
+        )
+    )
+    client = TestClient(_make_api_app(MemoryGraphStore(), tmp_path))
+
+    response = client.post(
+        f"/api/v1/admin/dlq/{event.event_id}/replay",
+        headers={"Authorization": "Bearer test-token-minimum-24-characters!!"},
+    )
+
+    assert response.status_code == 202
+    job = json.loads(
+        (tmp_path / "jobs" / f"{response.json()['job_id']}.json").read_text(encoding="utf-8")
+    )
+    assert job["kind"] == "SOURCE_OPERATION"
+    assert job["payload"] == {
+        "source_id": "confluence-prod",
+        "operation": "REPLAY",
+        "event_ids": [event.event_id],
+        "dry_run": False,
+    }
 
 
 def test_gitlab_ingestion_endpoint_accepts_request(tmp_path):

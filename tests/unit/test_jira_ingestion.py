@@ -59,6 +59,31 @@ def test_malformed_record_is_captured_and_quarantined_without_graph_mutation(tmp
     assert len(list((tmp_path / "dlq").glob("*.json"))) == 1
 
 
+def test_dlq_record_uses_the_unified_envelope(tmp_path) -> None:
+    """FR-INGEST-005: every service writes the same DLQ envelope fields."""
+    service, _store = _service(tmp_path)
+
+    service.ingest({"issues": [{"fields": {"summary": "No key"}}]})
+
+    records = list((tmp_path / "dlq").glob("*.json"))
+    assert len(records) == 1
+    record = json.loads(records[0].read_text(encoding="utf-8"))
+    for field in (
+        "event_id",
+        "source_system",
+        "source_record_id",
+        "payload_hash",
+        "stage",
+        "error_category",
+        "error",
+    ):
+        assert field in record, f"DLQ record missing unified field: {field}"
+    assert record["source_system"] == "jira"
+    assert record["stage"] == "mapping"
+    assert record["error_category"] == "mapping_error"
+    assert record["replay_ref"]
+
+
 def test_dry_run_validates_without_capture_or_graph_writes(tmp_path) -> None:
     service, store = _service(tmp_path)
     document = {"issues": [{"key": "EOIP-3", "fields": {"summary": "Dry run"}}]}

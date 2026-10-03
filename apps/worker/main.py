@@ -10,6 +10,7 @@ from threading import Thread
 from uuid import uuid4
 
 import httpx
+from eoip.audit.sink import AuditSink
 from eoip.connectors.errors import ConnectorError
 from eoip.connectors.gitlab_json import GitLabJsonConnector
 from eoip.connectors.jira_json import JiraJsonConnector
@@ -23,9 +24,10 @@ from eoip.ingestion.gitlab import GitLabIngestionService
 from eoip.ingestion.gitlab_rest import GitLabTemporalIngestionService, run_registered_gitlab_operation
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
 from eoip.ingestion.jira_rest import JiraTemporalIngestionService, run_registered_jira_operation
+from eoip.ingestion.replay import replay_captured_events
 from eoip.ingestion.source_sync import run_configured_source_sync, run_registered_source_operation
 from eoip.jobs import JobQueue, write_json
-from eoip.observability import configure_json_logging, log_audit_event
+from eoip.observability import configure_json_logging
 from eoip.runtime import create_store, data_root
 
 logger = logging.getLogger("eoip.worker")
@@ -52,6 +54,15 @@ def execute_job(store, root, job):
             root / "dlq",
         )
         return service.ingest(payload["document"], dry_run=payload.get("dry_run", False))
+    if job["kind"] == "REPLAY":
+        return replay_captured_events(
+            store,
+            root,
+            source_system=payload["source_system"],
+            event_ids=payload.get("event_ids"),
+            dry_run=payload.get("dry_run", False),
+            repository_id=payload.get("repository_id", "demo"),
+        )
     if job["kind"] in {"CONFLUENCE", "SERVICENOW"}:
         return run_configured_source_sync(
             job["kind"].lower(),
@@ -158,6 +169,7 @@ def main():
     signal.signal(signal.SIGTERM, stop)
     signal.signal(signal.SIGINT, stop)
     store, root = create_store(), data_root()
+    audit_sink = AuditSink(root / "audit")
 
     def heartbeat():
         while running:
@@ -260,7 +272,7 @@ def main():
                 reason_code=job.get("error"),
                 safe_summary=f"{job['kind']} job completed with status {job['status']}",
             )
-            log_audit_event(logger, audit, operation="ingestion", job_id=job["job_id"])
+            audit_sink.emit(audit, operation="ingestion", job_id=job["job_id"])
             logger.info(
                 "job.completed",
                 extra={

@@ -28,7 +28,12 @@ class ValidationEngine:
         started_at = utc_now_iso()
         findings: list[dict] = []
 
-        vertices = self._store.find_vertices(limit=self._vertex_limit)
+        all_vertices = self._store.find_vertices(
+            limit=self._vertex_limit,
+            include_deleted=True,
+        )
+        vertices = [item for item in all_vertices if not item["properties"].get("deleted_at")]
+        deleted_vertices = [item for item in all_vertices if item["properties"].get("deleted_at")]
         edges = self._store.find_edges(limit=self._edge_limit)
 
         for vertex in vertices:
@@ -38,6 +43,7 @@ class ValidationEngine:
             findings.extend(self._check_edge(edge))
 
         findings.extend(self._check_orphans(vertices, edges))
+        findings.extend(self._check_deletion_conflicts(deleted_vertices, edges))
 
         quality = QualityMetrics.compute(vertices, edges, findings)
 
@@ -48,7 +54,7 @@ class ValidationEngine:
             "findings": findings,
             "valid": not any(f["severity"] == "ERROR" for f in findings),
             "partial": len(vertices) >= self._vertex_limit or len(edges) >= self._edge_limit,
-            "vertices_checked": len(vertices),
+            "vertices_checked": len(all_vertices),
             "edges_checked": len(edges),
             "quality": quality.as_dict(),
         }
@@ -92,6 +98,25 @@ class ValidationEngine:
                 }
             )
         return findings
+
+    @staticmethod
+    def _check_deletion_conflicts(vertices: list[dict], edges: list[dict]) -> list[dict]:
+        active_edge_vertices = {
+            endpoint
+            for edge in edges
+            if edge["properties"].get("is_current") is not False
+            for endpoint in (edge["out_v"], edge["in_v"])
+        }
+        return [
+            {
+                "canonical_id": vertex["canonical_id"],
+                "rule": "deletion_conflict",
+                "severity": "WARNING",
+                "detail": "Tombstoned entity is still referenced by an active relationship",
+            }
+            for vertex in vertices
+            if vertex["vid"] in active_edge_vertices
+        ]
 
     def _check_edge(self, edge: dict) -> list[dict]:
         findings = []

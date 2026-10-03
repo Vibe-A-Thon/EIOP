@@ -90,17 +90,27 @@ async def check_mcp(headers, symbol):
     ):
         await session.initialize()
         tools = await session.list_tools()
-        assert {tool.name for tool in tools.tools} == {
+        expected_tools = {
             "search",
             "entity",
             "path",
             "impact",
             "lineage",
             "trace_impact",
+            "list_agents",
+            "run_agent",
+            "agent_explanation",
+            "neighbors",
+            "document",
             "code_symbol",
             "jira_issue",
             "evidence",
             "query",
+        }
+        actual_tools = {tool.name for tool in tools.tools}
+        assert actual_tools == expected_tools, {
+            "missing": sorted(expected_tools - actual_tools),
+            "unexpected": sorted(actual_tools - expected_tools),
         }
         result = await session.call_tool("search", {"q": "EOIP-1"})
         assert not result.isError

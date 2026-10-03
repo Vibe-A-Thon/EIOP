@@ -13,7 +13,7 @@ import logging
 import threading
 from typing import Any
 
-from eoip.ontology.manifest import EDGE_LABELS, VERTEX_LABELS, edge_endpoints_valid
+from eoip.ontology.manifest import EDGE_LABELS, VERTEX_LABELS
 
 log = logging.getLogger("eoip.graph")
 
@@ -54,20 +54,20 @@ class MemoryGraphStore:
     # -- vertices --------------------------------------------------------------
     def upsert_vertex(self, label: str, properties: dict) -> dict:
         with self._lock:
-            if label not in VERTEX_LABELS:
-                raise ValueError(f"unknown vertex label: {label}")
+            from eoip.validation.gate import check_vertex
+
+            check_vertex(label, properties)
             cid = properties.get("canonical_id")
-            if not cid:
-                raise ValueError(f"canonical_id is required for {label}")
-            _domain, required, _optional = VERTEX_LABELS[label]
-            missing = [k for k in required if k != "canonical_id" and properties.get(k) is None]
-            if missing:
-                log.warning("missing required properties for %s: %s (canonical_id=%s)", label, missing, cid)
             existing = self._vids.get(cid)
             now = properties.get("modified_at")
             if existing is not None:
                 props = self._vertices[existing]["properties"]
+                first_seen = props.get("first_seen")
                 props.update({k: v for k, v in properties.items() if v is not None})
+                if first_seen is not None:
+                    props["first_seen"] = first_seen
+                if "deleted_at" not in properties:
+                    props.pop("deleted_at", None)
                 if now:
                     props["modified_at"] = now
                 return self._vertices[existing]
@@ -90,13 +90,18 @@ class MemoryGraphStore:
         return self._vertices.get(vid) if vid else None
 
     def find_vertex_by_property(
-        self, label: str, key: str, value: Any, limit: int = 10
+        self,
+        label: str,
+        key: str,
+        value: Any,
+        limit: int = 10,
+        include_deleted: bool = False,
     ) -> list[dict]:
         out = []
         for rec in self._vertices.values():
             if rec["label"] != label or rec["properties"].get(key) != value:
                 continue
-            if rec["properties"].get("deleted_at"):
+            if not include_deleted and rec["properties"].get("deleted_at"):
                 continue
             out.append(rec)
             if len(out) >= limit:
@@ -108,6 +113,7 @@ class MemoryGraphStore:
         label: str | None = None,
         filters: dict[str, Any] | None = None,
         limit: int = 100,
+        include_deleted: bool = False,
     ) -> list[dict]:
         out = []
         for rec in self._vertices.values():
@@ -116,7 +122,7 @@ class MemoryGraphStore:
             props = rec["properties"]
             if filters and any(props.get(k) != v for k, v in filters.items()):
                 continue
-            if props.get("deleted_at"):
+            if not include_deleted and props.get("deleted_at"):
                 continue
             out.append(rec)
             if len(out) >= limit:
@@ -129,14 +135,15 @@ class MemoryGraphStore:
     # -- edges ---------------------------------------------------------------
     def upsert_edge(self, label: str, out_v: str, in_v: str, properties: dict) -> dict:
         with self._lock:
+            from eoip.validation.gate import check_edge
+
             if label not in EDGE_LABELS:
                 raise ValueError(f"unknown edge label: {label}")
             out_vid = self._vids.get(out_v, out_v)
             in_vid = self._vids.get(in_v, in_v)
             out_rec = self._vertices[out_vid]
             in_rec = self._vertices[in_vid]
-            if not edge_endpoints_valid(label, out_rec["label"], in_rec["label"]):
-                raise ValueError(f"invalid endpoints for {label}: {out_rec['label']} -> {in_rec['label']}")
+            check_edge(label, out_rec["label"], in_rec["label"], properties)
             eid = properties.get("edge_key") or edge_key(
                 label, out_rec["canonical_id"], in_rec["canonical_id"], properties.get("fact_key", "")
             )

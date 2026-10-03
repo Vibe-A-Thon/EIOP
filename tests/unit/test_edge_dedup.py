@@ -97,6 +97,7 @@ def test_hugegraph_second_upsert_with_same_edge_key_does_not_post():
     posted = [entry for entry in requests if entry[0:2] == ("POST", "/graph/edges")]
     assert not posted, f"duplicate edge POSTed: {posted}"
     assert requests[0][0:2] == ("PUT", "/graph/edges/edge-1")
+    assert requests[0][2]["json"] == {"properties": {"fact_key": "f-1", "creation_status": "DETERMINISTIC"}}
 
 
 def test_hugegraph_upsert_without_edge_key_still_creates():

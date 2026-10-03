@@ -165,3 +165,52 @@ class SimilarityEngine:
 
         scores.sort(key=lambda s: -s.score)
         return scores[:limit]
+
+    def link_prediction(
+        self,
+        canonical_id: str,
+        algorithm: str = "common_neighbors",
+        limit: int = 10,
+    ) -> list[dict]:
+        """Predict missing edges from *canonical_id* using similarity scores.
+
+        Returns dicts with source_id, target_id, score, and algorithm.
+        Only non-adjacent pairs are returned.
+        """
+        root = self._store.get_vertex_by_canonical_id(canonical_id)
+        if root is None:
+            return []
+
+        adj = self._all_vertex_neighbors()
+        root_nbrs = adj.get(canonical_id, set())
+
+        predictions: list[dict] = []
+        for other_cid, other_nbrs in adj.items():
+            if other_cid == canonical_id or other_cid in root_nbrs:
+                continue
+            common = root_nbrs & other_nbrs
+            if not common:
+                continue
+
+            if algorithm == "jaccard":
+                union = root_nbrs | other_nbrs
+                score = len(common) / len(union) if union else 0.0
+            elif algorithm == "adamic_adar":
+                score = 0.0
+                for cn in common:
+                    deg = len(adj.get(cn, set()))
+                    if deg > 1:
+                        score += 1.0 / math.log(deg)
+            else:
+                score = float(len(common))
+
+            if score > 0.0:
+                predictions.append({
+                    "source_id": canonical_id,
+                    "target_id": other_cid,
+                    "score": round(score, 6),
+                    "algorithm": algorithm,
+                })
+
+        predictions.sort(key=lambda p: -p["score"])
+        return predictions[:limit]

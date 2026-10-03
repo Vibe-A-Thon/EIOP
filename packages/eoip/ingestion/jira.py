@@ -12,6 +12,7 @@ from eoip.connectors.jira_json import JiraJsonConnector
 from eoip.contracts.source_event import SourceEvent, SourceEventV2, utc_now_iso
 from eoip.graph.store import GraphStore
 from eoip.identity.resolver import merge_source_aliases, person_identity
+from eoip.ingestion.dlq import write_dlq_record
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
 
@@ -54,8 +55,14 @@ class JiraIngestionService:
 
     def ingest(self, document: object, *, dry_run: bool = False) -> dict:
         records = self.connector.source_records(document)
-        events = self.connector.events(records)
+        return self.ingest_events(self.connector.events(records), dry_run=dry_run)
+
+    def ingest_events(
+        self, events: list[SourceEvent], *, dry_run: bool = False
+    ) -> dict:
+        """Ingest already-captured events without regenerating their identity or timestamps."""
         run_id = str(uuid4())
+        self._run_id = run_id
         started_at = utc_now_iso()
         accepted = []
         rejected = []
@@ -279,15 +286,12 @@ class JiraIngestionService:
             )
 
     def _write_dlq(self, event: SourceEvent, error: str) -> None:
-        self.dlq_root.mkdir(parents=True, exist_ok=True)
-        destination = self.dlq_root / f"{event.event_id}.json"
-        record = {
-            "event_id": event.event_id,
-            "source_system": event.source_system,
-            "source_record_id": event.source_record_id,
-            "payload_hash": event.payload_hash,
-            "error": error,
-            "replay_ref": str(self.capture.root / event.source_system / f"{event.event_id}.json"),
-        }
-        if not destination.exists():
-            destination.write_text(json.dumps(record, sort_keys=True, indent=2), encoding="utf-8")
+        write_dlq_record(
+            self.dlq_root,
+            event,
+            error,
+            stage="mapping",
+            error_category="mapping_error",
+            run_id=getattr(self, "_run_id", None),
+            replay_ref=str(self.capture.root / event.source_system / f"{event.event_id}.json"),
+        )
