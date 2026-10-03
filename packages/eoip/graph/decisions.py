@@ -7,7 +7,7 @@ and links decisions to architecture/code/releases.
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from eoip.graph.store import GraphStore
 
@@ -77,7 +77,7 @@ def ingest_decision(
     ingestion_run_id: str = "manual",
 ) -> dict:
     """Create or update a Decision vertex with its alternatives and links."""
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     cid = f"urn:eoip:decision:{name.lower().replace(' ', '-')}"
 
     decision = store.upsert_vertex("Decision", {
@@ -112,7 +112,6 @@ def ingest_decision(
         target = store.get_vertex_by_canonical_id(entity_cid)
         if not target:
             continue
-        spec = ("DECIDES", target)
         if target["label"] in (s for s in ["File", "CodeSymbol", "Service", "APIService", "APIEndpoint", "Deployment", "Repository"]):
             store.upsert_edge("DECIDES", decision["vid"], target["vid"], {
                 "fact_key": f"decides:{cid}:{entity_cid}",

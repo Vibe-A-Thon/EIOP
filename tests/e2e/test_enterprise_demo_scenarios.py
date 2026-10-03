@@ -107,8 +107,11 @@ def test_demo_is_idempotent_and_analytics_have_useful_structure(tmp_path):
 
     metrics = GraphMetricsEngine(store)
     stats = metrics.graph_statistics()
-    assert stats["vertex_count"] >= 140
-    assert stats["edge_count"] >= 450
+    # Keep the gate bound to the deterministic one-commit Docker fixture.
+    # A developer checkout can contain additional Git history and therefore
+    # legitimately produce higher counts, but must not define the demo floor.
+    assert stats["vertex_count"] >= 110
+    assert stats["edge_count"] >= 300
     assert len(metrics.connected_components()) >= 1
     assert metrics.blast_radius("urn:eoip:code:api-service:northstar:checkout", 4).total_affected >= 8
 

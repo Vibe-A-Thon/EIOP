@@ -1,8 +1,9 @@
 """Tests for architecture conformance engine (G2-P7)."""
 
+from eoip.graph.conformance import ArchRule, RuleKind, check_conformance, compile_rule, parse_rules
 from eoip.graph.memory import MemoryGraphStore
-from eoip.graph.conformance import parse_rules, compile_rule, check_conformance, ArchRule, RuleKind
 from fastapi.testclient import TestClient
+
 from apps.api.app import create_app
 
 

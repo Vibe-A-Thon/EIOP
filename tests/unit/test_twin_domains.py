@@ -1,11 +1,18 @@
 """Tests for G2-P6 twin domain services: test intelligence, decisions, business intent, digital twin."""
 
+from eoip.graph.business_intent import (
+    ingest_capability,
+    ingest_objective,
+    intent_to_runtime_chain,
+    link_to_capability,
+    reverse_impact,
+)
+from eoip.graph.decisions import extract_decisions_from_document, find_decisions_for_entity, ingest_decision
 from eoip.graph.memory import MemoryGraphStore
-from eoip.graph.test_intelligence import map_tests_to_code, map_test_runs_to_builds, select_tests_for_changes
-from eoip.graph.decisions import ingest_decision, find_decisions_for_entity, extract_decisions_from_document
-from eoip.graph.business_intent import ingest_objective, ingest_capability, link_to_capability, reverse_impact, intent_to_runtime_chain
-from eoip.graph.twin import classify_facts, digital_thread_coverage, detect_missing_links
+from eoip.graph.test_intelligence import map_test_runs_to_builds, map_tests_to_code, select_tests_for_changes
+from eoip.graph.twin import classify_facts, detect_missing_links, digital_thread_coverage
 from fastapi.testclient import TestClient
+
 from apps.api.app import create_app
 
 
@@ -22,7 +29,7 @@ def _test_intelligence_store():
     store.upsert_edge("PART_OF_SUITE", tc["vid"], suite["vid"], {"fact_key": "suite:tc1:ts1"})
     run = store.upsert_vertex("TestRun", {"canonical_id": "urn:tr1", "name": "Run 1", "execution_status": "passed", "passed_count": 5, "failed_count": 0})
     store.upsert_edge("EXECUTED_IN", tc["vid"], run["vid"], {"fact_key": "exec:tc1:tr1"})
-    pipe = store.upsert_vertex("PipelineRun", {"canonical_id": "urn:pipe1", "name": "CI Build 42"})
+    store.upsert_vertex("PipelineRun", {"canonical_id": "urn:pipe1", "name": "CI Build 42"})
     return store
 
 
@@ -98,7 +105,7 @@ def test_ingest_decision_with_alternatives():
 
 def test_ingest_decision_with_linked_entities():
     store = MemoryGraphStore()
-    svc = store.upsert_vertex("Service", {"canonical_id": "urn:svc:auth", "service_id": "auth", "name": "Auth Service"})
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:auth", "service_id": "auth", "name": "Auth Service"})
     result = ingest_decision(store, "Auth Design", linked_entities=["urn:svc:auth"])
     assert len(result["linked_entities"]) == 1
     assert result["linked_entities"][0]["edge"] == "DECIDES"
@@ -106,7 +113,7 @@ def test_ingest_decision_with_linked_entities():
 
 def test_find_decisions_for_entity():
     store = MemoryGraphStore()
-    svc = store.upsert_vertex("Service", {"canonical_id": "urn:svc:api", "service_id": "api", "name": "API Service"})
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:api", "service_id": "api", "name": "API Service"})
     ingest_decision(store, "API Architecture", linked_entities=["urn:svc:api"])
     decisions = find_decisions_for_entity(store, "urn:svc:api")
     assert len(decisions) == 1
@@ -158,7 +165,7 @@ def test_ingest_capability():
 def test_capability_with_parent():
     store = MemoryGraphStore()
     parent = ingest_capability(store, "Commerce Platform")
-    child = ingest_capability(store, "Order Processing", parent_cid=parent["canonical_id"])
+    ingest_capability(store, "Order Processing", parent_cid=parent["canonical_id"])
     edges = store.find_edges(limit=100)
     decompose = [e for e in edges if e["label"] == "DECOMPOSES_INTO"]
     assert len(decompose) == 1
@@ -167,7 +174,7 @@ def test_capability_with_parent():
 def test_capability_with_objective():
     store = MemoryGraphStore()
     obj = ingest_objective(store, "Revenue Growth")
-    cap = ingest_capability(store, "Payment Processing", objective_cid=obj["canonical_id"])
+    ingest_capability(store, "Payment Processing", objective_cid=obj["canonical_id"])
     edges = store.find_edges(limit=100)
     fulfills = [e for e in edges if e["label"] == "FULFILLS"]
     assert len(fulfills) == 1
@@ -176,7 +183,7 @@ def test_capability_with_objective():
 def test_link_to_capability():
     store = MemoryGraphStore()
     cap = ingest_capability(store, "Authentication")
-    svc = store.upsert_vertex("Service", {"canonical_id": "urn:svc:auth", "service_id": "auth", "name": "Auth Service"})
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:auth", "service_id": "auth", "name": "Auth Service"})
     result = link_to_capability(store, "urn:svc:auth", cap["canonical_id"])
     assert result is not None
     assert result["edge"] == "REALIZES"
@@ -186,7 +193,7 @@ def test_reverse_impact():
     store = MemoryGraphStore()
     obj = ingest_objective(store, "Customer Satisfaction")
     cap = ingest_capability(store, "User Management", objective_cid=obj["canonical_id"])
-    svc = store.upsert_vertex("Service", {"canonical_id": "urn:svc:users", "service_id": "users", "name": "User Service"})
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:users", "service_id": "users", "name": "User Service"})
     link_to_capability(store, "urn:svc:users", cap["canonical_id"])
     result = reverse_impact(store, "urn:svc:users")
     assert len(result["capabilities"]) == 1
@@ -206,7 +213,7 @@ def test_intent_to_runtime_chain():
     store = MemoryGraphStore()
     obj = ingest_objective(store, "Automate Billing")
     cap = ingest_capability(store, "Invoice Generation", objective_cid=obj["canonical_id"])
-    svc = store.upsert_vertex("Service", {"canonical_id": "urn:svc:billing", "service_id": "billing", "name": "Billing Service"})
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:billing", "service_id": "billing", "name": "Billing Service"})
     link_to_capability(store, "urn:svc:billing", cap["canonical_id"])
     result = intent_to_runtime_chain(store, obj["canonical_id"])
     assert len(result["chain"]) >= 1
@@ -264,7 +271,7 @@ def test_detect_missing_links():
 
 def test_detect_missing_links_connected():
     store = MemoryGraphStore()
-    svc = store.upsert_vertex("Service", {"canonical_id": "urn:svc:connected", "service_id": "conn", "name": "Connected"})
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:connected", "service_id": "conn", "name": "Connected"})
     dep = store.upsert_vertex("Deployment", {"canonical_id": "urn:dep:1", "name": "Deploy"})
     pipe = store.upsert_vertex("PipelineRun", {"canonical_id": "urn:pipe:1", "name": "CI Build"})
     store.upsert_edge("DEPLOYS", pipe["vid"], dep["vid"], {"fact_key": "deploys:1"})
@@ -321,7 +328,7 @@ def test_api_ingest_decision():
 
 def test_api_decisions_for_entity():
     client, store = _twin_client()
-    svc = store.upsert_vertex("Service", {"canonical_id": "urn:svc:test", "service_id": "test", "name": "Test"})
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:test", "service_id": "test", "name": "Test"})
     ingest_decision(store, "Test Decision", linked_entities=["urn:svc:test"])
     resp = client.get("/api/v1/twin/decisions/urn:svc:test")
     assert resp.status_code == 200
@@ -346,17 +353,17 @@ def test_api_link_entity():
     client, store = _twin_client()
     from eoip.graph.business_intent import ingest_capability
     cap = ingest_capability(store, "Auth Capability")
-    svc = store.upsert_vertex("Service", {"canonical_id": "urn:svc:auth2", "service_id": "auth2", "name": "Auth"})
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:auth2", "service_id": "auth2", "name": "Auth"})
     resp = client.post("/api/v1/twin/business/link", json={"entity_cid": "urn:svc:auth2", "capability_cid": cap["canonical_id"]})
     assert resp.status_code == 200
 
 
 def test_api_reverse_impact():
     client, store = _twin_client()
-    from eoip.graph.business_intent import ingest_objective, ingest_capability, link_to_capability
+    from eoip.graph.business_intent import ingest_capability, ingest_objective, link_to_capability
     obj = ingest_objective(store, "Uptime")
     cap = ingest_capability(store, "Monitoring", objective_cid=obj["canonical_id"])
-    svc = store.upsert_vertex("Service", {"canonical_id": "urn:svc:mon", "service_id": "mon", "name": "Monitor"})
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:mon", "service_id": "mon", "name": "Monitor"})
     link_to_capability(store, "urn:svc:mon", cap["canonical_id"])
     resp = client.get("/api/v1/twin/business/reverse-impact/urn:svc:mon")
     assert resp.status_code == 200

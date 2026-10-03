@@ -6,7 +6,6 @@ deployment) by traversing the graph for temporally-ordered connected events.
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Any
 
 from eoip.graph.store import GraphStore

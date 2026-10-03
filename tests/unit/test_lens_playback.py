@@ -1,13 +1,15 @@
 """Tests for lens framework, graph playback, and production APIs (G2-P10)."""
 
-from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.lens import (
-    KnowledgeContext, list_lenses, lens_data, LENS_CATALOG,
+    KnowledgeContext,
+    lens_data,
+    list_lenses,
 )
+from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.playback import build_event_stream, build_evidence_panel, export_timeline
 from fastapi.testclient import TestClient
-from apps.api.app import create_app
 
+from apps.api.app import create_app
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -57,7 +59,7 @@ def _rich_store():
         "created_at": "2026-01-05T10:00:00Z",
     })
     store.upsert_edge("HAS_CHANGE", wi["vid"], c1["vid"], {"fact_key": "hc:1"})
-    req = store.upsert_vertex("Requirement", {
+    store.upsert_vertex("Requirement", {
         "canonical_id": "urn:req:1", "name": "Auth feature",
     })
     return store

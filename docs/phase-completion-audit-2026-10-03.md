@@ -3,6 +3,45 @@
 **Date:** 2026-10-03
 **Method:** every Markdown document in the repository was read and analyzed (EOIP-engg-doc-pkg root: 00–75 series, MVP requirements/plan, gaps/gaps2 requirements + implementation, KGR requirements + implementation plan, knowgridflow product architecture, all 17 diagrams, implementation work packages, examples, traceability catalog; plus repo docs/). Backend and frontend were audited file-by-file against those obligations; all P0 defects were fixed and re-verified.
 
+## Latest bounded certification - 2026-10-04
+
+**Overall release certification is blocked, not complete.** The latest full-host
+[receipt](../test-results/recovery-bundle-final-host.xml) is **956 passed /
+5 failed / 15 skipped**, exit 1. Three document-reference tests and two temporal
+relationship replacement/deletion tests fail. The user explicitly instructed
+this batch to leave the concurrent temporal changes untouched and report these
+failures; no repair/revert was performed. Earlier passing baselines below are
+historical and do not supersede this failure or certify subsequent shared-tree
+changes.
+
+Completed within this batch's scope:
+
+- Self-contained logical configuration/model-byte recovery: **62 focused tests
+  pass**; combined recovery/evidence regression: **78 pass**, exit 0.
+- Rebuilt isolated Docker recovery: **PASS**, exact graph/raw/operational/config/
+  binary equality, checkpoint equality, held jobs, golden queries and refusal
+  of populated destinations. The fixture has 112 vertices, 320 edges, 11 raw
+  files, 9 asset files and one 1,310,720-byte synthetic Ollama-layout blob;
+  [receipt](../test-results/eoip-recovery-acceptance-b604ed44ee93462c93ee783d5badfd61.json).
+  Disposable project resources are absent; primary readiness is HTTP 200/`ready`.
+  No primary reset/redeployment was performed.
+- Fail-closed executable evidence mapping for all 28 MVP requirements:
+  **16 checker cases pass** in the combined selection. The actual
+  [report](../test-results/mvp-requirement-evidence.json) is `EVIDENCE_GAPS`,
+  exits 1 and maps passing annotations for only 3/28 rows (10.71%).
+  This is **annotation coverage, not development completion**. Absent
+  annotations do not prove absent functionality, and current source hashes do
+  not retrospectively revision-bind the full-host JUnit receipt.
+
+Still open: the five protected regression failures; evidence for the remaining
+25 MVP rows; native/crash-consistent recovery; webhook receipt/path rebasing;
+memory/audit/trace recovery; actual installed-model readability/inference;
+live tenants and attachment bytes; live/visual/packaged extension acceptance;
+and revision-linked release SBOM/license/no-egress/hardware benchmark evidence.
+Later-phase code availability alone is not requirement-level certification.
+See [the reconciled gap audit](gap-audit-2026-10-02.md) for exact failing checks
+and recovery boundaries.
+
 **Earlier verified release-operations baseline (2026-10-03):**
 - Working tree based on `9a70e5a24c06722c60f0f97a57e5187db6a7fe27`, not a committed release.
 - `scripts/docker.ps1 test` — exit 0: **477 Python tests**, live container smoke checks and **4 Chromium journeys** passed.

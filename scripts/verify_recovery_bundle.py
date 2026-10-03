@@ -26,6 +26,8 @@ def verify_recovery_bundle(source, target, root: Path, *, project_root: Path | N
     load_canonical_demo(source, data, project_root)
     golden = golden_queries(source, data)
     pending = JobQueue(data).submit("DEMO", {})
+    checkpoint = {"cursor": "bundle-checkpoint", "baseline_complete": True}
+    write_json(data / "state" / "connectors" / "recovery.json", checkpoint)
     config, models = root / "config", root / "models"
     shutil.copytree(project / "config", config)
     weights = b"EOIP synthetic binary recovery fixture\x00\xff" * 32_768
@@ -51,6 +53,9 @@ def verify_recovery_bundle(source, target, root: Path, *, project_root: Path | N
     )
     assert golden_queries(target, restored_root / "data") == golden
     assert JobQueue(restored_root / "data").get(pending["job_id"])["status"] == "HELD"
+    assert json.loads(
+        (restored_root / "data" / "state" / "connectors" / "recovery.json").read_text()
+    ) == checkpoint
     with patch.dict(os.environ, {"EOIP_CONFIG_DIR": str(config)}):
         expected = (load_memory_policy(), load_query_policy(), load_agent_config("Trace Impact"))
         assert expected[2] is not None, "Agent configuration was not loaded"
@@ -72,6 +77,7 @@ def verify_recovery_bundle(source, target, root: Path, *, project_root: Path | N
         "model_blobs": exported["model_blobs"], "weight_bytes": len(weights),
         "weight_sha256": sha, "asset_inventory_and_bytes_equal": True,
         "configuration_loaders_equal": True, "pending_job_held": True,
+        "checkpoint_equal": True,
         "golden_queries_equal": True, "populated_graph_rejected": True,
         "model_fixture": "synthetic Ollama-layout binary bytes; not inference certification",
     }

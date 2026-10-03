@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import copy
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 from uuid import uuid4
 
@@ -239,9 +239,7 @@ class SimulationOverlay:
             return False
         if in_v and e["in_v"] != in_v:
             return False
-        if label and e["label"] != label:
-            return False
-        return True
+        return not (label and e["label"] != label)
 
     @property
     def mutation_count(self) -> int:
@@ -268,7 +266,7 @@ class SimulationWorkspace:
         vertex_count = self._base.count_vertices()
         self._manifests[sim_id] = SimulationManifest(
             simulation_id=sim_id,
-            created_at=datetime.now(timezone.utc).isoformat(),
+            created_at=datetime.now(UTC).isoformat(),
             base_snapshot=f"{description or 'snapshot'} ({vertex_count} vertices)",
             mutations=[],
         )

@@ -14,11 +14,11 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from eoip.contracts.graph_mutation import GraphMutation
-from eoip.contracts.normalized import NormalizedEntity, NormalizedRelationship
+from eoip.contracts.normalized import NormalizedEntity
 from eoip.graph.store import GraphStore
 from eoip.ingestion.pipeline import apply_graph_mutation
 from eoip.ontology.manifest import VERTEX_LABELS
@@ -130,7 +130,7 @@ class JsonProcessor:
         pipeline_id: str = "manual",
     ) -> ProcessingResult:
         result = ProcessingResult()
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         if isinstance(data, list):
             for i, item in enumerate(data):
@@ -192,7 +192,7 @@ class JsonProcessor:
                 combined.errors.extend(result.errors)
                 combined.log.extend(result.log)
                 combined.files_processed += 1
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - one bad file must not abort the batch
                 combined.errors.append({"file": name, "error": str(exc)})
                 combined.log.append(f"[ERROR] Failed to process {name}: {exc}")
         return combined
@@ -241,7 +241,10 @@ class JsonProcessor:
             apply_graph_mutation(self._store, mutation)
             result.entities_created += 1
             result.log.append(f"[OK] Entity: {entity_type}:{cid}")
-        except (MutationBlocked, Exception) as exc:
+        except MutationBlocked as exc:
+            result.errors.append({"canonical_id": cid, "entity_type": entity_type, "error": str(exc)})
+            result.log.append(f"[ERR] Entity {cid}: {exc}")
+        except Exception as exc:  # noqa: BLE001 - record and continue per entity
             result.errors.append({"canonical_id": cid, "entity_type": entity_type, "error": str(exc)})
             result.log.append(f"[ERR] Entity {cid}: {exc}")
 
@@ -277,7 +280,7 @@ class JsonProcessor:
             self._store.upsert_edge(rel_type, source_v["vid"], target_v["vid"], props)
             result.relationships_created += 1
             result.log.append(f"[OK] Edge: {from_id} --{rel_type}--> {to_id}")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - record and continue per relationship
             result.errors.append({"relationship": rel_type, "from_id": from_id, "to_id": to_id, "error": str(exc)})
             result.log.append(f"[ERR] Edge {from_id}->{to_id}: {exc}")
 
@@ -296,11 +299,11 @@ class JsonProcessor:
                 "pipeline_id": pipeline_id,
                 "run_status": "SUCCEEDED" if not result.errors else "PARTIAL",
                 "started_at": now,
-                "completed_at": datetime.now(timezone.utc).isoformat(),
+                "completed_at": datetime.now(UTC).isoformat(),
                 "records_accepted": result.entities_created,
                 "records_rejected": len(result.errors),
             })
             result.metadata_vertices = 1
             result.log.append(f"[OK] Metadata: {meta_cid}")
-        except Exception:
-            pass
+        except Exception as exc:  # noqa: BLE001 - metadata failure must not fail ingested entities
+            result.log.append(f"[WARN] Metadata vertex skipped: {exc}")

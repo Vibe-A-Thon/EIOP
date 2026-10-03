@@ -1,17 +1,22 @@
 """Tests for simulation workspace, extended what-if, and causal hypothesis engine (G2-P9)."""
 
+from eoip.graph.causal import (
+    CausalHypothesis,
+    check_causal_prerequisites,
+    find_temporal_correlations,
+    generate_hypotheses,
+    review_hypothesis,
+)
 from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.simulation import Mutation, SimulationOverlay, SimulationWorkspace
 from eoip.graph.whatif import (
-    WhatIfEngine, parse_whatif_intent, confirm_scenario, execute_scenario, MutationPlan,
-)
-from eoip.graph.causal import (
-    find_temporal_correlations, check_causal_prerequisites,
-    generate_hypotheses, review_hypothesis, CausalHypothesis,
+    confirm_scenario,
+    execute_scenario,
+    parse_whatif_intent,
 )
 from fastapi.testclient import TestClient
-from apps.api.app import create_app
 
+from apps.api.app import create_app
 
 # ---------------------------------------------------------------------------
 # Helpers

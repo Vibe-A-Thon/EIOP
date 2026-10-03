@@ -6,7 +6,7 @@ missing tests, broken provenance) and evaluates knowledge health SLOs.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import VERTEX_LABELS

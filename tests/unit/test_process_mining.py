@@ -2,10 +2,14 @@
 
 from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.process_mining import (
-    extract_cases_from_graph, discover_process_paths,
-    compare_to_designed_flow, deviation_report, ProcessCase,
+    ProcessCase,
+    compare_to_designed_flow,
+    deviation_report,
+    discover_process_paths,
+    extract_cases_from_graph,
 )
 from fastapi.testclient import TestClient
+
 from apps.api.app import create_app
 
 

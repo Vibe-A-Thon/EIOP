@@ -1,8 +1,9 @@
 """Tests for native graph query operators (G2-P7)."""
 
 from eoip.graph.memory import MemoryGraphStore
-from eoip.graph.query_operators import query_why, query_why_not, query_what_changed, query_context
+from eoip.graph.query_operators import query_context, query_what_changed, query_why, query_why_not
 from fastapi.testclient import TestClient
+
 from apps.api.app import create_app
 
 

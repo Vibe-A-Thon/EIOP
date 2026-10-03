@@ -6,7 +6,7 @@ traceability chain. Supports reverse traversal from runtime to business intent.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from eoip.graph.store import GraphStore
 
@@ -23,7 +23,7 @@ def ingest_objective(
     ingestion_run_id: str = "manual",
 ) -> dict:
     """Create or update a BusinessObjective vertex."""
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     cid = f"urn:eoip:objective:{name.lower().replace(' ', '-')}"
     return store.upsert_vertex("BusinessObjective", {
         "canonical_id": cid,
@@ -51,7 +51,7 @@ def ingest_capability(
     ingestion_run_id: str = "manual",
 ) -> dict:
     """Create or update a BusinessCapability vertex and its relationships."""
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     cid = f"urn:eoip:capability:{name.lower().replace(' ', '-')}"
     cap = store.upsert_vertex("BusinessCapability", {
         "canonical_id": cid,
@@ -185,10 +185,6 @@ def intent_to_runtime_chain(store: GraphStore, objective_cid: str) -> dict:
     visited: set[str] = {obj["canonical_id"]}
 
     frontier = [obj]
-    chain_order = ["BusinessCapability", "Requirement", "WorkItem", "Epic", "Feature", "UserStory",
-                   "File", "CodeSymbol", "APIService", "APIEndpoint", "Service",
-                   "TestCase", "TestRun", "PipelineRun", "BuildRecord",
-                   "Deployment", "Incident"]
 
     for _ in range(10):
         next_frontier: list[dict] = []
@@ -225,5 +221,5 @@ def intent_to_runtime_chain(store: GraphStore, objective_cid: str) -> dict:
         "objective": objective_cid,
         "chain": chain,
         "depth": max((c.get("edge") is not None for c in chain), default=0),
-        "labels_present": sorted(set(c["label"] for c in chain)),
+        "labels_present": sorted({c["label"] for c in chain}),
     }

@@ -11,7 +11,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from typing import Any
 
-from eoip.graph.simulation import Mutation, SimulationOverlay, SimulationWorkspace
+from eoip.graph.simulation import Mutation, SimulationWorkspace
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import VERTEX_LABELS
 
@@ -309,11 +309,15 @@ def execute_scenario(store: GraphStore, plan: MutationPlan) -> dict[str, Any]:
                 for e in edges:
                     src = overlay.get_vertex(e["out_v"])
                     tgt = overlay.get_vertex(e["in_v"])
-                    if src and tgt:
-                        if src["canonical_id"] == mut.out_v and tgt["canonical_id"] == mut.in_v:
-                            results.append(workspace.apply_mutation(sim_id, Mutation(
-                                kind="remove_edge", target_id=e["eid"],
-                            )))
+                    if (
+                        src
+                        and tgt
+                        and src["canonical_id"] == mut.out_v
+                        and tgt["canonical_id"] == mut.in_v
+                    ):
+                        results.append(workspace.apply_mutation(sim_id, Mutation(
+                            kind="remove_edge", target_id=e["eid"],
+                        )))
         else:
             results.append(workspace.apply_mutation(sim_id, mut))
 

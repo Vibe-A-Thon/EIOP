@@ -8,6 +8,7 @@ import zipfile
 
 import pytest
 from eoip.graph.memory import MemoryGraphStore
+from eoip.jobs import write_json
 from eoip.recovery_bundle import backup_bundle, restore_bundle
 from eoip.snapshot import digest
 
@@ -37,6 +38,8 @@ def make_bundle(tmp_path):
     config, models, blob = assets(tmp_path / "source")
     graph = MemoryGraphStore()
     graph.upsert_vertex("WorkItem", {"canonical_id": "test:bundle", "issue_key": "BUNDLE-1"})
+    write_json(tmp_path / "source" / "data" / "state" / "connectors" / "demo.json",
+               {"cursor": "committed-checkpoint"})
     bundle = tmp_path / "backup.zip"
     backup_bundle(graph, tmp_path / "source" / "data", bundle, config_dir=config, model_dir=models)
     return bundle, config, models, blob
@@ -56,9 +59,12 @@ def test_bundle_restores_actual_weights_configuration_and_graph(tmp_path):
     ).read_bytes()
     assert (target / "models" / blob.relative_to(models)).read_bytes() == blob.read_bytes()
     assert graph.get_vertex_by_canonical_id("test:bundle") is not None
+    assert json.loads((target / "data" / "state" / "connectors" / "demo.json").read_text()) == {
+        "cursor": "committed-checkpoint",
+    }
 
 
-@pytest.mark.parametrize("failure", ["checksum", "traversal", "duplicate", "unsupported", "graph"])
+@pytest.mark.parametrize("failure", ["checksum", "traversal", "duplicate", "unsupported", "graph", "symlink"])
 def test_invalid_bundle_refused_before_graph_or_destination_writes(tmp_path, failure):
     bundle, _, _, _ = make_bundle(tmp_path)
     with zipfile.ZipFile(bundle) as archive:
@@ -83,7 +89,11 @@ def test_invalid_bundle_refused_before_graph_or_destination_writes(tmp_path, fai
         entries["bundle.json"] = json.dumps(manifest).encode()
     with zipfile.ZipFile(bundle, "w") as archive:
         for name, content in entries.items():
-            archive.writestr(name, content)
+            info = zipfile.ZipInfo(name)
+            if failure == "symlink" and name == "bundle.json":
+                info.create_system = 3
+                info.external_attr = 0o120777 << 16
+            archive.writestr(info, content)
         if failure == "duplicate":
             archive.writestr(blob_name, entries[blob_name])
     graph = MemoryGraphStore()
@@ -254,3 +264,15 @@ def test_plaintext_secret_key_variants_are_not_archived(tmp_path, key):
         backup_bundle(MemoryGraphStore(), tmp_path / "data", tmp_path / "backup.zip",
                       config_dir=config, model_dir=models)
     assert not (tmp_path / "backup.zip").exists()
+
+
+def test_shared_yaml_aliases_are_validated_once(tmp_path):
+    config, models, _ = assets(tmp_path / "source")
+    lines = ["node0: &alias0 [safe]"]
+    for index in range(1, 20):
+        references = ", ".join([f"*alias{index - 1}"] * 8)
+        lines.append(f"node{index}: &alias{index} [{references}]")
+    (config / "aliases.yaml").write_text("\n".join(lines))
+    backup_bundle(MemoryGraphStore(), tmp_path / "data", tmp_path / "backup.zip",
+                  config_dir=config, model_dir=models)
+    assert (tmp_path / "backup.zip").is_file()

@@ -639,7 +639,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
                     "ext": fmt["ext"],
                     "content": converter.convert(fmt["id"], limit=10000),
                 }
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - per-format failure must not abort the others
                 generated[fmt["id"]] = {"label": fmt["label"], "error": str(exc)}
         result.formats_generated = list(generated.keys())
         return {
@@ -768,7 +768,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     @app.post("/api/v1/conformance/check")
     def conformance_check(body: dict):
-        from eoip.graph.conformance import parse_rules, check_conformance
+        from eoip.graph.conformance import check_conformance, parse_rules
         dsl = body.get("rules_dsl", "")
         rules_list = body.get("rules", [])
         if dsl:
@@ -794,7 +794,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     @app.get("/api/v1/process/paths")
     def process_paths():
-        from eoip.graph.process_mining import extract_cases_from_graph, discover_process_paths
+        from eoip.graph.process_mining import discover_process_paths, extract_cases_from_graph
         cases = extract_cases_from_graph(store)
         return discover_process_paths(cases)
 
@@ -811,7 +811,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     @app.post("/api/v1/knowledge/slo")
     def knowledge_slo(body: dict):
-        from eoip.graph.knowledge_debt import parse_slo_rules, evaluate_slos
+        from eoip.graph.knowledge_debt import evaluate_slos, parse_slo_rules
         rules_config = body.get("rules", [])
         if not rules_config:
             raise HTTPException(400, "rules required")
@@ -857,7 +857,6 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     @app.get("/api/v1/simulation/list")
     def simulation_list():
-        from eoip.graph.simulation import SimulationWorkspace
         if "workspace" not in _sim_workspace:
             return {"simulations": []}
         return {"simulations": _sim_workspace["workspace"].list_simulations()}
@@ -902,7 +901,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     @app.post("/api/v1/whatif/plan")
     def whatif_plan(body: dict):
-        from eoip.graph.whatif import parse_whatif_intent, confirm_scenario
+        from eoip.graph.whatif import confirm_scenario, parse_whatif_intent
         intent = body.get("intent", "")
         if not intent:
             raise HTTPException(400, "intent required")
@@ -911,7 +910,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     @app.post("/api/v1/whatif/execute")
     def whatif_execute(body: dict):
-        from eoip.graph.whatif import parse_whatif_intent, execute_scenario
+        from eoip.graph.whatif import execute_scenario, parse_whatif_intent
         intent = body.get("intent", "")
         if not intent:
             raise HTTPException(400, "intent required")
@@ -995,7 +994,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     @app.get("/api/v1/admin/schema")
     def admin_schema():
-        from eoip.ontology.manifest import VERTEX_LABELS, EDGE_LABELS, DOMAINS, ONTOLOGY_VERSION
+        from eoip.ontology.manifest import DOMAINS, EDGE_LABELS, ONTOLOGY_VERSION, VERTEX_LABELS
         return {
             "ontology_version": ONTOLOGY_VERSION,
             "domains": DOMAINS,
@@ -1003,6 +1002,55 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             "edge_types": len(EDGE_LABELS),
             "vertex_labels": list(VERTEX_LABELS.keys()),
             "edge_labels": list(EDGE_LABELS.keys()),
+        }
+
+    # --- EQL: EOIP Query Language ---
+
+    @app.post("/api/v1/query/eql")
+    def eql_query(body: dict):
+        from eoip.query.eql import parse_and_execute
+        q = body.get("query", "")
+        if not q:
+            raise HTTPException(400, "query required")
+        return parse_and_execute(store, q)
+
+    # --- Source & Pipeline Management (query-mode) ---
+
+    @app.get("/api/v1/connectors/catalog")
+    def connectors_catalog():
+        return {"connectors": [
+            {"id": "jira", "name": "Jira", "type": "api", "capabilities": ["baseline", "poll", "webhook"]},
+            {"id": "gitlab", "name": "GitLab", "type": "api", "capabilities": ["baseline", "poll", "webhook"]},
+            {"id": "github", "name": "GitHub", "type": "api", "capabilities": ["baseline", "poll", "webhook"]},
+            {"id": "confluence", "name": "Confluence", "type": "api", "capabilities": ["baseline", "poll"]},
+            {"id": "servicenow", "name": "ServiceNow", "type": "api", "capabilities": ["baseline", "poll"]},
+            {"id": "rally", "name": "Rally", "type": "api", "capabilities": ["baseline", "poll"]},
+            {"id": "grafana", "name": "Grafana", "type": "api", "capabilities": ["baseline", "poll"]},
+            {"id": "datadog", "name": "Datadog", "type": "api", "capabilities": ["baseline", "poll"]},
+            {"id": "kibana", "name": "Kibana", "type": "api", "capabilities": ["baseline", "poll"]},
+            {"id": "qtest", "name": "qTest", "type": "api", "capabilities": ["baseline", "poll"]},
+            {"id": "figma", "name": "Figma", "type": "api", "capabilities": ["baseline", "poll"]},
+            {"id": "api_portal", "name": "API Portal", "type": "api", "capabilities": ["baseline"]},
+            {"id": "crawler", "name": "Web Crawler", "type": "crawler", "capabilities": ["baseline"]},
+            {"id": "local_code", "name": "Local Code", "type": "file", "capabilities": ["baseline"]},
+            {"id": "generic", "name": "Generic JSON", "type": "json", "capabilities": ["baseline"]},
+        ]}
+
+    @app.get("/api/v1/pipeline/status")
+    def pipeline_status():
+        v_count = store.count_vertices()
+        e_count = store.count_edges()
+        from eoip.ontology.manifest import VERTEX_LABELS as VL
+        label_counts = {}
+        for lbl in VL:
+            c = store.count_vertices(label=lbl)
+            if c > 0:
+                label_counts[lbl] = c
+        return {
+            "status": "operational",
+            "graph": {"vertices": v_count, "edges": e_count},
+            "entity_breakdown": label_counts,
+            "domains_active": len({VL[lbl][0] for lbl in label_counts}),
         }
 
     return app

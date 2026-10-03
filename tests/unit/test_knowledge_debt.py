@@ -1,10 +1,14 @@
 """Tests for knowledge debt catalog and SLO evaluator (G2-P7/P8)."""
 
-from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.knowledge_debt import (
-    detect_knowledge_debt, parse_slo_rules, evaluate_slos, SLORule,
+    SLORule,
+    detect_knowledge_debt,
+    evaluate_slos,
+    parse_slo_rules,
 )
+from eoip.graph.memory import MemoryGraphStore
 from fastapi.testclient import TestClient
+
 from apps.api.app import create_app
 
 

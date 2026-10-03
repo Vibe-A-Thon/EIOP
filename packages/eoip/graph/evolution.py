@@ -171,9 +171,6 @@ class GraphEvolutionEngine:
             if event.operation == "DELETE":
                 change = "DELETE"
             version = self._graph_version(event, relationship_id, revision_id)
-            if current:
-                self._close_revision(current, observed_at)
-                self._expire_relationship(current, observed_at)
             if change != "DELETE":
                 source = self.store.get_vertex_by_canonical_id(from_id)
                 target = self.store.get_vertex_by_canonical_id(to_id)
@@ -182,6 +179,12 @@ class GraphEvolutionEngine:
                 edge_properties = {
                     **properties,
                     "fact_key": relationship_id,
+                    # Per-revision edge identity: each revision is its own
+                    # physical edge so history is preserved on the graph and
+                    # the new current edge can be created BEFORE the old one
+                    # is expired — concurrent readers always observe a
+                    # consistent current state (no visibility gap).
+                    "edge_key": f"{relationship_id}:{revision_id}",
                     "is_current": True,
                     "valid_from": observed_at,
                     "valid_to": "",
@@ -192,6 +195,9 @@ class GraphEvolutionEngine:
                 self.store.upsert_edge(
                     relationship_type, source["vid"], target["vid"], edge_properties
                 )
+            if current:
+                self._close_revision(current, observed_at)
+                self._expire_relationship(current, observed_at)
             self._create_relationship_revision(
                 relationship_id, state, revision_id, current, version, event
             )
@@ -286,7 +292,16 @@ class GraphEvolutionEngine:
                 state["relationship_type"],
                 source["vid"],
                 target["vid"],
-                {**state.get("properties", {}), "fact_key": props["relationship_id"], "is_current": False, "valid_to": at},
+                {
+                    **state.get("properties", {}),
+                    "fact_key": props["relationship_id"],
+                    # Target the exact physical edge created for this revision
+                    # (see evolve_relationship) so expiry cannot create a
+                    # parallel edge or miss the current one.
+                    "edge_key": f"{props['relationship_id']}:{props['revision_id']}",
+                    "is_current": False,
+                    "valid_to": at,
+                },
             )
 
     def _record(self, change, kind, target, event, details, version=None, mutate=True):

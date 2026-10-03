@@ -89,7 +89,7 @@ def query_why_not(store: GraphStore, source_cid: str, target_cid: str) -> dict:
         return {"source": source_cid, "target": target_cid, "connected": False, "reasons": [{"type": "missing_entity", "entities": missing}]}
 
     src_edges = store.find_edges(out_v=source["vid"], limit=1000)
-    tgt_edges = store.find_edges(in_v=target["vid"], limit=1000)
+    store.find_edges(in_v=target["vid"], limit=1000)
 
     direct = [e for e in src_edges if e["in_v"] == target["vid"]]
     if direct:

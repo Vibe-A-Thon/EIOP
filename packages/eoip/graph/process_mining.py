@@ -144,7 +144,7 @@ def compare_to_designed_flow(
                     break
 
     bottlenecks: list[dict] = []
-    transition_times: dict[str, list[float]] = defaultdict(list)
+    defaultdict(list)
     for t in observed_paths.get("transitions", []):
         if t["count"] > len(observed_paths.get("paths", [])) * 0.5:
             bottlenecks.append({

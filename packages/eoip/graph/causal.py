@@ -12,7 +12,6 @@ from datetime import datetime
 from typing import Any
 
 from eoip.graph.store import GraphStore
-from eoip.ontology.manifest import VERTEX_LABELS
 
 TEMPORAL_FIELDS = ("created_at", "modified_at", "event_timestamp", "started_at", "observed_at")
 CAUSAL_EDGE_LABELS = ("TRIGGERED_BY", "RESOLVES", "CORRELATES_WITH", "IMPLEMENTS", "MODIFIES")
@@ -53,7 +52,7 @@ def _parse_timestamp(value: str | None) -> datetime | None:
     for fmt in ("%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S",
                 "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
         try:
-            return datetime.fromisoformat(value.replace("Z", "+00:00"))
+            return datetime.fromisoformat(value)
         except (ValueError, AttributeError):
             continue
     return None

@@ -7,7 +7,6 @@ and provides change-based test selection.
 from __future__ import annotations
 
 from eoip.graph.store import GraphStore
-from eoip.ontology.manifest import EDGE_LABELS
 
 
 def map_tests_to_code(store: GraphStore) -> list[dict]:

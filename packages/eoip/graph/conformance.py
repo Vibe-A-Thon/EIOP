@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 from eoip.graph.store import GraphStore
-from eoip.ontology.manifest import VERTEX_LABELS, EDGE_LABELS
+from eoip.ontology.manifest import VERTEX_LABELS
 
 
 class RuleKind(str, Enum):

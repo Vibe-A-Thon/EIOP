@@ -1,11 +1,9 @@
 """Tests for JSON ingestion, format conversion, and graph health API endpoints."""
 
-import json
 import os
 
 from eoip.graph.memory import MemoryGraphStore
 from fastapi.testclient import TestClient
-
 
 TOKEN = "test-token-minimum-24-characters!!"
 HEADERS = {"Authorization": f"Bearer {TOKEN}"}
@@ -130,7 +128,7 @@ def test_process_and_convert(tmp_path):
     assert "rdf" in body["formats"]
     assert "cypher" in body["formats"]
     assert "sparql" in body["formats"]
-    for fmt_id, fmt_data in body["formats"].items():
+    for fmt_data in body["formats"].values():
         assert "label" in fmt_data
         if "error" not in fmt_data:
             assert len(fmt_data["content"]) > 0

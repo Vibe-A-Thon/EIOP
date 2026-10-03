@@ -473,7 +473,8 @@ eoip-api:/data/backups/FILE.json ./FILE.json` as a single command.
 
 `restore-test` restores the newest snapshot into a disposable, separate HugeGraph
 container, checks all vertex/edge properties, raw/DLQ JSON equality, operational
-state and the Jira-to-symbol evidence path, then
+state and the Jira-to-symbol evidence path (plus asset inventory/byte equality
+when the newest archive is a ZIP recovery bundle), then
 removes that test graph container. The main deployment and its volumes remain
 available. Run backup before this command.
 The Python verifier also accepts `--source <snapshot-path>` to select an explicit
@@ -526,13 +527,138 @@ this remains a single-API/single-worker filesystem queue, not a distributed queu
 
 Snapshots created before operational export remain readable under the same
 schema version but cannot recover operational state that was never captured.
-This scope does not include repository `config/`, model manifests/binaries,
+The legacy JSON snapshot does not include repository `config/`, model manifests/binaries,
 webhook receipts, audit history or agent traces. Held webhook jobs refuse
 readmission explicitly because receipt recovery/path rebasing is not implemented.
 Reprovision source secrets separately, including any referenced external files.
 Archives may contain sensitive raw/job/configuration values; handle them as
 confidential. Exact logical equality is not native disaster-recovery certification.
 Use supported native HugeGraph backup tooling for production-sized graphs.
+
+### Self-contained configuration and model-weight bundles
+
+The opt-in ZIP bundle adds actual configuration and Ollama model-weight bytes
+to the existing logical snapshot. Legacy JSON commands remain supported.
+
+```powershell
+.\scripts\docker.ps1 backup-bundle
+.\scripts\docker.ps1 restore-test
+.\scripts\docker.ps1 recovery-acceptance
+```
+
+Build the current application image before using `backup-bundle`. It stops only
+the currently running API, MCP, worker and local-model services, then uses a
+one-off audited backup container with read-only access to the existing model
+volume. Those services are restarted in `finally`, including after a failure.
+Stop any other graph/configuration/model writers and close admin clients yourself;
+this command cannot quiesce external processes. The API is unavailable during
+this backup. Model files/directories must be readable by the image's UID 10001;
+permission errors are reported, not bypassed. A disabled model with no downloaded
+weights is valid and records zero model blobs.
+
+The bundle contains `bundle.json`, `snapshot.json`, `config/` YAML/JSON and
+`models/blobs/sha256-*` plus `models/manifests/`. Each asset has its exact size and
+SHA-256 in the manifest. Ollama manifest digest/size references must match actual
+included blobs. Weight copies/hashing are streamed, not base64-encoded into JSON.
+Backup publishes the ZIP by same-directory atomic replacement after validation;
+failure leaves a previous destination archive intact. Source edits detected
+during copying refuse publication; this is not a substitute for quiescence.
+
+Current limits: **64 GiB total uncompressed asset bytes**, **100,000 assets
+including the logical snapshot**, **256 MiB snapshot**, and **1 MiB per
+configuration/model manifest and for `bundle.json`**. `--max-bytes` can lower
+the total bound, not increase it. The existing logical graph/operational limits
+still apply. Ensure temporary storage and the destination have sufficient free
+space: restore stages a full validated copy before copying assets to targets.
+Do not infer production scale or native backup guarantees from these limits.
+
+`.env`, arbitrary deployment files and private-key files are not supported
+configuration assets. Plaintext values under recognized password/token/API-key/
+authorization/private-key fields are refused, including common camel-case and
+hyphenated variants. `env://` and `vault://` references can be preserved, but
+their external credentials/resolvers must be reprovisioned separately. This
+key-based check is not a general secret scanner. Raw graph/evidence, configuration
+and model assets may be sensitive or licensed: the manifest labels the archive
+`RESTRICTED`; use access-controlled storage and honor model redistribution terms.
+The archive is neither encrypted nor signed; checksums detect corruption, not
+replacement by an attacker who can rewrite the archive and its manifest.
+
+For direct local commands, supply the **models** directory, not its `.ollama`
+parent. Bundle restore requires explicit, separate, empty configuration/model
+targets and the existing empty graph/data conditions:
+
+```powershell
+python -m scripts.backup --bundle --config-dir .\config --model-dir C:\local-model\.ollama\models --output C:\recovery\eoip.zip
+$env:EOIP_DATA_DIR = 'C:\recovery-target\data'
+python -m scripts.restore C:\recovery\eoip.zip --config-dir C:\recovery-target\config --model-dir C:\recovery-target\models
+```
+
+The ZIP manifest/member allowlist, sizes, checksums, model references,
+configuration and inner logical graph are checked before any target writes.
+Traversal, duplicate/case-colliding names, unsupported schema, symlinks,
+recursive configuration aliases and populated targets refuse recovery.
+Do not concurrently write to restore destinations. Graph restoration followed
+by asset copies is **not transactional or crash-atomic**; disk/process failures
+after mutation can leave partial targets. Preserve the archive and use a new
+isolated empty deployment for retry rather than overwriting the failed target.
+
+Activation is deliberate: in a separate Docker deployment mount the restored
+configuration directory read-only at `/opt/eoip/config` (the same path used by
+bundled mappings/ontology and policy loaders), and mount the restored **models**
+directory at `/root/.ollama/models` in the local-model container. Set
+`EOIP_CONFIG_DIR=/opt/eoip/config`, the desired `EOIP_OLLAMA_MODEL` tag and the
+local model URL as appropriate. On the host, set `EOIP_CONFIG_DIR` to the restored
+configuration root and explicitly select restored mapping/ontology paths for
+commands with their own path arguments. Restore does not silently switch a
+running deployment to new policies or restart model serving. Verify policies,
+model availability and held jobs before starting writers.
+
+`recovery-acceptance` builds and uses two fresh disposable HugeGraphs, checks
+exact logical recovery, actual binary/configuration byte equality and inventory,
+configuration-loader equivalence, held jobs, golden queries and populated-graph
+refusal; it writes a unique JSON receipt under `test-results/` and removes its
+containers/network in `finally`. Its Ollama-layout binary fixture is synthetic:
+it certifies recovery bytes, not downloaded model quality or inference. The
+primary graph/data/model volumes are neither reset nor restored by this gate.
+Webhook receipt rebasing, audit/trace/memory history, native RocksDB recovery and
+multi-store transactional recovery remain outside this bundle.
+
+## Executable MVP requirement evidence
+
+Use an existing pytest JUnit receipt to check explicit requirement annotations
+against every row in the 28-requirement MVP traceability matrix:
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 -m scripts.verify_requirement_evidence . `
+  EOIP-engg-doc-pkg\traceability\mvp-traceability.csv `
+  test-results\recovery-bundle-final-host.xml `
+  --output test-results\mvp-requirement-evidence.json
+```
+
+The checker reads literal `pytest.mark.req("REQUIREMENT-ID")` annotations,
+including module/class inheritance, without importing test modules. It matches
+exact JUnit test identities and all parameterized outcomes. A direct MVP
+annotation or passing evidence for every declared parent can support a row;
+failed/skipped/partial/missing outcomes remain explicit. It also refuses a
+globally green verdict if any test in the supplied receipt failed or errored.
+Malformed matrices/receipts and source paths escaping the test directory fail
+explicitly. All 28 declared MVP rows are required; the denominator is not reduced
+to only annotated tests.
+
+The output directory is created when needed. `EVIDENCE_GAPS` persists a report
+and returns **exit 1**; complete mapped passing evidence returns exit 0 with
+`MAPPED_TEST_EVIDENCE`, not an application-completion certificate. An unannotated
+requirement may already have implementation and tests: inspect it and add
+accurate requirement-specific acceptance evidence rather than inflating coverage
+with unrelated markers.
+
+The recorded full-host receipt has **956 passed / 5 failed / 15 skipped**.
+The checker currently maps passing annotations for **3/28 requirements (10.71%
+annotated evidence coverage)**, not 10.71% development completion.
+`application_completion_percent` remains null and `source_revision_bound` false:
+current test-source hashes cannot prove which source revision generated an older
+receipt. The five temporal-history failures remain unrepaired at the user's
+explicit direction; see [the gap audit](gap-audit-2026-10-02.md).
 
 ## VS Code extension
 

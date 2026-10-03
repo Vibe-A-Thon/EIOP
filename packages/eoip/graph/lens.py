@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from eoip.graph.store import GraphStore
-from eoip.ontology.manifest import VERTEX_LABELS, EDGE_LABELS, DOMAINS
+from eoip.ontology.manifest import DOMAINS, EDGE_LABELS, VERTEX_LABELS
 
 
 @dataclass
@@ -155,10 +155,10 @@ def _timeline_lens(store: GraphStore, ctx: KnowledgeContext) -> dict[str, Any]:
         if not v:
             continue
         props = v["properties"]
-        for field in ("created_at", "modified_at", "started_at", "finished_at", "resolved_at"):
-            ts = props.get(field)
+        for prop_key in ("created_at", "modified_at", "started_at", "finished_at", "resolved_at"):
+            ts = props.get(prop_key)
             if ts:
-                events.append({"entity": cid, "label": v["label"], "event": field, "timestamp": ts})
+                events.append({"entity": cid, "label": v["label"], "event": prop_key, "timestamp": ts})
         out_edges = store.find_edges(out_v=v["vid"], limit=200)
         for e in out_edges:
             if e["label"] == "HAS_CHANGE":
@@ -303,7 +303,7 @@ def _requirement_lens(store: GraphStore, ctx: KnowledgeContext) -> dict[str, Any
 
 
 def _process_lens(store: GraphStore, ctx: KnowledgeContext) -> dict[str, Any]:
-    from eoip.graph.process_mining import extract_cases_from_graph, discover_process_paths
+    from eoip.graph.process_mining import discover_process_paths, extract_cases_from_graph
     cases = extract_cases_from_graph(store)
     paths = discover_process_paths(cases) if cases else {"total_cases": 0, "unique_paths": 0, "paths": [], "transitions": []}
     return {"lens": "process", "cases": len(cases), "paths": paths}

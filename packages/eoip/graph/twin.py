@@ -7,7 +7,6 @@ digital-thread coverage metrics, and missing-link detection.
 from __future__ import annotations
 
 from eoip.graph.store import GraphStore
-from eoip.ontology.manifest import VERTEX_LABELS, EDGE_LABELS, DOMAINS
 
 FACT_CLASSES = {
     "intended": {

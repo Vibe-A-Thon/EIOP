@@ -70,7 +70,7 @@ def test_tombstoned_vertex_with_active_edge_reports_deletion_conflict():
 
 def test_ambiguous_vertex_creates_warning():
     store = MemoryGraphStore()
-    project = store.upsert_vertex("Project", {"canonical_id": "urn:test:project:1", "name": "Test Project"})
+    store.upsert_vertex("Project", {"canonical_id": "urn:test:project:1", "name": "Test Project"})
     store.upsert_vertex("WorkItem", {
         "canonical_id": "urn:test:amb:1", "issue_key": "AMB-1", "summary": "Ambiguous item",
         "ingestion_run_id": "run-1", "creation_status": "AMBIGUOUS",
@@ -123,7 +123,7 @@ def test_missing_creation_status_on_edge_is_warning():
         "fact_key": "no-status",
     })
     edges = store.find_edges(limit=100)
-    target = [e for e in edges if e["properties"].get("fact_key") == "no-status"][0]
+    target = next(e for e in edges if e["properties"].get("fact_key") == "no-status")
     target["properties"].pop("creation_status", None)
     engine = ValidationEngine(store)
     result = engine.run()

@@ -58,6 +58,7 @@ def _configuration(content: bytes, name: str) -> None:
     document = json.loads(content) if name.endswith(".json") else yaml.safe_load(content)
 
     seen = set()
+    checked = set()
 
     def check(value, depth=0):
         if depth > 100:
@@ -65,6 +66,8 @@ def _configuration(content: bytes, name: str) -> None:
         if isinstance(value, (dict, list)):
             if id(value) in seen:
                 raise ValueError("Recovery configuration contains recursive aliases")
+            if id(value) in checked:
+                return
             seen.add(id(value))
         if isinstance(value, dict):
             for key, item in value.items():
@@ -80,6 +83,7 @@ def _configuration(content: bytes, name: str) -> None:
                 check(item, depth + 1)
         if isinstance(value, (dict, list)):
             seen.remove(id(value))
+            checked.add(id(value))
 
     check(document)
 
@@ -245,6 +249,8 @@ def restore_bundle(store, data_dir, source, *, config_dir, model_dir, max_bytes=
             names = [info.filename for info in infos]
             if len(infos) > MAX_FILES + 1 or len({name.casefold() for name in names}) != len(names):
                 raise ValueError("Recovery bundle contains duplicate or excessive files")
+            if any(stat.S_ISLNK(info.external_attr >> 16) or info.is_dir() for info in infos):
+                raise ValueError("Recovery bundle symlinks and directory entries are forbidden")
             if "bundle.json" not in names or archive.getinfo("bundle.json").file_size > MAX_METADATA:
                 raise ValueError("Missing or oversized recovery bundle manifest")
             manifest = json.loads(archive.read("bundle.json"))
