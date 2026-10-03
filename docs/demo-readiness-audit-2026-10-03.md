@@ -6,11 +6,11 @@
 
 ## Audit inventory and method
 
-The repository contains 138 Markdown files and 20,777 lines after adding the Northstar wiki and package guidance. The inventory comprises 117 engineering-package files, 14 operational/audit files under `docs/`, one application README, four example READMEs, and two root/other guides. The review covered every file heading and body, extracted requirement/status language, and reconciled claims against code, routes, tests, schemas, fixtures, deployment definitions, and runtime loaders.
+The repository contains 138 Markdown files and 21,702 physical lines after adding the Northstar wiki and package guidance. The inventory comprises 117 engineering-package files, 14 operational/audit files under `docs/`, one application README, four example READMEs, and two root/other guides. The review covered every file heading and body, extracted requirement/status language, and reconciled claims against code, routes, tests, schemas, fixtures, deployment definitions, and runtime loaders.
 
 The documentation corpus references 28 unique `MVP-FR-*` identifiers, 83 unique `FR-*` identifiers, 19 `NFR-*` identifiers, 364 `G2-*` identifiers, 16 `FR-KGR-*` identifiers, and 82 implementation work packages. Counts overlap where specialized identifiers are also matched by a broader family; they describe documentation scope, not completion percentages.
 
-The executable inventory contains 86 FastAPI route declarations, 488 Python test functions, four Playwright scenarios, 27 connector modules, 62 ontology vertex labels, and 56 relationship labels. Code existence was not treated as proof of a live external integration or non-functional certification.
+The refreshed executable inventory contains 137 FastAPI route declarations, 860 Python test functions, five Playwright scenarios, 29 connector modules, 62 ontology vertex labels, and 56 relationship labels. Parameterization explains why the current JUnit receipt contains more outcomes than Python test-function definitions. Code existence was not treated as proof of a live external integration or non-functional certification.
 
 ## Executive finding
 
@@ -71,6 +71,7 @@ The pack uses reserved `.invalid` hostnames and synthetic people, identifiers, m
 - Published smoke benchmarks are not a production-scale hardware certification, capacity guarantee, or customer SLO.
 - The real VS Code host suite uses an HTTP contract fixture; live HugeGraph plus manual rendered-UI acceptance remains a separate gate.
 - Optional LLM synthesis depends on locally configured models. Every golden scenario must remain demonstrable with deterministic graph behavior.
+- The governed `/api/v1/path` query uses a semantic relationship allowlist and does not return every cross-domain Northstar route. Use `/api/v1/graph/shortest-paths` for the incident, release, test and design scenarios until those query semantics are deliberately unified.
 
 ## Release gate
 
@@ -88,10 +89,19 @@ This gate supports a credible demo of implemented capability while keeping roadm
 
 ## Verification executed in this audit
 
-- Full Python regression: **557 passed, 9 opt-in tests skipped** in 250.82 seconds.
+- Runtime verification was refreshed on **2026-10-04** after rebuilding the primary Docker stack from the final working tree.
+- Full Dockerized Python regression: **1,008 passed, 15 skipped** in 138.32 seconds. The two emitted warnings are the known Starlette/httpx deprecation and the deliberate duplicate-ZIP security fixture.
+- Fresh host JUnit evidence: `test-results/full-regression-2026-10-04.xml` contains 1,023 outcomes: **1,008 passed, 0 failed, 0 errors, 15 skipped**. Its SHA-256 is recorded in the requirement-evidence receipt.
+- MVP traceability evidence: `test-results/mvp-requirement-evidence-2026-10-04.json` is tamper-evident and correctly reports `EVIDENCE_GAPS`; only 3/28 MVP rows currently have complete passing requirement annotations (10.71%). This is an annotation-coverage result, not an application-completion percentage.
 - Enterprise scenario and clean-recovery tests: passed, including idempotency, schema/ontology validation, live catalog readiness, cross-domain paths, graph analytics, replay, and exact logical recovery.
 - Ruff over the entire repository: passed after closing the stale UTC alias, silent Git diff-hunk exception, and test-import findings.
 - `git diff --check`: passed; Git emitted only the repository's existing Windows line-ending conversion notices.
 - Web production build: passed with Vite; the existing greater-than-500-kB chunk warning remains a frontend performance optimization item.
 - Executable in-process demo receipt: enterprise load `SUCCEEDED`; 8/8 scenarios ready; 150 vertices after persisting the validation run, 456 edges, 31 raw captures, zero validation errors/warnings, and 1.0 evidence/provenance coverage.
-- Docker/real HugeGraph replay was not rerun in this session because the Docker CLI is unavailable on `PATH`. Historical receipts remain evidence for their exact earlier revisions, not for this new dataset. A Docker-capable host must complete the release gate before the customer presentation.
+- Disposable real-HugeGraph acceptance: **PASS**. Receipt: `test-results/eoip-acceptance-0e315bbbdca147d5b50c7d96e9da287a.json`. It proves 111 vertices, 345 relationships, 11 restored raw files, exact replay equivalence, clean validation, populated-target refusal, canonical-ingestion contract validity, idempotent schema preflight, and rejection of four incompatible schema proposals without mutation.
+- Docker smoke: **PASS** for readiness/authentication/query limits, Jira-to-commit-to-file-to-symbol evidence, validation, durable worker replay, frontend delivery, and real MCP search/path tools.
+- Dockerized Playwright: **5 passed** in 33.7 seconds after recreating the web container from the current frontend. Coverage includes login/search/trace/admin, invalid credentials, API outage and retry, network interruption, and held-job readmission/cancellation.
+- Live primary stack: API, worker, web, MCP, and HugeGraph containers are healthy. The live demo job `d2ec736e-e5c4-411f-933e-712b5485f765` succeeded and `/api/v1/demo/scenarios` reports `ready: true` with 8/8 scenarios ready.
+- Live scenario probes: intent-to-runtime returned 2 shortest paths; incident-to-pipeline 2; release-to-deployment 3; test-suite-to-endpoint 3; design-to-feature 1; Checkout API blast radius affected 8 entities; KB00192 deterministic GraphRAG returned a grounded fact; centrality returned all 3 requested services; Checkout API removal what-if completed in 15.45 seconds.
+- The persisted development graph currently validates with **0 errors**, 47 warnings, evidence coverage 1.0, and provenance coverage 0.6328 across 321 current entities and 1,033 relationships. The warnings and lower provenance score are attributable to older retained development entities, not the isolated Northstar pack; use the isolated acceptance receipt for a clean sales claim or reset into a disposable demo deployment before presentation.
+- The desktop in-app browser runtime exposed no controllable browser instance during this audit. Visual verification was therefore completed through the repository's Dockerized Playwright/Chromium suite rather than an interactive browser session.

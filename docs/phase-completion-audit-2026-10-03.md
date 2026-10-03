@@ -5,14 +5,37 @@
 
 ## Latest bounded certification - 2026-10-04
 
-**Overall release certification is blocked, not complete.** The latest full-host
-[receipt](../test-results/recovery-bundle-final-host.xml) is **956 passed /
-5 failed / 15 skipped**, exit 1. Three document-reference tests and two temporal
-relationship replacement/deletion tests fail. The user explicitly instructed
-this batch to leave the concurrent temporal changes untouched and report these
-failures; no repair/revert was performed. Earlier passing baselines below are
-historical and do not supersede this failure or certify subsequent shared-tree
-changes.
+**Temporal compatibility follow-up:** the newer
+[full-host receipt](../test-results/temporal-compatibility-full.xml) now contains
+**1,031 outcomes: 1,016 passed / 0 failed / 0 errors / 15 skipped**. Eight added
+outcomes cover legacy restored physical identities, normalized ingestion,
+replacement/deletion/reversion, deletion-only revision recreation and the
+disposable temporal acceptance helper. The failed-first selection had seven
+failures before the repair. The
+[rebuilt HugeGraph receipt](../test-results/eoip-acceptance-d8225f6f8365484782688753b7ce2959.json)
+passes legacy expiry, current-only replacement, deletion barriers and recreation
+with exactly three physical history edges. Its separately verified demo snapshot
+contains 115 vertices, 345 edges and 11 raw files. Primary readiness remains green;
+the primary deployment was not modified. This follow-up did not rerun Chromium
+or reread every Markdown file; the earlier UI/audit evidence remains historical.
+See [the gap audit](gap-audit-2026-10-02.md) for boundaries and current receipts.
+
+**The current automated demo gate is green; overall product certification remains
+bounded, not complete.** The refreshed full-host
+[receipt](../test-results/full-regression-2026-10-04.xml) contains **1,023
+outcomes: 1,008 passed / 0 failed / 0 errors / 15 skipped**. The five temporal
+and documentation-reference failures in `recovery-bundle-final-host.xml` were
+repaired and are historical. Full Docker smoke passes, all five Chromium
+journeys pass, the rebuilt primary stack is healthy, and the live catalog reports
+8/8 Northstar scenarios ready.
+
+The isolated real-HugeGraph acceptance gate is also **PASS**; see
+[`eoip-acceptance-0e315bbbdca147d5b50c7d96e9da287a.json`](../test-results/eoip-acceptance-0e315bbbdca147d5b50c7d96e9da287a.json).
+It proves replay equivalence, clean validation, canonical-ingestion contracts,
+populated-target refusal and fail-closed schema preflight without touching the
+primary volumes. Live primary validation has zero errors but retains warnings
+from older development entities, so the isolated receipt is the clean sales
+claim.
 
 Completed within this batch's scope:
 
@@ -33,8 +56,8 @@ Completed within this batch's scope:
   annotations do not prove absent functionality, and current source hashes do
   not retrospectively revision-bind the full-host JUnit receipt.
 
-Still open: the five protected regression failures; evidence for the remaining
-25 MVP rows; native/crash-consistent recovery; webhook receipt/path rebasing;
+Still open: explicit mapped evidence for the remaining 25 MVP rows;
+native/crash-consistent recovery; webhook receipt/path rebasing;
 memory/audit/trace recovery; actual installed-model readability/inference;
 live tenants and attachment bytes; live/visual/packaged extension acceptance;
 and revision-linked release SBOM/license/no-egress/hardware benchmark evidence.

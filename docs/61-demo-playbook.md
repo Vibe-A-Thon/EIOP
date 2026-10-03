@@ -214,6 +214,20 @@ All eight scenarios should report `ready: true` before a customer session.
 4. Open KGR on `Checkout API`; show blast radius and what-if removal to explain architectural risk.
 5. Finish with `KB00192` in GraphRAG and emphasize source-linked answers, local deployment, and deterministic fallback.
 
+### Presenter API notes
+
+- Use `/api/v1/path` for the governed PAY-142 intent-to-runtime trace. For the
+  broader incident, release, test and design stories use
+  `/api/v1/graph/shortest-paths`; that analytics route traverses every current
+  relationship type, while the governed path query intentionally applies a
+  semantic relationship allowlist.
+- Allow up to 30 seconds for the first validation or what-if request after a
+  container rebuild. On the verified 2026-10-04 development graph, validation
+  completed in 6.3 seconds and Checkout API removal what-if in 15.45 seconds.
+- Treat `/api/v1/demo/scenarios` readiness as an entity-availability check, then
+  execute at least one path/analytic per story. Readiness alone is not proof that
+  every query mode traverses the same relationship vocabulary.
+
 ### Honest live-demo boundary
 
 The graph and analytics are live application behavior over persisted demo data. The source exports are offline fixtures unless organization-specific connector URLs and credentials have been configured. Optional model synthesis is not required for any golden path. Native disaster recovery, full-scale production performance, and the remaining G2 P6-P10 roadmap items are not represented by this pack as completed capabilities.

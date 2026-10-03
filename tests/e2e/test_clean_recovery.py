@@ -7,7 +7,7 @@ import pytest
 from eoip.graph.memory import MemoryGraphStore
 from eoip.snapshot import backup, restore
 
-from scripts.verify_clean_demo import verify_clean_demo
+from scripts.verify_clean_demo import verify_clean_demo, verify_temporal_edge_upgrade
 from scripts.verify_restore import select_snapshot, verify_restored_snapshot
 
 
@@ -35,6 +35,16 @@ def test_clean_demo_replay_and_complete_recovery(tmp_path):
         assert ingestion["mutations"]["VERTEX"] > 0
         assert ingestion["mutations"]["EDGE"] > 0
         assert ingestion["run_count"] == 3
+
+
+@pytest.mark.req("G2-T0220", "G2-T0221", "G2-T0223", "G2-T0225")
+def test_disposable_temporal_upgrade_acceptance(tmp_path):
+    result = verify_temporal_edge_upgrade(MemoryGraphStore(), tmp_path)
+    assert result == {
+        "legacy_edge_expired": True, "replacement_current_only": True,
+        "deletion_barrier_preserved": True, "recreation_without_phantom_edge": True,
+        "physical_history_edges": 3,
+    }
 
 
 @pytest.mark.parametrize("mutation", ["vertex", "edge", "raw", "extra_raw"])

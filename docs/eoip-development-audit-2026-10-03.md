@@ -4,9 +4,20 @@
 **Repository revision inspected:** `f5a2402` (`dev_local`)  
 **Scope:** current working tree, the engineering handoff in `EOIP-engg-doc-pkg/`, application source and tests, available validation results, and prior deployment/test evidence.
 
-> **Executive conclusion:** EOIP has a substantial P1/MVP implementation. The latest Docker test profile passed 477 Python tests, live smoke checks and four Chromium journeys. A separate fresh-HugeGraph deployment passed demo ingestion, evidence-backed traversal, replay and exact logical recovery. The primary demo remains healthy. This closes the isolated clean-demo/logical-restore gate, but does **not** establish 100% completion, native disaster recovery, full safety/quality certification, real extension-host acceptance or full roadmap completion.
+> **Executive conclusion — refreshed 2026-10-04:** EOIP has a substantial P1/MVP implementation and a green automated sales-demo gate. The current host and Docker Python suites each report **1,008 passed / 15 skipped / 0 failed**; Docker smoke and all **5 Chromium journeys** pass. A disposable real-HugeGraph deployment passed demo ingestion, evidence-backed traversal, replay, schema preflight and exact logical recovery, and the rebuilt primary demo is healthy with 8/8 Northstar scenarios ready. This does **not** establish 100% completion, native disaster recovery, full safety/quality certification, live customer-connector acceptance, real extension-host acceptance or full roadmap completion.
 
 ## Remediation update — 2026-10-03
+
+### Superseding demo evidence — 2026-10-04
+
+The current evidence is recorded in
+[`demo-readiness-audit-2026-10-03.md`](demo-readiness-audit-2026-10-03.md).
+The authoritative host JUnit receipt is
+`test-results/full-regression-2026-10-04.xml`; the current isolated HugeGraph
+receipt is `test-results/eoip-acceptance-0e315bbbdca147d5b50c7d96e9da287a.json`.
+Older counts in the chronological sections below are retained as history and do
+not supersede these results. Explicit MVP test-annotation coverage remains only
+3/28, so green regression is not represented as full requirement certification.
 
 ### Latest release-operations evidence
 

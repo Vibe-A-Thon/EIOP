@@ -3,14 +3,18 @@
 Run only in the disposable acceptance Compose project, never against the demo graph.
 """
 
+import hashlib
 import json
 import os
 from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
+from eoip.contracts.source_event import SourceEventV2
 from eoip.demo import load_demo
+from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
 from eoip.graph.hugegraph import HugeGraphStore
+from eoip.graph.memory import MemoryGraphStore, edge_key
 from eoip.graph.traversal import GraphTraversal
 from eoip.ingestion import pipeline
 from eoip.ingestion.replay import logical_graph_output, logical_output_diff
@@ -115,6 +119,69 @@ def demo_business_output(store) -> dict:
     return projection
 
 
+def verify_temporal_edge_upgrade(store, root: Path) -> dict:
+    """Exercise old physical identities on the disposable acceptance server."""
+    cid = {name: f"urn:eoip:acceptance:temporal:{name}" for name in ("a", "b", "c")}
+    relationship = "urn:eoip:acceptance:temporal:dependency"
+    assert all(store.get_vertex_by_canonical_id(value) is None for value in cid.values())
+
+    def event(day, operation="UPSERT"):
+        payload = {"id": relationship, "day": day}
+        at = f"2026-10-{day:02d}T00:00:00Z"
+        return SourceEventV2(
+            event_id=f"acceptance-temporal-{day}", source_system="test",
+            source_instance_id="acceptance", source_record_id=relationship,
+            operation=operation, event_time=at, captured_at=at,
+            content_hash=hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest(),
+            payload=payload if operation != "DELETE" else None,
+        )
+
+    fixture = MemoryGraphStore()
+    for name, identity in cid.items():
+        fixture.upsert_vertex("File", {"canonical_id": identity, "repo_id": "acceptance", "path": name})
+    seeded = GraphEvolutionEngine(fixture, ChangeJournal(root / "seed.ndjson"))
+    first = event(1)
+    seeded.evolve_relationship(relationship, "DEPENDS_ON", cid["a"], cid["b"], {}, first)
+    for vertex in fixture.find_vertices(limit=100):
+        properties = {key: value for key, value in vertex["properties"].items() if key != "edge_key"}
+        store.upsert_vertex(vertex["label"], properties)
+    source = store.get_vertex_by_canonical_id(cid["a"])
+    target = store.get_vertex_by_canonical_id(cid["b"])
+    legacy_key = edge_key("DEPENDS_ON", cid["a"], cid["b"], relationship)
+    old_properties = dict(fixture.find_edges()[0]["properties"])
+    old_properties["edge_key"] = legacy_key
+    store.upsert_edge("DEPENDS_ON", source["vid"], target["vid"], old_properties)
+    engine = GraphEvolutionEngine(store, ChangeJournal(root / "evolution.ndjson"))
+
+    def current_targets():
+        return [
+            edge["in_cid"] for edge in store.edges_from(source["vid"], labels=["DEPENDS_ON"])
+        ]
+
+    engine.evolve_relationship(relationship, "DEPENDS_ON", cid["a"], cid["c"], {}, event(2))
+    assert current_targets() == [cid["c"]], "Legacy relationship remained current"
+    expired = store.find_edge_by_key(legacy_key)
+    assert expired["properties"]["is_current"] is False
+    assert expired["properties"]["valid_to"] == event(2).event_time
+    engine.evolve_relationship(relationship, "DEPENDS_ON", cid["a"], cid["c"], {}, event(3, "DELETE"))
+    assert current_targets() == []
+    engine.evolve_relationship(relationship, "DEPENDS_ON", cid["a"], cid["b"], {}, event(4))
+    assert current_targets() == [cid["b"]]
+    assert len(store.edges_from(source["vid"], labels=["DEPENDS_ON"], include_historical=True)) == 3
+    assert not [
+        item for item in engine.as_of("2026-10-03T12:00:00Z", limit=100_000)["relationships"]
+        if item["relationship_id"] == relationship
+    ]
+    assert engine.evolve_relationship(
+        relationship, "DEPENDS_ON", cid["a"], cid["b"], {}, first,
+    )["status"] == "LATE_IGNORED"
+    return {
+        "legacy_edge_expired": True, "replacement_current_only": True,
+        "deletion_barrier_preserved": True, "recreation_without_phantom_edge": True,
+        "physical_history_edges": 3,
+    }
+
+
 def golden_queries(store, data: Path) -> dict:
     symbols = store.find_vertices(label="CodeSymbol", filters={"name": "compute_impact"})
     assert len(symbols) == 1, "Expected exactly one compute_impact symbol"
@@ -210,6 +277,7 @@ def main():
     try:
         result = verify_clean_demo(source, target, Path("/tmp/acceptance"))
         result["schema_preflight"] = verify_schema_preflight(source)
+        result["temporal_edge_upgrade"] = verify_temporal_edge_upgrade(source, Path("/tmp/temporal"))
         write_json(report, result)
         print(json.dumps(result, indent=2))
     except Exception as exc:

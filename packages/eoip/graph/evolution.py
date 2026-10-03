@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from eoip.contracts.source_event import SourceEventV2
+from eoip.graph.memory import edge_key
 from eoip.graph.store import GraphStore
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -179,11 +180,9 @@ class GraphEvolutionEngine:
                 edge_properties = {
                     **properties,
                     "fact_key": relationship_id,
-                    # Per-revision edge identity: each revision is its own
-                    # physical edge so history is preserved on the graph and
-                    # the new current edge can be created BEFORE the old one
-                    # is expired — concurrent readers always observe a
-                    # consistent current state (no visibility gap).
+                    # Preserve each interval as a separate physical edge.
+                    # Creation before expiry avoids a gap, but concurrent
+                    # readers can briefly see both edges (no store transaction).
                     "edge_key": f"{relationship_id}:{revision_id}",
                     "is_current": True,
                     "valid_from": observed_at,
@@ -261,6 +260,7 @@ class GraphEvolutionEngine:
                 "canonical_id": f"urn:eoip:revision:relationship:{rid}",
                 "revision_id": rid,
                 "relationship_id": rel_id,
+                "edge_key": f"{rel_id}:{rid}",
                 "relationship_type": state["relationship_type"],
                 "from_id": state["from_id"],
                 "to_id": state["to_id"],
@@ -285,9 +285,28 @@ class GraphEvolutionEngine:
     def _expire_relationship(self, revision: dict, at: str) -> None:
         props = revision["properties"]
         state = json.loads(props["payload_json"])
+        if state.get("operation") == "DELETE":
+            return
         source = self.store.get_vertex_by_canonical_id(state["from_id"])
         target = self.store.get_vertex_by_canonical_id(state["to_id"])
         if source and target:
+            physical_key = props.get("edge_key")
+            if not physical_key:
+                # Older revisions did not record their physical identity.
+                legacy_key = edge_key(
+                    state["relationship_type"], state["from_id"], state["to_id"],
+                    props["relationship_id"],
+                )
+                legacy = self.store.find_edge_by_key(legacy_key)
+                legacy_matches = (
+                    legacy is not None
+                    and legacy["properties"].get("is_current") is not False
+                    and legacy["properties"].get("valid_from") == props["valid_from"]
+                )
+                physical_key = (
+                    legacy_key if legacy_matches
+                    else f"{props['relationship_id']}:{props['revision_id']}"
+                )
             self.store.upsert_edge(
                 state["relationship_type"],
                 source["vid"],
@@ -295,10 +314,7 @@ class GraphEvolutionEngine:
                 {
                     **state.get("properties", {}),
                     "fact_key": props["relationship_id"],
-                    # Target the exact physical edge created for this revision
-                    # (see evolve_relationship) so expiry cannot create a
-                    # parallel edge or miss the current one.
-                    "edge_key": f"{props['relationship_id']}:{props['revision_id']}",
+                    "edge_key": physical_key,
                     "is_current": False,
                     "valid_to": at,
                 },

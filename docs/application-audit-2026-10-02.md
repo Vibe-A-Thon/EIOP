@@ -4,6 +4,16 @@
 **Audited baseline:** Phase 1 integrated vertical slice  
 **Documentation reviewed:** all 115 Markdown files under `EOIP-engg-doc-pkg/` (requirements, architecture, implementation work packages, gap studies, diagrams, data contracts, acceptance criteria, and roadmap)
 
+> **Superseding verification — 2026-10-04:** Docker Desktop is available through
+> the repository wrapper even though its CLI directory is absent from the initial
+> shell `PATH`. The rebuilt stack is healthy. The current host and Docker Python
+> suites each report **1,008 passed / 15 skipped / 0 failed**, Docker smoke passes,
+> all **5 Playwright Chromium journeys** pass, and isolated real-HugeGraph
+> acceptance is `PASS`. See
+> [the demo-readiness audit](demo-readiness-audit-2026-10-03.md) for live scenario
+> metrics and receipt paths. The older Docker-unavailable paragraph below is
+> retained only as the 2026-10-02 point-in-time observation.
+
 ## Executive result
 
 The repository implements the executable Phase 1/MVP boundary described by `MVP-requirements.md` and `MVP-implementation-plan.md`: local Docker topology, HugeGraph-backed knowledge model, deterministic ingestion and code parsing, bounded query services, validation/provenance, GraphRAG retrieval, a read-only agent/MCP surface, VS Code context commands, operational controls, and an API-backed web/admin experience.

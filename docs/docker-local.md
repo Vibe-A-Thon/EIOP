@@ -182,6 +182,17 @@ only schema GET requests and retain identical raw vertex/edge records and schema
 definitions. The proposed manifest is substituted by the verifier; server reads
 and preservation checks use the real HugeGraph instance.
 
+After the recovery and schema checks, the disposable source also exercises a
+synthetic pre-upgrade temporal relationship with its original fact-based physical
+edge identity. Replacement must expire that exact edge, deletion must leave no
+current edge, recreation must not materialize a deletion-only revision as an edge,
+and late replay must remain rejected. The `temporal_edge_upgrade` receipt records
+these assertions separately: its three physical history edges are created after
+the snapshot comparison and are not included in the demo snapshot counts.
+Host regressions additionally cover restoring legacy snapshots and canonical
+ingestion envelopes. This is bounded upgrade compatibility, not an atomic
+multi-writer migration or native disaster-recovery certificate.
+
 Both initial ingestion and replay also validate emitted GraphMutation and
 NormalizedEntity/NormalizedRelationship envelopes against the checked-in JSON
 schemas. The receipt records vertex/edge mutation counts and distinct run counts;
@@ -652,13 +663,15 @@ requirement may already have implementation and tests: inspect it and add
 accurate requirement-specific acceptance evidence rather than inflating coverage
 with unrelated markers.
 
-The recorded full-host receipt has **956 passed / 5 failed / 15 skipped**.
-The checker currently maps passing annotations for **3/28 requirements (10.71%
-annotated evidence coverage)**, not 10.71% development completion.
-`application_completion_percent` remains null and `source_revision_bound` false:
-current test-source hashes cannot prove which source revision generated an older
-receipt. The five temporal-history failures remain unrepaired at the user's
-explicit direction; see [the gap audit](gap-audit-2026-10-02.md).
+The refreshed `test-results/full-regression-2026-10-04.xml` receipt contains
+**1,023 outcomes: 1,008 passed / 0 failed / 0 errors / 15 skipped**. The bound
+`test-results/mvp-requirement-evidence-2026-10-04.json` receipt still reports
+`EVIDENCE_GAPS`: passing annotations map only **3/28 requirements (10.71%
+annotated evidence coverage)**. This is not 10.71% development completion;
+`application_completion_percent` remains null. `source_revision_bound` also
+remains false because file hashes and a JUnit artifact do not cryptographically
+bind a Git revision. The earlier five-failure receipt is historical and must not
+be used as the current regression verdict.
 
 ## VS Code extension
 
