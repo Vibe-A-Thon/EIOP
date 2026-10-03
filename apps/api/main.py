@@ -12,9 +12,10 @@ from uuid import uuid4
 
 import httpx
 from eoip.agents.catalog import build_agent_registry
+from eoip.agents.memory import MAX_TTL_SECONDS, FileMemoryStore, MemoryStorageError
 from eoip.agents.runtime import AgentRuntime
 from eoip.audit.sink import AuditSink
-from eoip.config import load_agent_config
+from eoip.config import load_agent_config, load_memory_policy
 from eoip.connectors.acquisition import AcquisitionPolicy, AcquisitionScheduler
 from eoip.connectors.registry import (
     SourceAlreadyExistsError,
@@ -141,6 +142,7 @@ class AgentRunRequest(BaseModel):
     budgets: dict = Field(default_factory=dict)
     dry_run: bool = False
     synthesize: bool = False
+    memory_ttl_seconds: int | None = Field(default=None, ge=1, le=MAX_TTL_SECONDS, strict=True)
 
 
 class ProposalDecisionRequest(BaseModel):
@@ -184,7 +186,10 @@ def create_app():
     audit_sink = AuditSink(data_root() / "audit")
     validator = ValidationEngine(store)
     agent_registry = build_agent_registry(load_agent_config("trace-impact"))
-    agent_runtime = AgentRuntime(store, agent_registry)
+    agent_runtime = AgentRuntime(
+        store, agent_registry,
+        memory_store=FileMemoryStore(data_root(), policy=load_memory_policy()),
+    )
     event_emitter = GraphEventEmitter(buffer_size=1000)
     app = query_app(store, dependencies=[Depends(HTTPBearer(auto_error=False))])
     app.state.event_emitter = event_emitter
@@ -801,6 +806,31 @@ def create_app():
         except RuntimeError as exc:
             raise HTTPException(409, str(exc)) from exc
 
+    @app.post("/api/v1/admin/jobs/{job_id}/readmit", status_code=202)
+    def readmit_job(job_id: str, request: Request):
+        try:
+            held = queue.get(job_id)
+        except (ValueError, FileNotFoundError):
+            raise HTTPException(404, "Job not found") from None
+        try:
+            if held["kind"] == "SOURCE_OPERATION":
+                return acquisition_scheduler.readmit(
+                    job_id, correlation_id=request.state.correlation_id
+                )
+            if held["kind"] not in {
+                "DEMO", "JIRA_JSON", "GITLAB_JSON", "REPLAY", "CONFLUENCE", "SERVICENOW",
+            }:
+                raise RuntimeError(
+                    "Job kind cannot be re-admitted; webhook receipt recovery is required"
+                )
+            return queue.readmit(job_id, correlation_id=request.state.correlation_id)
+        except (SourceNotFoundError, FileNotFoundError):
+            raise HTTPException(404, "Job or source not found") from None
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+        except RuntimeError as exc:
+            raise HTTPException(409, str(exc)) from exc
+
     @app.post("/api/v1/admin/ingestion/jira", status_code=202)
     def ingest(payload: IngestionRequest, request: Request):
         return queue.submit(
@@ -851,6 +881,11 @@ def create_app():
     def run_agent(agent_id: str, payload: AgentRunRequest, request: Request):
         if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{1,127}", agent_id):
             raise HTTPException(404, "Agent not found")
+        if (
+            payload.memory_ttl_seconds is not None
+            and payload.memory_ttl_seconds > agent_runtime.memory_store.policy.ttl_seconds
+        ):
+            raise HTTPException(422, "Task memory TTL exceeds the configured maximum")
         result = agent_runtime.run(AgentRequest(
             request_id=str(uuid4()),
             agent_id=agent_id,
@@ -860,7 +895,11 @@ def create_app():
             actor_id="local-user",
             correlation_id=request.state.correlation_id,
             dry_run=payload.dry_run,
-            metadata={"synthesize": payload.synthesize},
+            metadata={
+                "synthesize": payload.synthesize,
+                **({"memory_ttl_seconds": payload.memory_ttl_seconds}
+                   if payload.memory_ttl_seconds is not None else {}),
+            },
         ))
         if result.status == "DENIED" and result.summary.startswith("Unknown agent"):
             raise HTTPException(404, "Agent not found")
@@ -876,6 +915,16 @@ def create_app():
             "result": result.model_dump() if result else None,
             "trace": trace.model_dump() if trace else None,
         }
+
+    @app.get("/api/v1/agents/runs/{run_id}/memory")
+    def get_agent_memory(run_id: str):
+        try:
+            memory = agent_runtime.get_memory(run_id)
+        except MemoryStorageError as exc:
+            raise HTTPException(503, "Task memory storage is unavailable") from exc
+        if memory is None:
+            raise HTTPException(404, "Agent task memory not found")
+        return memory.model_dump()
 
     @app.get("/api/v1/agents/runs/{run_id}/explanation")
     def explain_agent_run(run_id: str):

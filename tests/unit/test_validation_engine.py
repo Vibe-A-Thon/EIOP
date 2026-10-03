@@ -68,6 +68,94 @@ def test_tombstoned_vertex_with_active_edge_reports_deletion_conflict():
     assert result["vertices_checked"] == 2
 
 
+def test_ambiguous_vertex_creates_warning():
+    store = MemoryGraphStore()
+    project = store.upsert_vertex("Project", {"canonical_id": "urn:test:project:1", "name": "Test Project"})
+    store.upsert_vertex("WorkItem", {
+        "canonical_id": "urn:test:amb:1", "issue_key": "AMB-1", "summary": "Ambiguous item",
+        "ingestion_run_id": "run-1", "creation_status": "AMBIGUOUS",
+    })
+    result = ValidationEngine(store).run()
+    warnings = [f for f in result["findings"] if f["rule"] == "ambiguous_needs_review" and "canonical_id" in f]
+    assert warnings
+    assert "AMBIGUOUS" in warnings[0]["detail"]
+    assert warnings[0]["severity"] == "WARNING"
+    assert result["valid"] is True
+
+
+def test_ambiguous_edge_creates_warning():
+    store = _seeded_store()
+    project = store.get_vertex_by_canonical_id("urn:test:project:1")
+    item = store.get_vertex_by_canonical_id("urn:test:item:1")
+    store.upsert_edge("CONTAINS", project["vid"], item["vid"], {
+        "fact_key": "amb-edge", "creation_status": "AMBIGUOUS",
+    })
+    result = ValidationEngine(store).run()
+    warnings = [f for f in result["findings"] if f["rule"] == "ambiguous_needs_review" and "edge_id" in f]
+    assert warnings
+    assert "AMBIGUOUS" in warnings[0]["detail"]
+    assert warnings[0]["severity"] == "WARNING"
+
+
+def test_invalid_creation_status_on_edge_is_error():
+    store = _seeded_store()
+    project = store.get_vertex_by_canonical_id("urn:test:project:1")
+    item = store.get_vertex_by_canonical_id("urn:test:item:1")
+    store.upsert_edge("CONTAINS", project["vid"], item["vid"], {
+        "fact_key": "bad-status", "creation_status": "BOGUS_STATUS",
+    })
+    result = ValidationEngine(store).run()
+    errors = [f for f in result["findings"] if f["rule"] == "invalid_creation_status"]
+    assert errors
+    assert "BOGUS_STATUS" in errors[0]["detail"]
+    assert errors[0]["severity"] == "ERROR"
+    assert result["valid"] is False
+
+
+def test_missing_creation_status_on_edge_is_warning():
+    store = MemoryGraphStore()
+    project = store.upsert_vertex("Project", {"canonical_id": "urn:test:project:1", "name": "Test Project"})
+    item = store.upsert_vertex("WorkItem", {
+        "canonical_id": "urn:test:item:1", "issue_key": "TEST-1", "summary": "Test item",
+        "ingestion_run_id": "run-1",
+    })
+    store.upsert_edge("CONTAINS", project["vid"], item["vid"], {
+        "fact_key": "no-status",
+    })
+    edges = store.find_edges(limit=100)
+    target = [e for e in edges if e["properties"].get("fact_key") == "no-status"][0]
+    target["properties"].pop("creation_status", None)
+    engine = ValidationEngine(store)
+    result = engine.run()
+    warnings = [f for f in result["findings"] if f["rule"] == "missing_creation_status"]
+    assert warnings
+    assert warnings[0]["severity"] == "WARNING"
+
+
+def test_deterministic_creation_status_no_warning():
+    store = _seeded_store()
+    result = ValidationEngine(store).run()
+    ambiguous = [f for f in result["findings"] if f["rule"] == "ambiguous_needs_review"]
+    assert not ambiguous
+
+
+def test_human_confirmed_and_manual_statuses_accepted():
+    store = MemoryGraphStore()
+    project = store.upsert_vertex("Project", {"canonical_id": "urn:test:project:1", "name": "Test Project"})
+    item = store.upsert_vertex("WorkItem", {
+        "canonical_id": "urn:test:item:1", "issue_key": "TEST-1", "summary": "Test item",
+        "ingestion_run_id": "run-1", "creation_status": "MANUAL",
+    })
+    store.upsert_edge("CONTAINS", project["vid"], item["vid"], {
+        "fact_key": "manual-edge", "creation_status": "HUMAN_CONFIRMED",
+    })
+    result = ValidationEngine(store).run()
+    errors = [f for f in result["findings"] if f["rule"] == "invalid_creation_status"]
+    assert not errors
+    ambiguous = [f for f in result["findings"] if f["rule"] == "ambiguous_needs_review"]
+    assert not ambiguous
+
+
 def test_quality_metrics_computation():
     vertices = [
         {"canonical_id": "v1", "label": "WorkItem", "vid": "1", "properties": {"ingestion_run_id": "run-1"}},

@@ -86,6 +86,68 @@
   bytes, stale detection and remaining release/roadmap gates remain open.
   Earlier batch boundary statements above describe their original scope.
 
+**Confluence history/reference freshness and temporal recovery batch:**
+- G2-SRC-CONF-002/004/005 now have bounded implementation and fixture
+  certification: complete public version-metadata acquisition and immutable
+  replay; exact evidence-backed document links; shared referenced-fact
+  freshness through validation, stale API and the governed agent.
+- Ontology 0.4.0/schema 1.2 add 21 document-reference lookup indexes.
+  Initial Docker failure (10 passed / 2 failed) is retained as FAIL:
+  `test-results/eoip-dlq-acceptance-00342b77ba7f468d975b74ddd07be9b2.json`.
+  Required Service identity and missing indexes were corrected, not bypassed.
+- Fixed temporal deletion/reversion ordering and historical interval loss.
+  Logical recovery now preserves tombstones/expired edges and rejects even
+  tombstone-only destinations; unit round-trips preserve as-of barriers.
+- Final full host regression: **625 passed / 12 opt-in skips**, exit 0.
+  Changed-Python Ruff and whitespace checks pass. Existing dependency
+  deprecation warning remains unchanged.
+- Final isolated API/worker/HugeGraph gate: **12 passed / zero failures/
+  errors/skips**, exit 0. Stale API returns HTTP 200 with two changed-target
+  findings that survive offline capture replay. Receipt:
+  `test-results/eoip-dlq-acceptance-0c5d4828d59f44d295db5a66169bdcef.json`.
+- Final canonical/exact logical recovery: **PASS**, exit 0; 111 vertices /
+  345 edges / 11 raw records, zero validation errors, replay equivalence,
+  populated-target refusal and four nonmutating schema incompatibility
+  refusals. Receipt:
+  `test-results/eoip-acceptance-3199c002c5b44eae9ee9808d232492d7.json`.
+- Both disposable projects are completely removed; primary readiness `ready`.
+  Primary deployment/data remain unchanged. This supersedes earlier open-history/
+  explicit-link/freshness statements only within this batch's bounded scope,
+  not full G2-P4 sign-off or 100% application completion.
+- Live tenants, inferred semantic matching, attachment bytes, configuration/
+  checkpoint/job/native recovery, other adapters, release non-functional
+  gates and remaining G2-P6..P10 functionality are not certified by this batch.
+
+**Operational state and held-job recovery batch (2026-10-03):**
+- G2-REL-006/007/008 and G2-T1046 gain bounded logical preservation of registry,
+  acquisition policies, connector checkpoints, state reports, semantic journal
+  and durable jobs. Stale worker heartbeat is excluded.
+- User-approved policy: interrupted PENDING/RUNNING jobs become HELD; worker
+  startup does not execute them. Authenticated, audit-preflighted readmission
+  retains the ID and rechecks current source admission. Confirmation-gated admin
+  controls provide readmission and cancellation, with visible refusal errors.
+- Fixed a compatibility defect found during final review: normal DEMO jobs use
+  null payloads. Export/restore now preserve those jobs rather than rejecting
+  legitimate history; malformed registered-source payloads still refuse.
+- Final full host regression: **646 passed / 12 opt-in skips**; focused recovery
+  contracts: **37 passed**. Changed-code Ruff, editor diagnostics and whitespace
+  checks pass. Frontend production build passes (existing chunk-size warning).
+- Edge fixture-backed admin flow: **1 passed**, zero page errors.
+  `test-results/operational-recovery-browser.xml`.
+- Final isolated API/independent-worker/HugeGraph gate: **12 passed**, no
+  failures/errors/skips; actual HELD dormancy, same-ID HTTP 202 readmission,
+  successful execution and duplicate HTTP 409 refusal are asserted.
+  `test-results/eoip-dlq-acceptance-b556b50c177a4581973df82ce5d4b509.json`.
+- Final exact logical recovery: **PASS**, 111 vertices / 345 edges / 11 raw
+  records, checkpoint equality, active-job hold and heartbeat omission.
+  `test-results/eoip-acceptance-dc9fb89bd0734a50b46fd808af24159e.json`.
+- Final disposable containers/networks/volumes are removed; temporary frontend
+  stopped; primary deployment/data untouched and readiness remains `ready`.
+- Logical export requires quiescence and is not atomic/native recovery.
+  Configuration/model artifacts, webhook receipts/path rebasing, audit/trace
+  history, live tenant certification, distributed admission and remaining
+  roadmap/release/hardware gates are not closed by this batch.
+
 **Schema-compatibility batch (2026-10-03, `6f6149b` + working-tree changes):**
 - Gap 22 adds a fail-before-mutation structural compatibility preflight; compatible additive bootstrap remains supported.
 - Full local `python -X utf8 -m pytest`: **505 passed**, exit 0; focused schema/recovery/repository suite: **35 passed**, exit 0; changed-file Ruff and editor error diagnostics pass.
@@ -118,6 +180,30 @@
 - Receipt: `test-results/extension-host-a55403be-9158-4035-bcd2-7771cae2fc01.json`. JS syntax/editor checks pass; primary readiness remains ready.
 - HTTP contract fixture and automated prompts are explicit test doubles. Live graph integration, manual UI, visual TreeView/webview and packaged-VSIX certification remain separate.
 - Python/container/browser suites were not re-run for this JS-only batch; the preceding counts are historical.
+
+**Scoped task-memory batch:**
+- FR-MEM-001 / WP-AGENT-MEMORY-06 now enforce versioned file-backed task memory,
+  30-day maximum retention, shorter per-record TTLs, count/byte limits, exact
+  owner/scope isolation and classified minimized content. Only TraceImpact is
+  approved; all other catalog agents remain RUN_ONLY.
+- Corruption/capacity failures are explicit. Durable graph-run and trace
+  persistence precede memory admission; warnings refresh result explanation
+  uncertainty. Failed recalls consume the tool-call budget.
+- Final full UTF-8 host suite: **840 passed / 15 opt-in skips**, zero failures/
+  errors, exit 0: `test-results/scoped-memory-final-host.xml`.
+  Focused selection: **66 passed**; conformance/receipt regression: **24 passed**.
+  Changed-code Ruff/editor diagnostics pass.
+- Rebuilt isolated API/worker/HugeGraph gate: **16 passed**, zero failures/
+  errors/skips, exit 0. Includes three memory HTTP journeys and Linux
+  independent-process writer certification; Windows is covered by host tests.
+  Receipt: `test-results/eoip-dlq-acceptance-5382af51be56413f94e3a0ba07de70b8.json`
+  and matching XML. Earlier 15-pass Docker evidence predates final refinements.
+  Earlier 804-pass/1-failure host evidence remains FAIL.
+- Disposable resources removed; primary not redeployed/reset. Idle disk expiry
+  waits for startup/access; durable audit/trace/history retention, privacy of
+  all exports, multi-tenant authorization, other memory kinds, memory snapshot
+  recovery and crash-atomic multi-store persistence are not certified.
+  Passing shared-working-tree tests do not establish a committed release.
 
 **Interpretation:** IMPLEMENTED below describes code availability, not completed
 end-to-end certification. Broader registered/live-source replay, live-backend/visual extension acceptance, broader

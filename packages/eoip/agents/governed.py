@@ -16,6 +16,7 @@ from eoip.contracts.agent import (
     RuleDecision,
 )
 from eoip.contracts.source_event import utc_now_iso
+from eoip.graph.documentation import document_reference_findings
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import EDGE_LABELS, VERTEX_LABELS
 from eoip.retrieval.service import retrieve
@@ -132,7 +133,7 @@ class ConnectorDiagnosisAgent(_ConfiguredAgent):
 
 
 class DocumentationFreshnessAgent(_ConfiguredAgent):
-    """Identify documents without content hashes or documented targets."""
+    """Identify coverage gaps and stale evidence-backed document references."""
 
     agent_id = "DocumentationFreshness"
 
@@ -144,10 +145,20 @@ class DocumentationFreshnessAgent(_ConfiguredAgent):
             has_target = any(edge["label"] == "DOCUMENTS" for edge in store.edges_from(document["vid"]))
             if not props.get("content_hash") or not has_target:
                 stale.append(props["canonical_id"])
+        reference_edges = store.find_edges(label="DOCUMENTS", limit=10_001)
+        partial = len(documents) >= 1000 or len(reference_edges) > 10_000
+        stale = sorted(set(stale) | {
+            finding["canonical_id"] for finding in document_reference_findings(
+                store, reference_edges,
+            )
+        })
         return AgentResult(
             request_id=request.request_id,
-            status="PARTIAL" if stale else "SUCCEEDED",
-            summary=f"Checked {len(documents)} documents; {len(stale)} freshness or coverage gap(s) found.",
+            status="PARTIAL" if stale or partial else "SUCCEEDED",
+            summary=(
+                f"Checked {len(documents)} documents; {len(stale)} freshness or coverage gap(s) found."
+                + (" Scan limit reached; review is incomplete." if partial else "")
+            ),
             evidence_refs=stale,
             tool_calls=[{"tool": "search", "input": {"label": "Document"}}],
         )

@@ -26,7 +26,7 @@ def test_inspector_8_tabs_listed():
     path = os.path.join("apps", "web", "src", "kgr", "KGRExplorer.jsx")
     if not os.path.exists(path):
         return
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         content = f.read()
     assert "inspectorTabs" in content
     assert "'overview'" in content
@@ -45,7 +45,7 @@ def test_graph_types_count_10():
     path = os.path.join("apps", "web", "src", "kgr", "KGRExplorer.jsx")
     if not os.path.exists(path):
         return
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         content = f.read()
     assert "'knowledge'" in content
     assert "'relationship'" in content

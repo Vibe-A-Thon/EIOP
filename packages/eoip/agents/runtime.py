@@ -11,6 +11,13 @@ from uuid import uuid4
 
 import httpx
 from eoip.agents.firewall import KnowledgeFirewall
+from eoip.agents.memory import (
+    AgentResultCache,
+    FileMemoryStore,
+    MemoryPolicyError,
+    MemoryStorageError,
+    MemoryStore,
+)
 from eoip.agents.proposals import ProposalStore
 from eoip.agents.tools import ToolRegistry, build_graph_tool_registry
 from eoip.agents.trace import AgentTraceStore
@@ -25,6 +32,7 @@ from eoip.contracts.agent import (
     ExplanationEnvelope,
     RuleDecision,
 )
+from eoip.contracts.memory import MemoryRecord
 from eoip.contracts.source_event import utc_now_iso
 from eoip.contracts.tool import ToolRequest, ToolResult
 from eoip.graph.store import GraphStore
@@ -97,6 +105,7 @@ class AgentExecutionContext:
         tools: ToolRegistry,
         deadline: float,
         emit,
+        memory_store: MemoryStore | None = None,
     ) -> None:
         self.run_id = run_id
         self.request = request
@@ -105,7 +114,34 @@ class AgentExecutionContext:
         self._tools = tools
         self._deadline = deadline
         self._emit = emit
+        self._memory_store = memory_store
         self.tool_calls: list[dict] = []
+
+    def recall_task(self, run_id: str) -> MemoryRecord | None:
+        if self.contract.memory_policy != "APPROVED" or self._memory_store is None:
+            raise PermissionError("Persistent task memory is not approved for this agent")
+        if self.remaining_seconds <= 0:
+            raise TimeoutError("Agent run deadline exceeded")
+        if len(self.tool_calls) >= self.budgets.max_tool_calls:
+            raise RuntimeError("Tool-call budget exhausted")
+        call = {
+            "tool_call_id": str(uuid4()), "tool_name": "task_memory",
+            "status": "FAILED", "evidence_refs": [],
+        }
+        self.tool_calls.append(call)
+        try:
+            record = self._memory_store.get(
+                run_id, scope=f"agent:{self.contract.agent_id}", owner=self.request.actor_id,
+            )
+        except (MemoryPolicyError, MemoryStorageError):
+            self._emit("OBSERVE", "FAILED", "Scoped task memory lookup failed")
+            raise
+        call.update({
+            "status": "SUCCEEDED" if record else "NOT_FOUND",
+            "evidence_refs": record.provenance_refs if record else [],
+        })
+        self._emit("OBSERVE", "SUCCEEDED", "Scoped task memory lookup completed")
+        return record
 
     @property
     def remaining_seconds(self) -> float:
@@ -181,6 +217,8 @@ class AgentRuntime:
         firewall: KnowledgeFirewall | None = None,
         proposal_store: ProposalStore | None = None,
         failure_threshold: int = 3,
+        memory_store: MemoryStore | None = None,
+        result_cache: AgentResultCache | None = None,
     ) -> None:
         self._store = store
         self._registry = registry
@@ -190,7 +228,8 @@ class AgentRuntime:
         self._proposal_store = proposal_store or ProposalStore()
         self._failures: defaultdict[str, int] = defaultdict(int)
         self._failure_threshold = failure_threshold
-        self._results: dict[str, AgentResult] = {}
+        self._memory_store = memory_store or FileMemoryStore()
+        self._results = result_cache or AgentResultCache(policy=self._memory_store.policy)
 
     @property
     def registry(self) -> AgentRegistry:
@@ -203,6 +242,21 @@ class AgentRuntime:
     @property
     def proposal_store(self) -> ProposalStore:
         return self._proposal_store
+
+    @property
+    def memory_store(self) -> MemoryStore:
+        return self._memory_store
+
+    def get_memory(self, run_id: str) -> MemoryRecord | None:
+        trace = self._trace_store.get(run_id)
+        if trace is None:
+            return None
+        contract = self._registry.get_contract(trace.agent_id)
+        if contract is None or not contract.enabled or contract.memory_policy != "APPROVED":
+            return None
+        return self._memory_store.get(
+            run_id, scope=f"agent:{trace.agent_id}", owner=trace.actor_id,
+        )
 
     def get_result(self, run_id: str) -> AgentResult | None:
         return self._results.get(run_id)
@@ -275,6 +329,7 @@ class AgentRuntime:
             tools=self._tools,
             deadline=start + budgets.max_seconds,
             emit=emit,
+            memory_store=self._memory_store,
         )
         emit("EXECUTE", "STARTED", f"Executing {request.agent_id}")
         result = self._execute_bounded(agent, request, context, budgets.max_seconds)
@@ -372,6 +427,7 @@ class AgentRuntime:
         events: list[AgentTraceEvent],
         elapsed: float,
     ) -> AgentResult:
+        initial_result = result
         events.append(AgentTraceEvent(
             sequence=len(events), phase="AUDIT", occurred_at=utc_now_iso(),
             status="SUCCEEDED", summary="Run prepared for durable audit",
@@ -393,16 +449,74 @@ class AgentRuntime:
         persisted = self._persist_run(request, result, elapsed)
         try:
             self._trace_store.save(trace)
-        except OSError:
+        except OSError as exc:
+            log.error("agent.trace.persist_failed", extra={
+                "event": "agent.trace.persist_failed", "error_type": type(exc).__name__,
+                "correlation_id": trace.correlation_id,
+            })
             persisted = False
         if not persisted:
-            warnings = [*(result.warnings or []), "Agent run could not be persisted"]
-            result = result.model_copy(update={
-                "status": "PARTIAL" if result.status == "SUCCEEDED" else result.status,
-                "warnings": warnings,
-            })
-        self._results[trace.run_id] = result
+            result = self._with_persistence_warning(result, "Agent run could not be persisted")
+        if contract.memory_policy == "APPROVED" and result.status != "DENIED" and persisted:
+            try:
+                self._memory_store.put(MemoryRecord(
+                    memory_id=result.run_id or request.request_id,
+                    kind="TASK",
+                    scope=f"agent:{contract.agent_id}",
+                    owner=request.actor_id,
+                    source=contract.agent_id,
+                    ttl_seconds=request.metadata.get(
+                        "memory_ttl_seconds", self._memory_store.policy.ttl_seconds,
+                    ),
+                    provenance_refs=[f"urn:eoip:agent:run:{result.run_id or request.request_id}"],
+                    confidence=result.explanation.confidence if result.explanation else None,
+                    classification="INTERNAL",
+                    deletion_policy="DELETE_AT_EXPIRY",
+                    content={"status": result.status, "evidence_count": len(result.evidence_refs)},
+                ), correlation_id=request.correlation_id or request.request_id)
+            except (MemoryPolicyError, MemoryStorageError, ValueError) as exc:
+                log.error("agent.memory.persist_failed", extra={
+                    "event": "agent.memory.persist_failed",
+                    "correlation_id": request.correlation_id or request.request_id,
+                    "error_type": type(exc).__name__,
+                })
+                result = self._with_persistence_warning(
+                    result, f"Task memory could not be persisted ({type(exc).__name__})",
+                )
+        if result != initial_result:
+            for index, event in enumerate(events):
+                if event.phase == "EXPLAIN" and result.explanation is not None:
+                    events[index] = event.model_copy(update={
+                        "status": result.status,
+                        "metadata": {**event.metadata, "explanation": result.explanation.model_dump()},
+                    })
+                elif event.phase == "FINISH":
+                    events[index] = event.model_copy(update={"status": result.status})
+            trace = trace.model_copy(update={"events": events, "final_status": result.status})
+            refreshed = self._persist_run(request, result, elapsed) if persisted else False
+            try:
+                self._trace_store.save(trace)
+            except OSError as exc:
+                log.error("agent.trace.persist_failed", extra={
+                    "event": "agent.trace.persist_failed", "error_type": type(exc).__name__,
+                    "correlation_id": trace.correlation_id,
+                })
+                refreshed = False
+            if persisted and not refreshed:
+                result = self._with_persistence_warning(result, "Agent run could not be persisted")
+        self._results.put(trace.run_id, result)
         return result
+
+    def _with_persistence_warning(self, result: AgentResult, warning: str) -> AgentResult:
+        updated = result.model_copy(update={
+            "status": "PARTIAL" if result.status == "SUCCEEDED" else result.status,
+            "warnings": [*(result.warnings or []), warning],
+        })
+        return updated.model_copy(update={
+            "explanation": self._explain(
+                updated, result.explanation.rule_decisions if result.explanation else [],
+            ),
+        })
 
     @staticmethod
     def _clamped_budgets(request: AgentRequest, contract: AgentContract) -> AgentBudgets:

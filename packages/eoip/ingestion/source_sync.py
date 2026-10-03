@@ -16,6 +16,7 @@ from eoip.connectors.rest import parse_utc
 from eoip.connectors.servicenow import ServiceNowConnector
 from eoip.connectors.sync import SyncBatch
 from eoip.contracts.source_event import SourceEvent, SourceEventV2, upgrade_source_event, utc_now_iso
+from eoip.graph.documentation import reconcile_document_references
 from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
 from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
@@ -188,6 +189,7 @@ class SourceSyncIngestionService:
                     }
                     structure = extract_storage_body(content, source_ref)
                     structure["source_metadata"] = mapped["source_metadata"]
+                    structure["source_history"] = mapped["source_history"]
                     properties["payload_json"] = json.dumps(structure, sort_keys=True)
                     properties["parser_version"] = structure["parser_version"]
                     parents = [
@@ -294,7 +296,7 @@ class SourceSyncIngestionService:
                 "schema_version": SCHEMA_VERSION,
                 "first_seen": shared["first_seen"],
             }
-            self.evolution.evolve_entity(
+            evolution_result = self.evolution.evolve_entity(
                 mapped["label"],
                 mapped["canonical_id"],
                 semantic_properties,
@@ -362,9 +364,11 @@ class SourceSyncIngestionService:
                 },
             )
             nodes_by_cid[mapped["canonical_id"]] = node
-            records.append((event, mapped, evidence_props))
+            records.append((event, mapped, evidence_props, evolution_result["status"]))
 
-        for _event, mapped, edge_properties in records:
+        for event, mapped, edge_properties, status in records:
+            if status == "LATE_IGNORED":
+                continue
             for parent_cid in mapped["parents"]:
                 parent = nodes_by_cid.get(parent_cid) or self.store.get_vertex_by_canonical_id(
                     parent_cid
@@ -381,6 +385,15 @@ class SourceSyncIngestionService:
                             ),
                         },
                     )
+            node = nodes_by_cid[mapped["canonical_id"]]
+            if (
+                source_system == "confluence" and mapped["label"] == "Document"
+                and mapped["properties"].get("doc_format") == "confluence-storage"
+                and (status == "DELETE" or node["properties"].get("content_hash") == event.content_hash)
+            ):
+                reconcile_document_references(
+                    self.store, self.evolution, node, upgrade_source_event(event), edge_properties,
+                )
         link_domains(self.store, list(nodes_by_cid.values()))
 
     def _write_dlq(self, event: SourceEvent | SourceEventV2, error: str, correlation_id: str) -> None:

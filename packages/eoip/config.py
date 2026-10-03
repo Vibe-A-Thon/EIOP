@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 import yaml
+from eoip.agents.memory import MemoryPolicy
 from eoip.query.policy import QueryPolicy
 
 
@@ -33,3 +34,10 @@ def load_agent_config(agent_id: str) -> dict | None:
     if not path.exists():
         return None
     return yaml.safe_load(path.read_text(encoding="utf-8"))
+
+
+def load_memory_policy() -> MemoryPolicy:
+    path = _config_root() / "memory-policy.yaml"
+    if not path.exists():
+        return MemoryPolicy()
+    return MemoryPolicy.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))

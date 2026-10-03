@@ -6,11 +6,12 @@ are enumerated here; namespaces for Organization, Work, Code, CI/CD,
 Operations, Knowledge and AI/Agent concepts are preserved.
 """
 
-ONTOLOGY_VERSION = "0.3.0"
-SCHEMA_VERSION = "1.1"
+ONTOLOGY_VERSION = "0.4.0"
+SCHEMA_VERSION = "1.2"
+DOCUMENT_TARGET_LABELS = ("Service", "APIService", "APIEndpoint", "Project", "WorkItem", "File", "CodeSymbol")
 
 # Graph domains (one physical graph, multiple logical domains — ADR-1)
-DOMAINS = ["META", "WORK", "CODE", "CICD", "KNOWLEDGE", "IDENTITY", "AGENT", "OPS", "TEST", "DESIGN"]
+DOMAINS = ["META", "WORK", "CODE", "CICD", "KNOWLEDGE", "IDENTITY", "AGENT", "OPS", "TEST", "DESIGN", "INTEGRATION", "DECISION", "PROCESS", "BUSINESS"]
 
 # Shared property keys (11-graph-schema.md) with HugeGraph data types.
 # TEXT | INT | LONG | DOUBLE | BOOLEAN | DATE (ISO-8601 strings in MVP)
@@ -214,12 +215,49 @@ PROPERTY_KEYS: dict[str, str] = {
     # ProdPages properties
     "page_url": "TEXT",
     "page_status": "TEXT",
+    # INTEGRATION domain properties (JSON ingestion pipelines)
+    "source_connector": "TEXT",
+    "pipeline_id": "TEXT",
+    "last_ingestion_run": "DATE",
+    "build_number": "TEXT",
+    "records_accepted": "INT",
+    "records_rejected": "INT",
+    "completed_at": "DATE",
+    # DECISION domain properties
+    "decision_status": "TEXT",
+    "decision_date": "DATE",
+    "rationale": "TEXT",
+    "constraints": "TEXT",
+    "alternatives_considered": "TEXT",
+    "outcome": "TEXT",
+    "superseded_by": "TEXT",
+    # PROCESS domain properties
+    "process_type": "TEXT",
+    "step_order": "INT",
+    "expected_duration": "DOUBLE",
+    "actual_duration": "DOUBLE",
+    "deviation_type": "TEXT",
+    "is_designed": "BOOLEAN",
+    "event_timestamp": "DATE",
+    "actor": "TEXT",
+    # BUSINESS domain properties
+    "objective_type": "TEXT",
+    "capability_level": "INT",
+    "business_domain": "TEXT",
+    "kpi_target": "TEXT",
+    "kpi_actual": "TEXT",
+    "owner_id": "TEXT",
+    "strategic_priority": "TEXT",
+    # Twin classification properties
+    "fact_class": "TEXT",
+    "coverage_score": "DOUBLE",
+    "thread_depth": "INT",
 }
 
 # Vertex labels -> (graph_domain, required properties, optional properties)
 VERTEX_LABELS: dict[str, tuple[str, list[str], list[str]]] = {
     "DataSource": ("META", ["canonical_id", "name", "source_system"], ["source_uri", "description"]),
-    "IngestionRun": ("META", ["canonical_id", "run_status", "run_kind"], ["counts", "started_at", "finished_at", "source_system", "ingestion_run_id"]),
+    "IngestionRun": ("META", ["canonical_id", "run_status", "run_kind"], ["counts", "started_at", "finished_at", "source_system", "ingestion_run_id", "source_connector", "pipeline_id", "records_accepted", "records_rejected", "completed_at"]),
     "GraphDomain": ("META", ["canonical_id", "name"], ["description"]),
     "OntologyVersion": ("META", ["canonical_id", "ontology_version"], ["schema_version"]),
     "Evidence": ("META", ["canonical_id", "source_system", "source_ref", "method"], ["captured_at", "parser_version", "mapper_version", "confidence", "evidence_key"]),
@@ -285,6 +323,21 @@ VERTEX_LABELS: dict[str, tuple[str, list[str], list[str]]] = {
     "Epic": ("WORK", ["canonical_id", "name"], ["rally_id", "rally_formatted_id", "description", "status", "plan_estimate", "release_name", "source_system", "created_at", "modified_at"]),
     "Feature": ("WORK", ["canonical_id", "name"], ["rally_id", "rally_formatted_id", "description", "status", "plan_estimate", "iteration_name", "release_name", "schedule_state", "source_system", "created_at", "modified_at"]),
     "UserStory": ("WORK", ["canonical_id", "name"], ["rally_id", "rally_formatted_id", "description", "status", "plan_estimate", "iteration_name", "schedule_state", "source_system", "created_at", "modified_at"]),
+    # INTEGRATION domain — generic entities from JSON ingestion pipelines
+    "GenericEntity": ("INTEGRATION", ["canonical_id", "name"], ["description", "entity_type", "source_connector", "pipeline_id", "last_ingestion_run", "source_system", "created_at", "modified_at"]),
+    "Requirement": ("WORK", ["canonical_id", "name"], ["description", "status", "priority", "source_system", "created_at", "modified_at"]),
+    "BuildRecord": ("CICD", ["canonical_id", "name"], ["status", "build_number", "duration_seconds", "source_system", "created_at"]),
+    # DECISION domain
+    "Decision": ("DECISION", ["canonical_id", "name"], ["description", "decision_status", "decision_date", "rationale", "constraints", "alternatives_considered", "outcome", "superseded_by", "source_system", "created_at", "modified_at"]),
+    "Alternative": ("DECISION", ["canonical_id", "name"], ["description", "rationale", "outcome", "source_system"]),
+    "DecisionOutcome": ("DECISION", ["canonical_id", "name"], ["description", "status", "decision_date", "source_system"]),
+    # PROCESS domain
+    "ProcessFlow": ("PROCESS", ["canonical_id", "name"], ["description", "process_type", "is_designed", "source_system", "created_at", "modified_at"]),
+    "ProcessStep": ("PROCESS", ["canonical_id", "name"], ["description", "step_order", "expected_duration", "actual_duration", "status", "actor", "source_system"]),
+    "ProcessEvent": ("PROCESS", ["canonical_id", "name"], ["description", "event_timestamp", "actor", "deviation_type", "source_system"]),
+    # BUSINESS domain
+    "BusinessObjective": ("BUSINESS", ["canonical_id", "name"], ["description", "objective_type", "strategic_priority", "kpi_target", "kpi_actual", "owner_id", "status", "source_system", "created_at", "modified_at"]),
+    "BusinessCapability": ("BUSINESS", ["canonical_id", "name"], ["description", "capability_level", "business_domain", "owner_id", "status", "source_system", "created_at", "modified_at"]),
 }
 
 # Edge labels -> (out vertex labels, in vertex labels, properties)
@@ -327,11 +380,11 @@ EDGE_LABELS: dict[str, tuple[list[str], list[str], list[str]]] = {
     "DEPENDS_ON": (["CodeSymbol", "File", "Service"], ["Dependency", "CodeSymbol", "File", "Service"], []),
     "IMPLEMENTS": (["MergeRequest", "Commit"], ["WorkItem"], []),
     "REFERENCES": (["MergeRequest", "Commit", "Document", "DocumentSection", "WorkItem", "PipelineRun"], ["WorkItem", "Commit", "CodeSymbol", "Dependency", "File"], []),
-    "DOCUMENTS": (["Document", "DocumentSection"], ["CodeSymbol", "WorkItem", "File"], []),
-    "EVIDENCED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Dependency", "Service", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "Metric", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory"], ["Evidence"], []),
-    "INGESTED_IN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "Service", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "Metric", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory"], ["IngestionRun"], []),
-    "BELONGS_TO_DOMAIN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "Service", "Evidence", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "Metric", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory"], ["GraphDomain"], []),
-    "VALIDATED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Repository", "Project", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "Metric", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory"], ["ValidationRun"], []),
+    "DOCUMENTS": (["Document", "DocumentSection"], list(DOCUMENT_TARGET_LABELS), []),
+    "EVIDENCED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Dependency", "Service", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "Metric", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory", "Decision", "Alternative", "DecisionOutcome", "ProcessFlow", "ProcessStep", "ProcessEvent", "BusinessObjective", "BusinessCapability"], ["Evidence"], []),
+    "INGESTED_IN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "Service", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "Metric", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory", "Decision", "Alternative", "DecisionOutcome", "ProcessFlow", "ProcessStep", "ProcessEvent", "BusinessObjective", "BusinessCapability"], ["IngestionRun"], []),
+    "BELONGS_TO_DOMAIN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "Service", "Evidence", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "Metric", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory", "Decision", "Alternative", "DecisionOutcome", "ProcessFlow", "ProcessStep", "ProcessEvent", "BusinessObjective", "BusinessCapability"], ["GraphDomain"], []),
+    "VALIDATED_BY": (["Service", "WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Repository", "Project", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "Metric", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory", "Decision", "Alternative", "DecisionOutcome", "ProcessFlow", "ProcessStep", "ProcessEvent", "BusinessObjective", "BusinessCapability"], ["ValidationRun"], []),
     "PRODUCED_BY": (["PipelineRun", "Document", "DocumentSection", "Release", "Deployment"], ["Commit", "PipelineRun", "MergeRequest", "Job"], []),
     "TRIGGERED_BY": (["Incident", "AlertEvent"], ["Deployment", "Commit", "PipelineRun", "ChangeRequest"], []),
     "MONITORS": (["MonitorRule", "Dashboard"], ["APIService", "Deployment", "Repository", "PipelineRun"], []),
@@ -351,6 +404,21 @@ EDGE_LABELS: dict[str, tuple[list[str], list[str], list[str]]] = {
     "LOGGED_BY": (["LogAggregate"], ["APIService", "Deployment", "Repository"], []),
     "COVERS": (["TestSuite", "TestCycle"], ["WorkItem", "Feature", "UserStory", "Epic"], []),
     "SUCCEEDS": (["Commit"], ["Commit"], []),
+    # DECISION domain edges
+    "HAS_ALTERNATIVE": (["Decision"], ["Alternative"], []),
+    "HAS_OUTCOME": (["Decision"], ["DecisionOutcome"], []),
+    "DECIDES": (["Decision"], ["File", "CodeSymbol", "Service", "APIService", "APIEndpoint", "Deployment", "Repository"], []),
+    "SUPERSEDES": (["Decision"], ["Decision"], []),
+    # PROCESS domain edges
+    "HAS_STEP": (["ProcessFlow"], ["ProcessStep"], []),
+    "PRECEDES": (["ProcessStep"], ["ProcessStep"], []),
+    "TRIGGERS_PROCESS": (["ProcessEvent"], ["ProcessStep", "ProcessFlow"], []),
+    "DEVIATES_FROM": (["ProcessEvent"], ["ProcessStep"], []),
+    # BUSINESS domain edges
+    "FULFILLS": (["BusinessCapability", "Service", "Deployment", "APIService"], ["BusinessObjective"], []),
+    "REALIZES": (["Project", "Epic", "Feature", "UserStory", "WorkItem", "Service", "APIService"], ["BusinessCapability"], []),
+    "DECOMPOSES_INTO": (["BusinessObjective", "BusinessCapability"], ["BusinessObjective", "BusinessCapability"], []),
+    "TRACES_TO": (["BusinessObjective", "BusinessCapability", "Requirement", "Decision"], ["WorkItem", "Epic", "Feature", "UserStory", "File", "CodeSymbol", "TestCase", "Deployment", "Service", "APIService", "PipelineRun"], []),
 }
 
 # Index baseline (11-graph-schema.md §Index baseline; FR-GRAPH-008)
@@ -371,6 +439,10 @@ INDEXES: list[dict] = [
     # edge labels already use edge_key as a sort key, which supplies endpoint-
     # scoped uniqueness; this queryable index makes lookup-before-upsert O(log n).
     {"name": "idx_edge_key", "type": "SECONDARY", "label": None, "fields": ["edge_key"], "base_type": "EDGE_LABEL"},
+    *(
+        {"name": f"idx_document_reference_{key}_{label}", "type": "SECONDARY", "label": label, "fields": [key]}
+        for label in DOCUMENT_TARGET_LABELS for key in ("url", "path", "source_uri")
+    ),
 ]
 
 # Business vertex labels counted as "business" (non-meta) facts

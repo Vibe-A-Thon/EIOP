@@ -35,6 +35,6 @@ def test_confluence_fetched_rejection_preserves_capture_and_checkpoint(live_repl
         assert logical_output_diff(before, logical_graph_output(live.store))["equivalent"]
         assert not (live.root / "state" / "connectors" / f"{source_id}.json").exists()
         requests = upstream.get("/requests").json()
-        assert len(requests) == 15 and all(r["correlation_id"] == baseline["correlation_id"] for r in requests)
+        assert len(requests) == 17 and all(r["correlation_id"] == baseline["correlation_id"] for r in requests)
         live.audit(baseline, "partial")
         live.audit(replay, "partial")

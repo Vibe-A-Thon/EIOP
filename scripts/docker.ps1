@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('up', 'test', 'status', 'logs', 'down', 'backup', 'extension', 'restore-test', 'acceptance', 'dlq-acceptance')]
+    [ValidateSet('up', 'test', 'status', 'logs', 'down', 'backup', 'backup-bundle', 'extension', 'restore-test', 'acceptance', 'recovery-acceptance', 'dlq-acceptance')]
     [string]$Action = 'up'
 )
 $ErrorActionPreference = 'Stop'
@@ -58,6 +58,17 @@ switch ($Action) {
         try { Invoke-Compose -CommandArguments @('exec', '-T', 'eoip-api', 'python', '-m', 'scripts.backup') }
         finally { Invoke-Compose -CommandArguments @('start', 'eoip-worker') }
     }
+    'backup-bundle' {
+        $writers = @(@(Invoke-Compose -CommandArguments @('ps', '--status', 'running', '--services')) |
+            Where-Object { $_ -in @('eoip-worker', 'eoip-api', 'eoip-mcp', 'local-model') })
+        try {
+            if ($writers.Count -gt 0) { Invoke-Compose -CommandArguments (@('stop') + $writers) }
+            Invoke-Compose -CommandArguments @('--profile', 'tools', 'run', '--rm', '--no-deps', 'bundle-backup')
+        }
+        finally {
+            if ($writers.Count -gt 0) { Invoke-Compose -CommandArguments (@('start') + $writers) }
+        }
+    }
     'extension' { Invoke-Compose -CommandArguments @('--profile', 'tools', 'run', '--build', '--rm', 'extension-build') }
     'acceptance' {
         $previousAcceptanceRun = $env:EOIP_ACCEPTANCE_RUN
@@ -96,6 +107,24 @@ switch ($Action) {
                 try { Invoke-Compose -CommandArguments @('down', '--volumes') }
                 finally { $env:EOIP_ACCEPTANCE_RUN = $previousAcceptanceRun }
             }
+        }
+    }
+    'recovery-acceptance' {
+        $previousAcceptanceRun = $env:EOIP_ACCEPTANCE_RUN
+        $runId = "eoip-recovery-acceptance-$([Guid]::NewGuid().ToString('N'))"
+        $env:EOIP_ACCEPTANCE_RUN = $runId
+        $composeArguments = @('compose', '--env-file', $envFile, '-p', $runId, '-f',
+            (Join-Path $projectRoot 'deploy\docker-compose.acceptance.yml'))
+        try {
+            Invoke-Compose -CommandArguments @('build', 'recovery-acceptance')
+            Invoke-Compose -CommandArguments @('up', '-d', '--wait', '--wait-timeout', '420',
+                'source-graph', 'target-graph')
+            Invoke-Compose -CommandArguments @('run', '--rm', '--no-deps', 'recovery-acceptance')
+            Write-Host "Recovery evidence: test-results\$runId.json"
+        }
+        finally {
+            try { Invoke-Compose -CommandArguments @('down', '--volumes') }
+            finally { $env:EOIP_ACCEPTANCE_RUN = $previousAcceptanceRun }
         }
     }
     'restore-test' {

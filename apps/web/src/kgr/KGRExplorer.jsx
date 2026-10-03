@@ -21,6 +21,12 @@ import CodePanel from './components/CodePanel.jsx';
 import QueryBuilder from './components/QueryBuilder.jsx';
 import GeoMap from './components/GeoMap.jsx';
 import PRDashboard from './components/PRDashboard.jsx';
+import MetadataGraphView from './graphs/MetadataGraph.jsx';
+import OntologyGraphView from './graphs/OntologyGraph.jsx';
+import ProvenanceGraphView from './graphs/ProvenanceGraph.jsx';
+import ImpactGraphView from './graphs/ImpactGraph.jsx';
+import SimilarityGraphView from './graphs/SimilarityGraph.jsx';
+import RelationshipGraphView from './graphs/RelationshipGraph.jsx';
 
 const graphTypes = [
   {id: 'knowledge', label: 'Knowledge', icon: 'graph', hint: 'Entity-centric knowledge graph with relationships and evidence'},
@@ -372,274 +378,6 @@ function NodeInspector({node, detail, metrics, blastRadius, reverseImpact, fullC
   </section>;
 }
 
-function MetadataGraphView({schema}) {
-  if (!schema) return <div className="empty-state"><span className="empty-icon"><Icon name="database" size={22}/></span><strong>Loading schema...</strong></div>;
-  const labels = Object.entries(schema.vertex_labels || {});
-  const edges = Object.entries(schema.edge_labels || {});
-  return <div className="kgr-metadata-view">
-    <section className="panel"><div className="panel-heading"><div><span className="eyebrow">VERTEX LABELS</span><h2>Entity types ({labels.length})</h2></div></div>
-      <div className="schema-grid">{labels.map(([name, info]) =>
-        <div key={name} className="schema-card" tabIndex="0">
-          <div className="schema-card-header"><span className="type-dot" style={{background: palette[name] || '#94a3b8'}}/><strong>{name}</strong><span className="badge">{info.instance_count}</span></div>
-          <small className="schema-domain">{info.domain}</small>
-          <div className="schema-props"><strong>Required:</strong> {info.required_properties.join(', ')}</div>
-          {info.optional_properties.length > 0 && <div className="schema-props"><strong>Optional:</strong> {info.optional_properties.join(', ')}</div>}
-        </div>
-      )}</div>
-    </section>
-    <section className="panel"><div className="panel-heading"><div><span className="eyebrow">EDGE LABELS</span><h2>Relationship types ({edges.length})</h2></div></div>
-      <div className="schema-grid">{edges.map(([name, info]) =>
-        <div key={name} className="schema-card" tabIndex="0">
-          <div className="schema-card-header"><Icon name="link" size={14}/><strong>{name}</strong></div>
-          <div className="schema-props"><strong>From:</strong> {info.source_labels.join(', ')}</div>
-          <div className="schema-props"><strong>To:</strong> {info.target_labels.join(', ')}</div>
-        </div>
-      )}</div>
-    </section>
-  </div>;
-}
-
-function OntologyGraphView({schema}) {
-  if (!schema) return <div className="empty-state"><span className="empty-icon"><Icon name="layers" size={22}/></span><strong>Loading ontology...</strong></div>;
-  const domains = schema.domains || [];
-  const labels = schema.vertex_labels || {};
-  const domainGroups = {};
-  for (const [name, info] of Object.entries(labels)) {
-    const d = info.domain;
-    if (!domainGroups[d]) domainGroups[d] = [];
-    domainGroups[d].push({name, ...info});
-  }
-  return <div className="kgr-ontology-view">
-    <section className="panel"><div className="panel-heading"><div><span className="eyebrow">ONTOLOGY</span>
-      <h2>Enterprise ontology v{schema.ontology_version}</h2><p>Schema v{schema.schema_version} · {domains.length} domains · {Object.keys(labels).length} entity types</p>
-    </div></div>
-      <div className="ontology-domain-grid">{domains.map(d =>
-        <div key={d} className="ontology-domain-card">
-          <h3><Icon name="layers" size={16}/> {d}</h3>
-          <div className="ontology-types">{(domainGroups[d] || []).map(t =>
-            <div key={t.name} className="ontology-type-row">
-              <span className="type-dot" style={{background: palette[t.name] || '#94a3b8'}}/><strong>{t.name}</strong>
-              <span className="badge">{t.instance_count}</span>
-              <small>{t.required_properties.length} required</small>
-            </div>
-          )}</div>
-        </div>
-      )}</div>
-    </section>
-    <section className="panel"><div className="panel-heading"><div><span className="eyebrow">INDEXES</span><h2>Index coverage</h2></div></div>
-      <div className="index-list">{(schema.indexes || []).map(idx =>
-        <div key={idx.name} className="index-row"><Icon name="check" size={14}/><strong>{idx.name}</strong>
-          <span className="badge">{idx.type}</span><small>{idx.label || 'global'} · {idx.fields.join(', ')}</small>
-        </div>
-      )}</div>
-    </section>
-  </div>;
-}
-
-function ProvenanceGraphView({graph, onInspect, selected}) {
-  const evidenceNodes = (graph.nodes || []).filter(n => ['Evidence', 'IngestionRun', 'ValidationRun'].includes(n.label));
-  return <div className="kgr-provenance-view">
-    <section className="panel"><div className="panel-heading"><div><span className="eyebrow">PROVENANCE CHAIN</span>
-      <h2>Evidence & ingestion lineage</h2><p>Entities are connected to their source evidence and ingestion runs.</p>
-    </div><span className="count-badge">{evidenceNodes.length} provenance entities</span></div>
-      {evidenceNodes.length ? <div className="provenance-list">{evidenceNodes.map(n =>
-        <button key={n.id} onClick={() => onInspect(n)} className={selected?.id === n.id ? 'selected' : ''}>
-          <span className="type-dot" style={{background: palette[n.label] || '#94a3b8'}}/><span>
-            <strong>{n.properties?.source_ref || n.properties?.run_kind || displayLabel(n)}</strong>
-            <small>{n.label} · {n.properties?.method || n.properties?.run_status || ''}</small>
-          </span><Icon name="chevron" size={14}/>
-        </button>
-      )}</div> : <div className="empty-state"><span className="empty-icon"><Icon name="shield" size={22}/></span>
-        <strong>No provenance entities</strong><p>Search and expand entities to load their evidence chain.</p>
-      </div>}
-    </section>
-  </div>;
-}
-
-function ImpactGraphView({api, run, busy, graph, setGraph}) {
-  const [centralityResults, setCentralityResults] = useState(null);
-  const [anomalyResults, setAnomalyResults] = useState(null);
-  const [clusterResults, setClusterResults] = useState(null);
-
-  const runCentrality = useCallback(() => {
-    const ids = (graph.nodes || []).slice(0, 50).map(n => n.id);
-    if (!ids.length) return;
-    run(async () => {
-      const result = await api('/api/v1/graph/centrality/full', {
-        canonical_ids: ids, algorithms: ['degree', 'betweenness', 'closeness', 'pagerank']
-      });
-      setCentralityResults(result);
-    });
-  }, [api, run, graph]);
-
-  const runAnomalies = useCallback(() => {
-    run(async () => {
-      const result = await api('/api/v1/graph/anomalies', {algorithms: ['degree_zscore'], threshold: 2.0});
-      setAnomalyResults(result);
-    });
-  }, [api, run]);
-
-  const runClusters = useCallback(() => {
-    run(async () => {
-      const result = await api('/api/v1/graph/cluster', {algorithm: 'label_propagation', resolution: 1.0});
-      setClusterResults(result);
-    });
-  }, [api, run]);
-
-  const topCentral = useMemo(() => {
-    if (!centralityResults) return [];
-    return Object.entries(centralityResults)
-      .map(([id, m]) => ({id, ...m}))
-      .sort((a, b) => (b.page_rank || 0) - (a.page_rank || 0))
-      .slice(0, 15);
-  }, [centralityResults]);
-
-  return <div className="kgr-impact-view">
-    <div className="impact-actions-bar">
-      <button className="primary-button" disabled={busy} onClick={runCentrality}><Icon name="activity" size={16}/>Compute centrality</button>
-      <button className="primary-button" disabled={busy} onClick={runAnomalies}><Icon name="graph" size={16}/>Detect anomalies</button>
-      <button className="primary-button" disabled={busy} onClick={runClusters}><Icon name="layers" size={16}/>Find communities</button>
-    </div>
-
-    {topCentral.length > 0 && <section className="panel">
-      <div className="panel-heading"><div><span className="eyebrow">CENTRALITY LEADERS</span>
-        <h2>Top {topCentral.length} by PageRank</h2></div></div>
-      <div className="centrality-table">
-        <div className="centrality-header"><span>Entity</span><span>Degree</span><span>Betweenness</span><span>Closeness</span><span>PageRank</span></div>
-        {topCentral.map(c => <div key={c.id} className="centrality-row">
-          <span className="centrality-id" title={c.id}>{shortId(c.canonical_id || c.id, 28)}</span>
-          <span>{c.degree}</span>
-          <span>{(c.betweenness || 0).toFixed(4)}</span>
-          <span>{(c.closeness || 0).toFixed(4)}</span>
-          <span className="centrality-pr">{(c.page_rank || 0).toFixed(4)}</span>
-        </div>)}
-      </div>
-    </section>}
-
-    {anomalyResults && <section className="panel">
-      <div className="panel-heading"><div><span className="eyebrow">ANOMALIES</span>
-        <h2>{anomalyResults.length} outlier{anomalyResults.length !== 1 ? 's' : ''} detected</h2></div></div>
-      {anomalyResults.length ? <div className="anomaly-list">{anomalyResults.map((a, i) =>
-        <div key={a.canonical_id || i} className="anomaly-row">
-          <span className={`anomaly-type ${a.anomaly_type}`}>{a.anomaly_type}</span>
-          <strong>{shortId(a.canonical_id, 28)}</strong>
-          <span className="anomaly-score">z={a.score?.toFixed(2)}</span>
-          <small>{a.details?.degree != null ? `degree: ${a.details.degree}` : ''}</small>
-        </div>
-      )}</div> : <p className="subtle">No anomalies found at this threshold.</p>}
-    </section>}
-
-    {clusterResults && <section className="panel">
-      <div className="panel-heading"><div><span className="eyebrow">COMMUNITIES</span>
-        <h2>{clusterResults.community_count} communities (modularity {(clusterResults.modularity || 0).toFixed(3)})</h2></div></div>
-      <div className="cluster-grid">{(clusterResults.communities || []).slice(0, 20).map((c, i) =>
-        <div key={i} className="cluster-card">
-          <div className="cluster-header"><strong>Community {c.community_id ?? i}</strong><span className="badge">{c.size ?? c.members?.length ?? 0}</span></div>
-          <div className="cluster-members">{(c.members || []).slice(0, 5).map(m =>
-            <span key={m} className="cluster-member" title={m}>{shortId(m, 20)}</span>
-          )}{(c.members || []).length > 5 && <span className="cluster-more">+{(c.members || []).length - 5} more</span>}</div>
-        </div>
-      )}</div>
-    </section>}
-
-    {!centralityResults && !anomalyResults && !clusterResults && <div className="empty-state">
-      <span className="empty-icon"><Icon name="activity" size={22}/></span>
-      <strong>Impact analysis</strong><p>Run centrality, anomaly detection, or community analysis using the buttons above.</p>
-    </div>}
-  </div>;
-}
-
-function SimilarityGraphView({api, run, busy, graph, onHighlightPath}) {
-  const [queryId, setQueryId] = useState('');
-  const [algorithm, setAlgorithm] = useState('jaccard');
-  const [results, setResults] = useState(null);
-  const [pathResults, setPathResults] = useState(null);
-  const [pathSource, setPathSource] = useState('');
-  const [pathTarget, setPathTarget] = useState('');
-
-  const nodeIds = useMemo(() => (graph.nodes || []).map(n => n.id), [graph]);
-
-  const runSimilarity = useCallback(() => {
-    if (!queryId.trim()) return;
-    run(async () => {
-      const result = await api('/api/v1/graph/similarity', {
-        canonical_id: queryId.trim(), algorithm, limit: 20,
-      });
-      setResults(result);
-    });
-  }, [api, run, queryId, algorithm]);
-
-  const runPaths = useCallback(() => {
-    if (!pathSource.trim() || !pathTarget.trim()) return;
-    run(async () => {
-      const result = await api('/api/v1/graph/shortest-paths', {
-        source_id: pathSource.trim(), target_id: pathTarget.trim(), max_paths: 5,
-      });
-      setPathResults(result);
-    });
-  }, [api, run, pathSource, pathTarget]);
-
-  return <div className="kgr-similarity-view">
-    <section className="panel">
-      <div className="panel-heading"><div><span className="eyebrow">SIMILARITY SEARCH</span>
-        <h2>Find structurally similar nodes</h2></div></div>
-      <div className="similarity-form">
-        <div className="similarity-input-row">
-          <input type="text" placeholder="Enter entity canonical ID..." value={queryId}
-            onChange={e => setQueryId(e.target.value)} list="sim-node-list" aria-label="Entity ID"/>
-          <datalist id="sim-node-list">{nodeIds.slice(0, 100).map(id => <option key={id} value={id}/>)}</datalist>
-          <label className="select-control"><select value={algorithm} onChange={e => setAlgorithm(e.target.value)} aria-label="Algorithm">
-            <option value="jaccard">Jaccard</option>
-            <option value="adamic_adar">Adamic-Adar</option>
-            <option value="common_neighbors">Common neighbors</option>
-          </select></label>
-          <button className="primary-button" disabled={busy || !queryId.trim()} onClick={runSimilarity}><Icon name="users" size={16}/>Search</button>
-        </div>
-      </div>
-      {results && results.length > 0 ? <div className="similarity-results">
-        {results.map((s, i) => <div key={s.canonical_id || i} className="similarity-result-row">
-          <span className="similarity-rank">{i + 1}</span>
-          <div className="similarity-info">
-            <strong>{shortId(s.canonical_id, 36)}</strong>
-            <small>{s.common_neighbors ?? 0} common neighbors</small>
-          </div>
-          <span className="similarity-score">{(s.score ?? 0).toFixed(4)}</span>
-        </div>)}
-      </div> : results ? <p className="subtle">No similar nodes found.</p> : null}
-    </section>
-
-    <section className="panel">
-      <div className="panel-heading"><div><span className="eyebrow">SHORTEST PATHS</span>
-        <h2>Find all shortest paths between two entities</h2></div></div>
-      <div className="similarity-form">
-        <div className="similarity-input-row">
-          <input type="text" placeholder="Source entity ID..." value={pathSource}
-            onChange={e => setPathSource(e.target.value)} list="path-src-list" aria-label="Source ID"/>
-          <datalist id="path-src-list">{nodeIds.slice(0, 100).map(id => <option key={id} value={id}/>)}</datalist>
-          <span className="path-arrow-inline"><Icon name="chevron" size={14}/></span>
-          <input type="text" placeholder="Target entity ID..." value={pathTarget}
-            onChange={e => setPathTarget(e.target.value)} list="path-tgt-list" aria-label="Target ID"/>
-          <datalist id="path-tgt-list">{nodeIds.slice(0, 100).map(id => <option key={id} value={id}/>)}</datalist>
-          <button className="primary-button" disabled={busy || !pathSource.trim() || !pathTarget.trim()} onClick={runPaths}>
-            <Icon name="link" size={16}/>Find paths</button>
-        </div>
-      </div>
-      {pathResults && <>
-        <p className="subtle">{pathResults.count} path{pathResults.count !== 1 ? 's' : ''} found</p>
-        <div className="paths-list">{(pathResults.paths || []).map((path, i) =>
-          <div key={i} className="path-row path-clickable" onClick={() => onHighlightPath && onHighlightPath(path)}>
-            <span className="path-index">#{i + 1}</span>
-            <div className="path-nodes">{path.map((nid, j) => <React.Fragment key={j}>
-              {j > 0 && <span className="path-sep">&rarr;</span>}
-              <span className="path-node" title={nid}>{shortId(nid, 18)}</span>
-            </React.Fragment>)}</div>
-            <span className="path-length">{path.length - 1} hop{path.length - 1 !== 1 ? 's' : ''}</span>
-          </div>
-        )}</div>
-      </>}
-    </section>
-  </div>;
-}
 
 function BlastRadiusView({data, onClose}) {
   if (!data) return null;
@@ -783,25 +521,6 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
     return () => window.removeEventListener('keydown', handler);
   }, [selected, handleUndo, handleRedo]);
 
-  const handleContextMenu = useCallback((e, type, data) => {
-    e.preventDefault();
-    const items = [];
-    if (type === 'node' && data) {
-      items.push({label: 'Expand neighborhood', icon: 'graph', action: () => expand(data)});
-      items.push({label: 'Explore blast radius', icon: 'activity', action: () => { setSelected(data); computeBlastRadius(); }});
-      items.push({label: 'Trace lineage', icon: 'shield', action: () => { setSelected(data); computeLineage(); }});
-      items.push({divider: true});
-      items.push({label: 'Copy canonical ID', icon: 'check', action: () => { try { navigator.clipboard.writeText(data.id); } catch {} }});
-    } else if (type === 'edge' && data) {
-      items.push({label: 'Inspect relationship', icon: 'link', action: () => { setSelectedEdge(data); setSelected(null); }});
-      items.push({label: 'Copy edge details', icon: 'check', action: () => { try { navigator.clipboard.writeText(JSON.stringify(data, null, 2)); } catch {} }});
-    } else {
-      items.push({label: 'Fit all', icon: 'graph', action: () => {}});
-      items.push({label: 'Reset filters', icon: 'close', action: () => setFilters(defaultFilters)});
-    }
-    setContextMenu({x: e.clientX, y: e.clientY, items});
-  }, [expand, computeBlastRadius, computeLineage]);
-
   const bookmarkState = useMemo(() => ({
     graph, filters, graphType, selectedId: selected?.id,
   }), [graph, filters, graphType, selected]);
@@ -905,6 +624,25 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
       await inspect(node);
     });
   }, [api, run, setGraph, inspect]);
+
+  const handleContextMenu = useCallback((e, type, data) => {
+    e.preventDefault();
+    const items = [];
+    if (type === 'node' && data) {
+      items.push({label: 'Expand neighborhood', icon: 'graph', action: () => expand(data)});
+      items.push({label: 'Explore blast radius', icon: 'activity', action: () => { setSelected(data); computeBlastRadius(); }});
+      items.push({label: 'Trace lineage', icon: 'shield', action: () => { setSelected(data); computeLineage(); }});
+      items.push({divider: true});
+      items.push({label: 'Copy canonical ID', icon: 'check', action: () => { try { navigator.clipboard.writeText(data.id); } catch {} }});
+    } else if (type === 'edge' && data) {
+      items.push({label: 'Inspect relationship', icon: 'link', action: () => { setSelectedEdge(data); setSelected(null); }});
+      items.push({label: 'Copy edge details', icon: 'check', action: () => { try { navigator.clipboard.writeText(JSON.stringify(data, null, 2)); } catch {} }});
+    } else {
+      items.push({label: 'Fit all', icon: 'graph', action: () => {}});
+      items.push({label: 'Reset filters', icon: 'close', action: () => setFilters(defaultFilters)});
+    }
+    setContextMenu({x: e.clientX, y: e.clientY, items});
+  }, [expand, computeBlastRadius, computeLineage]);
 
   const computeStructureAnalysis = useCallback(() => {
     run(async () => {
@@ -1019,18 +757,7 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
           onClose={() => {setSelected(null); setDetail(null);}} busy={busy}/>
       </div>}
 
-      {graphType === 'relationship' && <div className="kgr-relationship-view">
-        <section className="panel"><div className="panel-heading"><div><span className="eyebrow">KGR · RELATIONSHIP ANALYSIS</span>
-          <h2>Edge-centric view</h2><p>Relationship types as nodes, connected when they share entity endpoints.</p></div></div>
-          <div className="relationship-bars">{Object.entries((graph.edges || []).reduce((acc, e) => {
-            acc[e.type] = (acc[e.type] || 0) + 1; return acc;
-          }, {})).sort((a, b) => b[1] - a[1]).map(([type, count]) =>
-            <Tip text={`${count} ${type} relationships in view`} key={type}><div tabIndex="0">
-              <span>{type}</span><i><b style={{width: `${Math.max(8, count / Math.max(...Object.values((graph.edges || []).reduce((a, e) => {a[e.type] = (a[e.type] || 0) + 1; return a;}, {}))) * 100)}%`}}/></i><strong>{count}</strong>
-            </div></Tip>
-          )}</div>
-        </section>
-      </div>}
+      {graphType === 'relationship' && <RelationshipGraphView edges={graph.edges}/>}
 
       {graphType === 'metadata' && <MetadataGraphView schema={schema}/>}
       {graphType === 'ontology' && <OntologyGraphView schema={schema}/>}

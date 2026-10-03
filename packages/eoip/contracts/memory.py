@@ -5,7 +5,7 @@ MVP persists only task/audit evidence needed for TraceImpact (FR-MEM-001).
 """
 
 from eoip.contracts.source_event import utc_now_iso
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class MemoryRecord(BaseModel):
@@ -14,7 +14,7 @@ class MemoryRecord(BaseModel):
     scope: str
     owner: str
     source: str
-    created_at: str = utc_now_iso()
+    created_at: str = Field(default_factory=utc_now_iso)
     ttl_seconds: int | None = None
     provenance_refs: list
     confidence: float | None = None

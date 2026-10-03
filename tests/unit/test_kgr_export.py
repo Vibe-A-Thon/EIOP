@@ -30,7 +30,7 @@ def test_export_menu_file_exists():
 def test_export_menu_has_7_formats():
     import os
     path = os.path.join("apps", "web", "src", "kgr", "components", "ExportMenu.jsx")
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         content = f.read()
     assert "'png'" in content
     assert "'svg'" in content

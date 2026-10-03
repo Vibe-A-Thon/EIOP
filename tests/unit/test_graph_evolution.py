@@ -7,6 +7,7 @@ import pytest
 from eoip.contracts.source_event import SourceEventV2
 from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine, SemanticEventBus
 from eoip.graph.memory import MemoryGraphStore
+from eoip.snapshot import backup, restore
 from fastapi.testclient import TestClient
 
 
@@ -84,6 +85,71 @@ def test_relationship_replacement_expires_old_edge_and_preserves_history(tmp_pat
     assert {edge["in_cid"] for edge in store.edges_from("v:1", include_historical=True)} == {"b", "c"}
     assert engine.as_of("2026-10-01T12:00:00Z")["relationships"][0]["to_id"] == "b"
     assert engine.as_of("2026-10-03T00:00:00Z")["relationships"][0]["to_id"] == "c"
+
+
+@pytest.mark.req("G2-T0225", "G2-T0224")
+def test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay(tmp_path):
+    store = MemoryGraphStore()
+    engine = GraphEvolutionEngine(store, ChangeJournal(tmp_path / "journal.ndjson"))
+    original = _event("first", "2026-10-01T00:00:00Z", {"id": "a"})
+    deleted = _event("deleted", "2026-10-02T00:00:00Z", {"id": "a"}, "DELETE")
+    for cid in ("a", "b"):
+        engine.evolve_entity("File", cid, {"repo_id": "repo", "path": cid}, original)
+    engine.evolve_relationship("a-b", "DEPENDS_ON", "a", "b", {}, original)
+    engine.evolve_relationship("a-b", "DEPENDS_ON", "a", "b", {}, deleted)
+    engine.evolve_entity("File", "a", {"repo_id": "repo", "path": "a"}, deleted)
+    assert engine.as_of("2026-10-01T12:00:00Z")["relationships"]
+    after = engine.as_of("2026-10-03T00:00:00Z")
+    assert [entity["canonical_id"] for entity in after["entities"]] == ["b"]
+    assert after["relationships"] == []
+    assert engine.evolve_relationship("a-b", "DEPENDS_ON", "a", "b", {}, original)["status"] == "LATE_IGNORED"
+    assert engine.evolve_entity("File", "a", {"repo_id": "repo", "path": "a"}, original)["status"] == "LATE_IGNORED"
+    assert store.get_vertex_by_canonical_id("a")["properties"]["deleted_at"]
+    assert store.find_edges(label="DEPENDS_ON") == []
+    snapshot = tmp_path / "deleted-snapshot.json"
+    backup(store, tmp_path / "data", snapshot)
+    target = MemoryGraphStore()
+    restore(target, tmp_path / "restored", snapshot)
+    recovered = GraphEvolutionEngine(target, ChangeJournal(tmp_path / "recovered.ndjson"))
+    assert recovered.as_of("2026-10-03T00:00:00Z") == after
+    assert recovered.evolve_entity("File", "a", {"repo_id": "repo", "path": "a"}, original)["status"] == "LATE_IGNORED"
+    assert recovered.evolve_relationship("a-b", "DEPENDS_ON", "a", "b", {}, original)["status"] == "LATE_IGNORED"
+
+
+@pytest.mark.req("G2-T0213", "G2-T0224")
+def test_returning_to_prior_content_retains_all_revision_intervals(tmp_path):
+    store = MemoryGraphStore()
+    engine = GraphEvolutionEngine(store, ChangeJournal(tmp_path / "journal.ndjson"))
+    for cid in ("a", "b", "c"):
+        store.upsert_vertex("File", {"canonical_id": cid, "repo_id": "repo", "path": cid})
+    first = _event("first", "2026-10-01T00:00:00Z", {"id": "item", "status": "Open"})
+    second = _event("second", "2026-10-02T00:00:00Z", {"id": "item", "status": "Done"})
+    reverted = _event("reverted", "2026-10-03T00:00:00Z", first.payload)
+    repeated = _event("repeated", "2026-10-04T00:00:00Z", first.payload)
+    base = {"issue_key": "EOIP-1", "summary": "Temporal"}
+    for event, status, target in ((first, "Open", "b"), (second, "Done", "c"), (reverted, "Open", "b")):
+        engine.evolve_entity("WorkItem", "item", {**base, "status": status}, event)
+        engine.evolve_relationship("dependency", "DEPENDS_ON", "a", target, {}, event)
+    for at, status, target in (
+        ("2026-10-01T12:00:00Z", "Open", "b"),
+        ("2026-10-02T12:00:00Z", "Done", "c"),
+        ("2026-10-03T12:00:00Z", "Open", "b"),
+    ):
+        history = engine.as_of(at)
+        assert history["entities"][0]["properties"]["status"] == status
+        assert history["relationships"][0]["to_id"] == target
+    assert engine.evolve_entity("WorkItem", "item", {**base, "status": "Open"}, repeated)["status"] == "UNCHANGED"
+    assert engine.evolve_relationship("dependency", "DEPENDS_ON", "a", "b", {}, repeated)["status"] == "UNCHANGED"
+    assert len(store.find_vertices(label="EntityRevision")) == 3
+    assert len(store.find_vertices(label="RelationshipRevision")) == 3
+    snapshot = tmp_path / "reverted-snapshot.json"
+    backup(store, tmp_path / "data", snapshot)
+    target = MemoryGraphStore()
+    restore(target, tmp_path / "restored", snapshot)
+    recovered = GraphEvolutionEngine(target, ChangeJournal(tmp_path / "recovered.ndjson"))
+    for day in (1, 2, 3):
+        at = f"2026-10-{day:02d}T12:00:00Z"
+        assert recovered.as_of(at) == engine.as_of(at)
 
 
 @pytest.mark.req("G2-T0230", "G2-T0232", "G2-REL-005")

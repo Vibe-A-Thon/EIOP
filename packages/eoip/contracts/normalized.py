@@ -8,7 +8,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-CreationStatus = Literal["DETERMINISTIC", "INFERRED", "HUMAN_CONFIRMED"]
+CreationStatus = Literal["DETERMINISTIC", "INFERRED", "AMBIGUOUS", "MANUAL", "HUMAN_CONFIRMED"]
 
 
 class NormalizedEntity(BaseModel):

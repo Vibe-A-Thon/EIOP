@@ -8,7 +8,7 @@ from typing import Any
 from urllib.parse import urljoin, urlsplit
 from xml.etree import ElementTree as ET
 
-PARSER_VERSION = "confluence-storage/1.0"
+PARSER_VERSION = "confluence-storage/1.1"
 _AC = "{http://atlassian.com/content}"
 _RI = "{http://atlassian.com/resource/identifier}"
 _HEADINGS = {f"h{level}": level for level in range(1, 7)}
@@ -36,6 +36,8 @@ def _entities(fragment: str) -> str:
 
 def _url_link(href: str, text: str, page_url: str) -> dict[str, str] | None:
     href = href.strip()
+    if href.startswith("urn:eoip:") and not any(character.isspace() for character in href):
+        return {"kind": "entity", "target": href, "text": text}
     target = urljoin(page_url, href)
     parsed = urlsplit(target)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:

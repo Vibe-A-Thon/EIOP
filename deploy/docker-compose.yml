@@ -170,6 +170,16 @@ services:
       retries: 30
       start_period: 60s
 
+  bundle-backup:
+    <<: *application
+    profiles: [tools]
+    command: [python, -m, scripts.backup, --bundle, --config-dir, /opt/eoip/config, --model-dir, /model-source/models]
+    volumes:
+      - application-data:/data
+      - model-data:/model-source:ro
+    depends_on:
+      hugegraph-server: {condition: service_healthy}
+
   restore-check:
     <<: *application
     profiles: [restore-test]

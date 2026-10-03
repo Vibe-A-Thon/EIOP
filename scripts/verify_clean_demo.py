@@ -14,7 +14,7 @@ from eoip.graph.hugegraph import HugeGraphStore
 from eoip.graph.traversal import GraphTraversal
 from eoip.ingestion import pipeline
 from eoip.ingestion.replay import logical_graph_output, logical_output_diff
-from eoip.jobs import write_json
+from eoip.jobs import JobQueue, write_json
 from eoip.provenance.lineage import LineageService
 from eoip.snapshot import backup, restore
 from eoip.validation.engine import ValidationEngine
@@ -163,10 +163,16 @@ def verify_clean_demo(source, target, root: Path, *, project_root: Path | None =
     validation = ValidationEngine(source).run()
     errors = [finding for finding in validation["findings"] if finding["severity"] == "ERROR"]
     assert not errors, f"Fresh demo validation errors: {errors}"
+    write_json(original_data / "state" / "connectors" / "acceptance.json",
+               {"cursor": "acceptance-checkpoint", "baseline_complete": True})
+    write_json(original_data / "state" / "worker.json", {"status": "running"})
+    pending = JobQueue(original_data).submit("DEMO")
     snapshot = root / "snapshot.json"
     exported = backup(source, original_data, snapshot)
     restored = restore(target, restored_data, snapshot)
     verify_restored_snapshot(target, restored_data, snapshot)
+    assert JobQueue(restored_data).get(pending["job_id"])["status"] == "HELD"
+    assert not (restored_data / "state" / "worker.json").exists()
     assert golden_queries(target, restored_data) == golden, "Recovery changed golden query results"
     try:
         restore(target, restored_data, snapshot)
@@ -186,6 +192,8 @@ def verify_clean_demo(source, target, root: Path, *, project_root: Path | None =
         "golden": golden,
         "snapshot_sha256": exported["sha256"],
         "populated_target_rejected": True,
+        "operational_recovery": {"checkpoint_preserved": True, "active_job_held": True,
+                                 "stale_worker_heartbeat_excluded": True},
         "canonical_ingestion": {"initial": initial_contracts, "replay": replay_contracts},
     }
 

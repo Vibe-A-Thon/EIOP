@@ -5,7 +5,21 @@ import httpx
 import pytest
 from eoip.graph.hugegraph import HugeGraphStore
 from eoip.graph.store import GraphQueryTimeout, graph_query_deadline
-from eoip.ontology.manifest import EDGE_LABELS, PROPERTY_KEYS, VERTEX_LABELS
+from eoip.ontology.manifest import DOCUMENT_TARGET_LABELS, EDGE_LABELS, PROPERTY_KEYS, VERTEX_LABELS
+
+
+@pytest.mark.req("G2-SRC-CONF-004")
+def test_document_reference_lookups_have_single_property_secondary_indexes():
+    indexes = HugeGraphStore._schema_definitions()["indexlabels"]
+    for label in DOCUMENT_TARGET_LABELS:
+        for key in ("url", "path", "source_uri"):
+            assert any(
+                index["base_type"] == "VERTEX_LABEL"
+                and index["base_value"] == label
+                and index["index_type"] == "SECONDARY"
+                and index["fields"] == [key]
+                for index in indexes
+            ), (label, key)
 
 
 def test_schema_bootstrap_appends_new_properties_to_existing_labels():

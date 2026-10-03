@@ -22,6 +22,10 @@ EXPECTED_JOURNEYS = {
     "test_confluence_http_baseline_hierarchy_incremental_and_replay",
     "test_confluence_fetched_rejection_preserves_capture_and_checkpoint",
     "test_confluence_upstream_failures_are_persistent_and_nonmutating",
+    "test_task_memory_http_persistence_expiry_and_trace_survival",
+    "test_task_memory_http_admission_and_scoped_deletion",
+    "test_task_memory_http_minimization_and_corruption_refusal",
+    "test_independent_processes_do_not_lose_memory_records",
 }
 
 
@@ -32,7 +36,11 @@ def main():
     report.parent.mkdir(parents=True, exist_ok=True)
     junit = report.with_suffix(".xml")
     completed = subprocess.run(
-        [sys.executable, "-m", "pytest", "tests/runtime_dlq", "-q", f"--junitxml={junit}"],
+        [
+            sys.executable, "-m", "pytest", "tests/runtime_dlq",
+            "tests/unit/test_agent_memory.py::test_independent_processes_do_not_lose_memory_records",
+            "-q", f"--junitxml={junit}",
+        ],
         check=False,
     )
     report_error = None
@@ -63,7 +71,11 @@ def main():
         "junit": junit.name,
         "report_error": report_error,
         "infra": "isolated HugeGraph 1.7.0 + real HTTP API + independent durable worker",
-        "scope": "Jira v1 and Confluence v2 replay; Confluence and ServiceNow fixture HTTP acquisition, replay and failures",
+        "scope": (
+            "Jira v1 and Confluence v2 replay; Confluence and ServiceNow fixture HTTP acquisition, "
+            "replay and failures; bounded classified task-memory persistence, expiry and refusals; "
+            "Linux independent-process memory writes"
+        ),
         "excluded": ["live upstream tenants", "other registered adapters", "browser UI", "worker crash recovery"],
     }
     write_json(report, result)

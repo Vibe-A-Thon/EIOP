@@ -2,6 +2,7 @@
 
 import json
 import os
+import threading
 from pathlib import Path
 from uuid import UUID, uuid4
 
@@ -22,6 +23,7 @@ class JobQueue:
     def __init__(self, root):
         self.root = Path(root) / "jobs"
         self.root.mkdir(parents=True, exist_ok=True)
+        self._lock = threading.RLock()
 
     def submit(self, kind, payload=None, *, correlation_id=None):
         job_id = str(uuid4())
@@ -41,13 +43,29 @@ class JobQueue:
         return json.loads((self.root / f"{job_id}.json").read_text(encoding="utf-8"))
 
     def cancel(self, job_id):
-        job = self.get(job_id)
-        if job["status"] == "RUNNING":
-            raise RuntimeError("Running jobs cannot be cancelled safely")
-        if job["status"] == "PENDING":
-            job.update(status="CANCELLED", finished_at=utc_now_iso())
+        with self._lock:
+            job = self.get(job_id)
+            if job["status"] == "RUNNING":
+                raise RuntimeError("Running jobs cannot be cancelled safely")
+            if job["status"] in {"PENDING", "HELD"}:
+                job.update(status="CANCELLED", finished_at=utc_now_iso())
+                write_json(self.root / f"{job_id}.json", job)
+            return {key: value for key, value in job.items() if key != "payload"}
+
+    def readmit(self, job_id, *, correlation_id=None):
+        with self._lock:
+            job = self.get(job_id)
+            if job["status"] != "HELD":
+                raise RuntimeError("Only held recovery jobs can be re-admitted")
+            if not isinstance(job.get("recovery"), dict):
+                raise TypeError("Held job lacks recovery metadata")
+            now = utc_now_iso()
+            job.update(status="PENDING", attempts=0, correlation_id=correlation_id or str(uuid4()))
+            job["recovery"] = {**job["recovery"], "readmitted_at": now}
+            for key in ("started_at", "finished_at", "next_attempt", "error", "result"):
+                job.pop(key, None)
             write_json(self.root / f"{job_id}.json", job)
-        return {key: value for key, value in job.items() if key != "payload"}
+            return {key: value for key, value in job.items() if key != "payload"}
 
     def list(self):
         jobs = [json.loads(p.read_text(encoding="utf-8")) for p in self.root.glob("*.json")]

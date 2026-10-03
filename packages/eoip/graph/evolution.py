@@ -106,8 +106,12 @@ class GraphEvolutionEngine:
             if current_revision and self._is_late(event.event_time, current_revision["properties"]["observed_at"]):
                 return self._record("LATE_EVENT", "ENTITY", canonical_id, event, {}, mutate=False)
             state = {"label": label, "properties": {**properties, "canonical_id": canonical_id}}
-            revision_id = self._revision_id("ENTITY", canonical_id, state, event)
-            if current_revision and current_revision["properties"]["revision_id"] == revision_id:
+            if event.operation == "DELETE":
+                state["operation"] = "DELETE"
+            revision_id, unchanged = self._revision_for_state(
+                "ENTITY", canonical_id, state, event, current_revision
+            )
+            if unchanged:
                 return {"status": "UNCHANGED", "revision_id": revision_id}
             observed_at = event.event_time
             change = "CREATE" if self.store.get_vertex_by_canonical_id(canonical_id) is None else "UPDATE"
@@ -131,9 +135,9 @@ class GraphEvolutionEngine:
                         "deleted_at": "",
                     },
                 )
-                self._create_entity_revision(
-                    canonical_id, label, state, revision_id, current_revision, version, event
-                )
+            self._create_entity_revision(
+                canonical_id, label, state, revision_id, current_revision, version, event
+            )
             return self._record(change, "ENTITY", canonical_id, event, {"revision_id": revision_id}, version)
 
     def evolve_relationship(
@@ -155,8 +159,12 @@ class GraphEvolutionEngine:
                 "to_id": to_id,
                 "properties": properties,
             }
-            revision_id = self._revision_id("RELATIONSHIP", relationship_id, state, event)
-            if current and current["properties"]["revision_id"] == revision_id:
+            if event.operation == "DELETE":
+                state["operation"] = "DELETE"
+            revision_id, unchanged = self._revision_for_state(
+                "RELATIONSHIP", relationship_id, state, event, current
+            )
+            if unchanged:
                 return {"status": "UNCHANGED", "revision_id": revision_id}
             observed_at = event.event_time
             change = "CREATE" if current is None else "UPDATE"
@@ -176,6 +184,7 @@ class GraphEvolutionEngine:
                     "fact_key": relationship_id,
                     "is_current": True,
                     "valid_from": observed_at,
+                    "valid_to": "",
                     "source_event_id": event.event_id,
                     "source_version": event.source_version,
                     "graph_version": version,
@@ -183,9 +192,9 @@ class GraphEvolutionEngine:
                 self.store.upsert_edge(
                     relationship_type, source["vid"], target["vid"], edge_properties
                 )
-                self._create_relationship_revision(
-                    relationship_id, state, revision_id, current, version, event
-                )
+            self._create_relationship_revision(
+                relationship_id, state, revision_id, current, version, event
+            )
             return self._record(
                 change,
                 "RELATIONSHIP",
@@ -228,11 +237,13 @@ class GraphEvolutionEngine:
                 "entity_type": label,
                 "observed_at": event.event_time,
                 "valid_from": event.event_time,
+                "valid_to": "",
                 "is_current": True,
                 "previous_revision": previous["properties"]["revision_id"] if previous else None,
                 "source_version": event.source_version,
                 "graph_version": version,
                 "source_event_id": event.event_id,
+                "content_hash": event.content_hash,
                 "payload_json": json.dumps({**state, "canonical_id": cid}, sort_keys=True),
             },
         )
@@ -249,11 +260,13 @@ class GraphEvolutionEngine:
                 "to_id": state["to_id"],
                 "observed_at": event.event_time,
                 "valid_from": event.event_time,
+                "valid_to": "",
                 "is_current": True,
                 "previous_revision": previous["properties"]["revision_id"] if previous else None,
                 "source_version": event.source_version,
                 "graph_version": version,
                 "source_event_id": event.event_id,
+                "content_hash": event.content_hash,
                 "payload_json": json.dumps({**state, "relationship_id": rel_id}, sort_keys=True),
             },
         )
@@ -316,8 +329,26 @@ class GraphEvolutionEngine:
             for item in items
             if item["properties"].get("valid_from", "") <= at
             and (not item["properties"].get("valid_to") or at < item["properties"]["valid_to"])
+            and json.loads(item["properties"]["payload_json"]).get("operation") != "DELETE"
         ]
         return active[:limit]
+
+    def _revision_for_state(self, kind, target, state, event, current) -> tuple[str, bool]:
+        revision_id = self._revision_id(kind, target, state, event)
+        identity_key = "canonical_id" if kind == "ENTITY" else "relationship_id"
+        if current:
+            props = current["properties"]
+            if props["revision_id"] == revision_id or (
+                props.get("content_hash") == event.content_hash
+                and json.loads(props["payload_json"]) == {**state, identity_key: target}
+            ):
+                return props["revision_id"], True
+        if self.store.get_vertex_by_canonical_id(f"urn:eoip:revision:{kind.lower()}:{revision_id}"):
+            # Equal content in a later interval must not overwrite its earlier revision.
+            revision_id = hashlib.sha256(
+                f"{revision_id}|{event.event_time}|{event.event_id}".encode()
+            ).hexdigest()
+        return revision_id, False
 
     @staticmethod
     def _revision_id(kind, target, state, event):

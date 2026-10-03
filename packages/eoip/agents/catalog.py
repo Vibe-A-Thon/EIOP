@@ -44,6 +44,7 @@ def _contract(
         allowed_tools=sorted(agent.allowed_tools),
         prohibited_tools=["write_graph", "delete_graph", "deploy", "send_message"],
         model_policy=model_policy,
+        memory_policy="APPROVED" if agent.agent_id == "TraceImpact" else "RUN_ONLY",
         risk_level=risk_level,
         human_control=human_control,
         budgets=AgentBudgets(max_steps=agent.max_steps, max_seconds=agent.max_seconds),

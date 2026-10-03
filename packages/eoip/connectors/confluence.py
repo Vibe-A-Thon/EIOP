@@ -7,7 +7,11 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 from urllib.parse import quote
 
-from eoip.connectors.confluence_metadata import extract_page_metadata
+from eoip.connectors.confluence_metadata import (
+    MAX_PAGE_VERSIONS,
+    extract_page_history,
+    extract_page_metadata,
+)
 from eoip.connectors.errors import ConnectorError
 from eoip.connectors.rest import RestConnector, parse_utc, utc_timestamp
 from eoip.connectors.sync import SyncBatch
@@ -15,7 +19,7 @@ from eoip.connectors.sync import SyncBatch
 
 class ConfluenceConnector(RestConnector):
     source_system = "confluence"
-    mapper_version = "confluence-dc/1.1"
+    mapper_version = "confluence-dc/1.2"
 
     def __init__(self, base_url: str, *, page_size: int = 100, **kwargs) -> None:
         if not 1 <= page_size <= 1000:
@@ -77,6 +81,7 @@ class ConfluenceConnector(RestConnector):
                     self._required_id(record, "id", record_kind, correlation_id)
                     if record_kind == "page":
                         record = self._complete_labels(record, correlation_id)
+                        record = self._complete_history(record, correlation_id)
                     version = record.get("version")
                     version_value = version.get("number") if isinstance(version, dict) else None
                     if version_value is None and isinstance(version, dict):
@@ -127,6 +132,7 @@ class ConfluenceConnector(RestConnector):
                 "parent_ids": [str(item["id"]) for item in ancestors if isinstance(item, dict) and item.get("id")],
                 "url": self._nested(record, "_links.webui"),
                 "source_metadata": extract_page_metadata(record),
+                "source_history": extract_page_history(record, self.base_url),
             }
         if kind == "attachment":
             space_key = self._nested(record, "space.key")
@@ -147,6 +153,32 @@ class ConfluenceConnector(RestConnector):
                 "version": self._nested(record, "version.number"),
             }
         raise ValueError("unsupported Confluence record kind")
+
+    def _complete_history(self, record: dict, correlation_id: str) -> dict:
+        version = record.get("version")
+        number = version.get("number") if isinstance(version, dict) else None
+        if isinstance(number, bool) or not isinstance(number, int) or not 1 <= number <= MAX_PAGE_VERSIONS:
+            self._log_failure("invalid_response", correlation_id)
+            raise ConnectorError(self.source_system, "invalid_response", correlation_id)
+        versions = [version]
+        path = f"/rest/api/content/{quote(str(record['id']), safe='')}"
+        for previous in range(number - 1, 0, -1):
+            historical = self.get_json(
+                path, params={"status": "historical", "version": previous, "expand": "version"},
+                correlation_id=correlation_id,
+            )
+            historical_version = historical.get("version")
+            if (
+                str(historical.get("id")) != str(record["id"])
+                or not isinstance(historical_version, dict)
+                or not isinstance(historical_version.get("number"), int)
+                or isinstance(historical_version.get("number"), bool)
+                or historical_version.get("number") != previous
+            ):
+                self._log_failure("invalid_response", correlation_id)
+                raise ConnectorError(self.source_system, "invalid_response", correlation_id)
+            versions.append(historical_version)
+        return {**record, "version_history": {"complete": True, "results": versions}}
 
     def _complete_labels(self, record: dict, correlation_id: str) -> dict:
         continuation = self._nested(record, "metadata.labels._links.next")

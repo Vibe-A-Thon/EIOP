@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 from typing import Any
+from urllib.parse import quote
 
 from eoip.connectors.rest import parse_utc
+
+MAX_PAGE_VERSIONS = 1000
 
 
 def _object(value: Any, field: str) -> dict:
@@ -75,4 +78,64 @@ def extract_page_metadata(record: dict) -> dict[str, Any]:
         "editor": _actor(version.get("by"), "version.by"),
         "created_at": _timestamp(history.get("createdDate"), "history.createdDate"),
         "modified_at": _timestamp(version.get("when"), "version.when"),
+    }
+
+
+def extract_page_history(record: dict, base_url: str) -> dict[str, Any]:
+    collection = record.get("version_history")
+    complete = False
+    if collection is not None:
+        collection = _object(collection, "version_history")
+        complete = collection.get("complete")
+        if not isinstance(complete, bool):
+            raise TypeError("Confluence history completeness must be boolean")
+        versions = collection.get("results")
+        if not isinstance(versions, list):
+            raise TypeError("Confluence history results must be a list")
+    else:
+        history = _object(record.get("history"), "history")
+        versions = [record.get("version"), *(
+            history.get(key) for key in ("previousVersion", "nextVersion", "lastUpdated")
+        )]
+        versions = [item for item in versions if item is not None]
+    if len(versions) > MAX_PAGE_VERSIONS:
+        raise ValueError("Confluence page history exceeds 1000 versions")
+    revisions = {}
+    for item in versions:
+        item = _object(item, "history version")
+        number = item.get("number")
+        if not item and not complete:
+            continue
+        if isinstance(number, bool) or not isinstance(number, int) or number < 1:
+            raise ValueError("Confluence history version number must be a positive integer")
+        message = item.get("message", "")
+        minor_edit = item.get("minorEdit", False)
+        if not isinstance(message, str) or not isinstance(minor_edit, bool):
+            raise TypeError("Confluence history message/minorEdit have invalid types")
+        revision = {
+            "number": number, "modified_at": _timestamp(item.get("when"), "history version.when"),
+            "editor": _actor(item.get("by"), "history version.by"),
+            "message": message, "minor_edit": minor_edit,
+            "source_ref": (
+                f"{base_url.rstrip('/')}/rest/api/content/{quote(str(record['id']), safe='')}"
+                f"?status=historical&version={number}"
+            ),
+        }
+        if number in revisions and (complete or revisions[number] != revision):
+            raise ValueError("Confluence history contains duplicate/conflicting versions")
+        revisions[number] = revision
+    if complete:
+        page_version = _object(record.get("version"), "version")
+        current = page_version.get("number")
+        if (
+            isinstance(current, bool) or not isinstance(current, int)
+            or not 1 <= current <= MAX_PAGE_VERSIONS
+            or sorted(revisions) != list(range(1, current + 1))
+        ):
+            raise ValueError("incomplete Confluence page history")
+        if next(item for item in versions if item["number"] == current) != page_version:
+            raise ValueError("Confluence history current version disagrees with page metadata")
+    return {
+        "schema_version": "1.0", "complete": complete,
+        "revisions": [revisions[number] for number in sorted(revisions, reverse=True)],
     }

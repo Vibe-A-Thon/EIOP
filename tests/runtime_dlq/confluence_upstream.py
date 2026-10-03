@@ -21,7 +21,7 @@ class ConfluenceAPIHandler(ProtocolFixtureHandler):
             return
         match = re.fullmatch(
             r"/([a-f0-9]{32})/(valid|rejected|schema-drift|invalid-response|label-invalid)"
-            r"/(requests|rest/api/space|rest/api/content/search|rest/api/content/[a-f0-9]{32}-page-[01]/label)", url.path
+            r"/(requests|rest/api/space|rest/api/content/search|rest/api/content/[a-f0-9]{32}-page-[01](?:/label)?)", url.path
         )
         if not match:
             self.respond(404, {"error": "unknown fixture route"})
@@ -45,6 +45,18 @@ class ConfluenceAPIHandler(ProtocolFixtureHandler):
             self.respond(401, {"error": "fixture authentication failed"})
             return
         try:
+            if re.fullmatch(r"rest/api/content/[a-f0-9]{32}-page-[01]", action):
+                assert params == {"status": ["historical"], "version": ["1"], "expand": ["version"]}
+                self.respond(200, {
+                    "id": action.rsplit("/", 1)[-1],
+                    "version": {
+                        "number": 1, "when": "2026-09-30T00:00:00Z",
+                        "by": {"type": "known", "userKey": "previous-editor-key",
+                               "displayName": "Fixture Previous Editor"},
+                        "message": "Initial runbook", "minorEdit": False,
+                    },
+                })
+                return
             start = int(params["start"][0])
             limit = int(params["limit"][0])
             assert start >= 0 and limit > 0
@@ -77,7 +89,7 @@ class ConfluenceAPIHandler(ProtocolFixtureHandler):
                     records = [{
                         "id": f"{run_id}-page-{index}", "title": f"Acceptance page {index}",
                         "space": {"key": space_key},
-                        "version": {**version, "by": {
+                        "version": {**version, "number": 2, "by": {
                             "type": "known", "userKey": "editor-key", "displayName": "Fixture Editor",
                         }},
                         "history": {
@@ -95,6 +107,7 @@ class ConfluenceAPIHandler(ProtocolFixtureHandler):
                             '<ac:structured-macro ac:name="anchor">'
                             '<ac:parameter ac:name="">checks</ac:parameter></ac:structured-macro>'
                             '<a href="https://example.org/runbook">Runbook</a>'
+                            f'<a href="urn:eoip:ops:service:{run_id}">Acceptance Service</a>'
                             '<ac:link><ri:page ri:content-title="Acceptance page 0"/></ac:link>'
                             '<ac:structured-macro ac:name="code">'
                             '<ac:parameter ac:name="language">python</ac:parameter>'

@@ -28,7 +28,7 @@ def test_default_filters_has_10_dimensions():
     path = os.path.join("apps", "web", "src", "kgr", "KGRExplorer.jsx")
     if not os.path.exists(path):
         return
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         content = f.read()
     assert "domain:" in content
     assert "label:" in content
@@ -47,7 +47,7 @@ def test_filter_chips_include_temporal():
     path = os.path.join("apps", "web", "src", "kgr", "KGRExplorer.jsx")
     if not os.path.exists(path):
         return
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         content = f.read()
     assert "filters.temporal" in content
 
@@ -57,7 +57,7 @@ def test_filter_chips_include_community():
     path = os.path.join("apps", "web", "src", "kgr", "KGRExplorer.jsx")
     if not os.path.exists(path):
         return
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         content = f.read()
     assert "filters.community" in content
 
@@ -104,7 +104,7 @@ def test_keyboard_shortcuts_defined():
     path = os.path.join("apps", "web", "src", "kgr", "KGRExplorer.jsx")
     if not os.path.exists(path):
         return
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         content = f.read()
     assert "Escape" in content
     assert "handleUndo" in content

@@ -119,6 +119,7 @@ def test_structure_is_persisted_versioned_and_replayable(tmp_path):
         structure = json.loads(page["properties"]["payload_json"])
         expected = extract_storage_body(BODY, page["properties"]["path"])
         expected["source_metadata"] = connector.map_event(event)["source_metadata"]
+        expected["source_history"] = connector.map_event(event)["source_history"]
         assert structure == expected
         revision = store.find_vertices(label="EntityRevision", filters={"subject_id": cid})[0]
         assert json.loads(revision["properties"]["payload_json"])["properties"]["payload_json"] == (

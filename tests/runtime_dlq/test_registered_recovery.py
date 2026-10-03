@@ -1,4 +1,9 @@
+import time
+from uuid import uuid4
+
+from eoip.contracts.source_event import utc_now_iso
 from eoip.ingestion.replay import logical_graph_output, logical_output_diff
+from eoip.jobs import write_json
 
 
 def test_registered_v2_mapper_recovery_is_persistent_and_idempotent(live_replay, registered_capture):
@@ -26,3 +31,24 @@ def test_registered_v2_mapper_recovery_is_persistent_and_idempotent(live_replay,
         assert any(record["event_id"] == event.event_id for record in live.get("/api/v1/admin/dlq"))
         live.audit(first, "success")
         live.audit(second, "success")
+        held_id = str(uuid4())
+        write_json(live.root / "jobs" / f"{held_id}.json", {
+            "job_id": held_id, "kind": "SOURCE_OPERATION", "status": "HELD",
+            "created_at": utc_now_iso(), "correlation_id": "recovery-before-readmission",
+            "attempts": 0, "payload": {
+                "source_id": source_id, "operation": "REPLAY", "event_ids": [event.event_id],
+                "dry_run": False,
+            },
+            "recovery": {"original_status": "RUNNING", "snapshot_sha256": "acceptance",
+                         "restored_at": utc_now_iso()},
+        })
+        time.sleep(3)
+        assert live.get(f"/api/v1/admin/jobs/{held_id}")["status"] == "HELD"
+        assert logical_output_diff(before, logical_graph_output(live.store))["equivalent"]
+        third = live.finish(live.submit(f"/api/v1/admin/jobs/{held_id}/readmit"), "SUCCEEDED")
+        assert third["job_id"] == held_id
+        assert third["recovery"]["readmitted_at"]
+        assert logical_output_diff(before, logical_graph_output(live.store))["equivalent"]
+        assert (raw.read_bytes(), dlq.read_bytes()) == original
+        assert live.client.post(f"/api/v1/admin/jobs/{held_id}/readmit").status_code == 409
+        live.audit(third, "success")

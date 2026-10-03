@@ -219,8 +219,8 @@ transactional across graph and files; quiesce writers and back up first.
 This builds the current runtime and test images, starts a fresh HugeGraph,
 schema initializer, HTTP API, independent worker and authenticated ServiceNow
 Table API and Confluence Data Center REST fixtures in a uniquely named Compose
-project, and runs twelve opt-in
-multi-step pytest journeys:
+project, and runs fifteen opt-in
+multi-step pytest journeys plus a Linux independent-process memory-writer test:
 
 - A real API-submitted Jira record is rejected by the worker, captured and listed
   in the DLQ. Replaying unchanged invalid input remains `PARTIAL`, creates no
@@ -260,12 +260,18 @@ multi-step pytest journeys:
 - Confluence page storage XHTML is extracted deterministically into Document
   `payload_json`: headings, explicit anchors, safe HTTP(S) links, unresolved
   page/attachment references, code snippets and structured tables. Document and
-  Evidence record `parser_version=confluence-storage/1.0`. Original body text
+  Evidence record `parser_version=confluence-storage/1.1`. Original body text
   remains in `description` and immutable capture; revisions preserve both forms.
 - Page payloads also retain source labels, author/editor references and UTC
   creation/modification timestamps. Expanded labels with continuation are
   reacquired through the trusted content-label endpoint; the fixture verifies
   complete pagination, correlation propagation and exact persisted metadata.
+- Public historical-content requests acquire all previous version metadata
+  before hashing/capture. Replay preserves complete source history offline.
+- Exact canonical URNs and unambiguous indexed source URLs create evidence-backed
+  temporal `DOCUMENTS` links. Changed/deleted referenced technical facts appear
+  in validation, the stale API and DocumentationFreshnessAgent. Replaying the
+  same capture cannot silently acknowledge newer target facts.
 - A fetched Confluence page without a title is captured and rejected as a
   mapping error. The baseline and unchanged-input DLQ replay remain `PARTIAL`
   without advancing a checkpoint or creating the rejected Document.
@@ -273,6 +279,12 @@ multi-step pytest journeys:
   (including the secondary label endpoint)
   failures persist categorized `FAILED` jobs/manifests with matching API/worker
   and upstream correlations, and no capture, business graph or checkpoint writes.
+- TraceImpact task-memory journeys verify authenticated classified HTTP retrieval,
+  shared-volume persistence across independent API/test processes, short-TTL
+  expiry without deleting durable run evidence, exact owner/scope deletion,
+  invalid TTL refusal, minimized content and explicit corruption failure.
+  Three independently spawned writers additionally verify that OS locking
+  prevents lost JSON records on Linux; the host unit suite exercises Windows.
 
 Durable job results and matching API/worker audit correlation IDs are checked.
 DLQ entries are historical evidence: successful replay does **not** delete or
@@ -283,18 +295,71 @@ network. Its containers/network/application volume are removed in `finally`.
 JSON verdict and JUnit evidence persist as
 `test-results/eoip-dlq-acceptance-<run-id>.json` and `.xml`. Failed collection,
 missing evidence, unexpected/duplicate journey names, any skipped journey or
-nonzero pytest exit fails the gate. Normal host pytest runs skip these twelve
-tests; the command above runs all twelve against the actual services. No browser
+nonzero pytest exit fails the gate. Normal host pytest runs skip these fifteen
+HTTP journeys; the command above runs all fifteen against the actual services
+and the independent-writer test in Linux. No browser
 run is part of this API-only gate. The earlier Confluence mapper-recovery journeys
 still use service-seeded immutable captures and an unreachable upstream URL;
 the new acquisition journeys use a separate authenticated internal HTTP fixture.
 Both source fixtures use deterministic fixture-only credentials via environment
 secret references, not real Confluence/ServiceNow tenants. Attachment metadata
-is covered, not downloading/parsing attachment bytes; historical versions,
-rendered/rich macro expansion, semantic document links and stale
-documentation detection remain separate G2-P4 obligations. Other registered adapters, live
+is covered, not downloading/parsing attachment bytes. Historical version metadata,
+explicit document links and referenced-fact staleness are covered; historical
+body retrieval, rendered/rich macro expansion and inferred semantic matching are
+not covered. Other registered adapters, live
 source systems, worker crash recovery and config/native recovery remain
 separate acceptance obligations.
+
+## Bounded scoped agent task memory
+
+The API composition root loads `config/memory-policy.yaml` and stores approved
+task records in `EOIP_DATA_DIR/agent-memory/records.json`. The versioned defaults
+are **30 days maximum**, **1,000 records** and **8 MiB serialized JSON**.
+Operators may shorten retention; per-run `memory_ttl_seconds` is a strict
+positive integer no greater than the configured maximum. No policy may exceed
+30 days. Invalid configuration fails startup rather than silently relaxing policy.
+
+Only the catalog's TraceImpact contract currently enables `APPROVED` persistent
+memory. Other catalog agents remain `RUN_ONLY`; generic conversation, semantic
+and procedural retention are not enabled. A record retains only outcome status
+and evidence count, together with run identity, exact agent scope, owner,
+source, provenance, confidence, classification, creation time and deletion policy.
+Task goals, prompts, document bodies and tool payloads are not copied into this
+memory store. This does not certify all pre-existing graph/log/audit content.
+
+`GET /api/v1/agents/runs/{run_id}/memory` uses existing bearer authentication and
+operation auditing. Responses preserve `INTERNAL` classification. Missing,
+expired, disallowed or unavailable run-scoped records return 404; corrupt or
+unavailable memory storage returns a safe 503. The existing local bearer token
+is not a new multi-tenant identity or RBAC boundary. In-agent
+`recall_task(run_id)` uses the current actor and agent scope, enforces APPROVED
+policy, and consumes the existing tool-call/time budget.
+
+Records are immutable until exact-scope/owner deletion or expiry. Writes use an
+OS lock, a flushed temporary file and atomic replacement; readers validate the
+entire bounded envelope. Capacity exhaustion refuses the new record rather than
+evicting unexpired persistent evidence. Memory is admitted only after its graph
+run and trace have persisted. Persistence failure is explicit in warnings and
+explanations; otherwise successful runs become PARTIAL.
+
+Expiry is enforced at startup and on every storage operation, including at the
+exact TTL boundary. There is no idle background sweeper: physical deletion occurs
+on the next operation/startup. A corrupt file is not silently repaired or
+overwritten. Tightening policy below existing records' TTL/count/byte bounds may
+refuse startup; restore the previous valid policy, perform explicit governed
+cleanup/migration, then apply the stricter policy. Do not edit a live file while
+writers are active.
+
+The transient AgentResult cache is separately bounded by retention, record count
+and serialized bytes; it evicts oldest entries and excludes oversized results.
+These are serialized-byte bounds, not exact Python heap-size guarantees.
+Run detail may return `result: null` after eviction/restart while the durable trace
+remains; explanation retrieval falls back to trace evidence.
+
+Durable traces, audits, proposals and graph history have separate lifecycles.
+Their global retention/privacy certification remains open. Operational snapshots
+currently cover graph/raw/DLQ/state/journal/jobs, **not this memory directory**;
+this batch does not extend disaster-recovery guarantees to task memory.
 
 ### Confluence storage extraction boundaries
 
@@ -305,17 +370,18 @@ raise mapping errors after capture, before Document/Evidence writes, using the
 existing DLQ path. Limits are 2,000,000 characters, 50,000 elements (including
 the wrapper), 128 nesting levels and table spans of 1..1000.
 
-Extraction does not fetch link targets, expand arbitrary macros or create
-semantic entity relationships. Script/style/noscript subtrees and non-HTTP(S)
+Extraction does not fetch link targets or expand arbitrary macros. Explicit
+canonical EOIP URNs are retained for the separate reference reconciler described
+below. Script/style/noscript subtrees and other non-HTTP(S)
 URL links are excluded from derived output; raw content is retained as evidence,
 not sanitized HTML for rendering. An empty/missing body clears current raw and
 derived content while retaining earlier revisions; older replay cannot restore
 stale content. Existing `payload_json` and `parser_version` graph property keys
-are reused; no new physical key or schema version is introduced.
+are reused; parser changes do not add physical property keys.
 
 ### Confluence source metadata boundaries
 
-The `confluence-dc/1.1` mapper adds `source_metadata` (schema `1.0`) alongside
+The `confluence-dc/1.2` mapper retains `source_metadata` (schema `1.0`) alongside
 the existing storage-extraction output in Document `payload_json`. Labels are
 sorted and deduplicated by `(prefix, name)`; missing prefixes remain empty,
 not inferred. Author (`history.createdBy`) and editor (`version.by`) contain
@@ -341,13 +407,60 @@ response shapes and collections exceeding 10,000 acquired labels fail
 explicitly before ingestion. Malformed individual metadata fields or unresolved
 label continuation in a submitted capture fail mapping through the existing
 capture-before-write DLQ path. Replay uses captured complete labels without
-upstream requests. Source historical-version retrieval, attachment bytes,
-semantic linking, stale detection and live-tenant certification remain open.
+upstream requests.
+
+### Confluence history, document links and freshness boundaries
+
+`source_history` (schema `1.0`) contains ordered version numbers, UTC timestamps,
+editor references, messages, minor-edit flags and trusted constructed source
+references. Acquisition uses the configured base and quoted content ID with
+`status=historical&version=N&expand=version`, never response-provided URLs.
+The current search result supplies current-version metadata; earlier versions
+are fetched before capture. A complete history must agree with that current
+metadata and contain every version from 1 through the current version.
+The maximum is 1,000 versions. Invalid/noninteger versions, missing/inaccessible
+history, mismatched IDs/versions or exceeded bounds fail explicitly, without
+silent truncation. Historical bodies are not fetched. Older captures without
+acquired history remain ingestible with `complete=false`; replay stays offline.
+
+Managed `DOCUMENTS` links support Service, APIService, APIEndpoint, Project,
+WorkItem, File and CodeSymbol. Eligible existing entities resolve by exact EOIP
+URN or exact `url`, `path` or `source_uri`; each property has a single-property
+HugeGraph secondary index. Ambiguous URLs are logged and not linked. Titles
+and names are not identity evidence; targets are not fetched or inferred.
+Managed links carry `document-reference/1.0`, source evidence, the document
+capture hash and a baseline fingerprint of target business properties.
+Observation timestamps/provenance do not trigger staleness. File/CodeSymbol
+content hashes do; non-code envelope hashes do not.
+
+Validation and `/api/v1/graph/stale` report `target_changed`, `target_deleted`
+or `target_missing` per reference. The stale API includes a `partial` flag;
+DocumentationFreshnessAgent reports PARTIAL for stale references or capped
+scans. Scan caps are 50,000 vertices/reference edges; reconciliation refuses
+more than 10,000 source links or existing document edges rather than truncating.
+Source-link reconciliation limits are enforced after mapping, so they are not
+an acquisition-before-write guarantee.
+
+Identical capture replay retains the baseline even after target changes. A new
+document version can acknowledge current target facts; removed references or
+document deletion expire managed links. Late replay cannot resurrect deleted
+entities/relationships. Deletion markers remain current revision barriers but
+are excluded from as-of facts. Returning to identical earlier content creates
+a distinct revision interval without rewriting the previous interval; unchanged
+polling/replay remains idempotent.
+
+These controlled endpoint/index additions use ontology `0.4.0`, schema `1.2`.
+Fresh bootstrap and compatible additive schema initialization install them.
+Snapshots still require exact schema equality: older `1.1` archives need an
+explicit migration, not automatic acceptance. Attachment bytes, inferred semantic
+matching and live-tenant certification remain open.
 
 ## Backup and restore
 
 Avoid submitting admin writes during backup. This command stops the worker,
-exports a checksummed logical graph and raw/DLQ evidence, and restarts the worker:
+exports a checksummed logical graph and raw/DLQ evidence, and restarts the worker.
+The archive also preserves operational JSON under `state/` and `jobs/`, and
+NDJSON under `journal/`. Worker heartbeat `state/worker.json` is excluded.
 
 ```powershell
 .\scripts\docker.ps1 backup
@@ -359,16 +472,17 @@ The output path is inside `/data/backups/`. Copy a snapshot to the host using
 eoip-api:/data/backups/FILE.json ./FILE.json` as a single command.
 
 `restore-test` restores the newest snapshot into a disposable, separate HugeGraph
-container, checks all vertex/edge properties, raw/DLQ JSON equality, counts and
-the Jira-to-symbol evidence path, then
+container, checks all vertex/edge properties, raw/DLQ JSON equality, operational
+state and the Jira-to-symbol evidence path, then
 removes that test graph container. The main deployment and its volumes remain
 available. Run backup before this command.
 The Python verifier also accepts `--source <snapshot-path>` to select an explicit
 archive; without it, the lexically newest snapshot filename is used. A missing
 backup produces an actionable error rather than an empty-selection exception.
-Because snapshots omit worker job history, the smoke test validates the restored
-graph directly before submitting an idempotent demo replay to verify worker
-processing.
+Recovery preserves terminal job history. Pending/running jobs become `HELD`
+with their original status, snapshot checksum and recovery timestamp. Already
+held jobs retain their existing recovery metadata. The worker skips held jobs;
+starting it must not automatically resume interrupted work.
 
 For restore, create a separate Compose project with separate ports and
 `EOIP_LOAD_DEMO=false`. Start HugeGraph and schema-init, leave the worker stopped,
@@ -379,10 +493,45 @@ python -m scripts.restore /data/backups/FILE.json
 ```
 
 Restore checks the checksum, schema version, endpoint types, and evidence paths
-before mutation, and requires an empty graph. It never clears an existing graph.
+before mutation, and requires a physically empty graph, including tombstoned
+vertices and expired relationships, and empty raw/DLQ/state/journal/job data
+(a worker heartbeat alone is permitted). It never clears existing data.
+Operational paths reject traversal, worker-heartbeat entries, noncanonical job
+IDs and Windows reserved names. Export refuses symlinked operational files;
+restore refuses paths resolving outside its data root. Operational exports are bounded to
+100,000 files and 64,000,000 UTF-8 bytes; oversized archives fail explicitly.
+Logical exports preserve tombstones and historical edges in both store paths;
+the non-paginated path refuses more than 1,000,000 vertices or edges. Temporal
+revision/deletion barriers remain effective after recovery.
 The local logical export is intended for small, quiescent development datasets;
-it is not a transaction-consistent production RocksDB backup. Job history is not
-restored, so pending imports cannot resume automatically from the snapshot.
+it is not a transaction-consistent production RocksDB backup. Quiesce all writers
+for both export and restore; graph/file restoration is not an atomic transaction.
+After restoration, review held jobs in **Administration -> Sources & jobs**.
+**Readmit** requires confirmation and invokes authenticated, audit-preflighted
+`POST /api/v1/admin/jobs/{job_id}/readmit`. Registered source operations recheck
+enabled state, pause, capability, concurrency and rate limits. Successful
+readmission retains the job ID, records the operator correlation ID and new
+admission time, resets execution/retry state, and returns HTTP 202. A repeated
+readmission refuses with HTTP 409. Held jobs can also be cancelled.
+The archive ends at the quiescent backup boundary. Events arriving afterward
+are not present: recover them from retained immutable captures outside this
+archive, or run the source's supported incremental/reconciliation operation
+from its restored committed checkpoint after checking current credentials and
+admission policy. Do not advance checkpoints manually or assume that readmitting
+a held job recovers every post-backup event. Verify source continuity and run
+validation before treating the restored instance as authoritative.
+Re-execution can repeat pre-backup side effects; confirmation is not a guarantee
+of exactly-once delivery. In-process locking serializes operator transitions;
+this remains a single-API/single-worker filesystem queue, not a distributed queue.
+
+Snapshots created before operational export remain readable under the same
+schema version but cannot recover operational state that was never captured.
+This scope does not include repository `config/`, model manifests/binaries,
+webhook receipts, audit history or agent traces. Held webhook jobs refuse
+readmission explicitly because receipt recovery/path rebasing is not implemented.
+Reprovision source secrets separately, including any referenced external files.
+Archives may contain sensitive raw/job/configuration values; handle them as
+confidential. Exact logical equality is not native disaster-recovery certification.
 Use supported native HugeGraph backup tooling for production-sized graphs.
 
 ## VS Code extension

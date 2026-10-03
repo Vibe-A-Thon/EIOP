@@ -111,6 +111,25 @@ class NLQueryRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1024)
 
 
+class JsonIngestionRequest(BaseModel):
+    data: dict | list = Field(...)
+    source_label: str = Field(default="json_upload", max_length=128)
+    pipeline_id: str = Field(default="manual", max_length=128)
+
+
+class FormatConvertRequest(BaseModel):
+    format_id: str = Field(
+        min_length=1, max_length=32,
+        pattern="^(rdf|rdf_xml|rdfs|owl|gremlin|cypher|gql|sparql)$",
+    )
+    limit: int = Field(default=10000, ge=1, le=50000)
+
+
+class BatchIngestionRequest(BaseModel):
+    files: list[dict] = Field(min_length=1, max_length=50)
+    pipeline_id: str = Field(default="batch", max_length=128)
+
+
 def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> FastAPI:
     app = FastAPI(title="EOIP API", version="1.0.0", dependencies=dependencies or [])
     executor = QueryExecutor(store, load_query_policy())
@@ -444,7 +463,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         from eoip.graph.anomaly import AnomalyDetector
         detector = AnomalyDetector(store)
         results = detector.stale_entities(threshold_hours=threshold_hours)
-        return {"stale": [r.to_dict() for r in results], "count": len(results)}
+        return {"stale": [r.to_dict() for r in results], "count": len(results), "partial": detector.partial}
 
     @app.get("/api/v1/graph/pr-impact")
     def graph_pr_impact():
@@ -536,6 +555,454 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
                 "new_components": 0,
                 "broken_paths": 0,
             },
+        }
+
+    # -- JSON Ingestion & Format Conversion Endpoints --
+
+    @app.post("/api/v1/admin/ingestion/json")
+    def ingest_json(payload: JsonIngestionRequest):
+        from eoip.ingestion.json_processor import JsonProcessor
+        processor = JsonProcessor(store)
+        result = processor.process_json_data(
+            payload.data,
+            source_label=payload.source_label,
+            pipeline_id=payload.pipeline_id,
+        )
+        return result.to_dict()
+
+    @app.post("/api/v1/admin/ingestion/json/batch")
+    def ingest_json_batch(payload: BatchIngestionRequest):
+        from eoip.ingestion.json_processor import JsonProcessor
+        processor = JsonProcessor(store)
+        combined_entities = 0
+        combined_relationships = 0
+        combined_errors: list = []
+        combined_log: list = []
+        for i, file_data in enumerate(payload.files):
+            data = file_data.get("data") or file_data.get("content")
+            label = file_data.get("source_label") or file_data.get("name") or f"batch-{i}"
+            if data is None:
+                combined_errors.append({"index": i, "error": "Missing data field"})
+                continue
+            result = processor.process_json_data(
+                data, source_label=label, pipeline_id=payload.pipeline_id,
+            )
+            combined_entities += result.entities_created
+            combined_relationships += result.relationships_created
+            combined_errors.extend(result.errors)
+            combined_log.extend(result.log)
+        return {
+            "files_processed": len(payload.files),
+            "entities_created": combined_entities,
+            "relationships_created": combined_relationships,
+            "error_count": len(combined_errors),
+            "errors": combined_errors[:50],
+            "log": combined_log[-100:],
+        }
+
+    @app.post("/api/v1/graph/convert")
+    def convert_graph(payload: FormatConvertRequest):
+        from eoip.graph.format_converter import FormatConverter
+        converter = FormatConverter(store)
+        content = converter.convert(payload.format_id, limit=payload.limit)
+        formats = converter.available_formats()
+        fmt = next((f for f in formats if f["id"] == payload.format_id), None)
+        return {
+            "format": payload.format_id,
+            "extension": fmt["ext"] if fmt else ".txt",
+            "label": fmt["label"] if fmt else payload.format_id,
+            "content": content,
+            "content_length": len(content),
+        }
+
+    @app.get("/api/v1/graph/formats")
+    def available_formats():
+        from eoip.graph.format_converter import FormatConverter
+        return {"formats": FormatConverter.available_formats()}
+
+    @app.post("/api/v1/admin/ingestion/process-and-convert")
+    def process_and_convert(payload: JsonIngestionRequest):
+        from eoip.graph.format_converter import FormatConverter
+        from eoip.ingestion.json_processor import JsonProcessor
+        processor = JsonProcessor(store)
+        result = processor.process_json_data(
+            payload.data,
+            source_label=payload.source_label,
+            pipeline_id=payload.pipeline_id,
+        )
+        converter = FormatConverter(store)
+        generated = {}
+        for fmt in converter.available_formats():
+            try:
+                generated[fmt["id"]] = {
+                    "label": fmt["label"],
+                    "ext": fmt["ext"],
+                    "content": converter.convert(fmt["id"], limit=10000),
+                }
+            except Exception as exc:
+                generated[fmt["id"]] = {"label": fmt["label"], "error": str(exc)}
+        result.formats_generated = list(generated.keys())
+        return {
+            "ingestion": result.to_dict(),
+            "formats": generated,
+        }
+
+    # --- G2-P6: Twin Domain APIs ---
+
+    @app.get("/api/v1/twin/test-intelligence/mappings")
+    def test_code_mappings():
+        from eoip.graph.test_intelligence import map_tests_to_code
+        return {"mappings": map_tests_to_code(store)}
+
+    @app.get("/api/v1/twin/test-intelligence/runs")
+    def test_run_builds():
+        from eoip.graph.test_intelligence import map_test_runs_to_builds
+        return {"mappings": map_test_runs_to_builds(store)}
+
+    @app.post("/api/v1/twin/test-intelligence/select")
+    def select_tests(body: dict):
+        from eoip.graph.test_intelligence import select_tests_for_changes
+        changed = body.get("changed_files", [])
+        if not changed:
+            raise HTTPException(400, "changed_files required")
+        return select_tests_for_changes(store, changed)
+
+    @app.post("/api/v1/twin/decisions/ingest")
+    def ingest_decision_endpoint(body: dict):
+        from eoip.graph.decisions import ingest_decision
+        name = body.get("name")
+        if not name:
+            raise HTTPException(400, "name required")
+        return ingest_decision(
+            store, name,
+            rationale=body.get("rationale", ""),
+            status=body.get("status", "Proposed"),
+            constraints=body.get("constraints", ""),
+            alternatives=body.get("alternatives"),
+            linked_entities=body.get("linked_entities"),
+        )
+
+    @app.get("/api/v1/twin/decisions/{entity_cid:path}")
+    def decisions_for_entity(entity_cid: str):
+        from eoip.graph.decisions import find_decisions_for_entity
+        return {"decisions": find_decisions_for_entity(store, entity_cid)}
+
+    @app.post("/api/v1/twin/decisions/extract")
+    def extract_decisions(body: dict):
+        from eoip.graph.decisions import extract_decisions_from_document
+        doc_cid = body.get("document_cid")
+        if not doc_cid:
+            raise HTTPException(400, "document_cid required")
+        return {"decisions": extract_decisions_from_document(store, doc_cid)}
+
+    @app.post("/api/v1/twin/business/objectives")
+    def create_objective(body: dict):
+        from eoip.graph.business_intent import ingest_objective
+        name = body.get("name")
+        if not name:
+            raise HTTPException(400, "name required")
+        result = ingest_objective(
+            store, name,
+            description=body.get("description", ""),
+            objective_type=body.get("objective_type", "strategic"),
+            priority=body.get("priority", "medium"),
+            kpi_target=body.get("kpi_target", ""),
+            owner_id=body.get("owner_id", ""),
+        )
+        return {"objective": result}
+
+    @app.post("/api/v1/twin/business/capabilities")
+    def create_capability(body: dict):
+        from eoip.graph.business_intent import ingest_capability
+        name = body.get("name")
+        if not name:
+            raise HTTPException(400, "name required")
+        return {"capability": ingest_capability(
+            store, name,
+            description=body.get("description", ""),
+            level=body.get("level", 1),
+            business_domain=body.get("business_domain", ""),
+            owner_id=body.get("owner_id", ""),
+            parent_cid=body.get("parent_cid"),
+            objective_cid=body.get("objective_cid"),
+        )}
+
+    @app.post("/api/v1/twin/business/link")
+    def link_entity_to_capability(body: dict):
+        from eoip.graph.business_intent import link_to_capability
+        entity_cid = body.get("entity_cid")
+        capability_cid = body.get("capability_cid")
+        if not entity_cid or not capability_cid:
+            raise HTTPException(400, "entity_cid and capability_cid required")
+        result = link_to_capability(store, entity_cid, capability_cid)
+        if not result:
+            raise HTTPException(404, "Entity or capability not found")
+        return result
+
+    @app.get("/api/v1/twin/business/reverse-impact/{service_cid:path}")
+    def business_reverse_impact(service_cid: str):
+        from eoip.graph.business_intent import reverse_impact
+        return reverse_impact(store, service_cid)
+
+    @app.get("/api/v1/twin/business/chain/{objective_cid:path}")
+    def intent_chain(objective_cid: str):
+        from eoip.graph.business_intent import intent_to_runtime_chain
+        return intent_to_runtime_chain(store, objective_cid)
+
+    @app.get("/api/v1/twin/classify")
+    def twin_classify():
+        from eoip.graph.twin import classify_facts
+        return classify_facts(store)
+
+    @app.get("/api/v1/twin/coverage")
+    def twin_coverage():
+        from eoip.graph.twin import digital_thread_coverage
+        return digital_thread_coverage(store)
+
+    @app.get("/api/v1/twin/missing-links")
+    def twin_missing_links():
+        from eoip.graph.twin import detect_missing_links
+        return detect_missing_links(store)
+
+    # --- G2-P7: Architecture Conformance, Process Mining, Query Operators ---
+
+    @app.post("/api/v1/conformance/check")
+    def conformance_check(body: dict):
+        from eoip.graph.conformance import parse_rules, check_conformance
+        dsl = body.get("rules_dsl", "")
+        rules_list = body.get("rules", [])
+        if dsl:
+            from eoip.graph.conformance import ArchRule, RuleKind
+            rules = parse_rules(dsl)
+        elif rules_list:
+            from eoip.graph.conformance import ArchRule, RuleKind
+            rules = [ArchRule(
+                id=r["id"], kind=RuleKind(r["kind"]),
+                source=r["source"], target=r["target"],
+                severity=r.get("severity", "ERROR"),
+                max_depth=r.get("max_depth", 4),
+            ) for r in rules_list]
+        else:
+            raise HTTPException(400, "rules_dsl or rules required")
+        return check_conformance(store, rules)
+
+    @app.get("/api/v1/process/cases")
+    def process_cases(source_label: str = "WorkItem"):
+        from eoip.graph.process_mining import extract_cases_from_graph
+        cases = extract_cases_from_graph(store, source_label=source_label)
+        return {"cases": [c.to_dict() for c in cases[:100]], "total": len(cases)}
+
+    @app.get("/api/v1/process/paths")
+    def process_paths():
+        from eoip.graph.process_mining import extract_cases_from_graph, discover_process_paths
+        cases = extract_cases_from_graph(store)
+        return discover_process_paths(cases)
+
+    @app.post("/api/v1/process/deviations")
+    def process_deviations(body: dict):
+        from eoip.graph.process_mining import deviation_report
+        designed = body.get("designed_steps")
+        return deviation_report(store, designed_steps=designed)
+
+    @app.get("/api/v1/knowledge/debt")
+    def knowledge_debt():
+        from eoip.graph.knowledge_debt import detect_knowledge_debt
+        return detect_knowledge_debt(store)
+
+    @app.post("/api/v1/knowledge/slo")
+    def knowledge_slo(body: dict):
+        from eoip.graph.knowledge_debt import parse_slo_rules, evaluate_slos
+        rules_config = body.get("rules", [])
+        if not rules_config:
+            raise HTTPException(400, "rules required")
+        rules = parse_slo_rules(rules_config)
+        return evaluate_slos(store, rules)
+
+    @app.get("/api/v1/query/why/{entity_cid:path}")
+    def query_why_endpoint(entity_cid: str):
+        from eoip.graph.query_operators import query_why
+        return query_why(store, entity_cid)
+
+    @app.post("/api/v1/query/why-not")
+    def query_why_not_endpoint(body: dict):
+        from eoip.graph.query_operators import query_why_not
+        source = body.get("source_cid")
+        target = body.get("target_cid")
+        if not source or not target:
+            raise HTTPException(400, "source_cid and target_cid required")
+        return query_why_not(store, source, target)
+
+    @app.get("/api/v1/query/what-changed/{entity_cid:path}")
+    def query_what_changed_endpoint(entity_cid: str):
+        from eoip.graph.query_operators import query_what_changed
+        return query_what_changed(store, entity_cid)
+
+    @app.get("/api/v1/query/context/{entity_cid:path}")
+    def query_context_endpoint(entity_cid: str):
+        from eoip.graph.query_operators import query_context
+        return query_context(store, entity_cid)
+
+    # --- G2-P9: Counterfactual Twin & Causal Intelligence ---
+
+    _sim_workspace: dict = {}
+
+    @app.post("/api/v1/simulation/create")
+    def simulation_create(body: dict):
+        from eoip.graph.simulation import SimulationWorkspace
+        if "workspace" not in _sim_workspace:
+            _sim_workspace["workspace"] = SimulationWorkspace(store)
+        ws = _sim_workspace["workspace"]
+        sim_id = ws.create(description=body.get("description", ""))
+        return {"simulation_id": sim_id}
+
+    @app.get("/api/v1/simulation/list")
+    def simulation_list():
+        from eoip.graph.simulation import SimulationWorkspace
+        if "workspace" not in _sim_workspace:
+            return {"simulations": []}
+        return {"simulations": _sim_workspace["workspace"].list_simulations()}
+
+    @app.post("/api/v1/simulation/{sim_id}/mutate")
+    def simulation_mutate(sim_id: str, body: dict):
+        from eoip.graph.simulation import Mutation
+        if "workspace" not in _sim_workspace:
+            raise HTTPException(404, "No simulation workspace")
+        ws = _sim_workspace["workspace"]
+        mutations_data = body.get("mutations", [body] if "kind" in body else [])
+        if not mutations_data:
+            raise HTTPException(400, "mutations required")
+        mutations = [Mutation(
+            kind=m["kind"], label=m.get("label", ""),
+            target_id=m.get("target_id", ""), properties=m.get("properties", {}),
+            out_v=m.get("out_v", ""), in_v=m.get("in_v", ""),
+        ) for m in mutations_data]
+        results = ws.apply_mutations(sim_id, mutations)
+        return {"results": results}
+
+    @app.get("/api/v1/simulation/{sim_id}/analyze")
+    def simulation_analyze(sim_id: str, analysis_type: str = "impact"):
+        if "workspace" not in _sim_workspace:
+            raise HTTPException(404, "No simulation workspace")
+        return _sim_workspace["workspace"].run_analysis(sim_id, analysis_type)
+
+    @app.get("/api/v1/simulation/{sim_id}/compare")
+    def simulation_compare(sim_id: str):
+        if "workspace" not in _sim_workspace:
+            raise HTTPException(404, "No simulation workspace")
+        return _sim_workspace["workspace"].compare(sim_id)
+
+    @app.get("/api/v1/simulation/{sim_id}/manifest")
+    def simulation_manifest(sim_id: str):
+        if "workspace" not in _sim_workspace:
+            raise HTTPException(404, "No simulation workspace")
+        manifest = _sim_workspace["workspace"].get_manifest(sim_id)
+        if not manifest:
+            raise HTTPException(404, "Simulation not found")
+        return manifest
+
+    @app.post("/api/v1/whatif/plan")
+    def whatif_plan(body: dict):
+        from eoip.graph.whatif import parse_whatif_intent, confirm_scenario
+        intent = body.get("intent", "")
+        if not intent:
+            raise HTTPException(400, "intent required")
+        plan = parse_whatif_intent(intent)
+        return confirm_scenario(plan)
+
+    @app.post("/api/v1/whatif/execute")
+    def whatif_execute(body: dict):
+        from eoip.graph.whatif import parse_whatif_intent, execute_scenario
+        intent = body.get("intent", "")
+        if not intent:
+            raise HTTPException(400, "intent required")
+        plan = parse_whatif_intent(intent)
+        plan.confirmed = True
+        return execute_scenario(store, plan)
+
+    @app.post("/api/v1/causal/correlations/{entity_cid:path}")
+    def causal_correlations(entity_cid: str, body: dict | None = None):
+        from eoip.graph.causal import find_temporal_correlations
+        window = 24.0
+        if body and "time_window_hours" in body:
+            window = float(body["time_window_hours"])
+        return {"entity": entity_cid, "correlations": find_temporal_correlations(store, entity_cid, window)}
+
+    @app.post("/api/v1/causal/prerequisites")
+    def causal_prerequisites(body: dict):
+        from eoip.graph.causal import check_causal_prerequisites
+        cause = body.get("cause_cid")
+        effect = body.get("effect_cid")
+        if not cause or not effect:
+            raise HTTPException(400, "cause_cid and effect_cid required")
+        return check_causal_prerequisites(store, cause, effect)
+
+    @app.post("/api/v1/causal/hypotheses/{incident_cid:path}")
+    def causal_hypotheses(incident_cid: str, body: dict | None = None):
+        from eoip.graph.causal import generate_hypotheses
+        window = 24.0
+        if body and "time_window_hours" in body:
+            window = float(body["time_window_hours"])
+        return generate_hypotheses(store, incident_cid, window)
+
+    # --- G2-P10: Lens Framework, Graph Playback, Production APIs ---
+
+    @app.get("/api/v1/lens/catalog")
+    def lens_catalog():
+        from eoip.graph.lens import list_lenses
+        return {"lenses": list_lenses()}
+
+    @app.post("/api/v1/lens/{lens_id}")
+    def lens_view(lens_id: str, body: dict | None = None):
+        from eoip.graph.lens import KnowledgeContext, lens_data
+        ctx = KnowledgeContext.from_dict(body or {})
+        return lens_data(store, lens_id, ctx)
+
+    @app.post("/api/v1/playback/stream")
+    def playback_stream(body: dict):
+        from eoip.graph.playback import build_event_stream
+        root_cid = body.get("root_cid", "")
+        if not root_cid:
+            raise HTTPException(400, "root_cid required")
+        return build_event_stream(store, root_cid, max_depth=body.get("max_depth", 3), max_events=body.get("max_events", 200))
+
+    @app.post("/api/v1/playback/evidence")
+    def playback_evidence(body: dict):
+        from eoip.graph.playback import build_evidence_panel
+        root_cid = body.get("root_cid", "")
+        if not root_cid:
+            raise HTTPException(400, "root_cid required")
+        return build_evidence_panel(store, root_cid)
+
+    @app.post("/api/v1/playback/export")
+    def playback_export(body: dict):
+        from eoip.graph.playback import export_timeline
+        root_cid = body.get("root_cid", "")
+        if not root_cid:
+            raise HTTPException(400, "root_cid required")
+        fmt = body.get("format", "json")
+        return export_timeline(store, root_cid, format=fmt)
+
+    @app.get("/api/v1/health/graph")
+    def graph_health():
+        v_count = store.count_vertices()
+        e_count = store.count_edges()
+        return {
+            "status": "healthy",
+            "vertices": v_count,
+            "edges": e_count,
+            "store_healthy": store.health(),
+        }
+
+    @app.get("/api/v1/admin/schema")
+    def admin_schema():
+        from eoip.ontology.manifest import VERTEX_LABELS, EDGE_LABELS, DOMAINS, ONTOLOGY_VERSION
+        return {
+            "ontology_version": ONTOLOGY_VERSION,
+            "domains": DOMAINS,
+            "vertex_types": len(VERTEX_LABELS),
+            "edge_types": len(EDGE_LABELS),
+            "vertex_labels": list(VERTEX_LABELS.keys()),
+            "edge_labels": list(EDGE_LABELS.keys()),
         }
 
     return app

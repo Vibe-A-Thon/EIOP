@@ -64,3 +64,39 @@ def test_queue_is_persistent_and_rejects_invalid_job_ids(tmp_path):
     assert "payload" not in fresh.list()[0]
     with pytest.raises(ValueError):
         fresh.get("../../outside")
+
+
+@pytest.mark.req("G2-T0224", "G2-T0225", "NFR-REL-003")
+def test_snapshot_preserves_tombstones_and_expired_relationships(tmp_path):
+    source = graph()
+    issue = source.get_vertex_by_canonical_id("issue:1")
+    source.upsert_vertex("WorkItem", {
+        **issue["properties"], "deleted_at": "2026-10-02T00:00:00Z",
+    })
+    edge = source.find_edges()[0]
+    source.upsert_edge("IMPLEMENTS", edge["out_v"], edge["in_v"], {
+        **edge["properties"], "is_current": False, "valid_to": "2026-10-02T00:00:00Z",
+    })
+    snapshot = tmp_path / "snapshot.json"
+    result = backup(source, tmp_path / "source", snapshot)
+    assert (result["vertices"], result["edges"]) == (2, 1)
+    target = MemoryGraphStore()
+    restore(target, tmp_path / "restored", snapshot)
+    assert target.get_vertex_by_canonical_id("issue:1")["properties"]["deleted_at"]
+    assert target.find_edges() == []
+    assert target.find_edges(include_historical=True)[0]["properties"]["valid_to"] == "2026-10-02T00:00:00Z"
+
+
+@pytest.mark.req("NFR-REL-003")
+def test_restore_refuses_graph_containing_only_tombstones(tmp_path):
+    snapshot = tmp_path / "snapshot.json"
+    backup(graph(), tmp_path / "source", snapshot)
+    target = MemoryGraphStore()
+    target.upsert_vertex("WorkItem", {
+        "canonical_id": "deleted:1", "issue_key": "EOIP-0", "summary": "Deleted",
+        "deleted_at": "2026-10-02T00:00:00Z",
+    })
+    assert target.count_vertices() == 0
+    with pytest.raises(ValueError, match="empty graph"):
+        restore(target, tmp_path / "restored", snapshot)
+    assert target.get_vertex_by_canonical_id("issue:1") is None

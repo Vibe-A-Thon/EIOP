@@ -10,6 +10,7 @@ import logging
 from uuid import uuid4
 
 from eoip.contracts.source_event import utc_now_iso
+from eoip.graph.documentation import document_reference_findings
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import EDGE_LABELS, VERTEX_LABELS, edge_endpoints_valid
 from eoip.validation.quality import QualityMetrics
@@ -44,6 +45,7 @@ class ValidationEngine:
 
         findings.extend(self._check_orphans(vertices, edges))
         findings.extend(self._check_deletion_conflicts(deleted_vertices, edges))
+        findings.extend(document_reference_findings(self._store, edges))
 
         quality = QualityMetrics.compute(vertices, edges, findings)
 
@@ -53,7 +55,7 @@ class ValidationEngine:
             "finished_at": utc_now_iso(),
             "findings": findings,
             "valid": not any(f["severity"] == "ERROR" for f in findings),
-            "partial": len(vertices) >= self._vertex_limit or len(edges) >= self._edge_limit,
+            "partial": len(all_vertices) >= self._vertex_limit or len(edges) >= self._edge_limit,
             "vertices_checked": len(all_vertices),
             "edges_checked": len(edges),
             "quality": quality.as_dict(),
@@ -97,6 +99,18 @@ class ValidationEngine:
                     "detail": "Vertex has no canonical_id",
                 }
             )
+
+        cs = vertex["properties"].get("creation_status")
+        if cs == "AMBIGUOUS":
+            findings.append(
+                {
+                    "canonical_id": vertex["canonical_id"],
+                    "rule": "ambiguous_needs_review",
+                    "severity": "WARNING",
+                    "detail": f"Vertex {label} has AMBIGUOUS creation_status and needs human review",
+                }
+            )
+
         return findings
 
     @staticmethod
@@ -164,13 +178,33 @@ class ValidationEngine:
                 }
             )
 
-        if not edge["properties"].get("creation_status"):
+        VALID_CREATION_STATUSES = {"DETERMINISTIC", "INFERRED", "AMBIGUOUS", "MANUAL", "HUMAN_CONFIRMED"}
+        cs = edge["properties"].get("creation_status")
+        if not cs:
             findings.append(
                 {
                     "edge_id": edge["eid"],
                     "rule": "missing_creation_status",
                     "severity": "WARNING",
-                    "detail": "Edge missing creation_status (DETERMINISTIC or INFERRED)",
+                    "detail": "Edge missing creation_status",
+                }
+            )
+        elif cs not in VALID_CREATION_STATUSES:
+            findings.append(
+                {
+                    "edge_id": edge["eid"],
+                    "rule": "invalid_creation_status",
+                    "severity": "ERROR",
+                    "detail": f"Invalid creation_status: {cs}",
+                }
+            )
+        elif cs == "AMBIGUOUS":
+            findings.append(
+                {
+                    "edge_id": edge["eid"],
+                    "rule": "ambiguous_needs_review",
+                    "severity": "WARNING",
+                    "detail": "Edge has AMBIGUOUS creation_status and needs human review",
                 }
             )
 

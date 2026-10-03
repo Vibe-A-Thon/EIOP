@@ -98,7 +98,7 @@ def test_relationship_accepts_physical_ids_without_changing_fact_identity():
 
 
 @pytest.mark.parametrize("properties", [
-    {"graph_domain": "CODE"}, {"creation_status": "MANUAL"},
+    {"graph_domain": "CODE"}, {"creation_status": "INVENTED"},
 ])
 def test_entity_rejects_contradictory_or_unsupported_properties(properties):
     store = MemoryGraphStore()

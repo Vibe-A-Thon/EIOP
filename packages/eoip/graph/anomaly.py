@@ -11,6 +11,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any
 
+from eoip.graph.documentation import document_reference_findings
 from eoip.graph.store import GraphStore
 
 
@@ -303,4 +304,15 @@ class AnomalyDetector:
                         },
                     )
                 )
+        reference_edges = self._store.find_edges(label="DOCUMENTS", limit=50_000)
+        self.partial = len(vertices) >= 50_000 or len(reference_edges) >= 50_000
+        results.extend(
+            AnomalyResult(
+                canonical_id=finding["canonical_id"],
+                anomaly_type="stale_document_reference", score=1.0, details=finding,
+            )
+            for finding in document_reference_findings(
+                self._store, reference_edges,
+            )
+        )
         return results

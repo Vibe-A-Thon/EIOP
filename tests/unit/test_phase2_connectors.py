@@ -39,6 +39,10 @@ def test_confluence_sync_emits_spaces_pages_and_attachment_metadata_incrementall
 
     def handler(request):
         requests.append(request)
+        if request.url.path.endswith("/content/42"):
+            return httpx.Response(200, json={
+                "id": "42", "version": {"number": int(request.url.params["version"])},
+            })
         if request.url.path.endswith("/rest/api/content/search"):
             query = request.url.params["cql"]
             if "type = attachment" in query:

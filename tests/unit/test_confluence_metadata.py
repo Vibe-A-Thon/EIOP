@@ -134,6 +134,8 @@ def label_client(label_response):
             return httpx.Response(200, json={"results": [{"key": "ENG", "name": "Engineering"}]})
         if request.url.path.endswith("/label"):
             return label_response(request)
+        if request.url.path.endswith("/content/42"):
+            return httpx.Response(200, json={"id": "42", "version": {"number": 1}})
         if "type = attachment" in request.url.params["cql"]:
             return httpx.Response(200, json={"results": []})
         payload = page_payload()

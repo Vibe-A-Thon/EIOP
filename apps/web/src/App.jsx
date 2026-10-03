@@ -266,7 +266,7 @@ function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDet
     {lens === 'evidence' && <EvidenceView source={source} setSource={setSource} selected={selected} lineage={lineage} rag={rag} question={question} setQuestion={setQuestion} onLineage={traceLineage} onRag={retrieve} onInspect={node => run(() => inspect(node))} busy={busy}/>} 
     {lens === 'architecture' && <ArchitectureView stats={stats} graph={graph}/>}
     {lens === 'agent' && <AgentView agents={agents} selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent} goal={agentGoal} setGoal={setAgentGoal} selected={selected} result={agentResult} onRun={runAgent} busy={busy} synthesize={agentSynthesize} setSynthesize={setAgentSynthesize}/>}
-    {lens === 'kgr' && <KGRExplorer graph={graph} setGraph={setGraph} api={api} run={run} busy={busy} stats={stats}/>}
+    {lens === 'kgr' && <KGRExplorer graph={graph} setGraph={setGraph} api={api} run={run} busy={busy} stats={stats} apiBase={window.location.origin}/>}
     <LensLibrary open={libraryOpen} onClose={() => setLibraryOpen(false)} onSelect={openCatalogLens}/>
   </>;
 }
@@ -275,9 +275,9 @@ function ConnectorCard({icon, name, description, status = 'Available', children,
   return <article className={`connector-card ${tone || ''}`}><div className="connector-top"><span className="connector-icon"><Icon name={icon}/></span><StatusPill status={status}/></div><h3>{name}</h3><p>{description}</p>{children}</article>;
 }
 
-function JobsTable({jobs, jobSummary, onCancel}) {
+function JobsTable({jobs, jobSummary, onCancel, onReadmit}) {
   if (!jobs.length) return <EmptyState icon="clock" title="No ingestion jobs yet">Load the demo or import a source to create the first durable job.</EmptyState>;
-  return <div className="table-wrap"><table><thead><tr><th>Source</th><th>Status</th><th>Created</th><th>Result</th>{onCancel && <th>Action</th>}</tr></thead><tbody>{jobs.map(job => <tr key={job.job_id}><td><div className="table-primary"><span className="service-icon mini"><Icon name={job.kind === 'DEMO' ? 'spark' : 'upload'} size={15}/></span><span><strong>{job.kind.replaceAll('_', ' ')}</strong><small title={job.job_id}>{shortId(job.job_id, 18)}</small></span></div></td><td><StatusPill status={job.status}/></td><td>{formatTime(job.created_at)}</td><td>{job.error || (job.result ? jobSummary(job) : job.status === 'CANCELLED' ? 'Cancelled before execution' : 'Waiting for worker')}</td>{onCancel && <td>{job.status === 'PENDING' ? <button className="table-action" onClick={() => onCancel(job.job_id)}>Cancel</button> : <span className="subtle">—</span>}</td>}</tr>)}</tbody></table></div>;
+  return <div className="table-wrap"><table><thead><tr><th>Source</th><th>Status</th><th>Created</th><th>Result</th>{onCancel && <th>Action</th>}</tr></thead><tbody>{jobs.map(job => <tr key={job.job_id}><td><div className="table-primary"><span className="service-icon mini"><Icon name={job.kind === 'DEMO' ? 'spark' : 'upload'} size={15}/></span><span><strong>{job.kind.replaceAll('_', ' ')}</strong><small title={job.job_id}>{shortId(job.job_id, 18)}</small></span></div></td><td><StatusPill status={job.status}/></td><td>{formatTime(job.created_at)}</td><td>{job.status === 'HELD' ? 'Recovery hold: review possible side effects before re-admission' : job.error || (job.result ? jobSummary(job) : job.status === 'CANCELLED' ? 'Cancelled before execution' : 'Waiting for worker')}</td>{onCancel && <td>{['PENDING', 'HELD'].includes(job.status) ? <><button className="table-action" onClick={() => onCancel(job.job_id)}>Cancel</button>{job.status === 'HELD' && onReadmit && <button className="table-action" onClick={() => onReadmit(job.job_id)}>Readmit</button>}</> : <span className="subtle">—</span>}</td>}</tr>)}</tbody></table></div>;
 }
 
 function FindingsTable({findings}) {
@@ -333,17 +333,29 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
   const [section, setSection] = useState('overview');
   const [checkpoint, setCheckpoint] = useState('');
   const [dryRun, setDryRun] = useState(true);
+  const [jsonFiles, setJsonFiles] = useState([]);
+  const [ingestionResult, setIngestionResult] = useState(null);
+  const [convertResult, setConvertResult] = useState(null);
+  const [availableFormats, setAvailableFormats] = useState(null);
+  const [selectedFormat, setSelectedFormat] = useState('rdf');
+  const [ingestionLog, setIngestionLog] = useState([]);
+  const [dragOver, setDragOver] = useState(false);
   const finishedJobs = jobs.filter(job => ['SUCCEEDED', 'PARTIAL', 'FAILED', 'CANCELLED'].includes(job.status));
   const successRate = finishedJobs.length ? Math.round(finishedJobs.filter(job => job.status === 'SUCCEEDED').length / finishedJobs.length * 100) : null;
   const jobSummary = job => {const result = job.result || {}; return job.kind === 'DEMO' ? `${result.jira?.records_accepted || 0} Jira · ${result.git?.files || 0} files · ${result.git?.symbols || 0} symbols` : `${result.records_accepted || 0} accepted · ${result.records_rejected || 0} rejected`;};
   async function importFile(file, endpoint) {if (!file) return; if (file.size > 3_000_000) throw new Error('Select a JSON file smaller than 3 MB'); await api(endpoint, {document: JSON.parse(await file.text())}); await refresh();}
   const submitSync = source => run(async () => {await api(`/api/v1/admin/ingestion/${source}`, {checkpoint: checkpoint || null, watermark: null, dry_run: dryRun}); await refresh();});
   const cancelJob = jobId => run(async () => {await api(`/api/v1/admin/jobs/${encodeURIComponent(jobId)}/cancel`, {}); await refresh();});
+  const readmitJob = jobId => {
+    if (window.confirm('Re-admit this recovered job? Execution may repeat side effects from before the backup.')) {
+      run(async () => {await api(`/api/v1/admin/jobs/${encodeURIComponent(jobId)}/readmit`, {}); await refresh();});
+    }
+  };
   const replayDlq = eventId => run(async () => {await api(`/api/v1/admin/dlq/${encodeURIComponent(eventId)}/replay`, {}); setDlq(await api('/api/v1/admin/dlq?limit=25')); await refresh();});
   return <>
     <div className="admin-summary"><div><span className="eyebrow"><i/>OPERATIONS OVERVIEW</span><h2>Keep enterprise knowledge trustworthy.</h2><p>Monitor source ingestion, graph quality, ontology state, and auditable platform activity from one control plane.</p></div><div className="admin-summary-actions"><button className="secondary-button" onClick={() => run(async () => {setValidation(await api('/api/v1/admin/validation', {})); setSection('quality');})} disabled={busy} title="Validate current graph facts and open quality results"><Icon name="shield"/>Run validation</button><button className="primary-button" onClick={() => run(async () => {await api('/api/v1/admin/demo', {}); await refresh();})} disabled={busy} title="Queue an idempotent demo ingestion run"><Icon name="spark"/>Load / replay demo</button></div></div>
     <div className="metrics-grid admin-metrics"><MetricCard icon="database" eyebrow="GRAPH ENTITIES" value={stats?.vertices ?? '—'} caption="Authoritative HugeGraph" tone="violet"/><MetricCard icon="graph" eyebrow="RELATIONSHIPS" value={stats?.edges ?? '—'} caption="Across all graph domains" tone="blue"/><MetricCard icon="activity" eyebrow="JOB SUCCESS" value={successRate === null ? '—' : `${successRate}%`} caption={`${finishedJobs.length} completed runs`} tone="mint" tooltip="Success rate calculated from completed jobs returned by the API"/><MetricCard icon="shield" eyebrow="SCHEMA" value={stats?.schema?.schema_version || '—'} caption={`Ontology ${stats?.schema?.ontology_version || 'unavailable'}`} tone="gold"/></div>
-    <div className="admin-tabs" role="tablist">{[['overview', 'Overview', 'layers'], ['sources', 'Sources & jobs', 'upload'], ['quality', 'Quality & ontology', 'shield'], ['operations', 'Audit & recovery', 'terminal']].map(([id, label, icon]) => <button key={id} role="tab" aria-selected={section === id} className={section === id ? 'active' : ''} onClick={() => setSection(id)} title={`Open ${label}`}><Icon name={icon}/>{label}</button>)}</div>
+    <div className="admin-tabs" role="tablist">{[['overview', 'Overview', 'layers'], ['sources', 'Sources & jobs', 'upload'], ['ingestion', 'JSON Ingestion & Convert', 'database'], ['quality', 'Quality & ontology', 'shield'], ['operations', 'Audit & recovery', 'terminal']].map(([id, label, icon]) => <button key={id} role="tab" aria-selected={section === id} className={section === id ? 'active' : ''} onClick={() => setSection(id)} title={`Open ${label}`}><Icon name={icon}/>{label}</button>)}</div>
     {section === 'overview' && <div className="admin-grid">
       <section className="panel span-2"><div className="panel-heading"><div><span className="eyebrow">RECENT ACTIVITY</span><h2>Ingestion jobs</h2><p>Durable worker jobs and their latest reported state.</p></div><button className="secondary-button" onClick={() => run(refresh)} disabled={busy}><Icon name="refresh"/>Refresh jobs</button></div><JobsTable jobs={jobs} jobSummary={jobSummary}/></section>
       <section className="panel"><div className="panel-heading"><div><span className="eyebrow">PLATFORM</span><h2>Service health</h2></div></div><div className="service-list"><div><span className="service-icon violet"><Icon name="database"/></span><span><strong>HugeGraph</strong><small>Authoritative graph store</small></span><StatusPill status={system?.graph?.status || (stats ? 'READY' : 'CHECKING')}/></div><div><span className="service-icon mint"><Icon name="activity"/></span><span><strong>Ingestion worker</strong><small>Background job processor</small></span><StatusPill status={stats?.worker?.status || 'STARTING'}/></div><div><span className="service-icon blue"><Icon name="shield"/></span><span><strong>Schema bootstrap</strong><small>Idempotent ontology schema</small></span><StatusPill status={stats?.schema ? 'READY' : 'CHECKING'}/></div><div><span className="service-icon coral"><Icon name="spark"/></span><span><strong>Local model</strong><small>{system?.model?.name || 'Optional deterministic fallback active'}</small></span><StatusPill status={system?.model?.status || 'CHECKING'}/></div><div><span className="service-icon gold"><Icon name="upload"/></span><span><strong>Backup state</strong><small>{system?.backup?.latest ? `${system.backup.latest.vertices} entities · ${formatTime(system.backup.latest.created_at)}` : 'No checksummed snapshot found'}</small></span><StatusPill status={system?.backup?.status || 'CHECKING'}/></div></div></section>
@@ -352,7 +364,178 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
     {section === 'sources' && <div className="admin-section">
       <div className="connector-grid"><ConnectorCard icon="spark" name="Demo dataset" description="Synthetic Jira, Git, code, pipeline, and documentation evidence." status="Ready" tone="violet"><button onClick={() => run(async () => {await api('/api/v1/admin/demo', {}); await refresh();})} disabled={busy}>Load dataset <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="upload" name="Jira JSON" description="Import a configurable Jira export with record-level validation." status="File import" tone="blue"><label className="file-picker"><input type="file" accept="application/json,.json" onChange={event => setUpload(event.target.files?.[0] || null)}/><Icon name="document"/><span>{upload?.name || 'Choose JSON file'}</span></label><button onClick={() => run(() => importFile(upload, '/api/v1/admin/ingestion/jira'))} disabled={busy || !upload}>Import Jira <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="code" name="GitLab metadata" description="Import merge request and pipeline metadata from JSON." status="File import" tone="coral"><label className="file-picker"><input type="file" accept="application/json,.json" onChange={event => setGitlabUpload(event.target.files?.[0] || null)}/><Icon name="document"/><span>{gitlabUpload?.name || 'Choose JSON file'}</span></label><button onClick={() => run(() => importFile(gitlabUpload, '/api/v1/admin/ingestion/gitlab'))} disabled={busy || !gitlabUpload}>Import GitLab <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="document" name="Confluence" description="Queue incremental Data Center content synchronization." status="Configured externally" tone="mint"><button onClick={() => submitSync('confluence')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="settings" name="ServiceNow" description="Queue incremental knowledge article synchronization." status="Configured externally" tone="gold"><button onClick={() => submitSync('servicenow')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="layers" name="Rally" description="Import epics, features, and user stories from Rally/Broadcom." status="Configured externally" tone="violet"><button onClick={() => submitSync('rally')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="activity" name="Grafana" description="Sync dashboards, alert rules, and data sources from Grafana." status="Configured externally" tone="mint"><button onClick={() => submitSync('grafana')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="activity" name="Datadog" description="Sync dashboards and monitors from Datadog." status="Configured externally" tone="coral"><button onClick={() => submitSync('datadog')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="terminal" name="Kibana" description="Import dashboards, saved searches, and index patterns from Kibana." status="Configured externally" tone="blue"><button onClick={() => submitSync('kibana')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="shield" name="qTest" description="Import test cases, suites, cycles, and runs from qTest." status="Configured externally" tone="gold"><button onClick={() => submitSync('qtest')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="focus" name="Figma" description="Import design files, pages, and components from Figma." status="Configured externally" tone="violet"><button onClick={() => submitSync('figma')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="link" name="API Portal" description="Sync API services, endpoints, and Swagger connections." status="Configured externally" tone="blue"><button onClick={() => submitSync('api_portal')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="code" name="GitHub" description="Import repositories, commits, and pull requests from GitHub." status="Configured externally" tone="coral"><button onClick={() => submitSync('github')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard></div>
       <section className="panel sync-options"><div><h2>Incremental sync options</h2><p>Applies to Confluence and ServiceNow jobs. Credentials remain in worker configuration.</p></div><label>Checkpoint<input value={checkpoint} onChange={event => setCheckpoint(event.target.value)} placeholder="Optional ISO-8601 checkpoint"/></label><label className="toggle"><input type="checkbox" checked={dryRun} onChange={event => setDryRun(event.target.checked)}/><span/>Dry run only</label></section>
-      <section className="panel"><div className="panel-heading"><div><span className="eyebrow">DURABLE QUEUE</span><h2>Ingestion jobs</h2></div><button className="secondary-button" onClick={() => run(refresh)} disabled={busy}><Icon name="refresh"/>Refresh counts</button></div><JobsTable jobs={jobs} jobSummary={jobSummary} onCancel={cancelJob}/></section>
+      <section className="panel"><div className="panel-heading"><div><span className="eyebrow">DURABLE QUEUE</span><h2>Ingestion jobs</h2></div><button className="secondary-button" onClick={() => run(refresh)} disabled={busy}><Icon name="refresh"/>Refresh counts</button></div><JobsTable jobs={jobs} jobSummary={jobSummary} onCancel={cancelJob} onReadmit={readmitJob}/></section>
+    </div>}
+    {section === 'ingestion' && <div className="admin-section admin-ingestion-panel">
+      <section className="panel span-3">
+        <div className="panel-heading"><div><span className="eyebrow">JSON INGESTION PIPELINE</span>
+          <h2>Ingest JSON data into the knowledge graph</h2>
+          <p>Upload JSON files to process entities, build relationships, metadata graphs, and convert to RDF, RDFS, OWL, Gremlin, Cypher, GQL, and SPARQL formats.</p>
+        </div></div>
+
+        <div className={`file-drop-zone ${dragOver ? 'dragover' : ''}`}
+          onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={e => {
+            e.preventDefault(); setDragOver(false);
+            const files = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.json'));
+            setJsonFiles(prev => [...prev, ...files]);
+          }}
+          onClick={() => document.getElementById('json-file-input')?.click()}>
+          <input id="json-file-input" type="file" accept="application/json,.json" multiple
+            onChange={e => setJsonFiles(prev => [...prev, ...Array.from(e.target.files || [])])}/>
+          <span className="section-icon violet"><Icon name="upload"/></span>
+          <strong>Drop JSON files here or click to browse</strong>
+          <small>Supports entity arrays, nested documents, and NormalizedEntity envelopes</small>
+        </div>
+
+        {jsonFiles.length > 0 && <div style={{marginTop: 12}}>
+          <h3>{jsonFiles.length} file{jsonFiles.length !== 1 ? 's' : ''} selected</h3>
+          <div className="ingestion-pipeline-grid">
+            {jsonFiles.map((f, i) => <div key={`${f.name}-${i}`} className="pipeline-card">
+              <div className="pipeline-card-header">
+                <span className="section-icon blue"><Icon name="document"/></span>
+                <div><h3>{f.name}</h3><p>{(f.size / 1024).toFixed(1)} KB</p></div>
+              </div>
+              <button className="table-action" onClick={() => setJsonFiles(prev => prev.filter((_, j) => j !== i))}>Remove</button>
+            </div>)}
+          </div>
+          <div className="pipeline-actions" style={{marginTop: 12}}>
+            <button className="primary-button" disabled={busy} onClick={() => run(async () => {
+              setIngestionLog([]);
+              let totalEntities = 0, totalRels = 0, allErrors = [];
+              for (const file of jsonFiles) {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                setIngestionLog(prev => [...prev, {ts: new Date().toISOString().slice(11, 19), level: 'info', msg: `Processing ${file.name}...`}]);
+                const result = await api('/api/v1/admin/ingestion/json', {data, source_label: file.name, pipeline_id: 'manual_gui'});
+                totalEntities += result.entities_created || 0;
+                totalRels += result.relationships_created || 0;
+                if (result.errors?.length) allErrors.push(...result.errors);
+                setIngestionLog(prev => [...prev, {ts: new Date().toISOString().slice(11, 19), level: result.error_count ? 'err' : 'ok', msg: `${file.name}: ${result.entities_created} entities, ${result.relationships_created} relationships${result.error_count ? `, ${result.error_count} errors` : ''}`}]);
+              }
+              setIngestionResult({entities_created: totalEntities, relationships_created: totalRels, error_count: allErrors.length, errors: allErrors.slice(0, 20)});
+              setIngestionLog(prev => [...prev, {ts: new Date().toISOString().slice(11, 19), level: 'ok', msg: `All files processed: ${totalEntities} entities, ${totalRels} relationships created`}]);
+              await refresh();
+            })}><Icon name="database" size={16}/>Process & Build Graphs</button>
+            <button className="primary-button" disabled={busy} onClick={() => run(async () => {
+              setIngestionLog([]);
+              for (const file of jsonFiles) {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                setIngestionLog(prev => [...prev, {ts: new Date().toISOString().slice(11, 19), level: 'info', msg: `Processing & converting ${file.name}...`}]);
+                const result = await api('/api/v1/admin/ingestion/process-and-convert', {data, source_label: file.name, pipeline_id: 'manual_gui'});
+                setIngestionResult(result.ingestion);
+                setConvertResult(result.formats);
+                setIngestionLog(prev => [...prev, {ts: new Date().toISOString().slice(11, 19), level: 'ok', msg: `${file.name}: ${result.ingestion?.entities_created || 0} entities, ${Object.keys(result.formats || {}).length} formats generated`}]);
+              }
+              await refresh();
+            })}><Icon name="layers" size={16}/>Process, Build & Convert All Formats</button>
+            <button className="secondary-button" onClick={() => { setJsonFiles([]); setIngestionResult(null); setConvertResult(null); setIngestionLog([]); }}>
+              <Icon name="close" size={16}/>Clear all
+            </button>
+          </div>
+        </div>}
+      </section>
+
+      {ingestionLog.length > 0 && <section className="panel">
+        <div className="panel-heading"><div><span className="eyebrow">PROCESSING LOG</span><h2>Pipeline activity</h2></div></div>
+        <div className="processing-log">{ingestionLog.map((entry, i) =>
+          <div key={i} className="log-entry"><span className="log-ts">{entry.ts}</span><span className={`log-${entry.level}`}>[{entry.level.toUpperCase()}]</span><span>{entry.msg}</span></div>
+        )}</div>
+      </section>}
+
+      {ingestionResult && <section className="panel">
+        <div className="panel-heading"><div><span className="eyebrow">INGESTION RESULT</span><h2>Graph building summary</h2></div></div>
+        <div className="metrics-grid">
+          <MetricCard icon="database" eyebrow="ENTITIES CREATED" value={ingestionResult.entities_created} caption="Vertices added to graph" tone="violet"/>
+          <MetricCard icon="graph" eyebrow="RELATIONSHIPS" value={ingestionResult.relationships_created} caption="Edges established" tone="blue"/>
+          <MetricCard icon="activity" eyebrow="ERRORS" value={ingestionResult.error_count || 0} caption={ingestionResult.error_count ? 'Review errors below' : 'No errors'} tone={ingestionResult.error_count ? 'coral' : 'mint'}/>
+          <MetricCard icon="layers" eyebrow="METADATA" value={ingestionResult.metadata_vertices || 1} caption="Ingestion run records" tone="gold"/>
+        </div>
+        {ingestionResult.errors?.length > 0 && <div style={{marginTop: 12}}>
+          <h3>Errors ({ingestionResult.errors.length})</h3>
+          <div className="table-wrap"><table><thead><tr><th>Entity</th><th>Type</th><th>Error</th></tr></thead>
+            <tbody>{ingestionResult.errors.slice(0, 20).map((err, i) => <tr key={i}>
+              <td><code>{err.canonical_id || err.relationship || '—'}</code></td>
+              <td>{err.entity_type || err.relationship || '—'}</td>
+              <td>{err.error}</td>
+            </tr>)}</tbody>
+          </table></div>
+        </div>}
+      </section>}
+
+      <section className="panel">
+        <div className="panel-heading"><div><span className="eyebrow">FORMAT CONVERSION</span>
+          <h2>Convert graph to standard formats</h2>
+          <p>Export the current knowledge graph in industry-standard formats.</p>
+        </div>
+        <button className="secondary-button" disabled={busy} onClick={() => run(async () => {
+          const result = await api('/api/v1/graph/formats');
+          setAvailableFormats(result.formats);
+        })}><Icon name="refresh" size={16}/>Load formats</button></div>
+        <div className="format-output-grid">
+          {[
+            {id: 'rdf', label: 'RDF (Turtle)', icon: 'R', color: '#7054e8', desc: 'W3C RDF in Turtle syntax'},
+            {id: 'rdf_xml', label: 'RDF/XML', icon: 'X', color: '#2589e8', desc: 'W3C RDF in XML format'},
+            {id: 'rdfs', label: 'RDFS Schema', icon: 'S', color: '#10a981', desc: 'RDFS class definitions'},
+            {id: 'owl', label: 'OWL Ontology', icon: 'O', color: '#df9d23', desc: 'OWL ontology export'},
+            {id: 'gremlin', label: 'Gremlin', icon: 'G', color: '#ec6b76', desc: 'TinkerPop traversal script'},
+            {id: 'cypher', label: 'Cypher', icon: 'C', color: '#7054e8', desc: 'Neo4j MERGE statements'},
+            {id: 'gql', label: 'GQL', icon: 'Q', color: '#2589e8', desc: 'ISO GQL INSERT statements'},
+            {id: 'sparql', label: 'SPARQL', icon: 'S', color: '#10a981', desc: 'SPARQL INSERT DATA'},
+          ].map(fmt => <div key={fmt.id} className={`format-output-card ${selectedFormat === fmt.id ? 'selected' : ''}`}
+            onClick={() => setSelectedFormat(fmt.id)}>
+            <span className="format-icon" style={{background: fmt.color, color: '#fff'}}>{fmt.icon}</span>
+            <div><strong>{fmt.label}</strong><small>{fmt.desc}</small></div>
+          </div>)}
+        </div>
+        <div className="pipeline-actions" style={{marginTop: 12}}>
+          <button className="primary-button" disabled={busy} onClick={() => run(async () => {
+            const result = await api('/api/v1/graph/convert', {format_id: selectedFormat, limit: 10000});
+            setConvertResult({[selectedFormat]: result});
+          })}><Icon name="database" size={16}/>Convert to {selectedFormat.toUpperCase()}</button>
+          <button className="primary-button" disabled={busy} onClick={() => run(async () => {
+            const allFormats = {};
+            for (const fmtId of ['rdf', 'rdf_xml', 'rdfs', 'owl', 'gremlin', 'cypher', 'gql', 'sparql']) {
+              setIngestionLog(prev => [...prev, {ts: new Date().toISOString().slice(11, 19), level: 'info', msg: `Converting to ${fmtId}...`}]);
+              const result = await api('/api/v1/graph/convert', {format_id: fmtId, limit: 10000});
+              allFormats[fmtId] = result;
+            }
+            setConvertResult(allFormats);
+            setIngestionLog(prev => [...prev, {ts: new Date().toISOString().slice(11, 19), level: 'ok', msg: `All 8 formats generated successfully`}]);
+          })}><Icon name="layers" size={16}/>Convert All Formats</button>
+        </div>
+      </section>
+
+      {convertResult && <section className="panel">
+        <div className="panel-heading"><div><span className="eyebrow">GENERATED OUTPUT</span>
+          <h2>Format conversion results</h2></div></div>
+        <div className="format-output-grid">
+          {Object.entries(convertResult).map(([fmtId, data]) => <div key={fmtId} className="format-output-card"
+            onClick={() => {
+              if (data.content) {
+                const blob = new Blob([data.content], {type: 'text/plain'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url;
+                a.download = `eoip-graph${data.extension || `.${fmtId}`}`;
+                a.click(); URL.revokeObjectURL(url);
+              }
+            }}>
+            <span className="format-icon" style={{background: data.error ? '#ec6b76' : '#10a981', color: '#fff'}}>
+              {data.error ? '!' : '✓'}
+            </span>
+            <div>
+              <strong>{data.label || fmtId.toUpperCase()}</strong>
+              <small>{data.error || `${(data.content_length || data.content?.length || 0).toLocaleString()} chars — click to download`}</small>
+            </div>
+          </div>)}
+        </div>
+        {convertResult[selectedFormat]?.content && <details style={{marginTop: 12}}>
+          <summary style={{cursor: 'pointer', fontWeight: 600}}>Preview: {selectedFormat.toUpperCase()}</summary>
+          <pre className="processing-log" style={{maxHeight: 300, overflow: 'auto', whiteSpace: 'pre-wrap'}}>{convertResult[selectedFormat].content.slice(0, 5000)}{convertResult[selectedFormat].content.length > 5000 ? '\n\n... (truncated)' : ''}</pre>
+        </details>}
+      </section>}
     </div>}
     {section === 'quality' && <div className="admin-grid">
       <section className="panel span-2"><div className="panel-heading"><div><span className="eyebrow">GRAPH VALIDATION</span><h2>Knowledge quality</h2><p>Metrics are computed from persisted entities, relationships, and findings.</p></div><button className="primary-button" onClick={() => run(async () => setValidation(await api('/api/v1/admin/validation', {})))} disabled={busy}><Icon name="shield"/>Run validation</button></div>{validation ? <><div className={`validation-banner ${validation.valid ? 'success' : 'danger'}`}><Icon name={validation.valid ? 'check' : 'warning'}/><div><strong>{validation.valid ? 'No findings in the checked graph.' : `${validation.findings.length} findings require review.`}</strong><small>Checked {validation.vertices_checked} entities and {validation.edges_checked} relationships · {formatTime(validation.finished_at)}</small></div></div><div className="quality-grid"><QualityRing label="Evidence coverage" value={validation.quality?.evidence_coverage} tone="violet"/><QualityRing label="Provenance coverage" value={validation.quality?.provenance_coverage} tone="mint"/><QualityRing label="Schema compliance" value={validation.quality?.schema_compliance} tone="blue"/><QualityRing label="Completeness" value={validation.quality?.completeness} tone="gold"/><QualityRing label="Freshness" value={validation.quality?.freshness} tone="coral"/><QualityRing label="Orphan rate" value={validation.quality?.orphan_rate} tone="coral"/><QualityRing label="Duplicate rate" value={validation.quality?.duplicate_rate} tone="coral"/><div className="finding-count"><strong>{validation.quality?.error_count || 0}</strong><span>Errors</span><small>{validation.quality?.warning_count || 0} warnings</small></div></div><FindingsTable findings={validation.findings || []}/></> : <EmptyState icon="shield" title="Validation has not run in this session">Run validation to compute current quality coverage and inspect first-class findings.</EmptyState>}</section>

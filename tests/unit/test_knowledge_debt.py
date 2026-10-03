@@ -1,0 +1,160 @@
+"""Tests for knowledge debt catalog and SLO evaluator (G2-P7/P8)."""
+
+from eoip.graph.memory import MemoryGraphStore
+from eoip.graph.knowledge_debt import (
+    detect_knowledge_debt, parse_slo_rules, evaluate_slos, SLORule,
+)
+from fastapi.testclient import TestClient
+from apps.api.app import create_app
+
+
+def test_detect_unowned_service():
+    store = MemoryGraphStore()
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:lonely", "service_id": "s1", "name": "Lonely"})
+    result = detect_knowledge_debt(store)
+    unowned = [f for f in result["findings"] if f["category"] == "unowned_component"]
+    assert unowned
+    assert unowned[0]["canonical_id"] == "urn:svc:lonely"
+
+
+def test_detect_undocumented_api():
+    store = MemoryGraphStore()
+    store.upsert_vertex("APIEndpoint", {
+        "canonical_id": "urn:api:ep1", "api_name": "users", "api_method": "GET", "api_path": "/users",
+    })
+    result = detect_knowledge_debt(store)
+    undoc = [f for f in result["findings"] if f["category"] == "undocumented_api"]
+    assert undoc
+
+
+def test_detect_unlinked_requirement():
+    store = MemoryGraphStore()
+    store.upsert_vertex("Requirement", {"canonical_id": "urn:req:1", "name": "Auth feature"})
+    result = detect_knowledge_debt(store)
+    unlinked = [f for f in result["findings"] if f["category"] == "unlinked_requirement"]
+    assert unlinked
+
+
+def test_detect_missing_test():
+    store = MemoryGraphStore()
+    store.upsert_vertex("APIEndpoint", {
+        "canonical_id": "urn:api:ep2", "api_name": "orders", "api_method": "POST", "api_path": "/orders",
+    })
+    result = detect_knowledge_debt(store)
+    missing = [f for f in result["findings"] if f["category"] == "missing_test"]
+    assert missing
+
+
+def test_detect_low_confidence():
+    store = MemoryGraphStore()
+    store.upsert_vertex("File", {
+        "canonical_id": "urn:f:low", "repo_id": "r1", "path": "x.py",
+        "creation_status": "INFERRED", "confidence": 0.3,
+    })
+    result = detect_knowledge_debt(store)
+    low = [f for f in result["findings"] if f["category"] == "low_confidence_inference"]
+    assert low
+    assert low[0]["severity"] == "ERROR"
+
+
+def test_no_debt_in_clean_graph():
+    store = MemoryGraphStore()
+    result = detect_knowledge_debt(store)
+    assert result["total_debt"] == 0
+
+
+def test_debt_by_category():
+    store = MemoryGraphStore()
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:1", "service_id": "s1", "name": "Svc1"})
+    store.upsert_vertex("Requirement", {"canonical_id": "urn:req:1", "name": "Req1"})
+    result = detect_knowledge_debt(store)
+    assert "unowned_component" in result["by_category"]
+    assert "unlinked_requirement" in result["by_category"]
+
+
+# --- SLO Evaluator ---
+
+def test_parse_slo_rules():
+    config = [{"id": "SLO-1", "metric": "evidence_coverage", "threshold": 0.8}]
+    rules = parse_slo_rules(config)
+    assert len(rules) == 1
+    assert rules[0].metric == "evidence_coverage"
+
+
+def test_evaluate_slo_met():
+    store = MemoryGraphStore()
+    proj = store.upsert_vertex("Project", {"canonical_id": "urn:p:1", "name": "P1"})
+    ev = store.upsert_vertex("Evidence", {
+        "canonical_id": "urn:ev:1", "source_system": "jira", "source_ref": "r1", "method": "api",
+    })
+    store.upsert_edge("EVIDENCED_BY", proj["vid"], ev["vid"], {"fact_key": "ev:1"})
+    rules = [SLORule(id="SLO-1", metric="evidence_coverage", threshold=0.5)]
+    result = evaluate_slos(store, rules)
+    assert result["met"] >= 1
+
+
+def test_evaluate_slo_breached():
+    store = MemoryGraphStore()
+    store.upsert_vertex("Project", {"canonical_id": "urn:p:1", "name": "P1"})
+    rules = [SLORule(id="SLO-1", metric="evidence_coverage", threshold=0.99)]
+    result = evaluate_slos(store, rules)
+    breaches = [r for r in result["results"] if r["status"] == "BREACHED"]
+    assert breaches
+
+
+def test_evaluate_slo_unknown_metric():
+    store = MemoryGraphStore()
+    rules = [SLORule(id="SLO-1", metric="nonexistent_metric", threshold=0.5)]
+    result = evaluate_slos(store, rules)
+    assert result["unknown"] >= 1
+
+
+def test_evaluate_slo_empty_graph():
+    store = MemoryGraphStore()
+    rules = [SLORule(id="SLO-1", metric="evidence_coverage", threshold=0.5)]
+    result = evaluate_slos(store, rules)
+    assert result["unknown"] >= 1
+
+
+def test_evaluate_slo_health_score():
+    store = MemoryGraphStore()
+    proj = store.upsert_vertex("Project", {"canonical_id": "urn:p:1", "name": "P1"})
+    ev = store.upsert_vertex("Evidence", {
+        "canonical_id": "urn:ev:1", "source_system": "jira", "source_ref": "r1", "method": "api",
+    })
+    store.upsert_edge("EVIDENCED_BY", proj["vid"], ev["vid"], {"fact_key": "ev:1"})
+    rules = [
+        SLORule(id="SLO-1", metric="evidence_coverage", threshold=0.5),
+        SLORule(id="SLO-2", metric="orphan_rate", threshold=0.5, operator="lte"),
+    ]
+    result = evaluate_slos(store, rules)
+    assert 0 <= result["health_score"] <= 1
+
+
+# --- API Tests ---
+
+def test_api_knowledge_debt():
+    store = MemoryGraphStore()
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:1", "service_id": "s1", "name": "S1"})
+    client = TestClient(create_app(store))
+    resp = client.get("/api/v1/knowledge/debt")
+    assert resp.status_code == 200
+    assert "total_debt" in resp.json()
+
+
+def test_api_knowledge_slo():
+    store = MemoryGraphStore()
+    store.upsert_vertex("Project", {"canonical_id": "urn:p:1", "name": "P1"})
+    client = TestClient(create_app(store))
+    resp = client.post("/api/v1/knowledge/slo", json={
+        "rules": [{"id": "SLO-1", "metric": "evidence_coverage", "threshold": 0.5}]
+    })
+    assert resp.status_code == 200
+    assert "results" in resp.json()
+
+
+def test_api_knowledge_slo_no_rules():
+    store = MemoryGraphStore()
+    client = TestClient(create_app(store))
+    resp = client.post("/api/v1/knowledge/slo", json={})
+    assert resp.status_code == 400

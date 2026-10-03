@@ -33,7 +33,7 @@ def test_confluence_fixture_pagination_and_incremental_overlap(confluence_url):
             "space", "page", "page", "attachment",
         ]
         requests = next(iter(ConfluenceAPIHandler.requests.values()))
-        assert len(requests) == 15
+        assert len(requests) == 17
         for event in baseline.events:
             if event.metadata["record_kind"] == "page":
                 metadata = connector.map_event(event)["source_metadata"]
@@ -44,6 +44,11 @@ def test_confluence_fixture_pagination_and_incremental_overlap(confluence_url):
                 ]
                 assert metadata["author"]["user_key"] == "author-key"
                 assert metadata["editor"]["user_key"] == "editor-key"
+                history = connector.map_event(event)["source_history"]
+                assert history["complete"] is True
+                assert [revision["number"] for revision in history["revisions"]] == [2, 1]
+                assert history["revisions"][1]["editor"]["user_key"] == "previous-editor-key"
+                assert history["revisions"][1]["message"] == "Initial runbook"
         assert all(r["authorized"] and r["correlation_id"] == "fixture-baseline" for r in requests)
         overlap = connector.sync(checkpoint=baseline.next_checkpoint, watermark="2026-10-01T00:01:00Z")
         assert [e.event_id for e in overlap.events] == [e.event_id for e in baseline.events]

@@ -76,6 +76,36 @@ class AcquisitionScheduler:
         dry_run: bool = False,
         correlation_id: str | None = None,
     ) -> dict:
+        with self._lock:
+            self._check_admission(source_id, operation, event_ids)
+            return self.queue.submit(
+                "SOURCE_OPERATION",
+                {
+                    "source_id": source_id,
+                    "operation": operation,
+                    "checkpoint": checkpoint,
+                    "event_ids": event_ids or [],
+                    "dry_run": dry_run,
+                },
+                correlation_id=correlation_id,
+            )
+
+    def readmit(self, job_id: str, *, correlation_id: str | None = None) -> dict:
+        with self._lock:
+            job = self.queue.get(job_id)
+            if job["status"] != "HELD" or job["kind"] != "SOURCE_OPERATION":
+                raise RuntimeError("Only held source operation jobs can be re-admitted")
+            payload = job["payload"]
+            if not isinstance(payload, dict) or not isinstance(payload.get("source_id"), str):
+                raise TypeError("source_id is required for source operation recovery")
+            self._check_admission(
+                payload["source_id"], payload.get("operation"), payload.get("event_ids")
+            )
+            return self.queue.readmit(job_id, correlation_id=correlation_id)
+
+    def _check_admission(self, source_id, operation, event_ids):
+        if operation not in {"BASELINE", "POLL", "RECONCILE", "REPLAY"}:
+            raise ValueError("unsupported source acquisition operation")
         source = self.registry.get(source_id)
         if not source.enabled:
             raise RuntimeError("source is disabled")
@@ -91,26 +121,14 @@ class AcquisitionScheduler:
         if operation == "REPLAY" and not event_ids:
             raise ValueError("event_ids are required for replay")
 
-        with self._lock:
-            jobs = self._source_jobs(source_id)
-            active = [job for job in jobs if job.get("status") in {"PENDING", "RUNNING"}]
-            if len(active) >= policy.max_concurrency:
-                raise RuntimeError("source concurrency limit reached")
-            cutoff = time.time() - 60
-            recent = [job for job in jobs if self._created_epoch(job) >= cutoff]
-            if len(recent) >= policy.rate_limit_per_minute:
-                raise RuntimeError("source rate limit reached")
-            return self.queue.submit(
-                "SOURCE_OPERATION",
-                {
-                    "source_id": source_id,
-                    "operation": operation,
-                    "checkpoint": checkpoint,
-                    "event_ids": event_ids or [],
-                    "dry_run": dry_run,
-                },
-                correlation_id=correlation_id,
-            )
+        jobs = self._source_jobs(source_id)
+        active = [job for job in jobs if job.get("status") in {"PENDING", "RUNNING"}]
+        if len(active) >= policy.max_concurrency:
+            raise RuntimeError("source concurrency limit reached")
+        cutoff = time.time() - 60
+        recent = [job for job in jobs if job.get("status") != "HELD" and self._created_epoch(job) >= cutoff]
+        if len(recent) >= policy.rate_limit_per_minute:
+            raise RuntimeError("source rate limit reached")
 
     def _policies(self) -> dict[str, AcquisitionPolicy]:
         if not self.policy_path.exists():
@@ -134,7 +152,8 @@ class AcquisitionScheduler:
         from datetime import datetime
 
         try:
-            return datetime.fromisoformat(job["created_at"]).timestamp()
+            admitted_at = (job.get("recovery") or {}).get("readmitted_at", job["created_at"])
+            return datetime.fromisoformat(admitted_at).timestamp()
         except (KeyError, TypeError, ValueError):
             return 0.0
 

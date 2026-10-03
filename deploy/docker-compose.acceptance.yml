@@ -16,7 +16,7 @@ services:
     <<: *graph
   target-graph:
     <<: *graph
-  acceptance:
+  acceptance: &acceptance
     image: eoip-app:local
     build:
       context: ..
@@ -36,6 +36,10 @@ services:
     init: true
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
+  recovery-acceptance:
+    <<: *acceptance
+    profiles: [recovery-test]
+    command: [python, -m, scripts.verify_recovery_bundle]
 
 networks:
   acceptance:
