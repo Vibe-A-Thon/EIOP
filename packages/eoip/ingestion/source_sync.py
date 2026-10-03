@@ -11,6 +11,7 @@ from urllib.parse import urljoin
 from uuid import uuid4
 
 from eoip.connectors.confluence import ConfluenceConnector
+from eoip.connectors.confluence_body import extract_storage_body
 from eoip.connectors.rest import parse_utc
 from eoip.connectors.servicenow import ServiceNowConnector
 from eoip.connectors.sync import SyncBatch
@@ -171,6 +172,7 @@ class SourceSyncIngestionService:
                     content = mapped["body"]
                     if content is not None and not isinstance(content, str):
                         raise ValueError("Confluence page body must be text")
+                    content = content or ""
                     source_ref = (
                         urljoin(self.connector.base_url + "/", mapped["url"].lstrip("/"))
                         if mapped["url"]
@@ -184,6 +186,9 @@ class SourceSyncIngestionService:
                         "description": content,
                         "modified_at": mapped["updated_at"] or event.captured_at,
                     }
+                    structure = extract_storage_body(content, source_ref)
+                    properties["payload_json"] = json.dumps(structure, sort_keys=True)
+                    properties["parser_version"] = structure["parser_version"]
                     parents = [
                         f"urn:eoip:knowledge:document:{instance}:page:{parent_id}"
                         for parent_id in mapped["parent_ids"]
@@ -331,6 +336,10 @@ class SourceSyncIngestionService:
                     "evidence_key": event.event_id,
                     "content_hash": event.payload_hash,
                     "mapper_version": self.connector.mapper_version,
+                    **(
+                        {"parser_version": mapped["properties"]["parser_version"]}
+                        if "parser_version" in mapped["properties"] else {}
+                    ),
                     "ontology_version": ONTOLOGY_VERSION,
                     "schema_version": SCHEMA_VERSION,
                 },

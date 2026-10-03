@@ -5,7 +5,7 @@ from eoip.contracts.source_event import SourceEventV2
 from eoip.ingestion.replay import logical_graph_output, logical_output_diff
 
 
-@pytest.mark.req("FR-CONF-001", "G2-T0401", "G2-T0402", "G2-T0403", "G2-T0404")
+@pytest.mark.req("FR-CONF-001", "G2-T0401", "G2-T0402", "G2-T0403", "G2-T0404", "G2-SRC-CONF-003")
 def test_confluence_http_baseline_hierarchy_incremental_and_replay(live_replay, confluence_source):
     live = live_replay
     with confluence_source() as (source_id, upstream):
@@ -39,6 +39,21 @@ def test_confluence_http_baseline_hierarchy_incremental_and_replay(live_replay, 
             assert node["properties"]["registry_source_id"] == source_id
             evidence = live.store.find_vertices(label="Evidence", filters={"evidence_key": event.event_id})
             assert len(evidence) == 1 and evidence[0]["properties"]["content_hash"] == event.content_hash
+            if kind == "page":
+                structure = json.loads(node["properties"]["payload_json"])
+                index = event.payload["id"].rsplit("-", 1)[-1]
+                assert structure["headings"] == [
+                    {"level": 2, "text": f"Fixture page {index}", "anchor": f"fixture-{index}"}
+                ]
+                assert structure["anchors"] == [f"fixture-{index}", "checks"]
+                assert [link["kind"] for link in structure["links"]] == ["anchor", "external", "page"]
+                assert structure["code_snippets"] == [{"language": "python", "text": 'print("ready")'}]
+                assert structure["tables"][0]["rows"] == [
+                    [{"text": "State", "header": True, "rowspan": 1, "colspan": 1}],
+                    [{"text": "Ready", "header": False, "rowspan": 1, "colspan": 1}],
+                ]
+                assert node["properties"]["description"] == event.payload["body"]["storage"]["value"]
+                assert evidence[0]["properties"]["parser_version"] == structure["parser_version"]
             assert any(e["in_cid"] == evidence[0]["canonical_id"]
                        for e in live.store.edges_from(node["vid"], labels=["EVIDENCED_BY"]))
             nodes[event.source_record_id] = node

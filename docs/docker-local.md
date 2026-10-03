@@ -257,6 +257,11 @@ multi-step pytest journeys:
   without changing content, revisions, hierarchy or original capture provenance.
   Replay preserves the latest observation time, immutable raw bytes and checkpoint,
   and performs no upstream acquisition.
+- Confluence page storage XHTML is extracted deterministically into Document
+  `payload_json`: headings, explicit anchors, safe HTTP(S) links, unresolved
+  page/attachment references, code snippets and structured tables. Document and
+  Evidence record `parser_version=confluence-storage/1.0`. Original body text
+  remains in `description` and immutable capture; revisions preserve both forms.
 - A fetched Confluence page without a title is captured and rejected as a
   mapping error. The baseline and unchanged-input DLQ replay remain `PARTIAL`
   without advancing a checkpoint or creating the rejected Document.
@@ -281,10 +286,27 @@ the new acquisition journeys use a separate authenticated internal HTTP fixture.
 Both source fixtures use deterministic fixture-only credentials via environment
 secret references, not real Confluence/ServiceNow tenants. Attachment metadata
 is covered, not downloading/parsing attachment bytes; historical versions,
-authors, labels, body-structure extraction, semantic document links and stale
+authors, labels, rendered/rich macro expansion, semantic document links and stale
 documentation detection remain separate G2-P4 obligations. Other registered adapters, live
 source systems, worker crash recovery and config/native recovery remain
 separate acceptance obligations.
+
+### Confluence storage extraction boundaries
+
+Storage fragments must be well-formed XHTML/XML; known HTML entities are
+normalized outside CDATA, while code macro CDATA stays literal. Malformed
+markup, declarations, unknown entities, invalid table spans and exceeded limits
+raise mapping errors after capture, before Document/Evidence writes, using the
+existing DLQ path. Limits are 2,000,000 characters, 50,000 elements (including
+the wrapper), 128 nesting levels and table spans of 1..1000.
+
+Extraction does not fetch link targets, expand arbitrary macros or create
+semantic entity relationships. Script/style/noscript subtrees and non-HTTP(S)
+URL links are excluded from derived output; raw content is retained as evidence,
+not sanitized HTML for rendering. An empty/missing body clears current raw and
+derived content while retaining earlier revisions; older replay cannot restore
+stale content. Existing `payload_json` and `parser_version` graph property keys
+are reused; no new physical key or schema version is introduced.
 
 ## Backup and restore
 

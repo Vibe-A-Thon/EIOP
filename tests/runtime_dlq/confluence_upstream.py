@@ -67,7 +67,19 @@ class ConfluenceAPIHandler(ProtocolFixtureHandler):
                     records = [{
                         "id": f"{run_id}-page-{index}", "title": f"Acceptance page {index}",
                         "space": {"key": space_key}, "version": version,
-                        "body": {"storage": {"value": f"<p>Fixture page {index}</p>"}},
+                        "body": {"storage": {"value": (
+                            f'<h2 id="fixture-{index}">Fixture page {index}</h2>'
+                            '<a href="#checks">Checks</a>'
+                            '<ac:structured-macro ac:name="anchor">'
+                            '<ac:parameter ac:name="">checks</ac:parameter></ac:structured-macro>'
+                            '<a href="https://example.org/runbook">Runbook</a>'
+                            '<ac:link><ri:page ri:content-title="Acceptance page 0"/></ac:link>'
+                            '<ac:structured-macro ac:name="code">'
+                            '<ac:parameter ac:name="language">python</ac:parameter>'
+                            '<ac:plain-text-body><![CDATA[print("ready")]]></ac:plain-text-body>'
+                            '</ac:structured-macro>'
+                            '<table><tr><th>State</th></tr><tr><td>Ready</td></tr></table>'
+                        )}},
                         "ancestors": [] if index == 0 else [{"id": f"{run_id}-page-0"}],
                         "_links": {"webui": f"/pages/{run_id}-page-{index}"},
                     } for index in range(2)]

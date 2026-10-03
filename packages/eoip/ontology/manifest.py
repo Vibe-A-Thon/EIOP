@@ -237,7 +237,7 @@ VERTEX_LABELS: dict[str, tuple[str, list[str], list[str]]] = {
     "CodeSymbol": ("CODE", ["canonical_id", "qualified_name", "symbol_kind"], ["name", "repo_id", "path", "start_line", "end_line", "start_column", "end_column", "language", "parser_version"]),
     "Dependency": ("CODE", ["canonical_id", "name"], ["resolved", "language"]),
     "Service": ("CODE", ["canonical_id", "service_id", "name"], ["description", "status", "source_system", "created_at", "modified_at"]),
-    "Document": ("KNOWLEDGE", ["canonical_id", "name", "path"], ["doc_format", "content_hash", "description", "repo_id"]),
+    "Document": ("KNOWLEDGE", ["canonical_id", "name", "path"], ["doc_format", "content_hash", "description", "repo_id", "payload_json", "parser_version"]),
     "KnowledgeSpace": ("KNOWLEDGE", ["canonical_id", "name", "space_key"], ["description"]),
     "DocumentSection": ("KNOWLEDGE", ["canonical_id", "name"], ["path", "section_index", "content_hash", "start_line", "end_line"]),
     "AgentRun": ("AGENT", ["canonical_id", "agent_id", "goal"], ["run_status", "budgets", "started_at", "finished_at"]),

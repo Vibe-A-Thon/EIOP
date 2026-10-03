@@ -65,6 +65,27 @@
   historical versions, authors/labels, attachment bytes, body-structure extraction,
   semantic linking and stale-document detection remain unverified/open.
 
+**Confluence structured body extraction batch (2026-10-03):**
+- G2-SRC-CONF-003 practical storage extraction is implemented: headings, explicit
+  anchors, safe URL links and unresolved resource references, literal code
+  snippets and structured tables. Versioned output uses Document `payload_json`;
+  Document/Evidence carry `confluence-storage/1.0`. Raw body/capture and temporal
+  revision history remain intact.
+- Empty/missing body clears current content; old replay cannot reinstate it.
+  Malformed/bounded-input violations are captured and DLQ'd before business writes.
+- Full host regression: **578 passed / 12 opt-in skips**, exit 0; focused
+  regression **43 passed**; final parser/history assertions **13 passed**.
+  Changed-code Ruff/editor diagnostics and whitespace checks pass.
+- Rebuilt isolated Docker API/worker/HugeGraph gate: **12 passed**, exit 0,
+  no failures/errors/skips. Receipt:
+  `test-results/eoip-dlq-acceptance-2b3b094995e84c87851c8a2b8b79ef81.json`
+  with matching XML. Both disposable projects removed; primary readiness
+  `ready`; primary was not redeployed/reset.
+- Extraction is not semantic document/entity linking or arbitrary rendered macro
+  expansion. Real tenants, authors/labels, source history fetching, attachment
+  bytes, stale detection and remaining release/roadmap gates remain open.
+  Earlier batch boundary statements above describe their original scope.
+
 **Schema-compatibility batch (2026-10-03, `6f6149b` + working-tree changes):**
 - Gap 22 adds a fail-before-mutation structural compatibility preflight; compatible additive bootstrap remains supported.
 - Full local `python -X utf8 -m pytest`: **505 passed**, exit 0; focused schema/recovery/repository suite: **35 passed**, exit 0; changed-file Ruff and editor error diagnostics pass.
