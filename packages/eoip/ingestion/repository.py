@@ -12,6 +12,7 @@ from uuid import uuid4
 
 from eoip.codegraph.parser import PARSER_VERSION, CodeParser
 from eoip.contracts.source_event import SourceEvent, utc_now_iso
+from eoip.graph.meta import link_domains
 from eoip.identity.resolver import merge_source_aliases, person_identity
 from eoip.ingestion.jira import FileEventCapture
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
@@ -46,6 +47,8 @@ class RepositoryIngestionService:
             "source_ref": f"git://{repo_id}/commit/{sha}",
             "evidence_key": event.event_id,
             "ingestion_run_id": run_id,
+            "ontology_version": ONTOLOGY_VERSION,
+            "schema_version": SCHEMA_VERSION,
         }
         repo = self.store.upsert_vertex(
             "Repository", {**shared, "canonical_id": f"urn:eoip:code:repo:{repo_id}", "name": repo_id}
@@ -225,7 +228,8 @@ class RepositoryIngestionService:
                 "finished_at": utc_now_iso(),
             },
         )
-        for node in {item["canonical_id"]: item for item in ingested_nodes}.values():
+        deduped_nodes = list({item["canonical_id"]: item for item in ingested_nodes}.values())
+        for node in deduped_nodes:
             self.store.upsert_edge(
                 "INGESTED_IN",
                 node["vid"],
@@ -236,6 +240,7 @@ class RepositoryIngestionService:
                     "ingestion_run_id": run_id,
                 },
             )
+        link_domains(self.store, deduped_nodes)
         return result
 
     def _capture(self, repo_id, source_id, payload):

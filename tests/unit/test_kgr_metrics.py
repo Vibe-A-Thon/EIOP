@@ -95,12 +95,55 @@ def test_graph_schema_returns_structure():
 
 
 def test_blast_radius_to_dict():
-    result = BlastRadiusResult("x:1", 3, {1: 2, 2: 1}, {"File": 2, "Commit": 1}, "LOW", ["a", "b", "c"])
+    from eoip.graph.metrics import AffectedItem
+    items = [AffectedItem("a", "File", 1, ["DEPENDS_ON"], 2), AffectedItem("b", "File", 1, ["DEPENDS_ON"], 0), AffectedItem("c", "Commit", 2, ["DEPENDS_ON", "MODIFIES"], 1)]
+    result = BlastRadiusResult("x:1", 3, {1: 2, 2: 1}, {"File": 2, "Commit": 1}, "LOW", ["a", "b", "c"], items)
     d = result.to_dict()
     assert d["target_id"] == "x:1"
     assert d["total_affected"] == 3
     assert d["by_depth"] == {1: 2, 2: 1}
     assert d["risk"] == "LOW"
+    assert len(d["affected_details"]) == 3
+
+
+def test_blast_radius_affected_details_include_rationale():
+    """P1-11: Each affected item carries why-included metadata."""
+    store = _build_chain_store()
+    engine = GraphMetricsEngine(store)
+    result = engine.blast_radius("commit:B", max_depth=4)
+    assert len(result.affected_details) == result.total_affected
+    for item in result.affected_details:
+        d = item.to_dict()
+        assert "canonical_id" in d
+        assert "label" in d
+        assert "path_depth" in d and d["path_depth"] >= 1
+        assert "edge_classes" in d and len(d["edge_classes"]) >= 1
+        assert "why_included" in d
+        assert "Reached at depth" in d["why_included"]
+    depths = [item.path_depth for item in result.affected_details]
+    assert depths == sorted(depths)
+
+
+def test_reverse_impact_affected_details_include_rationale():
+    """P1-11: Reverse impact also returns per-item rationale."""
+    store = _build_chain_store()
+    engine = GraphMetricsEngine(store)
+    result = engine.reverse_impact("evidence:E", max_depth=4)
+    assert len(result.affected_details) >= 1
+    for item in result.affected_details:
+        d = item.to_dict()
+        assert "why_included" in d
+        assert d["evidence_count"] >= 0
+
+
+def test_blast_radius_to_dict_includes_affected_details():
+    store = _build_chain_store()
+    engine = GraphMetricsEngine(store)
+    result = engine.blast_radius("commit:B", max_depth=4)
+    d = result.to_dict()
+    assert "affected_details" in d
+    assert len(d["affected_details"]) == d["total_affected"]
+    assert all("why_included" in item for item in d["affected_details"])
 
 
 def test_centrality_to_dict():

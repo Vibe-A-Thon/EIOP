@@ -67,3 +67,9 @@ def test_repository_ingestion_links_entities_to_evidence_and_run(tmp_path):
         assert any(edge["in_v"] == run["vid"] for edge in run_edges), vertex["canonical_id"]
         if vertex["label"] in {"Repository", "Branch", "Commit", "File", "CodeSymbol", "Document", "MergeRequest", "PipelineRun"}:
             assert store.edges_from(vertex["vid"], labels=["EVIDENCED_BY"])
+
+    domain_edges = store.find_edges(label="BELONGS_TO_DOMAIN")
+    assert len(domain_edges) >= 3
+    domain_vids = {e["in_v"] for e in domain_edges}
+    for vid in domain_vids:
+        assert store.get_vertex(vid)["label"] == "GraphDomain"

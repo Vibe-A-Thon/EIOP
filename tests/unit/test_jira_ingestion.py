@@ -113,3 +113,28 @@ def test_jira_parent_relationship_is_created_even_when_parent_record_follows_chi
     edge = store.find_edges(label="PARENT_OF")[0]
     assert edge["out_v"] == parent["vid"]
     assert edge["in_v"] == child["vid"]
+
+
+def test_jira_ingestion_creates_belongs_to_domain_edges(tmp_path) -> None:
+    """P1-17: Ingested entities are linked to their GraphDomain."""
+    service, store = _service(tmp_path)
+    document = {
+        "issues": [
+            {
+                "key": "EOIP-10",
+                "fields": {
+                    "summary": "Domain test",
+                    "project": {"key": "EOIP", "name": "EOIP"},
+                    "assignee": {"accountId": "eng-1", "displayName": "Engineer"},
+                },
+            }
+        ]
+    }
+
+    service.ingest(document)
+
+    domain_edges = store.find_edges(label="BELONGS_TO_DOMAIN")
+    assert len(domain_edges) >= 2
+    domain_vids = {e["in_v"] for e in domain_edges}
+    domain_labels = {store.get_vertex(vid)["label"] for vid in domain_vids}
+    assert domain_labels == {"GraphDomain"}

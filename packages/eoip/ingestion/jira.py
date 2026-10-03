@@ -10,6 +10,7 @@ from uuid import uuid4
 
 from eoip.connectors.jira_json import JiraJsonConnector
 from eoip.contracts.source_event import SourceEvent, SourceEventV2, utc_now_iso
+from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.identity.resolver import merge_source_aliases, person_identity
 from eoip.ingestion.dlq import write_dlq_record
@@ -107,7 +108,7 @@ class JiraIngestionService:
                 "schema_version": SCHEMA_VERSION,
             },
         )
-        run_edge_props = {"ingestion_run_id": run_id, "creation_status": "DETERMINISTIC"}
+        run_edge_props = {"ingestion_run_id": run_id, "creation_status": "DETERMINISTIC", "ontology_version": ONTOLOGY_VERSION, "schema_version": SCHEMA_VERSION}
         records = []
         for event, issue in accepted:
             project_cid = f"urn:eoip:work:project:jira:{issue['project_key']}"
@@ -284,6 +285,13 @@ class JiraIngestionService:
                 run["vid"],
                 {"fact_key": f"run:{run_id}:{issue['issue_key']}", **run_edge_props},
             )
+
+        all_vertices = []
+        for item in records:
+            all_vertices.extend(
+                v for v in [item["project"], item["work_item"], item["person"]] if v is not None
+            )
+        link_domains(self.store, all_vertices)
 
     def _write_dlq(self, event: SourceEvent, error: str) -> None:
         write_dlq_record(

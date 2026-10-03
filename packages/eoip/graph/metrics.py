@@ -8,17 +8,44 @@ from typing import Any
 from eoip.graph.store import GraphStore
 
 
+class AffectedItem:
+    __slots__ = ("canonical_id", "label", "path_depth", "edge_classes", "evidence_count")
+
+    def __init__(self, canonical_id: str, label: str, path_depth: int,
+                 edge_classes: list[str], evidence_count: int = 0):
+        self.canonical_id = canonical_id
+        self.label = label
+        self.path_depth = path_depth
+        self.edge_classes = edge_classes
+        self.evidence_count = evidence_count
+
+    def to_dict(self) -> dict:
+        return {
+            "canonical_id": self.canonical_id,
+            "label": self.label,
+            "path_depth": self.path_depth,
+            "edge_classes": self.edge_classes,
+            "evidence_count": self.evidence_count,
+            "why_included": (
+                f"Reached at depth {self.path_depth} via {', '.join(self.edge_classes)}"
+                + (f"; {self.evidence_count} evidence link(s)" if self.evidence_count else "")
+            ),
+        }
+
+
 class BlastRadiusResult:
-    __slots__ = ("affected_ids", "by_depth", "by_type", "risk", "target_id", "total_affected")
+    __slots__ = ("affected_ids", "affected_details", "by_depth", "by_type", "risk", "target_id", "total_affected")
 
     def __init__(self, target_id: str, total_affected: int, by_depth: dict[int, int],
-                 by_type: dict[str, int], risk: str, affected_ids: list[str]):
+                 by_type: dict[str, int], risk: str, affected_ids: list[str],
+                 affected_details: list[AffectedItem] | None = None):
         self.target_id = target_id
         self.total_affected = total_affected
         self.by_depth = by_depth
         self.by_type = by_type
         self.risk = risk
         self.affected_ids = affected_ids
+        self.affected_details = affected_details or []
 
     def to_dict(self) -> dict:
         return {
@@ -28,6 +55,7 @@ class BlastRadiusResult:
             "by_type": self.by_type,
             "risk": self.risk,
             "affected_ids": self.affected_ids,
+            "affected_details": [item.to_dict() for item in self.affected_details],
         }
 
 
@@ -113,19 +141,23 @@ class GraphMetricsEngine:
 
         return out_adj, in_adj, node_map
 
+    def _evidence_count(self, vid: int) -> int:
+        return sum(1 for e in self._store.edges_from(vid) if e["label"] == "EVIDENCED_BY")
+
     def blast_radius(self, canonical_id: str, max_depth: int = 4) -> BlastRadiusResult:
         root = self._store.get_vertex_by_canonical_id(canonical_id)
         if root is None:
             return BlastRadiusResult(canonical_id, 0, {}, {}, "NONE", [])
 
         visited: set[int] = {root["vid"]}
-        queue: deque[tuple[int, int]] = deque([(root["vid"], 0)])
+        queue: deque[tuple[int, int, list[str]]] = deque([(root["vid"], 0, [])])
         by_depth: dict[int, int] = defaultdict(int)
         by_type: dict[str, int] = defaultdict(int)
         affected_ids: list[str] = []
+        affected_details: list[AffectedItem] = []
 
         while queue:
-            vid, depth = queue.popleft()
+            vid, depth, edge_trail = queue.popleft()
             if depth >= max_depth:
                 continue
             for edge in self._store.edges_from(vid):
@@ -135,17 +167,27 @@ class GraphMetricsEngine:
                     target = self._store.get_vertex(tvid)
                     if target:
                         d = depth + 1
+                        trail = edge_trail + [edge["label"]]
                         by_depth[d] = by_depth.get(d, 0) + 1
                         by_type[target["label"]] = by_type.get(target["label"], 0) + 1
-                        affected_ids.append(target["properties"]["canonical_id"])
-                        queue.append((tvid, d))
+                        cid = target["properties"]["canonical_id"]
+                        affected_ids.append(cid)
+                        affected_details.append(AffectedItem(
+                            canonical_id=cid,
+                            label=target["label"],
+                            path_depth=d,
+                            edge_classes=list(dict.fromkeys(trail)),
+                            evidence_count=self._evidence_count(tvid),
+                        ))
+                        queue.append((tvid, d, trail))
 
         total = len(affected_ids)
         total_graph = self._store.count_vertices()
         pct = (total / max(total_graph, 1)) * 100
         risk = "HIGH" if pct > 20 else "MEDIUM" if pct > 5 else "LOW"
 
-        return BlastRadiusResult(canonical_id, total, dict(by_depth), dict(by_type), risk, affected_ids)
+        affected_details.sort(key=lambda i: (i.path_depth, -i.evidence_count))
+        return BlastRadiusResult(canonical_id, total, dict(by_depth), dict(by_type), risk, affected_ids, affected_details)
 
     def reverse_impact(self, canonical_id: str, max_depth: int = 4) -> BlastRadiusResult:
         root = self._store.get_vertex_by_canonical_id(canonical_id)
@@ -153,13 +195,14 @@ class GraphMetricsEngine:
             return BlastRadiusResult(canonical_id, 0, {}, {}, "NONE", [])
 
         visited: set[int] = {root["vid"]}
-        queue: deque[tuple[int, int]] = deque([(root["vid"], 0)])
+        queue: deque[tuple[int, int, list[str]]] = deque([(root["vid"], 0, [])])
         by_depth: dict[int, int] = defaultdict(int)
         by_type: dict[str, int] = defaultdict(int)
         affected_ids: list[str] = []
+        affected_details: list[AffectedItem] = []
 
         while queue:
-            vid, depth = queue.popleft()
+            vid, depth, edge_trail = queue.popleft()
             if depth >= max_depth:
                 continue
             for edge in self._store.edges_to(vid):
@@ -169,17 +212,27 @@ class GraphMetricsEngine:
                     source = self._store.get_vertex(svid)
                     if source:
                         d = depth + 1
+                        trail = edge_trail + [edge["label"]]
                         by_depth[d] = by_depth.get(d, 0) + 1
                         by_type[source["label"]] = by_type.get(source["label"], 0) + 1
-                        affected_ids.append(source["properties"]["canonical_id"])
-                        queue.append((svid, d))
+                        cid = source["properties"]["canonical_id"]
+                        affected_ids.append(cid)
+                        affected_details.append(AffectedItem(
+                            canonical_id=cid,
+                            label=source["label"],
+                            path_depth=d,
+                            edge_classes=list(dict.fromkeys(trail)),
+                            evidence_count=self._evidence_count(svid),
+                        ))
+                        queue.append((svid, d, trail))
 
         total = len(affected_ids)
         total_graph = self._store.count_vertices()
         pct = (total / max(total_graph, 1)) * 100
         risk = "HIGH" if pct > 20 else "MEDIUM" if pct > 5 else "LOW"
 
-        return BlastRadiusResult(canonical_id, total, dict(by_depth), dict(by_type), risk, affected_ids)
+        affected_details.sort(key=lambda i: (i.path_depth, -i.evidence_count))
+        return BlastRadiusResult(canonical_id, total, dict(by_depth), dict(by_type), risk, affected_ids, affected_details)
 
     def full_centrality(self, canonical_ids: list[str], algorithms: list[str]) -> dict[str, CentralityMetrics]:
         results = self.centrality(canonical_ids)

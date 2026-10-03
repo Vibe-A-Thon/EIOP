@@ -8,6 +8,7 @@ from uuid import uuid4
 
 from eoip.connectors.gitlab_json import GitLabJsonConnector
 from eoip.contracts.source_event import SourceEvent, utc_now_iso
+from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
