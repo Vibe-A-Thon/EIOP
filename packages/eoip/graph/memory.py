@@ -89,6 +89,20 @@ class MemoryGraphStore:
         vid = self._vids.get(canonical_id)
         return self._vertices.get(vid) if vid else None
 
+    def find_vertex_by_property(
+        self, label: str, key: str, value: Any, limit: int = 10
+    ) -> list[dict]:
+        out = []
+        for rec in self._vertices.values():
+            if rec["label"] != label or rec["properties"].get(key) != value:
+                continue
+            if rec["properties"].get("deleted_at"):
+                continue
+            out.append(rec)
+            if len(out) >= limit:
+                break
+        return out
+
     def find_vertices(
         self,
         label: str | None = None,
@@ -117,8 +131,10 @@ class MemoryGraphStore:
         with self._lock:
             if label not in EDGE_LABELS:
                 raise ValueError(f"unknown edge label: {label}")
-            out_rec = self._vertices[out_v]
-            in_rec = self._vertices[in_v]
+            out_vid = self._vids.get(out_v, out_v)
+            in_vid = self._vids.get(in_v, in_v)
+            out_rec = self._vertices[out_vid]
+            in_rec = self._vertices[in_vid]
             if not edge_endpoints_valid(label, out_rec["label"], in_rec["label"]):
                 raise ValueError(f"invalid endpoints for {label}: {out_rec['label']} -> {in_rec['label']}")
             eid = properties.get("edge_key") or edge_key(
@@ -129,23 +145,30 @@ class MemoryGraphStore:
                 existing["properties"].update({k: v for k, v in properties.items() if v is not None})
                 return existing
             props = dict(properties)
+            props.setdefault("edge_key", eid)
             props.setdefault("creation_status", "DETERMINISTIC")
             record = {
                 "eid": eid,
                 "label": label,
-                "out_v": out_v,
-                "in_v": in_v,
+                "out_v": out_vid,
+                "in_v": in_vid,
                 "out_cid": out_rec["canonical_id"],
                 "in_cid": in_rec["canonical_id"],
                 "properties": props,
             }
             self._edges[eid] = record
-            self._adj_out.setdefault(out_v, []).append(eid)
-            self._adj_in.setdefault(in_v, []).append(eid)
+            self._adj_out.setdefault(out_vid, []).append(eid)
+            self._adj_in.setdefault(in_vid, []).append(eid)
             return record
 
     def get_edge(self, eid: str) -> dict | None:
         return self._edges.get(eid)
+
+    def find_edge_by_key(self, edge_key: str) -> dict | None:
+        for rec in self._edges.values():
+            if rec["properties"].get("edge_key") == edge_key:
+                return rec
+        return None
 
     def find_edges(
         self,

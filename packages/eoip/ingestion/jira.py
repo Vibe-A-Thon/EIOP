@@ -11,6 +11,7 @@ from uuid import uuid4
 from eoip.connectors.jira_json import JiraJsonConnector
 from eoip.contracts.source_event import SourceEvent, SourceEventV2, utc_now_iso
 from eoip.graph.store import GraphStore
+from eoip.identity.resolver import merge_source_aliases, person_identity
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
 
@@ -177,14 +178,22 @@ class JiraIngestionService:
             person = None
             if issue["assignee_name"]:
                 identity = issue["assignee_id"] or issue["assignee_email"] or f"{event.source_record_id}:{issue['assignee_name']}"
-                person_key = str(identity).strip().casefold()
+                person_cid, source_alias = person_identity(issue["assignee_email"], "jira", identity)
+                existing_person = self.store.get_vertex_by_canonical_id(person_cid)
                 person = self.store.upsert_vertex(
                     "Person",
                     {
                         **shared,
-                        "canonical_id": f"urn:eoip:identity:person:jira:{person_key}",
+                        "canonical_id": person_cid,
                         "display_name": issue["assignee_name"],
                         "email": issue["assignee_email"],
+                        "source_aliases": (
+                            merge_source_aliases(
+                                existing_person["properties"].get("source_aliases"), source_alias
+                            )
+                            if existing_person
+                            else source_alias
+                        ),
                     },
                 )
                 self.store.upsert_edge(
@@ -192,7 +201,7 @@ class JiraIngestionService:
                     person["vid"],
                     evidence["vid"],
                     {
-                        "fact_key": f"person-evidence:{event.event_id}:{person_key}",
+                        "fact_key": f"person-evidence:{event.event_id}:{person_cid}",
                         "evidence_key": event.event_id,
                         "source_ref": evidence["properties"]["source_ref"],
                         "source_system": "jira",
@@ -203,7 +212,7 @@ class JiraIngestionService:
                     "INGESTED_IN",
                     person["vid"],
                     run["vid"],
-                    {"fact_key": f"person-run:{run_id}:{person_key}", **run_edge_props},
+                    {"fact_key": f"person-run:{run_id}:{person_cid}", **run_edge_props},
                 )
             records.append({"event": event, "issue": issue, "project": project, "work_item": work_item, "evidence": evidence, "person": person})
 

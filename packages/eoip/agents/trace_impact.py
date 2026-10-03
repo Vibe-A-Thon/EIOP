@@ -6,7 +6,13 @@ trace and impact requests. Returns decision summary and evidence refs.
 
 from __future__ import annotations
 
-from eoip.contracts.agent import AgentRequest, AgentResult
+from eoip.contracts.agent import (
+    AgentRequest,
+    AgentResult,
+    ConfidenceInput,
+    ExplanationEnvelope,
+    RuleDecision,
+)
 from eoip.graph.store import GraphStore
 from eoip.graph.traversal import GraphTraversal
 
@@ -81,6 +87,13 @@ class TraceImpactAgent:
         if refs:
             summary += f" {len(refs)} source references found."
 
+        graph_paths = [
+            [vertex["properties"]["canonical_id"] for vertex in item["path"]["vertices"]]
+            for item in impacted
+        ]
+        evidence_ratio = min(1.0, len(refs) / max(1, len(impacted)))
+        confidence = round(0.65 + (0.3 * evidence_ratio), 3)
+
         return AgentResult(
             request_id=request.request_id,
             status="PARTIAL" if result["truncated"] else "SUCCEEDED",
@@ -88,4 +101,32 @@ class TraceImpactAgent:
             evidence_refs=refs,
             tool_calls=tool_calls,
             warnings=["Results truncated by traversal budget"] if result["truncated"] else None,
+            explanation=ExplanationEnvelope(
+                decision_summary=summary,
+                observed_facts=[
+                    f"The source entity exists as {result['source']['label']}.",
+                    f"The bounded traversal returned {len(impacted)} connected entities.",
+                ],
+                inferred_findings=[f"Impact distribution: {breakdown}"] if breakdown else [],
+                evidence_refs=refs,
+                graph_paths=graph_paths,
+                rule_decisions=[RuleDecision(
+                    rule_id="AGENT-BOUNDED-TRAVERSAL",
+                    outcome="WARN" if result["truncated"] else "ALLOW",
+                    summary=(
+                        "The graph result reached a configured bound."
+                        if result["truncated"]
+                        else "The graph result completed within configured bounds."
+                    ),
+                )],
+                confidence=confidence,
+                confidence_inputs=[ConfidenceInput(
+                    name="evidence_path_coverage",
+                    value=evidence_ratio,
+                    weight=1.0,
+                    evidence_refs=refs,
+                )],
+                uncertainty=["Additional entities may exist beyond the traversal bound."]
+                if result["truncated"] else [],
+            ),
         )

@@ -61,6 +61,10 @@ class GraphStore(Protocol):
 
     def get_vertex_by_canonical_id(self, canonical_id: str) -> Vertex | None: ...
 
+    def find_vertex_by_property(
+        self, label: str, key: str, value: Any, limit: int = 10
+    ) -> list[Vertex]: ...
+
     def find_vertices(
         self,
         label: str | None = None,
@@ -74,6 +78,8 @@ class GraphStore(Protocol):
     def upsert_edge(self, label: str, out_v: str, in_v: str, properties: dict) -> Edge: ...
 
     def get_edge(self, eid: str) -> Edge | None: ...
+
+    def find_edge_by_key(self, edge_key: str) -> Edge | None: ...
 
     def find_edges(
         self,

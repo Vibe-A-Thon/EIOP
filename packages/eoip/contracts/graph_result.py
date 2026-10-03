@@ -39,3 +39,15 @@ class GraphResult(BaseModel):
     evidence: list[dict] = []
     partial: bool
     warnings: list[str] = []
+
+
+class TraversalGraphResult(GraphResult):
+    """GraphResult plus executor-computed traversal metadata.
+
+    `meta.impact_rationale` maps each impacted canonical_id to a deterministic
+    'why included' string (FR-QUERY-003). Extension only: every GraphResult v1
+    field is preserved and `meta` is optional, so this remains wire-compatible
+    with the published graph_result.schema.json envelope.
+    """
+
+    meta: dict | None = None

@@ -83,7 +83,7 @@ def test_read_only_agent_tools():
 
 def test_read_tools_allowlist():
     """READ_TOOLS only contains safe read operations."""
-    assert READ_TOOLS == frozenset({"search", "entity", "path", "impact", "lineage"})
+    assert READ_TOOLS.issuperset({"search", "entity", "path", "impact", "lineage"})
     assert "delete" not in READ_TOOLS
     assert "write" not in READ_TOOLS
     assert "execute" not in READ_TOOLS

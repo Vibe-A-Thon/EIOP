@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from pathlib import Path
 from threading import Lock
 
@@ -16,6 +17,23 @@ from eoip.audit.redaction import redact_secrets
 from eoip.contracts.audit import AuditEvent
 
 log = logging.getLogger("eoip.audit")
+
+# Token-shaped secrets that key-based redaction cannot catch inside free text
+# (GitHub/GitLab PATs, fine-grained PATs, OpenAI-style keys, Slack tokens).
+_TOKEN_PATTERN = re.compile(
+    r"\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}"
+    r"|sk-[A-Za-z0-9]{16,}|xox[baprs]-[A-Za-z0-9-]{10,})\b"
+)
+
+
+def _redact_tokens(value):
+    if isinstance(value, str):
+        return _TOKEN_PATTERN.sub("***REDACTED***", value)
+    if isinstance(value, dict):
+        return {key: _redact_tokens(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_redact_tokens(item) for item in value]
+    return value
 
 
 class AuditSink:
@@ -27,7 +45,7 @@ class AuditSink:
     def emit(self, event: AuditEvent, **extra) -> None:
         record = event.model_dump(exclude_none=True)
         record.update({k: v for k, v in extra.items() if v is not None})
-        record = redact_secrets(record)
+        record = _redact_tokens(redact_secrets(record))
 
         log.info(
             "audit.event",

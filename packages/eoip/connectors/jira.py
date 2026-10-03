@@ -21,7 +21,6 @@ from eoip.connectors.errors import ConnectorError
 from eoip.contracts.source_event import SourceEventV2, utc_now_iso
 from eoip.contracts.source_registry import SourceCapabilities
 
-
 DEFAULT_FIELDS = [
     "summary",
     "description",

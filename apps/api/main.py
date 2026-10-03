@@ -11,8 +11,8 @@ from time import perf_counter
 from uuid import uuid4
 
 import httpx
-from eoip.agents.runtime import AgentRegistry, AgentRuntime
-from eoip.agents.trace_impact import TraceImpactAgent
+from eoip.agents.catalog import build_agent_registry
+from eoip.agents.runtime import AgentRuntime
 from eoip.audit.sink import AuditSink
 from eoip.config import load_agent_config
 from eoip.connectors.acquisition import AcquisitionPolicy, AcquisitionScheduler
@@ -54,7 +54,7 @@ def _operation(path: str, body: bytes) -> str:
         return "ingestion"
     if path == "/api/v1/admin/validation":
         return "validation"
-    if path == "/api/v1/agents/trace-impact":
+    if path.startswith("/api/v1/agents/"):
         return "agent"
     if path == "/api/v1/rag":
         try:
@@ -66,6 +66,7 @@ def _operation(path: str, body: bytes) -> str:
     if path in {
         "/api/v1/search",
         "/api/v1/query",
+        "/api/v1/query/nl",
         "/api/v1/path",
         "/api/v1/impact",
         "/api/v1/lineage",
@@ -118,6 +119,18 @@ class TraceRequest(BaseModel):
     max_depth: int = Field(default=4, ge=1, le=8)
 
 
+class AgentRunRequest(BaseModel):
+    goal: str = Field(min_length=1, max_length=4096)
+    context_refs: list[str] = Field(default_factory=list, max_length=100)
+    budgets: dict = Field(default_factory=dict)
+    dry_run: bool = False
+    synthesize: bool = False
+
+
+class ProposalDecisionRequest(BaseModel):
+    actor_id: str = Field(min_length=1, max_length=256)
+
+
 class RetrievalRequest(BaseModel):
     canonical_id: str = Field(min_length=1, max_length=512)
     question: str = Field(
@@ -154,8 +167,7 @@ def create_app():
     evolution = GraphEvolutionEngine(store, change_journal)
     audit_sink = AuditSink(data_root() / "audit")
     validator = ValidationEngine(store)
-    agent_registry = AgentRegistry()
-    agent_registry.register(TraceImpactAgent(load_agent_config("trace-impact")))
+    agent_registry = build_agent_registry(load_agent_config("trace-impact"))
     agent_runtime = AgentRuntime(store, agent_registry)
     app = query_app(store, dependencies=[Depends(HTTPBearer(auto_error=False))])
     registry = CollectorRegistry()
@@ -750,6 +762,82 @@ def create_app():
         write_json(data_root() / "state/validation.json", result)
         return result
 
+    @app.get("/api/v1/agents")
+    def list_agents():
+        return {"agents": [contract.model_dump() for contract in agent_registry.list_contracts()]}
+
+    @app.post("/api/v1/agents/{agent_id}/runs")
+    def run_agent(agent_id: str, payload: AgentRunRequest, request: Request):
+        if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{1,127}", agent_id):
+            raise HTTPException(404, "Agent not found")
+        result = agent_runtime.run(AgentRequest(
+            request_id=str(uuid4()),
+            agent_id=agent_id,
+            goal=payload.goal,
+            context_refs=payload.context_refs,
+            budgets=payload.budgets,
+            actor_id="local-user",
+            correlation_id=request.state.correlation_id,
+            dry_run=payload.dry_run,
+            metadata={"synthesize": payload.synthesize},
+        ))
+        if result.status == "DENIED" and result.summary.startswith("Unknown agent"):
+            raise HTTPException(404, "Agent not found")
+        return result.model_dump()
+
+    @app.get("/api/v1/agents/runs/{run_id}")
+    def get_agent_run(run_id: str):
+        result = agent_runtime.get_result(run_id)
+        trace = agent_runtime.trace_store.get(run_id)
+        if result is None and trace is None:
+            raise HTTPException(404, "Agent run not found")
+        return {
+            "result": result.model_dump() if result else None,
+            "trace": trace.model_dump() if trace else None,
+        }
+
+    @app.get("/api/v1/agents/runs/{run_id}/explanation")
+    def explain_agent_run(run_id: str):
+        result = agent_runtime.get_result(run_id)
+        if result and result.explanation:
+            return result.explanation.model_dump()
+        trace = agent_runtime.trace_store.get(run_id)
+        if trace:
+            for event in reversed(trace.events):
+                if event.phase == "EXPLAIN" and event.metadata.get("explanation"):
+                    return event.metadata["explanation"]
+        raise HTTPException(404, "Agent explanation not found")
+
+    @app.get("/api/v1/agents/proposals")
+    def list_agent_proposals(status: str | None = None):
+        if status and status not in {"PENDING", "APPROVED", "REJECTED", "EXPIRED"}:
+            raise HTTPException(422, "Invalid proposal status")
+        return {"proposals": [
+            item.model_dump() for item in agent_runtime.proposal_store.list(status=status)
+        ]}
+
+    @app.post("/api/v1/agents/proposals/{proposal_id}/approve")
+    def approve_agent_proposal(proposal_id: str, payload: ProposalDecisionRequest):
+        try:
+            return agent_runtime.proposal_store.decide(
+                proposal_id, actor_id=payload.actor_id, approve=True
+            ).model_dump()
+        except KeyError as exc:
+            raise HTTPException(404, "Proposal not found") from exc
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from exc
+
+    @app.post("/api/v1/agents/proposals/{proposal_id}/reject")
+    def reject_agent_proposal(proposal_id: str, payload: ProposalDecisionRequest):
+        try:
+            return agent_runtime.proposal_store.decide(
+                proposal_id, actor_id=payload.actor_id, approve=False
+            ).model_dump()
+        except KeyError as exc:
+            raise HTTPException(404, "Proposal not found") from exc
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from exc
+
     @app.post("/api/v1/agents/trace-impact")
     def trace(payload: TraceRequest):
         request = AgentRequest(
@@ -763,10 +851,13 @@ def create_app():
         if result.status == "FAILED" and "not found" in result.summary.lower():
             raise HTTPException(404, "Entity not found")
         return {
-            "agent_id": result.request_id,
+            "agent_id": "TraceImpact",
+            "run_id": result.run_id,
+            "status": result.status,
             "summary": result.summary,
             "evidence_refs": result.evidence_refs,
             "tool_calls": result.tool_calls,
+            "explanation": result.explanation.model_dump() if result.explanation else None,
             "generation": "deterministic",
             "partial": result.status == "PARTIAL",
         }

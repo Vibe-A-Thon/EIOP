@@ -8,7 +8,7 @@ def test_email_resolution():
     identity = resolver.resolve_person(display_name="Alice", email="Alice@Example.com", source_system="jira")
     assert identity.canonical_key == "alice@example.com"
     assert identity.resolution_method == "email"
-    assert resolver.person_canonical_id(identity) == "urn:eoip:identity:person:jira:alice@example.com"
+    assert resolver.person_canonical_id(identity) == "urn:eoip:identity:person:email:alice@example.com"
 
 
 def test_source_id_fallback():

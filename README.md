@@ -73,3 +73,6 @@ not provide native RDF or SPARQL support.
 
 See [the Docker runbook](docs/docker-local.md) for Full instructions and current scope, services, tests,
 backup/restore, the VS Code extension, optional profiles, and implementation limits.
+
+See the [Deep Agents and XAI guide](docs/deep-agents-xai.md) for governed agent contracts,
+bounded orchestration, evidence-linked explanations, and approval-only change proposals.

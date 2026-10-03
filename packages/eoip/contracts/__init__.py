@@ -1,6 +1,14 @@
-"""EOIP versioned data contracts (Pydantic models mirroring schemas/*.schema.json v1.0)."""
+"""EOIP versioned data contracts and governed agent execution models."""
 
-from eoip.contracts.agent import AgentRequest, AgentResult
+from eoip.contracts.agent import (
+    AgentBudgets,
+    AgentContract,
+    AgentExecutionTrace,
+    AgentRequest,
+    AgentResult,
+    ChangeProposal,
+    ExplanationEnvelope,
+)
 from eoip.contracts.audit import AuditEvent
 from eoip.contracts.evidence import Evidence
 from eoip.contracts.graph_mutation import GraphMutation
@@ -12,13 +20,18 @@ from eoip.contracts.retrieval import RetrievalResult
 from eoip.contracts.revision import GraphRevision, RelationshipRevision, RevisionMetadata
 from eoip.contracts.source_event import PermissionMetadata, SourceEvent, SourceEventV2, upgrade_source_event
 from eoip.contracts.source_registry import SourceCapabilities, SourceCheckpoint, SourceRegistryEntry
-from eoip.contracts.tool import ToolRequest, ToolResult
+from eoip.contracts.tool import ToolContract, ToolRequest, ToolResult
 
 __all__ = [
+    "AgentBudgets",
+    "AgentContract",
+    "AgentExecutionTrace",
     "AgentRequest",
     "AgentResult",
     "AuditEvent",
+    "ChangeProposal",
     "Evidence",
+    "ExplanationEnvelope",
     "GraphEdge",
     "GraphMutation",
     "GraphNode",
@@ -38,6 +51,7 @@ __all__ = [
     "SourceEvent",
     "SourceEventV2",
     "SourceRegistryEntry",
+    "ToolContract",
     "ToolRequest",
     "ToolResult",
     "upgrade_source_event",

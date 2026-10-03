@@ -136,7 +136,15 @@ def _build_contexts(
     return contexts
 
 
-def retrieve(store, canonical_id, question, *, synthesize=False) -> RetrievalResult:
+def retrieve(
+    store,
+    canonical_id,
+    question,
+    *,
+    synthesize=False,
+    model_timeout: float = 90.0,
+    max_model_tokens: int = 512,
+) -> RetrievalResult:
     strategy = select_strategy(canonical_id, question, store)
     if strategy == RetrievalStrategy.NONE:
         return RetrievalResult(
@@ -174,7 +182,7 @@ def retrieve(store, canonical_id, question, *, synthesize=False) -> RetrievalRes
     warnings: list[str] = []
     generation = "deterministic"
     if synthesize:
-        provider = LocalModelProvider()
+        provider = LocalModelProvider(timeout=model_timeout)
         if not provider.available:
             warnings.append("No local model is configured; graph evidence remains available.")
         else:
@@ -193,6 +201,7 @@ def retrieve(store, canonical_id, question, *, synthesize=False) -> RetrievalRes
                             "evidence_refs": refs,
                         }
                     ),
+                    max_tokens=max_model_tokens,
                 )
                 answer = response.content
                 generation = response.generation

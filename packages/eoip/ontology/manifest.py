@@ -6,11 +6,11 @@ are enumerated here; namespaces for Organization, Work, Code, CI/CD,
 Operations, Knowledge and AI/Agent concepts are preserved.
 """
 
-ONTOLOGY_VERSION = "0.2.0"
-SCHEMA_VERSION = "1.0"
+ONTOLOGY_VERSION = "0.3.0"
+SCHEMA_VERSION = "1.1"
 
 # Graph domains (one physical graph, multiple logical domains — ADR-1)
-DOMAINS = ["META", "WORK", "CODE", "CICD", "KNOWLEDGE", "IDENTITY", "AGENT"]
+DOMAINS = ["META", "WORK", "CODE", "CICD", "KNOWLEDGE", "IDENTITY", "AGENT", "OPS", "TEST", "DESIGN"]
 
 # Shared property keys (11-graph-schema.md) with HugeGraph data types.
 # TEXT | INT | LONG | DOUBLE | BOOLEAN | DATE (ISO-8601 strings in MVP)
@@ -25,6 +25,7 @@ PROPERTY_KEYS: dict[str, str] = {
     "graph_domain": "TEXT",
     "entity_type": "TEXT",
     "name": "TEXT",
+    "service_id": "TEXT",
     "display_name": "TEXT",
     "content_hash": "TEXT",
     "creation_status": "TEXT",
@@ -53,6 +54,7 @@ PROPERTY_KEYS: dict[str, str] = {
     "evidence_key": "TEXT",
     # domain-specific additive properties
     "email": "TEXT",
+    "source_aliases": "TEXT",
     "issue_type": "TEXT",
     "summary": "TEXT",
     "status": "TEXT",
@@ -136,6 +138,77 @@ PROPERTY_KEYS: dict[str, str] = {
     "end_date": "DATE",
     "link_type": "TEXT",
     "link_direction": "TEXT",
+    # OPS domain properties
+    "incident_number": "TEXT",
+    "priority": "TEXT",
+    "impact": "TEXT",
+    "urgency": "TEXT",
+    "assigned_group": "TEXT",
+    "resolution_notes": "TEXT",
+    "resolved_at": "DATE",
+    "closed_at": "DATE",
+    "category": "TEXT",
+    "subcategory": "TEXT",
+    "change_type": "TEXT",
+    "risk_level": "TEXT",
+    "approval_status": "TEXT",
+    "planned_start": "DATE",
+    "planned_end": "DATE",
+    "dashboard_id": "TEXT",
+    "dashboard_url": "TEXT",
+    "dashboard_type": "TEXT",
+    "panel_count": "INT",
+    "monitor_id": "TEXT",
+    "monitor_type": "TEXT",
+    "threshold": "DOUBLE",
+    "alert_status": "TEXT",
+    "metric_name": "TEXT",
+    "metric_value": "DOUBLE",
+    "metric_unit": "TEXT",
+    "log_level": "TEXT",
+    "log_source": "TEXT",
+    "log_count": "LONG",
+    # TEST domain properties
+    "test_case_id": "TEXT",
+    "test_type": "TEXT",
+    "test_status": "TEXT",
+    "execution_status": "TEXT",
+    "automation_status": "TEXT",
+    "test_suite_id": "TEXT",
+    "test_cycle_id": "TEXT",
+    "test_run_id": "TEXT",
+    "passed_count": "INT",
+    "failed_count": "INT",
+    "skipped_count": "INT",
+    "total_count": "INT",
+    "execution_time": "DOUBLE",
+    # DESIGN domain properties
+    "figma_file_key": "TEXT",
+    "figma_node_id": "TEXT",
+    "component_type": "TEXT",
+    "page_name": "TEXT",
+    "frame_name": "TEXT",
+    "last_modified_by": "TEXT",
+    "thumbnail_url": "TEXT",
+    # API Portal properties
+    "api_name": "TEXT",
+    "api_version": "TEXT",
+    "api_method": "TEXT",
+    "api_path": "TEXT",
+    "api_protocol": "TEXT",
+    "swagger_url": "TEXT",
+    "upstream_service": "TEXT",
+    "downstream_service": "TEXT",
+    # Rally properties
+    "rally_id": "TEXT",
+    "rally_formatted_id": "TEXT",
+    "plan_estimate": "DOUBLE",
+    "iteration_name": "TEXT",
+    "release_name": "TEXT",
+    "schedule_state": "TEXT",
+    # ProdPages properties
+    "page_url": "TEXT",
+    "page_status": "TEXT",
 }
 
 # Vertex labels -> (graph_domain, required properties, optional properties)
@@ -149,7 +222,7 @@ VERTEX_LABELS: dict[str, tuple[str, list[str], list[str]]] = {
     "ValidationFinding": ("META", ["canonical_id", "severity", "rule_id"], ["remediation", "description"]),
     "Project": ("WORK", ["canonical_id", "name"], ["display_name", "issue_key"]),
     "WorkItem": ("WORK", ["canonical_id", "issue_key", "summary"], ["issue_type", "status", "description", "created_at", "modified_at", "deleted_at"]),
-    "Person": ("IDENTITY", ["canonical_id", "display_name"], ["email"]),
+    "Person": ("IDENTITY", ["canonical_id", "display_name"], ["email", "source_aliases"]),
     "Repository": ("CODE", ["canonical_id", "repo_id", "name"], ["source_uri"]),
     "Branch": ("CODE", ["canonical_id", "branch_name"], ["repo_id"]),
     "Commit": ("CODE", ["canonical_id", "commit_sha"], ["message", "author_email", "author_name", "created_at", "parent_shas"]),
@@ -158,6 +231,7 @@ VERTEX_LABELS: dict[str, tuple[str, list[str], list[str]]] = {
     "File": ("CODE", ["canonical_id", "repo_id", "path"], ["language", "content_hash"]),
     "CodeSymbol": ("CODE", ["canonical_id", "qualified_name", "symbol_kind"], ["name", "repo_id", "path", "start_line", "end_line", "start_column", "end_column", "language", "parser_version"]),
     "Dependency": ("CODE", ["canonical_id", "name"], ["resolved", "language"]),
+    "Service": ("CODE", ["canonical_id", "service_id", "name"], ["description", "status", "source_system", "created_at", "modified_at"]),
     "Document": ("KNOWLEDGE", ["canonical_id", "name", "path"], ["doc_format", "content_hash", "description", "repo_id"]),
     "KnowledgeSpace": ("KNOWLEDGE", ["canonical_id", "name", "space_key"], ["description"]),
     "DocumentSection": ("KNOWLEDGE", ["canonical_id", "name"], ["path", "section_index", "content_hash", "start_line", "end_line"]),
@@ -178,6 +252,33 @@ VERTEX_LABELS: dict[str, tuple[str, list[str], list[str]]] = {
     "Sprint": ("WORK", ["canonical_id", "sprint_id", "name"], ["description", "project_key", "status", "start_date", "end_date"]),
     "Comment": ("WORK", ["canonical_id", "comment_id", "content"], ["created_at", "modified_at", "source_system", "source_id"]),
     "WorkItemChange": ("WORK", ["canonical_id", "change_id", "field_name"], ["from_value", "to_value", "created_at", "source_system", "source_id"]),
+    # OPS domain — ServiceNow incidents, change requests, requests; observability dashboards/monitors
+    "Incident": ("OPS", ["canonical_id", "incident_number", "summary"], ["description", "status", "priority", "impact", "urgency", "assigned_group", "category", "subcategory", "source_system", "created_at", "modified_at", "resolved_at", "closed_at", "resolution_notes"]),
+    "ChangeRequest": ("OPS", ["canonical_id", "name", "change_type"], ["description", "status", "risk_level", "approval_status", "planned_start", "planned_end", "source_system", "created_at", "modified_at", "closed_at"]),
+    "ServiceRequest": ("OPS", ["canonical_id", "name"], ["description", "status", "priority", "category", "source_system", "created_at", "modified_at", "closed_at"]),
+    "Dashboard": ("OPS", ["canonical_id", "name", "dashboard_type"], ["dashboard_id", "dashboard_url", "description", "panel_count", "source_system", "created_at", "modified_at"]),
+    "MonitorRule": ("OPS", ["canonical_id", "name", "monitor_type"], ["monitor_id", "description", "status", "threshold", "source_system", "created_at", "modified_at"]),
+    "AlertEvent": ("OPS", ["canonical_id", "name"], ["alert_status", "severity", "description", "source_system", "created_at", "resolved_at"]),
+    "LogAggregate": ("OPS", ["canonical_id", "log_source"], ["log_level", "log_count", "description", "source_system", "created_at"]),
+    "KBArticle": ("KNOWLEDGE", ["canonical_id", "name"], ["description", "content", "category", "status", "source_system", "created_at", "modified_at"]),
+    "ProdPage": ("KNOWLEDGE", ["canonical_id", "name", "page_url"], ["description", "page_status", "source_system", "created_at", "modified_at"]),
+    # TEST domain — qTest, test management
+    "TestCase": ("TEST", ["canonical_id", "name"], ["test_case_id", "test_type", "test_status", "automation_status", "description", "source_system", "created_at", "modified_at"]),
+    "TestSuite": ("TEST", ["canonical_id", "name"], ["test_suite_id", "description", "source_system", "created_at"]),
+    "TestCycle": ("TEST", ["canonical_id", "name"], ["test_cycle_id", "description", "status", "start_date", "end_date", "source_system"]),
+    "TestRun": ("TEST", ["canonical_id", "name"], ["test_run_id", "execution_status", "passed_count", "failed_count", "skipped_count", "total_count", "execution_time", "source_system", "created_at", "finished_at"]),
+    # DESIGN domain — Figma
+    "DesignFile": ("DESIGN", ["canonical_id", "name"], ["figma_file_key", "description", "thumbnail_url", "last_modified_by", "source_system", "created_at", "modified_at"]),
+    "DesignPage": ("DESIGN", ["canonical_id", "name", "page_name"], ["figma_file_key", "figma_node_id", "source_system"]),
+    "DesignComponent": ("DESIGN", ["canonical_id", "name", "component_type"], ["figma_file_key", "figma_node_id", "description", "source_system"]),
+    # API Portal
+    "APIService": ("CODE", ["canonical_id", "api_name"], ["api_version", "description", "swagger_url", "status", "source_system", "created_at", "modified_at"]),
+    "APIEndpoint": ("CODE", ["canonical_id", "api_name", "api_method", "api_path"], ["description", "api_version", "api_protocol", "source_system"]),
+    "APIConnection": ("CODE", ["canonical_id", "upstream_service", "downstream_service"], ["description", "api_protocol", "source_system"]),
+    # Rally
+    "Epic": ("WORK", ["canonical_id", "name"], ["rally_id", "rally_formatted_id", "description", "status", "plan_estimate", "release_name", "source_system", "created_at", "modified_at"]),
+    "Feature": ("WORK", ["canonical_id", "name"], ["rally_id", "rally_formatted_id", "description", "status", "plan_estimate", "iteration_name", "release_name", "schedule_state", "source_system", "created_at", "modified_at"]),
+    "UserStory": ("WORK", ["canonical_id", "name"], ["rally_id", "rally_formatted_id", "description", "status", "plan_estimate", "iteration_name", "schedule_state", "source_system", "created_at", "modified_at"]),
 }
 
 # Edge labels -> (out vertex labels, in vertex labels, properties)
@@ -185,12 +286,12 @@ VERTEX_LABELS: dict[str, tuple[str, list[str], list[str]]] = {
 # FR-VALID-002). RELATED_TO is deliberately absent (forbidden).
 EDGE_LABELS: dict[str, tuple[list[str], list[str], list[str]]] = {
     "CONTAINS": (
-        ["Project", "Repository", "Document", "DataSource", "KnowledgeSpace", "Organization"],
-        ["WorkItem", "File", "DocumentSection", "Project", "Document", "Repository"],
+        ["Project", "Repository", "Document", "DataSource", "KnowledgeSpace", "Organization", "TestSuite", "TestCycle", "DesignFile", "APIService", "Dashboard", "Epic"],
+        ["WorkItem", "File", "DocumentSection", "Project", "Document", "Repository", "TestCase", "TestRun", "DesignPage", "DesignComponent", "APIEndpoint", "Feature", "UserStory"],
         [],
     ),
     "PARENT_OF": (["WorkItem"], ["WorkItem"], []),
-    "ASSIGNED_TO": (["WorkItem"], ["Person"], []),
+    "ASSIGNED_TO": (["WorkItem", "Incident", "ChangeRequest", "ServiceRequest", "TestCase", "Epic", "Feature", "UserStory"], ["Person"], []),
     "AUTHORED_BY": (["Commit", "MergeRequest", "Comment", "WorkItemChange"], ["Person"], []),
     "HAS_BRANCH": (["Repository"], ["Branch"], []),
     "HAS_COMMIT": (["Repository", "Branch"], ["Commit"], []),
@@ -217,15 +318,32 @@ EDGE_LABELS: dict[str, tuple[list[str], list[str], list[str]]] = {
     "DECLARES": (["File"], ["CodeSymbol"], []),
     "CALLS": (["CodeSymbol"], ["CodeSymbol"], []),
     "IMPORTS": (["File", "CodeSymbol"], ["Dependency"], []),
-    "DEPENDS_ON": (["CodeSymbol", "File"], ["Dependency", "CodeSymbol", "File"], []),
+    "DEPENDS_ON": (["CodeSymbol", "File", "Service"], ["Dependency", "CodeSymbol", "File", "Service"], []),
     "IMPLEMENTS": (["MergeRequest", "Commit"], ["WorkItem"], []),
     "REFERENCES": (["MergeRequest", "Commit", "Document", "DocumentSection", "WorkItem", "PipelineRun"], ["WorkItem", "Commit", "CodeSymbol", "Dependency", "File"], []),
     "DOCUMENTS": (["Document", "DocumentSection"], ["CodeSymbol", "WorkItem", "File"], []),
-    "EVIDENCED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Dependency", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange"], ["Evidence"], []),
-    "INGESTED_IN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange"], ["IngestionRun"], []),
-    "BELONGS_TO_DOMAIN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "Evidence", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange"], ["GraphDomain"], []),
-    "VALIDATED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Repository", "Project", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange"], ["ValidationRun"], []),
+    "EVIDENCED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Dependency", "Service", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory"], ["Evidence"], []),
+    "INGESTED_IN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "Service", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory"], ["IngestionRun"], []),
+    "BELONGS_TO_DOMAIN": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Person", "Project", "Repository", "Branch", "Dependency", "Service", "Evidence", "KnowledgeSpace", "Organization", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory"], ["GraphDomain"], []),
+    "VALIDATED_BY": (["WorkItem", "Commit", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Document", "DocumentSection", "Repository", "Project", "Tag", "Release", "Job", "Artifact", "Deployment", "IssueType", "Status", "Version", "Sprint", "Comment", "WorkItemChange", "Incident", "ChangeRequest", "ServiceRequest", "Dashboard", "MonitorRule", "AlertEvent", "LogAggregate", "KBArticle", "ProdPage", "TestCase", "TestSuite", "TestCycle", "TestRun", "DesignFile", "DesignPage", "DesignComponent", "APIService", "APIEndpoint", "APIConnection", "Epic", "Feature", "UserStory"], ["ValidationRun"], []),
     "PRODUCED_BY": (["PipelineRun", "Document", "DocumentSection", "Release", "Deployment"], ["Commit", "PipelineRun", "MergeRequest", "Job"], []),
+    "TRIGGERED_BY": (["Incident", "AlertEvent"], ["Deployment", "Commit", "PipelineRun", "ChangeRequest"], []),
+    "MONITORS": (["MonitorRule", "Dashboard"], ["APIService", "Deployment", "Repository", "PipelineRun"], []),
+    "ALERTS_ON": (["AlertEvent"], ["MonitorRule", "Dashboard"], []),
+    "VISUALIZES": (["Dashboard"], ["APIService", "MonitorRule", "Metric"], []),
+    "TESTS": (["TestCase", "TestRun"], ["WorkItem", "Feature", "UserStory", "CodeSymbol", "File", "APIEndpoint", "Epic"], []),
+    "PART_OF_SUITE": (["TestCase"], ["TestSuite"], []),
+    "EXECUTED_IN": (["TestCase"], ["TestRun", "TestCycle"], []),
+    "DESIGNS": (["DesignFile", "DesignPage", "DesignComponent"], ["WorkItem", "Feature", "UserStory", "Epic"], []),
+    "USES_COMPONENT": (["DesignPage"], ["DesignComponent"], []),
+    "EXPOSES": (["APIService"], ["APIEndpoint"], []),
+    "CONNECTS_TO": (["APIConnection", "APIService"], ["APIService"], []),
+    "DOCUMENTS_API": (["Document", "ProdPage", "KBArticle"], ["APIService", "APIEndpoint"], []),
+    "RESOLVES": (["ChangeRequest", "Commit", "MergeRequest"], ["Incident", "AlertEvent"], []),
+    "CORRELATES_WITH": (["Incident"], ["Incident", "AlertEvent", "LogAggregate", "Dashboard"], []),
+    "CHILD_OF": (["Feature", "UserStory"], ["Epic", "Feature"], []),
+    "LOGGED_BY": (["LogAggregate"], ["APIService", "Deployment", "Repository"], []),
+    "COVERS": (["TestSuite", "TestCycle"], ["WorkItem", "Feature", "UserStory", "Epic"], []),
 }
 
 # Index baseline (11-graph-schema.md §Index baseline; FR-GRAPH-008)
@@ -241,6 +359,10 @@ INDEXES: list[dict] = [
     {"name": "idx_entity_revision_current", "type": "SECONDARY", "label": "EntityRevision", "fields": ["subject_id", "is_current"]},
     {"name": "idx_relationship_revision_current", "type": "SECONDARY", "label": "RelationshipRevision", "fields": ["relationship_id", "is_current"]},
     {"name": "idx_graph_version", "type": "SECONDARY", "label": "GraphVersion", "fields": ["graph_version"]},
+    # Edge-scoped UNIQUE index (FR-INGEST-003): HugeGraph attaches edge indexes
+    # to a physical edge label, so ensure_schema expands this single entry into
+    # one index per physical edge label (<label>__<out>__<in>).
+    {"name": "idx_edge_key", "type": "UNIQUE", "label": None, "fields": ["edge_key"], "base_type": "EDGE_LABEL"},
 ]
 
 # Business vertex labels counted as "business" (non-meta) facts

@@ -70,3 +70,53 @@ def test_query_executor_search_under_1s():
     executor.execute(plan)
     elapsed = time.perf_counter() - start
     assert elapsed < 1.0, f"Search took {elapsed:.2f}s, exceeds 1s target"
+
+
+def test_benchmark_dataset_scale_s_executor_bounds():
+    """NFR-PERF-001 (CI scale): benchmark dataset scale 's' (seed 42) — 200 work
+    items, 2 repos, 30 commits, 500 files/symbols; ~2.3k edges, ~950 vertices.
+
+    SEARCH / IMPACT / PATH executed via the QueryExecutor must each stay under
+    a 2s bound (max over repeated runs as a p95 proxy). Generation + queries
+    complete in well under 5s, so this test runs in the default suite.
+
+    TODO(NFR-PERF-001): full-scale benchmarking against HugeGraph requires the
+    Docker Compose profile; scale 'm' (~19k edges) and production profiles run
+    there, not in unit tests.
+    """
+    from scripts.benchmark_data import build_store, store_stats
+
+    store = build_store("s")
+    stats = store_stats(store, "s", 42)
+    assert stats["vertices"] > 0 and stats["edges"] > 0
+
+    executor = QueryExecutor(store)
+    plans = [
+        QueryPlan(intent="SEARCH", anchors=["BENCH-42"], max_depth=1, result_limit=25, evidence_mode="NONE"),
+        QueryPlan(
+            intent="IMPACT",
+            anchors=["urn:bench:item:0"],
+            max_depth=4,
+            result_limit=100,
+            evidence_mode="SUMMARY",
+        ),
+        QueryPlan(
+            intent="PATH",
+            anchors=["urn:bench:item:0", "urn:bench:item:5"],
+            max_depth=8,
+            result_limit=100,
+            evidence_mode="NONE",
+        ),
+    ]
+    for plan in plans:
+        latencies = []
+        for _ in range(5):
+            start = time.perf_counter()
+            result = executor.execute(plan)
+            latencies.append(time.perf_counter() - start)
+        p95 = max(latencies)
+        assert p95 < 2.0, (
+            f"{plan.intent} on scale s ({stats['vertices']} vertices, "
+            f"{stats['edges']} edges) took {p95:.2f}s, exceeds 2s bound"
+        )
+        assert result is not None

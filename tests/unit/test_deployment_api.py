@@ -124,6 +124,34 @@ def test_metrics_include_ingestion_job_status_and_runtime(monkeypatch, tmp_path)
     assert 'eoip_ingestion_job_duration_seconds_count{kind="JIRA_JSON"} 1.0' in repeated_metrics
 
 
+def test_deep_agent_catalog_run_trace_and_xai_api(monkeypatch, tmp_path):
+    api = client(monkeypatch, tmp_path)
+    headers = {"Authorization": "Bearer test-token-with-at-least-24-characters"}
+
+    catalog = api.get("/api/v1/agents", headers=headers)
+    assert catalog.status_code == 200
+    assert any(item["agent_id"] == "DataQuality" for item in catalog.json()["agents"])
+
+    response = api.post(
+        "/api/v1/agents/DataQuality/runs",
+        headers=headers,
+        json={"goal": "Assess graph data quality", "dry_run": True},
+    )
+    assert response.status_code == 200
+    result = response.json()
+    assert result["run_id"]
+    assert result["explanation"]["chain_of_thought_disclosed"] is False
+
+    trace = api.get(f"/api/v1/agents/runs/{result['run_id']}", headers=headers)
+    explanation = api.get(
+        f"/api/v1/agents/runs/{result['run_id']}/explanation", headers=headers
+    )
+    assert trace.status_code == 200
+    assert trace.json()["trace"]["final_status"] == result["status"]
+    assert explanation.status_code == 200
+    assert explanation.json()["decision_summary"] == result["summary"]
+
+
 def test_pending_ingestion_job_can_be_cancelled(monkeypatch, tmp_path):
     api = client(monkeypatch, tmp_path)
     headers = {"Authorization": "Bearer test-token-with-at-least-24-characters"}

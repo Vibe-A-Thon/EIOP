@@ -59,3 +59,54 @@ def test_policy_violation_raised():
     with pytest.raises(PolicyViolation) as exc_info:
         executor.execute(plan)
     assert exc_info.value.violations
+
+
+def test_search_rejects_single_character_queries():
+    store = _loaded_store()
+    executor = QueryExecutor(store)
+    plan = QueryPlan(
+        intent="SEARCH", anchors=["a"], max_depth=1, result_limit=10, evidence_mode="NONE"
+    )
+    with pytest.raises(PolicyViolation, match="at least 2 characters"):
+        executor.execute(plan)
+
+
+def test_search_prefers_indexed_exact_match_over_substring_matches():
+    store = _loaded_store()
+    store.upsert_vertex("Document", {
+        "canonical_id": "urn:test:doc:1", "name": "aaa notes about TEST-1",
+    })
+    executor = QueryExecutor(store)
+    plan = QueryPlan(
+        intent="SEARCH", anchors=["TEST-1"], max_depth=1, result_limit=10, evidence_mode="NONE"
+    )
+    result = executor.execute(plan)
+    assert result.nodes[0].id == "urn:test:item:1"
+    assert any(node.id == "urn:test:doc:1" for node in result.nodes)
+
+
+def test_search_resolves_file_by_path_lookup():
+    store = _loaded_store()
+    store.upsert_vertex("File", {
+        "canonical_id": "urn:test:file:1", "repo_id": "demo", "path": "src/app.py",
+    })
+    executor = QueryExecutor(store)
+    plan = QueryPlan(
+        intent="SEARCH", anchors=["src/app.py"], max_depth=1, result_limit=10, evidence_mode="NONE"
+    )
+    result = executor.execute(plan)
+    assert any(node.id == "urn:test:file:1" for node in result.nodes)
+
+
+def test_impact_result_exposes_impact_rationale_meta():
+    store = _loaded_store()
+    executor = QueryExecutor(store)
+    plan = QueryPlan(
+        intent="IMPACT", anchors=["urn:test:item:1"], max_depth=4, result_limit=100,
+        evidence_mode="SUMMARY",
+    )
+    result = executor.execute(plan)
+    assert result.meta is not None
+    assert result.meta["impact_rationale"] == {
+        "urn:test:commit:abc": "1 hop(s) via IMPLEMENTS; evidence: 1 source ref(s)"
+    }

@@ -153,7 +153,18 @@ class HugeGraphStore:
             ensure("edgelabels", edges)
             index_defs = []
             for idx in INDEXES:
-                if idx["label"] is not None:
+                if idx.get("base_type") == "EDGE_LABEL":
+                    # Edge indexes attach to a physical edge label, so expand
+                    # the manifest entry into one UNIQUE index per edge label.
+                    for edge_name in {item["name"] for item in edges}:
+                        index_defs.append({
+                            "name": f"{idx['name']}_{edge_name}",
+                            "base_type": "EDGE_LABEL",
+                            "base_value": edge_name,
+                            "index_type": idx["type"],
+                            "fields": idx["fields"],
+                        })
+                elif idx["label"] is not None:
                     index_defs.append({
                         "name": idx["name"],
                         "base_type": "VERTEX_LABEL",
@@ -251,6 +262,19 @@ class HugeGraphStore:
             if not page:
                 break
 
+    def find_vertex_by_property(self, label, key, value, limit=10):
+        if label not in VERTEX_LABELS:
+            raise ValueError("Unknown vertex label")
+        result = []
+        for raw in self._pages("vertices", {"label": label, "properties": f"{key}:{value}"}):
+            props = raw["properties"]
+            if props.get("deleted_at") or props.get(key) != value:
+                continue
+            result.append(self._vertex(raw))
+            if len(result) >= limit:
+                break
+        return result
+
     def find_vertices(self, label=None, filters=None, limit=100):
         if label is not None and label not in VERTEX_LABELS:
             raise ValueError("Unknown vertex label")
@@ -283,20 +307,7 @@ class HugeGraphStore:
         props.setdefault("creation_status", "DETERMINISTIC")
         physical_label = f"{label}__{source['label']}__{target['label']}"
         with self._lock:
-            existing = next(
-                (
-                    edge
-                    for edge in self.find_edges(
-                        label=label,
-                        out_v=out_v,
-                        in_v=in_v,
-                        limit=10_000,
-                        include_historical=True,
-                    )
-                    if edge["properties"].get("edge_key") == props["edge_key"]
-                ),
-                None,
-            )
+            existing = self.find_edge_by_key(props["edge_key"])
             if existing:
                 raw = self._request(
                     "PUT",
@@ -326,6 +337,15 @@ class HugeGraphStore:
             if exc.response.status_code == 404:
                 return None
             raise
+
+    def find_edge_by_key(self, edge_key, *, limit=50_000):
+        # Lookup-then-create (best effort under concurrency): scan paged edges
+        # and match on the edge_key property, mirroring the vertex paging used
+        # by find_vertices/find_edges.
+        for edge in self.find_edges(limit=limit, include_historical=True):
+            if edge["properties"].get("edge_key") == edge_key:
+                return edge
+        return None
 
     def find_edges(self, label=None, out_v=None, in_v=None, limit=500, include_historical=False):
         params = {}

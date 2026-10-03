@@ -7,9 +7,10 @@ validated against schema + policy, then executed via a named bounded template.
 from __future__ import annotations
 
 import concurrent.futures
+import re
 from uuid import uuid4
 
-from eoip.contracts.graph_result import GraphEdge, GraphNode, GraphPath, GraphResult
+from eoip.contracts.graph_result import GraphEdge, GraphNode, GraphPath, GraphResult, TraversalGraphResult
 from eoip.contracts.query_plan import QueryPlan
 from eoip.graph.store import GraphStore
 from eoip.graph.traversal import GraphTraversal
@@ -54,28 +55,57 @@ class QueryTimeout(Exception):
         super().__init__(f"Query exceeded {timeout_ms}ms timeout")
 
 
+_SEARCHABLE_PROPS = {
+    "canonical_id",
+    "name",
+    "display_name",
+    "summary",
+    "issue_key",
+    "path",
+    "qualified_name",
+    "commit_sha",
+}
+
+_ISSUE_KEY_EXACT = re.compile(r"^[A-Z][A-Z0-9]+-\d+$")
+_SHA_EXACT = re.compile(r"^[0-9a-f]{40}$")
+# Index-backed exact lookups tried before the general substring scan
+# (mirror the SECONDARY indexes declared in the ontology manifest).
+_EXACT_PROPERTY_LOOKUPS = (
+    ("WorkItem", "issue_key"),
+    ("Commit", "commit_sha"),
+    ("CodeSymbol", "qualified_name"),
+)
+
+
 def _search(store: GraphStore, plan: QueryPlan) -> GraphResult:
-    query = plan.anchors[0].strip().casefold()
+    raw_query = plan.anchors[0].strip()
     filters = dict(plan.filters or {})
     label = filters.pop("label", None)
+    if (
+        len(raw_query) < 2
+        and not _ISSUE_KEY_EXACT.fullmatch(raw_query)
+        and not _SHA_EXACT.fullmatch(raw_query)
+    ):
+        raise PolicyViolation(
+            [
+                (
+                    "Search query must be at least 2 characters "
+                    "(exact issue keys and commit SHAs remain allowed)"
+                )
+            ]
+        )
+    exact = _exact_matches(store, raw_query, label)
+    seen = {v["canonical_id"] for v in exact}
+    query = raw_query.casefold()
     candidates = store.find_vertices(label=label, filters=filters or None, limit=5000)
     matches = [
         v
         for v in candidates
-        if any(
+        if v["canonical_id"] not in seen
+        and any(
             query in str(val).casefold()
             for key, val in v["properties"].items()
-            if key
-            in {
-                "canonical_id",
-                "name",
-                "display_name",
-                "summary",
-                "issue_key",
-                "path",
-                "qualified_name",
-                "commit_sha",
-            }
+            if key in _SEARCHABLE_PROPS
         )
     ]
     matches.sort(
@@ -84,14 +114,33 @@ def _search(store: GraphStore, plan: QueryPlan) -> GraphResult:
             str(v["properties"].get("name", "")).casefold(),
         )
     )
-    nodes = [_to_node(v) for v in matches[: plan.result_limit]]
+    combined = exact + matches
+    nodes = [_to_node(v) for v in combined[: plan.result_limit]]
     return GraphResult(
         query_id=str(uuid4()),
         nodes=nodes,
         edges=[],
-        partial=len(matches) > plan.result_limit or len(candidates) == 5000,
+        partial=len(combined) > plan.result_limit or len(candidates) == 5000,
         evidence=[],
     )
+
+
+def _exact_matches(store: GraphStore, raw_query: str, label: str | None) -> list[dict]:
+    found: list[dict] = []
+    seen: set[str] = set()
+    for item_label, key in _EXACT_PROPERTY_LOOKUPS:
+        if label is not None and label != item_label:
+            continue
+        for vertex in store.find_vertex_by_property(item_label, key, raw_query):
+            if vertex["canonical_id"] not in seen and not vertex["properties"].get("deleted_at"):
+                seen.add(vertex["canonical_id"])
+                found.append(vertex)
+    if "/" in raw_query and label in (None, "File"):
+        for vertex in store.find_vertices(label="File", filters={"path": raw_query}, limit=10):
+            if vertex["canonical_id"] not in seen and not vertex["properties"].get("deleted_at"):
+                seen.add(vertex["canonical_id"])
+                found.append(vertex)
+    return found
 
 
 def _path(store: GraphStore, plan: QueryPlan) -> GraphResult:
@@ -179,7 +228,7 @@ _TEMPLATES = {
 }
 
 
-def _traversal_result(result: dict) -> GraphResult:
+def _traversal_result(result: dict) -> TraversalGraphResult:
     vertices = {result["source"]["canonical_id"]: result["source"]}
     edges = {}
     paths = []
@@ -194,13 +243,19 @@ def _traversal_result(result: dict) -> GraphResult:
                 edge_ids=[e["eid"] for e in path["edges"]],
             )
         )
-    return GraphResult(
+    rationale = {
+        item["vertex"]["canonical_id"]: item["rationale"]
+        for item in result["impacted"]
+        if item.get("rationale")
+    }
+    return TraversalGraphResult(
         query_id=str(uuid4()),
         nodes=[_to_node(v) for v in vertices.values()],
         edges=[_to_edge(e) for e in edges.values()],
         paths=paths,
         evidence=_edge_evidence(list(edges.values())),
         partial=result["truncated"],
+        meta={"impact_rationale": rationale},
     )
 
 

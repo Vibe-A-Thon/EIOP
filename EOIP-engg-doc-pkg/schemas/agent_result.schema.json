@@ -9,6 +9,10 @@
     "evidence_refs"
   ],
   "properties": {
+    "schema_version": {
+      "const": "2.0",
+      "default": "2.0"
+    },
     "request_id": {
       "type": "string"
     },
@@ -17,7 +21,8 @@
         "SUCCEEDED",
         "PARTIAL",
         "FAILED",
-        "DENIED"
+        "DENIED",
+        "CANCELLED"
       ]
     },
     "summary": {
@@ -33,6 +38,16 @@
       "type": "array"
     },
     "warnings": {
+      "type": "array"
+    },
+    "run_id": {
+      "type": ["string", "null"]
+    },
+    "explanation": {
+      "type": ["object", "null"],
+      "description": "Evidence-linked decision summary. Hidden chain-of-thought is never included."
+    },
+    "proposals": {
       "type": "array"
     }
   }

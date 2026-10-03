@@ -95,3 +95,41 @@ def test_path_stops_when_configured_time_budget_expires(monkeypatch) -> None:
 def test_timeout_budget_must_be_a_positive_finite_number(timeout_seconds) -> None:
     with pytest.raises(ValueError, match="timeout_seconds"):
         GraphTraversal(MemoryGraphStore(), timeout_seconds=timeout_seconds)
+
+
+def test_impact_items_include_rationale_and_ordered_by_depth_then_evidence() -> None:
+    store = MemoryGraphStore()
+    root = _vertex(store, "CodeSymbol", "symbol:root")
+    near = _vertex(store, "CodeSymbol", "symbol:near")
+    bridge = _vertex(store, "CodeSymbol", "symbol:bridge")
+    far = _vertex(store, "CodeSymbol", "symbol:far")
+    store.upsert_edge("CALLS", root["vid"], near["vid"], {})
+    store.upsert_edge(
+        "CALLS", root["vid"], bridge["vid"], {"source_ref": "git://demo", "evidence_key": "e1"}
+    )
+    store.upsert_edge("CALLS", bridge["vid"], far["vid"], {})
+
+    result = GraphTraversal(store, max_depth=3).impact(root["canonical_id"])
+
+    ids = [item["vertex"]["canonical_id"] for item in result["impacted"]]
+    # Same hop count: the evidence-backed neighbor ranks first; 2-hop last.
+    assert ids == ["symbol:bridge", "symbol:near", "symbol:far"]
+    rationale = {item["vertex"]["canonical_id"]: item["rationale"] for item in result["impacted"]}
+    assert rationale["symbol:near"] == "1 hop(s) via CALLS; evidence: 0 source ref(s)"
+    assert rationale["symbol:bridge"] == "1 hop(s) via CALLS; evidence: 1 source ref(s)"
+    assert rationale["symbol:far"] == "2 hop(s) via CALLS; evidence: 1 source ref(s)"
+
+
+def test_impact_truncation_keeps_most_relevant_items() -> None:
+    store = MemoryGraphStore()
+    root = _vertex(store, "CodeSymbol", "symbol:root")
+    plain = _vertex(store, "CodeSymbol", "symbol:plain")
+    backed = _vertex(store, "CodeSymbol", "symbol:backed")
+    store.upsert_edge("CALLS", root["vid"], plain["vid"], {})
+    store.upsert_edge("CALLS", root["vid"], backed["vid"], {"source_ref": "git://demo"})
+
+    result = GraphTraversal(store, max_depth=1, max_results=1).impact(root["canonical_id"])
+
+    assert [item["vertex"]["canonical_id"] for item in result["impacted"]] == ["symbol:backed"]
+    assert result["truncated"] is True
+    assert result["impacted"][0]["rationale"] == "1 hop(s) via CALLS; evidence: 1 source ref(s)"

@@ -12,6 +12,7 @@ from uuid import uuid4
 
 from eoip.codegraph.parser import PARSER_VERSION, CodeParser
 from eoip.contracts.source_event import SourceEvent, utc_now_iso
+from eoip.identity.resolver import merge_source_aliases, person_identity
 from eoip.ingestion.jira import FileEventCapture
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
@@ -75,13 +76,22 @@ class RepositoryIngestionService:
         self._issue_links(commit, message, "IMPLEMENTS", edge_props)
 
         if author_email:
+            person_cid, source_alias = person_identity(author_email, "git", author_email)
+            existing_person = self.store.get_vertex_by_canonical_id(person_cid)
             person = self.store.upsert_vertex(
                 "Person",
                 {
                     **shared,
-                    "canonical_id": f"urn:eoip:identity:person:email:{author_email}",
+                    "canonical_id": person_cid,
                     "display_name": author_name or author_email,
                     "email": author_email,
+                    "source_aliases": (
+                        merge_source_aliases(
+                            existing_person["properties"].get("source_aliases"), source_alias
+                        )
+                        if existing_person
+                        else source_alias
+                    ),
                 },
             )
             ingested_nodes.append(person)

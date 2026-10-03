@@ -12,6 +12,22 @@ from eoip.graph.store import Edge, GraphQueryTimeout, GraphStore, graph_query_de
 Direction = Literal["outgoing", "incoming", "both"]
 
 
+def _path_evidence_count(edges: list[Edge]) -> int:
+    return sum(
+        1
+        for edge in edges
+        if edge["properties"].get("source_ref") or edge["properties"].get("evidence_key")
+    )
+
+
+def impact_rationale(item: dict) -> str:
+    """Deterministic 'why included' summary for one impacted item."""
+    edges = item["path"]["edges"]
+    labels = sorted({edge["label"] for edge in edges})
+    evidence = _path_evidence_count(edges)
+    return f"{len(edges)} hop(s) via {', '.join(labels)}; evidence: {evidence} source ref(s)"
+
+
 DEFAULT_TRAVERSAL_EDGES = frozenset(
     {
         "CONTAINS",
@@ -135,27 +151,27 @@ class GraphTraversal:
             try:
                 self._check_deadline(deadline)
             except GraphQueryTimeout:
-                return {"source": source, "impacted": impacted, "truncated": True}
+                return self._finalize_impact(source, impacted, True)
             if len(visited) >= self._max_visited:
-                return {"source": source, "impacted": impacted, "truncated": True}
+                return self._finalize_impact(source, impacted, True)
             current_id, vertices, edges = queue.popleft()
             if len(edges) >= depth_limit:
                 try:
                     neighbors = self._neighbors(current_id, direction, deadline)
                 except GraphQueryTimeout:
-                    return {"source": source, "impacted": impacted, "truncated": True}
+                    return self._finalize_impact(source, impacted, True)
                 if any(neighbor_id not in visited for _, neighbor_id in neighbors):
                     truncated = True
                 continue
             try:
                 neighbors = self._neighbors(current_id, direction, deadline)
             except GraphQueryTimeout:
-                return {"source": source, "impacted": impacted, "truncated": True}
+                return self._finalize_impact(source, impacted, True)
             for edge, neighbor_id in neighbors:
                 try:
                     self._check_deadline(deadline)
                 except GraphQueryTimeout:
-                    return {"source": source, "impacted": impacted, "truncated": True}
+                    return self._finalize_impact(source, impacted, True)
                 if neighbor_id in visited:
                     continue
                 try:
@@ -163,12 +179,9 @@ class GraphTraversal:
                         neighbor = self._store.get_vertex(neighbor_id)
                     self._check_deadline(deadline)
                 except GraphQueryTimeout:
-                    return {"source": source, "impacted": impacted, "truncated": True}
+                    return self._finalize_impact(source, impacted, True)
                 if neighbor is None or neighbor["properties"].get("deleted_at"):
                     continue
-                if len(impacted) >= self._max_results:
-                    truncated = True
-                    return {"source": source, "impacted": impacted, "truncated": truncated}
                 visited.add(neighbor_id)
                 next_vertices = [*vertices, neighbor]
                 next_edges = [*edges, edge]
@@ -176,6 +189,21 @@ class GraphTraversal:
                     {"vertex": neighbor, "path": {"vertices": next_vertices, "edges": next_edges}}
                 )
                 queue.append((neighbor_id, next_vertices, next_edges))
+        return self._finalize_impact(source, impacted, truncated)
+
+    def _finalize_impact(self, source: dict, impacted: list[dict], truncated: bool) -> dict:
+        """Annotate rationale, then keep the most relevant items under the cap."""
+        for item in impacted:
+            item["rationale"] = impact_rationale(item)
+        impacted.sort(
+            key=lambda item: (
+                len(item["path"]["edges"]),
+                -_path_evidence_count(item["path"]["edges"]),
+            )
+        )
+        if len(impacted) > self._max_results:
+            truncated = True
+            impacted = impacted[: self._max_results]
         return {"source": source, "impacted": impacted, "truncated": truncated}
 
     def _depth_limit(self, requested: int | None) -> int:

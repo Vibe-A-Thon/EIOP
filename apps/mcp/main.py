@@ -88,6 +88,43 @@ def create_app():
         )
 
     @mcp.tool()
+    async def list_agents() -> dict:
+        """List governed Deep Agents, capabilities, risk, and execution budgets."""
+        return await call("GET", "/api/v1/agents")
+
+    @mcp.tool()
+    async def run_agent(
+        agent_id: str,
+        goal: str,
+        context_refs: list[str] | None = None,
+        dry_run: bool = False,
+        synthesize: bool = False,
+    ) -> dict:
+        """Run an allowlisted agent; mutations can only be returned as inert proposals."""
+        from urllib.parse import quote
+
+        return await call(
+            "POST",
+            "/api/v1/agents/" + quote(agent_id, safe="") + "/runs",
+            json={
+                "goal": goal,
+                "context_refs": context_refs or [],
+                "dry_run": dry_run,
+                "synthesize": synthesize,
+            },
+        )
+
+    @mcp.tool()
+    async def agent_explanation(run_id: str) -> dict:
+        """Return evidence, confidence, uncertainty, and policy decisions for an agent run."""
+        from urllib.parse import quote
+
+        return await call(
+            "GET",
+            "/api/v1/agents/runs/" + quote(run_id, safe="") + "/explanation",
+        )
+
+    @mcp.tool()
     async def code_symbol(qualified_name: str) -> dict:
         """Look up a code symbol by qualified name and return graph context."""
         return await call("GET", "/api/v1/search", params={"q": qualified_name, "limit": 5})
