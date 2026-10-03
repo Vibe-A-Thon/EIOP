@@ -117,7 +117,7 @@ services:
       dockerfile: deploy/Dockerfile
       target: test
     profiles: [test]
-    command: [python, -m, pytest, -q]
+    command: [python, -m, pytest]
 
   smoke:
     <<: *application
@@ -143,7 +143,7 @@ services:
     environment:
       EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/docker.ps1 first}
     volumes:
-      - ../test-results:/app/test-results
+      - ../test-results/browser:/app/test-results
     networks: [backend]
     depends_on:
       eoip-web: {condition: service_healthy}

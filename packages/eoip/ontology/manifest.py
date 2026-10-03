@@ -350,6 +350,7 @@ EDGE_LABELS: dict[str, tuple[list[str], list[str], list[str]]] = {
     "CHILD_OF": (["Feature", "UserStory"], ["Epic", "Feature"], []),
     "LOGGED_BY": (["LogAggregate"], ["APIService", "Deployment", "Repository"], []),
     "COVERS": (["TestSuite", "TestCycle"], ["WorkItem", "Feature", "UserStory", "Epic"], []),
+    "SUCCEEDS": (["Commit"], ["Commit"], []),
 }
 
 # Index baseline (11-graph-schema.md §Index baseline; FR-GRAPH-008)

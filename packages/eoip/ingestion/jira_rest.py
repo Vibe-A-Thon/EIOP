@@ -11,6 +11,7 @@ from eoip.connectors.jira import JiraConnector
 from eoip.connectors.reconciliation import SourceReconciler
 from eoip.contracts.source_event import SourceEventV2, utc_now_iso
 from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
+from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
@@ -258,6 +259,7 @@ class JiraTemporalIngestionService:
             },
         )
         linked = []
+        ingested_vertices = []
         for event, mapped in accepted:
             result = self.evolution.evolve_entity(
                 mapped["label"], mapped["canonical_id"], mapped["properties"], event
@@ -289,6 +291,8 @@ class JiraTemporalIngestionService:
                 "source_ref": evidence["properties"]["source_ref"],
                 "source_system": "jira",
                 "creation_status": "DETERMINISTIC",
+                "ontology_version": ONTOLOGY_VERSION,
+                "schema_version": SCHEMA_VERSION,
             }
             self.store.upsert_edge(
                 "EVIDENCED_BY",
@@ -307,10 +311,12 @@ class JiraTemporalIngestionService:
                 },
             )
             self._link_entity(mapped, entity, event, edge_props)
+            ingested_vertices.append(entity)
             if mapped["kind"] == "issue":
                 linked.append((mapped, entity, event, edge_props))
         for mapped, entity, event, edge_props in linked:
             self._link_issue_dependencies(mapped, entity, event, edge_props)
+        link_domains(self.store, ingested_vertices)
 
     def _link_entity(self, mapped: dict, entity: dict, event: SourceEventV2, props: dict) -> None:
         kind = mapped["kind"]

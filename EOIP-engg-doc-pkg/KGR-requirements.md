@@ -1,8 +1,8 @@
 # KGR — Knowledge Graph Renderer & Explorer: Requirements Specification
 
-**Version:** 2.0  
+**Version:** 3.0  
 **Date:** 2026-10-03  
-**Status:** Final Draft  
+**Status:** Final Draft (Revised — comprehensive competitor audit)  
 **Scope:** A knowledge graph visualization, exploration, and analysis platform integrated into EOIP that surpasses Graphify, Neo4j Bloom, Linkurious, Gephi, Graphistry, yFiles, Sourcetrail, CodeSee, Sourcegraph, and every other tool in the category.
 
 ---
@@ -15,19 +15,19 @@ The Knowledge Graph Renderer (KGR) module transforms EOIP from a query-and-inspe
 
 | Capability | Graphify | Neo4j Bloom | Linkurious | Gephi | Graphistry | yFiles | Sourcetrail | CodeSee | Sourcegraph | code2flow | **KGR (EOIP)** |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Data sources | Neo4j only | Neo4j only | Neo4j, JanusGraph | File import | CSV, Parquet, Neo4j | Any (SDK) | C/C++/Java/Python | GitHub only | Multi-host | Files | **Any GraphStore, file import, 6+ connectors** |
+| Data sources | Self-contained (NetworkX + tree-sitter AST, 37+ langs) | Neo4j only | Neo4j, Cosmos DB, Neptune, Memgraph, Spanner | File import | CSV, Parquet, Neo4j | Any (SDK) | C/C++/Java/Python | GitHub only | Multi-host | Files | **Any GraphStore, file import, 6+ connectors** |
 | Max nodes (interactive) | ~5K | ~10K | ~10K | ~50K (desktop) | 8M (GPU) | ~5K (no optimization) | ~1K | ~1K | N/A (search) | ~500 | **50K+ (WebGL), 5K (Canvas)** |
-| Graph types | Property only | Property only | Property only | Network only | Tabular→graph | Any (SDK) | Call graph only | Dependency only | N/A | Call graph only | **8 specialized types** |
+| Graph types | Property only | Property only | Property only | Network only | Tabular→graph | Any (SDK) | Call graph only | Dependency only | N/A | Call graph only | **10 specialized types** |
 | Layouts | Force only | 4 layouts | Force + hierarchical | ForceAtlas2 + 6 | Force only | 20+ (best) | Custom Qt | Auto | N/A | Graphviz | **12 algorithms** |
 | Impact/blast radius | None | None | None | None | None | None | None | None | None | None | **BFS blast radius + reverse impact** |
 | Centrality metrics | None | GDS required | None | 6 metrics | None | Basic | None | None | None | None | **8 centrality algorithms** |
 | Community detection | Leiden | GDS required | None | Modularity | Clustering | None | None | None | None | None | **Leiden + Louvain + Label Propagation** |
-| Evidence/provenance | Extracted/Inferred | None | None | None | None | None | None | None | None | None | **First-class evidence chain + trust propagation** |
+| Evidence/provenance | Extracted/Inferred/Ambiguous | None | None | None | None | None | None | None | None | None | **First-class evidence chain + trust propagation + AMBIGUOUS status** |
 | Enterprise ontology | None | None | None | None | None | None | None | None | None | None | **OWL/RDFS-aligned ontology viewer** |
 | Node inspection | Properties panel | Properties + NL | Properties | Attributes | Tooltip | Custom | 3-panel (graph+code+search) | Map view | Code intel | None | **8-tab inspector with impact, evidence, similarity** |
 | Filtering | Label filter | Perspective filter | Faceted | Partition | Histogram + time | Custom | None | None | Repo scope | None | **10-dimensional filtering + saved presets** |
 | Search | Subgraph query | NL + Cypher | Typeahead faceted | None | Filter | None | Fuzzy symbol | NL queries | Regex + structural | None | **Semantic + path + fuzzy + NL-ready** |
-| Export | graph.html, JSON | PNG, CSV | PNG, CSV, XLSX | PNG, SVG, PDF, GEXF | CSV, JSON, Parquet | PNG-PDF-SVG-VSDX | PNG | None | None | DOT, PNG, SVG | **PNG, SVG, PDF, JSON-LD, GraphML, CSV, clipboard** |
+| Export | graph.html, JSON, GraphML, SVG, Obsidian vault, Mermaid, Cypher | PNG, CSV | PNG, CSV, XLSX | PNG, SVG, PDF, GEXF | CSV, JSON, Parquet | PNG-PDF-SVG-VSDX | PNG | None | None | DOT, PNG, SVG | **PNG, SVG, PDF, JSON-LD, GraphML, CSV, GEXF, Obsidian, Mermaid, Cypher, clipboard** |
 | Real-time updates | Git hooks | None | Alerting | None | Streaming | WebSocket | None | PR sync | Webhooks | None | **WebSocket + polling fallback** |
 | Collaboration | None | Shared scenes | Case management | None | Shared URLs | Real-time collab | Bookmarks | Code tours | Notebooks (removed) | None | **Annotations + bookmarks + context export** |
 | Accessibility | None | Basic | Basic | None | None | Basic | None | None | None | None | **WCAG 2.1 AA, keyboard nav, color-blind modes** |
@@ -64,6 +64,19 @@ Every documented competitor weakness becomes a KGR design requirement:
 | Call-graph-only visualization | Sourcetrail, code2flow | 8 specialized graph types |
 | Crashes on large indexing | Sourcetrail (SQLite locks) | Bounded queries, no full-index required |
 | Non-deterministic output | code2flow | Deterministic graph traversal with policy bounds |
+| No node group collapsing / declutter | Graphify, Gephi, code2flow | Node group collapsing with combo nodes |
+| No geo-mode / geographic positioning | Graphify, Gephi, Sourcetrail, code2flow | Geo-mode when entities have location metadata |
+| No code + graph side-by-side view | Graphify, Gephi, Graphistry, code2flow | Synchronized code viewer + graph panel (Sourcetrail-inspired) |
+| No visual query builder | Graphify, Gephi, code2flow, Sourcetrail | No-code visual query builder for non-technical users |
+| No dead code / orphaned entity detection | Graphify, Neo4j Bloom, Gephi | Orphaned entity detection + dead code highlighting |
+| No community auto-labeling | Neo4j Bloom, Gephi, Graphistry | Automated community naming from dominant entity types |
+| No PR/change conflict detection | Neo4j Bloom, Gephi, Sourcetrail | PR dashboard with community-based conflict detection |
+| Ollama backend drops 96% of edges | Graphify | No LLM dependency for graph construction — deterministic AST + API extraction |
+| Watch mode has unbounded O(n) state | Graphify | Bounded event buffer with ring-buffer eviction |
+| 10K node display limit | Neo4j Bloom | Progressive WebGL rendering to 50K+ |
+| Performance collapses at 384K nodes | Gephi | Progressive rendering with virtualization |
+| Edge types immutable after creation | Linkurious | Schema-driven mutable edge types via ontology manifest |
+| No subgraph extraction with depth | Graphify, Neo4j Bloom | Configurable neighborhood expansion (1-8 hops) with depth control |
 
 ---
 
@@ -212,7 +225,7 @@ When an edge is selected, the system SHALL display:
 - Temporal context: when was this relationship established
 - Path context: which known paths use this edge
 - Parallel edges: other relationships between the same two entities
-- Trust badge: DETERMINISTIC (green), INFERRED (amber), MANUAL (blue)
+- Trust badge: DETERMINISTIC (green), INFERRED (amber), AMBIGUOUS (orange), MANUAL (blue)
 
 ### FR-KGR-004: Interactive Graph Exploration
 
@@ -324,19 +337,24 @@ This surpasses yFiles (20 but €9.2K), Gephi (7), and every free tool.
 - Structural diff: changes in topology (new connections, broken paths)
 - **Unique to KGR** — only yFiles has basic diff; KGR adds structural analysis
 
-### FR-KGR-007: Export & Sharing (7+ Formats)
+### FR-KGR-007: Export & Sharing (11+ Formats)
 
-This surpasses every competitor's export (Graphify: HTML/JSON, Gephi: PNG/SVG/PDF/GEXF, yFiles: PNG-PDF-SVG-VSDX but €9.2K, Graphistry: CSV/JSON/Parquet).
+This surpasses every competitor's export (Graphify: HTML/JSON/GraphML/SVG/Obsidian/Mermaid/Cypher, Gephi: PNG/SVG/PDF/GEXF, yFiles: PNG-PDF-SVG-VSDX but €9.2K, Graphistry: CSV/JSON/Parquet).
 
 - **PNG export**: current canvas at 2x resolution
 - **SVG export**: vector graph via `cy.svg()`
 - **PDF report**: graph image + node table + relationship summary + metrics
 - **JSON-LD export**: graph data with EOIP ontology context
 - **GraphML export**: standard graph interchange format
+- **GEXF export**: Gephi-compatible graph exchange format (matches Gephi's native format)
 - **CSV export**: separate nodes.csv and edges.csv files
+- **Obsidian vault export**: entity-per-note structure with `[[wikilinks]]` for graph relationships, preserving domain hierarchy as folder structure (matches Graphify's Obsidian export)
+- **Mermaid diagram export**: entity relationships as Mermaid flowchart/graph syntax for embedding in Markdown documentation (matches Graphify's Mermaid callflow)
+- **Cypher script export**: graph as Neo4j-compatible Cypher CREATE/MERGE statements for pushing to Neo4j or FalkorDB (matches Graphify's Cypher export)
 - **Clipboard**: copy selected node/edge as formatted Markdown
 - **Context export**: current lens context as reusable JSON
 - Export dialog with format selector, resolution options, scope (visible/all)
+- Annotations included in PDF/JSON-LD/context exports when "Include annotations" is checked
 
 ### FR-KGR-008: Annotation & Collaboration
 
@@ -357,6 +375,105 @@ This surpasses every competitor's export (Graphify: HTML/JSON, Gephi: PNG/SVG/PD
 - Anomaly highlighting: nodes with unusual degree patterns
 - Recommended next expansions based on current exploration context
 - **Surpasses** Neo4j Bloom's NL queries by using local-first LLM (no cloud)
+
+### FR-KGR-010: Node Group Collapsing & Combo Declutter
+
+Addresses a gap present in Graphify, Gephi, and code2flow. Matches Linkurious, yFiles, and KeyLines.
+
+- **Group by domain**: Collapse all entities in a GraphDomain into a single combo node
+- **Group by type**: Collapse all entities of the same vertex label into a combo node
+- **Group by community**: Collapse detected community clusters into combo nodes
+- **Custom grouping**: Select multiple nodes and collapse into a named group
+- Combo node displays: group name, member count badge, aggregate edge count
+- Double-click combo node to expand back to individual members
+- Nested grouping: groups within groups (max 3 levels)
+- Edges between groups become bundled super-edges with count labels
+- Collapse/expand state persists across layout changes
+- Keyboard shortcut: `G` to group selected, `Shift+G` to ungroup
+- **Unique to KGR among free tools** — yFiles has this but costs €9,200+/yr, KeyLines is commercial
+
+### FR-KGR-011: Geographic Mode (Geo-Mode)
+
+Addresses a gap present in Graphify, Gephi, Sourcetrail, and code2flow. Matches Linkurious and Ogma.
+
+- Position entities on a geographic map when they have location metadata (latitude/longitude properties, or region/datacenter tags)
+- Map tile provider: OpenStreetMap (local tile cache, no external CDN in production)
+- Entities without location data clustered in a sidebar or positioned at configurable default coordinates
+- Edge rendering: curved lines between geographic positions with arrow markers
+- Zoom levels: continent → country → city → site with progressive entity display
+- Toggle between geo-mode and standard graph layout without losing selection state
+- Use case: visualize service deployments, team locations, infrastructure topology
+- Available as layout option in GraphToolbar (layout algorithm #13)
+- Graceful degradation: if no entities have location data, show informative message
+
+### FR-KGR-012: Code + Graph Side-by-Side View
+
+Inspired by Sourcetrail's defining feature (graph + code + search synchronized). No free tool currently offers this in the browser.
+
+- Split-pane view: graph canvas (left) + code viewer (right)
+- Click a CodeSymbol node → code viewer scrolls to its definition (start_line/end_line)
+- Click a File node → code viewer shows that file with syntax highlighting
+- Highlight a function in code → corresponding graph node selected and centered
+- Breadcrumb trail showing: File → Class → Method navigation
+- Code viewer: read-only Monaco editor (already bundled in VS Code extension context) or lightweight syntax highlighter
+- Source file retrieval: fetch from local filesystem via API endpoint `GET /api/v1/files/{path}`
+- Diff view: when a Commit node is selected, show the commit's diff in the code panel
+- Available as a toggle in the KGR toolbar ("Code Panel" button)
+- **Surpasses Sourcetrail** by being browser-based (Sourcetrail was desktop Qt only) and supporting all languages (Sourcetrail supported only 4)
+
+### FR-KGR-013: Visual Query Builder (No-Code)
+
+Addresses Linkurious's no-code Query Builder capability. No other free tool offers this.
+
+- Drag-and-drop visual query construction on a canvas
+- Palette of entity types (from ontology manifest) as draggable node templates
+- Palette of relationship types as connectable edge templates
+- Property filter widgets on each node/edge template: operator (=, !=, >, <, contains, regex) + value
+- Result limit and depth controls
+- "Run Query" button converts visual pattern to QueryPlan and executes
+- Results rendered on the main graph canvas with query pattern highlighted
+- Save/load query patterns in localStorage with named configurations
+- Share queries as exportable JSON
+- **Surpasses Linkurious** by being integrated with the full KGR explorer, not a standalone mode
+
+### FR-KGR-014: Dead Code & Orphaned Entity Detection
+
+Inspired by code2flow's orphaned function detection. Extended to cover all entity types.
+
+- **Orphaned entities**: identify graph nodes with zero incoming edges (unreferenced)
+- **Dead code symbols**: CodeSymbol nodes with no CALLED_BY, REFERENCES, or IMPORTS edges
+- **Disconnected components**: entities in components not connected to any domain hub
+- **Stale entities**: entities whose last ingestion_run is older than a configurable threshold
+- Visual indicator: orphaned nodes get a distinct style (dashed border, dimmed opacity)
+- Filter dimension: toggle to show only orphaned/stale entities
+- Available in the Health dashboard as a dedicated "Dead Code" widget with count and drill-down
+- API endpoint: `GET /api/v1/graph/orphaned` returns orphaned entity list
+- **Surpasses code2flow** (only functions in 4 languages) by covering all entity types in a language-agnostic graph
+
+### FR-KGR-015: Community Auto-Labeling
+
+Addresses a gap in all competitors except Graphify (which has basic community labeling).
+
+- Automatically name detected communities based on the most prevalent entity types and shared properties within the cluster
+- Labeling algorithm: extract top-3 most common vertex labels + top-3 most common property values (e.g., "Code: auth-service, API, security")
+- Community labels displayed on convex hull overlays in the graph
+- Community labels shown in the community filter dropdown
+- Override: user can rename a community label (persisted in localStorage)
+- Community summary card: click a hull to see member count, dominant types, key hub nodes, intra-community density
+- **Surpasses Graphify** which labels communities but doesn't allow user overrides or show summary cards
+
+### FR-KGR-016: PR / Change Impact Dashboard
+
+Inspired by Graphify's PR dashboard (`graphify prs`) with community-based conflict detection.
+
+- **PR list**: display open pull requests/merge requests with title, branch, author, status
+- **Community overlap detection**: for each PR, identify which graph communities are touched by its changes
+- **Conflict risk indicator**: when two or more PRs touch the same community, flag as potential conflict (HIGH: >50% overlap, MEDIUM: 20-50%, LOW: <20%)
+- **Change heatmap**: overlay on the graph showing which nodes/edges are affected by each PR
+- **PR comparison view**: select two PRs to see their blast radius overlap
+- Data source: GitLab MR API / GitHub PR API via existing connectors
+- Available as a dedicated dashboard accessible from the KGR lens toolbar
+- **Surpasses Graphify** by providing visual overlap analysis (Graphify only lists PRs with community labels)
 
 ---
 
@@ -436,7 +553,7 @@ interface GraphEdge {
   from_id: string;
   to_id: string;
   properties: Record<string, unknown>;
-  creation_status?: 'DETERMINISTIC' | 'INFERRED' | 'MANUAL';
+  creation_status?: 'DETERMINISTIC' | 'INFERRED' | 'AMBIGUOUS' | 'MANUAL';
   evidence?: {
     source_ref?: string;
     evidence_key?: string;
@@ -634,7 +751,7 @@ class SimilarityRequest(BaseModel):
 
 | ID | Criterion | Competitor Gap Addressed |
 |---|---|---|
-| AC-01 | User can switch between 8 graph types with appropriate visualization | Graphify: 1 type, Bloom: 1, Gephi: 1 |
+| AC-01 | User can switch between 10 graph types with appropriate visualization | Graphify: 1 type, Bloom: 1, Gephi: 1 |
 | AC-02 | 8-tab inspector shows properties, relationships, impact, evidence, similarity, history, annotations, raw | Graphify: properties only |
 | AC-03 | Blast radius renders concentric rings with depth/type breakdown and risk | No competitor has this |
 | AC-04 | Centrality metrics computed and displayed as radar chart | Gephi: desktop only, Bloom: GDS required |
@@ -642,7 +759,7 @@ class SimilarityRequest(BaseModel):
 | AC-06 | Graph renders 1,000 nodes in < 2 seconds | Sourcetrail: crashes, code2flow: cluttered |
 | AC-07 | Progressive WebGL rendering handles 50,000 nodes | Graphify: 5K limit |
 | AC-08 | All existing EOIP lenses continue unchanged | N/A |
-| AC-09 | Export produces valid PNG, SVG, PDF, JSON-LD, GraphML, CSV | Graphify: HTML only |
+| AC-09 | Export produces valid PNG, SVG, PDF, JSON-LD, GraphML, CSV, GEXF, Obsidian, Mermaid, Cypher | Graphify: HTML/JSON/GraphML/SVG/Obsidian/Mermaid/Cypher — KGR matches all + adds PDF/JSON-LD/GEXF |
 | AC-10 | 10-dimensional filter state persists across graph type switches | Graphify: label only |
 | AC-11 | Minimap, fisheye, semantic zoom all function | No competitor bundles all three |
 | AC-12 | Full keyboard navigation without mouse | No competitor achieves full keyboard nav |
@@ -654,6 +771,15 @@ class SimilarityRequest(BaseModel):
 | AC-18 | Graph diff shows added/removed/modified entities | No free competitor has this |
 | AC-19 | What-if simulation shows impact of entity removal | No competitor has this |
 | AC-20 | Annotations on nodes/edges persist and export with reports | No free competitor has this |
+| AC-21 | Node group collapsing works with domain/type/community/custom grouping | yFiles (€9.2K), KeyLines (commercial), Linkurious (commercial) — KGR does it free |
+| AC-22 | Code + graph side-by-side view with synchronized navigation | Sourcetrail (discontinued, desktop, 4 langs) — KGR is browser-based, all languages |
+| AC-23 | Visual query builder produces valid QueryPlans without writing code | Linkurious (commercial) — KGR does it free |
+| AC-24 | Dead code / orphaned entity detection with visual indicators | code2flow (4 langs, CLI only) — KGR covers all entity types |
+| AC-25 | Community auto-labeling with user override and summary cards | Graphify (basic labeling only, no override) |
+| AC-26 | PR/change impact dashboard with community overlap detection | Graphify (list only, no visual overlap) |
+| AC-27 | 11+ export formats covering every competitor's export capability | Surpasses all: matches Graphify's 7 + adds PDF/JSON-LD/GEXF/clipboard |
+| AC-28 | AMBIGUOUS evidence status supported alongside DETERMINISTIC/INFERRED/MANUAL | Matches Graphify's 3-tier evidence (EXTRACTED/INFERRED/AMBIGUOUS) |
+| AC-29 | Geo-mode positions entities on map when location metadata available | Linkurious, Ogma (commercial) — KGR does it free |
 
 ---
 
@@ -690,3 +816,9 @@ class SimilarityRequest(BaseModel):
 | Semantic zoom | Adjusting visible detail based on zoom level |
 | Trust propagation | How evidence confidence flows through the graph along edges |
 | What-if analysis | Simulating the effect of adding/removing an entity on the graph structure |
+| Ambiguous edge | Relationship that couldn't be fully resolved — e.g., dynamic dispatch, reflection, string-built imports |
+| Combo node | A collapsed group of nodes represented as a single visual element |
+| Geo-mode | Positioning graph nodes on a geographic map using location metadata |
+| Orphaned entity | A graph node with zero incoming edges — unreferenced by any other entity |
+| Visual query builder | Drag-and-drop interface for constructing graph queries without writing code |
+| Community labeling | Automated naming of detected clusters based on member entity characteristics |

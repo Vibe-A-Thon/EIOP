@@ -8,6 +8,7 @@ from uuid import uuid4
 
 from eoip.connectors.gitlab_json import GitLabJsonConnector
 from eoip.contracts.source_event import SourceEvent, utc_now_iso
+from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
@@ -93,6 +94,7 @@ class GitLabIngestionService:
                     "ingestion_run_id": run_id,
                 },
             )
+        ingested_vertices = [repo] if repo is not None else []
         for event, record in mapped:
             mr_kind = record["kind"] == "merge_request"
             entity_type = "MergeRequest" if mr_kind else "PipelineRun"
@@ -130,6 +132,7 @@ class GitLabIngestionService:
                     }
                 )
             entity = self.store.upsert_vertex(entity_type, props)
+            ingested_vertices.append(entity)
             evidence = self.store.upsert_vertex(
                 "Evidence",
                 {
@@ -153,6 +156,8 @@ class GitLabIngestionService:
                 "source_system": "gitlab",
                 "ingestion_run_id": run_id,
                 "creation_status": "DETERMINISTIC",
+                "ontology_version": ONTOLOGY_VERSION,
+                "schema_version": SCHEMA_VERSION,
             }
             self.store.upsert_edge(
                 "EVIDENCED_BY",
@@ -233,6 +238,8 @@ class GitLabIngestionService:
                             work_item["vid"],
                             {"fact_key": f"pipeline-issue:{canonical_id}:{issue_key}", **evidence_props},
                         )
+
+        link_domains(self.store, ingested_vertices)
 
     def _write_dlq(self, event: SourceEvent, error: str) -> None:
         write_dlq_record(

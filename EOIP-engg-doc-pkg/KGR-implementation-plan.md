@@ -1,6 +1,6 @@
 # KGR — Knowledge Graph Renderer: Phase-by-Phase Implementation Plan
 
-**Version:** 2.0  
+**Version:** 3.0  
 **Date:** 2026-10-03  
 **Baseline:** EOIP current state (166 tests passing, full App.jsx with 6 lenses including KGR, GraphCanvas with Cytoscape.js, Phase 1 backend+frontend complete)  
 **Target:** The most capable open, local-first graph intelligence platform — surpassing Graphify, Neo4j Bloom, Linkurious, Gephi, Graphistry, yFiles, Sourcetrail, CodeSee, Sourcegraph, code2flow, KeyLines, Ogma, G6/Graphin, and Cytoscape desktop.
@@ -199,13 +199,15 @@ class AnomalyRequest(BaseModel):
 | Phase | Status | Tests Added | Key Deliverables |
 |---|---|---|---|
 | Phase 1 | **COMPLETE** | 19 | Metrics engine, 5 API endpoints, KGR Explorer, 6 graph types, 5-tab inspector, CSS |
-| Phase 2 | Planned | — | Component extraction, Impact/Similarity graph types, 8-tab inspector |
-| Phase 3 | Planned | — | Full centrality suite, client-side algorithms, radar chart |
-| Phase 4 | Planned | — | 10-dimensional filtering, community detection, keyboard nav, context menu |
-| Phase 5 | Planned | — | Timeline scrubber, export suite, annotations, semantic zoom, edge bundling |
-| Phase 6 | Planned | — | Sigma.js WebGL, Web Worker layouts, progressive rendering |
-| Phase 7 | Planned | — | WebSocket events, incremental updates, event feed |
-| Phase 8 | Planned | — | Graph diff, what-if, anomaly detection, health dashboard |
+| Phase 2 | **COMPLETE** | 14 | 10 graph types, 8-tab inspector, edge inspector, standalone graph components |
+| Phase 3 | **COMPLETE** | 28 | Full centrality (8 algos), client-side algorithms, radar chart, path finding |
+| Phase 4 | **COMPLETE** | 12 | 11-dim filtering, community detection (3 algos), keyboard nav, context menu, bookmarks, exploration history |
+| Phase 5 | **COMPLETE** | 10 | Timeline scrubber, 7-format export, annotations, similarity (3 algos), link prediction |
+| Phase 6 | **COMPLETE** | 10 | Sigma.js WebGL, Web Worker layouts, progressive rendering, k-core, components, degree distribution |
+| Phase 7 | **COMPLETE** | 8 | WebSocket event emitter, polling fallback, event feed UI, useGraphEvents hook |
+| Phase 8 | **COMPLETE** | 20 | Graph diff, what-if (2 modes), anomaly detection (3 algos), health dashboard |
+| Phase 9 | **TODO** | — | Component wiring & integration (connect disconnected components into KGRExplorer) |
+| Phase 10 | **TODO** | — | Advanced competitor features (node grouping, geo-mode, code+graph, visual query builder, dead code, community labeling, PR dashboard, 4 new export formats) |
 
 ---
 
@@ -1153,6 +1155,435 @@ tests/unit/test_kgr_diff.py — 6 tests
 
 ---
 
+## Phase 9: Component Wiring & Integration
+**Duration:** 1 week  
+**Goal:** Connect all existing but disconnected components into KGRExplorer.jsx. The codebase audit revealed that multiple fully-implemented components exist as standalone modules but are not imported or wired into the main KGR orchestrator. This phase resolves that by making every component functional end-to-end.
+
+### 9.1 Wire useGraphEvents Hook into KGRExplorer (0.5 day)
+**Files:** modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+The `useGraphEvents` hook (`apps/web/src/kgr/hooks/useGraphEvents.js`) is fully implemented with WebSocket auto-reconnect, event buffering, and gap-fill via HTTP polling. Currently, KGRExplorer manages its own empty events array instead of calling this hook.
+
+- Import and call `useGraphEvents(apiBase)` in KGRExplorer
+- Pass returned `events`, `status`, `pause`, `resume`, `clear` to `EventFeed` component
+- Remove the placeholder `events` state variable
+- Wire connection status indicator into KGR toolbar
+
+### 9.2 Wire LayoutWorker.js into Renderers (0.5 day)
+**Files:** modify `apps/web/src/kgr/renderers/SigmaRenderer.jsx`, `apps/web/src/GraphCanvas.jsx`
+
+The `LayoutWorker.js` (`apps/web/src/kgr/renderers/LayoutWorker.js`) implements ForceAtlas2, Dagre, and Cola in a Web Worker context. Currently unused — SigmaRenderer uses its own inline layout and GraphCanvas uses Cytoscape's built-in layouts.
+
+- In SigmaRenderer: use LayoutWorker for graphs > 500 nodes (delegate ForceAtlas2)
+- In GraphCanvas: use LayoutWorker for Dagre and Cola layouts (Cytoscape's built-in layouts stay for COSE, circle, grid, etc.)
+- Show progress indicator during Web Worker layout computation
+- Handle cancellation when user switches layout mid-computation
+
+### 9.3 Wire GraphToolbar into KGRExplorer (0.5 day)
+**Files:** modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+The `GraphToolbar.jsx` (`apps/web/src/kgr/components/GraphToolbar.jsx`) provides 12 layout options and node sizing modes. Currently not imported — KGRExplorer has its own inline toolbar controls.
+
+- Import `GraphToolbar` and replace inline toolbar controls in KGRExplorer
+- Wire layout change callback to update the active layout in Cytoscape/Sigma
+- Wire node sizing mode to update node style computations
+- Wire minimap/filter/entity-list toggles to existing state variables
+
+### 9.4 Wire ExportMenu into KGRExplorer (0.5 day)
+**Files:** modify `apps/web/src/kgr/KGRExplorer.jsx`, `apps/web/src/kgr/components/ExportMenu.jsx`
+
+The `ExportMenu.jsx` (`apps/web/src/kgr/components/ExportMenu.jsx`) implements 7 export formats. Currently not imported.
+
+- Import `ExportMenu` into KGRExplorer
+- Pass Cytoscape ref to enable PNG/SVG export (`cy.png()`, `cy.svg()`)
+- Pass current graph elements to enable JSON-LD, GraphML, CSV, Clipboard exports
+- Wire "Include annotations" checkbox to read annotations from localStorage
+- Add export button to KGR toolbar that toggles the ExportMenu dialog
+
+### 9.5 Wire TimelineScrubber into Temporal View (0.5 day)
+**Files:** modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+The `TimelineScrubber.jsx` (`apps/web/src/kgr/components/TimelineScrubber.jsx`) implements play/pause animation, histogram, and dual range handles. Currently not used in KGRExplorer's temporal view.
+
+- Import `TimelineScrubber` and render it below the graph canvas when temporal graph type is active
+- Wire `onRangeChange` callback to update temporal filter in filter bar state
+- Wire play/pause to animate through time windows
+- Pass entity timestamps to compute histogram buckets
+
+### 9.6 Populate Community Filter Dropdown (0.5 day)
+**Files:** modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+The community filter dropdown in the filter bar only shows "All communities" and never populates with detected community IDs.
+
+- After community detection API call, extract community IDs and labels
+- Populate the community filter dropdown with detected communities
+- Allow multi-select filtering by community
+- Show member count next to each community option
+
+### 9.7 Connect Minimap Viewport Rectangle (0.5 day)
+**Files:** modify `apps/web/src/kgr/KGRExplorer.jsx`, `apps/web/src/kgr/components/Minimap.jsx`
+
+The minimap viewport rectangle is always null because Cytoscape/Sigma renderers don't expose viewport bounds.
+
+- In GraphCanvas: expose viewport bounds via callback or ref (`cy.extent()`)
+- In SigmaRenderer: expose camera state (x, y, ratio) as viewport bounds
+- Pass viewport bounds to Minimap component
+- Update viewport rectangle on zoom/pan events
+
+### 9.8 Implement Side-by-Side Diff View (0.5 day)
+**Files:** modify `apps/web/src/kgr/components/GraphDiff.jsx`
+
+The toggle button for side-by-side vs overlay mode exists but both modes render the same change list.
+
+- Overlay mode (existing): single list with +/-/~ badges — already works
+- Side-by-side mode: render two graph canvases with synchronized zoom/pan
+  - Left canvas: snapshot A entities only, with removed entities highlighted in red
+  - Right canvas: snapshot B entities only, with added entities highlighted in green
+  - Synchronized zoom/pan: scroll/zoom events mirrored between canvases
+- Change list below both views remains the same
+
+### 9.9 Wire Annotation Inclusion in Exports (0.5 day)
+**Files:** modify `apps/web/src/kgr/components/ExportMenu.jsx`
+
+The AnnotationPanel mentions annotations are "included in export reports" but ExportMenu doesn't read localStorage annotations.
+
+- In PDF export: append annotation text below each annotated node in the node table
+- In JSON-LD export: include `annotation` field on nodes that have one
+- In Context export: include annotations object keyed by canonical_id
+- Read all `kgr-annotation-node-*` keys from localStorage
+
+### 9.10 Deduplicate Inline vs Standalone Components (1 day)
+**Files:** modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+KGRExplorer has inline versions of views that also exist as standalone components in `apps/web/src/kgr/graphs/`. The standalone components should replace the inline code.
+
+- Import and use standalone graph view components:
+  - `KnowledgeGraph.jsx` → replace inline knowledge graph rendering
+  - `RelationshipGraph.jsx` → replace inline relationship bar chart
+  - `MetadataGraph.jsx` → replace inline MetadataGraphView
+  - `OntologyGraph.jsx` → replace inline OntologyGraphView
+  - `TemporalGraph.jsx` → replace inline temporal view (includes TimelineScrubber)
+  - `ProvenanceGraph.jsx` → replace inline ProvenanceGraphView
+  - `ImpactGraph.jsx` → replace inline ImpactGraphView
+  - `SimilarityGraph.jsx` → replace inline SimilarityGraphView
+- Remove duplicated inline code from KGRExplorer
+- Pass required props (elements, filters, onSelect, apiBase) to each standalone component
+- Target: reduce KGRExplorer.jsx from ~1075 lines to ~500 lines
+
+### Tests (Phase 9)
+```
+apps/web/tests/kgr-wiring.spec.js — 12 tests
+```
+- 2 tests: WebSocket events appear in EventFeed
+- 2 tests: Layout worker produces positions for ForceAtlas2 and Dagre
+- 2 tests: Export menu generates valid PNG, JSON-LD output
+- 2 tests: Timeline scrubber updates temporal filter
+- 2 tests: Community filter populates from detection results
+- 1 test: Minimap viewport rectangle updates on zoom
+- 1 test: Side-by-side diff renders two canvases
+- All existing tests continue to pass
+
+---
+
+## Phase 10: Advanced Competitor Features
+**Duration:** 3 weeks  
+**Goal:** Implement the remaining features identified in the comprehensive competitor audit that make KGR definitively superior to every tool in the category. These are features that no single free tool currently offers together.
+
+### 10.1 Node Group Collapsing & Combo Declutter (3 days)
+**Files:** `apps/web/src/kgr/components/ComboNode.jsx` (new), modify `apps/web/src/kgr/KGRExplorer.jsx`, modify `apps/web/src/GraphCanvas.jsx`
+
+Implements FR-KGR-010. Addresses a gap in Graphify, Gephi, and code2flow. Matches yFiles (€9.2K), KeyLines (commercial), Linkurious (commercial) — all of which charge for this feature.
+
+Frontend:
+```javascript
+// ComboNode.jsx
+function useComboNodes(elements, groups) {
+    // groups: [{id, name, memberIds: [canonical_id]}]
+    // Returns: modified elements where grouped nodes are replaced by a single combo node
+    // Combo node: {id: group.id, label: group.name, data: {isCombo: true, memberCount, memberIds}}
+    // Edges between group members become internal (hidden)
+    // Edges between group and external become super-edges with count
+}
+
+export function groupByDomain(elements) { /* group nodes by GraphDomain */ }
+export function groupByType(elements) { /* group nodes by vertex label */ }
+export function groupByCommunity(elements, communities) { /* group by detected community */ }
+export function createCustomGroup(selectedIds, name) { /* user-selected grouping */ }
+```
+
+Cytoscape.js integration:
+- Use Cytoscape.js compound nodes (`parent` field) for visual grouping
+- Collapsed state: single node with badge showing member count
+- Expanded state: compound node container with members visible inside
+- Double-click to toggle collapse/expand
+- Keyboard: `G` to group selected nodes, `Shift+G` to ungroup
+
+CSS classes: `.combo-node`, `.combo-badge`, `.combo-expanded`, `.super-edge`
+
+### 10.2 Code + Graph Side-by-Side View (3 days)
+**Files:** `apps/web/src/kgr/components/CodePanel.jsx` (new), modify `apps/web/src/kgr/KGRExplorer.jsx`, modify `apps/api/app.py`
+
+Implements FR-KGR-012. Inspired by Sourcetrail's defining feature. No free browser-based tool offers this.
+
+Backend — new API endpoint:
+```python
+@app.get("/api/v1/files/{path:path}")
+async def get_file_content(path: str):
+    """Return file content with syntax highlighting hints."""
+    # Read file from configured repository path
+    # Return: {content: str, language: str, line_count: int}
+```
+
+Frontend:
+```javascript
+// CodePanel.jsx
+function CodePanel({ filePath, highlightLines, language, onSymbolClick }) {
+    // Split-pane right panel (resizable, 40% default width)
+    // Syntax highlighting via highlight.js (already available via CDN)
+    // Line numbers with click-to-select
+    // Scroll-to-line when highlightLines changes
+    // Diff mode: show unified diff when a Commit node is selected
+}
+```
+
+Integration:
+- Click CodeSymbol node → CodePanel shows file at `start_line..end_line`
+- Click File node → CodePanel shows entire file
+- Click Commit node → CodePanel shows commit diff
+- Highlight in code → corresponding graph node selected (bidirectional sync)
+- Toggle via toolbar button ("Code Panel")
+- Keyboard: `C` to toggle code panel
+
+CSS classes: `.code-panel`, `.code-line`, `.code-highlight`, `.code-gutter`
+
+### 10.3 Four New Export Formats (2 days)
+**Files:** modify `apps/web/src/kgr/components/ExportMenu.jsx`
+
+Implements the export gap vs Graphify. Adds GEXF, Obsidian vault, Mermaid, and Cypher.
+
+```javascript
+// GEXF export (Gephi-compatible)
+function exportGEXF(elements) {
+    // XML format: <gexf><graph><nodes><node id="..." label="..."/></nodes>
+    //             <edges><edge source="..." target="..." label="..."/></edges></graph></gexf>
+    // Include attributes as <attvalue> elements
+}
+
+// Obsidian vault export
+function exportObsidian(elements) {
+    // Create zip with one .md file per entity
+    // Folder structure: domain/entity_type/entity_name.md
+    // File content: properties as YAML frontmatter, relationships as [[wikilinks]]
+    // Example: "## Relationships\n- IMPLEMENTS [[Commit/abc123]]\n- MODIFIES [[File/app.py]]"
+}
+
+// Mermaid diagram export
+function exportMermaid(elements) {
+    // Generate Mermaid graph syntax: "graph TD\n  A[Entity] --> B[Entity]\n  ..."
+    // Group by domain with subgraph blocks
+    // Limit to visible entities to keep diagrams readable
+    // Output as .md file with ```mermaid code block
+}
+
+// Cypher script export (Neo4j/FalkorDB compatible)
+function exportCypher(elements) {
+    // Generate CREATE/MERGE statements
+    // Nodes: "MERGE (n:Label {canonical_id: 'id'}) SET n.prop1 = 'val1', ..."
+    // Edges: "MATCH (a {canonical_id: 'src'}), (b {canonical_id: 'tgt'}) MERGE (a)-[:TYPE]->(b)"
+    // Output as .cypher file
+}
+```
+
+### 10.4 Visual Query Builder (3 days)
+**Files:** `apps/web/src/kgr/components/QueryBuilder.jsx` (new), modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+Implements FR-KGR-013. Matches Linkurious's no-code Query Builder (commercial).
+
+```javascript
+// QueryBuilder.jsx
+function QueryBuilder({ ontologyManifest, onExecute }) {
+    // Canvas area (400x300) for visual query construction
+    // Left palette: entity type chips (from ontology manifest vertex labels)
+    // Drag entity type to canvas → creates query node
+    // Draw edge between query nodes → select edge type from dropdown
+    // Click query node → add property filters (key, operator, value)
+    // Controls: result limit slider, depth slider
+    // "Run" button → converts visual pattern to QueryPlan JSON
+    // "Save" button → persist to localStorage
+    // "Load" button → restore saved queries
+    // "Clear" button → reset canvas
+}
+
+function visualPatternToQueryPlan(pattern) {
+    // Convert visual node+edge pattern to EOIP QueryPlan
+    // {intent: "SEARCH", anchors: [...], filters: [...], max_depth, result_limit}
+}
+```
+
+Accessible from KGR toolbar as "Query Builder" button. Opens as a modal overlay.
+Keyboard shortcut: `Q` to toggle query builder.
+
+CSS classes: `.query-builder`, `.qb-canvas`, `.qb-palette`, `.qb-node`, `.qb-edge`, `.qb-filter`
+
+### 10.5 Dead Code & Orphaned Entity Detection (2 days)
+**Files:** modify `packages/eoip/graph/anomaly.py`, modify `apps/api/app.py`, modify `apps/web/src/kgr/components/GraphHealth.jsx`
+
+Implements FR-KGR-014. Matches code2flow's orphaned function detection. Extended to cover all entity types.
+
+Backend:
+```python
+# Add to AnomalyDetector
+def orphaned_entities(self, entity_types: list[str] | None = None) -> list[AnomalyResult]:
+    """Find entities with zero incoming edges (unreferenced).
+    Excludes meta-graph entities (GraphDomain, OntologyVersion, DataSource).
+    Optionally filter to specific entity types (e.g., ['CodeSymbol', 'File'])."""
+
+def stale_entities(self, threshold_hours: int = 168) -> list[AnomalyResult]:
+    """Find entities whose last ingestion_run is older than threshold."""
+```
+
+New API endpoint:
+```python
+@app.get("/api/v1/graph/orphaned")
+async def orphaned_entities(types: str = Query(default=None)):
+    # Returns: [{canonical_id, label, name, in_degree: 0, last_ingestion_run}]
+```
+
+Frontend — add to GraphHealth.jsx:
+- "Dead Code" widget: count of CodeSymbol entities with zero CALLED_BY/REFERENCES/IMPORTS edges
+- "Orphaned Entities" widget: count of entities with zero incoming edges
+- "Stale Entities" widget: count of entities not updated in >7 days
+- Click any count to filter the main graph to show only those entities
+
+### 10.6 Community Auto-Labeling (1 day)
+**Files:** modify `packages/eoip/graph/community.py`, modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+Implements FR-KGR-015.
+
+Backend:
+```python
+# Add to CommunityDetectionEngine
+def label_community(self, member_ids: list[str]) -> str:
+    """Generate a human-readable label for a community.
+    Algorithm: extract top-3 most common vertex labels + top-2 most common
+    property values (e.g., 'Code: auth-service, API, security').
+    Format: '{dominant_label}: {key_terms}'."""
+```
+
+Update `CommunityResult` to include labels:
+```python
+class Community:
+    id: int
+    members: list[str]
+    size: int
+    label_distribution: dict[str, int]
+    auto_label: str  # NEW: generated label
+```
+
+Frontend:
+- Show community labels on convex hull overlays
+- Use labels in community filter dropdown instead of numeric IDs
+- Allow user to rename a community label (override stored in localStorage)
+- Community summary card on hull click: member count, dominant types, hub nodes, density
+
+### 10.7 Geo-Mode (2 days)
+**Files:** `apps/web/src/kgr/components/GeoMap.jsx` (new), modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+Implements FR-KGR-011. Matches Linkurious and Ogma (both commercial).
+
+```javascript
+// GeoMap.jsx
+function GeoMap({ elements, onSelect }) {
+    // Leaflet.js map (via CDN) with OpenStreetMap tiles
+    // Place nodes at [latitude, longitude] from entity properties
+    // Nodes without location: sidebar list or default position
+    // Curved edge rendering between geo-positioned nodes
+    // Zoom levels with progressive entity display
+    // Click node → select in inspector
+    // Toggle between geo-mode and standard layout
+}
+```
+
+- Map tile caching: service worker caches tiles for offline use after initial load
+- Available as layout option #13 in GraphToolbar
+- Entities require `latitude`/`longitude` properties or `region`/`datacenter` tags
+- Graceful degradation: if <3 entities have location data, show message with instructions
+
+CSS classes: `.geo-map`, `.geo-node`, `.geo-edge`, `.geo-sidebar`
+
+### 10.8 PR / Change Impact Dashboard (2 days)
+**Files:** `apps/web/src/kgr/components/PRDashboard.jsx` (new), modify `apps/web/src/kgr/KGRExplorer.jsx`, modify `apps/api/app.py`
+
+Implements FR-KGR-016. Inspired by Graphify's `graphify prs` with community-based conflict detection.
+
+Backend:
+```python
+@app.get("/api/v1/graph/pr-impact")
+async def pr_impact():
+    """Analyze open PRs/MRs for community overlap and conflict risk."""
+    # 1. Fetch open MRs from GitLab connector (or PRs from GitHub)
+    # 2. For each MR: find Commit vertices, trace to modified entities
+    # 3. Map modified entities to communities (from last community detection run)
+    # 4. Compute pairwise overlap between MRs
+    # 5. Return: [{mr_id, title, author, communities_touched: [], entities_modified: int}]
+    # 6. conflicts: [{mr_a, mr_b, overlap_communities: [], overlap_pct: float, risk: "HIGH"|"MEDIUM"|"LOW"}]
+```
+
+Frontend:
+```javascript
+// PRDashboard.jsx
+function PRDashboard({ apiBase }) {
+    // Table of open PRs/MRs with columns: title, author, status, communities touched, entities modified
+    // Conflict matrix: heatmap showing pairwise overlap between PRs
+    // Click a PR → highlight its affected entities on the graph
+    // Click a conflict → show both PRs' blast radius overlap
+    // Risk indicators: HIGH (red), MEDIUM (amber), LOW (green)
+}
+```
+
+Accessible from KGR toolbar as "PR Impact" button. Opens as a side panel.
+
+CSS classes: `.pr-dashboard`, `.pr-row`, `.conflict-matrix`, `.conflict-cell`, `.risk-badge`
+
+### 10.9 AMBIGUOUS Evidence Status Support (0.5 day)
+**Files:** modify `packages/eoip/ontology/manifest.py`, modify `apps/web/src/kgr/KGRExplorer.jsx`, modify `apps/web/src/kgr/components/EdgeInspector.jsx`
+
+Adds AMBIGUOUS as a fourth evidence status alongside DETERMINISTIC, INFERRED, and MANUAL. This matches Graphify's three-tier evidence system (EXTRACTED/INFERRED/AMBIGUOUS) and extends it.
+
+Backend:
+- Add `"AMBIGUOUS"` to the allowed `creation_status` values in the validation gate
+- AMBIGUOUS = evidence that couldn't be fully resolved (dynamic dispatch, reflection, string-built imports)
+
+Frontend:
+- Trust badge: AMBIGUOUS gets orange color (between INFERRED amber and DETERMINISTIC green)
+- Edge style: AMBIGUOUS edges rendered with dotted-dash pattern (distinct from INFERRED dashed)
+- Filter bar trust filter: add AMBIGUOUS option to the radio group (Deterministic / Inferred / Ambiguous / Manual / All)
+
+### Tests (Phase 10)
+```
+tests/unit/test_kgr_combo.py — 6 tests
+tests/unit/test_kgr_orphaned.py — 6 tests
+tests/unit/test_kgr_community_labels.py — 4 tests
+tests/unit/test_kgr_pr_impact.py — 4 tests
+apps/web/tests/kgr-advanced.spec.js — 10 tests
+```
+- 3 tests for combo node creation (by domain, type, community)
+- 3 tests for combo edge aggregation
+- 3 tests for orphaned entity detection
+- 3 tests for stale entity detection
+- 4 tests for community auto-labeling
+- 2 tests for PR impact endpoint
+- 2 tests for conflict detection
+- 2 tests for GEXF export validation
+- 2 tests for Obsidian export structure
+- 2 tests for Mermaid export syntax
+- 2 tests for Cypher export syntax
+- 2 tests for AMBIGUOUS evidence filtering
+- 2 tests for visual query builder → QueryPlan conversion
+- All existing tests continue to pass
+
+---
+
 ## Cross-Cutting Concerns (Applied Across All Phases)
 
 ### CSS Design System Extension
@@ -1176,6 +1607,8 @@ New classes to add per phase:
 - Phase 6: `.sigma-container`, `.progressive-loader`, `.virtual-list`
 - Phase 7: `.event-feed`, `.event-item`, `.ws-status`, `.change-badge`
 - Phase 8: `.graph-diff`, `.diff-overlay`, `.whatif-modal`, `.health-dashboard`, `.health-widget`
+- Phase 9: (no new classes — wiring phase uses existing component CSS)
+- Phase 10: `.combo-node`, `.combo-badge`, `.combo-expanded`, `.super-edge`, `.code-panel`, `.code-line`, `.code-highlight`, `.code-gutter`, `.query-builder`, `.qb-canvas`, `.qb-palette`, `.qb-node`, `.qb-edge`, `.qb-filter`, `.geo-map`, `.geo-node`, `.geo-edge`, `.geo-sidebar`, `.pr-dashboard`, `.pr-row`, `.conflict-matrix`, `.conflict-cell`, `.risk-badge`, `.ambiguous-edge`, `.orphan-indicator`
 
 All classes follow existing design system tokens (CSS variables for colors, spacing, radii).
 Dark mode support via existing `@media (prefers-color-scheme: dark)` pattern.
@@ -1203,6 +1636,8 @@ graphology-communities-louvain  # Community detection
 graphology-layout-forceatlas2   # ForceAtlas2 layout
 graphology-metrics  # Centrality metrics
 jspdf@2.x          # PDF export (Phase 5)
+leaflet@1.9+       # Geo-mode map rendering (Phase 10)
+highlight.js@11.x  # Code panel syntax highlighting (Phase 10)
 ```
 
 ---
@@ -1219,7 +1654,9 @@ jspdf@2.x          # PDF export (Phase 5)
 | 6 | 1.5 weeks | Sigma.js WebGL, Web Worker layouts, progressive rendering, k-core | ~10 | 50K+ nodes (Graphify: 5K, Sourcetrail: crashes) |
 | 7 | 1 week | WebSocket events, incremental updates, event feed | ~8 | Real-time (Graphify: stale, CodeSee: sunset) |
 | 8 | 1.5 weeks | Graph diff, what-if simulation, anomaly detection, health dashboard | ~20 | What-if (none), anomaly (none), diff (yFiles only) |
-| **Total** | **~14 weeks** | **Complete KGR platform** | **~160+** | **Every competitor gap closed** |
+| 9 | 1 week | Wire all disconnected components into KGRExplorer, deduplicate inline code | ~12 | End-to-end integration of all Phase 2-8 features |
+| 10 | 3 weeks | Node grouping, code+graph, 4 new exports, visual query builder, dead code, geo-mode, PR dashboard, community labeling, AMBIGUOUS evidence | ~30 | Node grouping (yFiles €9.2K), code+graph (Sourcetrail dead), all Graphify exports, no-code queries (Linkurious $$), PR conflicts (Graphify basic) |
+| **Total** | **~18 weeks** | **Complete KGR platform — surpasses every competitor** | **~190+** | **Every competitor gap closed, every Graphify feature matched or exceeded** |
 
 ### Definition of Done (per phase)
 1. All new components render correctly in browser
@@ -1245,6 +1682,10 @@ Phase 1 ──────┐
               ├── Phase 7         │
               │                   │
               └── Phase 8 ───────(depends on Phase 3 metrics)
+                                  │
+              Phase 9 ────────────┤ (depends on all of Phases 2-8 being built)
+                                  │
+              Phase 10 ───────────┘ (depends on Phase 9 wiring being complete)
 ```
 
 - Phase 1 is the foundation; all subsequent phases depend on it
@@ -1252,30 +1693,38 @@ Phase 1 ──────┐
 - Phase 3 depends on Phase 2 (inspector enhancements)
 - Phase 5 depends on Phases 2-4 (needs all UI components in place)
 - Phase 8 depends on Phase 3 (metrics engine for what-if)
+- **Phase 9** depends on all of Phases 2-8 (wires disconnected components together)
+- **Phase 10** depends on Phase 9 (builds advanced features on a fully integrated KGRExplorer)
 
 ---
 
 ## Competitive Advantage Summary
 
-After all 8 phases, KGR will have:
+After all 10 phases, KGR will have:
 
 | Capability | KGR | Best Competitor | Gap |
 |---|---|---|---|
-| Graph types | 8 purpose-built | 1-2 (yFiles configurable) | 4-8x more |
+| Graph types | 10 purpose-built | 1-2 (yFiles configurable) | 5-10x more |
 | Max interactive nodes | 50K+ (WebGL) | 8M (Graphistry, needs GPU) | CPU-only, no GPU needed |
 | Centrality algorithms | 8 | 6 (Gephi, desktop only) | In-browser, not desktop |
-| Community detection | 3 algorithms | 1 (Graphify: Leiden) | 3x algorithms, visual hulls |
+| Community detection | 3 algorithms + auto-labeling | 1 (Graphify: Leiden, basic labeling) | 3x algorithms, visual hulls, smart labels |
 | Impact analysis | Blast radius + reverse + what-if | None | Unique to KGR |
-| Evidence/provenance | First-class trust propagation | Partial (Graphify) | Much deeper |
+| Evidence/provenance | 4-tier (DETERMINISTIC/INFERRED/AMBIGUOUS/MANUAL) | 3-tier (Graphify: EXTRACTED/INFERRED/AMBIGUOUS) | Matches + extends |
 | Inspector tabs | 8 | 3 (Sourcetrail) | 2.7x richer |
-| Filter dimensions | 10 | 5 (Linkurious faceted) | 2x |
-| Export formats | 7 | 5 (Gephi) | More + web-native |
-| Layout algorithms | 12 | 20 (yFiles, €9.2K/yr) | Free, 60% coverage |
+| Filter dimensions | 11 | 5 (Linkurious faceted) | 2.2x |
+| Export formats | 11 (PNG, SVG, PDF, JSON-LD, GraphML, GEXF, CSV, Obsidian, Mermaid, Cypher, clipboard) | 7 (Graphify: HTML/JSON/GraphML/SVG/Obsidian/Mermaid/Cypher) | Matches all Graphify exports + adds PDF/JSON-LD/GEXF |
+| Layout algorithms | 13 (incl. geo-mode) | 20 (yFiles, €9.2K/yr) | Free, 65% coverage |
+| Node group collapsing | Domain/type/community/custom | yFiles (€9.2K), KeyLines (commercial) | Free, built-in |
+| Code + graph view | Browser-based, all languages | Sourcetrail (discontinued, 4 langs, desktop) | Alive, browser, all languages |
+| Visual query builder | No-code drag-and-drop | Linkurious (commercial) | Free, integrated |
+| Dead code detection | All entity types, visual indicators | code2flow (4 langs, CLI only) | All types, interactive |
+| PR conflict detection | Community-based overlap analysis | Graphify (list only, no visual) | Visual overlap + risk scoring |
 | Keyboard navigation | Full | None complete | WCAG 2.1 AA |
 | Real-time updates | WebSocket + polling | Streaming (Graphistry, GPU) | No GPU needed |
 | Graph diff | Overlay + side-by-side | Basic (yFiles only) | Visual + structural |
 | What-if simulation | Full simulation | None | Unique to KGR |
-| Anomaly detection | 3 algorithms | None (in viz tool) | Unique to KGR |
+| Anomaly detection | 3 algorithms + orphan detection | None (in viz tool) | Unique to KGR |
+| Geo-mode | Map-based layout | Linkurious, Ogma (commercial) | Free |
 | Price | $0 (bundled) | $0-$11K/year | Free |
 | Local-first | Yes | Varies | No cloud dependency |
 | Open/extensible | Yes | Varies | No vendor lock-in |

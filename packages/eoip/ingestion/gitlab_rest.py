@@ -12,6 +12,7 @@ from eoip.connectors.gitlab_json import ISSUE_KEY_PATTERN
 from eoip.connectors.reconciliation import SourceReconciler
 from eoip.contracts.source_event import SourceEventV2, utc_now_iso
 from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
+from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
@@ -381,6 +382,7 @@ class GitLabTemporalIngestionService:
                 "counts": json.dumps({"accepted": len(accepted), "rejected": rejected_count}),
             },
         )
+        ingested_vertices = []
         for event, mapped in accepted:
             result = self.evolution.evolve_entity(
                 mapped["label"], mapped["canonical_id"], mapped["properties"], event
@@ -413,6 +415,8 @@ class GitLabTemporalIngestionService:
                 "source_system": "gitlab",
                 "ingestion_run_id": run_id,
                 "creation_status": "DETERMINISTIC",
+                "ontology_version": ONTOLOGY_VERSION,
+                "schema_version": SCHEMA_VERSION,
             }
             self.store.upsert_edge(
                 "EVIDENCED_BY",
@@ -430,6 +434,8 @@ class GitLabTemporalIngestionService:
                 key: value for key, value in edge_props.items() if key != "ingestion_run_id"
             }
             self._link_entity(mapped, entity, event, stable_edge_props)
+            ingested_vertices.append(entity)
+        link_domains(self.store, ingested_vertices)
 
     def _link_entity(self, mapped: dict, entity: dict, event: SourceEventV2, edge_props: dict) -> None:
         kind = mapped["kind"]

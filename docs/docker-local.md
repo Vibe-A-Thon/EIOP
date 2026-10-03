@@ -120,7 +120,7 @@ mutation and link the resulting canonical records to evidence and ingestion runs
 .\scripts\docker.ps1 test
 ```
 
-Run startup first. The test command builds test images, runs Python tests inside
+Run startup first. The test command builds the test and smoke application images, runs Python tests inside
 Linux, runs the real-stack smoke test, and then runs Chromium UI tests inside a
 Playwright container. The browser image is a substantial first-time download.
 
@@ -128,12 +128,49 @@ The smoke test checks API authorization/limits, worker completion and replay,
 Jira-to-code paths, impact, evidence, schema validation, model-unavailable
 retrieval, the web service, and actual MCP initialization/list/call operations.
 UI tests check valid/invalid login, symbol search, path visualization, agent
-evidence, and administration validation. Screenshots are saved under the
-Git-ignored `test-results/`.
+evidence, administration validation/ontology, DLQ rendering, and recovery after
+simulated API unavailability or network interruption. DLQ rendering and outage
+responses are browser-controlled test fixtures, not proof of live DLQ replay or
+a real server crash. Screenshots are saved under the
+Git-ignored `test-results/browser/`, separate from acceptance receipts so browser
+runs cannot erase recovery evidence.
 
 Local Python development remains available with `python -m pytest` from the repository root.
 `requirements.lock` pins the runtime versions verified in the Linux image;
 `pyproject.toml` describes portable development dependencies.
+
+### Fresh demo and recovery acceptance
+
+```powershell
+.\scripts\docker.ps1 acceptance
+```
+
+This builds the current runtime and creates a uniquely named, disposable Compose
+project with two fresh HugeGraph servers on an internal network. It publishes no
+ports and mounts none of the running demo's graph/application volumes. It loads
+the demo from empty storage, verifies the Jira-to-code path and its captured raw
+evidence, impact and lineage, repeats ingestion, validates the graph, then
+exports and restores a checksummed snapshot. Recovery must retain **every**
+vertex/edge property, every raw/DLQ JSON record, and identical golden-query
+results. A second restore must reject the populated target without changing it.
+
+Re-ingestion compares business identities and properties, excluding ingestion
+run history and observation timestamps (`captured_at`, `first_seen`, `last_seen`,
+`valid_from`, `modified_at`), which change when fixtures are captured again.
+Snapshot/restore comparisons do not omit those properties. This gate does not
+certify temporal first-observation semantics or native HugeGraph disaster recovery.
+
+The command exits nonzero on failure, saves a JSON receipt under
+`test-results/eoip-acceptance-<run-id>.json`, and removes only that run's disposable
+containers/network/volumes in a `finally` block. It does not reset the live demo.
+Do not point the acceptance script at an existing graph: both targets must be empty.
+
+The legacy `python -m scripts.demo_reset --confirm` command is for backends that
+allow deletion. It preserves audit history, audits intent before mutation, closes
+the store on every outcome, and fails rather than treating an unsupported clear
+as a successful reset. Runtime HugeGraph deletion remains deliberately disabled;
+use the isolated acceptance command instead. Reset is destructive and is not
+transactional across graph and files; quiesce writers and back up first.
 
 ## Backup and restore
 
@@ -150,9 +187,13 @@ The output path is inside `/data/backups/`. Copy a snapshot to the host using
 eoip-api:/data/backups/FILE.json ./FILE.json` as a single command.
 
 `restore-test` restores the newest snapshot into a disposable, separate HugeGraph
-container, checks vertex/edge counts and the Jira-to-symbol evidence path, then
+container, checks all vertex/edge properties, raw/DLQ JSON equality, counts and
+the Jira-to-symbol evidence path, then
 removes that test graph container. The main deployment and its volumes remain
 available. Run backup before this command.
+The Python verifier also accepts `--source <snapshot-path>` to select an explicit
+archive; without it, the lexically newest snapshot filename is used. A missing
+backup produces an actionable error rather than an empty-selection exception.
 Because snapshots omit worker job history, the smoke test validates the restored
 graph directly before submitting an idempotent demo replay to verify worker
 processing.

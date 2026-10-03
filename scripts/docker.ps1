@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('up', 'test', 'status', 'logs', 'down', 'backup', 'extension', 'restore-test')]
+    [ValidateSet('up', 'test', 'status', 'logs', 'down', 'backup', 'extension', 'restore-test', 'acceptance')]
     [string]$Action = 'up'
 )
 $ErrorActionPreference = 'Stop'
@@ -45,7 +45,7 @@ function Invoke-Compose {
 switch ($Action) {
     'up' { Invoke-Compose -CommandArguments @('up', '--build', '-d', '--wait', '--wait-timeout', '420'); Write-Host 'EOIP: http://localhost:8080/app | API: http://localhost:8000/docs | MCP: http://localhost:8001/mcp' }
     'test' {
-        Invoke-Compose -CommandArguments @('--profile', 'test', 'build', 'tests', 'ui-tests')
+        Invoke-Compose -CommandArguments @('--profile', 'test', 'build', 'tests', 'smoke', 'ui-tests')
         Invoke-Compose -CommandArguments @('--profile', 'test', 'run', '--rm', '--no-deps', 'tests')
         Invoke-Compose -CommandArguments @('--profile', 'test', 'run', '--rm', '--no-deps', 'smoke')
         Invoke-Compose -CommandArguments @('--profile', 'test', 'run', '--rm', '--no-deps', 'ui-tests')
@@ -59,6 +59,22 @@ switch ($Action) {
         finally { Invoke-Compose -CommandArguments @('start', 'eoip-worker') }
     }
     'extension' { Invoke-Compose -CommandArguments @('--profile', 'tools', 'run', '--build', '--rm', 'extension-build') }
+    'acceptance' {
+        $previousAcceptanceRun = $env:EOIP_ACCEPTANCE_RUN
+        $runId = "eoip-acceptance-$([Guid]::NewGuid().ToString('N'))"
+        $env:EOIP_ACCEPTANCE_RUN = $runId
+        $composeArguments = @('compose', '--env-file', $envFile, '-p', $runId, '-f',
+            (Join-Path $projectRoot 'deploy\docker-compose.acceptance.yml'))
+        try {
+            Invoke-Compose -CommandArguments @('build', 'acceptance')
+            Invoke-Compose -CommandArguments @('up', '--abort-on-container-exit', '--exit-code-from', 'acceptance')
+            Write-Host "Acceptance evidence: test-results\$runId.json"
+        }
+        finally {
+            try { Invoke-Compose -CommandArguments @('down', '--volumes') }
+            finally { $env:EOIP_ACCEPTANCE_RUN = $previousAcceptanceRun }
+        }
+    }
     'restore-test' {
         try {
             Invoke-Compose -CommandArguments @('--profile', 'restore-test', 'run', '--rm', 'restore-check')

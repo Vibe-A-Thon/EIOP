@@ -18,13 +18,34 @@ from eoip.ingestion.jira import FileEventCapture
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
 ISSUE_KEY = re.compile(r"\b[A-Z][A-Z0-9]+-\d+\b")
+MAX_HISTORY_COMMITS = 50
+_HUNK_HEADER = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@")
+
+
+def _parse_diff_hunks(diff_text: str) -> dict[str, list[tuple[int, int]]]:
+    """Parse unified diff output into {filepath: [(start_line, end_line), ...]}."""
+    result: dict[str, list[tuple[int, int]]] = {}
+    current_file: str | None = None
+    for line in diff_text.splitlines():
+        if line.startswith("+++ b/"):
+            current_file = line[6:]
+        elif line.startswith("+++ /dev/null"):
+            current_file = None
+        elif current_file and line.startswith("@@"):
+            m = _HUNK_HEADER.match(line)
+            if m:
+                start = int(m.group(1))
+                count = int(m.group(2)) if m.group(2) else 1
+                end = start + max(count - 1, 0)
+                result.setdefault(current_file, []).append((start, end))
+    return result
 
 
 class RepositoryIngestionService:
     def __init__(self, store, capture: FileEventCapture):
         self.store, self.capture = store, capture
 
-    def ingest(self, root: Path, repo_id="demo", metadata=None):
+    def ingest(self, root: Path, repo_id="demo", metadata=None, *, max_commits=MAX_HISTORY_COMMITS):
         root = root.resolve()
         run_id = str(uuid4())
         shared = {
@@ -40,16 +61,7 @@ class RepositoryIngestionService:
 
         sha = git("rev-parse", "HEAD").strip()
         branch = git("rev-parse", "--abbrev-ref", "HEAD").strip()
-        message = git("log", "-1", "--format=%B").strip()
-        event = self._capture(repo_id, sha, {"commit_sha": sha, "branch": branch, "message": message})
-        edge_props = {
-            "source_system": "git",
-            "source_ref": f"git://{repo_id}/commit/{sha}",
-            "evidence_key": event.event_id,
-            "ingestion_run_id": run_id,
-            "ontology_version": ONTOLOGY_VERSION,
-            "schema_version": SCHEMA_VERSION,
-        }
+
         repo = self.store.upsert_vertex(
             "Repository", {**shared, "canonical_id": f"urn:eoip:code:repo:{repo_id}", "name": repo_id}
         )
@@ -57,48 +69,104 @@ class RepositoryIngestionService:
             "Branch",
             {**shared, "canonical_id": f"urn:eoip:code:branch:{repo_id}:{branch}", "branch_name": branch},
         )
-        self._evidence(repo, event, edge_props["source_ref"])
-        self._evidence(branch_node, event, edge_props["source_ref"])
-        author_name = git("log", "-1", "--format=%aN").strip()
-        author_email = git("log", "-1", "--format=%aE").strip()
-        commit = self.store.upsert_vertex(
-            "Commit",
-            {
-                **shared,
-                "canonical_id": f"urn:eoip:code:commit:{repo_id}:{sha}",
-                "commit_sha": sha,
-                "message": message,
-                "author_name": author_name,
-                "author_email": author_email,
-            },
-        )
-        self._evidence(commit, event, edge_props["source_ref"])
-        ingested_nodes = [repo, branch_node, commit]
-        self.store.upsert_edge("HAS_BRANCH", repo["vid"], branch_node["vid"], edge_props)
-        self.store.upsert_edge("HAS_COMMIT", branch_node["vid"], commit["vid"], edge_props)
-        self._issue_links(commit, message, "IMPLEMENTS", edge_props)
+        repo_event = self._capture(repo_id, "repo", {"repo_id": repo_id, "branch": branch})
+        repo_ref = f"git://{repo_id}"
+        self._evidence(repo, repo_event, repo_ref)
+        self._evidence(branch_node, repo_event, repo_ref)
 
-        if author_email:
-            person_cid, source_alias = person_identity(author_email, "git", author_email)
-            existing_person = self.store.get_vertex_by_canonical_id(person_cid)
-            person = self.store.upsert_vertex(
-                "Person",
+        ingested_nodes = [repo, branch_node]
+        commit_nodes: dict[str, dict] = {}
+
+        log_format = "%H%x00%P%x00%aN%x00%aE%x00%B%x1e"
+        raw_log = git("log", f"--max-count={max_commits}", f"--format={log_format}", "HEAD")
+        entries = [e.strip() for e in raw_log.split("\x1e") if e.strip()]
+
+        for entry in entries:
+            parts = entry.split("\x00", 4)
+            if len(parts) < 5:
+                continue
+            c_sha, parent_str, author_name, author_email, message = parts
+            c_sha = c_sha.strip()
+            parent_shas = [p for p in parent_str.strip().split() if p]
+            message = message.strip()
+
+            event = self._capture(repo_id, c_sha, {"commit_sha": c_sha, "branch": branch, "message": message})
+            edge_props = {
+                "source_system": "git",
+                "source_ref": f"git://{repo_id}/commit/{c_sha}",
+                "evidence_key": event.event_id,
+                "ingestion_run_id": run_id,
+                "ontology_version": ONTOLOGY_VERSION,
+                "schema_version": SCHEMA_VERSION,
+            }
+
+            commit_node = self.store.upsert_vertex(
+                "Commit",
                 {
                     **shared,
-                    "canonical_id": person_cid,
-                    "display_name": author_name or author_email,
-                    "email": author_email,
-                    "source_aliases": (
-                        merge_source_aliases(
-                            existing_person["properties"].get("source_aliases"), source_alias
-                        )
-                        if existing_person
-                        else source_alias
-                    ),
+                    "canonical_id": f"urn:eoip:code:commit:{repo_id}:{c_sha}",
+                    "commit_sha": c_sha,
+                    "message": message,
+                    "author_name": author_name.strip(),
+                    "author_email": author_email.strip(),
+                    "parent_shas": ",".join(parent_shas),
                 },
             )
-            ingested_nodes.append(person)
-            self.store.upsert_edge("AUTHORED_BY", commit["vid"], person["vid"], edge_props)
+            self._evidence(commit_node, event, edge_props["source_ref"])
+            commit_nodes[c_sha] = commit_node
+            ingested_nodes.append(commit_node)
+
+            self.store.upsert_edge("HAS_COMMIT", branch_node["vid"], commit_node["vid"], edge_props)
+            self._issue_links(commit_node, message, "IMPLEMENTS", edge_props)
+
+            if author_email.strip():
+                person_cid, source_alias = person_identity(author_email.strip(), "git", author_email.strip())
+                existing_person = self.store.get_vertex_by_canonical_id(person_cid)
+                person = self.store.upsert_vertex(
+                    "Person",
+                    {
+                        **shared,
+                        "canonical_id": person_cid,
+                        "display_name": author_name.strip() or author_email.strip(),
+                        "email": author_email.strip(),
+                        "source_aliases": (
+                            merge_source_aliases(
+                                existing_person["properties"].get("source_aliases"), source_alias
+                            )
+                            if existing_person
+                            else source_alias
+                        ),
+                    },
+                )
+                ingested_nodes.append(person)
+                self.store.upsert_edge("AUTHORED_BY", commit_node["vid"], person["vid"], edge_props)
+
+        for c_sha, node in commit_nodes.items():
+            parent_csv = node.get("properties", node).get("parent_shas", "")
+            for parent_sha in (p for p in parent_csv.split(",") if p):
+                parent_node = commit_nodes.get(parent_sha)
+                if parent_node:
+                    self.store.upsert_edge(
+                        "SUCCEEDS", node["vid"], parent_node["vid"],
+                        {"fact_key": f"succeeds:{c_sha}:{parent_sha}", "source_system": "git", "ingestion_run_id": run_id},
+                    )
+
+        self.store.upsert_edge(
+            "HAS_BRANCH", repo["vid"], branch_node["vid"],
+            {"source_system": "git", "source_ref": repo_ref, "evidence_key": repo_event.event_id,
+             "ingestion_run_id": run_id, "ontology_version": ONTOLOGY_VERSION, "schema_version": SCHEMA_VERSION},
+        )
+
+        head_commit = commit_nodes.get(sha)
+        head_edge_props = {
+            "source_system": "git",
+            "source_ref": f"git://{repo_id}/commit/{sha}",
+            "evidence_key": repo_event.event_id,
+            "ingestion_run_id": run_id,
+            "ontology_version": ONTOLOGY_VERSION,
+            "schema_version": SCHEMA_VERSION,
+        }
+
         changed = set(git("diff-tree", "--root", "--no-commit-id", "--name-only", "-r", "HEAD").splitlines())
         files = symbols = 0
         errors = []
@@ -121,7 +189,7 @@ class RepositoryIngestionService:
             source = path.read_text(encoding="utf-8")
             file_event = self._capture(repo_id, name, {"path": name, "commit_sha": sha, "content": source})
             props = {
-                **edge_props,
+                **head_edge_props,
                 "evidence_key": file_event.event_id,
                 "source_ref": f"git://{repo_id}/{sha}/{name}",
             }
@@ -155,8 +223,8 @@ class RepositoryIngestionService:
             ingested_nodes.append(file)
             self._evidence(file, file_event, props["source_ref"])
             self.store.upsert_edge("CONTAINS", repo["vid"], file["vid"], props)
-            if name in changed:
-                self.store.upsert_edge("MODIFIES", commit["vid"], file["vid"], props)
+            if name in changed and head_commit:
+                self.store.upsert_edge("MODIFIES", head_commit["vid"], file["vid"], props)
             file_nodes[name] = file
             file_imports[name] = parsed.imports
             files += 1
@@ -207,9 +275,12 @@ class RepositoryIngestionService:
             for imp in imports:
                 target = path_to_file.get(imp)
                 if target and target["vid"] != src["vid"]:
-                    self.store.upsert_edge("DEPENDS_ON", src["vid"], target["vid"], edge_props)
-        if metadata:
-            ingested_nodes.extend(self._gitlab(repo, commit, metadata, shared, sha))
+                    self.store.upsert_edge("DEPENDS_ON", src["vid"], target["vid"], head_edge_props)
+
+        self._link_commits_to_symbols(git, repo_id, commit_nodes, file_nodes, run_id)
+
+        if metadata and head_commit:
+            ingested_nodes.extend(self._gitlab(repo, head_commit, metadata, shared, sha))
         result = {
             "run_id": run_id,
             "run_status": "PARTIAL" if errors else "SUCCEEDED",
@@ -217,6 +288,7 @@ class RepositoryIngestionService:
             "symbols": symbols,
             "errors": errors,
             "commit_sha": sha,
+            "commits_ingested": len(commit_nodes),
         }
         run = self.store.upsert_vertex(
             "IngestionRun",
@@ -281,6 +353,41 @@ class RepositoryIngestionService:
             issue = self.store.get_vertex_by_canonical_id(f"urn:eoip:work:item:jira:{key}")
             if issue:
                 self.store.upsert_edge(relation, node["vid"], issue["vid"], props)
+
+    def _link_commits_to_symbols(self, git, repo_id, commit_nodes, file_nodes, run_id):
+        """Link each commit to the CodeSymbols it modifies via diff-hunk analysis."""
+        symbol_ranges: dict[str, list[tuple[int, int, str]]] = {}
+        for fname, fnode in file_nodes.items():
+            for edge in self.store.edges_from(fnode["vid"]):
+                if edge["label"] != "DECLARES":
+                    continue
+                sym = self.store.get_vertex(edge["in_v"])
+                if not sym:
+                    continue
+                props = sym.get("properties", sym)
+                start = props.get("start_line")
+                end = props.get("end_line")
+                if start is None:
+                    continue
+                start, end = int(start), int(end or start)
+                symbol_ranges.setdefault(fname, []).append((start, end, sym["vid"]))
+
+        for c_sha, commit_node in commit_nodes.items():
+            try:
+                diff_text = git("diff-tree", "-p", "--no-commit-id", c_sha)
+            except Exception:
+                continue
+            hunks = _parse_diff_hunks(diff_text)
+            for fname, ranges in hunks.items():
+                if fname not in symbol_ranges:
+                    continue
+                for hunk_start, hunk_end in ranges:
+                    for sym_start, sym_end, sym_vid in symbol_ranges[fname]:
+                        if hunk_start <= sym_end and hunk_end >= sym_start:
+                            self.store.upsert_edge(
+                                "REFERENCES", commit_node["vid"], sym_vid,
+                                {"fact_key": f"diff-hunk:{c_sha}:{sym_vid}", "source_system": "git", "ingestion_run_id": run_id},
+                            )
 
     def _gitlab(self, repo, commit, metadata, shared, sha):
         event = self._capture(shared["repo_id"], "gitlab-metadata", metadata)

@@ -4,9 +4,45 @@
 **Repository revision inspected:** `f5a2402` (`dev_local`)  
 **Scope:** current working tree, the engineering handoff in `EOIP-engg-doc-pkg/`, application source and tests, available validation results, and prior deployment/test evidence.
 
-> **Executive conclusion:** EOIP has a substantial P1/MVP implementation and the current Docker test profile now passes: the Python suite completed all 418 tests, smoke checks passed including repeat-ingestion replay, and both included Playwright scenarios passed. The API readiness check and web page also returned successfully against the running stack. This is meaningful current demo evidence, but it does **not** establish 100% completion or full roadmap completion. The clean-reset golden-path/restore gate, broader P1 safety and quality evidence, and real VS Code extension-host acceptance remain open.
+> **Executive conclusion:** EOIP has a substantial P1/MVP implementation. The latest Docker test profile passed 477 Python tests, live smoke checks and four Chromium journeys. A separate fresh-HugeGraph deployment passed demo ingestion, evidence-backed traversal, replay and exact logical recovery. The primary demo remains healthy. This closes the isolated clean-demo/logical-restore gate, but does **not** establish 100% completion, native disaster recovery, full safety/quality certification, real extension-host acceptance or full roadmap completion.
 
 ## Remediation update — 2026-10-03
+
+### Latest release-operations evidence
+
+**Evidence scope:** working tree based on `9a70e5a24c06722c60f0f97a57e5187db6a7fe27`;
+these changes were not committed at verification time. The sections below retain
+their earlier point-in-time counts and estimates; this update supersedes their
+clean-demo/restore and current test-run status, not their requirement percentages.
+
+| Check | Result |
+|---|---|
+| `scripts/docker.ps1 acceptance` | Exit 0; receipt `test-results/eoip-acceptance-7d7e929b604e4dabb4aa2787912efc15.json` reports PASS. |
+| Fresh persisted graph and recovery | 53 vertices, 141 edges, 9 restored raw records; all properties and raw/DLQ JSON compared exactly. |
+| Golden path | `EOIP-1 -> commit -> file -> compute_impact`, with `IMPLEMENTS`, `MODIFIES`, `DECLARES` and captured raw evidence; impact and lineage unchanged after restore. |
+| Replay and validation | Business projection equivalent; zero ERROR validation findings. Observation timestamps and run history are excluded only from replay equivalence, never from restore equality. |
+| Nonempty restore target | Second restore rejected, and target contents verified unchanged. |
+| Complete Docker regression | Exit 0; **477 passed**, one existing Python warning; live smoke checks passed. |
+| Chromium acceptance | **4 passed**: explorer/admin journey, invalid credentials, simulated API outage/reconnect, simulated network interruption/retry. |
+| Evidence retention | Browser output is mounted at `test-results/browser/`; the recovery receipt remained present after the full regression run. |
+| Cleanup and live demo | Disposable acceptance containers/network removed; API readiness and web returned HTTP 200. No primary graph reset was performed. |
+
+The first expanded browser run failed because the test selected the issue anchor
+after an NL impact query rather than the searched code symbol. The corrected
+journey explicitly searches for and selects `compute_impact`; the complete
+profile then passed. The optional browser API proxy now fulfills intercepted
+responses instead of leaving routes pending.
+
+Reset regressions additionally verify that confirmation and audit intent precede
+mutation, graph-clear failure preserves raw/DLQ/state data, audit history survives
+successful reset, and stores close on failure. Runtime HugeGraph clear remains
+disabled; acceptance uses separate empty servers rather than deleting live data.
+
+**Still unverified:** live DLQ replay through the deployed API/worker, actual
+server-crash browser recovery, real VS Code extension-host behavior, native/config/
+job recovery, full-scale benchmarks, release SBOM/license/no-egress evidence and
+the remaining G2/KGR/later-phase obligations. Mocked UI responses are not counted
+as proof of these capabilities.
 
 **Priority gate 1 (captured-event replay and a green Python baseline) is complete on the current working tree.** The code replay path consumes the content stored in the immutable `SourceEvent` and does not reopen the source checkout. This was verified after deleting the originally ingested source file.
 

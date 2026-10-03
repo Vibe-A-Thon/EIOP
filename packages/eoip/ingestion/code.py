@@ -8,6 +8,7 @@ from pathlib import Path
 from eoip.codegraph.parser import PARSER_VERSION, CodeParser
 from eoip.connectors.local_code import LocalCodeConnector
 from eoip.contracts.source_event import SourceEvent, utc_now_iso
+from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
@@ -147,6 +148,7 @@ class CodeIngestionService:
             {"fact_key": f"code-repository-run:{run_id}:{repo_id}", "ingestion_run_id": run_id},
         )
         counts = {"files": 0, "symbols": 0, "dependencies": 0, "calls": 0}
+        ingested_vertices = [repository]
         for event, parsed_file in parsed:
             now = event.captured_at
             file_cid = f"urn:eoip:code:file:{repo_id}:{parsed_file.path}"
@@ -175,6 +177,7 @@ class CodeIngestionService:
                     "content_hash": parsed_file.content_hash,
                 },
             )
+            ingested_vertices.append(file_vertex)
             evidence = self.store.upsert_vertex(
                 "Evidence",
                 {
@@ -198,6 +201,8 @@ class CodeIngestionService:
                 "source_system": "git",
                 "ingestion_run_id": run_id,
                 "creation_status": "DETERMINISTIC",
+                "ontology_version": ONTOLOGY_VERSION,
+                "schema_version": SCHEMA_VERSION,
             }
             self.store.upsert_edge(
                 "CONTAINS",
@@ -238,6 +243,7 @@ class CodeIngestionService:
                     },
                 )
                 symbol_vertices[symbol.canonical_id] = symbol_vertex
+                ingested_vertices.append(symbol_vertex)
                 self.store.upsert_edge(
                     "DECLARES",
                     file_vertex["vid"],
@@ -305,6 +311,7 @@ class CodeIngestionService:
                     {"fact_key": f"calls:{call.caller_id}:{call.target_id}", **evidence_props},
                 )
                 counts["calls"] += 1
+        link_domains(self.store, ingested_vertices)
         return {
             "run_id": run_id,
             "run_status": "PARTIAL" if rejected else "SUCCEEDED",

@@ -68,7 +68,40 @@ def link_domains(store: GraphStore, vertices: Iterable[dict]) -> int:
     return linked
 
 
+class SchemaVersionConflict(RuntimeError):
+    """Raised when the running code's schema is incompatible with the persisted graph."""
+
+
+def _major(version: str) -> str:
+    return version.split(".")[0]
+
+
+def check_schema_compatibility(store: GraphStore) -> None:
+    """Fail fast if the persisted graph uses an incompatible schema major version.
+
+    A major-version bump (e.g. 1.x → 2.x) is incompatible: the store may
+    contain labels, properties, or edge constraints that the running code
+    no longer understands. Minor bumps (1.0 → 1.1) are additive and safe.
+    """
+    existing = store.get_vertex_by_canonical_id(f"urn:eoip:meta:ontology:{ONTOLOGY_VERSION}")
+    if existing:
+        return
+    all_versions = store.find_vertices(label="OntologyVersion", limit=10)
+    if not all_versions:
+        return
+    for vertex in all_versions:
+        stored_schema = vertex.get("properties", vertex).get("schema_version", "")
+        if stored_schema and _major(stored_schema) != _major(SCHEMA_VERSION):
+            raise SchemaVersionConflict(
+                f"Persisted graph uses schema {stored_schema} (major {_major(stored_schema)}), "
+                f"but running code expects schema {SCHEMA_VERSION} (major {_major(SCHEMA_VERSION)}). "
+                f"Back up the database before upgrading."
+            )
+
+
 def bootstrap_meta_graph(store: GraphStore) -> dict:
+    check_schema_compatibility(store)
+
     created = {"domains": 0, "ontology_version": 0}
 
     for domain in DOMAINS:

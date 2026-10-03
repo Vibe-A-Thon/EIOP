@@ -1,9 +1,10 @@
 """Tests for meta-graph bootstrap, BELONGS_TO_DOMAIN, AUTHORED_BY, DEPENDS_ON, config loading."""
 
+import pytest
 
 from eoip.graph.memory import MemoryGraphStore
-from eoip.graph.meta import DOMAINS, bootstrap_meta_graph
-from eoip.ontology.manifest import ONTOLOGY_VERSION
+from eoip.graph.meta import DOMAINS, SchemaVersionConflict, bootstrap_meta_graph, check_schema_compatibility
+from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
 
 def test_bootstrap_creates_domain_vertices():
@@ -161,3 +162,31 @@ def test_traceability_only_follows_traceability_edges():
     result = executor.execute(plan)
     edge_types = {e.type for e in result.edges}
     assert not edge_types or edge_types <= {"IMPLEMENTS", "REFERENCES", "DOCUMENTS"}
+
+
+def test_schema_version_compatible_same_major():
+    """P1-22: same major version passes compatibility check."""
+    store = MemoryGraphStore()
+    bootstrap_meta_graph(store)
+    check_schema_compatibility(store)
+
+
+def test_schema_version_incompatible_major_raises():
+    """P1-22: incompatible major version fails startup."""
+    store = MemoryGraphStore()
+    store.upsert_vertex(
+        "OntologyVersion",
+        {
+            "canonical_id": "urn:eoip:meta:ontology:legacy",
+            "ontology_version": "0.1.0",
+            "schema_version": "999.0",
+        },
+    )
+    with pytest.raises(SchemaVersionConflict, match="999.0"):
+        check_schema_compatibility(store)
+
+
+def test_schema_version_empty_store_passes():
+    """P1-22: fresh store with no OntologyVersion passes."""
+    store = MemoryGraphStore()
+    check_schema_compatibility(store)

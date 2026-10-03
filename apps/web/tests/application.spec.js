@@ -3,11 +3,12 @@ import {test, expect} from '@playwright/test';
 async function proxyApiRequests(page) {
   if (!process.env.PLAYWRIGHT_API_PROXY) return;
   const target = new URL(process.env.PLAYWRIGHT_API_PROXY);
-  await page.route('**/api/**', route => {
+  await page.route('**/api/**', async route => {
     const url = new URL(route.request().url());
     url.protocol = target.protocol;
     url.host = target.host;
-    return route.fetch({url: url.toString()});
+    const response = await route.fetch({url: url.toString()});
+    await route.fulfill({response});
   });
 }
 
@@ -19,12 +20,14 @@ test('login, search, trace graph evidence, and administer persisted data', async
   await page.getByLabel('Access token').fill(process.env.EOIP_API_TOKEN);
   await page.getByRole('button', {name: 'Connect', exact: true}).click();
   await expect(page.getByRole('heading', {name: 'Relationship map'})).toBeVisible();
-  await page.getByRole('textbox', {name: 'Search knowledge graph'}).fill('compute_impact');
-  await page.getByRole('button', {name: 'Search graph'}).click();
   await page.getByRole('textbox', {name: 'Ask the knowledge graph'}).fill('what is the impact of EOIP-1');
   await page.getByRole('button', {name: 'Ask graph'}).click();
   await expect(page.getByRole('status')).toContainText('Interpreted as', {timeout: 15000});
-  await page.locator('.entity-list button').first().click();
+  await page.getByRole('textbox', {name: 'Search knowledge graph'}).fill('compute_impact');
+  await page.getByRole('button', {name: 'Search graph'}).click();
+  const symbol = page.locator('.entity-list button').filter({hasText: 'compute_impact'}).first();
+  await expect(symbol).toBeVisible();
+  await symbol.click();
   await expect(page.getByRole('button', {name: 'Explore impact'})).toBeVisible();
   await page.getByRole('tab', {name: 'Impact'}).click();
   await page.getByLabel('From canonical ID').fill('urn:eoip:work:item:jira:EOIP-1');

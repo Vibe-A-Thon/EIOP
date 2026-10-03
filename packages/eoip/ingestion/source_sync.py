@@ -15,6 +15,7 @@ from eoip.connectors.servicenow import ServiceNowConnector
 from eoip.connectors.sync import SyncBatch
 from eoip.contracts.source_event import SourceEvent, SourceEventV2, upgrade_source_event, utc_now_iso
 from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
+from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
@@ -249,6 +250,8 @@ class SourceSyncIngestionService:
             "ingestion_run_id": run_id,
             "source_system": source_system,
             "creation_status": "DETERMINISTIC",
+            "ontology_version": ONTOLOGY_VERSION,
+            "schema_version": SCHEMA_VERSION,
         }
         nodes_by_cid: dict[str, dict] = {}
         records = []
@@ -354,6 +357,7 @@ class SourceSyncIngestionService:
                             ),
                         },
                     )
+        link_domains(self.store, list(nodes_by_cid.values()))
 
     def _write_dlq(self, event: SourceEvent | SourceEventV2, error: str, correlation_id: str) -> None:
         write_dlq_record(

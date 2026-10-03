@@ -610,6 +610,36 @@ class HugeGraphStore:
             "mode": "hugegraph-native-post",
         }
 
+    def native_export(self):
+        """Export all vertices and edges as raw HugeGraph JSON dicts (track-1)."""
+        vertices = [raw for raw in self._pages("vertices")]
+        edges = [raw for raw in self._pages("edges")]
+        schema = {
+            "vertexlabels": self._request("GET", "/schema/vertexlabels")["vertexlabels"],
+            "edgelabels": self._request("GET", "/schema/edgelabels")["edgelabels"],
+            "propertykeys": self._request("GET", "/schema/propertykeys")["propertykeys"],
+            "indexlabels": self._request("GET", "/schema/indexlabels")["indexlabels"],
+        }
+        return {"schema": schema, "vertices": vertices, "edges": edges}
+
+    def native_import(self, export_data, *, batch_size=500):
+        """Restore raw HugeGraph vertices and edges from a native export (track-1).
+
+        Requires an empty graph with schema already bootstrapped.
+        """
+        if self.count_vertices() or self.count_edges():
+            raise RuntimeError("native_import requires an empty graph")
+        self.ensure_schema({})
+        vertices = export_data["vertices"]
+        edges = export_data["edges"]
+        for offset in range(0, len(vertices), batch_size):
+            batch = vertices[offset:offset + batch_size]
+            self._request("POST", "/graph/vertices/batch", json=batch, timeout=120)
+        for offset in range(0, len(edges), batch_size):
+            batch = edges[offset:offset + batch_size]
+            self._request("POST", "/graph/edges/batch", params={"check_vertex": True}, json=batch, timeout=120)
+        return {"vertices": len(vertices), "edges": len(edges)}
+
     def tombstone_vertex(self, canonical_id):
         vertex = self.get_vertex_by_canonical_id(canonical_id)
         if not vertex:

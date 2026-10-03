@@ -3,11 +3,18 @@
 **Date:** 2026-10-03
 **Method:** every Markdown document in the repository was read and analyzed (EOIP-engg-doc-pkg root: 00–75 series, MVP requirements/plan, gaps/gaps2 requirements + implementation, KGR requirements + implementation plan, knowgridflow product architecture, all 17 diagrams, implementation work packages, examples, traceability catalog; plus repo docs/). Backend and frontend were audited file-by-file against those obligations; all P0 defects were fixed and re-verified.
 
-**Verification baseline (2026-10-03):**
-- `python -m pytest` — **467 passed** (local venv)
-- `python -m ruff check packages apps tests scripts` — clean
-- `powershell -ExecutionPolicy Bypass -File ./scripts/docker.ps1 test` — 467 container tests + container smoke test + 2 Playwright UI tests pass
-- Live API validation (health/search/query/path/impact/lineage/ingestion-runs/rag/MCP tools/web app) — green
+**Latest verified release-operations baseline (2026-10-03):**
+- Working tree based on `9a70e5a24c06722c60f0f97a57e5187db6a7fe27`, not a committed release.
+- `scripts/docker.ps1 test` — exit 0: **477 Python tests**, live container smoke checks and **4 Chromium journeys** passed.
+- `scripts/docker.ps1 acceptance` — exit 0: two fresh isolated HugeGraph servers, 53 vertices / 141 edges / 9 raw records, exact logical restore equality and populated-target rejection passed.
+- Primary API readiness and web returned HTTP 200; disposable acceptance resources were removed without resetting primary data.
+- Earlier local baseline: 467 Python tests and full Ruff passed.
+
+**Interpretation:** IMPLEMENTED below describes code availability, not completed
+end-to-end certification. Live DLQ replay, real extension-host acceptance, broader
+safety/quality/release evidence and later-phase partial obligations remain open.
+See [the updated development audit](eoip-development-audit-2026-10-03.md) for the
+tested scope, failures corrected, exclusions and remaining gates.
 
 ## Phase 1 / MVP (T01–T28) — IMPLEMENTED
 
@@ -23,7 +30,7 @@
 | T20–T22 | GraphRAG, agent, MCP | strategy router + model-down fallback, **RAG eval harness** (`retrieval/eval.py`, `scripts/rag_eval.py`), governed agent runtime + catalog, 15 read-only MCP tools incl. `neighbors`/`document` with structured errors |
 | T23–T24 | Logging, metrics | correlation IDs, JSON audit sink (API + worker), Prometheus counters/histograms, health endpoints |
 | T25–T26 | Backup/restore | checksummed snapshot + restore verification (`snapshot.py`, `scripts/backup.py`, `restore.py`, `verify_restore.py`, restore-test compose profile) |
-| T27–T28 | Tests, E2E demo | 467 tests (unit/contract/integration/e2e/security/performance), container smoke test, Playwright UI tests, demo playbook |
+| T27–T28 | Tests, E2E demo | 477 Python tests, live container smoke checks, 4 Chromium journeys, isolated fresh-HugeGraph/logical-recovery acceptance; full release certification remains open |
 
 ## Gap-closure items from the 2026-10-02 audit — status
 
