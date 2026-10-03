@@ -12,7 +12,7 @@ export default function EdgeInspector({edge, sourceNode, targetNode, onClose, on
 
   const props = edge.properties || {};
   const status = (edge.creation_status || props.creation_status || 'DETERMINISTIC').toUpperCase();
-  const statusColor = status === 'DETERMINISTIC' ? '#22c55e' : status === 'INFERRED' ? '#f59e0b' : '#3b82f6';
+  const statusColor = status === 'DETERMINISTIC' ? '#22c55e' : status === 'INFERRED' ? '#f59e0b' : status === 'AMBIGUOUS' ? '#f97316' : status === 'MANUAL' ? '#3b82f6' : '#94a3b8';
 
   const parallelCount = edge._parallelCount || 0;
 

@@ -71,24 +71,52 @@ export default function GraphDiff({api, run, busy}) {
         <div className="diff-stat diff-removed"><Icon name="close" size={16}/><strong>{changes.removed.length}</strong><span>Removed</span></div>
         <div className="diff-stat diff-modified"><Icon name="activity" size={16}/><strong>{changes.modified.length}</strong><span>Modified</span></div>
       </div>
-      <div className="diff-filter-row">
-        {['all', 'added', 'removed', 'modified'].map(f =>
-          <button key={f} className={filterAction === f ? 'active' : ''} onClick={() => setFilterAction(f)}>{f}</button>
-        )}
-      </div>
-      <div className="diff-change-list">
-        {filteredChanges.map((c, i) =>
-          <div key={c.id || i} className={`diff-change-item diff-${c.action}`}>
-            <span className={`diff-badge diff-badge-${c.action}`}>
-              {c.action === 'added' ? '+' : c.action === 'removed' ? '−' : '~'}
-            </span>
-            <span className="diff-type">{c.type}</span>
-            <strong>{c.label}</strong>
-            <code>{c.id?.length > 30 ? c.id.slice(0, 29) + '…' : c.id}</code>
+
+      {viewMode === 'side-by-side' && <div className="diff-side-by-side">
+        <div className="diff-pane diff-pane-left">
+          <h4>Snapshot A</h4>
+          <div className="diff-pane-list">
+            {changes.removed.map((c, i) => <div key={c.id || i} className="diff-change-item diff-removed">
+              <span className="diff-badge diff-badge-removed">−</span><span className="diff-type">{c.type}</span><strong>{c.label}</strong>
+            </div>)}
+            {changes.modified.map((c, i) => <div key={c.id || i} className="diff-change-item diff-modified">
+              <span className="diff-badge diff-badge-modified">~</span><span className="diff-type">{c.type}</span><strong>{c.label}</strong>
+            </div>)}
           </div>
-        )}
-        {filteredChanges.length === 0 && <p className="subtle">No changes match the current filter.</p>}
-      </div>
+        </div>
+        <div className="diff-pane diff-pane-right">
+          <h4>Snapshot B</h4>
+          <div className="diff-pane-list">
+            {changes.added.map((c, i) => <div key={c.id || i} className="diff-change-item diff-added">
+              <span className="diff-badge diff-badge-added">+</span><span className="diff-type">{c.type}</span><strong>{c.label}</strong>
+            </div>)}
+            {changes.modified.map((c, i) => <div key={c.id || i} className="diff-change-item diff-modified">
+              <span className="diff-badge diff-badge-modified">~</span><span className="diff-type">{c.type}</span><strong>{c.label}</strong>
+            </div>)}
+          </div>
+        </div>
+      </div>}
+
+      {viewMode !== 'side-by-side' && <>
+        <div className="diff-filter-row">
+          {['all', 'added', 'removed', 'modified'].map(f =>
+            <button key={f} className={filterAction === f ? 'active' : ''} onClick={() => setFilterAction(f)}>{f}</button>
+          )}
+        </div>
+        <div className="diff-change-list">
+          {filteredChanges.map((c, i) =>
+            <div key={c.id || i} className={`diff-change-item diff-${c.action}`}>
+              <span className={`diff-badge diff-badge-${c.action}`}>
+                {c.action === 'added' ? '+' : c.action === 'removed' ? '−' : '~'}
+              </span>
+              <span className="diff-type">{c.type}</span>
+              <strong>{c.label}</strong>
+              <code>{c.id?.length > 30 ? c.id.slice(0, 29) + '…' : c.id}</code>
+            </div>
+          )}
+          {filteredChanges.length === 0 && <p className="subtle">No changes match the current filter.</p>}
+        </div>
+      </>}
     </section>}
 
     {!diffData && <div className="empty-state">

@@ -335,3 +335,46 @@ class CommunityDetectionEngine:
             modularity=round(mod, 6),
             algorithm="louvain",
         )
+
+    def label_community(self, member_ids: list[str]) -> str:
+        """Generate a human-readable label for a community.
+
+        Uses the top-3 most common vertex labels and top-2 most common
+        property values (name or display_name) to build a descriptive label.
+        """
+        label_counts: dict[str, int] = defaultdict(int)
+        name_counts: dict[str, int] = defaultdict(int)
+        for cid in member_ids:
+            v = self._store.get_vertex_by_canonical_id(cid)
+            if v is None:
+                continue
+            label_counts[v["label"]] += 1
+            props = v.get("properties", v)
+            name = props.get("name") or props.get("display_name") or ""
+            if name:
+                for part in name.replace("-", " ").replace("_", " ").split():
+                    if len(part) > 2:
+                        name_counts[part.lower()] += 1
+
+        top_labels = sorted(label_counts.items(), key=lambda x: -x[1])[:3]
+        top_names = sorted(name_counts.items(), key=lambda x: -x[1])[:2]
+
+        label_str = ", ".join(l for l, _ in top_labels)
+        name_str = ", ".join(n for n, _ in top_names)
+        if name_str:
+            return f"{label_str}: {name_str}"
+        return label_str or "Unknown"
+
+    def detect_with_labels(
+        self, algorithm: str = "label_propagation", resolution: float = 1.0
+    ) -> CommunityResult:
+        """Run detection and auto-label each community."""
+        if algorithm == "louvain":
+            result = self.louvain(resolution=resolution)
+        else:
+            result = self.label_propagation()
+
+        for comm in result.communities:
+            comm["auto_label"] = self.label_community(comm["members"][:50])
+
+        return result

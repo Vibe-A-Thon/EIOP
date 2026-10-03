@@ -243,3 +243,64 @@ class AnomalyDetector:
 
         results.sort(key=lambda r: -r.score)
         return results
+
+    def orphaned_entities(
+        self, entity_types: list[str] | None = None
+    ) -> list[AnomalyResult]:
+        """Find entities with zero incoming edges (unreferenced).
+
+        Excludes meta-graph entities (GraphDomain, OntologyVersion, DataSource).
+        """
+        META_LABELS = {"GraphDomain", "OntologyVersion", "DataSource"}
+        vertices = self._store.find_vertices(limit=50_000)
+        results: list[AnomalyResult] = []
+        for v in vertices:
+            if v["label"] in META_LABELS:
+                continue
+            if entity_types and v["label"] not in entity_types:
+                continue
+            incoming = self._store.edges_to(v["vid"])
+            if len(incoming) == 0:
+                cid = v["properties"]["canonical_id"]
+                results.append(
+                    AnomalyResult(
+                        canonical_id=cid,
+                        anomaly_type="orphaned",
+                        score=0.0,
+                        details={
+                            "label": v["label"],
+                            "in_degree": 0,
+                            "out_degree": len(self._store.edges_from(v["vid"])),
+                        },
+                    )
+                )
+        return results
+
+    def stale_entities(self, threshold_hours: int = 168) -> list[AnomalyResult]:
+        """Find entities not updated within *threshold_hours*."""
+        import datetime
+
+        cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
+            hours=threshold_hours
+        )
+        cutoff_iso = cutoff.isoformat()
+        vertices = self._store.find_vertices(limit=50_000)
+        results: list[AnomalyResult] = []
+        for v in vertices:
+            props = v.get("properties", v)
+            last_run = props.get("last_ingestion_run") or props.get("modified_at") or ""
+            if last_run and last_run < cutoff_iso:
+                cid = props.get("canonical_id", v.get("canonical_id", ""))
+                results.append(
+                    AnomalyResult(
+                        canonical_id=cid,
+                        anomaly_type="stale",
+                        score=0.0,
+                        details={
+                            "label": v["label"],
+                            "last_seen": last_run,
+                            "threshold_hours": threshold_hours,
+                        },
+                    )
+                )
+        return results

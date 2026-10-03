@@ -5,6 +5,9 @@ import CentralityRadar from './components/CentralityRadar.jsx';
 import ContextMenu from './components/ContextMenu.jsx';
 import ExplorationHistoryBar, {createHistory, pushState, undo, redo} from './components/ExplorationHistory.jsx';
 import GraphBookmarks from './components/GraphBookmarks.jsx';
+import GraphToolbar from './components/GraphToolbar.jsx';
+import ExportMenu from './components/ExportMenu.jsx';
+import TimelineScrubber from './components/TimelineScrubber.jsx';
 import SigmaRenderer from './renderers/SigmaRenderer.jsx';
 import VirtualEntityList from './components/VirtualEntityList.jsx';
 import EventFeed from './components/EventFeed.jsx';
@@ -12,6 +15,12 @@ import GraphDiff from './components/GraphDiff.jsx';
 import GraphHealth from './components/GraphHealth.jsx';
 import EdgeInspector from './components/EdgeInspector.jsx';
 import Minimap from './components/Minimap.jsx';
+import useGraphEvents from './hooks/useGraphEvents.js';
+import ComboNode, {groupByDomain, groupByType, groupByCommunity} from './components/ComboNode.jsx';
+import CodePanel from './components/CodePanel.jsx';
+import QueryBuilder from './components/QueryBuilder.jsx';
+import GeoMap from './components/GeoMap.jsx';
+import PRDashboard from './components/PRDashboard.jsx';
 
 const graphTypes = [
   {id: 'knowledge', label: 'Knowledge', icon: 'graph', hint: 'Entity-centric knowledge graph with relationships and evidence'},
@@ -66,6 +75,8 @@ function FilterBar({filters, onChange, schema}) {
           <option value="ALL">All trust</option>
           <option value="DETERMINISTIC">Deterministic</option>
           <option value="INFERRED">Inferred</option>
+          <option value="AMBIGUOUS">Ambiguous</option>
+          <option value="MANUAL">Manual</option>
         </select>
       </label>
       <label className="select-control" title="Filter by evidence"><Icon name="shield" size={14}/>
@@ -655,7 +666,7 @@ function BlastRadiusView({data, onClose}) {
 
 const defaultFilters = {domain: 'ALL', label: 'ALL', edgeType: 'ALL', trust: 'ALL', evidence: 'ALL', source: 'ALL', minDegree: 0, searchText: '', temporal: {from: '', to: ''}, community: 'ALL'};
 
-export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
+export default function KGRExplorer({graph, setGraph, api, run, busy, stats, apiBase}) {
   const [graphType, setGraphType] = useState('knowledge');
   const [filters, setFilters] = useState(defaultFilters);
   const [selected, setSelected] = useState(null);
@@ -679,9 +690,24 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
   const [showEntityList, setShowEntityList] = useState(false);
   const [structureAnalysis, setStructureAnalysis] = useState(null);
   const [eventFeedCollapsed, setEventFeedCollapsed] = useState(true);
-  const [graphEvents, setGraphEvents] = useState([]);
-  const [wsStatus, setWsStatus] = useState('disconnected');
+  const [layout, setLayout] = useState('cose');
+  const [sizeMode, setSizeMode] = useState('uniform');
+  const [showMinimap, setShowMinimap] = useState(true);
+  const [showExport, setShowExport] = useState(false);
+  const [timelineRange, setTimelineRange] = useState(null);
+  const [comboMode, setComboMode] = useState(null);
+  const [showCodePanel, setShowCodePanel] = useState(false);
+  const [codeFile, setCodeFile] = useState(null);
+  const [showQueryBuilder, setShowQueryBuilder] = useState(false);
+  const [showGeoMode, setShowGeoMode] = useState(false);
+  const [showPRDashboard, setShowPRDashboard] = useState(false);
+  const [viewport, setViewport] = useState(null);
+  const [communities, setCommunities] = useState(null);
+  const [orphanedCount, setOrphanedCount] = useState(null);
   const explorerRef = useRef(null);
+  const cyRef = useRef(null);
+
+  const {events: graphEvents, status: wsStatus, pause: pauseEvents, resume: resumeEvents, clear: clearEvents} = useGraphEvents(apiBase);
 
   useEffect(() => {run(async () => setSchema(await api('/api/v1/graph/schema')));}, []);
 
@@ -740,6 +766,18 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
       if (e.key === 'z' && (e.ctrlKey || e.metaKey) && !e.shiftKey) handleUndo();
       if (e.key === 'z' && (e.ctrlKey || e.metaKey) && e.shiftKey) handleRedo();
       if (e.key === 'Z' && (e.ctrlKey || e.metaKey)) handleRedo();
+      if (e.key === 'm' && !e.ctrlKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        setShowMinimap(v => !v);
+      }
+      if (e.key === 'c' && !e.ctrlKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        setShowCodePanel(v => !v);
+      }
+      if (e.key === 'q' && !e.ctrlKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        setShowQueryBuilder(v => !v);
+      }
+      if (e.key === 'g' && !e.ctrlKey && !e.shiftKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        setComboMode(prev => prev ? null : 'domain');
+      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -944,21 +982,31 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
             <div className="panel-heading-right">
               <span className="count-badge">{displayedNodes.length}{displayedNodes.length < visibleNodes.length ? `/${visibleNodes.length}` : ''} entities · {visibleEdges.length} relationships</span>
               {visibleNodes.length >= SIGMA_THRESHOLD && <span className="renderer-badge">WebGL</span>}
-              <button className="icon-button" onClick={() => setShowEntityList(v => !v)} title="Toggle entity list"><Icon name="database" size={14}/></button>
-              <button className="icon-button" onClick={computeStructureAnalysis} title="Structure analysis" disabled={busy}><Icon name="layers" size={14}/></button>
+              {wsStatus === 'connected' && <span className="ws-status-badge connected" title="WebSocket connected">●</span>}
+              {wsStatus === 'connecting' && <span className="ws-status-badge connecting" title="Connecting...">◌</span>}
             </div>
           </div>
+          <GraphToolbar layout={layout} onLayoutChange={setLayout} sizeMode={sizeMode} onSizeModeChange={setSizeMode}
+            onFitAll={() => cyRef.current?.fit()} onToggleMinimap={() => setShowMinimap(v => !v)}
+            onToggleFilters={() => setShowFilters(v => !v)} onToggleEntityList={() => setShowEntityList(v => !v)}
+            onExport={() => setShowExport(v => !v)}/>
           {renderProgress && <div className="render-progress-bar"><div className="render-progress-fill" style={{width: `${(renderedCount / Math.max(visibleNodes.length, 1)) * 100}%`}}/><span>{renderProgress}</span></div>}
-          {visibleNodes.length >= SIGMA_THRESHOLD
-            ? <SigmaRenderer nodes={displayedNodes} edges={visibleEdges}
-                selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))}
-                onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}} onExpand={expand}/>
-            : <GraphCanvas nodes={displayedNodes} edges={visibleEdges} paths={graph.paths || []}
-                selectedId={selected?.id} selectedEdgeId={selectedEdge?.id}
-                onSelectNode={n => run(() => inspect(n))} onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}}
-                onExpand={expand}/>
+          {showGeoMode
+            ? <GeoMap elements={displayedNodes} edges={visibleEdges} onSelect={n => run(() => inspect(n))}/>
+            : visibleNodes.length >= SIGMA_THRESHOLD
+              ? <SigmaRenderer nodes={displayedNodes} edges={visibleEdges}
+                  selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))}
+                  onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}} onExpand={expand}
+                  onViewportChange={setViewport} layout={layout}/>
+              : <GraphCanvas nodes={displayedNodes} edges={visibleEdges} paths={graph.paths || []}
+                  selectedId={selected?.id} selectedEdgeId={selectedEdge?.id}
+                  onSelectNode={n => run(() => inspect(n))} onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}}
+                  onExpand={expand} cyRef={cyRef} layout={layout} onViewportChange={setViewport}/>
           }
         </section>
+        {showCodePanel && <CodePanel filePath={codeFile} apiBase={apiBase}
+          onSymbolClick={id => { const node = (graph.nodes || []).find(n => n.id === id); if (node) run(() => inspect(node)); }}
+          onClose={() => setShowCodePanel(false)}/>}
         {showEntityList && <VirtualEntityList nodes={visibleNodes} selectedId={selected?.id}
           onSelect={n => run(() => inspect(n))} onExpand={expand} palette={palette}/>}
         <NodeInspector node={selected} detail={detail} metrics={metrics} blastRadius={blastRadius}
@@ -992,10 +1040,13 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
           <div className="panel-heading"><div><span className="eyebrow">KGR · TEMPORAL VIEW</span><h2>Time-filtered graph</h2></div></div>
           {visibleNodes.length >= SIGMA_THRESHOLD
             ? <SigmaRenderer nodes={displayedNodes} edges={visibleEdges}
-                selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))} onExpand={expand}/>
+                selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))} onExpand={expand}
+                onViewportChange={setViewport} layout={layout}/>
             : <GraphCanvas nodes={displayedNodes} edges={visibleEdges} paths={graph.paths || []}
-                selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))} onExpand={expand}/>
+                selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))} onExpand={expand}
+                cyRef={cyRef} layout={layout} onViewportChange={setViewport}/>
           }
+          <TimelineScrubber nodes={graph.nodes || []} range={timelineRange} onRangeChange={setTimelineRange}/>
         </section>
         <NodeInspector node={selected} detail={detail} metrics={metrics} blastRadius={blastRadius}
           reverseImpact={reverseImpact} fullCentrality={fullCentrality} similarNodes={similarNodes}
@@ -1058,11 +1109,19 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats}) {
       targetNode={(graph.nodes || []).find(n => n.id === selectedEdge.to_id)}
       onClose={() => setSelectedEdge(null)}
       onNavigate={n => { if (n) { setSelectedEdge(null); inspect(n); }}}/>}
-    <Minimap nodes={displayedNodes} selectedId={selected?.id}/>
+    {showMinimap && <Minimap nodes={displayedNodes} selectedId={selected?.id} viewport={viewport}
+      onNavigate={pos => { if (cyRef.current) cyRef.current.center(); }}/>}
     {showBlast && blastRadius && <BlastRadiusView data={blastRadius} onClose={() => setShowBlast(false)}/>}
+    {showExport && <ExportMenu graph={{nodes: displayedNodes, edges: visibleEdges}} cyRef={cyRef}
+      onClose={() => setShowExport(false)}/>}
+    {showQueryBuilder && <QueryBuilder schema={schema} onExecute={(plan) => {
+      run(async () => { const result = await api('/api/v1/query', plan); setGraph(result); });
+      setShowQueryBuilder(false);
+    }} onClose={() => setShowQueryBuilder(false)}/>}
+    {showPRDashboard && <PRDashboard api={api} run={run} busy={busy} onClose={() => setShowPRDashboard(false)}/>}
     {contextMenu && <ContextMenu x={contextMenu.x} y={contextMenu.y} items={contextMenu.items} onClose={() => setContextMenu(null)}/>}
     <EventFeed events={graphEvents} status={wsStatus}
-      onPause={() => {}} onResume={() => {}} onClear={() => setGraphEvents([])}
+      onPause={pauseEvents} onResume={resumeEvents} onClear={clearEvents}
       onNavigate={(e) => {
         if (e.data?.canonical_id) {
           const node = (graph.nodes || []).find(n => n.id === e.data.canonical_id);

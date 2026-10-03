@@ -396,6 +396,94 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             limit=payload.limit,
         )
 
+    @app.get("/api/v1/graph/orphaned")
+    def graph_orphaned(
+        entity_types: str | None = Query(default=None, max_length=256),
+    ):
+        from eoip.graph.anomaly import AnomalyDetector
+        detector = AnomalyDetector(store)
+        types = [t.strip() for t in entity_types.split(",")] if entity_types else None
+        results = detector.orphaned_entities(entity_types=types)
+        return {"orphaned": [r.to_dict() for r in results], "count": len(results)}
+
+    @app.get("/api/v1/graph/stale")
+    def graph_stale(
+        threshold_hours: int = Query(default=168, ge=1, le=8760),
+    ):
+        from eoip.graph.anomaly import AnomalyDetector
+        detector = AnomalyDetector(store)
+        results = detector.stale_entities(threshold_hours=threshold_hours)
+        return {"stale": [r.to_dict() for r in results], "count": len(results)}
+
+    @app.get("/api/v1/graph/pr-impact")
+    def graph_pr_impact():
+        from eoip.graph.community import CommunityDetectionEngine
+        community_engine = CommunityDetectionEngine(store)
+        result = community_engine.detect_with_labels()
+        community_map = {}
+        for comm in result.communities:
+            for member in comm["members"]:
+                community_map[member] = comm.get("auto_label", f"Community {comm['id']}")
+
+        vertices = store.find_vertices(limit=50_000)
+        pr_groups: dict[str, list] = {}
+        for v in vertices:
+            props = v.get("properties", {})
+            mr_id = props.get("merge_request_id") or props.get("pr_id")
+            if mr_id:
+                pr_groups.setdefault(str(mr_id), []).append(v)
+
+        prs = []
+        for mr_id, members in pr_groups.items():
+            communities_touched = set()
+            for m in members:
+                cid = m.get("properties", {}).get("canonical_id", "")
+                if cid in community_map:
+                    communities_touched.add(community_map[cid])
+            prs.append({
+                "mr_id": mr_id,
+                "title": members[0].get("properties", {}).get("pr_title", f"PR #{mr_id}"),
+                "author": members[0].get("properties", {}).get("pr_author", ""),
+                "communities_touched": sorted(communities_touched),
+                "entities_modified": len(members),
+            })
+
+        conflicts = []
+        pr_list = list(pr_groups.keys())
+        for i, a in enumerate(pr_list):
+            comms_a = {community_map.get(m.get("properties", {}).get("canonical_id", ""), "")
+                       for m in pr_groups[a]} - {""}
+            for b in pr_list[i + 1:]:
+                comms_b = {community_map.get(m.get("properties", {}).get("canonical_id", ""), "")
+                           for m in pr_groups[b]} - {""}
+                overlap = comms_a & comms_b
+                if overlap:
+                    pct = len(overlap) / max(len(comms_a | comms_b), 1)
+                    risk = "HIGH" if pct > 0.5 else "MEDIUM" if pct > 0.2 else "LOW"
+                    conflicts.append({
+                        "mr_a": a, "mr_b": b,
+                        "overlap_communities": sorted(overlap),
+                        "overlap_pct": round(pct, 3),
+                        "risk": risk,
+                    })
+
+        return {"pull_requests": prs, "conflicts": conflicts}
+
+    @app.get("/api/v1/files/{path:path}")
+    def get_file(path: str):
+        import os
+        safe = os.path.normpath(path)
+        if safe.startswith("..") or os.path.isabs(safe):
+            raise HTTPException(400, "Invalid path")
+        try:
+            with open(safe, "r", encoding="utf-8", errors="replace") as f:
+                content = f.read(512_000)
+        except FileNotFoundError:
+            raise HTTPException(404, "File not found")
+        except OSError:
+            raise HTTPException(500, "Could not read file")
+        return {"path": safe, "content": content, "lines": content.count("\n") + 1}
+
     @app.post("/api/v1/graph/diff")
     def graph_diff(payload: DiffRequest):
         vertices = store.find_vertices(limit=50_000)
