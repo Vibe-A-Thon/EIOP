@@ -229,6 +229,41 @@ class MemoryGraphStore:
     def count_edges(self, label: str | None = None) -> int:
         return len(self.find_edges(label=label, limit=1_000_000))
 
+    def bulk_load(self, vertices: list[dict], edges: list[dict], *, batch_size: int = 500) -> dict:
+        """Atomically load a validated logical snapshot into an empty test store."""
+        if batch_size < 1:
+            raise ValueError("batch_size must be positive")
+        with self._lock:
+            if self.count_vertices() or self.count_edges():
+                raise RuntimeError("bulk_load requires an empty graph")
+            staging = MemoryGraphStore()
+            staging._schema = self._schema
+            ids = {}
+            for vertex in vertices:
+                created = staging.upsert_vertex(vertex["label"], vertex["properties"])
+                ids[vertex["vid"]] = created["vid"]
+                ids[vertex["canonical_id"]] = created["vid"]
+            for edge in edges:
+                try:
+                    out_v, in_v = ids[edge["out_v"]], ids[edge["in_v"]]
+                except KeyError as exc:
+                    raise ValueError(f"bulk edge references missing vertex: {exc.args[0]}") from exc
+                staging.upsert_edge(edge["label"], out_v, in_v, edge["properties"])
+            self._vids = staging._vids
+            self._vertices = staging._vertices
+            self._edges = staging._edges
+            self._adj_out = staging._adj_out
+            self._adj_in = staging._adj_in
+            self._vid_seq = staging._vid_seq
+            return {
+                "vertices": len(vertices),
+                "edges": len(edges),
+                "vertex_batches": (len(vertices) + batch_size - 1) // batch_size,
+                "edge_batches": (len(edges) + batch_size - 1) // batch_size,
+                "batch_size": batch_size,
+                "mode": "atomic-memory",
+            }
+
     # -- maintenance -----------------------------------------------------------
     def tombstone_vertex(self, canonical_id: str) -> bool:
         vid = self._vids.get(canonical_id)

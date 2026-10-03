@@ -1,0 +1,137 @@
+{
+  "schema_version": "eoip-benchmark-result/v1",
+  "created_at": "2026-10-03T07:43:10.091672+00:00",
+  "requirement": "NFR-PERF-001",
+  "manifest": {
+    "id": "mvp-v1",
+    "schema_version": "eoip-benchmark-manifest/v1",
+    "path": "config/benchmarks/mvp-v1.json"
+  },
+  "software": {
+    "eoip_git_revision": "354b8a95e3ce49c55c03e361442bcd67d23a0014",
+    "working_tree_dirty": true,
+    "source_fingerprint_sha256": "936470fdd21447eda56f11775c4844e0fbada179ac9451f2991eb6b1396d8368"
+  },
+  "backend": "configured",
+  "run": "smoke",
+  "dataset": {
+    "scale": "s",
+    "seed": 42,
+    "vertices": 774,
+    "edges": 2007,
+    "work_items": 200,
+    "repos": 2,
+    "commits": 30,
+    "files_symbols": 500,
+    "document_sections": 20
+  },
+  "hardware": {
+    "os": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+    "architecture": "x86_64",
+    "python": "3.11.14",
+    "cpu_model": "not reported by operating system",
+    "cpu_logical_cores": 8,
+    "memory_total_bytes": 8187506688,
+    "storage_type": "not declared",
+    "storage_total_bytes": 1081101176832,
+    "storage_free_bytes_at_start": 1006269575168,
+    "containerized": true
+  },
+  "configuration": {
+    "samples": 20,
+    "warmups": 3,
+    "api_url": null,
+    "hugegraph_url": "http://restore-graph:8080",
+    "bulk_batch_size": 500
+  },
+  "preparation": {
+    "duration_seconds": 18.66,
+    "logical_mutations": 2781,
+    "logical_mutations_per_second": 149.035,
+    "vertices": 774,
+    "edges": 2007,
+    "vertex_batches": 2,
+    "edge_batches": 5,
+    "batch_size": 500,
+    "mode": "hugegraph-native-post"
+  },
+  "workloads": [
+    {
+      "samples": 20,
+      "warmups": 3,
+      "latency_ms": {
+        "min": 2.229,
+        "p50": 2.597,
+        "p95": 2.865,
+        "p99": 3.759,
+        "max": 3.759
+      },
+      "throughput_operations_per_second": 373.963,
+      "id": "indexed_entity_lookup",
+      "kind": "store_lookup",
+      "target_p95_ms": 500.0,
+      "status": "passed"
+    },
+    {
+      "samples": 20,
+      "warmups": 3,
+      "latency_ms": {
+        "min": 84.036,
+        "p50": 102.692,
+        "p95": 204.904,
+        "p99": 363.223,
+        "max": 363.223
+      },
+      "throughput_operations_per_second": 7.136,
+      "id": "standard_search",
+      "kind": "query_plan",
+      "target_p95_ms": 1000.0,
+      "status": "passed"
+    },
+    {
+      "id": "standard_api_search",
+      "status": "skipped",
+      "reason": "--api-url was not supplied",
+      "target_p95_ms": 1000
+    },
+    {
+      "samples": 20,
+      "warmups": 3,
+      "latency_ms": {
+        "min": 58.487,
+        "p50": 62.224,
+        "p95": 71.897,
+        "p99": 88.835,
+        "max": 88.835
+      },
+      "throughput_operations_per_second": 15.753,
+      "id": "bounded_path",
+      "kind": "query_plan",
+      "target_p95_ms": 2000.0,
+      "status": "passed"
+    },
+    {
+      "samples": 20,
+      "warmups": 3,
+      "latency_ms": {
+        "min": 641.093,
+        "p50": 859.096,
+        "p95": 1641.596,
+        "p99": 1845.495,
+        "max": 1845.495
+      },
+      "throughput_operations_per_second": 0.992,
+      "id": "bounded_impact",
+      "kind": "query_plan",
+      "target_p95_ms": 2000.0,
+      "status": "passed"
+    }
+  ],
+  "resources": {
+    "client_process_cpu_seconds": 15.528,
+    "client_peak_rss_bytes": 68644864,
+    "storage_bytes_consumed": 307036160,
+    "scope": "benchmark client process; server/container metrics require external collection"
+  },
+  "status": "passed"
+}

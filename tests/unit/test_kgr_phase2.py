@@ -1,8 +1,9 @@
 """Phase 2 tests: component extraction, 8+ graph types, 8-tab inspector, edge inspector."""
 
-from apps.api.app import create_app
 from eoip.graph.memory import MemoryGraphStore
 from fastapi.testclient import TestClient
+
+from apps.api.app import create_app
 
 
 def _file_props(cid):
@@ -21,7 +22,6 @@ def _build_graph(store):
 
 def test_inspector_8_tabs_listed():
     """The NodeInspector defines exactly 8 tabs."""
-    import importlib.util
     import os
     path = os.path.join("apps", "web", "src", "kgr", "KGRExplorer.jsx")
     if not os.path.exists(path):

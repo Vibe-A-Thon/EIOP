@@ -11,7 +11,6 @@ from time import perf_counter
 from uuid import uuid4
 
 import httpx
-from eoip.events.emitter import GraphEventEmitter
 from eoip.agents.catalog import build_agent_registry
 from eoip.agents.runtime import AgentRuntime
 from eoip.audit.sink import AuditSink
@@ -27,6 +26,7 @@ from eoip.contracts.agent import AgentRequest
 from eoip.contracts.audit import AuditEvent
 from eoip.contracts.source_event import SourceEvent, SourceEventV2
 from eoip.contracts.source_registry import SourceCapabilities, SourceRegistryEntry, SourceType
+from eoip.events.emitter import GraphEventEmitter
 from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
 from eoip.jobs import JobQueue, write_json
 from eoip.models.provider import LocalModelProvider

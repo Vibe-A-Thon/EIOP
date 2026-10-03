@@ -9,7 +9,7 @@ from eoip.graph.store import GraphStore
 
 
 class AffectedItem:
-    __slots__ = ("canonical_id", "label", "path_depth", "edge_classes", "evidence_count")
+    __slots__ = ("canonical_id", "edge_classes", "evidence_count", "label", "path_depth")
 
     def __init__(self, canonical_id: str, label: str, path_depth: int,
                  edge_classes: list[str], evidence_count: int = 0):
@@ -34,7 +34,7 @@ class AffectedItem:
 
 
 class BlastRadiusResult:
-    __slots__ = ("affected_ids", "affected_details", "by_depth", "by_type", "risk", "target_id", "total_affected")
+    __slots__ = ("affected_details", "affected_ids", "by_depth", "by_type", "risk", "target_id", "total_affected")
 
     def __init__(self, target_id: str, total_affected: int, by_depth: dict[int, int],
                  by_type: dict[str, int], risk: str, affected_ids: list[str],

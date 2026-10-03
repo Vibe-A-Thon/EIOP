@@ -1,10 +1,8 @@
 """Phase 7 tests: event emitter — subscribe, emit, poll, filter."""
 
-import asyncio
 
 import pytest
 from eoip.events.emitter import EventType, GraphEvent, GraphEventEmitter
-
 
 # --- Event emitter subscribe/unsubscribe ---
 

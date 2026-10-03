@@ -84,8 +84,9 @@ def test_isolate_nonexistent():
 # --- API ---
 
 def test_api_whatif_removal():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     _build_hub(store)
     client = TestClient(create_app(store))
@@ -96,8 +97,9 @@ def test_api_whatif_removal():
 
 
 def test_api_whatif_isolate():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     _build_hub(store)
     client = TestClient(create_app(store))

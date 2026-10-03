@@ -21,6 +21,9 @@ test('login, search, trace graph evidence, and administer persisted data', async
   await expect(page.getByRole('heading', {name: 'Relationship map'})).toBeVisible();
   await page.getByRole('textbox', {name: 'Search knowledge graph'}).fill('compute_impact');
   await page.getByRole('button', {name: 'Search graph'}).click();
+  await page.getByRole('textbox', {name: 'Ask the knowledge graph'}).fill('what is the impact of EOIP-1');
+  await page.getByRole('button', {name: 'Ask graph'}).click();
+  await expect(page.getByRole('status')).toContainText('Interpreted as', {timeout: 15000});
   await page.locator('.entity-list button').first().click();
   await expect(page.getByRole('button', {name: 'Explore impact'})).toBeVisible();
   await page.getByRole('tab', {name: 'Impact'}).click();

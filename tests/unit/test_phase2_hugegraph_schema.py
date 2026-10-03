@@ -95,6 +95,22 @@ def test_hugegraph_request_timeout_uses_active_traversal_deadline():
     assert 0 < store.client.timeout <= 10.0
 
 
+def test_hugegraph_schema_task_waits_until_success():
+    store = HugeGraphStore.__new__(HugeGraphStore)
+    statuses = iter(["running", "success"])
+    calls = []
+
+    def request(method, path, **kwargs):
+        calls.append((method, path))
+        return {"task_status": next(statuses)}
+
+    store._request = request
+
+    store._wait_schema_task({"task_id": 17}, timeout_seconds=1)
+
+    assert calls == [("GET", "/tasks/17"), ("GET", "/tasks/17")]
+
+
 def test_hugegraph_exact_property_lookup_serializes_json_filter():
     store = HugeGraphStore.__new__(HugeGraphStore)
     vertex = {
@@ -118,6 +134,49 @@ def test_hugegraph_exact_property_lookup_serializes_json_filter():
     ]
 
 
+def test_hugegraph_edge_decoding_caches_only_immutable_vertex_identity():
+    store = HugeGraphStore.__new__(HugeGraphStore)
+    store._identity_cache = {}
+    vertices = {
+        "out": {
+            "vid": "out",
+            "canonical_id": "urn:test:project",
+            "label": "Project",
+            "properties": {"canonical_id": "urn:test:project", "name": "old"},
+        },
+        "in": {
+            "vid": "in",
+            "canonical_id": "urn:test:item",
+            "label": "WorkItem",
+            "properties": {"canonical_id": "urn:test:item", "status": "old"},
+        },
+    }
+    calls = []
+
+    def get_vertex(vid):
+        calls.append(vid)
+        vertex = vertices[vid]
+        store._remember_identity(vertex)
+        return vertex
+
+    store.get_vertex = get_vertex
+    raw = {
+        "id": "edge-1",
+        "label": "CONTAINS__Project__WorkItem",
+        "outV": "out",
+        "inV": "in",
+        "properties": {},
+    }
+
+    first = store._edge(raw)
+    vertices["out"]["properties"]["name"] = "new"
+    second = store._edge(raw)
+
+    assert first["out_cid"] == second["out_cid"] == "urn:test:project"
+    assert calls == ["out", "in"]
+    assert all(len(identity) == 2 for identity in store._identity_cache.values())
+
+
 @pytest.mark.req("FR-INGEST-003")
 def test_hugegraph_edge_upsert_updates_matching_edge_key_instead_of_duplicating():
     store = HugeGraphStore.__new__(HugeGraphStore)
@@ -127,15 +186,13 @@ def test_hugegraph_edge_upsert_updates_matching_edge_key_instead_of_duplicating(
         "in": {"vid": "in", "canonical_id": "item-1", "label": "WorkItem", "properties": {}},
     }
     store.get_vertex = vertices.get
-    store.find_edges = lambda **kwargs: [
-        {
-            "eid": "edge-1",
-            "label": "CONTAINS",
-            "out_v": "out",
-            "in_v": "in",
-            "properties": {"edge_key": "stable-key"},
-        }
-    ]
+    store.find_edge_by_key = lambda key, **kwargs: {
+        "eid": "edge-1",
+        "label": "CONTAINS",
+        "out_v": "out",
+        "in_v": "in",
+        "properties": {"edge_key": key},
+    }
     requests = []
 
     def request(method, path, **kwargs):

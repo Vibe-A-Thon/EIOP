@@ -55,6 +55,9 @@ def _hugegraph_stub():
     store.get_vertex = vertices.get
     found = []
     store.find_edges = lambda **kwargs: list(found)
+    store.find_edge_by_key = lambda key, **kwargs: next(
+        (edge for edge in found if edge["properties"].get("edge_key") == key), None
+    )
     requests = []
 
     def request(method, path, **kwargs):
@@ -107,3 +110,37 @@ def test_hugegraph_upsert_without_edge_key_still_creates():
 
     assert edge["eid"] == "edge-1"
     assert ("POST", "/graph/edges") in [(method, path) for method, path, _ in requests]
+
+
+def test_hugegraph_upsert_uses_physical_label_edge_key_index():
+    store = HugeGraphStore.__new__(HugeGraphStore)
+    raw = {
+        "id": "edge-1",
+        "label": "CONTAINS__Project__WorkItem",
+        "outV": "out",
+        "inV": "in",
+        "properties": {"edge_key": "stable-key"},
+    }
+    calls = []
+    store._pages = lambda kind, params=None: calls.append((kind, params)) or iter([raw])
+    store.get_vertex = lambda vid: {
+        "vid": vid,
+        "canonical_id": f"urn:test:{vid}",
+        "label": "Project" if vid == "out" else "WorkItem",
+        "properties": {},
+    }
+
+    result = store.find_edge_by_key(
+        "stable-key", physical_label="CONTAINS__Project__WorkItem"
+    )
+
+    assert result["eid"] == "edge-1"
+    assert calls == [
+        (
+            "edges",
+            {
+                "label": "CONTAINS__Project__WorkItem",
+                "properties": '{"edge_key":"stable-key"}',
+            },
+        )
+    ]

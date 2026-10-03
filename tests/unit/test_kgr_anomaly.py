@@ -82,8 +82,9 @@ def test_dense_subgraph_empty():
 # --- API ---
 
 def test_api_anomalies():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     _build_star_with_outlier(store, spoke_count=8)
     client = TestClient(create_app(store))

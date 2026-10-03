@@ -1,10 +1,5 @@
 """Phase 8 tests: graph diff — diff computation and API."""
 
-import json
-import tempfile
-from pathlib import Path
-
-from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine, SemanticChangeEvent
 from eoip.graph.memory import MemoryGraphStore
 
 
@@ -16,8 +11,9 @@ def _file_props(cid):
 
 def test_diff_detects_added_vertices():
     """Diff between empty state and state with vertices."""
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     store.upsert_vertex("File", {**_file_props("urn:a"), "modified_at": "2026-10-02T10:00:00Z"})
     store.upsert_vertex("File", {**_file_props("urn:b"), "modified_at": "2026-10-02T12:00:00Z"})
@@ -29,20 +25,19 @@ def test_diff_detects_added_vertices():
 
 def test_diff_returns_structure():
     """The /api/v1/graph/diff endpoint returns a structured response."""
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
-    with tempfile.TemporaryDirectory() as tmp:
-        journal = ChangeJournal(Path(tmp) / "journal.ndjson")
-        _create_app = lambda: create_app(store)
-        client = TestClient(_create_app())
-        resp = client.get("/api/v1/graph/statistics")
-        assert resp.status_code == 200
+    client = TestClient(create_app(store))
+    resp = client.get("/api/v1/graph/statistics")
+    assert resp.status_code == 200
 
 
 def test_graph_schema_endpoint():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     client = TestClient(create_app(store))
     resp = client.get("/api/v1/graph/schema")
@@ -53,8 +48,9 @@ def test_graph_schema_endpoint():
 
 
 def test_graph_statistics_endpoint():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     store.upsert_vertex("File", _file_props("urn:x"))
     client = TestClient(create_app(store))
@@ -65,8 +61,9 @@ def test_graph_statistics_endpoint():
 
 
 def test_degree_distribution_api():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     store.upsert_vertex("File", _file_props("urn:a"))
     store.upsert_vertex("File", _file_props("urn:b"))

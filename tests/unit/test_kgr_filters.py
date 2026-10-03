@@ -1,8 +1,9 @@
 """Phase 4 tests: 10-dimensional filter state management and filter-related API behaviour."""
 
-from apps.api.app import create_app
 from eoip.graph.memory import MemoryGraphStore
 from fastapi.testclient import TestClient
+
+from apps.api.app import create_app
 
 
 def _file_props(cid):

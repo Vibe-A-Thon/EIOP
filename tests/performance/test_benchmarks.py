@@ -76,47 +76,40 @@ def test_benchmark_dataset_scale_s_executor_bounds():
     """NFR-PERF-001 (CI scale): benchmark dataset scale 's' (seed 42) — 200 work
     items, 2 repos, 30 commits, 500 files/symbols; ~2.3k edges, ~950 vertices.
 
-    SEARCH / IMPACT / PATH executed via the QueryExecutor must each stay under
-    a 2s bound (max over repeated runs as a p95 proxy). Generation + queries
-    complete in well under 5s, so this test runs in the default suite.
-
-    TODO(NFR-PERF-001): full-scale benchmarking against HugeGraph requires the
-    Docker Compose profile; scale 'm' (~19k edges) and production profiles run
-    there, not in unit tests.
+    The versioned harness emits actual nearest-rank p50/p95/p99 values. The
+    full baseline profile runs manually against an isolated HugeGraph stack.
     """
-    from scripts.benchmark_data import build_store, store_stats
+    from scripts.benchmark import load_manifest, run_benchmark
 
-    store = build_store("s")
-    stats = store_stats(store, "s", 42)
-    assert stats["vertices"] > 0 and stats["edges"] > 0
+    report = run_benchmark(load_manifest(), samples=5, warmups=1)
 
-    executor = QueryExecutor(store)
-    plans = [
-        QueryPlan(intent="SEARCH", anchors=["BENCH-42"], max_depth=1, result_limit=25, evidence_mode="NONE"),
-        QueryPlan(
-            intent="IMPACT",
-            anchors=["urn:bench:item:0"],
-            max_depth=4,
-            result_limit=100,
-            evidence_mode="SUMMARY",
-        ),
-        QueryPlan(
-            intent="PATH",
-            anchors=["urn:bench:item:0", "urn:bench:item:5"],
-            max_depth=8,
-            result_limit=100,
-            evidence_mode="NONE",
-        ),
-    ]
-    for plan in plans:
-        latencies = []
-        for _ in range(5):
-            start = time.perf_counter()
-            result = executor.execute(plan)
-            latencies.append(time.perf_counter() - start)
-        p95 = max(latencies)
-        assert p95 < 2.0, (
-            f"{plan.intent} on scale s ({stats['vertices']} vertices, "
-            f"{stats['edges']} edges) took {p95:.2f}s, exceeds 2s bound"
-        )
-        assert result is not None
+    assert report["status"] == "passed"
+    assert report["dataset"]["vertices"] > 0
+    assert report["dataset"]["edges"] > 0
+    measured = [item for item in report["workloads"] if item["status"] != "skipped"]
+    assert measured
+    assert all(set(item["latency_ms"]) >= {"p50", "p95", "p99"} for item in measured)
+
+
+def test_benchmark_manifest_declares_normative_full_dataset():
+    from scripts.benchmark import load_manifest
+    from scripts.benchmark_data import SCALES
+
+    manifest = load_manifest()
+    baseline = SCALES[manifest["dataset"]["profiles"]["full"]]
+
+    assert baseline["work_items"] == 2_000
+    assert baseline["repos"] == 10
+    assert baseline["commits"] == 15_000
+    assert baseline["files_symbols"] == 25_000
+    assert baseline["document_sections"] == 5_000
+    assert manifest["bulk_batch_size"] == 500
+
+
+def test_benchmark_percentile_uses_nearest_rank():
+    from scripts.benchmark import percentile
+
+    values = list(range(1, 101))
+    assert percentile(values, 50) == 50
+    assert percentile(values, 95) == 95
+    assert percentile(values, 99) == 99

@@ -10,12 +10,13 @@ from __future__ import annotations
 import hashlib
 import json
 from threading import RLock
+from time import monotonic, sleep
 from urllib.parse import quote
 
 import httpx
 from eoip.contracts.source_event import utc_now_iso
 from eoip.graph.memory import edge_key
-from eoip.graph.store import GraphQueryTimeout, remaining_query_seconds
+from eoip.graph.store import BulkLoadError, GraphQueryTimeout, remaining_query_seconds
 from eoip.ontology.manifest import (
     EDGE_LABELS,
     INDEXES,
@@ -25,6 +26,8 @@ from eoip.ontology.manifest import (
 
 
 class HugeGraphStore:
+    _IDENTITY_CACHE_LIMIT = 100_000
+
     def __init__(self, url: str, graph: str = "hugegraph", username: str = "admin", password: str = ""):
         self.client = httpx.Client(
             base_url=url.rstrip("/"),
@@ -35,6 +38,7 @@ class HugeGraphStore:
         self.base = f"/graphspaces/DEFAULT/graphs/{quote(graph, safe='')}"
         self.graph = graph
         self._lock = RLock()
+        self._identity_cache: dict[str, tuple[str, str]] = {}
 
     def close(self):
         self.client.close()
@@ -55,6 +59,23 @@ class HugeGraphStore:
             raise GraphQueryTimeout("Graph store request exceeded the traversal time budget") from exc
         response.raise_for_status()
         return response.json() if response.content else None
+
+    def _wait_schema_task(self, response, timeout_seconds=60.0):
+        task_id = response.get("task_id") if isinstance(response, dict) else None
+        if task_id is None:
+            return
+        deadline = monotonic() + timeout_seconds
+        while monotonic() < deadline:
+            task = self._request("GET", f"/tasks/{quote(str(task_id), safe='')}")
+            status = str(task.get("task_status", "")).casefold()
+            if status == "success":
+                return
+            if status in {"failed", "cancelled", "canceled"}:
+                raise RuntimeError(
+                    f"HugeGraph schema task {task_id} {status}: {task.get('task_result')}"
+                )
+            sleep(0.05)
+        raise TimeoutError(f"HugeGraph schema task {task_id} did not finish within {timeout_seconds}s")
 
     def health(self):
         try:
@@ -89,11 +110,49 @@ class HugeGraphStore:
             def ensure(kind, items):
                 nonlocal created
                 existing_items = self._request("GET", f"/schema/{kind}")[kind]
+                if kind == "indexlabels":
+                    # Clean up only the temporary additive names produced by
+                    # the interrupted 2026-10 edge-index migration. They are
+                    # redundant with idx_edge_key_* and contain no graph data.
+                    obsolete = [
+                        entry
+                        for entry in existing_items
+                        if entry["name"].startswith("idx_edge_key_lookup_")
+                    ]
+                    for entry in obsolete:
+                        response = self._request(
+                            "DELETE",
+                            f"/schema/indexlabels/{quote(entry['name'], safe='')}",
+                        )
+                        self._wait_schema_task(response)
+                        created = True
+                    if obsolete:
+                        obsolete_names = {entry["name"] for entry in obsolete}
+                        existing_items = [
+                            entry for entry in existing_items if entry["name"] not in obsolete_names
+                        ]
                 existing = {item["name"]: item for item in existing_items}
                 for item in items:
                     current = existing.get(item["name"])
                     if current is None:
-                        self._request("POST", f"/schema/{kind}", json=item)
+                        response = self._request("POST", f"/schema/{kind}", json=item)
+                        if kind == "indexlabels":
+                            self._wait_schema_task(response)
+                        created = True
+                    elif kind == "indexlabels" and any(
+                        current.get(key) != item.get(key)
+                        for key in ("base_type", "base_value", "index_type", "fields")
+                    ):
+                        # HugeGraph schema mutation is asynchronous. Waiting
+                        # between delete and same-name recreate prevents a
+                        # race that otherwise leaves schema bootstrap failed.
+                        deleted = self._request(
+                            "DELETE",
+                            f"/schema/indexlabels/{quote(item['name'], safe='')}",
+                        )
+                        self._wait_schema_task(deleted)
+                        rebuilt = self._request("POST", "/schema/indexlabels", json=item)
+                        self._wait_schema_task(rebuilt)
                         created = True
                     elif kind in {"vertexlabels", "edgelabels"}:
                         missing_properties = sorted(
@@ -191,22 +250,45 @@ class HugeGraphStore:
         return {k: v for k, v in properties.items() if v is not None}
 
     def _vertex(self, raw):
-        return {
+        vertex = {
             "vid": raw["id"],
             "canonical_id": raw["properties"]["canonical_id"],
             "label": raw["label"],
             "properties": raw["properties"],
         }
+        self._remember_identity(vertex)
+        return vertex
+
+    def _remember_identity(self, vertex):
+        # Canonical IDs and labels are immutable by graph contract, so caching
+        # only this pair cannot hide mutable property updates from other EOIP
+        # processes. Clear-on-limit keeps the adapter bounded for large graphs.
+        cache = getattr(self, "_identity_cache", None)
+        if cache is None:
+            cache = self._identity_cache = {}
+        if len(cache) >= self._IDENTITY_CACHE_LIMIT and vertex["vid"] not in cache:
+            cache.clear()
+        cache[vertex["vid"]] = (vertex["canonical_id"], vertex["label"])
+
+    def _vertex_identity(self, vid):
+        cached = getattr(self, "_identity_cache", {}).get(vid)
+        if cached is not None:
+            return cached
+        vertex = self.get_vertex(vid)
+        if vertex is None:
+            raise ValueError(f"Edge references missing vertex: {vid}")
+        return vertex["canonical_id"], vertex["label"]
 
     def _edge(self, raw):
-        source, target = self.get_vertex(raw["outV"]), self.get_vertex(raw["inV"])
+        source_cid, _source_label = self._vertex_identity(raw["outV"])
+        target_cid, _target_label = self._vertex_identity(raw["inV"])
         return {
             "eid": raw["id"],
             "label": raw["label"].split("__")[0],
             "out_v": raw["outV"],
             "in_v": raw["inV"],
-            "out_cid": source["canonical_id"],
-            "in_cid": target["canonical_id"],
+            "out_cid": source_cid,
+            "in_cid": target_cid,
             "properties": raw["properties"],
         }
 
@@ -317,7 +399,7 @@ class HugeGraphStore:
         props.setdefault("creation_status", "DETERMINISTIC")
         physical_label = f"{label}__{source['label']}__{target['label']}"
         with self._lock:
-            existing = self.find_edge_by_key(props["edge_key"])
+            existing = self.find_edge_by_key(props["edge_key"], physical_label=physical_label)
             if existing:
                 raw = self._request(
                     "PUT",
@@ -348,10 +430,24 @@ class HugeGraphStore:
                 return None
             raise
 
-    def find_edge_by_key(self, edge_key, *, limit=50_000):
-        # Lookup-then-create (best effort under concurrency): scan paged edges
-        # and match on the edge_key property, mirroring the vertex paging used
-        # by find_vertices/find_edges.
+    def find_edge_by_key(self, edge_key, *, limit=50_000, physical_label=None):
+        # Upserts know the physical edge label, allowing HugeGraph to use the
+        # per-label edge_key secondary index instead of scanning the graph.
+        if physical_label:
+            property_filter = json.dumps({"edge_key": edge_key}, separators=(",", ":"))
+            try:
+                for raw in self._pages(
+                    "edges", {"label": physical_label, "properties": property_filter}
+                ):
+                    if raw["properties"].get("edge_key") == edge_key:
+                        return self._edge(raw)
+                return None
+            except httpx.HTTPStatusError as exc:
+                # Pre-migration deployments may still have the old UNIQUE
+                # edge index, which HugeGraph 1.7 refuses for property queries.
+                if exc.response.status_code != 400 or "NoIndexException" not in exc.response.text:
+                    raise
+        # Callers without endpoint-label context retain the bounded fallback.
         for edge in self.find_edges(limit=limit, include_historical=True):
             if edge["properties"].get("edge_key") == edge_key:
                 return edge
@@ -387,6 +483,132 @@ class HugeGraphStore:
             if (not label or raw["label"].split("__")[0] == label)
             and raw["properties"].get("is_current") is not False
         )
+
+    def bulk_load(self, vertices, edges, *, batch_size=500):
+        """Load a prevalidated logical snapshot through native batch POSTs.
+
+        This is an offline baseline/restore path, not an online upsert path.
+        HugeGraph 1.7 batch PUT conflicts with UNIQUE vertex indexes, while
+        batch POST provides a single transaction per bounded request. The
+        empty-graph guard makes retries explicit: discard the isolated volume
+        after a partial failure and start again.
+        """
+        from eoip.validation.gate import check_edge, check_vertex
+
+        if not 1 <= batch_size <= 1000:
+            raise ValueError("batch_size must be between 1 and 1000")
+        vertices = list(vertices)
+        edges = list(edges)
+        if not vertices:
+            raise ValueError("bulk_load requires at least one vertex")
+        if self.count_vertices() or self.count_edges():
+            raise RuntimeError("bulk_load requires an empty graph; use an isolated deployment")
+
+        normalized_vertices = []
+        endpoints = {}
+        canonical_ids = set()
+        for vertex in vertices:
+            label = vertex["label"]
+            properties = dict(vertex["properties"])
+            check_vertex(label, properties)
+            canonical_id = properties["canonical_id"]
+            if vertex.get("canonical_id", canonical_id) != canonical_id:
+                raise ValueError("bulk vertex canonical_id does not match its properties")
+            if canonical_id in canonical_ids:
+                raise ValueError(f"duplicate canonical_id in bulk load: {canonical_id}")
+            canonical_ids.add(canonical_id)
+            properties = self._properties(properties)
+            properties.setdefault("entity_type", label)
+            properties.setdefault("graph_domain", VERTEX_LABELS[label][0])
+            vid = self.vertex_id(canonical_id)
+            normalized = {"id": vid, "label": label, "properties": properties}
+            normalized_vertices.append(normalized)
+            identity = (vid, canonical_id, label)
+            for reference in {vertex.get("vid"), vertex.get("canonical_id"), canonical_id, vid}:
+                if reference is not None:
+                    endpoints[reference] = identity
+
+        normalized_edges = []
+        edge_keys = set()
+        for edge in edges:
+            try:
+                out_vid, out_cid, out_label = endpoints[edge["out_v"]]
+                in_vid, in_cid, in_label = endpoints[edge["in_v"]]
+            except KeyError as exc:
+                raise ValueError(f"bulk edge references missing vertex: {exc.args[0]}") from exc
+            label = edge["label"]
+            properties = dict(edge["properties"])
+            check_edge(label, out_label, in_label, properties)
+            properties = self._properties(properties)
+            properties.setdefault(
+                "edge_key",
+                edge_key(label, out_cid, in_cid, properties.get("fact_key", "")),
+            )
+            properties.setdefault("creation_status", "DETERMINISTIC")
+            if properties["edge_key"] in edge_keys:
+                raise ValueError(f"duplicate edge_key in bulk load: {properties['edge_key']}")
+            edge_keys.add(properties["edge_key"])
+            normalized_edges.append(
+                {
+                    "label": f"{label}__{out_label}__{in_label}",
+                    "outV": out_vid,
+                    "outVLabel": out_label,
+                    "inV": in_vid,
+                    "inVLabel": in_label,
+                    "properties": properties,
+                }
+            )
+
+        self.ensure_schema({})
+        vertices_committed = 0
+        edges_committed = 0
+        vertex_batches = 0
+        edge_batches = 0
+        try:
+            for offset in range(0, len(normalized_vertices), batch_size):
+                batch = normalized_vertices[offset : offset + batch_size]
+                created = self._request(
+                    "POST", "/graph/vertices/batch", json=batch, timeout=120
+                )
+                if not isinstance(created, list) or len(created) != len(batch):
+                    raise RuntimeError("HugeGraph returned an invalid vertex batch result")
+                vertices_committed += len(batch)
+                vertex_batches += 1
+                for item in batch:
+                    self._remember_identity(
+                        {
+                            "vid": item["id"],
+                            "canonical_id": item["properties"]["canonical_id"],
+                            "label": item["label"],
+                        }
+                    )
+            for offset in range(0, len(normalized_edges), batch_size):
+                batch = normalized_edges[offset : offset + batch_size]
+                created = self._request(
+                    "POST",
+                    "/graph/edges/batch",
+                    params={"check_vertex": True},
+                    json=batch,
+                    timeout=120,
+                )
+                if not isinstance(created, list) or len(created) != len(batch):
+                    raise RuntimeError("HugeGraph returned an invalid edge batch result")
+                edges_committed += len(batch)
+                edge_batches += 1
+        except Exception as exc:
+            raise BulkLoadError(
+                "HugeGraph bulk load failed; discard the isolated graph and retry",
+                vertices_committed=vertices_committed,
+                edges_committed=edges_committed,
+            ) from exc
+        return {
+            "vertices": vertices_committed,
+            "edges": edges_committed,
+            "vertex_batches": vertex_batches,
+            "edge_batches": edge_batches,
+            "batch_size": batch_size,
+            "mode": "hugegraph-native-post",
+        }
 
     def tombstone_vertex(self, canonical_id):
         vertex = self.get_vertex_by_canonical_id(canonical_id)

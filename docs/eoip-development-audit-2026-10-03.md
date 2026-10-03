@@ -272,7 +272,7 @@ The documentation IDs are qualified; the requested shorthand `NFR-001..014` belo
 | 9 | NFR-REL-002 | Backup/restore with verification | **Partial — 50%** | Backup/restore tests and historical run exist; native graph backup/config archival remains open. |
 | 10 | NFR-OPS-001 | Structured logs, health, correlation IDs | **Verified — 100%** | Health/observability and deployment API tests; historical services reported healthy. |
 | 11 | NFR-OPS-002 | Local machine-readable metrics | **Verified — 100%** | Metrics and deployment API tests; historical Prometheus scrape. |
-| 12 | NFR-PERF-001 | Measured, benchmark-defined objectives | **Missing — 0%** | Versioned benchmark/hardware manifest and published p50/p95/p99 evidence not demonstrated. |
+| 12 | NFR-PERF-001 | Measured, benchmark-defined objectives | **Partial** | Versioned manifest, deterministic smoke/full datasets, automated tests, hardware/resource metadata, and published memory p50/p95/p99 evidence now exist. Full HugeGraph + HTTP measurement remains open. |
 | 13 | NFR-MAINT-001 | Modular-monolith boundaries/stable contracts | **Partial — 50%** | Package/service boundaries, lint, and current test-profile evidence exist; contract and architecture fitness evidence remains incomplete. |
 | 14 | NFR-PRIV-001 | Data minimization/classification | **Partial — 50%** | Redaction/safe-summary tests exist; complete field classification/prohibited-content coverage is unverified. |
 
@@ -450,3 +450,67 @@ Order work so the product remains demonstrable at each checkpoint. Do not spend 
 
 **Current sign-off: NOT DEMO-READY / NOT 100% COMPLETE.**  
 The previous replay, Docker-availability, and basic browser blockers are resolved for the current working tree. The shortest remaining path is to run and record a clean-reset cross-source golden path plus verified backup/restore; close the remaining P1 safety/quality evidence; exercise the complete browser acceptance matrix and VS Code extension in a real host; then rerun the release suite on one recorded revision. Deferred P2+ capabilities should remain clearly marked as later roadmap work rather than being mixed into the P1 exit gate.
+
+## 10. Continuation remediation evidence (revision `354b8a9` plus working changes)
+
+The following later evidence supersedes the corresponding open observations
+above while preserving the original point-in-time audit history.
+
+### Clean deployment and recovery gates
+
+* A clean isolated Compose project created the schema on first bootstrap and
+  returned `created=False` on the repeat bootstrap.
+* The clean stack reported ready, retained graph counts across restart, and was
+  removed without touching the normal development volumes.
+* The current Docker test profile passed the Linux Python suite, live API/MCP/
+  worker smoke journey, and both Playwright scenarios (login/search/trace/admin
+  and invalid credentials).
+* A checksum backup captured 179 vertices, 527 edges, and 9 raw files with
+  SHA-256 `ebd5bd7be173f58d61bcd0cb549428a44e96e8f1ccbe2a635555a61a094b98ca`.
+  Restore into an isolated empty HugeGraph instance reproduced all counts and
+  preserved the golden path and source evidence.
+
+These results close the clean-bootstrap and backup/restore portions of orders
+5 and 7. Broader cross-source acceptance and the single-command release/demo
+workflow remain separate work.
+
+### `NFR-PERF-001` benchmark package
+
+* Added versioned manifest `config/benchmarks/mvp-v1.json` and reproducible
+  runner `scripts/benchmark.py`.
+* The CI smoke profile and normative full profile now report true nearest-rank
+  p50/p95/p99, throughput, hardware/configuration, Git state, CPU, peak RSS,
+  and storage use. Benchmark failures are retained in the JSON report and
+  return a non-zero exit.
+* The full memory run generated 47,140 vertices and 223,940 edges from the
+  documented 2,000-work-item / 15,000-commit / 25,000-file-symbol /
+  5,000-document-section data shape. All measured in-process workloads passed
+  their provisional thresholds; see `docs/benchmarks/2026-10-03-memory-full.json`.
+* Live HugeGraph inspection exposed an O(E) edge-dedup lookup and a HugeGraph
+  1.7 incompatibility: `UNIQUE` edge indexes are created but rejected for
+  property-filter queries. The schema now uses a queryable `SECONDARY` edge-key
+  index while retaining `edge_key` as the physical edge sort key. Schema
+  migration waits for each asynchronous delete/rebuild task. A clean,
+  isolated HugeGraph test verified indexed lookup and duplicate upsert collapse
+  to one edge.
+* The first isolated HugeGraph benchmark correctly failed bounded impact at
+  3,814.025 ms p95 versus the 2,000 ms target. A bounded cache of immutable
+  vertex identities removed redundant endpoint REST reads; the identical clean
+  rerun passed at 917.343 ms p95. The failed and passing reports are both
+  retained under `docs/benchmarks/`.
+* The development graph migrated all 549 physical edge-key indexes from the
+  non-queryable `UNIQUE` form to `SECONDARY`. Migration waits for HugeGraph
+  delete/rebuild tasks, removed two known temporary index artifacts from an
+  interrupted attempt, preserved the graph at 179 vertices / 527 edges, and
+  completed with every normal service healthy.
+* The post-migration Docker profile passed 461 Python tests and the live
+  readiness/auth/query-limit, Jira-to-code/evidence/validation, durable replay,
+  web, and MCP smoke checks. The browser journey exposed a stale-result race:
+  graph entity buttons remained interactive during search. Those buttons now
+  honor the global busy state; the login/search/path/agent/admin journey and
+  invalid-credential scenario both pass on rerun.
+
+The remaining performance gate is a full isolated HugeGraph + authenticated
+HTTP run with server/container resource telemetry. Until that result is
+published, the memory figures are algorithmic evidence only and not a product
+performance claim.

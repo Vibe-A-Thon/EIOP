@@ -365,10 +365,11 @@ INDEXES: list[dict] = [
     {"name": "idx_entity_revision_current", "type": "SECONDARY", "label": "EntityRevision", "fields": ["subject_id", "is_current"]},
     {"name": "idx_relationship_revision_current", "type": "SECONDARY", "label": "RelationshipRevision", "fields": ["relationship_id", "is_current"]},
     {"name": "idx_graph_version", "type": "SECONDARY", "label": "GraphVersion", "fields": ["graph_version"]},
-    # Edge-scoped UNIQUE index (FR-INGEST-003): HugeGraph attaches edge indexes
-    # to a physical edge label, so ensure_schema expands this single entry into
-    # one index per physical edge label (<label>__<out>__<in>).
-    {"name": "idx_edge_key", "type": "UNIQUE", "label": None, "fields": ["edge_key"], "base_type": "EDGE_LABEL"},
+    # Edge-scoped SECONDARY index (FR-INGEST-003): HugeGraph 1.7 accepts UNIQUE
+    # edge indexes but does not use them for property-filter queries. Physical
+    # edge labels already use edge_key as a sort key, which supplies endpoint-
+    # scoped uniqueness; this queryable index makes lookup-before-upsert O(log n).
+    {"name": "idx_edge_key", "type": "SECONDARY", "label": None, "fields": ["edge_key"], "base_type": "EDGE_LABEL"},
 ]
 
 # Business vertex labels counted as "business" (non-meta) facts

@@ -126,8 +126,9 @@ def test_label_propagation_empty():
 # --- API: /api/v1/graph/cluster ---
 
 def test_api_cluster_leiden():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     _build_two_cliques(store)
     client = TestClient(create_app(store))
@@ -139,8 +140,9 @@ def test_api_cluster_leiden():
 
 
 def test_api_cluster_default_algorithm():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     _build_two_cliques(store)
     client = TestClient(create_app(store))

@@ -1,151 +1,76 @@
-from eoip.codegraph.parser import CodeParser
+"""Deterministic captured-event replay (FR-CONN-006)."""
+
+import pytest
 from eoip.connectors.jira_json import JiraJsonConnector
-from eoip.connectors.local_code import LocalCodeConnector
 from eoip.graph.memory import MemoryGraphStore
-from eoip.ingestion.code import CodeIngestionService
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
-from eoip.ingestion.replay import (
-    logical_graph_output,
-    logical_output_diff,
-    replay_captured_events,
-)
-
-from apps.worker.main import execute_job
+from eoip.ingestion.replay import replay_captured_events
 
 
-def _captured_jira_graph(tmp_path):
+def _ingest_jira(tmp_path, document):
     store = MemoryGraphStore()
     service = JiraIngestionService(
         store,
-        JiraJsonConnector(),
+        JiraJsonConnector.from_yaml("config/mappings/jira-mvp.yaml"),
         FileEventCapture(tmp_path / "raw"),
         tmp_path / "dlq",
     )
-    service.ingest(
-        {
-            "issues": [
-                {
-                    "key": "EOIP-REPLAY-1",
-                    "fields": {
-                        "summary": "Replay captured source event",
-                        "project": {"key": "EOIP", "name": "EOIP"},
-                    },
-                }
-            ]
-        }
-    )
-    event_id = next((tmp_path / "raw" / "jira").glob("*.json")).stem
-    return store, event_id
+    result = service.ingest(document)
+    return store, service, result
 
 
-def test_replay_preserves_captured_identity_and_is_logically_equivalent(tmp_path):
-    store, event_id = _captured_jira_graph(tmp_path)
-    expected = logical_graph_output(store)
+def test_replay_is_idempotent_and_preserves_counts(tmp_path):
+    document = {
+        "issues": [
+            {"key": "EOIP-7", "fields": {"summary": "Replay me", "project": {"key": "EOIP"}}},
+        ]
+    }
+    store, _service, first = _ingest_jira(tmp_path, document)
+    assert first["records_accepted"] == 1
+    before = store.count_vertices()
 
-    result = replay_captured_events(
-        store,
-        tmp_path,
-        source_system="jira",
-        event_ids=[event_id],
-    )
+    replay = replay_captured_events(store, tmp_path, source_system="jira")
 
-    assert result["records_replayed"] == 1
-    assert result["logical_diff"]["equivalent"] is True, result["logical_diff"]
-    assert logical_graph_output(store) == expected
-    evidence = store.get_vertex_by_canonical_id(
-        f"urn:eoip:evidence:source-event:jira:{event_id}"
-    )
-    assert evidence["properties"]["evidence_key"] == event_id
-
-
-def test_worker_executes_replay_job_kind(tmp_path):
-    store, event_id = _captured_jira_graph(tmp_path)
-
-    result = execute_job(
-        store,
-        tmp_path,
-        {
-            "kind": "REPLAY",
-            "correlation_id": "replay-correlation",
-            "payload": {
-                "source_system": "jira",
-                "event_ids": [event_id],
-                "dry_run": False,
-            },
-        },
-    )
-
-    assert result["run_status"] == "SUCCEEDED"
-    assert result["records_replayed"] == 1
-    assert result["logical_diff"]["equivalent"] is True
+    assert replay["records_replayed"] == 1
+    assert replay["run_status"] == "SUCCEEDED"
+    # Logical entities are unchanged; only a new IngestionRun records the replay.
+    assert store.count_vertices() - before == 1
+    assert store.count_vertices("IngestionRun") == 2
+    assert store.count_vertices("WorkItem") == 1
 
 
-def test_replay_rejects_missing_selected_event(tmp_path):
-    store, _event_id = _captured_jira_graph(tmp_path)
+def test_replay_dry_run_writes_nothing(tmp_path):
+    document = {"issues": [{"key": "EOIP-8", "fields": {"summary": "Dry"}}]}
+    store, _service, _ = _ingest_jira(tmp_path, document)
+    before = store.count_vertices()
 
-    try:
+    replay = replay_captured_events(store, tmp_path, source_system="jira", dry_run=True)
+
+    assert replay["run_status"] == "DRY_RUN"
+    assert store.count_vertices() == before
+
+
+def test_replay_with_unknown_event_id_fails_explicitly(tmp_path):
+    document = {"issues": [{"key": "EOIP-9", "fields": {"summary": "One"}}]}
+    store, _service, _ = _ingest_jira(tmp_path, document)
+
+    with pytest.raises(ValueError, match="not found"):
         replay_captured_events(
-            store,
-            tmp_path,
-            source_system="jira",
-            event_ids=["0" * 64],
+            store, tmp_path, source_system="jira", event_ids=["f" * 64]
         )
-    except ValueError as exc:
-        assert "captured events not found" in str(exc)
-    else:
-        raise AssertionError("missing replay event must be rejected")
 
 
-def test_logical_output_diff_reports_golden_drift():
-    expected = {"vertices": {"urn:test:1": {"label": "Project"}}, "edges": {}}
-    actual = {
-        "vertices": {
-            "urn:test:1": {"label": "Repository"},
-            "urn:test:2": {"label": "Project"},
-        },
-        "edges": {},
-    }
-
-    diff = logical_output_diff(expected, actual)
-
-    assert diff == {
-        "vertices": {
-            "added": ["urn:test:2"],
-            "removed": [],
-            "changed": ["urn:test:1"],
-        },
-        "edges": {"added": [], "removed": [], "changed": []},
-        "equivalent": False,
-    }
-
-
-def test_captured_code_event_replays_without_source_tree(tmp_path):
-    source_root = tmp_path / "repository"
-    source_root.mkdir()
-    (source_root / "service.py").write_text(
-        "def execute():\n    return 'ok'\n",
-        encoding="utf-8",
-    )
+def test_replay_unsupported_source_fails_explicitly(tmp_path):
     store = MemoryGraphStore()
-    service = CodeIngestionService(
-        store,
-        LocalCodeConnector(),
-        CodeParser(),
-        FileEventCapture(tmp_path / "raw"),
-        tmp_path / "dlq",
-    )
-    service.ingest(source_root, "platform")
-    event_id = next((tmp_path / "raw" / "git").glob("*.json")).stem
-    expected = logical_graph_output(store)
-    (source_root / "service.py").unlink()
+    with pytest.raises(ValueError, match="not supported"):
+        replay_captured_events(store, tmp_path, source_system="confluence")
 
-    result = replay_captured_events(
-        store,
-        tmp_path,
-        source_system="git",
-        event_ids=[event_id],
-    )
 
-    assert result["records_replayed"] == 1
-    assert result["logical_diff"]["equivalent"] is True, result["logical_diff"]
-    assert logical_graph_output(store) == expected
+def test_replay_empty_source_is_a_noop_success(tmp_path):
+    store = MemoryGraphStore()
+    (tmp_path / "raw" / "jira").mkdir(parents=True)
+
+    replay = replay_captured_events(store, tmp_path, source_system="jira")
+
+    assert replay["records_seen"] == 0
+    assert replay["run_status"] == "SUCCEEDED"

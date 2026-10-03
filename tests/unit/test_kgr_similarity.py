@@ -99,8 +99,9 @@ def test_common_neighbors_to_dict():
 # --- API ---
 
 def test_api_similarity_jaccard():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     _build_triangle_with_extra(store)
     client = TestClient(create_app(store))
@@ -114,8 +115,9 @@ def test_api_similarity_jaccard():
 
 
 def test_api_similarity_adamic_adar():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     _build_triangle_with_extra(store)
     client = TestClient(create_app(store))

@@ -1,27 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import Graph from 'graphology';
+import Sigma from 'sigma';
 import {palette} from '../../GraphCanvas.jsx';
-
-const SIGMA_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js';
-const GRAPHOLOGY_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/graphology/0.25.4/graphology.umd.min.js';
-
-let libsLoaded = null;
-
-function loadLibs() {
-  if (libsLoaded) return libsLoaded;
-  libsLoaded = new Promise((resolve, reject) => {
-    if (window.graphology && window.Sigma) {resolve(); return;}
-    const loadScript = (src) => new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = src; s.onload = res; s.onerror = rej;
-      document.head.appendChild(s);
-    });
-    loadScript(GRAPHOLOGY_CDN)
-      .then(() => loadScript(SIGMA_CDN))
-      .then(resolve)
-      .catch(reject);
-  });
-  return libsLoaded;
-}
 
 function buildGraph(Graph, nodes, edges) {
   const g = new Graph();
@@ -105,17 +85,10 @@ export default function SigmaRenderer({nodes, edges, selectedId, onSelectNode, o
   const containerRef = useRef(null);
   const sigmaRef = useRef(null);
   const graphRef = useRef(null);
-  const [ready, setReady] = useState(false);
   const [progress, setProgress] = useState(null);
 
   useEffect(() => {
-    loadLibs().then(() => setReady(true)).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (!ready || !containerRef.current) return;
-    const Graph = window.graphology;
-    if (!Graph || !window.Sigma) return;
+    if (!containerRef.current) return;
 
     if (sigmaRef.current) {
       sigmaRef.current.kill();
@@ -134,7 +107,7 @@ export default function SigmaRenderer({nodes, edges, selectedId, onSelectNode, o
 
     setProgress(null);
     try {
-      const renderer = new window.Sigma(g, containerRef.current, {
+      const renderer = new Sigma(g, containerRef.current, {
         renderEdgeLabels: nodes.length < 2000,
         labelRenderedSizeThreshold: nodes.length > 5000 ? 15 : 8,
         labelDensity: 0.07,
@@ -172,7 +145,7 @@ export default function SigmaRenderer({nodes, edges, selectedId, onSelectNode, o
         sigmaRef.current = null;
       }
     };
-  }, [ready, nodes, edges]);
+  }, [nodes, edges]);
 
   useEffect(() => {
     if (!graphRef.current || !sigmaRef.current) return;
@@ -204,4 +177,4 @@ export default function SigmaRenderer({nodes, edges, selectedId, onSelectNode, o
   </div>;
 }
 
-export {applyForceLayout, buildGraph, loadLibs};
+export {applyForceLayout, buildGraph};

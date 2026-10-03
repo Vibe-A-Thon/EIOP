@@ -1,0 +1,129 @@
+{
+  "schema_version": "eoip-benchmark-result/v1",
+  "created_at": "2026-10-03T07:15:36.704224+00:00",
+  "requirement": "NFR-PERF-001",
+  "manifest": {
+    "id": "mvp-v1",
+    "schema_version": "eoip-benchmark-manifest/v1",
+    "path": "config/benchmarks/mvp-v1.json"
+  },
+  "software": {
+    "eoip_git_revision": "unknown",
+    "working_tree_dirty": null
+  },
+  "backend": "configured",
+  "run": "smoke",
+  "dataset": {
+    "scale": "s",
+    "seed": 42,
+    "vertices": 774,
+    "edges": 2007,
+    "work_items": 200,
+    "repos": 2,
+    "commits": 30,
+    "files_symbols": 500,
+    "document_sections": 20
+  },
+  "hardware": {
+    "os": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+    "architecture": "x86_64",
+    "python": "3.11.14",
+    "cpu_model": "not reported by operating system",
+    "cpu_logical_cores": 8,
+    "memory_total_bytes": 8187506688,
+    "storage_type": "Docker Desktop NVMe-backed volume",
+    "storage_total_bytes": 1081101176832,
+    "storage_free_bytes_at_start": 1006718865408,
+    "containerized": true
+  },
+  "configuration": {
+    "samples": 20,
+    "warmups": 3,
+    "api_url": null,
+    "hugegraph_url": "http://restore-graph:8080"
+  },
+  "preparation": {
+    "duration_seconds": 39.162,
+    "logical_mutations": 2781,
+    "logical_mutations_per_second": 71.012
+  },
+  "workloads": [
+    {
+      "samples": 20,
+      "warmups": 3,
+      "latency_ms": {
+        "min": 1.858,
+        "p50": 2.406,
+        "p95": 2.695,
+        "p99": 2.906,
+        "max": 2.906
+      },
+      "throughput_operations_per_second": 420.738,
+      "id": "indexed_entity_lookup",
+      "kind": "store_lookup",
+      "target_p95_ms": 500.0,
+      "status": "passed"
+    },
+    {
+      "samples": 20,
+      "warmups": 3,
+      "latency_ms": {
+        "min": 64.76,
+        "p50": 79.963,
+        "p95": 129.433,
+        "p99": 134.982,
+        "max": 134.982
+      },
+      "throughput_operations_per_second": 11.489,
+      "id": "standard_search",
+      "kind": "query_plan",
+      "target_p95_ms": 1000.0,
+      "status": "passed"
+    },
+    {
+      "id": "standard_api_search",
+      "status": "skipped",
+      "reason": "--api-url was not supplied",
+      "target_p95_ms": 1000
+    },
+    {
+      "samples": 20,
+      "warmups": 3,
+      "latency_ms": {
+        "min": 44.717,
+        "p50": 48.804,
+        "p95": 50.838,
+        "p99": 74.581,
+        "max": 74.581
+      },
+      "throughput_operations_per_second": 20.166,
+      "id": "bounded_path",
+      "kind": "query_plan",
+      "target_p95_ms": 2000.0,
+      "status": "passed"
+    },
+    {
+      "samples": 20,
+      "warmups": 3,
+      "latency_ms": {
+        "min": 571.139,
+        "p50": 701.34,
+        "p95": 917.343,
+        "p99": 985.984,
+        "max": 985.984
+      },
+      "throughput_operations_per_second": 1.37,
+      "id": "bounded_impact",
+      "kind": "query_plan",
+      "target_p95_ms": 2000.0,
+      "status": "passed"
+    }
+  ],
+  "resources": {
+    "client_process_cpu_seconds": 23.727,
+    "client_peak_rss_bytes": 47542272,
+    "storage_bytes_consumed": 309264384,
+    "scope": "benchmark client process; server/container metrics require external collection"
+  },
+  "status": "passed"
+}

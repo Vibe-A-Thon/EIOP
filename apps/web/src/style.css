@@ -729,3 +729,10 @@ tr:last-child td { border-bottom: 0; }
 /* Filter date inputs */
 .filter-date { display: flex; align-items: center; gap: 4px; }
 .filter-date input[type="date"] { font-size: 12px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+
+/* NL query + N/A quality rings (FR-VALID-003, FR-QUERY-005 UI) */
+.nl-search { margin-top: 10px; height: 44px; }
+.nl-search > svg { color: var(--violet, #7c5cff); }
+.nl-interpretation { margin-top: 10px; max-width: 880px; }
+.quality-ring.na { background: #edf0f4; }
+.quality-ring.na span { color: #929cad; }

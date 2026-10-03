@@ -1,16 +1,20 @@
 """Deterministic benchmark dataset generator (NFR-PERF-001).
 
-Produces the engineering-doc dataset profile scaled down for CI and local
-runs, built directly into a MemoryGraphStore via the standard upsert APIs.
+Produces versioned engineering benchmark profiles through the same graph-store
+port used by the application.  Small profiles keep CI fast; ``baseline``
+matches the representative MVP dataset defined in the engineering package.
 
 Profiles:
-    s: 200 work items, 2 repos, 30 commits, 500 files/symbols, ~2.3k edges
-    m: 2000 work items, 10 repos, 150 commits, 2500 files/symbols, ~19k edges
+    s: 200 work items, 2 repos, 30 commits, 500 files/symbols
+    m: 2,000 work items, 10 repos, 150 commits, 2,500 files/symbols
+    baseline: 2,000 work items, 10 repos, 15,000 commits,
+              25,000 files/symbols, 5,000 document sections and
+              approximately 200,000 relationships
 
 Generation is fully deterministic for a given (scale, seed).
 
-TODO(NFR-PERF-001): full-scale benchmarking against HugeGraph under the
-Docker Compose profile; this script only reproduces the shape at CI scale.
+The ``populate_store`` entry point can load an isolated HugeGraph deployment;
+it deliberately does not clear an existing graph.
 """
 
 from __future__ import annotations
@@ -22,22 +26,44 @@ import sys
 from pathlib import Path
 
 from eoip.graph.memory import MemoryGraphStore
+from eoip.graph.store import GraphStore
 from eoip.jobs import write_json
 from eoip.ontology.manifest import SCHEMA_VERSION
 from eoip.snapshot import digest
 
 SCALES = {
-    "s": {"work_items": 200, "repos": 2, "commits": 30, "files_symbols": 500, "extra_refs": 500},
-    "m": {"work_items": 2000, "repos": 10, "commits": 150, "files_symbols": 2500, "extra_refs": 8000},
+    "s": {
+        "work_items": 200,
+        "repos": 2,
+        "commits": 30,
+        "files_symbols": 500,
+        "document_sections": 20,
+        "extra_refs": 500,
+    },
+    "m": {
+        "work_items": 2_000,
+        "repos": 10,
+        "commits": 150,
+        "files_symbols": 2_500,
+        "document_sections": 500,
+        "extra_refs": 8_000,
+    },
+    "baseline": {
+        "work_items": 2_000,
+        "repos": 10,
+        "commits": 15_000,
+        "files_symbols": 25_000,
+        "document_sections": 5_000,
+        "extra_refs": 120_000,
+    },
 }
 
 
-def build_store(scale: str = "s", seed: int = 42) -> MemoryGraphStore:
+def populate_store(store: GraphStore, scale: str = "s", seed: int = 42) -> GraphStore:
     if scale not in SCALES:
         raise ValueError(f"unknown scale: {scale}")
     profile = SCALES[scale]
     rng = random.Random(seed)
-    store = MemoryGraphStore()
 
     n_projects = max(2, profile["work_items"] // 50)
     projects = [
@@ -84,8 +110,8 @@ def build_store(scale: str = "s", seed: int = 42) -> MemoryGraphStore:
             )
 
     n_repos = profile["repos"]
-    commits_per_repo = profile["commits"] // n_repos
     commits = []
+    commits_by_repo: list[list[dict]] = [[] for _ in range(n_repos)]
     for r in range(n_repos):
         repo = store.upsert_vertex(
             "Repository",
@@ -96,7 +122,10 @@ def build_store(scale: str = "s", seed: int = 42) -> MemoryGraphStore:
             {"canonical_id": f"urn:bench:branch:{r}", "branch_name": "main", "repo_id": f"bench-repo-{r}"},
         )
         store.upsert_edge("HAS_BRANCH", repo["vid"], branch["vid"], {"fact_key": f"branch-{r}"})
-        for c in range(commits_per_repo):
+        commits_for_repo = profile["commits"] // n_repos + (
+            1 if r < profile["commits"] % n_repos else 0
+        )
+        for c in range(commits_for_repo):
             commit = store.upsert_vertex(
                 "Commit",
                 {
@@ -107,6 +136,7 @@ def build_store(scale: str = "s", seed: int = 42) -> MemoryGraphStore:
                 },
             )
             commits.append((commit, r))
+            commits_by_repo[r].append(commit)
             store.upsert_edge(
                 "HAS_COMMIT",
                 branch["vid"],
@@ -135,12 +165,15 @@ def build_store(scale: str = "s", seed: int = 42) -> MemoryGraphStore:
             },
         )
         files.append(file_v)
-        commit = commits[r * commits_per_repo + f % commits_per_repo][0]
+        commit = commits_by_repo[r][f % len(commits_by_repo[r])]
         store.upsert_edge(
             "MODIFIES",
             commit["vid"],
             file_v["vid"],
-            {"fact_key": f"mod-{f}", "source_ref": f"bench://commit/{r}/{f % commits_per_repo}"},
+            {
+                "fact_key": f"mod-{f}",
+                "source_ref": f"bench://commit/{r}/{f % len(commits_by_repo[r])}",
+            },
         )
 
     dependencies = [
@@ -150,7 +183,6 @@ def build_store(scale: str = "s", seed: int = 42) -> MemoryGraphStore:
         )
         for d in range(8 * n_repos)
     ]
-
     symbols = []
     for s in range(profile["files_symbols"] - n_files):
         file_v = files[s % n_files]
@@ -182,10 +214,49 @@ def build_store(scale: str = "s", seed: int = 42) -> MemoryGraphStore:
             dependencies[rng.randrange(len(dependencies))]["vid"],
             {"fact_key": f"import-{s}", "source_ref": f"bench://file/{s}"},
         )
+
+    # A sparse symbol dependency chain provides a stable bounded five-hop
+    # workload independent of the deliberately dense WorkItem subgraph.
+    for s in range(len(symbols) - 1):
+        store.upsert_edge(
+            "DEPENDS_ON",
+            symbols[s]["vid"],
+            symbols[s + 1]["vid"],
+            {"fact_key": f"symbol-chain-{s}", "source_ref": f"bench://symbol/{s}"},
+        )
+
+    for section_index in range(profile["document_sections"]):
+        section = store.upsert_vertex(
+            "DocumentSection",
+            {
+                "canonical_id": f"urn:bench:document-section:{section_index}",
+                "name": f"Benchmark design section {section_index}",
+                "path": f"docs/design-{section_index // 20}.md",
+                "section_index": section_index,
+                "content": (
+                    f"Design evidence for benchmark component {section_index % 17} "
+                    f"and work item BENCH-{section_index % len(items)}."
+                ),
+            },
+        )
+        target = items[section_index % len(items)]
+        store.upsert_edge(
+            "DOCUMENTS",
+            section["vid"],
+            target["vid"],
+            {
+                "fact_key": f"document-{section_index}",
+                "source_ref": f"bench://document/{section_index}",
+            },
+        )
     return store
 
 
-def store_stats(store: MemoryGraphStore, scale: str, seed: int) -> dict:
+def build_store(scale: str = "s", seed: int = 42) -> MemoryGraphStore:
+    return populate_store(MemoryGraphStore(), scale, seed)
+
+
+def store_stats(store: GraphStore, scale: str, seed: int) -> dict:
     return {
         "scale": scale,
         "seed": seed,
@@ -195,6 +266,7 @@ def store_stats(store: MemoryGraphStore, scale: str, seed: int) -> dict:
         "repos": SCALES[scale]["repos"],
         "commits": SCALES[scale]["commits"],
         "files_symbols": SCALES[scale]["files_symbols"],
+        "document_sections": SCALES[scale]["document_sections"],
     }
 
 

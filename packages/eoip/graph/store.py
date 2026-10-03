@@ -22,6 +22,15 @@ class GraphQueryTimeout(ValueError):
     """A graph operation exceeded the caller's cooperative deadline."""
 
 
+class BulkLoadError(RuntimeError):
+    """A bounded native bulk-load batch failed after earlier batches committed."""
+
+    def __init__(self, message: str, *, vertices_committed: int, edges_committed: int):
+        self.vertices_committed = vertices_committed
+        self.edges_committed = edges_committed
+        super().__init__(message)
+
+
 @contextmanager
 def graph_query_deadline(deadline: float):
     token = _query_deadline.set(deadline)
@@ -101,6 +110,14 @@ class GraphStore(Protocol):
     def edges_to(self, vid: str, labels: list[str] | None = None, limit: int = 500, include_historical: bool = False) -> list[Edge]: ...
 
     def count_edges(self, label: str | None = None) -> int: ...
+
+    def bulk_load(
+        self,
+        vertices: list[Vertex],
+        edges: list[Edge],
+        *,
+        batch_size: int = 500,
+    ) -> dict: ...
 
     # -- maintenance ---------------------------------------------------------
     def tombstone_vertex(self, canonical_id: str) -> bool: ...

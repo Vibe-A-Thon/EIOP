@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from collections import deque
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
@@ -19,7 +19,7 @@ class EventType(str, Enum):
 
 
 class GraphEvent:
-    __slots__ = ("type", "data", "timestamp", "event_id")
+    __slots__ = ("data", "event_id", "timestamp", "type")
 
     _counter = 0
 
@@ -28,7 +28,7 @@ class GraphEvent:
         self.event_id = GraphEvent._counter
         self.type = type
         self.data = data
-        self.timestamp = timestamp or datetime.now(timezone.utc).isoformat()
+        self.timestamp = timestamp or datetime.now(UTC).isoformat()
 
     def to_dict(self) -> dict[str, Any]:
         return {

@@ -31,6 +31,18 @@ function nodeName(node) {
     properties.title || properties.path || node.label || node.id;
 }
 
+function findEnclosingSymbol(symbols, position) {
+  let best;
+  for (const candidate of symbols) {
+    const range = candidate.selectionRange || candidate.range;
+    if (!range || !range.contains(position)) continue;
+    const child = findEnclosingSymbol(candidate.children || [], position);
+    if (child) return child;
+    best = candidate.name;
+  }
+  return best;
+}
+
 class ContextProvider {
   constructor(call) {
     this.call = call;
@@ -148,7 +160,18 @@ class ContextProvider {
       );
     }
     const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active);
-    const symbol = wordRange ? editor.document.getText(wordRange) : '';
+    const word = wordRange ? editor.document.getText(wordRange) : '';
+    // Prefer the language server / document-symbol provider so nested symbols
+    // resolve by their real name; fall back to the word at the cursor.
+    let symbol = word;
+    try {
+      const symbols = await vscode.commands.executeDocumentSymbolProvider(editor.document.uri);
+      const position = editor.selection.active;
+      const enclosing = findEnclosingSymbol(symbols || [], position);
+      if (enclosing) symbol = enclosing;
+    } catch (_) {
+      // Symbol providers are optional; word-at-cursor remains the fallback.
+    }
     return {
       relativePath: normalizedPath(relative),
       symbol,
@@ -367,6 +390,40 @@ function activate(context) {
     showCollapseAll: true,
   });
   context.subscriptions.push(provider.emitter, treeView);
+
+  // Online/offline indicator: refreshed on activation and after every call so
+  // editing never depends on EOIP availability (FR-VSCODE-001 offline state).
+  const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 25);
+  statusBar.command = 'eoip.search';
+  context.subscriptions.push(statusBar);
+  function setConnectivity(online, detail) {
+    statusBar.text = online ? '$(graph) EOIP' : '$(debug-disconnect) EOIP offline';
+    statusBar.tooltip = online
+      ? 'EOIP API reachable. Click to search the knowledge graph.'
+      : `EOIP API unavailable${detail ? `: ${detail}` : ''}. Commands stay read-only and never block editing.`;
+    statusBar.backgroundColor = online ? undefined : new vscode.ThemeColor('statusBarItem.warningBackground');
+    statusBar.show();
+  }
+  const originalCall = call;
+  call = async (endpoint, body) => {
+    try {
+      const result = await originalCall(endpoint, body);
+      setConnectivity(true);
+      return result;
+    } catch (error) {
+      if (error.code === 'EOIP_OFFLINE' || error.code === 'EOIP_TIMEOUT') setConnectivity(false, error.message);
+      throw error;
+    }
+  };
+  provider.call = call;
+  (async () => {
+    try {
+      await originalCall('/health/ready');
+      setConnectivity(true);
+    } catch (error) {
+      setConnectivity(false, error.message);
+    }
+  })();
 
   async function choose(query, label) {
     const suffix = label ? `&label=${encodeURIComponent(label)}` : '';

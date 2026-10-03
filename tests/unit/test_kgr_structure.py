@@ -122,8 +122,9 @@ def test_degree_distribution_empty():
 # --- API endpoints ---
 
 def test_api_kcore():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     _build_two_cliques(store)
     client = TestClient(create_app(store))
@@ -135,8 +136,9 @@ def test_api_kcore():
 
 
 def test_api_components():
-    from apps.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from apps.api.app import create_app
     store = MemoryGraphStore()
     _build_disconnected(store)
     client = TestClient(create_app(store))

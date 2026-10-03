@@ -1,9 +1,10 @@
 """Phase 5 tests: export formats, timeline scrubber, similarity API, and link prediction."""
 
-from apps.api.app import create_app
 from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.similarity import SimilarityEngine
 from fastapi.testclient import TestClient
+
+from apps.api.app import create_app
 
 
 def _file_props(cid):
