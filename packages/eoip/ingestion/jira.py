@@ -14,6 +14,7 @@ from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.identity.resolver import merge_source_aliases, person_identity
 from eoip.ingestion.dlq import write_dlq_record
+from eoip.ingestion.pipeline import IngestionGraphStore
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
 
@@ -49,7 +50,7 @@ class JiraIngestionService:
         capture: FileEventCapture,
         dlq_root: str | Path,
     ) -> None:
-        self.store = store
+        self.store = IngestionGraphStore(store)
         self.connector = connector
         self.capture = capture
         self.dlq_root = Path(dlq_root)
@@ -81,6 +82,7 @@ class JiraIngestionService:
                     self._write_dlq(event, str(exc))
 
         if not dry_run:
+            self.store.begin_run(run_id)
             self._write_graph(accepted, run_id, started_at, len(rejected))
         return {
             "run_id": run_id,

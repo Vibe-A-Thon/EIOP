@@ -30,6 +30,11 @@ def test_clean_demo_replay_and_complete_recovery(tmp_path):
     assert result["replay_equivalent"]
     assert result["restored_raw_files"] > 0
     assert result["populated_target_rejected"]
+    for ingestion in result["canonical_ingestion"].values():
+        assert ingestion["contracts_valid"]
+        assert ingestion["mutations"]["VERTEX"] > 0
+        assert ingestion["mutations"]["EDGE"] > 0
+        assert ingestion["run_count"] == 3
 
 
 @pytest.mark.parametrize("mutation", ["vertex", "edge", "raw", "extra_raw"])

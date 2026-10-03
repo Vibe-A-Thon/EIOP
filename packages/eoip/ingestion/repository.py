@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import re
 import subprocess
 from dataclasses import asdict
@@ -15,11 +16,13 @@ from eoip.contracts.source_event import SourceEvent, utc_now_iso
 from eoip.graph.meta import link_domains
 from eoip.identity.resolver import merge_source_aliases, person_identity
 from eoip.ingestion.jira import FileEventCapture
+from eoip.ingestion.pipeline import IngestionGraphStore
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
 ISSUE_KEY = re.compile(r"\b[A-Z][A-Z0-9]+-\d+\b")
 MAX_HISTORY_COMMITS = 50
 _HUNK_HEADER = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@")
+log = logging.getLogger(__name__)
 
 
 def _parse_diff_hunks(diff_text: str) -> dict[str, list[tuple[int, int]]]:
@@ -43,7 +46,7 @@ def _parse_diff_hunks(diff_text: str) -> dict[str, list[tuple[int, int]]]:
 
 class RepositoryIngestionService:
     def __init__(self, store, capture: FileEventCapture):
-        self.store, self.capture = store, capture
+        self.store, self.capture = IngestionGraphStore(store), capture
 
     def ingest(self, root: Path, repo_id="demo", metadata=None, *, max_commits=MAX_HISTORY_COMMITS):
         root = root.resolve()
@@ -62,6 +65,8 @@ class RepositoryIngestionService:
         sha = git("rev-parse", "HEAD").strip()
         branch = git("rev-parse", "--abbrev-ref", "HEAD").strip()
 
+        repo_event = self._capture(repo_id, "repo", {"repo_id": repo_id, "branch": branch})
+        self.store.begin_run(run_id)
         repo = self.store.upsert_vertex(
             "Repository", {**shared, "canonical_id": f"urn:eoip:code:repo:{repo_id}", "name": repo_id}
         )
@@ -69,7 +74,6 @@ class RepositoryIngestionService:
             "Branch",
             {**shared, "canonical_id": f"urn:eoip:code:branch:{repo_id}:{branch}", "branch_name": branch},
         )
-        repo_event = self._capture(repo_id, "repo", {"repo_id": repo_id, "branch": branch})
         repo_ref = f"git://{repo_id}"
         self._evidence(repo, repo_event, repo_ref)
         self._evidence(branch_node, repo_event, repo_ref)
@@ -375,7 +379,16 @@ class RepositoryIngestionService:
         for c_sha, commit_node in commit_nodes.items():
             try:
                 diff_text = git("diff-tree", "-p", "--no-commit-id", c_sha)
-            except Exception:
+            except (subprocess.SubprocessError, UnicodeError) as exc:
+                log.warning(
+                    "repository.diff_hunk_skipped",
+                    extra={
+                        "event": "repository.diff_hunk_skipped",
+                        "commit_sha": c_sha,
+                        "repo_id": repo_id,
+                        "error_type": type(exc).__name__,
+                    },
+                )
                 continue
             hunks = _parse_diff_hunks(diff_text)
             for fname, ranges in hunks.items():

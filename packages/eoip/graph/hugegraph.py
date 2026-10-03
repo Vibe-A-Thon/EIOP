@@ -103,13 +103,121 @@ class HugeGraphStore:
         labels = self._request("GET", "/schema/vertexlabels")["vertexlabels"]
         return {"initialized": set(VERTEX_LABELS).issubset({item["name"] for item in labels})}
 
+    @staticmethod
+    def _schema_definitions():
+        all_keys = list(PROPERTY_KEYS)
+        edges = [
+            {
+                "name": f"{label}__{out_label}__{in_label}",
+                "source_label": out_label,
+                "target_label": in_label,
+                "frequency": "MULTIPLE",
+                "sort_keys": ["edge_key"],
+                "properties": all_keys,
+                "nullable_keys": [key for key in all_keys if key != "edge_key"],
+                "enable_label_index": True,
+            }
+            for label, (outs, ins, _) in EDGE_LABELS.items()
+            for out_label in outs
+            for in_label in ins
+        ]
+        indexes = []
+        for idx in INDEXES:
+            if idx.get("base_type") == "EDGE_LABEL":
+                targets = [edge["name"] for edge in edges]
+                base_type = "EDGE_LABEL"
+            else:
+                targets = [idx["label"]] if idx["label"] is not None else list(VERTEX_LABELS)
+                base_type = "VERTEX_LABEL"
+            for target in targets:
+                indexes.append({
+                    "name": idx["name"] if idx.get("label") is not None else f"{idx['name']}_{target}",
+                    "base_type": base_type,
+                    "base_value": target,
+                    "index_type": idx["type"],
+                    "fields": idx["fields"],
+                })
+        return {
+            "propertykeys": [
+                {"name": key, "data_type": "TEXT" if kind == "DATE" else kind, "cardinality": "SINGLE"}
+                for key, kind in PROPERTY_KEYS.items()
+            ],
+            "vertexlabels": [
+                {
+                    "name": name,
+                    "id_strategy": "CUSTOMIZE_STRING",
+                    "primary_keys": [],
+                    "properties": all_keys,
+                    "nullable_keys": [key for key in all_keys if key != "canonical_id"],
+                    "enable_label_index": True,
+                }
+                for name in VERTEX_LABELS
+            ],
+            "edgelabels": edges,
+            "indexlabels": indexes,
+        }
+
+    @staticmethod
+    def _check_schema_compatibility(definitions, existing):
+        structural_fields = {
+            "propertykeys": ("data_type", "cardinality"),
+            "vertexlabels": ("id_strategy", "primary_keys", "enable_label_index"),
+            "edgelabels": (
+                "source_label", "target_label", "frequency", "sort_keys", "enable_label_index",
+            ),
+            "indexlabels": ("base_type", "base_value", "index_type", "fields"),
+        }
+
+        def incompatible(kind, name, field, actual, expected):
+            raise ValueError(
+                f"Incompatible HugeGraph schema {kind}/{name}: {field} is {actual!r}, "
+                f"expected {expected!r}. Bootstrap refused before mutation; "
+                "use an explicit, backed-up migration or a separate empty graph."
+            )
+
+        for kind, items in definitions.items():
+            by_name = {item["name"]: item for item in existing[kind]}
+            for item in items:
+                current = by_name.get(item["name"])
+                if current is None:
+                    continue
+                for field in structural_fields[kind]:
+                    if current.get(field) != item[field]:
+                        incompatible(kind, item["name"], field, current.get(field), item[field])
+                if kind not in {"vertexlabels", "edgelabels"}:
+                    continue
+                for field in ("properties", "nullable_keys"):
+                    if not isinstance(current.get(field), list):
+                        incompatible(kind, item["name"], field, current.get(field), "a list")
+                shared = set(item["properties"]) & set(current["properties"])
+                actual_nullable = set(current["nullable_keys"]) & shared
+                expected_nullable = set(item["nullable_keys"]) & shared
+                if actual_nullable != expected_nullable:
+                    incompatible(
+                        kind, item["name"], "nullable_keys",
+                        sorted(actual_nullable), sorted(expected_nullable),
+                    )
+                missing_required = (
+                    set(item["properties"]) - set(item["nullable_keys"]) - set(current["properties"])
+                )
+                if missing_required:
+                    incompatible(
+                        kind, item["name"], "required properties", [], sorted(missing_required),
+                    )
+
     def ensure_schema(self, manifest=None):
         created = False
         with self._lock:
+            definitions = self._schema_definitions()
+            existing_schema = {
+                kind: self._request("GET", f"/schema/{kind}")[kind]
+                for kind in definitions
+            }
+            self._check_schema_compatibility(definitions, existing_schema)
 
             def ensure(kind, items):
                 nonlocal created
-                existing_items = self._request("GET", f"/schema/{kind}")[kind]
+                existing_items = existing_schema[kind]
                 if kind == "indexlabels":
                     # Clean up only the temporary additive names produced by
                     # the interrupted 2026-10 edge-index migration. They are
@@ -139,21 +247,6 @@ class HugeGraphStore:
                         if kind == "indexlabels":
                             self._wait_schema_task(response)
                         created = True
-                    elif kind == "indexlabels" and any(
-                        current.get(key) != item.get(key)
-                        for key in ("base_type", "base_value", "index_type", "fields")
-                    ):
-                        # HugeGraph schema mutation is asynchronous. Waiting
-                        # between delete and same-name recreate prevents a
-                        # race that otherwise leaves schema bootstrap failed.
-                        deleted = self._request(
-                            "DELETE",
-                            f"/schema/indexlabels/{quote(item['name'], safe='')}",
-                        )
-                        self._wait_schema_task(deleted)
-                        rebuilt = self._request("POST", "/schema/indexlabels", json=item)
-                        self._wait_schema_task(rebuilt)
-                        created = True
                     elif kind in {"vertexlabels", "edgelabels"}:
                         missing_properties = sorted(
                             set(item["properties"]) - set(current.get("properties", []))
@@ -171,76 +264,8 @@ class HugeGraphStore:
                             )
                             created = True
 
-            ensure(
-                "propertykeys",
-                [
-                    {"name": key, "data_type": "TEXT" if kind == "DATE" else kind, "cardinality": "SINGLE"}
-                    for key, kind in PROPERTY_KEYS.items()
-                ],
-            )
-            all_keys = list(PROPERTY_KEYS)
-            ensure(
-                "vertexlabels",
-                [
-                    {
-                        "name": name,
-                        "id_strategy": "CUSTOMIZE_STRING",
-                        "properties": all_keys,
-                        "nullable_keys": [k for k in all_keys if k != "canonical_id"],
-                        "enable_label_index": True,
-                    }
-                    for name in VERTEX_LABELS
-                ],
-            )
-            edges = []
-            for label, (outs, ins, _) in EDGE_LABELS.items():
-                for out_label in outs:
-                    for in_label in ins:
-                        edges.append(
-                            {
-                                "name": f"{label}__{out_label}__{in_label}",
-                                "source_label": out_label,
-                                "target_label": in_label,
-                                "frequency": "MULTIPLE",
-                                "sort_keys": ["edge_key"],
-                                "properties": all_keys,
-                                "nullable_keys": [k for k in all_keys if k != "edge_key"],
-                                "enable_label_index": True,
-                            }
-                        )
-            ensure("edgelabels", edges)
-            index_defs = []
-            for idx in INDEXES:
-                if idx.get("base_type") == "EDGE_LABEL":
-                    # Edge indexes attach to a physical edge label, so expand
-                    # the manifest entry into one UNIQUE index per edge label.
-                    for edge_name in {item["name"] for item in edges}:
-                        index_defs.append({
-                            "name": f"{idx['name']}_{edge_name}",
-                            "base_type": "EDGE_LABEL",
-                            "base_value": edge_name,
-                            "index_type": idx["type"],
-                            "fields": idx["fields"],
-                        })
-                elif idx["label"] is not None:
-                    index_defs.append({
-                        "name": idx["name"],
-                        "base_type": "VERTEX_LABEL",
-                        "base_value": idx["label"],
-                        "index_type": idx["type"],
-                        "fields": idx["fields"],
-                    })
-                else:
-                    for vl in VERTEX_LABELS:
-                        if all(f in PROPERTY_KEYS for f in idx["fields"]):
-                            index_defs.append({
-                                "name": f"{idx['name']}_{vl}",
-                                "base_type": "VERTEX_LABEL",
-                                "base_value": vl,
-                                "index_type": idx["type"],
-                                "fields": idx["fields"],
-                            })
-            ensure("indexlabels", index_defs)
+            for kind, items in definitions.items():
+                ensure(kind, items)
         return {"created": created, "initialized": True}
 
     def _properties(self, properties):

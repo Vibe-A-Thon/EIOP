@@ -183,3 +183,37 @@ After demo ingestion, the graph contains:
 
 The path from `EOIP-1` to `compute_impact` traverses:
 `WorkItem -[IMPLEMENTS]- Commit -[MODIFIES]- File -[DECLARES]- CodeSymbol`
+
+## Enterprise sales scenarios
+
+The default demo job also loads the validated Northstar Commerce scenario pack at `examples/demo-enterprise/scenario-pack.json`. This is an executable corpus, not UI-only sample text. The live catalog endpoint reports readiness from persisted graph entities:
+
+```bash
+curl -H "Authorization: Bearer $TOKEN" \
+  http://localhost:8000/api/v1/demo/scenarios
+```
+
+All eight scenarios should report `ready: true` before a customer session.
+
+| Scenario | Start with | Demonstrate |
+|---|---|---|
+| Intent to runtime | Search `PAY-142` | Trace to commit `c0ffee142`, `risk.py`, `authorize_order`, API contract, tests, pipeline and deployment. |
+| Incident root cause | Search `INC0012042` | Correlate alert, log signature and dashboard to deployment `2026.10.1` and emergency change `CHG0031088`. |
+| API blast radius | Search `Checkout API` | Explore downstream Risk and Payments APIs; run blast radius, centrality and what-if removal. |
+| Release governance | Search `2026.10.1` | Follow release to pipeline, jobs, artifact, test run and production deployment with evidence. |
+| Test intelligence | Search `Checkout regression` | Prove TC-884 covers PAY-142, `authorize_order`, and `POST /orders`; show TC-901 resilience coverage. |
+| Design to delivery | Search `Northstar Checkout Experience` | Connect the Figma page/component to FTR-42 and US-142. |
+| Knowledge provenance | Search `KB00192` | Retrieve the trusted runbook, architecture decision, API and monitor; open evidence/lineage. |
+| Graph analytics | Search `Checkout API` in KGR | Run communities, similarity, anomaly detection, link prediction and graph-health/what-if views. |
+
+### Suggested 20-minute pitch
+
+1. Open the scenario catalog endpoint and show all eight green readiness results.
+2. Use `PAY-142` for the two-minute intent-to-code trace, including relationship evidence.
+3. Pivot to `INC0012042` for the operations story and show the triggering deployment.
+4. Open KGR on `Checkout API`; show blast radius and what-if removal to explain architectural risk.
+5. Finish with `KB00192` in GraphRAG and emphasize source-linked answers, local deployment, and deterministic fallback.
+
+### Honest live-demo boundary
+
+The graph and analytics are live application behavior over persisted demo data. The source exports are offline fixtures unless organization-specific connector URLs and credentials have been configured. Optional model synthesis is not required for any golden path. Native disaster recovery, full-scale production performance, and the remaining G2 P6-P10 roadmap items are not represented by this pack as completed capabilities.

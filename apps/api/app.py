@@ -5,6 +5,7 @@ from uuid import uuid4
 from eoip.config import load_query_policy
 from eoip.contracts.graph_result import GraphResult, TraversalGraphResult
 from eoip.contracts.query_plan import QueryPlan
+from eoip.demo_scenarios import read_demo_scenario_pack
 from eoip.graph.metrics import GraphMetricsEngine
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import VERTEX_LABELS
@@ -144,6 +145,36 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             response.status_code = 503
             return {"status": "not_ready"}
         return {"status": "ready"}
+
+    @app.get("/api/v1/demo/scenarios")
+    def demo_scenarios():
+        """Return the sales-demo catalog with live graph-readiness state."""
+        pack = read_demo_scenario_pack()
+        scenarios = []
+        for item in pack["scenarios"]:
+            path_state = [
+                {
+                    "canonical_id": canonical_id,
+                    "available": store.get_vertex_by_canonical_id(canonical_id) is not None,
+                }
+                for canonical_id in item["expected_path"]
+            ]
+            scenarios.append(
+                {
+                    **item,
+                    "available": store.get_vertex_by_canonical_id(item["entrypoint"]) is not None,
+                    "expected_path_state": path_state,
+                    "ready": all(node["available"] for node in path_state),
+                }
+            )
+        return {
+            "dataset_id": pack["dataset_id"],
+            "version": pack["version"],
+            "title": pack["title"],
+            "description": pack.get("description"),
+            "ready": all(item["ready"] for item in scenarios),
+            "scenarios": scenarios,
+        }
 
     @app.get("/api/v1/search", response_model=GraphResult)
     def search(

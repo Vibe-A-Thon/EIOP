@@ -67,6 +67,26 @@ containers and networks while retaining volumes. Startup resumes interrupted
 RUNNING jobs and retries transient I/O/HTTP failures three times. Keep one worker
 replica: the filesystem queue does not implement multi-worker claiming.
 
+### Schema compatibility and startup refusal
+
+Schema bootstrap reads all four schema collections before making any changes.
+It refuses incompatible property types/cardinality, vertex ID strategies/primary
+keys, edge endpoints/frequency/sort keys, label-index settings, property
+nullability, and same-name index definitions. Missing compatibility metadata
+also causes refusal. The error identifies the schema object and conflicting field.
+Compose keeps API/worker startup gated on successful schema initialization.
+
+Compatible bootstrap remains idempotent; missing labels, keys, indexes and
+nullable label properties can still be added. Required properties cannot be
+retroactively appended to existing labels. Bootstrap no longer silently deletes
+and rebuilds incompatible same-name indexes. The known obsolete
+`idx_edge_key_lookup_*` cleanup runs only after the full compatibility check passes.
+On refusal, preserve the existing volumes, back up the graph, and use an explicitly
+reviewed migration or a separate empty graph; do not clear the live graph to force
+startup. These are structural checks against the current manifest, not a
+general-purpose schema-version migration framework. Quiesce other schema writers
+during bootstrap: the read/check/write sequence is not a cross-process transaction.
+
 The backend network is internal. Graph, worker, schema bootstrap, and local
 model services have no external gateway. Published web/API/MCP services also join
 a frontend network because Docker Desktop does not publish localhost ports for
@@ -136,6 +156,8 @@ Git-ignored `test-results/browser/`, separate from acceptance receipts so browse
 runs cannot erase recovery evidence.
 
 Local Python development remains available with `python -m pytest` from the repository root.
+On Windows with a non-UTF-8 locale, use `python -X utf8 -m pytest`; UI source files
+contain UTF-8 characters and some existing tests rely on Python's default encoding.
 `requirements.lock` pins the runtime versions verified in the Linux image;
 `pyproject.toml` describes portable development dependencies.
 
@@ -153,6 +175,22 @@ evidence, impact and lineage, repeats ingestion, validates the graph, then
 exports and restores a checksummed snapshot. Recovery must retain **every**
 vertex/edge property, every raw/DLQ JSON record, and identical golden-query
 results. A second restore must reject the populated target without changing it.
+It also repeats schema bootstrap on the populated source and proposes four
+incompatible manifest changes (property type, vertex ID strategy, edge frequency,
+index type), each alongside a pending safe addition. All proposals must fail with
+only schema GET requests and retain identical raw vertex/edge records and schema
+definitions. The proposed manifest is substituted by the verifier; server reads
+and preservation checks use the real HugeGraph instance.
+
+Both initial ingestion and replay also validate emitted GraphMutation and
+NormalizedEntity/NormalizedRelationship envelopes against the checked-in JSON
+schemas. The receipt records vertex/edge mutation counts and distinct run counts;
+referenced evidence must already have a captured raw record before consumption.
+Administrative bootstrap and snapshot bulk loading are outside this source
+contract boundary. Invalid contract proposals fail explicitly before their
+affected write, but the run is not transactional: earlier writes can remain.
+Raw captures are retained; automatic canonical-validation DLQ routing is not
+part of this gate.
 
 Re-ingestion compares business identities and properties, excluding ingestion
 run history and observation timestamps (`captured_at`, `first_seen`, `last_seen`,
@@ -171,6 +209,66 @@ the store on every outcome, and fails rather than treating an unsupported clear
 as a successful reset. Runtime HugeGraph deletion remains deliberately disabled;
 use the isolated acceptance command instead. Reset is destructive and is not
 transactional across graph and files; quiesce writers and back up first.
+
+## Isolated live DLQ/API/worker acceptance
+
+```powershell
+.\scripts\docker.ps1 dlq-acceptance
+```
+
+This builds the current runtime and test images, starts a fresh HugeGraph,
+schema initializer, HTTP API, independent worker and authenticated ServiceNow
+Table API fixture in a uniquely named Compose project, and runs nine opt-in
+multi-step pytest journeys:
+
+- A real API-submitted Jira record is rejected by the worker, captured and listed
+  in the DLQ. Replaying unchanged invalid input remains `PARTIAL`, creates no
+  WorkItem, and preserves the raw capture and original DLQ entry.
+- An obsolete mapper genuinely rejects valid Jira input via the ingestion
+  service. The current worker mapper then replays that immutable capture
+  successfully, persists the WorkItem and evidence link, and repeats replay
+  without logical drift or duplicate business vertices. The initial rejection
+  in this scenario is service-seeded, not API-submitted.
+- Missing/invalid authentication, unknown records, missing capture and
+  mismatched DLQ/capture hash are refused without queuing jobs or graph writes.
+- Registered Confluence v2 invalid captures route through `SOURCE_OPERATION`
+  to the independent worker, remain `PARTIAL`, and preserve raw/DLQ bytes.
+- An obsolete Confluence mapper service-seeds a genuine rejection. The current
+  worker recovers the Document and evidence link; repeat replay through the
+  source endpoint preserves the entire stable logical graph.
+- Missing registry entries and wrong adapter types return 409 without jobs or
+  graph mutations, with correlated refusal audits. Registry IDs deliberately
+  differ from adapter instance hashes to verify DLQ routing.
+- ServiceNow baseline acquisition paginates four tables over actual HTTP,
+  persists five mapped entities and evidence links, advances a checkpoint, and
+  then runs an empty incremental sync. Replay preserves the logical graph,
+  raw bytes and checkpoint without fetching upstream again.
+- A fetched ServiceNow mapping rejection remains `PARTIAL` through DLQ replay.
+  Authentication and source-policy refusals enqueue nothing. Registered DLQ
+  replay shares source scheduler admission for enabled, paused, capability,
+  concurrency and rate controls; concurrency has paired endpoint unit coverage.
+- Invalid upstream credentials persist a categorized `FAILED` job and baseline
+  manifest without capture, business graph or checkpoint writes. Outbound
+  REST requests carry the job's `X-Correlation-ID`, including failed requests.
+
+Durable job results and matching API/worker audit correlation IDs are checked.
+DLQ entries are historical evidence: successful replay does **not** delete or
+mark them resolved; an immutable invalid payload is not repaired by replay.
+
+The gate publishes no ports, uses no primary volumes and has an internal-only
+network. Its containers/network/application volume are removed in `finally`.
+JSON verdict and JUnit evidence persist as
+`test-results/eoip-dlq-acceptance-<run-id>.json` and `.xml`. Failed collection,
+missing evidence, unexpected/duplicate journey names, any skipped journey or
+nonzero pytest exit fails the gate. Normal host pytest runs skip these nine
+tests; the command above runs all nine against the actual services. No browser
+run is part of this API-only gate. Confluence replay uses local immutable
+captures, an unreachable upstream URL and an environment secret reference;
+it does not certify live upstream acquisition. ServiceNow uses deterministic
+fixture-only credentials via environment secret references and an internal
+HTTP server, not a real ServiceNow tenant. Other registered adapters, live
+source systems, worker crash recovery and config/native recovery remain
+separate acceptance obligations.
 
 ## Backup and restore
 

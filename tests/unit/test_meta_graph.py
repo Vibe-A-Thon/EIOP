@@ -1,10 +1,9 @@
 """Tests for meta-graph bootstrap, BELONGS_TO_DOMAIN, AUTHORED_BY, DEPENDS_ON, config loading."""
 
 import pytest
-
 from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.meta import DOMAINS, SchemaVersionConflict, bootstrap_meta_graph, check_schema_compatibility
-from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
+from eoip.ontology.manifest import ONTOLOGY_VERSION
 
 
 def test_bootstrap_creates_domain_vertices():

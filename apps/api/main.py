@@ -80,6 +80,7 @@ def _operation(path: str, body: bytes) -> str:
         "/api/v1/graph/schema",
         "/api/v1/graph/statistics",
         "/api/v1/change-journal",
+        "/api/v1/demo/scenarios",
     } or path.startswith(("/api/v1/entities/", "/api/v1/graph/")):
         return "query"
     if path.startswith(("/api/v1/admin/", "/api/v1/sources")):
@@ -990,15 +991,11 @@ def create_app():
                 raise HTTPException(409, "Registered replay source is unavailable") from exc
             if entry.source_type != source_system:
                 raise HTTPException(409, "Registered replay source type does not match the event")
-            return queue.submit(
-                "SOURCE_OPERATION",
-                {
-                    "source_id": source_id,
-                    "operation": "REPLAY",
-                    "event_ids": [event_id],
-                    "dry_run": False,
-                },
-                correlation_id=request.state.correlation_id,
+            return submit_source_operation(
+                source_id,
+                "REPLAY",
+                SourceOperationRequest(event_ids=[event_id], dry_run=False),
+                request,
             )
         if source_system == "gitlab":
             record_kind = (source_event.metadata or {}).get("record_kind")

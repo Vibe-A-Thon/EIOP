@@ -12,6 +12,7 @@ from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
+from eoip.ingestion.pipeline import IngestionGraphStore
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
 
@@ -24,7 +25,7 @@ class GitLabIngestionService:
         capture: FileEventCapture,
         dlq_root: str | Path,
     ) -> None:
-        self.store = store
+        self.store = IngestionGraphStore(store)
         self.repo_id = repo_id
         self.connector = connector
         self.capture = capture
@@ -53,6 +54,7 @@ class GitLabIngestionService:
                     self._write_dlq(event, str(exc))
         run_id = uuid4().hex
         if not dry_run:
+            self.store.begin_run(run_id)
             self._write_graph(mapped, run_id, len(rejected))
         return {
             "run_id": run_id,

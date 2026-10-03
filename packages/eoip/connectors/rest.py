@@ -87,6 +87,7 @@ class RestConnector:
     ) -> dict:
         url = f"{self.base_url}/{path.lstrip('/')}"
         headers = {"Authorization": f"Bearer {self._token}"} if self._token else {}
+        headers["X-Correlation-ID"] = correlation_id
         try:
             response = self._client.get(url, params=params, headers=headers, auth=self._basic_auth)
         except httpx.TimeoutException as exc:

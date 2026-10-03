@@ -165,6 +165,7 @@ def test_v2_dlq_replay_routes_through_registered_source(tmp_path):
     assert job["payload"] == {
         "source_id": "confluence-prod",
         "operation": "REPLAY",
+        "checkpoint": None,
         "event_ids": [event.event_id],
         "dry_run": False,
     }

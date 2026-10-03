@@ -34,7 +34,7 @@ function nodeName(node) {
 function findEnclosingSymbol(symbols, position) {
   let best;
   for (const candidate of symbols) {
-    const range = candidate.selectionRange || candidate.range;
+    const range = candidate.range || candidate.location?.range;
     if (!range || !range.contains(position)) continue;
     const child = findEnclosingSymbol(candidate.children || [], position);
     if (child) return child;
@@ -165,7 +165,7 @@ class ContextProvider {
     // resolve by their real name; fall back to the word at the cursor.
     let symbol = word;
     try {
-      const symbols = await vscode.commands.executeDocumentSymbolProvider(editor.document.uri);
+      const symbols = await vscode.commands.executeCommand('vscode.executeDocumentSymbolProvider', editor.document.uri);
       const position = editor.selection.active;
       const enclosing = findEnclosingSymbol(symbols || [], position);
       if (enclosing) symbol = enclosing;
@@ -589,6 +589,7 @@ function activate(context) {
     refreshTimer = setTimeout(() => provider.refresh(editor), 350);
   };
   context.subscriptions.push(
+    new vscode.Disposable(() => clearTimeout(refreshTimer)),
     vscode.window.onDidChangeActiveTextEditor(scheduleRefresh),
     vscode.window.onDidChangeTextEditorSelection(event => scheduleRefresh(event.textEditor)),
   );

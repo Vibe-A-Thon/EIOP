@@ -19,6 +19,7 @@ from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
+from eoip.ingestion.pipeline import IngestionGraphStore
 from eoip.jobs import write_json
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
@@ -35,14 +36,14 @@ class SourceSyncIngestionService:
         on_stage=None,
         registry_source_id: str | None = None,
     ) -> None:
-        self.store = store
+        self.store = IngestionGraphStore(store)
         self.connector = connector
         self.capture = capture
         self.dlq_root = dlq_root
         self.on_stage = on_stage or (lambda _stage: None)
         self.registry_source_id = registry_source_id or connector.source_system
         self.evolution = GraphEvolutionEngine(
-            store, ChangeJournal(Path(dlq_root).parent / "journal" / "semantic-changes.ndjson")
+            self.store, ChangeJournal(Path(dlq_root).parent / "journal" / "semantic-changes.ndjson")
         )
 
     def sync(
@@ -105,6 +106,7 @@ class SourceSyncIngestionService:
         self.on_stage("VALIDATING")
         self.on_stage("MUTATING")
         if not dry_run:
+            self.store.begin_run(run_id)
             self._write_graph(accepted, run_id, started_at, len(rejected))
         self.on_stage("VERIFYING")
         return {

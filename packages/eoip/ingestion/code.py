@@ -12,6 +12,7 @@ from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
+from eoip.ingestion.pipeline import IngestionGraphStore
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
 
@@ -24,7 +25,7 @@ class CodeIngestionService:
         capture: FileEventCapture,
         dlq_root: str | Path,
     ) -> None:
-        self.store = store
+        self.store = IngestionGraphStore(store)
         self.connector = connector
         self.parser = parser
         self.capture = capture
@@ -81,6 +82,7 @@ class CodeIngestionService:
             }
 
         run_id = __import__("uuid").uuid4().hex
+        self.store.begin_run(run_id)
         started_at = utc_now_iso()
         run = self.store.upsert_vertex(
             "IngestionRun",

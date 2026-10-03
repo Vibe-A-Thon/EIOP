@@ -280,7 +280,7 @@ class AnomalyDetector:
         """Find entities not updated within *threshold_hours*."""
         import datetime
 
-        cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
+        cutoff = datetime.datetime.now(datetime.UTC) - datetime.timedelta(
             hours=threshold_hours
         )
         cutoff_iso = cutoff.isoformat()

@@ -28,3 +28,24 @@ command. The extension runs in VS Code; Docker packages it and hosts the API.
 Run the extension-host acceptance checks from this directory with `npm test`.
 The runner downloads a compatible VS Code build unless `VSCODE_EXECUTABLE` points
 to an installed VS Code executable.
+
+For an installed Windows host, run:
+
+```powershell
+$env:VSCODE_EXECUTABLE = 'C:\Program Files\Microsoft VS Code\Code.exe'
+npm.cmd test
+```
+
+Each run uses a unique disposable user-data/extensions profile; it does not
+change your regular settings, token or installed extensions. A JSON receipt is
+saved under the repository's ignored `test-results/` directory. A nonzero host
+exit or missing/incomplete receipt fails the gate.
+
+Four multi-step journeys exercise all eight commands: context/path/source
+navigation and offline handling; search/impact/lineage/retrieval; nested and flat
+document-symbol providers with the cursor inside a function body; authentication
+and unsafe-path refusals. Source text remains unchanged. The tests use real
+VS Code commands, editors, ranges, SecretStorage and document-symbol registration,
+but automate input/quick-pick selection and use a loopback HTTP contract fixture.
+They do not certify live HugeGraph integration, manual prompt behavior or visual
+TreeView layout.

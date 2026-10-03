@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('up', 'test', 'status', 'logs', 'down', 'backup', 'extension', 'restore-test', 'acceptance')]
+    [ValidateSet('up', 'test', 'status', 'logs', 'down', 'backup', 'extension', 'restore-test', 'acceptance', 'dlq-acceptance')]
     [string]$Action = 'up'
 )
 $ErrorActionPreference = 'Stop'
@@ -73,6 +73,29 @@ switch ($Action) {
         finally {
             try { Invoke-Compose -CommandArguments @('down', '--volumes') }
             finally { $env:EOIP_ACCEPTANCE_RUN = $previousAcceptanceRun }
+        }
+    }
+    'dlq-acceptance' {
+        $previousAcceptanceRun = $env:EOIP_ACCEPTANCE_RUN
+        $runId = "eoip-dlq-acceptance-$([Guid]::NewGuid().ToString('N'))"
+        $env:EOIP_ACCEPTANCE_RUN = $runId
+        $composeArguments = @('compose', '--env-file', $envFile, '-p', $runId, '-f',
+            (Join-Path $projectRoot 'deploy\docker-compose.dlq-acceptance.yml'))
+        try {
+            Invoke-Compose -CommandArguments @('build', 'dlq-api', 'acceptance')
+            Invoke-Compose -CommandArguments @('up', '-d', '--wait', '--wait-timeout', '420',
+                'dlq-api', 'dlq-worker', 'dlq-upstream')
+            Invoke-Compose -CommandArguments @('run', '--rm', '--no-deps', 'acceptance')
+            Write-Host "DLQ acceptance evidence: test-results\$runId.json"
+        }
+        finally {
+            try {
+                Invoke-Compose -CommandArguments @('logs', '--tail', '80', 'schema-init', 'dlq-api', 'dlq-worker', 'dlq-upstream')
+            }
+            finally {
+                try { Invoke-Compose -CommandArguments @('down', '--volumes') }
+                finally { $env:EOIP_ACCEPTANCE_RUN = $previousAcceptanceRun }
+            }
         }
     }
     'restore-test' {

@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from eoip.connectors.jira_json import JiraJsonConnector
+from eoip.demo_scenarios import load_demo_scenario_pack
 from eoip.graph.meta import bootstrap_meta_graph, link_domains
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
 from eoip.ingestion.repository import RepositoryIngestionService
@@ -27,6 +28,12 @@ def load_demo(store, data_dir, project_root=None):
         root / "examples/demo-repo", metadata=metadata
     )
 
+    enterprise_result = load_demo_scenario_pack(
+        store,
+        data_dir,
+        project_root=root,
+    )
+
     link_domains(store, store.find_vertices(limit=50_000))
 
-    return {"jira": jira_result, "git": git_result}
+    return {"jira": jira_result, "git": git_result, "enterprise": enterprise_result}

@@ -6,6 +6,8 @@ const path = require('node:path');
 const vscode = require('vscode');
 
 async function run() {
+  const journeys = [];
+  const requests = [];
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'eoip-vscode-test-'));
   const configuration = vscode.workspace.getConfiguration('eoip');
   const oldRoot = configuration.get('repositoryRoot');
@@ -96,6 +98,7 @@ async function run() {
     server = http.createServer(async (request, response) => {
       let body = '';
       for await (const chunk of request) body += chunk;
+      requests.push({url: request.url, method: request.method, body: body ? JSON.parse(body) : undefined});
       response.setHeader('Content-Type', 'application/json');
       if (request.headers.authorization !== 'Bearer test-token') {
         response.writeHead(401).end(JSON.stringify({detail: 'Unauthorized'}));
@@ -112,6 +115,12 @@ async function run() {
           partial: false,
           warnings: [],
         }));
+      } else if (request.url.startsWith('/api/v1/entities/')) {
+        response.end(JSON.stringify(symbol));
+      } else if (request.url === '/health/ready') {
+        response.end(JSON.stringify({status: 'ready'}));
+      } else if (request.url === '/api/v1/rag') {
+        response.end(JSON.stringify({canonical_id: JSON.parse(body).canonical_id, evidence: lineage.evidence}));
       } else if (request.url === '/api/v1/impact') {
         response.end(JSON.stringify(impact));
       } else if (request.url === '/api/v1/lineage') {
@@ -177,6 +186,11 @@ async function run() {
     assert.equal(traceResult.path.paths[0].node_ids.length, 2);
     assert.ok(traceResult.impact.nodes.some(node => node.id === dependency.id));
 
+    const fixture = {symbol, jira, inputs, requests, document};
+    for (const name of ['commands', 'symbols', 'refusals']) {
+      await require(`./${name}`).run(fixture);
+      journeys.push(name);
+    }
     await vscode.window.showTextDocument(document);
     await new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
     server = undefined;
@@ -190,6 +204,15 @@ async function run() {
     });
     assert.equal(unsafe.ok, false, 'source navigation must reject traversal paths');
     assert.equal(unsafe.code, 'EOIP_UNSAFE_SOURCE_PATH');
+    journeys.push('context-path-navigation-offline');
+    if (process.env.EOIP_EXTENSION_RECEIPT) {
+      await fs.writeFile(process.env.EOIP_EXTENSION_RECEIPT, JSON.stringify({
+        status: 'PASS', passed: journeys.length, failed: 0, journeys,
+        vscode: vscode.version,
+        scope: 'Real VS Code host; local HTTP contract fixture; prompt input/selection automated.',
+        exclusions: ['Live HugeGraph/API integration', 'Manual prompt interaction', 'Visual TreeView layout'],
+      }, null, 2));
+    }
     console.log('VS Code extension-host acceptance passed: graph context, Jira path and impact, exact range, and source path safety.');
   } finally {
     vscode.window.showInputBox = originalShowInputBox;

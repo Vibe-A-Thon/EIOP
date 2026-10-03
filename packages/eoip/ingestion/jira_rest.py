@@ -15,6 +15,7 @@ from eoip.graph.meta import link_domains
 from eoip.graph.store import GraphStore
 from eoip.ingestion.dlq import write_dlq_record
 from eoip.ingestion.jira import FileEventCapture
+from eoip.ingestion.pipeline import IngestionGraphStore
 from eoip.jobs import write_json
 from eoip.ontology.manifest import ONTOLOGY_VERSION, SCHEMA_VERSION
 
@@ -27,12 +28,12 @@ class JiraTemporalIngestionService:
         capture: FileEventCapture,
         dlq_root: str | Path,
     ) -> None:
-        self.store = store
+        self.store = IngestionGraphStore(store)
         self.connector = connector
         self.capture = capture
         self.dlq_root = Path(dlq_root)
         self.evolution = GraphEvolutionEngine(
-            store,
+            self.store,
             ChangeJournal(self.dlq_root.parent / "journal" / "semantic-changes.ndjson"),
         )
 
@@ -56,6 +57,7 @@ class JiraTemporalIngestionService:
                 if not dry_run:
                     self._write_dlq(event, str(exc))
         if not dry_run:
+            self.store.begin_run(run_id)
             self._write_graph(accepted, run_id, started_at, len(rejected))
         return {
             "run_id": run_id,

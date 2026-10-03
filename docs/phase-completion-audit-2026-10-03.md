@@ -3,15 +3,82 @@
 **Date:** 2026-10-03
 **Method:** every Markdown document in the repository was read and analyzed (EOIP-engg-doc-pkg root: 00–75 series, MVP requirements/plan, gaps/gaps2 requirements + implementation, KGR requirements + implementation plan, knowgridflow product architecture, all 17 diagrams, implementation work packages, examples, traceability catalog; plus repo docs/). Backend and frontend were audited file-by-file against those obligations; all P0 defects were fixed and re-verified.
 
-**Latest verified release-operations baseline (2026-10-03):**
+**Earlier verified release-operations baseline (2026-10-03):**
 - Working tree based on `9a70e5a24c06722c60f0f97a57e5187db6a7fe27`, not a committed release.
 - `scripts/docker.ps1 test` — exit 0: **477 Python tests**, live container smoke checks and **4 Chromium journeys** passed.
 - `scripts/docker.ps1 acceptance` — exit 0: two fresh isolated HugeGraph servers, 53 vertices / 141 edges / 9 raw records, exact logical restore equality and populated-target rejection passed.
 - Primary API readiness and web returned HTTP 200; disposable acceptance resources were removed without resetting primary data.
 - Earlier local baseline: 467 Python tests and full Ruff passed.
 
+**Registered v2 replay batch (2026-10-03):**
+- The isolated API/worker/HugeGraph DLQ gate now passes six named journeys,
+  including registered Confluence v2 PARTIAL rejection, persistent mapper
+  recovery, stable logical replay equivalence, and registry admission refusals.
+- Receipt: `test-results/eoip-dlq-acceptance-f7ad5bc7752d499b930138f885b52db1.json`
+  with matching XML; exit 0, zero skipped runtime cases.
+- Full host regression: 537 passed / 6 opt-in skips; final focused receipt
+  tests: 9 passed / 6 skips. Changed-file Ruff passes.
+- Disposable resources cleaned; primary readiness confirmed. No production
+  logic changes or primary redeployment. Local captured replay does not certify
+  live upstream acquisition, other registered adapters or the remaining roadmap.
+
+**ServiceNow acquisition and replay-admission batch (2026-10-03):**
+- Fixed registered DLQ replay bypassing the source scheduler. Paired endpoint
+  tests verify disabled, paused, replay-capability, concurrency and rate refusals
+  enqueue no jobs and perform no graph writes.
+- Shared REST connectors now forward `X-Correlation-ID` upstream; actual HTTP
+  fixture tests cover successful acquisition and upstream authentication failure.
+- Nine exact-name Docker journeys pass, exit 0, with zero failures/errors/skips.
+  ServiceNow baseline pagination across four tables, five persisted entities
+  and evidence links, checkpointed incremental sync, idempotent capture replay,
+  mapping rejection and persistent upstream authentication failure are certified.
+- Receipt: `test-results/eoip-dlq-acceptance-9cce39ba324243179ff3e71922eae4e1.json`
+  and matching XML. Earlier failing receipts remain FAIL. The first exposed
+  missing correlation and an incorrect 422 audit expectation; the second
+  exposed omitted polling capability in test registration.
+- Full host suite: **557 passed, 9 opt-in skips**, exit 0. Focused endpoint,
+  fixture, adapter and receipt regression: **45 passed**, exit 0. Changed-code
+  Ruff, editor diagnostics and whitespace checks pass.
+- Disposable DLQ containers/network/volume removed; primary readiness is
+  `ready`. No primary redeployment/reset. ServiceNow is an authenticated
+  internal HTTP protocol fixture, not a live tenant; other adapters, release
+  non-functional gates and the remaining roadmap are still open.
+
+**Schema-compatibility batch (2026-10-03, `6f6149b` + working-tree changes):**
+- Gap 22 adds a fail-before-mutation structural compatibility preflight; compatible additive bootstrap remains supported.
+- Full local `python -X utf8 -m pytest`: **505 passed**, exit 0; focused schema/recovery/repository suite: **35 passed**, exit 0; changed-file Ruff and editor error diagnostics pass.
+- The initial plain Windows full run failed seven existing UI-file decoding tests; UTF-8-mode rerun resolves the locale mismatch without unrelated source changes.
+- Gap 18 already has bounded history and diff-hunk implementation/tests; gap 19's then-unwired helper is addressed in the following batch.
+- Isolated HugeGraph acceptance: exit 0, 54 vertices / 142 edges / 10 raw records; replay/restore pass. Four incompatible manifest proposals cause no schema mutations and preserve exact raw graph/schema state. Receipt: `test-results/eoip-acceptance-8fa23747ff814739ab7439aacb9dde33.json`; primary volumes untouched.
+- See [the reconciled original backlog](gap-audit-2026-10-02.md) for scope and next priorities. This batch does not replace the earlier live UI/extension evidence with new certification.
+
+**Canonical-boundary batch (2026-10-03, same baseline + working-tree changes):**
+- Gap 19 now routes all eight ingestion services, including temporal/domain writes and existing-entity tombstones, through validated NormalizedEntity/NormalizedRelationship/GraphMutation envelopes.
+- Invalid identity/domain/confidence/status proposals fail before their write; real run IDs are required and context-isolated. Repository raw capture precedes its first graph mutation.
+- Existing persisted projections, revision subject types, fact-based edge deduplication and missing-entity deletion no-ops are preserved. Administrative bulk/schema/reset and demo meta bootstrap remain outside the source-ingestion boundary.
+- Final full UTF-8-mode Python suite: **528 passed**; focused canonical/recovery suite: **32 passed**. Changed-code Ruff and pipeline editor diagnostics pass; repository diff handling retains two baseline lint findings.
+- Contract failures propagate and preserve captured input; automatic canonical-validation DLQ handling, transactional run rollback and full-scale endpoint-lookup performance certification are not claimed.
+- New isolated HugeGraph acceptance: **PASS**, 54 vertices / 142 edges / 10 raw records, zero validation errors, replay and exact logical restore equality. Initial/replay consumed 53/53 vertex and 108/83 edge envelopes with two run IDs each. The schema refusal gate also passes. Receipt: `test-results/eoip-acceptance-94d8065314e34dc3a0f6ebdc3db5521c.json`; disposable resources removed, primary services healthy and not redeployed/reset.
+
+**Live DLQ acceptance batch (2026-10-03):**
+- Added `scripts/docker.ps1 dlq-acceptance`: fresh internal-only HugeGraph/API/worker, separate application volume, no host ports/primary mounts and targeted finally cleanup.
+- Three real HTTP/worker journeys pass: genuine worker rejection and still-invalid replay remain PARTIAL; service-seeded obsolete-mapper rejection recovers with preserved raw input/evidence and idempotent replay; auth/missing capture/hash mismatch refusals enqueue nothing.
+- Durable jobs, API/worker audit correlations and retained DLQ history are checked. Successful replay does not imply deletion/resolution of the historical DLQ record.
+- Latest full UTF-8-mode host regression: **534 passed, 3 opt-in runtime tests skipped**, exit 0. The three runtime tests separately **passed in Docker**, exit 0. New-code Ruff and PowerShell syntax checks pass; editor workspace import-resolution warnings remain.
+- Receipt: `test-results/eoip-dlq-acceptance-e97e862f386e406b9e71e94da9fff68c.json` plus matching JUnit XML. Primary services remained healthy and were not recreated/reset.
+- This certifies Jira v1 replay only; registered v2/live sources, browser UI and crash/native/config/job-state recovery are not covered by this gate.
+
+**Real VS Code host batch (2026-10-03):**
+- Four multi-step journeys in installed VS Code 1.140.0 pass, exit 0, with all eight contributed commands executed.
+- Fixed nonexistent document-symbol API usage and name-only range matching; real nested and flat providers resolve a cursor inside the function body.
+- Search/entity read-back, path/impact/lineage/retrieval, exact source navigation, authentication/path refusal and offline preservation pass; source text remains unchanged.
+- Unique user-data/extensions profiles are cleaned with bounded Windows lock retries before PASS. Missing/incomplete receipt, host failure or cleanup failure fails the gate.
+- Receipt: `test-results/extension-host-a55403be-9158-4035-bcd2-7771cae2fc01.json`. JS syntax/editor checks pass; primary readiness remains ready.
+- HTTP contract fixture and automated prompts are explicit test doubles. Live graph integration, manual UI, visual TreeView/webview and packaged-VSIX certification remain separate.
+- Python/container/browser suites were not re-run for this JS-only batch; the preceding counts are historical.
+
 **Interpretation:** IMPLEMENTED below describes code availability, not completed
-end-to-end certification. Live DLQ replay, real extension-host acceptance, broader
+end-to-end certification. Broader registered/live-source replay, live-backend/visual extension acceptance, broader
 safety/quality/release evidence and later-phase partial obligations remain open.
 See [the updated development audit](eoip-development-audit-2026-10-03.md) for the
 tested scope, failures corrected, exclusions and remaining gates.
@@ -26,11 +93,11 @@ tested scope, failures corrected, exclusions and remaining gates.
 | T10–T12 | Linking, provenance, validation | issue-key linking, `Evidence`/`EVIDENCED_BY`, lineage endpoint, **hard mutation-path gate** (`validation/gate.py`) + soft rule engine + N/A-correct quality metrics |
 | T13–T15 | Query API, impact, path | typed `QueryPlan`, policy bounds, **NL→QueryPlan** (`query/nl.py`, `POST /api/v1/query/nl`), index-backed search, impact rationale + ranking |
 | T16–T18 | Web UI, graph visualizer, admin | React app, Cytoscape + bundled Sigma.js/WebGL (no CDN), search/graph/impact/evidence/architecture/agent/KGR lenses, admin jobs/quality/audit/DLQ |
-| T19 | VS Code extension | sidebar TreeView, document-symbol resolution + word fallback, status-bar connectivity, traversal-guarded source opening, mock-API test suite |
+| T19 | VS Code extension | sidebar TreeView, body/nested/flat document-symbol resolution + word fallback, status-bar connectivity, traversal-guarded source opening; four real-host journeys cover all commands with an HTTP contract fixture |
 | T20–T22 | GraphRAG, agent, MCP | strategy router + model-down fallback, **RAG eval harness** (`retrieval/eval.py`, `scripts/rag_eval.py`), governed agent runtime + catalog, 15 read-only MCP tools incl. `neighbors`/`document` with structured errors |
 | T23–T24 | Logging, metrics | correlation IDs, JSON audit sink (API + worker), Prometheus counters/histograms, health endpoints |
 | T25–T26 | Backup/restore | checksummed snapshot + restore verification (`snapshot.py`, `scripts/backup.py`, `restore.py`, `verify_restore.py`, restore-test compose profile) |
-| T27–T28 | Tests, E2E demo | 477 Python tests, live container smoke checks, 4 Chromium journeys, isolated fresh-HugeGraph/logical-recovery acceptance; full release certification remains open |
+| T27–T28 | Tests, E2E demo | Latest 534 local Python passes / 3 opt-in skips plus 3 isolated live DLQ journeys; isolated canonical-ingestion/HugeGraph/logical-recovery acceptance; earlier 477 container tests, live smoke and 4 Chromium journeys; full release certification remains open |
 
 ## Gap-closure items from the 2026-10-02 audit — status
 
@@ -53,11 +120,11 @@ tested scope, failures corrected, exclusions and remaining gates.
 | 15 | Audit coverage | **IMPLEMENTED** (worker audit through shared AuditSink, policy-denial typing, canary-secret redaction tests) |
 | 16 | HugeGraph-native backup | **DEFERRED** — HugeGraph native backup tooling is not available in the pinned 1.7.0 image; the checksummed logical archive track is implemented, tested, and documented as the MVP-supported track |
 | 17 | Domain links on all paths | **IMPLEMENTED** |
-| 18 | Multi-commit git history | **DEFERRED** — MVP golden path uses the single fixture commit; commit-walk + diff-hunk→symbol linking scheduled with G2-P3 incremental code parsing |
-| 19 | Canonical contracts at boundaries | **PARTIAL** — contracts are versioned and schema-checked; full NormalizedEntity/GraphMutation emission between map/store stages scheduled with G2-P0 contract hardening |
+| 18 | Multi-commit git history | **IMPLEMENTED, LIMITED ACCEPTANCE** — bounded commit walk + parent/diff-hunk symbol links and repository tests exist; historical coordinates, deletion/rename/merge cases need broader certification |
+| 19 | Canonical contracts at boundaries | **IMPLEMENTED** — all eight ingestion services consume normalized GraphMutation envelopes through the shared adapter, including temporal/domain/tombstone paths; guarded service/JSON-schema tests cover capture, run context and pre-write rejection |
 | 20 | Security verification suite | **IMPLEMENTED** (prompt-injection/poisoned-fixture tests, canary redaction, read-only surface checks, policy-bound tests) |
 | 21 | Benchmark dataset | **IMPLEMENTED** (deterministic scale s/m generator + bounded-traversal benchmark test; full-scale HugeGraph benchmarking deferred to capacity work) |
-| 22 | Schema version discipline | **PARTIAL** — additive-only bootstrap is idempotent and tested; incompatible-version hard-stop requires the first breaking schema change (none exists yet) |
+| 22 | Schema version discipline | **IMPLEMENTED STRUCTURAL GATE** — all schema kinds are preflighted before any mutation; incompatibilities fail explicitly, compatible additive changes remain supported. General version migration and cross-process schema locking are not provided. |
 | 23 | Version stamping completeness | **IMPLEMENTED** (ontology/schema versions on all edges; missing-version soft rule) |
 
 ## G2 / KnowGridFlow phases
@@ -84,4 +151,4 @@ Remaining: Phase-2/4 cosmetic component extraction (FilterBar/NodeInspector inli
 
 ## Honest completion boundary
 
-The platform now implements the full MVP vertical slice plus G2-P0..P5 and the KGR module end-to-end, verified by the Docker suite. G2-P6..P10 contain genuinely new product surface (architecture-conformance DSL, process mining, knowledge-debt SLOs, counterfactual scenario overlays, causal hypotheses, playback UX) that requires new backend services and acceptance fixtures before its UI can be truthfully enabled; those lenses remain marked "planned" in the UI rather than faked. Items 16/18/19/22 above are the remaining deferred/partial MVP-adjacent pieces, each with a documented rationale.
+The platform implements the MVP vertical slice plus substantial G2-P0..P5 and KGR code, with the earlier Docker evidence scoped above. Code presence is not end-to-end certification of every adapter or surface. G2-P6..P10 require further backend services and acceptance fixtures for architecture conformance, process mining, knowledge-health SLOs, counterfactual overlays, causal hypotheses and playback. Items 16/19 remain incomplete; item 18 has bounded implementation but broader historical acceptance remains open. Item 22 now enforces structural refusal before mutation, not a general schema migration framework.

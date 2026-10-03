@@ -5,21 +5,104 @@ Run only in the disposable acceptance Compose project, never against the demo gr
 
 import json
 import os
+from copy import deepcopy
 from pathlib import Path
+from unittest.mock import patch
 
 from eoip.demo import load_demo
 from eoip.graph.hugegraph import HugeGraphStore
 from eoip.graph.traversal import GraphTraversal
+from eoip.ingestion import pipeline
 from eoip.ingestion.replay import logical_graph_output, logical_output_diff
 from eoip.jobs import write_json
 from eoip.provenance.lineage import LineageService
 from eoip.snapshot import backup, restore
 from eoip.validation.engine import ValidationEngine
+from jsonschema import validate
 
 from scripts.verify_restore import verify_restored_snapshot
 
 ISSUE = "urn:eoip:work:item:jira:EOIP-1"
 RECAPTURE_TIMESTAMPS = frozenset({"captured_at", "first_seen", "last_seen", "valid_from", "modified_at"})
+
+
+def load_canonical_demo(store, data: Path, project_root: Path | None) -> tuple[dict, dict]:
+    schema_root = Path(__file__).resolve().parents[1] / "schemas"
+    schemas = {
+        name: json.loads((schema_root / f"{name}.schema.json").read_text(encoding="utf-8"))
+        for name in ("graph_mutation", "normalized_entity", "normalized_relationship")
+    }
+    counts = {"VERTEX": 0, "EDGE": 0}
+    runs = set()
+    consumer = pipeline.apply_graph_mutation
+
+    def checked_consumer(graph, mutation):
+        validate(mutation.model_dump(), schemas["graph_mutation"])
+        kind = "normalized_entity" if mutation.target_kind == "VERTEX" else "normalized_relationship"
+        validate(mutation.payload, schemas[kind])
+        evidence_key = mutation.payload["properties"].get("evidence_key")
+        if evidence_key:
+            assert list((data / "raw").rglob(f"{evidence_key}.json")), "Mutation preceded evidence capture"
+        result = consumer(graph, mutation)
+        counts[mutation.target_kind] += 1
+        runs.add(mutation.ingestion_run_id)
+        return result
+
+    with patch.object(pipeline, "apply_graph_mutation", side_effect=checked_consumer):
+        result = load_demo(store, data, project_root)
+    assert all(counts.values()), "Demo bypassed canonical mutation envelopes"
+    assert runs, "Demo did not provide ingestion run context"
+    return result, {"mutations": counts, "run_count": len(runs), "contracts_valid": True}
+
+
+def verify_schema_preflight(store: HugeGraphStore) -> dict:
+    kinds = tuple(store._schema_definitions())
+
+    def schema_state():
+        return {kind: store._request("GET", f"/schema/{kind}")[kind] for kind in kinds}
+
+    def data_state():
+        return {
+            kind: {item["id"]: item for item in store._pages(kind)}
+            for kind in ("vertices", "edges")
+        }
+
+    schema_before = schema_state()
+    data_before = data_state()
+    assert store.ensure_schema() == {"created": False, "initialized": True}
+    proposals = [
+        ("propertykeys", "data_type", "INT"),
+        ("vertexlabels", "id_strategy", "AUTOMATIC"),
+        ("edgelabels", "frequency", "SINGLE"),
+        ("indexlabels", "index_type", "RANGE"),
+    ]
+    for kind, field, value in proposals:
+        proposed = deepcopy(store._schema_definitions())
+        proposed[kind][0][field] = value
+        proposed["propertykeys"].append({
+            "name": "acceptance_pending_property", "data_type": "TEXT", "cardinality": "SINGLE",
+        })
+        # Only the proposed manifest is substituted; all reads use the real populated server.
+        with (
+            patch.object(store, "_schema_definitions", return_value=proposed),
+            patch.object(store, "_request", wraps=store._request) as requests,
+        ):
+            try:
+                store.ensure_schema()
+            except ValueError as exc:
+                assert "Incompatible HugeGraph schema" in str(exc) and field in str(exc), str(exc)
+            else:
+                raise AssertionError(f"Incompatible {kind}/{field} proposal was accepted")
+            assert len(requests.call_args_list) == 4
+            assert all(call.args[0] == "GET" for call in requests.call_args_list)
+        assert schema_state() == schema_before, f"Rejected {kind}/{field} changed schema"
+        assert data_state() == data_before, f"Rejected {kind}/{field} changed data"
+    return {
+        "idempotent": True,
+        "incompatible_proposals_rejected": len(proposals),
+        "schema_and_data_unchanged": True,
+        "no_schema_mutations": True,
+    }
 
 
 def demo_business_output(store) -> dict:
@@ -67,12 +150,12 @@ def verify_clean_demo(source, target, root: Path, *, project_root: Path | None =
         assert store.count_vertices() == store.count_edges() == 0, "Acceptance requires empty graphs"
     source.ensure_schema({})
     original_data, restored_data = root / "original", root / "restored"
-    initial = load_demo(source, original_data, project_root)
+    initial, initial_contracts = load_canonical_demo(source, original_data, project_root)
     assert initial["jira"]["run_status"] == "SUCCEEDED"
     assert initial["git"]["files"] and initial["git"]["symbols"]
     golden_queries(source, original_data)
     before = demo_business_output(source)
-    replay = load_demo(source, original_data, project_root)
+    replay, replay_contracts = load_canonical_demo(source, original_data, project_root)
     assert replay["jira"]["run_status"] == "SUCCEEDED"
     diff = logical_output_diff(before, demo_business_output(source))
     assert diff["equivalent"], f"Replay changed logical business data: {diff}"
@@ -103,6 +186,7 @@ def verify_clean_demo(source, target, root: Path, *, project_root: Path | None =
         "golden": golden,
         "snapshot_sha256": exported["sha256"],
         "populated_target_rejected": True,
+        "canonical_ingestion": {"initial": initial_contracts, "replay": replay_contracts},
     }
 
 
@@ -117,6 +201,7 @@ def main():
     target = HugeGraphStore(target_url, password=password)
     try:
         result = verify_clean_demo(source, target, Path("/tmp/acceptance"))
+        result["schema_preflight"] = verify_schema_preflight(source)
         write_json(report, result)
         print(json.dumps(result, indent=2))
     except Exception as exc:
