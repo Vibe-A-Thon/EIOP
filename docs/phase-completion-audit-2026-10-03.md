@@ -169,6 +169,27 @@ tested scope, failures corrected, exclusions and remaining gates.
 | 22 | Schema version discipline | **IMPLEMENTED STRUCTURAL GATE** — all schema kinds are preflighted before any mutation; incompatibilities fail explicitly, compatible additive changes remain supported. General version migration and cross-process schema locking are not provided. |
 | 23 | Version stamping completeness | **IMPLEMENTED** (ontology/schema versions on all edges; missing-version soft rule) |
 
+**Confluence page metadata batch (2026-10-03):**
+- G2-SRC-CONF-001 labels, author/editor references and creation/modification
+  timestamps now persist in page `payload_json` with source mapper version
+  `confluence-dc/1.1`. UTC normalization retains fractional precision;
+  source-only actor references do not create canonical Person identities.
+- Complete-label pagination uses the trusted content endpoint, forwards
+  correlation and refuses malformed/repeated/empty-next/over-limit collections.
+  Mapping failures capture before DLQ; current clearing, prior revisions and
+  late replay are tested. Capture/event time semantics are unchanged.
+- Focused regression: **51 passed**; full host regression: **598 passed /
+  12 opt-in skips**, exit 0. Changed-code Ruff/editor/Pylance and whitespace pass.
+- Final rebuilt Docker API/worker/HugeGraph gate: **12 passed**, exit 0,
+  no failures/errors/skips. Receipt:
+  `test-results/eoip-dlq-acceptance-8f341c4e08814b9d914c39ac4ae0373c.json`
+  with matching XML. Initial 11-pass/1-failure receipt remains FAIL; only the
+  rejection request-count assertion was stale after added label pagination.
+- Both disposable projects removed; primary readiness `ready`; no primary
+  redeployment/reset. Protocol fixtures are not live tenants. Source revision
+  retrieval, semantic linking, stale detection and attachment contents remain
+  separate G2-P4 work; no phase/application 100% completion claim.
+
 ## G2 / KnowGridFlow phases
 
 | Phase | Status | Evidence |

@@ -18,6 +18,11 @@ def test_confluence_fetched_rejection_preserves_capture_and_checkpoint(live_repl
         original = raw.read_bytes(), dlq.read_bytes()
         event = SourceEventV2.model_validate_json(original[0])
         assert event.payload["id"] and "title" not in event.payload
+        assert event.payload["metadata"]["labels"]["results"] == [
+            {"name": "runbook", "prefix": "global"},
+            {"name": "deploy", "prefix": "global"},
+            {"name": "operations", "prefix": "team"},
+        ]
         record = json.loads(original[1])
         assert record["registry_source_id"] == source_id and record["error_category"] == "mapping_error"
         assert record["correlation_id"] == baseline["correlation_id"]
@@ -30,6 +35,6 @@ def test_confluence_fetched_rejection_preserves_capture_and_checkpoint(live_repl
         assert logical_output_diff(before, logical_graph_output(live.store))["equivalent"]
         assert not (live.root / "state" / "connectors" / f"{source_id}.json").exists()
         requests = upstream.get("/requests").json()
-        assert len(requests) == 7 and all(r["correlation_id"] == baseline["correlation_id"] for r in requests)
+        assert len(requests) == 15 and all(r["correlation_id"] == baseline["correlation_id"] for r in requests)
         live.audit(baseline, "partial")
         live.audit(replay, "partial")

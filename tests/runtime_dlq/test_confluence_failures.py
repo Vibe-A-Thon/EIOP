@@ -11,6 +11,7 @@ def test_confluence_upstream_failures_are_persistent_and_nonmutating(live_replay
         ("valid", "env://EOIP_ACCEPTANCE_INVALID_TOKEN", "authentication_failed", 1),
         ("schema-drift", "env://EOIP_ACCEPTANCE_SOURCE_TOKEN", "schema_drift", 2),
         ("invalid-response", "env://EOIP_ACCEPTANCE_SOURCE_TOKEN", "invalid_response", 1),
+        ("label-invalid", "env://EOIP_ACCEPTANCE_SOURCE_TOKEN", "invalid_response", 3),
     ):
         with confluence_source(mode=mode, token_ref=token_ref) as (source_id, upstream):
             before = logical_graph_output(live.store)

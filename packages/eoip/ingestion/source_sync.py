@@ -187,6 +187,7 @@ class SourceSyncIngestionService:
                         "modified_at": mapped["updated_at"] or event.captured_at,
                     }
                     structure = extract_storage_body(content, source_ref)
+                    structure["source_metadata"] = mapped["source_metadata"]
                     properties["payload_json"] = json.dumps(structure, sort_keys=True)
                     properties["parser_version"] = structure["parser_version"]
                     parents = [

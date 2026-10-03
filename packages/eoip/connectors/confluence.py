@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import json
 from datetime import UTC, datetime, timedelta
 from typing import Any
+from urllib.parse import quote
 
+from eoip.connectors.confluence_metadata import extract_page_metadata
 from eoip.connectors.errors import ConnectorError
 from eoip.connectors.rest import RestConnector, parse_utc, utc_timestamp
 from eoip.connectors.sync import SyncBatch
@@ -12,7 +15,7 @@ from eoip.connectors.sync import SyncBatch
 
 class ConfluenceConnector(RestConnector):
     source_system = "confluence"
-    mapper_version = "confluence-dc/1.0"
+    mapper_version = "confluence-dc/1.1"
 
     def __init__(self, base_url: str, *, page_size: int = 100, **kwargs) -> None:
         if not 1 <= page_size <= 1000:
@@ -60,7 +63,7 @@ class ConfluenceConnector(RestConnector):
                 params: dict[str, str | int] = {
                     "cql": " AND ".join(clauses),
                     "expand": (
-                        "space,version,body.storage,ancestors,metadata.labels"
+                        "space,version,body.storage,ancestors,metadata.labels,history"
                         if record_kind == "page"
                         else "space,version,container,extensions"
                     ),
@@ -72,6 +75,8 @@ class ConfluenceConnector(RestConnector):
                     result_key="results",
                 ):
                     self._required_id(record, "id", record_kind, correlation_id)
+                    if record_kind == "page":
+                        record = self._complete_labels(record, correlation_id)
                     version = record.get("version")
                     version_value = version.get("number") if isinstance(version, dict) else None
                     if version_value is None and isinstance(version, dict):
@@ -121,6 +126,7 @@ class ConfluenceConnector(RestConnector):
                 "body": body,
                 "parent_ids": [str(item["id"]) for item in ancestors if isinstance(item, dict) and item.get("id")],
                 "url": self._nested(record, "_links.webui"),
+                "source_metadata": extract_page_metadata(record),
             }
         if kind == "attachment":
             space_key = self._nested(record, "space.key")
@@ -141,6 +147,39 @@ class ConfluenceConnector(RestConnector):
                 "version": self._nested(record, "version.number"),
             }
         raise ValueError("unsupported Confluence record kind")
+
+    def _complete_labels(self, record: dict, correlation_id: str) -> dict:
+        continuation = self._nested(record, "metadata.labels._links.next")
+        if not isinstance(continuation, str) or not continuation:
+            return record
+        # Never follow a response-provided URL with authenticated credentials.
+        path = f"/rest/api/content/{quote(str(record['id']), safe='')}/label"
+        labels: list[dict] = []
+        seen_pages: set[str] = set()
+        while True:
+            response = self.get_json(
+                path, params={"start": len(labels), "limit": self.page_size},
+                correlation_id=correlation_id,
+            )
+            rows = response.get("results")
+            links = response.get("_links", {})
+            if (
+                not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows)
+                or not isinstance(links, dict)
+                or (links.get("next") is not None and not isinstance(links["next"], str))
+            ):
+                self._log_failure("invalid_response", correlation_id)
+                raise ConnectorError(self.source_system, "invalid_response", correlation_id)
+            signature = json.dumps(rows, sort_keys=True)
+            if (not rows and links.get("next")) or (rows and signature in seen_pages) or len(labels) + len(rows) > 10_000:
+                self._log_failure("invalid_response", correlation_id)
+                raise ConnectorError(self.source_system, "invalid_response", correlation_id)
+            seen_pages.add(signature)
+            labels.extend(rows)
+            if not rows or (len(rows) < self.page_size and not links.get("next")):
+                break
+        metadata = {**record["metadata"], "labels": {"results": labels}}
+        return {**record, "metadata": metadata}
 
     def _pages(self, path: str, params: dict, correlation_id: str, *, result_key: str):
         start = 0

@@ -20,8 +20,8 @@ class ConfluenceAPIHandler(ProtocolFixtureHandler):
             self.respond(200, {"status": "ready"})
             return
         match = re.fullmatch(
-            r"/([a-f0-9]{32})/(valid|rejected|schema-drift|invalid-response)"
-            r"/(requests|rest/api/space|rest/api/content/search)", url.path
+            r"/([a-f0-9]{32})/(valid|rejected|schema-drift|invalid-response|label-invalid)"
+            r"/(requests|rest/api/space|rest/api/content/search|rest/api/content/[a-f0-9]{32}-page-[01]/label)", url.path
         )
         if not match:
             self.respond(404, {"error": "unknown fixture route"})
@@ -55,6 +55,16 @@ class ConfluenceAPIHandler(ProtocolFixtureHandler):
                     "key": space_key, "name": "Acceptance knowledge",
                     "description": {"plain": {"value": "Fixture space"}},
                 }]
+            elif action.endswith("/label"):
+                assert action.split("/")[-2] in {f"{run_id}-page-0", f"{run_id}-page-1"}
+                if mode == "label-invalid":
+                    self.respond(200, {"results": {}})
+                    return
+                records = [
+                    {"name": "runbook", "prefix": "global"},
+                    {"name": "deploy", "prefix": "global"},
+                    {"name": "operations", "prefix": "team"},
+                ]
             else:
                 query = params["cql"][0]
                 assert f'space = "{space_key}"' in query
@@ -63,10 +73,22 @@ class ConfluenceAPIHandler(ProtocolFixtureHandler):
                 assert upper is not None
                 version = {"number": 1, "when": "2026-10-01T00:00:00Z"}
                 if "type = page" in query:
-                    assert params["expand"] == ["space,version,body.storage,ancestors,metadata.labels"]
+                    assert params["expand"] == ["space,version,body.storage,ancestors,metadata.labels,history"]
                     records = [{
                         "id": f"{run_id}-page-{index}", "title": f"Acceptance page {index}",
-                        "space": {"key": space_key}, "version": version,
+                        "space": {"key": space_key},
+                        "version": {**version, "by": {
+                            "type": "known", "userKey": "editor-key", "displayName": "Fixture Editor",
+                        }},
+                        "history": {
+                            "createdBy": {"type": "known", "userKey": "author-key",
+                                          "username": "fixture-author", "displayName": "Fixture Author"},
+                            "createdDate": "2026-09-30T00:00:00Z",
+                        },
+                        "metadata": {"labels": {
+                            "results": [{"name": "runbook", "prefix": "global"}],
+                            "_links": {"next": f"/rest/api/content/{run_id}-page-{index}/label?start=1"},
+                        }},
                         "body": {"storage": {"value": (
                             f'<h2 id="fixture-{index}">Fixture page {index}</h2>'
                             '<a href="#checks">Checks</a>'

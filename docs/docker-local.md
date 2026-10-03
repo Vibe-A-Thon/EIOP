@@ -262,10 +262,15 @@ multi-step pytest journeys:
   page/attachment references, code snippets and structured tables. Document and
   Evidence record `parser_version=confluence-storage/1.0`. Original body text
   remains in `description` and immutable capture; revisions preserve both forms.
+- Page payloads also retain source labels, author/editor references and UTC
+  creation/modification timestamps. Expanded labels with continuation are
+  reacquired through the trusted content-label endpoint; the fixture verifies
+  complete pagination, correlation propagation and exact persisted metadata.
 - A fetched Confluence page without a title is captured and rejected as a
   mapping error. The baseline and unchanged-input DLQ replay remain `PARTIAL`
   without advancing a checkpoint or creating the rejected Document.
 - Confluence authentication, missing content ID and invalid response-shape
+  (including the secondary label endpoint)
   failures persist categorized `FAILED` jobs/manifests with matching API/worker
   and upstream correlations, and no capture, business graph or checkpoint writes.
 
@@ -286,7 +291,7 @@ the new acquisition journeys use a separate authenticated internal HTTP fixture.
 Both source fixtures use deterministic fixture-only credentials via environment
 secret references, not real Confluence/ServiceNow tenants. Attachment metadata
 is covered, not downloading/parsing attachment bytes; historical versions,
-authors, labels, rendered/rich macro expansion, semantic document links and stale
+rendered/rich macro expansion, semantic document links and stale
 documentation detection remain separate G2-P4 obligations. Other registered adapters, live
 source systems, worker crash recovery and config/native recovery remain
 separate acceptance obligations.
@@ -307,6 +312,37 @@ not sanitized HTML for rendering. An empty/missing body clears current raw and
 derived content while retaining earlier revisions; older replay cannot restore
 stale content. Existing `payload_json` and `parser_version` graph property keys
 are reused; no new physical key or schema version is introduced.
+
+### Confluence source metadata boundaries
+
+The `confluence-dc/1.1` mapper adds `source_metadata` (schema `1.0`) alongside
+the existing storage-extraction output in Document `payload_json`. Labels are
+sorted and deduplicated by `(prefix, name)`; missing prefixes remain empty,
+not inferred. Author (`history.createdBy`) and editor (`version.by`) contain
+only source `type`, user key, username and display name. Email is not copied
+into derived metadata. These references do not create canonical Person entities
+or cross-source identity merges.
+
+Creation (`history.createdDate`) and modification (`version.when`) timestamps
+are normalized to UTC, retaining available fractional precision. The shared
+timestamp parser accepts ISO-8601 input and treats timezone-less input as UTC.
+Missing fields produce explicit empty labels/null actor or timestamp values,
+clearing current metadata on an update while preserving earlier revisions.
+Source timestamps do not replace capture/event time or change late-event rules.
+Immutable raw capture retains the acquired page payload, including source actor
+fields and complete labels. Label enrichment happens before event hashing and
+capture; the truncated expansion is replaced with the label endpoint results.
+
+When expanded labels advertise continuation, acquisition restarts at offset
+zero using the configured trusted base URL and a quoted content ID. It never
+follows response-provided URLs with credentials. Short pages with explicit
+continuation continue; repeated pages, empty continuation pages, invalid
+response shapes and collections exceeding 10,000 acquired labels fail
+explicitly before ingestion. Malformed individual metadata fields or unresolved
+label continuation in a submitted capture fail mapping through the existing
+capture-before-write DLQ path. Replay uses captured complete labels without
+upstream requests. Source historical-version retrieval, attachment bytes,
+semantic linking, stale detection and live-tenant certification remain open.
 
 ## Backup and restore
 

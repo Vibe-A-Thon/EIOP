@@ -5,7 +5,7 @@ from eoip.contracts.source_event import SourceEventV2
 from eoip.ingestion.replay import logical_graph_output, logical_output_diff
 
 
-@pytest.mark.req("FR-CONF-001", "G2-T0401", "G2-T0402", "G2-T0403", "G2-T0404", "G2-SRC-CONF-003")
+@pytest.mark.req("FR-CONF-001", "G2-T0401", "G2-T0402", "G2-T0403", "G2-T0404", "G2-SRC-CONF-003", "G2-SRC-CONF-001")
 def test_confluence_http_baseline_hierarchy_incremental_and_replay(live_replay, confluence_source):
     live = live_replay
     with confluence_source() as (source_id, upstream):
@@ -14,13 +14,16 @@ def test_confluence_http_baseline_hierarchy_incremental_and_replay(live_replay, 
         result = baseline["result"]
         assert (result["records_seen"], result["records_accepted"], result["records_rejected"]) == (4, 4, 0)
         requests = upstream.get("/requests").json()
-        assert len(requests) == 7
+        assert len(requests) == 15
         assert all(r["authorized"] and r["correlation_id"] == baseline["correlation_id"] for r in requests)
         for kind, expected in (("space", [0, 1]), ("page", [0, 1, 2]), ("attachment", [0, 1])):
             offsets = [int(r["params"]["start"][0]) for r in requests
                        if (r["path"].endswith("/space") if kind == "space"
                            else f"type = {kind}" in r["params"].get("cql", [""])[0])]
             assert offsets == expected
+        for index in range(2):
+            assert [int(r["params"]["start"][0]) for r in requests
+                    if r["path"].endswith(f"/{run_id}-page-{index}/label")] == [0, 1, 2, 3]
         events = []
         for path in (live.root / "raw" / "confluence").glob("*.json"):
             event = SourceEventV2.model_validate_json(path.read_text(encoding="utf-8"))
@@ -54,6 +57,19 @@ def test_confluence_http_baseline_hierarchy_incremental_and_replay(live_replay, 
                 ]
                 assert node["properties"]["description"] == event.payload["body"]["storage"]["value"]
                 assert evidence[0]["properties"]["parser_version"] == structure["parser_version"]
+                assert structure["source_metadata"] == {
+                    "schema_version": "1.0",
+                    "labels": [
+                        {"name": "deploy", "prefix": "global"},
+                        {"name": "runbook", "prefix": "global"},
+                        {"name": "operations", "prefix": "team"},
+                    ],
+                    "author": {"type": "known", "user_key": "author-key",
+                               "username": "fixture-author", "display_name": "Fixture Author"},
+                    "editor": {"type": "known", "user_key": "editor-key", "display_name": "Fixture Editor"},
+                    "created_at": "2026-09-30T00:00:00Z",
+                    "modified_at": "2026-10-01T00:00:00Z",
+                }
             assert any(e["in_cid"] == evidence[0]["canonical_id"]
                        for e in live.store.edges_from(node["vid"], labels=["EVIDENCED_BY"]))
             nodes[event.source_record_id] = node
@@ -76,7 +92,7 @@ def test_confluence_http_baseline_hierarchy_incremental_and_replay(live_replay, 
         incremental = live.finish(live.submit(f"/api/v1/sources/{source_id}/sync", {}), "SUCCEEDED")
         assert incremental["result"]["records_seen"] == 1  # Space metadata is refreshed on every sync.
         assert incremental["result"]["records_accepted"] == 1
-        poll_requests = upstream.get("/requests").json()[7:]
+        poll_requests = upstream.get("/requests").json()[15:]
         assert len(poll_requests) == 4
         assert all("lastModified >=" in r["params"]["cql"][0] for r in poll_requests if "cql" in r["params"])
         assert all(r["correlation_id"] == incremental["correlation_id"] for r in poll_requests)
@@ -94,6 +110,6 @@ def test_confluence_http_baseline_hierarchy_incremental_and_replay(live_replay, 
         assert checkpoint.read_bytes() == checkpoint_bytes
         assert all((live.root / "raw" / "confluence" / f"{event_id}.json").read_bytes() == raw
                    for event_id, raw in original_raw.items())
-        assert len(upstream.get("/requests").json()) == 11
+        assert len(upstream.get("/requests").json()) == 19
         for job in (baseline, incremental, replay):
             live.audit(job, "success")

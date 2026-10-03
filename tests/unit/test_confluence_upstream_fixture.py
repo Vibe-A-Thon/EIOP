@@ -33,7 +33,17 @@ def test_confluence_fixture_pagination_and_incremental_overlap(confluence_url):
             "space", "page", "page", "attachment",
         ]
         requests = next(iter(ConfluenceAPIHandler.requests.values()))
-        assert len(requests) == 7
+        assert len(requests) == 15
+        for event in baseline.events:
+            if event.metadata["record_kind"] == "page":
+                metadata = connector.map_event(event)["source_metadata"]
+                assert metadata["labels"] == [
+                    {"name": "deploy", "prefix": "global"},
+                    {"name": "runbook", "prefix": "global"},
+                    {"name": "operations", "prefix": "team"},
+                ]
+                assert metadata["author"]["user_key"] == "author-key"
+                assert metadata["editor"]["user_key"] == "editor-key"
         assert all(r["authorized"] and r["correlation_id"] == "fixture-baseline" for r in requests)
         overlap = connector.sync(checkpoint=baseline.next_checkpoint, watermark="2026-10-01T00:01:00Z")
         assert [e.event_id for e in overlap.events] == [e.event_id for e in baseline.events]
@@ -56,6 +66,7 @@ def test_confluence_fixture_mapping_rejection(confluence_url):
     ("valid", "fixture-only-invalid", "authentication_failed"),
     ("schema-drift", "fixture-only-valid", "schema_drift"),
     ("invalid-response", "fixture-only-valid", "invalid_response"),
+    ("label-invalid", "fixture-only-valid", "invalid_response"),
 ])
 def test_confluence_fixture_categorizes_acquisition_failures(confluence_url, mode, token, category):
     with ConfluenceConnector(f"{confluence_url}/{mode}", token=token, page_size=1) as connector:
