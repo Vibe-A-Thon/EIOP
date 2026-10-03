@@ -19,6 +19,9 @@ EXPECTED_JOURNEYS = {
     "test_servicenow_http_baseline_incremental_and_replay",
     "test_servicenow_fetched_rejection_and_admission_controls",
     "test_servicenow_upstream_authentication_failure_is_persistent",
+    "test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "test_confluence_fetched_rejection_preserves_capture_and_checkpoint",
+    "test_confluence_upstream_failures_are_persistent_and_nonmutating",
 }
 
 
@@ -60,7 +63,7 @@ def main():
         "junit": junit.name,
         "report_error": report_error,
         "infra": "isolated HugeGraph 1.7.0 + real HTTP API + independent durable worker",
-        "scope": "Jira v1 and Confluence v2 replay; ServiceNow fixture HTTP acquisition, replay and admission",
+        "scope": "Jira v1 and Confluence v2 replay; Confluence and ServiceNow fixture HTTP acquisition, replay and failures",
         "excluded": ["live upstream tenants", "other registered adapters", "browser UI", "worker crash recovery"],
     }
     write_json(report, result)

@@ -88,27 +88,41 @@ class ObsoleteConfluenceMapper(ConfluenceConnector):
         raise ValueError("obsolete mapper cannot read page title")
 
 
+@contextmanager
+def registered_http_source(live, source_type, upstream_url, mode, token_ref):
+    run_id = uuid4().hex
+    source_id = f"{source_type}-{run_id}"
+    base_url = f"{upstream_url}/{run_id}/{mode}"
+    response = live.client.post("/api/v1/sources", json={
+        "source_id": source_id, "source_type": source_type,
+        "name": "HTTP acquisition acceptance", "base_url": base_url,
+        "capabilities": {"polling": True},
+        "config": {"page_size": 1}, "secret_refs": {"token": token_ref},
+    })
+    assert response.status_code == 201, response.text
+    try:
+        with httpx.Client(base_url=base_url, timeout=15, trust_env=False) as upstream:
+            yield source_id, upstream
+    finally:
+        response = live.client.delete(f"/api/v1/sources/{source_id}")
+        assert response.status_code == 204, response.text
+
+
 @pytest.fixture
 def servicenow_source(live_replay):
-    @contextmanager
     def register(*, mode="valid", token_ref="env://EOIP_ACCEPTANCE_SOURCE_TOKEN"):
-        assert os.environ["EOIP_ACCEPTANCE_SOURCE_URL"] == "http://dlq-upstream:8090"
-        run_id = uuid4().hex
-        source_id = f"servicenow-{run_id}"
-        base_url = f"{os.environ['EOIP_ACCEPTANCE_SOURCE_URL']}/{run_id}/{mode}"
-        response = live_replay.client.post("/api/v1/sources", json={
-            "source_id": source_id, "source_type": "servicenow",
-            "name": "Table API acceptance", "base_url": base_url,
-            "capabilities": {"polling": True},
-            "config": {"page_size": 1}, "secret_refs": {"token": token_ref},
-        })
-        assert response.status_code == 201, response.text
-        try:
-            with httpx.Client(base_url=base_url, timeout=15, trust_env=False) as upstream:
-                yield source_id, upstream
-        finally:
-            response = live_replay.client.delete(f"/api/v1/sources/{source_id}")
-            assert response.status_code == 204, response.text
+        url = os.environ["EOIP_ACCEPTANCE_SOURCE_URL"]
+        assert url == "http://dlq-upstream:8090"
+        return registered_http_source(live_replay, "servicenow", url, mode, token_ref)
+    return register
+
+
+@pytest.fixture
+def confluence_source(live_replay):
+    def register(*, mode="valid", token_ref="env://EOIP_ACCEPTANCE_SOURCE_TOKEN"):
+        url = os.environ["EOIP_ACCEPTANCE_CONFLUENCE_URL"]
+        assert url == "http://dlq-confluence:8091"
+        return registered_http_source(live_replay, "confluence", url, mode, token_ref)
     return register
 
 

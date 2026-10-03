@@ -15,6 +15,7 @@ from scripts import verify_live_dlq
         (1, [""] * (len(verify_live_dlq.EXPECTED_JOURNEYS) - 1) + ["<failure/>"], "FAIL"),
         (0, [""] * (len(verify_live_dlq.EXPECTED_JOURNEYS) - 1) + ["<skipped/>"], "FAIL"),
         (0, [""] * (len(verify_live_dlq.EXPECTED_JOURNEYS) - 1) + ["<error/>"], "FAIL"),
+        (0, [""] * 9, "FAIL"),
         (0, [""] * 6, "FAIL"),
         (0, [""] * 3, "FAIL"),
         (2, None, "FAIL"),

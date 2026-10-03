@@ -218,7 +218,8 @@ transactional across graph and files; quiesce writers and back up first.
 
 This builds the current runtime and test images, starts a fresh HugeGraph,
 schema initializer, HTTP API, independent worker and authenticated ServiceNow
-Table API fixture in a uniquely named Compose project, and runs nine opt-in
+Table API and Confluence Data Center REST fixtures in a uniquely named Compose
+project, and runs twelve opt-in
 multi-step pytest journeys:
 
 - A real API-submitted Jira record is rejected by the worker, captured and listed
@@ -250,6 +251,18 @@ multi-step pytest journeys:
 - Invalid upstream credentials persist a categorized `FAILED` job and baseline
   manifest without capture, business graph or checkpoint writes. Outbound
   REST requests carry the job's `X-Correlation-ID`, including failed requests.
+- Confluence baseline paginates space, page and attachment metadata over real
+  HTTP. Four entities, provenance and space/page/attachment hierarchy persist
+  in HugeGraph. Incremental sync refreshes the unchanged space's `last_seen`
+  without changing content, revisions, hierarchy or original capture provenance.
+  Replay preserves the latest observation time, immutable raw bytes and checkpoint,
+  and performs no upstream acquisition.
+- A fetched Confluence page without a title is captured and rejected as a
+  mapping error. The baseline and unchanged-input DLQ replay remain `PARTIAL`
+  without advancing a checkpoint or creating the rejected Document.
+- Confluence authentication, missing content ID and invalid response-shape
+  failures persist categorized `FAILED` jobs/manifests with matching API/worker
+  and upstream correlations, and no capture, business graph or checkpoint writes.
 
 Durable job results and matching API/worker audit correlation IDs are checked.
 DLQ entries are historical evidence: successful replay does **not** delete or
@@ -260,13 +273,16 @@ network. Its containers/network/application volume are removed in `finally`.
 JSON verdict and JUnit evidence persist as
 `test-results/eoip-dlq-acceptance-<run-id>.json` and `.xml`. Failed collection,
 missing evidence, unexpected/duplicate journey names, any skipped journey or
-nonzero pytest exit fails the gate. Normal host pytest runs skip these nine
-tests; the command above runs all nine against the actual services. No browser
-run is part of this API-only gate. Confluence replay uses local immutable
-captures, an unreachable upstream URL and an environment secret reference;
-it does not certify live upstream acquisition. ServiceNow uses deterministic
-fixture-only credentials via environment secret references and an internal
-HTTP server, not a real ServiceNow tenant. Other registered adapters, live
+nonzero pytest exit fails the gate. Normal host pytest runs skip these twelve
+tests; the command above runs all twelve against the actual services. No browser
+run is part of this API-only gate. The earlier Confluence mapper-recovery journeys
+still use service-seeded immutable captures and an unreachable upstream URL;
+the new acquisition journeys use a separate authenticated internal HTTP fixture.
+Both source fixtures use deterministic fixture-only credentials via environment
+secret references, not real Confluence/ServiceNow tenants. Attachment metadata
+is covered, not downloading/parsing attachment bytes; historical versions,
+authors, labels, body-structure extraction, semantic document links and stale
+documentation detection remain separate G2-P4 obligations. Other registered adapters, live
 source systems, worker crash recovery and config/native recovery remain
 separate acceptance obligations.
 

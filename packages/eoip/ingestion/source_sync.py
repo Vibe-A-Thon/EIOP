@@ -11,6 +11,7 @@ from urllib.parse import urljoin
 from uuid import uuid4
 
 from eoip.connectors.confluence import ConfluenceConnector
+from eoip.connectors.rest import parse_utc
 from eoip.connectors.servicenow import ServiceNowConnector
 from eoip.connectors.sync import SyncBatch
 from eoip.contracts.source_event import SourceEvent, SourceEventV2, upgrade_source_event, utc_now_iso
@@ -296,14 +297,25 @@ class SourceSyncIngestionService:
             node = self.store.get_vertex_by_canonical_id(mapped["canonical_id"])
             if node is None:
                 raise RuntimeError("graph evolution did not produce the expected current entity")
+            last_seen = event.captured_at
+            previous_seen = node["properties"].get("last_seen")
+            if previous_seen is not None:
+                previous_time = parse_utc(previous_seen)
+                observation_time = parse_utc(last_seen)
+                if previous_time is None or observation_time is None:
+                    raise ValueError("source observation timestamp is required")
+                if previous_time > observation_time:
+                    last_seen = previous_seen
             node = self.store.upsert_vertex(
                 mapped["label"],
                 {
                     **node["properties"],
                     "ingestion_run_id": run_id,
-                    "last_seen": event.captured_at,
+                    "last_seen": last_seen,
                 },
             )
+            capture_path = self.capture.root / source_system / f"{event.event_id}.json"
+            captured_at = json.loads(capture_path.read_text(encoding="utf-8"))["captured_at"]
             evidence = self.store.upsert_vertex(
                 "Evidence",
                 {
@@ -315,7 +327,7 @@ class SourceSyncIngestionService:
                     "source_id": event.source_record_id,
                     "source_version": event.source_version,
                     "method": "SOURCE_EVENT",
-                    "captured_at": event.captured_at,
+                    "captured_at": captured_at,
                     "evidence_key": event.event_id,
                     "content_hash": event.payload_hash,
                     "mapper_version": self.connector.mapper_version,

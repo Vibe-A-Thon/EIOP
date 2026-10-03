@@ -6,7 +6,55 @@ from eoip.connectors.servicenow import ServiceNowConnector
 from eoip.connectors.sync import SyncBatch
 from eoip.graph.memory import MemoryGraphStore
 from eoip.ingestion.jira import FileEventCapture
+from eoip.ingestion.replay import logical_graph_output, logical_output_diff
 from eoip.ingestion.source_sync import SourceSyncIngestionService
+
+
+@pytest.mark.req("FR-CONF-001", "FR-SNOW-001", "FR-CONN-006")
+@pytest.mark.parametrize("source_system", ["confluence", "servicenow"])
+def test_rest_refetch_preserves_capture_provenance_and_replay_freshness(tmp_path, source_system):
+    connector = (
+        ConfluenceConnector("https://confluence.example", token="fixture-only")
+        if source_system == "confluence"
+        else ServiceNowConnector("https://servicenow.example", token="fixture-only")
+    )
+    with connector:
+        kind = "space" if source_system == "confluence" else "incident"
+        payload = (
+            {"key": "ENG", "name": "Engineering"}
+            if kind == "space"
+            else {
+                "sys_id": "1", "number": "INC001", "short_description": "Fixture",
+                "sys_updated_on": "2026-10-01 00:00:00",
+            }
+        )
+        original = connector.make_event(kind, f"{connector.instance_id}:{kind}:1", payload, "1")
+        original = original.model_copy(update={
+            "captured_at": "2026-10-01T00:00:00Z", "event_time": "2026-10-01T00:00:00Z",
+        })
+        newer = original.model_copy(update={
+            "captured_at": "2026-10-03T00:00:00Z", "event_time": "2026-10-03T00:00:00Z",
+        })
+        store = MemoryGraphStore()
+        service = SourceSyncIngestionService(
+            store, connector, FileEventCapture(tmp_path / "raw"), str(tmp_path / "dlq")
+        )
+        assert service.ingest(SyncBatch([original], original.captured_at))["run_status"] == "SUCCEEDED"
+        raw = tmp_path / "raw" / source_system / f"{original.event_id}.json"
+        raw_bytes = raw.read_bytes()
+        first = logical_graph_output(store)
+        assert service.ingest(SyncBatch([newer], newer.captured_at))["run_status"] == "SUCCEEDED"
+        latest = logical_graph_output(store)
+        evidence = store.find_vertices(label="Evidence", filters={"evidence_key": original.event_id})[0]
+        assert evidence["properties"]["captured_at"] == original.captured_at
+        subject = next(v for v in store.find_vertices() if v["label"] in {"KnowledgeSpace", "WorkItem"})
+        assert subject["properties"]["last_seen"] == newer.captured_at
+        expected = json.loads(json.dumps(first))
+        expected["vertices"][subject["canonical_id"]]["properties"]["last_seen"] = newer.captured_at
+        assert logical_output_diff(expected, latest)["equivalent"]
+        assert service.ingest(SyncBatch([original], newer.captured_at))["run_status"] == "SUCCEEDED"
+        assert logical_output_diff(latest, logical_graph_output(store))["equivalent"]
+        assert raw.read_bytes() == raw_bytes
 
 
 @pytest.mark.req("FR-CONF-001")

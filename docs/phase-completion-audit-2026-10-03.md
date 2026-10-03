@@ -44,6 +44,27 @@
   internal HTTP protocol fixture, not a live tenant; other adapters, release
   non-functional gates and the remaining roadmap are still open.
 
+**Confluence HTTP acquisition and provenance batch (2026-10-03):**
+- Added authenticated Data Center REST protocol fixture and three multi-step
+  API/worker/HugeGraph journeys: paginated baseline with hierarchy/evidence,
+  incremental refresh and immutable replay; fetched mapping rejection; and
+  persistent authentication/schema-drift/invalid-response failures.
+- Fixed shared REST ingestion overwriting immutable Evidence capture timestamps
+  and replay regressing observation freshness. Two deterministic source-specific
+  regressions failed before repair and now pass; only the unchanged space's
+  `last_seen` may change during incremental polling, not its semantic graph.
+- Final exact-name Docker gate: **12 passed, zero failures/errors/skips**, exit 0.
+  Receipt: `test-results/eoip-dlq-acceptance-ccb926603ecc45639d64f167236a7c4c.json`
+  with matching XML. The first 11-pass/1-failure receipt remains FAIL.
+- Final UTF-8 host suite: **565 passed, 12 opt-in skips**, exit 0; focused
+  regression: **44 passed**, exit 0. Changed-code Ruff/editor diagnostics,
+  PowerShell parser and whitespace pass. Disposable resources removed;
+  primary readiness `ready`; no primary reset/redeployment by this batch.
+- FR-CONF-001 and G2-T0401..0404 are certified only for the documented acquisition/
+  hierarchy/attachment-metadata scope, not completely discharged. Real tenant,
+  historical versions, authors/labels, attachment bytes, body-structure extraction,
+  semantic linking and stale-document detection remain unverified/open.
+
 **Schema-compatibility batch (2026-10-03, `6f6149b` + working-tree changes):**
 - Gap 22 adds a fail-before-mutation structural compatibility preflight; compatible additive bootstrap remains supported.
 - Full local `python -X utf8 -m pytest`: **505 passed**, exit 0; focused schema/recovery/repository suite: **35 passed**, exit 0; changed-file Ruff and editor error diagnostics pass.

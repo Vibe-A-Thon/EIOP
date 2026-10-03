@@ -84,13 +84,13 @@ switch ($Action) {
         try {
             Invoke-Compose -CommandArguments @('build', 'dlq-api', 'acceptance')
             Invoke-Compose -CommandArguments @('up', '-d', '--wait', '--wait-timeout', '420',
-                'dlq-api', 'dlq-worker', 'dlq-upstream')
+                'dlq-api', 'dlq-worker', 'dlq-upstream', 'dlq-confluence')
             Invoke-Compose -CommandArguments @('run', '--rm', '--no-deps', 'acceptance')
             Write-Host "DLQ acceptance evidence: test-results\$runId.json"
         }
         finally {
             try {
-                Invoke-Compose -CommandArguments @('logs', '--tail', '80', 'schema-init', 'dlq-api', 'dlq-worker', 'dlq-upstream')
+                Invoke-Compose -CommandArguments @('logs', '--tail', '80', 'schema-init', 'dlq-api', 'dlq-worker', 'dlq-upstream', 'dlq-confluence')
             }
             finally {
                 try { Invoke-Compose -CommandArguments @('down', '--volumes') }

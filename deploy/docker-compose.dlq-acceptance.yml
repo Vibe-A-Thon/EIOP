@@ -19,6 +19,20 @@ x-app: &app
   cap_drop: [ALL]
 
 services:
+  dlq-confluence:
+    image: eoip-dlq-tests:local
+    command: [python, -m, tests.runtime_dlq.confluence_upstream]
+    environment:
+      EOIP_ACCEPTANCE_SOURCE_TOKEN: fixture-only-valid
+    networks: [acceptance]
+    init: true
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8091/health', timeout=5)"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
   dlq-upstream:
     image: eoip-dlq-tests:local
     command: [python, -m, tests.runtime_dlq.servicenow_upstream]
@@ -81,6 +95,7 @@ services:
       EOIP_LIVE_DLQ_ACCEPTANCE: "1"
       EOIP_API_URL: http://dlq-api:8000
       EOIP_ACCEPTANCE_SOURCE_URL: http://dlq-upstream:8090
+      EOIP_ACCEPTANCE_CONFLUENCE_URL: http://dlq-confluence:8091
       EOIP_ACCEPTANCE_REPORT: /results/${EOIP_ACCEPTANCE_RUN:?Set unique acceptance ID}.json
     volumes: ["dlq-data:/data", "../test-results:/results"]
     command: [python, -m, scripts.verify_live_dlq]
@@ -88,6 +103,7 @@ services:
       dlq-api: {condition: service_healthy}
       dlq-worker: {condition: service_healthy}
       dlq-upstream: {condition: service_healthy}
+      dlq-confluence: {condition: service_healthy}
 
 networks:
   acceptance:
