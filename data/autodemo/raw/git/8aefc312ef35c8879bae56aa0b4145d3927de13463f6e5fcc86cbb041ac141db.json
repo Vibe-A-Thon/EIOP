@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.501277Z",
+  "event_id": "8aefc312ef35c8879bae56aa0b4145d3927de13463f6e5fcc86cbb041ac141db",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "9fc6ba052e45a74220084ad850950ba7dd06bdb1",
+    "message": "changes for KGR implementation plan and requirements"
+  },
+  "payload_hash": "1a0450ddd34caf0ae3a9d18ace86400fc8100a4277be2f231a0707d7a895cec6",
+  "schema_version": "1.0",
+  "source_record_id": "demo:9fc6ba052e45a74220084ad850950ba7dd06bdb1",
+  "source_system": "git",
+  "source_version": "1a0450ddd34caf0ae3a9d18ace86400fc8100a4277be2f231a0707d7a895cec6"
+}

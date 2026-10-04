@@ -1,0 +1,5 @@
+{
+  "results": [
+    {"id": "COM-014", "type": "page", "title": "Checkout risk architecture", "space": {"key": "COMMERCE", "name": "Commerce Engineering"}, "version": {"number": 8}, "body": {"storage": {"value": "<h1>Checkout risk architecture</h1><p>PAY-142 introduces a bounded, explainable risk decision before payment authorization.</p><h2>Failure modes</h2><p>Timeouts use a safe refusal and manual review path.</p>"}}, "_links": {"webui": "/spaces/COMMERCE/pages/COM-014"}}
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "test_suites": [
+    {
+      "id": 4001,
+      "name": "Checkout Regression Suite",
+      "description": "Critical checkout, risk decision, and payment regression tests",
+      "last_modified_date": "2026-10-01T17:00:00Z",
+      "created_date": "2026-08-01T09:00:00Z"
+    },
+    {
+      "id": 4002,
+      "name": "Risk Service Resilience Suite",
+      "description": "Timeout, fallback, and circuit breaker tests for the risk decision boundary",
+      "last_modified_date": "2026-10-02T10:00:00Z",
+      "created_date": "2026-10-01T20:00:00Z"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": 40101,
+      "name": "Low-risk order is automatically authorized",
+      "test_case_id": "TC-CHK-001",
+      "description": "Verify that an order with risk score below threshold receives automatic authorization with decision evidence.",
+      "status": "Approved",
+      "automation_status": "Automated",
+      "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
+      "last_modified_date": "2026-09-30T12:00:00Z",
+      "created_date": "2026-09-18T10:00:00Z"
+    },
+    {
+      "id": 40102,
+      "name": "High-risk order routes to manual review",
+      "test_case_id": "TC-CHK-002",
+      "description": "Verify that an order with risk score above threshold is refused and routed to manual review with explanation.",
+      "status": "Approved",
+      "automation_status": "Automated",
+      "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
+      "last_modified_date": "2026-09-30T12:00:00Z",
+      "created_date": "2026-09-18T10:30:00Z"
+    },
+    {
+      "id": 40201,
+      "name": "Risk service timeout triggers safe fallback",
+      "test_case_id": "TC-RSK-001",
+      "description": "Inject 500ms latency into risk service and verify checkout returns safe refusal with structured trace.",
+      "status": "Approved",
+      "automation_status": "Automated",
+      "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
+      "last_modified_date": "2026-10-02T10:00:00Z",
+      "created_date": "2026-10-01T20:30:00Z"
+    },
+    {
+      "id": 40202,
+      "name": "Retry bounded to single attempt with jitter",
+      "test_case_id": "TC-RSK-002",
+      "description": "Verify that the checkout service retries at most once when the risk service returns 503, with random jitter between 50-100ms.",
+      "status": "Approved",
+      "automation_status": "Automated",
+      "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
+      "last_modified_date": "2026-10-02T10:00:00Z",
+      "created_date": "2026-10-01T21:00:00Z"
+    }
+  ],
+  "test_runs": [
+    {
+      "id": 4501,
+      "name": "Release 2026.10.1 checkout regression",
+      "test_run_id": "TR-CHK-2026101",
+      "execution_status": "Passed",
+      "passed_count": 128,
+      "failed_count": 0,
+      "skipped_count": 2,
+      "total_count": 130,
+      "execution_time": 312.5,
+      "created_date": "2026-10-01T17:16:00Z",
+      "last_modified_date": "2026-10-01T17:21:12Z"
+    },
+    {
+      "id": 4502,
+      "name": "Post-hotfix resilience validation",
+      "test_run_id": "TR-RSK-POST",
+      "execution_status": "Passed",
+      "passed_count": 24,
+      "failed_count": 0,
+      "skipped_count": 0,
+      "total_count": 24,
+      "execution_time": 145.8,
+      "created_date": "2026-10-02T09:00:00Z",
+      "last_modified_date": "2026-10-02T09:02:26Z"
+    }
+  ]
+}

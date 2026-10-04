@@ -1,0 +1,43 @@
+{
+  "results": [
+    {
+      "id": "99001",
+      "type": "page",
+      "title": "Checkout Risk Architecture — ADR-COM-014",
+      "space": {"key": "COMMERCE", "name": "Commerce Engineering"},
+      "body": {
+        "storage": {
+          "value": "<h2>Checkout Risk Architecture</h2><p>The Checkout API asks the Risk Decision API for a bounded, explainable decision before calling the Payment Authorization API.</p><h3>Runtime Flow</h3><ol><li>POST /orders validates the request and creates an order identifier.</li><li>Checkout calls POST /v2/decisions with non-card order signals.</li><li>Risk returns a score, approve/review decision, and reason code.</li><li>Approved orders proceed to tokenized payment authorization.</li></ol><h3>Reliability Boundary</h3><p>The synchronous risk call has a 250ms budget. Retries are bounded to one attempt with jitter. After INC0071042, the checkout API implements a safe fallback that refuses high-risk orders when the risk service is degraded.</p>"
+        }
+      },
+      "version": {"number": 5, "when": "2026-10-02T09:30:00.000Z"},
+      "_links": {"webui": "/spaces/COMMERCE/pages/99001"}
+    },
+    {
+      "id": "99002",
+      "type": "page",
+      "title": "Checkout Latency Incident Runbook",
+      "space": {"key": "COMMERCE", "name": "Commerce Engineering"},
+      "body": {
+        "storage": {
+          "value": "<h2>Runbook: Checkout Latency SLO Breach</h2><ol><li>Confirm impact in the Commerce production overview dashboard.</li><li>Compare alert start with the latest production deployment.</li><li>Inspect risk_decision_timeout log aggregate; do not inspect customer payloads.</li><li>If retry fan-out is present, request the approved bounded-fallback change.</li><li>Verify p95 below 450ms for ten minutes.</li><li>Attach dashboard, deployment, change and test-run identifiers to incident.</li></ol><p>Rollback authority: Commerce SRE. Emergency changes require auditable ServiceNow approval.</p>"
+        }
+      },
+      "version": {"number": 3, "when": "2026-10-02T10:00:00.000Z"},
+      "_links": {"webui": "/spaces/COMMERCE/pages/99002"}
+    },
+    {
+      "id": "99003",
+      "type": "page",
+      "title": "Inventory Reservation — Async Migration Plan",
+      "space": {"key": "COMMERCE", "name": "Commerce Engineering"},
+      "body": {
+        "storage": {
+          "value": "<h2>Inventory Reservation: Sync to Async Migration</h2><p>SHOP-304 replaces the synchronous inventory lock call with an event-driven reservation model.</p><h3>Current State</h3><p>Checkout calls POST /inventory/reserve synchronously. Average latency: 120ms, p95: 280ms. Under load the inventory service becomes a bottleneck.</p><h3>Target State</h3><p>Checkout publishes a ReservationRequested event. The Inventory service processes it asynchronously and publishes ReservationConfirmed. The checkout flow proceeds optimistically with a 15-minute reservation TTL. Expected p95 improvement: 80ms.</p><h3>Risks</h3><ul><li>Overselling during reservation window — mitigated by compensating transaction on confirmation failure.</li><li>Event bus lag — circuit breaker falls back to synchronous path.</li></ul>"
+        }
+      },
+      "version": {"number": 1, "when": "2026-10-03T14:00:00.000Z"},
+      "_links": {"webui": "/spaces/COMMERCE/pages/99003"}
+    }
+  ]
+}

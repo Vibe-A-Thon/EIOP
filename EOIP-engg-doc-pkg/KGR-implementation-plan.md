@@ -2790,6 +2790,25 @@ After all 13 phases, KGR will have:
 | What-if simulation | Full simulation | None | Unique to KGR |
 | Anomaly detection | 3 algorithms + orphan detection | None (in viz tool) | Unique to KGR |
 | Geo-mode | Map-based layout | Linkurious, Ogma (commercial) | Free |
+| Semantic zoom | 3-level (cluster/entity/detail) | None (in free tools) | Unique to KGR |
+| Edge bundling | Force-directed bundling (FDEB) | yFiles (€9.2K) | Free |
+| Color-blind palette | 3 modes (deuteranopia/tritanopia/high-contrast) | None complete | WCAG 2.1 AA |
+| Fisheye distortion | 2x magnification with gradual falloff | yFiles (€9.2K) | Free |
+| Interactive HTML export | Self-contained graph.html with search/filter/inspect | Graphify (basic zoom/pan only) | Full interactive |
+| Graph report generation | 7-section Markdown analysis report | Graphify (basic topology only) | Centrality + health + recommendations |
+| Hub exclusion filter | Degree percentile threshold with visual indicator | Graphify (--exclude-hubs flag, no visual) | Visual + configurable |
+| Surprising connections | Structural surprise scoring + unexpected absence | Graphify (basic ranking) | Cross-domain + absence detection |
+| Rule-based styling | Composable IF/THEN visual rules | Neo4j Bloom (Perspective), Linkurious (commercial) | Free, exportable |
+| Lasso selection | Freeform + rectangle multi-select | KeyLines, yFiles (commercial) | Free |
+| URL deep linking | Full state encoding (filters, zoom, selection, layout) | Neo4j Bloom (selection only) | Full state sharing |
+| Table view | Sortable entity/relationship table with accessibility | None | WCAG accessible alternative |
+| Investigation playbooks | Guided multi-step analysis workflows | Graphistry (commercial) | Free, includes what-if |
+| Cross-project merge | Union/intersection/diff graph merging | Graphify (multi-repo) | Full merge strategies |
+| RAG patterns | 17 patterns (Simple→RAG of RAGs) | None (in graph viz tools) | **Unique to KGR** |
+| Agent types | 40+ (reflex, goal, tool, orchestrator, meta, autonomous) | None (in graph viz tools) | **Unique to KGR** |
+| Engineering disciplines | 8 (Loop, Graph, Harness, Memory, Context, Prompt, composite) | None (in graph viz tools) | **Unique to KGR** |
+| MCP graph intelligence | 5+ graph-aware MCP tools | Graphify (basic MCP) | Full RAG+agent MCP |
+| AI Explorer | Chat-based graph exploration with structured fallback | Neo4j Bloom (NL, cloud-only) | Local-first, multi-RAG |
 | Price | $0 (bundled) | $0-$11K/year | Free |
 | Local-first | Yes | Varies | No cloud dependency |
 | Open/extensible | Yes | Varies | No vendor lock-in |

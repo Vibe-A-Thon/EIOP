@@ -27,6 +27,18 @@ Security is designed for a local trusted-network MVP without pretending that tru
 | FR-QUERY-006 | Query safety policy | P1-MVP | All exposed query endpoints pass policy conformance suite. |
 | FR-QUERY-007 | Query evidence envelope | P1-MVP | GraphRAG/UI/MCP consume same evidence format. |
 | FR-QUERY-008 | Raw Gremlin admin boundary | P1-MVP | No public OpenAPI/MCP tool accepts free-form Gremlin in MVP. |
+| FR-QUERY-009 | Natural-language query processor | P1-MVP | NLQ routes graph facts, query operators, QueryPlan execution and safe search fallback while returning answer text, confidence, highlights and follow-ups. |
+
+## Natural-language query processor
+
+The NLQ processor SHALL be the single public natural-language query layer for graph exploration. It SHALL route a question to the narrowest safe engine that can answer it:
+
+1. graph fact/EQL routes for counts, domains, labels and relationship labels;
+2. structured query operators for WHY, WHY NOT, WHAT CHANGED and contextual who/when/where/how questions;
+3. natural-language-to-QueryPlan interpretation for search, path, impact, neighborhood, lineage and traceability;
+4. graph-domain search fallback only when a question is clearly about known graph concepts but lacks a canonical anchor.
+
+Every route SHALL preserve the QueryPlan safety boundary for graph traversal, SHALL avoid natural-language-to-Gremlin generation, and SHALL return a user-facing answer with machine-readable result data, confidence, highlights, warnings and suggested follow-up queries.
 
 ## Engineering rules
 

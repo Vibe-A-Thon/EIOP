@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.471590Z",
+  "event_id": "a9909a41180693a890f6c06e73d71df9cc0d00190f2e66d5d5523d9872f9e377",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "6f6149baebf2d00ac9b311492f2cc329dd1f91f7",
+    "message": "KGR: Add new components and update existing ones"
+  },
+  "payload_hash": "2f397553017dccc9b484b7e7766dafb438187685a68fad54c909501cfc2ad146",
+  "schema_version": "1.0",
+  "source_record_id": "demo:6f6149baebf2d00ac9b311492f2cc329dd1f91f7",
+  "source_system": "git",
+  "source_version": "2f397553017dccc9b484b7e7766dafb438187685a68fad54c909501cfc2ad146"
+}

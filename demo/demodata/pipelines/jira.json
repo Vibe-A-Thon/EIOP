@@ -1,0 +1,82 @@
+{
+  "issues": [
+    {
+      "key": "SHOP-301",
+      "fields": {
+        "summary": "Integrate risk decision API into checkout flow",
+        "description": "Call the Risk Decision API before payment authorization. Return explainable decision evidence. The risk call has a 250ms latency budget with one bounded retry.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "Done"},
+        "priority": {"name": "Critical"},
+        "project": {"key": "SHOP", "name": "Northstar Commerce Platform"},
+        "assignee": {"accountId": "maya.chen", "displayName": "Maya Chen", "emailAddress": "maya.chen@example.invalid"},
+        "reporter": {"accountId": "jordan.blake", "displayName": "Jordan Blake", "emailAddress": "jordan.blake@example.invalid"},
+        "created": "2026-09-10T09:00:00.000+0000",
+        "updated": "2026-09-30T16:45:00.000+0000",
+        "labels": ["checkout", "risk", "payment"],
+        "components": [{"name": "checkout-api"}, {"name": "risk-engine"}],
+        "fixVersions": [{"name": "2026.10.1"}]
+      }
+    },
+    {
+      "key": "SHOP-302",
+      "fields": {
+        "summary": "Implement bounded risk timeout fallback",
+        "description": "When the risk service exceeds its 250ms budget, refuse high-value or new-account orders and route to manual review. Emit a structured trace for observability.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "Done"},
+        "priority": {"name": "Critical"},
+        "project": {"key": "SHOP", "name": "Northstar Commerce Platform"},
+        "assignee": {"accountId": "maya.chen", "displayName": "Maya Chen", "emailAddress": "maya.chen@example.invalid"},
+        "created": "2026-10-01T18:30:00.000+0000",
+        "updated": "2026-10-02T09:30:00.000+0000",
+        "labels": ["checkout", "resilience", "incident-INC0071042"]
+      }
+    },
+    {
+      "key": "SHOP-303",
+      "fields": {
+        "summary": "Add contract tests for checkout-risk API boundary",
+        "description": "Consumer-driven contract tests between the Checkout API and Risk Decision API. Test both happy path and timeout scenarios.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "Done"},
+        "priority": {"name": "High"},
+        "project": {"key": "SHOP", "name": "Northstar Commerce Platform"},
+        "assignee": {"accountId": "sam.torres", "displayName": "Sam Torres", "emailAddress": "sam.torres@example.invalid"},
+        "created": "2026-09-18T10:00:00.000+0000",
+        "updated": "2026-09-30T12:00:00.000+0000",
+        "labels": ["testing", "contracts", "checkout"]
+      }
+    },
+    {
+      "key": "SHOP-304",
+      "fields": {
+        "summary": "Upgrade inventory reservation to async event-driven model",
+        "description": "Replace synchronous inventory lock with an event-driven reservation that expires after 15 minutes. Reduces checkout p95 by eliminating the inventory API blocking call.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "High"},
+        "project": {"key": "SHOP", "name": "Northstar Commerce Platform"},
+        "assignee": {"accountId": "maya.chen", "displayName": "Maya Chen", "emailAddress": "maya.chen@example.invalid"},
+        "created": "2026-10-02T09:00:00.000+0000",
+        "updated": "2026-10-03T14:00:00.000+0000",
+        "labels": ["checkout", "inventory", "performance"]
+      }
+    },
+    {
+      "key": "SHOP-305",
+      "fields": {
+        "summary": "Production readiness review for checkout v2",
+        "description": "Verify SLO compliance, runbook completeness, rollback plan, and monitoring coverage before GA. Requires sign-off from SRE and QA.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "To Do"},
+        "priority": {"name": "High"},
+        "project": {"key": "SHOP", "name": "Northstar Commerce Platform"},
+        "assignee": {"accountId": "liam.patel", "displayName": "Liam Patel", "emailAddress": "liam.patel@example.invalid"},
+        "created": "2026-10-03T08:00:00.000+0000",
+        "updated": "2026-10-03T08:00:00.000+0000",
+        "labels": ["production-readiness", "sre"]
+      }
+    }
+  ]
+}

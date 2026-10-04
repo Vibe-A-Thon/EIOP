@@ -1,0 +1,80 @@
+{
+  "description": "Query capability demonstration — shows structured, NL, path, impact, and search query types.",
+  "version": "1.0.0",
+  "examples": [
+    {
+      "id": "query-search-entity",
+      "type": "search",
+      "query": "EOIP-1",
+      "description": "Search for an entity by issue key",
+      "expected_results": ["WorkItem with canonical_id urn:eoip:work:item:jira:EOIP-1"]
+    },
+    {
+      "id": "query-path-trace",
+      "type": "path",
+      "source": "urn:eoip:work:item:jira:EOIP-1",
+      "target": "urn:eoip:code:symbol:demo:service.py:compute_impact",
+      "max_depth": 6,
+      "description": "Find path from Jira issue to code function",
+      "expected_path": ["WorkItem", "Commit", "File", "CodeSymbol"]
+    },
+    {
+      "id": "query-impact-blast",
+      "type": "impact",
+      "anchor": "urn:eoip:code:symbol:demo:service.py:compute_impact",
+      "max_depth": 3,
+      "description": "Compute blast radius of changing compute_impact()",
+      "expected_labels": ["File", "Dependency", "WorkItem"]
+    },
+    {
+      "id": "query-nl-simple",
+      "type": "natural_language",
+      "query": "What is EOIP-1 about?",
+      "description": "Simple NL query interpreted as entity lookup",
+      "expected_intent": "entity_lookup"
+    },
+    {
+      "id": "query-nl-trace",
+      "type": "natural_language",
+      "query": "How is EOIP-1 implemented in code?",
+      "description": "NL query interpreted as path query",
+      "expected_intent": "path_query"
+    },
+    {
+      "id": "query-nl-impact",
+      "type": "natural_language",
+      "query": "What would be affected if we change compute_impact?",
+      "description": "NL query interpreted as impact analysis",
+      "expected_intent": "impact_analysis"
+    },
+    {
+      "id": "query-neighborhood",
+      "type": "neighborhood",
+      "anchor": "urn:eoip:code:repo:demo",
+      "max_depth": 2,
+      "description": "Get the neighborhood of the demo repository",
+      "expected_labels": ["Branch", "File", "Commit", "MergeRequest"]
+    },
+    {
+      "id": "query-traceability",
+      "type": "traceability",
+      "source": "urn:eoip:work:item:jira:PAY-142",
+      "description": "Full traceability from requirement through all graph domains",
+      "expected_domains": ["work", "code", "cicd", "ops", "test", "design", "knowledge"]
+    },
+    {
+      "id": "query-lineage",
+      "type": "lineage",
+      "entity": "urn:eoip:work:item:jira:EOIP-1",
+      "description": "Provenance lineage — trace entity back to source evidence",
+      "expected_evidence": ["source_system", "captured_at", "payload_hash"]
+    },
+    {
+      "id": "query-eql",
+      "type": "eql",
+      "query": "FIND WorkItem WHERE status = 'Done' TRACE_TO CodeSymbol",
+      "description": "Enterprise Query Language — structured query with traceability",
+      "expected_results": ["WorkItems linked to CodeSymbols through implementation edges"]
+    }
+  ]
+}

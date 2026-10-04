@@ -1,0 +1,48 @@
+{
+  "files": [
+    {
+      "key": "TN-PATIENT-PORTAL-2026",
+      "name": "TechNova Patient Dashboard",
+      "last_modified": "2026-10-02T14:00:00Z",
+      "thumbnail_url": "https://figma.example.invalid/thumbnails/patient-dashboard.png",
+      "version": "38"
+    }
+  ],
+  "pages": [
+    {
+      "file_key": "TN-PATIENT-PORTAL-2026",
+      "id": "20:100",
+      "name": "Appointment Booking Flow",
+      "type": "CANVAS"
+    },
+    {
+      "file_key": "TN-PATIENT-PORTAL-2026",
+      "id": "20:200",
+      "name": "Patient Records Dashboard",
+      "type": "CANVAS"
+    }
+  ],
+  "components": [
+    {
+      "file_key": "TN-PATIENT-PORTAL-2026",
+      "component_id": "20:150",
+      "name": "Calendar Date Picker",
+      "description": "Accessible date picker with keyboard navigation for appointment scheduling. WCAG 2.1 AA compliant after HLTH-103 revision.",
+      "type": "COMPONENT"
+    },
+    {
+      "file_key": "TN-PATIENT-PORTAL-2026",
+      "component_id": "20:160",
+      "name": "Time Slot Selector",
+      "description": "Available appointment slots with provider availability. High contrast mode for accessibility.",
+      "type": "COMPONENT"
+    },
+    {
+      "file_key": "TN-PATIENT-PORTAL-2026",
+      "component_id": "20:250",
+      "name": "Patient Record Card",
+      "description": "Summary card showing patient demographics, upcoming appointments, and recent visits. PHI fields masked by default.",
+      "type": "COMPONENT"
+    }
+  ]
+}

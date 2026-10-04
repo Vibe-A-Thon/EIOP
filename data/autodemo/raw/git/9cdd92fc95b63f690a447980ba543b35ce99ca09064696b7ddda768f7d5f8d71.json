@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.488559Z",
+  "event_id": "9cdd92fc95b63f690a447980ba543b35ce99ca09064696b7ddda768f7d5f8d71",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "edd28364f480d58de960edffc1384086e5a34f30",
+    "message": "completion of kgr and related tests"
+  },
+  "payload_hash": "9ca250ef97b0007c3d4f3010b3f6b526578885018717939289e8c299853fdd64",
+  "schema_version": "1.0",
+  "source_record_id": "demo:edd28364f480d58de960edffc1384086e5a34f30",
+  "source_system": "git",
+  "source_version": "9ca250ef97b0007c3d4f3010b3f6b526578885018717939289e8c299853fdd64"
+}

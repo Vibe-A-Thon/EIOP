@@ -1,0 +1,1332 @@
+{
+  "captured_at": "2026-10-04T08:19:18.281303Z",
+  "event_id": "northstar-commerce-1.0.0",
+  "metadata": {
+    "fixture_path": "Demo/demodata/enterprise/scenario-pack.json"
+  },
+  "payload": {
+    "dataset_id": "northstar-commerce",
+    "description": "A synthetic but internally consistent sales-demo corpus linking strategy, delivery, code, APIs, CI/CD, testing, design, knowledge, operations and evidence.",
+    "edges": [
+      {
+        "from": "urn:eoip:identity:organization:northstar",
+        "label": "CONTAINS",
+        "to": "urn:eoip:work:project:northstar-pay"
+      },
+      {
+        "from": "urn:eoip:identity:organization:northstar",
+        "label": "CONTAINS",
+        "to": "urn:eoip:code:repo:northstar-checkout"
+      },
+      {
+        "from": "urn:eoip:work:project:northstar-pay",
+        "label": "CONTAINS",
+        "to": "urn:eoip:work:item:jira:PAY-142"
+      },
+      {
+        "from": "urn:eoip:work:project:northstar-pay",
+        "label": "CONTAINS",
+        "to": "urn:eoip:work:item:jira:PAY-155"
+      },
+      {
+        "from": "urn:eoip:work:epic:northstar:EPC-7",
+        "label": "CONTAINS",
+        "to": "urn:eoip:work:feature:northstar:FTR-42"
+      },
+      {
+        "from": "urn:eoip:work:feature:northstar:FTR-42",
+        "label": "CHILD_OF",
+        "to": "urn:eoip:work:epic:northstar:EPC-7"
+      },
+      {
+        "from": "urn:eoip:work:story:northstar:US-142",
+        "label": "CHILD_OF",
+        "to": "urn:eoip:work:feature:northstar:FTR-42"
+      },
+      {
+        "from": "urn:eoip:work:item:jira:PAY-142",
+        "label": "ASSIGNED_TO",
+        "to": "urn:eoip:identity:person:maya.chen"
+      },
+      {
+        "from": "urn:eoip:work:item:jira:PAY-155",
+        "label": "ASSIGNED_TO",
+        "to": "urn:eoip:identity:person:liam.patel"
+      },
+      {
+        "from": "urn:eoip:work:project:northstar-pay",
+        "label": "HAS_ISSUE_TYPE",
+        "to": "urn:eoip:work:issue-type:northstar:story"
+      },
+      {
+        "from": "urn:eoip:work:item:jira:PAY-142",
+        "label": "HAS_STATUS",
+        "to": "urn:eoip:work:status:northstar:done"
+      },
+      {
+        "from": "urn:eoip:work:project:northstar-pay",
+        "label": "HAS_SPRINT",
+        "to": "urn:eoip:work:sprint:northstar:26.20"
+      },
+      {
+        "from": "urn:eoip:work:item:jira:PAY-142",
+        "label": "IN_SPRINT",
+        "to": "urn:eoip:work:sprint:northstar:26.20"
+      },
+      {
+        "from": "urn:eoip:work:project:northstar-pay",
+        "label": "HAS_VERSION",
+        "to": "urn:eoip:work:version:northstar:2026.10.1"
+      },
+      {
+        "from": "urn:eoip:work:item:jira:PAY-142",
+        "label": "FIXED_IN",
+        "to": "urn:eoip:work:version:northstar:2026.10.1"
+      },
+      {
+        "from": "urn:eoip:work:item:jira:PAY-142",
+        "label": "HAS_COMMENT",
+        "to": "urn:eoip:work:comment:northstar:PAY-142:7"
+      },
+      {
+        "from": "urn:eoip:work:comment:northstar:PAY-142:7",
+        "label": "AUTHORED_BY",
+        "to": "urn:eoip:identity:person:maya.chen"
+      },
+      {
+        "from": "urn:eoip:code:repo:northstar-checkout",
+        "label": "HAS_BRANCH",
+        "to": "urn:eoip:code:branch:northstar-checkout:main"
+      },
+      {
+        "from": "urn:eoip:code:repo:northstar-checkout",
+        "label": "HAS_COMMIT",
+        "to": "urn:eoip:code:commit:northstar:c0ffee142"
+      },
+      {
+        "from": "urn:eoip:code:branch:northstar-checkout:main",
+        "label": "HAS_COMMIT",
+        "to": "urn:eoip:code:commit:northstar:c0ffee142"
+      },
+      {
+        "from": "urn:eoip:code:repo:northstar-checkout",
+        "label": "HAS_MERGE_REQUEST",
+        "to": "urn:eoip:cicd:mr:northstar-checkout:142"
+      },
+      {
+        "from": "urn:eoip:code:repo:northstar-checkout",
+        "label": "HAS_TAG",
+        "to": "urn:eoip:code:tag:northstar-checkout:v2026.10.1"
+      },
+      {
+        "from": "urn:eoip:code:repo:northstar-checkout",
+        "label": "HAS_RELEASE",
+        "to": "urn:eoip:cicd:release:northstar:2026.10.1"
+      },
+      {
+        "from": "urn:eoip:cicd:mr:northstar-checkout:142",
+        "label": "IMPLEMENTS",
+        "to": "urn:eoip:work:item:jira:PAY-142"
+      },
+      {
+        "from": "urn:eoip:code:commit:northstar:c0ffee142",
+        "label": "IMPLEMENTS",
+        "to": "urn:eoip:work:item:jira:PAY-142"
+      },
+      {
+        "from": "urn:eoip:cicd:mr:northstar-checkout:142",
+        "label": "REFERENCES",
+        "to": "urn:eoip:code:commit:northstar:c0ffee142"
+      },
+      {
+        "from": "urn:eoip:cicd:mr:northstar-checkout:142",
+        "label": "AUTHORED_BY",
+        "to": "urn:eoip:identity:person:maya.chen"
+      },
+      {
+        "from": "urn:eoip:code:commit:northstar:c0ffee142",
+        "label": "AUTHORED_BY",
+        "to": "urn:eoip:identity:person:maya.chen"
+      },
+      {
+        "from": "urn:eoip:code:commit:northstar:c0ffee142",
+        "label": "MODIFIES",
+        "to": "urn:eoip:code:file:northstar:services/checkout/risk.py"
+      },
+      {
+        "from": "urn:eoip:cicd:mr:northstar-checkout:142",
+        "label": "MODIFIES",
+        "to": "urn:eoip:code:file:northstar:services/checkout/risk.py"
+      },
+      {
+        "from": "urn:eoip:code:file:northstar:services/checkout/risk.py",
+        "label": "DECLARES",
+        "to": "urn:eoip:code:symbol:northstar:risk:authorize_order"
+      },
+      {
+        "from": "urn:eoip:code:file:northstar:services/checkout/risk.py",
+        "label": "DECLARES",
+        "to": "urn:eoip:code:symbol:northstar:risk:score_order"
+      },
+      {
+        "from": "urn:eoip:code:symbol:northstar:risk:authorize_order",
+        "label": "CALLS",
+        "to": "urn:eoip:code:symbol:northstar:risk:score_order"
+      },
+      {
+        "from": "urn:eoip:code:file:northstar:services/checkout/risk.py",
+        "label": "IMPORTS",
+        "to": "urn:eoip:code:dependency:northstar:httpx"
+      },
+      {
+        "from": "urn:eoip:code:api-service:northstar:checkout",
+        "label": "EXPOSES",
+        "to": "urn:eoip:code:api-endpoint:northstar:checkout:post-orders"
+      },
+      {
+        "from": "urn:eoip:code:api-service:northstar:risk",
+        "label": "EXPOSES",
+        "to": "urn:eoip:code:api-endpoint:northstar:risk:post-decisions"
+      },
+      {
+        "from": "urn:eoip:code:api-service:northstar:checkout",
+        "label": "CONNECTS_TO",
+        "to": "urn:eoip:code:api-service:northstar:risk"
+      },
+      {
+        "from": "urn:eoip:code:api-service:northstar:checkout",
+        "label": "CONNECTS_TO",
+        "to": "urn:eoip:code:api-service:northstar:payments"
+      },
+      {
+        "from": "urn:eoip:code:api-connection:northstar:checkout-risk",
+        "label": "CONNECTS_TO",
+        "to": "urn:eoip:code:api-service:northstar:risk"
+      },
+      {
+        "from": "urn:eoip:code:symbol:northstar:risk:authorize_order",
+        "label": "DEPENDS_ON",
+        "to": "urn:eoip:code:dependency:northstar:httpx"
+      },
+      {
+        "from": "urn:eoip:cicd:pipeline:northstar:4815",
+        "label": "HAS_JOB",
+        "to": "urn:eoip:cicd:job:northstar:contract-tests"
+      },
+      {
+        "from": "urn:eoip:cicd:pipeline:northstar:4815",
+        "label": "HAS_JOB",
+        "to": "urn:eoip:cicd:job:northstar:deploy-prod"
+      },
+      {
+        "from": "urn:eoip:cicd:job:northstar:deploy-prod",
+        "label": "PRODUCES",
+        "to": "urn:eoip:cicd:artifact:northstar:checkout:2026.10.1"
+      },
+      {
+        "from": "urn:eoip:cicd:pipeline:northstar:4815",
+        "label": "PRODUCED_BY",
+        "to": "urn:eoip:code:commit:northstar:c0ffee142"
+      },
+      {
+        "from": "urn:eoip:cicd:release:northstar:2026.10.1",
+        "label": "PRODUCED_BY",
+        "to": "urn:eoip:cicd:pipeline:northstar:4815"
+      },
+      {
+        "from": "urn:eoip:cicd:pipeline:northstar:4815",
+        "label": "DEPLOYS",
+        "to": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.1"
+      },
+      {
+        "from": "urn:eoip:cicd:job:northstar:deploy-prod",
+        "label": "DEPLOYS",
+        "to": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.1"
+      },
+      {
+        "from": "urn:eoip:cicd:pipeline:northstar:4815",
+        "label": "REFERENCES",
+        "to": "urn:eoip:work:item:jira:PAY-142"
+      },
+      {
+        "from": "urn:eoip:test:suite:northstar:checkout-regression",
+        "label": "CONTAINS",
+        "to": "urn:eoip:test:case:northstar:TC-884"
+      },
+      {
+        "from": "urn:eoip:test:suite:northstar:checkout-regression",
+        "label": "CONTAINS",
+        "to": "urn:eoip:test:case:northstar:TC-901"
+      },
+      {
+        "from": "urn:eoip:test:cycle:northstar:release-2026.10.1",
+        "label": "CONTAINS",
+        "to": "urn:eoip:test:run:northstar:4815"
+      },
+      {
+        "from": "urn:eoip:test:case:northstar:TC-884",
+        "label": "TESTS",
+        "to": "urn:eoip:work:item:jira:PAY-142"
+      },
+      {
+        "from": "urn:eoip:test:case:northstar:TC-884",
+        "label": "TESTS",
+        "to": "urn:eoip:code:symbol:northstar:risk:authorize_order"
+      },
+      {
+        "from": "urn:eoip:test:case:northstar:TC-884",
+        "label": "TESTS",
+        "to": "urn:eoip:code:api-endpoint:northstar:checkout:post-orders"
+      },
+      {
+        "from": "urn:eoip:test:case:northstar:TC-901",
+        "label": "TESTS",
+        "to": "urn:eoip:work:item:jira:PAY-155"
+      },
+      {
+        "from": "urn:eoip:test:case:northstar:TC-884",
+        "label": "PART_OF_SUITE",
+        "to": "urn:eoip:test:suite:northstar:checkout-regression"
+      },
+      {
+        "from": "urn:eoip:test:case:northstar:TC-901",
+        "label": "PART_OF_SUITE",
+        "to": "urn:eoip:test:suite:northstar:checkout-regression"
+      },
+      {
+        "from": "urn:eoip:test:case:northstar:TC-884",
+        "label": "EXECUTED_IN",
+        "to": "urn:eoip:test:run:northstar:4815"
+      },
+      {
+        "from": "urn:eoip:test:case:northstar:TC-901",
+        "label": "EXECUTED_IN",
+        "to": "urn:eoip:test:cycle:northstar:release-2026.10.1"
+      },
+      {
+        "from": "urn:eoip:test:suite:northstar:checkout-regression",
+        "label": "COVERS",
+        "to": "urn:eoip:work:feature:northstar:FTR-42"
+      },
+      {
+        "from": "urn:eoip:design:file:northstar:checkout",
+        "label": "CONTAINS",
+        "to": "urn:eoip:design:page:northstar:checkout-flow"
+      },
+      {
+        "from": "urn:eoip:design:file:northstar:checkout",
+        "label": "CONTAINS",
+        "to": "urn:eoip:design:component:northstar:payment-panel"
+      },
+      {
+        "from": "urn:eoip:design:page:northstar:checkout-flow",
+        "label": "USES_COMPONENT",
+        "to": "urn:eoip:design:component:northstar:payment-panel"
+      },
+      {
+        "from": "urn:eoip:design:file:northstar:checkout",
+        "label": "DESIGNS",
+        "to": "urn:eoip:work:feature:northstar:FTR-42"
+      },
+      {
+        "from": "urn:eoip:design:component:northstar:payment-panel",
+        "label": "DESIGNS",
+        "to": "urn:eoip:work:story:northstar:US-142"
+      },
+      {
+        "from": "urn:eoip:ops:dashboard:northstar:commerce-overview",
+        "label": "VISUALIZES",
+        "to": "urn:eoip:code:api-service:northstar:checkout"
+      },
+      {
+        "from": "urn:eoip:ops:dashboard:northstar:commerce-overview",
+        "label": "VISUALIZES",
+        "to": "urn:eoip:ops:metric:northstar:checkout-p95"
+      },
+      {
+        "from": "urn:eoip:ops:dashboard:northstar:commerce-overview",
+        "label": "MONITORS",
+        "to": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.1"
+      },
+      {
+        "from": "urn:eoip:ops:monitor:northstar:checkout-latency",
+        "label": "MONITORS",
+        "to": "urn:eoip:code:api-service:northstar:checkout"
+      },
+      {
+        "from": "urn:eoip:ops:alert:northstar:ALERT-771",
+        "label": "ALERTS_ON",
+        "to": "urn:eoip:ops:monitor:northstar:checkout-latency"
+      },
+      {
+        "from": "urn:eoip:ops:log:northstar:risk-timeout:2026-10-01",
+        "label": "LOGGED_BY",
+        "to": "urn:eoip:code:api-service:northstar:checkout"
+      },
+      {
+        "from": "urn:eoip:ops:incident:INC0012042",
+        "label": "TRIGGERED_BY",
+        "to": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.1"
+      },
+      {
+        "from": "urn:eoip:ops:incident:INC0012042",
+        "label": "CORRELATES_WITH",
+        "to": "urn:eoip:ops:alert:northstar:ALERT-771"
+      },
+      {
+        "from": "urn:eoip:ops:incident:INC0012042",
+        "label": "CORRELATES_WITH",
+        "to": "urn:eoip:ops:log:northstar:risk-timeout:2026-10-01"
+      },
+      {
+        "from": "urn:eoip:ops:incident:INC0012042",
+        "label": "CORRELATES_WITH",
+        "to": "urn:eoip:ops:dashboard:northstar:commerce-overview"
+      },
+      {
+        "from": "urn:eoip:ops:change:CHG0031088",
+        "label": "RESOLVES",
+        "to": "urn:eoip:ops:incident:INC0012042"
+      },
+      {
+        "from": "urn:eoip:ops:incident:INC0012042",
+        "label": "ASSIGNED_TO",
+        "to": "urn:eoip:identity:person:liam.patel"
+      },
+      {
+        "from": "urn:eoip:knowledge:space:northstar:commerce",
+        "label": "CONTAINS",
+        "to": "urn:eoip:knowledge:document:northstar:checkout-architecture"
+      },
+      {
+        "from": "urn:eoip:knowledge:document:northstar:checkout-architecture",
+        "label": "CONTAINS",
+        "to": "urn:eoip:knowledge:section:northstar:checkout-architecture:failure-modes"
+      },
+      {
+        "from": "urn:eoip:knowledge:document:northstar:checkout-architecture",
+        "label": "DOCUMENTS",
+        "to": "urn:eoip:work:item:jira:PAY-142"
+      },
+      {
+        "from": "urn:eoip:knowledge:section:northstar:checkout-architecture:failure-modes",
+        "label": "DOCUMENTS",
+        "to": "urn:eoip:code:symbol:northstar:risk:authorize_order"
+      },
+      {
+        "from": "urn:eoip:knowledge:document:northstar:checkout-architecture",
+        "label": "DOCUMENTS_API",
+        "to": "urn:eoip:code:api-service:northstar:checkout"
+      },
+      {
+        "from": "urn:eoip:knowledge:kb:northstar:KB00192",
+        "label": "DOCUMENTS_API",
+        "to": "urn:eoip:code:api-service:northstar:checkout"
+      },
+      {
+        "from": "urn:eoip:knowledge:prod-page:northstar:checkout-status",
+        "label": "DOCUMENTS_API",
+        "to": "urn:eoip:code:api-service:northstar:checkout"
+      },
+      {
+        "from": "urn:eoip:knowledge:document:northstar:checkout-architecture",
+        "label": "REFERENCES",
+        "to": "urn:eoip:code:file:northstar:services/checkout/risk.py"
+      },
+      {
+        "from": "urn:eoip:work:item:jira:PAY-142",
+        "label": "EVIDENCED_BY",
+        "to": "urn:eoip:evidence:demo-enterprise:northstar-pack"
+      },
+      {
+        "from": "urn:eoip:code:commit:northstar:c0ffee142",
+        "label": "EVIDENCED_BY",
+        "to": "urn:eoip:evidence:demo-enterprise:northstar-pack"
+      },
+      {
+        "from": "urn:eoip:ops:incident:INC0012042",
+        "label": "EVIDENCED_BY",
+        "to": "urn:eoip:evidence:demo-enterprise:northstar-pack"
+      },
+      {
+        "from": "urn:eoip:code:api-service:northstar:checkout",
+        "label": "EVIDENCED_BY",
+        "to": "urn:eoip:evidence:demo-enterprise:northstar-pack"
+      },
+      {
+        "from": "urn:eoip:test:suite:northstar:checkout-regression",
+        "label": "EVIDENCED_BY",
+        "to": "urn:eoip:evidence:demo-enterprise:northstar-pack"
+      },
+      {
+        "from": "urn:eoip:design:file:northstar:checkout",
+        "label": "EVIDENCED_BY",
+        "to": "urn:eoip:evidence:demo-enterprise:northstar-pack"
+      },
+      {
+        "from": "urn:eoip:knowledge:kb:northstar:KB00192",
+        "label": "EVIDENCED_BY",
+        "to": "urn:eoip:evidence:demo-enterprise:northstar-pack"
+      }
+    ],
+    "scenarios": [
+      {
+        "audience": "Product, engineering and architecture leaders",
+        "capabilities": [
+          "search",
+          "traceability",
+          "path",
+          "evidence",
+          "GraphRAG"
+        ],
+        "entrypoint": "urn:eoip:work:item:jira:PAY-142",
+        "expected_path": [
+          "urn:eoip:work:item:jira:PAY-142",
+          "urn:eoip:code:commit:northstar:c0ffee142",
+          "urn:eoip:code:file:northstar:services/checkout/risk.py",
+          "urn:eoip:code:symbol:northstar:risk:authorize_order"
+        ],
+        "id": "intent-to-runtime",
+        "story": "Trace the checkout risk-control story through its merge request, commit, source file, API contract, test coverage and production deployment.",
+        "title": "Trace business intent to production"
+      },
+      {
+        "audience": "SRE, operations and support leaders",
+        "capabilities": [
+          "neighborhood",
+          "lineage",
+          "impact",
+          "correlation"
+        ],
+        "entrypoint": "urn:eoip:ops:incident:INC0012042",
+        "expected_path": [
+          "urn:eoip:ops:incident:INC0012042",
+          "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.1",
+          "urn:eoip:cicd:pipeline:northstar:4815"
+        ],
+        "id": "incident-root-cause",
+        "story": "Move from a payment latency incident to alerts, logs, dashboards, the triggering deployment and the approved remediation change.",
+        "title": "Correlate an incident to the deployment that triggered it"
+      },
+      {
+        "audience": "Enterprise and solution architects",
+        "capabilities": [
+          "blast-radius",
+          "reverse-impact",
+          "what-if",
+          "centrality"
+        ],
+        "entrypoint": "urn:eoip:code:api-service:northstar:checkout",
+        "expected_path": [
+          "urn:eoip:code:api-service:northstar:checkout",
+          "urn:eoip:code:api-service:northstar:risk",
+          "urn:eoip:code:api-service:northstar:payments"
+        ],
+        "id": "api-blast-radius",
+        "story": "Show the checkout service, its endpoints, downstream risk and payment services, monitors, documentation and contract tests.",
+        "title": "Assess API dependency blast radius"
+      },
+      {
+        "audience": "Engineering management, audit and risk",
+        "capabilities": [
+          "provenance",
+          "lineage",
+          "timeline",
+          "auditability"
+        ],
+        "entrypoint": "urn:eoip:cicd:release:northstar:2026.10.1",
+        "expected_path": [
+          "urn:eoip:cicd:release:northstar:2026.10.1",
+          "urn:eoip:cicd:pipeline:northstar:4815",
+          "urn:eoip:cicd:job:northstar:deploy-prod",
+          "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.1"
+        ],
+        "id": "release-governance",
+        "story": "Explain which commit, pipeline, jobs, artifact, approvals, tests and deployment comprise a release.",
+        "title": "Explain a governed release"
+      },
+      {
+        "audience": "QA, compliance and delivery leaders",
+        "capabilities": [
+          "coverage",
+          "traceability",
+          "quality",
+          "evidence"
+        ],
+        "entrypoint": "urn:eoip:test:suite:northstar:checkout-regression",
+        "expected_path": [
+          "urn:eoip:test:suite:northstar:checkout-regression",
+          "urn:eoip:test:case:northstar:TC-884",
+          "urn:eoip:code:api-endpoint:northstar:checkout:post-orders"
+        ],
+        "id": "test-intelligence",
+        "story": "Connect automated test cases and their execution to the business story, implementation symbol and API endpoint they validate.",
+        "title": "Prove requirement and API test coverage"
+      },
+      {
+        "audience": "Design, product and engineering",
+        "capabilities": [
+          "design graph",
+          "portfolio hierarchy",
+          "cross-domain path"
+        ],
+        "entrypoint": "urn:eoip:design:file:northstar:checkout",
+        "expected_path": [
+          "urn:eoip:design:file:northstar:checkout",
+          "urn:eoip:design:page:northstar:checkout-flow",
+          "urn:eoip:design:component:northstar:payment-panel",
+          "urn:eoip:work:feature:northstar:FTR-42"
+        ],
+        "id": "design-to-delivery",
+        "story": "Trace a Figma design file and reusable payment component to the feature and story that delivered it.",
+        "title": "Connect customer experience design to delivery"
+      },
+      {
+        "audience": "Support, onboarding and governance",
+        "capabilities": [
+          "knowledge graph",
+          "GraphRAG",
+          "lineage",
+          "source navigation"
+        ],
+        "entrypoint": "urn:eoip:knowledge:kb:northstar:KB00192",
+        "expected_path": [
+          "urn:eoip:knowledge:kb:northstar:KB00192",
+          "urn:eoip:code:api-service:northstar:checkout",
+          "urn:eoip:ops:monitor:northstar:checkout-latency"
+        ],
+        "id": "knowledge-provenance",
+        "story": "Find the runbook, architecture decision and API documentation with the source evidence behind every connection.",
+        "title": "Find the trusted operational answer"
+      },
+      {
+        "audience": "CIO, CTO and transformation leaders",
+        "capabilities": [
+          "centrality",
+          "community detection",
+          "similarity",
+          "anomaly detection",
+          "what-if"
+        ],
+        "entrypoint": "urn:eoip:code:api-service:northstar:checkout",
+        "expected_path": [
+          "urn:eoip:code:api-service:northstar:checkout",
+          "urn:eoip:ops:dashboard:northstar:commerce-overview",
+          "urn:eoip:ops:incident:INC0012042"
+        ],
+        "id": "graph-analytics",
+        "story": "Use centrality, communities, similarity, anomaly detection, link prediction and what-if removal on a connected enterprise subgraph.",
+        "title": "Identify critical systems and hidden risk"
+      }
+    ],
+    "title": "Northstar Commerce enterprise digital thread",
+    "version": "1.0.0",
+    "vertices": [
+      {
+        "label": "Organization",
+        "properties": {
+          "canonical_id": "urn:eoip:identity:organization:northstar",
+          "external_id": "NSRG",
+          "name": "Northstar Retail Group",
+          "source_system": "demo_enterprise",
+          "url": "https://northstar.example.invalid"
+        }
+      },
+      {
+        "label": "Project",
+        "properties": {
+          "canonical_id": "urn:eoip:work:project:northstar-pay",
+          "display_name": "Payments Modernization",
+          "issue_key": "PAY",
+          "name": "Northstar Payments Modernization"
+        }
+      },
+      {
+        "label": "Person",
+        "properties": {
+          "canonical_id": "urn:eoip:identity:person:maya.chen",
+          "display_name": "Maya Chen",
+          "email": "maya.chen@example.invalid",
+          "source_aliases": "jira:maya.chen;gitlab:mchen"
+        }
+      },
+      {
+        "label": "Person",
+        "properties": {
+          "canonical_id": "urn:eoip:identity:person:liam.patel",
+          "display_name": "Liam Patel",
+          "email": "liam.patel@example.invalid",
+          "source_aliases": "servicenow:liam.patel;gitlab:lpatel"
+        }
+      },
+      {
+        "label": "Epic",
+        "properties": {
+          "canonical_id": "urn:eoip:work:epic:northstar:EPC-7",
+          "description": "Reduce checkout abandonment without increasing fraud exposure.",
+          "name": "Frictionless trusted checkout",
+          "plan_estimate": 40.0,
+          "rally_formatted_id": "EPC7",
+          "rally_id": "7007",
+          "release_name": "2026.10",
+          "source_system": "rally",
+          "status": "In Progress"
+        }
+      },
+      {
+        "label": "Feature",
+        "properties": {
+          "canonical_id": "urn:eoip:work:feature:northstar:FTR-42",
+          "description": "Apply a bounded risk decision before payment authorization.",
+          "iteration_name": "Sprint 26.20",
+          "name": "Real-time checkout risk decision",
+          "plan_estimate": 13.0,
+          "rally_formatted_id": "F42",
+          "rally_id": "7042",
+          "release_name": "2026.10",
+          "schedule_state": "Accepted",
+          "source_system": "rally",
+          "status": "Accepted"
+        }
+      },
+      {
+        "label": "UserStory",
+        "properties": {
+          "canonical_id": "urn:eoip:work:story:northstar:US-142",
+          "description": "As a customer I receive an immediate decision for a low-risk order.",
+          "iteration_name": "Sprint 26.20",
+          "name": "Authorize low-risk orders automatically",
+          "plan_estimate": 5.0,
+          "rally_formatted_id": "US142",
+          "rally_id": "7142",
+          "schedule_state": "Accepted",
+          "source_system": "rally",
+          "status": "Completed"
+        }
+      },
+      {
+        "label": "WorkItem",
+        "properties": {
+          "canonical_id": "urn:eoip:work:item:jira:PAY-142",
+          "created_at": "2026-09-12T09:00:00Z",
+          "description": "Call the risk API before payment authorization and retain explainable decision evidence.",
+          "issue_key": "PAY-142",
+          "issue_type": "Story",
+          "modified_at": "2026-10-01T16:45:00Z",
+          "status": "Done",
+          "summary": "Add risk decision to checkout authorization"
+        }
+      },
+      {
+        "label": "WorkItem",
+        "properties": {
+          "canonical_id": "urn:eoip:work:item:jira:PAY-155",
+          "created_at": "2026-10-02T08:30:00Z",
+          "description": "Fail safely and emit a trace when the risk service exceeds its latency budget.",
+          "issue_key": "PAY-155",
+          "issue_type": "Task",
+          "modified_at": "2026-10-03T10:15:00Z",
+          "status": "In Progress",
+          "summary": "Harden risk timeout fallback"
+        }
+      },
+      {
+        "label": "IssueType",
+        "properties": {
+          "canonical_id": "urn:eoip:work:issue-type:northstar:story",
+          "issue_type_id": "10001",
+          "name": "Story",
+          "project_key": "PAY"
+        }
+      },
+      {
+        "label": "Status",
+        "properties": {
+          "canonical_id": "urn:eoip:work:status:northstar:done",
+          "name": "Done",
+          "project_key": "PAY",
+          "status_id": "10002"
+        }
+      },
+      {
+        "label": "Sprint",
+        "properties": {
+          "canonical_id": "urn:eoip:work:sprint:northstar:26.20",
+          "end_date": "2026-10-02T23:59:59Z",
+          "name": "Sprint 26.20",
+          "project_key": "PAY",
+          "sprint_id": "2620",
+          "start_date": "2026-09-21T00:00:00Z",
+          "status": "CLOSED"
+        }
+      },
+      {
+        "label": "Version",
+        "properties": {
+          "canonical_id": "urn:eoip:work:version:northstar:2026.10.1",
+          "name": "2026.10.1",
+          "project_key": "PAY",
+          "release_date": "2026-10-01T18:00:00Z",
+          "released": true,
+          "status": "RELEASED",
+          "version_id": "2026101"
+        }
+      },
+      {
+        "label": "Comment",
+        "properties": {
+          "canonical_id": "urn:eoip:work:comment:northstar:PAY-142:7",
+          "comment_id": "7",
+          "content": "Security review approved the decision evidence payload; no card data is persisted.",
+          "created_at": "2026-09-29T11:20:00Z",
+          "source_id": "PAY-142",
+          "source_system": "jira"
+        }
+      },
+      {
+        "label": "Repository",
+        "properties": {
+          "canonical_id": "urn:eoip:code:repo:northstar-checkout",
+          "name": "northstar-checkout",
+          "repo_id": "northstar-checkout",
+          "source_uri": "https://gitlab.example.invalid/northstar/checkout"
+        }
+      },
+      {
+        "label": "Branch",
+        "properties": {
+          "branch_name": "main",
+          "canonical_id": "urn:eoip:code:branch:northstar-checkout:main",
+          "repo_id": "northstar-checkout"
+        }
+      },
+      {
+        "label": "MergeRequest",
+        "properties": {
+          "canonical_id": "urn:eoip:cicd:mr:northstar-checkout:142",
+          "mr_iid": 142,
+          "mr_title": "PAY-142 add explainable risk authorization",
+          "source_branch": "feature/PAY-142-risk-decision",
+          "status": "merged",
+          "target_branch": "main"
+        }
+      },
+      {
+        "label": "Commit",
+        "properties": {
+          "author_email": "maya.chen@example.invalid",
+          "author_name": "Maya Chen",
+          "canonical_id": "urn:eoip:code:commit:northstar:c0ffee142",
+          "commit_sha": "c0ffee142c0ffee142c0ffee142c0ffee142c0f",
+          "created_at": "2026-09-30T14:22:00Z",
+          "message": "PAY-142 add bounded risk authorization"
+        }
+      },
+      {
+        "label": "File",
+        "properties": {
+          "canonical_id": "urn:eoip:code:file:northstar:services/checkout/risk.py",
+          "content_hash": "demo-risk-v1",
+          "language": "python",
+          "path": "services/checkout/risk.py",
+          "repo_id": "northstar-checkout"
+        }
+      },
+      {
+        "label": "CodeSymbol",
+        "properties": {
+          "canonical_id": "urn:eoip:code:symbol:northstar:risk:authorize_order",
+          "end_line": 38,
+          "language": "python",
+          "name": "authorize_order",
+          "parser_version": "demo/1.0",
+          "path": "services/checkout/risk.py",
+          "qualified_name": "services.checkout.risk.authorize_order",
+          "repo_id": "northstar-checkout",
+          "start_line": 18,
+          "symbol_kind": "function"
+        }
+      },
+      {
+        "label": "CodeSymbol",
+        "properties": {
+          "canonical_id": "urn:eoip:code:symbol:northstar:risk:score_order",
+          "end_line": 15,
+          "language": "python",
+          "name": "score_order",
+          "parser_version": "demo/1.0",
+          "path": "services/checkout/risk.py",
+          "qualified_name": "services.checkout.risk.score_order",
+          "repo_id": "northstar-checkout",
+          "start_line": 6,
+          "symbol_kind": "function"
+        }
+      },
+      {
+        "label": "Dependency",
+        "properties": {
+          "canonical_id": "urn:eoip:code:dependency:northstar:httpx",
+          "language": "python",
+          "name": "httpx",
+          "resolved": true
+        }
+      },
+      {
+        "label": "APIService",
+        "properties": {
+          "api_name": "Checkout API",
+          "api_version": "2026-10",
+          "canonical_id": "urn:eoip:code:api-service:northstar:checkout",
+          "description": "Creates and authorizes customer orders.",
+          "source_system": "api_portal",
+          "status": "production",
+          "swagger_url": "fixture://Demo/demodata/enterprise/api/checkout-openapi.json"
+        }
+      },
+      {
+        "label": "APIService",
+        "properties": {
+          "api_name": "Risk Decision API",
+          "api_version": "v2",
+          "canonical_id": "urn:eoip:code:api-service:northstar:risk",
+          "description": "Returns an explainable risk decision.",
+          "source_system": "api_portal",
+          "status": "production",
+          "swagger_url": "https://api.example.invalid/risk/openapi.json"
+        }
+      },
+      {
+        "label": "APIService",
+        "properties": {
+          "api_name": "Payment Authorization API",
+          "api_version": "v3",
+          "canonical_id": "urn:eoip:code:api-service:northstar:payments",
+          "description": "Authorizes tokenized payments.",
+          "source_system": "api_portal",
+          "status": "production"
+        }
+      },
+      {
+        "label": "APIEndpoint",
+        "properties": {
+          "api_method": "POST",
+          "api_name": "Create order",
+          "api_path": "/orders",
+          "api_protocol": "REST",
+          "api_version": "2026-10",
+          "canonical_id": "urn:eoip:code:api-endpoint:northstar:checkout:post-orders",
+          "description": "Creates an order and executes the risk decision.",
+          "source_system": "api_portal"
+        }
+      },
+      {
+        "label": "APIEndpoint",
+        "properties": {
+          "api_method": "POST",
+          "api_name": "Create risk decision",
+          "api_path": "/v2/decisions",
+          "api_protocol": "REST",
+          "api_version": "v2",
+          "canonical_id": "urn:eoip:code:api-endpoint:northstar:risk:post-decisions",
+          "description": "Scores an order and explains decision factors.",
+          "source_system": "api_portal"
+        }
+      },
+      {
+        "label": "APIConnection",
+        "properties": {
+          "api_protocol": "REST",
+          "canonical_id": "urn:eoip:code:api-connection:northstar:checkout-risk",
+          "description": "Synchronous risk decision with a 250 ms budget.",
+          "downstream_service": "Risk Decision API",
+          "source_system": "api_portal",
+          "upstream_service": "Checkout API"
+        }
+      },
+      {
+        "label": "Tag",
+        "properties": {
+          "canonical_id": "urn:eoip:code:tag:northstar-checkout:v2026.10.1",
+          "commit_sha": "c0ffee142c0ffee142c0ffee142c0ffee142c0f",
+          "repo_id": "northstar-checkout",
+          "source_system": "gitlab",
+          "tag_name": "v2026.10.1"
+        }
+      },
+      {
+        "label": "PipelineRun",
+        "properties": {
+          "canonical_id": "urn:eoip:cicd:pipeline:northstar:4815",
+          "commit_sha": "c0ffee142c0ffee142c0ffee142c0ffee142c0f",
+          "created_at": "2026-10-01T17:10:00Z",
+          "name": "checkout-main-4815",
+          "pipeline_status": "success",
+          "ref": "v2026.10.1"
+        }
+      },
+      {
+        "label": "Job",
+        "properties": {
+          "canonical_id": "urn:eoip:cicd:job:northstar:contract-tests",
+          "commit_sha": "c0ffee142c0ffee142c0ffee142c0ffee142c0f",
+          "created_at": "2026-10-01T17:16:00Z",
+          "duration_seconds": 48.2,
+          "job_id": "4815-2",
+          "name": "contract-tests",
+          "ref": "v2026.10.1",
+          "repo_id": "northstar-checkout",
+          "stage": "test",
+          "status": "success"
+        }
+      },
+      {
+        "label": "Job",
+        "properties": {
+          "canonical_id": "urn:eoip:cicd:job:northstar:deploy-prod",
+          "commit_sha": "c0ffee142c0ffee142c0ffee142c0ffee142c0f",
+          "created_at": "2026-10-01T17:42:00Z",
+          "duration_seconds": 93.4,
+          "job_id": "4815-4",
+          "name": "deploy-production",
+          "ref": "v2026.10.1",
+          "repo_id": "northstar-checkout",
+          "stage": "deploy",
+          "status": "success"
+        }
+      },
+      {
+        "label": "Artifact",
+        "properties": {
+          "artifact_format": "OCI",
+          "artifact_type": "container",
+          "canonical_id": "urn:eoip:cicd:artifact:northstar:checkout:2026.10.1",
+          "file_size": 188743680,
+          "name": "checkout-api:2026.10.1",
+          "repo_id": "northstar-checkout",
+          "url": "registry.example.invalid/northstar/checkout:2026.10.1"
+        }
+      },
+      {
+        "label": "Release",
+        "properties": {
+          "canonical_id": "urn:eoip:cicd:release:northstar:2026.10.1",
+          "description": "Risk-aware checkout production release.",
+          "external_id": "release-2026101",
+          "name": "Northstar Checkout 2026.10.1",
+          "published_at": "2026-10-01T18:00:00Z",
+          "repo_id": "northstar-checkout",
+          "status": "released",
+          "tag_name": "v2026.10.1"
+        }
+      },
+      {
+        "label": "Deployment",
+        "properties": {
+          "canonical_id": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.1",
+          "commit_sha": "c0ffee142c0ffee142c0ffee142c0ffee142c0f",
+          "created_at": "2026-10-01T17:45:00Z",
+          "deployable_id": "checkout-api:2026.10.1",
+          "environment": "production",
+          "name": "checkout-api production 2026.10.1",
+          "ref": "v2026.10.1",
+          "repo_id": "northstar-checkout",
+          "status": "succeeded",
+          "url": "https://deployments.example.invalid/checkout/2026.10.1"
+        }
+      },
+      {
+        "label": "TestSuite",
+        "properties": {
+          "canonical_id": "urn:eoip:test:suite:northstar:checkout-regression",
+          "created_at": "2026-08-01T09:00:00Z",
+          "description": "Critical checkout, risk and payment regression suite.",
+          "name": "Checkout regression",
+          "source_system": "qtest",
+          "test_suite_id": "TS-88"
+        }
+      },
+      {
+        "label": "TestCase",
+        "properties": {
+          "automation_status": "Automated",
+          "canonical_id": "urn:eoip:test:case:northstar:TC-884",
+          "created_at": "2026-09-18T10:00:00Z",
+          "description": "Verifies the risk decision and checkout response contract.",
+          "modified_at": "2026-09-30T12:00:00Z",
+          "name": "Low-risk order is automatically authorized",
+          "source_system": "qtest",
+          "test_case_id": "TC-884",
+          "test_status": "Approved",
+          "test_type": "API contract"
+        }
+      },
+      {
+        "label": "TestCase",
+        "properties": {
+          "automation_status": "Automated",
+          "canonical_id": "urn:eoip:test:case:northstar:TC-901",
+          "created_at": "2026-10-02T09:00:00Z",
+          "description": "Injects latency and verifies safe refusal plus trace emission.",
+          "name": "Risk timeout uses safe fallback",
+          "source_system": "qtest",
+          "test_case_id": "TC-901",
+          "test_status": "Approved",
+          "test_type": "Resilience"
+        }
+      },
+      {
+        "label": "TestCycle",
+        "properties": {
+          "canonical_id": "urn:eoip:test:cycle:northstar:release-2026.10.1",
+          "description": "Release qualification across contract, regression and resilience tests.",
+          "end_date": "2026-10-01T16:50:00Z",
+          "name": "Release 2026.10.1 qualification",
+          "source_system": "qtest",
+          "start_date": "2026-09-30T08:00:00Z",
+          "status": "Completed",
+          "test_cycle_id": "CY-2026101"
+        }
+      },
+      {
+        "label": "TestRun",
+        "properties": {
+          "canonical_id": "urn:eoip:test:run:northstar:4815",
+          "created_at": "2026-10-01T17:16:00Z",
+          "execution_status": "Passed",
+          "execution_time": 312.5,
+          "failed_count": 0,
+          "finished_at": "2026-10-01T17:21:12Z",
+          "name": "Pipeline 4815 qTest execution",
+          "passed_count": 128,
+          "skipped_count": 2,
+          "source_system": "qtest",
+          "test_run_id": "TR-4815",
+          "total_count": 130
+        }
+      },
+      {
+        "label": "DesignFile",
+        "properties": {
+          "canonical_id": "urn:eoip:design:file:northstar:checkout",
+          "created_at": "2026-08-12T09:00:00Z",
+          "description": "Checkout journey, risk challenge and payment states.",
+          "figma_file_key": "NS-CHECKOUT-2026",
+          "last_modified_by": "Maya Chen",
+          "modified_at": "2026-09-27T15:00:00Z",
+          "name": "Northstar Checkout Experience",
+          "source_system": "figma",
+          "thumbnail_url": "https://figma.example.invalid/thumbnails/checkout.png"
+        }
+      },
+      {
+        "label": "DesignPage",
+        "properties": {
+          "canonical_id": "urn:eoip:design:page:northstar:checkout-flow",
+          "figma_file_key": "NS-CHECKOUT-2026",
+          "figma_node_id": "12:400",
+          "name": "Checkout flow",
+          "page_name": "Checkout Flow",
+          "source_system": "figma"
+        }
+      },
+      {
+        "label": "DesignComponent",
+        "properties": {
+          "canonical_id": "urn:eoip:design:component:northstar:payment-panel",
+          "component_type": "FRAME",
+          "description": "Payment state with explainable risk challenge messaging.",
+          "figma_file_key": "NS-CHECKOUT-2026",
+          "figma_node_id": "12:488",
+          "name": "Payment and risk panel",
+          "source_system": "figma"
+        }
+      },
+      {
+        "label": "Dashboard",
+        "properties": {
+          "canonical_id": "urn:eoip:ops:dashboard:northstar:commerce-overview",
+          "created_at": "2026-07-01T09:00:00Z",
+          "dashboard_id": "commerce-prod",
+          "dashboard_type": "Grafana",
+          "dashboard_url": "https://grafana.example.invalid/d/commerce-prod",
+          "description": "Golden signals for checkout, risk and payment services.",
+          "modified_at": "2026-10-01T08:00:00Z",
+          "name": "Commerce production overview",
+          "panel_count": 12,
+          "source_system": "grafana"
+        }
+      },
+      {
+        "label": "Metric",
+        "properties": {
+          "canonical_id": "urn:eoip:ops:metric:northstar:checkout-p95",
+          "created_at": "2026-07-01T09:00:00Z",
+          "description": "Checkout API request latency p95.",
+          "metric_id": "checkout-p95",
+          "modified_at": "2026-10-03T10:00:00Z",
+          "name": "checkout.request.duration.p95",
+          "source_system": "datadog",
+          "unit": "milliseconds"
+        }
+      },
+      {
+        "label": "MonitorRule",
+        "properties": {
+          "canonical_id": "urn:eoip:ops:monitor:northstar:checkout-latency",
+          "created_at": "2026-08-01T09:00:00Z",
+          "description": "Alerts when p95 exceeds 450 ms for ten minutes.",
+          "modified_at": "2026-10-01T08:00:00Z",
+          "monitor_id": "DD-4412",
+          "monitor_type": "metric alert",
+          "name": "Checkout latency exceeds SLO",
+          "source_system": "datadog",
+          "status": "enabled",
+          "threshold": 450.0
+        }
+      },
+      {
+        "label": "AlertEvent",
+        "properties": {
+          "alert_status": "resolved",
+          "canonical_id": "urn:eoip:ops:alert:northstar:ALERT-771",
+          "created_at": "2026-10-01T18:12:00Z",
+          "description": "p95 reached 812 ms after release 2026.10.1.",
+          "name": "Checkout p95 above 450 ms",
+          "resolved_at": "2026-10-01T19:04:00Z",
+          "severity": "high",
+          "source_system": "datadog"
+        }
+      },
+      {
+        "label": "LogAggregate",
+        "properties": {
+          "canonical_id": "urn:eoip:ops:log:northstar:risk-timeout:2026-10-01",
+          "created_at": "2026-10-01T18:15:00Z",
+          "description": "risk_decision_timeout grouped error signature",
+          "log_count": 438,
+          "log_level": "ERROR",
+          "log_source": "checkout-api",
+          "source_system": "kibana"
+        }
+      },
+      {
+        "label": "Incident",
+        "properties": {
+          "assigned_group": "Commerce SRE",
+          "canonical_id": "urn:eoip:ops:incident:INC0012042",
+          "category": "Application",
+          "closed_at": "2026-10-02T09:30:00Z",
+          "created_at": "2026-10-01T18:14:00Z",
+          "description": "Risk timeouts increased checkout p95 and reduced authorization throughput.",
+          "impact": "High",
+          "incident_number": "INC0012042",
+          "modified_at": "2026-10-02T09:30:00Z",
+          "priority": "P1",
+          "resolution_notes": "Reduced retry fan-out and enabled bounded safe fallback.",
+          "resolved_at": "2026-10-01T19:04:00Z",
+          "source_system": "servicenow",
+          "status": "Resolved",
+          "subcategory": "Performance",
+          "summary": "Checkout latency spike after risk release",
+          "urgency": "High"
+        }
+      },
+      {
+        "label": "ChangeRequest",
+        "properties": {
+          "approval_status": "Approved",
+          "canonical_id": "urn:eoip:ops:change:CHG0031088",
+          "change_type": "Emergency",
+          "closed_at": "2026-10-01T19:10:00Z",
+          "created_at": "2026-10-01T18:28:00Z",
+          "description": "Deploy the safe fallback and reduce retry amplification.",
+          "modified_at": "2026-10-01T19:10:00Z",
+          "name": "Enable bounded risk timeout fallback",
+          "planned_end": "2026-10-01T19:05:00Z",
+          "planned_start": "2026-10-01T18:35:00Z",
+          "risk_level": "Medium",
+          "source_system": "servicenow",
+          "status": "Closed"
+        }
+      },
+      {
+        "label": "KnowledgeSpace",
+        "properties": {
+          "canonical_id": "urn:eoip:knowledge:space:northstar:commerce",
+          "description": "Architecture, operations and onboarding knowledge for commerce systems.",
+          "name": "Commerce Engineering",
+          "space_key": "COMMERCE"
+        }
+      },
+      {
+        "label": "Document",
+        "properties": {
+          "canonical_id": "urn:eoip:knowledge:document:northstar:checkout-architecture",
+          "content_hash": "demo-architecture-v1",
+          "description": "Architecture, decisions and failure-mode boundaries.",
+          "doc_format": "markdown",
+          "name": "Checkout risk architecture",
+          "path": "wiki/checkout-risk-architecture.md",
+          "repo_id": "northstar-checkout"
+        }
+      },
+      {
+        "label": "DocumentSection",
+        "properties": {
+          "canonical_id": "urn:eoip:knowledge:section:northstar:checkout-architecture:failure-modes",
+          "content_hash": "demo-architecture-failure-modes-v1",
+          "end_line": 53,
+          "name": "Failure modes and safe fallback",
+          "path": "wiki/checkout-risk-architecture.md",
+          "section_index": 3,
+          "start_line": 34
+        }
+      },
+      {
+        "label": "KBArticle",
+        "properties": {
+          "canonical_id": "urn:eoip:knowledge:kb:northstar:KB00192",
+          "category": "Commerce Operations",
+          "content": "Confirm SLO alert, inspect risk timeout logs, correlate latest deployment, enable approved fallback, and verify recovery.",
+          "created_at": "2026-08-20T09:00:00Z",
+          "description": "Triage steps, safe mitigations and ownership for checkout latency.",
+          "modified_at": "2026-10-02T10:00:00Z",
+          "name": "Checkout latency incident runbook",
+          "source_system": "servicenow",
+          "status": "Published"
+        }
+      },
+      {
+        "label": "ProdPage",
+        "properties": {
+          "canonical_id": "urn:eoip:knowledge:prod-page:northstar:checkout-status",
+          "created_at": "2026-06-01T09:00:00Z",
+          "description": "Customer-facing checkout availability and incident history.",
+          "modified_at": "2026-10-02T09:30:00Z",
+          "name": "Checkout service status",
+          "page_status": "operational",
+          "page_url": "https://status.example.invalid/checkout",
+          "source_system": "web"
+        }
+      },
+      {
+        "label": "Evidence",
+        "properties": {
+          "canonical_id": "urn:eoip:evidence:demo-enterprise:northstar-pack",
+          "captured_at": "2026-10-03T00:00:00Z",
+          "confidence": 1.0,
+          "evidence_key": "northstar-commerce-1.0.0",
+          "mapper_version": "demo-pack/1.0",
+          "method": "SOURCE_EVENT",
+          "source_ref": "fixture://Demo/demodata/enterprise/scenario-pack.json",
+          "source_system": "demo_enterprise"
+        }
+      }
+    ]
+  },
+  "payload_hash": "cbd165421b8e4bd8583eef8762015f0a6d079a35b6efdac9d1719e98adad01d4",
+  "schema_version": "1.0",
+  "source_record_id": "scenario-pack.json",
+  "source_system": "demo_enterprise",
+  "source_version": "1.0.0"
+}

@@ -1,0 +1,98 @@
+{
+  "issues": [
+    {
+      "key": "HLTH-101",
+      "fields": {
+        "summary": "Implement patient records sync service",
+        "description": "Build a HIPAA-compliant sync service that keeps patient records consistent across the portal, scheduling, and billing microservices. Must handle conflict resolution and emit audit events.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "Done"},
+        "priority": {"name": "Critical"},
+        "project": {"key": "HLTH", "name": "TechNova Patient Portal"},
+        "assignee": {"accountId": "kai.nakamura", "displayName": "Kai Nakamura", "emailAddress": "kai.nakamura@example.invalid"},
+        "reporter": {"accountId": "aisha.rahman", "displayName": "Dr. Aisha Rahman", "emailAddress": "aisha.rahman@example.invalid"},
+        "created": "2026-08-10T09:00:00.000+0000",
+        "updated": "2026-09-28T17:30:00.000+0000",
+        "labels": ["hipaa", "backend", "sync"],
+        "components": [{"name": "patient-records-api"}],
+        "fixVersions": [{"name": "2026.10-portal"}]
+      }
+    },
+    {
+      "key": "HLTH-102",
+      "fields": {
+        "summary": "Add end-to-end encryption for patient data at rest",
+        "description": "Encrypt all PHI fields in the patient records database using AES-256-GCM. Key rotation must be automated and auditable.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "Done"},
+        "priority": {"name": "Critical"},
+        "project": {"key": "HLTH", "name": "TechNova Patient Portal"},
+        "assignee": {"accountId": "kai.nakamura", "displayName": "Kai Nakamura", "emailAddress": "kai.nakamura@example.invalid"},
+        "created": "2026-08-12T10:00:00.000+0000",
+        "updated": "2026-09-25T14:00:00.000+0000",
+        "labels": ["hipaa", "security", "encryption"],
+        "components": [{"name": "patient-records-api"}, {"name": "infrastructure"}]
+      }
+    },
+    {
+      "key": "HLTH-103",
+      "fields": {
+        "summary": "Redesign appointment booking UI for accessibility",
+        "description": "The appointment booking flow must meet WCAG 2.1 AA. Redesign calendar widget, time-slot picker, and confirmation screens.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "High"},
+        "project": {"key": "HLTH", "name": "TechNova Patient Portal"},
+        "assignee": {"accountId": "aisha.rahman", "displayName": "Dr. Aisha Rahman", "emailAddress": "aisha.rahman@example.invalid"},
+        "created": "2026-09-01T08:00:00.000+0000",
+        "updated": "2026-10-03T11:00:00.000+0000",
+        "labels": ["frontend", "accessibility", "ux"]
+      }
+    },
+    {
+      "key": "HLTH-104",
+      "fields": {
+        "summary": "Fix patient data sync race condition",
+        "description": "Concurrent updates to the same patient record from portal and scheduling services cause stale appointment data. Root cause of INC0050201.",
+        "issuetype": {"name": "Bug"},
+        "status": {"name": "Done"},
+        "priority": {"name": "Critical"},
+        "project": {"key": "HLTH", "name": "TechNova Patient Portal"},
+        "assignee": {"accountId": "kai.nakamura", "displayName": "Kai Nakamura", "emailAddress": "kai.nakamura@example.invalid"},
+        "created": "2026-09-28T18:00:00.000+0000",
+        "updated": "2026-09-29T16:00:00.000+0000",
+        "labels": ["bugfix", "sync", "incident-INC0050201"]
+      }
+    },
+    {
+      "key": "HLTH-105",
+      "fields": {
+        "summary": "HIPAA compliance audit automation",
+        "description": "Automate the quarterly HIPAA compliance checks: access logging, PHI field encryption verification, data retention policy enforcement, and breach notification readiness.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "High"},
+        "project": {"key": "HLTH", "name": "TechNova Patient Portal"},
+        "assignee": {"accountId": "priya.sharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@example.invalid"},
+        "created": "2026-09-05T09:00:00.000+0000",
+        "updated": "2026-10-02T15:00:00.000+0000",
+        "labels": ["hipaa", "compliance", "testing"]
+      }
+    },
+    {
+      "key": "HLTH-106",
+      "fields": {
+        "summary": "Implement appointment reminder notification service",
+        "description": "Send HIPAA-compliant appointment reminders via SMS and email 24h and 1h before appointments. Must not include PHI in message body.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "To Do"},
+        "priority": {"name": "Medium"},
+        "project": {"key": "HLTH", "name": "TechNova Patient Portal"},
+        "assignee": {"accountId": "carlos.mendez", "displayName": "Carlos Mendez", "emailAddress": "carlos.mendez@example.invalid"},
+        "created": "2026-10-01T10:00:00.000+0000",
+        "updated": "2026-10-01T10:00:00.000+0000",
+        "labels": ["notifications", "backend"]
+      }
+    }
+  ]
+}

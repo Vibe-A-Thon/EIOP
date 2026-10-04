@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.507492Z",
+  "event_id": "e5439006df4a45dc262ffb29a76431ca641fff990d630238eb708db7dbc3c5a9",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "7ffbf891f0ec1f06a3ff0df2ac2116bd9e697722",
+    "message": "changes related to enhancing the user interface and overall user experience."
+  },
+  "payload_hash": "40b341a21a1063e24d81181749369a80e78bb913fc42454ad80dab8302aace22",
+  "schema_version": "1.0",
+  "source_record_id": "demo:7ffbf891f0ec1f06a3ff0df2ac2116bd9e697722",
+  "source_system": "git",
+  "source_version": "40b341a21a1063e24d81181749369a80e78bb913fc42454ad80dab8302aace22"
+}

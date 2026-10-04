@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.524020Z",
+  "event_id": "82a3352e24169e7bf92346e20c69012515c30418b2e0f9b2383f318690b9079c",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "721de929e5464d2665397995f1d29a3aa97d39ac",
+    "message": "changes for app component"
+  },
+  "payload_hash": "aa01f6868cdc347b0dfd61bdad281519f4429b1c98d25a11a4e11afa674f46a8",
+  "schema_version": "1.0",
+  "source_record_id": "demo:721de929e5464d2665397995f1d29a3aa97d39ac",
+  "source_system": "git",
+  "source_version": "aa01f6868cdc347b0dfd61bdad281519f4429b1c98d25a11a4e11afa674f46a8"
+}

@@ -2,27 +2,31 @@
 
 # EOIP Current Coordination Context
 
-**Snapshot timestamp**: 2026-10-04T11:32:50.8200737+05:30
+**Snapshot timestamp**: 2026-10-04T14:44:54+05:30
 **Active role**: Senior Engineer
 **Repo root**: F:\code\EOIP\EIOP
-**Branch**: dev_local
-**Last commit**: b54127245c7af1189082648c5bce9cc0e4579df7
-**Active ticket**: none
-**Last worked ticket**: ticket-20261004-002
-**Last worked status**: Done
-**Next ticket**: ticket-20261004-003
-**Next role**: QA Lead
-**Publication**: not requested
+**Branch**: feature/audit-evidence-foundation
+**Last commit**: 47bc8516d76031481c637780ddf8952ca865f2e1
+**Active ticket**: ticket-20261004-003
+**Last worked ticket**: ticket-20261004-003
+**Last worked status**: In Progress
+**Next ticket**: ticket-20261004-004 publication/CI/review blocker, then scoped follow-up tickets
+**Next role**: QA Lead / Senior Engineer as assigned by ticket
+**Publication**: not requested for this audit update; prior phase publication/review remains pending
 
 Branch/HEAD describe the observed checkout, not a commit of this session's edits.
 Recheck Git state on resume; this is not a live automatically refreshed snapshot.
 
 ## Goal and scope
 
-Continue evidence-backed EOIP delivery phase by phase while preserving demo
-utility and local-first constraints. This session synchronized only the supplied
-coordination packet and tickets; it did not re-audit every application file,
-certify every phase or change the primary deployment.
+The comprehensive documentation/application audit is active under
+ticket-20261004-003. The allowed Markdown/text corpus was opened for a fresh
+structured scan, excluding the two KGR files and withholding secret-like example
+token content. The new full-document report is an audit artifact, not
+implementation or independent release acceptance.
+The user selected canonical `demo\demodata`, `demo\script` and `demo\autodemo`
+paths because Windows cannot maintain three case-only root directories.
+No full application certification or primary deployment change is claimed.
 
 Follow [instruction](instruction.md), choose personas from [roles](roles.md)
 and use [onboarding/resume prompts](onboarding_prompts.md). Preserve the two KGR
@@ -54,20 +58,35 @@ Use the exact commands and approval/prerequisite classifications in
 Do not use generic `npm test`, `flake8`, fictitious shell scripts or assumed CI.
 
 Latest handoff and historical receipts: [memory](memory.md#latest-handoff).
-Known passing receipts are historical; no application tests/builds were rerun in
-this documentation session. Current failures, PRs and live readiness are not
-freshly verified. Full product completion is not established.
+Stable-source full regression now PASS at HEAD 47bc851: 1,207 outcomes (1,192 passed, 15 skipped, zero failures/errors), receipt test-results/audit-source-bound-validation.json (content-bound, not revision-bound). All five active gaps from docs/audit-2026-10-04/mvp-gap-report are verified resolved (23 new NFR/security/e2e/performance tests pass; demo/autodemo 10/10). Demo script artifacts now include `demo/script/walkthrough.md` and `demo/script/presentation.pptx`; the PPTX passed ZIP/XML structural validation, while artifact-tool visual rendering is unavailable because the bundled package is missing locally. Web build passes, and VS Code extension host now passes locally after clearing a leaked ELECTRON_RUN_AS_NODE environment variable in the test runner: receipt test-results/extension-host-dca6d363-9f4f-4d23-964f-c4b2b6a92c1c.json records 4/4 journeys. Remote CI and independent review remain pending; no publication performed this session. See [phase test report](docs/validation-evidence-phase1.md).
+
+The fresh [full-document gap report](docs/audit-2026-10-04/full-doc-gap-report.md)
+and [structured JSON](docs/audit-2026-10-04/full-doc-gap-report.json) opened 156
+source Markdown/text files, excluding generated report self-input, the two KGR
+documents and secret-like token content. It extracted 761 IDs/requirement-like
+IDs: 108 Partial and 653 Missing under a conservative policy with zero Done
+without current full acceptance and independent review. The prior
+[partial documentation audit](docs/audit-2026-10-04/gap-report.md) remains a
+dated bounded artifact.
 
 ## Working tree and next work
 
-- The original coordination packet is tracked and modified; three new ticket/template
-  files are untracked and all changes are left on disk.
-- Only packet files are dirty at verification; prior web graph/layout work is
-  untouched. Do not assume an earlier session's dirty list is still current.
-- No branch switch, pull, commit, push, reset or deployment is authorized by this snapshot.
-- Next: start [ticket-20261004-003](tickets/ticket-20261004-003.md) as QA Lead,
-  reconcile newer source-bound/recovery receipts with acceptance/audits, then
-  assign only verified gaps. Do not implement the blocked import proposal.
+- HEAD observed for this pass is `47bc8516d76031481c637780ddf8952ca865f2e1`.
+  Recheck before resuming because local report/demo/test artifacts remain uncommitted.
+- Current owned dirty/untracked scope includes the VS Code extension test runner
+  environment fix, MVP report synchronization, demo artifacts, active-gap tests
+  and coordination updates. Additional tracked modifications observed outside
+  this pass: `deploy/Dockerfile`, `packages/eoip/demo.py`,
+  `packages/eoip/demo_scenarios.py`, `tests/e2e/test_clean_recovery.py` and
+  `tests/e2e/test_enterprise_demo_scenarios.py`; preserve them for coordination.
+  A failed presentation-tool setup left `.tmp/presentation-build/package.json`;
+  removal was blocked by command policy. No staged files were observed before
+  this handoff.
+- No branch switch/create, commit, push, PR, reset, shared deployment, dependency
+  install, live source/model access or Docker reset was performed.
+- Next: observe remote CI and independent review for ticket-20261004-004, then
+  decide whether the broader full-document gap report items are current-phase
+  requirements or later-roadmap proposals.
 
 For exact queue/status see [todo-status](todo-status.md), gates see
 [checklist](checklist.md), and field-level handoff rules see

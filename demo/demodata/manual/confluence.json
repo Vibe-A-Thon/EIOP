@@ -1,0 +1,43 @@
+{
+  "results": [
+    {
+      "id": "98001",
+      "type": "page",
+      "title": "Patient Portal Architecture — Sync Service Design",
+      "space": {"key": "HLTH", "name": "TechNova HealthTech"},
+      "body": {
+        "storage": {
+          "value": "<h2>Patient Records Sync Architecture</h2><p>The patient-records-sync service uses event-driven CQRS to keep patient data consistent across the portal, scheduling, and billing microservices.</p><h3>Write Path</h3><p>All mutations go through the Patient Records API, which publishes domain events to an internal event bus. Each downstream consumer applies changes with optimistic locking (version field on every patient record).</p><h3>Failure Modes</h3><ul><li><strong>Race condition:</strong> Concurrent writes without locking cause stale reads. Mitigated by HLTH-104 optimistic locking fix.</li><li><strong>Event bus lag:</strong> Consumer backpressure triggers circuit breaker. Stale records are flagged, not silently served.</li></ul><h3>HIPAA Controls</h3><p>All PHI fields are encrypted at rest (AES-256-GCM) and in transit (mTLS). Audit events are emitted for every read and write of PHI data. See HLTH-102 for encryption implementation.</p>"
+        }
+      },
+      "version": {"number": 4, "when": "2026-09-29T15:00:00.000Z"},
+      "_links": {"webui": "/spaces/HLTH/pages/98001"}
+    },
+    {
+      "id": "98002",
+      "type": "page",
+      "title": "HIPAA Compliance Checklist — Q4 2026",
+      "space": {"key": "HLTH", "name": "TechNova HealthTech"},
+      "body": {
+        "storage": {
+          "value": "<h2>HIPAA Technical Safeguards Checklist</h2><table><tr><th>Control</th><th>Status</th><th>Evidence</th></tr><tr><td>PHI encryption at rest</td><td>Pass</td><td>HLTH-102, TC-HIP-001</td></tr><tr><td>Access logging</td><td>Pass</td><td>Audit service, TC-HIP-002</td></tr><tr><td>Data retention policy</td><td>In Progress</td><td>HLTH-105</td></tr><tr><td>Breach notification readiness</td><td>Pass</td><td>Runbook RB-HIPAA-001</td></tr><tr><td>Minimum necessary access</td><td>Pass</td><td>RBAC configuration</td></tr></table>"
+        }
+      },
+      "version": {"number": 2, "when": "2026-10-02T10:00:00.000Z"},
+      "_links": {"webui": "/spaces/HLTH/pages/98002"}
+    },
+    {
+      "id": "98003",
+      "type": "page",
+      "title": "Appointment Booking Accessibility Audit",
+      "space": {"key": "HLTH", "name": "TechNova HealthTech"},
+      "body": {
+        "storage": {
+          "value": "<h2>WCAG 2.1 AA Audit — Appointment Booking Flow</h2><p>Audit performed against the Figma designs for HLTH-103 before implementation.</p><h3>Findings</h3><ul><li><strong>Calendar widget:</strong> Missing keyboard navigation for date selection. Fix required.</li><li><strong>Time-slot picker:</strong> Contrast ratio 3.8:1 on selected state (below 4.5:1 minimum). Colors updated in Figma rev 3.</li><li><strong>Confirmation screen:</strong> No focus management after submission. Screen reader users lose context.</li></ul><h3>Remediation</h3><p>All findings assigned to HLTH-103. Figma components updated by Dr. Aisha Rahman. Implementation to follow design revision.</p>"
+        }
+      },
+      "version": {"number": 1, "when": "2026-10-03T08:00:00.000Z"},
+      "_links": {"webui": "/spaces/HLTH/pages/98003"}
+    }
+  ]
+}

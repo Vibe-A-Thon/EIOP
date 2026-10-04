@@ -1,0 +1,87 @@
+{
+  "description": "Agent capability demonstration scenarios — shows agent types across 9 categories with graph-based analysis.",
+  "version": "1.0.0",
+  "scenarios": [
+    {
+      "id": "agent-trace-impact",
+      "agent_type": "retrieval",
+      "category": "tool_using",
+      "title": "Trace and Impact Analysis",
+      "question": "Trace EOIP-1 to its implementation and assess the blast radius of changing compute_impact()",
+      "expected_tools": ["search_entity", "find_path", "impact_analysis"],
+      "expected_output": "Path from WorkItem through Commit to CodeSymbol, plus dependent entities"
+    },
+    {
+      "id": "agent-incident-root-cause",
+      "agent_type": "goal_based",
+      "category": "deliberative",
+      "title": "Incident Root Cause Analysis",
+      "question": "What caused INC0071042 and which deployment introduced the regression?",
+      "expected_tools": ["search_entity", "neighbors", "find_path"],
+      "expected_output": "Incident → Alert → Deployment → Pipeline → Commit → MergeRequest chain"
+    },
+    {
+      "id": "agent-compliance-check",
+      "agent_type": "compliance",
+      "category": "enterprise",
+      "title": "HIPAA Compliance Verification",
+      "question": "Verify that all patient data handling meets HIPAA technical safeguards",
+      "expected_tools": ["search_entity", "neighbors", "get_entity"],
+      "expected_output": "Compliance check against PHI encryption, access logging, audit trail"
+    },
+    {
+      "id": "agent-release-governance",
+      "agent_type": "workflow",
+      "category": "orchestration",
+      "title": "Release Governance Check",
+      "question": "Is release 2026.10.1 ready? Check tests, deployment, monitoring, and documentation",
+      "expected_tools": ["search_entity", "find_path", "neighbors"],
+      "expected_output": "Multi-step workflow checking test runs, pipeline status, monitoring, docs"
+    },
+    {
+      "id": "agent-anomaly-detection",
+      "agent_type": "monitor",
+      "category": "autonomous",
+      "title": "Graph Anomaly Detection",
+      "question": "Find orphan vertices, disconnected components, and suspicious patterns in the graph",
+      "expected_tools": ["search_entity", "neighbors", "graph_analytics"],
+      "expected_output": "List of anomalies: orphan vertices, missing edges, unusual patterns"
+    },
+    {
+      "id": "agent-design-trace",
+      "agent_type": "retrieval",
+      "category": "tool_using",
+      "title": "Design to Delivery Trace",
+      "question": "Trace the checkout payment panel design from Figma to the deployed code",
+      "expected_tools": ["search_entity", "find_path"],
+      "expected_output": "DesignComponent → Feature → WorkItem → MR → Code → Pipeline → Deployment"
+    },
+    {
+      "id": "agent-knowledge-provenance",
+      "agent_type": "explanation",
+      "category": "meta_cognitive",
+      "title": "Knowledge Provenance Verification",
+      "question": "Where did the answer about checkout timeout behavior come from and how trustworthy is it?",
+      "expected_tools": ["search_entity", "lineage", "evidence"],
+      "expected_output": "Evidence chain: KB article → source system → evidence record with confidence"
+    },
+    {
+      "id": "agent-blast-radius",
+      "agent_type": "computation",
+      "category": "tool_using",
+      "title": "API Blast Radius Assessment",
+      "question": "What is the blast radius if the Checkout API goes down?",
+      "expected_tools": ["search_entity", "impact_analysis", "neighbors"],
+      "expected_output": "Upstream/downstream services, dependent tests, monitoring coverage"
+    },
+    {
+      "id": "agent-peer-review",
+      "agent_type": "peer_review",
+      "category": "collaboration",
+      "title": "Multi-perspective Code Review",
+      "question": "Review the risk decision implementation from security, performance, and reliability perspectives",
+      "expected_tools": ["get_entity", "neighbors", "search_entity"],
+      "expected_output": "Three independent assessments merged into a consensus review"
+    }
+  ]
+}

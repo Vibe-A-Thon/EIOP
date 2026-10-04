@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.425438Z",
+  "event_id": "007354d64f6fe8780a2dbb76ff8235f06ca6ceb18bc13b35827d90b3a149ef44",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "cb36bb667d02323617010361e277b0d2f9880fd0",
+    "message": "kgr changes and new export formats for interactive HTML and graph report implemented"
+  },
+  "payload_hash": "46ee68b4264d02b06a2ec456285ac72461212b2ca515012f05bf9e9bb7b033e9",
+  "schema_version": "1.0",
+  "source_record_id": "demo:cb36bb667d02323617010361e277b0d2f9880fd0",
+  "source_system": "git",
+  "source_version": "46ee68b4264d02b06a2ec456285ac72461212b2ca515012f05bf9e9bb7b033e9"
+}

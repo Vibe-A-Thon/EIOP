@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.448630Z",
+  "event_id": "2a12e3f0626e2f9ba213e9f21a5bd9d7c880904932ee25868baee14d5725c5aa",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "3c8aaa39c65a182fa1c7b6c64d362f48fab281d0",
+    "message": "gaps changes and intelligence and query capabilities added to the EOIP system"
+  },
+  "payload_hash": "b6987d821f40c00e65f406ee228b93613bed31ce75ec920e9d71f8be87c74dd7",
+  "schema_version": "1.0",
+  "source_record_id": "demo:3c8aaa39c65a182fa1c7b6c64d362f48fab281d0",
+  "source_system": "git",
+  "source_version": "b6987d821f40c00e65f406ee228b93613bed31ce75ec920e9d71f8be87c74dd7"
+}

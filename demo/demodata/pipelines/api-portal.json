@@ -1,0 +1,112 @@
+{
+  "services": [
+    {
+      "id": "svc-checkout",
+      "name": "Checkout API",
+      "version": "2026-10",
+      "description": "Creates and authorizes customer orders with integrated risk decisioning.",
+      "status": "production",
+      "swagger_url": "https://api.example.invalid/checkout/openapi.json",
+      "updated_at": "2026-10-01T17:45:00Z"
+    },
+    {
+      "id": "svc-risk",
+      "name": "Risk Decision API",
+      "version": "v2",
+      "description": "Returns an explainable risk decision with score and reason code.",
+      "status": "production",
+      "swagger_url": "https://api.example.invalid/risk/openapi.json",
+      "updated_at": "2026-10-01T18:00:00Z"
+    },
+    {
+      "id": "svc-payments",
+      "name": "Payment Authorization API",
+      "version": "v3",
+      "description": "Authorizes tokenized payments via gateway integration.",
+      "status": "production",
+      "updated_at": "2026-09-15T10:00:00Z"
+    },
+    {
+      "id": "svc-inventory",
+      "name": "Inventory Reservation API",
+      "version": "v1",
+      "description": "Manages product inventory with reservation and release capabilities.",
+      "status": "production",
+      "updated_at": "2026-10-03T10:00:00Z"
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "ep-checkout-orders",
+      "service_id": "svc-checkout",
+      "path": "/orders",
+      "method": "POST",
+      "description": "Create order with risk decision and payment authorization.",
+      "version": "2026-10",
+      "updated_at": "2026-10-01T17:45:00Z"
+    },
+    {
+      "id": "ep-checkout-order-get",
+      "service_id": "svc-checkout",
+      "path": "/orders/{order_id}",
+      "method": "GET",
+      "description": "Retrieve order status with decision evidence.",
+      "version": "2026-10",
+      "updated_at": "2026-09-30T14:00:00Z"
+    },
+    {
+      "id": "ep-risk-decisions",
+      "service_id": "svc-risk",
+      "path": "/v2/decisions",
+      "method": "POST",
+      "description": "Score an order and return explainable risk decision.",
+      "version": "v2",
+      "updated_at": "2026-10-01T18:00:00Z"
+    },
+    {
+      "id": "ep-risk-explain",
+      "service_id": "svc-risk",
+      "path": "/v2/decisions/{decision_id}/explain",
+      "method": "GET",
+      "description": "Retrieve detailed decision factors for audit.",
+      "version": "v2",
+      "updated_at": "2026-09-28T10:00:00Z"
+    },
+    {
+      "id": "ep-payment-authorize",
+      "service_id": "svc-payments",
+      "path": "/v3/authorize",
+      "method": "POST",
+      "description": "Authorize a tokenized payment against the gateway.",
+      "version": "v3",
+      "updated_at": "2026-09-15T10:00:00Z"
+    },
+    {
+      "id": "ep-payment-capture",
+      "service_id": "svc-payments",
+      "path": "/v3/capture",
+      "method": "POST",
+      "description": "Capture a previously authorized payment.",
+      "version": "v3",
+      "updated_at": "2026-09-15T10:00:00Z"
+    },
+    {
+      "id": "ep-inventory-reserve",
+      "service_id": "svc-inventory",
+      "path": "/v1/reservations",
+      "method": "POST",
+      "description": "Create an inventory reservation with TTL expiry.",
+      "version": "v1",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "ep-inventory-release",
+      "service_id": "svc-inventory",
+      "path": "/v1/reservations/{reservation_id}",
+      "method": "DELETE",
+      "description": "Release an inventory reservation.",
+      "version": "v1",
+      "updated_at": "2026-10-03T10:00:00Z"
+    }
+  ]
+}

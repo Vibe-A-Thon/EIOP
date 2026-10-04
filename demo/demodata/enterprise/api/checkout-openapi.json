@@ -1,0 +1,23 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Northstar Checkout API",
+    "version": "2026-10",
+    "description": "Synthetic contract used by the EOIP enterprise demo."
+  },
+  "servers": [{"url": "https://api.example.invalid/checkout"}],
+  "paths": {
+    "/orders": {
+      "post": {
+        "operationId": "createOrder",
+        "summary": "Create and risk-authorize an order",
+        "x-work-item": "PAY-142",
+        "responses": {
+          "201": {"description": "Order created"},
+          "409": {"description": "Order requires manual review"},
+          "503": {"description": "A safe decision could not be obtained"}
+        }
+      }
+    }
+  }
+}

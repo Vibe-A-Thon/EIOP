@@ -15,16 +15,30 @@ The application exposes domain query services rather than database access. Exact
 
 ```mermaid
 flowchart LR
- U[NL / structured request] --> I[Intent extraction]
+ U[NL / structured request] --> N[NLQ Processor]
+ N --> O[EQL / query operators]
+ N --> I[Intent extraction]
  I --> P[Typed QueryPlan]
  P --> S[Schema + policy validation]
  S --> C[Cost / bounds validation]
  C --> G[Named Gremlin template]
  G --> H[(HugeGraph)]
  H --> E[GraphResult + Evidence]
+ O --> E
  E --> A[UI / MCP / RAG / Agent]
  S -->|deny| D[Policy error + audit]
 ```
+
+## NLQ processor design
+
+`packages/eoip/query/nlq.py` provides the public natural-language query processor used by `POST /api/v1/query/nl`.
+
+- It first handles deterministic graph fact questions with EQL (`COUNT`, `DOMAINS`, `LABELS`, `EDGE LABELS`).
+- It routes explanatory questions to existing query operators (`WHY`, `WHY NOT`, `WHAT CHANGED`, `CONTEXT`).
+- It delegates traversal/search questions to `packages/eoip/query/nl.py`, which compiles natural language into bounded `QueryPlan` objects.
+- It executes plans only through `QueryExecutor`, so query policy limits still control depth, result count, timeout and relationship bounds.
+- It composes deterministic answer text from the returned graph facts and includes confidence, highlights, warnings and follow-up suggestions.
+- It uses graph-domain search fallback only for unresolved questions containing graph concepts, keeping unrelated questions in clarification mode.
 
 ## Applicable requirements
 

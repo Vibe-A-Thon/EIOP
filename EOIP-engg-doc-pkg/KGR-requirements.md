@@ -1,8 +1,8 @@
 # KGR — Knowledge Graph Renderer & Explorer: Requirements Specification
 
-**Version:** 3.0  
-**Date:** 2026-10-03  
-**Status:** Final Draft (Revised — comprehensive competitor audit)  
+**Version:** 4.0  
+**Date:** 2026-10-04  
+**Status:** Final Draft (Revised — competitive gap audit + RAG/Agent/Engineering patterns)  
 **Scope:** A knowledge graph visualization, exploration, and analysis platform integrated into EOIP that surpasses Graphify, Neo4j Bloom, Linkurious, Gephi, Graphistry, yFiles, Sourcetrail, CodeSee, Sourcegraph, and every other tool in the category.
 
 ---
@@ -77,6 +77,20 @@ Every documented competitor weakness becomes a KGR design requirement:
 | Performance collapses at 384K nodes | Gephi | Progressive rendering with virtualization |
 | Edge types immutable after creation | Linkurious | Schema-driven mutable edge types via ontology manifest |
 | No subgraph extraction with depth | Graphify, Neo4j Bloom | Configurable neighborhood expansion (1-8 hops) with depth control |
+| No self-contained interactive export | Neo4j Bloom, Gephi, Linkurious | Self-contained graph.html with search, filter, inspect |
+| No automated graph report | Neo4j Bloom, Gephi, Linkurious, yFiles | 7-section Markdown report with centrality + health + recommendations |
+| No hub exclusion with visual indicator | Neo4j Bloom, Gephi | Degree-based hub exclusion with dimmed silhouette |
+| No surprising connection detection | Neo4j Bloom, Gephi, Linkurious | Structural surprise scoring + unexpected absence detection |
+| No rule-based conditional styling (free) | Graphify, Gephi, code2flow | Composable IF/THEN visual rules, exportable JSON |
+| No lasso/rectangle selection (free) | Graphify, Gephi, Sourcetrail | Shift+drag lasso, Ctrl+Shift+drag rectangle |
+| No URL deep linking for graph state | Graphify, Gephi, code2flow | Full state encoded in URL hash |
+| No accessible table view alternative | ALL competitors | WCAG-compliant sortable/filterable table view |
+| No investigation playbooks (free) | Graphify, Neo4j Bloom, Gephi | Built-in + custom playbooks with what-if integration |
+| No cross-project graph merge | Neo4j Bloom, Gephi, Linkurious | Union/intersection/diff merge with preview |
+| No RAG-powered graph queries | ALL competitors | 17 RAG patterns with auto-routing |
+| No agentic AI graph exploration | ALL competitors | 40+ agent types with tool integration |
+| No engineering discipline patterns | ALL competitors | 8 composable meta-patterns |
+| AI queries require cloud/GPU | Neo4j Bloom (cloud), Graphistry (GPU) | Local-first, LLM-optional, structured fallback |
 
 ---
 
@@ -475,6 +489,214 @@ Inspired by Graphify's PR dashboard (`graphify prs`) with community-based confli
 - Available as a dedicated dashboard accessible from the KGR lens toolbar
 - **Surpasses Graphify** by providing visual overlap analysis (Graphify only lists PRs with community labels)
 
+### FR-KGR-017: Self-Contained Interactive HTML Export
+
+Inspired by Graphify's `graph.html` but significantly more capable. No competitor bundles search, filtering, and inspection into a single portable HTML file.
+
+- Single HTML file containing: graph data (compressed JSON), rendering engine (Sigma.js inline), interaction logic
+- Interactive features in exported HTML: zoom/pan, click-to-inspect, search bar, filter by entity type, community hull overlays, domain coloring, node sizing by degree
+- Responsive: works on mobile browsers
+- Dark/light theme auto-detect from OS
+- Target file size: < 2MB for 5K-node graph, < 10MB for 20K-node graph
+- Export option in ExportMenu alongside existing formats
+- **Surpasses Graphify**: KGR's graph.html includes search, filtering, community hulls, and full inspector — Graphify's only has zoom/pan
+
+### FR-KGR-018: Automated Graph Intelligence Report
+
+Inspired by Graphify's GRAPH_REPORT.md but with far deeper analysis.
+
+- Auto-generated Markdown report with 7 sections:
+  1. Executive summary (node/edge counts, density, components)
+  2. Topology statistics (degree distribution, clustering coefficient, diameter)
+  3. Centrality analysis (top-10 by each of 8 centrality algorithms)
+  4. Community breakdown (auto-labels, inter/intra density, bridge nodes)
+  5. Evidence coverage (trust distribution, provenance depth, unevidenced entities)
+  6. Health assessment (completeness, freshness, anomalies, stale entities)
+  7. Actionable recommendations (orphaned entities, missing edges, risk hotspots)
+- Export option: "Graph Report" button in ExportMenu
+- **Surpasses Graphify**: adds centrality analysis, evidence coverage, health scores, actionable recommendations
+
+### FR-KGR-019: Hub Exclusion Filter
+
+Inspired by Graphify's `--exclude-hubs` flag. Hub nodes dominate visuals and obscure substructures.
+
+- New filter dimension (#12): max degree threshold slider
+- Quick presets: "Remove top-1%", "Remove top-5%", "Remove top-10%"
+- Visual indicator: dimmed hub silhouette showing excluded node position
+- "Show hubs" toggle to re-enable
+- Hub exclusion reveals hidden community structures
+- **Surpasses Graphify**: visual indicator of excluded hubs (Graphify just hides them)
+
+### FR-KGR-020: Surprising/Unexpected Connection Detection
+
+Inspired by Graphify's unexpected connection ranking. Extended with cross-domain analysis and absence detection.
+
+- **Surprising edges**: edges connecting structurally distant entities (low Jaccard similarity of neighborhoods × long alternate path × cross-domain bonus)
+- **Surprising communities**: communities bridging 3+ different GraphDomains
+- **Unexpected absence**: entity pairs with high link prediction scores but no actual edge — connections that probably should exist
+- API endpoint: `GET /api/v1/graph/surprises`
+- UI: "Surprise" sidebar tab with ranked list, click to highlight on graph
+- Sparkle icon overlay on surprising edges in graph view
+- **Surpasses Graphify**: adds cross-domain analysis and unexpected absence detection
+
+### FR-KGR-021: Rule-Based Conditional Visual Styling
+
+Inspired by Neo4j Bloom's "Perspective" system and Linkurious's conditional styling.
+
+- Rule builder: IF [entity type] [property] [operator] [value] THEN [set color/size/shape/border/icon/label]
+- Rule priority: top-to-bottom, first match wins
+- Live preview: rules apply immediately as edited
+- Template rules: pre-built rule sets for common patterns (test files green, deprecated entities red, high-risk entities large)
+- Persist rules in localStorage, import/export as JSON
+- **Surpasses Neo4j Bloom**: rules are composable, exportable, and apply to all 10 graph types
+
+### FR-KGR-022: Lasso/Rectangle Multi-Selection
+
+Inspired by KeyLines and yFiles. Essential for large graph interaction.
+
+- Shift+drag: freeform lasso (polygon) selection — all nodes inside the polygon selected
+- Ctrl+Shift+drag: rectangle selection
+- Selection count badge in toolbar
+- "Select all in community" context menu option
+- Group selection actions: hide all, expand all, blast radius union, export selection
+- **Unique among free tools** — KeyLines (€5K+) and yFiles (€9.2K) both charge for this
+
+### FR-KGR-023: URL Deep Linking / Graph State Sharing
+
+Inspired by Neo4j Bloom's shareable scene URLs.
+
+- Encode graph state in URL hash: graph type, active filters, selected node, zoom/pan, layout algorithm
+- "Copy link to this view" button in toolbar
+- Opening shared URL restores exact graph state
+- Browser bookmark compatible
+- State update debounced (500ms) to avoid excessive URL changes
+- **Surpasses Neo4j Bloom**: includes filter state, layout, and zoom (Bloom only encodes selection)
+
+### FR-KGR-024: Alternative Table/List View (Accessibility)
+
+WCAG requirement: provide non-visual alternative to graph visualization.
+
+- Sortable, filterable data table showing graph entities
+- Columns: Name, Type, Domain, Degree, In-Degree, Out-Degree, Evidence, Status
+- Expandable rows: show relationships for each entity
+- Virtual scrolling for large datasets (50K+ rows)
+- Toggle via toolbar button or keyboard shortcut (`T`)
+- Split view option: table (left) + graph (right) with synchronized selection
+- Full keyboard navigation with ARIA table roles
+- Screen reader compatible
+- **Unique to KGR** — no competitor offers a true accessible table alternative
+
+### FR-KGR-025: Investigation Playbooks
+
+Inspired by Graphistry's investigation workflows. Guided exploration for common analysis patterns.
+
+- Built-in playbooks: Impact Assessment, Root Cause Analysis, Community Health Check, Dependency Audit
+- Playbook runner: step-by-step guided mode with progress indicator
+- Each step auto-executes analysis and waits for user input where needed
+- User-created custom playbooks saved in localStorage
+- Export/import playbooks as JSON for team sharing
+- **Surpasses Graphistry**: includes what-if simulation and anomaly detection steps (Graphistry is GPU-only commercial)
+
+### FR-KGR-026: Cross-Project Graph Merge
+
+Inspired by Graphify's multi-repo graph merging.
+
+- Merge strategies: union (add all), intersection (keep common), diff (keep unique)
+- Conflict resolution: primary wins on property conflicts with audit trail
+- Accept EOIP snapshot files or GraphML/GEXF imports
+- Preview merge: show counts of added/merged/skipped/conflicted entities before applying
+- Undo merge via exploration history
+- API endpoint: `POST /api/v1/graph/merge`
+
+### FR-KGR-027: RAG-Powered Graph Intelligence (17 Patterns)
+
+The system SHALL support 17 Retrieval-Augmented Generation patterns over the knowledge graph, making KGR the first graph platform with native RAG capabilities.
+
+#### 27.1 RAG Patterns
+
+| # | Pattern | Retrieval Strategy | When to Use |
+|---|---|---|---|
+| 1 | Simple RAG | Keyword match + 1-hop BFS | Simple factual queries |
+| 2 | Advanced RAG | Query expansion → retrieval → re-ranking → filtering | Complex queries needing precision |
+| 3 | Graph RAG | Community-based: summarize per-community → merge | Questions spanning the entire graph |
+| 4 | Hybrid RAG | Vector similarity + graph traversal + keyword BM25 | Multi-modality queries |
+| 5 | Corrective RAG (CRAG) | Retrieve → evaluate → corrective re-retrieval if poor | When initial retrieval insufficient |
+| 6 | Self-RAG | Retrieve → generate → self-evaluate → regenerate if poor | Response quality verification |
+| 7 | Adaptive RAG | Query classifier → route to simplest sufficient RAG | Cost/latency optimization |
+| 8 | Agentic RAG | Agent loop: plan → execute → evaluate → adjust → iterate | Open-ended exploration |
+| 9 | Modular RAG | Composable pipeline: search → retrieve → rerank → compress → generate | Custom retrieval pipelines |
+| 10 | HyDE | Generate hypothetical document → use as retrieval query | Abstract queries, concrete answers |
+| 11 | Conversational RAG | Session memory + context carry-forward | Multi-turn exploration sessions |
+| 12 | Multi-step RAG | Decompose complex query → sequential sub-queries → aggregate | Compound questions |
+| 13 | Multi-hop RAG | Graph path traversal through N hops for transitive context | Causal chains, lineage traces |
+| 14 | Branched RAG | Parallel retrieval branches → merge best results | Multiple valid retrieval paths |
+| 15 | Multimodal RAG | Across modalities: graph + code + documentation + diagrams | Cross-domain queries |
+| 16 | Speculative RAG | Multiple drafts in parallel → verify against facts → select best | High-confidence answers |
+| 17 | RAG of RAGs | Meta-RAG: routes to sub-RAGs, aggregates, resolves conflicts | Complex multi-pattern queries |
+
+- Auto-routing: RAGRouter classifies queries and selects best pattern
+- LLM-optional: structured graph analysis fallback when no LLM configured
+- API: `POST /api/v1/rag/query` (auto-routed), `POST /api/v1/rag/query/{pattern}` (specific)
+- **Unique to KGR** — no graph visualization tool has native RAG capabilities
+
+### FR-KGR-028: Agentic AI Graph Intelligence (40+ Agent Types)
+
+The system SHALL support 40+ agent types organized into 9 categories, each operating over the EOIP knowledge graph.
+
+#### 28.1 Agent Categories
+
+| Category | Agents | Capabilities |
+|---|---|---|
+| Reactive | Simple Reflex, Model-Based Reflex | Condition-action rules, internal state tracking |
+| Deliberative | Goal-Based, Utility-Based, Planner, Executor | Goal decomposition, utility maximization, plan generation |
+| Tool-Using | Tool-Calling, Function-Calling, RAG Agent | Invoke graph APIs, execute queries, RAG-enhanced responses |
+| Orchestration | Orchestrator, Router, Hierarchical, Task Agent | Multi-agent coordination, query routing, task decomposition |
+| Collaboration | Choreography, Peer-to-Peer, Consensus, Collaboration, Swarm | Decentralized coordination, voting, emergent behavior |
+| Meta-Cognitive | Critic, Reflection, Self-Reflection, Reviewer, Validator, XAI Agent | Self-evaluation, explanation generation, quality assurance |
+| Autonomous | Self-Learning, Self-Evolving, Self-Writing, Deep AI Agents | Online learning, strategy evolution, code generation |
+| Enterprise | Enterprise Agent, Just-In-Time Agent | Compliance-aware analysis, on-demand provisioning |
+| Multi-Agent | Multi-Agent System, Agentic Swarm | Agent composition, swarm intelligence for parallel exploration |
+
+- Agent registry with factory pattern for dynamic instantiation
+- Perceive-decide-act lifecycle with memory persistence
+- Tool integration: all graph analysis tools available to agents
+- API: `POST /api/v1/agents/query` (auto-routed), `POST /api/v1/agents/query/{type}` (specific)
+- **Unique to KGR** — no graph visualization tool has an agent framework
+
+### FR-KGR-029: Engineering Disciplines (8 Patterns)
+
+The system SHALL implement 8 engineering discipline patterns that compose RAG, agents, and graph analysis into higher-order intelligence systems.
+
+| # | Discipline | Purpose | Use Case |
+|---|---|---|---|
+| 1 | Loop Engineering | Iterative refinement cycles with convergence detection | Refining community detection thresholds, sensitivity tuning |
+| 2 | Graph Engineering | Structured graph construction, optimization, and maintenance | Schema optimization, index recommendations, migration planning |
+| 3 | Harness Engineering | Controlled execution environments with safety bounds | Sandboxed what-if simulations, rate limiting, circuit breakers |
+| 4 | Memory Engineering | 5-tier memory system (short-term, working, long-term, episodic, semantic) | Agents that learn from prior analysis sessions |
+| 5 | Context Engineering | Optimal context assembly within token budgets | Assembling relevant graph context for LLM queries |
+| 6 | Prompt Engineering | Structured prompt construction with template library | Effective prompts for graph analysis, chain-of-thought reasoning |
+| 7 | Graph-over-Loop Engineering | Graph traversal drives iteration control flow | Automated dependency chain analysis, root cause search |
+| 8 | Loop-over-Graph Engineering | Iterative loops progressively refine graph understanding | Progressive intelligence that improves each pass |
+
+- API: `POST /api/v1/engineering/{discipline}` for each pattern
+- Composable: disciplines can be combined (e.g., Loop + Graph-over-Loop for multi-pass traversal)
+- **Unique to KGR** — no competitor has formalized engineering discipline patterns
+
+### FR-KGR-030: AI Explorer Panel
+
+Integrated chat-style interface for AI-powered graph exploration.
+
+- Natural language questions about the graph
+- Structured responses with: text explanation, graph highlights, action buttons, source references
+- RAG pattern indicator showing which pattern was used
+- Agent type indicator showing which agent processed the query
+- Confidence score for each response
+- Pre-built quick actions: "Explain this cluster", "What would break?", "Find surprising connections"
+- Session memory: conversation history persisted
+- LLM-optional: structured graph analysis fallback without LLM
+- Keyboard shortcut: `A` to toggle AI Explorer
+- **Unique to KGR** — no competitor has integrated AI graph exploration
+
 ---
 
 ## 3. Non-Functional Requirements
@@ -606,19 +828,49 @@ interface CentralityMetrics {
 | GET | `/api/v1/graph/schema` | Full ontology meta-graph | **Done** |
 | GET | `/api/v1/graph/statistics` | Aggregate graph statistics | **Done** |
 
-### 5.2 Endpoints (Planned)
+### 5.2 Endpoints (Implemented — Phases 3-10)
 
 | Method | Path | Description | Phase |
 |---|---|---|---|
-| POST | `/api/v1/graph/cluster` | Leiden community detection | 4 |
-| POST | `/api/v1/graph/diff` | Compare two graph snapshots | 8 |
-| POST | `/api/v1/graph/what-if` | Simulate entity removal | 8 |
-| POST | `/api/v1/graph/similarity` | Jaccard/Adamic-Adar similarity between nodes | 5 |
-| POST | `/api/v1/graph/shortest-paths` | All shortest paths (not just one) | 4 |
-| GET | `/api/v1/graph/events` | Polling fallback for real-time events | 7 |
-| WS | `/ws/graph/events` | WebSocket for real-time graph changes | 7 |
+| POST | `/api/v1/graph/centrality/full` | Full centrality (8 algorithms) | 3 |
+| POST | `/api/v1/graph/shortest-paths` | All shortest paths (Yen's k-shortest) | 3 |
+| POST | `/api/v1/graph/cluster` | Leiden/Louvain/Label Propagation community detection | 4 |
+| POST | `/api/v1/graph/similarity` | Jaccard/Adamic-Adar/Common neighbors | 5 |
+| POST | `/api/v1/graph/link-prediction` | Predict missing edges | 5 |
 | POST | `/api/v1/graph/k-core` | k-core decomposition | 6 |
-| POST | `/api/v1/graph/link-prediction` | Predict missing edges | 6 |
+| POST | `/api/v1/graph/components` | Connected component analysis | 6 |
+| POST | `/api/v1/graph/degree-distribution` | Degree histogram data | 6 |
+| WS | `/ws/graph/events` | WebSocket for real-time graph changes | 7 |
+| GET | `/api/v1/graph/events` | Polling fallback with since_id | 7 |
+| POST | `/api/v1/graph/diff` | Compare two graph snapshots | 8 |
+| POST | `/api/v1/graph/what-if` | Simulate entity removal/isolation | 8 |
+| POST | `/api/v1/graph/anomalies` | Detect outlier nodes (3 algorithms) | 8 |
+| GET | `/api/v1/graph/orphaned` | Orphaned entity detection | 10 |
+| GET | `/api/v1/graph/stale` | Stale entity detection | 10 |
+| GET | `/api/v1/graph/pr-impact` | PR/MR community overlap analysis | 10 |
+| GET | `/api/v1/files/{path}` | File content retrieval for code panel | 10 |
+
+### 5.3 Endpoints (Planned — Phases 12-13)
+
+| Method | Path | Description | Phase |
+|---|---|---|---|
+| GET | `/api/v1/graph/surprises` | Surprising/unexpected connection detection | 12 |
+| POST | `/api/v1/graph/merge` | Cross-project graph merge | 12 |
+| POST | `/api/v1/rag/query` | Auto-routed RAG query over knowledge graph | 13 |
+| POST | `/api/v1/rag/query/{pattern}` | Specific RAG pattern (17 available) | 13 |
+| GET | `/api/v1/rag/patterns` | List available RAG patterns | 13 |
+| POST | `/api/v1/rag/evaluate` | Evaluate retrieval quality for a query | 13 |
+| POST | `/api/v1/agents/query` | Auto-routed agent query | 13 |
+| POST | `/api/v1/agents/query/{type}` | Specific agent type (40+ available) | 13 |
+| GET | `/api/v1/agents/types` | List available agent types | 13 |
+| POST | `/api/v1/agents/orchestrate` | Multi-agent orchestration | 13 |
+| GET | `/api/v1/agents/memory` | Agent memory state | 13 |
+| POST | `/api/v1/engineering/loop` | Run a loop engineering cycle | 13 |
+| POST | `/api/v1/engineering/context` | Assemble optimal context | 13 |
+| POST | `/api/v1/engineering/prompt` | Build a structured prompt | 13 |
+| POST | `/api/v1/engineering/harness/sandbox` | Create sandboxed environment | 13 |
+| GET | `/api/v1/engineering/memory` | Query agent memory | 13 |
+| POST | `/api/v1/engineering/traverse` | Graph-over-loop traversal | 13 |
 
 ### 5.3 Request/Response Contracts
 
@@ -702,48 +954,74 @@ class SimilarityRequest(BaseModel):
 - BFS from target along incoming edges (upstream traversal)
 - Same depth/type grouping and risk classification as blast radius
 
-### 7.3 Centrality Analysis (Implemented — degree; planned — full suite)
-- **Degree centrality**: in/out/total (implemented)
-- **Betweenness centrality**: fraction of shortest paths (planned, Phase 3)
-- **Closeness centrality**: inverse of avg shortest path (planned, Phase 3)
-- **PageRank**: iterative, 20 iterations, damping=0.85 (planned, Phase 3)
-- **Eigenvector centrality**: influence via neighbor importance (planned, Phase 6)
-- **Katz centrality**: attenuated walk-based (planned, Phase 6)
-- **HITS hub/authority**: bipartite influence (planned, Phase 6)
-- **Harmonic centrality**: handles disconnected graphs (planned, Phase 6)
+### 7.3 Centrality Analysis (Implemented — Phase 3)
+- **Degree centrality**: in/out/total
+- **Betweenness centrality**: Brandes' algorithm, normalized by (n-1)(n-2)
+- **Closeness centrality**: inverse of average shortest path length
+- **PageRank**: iterative, 20 iterations, damping=0.85
+- **Eigenvector centrality**: power iteration, 50 iterations
+- **Katz centrality**: alpha=0.1, 50 iterations
+- **HITS hub/authority**: 20 iterations, normalized
+- **Harmonic centrality**: handles disconnected graphs
 - Display as radar chart in Impact tab
+- Client-side: centrality.js with 8 matching functions
 
-### 7.4 Community Detection (Planned — Phase 4)
-- **Leiden algorithm**: current gold standard, guarantees connected communities
-- **Louvain**: modularity optimization, fast
-- **Label Propagation**: near-linear time for very large graphs
+### 7.4 Community Detection (Implemented — Phase 4)
+- **Leiden algorithm**: 3-phase (local moving → refinement via BFS → aggregation), max 10 iterations, guarantees connected communities
+- **Louvain**: single-pass modularity optimization with resolution parameter
+- **Label Propagation**: async, max 20 iterations, random tie-breaking
+- **Auto-labeling**: top-3 vertex labels + top-2 name tokens per community (Phase 10)
 - Visual: convex hull overlays on graph canvas with cluster coloring
 
-### 7.5 Similarity Analysis (Planned — Phase 5)
-- **Jaccard similarity**: neighbor overlap
-- **Adamic-Adar**: weighted common neighbors biased toward low-degree bridges
-- **Common neighbors**: simplest predictor
-- **Link prediction**: predict likely missing edges based on structural similarity
+### 7.5 Similarity Analysis (Implemented — Phase 5)
+- **Jaccard similarity**: |N(u) ∩ N(v)| / |N(u) ∪ N(v)|
+- **Adamic-Adar**: sum(1/log(|N(w)|)) for w in common neighbors
+- **Common neighbors**: simple count
+- **Link prediction**: predict missing edges for non-adjacent pairs only
 
-### 7.6 Graph Statistics (Implemented)
+### 7.6 Graph Statistics (Implemented — Phases 1+6)
 - Vertex count, edge count, density
 - Vertex/edge label counts
-- Connected components (planned Phase 6)
-- Clustering coefficient (planned Phase 6)
-- Degree distribution (planned Phase 6)
-- k-core decomposition (planned Phase 6)
+- Connected components (BFS/DFS)
+- Clustering coefficient
+- Degree distribution histogram
+- k-core decomposition (iterative peeling)
 
-### 7.7 What-If Analysis (Planned — Phase 8)
-- Simulate entity removal: compute broken paths, orphaned entities
-- New centrality scores for affected entities
+### 7.7 What-If Analysis (Implemented — Phase 8)
+- **simulate_removal**: compute broken paths, orphaned entities, centrality changes
+- **simulate_isolation**: keep entity but remove all edges
+- MutationPlan with NL intent parsing (6 intent types)
+- Confirm/execute scenario via SimulationWorkspace
 - Before/after comparison view
-- Risk summary text generation
 
-### 7.8 Anomaly Detection (Planned — Phase 8)
-- Outlier nodes by z-score on centrality distributions
-- Sudden degree spikes (temporal anomaly)
-- Missing expected edges (link prediction gap)
-- Dense subgraph detection (unexpected clusters)
+### 7.8 Anomaly Detection (Implemented — Phase 8)
+- **degree_zscore_outliers**: nodes with degree > mean + threshold*std
+- **dense_subgraph_detection**: unexpectedly dense clusters
+- **missing_expected_edges**: gaps detected via link prediction
+- **orphaned_entities**: zero incoming edges (excludes meta-labels) (Phase 10)
+- **stale_entities**: last modification > threshold (default 168 hours) (Phase 10)
+
+### 7.9 Surprising Connection Analysis (Planned — Phase 12)
+- Structural surprise scoring: 1/jaccard × path_length × cross_domain_bonus
+- Community bridge detection: communities spanning 3+ domains
+- Unexpected absence: high link prediction score but no actual edge
+
+### 7.10 RAG Intelligence (Planned — Phase 13)
+- 17 RAG patterns from Simple RAG to RAG of RAGs
+- Graph-native retrieval: community-based, path-based, similarity-based
+- Auto-routing: RAGRouter classifies queries to optimal pattern
+- LLM-optional: structured fallback without LLM configured
+
+### 7.11 Agentic Intelligence (Planned — Phase 13)
+- 40+ agent types in 9 categories (reactive, deliberative, tool-using, orchestration, collaboration, meta-cognitive, autonomous, enterprise, multi-agent)
+- Perceive-decide-act lifecycle with memory persistence
+- Agent registry with factory pattern for dynamic instantiation
+- All graph analysis tools available to agents as callable tools
+
+### 7.12 Engineering Disciplines (Planned — Phase 13)
+- 8 meta-patterns composing RAG + agents + graph analysis
+- Loop, Graph, Harness, Memory, Context, Prompt, Graph-over-Loop, Loop-over-Graph
+- Composable: disciplines can be combined for multi-pass intelligent analysis
 
 ---
 
@@ -780,6 +1058,25 @@ class SimilarityRequest(BaseModel):
 | AC-27 | 11+ export formats covering every competitor's export capability | Surpasses all: matches Graphify's 7 + adds PDF/JSON-LD/GEXF/clipboard |
 | AC-28 | AMBIGUOUS evidence status supported alongside DETERMINISTIC/INFERRED/MANUAL | Matches Graphify's 3-tier evidence (EXTRACTED/INFERRED/AMBIGUOUS) |
 | AC-29 | Geo-mode positions entities on map when location metadata available | Linkurious, Ogma (commercial) — KGR does it free |
+| AC-30 | Semantic zoom shows 3 levels (cluster/entity/detail) with smooth transitions | No free competitor has this |
+| AC-31 | Fisheye distortion provides 2x magnification at cursor with gradual falloff | yFiles (€9.2K) — KGR does it free |
+| AC-32 | Force-directed edge bundling declutters high-degree nodes | yFiles (€9.2K) — KGR does it free |
+| AC-33 | Color-blind safe palette with 3 modes (deuteranopia/tritanopia/high-contrast) | No competitor has 3 palette modes |
+| AC-34 | Self-contained interactive HTML export with search/filter/inspect | Graphify (basic zoom only) — KGR adds full interaction |
+| AC-35 | Automated graph report with 7 analysis sections | Graphify (basic topology) — KGR adds centrality, health, recommendations |
+| AC-36 | Hub exclusion filter with visual indicator of excluded nodes | Graphify (flag only, no visual) |
+| AC-37 | Surprising connection detection with cross-domain and absence analysis | Graphify (basic ranking only) |
+| AC-38 | Rule-based conditional styling with composable IF/THEN rules | Neo4j Bloom, Linkurious (both commercial) — KGR does it free |
+| AC-39 | Lasso and rectangle multi-selection for large graphs | KeyLines, yFiles (commercial) — KGR does it free |
+| AC-40 | URL deep linking encodes full graph state (filters, zoom, selection, layout) | Neo4j Bloom (selection only) — KGR encodes full state |
+| AC-41 | Alternative table view provides WCAG-accessible data browsing | No competitor has this |
+| AC-42 | Investigation playbooks guide multi-step analysis workflows | Graphistry (GPU-only, commercial) — KGR does it free |
+| AC-43 | Cross-project graph merge with preview and undo | Graphify (multi-repo, no preview) |
+| AC-44 | 17 RAG patterns route queries to optimal retrieval strategy | No graph viz tool has RAG |
+| AC-45 | 40+ agent types with perceive-decide-act lifecycle | No graph viz tool has agents |
+| AC-46 | 8 engineering disciplines compose RAG + agents into higher-order intelligence | Unique to KGR |
+| AC-47 | AI Explorer panel provides chat-based graph exploration with LLM-optional fallback | Neo4j Bloom (NL, cloud-only) — KGR is local-first + multi-RAG |
+| AC-48 | MCP tools expose RAG/agent/engineering capabilities to external clients | Graphify (basic MCP) — KGR has full RAG+agent MCP |
 
 ---
 
@@ -822,3 +1119,27 @@ class SimilarityRequest(BaseModel):
 | Orphaned entity | A graph node with zero incoming edges — unreferenced by any other entity |
 | Visual query builder | Drag-and-drop interface for constructing graph queries without writing code |
 | Community labeling | Automated naming of detected clusters based on member entity characteristics |
+| Semantic zoom | Adjusting visible detail level (labels, edges, hulls) based on zoom factor |
+| Fisheye distortion | Magnification effect centered at cursor position with gradual falloff |
+| Edge bundling | Force-directed algorithm that groups nearby parallel edges for visual clarity |
+| Hub exclusion | Filtering out high-degree nodes to reveal hidden substructures |
+| Surprising connection | An edge between structurally distant entities — low neighborhood overlap, long alternate path |
+| Lasso selection | Freeform polygon drawn by dragging; all nodes inside the polygon are selected |
+| Deep linking | Encoding graph state (filters, zoom, selection) in the URL for sharing or bookmarking |
+| Investigation playbook | A guided multi-step analysis workflow with pre-defined actions and user checkpoints |
+| RAG | Retrieval-Augmented Generation — a pattern that retrieves relevant context before generating a response |
+| Graph RAG | A RAG variant using community detection to summarize graph neighborhoods as retrieval context |
+| Self-RAG | A RAG variant that evaluates its own output for groundedness and regenerates if quality is low |
+| CRAG | Corrective RAG — triggers corrective re-retrieval when initial results are insufficient |
+| Agentic RAG | A RAG variant using an agent loop to iteratively plan, retrieve, and evaluate |
+| HyDE | Hypothetical Document Embedding — generates a hypothetical answer to use as a retrieval query |
+| RAG of RAGs | A meta-RAG that routes to multiple sub-RAG patterns and aggregates their results |
+| Agent registry | A factory-pattern registry that instantiates agent types by name |
+| Loop Engineering | Iterative refinement cycles over graph analysis with convergence detection |
+| Graph Engineering | Structured graph construction, schema optimization, and health monitoring |
+| Harness Engineering | Controlled execution environments with sandboxing, rate limiting, and circuit breakers |
+| Memory Engineering | 5-tier memory system for agent state (short-term, working, long-term, episodic, semantic) |
+| Context Engineering | Optimal context assembly for LLM interactions within token budgets |
+| Prompt Engineering | Structured prompt construction with templates, chain-of-thought, and few-shot examples |
+| Graph-over-Loop | Pattern where graph traversal drives the iteration loop's control flow |
+| Loop-over-Graph | Pattern where iterative loops progressively refine graph understanding |

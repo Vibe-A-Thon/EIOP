@@ -4,6 +4,9 @@ const {randomUUID} = require('node:crypto');
 const {runTests} = require('@vscode/test-electron');
 
 async function main() {
+  // A parent shell may set this for VS Code's CLI shim. If it leaks into the
+  // Electron host, Code.exe runs as raw Node and rejects VS Code launch flags.
+  delete process.env.ELECTRON_RUN_AS_NODE;
   const runId = randomUUID();
   const profile = path.resolve(__dirname, '..', '.vscode-test', runId);
   const receipt = path.resolve(__dirname, '..', '..', '..', 'test-results', `extension-host-${runId}.json`);
@@ -12,6 +15,10 @@ async function main() {
   const options = {
     extensionDevelopmentPath: path.resolve(__dirname, '..'),
     extensionTestsPath: path.resolve(__dirname, 'suite'),
+    // Pin a stable VS Code build: the "latest" resolver can return a build
+    // whose CLI rejects the standard extension-host flags (observed exit 9
+    // with "bad option" for every launch argument on 1.140.0).
+    version: process.env.VSCODE_TEST_VERSION || '1.96.4',
     launchArgs: [
       '--disable-gpu', '--skip-welcome', '--disable-extensions',
       `--user-data-dir=${path.join(profile, 'user-data')}`,

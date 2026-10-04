@@ -1,0 +1,55 @@
+{
+  "files": [
+    {
+      "key": "NS-CHECKOUT-V2-2026",
+      "name": "Northstar Checkout Experience v2",
+      "last_modified": "2026-09-27T15:00:00Z",
+      "thumbnail_url": "https://figma.example.invalid/thumbnails/checkout-v2.png",
+      "version": "42"
+    }
+  ],
+  "pages": [
+    {
+      "file_key": "NS-CHECKOUT-V2-2026",
+      "id": "30:100",
+      "name": "Checkout Flow",
+      "type": "CANVAS"
+    },
+    {
+      "file_key": "NS-CHECKOUT-V2-2026",
+      "id": "30:200",
+      "name": "Risk Challenge States",
+      "type": "CANVAS"
+    }
+  ],
+  "components": [
+    {
+      "file_key": "NS-CHECKOUT-V2-2026",
+      "component_id": "30:110",
+      "name": "Order Summary Card",
+      "description": "Displays order total, item count, and applied discounts. Includes estimated delivery.",
+      "type": "COMPONENT"
+    },
+    {
+      "file_key": "NS-CHECKOUT-V2-2026",
+      "component_id": "30:120",
+      "name": "Payment Method Selector",
+      "description": "Card, wallet, and buy-now-pay-later payment options. Tokenized card display.",
+      "type": "COMPONENT"
+    },
+    {
+      "file_key": "NS-CHECKOUT-V2-2026",
+      "component_id": "30:210",
+      "name": "Risk Challenge Dialog",
+      "description": "3DS-style challenge dialog when risk score exceeds threshold. Timeout fallback messaging.",
+      "type": "COMPONENT"
+    },
+    {
+      "file_key": "NS-CHECKOUT-V2-2026",
+      "component_id": "30:220",
+      "name": "Order Confirmation",
+      "description": "Post-authorization confirmation with order ID, delivery estimate, and decision evidence summary.",
+      "type": "COMPONENT"
+    }
+  ]
+}

@@ -5,6 +5,7 @@ import json
 from eoip.graph.memory import MemoryGraphStore
 from eoip.models.provider import ModelResponse, ModelUnavailable
 from eoip.query.nl import interpret
+from eoip.query.nlq import NLQProcessor
 from fastapi.testclient import TestClient
 
 from apps.api.app import create_app
@@ -18,6 +19,14 @@ def _store() -> MemoryGraphStore:
             "canonical_id": "urn:eoip:work:item:jira:EOIP-1",
             "issue_key": "EOIP-1",
             "summary": "Trace impact",
+        },
+    )
+    store.upsert_vertex(
+        "WorkItem",
+        {
+            "canonical_id": "urn:eoip:work:item:jira:EOIP-2",
+            "issue_key": "EOIP-2",
+            "summary": "Unconnected item",
         },
     )
     return store
@@ -55,6 +64,22 @@ def test_impact_question_plans_impact_on_issue_key() -> None:
     assert result.interpreted_via == "rules"
 
 
+def test_neighborhood_question_plans_neighborhood() -> None:
+    result = interpret("show neighbors around EOIP-1")
+
+    assert result.plan is not None
+    assert result.plan.intent == "NEIGHBORHOOD"
+    assert result.plan.anchors == ["urn:eoip:work:item:jira:EOIP-1"]
+
+
+def test_lineage_question_plans_lineage() -> None:
+    result = interpret("show provenance and evidence for EOIP-1")
+
+    assert result.plan is not None
+    assert result.plan.intent == "LINEAGE"
+    assert result.plan.anchors == ["urn:eoip:work:item:jira:EOIP-1"]
+
+
 def test_path_question_plans_path_with_two_anchors() -> None:
     result = interpret("how is EOIP-1 connected to EOIP-2")
 
@@ -84,6 +109,53 @@ def test_unresolvable_question_requests_clarification(monkeypatch) -> None:
     assert result.clarification
     assert "issue key" in result.clarification
     assert result.interpreted_via == "fallback"
+
+
+def test_nlq_processor_routes_count_to_eql() -> None:
+    response = NLQProcessor(_store()).process("how many work items are in the graph?")
+
+    assert response.engine == "eql"
+    assert response.result["query"] == "COUNT"
+    assert response.result["target"] == "WorkItem"
+    assert response.result["count"] == 2
+    assert "WorkItem count: 2" in response.answer
+
+
+def test_nlq_processor_routes_why_to_query_operator() -> None:
+    store = _store()
+    issue = store.get_vertex_by_canonical_id("urn:eoip:work:item:jira:EOIP-1")
+    commit = store.upsert_vertex(
+        "Commit",
+        {
+            "canonical_id": "urn:eoip:code:commit:demo:def456",
+            "commit_sha": "def456",
+        },
+    )
+    store.upsert_edge("IMPLEMENTS", commit["vid"], issue["vid"], {"evidence_key": "ev2"})
+
+    response = NLQProcessor(store).process("why does EOIP-1 exist?")
+
+    assert response.engine == "operator"
+    assert response.result["total_reasons"] == 1
+    assert "Found 1 reason" in response.answer
+
+
+def test_nlq_processor_uses_search_fallback_for_graph_domain_phrase() -> None:
+    store = _store()
+    store.upsert_vertex(
+        "Service",
+        {
+            "canonical_id": "urn:eoip:service:billing",
+            "service_id": "billing",
+            "name": "billing subsystem",
+        },
+    )
+
+    response = NLQProcessor(store).process("which services does the billing subsystem touch?")
+
+    assert response.engine == "search_fallback"
+    assert response.result.nodes[0].id == "urn:eoip:service:billing"
+    assert "Found 1 matching graph entity" in response.answer
 
 
 def test_model_draft_used_when_rules_find_nothing(monkeypatch) -> None:
@@ -209,6 +281,8 @@ def test_nl_query_endpoint_interprets_and_executes() -> None:
     body = response.json()
     assert body["interpretation"]["plan"]["intent"] == "IMPACT"
     assert body["interpretation"]["interpreted_via"] == "rules"
+    assert body["engine"] == "query_plan"
+    assert "Impact analysis returned" in body["answer"]
     assert body["result"]["nodes"]
     rationale = body["result"]["meta"]["impact_rationale"]
     assert rationale["urn:eoip:code:commit:demo:abc123"]

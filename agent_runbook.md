@@ -32,6 +32,7 @@ before Python execution; do not install dependencies just to populate templates.
 | Python unit tests | `& .\.venv\Scripts\python.exe -X utf8 -m pytest -q tests\unit` | Existing configured venv required; writes caches |
 | Targeted temporal/recovery tests | `& .\.venv\Scripts\python.exe -X utf8 -m pytest -q tests\unit\test_graph_evolution.py tests\e2e\test_clean_recovery.py` | Existing venv; use only when relevant |
 | Full Python regression | `& .\.venv\Scripts\python.exe -X utf8 -m pytest -q --junitxml=test-results\coordination-regression.xml` | Explicit broader validation; creates/replaces this receipt |
+| Source-bound Python regression | `& .\.venv\Scripts\python.exe -X utf8 -m scripts.validate_with_evidence --project-root . --output test-results\audit-source-bound-validation.json --artifact test-results\audit-full-regression.xml -- .\.venv\Scripts\python.exe -X utf8 -m pytest -q --junitxml=test-results\audit-full-regression.xml` | Existing venv/Git; runs the explicit command, refuses stale artifacts or source/HEAD drift, creates XML and JSON receipts |
 | Python lint | `& .\.venv\Scripts\python.exe -m ruff check packages apps scripts tests` | Narrow to changed paths for small changes |
 | Web build | `npm --prefix apps\web run build` | Existing node_modules required; writes web build output |
 | Extension host tests | `npm --prefix apps\vscode-extension test` | Installed dev dependencies; may download/launch VS Code; approve network/runtime requirements first |
@@ -47,9 +48,24 @@ before Python execution; do not install dependencies just to populate templates.
 The actual tooling is defined in [pyproject.toml](pyproject.toml),
 [web package manifest](apps/web/package.json),
 [extension package manifest](apps/vscode-extension/package.json) and
-[Docker wrapper](scripts/docker.ps1). There is no configured repository CI workflow
-in `.github\workflows` at the observed snapshot; do not invent a CI-local script or
-claim CI passes. Recheck before implementing CI.
+[Docker wrapper](scripts/docker.ps1).
+[Validation evidence CI](.github/workflows/validation-evidence.yml) installs the
+existing development extras, runs scoped evidence-tooling lint and the full
+Python suite on Windows/Python 3.11, and retains receipts even on failure.
+Its presence is not a passing CI result; observe the published run separately.
+
+The [validation wrapper](scripts/validate_with_evidence.py) requires an explicit
+argument vector after `--`; it does not run a shell or deploy implicitly. Do not
+put credentials in command arguments, which are recorded. Environment values
+and child stdout/stderr are not stored in receipts. Source fingerprints omit the
+two KGR exclusions, secret/environment paths, runtime/dependency directories and
+declared output artifacts. Outputs cannot overwrite protected or Git-tracked
+source, including paths newly staged by the child command. Freshness requires a
+changed artifact state and a modification timestamp at/after command start.
+Dirty checkouts can be content-bound, not immutable revision-bound. Before/after
+snapshots cannot detect transient edits that are reverted during execution.
+Command success/fresh artifacts do not certify artifact semantics, requirement
+completeness, live integrations or independent QA acceptance.
 
 For deployment/backup/restore details consult the [local Docker guide](docs/docker-local.md).
 Do not run primary backup/restore/reset commands merely as a routine handoff step.

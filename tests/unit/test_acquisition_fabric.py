@@ -169,6 +169,81 @@ def test_controlled_crawler_rejects_private_dns_resolution() -> None:
         crawler.crawl()
 
 
+@pytest.mark.req("G2-EKAF-019")
+def test_controlled_crawler_enforces_rate_and_politeness_controls() -> None:
+    pages = {
+        "/docs": '<html><body><a href="/docs/setup">Setup</a></body></html>',
+        "/docs/setup": "<html><body>Setup</body></html>",
+    }
+    requests = []
+
+    def handler(request):
+        requests.append(str(request.url))
+        return httpx.Response(
+            200,
+            text=pages[request.url.path],
+            headers={"Content-Type": "text/html"},
+        )
+
+    now = [100.0]
+    sleeps: list[float] = []
+
+    def sleeper(seconds: float) -> None:
+        sleeps.append(seconds)
+        now[0] += seconds
+
+    scope = CrawlScope(
+        start_urls=["https://docs.example.test/docs"],
+        allowed_hosts=["docs.example.test"],
+        include_paths=["/docs"],
+        max_depth=1,
+        page_limit=2,
+        rate_limit_per_minute=1,
+        politeness_delay_ms=500,
+        max_concurrency=2,
+    )
+    crawler = ControlledWebCrawler(
+        "docs-prod",
+        scope,
+        client=httpx.Client(transport=httpx.MockTransport(handler)),
+        resolver=lambda _host: ["93.184.216.34"],
+        sleeper=sleeper,
+        clock=lambda: now[0],
+    )
+
+    events = crawler.crawl()
+
+    assert len(events) == 2
+    assert requests == [
+        "https://docs.example.test/docs",
+        "https://docs.example.test/docs/setup",
+    ]
+    assert sleeps and sleeps[0] == pytest.approx(60.0)
+    assert events[0].metadata["rate_limit_per_minute"] == 1
+    assert events[0].metadata["politeness_delay_ms"] == 500
+    assert events[0].metadata["max_concurrency"] == 2
+
+    polite_now = [200.0]
+    polite_sleeps: list[float] = []
+
+    def polite_sleep(seconds: float) -> None:
+        polite_sleeps.append(seconds)
+        polite_now[0] += seconds
+
+    polite_crawler = ControlledWebCrawler(
+        "docs-prod",
+        scope.model_copy(update={"rate_limit_per_minute": 60}),
+        client=httpx.Client(transport=httpx.MockTransport(handler)),
+        resolver=lambda _host: ["93.184.216.34"],
+        sleeper=polite_sleep,
+        clock=lambda: polite_now[0],
+    )
+
+    polite_crawler.crawl()
+
+    assert polite_sleeps[0] == pytest.approx(0.5)
+
+
 @pytest.mark.req("G2-EKAF-001", "G2-T0340", "G2-T0341")
 def test_generic_web_and_file_connectors_share_source_connector_semantics(tmp_path) -> None:
     docs = tmp_path / "docs"

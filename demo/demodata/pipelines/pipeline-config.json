@@ -1,0 +1,120 @@
+{
+  "pipeline_id": "northstar-commerce-pipeline",
+  "version": "2.0.0",
+  "description": "Automated multi-source ingestion pipeline for Northstar Commerce demo. Loads data from 12 source systems with validation gates between stages.",
+  "stages": [
+    {
+      "name": "meta-bootstrap",
+      "description": "Initialize meta graph with domains and ontology version",
+      "action": "bootstrap_meta_graph",
+      "required": true
+    },
+    {
+      "name": "jira-ingest",
+      "description": "Ingest Jira work items (SHOP project) with project hierarchy",
+      "action": "ingest_jira",
+      "source": "jira.json",
+      "connector_config": "config/mappings/jira-mvp.yaml",
+      "required": true
+    },
+    {
+      "name": "gitlab-ingest",
+      "description": "Ingest GitLab merge requests, pipelines, and deployments",
+      "action": "ingest_gitlab",
+      "source": "gitlab.json",
+      "required": true
+    },
+    {
+      "name": "servicenow-ingest",
+      "description": "Ingest ServiceNow incidents and change requests",
+      "action": "ingest_servicenow",
+      "source": "servicenow.json",
+      "required": true
+    },
+    {
+      "name": "confluence-ingest",
+      "description": "Ingest Confluence wiki pages for knowledge graph",
+      "action": "ingest_confluence",
+      "source": "confluence.json",
+      "required": true
+    },
+    {
+      "name": "figma-ingest",
+      "description": "Ingest Figma design files, pages, and components",
+      "action": "ingest_figma",
+      "source": "figma.json",
+      "required": false
+    },
+    {
+      "name": "code-graph-ingest",
+      "description": "Load code graph from JSON (code-as-JSON for code graph construction)",
+      "action": "load_code_graph",
+      "source": "code-graph.json",
+      "required": true
+    },
+    {
+      "name": "api-portal-ingest",
+      "description": "Ingest API service and endpoint definitions",
+      "action": "ingest_api_portal",
+      "source": "api-portal.json",
+      "required": true
+    },
+    {
+      "name": "observability-ingest",
+      "description": "Ingest Grafana dashboards, Datadog monitors, Kibana saved objects",
+      "action": "ingest_observability",
+      "source": "observability.json",
+      "required": false
+    },
+    {
+      "name": "qtest-ingest",
+      "description": "Ingest qTest test suites, cases, and runs",
+      "action": "ingest_qtest",
+      "source": "qtest.json",
+      "required": false
+    },
+    {
+      "name": "rally-ingest",
+      "description": "Ingest Rally epics, features, and user stories",
+      "action": "ingest_rally",
+      "source": "rally.json",
+      "required": false
+    },
+    {
+      "name": "crawler-ingest",
+      "description": "Ingest crawled developer portal and status pages",
+      "action": "ingest_crawler",
+      "source": "crawler-portal.json",
+      "required": false
+    },
+    {
+      "name": "enterprise-pack",
+      "description": "Load validated enterprise scenario pack with cross-domain graph",
+      "action": "load_scenario_pack",
+      "source": "Demo/demodata/enterprise/scenario-pack.json",
+      "required": true
+    },
+    {
+      "name": "domain-linking",
+      "description": "Create cross-domain BELONGS_TO_DOMAIN edges",
+      "action": "link_domains",
+      "required": true
+    },
+    {
+      "name": "validation",
+      "description": "Run graph validation to verify integrity",
+      "action": "validate",
+      "required": false
+    }
+  ],
+  "verification": {
+    "min_vertices": 80,
+    "min_edges": 60,
+    "required_labels": ["Project", "WorkItem", "Person", "Repository", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Incident", "ChangeRequest", "APIService", "Dashboard", "TestSuite", "DesignFile", "Document"],
+    "golden_path": {
+      "source": "urn:eoip:work:item:jira:EOIP-1",
+      "target": "urn:eoip:code:symbol:demo:service.py:compute_impact",
+      "max_depth": 6
+    }
+  }
+}

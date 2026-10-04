@@ -24,7 +24,15 @@ const SIZE_MODES = [
   {id: 'property', label: 'By property value'},
 ];
 
-export default function GraphToolbar({layout, onLayoutChange, sizeMode, onSizeModeChange, onFitAll, onToggleMinimap, onToggleFilters, onToggleEntityList, onExport}) {
+const COLOR_BLIND_MODES = [
+  {id: 'default', label: 'Default'},
+  {id: 'deuteranopia', label: 'Deuteranopia (red-green)'},
+  {id: 'tritanopia', label: 'Tritanopia (blue-yellow)'},
+  {id: 'high-contrast', label: 'High contrast'},
+];
+
+export default function GraphToolbar({layout, onLayoutChange, sizeMode, onSizeModeChange, onFitAll, onToggleMinimap, onToggleFilters, onToggleEntityList, onExport,
+  fisheyeEnabled, onToggleFisheye, colorBlindMode, onColorBlindChange, onToggleTableView, onToggleDeepLink, multiSelectionCount, onTogglePlaybooks, onToggleStyleRules, onToggleAIExplorer, onToggleSurprises}) {
   const [showSettings, setShowSettings] = useState(false);
 
   return <div className="kgr-graph-toolbar" role="toolbar" aria-label="Graph toolbar">
@@ -45,6 +53,20 @@ export default function GraphToolbar({layout, onLayoutChange, sizeMode, onSizeMo
     </div>
 
     <div className="toolbar-group">
+      <button className={`toolbar-button${fisheyeEnabled ? ' is-active' : ''}`} onClick={onToggleFisheye} title="Toggle fisheye distortion (Shift+F)"><Icon name="focus" size={14}/> Fisheye</button>
+      <button className="toolbar-button" onClick={onToggleTableView} title="Toggle table view (T)"><Icon name="database" size={14}/> Table</button>
+      <button className="toolbar-button" onClick={onToggleDeepLink} title="Copy link to this view"><Icon name="link" size={14}/> Share</button>
+      {multiSelectionCount > 0 && <span className="selection-count-badge">{multiSelectionCount} selected</span>}
+    </div>
+
+    <div className="toolbar-group">
+      <button className="toolbar-button" onClick={onToggleSurprises} title="Surprising connections"><Icon name="activity" size={14}/> Surprises</button>
+      <button className="toolbar-button" onClick={onTogglePlaybooks} title="Investigation playbooks"><Icon name="layers" size={14}/> Playbooks</button>
+      <button className="toolbar-button" onClick={onToggleStyleRules} title="Conditional styling rules"><Icon name="settings" size={14}/> Rules</button>
+      <button className="toolbar-button" onClick={onToggleAIExplorer} title="AI Explorer (A)"><Icon name="graph" size={14}/> AI</button>
+    </div>
+
+    <div className="toolbar-group">
       <button className="toolbar-button" onClick={onExport} title="Export graph"><Icon name="check" size={14}/> Export</button>
       <button className="toolbar-button" onClick={() => setShowSettings(s => !s)} title="Settings"><Icon name="settings" size={14}/></button>
     </div>
@@ -55,6 +77,13 @@ export default function GraphToolbar({layout, onLayoutChange, sizeMode, onSizeMo
         {SIZE_MODES.map(m => <label key={m.id}>
           <input type="radio" name="sizeMode" value={m.id} checked={(sizeMode || 'uniform') === m.id}
             onChange={() => onSizeModeChange && onSizeModeChange(m.id)}/> {m.label}
+        </label>)}
+      </div>
+      <h4>Accessibility</h4>
+      <div className="toolbar-radio-group">
+        {COLOR_BLIND_MODES.map(m => <label key={m.id}>
+          <input type="radio" name="colorBlind" value={m.id} checked={(colorBlindMode || 'default') === m.id}
+            onChange={() => onColorBlindChange && onColorBlindChange(m.id)}/> {m.label}
         </label>)}
       </div>
     </div>}
