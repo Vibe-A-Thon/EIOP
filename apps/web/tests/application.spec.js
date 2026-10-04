@@ -42,6 +42,56 @@ test('login, search, trace graph evidence, and administer persisted data', async
   await page.screenshot({path: 'test-results/explorer.png', fullPage: true});
   await page.getByRole('button', {name: 'Administration'}).click();
   await expect(page.getByRole('heading', {name: 'Ingestion jobs'})).toBeVisible();
+  await page.route('**/api/v1/connectors/catalog', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({connectors: [
+      {id: 'jira', name: 'Jira', type: 'api', capabilities: ['baseline', 'poll', 'webhook', 'replay']},
+      {id: 'web', name: 'Web Crawler', type: 'crawler', capabilities: ['baseline', 'poll', 'reconcile']},
+    ]}),
+  }));
+  await page.route('**/api/v1/sources', route => {
+    if (route.request().method() === 'POST') {
+      return route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({source_id: 'jira-prod', source_type: 'jira', name: 'Jira Prod', enabled: true}),
+      });
+    }
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([{
+        source_id: 'jira-prod',
+        source_type: 'jira',
+        name: 'Jira Prod',
+        enabled: true,
+        health: 'HEALTHY',
+        acquisition_modes: ['baseline', 'poll', 'replay'],
+        checkpoint: '2026-10-05T10:00:00Z',
+        capabilities: {baseline: true, polling: true, webhooks: true, discovery: true, reconciliation: false, replay: true},
+      }]),
+    });
+  });
+  await page.route('**/api/v1/sources/jira-prod/discover', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({source_id: 'jira-prod', status: 'COMPLETE', items: [{key: 'EOIP-1', type: 'issue'}]}),
+  }));
+  await page.route('**/api/v1/sources/jira-prod/dry-run', route => route.fulfill({
+    status: 202,
+    contentType: 'application/json',
+    body: JSON.stringify({job_id: 'job-dry-run', status: 'PENDING'}),
+  }));
+  await page.getByRole('tab', {name: 'Sources & jobs'}).click();
+  await page.getByRole('button', {name: 'Load source control'}).click();
+  await expect(page.getByRole('heading', {name: 'Registered sources'})).toBeVisible();
+  await expect(page.getByText('Jira Prod')).toBeVisible();
+  await expect(page.getByText('baseline, poll, replay')).toBeVisible();
+  await page.getByRole('button', {name: 'Discover'}).click();
+  await expect(page.getByRole('heading', {name: 'jira-prod'})).toBeVisible();
+  await expect(page.getByText('EOIP-1')).toBeVisible();
+  await page.getByRole('button', {name: 'Dry run'}).click();
   await page.getByRole('button', {name: 'Run validation'}).click();
   await expect(page.getByText(/Checked \d+ entities and \d+ relationships/)).toBeVisible();
   await page.getByRole('tab', {name: 'Quality & ontology'}).click();

@@ -113,7 +113,104 @@
       ],
       "version": "8.12.0",
       "updated_at": "2026-09-30T10:00:00.000Z"
+    },
+    {
+      "id": "kibana-dash-pay-004",
+      "type": "dashboard",
+      "attributes": {
+        "title": "Settlement Processing Logs",
+        "description": "Real-time settlement batch processing status, reconciliation results, and payout timeline monitoring",
+        "hits": 0,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        },
+        "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":0,\"y\":0,\"w\":24,\"h\":12},\"title\":\"Settlement Batch Status\",\"type\":\"visualization\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":24,\"y\":0,\"w\":24,\"h\":12},\"title\":\"Reconciliation Errors\",\"type\":\"visualization\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":0,\"y\":12,\"w\":24,\"h\":12},\"title\":\"Payout Timeline\",\"type\":\"visualization\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":24,\"y\":12,\"w\":24,\"h\":12},\"title\":\"Batch Duration Histogram\",\"type\":\"visualization\"}]",
+        "timeRestore": true,
+        "timeTo": "now",
+        "timeFrom": "now-24h",
+        "refreshInterval": {
+          "pause": false,
+          "value": 30000
+        }
+      },
+      "references": [
+        {"id": "kibana-idx-settlement", "name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern"}
+      ],
+      "version": "8.12.0",
+      "updated_at": "2026-10-01T09:00:00.000Z"
+    },
+    {
+      "id": "kibana-dash-pay-005",
+      "type": "dashboard",
+      "attributes": {
+        "title": "Webhook Delivery Monitor",
+        "description": "Webhook dispatch success rates, delivery latency, retry counts, and DLQ depth",
+        "hits": 0,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        },
+        "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":0,\"y\":0,\"w\":24,\"h\":12},\"title\":\"Delivery Success Rate\",\"type\":\"visualization\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":24,\"y\":0,\"w\":24,\"h\":12},\"title\":\"Latency P50/P95/P99\",\"type\":\"visualization\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":0,\"y\":12,\"w\":16,\"h\":12},\"title\":\"Retry Distribution\",\"type\":\"visualization\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":16,\"y\":12,\"w\":16,\"h\":12},\"title\":\"DLQ Depth\",\"type\":\"visualization\"},{\"panelIndex\":\"5\",\"gridData\":{\"x\":32,\"y\":12,\"w\":16,\"h\":12},\"title\":\"Top Failing Merchants\",\"type\":\"visualization\"}]",
+        "timeRestore": true,
+        "timeTo": "now",
+        "timeFrom": "now-24h",
+        "refreshInterval": {
+          "pause": false,
+          "value": 30000
+        }
+      },
+      "references": [
+        {"id": "idx-payment-logs", "name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern"}
+      ],
+      "version": "8.12.0",
+      "updated_at": "2026-10-01T10:00:00.000Z"
+    },
+    {
+      "id": "kibana-idx-settlement",
+      "type": "index-pattern",
+      "attributes": {
+        "title": "settlement-logs-*",
+        "timeFieldName": "@timestamp",
+        "fields": "[{\"name\":\"@timestamp\",\"type\":\"date\"},{\"name\":\"batch_id\",\"type\":\"string\"},{\"name\":\"status\",\"type\":\"string\"},{\"name\":\"merchant_id\",\"type\":\"string\"},{\"name\":\"amount\",\"type\":\"float\"},{\"name\":\"currency\",\"type\":\"string\"},{\"name\":\"reconciliation_status\",\"type\":\"string\"},{\"name\":\"error_code\",\"type\":\"string\"},{\"name\":\"duration_ms\",\"type\":\"float\"},{\"name\":\"payout_date\",\"type\":\"date\"}]"
+      },
+      "version": "8.12.0",
+      "updated_at": "2026-10-01T09:00:00.000Z"
+    },
+    {
+      "id": "kibana-search-settlement-fail",
+      "type": "search",
+      "attributes": {
+        "title": "Settlement Batch Failures",
+        "description": "Saved search for settlement batch failures. Filters settlement-logs-* index for failed settlement batches.",
+        "columns": ["batch_id", "merchant_id", "error_code", "amount", "@timestamp"],
+        "sort": [["@timestamp", "desc"]],
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"status:FAILED\",\"language\":\"kuery\"},\"filter\":[],\"indexRefName\":\"kibanaSavedObjectMeta.searchSourceJSON.index\"}"
+        }
+      },
+      "references": [
+        {"id": "kibana-idx-settlement", "name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern"}
+      ],
+      "version": "8.12.0",
+      "updated_at": "2026-10-01T11:00:00.000Z"
+    },
+    {
+      "id": "kibana-search-webhook-errors",
+      "type": "search",
+      "attributes": {
+        "title": "Webhook Delivery Errors",
+        "description": "Saved search for webhook delivery errors. Filters payment-logs-* index for failed webhook delivery attempts.",
+        "columns": ["merchant_id", "event_type", "http_status", "error", "retry_count", "@timestamp"],
+        "sort": [["@timestamp", "desc"]],
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"service:webhook-dispatcher AND level:ERROR\",\"language\":\"kuery\"},\"filter\":[],\"indexRefName\":\"kibanaSavedObjectMeta.searchSourceJSON.index\"}"
+        }
+      },
+      "references": [
+        {"id": "idx-payment-logs", "name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern"}
+      ],
+      "version": "8.12.0",
+      "updated_at": "2026-10-01T11:30:00.000Z"
     }
   ],
-  "total": 6
+  "total": 11
 }

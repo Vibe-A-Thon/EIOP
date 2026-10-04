@@ -43,6 +43,34 @@
       ]
     },
     {
+      "id": "kibana-dash-frd-004",
+      "type": "dashboard",
+      "version": "WzE4LDNd",
+      "updated_at": "2026-10-04T09:00:00Z",
+      "attributes": {
+        "title": "ML Model Performance Logs",
+        "description": "Model inference latency, prediction distribution, false positive tracking, and model version comparison",
+        "panelsJSON": "[{\"title\":\"Inference Latency Histogram\",\"type\":\"histogram\"},{\"title\":\"Prediction Score Distribution\",\"type\":\"histogram\"},{\"title\":\"False Positive Rate Timeseries\",\"type\":\"tsvb\"},{\"title\":\"Model Version Comparison\",\"type\":\"bar\"}]"
+      },
+      "references": [
+        {"id": "fraud-logs-idx", "type": "index-pattern"}
+      ]
+    },
+    {
+      "id": "kibana-dash-frd-005",
+      "type": "dashboard",
+      "version": "WzIwLDNd",
+      "updated_at": "2026-10-04T09:30:00Z",
+      "attributes": {
+        "title": "AML Alert Monitor",
+        "description": "AML rule engine alert volume, alert severity distribution, SAR filing status, and analyst case queue depth",
+        "panelsJSON": "[{\"title\":\"Alert Volume Timeseries\",\"type\":\"tsvb\"},{\"title\":\"Severity Pie Chart\",\"type\":\"pie\"},{\"title\":\"SAR Filing Pipeline\",\"type\":\"bar\"},{\"title\":\"Case Queue Depth\",\"type\":\"metric\"}]"
+      },
+      "references": [
+        {"id": "kibana-idx-aml", "type": "index-pattern"}
+      ]
+    },
+    {
       "id": "fraud-logs-idx",
       "type": "index-pattern",
       "version": "WzQsM10d",
@@ -62,6 +90,17 @@
         "title": "txn-monitor-*",
         "timeFieldName": "@timestamp",
         "fields": "[{\"name\":\"velocity_count\",\"type\":\"integer\"},{\"name\":\"dimension\",\"type\":\"keyword\"},{\"name\":\"window_size\",\"type\":\"keyword\"},{\"name\":\"anomaly_score\",\"type\":\"float\"},{\"name\":\"alert_severity\",\"type\":\"keyword\"},{\"name\":\"consumer_lag\",\"type\":\"long\"}]"
+      }
+    },
+    {
+      "id": "kibana-idx-aml",
+      "type": "index-pattern",
+      "version": "WzIyLDNd",
+      "updated_at": "2026-10-04T09:00:00Z",
+      "attributes": {
+        "title": "aml-logs-*",
+        "timeFieldName": "@timestamp",
+        "fields": "[{\"name\":\"timestamp\",\"type\":\"date\"},{\"name\":\"rule_id\",\"type\":\"keyword\"},{\"name\":\"alert_severity\",\"type\":\"keyword\"},{\"name\":\"account_id\",\"type\":\"keyword\"},{\"name\":\"transaction_ids\",\"type\":\"keyword\"},{\"name\":\"pattern_type\",\"type\":\"keyword\"},{\"name\":\"sar_status\",\"type\":\"keyword\"},{\"name\":\"analyst_assigned\",\"type\":\"keyword\"}]"
       }
     },
     {
@@ -89,7 +128,33 @@
           "searchSourceJSON": "{\"query\":{\"bool\":{\"must\":[{\"term\":{\"alert_type\":\"aml\"}},{\"range\":{\"detection_confidence\":{\"gte\":0.7}}}]}},\"index\":\"fraud-logs-idx\"}"
         }
       }
+    },
+    {
+      "id": "model-drift-indicators",
+      "type": "search",
+      "version": "WzI1LDNd",
+      "updated_at": "2026-10-04T10:00:00Z",
+      "attributes": {
+        "title": "Model Drift Indicators",
+        "description": "Saved search for detecting model drift by tracking prediction score distribution changes, feature importance shifts, and accuracy degradation over time.",
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"bool\":{\"must\":[{\"range\":{\"prediction_drift_score\":{\"gte\":0.1}}},{\"term\":{\"model_status\":\"active\"}}]}},\"index\":\"fraud-logs-idx\"}"
+        }
+      }
+    },
+    {
+      "id": "aml-high-severity-alerts",
+      "type": "search",
+      "version": "WzI2LDNd",
+      "updated_at": "2026-10-04T10:00:00Z",
+      "attributes": {
+        "title": "AML High Severity Alerts",
+        "description": "Saved search for high and critical severity AML alerts requiring immediate analyst review and potential SAR filing.",
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"bool\":{\"must\":[{\"terms\":{\"alert_severity\":[\"high\",\"critical\"]}},{\"term\":{\"sar_status\":\"pending\"}}]}},\"index\":\"kibana-idx-aml\"}"
+        }
+      }
     }
   ],
-  "total": 7
+  "total": 12
 }

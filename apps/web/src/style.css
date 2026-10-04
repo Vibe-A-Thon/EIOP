@@ -356,6 +356,16 @@ tr:last-child td { border-bottom: 0; }
 .table-primary { display: flex; align-items: center; gap: 8px; min-width: 130px; }
 .table-action { border: 0; background: transparent; color: var(--violet); font-weight: 700; cursor: pointer; padding: 5px 0; }
 .table-action:hover { text-decoration: underline; }
+.table-action.danger { color: var(--coral); }
+.table-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.table-footer { display: flex; justify-content: flex-end; margin-top: 10px; }
+.connector-catalog-strip { display: flex; gap: 7px; overflow-x: auto; padding: 2px 0 12px; }
+.connector-catalog-strip button { min-width: 150px; display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 2px 7px; align-items: center; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; color: #516078; background: #fff; text-align: left; }
+.connector-catalog-strip button.active { border-color: #cfc5ff; color: var(--violet); background: var(--violet-soft); }
+.connector-catalog-strip small { grid-column: 2; overflow: hidden; color: var(--muted); font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.source-form { display: grid; grid-template-columns: repeat(5, minmax(150px, 1fr)) auto; gap: 10px; align-items: end; }
+.source-form label { display: grid; gap: 5px; min-width: 0; }
+.source-form .primary-button { min-height: 43px; white-space: nowrap; }
 .validation-banner { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 9px; }.validation-banner.success { color: #0b8564; background: #eaf9f4; }.validation-banner.danger { color: #bc404a; background: #fff0f1; }.validation-banner > div { display: grid; }.validation-banner strong { font-size: 10px; }.validation-banner small { opacity: .75; font-size: 8px; }
 .quality-grid { display: grid; grid-template-columns: 1fr 1fr .7fr; gap: 8px; margin: 12px 0; }
 .quality-ring-card { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 9px; }.quality-ring { width: 48px; height: 48px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 50%; background: conic-gradient(var(--violet) var(--score), #edf0f4 0); position: relative; }.quality-ring.mint { background: conic-gradient(var(--mint) var(--score), #edf0f4 0); }.quality-ring::after { content: ''; position: absolute; inset: 5px; border-radius: 50%; background: #fff; }.quality-ring span { z-index: 1; font-size: 9px; font-weight: 700; }.quality-ring-card > div:last-child { display: grid; }.quality-ring-card strong { font-size: 9px; }.quality-ring-card small { color: #929cad; font-size: 7px; }
@@ -614,7 +624,7 @@ tr:last-child td { border-bottom: 0; }
   .lens-bar { align-items: stretch; flex-direction: column; }.lens-bar > div { overflow-x: auto; }.context-chip { max-width: none; }
   .panel-heading { flex-direction: column; }.panel-tools { width: 100%; justify-content: space-between; flex-wrap: wrap; }
   .entity-list { grid-template-columns: 1fr; }.lens-layout, .lens-layout.two-column { grid-template-columns: 1fr; }.path-form { grid-template-columns: 1fr; }.path-arrow { height: 18px; rotate: 90deg; }
-  .admin-summary { align-items: stretch; flex-direction: column; }.admin-summary-actions { flex-wrap: wrap; }.admin-tabs { overflow-x: auto; }.admin-tabs button { white-space: nowrap; }.admin-grid { grid-template-columns: 1fr; }.span-2, .span-3 { grid-column: auto; }.connector-grid { grid-template-columns: 1fr; }.sync-options { grid-template-columns: 1fr; }.inventory-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }.quality-grid { grid-template-columns: 1fr; }
+  .admin-summary { align-items: stretch; flex-direction: column; }.admin-summary-actions { flex-wrap: wrap; }.admin-tabs { overflow-x: auto; }.admin-tabs button { white-space: nowrap; }.admin-grid { grid-template-columns: 1fr; }.span-2, .span-3 { grid-column: auto; }.connector-grid { grid-template-columns: 1fr; }.sync-options, .source-form { grid-template-columns: 1fr; }.inventory-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }.quality-grid { grid-template-columns: 1fr; }
   .guided-demo-hero { align-items: stretch; flex-direction: column; padding: 20px; }.guided-demo-grid { grid-template-columns: 1fr; }
   .search-domain-grid, .architecture-grid { grid-template-columns: 1fr; }.domain-map { grid-template-columns: repeat(2, minmax(0,1fr)); }.relationship-bars { grid-template-columns: 1fr; }.lens-catalog { grid-template-columns: repeat(2, minmax(0,1fr)); }.lens-library { padding: 18px; }
   .xai-grid { grid-template-columns: 1fr; }

@@ -35,6 +35,23 @@
       ],
       "created_at": "2026-08-10T09:00:00.000Z",
       "modified_at": "2026-09-30T10:00:00.000Z"
+    },
+    {
+      "id": "dd-dash-pay-003",
+      "title": "Merchant Integration Health",
+      "description": "Overall merchant integration health: webhook delivery, API usage, error rates",
+      "url": "/dashboard/dd-dash-pay-003/merchant-integration-health",
+      "layout_type": "ordered",
+      "is_read_only": false,
+      "author_handle": "lwei@mfs.com",
+      "widgets": [
+        {"definition": {"title": "Webhook Success Rate", "type": "query_value"}},
+        {"definition": {"title": "Top Merchants by Volume", "type": "toplist"}},
+        {"definition": {"title": "API Error Rate by Endpoint", "type": "timeseries"}},
+        {"definition": {"title": "Integration Latency Heatmap", "type": "heatmap"}}
+      ],
+      "created_at": "2026-10-01T09:00:00.000Z",
+      "modified_at": "2026-10-01T09:00:00.000Z"
     }
   ],
   "monitors": [
@@ -110,6 +127,61 @@
       "created": "2026-09-01T09:00:00.000Z",
       "modified": "2026-09-30T14:00:00.000Z",
       "creator": {"handle": "schen@mfs.com", "name": "Sarah Chen"}
+    },
+    {
+      "id": 550005,
+      "name": "Webhook Delivery Timeout Rate",
+      "type": "metric alert",
+      "query": "sum(last_5m):sum:webhook.delivery.timeout{env:prod,namespace:mfs-prod}.as_rate() / sum:webhook.delivery.total{env:prod,namespace:mfs-prod}.as_rate() * 100 > 5",
+      "message": "Webhook delivery timeout rate exceeds 5% in mfs-prod. Current: {{value}}%.\n\nCheck merchant endpoint availability and webhook dispatcher timeout settings.\n\n@slack-mfs-payment-alerts @lwei@mfs.com",
+      "tags": ["service:webhook-dispatcher", "env:prod", "team:payment-services"],
+      "priority": 2,
+      "options": {
+        "thresholds": {"critical": 5.0, "warning": 2.0},
+        "notify_no_data": true,
+        "renotify_interval": 300,
+        "evaluation_delay": 60
+      },
+      "overall_state": "OK",
+      "created": "2026-10-01T09:00:00.000Z",
+      "modified": "2026-10-01T09:00:00.000Z",
+      "creator": {"handle": "lwei@mfs.com", "name": "Li Wei"}
+    },
+    {
+      "id": 550006,
+      "name": "Analytics Pipeline Stale Data",
+      "type": "metric alert",
+      "query": "avg(last_5m):max:analytics.pipeline.lag{env:prod,namespace:mfs-prod} > 300",
+      "message": "Analytics pipeline data is stale. Lag exceeds 300 seconds in mfs-prod. Current: {{value}}s.\n\nCheck Kafka consumer group mfs-analytics-agg and aggregation service health.\n\n@slack-mfs-platform-alerts @schen@mfs.com",
+      "tags": ["service:analytics-pipeline", "env:prod", "team:platform-engineering"],
+      "priority": 2,
+      "options": {
+        "thresholds": {"critical": 300},
+        "notify_no_data": true,
+        "renotify_interval": 600
+      },
+      "overall_state": "OK",
+      "created": "2026-10-01T09:30:00.000Z",
+      "modified": "2026-10-01T09:30:00.000Z",
+      "creator": {"handle": "schen@mfs.com", "name": "Sarah Chen"}
+    },
+    {
+      "id": 550007,
+      "name": "Merchant API Rate Limit Hits",
+      "type": "metric alert",
+      "query": "sum(last_1m):sum:api.ratelimit.hits{env:prod,namespace:mfs-prod} by {merchant_id} > 50",
+      "message": "Merchant {{merchant_id.name}} is hitting API rate limits. Current: {{value}} hits/min.\n\nReview merchant integration configuration and consider adjusting rate limit thresholds.\n\n@slack-mfs-payment-alerts @mrivera@mfs.com",
+      "tags": ["service:mfs-payment-gateway", "env:prod", "team:payment-services"],
+      "priority": 3,
+      "options": {
+        "thresholds": {"warning": 50},
+        "notify_no_data": false,
+        "renotify_interval": 900
+      },
+      "overall_state": "OK",
+      "created": "2026-10-01T10:00:00.000Z",
+      "modified": "2026-10-01T10:00:00.000Z",
+      "creator": {"handle": "mrivera@mfs.com", "name": "Maria Rivera"}
     }
   ]
 }

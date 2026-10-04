@@ -37,6 +37,24 @@
       "type": "CANVAS",
       "children_count": 11,
       "description": "Settlement dashboard showing batch status, reconciliation results, and settlement file download. References PAY-301 batch processor and PAY-302 reconciliation. Designed by Elena Torres (etorres)."
+    },
+    {
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "id": "page-pay-004",
+      "name": "Webhook Configuration UI",
+      "node_id": "4:1",
+      "type": "CANVAS",
+      "children_count": 8,
+      "description": "Merchant webhook registration and management interface with URL configuration, event type selection, and delivery log viewer"
+    },
+    {
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "id": "page-pay-005",
+      "name": "Analytics Dashboard Design",
+      "node_id": "5:1",
+      "type": "CANVAS",
+      "children_count": 12,
+      "description": "Real-time payment analytics dashboard with transaction volume charts, success rate gauges, settlement timeline, and merchant performance comparison"
     }
   ],
   "components": [
@@ -79,6 +97,36 @@
       "containing_frame": {"name": "Checkout Flow"},
       "created_at": "2026-09-05T11:00:00.000Z",
       "updated_at": "2026-09-27T09:00:00.000Z"
+    },
+    {
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "component_id": "comp-pay-005",
+      "name": "WebhookConfigPanel",
+      "node_id": "205:1",
+      "description": "Webhook URL configuration panel with endpoint registration, event type toggles, and test delivery button",
+      "containing_frame": {"name": "Webhook Configuration UI"},
+      "created_at": "2026-10-01T09:00:00.000Z",
+      "updated_at": "2026-10-01T09:00:00.000Z"
+    },
+    {
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "component_id": "comp-pay-006",
+      "name": "AnalyticsChart",
+      "node_id": "206:1",
+      "description": "Reusable analytics chart component supporting line, bar, gauge, and heatmap visualizations",
+      "containing_frame": {"name": "Analytics Dashboard Design"},
+      "created_at": "2026-10-01T09:30:00.000Z",
+      "updated_at": "2026-10-01T09:30:00.000Z"
+    },
+    {
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "component_id": "comp-pay-007",
+      "name": "MerchantPerformanceCard",
+      "node_id": "207:1",
+      "description": "Merchant performance summary card showing transaction volume, success rate, and webhook delivery stats",
+      "containing_frame": {"name": "Analytics Dashboard Design"},
+      "created_at": "2026-10-01T10:00:00.000Z",
+      "updated_at": "2026-10-01T10:00:00.000Z"
     }
   ]
 }

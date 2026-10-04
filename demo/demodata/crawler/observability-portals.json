@@ -139,5 +139,164 @@
       "https://wiki.mfs.internal/spaces/ENG/pages/incident-response",
       "https://status.mfs.internal"
     ]
+  },
+  {
+    "url": "https://fortuna.mfs.internal/dashboard/mfs-platform",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Fortuna - MFS Platform Reliability Dashboard",
+    "headings": [
+      "MFS Platform Reliability Dashboard",
+      "Service SLOs",
+      "Error Budgets",
+      "Incident Frequency",
+      "Change Failure Rate",
+      "MTTR by Severity"
+    ],
+    "text": "Fortuna - MFS Platform Reliability Dashboard. Platform-wide reliability overview for all Meridian Financial Services production services. Dashboard owner: Marcus Thompson (Platform Engineering). Data sources: Prometheus (prometheus.mfs.internal:9090), PagerDuty (mfs.pagerduty.com), GitLab CI/CD (gitlab.mfs.internal). Service SLOs. mfs-payment-gateway: Availability SLO 99.95% (current 30-day: 99.97%), latency SLO p99 < 200ms (current: 168ms). Status: within budget. mfs-fraud-engine: Availability SLO 99.99% (current 30-day: 99.995%), latency SLO p99 < 50ms (current: 42ms). Status: within budget. mfs-kyc-engine: Availability SLO 99.9% (current 30-day: 99.94%), latency SLO p99 < 500ms (current: 387ms). Status: within budget. mfs-webhook-api: Delivery success SLO 99.5% (current 30-day: 99.72%). Status: within budget. mfs-case-engine: Availability SLO 99.9% (current 30-day: 99.98%). Status: within budget. Error Budgets Remaining This Quarter. mfs-payment-gateway: 72% error budget remaining (consumed 28% from INC0080101 payment latency incident on 2026-10-01). mfs-fraud-engine: 95% error budget remaining (minimal consumption). mfs-kyc-engine: 61% error budget remaining (consumed by two brief degradation events in September). mfs-webhook-api: 84% error budget remaining. mfs-case-engine: 93% error budget remaining. Error budget policy: when budget falls below 25%, feature freeze enforced until budget recovers. Below 10% triggers mandatory reliability sprint. Incident Frequency Trending. Last 30 days: 4 total incidents (3 payments, 1 fraud). Last 90 days: 9 total incidents. Trend: declining (12 incidents in previous quarter). Incidents by severity: P1 (1), P2 (2), P3 (6) in last 90 days. Most common root cause category: dependency timeout (4 of 9). Change Failure Rate. mfs-payment-gateway: 2.3% (1 failure in 43 deployments this quarter). mfs-fraud-engine: 0% (0 failures in 28 deployments). mfs-kyc-engine: 3.1% (1 failure in 32 deployments). Platform average: 1.8%. Industry benchmark target: < 5%. All change failures were caught in canary phase before full production rollout. MTTR by Severity Level. P1 (Critical): Mean Time To Resolve 47 minutes (target: < 60 minutes). P2 (High): MTTR 2.3 hours (target: < 4 hours). P3 (Medium): MTTR 8.1 hours (target: < 24 hours). P4 (Low): MTTR 3.2 days (target: < 5 business days). MTTR trending downward across all severity levels compared to previous quarter.",
+    "links": [
+      "https://fortuna.mfs.internal/dashboard/risk-scoring",
+      "https://fortuna.mfs.internal/slo/definitions",
+      "https://grafana.mfs.internal/d/cluster-overview",
+      "https://status.mfs.internal"
+    ]
+  },
+  {
+    "url": "https://fortuna.mfs.internal/slo/definitions",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Fortuna - SLO Definitions & Targets",
+    "headings": [
+      "SLO Definitions & Targets",
+      "Payment Gateway SLOs",
+      "Fraud Engine SLOs",
+      "Webhook API SLOs",
+      "KYC Engine SLOs",
+      "Burn Rate Alerting",
+      "Error Budget Policies"
+    ],
+    "text": "Fortuna - SLO Definitions & Targets. Comprehensive SLO definitions for all Meridian Financial Services production services. Owner: Marcus Thompson (Platform Engineering). Approved by: David Kim (VP Engineering). Last reviewed: 2026-09-01. Payment Gateway SLOs. Service: mfs-payment-gateway on mfs-pay-pod-01. Availability: 99.95% measured as successful responses (HTTP 2xx + 3xx) divided by total requests over a 30-day rolling window. Allowed downtime: 21.6 minutes per month. Latency: p99 < 200ms measured by histogram_quantile on payment processing endpoints. p95 < 150ms. p50 < 80ms. Error rate: < 0.1% measured as HTTP 5xx responses divided by total responses. Excludes client errors (4xx). Throughput: sustained 5,000 transactions per minute capacity. Fraud Engine SLOs. Service: mfs-fraud-engine on mfs-fraud-pod-01. Availability: 99.99% (higher than payment gateway because degraded fraud scoring forces all transactions to manual review). Allowed downtime: 4.3 minutes per month. Inference latency: p99 < 50ms for model prediction endpoint. End-to-end scoring latency p99 < 150ms (includes feature extraction + ML inference + rule evaluation). False positive rate: < 2% of legitimate transactions incorrectly flagged as fraudulent. Measured weekly against manual review outcomes. Model accuracy: F1 score >= 0.94 for production model. Monitored via MLflow at mlflow.mfs.internal. Webhook API SLOs. Service: mfs-webhook-api on mfs-webhook-pod-01. Delivery success rate: 99.5% measured as successfully delivered webhooks (HTTP 2xx from merchant endpoint) divided by total delivery attempts (after all retries). Delivery latency: p99 < 500ms measured from event occurrence to first delivery attempt. Retry policy: exponential backoff with maximum 5 attempts over 12 hours. KYC Engine SLOs. Service: mfs-kyc-engine on mfs-kyc-pod-01. Availability: 99.9%. Allowed downtime: 43.2 minutes per month. Verification time: < 30 seconds from document submission to verification result. Sanctions screening latency: p99 < 2 seconds (includes external list queries). Document OCR accuracy: > 98% for machine-readable zones. Burn Rate Alerting. Burn rate alerts fire when the error budget is being consumed faster than the allowed pace. Fast burn: 14.4x burn rate over 1 hour (consumes 2% of monthly budget in 1 hour). Alert severity: P1, pages on-call immediately. Slow burn: 6x burn rate over 6 hours (consumes 5% of monthly budget in 6 hours). Alert severity: P2, notifies on-call via Slack. Sustained burn: 3x burn rate over 24 hours. Alert severity: P3, creates a ticket for next business day. Alert routing: Prometheus alerting rules -> AlertManager at alerts.mfs.internal -> PagerDuty integration. Error Budget Policies. 100-75% budget remaining: normal operations, feature development continues. 75-50% budget remaining: increased monitoring, post-incident reviews required for any new incidents. 50-25% budget remaining: reliability improvements prioritized over new features. On-call staffing increased. 25-10% budget remaining: feature freeze. All engineering effort directed at reliability improvements. Only critical security patches and reliability fixes deployed. Below 10%: mandatory reliability sprint. No deployments except reliability fixes. Escalation to VP Engineering (David Kim). Architecture Review Board convened.",
+    "links": [
+      "https://fortuna.mfs.internal/dashboard/mfs-platform",
+      "https://fortuna.mfs.internal/dashboard/risk-scoring",
+      "https://alerts.mfs.internal/schedules",
+      "https://grafana.mfs.internal/d/payment-gateway-slo"
+    ]
+  },
+  {
+    "url": "https://kibana.mfs.internal/app/discover#/fraud-logs",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Kibana - Fraud Detection Log Explorer",
+    "headings": [
+      "Fraud Detection Log Explorer",
+      "Index Pattern",
+      "Common Fields",
+      "Saved Queries",
+      "High-Risk Transactions",
+      "Model Timeout Errors",
+      "False Positive Review",
+      "Log Volume"
+    ],
+    "text": "Kibana - Fraud Detection Log Explorer. Elasticsearch-based log analysis for fraud detection pipeline logs. Cluster: es-cluster.mfs.internal. Owner: Fraud and Risk squad (Priya Natarajan). Index Pattern. Index pattern: fraud-logs-*. Index rotation: daily (fraud-logs-YYYY.MM.DD). Retention: 30 days hot (SSD), 90 days warm (HDD), 365 days cold (S3 archive). Shard configuration: 3 primary shards, 1 replica per index. Average daily index size: 4.2 GB. Common Fields. @timestamp (datetime): log event timestamp. service (keyword): originating service, primarily 'mfs-fraud-engine'. level (keyword): log level (DEBUG, INFO, WARNING, ERROR). transaction_id (keyword): reference to payment transaction being scored. fraud_score (float): computed fraud score (0.0-1.0). model_version (keyword): ML model version used for scoring (e.g. 'fraud-xgb-v4.2'). decision (keyword): scoring decision (APPROVE, REVIEW, DECLINE). latency_ms (integer): end-to-end scoring latency in milliseconds. rule_ids (keyword array): AML/fraud rules triggered during evaluation. customer_id (keyword): customer identifier. correlation_id (keyword): distributed trace correlation identifier. Saved Queries. High-Risk Transactions. Query: fraud_score > 0.9 AND decision:DECLINE. Description: Transactions with very high fraud scores that were automatically declined. Typical volume: 40-60 per day. Fields displayed: @timestamp, transaction_id, fraud_score, model_version, customer_id, rule_ids, latency_ms. Use case: Review automatic declines to validate model accuracy and identify false positives. Dashboard link: grafana.mfs.internal/d/fraud-engine-slo. Model Timeout Errors. Query: service:fraud-scoring AND level:ERROR AND message:timeout. Description: Fraud scoring requests that exceeded the timeout threshold (200ms). Fields displayed: @timestamp, transaction_id, latency_ms, model_version, message, correlation_id. Typical volume: 2-5 per day during normal operations. Spike above 20 per hour triggers PagerDuty alert to fraud-oncall. Root causes: model inference latency spike, Redis velocity check delay, database connection pool saturation on pghost-prod-02.mfs.internal. False Positive Review. Query: decision:DECLINE AND manual_review_result:LEGITIMATE. Description: Transactions that were declined by the fraud engine but subsequently confirmed as legitimate by a human analyst. Fields displayed: @timestamp, transaction_id, fraud_score, model_version, decision, manual_review_result, reviewer_id, rule_ids. Use case: Model improvement feedback loop. False positives are fed back into the weekly retraining pipeline. Current false positive rate: 1.8% (target: < 2%). Tracked in Fortuna dashboard at fortuna.mfs.internal/dashboard/risk-scoring. Log Volume. Daily log volume for fraud-logs-* index: approximately 1.2M events per day. By level: INFO 88%, WARNING 8%, ERROR 0.5%, DEBUG 3.5%. Peak hours: 10:00-14:00 UTC and 18:00-22:00 UTC (aligned with transaction volume peaks).",
+    "links": [
+      "https://kibana.mfs.internal/app/discover",
+      "https://grafana.mfs.internal/d/fraud-engine-slo",
+      "https://fortuna.mfs.internal/dashboard/risk-scoring",
+      "https://wiki.mfs.internal/spaces/ENG/pages/fraud-system-docs"
+    ]
+  },
+  {
+    "url": "https://grafana.mfs.internal/d/cluster-overview",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Grafana - OpenShift Cluster Overview",
+    "headings": [
+      "OpenShift Cluster Overview",
+      "Cluster Details",
+      "Namespace Summary",
+      "Node Utilization",
+      "Persistent Volume Utilization",
+      "Network I/O",
+      "Pod Restart Frequency"
+    ],
+    "text": "Grafana - OpenShift Cluster Overview. Cluster-wide resource utilization and health dashboard. Dashboard ID: cluster-overview. Owner: Marcus Thompson (Platform Engineering). Data sources: Prometheus (prometheus.mfs.internal:9090), OpenShift metrics API (console.ocp-prod-east.mfs.internal). Cluster Details. Cluster: ocp-prod-east.mfs.internal. OpenShift version: 4.14.8 (upgrade to 4.14.12 scheduled for 2026-10-19). Control plane: 3 nodes (healthy). Worker nodes: 18 (all healthy, expanded from 12 to 18 in 2026-09-20 capacity planning). Region: US-East. Namespace Summary. mfs-payments: 6 pods total. mfs-pay-pod-01 (3 replicas, payment gateway), mfs-webhook-pod-01 (2 replicas, webhook API), mfs-settlement-worker-01 (1 replica, batch settlement). CPU allocated: 8 cores. Memory allocated: 12Gi. mfs-fraud: 8 pods total. mfs-fraud-pod-01 (4 replicas, fraud engine), mfs-kyc-pod-01 (2 replicas, KYC engine), mfs-case-pod-01 (2 replicas, case management). CPU allocated: 24 cores. Memory allocated: 48Gi. mfs-platform: 4 pods total. mfs-analytics-pod-01 (2 replicas, analytics service), mfs-common-pod-01 (2 replicas, shared services). CPU allocated: 6 cores. Memory allocated: 8Gi. mfs-portal: 3 pods total. mfs-portal-pod-01 (2 replicas, customer portal), mfs-admin-pod-01 (1 replica, admin portal). CPU allocated: 4 cores. Memory allocated: 6Gi. Node Utilization. Total worker nodes: 18. Average CPU utilization: 62% (peak: 78% during business hours). Average memory utilization: 71% (peak: 82%). Node with highest CPU: worker-node-07 (fraud engine pods, 74% avg CPU). Node with lowest CPU: worker-node-16 (portal pods, 38% avg CPU). CPU headroom at current growth rate: approximately 4 months before additional capacity needed. Memory headroom: approximately 3 months. Persistent Volume Utilization. mfs-payments PV: 120Gi allocated, 67Gi used (56%). mfs-fraud PV: 200Gi allocated, 142Gi used (71%). mfs-platform PV: 50Gi allocated, 28Gi used (56%). Prometheus data PV: 500Gi allocated, 389Gi used (78%, retention policy review scheduled). Elasticsearch data PV: 1Ti allocated, 720Gi used (70%). Network I/O. Between namespaces (30-minute average): mfs-payments -> mfs-fraud: 24.3 MB/s (fraud scoring requests). mfs-fraud -> mfs-payments: 8.7 MB/s (scoring responses). mfs-portal -> mfs-payments: 12.1 MB/s (payment API calls). mfs-platform -> all namespaces: 3.4 MB/s (monitoring and audit). External ingress (api-gateway): 45.2 MB/s. External egress: 18.6 MB/s. Pod Restart Frequency. Last 24 hours: 0 restarts across all pods. Last 7 days: 2 restarts (mfs-common-pod-01 replica 2, OOMKilled on 2026-10-02, memory limit increased). Last 30 days: 5 restarts total. Most restarts by pod: mfs-common-pod-01 (3, all OOMKilled, memory limit increased from 512Mi to 1Gi). Alert: PagerDuty alert triggered if any pod restarts more than 3 times in 1 hour.",
+    "links": [
+      "https://grafana.mfs.internal/d/payment-gateway-slo",
+      "https://grafana.mfs.internal/d/fraud-engine-slo",
+      "https://console.ocp-prod-east.mfs.internal",
+      "https://wiki.mfs.internal/spaces/ENG/pages/openshift-pods"
+    ]
+  },
+  {
+    "url": "https://app.datadoghq.com/infrastructure/map?tag=team:mfs",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Datadog - MFS Infrastructure Map",
+    "headings": [
+      "MFS Infrastructure Map",
+      "Infrastructure Topology",
+      "OpenShift Worker Nodes",
+      "PostgreSQL Hosts",
+      "Kafka Brokers",
+      "Redis Cluster",
+      "HSM Gateway",
+      "Vault Server",
+      "Host Metrics Aggregation",
+      "Container Density",
+      "Network Flow Visualization"
+    ],
+    "text": "Datadog - MFS Infrastructure Map. Infrastructure topology visualization for all Meridian Financial Services production hosts. Organization: Meridian Financial Services. Environment: production. Tag filter: team:mfs. Infrastructure Topology. Total managed hosts: 28. OpenShift worker nodes: 18. PostgreSQL database hosts: 3 (pghost-prod-01, pghost-prod-02, pghost-prod-03). Kafka brokers: 3. Redis cluster nodes: 2. HSM gateway: 1. Vault server: 1. OpenShift Worker Nodes. 18 worker nodes on ocp-prod-east.mfs.internal. Node specifications: 8 vCPU, 32Gi RAM each. Total cluster capacity: 144 vCPU, 576Gi RAM. Node distribution by namespace workload: 6 nodes primarily serving mfs-fraud (higher resource allocation for ML inference), 5 nodes primarily serving mfs-payments, 3 nodes primarily serving mfs-portal and mfs-platform, 4 nodes as general-purpose with mixed workload scheduling. Host agent: Datadog Agent v7.48 installed on all nodes. PostgreSQL Hosts. pghost-prod-01.mfs.internal: 16 vCPU, 64Gi RAM, 2Ti SSD. Database: mfs_payments_db. Service account: svc-payment-api. CPU utilization: 34%. Memory utilization: 52%. Disk utilization: 48%. Active connections: 12/200 max. Read replica: pghost-prod-01-ro.mfs.internal. pghost-prod-02.mfs.internal: 16 vCPU, 64Gi RAM, 2Ti SSD. Database: mfs_fraud_db. Service account: svc-fraud-engine. CPU utilization: 41%. Memory utilization: 58%. Disk utilization: 55%. Active connections: 9/200 max. Read replica: pghost-prod-02-ro.mfs.internal. pghost-prod-03.mfs.internal: 8 vCPU, 32Gi RAM, 1Ti SSD. Databases: mfs_audit_db, mfs_customers_db. Service accounts: svc-notification-svc, svc-kyc-engine. CPU utilization: 28%. Memory utilization: 44%. Disk utilization: 62% (high due to audit log volume, retention review scheduled). Active connections: 10/200 max. Read replica: pghost-prod-03-ro.mfs.internal. Kafka Brokers. 3 brokers on kafka-broker.mfs.internal. Broker specifications: 8 vCPU, 16Gi RAM, 1Ti SSD each. Topics: txn-events (12 partitions), fraud-scores (6 partitions), aml-alerts (3 partitions), payment-status (6 partitions), webhook-delivery (6 partitions), case-events (3 partitions), audit-events (6 partitions). Total messages per second: 142.8 across all topics. Replication factor: 3 (all topics). Consumer lag: 0 across all consumer groups. Redis Cluster. 2 nodes on redis-cluster.mfs.internal. Node specifications: 4 vCPU, 16Gi RAM each. Total memory allocated to data: 24Gi. Memory utilization: 68%. Key count: 2.4M. Primary use cases: fraud velocity windows (VelocityMonitor), payment idempotency keys, API rate limiting state, OAuth token cache. Operations per second: 12,400. HSM Gateway. 1 instance at hsm-gateway.mfs.internal:8443. Dedicated hardware security module for cryptographic key management and card tokenization. CPU utilization: 18%. Operations per second: 84 (tokenization and encryption requests from mfs-payment-gateway). Availability: 99.999% (30-day). Vault Server. 1 instance at vault.mfs.internal. HashiCorp Vault for secrets management, service account tokens, and PKI certificate issuance. CPU utilization: 12%. Active leases: 847 (service account tokens and dynamic database credentials). PKI certificates issued this month: 142. Status: unsealed, HA mode active. Host Metrics Aggregation. Aggregate CPU utilization (all hosts): 38%. Aggregate memory utilization: 54%. Aggregate disk utilization: 51%. Network bandwidth utilization: 23% of available capacity. Top host by CPU: pghost-prod-02.mfs.internal (41%, fraud scoring query load). Container Density. Total containers running: 21 (across all OpenShift worker nodes). Average containers per node: 1.2. Maximum containers on a single node: 3 (worker-node-07, fraud engine pods). Minimum containers on a single node: 1. Network Flow Visualization. Top traffic flows (MB/s): api-gateway -> mfs-pay-pod-01: 18.4. mfs-pay-pod-01 -> mfs-fraud-pod-01: 24.3. mfs-pay-pod-01 -> pghost-prod-01: 8.2. mfs-fraud-pod-01 -> pghost-prod-02: 6.7. mfs-fraud-pod-01 -> redis-cluster: 4.1. mfs-pay-pod-01 -> kafka-broker: 3.8. mfs-pay-pod-01 -> hsm-gateway: 1.2. All inter-service traffic encrypted via mTLS.",
+    "links": [
+      "https://app.datadoghq.com/mfs/apm",
+      "https://grafana.mfs.internal/d/cluster-overview",
+      "https://wiki.mfs.internal/spaces/ENG/pages/openshift-pods",
+      "https://wiki.mfs.internal/spaces/ENG/pages/overview"
+    ]
+  },
+  {
+    "url": "https://mfs.pagerduty.com/on-call",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "PagerDuty - MFS On-Call Schedule",
+    "headings": [
+      "MFS On-Call Schedule",
+      "Active On-Call Rotations",
+      "payments-oncall Rotation",
+      "fraud-oncall Rotation",
+      "platform-oncall Rotation",
+      "Escalation Policies",
+      "Recent Incidents"
+    ],
+    "text": "PagerDuty - MFS On-Call Schedule. On-call rotation management for Meridian Financial Services production services. Organization: Meridian Financial Services. Active On-Call Rotations. Three active on-call rotations covering all production services. Rotation schedule: weekly, Monday 09:00 UTC. payments-oncall Rotation. Primary on-call: Arjun Deshmukh (arjun.deshmukh@mfs.internal). Secondary on-call: Sarah Chen (sarah.chen@mfs.internal). Rotation participants: Arjun Deshmukh, Sarah Chen, Wei Zhang, Elena Volkov, James Okafor, Ravi Krishnan. Services covered: mfs-payment-gateway, Token Vault, Settlement Service, Webhook API. fraud-oncall Rotation. Primary on-call: Nadia Kowalski (nadia.kowalski@mfs.internal). Secondary on-call: Priya Sharma (priya.sharma@mfs.internal). Rotation participants: Nadia Kowalski, Priya Sharma, Omar Hassan, Yuki Tanaka, Carlos Rivera, Fatima Al-Said. Services covered: mfs-fraud-engine, AML Engine, KYC Engine, Case Management, MLflow, Fortuna. platform-oncall Rotation. Primary on-call: Marcus Thompson (marcus.thompson@mfs.internal). Secondary on-call: David Kim (david.kim@mfs.internal). Rotation participants: Marcus Thompson, David Kim, Aisha Obi, Jordan Lee, Mei Wong, Tom Anderson. Services covered: OpenShift cluster (ocp-prod-east.mfs.internal), Redis, Kafka, Vault, API Gateway, PostgreSQL hosts, CDN, Grafana, Datadog, Kibana. Escalation Policies. Tier 1: Primary on-call notified immediately via phone call, SMS, push notification, and Slack. Acknowledgment required within 5 minutes. Tier 2: If no acknowledgment from primary within 5 minutes, secondary on-call is automatically escalated. Same notification channels. Tier 3: If no acknowledgment from secondary within 10 minutes (15 minutes total), engineering manager is notified. Payments: Arjun Deshmukh. Fraud: Priya Natarajan. Platform: Marcus Thompson. Tier 4: If no acknowledgment within 30 minutes total, VP Engineering David Kim is notified. Automatic conference bridge created in Slack #incident-war-room. Cross-team escalation: P1 incidents affecting multiple services trigger all relevant on-call rotations simultaneously. Recent Incidents (Last 30 Days). Total incidents: 4 (3 payments, 1 fraud). INC0080101 - Payment Latency Spike (P1). Date: 2026-10-01 18:12 UTC. Duration: 50 minutes. Impact: Payment processing p95 latency spiked to 812ms. Root cause: Fraud engine model update caused retry amplification in payment gateway. Resolved by: Wei Zhang (payments-oncall primary). Resolution: Reduced retry fan-out, enabled bounded safe fallback in RetryHandler.circuit_breaker. INC0080102 - Settlement Batch Delay (P3). Date: 2026-09-28 03:15 UTC. Duration: 2.5 hours. Impact: Daily settlement batch processing delayed by 2 hours. Root cause: pghost-prod-01.mfs.internal connection pool saturation during analytics reporting query. Resolved by: Sarah Chen (payments-oncall). Resolution: Moved analytics query to read replica pghost-prod-01-ro.mfs.internal. INC0080103 - Webhook Delivery Failures (P2). Date: 2026-09-25 11:30 UTC. Duration: 45 minutes. Impact: 12% of webhook deliveries failing with timeout errors. Root cause: Merchant endpoint at partner site was rate limiting MFS webhook deliveries. Resolved by: James Okafor (payments-oncall). Resolution: Implemented per-merchant delivery rate limiting and retry backoff in webhook dispatch service. INC0080201 - Fraud Score Latency Degradation (P2). Date: 2026-09-22 15:45 UTC. Duration: 30 minutes. Impact: Fraud scoring p99 latency increased to 180ms (SLO: 200ms, approaching threshold). Root cause: Redis velocity window cache eviction during peak transaction volume. Resolved by: Yuki Tanaka (fraud-oncall). Resolution: Increased Redis memory allocation and adjusted eviction policy to LRU for velocity keys.",
+    "links": [
+      "https://mfs.pagerduty.com/incidents",
+      "https://alerts.mfs.internal/schedules",
+      "https://status.mfs.internal",
+      "https://wiki.mfs.internal/spaces/ENG/pages/incident-response"
+    ]
+  },
+  {
+    "url": "https://mlflow.mfs.internal/models",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "MLflow - Model Registry Overview",
+    "headings": [
+      "MLflow Model Registry",
+      "Registered Models",
+      "fraud-scoring-xgboost",
+      "transaction-anomaly-iforest",
+      "aml-pattern-detector",
+      "Model Performance Comparison",
+      "Training Infrastructure",
+      "Feature Store Integration"
+    ],
+    "text": "MLflow - Model Registry Overview. Central model registry for all Meridian Financial Services machine learning models. MLflow tracking server: mlflow.mfs.internal:5000. Owner: Fraud and Risk squad (Priya Natarajan). ML Engineering Lead: Omar Hassan. Registered Models. Three registered models in production serving fraud detection, anomaly detection, and AML pattern recognition. fraud-scoring-xgboost. Description: Primary fraud scoring model using gradient-boosted decision trees (XGBoost). Champion version: v2.2 (deployed 2026-09-20, serving 95% of traffic). Status: production. Challenger version: v2.3 (deployed 2026-09-28, serving 5% of traffic as canary). Status: staging. Model v2.2 metrics (production, 30-day rolling): AUC: 0.982. Precision: 0.961 (3.9% false positive rate on legitimate transactions). Recall: 0.954 (catches 95.4% of actual fraud). F1 Score: 0.957. False positive rate: 1.8%. Training data: 12M historical transactions from mfs_fraud_db. Feature count: 42 features from FeatureExtractor. Retraining cadence: weekly (every Monday 02:00 UTC). Model v2.3 metrics (canary, 2-week evaluation): AUC: 0.985 (+0.003 improvement over v2.2). Precision: 0.948 (lower than v2.2 by 0.013). Recall: 0.967 (+0.013 improvement, catches more fraud). F1 Score: 0.957 (equivalent to v2.2). False positive rate: 4.2% (elevated compared to v2.2's 1.8% - under investigation). Investigation notes: v2.3 has improved recall (catches more fraud) but at the cost of higher false positive rate. The elevated false positive rate is attributed to new velocity features that are more sensitive to legitimate burst patterns (e.g., holiday shopping). Feature engineering team (Yuki Tanaka) is tuning the velocity thresholds. Decision on promotion to champion deferred until false positive rate is brought below 2.5%. transaction-anomaly-iforest. Description: Unsupervised anomaly detection model using Isolation Forest for identifying unusual transaction patterns that may not match known fraud signatures. Champion version: v1.5 (deployed 2026-09-10). Status: production. Metrics: Anomaly detection rate: 2.3% of transactions flagged. Precision on confirmed anomalies: 0.78. Recall on confirmed anomalies: 0.89. Processing latency: p99 12ms. Used as a secondary signal in the fraud scoring pipeline, contributing to the amount_anomaly feature in FeatureExtractor.extract_amount_pattern. aml-pattern-detector. Description: Pattern recognition model for anti-money laundering detection, specialized in identifying structuring, layering, and rapid movement patterns. Champion version: v1.0 (deployed 2026-08-15). Status: production. Metrics: Pattern detection accuracy: 0.92. False alert rate: 8.4% (acceptable for AML where high sensitivity is required). SAR-worthy detection rate: 0.96 (catches 96% of patterns that require SAR filing). Supports rule types: STRUCT-001, RAPID-001, and pattern-based detection for MERCH-001. Works in conjunction with the rule-based AMLRuleEngine for comprehensive AML coverage. Model Performance Comparison. v2.2 vs v2.3 A/B test (running since 2026-09-28): Traffic split: 95% v2.2 / 5% v2.3. Transactions scored: v2.2: 3,654,200 / v2.3: 192,326. Statistical significance: not yet achieved (minimum 2 weeks of data required, target: 2026-10-12). Key delta: v2.3 caught 14 additional confirmed fraud cases that v2.2 missed, but also incorrectly flagged 847 more legitimate transactions. Dollar impact: v2.3 additional fraud caught: $127,400. v2.3 additional false positives cost (analyst review time): estimated $12,700. Net benefit if false positive rate is resolved: positive ROI. Training Infrastructure. GPU nodes: mfs-model-pod-01 on ocp-prod-east.mfs.internal (2x NVIDIA A100, 80GB VRAM each). Training framework: XGBoost 2.0 with GPU acceleration (gpu_hist tree method). Training data pipeline: Apache Spark on mfs-data namespace for feature engineering at scale. Training time: fraud-scoring-xgboost weekly retrain: approximately 45 minutes. Model artifact storage: MLflow artifact store backed by S3-compatible storage at backup.mfs.internal. Experiment tracking: all training runs logged to MLflow with hyperparameters, metrics, and feature importance. Feature Store Integration. Feature store: Feast (Feature Store) integrated with MLflow for consistent feature serving. Online store: Redis at redis-cluster.mfs.internal (low-latency feature retrieval for real-time scoring). Offline store: PostgreSQL read replicas (pghost-prod-02-ro.mfs.internal) for batch training data. Feature groups: velocity_features (8 features from VelocityMonitor), amount_features (6 features), geo_features (5 features), device_features (4 features), merchant_features (7 features), temporal_features (6 features), customer_features (6 features). Feature freshness SLA: online features updated within 1 second, offline features refreshed daily.",
+    "links": [
+      "https://mlflow.mfs.internal/models/fraud-xgb",
+      "https://grafana.mfs.internal/d/fraud-engine-slo",
+      "https://fortuna.mfs.internal/dashboard/risk-scoring",
+      "https://wiki.mfs.internal/spaces/ENG/pages/fraud-system-docs"
+    ]
   }
 ]

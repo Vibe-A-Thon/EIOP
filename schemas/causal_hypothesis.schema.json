@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:causal_hypothesis:1.0",
+  "title": "CausalHypothesis v1",
+  "type": "object",
+  "required": ["schema_version", "hypothesis_id", "cause_cid", "effect_cid", "status", "confidence"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "hypothesis_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "cause_cid": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "effect_cid": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "status": {"enum": ["CORRELATION", "HYPOTHESIS", "NEEDS_REVIEW", "REJECTED", "HUMAN_CONFIRMED_CAUSE"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "evidence_refs": {"type": "array", "items": {"type": "string", "maxLength": 4096}},
+    "time_ordering": {"type": "boolean"},
+    "alternative_hypotheses": {"type": "array", "items": {"type": "string", "maxLength": 512}},
+    "review_status": {"type": ["string", "null"], "maxLength": 128},
+    "reviewer_notes": {"type": ["string", "null"], "maxLength": 4096}
+  },
+  "additionalProperties": false
+}

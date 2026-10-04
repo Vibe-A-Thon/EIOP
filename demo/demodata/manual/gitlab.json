@@ -132,6 +132,61 @@
       "web_url": "https://gitlab.mfs.internal/mfs/mfs-settlement-engine/-/merge_requests/502",
       "labels": ["reconciliation", "real-time"],
       "milestone": {"title": "Sprint 16"}
+    },
+    {
+      "iid": 601,
+      "title": "PAY-401 implement payment webhook dispatcher",
+      "state": "merged",
+      "source_branch": "feature/PAY-401-webhook-dispatcher",
+      "target_branch": "main",
+      "merge_commit_sha": "dd6010101dd6010101dd6010101dd6010101dd60",
+      "author": {"name": "Alex Kim", "username": "akim"},
+      "reviewers": [{"name": "Sarah Chen", "username": "schen"}],
+      "approved_by": [{"name": "Arjun Deshmukh", "username": "adesh"}],
+      "work_item_keys": ["PAY-401"],
+      "description": "Implements the payment webhook dispatcher service.\n\n## Changes\n- WebhookDispatcher class in services/webhook/dispatcher.py\n- Kafka consumer for 'mfs.payment.events' topic\n- HMAC-SHA256 signature generation for payload verification\n- Merchant endpoint registry in mfs_payments_db.webhook_registrations\n- Service account: svc-webhook-dispatch\n- Deployment: mfs-pay-pod-01, mfs-pay-pod-02 in mfs-payments namespace\n\n## Database\n- New table: mfs_payments_db.webhook_registrations\n- New table: mfs_payments_db.webhook_delivery_log\n\n## Infrastructure\n- Reads from Kafka topic: mfs.payment.events\n- Connects to vault.mfs.internal for merchant signing secrets\n- Pod: mfs-pay-pod-01 (mfs-payments namespace)\n\nRelated: PAY-401, CHG0090401, TC-PAY-009, TC-PAY-010",
+      "labels": ["webhook", "feature", "PAY-401"],
+      "milestone": {"title": "Q4 2026 - Payment Gateway v2"},
+      "created_at": "2026-09-25T10:00:00.000Z",
+      "updated_at": "2026-10-02T15:00:00.000Z",
+      "merged_at": "2026-10-02T15:00:00.000Z",
+      "web_url": "https://gitlab.mfs.internal/mfs/payment-gateway/-/merge_requests/601"
+    },
+    {
+      "iid": 602,
+      "title": "PAY-402 webhook retry with dead letter queue",
+      "state": "open",
+      "source_branch": "feature/PAY-402-webhook-retry-dlq",
+      "target_branch": "main",
+      "merge_commit_sha": null,
+      "author": {"name": "Wei Zhang", "username": "wzhang"},
+      "reviewers": [{"name": "Alex Kim", "username": "akim"}],
+      "approved_by": [],
+      "work_item_keys": ["PAY-402"],
+      "description": "Implements exponential backoff retry and dead letter queue for webhook deliveries.\n\n## Changes\n- WebhookRetryHandler in services/webhook/retry_handler.py\n- DLQ management in services/webhook/dlq.py\n- Admin API endpoints for DLQ inspection and replay\n- Backoff schedule: 1s, 2s, 4s, 8s, 16s (configurable)\n\n## Database\n- New table: mfs_payments_db.webhook_dlq\n\n## Infrastructure\n- Pod: mfs-pay-pod-01, mfs-pay-pod-02\n- Service account: svc-webhook-dispatch\n\nRelated: PAY-402, CHG0090501, TC-PAY-011",
+      "labels": ["webhook", "retry", "dlq", "PAY-402"],
+      "milestone": {"title": "Q4 2026 - Payment Gateway v2"},
+      "created_at": "2026-10-01T09:00:00.000Z",
+      "updated_at": "2026-10-03T11:00:00.000Z",
+      "web_url": "https://gitlab.mfs.internal/mfs/payment-gateway/-/merge_requests/602"
+    },
+    {
+      "iid": 701,
+      "title": "PAY-501 build transaction analytics aggregator",
+      "state": "open",
+      "source_branch": "feature/PAY-501-analytics-aggregator",
+      "target_branch": "main",
+      "merge_commit_sha": null,
+      "author": {"name": "Elena Volkov", "username": "evolkov"},
+      "reviewers": [{"name": "Marcus Rivera", "username": "mrivera"}],
+      "approved_by": [],
+      "work_item_keys": ["PAY-501"],
+      "description": "Transaction analytics aggregation service.\n\n## Changes\n- AnalyticsAggregator in services/analytics/aggregator.py\n- Kafka consumer group 'mfs-analytics-agg' for 'mfs.payment.events'\n- Aggregation pipelines: volume, success rate, settlement time, refund rate\n- Batch writes to mfs_payments_db.analytics_aggregates\n\n## Database\n- New table: mfs_payments_db.analytics_aggregates\n- New table: mfs_payments_db.analytics_dimensions\n\n## Infrastructure\n- Pod: mfs-pay-pod-03 (new pod for analytics workload)\n- Service account: svc-analytics\n- Reads from Kafka: mfs.payment.events\n\nRelated: PAY-501, TC-PAY-012",
+      "labels": ["analytics", "kafka", "aggregation", "PAY-501"],
+      "milestone": {"title": "Q1 2027 - Merchant Integration"},
+      "created_at": "2026-10-03T14:00:00.000Z",
+      "updated_at": "2026-10-04T09:00:00.000Z",
+      "web_url": "https://gitlab.mfs.internal/mfs/payment-gateway/-/merge_requests/701"
     }
   ],
   "pipelines": [
@@ -274,6 +329,58 @@
         {"name": "sast-scan", "status": "success", "stage": "security"},
         {"name": "container-scan", "status": "skipped", "stage": "security"},
         {"name": "build-image", "status": "skipped", "stage": "build"}
+      ]
+    },
+    {
+      "id": 9008,
+      "name": "mfs-payment-gateway CI/CD",
+      "status": "success",
+      "ref": "feature/PAY-401-webhook-dispatcher",
+      "sha": "dd6010101dd6010101dd6010101dd6010101dd60",
+      "work_item_keys": ["PAY-401"],
+      "created_at": "2026-10-01T10:00:00.000Z",
+      "updated_at": "2026-10-01T10:50:00.000Z",
+      "web_url": "https://gitlab.mfs.internal/mfs/payment-gateway/-/pipelines/9008",
+      "jobs": [
+        {"name": "build", "status": "success", "stage": "build"},
+        {"name": "unit-test", "status": "success", "stage": "test"},
+        {"name": "integration-test", "status": "success", "stage": "test"},
+        {"name": "security-scan", "status": "success", "stage": "security"},
+        {"name": "deploy-staging", "status": "success", "stage": "deploy"},
+        {"name": "deploy-production", "status": "success", "stage": "deploy"}
+      ]
+    },
+    {
+      "id": 9009,
+      "name": "mfs-payment-gateway CI/CD",
+      "status": "running",
+      "ref": "feature/PAY-402-webhook-retry-dlq",
+      "sha": "ee6020202ee6020202ee6020202ee6020202ee60",
+      "work_item_keys": ["PAY-402"],
+      "created_at": "2026-10-02T09:00:00.000Z",
+      "updated_at": "2026-10-02T09:30:00.000Z",
+      "web_url": "https://gitlab.mfs.internal/mfs/payment-gateway/-/pipelines/9009",
+      "jobs": [
+        {"name": "build", "status": "success", "stage": "build"},
+        {"name": "unit-test", "status": "success", "stage": "test"},
+        {"name": "integration-test", "status": "running", "stage": "test"},
+        {"name": "security-scan", "status": "pending", "stage": "security"}
+      ]
+    },
+    {
+      "id": 9010,
+      "name": "mfs-payment-gateway CI/CD",
+      "status": "failed",
+      "ref": "feature/PAY-501-analytics-aggregator",
+      "sha": "ff7010101ff7010101ff7010101ff7010101ff70",
+      "work_item_keys": ["PAY-501"],
+      "created_at": "2026-10-03T14:30:00.000Z",
+      "updated_at": "2026-10-03T15:00:00.000Z",
+      "web_url": "https://gitlab.mfs.internal/mfs/payment-gateway/-/pipelines/9010",
+      "jobs": [
+        {"name": "build", "status": "success", "stage": "build"},
+        {"name": "unit-test", "status": "failed", "stage": "test"},
+        {"name": "integration-test", "status": "skipped", "stage": "test"}
       ]
     }
   ]

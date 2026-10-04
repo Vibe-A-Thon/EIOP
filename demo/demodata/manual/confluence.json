@@ -211,11 +211,177 @@
         "self": "https://confluence.mfs.internal/rest/api/content/98505",
         "webui": "/spaces/PAY/pages/98505/Incident+Runbook+Payment+Timeouts"
       }
+    },
+    {
+      "id": "98506",
+      "type": "page",
+      "status": "current",
+      "title": "Webhook Integration Guide",
+      "space": {
+        "key": "PAY",
+        "name": "Payment Gateway",
+        "type": "global"
+      },
+      "version": {
+        "number": 1,
+        "when": "2026-10-01T10:00:00.000Z",
+        "by": {
+          "displayName": "Alex Kim",
+          "accountId": "akim"
+        },
+        "message": "Initial webhook integration documentation"
+      },
+      "ancestors": [
+        {"id": "98501", "title": "Payment Gateway Architecture"}
+      ],
+      "body": {
+        "storage": {
+          "value": "<h1>Webhook Integration Guide</h1><p>This document describes the MFS Payment Gateway webhook notification system for merchant integrations.</p><h2>WebhookDispatcher Service Overview</h2><p>The <code>WebhookDispatcher</code> service is responsible for delivering real-time payment event notifications to registered merchant endpoints. It runs on pods <strong>mfs-pay-pod-01</strong> and <strong>mfs-pay-pod-02</strong> under the <code>svc-webhook-dispatch</code> service account.</p><h2>Supported Event Types</h2><table><tr><th>Event Type</th><th>Description</th><th>Trigger</th></tr><tr><td><code>payment.authorized</code></td><td>Payment authorization completed</td><td>Successful authorization response from acquirer</td></tr><tr><td><code>payment.captured</code></td><td>Payment captured and funds held</td><td>Capture request confirmed by processor</td></tr><tr><td><code>payment.refunded</code></td><td>Payment refunded to cardholder</td><td>Refund processed and confirmed</td></tr><tr><td><code>payment.failed</code></td><td>Payment processing failed</td><td>Authorization declined or processing error</td></tr><tr><td><code>payment.chargeback</code></td><td>Chargeback initiated by cardholder</td><td>Chargeback notification received from acquirer</td></tr></table><h2>HMAC-SHA256 Signature Verification</h2><p>All webhook payloads are signed using HMAC-SHA256. The signature is included in the <code>X-MFS-Signature</code> HTTP header.</p><h3>Verification Steps</h3><ol><li>Extract the <code>X-MFS-Signature</code> header from the incoming request</li><li>Retrieve the merchant's signing secret from HashiCorp Vault at <code>vault.mfs.internal</code> (path: <code>secret/mfs/webhooks/{merchant_id}/signing_key</code>)</li><li>Compute HMAC-SHA256 of the raw request body using the signing secret</li><li>Compare the computed signature with the header value using constant-time comparison</li><li>Reject the request if signatures do not match (return HTTP 401)</li></ol><h2>Retry Policy</h2><p>Failed webhook deliveries are retried with exponential backoff:</p><table><tr><th>Attempt</th><th>Delay</th></tr><tr><td>1st retry</td><td>1 second</td></tr><tr><td>2nd retry</td><td>2 seconds</td></tr><tr><td>3rd retry</td><td>4 seconds</td></tr><tr><td>4th retry</td><td>8 seconds</td></tr><tr><td>5th retry</td><td>16 seconds</td></tr></table><p>After 5 failed attempts, the event is moved to the Dead Letter Queue (DLQ) for manual review.</p><h2>Dead Letter Queue (DLQ) Management</h2><p>Failed webhook events that exhaust all retry attempts are written to the <code>webhook_dlq</code> table in <code>mfs_payments_db</code> on <code>pghost-prod-01.mfs.internal</code>. DLQ entries contain the original payload, error details, and all retry attempt timestamps. Operations teams can replay DLQ events via the admin API.</p><h2>Event Streaming</h2><p>All payment events are published to the Kafka topic <code>mfs.payment.events</code>. The WebhookDispatcher consumes from this topic and dispatches notifications to registered merchant endpoints.</p><h2>Database Tables</h2><ul><li><code>webhook_registrations</code> - Merchant webhook endpoint registrations (merchant_id, callback_url, event_types, active, created_at) on <code>pghost-prod-01.mfs.internal</code></li><li><code>webhook_delivery_log</code> - Delivery attempt history (webhook_id, event_type, status_code, response_time_ms, attempt_number, created_at) on <code>pghost-prod-01.mfs.internal</code></li></ul><h2>Vault Integration</h2><p>Webhook signing secrets are stored in HashiCorp Vault at <code>vault.mfs.internal</code>. The <code>svc-webhook-dispatch</code> service account authenticates via Kubernetes auth method to retrieve signing secrets for HMAC computation.</p>",
+          "representation": "storage"
+        }
+      },
+      "metadata": {
+        "labels": {
+          "results": [
+            {"name": "webhook"},
+            {"name": "integration"},
+            {"name": "merchant-api"}
+          ]
+        }
+      },
+      "_links": {
+        "self": "https://confluence.mfs.internal/rest/api/content/98506",
+        "webui": "/spaces/PAY/pages/98506/Webhook+Integration+Guide"
+      }
+    },
+    {
+      "id": "98507",
+      "type": "page",
+      "status": "current",
+      "title": "Payment Analytics Data Model",
+      "space": {
+        "key": "PAY",
+        "name": "Payment Gateway",
+        "type": "global"
+      },
+      "version": {
+        "number": 1,
+        "when": "2026-10-03T14:00:00.000Z",
+        "by": {
+          "displayName": "Elena Volkov",
+          "accountId": "evolkov"
+        },
+        "message": "Analytics data model documentation"
+      },
+      "ancestors": [
+        {"id": "98501", "title": "Payment Gateway Architecture"}
+      ],
+      "body": {
+        "storage": {
+          "value": "<h1>Payment Analytics Data Model</h1><p>This document describes the analytics aggregation pipeline and data model for the MFS Payment Gateway reporting system.</p><h2>Analytics Aggregation Pipeline Overview</h2><p>The analytics pipeline consumes payment events from Kafka and aggregates them into queryable summary tables for operational dashboards and business reporting. The pipeline runs on <strong>mfs-pay-pod-03</strong> under the <code>svc-analytics</code> service account.</p><h3>Pipeline Architecture</h3><ol><li>Payment events are consumed from Kafka topic <code>mfs.payment.events</code> by consumer group <code>mfs-analytics-agg</code></li><li>Events are windowed into configurable time buckets (default: 5 minutes)</li><li>Aggregation computations run in-memory with periodic flush to PostgreSQL</li><li>Aggregated results are written to the <code>analytics_aggregates</code> table in <code>mfs_payments_db</code></li><li>Dimension metadata is maintained in the <code>analytics_dimensions</code> table</li></ol><h2>Table Schema: analytics_aggregates</h2><table><tr><th>Column</th><th>Type</th><th>Description</th></tr><tr><td><code>dimension_key</code></td><td>VARCHAR(128)</td><td>Composite key combining merchant, currency, and payment method</td></tr><tr><td><code>time_bucket</code></td><td>TIMESTAMP</td><td>Start of the aggregation time window</td></tr><tr><td><code>transaction_count</code></td><td>INTEGER</td><td>Total number of transactions in the bucket</td></tr><tr><td><code>success_count</code></td><td>INTEGER</td><td>Number of successful transactions</td></tr><tr><td><code>failure_count</code></td><td>INTEGER</td><td>Number of failed transactions</td></tr><tr><td><code>avg_settlement_ms</code></td><td>DOUBLE PRECISION</td><td>Average settlement time in milliseconds</td></tr><tr><td><code>refund_count</code></td><td>INTEGER</td><td>Number of refunded transactions</td></tr><tr><td><code>merchant_id</code></td><td>VARCHAR(64)</td><td>Merchant identifier</td></tr></table><h2>Table Schema: analytics_dimensions</h2><table><tr><th>Column</th><th>Type</th><th>Description</th></tr><tr><td><code>dimension_key</code></td><td>VARCHAR(128)</td><td>Primary key matching analytics_aggregates</td></tr><tr><td><code>merchant_id</code></td><td>VARCHAR(64)</td><td>Merchant identifier</td></tr><tr><td><code>currency</code></td><td>VARCHAR(3)</td><td>ISO 4217 currency code</td></tr><tr><td><code>payment_method</code></td><td>VARCHAR(32)</td><td>Payment method (card, bank_transfer, wallet)</td></tr><tr><td><code>region</code></td><td>VARCHAR(32)</td><td>Geographic region</td></tr></table><h2>Deployment</h2><p>The analytics aggregation service is deployed on <strong>mfs-pay-pod-03</strong> in the <code>mfs-prod</code> namespace. It uses the <code>svc-analytics</code> service account with read-only access to <code>mfs_payments_db</code> on <code>pghost-prod-01.mfs.internal</code> for query operations and write access to the analytics tables.</p><h2>Kafka Consumer Group</h2><p>Consumer group: <code>mfs-analytics-agg</code></p><p>The consumer group tracks offsets independently from other consumers on <code>mfs.payment.events</code>, ensuring analytics processing does not interfere with webhook dispatch or other downstream consumers.</p>",
+          "representation": "storage"
+        }
+      },
+      "metadata": {
+        "labels": {
+          "results": [
+            {"name": "analytics"},
+            {"name": "data-model"},
+            {"name": "reporting"}
+          ]
+        }
+      },
+      "_links": {
+        "self": "https://confluence.mfs.internal/rest/api/content/98507",
+        "webui": "/spaces/PAY/pages/98507/Payment+Analytics+Data+Model"
+      }
+    },
+    {
+      "id": "98508",
+      "type": "page",
+      "status": "current",
+      "title": "Database Schema Reference",
+      "space": {
+        "key": "ENG",
+        "name": "Engineering",
+        "type": "global"
+      },
+      "version": {
+        "number": 3,
+        "when": "2026-09-30T09:00:00.000Z",
+        "by": {
+          "displayName": "Arjun Deshmukh",
+          "accountId": "adesh"
+        },
+        "message": "Updated with webhook and analytics tables"
+      },
+      "ancestors": [
+        {"id": "98501", "title": "Payment Gateway Architecture"}
+      ],
+      "body": {
+        "storage": {
+          "value": "<h1>Database Schema Reference</h1><p>Complete schema reference for all PAY domain databases at Meridian Financial Services.</p><h2>Primary Database: mfs_payments_db</h2><p>Host: <code>pghost-prod-01.mfs.internal</code> | Engine: PostgreSQL 15</p><h3>Core Payment Tables</h3><table><tr><th>Table</th><th>Description</th><th>Key Columns</th></tr><tr><td><code>payments</code></td><td>Payment transaction records</td><td>payment_id (UUID PK), token_id (VARCHAR), amount (NUMERIC(15,2)), currency (VARCHAR(3)), status (VARCHAR(20)), merchant_id (VARCHAR(64)), idempotency_key (VARCHAR(128)), created_at (TIMESTAMP), updated_at (TIMESTAMP)</td></tr><tr><td><code>payment_methods</code></td><td>Stored payment method metadata</td><td>method_id (UUID PK), merchant_id (VARCHAR(64)), type (VARCHAR(32)), last_four (VARCHAR(4)), brand (VARCHAR(20)), expiry_month (INT), expiry_year (INT), active (BOOLEAN)</td></tr><tr><td><code>tokens</code></td><td>Payment token records</td><td>token_id (VARCHAR PK), encrypted_pan (BYTEA), last_four (VARCHAR(4)), brand (VARCHAR(20)), key_id (VARCHAR(64)), created_at (TIMESTAMP), expires_at (TIMESTAMP)</td></tr><tr><td><code>idempotency_keys</code></td><td>Idempotent request deduplication</td><td>idempotency_key (VARCHAR(128) PK), payment_id (UUID), response_hash (VARCHAR(64)), created_at (TIMESTAMP), expires_at (TIMESTAMP)</td></tr></table><h3>Webhook Tables</h3><table><tr><th>Table</th><th>Description</th><th>Key Columns</th></tr><tr><td><code>webhook_registrations</code></td><td>Merchant webhook endpoint registrations</td><td>registration_id (UUID PK), merchant_id (VARCHAR(64)), callback_url (VARCHAR(512)), event_types (TEXT[]), active (BOOLEAN), created_at (TIMESTAMP), updated_at (TIMESTAMP)</td></tr><tr><td><code>webhook_delivery_log</code></td><td>Webhook delivery attempt history</td><td>delivery_id (UUID PK), registration_id (UUID FK), event_id (UUID), event_type (VARCHAR(64)), status_code (INT), response_time_ms (INT), attempt_number (INT), created_at (TIMESTAMP)</td></tr><tr><td><code>webhook_dlq</code></td><td>Dead letter queue for failed webhook deliveries</td><td>dlq_id (UUID PK), event_id (UUID), registration_id (UUID FK), payload (JSONB), error_details (TEXT), retry_attempts (INT), first_attempt_at (TIMESTAMP), last_attempt_at (TIMESTAMP), created_at (TIMESTAMP)</td></tr></table><h3>Analytics Tables</h3><table><tr><th>Table</th><th>Description</th><th>Key Columns</th></tr><tr><td><code>analytics_aggregates</code></td><td>Aggregated transaction metrics</td><td>dimension_key (VARCHAR(128)), time_bucket (TIMESTAMP), transaction_count (INT), success_count (INT), failure_count (INT), avg_settlement_ms (DOUBLE PRECISION), refund_count (INT), merchant_id (VARCHAR(64)), PRIMARY KEY (dimension_key, time_bucket)</td></tr><tr><td><code>analytics_dimensions</code></td><td>Dimension metadata for analytics</td><td>dimension_key (VARCHAR(128) PK), merchant_id (VARCHAR(64)), currency (VARCHAR(3)), payment_method (VARCHAR(32)), region (VARCHAR(32))</td></tr></table><h3>Settlement Tables</h3><table><tr><th>Table</th><th>Description</th><th>Key Columns</th></tr><tr><td><code>settlement_batches</code></td><td>Settlement batch metadata</td><td>batch_id (UUID PK), status (VARCHAR(20)), created_at (TIMESTAMP), completed_at (TIMESTAMP), transaction_count (INT), total_amount (NUMERIC(15,2)), currency (VARCHAR(3))</td></tr><tr><td><code>reconciliation_records</code></td><td>Reconciliation results per batch</td><td>record_id (UUID PK), batch_id (UUID FK), gateway_entry_id (UUID), settlement_entry_id (UUID), status (VARCHAR(20)), discrepancy_amount (NUMERIC(15,2)), created_at (TIMESTAMP)</td></tr></table><h2>Audit Database: mfs_audit_db</h2><p>Host: <code>pghost-prod-03.mfs.internal</code> | Engine: PostgreSQL 15</p><table><tr><th>Table</th><th>Description</th><th>Key Columns</th></tr><tr><td><code>audit_log</code></td><td>General audit trail for all operations</td><td>audit_id (UUID PK), operation (VARCHAR(64)), entity_type (VARCHAR(64)), entity_id (VARCHAR(128)), actor (VARCHAR(128)), details (JSONB), created_at (TIMESTAMP)</td></tr><tr><td><code>access_log</code></td><td>Service account access records</td><td>access_id (UUID PK), service_account (VARCHAR(128)), resource (VARCHAR(256)), action (VARCHAR(64)), result (VARCHAR(20)), ip_address (INET), created_at (TIMESTAMP)</td></tr><tr><td><code>compliance_events</code></td><td>PCI DSS and regulatory compliance events</td><td>event_id (UUID PK), compliance_standard (VARCHAR(32)), requirement_id (VARCHAR(16)), event_type (VARCHAR(64)), status (VARCHAR(20)), details (JSONB), created_at (TIMESTAMP)</td></tr></table>",
+          "representation": "storage"
+        }
+      },
+      "metadata": {
+        "labels": {
+          "results": [
+            {"name": "database"},
+            {"name": "schema"},
+            {"name": "reference"}
+          ]
+        }
+      },
+      "_links": {
+        "self": "https://confluence.mfs.internal/rest/api/content/98508",
+        "webui": "/spaces/ENG/pages/98508/Database+Schema+Reference"
+      }
+    },
+    {
+      "id": "98509",
+      "type": "page",
+      "status": "current",
+      "title": "Service Account Registry",
+      "space": {
+        "key": "ENG",
+        "name": "Engineering",
+        "type": "global"
+      },
+      "version": {
+        "number": 2,
+        "when": "2026-10-02T11:00:00.000Z",
+        "by": {
+          "displayName": "Marcus Thompson",
+          "accountId": "mthompson"
+        },
+        "message": "Added webhook and analytics service accounts"
+      },
+      "ancestors": [],
+      "body": {
+        "storage": {
+          "value": "<h1>Service Account Registry</h1><p>Comprehensive registry of all MFS service accounts, their purpose, deployment assignments, database access, Vault paths, and Kafka topic permissions.</p><h2>Payment Domain Service Accounts</h2><table><tr><th>Service Account</th><th>Service</th><th>Pod Assignment</th><th>Database Access</th><th>Vault Path</th><th>Kafka Topics</th></tr><tr><td><code>svc-payment-api</code></td><td>mfs-payment-gateway</td><td>mfs-pay-pod-01, mfs-pay-pod-02</td><td>read/write <code>mfs_payments_db</code> on <code>pghost-prod-01.mfs.internal</code></td><td><code>secret/mfs/payment-api/credentials</code></td><td>Producer: <code>mfs.payment.events</code></td></tr><tr><td><code>svc-token-vault</code></td><td>mfs-payment-gateway (tokenization)</td><td>mfs-vault-pod-01</td><td>read/write <code>mfs_payments_db</code> (card_tokens, token_audit_log tables only)</td><td><code>secret/mfs/token-vault/hsm-keys</code></td><td>None</td></tr><tr><td><code>svc-webhook-dispatch</code></td><td>Webhook delivery service</td><td>mfs-pay-pod-01, mfs-pay-pod-02</td><td>read/write <code>mfs_payments_db</code> (webhook_registrations, webhook_delivery_log, webhook_dlq tables)</td><td><code>secret/mfs/webhooks/{merchant_id}/signing_key</code> on <code>vault.mfs.internal</code></td><td>Consumer: <code>mfs.payment.events</code></td></tr><tr><td><code>svc-analytics</code></td><td>Analytics aggregation service</td><td>mfs-pay-pod-03</td><td>read-only <code>mfs_payments_db</code> on <code>pghost-prod-01.mfs.internal</code>, read/write analytics_aggregates, analytics_dimensions</td><td><code>secret/mfs/analytics/credentials</code></td><td>Consumer: <code>mfs.payment.events</code> (group: <code>mfs-analytics-agg</code>)</td></tr></table><h2>Platform Service Accounts</h2><table><tr><th>Service Account</th><th>Service</th><th>Pod Assignment</th><th>Database Access</th><th>Vault Path</th><th>Kafka Topics</th></tr><tr><td><code>svc-notification-svc</code></td><td>Platform notifications</td><td>mfs-notify-pod-01</td><td>read-only <code>mfs_payments_db</code></td><td><code>secret/mfs/notifications/smtp-credentials</code></td><td>Consumer: <code>mfs.notifications</code></td></tr><tr><td><code>svc-fraud-engine</code></td><td>Fraud scoring engine</td><td>mfs-fraud-pod-01</td><td>read/write <code>mfs_fraud_db</code> on <code>pghost-prod-02.mfs.internal</code></td><td><code>secret/mfs/fraud/model-keys</code></td><td>Consumer: <code>mfs.payment.events</code>, Producer: <code>mfs.fraud.scores</code></td></tr><tr><td><code>svc-model-serving</code></td><td>ML model serving</td><td>mfs-ml-pod-01, mfs-ml-pod-02</td><td>read-only <code>mfs_fraud_db</code> on <code>pghost-prod-02.mfs.internal</code></td><td><code>secret/mfs/ml/model-artifacts</code></td><td>Consumer: <code>mfs.fraud.scores</code></td></tr><tr><td><code>svc-aml-engine</code></td><td>AML rule engine</td><td>mfs-aml-pod-01</td><td>read/write <code>mfs_compliance_db</code> on <code>pghost-prod-02.mfs.internal</code></td><td><code>secret/mfs/aml/rule-configs</code></td><td>Consumer: <code>mfs.payment.events</code>, Producer: <code>mfs.aml.alerts</code></td></tr></table><h2>HSM Integration</h2><p>The <code>svc-token-vault</code> service account connects to the Hardware Security Module (HSM) gateway at <code>hsm-gateway.mfs.internal:8443</code> for cryptographic key operations. PKCS#11 sessions are pooled (20 concurrent sessions) and keys are never exported from the HSM boundary.</p><h2>Access Control Notes</h2><ul><li>All service accounts use Kubernetes ServiceAccount tokens for pod-level authentication</li><li>Database credentials are rotated every 90 days via Vault dynamic secrets</li><li>Kafka topic ACLs are managed via Confluent RBAC</li><li>All access is logged to <code>mfs_audit_db.access_log</code> on <code>pghost-prod-03.mfs.internal</code></li></ul>",
+          "representation": "storage"
+        }
+      },
+      "metadata": {
+        "labels": {
+          "results": [
+            {"name": "service-accounts"},
+            {"name": "security"},
+            {"name": "governance"}
+          ]
+        }
+      },
+      "_links": {
+        "self": "https://confluence.mfs.internal/rest/api/content/98509",
+        "webui": "/spaces/ENG/pages/98509/Service+Account+Registry"
+      }
     }
   ],
   "start": 0,
   "limit": 25,
-  "size": 5,
+  "size": 9,
   "_links": {
     "base": "https://confluence.mfs.internal",
     "context": "/wiki"

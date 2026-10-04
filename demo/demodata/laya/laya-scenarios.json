@@ -74,6 +74,60 @@
       "expected_output_fields": ["trends", "patterns", "anomalies", "evidence_refs", "confidence"],
       "fallback_mode": "temporal_aggregation",
       "note": "Aggregates: deployment frequency, incident rate, mean time to recovery, change failure rate from ServiceNow and GitLab data"
+    },
+    {
+      "id": "laya-domain-comparison",
+      "capability": "domain_comparison",
+      "question": "Compare the architectural patterns used in the payment gateway vs fraud detection platform",
+      "context_entities": ["urn:eoip:code:api-service:mfs:payment-gateway", "urn:eoip:code:api-service:mfs:fraud-engine"],
+      "expected_output_fields": ["comparison_matrix", "shared_patterns", "divergences", "recommendations"],
+      "fallback_mode": "structured_comparison",
+      "note": "Compares architecture, patterns, libraries, and design decisions between mfs-payment-gateway and mfs-fraud-engine"
+    },
+    {
+      "id": "laya-architecture-explanation",
+      "capability": "architecture_explanation",
+      "question": "Explain the end-to-end data flow from a payment transaction to fraud score to settlement",
+      "context_entities": ["urn:eoip:code:symbol:mfs-payment-gateway:payment.service:PaymentService", "urn:eoip:code:symbol:mfs-fraud-engine:scoring.engine:FraudScoringEngine", "urn:eoip:code:symbol:mfs-settlement-engine:batch.processor:SettlementBatchProcessor"],
+      "expected_output_fields": ["data_flow_diagram", "latency_analysis", "failure_modes"],
+      "fallback_mode": "graph_flow_narrative",
+      "note": "Traces data flow: PaymentService ingests transaction, FraudScoringEngine evaluates risk, SettlementBatchProcessor completes settlement"
+    },
+    {
+      "id": "laya-risk-prediction",
+      "capability": "risk_prediction",
+      "question": "Predict which components are most likely to cause an outage based on recent change velocity and test coverage",
+      "context_entities": ["urn:eoip:code:api-service:mfs:payment-gateway", "urn:eoip:code:api-service:mfs:fraud-engine", "urn:eoip:code:repo:mfs-common-libs"],
+      "expected_output_fields": ["risk_scores", "contributing_factors", "mitigation_actions"],
+      "fallback_mode": "risk_model_analysis",
+      "note": "Computes risk scores using change frequency, test coverage gaps, incident history, and dependency complexity for each component"
+    },
+    {
+      "id": "laya-compliance-audit",
+      "capability": "compliance_audit",
+      "question": "Generate a PCI DSS compliance evidence report for the payment tokenization path",
+      "context_entities": ["urn:eoip:code:symbol:mfs-payment-gateway:tokenization.service:TokenizationService", "urn:eoip:infra:service-account:svc-token-vault", "urn:eoip:infra:service:hsm-gateway"],
+      "expected_output_fields": ["compliance_findings", "evidence_map", "gaps", "remediation_plan"],
+      "fallback_mode": "compliance_evidence_chain",
+      "note": "Maps PCI DSS requirements to evidence: TokenizationService encryption, token vault access controls, HSM key management procedures"
+    },
+    {
+      "id": "laya-team-capacity",
+      "capability": "team_capacity",
+      "question": "Analyze team workload distribution and identify bottleneck risks for the Q4 release",
+      "context_entities": ["urn:eoip:work:sprint:jira:Sprint-26.14", "urn:eoip:work:sprint:jira:Sprint-26.15", "urn:eoip:work:sprint:jira:Sprint-26.16"],
+      "expected_output_fields": ["workload_distribution", "bottleneck_analysis", "recommendations"],
+      "fallback_mode": "workload_aggregation",
+      "note": "Analyzes story point distribution, assignment density, and cross-team dependencies across Q4 sprints"
+    },
+    {
+      "id": "laya-migration-whatif",
+      "capability": "migration_whatif",
+      "question": "What if we migrate from PostgreSQL to CockroachDB for the payment database - what's the impact analysis?",
+      "context_entities": ["urn:eoip:infra:db-server:pghost-prod-01.mfs.internal", "urn:eoip:infra:database:mfs_payments_db", "urn:eoip:infra:service-account:svc-payment-api"],
+      "expected_output_fields": ["affected_services", "schema_compatibility", "performance_implications", "migration_steps", "rollback_plan"],
+      "fallback_mode": "impact_simulation",
+      "note": "Simulates PostgreSQL to CockroachDB migration: identifies all services using pghost-prod-01, schema compatibility issues, connection string changes, and phased migration plan"
     }
   ]
 }

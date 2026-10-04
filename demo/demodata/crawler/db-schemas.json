@@ -87,5 +87,102 @@
       "https://wiki.mfs.internal/spaces/ENG/pages/db-schema-overview",
       "https://wiki.mfs.internal/spaces/ENG/pages/security-pci"
     ]
+  },
+  {
+    "url": "https://dbdocs.mfs.internal/mfs_fraud_db/tables",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "mfs_fraud_db - Extended Table Documentation",
+    "headings": [
+      "mfs_fraud_db Extended Tables",
+      "Connection Details",
+      "Table: fraud_transactions",
+      "Table: fraud_scores",
+      "Table: model_registry",
+      "Table: model_versions",
+      "Table: ab_test_results",
+      "Table: velocity_windows",
+      "Table: alerts",
+      "Table: aml_cases",
+      "Table: sar_filings",
+      "Table: fraud_cases",
+      "Table: case_evidence",
+      "Table: case_dispositions",
+      "Service Account Access"
+    ],
+    "text": "mfs_fraud_db Extended Table Documentation. Connection Details. Host: pghost-prod-02.mfs.internal. Port: 5432. Read replica: pghost-prod-02-ro.mfs.internal. Schema version: v2026.09.28. Total estimated rows: 112M across all tables. Table: fraud_transactions. Fraud-enriched transaction records. Columns: id (UUID, PK), payment_id (UUID, NOT NULL, references mfs_payments_db.payments at application level), fraud_score (NUMERIC(5,4), NOT NULL), model_version (VARCHAR(64), NOT NULL), features_json (JSONB, NOT NULL, full feature vector used for scoring), scored_at (TIMESTAMPTZ, NOT NULL, default NOW()). Row count: ~68M. Partitioned by scored_at (monthly). Table: fraud_scores. Detailed fraud scoring breakdown. Columns: id (UUID, PK), transaction_id (UUID, NOT NULL, FK to fraud_transactions), score (NUMERIC(5,4), NOT NULL, final composite score), confidence (NUMERIC(5,4), NOT NULL, model confidence interval), model_id (UUID, NOT NULL, FK to model_registry), explanation_json (JSONB, SHAP values and feature contributions). Row count: ~68M. Table: model_registry. Central registry of all ML models. Columns: id (UUID, PK), name (VARCHAR(128), NOT NULL), version (VARCHAR(64), NOT NULL, UNIQUE), status (VARCHAR(32), NOT NULL, one of: training, staging, champion, challenger, retired), metrics_json (JSONB, training and validation metrics including AUC, precision, recall, F1), created_at (TIMESTAMPTZ, NOT NULL, default NOW()). Row count: ~30. Table: model_versions. Detailed model version tracking with champion/challenger designation. Columns: id (UUID, PK), model_id (UUID, NOT NULL, FK to model_registry), version (VARCHAR(64), NOT NULL), champion_flag (BOOLEAN, NOT NULL, default false), performance_baseline_json (JSONB, baseline metrics for drift detection including feature distributions, KL-divergence thresholds). Row count: ~30. Table: ab_test_results. A/B test results for model comparison. Columns: id (UUID, PK), model_a_id (UUID, NOT NULL, FK to model_registry), model_b_id (UUID, NOT NULL, FK to model_registry), traffic_split (NUMERIC(3,2), NOT NULL, e.g. 0.95/0.05), metrics_json (JSONB, comparative metrics: AUC delta, precision delta, recall delta, false positive rate delta, statistical significance p-value), start_date (TIMESTAMPTZ, NOT NULL), end_date (TIMESTAMPTZ), status (VARCHAR(32), NOT NULL, one of: running, completed, cancelled). Row count: ~15. Table: velocity_windows. Sliding window transaction velocity aggregates. Columns: account_id (UUID, NOT NULL), window_type (VARCHAR(16), NOT NULL, one of: 1min, 5min, 1hour, 24hour), count (INTEGER, NOT NULL, default 0), last_updated (TIMESTAMPTZ, NOT NULL, default NOW()). Row count: ~8M active windows. Composite PK: (account_id, window_type). Table: alerts. Rule-triggered fraud and AML alerts. Columns: id (UUID, PK), rule_id (VARCHAR(32), NOT NULL, e.g. STRUCT-001, RAPID-001, GEO-001, MERCH-001, VELOCITY-001), severity (VARCHAR(16), NOT NULL, one of: low, medium, high, critical), account_id (UUID, NOT NULL), transaction_ids (UUID[], array of related transaction IDs), created_at (TIMESTAMPTZ, NOT NULL, default NOW()). Row count: ~52K. Table: aml_cases. Anti-money laundering investigation cases. Columns: id (UUID, PK), alert_ids (UUID[], NOT NULL, array of FK references to alerts), pattern_type (VARCHAR(64), NOT NULL, e.g. structuring, rapid_movement, layering, smurfing), status (VARCHAR(32), NOT NULL, one of: open, investigating, escalated, closed_cleared, closed_filed), analyst_id (VARCHAR(128)), assigned_at (TIMESTAMPTZ), closed_at (TIMESTAMPTZ), created_at (TIMESTAMPTZ, NOT NULL, default NOW()). Row count: ~2.1K. Table: sar_filings. Suspicious Activity Report filings to FinCEN. Columns: id (UUID, PK), case_id (UUID, NOT NULL, FK to aml_cases), filing_type (VARCHAR(32), NOT NULL, one of: initial, supplemental, corrected), fincen_id (VARCHAR(64), FinCEN tracking number assigned after submission), status (VARCHAR(32), NOT NULL, one of: draft, submitted, accepted, rejected), filed_at (TIMESTAMPTZ), created_at (TIMESTAMPTZ, NOT NULL, default NOW()). Row count: ~180. Table: fraud_cases. Fraud investigation case tracking. Columns: id (UUID, PK), priority (VARCHAR(16), NOT NULL, one of: CRITICAL, HIGH, MEDIUM, LOW), status (VARCHAR(32), NOT NULL, one of: NEW, ASSIGNED, IN_REVIEW, DISPOSITION, CLOSED), assigned_analyst (VARCHAR(128)), evidence_ids (UUID[], array of FK references to case_evidence), created_at (TIMESTAMPTZ, NOT NULL, default NOW()), updated_at (TIMESTAMPTZ, NOT NULL), closed_at (TIMESTAMPTZ). Row count: ~4.8K. Table: case_evidence. Evidence artifacts linked to fraud investigation cases. Columns: id (UUID, PK), case_id (UUID, NOT NULL, FK to fraud_cases), source_type (VARCHAR(32), NOT NULL, one of: transaction, fraud_score, aml_alert, customer_record, external), source_id (VARCHAR(256), NOT NULL, reference to source system record), data_json (JSONB, evidence details and metadata). Row count: ~28K. Table: case_dispositions. Investigation decision records. Columns: id (UUID, PK), case_id (UUID, NOT NULL, FK to fraud_cases), decision (VARCHAR(32), NOT NULL, one of: confirmed_fraud, false_positive, suspicious_activity, insufficient_evidence), rationale (TEXT, NOT NULL), analyst_id (VARCHAR(128), NOT NULL), created_at (TIMESTAMPTZ, NOT NULL, default NOW()). Row count: ~3.9K. Service Account Access. svc-fraud-engine: read/write access to fraud_transactions, fraud_scores, model_registry, model_versions, ab_test_results, alerts. Primary service account for scoring pipeline. svc-txn-monitor: read/write access to velocity_windows. Used by VelocityMonitor for real-time sliding window updates. svc-aml-engine: read/write access to aml_cases, sar_filings, alerts. Used for AML investigation workflow and SAR filing. svc-case-engine: read/write access to fraud_cases, case_evidence, case_dispositions. Used by the case management service. svc-model-serving: read access to model_registry, model_versions. Used by ModelServing for loading model metadata and artifacts.",
+    "links": [
+      "https://dbdocs.mfs.internal/",
+      "https://dbdocs.mfs.internal/mfs_fraud_db",
+      "https://wiki.mfs.internal/spaces/ENG/pages/fraud-system-docs",
+      "https://api.mfs.internal/catalog/case-api/v1/swagger.json"
+    ]
+  },
+  {
+    "url": "https://dbdocs.mfs.internal/mfs_customers_db/tables",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "mfs_customers_db - Extended Table Documentation",
+    "headings": [
+      "mfs_customers_db Extended Tables",
+      "Connection Details",
+      "Table: customers",
+      "Table: document_verifications",
+      "Table: identity_checks",
+      "Table: sanctions_hits",
+      "Table: liveness_results",
+      "Service Account Access"
+    ],
+    "text": "mfs_customers_db Extended Table Documentation. Connection Details. Host: pghost-prod-03.mfs.internal. Port: 5432. Read replica: pghost-prod-03-ro.mfs.internal. Schema version: v2026.09.25. Total estimated rows: 32M across all tables. Used by: mfs-kyc-engine (mfs-kyc-pod-01). Table: customers. Core customer identity records. Columns: id (UUID, PK), name (VARCHAR(256), NOT NULL, encrypted PII via EncryptionUtil.encrypt_field), email (VARCHAR(256), NOT NULL, SHA-256 hash via EncryptionUtil.hash_pii), kyc_status (VARCHAR(32), NOT NULL, one of: pending, verified, rejected, expired, manual_review), risk_level (VARCHAR(16), NOT NULL, default 'standard', one of: low, standard, elevated, high), created_at (TIMESTAMPTZ, NOT NULL, default NOW()), updated_at (TIMESTAMPTZ, NOT NULL). Row count: ~8.2M. KYC status is updated by the KYC verification pipeline. Risk level is computed from verification results and sanctions screening. Table: document_verifications. Identity document verification records. Columns: id (UUID, PK), customer_id (UUID, NOT NULL, FK to customers), document_type (VARCHAR(32), NOT NULL, one of: passport, drivers_license, national_id), ocr_result_json (JSONB, NOT NULL, extracted document fields: name, date_of_birth, document_number, expiry_date, country, issuing_authority), authenticity_score (NUMERIC(5,4), NOT NULL, range 0.0000-1.0000, document authenticity confidence), status (VARCHAR(32), NOT NULL, one of: pending, processing, verified, rejected, manual_review), submitted_at (TIMESTAMPTZ, NOT NULL, default NOW()), completed_at (TIMESTAMPTZ). Row count: ~12M. Documents with authenticity_score below 0.70 are automatically rejected. Scores between 0.70 and 0.85 require manual review. Table: identity_checks. Composite identity verification results combining document, liveness, and sanctions. Columns: id (UUID, PK), customer_id (UUID, NOT NULL, FK to customers), verification_id (UUID, NOT NULL, FK to document_verifications), liveness_result (VARCHAR(16), one of: pass, fail, inconclusive, not_submitted), sanctions_result (VARCHAR(16), one of: clear, match_found, pending_review), overall_status (VARCHAR(32), NOT NULL, one of: approved, rejected, pending_review, incomplete), created_at (TIMESTAMPTZ, NOT NULL, default NOW()). Row count: ~10M. Overall status is approved only when: document verification is verified, liveness result is pass, and sanctions result is clear. Table: sanctions_hits. Records of sanctions screening matches. Columns: id (UUID, PK), customer_id (UUID, NOT NULL, FK to customers), list_name (VARCHAR(32), NOT NULL, one of: OFAC_SDN, EU_SANCTIONS, PEP), match_score (NUMERIC(5,4), NOT NULL, range 0.0000-1.0000), review_status (VARCHAR(32), NOT NULL, one of: pending_review, confirmed_match, false_positive, escalated), matched_entry_id (VARCHAR(128)), reviewed_by (VARCHAR(128)), reviewed_at (TIMESTAMPTZ), created_at (TIMESTAMPTZ, NOT NULL, default NOW()). Row count: ~850. Matches with score above 0.85 are flagged for mandatory compliance team review. Table: liveness_results. Biometric liveness detection results. Columns: id (UUID, PK), verification_id (UUID, NOT NULL, FK to document_verifications), confidence (NUMERIC(5,4), NOT NULL, face match confidence against document photo), anti_spoofing_score (NUMERIC(5,4), NOT NULL, protection against photo/video/mask attacks), image_quality (NUMERIC(5,4), NOT NULL, input image quality assessment), result (VARCHAR(16), NOT NULL, one of: pass, fail, inconclusive), created_at (TIMESTAMPTZ, NOT NULL, default NOW()). Row count: ~9M. Pass requires: confidence >= 0.90, anti_spoofing_score >= 0.85, and image_quality >= 0.70. Service Account Access. svc-kyc-engine: read/write access to all tables. Primary service account for the KYC verification pipeline. Used by mfs-kyc-engine on mfs-kyc-pod-01.",
+    "links": [
+      "https://dbdocs.mfs.internal/",
+      "https://dbdocs.mfs.internal/mfs_customers_db",
+      "https://api.mfs.internal/catalog/kyc-api/v1/swagger.json",
+      "https://wiki.mfs.internal/spaces/COMPLIANCE/pages/data-classification"
+    ]
+  },
+  {
+    "url": "https://dbdocs.mfs.internal/mfs_audit_db/tables",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "mfs_audit_db - Extended Table Documentation",
+    "headings": [
+      "mfs_audit_db Extended Tables",
+      "Connection Details",
+      "Table: audit_log",
+      "Table: access_log",
+      "Table: compliance_events",
+      "Service Account Access"
+    ],
+    "text": "mfs_audit_db Extended Table Documentation. Connection Details. Host: pghost-prod-03.mfs.internal. Port: 5432. Read replica: pghost-prod-03-ro.mfs.internal. Schema version: v2026.09.28. Total estimated rows: 325M across all tables. Used by: all MFS services via AuditLogger from mfs-common-libs. Table: audit_log. Comprehensive audit trail for all service actions. Columns: id (UUID, PK), timestamp (TIMESTAMPTZ, NOT NULL, default NOW()), service (VARCHAR(128), NOT NULL, e.g. 'mfs-payment-gateway', 'mfs-fraud-engine', 'mfs-kyc-engine', 'mfs-case-engine'), action (VARCHAR(64), NOT NULL, e.g. 'payment.created', 'fraud.scored', 'case.assigned', 'kyc.verified', 'sar.filed'), actor (VARCHAR(128), NOT NULL, service account or user identifier performing the action), resource (VARCHAR(256), NOT NULL, resource identifier such as payment_id, case_id, customer_id), details_json (JSONB, contextual details including request parameters, response summary, and change tracking). Row count: ~195M. Partitioned by timestamp (monthly). Retention: 7 years per PCI DSS requirement 10.7. Written by AuditLogger.log_event from mfs-common-libs. Table: access_log. Data access audit trail for compliance and security monitoring. Columns: id (UUID, PK), timestamp (TIMESTAMPTZ, NOT NULL, default NOW()), service_account (VARCHAR(128), NOT NULL, e.g. 'svc-payment-api', 'svc-fraud-engine', 'svc-kyc-engine'), resource (VARCHAR(256), NOT NULL, accessed resource identifier), action (VARCHAR(32), NOT NULL, one of: read, write, delete, export), ip_address (INET, NOT NULL, source IP of the requesting service), result (VARCHAR(16), NOT NULL, one of: success, denied, error). Row count: ~98M. Written by AuditLogger.log_access. Critical for PCI DSS requirement 10.2 (logging all access to cardholder data). Table: compliance_events. Regulatory compliance event tracking across frameworks. Columns: id (UUID, PK), timestamp (TIMESTAMPTZ, NOT NULL, default NOW()), framework (VARCHAR(32), NOT NULL, one of: PCI_DSS, GDPR, SOX, AML_BSA), control_id (VARCHAR(32), NOT NULL, specific control identifier e.g. 'PCI-3.4', 'GDPR-17', 'BSA-314a'), status (VARCHAR(32), NOT NULL, one of: compliant, non_compliant, remediation_in_progress, waiver_granted), evidence_json (JSONB, NOT NULL, supporting evidence including test results, configuration snapshots, and review notes). Row count: ~32M. Used for automated compliance monitoring and audit preparation. Service Account Access. All MFS services have write access to the audit_log and access_log tables via AuditLogger. Service accounts with write access: svc-payment-api, svc-fraud-engine, svc-kyc-engine, svc-case-engine, svc-aml-engine, svc-model-serving, svc-txn-monitor, svc-notification-svc, svc-webhook-dispatch, svc-analytics, svc-customer-svc, svc-cicd-deployer. Read access to audit data requires explicit approval and is restricted to svc-analytics (for compliance reporting) and svc-notification-svc (for audit event forwarding).",
+    "links": [
+      "https://dbdocs.mfs.internal/",
+      "https://dbdocs.mfs.internal/mfs_audit_db",
+      "https://wiki.mfs.internal/spaces/ENG/pages/security-pci",
+      "https://wiki.mfs.internal/spaces/COMPLIANCE/pages/data-classification"
+    ]
+  },
+  {
+    "url": "https://dbdocs.mfs.internal/migrations/overview",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Schema Versioning & Migration Overview",
+    "headings": [
+      "Schema Versioning & Migration",
+      "Migration Tool",
+      "Migration Naming Convention",
+      "Source Control",
+      "Approval Process",
+      "Recent Migrations - mfs_payments_db",
+      "Recent Migrations - mfs_fraud_db",
+      "Rollback Procedures"
+    ],
+    "text": "Schema Versioning & Migration Overview. Last updated: 2026-09-30 by Jordan Lee. This document describes the schema migration process for all MFS production databases. Migration Tool. All MFS databases use Flyway for schema versioning and migration management. Flyway version: 9.22. Migration execution is integrated into the GitLab CI/CD pipeline as a pre-deployment step. Migrations run with the deployer service account svc-cicd-deployer which has DDL privileges on all production databases. Migration Naming Convention. All migration files follow the naming convention: V{version}__{description}.sql. Version numbers are sequential integers scoped to each database. Description uses snake_case and must clearly describe the schema change. Examples: V47__add_webhook_tables.sql, V48__add_analytics_aggregates.sql. Down migrations (rollbacks) follow: U{version}__{description}.sql. Source Control. All migration files are stored in GitLab at gitlab.mfs.internal in the respective service repository under the db/migrations/ directory. mfs-payment-gateway migrations: gitlab.mfs.internal/mfs/payment-gateway/db/migrations/. mfs-fraud-engine migrations: gitlab.mfs.internal/mfs/fraud-engine/db/migrations/. mfs-common-libs migrations (audit db): gitlab.mfs.internal/mfs/common-libs/db/migrations/. Migration files are code-reviewed with the same rigor as application code. Approval Process. Production migrations require approval from: 1. The owning squad lead (Arjun Deshmukh for payments, Priya Natarajan for fraud, Marcus Thompson for platform). 2. A DBA review from Platform Engineering (Aisha Obi). 3. For migrations affecting tables with > 10M rows: performance impact assessment required. 4. For migrations adding or modifying indexes: execution plan review required. Migrations are first applied to staging databases on ocp-staging.mfs.internal and validated before production execution. Recent Migrations - mfs_payments_db. V47__add_webhook_tables.sql: Added webhook_registrations and webhook_deliveries tables for the webhook API. Applied: 2026-09-10. V48__add_analytics_aggregates.sql: Added materialized views for transaction analytics aggregation. Applied: 2026-09-15. V49__add_settlement_batches.sql: Added settlement_batch_items table linking individual transactions to settlement batches. Applied: 2026-09-22. Recent Migrations - mfs_fraud_db. V23__add_kyc_tables.sql: Added document_verifications, identity_checks, sanctions_hits, and liveness_results tables. Note: These tables were later moved to mfs_customers_db via data migration. Applied: 2026-08-20. V24__add_case_management_tables.sql: Added fraud_cases, case_evidence, and case_dispositions tables for the case management service. Applied: 2026-09-01. V25__add_ab_test_results.sql: Added ab_test_results table for model A/B testing tracking. Applied: 2026-09-15. V26__add_sar_filings.sql: Added sar_filings table for Suspicious Activity Report tracking. Applied: 2026-09-20. Rollback Procedures. Each migration has a corresponding rollback script (U{version}__*.sql). Rollbacks are executed via Flyway undo command through the GitLab CI/CD pipeline. Rollback requires the same approval process as forward migrations. Data-destructive rollbacks (dropping columns or tables) require VP Engineering approval. All rollback executions are logged to mfs_audit_db via AuditLogger.",
+    "links": [
+      "https://dbdocs.mfs.internal/",
+      "https://gitlab.mfs.internal",
+      "https://wiki.mfs.internal/spaces/DEVOPS/pages/cicd-standards",
+      "https://wiki.mfs.internal/spaces/ENG/pages/db-schema-overview"
+    ]
   }
 ]

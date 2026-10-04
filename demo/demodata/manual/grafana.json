@@ -89,6 +89,113 @@
           ]
         }
       ]
+    },
+    {
+      "uid": "webhook-delivery-slo",
+      "title": "Webhook Delivery SLOs",
+      "url": "/d/webhook-delivery-slo/webhook-delivery-slos",
+      "folderTitle": "MFS Payment Gateway",
+      "tags": ["webhook", "slo", "payment-gateway"],
+      "version": 1,
+      "created": "2026-10-01T09:00:00.000Z",
+      "updated": "2026-10-01T09:00:00.000Z",
+      "panels": [
+        {
+          "id": 1,
+          "title": "Delivery Success Rate",
+          "type": "gauge",
+          "description": "Webhook delivery success rate. SLO target: > 99.5%.",
+          "targets": [
+            {"expr": "sum(rate(webhook_deliveries_total{status=\"success\"}[5m])) / sum(rate(webhook_deliveries_total[5m])) * 100", "legendFormat": "Success Rate"}
+          ],
+          "thresholds": [{"value": 99.5, "color": "green"}, {"value": 98.0, "color": "yellow"}, {"value": 0, "color": "red"}]
+        },
+        {
+          "id": 2,
+          "title": "Delivery Latency P99",
+          "type": "timeseries",
+          "description": "P99 webhook delivery latency from dispatch to merchant acknowledgement.",
+          "targets": [
+            {"expr": "histogram_quantile(0.99, rate(webhook_delivery_duration_seconds_bucket{namespace='mfs-prod'}[5m]))", "legendFormat": "P99 Latency"}
+          ]
+        },
+        {
+          "id": 3,
+          "title": "DLQ Depth",
+          "type": "stat",
+          "description": "Current depth of the webhook dead-letter queue.",
+          "targets": [
+            {"expr": "webhook_dlq_depth{namespace='mfs-prod'}", "legendFormat": "DLQ Messages"}
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Retry Rate by Merchant",
+          "type": "timeseries",
+          "description": "Webhook delivery retry rate broken down by merchant.",
+          "targets": [
+            {"expr": "sum(rate(webhook_delivery_retries_total{namespace='mfs-prod'}[5m])) by (merchant_id)", "legendFormat": "{{merchant_id}}"}
+          ]
+        },
+        {
+          "id": 5,
+          "title": "Error Budget Remaining",
+          "type": "gauge",
+          "description": "Remaining error budget for webhook delivery SLO (99.5% target over 30-day window).",
+          "targets": [
+            {"expr": "1 - ((1 - (sum(rate(webhook_deliveries_total{status=\"success\"}[30d])) / sum(rate(webhook_deliveries_total[30d])))) / (1 - 0.995))", "legendFormat": "Budget Remaining"}
+          ],
+          "thresholds": [{"value": 0.5, "color": "green"}, {"value": 0.2, "color": "yellow"}, {"value": 0, "color": "red"}]
+        }
+      ]
+    },
+    {
+      "uid": "analytics-pipeline",
+      "title": "Payment Analytics Pipeline",
+      "url": "/d/analytics-pipeline/payment-analytics-pipeline",
+      "folderTitle": "MFS Payment Gateway",
+      "tags": ["analytics", "kafka", "pipeline"],
+      "version": 1,
+      "created": "2026-10-01T10:00:00.000Z",
+      "updated": "2026-10-01T10:00:00.000Z",
+      "panels": [
+        {
+          "id": 1,
+          "title": "Events Processed/sec",
+          "type": "timeseries",
+          "description": "Rate of events processed by the analytics pipeline consumers.",
+          "targets": [
+            {"expr": "sum(rate(analytics_events_processed_total{namespace='mfs-prod'}[1m]))", "legendFormat": "Events/sec"}
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Aggregation Lag",
+          "type": "stat",
+          "description": "Current lag in seconds between event ingestion and aggregation completion.",
+          "targets": [
+            {"expr": "analytics_aggregation_lag_seconds{namespace='mfs-prod'}", "legendFormat": "Lag (s)"}
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Consumer Group Offset",
+          "type": "timeseries",
+          "description": "Kafka consumer group offset for the analytics aggregation consumers.",
+          "targets": [
+            {"expr": "kafka_consumer_group_lag{group=\"mfs-analytics-agg\",namespace='mfs-prod'}", "legendFormat": "{{topic}}-{{partition}}"}
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Analytics Query Latency",
+          "type": "timeseries",
+          "description": "Latency of analytics queries against the aggregated data store.",
+          "targets": [
+            {"expr": "histogram_quantile(0.99, rate(analytics_query_duration_seconds_bucket{namespace='mfs-prod'}[5m]))", "legendFormat": "P99 Query Latency"}
+          ]
+        }
+      ]
     }
   ],
   "alert_rules": {
@@ -124,6 +231,49 @@
               },
               "version": 2
             }
+          },
+          {
+            "grafana_alert": {
+              "uid": "alert-webhook-success-rate",
+              "title": "Webhook Delivery Success Rate Below SLO",
+              "condition": "sum(rate(webhook_deliveries_total{status='success',namespace='mfs-prod'}[5m])) / sum(rate(webhook_deliveries_total{namespace='mfs-prod'}[5m])) * 100 < 99.5",
+              "for": "5m",
+              "labels": {"severity": "critical", "team": "payment-services"},
+              "annotations": {
+                "summary": "Webhook delivery success rate has dropped below the 99.5% SLO target",
+                "description": "The webhook delivery success rate in mfs-prod has fallen below 99.5% for 5 minutes. Current value: {{ $value | humanizePercentage }}. Check webhook dispatcher service and merchant endpoint availability.",
+                "runbook_url": "https://confluence.mfs.internal/spaces/PAY/pages/98510/Incident+Runbook+Webhook+Delivery"
+              },
+              "version": 1
+            }
+          },
+          {
+            "grafana_alert": {
+              "uid": "alert-webhook-dlq-depth",
+              "title": "Webhook DLQ Depth Exceeding Threshold",
+              "condition": "webhook_dlq_depth{namespace='mfs-prod'} > 100",
+              "for": "10m",
+              "labels": {"severity": "warning", "team": "payment-services"},
+              "annotations": {
+                "summary": "Webhook dead-letter queue depth exceeds 100 messages",
+                "description": "The webhook DLQ in mfs-prod has exceeded 100 messages for 10 minutes. Current depth: {{ $value }}. Investigate failed deliveries and consider reprocessing."
+              },
+              "version": 1
+            }
+          },
+          {
+            "grafana_alert": {
+              "uid": "alert-analytics-consumer-lag",
+              "title": "Analytics Pipeline Consumer Lag",
+              "condition": "kafka_consumer_group_lag{group='mfs-analytics-agg',namespace='mfs-prod'} > 10000",
+              "for": "15m",
+              "labels": {"severity": "warning", "team": "platform-engineering"},
+              "annotations": {
+                "summary": "Analytics pipeline Kafka consumer group lag exceeds 10000",
+                "description": "The mfs-analytics-agg consumer group lag in mfs-prod has exceeded 10000 for 15 minutes. Current lag: {{ $value }}. Check consumer health and Kafka broker connectivity."
+              },
+              "version": 1
+            }
           }
         ]
       }
@@ -154,6 +304,19 @@
       "jsonData": {
         "sslmode": "require",
         "maxOpenConns": 10
+      }
+    },
+    {
+      "id": 3,
+      "name": "MFS Kafka Metrics",
+      "type": "prometheus",
+      "url": "http://kafka-exporter.mfs.internal:9308",
+      "access": "proxy",
+      "isDefault": false,
+      "database": "",
+      "jsonData": {
+        "httpMethod": "POST",
+        "timeInterval": "15s"
       }
     }
   ]

@@ -34,6 +34,21 @@
         {"title": "Consumer Group Rebalance Events", "type": "timeseries", "query": "sum:kafka.consumer.rebalances{consumer_group:mfs-txn-monitor-cg}"},
         {"title": "Alert Severity Distribution", "type": "toplist", "query": "sum:txn.monitor.alerts{service:mfs-txn-monitor} by {severity}"}
       ]
+    },
+    {
+      "id": "dd-dash-frd-003",
+      "title": "ML Pipeline Monitoring",
+      "description": "End-to-end ML pipeline monitoring for fraud detection model training, feature extraction, model registry, and A/B testing",
+      "url": "/dashboard/dd-dash-frd-003",
+      "created_at": "2026-10-04T09:00:00Z",
+      "modified_at": "2026-10-04T09:00:00Z",
+      "author_handle": "nkowalski",
+      "widgets": [
+        {"title": "Model Training Duration", "type": "timeseries", "query": "avg:model.training.duration{service:mfs-fraud-engine,env:prod}"},
+        {"title": "Feature Extraction Throughput", "type": "timeseries", "query": "sum:feature.extraction.throughput{service:mfs-fraud-engine,env:prod}.as_rate()"},
+        {"title": "Model Registry Versions", "type": "query_value", "query": "max:model.registry.version_count{service:mfs-fraud-engine,env:prod}"},
+        {"title": "A/B Test Traffic Split", "type": "toplist", "query": "avg:model.ab_test.traffic_split{service:mfs-fraud-engine,env:prod} by {model_version}"}
+      ]
     }
   ],
   "monitors": [
@@ -83,6 +98,42 @@
       "priority": 2,
       "created": "2026-09-10T09:00:00Z",
       "modified": "2026-10-02T14:00:00Z",
+      "overall_state": "OK"
+    },
+    {
+      "id": 9905,
+      "name": "Model Retraining Duration Exceeded",
+      "type": "metric alert",
+      "query": "avg(last_15m):avg:model.training.duration{service:mfs-fraud-engine,env:prod} > 3600",
+      "message": "Model retraining duration exceeds 3600 seconds (1 hour). Check training data volume, GPU resource allocation, and hyperparameter search space. @slack-fraud-oncall @pagerduty-fraud-risk",
+      "tags": ["service:mfs-fraud-engine", "team:fraud-risk", "env:prod"],
+      "priority": 2,
+      "created": "2026-10-04T09:00:00Z",
+      "modified": "2026-10-04T09:00:00Z",
+      "overall_state": "OK"
+    },
+    {
+      "id": 9906,
+      "name": "Feature Store Staleness Alert",
+      "type": "metric alert",
+      "query": "avg(last_5m):avg:feature.store.staleness{service:mfs-fraud-engine,env:prod} > 300",
+      "message": "Feature store staleness exceeds 300 seconds (5 minutes). Features may be outdated, impacting model accuracy. Check Feast materialization jobs and Kafka consumer health. @slack-fraud-oncall @pagerduty-fraud-risk",
+      "tags": ["service:mfs-fraud-engine", "team:fraud-risk", "env:prod"],
+      "priority": 1,
+      "created": "2026-10-04T09:00:00Z",
+      "modified": "2026-10-04T09:00:00Z",
+      "overall_state": "OK"
+    },
+    {
+      "id": 9907,
+      "name": "Fraud Score Distribution Anomaly",
+      "type": "anomaly detection",
+      "query": "avg(last_15m):anomalies(avg:fraud.score.distribution{service:mfs-fraud-engine,env:prod}, 'agile', 3)",
+      "message": "Anomaly detected in fraud score distribution. The prediction score distribution has deviated significantly from historical patterns. Possible causes: data drift, feature pipeline issues, or upstream data quality changes. @slack-fraud-oncall @pagerduty-fraud-risk",
+      "tags": ["service:mfs-fraud-engine", "team:fraud-risk", "env:prod"],
+      "priority": 1,
+      "created": "2026-10-04T09:00:00Z",
+      "modified": "2026-10-04T09:00:00Z",
       "overall_state": "OK"
     }
   ]

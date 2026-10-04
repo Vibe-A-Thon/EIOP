@@ -66,6 +66,36 @@
       "language": "python",
       "content_hash": "mfs-txn-model-v1",
       "line_count": 58
+    },
+    {
+      "path": "services/kyc/document_verifier.py",
+      "language": "python",
+      "content_hash": "mfs-doc-verifier-v1",
+      "line_count": 145
+    },
+    {
+      "path": "services/kyc/liveness_detector.py",
+      "language": "python",
+      "content_hash": "mfs-liveness-detector-v1",
+      "line_count": 112
+    },
+    {
+      "path": "services/kyc/sanctions_screener.py",
+      "language": "python",
+      "content_hash": "mfs-sanctions-screener-v1",
+      "line_count": 88
+    },
+    {
+      "path": "services/case_mgmt/case_router.py",
+      "language": "python",
+      "content_hash": "mfs-case-router-v1",
+      "line_count": 134
+    },
+    {
+      "path": "services/case_mgmt/evidence_aggregator.py",
+      "language": "python",
+      "content_hash": "mfs-evidence-aggregator-v1",
+      "line_count": 98
     }
   ],
   "symbols": [
@@ -228,6 +258,142 @@
       "path": "services/models/transaction.py",
       "start_line": 8,
       "end_line": 58
+    },
+    {
+      "qualified_name": "services.kyc.document_verifier.DocumentVerifier",
+      "symbol_kind": "class",
+      "name": "DocumentVerifier",
+      "path": "services/kyc/document_verifier.py",
+      "start_line": 12,
+      "end_line": 145
+    },
+    {
+      "qualified_name": "services.kyc.document_verifier.DocumentVerifier.verify_document",
+      "symbol_kind": "method",
+      "name": "verify_document",
+      "path": "services/kyc/document_verifier.py",
+      "start_line": 28,
+      "end_line": 62
+    },
+    {
+      "qualified_name": "services.kyc.document_verifier.DocumentVerifier.extract_ocr",
+      "symbol_kind": "method",
+      "name": "extract_ocr",
+      "path": "services/kyc/document_verifier.py",
+      "start_line": 64,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "services.kyc.document_verifier.DocumentVerifier.check_authenticity",
+      "symbol_kind": "method",
+      "name": "check_authenticity",
+      "path": "services/kyc/document_verifier.py",
+      "start_line": 100,
+      "end_line": 140
+    },
+    {
+      "qualified_name": "services.kyc.liveness_detector.LivenessDetector",
+      "symbol_kind": "class",
+      "name": "LivenessDetector",
+      "path": "services/kyc/liveness_detector.py",
+      "start_line": 10,
+      "end_line": 112
+    },
+    {
+      "qualified_name": "services.kyc.liveness_detector.LivenessDetector.detect_liveness",
+      "symbol_kind": "method",
+      "name": "detect_liveness",
+      "path": "services/kyc/liveness_detector.py",
+      "start_line": 24,
+      "end_line": 68
+    },
+    {
+      "qualified_name": "services.kyc.liveness_detector.LivenessDetector.anti_spoofing_check",
+      "symbol_kind": "method",
+      "name": "anti_spoofing_check",
+      "path": "services/kyc/liveness_detector.py",
+      "start_line": 70,
+      "end_line": 108
+    },
+    {
+      "qualified_name": "services.kyc.sanctions_screener.SanctionsScreener",
+      "symbol_kind": "class",
+      "name": "SanctionsScreener",
+      "path": "services/kyc/sanctions_screener.py",
+      "start_line": 8,
+      "end_line": 88
+    },
+    {
+      "qualified_name": "services.kyc.sanctions_screener.SanctionsScreener.screen_entity",
+      "symbol_kind": "method",
+      "name": "screen_entity",
+      "path": "services/kyc/sanctions_screener.py",
+      "start_line": 18,
+      "end_line": 42
+    },
+    {
+      "qualified_name": "services.kyc.sanctions_screener.SanctionsScreener.check_ofac",
+      "symbol_kind": "method",
+      "name": "check_ofac",
+      "path": "services/kyc/sanctions_screener.py",
+      "start_line": 44,
+      "end_line": 65
+    },
+    {
+      "qualified_name": "services.kyc.sanctions_screener.SanctionsScreener.check_pep",
+      "symbol_kind": "method",
+      "name": "check_pep",
+      "path": "services/kyc/sanctions_screener.py",
+      "start_line": 67,
+      "end_line": 85
+    },
+    {
+      "qualified_name": "services.case_mgmt.case_router.CaseRouter",
+      "symbol_kind": "class",
+      "name": "CaseRouter",
+      "path": "services/case_mgmt/case_router.py",
+      "start_line": 10,
+      "end_line": 134
+    },
+    {
+      "qualified_name": "services.case_mgmt.case_router.CaseRouter.route_case",
+      "symbol_kind": "method",
+      "name": "route_case",
+      "path": "services/case_mgmt/case_router.py",
+      "start_line": 28,
+      "end_line": 78
+    },
+    {
+      "qualified_name": "services.case_mgmt.case_router.CaseRouter.score_priority",
+      "symbol_kind": "method",
+      "name": "score_priority",
+      "path": "services/case_mgmt/case_router.py",
+      "start_line": 80,
+      "end_line": 130
+    },
+    {
+      "qualified_name": "services.case_mgmt.evidence_aggregator.EvidenceAggregator",
+      "symbol_kind": "class",
+      "name": "EvidenceAggregator",
+      "path": "services/case_mgmt/evidence_aggregator.py",
+      "start_line": 8,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "services.case_mgmt.evidence_aggregator.EvidenceAggregator.aggregate",
+      "symbol_kind": "method",
+      "name": "aggregate",
+      "path": "services/case_mgmt/evidence_aggregator.py",
+      "start_line": 20,
+      "end_line": 58
+    },
+    {
+      "qualified_name": "services.case_mgmt.evidence_aggregator.EvidenceAggregator.collect_from_sources",
+      "symbol_kind": "method",
+      "name": "collect_from_sources",
+      "path": "services/case_mgmt/evidence_aggregator.py",
+      "start_line": 60,
+      "end_line": 95
     }
   ],
   "dependencies": [
@@ -260,6 +426,47 @@
     {"source": "services.aml.sar_generator.SARGenerator.generate_sar", "target": "services.common.db_client.FraudDBClient", "edge_type": "uses"},
     {"source": "services.scoring.fraud_scorer.FraudScorer.score_transaction", "target": "services.models.transaction.Transaction", "edge_type": "uses"},
     {"source": "services.monitoring.velocity_monitor.VelocityMonitor.check_velocity", "target": "services.models.transaction.Transaction", "edge_type": "uses"},
-    {"source": "services.aml.rule_engine.AMLRuleEngine.evaluate_patterns", "target": "services.models.transaction.Transaction", "edge_type": "uses"}
+    {"source": "services.aml.rule_engine.AMLRuleEngine.evaluate_patterns", "target": "services.models.transaction.Transaction", "edge_type": "uses"},
+
+    {"source": "services.kyc.document_verifier.DocumentVerifier.verify_document", "target": "services.kyc.document_verifier.DocumentVerifier.extract_ocr", "edge_type": "calls"},
+    {"source": "services.kyc.document_verifier.DocumentVerifier.verify_document", "target": "services.kyc.document_verifier.DocumentVerifier.check_authenticity", "edge_type": "calls"},
+    {"source": "services.kyc.liveness_detector.LivenessDetector.detect_liveness", "target": "services.kyc.liveness_detector.LivenessDetector.anti_spoofing_check", "edge_type": "calls"},
+    {"source": "services.kyc.sanctions_screener.SanctionsScreener.screen_entity", "target": "services.kyc.sanctions_screener.SanctionsScreener.check_ofac", "edge_type": "calls"},
+    {"source": "services.kyc.sanctions_screener.SanctionsScreener.screen_entity", "target": "services.kyc.sanctions_screener.SanctionsScreener.check_pep", "edge_type": "calls"},
+    {"source": "services.case_mgmt.case_router.CaseRouter.route_case", "target": "services.case_mgmt.case_router.CaseRouter.score_priority", "edge_type": "calls"},
+    {"source": "services.case_mgmt.evidence_aggregator.EvidenceAggregator.aggregate", "target": "services.case_mgmt.evidence_aggregator.EvidenceAggregator.collect_from_sources", "edge_type": "calls"},
+
+    {"source": "services.case_mgmt.case_router.CaseRouter.route_case", "target": "services.case_mgmt.evidence_aggregator.EvidenceAggregator.aggregate", "edge_type": "calls"},
+    {"source": "services.case_mgmt.case_router.CaseRouter.route_case", "target": "services.aml.rule_engine.AMLRuleEngine.evaluate_patterns", "edge_type": "calls"},
+    {"source": "services.case_mgmt.evidence_aggregator.EvidenceAggregator.collect_from_sources", "target": "services.scoring.fraud_scorer.FraudScorer", "edge_type": "uses"},
+    {"source": "services.case_mgmt.evidence_aggregator.EvidenceAggregator.collect_from_sources", "target": "services.kyc.document_verifier.DocumentVerifier", "edge_type": "uses"},
+    {"source": "services.kyc.document_verifier.DocumentVerifier.verify_document", "target": "services.kyc.sanctions_screener.SanctionsScreener.screen_entity", "edge_type": "calls"},
+
+    {"source": "services.kyc.document_verifier.DocumentVerifier", "target": "services.common.db_client.FraudDBClient", "edge_type": "imports"},
+    {"source": "services.kyc.liveness_detector.LivenessDetector", "target": "services.common.db_client.FraudDBClient", "edge_type": "imports"},
+    {"source": "services.kyc.sanctions_screener.SanctionsScreener", "target": "services.common.db_client.FraudDBClient", "edge_type": "imports"},
+    {"source": "services.case_mgmt.case_router.CaseRouter", "target": "services.common.db_client.FraudDBClient", "edge_type": "imports"},
+    {"source": "services.case_mgmt.evidence_aggregator.EvidenceAggregator", "target": "services.common.db_client.FraudDBClient", "edge_type": "imports"},
+    {"source": "services.case_mgmt.case_router.CaseRouter", "target": "services.common.kafka_consumer.FraudKafkaConsumer", "edge_type": "imports"},
+    {"source": "services.kyc.document_verifier.DocumentVerifier", "target": "services.common.kafka_consumer.FraudKafkaConsumer", "edge_type": "imports"},
+
+    {"source": "mfs-fraud-engine", "target": "pghost-prod-02.mfs.internal:mfs_fraud_db", "edge_type": "CONNECTS_TO", "metadata": {"description": "Fraud database connection"}},
+    {"source": "mfs-fraud-engine", "target": "pghost-prod-03.mfs.internal:mfs_customers_db", "edge_type": "CONNECTS_TO", "metadata": {"description": "Customers database connection"}},
+    {"source": "mfs-fraud-engine", "target": "kafka-broker.mfs.internal", "edge_type": "CONNECTS_TO", "metadata": {"description": "Kafka broker for topics mfs.txn.raw, mfs.txn.features, mfs.txn.enriched, mfs.alerts.txn"}},
+    {"source": "mfs-fraud-engine", "target": "mlflow.mfs.internal", "edge_type": "CONNECTS_TO", "metadata": {"description": "MLflow model registry for model versioning and serving"}},
+
+    {"source": "mfs-fraud-engine", "target": "mfs-fraud-pod-01", "edge_type": "DEPLOYED_ON", "metadata": {"namespace": "mfs-prod"}},
+    {"source": "mfs-fraud-engine", "target": "mfs-fraud-pod-02", "edge_type": "DEPLOYED_ON", "metadata": {"namespace": "mfs-prod"}},
+    {"source": "mfs-fraud-engine", "target": "mfs-kyc-pod-01", "edge_type": "DEPLOYED_ON", "metadata": {"namespace": "mfs-prod"}},
+    {"source": "mfs-fraud-engine", "target": "mfs-case-pod-01", "edge_type": "DEPLOYED_ON", "metadata": {"namespace": "mfs-prod"}},
+    {"source": "mfs-fraud-engine", "target": "mfs-aml-pod-01", "edge_type": "DEPLOYED_ON", "metadata": {"namespace": "mfs-prod"}},
+    {"source": "mfs-fraud-engine", "target": "mfs-model-pod-01", "edge_type": "DEPLOYED_ON", "metadata": {"namespace": "mfs-prod"}},
+
+    {"source": "mfs-fraud-engine", "target": "svc-fraud-engine", "edge_type": "USES_SERVICE_ACCOUNT", "metadata": {"purpose": "Fraud scoring engine service account"}},
+    {"source": "mfs-fraud-engine", "target": "svc-kyc-engine", "edge_type": "USES_SERVICE_ACCOUNT", "metadata": {"purpose": "KYC verification service account"}},
+    {"source": "mfs-fraud-engine", "target": "svc-case-engine", "edge_type": "USES_SERVICE_ACCOUNT", "metadata": {"purpose": "Case management service account"}},
+    {"source": "mfs-fraud-engine", "target": "svc-aml-engine", "edge_type": "USES_SERVICE_ACCOUNT", "metadata": {"purpose": "AML rule engine service account"}},
+    {"source": "mfs-fraud-engine", "target": "svc-model-serving", "edge_type": "USES_SERVICE_ACCOUNT", "metadata": {"purpose": "Model serving and inference service account"}},
+    {"source": "mfs-fraud-engine", "target": "svc-txn-monitor", "edge_type": "USES_SERVICE_ACCOUNT", "metadata": {"purpose": "Transaction monitoring service account"}}
   ]
 }

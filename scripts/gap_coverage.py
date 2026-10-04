@@ -13,15 +13,24 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
-from eoip.gaps.coverage import build_gap_coverage_report
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "packages"))
+
+from eoip.gaps.coverage import G2_IMPLEMENTATION_DOC, G2_REQUIREMENTS_DOC, build_gap_coverage_report
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build EOIP GAP requirement coverage report")
     parser.add_argument("--project-root", default=".", help="Repository root")
     parser.add_argument("--output", help="Optional JSON output path")
+    parser.add_argument(
+        "--doc-set",
+        choices=("gap", "g2"),
+        default="gap",
+        help="Requirement document set to scan",
+    )
     parser.add_argument(
         "--fail-on-planned-p0",
         action="store_true",
@@ -30,7 +39,13 @@ def main() -> int:
     args = parser.parse_args()
 
     root = Path(args.project_root).resolve()
-    report = build_gap_coverage_report(root).to_dict()
+    kwargs = (
+        {"requirements_doc": G2_REQUIREMENTS_DOC, "implementation_doc": G2_IMPLEMENTATION_DOC}
+        if args.doc_set == "g2"
+        else {}
+    )
+    report = build_gap_coverage_report(root, **kwargs).to_dict()
+    report["doc_set"] = args.doc_set
     payload = json.dumps(report, indent=2, sort_keys=True)
     if args.output:
         output = Path(args.output)

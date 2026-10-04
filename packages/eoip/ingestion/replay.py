@@ -6,7 +6,7 @@ pipeline is idempotent: capture deduplicates by event id + payload hash and
 graph upserts are keyed by canonical ids, so replay repairs missed or failed
 mutations without creating duplicates.
 
-Scope: sources with file-captured SourceEvents (jira, gitlab). Other sources
+Scope: sources with file-captured SourceEvents (jira, gitlab, git, documents). Other sources
 raise a stable error instead of silently no-oping.
 """
 
@@ -19,12 +19,13 @@ from eoip.codegraph.parser import CodeParser
 from eoip.connectors.gitlab_json import GitLabJsonConnector
 from eoip.connectors.jira_json import JiraJsonConnector
 from eoip.connectors.local_code import LocalCodeConnector
-from eoip.contracts.source_event import SourceEvent
+from eoip.contracts.source_event import SourceEvent, SourceEventV2, upgrade_source_event
 from eoip.ingestion.code import CodeIngestionService
+from eoip.ingestion.files import FileIngestionService
 from eoip.ingestion.gitlab import GitLabIngestionService
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
 
-SUPPORTED_SOURCES = frozenset({"jira", "gitlab", "git"})
+SUPPORTED_SOURCES = frozenset({"jira", "gitlab", "git", "documents"})
 _VOLATILE_VERTEX_LABELS = frozenset({"IngestionRun", "ValidationRun", "ValidationFinding"})
 _VOLATILE_EDGE_LABELS = frozenset({"INGESTED_IN", "VALIDATED_BY"})
 _VOLATILE_PROPERTIES = frozenset(
@@ -67,7 +68,7 @@ def replay_captured_events(
         }
 
     wanted = set(event_ids) if event_ids else None
-    events: list[SourceEvent] = []
+    events: list[SourceEvent | SourceEventV2] = []
     available = {p.stem for p in raw_dir.glob("*.json")}
     if wanted is not None:
         not_found = sorted(wanted - available)
@@ -76,7 +77,11 @@ def replay_captured_events(
     for path in sorted(raw_dir.glob("*.json")):
         if wanted is not None and path.stem not in wanted:
             continue
-        event = SourceEvent.model_validate_json(path.read_text(encoding="utf-8"))
+        document = json.loads(path.read_text(encoding="utf-8"))
+        event = (
+            SourceEventV2.model_validate(document) if document.get("schema_version") == "2.0"
+            else SourceEvent.model_validate(document)
+        )
         if event.event_id != path.stem:
             raise ValueError(f"captured event id mismatch: {path.name}")
         if event.source_system != source_system:
@@ -101,6 +106,17 @@ def replay_captured_events(
             root / "dlq",
         )
         result = service.ingest_events(events, dry_run=dry_run)
+    elif source_system == "documents":
+        service = FileIngestionService(store, root)
+        outcomes = [service.ingest_event(upgrade_source_event(event), dry_run=dry_run) for event in events]
+        result = {
+            "run_status": "DRY_RUN" if dry_run else (
+                "SUCCEEDED" if all(item["run_status"] == "SUCCEEDED" for item in outcomes) else "PARTIAL"
+            ),
+            "records_seen": len(events),
+            "records_accepted": sum(item["run_status"] in {"SUCCEEDED", "DRY_RUN"} for item in outcomes),
+            "results": outcomes,
+        }
     else:
         repo_ids = {event.payload.get("repo_id") for event in events}
         if len(repo_ids) > 1 or None in repo_ids:

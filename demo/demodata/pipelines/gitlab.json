@@ -104,6 +104,51 @@
       "updated_at": "2026-10-02T10:00:00.000Z",
       "description": "Automated SAR/CTR generation and FinCEN filing.\n\n## Changes\n- SAR form pre-population from AML case data\n- CTR auto-filing for transactions > $10,000\n- FinCEN BSA E-Filing system integration\n- Narrative generation from detection rule outputs\n- Batch submission with retry logic\n\n## Infrastructure\n- Pod: mfs-aml-pod-01 (mfs-prod namespace)\n- Service account: svc-aml-engine\n- DB: mfs_aml_db on pghost-prod-02.mfs.internal\n\nRelated: FRD-302",
       "work_item_keys": ["FRD-302"]
+    },
+    {
+      "iid": 1601,
+      "title": "FRD-401 document OCR extraction pipeline",
+      "source_branch": "feature/FRD-401-document-ocr",
+      "target_branch": "main",
+      "state": "open",
+      "merge_commit_sha": null,
+      "author": {"username": "nkowalski", "name": "Nadia Kowalski"},
+      "reviewers": [{"username": "psharma", "name": "Priya Sharma"}],
+      "approved_by": [{"username": "schen", "name": "Sarah Chen"}],
+      "created_at": "2026-10-02T09:00:00.000Z",
+      "updated_at": "2026-10-03T10:00:00.000Z",
+      "description": "Implements document OCR extraction pipeline for KYC verification.\n\n## Changes\n- Tesseract OCR integration for document text extraction\n- Support for passport, driver's license, and national ID documents\n- Document data written to document_verifications table in mfs_customers_db on pghost-prod-03.mfs.internal\n- Service runs on mfs-kyc-pod-01 under svc-kyc-engine\n\n## Infrastructure\n- Pod: mfs-kyc-pod-01 (mfs-prod namespace)\n- Service account: svc-kyc-engine\n- DB: mfs_customers_db on pghost-prod-03.mfs.internal\n\nRelated: FRD-401",
+      "work_item_keys": ["FRD-401"]
+    },
+    {
+      "iid": 1602,
+      "title": "FRD-402 liveness detection module",
+      "source_branch": "feature/FRD-402-liveness-detection",
+      "target_branch": "main",
+      "state": "open",
+      "merge_commit_sha": null,
+      "author": {"username": "psharma", "name": "Priya Sharma"},
+      "reviewers": [{"username": "nkowalski", "name": "Nadia Kowalski"}],
+      "approved_by": [],
+      "created_at": "2026-10-02T10:00:00.000Z",
+      "updated_at": "2026-10-03T10:00:00.000Z",
+      "description": "Implements liveness detection module for selfie verification.\n\n## Changes\n- AWS Rekognition integration for liveness detection\n- Liveness results stored in liveness_results table\n- Anti-spoofing checks for photo and video replay attacks\n- Service runs under svc-kyc-engine\n\n## Infrastructure\n- Pod: mfs-kyc-pod-01 (mfs-prod namespace)\n- Service account: svc-kyc-engine\n\nRelated: FRD-402",
+      "work_item_keys": ["FRD-402"]
+    },
+    {
+      "iid": 1701,
+      "title": "FRD-501 case routing engine",
+      "source_branch": "feature/FRD-501-case-routing",
+      "target_branch": "main",
+      "state": "open",
+      "merge_commit_sha": null,
+      "author": {"username": "dokoye", "name": "David Okoye"},
+      "reviewers": [{"username": "psharma", "name": "Priya Sharma"}, {"username": "lwei", "name": "Li Wei"}],
+      "approved_by": [],
+      "created_at": "2026-10-02T11:00:00.000Z",
+      "updated_at": "2026-10-03T10:00:00.000Z",
+      "description": "Implements case routing engine with priority scoring.\n\n## Changes\n- Priority scoring algorithm for fraud case assignment\n- Automated case routing based on analyst workload and specialization\n- Case data stored in mfs_fraud_db.fraud_cases\n- Service runs on mfs-case-pod-01 under svc-case-engine\n\n## Infrastructure\n- Pod: mfs-case-pod-01 (mfs-prod namespace)\n- Service account: svc-case-engine\n- DB: mfs_fraud_db on pghost-prod-02.mfs.internal\n\nRelated: FRD-501, CHG0090801",
+      "work_item_keys": ["FRD-501"]
     }
   ],
   "pipelines": [

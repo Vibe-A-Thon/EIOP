@@ -25,3 +25,4 @@ class RetrievalResult(BaseModel):
     partial: bool | None = None
     facts: list[dict] | None = None
     graph: dict | None = None
+    trace: dict | None = None  # GAP-RET-006 retrieval trace

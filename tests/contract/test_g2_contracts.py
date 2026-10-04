@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
+from pathlib import Path
 
 import pytest
 from eoip.connectors.base import ConnectorHealth, DiscoveryResult, DiscoveryScope, SourceConnector
@@ -34,8 +35,36 @@ def test_v1_source_event_upgrade_preserves_identity_and_hash() -> None:
     assert upgraded.event_id == legacy.event_id
     assert upgraded.payload_hash == legacy.payload_hash
     assert upgraded.source_instance_id == "jira-prod"
+    assert upgraded.source_id == "jira-prod"
+    assert upgraded.source_type == "jira"
+    assert upgraded.observed_time == legacy.captured_at
     assert upgraded.operation == "UPDATE"
     assert upgraded.cursor == "cursor-7"
+
+
+@pytest.mark.req("G2-EKAF-003")
+def test_v2_event_exposes_g2_envelope_aliases() -> None:
+    event = SourceEventV2(
+        event_id="event-2a",
+        source_system="gitlab",
+        source_instance_id="gitlab-prod",
+        source_record_id="merge_request:1",
+        source_record_type="merge_request",
+        operation="UPDATE",
+        event_time="2026-10-03T00:00:00Z",
+        captured_at="2026-10-03T00:00:05Z",
+        content_hash="abc123",
+        payload={"iid": 1},
+        evidence_ref="raw://gitlab/event-2a",
+        correlation_id="run-1",
+    )
+
+    assert event.source_id == "gitlab-prod"
+    assert event.source_type == "gitlab"
+    assert event.source_record_type == "merge_request"
+    assert event.observed_time == "2026-10-03T00:00:05Z"
+    assert event.evidence_ref == "raw://gitlab/event-2a"
+    assert event.correlation_id == "run-1"
 
 
 @pytest.mark.req("G2-T0002")
@@ -116,3 +145,31 @@ def test_fake_connector_satisfies_runtime_connector_protocol() -> None:
     assert isinstance(connector, SourceConnector)
     assert connector.capabilities().polling is True
     assert connector.discover(DiscoveryScope()).source_id == "fake-1"
+
+
+@pytest.mark.req("G2-REQ-34")
+def test_required_g2_schema_contracts_exist() -> None:
+    expected = {
+        "source_registry_entry.schema.json",
+        "source_capabilities.schema.json",
+        "source_event_v2.schema.json",
+        "source_checkpoint.schema.json",
+        "crawl_scope.schema.json",
+        "reconciliation_run.schema.json",
+        "semantic_change_event.schema.json",
+        "graph_revision.schema.json",
+        "relationship_revision.schema.json",
+        "graph_diff.schema.json",
+        "telemetry_evidence.schema.json",
+        "api_contract.schema.json",
+        "knowledge_capsule.schema.json",
+        "simulation_spec.schema.json",
+        "knowledge_debt_finding.schema.json",
+        "knowledge_slo.schema.json",
+        "ontology_evolution_proposal.schema.json",
+        "causal_hypothesis.schema.json",
+        "process_event.schema.json",
+    }
+
+    schema_root = Path("schemas")
+    assert expected <= {path.name for path in schema_root.glob("*.schema.json")}

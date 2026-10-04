@@ -19,6 +19,22 @@
       "description": "Compliance test suite for AML rule engine, SAR/CTR automation, and FinCEN integration",
       "last_modified_date": "2026-10-02T14:00:00Z",
       "created_date": "2026-09-05T09:00:00Z"
+    },
+    {
+      "id": 30103,
+      "name": "KYC & Case Management Test Suite",
+      "suite_id": "TS-FRD-003",
+      "description": "Test suite for KYC document verification, identity checks, liveness detection, case routing, and evidence aggregation",
+      "project_id": 200,
+      "project_name": "Fraud Detection Platform",
+      "test_case_count": 5,
+      "test_case_ids": ["TC-FRD-008", "TC-FRD-009", "TC-FRD-010", "TC-FRD-011", "TC-FRD-012"],
+      "properties": [
+        {"field_name": "Status", "field_value_name": "Active", "field_value": "active"},
+        {"field_name": "Planned Release", "field_value_name": "Q1 2027 - Identity Platform v1", "field_value": "Q1 2027 - Identity Platform v1"}
+      ],
+      "last_modified_date": "2026-10-04T10:00:00Z",
+      "created_date": "2026-10-01T09:00:00Z"
     }
   ],
   "items": [
@@ -174,6 +190,105 @@
         {"step_number": 6, "description": "Verify filing records stored in mfs_aml_db.filings", "expected_result": "SAR and CTR filing records with confirmation numbers and timestamps"},
         {"step_number": 7, "description": "Test batch submission with 5 SARs", "expected_result": "Batch accepted, all 5 filings confirmed"}
       ]
+    },
+    {
+      "id": 60108,
+      "name": "OCR extraction accuracy for passport documents",
+      "test_case_id": "TC-FRD-008",
+      "description": "Verify Tesseract OCR pipeline accurately extracts identity fields from passport documents including MRZ parsing, name extraction, date of birth, document number, and expiry date with minimum confidence threshold.",
+      "status": "Approved",
+      "automation_status": "Automated",
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/kyc/test_ocr_passport.py"},
+      "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
+      "test_suite_id": 30103,
+      "linked_work_items": ["FRD-401"],
+      "last_modified_date": "2026-10-04T10:00:00Z",
+      "created_date": "2026-10-01T10:00:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Submit high-quality passport image (300 DPI, well-lit, no glare) to OCR pipeline", "expected_result": "All identity fields extracted with confidence >= 0.95"},
+        {"step_number": 2, "description": "Validate MRZ line parsing against known passport MRZ checksums", "expected_result": "MRZ checksum validation passes for all check digits"},
+        {"step_number": 3, "description": "Submit degraded passport image (low contrast, slight rotation) to OCR pipeline", "expected_result": "Fields extracted with confidence >= 0.85 after pre-processing (deskew, contrast normalization)"},
+        {"step_number": 4, "description": "Verify extracted fields persisted to mfs_customers_db.document_verifications with correct confidence scores", "expected_result": "Document verification record created with ocr_confidence and authenticity_score populated"}
+      ]
+    },
+    {
+      "id": 60109,
+      "name": "OCR extraction for driver's license with varied image quality",
+      "test_case_id": "TC-FRD-009",
+      "description": "Verify OCR pipeline handles driver's license documents across varying image quality conditions including low resolution, partial occlusion, and glare.",
+      "status": "Approved",
+      "automation_status": "Automated",
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/kyc/test_ocr_drivers_license.py"},
+      "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
+      "test_suite_id": 30103,
+      "linked_work_items": ["FRD-401"],
+      "last_modified_date": "2026-10-04T10:30:00Z",
+      "created_date": "2026-10-01T10:30:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Submit standard driver's license image to OCR pipeline and validate extraction of name, DOB, license number, expiry, and address fields", "expected_result": "All fields extracted with confidence >= 0.90"},
+        {"step_number": 2, "description": "Submit low-resolution driver's license image (150 DPI) with slight blur", "expected_result": "Image quality check flags low quality; OCR attempts extraction with reduced confidence threshold (>= 0.75) or routes to manual review"},
+        {"step_number": 3, "description": "Submit driver's license image with glare obscuring partial text and verify graceful degradation", "expected_result": "Extractable fields returned with individual confidence scores; obscured fields flagged as low-confidence and routed for manual verification"}
+      ]
+    },
+    {
+      "id": 60110,
+      "name": "Liveness detection anti-spoofing verification",
+      "test_case_id": "TC-FRD-010",
+      "description": "Verify AWS Rekognition-based liveness detection correctly identifies live subjects and rejects spoofing attempts including printed photos, screen replay, and 3D masks.",
+      "status": "Approved",
+      "automation_status": "Manual",
+      "automation": {"status": "Manual"},
+      "properties": [{"field_name": "Status", "field_value_name": "Failed", "field_value": "failed"}],
+      "test_suite_id": 30103,
+      "linked_work_items": ["FRD-402"],
+      "last_modified_date": "2026-10-04T11:00:00Z",
+      "created_date": "2026-10-01T11:00:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Submit live selfie video with active challenge (head turn left, blink) from genuine user", "expected_result": "Passive liveness score >= 0.95, active challenge passed, is_spoof_detected = false"},
+        {"step_number": 2, "description": "Submit printed photo of subject held in front of camera", "expected_result": "Spoof detected: is_spoof_detected = true, passive liveness score < 0.3"},
+        {"step_number": 3, "description": "Submit screen replay attack (video of subject played on phone screen)", "expected_result": "Spoof detected: is_spoof_detected = true, moire pattern or reflection artifacts identified"},
+        {"step_number": 4, "description": "Submit document photo and live selfie for face match comparison", "expected_result": "Face match score >= 0.95 for genuine match; < 0.5 for mismatched identities"},
+        {"step_number": 5, "description": "Verify all liveness results persisted to mfs_customers_db.liveness_results with correct scores and detection flags", "expected_result": "Liveness result records created with passive_liveness_score, active_challenge_passed, face_match_score, and is_spoof_detected fields"}
+      ]
+    },
+    {
+      "id": 60111,
+      "name": "Case routing assigns correct priority based on risk score",
+      "test_case_id": "TC-FRD-011",
+      "description": "Verify fraud case routing engine assigns correct priority level and analyst queue based on aggregate risk score from multiple detection sources.",
+      "status": "Approved",
+      "automation_status": "Automated",
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/cases/test_case_routing.py"},
+      "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
+      "test_suite_id": 30103,
+      "linked_work_items": ["FRD-410"],
+      "last_modified_date": "2026-10-04T11:30:00Z",
+      "created_date": "2026-10-01T11:30:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Create fraud case with risk score >= 0.9 from combined velocity and anomaly alerts", "expected_result": "Case assigned priority P1 and routed to immediate investigation queue"},
+        {"step_number": 2, "description": "Create fraud case with risk score 0.7-0.9 from single anomaly detection source", "expected_result": "Case assigned priority P2 and routed to standard investigation queue"},
+        {"step_number": 3, "description": "Create fraud case with risk score < 0.7 from velocity-only alert", "expected_result": "Case assigned priority P3 and routed to batch review queue"}
+      ]
+    },
+    {
+      "id": 60112,
+      "name": "Evidence aggregation from multiple detection sources",
+      "test_case_id": "TC-FRD-012",
+      "description": "Verify fraud case evidence aggregation correctly collects, correlates, and presents evidence from velocity monitoring, anomaly detection, and AML detection sources into a unified case evidence timeline.",
+      "status": "Approved",
+      "automation_status": "Automated",
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/cases/test_evidence_aggregation.py"},
+      "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
+      "test_suite_id": 30103,
+      "linked_work_items": ["FRD-411"],
+      "last_modified_date": "2026-10-04T12:00:00Z",
+      "created_date": "2026-10-01T12:00:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Trigger velocity alert, anomaly detection alert, and AML pattern match for the same account within a 1-hour window", "expected_result": "Three separate evidence records created in mfs_fraud_db.case_evidence with distinct source_type values"},
+        {"step_number": 2, "description": "Verify evidence aggregation service correlates all three sources into a single fraud case", "expected_result": "Single fraud_cases record created with all three evidence records linked via case_id foreign key"},
+        {"step_number": 3, "description": "Retrieve aggregated evidence timeline via case API and verify chronological ordering", "expected_result": "Evidence items returned in chronological order with correct source_type (velocity, anomaly, aml) and evidence_data payloads"},
+        {"step_number": 4, "description": "Verify aggregate risk score is computed from combined evidence sources and is higher than any individual source score", "expected_result": "Case risk_score reflects weighted combination of all evidence sources and exceeds maximum individual source score"}
+      ]
     }
   ],
   "test_runs": [
@@ -221,6 +336,31 @@
         "total": 1,
         "passed": 1,
         "failed": 0,
+        "in_progress": 0,
+        "not_run": 0
+      }
+    },
+    {
+      "id": 7003,
+      "name": "Sprint 26.15 KYC & Case Management Smoke",
+      "test_run_id": "TR-FRD-003",
+      "description": "Sprint 26.15 smoke test run covering KYC document verification, liveness detection, case routing, and evidence aggregation",
+      "status": "Completed",
+      "test_suite_id": 30103,
+      "start_date": "2026-10-04T08:00:00Z",
+      "end_date": "2026-10-04T12:30:00Z",
+      "executed_by": "jobrien",
+      "test_case_results": [
+        {"test_case_id": "TC-FRD-008", "status": "passed", "executed_at": "2026-10-04T08:30:00Z"},
+        {"test_case_id": "TC-FRD-009", "status": "passed", "executed_at": "2026-10-04T09:00:00Z"},
+        {"test_case_id": "TC-FRD-010", "status": "failed", "executed_at": "2026-10-04T09:45:00Z", "failure_reason": "Liveness spoof detected incorrectly: screen replay attack with high-resolution display was not flagged as spoof (is_spoof_detected = false, passive_liveness_score = 0.72)"},
+        {"test_case_id": "TC-FRD-011", "status": "passed", "executed_at": "2026-10-04T10:30:00Z"},
+        {"test_case_id": "TC-FRD-012", "status": "passed", "executed_at": "2026-10-04T11:15:00Z"}
+      ],
+      "summary": {
+        "total": 5,
+        "passed": 4,
+        "failed": 1,
         "in_progress": 0,
         "not_run": 0
       }

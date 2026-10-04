@@ -57,12 +57,16 @@ class SourceEventV2(BaseModel):
 
     schema_version: Literal["2.0"] = "2.0"
     event_id: str = Field(min_length=1, max_length=512)
+    source_id: str | None = Field(default=None, min_length=1, max_length=128)
     source_system: str = Field(min_length=1, max_length=128)
+    source_type: str | None = Field(default=None, min_length=1, max_length=128)
     source_instance_id: str = Field(min_length=1, max_length=256)
     source_record_id: str = Field(min_length=1, max_length=2048)
+    source_record_type: str | None = Field(default=None, min_length=1, max_length=256)
     operation: SourceOperation = "UPSERT"
     source_version: str | None = Field(default=None, max_length=512)
     event_time: str
+    observed_time: str | None = None
     captured_at: str = Field(default_factory=utc_now_iso)
     content_hash: str = Field(min_length=1, max_length=128)
     payload_hash: str | None = Field(default=None, min_length=1, max_length=128)
@@ -70,10 +74,18 @@ class SourceEventV2(BaseModel):
     permissions: PermissionMetadata = Field(default_factory=PermissionMetadata)
     payload: dict[str, Any] | None = None
     payload_ref: str | None = Field(default=None, max_length=4096)
+    evidence_ref: str | None = Field(default=None, max_length=4096)
+    correlation_id: str | None = Field(default=None, max_length=512)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def require_payload_or_reference(self) -> "SourceEventV2":
+        if self.source_id is None:
+            self.source_id = self.source_instance_id
+        if self.source_type is None:
+            self.source_type = self.source_system
+        if self.observed_time is None:
+            self.observed_time = self.captured_at
         if self.payload is None and self.payload_ref is None and self.operation != "DELETE":
             raise ValueError("payload or payload_ref is required unless operation is DELETE")
         if self.payload_hash is not None and self.payload_hash != self.content_hash:
@@ -101,17 +113,23 @@ def upgrade_source_event(
     instance = source_instance_id or str(metadata.get("source_instance_id") or "default")
     return SourceEventV2(
         event_id=legacy.event_id,
+        source_id=instance,
         source_system=legacy.source_system,
+        source_type=legacy.source_system,
         source_instance_id=instance,
         source_record_id=legacy.source_record_id,
+        source_record_type=metadata.get("source_record_type"),
         operation=operation,
         source_version=legacy.source_version,
         event_time=event_time or legacy.captured_at,
+        observed_time=legacy.captured_at,
         captured_at=legacy.captured_at,
         content_hash=legacy.payload_hash,
         cursor=cursor,
         permissions=permissions or PermissionMetadata(),
         payload=legacy.payload,
         payload_ref=payload_ref,
+        evidence_ref=metadata.get("evidence_ref"),
+        correlation_id=metadata.get("correlation_id"),
         metadata=metadata,
     )

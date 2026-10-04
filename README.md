@@ -36,6 +36,12 @@ symbols, documentation, merge-request metadata, and pipeline metadata.
 
 ## On-prem source connectors
 
+Actual local binary/text files can be converted into JSON, citation-aware RAG
+chunks, graph records, and keyword/vector artifacts using the `documents`
+connector or authenticated raw-file upload API. See
+[file parsing and ingestion](docs/file-parsing.md) for formats, local tool
+prerequisites, CLI/API examples, and explicit support limitations.
+
 The worker supports incremental Confluence Data Center and ServiceNow Table API
 jobs. Before starting it, configure each source in the worker environment using
 either a bearer token or a username/password pair:

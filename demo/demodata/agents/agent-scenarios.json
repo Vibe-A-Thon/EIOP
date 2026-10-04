@@ -83,6 +83,78 @@
       "question": "Review the fraud engine's interaction with the payment gateway — are there circular dependencies or missing error handlers?",
       "expected_tools": ["search_entity", "find_path", "neighbors"],
       "expected_output": "FraudAPI calls PaymentAPI for transaction data; no circular dependency found; missing error handler in FraudScorer when payment service is unavailable"
+    },
+    {
+      "id": "agent-test-coverage",
+      "agent_type": "test_coverage",
+      "category": "tool_using",
+      "title": "Test Coverage Gap Analysis",
+      "question": "Analyze test coverage gaps for the webhook notification system across unit, integration, and E2E tests",
+      "expected_tools": ["graph_query", "test_mapping", "coverage_analysis"],
+      "expected_output": "Coverage percentages per test tier (unit, integration, E2E), untested code paths in webhook handlers, recommendations for priority test additions"
+    },
+    {
+      "id": "agent-incident-correlation",
+      "agent_type": "incident_correlation",
+      "category": "deliberative",
+      "title": "Incident-Deployment Correlation",
+      "question": "Correlate incident INC0080103 with recent deployments and changes to identify contributing factors",
+      "expected_tools": ["incident_timeline", "change_correlation", "deployment_history"],
+      "expected_output": "Timeline of INC0080103 mapped to recent CHG records and pipeline deployments, contributing factor ranking with confidence scores"
+    },
+    {
+      "id": "agent-security-scan",
+      "agent_type": "security_scan",
+      "category": "enterprise",
+      "title": "Service Account Permission Scan",
+      "question": "Scan service account permissions across all pods and identify any over-privileged access patterns",
+      "expected_tools": ["service_account_audit", "permission_analysis", "compliance_check"],
+      "expected_output": "List of service accounts with their permission scopes, flagged over-privileged accounts, least-privilege violation details, remediation recommendations"
+    },
+    {
+      "id": "agent-deployment-readiness",
+      "agent_type": "deployment_readiness",
+      "category": "orchestration",
+      "title": "Production Deployment Readiness Assessment",
+      "question": "Assess production readiness for the webhook notification system deployment (CHG0090401)",
+      "expected_tools": ["test_results", "dependency_check", "rollback_plan", "approval_status"],
+      "expected_output": "Readiness checklist with pass/fail status for each gate: test results, dependency compatibility, rollback plan existence, CAB approval status"
+    },
+    {
+      "id": "agent-knowledge-debt",
+      "agent_type": "knowledge_debt",
+      "category": "meta_cognitive",
+      "title": "Knowledge Debt Identification",
+      "question": "Identify knowledge debt in the payment gateway codebase - undocumented services, stale wiki pages, missing architecture decisions",
+      "expected_tools": ["documentation_audit", "staleness_check", "coverage_gap"],
+      "expected_output": "Knowledge debt inventory: undocumented services count, stale Confluence pages with last-updated dates, missing ADRs, documentation coverage percentage"
+    },
+    {
+      "id": "agent-service-dependency",
+      "agent_type": "service_dependency",
+      "category": "reactive",
+      "title": "Service Dependency Mapping",
+      "question": "Map all service dependencies for mfs-payment-gateway including database connections, Kafka topics, and external services",
+      "expected_tools": ["dependency_graph", "infrastructure_map", "connection_audit"],
+      "expected_output": "Complete dependency map: database connections (pghost-prod-01, mfs_payments_db), Kafka topics (payment.events, fraud.scores), external service integrations, health check endpoints"
+    },
+    {
+      "id": "agent-timeline-reconstruction",
+      "agent_type": "timeline_reconstruction",
+      "category": "deliberative",
+      "title": "Incident Timeline Reconstruction",
+      "question": "Reconstruct the complete timeline of events leading to the connection pool leak (PAY-901) from first detection to resolution",
+      "expected_tools": ["event_timeline", "log_correlation", "change_history"],
+      "expected_output": "Chronological event timeline: first alert timestamp, escalation events, diagnostic steps, root cause identification, fix deployment, verification — with evidence links"
+    },
+    {
+      "id": "agent-compliance-audit",
+      "agent_type": "compliance_audit",
+      "category": "enterprise",
+      "title": "PCI DSS Payment Path Compliance Audit",
+      "question": "Audit PCI DSS compliance for the payment processing path from API ingress to database storage",
+      "expected_tools": ["encryption_audit", "access_control_check", "logging_verification", "network_segmentation"],
+      "expected_output": "PCI DSS compliance report: encryption at rest and in transit status, access control findings, audit logging completeness, network segmentation verification, overall compliance score"
     }
   ]
 }

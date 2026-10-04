@@ -250,3 +250,69 @@ def test_admin_system_status_reports_real_local_state(tmp_path, monkeypatch):
         "backup": {"status": "not_created", "count": 0, "latest": None},
         "connectors": {"checkpoint_count": 0},
     }
+
+
+def test_g2_required_query_and_simulation_aliases(tmp_path):
+    store = MemoryGraphStore()
+    service = store.upsert_vertex(
+        "Service",
+        {"canonical_id": "urn:svc:checkout", "name": "Checkout", "created_at": "2026-10-03T00:00:00Z"},
+    )
+    evidence = store.upsert_vertex(
+        "Evidence",
+        {
+            "canonical_id": "urn:evidence:checkout",
+            "source_system": "fixture",
+            "method": "unit-test",
+            "created_at": "2026-10-03T00:00:00Z",
+        },
+    )
+    store.upsert_edge("EVIDENCED_BY", service["vid"], evidence["vid"], {"fact_key": "evidence:checkout"})
+    app = _make_api_app(store, tmp_path)
+    client = TestClient(app)
+    headers = {"Authorization": "Bearer test-token-minimum-24-characters!!"}
+
+    why = client.post("/api/v1/query/why", headers=headers, json={"entity_cid": "urn:svc:checkout"})
+    changed = client.post(
+        "/api/v1/query/what-changed", headers=headers, json={"entity_cid": "urn:svc:checkout"}
+    )
+    what_if = client.post(
+        "/api/v1/query/what-if", headers=headers, json={"intent": "remove Service urn:svc:checkout"}
+    )
+    simulation = client.post(
+        "/api/v1/simulations",
+        headers=headers,
+        json={
+            "description": "remove checkout",
+            "mutations": [{"kind": "remove_vertex", "target_id": "urn:svc:checkout"}],
+        },
+    )
+    sim_id = simulation.json()["simulation_id"]
+    manifest = client.get(f"/api/v1/simulations/{sim_id}", headers=headers)
+
+    assert why.status_code == 200
+    assert why.json()["total_reasons"] == 1
+    assert changed.status_code == 200
+    assert changed.json()["entity"] == "urn:svc:checkout"
+    assert what_if.status_code == 200
+    assert what_if.json()["requires_confirmation"] is True
+    assert simulation.status_code == 200
+    assert simulation.json()["mutation_results"][0]["success"] is True
+    assert manifest.status_code == 200
+    assert manifest.json()["simulation_id"] == sim_id
+
+
+def test_g2_required_knowledge_aliases(tmp_path):
+    store = MemoryGraphStore()
+    store.upsert_vertex("Service", {"canonical_id": "urn:svc:unowned", "name": "Unowned"})
+    app = _make_api_app(store, tmp_path)
+    client = TestClient(app)
+    headers = {"Authorization": "Bearer test-token-minimum-24-characters!!"}
+
+    debt = client.get("/api/v1/knowledge-debt", headers=headers)
+    slos = client.get("/api/v1/knowledge-slos", headers=headers)
+
+    assert debt.status_code == 200
+    assert debt.json()["total_debt"] >= 1
+    assert slos.status_code == 200
+    assert "results" in slos.json()

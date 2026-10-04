@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:process_event:1.0",
+  "title": "ProcessEvent v1",
+  "type": "object",
+  "required": ["schema_version", "event_id", "case_id", "activity", "event_time"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "event_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "case_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "activity": {"type": "string", "minLength": 1, "maxLength": 512},
+    "actor": {"type": ["string", "null"], "maxLength": 512},
+    "event_time": {"type": "string", "format": "date-time"},
+    "lifecycle_state": {"type": ["string", "null"], "maxLength": 128},
+    "source_ref": {"type": ["string", "null"], "maxLength": 4096},
+    "attributes": {"type": "object"}
+  },
+  "additionalProperties": false
+}

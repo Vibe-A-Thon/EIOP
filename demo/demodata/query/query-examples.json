@@ -90,6 +90,67 @@
       "query": "What changed in the payment gateway between September 15 and October 1, 2026?",
       "description": "Temporal query across MRs, deployments, and incidents in a time window",
       "expected_intent": "temporal_diff"
+    },
+    {
+      "id": "query-search-frd",
+      "type": "search",
+      "query": "FRD fraud scoring model",
+      "description": "Search for fraud scoring model artifacts across FRD domain",
+      "expected_results": ["WorkItem FRD-101 — Fraud Scoring Model v2", "CodeSymbol FraudScoringEngine in mfs-fraud-engine"]
+    },
+    {
+      "id": "query-path-kyc-pod",
+      "type": "path",
+      "source": "urn:eoip:work:epic:rally:EPC-204",
+      "target": "urn:eoip:infra:pod:mfs-kyc-pod-01",
+      "max_depth": 8,
+      "description": "Trace the path from KYC epic through implementation to production pod",
+      "expected_path": ["Epic → Feature → Story → MergeRequest → Pipeline → Deployment → Pod"]
+    },
+    {
+      "id": "query-impact-fraud-db",
+      "type": "impact",
+      "anchor": "urn:eoip:infra:db-server:pghost-prod-02.mfs.internal",
+      "max_depth": 4,
+      "description": "Analyze blast radius of fraud database failure",
+      "expected_labels": ["Database", "Pod", "ServiceAccount", "Pipeline", "Incident"]
+    },
+    {
+      "id": "query-nlq-change-frequency",
+      "type": "nlq",
+      "query": "which services have the highest change frequency in the last 2 sprints?",
+      "description": "Natural language query about change velocity",
+      "expected_intent": "temporal_aggregation"
+    },
+    {
+      "id": "query-neighborhood-fraud-engine",
+      "type": "neighborhood",
+      "anchor": "urn:eoip:infra:service-account:svc-fraud-engine",
+      "max_depth": 2,
+      "description": "Show all entities within 2 hops of the fraud engine service account",
+      "expected_labels": ["ServiceAccount", "Pod", "Database", "Pipeline", "CodeSymbol"]
+    },
+    {
+      "id": "query-comparison-coverage",
+      "type": "comparison",
+      "query": "compare test coverage PAY vs FRD",
+      "description": "Cross-domain test coverage comparison",
+      "expected_domains": ["test", "code"],
+      "expected_intent": "comparative_analysis"
+    },
+    {
+      "id": "query-eql-failed-tests",
+      "type": "eql",
+      "query": "g.V().has('type','test_case').has('status','FAILED').out('tests').values('key')",
+      "description": "EQL query to find Jira keys linked to failed test cases",
+      "expected_intent": "structured_query"
+    },
+    {
+      "id": "query-traceability-frd",
+      "type": "traceability",
+      "source": "urn:eoip:work:item:jira:FRD-401",
+      "description": "Full traceability from requirement through code to test to deployment",
+      "expected_chain": ["Story → MergeRequest → Commit → File → CodeSymbol → TestCase → Pipeline → Deployment"]
     }
   ]
 }

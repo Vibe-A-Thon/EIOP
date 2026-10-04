@@ -2,8 +2,8 @@ FROM python:3.11.14-slim-bookworm AS runtime
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/opt/eoip:/opt/eoip/packages
 RUN apt-get update && apt-get install -y --no-install-recommends git curl && rm -rf /var/lib/apt/lists/*
 WORKDIR /opt/eoip
-COPY requirements.lock ./
-RUN pip install --no-cache-dir -r requirements.lock
+COPY requirements.lock requirements-fileparse.lock ./
+RUN pip install --no-cache-dir -r requirements.lock -r requirements-fileparse.lock
 COPY pyproject.toml ./
 COPY packages ./packages
 RUN pip install --no-cache-dir --no-deps .

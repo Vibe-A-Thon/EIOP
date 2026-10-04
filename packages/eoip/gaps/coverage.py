@@ -18,16 +18,19 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
-GAP_ID_RE = re.compile(r"\bGAP-([A-Z0-9]+)-(\d{3})\b")
-GAP_RANGE_RE = re.compile(
-    r"\bGAP-([A-Z0-9]+)-(\d{3})\s*(?:\.\.|through)\s*(?:GAP-\1-)?(\d{3})\b",
+REQ_ID_RE = re.compile(r"\b((?:GAP|G2)-([A-Z0-9]+(?:-[A-Z0-9]+)*)-(\d{3}))\b")
+REQ_RANGE_RE = re.compile(
+    r"\b(GAP|G2)-([A-Z0-9]+(?:-[A-Z0-9]+)*)-(\d{3})"
+    r"\s*(?:\.\.|through)\s*(?:(?:GAP|G2)-\2-)?(\d{3})\b",
     re.IGNORECASE,
 )
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
-REQUIREMENT_LINE_RE = re.compile(r"^\s*[-*]\s+\*\*(GAP-[A-Z0-9]+-\d{3})[:*]")
+REQUIREMENT_LINE_RE = re.compile(r"^\s*[-*]\s+\*\*((?:GAP|G2)-[A-Z0-9-]+-\d{3})[:*]")
 
 DEFAULT_REQUIREMENTS_DOC = Path("EOIP-engg-doc-pkg/gaps-requirements.md")
 DEFAULT_IMPLEMENTATION_DOC = Path("EOIP-engg-doc-pkg/gaps-implementation.md")
+G2_REQUIREMENTS_DOC = Path("EOIP-engg-doc-pkg/gaps2-requirements.md")
+G2_IMPLEMENTATION_DOC = Path("EOIP-engg-doc-pkg/gaps2-implementation.md")
 DEFAULT_EVIDENCE_ROOTS = (
     Path("packages"),
     Path("apps"),
@@ -106,7 +109,7 @@ class GapRequirement:
 
     @property
     def prefix(self) -> str:
-        return self.requirement_id.split("-")[1]
+        return _prefix(self.requirement_id)
 
     @property
     def status(self) -> str:
@@ -173,10 +176,16 @@ def load_gap_requirements(
 def build_gap_coverage_report(
     repo_root: Path,
     *,
+    requirements_doc: Path = DEFAULT_REQUIREMENTS_DOC,
+    implementation_doc: Path = DEFAULT_IMPLEMENTATION_DOC,
     evidence_roots: Iterable[Path] = DEFAULT_EVIDENCE_ROOTS,
     test_roots: Iterable[Path] = DEFAULT_TEST_ROOTS,
 ) -> GapCoverageReport:
-    requirements = load_gap_requirements(repo_root)
+    requirements = load_gap_requirements(
+        repo_root,
+        requirements_doc=requirements_doc,
+        implementation_doc=implementation_doc,
+    )
     by_id = {req.requirement_id: req for req in requirements}
     implementation_refs = _scan_evidence(repo_root, evidence_roots, SOURCE_EXTENSIONS, by_id)
     test_refs = _scan_evidence(repo_root, test_roots, TEST_EXTENSIONS, by_id)
@@ -195,8 +204,21 @@ def _parse_requirements(path: Path, phase_map: dict[str, str], repo_root: Path) 
         heading = HEADING_RE.match(line)
         if heading:
             level, title = len(heading.group(1)), heading.group(2).strip()
+            parent_section = " / ".join(name for lvl, name in section_stack if lvl < level)
             section_stack = [(lvl, name) for lvl, name in section_stack if lvl < level]
             section_stack.append((level, title))
+            for req_id in _ids_from_line(title):
+                prefix = _prefix(req_id)
+                requirements[req_id] = GapRequirement(
+                    requirement_id=req_id,
+                    title=title[:160],
+                    description=title,
+                    source_path=_rel(path, repo_root),
+                    source_line=line_number,
+                    section=parent_section or title,
+                    phase=phase_map.get(req_id),
+                    priority=PRIORITY_BY_PREFIX.get(prefix, "P2"),
+                )
             continue
 
         ids = _ids_from_line(line)
@@ -208,7 +230,7 @@ def _parse_requirements(path: Path, phase_map: dict[str, str], repo_root: Path) 
         for req_id in ids:
             if req_id in requirements and not explicit_requirement:
                 continue
-            prefix = req_id.split("-")[1]
+            prefix = _prefix(req_id)
             requirements[req_id] = GapRequirement(
                 requirement_id=req_id,
                 title=description.split(".")[0][:160],
@@ -227,7 +249,7 @@ def _load_phase_map(path: Path) -> dict[str, str]:
     current_phase: str | None = None
     for line in path.read_text(encoding="utf-8").splitlines():
         heading = HEADING_RE.match(line)
-        if heading and "Phase " in heading.group(2):
+        if heading and ("Phase " in heading.group(2) or re.search(r"\bG2-P\d+\b", heading.group(2))):
             current_phase = heading.group(2).strip()
             continue
         if not current_phase:
@@ -240,12 +262,12 @@ def _load_phase_map(path: Path) -> dict[str, str]:
 def _ids_from_line(line: str) -> list[str]:
     line = line.replace("*", "").replace("`", "")
     ids: set[str] = set()
-    for prefix, start, end in GAP_RANGE_RE.findall(line):
+    for family, prefix, start, end in REQ_RANGE_RE.findall(line):
         start_i, end_i = int(start), int(end)
         if start_i <= end_i and end_i - start_i <= 200:
-            ids.update(f"GAP-{prefix.upper()}-{idx:03d}" for idx in range(start_i, end_i + 1))
-    for prefix, number in GAP_ID_RE.findall(line):
-        ids.add(f"GAP-{prefix.upper()}-{int(number):03d}")
+            ids.update(f"{family.upper()}-{prefix.upper()}-{idx:03d}" for idx in range(start_i, end_i + 1))
+    for req_id, _prefix_value, _number in REQ_ID_RE.findall(line):
+        ids.add(req_id.upper())
     return sorted(ids, key=_id_sort_key)
 
 
@@ -294,10 +316,18 @@ def _skip_path(path: Path) -> bool:
 
 
 def _id_sort_key(req_id: str) -> tuple[str, int]:
-    match = GAP_ID_RE.search(req_id)
+    match = REQ_ID_RE.search(req_id)
     if not match:
         return req_id, 0
-    return match.group(1), int(match.group(2))
+    return match.group(2), int(match.group(3))
+
+
+def _prefix(req_id: str) -> str:
+    match = REQ_ID_RE.search(req_id)
+    if match:
+        return match.group(2)
+    parts = req_id.split("-")
+    return "-".join(parts[1:-1]) if len(parts) > 2 else req_id
 
 
 def _count_by(values: Iterable[str]) -> dict[str, int]:

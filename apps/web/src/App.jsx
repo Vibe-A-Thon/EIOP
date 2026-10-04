@@ -382,7 +382,7 @@ function AuditTable({items}) {
 function DeadLetterTable({items, onReplay, busy}) {
   if (!items.length) return <EmptyState icon="check" title="Dead-letter queue is clear">No rejected records were returned by the API.</EmptyState>;
   return <div className="table-wrap"><table><thead><tr><th>Source</th><th>Failure</th><th>Record</th><th>Payload hash</th><th>Recovery</th></tr></thead><tbody>{items.map((item, index) => {
-    const replayable = ['jira', 'gitlab'].includes(item.source_system);
+    const replayable = Boolean(item.event_id);
     return <tr key={item.event_id || index}>
       <td><strong>{item.source_system || 'Unknown source'}</strong><small>{item.error_category || item.stage || 'Unknown category'}</small></td>
       <td>{item.error || item.error_message || 'Rejected record'}</td>
@@ -391,6 +391,66 @@ function DeadLetterTable({items, onReplay, busy}) {
       <td>{replayable && item.event_id ? <button className="table-action" onClick={() => onReplay(item.event_id)} disabled={busy}>Replay</button> : <span className="subtle">Not supported</span>}</td>
     </tr>;
   })}</tbody></table></div>;
+}
+
+function SourceRegistryTable({sources, onLoad, onOperation, onDiscover, onToggle, onDelete, busy}) {
+  if (!sources) return <EmptyState icon="database" title="Source registry is not loaded">Load registered sources to operate baseline, sync, discovery, reconciliation and replay flows.</EmptyState>;
+  if (!sources.length) return <EmptyState icon="database" title="No registered sources">Create a governed source from the connector catalog to begin acquisition.</EmptyState>;
+  return <div className="table-wrap"><table><thead><tr><th>Source</th><th>Health</th><th>Modes</th><th>Checkpoint</th><th>Operations</th></tr></thead><tbody>{sources.map(source => {
+    const caps = source.capabilities || {};
+    return <tr key={source.source_id}>
+      <td><div className="table-primary"><span className="service-icon mini"><Icon name="database" size={15}/></span><span><strong>{source.name || source.source_id}</strong><small>{source.source_id} · {source.source_type}</small></span></div></td>
+      <td><StatusPill status={source.enabled ? (source.health || 'UNKNOWN') : 'DISABLED'}/></td>
+      <td>{(source.acquisition_modes || []).join(', ') || 'baseline'}</td>
+      <td><code title={source.checkpoint || ''}>{shortId(source.checkpoint || source.last_incremental_run || source.last_successful_baseline || '', 22)}</code></td>
+      <td><div className="table-actions">
+        {caps.discovery && <button className="table-action" onClick={() => onDiscover(source.source_id)} disabled={busy}>Discover</button>}
+        {caps.baseline && <button className="table-action" onClick={() => onOperation(source.source_id, 'baseline')} disabled={busy}>Baseline</button>}
+        <button className="table-action" onClick={() => onOperation(source.source_id, 'dry-run')} disabled={busy}>Dry run</button>
+        {caps.polling && <button className="table-action" onClick={() => onOperation(source.source_id, 'sync')} disabled={busy}>Sync</button>}
+        {caps.reconciliation && <button className="table-action" onClick={() => onOperation(source.source_id, 'reconcile')} disabled={busy}>Reconcile</button>}
+        {caps.replay && <button className="table-action" onClick={() => onOperation(source.source_id, 'replay')} disabled={busy}>Replay</button>}
+        <button className="table-action" onClick={() => onToggle(source)} disabled={busy}>{source.enabled ? 'Disable' : 'Enable'}</button>
+        <button className="table-action danger" onClick={() => onDelete(source.source_id)} disabled={busy}>Delete</button>
+      </div></td>
+    </tr>;
+  })}</tbody></table><div className="table-footer"><button className="secondary-button" onClick={onLoad} disabled={busy}><Icon name="refresh"/>Refresh registry</button></div></div>;
+}
+
+function SourceOnboarding({catalog, draft, setDraft, onSubmit, busy}) {
+  const connectors = catalog || [];
+  const selected = connectors.find(connector => connector.id === draft.sourceType);
+  function choose(type) {
+    const connector = connectors.find(item => item.id === type);
+    const mappedType = type === 'local_code' ? 'local_files' : type;
+    setDraft(current => ({
+      ...current,
+      sourceType: mappedType,
+      name: current.name || connector?.name || mappedType,
+      sourceId: current.sourceId || `${mappedType}-prod`,
+    }));
+  }
+  return <section className="panel span-3"><div className="panel-heading"><div><span className="eyebrow">SOURCE ONBOARDING</span><h2>Registry and discovery</h2><p>Create non-secret source entries, then run discovery or dry-run acquisition from the registry.</p></div></div>
+    <div className="connector-catalog-strip">{connectors.map(connector => <button key={connector.id} type="button" className={draft.sourceType === connector.id || draft.sourceType === 'local_files' && connector.id === 'local_code' ? 'active' : ''} onClick={() => choose(connector.id)}><Icon name={connector.type === 'crawler' ? 'search' : connector.type === 'file' ? 'document' : 'link'} size={14}/><span>{connector.name}</span><small>{(connector.capabilities || []).join(', ')}</small></button>)}</div>
+    <form className="source-form" onSubmit={event => {event.preventDefault(); onSubmit();}}>
+      <label>Source ID<input value={draft.sourceId} onChange={event => setDraft(current => ({...current, sourceId: event.target.value}))} placeholder="jira-prod" required/></label>
+      <label>Source type<select value={draft.sourceType} onChange={event => setDraft(current => ({...current, sourceType: event.target.value}))}>
+        {['jira', 'gitlab', 'github', 'confluence', 'servicenow', 'rally', 'grafana', 'datadog', 'kibana', 'qtest', 'figma', 'api_portal', 'web', 'local_files'].map(type => <option key={type} value={type}>{type}</option>)}
+      </select></label>
+      <label>Name<input value={draft.name} onChange={event => setDraft(current => ({...current, name: event.target.value}))} placeholder={selected?.name || 'Production source'} required/></label>
+      <label>Base URL<input value={draft.baseUrl} onChange={event => setDraft(current => ({...current, baseUrl: event.target.value}))} placeholder="https://example.local"/></label>
+      <label>Token secret ref<input value={draft.secretRef} onChange={event => setDraft(current => ({...current, secretRef: event.target.value}))} placeholder="env://JIRA_TOKEN"/></label>
+      <button className="primary-button" type="submit" disabled={busy}><Icon name="plus"/>Create source</button>
+    </form>
+  </section>;
+}
+
+function DiscoveryResult({result}) {
+  if (!result) return null;
+  const items = result.items || result.resources || result.entities || [];
+  return <section className="panel span-3"><div className="panel-heading"><div><span className="eyebrow">DISCOVERY RESULT</span><h2>{result.source_id || result.source || 'Source discovery'}</h2><p>Preview returned by the connector without materializing graph changes.</p></div><StatusPill status={result.status || 'COMPLETE'}/></div>
+    <pre className="code-panel">{JSON.stringify({...result, items: items.slice ? items.slice(0, 20) : items}, null, 2)}</pre>
+  </section>;
 }
 
 function AdminOntology({schema}) {
@@ -417,6 +477,10 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
   const [gitlabUpload, setGitlabUpload] = useState(null);
   const [audit, setAudit] = useState(null);
   const [dlq, setDlq] = useState(null);
+  const [sources, setSources] = useState(null);
+  const [connectorCatalog, setConnectorCatalog] = useState(null);
+  const [sourceDiscovery, setSourceDiscovery] = useState(null);
+  const [sourceDraft, setSourceDraft] = useState({sourceId: '', sourceType: 'jira', name: '', baseUrl: '', secretRef: ''});
   const [ontology, setOntology] = useState(null);
   const [ontologySchema, setOntologySchema] = useState(null);
   const [section, setSection] = useState('overview');
@@ -434,6 +498,53 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
   const jobSummary = job => {const result = job.result || {}; return job.kind === 'DEMO' ? `${result.jira?.records_accepted || 0} Jira · ${result.git?.files || 0} files · ${result.git?.symbols || 0} symbols` : `${result.records_accepted || 0} accepted · ${result.records_rejected || 0} rejected`;};
   async function importFile(file, endpoint) {if (!file) return; if (file.size > 3_000_000) throw new Error('Select a JSON file smaller than 3 MB'); await api(endpoint, {document: JSON.parse(await file.text())}); await refresh();}
   const submitSync = source => run(async () => {await api(`/api/v1/admin/ingestion/${source}`, {checkpoint: checkpoint || null, watermark: null, dry_run: dryRun}); await refresh();});
+  const loadSourceControl = () => run(async () => {
+    const [nextSources, catalog] = await Promise.all([api('/api/v1/sources'), api('/api/v1/connectors/catalog')]);
+    setSources(nextSources);
+    setConnectorCatalog(catalog.connectors || []);
+  });
+  const createRegistrySource = () => run(async () => {
+    const catalogItem = (connectorCatalog || []).find(item => item.id === sourceDraft.sourceType || (sourceDraft.sourceType === 'local_files' && item.id === 'local_code'));
+    const modes = catalogItem?.capabilities || ['baseline'];
+    const capabilities = {
+      baseline: modes.includes('baseline'),
+      polling: modes.includes('poll'),
+      webhooks: modes.includes('webhook'),
+      discovery: true,
+      reconciliation: modes.includes('reconcile'),
+      replay: modes.includes('replay'),
+    };
+    const payload = {
+      source_id: sourceDraft.sourceId,
+      source_type: sourceDraft.sourceType,
+      name: sourceDraft.name || sourceDraft.sourceId,
+      base_url: sourceDraft.baseUrl || null,
+      capabilities,
+      secret_refs: sourceDraft.secretRef ? {token: sourceDraft.secretRef} : {},
+    };
+    await api('/api/v1/sources', payload);
+    setSourceDraft({sourceId: '', sourceType: 'jira', name: '', baseUrl: '', secretRef: ''});
+    const nextSources = await api('/api/v1/sources');
+    setSources(nextSources);
+  });
+  const sourceOperation = (sourceId, operation) => run(async () => {
+    const body = operation === 'dry-run' ? {checkpoint: checkpoint || null, dry_run: true} : {checkpoint: checkpoint || null, dry_run: dryRun};
+    await api(`/api/v1/sources/${encodeURIComponent(sourceId)}/${operation}`, body);
+    await refresh();
+  });
+  const discoverSource = sourceId => run(async () => setSourceDiscovery(await api(`/api/v1/sources/${encodeURIComponent(sourceId)}/discover`, {})));
+  const toggleSource = source => run(async () => {
+    await api(`/api/v1/sources/${encodeURIComponent(source.source_id)}`, {enabled: !source.enabled}, 'PATCH');
+    setSources(await api('/api/v1/sources'));
+  });
+  const deleteSource = sourceId => {
+    if (window.confirm(`Delete source ${sourceId}?`)) {
+      run(async () => {
+        await api(`/api/v1/sources/${encodeURIComponent(sourceId)}`, undefined, 'DELETE');
+        setSources(await api('/api/v1/sources'));
+      });
+    }
+  };
   const cancelJob = jobId => run(async () => {await api(`/api/v1/admin/jobs/${encodeURIComponent(jobId)}/cancel`, {}); await refresh();});
   const readmitJob = jobId => {
     if (window.confirm('Re-admit this recovered job? Execution may repeat side effects from before the backup.')) {
@@ -453,6 +564,9 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
     {section === 'sources' && <div className="admin-section">
       <div className="connector-grid"><ConnectorCard icon="spark" name="Demo dataset" description="Synthetic Jira, Git, code, pipeline, and documentation evidence." status="Ready" tone="violet"><button onClick={() => run(async () => {await api('/api/v1/admin/demo', {}); await refresh();})} disabled={busy}>Load dataset <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="upload" name="Jira JSON" description="Import a configurable Jira export with record-level validation." status="File import" tone="blue"><label className="file-picker"><input type="file" accept="application/json,.json" onChange={event => setUpload(event.target.files?.[0] || null)}/><Icon name="document"/><span>{upload?.name || 'Choose JSON file'}</span></label><button onClick={() => run(() => importFile(upload, '/api/v1/admin/ingestion/jira'))} disabled={busy || !upload}>Import Jira <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="code" name="GitLab metadata" description="Import merge request and pipeline metadata from JSON." status="File import" tone="coral"><label className="file-picker"><input type="file" accept="application/json,.json" onChange={event => setGitlabUpload(event.target.files?.[0] || null)}/><Icon name="document"/><span>{gitlabUpload?.name || 'Choose JSON file'}</span></label><button onClick={() => run(() => importFile(gitlabUpload, '/api/v1/admin/ingestion/gitlab'))} disabled={busy || !gitlabUpload}>Import GitLab <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="document" name="Confluence" description="Queue incremental Data Center content synchronization." status="Configured externally" tone="mint"><button onClick={() => submitSync('confluence')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="settings" name="ServiceNow" description="Queue incremental knowledge article synchronization." status="Configured externally" tone="gold"><button onClick={() => submitSync('servicenow')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="layers" name="Rally" description="Import epics, features, and user stories from Rally/Broadcom." status="Configured externally" tone="violet"><button onClick={() => submitSync('rally')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="activity" name="Grafana" description="Sync dashboards, alert rules, and data sources from Grafana." status="Configured externally" tone="mint"><button onClick={() => submitSync('grafana')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="activity" name="Datadog" description="Sync dashboards and monitors from Datadog." status="Configured externally" tone="coral"><button onClick={() => submitSync('datadog')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="terminal" name="Kibana" description="Import dashboards, saved searches, and index patterns from Kibana." status="Configured externally" tone="blue"><button onClick={() => submitSync('kibana')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="shield" name="qTest" description="Import test cases, suites, cycles, and runs from qTest." status="Configured externally" tone="gold"><button onClick={() => submitSync('qtest')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="focus" name="Figma" description="Import design files, pages, and components from Figma." status="Configured externally" tone="violet"><button onClick={() => submitSync('figma')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="link" name="API Portal" description="Sync API services, endpoints, and Swagger connections." status="Configured externally" tone="blue"><button onClick={() => submitSync('api_portal')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard><ConnectorCard icon="code" name="GitHub" description="Import repositories, commits, and pull requests from GitHub." status="Configured externally" tone="coral"><button onClick={() => submitSync('github')} disabled={busy}>Queue dry run <Icon name="arrow"/></button></ConnectorCard></div>
       <section className="panel sync-options"><div><h2>Incremental sync options</h2><p>Applies to Confluence and ServiceNow jobs. Credentials remain in worker configuration.</p></div><label>Checkpoint<input value={checkpoint} onChange={event => setCheckpoint(event.target.value)} placeholder="Optional ISO-8601 checkpoint"/></label><label className="toggle"><input type="checkbox" checked={dryRun} onChange={event => setDryRun(event.target.checked)}/><span/>Dry run only</label></section>
+      <SourceOnboarding catalog={connectorCatalog} draft={sourceDraft} setDraft={setSourceDraft} onSubmit={createRegistrySource} busy={busy}/>
+      <section className="panel span-3"><div className="panel-heading"><div><span className="eyebrow">SOURCE REGISTRY</span><h2>Registered sources</h2><p>Operate baseline, discovery, dry run, sync, reconciliation and replay from the durable registry.</p></div><button className="secondary-button" onClick={loadSourceControl} disabled={busy}><Icon name="refresh"/>Load source control</button></div><SourceRegistryTable sources={sources} onLoad={loadSourceControl} onOperation={sourceOperation} onDiscover={discoverSource} onToggle={toggleSource} onDelete={deleteSource} busy={busy}/></section>
+      <DiscoveryResult result={sourceDiscovery}/>
       <section className="panel"><div className="panel-heading"><div><span className="eyebrow">DURABLE QUEUE</span><h2>Ingestion jobs</h2></div><button className="secondary-button" onClick={() => run(refresh)} disabled={busy}><Icon name="refresh"/>Refresh counts</button></div><JobsTable jobs={jobs} jobSummary={jobSummary} onCancel={cancelJob} onReadmit={readmitJob}/></section>
     </div>}
     {section === 'ingestion' && <div className="admin-section admin-ingestion-panel">
@@ -655,8 +769,8 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [health, setHealth] = useState('checking');
 
-  async function api(path, body) {
-    const response = await fetch(path, {method: body === undefined ? 'GET' : 'POST', headers: {'Authorization': `Bearer ${token}`, ...(body !== undefined ? {'Content-Type': 'application/json'} : {})}, ...(body !== undefined ? {body: JSON.stringify(body)} : {})});
+  async function api(path, body, method) {
+    const response = await fetch(path, {method: method || (body === undefined ? 'GET' : 'POST'), headers: {'Authorization': `Bearer ${token}`, ...(body !== undefined ? {'Content-Type': 'application/json'} : {})}, ...(body !== undefined ? {body: JSON.stringify(body)} : {})});
     const contentType = response.headers.get('content-type') || '';
     const data = contentType.includes('json') ? await response.json() : await response.text();
     if (!response.ok) {

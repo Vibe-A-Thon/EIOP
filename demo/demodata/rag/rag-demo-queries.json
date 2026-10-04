@@ -123,6 +123,86 @@
       "question": "Provide a comprehensive analysis of Meridian Financial Services engineering health",
       "expected_strategy": "meta_orchestrate_fuse",
       "note": "RAG of RAGs: orchestrates graph-RAG for topology, hybrid-RAG for docs, corrective-RAG for test gaps"
+    },
+    {
+      "id": "rag-frd-domain",
+      "pattern": "graph_rag",
+      "question": "What fraud detection models are deployed and what are their performance baselines?",
+      "expected_strategy": "graph_traversal_with_context",
+      "expected_anchors": ["urn:eoip:code:repo:mfs-fraud-engine", "urn:eoip:work:item:jira:FRD-101"],
+      "note": "FRD domain query — traverses fraud engine repo, FRD Jira stories, and model deployment artifacts"
+    },
+    {
+      "id": "rag-cross-domain-payment-fraud",
+      "pattern": "hybrid_rag",
+      "question": "How does a payment tokenization failure affect fraud scoring accuracy?",
+      "expected_strategy": "multi_hop_reasoning",
+      "expected_anchors": ["urn:eoip:code:symbol:mfs-payment-gateway:tokenization.service:tokenize_card", "urn:eoip:code:symbol:mfs-fraud-engine:scoring.engine:score_transaction"],
+      "note": "Cross-domain query — hybrid retrieval across PAY tokenization and FRD scoring, multi-hop reasoning through data flow"
+    },
+    {
+      "id": "rag-infrastructure-pods",
+      "pattern": "graph_rag",
+      "question": "Which pods connect to pghost-prod-02.mfs.internal and what service accounts do they use?",
+      "expected_strategy": "infrastructure_graph_traversal",
+      "expected_anchors": ["urn:eoip:infra:db-server:pghost-prod-02.mfs.internal"],
+      "note": "Infrastructure query — traverses DB server to pods to service accounts in the infrastructure graph layer"
+    },
+    {
+      "id": "rag-compliance-least-privilege",
+      "pattern": "corrective_rag",
+      "question": "Are all service accounts following least-privilege access for PCI DSS compliance?",
+      "expected_strategy": "compliance_verification",
+      "expected_anchors": ["urn:eoip:knowledge:page:confluence:pci-dss-compliance"],
+      "note": "Compliance query — corrective retrieval iterates over service accounts, checks permissions against PCI DSS least-privilege requirements"
+    },
+    {
+      "id": "rag-whatif-credential-rotation",
+      "pattern": "agentic_rag",
+      "question": "What would be the blast radius if we rotate the svc-payment-api service account credentials?",
+      "expected_strategy": "impact_simulation",
+      "expected_anchors": ["urn:eoip:infra:service-account:svc-payment-api"],
+      "note": "What-if query — agentic RAG simulates credential rotation impact across pods, pipelines, and dependent services"
+    },
+    {
+      "id": "rag-comparison-test-coverage",
+      "pattern": "advanced_rag",
+      "question": "Compare the test coverage between the payment gateway and fraud detection modules",
+      "expected_strategy": "comparative_analysis",
+      "expected_anchors": ["urn:eoip:code:repo:mfs-payment-gateway", "urn:eoip:code:repo:mfs-fraud-engine"],
+      "note": "Comparison query — advanced retrieval gathers test suites for both domains and performs comparative analysis"
+    },
+    {
+      "id": "rag-temporal-sprint-changes",
+      "pattern": "graph_rag",
+      "question": "What changes were deployed to production in the last sprint that affected the payment processing path?",
+      "expected_strategy": "temporal_graph_traversal",
+      "expected_anchors": ["urn:eoip:code:api-service:mfs:payment-gateway"],
+      "note": "Temporal query — graph traversal filtered by sprint time window, follows deployment path through pipelines and changes"
+    },
+    {
+      "id": "rag-incident-correlation",
+      "pattern": "hybrid_rag",
+      "question": "What is the root cause chain connecting INC0080101 to PRB0010001?",
+      "expected_strategy": "causal_chain_analysis",
+      "expected_anchors": ["urn:eoip:ops:incident:INC0080101", "urn:eoip:ops:problem:PRB0010001"],
+      "note": "Incident correlation — hybrid retrieval traces causal chain from incident through changes and deployments to problem record"
+    },
+    {
+      "id": "rag-knowledge-gap-tests",
+      "pattern": "corrective_rag",
+      "question": "Which API endpoints lack automated test coverage?",
+      "expected_strategy": "gap_analysis",
+      "expected_anchors": [],
+      "note": "Knowledge gap query — corrective retrieval enumerates API endpoints from API Portal and cross-references with qTest test cases"
+    },
+    {
+      "id": "rag-abstention-financial",
+      "pattern": "simple_rag",
+      "question": "What was the quarterly revenue impact of the payment gateway v2 migration?",
+      "expected_strategy": "abstention",
+      "expected_anchors": [],
+      "note": "Abstention query — should abstain because financial revenue data is not present in the engineering knowledge base"
     }
   ]
 }

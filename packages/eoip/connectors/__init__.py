@@ -7,6 +7,7 @@ from eoip.connectors.base import (
     DiscoveryScope,
     SourceConnector,
 )
+from eoip.connectors.files import FileParsingConnector, FileParsingScope
 from eoip.connectors.generic import LocalFileConnector, LocalFileScope, WebSourceConnector
 from eoip.connectors.github import GitHubConnector
 from eoip.connectors.gitlab import GitLabConnector
@@ -18,6 +19,8 @@ __all__ = [
     "DiscoveredResource",
     "DiscoveryResult",
     "DiscoveryScope",
+    "FileParsingConnector",
+    "FileParsingScope",
     "GitHubConnector",
     "GitLabConnector",
     "JiraConnector",

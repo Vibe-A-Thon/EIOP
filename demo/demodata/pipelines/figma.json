@@ -26,6 +26,20 @@
       "id": "30:300",
       "name": "Model Performance",
       "type": "CANVAS"
+    },
+    {
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
+      "id": "4:1",
+      "name": "KYC Verification Flow",
+      "type": "CANVAS",
+      "description": "End-to-end KYC verification user flow covering document upload with image quality checks, selfie capture for liveness detection, real-time verification status tracking, and sanctions check results display. Includes progressive disclosure of verification steps, error states for rejected documents, and manual review queue interface."
+    },
+    {
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
+      "id": "5:1",
+      "name": "Case Management Dashboard",
+      "type": "CANVAS",
+      "description": "Fraud case management dashboard featuring a filterable case list with priority indicators, priority queue for P1/P2 cases requiring immediate attention, evidence panel showing aggregated detection data from multiple sources, analyst assignment workflow with workload balancing, and disposition workflow for recording case outcomes (confirmed fraud, false positive, inconclusive)."
     }
   ],
   "components": [
@@ -62,6 +76,27 @@
       "component_id": "30:130",
       "name": "VelocityChart",
       "description": "Real-time velocity monitoring chart with sparklines for per-account, per-merchant, and per-device transaction rates across 1min, 5min, 1hr, 24hr windows. Threshold breach indicators shown as red markers.",
+      "type": "COMPONENT"
+    },
+    {
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
+      "component_id": "4:110",
+      "name": "DocumentUploadPanel",
+      "description": "Document photo capture and upload component for KYC verification. Supports camera capture and file upload modes. Includes real-time image quality checks (blur detection, glare detection, crop validation, minimum resolution enforcement). Displays upload progress, OCR extraction status, and document authenticity score. Shows extracted field preview with confidence indicators for each field.",
+      "type": "COMPONENT"
+    },
+    {
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
+      "component_id": "5:110",
+      "name": "CaseListView",
+      "description": "Sortable and filterable fraud case list component with priority indicators (P1 red, P2 orange, P3 yellow, P4 gray). Columns: case ID, priority, risk score, status, source types, assigned analyst, created date, SLA countdown. Supports multi-select for bulk assignment, filtering by priority/status/date range/analyst, and sorting by any column. Includes inline case preview on hover.",
+      "type": "COMPONENT"
+    },
+    {
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
+      "component_id": "5:120",
+      "name": "EvidenceTimeline",
+      "description": "Chronological evidence timeline component showing fraud evidence collected from multiple detection sources. Each evidence node displays source type icon (velocity, anomaly, AML, KYC), timestamp, severity badge, and expandable detail panel with source-specific evidence data. Supports filtering by source type and severity. Connected to mfs_fraud_db.case_evidence records.",
       "type": "COMPONENT"
     }
   ]

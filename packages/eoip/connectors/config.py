@@ -55,6 +55,27 @@ def connector_from_registry(
 
     variables = os.environ if environ is None else environ
     correlation_id = correlation_id or str(uuid4())
+    if entry.source_type == "documents":
+        from pathlib import Path
+
+        from eoip.connectors.files import FileParsingConnector, FileParsingScope
+
+        try:
+            scope_config = dict(entry.config.get("scope", {}))
+            if entry.excluded_scopes:
+                scope_config["excluded_paths"] = [
+                    *scope_config.get("excluded_paths", []), *entry.excluded_scopes,
+                ]
+            scope = FileParsingScope.model_validate(scope_config)
+            if entry.allowed_scopes and any(
+                not any(Path(root).resolve().is_relative_to(Path(allowed).resolve())
+                        for allowed in entry.allowed_scopes)
+                for root in scope.roots
+            ):
+                raise ValueError("File roots must lie within allowed_scopes")
+            return FileParsingConnector(entry.source_id, scope)
+        except (OSError, TypeError, ValueError) as exc:
+            raise ConnectorError(entry.source_type, "configuration_error", correlation_id) from exc
     connector_class = {
         "confluence": ConfluenceConnector,
         "servicenow": ServiceNowConnector,

@@ -58,5 +58,78 @@
       "https://gitlab.mfs.internal/mfs/customer-portal",
       "https://wiki.mfs.internal/spaces/ENG/pages/overview"
     ]
+  },
+  {
+    "url": "https://figma.mfs.internal/file/design-system/components",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "MFS Design System - Component Library",
+    "headings": [
+      "MFS Design System Component Library",
+      "Overview",
+      "Button Components",
+      "Input Components",
+      "Data Display Components",
+      "Feedback Components",
+      "Navigation Components",
+      "Color Tokens",
+      "Typography Scale"
+    ],
+    "text": "MFS Design System - Component Library. Core UI component library for all Meridian Financial Services applications. Last modified: 2026-09-30 by Wei Zhang. Owner: Payments Core squad (Arjun Deshmukh). Design system version: 3.2. Overview. The MFS Design System provides a unified set of reusable UI components, design tokens, and patterns used across the MFS customer portal, fraud dashboard, and internal tools. Built with React and Tailwind CSS. Storybook documentation at storybook.mfs.internal. All components support light and dark themes and meet WCAG 2.1 AA accessibility standards. Button Components. Button: Primary interactive element. Variants: primary (MFS Blue, main CTAs), secondary (outlined, secondary actions), danger (red, destructive actions like delete or cancel payment), ghost (text-only, tertiary actions). Sizes: small (32px height), medium (40px height), large (48px height). States: default, hover, active, focused, disabled, loading (with spinner). All buttons include focus ring for keyboard navigation and aria-label for screen readers. Input Components. Input: Text input field. Types: text (default), number (with increment/decrement), password (with show/hide toggle), search (with clear button and search icon). States: default, focused, filled, error (with error message below), disabled. Includes optional label, helper text, and character counter. Select: Dropdown selector with search-as-you-type filtering. Supports single and multi-select. DatePicker: Calendar-based date selection. Supports single date, date range, and relative date presets (today, last 7 days, last 30 days, custom range). Data Display Components. Table: Data table with built-in sorting (click column header), filtering (column-level filters), and pagination (configurable page sizes: 10, 25, 50, 100). Supports row selection, expandable rows, and sticky headers. Responsive: collapses to card layout on mobile. Badge: Status indicator. Variants: status (success/warning/error/info with colored dot), severity (CRITICAL red, HIGH orange, MEDIUM yellow, LOW gray). Card: Content container with optional header, body, footer, and action buttons. Supports elevated and flat variants. Feedback Components. Modal: Overlay dialog for confirmations, forms, and detail views. Sizes: small (400px), medium (600px), large (800px). Includes focus trap and escape-to-close. Toast: Temporary notification banner. Variants: success (green), error (red), warning (amber), info (blue). Auto-dismiss after configurable duration (default 5 seconds). Stacks up to 3 toasts vertically. Navigation Components. Avatar: User avatar with initials fallback. Sizes: 24px, 32px, 40px, 56px. Breadcrumb: Navigation trail showing current page location. Tabs: Horizontal tab navigation with lazy-loaded content panels. Supports icons and badge counts on tab labels. Accordion: Collapsible content sections. Supports single-open and multi-open modes. Color Tokens. All colors are defined as design tokens for consistent theming. primary-blue: #1A73E8 (brand primary, CTAs, navigation active state, links). success-green: #34A853 (success states, approved transactions, verified status). danger-red: #EA4335 (error states, fraud alerts, declined transactions, destructive actions). warning-amber: #FBBC04 (warning states, medium risk alerts, pending status). neutral-50: #F8F9FA (light background). neutral-900: #212529 (dark text). Dark theme overrides: primary-blue-dark #8AB4F8, background-dark #1A1A2E, surface-dark #16213E, text-dark #E8EAED. Typography Scale. Font family: Inter (all text). Font sizes: 12px (caption, meta text), 14px (body small, table cells), 16px (body default, form inputs), 20px (h4, section headings), 24px (h3, card titles), 32px (h2, page section headings). Font weights: 400 regular (body text), 500 medium (labels, navigation), 600 semibold (subheadings), 700 bold (headings, emphasis). Line heights: 1.4 (body), 1.2 (headings).",
+    "links": [
+      "https://figma.mfs.internal/files/MFS-PAY-PORTAL-2026",
+      "https://figma.mfs.internal/files/MFS-FRAUD-DASH-2026",
+      "https://storybook.mfs.internal",
+      "https://gitlab.mfs.internal/mfs/design-system"
+    ]
+  },
+  {
+    "url": "https://figma.mfs.internal/file/fraud-dashboard/prototype",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Fraud Investigation Dashboard - Interactive Prototype",
+    "headings": [
+      "Fraud Investigation Dashboard Prototype",
+      "Overview",
+      "Dashboard Layout",
+      "Left Sidebar - Case Queue",
+      "Main Panel - Case Detail",
+      "Right Panel - Analyst Actions",
+      "Interactive States",
+      "Responsive Breakpoints"
+    ],
+    "text": "Fraud Investigation Dashboard - Interactive Prototype. Interactive prototype for the fraud investigation workflow used by the Fraud and Risk squad and compliance analysts. Last modified: 2026-09-28 by Omar Hassan. Owner: Fraud and Risk squad (Priya Natarajan). Product owner: Samantha Rodriguez (Director of Engineering). Overview. The fraud investigation dashboard provides analysts with a unified interface for reviewing fraud cases, examining transaction evidence, and recording investigation dispositions. Data sources: mfs_fraud_db on pghost-prod-02.mfs.internal via the Case Management API and Fraud Scoring API. The dashboard is implemented as part of the mfs-fraud-dashboard application (React/TypeScript). Dashboard Layout. Three-panel layout optimized for investigator workflows. Left sidebar (320px fixed width): case queue with filters. Main panel (fluid width): case detail with transaction timeline and evidence. Right panel (280px fixed width, collapsible): analyst actions and disposition form. Top bar: global search, notification bell (new CRITICAL cases), analyst avatar with role indicator. Left Sidebar - Case Queue. Case list displaying all assigned and unassigned cases. Each case card shows: case_id, priority badge (CRITICAL red, HIGH orange, MEDIUM yellow, LOW gray), status badge, title (truncated), customer_id, created_at relative time. Filter controls: priority multi-select (CRITICAL, HIGH, MEDIUM, LOW), status multi-select (NEW, ASSIGNED, IN_REVIEW, DISPOSITION, CLOSED), date range picker, assigned analyst dropdown. Sort options: priority (default), newest first, oldest first. Real-time updates via WebSocket when new cases are created or statuses change. Unassigned CRITICAL cases pulse with red border animation. Main Panel - Case Detail. Transaction timeline: vertical timeline showing all transactions linked to the case, each with timestamp, amount (formatted via formatCurrency), status, and fraud score. Click a transaction to expand full detail card. Evidence cards: grid layout showing collected evidence from multiple sources (transaction records, fraud scores, AML alerts, customer records). Each card shows source_type icon, summary, and relevance score. Click to expand full evidence detail in modal. Risk score gauge: circular gauge visualization showing the composite fraud score (0.0-1.0) with color gradient from green (low) to red (critical). Gauge includes model version label and confidence interval. Geographic map: interactive map showing transaction origin locations plotted by IP geolocation. Color-coded markers: green (normal), yellow (elevated risk), red (high-risk jurisdiction). Supports zoom, pan, and click-for-details on each marker. Customer profile sidebar: compact view showing customer name (masked), kyc_status, risk_level, account age, and transaction history summary. Right Panel - Analyst Actions. Assign button: assign case to self or select analyst from dropdown. Changes status to ASSIGNED. Escalate button: escalate to supervisor with required justification text. Triggers PagerDuty alert for CRITICAL escalations. Disposition form: decision select (confirmed_fraud, false_positive, suspicious_activity, insufficient_evidence), rationale text area (required, minimum 50 characters), recommended actions checklist, SAR required toggle. Submit creates disposition record and transitions case to DISPOSITION status. Notes section: chronological list of analyst notes with add-note text area. Interactive States. Case selection: clicking a case in the left sidebar loads its full detail in the main panel with smooth transition animation. Evidence drill-down: clicking an evidence card opens a modal with full evidence detail, source links, and related records. Disposition form: form validation requires all mandatory fields. Submit shows confirmation dialog before recording decision. Toast notification confirms successful disposition. Responsive Breakpoints. Desktop (1440px and above): full three-panel layout as described. Tablet (768px to 1439px): left sidebar collapses to icon-only mode, right panel becomes a slide-out drawer triggered by action button. Case queue and case detail share the main viewport with tab navigation. Mobile (below 768px): single-panel layout with bottom navigation tabs for case queue, case detail, and actions. Optimized for read-only case review on mobile; disposition actions require desktop or tablet.",
+    "links": [
+      "https://figma.mfs.internal/files/MFS-FRAUD-DASH-2026",
+      "https://figma.mfs.internal/file/design-system/components",
+      "https://api.mfs.internal/catalog/case-api/v1/swagger.json",
+      "https://api.mfs.internal/services/fraud-scoring-api"
+    ]
+  },
+  {
+    "url": "https://figma.mfs.internal/file/mobile-payment/prototype",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Mobile Payment Flow - User Journey",
+    "headings": [
+      "Mobile Payment Flow Prototype",
+      "Overview",
+      "User Journey Steps",
+      "Step 1: Merchant Selection",
+      "Step 2: Amount Entry",
+      "Step 3: Payment Method Selection",
+      "Step 4: Review & Confirm",
+      "Step 5: Processing Animation",
+      "Step 6: Result Screen",
+      "Error States",
+      "Accessibility"
+    ],
+    "text": "Mobile Payment Flow - User Journey. Interactive prototype for the mobile payment experience on the MFS customer portal. Last modified: 2026-09-30 by Lisa Park. Design lead: Wei Zhang. Owner: Payments Core squad (Arjun Deshmukh). Overview. This prototype defines the complete mobile payment user journey from merchant selection through payment confirmation. Designed mobile-first for the mfs-customer-portal responsive experience. Integrates with Payment Gateway API v2 and Fraud Scoring API v2. Target: reduce payment completion time by 30% compared to current flow. User Journey Steps. The payment flow consists of 6 sequential screens with clear progress indication via a step indicator bar at the top. Step 1: Merchant Selection. Search or browse merchants from a categorized list. Recent merchants section shows last 5 merchants for quick access. Each merchant card displays: merchant name, category, logo, and verification badge. Selecting a merchant advances to Step 2 with a slide-left transition. Step 2: Amount Entry. Large numeric keypad optimized for thumb reach on mobile. Amount displayed in large font (32px) with real-time currency formatting via formatCurrency. Currency selector (default USD) with support for EUR, GBP, CAD, AUD, JPY. Optional memo/description field. Amount validation: minimum $0.01, maximum per-merchant limit. Step 3: Payment Method Selection. List of saved payment methods using CardDisplay component. Each card shows: card brand logo, masked card number (last 4 digits via maskCardNumber), expiry date, default indicator. Options: select a saved card, add new card (opens tokenization flow via Token Vault API), or bank transfer (ACH). New card entry: card number, expiry, CVV fields with inline validation using validateCard function. Card is tokenized immediately via POST /tokens/v1/tokenize before proceeding. Step 4: Review & Confirm. Summary screen showing: merchant name, payment amount (formatted), selected payment method (masked card), and memo. Edit links for each field to return to the relevant step. Terms and conditions checkbox. Confirm Payment button (primary, full-width) with biometric authentication option (FaceID/TouchID). Step 5: Processing Animation. Full-screen processing state with animated progress indicator. Three phases visualized: (1) Securing payment (tokenization check), (2) Fraud check (real-time fraud scoring via Fraud Scoring API, fraud_score displayed as a shield icon with checkmark for low risk), (3) Processing payment (payment creation via Payment Gateway API). Each phase shows a checkmark animation on completion. If fraud check returns high risk (fraud_score > 0.60), FraudAlertBanner appears with additional verification step before proceeding. Step 6: Result Screen. Success state: green checkmark animation, transaction ID, amount, merchant name, timestamp, and a Share Receipt button. Includes Add to Favorites option for the merchant. Failure state: red X animation with clear error message and recommended action. Includes Retry Payment and Contact Support buttons. Transaction details are saved and accessible from TransactionHistory. Error States. Network timeout: shown after 30 seconds of no response. Message: 'Connection timed out. Please check your internet connection and try again.' Retry button available. Card declined: shown when payment processor returns decline. Message: 'Your card was declined. Please try a different payment method or contact your bank.' Suggests selecting a different saved card. Fraud hold: shown when fraud_score exceeds critical threshold (> 0.85). Message: 'This transaction requires additional verification for your security.' Presents identity verification step (selfie or OTP). FraudAlertBanner displayed with severity: critical. Insufficient funds: shown for bank transfer payments. Message: 'Insufficient funds in the selected account.' Suggests selecting a different payment method. Accessibility. Full WCAG 2.1 AA compliance verified. VoiceOver (iOS) tested: all screens, buttons, and form inputs have descriptive aria-labels. Dynamic announcements for processing phase transitions and result state. TalkBack (Android) tested: equivalent screen reader support with focus management. Color contrast: all text meets minimum 4.5:1 ratio against backgrounds in both light and dark themes. Touch targets: minimum 44x44px for all interactive elements. Reduced motion: processing animation respects prefers-reduced-motion setting, replacing animation with static progress indicators. Font scaling: supports dynamic type up to 200% without layout breakage.",
+    "links": [
+      "https://figma.mfs.internal/files/MFS-PAY-PORTAL-2026",
+      "https://figma.mfs.internal/file/design-system/components",
+      "https://api.mfs.internal/services/payment-gateway-api",
+      "https://api.mfs.internal/services/token-vault-api"
+    ]
   }
 ]

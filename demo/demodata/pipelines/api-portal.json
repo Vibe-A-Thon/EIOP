@@ -35,6 +35,26 @@
       "status": "production",
       "owner": "Fraud & Risk",
       "updated_at": "2026-10-02T09:00:00Z"
+    },
+    {
+      "id": "svc-kyc-api-v1",
+      "name": "KYC API v1",
+      "version": "1.0.0-beta",
+      "description": "KYC document verification and identity check API. Provides document upload with OCR extraction, liveness detection via AWS Rekognition, sanctions screening against OFAC/PEP lists, and end-to-end identity verification workflow management.",
+      "base_url": "https://api.mfs.internal/kyc/v1",
+      "status": "beta",
+      "owner": "Identity & Compliance",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "svc-case-api-v1",
+      "name": "Case Management API v1",
+      "version": "1.0.0",
+      "description": "Fraud case lifecycle management API. Provides case creation, evidence aggregation from multiple detection sources, analyst assignment with workload balancing, priority-based routing, and disposition recording for fraud investigation workflows.",
+      "base_url": "https://api.mfs.internal/cases/v1",
+      "status": "active",
+      "owner": "Fraud Operations",
+      "updated_at": "2026-10-03T11:00:00Z"
     }
   ],
   "endpoints": [
@@ -154,6 +174,78 @@
       "description": "List active and completed A/B tests with per-variant metrics (AUC-ROC, false positive rate, latency) and statistical significance.",
       "version": "1.0.0",
       "updated_at": "2026-10-02T09:00:00Z"
+    },
+    {
+      "id": "ep-kyc-submit-verification",
+      "service_id": "svc-kyc-api-v1",
+      "path": "/v1/verifications",
+      "method": "POST",
+      "description": "Submit a document for KYC verification. Accepts document image (passport, driver's license, national ID) with metadata. Initiates OCR extraction, authenticity scoring, and returns a verification ID for status polling. Supports multipart/form-data upload.",
+      "version": "1.0.0-beta",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "ep-kyc-get-verification",
+      "service_id": "svc-kyc-api-v1",
+      "path": "/v1/verifications/{id}",
+      "method": "GET",
+      "description": "Get verification status and results for a submitted document. Returns OCR extracted fields, confidence scores, authenticity score, and current verification status (pending, approved, rejected, manual_review).",
+      "version": "1.0.0-beta",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "ep-kyc-liveness",
+      "service_id": "svc-kyc-api-v1",
+      "path": "/v1/verifications/{id}/liveness",
+      "method": "POST",
+      "description": "Submit liveness check for a verification. Accepts selfie image or video for passive and active liveness detection via AWS Rekognition. Performs face match against document photo. Returns liveness score, spoof detection result, and face match similarity score.",
+      "version": "1.0.0-beta",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "ep-kyc-sanctions-screen",
+      "service_id": "svc-kyc-api-v1",
+      "path": "/v1/sanctions/screen",
+      "method": "GET",
+      "description": "Screen an individual against sanctions lists (OFAC SDN, PEP, EU Sanctions, UN Sanctions). Accepts name, date of birth, and nationality. Returns match results with similarity scores using Jaro-Winkler fuzzy matching. Threshold configurable (default 0.88).",
+      "version": "1.0.0-beta",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "ep-cases-list",
+      "service_id": "svc-case-api-v1",
+      "path": "/v1/cases",
+      "method": "GET",
+      "description": "List fraud cases with filtering by priority (P1-P4), status (open, assigned, investigating, disposed), assigned analyst, date range, and source type. Supports pagination and sorting by risk score, priority, or creation date.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-03T11:00:00Z"
+    },
+    {
+      "id": "ep-cases-create",
+      "service_id": "svc-case-api-v1",
+      "path": "/v1/cases",
+      "method": "POST",
+      "description": "Create a new fraud case. Accepts initial evidence references, risk score, and source detection type. Automatically assigns priority based on risk score (>= 0.9: P1, 0.7-0.9: P2, 0.5-0.7: P3, < 0.5: P4) and routes to appropriate investigation queue.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-03T11:00:00Z"
+    },
+    {
+      "id": "ep-cases-assign",
+      "service_id": "svc-case-api-v1",
+      "path": "/v1/cases/{id}/assign",
+      "method": "PUT",
+      "description": "Assign a fraud case to an analyst. Accepts analyst ID and optional reassignment reason. Validates analyst availability and workload capacity before assignment. Updates case status to 'assigned' and notifies the analyst via configured channels.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-03T11:00:00Z"
+    },
+    {
+      "id": "ep-cases-disposition",
+      "service_id": "svc-case-api-v1",
+      "path": "/v1/cases/{id}/disposition",
+      "method": "POST",
+      "description": "Record final disposition for a fraud case. Accepts outcome (confirmed_fraud, false_positive, inconclusive), analyst notes, and supporting evidence references. Updates case status to 'disposed' and triggers downstream actions (SAR filing for confirmed fraud, model feedback for false positives).",
+      "version": "1.0.0",
+      "updated_at": "2026-10-03T11:00:00Z"
     }
   ]
 }

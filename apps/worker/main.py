@@ -74,6 +74,12 @@ def execute_job(store, root, job):
     if job["kind"] == "SOURCE_OPERATION":
         registry = SourceRegistry(root / "state" / "source-registry.json")
         entry = registry.get(payload["source_id"])
+        if entry.source_type == "documents":
+            from eoip.ingestion.files import run_registered_file_operation
+
+            return run_registered_file_operation(
+                entry, payload, store, str(root), job["correlation_id"]
+            )
         if entry.source_type == "github":
             return run_registered_github_operation(
                 entry, payload, store, str(root), job["correlation_id"]

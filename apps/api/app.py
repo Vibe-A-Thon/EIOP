@@ -181,6 +181,13 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
     app = FastAPI(title="EOIP API", version="1.0.0", dependencies=dependencies or [])
     executor = QueryExecutor(store, load_query_policy())
     app.state.graph_store = store
+    from eoip.graph.bitemporal import build_router as build_bitemporal_router
+
+    app.include_router(build_bitemporal_router(store))
+    from eoip.fileparse.api import build_router as build_file_router
+    from eoip.runtime import data_root
+
+    app.include_router(build_file_router(store, data_root()))
 
     @app.middleware("http")
     async def add_correlation_id(request: Request, call_next):
@@ -919,6 +926,11 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         from eoip.graph.knowledge_debt import detect_knowledge_debt
         return detect_knowledge_debt(store)
 
+    @app.get("/api/v1/knowledge-debt")
+    def knowledge_debt_required_alias():
+        from eoip.graph.knowledge_debt import detect_knowledge_debt
+        return detect_knowledge_debt(store)
+
     @app.post("/api/v1/knowledge/slo")
     def knowledge_slo(body: dict):
         from eoip.graph.knowledge_debt import evaluate_slos, parse_slo_rules
@@ -928,10 +940,48 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         rules = parse_slo_rules(rules_config)
         return evaluate_slos(store, rules)
 
+    @app.get("/api/v1/knowledge-slos")
+    def knowledge_slos_required_alias():
+        from eoip.graph.knowledge_debt import evaluate_slos, parse_slo_rules
+
+        rules = parse_slo_rules([
+            {
+                "id": "provenance-coverage",
+                "metric": "evidence_coverage",
+                "threshold": 0.8,
+                "operator": "gte",
+                "description": "At least 80% of business entities carry evidence.",
+            },
+            {
+                "id": "orphan-rate",
+                "metric": "orphan_rate",
+                "threshold": 0.1,
+                "operator": "lte",
+                "description": "No more than 10% of non-meta entities should be isolated.",
+            },
+            {
+                "id": "graph-connectivity",
+                "metric": "connectivity",
+                "threshold": 0.75,
+                "operator": "gte",
+                "description": "At least 75% of entities should participate in relationships.",
+            },
+        ])
+        return evaluate_slos(store, rules)
+
     @app.get("/api/v1/query/why/{entity_cid:path}")
     def query_why_endpoint(entity_cid: str):
         from eoip.graph.query_operators import query_why
         return query_why(store, entity_cid)
+
+    @app.post("/api/v1/query/why")
+    def query_why_required_alias(body: dict):
+        from eoip.graph.query_operators import query_why
+
+        entity = body.get("entity_cid") or body.get("canonical_id") or body.get("entity")
+        if not entity:
+            raise HTTPException(400, "entity_cid is required")
+        return query_why(store, entity)
 
     @app.post("/api/v1/query/why-not")
     def query_why_not_endpoint(body: dict):
@@ -946,6 +996,28 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
     def query_what_changed_endpoint(entity_cid: str):
         from eoip.graph.query_operators import query_what_changed
         return query_what_changed(store, entity_cid)
+
+    @app.post("/api/v1/query/what-changed")
+    def query_what_changed_required_alias(body: dict):
+        from eoip.graph.query_operators import query_what_changed
+
+        entity = body.get("entity_cid") or body.get("canonical_id") or body.get("entity")
+        if not entity:
+            raise HTTPException(400, "entity_cid is required")
+        return query_what_changed(store, entity)
+
+    @app.post("/api/v1/query/what-if")
+    def query_what_if_required_alias(body: dict):
+        from eoip.graph.whatif import confirm_scenario, execute_scenario, parse_whatif_intent
+
+        intent = body.get("intent") or body.get("scenario")
+        if not intent:
+            raise HTTPException(400, "intent is required")
+        plan = parse_whatif_intent(intent)
+        if body.get("execute") is True or body.get("confirmed") is True:
+            plan.confirmed = True
+            return execute_scenario(store, plan)
+        return confirm_scenario(plan)
 
     @app.get("/api/v1/query/context/{entity_cid:path}")
     def query_context_endpoint(entity_cid: str):
@@ -965,11 +1037,44 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         sim_id = ws.create(description=body.get("description", ""))
         return {"simulation_id": sim_id}
 
+    @app.post("/api/v1/simulations")
+    def simulations_required_create(body: dict):
+        from eoip.graph.simulation import Mutation, SimulationWorkspace
+
+        if "workspace" not in _sim_workspace:
+            _sim_workspace["workspace"] = SimulationWorkspace(store)
+        ws = _sim_workspace["workspace"]
+        sim_id = ws.create(description=body.get("description", ""))
+        mutation_results = []
+        for item in body.get("mutations", []):
+            mutation_results.append(ws.apply_mutation(sim_id, Mutation(
+                kind=item["kind"],
+                label=item.get("label", ""),
+                target_id=item.get("target_id", ""),
+                properties=item.get("properties", {}),
+                out_v=item.get("out_v", ""),
+                in_v=item.get("in_v", ""),
+            )))
+        return {
+            "simulation_id": sim_id,
+            "mutation_results": mutation_results,
+            "manifest": ws.get_manifest(sim_id),
+        }
+
     @app.get("/api/v1/simulation/list")
     def simulation_list():
         if "workspace" not in _sim_workspace:
             return {"simulations": []}
         return {"simulations": _sim_workspace["workspace"].list_simulations()}
+
+    @app.get("/api/v1/simulations/{sim_id}")
+    def simulations_required_get(sim_id: str):
+        if "workspace" not in _sim_workspace:
+            raise HTTPException(404, "No simulation workspace")
+        manifest = _sim_workspace["workspace"].get_manifest(sim_id)
+        if not manifest:
+            raise HTTPException(404, "Simulation not found")
+        return manifest
 
     @app.post("/api/v1/simulation/{sim_id}/mutate")
     def simulation_mutate(sim_id: str, body: dict):
@@ -1164,11 +1269,22 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         status: str | None = Query(default=None, pattern="^(done|partial|planned)$"),
         priority: str | None = Query(default=None, pattern="^P[0-9]+$"),
         include_requirements: bool = Query(default=True),
+        doc_set: str = Query(default="gap", pattern="^(gap|g2)$"),
     ):
-        from eoip.gaps.coverage import build_gap_coverage_report
+        from eoip.gaps.coverage import (
+            G2_IMPLEMENTATION_DOC,
+            G2_REQUIREMENTS_DOC,
+            build_gap_coverage_report,
+        )
 
         repo_root = Path(__file__).resolve().parents[2]
-        report = build_gap_coverage_report(repo_root).to_dict()
+        kwargs = (
+            {"requirements_doc": G2_REQUIREMENTS_DOC, "implementation_doc": G2_IMPLEMENTATION_DOC}
+            if doc_set == "g2"
+            else {}
+        )
+        report = build_gap_coverage_report(repo_root, **kwargs).to_dict()
+        report["doc_set"] = doc_set
         requirements = report["requirements"]
         if status:
             requirements = [item for item in requirements if item["status"] == status]
@@ -1179,15 +1295,48 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         return report
 
     @app.get("/api/v1/gaps/requirements/{requirement_id}")
-    def gap_requirement(requirement_id: str):
-        from eoip.gaps.coverage import build_gap_coverage_report
+    def gap_requirement(requirement_id: str, doc_set: str = Query(default="gap", pattern="^(gap|g2)$")):
+        from eoip.gaps.coverage import (
+            G2_IMPLEMENTATION_DOC,
+            G2_REQUIREMENTS_DOC,
+            build_gap_coverage_report,
+        )
 
         normalized = requirement_id.upper()
         repo_root = Path(__file__).resolve().parents[2]
-        for item in build_gap_coverage_report(repo_root).to_dict()["requirements"]:
+        kwargs = (
+            {"requirements_doc": G2_REQUIREMENTS_DOC, "implementation_doc": G2_IMPLEMENTATION_DOC}
+            if doc_set == "g2"
+            else {}
+        )
+        for item in build_gap_coverage_report(repo_root, **kwargs).to_dict()["requirements"]:
             if item["requirement_id"] == normalized:
                 return item
         raise HTTPException(status_code=404, detail="GAP requirement not found")
+
+    @app.get("/api/v1/gaps/g2/architecture-guardrails")
+    def g2_architecture_guardrails():
+        from eoip.gaps.g2_architecture import evaluate_g2_architecture_guardrails
+
+        return evaluate_g2_architecture_guardrails()
+
+    @app.post("/api/v1/gaps/g2/architecture-guardrails")
+    def g2_architecture_guardrails_for_profile(body: dict):
+        from eoip.gaps.g2_architecture import evaluate_g2_architecture_guardrails
+
+        return evaluate_g2_architecture_guardrails(body.get("profile", body))
+
+    @app.get("/api/v1/gaps/g2/observability-contract")
+    def g2_observability_contract_endpoint():
+        from eoip.gaps.g2_observability import g2_observability_contract
+
+        return g2_observability_contract()
+
+    @app.post("/api/v1/gaps/g2/observability-contract")
+    def g2_observability_contract_validate(body: dict):
+        from eoip.gaps.g2_observability import validate_g2_observability_snapshot
+
+        return validate_g2_observability_snapshot(body.get("snapshot", body))
 
     # --- EQL: EOIP Query Language ---
 
@@ -1218,6 +1367,8 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             {"id": "api_portal", "name": "API Portal", "type": "api", "capabilities": ["baseline"]},
             {"id": "web", "name": "Web Crawler", "type": "crawler", "capabilities": ["baseline", "poll", "reconcile"]},
             {"id": "local_code", "name": "Local Code", "type": "file", "capabilities": ["baseline"]},
+            {"id": "file_parsing", "name": "Binary/Text File Parsing", "type": "file",
+             "capabilities": ["baseline", "parse", "json_export", "rag_chunks", "graph_ingestion"]},
             {"id": "generic", "name": "Generic JSON", "type": "json", "capabilities": ["baseline"]},
         ]}
 

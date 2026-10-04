@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:api_contract:1.0",
+  "title": "APIContract v1",
+  "type": "object",
+  "required": ["schema_version", "contract_id", "api_name", "contract_type", "version", "operations"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "contract_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "api_name": {"type": "string", "minLength": 1, "maxLength": 512},
+    "contract_type": {"enum": ["OPENAPI", "ASYNCAPI", "GRAPHQL", "PROTOBUF", "JSON_SCHEMA", "POSTMAN"]},
+    "version": {"type": "string", "minLength": 1, "maxLength": 128},
+    "source_ref": {"type": ["string", "null"], "maxLength": 4096},
+    "producer_service_id": {"type": ["string", "null"], "maxLength": 2048},
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["operation_id"],
+        "properties": {
+          "operation_id": {"type": "string", "minLength": 1, "maxLength": 512},
+          "method": {"type": ["string", "null"], "maxLength": 32},
+          "path": {"type": ["string", "null"], "maxLength": 2048},
+          "request_schema_ref": {"type": ["string", "null"], "maxLength": 2048},
+          "response_schema_refs": {"type": "array", "items": {"type": "string", "maxLength": 2048}},
+          "breaking_change": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "metadata": {"type": "object"}
+  },
+  "additionalProperties": false
+}

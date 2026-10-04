@@ -28,7 +28,8 @@
     "generation": { "type": ["string", "null"] },
     "partial": { "type": ["boolean", "null"] },
     "facts": { "type": ["array", "null"], "items": { "type": "object" } },
-    "graph": { "type": ["object", "null"] }
+    "graph": { "type": ["object", "null"] },
+    "trace": { "type": ["object", "null"] }
   },
   "additionalProperties": false
 }

@@ -116,5 +116,81 @@
     ],
     "crawled_at": "2026-09-30T06:20:00.000Z",
     "content_length": 1650
+  },
+  {
+    "url": "https://dbdocs.mfs.internal/mfs_payments_db/tables",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "mfs_payments_db - Table Reference",
+    "headings": [
+      "mfs_payments_db - Table Reference",
+      "payments",
+      "payment_methods",
+      "tokens",
+      "idempotency_keys",
+      "webhook_registrations",
+      "webhook_delivery_log",
+      "webhook_dlq",
+      "analytics_aggregates",
+      "settlement_batches"
+    ],
+    "text": "mfs_payments_db - Table Reference\n\nComplete table reference for mfs_payments_db on pghost-prod-01.mfs.internal.\n\npayments\nCore payments table tracking all transaction lifecycle states.\nColumns: id (PK, uuid), amount (decimal(19,4)), currency (varchar(3)), status (varchar - pending/authorized/captured/failed/refunded), merchant_id (varchar), created_at (timestamptz), updated_at (timestamptz)\nIndexes: idx_payments_merchant_id, idx_payments_status, idx_payments_created_at\n\npayment_methods\nPayment method details linked to individual payments.\nColumns: id (PK, uuid), payment_id (FK to payments), type (varchar - card/bank/wallet), last_four (varchar(4)), token_id (FK to tokens)\nIndex: idx_payment_methods_payment_id\n\ntokens\nTokenized cardholder data with HSM key references.\nColumns: id (PK, uuid), pan_hash (varchar(64)), token_value (varchar), created_at (timestamptz), hsm_key_id (varchar)\nIndex: idx_tokens_pan_hash\n\nidempotency_keys\nIdempotency key tracking for safe payment retries.\nColumns: key (PK, varchar(64)), payment_id (FK to payments), created_at (timestamptz), expires_at (timestamptz)\nIndex: idx_idempotency_keys_expires_at\n\nwebhook_registrations\nMerchant webhook registration configurations.\nColumns: id (PK, uuid), merchant_id (varchar), url (text), events (jsonb - array of subscribed event types), secret_vault_path (varchar - path in vault.mfs.internal for HMAC signing secret), created_at (timestamptz)\nIndexes: idx_webhook_registrations_merchant_id\n\nwebhook_delivery_log\nDelivery attempt log for all webhook dispatches.\nColumns: id (PK, uuid), registration_id (FK to webhook_registrations), event_id (varchar), status (varchar - pending/delivered/failed/dlq), http_status (int), latency_ms (int), created_at (timestamptz)\nIndexes: idx_webhook_delivery_log_registration_id, idx_webhook_delivery_log_status\n\nwebhook_dlq\nDead letter queue for webhook deliveries that exhausted all retries.\nColumns: id (PK, uuid), delivery_log_id (FK to webhook_delivery_log), payload (jsonb), error (text), retry_count (int), created_at (timestamptz)\nIndex: idx_webhook_dlq_created_at\n\nanalytics_aggregates\nPre-computed analytics aggregates for dashboard queries.\nColumns: id (PK, uuid), dimension_key (varchar - merchant_id or currency), time_bucket (timestamptz - hourly buckets), transaction_count (int), success_count (int), failure_count (int), avg_settlement_ms (decimal)\nIndexes: idx_analytics_aggregates_dimension_key, idx_analytics_aggregates_time_bucket\n\nsettlement_batches\nSettlement batch metadata for reconciliation.\nColumns: id (PK, uuid), batch_date (date), merchant_id (varchar), total_amount (decimal(19,4)), status (varchar - pending/processing/completed/failed), created_at (timestamptz)\nIndexes: idx_settlement_batches_merchant_id, idx_settlement_batches_batch_date\n\nService Accounts:\n- svc-payment-api: read/write access to all tables\n- svc-analytics: read-only access to payments, analytics_aggregates, settlement_batches",
+    "links": [
+      "https://dbdocs.mfs.internal/mfs_payments_db/tables/payments",
+      "https://dbdocs.mfs.internal/mfs_payments_db/tables/webhook_registrations",
+      "https://dbdocs.mfs.internal/mfs_payments_db/tables/analytics_aggregates",
+      "https://wiki.mfs.internal/database/mfs-payments-db-schema",
+      "https://wiki.mfs.internal/architecture/payment-gateway-v2"
+    ],
+    "crawled_at": "2026-10-01T08:00:00.000Z",
+    "content_length": 3850
+  },
+  {
+    "url": "https://ocp-prod-east.mfs.internal/console/project/mfs-payments/overview",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "mfs-payments Namespace - Pod Overview",
+    "headings": [
+      "mfs-payments Namespace - Pod Overview",
+      "Pod Topology",
+      "Services",
+      "ConfigMaps and Secrets",
+      "Ingress"
+    ],
+    "text": "mfs-payments Namespace - Pod Overview\n\nPod topology for mfs-payments namespace on ocp-prod-east.mfs.internal cluster.\n\nPod Topology\n\nmfs-pay-pod-01\nWorkloads: payment processing, tokenization, webhook dispatch\nReplicas: 4\nResources: 2 CPU / 4Gi memory per replica\nStatus: Running\n\nmfs-pay-pod-02\nWorkloads: payment processing secondary\nReplicas: 2\nResources: 2 CPU / 4Gi memory per replica\nStatus: Running\n\nmfs-pay-pod-03\nWorkloads: analytics workload\nReplicas: 2\nResources: 1 CPU / 2Gi memory per replica\nStatus: Running\n\nServices\n\nmfs-payment-gateway\nType: ClusterIP\nPort: 8080\nTargets: mfs-pay-pod-01, mfs-pay-pod-02\nSelector: app=mfs-payment-gateway\n\nmfs-analytics\nType: ClusterIP\nPort: 8081\nTargets: mfs-pay-pod-03\nSelector: app=mfs-analytics\n\nConfigMaps and Secrets\n\nConfigMaps:\n- payment-config: Payment processing configuration (timeouts, retry limits, circuit breaker thresholds)\n- webhook-config: Webhook dispatch configuration (delivery timeouts, max retries, DLQ settings)\n- analytics-config: Analytics aggregation configuration (time buckets, dimension keys, retention)\n\nSecrets:\n- payment-db-credentials: PostgreSQL credentials for pghost-prod-01.mfs.internal (rotated via vault.mfs.internal)\n- webhook-signing-keys: HMAC signing keys for webhook payload signatures (synced from vault.mfs.internal)\n\nIngress\napi-gateway.mfs.internal -> mfs-payment-gateway service (port 8080)\nTLS termination at ingress controller with Let's Encrypt certificate",
+    "links": [
+      "https://ocp-prod-east.mfs.internal/console/project/mfs-payments",
+      "https://ocp-prod-east.mfs.internal/console/project/mfs-payments/pods/mfs-pay-pod-01",
+      "https://ocp-prod-east.mfs.internal/console/project/mfs-payments/pods/mfs-pay-pod-02",
+      "https://ocp-prod-east.mfs.internal/console/project/mfs-payments/pods/mfs-pay-pod-03",
+      "https://grafana.mfs.internal/d/pay-gateway-slos/payment-gateway-slos",
+      "https://grafana.mfs.internal/d/mfs-analytics/analytics-dashboard"
+    ],
+    "crawled_at": "2026-10-01T08:30:00.000Z",
+    "content_length": 2400
+  },
+  {
+    "url": "https://wiki.mfs.internal/spaces/OPS/pages/incident-response-payment",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Payment Gateway - Incident Response Playbook",
+    "headings": [
+      "Payment Gateway - Incident Response Playbook",
+      "P1 Response SLA",
+      "Escalation Path",
+      "Diagnostic Tools",
+      "Common Issues and Resolution",
+      "Rollback Procedures"
+    ],
+    "text": "Payment Gateway - Incident Response Playbook\n\nComprehensive incident response playbook for the MFS Payment Gateway.\n\nP1 Response SLA\n- Acknowledge: 15 minutes from alert firing\n- Mitigate: 1 hour from acknowledgement\n- Resolve: 4 hours from mitigation (best effort)\n- Post-incident review: within 48 hours of resolution\n\nEscalation Path\n1. On-call engineer: payments-oncall PagerDuty rotation (primary responder)\n2. Squad lead: Arjun Deshmukh (payments squad lead, available 08:00-22:00 IST)\n3. Platform: Marcus Thompson (platform engineering lead, available 08:00-20:00 EST)\n4. VP Engineering: David Kim (final escalation, P1 only)\n\nDiagnostic Tools\n- Grafana: payment-gateway-slo dashboard (https://grafana.mfs.internal/d/pay-gateway-slos) - latency P99, success rate, circuit breaker state\n- Kibana: query 'service:mfs-payment-gateway AND level:ERROR' for error log analysis (https://kibana.mfs.internal)\n- Datadog APM: distributed traces for payment request lifecycle (https://app.datadoghq.com/apm/traces?service=mfs-payment-gateway)\n- OpenShift console: pod health and resource utilization on ocp-prod-east.mfs.internal\n\nCommon Issues and Resolution\n\n1. Database Connection Exhaustion\nSymptom: Increasing latency and connection timeout errors in application logs.\nDiagnosis: Check pghost-prod-01.mfs.internal connection count via pg_stat_activity. Compare active connections against max_connections (200) and HikariCP pool size (50 per pod).\nResolution: If connection usage exceeds 80% threshold, restart pods sequentially using oc rollout restart deployment/mfs-payment-gateway -n mfs-payments. If persistent, increase pool size in payment-config ConfigMap.\n\n2. Tokenization HSM Timeout\nSymptom: TokenizationService latency spike, PKCS#11 session timeout errors.\nDiagnosis: Verify hsm-gateway.mfs.internal:8443 health endpoint. Check HSM session pool metrics on mfs-vault-pod-01.\nResolution: Restart svc-token-vault sessions. If HSM is unresponsive, escalate to Platform Engineering.\n\n3. Kafka Producer Errors\nSymptom: Payment events not reaching webhook dispatcher, consumer lag increasing.\nDiagnosis: Check kafka-broker.mfs.internal broker health via kafka-manager. Verify topic mfs.payment.events partition status.\nResolution: If broker is unhealthy, restart affected broker. If topic partitions are offline, reassign partitions.\n\n4. Webhook Delivery Failures\nSymptom: DLQ depth increasing, merchants reporting missing notifications.\nDiagnosis: Check webhook_dlq table depth. Verify merchant endpoint health via webhook test endpoint (POST /webhooks/{id}/test).\nResolution: If merchant endpoint is down, pause deliveries. Once restored, replay DLQ entries via DeadLetterQueue.replay().\n\n5. Redis Connection Errors\nSymptom: Idempotency key lookups failing, duplicate payment risk.\nDiagnosis: Verify redis-cluster.mfs.internal cluster status using redis-cli cluster info. Check CLUSTER_STATE and connected_clients.\nResolution: If cluster state is not 'ok', check for failed nodes and perform failover. Restart affected pods to re-establish connections.\n\nRollback Procedures\n- GitLab CI/CD: Trigger rollback-production job in the mfs-payment-gateway pipeline to deploy the previous stable version.\n- OpenShift manual: oc rollback deployment/mfs-payment-gateway -n mfs-payments on ocp-prod-east.mfs.internal.\n- Database: Rollback migrations via Alembic downgrade if schema changes caused the incident. Coordinate with DBA team.",
+    "links": [
+      "https://grafana.mfs.internal/d/pay-gateway-slos/payment-gateway-slos",
+      "https://kibana.mfs.internal/app/discover#/?service=mfs-payment-gateway",
+      "https://wiki.mfs.internal/runbooks/payment-timeouts",
+      "https://wiki.mfs.internal/architecture/payment-gateway-v2",
+      "https://ocp-prod-east.mfs.internal/console/project/mfs-payments/overview"
+    ],
+    "crawled_at": "2026-10-01T09:00:00.000Z",
+    "content_length": 4200
   }
 ]

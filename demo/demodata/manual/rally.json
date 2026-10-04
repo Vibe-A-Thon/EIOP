@@ -1,6 +1,6 @@
 {
   "QueryResult": {
-    "TotalResultCount": 8,
+    "TotalResultCount": 17,
     "StartIndex": 1,
     "PageSize": 200,
     "Results": [
@@ -25,7 +25,7 @@
           "_refObjectName": "Meridian Financial Services"
         },
         "Children": {
-          "Count": 1
+          "Count": 2
         },
         "Tags": {
           "_tagsNameArray": [
@@ -105,6 +105,40 @@
         "CreationDate": "2026-08-01T08:00:00.000Z",
         "LastUpdateDate": "2026-09-30T16:10:00.000Z",
         "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/epic/701003"
+      },
+      {
+        "ObjectID": 701004,
+        "FormattedID": "EPC-104",
+        "_type": "PortfolioItem/Epic",
+        "Name": "Merchant Integration Platform",
+        "Description": "Build a comprehensive merchant integration platform with webhook notifications, partner API access, and real-time settlement reporting.",
+        "State": {
+          "_refObjectName": "Defined"
+        },
+        "PlanEstimate": 72,
+        "Iteration": null,
+        "Release": {
+          "_refObjectName": "Q1 2027 Release"
+        },
+        "Owner": {
+          "_refObjectName": "Marcus Rivera"
+        },
+        "Project": {
+          "_refObjectName": "Meridian Financial Services"
+        },
+        "Children": {
+          "Count": 1
+        },
+        "Tags": {
+          "_tagsNameArray": [
+            {"Name": "merchant"},
+            {"Name": "integration"},
+            {"Name": "webhook"}
+          ]
+        },
+        "CreationDate": "2026-09-15T09:00:00.000Z",
+        "LastUpdateDate": "2026-10-01T10:30:00.000Z",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/epic/701004"
       },
       {
         "ObjectID": 702001,
@@ -212,6 +246,80 @@
         "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/feature/702003"
       },
       {
+        "ObjectID": 702004,
+        "FormattedID": "F-PAY-400",
+        "_type": "PortfolioItem/Feature",
+        "Name": "Webhook Notification System",
+        "Description": "Build a robust webhook notification system for merchant integrations with event-driven dispatch, retry logic, and dead letter queue support. Aligns with Jira feature PAY-400.",
+        "State": {
+          "_refObjectName": "In-Progress"
+        },
+        "PlanEstimate": 21,
+        "Iteration": {
+          "_refObjectName": "Sprint 26.15"
+        },
+        "Release": {
+          "_refObjectName": "Q1 2027 Release"
+        },
+        "Owner": {
+          "_refObjectName": "Sarah Chen"
+        },
+        "Project": {
+          "_refObjectName": "Meridian Financial Services"
+        },
+        "Parent": {
+          "FormattedID": "EPC-104",
+          "_refObjectName": "Merchant Integration Platform",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/epic/701004"
+        },
+        "Tags": {
+          "_tagsNameArray": [
+            {"Name": "webhook"},
+            {"Name": "notification"},
+            {"Name": "merchant-integration"}
+          ]
+        },
+        "CreationDate": "2026-09-18T09:00:00.000Z",
+        "LastUpdateDate": "2026-10-02T11:00:00.000Z",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/feature/702004"
+      },
+      {
+        "ObjectID": 702005,
+        "FormattedID": "F-PAY-500",
+        "_type": "PortfolioItem/Feature",
+        "Name": "Payment Analytics & Reporting",
+        "Description": "Deliver payment analytics and reporting capabilities including transaction aggregation, trend analysis, and real-time settlement dashboards. Aligns with Jira feature PAY-500.",
+        "State": {
+          "_refObjectName": "Defined"
+        },
+        "PlanEstimate": 18,
+        "Iteration": null,
+        "Release": {
+          "_refObjectName": "Q4 2026 Release"
+        },
+        "Owner": {
+          "_refObjectName": "Marcus Rivera"
+        },
+        "Project": {
+          "_refObjectName": "Meridian Financial Services"
+        },
+        "Parent": {
+          "FormattedID": "EPC-101",
+          "_refObjectName": "Payment Gateway V2 Migration",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/epic/701001"
+        },
+        "Tags": {
+          "_tagsNameArray": [
+            {"Name": "analytics"},
+            {"Name": "reporting"},
+            {"Name": "payment-gateway"}
+          ]
+        },
+        "CreationDate": "2026-09-20T10:00:00.000Z",
+        "LastUpdateDate": "2026-10-01T14:30:00.000Z",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/feature/702005"
+      },
+      {
         "ObjectID": 703001,
         "FormattedID": "US-PAY-1001",
         "_type": "HierarchicalRequirement",
@@ -281,6 +389,250 @@
         "CreationDate": "2026-07-12T10:00:00.000Z",
         "LastUpdateDate": "2026-09-28T11:20:00.000Z",
         "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/hierarchicalrequirement/703002"
+      },
+      {
+        "ObjectID": 703003,
+        "FormattedID": "US-PAY-401",
+        "_type": "HierarchicalRequirement",
+        "Name": "Implement payment webhook dispatcher",
+        "Description": "As a merchant integration engineer, I need a payment webhook dispatcher that sends real-time event notifications to registered merchant endpoints so that partners receive instant payment status updates. References Jira PAY-401.",
+        "ScheduleState": "In-Progress",
+        "PlanEstimate": 8,
+        "Iteration": {
+          "_refObjectName": "Sprint 26.15"
+        },
+        "Release": {
+          "_refObjectName": "Q1 2027 Release"
+        },
+        "Owner": {
+          "_refObjectName": "Alex Kim"
+        },
+        "Project": {
+          "_refObjectName": "Meridian Financial Services"
+        },
+        "PortfolioItem": {
+          "FormattedID": "F-PAY-400",
+          "_refObjectName": "Webhook Notification System",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/feature/702004"
+        },
+        "Tasks": {
+          "Count": 3,
+          "_tagsNameArray": [
+            {"Name": "Design webhook event schema", "State": "Completed"},
+            {"Name": "Build dispatcher service", "State": "Completed"},
+            {"Name": "Implement delivery tracking", "State": "In-Progress"}
+          ]
+        },
+        "Tags": {
+          "_tagsNameArray": [
+            {"Name": "webhook"},
+            {"Name": "dispatcher"},
+            {"Name": "merchant-integration"}
+          ]
+        },
+        "CreationDate": "2026-09-20T09:00:00.000Z",
+        "LastUpdateDate": "2026-10-03T15:00:00.000Z",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/hierarchicalrequirement/703003"
+      },
+      {
+        "ObjectID": 703004,
+        "FormattedID": "US-PAY-402",
+        "_type": "HierarchicalRequirement",
+        "Name": "Webhook retry with dead letter queue",
+        "Description": "As a platform reliability engineer, I need webhook retry logic with exponential backoff and a dead letter queue so that failed webhook deliveries are automatically retried and undeliverable events are captured for investigation. References Jira PAY-402.",
+        "ScheduleState": "Defined",
+        "PlanEstimate": 5,
+        "Iteration": {
+          "_refObjectName": "Sprint 26.16"
+        },
+        "Release": {
+          "_refObjectName": "Q1 2027 Release"
+        },
+        "Owner": {
+          "_refObjectName": "Wei Zhang"
+        },
+        "Project": {
+          "_refObjectName": "Meridian Financial Services"
+        },
+        "PortfolioItem": {
+          "FormattedID": "F-PAY-400",
+          "_refObjectName": "Webhook Notification System",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/feature/702004"
+        },
+        "Tags": {
+          "_tagsNameArray": [
+            {"Name": "webhook"},
+            {"Name": "retry"},
+            {"Name": "dead-letter-queue"}
+          ]
+        },
+        "CreationDate": "2026-09-22T10:30:00.000Z",
+        "LastUpdateDate": "2026-10-01T09:00:00.000Z",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/hierarchicalrequirement/703004"
+      },
+      {
+        "ObjectID": 703005,
+        "FormattedID": "US-PAY-501",
+        "_type": "HierarchicalRequirement",
+        "Name": "Build transaction analytics aggregator",
+        "Description": "As a payment analytics engineer, I need a transaction analytics aggregator that computes real-time metrics across payment channels so that business intelligence dashboards reflect current transaction volumes and trends. References Jira PAY-501.",
+        "ScheduleState": "Defined",
+        "PlanEstimate": 8,
+        "Iteration": {
+          "_refObjectName": "Sprint 26.16"
+        },
+        "Release": {
+          "_refObjectName": "Q4 2026 Release"
+        },
+        "Owner": {
+          "_refObjectName": "Elena Volkov"
+        },
+        "Project": {
+          "_refObjectName": "Meridian Financial Services"
+        },
+        "PortfolioItem": {
+          "FormattedID": "F-PAY-500",
+          "_refObjectName": "Payment Analytics & Reporting",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/feature/702005"
+        },
+        "Tags": {
+          "_tagsNameArray": [
+            {"Name": "analytics"},
+            {"Name": "aggregation"},
+            {"Name": "payment-gateway"}
+          ]
+        },
+        "CreationDate": "2026-09-25T08:00:00.000Z",
+        "LastUpdateDate": "2026-10-01T12:00:00.000Z",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/hierarchicalrequirement/703005"
+      },
+      {
+        "ObjectID": 703006,
+        "FormattedID": "US-PAY-502",
+        "_type": "HierarchicalRequirement",
+        "Name": "Real-time settlement reporting dashboard",
+        "Description": "As a finance operations manager, I need a real-time settlement reporting dashboard that displays settlement status, reconciliation gaps, and payout timelines so that I can monitor settlement health across all merchant accounts. References Jira PAY-502.",
+        "ScheduleState": "Defined",
+        "PlanEstimate": 5,
+        "Iteration": {
+          "_refObjectName": "Sprint 26.17"
+        },
+        "Release": {
+          "_refObjectName": "Q4 2026 Release"
+        },
+        "Owner": {
+          "_refObjectName": "James Okafor"
+        },
+        "Project": {
+          "_refObjectName": "Meridian Financial Services"
+        },
+        "PortfolioItem": {
+          "FormattedID": "F-PAY-500",
+          "_refObjectName": "Payment Analytics & Reporting",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/feature/702005"
+        },
+        "Tags": {
+          "_tagsNameArray": [
+            {"Name": "settlement"},
+            {"Name": "reporting"},
+            {"Name": "dashboard"}
+          ]
+        },
+        "CreationDate": "2026-09-26T09:30:00.000Z",
+        "LastUpdateDate": "2026-10-01T13:15:00.000Z",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/hierarchicalrequirement/703006"
+      },
+      {
+        "ObjectID": 704001,
+        "FormattedID": "DE-PAY-901",
+        "_type": "Defect",
+        "Name": "Connection pool leak under concurrent tokenization requests",
+        "Description": "Under high concurrency, the payment tokenization service leaks database connections from the connection pool, eventually exhausting available connections and causing request timeouts. Found during Sprint 26.14 load testing. Related to US-PAY-101 tokenization implementation.",
+        "Severity": {
+          "_refObjectName": "Major"
+        },
+        "State": {
+          "_refObjectName": "Open"
+        },
+        "Priority": {
+          "_refObjectName": "Resolve Immediately"
+        },
+        "ScheduleState": "In-Progress",
+        "PlanEstimate": 5,
+        "Iteration": {
+          "_refObjectName": "Sprint 26.15"
+        },
+        "Release": {
+          "_refObjectName": "Q4 2026 Release"
+        },
+        "Owner": {
+          "_refObjectName": "Alex Kim"
+        },
+        "Project": {
+          "_refObjectName": "Meridian Financial Services"
+        },
+        "Requirement": {
+          "FormattedID": "US-PAY-1001",
+          "_refObjectName": "Implement payment tokenization service",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/hierarchicalrequirement/703001"
+        },
+        "FoundInBuild": "Sprint 26.14",
+        "Tags": {
+          "_tagsNameArray": [
+            {"Name": "connection-pool"},
+            {"Name": "tokenization"},
+            {"Name": "concurrency"}
+          ]
+        },
+        "CreationDate": "2026-09-28T14:00:00.000Z",
+        "LastUpdateDate": "2026-10-03T10:30:00.000Z",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/defect/704001"
+      },
+      {
+        "ObjectID": 704002,
+        "FormattedID": "DE-PAY-902",
+        "_type": "Defect",
+        "Name": "Idempotency key collision with high-frequency retries",
+        "Description": "When multiple retry attempts occur within the same millisecond window, the idempotency key generation produces collisions, causing legitimate retry requests to be incorrectly rejected as duplicates. Found during Sprint 26.13 regression testing. Related to US-PAY-102 idempotent retry handler.",
+        "Severity": {
+          "_refObjectName": "Minor"
+        },
+        "State": {
+          "_refObjectName": "Fixed"
+        },
+        "Priority": {
+          "_refObjectName": "High Attention"
+        },
+        "ScheduleState": "Completed",
+        "PlanEstimate": 3,
+        "Iteration": {
+          "_refObjectName": "Sprint 26.14"
+        },
+        "Release": {
+          "_refObjectName": "Q4 2026 Release"
+        },
+        "Owner": {
+          "_refObjectName": "Wei Zhang"
+        },
+        "Project": {
+          "_refObjectName": "Meridian Financial Services"
+        },
+        "Requirement": {
+          "FormattedID": "US-PAY-1002",
+          "_refObjectName": "Build idempotent payment retry handler",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/hierarchicalrequirement/703002"
+        },
+        "FoundInBuild": "Sprint 26.13",
+        "Tags": {
+          "_tagsNameArray": [
+            {"Name": "idempotency"},
+            {"Name": "retry"},
+            {"Name": "key-collision"}
+          ]
+        },
+        "CreationDate": "2026-09-15T11:00:00.000Z",
+        "LastUpdateDate": "2026-09-30T16:45:00.000Z",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/defect/704002"
       }
     ]
   }

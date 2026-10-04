@@ -34,6 +34,111 @@
         {"title": "Case Resolution Time (hours)", "type": "timeseries", "datasource": "prometheus-mfs-prod"},
         {"title": "Rule Engine Error Rate", "type": "timeseries", "datasource": "prometheus-mfs-prod"}
       ]
+    },
+    {
+      "uid": "model-serving-slo",
+      "title": "Model Serving SLOs",
+      "url": "/d/model-serving-slo",
+      "version": 1,
+      "tags": ["ml", "slo", "model-serving"],
+      "panels": [
+        {
+          "id": 1,
+          "title": "Inference Latency P99",
+          "type": "gauge",
+          "datasource": "prometheus-mfs-prod",
+          "description": "Model inference latency P99 (target <50ms)",
+          "targets": [
+            {"expr": "histogram_quantile(0.99, rate(fraud_score_latency_seconds_bucket[5m]))", "legendFormat": "p99 latency"}
+          ],
+          "thresholds": [{"value": 0.03, "color": "green"}, {"value": 0.05, "color": "red"}]
+        },
+        {
+          "id": 2,
+          "title": "Model Availability",
+          "type": "gauge",
+          "datasource": "prometheus-mfs-prod",
+          "description": "Model serving availability (target 99.99%)",
+          "targets": [
+            {"expr": "avg_over_time(up{job='fraud-model-serving'}[1h])", "legendFormat": "availability"}
+          ],
+          "thresholds": [{"value": 0.9999, "color": "green"}, {"value": 0.999, "color": "red"}]
+        },
+        {
+          "id": 3,
+          "title": "False Positive Rate",
+          "type": "timeseries",
+          "datasource": "prometheus-mfs-prod",
+          "targets": [
+            {"expr": "rate(fraud_false_positives_total[5m]) / rate(fraud_predictions_total[5m])", "legendFormat": "FP rate"}
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Prediction Throughput",
+          "type": "timeseries",
+          "datasource": "prometheus-mfs-prod",
+          "targets": [
+            {"expr": "rate(fraud_predictions_total[5m])", "legendFormat": "predictions/sec"}
+          ]
+        },
+        {
+          "id": 5,
+          "title": "Model Version Performance",
+          "type": "timeseries",
+          "datasource": "prometheus-mfs-prod",
+          "description": "Comparison of model version inference latency and accuracy",
+          "targets": [
+            {"expr": "histogram_quantile(0.95, rate(fraud_score_latency_seconds_bucket{model_version=~'.+'}[5m]))", "legendFormat": "{{model_version}} p95"},
+            {"expr": "fraud_model_auc_roc{model_version=~'.+'}", "legendFormat": "{{model_version}} AUC-ROC"}
+          ]
+        }
+      ]
+    },
+    {
+      "uid": "feature-pipeline",
+      "title": "Feature Pipeline Health",
+      "url": "/d/feature-pipeline",
+      "version": 1,
+      "tags": ["kafka", "feature-extraction", "pipeline"],
+      "panels": [
+        {
+          "id": 1,
+          "title": "Feature Extraction Rate",
+          "type": "timeseries",
+          "datasource": "prometheus-mfs-prod",
+          "targets": [
+            {"expr": "rate(feature_extraction_total[5m])", "legendFormat": "extractions/sec"}
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Kafka Consumer Lag",
+          "type": "timeseries",
+          "datasource": "prometheus-mfs-prod",
+          "targets": [
+            {"expr": "kafka_consumer_lag{consumer_group='mfs-feature-extractor-cg', topic='mfs.txn.raw'}", "legendFormat": "consumer lag"}
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Feature Freshness",
+          "type": "timeseries",
+          "datasource": "prometheus-mfs-prod",
+          "targets": [
+            {"expr": "time() - feature_store_last_write_timestamp_seconds", "legendFormat": "staleness (seconds)"}
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Feature Store Write Latency",
+          "type": "timeseries",
+          "datasource": "prometheus-mfs-prod",
+          "targets": [
+            {"expr": "histogram_quantile(0.95, rate(feature_store_write_latency_seconds_bucket[5m]))", "legendFormat": "p95 write latency"}
+          ]
+        }
+      ]
     }
   ],
   "alert_rules": [
@@ -92,6 +197,48 @@
       },
       "notification_channels": ["#aml-alerts"],
       "state": "ok"
+    },
+    {
+      "uid": "alert-model-inference-latency",
+      "title": "Model Inference Latency P99 Exceeds SLO",
+      "condition": "histogram_quantile(0.99, rate(fraud_score_latency_seconds_bucket[5m])) > 0.05 for 5m",
+      "severity": "critical",
+      "labels": {"team": "fraud-risk", "service": "mfs-model-serving"},
+      "annotations": {
+        "summary": "Model inference P99 latency exceeding 50ms SLO",
+        "description": "The fraud scoring model inference P99 latency has exceeded the 50ms target for more than 5 minutes. Check model serving pods mfs-model-pod-01, GPU utilization, and batch size configuration.",
+        "runbook_url": "https://confluence.mfs.internal/spaces/FRD/pages/99010"
+      },
+      "notification_channels": ["#fraud-oncall", "pagerduty-fraud"],
+      "state": "ok"
+    },
+    {
+      "uid": "alert-fp-rate-threshold",
+      "title": "False Positive Rate Above Threshold",
+      "condition": "rate(fraud_false_positives_total[10m]) / rate(fraud_predictions_total[10m]) > 0.02 for 10m",
+      "severity": "critical",
+      "labels": {"team": "fraud-risk", "service": "mfs-model-serving"},
+      "annotations": {
+        "summary": "False positive rate exceeding 2% threshold",
+        "description": "The fraud model false positive rate has exceeded the 2% threshold for more than 10 minutes. This may indicate model drift, stale features, or data quality issues. Review model version performance and feature freshness.",
+        "runbook_url": "https://confluence.mfs.internal/spaces/FRD/pages/99011"
+      },
+      "notification_channels": ["#fraud-oncall", "pagerduty-fraud"],
+      "state": "ok"
+    },
+    {
+      "uid": "alert-feature-pipeline-lag",
+      "title": "Feature Pipeline Consumer Lag",
+      "condition": "kafka_consumer_lag{consumer_group='mfs-feature-extractor-cg'} > 5000 for 15m",
+      "severity": "warning",
+      "labels": {"team": "platform-engineering", "service": "mfs-feature-pipeline"},
+      "annotations": {
+        "summary": "Feature pipeline Kafka consumer lag exceeding 5,000 messages",
+        "description": "The feature extraction pipeline consumer group mfs-feature-extractor-cg has sustained lag over 5,000 messages for more than 15 minutes. Feature freshness is degraded, which may impact model accuracy.",
+        "runbook_url": "https://confluence.mfs.internal/spaces/FRD/pages/99012"
+      },
+      "notification_channels": ["#platform-alerts"],
+      "state": "ok"
     }
   ],
   "datasources": [
@@ -115,6 +262,14 @@
       "url": "pghost-prod-02.mfs.internal:5432",
       "database": "mfs_aml_db",
       "access": "proxy"
+    },
+    {
+      "id": 4,
+      "name": "MFS MLflow Metrics",
+      "type": "prometheus",
+      "url": "http://mlflow-exporter.mfs.internal:9309",
+      "access": "proxy",
+      "isDefault": false
     }
   ]
 }

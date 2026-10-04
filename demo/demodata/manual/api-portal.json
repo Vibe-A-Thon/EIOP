@@ -41,6 +41,34 @@
       "authentication": "OAuth2 Client Credentials (svc-settlement)",
       "updated_at": "2026-09-30T15:00:00.000Z",
       "created_at": "2026-08-10T09:00:00.000Z"
+    },
+    {
+      "id": "svc-webhook-api-v1",
+      "name": "Webhook API v1",
+      "version": "1.0.0",
+      "description": "Merchant webhook registration and management API. Allows merchants to register callback URLs for payment event notifications, manage webhook configurations, and inspect delivery logs.",
+      "swagger_url": "https://api.mfs.internal/catalog/webhook-api/v1/swagger.json",
+      "base_url": "https://api.mfs.internal/webhook/v1",
+      "status": "active",
+      "owner": "Payments Core",
+      "contact": "payments-core@mfs.internal",
+      "authentication": "Bearer Token + HMAC Signature",
+      "updated_at": "2026-10-02T15:00:00.000Z",
+      "created_at": "2026-09-28T10:00:00.000Z"
+    },
+    {
+      "id": "svc-analytics-api-v1",
+      "name": "Analytics API v1",
+      "version": "1.0.0-beta",
+      "description": "Payment analytics and reporting API. Provides aggregated transaction metrics, settlement summaries, and merchant performance data for dashboards and scheduled reports.",
+      "swagger_url": "https://api.mfs.internal/catalog/analytics-api/v1/swagger.json",
+      "base_url": "https://api.mfs.internal/analytics/v1",
+      "status": "beta",
+      "owner": "Payments Core",
+      "contact": "payments-core@mfs.internal",
+      "authentication": "Bearer Token",
+      "updated_at": "2026-10-04T09:00:00.000Z",
+      "created_at": "2026-10-03T14:00:00.000Z"
     }
   ],
   "endpoints": [
@@ -158,6 +186,89 @@
       "name": "Settlement Batch Status",
       "description": "Get settlement batch status including transaction count, total amount, and reconciliation state.",
       "version": "1.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-001",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks",
+      "method": "POST",
+      "name": "Register Webhook URL",
+      "description": "Register a new webhook callback URL for a merchant to receive payment event notifications.",
+      "version": "1.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-002",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks",
+      "method": "GET",
+      "name": "List Registered Webhooks",
+      "description": "List all registered webhook configurations for the authenticated merchant.",
+      "version": "1.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-003",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks/{id}",
+      "method": "PUT",
+      "name": "Update Webhook Configuration",
+      "description": "Update an existing webhook configuration including callback URL, subscribed events, and retry policy.",
+      "version": "1.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-004",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks/{id}",
+      "method": "DELETE",
+      "name": "Deregister Webhook",
+      "description": "Deregister a webhook and stop all future event deliveries to the configured callback URL.",
+      "version": "1.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-005",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks/{id}/deliveries",
+      "method": "GET",
+      "name": "Get Delivery Log",
+      "description": "Retrieve the delivery log for a webhook including HTTP status, latency, and retry attempts.",
+      "version": "1.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-006",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks/{id}/test",
+      "method": "POST",
+      "name": "Send Test Webhook",
+      "description": "Send a test webhook event to the configured callback URL to verify connectivity and HMAC signature validation.",
+      "version": "1.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-analytics-001",
+      "service_id": "svc-analytics-api-v1",
+      "path": "/metrics/transactions",
+      "method": "GET",
+      "name": "Transaction Volume and Success Rates",
+      "description": "Retrieve aggregated transaction volume, success rates, and failure breakdowns over configurable time windows.",
+      "version": "1.0.0-beta",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-analytics-002",
+      "service_id": "svc-analytics-api-v1",
+      "path": "/metrics/settlement",
+      "method": "GET",
+      "name": "Settlement Batch Summaries",
+      "description": "Retrieve settlement batch summaries including total amounts, transaction counts, and reconciliation status by merchant and date range.",
+      "version": "1.0.0-beta",
       "response_content_type": "application/json"
     }
   ]

@@ -7,12 +7,16 @@
   "properties": {
     "schema_version": {"const": "2.0"},
     "event_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "source_id": {"type": ["string", "null"], "minLength": 1, "maxLength": 128, "description": "Registry source identifier when available; defaults to source_instance_id in runtime contracts."},
     "source_system": {"type": "string", "minLength": 1, "maxLength": 128},
+    "source_type": {"type": ["string", "null"], "minLength": 1, "maxLength": 128, "description": "G2 source type alias; defaults to source_system in runtime contracts."},
     "source_instance_id": {"type": "string", "minLength": 1, "maxLength": 256},
     "source_record_id": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "source_record_type": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
     "operation": {"enum": ["CREATE", "UPDATE", "UPSERT", "DELETE", "RELATIONSHIP_UPDATE", "PERMISSION_UPDATE"]},
     "source_version": {"type": ["string", "null"], "maxLength": 512},
     "event_time": {"type": "string", "format": "date-time"},
+    "observed_time": {"type": ["string", "null"], "format": "date-time"},
     "captured_at": {"type": "string", "format": "date-time"},
     "content_hash": {"type": "string", "minLength": 1, "maxLength": 128},
     "payload_hash": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Deprecated v1 compatibility copy of content_hash"},
@@ -30,6 +34,8 @@
     },
     "payload": {"type": ["object", "null"]},
     "payload_ref": {"type": ["string", "null"], "maxLength": 4096},
+    "evidence_ref": {"type": ["string", "null"], "maxLength": 4096},
+    "correlation_id": {"type": ["string", "null"], "maxLength": 512},
     "metadata": {"type": "object"}
   },
   "additionalProperties": false

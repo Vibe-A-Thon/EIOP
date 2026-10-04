@@ -84,6 +84,55 @@
       "language": "python",
       "content_hash": "mfs-pay-config-v3",
       "line_count": 45
+    },
+    {
+      "path": "services/webhook/dispatcher.py",
+      "language": "python",
+      "content_hash": "mfs-webhook-dispatch-v1",
+      "line_count": 156,
+      "description": "Webhook event dispatcher with HMAC signing and delivery tracking"
+    },
+    {
+      "path": "services/webhook/retry_handler.py",
+      "language": "python",
+      "content_hash": "mfs-webhook-retry-v1",
+      "line_count": 98,
+      "description": "Exponential backoff retry with max attempts and circuit breaker"
+    },
+    {
+      "path": "services/webhook/dlq.py",
+      "language": "python",
+      "content_hash": "mfs-webhook-dlq-v1",
+      "line_count": 72,
+      "description": "Dead letter queue for failed webhook deliveries"
+    },
+    {
+      "path": "services/analytics/aggregator.py",
+      "language": "python",
+      "content_hash": "mfs-analytics-agg-v1",
+      "line_count": 184,
+      "description": "Transaction analytics aggregation with time-bucketed metrics"
+    },
+    {
+      "path": "services/analytics/reporter.py",
+      "language": "python",
+      "content_hash": "mfs-analytics-report-v1",
+      "line_count": 112,
+      "description": "Analytics reporting with merchant performance summaries"
+    },
+    {
+      "path": "services/settlement/batch_processor.py",
+      "language": "python",
+      "content_hash": "mfs-settlement-batch-v1",
+      "line_count": 210,
+      "description": "Settlement batch processing with reconciliation"
+    },
+    {
+      "path": "services/settlement/reconciliation.py",
+      "language": "python",
+      "content_hash": "mfs-settlement-recon-v1",
+      "line_count": 145,
+      "description": "Settlement reconciliation with bank statement matching"
     }
   ],
   "symbols": [
@@ -350,6 +399,166 @@
       "path": "utils/kafka_producer.py",
       "start_line": 22,
       "end_line": 48
+    },
+    {
+      "qualified_name": "services.webhook.dispatcher.WebhookDispatcher",
+      "symbol_kind": "class",
+      "name": "WebhookDispatcher",
+      "path": "services/webhook/dispatcher.py",
+      "start_line": 16,
+      "end_line": 156
+    },
+    {
+      "qualified_name": "services.webhook.dispatcher.WebhookDispatcher.dispatch",
+      "symbol_kind": "method",
+      "name": "dispatch",
+      "path": "services/webhook/dispatcher.py",
+      "start_line": 32,
+      "end_line": 78
+    },
+    {
+      "qualified_name": "services.webhook.dispatcher.WebhookDispatcher.sign_payload",
+      "symbol_kind": "method",
+      "name": "sign_payload",
+      "path": "services/webhook/dispatcher.py",
+      "start_line": 80,
+      "end_line": 108
+    },
+    {
+      "qualified_name": "services.webhook.dispatcher.WebhookDispatcher.verify_delivery",
+      "symbol_kind": "method",
+      "name": "verify_delivery",
+      "path": "services/webhook/dispatcher.py",
+      "start_line": 110,
+      "end_line": 148
+    },
+    {
+      "qualified_name": "services.webhook.retry_handler.RetryHandler",
+      "symbol_kind": "class",
+      "name": "RetryHandler",
+      "path": "services/webhook/retry_handler.py",
+      "start_line": 12,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "services.webhook.retry_handler.RetryHandler.retry_with_backoff",
+      "symbol_kind": "method",
+      "name": "retry_with_backoff",
+      "path": "services/webhook/retry_handler.py",
+      "start_line": 24,
+      "end_line": 72
+    },
+    {
+      "qualified_name": "services.webhook.dlq.DeadLetterQueue",
+      "symbol_kind": "class",
+      "name": "DeadLetterQueue",
+      "path": "services/webhook/dlq.py",
+      "start_line": 10,
+      "end_line": 72
+    },
+    {
+      "qualified_name": "services.webhook.dlq.DeadLetterQueue.enqueue",
+      "symbol_kind": "method",
+      "name": "enqueue",
+      "path": "services/webhook/dlq.py",
+      "start_line": 22,
+      "end_line": 42
+    },
+    {
+      "qualified_name": "services.webhook.dlq.DeadLetterQueue.replay",
+      "symbol_kind": "method",
+      "name": "replay",
+      "path": "services/webhook/dlq.py",
+      "start_line": 44,
+      "end_line": 68
+    },
+    {
+      "qualified_name": "services.analytics.aggregator.AnalyticsAggregator",
+      "symbol_kind": "class",
+      "name": "AnalyticsAggregator",
+      "path": "services/analytics/aggregator.py",
+      "start_line": 18,
+      "end_line": 184
+    },
+    {
+      "qualified_name": "services.analytics.aggregator.AnalyticsAggregator.aggregate",
+      "symbol_kind": "method",
+      "name": "aggregate",
+      "path": "services/analytics/aggregator.py",
+      "start_line": 34,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "services.analytics.aggregator.AnalyticsAggregator.flush_bucket",
+      "symbol_kind": "method",
+      "name": "flush_bucket",
+      "path": "services/analytics/aggregator.py",
+      "start_line": 100,
+      "end_line": 142
+    },
+    {
+      "qualified_name": "services.analytics.reporter.AnalyticsReporter",
+      "symbol_kind": "class",
+      "name": "AnalyticsReporter",
+      "path": "services/analytics/reporter.py",
+      "start_line": 14,
+      "end_line": 112
+    },
+    {
+      "qualified_name": "services.analytics.reporter.AnalyticsReporter.generate_report",
+      "symbol_kind": "method",
+      "name": "generate_report",
+      "path": "services/analytics/reporter.py",
+      "start_line": 28,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "services.settlement.batch_processor.SettlementBatchProcessor",
+      "symbol_kind": "class",
+      "name": "SettlementBatchProcessor",
+      "path": "services/settlement/batch_processor.py",
+      "start_line": 20,
+      "end_line": 210
+    },
+    {
+      "qualified_name": "services.settlement.batch_processor.SettlementBatchProcessor.process_batch",
+      "symbol_kind": "method",
+      "name": "process_batch",
+      "path": "services/settlement/batch_processor.py",
+      "start_line": 38,
+      "end_line": 118
+    },
+    {
+      "qualified_name": "services.settlement.batch_processor.SettlementBatchProcessor.create_payout",
+      "symbol_kind": "method",
+      "name": "create_payout",
+      "path": "services/settlement/batch_processor.py",
+      "start_line": 120,
+      "end_line": 178
+    },
+    {
+      "qualified_name": "services.settlement.reconciliation.ReconciliationEngine",
+      "symbol_kind": "class",
+      "name": "ReconciliationEngine",
+      "path": "services/settlement/reconciliation.py",
+      "start_line": 16,
+      "end_line": 145
+    },
+    {
+      "qualified_name": "services.settlement.reconciliation.ReconciliationEngine.reconcile",
+      "symbol_kind": "method",
+      "name": "reconcile",
+      "path": "services/settlement/reconciliation.py",
+      "start_line": 30,
+      "end_line": 82
+    },
+    {
+      "qualified_name": "services.settlement.reconciliation.ReconciliationEngine.match_transactions",
+      "symbol_kind": "method",
+      "name": "match_transactions",
+      "path": "services/settlement/reconciliation.py",
+      "start_line": 84,
+      "end_line": 132
     }
   ],
   "dependencies": [
@@ -366,20 +575,30 @@
     {"name": "alembic", "resolved": true, "language": "python"}
   ],
   "infrastructure": {
-    "service_account": "svc-payment-api",
-    "database": {
-      "name": "mfs_payments_db",
-      "host": "pghost-prod-01.mfs.internal",
-      "port": 5432,
-      "type": "postgresql"
-    },
-    "pod": "mfs-pay-pod-01",
-    "namespace": "mfs-payments",
-    "cluster": "ocp-prod-east.mfs.internal",
-    "redis": "redis-cluster.mfs.internal:6379",
-    "kafka_broker": "kafka-broker.mfs.internal:9092",
-    "kafka_topics": ["txn-events", "payment-status", "refund-requests"],
-    "hsm_endpoint": "hsm-gateway.mfs.internal:8443"
+    "databases": [
+      {"host": "pghost-prod-01.mfs.internal", "name": "mfs_payments_db", "service_account": "svc-payment-api", "tables": ["payments", "payment_methods", "tokens", "idempotency_keys", "webhook_registrations", "webhook_delivery_log", "webhook_dlq", "analytics_aggregates", "settlement_batches", "reconciliation_records"]},
+      {"host": "pghost-prod-03.mfs.internal", "name": "mfs_audit_db", "service_account": "svc-payment-api", "tables": ["audit_log", "access_log", "compliance_events"]}
+    ],
+    "message_queues": [
+      {"type": "kafka", "broker": "kafka-broker.mfs.internal:9092", "topics": ["mfs.payment.events", "mfs.payment.settlements", "mfs.payment.dlq"]},
+      {"type": "kafka", "broker": "kafka-broker.mfs.internal:9092", "consumer_groups": ["mfs-webhook-dispatch", "mfs-analytics-agg", "mfs-settlement-proc"]}
+    ],
+    "pods": [
+      {"name": "mfs-pay-pod-01", "namespace": "mfs-payments", "replicas": 4, "resources": {"cpu": "2", "memory": "4Gi"}, "services": ["payment-processing", "tokenization", "webhook-dispatch"]},
+      {"name": "mfs-pay-pod-02", "namespace": "mfs-payments", "replicas": 2, "resources": {"cpu": "2", "memory": "4Gi"}, "services": ["payment-processing-secondary"]},
+      {"name": "mfs-pay-pod-03", "namespace": "mfs-payments", "replicas": 2, "resources": {"cpu": "1", "memory": "2Gi"}, "services": ["analytics", "settlement-processing"]}
+    ],
+    "service_accounts": ["svc-payment-api", "svc-token-vault", "svc-webhook-dispatch", "svc-analytics"],
+    "secrets": [
+      {"name": "payment-db-credentials", "vault_path": "secret/mfs/payments/db"},
+      {"name": "webhook-signing-keys", "vault_path": "secret/mfs/payments/webhook"},
+      {"name": "hsm-client-cert", "vault_path": "secret/mfs/payments/hsm"}
+    ],
+    "external_services": [
+      {"name": "hsm-gateway.mfs.internal:8443", "purpose": "Hardware Security Module for tokenization"},
+      {"name": "vault.mfs.internal", "purpose": "Secrets management"},
+      {"name": "redis-cluster.mfs.internal", "purpose": "Idempotency key cache and rate limiting"}
+    ]
   },
   "edges": [
     {"type": "CONTAINS", "from": "services/payment/service.py", "to": "services.payment.service.PaymentService"},
@@ -395,6 +614,13 @@
     {"type": "CONTAINS", "from": "utils/db.py", "to": "utils.db.DBClient"},
     {"type": "CONTAINS", "from": "utils/hsm.py", "to": "utils.hsm.HSMClient"},
     {"type": "CONTAINS", "from": "utils/kafka_producer.py", "to": "utils.kafka_producer.PaymentEventProducer"},
+    {"type": "CONTAINS", "from": "services/webhook/dispatcher.py", "to": "services.webhook.dispatcher.WebhookDispatcher"},
+    {"type": "CONTAINS", "from": "services/webhook/retry_handler.py", "to": "services.webhook.retry_handler.RetryHandler"},
+    {"type": "CONTAINS", "from": "services/webhook/dlq.py", "to": "services.webhook.dlq.DeadLetterQueue"},
+    {"type": "CONTAINS", "from": "services/analytics/aggregator.py", "to": "services.analytics.aggregator.AnalyticsAggregator"},
+    {"type": "CONTAINS", "from": "services/analytics/reporter.py", "to": "services.analytics.reporter.AnalyticsReporter"},
+    {"type": "CONTAINS", "from": "services/settlement/batch_processor.py", "to": "services.settlement.batch_processor.SettlementBatchProcessor"},
+    {"type": "CONTAINS", "from": "services/settlement/reconciliation.py", "to": "services.settlement.reconciliation.ReconciliationEngine"},
     {"type": "DECLARES", "from": "services.payment.service.PaymentService", "to": "services.payment.service.PaymentService.process_payment"},
     {"type": "DECLARES", "from": "services.payment.service.PaymentService", "to": "services.payment.service.PaymentService.validate_payment"},
     {"type": "DECLARES", "from": "services.payment.service.PaymentService", "to": "services.payment.service.PaymentService.refund_payment"},
@@ -409,6 +635,19 @@
     {"type": "DECLARES", "from": "api.routes.PaymentAPI", "to": "api.routes.PaymentAPI.get_payment"},
     {"type": "DECLARES", "from": "api.routes.PaymentAPI", "to": "api.routes.PaymentAPI.list_payments"},
     {"type": "DECLARES", "from": "api.routes.PaymentAPI", "to": "api.routes.PaymentAPI.process_refund"},
+    {"type": "DECLARES", "from": "services.webhook.dispatcher.WebhookDispatcher", "to": "services.webhook.dispatcher.WebhookDispatcher.dispatch"},
+    {"type": "DECLARES", "from": "services.webhook.dispatcher.WebhookDispatcher", "to": "services.webhook.dispatcher.WebhookDispatcher.sign_payload"},
+    {"type": "DECLARES", "from": "services.webhook.dispatcher.WebhookDispatcher", "to": "services.webhook.dispatcher.WebhookDispatcher.verify_delivery"},
+    {"type": "DECLARES", "from": "services.webhook.retry_handler.RetryHandler", "to": "services.webhook.retry_handler.RetryHandler.retry_with_backoff"},
+    {"type": "DECLARES", "from": "services.webhook.dlq.DeadLetterQueue", "to": "services.webhook.dlq.DeadLetterQueue.enqueue"},
+    {"type": "DECLARES", "from": "services.webhook.dlq.DeadLetterQueue", "to": "services.webhook.dlq.DeadLetterQueue.replay"},
+    {"type": "DECLARES", "from": "services.analytics.aggregator.AnalyticsAggregator", "to": "services.analytics.aggregator.AnalyticsAggregator.aggregate"},
+    {"type": "DECLARES", "from": "services.analytics.aggregator.AnalyticsAggregator", "to": "services.analytics.aggregator.AnalyticsAggregator.flush_bucket"},
+    {"type": "DECLARES", "from": "services.analytics.reporter.AnalyticsReporter", "to": "services.analytics.reporter.AnalyticsReporter.generate_report"},
+    {"type": "DECLARES", "from": "services.settlement.batch_processor.SettlementBatchProcessor", "to": "services.settlement.batch_processor.SettlementBatchProcessor.process_batch"},
+    {"type": "DECLARES", "from": "services.settlement.batch_processor.SettlementBatchProcessor", "to": "services.settlement.batch_processor.SettlementBatchProcessor.create_payout"},
+    {"type": "DECLARES", "from": "services.settlement.reconciliation.ReconciliationEngine", "to": "services.settlement.reconciliation.ReconciliationEngine.reconcile"},
+    {"type": "DECLARES", "from": "services.settlement.reconciliation.ReconciliationEngine", "to": "services.settlement.reconciliation.ReconciliationEngine.match_transactions"},
     {"type": "CALLS", "from": "api.routes.PaymentAPI.create_payment", "to": "services.payment.service.PaymentService.validate_payment"},
     {"type": "CALLS", "from": "api.routes.PaymentAPI.create_payment", "to": "services.payment.service.PaymentService.process_payment"},
     {"type": "CALLS", "from": "api.routes.PaymentAPI.process_refund", "to": "services.payment.service.PaymentService.refund_payment"},
@@ -425,6 +664,12 @@
     {"type": "CALLS", "from": "services.tokenization.service.TokenizationService.rotate_token", "to": "utils.hsm.HSMClient.encrypt"},
     {"type": "CALLS", "from": "services.retry.handler.RetryHandler.execute_with_retry", "to": "services.retry.handler.RetryHandler.circuit_breaker"},
     {"type": "CALLS", "from": "services.retry.handler.RetryHandler.execute_with_retry", "to": "services.retry.handler.RetryHandler.backoff_strategy"},
+    {"type": "CALLS", "from": "services.webhook.dispatcher.WebhookDispatcher.dispatch", "to": "services.webhook.retry_handler.RetryHandler.retry_with_backoff"},
+    {"type": "CALLS", "from": "services.webhook.dispatcher.WebhookDispatcher.dispatch", "to": "services.webhook.dispatcher.WebhookDispatcher.sign_payload"},
+    {"type": "CALLS", "from": "services.webhook.retry_handler.RetryHandler.retry_with_backoff", "to": "services.webhook.dlq.DeadLetterQueue.enqueue"},
+    {"type": "CALLS", "from": "services.settlement.batch_processor.SettlementBatchProcessor.process_batch", "to": "services.settlement.reconciliation.ReconciliationEngine.reconcile"},
+    {"type": "CALLS", "from": "services.settlement.reconciliation.ReconciliationEngine.reconcile", "to": "services.settlement.reconciliation.ReconciliationEngine.match_transactions"},
+    {"type": "CALLS", "from": "services.analytics.reporter.AnalyticsReporter.generate_report", "to": "services.analytics.aggregator.AnalyticsAggregator.aggregate"},
     {"type": "IMPORTS", "from": "services/payment/service.py", "to": "sqlalchemy"},
     {"type": "IMPORTS", "from": "services/payment/service.py", "to": "pydantic"},
     {"type": "IMPORTS", "from": "services/payment/service.py", "to": "structlog"},
@@ -441,15 +686,46 @@
     {"type": "IMPORTS", "from": "utils/hsm.py", "to": "cryptography"},
     {"type": "IMPORTS", "from": "utils/hsm.py", "to": "httpx"},
     {"type": "IMPORTS", "from": "utils/kafka_producer.py", "to": "kafka-python"},
+    {"type": "IMPORTS", "from": "services/webhook/dispatcher.py", "to": "httpx"},
+    {"type": "IMPORTS", "from": "services/webhook/dispatcher.py", "to": "structlog"},
+    {"type": "IMPORTS", "from": "services/webhook/retry_handler.py", "to": "structlog"},
+    {"type": "IMPORTS", "from": "services/webhook/dlq.py", "to": "kafka-python"},
+    {"type": "IMPORTS", "from": "services/webhook/dlq.py", "to": "structlog"},
+    {"type": "IMPORTS", "from": "services/analytics/aggregator.py", "to": "sqlalchemy"},
+    {"type": "IMPORTS", "from": "services/analytics/aggregator.py", "to": "structlog"},
+    {"type": "IMPORTS", "from": "services/analytics/aggregator.py", "to": "services.payment.service.PaymentService"},
+    {"type": "IMPORTS", "from": "services/analytics/reporter.py", "to": "pydantic"},
+    {"type": "IMPORTS", "from": "services/analytics/reporter.py", "to": "structlog"},
+    {"type": "IMPORTS", "from": "services/settlement/batch_processor.py", "to": "sqlalchemy"},
+    {"type": "IMPORTS", "from": "services/settlement/batch_processor.py", "to": "structlog"},
+    {"type": "IMPORTS", "from": "services/settlement/batch_processor.py", "to": "services.payment.service.PaymentService"},
+    {"type": "IMPORTS", "from": "services/settlement/reconciliation.py", "to": "sqlalchemy"},
+    {"type": "IMPORTS", "from": "services/settlement/reconciliation.py", "to": "structlog"},
     {"type": "DEPENDS_ON", "from": "services.payment.service.PaymentService", "to": "utils.db.DBClient"},
     {"type": "DEPENDS_ON", "from": "services.payment.service.PaymentService", "to": "services.tokenization.service.TokenizationService"},
     {"type": "DEPENDS_ON", "from": "services.payment.service.PaymentService", "to": "services.retry.handler.RetryHandler"},
     {"type": "DEPENDS_ON", "from": "services.payment.service.PaymentService", "to": "utils.kafka_producer.PaymentEventProducer"},
     {"type": "DEPENDS_ON", "from": "services.tokenization.service.TokenizationService", "to": "utils.hsm.HSMClient"},
     {"type": "DEPENDS_ON", "from": "api.routes.PaymentAPI", "to": "services.payment.service.PaymentService"},
+    {"type": "DEPENDS_ON", "from": "services.webhook.dispatcher.WebhookDispatcher", "to": "services.webhook.retry_handler.RetryHandler"},
+    {"type": "DEPENDS_ON", "from": "services.webhook.dispatcher.WebhookDispatcher", "to": "utils.db.DBClient"},
+    {"type": "DEPENDS_ON", "from": "services.webhook.retry_handler.RetryHandler", "to": "services.webhook.dlq.DeadLetterQueue"},
+    {"type": "DEPENDS_ON", "from": "services.analytics.aggregator.AnalyticsAggregator", "to": "services.payment.service.PaymentService"},
+    {"type": "DEPENDS_ON", "from": "services.analytics.aggregator.AnalyticsAggregator", "to": "utils.db.DBClient"},
+    {"type": "DEPENDS_ON", "from": "services.analytics.reporter.AnalyticsReporter", "to": "services.analytics.aggregator.AnalyticsAggregator"},
+    {"type": "DEPENDS_ON", "from": "services.settlement.batch_processor.SettlementBatchProcessor", "to": "services.payment.service.PaymentService"},
+    {"type": "DEPENDS_ON", "from": "services.settlement.batch_processor.SettlementBatchProcessor", "to": "services.settlement.reconciliation.ReconciliationEngine"},
+    {"type": "DEPENDS_ON", "from": "services.settlement.batch_processor.SettlementBatchProcessor", "to": "utils.db.DBClient"},
+    {"type": "DEPENDS_ON", "from": "services.settlement.reconciliation.ReconciliationEngine", "to": "utils.db.DBClient"},
     {"type": "CONNECTS_TO", "from": "utils.db.DBClient", "to": "mfs_payments_db", "properties": {"host": "pghost-prod-01.mfs.internal", "service_account": "svc-payment-api"}},
     {"type": "CONNECTS_TO", "from": "utils.kafka_producer.PaymentEventProducer", "to": "kafka-broker.mfs.internal", "properties": {"topic": "txn-events"}},
     {"type": "CONNECTS_TO", "from": "utils.hsm.HSMClient", "to": "hsm-gateway.mfs.internal", "properties": {"port": 8443}},
-    {"type": "DEPLOYED_ON", "from": "mfs-payment-gateway", "to": "mfs-pay-pod-01", "properties": {"namespace": "mfs-payments", "cluster": "ocp-prod-east.mfs.internal"}}
+    {"type": "CONNECTS_TO", "from": "services.webhook.dispatcher.WebhookDispatcher", "to": "kafka-broker.mfs.internal", "properties": {"topic": "mfs.payment.events"}},
+    {"type": "CONNECTS_TO", "from": "services.webhook.dlq.DeadLetterQueue", "to": "kafka-broker.mfs.internal", "properties": {"topic": "mfs.payment.dlq"}},
+    {"type": "CONNECTS_TO", "from": "services.settlement.batch_processor.SettlementBatchProcessor", "to": "kafka-broker.mfs.internal", "properties": {"topic": "mfs.payment.settlements"}},
+    {"type": "CONNECTS_TO", "from": "services.settlement.batch_processor.SettlementBatchProcessor", "to": "mfs_payments_db", "properties": {"host": "pghost-prod-01.mfs.internal", "service_account": "svc-payment-api"}},
+    {"type": "DEPLOYED_ON", "from": "mfs-payment-gateway", "to": "mfs-pay-pod-01", "properties": {"namespace": "mfs-payments", "cluster": "ocp-prod-east.mfs.internal"}},
+    {"type": "DEPLOYED_ON", "from": "mfs-payment-gateway", "to": "mfs-pay-pod-02", "properties": {"namespace": "mfs-payments", "cluster": "ocp-prod-east.mfs.internal"}},
+    {"type": "DEPLOYED_ON", "from": "mfs-payment-gateway", "to": "mfs-pay-pod-03", "properties": {"namespace": "mfs-payments", "cluster": "ocp-prod-east.mfs.internal"}}
   ]
 }
