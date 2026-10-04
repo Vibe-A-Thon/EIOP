@@ -496,6 +496,14 @@ an agent simply because a role exists.
 
 ## 12. Role assignment and handoff template
 
+This is a role-assignment brief, not a second session-handoff format.
+Use [instruction](instruction.md) for workflow/status/publication rules,
+[ticket template](tickets/ticket-template.md) for tracked work and
+[handoff template](handoff_template.md) for the canonical session handoff.
+The current role/persona belongs in [context](context.md); append handoff
+history only to [memory](memory.md). Onboarding must use the
+[onboarding prompts](onboarding_prompts.md), not an alternate persona list.
+
 ```text
 Role: <exact charter name or documented alias>
 Persona: <copy the charter's persona line>
@@ -507,7 +515,7 @@ Inputs / dependencies: <design, previous evidence and required access>
 Allowed actions / approval authority: <explicit limits and human approver>
 Acceptance: <behavior, failure paths and measurable thresholds>
 Evidence: <revision, environment, commands, exit codes and receipt locations>
-Status / limitations: <done, blocked or pending; what was not verified>
+Status / limitations: <Open, In Progress, Blocked, Done or Cancelled; what was not verified>
 Handoff: <next owner, exact next actions, rollback and outstanding approvals>
 ```
 
