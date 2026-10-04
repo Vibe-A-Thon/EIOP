@@ -1,43 +1,223 @@
 {
   "results": [
     {
-      "id": "98001",
+      "id": "98501",
       "type": "page",
-      "title": "Patient Portal Architecture — Sync Service Design",
-      "space": {"key": "HLTH", "name": "TechNova HealthTech"},
+      "status": "current",
+      "title": "Payment Gateway Architecture",
+      "space": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization",
+        "type": "global"
+      },
+      "version": {
+        "number": 5,
+        "when": "2026-09-28T10:00:00.000Z",
+        "by": {
+          "displayName": "Sarah Chen",
+          "accountId": "schen"
+        },
+        "message": "Updated pod topology and service account details"
+      },
+      "ancestors": [
+        {"id": "98500", "title": "PAY Project Home"}
+      ],
       "body": {
         "storage": {
-          "value": "<h2>Patient Records Sync Architecture</h2><p>The patient-records-sync service uses event-driven CQRS to keep patient data consistent across the portal, scheduling, and billing microservices.</p><h3>Write Path</h3><p>All mutations go through the Patient Records API, which publishes domain events to an internal event bus. Each downstream consumer applies changes with optimistic locking (version field on every patient record).</p><h3>Failure Modes</h3><ul><li><strong>Race condition:</strong> Concurrent writes without locking cause stale reads. Mitigated by HLTH-104 optimistic locking fix.</li><li><strong>Event bus lag:</strong> Consumer backpressure triggers circuit breaker. Stale records are flagged, not silently served.</li></ul><h3>HIPAA Controls</h3><p>All PHI fields are encrypted at rest (AES-256-GCM) and in transit (mTLS). Audit events are emitted for every read and write of PHI data. See HLTH-102 for encryption implementation.</p>"
+          "value": "<h1>Payment Gateway Architecture Overview</h1><p>This document describes the architecture of the Meridian Financial Services (MFS) Payment Gateway v2, covering the modernized payment processing stack.</p><h2>System Architecture</h2><p>The payment gateway is deployed on OpenShift in the <code>mfs-prod</code> namespace with the following topology:</p><ul><li><strong>mfs-pay-pod-01</strong> - Primary payment processing pod (active)</li><li><strong>mfs-pay-pod-02</strong> - Secondary payment processing pod (active)</li><li><strong>mfs-pay-pod-03</strong> - Tertiary payment processing pod (standby/overflow)</li><li><strong>mfs-vault-pod-01</strong> - Token vault and HSM integration pod</li><li><strong>mfs-settle-pod-01</strong> - Settlement batch processing pod</li></ul><h2>Service Accounts</h2><table><tr><th>Account</th><th>Purpose</th><th>Scope</th></tr><tr><td><code>svc-payment-api</code></td><td>Payment gateway API authentication and authorization</td><td>mfs-prod, mfs-staging</td></tr><tr><td><code>svc-token-vault</code></td><td>HSM key retrieval and token vault operations</td><td>mfs-prod</td></tr><tr><td><code>svc-settlement</code></td><td>Settlement batch processing and file generation</td><td>mfs-prod</td></tr><tr><td><code>svc-notification-svc</code></td><td>Alert and notification delivery</td><td>mfs-prod</td></tr></table><h2>Database Architecture</h2><p>Primary database: <strong>mfs_payments_db</strong> (PostgreSQL 15) on <code>pghost-prod-01.mfs.internal</code></p><p>Key schemas and tables:</p><ul><li><code>card_tokens</code> - Tokenized cardholder data</li><li><code>token_audit_log</code> - Token operation audit trail</li><li><code>cardholder_data</code> - Encrypted cardholder records (AES-256-GCM)</li><li><code>retry_ledger</code> - Idempotent retry state tracking</li><li><code>currency_rates</code> - FX rate cache</li><li><code>conversion_audit</code> - Currency conversion audit trail</li><li><code>settlement_batches</code> - Settlement batch metadata</li><li><code>settlement_records</code> - Individual settlement records</li><li><code>gateway_ledger</code> - Payment gateway transaction ledger</li></ul><p>Audit database: <strong>mfs_audit_db</strong> (PostgreSQL 15) on <code>pghost-prod-01.mfs.internal</code></p><h2>API Endpoints</h2><p>Base URL: <code>https://api.mfs.internal/payment/v2</code></p><ul><li>POST /tokens - Create payment token</li><li>GET /tokens/{id} - Retrieve token metadata</li><li>POST /payments - Process payment</li><li>POST /payments/{id}/retry - Retry failed payment</li><li>GET /payments/{id}/status - Payment status</li><li>POST /settlements/batch - Trigger settlement batch</li><li>GET /settlements/{batchId} - Settlement batch status</li></ul><h2>Related Resources</h2><ul><li><a href='/pages/98502'>PCI DSS Compliance Checklist</a></li><li><a href='/pages/98503'>Settlement Engine Design</a></li><li><a href='/pages/98504'>Payment API Reference</a></li><li><a href='/pages/98505'>Incident Runbook: Payment Timeouts</a></li></ul>",
+          "representation": "storage"
         }
       },
-      "version": {"number": 4, "when": "2026-09-29T15:00:00.000Z"},
-      "_links": {"webui": "/spaces/HLTH/pages/98001"}
+      "metadata": {
+        "labels": {
+          "results": [
+            {"name": "architecture"},
+            {"name": "payment-gateway"},
+            {"name": "infrastructure"}
+          ]
+        }
+      },
+      "_links": {
+        "self": "https://confluence.mfs.internal/rest/api/content/98501",
+        "webui": "/spaces/PAY/pages/98501/Payment+Gateway+Architecture"
+      }
     },
     {
-      "id": "98002",
+      "id": "98502",
       "type": "page",
-      "title": "HIPAA Compliance Checklist — Q4 2026",
-      "space": {"key": "HLTH", "name": "TechNova HealthTech"},
+      "status": "current",
+      "title": "PCI DSS Compliance Checklist",
+      "space": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization",
+        "type": "global"
+      },
+      "version": {
+        "number": 3,
+        "when": "2026-09-27T14:00:00.000Z",
+        "by": {
+          "displayName": "David Okoye",
+          "accountId": "dokoye"
+        },
+        "message": "Updated encryption at rest status to complete"
+      },
+      "ancestors": [
+        {"id": "98500", "title": "PAY Project Home"}
+      ],
       "body": {
         "storage": {
-          "value": "<h2>HIPAA Technical Safeguards Checklist</h2><table><tr><th>Control</th><th>Status</th><th>Evidence</th></tr><tr><td>PHI encryption at rest</td><td>Pass</td><td>HLTH-102, TC-HIP-001</td></tr><tr><td>Access logging</td><td>Pass</td><td>Audit service, TC-HIP-002</td></tr><tr><td>Data retention policy</td><td>In Progress</td><td>HLTH-105</td></tr><tr><td>Breach notification readiness</td><td>Pass</td><td>Runbook RB-HIPAA-001</td></tr><tr><td>Minimum necessary access</td><td>Pass</td><td>RBAC configuration</td></tr></table>"
+          "value": "<h1>PCI DSS v4.0 Compliance Checklist</h1><p>Tracking PCI DSS v4.0 compliance status for the MFS Payment Gateway modernization project (Epic EPC-102).</p><h2>Requirement 3: Protect Stored Account Data</h2><table><tr><th>Req</th><th>Description</th><th>Status</th><th>Jira</th><th>Notes</th></tr><tr><td>3.1</td><td>Account data storage is kept to minimum</td><td>COMPLETE</td><td>PAY-201</td><td>Data retention policy enforced, 90-day purge</td></tr><tr><td>3.2</td><td>SAD not stored after authorization</td><td>COMPLETE</td><td>PAY-201</td><td>CVV/CVC purged after auth response</td></tr><tr><td>3.3</td><td>PAN display restricted</td><td>COMPLETE</td><td>PAY-101</td><td>Tokenization masks all but last 4 digits</td></tr><tr><td>3.4</td><td>PAN rendered unreadable where stored</td><td>COMPLETE</td><td>PAY-201</td><td>AES-256-GCM encryption via svc-token-vault on mfs-vault-pod-01</td></tr><tr><td>3.5</td><td>Keys used to protect stored data secured</td><td>IN PROGRESS</td><td>PAY-202</td><td>HSM key rotation implementation in progress</td></tr><tr><td>3.6</td><td>Cryptographic key management processes</td><td>IN PROGRESS</td><td>PAY-202</td><td>90-day rotation scheduler (PAY-221) being built</td></tr><tr><td>3.7</td><td>Key management lifecycle documented</td><td>COMPLETE</td><td>PAY-202</td><td>Documented in Confluence</td></tr></table><h2>Requirement 6: Develop and Maintain Secure Systems</h2><table><tr><th>Req</th><th>Description</th><th>Status</th><th>Notes</th></tr><tr><td>6.1</td><td>Vulnerability management process</td><td>COMPLETE</td><td>SAST scan in all CI pipelines (pipelines 9001-9007)</td></tr><tr><td>6.2</td><td>Secure development lifecycle</td><td>COMPLETE</td><td>Code review required for all MRs (!301-!502)</td></tr><tr><td>6.3</td><td>Security testing in SDLC</td><td>COMPLETE</td><td>PCI compliance check job in token vault pipelines</td></tr><tr><td>6.4</td><td>Change management procedures</td><td>COMPLETE</td><td>ServiceNow CHG process (CHG0090101, CHG0090201)</td></tr></table><h2>Test Evidence</h2><ul><li>TC-PAY-005: Cardholder data encryption verification - PASSED</li><li>TC-PAY-006: HSM key rotation without downtime - PASSED</li><li>TR-PAY-002: PCI compliance audit test run - ALL PASSED</li></ul>",
+          "representation": "storage"
         }
       },
-      "version": {"number": 2, "when": "2026-10-02T10:00:00.000Z"},
-      "_links": {"webui": "/spaces/HLTH/pages/98002"}
+      "metadata": {
+        "labels": {
+          "results": [
+            {"name": "pci-dss"},
+            {"name": "compliance"},
+            {"name": "security"},
+            {"name": "checklist"}
+          ]
+        }
+      },
+      "_links": {
+        "self": "https://confluence.mfs.internal/rest/api/content/98502",
+        "webui": "/spaces/PAY/pages/98502/PCI+DSS+Compliance+Checklist"
+      }
     },
     {
-      "id": "98003",
+      "id": "98503",
       "type": "page",
-      "title": "Appointment Booking Accessibility Audit",
-      "space": {"key": "HLTH", "name": "TechNova HealthTech"},
+      "status": "current",
+      "title": "Settlement Engine Design",
+      "space": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization",
+        "type": "global"
+      },
+      "version": {
+        "number": 4,
+        "when": "2026-09-30T11:00:00.000Z",
+        "by": {
+          "displayName": "Sarah Chen",
+          "accountId": "schen"
+        },
+        "message": "Added reconciliation engine design"
+      },
+      "ancestors": [
+        {"id": "98500", "title": "PAY Project Home"}
+      ],
       "body": {
         "storage": {
-          "value": "<h2>WCAG 2.1 AA Audit — Appointment Booking Flow</h2><p>Audit performed against the Figma designs for HLTH-103 before implementation.</p><h3>Findings</h3><ul><li><strong>Calendar widget:</strong> Missing keyboard navigation for date selection. Fix required.</li><li><strong>Time-slot picker:</strong> Contrast ratio 3.8:1 on selected state (below 4.5:1 minimum). Colors updated in Figma rev 3.</li><li><strong>Confirmation screen:</strong> No focus management after submission. Screen reader users lose context.</li></ul><h3>Remediation</h3><p>All findings assigned to HLTH-103. Figma components updated by Dr. Aisha Rahman. Implementation to follow design revision.</p>"
+          "value": "<h1>Settlement Engine Technical Design</h1><p>Technical design document for the real-time settlement processing engine (Epic EPC-103, Feature PAY-300).</p><h2>Overview</h2><p>The settlement engine replaces the legacy T+1 batch settlement system with near-real-time processing capability. It runs on <code>mfs-settle-pod-01</code> in the <code>mfs-prod</code> OpenShift namespace using the <code>svc-settlement</code> service account.</p><h2>Settlement Batch Processing (PAY-301)</h2><h3>State Machine</h3><pre>PENDING -&gt; AGGREGATING -&gt; GENERATING -&gt; SUBMITTED -&gt; CONFIRMED\n                                                       |\n                                                   FAILED (retry)</pre><h3>Sequence Flow</h3><ol><li>Batch trigger received (scheduled or on-demand via API)</li><li>BatchAggregator groups transactions from <code>gateway_ledger</code> table in <code>mfs_payments_db</code></li><li>Transactions grouped by: merchant_id, currency, acquiring_bank</li><li>ISO 8583 settlement file generated per acquirer</li><li>Files transmitted to acquirer SFTP endpoints</li><li>Settlement confirmation received and recorded in <code>settlement_records</code> table</li></ol><h3>Performance Targets</h3><ul><li>100K transactions per batch within 5-minute SLA</li><li>Parallel aggregation with configurable thread pool (default: 8 threads)</li><li>Database batch inserts with 1000-record chunks</li></ul><h2>Balance Reconciliation (PAY-302)</h2><h3>Reconciliation Flow</h3><ol><li>Listen for settlement batch completion events on Kafka topic <code>mfs.settlement.completed</code></li><li>Load gateway ledger entries for the batch period from <code>mfs_payments_db</code></li><li>Load settlement confirmation records</li><li>Match gateway entries against settlement confirmations</li><li>Flag discrepancies exceeding $0.01 threshold</li><li>Write results to <code>mfs_audit_db</code> reconciliation tables</li><li>Send alerts via <code>svc-notification-svc</code> for unresolved discrepancies</li></ol><h2>Database Schema</h2><p>All tables in <code>mfs_payments_db</code> on <code>pghost-prod-01.mfs.internal</code>:</p><ul><li><code>settlement_batches</code> - Batch metadata (id, status, created_at, completed_at, transaction_count)</li><li><code>settlement_records</code> - Per-transaction settlement records linked to batch</li><li><code>reconciliation_results</code> - Reconciliation outcomes per batch (in <code>mfs_audit_db</code>)</li></ul>",
+          "representation": "storage"
         }
       },
-      "version": {"number": 1, "when": "2026-10-03T08:00:00.000Z"},
-      "_links": {"webui": "/spaces/HLTH/pages/98003"}
+      "metadata": {
+        "labels": {
+          "results": [
+            {"name": "settlement"},
+            {"name": "technical-design"},
+            {"name": "architecture"}
+          ]
+        }
+      },
+      "_links": {
+        "self": "https://confluence.mfs.internal/rest/api/content/98503",
+        "webui": "/spaces/PAY/pages/98503/Settlement+Engine+Design"
+      }
+    },
+    {
+      "id": "98504",
+      "type": "page",
+      "status": "current",
+      "title": "Payment API Reference",
+      "space": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization",
+        "type": "global"
+      },
+      "version": {
+        "number": 6,
+        "when": "2026-09-29T09:00:00.000Z",
+        "by": {
+          "displayName": "Alex Kim",
+          "accountId": "akim"
+        },
+        "message": "Added multi-currency endpoints"
+      },
+      "ancestors": [
+        {"id": "98500", "title": "PAY Project Home"}
+      ],
+      "body": {
+        "storage": {
+          "value": "<h1>Payment Gateway API v2 Reference</h1><p>API reference for the MFS Payment Gateway v2. Base URL: <code>https://api.mfs.internal/payment/v2</code></p><p>Authentication: Bearer token via <code>svc-payment-api</code> service account OAuth2 client credentials flow.</p><h2>Tokenization Endpoints</h2><h3>POST /api/v2/tokens</h3><p>Create a payment token from cardholder data.</p><pre>Request:\n{\n  \"pan\": \"4111111111111111\",\n  \"expiry_month\": 12,\n  \"expiry_year\": 2028,\n  \"cardholder_name\": \"John Doe\"\n}\n\nResponse (201):\n{\n  \"token_id\": \"tok_mfs_abc123def456\",\n  \"last_four\": \"1111\",\n  \"brand\": \"visa\",\n  \"created_at\": \"2026-09-20T10:00:00Z\"\n}</pre><h3>GET /api/v2/tokens/{token_id}</h3><p>Retrieve token metadata (never returns raw PAN).</p><h2>Payment Endpoints</h2><h3>POST /api/v2/payments</h3><p>Process a payment using a token.</p><pre>Request:\n{\n  \"token_id\": \"tok_mfs_abc123def456\",\n  \"amount\": 99.99,\n  \"currency\": \"USD\",\n  \"merchant_id\": \"merch_001\",\n  \"idempotency_key\": \"pay_20260920_001\"\n}\n\nResponse (201):\n{\n  \"payment_id\": \"pay_mfs_xyz789\",\n  \"status\": \"completed\",\n  \"amount\": 99.99,\n  \"currency\": \"USD\"\n}</pre><h3>POST /api/v2/payments/{payment_id}/retry</h3><p>Retry a failed payment with idempotency guarantee.</p><h3>GET /api/v2/payments/{payment_id}/status</h3><p>Check payment processing status.</p><h2>Currency Endpoints</h2><h3>GET /api/v2/currencies/rates</h3><p>Get current exchange rates for supported currencies (USD, EUR, GBP, JPY, CAD, AUD, CHF).</p><h3>POST /api/v2/payments/convert</h3><p>Process a payment with currency conversion.</p><pre>Request:\n{\n  \"token_id\": \"tok_mfs_abc123def456\",\n  \"amount\": 100.00,\n  \"source_currency\": \"EUR\",\n  \"target_currency\": \"USD\",\n  \"merchant_id\": \"merch_002\"\n}</pre><h2>Settlement Endpoints</h2><h3>POST /api/v2/settlements/batch</h3><p>Trigger a settlement batch. Requires <code>svc-settlement</code> service account.</p><h3>GET /api/v2/settlements/{batch_id}</h3><p>Get settlement batch status and summary.</p><h2>Error Codes</h2><table><tr><th>Code</th><th>Description</th></tr><tr><td>PAY-001</td><td>Invalid token</td></tr><tr><td>PAY-002</td><td>Insufficient funds</td></tr><tr><td>PAY-003</td><td>Currency not supported</td></tr><tr><td>PAY-004</td><td>Duplicate idempotency key</td></tr><tr><td>PAY-005</td><td>Circuit breaker open</td></tr><tr><td>PAY-006</td><td>Settlement batch in progress</td></tr></table>",
+          "representation": "storage"
+        }
+      },
+      "metadata": {
+        "labels": {
+          "results": [
+            {"name": "api-reference"},
+            {"name": "payment-gateway"},
+            {"name": "rest-api"}
+          ]
+        }
+      },
+      "_links": {
+        "self": "https://confluence.mfs.internal/rest/api/content/98504",
+        "webui": "/spaces/PAY/pages/98504/Payment+API+Reference"
+      }
+    },
+    {
+      "id": "98505",
+      "type": "page",
+      "status": "current",
+      "title": "Incident Runbook: Payment Timeouts",
+      "space": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization",
+        "type": "global"
+      },
+      "version": {
+        "number": 2,
+        "when": "2026-09-29T08:00:00.000Z",
+        "by": {
+          "displayName": "Li Wei",
+          "accountId": "lwei"
+        },
+        "message": "Added connection pool tuning steps from INC0080101 resolution"
+      },
+      "ancestors": [
+        {"id": "98500", "title": "PAY Project Home"}
+      ],
+      "body": {
+        "storage": {
+          "value": "<h1>Incident Runbook: Payment Gateway Timeouts</h1><p>Runbook for diagnosing and resolving payment processing timeout incidents on the MFS Payment Gateway.</p><p><strong>Last incident:</strong> INC0080101 (2026-09-28) - Payment timeout spike on mfs-pay-pod-01</p><h2>1. Initial Triage</h2><ol><li>Check Grafana dashboard <strong>Payment Gateway SLOs</strong> for p99 latency spike</li><li>Check Datadog monitor <strong>Payment API Latency P99</strong> for alert status</li><li>Identify affected pods: <code>oc get pods -n mfs-prod -l app=mfs-payment-gateway</code></li><li>Check pod health: <code>oc describe pod mfs-pay-pod-01 -n mfs-prod</code></li></ol><h2>2. Database Connection Investigation</h2><ol><li>Check active connections to <code>mfs_payments_db</code> on <code>pghost-prod-01.mfs.internal</code>:<br/><code>SELECT count(*) FROM pg_stat_activity WHERE datname = 'mfs_payments_db';</code></li><li>Check for long-running queries:<br/><code>SELECT pid, now() - pg_stat_activity.query_start AS duration, query FROM pg_stat_activity WHERE datname = 'mfs_payments_db' AND state != 'idle' ORDER BY duration DESC;</code></li><li>Check connection pool metrics via Prometheus (exported by <code>svc-payment-api</code>):<br/><code>hikari_connections_active{pod=~\"mfs-pay-pod-.*\"}</code></li></ol><h2>3. Connection Pool Tuning</h2><p><strong>Lesson from INC0080101:</strong> After the tokenization deployment (CHG0090101), connection pool exhaustion occurred due to longer-running tokenization queries.</p><ul><li>Default pool size: 20 connections per pod</li><li>Recommended: 50 connections per pod for tokenization workload</li><li>Query timeout: 3 seconds (added post-INC0080101)</li></ul><p>To update pool config:</p><pre>oc edit configmap mfs-payment-gateway-config -n mfs-prod\n# Update:\n#   spring.datasource.hikari.maximum-pool-size: 50\n#   spring.datasource.hikari.connection-timeout: 3000\noc rollout restart deployment/mfs-payment-gateway -n mfs-prod</pre><h2>4. Token Vault Latency</h2><p>If timeout is related to token operations (check <code>svc-token-vault</code> metrics):</p><ol><li>Check HSM session pool on <code>mfs-vault-pod-01</code></li><li>Verify PKCS#11 session count: should be 20 (increased from 5 after INC0080102 investigation)</li><li>Check Datadog monitor <strong>Token Vault Response Time</strong></li></ol><h2>5. Circuit Breaker Status</h2><p>If retry handler circuit breaker is open:</p><ol><li>Check circuit breaker state: <code>GET /actuator/circuitbreakers</code> on affected pod</li><li>Review recent failure pattern in <code>retry_ledger</code> table</li><li>Circuit breaker auto-recovers via half-open probe every 30 seconds</li></ol><h2>6. Escalation</h2><ul><li><strong>L1:</strong> DevOps & SRE (Li Wei, Raj Patel)</li><li><strong>L2:</strong> Platform Engineering (Sarah Chen, David Okoye)</li><li><strong>L3:</strong> Payment Services (Marcus Rivera, Alex Kim)</li></ul>",
+          "representation": "storage"
+        }
+      },
+      "metadata": {
+        "labels": {
+          "results": [
+            {"name": "runbook"},
+            {"name": "incident-response"},
+            {"name": "payment-gateway"},
+            {"name": "troubleshooting"}
+          ]
+        }
+      },
+      "_links": {
+        "self": "https://confluence.mfs.internal/rest/api/content/98505",
+        "webui": "/spaces/PAY/pages/98505/Incident+Runbook+Payment+Timeouts"
+      }
     }
-  ]
+  ],
+  "start": 0,
+  "limit": 25,
+  "size": 5,
+  "_links": {
+    "base": "https://confluence.mfs.internal",
+    "context": "/wiki"
+  }
 }

@@ -110,7 +110,7 @@ class GraphRAG(BaseRAG):
         engine = CommunityDetectionEngine(self._store)
         try:
             result = engine.detect(algorithm="louvain", resolution=1.0)
-        except Exception:
+        except Exception:  # noqa: BLE001 - resilient fallback must not fail the caller
             return []
         results = []
         for comm in result.get("communities", [])[:5]:
@@ -144,7 +144,7 @@ class MultiHopRAG(BaseRAG):
         engine = GraphMetricsEngine(self._store)
         try:
             br = engine.blast_radius(selected_id, max_depth=3)
-        except Exception:
+        except Exception:  # noqa: BLE001 - resilient fallback must not fail the caller
             return []
         return [{"canonical_id": item.canonical_id, "label": item.label, "depth": item.depth} for item in (br.affected_items or [])[:20]]
 
@@ -183,7 +183,9 @@ class SelfRAG(BaseRAG):
 
 
 class ConversationalRAG(BaseRAG):
-    _session_memory: list[str] = []
+    def __init__(self, store: GraphStore, pattern: RAGPattern) -> None:
+        super().__init__(store, pattern)
+        self._session_memory: list[str] = []
 
     def execute(self, query: str, context: dict) -> RAGResult:
         combined_query = f"{query} {' '.join(self._session_memory[-3:])}" if self._session_memory else query
@@ -223,7 +225,7 @@ class BranchedRAG(BaseRAG):
         if context.get("selected_id"):
             results.append(MultiHopRAG(self._store, _PATTERN_MAP["multihop"]).execute(query, context))
         best = max(results, key=lambda r: r.confidence)
-        all_sources = list(set(s for r in results for s in r.sources))[:20]
+        all_sources = list({s for r in results for s in r.sources})[:20]
         best.sources = all_sources
         best.pattern = "branched"
         return best
@@ -248,13 +250,13 @@ class RAGOfRAGs(BaseRAG):
             "hybrid": HybridRAG(self._store, _PATTERN_MAP["hybrid"]).execute(query, context),
         }
         best = max(results.values(), key=lambda r: r.confidence)
-        all_sources = list(set(s for r in results.values() for s in r.sources))[:20]
+        all_sources = list({s for r in results.values() for s in r.sources})[:20]
         combined = f"[Best: {best.pattern}] {best.answer}"
         return RAGResult(
             answer=combined, pattern="rag_of_rags",
             confidence=max(r.confidence for r in results.values()),
             sources=all_sources,
-            highlight_ids=list(set(h for r in results.values() for h in r.highlight_ids))[:10],
+            highlight_ids=list({h for r in results.values() for h in r.highlight_ids})[:10],
             metadata={"sub_patterns": {k: v.confidence for k, v in results.items()}},
         )
 

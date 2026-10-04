@@ -1,0 +1,54 @@
+{
+  "captured_at": "2026-10-04T14:47:08.152175Z",
+  "event_id": "bfca43bdef9b6dfb6c6b94f2d5d523c9fbb721a3925dcdf5f441e979f0b80968",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-txn-monitor"
+        }
+      ],
+      "created": "2026-08-26T09:00:00.000+0000",
+      "customfield_10014": "EPC-202",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Implement alert routing and escalation logic. High-severity alerts (score > 0.9) go to immediate review queue. Medium alerts (0.7-0.9) are batched for analyst review. Low alerts are logged. Escalation triggers after 15 minutes without acknowledgment.",
+      "issuetype": {
+        "name": "Task"
+      },
+      "labels": [
+        "alerting",
+        "escalation",
+        "routing"
+      ],
+      "parent": {
+        "key": "FRD-202"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "Alert routing rules and escalation",
+      "updated": "2026-10-02T11:00:00.000+0000"
+    },
+    "key": "FRD-221"
+  },
+  "payload_hash": "7a91f6ccd994f2bd1374e9a2fbb8db6aa1e0afc151bb1401330600dfc756cd5c",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-221",
+  "source_system": "jira",
+  "source_version": "7a91f6ccd994f2bd1374e9a2fbb8db6aa1e0afc151bb1401330600dfc756cd5c"
+}

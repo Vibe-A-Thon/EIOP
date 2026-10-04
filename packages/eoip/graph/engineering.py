@@ -106,7 +106,7 @@ class LoopDiscipline(BaseDiscipline):
     def execute(self, query: str, context: dict) -> EngineeringResult:
         steps = ["Initialize iteration state"]
         max_iterations = context.get("max_iterations", 5)
-        convergence_threshold = context.get("convergence_threshold", 0.01)
+        context.get("convergence_threshold", 0.01)
 
         vertices = self._store.find_vertices(limit=200)
         edges = list(self._store.find_edges(limit=1000))

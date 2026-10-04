@@ -1,0 +1,54 @@
+{
+  "captured_at": "2026-10-04T14:47:08.152743Z",
+  "event_id": "92d9dabd023ddee01cf7040fafba6e3148c2142a1362571d2b595127c7be09cd",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-aml-engine"
+        }
+      ],
+      "created": "2026-09-10T09:00:00.000+0000",
+      "customfield_10014": "EPC-203",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Implement automated Currency Transaction Report filing for transactions exceeding $10,000. Integrate with FinCEN BSA E-Filing system for batch submission. Include aggregation logic for multiple related transactions from the same customer within a business day.",
+      "issuetype": {
+        "name": "Task"
+      },
+      "labels": [
+        "ctr",
+        "fincen",
+        "integration"
+      ],
+      "parent": {
+        "key": "FRD-302"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "status": {
+        "name": "To Do"
+      },
+      "summary": "CTR filing integration",
+      "updated": "2026-09-28T09:00:00.000+0000"
+    },
+    "key": "FRD-321"
+  },
+  "payload_hash": "999350843396a2800b85ce9db1b9af2b393248f99e3af8f8099e8a734ded4217",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-321",
+  "source_system": "jira",
+  "source_version": "999350843396a2800b85ce9db1b9af2b393248f99e3af8f8099e8a734ded4217"
+}

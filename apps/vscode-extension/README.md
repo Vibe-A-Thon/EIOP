@@ -41,7 +41,7 @@ change your regular settings, token or installed extensions. A JSON receipt is
 saved under the repository's ignored `test-results/` directory. A nonzero host
 exit or missing/incomplete receipt fails the gate.
 
-Four multi-step journeys exercise all eight commands: context/path/source
+Five multi-step journeys exercise all ten commands: NLQ/MCP protocol and refusals; context/path/source
 navigation and offline handling; search/impact/lineage/retrieval; nested and flat
 document-symbol providers with the cursor inside a function body; authentication
 and unsafe-path refusals. Source text remains unchanged. The tests use real
@@ -49,3 +49,16 @@ VS Code commands, editors, ranges, SecretStorage and document-symbol registratio
 but automate input/quick-pick selection and use a loopback HTTP contract fixture.
 They do not certify live HugeGraph integration, manual prompt behavior or visual
 TreeView layout.
+
+**EOIP: Natural Language Query** submits a read-only question to
+`/api/v1/query/nl` and displays the interpreted plan, answer, warnings and graph
+results. **EOIP: Read-only MCP Tool** discovers and invokes approved read-only
+tools through an actual initialization/tools-list/tools-call exchange.
+Set `eoip.mcpUrl` (default `http://localhost:8001/mcp`) for EOIP's stateless JSON
+Streamable HTTP transport. Arbitrary agent/admin/write tools are refused.
+Both commands use the same SecretStorage token as other EOIP commands.
+
+Full auto-demo uses a disposable visible development host with the updated
+0.1.0 source extension. See [demo instructions](../../demo/autodemo/README.md).
+The existing VSIX is not rebuilt or installed by this demo. `npm test` also runs
+native Node protocol tests before the five real-host fixture journeys.

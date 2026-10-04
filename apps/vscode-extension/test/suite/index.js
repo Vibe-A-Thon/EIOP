@@ -12,6 +12,7 @@ async function run() {
   const configuration = vscode.workspace.getConfiguration('eoip');
   const oldRoot = configuration.get('repositoryRoot');
   const oldApiUrl = configuration.get('apiUrl');
+  const oldMcpUrl = configuration.get('mcpUrl');
   const originalShowInputBox = vscode.window.showInputBox;
   const originalShowQuickPick = vscode.window.showQuickPick;
   let server;
@@ -127,6 +128,16 @@ async function run() {
         response.end(JSON.stringify(lineage));
       } else if (request.url === '/api/v1/path') {
         response.end(JSON.stringify(trace));
+      } else if (request.url === '/api/v1/query/nl') {
+        response.end(JSON.stringify({interpretation: {plan: {intent: 'IMPACT'}}, result: impact}));
+      } else if (request.url === '/mcp') {
+        const rpc = JSON.parse(body);
+        if (rpc.method === 'notifications/initialized') { response.writeHead(202).end(); return; }
+        const result = rpc.method === 'initialize'
+          ? {protocolVersion: '2024-11-05', capabilities: {tools: {}}, serverInfo: {name: 'fixture'}}
+          : rpc.method === 'tools/list' ? {tools: [{name: 'search'}]}
+          : {content: [{type: 'text', text: JSON.stringify(impact)}]};
+        response.end(JSON.stringify({jsonrpc: '2.0', id: rpc.id, result}));
       } else {
         response.writeHead(404).end(JSON.stringify({detail: 'Not found'}));
       }
@@ -134,6 +145,7 @@ async function run() {
     await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
     const apiUrl = `http://127.0.0.1:${server.address().port}`;
     await configuration.update('apiUrl', apiUrl, vscode.ConfigurationTarget.Global);
+    await configuration.update('mcpUrl', `${apiUrl}/mcp`, vscode.ConfigurationTarget.Global);
     await configuration.update(
       'repositoryRoot',
       root,
@@ -168,6 +180,18 @@ async function run() {
     assert.equal(vscode.window.activeTextEditor.selection.end.character, 12);
 
     await vscode.commands.executeCommand('eoip.setToken');
+    const nlq = await vscode.commands.executeCommand('eoip.nlq', 'What is the impact of EOIP-1?');
+    assert.equal(nlq.interpretation.plan.intent, 'IMPACT');
+    assert.equal(JSON.parse(vscode.window.activeTextEditor.document.getText()).result.query_id, 'test-impact');
+    const invalidQuestion = await vscode.commands.executeCommand('eoip.nlq', ' ');
+    assert.equal(invalidQuestion.code, 'EOIP_INVALID_QUESTION');
+    const mcp = await vscode.commands.executeCommand('eoip.mcp', {tool: 'search', arguments: {q: 'EOIP-1'}});
+    assert.equal(mcp.tool, 'search');
+    assert.deepEqual(mcp.tools, ['search']);
+    const refused = await vscode.commands.executeCommand('eoip.mcp', {tool: 'run_agent', arguments: {}});
+    assert.equal(refused.ok, false);
+    journeys.push('nlq-mcp-read-only');
+    await vscode.window.showTextDocument(document);
     vscode.window.activeTextEditor.selection = new vscode.Selection(
       new vscode.Position(0, 5),
       new vscode.Position(0, 5),
@@ -214,6 +238,14 @@ async function run() {
       }, null, 2));
     }
     console.log('VS Code extension-host acceptance passed: graph context, Jira path and impact, exact range, and source path safety.');
+  } catch (error) {
+    if (process.env.EOIP_EXTENSION_RECEIPT) {
+      await fs.writeFile(process.env.EOIP_EXTENSION_RECEIPT, JSON.stringify({
+        status: 'FAIL', passed: journeys.length, failed: 1, journeys, error: error.message,
+      }, null, 2));
+    }
+    console.error('Extension journey failure:', error.message);
+    throw error;
   } finally {
     vscode.window.showInputBox = originalShowInputBox;
     vscode.window.showQuickPick = originalShowQuickPick;
@@ -222,6 +254,7 @@ async function run() {
     }
     await vscode.commands.executeCommand('workbench.action.closeAllEditors');
     await configuration.update('apiUrl', oldApiUrl, vscode.ConfigurationTarget.Global);
+    await configuration.update('mcpUrl', oldMcpUrl, vscode.ConfigurationTarget.Global);
     await vscode.workspace.getConfiguration('eoip').update(
       'repositoryRoot',
       oldRoot,

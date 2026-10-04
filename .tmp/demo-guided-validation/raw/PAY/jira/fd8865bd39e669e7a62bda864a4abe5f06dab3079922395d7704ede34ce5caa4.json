@@ -1,0 +1,67 @@
+{
+  "captured_at": "2026-10-04T14:43:26.265009Z",
+  "event_id": "fd8865bd39e669e7a62bda864a4abe5f06dab3079922395d7704ede34ce5caa4",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "dokoye",
+        "displayName": "David Okoye",
+        "emailAddress": "dokoye@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-token-vault"
+        }
+      ],
+      "created": "2026-07-22T11:00:00.000+0000",
+      "customfield_10015": "Platform Engineering",
+      "description": "Update the PostgreSQL database encryption configuration on pghost-prod-01.mfs.internal for mfs_payments_db. Enable TDE and configure pgcrypto extension for column-level encryption of cardholder data tables.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "database",
+        "encryption",
+        "postgresql"
+      ],
+      "parent": {
+        "key": "PAY-201"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "dokoye",
+        "displayName": "David Okoye",
+        "emailAddress": "dokoye@mfs.com"
+      },
+      "resolutiondate": "2026-09-25T10:00:00.000+0000",
+      "status": {
+        "name": "Done",
+        "statusCategory": {
+          "name": "Done"
+        }
+      },
+      "story_points": 3,
+      "summary": "Update DB encryption at rest",
+      "updated": "2026-09-25T10:00:00.000+0000"
+    },
+    "id": "60211",
+    "key": "PAY-211",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60211"
+  },
+  "payload_hash": "fa9c62e013ee5e1a3afa1def7ef3bdf261d7b40c024417c51b0934f784e0ef2f",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-211",
+  "source_system": "jira",
+  "source_version": "fa9c62e013ee5e1a3afa1def7ef3bdf261d7b40c024417c51b0934f784e0ef2f"
+}

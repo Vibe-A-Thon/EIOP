@@ -1,0 +1,70 @@
+{
+  "captured_at": "2026-10-04T13:49:45.895317Z",
+  "event_id": "56e7665987a09fe955087076411a8d6fa65d26f67a83cde805907d159d4d4c7a",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "akim",
+        "displayName": "Alex Kim",
+        "emailAddress": "akim@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        },
+        {
+          "name": "mfs-common-libs"
+        }
+      ],
+      "created": "2026-07-18T08:00:00.000+0000",
+      "customfield_10015": "Payment Services",
+      "description": "Build a currency exchange rate service that fetches real-time FX rates from the approved provider API and caches them with a 60-second TTL. Must support rate fallback to last known good rate.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "fx-rates",
+        "currency",
+        "caching"
+      ],
+      "parent": {
+        "key": "PAY-103"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "akim",
+        "displayName": "Alex Kim",
+        "emailAddress": "akim@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "story_points": 5,
+      "summary": "Currency exchange rate service",
+      "updated": "2026-09-28T15:00:00.000+0000"
+    },
+    "id": "60131",
+    "key": "PAY-131",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60131"
+  },
+  "payload_hash": "5660b329c7009438a074a7deb10de1bbf852d9bfc453fbf543d16eec0b34f640",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-131",
+  "source_system": "jira",
+  "source_version": "5660b329c7009438a074a7deb10de1bbf852d9bfc453fbf543d16eec0b34f640"
+}

@@ -48,7 +48,12 @@ class SourceReconciler:
         stale, unchanged = [], []
         for cid in sorted(source.keys() & graph.keys()):
             graph_hash = graph[cid]["properties"].get("content_hash")
-            if graph_hash == source[cid].payload_hash:
+            source_hash = (
+                source[cid].content_hash
+                if isinstance(source[cid], SourceEventV2)
+                else source[cid].payload_hash
+            )
+            if graph_hash == source_hash:
                 unchanged.append(cid)
             else:
                 stale.append(cid)

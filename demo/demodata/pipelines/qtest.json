@@ -1,92 +1,229 @@
 {
+  "project": {
+    "id": 50002,
+    "name": "MFS Fraud Platform"
+  },
   "test_suites": [
     {
-      "id": 4001,
-      "name": "Checkout Regression Suite",
-      "description": "Critical checkout, risk decision, and payment regression tests",
-      "last_modified_date": "2026-10-01T17:00:00Z",
-      "created_date": "2026-08-01T09:00:00Z"
+      "id": 6001,
+      "name": "FRD Regression Suite",
+      "suite_id": "TS-FRD-001",
+      "description": "Regression test suite for the MFS Fraud Detection platform covering fraud scoring, feature extraction, and transaction monitoring",
+      "last_modified_date": "2026-10-02T16:00:00Z",
+      "created_date": "2026-08-20T09:00:00Z"
     },
     {
-      "id": 4002,
-      "name": "Risk Service Resilience Suite",
-      "description": "Timeout, fallback, and circuit breaker tests for the risk decision boundary",
-      "last_modified_date": "2026-10-02T10:00:00Z",
-      "created_date": "2026-10-01T20:00:00Z"
+      "id": 6002,
+      "name": "AML Compliance Suite",
+      "suite_id": "TS-FRD-002",
+      "description": "Compliance test suite for AML rule engine, SAR/CTR automation, and FinCEN integration",
+      "last_modified_date": "2026-10-02T14:00:00Z",
+      "created_date": "2026-09-05T09:00:00Z"
     }
   ],
-  "test_cases": [
+  "items": [
     {
-      "id": 40101,
-      "name": "Low-risk order is automatically authorized",
-      "test_case_id": "TC-CHK-001",
-      "description": "Verify that an order with risk score below threshold receives automatic authorization with decision evidence.",
+      "id": 60101,
+      "name": "Fraud score calculation accuracy",
+      "test_case_id": "TC-FRD-001",
+      "description": "Verify fraud scoring engine produces accurate scores for known fraud and legitimate transaction patterns using the v2 XGBoost model. Score accuracy validated against labeled test dataset with AUC-ROC > 0.96.",
       "status": "Approved",
       "automation_status": "Automated",
       "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
-      "last_modified_date": "2026-09-30T12:00:00Z",
-      "created_date": "2026-09-18T10:00:00Z"
+      "test_suite_id": 6001,
+      "linked_work_items": ["FRD-101"],
+      "last_modified_date": "2026-09-28T17:00:00Z",
+      "created_date": "2026-08-20T10:00:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Load labeled test dataset with 10,000 transactions (50% fraud, 50% legitimate)", "expected_result": "Dataset loaded successfully"},
+        {"step_number": 2, "description": "Run feature extraction pipeline on test transactions", "expected_result": "All 47 features computed for each transaction"},
+        {"step_number": 3, "description": "Score all transactions using fraud model v2", "expected_result": "Scores returned within 50ms p99 latency SLA"},
+        {"step_number": 4, "description": "Calculate AUC-ROC on scored results", "expected_result": "AUC-ROC >= 0.96"},
+        {"step_number": 5, "description": "Calculate false positive rate at 0.5 threshold", "expected_result": "False positive rate < 2%"},
+        {"step_number": 6, "description": "Verify score distribution matches training baseline", "expected_result": "KS statistic < 0.05 between training and test distributions"},
+        {"step_number": 7, "description": "Validate model metadata in mfs_fraud_db.model_registry", "expected_result": "Model v2 entry present with correct metrics"},
+        {"step_number": 8, "description": "Verify scoring results written to mfs_fraud_db.fraud_scores", "expected_result": "All 10,000 scores persisted with correct transaction IDs"}
+      ]
     },
     {
-      "id": 40102,
-      "name": "High-risk order routes to manual review",
-      "test_case_id": "TC-CHK-002",
-      "description": "Verify that an order with risk score above threshold is refused and routed to manual review with explanation.",
+      "id": 60102,
+      "name": "Feature extraction pipeline latency",
+      "test_case_id": "TC-FRD-002",
+      "description": "Verify real-time feature extraction service computes all fraud-relevant features within latency budget. Tests Kafka consumer throughput and feature computation performance.",
       "status": "Approved",
       "automation_status": "Automated",
       "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
-      "last_modified_date": "2026-09-30T12:00:00Z",
-      "created_date": "2026-09-18T10:30:00Z"
+      "test_suite_id": 6001,
+      "linked_work_items": ["FRD-102"],
+      "last_modified_date": "2026-10-01T14:00:00Z",
+      "created_date": "2026-08-25T10:00:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Publish 1,000 raw transactions to mfs.txn.raw Kafka topic", "expected_result": "All messages published successfully"},
+        {"step_number": 2, "description": "Monitor feature extraction consumer processing", "expected_result": "Consumer processes all 1,000 messages without errors"},
+        {"step_number": 3, "description": "Verify enriched events on mfs.txn.features topic", "expected_result": "1,000 enriched events with all 47 features present"},
+        {"step_number": 4, "description": "Measure end-to-end latency (publish to enriched event)", "expected_result": "p95 latency < 20ms, p99 < 35ms"},
+        {"step_number": 5, "description": "Verify merchant_risk_score computation against reference table", "expected_result": "Scores match expected values from mfs_fraud_db.merchant_risk"},
+        {"step_number": 6, "description": "Test consumer recovery after simulated Kafka broker failure", "expected_result": "Consumer reconnects and resumes processing within 30 seconds"}
+      ]
     },
     {
-      "id": 40201,
-      "name": "Risk service timeout triggers safe fallback",
-      "test_case_id": "TC-RSK-001",
-      "description": "Inject 500ms latency into risk service and verify checkout returns safe refusal with structured trace.",
+      "id": 60103,
+      "name": "Model A/B test routing",
+      "test_case_id": "TC-FRD-003",
+      "description": "Verify model versioning framework correctly routes traffic between model versions according to configured split percentages and collects per-variant performance metrics.",
       "status": "Approved",
       "automation_status": "Automated",
       "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
-      "last_modified_date": "2026-10-02T10:00:00Z",
-      "created_date": "2026-10-01T20:30:00Z"
+      "test_suite_id": 6001,
+      "linked_work_items": ["FRD-103"],
+      "last_modified_date": "2026-10-02T09:00:00Z",
+      "created_date": "2026-08-28T10:00:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Configure A/B test with 80/20 split between model v1 and v2", "expected_result": "Configuration applied successfully via svc-model-serving"},
+        {"step_number": 2, "description": "Send 10,000 scoring requests through the model router", "expected_result": "All requests scored without errors"},
+        {"step_number": 3, "description": "Verify traffic distribution matches configured split", "expected_result": "80% (+/- 2%) routed to v1, 20% (+/- 2%) routed to v2"},
+        {"step_number": 4, "description": "Check per-variant metrics collection in mfs_fraud_db.ab_test_results", "expected_result": "Separate AUC-ROC and FP rate recorded for each variant"},
+        {"step_number": 5, "description": "Simulate v2 underperformance (FP rate > baseline + 0.5%)", "expected_result": "Automated rollback triggered within 5 minutes"},
+        {"step_number": 6, "description": "Verify rollback routes 100% traffic to v1", "expected_result": "All subsequent requests served by v1"},
+        {"step_number": 7, "description": "Verify rollback event logged to model registry", "expected_result": "Rollback reason and timestamp recorded in mfs_fraud_db.model_versions"}
+      ]
     },
     {
-      "id": 40202,
-      "name": "Retry bounded to single attempt with jitter",
-      "test_case_id": "TC-RSK-002",
-      "description": "Verify that the checkout service retries at most once when the risk service returns 503, with random jitter between 50-100ms.",
+      "id": 60104,
+      "name": "Transaction velocity threshold detection",
+      "test_case_id": "TC-FRD-004",
+      "description": "Verify transaction velocity monitor correctly detects and alerts on threshold breaches across per-account, per-merchant, and per-device dimensions over sliding time windows.",
       "status": "Approved",
       "automation_status": "Automated",
       "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
-      "last_modified_date": "2026-10-02T10:00:00Z",
-      "created_date": "2026-10-01T21:00:00Z"
+      "test_suite_id": 6001,
+      "linked_work_items": ["FRD-201"],
+      "last_modified_date": "2026-09-30T16:00:00Z",
+      "created_date": "2026-09-01T10:00:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Configure velocity thresholds: 5 txns/1min, 20 txns/5min per account", "expected_result": "Rules loaded via hot-reload without restart"},
+        {"step_number": 2, "description": "Simulate 6 transactions from same account within 1 minute", "expected_result": "Velocity alert generated on mfs.alerts.txn topic"},
+        {"step_number": 3, "description": "Verify alert contains correct metadata (account, dimension, window, count)", "expected_result": "Alert payload matches expected schema"},
+        {"step_number": 4, "description": "Test per-merchant velocity: 50 inbound txns to same merchant in 5 minutes", "expected_result": "Merchant velocity alert generated"},
+        {"step_number": 5, "description": "Verify alerts persisted to mfs_fraud_db.alerts table", "expected_result": "Both alerts stored with correct timestamps and severity"}
+      ]
+    },
+    {
+      "id": 60105,
+      "name": "Anomaly detection alert generation",
+      "test_case_id": "TC-FRD-005",
+      "description": "Verify anomaly detection system identifies unusual transaction patterns and generates alerts with correct severity classification.",
+      "status": "Approved",
+      "automation_status": "Automated",
+      "properties": [{"field_name": "Status", "field_value_name": "In Progress", "field_value": "in_progress"}],
+      "test_suite_id": 6001,
+      "linked_work_items": ["FRD-202"],
+      "last_modified_date": "2026-10-02T11:00:00Z",
+      "created_date": "2026-09-10T10:00:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Inject known anomalous transaction pattern (amount 10x average, new device, foreign IP)", "expected_result": "Anomaly detected by both Z-score and isolation forest models"},
+        {"step_number": 2, "description": "Verify anomaly score > 0.9 for HIGH severity classification", "expected_result": "Alert classified as HIGH severity"},
+        {"step_number": 3, "description": "Inject borderline anomaly (amount 3x average, known device)", "expected_result": "Score between 0.7-0.9, classified as MEDIUM"},
+        {"step_number": 4, "description": "Verify alert routing: HIGH to immediate queue, MEDIUM to batch queue", "expected_result": "Alerts routed to correct queues"},
+        {"step_number": 5, "description": "Test escalation: no acknowledgment after 15 minutes", "expected_result": "Escalation triggered to senior analyst queue"},
+        {"step_number": 6, "description": "Verify all alerts published to mfs.alerts.txn Kafka topic", "expected_result": "Alert events contain correct schema and correlation IDs"}
+      ]
+    },
+    {
+      "id": 60106,
+      "name": "AML rule engine pattern matching",
+      "test_case_id": "TC-FRD-006",
+      "description": "Verify AML rule engine correctly identifies structuring, layering, and integration money laundering patterns from transaction data in mfs_aml_db.",
+      "status": "Approved",
+      "automation_status": "Automated",
+      "properties": [{"field_name": "Status", "field_value_name": "Passed", "field_value": "passed"}],
+      "test_suite_id": 6002,
+      "linked_work_items": ["FRD-301"],
+      "last_modified_date": "2026-10-02T14:00:00Z",
+      "created_date": "2026-09-10T10:00:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Seed mfs_aml_db with structuring test data: 5 deposits of $9,500 from same customer in 3 days", "expected_result": "Test data inserted into aml_transactions table"},
+        {"step_number": 2, "description": "Run structuring detection rule AML-STRUCT-001", "expected_result": "Pattern detected with confidence > 0.85"},
+        {"step_number": 3, "description": "Seed layering test data: funds moved through 4 accounts within 24 hours", "expected_result": "Test data inserted with correct account linkages"},
+        {"step_number": 4, "description": "Run layering detection rule AML-LAYER-001", "expected_result": "Layering pattern detected with all intermediate accounts identified"},
+        {"step_number": 5, "description": "Seed integration test data: large cash deposit split into legitimate-appearing purchases", "expected_result": "Test data reflects integration pattern"},
+        {"step_number": 6, "description": "Run integration detection rule AML-INTEG-001", "expected_result": "Integration pattern detected"},
+        {"step_number": 7, "description": "Verify all detected patterns create AML case records in mfs_aml_db.cases", "expected_result": "3 case records created with correct rule IDs and evidence links"},
+        {"step_number": 8, "description": "Validate detection results against known-good baseline", "expected_result": "Zero false negatives on seeded patterns"},
+        {"step_number": 9, "description": "Run rules against clean transaction data (no AML patterns)", "expected_result": "Zero false positives generated"}
+      ]
+    },
+    {
+      "id": 60107,
+      "name": "SAR auto-generation and filing",
+      "test_case_id": "TC-FRD-007",
+      "description": "Verify automated SAR form pre-population from AML case data and CTR filing integration with FinCEN BSA E-Filing system.",
+      "status": "Draft",
+      "automation_status": "Manual",
+      "properties": [{"field_name": "Status", "field_value_name": "Not Run", "field_value": "not_run"}],
+      "test_suite_id": 6002,
+      "linked_work_items": ["FRD-302"],
+      "last_modified_date": "2026-09-28T09:00:00Z",
+      "created_date": "2026-09-15T10:00:00Z",
+      "test_steps": [
+        {"step_number": 1, "description": "Create AML case with structuring detection from TC-FRD-006", "expected_result": "Case record created in mfs_aml_db.cases"},
+        {"step_number": 2, "description": "Trigger SAR auto-generation for the case", "expected_result": "SAR form pre-populated with subject info, transaction details, and narrative"},
+        {"step_number": 3, "description": "Validate SAR XML against FinCEN schema", "expected_result": "XML passes FinCEN validation with no errors"},
+        {"step_number": 4, "description": "Submit SAR to FinCEN BSA E-Filing sandbox", "expected_result": "Filing accepted with confirmation number"},
+        {"step_number": 5, "description": "Trigger CTR auto-filing for >$10,000 transaction", "expected_result": "CTR form generated with correct aggregation of same-day transactions"},
+        {"step_number": 6, "description": "Verify filing records stored in mfs_aml_db.filings", "expected_result": "SAR and CTR filing records with confirmation numbers and timestamps"},
+        {"step_number": 7, "description": "Test batch submission with 5 SARs", "expected_result": "Batch accepted, all 5 filings confirmed"}
+      ]
     }
   ],
   "test_runs": [
     {
-      "id": 4501,
-      "name": "Release 2026.10.1 checkout regression",
-      "test_run_id": "TR-CHK-2026101",
-      "execution_status": "Passed",
-      "passed_count": 128,
-      "failed_count": 0,
-      "skipped_count": 2,
-      "total_count": 130,
-      "execution_time": 312.5,
-      "created_date": "2026-10-01T17:16:00Z",
-      "last_modified_date": "2026-10-01T17:21:12Z"
+      "id": 7001,
+      "name": "Sprint 14 Regression",
+      "test_run_id": "TR-FRD-001",
+      "description": "Sprint 14 regression run covering fraud scoring, feature extraction, model versioning, and transaction monitoring test cases",
+      "status": "In Progress",
+      "test_suite_id": 6001,
+      "start_date": "2026-10-01T08:00:00Z",
+      "end_date": null,
+      "executed_by": "jobrien",
+      "test_case_results": [
+        {"test_case_id": "TC-FRD-001", "status": "passed", "executed_at": "2026-10-01T08:30:00Z"},
+        {"test_case_id": "TC-FRD-002", "status": "passed", "executed_at": "2026-10-01T09:00:00Z"},
+        {"test_case_id": "TC-FRD-003", "status": "passed", "executed_at": "2026-10-01T09:45:00Z"},
+        {"test_case_id": "TC-FRD-004", "status": "passed", "executed_at": "2026-10-01T10:15:00Z"},
+        {"test_case_id": "TC-FRD-005", "status": "in_progress", "executed_at": null},
+        {"test_case_id": "TC-FRD-006", "status": "passed", "executed_at": "2026-10-02T14:30:00Z"},
+        {"test_case_id": "TC-FRD-007", "status": "not_run", "executed_at": null}
+      ],
+      "summary": {
+        "total": 7,
+        "passed": 5,
+        "failed": 0,
+        "in_progress": 1,
+        "not_run": 1
+      }
     },
     {
-      "id": 4502,
-      "name": "Post-hotfix resilience validation",
-      "test_run_id": "TR-RSK-POST",
-      "execution_status": "Passed",
-      "passed_count": 24,
-      "failed_count": 0,
-      "skipped_count": 0,
-      "total_count": 24,
-      "execution_time": 145.8,
-      "created_date": "2026-10-02T09:00:00Z",
-      "last_modified_date": "2026-10-02T09:02:26Z"
+      "id": 7002,
+      "name": "AML Compliance Audit",
+      "test_run_id": "TR-FRD-002",
+      "description": "AML compliance audit test run covering rule engine pattern matching and regulatory reporting",
+      "status": "Completed",
+      "test_suite_id": 6002,
+      "start_date": "2026-10-02T10:00:00Z",
+      "end_date": "2026-10-02T15:00:00Z",
+      "executed_by": "jobrien",
+      "test_case_results": [
+        {"test_case_id": "TC-FRD-006", "status": "passed", "executed_at": "2026-10-02T14:30:00Z"}
+      ],
+      "summary": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "in_progress": 0,
+        "not_run": 0
+      }
     }
   ]
 }

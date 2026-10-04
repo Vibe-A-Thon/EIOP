@@ -1,14 +1,14 @@
 """Phase 13 — AI-Assisted Graph Intelligence: tests for RAG, Agents, Engineering."""
 
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
+from packages.eoip.graph.agent_router import AGENT_TYPES, AgentResult, AgentRouter
+from packages.eoip.graph.engineering import ENGINEERING_DISCIPLINES, EngineeringResult, EngineeringRouter
 from packages.eoip.graph.memory import MemoryGraphStore
-from packages.eoip.graph.rag_router import RAGRouter, RAG_PATTERNS, RAGResult
-from packages.eoip.graph.agent_router import AgentRouter, AGENT_TYPES, AgentResult
-from packages.eoip.graph.engineering import EngineeringRouter, ENGINEERING_DISCIPLINES, EngineeringResult
+from packages.eoip.graph.rag_router import RAG_PATTERNS, RAGResult, RAGRouter
 
 
 def _make_store():
@@ -109,7 +109,7 @@ def test_agent_types_count():
 
 def test_agent_types_nine_categories():
     """Should have exactly 9 categories."""
-    categories = set(a.category for a in AGENT_TYPES)
+    categories = {a.category for a in AGENT_TYPES}
     assert len(categories) == 9
     expected = {"reactive", "deliberative", "tool_using", "orchestration",
                 "collaboration", "meta_cognitive", "autonomous", "enterprise", "multi_agent"}

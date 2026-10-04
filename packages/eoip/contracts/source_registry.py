@@ -26,6 +26,10 @@ SourceType = Literal[
     "web",
 ]
 
+AcquisitionMode = Literal["baseline", "poll", "webhook", "reconcile", "replay"]
+SourceHealth = Literal["UNKNOWN", "HEALTHY", "DEGRADED", "UNAVAILABLE", "MISCONFIGURED"]
+WebhookStatus = Literal["UNCONFIGURED", "CONFIGURED", "ACTIVE", "DISABLED", "FAILING"]
+
 
 class SourceCapabilities(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -50,6 +54,20 @@ class SourceRegistryEntry(BaseModel):
     source_type: SourceType
     name: str = Field(min_length=1, max_length=256)
     base_url: str | None = Field(default=None, max_length=2048)
+    acquisition_modes: list[AcquisitionMode] = Field(default_factory=list, max_length=16)
+    allowed_scopes: list[str] = Field(default_factory=list, max_length=1000)
+    excluded_scopes: list[str] = Field(default_factory=list, max_length=1000)
+    polling_frequency_seconds: int | None = Field(default=None, ge=1, le=31_536_000)
+    webhook_status: WebhookStatus = "UNCONFIGURED"
+    mapping_version: str | None = Field(default=None, max_length=128)
+    parser_version: str | None = Field(default=None, max_length=128)
+    checkpoint: str | None = Field(default=None, max_length=4096)
+    last_successful_baseline: str | None = Field(default=None, max_length=64)
+    last_incremental_run: str | None = Field(default=None, max_length=64)
+    reconciliation_schedule: str | None = Field(default=None, max_length=256)
+    health: SourceHealth = "UNKNOWN"
+    freshness_slo_seconds: int | None = Field(default=None, ge=1, le=31_536_000)
+    compatibility: dict[str, Any] = Field(default_factory=dict)
     enabled: bool = True
     capabilities: SourceCapabilities = Field(default_factory=SourceCapabilities)
     config: dict[str, Any] = Field(default_factory=dict)
@@ -78,6 +96,19 @@ class SourceRegistryEntry(BaseModel):
     def require_remote_url(self) -> SourceRegistryEntry:
         if self.source_type not in {"local_files", "documents"} and not self.base_url:
             raise ValueError(f"base_url is required for {self.source_type}")
+        if not self.acquisition_modes:
+            modes: list[AcquisitionMode] = []
+            if self.capabilities.baseline:
+                modes.append("baseline")
+            if self.capabilities.polling:
+                modes.append("poll")
+            if self.capabilities.webhooks:
+                modes.append("webhook")
+            if self.capabilities.reconciliation:
+                modes.append("reconcile")
+            if self.capabilities.replay:
+                modes.append("replay")
+            self.acquisition_modes = modes
         return self
 
 

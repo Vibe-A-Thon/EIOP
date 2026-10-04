@@ -10,7 +10,7 @@ from pathlib import Path
 
 from eoip.connectors.jira_json import JiraJsonConnector
 from eoip.graph.memory import MemoryGraphStore
-from eoip.graph.meta import bootstrap_meta_graph, link_domains
+from eoip.graph.meta import bootstrap_meta_graph
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
 from eoip.ingestion.repository import RepositoryIngestionService
 
@@ -22,7 +22,7 @@ def _project_root():
 def _load_jira_data():
     root = _project_root()
     return json.loads(
-        (root / "Demo/demodata/core/jira/sample-jira.json").read_text(encoding="utf-8")
+        (root / "demo/demodata/core/jira/sample-jira.json").read_text(encoding="utf-8")
     )
 
 
@@ -74,15 +74,15 @@ def test_idempotent_git_re_ingestion(tmp_path):
     bootstrap_meta_graph(store)
     capture = FileEventCapture(tmp_path / "raw")
     metadata = json.loads(
-        (root / "Demo/demodata/core/gitlab/sample-gitlab.json").read_text(encoding="utf-8")
+        (root / "demo/demodata/core/gitlab/sample-gitlab.json").read_text(encoding="utf-8")
     )
 
     repo_svc = RepositoryIngestionService(store, capture)
-    repo_svc.ingest(root / "Demo/demodata/core/demo-repo", metadata=metadata)
+    repo_svc.ingest(root / "demo/demodata/core/demo-repo", metadata=metadata)
     biz_after_first = _count_business_vertices(store)
 
     repo_svc2 = RepositoryIngestionService(store, capture)
-    repo_svc2.ingest(root / "Demo/demodata/core/demo-repo", metadata=metadata)
+    repo_svc2.ingest(root / "demo/demodata/core/demo-repo", metadata=metadata)
     biz_after_second = _count_business_vertices(store)
 
     assert biz_after_second == biz_after_first, (

@@ -1,0 +1,53 @@
+{
+  "captured_at": "2026-10-04T13:45:50.511263Z",
+  "event_id": "c912e6a041240320fed38d70f4f067f4ad3b502d8e3443586dbab90d6c2ea8ef",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-fraud-engine"
+        }
+      ],
+      "created": "2026-08-18T10:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Train the v2 fraud detection model using the updated feature set with 6 months of labeled transaction data. Target AUC-ROC > 0.96 and false positive rate < 2%. Use XGBoost with hyperparameter tuning via Optuna. Export to ONNX for serving.",
+      "issuetype": {
+        "name": "Task"
+      },
+      "labels": [
+        "model-training",
+        "xgboost"
+      ],
+      "parent": {
+        "key": "FRD-101"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "status": {
+        "name": "Done"
+      },
+      "summary": "Train fraud model v2",
+      "updated": "2026-09-25T16:00:00.000+0000"
+    },
+    "key": "FRD-111"
+  },
+  "payload_hash": "0eba24ad27ba225490588d9c2f202fac53e14c9ec6a2d5386684045251a88182",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-111",
+  "source_system": "jira",
+  "source_version": "0eba24ad27ba225490588d9c2f202fac53e14c9ec6a2d5386684045251a88182"
+}

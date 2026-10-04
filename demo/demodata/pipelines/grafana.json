@@ -1,0 +1,120 @@
+{
+  "dashboards": [
+    {
+      "uid": "fraud-engine-slos",
+      "title": "Fraud Engine SLOs",
+      "url": "/d/fraud-engine-slos",
+      "version": 6,
+      "tags": ["fraud", "slo", "production"],
+      "panels": [
+        {"title": "Fraud Score Latency p95 (target: <50ms)", "type": "stat", "datasource": "prometheus-mfs-prod"},
+        {"title": "Fraud Score Latency p99", "type": "stat", "datasource": "prometheus-mfs-prod"},
+        {"title": "Scoring Throughput (req/sec)", "type": "timeseries", "datasource": "prometheus-mfs-prod"},
+        {"title": "False Positive Rate (target: <2%)", "type": "gauge", "datasource": "prometheus-mfs-prod"},
+        {"title": "Model Accuracy AUC-ROC", "type": "stat", "datasource": "prometheus-mfs-prod"},
+        {"title": "Error Budget Remaining", "type": "gauge", "datasource": "prometheus-mfs-prod"},
+        {"title": "SLO Burn Rate (14-day window)", "type": "timeseries", "datasource": "prometheus-mfs-prod"},
+        {"title": "Feature Extraction Latency p95", "type": "stat", "datasource": "prometheus-mfs-prod"},
+        {"title": "Kafka Consumer Lag (mfs.txn.raw)", "type": "timeseries", "datasource": "prometheus-mfs-prod"},
+        {"title": "Model Version Traffic Split", "type": "piechart", "datasource": "prometheus-mfs-prod"}
+      ]
+    },
+    {
+      "uid": "aml-processing",
+      "title": "AML Processing",
+      "url": "/d/aml-processing",
+      "version": 3,
+      "tags": ["aml", "compliance", "production"],
+      "panels": [
+        {"title": "AML Rule Engine Processing Time p95", "type": "stat", "datasource": "prometheus-mfs-prod"},
+        {"title": "Patterns Detected by Type", "type": "barchart", "datasource": "prometheus-mfs-prod"},
+        {"title": "Detection Confidence Distribution", "type": "histogram", "datasource": "prometheus-mfs-prod"},
+        {"title": "SAR Filing Queue Depth", "type": "gauge", "datasource": "prometheus-mfs-prod"},
+        {"title": "CTR Auto-Filing Success Rate", "type": "stat", "datasource": "prometheus-mfs-prod"},
+        {"title": "Case Resolution Time (hours)", "type": "timeseries", "datasource": "prometheus-mfs-prod"},
+        {"title": "Rule Engine Error Rate", "type": "timeseries", "datasource": "prometheus-mfs-prod"}
+      ]
+    }
+  ],
+  "alert_rules": [
+    {
+      "uid": "alert-fraud-latency",
+      "title": "Fraud Score Latency SLO Breach",
+      "condition": "p95(fraud_score_latency_ms) > 50 for 5m",
+      "severity": "critical",
+      "labels": {"team": "fraud-risk", "service": "mfs-fraud-engine"},
+      "annotations": {
+        "summary": "Fraud scoring latency exceeding 50ms SLO",
+        "description": "The fraud scoring engine p95 latency has exceeded the 50ms SLA target for more than 5 minutes. Check mfs-fraud-pod-01 and mfs-fraud-pod-02 resource utilization and model serving health.",
+        "runbook_url": "https://confluence.mfs.internal/spaces/FRD/pages/99005"
+      },
+      "notification_channels": ["#fraud-oncall", "pagerduty-fraud"],
+      "state": "ok"
+    },
+    {
+      "uid": "alert-fraud-fp-rate",
+      "title": "Fraud False Positive Rate Breach",
+      "condition": "fraud_false_positive_rate > 0.02 for 5m",
+      "severity": "critical",
+      "labels": {"team": "fraud-risk", "service": "mfs-fraud-engine"},
+      "annotations": {
+        "summary": "Fraud scoring false positive rate exceeding 2% SLA",
+        "description": "The fraud scoring engine false positive rate has exceeded the 2% target. This may indicate feature data staleness or model drift. See INC0080201 for previous occurrence and resolution steps.",
+        "runbook_url": "https://confluence.mfs.internal/spaces/FRD/pages/99005"
+      },
+      "notification_channels": ["#fraud-oncall", "pagerduty-fraud"],
+      "state": "ok"
+    },
+    {
+      "uid": "alert-kafka-lag",
+      "title": "Transaction Monitor Kafka Consumer Lag",
+      "condition": "kafka_consumer_lag{consumer_group='mfs-txn-monitor-cg'} > 10000 for 5m",
+      "severity": "warning",
+      "labels": {"team": "platform-engineering", "service": "mfs-txn-monitor"},
+      "annotations": {
+        "summary": "Kafka consumer lag exceeding 10,000 messages",
+        "description": "Transaction monitoring consumer group mfs-txn-monitor-cg has sustained lag over 10,000 messages on mfs.txn.enriched topic. Real-time alerting is delayed. See INC0080202.",
+        "runbook_url": "https://confluence.mfs.internal/spaces/FRD/pages/99003"
+      },
+      "notification_channels": ["#platform-alerts"],
+      "state": "alerting"
+    },
+    {
+      "uid": "alert-aml-processing",
+      "title": "AML Rule Engine Processing Time",
+      "condition": "p95(aml_rule_processing_ms) > 500 for 10m",
+      "severity": "warning",
+      "labels": {"team": "fraud-risk", "service": "mfs-aml-engine"},
+      "annotations": {
+        "summary": "AML rule engine processing time exceeding 500ms target",
+        "description": "The AML rule engine on mfs-aml-pod-01 is processing patterns slower than the 500ms p95 target. Check mfs_aml_db query performance on pghost-prod-02.mfs.internal.",
+        "runbook_url": "https://confluence.mfs.internal/spaces/FRD/pages/99002"
+      },
+      "notification_channels": ["#aml-alerts"],
+      "state": "ok"
+    }
+  ],
+  "datasources": [
+    {
+      "name": "prometheus-mfs-prod",
+      "type": "prometheus",
+      "url": "https://prometheus.mfs.internal/mfs-prod",
+      "access": "proxy",
+      "isDefault": true
+    },
+    {
+      "name": "mfs-fraud-db",
+      "type": "postgres",
+      "url": "pghost-prod-02.mfs.internal:5432",
+      "database": "mfs_fraud_db",
+      "access": "proxy"
+    },
+    {
+      "name": "mfs-aml-db",
+      "type": "postgres",
+      "url": "pghost-prod-02.mfs.internal:5432",
+      "database": "mfs_aml_db",
+      "access": "proxy"
+    }
+  ]
+}

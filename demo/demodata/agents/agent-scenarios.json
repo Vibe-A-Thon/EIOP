@@ -1,87 +1,88 @@
 {
-  "description": "Agent capability demonstration scenarios — shows agent types across 9 categories with graph-based analysis.",
-  "version": "1.0.0",
+  "description": "Agent capability demonstration scenarios — shows agent types across 9 categories with graph-based analysis. Uses Meridian Financial Services (MFS) demo data.",
+  "version": "2.0.0",
+  "organization": "Meridian Financial Services",
   "scenarios": [
     {
       "id": "agent-trace-impact",
       "agent_type": "retrieval",
       "category": "tool_using",
       "title": "Trace and Impact Analysis",
-      "question": "Trace EOIP-1 to its implementation and assess the blast radius of changing compute_impact()",
+      "question": "Trace PAY-101 to its implementation and assess the blast radius of changing TokenizationService.tokenize_card()",
       "expected_tools": ["search_entity", "find_path", "impact_analysis"],
-      "expected_output": "Path from WorkItem through Commit to CodeSymbol, plus dependent entities"
+      "expected_output": "Path from WorkItem PAY-101 through MR !301 → Commit → File → CodeSymbol, plus dependent entities across payment gateway"
     },
     {
       "id": "agent-incident-root-cause",
       "agent_type": "goal_based",
       "category": "deliberative",
       "title": "Incident Root Cause Analysis",
-      "question": "What caused INC0071042 and which deployment introduced the regression?",
+      "question": "What caused INC0080101 (payment timeout spike) and which deployment introduced the regression?",
       "expected_tools": ["search_entity", "neighbors", "find_path"],
-      "expected_output": "Incident → Alert → Deployment → Pipeline → Commit → MergeRequest chain"
+      "expected_output": "Incident → affected CI mfs-payment-gateway → recent CHG0090101 → Pipeline 9001 → MR !301 → PAY-101 tokenization change chain"
     },
     {
       "id": "agent-compliance-check",
       "agent_type": "compliance",
       "category": "enterprise",
-      "title": "HIPAA Compliance Verification",
-      "question": "Verify that all patient data handling meets HIPAA technical safeguards",
+      "title": "PCI DSS Compliance Verification",
+      "question": "Verify that all cardholder data handling meets PCI DSS encryption and key management requirements",
       "expected_tools": ["search_entity", "neighbors", "get_entity"],
-      "expected_output": "Compliance check against PHI encryption, access logging, audit trail"
+      "expected_output": "Compliance check against PAY-201 encryption at rest, PAY-202 HSM key rotation, token vault architecture, audit trail in mfs_audit_db"
     },
     {
       "id": "agent-release-governance",
       "agent_type": "workflow",
       "category": "orchestration",
       "title": "Release Governance Check",
-      "question": "Is release 2026.10.1 ready? Check tests, deployment, monitoring, and documentation",
+      "question": "Is the Payment Gateway v2 release ready? Check all test suites, pipeline status, monitoring, and documentation completeness",
       "expected_tools": ["search_entity", "find_path", "neighbors"],
-      "expected_output": "Multi-step workflow checking test runs, pipeline status, monitoring, docs"
+      "expected_output": "Multi-step workflow: TC-PAY-007 IN_PROGRESS and TC-PAY-008 NOT_RUN are blockers; Grafana dashboards configured; Confluence docs present but runbook needs update"
     },
     {
       "id": "agent-anomaly-detection",
       "agent_type": "monitor",
       "category": "autonomous",
       "title": "Graph Anomaly Detection",
-      "question": "Find orphan vertices, disconnected components, and suspicious patterns in the graph",
+      "question": "Find orphan vertices, disconnected components, and suspicious patterns in the MFS enterprise graph",
       "expected_tools": ["search_entity", "neighbors", "graph_analytics"],
-      "expected_output": "List of anomalies: orphan vertices, missing edges, unusual patterns"
+      "expected_output": "Anomalies: mfs-customer-portal code entities not linked to any Jira story; settlement engine has no Kibana dashboard; some Figma components not linked to code"
     },
     {
       "id": "agent-design-trace",
-      "agent_type": "retrieval",
-      "category": "tool_using",
-      "title": "Design to Delivery Trace",
-      "question": "Trace the checkout payment panel design from Figma to the deployed code",
-      "expected_tools": ["search_entity", "find_path"],
-      "expected_output": "DesignComponent → Feature → WorkItem → MR → Code → Pipeline → Deployment"
+      "agent_type": "design_trace",
+      "category": "reactive",
+      "title": "Design-to-Implementation Traceability",
+      "question": "Which Figma designs have been implemented and which are pending for the payment portal?",
+      "expected_tools": ["search_entity", "neighbors", "find_path"],
+      "expected_output": "PaymentCard → PaymentForm.tsx (implemented), CurrencySelector → (no code link yet), SettlementTable → (partially implemented)"
     },
     {
       "id": "agent-knowledge-provenance",
-      "agent_type": "explanation",
+      "agent_type": "provenance",
       "category": "meta_cognitive",
-      "title": "Knowledge Provenance Verification",
-      "question": "Where did the answer about checkout timeout behavior come from and how trustworthy is it?",
-      "expected_tools": ["search_entity", "lineage", "evidence"],
-      "expected_output": "Evidence chain: KB article → source system → evidence record with confidence"
+      "title": "Knowledge Provenance Audit",
+      "question": "How was the payment gateway architecture documentation created and when was it last verified?",
+      "expected_tools": ["search_entity", "get_entity", "lineage_trace"],
+      "expected_output": "Confluence page created by Sarah Chen on 2026-08-15, last edited 2026-09-28, linked to 3 code repos, 2 API specs, not verified since PAY-103 multicurrency addition"
     },
     {
       "id": "agent-blast-radius",
-      "agent_type": "computation",
-      "category": "tool_using",
-      "title": "API Blast Radius Assessment",
-      "question": "What is the blast radius if the Checkout API goes down?",
+      "agent_type": "blast_radius",
+      "category": "collaboration",
+      "title": "Change Blast Radius Assessment",
+      "question": "What is the blast radius of upgrading sqlalchemy in mfs-common-libs?",
       "expected_tools": ["search_entity", "impact_analysis", "neighbors"],
-      "expected_output": "Upstream/downstream services, dependent tests, monitoring coverage"
+      "expected_output": "Affects mfs-payment-gateway (DBClient), mfs-fraud-engine (model storage), mfs-settlement-engine; 4 pipelines, 2 ServiceNow changes needed, 12 test cases to re-run"
     },
     {
       "id": "agent-peer-review",
       "agent_type": "peer_review",
       "category": "collaboration",
-      "title": "Multi-perspective Code Review",
-      "question": "Review the risk decision implementation from security, performance, and reliability perspectives",
-      "expected_tools": ["get_entity", "neighbors", "search_entity"],
-      "expected_output": "Three independent assessments merged into a consensus review"
+      "title": "Cross-Domain Peer Review",
+      "question": "Review the fraud engine's interaction with the payment gateway — are there circular dependencies or missing error handlers?",
+      "expected_tools": ["search_entity", "find_path", "neighbors"],
+      "expected_output": "FraudAPI calls PaymentAPI for transaction data; no circular dependency found; missing error handler in FraudScorer when payment service is unavailable"
     }
   ]
 }

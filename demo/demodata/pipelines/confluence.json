@@ -3,41 +3,67 @@
     {
       "id": "99001",
       "type": "page",
-      "title": "Checkout Risk Architecture — ADR-COM-014",
-      "space": {"key": "COMMERCE", "name": "Commerce Engineering"},
+      "title": "Fraud Detection Architecture",
+      "space": {"key": "FRD", "name": "MFS Fraud Platform"},
       "body": {
         "storage": {
-          "value": "<h2>Checkout Risk Architecture</h2><p>The Checkout API asks the Risk Decision API for a bounded, explainable decision before calling the Payment Authorization API.</p><h3>Runtime Flow</h3><ol><li>POST /orders validates the request and creates an order identifier.</li><li>Checkout calls POST /v2/decisions with non-card order signals.</li><li>Risk returns a score, approve/review decision, and reason code.</li><li>Approved orders proceed to tokenized payment authorization.</li></ol><h3>Reliability Boundary</h3><p>The synchronous risk call has a 250ms budget. Retries are bounded to one attempt with jitter. After INC0071042, the checkout API implements a safe fallback that refuses high-risk orders when the risk service is degraded.</p>"
+          "value": "<h2>Fraud Detection Platform Architecture</h2><p>The MFS Fraud Detection platform is a real-time ML-powered system that scores every incoming transaction for fraud probability within 50ms SLA.</p><h3>System Components</h3><ul><li><strong>Feature Extraction Service:</strong> Consumes raw transactions from Kafka topic <code>mfs.txn.raw</code>, computes real-time features (velocity, merchant risk, device fingerprint, geolocation anomaly), and publishes enriched events to <code>mfs.txn.features</code>. Runs on <code>mfs-fraud-pod-01</code> under <code>svc-fraud-engine</code> service account.</li><li><strong>Fraud Scoring Engine:</strong> XGBoost model (v2, ONNX format) served via gRPC. Deployed across <code>mfs-fraud-pod-01</code> and <code>mfs-fraud-pod-02</code> in <code>mfs-prod</code> OpenShift namespace for high availability.</li><li><strong>Model Registry:</strong> MLflow-based model versioning with A/B testing support. Metadata stored in <code>mfs_fraud_db.model_registry</code> on <code>pghost-prod-02.mfs.internal</code>.</li></ul><h3>Data Flow</h3><p>Transaction Ingestion &rarr; Feature Extraction &rarr; Fraud Scoring &rarr; Decision (approve/review/decline) &rarr; Alert Generation</p><h3>Related Work Items</h3><p>FRD-100 (Feature), FRD-101 (Model Pipeline), FRD-102 (Feature Extraction), FRD-103 (Model Versioning)</p>"
         }
       },
-      "version": {"number": 5, "when": "2026-10-02T09:30:00.000Z"},
-      "_links": {"webui": "/spaces/COMMERCE/pages/99001"}
+      "version": {"number": 5, "when": "2026-10-02T10:00:00.000Z"},
+      "_links": {"webui": "/spaces/FRD/pages/99001"}
     },
     {
       "id": "99002",
       "type": "page",
-      "title": "Checkout Latency Incident Runbook",
-      "space": {"key": "COMMERCE", "name": "Commerce Engineering"},
+      "title": "AML Compliance Framework",
+      "space": {"key": "FRD", "name": "MFS Fraud Platform"},
       "body": {
         "storage": {
-          "value": "<h2>Runbook: Checkout Latency SLO Breach</h2><ol><li>Confirm impact in the Commerce production overview dashboard.</li><li>Compare alert start with the latest production deployment.</li><li>Inspect risk_decision_timeout log aggregate; do not inspect customer payloads.</li><li>If retry fan-out is present, request the approved bounded-fallback change.</li><li>Verify p95 below 450ms for ten minutes.</li><li>Attach dashboard, deployment, change and test-run identifiers to incident.</li></ol><p>Rollback authority: Commerce SRE. Emergency changes require auditable ServiceNow approval.</p>"
+          "value": "<h2>Anti-Money Laundering Compliance Framework</h2><p>The AML compliance engine implements FinCEN regulatory requirements for detecting and reporting suspicious financial activity.</p><h3>Detection Patterns</h3><table><tr><th>Pattern</th><th>Description</th><th>Rule ID</th></tr><tr><td>Structuring</td><td>Transactions split to stay below $10,000 CTR threshold</td><td>AML-STRUCT-001</td></tr><tr><td>Layering</td><td>Rapid inter-account fund movements to obscure origin</td><td>AML-LAYER-001</td></tr><tr><td>Integration</td><td>Illicit funds merged into legitimate-appearing transactions</td><td>AML-INTEG-001</td></tr></table><h3>Reporting Automation</h3><p>SAR forms auto-populated from case data via FRD-311. CTR auto-filing for >$10K transactions via FRD-321. Integration with FinCEN BSA E-Filing system.</p><h3>Infrastructure</h3><p>AML engine runs on <code>mfs-aml-pod-01</code> in <code>mfs-prod</code> namespace under <code>svc-aml-engine</code>. Data stored in <code>mfs_aml_db</code> on <code>pghost-prod-02.mfs.internal</code>.</p><h3>Related</h3><p>EPC-203 (Epic), FRD-300 (Feature), FRD-301 (Rule Engine), FRD-302 (SAR Automation)</p>"
         }
       },
-      "version": {"number": 3, "when": "2026-10-02T10:00:00.000Z"},
-      "_links": {"webui": "/spaces/COMMERCE/pages/99002"}
+      "version": {"number": 3, "when": "2026-10-01T14:00:00.000Z"},
+      "_links": {"webui": "/spaces/FRD/pages/99002"}
     },
     {
       "id": "99003",
       "type": "page",
-      "title": "Inventory Reservation — Async Migration Plan",
-      "space": {"key": "COMMERCE", "name": "Commerce Engineering"},
+      "title": "Transaction Monitoring Design",
+      "space": {"key": "FRD", "name": "MFS Fraud Platform"},
       "body": {
         "storage": {
-          "value": "<h2>Inventory Reservation: Sync to Async Migration</h2><p>SHOP-304 replaces the synchronous inventory lock call with an event-driven reservation model.</p><h3>Current State</h3><p>Checkout calls POST /inventory/reserve synchronously. Average latency: 120ms, p95: 280ms. Under load the inventory service becomes a bottleneck.</p><h3>Target State</h3><p>Checkout publishes a ReservationRequested event. The Inventory service processes it asynchronously and publishes ReservationConfirmed. The checkout flow proceeds optimistically with a 15-minute reservation TTL. Expected p95 improvement: 80ms.</p><h3>Risks</h3><ul><li>Overselling during reservation window — mitigated by compensating transaction on confirmation failure.</li><li>Event bus lag — circuit breaker falls back to synchronous path.</li></ul>"
+          "value": "<h2>Real-time Transaction Monitoring System Design</h2><p>The transaction monitoring system provides continuous surveillance of financial transactions using velocity-based rules and statistical anomaly detection.</p><h3>Velocity Monitoring</h3><p>Tracks transaction rates across three dimensions:</p><ul><li><strong>Per-account:</strong> Flags accounts exceeding normal transaction frequency</li><li><strong>Per-merchant:</strong> Identifies merchants with unusual inbound transaction patterns</li><li><strong>Per-device:</strong> Detects device-based fraud rings</li></ul><p>Time windows: 1 minute, 5 minutes, 1 hour, 24 hours. Thresholds configurable via YAML rules with hot-reload (no service restart required).</p><h3>Anomaly Detection</h3><p>Two-stage approach: Z-score analysis for univariate anomalies, isolation forest for multivariate pattern detection. Severity levels: HIGH (&gt;0.9), MEDIUM (0.7-0.9), LOW (&lt;0.7).</p><h3>Kafka Topics</h3><p>Input: <code>mfs.txn.enriched</code> | Output: <code>mfs.alerts.txn</code></p><h3>Infrastructure</h3><p>Deployed on <code>mfs-txn-mon-pod-01</code> under <code>svc-txn-monitor</code>. Alert data persisted to <code>mfs_fraud_db.alerts</code> table. Consumer group: <code>mfs-txn-monitor-cg</code>.</p><h3>Related</h3><p>EPC-202 (Epic), FRD-200 (Feature), FRD-201 (Velocity), FRD-202 (Anomaly), INC0080202 (Kafka lag issue)</p>"
         }
       },
-      "version": {"number": 1, "when": "2026-10-03T14:00:00.000Z"},
-      "_links": {"webui": "/spaces/COMMERCE/pages/99003"}
+      "version": {"number": 4, "when": "2026-10-02T11:00:00.000Z"},
+      "_links": {"webui": "/spaces/FRD/pages/99003"}
+    },
+    {
+      "id": "99004",
+      "type": "page",
+      "title": "Fraud Model Training Pipeline",
+      "space": {"key": "FRD", "name": "MFS Fraud Platform"},
+      "body": {
+        "storage": {
+          "value": "<h2>Fraud Model Training Pipeline</h2><p>End-to-end ML pipeline for training, evaluating, and deploying fraud detection models.</p><h3>Pipeline Stages</h3><ol><li><strong>Data Extraction:</strong> Pull labeled transaction data from <code>mfs_fraud_db.fraud_transactions</code> on <code>pghost-prod-02.mfs.internal</code>. Uses 6-month sliding window.</li><li><strong>Feature Engineering:</strong> Compute 47 features including velocity aggregates, merchant category embeddings, device fingerprint hashes, and geolocation risk scores.</li><li><strong>Model Training:</strong> XGBoost with Optuna hyperparameter optimization. Target: AUC-ROC &gt; 0.96, false positive rate &lt; 2%.</li><li><strong>Model Evaluation:</strong> Held-out test set evaluation plus shadow mode comparison against production model.</li><li><strong>Model Export:</strong> ONNX format for cross-platform serving compatibility.</li><li><strong>Registry:</strong> Model metadata, metrics, and artifacts stored in MLflow. Version tracked in <code>mfs_fraud_db.model_registry</code>.</li></ol><h3>A/B Testing</h3><p>New models deployed with configurable traffic split (e.g., 90/10 production/candidate). Automated rollback if candidate model false positive rate exceeds production baseline by &gt;0.5%.</p><h3>Related</h3><p>FRD-101 (Story), FRD-111 (Model Training Task), FRD-103 (A/B Testing), MR !601</p>"
+        }
+      },
+      "version": {"number": 2, "when": "2026-09-28T17:00:00.000Z"},
+      "_links": {"webui": "/spaces/FRD/pages/99004"}
+    },
+    {
+      "id": "99005",
+      "type": "page",
+      "title": "Incident Runbook: False Positive Spikes",
+      "space": {"key": "FRD", "name": "MFS Fraud Platform"},
+      "body": {
+        "storage": {
+          "value": "<h2>Incident Runbook: Fraud Engine False Positive Spikes</h2><p>This runbook covers diagnosis and remediation when the fraud scoring engine false positive rate exceeds the 2% SLA threshold.</p><h3>Detection</h3><p>Datadog monitor 'Fraud False Positive Rate' fires when FP rate &gt; 2% over 5-minute window. Alert routed to #fraud-oncall Slack channel and PagerDuty.</p><h3>Immediate Triage</h3><ol><li>Check Grafana dashboard 'Fraud Engine SLOs' for score distribution shift</li><li>Verify feature extraction freshness on <code>mfs-fraud-pod-01</code>: <code>kubectl exec -n mfs-prod mfs-fraud-pod-01 -- curl localhost:8080/health/features</code></li><li>Check model version in production: <code>kubectl exec -n mfs-prod mfs-fraud-pod-01 -- curl localhost:8080/model/version</code></li><li>Review mfs_fraud_db reference table timestamps for staleness</li></ol><h3>Common Root Causes</h3><table><tr><th>Cause</th><th>Indicator</th><th>Fix</th></tr><tr><td>Stale feature reference data</td><td>merchant_risk table last_updated &gt; 24h ago</td><td>Run feature refresh job; see INC0080201</td></tr><tr><td>Model/feature version mismatch</td><td>Model trained on feature set v(N) but serving v(N-1)</td><td>Align feature pipeline version with model training config</td></tr><tr><td>Training data drift</td><td>Score distribution diverges from training baseline</td><td>Retrain model with recent data; trigger FRD-111 pipeline</td></tr></table><h3>Rollback</h3><p>If false positive rate does not recover within 30 minutes: roll back to previous model version via <code>svc-fraud-engine</code> config: <code>kubectl set env deployment/fraud-engine -n mfs-prod MODEL_VERSION=v1</code></p><h3>Post-Incident</h3><p>File ServiceNow incident. Update this runbook. Review in weekly fraud ops meeting.</p>"
+        }
+      },
+      "version": {"number": 3, "when": "2026-09-28T12:00:00.000Z"},
+      "_links": {"webui": "/spaces/FRD/pages/99005"}
     }
   ]
 }

@@ -1,0 +1,84 @@
+{
+  "captured_at": "2026-10-04T14:47:08.050764Z",
+  "event_id": "b24233007cbb43d71da6e7b6c6d5915c2ffc2d7df48092863768e2002e52b022",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "dokoye",
+        "displayName": "David Okoye",
+        "emailAddress": "dokoye@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-token-vault"
+        }
+      ],
+      "created": "2026-07-18T11:00:00.000+0000",
+      "customfield_10014": "EPC-102",
+      "customfield_10015": "Platform Engineering",
+      "description": "Implement a PCI DSS v4.0 compliant token vault for secure cardholder data storage with HSM-based encryption key management. This feature covers encryption at rest and key rotation under Epic EPC-102.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Feature",
+        "subtask": false
+      },
+      "labels": [
+        "pci-dss",
+        "token-vault",
+        "encryption"
+      ],
+      "priority": {
+        "name": "Critical"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "subtasks": [
+        {
+          "fields": {
+            "status": {
+              "name": "Done"
+            },
+            "summary": "Encrypt cardholder data at rest"
+          },
+          "key": "PAY-201"
+        },
+        {
+          "fields": {
+            "status": {
+              "name": "In Progress"
+            },
+            "summary": "Implement HSM key rotation"
+          },
+          "key": "PAY-202"
+        }
+      ],
+      "summary": "PCI DSS Token Vault Implementation",
+      "updated": "2026-09-27T09:15:00.000+0000"
+    },
+    "id": "60200",
+    "key": "PAY-200",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60200"
+  },
+  "payload_hash": "114120f9174521e51f38069eb3b5b8879111e7454c6b97d9fb2803058f9d27ca",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-200",
+  "source_system": "jira",
+  "source_version": "114120f9174521e51f38069eb3b5b8879111e7454c6b97d9fb2803058f9d27ca"
+}

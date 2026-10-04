@@ -1,0 +1,66 @@
+{
+  "captured_at": "2026-10-04T13:49:45.895317Z",
+  "event_id": "f878ce0457f56f3f768dd208005b8d5aba43c3a0d9fe783f6fbbe16ccd3dfbab",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-07-16T10:00:00.000+0000",
+      "customfield_10015": "Payment Services",
+      "description": "Configure the circuit breaker parameters for the payment retry handler. Define thresholds, timeout durations, and half-open probe intervals in the application configuration.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "circuit-breaker",
+        "configuration"
+      ],
+      "parent": {
+        "key": "PAY-102"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "story_points": 2,
+      "summary": "Add retry circuit breaker config",
+      "updated": "2026-09-27T11:30:00.000+0000"
+    },
+    "id": "60121",
+    "key": "PAY-121",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60121"
+  },
+  "payload_hash": "ad164550d316719e855e6d16a1c4444c76f190934a26cd29766a999174fa56d1",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-121",
+  "source_system": "jira",
+  "source_version": "ad164550d316719e855e6d16a1c4444c76f190934a26cd29766a999174fa56d1"
+}

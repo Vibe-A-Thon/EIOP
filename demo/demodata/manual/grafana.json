@@ -1,0 +1,160 @@
+{
+  "dashboards": [
+    {
+      "uid": "pay-gateway-slos",
+      "title": "Payment Gateway SLOs",
+      "url": "/d/pay-gateway-slos/payment-gateway-slos",
+      "folderTitle": "MFS Payment Gateway",
+      "tags": ["payment-gateway", "slo", "production"],
+      "version": 8,
+      "created": "2026-07-20T09:00:00.000Z",
+      "updated": "2026-09-28T15:00:00.000Z",
+      "panels": [
+        {
+          "id": 1,
+          "title": "Payment API Latency P99",
+          "type": "timeseries",
+          "description": "P99 latency for all payment API endpoints on mfs-pay-pod-01, mfs-pay-pod-02, mfs-pay-pod-03. SLO target: < 200ms.",
+          "targets": [
+            {"expr": "histogram_quantile(0.99, rate(payment_api_request_duration_seconds_bucket{namespace='mfs-prod'}[5m]))", "legendFormat": "{{pod}}"}
+          ],
+          "thresholds": [{"value": 0.2, "color": "red", "label": "SLO: 200ms"}]
+        },
+        {
+          "id": 2,
+          "title": "Payment Success Rate",
+          "type": "gauge",
+          "description": "Percentage of successful payment transactions. SLO target: > 99.9%.",
+          "targets": [
+            {"expr": "sum(rate(payment_api_requests_total{status='success',namespace='mfs-prod'}[5m])) / sum(rate(payment_api_requests_total{namespace='mfs-prod'}[5m])) * 100"}
+          ],
+          "thresholds": [{"value": 99.9, "color": "green"}, {"value": 99.0, "color": "yellow"}, {"value": 0, "color": "red"}]
+        },
+        {
+          "id": 3,
+          "title": "Tokenization Throughput",
+          "type": "timeseries",
+          "description": "Token creation rate per second across all payment pods.",
+          "targets": [
+            {"expr": "sum(rate(tokenization_requests_total{namespace='mfs-prod'}[1m]))", "legendFormat": "Tokens/sec"}
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Circuit Breaker Status",
+          "type": "stat",
+          "description": "Current state of the payment retry circuit breaker: 0=CLOSED (healthy), 1=OPEN (tripped), 2=HALF_OPEN (probing).",
+          "targets": [
+            {"expr": "circuit_breaker_state{service='mfs-payment-gateway',namespace='mfs-prod'}", "legendFormat": "{{pod}}"}
+          ]
+        }
+      ]
+    },
+    {
+      "uid": "settlement-processing",
+      "title": "Settlement Processing",
+      "url": "/d/settlement-processing/settlement-processing",
+      "folderTitle": "MFS Payment Gateway",
+      "tags": ["settlement", "batch-processing", "reconciliation"],
+      "version": 3,
+      "created": "2026-08-15T09:00:00.000Z",
+      "updated": "2026-09-30T14:00:00.000Z",
+      "panels": [
+        {
+          "id": 1,
+          "title": "Settlement Batch Duration",
+          "type": "timeseries",
+          "description": "Time to process settlement batches on mfs-settle-pod-01. SLA target: < 5 minutes.",
+          "targets": [
+            {"expr": "settlement_batch_duration_seconds{namespace='mfs-prod',pod='mfs-settle-pod-01'}", "legendFormat": "Batch Duration"}
+          ],
+          "thresholds": [{"value": 300, "color": "red", "label": "SLA: 5min"}]
+        },
+        {
+          "id": 2,
+          "title": "Settlement Transaction Volume",
+          "type": "timeseries",
+          "description": "Number of transactions processed per settlement batch.",
+          "targets": [
+            {"expr": "settlement_batch_transaction_count{namespace='mfs-prod'}", "legendFormat": "Transactions/batch"}
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Reconciliation Discrepancies",
+          "type": "stat",
+          "description": "Number of unresolved reconciliation discrepancies flagged in the last 24 hours.",
+          "targets": [
+            {"expr": "sum(reconciliation_discrepancies_total{namespace='mfs-prod',status='unresolved'})", "legendFormat": "Unresolved"}
+          ]
+        }
+      ]
+    }
+  ],
+  "alert_rules": {
+    "mfs-prod": [
+      {
+        "rules": [
+          {
+            "grafana_alert": {
+              "uid": "alert-pay-latency",
+              "title": "Payment API Latency P99 > 200ms",
+              "condition": "histogram_quantile(0.99, rate(payment_api_request_duration_seconds_bucket{namespace='mfs-prod'}[5m])) > 0.2",
+              "for": "5m",
+              "labels": {"severity": "critical", "team": "devops-sre"},
+              "annotations": {
+                "summary": "Payment API P99 latency exceeds 200ms SLO on {{ $labels.pod }}",
+                "description": "The payment API P99 latency on {{ $labels.pod }} in mfs-prod has exceeded the 200ms SLO threshold for 5 minutes. Current value: {{ $value }}s. Check connection pool to mfs_payments_db on pghost-prod-01.mfs.internal.",
+                "runbook_url": "https://confluence.mfs.internal/spaces/PAY/pages/98505/Incident+Runbook+Payment+Timeouts"
+              },
+              "version": 3
+            }
+          },
+          {
+            "grafana_alert": {
+              "uid": "alert-pay-error-rate",
+              "title": "Payment Error Rate > 1%",
+              "condition": "(sum(rate(payment_api_requests_total{status='error',namespace='mfs-prod'}[5m])) / sum(rate(payment_api_requests_total{namespace='mfs-prod'}[5m]))) > 0.01",
+              "for": "3m",
+              "labels": {"severity": "warning", "team": "payment-services"},
+              "annotations": {
+                "summary": "Payment API error rate exceeds 1% threshold",
+                "description": "The payment API error rate in mfs-prod has exceeded 1% for 3 minutes. Current value: {{ $value | humanizePercentage }}. Check svc-payment-api logs on affected pods.",
+                "runbook_url": "https://confluence.mfs.internal/spaces/PAY/pages/98505/Incident+Runbook+Payment+Timeouts"
+              },
+              "version": 2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "datasources": [
+    {
+      "id": 1,
+      "name": "MFS Prometheus",
+      "type": "prometheus",
+      "url": "https://prometheus.mfs.internal:9090",
+      "access": "proxy",
+      "isDefault": true,
+      "database": "",
+      "jsonData": {
+        "httpMethod": "POST",
+        "timeInterval": "15s"
+      }
+    },
+    {
+      "id": 2,
+      "name": "MFS PostgreSQL",
+      "type": "postgres",
+      "url": "pghost-prod-01.mfs.internal:5432",
+      "access": "proxy",
+      "isDefault": false,
+      "database": "mfs_payments_db",
+      "jsonData": {
+        "sslmode": "require",
+        "maxOpenConns": 10
+      }
+    }
+  ]
+}

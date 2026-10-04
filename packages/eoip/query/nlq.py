@@ -20,12 +20,11 @@ from typing import Any, Literal
 from eoip.contracts.graph_result import GraphNode, GraphResult
 from eoip.contracts.query_plan import QueryPlan
 from eoip.graph.store import GraphStore
-from eoip.ontology.manifest import EDGE_LABELS, VERTEX_LABELS
+from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.query.eql import parse_and_execute
 from eoip.query.executor import PolicyViolation, QueryExecutor
 from eoip.query.nl import CLARIFICATION_PROMPT, NLInterpretation, interpret
 from pydantic import BaseModel, Field
-
 
 EngineName = Literal["query_plan", "eql", "operator", "search_fallback", "clarification"]
 
@@ -375,7 +374,7 @@ def _ordered_anchors(text: str, store: GraphStore) -> list[str]:
 
 def _resolve_anchor(token: str, store: GraphStore) -> str | None:
     if token.startswith("urn:eoip:"):
-        return token if store.get_vertex_by_canonical_id(token) else token
+        return token
     lookups = (
         ("WorkItem", "issue_key"),
         ("Commit", "commit_sha"),

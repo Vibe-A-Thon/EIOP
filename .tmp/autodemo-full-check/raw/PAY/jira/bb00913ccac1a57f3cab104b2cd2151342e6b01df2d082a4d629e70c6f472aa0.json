@@ -1,0 +1,94 @@
+{
+  "captured_at": "2026-10-04T14:47:08.051941Z",
+  "event_id": "bb00913ccac1a57f3cab104b2cd2151342e6b01df2d082a4d629e70c6f472aa0",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-settlement-engine"
+        }
+      ],
+      "created": "2026-08-12T10:00:00.000+0000",
+      "customfield_10014": "EPC-103",
+      "customfield_10015": "Payment Services",
+      "customfield_10050": "TC-PAY-008",
+      "description": "Implement real-time balance reconciliation between the payment gateway ledger and acquiring bank settlement records. Must detect and flag discrepancies within 60 seconds.\n\nAcceptance Criteria:\n- Reconcile balances in real-time as settlement batches complete\n- Flag discrepancies > $0.01 for manual review\n- Generate reconciliation reports in mfs_audit_db\n- Dashboard integration via Grafana\n\nGitLab MR: !502\nTest Case: TC-PAY-008",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "MR !502: Real-time balance reconciliation"
+            },
+            "key": "MR-502"
+          },
+          "type": {
+            "name": "GitLab MR",
+            "outward": "is developed in"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Reconciliation report generator"
+            },
+            "key": "PAY-321"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "reconciliation",
+        "real-time",
+        "audit"
+      ],
+      "parent": {
+        "key": "PAY-300"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "To Do",
+        "statusCategory": {
+          "name": "To Do"
+        }
+      },
+      "story_points": 8,
+      "summary": "Real-time balance reconciliation",
+      "updated": "2026-09-30T09:00:00.000+0000"
+    },
+    "id": "60302",
+    "key": "PAY-302",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60302"
+  },
+  "payload_hash": "517f95b4686c69a05e4a3b9a0a25beccc4a92e08a3ab868002596e633fb8fd0c",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-302",
+  "source_system": "jira",
+  "source_version": "517f95b4686c69a05e4a3b9a0a25beccc4a92e08a3ab868002596e633fb8fd0c"
+}

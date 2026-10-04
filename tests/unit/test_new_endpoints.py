@@ -99,6 +99,27 @@ def test_admin_replay_endpoint_queues_replay_job(tmp_path):
     assert job["payload"]["event_ids"] == ["a" * 64]
 
 
+def test_g2_required_dlq_and_replay_aliases(tmp_path):
+    app = _make_api_app(MemoryGraphStore(), tmp_path)
+    client = TestClient(app)
+    headers = {"Authorization": "Bearer test-token-minimum-24-characters!!"}
+
+    dlq = client.get("/api/v1/ingestion/dlq", headers=headers)
+    replay = client.post(
+        "/api/v1/ingestion/replay",
+        headers=headers,
+        json={"source_system": "jira", "event_ids": ["a" * 64]},
+    )
+
+    assert dlq.status_code == 200
+    assert dlq.json() == []
+    assert replay.status_code == 202
+    job = json.loads(
+        (tmp_path / "jobs" / f"{replay.json()['job_id']}.json").read_text(encoding="utf-8")
+    )
+    assert job["kind"] == "REPLAY"
+
+
 def test_admin_replay_endpoint_rejects_malformed_event_id(tmp_path):
     app = _make_api_app(MemoryGraphStore(), tmp_path)
     client = TestClient(app)

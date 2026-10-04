@@ -1,0 +1,61 @@
+{
+  "captured_at": "2026-10-04T13:45:50.512571Z",
+  "event_id": "7ea0cb949d27ef2d352e364f66d2c195fd26317dd4dd36485dfb3c6a0e729e78",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-aml-engine"
+        }
+      ],
+      "created": "2026-09-01T09:00:00.000+0000",
+      "customfield_10014": "EPC-203",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Anti-money laundering pattern detection feature with rule-based detection for structuring, layering, and integration patterns. Integrates with FinCEN for automated SAR/CTR filing. Data stored in mfs_aml_db on pghost-prod-02.mfs.internal.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuetype": {
+        "name": "Feature"
+      },
+      "labels": [
+        "aml",
+        "compliance",
+        "fincen"
+      ],
+      "priority": {
+        "name": "Critical"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "To Do"
+      },
+      "summary": "AML Pattern Detection",
+      "updated": "2026-09-28T09:00:00.000+0000"
+    },
+    "key": "FRD-300"
+  },
+  "payload_hash": "57871277824e36bc10a5065b7a441124b7df65d4b65d0d3b03728aa190e8e9a8",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-300",
+  "source_system": "jira",
+  "source_version": "57871277824e36bc10a5065b7a441124b7df65d4b65d0d3b03728aa190e8e9a8"
+}

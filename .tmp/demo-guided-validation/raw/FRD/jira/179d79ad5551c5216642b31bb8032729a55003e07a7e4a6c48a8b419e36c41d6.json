@@ -1,0 +1,57 @@
+{
+  "captured_at": "2026-10-04T14:43:26.424055Z",
+  "event_id": "179d79ad5551c5216642b31bb8032729a55003e07a7e4a6c48a8b419e36c41d6",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "dokoye",
+        "displayName": "David Okoye",
+        "emailAddress": "david.okoye@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-fraud-engine"
+        },
+        {
+          "name": "mfs-common-libs"
+        }
+      ],
+      "created": "2026-08-25T10:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Implement the Kafka consumer for the 'mfs.txn.raw' topic that feeds into the feature extraction pipeline. Must handle partition rebalances, maintain exactly-once semantics, and support consumer group scaling. Runs under svc-txn-monitor service account on mfs-txn-mon-pod-01.",
+      "issuetype": {
+        "name": "Task"
+      },
+      "labels": [
+        "kafka",
+        "streaming",
+        "consumer"
+      ],
+      "parent": {
+        "key": "FRD-102"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "Kafka feature stream consumer",
+      "updated": "2026-10-01T14:00:00.000+0000"
+    },
+    "key": "FRD-121"
+  },
+  "payload_hash": "da953a04ec81d65709b94a4a0e02c0206c4060b764b991e896d69fb6a78a9a66",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-121",
+  "source_system": "jira",
+  "source_version": "da953a04ec81d65709b94a4a0e02c0206c4060b764b991e896d69fb6a78a9a66"
+}

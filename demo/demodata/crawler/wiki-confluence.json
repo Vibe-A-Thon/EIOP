@@ -1,0 +1,193 @@
+[
+  {
+    "url": "https://wiki.mfs.internal/spaces/ENG/pages/overview",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Engineering Handbook - Architecture Overview",
+    "headings": [
+      "Engineering Handbook",
+      "Architecture Overview",
+      "Service Architecture",
+      "Infrastructure Layout",
+      "Team Structure"
+    ],
+    "text": "Engineering Handbook - Meridian Financial Services. Architecture Overview. This document describes the overall system architecture for the MFS platform, including payment processing, fraud detection, and customer-facing services. Service Architecture. The MFS platform is built on a microservices architecture deployed to OpenShift Container Platform (OCP). Core services include mfs-payment-gateway (deployed on mfs-pay-pod-01 in namespace mfs-payments), mfs-fraud-engine (deployed on mfs-fraud-pod-01 in namespace mfs-fraud), mfs-customer-portal (deployed on mfs-portal-pod-01 in namespace mfs-portal), and shared libraries in mfs-common-libs. All services communicate via REST APIs through the API gateway at api-gateway.mfs.internal and asynchronous event streaming through Kafka at kafka-broker.mfs.internal. Service accounts follow the naming convention svc-<service-name> with least-privilege access. Infrastructure Layout. Production databases are hosted on dedicated PostgreSQL instances: pghost-prod-01.mfs.internal (mfs_payments_db), pghost-prod-02.mfs.internal (mfs_fraud_db), pghost-prod-03.mfs.internal (mfs_audit_db), and pghost-prod-04.mfs.internal (mfs_customers_db). Redis caching is provided by redis-cluster.mfs.internal. HSM integration for card tokenization connects to hsm-gateway.mfs.internal on port 8443. The production cluster is ocp-prod-east.mfs.internal running OpenShift 4.14. Secrets management is handled by HashiCorp Vault at vault.mfs.internal. Team Structure. The platform is maintained by three engineering squads: Payments Core (lead: Arjun Deshmukh, 6 engineers), Fraud and Risk (lead: Priya Natarajan, 5 engineers), and Platform Engineering (lead: Marcus Thompson, 4 engineers). The Director of Engineering is Samantha Rodriguez. Architecture decisions are reviewed by the Architecture Review Board chaired by David Kim (VP Engineering).",
+    "links": [
+      "https://wiki.mfs.internal/spaces/ENG/pages/team-structure",
+      "https://wiki.mfs.internal/spaces/ENG/pages/payment-gateway-runbook",
+      "https://wiki.mfs.internal/spaces/ENG/pages/fraud-system-docs",
+      "https://wiki.mfs.internal/spaces/ENG/pages/db-schema-overview",
+      "https://wiki.mfs.internal/spaces/ENG/pages/openshift-pods",
+      "https://api.mfs.internal/catalog"
+    ]
+  },
+  {
+    "url": "https://wiki.mfs.internal/spaces/ENG/pages/team-structure",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Engineering Team Structure and On-Call",
+    "headings": [
+      "Engineering Team Structure",
+      "Payments Core Squad",
+      "Fraud and Risk Squad",
+      "Platform Engineering Squad",
+      "On-Call Rotation",
+      "Escalation Matrix"
+    ],
+    "text": "Engineering Team Structure and On-Call. Payments Core Squad. Team Lead: Arjun Deshmukh (arjun.deshmukh@mfs.internal). Members: Wei Zhang (senior engineer, payment processing), Elena Volkov (senior engineer, tokenization), James Okafor (engineer, API development), Sarah Chen (engineer, settlement), Ravi Krishnan (engineer, reconciliation), Lisa Park (QA lead). Primary ownership: mfs-payment-gateway, payment API v2, settlement engine, token vault. Service account: svc-payment-api. On-call PagerDuty schedule: payments-oncall. Fraud and Risk Squad. Team Lead: Priya Natarajan (priya.natarajan@mfs.internal). Members: Omar Hassan (senior ML engineer, model training), Yuki Tanaka (engineer, feature engineering), Carlos Rivera (engineer, AML rules), Fatima Al-Said (data engineer, streaming), Nadia Petrov (QA). Primary ownership: mfs-fraud-engine, AML rule engine, velocity monitoring, fraud scoring API v2, model serving infrastructure. Service account: svc-fraud-engine. On-call PagerDuty schedule: fraud-oncall. Platform Engineering Squad. Team Lead: Marcus Thompson (marcus.thompson@mfs.internal). Members: Aisha Obi (senior SRE, infrastructure), Jordan Lee (DevOps engineer, CI/CD), Mei Wong (engineer, observability), Tom Anderson (engineer, security). Primary ownership: mfs-common-libs, OpenShift infrastructure, CI/CD pipelines, monitoring, vault and secrets management. Service account: svc-notification-svc. On-call PagerDuty schedule: platform-oncall. Escalation Matrix. P1 incidents: On-call engineer -> Squad Lead -> Marcus Thompson (Platform) -> David Kim (VP Engineering). P2 incidents: On-call engineer -> Squad Lead. All production changes require approval from the squad lead and at least one peer review.",
+    "links": [
+      "https://wiki.mfs.internal/spaces/ENG/pages/overview",
+      "https://pagerduty.mfs.internal/schedules",
+      "https://wiki.mfs.internal/spaces/ENG/pages/incident-response"
+    ]
+  },
+  {
+    "url": "https://wiki.mfs.internal/spaces/ENG/pages/payment-gateway-runbook",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Payment Gateway Operational Runbook",
+    "headings": [
+      "Payment Gateway Runbook",
+      "Service Overview",
+      "Health Checks",
+      "Incident Response Procedures",
+      "Deployment Procedures",
+      "Common Issues and Remediation",
+      "Rollback Procedures"
+    ],
+    "text": "Payment Gateway Operational Runbook. Last updated: 2026-09-28 by Arjun Deshmukh. Service Overview. The mfs-payment-gateway service processes all payment transactions for Meridian Financial Services. It runs on mfs-pay-pod-01 in the mfs-payments namespace on ocp-prod-east.mfs.internal. The service connects to mfs_payments_db on pghost-prod-01.mfs.internal using service account svc-payment-api. It publishes transaction events to the txn-events Kafka topic on kafka-broker.mfs.internal. The service also connects to the HSM gateway at hsm-gateway.mfs.internal:8443 for card tokenization and encryption operations. Redis caching at redis-cluster.mfs.internal is used for idempotency keys and rate limiting. Health Checks. The /health endpoint returns service status. Check database connectivity: verify pghost-prod-01.mfs.internal is reachable on port 5432. Check Redis connectivity: verify redis-cluster.mfs.internal is reachable on port 6379. Check Kafka producer health: verify kafka-broker.mfs.internal is reachable on port 9092. Check HSM gateway: verify hsm-gateway.mfs.internal is reachable on port 8443. Monitor the Grafana dashboard at grafana.mfs.internal/d/payment-gateway-slo for SLO metrics. Incident Response Procedures. Step 1: Acknowledge the PagerDuty alert from payments-oncall schedule. Step 2: Check the Grafana dashboard for payment-gateway SLOs. Step 3: Inspect logs in Kibana at kibana.mfs.internal using query service:mfs-payment-gateway AND level:ERROR. Step 4: Check recent deployments via the deployment timeline in Datadog. Step 5: If database related, check pghost-prod-01.mfs.internal connection pool metrics. Step 6: If tokenization related, verify HSM gateway status. Step 7: Escalate to Arjun Deshmukh if not resolved within 15 minutes. Deployment Procedures. Deployments use GitLab CI/CD pipeline. Production deployments require approval from the payments-oncall lead and a successful staging deployment. Canary deployments roll out to 10% of traffic first. Full rollout requires manual approval after 30-minute canary window. Rollback Procedures. Execute rollback via GitLab CI/CD: trigger the rollback-production job in the latest pipeline. Alternatively, use oc rollback on ocp-prod-east.mfs.internal to revert the mfs-pay-pod-01 deployment. After rollback, verify the /health endpoint and check Grafana SLO dashboard. Common Issues and Remediation. Payment timeout errors: Check pghost-prod-01.mfs.internal connection pool saturation. Increase max_connections in the db pool if needed. Tokenization failures: Check HSM gateway health at hsm-gateway.mfs.internal:8443/health. Kafka producer errors: Check kafka-broker.mfs.internal broker health and txn-events topic partition status. Redis connection errors: Check redis-cluster.mfs.internal cluster node health. Rate limiting triggers: Review and adjust rate limit configuration in ConfigManager.",
+    "links": [
+      "https://wiki.mfs.internal/spaces/ENG/pages/overview",
+      "https://grafana.mfs.internal/d/payment-gateway-slo",
+      "https://kibana.mfs.internal/app/discover",
+      "https://gitlab.mfs.internal/mfs/payment-gateway/-/pipelines",
+      "https://wiki.mfs.internal/spaces/ENG/pages/db-schema-payments"
+    ]
+  },
+  {
+    "url": "https://wiki.mfs.internal/spaces/ENG/pages/fraud-system-docs",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Fraud Detection System Documentation",
+    "headings": [
+      "Fraud Detection System",
+      "System Architecture",
+      "Model Training Pipeline",
+      "Feature Engineering",
+      "AML Rule Engine",
+      "Velocity Monitoring",
+      "Model Serving and Versioning"
+    ],
+    "text": "Fraud Detection System Documentation. Last updated: 2026-09-25 by Priya Natarajan. System Architecture. The mfs-fraud-engine is the core fraud detection service for Meridian Financial Services. It runs on mfs-fraud-pod-01 in the mfs-fraud namespace on ocp-prod-east.mfs.internal. The service uses an ensemble approach combining ML model predictions (XGBoost) with rule-based scoring from the AML engine. Transaction events are consumed from the txn-events Kafka topic on kafka-broker.mfs.internal by the KafkaConsumer in features/stream.py. Fraud scores are published to the fraud-scores topic, and AML alerts are published to the aml-alerts topic. The database mfs_fraud_db on pghost-prod-02.mfs.internal stores historical fraud scores, velocity windows, AML alerts, and model metadata. Service account: svc-fraud-engine. Model Training Pipeline. Models are trained on a weekly cadence using historical transaction data from mfs_fraud_db. The training pipeline uses scikit-learn for feature preprocessing and XGBoost for the gradient-boosted tree model. Training data includes velocity features, amount patterns, geographic risk scores, and merchant category codes. Model artifacts are stored in the MLflow registry at mlflow.mfs.internal:5000. Model promotion from staging to production requires approval from Priya Natarajan and a minimum F1 score of 0.94 on the holdout test set. Feature Engineering. The FeatureExtractor class in features/extractor.py computes three main feature groups: velocity features (transaction frequency over sliding windows), amount pattern features (statistical distribution of transaction amounts), and geographic risk features (IP geolocation, shipping-billing address mismatch). Feature vectors are computed in real-time from Redis-backed sliding windows managed by the VelocityMonitor. AML Rule Engine. The AMLRuleEngine in rules/aml_engine.py implements regulatory compliance rules for anti-money laundering. Key rules include structuring detection (multiple transactions just below reporting thresholds), rapid movement patterns, and geographic risk flagging. Suspicious activities are flagged with severity levels and stored in the mfs_fraud_db aml_alerts table. The rule engine publishes flagged transactions to the aml-alerts Kafka topic for compliance team review. Velocity Monitoring. The VelocityMonitor in engine/velocity.py maintains sliding windows in Redis at redis-cluster.mfs.internal for transaction velocity tracking. Windows are configurable at 1-minute, 5-minute, 1-hour, and 24-hour intervals. Thresholds are dynamically adjusted based on merchant category and historical baselines. Model Serving and Versioning. The ModelServing class in serving/server.py provides a FastAPI-based inference endpoint. Models are loaded from the MLflow registry. The service supports A/B testing between model versions. Current production model: fraud-xgb-v4.2 (deployed 2026-09-20). Canary model: fraud-xgb-v4.3 (5% traffic, deployed 2026-09-28).",
+    "links": [
+      "https://wiki.mfs.internal/spaces/ENG/pages/overview",
+      "https://wiki.mfs.internal/spaces/ENG/pages/aml-compliance",
+      "https://mlflow.mfs.internal/models/fraud-xgb",
+      "https://grafana.mfs.internal/d/fraud-engine-slo",
+      "https://api.mfs.internal/services/fraud-scoring-api"
+    ]
+  },
+  {
+    "url": "https://wiki.mfs.internal/spaces/ENG/pages/db-schema-overview",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Database Schema Documentation Overview",
+    "headings": [
+      "Database Schema Overview",
+      "mfs_payments_db",
+      "mfs_fraud_db",
+      "mfs_customers_db",
+      "mfs_audit_db",
+      "Connection Information",
+      "Backup and Recovery"
+    ],
+    "text": "Database Schema Documentation Overview. This page provides an overview of all production databases used by Meridian Financial Services. mfs_payments_db. Host: pghost-prod-01.mfs.internal, port 5432. Service account: svc-payment-api. Tables: payments (payment_id, customer_id, amount, currency, status, created_at, updated_at), transactions (txn_id, payment_id, type, amount, status, processor_response, created_at), currencies (currency_code, name, decimal_places, active), settlements (settlement_id, batch_date, total_amount, status, processor_id), audit_log (log_id, payment_id, action, actor, details, created_at). Total estimated rows: 142M across all tables. Schema version: v2026.09.15. mfs_fraud_db. Host: pghost-prod-02.mfs.internal, port 5432. Service account: svc-fraud-engine. Tables: fraud_scores (score_id, txn_id, ml_score, rule_score, final_score, risk_level, model_version, created_at), velocity_windows (window_id, customer_id, window_type, count, sum_amount, window_start, window_end), aml_alerts (alert_id, txn_id, rule_id, severity, status, analyst_notes, created_at, reviewed_at), models (model_id, name, version, f1_score, precision, recall, deployed_at, status), features (feature_id, txn_id, feature_vector, extraction_time, extractor_version). Total estimated rows: 88M across all tables. Schema version: v2026.09.20. mfs_customers_db. Host: pghost-prod-04.mfs.internal, port 5432. Service account: svc-customer-svc. Tables: customers (customer_id, first_name_enc, last_name_enc, email_hash, phone_hash, kyc_status, created_at), accounts (account_id, customer_id, account_type, status, opened_at), cards (card_id, account_id, token, card_type, expiry_month, expiry_year, status), addresses (address_id, customer_id, type, line1_enc, city, state, postal_code, country). Total estimated rows: 24M across all tables. PII fields are encrypted using EncryptionUtil from mfs-common-libs. Schema version: v2026.08.10. mfs_audit_db. Host: pghost-prod-03.mfs.internal, port 5432. Service account: svc-notification-svc. Tables: audit_events (event_id, service_name, event_type, actor, resource_id, details, created_at), access_logs (log_id, service_account, resource_type, resource_id, action, ip_address, created_at), change_records (record_id, entity_type, entity_id, field_name, old_value_hash, new_value_hash, changed_by, created_at). Total estimated rows: 310M across all tables. Retention: 7 years per PCI DSS requirement. Schema version: v2026.09.01. Connection Information. All database connections use TLS 1.3 with mutual authentication. Connection pools are managed by SQLAlchemy with a maximum of 20 connections per service instance. Read replicas are available for reporting queries on each host at <host>-ro.mfs.internal. Backup and Recovery. Daily full backups at 02:00 UTC. WAL archiving for point-in-time recovery. Recovery Point Objective (RPO): 5 minutes. Recovery Time Objective (RTO): 30 minutes. Backups stored in encrypted S3-compatible storage at backup.mfs.internal.",
+    "links": [
+      "https://wiki.mfs.internal/spaces/ENG/pages/overview",
+      "https://dbdocs.mfs.internal/mfs_payments_db",
+      "https://dbdocs.mfs.internal/mfs_fraud_db",
+      "https://dbdocs.mfs.internal/mfs_customers_db",
+      "https://dbdocs.mfs.internal/mfs_audit_db"
+    ]
+  },
+  {
+    "url": "https://wiki.mfs.internal/spaces/ENG/pages/service-accounts",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Service Account Registry",
+    "headings": [
+      "Service Account Registry",
+      "Production Service Accounts",
+      "Service Account Policies",
+      "Token Rotation Schedule"
+    ],
+    "text": "Service Account Registry. This page lists all production service accounts used by Meridian Financial Services applications. Production Service Accounts. svc-payment-api: Used by mfs-payment-gateway. Permissions: read/write access to mfs_payments_db, publish to txn-events and payment-status Kafka topics, connect to hsm-gateway.mfs.internal, read/write to redis-cluster.mfs.internal. Owner: Arjun Deshmukh (Payments Core). Last rotated: 2026-09-15. svc-fraud-engine: Used by mfs-fraud-engine. Permissions: read/write access to mfs_fraud_db, consume from txn-events Kafka topic, publish to fraud-scores and aml-alerts Kafka topics, read/write to redis-cluster.mfs.internal, read from mlflow.mfs.internal model registry. Owner: Priya Natarajan (Fraud and Risk). Last rotated: 2026-09-15. svc-customer-svc: Used by mfs-customer-portal backend. Permissions: read access to mfs_customers_db, read access to mfs_payments_db (read replica). Owner: Marcus Thompson (Platform Engineering). Last rotated: 2026-09-15. svc-notification-svc: Used by mfs-common-libs audit logging and notification services. Permissions: read/write access to mfs_audit_db, publish to audit-events Kafka topic, connect to vault.mfs.internal for secrets management. Owner: Marcus Thompson (Platform Engineering). Last rotated: 2026-09-15. svc-cicd-deployer: Used by GitLab CI/CD for deployment automation. Permissions: deploy to all namespaces on ocp-prod-east.mfs.internal, push to container registry at registry.mfs.internal. Owner: Jordan Lee (Platform Engineering). Last rotated: 2026-09-01. svc-monitoring: Used by observability stack (Grafana, Datadog agents). Permissions: read access to all service health endpoints, scrape Prometheus metrics from all namespaces. Owner: Mei Wong (Platform Engineering). Last rotated: 2026-09-15. Service Account Policies. All service accounts are created and managed through vault.mfs.internal. Service accounts use short-lived tokens (24-hour TTL) with automatic renewal. Each service account follows the principle of least privilege. Cross-service communication requires explicit authorization in the service mesh. Service account credentials are never stored in code repositories. Token Rotation Schedule. All production service account tokens are rotated on the 15th of each month. Emergency rotations can be triggered through the vault.mfs.internal admin console. Rotation requires approval from the owning squad lead and Platform Engineering.",
+    "links": [
+      "https://wiki.mfs.internal/spaces/ENG/pages/overview",
+      "https://vault.mfs.internal/ui/vault/secrets",
+      "https://wiki.mfs.internal/spaces/ENG/pages/security-policies"
+    ]
+  },
+  {
+    "url": "https://wiki.mfs.internal/spaces/ENG/pages/openshift-pods",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "OpenShift Pod Documentation",
+    "headings": [
+      "OpenShift Pod Documentation",
+      "Production Cluster",
+      "Pod Inventory",
+      "Namespace Layout",
+      "Scaling Policies",
+      "Resource Quotas"
+    ],
+    "text": "OpenShift Pod Documentation. Production Cluster. Cluster: ocp-prod-east.mfs.internal. OpenShift version: 4.14. Node count: 12 worker nodes, 3 control plane nodes. Region: US-East. Managed by: Platform Engineering (Marcus Thompson). Pod Inventory. mfs-pay-pod-01: Payment gateway service (mfs-payment-gateway). Namespace: mfs-payments. Replicas: 3 (min 2, max 6). CPU request: 500m, CPU limit: 2000m. Memory request: 512Mi, Memory limit: 2Gi. Image: registry.mfs.internal/mfs/payment-gateway:v2026.09.28. Health check: /health every 10s. Readiness probe: /ready every 5s. mfs-fraud-pod-01: Fraud detection engine (mfs-fraud-engine). Namespace: mfs-fraud. Replicas: 4 (min 3, max 8). CPU request: 1000m, CPU limit: 4000m. Memory request: 2Gi, Memory limit: 8Gi. Image: registry.mfs.internal/mfs/fraud-engine:v2026.09.25. Note: Higher resource allocation due to ML model inference. Health check: /health every 10s. Readiness probe: /ready every 5s. mfs-portal-pod-01: Customer-facing web portal (mfs-customer-portal). Namespace: mfs-portal. Replicas: 2 (min 2, max 4). CPU request: 250m, CPU limit: 1000m. Memory request: 256Mi, Memory limit: 1Gi. Image: registry.mfs.internal/mfs/customer-portal:v2026.09.30. Served behind CDN at cdn.mfs.internal. mfs-common-pod-01: Shared library services (notification, audit). Namespace: mfs-platform. Replicas: 2 (min 1, max 3). CPU request: 250m, CPU limit: 1000m. Memory request: 256Mi, Memory limit: 512Mi. Image: registry.mfs.internal/mfs/common-services:v2026.09.22. Namespace Layout. mfs-payments: Payment processing services and related resources. mfs-fraud: Fraud detection and AML services. mfs-portal: Customer-facing frontend services. mfs-platform: Shared platform services, monitoring agents, and infrastructure. mfs-data: Database proxies and data pipeline operators. Scaling Policies. Horizontal Pod Autoscaler (HPA) is enabled for all production workloads. Scale-up trigger: CPU utilization above 70% for 2 minutes. Scale-down trigger: CPU utilization below 30% for 10 minutes. mfs-fraud-pod-01 also scales on custom metric: fraud-queue-depth (threshold: 1000 pending items). Resource Quotas. Each namespace has defined resource quotas: mfs-payments: max 24 CPU cores, 48Gi memory. mfs-fraud: max 32 CPU cores, 64Gi memory. mfs-portal: max 8 CPU cores, 16Gi memory. mfs-platform: max 12 CPU cores, 24Gi memory.",
+    "links": [
+      "https://wiki.mfs.internal/spaces/ENG/pages/overview",
+      "https://console.ocp-prod-east.mfs.internal",
+      "https://grafana.mfs.internal/d/cluster-overview"
+    ]
+  },
+  {
+    "url": "https://wiki.mfs.internal/spaces/ENG/pages/api-gateway-config",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "API Gateway Configuration",
+    "headings": [
+      "API Gateway Configuration",
+      "Routing Rules",
+      "Rate Limiting",
+      "Authentication",
+      "CORS Configuration",
+      "TLS Configuration"
+    ],
+    "text": "API Gateway Configuration. The API gateway at api-gateway.mfs.internal routes external and internal API traffic to backend services. It runs on the mfs-platform namespace on ocp-prod-east.mfs.internal. Routing Rules. /payments/v2/* -> mfs-payment-gateway (mfs-pay-pod-01, namespace mfs-payments, port 8080). /fraud/v2/* -> mfs-fraud-engine (mfs-fraud-pod-01, namespace mfs-fraud, port 8080). /tokens/v1/* -> mfs-payment-gateway (mfs-pay-pod-01, tokenization endpoints, port 8080). /settlements/v1/* -> mfs-payment-gateway (mfs-pay-pod-01, settlement endpoints, port 8080). /aml/v1/* -> mfs-fraud-engine (mfs-fraud-pod-01, AML endpoints, port 8080). Rate Limiting. Global rate limit: 10,000 requests per minute per API key. Per-endpoint limits: POST /payments/v2/payments: 1,000 rpm. GET /payments/v2/payments: 5,000 rpm. POST /fraud/v2/score: 2,000 rpm. Rate limit headers: X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset. Rate limit state stored in redis-cluster.mfs.internal. Authentication. All external API calls require OAuth 2.0 bearer tokens. Internal service-to-service calls use mTLS with service account certificates from vault.mfs.internal. API keys are managed through the API portal at api.mfs.internal. Token validation is performed by the AuthClient from mfs-common-libs. CORS Configuration. Allowed origins: https://portal.mfs.internal, https://admin.mfs.internal. Allowed methods: GET, POST, PUT, DELETE, OPTIONS. Allowed headers: Authorization, Content-Type, X-Request-ID. Max age: 86400 seconds. TLS Configuration. TLS 1.3 only. Certificate provider: vault.mfs.internal PKI engine. Certificate rotation: automatic, 30-day rotation. Cipher suites: TLS_AES_256_GCM_SHA384, TLS_CHACHA20_POLY1305_SHA256.",
+    "links": [
+      "https://wiki.mfs.internal/spaces/ENG/pages/overview",
+      "https://api.mfs.internal/catalog",
+      "https://wiki.mfs.internal/spaces/ENG/pages/security-policies"
+    ]
+  },
+  {
+    "url": "https://wiki.mfs.internal/spaces/ENG/pages/security-pci",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Security Policies and PCI DSS Compliance",
+    "headings": [
+      "Security Policies",
+      "PCI DSS Compliance",
+      "Data Classification",
+      "Encryption Standards",
+      "Access Control",
+      "Audit and Logging Requirements",
+      "Incident Response"
+    ],
+    "text": "Security Policies and PCI DSS Compliance. Meridian Financial Services maintains PCI DSS Level 1 compliance for all cardholder data processing. Last audit: 2026-08-15. Next audit: 2027-02-15. Compliance officer: Jennifer Walsh (jennifer.walsh@mfs.internal). PCI DSS Compliance. PCI DSS version: 4.0. Scope: All systems that store, process, or transmit cardholder data. In-scope systems: mfs-payment-gateway, mfs-customer-portal (card entry), mfs_payments_db (tokenized storage), hsm-gateway.mfs.internal (key management). Out-of-scope: mfs-fraud-engine (receives only tokenized data), mfs_fraud_db, mfs_audit_db (no cardholder data). Compensating controls: Network segmentation via OpenShift network policies, application-level encryption via HSMClient, tokenization of all card data at point of entry. Data Classification. Level 1 (Restricted): Cardholder data (PAN, CVV, expiry). Handled only by TokenizationService. Never stored in plaintext. Level 2 (Confidential): Customer PII (names, addresses, phone numbers). Encrypted at rest using EncryptionUtil.encrypt_field from mfs-common-libs. Level 3 (Internal): Transaction amounts, statuses, merchant information. Protected by access controls but not field-level encrypted. Level 4 (Public): API documentation, service status pages. Encryption Standards. Data at rest: AES-256-GCM via HSMClient for cardholder data, AES-256-CBC via EncryptionUtil for PII. Data in transit: TLS 1.3 for all network communication. Key management: HSM-backed keys at hsm-gateway.mfs.internal with automatic rotation every 90 days. PII hashing: SHA-256 via EncryptionUtil.hash_pii for search indexes. Access Control. Role-based access control (RBAC) enforced at OpenShift and application levels. Service accounts have minimum required permissions (see Service Account Registry). Multi-factor authentication required for all administrative access. Privileged access to production databases requires approval and is time-limited (4-hour sessions). All access is logged to mfs_audit_db via AuditLogger. Audit and Logging Requirements. All data access events must be logged via AuditLogger.log_access. All data changes must be logged via AuditLogger.log_change. All authentication events must be logged via AuditLogger.log_event. Audit logs are retained for 7 years in mfs_audit_db on pghost-prod-03.mfs.internal. Log integrity is verified via hash chains. Incident Response. Security incidents follow the standard incident response procedure. PCI-related incidents require immediate notification to Jennifer Walsh and David Kim. Card data breaches must be reported to card brands within 24 hours. Post-incident review must be completed within 5 business days.",
+    "links": [
+      "https://wiki.mfs.internal/spaces/ENG/pages/overview",
+      "https://wiki.mfs.internal/spaces/ENG/pages/service-accounts",
+      "https://wiki.mfs.internal/spaces/ENG/pages/incident-response",
+      "https://vault.mfs.internal/ui/vault/secrets"
+    ]
+  }
+]

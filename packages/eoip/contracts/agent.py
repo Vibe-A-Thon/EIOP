@@ -85,7 +85,7 @@ class AgentRequest(BaseModel):
 
 class RuleDecision(BaseModel):
     rule_id: str
-    outcome: Literal["ALLOW", "DENY", "WARN", "REDACT", "ABSTAIN"]
+    outcome: Literal["ALLOW", "DENY", "WARN", "REDACT", "ABSTAIN", "BLOCK"]
     summary: str
 
 

@@ -14,7 +14,7 @@ from jsonschema import Draft202012Validator
 from apps.api.app import create_app
 
 ROOT = Path(__file__).resolve().parents[2]
-PACK_PATH = ROOT / "Demo/demodata/enterprise/scenario-pack.json"
+PACK_PATH = ROOT / "demo/demodata/enterprise/scenario-pack.json"
 SCHEMA_PATH = ROOT / "schemas/demo_scenario_pack.schema.json"
 
 
@@ -37,7 +37,7 @@ def test_enterprise_pack_is_schema_and_ontology_valid():
 
 
 def test_all_source_fixtures_are_parseable_json():
-    fixture_paths = sorted((ROOT / "Demo/demodata/enterprise/source-fixtures").glob("*.json"))
+    fixture_paths = sorted((ROOT / "demo/demodata/enterprise/source-fixtures").glob("*.json"))
     assert {item.name for item in fixture_paths} == {
         "api-portal.json",
         "confluence.json",
@@ -51,7 +51,7 @@ def test_all_source_fixtures_are_parseable_json():
     for path in fixture_paths:
         assert json.loads(path.read_text(encoding="utf-8"))
     assert json.loads(
-        (ROOT / "Demo/demodata/enterprise/api/checkout-openapi.json").read_text(encoding="utf-8")
+        (ROOT / "demo/demodata/enterprise/api/checkout-openapi.json").read_text(encoding="utf-8")
     )["openapi"] == "3.1.0"
 
 

@@ -1,0 +1,94 @@
+{
+  "captured_at": "2026-10-04T14:43:26.265009Z",
+  "event_id": "8109d6ef8b6ce6324ed155a7d7e24c84c414b329a58181bb80e2062a8e5430b8",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "dokoye",
+        "displayName": "David Okoye",
+        "emailAddress": "dokoye@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-token-vault"
+        }
+      ],
+      "created": "2026-07-22T10:00:00.000+0000",
+      "customfield_10014": "EPC-102",
+      "customfield_10015": "Platform Engineering",
+      "customfield_10050": "TC-PAY-006",
+      "description": "Implement automated HSM key rotation for the token vault encryption keys. Must support zero-downtime rotation with re-encryption of existing data using the new key.\n\nAcceptance Criteria:\n- Automated key rotation every 90 days\n- Zero-downtime key swap with dual-key read support\n- Re-encryption batch process for existing data\n- Full audit trail in mfs_audit_db\n\nGitLab MR: !402\nTest Case: TC-PAY-006",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "MR !402: Implement HSM key rotation"
+            },
+            "key": "MR-402"
+          },
+          "type": {
+            "name": "GitLab MR",
+            "outward": "is developed in"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Create key rotation scheduler"
+            },
+            "key": "PAY-221"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "hsm",
+        "key-rotation",
+        "encryption"
+      ],
+      "parent": {
+        "key": "PAY-200"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "story_points": 8,
+      "summary": "Implement HSM key rotation",
+      "updated": "2026-09-29T14:30:00.000+0000"
+    },
+    "id": "60202",
+    "key": "PAY-202",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60202"
+  },
+  "payload_hash": "c77a474e9fc3604c90822d68126e4c98f3d87aa33fdbb763e7598add4e59ee11",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-202",
+  "source_system": "jira",
+  "source_version": "c77a474e9fc3604c90822d68126e4c98f3d87aa33fdbb763e7598add4e59ee11"
+}

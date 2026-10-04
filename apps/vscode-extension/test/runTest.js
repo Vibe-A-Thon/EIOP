@@ -36,14 +36,22 @@ async function main() {
       await fs.rm(profile, {recursive: true, force: true, maxRetries: 20, retryDelay: 250});
     }
     const result = JSON.parse(await fs.readFile(receipt, 'utf8'));
-    if (result.status !== 'PASS' || result.passed !== 4 || result.failed !== 0) {
-      throw new Error('Extension host did not produce all four passing journey receipts.');
+    if (result.status !== 'PASS' || result.passed !== 5 || result.failed !== 0) {
+      throw new Error('Extension host did not produce all five passing journey receipts.');
     }
     result.exit_code = 0;
     await fs.writeFile(receipt, JSON.stringify(result, null, 2));
     console.log(`Acceptance receipt: ${receipt}`);
   } catch (error) {
-    await fs.writeFile(receipt, JSON.stringify({status: 'FAIL', exit_code: 1, error: error.message}, null, 2));
+    let detail;
+    try {
+      detail = JSON.parse(await fs.readFile(receipt, 'utf8'));
+    } catch (readError) {
+      if (readError.code !== 'ENOENT') throw readError;
+      detail = {};
+    }
+    await fs.writeFile(receipt, JSON.stringify({...detail, status: 'FAIL', exit_code: 1, hostError: error.message}, null, 2));
+    console.error(`Failure receipt: ${receipt}`);
     throw error;
   }
 }

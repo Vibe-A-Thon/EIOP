@@ -15,7 +15,7 @@ from eoip.ontology.manifest import edge_endpoints_valid
 from eoip.validation.gate import MutationBlocked, check_edge, check_vertex
 from jsonschema import Draft202012Validator
 
-DEFAULT_PACK = Path("Demo/demodata/enterprise/scenario-pack.json")
+DEFAULT_PACK = Path("demo/demodata/enterprise/scenario-pack.json")
 DEFAULT_SCHEMA = Path("schemas/demo_scenario_pack.schema.json")
 
 

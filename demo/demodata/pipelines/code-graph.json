@@ -1,157 +1,265 @@
 {
-  "description": "Code graph represented as JSON — Northstar Checkout services. Demonstrates code-as-JSON ingestion for constructing a code graph without parsing source files.",
+  "description": "Code graph represented as JSON -- MFS Fraud Detection platform services. Demonstrates code-as-JSON ingestion for constructing a code graph without parsing source files.",
   "repository": {
-    "repo_id": "northstar-checkout",
-    "name": "northstar-checkout",
-    "source_uri": "https://gitlab.example.invalid/northstar/checkout",
+    "repo_id": "mfs-fraud-engine",
+    "name": "mfs-fraud-engine",
+    "source_uri": "https://gitlab.mfs.internal/mfs/fraud-engine",
     "default_branch": "main"
   },
   "files": [
     {
-      "path": "services/checkout/risk.py",
+      "path": "services/scoring/fraud_scorer.py",
       "language": "python",
-      "content_hash": "northstar-risk-v2",
-      "line_count": 95
+      "content_hash": "mfs-fraud-scorer-v2",
+      "line_count": 185
     },
     {
-      "path": "services/checkout/api.py",
+      "path": "services/scoring/feature_extractor.py",
       "language": "python",
-      "content_hash": "northstar-api-v2",
-      "line_count": 68
+      "content_hash": "mfs-feature-extractor-v1",
+      "line_count": 210
     },
     {
-      "path": "services/checkout/fallback.py",
+      "path": "services/scoring/model_router.py",
       "language": "python",
-      "content_hash": "northstar-fallback-v1",
-      "line_count": 52
+      "content_hash": "mfs-model-router-v1",
+      "line_count": 132
     },
     {
-      "path": "services/inventory/reservation.py",
+      "path": "services/monitoring/velocity_monitor.py",
       "language": "python",
-      "content_hash": "northstar-reservation-v1",
-      "line_count": 88
+      "content_hash": "mfs-velocity-monitor-v1",
+      "line_count": 168
     },
     {
-      "path": "services/payment/authorize.py",
+      "path": "services/monitoring/anomaly_detector.py",
       "language": "python",
-      "content_hash": "northstar-payment-v1",
-      "line_count": 74
-    },
-    {
-      "path": "frontend/src/pages/Checkout.tsx",
-      "language": "typescript",
-      "content_hash": "northstar-checkout-page-v2",
-      "line_count": 310
-    },
-    {
-      "path": "frontend/src/components/RiskChallenge.tsx",
-      "language": "typescript",
-      "content_hash": "northstar-risk-challenge-v1",
+      "content_hash": "mfs-anomaly-detector-v1",
       "line_count": 145
+    },
+    {
+      "path": "services/aml/rule_engine.py",
+      "language": "python",
+      "content_hash": "mfs-aml-rules-v1",
+      "line_count": 234
+    },
+    {
+      "path": "services/aml/sar_generator.py",
+      "language": "python",
+      "content_hash": "mfs-sar-generator-v1",
+      "line_count": 178
+    },
+    {
+      "path": "services/common/kafka_consumer.py",
+      "language": "python",
+      "content_hash": "mfs-kafka-consumer-v2",
+      "line_count": 96
+    },
+    {
+      "path": "services/common/db_client.py",
+      "language": "python",
+      "content_hash": "mfs-db-client-v1",
+      "line_count": 72
+    },
+    {
+      "path": "services/models/transaction.py",
+      "language": "python",
+      "content_hash": "mfs-txn-model-v1",
+      "line_count": 58
     }
   ],
   "symbols": [
     {
-      "qualified_name": "services.checkout.risk.score_order",
-      "symbol_kind": "function",
-      "name": "score_order",
-      "path": "services/checkout/risk.py",
-      "start_line": 6,
-      "end_line": 18
-    },
-    {
-      "qualified_name": "services.checkout.risk.authorize_order",
-      "symbol_kind": "function",
-      "name": "authorize_order",
-      "path": "services/checkout/risk.py",
-      "start_line": 21,
-      "end_line": 42
-    },
-    {
-      "qualified_name": "services.checkout.api.create_order",
-      "symbol_kind": "function",
-      "name": "create_order",
-      "path": "services/checkout/api.py",
-      "start_line": 8,
-      "end_line": 32
-    },
-    {
-      "qualified_name": "services.checkout.fallback.safe_refuse",
-      "symbol_kind": "function",
-      "name": "safe_refuse",
-      "path": "services/checkout/fallback.py",
-      "start_line": 10,
-      "end_line": 28
-    },
-    {
-      "qualified_name": "services.checkout.fallback.emit_timeout_trace",
-      "symbol_kind": "function",
-      "name": "emit_timeout_trace",
-      "path": "services/checkout/fallback.py",
-      "start_line": 31,
-      "end_line": 52
-    },
-    {
-      "qualified_name": "services.inventory.reservation.ReservationService",
+      "qualified_name": "services.scoring.fraud_scorer.FraudScorer",
       "symbol_kind": "class",
-      "name": "ReservationService",
-      "path": "services/inventory/reservation.py",
-      "start_line": 12,
+      "name": "FraudScorer",
+      "path": "services/scoring/fraud_scorer.py",
+      "start_line": 18,
+      "end_line": 185
+    },
+    {
+      "qualified_name": "services.scoring.fraud_scorer.FraudScorer.score_transaction",
+      "symbol_kind": "method",
+      "name": "score_transaction",
+      "path": "services/scoring/fraud_scorer.py",
+      "start_line": 42,
       "end_line": 88
     },
     {
-      "qualified_name": "services.inventory.reservation.ReservationService.reserve",
+      "qualified_name": "services.scoring.fraud_scorer.FraudScorer.load_model",
       "symbol_kind": "method",
-      "name": "reserve",
-      "path": "services/inventory/reservation.py",
-      "start_line": 24,
-      "end_line": 52
+      "name": "load_model",
+      "path": "services/scoring/fraud_scorer.py",
+      "start_line": 90,
+      "end_line": 115
     },
     {
-      "qualified_name": "services.payment.authorize.authorize_payment",
-      "symbol_kind": "function",
-      "name": "authorize_payment",
-      "path": "services/payment/authorize.py",
-      "start_line": 10,
-      "end_line": 45
-    },
-    {
-      "qualified_name": "frontend.pages.Checkout",
-      "symbol_kind": "component",
-      "name": "Checkout",
-      "path": "frontend/src/pages/Checkout.tsx",
-      "start_line": 22,
-      "end_line": 310
-    },
-    {
-      "qualified_name": "frontend.components.RiskChallenge",
-      "symbol_kind": "component",
-      "name": "RiskChallenge",
-      "path": "frontend/src/components/RiskChallenge.tsx",
+      "qualified_name": "services.scoring.feature_extractor.FeatureExtractor",
+      "symbol_kind": "class",
+      "name": "FeatureExtractor",
+      "path": "services/scoring/feature_extractor.py",
       "start_line": 15,
+      "end_line": 210
+    },
+    {
+      "qualified_name": "services.scoring.feature_extractor.FeatureExtractor.extract_features",
+      "symbol_kind": "method",
+      "name": "extract_features",
+      "path": "services/scoring/feature_extractor.py",
+      "start_line": 35,
+      "end_line": 92
+    },
+    {
+      "qualified_name": "services.scoring.feature_extractor.FeatureExtractor.compute_velocity",
+      "symbol_kind": "method",
+      "name": "compute_velocity",
+      "path": "services/scoring/feature_extractor.py",
+      "start_line": 94,
+      "end_line": 130
+    },
+    {
+      "qualified_name": "services.scoring.model_router.ModelRouter",
+      "symbol_kind": "class",
+      "name": "ModelRouter",
+      "path": "services/scoring/model_router.py",
+      "start_line": 10,
+      "end_line": 132
+    },
+    {
+      "qualified_name": "services.scoring.model_router.ModelRouter.route_request",
+      "symbol_kind": "method",
+      "name": "route_request",
+      "path": "services/scoring/model_router.py",
+      "start_line": 30,
+      "end_line": 65
+    },
+    {
+      "qualified_name": "services.monitoring.velocity_monitor.VelocityMonitor",
+      "symbol_kind": "class",
+      "name": "VelocityMonitor",
+      "path": "services/monitoring/velocity_monitor.py",
+      "start_line": 12,
+      "end_line": 168
+    },
+    {
+      "qualified_name": "services.monitoring.velocity_monitor.VelocityMonitor.check_velocity",
+      "symbol_kind": "method",
+      "name": "check_velocity",
+      "path": "services/monitoring/velocity_monitor.py",
+      "start_line": 38,
+      "end_line": 85
+    },
+    {
+      "qualified_name": "services.monitoring.anomaly_detector.AnomalyDetector",
+      "symbol_kind": "class",
+      "name": "AnomalyDetector",
+      "path": "services/monitoring/anomaly_detector.py",
+      "start_line": 10,
       "end_line": 145
+    },
+    {
+      "qualified_name": "services.monitoring.anomaly_detector.AnomalyDetector.detect_anomaly",
+      "symbol_kind": "method",
+      "name": "detect_anomaly",
+      "path": "services/monitoring/anomaly_detector.py",
+      "start_line": 28,
+      "end_line": 72
+    },
+    {
+      "qualified_name": "services.aml.rule_engine.AMLRuleEngine",
+      "symbol_kind": "class",
+      "name": "AMLRuleEngine",
+      "path": "services/aml/rule_engine.py",
+      "start_line": 15,
+      "end_line": 234
+    },
+    {
+      "qualified_name": "services.aml.rule_engine.AMLRuleEngine.evaluate_patterns",
+      "symbol_kind": "method",
+      "name": "evaluate_patterns",
+      "path": "services/aml/rule_engine.py",
+      "start_line": 42,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "services.aml.rule_engine.AMLRuleEngine.detect_structuring",
+      "symbol_kind": "method",
+      "name": "detect_structuring",
+      "path": "services/aml/rule_engine.py",
+      "start_line": 100,
+      "end_line": 148
+    },
+    {
+      "qualified_name": "services.aml.sar_generator.SARGenerator",
+      "symbol_kind": "class",
+      "name": "SARGenerator",
+      "path": "services/aml/sar_generator.py",
+      "start_line": 12,
+      "end_line": 178
+    },
+    {
+      "qualified_name": "services.aml.sar_generator.SARGenerator.generate_sar",
+      "symbol_kind": "method",
+      "name": "generate_sar",
+      "path": "services/aml/sar_generator.py",
+      "start_line": 30,
+      "end_line": 95
+    },
+    {
+      "qualified_name": "services.common.kafka_consumer.FraudKafkaConsumer",
+      "symbol_kind": "class",
+      "name": "FraudKafkaConsumer",
+      "path": "services/common/kafka_consumer.py",
+      "start_line": 8,
+      "end_line": 96
+    },
+    {
+      "qualified_name": "services.common.db_client.FraudDBClient",
+      "symbol_kind": "class",
+      "name": "FraudDBClient",
+      "path": "services/common/db_client.py",
+      "start_line": 5,
+      "end_line": 72
+    },
+    {
+      "qualified_name": "services.models.transaction.Transaction",
+      "symbol_kind": "class",
+      "name": "Transaction",
+      "path": "services/models/transaction.py",
+      "start_line": 8,
+      "end_line": 58
     }
   ],
   "dependencies": [
-    {"name": "httpx", "resolved": true, "language": "python"},
-    {"name": "fastapi", "resolved": true, "language": "python"},
-    {"name": "pydantic", "resolved": true, "language": "python"},
-    {"name": "structlog", "resolved": true, "language": "python"},
-    {"name": "react", "resolved": true, "language": "typescript"},
-    {"name": "@stripe/stripe-js", "resolved": true, "language": "typescript"}
+    {"name": "xgboost", "version": "2.0.3", "type": "pypi"},
+    {"name": "onnxruntime", "version": "1.17.0", "type": "pypi"},
+    {"name": "confluent-kafka", "version": "2.3.0", "type": "pypi"},
+    {"name": "psycopg2-binary", "version": "2.9.9", "type": "pypi"},
+    {"name": "mlflow", "version": "2.11.0", "type": "pypi"},
+    {"name": "optuna", "version": "3.6.0", "type": "pypi"},
+    {"name": "scikit-learn", "version": "1.4.0", "type": "pypi"},
+    {"name": "numpy", "version": "1.26.4", "type": "pypi"},
+    {"name": "grpcio", "version": "1.62.0", "type": "pypi"},
+    {"name": "pydantic", "version": "2.6.0", "type": "pypi"}
   ],
   "edges": [
-    {"type": "CALLS", "from": "services.checkout.api.create_order", "to": "services.checkout.risk.authorize_order"},
-    {"type": "CALLS", "from": "services.checkout.risk.authorize_order", "to": "services.checkout.risk.score_order"},
-    {"type": "CALLS", "from": "services.checkout.api.create_order", "to": "services.checkout.fallback.safe_refuse"},
-    {"type": "CALLS", "from": "services.checkout.api.create_order", "to": "services.payment.authorize.authorize_payment"},
-    {"type": "CALLS", "from": "services.checkout.api.create_order", "to": "services.inventory.reservation.ReservationService.reserve"},
-    {"type": "CALLS", "from": "services.checkout.fallback.safe_refuse", "to": "services.checkout.fallback.emit_timeout_trace"},
-    {"type": "IMPORTS", "from": "services/checkout/api.py", "to": "fastapi"},
-    {"type": "IMPORTS", "from": "services/checkout/risk.py", "to": "httpx"},
-    {"type": "IMPORTS", "from": "services/checkout/fallback.py", "to": "structlog"},
-    {"type": "IMPORTS", "from": "services/payment/authorize.py", "to": "httpx"},
-    {"type": "IMPORTS", "from": "frontend/src/pages/Checkout.tsx", "to": "react"},
-    {"type": "IMPORTS", "from": "frontend/src/components/RiskChallenge.tsx", "to": "@stripe/stripe-js"}
+    {"source": "services.scoring.fraud_scorer.FraudScorer.score_transaction", "target": "services.scoring.feature_extractor.FeatureExtractor.extract_features", "edge_type": "calls"},
+    {"source": "services.scoring.fraud_scorer.FraudScorer.score_transaction", "target": "services.scoring.model_router.ModelRouter.route_request", "edge_type": "calls"},
+    {"source": "services.scoring.fraud_scorer.FraudScorer.load_model", "target": "services.common.db_client.FraudDBClient", "edge_type": "uses"},
+    {"source": "services.scoring.feature_extractor.FeatureExtractor.extract_features", "target": "services.scoring.feature_extractor.FeatureExtractor.compute_velocity", "edge_type": "calls"},
+    {"source": "services.scoring.feature_extractor.FeatureExtractor.extract_features", "target": "services.common.db_client.FraudDBClient", "edge_type": "uses"},
+    {"source": "services.scoring.feature_extractor.FeatureExtractor", "target": "services.common.kafka_consumer.FraudKafkaConsumer", "edge_type": "uses"},
+    {"source": "services.scoring.model_router.ModelRouter.route_request", "target": "services.common.db_client.FraudDBClient", "edge_type": "uses"},
+    {"source": "services.monitoring.velocity_monitor.VelocityMonitor.check_velocity", "target": "services.common.db_client.FraudDBClient", "edge_type": "uses"},
+    {"source": "services.monitoring.velocity_monitor.VelocityMonitor", "target": "services.common.kafka_consumer.FraudKafkaConsumer", "edge_type": "uses"},
+    {"source": "services.monitoring.anomaly_detector.AnomalyDetector.detect_anomaly", "target": "services.monitoring.velocity_monitor.VelocityMonitor.check_velocity", "edge_type": "calls"},
+    {"source": "services.monitoring.anomaly_detector.AnomalyDetector.detect_anomaly", "target": "services.common.db_client.FraudDBClient", "edge_type": "uses"},
+    {"source": "services.aml.rule_engine.AMLRuleEngine.evaluate_patterns", "target": "services.aml.rule_engine.AMLRuleEngine.detect_structuring", "edge_type": "calls"},
+    {"source": "services.aml.rule_engine.AMLRuleEngine.evaluate_patterns", "target": "services.common.db_client.FraudDBClient", "edge_type": "uses"},
+    {"source": "services.aml.sar_generator.SARGenerator.generate_sar", "target": "services.aml.rule_engine.AMLRuleEngine.evaluate_patterns", "edge_type": "calls"},
+    {"source": "services.aml.sar_generator.SARGenerator.generate_sar", "target": "services.common.db_client.FraudDBClient", "edge_type": "uses"},
+    {"source": "services.scoring.fraud_scorer.FraudScorer.score_transaction", "target": "services.models.transaction.Transaction", "edge_type": "uses"},
+    {"source": "services.monitoring.velocity_monitor.VelocityMonitor.check_velocity", "target": "services.models.transaction.Transaction", "edge_type": "uses"},
+    {"source": "services.aml.rule_engine.AMLRuleEngine.evaluate_patterns", "target": "services.models.transaction.Transaction", "edge_type": "uses"}
   ]
 }

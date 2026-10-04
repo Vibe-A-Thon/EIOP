@@ -17,6 +17,9 @@ from eoip.agents.runtime import AgentRuntime
 from eoip.audit.sink import AuditSink
 from eoip.config import load_agent_config, load_memory_policy
 from eoip.connectors.acquisition import AcquisitionPolicy, AcquisitionScheduler
+from eoip.connectors.base import DiscoveryScope
+from eoip.connectors.config import connector_from_registry
+from eoip.connectors.errors import ConnectorError
 from eoip.connectors.registry import (
     SourceAlreadyExistsError,
     SourceNotFoundError,
@@ -75,6 +78,9 @@ def _operation(path: str, body: bytes) -> str:
         "/api/v1/neighborhood",
         "/api/v1/traceability",
         "/api/v1/ontology/export",
+        "/api/v1/ontology/diff",
+        "/api/v1/knowledge/freshness",
+        "/api/v1/query/cache/stats",
         "/api/v1/graph/blast-radius",
         "/api/v1/graph/reverse-impact",
         "/api/v1/graph/metrics",
@@ -82,9 +88,9 @@ def _operation(path: str, body: bytes) -> str:
         "/api/v1/graph/statistics",
         "/api/v1/change-journal",
         "/api/v1/demo/scenarios",
-    } or path.startswith(("/api/v1/entities/", "/api/v1/graph/", "/api/v1/capsules")):
+    } or path.startswith(("/api/v1/entities/", "/api/v1/graph/", "/api/v1/capsules", "/api/v1/experts/")):
         return "query"
-    if path.startswith(("/api/v1/admin/", "/api/v1/sources")):
+    if path.startswith(("/api/v1/admin/", "/api/v1/sources", "/api/v1/identity/")):
         return "admin"
     return "other"
 
@@ -161,6 +167,20 @@ class SourceRegistryPatch(BaseModel):
     source_type: SourceType | None = None
     name: str | None = Field(default=None, min_length=1, max_length=256)
     base_url: str | None = Field(default=None, max_length=2048)
+    acquisition_modes: list[str] | None = Field(default=None, max_length=16)
+    allowed_scopes: list[str] | None = Field(default=None, max_length=1000)
+    excluded_scopes: list[str] | None = Field(default=None, max_length=1000)
+    polling_frequency_seconds: int | None = Field(default=None, ge=1, le=31_536_000)
+    webhook_status: str | None = Field(default=None, max_length=32)
+    mapping_version: str | None = Field(default=None, max_length=128)
+    parser_version: str | None = Field(default=None, max_length=128)
+    checkpoint: str | None = Field(default=None, max_length=4096)
+    last_successful_baseline: str | None = Field(default=None, max_length=64)
+    last_incremental_run: str | None = Field(default=None, max_length=64)
+    reconciliation_schedule: str | None = Field(default=None, max_length=256)
+    health: str | None = Field(default=None, max_length=32)
+    freshness_slo_seconds: int | None = Field(default=None, ge=1, le=31_536_000)
+    compatibility: dict | None = None
     enabled: bool | None = None
     capabilities: SourceCapabilities | None = None
     config: dict | None = None
@@ -732,6 +752,38 @@ def create_app():
     def baseline_source(source_id: str, payload: SourceOperationRequest, request: Request):
         return submit_source_operation(source_id, "BASELINE", payload, request)
 
+    @app.post("/api/v1/sources/{source_id}/discover")
+    def discover_source(source_id: str, request: Request, scope: DiscoveryScope | None = None):
+        try:
+            entry = source_registry.get(source_id)
+            if not entry.enabled or not entry.capabilities.discovery:
+                raise HTTPException(409, "Source discovery capability is not enabled")
+            connector = connector_from_registry(
+                entry,
+                correlation_id=getattr(getattr(request, "state", None), "correlation_id", None),
+            )
+            try:
+                return connector.discover(scope or DiscoveryScope()).model_dump(mode="json")
+            finally:
+                close = getattr(connector, "close", None)
+                if callable(close):
+                    close()
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+        except ConnectorError as exc:
+            raise HTTPException(503, f"Connector discovery unavailable: {exc.category}") from exc
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @app.post("/api/v1/sources/{source_id}/dry-run", status_code=202)
+    def dry_run_source(source_id: str, payload: SourceOperationRequest, request: Request):
+        return submit_source_operation(
+            source_id,
+            "POLL" if payload.checkpoint else "BASELINE",
+            payload.model_copy(update={"dry_run": True}),
+            request,
+        )
+
     @app.post("/api/v1/sources/{source_id}/sync", status_code=202)
     def sync_source(source_id: str, payload: SourceOperationRequest, request: Request):
         return submit_source_operation(source_id, "POLL", payload, request)
@@ -751,6 +803,21 @@ def create_app():
             return []
         paths = sorted(root.glob("*.json"), key=lambda item: item.stat().st_mtime, reverse=True)
         return [json.loads(path.read_text(encoding="utf-8")) for path in paths[:limit]]
+
+    @app.get("/api/v1/sources/{source_id}/checkpoint")
+    def source_checkpoint(source_id: str):
+        try:
+            source = source_registry.get(source_id)
+        except SourceNotFoundError as exc:
+            raise HTTPException(404, "Source not found") from exc
+        checkpoint_file = data_root() / "state" / "connectors" / f"{source_id}.json"
+        state = json.loads(checkpoint_file.read_text(encoding="utf-8")) if checkpoint_file.exists() else {}
+        return {
+            "source_id": source_id,
+            "registry_checkpoint": source.checkpoint,
+            "baseline_complete": bool(source.last_successful_baseline or state.get("baseline_complete")),
+            "state": state,
+        }
 
     @app.post("/api/v1/sources/{source_id}/replay", status_code=202)
     def replay_source(source_id: str, payload: SourceOperationRequest, request: Request):
@@ -1039,6 +1106,60 @@ def create_app():
 
         return detect_ontology_drift(store).to_dict()
 
+    @app.post("/api/v1/ontology/diff")
+    def ontology_diff(body: dict):
+        """Semantic diff between two manifest snapshots (GAP-GITOPS-003).
+
+        Body: {"old": <snapshot>|"current", "new": <snapshot>|"current"}.
+        Returns the classified changes and a CI publish verdict.
+        """
+        from eoip.ontology.gitops import current_manifest_snapshot, validate_ontology_change
+
+        def resolve(value) -> dict:
+            if value in (None, "current"):
+                return current_manifest_snapshot()
+            if isinstance(value, dict):
+                return value
+            raise HTTPException(422, "manifest snapshots must be objects or 'current'")
+
+        return validate_ontology_change(resolve(body.get("old")), resolve(body.get("new")))
+
+    @app.get("/api/v1/identity/candidates")
+    def list_identity_candidates(status: str | None = None):
+        from eoip.identity.candidates import IdentityCandidateStore
+
+        store_q = IdentityCandidateStore(data_root() / "state" / "identity-candidates.json")
+        if status and status not in {"PENDING", "CONFIRMED", "REJECTED"}:
+            raise HTTPException(422, "Invalid candidate status")
+        return {"candidates": [item.to_dict() for item in store_q.list(status=status)]}
+
+    @app.post("/api/v1/identity/candidates/{candidate_id}/decide")
+    def decide_identity_candidate(candidate_id: str, payload: ProposalDecisionRequest):
+        """Human review decision for an identity-merge candidate (GAP-ER-005/010)."""
+        from eoip.identity.candidates import IdentityCandidateStore
+
+        store_q = IdentityCandidateStore(data_root() / "state" / "identity-candidates.json")
+        try:
+            candidate = store_q.decide(candidate_id, approve=True, reviewer=payload.actor_id)
+        except KeyError as exc:
+            raise HTTPException(404, "Candidate not found") from exc
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from exc
+        return candidate.to_dict()
+
+    @app.post("/api/v1/identity/candidates/{candidate_id}/reject")
+    def reject_identity_candidate(candidate_id: str, payload: ProposalDecisionRequest):
+        from eoip.identity.candidates import IdentityCandidateStore
+
+        store_q = IdentityCandidateStore(data_root() / "state" / "identity-candidates.json")
+        try:
+            candidate = store_q.decide(candidate_id, approve=False, reviewer=payload.actor_id)
+        except KeyError as exc:
+            raise HTTPException(404, "Candidate not found") from exc
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from exc
+        return candidate.to_dict()
+
     @app.post("/api/v1/ontology/proposals", status_code=201)
     def generate_ontology_proposals():
         """Turn drift findings into governed, human-reviewable evolution proposals (G2-OEVO)."""
@@ -1117,6 +1238,10 @@ def create_app():
             items.append(json.loads(path.read_text(encoding="utf-8")))
         return items
 
+    @app.get("/api/v1/ingestion/dlq")
+    def ingestion_dlq_list(limit: int = Query(default=50, ge=1, le=500)):
+        return dlq_list(limit=limit)
+
     @app.post("/api/v1/admin/dlq/{event_id}/replay", status_code=202)
     def replay_dlq(event_id: str, request: Request):
         if not re.fullmatch(r"[a-f0-9]{64}", event_id):
@@ -1174,6 +1299,10 @@ def create_app():
             payload.model_dump(),
             correlation_id=request.state.correlation_id,
         )
+
+    @app.post("/api/v1/ingestion/replay", status_code=202)
+    def replay_ingestion_alias(payload: ReplayRequest, request: Request):
+        return replay_ingestion(payload, request)
 
     @app.get("/api/v1/admin/audit")
     def audit_log(limit: int = Query(default=50, ge=1, le=500)):

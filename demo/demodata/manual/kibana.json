@@ -1,0 +1,119 @@
+{
+  "saved_objects": [
+    {
+      "id": "dashboard-pay-gateway-perf",
+      "type": "dashboard",
+      "attributes": {
+        "title": "Payment Gateway Performance",
+        "description": "Real-time performance metrics for the MFS Payment Gateway including request latency, throughput, error rates, and circuit breaker status. Monitors mfs-pay-pod-01, mfs-pay-pod-02, mfs-pay-pod-03.",
+        "hits": 0,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        },
+        "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":0,\"y\":0,\"w\":24,\"h\":12},\"title\":\"Payment API Latency P99\",\"type\":\"visualization\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":24,\"y\":0,\"w\":24,\"h\":12},\"title\":\"Payment Throughput (TPS)\",\"type\":\"visualization\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":0,\"y\":12,\"w\":24,\"h\":12},\"title\":\"Error Rate by Endpoint\",\"type\":\"visualization\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":24,\"y\":12,\"w\":24,\"h\":12},\"title\":\"Circuit Breaker State\",\"type\":\"visualization\"}]",
+        "timeRestore": true,
+        "timeTo": "now",
+        "timeFrom": "now-24h",
+        "refreshInterval": {
+          "pause": false,
+          "value": 30000
+        }
+      },
+      "references": [
+        {"id": "idx-payment-logs", "name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern"}
+      ],
+      "version": "8.12.0",
+      "updated_at": "2026-09-28T15:00:00.000Z"
+    },
+    {
+      "id": "dashboard-pay-error-analysis",
+      "type": "dashboard",
+      "attributes": {
+        "title": "Payment Error Analysis",
+        "description": "Detailed error analysis dashboard for the MFS Payment Gateway. Breaks down errors by type, endpoint, pod, and time period. Includes tokenization failures, retry exhaustion, and circuit breaker trips.",
+        "hits": 0,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"level:ERROR\",\"language\":\"kuery\"},\"filter\":[]}"
+        },
+        "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":0,\"y\":0,\"w\":48,\"h\":12},\"title\":\"Error Timeline\",\"type\":\"visualization\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":0,\"y\":12,\"w\":24,\"h\":12},\"title\":\"Errors by Type\",\"type\":\"visualization\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":24,\"y\":12,\"w\":24,\"h\":12},\"title\":\"Errors by Pod\",\"type\":\"visualization\"}]",
+        "timeRestore": true,
+        "timeTo": "now",
+        "timeFrom": "now-7d"
+      },
+      "references": [
+        {"id": "idx-payment-logs", "name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern"}
+      ],
+      "version": "8.12.0",
+      "updated_at": "2026-09-29T10:00:00.000Z"
+    },
+    {
+      "id": "dashboard-token-vault-metrics",
+      "type": "dashboard",
+      "attributes": {
+        "title": "Token Vault Metrics",
+        "description": "Monitoring dashboard for the MFS Token Vault service. Tracks encryption/decryption operations, HSM session utilization, key rotation status, and audit log volume on mfs-vault-pod-01.",
+        "hits": 0,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"service:mfs-token-vault\",\"language\":\"kuery\"},\"filter\":[]}"
+        },
+        "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":0,\"y\":0,\"w\":24,\"h\":12},\"title\":\"Encryption/Decryption Latency\",\"type\":\"visualization\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":24,\"y\":0,\"w\":24,\"h\":12},\"title\":\"HSM Session Utilization\",\"type\":\"visualization\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":0,\"y\":12,\"w\":24,\"h\":12},\"title\":\"Key Rotation Status\",\"type\":\"visualization\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":24,\"y\":12,\"w\":24,\"h\":12},\"title\":\"Audit Log Volume\",\"type\":\"visualization\"}]",
+        "timeRestore": true,
+        "timeTo": "now",
+        "timeFrom": "now-24h"
+      },
+      "references": [
+        {"id": "idx-payment-logs", "name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern"}
+      ],
+      "version": "8.12.0",
+      "updated_at": "2026-09-30T09:00:00.000Z"
+    },
+    {
+      "id": "idx-payment-logs",
+      "type": "index-pattern",
+      "attributes": {
+        "title": "payment-logs-*",
+        "timeFieldName": "@timestamp",
+        "fields": "[{\"name\":\"@timestamp\",\"type\":\"date\"},{\"name\":\"level\",\"type\":\"string\"},{\"name\":\"service\",\"type\":\"string\"},{\"name\":\"pod_name\",\"type\":\"string\"},{\"name\":\"namespace\",\"type\":\"string\"},{\"name\":\"endpoint\",\"type\":\"string\"},{\"name\":\"status_code\",\"type\":\"integer\"},{\"name\":\"response_time_ms\",\"type\":\"float\"},{\"name\":\"error_code\",\"type\":\"string\"},{\"name\":\"transaction_id\",\"type\":\"string\"},{\"name\":\"service_account\",\"type\":\"string\"}]"
+      },
+      "version": "8.12.0",
+      "updated_at": "2026-09-15T09:00:00.000Z"
+    },
+    {
+      "id": "search-payment-errors",
+      "type": "search",
+      "attributes": {
+        "title": "payment-errors",
+        "description": "Saved search for payment gateway errors. Filters payment-logs-* index for ERROR level entries from mfs-payment-gateway service across all pods.",
+        "columns": ["@timestamp", "pod_name", "endpoint", "error_code", "status_code", "response_time_ms", "transaction_id"],
+        "sort": [["@timestamp", "desc"]],
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"level:ERROR AND service:mfs-payment-gateway\",\"language\":\"kuery\"},\"filter\":[],\"indexRefName\":\"kibanaSavedObjectMeta.searchSourceJSON.index\"}"
+        }
+      },
+      "references": [
+        {"id": "idx-payment-logs", "name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern"}
+      ],
+      "version": "8.12.0",
+      "updated_at": "2026-09-28T16:00:00.000Z"
+    },
+    {
+      "id": "search-token-vault-audit",
+      "type": "search",
+      "attributes": {
+        "title": "token-vault-audit",
+        "description": "Saved search for token vault audit events. Tracks all encryption, decryption, and key rotation operations by svc-token-vault service account.",
+        "columns": ["@timestamp", "operation", "service_account", "key_id", "result", "latency_ms"],
+        "sort": [["@timestamp", "desc"]],
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"service:mfs-token-vault AND (operation:encrypt OR operation:decrypt OR operation:key_rotation)\",\"language\":\"kuery\"},\"filter\":[],\"indexRefName\":\"kibanaSavedObjectMeta.searchSourceJSON.index\"}"
+        }
+      },
+      "references": [
+        {"id": "idx-payment-logs", "name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern"}
+      ],
+      "version": "8.12.0",
+      "updated_at": "2026-09-30T10:00:00.000Z"
+    }
+  ],
+  "total": 6
+}

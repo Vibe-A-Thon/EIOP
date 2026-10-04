@@ -1,0 +1,54 @@
+{
+  "captured_at": "2026-10-04T14:47:08.151609Z",
+  "event_id": "4baeed26114d142528d6afc995817eb37e486534ce6af44f62932b14b6d05a25",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-fraud-engine"
+        }
+      ],
+      "created": "2026-08-20T09:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Build a Grafana dashboard that displays model evaluation metrics: AUC-ROC, precision/recall curves, false positive rate trend, and score distribution histograms. Data sourced from MLflow experiment tracking stored in mfs_fraud_db on pghost-prod-02.mfs.internal.",
+      "issuetype": {
+        "name": "Task"
+      },
+      "labels": [
+        "dashboard",
+        "metrics",
+        "grafana"
+      ],
+      "parent": {
+        "key": "FRD-101"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "Model evaluation metrics dashboard",
+      "updated": "2026-10-01T15:00:00.000+0000"
+    },
+    "key": "FRD-112"
+  },
+  "payload_hash": "a64346f8f3cb90ea329f95cdc1ee448e715dda3af439a0cbc950a1a16e589f22",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-112",
+  "source_system": "jira",
+  "source_version": "a64346f8f3cb90ea329f95cdc1ee448e715dda3af439a0cbc950a1a16e589f22"
+}

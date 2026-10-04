@@ -6,8 +6,9 @@ tests against the compose manifest; live network tests require a running
 Docker environment.
 """
 
-import yaml
 from pathlib import Path
+
+import yaml
 
 COMPOSE_PATH = Path(__file__).resolve().parents[2] / "deploy" / "docker-compose.yml"
 

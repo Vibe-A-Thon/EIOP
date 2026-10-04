@@ -49,6 +49,34 @@ def test_registry_crud_is_durable_and_never_stores_inline_secrets(tmp_path) -> N
         _entry(secret_refs={"token": "plain-text-secret"})
 
 
+@pytest.mark.req("G2-EKAF-001", "G2-EKAF-021", "G2-EKAF-028")
+def test_registry_entry_carries_g2_operational_metadata_without_secrets() -> None:
+    entry = _entry(
+        allowed_scopes=["project=EOIP"],
+        excluded_scopes=["project=SECRET"],
+        polling_frequency_seconds=300,
+        webhook_status="ACTIVE",
+        mapping_version="jira/2.0",
+        parser_version="jira-rest/1.0",
+        checkpoint="cursor-42",
+        last_successful_baseline="2026-10-03T00:00:00Z",
+        last_incremental_run="2026-10-03T01:00:00Z",
+        reconciliation_schedule="PT24H",
+        health="HEALTHY",
+        freshness_slo_seconds=900,
+        compatibility={"product": "Jira Data Center", "versions": ["9.x"]},
+    )
+
+    dumped = entry.model_dump(mode="json")
+
+    assert dumped["acquisition_modes"] == ["baseline", "poll", "webhook", "replay"]
+    assert dumped["allowed_scopes"] == ["project=EOIP"]
+    assert dumped["excluded_scopes"] == ["project=SECRET"]
+    assert dumped["checkpoint"] == "cursor-42"
+    assert dumped["health"] == "HEALTHY"
+    assert dumped["compatibility"]["versions"] == ["9.x"]
+
+
 @pytest.mark.req("G2-T0101")
 def test_source_registry_api_crud_and_auth(monkeypatch, tmp_path) -> None:
     from apps.api import main as api_main

@@ -86,9 +86,29 @@ class LAYAEngine:
         for cid in canonical_ids:
             vertex = self._store.get_vertex_by_canonical_id(cid)
             if vertex:
-                neighbors = self._store.get_neighbors(
-                    vertex["vid"], max_depth=1, limit=20
-                )
+                neighbors = []
+                seen_neighbor_ids: set[str] = set()
+                for edges, endpoint in (
+                    (self._store.edges_from(vertex["vid"], limit=20), "in_v"),
+                    (self._store.edges_to(vertex["vid"], limit=20), "out_v"),
+                ):
+                    for edge in edges:
+                        neighbor_id = edge.get(endpoint)
+                        if (
+                            not isinstance(neighbor_id, str)
+                            or neighbor_id == vertex["vid"]
+                            or neighbor_id in seen_neighbor_ids
+                        ):
+                            continue
+                        neighbor = self._store.get_vertex(neighbor_id)
+                        if neighbor is None:
+                            continue
+                        seen_neighbor_ids.add(neighbor_id)
+                        neighbors.append(neighbor)
+                        if len(neighbors) == 20:
+                            break
+                    if len(neighbors) == 20:
+                        break
                 context.append({
                     "entity": vertex,
                     "neighbors": neighbors,
@@ -123,7 +143,7 @@ class LAYAEngine:
                 model_used=response.model,
                 fallback=False,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 - resilient fallback must not fail the caller
             return self._fallback_analyze(question, capability, context)
 
     def _fallback_analyze(

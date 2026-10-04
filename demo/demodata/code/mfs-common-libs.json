@@ -1,0 +1,318 @@
+{
+  "description": "Code graph represented as JSON — MFS Common Libraries. Shared Python libraries for authentication, audit logging, configuration, metrics, and encryption used across all Meridian Financial Services microservices.",
+  "repository": {
+    "repo_id": "mfs-common-libs",
+    "name": "mfs-common-libs",
+    "source_uri": "https://gitlab.mfs.internal/mfs/common-libs",
+    "default_branch": "main"
+  },
+  "files": [
+    {
+      "path": "auth/client.py",
+      "language": "python",
+      "content_hash": "mfs-auth-client-v3",
+      "line_count": 148
+    },
+    {
+      "path": "auth/encryption.py",
+      "language": "python",
+      "content_hash": "mfs-auth-enc-v2",
+      "line_count": 112
+    },
+    {
+      "path": "auth/__init__.py",
+      "language": "python",
+      "content_hash": "mfs-auth-init-v1",
+      "line_count": 4
+    },
+    {
+      "path": "logging/audit.py",
+      "language": "python",
+      "content_hash": "mfs-audit-log-v3",
+      "line_count": 165
+    },
+    {
+      "path": "logging/__init__.py",
+      "language": "python",
+      "content_hash": "mfs-log-init-v1",
+      "line_count": 3
+    },
+    {
+      "path": "config/manager.py",
+      "language": "python",
+      "content_hash": "mfs-config-mgr-v2",
+      "line_count": 124
+    },
+    {
+      "path": "metrics/collector.py",
+      "language": "python",
+      "content_hash": "mfs-metrics-coll-v2",
+      "line_count": 98
+    },
+    {
+      "path": "models/base.py",
+      "language": "python",
+      "content_hash": "mfs-base-model-v2",
+      "line_count": 56
+    }
+  ],
+  "symbols": [
+    {
+      "qualified_name": "auth.client.AuthClient",
+      "symbol_kind": "class",
+      "name": "AuthClient",
+      "path": "auth/client.py",
+      "start_line": 14,
+      "end_line": 148
+    },
+    {
+      "qualified_name": "auth.client.AuthClient.authenticate",
+      "symbol_kind": "method",
+      "name": "authenticate",
+      "path": "auth/client.py",
+      "start_line": 28,
+      "end_line": 62
+    },
+    {
+      "qualified_name": "auth.client.AuthClient.validate_token",
+      "symbol_kind": "method",
+      "name": "validate_token",
+      "path": "auth/client.py",
+      "start_line": 64,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "auth.client.AuthClient.refresh_token",
+      "symbol_kind": "method",
+      "name": "refresh_token",
+      "path": "auth/client.py",
+      "start_line": 100,
+      "end_line": 132
+    },
+    {
+      "qualified_name": "auth.encryption.EncryptionUtil",
+      "symbol_kind": "class",
+      "name": "EncryptionUtil",
+      "path": "auth/encryption.py",
+      "start_line": 12,
+      "end_line": 112
+    },
+    {
+      "qualified_name": "auth.encryption.EncryptionUtil.encrypt_field",
+      "symbol_kind": "method",
+      "name": "encrypt_field",
+      "path": "auth/encryption.py",
+      "start_line": 26,
+      "end_line": 52
+    },
+    {
+      "qualified_name": "auth.encryption.EncryptionUtil.decrypt_field",
+      "symbol_kind": "method",
+      "name": "decrypt_field",
+      "path": "auth/encryption.py",
+      "start_line": 54,
+      "end_line": 78
+    },
+    {
+      "qualified_name": "auth.encryption.EncryptionUtil.hash_pii",
+      "symbol_kind": "method",
+      "name": "hash_pii",
+      "path": "auth/encryption.py",
+      "start_line": 80,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "logging.audit.AuditLogger",
+      "symbol_kind": "class",
+      "name": "AuditLogger",
+      "path": "logging/audit.py",
+      "start_line": 16,
+      "end_line": 165
+    },
+    {
+      "qualified_name": "logging.audit.AuditLogger.log_event",
+      "symbol_kind": "method",
+      "name": "log_event",
+      "path": "logging/audit.py",
+      "start_line": 34,
+      "end_line": 72
+    },
+    {
+      "qualified_name": "logging.audit.AuditLogger.log_access",
+      "symbol_kind": "method",
+      "name": "log_access",
+      "path": "logging/audit.py",
+      "start_line": 74,
+      "end_line": 108
+    },
+    {
+      "qualified_name": "logging.audit.AuditLogger.log_change",
+      "symbol_kind": "method",
+      "name": "log_change",
+      "path": "logging/audit.py",
+      "start_line": 110,
+      "end_line": 148
+    },
+    {
+      "qualified_name": "logging.audit.AuditLogger._persist_to_db",
+      "symbol_kind": "method",
+      "name": "_persist_to_db",
+      "path": "logging/audit.py",
+      "start_line": 150,
+      "end_line": 165
+    },
+    {
+      "qualified_name": "config.manager.ConfigManager",
+      "symbol_kind": "class",
+      "name": "ConfigManager",
+      "path": "config/manager.py",
+      "start_line": 10,
+      "end_line": 124
+    },
+    {
+      "qualified_name": "config.manager.ConfigManager.get_config",
+      "symbol_kind": "method",
+      "name": "get_config",
+      "path": "config/manager.py",
+      "start_line": 24,
+      "end_line": 52
+    },
+    {
+      "qualified_name": "config.manager.ConfigManager.reload_config",
+      "symbol_kind": "method",
+      "name": "reload_config",
+      "path": "config/manager.py",
+      "start_line": 54,
+      "end_line": 82
+    },
+    {
+      "qualified_name": "config.manager.ConfigManager.validate_config",
+      "symbol_kind": "method",
+      "name": "validate_config",
+      "path": "config/manager.py",
+      "start_line": 84,
+      "end_line": 112
+    },
+    {
+      "qualified_name": "metrics.collector.MetricsCollector",
+      "symbol_kind": "class",
+      "name": "MetricsCollector",
+      "path": "metrics/collector.py",
+      "start_line": 10,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "metrics.collector.MetricsCollector.record_latency",
+      "symbol_kind": "method",
+      "name": "record_latency",
+      "path": "metrics/collector.py",
+      "start_line": 22,
+      "end_line": 42
+    },
+    {
+      "qualified_name": "metrics.collector.MetricsCollector.record_count",
+      "symbol_kind": "method",
+      "name": "record_count",
+      "path": "metrics/collector.py",
+      "start_line": 44,
+      "end_line": 62
+    },
+    {
+      "qualified_name": "metrics.collector.MetricsCollector.push_metrics",
+      "symbol_kind": "method",
+      "name": "push_metrics",
+      "path": "metrics/collector.py",
+      "start_line": 64,
+      "end_line": 88
+    },
+    {
+      "qualified_name": "models.base.BaseModel",
+      "symbol_kind": "class",
+      "name": "BaseModel",
+      "path": "models/base.py",
+      "start_line": 8,
+      "end_line": 56
+    },
+    {
+      "qualified_name": "models.base.BaseModel.to_dict",
+      "symbol_kind": "method",
+      "name": "to_dict",
+      "path": "models/base.py",
+      "start_line": 28,
+      "end_line": 38
+    },
+    {
+      "qualified_name": "models.base.BaseModel.validate_fields",
+      "symbol_kind": "method",
+      "name": "validate_fields",
+      "path": "models/base.py",
+      "start_line": 40,
+      "end_line": 56
+    }
+  ],
+  "dependencies": [
+    {"name": "pydantic", "resolved": true, "language": "python"},
+    {"name": "structlog", "resolved": true, "language": "python"},
+    {"name": "prometheus-client", "resolved": true, "language": "python"},
+    {"name": "cryptography", "resolved": true, "language": "python"},
+    {"name": "httpx", "resolved": true, "language": "python"},
+    {"name": "sqlalchemy", "resolved": true, "language": "python"}
+  ],
+  "infrastructure": {
+    "service_account": "svc-notification-svc",
+    "database": {
+      "name": "mfs_audit_db",
+      "host": "pghost-prod-03.mfs.internal",
+      "port": 5432,
+      "type": "postgresql"
+    },
+    "vault": "vault.mfs.internal:8200",
+    "metrics_endpoint": "prometheus.mfs.internal:9090"
+  },
+  "edges": [
+    {"type": "CONTAINS", "from": "auth/client.py", "to": "auth.client.AuthClient"},
+    {"type": "CONTAINS", "from": "auth/encryption.py", "to": "auth.encryption.EncryptionUtil"},
+    {"type": "CONTAINS", "from": "logging/audit.py", "to": "logging.audit.AuditLogger"},
+    {"type": "CONTAINS", "from": "config/manager.py", "to": "config.manager.ConfigManager"},
+    {"type": "CONTAINS", "from": "metrics/collector.py", "to": "metrics.collector.MetricsCollector"},
+    {"type": "CONTAINS", "from": "models/base.py", "to": "models.base.BaseModel"},
+    {"type": "DECLARES", "from": "auth.client.AuthClient", "to": "auth.client.AuthClient.authenticate"},
+    {"type": "DECLARES", "from": "auth.client.AuthClient", "to": "auth.client.AuthClient.validate_token"},
+    {"type": "DECLARES", "from": "auth.client.AuthClient", "to": "auth.client.AuthClient.refresh_token"},
+    {"type": "DECLARES", "from": "auth.encryption.EncryptionUtil", "to": "auth.encryption.EncryptionUtil.encrypt_field"},
+    {"type": "DECLARES", "from": "auth.encryption.EncryptionUtil", "to": "auth.encryption.EncryptionUtil.decrypt_field"},
+    {"type": "DECLARES", "from": "auth.encryption.EncryptionUtil", "to": "auth.encryption.EncryptionUtil.hash_pii"},
+    {"type": "DECLARES", "from": "logging.audit.AuditLogger", "to": "logging.audit.AuditLogger.log_event"},
+    {"type": "DECLARES", "from": "logging.audit.AuditLogger", "to": "logging.audit.AuditLogger.log_access"},
+    {"type": "DECLARES", "from": "logging.audit.AuditLogger", "to": "logging.audit.AuditLogger.log_change"},
+    {"type": "DECLARES", "from": "logging.audit.AuditLogger", "to": "logging.audit.AuditLogger._persist_to_db"},
+    {"type": "DECLARES", "from": "config.manager.ConfigManager", "to": "config.manager.ConfigManager.get_config"},
+    {"type": "DECLARES", "from": "config.manager.ConfigManager", "to": "config.manager.ConfigManager.reload_config"},
+    {"type": "DECLARES", "from": "config.manager.ConfigManager", "to": "config.manager.ConfigManager.validate_config"},
+    {"type": "DECLARES", "from": "metrics.collector.MetricsCollector", "to": "metrics.collector.MetricsCollector.record_latency"},
+    {"type": "DECLARES", "from": "metrics.collector.MetricsCollector", "to": "metrics.collector.MetricsCollector.record_count"},
+    {"type": "DECLARES", "from": "metrics.collector.MetricsCollector", "to": "metrics.collector.MetricsCollector.push_metrics"},
+    {"type": "DECLARES", "from": "models.base.BaseModel", "to": "models.base.BaseModel.to_dict"},
+    {"type": "DECLARES", "from": "models.base.BaseModel", "to": "models.base.BaseModel.validate_fields"},
+    {"type": "CALLS", "from": "auth.client.AuthClient.authenticate", "to": "auth.encryption.EncryptionUtil.encrypt_field"},
+    {"type": "CALLS", "from": "auth.client.AuthClient.validate_token", "to": "auth.encryption.EncryptionUtil.decrypt_field"},
+    {"type": "CALLS", "from": "logging.audit.AuditLogger.log_event", "to": "logging.audit.AuditLogger._persist_to_db"},
+    {"type": "CALLS", "from": "logging.audit.AuditLogger.log_access", "to": "logging.audit.AuditLogger._persist_to_db"},
+    {"type": "CALLS", "from": "logging.audit.AuditLogger.log_change", "to": "logging.audit.AuditLogger._persist_to_db"},
+    {"type": "CALLS", "from": "config.manager.ConfigManager.reload_config", "to": "config.manager.ConfigManager.validate_config"},
+    {"type": "CALLS", "from": "metrics.collector.MetricsCollector.push_metrics", "to": "metrics.collector.MetricsCollector.record_latency"},
+    {"type": "IMPORTS", "from": "auth/client.py", "to": "httpx"},
+    {"type": "IMPORTS", "from": "auth/client.py", "to": "pydantic"},
+    {"type": "IMPORTS", "from": "auth/encryption.py", "to": "cryptography"},
+    {"type": "IMPORTS", "from": "logging/audit.py", "to": "structlog"},
+    {"type": "IMPORTS", "from": "logging/audit.py", "to": "sqlalchemy"},
+    {"type": "IMPORTS", "from": "config/manager.py", "to": "pydantic"},
+    {"type": "IMPORTS", "from": "metrics/collector.py", "to": "prometheus-client"},
+    {"type": "IMPORTS", "from": "models/base.py", "to": "pydantic"},
+    {"type": "DEPENDS_ON", "from": "auth.client.AuthClient", "to": "auth.encryption.EncryptionUtil"},
+    {"type": "DEPENDS_ON", "from": "logging.audit.AuditLogger", "to": "models.base.BaseModel"},
+    {"type": "CONNECTS_TO", "from": "logging.audit.AuditLogger", "to": "mfs_audit_db", "properties": {"host": "pghost-prod-03.mfs.internal", "service_account": "svc-notification-svc"}},
+    {"type": "CONNECTS_TO", "from": "auth.client.AuthClient", "to": "vault.mfs.internal", "properties": {"port": 8200}},
+    {"type": "CONNECTS_TO", "from": "metrics.collector.MetricsCollector", "to": "prometheus.mfs.internal", "properties": {"port": 9090}}
+  ]
+}

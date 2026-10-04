@@ -1,0 +1,82 @@
+{
+  "captured_at": "2026-10-04T13:45:50.511263Z",
+  "event_id": "06640d79f001fb80e86d7f7a40ae03b0c4daa2fdd97ff0b5b5ed108eb543f5f9",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-txn-monitor"
+        }
+      ],
+      "created": "2026-08-20T10:00:00.000+0000",
+      "customfield_10014": "EPC-202",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Implement transaction velocity monitoring that tracks per-account, per-merchant, and per-device transaction rates over sliding time windows (1min, 5min, 1hr, 24hr). Velocity breaches trigger configurable alert thresholds. Deployed on mfs-txn-mon-pod-01 using svc-txn-monitor service account. Data persisted to mfs_fraud_db.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "FRD-211"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        },
+        {
+          "outwardIssue": {
+            "key": "TC-FRD-004"
+          },
+          "type": {
+            "name": "is verified by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story"
+      },
+      "labels": [
+        "velocity",
+        "monitoring",
+        "kafka"
+      ],
+      "parent": {
+        "key": "FRD-200"
+      },
+      "priority": {
+        "name": "Critical"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "Done"
+      },
+      "summary": "Transaction velocity monitor",
+      "updated": "2026-09-30T16:00:00.000+0000"
+    },
+    "key": "FRD-201"
+  },
+  "payload_hash": "648ef5293dacb8369db139e860a683c7e3b0fd8af0a2872bc560102e3f2b0208",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-201",
+  "source_system": "jira",
+  "source_version": "648ef5293dacb8369db139e860a683c7e3b0fd8af0a2872bc560102e3f2b0208"
+}

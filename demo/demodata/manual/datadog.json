@@ -1,0 +1,115 @@
+{
+  "dashboards": [
+    {
+      "id": "dd-pay-api-perf",
+      "title": "Payment API Performance",
+      "description": "Comprehensive performance dashboard for the MFS Payment Gateway API. Monitors latency percentiles, throughput, error rates, and resource utilization across mfs-pay-pod-01, mfs-pay-pod-02, mfs-pay-pod-03 in the mfs-prod OpenShift namespace.",
+      "url": "/dashboard/dd-pay-api-perf/payment-api-performance",
+      "layout_type": "ordered",
+      "is_read_only": false,
+      "author_handle": "lwei@mfs.com",
+      "widgets": [
+        {"definition": {"title": "API Latency P50/P95/P99", "type": "timeseries"}},
+        {"definition": {"title": "Request Throughput by Endpoint", "type": "timeseries"}},
+        {"definition": {"title": "Error Rate by Status Code", "type": "timeseries"}},
+        {"definition": {"title": "Pod CPU/Memory Utilization", "type": "heatmap"}},
+        {"definition": {"title": "Database Connection Pool Usage", "type": "query_value"}},
+        {"definition": {"title": "Active Payment Transactions", "type": "query_value"}}
+      ],
+      "created_at": "2026-07-25T09:00:00.000Z",
+      "modified_at": "2026-09-28T16:00:00.000Z"
+    },
+    {
+      "id": "dd-token-vault-health",
+      "title": "Token Vault Health",
+      "description": "Health monitoring dashboard for the MFS Token Vault service on mfs-vault-pod-01. Tracks HSM session utilization, encryption/decryption latency, key rotation events, and audit log throughput.",
+      "url": "/dashboard/dd-token-vault-health/token-vault-health",
+      "layout_type": "ordered",
+      "is_read_only": false,
+      "author_handle": "dokoye@mfs.com",
+      "widgets": [
+        {"definition": {"title": "HSM Session Pool Utilization", "type": "timeseries"}},
+        {"definition": {"title": "Encrypt/Decrypt Latency", "type": "timeseries"}},
+        {"definition": {"title": "Key Rotation Events", "type": "event_timeline"}},
+        {"definition": {"title": "Audit Log Write Rate", "type": "query_value"}}
+      ],
+      "created_at": "2026-08-10T09:00:00.000Z",
+      "modified_at": "2026-09-30T10:00:00.000Z"
+    }
+  ],
+  "monitors": [
+    {
+      "id": 550001,
+      "name": "Payment API Latency P99",
+      "type": "metric alert",
+      "query": "avg(last_5m):p99:payment.api.request.duration{env:prod,namespace:mfs-prod} > 200",
+      "message": "Payment API P99 latency exceeds 200ms on {{pod_name.name}} in mfs-prod. Current value: {{value}}ms.\n\nCheck connection pool to mfs_payments_db on pghost-prod-01.mfs.internal.\nRunbook: https://confluence.mfs.internal/spaces/PAY/pages/98505\n\n@pagerduty-mfs-sre @slack-mfs-payment-alerts",
+      "tags": ["service:mfs-payment-gateway", "env:prod", "team:devops-sre"],
+      "priority": 2,
+      "options": {
+        "thresholds": {"critical": 200, "warning": 150},
+        "notify_no_data": true,
+        "renotify_interval": 300,
+        "evaluation_delay": 60
+      },
+      "overall_state": "OK",
+      "created": "2026-07-25T10:00:00.000Z",
+      "modified": "2026-09-28T17:00:00.000Z",
+      "creator": {"handle": "lwei@mfs.com", "name": "Li Wei"}
+    },
+    {
+      "id": 550002,
+      "name": "Payment Error Rate",
+      "type": "metric alert",
+      "query": "sum(last_5m):sum:payment.api.errors{env:prod,namespace:mfs-prod}.as_rate() / sum:payment.api.requests{env:prod,namespace:mfs-prod}.as_rate() * 100 > 1",
+      "message": "Payment API error rate exceeds 1% in mfs-prod namespace. Current: {{value}}%.\n\nReview error logs for svc-payment-api across mfs-pay-pod-01/02/03.\n\n@slack-mfs-payment-alerts @mrivera@mfs.com",
+      "tags": ["service:mfs-payment-gateway", "env:prod", "team:payment-services"],
+      "priority": 2,
+      "options": {
+        "thresholds": {"critical": 1.0, "warning": 0.5},
+        "notify_no_data": false,
+        "renotify_interval": 600
+      },
+      "overall_state": "OK",
+      "created": "2026-07-25T10:30:00.000Z",
+      "modified": "2026-09-28T17:00:00.000Z",
+      "creator": {"handle": "lwei@mfs.com", "name": "Li Wei"}
+    },
+    {
+      "id": 550003,
+      "name": "Token Vault Response Time",
+      "type": "metric alert",
+      "query": "avg(last_5m):avg:token_vault.request.duration{env:prod,pod_name:mfs-vault-pod-01} > 50",
+      "message": "Token vault response time on mfs-vault-pod-01 exceeds 50ms threshold. Current: {{value}}ms.\n\nCheck HSM PKCS#11 session pool size (should be 20). Verify svc-token-vault service account connectivity.\n\nRelated: INC0080102\n\n@slack-mfs-platform-alerts @dokoye@mfs.com",
+      "tags": ["service:mfs-token-vault", "env:prod", "team:platform-engineering"],
+      "priority": 3,
+      "options": {
+        "thresholds": {"critical": 50, "warning": 30},
+        "notify_no_data": true,
+        "renotify_interval": 900
+      },
+      "overall_state": "Alert",
+      "created": "2026-08-10T10:00:00.000Z",
+      "modified": "2026-09-30T10:00:00.000Z",
+      "creator": {"handle": "dokoye@mfs.com", "name": "David Okoye"}
+    },
+    {
+      "id": 550004,
+      "name": "Settlement Batch Duration",
+      "type": "metric alert",
+      "query": "avg(last_15m):max:settlement.batch.duration{env:prod,pod_name:mfs-settle-pod-01} > 300",
+      "message": "Settlement batch processing on mfs-settle-pod-01 exceeds 5-minute SLA. Current duration: {{value}}s.\n\nCheck mfs_payments_db connection pool and settlement_records table performance on pghost-prod-01.mfs.internal.\n\n@slack-mfs-settlement-alerts @schen@mfs.com",
+      "tags": ["service:mfs-settlement-engine", "env:prod", "team:platform-engineering"],
+      "priority": 2,
+      "options": {
+        "thresholds": {"critical": 300, "warning": 240},
+        "notify_no_data": false,
+        "renotify_interval": 600
+      },
+      "overall_state": "OK",
+      "created": "2026-09-01T09:00:00.000Z",
+      "modified": "2026-09-30T14:00:00.000Z",
+      "creator": {"handle": "schen@mfs.com", "name": "Sarah Chen"}
+    }
+  ]
+}

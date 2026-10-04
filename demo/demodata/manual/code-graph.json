@@ -1,173 +1,411 @@
 {
-  "description": "Code graph represented as JSON — TechNova Patient Portal services. Demonstrates code-as-JSON ingestion for constructing a code graph without parsing source files.",
-  "repository": {
-    "repo_id": "technova-patient-portal",
-    "name": "technova-patient-portal",
-    "source_uri": "https://gitlab.example.invalid/technova/patient-portal",
-    "default_branch": "main"
-  },
+  "repository": "mfs-payment-gateway",
+  "language": "python",
+  "description": "MFS Payment Gateway v2 - Tokenization, retry handling, multi-currency, and settlement processing services.",
+  "default_branch": "main",
+  "remote_url": "https://gitlab.mfs.internal/mfs/mfs-payment-gateway.git",
   "files": [
     {
-      "path": "services/patient/sync_service.py",
+      "path": "src/services/tokenization_service.py",
       "language": "python",
-      "content_hash": "healthtech-sync-v2",
-      "line_count": 142
+      "lines": 185,
+      "last_modified": "2026-09-20T16:00:00.000Z",
+      "description": "Payment tokenization service with PCI DSS v4.0 compliant token generation and HSM integration."
     },
     {
-      "path": "services/patient/encryption.py",
+      "path": "src/services/retry_handler.py",
       "language": "python",
-      "content_hash": "healthtech-enc-v1",
-      "line_count": 87
+      "lines": 142,
+      "last_modified": "2026-09-28T11:00:00.000Z",
+      "description": "Idempotent payment retry handler with exponential backoff and circuit breaker pattern."
     },
     {
-      "path": "services/patient/models.py",
+      "path": "src/services/circuit_breaker.py",
       "language": "python",
-      "content_hash": "healthtech-models-v1",
-      "line_count": 65
+      "lines": 98,
+      "last_modified": "2026-09-27T10:00:00.000Z",
+      "description": "Circuit breaker implementation with closed/open/half-open state machine."
     },
     {
-      "path": "services/appointments/booking.py",
+      "path": "src/services/currency_exchange_service.py",
       "language": "python",
-      "content_hash": "healthtech-booking-v1",
-      "line_count": 110
+      "lines": 156,
+      "last_modified": "2026-09-29T09:00:00.000Z",
+      "description": "Multi-currency exchange rate service with real-time FX rate lookup and caching."
     },
     {
-      "path": "services/appointments/reminders.py",
+      "path": "src/services/encryption_service.py",
       "language": "python",
-      "content_hash": "healthtech-reminders-v1",
-      "line_count": 58
+      "lines": 134,
+      "last_modified": "2026-09-26T22:00:00.000Z",
+      "description": "AES-256-GCM encryption/decryption service for cardholder data at rest."
     },
     {
-      "path": "frontend/src/components/AppointmentCalendar.tsx",
-      "language": "typescript",
-      "content_hash": "healthtech-calendar-v3",
-      "line_count": 245
+      "path": "src/services/settlement_batch_processor.py",
+      "language": "python",
+      "lines": 210,
+      "last_modified": "2026-09-30T14:00:00.000Z",
+      "description": "Settlement batch processor with transaction aggregation and ISO 8583 file generation."
     },
     {
-      "path": "frontend/src/components/PatientRecordCard.tsx",
-      "language": "typescript",
-      "content_hash": "healthtech-record-card-v1",
-      "line_count": 120
+      "path": "src/services/reconciliation_engine.py",
+      "language": "python",
+      "lines": 178,
+      "last_modified": "2026-09-30T09:00:00.000Z",
+      "description": "Real-time balance reconciliation engine comparing gateway ledger vs settlement records."
+    },
+    {
+      "path": "src/api/payment_routes.py",
+      "language": "python",
+      "lines": 120,
+      "last_modified": "2026-09-29T10:00:00.000Z",
+      "description": "REST API routes for payment processing, tokenization, and currency conversion endpoints."
+    },
+    {
+      "path": "src/api/settlement_routes.py",
+      "language": "python",
+      "lines": 85,
+      "last_modified": "2026-09-30T14:00:00.000Z",
+      "description": "REST API routes for settlement batch management and reconciliation reporting."
+    },
+    {
+      "path": "src/models/payment_models.py",
+      "language": "python",
+      "lines": 95,
+      "last_modified": "2026-09-28T09:00:00.000Z",
+      "description": "SQLAlchemy models for payment transactions, tokens, and settlement records in mfs_payments_db."
+    },
+    {
+      "path": "src/config/database.py",
+      "language": "python",
+      "lines": 52,
+      "last_modified": "2026-09-28T17:00:00.000Z",
+      "description": "Database connection configuration for mfs_payments_db and mfs_audit_db on pghost-prod-01.mfs.internal."
+    },
+    {
+      "path": "src/config/hsm_config.py",
+      "language": "python",
+      "lines": 38,
+      "last_modified": "2026-09-24T08:00:00.000Z",
+      "description": "HSM PKCS#11 configuration for svc-token-vault service account key operations."
     }
   ],
   "symbols": [
     {
-      "qualified_name": "services.patient.sync_service.SyncService",
-      "symbol_kind": "class",
-      "name": "SyncService",
-      "path": "services/patient/sync_service.py",
+      "qualified_name": "src.services.tokenization_service.TokenizationService",
+      "name": "TokenizationService",
+      "kind": "class",
+      "path": "src/services/tokenization_service.py",
       "start_line": 15,
-      "end_line": 142
+      "end_line": 185,
+      "language": "python",
+      "docstring": "PCI DSS v4.0 compliant payment tokenization service. Generates irreversible tokens for cardholder PANs using HSM-managed keys via svc-token-vault."
     },
     {
-      "qualified_name": "services.patient.sync_service.SyncService.sync_record",
-      "symbol_kind": "method",
-      "name": "sync_record",
-      "path": "services/patient/sync_service.py",
-      "start_line": 28,
-      "end_line": 68
+      "qualified_name": "src.services.tokenization_service.TokenizationService.create_token",
+      "name": "create_token",
+      "kind": "method",
+      "path": "src/services/tokenization_service.py",
+      "start_line": 45,
+      "end_line": 95,
+      "language": "python",
+      "docstring": "Create a payment token from cardholder PAN. Stores encrypted data in mfs_payments_db.card_tokens."
     },
     {
-      "qualified_name": "services.patient.sync_service.SyncService.reconcile",
-      "symbol_kind": "method",
-      "name": "reconcile",
-      "path": "services/patient/sync_service.py",
-      "start_line": 70,
-      "end_line": 105
+      "qualified_name": "src.services.tokenization_service.TokenizationService.validate_pan",
+      "name": "validate_pan",
+      "kind": "method",
+      "path": "src/services/tokenization_service.py",
+      "start_line": 97,
+      "end_line": 120,
+      "language": "python",
+      "docstring": "Validate PAN using Luhn algorithm and card brand detection."
     },
     {
-      "qualified_name": "services.patient.encryption.encrypt_phi",
-      "symbol_kind": "function",
-      "name": "encrypt_phi",
-      "path": "services/patient/encryption.py",
+      "qualified_name": "src.services.retry_handler.RetryHandler",
+      "name": "RetryHandler",
+      "kind": "class",
+      "path": "src/services/retry_handler.py",
       "start_line": 12,
-      "end_line": 35
+      "end_line": 142,
+      "language": "python",
+      "docstring": "Idempotent payment retry handler with exponential backoff. Uses SHA-256(transaction_id + merchant_id) as idempotency key."
     },
     {
-      "qualified_name": "services.patient.encryption.rotate_key",
-      "symbol_kind": "function",
-      "name": "rotate_key",
-      "path": "services/patient/encryption.py",
-      "start_line": 38,
-      "end_line": 65
+      "qualified_name": "src.services.retry_handler.RetryHandler.execute_with_retry",
+      "name": "execute_with_retry",
+      "kind": "method",
+      "path": "src/services/retry_handler.py",
+      "start_line": 40,
+      "end_line": 90,
+      "language": "python",
+      "docstring": "Execute payment operation with retry logic. Max 3 retries with exponential backoff (1s, 2s, 4s)."
     },
     {
-      "qualified_name": "services.patient.models.PatientRecord",
-      "symbol_kind": "class",
-      "name": "PatientRecord",
-      "path": "services/patient/models.py",
+      "qualified_name": "src.services.circuit_breaker.CircuitBreaker",
+      "name": "CircuitBreaker",
+      "kind": "class",
+      "path": "src/services/circuit_breaker.py",
       "start_line": 8,
-      "end_line": 45
+      "end_line": 98,
+      "language": "python",
+      "docstring": "Circuit breaker with CLOSED/OPEN/HALF_OPEN states. Opens after 5 consecutive failures, probes every 30s."
     },
     {
-      "qualified_name": "services.patient.models.Appointment",
-      "symbol_kind": "class",
-      "name": "Appointment",
-      "path": "services/patient/models.py",
-      "start_line": 48,
-      "end_line": 65
+      "qualified_name": "src.services.circuit_breaker.CircuitBreaker.call",
+      "name": "call",
+      "kind": "method",
+      "path": "src/services/circuit_breaker.py",
+      "start_line": 35,
+      "end_line": 70,
+      "language": "python",
+      "docstring": "Execute operation through circuit breaker. Raises CircuitBreakerOpenError if breaker is open."
     },
     {
-      "qualified_name": "services.appointments.booking.BookingService",
-      "symbol_kind": "class",
-      "name": "BookingService",
-      "path": "services/appointments/booking.py",
+      "qualified_name": "src.services.currency_exchange_service.CurrencyExchangeService",
+      "name": "CurrencyExchangeService",
+      "kind": "class",
+      "path": "src/services/currency_exchange_service.py",
+      "start_line": 14,
+      "end_line": 156,
+      "language": "python",
+      "docstring": "Real-time currency exchange rate service. Fetches FX rates from provider API with 60s TTL cache. Supports USD, EUR, GBP, JPY, CAD, AUD, CHF."
+    },
+    {
+      "qualified_name": "src.services.currency_exchange_service.CurrencyExchangeService.convert",
+      "name": "convert",
+      "kind": "method",
+      "path": "src/services/currency_exchange_service.py",
+      "start_line": 55,
+      "end_line": 95,
+      "language": "python",
+      "docstring": "Convert amount between currencies at current FX rate with 0.01% accuracy guarantee. Logs conversion to mfs_audit_db."
+    },
+    {
+      "qualified_name": "src.services.encryption_service.EncryptionService",
+      "name": "EncryptionService",
+      "kind": "class",
+      "path": "src/services/encryption_service.py",
       "start_line": 10,
-      "end_line": 110
+      "end_line": 134,
+      "language": "python",
+      "docstring": "AES-256-GCM encryption service for cardholder data at rest. Uses HSM-managed keys via svc-token-vault on mfs-vault-pod-01."
     },
     {
-      "qualified_name": "services.appointments.booking.BookingService.create_appointment",
-      "symbol_kind": "method",
-      "name": "create_appointment",
-      "path": "services/appointments/booking.py",
-      "start_line": 22,
-      "end_line": 58
+      "qualified_name": "src.services.encryption_service.EncryptionService.encrypt",
+      "name": "encrypt",
+      "kind": "method",
+      "path": "src/services/encryption_service.py",
+      "start_line": 40,
+      "end_line": 75,
+      "language": "python",
+      "docstring": "Encrypt cardholder data field using AES-256-GCM with HSM key. Returns ciphertext with IV and auth tag."
     },
     {
-      "qualified_name": "services.appointments.reminders.send_reminder",
-      "symbol_kind": "function",
-      "name": "send_reminder",
-      "path": "services/appointments/reminders.py",
-      "start_line": 8,
-      "end_line": 42
-    },
-    {
-      "qualified_name": "frontend.components.AppointmentCalendar",
-      "symbol_kind": "component",
-      "name": "AppointmentCalendar",
-      "path": "frontend/src/components/AppointmentCalendar.tsx",
+      "qualified_name": "src.services.settlement_batch_processor.SettlementBatchProcessor",
+      "name": "SettlementBatchProcessor",
+      "kind": "class",
+      "path": "src/services/settlement_batch_processor.py",
       "start_line": 18,
-      "end_line": 245
+      "end_line": 210,
+      "language": "python",
+      "docstring": "Settlement batch processor. Aggregates transactions by merchant/currency/acquirer and generates ISO 8583 settlement files."
     },
     {
-      "qualified_name": "frontend.components.PatientRecordCard",
-      "symbol_kind": "component",
-      "name": "PatientRecordCard",
-      "path": "frontend/src/components/PatientRecordCard.tsx",
+      "qualified_name": "src.services.settlement_batch_processor.BatchAggregator",
+      "name": "BatchAggregator",
+      "kind": "class",
+      "path": "src/services/settlement_batch_processor.py",
+      "start_line": 120,
+      "end_line": 175,
+      "language": "python",
+      "docstring": "Groups completed transactions from gateway_ledger by merchant_id, currency, and acquiring_bank."
+    },
+    {
+      "qualified_name": "src.services.reconciliation_engine.ReconciliationEngine",
+      "name": "ReconciliationEngine",
+      "kind": "class",
+      "path": "src/services/reconciliation_engine.py",
+      "start_line": 15,
+      "end_line": 178,
+      "language": "python",
+      "docstring": "Real-time balance reconciliation engine. Compares gateway_ledger entries against settlement_records and flags discrepancies > $0.01."
+    },
+    {
+      "qualified_name": "src.services.reconciliation_engine.ReconciliationReportGenerator",
+      "name": "ReconciliationReportGenerator",
+      "kind": "class",
+      "path": "src/services/reconciliation_engine.py",
+      "start_line": 130,
+      "end_line": 178,
+      "language": "python",
+      "docstring": "Generates daily and on-demand reconciliation reports. Writes results to mfs_audit_db."
+    },
+    {
+      "qualified_name": "src.api.payment_routes.create_token",
+      "name": "create_token",
+      "kind": "function",
+      "path": "src/api/payment_routes.py",
+      "start_line": 20,
+      "end_line": 45,
+      "language": "python",
+      "docstring": "POST /api/v2/tokens - Create payment token from cardholder PAN."
+    },
+    {
+      "qualified_name": "src.api.payment_routes.process_payment",
+      "name": "process_payment",
+      "kind": "function",
+      "path": "src/api/payment_routes.py",
+      "start_line": 47,
+      "end_line": 80,
+      "language": "python",
+      "docstring": "POST /api/v2/payments - Process payment using token with idempotency key."
+    },
+    {
+      "qualified_name": "src.models.payment_models.CardToken",
+      "name": "CardToken",
+      "kind": "class",
+      "path": "src/models/payment_models.py",
+      "start_line": 10,
+      "end_line": 30,
+      "language": "python",
+      "docstring": "SQLAlchemy model for card_tokens table in mfs_payments_db."
+    },
+    {
+      "qualified_name": "src.config.database.get_payments_db_engine",
+      "name": "get_payments_db_engine",
+      "kind": "function",
+      "path": "src/config/database.py",
       "start_line": 12,
-      "end_line": 120
+      "end_line": 30,
+      "language": "python",
+      "docstring": "Create SQLAlchemy engine for mfs_payments_db on pghost-prod-01.mfs.internal using svc-payment-api credentials."
+    },
+    {
+      "qualified_name": "src.config.database.get_audit_db_engine",
+      "name": "get_audit_db_engine",
+      "kind": "function",
+      "path": "src/config/database.py",
+      "start_line": 32,
+      "end_line": 50,
+      "language": "python",
+      "docstring": "Create SQLAlchemy engine for mfs_audit_db on pghost-prod-01.mfs.internal."
     }
   ],
   "dependencies": [
-    {"name": "cryptography", "resolved": true, "language": "python"},
-    {"name": "sqlalchemy", "resolved": true, "language": "python"},
-    {"name": "pydantic", "resolved": true, "language": "python"},
-    {"name": "httpx", "resolved": true, "language": "python"},
-    {"name": "react", "resolved": true, "language": "typescript"},
-    {"name": "@radix-ui/react-calendar", "resolved": true, "language": "typescript"}
+    {"name": "fastapi", "version": "0.104.1", "language": "python"},
+    {"name": "sqlalchemy", "version": "2.0.23", "language": "python"},
+    {"name": "psycopg2-binary", "version": "2.9.9", "language": "python"},
+    {"name": "cryptography", "version": "41.0.7", "language": "python"},
+    {"name": "pkcs11", "version": "0.7.0", "language": "python"},
+    {"name": "httpx", "version": "0.25.2", "language": "python"},
+    {"name": "redis", "version": "5.0.1", "language": "python"},
+    {"name": "pydantic", "version": "2.5.3", "language": "python"},
+    {"name": "prometheus-client", "version": "0.19.0", "language": "python"},
+    {"name": "tenacity", "version": "8.2.3", "language": "python"}
   ],
   "edges": [
-    {"type": "CALLS", "from": "services.patient.sync_service.SyncService.sync_record", "to": "services.patient.encryption.encrypt_phi"},
-    {"type": "CALLS", "from": "services.patient.sync_service.SyncService.sync_record", "to": "services.patient.models.PatientRecord"},
-    {"type": "CALLS", "from": "services.patient.sync_service.SyncService.reconcile", "to": "services.patient.models.Appointment"},
-    {"type": "CALLS", "from": "services.appointments.booking.BookingService.create_appointment", "to": "services.patient.sync_service.SyncService.sync_record"},
-    {"type": "CALLS", "from": "services.appointments.reminders.send_reminder", "to": "services.patient.models.Appointment"},
-    {"type": "IMPORTS", "from": "services/patient/sync_service.py", "to": "cryptography"},
-    {"type": "IMPORTS", "from": "services/patient/sync_service.py", "to": "sqlalchemy"},
-    {"type": "IMPORTS", "from": "services/patient/encryption.py", "to": "cryptography"},
-    {"type": "IMPORTS", "from": "services/patient/models.py", "to": "pydantic"},
-    {"type": "IMPORTS", "from": "services/appointments/booking.py", "to": "httpx"},
-    {"type": "IMPORTS", "from": "frontend/src/components/AppointmentCalendar.tsx", "to": "react"},
-    {"type": "IMPORTS", "from": "frontend/src/components/AppointmentCalendar.tsx", "to": "@radix-ui/react-calendar"}
+    {
+      "from_symbol": "src.api.payment_routes.create_token",
+      "to_symbol": "src.services.tokenization_service.TokenizationService.create_token",
+      "kind": "calls",
+      "evidence": "payment_routes.py:25 -> tokenization_service.create_token(pan, expiry, name)"
+    },
+    {
+      "from_symbol": "src.services.tokenization_service.TokenizationService.create_token",
+      "to_symbol": "src.services.tokenization_service.TokenizationService.validate_pan",
+      "kind": "calls",
+      "evidence": "tokenization_service.py:50 -> self.validate_pan(pan)"
+    },
+    {
+      "from_symbol": "src.services.tokenization_service.TokenizationService.create_token",
+      "to_symbol": "src.services.encryption_service.EncryptionService.encrypt",
+      "kind": "calls",
+      "evidence": "tokenization_service.py:62 -> self.encryption_service.encrypt(pan_data)"
+    },
+    {
+      "from_symbol": "src.services.tokenization_service.TokenizationService",
+      "to_symbol": "src.models.payment_models.CardToken",
+      "kind": "uses",
+      "evidence": "tokenization_service.py:70 -> CardToken(token_id=token, encrypted_pan=ciphertext)"
+    },
+    {
+      "from_symbol": "src.api.payment_routes.process_payment",
+      "to_symbol": "src.services.retry_handler.RetryHandler.execute_with_retry",
+      "kind": "calls",
+      "evidence": "payment_routes.py:55 -> retry_handler.execute_with_retry(payment_operation)"
+    },
+    {
+      "from_symbol": "src.services.retry_handler.RetryHandler.execute_with_retry",
+      "to_symbol": "src.services.circuit_breaker.CircuitBreaker.call",
+      "kind": "calls",
+      "evidence": "retry_handler.py:60 -> self.circuit_breaker.call(operation)"
+    },
+    {
+      "from_symbol": "src.services.currency_exchange_service.CurrencyExchangeService.convert",
+      "to_symbol": "src.config.database.get_audit_db_engine",
+      "kind": "calls",
+      "evidence": "currency_exchange_service.py:80 -> audit_engine = get_audit_db_engine() for conversion audit logging"
+    },
+    {
+      "from_symbol": "src.services.encryption_service.EncryptionService",
+      "to_symbol": "src.config.hsm_config",
+      "kind": "imports",
+      "evidence": "encryption_service.py:5 -> from src.config.hsm_config import HSMConfig"
+    },
+    {
+      "from_symbol": "src.services.settlement_batch_processor.SettlementBatchProcessor",
+      "to_symbol": "src.services.settlement_batch_processor.BatchAggregator",
+      "kind": "uses",
+      "evidence": "settlement_batch_processor.py:45 -> self.aggregator = BatchAggregator()"
+    },
+    {
+      "from_symbol": "src.services.settlement_batch_processor.SettlementBatchProcessor",
+      "to_symbol": "src.config.database.get_payments_db_engine",
+      "kind": "calls",
+      "evidence": "settlement_batch_processor.py:30 -> engine = get_payments_db_engine() for settlement_records writes"
+    },
+    {
+      "from_symbol": "src.services.reconciliation_engine.ReconciliationEngine",
+      "to_symbol": "src.services.reconciliation_engine.ReconciliationReportGenerator",
+      "kind": "uses",
+      "evidence": "reconciliation_engine.py:50 -> self.report_generator = ReconciliationReportGenerator()"
+    },
+    {
+      "from_symbol": "src.services.reconciliation_engine.ReconciliationEngine",
+      "to_symbol": "src.config.database.get_payments_db_engine",
+      "kind": "calls",
+      "evidence": "reconciliation_engine.py:35 -> engine = get_payments_db_engine() for gateway_ledger and settlement_records reads"
+    },
+    {
+      "from_symbol": "src.services.reconciliation_engine.ReconciliationReportGenerator",
+      "to_symbol": "src.config.database.get_audit_db_engine",
+      "kind": "calls",
+      "evidence": "reconciliation_engine.py:140 -> audit_engine = get_audit_db_engine() for reconciliation results"
+    },
+    {
+      "from_symbol": "src.models.payment_models.CardToken",
+      "to_symbol": "src.config.database.get_payments_db_engine",
+      "kind": "uses",
+      "evidence": "payment_models.py:8 -> Base = declarative_base(); bound to get_payments_db_engine()"
+    },
+    {
+      "from_symbol": "src.services.tokenization_service.TokenizationService",
+      "to_symbol": "src.config.database.get_payments_db_engine",
+      "kind": "calls",
+      "evidence": "tokenization_service.py:25 -> engine = get_payments_db_engine() for card_tokens persistence"
+    },
+    {
+      "from_symbol": "src.services.retry_handler.RetryHandler",
+      "to_symbol": "src.config.database.get_payments_db_engine",
+      "kind": "calls",
+      "evidence": "retry_handler.py:20 -> engine = get_payments_db_engine() for retry_ledger persistence"
+    },
+    {
+      "from_symbol": "src.api.payment_routes.process_payment",
+      "to_symbol": "src.services.currency_exchange_service.CurrencyExchangeService.convert",
+      "kind": "calls",
+      "evidence": "payment_routes.py:65 -> exchange_service.convert(amount, source_currency, target_currency)"
+    }
   ]
 }

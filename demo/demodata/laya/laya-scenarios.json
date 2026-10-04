@@ -1,46 +1,79 @@
 {
-  "description": "LAYA (Local AI Yield Augmentation) capability demonstration — shows LLM-assisted enterprise knowledge analysis using existing local models.",
-  "version": "1.0.0",
+  "description": "LAYA (Local AI Yield Augmentation) capability demonstration — shows LLM-assisted enterprise knowledge analysis using existing local models. Uses Meridian Financial Services (MFS) demo data.",
+  "version": "2.0.0",
+  "organization": "Meridian Financial Services",
   "scenarios": [
     {
       "id": "laya-summarize-incident",
       "capability": "incident_summary",
-      "question": "Summarize the checkout latency incident and its resolution",
-      "context_entities": ["urn:eoip:ops:incident:INC0012042", "urn:eoip:ops:change:CHG0031088"],
+      "question": "Summarize the payment timeout spike incident (INC0080101) and its resolution",
+      "context_entities": ["urn:eoip:ops:incident:INC0080101", "urn:eoip:ops:change:CHG0090101"],
       "expected_output_fields": ["summary", "root_cause", "resolution", "evidence_refs", "confidence"],
-      "fallback_mode": "structured_graph_summary"
+      "fallback_mode": "structured_graph_summary",
+      "note": "Traces INC0080101 → mfs-payment-gateway → CHG0090101 tokenization deployment → MR !301 → PAY-101"
     },
     {
       "id": "laya-explain-decision",
       "capability": "decision_explanation",
-      "question": "Why was the risk timeout fallback chosen over a rollback?",
-      "context_entities": ["urn:eoip:ops:change:CHG0031088", "urn:eoip:knowledge:kb:northstar:KB00192"],
+      "question": "Why was HSM key rotation chosen over software-based key management for PCI DSS compliance?",
+      "context_entities": ["urn:eoip:work:item:jira:PAY-202", "urn:eoip:knowledge:page:confluence:pci-dss-compliance"],
       "expected_output_fields": ["explanation", "alternatives_considered", "evidence_refs", "confidence"],
-      "fallback_mode": "evidence_chain_narrative"
+      "fallback_mode": "evidence_chain_narrative",
+      "note": "Draws from Confluence PCI DSS checklist, PAY-202 story description, and architecture docs"
     },
     {
       "id": "laya-assess-readiness",
       "capability": "release_readiness",
-      "question": "Is release 2026.10.1 ready for production?",
-      "context_entities": ["urn:eoip:cicd:release:northstar:2026.10.1"],
+      "question": "Is the Payment Gateway V2 release ready for production?",
+      "context_entities": ["urn:eoip:work:feature:jira:PAY-100", "urn:eoip:work:feature:jira:PAY-200", "urn:eoip:work:feature:jira:PAY-300"],
       "expected_output_fields": ["verdict", "checklist", "blockers", "evidence_refs", "confidence"],
-      "fallback_mode": "structured_checklist"
+      "fallback_mode": "structured_checklist",
+      "note": "Checks: TC-PAY-007 IN_PROGRESS (blocker), TC-PAY-008 NOT_RUN (blocker), all pipelines green, Grafana dashboards configured"
     },
     {
       "id": "laya-generate-runbook",
       "capability": "runbook_generation",
-      "question": "Generate a runbook for handling patient data sync failures",
-      "context_entities": [],
+      "question": "Generate a runbook for handling payment gateway timeout incidents",
+      "context_entities": ["urn:eoip:ops:incident:INC0080101", "urn:eoip:code:api-service:mfs:payment-gateway"],
       "expected_output_fields": ["runbook", "steps", "related_entities", "confidence"],
-      "fallback_mode": "template_from_graph"
+      "fallback_mode": "template_from_graph",
+      "note": "Uses incident history, Grafana dashboards, pod topology, DB connection info, and existing Confluence runbook as inputs"
     },
     {
       "id": "laya-risk-assessment",
       "capability": "change_risk",
-      "question": "Assess the risk of deploying the async inventory reservation change",
-      "context_entities": [],
+      "question": "Assess the risk of deploying the fraud scoring model v2 (FRD-101)",
+      "context_entities": ["urn:eoip:work:item:jira:FRD-101", "urn:eoip:ops:change:CHG0090401"],
       "expected_output_fields": ["risk_level", "factors", "mitigations", "evidence_refs", "confidence"],
-      "fallback_mode": "graph_dependency_analysis"
+      "fallback_mode": "graph_dependency_analysis",
+      "note": "Analyzes: blast radius across mfs-fraud-engine dependents, previous incident INC0080201 (false positive spike), Kafka consumer impact, model rollback plan"
+    },
+    {
+      "id": "laya-entity-explanation",
+      "capability": "entity_explanation",
+      "question": "What is mfs-common-libs and how does it connect to other systems?",
+      "context_entities": ["urn:eoip:code:repo:mfs-common-libs"],
+      "expected_output_fields": ["explanation", "connections", "evidence_refs", "confidence"],
+      "fallback_mode": "graph_neighborhood_summary",
+      "note": "Explains the shared library's role: AuthClient used by all services, AuditLogger for compliance, MetricsCollector for observability"
+    },
+    {
+      "id": "laya-gap-analysis",
+      "capability": "gap_analysis",
+      "question": "What are the testing coverage gaps across the MFS platform?",
+      "context_entities": [],
+      "expected_output_fields": ["gaps", "severity", "recommendations", "evidence_refs", "confidence"],
+      "fallback_mode": "coverage_matrix_analysis",
+      "note": "Identifies: settlement batch (TC-PAY-007 incomplete), SAR reporting (TC-FRD-007 not run), mfs-customer-portal has no test cases"
+    },
+    {
+      "id": "laya-trend-summary",
+      "capability": "trend_summary",
+      "question": "Summarize the deployment and incident trends for Meridian Financial Services this quarter",
+      "context_entities": [],
+      "expected_output_fields": ["trends", "patterns", "anomalies", "evidence_refs", "confidence"],
+      "fallback_mode": "temporal_aggregation",
+      "note": "Aggregates: deployment frequency, incident rate, mean time to recovery, change failure rate from ServiceNow and GitLab data"
     }
   ]
 }

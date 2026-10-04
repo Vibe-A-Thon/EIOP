@@ -1,0 +1,105 @@
+{
+  "captured_at": "2026-10-04T13:49:45.895317Z",
+  "event_id": "9151a32c8a04801fc5720a2ec79e7a379cf011e87c8ae1325f5bf55fec1678ac",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "comment": {
+        "comments": [
+          {
+            "author": {
+              "displayName": "Raj Patel"
+            },
+            "body": "CHG0090102 submitted for approval. Deployment to mfs-staging namespace first.",
+            "created": "2026-09-26T09:00:00.000+0000"
+          }
+        ]
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-07-12T10:00:00.000+0000",
+      "customfield_10014": "EPC-101",
+      "customfield_10015": "Payment Services",
+      "customfield_10050": "TC-PAY-003",
+      "description": "Build an idempotent retry handler with circuit breaker pattern for payment processing. Must prevent duplicate charges during network failures and gateway timeouts. Uses svc-payment-api service account.\n\nAcceptance Criteria:\n- Idempotency key based on transaction ID + merchant ID\n- Circuit breaker opens after 5 consecutive failures\n- Half-open state probes every 30 seconds\n- Retry with exponential backoff (max 3 retries)\n\nGitLab MR: !302\nChange Request: CHG0090102\nTest Case: TC-PAY-003",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "MR !302: Build idempotent payment retry handler"
+            },
+            "key": "MR-302"
+          },
+          "type": {
+            "name": "GitLab MR",
+            "outward": "is developed in"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Add retry circuit breaker config"
+            },
+            "key": "PAY-121"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "retry",
+        "circuit-breaker",
+        "idempotency"
+      ],
+      "parent": {
+        "key": "PAY-100"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "story_points": 5,
+      "summary": "Build idempotent payment retry handler",
+      "updated": "2026-09-28T11:20:00.000+0000"
+    },
+    "id": "60102",
+    "key": "PAY-102",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60102"
+  },
+  "payload_hash": "51c92f3221cf2e03b23af4f73d6fe813b88b08c5a14772a8cfcba04e1a950e45",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-102",
+  "source_system": "jira",
+  "source_version": "51c92f3221cf2e03b23af4f73d6fe813b88b08c5a14772a8cfcba04e1a950e45"
+}

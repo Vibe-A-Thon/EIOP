@@ -23,7 +23,7 @@ async function run({symbol, jira, inputs, requests, document}) {
   const request = requests.find(item => item.url === '/api/v1/rag');
   assert.deepEqual(request.body, {canonical_id: symbol.id, question: 'Explain target', synthesize: false});
   assert.ok(requests.every(item => item.method === 'GET' ||
-    ['/api/v1/impact', '/api/v1/lineage', '/api/v1/path', '/api/v1/rag'].includes(item.url)));
+    ['/api/v1/impact', '/api/v1/lineage', '/api/v1/path', '/api/v1/rag', '/api/v1/query/nl', '/mcp'].includes(item.url)));
   await vscode.window.showTextDocument(document);
   assert.equal(document.isDirty, false);
 }

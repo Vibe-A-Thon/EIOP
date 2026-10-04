@@ -1,0 +1,82 @@
+{
+  "captured_at": "2026-10-04T13:45:50.511263Z",
+  "event_id": "2d55a168adc84a5ac727d32eaadfc098acb4a8d17a80c47dbc5bfc2cb9ad7937",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-fraud-engine"
+        }
+      ],
+      "created": "2026-08-22T11:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Implement a model versioning system that supports concurrent model deployments with traffic splitting for A/B testing. The framework must track model performance metrics per version and support automated rollback when a new model underperforms. Integrates with mfs-model-pod-01 via svc-model-serving service account.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "FRD-131"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        },
+        {
+          "outwardIssue": {
+            "key": "TC-FRD-003"
+          },
+          "type": {
+            "name": "is verified by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story"
+      },
+      "labels": [
+        "model-versioning",
+        "ab-testing",
+        "mlops"
+      ],
+      "parent": {
+        "key": "FRD-100"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "reporter": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "Model versioning and A/B testing framework",
+      "updated": "2026-10-02T09:00:00.000+0000"
+    },
+    "key": "FRD-103"
+  },
+  "payload_hash": "4e6be6720fadf40a5d3560bb13655d5d25f1fd3eb255d30bef3f3b93e69d78c0",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-103",
+  "source_system": "jira",
+  "source_version": "4e6be6720fadf40a5d3560bb13655d5d25f1fd3eb255d30bef3f3b93e69d78c0"
+}

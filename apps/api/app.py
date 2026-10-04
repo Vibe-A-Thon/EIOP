@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from uuid import uuid4
 
 from eoip.config import load_query_policy
@@ -156,6 +157,24 @@ class FormatConvertRequest(BaseModel):
 class BatchIngestionRequest(BaseModel):
     files: list[dict] = Field(min_length=1, max_length=50)
     pipeline_id: str = Field(default="batch", max_length=128)
+
+
+class FirewallInspectRequest(BaseModel):
+    content: str = Field(min_length=1, max_length=50_000)
+    boundary: str = Field(default="agent_context", max_length=128)
+    source_ref: str | None = Field(default=None, max_length=512)
+    block_on_restricted: bool = False
+
+
+class EvidenceManifestRequest(BaseModel):
+    answer_id: str = Field(min_length=1, max_length=256)
+    node_ids: list[str] = Field(default_factory=list, max_length=100)
+    edge_ids: list[str] = Field(default_factory=list, max_length=100)
+    evidence_refs: list[str] = Field(default_factory=list, max_length=200)
+    query_plan: dict | None = None
+    tool_calls: list[dict] = Field(default_factory=list, max_length=100)
+    rules_fired: list[dict] = Field(default_factory=list, max_length=100)
+    confidence_inputs: list[dict] = Field(default_factory=list, max_length=100)
 
 
 def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> FastAPI:
@@ -851,6 +870,32 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             raise HTTPException(422, str(exc)) from exc
         return {"name": name, "path": str(path), "status": "SAVED"}
 
+    @app.get("/api/v1/experts/{canonical_id:path}")
+    def experts_for_component(canonical_id: str):
+        """Evidence-ranked candidate experts for a component (GAP-REC-001)."""
+        from eoip.graph.expertise import find_experts
+
+        try:
+            return find_experts(store, canonical_id)
+        except ValueError as exc:
+            raise HTTPException(404, str(exc)) from exc
+
+    @app.get("/api/v1/knowledge/freshness")
+    def knowledge_freshness(stale_days: int = Query(default=90, ge=1, le=3650)):
+        """Stale-documentation detection for human review (GAP-FRESH-001..005)."""
+        from eoip.graph.expertise import freshness_report
+
+        return freshness_report(store, stale_days=stale_days)
+
+    @app.get("/api/v1/query/cache/stats")
+    def query_cache_stats():
+        """Semantic query cache metrics (GAP-CACHE; active only when EOIP_QUERY_CACHE=1)."""
+        from eoip.query.cache import SemanticQueryCache, cache_enabled
+
+        if not hasattr(app.state, "query_cache"):
+            app.state.query_cache = SemanticQueryCache()
+        return {"enabled": cache_enabled(), **app.state.query_cache.stats()}
+
     @app.get("/api/v1/process/cases")
     def process_cases(source_label: str = "WorkItem"):
         from eoip.graph.process_mining import extract_cases_from_graph
@@ -1068,6 +1113,81 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             "vertex_labels": list(VERTEX_LABELS.keys()),
             "edge_labels": list(EDGE_LABELS.keys()),
         }
+
+    @app.post("/api/v1/knowledge/firewall/inspect")
+    def knowledge_firewall_inspect(payload: FirewallInspectRequest):
+        from eoip.agents.firewall import KnowledgeFirewall
+
+        result = KnowledgeFirewall().inspect(
+            payload.content,
+            boundary=payload.boundary,
+            source_ref=payload.source_ref,
+            block_on_restricted=payload.block_on_restricted,
+        )
+        return {
+            "content": result.content,
+            "blocked": result.blocked,
+            "untrusted": result.untrusted,
+            "classifications": list(result.classifications),
+            "boundary": result.boundary,
+            "decisions": [decision.model_dump() for decision in result.decisions],
+            "provenance": result.provenance,
+        }
+
+    @app.get("/api/v1/knowledge/trust/states")
+    def knowledge_trust_states():
+        from eoip.provenance.trust import TrustState
+
+        return {
+            "states": [state.value for state in TrustState],
+            "minimum_query_filter": "Use trust_state >= requested threshold; REJECTED never passes.",
+        }
+
+    @app.post("/api/v1/evidence/manifest")
+    def evidence_manifest(payload: EvidenceManifestRequest):
+        from eoip.provenance.evidence import EvidenceService
+
+        manifest = EvidenceService(store).build_manifest(
+            answer_id=payload.answer_id,
+            node_ids=payload.node_ids,
+            edge_ids=payload.edge_ids,
+            evidence_refs=payload.evidence_refs,
+            query_plan=payload.query_plan,
+            tool_calls=payload.tool_calls,
+            rules_fired=payload.rules_fired,
+            confidence_inputs=payload.confidence_inputs,
+        )
+        return manifest.to_dict()
+
+    @app.get("/api/v1/gaps/coverage")
+    def gaps_coverage(
+        status: str | None = Query(default=None, pattern="^(done|partial|planned)$"),
+        priority: str | None = Query(default=None, pattern="^P[0-9]+$"),
+        include_requirements: bool = Query(default=True),
+    ):
+        from eoip.gaps.coverage import build_gap_coverage_report
+
+        repo_root = Path(__file__).resolve().parents[2]
+        report = build_gap_coverage_report(repo_root).to_dict()
+        requirements = report["requirements"]
+        if status:
+            requirements = [item for item in requirements if item["status"] == status]
+        if priority:
+            requirements = [item for item in requirements if item["priority"] == priority]
+        report["filtered_total"] = len(requirements)
+        report["requirements"] = requirements if include_requirements else []
+        return report
+
+    @app.get("/api/v1/gaps/requirements/{requirement_id}")
+    def gap_requirement(requirement_id: str):
+        from eoip.gaps.coverage import build_gap_coverage_report
+
+        normalized = requirement_id.upper()
+        repo_root = Path(__file__).resolve().parents[2]
+        for item in build_gap_coverage_report(repo_root).to_dict()["requirements"]:
+            if item["requirement_id"] == normalized:
+                return item
+        raise HTTPException(status_code=404, detail="GAP requirement not found")
 
     # --- EQL: EOIP Query Language ---
 
