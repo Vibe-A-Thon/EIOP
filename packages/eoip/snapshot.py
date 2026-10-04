@@ -34,7 +34,7 @@ def operational_path(name):
         or PureWindowsPath(name).is_reserved()
         or any(part.endswith((".", " ")) for part in relative.parts)
         or any(part in {".", ".."} or ":" in part or "\\" in part for part in relative.parts)
-        or relative.parts[0] not in {"state", "journal", "jobs"}
+        or relative.parts[0] not in {"state", "journal", "jobs", "receipts"}
         or name == "state/worker.json"
         or relative.suffix != (".ndjson" if relative.parts[0] == "journal" else ".json")
     ):
@@ -47,6 +47,13 @@ def operational_path(name):
                 raise ValueError("noncanonical job ID")
         except ValueError as exc:
             raise ValueError("Invalid snapshot operational job path") from exc
+    if relative.parts[0] == "receipts" and (
+        len(relative.parts) != 3
+        or not relative.stem
+        or len(relative.stem) != 64
+        or any(character not in "0123456789abcdef" for character in relative.stem)
+    ):
+        raise ValueError("Invalid snapshot operational receipt path")
     return relative
 
 
@@ -60,6 +67,21 @@ def validate_operational_record(name, content):
                 raise ValueError("Invalid snapshot operational journal")
         return None
     record = json.loads(content)
+    if relative.parts[0] == "receipts":
+        receipt = record.get("receipt") if isinstance(record, dict) else None
+        if (
+            not isinstance(receipt, dict)
+            or receipt.get("source_id") != relative.parts[1]
+            or not isinstance(receipt.get("delivery_id"), str)
+            or not isinstance(receipt.get("received_at"), str)
+            or not isinstance(receipt.get("content_hash"), str)
+            or len(receipt.get("content_hash", "")) != 64
+            or not isinstance(receipt.get("payload_ref"), str)
+            or not isinstance(record.get("payload"), dict)
+            or not isinstance(record.get("metadata", {}), dict)
+        ):
+            raise ValueError("Invalid snapshot operational receipt")
+        return record
     if relative.parts[0] == "jobs" and (
         not isinstance(record, dict)
         or record.get("job_id") != relative.stem
@@ -79,7 +101,7 @@ def validate_operational_record(name, content):
 def operational_files(root):
     records = {}
     total_bytes = 0
-    for sub in ("state", "journal", "jobs"):
+    for sub in ("state", "journal", "jobs", "receipts"):
         suffix = "*.ndjson" if sub == "journal" else "*.json"
         for path in (root / sub).rglob(suffix):
             name = path.relative_to(root).as_posix()

@@ -1,5 +1,22 @@
 # EOIP Full Documentation Gap Report
 
+## Current progress (supersedes historical totals below)
+
+The [current snapshot](./current-gap-report.json) indexes **172 documents /
+29,538 lines** and **1,428 candidate records: 0 Done, 224 Partial, 1,204 Missing**.
+Certified semantic review: **0/172 documents, 0/1,428 candidates**; acceptance
+verification: **0/1,428**. These are evidence-triage counts, not proof of missing behavior.
+Latest local regression: **1,486 passed, 31 skipped, 0 failures/errors** out of
+1,517 cases; content-bound PASS at `2026-10-04T20:33:58.615862+00:00`.
+Phase 1 tooling is implemented; publication, remote CI, review and later phases
+remain paused/pending. See the [checklist](./completion-checklist.md) and
+[test report](./test-report.md). Original snapshot figures below are historical.
+
+> Historical snapshot with an obsolete KGR exclusion. See the
+> [current gap report](./current-gap-report.md) and
+> [phase specification and decisions](./phase-1-spec.md).
+> Original counts and completion claims below have not been reverified.
+
 Generated: `2026-10-04T07:00:33.948606+00:00`  
 Branch/HEAD: `feature/audit-evidence-foundation` / `cb36bb667d02323617010361e277b0d2f9880fd0`
 

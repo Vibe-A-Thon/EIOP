@@ -19,9 +19,12 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install existing development dependencies
-        run: python -m pip install -e ".[dev,codeparse]"
+        run: python -m pip install -e ".[dev,codeparse,fileparse]"
       - name: Check evidence-tooling lint
-        run: python -m ruff check scripts\validate_with_evidence.py tests\unit\test_validation_source_binding.py
+        run: >-
+          python -m ruff check scripts\validate_with_evidence.py
+          scripts\documentation_audit.py tests\unit\test_validation_source_binding.py
+          tests\unit\test_documentation_audit.py
       - name: Run source-bound regression
         run: >-
           python -X utf8 -m scripts.validate_with_evidence

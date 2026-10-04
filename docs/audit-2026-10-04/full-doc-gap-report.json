@@ -1,4 +1,18 @@
 {
+  "current_progress": {
+    "source": "current-gap-report.json",
+    "documents": 172, "document_lines": 29538, "candidate_records": 1428,
+    "by_status": {"Done": 0, "Partial": 224, "Missing": 1204},
+    "semantic_reviewed_documents": 0, "semantic_reviewed_candidates": 0,
+    "acceptance_verified_candidates": 0,
+    "latest_regression": {"cases": 1517, "passed": 1486, "skipped": 31, "failures": 0, "errors": 0, "content_bound": true, "revision_bound": false, "completed_at": "2026-10-04T20:33:58.615862+00:00", "receipt": "../../test-results/audit-current-rerun-source-bound-validation.json"},
+    "phase_1": "implemented and locally tested; product semantic audit pending",
+    "publication": "paused by user; no commit, push, PR or remote CI",
+    "counts_basis": "Candidate evidence triage, not verified atomic product requirements; all other top-level counts below are historical."
+  },
+  "historical_snapshot": true,
+  "superseded_for_current_scope_by": "current-gap-report.json",
+  "current_scope_note": "KGR is now included. Original counts/statuses/receipts below describe only this historical snapshot, not current acceptance.",
   "generated_at": "2026-10-04T07:00:33.948606+00:00",
   "repo_root": "F:\\code\\EOIP\\EIOP",
   "branch": "feature/audit-evidence-foundation",

@@ -12,6 +12,9 @@ Updated: 2026-10-05
 | G2-T0005 capability interfaces | `connectors/base.py` | fake connector protocol test | Complete |
 | G2-T0006 traceability | this document | reviewed with phase exit | Complete |
 | G2 executable coverage | Gap coverage scanner, CLI and API support both legacy GAP docs and `gaps2-*` heading/range requirements via `doc_set=g2` | `test_gap_coverage.py` | Complete |
+| G2-ARCH-001..015 guardrails | Executable architecture profile evaluates acquisition contract, API/event-first rules, deterministic graph mutation, evidence, replayability and source-permission guardrails | `test_gap_coverage.py` | Complete |
+| G2-OBS-001..006 observability contract | Required traces and metrics are exposed as a machine-readable contract and validator under `/api/v1/gaps/g2/observability-contract` | `test_gap_coverage.py` | Complete |
+| G2 full readiness matrix | `/api/v1/gaps/g2/readiness` maps every `gaps2` requirement to concrete modules, routes, UI files or tests and verifies the surfaces are present | `test_g2_readiness.py` | Complete |
 | G2-T0101 registry CRUD | `connectors/registry.py`, `/api/v1/sources` routes | API and persistence tests | Complete |
 | G2-T0102 secret references | source registry validators | rejection tests | Complete |
 | G2-T0103 capability metadata | `SourceCapabilities` contract | contract and registry tests | Complete |

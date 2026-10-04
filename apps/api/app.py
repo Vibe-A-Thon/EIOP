@@ -1338,6 +1338,14 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
         return validate_g2_observability_snapshot(body.get("snapshot", body))
 
+    @app.get("/api/v1/gaps/g2/readiness")
+    def g2_readiness():
+        from eoip.gaps.g2_readiness import g2_readiness_report
+
+        repo_root = Path(__file__).resolve().parents[2]
+        routes = {route.path for route in app.routes if hasattr(route, "path")}
+        return g2_readiness_report(repo_root=repo_root, available_routes=routes)
+
     # --- EQL: EOIP Query Language ---
 
     @app.post("/api/v1/query/eql")

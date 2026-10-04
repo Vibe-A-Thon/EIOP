@@ -1,4 +1,18 @@
 {
+  "current_progress": {
+    "source": "current-gap-report.json",
+    "documents": 172, "document_lines": 29538, "candidate_records": 1428,
+    "by_status": {"Done": 0, "Partial": 224, "Missing": 1204},
+    "semantic_reviewed_documents": 0, "semantic_reviewed_candidates": 0,
+    "acceptance_verified_candidates": 0,
+    "latest_regression": {"cases": 1517, "passed": 1486, "skipped": 31, "failures": 0, "errors": 0, "content_bound": true, "revision_bound": false, "completed_at": "2026-10-04T20:33:58.615862+00:00", "receipt": "../../test-results/audit-current-rerun-source-bound-validation.json"},
+    "phase_1": "implemented and locally tested; product semantic audit pending",
+    "publication": "paused by user; no commit, push, PR or remote CI",
+    "counts_basis": "Candidate evidence triage, not verified atomic product requirements; all other top-level counts below are historical."
+  },
+  "historical_snapshot": true,
+  "superseded_for_current_scope_by": "current-gap-report.json",
+  "current_scope_note": "The original done/partial/planned counts measure identifier-reference coverage, not verified product completion.",
   "by_phase": {
     "10. Phase 7 \u2014 Enterprise Security, HA & Operational Maturity": 3,
     "11. Phase 8 \u2014 Advanced Analytics, Simulation & Predictive Intelligence": 2,

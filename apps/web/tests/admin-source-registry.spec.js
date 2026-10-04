@@ -75,12 +75,13 @@ test('admin source registry supports onboarding, discovery, and source operation
   await expect(page.getByText('Jira Prod')).toBeVisible();
   await expect(page.getByText('baseline, poll, replay')).toBeVisible();
 
-  await page.getByRole('button', {name: 'Discover'}).click();
+  const jiraRow = page.getByRole('row', {name: /Jira Prod/});
+  await jiraRow.getByRole('button', {name: 'Discover'}).click();
   await expect(page.getByRole('heading', {name: 'jira-prod'})).toBeVisible();
   await expect(page.getByText('EOIP-1')).toBeVisible();
 
-  await page.getByRole('button', {name: 'Dry run'}).click();
-  await page.getByRole('button', {name: 'Disable'}).click();
+  await jiraRow.getByRole('button', {name: 'Dry run'}).click();
+  await jiraRow.getByRole('button', {name: 'Disable'}).click();
   await expect(page.getByText('DISABLED')).toBeVisible();
 
   await page.getByText('Web Crawler').click();
