@@ -102,6 +102,10 @@ class LinkPredictionRequest(BaseModel):
     limit: int = Field(default=10, ge=1, le=50)
 
 
+class SurpriseRequest(BaseModel):
+    limit: int = Field(default=20, ge=1, le=100)
+
+
 class DiffRequest(BaseModel):
     snapshot_a: str = Field(min_length=1, max_length=64)
     snapshot_b: str = Field(min_length=1, max_length=64)
@@ -446,6 +450,12 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             limit=payload.limit,
         )
 
+    @app.post("/api/v1/graph/surprises")
+    def graph_surprises(payload: SurpriseRequest):
+        from eoip.graph.surprise import SurpriseDetector
+
+        return SurpriseDetector(store).summary(limit=payload.limit)
+
     @app.get("/api/v1/graph/orphaned")
     def graph_orphaned(
         entity_types: str | None = Query(default=None, max_length=256),
@@ -769,10 +779,16 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
     @app.post("/api/v1/conformance/check")
     def conformance_check(body: dict):
         from eoip.graph.conformance import check_conformance, parse_rules
+        from eoip.graph.rule_catalog import get_rule_set
         dsl = body.get("rules_dsl", "")
         rules_list = body.get("rules", [])
+        ruleset = body.get("ruleset", "")
+        if ruleset:
+            stored = get_rule_set(ruleset)
+            if stored is None:
+                raise HTTPException(404, f"Rule set not found: {ruleset}")
+            dsl = dsl or stored
         if dsl:
-            from eoip.graph.conformance import ArchRule, RuleKind
             rules = parse_rules(dsl)
         elif rules_list:
             from eoip.graph.conformance import ArchRule, RuleKind
@@ -783,8 +799,24 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
                 max_depth=r.get("max_depth", 4),
             ) for r in rules_list]
         else:
-            raise HTTPException(400, "rules_dsl or rules required")
+            raise HTTPException(400, "rules_dsl, rules, or ruleset required")
         return check_conformance(store, rules)
+
+    @app.get("/api/v1/conformance/rules")
+    def conformance_rule_sets():
+        from eoip.graph.rule_catalog import list_rule_sets
+
+        return {"rule_sets": list_rule_sets()}
+
+    @app.put("/api/v1/conformance/rules/{name}")
+    def save_conformance_rule_set(name: str, body: dict):
+        from eoip.graph.rule_catalog import save_rule_set
+
+        try:
+            path = save_rule_set(name, body.get("rules_dsl", ""))
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+        return {"name": name, "path": str(path), "status": "SAVED"}
 
     @app.get("/api/v1/process/cases")
     def process_cases(source_label: str = "WorkItem"):

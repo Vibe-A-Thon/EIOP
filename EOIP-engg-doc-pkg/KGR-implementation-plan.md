@@ -1,7 +1,7 @@
 # KGR — Knowledge Graph Renderer: Phase-by-Phase Implementation Plan
 
-**Version:** 3.0  
-**Date:** 2026-10-03  
+**Version:** 4.0  
+**Date:** 2026-10-04  
 **Baseline:** EOIP current state (166 tests passing, full App.jsx with 6 lenses including KGR, GraphCanvas with Cytoscape.js, Phase 1 backend+frontend complete)  
 **Target:** The most capable open, local-first graph intelligence platform — surpassing Graphify, Neo4j Bloom, Linkurious, Gephi, Graphistry, yFiles, Sourcetrail, CodeSee, Sourcegraph, code2flow, KeyLines, Ogma, G6/Graphin, and Cytoscape desktop.
 
@@ -206,8 +206,11 @@ class AnomalyRequest(BaseModel):
 | Phase 6 | **COMPLETE** | 10 | Sigma.js WebGL, Web Worker layouts, progressive rendering, k-core, components, degree distribution |
 | Phase 7 | **COMPLETE** | 8 | WebSocket event emitter, polling fallback, event feed UI, useGraphEvents hook |
 | Phase 8 | **COMPLETE** | 20 | Graph diff, what-if (2 modes), anomaly detection (3 algos), health dashboard |
-| Phase 9 | **TODO** | — | Component wiring & integration (connect disconnected components into KGRExplorer) |
-| Phase 10 | **TODO** | — | Advanced competitor features (node grouping, geo-mode, code+graph, visual query builder, dead code, community labeling, PR dashboard, 4 new export formats) |
+| Phase 9 | **COMPLETE** | 12 | Component wiring & integration (useGraphEvents, LayoutWorker, GraphToolbar, ExportMenu, TimelineScrubber, Minimap, community filter, diff view, annotations in exports, deduplicate inline components) |
+| Phase 10 | **COMPLETE** | 41 | Node grouping (ComboNode), geo-mode (GeoMap/Leaflet), code+graph (CodePanel), visual query builder (QueryBuilder), dead code/orphaned detection, community auto-labeling, PR dashboard, 4 new exports (GEXF/Obsidian/Mermaid/Cypher), AMBIGUOUS evidence |
+| Phase 11 | **TODO** | — | Visual Intelligence & Polish (semantic zoom, fisheye distortion, edge bundling, color-blind safe palette, orthogonal layout) |
+| Phase 12 | **TODO** | — | Competitive Parity Plus (self-contained HTML export, graph report generation, hub exclusion, surprising connections, rule-based styling, lasso selection, URL deep linking, table view, investigation playbooks, cross-project merge) |
+| Phase 13 | **TODO** | — | AI-Assisted Graph Intelligence (17 RAG patterns, 40+ agent types, 8 engineering disciplines, MCP-first graph intelligence) |
 
 ---
 
@@ -1698,9 +1701,1071 @@ Phase 1 ──────┐
 
 ---
 
+## Phase 11: Visual Intelligence & Polish
+**Duration:** 2 weeks  
+**Goal:** Implement the Phase 5 visual features that were specified but not yet built (semantic zoom, fisheye, edge bundling, color-blind palette), plus orthogonal layout. These are the remaining visual polish items identified in the competitive gap audit.
+
+### 11.1 Semantic Zoom (3 Levels) (2 days)
+**Files:** modify `apps/web/src/kgr/KGRExplorer.jsx`, modify `apps/web/src/GraphCanvas.jsx`
+
+Three zoom levels with smooth transitions:
+
+| Zoom Level | Range | Visible Elements |
+|---|---|---|
+| Cluster | < 0.3 | Community hulls only, hub nodes (degree > mean+1σ), no labels |
+| Entity | 0.3 - 0.8 | All nodes, abbreviated labels (first 15 chars), no edge labels |
+| Detail | > 0.8 | All nodes with full labels, edge labels, evidence indicators, property badges |
+
+Implementation:
+```javascript
+function getSemanticZoomLevel(zoom) {
+    if (zoom < 0.3) return 'cluster';
+    if (zoom < 0.8) return 'entity';
+    return 'detail';
+}
+
+function applySemanticZoom(cy, level) {
+    const styleLevels = {
+        cluster: { nodeLabel: '', edgeLabel: '', lowDegreeOpacity: 0.1 },
+        entity: { nodeLabel: node => node.data('label').substring(0, 15), edgeLabel: '', lowDegreeOpacity: 1 },
+        detail: { nodeLabel: 'data(label)', edgeLabel: 'data(type)', lowDegreeOpacity: 1 },
+    };
+    // Apply styles with 200ms CSS transition
+}
+```
+
+- CSS opacity/transform animations (200ms) for smooth transitions
+- Node hover always shows full label tooltip regardless of zoom level
+- Configurable thresholds in toolbar settings gear
+
+### 11.2 Fisheye Distortion (2 days)
+**Files:** modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+- Toggle from toolbar ("magnifier" icon)
+- 2x magnification at cursor center, gradual falloff to edges
+- Implementation: on mousemove, compute distorted positions for visible nodes
+```javascript
+function fisheyeDistort(nodes, focusX, focusY, radius = 200, distortion = 2) {
+    return nodes.map(node => {
+        const dx = node.x - focusX, dy = node.y - focusY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > radius) return node;
+        const scale = distortion * (1 - Math.pow(dist / radius, 2)) + 1;
+        return { ...node, x: focusX + dx * scale, y: focusY + dy * scale };
+    });
+}
+```
+- Debounce: recompute every 50ms during mouse movement
+- Disable during layout animation
+- Keyboard toggle: `Shift+F` for fisheye
+
+### 11.3 Force-Directed Edge Bundling (2 days)
+**Files:** modify `apps/web/src/GraphCanvas.jsx`, `apps/web/src/kgr/analysis/edge-bundling.js` (new)
+
+Force-Directed Edge Bundling (FDEB) for visual declutter:
+```javascript
+// edge-bundling.js
+export function forceDirectedEdgeBundling(edges, iterations = 6, stepSize = 0.1) {
+    // Holten & van Wijk FDEB algorithm:
+    // 1. Subdivide each edge into P control points
+    // 2. For each iteration:
+    //    a. Compute edge compatibility (angle, scale, position, visibility)
+    //    b. Apply spring forces between compatible edges' control points
+    //    c. Update control point positions
+    // 3. Return curved edge paths as SVG/bezier control points
+}
+
+export function edgeCompatibility(e1, e2) {
+    return angleCompat(e1, e2) * scaleCompat(e1, e2) *
+           positionCompat(e1, e2) * visibilityCompat(e1, e2);
+}
+```
+
+- Auto-activate when any node has > 10 edges (configurable threshold)
+- Toggle from toolbar settings
+- Performance: skip bundling for > 2K edges
+- Bundle strength slider in settings (0-100%)
+
+### 11.4 Color-Blind Safe Palette (1 day)
+**Files:** modify `apps/web/src/style.css`, `apps/web/src/kgr/KGRExplorer.jsx`
+
+Three palette modes:
+1. **Default**: standard domain-based coloring
+2. **Deuteranopia/Protanopia**: blue-orange-yellow scheme (no red-green)
+3. **Tritanopia**: blue-red-magenta scheme (no blue-yellow confusion)
+
+```css
+:root[data-palette="deuteranopia"] {
+    --domain-1: #0077BB; --domain-2: #EE7733; --domain-3: #CCBB44;
+    --domain-4: #009988; --domain-5: #CC3311; --domain-6: #33BBEE;
+    --risk-high: #CC3311; --risk-medium: #EE7733; --risk-low: #009988;
+}
+:root[data-palette="tritanopia"] {
+    --domain-1: #332288; --domain-2: #CC6677; --domain-3: #AA4499;
+    --domain-4: #882255; --domain-5: #661100; --domain-6: #117733;
+}
+```
+
+Additional accessibility:
+- Shape encoding alongside color: circles (default), diamonds (selected), triangles (high-degree hub), squares (annotated)
+- Pattern fills for community hull backgrounds
+- Toggle in toolbar settings gear under "Accessibility"
+- WCAG 2.1 AA contrast ratios enforced for all text-on-background combinations
+
+### 11.5 Orthogonal Layout (1 day)
+**Files:** modify `apps/web/src/kgr/renderers/LayoutWorker.js`
+
+Adds yFiles-style orthogonal layout (axis-aligned edges, right-angle bends):
+```javascript
+case 'orthogonal':
+    // Tamassia's orthogonal layout algorithm:
+    // 1. Planarize graph (handle crossings)
+    // 2. Compute orthogonal representation (assign port directions)
+    // 3. Compact layout (minimize bends and area)
+    // Simplified implementation: grid placement + Manhattan edge routing
+    const cols = Math.ceil(Math.sqrt(nodes.length));
+    nodes.forEach((node, i) => {
+        node.x = (i % cols) * gridSpacing;
+        node.y = Math.floor(i / cols) * gridSpacing;
+    });
+    // Route edges with L-shaped or Z-shaped bends along grid lines
+    break;
+```
+
+- Layout algorithm #14 in GraphToolbar
+- Best for: architecture diagrams, data flow diagrams, UML-style views
+- Matches yFiles' strongest differentiator (without the €9.2K/yr license)
+
+### Tests (Phase 11)
+```
+tests/unit/test_kgr_visual_intelligence.py — 15 tests
+apps/web/tests/kgr-visual.spec.js — 10 tests
+```
+- 3 tests for semantic zoom level transitions
+- 3 tests for fisheye coordinate distortion correctness
+- 3 tests for edge bundling compatibility computation
+- 3 tests for color-blind palette CSS variable application
+- 3 tests for orthogonal layout grid placement
+- All existing tests continue to pass
+
+---
+
+## Phase 12: Competitive Parity Plus — Beyond Every Competitor
+**Duration:** 3 weeks  
+**Goal:** Implement features that make KGR definitively the best graph platform — features no single competitor offers, identified through deep research across 15+ tools, academic papers, and community forums. These are the features that will make developers choose KGR over every alternative.
+
+### 12.1 Self-Contained Interactive HTML Export (3 days)
+**Files:** `apps/web/src/kgr/export/InteractiveExport.js` (new), modify `apps/web/src/kgr/components/ExportMenu.jsx`
+
+Inspired by Graphify's `graph.html` — a single HTML file that contains the full graph, rendering engine, and interaction logic. No server needed to view.
+
+```javascript
+// InteractiveExport.js
+export function generateInteractiveHTML(elements, options = {}) {
+    // 1. Serialize graph data as inline JSON (compressed)
+    // 2. Bundle minimal Sigma.js v3 renderer inline (UMD, ~150KB minified)
+    // 3. Include: zoom/pan, click-to-inspect, search, filter by type
+    // 4. Include: community hull overlays, domain coloring
+    // 5. Theme: light/dark auto-detect from OS
+    // 6. Total target size: < 2MB for 5K-node graph
+    return `<!DOCTYPE html>
+<html><head><title>KGR Graph Export</title>
+<style>/* inline CSS */</style>
+</head><body>
+<div id="graph-container"></div>
+<div id="inspector-panel"></div>
+<script>/* inline sigma.js + graphology */</script>
+<script>
+const GRAPH_DATA = ${JSON.stringify(compressedElements)};
+/* render logic: sigma, layout, interaction handlers */
+</script>
+</body></html>`;
+}
+```
+
+Features in exported HTML:
+- Zoom/pan interaction
+- Click-to-inspect node properties
+- Search bar with typeahead
+- Filter by entity type (checkbox toggles)
+- Community hull overlays
+- Domain coloring
+- Node sizing by degree
+- Responsive (works on mobile)
+- Dark/light theme
+- **Surpasses Graphify**: KGR's graph.html includes search, filtering, community hulls, and inspector — Graphify's only has zoom/pan
+
+### 12.2 Automated Graph Report Generation (2 days)
+**Files:** `apps/web/src/kgr/export/GraphReport.js` (new), modify `apps/web/src/kgr/components/ExportMenu.jsx`
+
+Inspired by Graphify's GRAPH_REPORT.md — automatically generates a comprehensive Markdown analysis report.
+
+```javascript
+// GraphReport.js
+export function generateGraphReport(elements, metrics, communities) {
+    const sections = [
+        generateOverviewSection(elements),        // node/edge counts, density, components
+        generateTopologySection(elements),         // degree distribution, clustering coefficient
+        generateCentralitySection(metrics),        // top-10 by each centrality measure
+        generateCommunitySection(communities),     // community breakdown, inter/intra density
+        generateEvidenceSection(elements),         // evidence coverage, trust distribution
+        generateHealthSection(elements),           // completeness, freshness, anomalies
+        generateRecommendationsSection(elements),  // actionable insights from anomaly detection
+    ];
+    return `# KGR Graph Intelligence Report\n\n${sections.join('\n\n---\n\n')}`;
+}
+```
+
+Output: `GRAPH_REPORT.md` with:
+- Executive summary (1 paragraph)
+- Topology statistics table
+- Top-10 most central entities per algorithm
+- Community breakdown with auto-labels
+- Evidence coverage analysis
+- Health score dashboard (text version)
+- Actionable recommendations (orphaned entities, stale data, missing edges)
+- **Surpasses Graphify**: KGR's report includes centrality analysis, evidence coverage, health scores, and recommendations — Graphify's only has basic topology
+
+### 12.3 Hub Exclusion Filter (1 day)
+**Files:** modify `apps/web/src/kgr/components/FilterBar.jsx`, modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+Inspired by Graphify's `--exclude-hubs` flag. Hub nodes (very high-degree) can dominate the visual and obscure interesting substructures.
+
+```javascript
+// New filter dimension (#12):
+// Hub exclusion: slider for max degree threshold
+// When active: hide nodes with degree > threshold (the "hubs")
+// Quick presets: "Remove top-1%", "Remove top-5%", "Remove top-10%"
+// Visual indicator: dimmed hub silhouette showing where excluded node was
+
+function computeHubThreshold(elements, percentile = 0.99) {
+    const degrees = elements.nodes.map(n => n.data.metrics?.degree || 0).sort((a, b) => a - b);
+    return degrees[Math.floor(degrees.length * percentile)];
+}
+```
+
+- Extends filter bar to 12 dimensions (was 11)
+- Hub exclusion reveals hidden substructures
+- "Show hubs" toggle button re-enables them
+- **Surpasses Graphify**: visual indicator of excluded hubs (Graphify just hides them)
+
+### 12.4 Surprising/Unexpected Connection Detection (2 days)
+**Files:** `packages/eoip/graph/surprise.py` (new), modify `apps/api/app.py`, modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+Inspired by Graphify's "unexpected connection" ranking. Uses graph structure to identify edges that are statistically surprising.
+
+Backend:
+```python
+# packages/eoip/graph/surprise.py
+class SurpriseDetector:
+    def __init__(self, store: GraphStore):
+        self._store = store
+
+    def surprising_edges(self, limit: int = 20) -> list[SurpriseResult]:
+        """Find edges connecting entities that are structurally distant.
+        Algorithm: for each edge (u,v), compute:
+        1. Jaccard similarity of neighborhoods (low = surprising)
+        2. Shortest path length if edge were removed (long = surprising)
+        3. Cross-domain factor (different domains = more surprising)
+        Score = 1/jaccard * path_length * cross_domain_bonus
+        Return top-N by surprise score."""
+
+    def surprising_communities(self, communities: list) -> list[SurpriseResult]:
+        """Find communities that bridge unexpected domains.
+        A community with entities from 3+ different domains is surprising."""
+
+    def unexpected_absence(self, limit: int = 20) -> list[SurpriseResult]:
+        """Find entity pairs that SHOULD be connected (high similarity) but aren't.
+        Uses link prediction score — pairs with high predicted score but no actual edge."""
+```
+
+API endpoint: `GET /api/v1/graph/surprises`
+
+Frontend:
+- "Surprise" tab in sidebar showing ranked surprising connections
+- Click to highlight the surprising edge on the graph
+- Sparkle icon on surprising edges in the graph view
+- **Surpasses Graphify**: adds cross-domain analysis and unexpected absence detection
+
+### 12.5 Rule-Based Conditional Visual Styling (2 days)
+**Files:** `apps/web/src/kgr/components/StyleRules.jsx` (new), modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+Inspired by Neo4j Bloom's "Perspective" system and Linkurious's conditional styling rules.
+
+```javascript
+// StyleRules.jsx
+function StyleRules({ onApply }) {
+    // Rule builder UI:
+    // IF [entity type] [property] [operator] [value]
+    // THEN [set color | set size | set shape | set border | set icon | set label]
+    //
+    // Example rules:
+    // IF File.path contains "test" THEN color = green, shape = diamond
+    // IF Service.status = "degraded" THEN color = red, border = dashed, size = 2x
+    // IF Commit.merge_request_id exists THEN icon = PR, label = pr_title
+    //
+    // Rule priority: top-to-bottom, first match wins
+    // Saved rules persist in localStorage
+    // Import/export rules as JSON
+}
+
+const defaultRules = [
+    { condition: { label: 'File', property: 'path', operator: 'contains', value: 'test' },
+      style: { color: '#4CAF50', shape: 'diamond' } },
+    { condition: { property: 'creation_status', operator: '=', value: 'AMBIGUOUS' },
+      style: { borderStyle: 'dotted', borderColor: '#FF9800' } },
+];
+```
+
+- Rule manager accessible from toolbar settings gear
+- Live preview: rules apply immediately as they're edited
+- Template rules: pre-built rule sets for common patterns
+- **Surpasses Neo4j Bloom**: rules are composable, exportable, and apply to all graph types
+
+### 12.6 Lasso/Rectangle Multi-Selection (1 day)
+**Files:** modify `apps/web/src/GraphCanvas.jsx`, modify `apps/web/src/kgr/renderers/SigmaRenderer.jsx`
+
+Inspired by KeyLines and yFiles. Essential for large graphs where click-selection is impractical.
+
+```javascript
+// Lasso selection mode
+function enableLassoSelect(cy) {
+    let path = [];
+    cy.on('mousedown', e => { if (e.originalEvent.shiftKey) startLasso(e); });
+    cy.on('mousemove', e => { if (lassoActive) extendLasso(e); });
+    cy.on('mouseup', e => { if (lassoActive) completeLasso(e); });
+}
+
+function pointInPolygon(point, polygon) {
+    // Ray casting algorithm for point-in-polygon test
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        if ((polygon[i].y > point.y) !== (polygon[j].y > point.y) &&
+            point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) /
+            (polygon[j].y - polygon[i].y) + polygon[i].x)
+            inside = !inside;
+    }
+    return inside;
+}
+
+// Rectangle selection: hold Ctrl+Shift and drag
+function enableRectSelect(cy) { /* ... */ }
+```
+
+- Shift+drag for lasso (freeform polygon selection)
+- Ctrl+Shift+drag for rectangle selection
+- Selected nodes highlighted with selection ring
+- Selection count badge in toolbar
+- "Select all in community" context menu option
+- **Unique among free tools** — KeyLines and yFiles both charge for this
+
+### 12.7 URL Deep Linking / Graph State Sharing (2 days)
+**Files:** modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+Inspired by Neo4j Bloom's shareable scene URLs. Enables sharing a specific graph view state via URL.
+
+```javascript
+// Encode graph state in URL hash
+function encodeGraphState(state) {
+    return btoa(JSON.stringify({
+        graphType: state.graphType,
+        filters: state.activeFilters,
+        selected: state.selectedNodeId,
+        zoom: state.zoom,
+        pan: state.pan,
+        layout: state.layout,
+    }));
+}
+
+// Read state from URL on load
+function decodeGraphState(hash) {
+    try { return JSON.parse(atob(hash)); } catch { return null; }
+}
+
+// Update URL hash on state change (debounced 500ms)
+useEffect(() => {
+    const hash = encodeGraphState(currentState);
+    window.history.replaceState(null, '', `#${hash}`);
+}, [currentState]);
+```
+
+- URL encodes: graph type, active filters, selected node, zoom/pan, layout
+- Share URL: "Copy link to this view" button in toolbar
+- Open shared URL → restore exact graph state
+- Bookmark-compatible: browser bookmarks preserve the view
+- **Surpasses Neo4j Bloom**: includes filter state and layout (Bloom only encodes selection)
+
+### 12.8 Alternative Table/List View for Accessibility (2 days)
+**Files:** `apps/web/src/kgr/components/TableView.jsx` (new), modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+WCAG requirement: graph visualization is inherently visual. Provide an alternative data-table view.
+
+```javascript
+// TableView.jsx
+function TableView({ elements, onSelect }) {
+    // Sortable, filterable data table showing graph entities
+    // Columns: Name, Type, Domain, Degree, In-Degree, Out-Degree, Evidence, Status
+    // Click row → select entity (highlights in graph if split-view)
+    // Search bar at top
+    // Expandable rows: show relationships for each entity
+    // Virtual scrolling for large datasets
+    // Export table as CSV
+    // Toggle between "Entities" and "Relationships" tabs
+}
+```
+
+- Toggle via toolbar button or keyboard shortcut (`T`)
+- Split view: table (left) + graph (right) with synchronized selection
+- Full keyboard navigation: arrow keys, Enter to select, Tab to move between columns
+- Screen reader compatible: proper ARIA table roles
+- **Unique to KGR** — no competitor offers a true accessible table alternative
+
+### 12.9 Investigation Playbooks (2 days)
+**Files:** `apps/web/src/kgr/components/Playbooks.jsx` (new), modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+Inspired by Graphistry's investigation workflows. Guided exploration sequences for common analysis patterns.
+
+```javascript
+// Playbooks.jsx
+const builtInPlaybooks = [
+    {
+        name: 'Impact Assessment',
+        description: 'Assess the blast radius and risk of modifying an entity',
+        steps: [
+            { action: 'select', prompt: 'Select the entity to assess' },
+            { action: 'blast-radius', depth: 4 },
+            { action: 'what-if', mode: 'remove' },
+            { action: 'report', template: 'impact-assessment' },
+        ],
+    },
+    {
+        name: 'Root Cause Analysis',
+        description: 'Trace upstream dependencies to find root causes',
+        steps: [
+            { action: 'select', prompt: 'Select the affected entity' },
+            { action: 'reverse-impact', depth: 6 },
+            { action: 'centrality', focus: 'betweenness' },
+            { action: 'filter', trust: 'INFERRED' },
+        ],
+    },
+    {
+        name: 'Community Health Check',
+        description: 'Audit a community cluster for orphans, stale entities, and anomalies',
+        steps: [
+            { action: 'detect-communities' },
+            { action: 'select-community', prompt: 'Select a community to audit' },
+            { action: 'orphaned-entities' },
+            { action: 'stale-entities' },
+            { action: 'anomaly-detection' },
+        ],
+    },
+    {
+        name: 'Dependency Audit',
+        description: 'Find critical dependencies and single points of failure',
+        steps: [
+            { action: 'centrality', focus: 'betweenness', sortBy: 'desc' },
+            { action: 'filter', centrality: { min: 'p90' } },
+            { action: 'what-if', mode: 'remove', target: 'selected' },
+        ],
+    },
+];
+```
+
+- Playbook runner: step-by-step guided mode with progress indicator
+- Each step auto-executes the action and waits for user input where needed
+- User can create custom playbooks (saved in localStorage)
+- Export playbooks as JSON for team sharing
+- **Surpasses Graphistry**: KGR playbooks include what-if simulation and anomaly detection
+
+### 12.10 Cross-Project Graph Merge (2 days)
+**Files:** modify `packages/eoip/snapshot.py`, modify `apps/api/app.py`
+
+Inspired by Graphify's multi-repo graph merging. Enables merging graphs from multiple EOIP instances or projects.
+
+Backend:
+```python
+# Extend snapshot.py
+def merge_graphs(primary_store: GraphStore, secondary_store: GraphStore,
+                 merge_strategy: str = 'union') -> MergeResult:
+    """Merge two graph stores into one.
+    Strategies:
+    - 'union': add all vertices/edges from secondary not in primary
+    - 'intersection': keep only vertices/edges present in both
+    - 'diff': keep only vertices/edges unique to one or the other
+    Conflict resolution: primary wins on property conflicts.
+    Returns: MergeResult with counts of added/merged/skipped entities."""
+```
+
+API endpoint: `POST /api/v1/graph/merge` (accepts snapshot file upload)
+
+Frontend:
+- "Merge Graph" button in toolbar
+- Upload another EOIP snapshot or GraphML/GEXF file
+- Preview merge: show what would be added/merged/conflicted
+- Confirm to apply merge
+- Undo merge via exploration history
+
+### Tests (Phase 12)
+```
+tests/unit/test_kgr_surprise.py — 10 tests
+tests/unit/test_kgr_interactive_export.py — 6 tests
+tests/unit/test_kgr_graph_report.py — 5 tests
+tests/unit/test_kgr_merge.py — 8 tests
+apps/web/tests/kgr-parity.spec.js — 15 tests
+```
+- 4 tests for surprising edge detection
+- 3 tests for unexpected absence detection
+- 3 tests for surprise API endpoint
+- 3 tests for interactive HTML export (valid HTML, contains data, renders)
+- 3 tests for graph report generation (sections, formatting)
+- 4 tests for graph merge (union, intersection, diff, conflicts)
+- 3 tests for hub exclusion filter
+- 3 tests for lasso selection coordinate math
+- 3 tests for URL state encode/decode roundtrip
+- 2 tests for table view rendering
+- All existing tests continue to pass
+
+---
+
+## Phase 13: AI-Assisted Graph Intelligence — RAG, Agents & Engineering Disciplines
+**Duration:** 4 weeks  
+**Goal:** Transform KGR from a visualization tool into a full AI-powered graph intelligence platform. Implements 17 RAG patterns, 40+ agent types, and 8 engineering disciplines for graph-aware AI exploration. This phase positions KGR as the first graph platform with native agentic AI capabilities — no competitor comes close.
+
+### 13.1 RAG Architecture — 17 Retrieval-Augmented Generation Patterns (1.5 weeks)
+
+All RAG patterns operate over the EOIP knowledge graph as their primary retrieval source, using the existing GraphStore, query executor, and metrics engines.
+
+**Files:**
+- `packages/eoip/rag/base.py` — Base RAG interface and router
+- `packages/eoip/rag/simple.py` — Simple, Advanced, Conversational RAG
+- `packages/eoip/rag/graph.py` — Graph RAG, Multi-hop RAG, Branched RAG
+- `packages/eoip/rag/hybrid.py` — Hybrid RAG (vector + graph + keyword)
+- `packages/eoip/rag/corrective.py` — CRAG, Self-RAG, Adaptive RAG
+- `packages/eoip/rag/agentic.py` — Agentic RAG, Modular RAG, RAG of RAGs
+- `packages/eoip/rag/specialized.py` — HyDE, Multi-step RAG, Speculative RAG, Multimodal RAG
+- `apps/api/rag_routes.py` — RAG API endpoints
+
+```python
+# packages/eoip/rag/base.py
+from abc import ABC, abstractmethod
+
+class BaseRAG(ABC):
+    """Base interface for all RAG patterns over the EOIP knowledge graph."""
+
+    def __init__(self, store: GraphStore, llm_client=None):
+        self._store = store
+        self._llm = llm_client  # Optional: defaults to local Ollama, falls back to no-LLM mode
+
+    @abstractmethod
+    def retrieve(self, query: str, context: dict = None) -> list[RetrievalResult]:
+        """Retrieve relevant graph entities/subgraphs for the query."""
+
+    @abstractmethod
+    def generate(self, query: str, retrieved: list[RetrievalResult]) -> RAGResponse:
+        """Generate response using retrieved context."""
+
+    def query(self, query: str, context: dict = None) -> RAGResponse:
+        """Full RAG pipeline: retrieve then generate."""
+        retrieved = self.retrieve(query, context)
+        return self.generate(query, retrieved)
+
+
+class RAGRouter:
+    """Routes queries to the best RAG pattern based on query characteristics."""
+
+    def route(self, query: str) -> str:
+        """Classify query and return best RAG pattern name.
+        - Simple factual → SimpleRAG
+        - Multi-entity relationship → GraphRAG
+        - Path-finding / causal → MultiHopRAG
+        - Exploratory / open-ended → AgenticRAG
+        - Cross-domain → HybridRAG
+        - Ambiguous / uncertain → CRAG
+        """
+```
+
+#### RAG Pattern Implementations
+
+| # | Pattern | Module | Retrieval Strategy | When to Use |
+|---|---|---|---|---|
+| 1 | **Simple RAG** | `simple.py` | Keyword match on entity properties + BFS 1-hop neighborhood | Simple factual queries about specific entities |
+| 2 | **Advanced RAG** | `simple.py` | Multi-stage: query expansion → retrieval → re-ranking → filtering | Complex queries needing better precision/recall |
+| 3 | **Graph RAG** | `graph.py` | Community-based: detect communities → summarize per-community → merge summaries | Questions spanning the entire graph or requiring global understanding |
+| 4 | **Hybrid RAG** | `hybrid.py` | Combines: vector similarity (embeddings) + graph traversal + keyword BM25 | Queries that benefit from multiple retrieval modalities |
+| 5 | **Corrective RAG (CRAG)** | `corrective.py` | Retrieve → evaluate relevance → if low-quality, trigger corrective retrieval (expand scope, try alternate paths) | When initial retrieval may be insufficient |
+| 6 | **Self-RAG** | `corrective.py` | Retrieve → generate → self-evaluate (relevance, groundedness, usefulness) → regenerate if poor | When response quality must be verified |
+| 7 | **Adaptive RAG** | `corrective.py` | Query classifier → route to simplest sufficient RAG (no-retrieval / single-step / multi-step) | Optimizing cost/latency by matching complexity to query |
+| 8 | **Agentic RAG** | `agentic.py` | Agent loop: plan retrieval strategy → execute → evaluate → adjust → iterate until satisfied | Open-ended exploration and research questions |
+| 9 | **Modular RAG** | `agentic.py` | Composable pipeline: [search] → [retrieve] → [rerank] → [compress] → [generate] — modules swappable | Custom retrieval pipelines for specific use cases |
+| 10 | **HyDE** | `specialized.py` | Generate hypothetical document → use as retrieval query → retrieve real matches | When query is abstract but answer should be concrete |
+| 11 | **Conversational RAG** | `simple.py` | Session memory + context carry-forward: maintain conversation history, contextualize follow-up queries | Multi-turn exploration sessions |
+| 12 | **Multi-step RAG** | `specialized.py` | Decompose complex query → sequential sub-queries → aggregate results | Compound questions requiring multiple retrieval steps |
+| 13 | **Multi-hop RAG** | `graph.py` | Graph path traversal: follow edges through N hops to gather transitive context | Causal chains, lineage traces, dependency analysis |
+| 14 | **Branched RAG** | `graph.py` | Parallel retrieval branches: query spawns multiple retrieval strategies simultaneously → merge best results | When multiple valid retrieval paths exist |
+| 15 | **Multimodal RAG** | `specialized.py` | Retrieves across modalities: graph entities + code snippets + documentation + diagrams | Queries involving code, docs, and graph together |
+| 16 | **Speculative RAG** | `specialized.py` | Generate multiple draft responses in parallel → verify each against retrieved facts → select best | When answer confidence matters |
+| 17 | **RAG of RAGs** | `agentic.py` | Meta-RAG: routes to sub-RAGs, aggregates results, resolves conflicts between different RAG outputs | Complex queries that no single RAG pattern handles well |
+
+API Endpoints:
+```python
+# apps/api/rag_routes.py
+POST /api/v1/rag/query           # Auto-routed RAG query
+POST /api/v1/rag/query/{pattern} # Specific RAG pattern (e.g., /rag/query/graph)
+GET  /api/v1/rag/patterns        # List available RAG patterns
+POST /api/v1/rag/evaluate        # Evaluate retrieval quality for a query
+```
+
+### 13.2 Agent Architecture — 40+ Agent Types (1.5 weeks)
+
+All agents operate over the EOIP knowledge graph and can invoke RAG patterns, metrics engines, and graph analysis tools.
+
+**Files:**
+- `packages/eoip/agents/base.py` — Base agent interface, agent registry
+- `packages/eoip/agents/reflex.py` — Simple Reflex, Model-Based Reflex
+- `packages/eoip/agents/goal.py` — Goal-Based, Utility-Based, Planner, Executor
+- `packages/eoip/agents/tool.py` — Tool-Calling, Function-Calling, RAG Agent
+- `packages/eoip/agents/orchestration.py` — Orchestrator, Router, Hierarchical, Task Agent
+- `packages/eoip/agents/collaboration.py` — Choreography, Peer-to-Peer, Consensus, Collaboration, Swarm
+- `packages/eoip/agents/meta.py` — Critic, Reflection, Self-Reflection, Reviewer, Validator, XAI Agent
+- `packages/eoip/agents/autonomous.py` — Self-Learning, Self-Evolving, Self-Writing, Deep AI Agents
+- `packages/eoip/agents/enterprise.py` — Enterprise Agent, Just-In-Time Agent
+- `packages/eoip/agents/multi.py` — Multi-Agent System, Agentic Swarm
+- `apps/api/agent_routes.py` — Agent API endpoints
+
+```python
+# packages/eoip/agents/base.py
+from abc import ABC, abstractmethod
+
+class BaseAgent(ABC):
+    """Base interface for all agent types in the EOIP graph intelligence system."""
+
+    def __init__(self, name: str, store: GraphStore, tools: list = None,
+                 rag: BaseRAG = None, llm_client=None):
+        self.name = name
+        self._store = store
+        self._tools = tools or []
+        self._rag = rag
+        self._llm = llm_client
+        self._memory = AgentMemory()
+
+    @abstractmethod
+    def perceive(self, observation: dict) -> dict:
+        """Process incoming observation from environment."""
+
+    @abstractmethod
+    def decide(self, perception: dict) -> Action:
+        """Decide next action based on perception and internal state."""
+
+    @abstractmethod
+    def act(self, action: Action) -> ActionResult:
+        """Execute decided action."""
+
+    def step(self, observation: dict) -> ActionResult:
+        """One perceive-decide-act cycle."""
+        perception = self.perceive(observation)
+        action = self.decide(perception)
+        return self.act(action)
+
+
+class AgentRegistry:
+    """Registry of available agent types with factory methods."""
+    _agents: dict[str, type[BaseAgent]] = {}
+
+    @classmethod
+    def register(cls, name: str):
+        def decorator(agent_class):
+            cls._agents[name] = agent_class
+            return agent_class
+        return decorator
+
+    @classmethod
+    def create(cls, name: str, **kwargs) -> BaseAgent:
+        return cls._agents[name](**kwargs)
+
+    @classmethod
+    def list_agents(cls) -> list[str]:
+        return list(cls._agents.keys())
+```
+
+#### Agent Type Implementations
+
+| Category | Agents | Module | Key Capabilities |
+|---|---|---|---|
+| **Reactive** | Simple Reflex, Model-Based Reflex | `reflex.py` | Condition-action rules; model-based adds internal state tracking |
+| **Deliberative** | Goal-Based, Utility-Based, Planner, Executor | `goal.py` | Goal decomposition, utility maximization, plan generation, plan execution |
+| **Tool-Using** | Tool-Calling, Function-Calling, RAG Agent | `tool.py` | Invoke graph APIs, execute queries, RAG-enhanced responses |
+| **Orchestration** | Orchestrator, Router, Hierarchical, Task Agent | `orchestration.py` | Multi-agent coordination, query routing, task decomposition |
+| **Collaboration** | Choreography, Peer-to-Peer, Consensus, Collaboration, Swarm | `collaboration.py` | Decentralized coordination, voting, emergent behavior |
+| **Meta-Cognitive** | Critic, Reflection, Self-Reflection, Reviewer, Validator, XAI Agent | `meta.py` | Self-evaluation, explanation generation, quality assurance |
+| **Autonomous** | Self-Learning, Self-Evolving, Self-Writing, Deep AI Agents | `autonomous.py` | Online learning from feedback, strategy evolution, code generation |
+| **Enterprise** | Enterprise Agent, Just-In-Time Agent | `enterprise.py` | Compliance-aware, on-demand resource provisioning |
+| **Multi-Agent** | Multi-Agent System, Agentic Swarm | `multi.py` | Agent composition, swarm intelligence for parallel exploration |
+
+Key agent implementations for graph intelligence:
+
+```python
+# Graph-Aware Tool-Calling Agent
+@AgentRegistry.register('tool-calling')
+class ToolCallingAgent(BaseAgent):
+    """Agent that selects and invokes graph analysis tools based on query intent."""
+
+    TOOLS = {
+        'blast_radius': lambda store, args: GraphMetricsEngine(store).blast_radius(**args),
+        'centrality': lambda store, args: GraphMetricsEngine(store).full_centrality(**args),
+        'community': lambda store, args: CommunityDetectionEngine(store).leiden(**args),
+        'similarity': lambda store, args: SimilarityEngine(store).jaccard(**args),
+        'paths': lambda store, args: GraphPathFinder(store).all_shortest_paths(**args),
+        'anomaly': lambda store, args: AnomalyDetector(store).degree_zscore_outliers(**args),
+        'whatif': lambda store, args: WhatIfEngine(store).simulate_removal(**args),
+        'surprise': lambda store, args: SurpriseDetector(store).surprising_edges(**args),
+    }
+
+# Graph Orchestrator Agent
+@AgentRegistry.register('orchestrator')
+class OrchestratorAgent(BaseAgent):
+    """Coordinates multiple sub-agents for complex graph analysis tasks."""
+
+    def decide(self, perception: dict) -> Action:
+        task = perception['query']
+        plan = self._decompose(task)  # Break into sub-tasks
+        assignments = self._assign(plan)  # Map sub-tasks to agent types
+        return Action('orchestrate', assignments)
+
+# Self-Reflection Agent
+@AgentRegistry.register('self-reflection')
+class SelfReflectionAgent(BaseAgent):
+    """Evaluates its own outputs and iteratively improves them."""
+
+    def act(self, action: Action) -> ActionResult:
+        result = self._execute(action)
+        critique = self._reflect(action, result)
+        if critique.score < 0.7:
+            improved_action = self._improve(action, critique)
+            return self.act(improved_action)  # Recursive improvement
+        return result
+```
+
+API Endpoints:
+```python
+# apps/api/agent_routes.py
+POST /api/v1/agents/query           # Auto-routed agent query
+POST /api/v1/agents/query/{type}    # Specific agent type
+GET  /api/v1/agents/types           # List available agent types
+POST /api/v1/agents/orchestrate     # Multi-agent orchestration
+GET  /api/v1/agents/memory          # Agent memory state
+```
+
+### 13.3 Engineering Disciplines — 8 Graph Intelligence Patterns (1 week)
+
+These are meta-patterns that compose RAG, agents, and graph analysis into higher-order intelligence systems.
+
+**Files:**
+- `packages/eoip/engineering/loop.py` — Loop Engineering
+- `packages/eoip/engineering/graph_eng.py` — Graph Engineering
+- `packages/eoip/engineering/harness.py` — Harness Engineering
+- `packages/eoip/engineering/memory_eng.py` — Memory Engineering
+- `packages/eoip/engineering/context.py` — Context Engineering
+- `packages/eoip/engineering/prompt.py` — Prompt Engineering
+- `packages/eoip/engineering/composite.py` — Graph-over-Loop, Loop-over-Graph Engineering
+
+```python
+# packages/eoip/engineering/loop.py
+class LoopEngine:
+    """Loop Engineering: iterative refinement cycles over graph analysis.
+    
+    Implements feedback loops where each iteration refines the previous result:
+    - Retrieve → Analyze → Evaluate → Refine → Retrieve (better)
+    - Convergence check: stop when delta between iterations < threshold
+    - Max iterations: configurable (default 5)
+    - Use case: iteratively improving community detection, centrality thresholds, anomaly sensitivity
+    """
+
+    def __init__(self, store: GraphStore, max_iterations: int = 5, convergence_threshold: float = 0.01):
+        self._store = store
+        self._max_iterations = max_iterations
+        self._threshold = convergence_threshold
+
+    def run_loop(self, initial_query: str, refine_fn: callable, evaluate_fn: callable) -> LoopResult:
+        result = initial_query
+        for i in range(self._max_iterations):
+            output = refine_fn(result)
+            score = evaluate_fn(output)
+            if score.delta < self._threshold:
+                return LoopResult(output, iterations=i+1, converged=True)
+            result = output
+        return LoopResult(result, iterations=self._max_iterations, converged=False)
+
+
+# packages/eoip/engineering/graph_eng.py
+class GraphEngineer:
+    """Graph Engineering: structured graph construction, optimization, and maintenance.
+    
+    - Schema design: optimal vertex labels, edge types, property keys for query patterns
+    - Index optimization: analyze query patterns, recommend indexes
+    - Graph health monitoring: continuous quality metrics
+    - Ontology evolution: manage schema changes without breaking existing data
+    - Use case: maintaining graph quality as the system scales
+    """
+
+    def optimize_schema(self, query_patterns: list[str]) -> SchemaRecommendation:
+        """Analyze query patterns and recommend schema optimizations."""
+
+    def monitor_health(self) -> HealthReport:
+        """Continuous graph health monitoring with actionable alerts."""
+
+    def plan_migration(self, current_schema: dict, target_schema: dict) -> MigrationPlan:
+        """Plan safe schema migration with rollback capability."""
+
+
+# packages/eoip/engineering/harness.py
+class HarnessEngine:
+    """Harness Engineering: controlled execution environments for graph operations.
+    
+    - Sandboxed execution: run what-if simulations in isolated graph copies
+    - Rate limiting: prevent runaway computations on large graphs
+    - Circuit breaker: stop computations exceeding resource limits
+    - Audit trail: log all graph modifications with rollback capability
+    - Use case: safe experimentation with graph mutations
+    """
+
+    def sandbox(self, store: GraphStore) -> SandboxedStore:
+        """Create an isolated copy of the graph store for safe experimentation."""
+
+    def rate_limit(self, operation: callable, max_per_second: int = 100) -> callable:
+        """Wrap operation with rate limiting."""
+
+    def circuit_breaker(self, operation: callable, timeout_ms: int = 5000,
+                       max_memory_mb: int = 512) -> callable:
+        """Wrap operation with circuit breaker for resource protection."""
+
+
+# packages/eoip/engineering/memory_eng.py
+class MemoryEngineer:
+    """Memory Engineering: structured memory systems for agents and sessions.
+    
+    - Short-term memory: current session context (conversation, selections, filters)
+    - Working memory: active analysis state (communities detected, paths found, metrics computed)
+    - Long-term memory: persistent learnings (user preferences, common query patterns, known anomalies)
+    - Episodic memory: past analysis sessions with timestamps and outcomes
+    - Semantic memory: concept relationships learned from repeated analysis
+    - Use case: agents that learn from prior analysis sessions
+    """
+
+    def __init__(self, store: GraphStore):
+        self._short_term = {}   # Session-scoped
+        self._working = {}      # Analysis-scoped
+        self._long_term = {}    # Persistent (localStorage or file-backed)
+        self._episodic = []     # Past sessions
+        self._semantic = {}     # Learned concepts
+
+    def remember(self, key: str, value: any, memory_type: str = 'working'):
+        """Store a fact in the specified memory tier."""
+
+    def recall(self, key: str, memory_type: str = None) -> any:
+        """Retrieve a fact, searching memory tiers in priority order."""
+
+    def consolidate(self):
+        """Move important working memory items to long-term memory."""
+
+
+# packages/eoip/engineering/context.py
+class ContextEngineer:
+    """Context Engineering: optimal context assembly for LLM interactions.
+    
+    - Context window management: fit maximum relevant information within token limits
+    - Priority ranking: most relevant entities/edges first
+    - Compression: summarize distant context, keep recent context verbatim
+    - Context types: entity context, relationship context, community context, temporal context
+    - Use case: assembling the best possible context for LLM-powered graph queries
+    """
+
+    def assemble_context(self, query: str, store: GraphStore,
+                        max_tokens: int = 4096) -> AssembledContext:
+        """Assemble optimal context for a graph query within token budget."""
+
+    def prioritize(self, entities: list, query: str) -> list:
+        """Rank entities by relevance to the query."""
+
+    def compress(self, context: str, target_tokens: int) -> str:
+        """Compress context to fit within target token count."""
+
+
+# packages/eoip/engineering/prompt.py
+class PromptEngineer:
+    """Prompt Engineering: structured prompt construction for graph analysis.
+    
+    - Template library: pre-built prompts for common graph analysis tasks
+    - Variable injection: fill templates with graph-specific data
+    - Chain-of-thought: structured reasoning prompts for complex analysis
+    - Few-shot examples: include relevant examples from past analyses
+    - Use case: generating effective prompts for LLM-powered graph intelligence
+    """
+
+    TEMPLATES = {
+        'explain_community': 'Analyze this community of {size} entities...',
+        'impact_assessment': 'Assess the impact of removing {entity} which has...',
+        'anomaly_explanation': 'Explain why {entity} is anomalous: degree={degree}...',
+        'path_interpretation': 'Interpret this path between {source} and {target}...',
+    }
+
+    def build_prompt(self, template_name: str, **kwargs) -> str:
+        """Build a prompt from a template with variable injection."""
+
+    def chain_of_thought(self, question: str, context: str) -> str:
+        """Wrap question in chain-of-thought reasoning structure."""
+
+
+# packages/eoip/engineering/composite.py
+class GraphOverLoopEngine:
+    """Graph-over-Loop Engineering: graph traversal drives the iteration loop.
+    
+    Pattern: Graph structure determines loop control flow.
+    - Start at a graph node
+    - Traverse edges to discover next analysis targets
+    - Each traversal step is one loop iteration
+    - Loop terminates when: leaf reached, depth exceeded, or convergence
+    - Use case: automated dependency chain analysis, provenance tracing, root cause search
+    """
+
+    def traverse_and_analyze(self, start_id: str, analysis_fn: callable,
+                            max_depth: int = 8, direction: str = 'outgoing') -> TraversalResult:
+        """Walk the graph, applying analysis_fn at each node."""
+
+
+class LoopOverGraphEngine:
+    """Loop-over-Graph Engineering: iterative loops modify/refine graph analysis.
+    
+    Pattern: Loop iterations progressively refine graph understanding.
+    - Iteration 1: coarse community detection
+    - Iteration 2: refine communities with stricter resolution
+    - Iteration 3: label communities, detect sub-communities
+    - Iteration N: converged understanding
+    - Use case: progressive graph intelligence that gets smarter each pass
+    """
+
+    def progressive_analysis(self, store: GraphStore, analyzers: list[callable],
+                            max_passes: int = 5) -> ProgressiveResult:
+        """Run multiple analysis passes, each building on the previous."""
+```
+
+API Endpoints:
+```python
+# apps/api/engineering_routes.py
+POST /api/v1/engineering/loop           # Run a loop engineering cycle
+POST /api/v1/engineering/context        # Assemble optimal context
+POST /api/v1/engineering/prompt         # Build a structured prompt
+POST /api/v1/engineering/harness/sandbox # Create a sandboxed environment
+GET  /api/v1/engineering/memory         # Query agent memory
+POST /api/v1/engineering/traverse       # Graph-over-loop traversal
+```
+
+### 13.4 MCP Integration for Graph Intelligence (3 days)
+**Files:** modify `apps/mcp/main.py`
+
+Extend the existing MCP server with graph-intelligence tools that expose RAG, agents, and engineering patterns to any MCP-compatible client (Claude, Cursor, VS Code, etc.).
+
+```python
+# New MCP tools to add to apps/mcp/main.py
+@mcp_tool("graph_query")
+def graph_query(query: str, rag_pattern: str = "auto") -> str:
+    """Natural language query over the knowledge graph using the best RAG pattern."""
+
+@mcp_tool("graph_analyze")
+def graph_analyze(entity_id: str, analysis_type: str = "impact") -> str:
+    """Run a graph analysis (impact, centrality, community, anomaly) on an entity."""
+
+@mcp_tool("graph_explore")
+def graph_explore(query: str, depth: int = 3) -> str:
+    """Agent-driven graph exploration with automatic tool selection."""
+
+@mcp_tool("graph_playbook")
+def graph_playbook(playbook_name: str, target_entity: str = None) -> str:
+    """Run an investigation playbook over the graph."""
+
+@mcp_tool("graph_context")
+def graph_context(query: str, max_tokens: int = 4096) -> str:
+    """Assemble optimal graph context for an LLM query."""
+```
+
+### 13.5 Frontend: AI Explorer Panel (3 days)
+**Files:** `apps/web/src/kgr/components/AIExplorer.jsx` (new), modify `apps/web/src/kgr/KGRExplorer.jsx`
+
+```javascript
+// AIExplorer.jsx
+function AIExplorer({ apiBase, graphElements, selectedNode }) {
+    // Chat-style interface for AI-powered graph exploration
+    // Input: natural language question or command
+    // Output: structured response with:
+    //   - Text explanation
+    //   - Graph highlights (entities/edges mentioned in response)
+    //   - Action buttons ("Show on graph", "Run blast radius", "Find paths")
+    //   - Source references (which entities were used as context)
+    //
+    // Session memory: conversation history persisted in session
+    // RAG pattern indicator: shows which RAG pattern was used
+    // Agent type indicator: shows which agent processed the query
+    // Confidence score: how confident the system is in its response
+    //
+    // Pre-built quick actions:
+    // - "Explain this cluster"
+    // - "What would break if I removed [selected]?"
+    // - "Find surprising connections"
+    // - "Assess dependency risk"
+    // - "Trace the provenance of [selected]"
+}
+```
+
+- Accessible from KGR toolbar as "AI Explorer" button
+- Keyboard shortcut: `A` to toggle AI Explorer panel
+- Works without LLM: falls back to structured graph analysis with formatted output
+- With LLM (Ollama/local): full natural language interaction
+- **Unique to KGR** — no competitor has integrated AI graph exploration
+
+### Tests (Phase 13)
+```
+tests/unit/test_rag_patterns.py — 34 tests (2 per RAG pattern)
+tests/unit/test_agent_types.py — 20 tests (key agent types)
+tests/unit/test_engineering.py — 16 tests (2 per discipline)
+tests/unit/test_mcp_graph.py — 10 tests (MCP tool invocations)
+apps/web/tests/ai-explorer.spec.js — 8 tests
+```
+- 2 tests per RAG pattern: one for retrieval quality, one for end-to-end query
+- 4 tests for RAG router (correct pattern selection)
+- 4 tests for agent registry (create, list, invoke)
+- 4 tests for tool-calling agent (correct tool selection)
+- 4 tests for orchestrator agent (task decomposition)
+- 4 tests for self-reflection agent (improvement loop)
+- 2 tests per engineering discipline: correctness and convergence
+- 5 tests for MCP tool invocations (graph_query, graph_analyze, graph_explore)
+- 5 tests for MCP context assembly (token budget, priority ranking)
+- All existing tests continue to pass
+
+---
+
+## Updated Phase Summary
+
+| Phase | Duration | Key Deliverables | New Tests | Competitor Gaps Closed |
+|---|---|---|---|---|
+| 1 | 2 weeks | **DONE** — Metrics engine, 5 API endpoints, KGR Explorer, 6 graph types | 19 | Blast radius (none had it), evidence chains |
+| 2 | 2 weeks | **DONE** — Component extraction, 10 graph types, 8-tab inspector, edge inspector | 14 | 10 graph types (max 1-2 elsewhere) |
+| 3 | 2 weeks | **DONE** — Full centrality (8 algos), client-side algorithms, radar chart, path finding | 28 | Full centrality (Gephi desktop-only, Bloom needs GDS) |
+| 4 | 2 weeks | **DONE** — Community detection, 11-dim filtering, keyboard nav, context menu, undo/redo | 12 | Leiden (free, in-browser), undo/redo, full keyboard nav |
+| 5 | 2 weeks | **DONE** — Timeline, 7-format export, annotations, similarity (3 algos), link prediction | 10 | 7 export formats, annotations, visual intelligence |
+| 6 | 1.5 weeks | **DONE** — Sigma.js WebGL, Web Worker layouts, progressive rendering, k-core | 10 | 50K+ nodes (Graphify: 5K, Sourcetrail: crashes) |
+| 7 | 1 week | **DONE** — WebSocket events, incremental updates, event feed | 8 | Real-time (Graphify: stale, CodeSee: sunset) |
+| 8 | 1.5 weeks | **DONE** — Graph diff, what-if simulation, anomaly detection, health dashboard | 20 | What-if (none), anomaly (none), diff (yFiles only) |
+| 9 | 1 week | **DONE** — Component wiring, deduplicate inline code, end-to-end integration | 12 | End-to-end integration of all Phase 2-8 features |
+| 10 | 3 weeks | **DONE** — ComboNode, GeoMap, CodePanel, QueryBuilder, PR dashboard, 4 exports, AMBIGUOUS, community labels, orphaned detection | 41 | Node grouping, code+graph, all Graphify exports, no-code queries, PR conflicts |
+| 11 | 2 weeks | Semantic zoom, fisheye, edge bundling, color-blind palette, orthogonal layout | ~15 | Visual intelligence parity with yFiles |
+| 12 | 3 weeks | Interactive HTML export, graph report, hub exclusion, surprises, style rules, lasso, deep links, table view, playbooks, cross-project merge | ~44 | Every remaining competitor feature + unique innovations |
+| 13 | 4 weeks | 17 RAG patterns, 40+ agent types, 8 engineering disciplines, MCP graph tools, AI Explorer | ~88 | **No competitor has AI-native graph intelligence** |
+| **Total** | **~27 weeks** | **Complete AI-powered graph intelligence platform** | **~330+** | **Every competitor gap closed + AI capabilities no one else has** |
+
+---
+
 ## Competitive Advantage Summary
 
-After all 10 phases, KGR will have:
+After all 13 phases, KGR will have:
 
 | Capability | KGR | Best Competitor | Gap |
 |---|---|---|---|

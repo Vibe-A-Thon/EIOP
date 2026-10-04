@@ -389,3 +389,32 @@ def test_api_twin_missing_links():
     resp = client.get("/api/v1/twin/missing-links")
     assert resp.status_code == 200
     assert "total_gaps" in resp.json()
+
+
+def test_api_decisions_extract():
+    store = MemoryGraphStore()
+    store.upsert_vertex(
+        "Document",
+        {
+            "canonical_id": "urn:doc:adr",
+            "name": "ADR-7 Database",
+            "path": "docs/adr/007-db.md",
+            "description": (
+                "# ADR-7: Use PostgreSQL\n\nStatus: Accepted\nContext: OLTP workload\n"
+                "Alternatives: MongoDB\nConsequences: Strong consistency"
+            ),
+        },
+    )
+    client = TestClient(create_app(store))
+    resp = client.post("/api/v1/twin/decisions/extract", json={"document_cid": "urn:doc:adr"})
+    assert resp.status_code == 200
+    decisions = resp.json()["decisions"]
+    assert len(decisions) == 1
+    assert decisions[0]["title"] == "Use PostgreSQL"
+
+    missing = client.post("/api/v1/twin/decisions/extract", json={"document_cid": "urn:missing"})
+    assert missing.status_code == 200
+    assert missing.json()["decisions"] == []
+
+    no_body = client.post("/api/v1/twin/decisions/extract", json={})
+    assert no_body.status_code == 400

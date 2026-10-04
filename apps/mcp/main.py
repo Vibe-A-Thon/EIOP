@@ -144,6 +144,25 @@ def create_app():
         )
 
     @mcp.tool()
+    async def blast_radius(canonical_id: str, max_depth: int = 4) -> dict:
+        """Compute the bounded dependency blast radius for a canonical entity."""
+        return await call(
+            "POST",
+            "/api/v1/graph/blast-radius",
+            json={"canonical_id": canonical_id, "max_depth": max_depth},
+        )
+
+    @mcp.tool()
+    async def graph_surprises(limit: int = 20) -> dict:
+        """Find surprising edges and high-similarity missing graph links."""
+        return await call("POST", "/api/v1/graph/surprises", json={"limit": limit})
+
+    @mcp.tool()
+    async def validate_ontology() -> dict:
+        """Run ontology/graph validation and return findings with quality metrics."""
+        return await call("POST", "/api/v1/admin/validation", json={})
+
+    @mcp.tool()
     async def neighbors(
         canonical_id: str,
         max_depth: int = 1,

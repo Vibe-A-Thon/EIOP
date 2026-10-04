@@ -128,3 +128,63 @@ def test_api_conformance_no_rules():
     client = TestClient(create_app(store))
     resp = client.post("/api/v1/conformance/check", json={})
     assert resp.status_code == 400
+
+
+def test_must_not_access_flags_only_direct_edges():
+    """MUST_NOT_ACCESS is a direct-edge check, unlike transitive MUST_NOT_DEPEND."""
+    store = MemoryGraphStore()
+    file_v = store.upsert_vertex("File", {"canonical_id": "urn:f1", "repo_id": "r1", "path": "a.py"})
+    sym_v = store.upsert_vertex(
+        "CodeSymbol",
+        {"canonical_id": "urn:s1", "qualified_name": "a.run", "symbol_kind": "function"},
+    )
+    svc_v = store.upsert_vertex("Service", {"canonical_id": "urn:svc:1", "service_id": "s1", "name": "DB"})
+    # File -> symbol -> service: transitive dependency, no direct access.
+    store.upsert_edge("DECLARES", file_v["vid"], sym_v["vid"], {"fact_key": "d:1"})
+    store.upsert_edge("DEPENDS_ON", sym_v["vid"], svc_v["vid"], {"fact_key": "d:2"})
+
+    access = check_conformance(store, [
+        ArchRule(id="RA", kind=RuleKind.MUST_NOT_ACCESS, source="File", target="Service")
+    ])
+    assert access["conformant"] is True
+
+    depend = check_conformance(store, [
+        ArchRule(id="RD", kind=RuleKind.MUST_NOT_DEPEND, source="File", target="Service")
+    ])
+    assert depend["conformant"] is False
+
+    store.upsert_edge("DEPENDS_ON", file_v["vid"], svc_v["vid"], {"fact_key": "d:3"})
+    access_direct = check_conformance(store, [
+        ArchRule(id="RA", kind=RuleKind.MUST_NOT_ACCESS, source="File", target="Service")
+    ])
+    assert access_direct["conformant"] is False
+
+
+def test_api_conformance_ruleset_and_catalog(monkeypatch, tmp_path):
+    monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
+    store = MemoryGraphStore()
+    client = TestClient(create_app(store))
+
+    listed = client.get("/api/v1/conformance/rules")
+    assert listed.status_code == 200
+    names = {item["name"] for item in listed.json()["rule_sets"]}
+    assert "default" in names
+
+    checked = client.post("/api/v1/conformance/check", json={"ruleset": "default"})
+    assert checked.status_code == 200
+    assert "conformant" in checked.json()
+
+    missing = client.post("/api/v1/conformance/check", json={"ruleset": "nope"})
+    assert missing.status_code == 404
+
+    saved = client.put(
+        "/api/v1/conformance/rules/team-rules",
+        json={"rules_dsl": "RULE T1: File MUST_NOT_DEPEND Service"},
+    )
+    assert saved.status_code == 200
+    listed_after = client.get("/api/v1/conformance/rules").json()["rule_sets"]
+    custom = [item for item in listed_after if item["name"] == "team-rules"]
+    assert custom and custom[0]["origin"] == "custom" and custom[0]["rule_count"] == 1
+
+    invalid = client.put("/api/v1/conformance/rules/bad", json={"rules_dsl": "no rules here"})
+    assert invalid.status_code == 422

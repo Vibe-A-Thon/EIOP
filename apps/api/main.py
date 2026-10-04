@@ -82,7 +82,7 @@ def _operation(path: str, body: bytes) -> str:
         "/api/v1/graph/statistics",
         "/api/v1/change-journal",
         "/api/v1/demo/scenarios",
-    } or path.startswith(("/api/v1/entities/", "/api/v1/graph/")):
+    } or path.startswith(("/api/v1/entities/", "/api/v1/graph/", "/api/v1/capsules")):
         return "query"
     if path.startswith(("/api/v1/admin/", "/api/v1/sources")):
         return "admin"
@@ -171,6 +171,16 @@ class SourceOperationRequest(BaseModel):
     checkpoint: str | None = Field(default=None, max_length=4096)
     event_ids: list[str] = Field(default_factory=list, max_length=1000)
     dry_run: bool = False
+
+
+class CapsuleRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=128)
+    root_entities: list[str] = Field(min_length=1, max_length=100)
+    max_depth: int = Field(default=2, ge=1, le=6)
+    domains: list[str] | None = None
+    trust_threshold: str | None = Field(default=None, max_length=32)
+    include_evidence: bool = True
+    result_limit: int = Field(default=200, ge=1, le=1000)
 
 
 def create_app():
@@ -513,6 +523,16 @@ def create_app():
             for path in sorted(root.glob("*.json"))
         ]
 
+    @app.post("/api/v1/admin/event-consumers/run")
+    def run_event_consumers():
+        """Run semantic event consumers on demand (they normally run in the worker)."""
+        from eoip.graph.consumers import run_default_consumers
+
+        try:
+            return run_default_consumers(store, data_root())
+        except (OSError, ValueError, RuntimeError) as exc:
+            raise HTTPException(500, f"Consumer run failed: {exc}") from exc
+
     @app.get("/api/v1/admin/timeline")
     def admin_timeline(limit: int = Query(default=100, ge=1, le=500)):
         path = data_root() / "state" / "admin-timeline.json"
@@ -603,6 +623,50 @@ def create_app():
         after: int = Query(default=0, ge=0), limit: int = Query(default=100, ge=1, le=1000)
     ):
         return [event.model_dump() for event in change_journal.read(after=after, limit=limit)]
+
+    @app.post("/api/v1/capsules", status_code=201)
+    def build_capsule(payload: CapsuleRequest):
+        """Build a reproducible bounded knowledge capsule (G2-CAP-001..006)."""
+        from eoip.graph.capsules import CapsuleDefinition, KnowledgeCapsuleService
+
+        service = KnowledgeCapsuleService(store, data_root() / "capsules")
+        try:
+            capsule = service.build(
+                CapsuleDefinition(
+                    name=payload.name,
+                    root_entities=tuple(payload.root_entities),
+                    max_depth=payload.max_depth,
+                    domains=tuple(payload.domains) if payload.domains else None,
+                    trust_threshold=payload.trust_threshold,
+                    include_evidence=payload.include_evidence,
+                    result_limit=payload.result_limit,
+                )
+            )
+        except ValueError as exc:
+            raise HTTPException(404, str(exc)) from exc
+        return {
+            "capsule_id": capsule.capsule_id,
+            "manifest": capsule.manifest,
+            "entities": capsule.entities,
+            "relationships": capsule.relationships,
+            "evidence_refs": capsule.evidence_refs,
+            "truncated": capsule.truncated,
+        }
+
+    @app.get("/api/v1/capsules")
+    def list_capsules():
+        from eoip.graph.capsules import KnowledgeCapsuleService
+
+        return KnowledgeCapsuleService(store, data_root() / "capsules").list_manifests()
+
+    @app.get("/api/v1/capsules/{name}")
+    def get_capsule(name: str):
+        from eoip.graph.capsules import KnowledgeCapsuleService
+
+        document = KnowledgeCapsuleService(store, data_root() / "capsules").get_manifest(name)
+        if document is None:
+            raise HTTPException(404, "Capsule not found")
+        return document
 
     @app.post("/api/v1/sources", response_model=SourceRegistryEntry, status_code=201)
     def create_source(entry: SourceRegistryEntry):
@@ -967,6 +1031,48 @@ def create_app():
             raise HTTPException(404, "Proposal not found") from exc
         except ValueError as exc:
             raise HTTPException(409, str(exc)) from exc
+
+    @app.get("/api/v1/ontology/drift")
+    def ontology_drift():
+        """Read-only scan for graph vocabulary missing from the ontology manifest."""
+        from eoip.ontology.drift import detect_ontology_drift
+
+        return detect_ontology_drift(store).to_dict()
+
+    @app.post("/api/v1/ontology/proposals", status_code=201)
+    def generate_ontology_proposals():
+        """Turn drift findings into governed, human-reviewable evolution proposals (G2-OEVO)."""
+        from uuid import uuid4
+
+        from eoip.contracts.agent import ChangeProposal
+        from eoip.contracts.source_event import utc_now_iso
+        from eoip.ontology.drift import build_evolution_proposal, detect_ontology_drift
+
+        report = detect_ontology_drift(store)
+        created = []
+        existing = {
+            proposal.target_ref for proposal in agent_runtime.proposal_store.list(status="PENDING")
+        }
+        for finding in report.findings:
+            target = f"{finding.kind}:{finding.value}"
+            if target in existing:
+                continue
+            payload = build_evolution_proposal(finding)
+            proposal = ChangeProposal(
+                proposal_id=str(uuid4()),
+                run_id="ontology-drift-detector",
+                proposed_by="OntologyDriftDetector",
+                operation=payload["proposal_type"],
+                target_ref=target,
+                patch=payload["evidence"],
+                rationale=f"{payload['summary']} — {payload['impact_analysis']}",
+                evidence_refs=[f"{finding.kind}:{finding.value}"],
+                risk_level="R2",
+                created_at=utc_now_iso(),
+            )
+            agent_runtime.proposal_store.create(proposal)
+            created.append(proposal.model_dump())
+        return {"created": len(created), "proposals": created, "drift": report.to_dict()}
 
     @app.post("/api/v1/agents/trace-impact")
     def trace(payload: TraceRequest):

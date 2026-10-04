@@ -140,7 +140,27 @@ def _check_must_not_depend(rule: ArchRule, store: GraphStore) -> list[Conformanc
 
 
 def _check_must_not_access(rule: ArchRule, store: GraphStore) -> list[ConformanceFinding]:
-    return _check_must_not_depend(rule, store)
+    """Direct-access check: flags a direct edge to the target (1 hop, any label).
+
+    Unlike MUST_NOT_DEPEND (transitive reachability), MUST_NOT_ACCESS models
+    a boundary that must never be crossed directly, even in one step.
+    """
+    findings: list[ConformanceFinding] = []
+    sources = _resolve_vertices(store, rule.source)
+    targets = _resolve_vertices(store, rule.target)
+    target_vids = {t["vid"] for t in targets}
+    for src in sources:
+        for edge in store.edges_from(src["vid"], limit=500):
+            if edge["in_v"] in target_vids:
+                findings.append(ConformanceFinding(
+                    rule_id=rule.id,
+                    severity=rule.severity,
+                    message=f"{rule.source} directly accesses {rule.target} via {edge['label']}",
+                    violating_path=[src["canonical_id"], edge["label"], edge.get("in_cid") or edge["in_v"]],
+                    source_file=src["properties"].get("path"),
+                    source_symbol=src["properties"].get("qualified_name"),
+                ))
+    return findings
 
 
 def _check_must_have(rule: ArchRule, store: GraphStore) -> list[ConformanceFinding]:

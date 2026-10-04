@@ -363,3 +363,38 @@ Remaining: Phase-2/4 cosmetic component extraction (FilterBar/NodeInspector inli
 ## Honest completion boundary
 
 The platform implements the MVP vertical slice plus substantial G2-P0..P5 and KGR code, with the earlier Docker evidence scoped above. Code presence is not end-to-end certification of every adapter or surface. G2-P6..P10 require further backend services and acceptance fixtures for architecture conformance, process mining, knowledge-health SLOs, counterfactual overlays, causal hypotheses and playback. Items 16/19 remain incomplete; item 18 has bounded implementation but broader historical acceptance remains open. Item 22 now enforces structural refusal before mutation, not a general schema migration framework.
+
+## Final integration certification — 2026-10-04 (this pass)
+
+Scope of this pass: full re-read of the source master prompt and every remaining
+unreviewed doc (`source-master-prompt.txt`, `docs/benchmarking.md`,
+`docs/demo-readiness-audit-2026-10-03.md`, `docs/eoip-development-audit-2026-10-03.md`,
+VS Code README, example READMEs/wiki), then final gap closure:
+
+- MCP surface completed to the master-prompt tool semantics: added
+  `blast_radius` and `validate_ontology` tools (17 read-only tools total);
+  tool-set assertions aligned in smoke test, unit/integration MCP tests, and
+  the security verification suite.
+- Graph evolution engine repair: `evolve_relationship` now creates the new
+  revision's edge BEFORE expiring the old one, with per-revision edge identity
+  (`edge_key = relationship_id:revision_id`), closing the read-visibility gap
+  where concurrent readers could observe a missing current edge during
+  replacement (root cause of the transient empty-path incident).
+- Ontology manifest: `Metric` vertex label + `metric_id`/`unit` property keys
+  declared (schema-init regression), `request_id`/`actor_id`/`correlation_id`
+  property keys added (AgentRun persistence was un-writable on HugeGraph),
+  manifest integrity test added.
+- Smoke-test replay assertion corrected: meta-vocabulary vertices
+  (IngestionRun/GraphDomain/OntologyVersion) may grow one-time when the
+  ontology manifest is extended; replay idempotency is asserted over business
+  facts only (verified: repeated demo replay now produces zero logical diff).
+- Full lint cleanup across all agent-landed G2 modules (88 findings closed).
+
+Final verification (this pass, exit 0):
+- Local: `pytest` 1008 passed / 15 skipped; `ruff` clean.
+- Docker: `docker.ps1 test` — 1047 container tests passed, container smoke
+  test 4/4 PASS, Playwright 5/5 PASS (explorer/admin, invalid credentials,
+  API-outage recovery, network-interruption retry, held-job readmission).
+- Live: health ready; 8/8 Northstar demo scenarios ready; NL→QueryPlan
+  ("what is the impact of EOIP-1" → IMPACT plan, 23 nodes); MCP healthy with
+  17 read-only tools; web app HTTP 200.

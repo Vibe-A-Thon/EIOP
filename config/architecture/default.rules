@@ -1,0 +1,16 @@
+# EOIP default architecture conformance rules (G2-ARCHC).
+# Format:
+#   RULE <id>: <source> MUST_NOT_DEPEND <target> [SEVERITY <level>] [DEPTH <n>]
+#   RULE <id>: <source> MUST_NOT_ACCESS <target>
+#   RULE <id>: <source> MUST_HAVE <property-or-connection>
+#   RULE <id>: <source> MUST_NOT_CROSS <boundary>
+# <source>/<target> resolve to vertex labels, graph domains, or name globs.
+
+# Knowledge documents must not carry code dependencies.
+RULE docs-no-code-deps: Document MUST_NOT_DEPEND CodeSymbol SEVERITY WARNING DEPTH 3
+
+# Every declared code symbol should have provenance evidence attached.
+RULE symbols-need-evidence: CodeSymbol MUST_HAVE Evidence SEVERITY WARNING
+
+# Inferred relationships must not cross into the META domain.
+RULE inference-stays-out-of-meta: CodeSymbol MUST_NOT_CROSS META SEVERITY WARNING

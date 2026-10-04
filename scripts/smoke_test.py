@@ -72,7 +72,12 @@ def main():
             time.sleep(2)
         assert job["status"] == "SUCCEEDED", job
         after = get("/api/v1/admin/stats")["labels"]
-        diff = {k: (before.get(k), after.get(k)) for k in set(before) | set(after) if k != "IngestionRun" and before.get(k) != after.get(k)}
+        # Replay must not change business facts. Meta-vocabulary vertices
+        # (runs, domains, ontology versions) may legitimately grow one-time
+        # when the manifest is extended; they are recorded per run and are
+        # not logical duplicates.
+        meta_labels = {"IngestionRun", "GraphDomain", "OntologyVersion"}
+        diff = {k: (before.get(k), after.get(k)) for k in set(before) | set(after) if k not in meta_labels and before.get(k) != after.get(k)}
         assert not diff, f"Logical entity counts changed after replay: {diff}"
         assert after.get("IngestionRun", 0) > before.get("IngestionRun", 0), "Replay did not create a new IngestionRun"
         print("PASS: durable worker replay preserves logical entity counts", flush=True)
@@ -102,6 +107,8 @@ async def check_mcp(headers, symbol):
             "agent_explanation",
             "neighbors",
             "document",
+            "blast_radius",
+            "validate_ontology",
             "code_symbol",
             "jira_issue",
             "evidence",
