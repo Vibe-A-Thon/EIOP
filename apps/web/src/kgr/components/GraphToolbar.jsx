@@ -14,6 +14,7 @@ const LAYOUTS = [
   {id: 'spread', label: 'Spread', group: 'Geometric'},
   {id: 'timeline', label: 'Timeline', group: 'Temporal'},
   {id: 'clustered', label: 'Clustered', group: 'Force'},
+  {id: 'orthogonal', label: 'Orthogonal', group: 'Architecture'},
 ];
 
 const SIZE_MODES = [

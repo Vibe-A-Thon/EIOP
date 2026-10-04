@@ -3,7 +3,10 @@ import GraphCanvas, {palette} from '../../GraphCanvas.jsx';
 
 export {palette};
 
-export default function CytoscapeRenderer({nodes, edges, paths, selectedId, selectedEdgeId, onSelectNode, onSelectEdge, onExpand, onContextMenu}) {
+export default function CytoscapeRenderer({
+  nodes, edges, paths, selectedId, selectedEdgeId, onSelectNode, onSelectEdge,
+  onExpand, onContextMenu, layout, onLayoutChange,
+}) {
   return <GraphCanvas
     nodes={nodes}
     edges={edges}
@@ -14,5 +17,7 @@ export default function CytoscapeRenderer({nodes, edges, paths, selectedId, sele
     onSelectEdge={onSelectEdge}
     onExpand={onExpand}
     onContextMenu={onContextMenu}
+    layout={layout}
+    onLayoutChange={onLayoutChange}
   />;
 }

@@ -11,12 +11,20 @@ const palette = {
 
 const safeClass = name => String(name).toLowerCase().replace(/[^a-z0-9]/g, '');
 
-export default function GraphCanvas({nodes = [], edges = [], paths = [], selectedId, selectedEdgeId, onSelectNode, onSelectEdge, onExpand}) {
+export default function GraphCanvas({
+  nodes = [], edges = [], paths = [], selectedId, selectedEdgeId,
+  onSelectNode, onSelectEdge, onExpand, layout: requestedLayout, onLayoutChange,
+}) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
   const [ready, setReady] = useState(false);
   const [showLabels, setShowLabels] = useState(true);
-  const [layout, setLayout] = useState('cose');
+  const [localLayout, setLocalLayout] = useState('cose');
+  const layout = requestedLayout || localLayout;
+  const changeLayout = value => {
+    if (onLayoutChange) onLayoutChange(value);
+    else setLocalLayout(value);
+  };
 
   const elements = useMemo(() => [
     ...nodes.map(node => ({
@@ -77,6 +85,10 @@ export default function GraphCanvas({nodes = [], edges = [], paths = [], selecte
           {selector: 'edge.inferred', style: {'line-style': 'dashed', 'line-color': '#f59e0b', 'target-arrow-color': '#f59e0b'}},
           {selector: 'edge.evidenced', style: {'width': 2.2}},
           {selector: 'edge.path-edge', style: {'width': 4, 'line-color': '#7c5cff', 'target-arrow-color': '#7c5cff', 'z-index': 10}},
+          {selector: 'edge.orthogonal-edge', style: {
+            'curve-style': 'taxi', 'taxi-direction': 'auto', 'taxi-turn': '50%',
+            'taxi-turn-min-distance': '18px',
+          }},
           {selector: '.labels-off', style: {'label': ''}},
           {selector: '.semantic-compact', style: {'label': ''}},
         ],
@@ -101,8 +113,10 @@ export default function GraphCanvas({nodes = [], edges = [], paths = [], selecte
     cy.elements().remove();
     if (!elements.length) return;
     cy.add(elements);
+    cy.edges().toggleClass('orthogonal-edge', layout === 'orthogonal');
+    const layoutName = layout === 'orthogonal' ? 'grid' : layout;
     try {
-      cy.layout({name: layout, padding: 34, animate: false, componentSpacing: 100, nodeOverlap: 28, idealEdgeLength: 100}).run();
+      cy.layout({name: layoutName, padding: 34, animate: false, componentSpacing: 100, nodeOverlap: 28, idealEdgeLength: 100}).run();
     } catch {
       cy.layout({name: 'grid', padding: 34}).run();
     }
@@ -132,7 +146,7 @@ export default function GraphCanvas({nodes = [], edges = [], paths = [], selecte
       {control('Zoom out', 'minus', () => cyRef.current?.zoom({level: Math.max(.18, (cyRef.current?.zoom() || 1) / 1.2), renderedPosition: {x: 350, y: 220}}))}
       {control('Fit all entities in view', 'focus', () => cyRef.current?.fit(undefined, 38))}
       {control(showLabels ? 'Hide graph labels' : 'Show graph labels', 'eye', () => setShowLabels(value => !value), showLabels)}
-      <Tip text="Switch graph layout"><select aria-label="Graph layout" value={layout} onChange={event => setLayout(event.target.value)}><option value="cose">Organic</option><option value="breadthfirst">Hierarchy</option><option value="circle">Circle</option><option value="grid">Grid</option></select></Tip>
+      <Tip text="Switch graph layout"><select aria-label="Graph layout" value={layout} onChange={event => changeLayout(event.target.value)}><option value="cose">Organic</option><option value="breadthfirst">Hierarchy</option><option value="circle">Circle</option><option value="grid">Grid</option><option value="orthogonal">Orthogonal</option></select></Tip>
     </div>
     {!ready && <div className="canvas-loading"><span className="spinner"/>Preparing relationship map…</div>}
     {ready && elements.length === 0 && <div className="empty-state canvas-empty"><span className="empty-icon"><Icon name="graph" size={24}/></span><strong>No relationships to display</strong><p>Search for an entity to build a bounded graph view.</p></div>}

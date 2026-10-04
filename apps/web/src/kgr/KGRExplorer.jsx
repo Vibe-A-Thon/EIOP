@@ -739,7 +739,7 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
               : <GraphCanvas nodes={displayedNodes} edges={visibleEdges} paths={graph.paths || []}
                   selectedId={selected?.id} selectedEdgeId={selectedEdge?.id}
                   onSelectNode={n => run(() => inspect(n))} onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}}
-                  onExpand={expand} cyRef={cyRef} layout={layout} onViewportChange={setViewport}/>
+                  onExpand={expand} cyRef={cyRef} layout={layout} onLayoutChange={setLayout} onViewportChange={setViewport}/>
           }
         </section>
         {showCodePanel && <CodePanel filePath={codeFile} apiBase={apiBase}
@@ -771,7 +771,7 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
                 onViewportChange={setViewport} layout={layout}/>
             : <GraphCanvas nodes={displayedNodes} edges={visibleEdges} paths={graph.paths || []}
                 selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))} onExpand={expand}
-                cyRef={cyRef} layout={layout} onViewportChange={setViewport}/>
+                cyRef={cyRef} layout={layout} onLayoutChange={setLayout} onViewportChange={setViewport}/>
           }
           <TimelineScrubber nodes={graph.nodes || []} range={timelineRange} onRangeChange={setTimelineRange}/>
         </section>

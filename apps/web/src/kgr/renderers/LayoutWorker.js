@@ -37,6 +37,9 @@ self.onmessage = function (event) {
       case 'cola':
         runCola(nodes, edges, positions, opts);
         break;
+      case 'orthogonal':
+        runOrthogonal(nodes, edges, positions, opts);
+        break;
       default:
         runForceAtlas2(nodes, edges, positions, opts);
     }
@@ -227,4 +230,28 @@ function runCola(nodes, edges, positions, opts) {
   for (const id of Object.keys(state)) {
     positions[id] = {x: state[id].x, y: state[id].y};
   }
+}
+
+function runOrthogonal(nodes, edges, positions, opts) {
+  const spacing = opts.gridSpacing || 140;
+  const cols = Math.max(1, Math.ceil(Math.sqrt(nodes.length || 1)));
+  const incoming = {};
+  for (const n of nodes) {
+    incoming[n.id] = 0;
+  }
+  for (const e of edges) {
+    if (e.to_id in incoming) incoming[e.to_id]++;
+  }
+
+  const ordered = [...nodes].sort((a, b) => {
+    const inDelta = (incoming[a.id] || 0) - (incoming[b.id] || 0);
+    return inDelta || String(a.id).localeCompare(String(b.id));
+  });
+
+  ordered.forEach((node, index) => {
+    positions[node.id] = {
+      x: (index % cols) * spacing,
+      y: Math.floor(index / cols) * spacing,
+    };
+  });
 }
