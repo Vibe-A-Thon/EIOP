@@ -11,9 +11,40 @@ const palette = {
 
 const safeClass = name => String(name).toLowerCase().replace(/[^a-z0-9]/g, '');
 
+export function getSemanticZoomLevel(zoom) {
+  if (zoom < 0.3) return 'cluster';
+  if (zoom < 0.8) return 'entity';
+  return 'detail';
+}
+
+export function applySemanticZoom(cy, level) {
+  if (!cy) return;
+  cy.nodes().removeClass('sz-cluster sz-entity sz-detail');
+  cy.nodes().addClass(`sz-${level}`);
+  cy.edges().removeClass('sz-cluster sz-entity sz-detail');
+  cy.edges().addClass(`sz-${level}`);
+}
+
+export function fisheyeDistort(positions, focusX, focusY, radius = 200, distortion = 2) {
+  const result = {};
+  for (const [id, pos] of Object.entries(positions)) {
+    const dx = pos.x - focusX, dy = pos.y - focusY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > radius || dist === 0) {
+      result[id] = {...pos};
+    } else {
+      const normalised = dist / radius;
+      const scale = distortion * (1 - normalised * normalised) + 1;
+      result[id] = {x: focusX + dx * scale, y: focusY + dy * scale};
+    }
+  }
+  return result;
+}
+
 export default function GraphCanvas({
   nodes = [], edges = [], paths = [], selectedId, selectedEdgeId,
   onSelectNode, onSelectEdge, onExpand, layout: requestedLayout, onLayoutChange,
+  semanticZoomLevel, fisheye,
 }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
@@ -91,12 +122,23 @@ export default function GraphCanvas({
           }},
           {selector: '.labels-off', style: {'label': ''}},
           {selector: '.semantic-compact', style: {'label': ''}},
+          {selector: 'node.sz-cluster', style: {'label': '', 'opacity': 0.35, 'width': 18, 'height': 18, 'border-width': 2, 'transition-property': 'opacity, width, height', 'transition-duration': '200ms'}},
+          {selector: 'node.sz-cluster[?isHub]', style: {'opacity': 1, 'width': 44, 'height': 44}},
+          {selector: 'node.sz-entity', style: {'text-max-width': '60px', 'transition-property': 'opacity, width, height', 'transition-duration': '200ms'}},
+          {selector: 'edge.sz-cluster', style: {'label': '', 'opacity': 0.15}},
+          {selector: 'edge.sz-entity', style: {'label': ''}},
+          {selector: 'edge.sz-detail', style: {}},
+          {selector: 'node.fisheye-focus', style: {'border-color': '#f59e0b', 'border-width': 3}},
         ],
       });
       instance.on('tap', 'node', event => onSelectNode?.(event.target.data('node')));
       instance.on('tap', 'edge', event => onSelectEdge?.(event.target.data('edge')));
       instance.on('dbltap', 'node', event => onExpand?.(event.target.data('node')));
-      instance.on('zoom', () => instance.nodes().toggleClass('semantic-compact', instance.zoom() < .52));
+      instance.on('zoom', () => {
+        instance.nodes().toggleClass('semantic-compact', instance.zoom() < .52);
+        const level = getSemanticZoomLevel(instance.zoom());
+        applySemanticZoom(instance, level);
+      });
       cyRef.current = instance;
       setReady(true);
     });

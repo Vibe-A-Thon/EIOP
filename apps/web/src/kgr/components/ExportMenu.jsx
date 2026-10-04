@@ -1,5 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {Icon} from '../../icons.jsx';
+import {generateInteractiveHTML} from '../export/InteractiveExport.js';
+import {generateGraphReport} from '../export/GraphReport.js';
 
 const FORMATS = [
   {id: 'png', label: 'PNG Image', icon: 'focus', desc: 'Rasterized graph image at 2x resolution'},
@@ -13,6 +15,8 @@ const FORMATS = [
   {id: 'mermaid', label: 'Mermaid Diagram', icon: 'graph', desc: 'Mermaid graph syntax for Markdown'},
   {id: 'cypher', label: 'Cypher Script', icon: 'database', desc: 'Neo4j-compatible CREATE/MERGE statements'},
   {id: 'clipboard', label: 'Clipboard', icon: 'check', desc: 'Copy selected node/edge as Markdown'},
+  {id: 'interactive', label: 'Interactive HTML', icon: 'graph', desc: 'Self-contained HTML with pan/zoom/search/filter'},
+  {id: 'report', label: 'Graph Report', icon: 'activity', desc: '7-section Markdown analysis report'},
 ];
 
 function getAnnotations() {
@@ -203,6 +207,12 @@ export default function ExportMenu({graph, cyRef, onClose}) {
       } else if (format === 'clipboard') {
         const text = (graph.nodes || []).slice(0, 10).map(n => `- **${n.label}**: ${n.id}`).join('\n');
         try { await navigator.clipboard.writeText(text); } catch {}
+      } else if (format === 'interactive') {
+        const html = generateInteractiveHTML(graph.nodes || [], graph.edges || [], {title: 'KGR Interactive Export', annotations});
+        download(html, 'kgr-interactive.html', 'text/html');
+      } else if (format === 'report') {
+        const md = generateGraphReport(graph.nodes || [], graph.edges || [], {title: 'KGR Graph Report', annotations});
+        download(md, 'kgr-graph-report.md', 'text/markdown');
       }
     } finally { setExporting(false); }
     if (onClose) onClose();

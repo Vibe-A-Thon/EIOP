@@ -70,6 +70,8 @@ class WebSourceConnector:
             scope,
             client=self.crawler._client,
             resolver=self.crawler._resolver,
+            sleeper=self.crawler._sleeper,
+            clock=self.crawler._clock,
         )
         events = crawler.crawl()
         if not events:

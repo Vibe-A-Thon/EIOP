@@ -10,7 +10,7 @@ from eoip.graph.metrics import GraphMetricsEngine
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.query.executor import PolicyViolation, QueryExecutor, QueryTimeout
-from eoip.query.nl import interpret
+from eoip.query.nlq import NLQProcessor
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from pydantic import BaseModel, Field
 
@@ -318,9 +318,12 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     @app.post("/api/v1/query/nl")
     def query_nl(payload: NLQueryRequest):
-        interpretation = interpret(payload.question, store=store)
+        nlq_response = NLQProcessor(store, executor).process(payload.question)
+        interpretation = nlq_response.interpretation
         if interpretation.plan is None:
-            return {"interpretation": interpretation.model_dump(), "result": None}
+            return nlq_response.model_dump()
+        if nlq_response.result is not None:
+            return nlq_response.model_dump()
         try:
             result = executor.execute(interpretation.plan)
         except PolicyViolation as exc:
@@ -328,6 +331,12 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         return {
             "interpretation": interpretation.model_dump(),
             "result": result,
+            "answer": nlq_response.answer,
+            "confidence": nlq_response.confidence,
+            "engine": nlq_response.engine,
+            "highlights": nlq_response.highlights,
+            "followups": nlq_response.followups,
+            "warnings": nlq_response.warnings,
         }
 
     metrics_engine = GraphMetricsEngine(store)
@@ -1063,10 +1072,92 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             {"id": "qtest", "name": "qTest", "type": "api", "capabilities": ["baseline", "poll"]},
             {"id": "figma", "name": "Figma", "type": "api", "capabilities": ["baseline", "poll"]},
             {"id": "api_portal", "name": "API Portal", "type": "api", "capabilities": ["baseline"]},
-            {"id": "crawler", "name": "Web Crawler", "type": "crawler", "capabilities": ["baseline"]},
+            {"id": "web", "name": "Web Crawler", "type": "crawler", "capabilities": ["baseline", "poll", "reconcile"]},
             {"id": "local_code", "name": "Local Code", "type": "file", "capabilities": ["baseline"]},
             {"id": "generic", "name": "Generic JSON", "type": "json", "capabilities": ["baseline"]},
         ]}
+
+    # --- Phase 12: Cross-project graph merge ---
+    class MergeRequest(BaseModel):
+        strategy: str = Field(default="union", pattern="^(union|intersection|diff)$")
+        vertices: list[dict] = Field(default_factory=list)
+        edges: list[dict] = Field(default_factory=list)
+
+    @app.post("/api/v1/graph/merge")
+    def graph_merge(payload: MergeRequest):
+        added_v = 0
+        added_e = 0
+        skipped = 0
+        for v in payload.vertices:
+            label = v.get("label", "Unknown")
+            props = v.get("properties", {})
+            cid = props.get("canonical_id")
+            if not cid:
+                skipped += 1
+                continue
+            if payload.strategy == "intersection":
+                existing = store.find_vertices(limit=1, label=label)
+                if not any(ev["properties"].get("canonical_id") == cid for ev in existing):
+                    skipped += 1
+                    continue
+            store.upsert_vertex(label, props)
+            added_v += 1
+        for e in payload.edges:
+            elabel = e.get("label", "RELATED_TO")
+            src = e.get("from_id") or e.get("source_id")
+            tgt = e.get("to_id") or e.get("target_id")
+            if not src or not tgt:
+                skipped += 1
+                continue
+            store.upsert_edge(elabel, src, tgt, e.get("properties", {}))
+            added_e += 1
+        return {"added_vertices": added_v, "added_edges": added_e, "skipped": skipped, "strategy": payload.strategy}
+
+    # --- Phase 13: RAG query endpoint ---
+    class RAGQueryRequest(BaseModel):
+        query: str = Field(min_length=1, max_length=2000)
+        pattern: str | None = None
+        context: dict = Field(default_factory=dict)
+
+    @app.post("/api/v1/rag/query")
+    def rag_query(payload: RAGQueryRequest):
+        from eoip.graph.rag_router import RAGRouter
+        router = RAGRouter(store)
+        return router.route(payload.query, pattern=payload.pattern, context=payload.context)
+
+    @app.get("/api/v1/rag/patterns")
+    def rag_patterns():
+        from eoip.graph.rag_router import RAG_PATTERNS
+        return {"patterns": [{"name": p.name, "description": p.description} for p in RAG_PATTERNS]}
+
+    # --- Phase 13: Agent query endpoint ---
+    class AgentQueryRequest(BaseModel):
+        query: str = Field(min_length=1, max_length=2000)
+        agent_type: str | None = None
+        context: dict = Field(default_factory=dict)
+
+    @app.post("/api/v1/agents/query")
+    def agents_query(payload: AgentQueryRequest):
+        from eoip.graph.agent_router import AgentRouter
+        router = AgentRouter(store)
+        return router.route(payload.query, agent_type=payload.agent_type, context=payload.context)
+
+    @app.get("/api/v1/agents/types")
+    def agents_types():
+        from eoip.graph.agent_router import AGENT_TYPES
+        return {"types": [{"name": a.name, "category": a.category, "description": a.description} for a in AGENT_TYPES]}
+
+    # --- Phase 13: Engineering discipline endpoints ---
+    class EngineeringRequest(BaseModel):
+        discipline: str = Field(min_length=1, max_length=100)
+        query: str = Field(min_length=1, max_length=2000)
+        context: dict = Field(default_factory=dict)
+
+    @app.post("/api/v1/engineering/{discipline}")
+    def engineering_execute(discipline: str, payload: EngineeringRequest):
+        from eoip.graph.engineering import EngineeringRouter
+        router = EngineeringRouter(store)
+        return router.execute(discipline, payload.query, context=payload.context)
 
     @app.get("/api/v1/pipeline/status")
     def pipeline_status():

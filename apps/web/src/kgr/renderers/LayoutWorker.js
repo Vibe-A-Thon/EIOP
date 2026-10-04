@@ -234,24 +234,61 @@ function runCola(nodes, edges, positions, opts) {
 
 function runOrthogonal(nodes, edges, positions, opts) {
   const spacing = opts.gridSpacing || 140;
-  const cols = Math.max(1, Math.ceil(Math.sqrt(nodes.length || 1)));
+
+  const adj = {};
   const incoming = {};
+  const outgoing = {};
   for (const n of nodes) {
+    adj[n.id] = [];
     incoming[n.id] = 0;
+    outgoing[n.id] = 0;
   }
   for (const e of edges) {
+    if (adj[e.from_id]) adj[e.from_id].push(e.to_id);
     if (e.to_id in incoming) incoming[e.to_id]++;
+    if (e.from_id in outgoing) outgoing[e.from_id]++;
   }
 
-  const ordered = [...nodes].sort((a, b) => {
-    const inDelta = (incoming[a.id] || 0) - (incoming[b.id] || 0);
-    return inDelta || String(a.id).localeCompare(String(b.id));
-  });
+  const rank = {};
+  const queue = [];
+  for (const n of nodes) {
+    if (!incoming[n.id]) queue.push(n.id);
+  }
+  const visited = new Set();
+  let qi = 0;
+  while (qi < queue.length) {
+    const id = queue[qi++];
+    if (visited.has(id)) continue;
+    visited.add(id);
+    rank[id] = rank[id] || 0;
+    for (const tgt of adj[id] || []) {
+      rank[tgt] = Math.max(rank[tgt] || 0, (rank[id] || 0) + 1);
+      if (!visited.has(tgt)) queue.push(tgt);
+    }
+  }
+  for (const n of nodes) {
+    if (!(n.id in rank)) rank[n.id] = 0;
+  }
 
-  ordered.forEach((node, index) => {
-    positions[node.id] = {
-      x: (index % cols) * spacing,
-      y: Math.floor(index / cols) * spacing,
-    };
-  });
+  const byRank = {};
+  for (const n of nodes) {
+    const r = rank[n.id] || 0;
+    if (!byRank[r]) byRank[r] = [];
+    byRank[r].push(n);
+  }
+
+  const maxRank = Math.max(...Object.keys(byRank).map(Number), 0);
+  self.postMessage({type: 'progress', iteration: 50, total: 100});
+
+  for (let r = 0; r <= maxRank; r++) {
+    const row = byRank[r] || [];
+    row.sort((a, b) => (outgoing[b.id] || 0) - (outgoing[a.id] || 0) || String(a.id).localeCompare(String(b.id)));
+    const totalWidth = row.length * spacing;
+    row.forEach((node, i) => {
+      positions[node.id] = {
+        x: (i - row.length / 2) * spacing + totalWidth / 2,
+        y: r * spacing,
+      };
+    });
+  }
 }

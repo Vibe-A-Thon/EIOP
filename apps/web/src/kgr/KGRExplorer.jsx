@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import GraphCanvas, {palette} from '../GraphCanvas.jsx';
+import GraphCanvas, {palette, getSemanticZoomLevel, applySemanticZoom, fisheyeDistort} from '../GraphCanvas.jsx';
 import {Icon, Tip} from '../icons.jsx';
 import CentralityRadar from './components/CentralityRadar.jsx';
 import ContextMenu from './components/ContextMenu.jsx';
@@ -21,6 +21,13 @@ import CodePanel from './components/CodePanel.jsx';
 import QueryBuilder from './components/QueryBuilder.jsx';
 import GeoMap from './components/GeoMap.jsx';
 import PRDashboard from './components/PRDashboard.jsx';
+import StyleRules, {applyStyleRules} from './components/StyleRules.jsx';
+import TableView from './components/TableView.jsx';
+import Playbooks from './components/Playbooks.jsx';
+import SurprisePanel from './components/SurprisePanel.jsx';
+import AIExplorer from './components/AIExplorer.jsx';
+import {generateInteractiveHTML} from './export/InteractiveExport.js';
+import {generateGraphReport} from './export/GraphReport.js';
 import MetadataGraphView from './graphs/MetadataGraph.jsx';
 import OntologyGraphView from './graphs/OntologyGraph.jsx';
 import ProvenanceGraphView from './graphs/ProvenanceGraph.jsx';
@@ -442,6 +449,19 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
   const [viewport, setViewport] = useState(null);
   const [communities, setCommunities] = useState(null);
   const [orphanedCount, setOrphanedCount] = useState(null);
+  const [fisheyeEnabled, setFisheyeEnabled] = useState(false);
+  const [semanticZoom, setSemanticZoom] = useState('detail');
+  const [colorBlindMode, setColorBlindMode] = useState('default');
+  const [hubExclusionPct, setHubExclusionPct] = useState(0);
+  const [showStyleRules, setShowStyleRules] = useState(false);
+  const [lassoMode, setLassoMode] = useState(null);
+  const [multiSelection, setMultiSelection] = useState([]);
+  const [showTableView, setShowTableView] = useState(false);
+  const [showPlaybooks, setShowPlaybooks] = useState(false);
+  const [showSurprises, setShowSurprises] = useState(false);
+  const [surpriseData, setSurpriseData] = useState(null);
+  const [showAIExplorer, setShowAIExplorer] = useState(false);
+  const [deepLinkState, setDeepLinkState] = useState(null);
   const explorerRef = useRef(null);
   const cyRef = useRef(null);
 
@@ -516,10 +536,39 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
       if (e.key === 'g' && !e.ctrlKey && !e.shiftKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
         setComboMode(prev => prev ? null : 'domain');
       }
+      if (e.key === 'F' && e.shiftKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        setFisheyeEnabled(v => !v);
+      }
+      if (e.key === 't' && !e.ctrlKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        setShowTableView(v => !v);
+      }
+      if (e.key === 'a' && !e.ctrlKey && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        setShowAIExplorer(v => !v);
+      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [selected, handleUndo, handleRedo]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-palette', colorBlindMode);
+    return () => document.documentElement.removeAttribute('data-palette');
+  }, [colorBlindMode]);
+
+  useEffect(() => {
+    if (!deepLinkState) {
+      try {
+        const hash = window.location.hash.slice(1);
+        if (hash) {
+          const state = JSON.parse(atob(hash));
+          if (state.graphType) setGraphType(state.graphType);
+          if (state.filters) setFilters(state.filters);
+          if (state.layout) setLayout(state.layout);
+          setDeepLinkState(state);
+        }
+      } catch {}
+    }
+  }, []);
 
   const bookmarkState = useMemo(() => ({
     graph, filters, graphType, selectedId: selected?.id,
@@ -727,7 +776,27 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
           <GraphToolbar layout={layout} onLayoutChange={setLayout} sizeMode={sizeMode} onSizeModeChange={setSizeMode}
             onFitAll={() => cyRef.current?.fit()} onToggleMinimap={() => setShowMinimap(v => !v)}
             onToggleFilters={() => setShowFilters(v => !v)} onToggleEntityList={() => setShowEntityList(v => !v)}
-            onExport={() => setShowExport(v => !v)}/>
+            onExport={() => setShowExport(v => !v)}
+            fisheyeEnabled={fisheyeEnabled} onToggleFisheye={() => setFisheyeEnabled(v => !v)}
+            colorBlindMode={colorBlindMode} onColorBlindChange={setColorBlindMode}
+            onToggleTableView={() => setShowTableView(v => !v)}
+            onToggleDeepLink={() => {
+              try {
+                const state = btoa(JSON.stringify({graphType, filters, layout, selected: selected?.id, zoom: viewport?.zoom, pan: viewport?.pan}));
+                navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${state}`);
+              } catch {}
+            }}
+            multiSelectionCount={multiSelection.length}
+            onTogglePlaybooks={() => setShowPlaybooks(v => !v)}
+            onToggleStyleRules={() => setShowStyleRules(v => !v)}
+            onToggleAIExplorer={() => setShowAIExplorer(v => !v)}
+            onToggleSurprises={() => {
+              setShowSurprises(v => !v);
+              if (!surpriseData) run(async () => {
+                const data = await api('/api/v1/graph/surprises', {limit: 20}).catch(() => null);
+                setSurpriseData(data);
+              });
+            }}/>
           {renderProgress && <div className="render-progress-bar"><div className="render-progress-fill" style={{width: `${(renderedCount / Math.max(visibleNodes.length, 1)) * 100}%`}}/><span>{renderProgress}</span></div>}
           {showGeoMode
             ? <GeoMap elements={displayedNodes} edges={visibleEdges} onSelect={n => run(() => inspect(n))}/>
@@ -846,6 +915,33 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
       setShowQueryBuilder(false);
     }} onClose={() => setShowQueryBuilder(false)}/>}
     {showPRDashboard && <PRDashboard api={api} run={run} busy={busy} onClose={() => setShowPRDashboard(false)}/>}
+    {showTableView && <TableView nodes={displayedNodes} edges={visibleEdges} selectedId={selected?.id}
+      onSelect={n => run(() => inspect(n))} onClose={() => setShowTableView(false)}/>}
+    {showStyleRules && <StyleRules onApply={() => {}} onClose={() => setShowStyleRules(false)}/>}
+    {showPlaybooks && <Playbooks api={api} run={run} busy={busy} selected={selected}
+      onAction={(action) => {
+        if (action === 'blast-radius' && selected) computeBlastRadius();
+        if (action === 'what-if' && selected) computeWhatIf();
+        if (action === 'centrality' && selected) computeFullCentrality();
+        if (action === 'reverse-impact' && selected) computeImpact();
+      }}
+      onClose={() => setShowPlaybooks(false)}/>}
+    {showSurprises && <SurprisePanel data={surpriseData} onClose={() => setShowSurprises(false)}
+      onHighlight={(type, item) => {
+        if (type === 'edge' && item.source_id) {
+          const node = (graph.nodes || []).find(n => n.id === item.source_id);
+          if (node) run(() => inspect(node));
+        }
+      }}/>}
+    {showAIExplorer && <AIExplorer api={api} run={run} busy={busy} selected={selected} graph={graph}
+      onHighlight={(ids) => {
+        if (ids?.length) {
+          const node = (graph.nodes || []).find(n => ids.includes(n.id));
+          if (node) run(() => inspect(node));
+        }
+      }}
+      onClose={() => setShowAIExplorer(false)}/>}
+    {fisheyeEnabled && <div className="fisheye-indicator"><Icon name="focus" size={12}/> Fisheye active (Shift+F)</div>}
     {contextMenu && <ContextMenu x={contextMenu.x} y={contextMenu.y} items={contextMenu.items} onClose={() => setContextMenu(null)}/>}
     <EventFeed events={graphEvents} status={wsStatus}
       onPause={pauseEvents} onResume={resumeEvents} onClear={clearEvents}

@@ -41,6 +41,10 @@ _FILE_PATH = re.compile(r"\b[\w.-]+/[\w./-]*\w\b")
 
 _TRACE_WORDS = re.compile(r"\b(implement\w*|requirement\w*|trac\w*)\b")
 _IMPACT_WORDS = re.compile(r"\b(impact\w*|affects?|depend\w*|blast\s*radius)\b")
+_NEIGHBORHOOD_WORDS = re.compile(
+    r"\b(neighbou?rs?|adjacent|around|nearby|connected\s+(?:entities|nodes|items))\b"
+)
+_LINEAGE_WORDS = re.compile(r"\b(lineage|provenance|evidence|source|origin|where\s+did)\b")
 _PATH_WORDS = re.compile(
     r"\b(path|link\s+between|connection\s+between|connected\s+to|connects?\s+)\b"
 )
@@ -120,6 +124,8 @@ def _rules(text: str, store: GraphStore | None) -> NLInterpretation | None:
     wants_path = _PATH_WORDS.search(lowered) or _HOW_CONNECTED.search(lowered)
     wants_impact = _IMPACT_WORDS.search(lowered)
     wants_trace = _TRACE_WORDS.search(lowered)
+    wants_neighborhood = _NEIGHBORHOOD_WORDS.search(lowered)
+    wants_lineage = _LINEAGE_WORDS.search(lowered)
 
     if wants_path and len(resolvable) >= 2:
         anchors = [resolvable[0][2], resolvable[1][2]]
@@ -138,6 +144,26 @@ def _rules(text: str, store: GraphStore | None) -> NLInterpretation | None:
             explanation=(
                 f"Impact wording with a resolvable {kind} mention ({token!r}); "
                 f"planned a bounded IMPACT query from its anchor"
+            ),
+            interpreted_via="rules",
+        )
+    if wants_lineage and resolvable:
+        kind, token, anchor = resolvable[0]
+        return NLInterpretation(
+            plan=_plan("LINEAGE", [anchor]),
+            explanation=(
+                f"Lineage/provenance wording with a resolvable {kind} mention ({token!r}); "
+                f"planned a bounded LINEAGE query from its anchor"
+            ),
+            interpreted_via="rules",
+        )
+    if wants_neighborhood and resolvable:
+        kind, token, anchor = resolvable[0]
+        return NLInterpretation(
+            plan=_plan("NEIGHBORHOOD", [anchor]),
+            explanation=(
+                f"Neighborhood wording with a resolvable {kind} mention ({token!r}); "
+                f"planned a one-hop NEIGHBORHOOD query from its anchor"
             ),
             interpreted_via="rules",
         )

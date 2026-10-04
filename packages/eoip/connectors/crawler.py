@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import ipaddress
 import socket
+import time
 from collections import deque
 from collections.abc import Callable
 from html.parser import HTMLParser
@@ -26,6 +27,9 @@ class CrawlScope(BaseModel):
     page_limit: int = Field(default=100, ge=1, le=10_000)
     mime_types: list[str] = Field(default_factory=lambda: ["text/html"], max_length=50)
     max_page_bytes: int = Field(default=2_000_000, ge=1024, le=50_000_000)
+    max_concurrency: int = Field(default=1, ge=1, le=16)
+    rate_limit_per_minute: int = Field(default=60, ge=1, le=60_000)
+    politeness_delay_ms: int = Field(default=0, ge=0, le=60_000)
 
     @field_validator("allowed_hosts")
     @classmethod
@@ -89,12 +93,18 @@ class ControlledWebCrawler:
         *,
         client: httpx.Client | None = None,
         resolver: Callable[[str], list[str]] | None = None,
+        sleeper: Callable[[float], None] | None = None,
+        clock: Callable[[], float] | None = None,
     ) -> None:
         self.source_id = source_id
         self.scope = scope
         self._client = client or httpx.Client(timeout=20, follow_redirects=False, trust_env=False)
         self._owns_client = client is None
         self._resolver = resolver or self._resolve
+        self._sleeper = sleeper or time.sleep
+        self._clock = clock or time.monotonic
+        self._last_fetch_by_host: dict[str, float] = {}
+        self._fetch_timestamps: deque[float] = deque()
 
     def close(self) -> None:
         if self._owns_client:
@@ -150,7 +160,13 @@ class ControlledWebCrawler:
                     captured_at=captured_at,
                     content_hash=content_hash,
                     payload=payload,
-                    metadata={"crawler": "controlled-web/1.0", "depth": depth},
+                    metadata={
+                        "crawler": "controlled-web/1.0",
+                        "depth": depth,
+                        "max_concurrency": self.scope.max_concurrency,
+                        "rate_limit_per_minute": self.scope.rate_limit_per_minute,
+                        "politeness_delay_ms": self.scope.politeness_delay_ms,
+                    },
                 )
             )
             if depth < self.scope.max_depth:
@@ -163,6 +179,7 @@ class ControlledWebCrawler:
         current = url
         for _ in range(6):
             self._validate_target(current)
+            self._throttle(current)
             response = self._client.get(current, headers={"User-Agent": "EOIP-ControlledCrawler/1.0"})
             if response.status_code in {301, 302, 303, 307, 308}:
                 location = response.headers.get("location")
@@ -173,6 +190,31 @@ class ControlledWebCrawler:
             response.raise_for_status()
             return response, current
         raise ValueError("crawler redirect limit exceeded")
+
+    def _throttle(self, url: str) -> None:
+        now = self._clock()
+        cutoff = now - 60.0
+        while self._fetch_timestamps and self._fetch_timestamps[0] <= cutoff:
+            self._fetch_timestamps.popleft()
+        if len(self._fetch_timestamps) >= self.scope.rate_limit_per_minute:
+            sleep_for = max(0.0, 60.0 - (now - self._fetch_timestamps[0]))
+            if sleep_for:
+                self._sleeper(sleep_for)
+                now = self._clock()
+                cutoff = now - 60.0
+                while self._fetch_timestamps and self._fetch_timestamps[0] <= cutoff:
+                    self._fetch_timestamps.popleft()
+
+        host = (urlsplit(url).hostname or "").lower().rstrip(".")
+        delay_s = self.scope.politeness_delay_ms / 1000.0
+        previous = self._last_fetch_by_host.get(host)
+        if previous is not None and delay_s > 0:
+            sleep_for = max(0.0, delay_s - (now - previous))
+            if sleep_for:
+                self._sleeper(sleep_for)
+                now = self._clock()
+        self._last_fetch_by_host[host] = now
+        self._fetch_timestamps.append(now)
 
     def _validate_target(self, url: str) -> None:
         if not self._is_in_scope(url):
