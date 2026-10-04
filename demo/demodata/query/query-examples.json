@@ -1,80 +1,95 @@
 {
-  "description": "Query capability demonstration — shows structured, NL, path, impact, and search query types.",
-  "version": "1.0.0",
+  "description": "Query capability demonstration — shows structured, NL, path, impact, and search query types. Uses Meridian Financial Services (MFS) demo data.",
+  "version": "2.0.0",
+  "organization": "Meridian Financial Services",
   "examples": [
     {
       "id": "query-search-entity",
       "type": "search",
-      "query": "EOIP-1",
-      "description": "Search for an entity by issue key",
-      "expected_results": ["WorkItem with canonical_id urn:eoip:work:item:jira:EOIP-1"]
+      "query": "PAY-101",
+      "description": "Search for a Jira story by issue key",
+      "expected_results": ["WorkItem with canonical_id urn:eoip:work:item:jira:PAY-101 — Implement payment tokenization service"]
     },
     {
       "id": "query-path-trace",
       "type": "path",
-      "source": "urn:eoip:work:item:jira:EOIP-1",
-      "target": "urn:eoip:code:symbol:demo:service.py:compute_impact",
+      "source": "urn:eoip:work:item:jira:PAY-101",
+      "target": "urn:eoip:code:symbol:mfs-payment-gateway:tokenization.service:tokenize_card",
       "max_depth": 6,
-      "description": "Find path from Jira issue to code function",
-      "expected_path": ["WorkItem", "Commit", "File", "CodeSymbol"]
+      "description": "Find path from Jira story to code function",
+      "expected_path": ["WorkItem → MergeRequest → Commit → File → CodeSymbol"]
     },
     {
       "id": "query-impact-blast",
       "type": "impact",
-      "anchor": "urn:eoip:code:symbol:demo:service.py:compute_impact",
+      "anchor": "urn:eoip:code:symbol:mfs-payment-gateway:tokenization.service:tokenize_card",
       "max_depth": 3,
-      "description": "Compute blast radius of changing compute_impact()",
-      "expected_labels": ["File", "Dependency", "WorkItem"]
+      "description": "Compute blast radius of changing tokenize_card()",
+      "expected_labels": ["File", "CodeSymbol", "Dependency", "WorkItem", "TestCase"]
     },
     {
       "id": "query-nl-simple",
       "type": "natural_language",
-      "query": "What is EOIP-1 about?",
+      "query": "What is PAY-201 about?",
       "description": "Simple NL query interpreted as entity lookup",
       "expected_intent": "entity_lookup"
     },
     {
       "id": "query-nl-trace",
       "type": "natural_language",
-      "query": "How is EOIP-1 implemented in code?",
-      "description": "NL query interpreted as path query",
+      "query": "How is the HSM key rotation implemented in code?",
+      "description": "NL query interpreted as path query from PAY-202 to code symbols",
       "expected_intent": "path_query"
     },
     {
       "id": "query-nl-impact",
       "type": "natural_language",
-      "query": "What would be affected if we change compute_impact?",
+      "query": "What would be affected if we change the PaymentService.process_payment function?",
       "description": "NL query interpreted as impact analysis",
       "expected_intent": "impact_analysis"
     },
     {
       "id": "query-neighborhood",
       "type": "neighborhood",
-      "anchor": "urn:eoip:code:repo:demo",
+      "anchor": "urn:eoip:ops:incident:INC0080101",
       "max_depth": 2,
-      "description": "Get the neighborhood of the demo repository",
-      "expected_labels": ["Branch", "File", "Commit", "MergeRequest"]
+      "description": "Explore the neighborhood around the payment timeout incident",
+      "expected_labels": ["Incident", "Change", "Pipeline", "MergeRequest", "WorkItem", "Person"]
     },
     {
       "id": "query-traceability",
       "type": "traceability",
-      "source": "urn:eoip:work:item:jira:PAY-142",
-      "description": "Full traceability from requirement through all graph domains",
-      "expected_domains": ["work", "code", "cicd", "ops", "test", "design", "knowledge"]
+      "source": "urn:eoip:work:epic:rally:EPC-101",
+      "description": "Full traceability chain from Rally epic to production deployment",
+      "expected_chain": ["Epic → Feature → Story → MergeRequest → Pipeline → Deployment → Pod"]
     },
     {
       "id": "query-lineage",
       "type": "lineage",
-      "entity": "urn:eoip:work:item:jira:EOIP-1",
-      "description": "Provenance lineage — trace entity back to source evidence",
-      "expected_evidence": ["source_system", "captured_at", "payload_hash"]
+      "entity": "urn:eoip:code:api-service:mfs:payment-gateway",
+      "description": "Trace the provenance lineage of the Payment Gateway API entity",
+      "expected_sources": ["api-portal", "swagger", "gitlab"]
     },
     {
-      "id": "query-eql",
+      "id": "query-eql-structured",
       "type": "eql",
-      "query": "FIND WorkItem WHERE status = 'Done' TRACE_TO CodeSymbol",
-      "description": "Enterprise Query Language — structured query with traceability",
-      "expected_results": ["WorkItems linked to CodeSymbols through implementation edges"]
+      "query": "FIND WorkItem WHERE status = 'In Progress' AND project_key = 'PAY' TRAVERSE IMPLEMENTS TO CodeSymbol",
+      "description": "Structured EQL query: find in-progress PAY stories and their implementing code",
+      "expected_intent": "structured_query"
+    },
+    {
+      "id": "query-cross-domain",
+      "type": "cross_domain",
+      "query": "Which test cases in qTest cover the fraud scoring API endpoints?",
+      "description": "Cross-domain query spanning qTest (test), API Portal (api), and GitLab (code)",
+      "expected_domains": ["test", "api", "code"]
+    },
+    {
+      "id": "query-temporal",
+      "type": "temporal",
+      "query": "What changed in the payment gateway between September 15 and October 1, 2026?",
+      "description": "Temporal query across MRs, deployments, and incidents in a time window",
+      "expected_intent": "temporal_diff"
     }
   ]
 }

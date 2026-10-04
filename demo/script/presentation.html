@@ -1,0 +1,870 @@
+<title>EOIP Platform Demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: slide deck with keyboard/click navigation */
+  :root {
+    --bg: #0f1419;
+    --fg: #e8eaed;
+    --fg-muted: #9aa0a6;
+    --surface: #1a2027;
+    --surface-alt: #232b34;
+    --border: #2d3740;
+    --accent: #4fc3f7;
+    --accent-dim: rgba(79,195,247,0.15);
+    --pay: #66bb6a;
+    --frd: #ff7043;
+    --warn: #ffd54f;
+    --pass: #66bb6a;
+    --fail: #ef5350;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f8f9fb;
+      --fg: #1a2027;
+      --fg-muted: #5f6b7a;
+      --surface: #ffffff;
+      --surface-alt: #f0f2f5;
+      --border: #d4d8de;
+      --accent: #0277bd;
+      --accent-dim: rgba(2,119,189,0.1);
+      --pay: #2e7d32;
+      --frd: #d84315;
+      --warn: #f57f17;
+      --pass: #2e7d32;
+      --fail: #c62828;
+      color-scheme: light;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f8f9fb;
+    --fg: #1a2027;
+    --fg-muted: #5f6b7a;
+    --surface: #ffffff;
+    --surface-alt: #f0f2f5;
+    --border: #d4d8de;
+    --accent: #0277bd;
+    --accent-dim: rgba(2,119,189,0.1);
+    --pay: #2e7d32;
+    --frd: #d84315;
+    --warn: #f57f17;
+    --pass: #2e7d32;
+    --fail: #c62828;
+    color-scheme: light;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    user-select: none;
+  }
+
+  .deck { position: relative; width: 100%; height: 100%; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    padding: 48px 64px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+
+  .slide-number {
+    position: fixed;
+    bottom: 20px;
+    right: 32px;
+    font-size: 13px;
+    color: var(--fg-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    z-index: 10;
+  }
+
+  .nav-hint {
+    position: fixed;
+    bottom: 20px;
+    left: 32px;
+    font-size: 12px;
+    color: var(--fg-muted);
+    z-index: 10;
+    opacity: 0.6;
+  }
+
+  h1 {
+    font-size: 2.4em;
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 0 16px 0;
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    font-size: 1.6em;
+    font-weight: 600;
+    line-height: 1.25;
+    margin: 0 0 12px 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+  }
+
+  .subtitle {
+    font-size: 1.15em;
+    color: var(--fg-muted);
+    margin: 0 0 32px 0;
+    line-height: 1.5;
+  }
+
+  .accent-text { color: var(--accent); }
+  .pay-text { color: var(--pay); }
+  .frd-text { color: var(--frd); }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .badge-pay { background: var(--pay); color: #fff; }
+  .badge-frd { background: var(--frd); color: #fff; }
+  .badge-accent { background: var(--accent); color: #000; }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    flex: 1;
+    align-content: start;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    flex: 1;
+    align-content: start;
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    align-content: start;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .card h3 { margin-bottom: 8px; }
+  .card p, .card ul { margin: 0; font-size: 0.9em; line-height: 1.6; color: var(--fg-muted); }
+  .card ul { padding-left: 18px; }
+  .card li { margin-bottom: 4px; }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 2.2em;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 0.8em;
+    color: var(--fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+  }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--border);
+    font-weight: 600;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--fg-muted);
+  }
+  td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.85em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .flow-arrow .node {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .flow-arrow .arrow { color: var(--accent); font-weight: 700; }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .title-slide h1 { font-size: 3em; margin-bottom: 8px; }
+  .title-slide .subtitle { font-size: 1.3em; max-width: 600px; }
+
+  .section-slide {
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .section-slide h1 {
+    font-size: 2.8em;
+    border-left: 4px solid var(--accent);
+    padding-left: 24px;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+    background: var(--surface-alt);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .talk-point {
+    background: var(--accent-dim);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.88em;
+    color: var(--fg);
+    margin-top: auto;
+    line-height: 1.5;
+  }
+
+  .pipe {
+    display: inline-block;
+    width: 4px;
+    height: 1em;
+    background: var(--border);
+    margin: 0 8px;
+    vertical-align: middle;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 700px) {
+    .slide { padding: 24px; }
+    h1 { font-size: 1.6em; }
+    h2 { font-size: 1.2em; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .title-slide h1 { font-size: 2em; }
+    .stat-num { font-size: 1.6em; }
+  }
+</style>
+
+<div class="deck" id="deck">
+
+  <!-- Slide 1: Title -->
+  <div class="slide title-slide active" data-slide="1">
+    <div style="font-size:0.85em;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;">Enterprise Operational Intelligence Platform</div>
+    <h1>EOIP</h1>
+    <p class="subtitle">Local-first, HugeGraph-authoritative enterprise knowledge graph platform</p>
+    <div style="margin-top:32px;color:var(--fg-muted);font-size:0.95em;">
+      <strong>Demo Organization:</strong> Meridian Financial Services
+    </div>
+  </div>
+
+  <!-- Slide 2: What is EOIP -->
+  <div class="slide" data-slide="2">
+    <h1>What is EOIP?</h1>
+    <p class="subtitle">A unified knowledge graph that connects every artifact in your engineering ecosystem</p>
+    <div class="grid-4" style="margin-bottom:24px;">
+      <div class="stat-card"><div class="stat-num">13</div><div class="stat-label">Source Connectors</div></div>
+      <div class="stat-card"><div class="stat-num">17</div><div class="stat-label">RAG Patterns</div></div>
+      <div class="stat-card"><div class="stat-num">41</div><div class="stat-label">Agent Types</div></div>
+      <div class="stat-card"><div class="stat-num">8</div><div class="stat-label">LAYA Capabilities</div></div>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <h3>Local-First</h3>
+        <p>Runs entirely on-premise. No data leaves your network. No cloud dependency. Works offline after initial setup.</p>
+      </div>
+      <div class="card">
+        <h3>Graph-Authoritative</h3>
+        <p>HugeGraph is the single source of truth. Every entity has provenance. Every edge has evidence.</p>
+      </div>
+      <div class="card">
+        <h3>AI-Augmented</h3>
+        <p>LAYA uses local LLMs when available, falls back to deterministic graph analysis. Model synthesis is optional.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Meridian Financial Services -->
+  <div class="slide" data-slide="3">
+    <h1>Meridian Financial Services</h1>
+    <p class="subtitle">Demo organization with two engineering domains</p>
+    <div class="grid-2">
+      <div class="card" style="border-left:4px solid var(--pay);">
+        <h3><span class="badge badge-pay">PAY</span> Payment Gateway Modernization</h3>
+        <ul>
+          <li>3 Rally Epics: EPC-101, 102, 103</li>
+          <li>18 Jira Issues: PAY-100 → PAY-321</li>
+          <li>7 GitLab MRs: !301 → !502</li>
+          <li>4 ServiceNow Changes, 2 Incidents</li>
+          <li>8 qTest Cases: TC-PAY-001 → 008</li>
+          <li>5 Confluence Pages</li>
+          <li>Figma, Kibana, Grafana, Datadog</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:4px solid var(--frd);">
+        <h3><span class="badge badge-frd">FRD</span> Fraud Detection &amp; AML</h3>
+        <ul>
+          <li>3 Rally Epics: EPC-201, 202, 203</li>
+          <li>18 Jira Issues: FRD-100 → FRD-321</li>
+          <li>7 GitLab MRs: !601 → !802</li>
+          <li>3 ServiceNow Changes, 2 Incidents</li>
+          <li>8 qTest Cases: TC-FRD-001 → 008</li>
+          <li>5 Confluence Pages</li>
+          <li>Figma, Kibana, Grafana, Datadog</li>
+        </ul>
+      </div>
+    </div>
+    <div class="talk-point">Manual ingestion (PAY) and pipeline ingestion (FRD) produce identical graph structures — the difference is the trigger (human click vs. scheduled automation).</div>
+  </div>
+
+  <!-- Slide 4: 13 Source Connectors -->
+  <div class="slide" data-slide="4">
+    <h1>13 Source System Connectors</h1>
+    <p class="subtitle">Every connector maps source records to the EOIP schema with full payload capture</p>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Connector</th><th>Type</th><th>PAY Records</th><th>FRD Records</th></tr></thead>
+        <tbody>
+          <tr><td>Rally</td><td>Work Management</td><td>8 (epics, features, stories)</td><td>8</td></tr>
+          <tr><td>Jira</td><td>Work Management</td><td>18 issues</td><td>18 issues</td></tr>
+          <tr><td>GitLab</td><td>Code &amp; CI/CD</td><td>7 MRs, 7 pipelines</td><td>7 MRs, 7 pipelines</td></tr>
+          <tr><td>ServiceNow</td><td>ITSM</td><td>4 changes, 2 incidents</td><td>3 changes, 2 incidents</td></tr>
+          <tr><td>Confluence</td><td>Knowledge</td><td>5 pages</td><td>5 pages</td></tr>
+          <tr><td>Figma</td><td>Design</td><td>1 file, 4 components</td><td>1 file, 4 components</td></tr>
+          <tr><td>qTest</td><td>Test Management</td><td>8 test cases, 2 suites</td><td>8 test cases, 2 suites</td></tr>
+          <tr><td>Kibana</td><td>Observability</td><td>3 dashboards</td><td>3 dashboards</td></tr>
+          <tr><td>Grafana</td><td>Observability</td><td>2 dashboards, 2 alerts</td><td>2 dashboards, 2 alerts</td></tr>
+          <tr><td>Datadog</td><td>Observability</td><td>2 dashboards, 4 monitors</td><td>2 dashboards, 4 monitors</td></tr>
+          <tr><td>API Portal</td><td>API Registry</td><td>3 services, 11 endpoints</td><td>3 services, 11 endpoints</td></tr>
+          <tr><td>LocalCode</td><td>Code Graph</td><td colspan="2">4 repositories, 110 symbols, 244 edges</td></tr>
+          <tr><td>Crawler</td><td>Web Harvesting</td><td colspan="2">5 portal types, 29 pages</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Slide 5: Code Graph -->
+  <div class="slide" data-slide="5">
+    <h1>Code-Graph Construction</h1>
+    <p class="subtitle">Source files parsed into symbols, files, dependencies, and edges</p>
+    <div class="grid-4" style="margin-bottom:24px;">
+      <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">Repositories</div></div>
+      <div class="stat-card"><div class="stat-num">46</div><div class="stat-label">Source Files</div></div>
+      <div class="stat-card"><div class="stat-num">110</div><div class="stat-label">Symbols</div></div>
+      <div class="stat-card"><div class="stat-num">244</div><div class="stat-label">Edges</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Repositories</h3>
+        <ul>
+          <li><code>mfs-payment-gateway</code> — 13 files, 33 symbols</li>
+          <li><code>mfs-fraud-engine</code> — 13 files, 29 symbols</li>
+          <li><code>mfs-common-libs</code> — 8 files, 24 symbols</li>
+          <li><code>mfs-customer-portal</code> — 12 files, 24 symbols</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Edge Types</h3>
+        <ul>
+          <li><code>DECLARES</code> — file declares a symbol</li>
+          <li><code>IMPORTS</code> — symbol imports another</li>
+          <li><code>CALLS</code> — function calls function</li>
+          <li><code>INHERITS</code> — class extends class</li>
+          <li><code>DEPENDS_ON</code> — package dependency</li>
+        </ul>
+      </div>
+    </div>
+    <div class="talk-point">Code-graph construction links every class, function, and import to the Jira stories, MRs, and test cases that reference them — forming a complete traceability chain.</div>
+  </div>
+
+  <!-- Slide 6: Crawler -->
+  <div class="slide" data-slide="6">
+    <h1>Controlled Web Crawler</h1>
+    <p class="subtitle">Policy-bounded crawling of internal portals with full provenance</p>
+    <div class="grid-3" style="margin-bottom:24px;">
+      <div class="card">
+        <h3>Wiki / Confluence</h3>
+        <p>9 pages — architecture docs, runbooks, onboarding guides from <code>wiki.mfs.internal</code></p>
+      </div>
+      <div class="card">
+        <h3>API Portal</h3>
+        <p>6 pages — Swagger specs, endpoint reference from <code>api.mfs.internal</code></p>
+      </div>
+      <div class="card">
+        <h3>DB Schemas</h3>
+        <p>4 pages — mfs_payments_db, mfs_fraud_db, mfs_audit_db from <code>dbdocs.mfs.internal</code></p>
+      </div>
+      <div class="card">
+        <h3>Figma Designs</h3>
+        <p>3 pages — Payment Portal, Fraud Dashboard, Component Library from <code>figma.mfs.internal</code></p>
+      </div>
+      <div class="card">
+        <h3>Observability</h3>
+        <p>7 pages — Grafana, Datadog, Kibana, Fortuna, status and alerts portals</p>
+      </div>
+      <div class="card" style="border:1px dashed var(--border);">
+        <h3>Policy Controls</h3>
+        <p>Allowed hosts, rate limits, depth limits, content-type filters. All configurable per crawl scope.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Golden Evidence Path -->
+  <div class="slide" data-slide="7">
+    <h1>The Golden Evidence Path</h1>
+    <p class="subtitle">Trace a business requirement through code to production — every hop has provenance</p>
+    <div class="flow-arrow" style="margin-bottom:24px;font-size:0.9em;">
+      <span class="node">Rally Epic<br><small>EPC-101</small></span>
+      <span class="arrow">&rarr;</span>
+      <span class="node">Jira Feature<br><small>PAY-100</small></span>
+      <span class="arrow">&rarr;</span>
+      <span class="node">Jira Story<br><small>PAY-101</small></span>
+      <span class="arrow">&rarr;</span>
+      <span class="node">GitLab MR<br><small>!301</small></span>
+      <span class="arrow">&rarr;</span>
+      <span class="node">Pipeline<br><small>9001</small></span>
+      <span class="arrow">&rarr;</span>
+      <span class="node">Deployment<br><small>CHG0090101</small></span>
+      <span class="arrow">&rarr;</span>
+      <span class="node">Pod<br><small>payment-gw-1</small></span>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Forward Trace</h3>
+        <p>Business requirement → code implementation → deployment</p>
+        <ul>
+          <li>Path query: bounded BFS over the live graph</li>
+          <li>Impact analysis: blast radius with depth and risk</li>
+          <li>Traceability: full chain from epic to production</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Reverse Trace (Incident)</h3>
+        <p>Production incident → triggering deployment → code change → requirement</p>
+        <ul>
+          <li><code>INC0080101</code> — payment timeout spike</li>
+          <li>→ <code>CHG0090101</code> → Pipeline 9001 → MR !301</li>
+          <li>→ <code>PAY-101</code> tokenization change</li>
+        </ul>
+      </div>
+    </div>
+    <div class="talk-point">The same graph traces requirements forward and incidents backward — no separate CMDB integration needed. Every edge has provenance: the original source event with payload hash.</div>
+  </div>
+
+  <!-- Slide 8: RAG Patterns -->
+  <div class="slide" data-slide="8">
+    <h1>17 RAG Patterns</h1>
+    <p class="subtitle">Queries are classified and routed to the optimal retrieval pattern</p>
+    <div class="grid-3">
+      <div class="card">
+        <h3>Core Patterns</h3>
+        <ul>
+          <li><strong>Simple</strong> — keyword match, 1-hop BFS</li>
+          <li><strong>Advanced</strong> — query expansion + reranking</li>
+          <li><strong>Graph</strong> — community summarize + merge</li>
+          <li><strong>Hybrid</strong> — vector + graph + BM25</li>
+          <li><strong>HyDE</strong> — hypothetical doc embedding</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Adaptive Patterns</h3>
+        <ul>
+          <li><strong>Corrective</strong> — retrieve, evaluate, correct</li>
+          <li><strong>Self</strong> — retrieve, generate, self-evaluate</li>
+          <li><strong>Adaptive</strong> — classify, route, adapt</li>
+          <li><strong>Agentic</strong> — agent plan, retrieve, reflect</li>
+          <li><strong>Modular</strong> — compose, retrieve, fuse</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Advanced Patterns</h3>
+        <ul>
+          <li><strong>Conversational</strong> — context carry + coreference</li>
+          <li><strong>Multi-step</strong> — decompose, chain</li>
+          <li><strong>Multi-hop</strong> — hop, retrieve, hop</li>
+          <li><strong>Branched</strong> — parallel retrieve, compare</li>
+          <li><strong>Multimodal</strong> — cross-type alignment</li>
+          <li><strong>Speculative</strong> — speculate, validate, prune</li>
+          <li><strong>RAG of RAGs</strong> — meta-orchestrate + fuse</li>
+        </ul>
+      </div>
+    </div>
+    <div class="talk-point">All 17 patterns use the graph as their primary context source. No vector database required — the graph IS the retrieval engine.</div>
+  </div>
+
+  <!-- Slide 9: Agent Types -->
+  <div class="slide" data-slide="9">
+    <h1>41 Agent Types in 9 Categories</h1>
+    <p class="subtitle">Graph-grounded agents with deterministic traversal — no LLM required for core operations</p>
+    <div class="grid-3">
+      <div class="card">
+        <h3>Tool-Using</h3>
+        <p>Retrieval agents using search, path, and impact tools</p>
+      </div>
+      <div class="card">
+        <h3>Deliberative</h3>
+        <p>Goal-based reasoning with multi-step planning</p>
+      </div>
+      <div class="card">
+        <h3>Enterprise</h3>
+        <p>Compliance, audit, governance, and regulatory checks</p>
+      </div>
+      <div class="card">
+        <h3>Orchestration</h3>
+        <p>Workflow, release governance, multi-stage operations</p>
+      </div>
+      <div class="card">
+        <h3>Autonomous</h3>
+        <p>Monitor, anomaly detection, drift tracking</p>
+      </div>
+      <div class="card">
+        <h3>Reactive</h3>
+        <p>Design trace, event-driven responses</p>
+      </div>
+      <div class="card">
+        <h3>Meta-Cognitive</h3>
+        <p>Provenance audit, knowledge lineage, self-reflection</p>
+      </div>
+      <div class="card">
+        <h3>Collaboration</h3>
+        <p>Blast radius, peer review, cross-team coordination</p>
+      </div>
+      <div class="card">
+        <h3>Hybrid</h3>
+        <p>Combined strategies adapting to query complexity</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 10: LAYA -->
+  <div class="slide" data-slide="10">
+    <h1>LAYA — Local AI Yield Augmentation</h1>
+    <p class="subtitle">8 capabilities with LLM-enhanced or deterministic fallback analysis</p>
+    <div class="grid-4" style="margin-bottom:24px;">
+      <div class="stat-card"><div class="stat-num" style="font-size:1.6em;">Incident<br>Summary</div><div class="stat-label">INC0080101</div></div>
+      <div class="stat-card"><div class="stat-num" style="font-size:1.6em;">Release<br>Readiness</div><div class="stat-label">Gateway V2</div></div>
+      <div class="stat-card"><div class="stat-num" style="font-size:1.6em;">Change<br>Risk</div><div class="stat-label">FRD-101</div></div>
+      <div class="stat-card"><div class="stat-num" style="font-size:1.6em;">Gap<br>Analysis</div><div class="stat-label">MFS Platform</div></div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Capability</th><th>MFS Demo Scenario</th><th>Fallback Mode</th></tr></thead>
+        <tbody>
+          <tr><td>incident_summary</td><td>Summarize INC0080101 payment timeout spike</td><td>structured_graph_summary</td></tr>
+          <tr><td>decision_explanation</td><td>Why HSM key rotation over software key mgmt?</td><td>evidence_chain_narrative</td></tr>
+          <tr><td>release_readiness</td><td>Is Payment Gateway V2 ready for production?</td><td>structured_checklist</td></tr>
+          <tr><td>runbook_generation</td><td>Generate timeout incident runbook</td><td>template_from_graph</td></tr>
+          <tr><td>change_risk</td><td>Risk of deploying fraud scoring model v2</td><td>graph_dependency_analysis</td></tr>
+          <tr><td>entity_explanation</td><td>What is mfs-common-libs?</td><td>graph_neighborhood_summary</td></tr>
+          <tr><td>gap_analysis</td><td>Testing coverage gaps across MFS</td><td>coverage_matrix_analysis</td></tr>
+          <tr><td>trend_summary</td><td>Deployment and incident trends this quarter</td><td>temporal_aggregation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Slide 11: Query Types -->
+  <div class="slide" data-slide="11">
+    <h1>12 Query Types</h1>
+    <p class="subtitle">Structured, natural language, and graph-native query capabilities</p>
+    <div class="grid-2">
+      <div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>Type</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>Search</td><td><code>PAY-101</code></td></tr>
+              <tr><td>Path</td><td>PAY-101 → tokenize_card</td></tr>
+              <tr><td>Impact</td><td>Blast radius of tokenize_card()</td></tr>
+              <tr><td>Natural Language</td><td>"How is HSM key rotation implemented?"</td></tr>
+              <tr><td>Neighborhood</td><td>INC0080101 context (2-hop)</td></tr>
+              <tr><td>Traceability</td><td>EPC-101 full chain to production</td></tr>
+              <tr><td>Lineage</td><td>Payment Gateway API provenance</td></tr>
+              <tr><td>EQL</td><td><code>FIND WorkItem WHERE status = 'In Progress'</code></td></tr>
+              <tr><td>Cross-Domain</td><td>qTest cases covering fraud API</td></tr>
+              <tr><td>Temporal</td><td>Changes between Sep 15 – Oct 1</td></tr>
+              <tr><td>Blast Radius</td><td>What breaks if we change X?</td></tr>
+              <tr><td>What-If</td><td>Remove AuthClient from common-libs</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Cross-Domain Example</h3>
+        <p style="margin-bottom:12px;">Question: <em>"Which test cases in qTest cover the fraud scoring API endpoints?"</em></p>
+        <p>Spans three domains:</p>
+        <ul>
+          <li><strong>Test</strong> — qTest (TC-FRD-*)</li>
+          <li><strong>API</strong> — API Portal (fraud-engine endpoints)</li>
+          <li><strong>Code</strong> — GitLab (FraudScorer, FraudAPI)</li>
+        </ul>
+        <p style="margin-top:12px;">The graph resolves this in a single traversal across domain boundaries.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 12: Infrastructure -->
+  <div class="slide" data-slide="12">
+    <h1>MFS Infrastructure Map</h1>
+    <p class="subtitle">All infrastructure entities are first-class graph citizens with edges to code and operations</p>
+    <div class="grid-3">
+      <div class="card">
+        <h3>Database Servers</h3>
+        <ul>
+          <li><code>pghost-prod-01.mfs.internal</code></li>
+          <li><code>pghost-prod-02.mfs.internal</code></li>
+          <li>Databases: mfs_payments_db, mfs_fraud_db, mfs_audit_db</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>OpenShift Pods</h3>
+        <ul>
+          <li>payment-gateway-prod-1/2/3</li>
+          <li>fraud-engine-prod-1/2</li>
+          <li>settlement-engine-prod-1</li>
+          <li>customer-portal-prod-1/2</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Service Accounts</h3>
+        <ul>
+          <li><code>svc-payment-gateway</code></li>
+          <li><code>svc-fraud-engine</code></li>
+          <li><code>svc-settlement-batch</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Kafka Topics</h3>
+        <ul>
+          <li>payment.transactions</li>
+          <li>fraud.alerts</li>
+          <li>settlement.batches</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>People</h3>
+        <ul>
+          <li>Sarah Chen — Lead Architect (PAY)</li>
+          <li>Elena Rodriguez — Tech Lead (FRD)</li>
+          <li>Marcus Johnson, Priya Sharma</li>
+          <li>David Kim, Raj Patel, James Wilson</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Monitoring</h3>
+        <ul>
+          <li>Grafana: latency &amp; throughput</li>
+          <li>Datadog: error rates &amp; SLOs</li>
+          <li>Kibana: application logs</li>
+          <li>Fortuna: risk dashboards</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 13: Architecture -->
+  <div class="slide" data-slide="13">
+    <h1>Architecture</h1>
+    <p class="subtitle">Layered architecture with graph authority and evidence-first design</p>
+    <div class="grid-2">
+      <div>
+        <div class="card" style="margin-bottom:16px;">
+          <h3>Ingestion Layer</h3>
+          <p>13 connectors → SourceEvent contract → Mapper → Validator → Graph Mutator → HugeGraph</p>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <h3>Intelligence Layer</h3>
+          <p>RAG Router (17 patterns) · Agent Router (41 types) · LAYA Engine (8 capabilities) · Engineering Disciplines (8)</p>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <h3>Query Layer</h3>
+          <p>12 query types · EQL parser · NL intent classifier · Graph traversal (BFS/DFS) · Impact analysis</p>
+        </div>
+        <div class="card">
+          <h3>API Layer</h3>
+          <p>FastAPI with 40+ endpoints · MCP Server (17 tools) · VS Code Extension · Prometheus metrics</p>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:16px;">
+          <h3>Pipeline Stages</h3>
+          <div class="flow-arrow" style="flex-direction:column;align-items:flex-start;gap:4px;font-size:0.82em;">
+            <span class="node" style="width:100%;text-align:center;">FETCH — acquire from source</span>
+            <span class="arrow" style="align-self:center;">&darr;</span>
+            <span class="node" style="width:100%;text-align:center;">MAP — transform to schema</span>
+            <span class="arrow" style="align-self:center;">&darr;</span>
+            <span class="node" style="width:100%;text-align:center;">VALIDATE — check constraints</span>
+            <span class="arrow" style="align-self:center;">&darr;</span>
+            <span class="node" style="width:100%;text-align:center;">MUTATE — write to HugeGraph</span>
+            <span class="arrow" style="align-self:center;">&darr;</span>
+            <span class="node" style="width:100%;text-align:center;">VERIFY — confirm graph state</span>
+            <span class="arrow" style="align-self:center;">&darr;</span>
+            <span class="node" style="width:100%;text-align:center;">LINK — cross-domain edges</span>
+            <span class="arrow" style="align-self:center;">&darr;</span>
+            <span class="node" style="width:100%;text-align:center;">SNAPSHOT — backup + audit</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 14: Demo Flow -->
+  <div class="slide" data-slide="14">
+    <h1>Demo Flow</h1>
+    <p class="subtitle">30-minute walkthrough covering all platform capabilities</p>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th style="width:40px;">#</th><th>Section</th><th>Duration</th><th>Key Actions</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Health &amp; Readiness</td><td>2 min</td><td>Verify services, check API docs</td></tr>
+          <tr><td>2</td><td>Multi-Source Ingestion</td><td>5 min</td><td>Manual (PAY) + Pipeline (FRD) — 13 sources each</td></tr>
+          <tr><td>3</td><td>Code-Graph Construction</td><td>3 min</td><td>4 repos, 110 symbols, dependency exploration</td></tr>
+          <tr><td>4</td><td>Crawler Data</td><td>2 min</td><td>5 portal types, policy-bounded crawling</td></tr>
+          <tr><td>5</td><td>Golden Evidence Path</td><td>5 min</td><td>EPC-101 → PAY-101 → code, incident INC0080101</td></tr>
+          <tr><td>6</td><td>AI-Assisted Analysis</td><td>5 min</td><td>RAG routing, agent dispatch, LAYA analysis</td></tr>
+          <tr><td>7</td><td>Query Capabilities</td><td>3 min</td><td>12 query types, cross-domain traversal</td></tr>
+          <tr><td>8</td><td>Administration</td><td>3 min</td><td>Admin panel, graph stats, backup/restore</td></tr>
+          <tr><td>9</td><td>Developer Integration</td><td>2 min</td><td>MCP tools, VS Code extension, metrics</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="talk-point">Quick path (15 min): Health → Ingestion overview → run-demo.bat → Golden path PAY-101 → Incident INC0080101 → RAG + LAYA → Admin</div>
+  </div>
+
+  <!-- Slide 15: Honest Boundaries -->
+  <div class="slide" data-slide="15">
+    <h1>Honest Boundaries</h1>
+    <p class="subtitle">What we demo is what we deliver — no hidden dependencies or aspirational claims</p>
+    <div class="grid-2" style="margin-top:16px;">
+      <div class="card" style="border-left:4px solid var(--pass);">
+        <h3>What Works Today</h3>
+        <ul>
+          <li>Graph and analytics are live behavior over persisted data</li>
+          <li>All golden paths work without a local LLM</li>
+          <li>13 connectors with validated JSON formats</li>
+          <li>17 RAG patterns with intent-based routing</li>
+          <li>41 agent types with graph-grounded execution</li>
+          <li>8 LAYA capabilities with deterministic fallback</li>
+          <li>12 query types including NL and EQL</li>
+          <li>Full backup/restore with checksum verification</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:4px solid var(--warn);">
+        <h3>Noted Limitations</h3>
+        <ul>
+          <li>Source exports are offline fixtures unless credentials configured</li>
+          <li>Model synthesis is optional (LAYA uses fallback without LLM)</li>
+          <li>Container hardening is not yet production-grade</li>
+          <li>Performance benchmarks are not demo claims</li>
+          <li>G2 roadmap items are future work, not current capability</li>
+          <li>Crawler operates on mock data in demo mode</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 16: Closing -->
+  <div class="slide title-slide" data-slide="16">
+    <div style="font-size:0.85em;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;">Enterprise Operational Intelligence Platform</div>
+    <h1>EOIP</h1>
+    <p class="subtitle">Local-first. Graph-authoritative. Evidence-driven.</p>
+    <div style="margin-top:24px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+      <div class="badge badge-accent">13 Connectors</div>
+      <div class="badge badge-accent">17 RAG Patterns</div>
+      <div class="badge badge-accent">41 Agent Types</div>
+      <div class="badge badge-accent">8 LAYA Capabilities</div>
+      <div class="badge badge-accent">12 Query Types</div>
+    </div>
+    <div style="margin-top:32px;color:var(--fg-muted);font-size:0.9em;">
+      Meridian Financial Services Demo Data<br>
+      <code>demo/autodemo/run-demo.bat</code>
+    </div>
+  </div>
+
+</div>
+
+<div class="slide-number" id="slideNum">1 / 16</div>
+<div class="nav-hint">Arrow keys or click to navigate</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('slideNum');
+  let current = 0;
+
+  function show(n) {
+    if (n < 0 || n >= slides.length) return;
+    slides[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    counter.textContent = (current + 1) + ' / ' + slides.length;
+    try { localStorage.setItem('eoip-slide', current); } catch(e) {}
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); show(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); show(current - 1); }
+    if (e.key === 'Home') { e.preventDefault(); show(0); }
+    if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (e.clientX > window.innerWidth / 2) show(current + 1);
+    else show(current - 1);
+  });
+
+  try {
+    var saved = parseInt(localStorage.getItem('eoip-slide'), 10);
+    if (!isNaN(saved) && saved > 0 && saved < slides.length) show(saved);
+  } catch(e) {}
+})();
+</script>

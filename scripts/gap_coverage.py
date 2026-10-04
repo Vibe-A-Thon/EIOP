@@ -1,0 +1,52 @@
+"""Generate a machine-readable GAP requirement coverage report.
+
+Requirement coverage:
+- GAP-KGCI-001: CLI runnable in CI.
+- GAP-KGCI-002: machine-readable report.
+- GAP-KGCI-003: fail build on configured semantic regression.
+
+Usage:
+  python -m scripts.gap_coverage --project-root . --output gap-coverage.json
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+from eoip.gaps.coverage import build_gap_coverage_report
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Build EOIP GAP requirement coverage report")
+    parser.add_argument("--project-root", default=".", help="Repository root")
+    parser.add_argument("--output", help="Optional JSON output path")
+    parser.add_argument(
+        "--fail-on-planned-p0",
+        action="store_true",
+        help="Return exit code 1 when any P0 GAP requirement has no code/test evidence",
+    )
+    args = parser.parse_args()
+
+    root = Path(args.project_root).resolve()
+    report = build_gap_coverage_report(root).to_dict()
+    payload = json.dumps(report, indent=2, sort_keys=True)
+    if args.output:
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(payload + "\n", encoding="utf-8")
+    else:
+        print(payload)
+
+    if args.fail_on_planned_p0:
+        has_planned_p0 = any(
+            item["priority"] == "P0" and item["status"] == "planned"
+            for item in report["requirements"]
+        )
+        return 1 if has_planned_p0 else 0
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,81 +1,391 @@
 {
   "issues": [
     {
-      "key": "SHOP-301",
+      "key": "FRD-100",
       "fields": {
-        "summary": "Integrate risk decision API into checkout flow",
-        "description": "Call the Risk Decision API before payment authorization. Return explainable decision evidence. The risk call has a 250ms latency budget with one bounded retry.",
+        "summary": "ML Fraud Scoring Engine",
+        "description": "Core machine learning fraud scoring engine with real-time feature extraction, model versioning, and A/B testing. Serves fraud probability scores via gRPC to downstream transaction processing services.",
+        "issuetype": {"name": "Feature"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "Critical"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "sarah.chen@mfs.example.invalid"},
+        "created": "2026-08-15T09:00:00.000+0000",
+        "updated": "2026-10-02T10:00:00.000+0000",
+        "labels": ["ml-platform", "fraud", "q4-priority"],
+        "components": [{"name": "mfs-fraud-engine"}],
+        "fixVersions": [{"name": "2026.Q4-FraudPlatform"}],
+        "customfield_10014": "EPC-201",
+        "customfield_10015": "Fraud & Risk"
+      }
+    },
+    {
+      "key": "FRD-101",
+      "fields": {
+        "summary": "Build fraud scoring model pipeline",
+        "description": "Implement the end-to-end model training and serving pipeline for fraud scoring. Includes data preprocessing, feature engineering, model training with XGBoost, and model export to ONNX format for serving. Pipeline must integrate with MLflow for experiment tracking. Deploys to mfs-fraud-pod-01 and mfs-fraud-pod-02 in mfs-prod namespace.",
         "issuetype": {"name": "Story"},
         "status": {"name": "Done"},
         "priority": {"name": "Critical"},
-        "project": {"key": "SHOP", "name": "Northstar Commerce Platform"},
-        "assignee": {"accountId": "maya.chen", "displayName": "Maya Chen", "emailAddress": "maya.chen@example.invalid"},
-        "reporter": {"accountId": "jordan.blake", "displayName": "Jordan Blake", "emailAddress": "jordan.blake@example.invalid"},
-        "created": "2026-09-10T09:00:00.000+0000",
-        "updated": "2026-09-30T16:45:00.000+0000",
-        "labels": ["checkout", "risk", "payment"],
-        "components": [{"name": "checkout-api"}, {"name": "risk-engine"}],
-        "fixVersions": [{"name": "2026.10.1"}]
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "nkowalski", "displayName": "Nadia Kowalski", "emailAddress": "nadia.kowalski@mfs.example.invalid"},
+        "reporter": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "parent": {"key": "FRD-100"},
+        "created": "2026-08-16T10:00:00.000+0000",
+        "updated": "2026-09-28T17:00:00.000+0000",
+        "labels": ["ml-pipeline", "model-training", "fraud"],
+        "components": [{"name": "mfs-fraud-engine"}],
+        "fixVersions": [{"name": "2026.Q4-FraudPlatform"}],
+        "customfield_10014": "EPC-201",
+        "customfield_10015": "Fraud & Risk",
+        "issuelinks": [
+          {"type": {"name": "is implemented by"}, "outwardIssue": {"key": "FRD-111"}},
+          {"type": {"name": "is implemented by"}, "outwardIssue": {"key": "FRD-112"}},
+          {"type": {"name": "is verified by"}, "outwardIssue": {"key": "TC-FRD-001"}}
+        ]
       }
     },
     {
-      "key": "SHOP-302",
+      "key": "FRD-102",
       "fields": {
-        "summary": "Implement bounded risk timeout fallback",
-        "description": "When the risk service exceeds its 250ms budget, refuse high-value or new-account orders and route to manual review. Emit a structured trace for observability.",
-        "issuetype": {"name": "Task"},
-        "status": {"name": "Done"},
-        "priority": {"name": "Critical"},
-        "project": {"key": "SHOP", "name": "Northstar Commerce Platform"},
-        "assignee": {"accountId": "maya.chen", "displayName": "Maya Chen", "emailAddress": "maya.chen@example.invalid"},
-        "created": "2026-10-01T18:30:00.000+0000",
-        "updated": "2026-10-02T09:30:00.000+0000",
-        "labels": ["checkout", "resilience", "incident-INC0071042"]
-      }
-    },
-    {
-      "key": "SHOP-303",
-      "fields": {
-        "summary": "Add contract tests for checkout-risk API boundary",
-        "description": "Consumer-driven contract tests between the Checkout API and Risk Decision API. Test both happy path and timeout scenarios.",
-        "issuetype": {"name": "Task"},
-        "status": {"name": "Done"},
-        "priority": {"name": "High"},
-        "project": {"key": "SHOP", "name": "Northstar Commerce Platform"},
-        "assignee": {"accountId": "sam.torres", "displayName": "Sam Torres", "emailAddress": "sam.torres@example.invalid"},
-        "created": "2026-09-18T10:00:00.000+0000",
-        "updated": "2026-09-30T12:00:00.000+0000",
-        "labels": ["testing", "contracts", "checkout"]
-      }
-    },
-    {
-      "key": "SHOP-304",
-      "fields": {
-        "summary": "Upgrade inventory reservation to async event-driven model",
-        "description": "Replace synchronous inventory lock with an event-driven reservation that expires after 15 minutes. Reduces checkout p95 by eliminating the inventory API blocking call.",
+        "summary": "Real-time feature extraction service",
+        "description": "Build a low-latency feature extraction service that computes fraud-relevant features from incoming transaction data in real time. Features include transaction velocity, merchant risk score, device fingerprint similarity, and geolocation anomaly score. Service reads from Kafka topic 'mfs.txn.raw' and writes enriched features to 'mfs.txn.features'. Uses svc-fraud-engine service account on mfs-fraud-pod-01.",
         "issuetype": {"name": "Story"},
         "status": {"name": "In Progress"},
         "priority": {"name": "High"},
-        "project": {"key": "SHOP", "name": "Northstar Commerce Platform"},
-        "assignee": {"accountId": "maya.chen", "displayName": "Maya Chen", "emailAddress": "maya.chen@example.invalid"},
-        "created": "2026-10-02T09:00:00.000+0000",
-        "updated": "2026-10-03T14:00:00.000+0000",
-        "labels": ["checkout", "inventory", "performance"]
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "sarah.chen@mfs.example.invalid"},
+        "parent": {"key": "FRD-100"},
+        "created": "2026-08-20T09:00:00.000+0000",
+        "updated": "2026-10-01T14:00:00.000+0000",
+        "labels": ["feature-engineering", "kafka", "real-time"],
+        "components": [{"name": "mfs-fraud-engine"}, {"name": "mfs-common-libs"}],
+        "fixVersions": [{"name": "2026.Q4-FraudPlatform"}],
+        "customfield_10014": "EPC-201",
+        "customfield_10015": "Fraud & Risk",
+        "issuelinks": [
+          {"type": {"name": "is implemented by"}, "outwardIssue": {"key": "FRD-121"}},
+          {"type": {"name": "is verified by"}, "outwardIssue": {"key": "TC-FRD-002"}}
+        ]
       }
     },
     {
-      "key": "SHOP-305",
+      "key": "FRD-103",
       "fields": {
-        "summary": "Production readiness review for checkout v2",
-        "description": "Verify SLO compliance, runbook completeness, rollback plan, and monitoring coverage before GA. Requires sign-off from SRE and QA.",
+        "summary": "Model versioning and A/B testing framework",
+        "description": "Implement a model versioning system that supports concurrent model deployments with traffic splitting for A/B testing. The framework must track model performance metrics per version and support automated rollback when a new model underperforms. Integrates with mfs-model-pod-01 via svc-model-serving service account.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "High"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "nkowalski", "displayName": "Nadia Kowalski", "emailAddress": "nadia.kowalski@mfs.example.invalid"},
+        "reporter": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "parent": {"key": "FRD-100"},
+        "created": "2026-08-22T11:00:00.000+0000",
+        "updated": "2026-10-02T09:00:00.000+0000",
+        "labels": ["model-versioning", "ab-testing", "mlops"],
+        "components": [{"name": "mfs-fraud-engine"}],
+        "fixVersions": [{"name": "2026.Q4-FraudPlatform"}],
+        "customfield_10014": "EPC-201",
+        "customfield_10015": "Fraud & Risk",
+        "issuelinks": [
+          {"type": {"name": "is implemented by"}, "outwardIssue": {"key": "FRD-131"}},
+          {"type": {"name": "is verified by"}, "outwardIssue": {"key": "TC-FRD-003"}}
+        ]
+      }
+    },
+    {
+      "key": "FRD-111",
+      "fields": {
+        "summary": "Train fraud model v2",
+        "description": "Train the v2 fraud detection model using the updated feature set with 6 months of labeled transaction data. Target AUC-ROC > 0.96 and false positive rate < 2%. Use XGBoost with hyperparameter tuning via Optuna. Export to ONNX for serving.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "Done"},
+        "priority": {"name": "High"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "nkowalski", "displayName": "Nadia Kowalski", "emailAddress": "nadia.kowalski@mfs.example.invalid"},
+        "parent": {"key": "FRD-101"},
+        "created": "2026-08-18T10:00:00.000+0000",
+        "updated": "2026-09-25T16:00:00.000+0000",
+        "labels": ["model-training", "xgboost"],
+        "components": [{"name": "mfs-fraud-engine"}],
+        "customfield_10014": "EPC-201",
+        "customfield_10015": "Fraud & Risk"
+      }
+    },
+    {
+      "key": "FRD-112",
+      "fields": {
+        "summary": "Model evaluation metrics dashboard",
+        "description": "Build a Grafana dashboard that displays model evaluation metrics: AUC-ROC, precision/recall curves, false positive rate trend, and score distribution histograms. Data sourced from MLflow experiment tracking stored in mfs_fraud_db on pghost-prod-02.mfs.internal.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "Medium"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "parent": {"key": "FRD-101"},
+        "created": "2026-08-20T09:00:00.000+0000",
+        "updated": "2026-10-01T15:00:00.000+0000",
+        "labels": ["dashboard", "metrics", "grafana"],
+        "components": [{"name": "mfs-fraud-engine"}],
+        "customfield_10014": "EPC-201",
+        "customfield_10015": "Fraud & Risk"
+      }
+    },
+    {
+      "key": "FRD-121",
+      "fields": {
+        "summary": "Kafka feature stream consumer",
+        "description": "Implement the Kafka consumer for the 'mfs.txn.raw' topic that feeds into the feature extraction pipeline. Must handle partition rebalances, maintain exactly-once semantics, and support consumer group scaling. Runs under svc-txn-monitor service account on mfs-txn-mon-pod-01.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "High"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "dokoye", "displayName": "David Okoye", "emailAddress": "david.okoye@mfs.example.invalid"},
+        "parent": {"key": "FRD-102"},
+        "created": "2026-08-25T10:00:00.000+0000",
+        "updated": "2026-10-01T14:00:00.000+0000",
+        "labels": ["kafka", "streaming", "consumer"],
+        "components": [{"name": "mfs-fraud-engine"}, {"name": "mfs-common-libs"}],
+        "customfield_10014": "EPC-201",
+        "customfield_10015": "Fraud & Risk"
+      }
+    },
+    {
+      "key": "FRD-131",
+      "fields": {
+        "summary": "A/B test framework setup",
+        "description": "Set up the A/B testing framework for model versioning. Implement traffic splitting logic with configurable percentages per model version, metric collection per variant, and statistical significance calculation for experiment conclusions.",
         "issuetype": {"name": "Task"},
         "status": {"name": "To Do"},
+        "priority": {"name": "Medium"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "nkowalski", "displayName": "Nadia Kowalski", "emailAddress": "nadia.kowalski@mfs.example.invalid"},
+        "parent": {"key": "FRD-103"},
+        "created": "2026-08-25T14:00:00.000+0000",
+        "updated": "2026-09-30T10:00:00.000+0000",
+        "labels": ["ab-testing", "framework"],
+        "components": [{"name": "mfs-fraud-engine"}],
+        "customfield_10014": "EPC-201",
+        "customfield_10015": "Fraud & Risk"
+      }
+    },
+    {
+      "key": "FRD-200",
+      "fields": {
+        "summary": "Real-time Transaction Monitoring",
+        "description": "Real-time transaction monitoring feature with velocity-based threshold detection, anomaly alerting, and configurable rule engine. Processes transactions from Kafka topic 'mfs.txn.enriched' and generates alerts to 'mfs.alerts.txn'.",
+        "issuetype": {"name": "Feature"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "Critical"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "sarah.chen@mfs.example.invalid"},
+        "created": "2026-08-18T09:00:00.000+0000",
+        "updated": "2026-10-01T14:00:00.000+0000",
+        "labels": ["transaction-monitoring", "real-time", "kafka"],
+        "components": [{"name": "mfs-txn-monitor"}],
+        "fixVersions": [{"name": "2026.Q4-FraudPlatform"}],
+        "customfield_10014": "EPC-202",
+        "customfield_10015": "Fraud & Risk"
+      }
+    },
+    {
+      "key": "FRD-201",
+      "fields": {
+        "summary": "Transaction velocity monitor",
+        "description": "Implement transaction velocity monitoring that tracks per-account, per-merchant, and per-device transaction rates over sliding time windows (1min, 5min, 1hr, 24hr). Velocity breaches trigger configurable alert thresholds. Deployed on mfs-txn-mon-pod-01 using svc-txn-monitor service account. Data persisted to mfs_fraud_db.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "Done"},
+        "priority": {"name": "Critical"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "sarah.chen@mfs.example.invalid"},
+        "parent": {"key": "FRD-200"},
+        "created": "2026-08-20T10:00:00.000+0000",
+        "updated": "2026-09-30T16:00:00.000+0000",
+        "labels": ["velocity", "monitoring", "kafka"],
+        "components": [{"name": "mfs-txn-monitor"}],
+        "fixVersions": [{"name": "2026.Q4-FraudPlatform"}],
+        "customfield_10014": "EPC-202",
+        "customfield_10015": "Fraud & Risk",
+        "issuelinks": [
+          {"type": {"name": "is implemented by"}, "outwardIssue": {"key": "FRD-211"}},
+          {"type": {"name": "is verified by"}, "outwardIssue": {"key": "TC-FRD-004"}}
+        ]
+      }
+    },
+    {
+      "key": "FRD-202",
+      "fields": {
+        "summary": "Anomaly detection alert system",
+        "description": "Build an anomaly detection system that identifies unusual transaction patterns using statistical methods (Z-score, isolation forests) and generates alerts with severity classification. Alerts published to 'mfs.alerts.txn' Kafka topic and persisted to mfs_fraud_db for case management.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "In Progress"},
         "priority": {"name": "High"},
-        "project": {"key": "SHOP", "name": "Northstar Commerce Platform"},
-        "assignee": {"accountId": "liam.patel", "displayName": "Liam Patel", "emailAddress": "liam.patel@example.invalid"},
-        "created": "2026-10-03T08:00:00.000+0000",
-        "updated": "2026-10-03T08:00:00.000+0000",
-        "labels": ["production-readiness", "sre"]
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "nkowalski", "displayName": "Nadia Kowalski", "emailAddress": "nadia.kowalski@mfs.example.invalid"},
+        "reporter": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "parent": {"key": "FRD-200"},
+        "created": "2026-08-22T09:00:00.000+0000",
+        "updated": "2026-10-02T11:00:00.000+0000",
+        "labels": ["anomaly-detection", "alerting", "ml"],
+        "components": [{"name": "mfs-txn-monitor"}],
+        "fixVersions": [{"name": "2026.Q4-FraudPlatform"}],
+        "customfield_10014": "EPC-202",
+        "customfield_10015": "Fraud & Risk",
+        "issuelinks": [
+          {"type": {"name": "is implemented by"}, "outwardIssue": {"key": "FRD-221"}},
+          {"type": {"name": "is verified by"}, "outwardIssue": {"key": "TC-FRD-005"}}
+        ]
+      }
+    },
+    {
+      "key": "FRD-211",
+      "fields": {
+        "summary": "Velocity rule configuration engine",
+        "description": "Implement a configurable rule engine for transaction velocity thresholds. Rules are defined in YAML and hot-reloaded without service restart. Supports per-account, per-merchant, and per-device dimensions with separate thresholds per time window.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "Done"},
+        "priority": {"name": "High"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "parent": {"key": "FRD-201"},
+        "created": "2026-08-25T10:00:00.000+0000",
+        "updated": "2026-09-28T14:00:00.000+0000",
+        "labels": ["rules-engine", "configuration"],
+        "components": [{"name": "mfs-txn-monitor"}],
+        "customfield_10014": "EPC-202",
+        "customfield_10015": "Fraud & Risk"
+      }
+    },
+    {
+      "key": "FRD-221",
+      "fields": {
+        "summary": "Alert routing rules and escalation",
+        "description": "Implement alert routing and escalation logic. High-severity alerts (score > 0.9) go to immediate review queue. Medium alerts (0.7-0.9) are batched for analyst review. Low alerts are logged. Escalation triggers after 15 minutes without acknowledgment.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "High"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "nkowalski", "displayName": "Nadia Kowalski", "emailAddress": "nadia.kowalski@mfs.example.invalid"},
+        "parent": {"key": "FRD-202"},
+        "created": "2026-08-26T09:00:00.000+0000",
+        "updated": "2026-10-02T11:00:00.000+0000",
+        "labels": ["alerting", "escalation", "routing"],
+        "components": [{"name": "mfs-txn-monitor"}],
+        "customfield_10014": "EPC-202",
+        "customfield_10015": "Fraud & Risk"
+      }
+    },
+    {
+      "key": "FRD-300",
+      "fields": {
+        "summary": "AML Pattern Detection",
+        "description": "Anti-money laundering pattern detection feature with rule-based detection for structuring, layering, and integration patterns. Integrates with FinCEN for automated SAR/CTR filing. Data stored in mfs_aml_db on pghost-prod-02.mfs.internal.",
+        "issuetype": {"name": "Feature"},
+        "status": {"name": "To Do"},
+        "priority": {"name": "Critical"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "sarah.chen@mfs.example.invalid"},
+        "created": "2026-09-01T09:00:00.000+0000",
+        "updated": "2026-09-28T09:00:00.000+0000",
+        "labels": ["aml", "compliance", "fincen"],
+        "components": [{"name": "mfs-aml-engine"}],
+        "fixVersions": [{"name": "2026.Q4-FraudPlatform"}],
+        "customfield_10014": "EPC-203",
+        "customfield_10015": "Fraud & Risk"
+      }
+    },
+    {
+      "key": "FRD-301",
+      "fields": {
+        "summary": "AML rule engine implementation",
+        "description": "Implement the core AML rule engine that detects structuring (transactions split to stay under reporting thresholds), layering (rapid movement through multiple accounts), and integration patterns (funds merged into legitimate-appearing transactions). Rules operate on mfs_aml_db data. Engine runs on mfs-aml-pod-01 under svc-aml-engine account.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "Critical"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "sarah.chen@mfs.example.invalid"},
+        "parent": {"key": "FRD-300"},
+        "created": "2026-09-02T10:00:00.000+0000",
+        "updated": "2026-10-02T14:00:00.000+0000",
+        "labels": ["aml", "rules-engine", "compliance"],
+        "components": [{"name": "mfs-aml-engine"}],
+        "fixVersions": [{"name": "2026.Q4-FraudPlatform"}],
+        "customfield_10014": "EPC-203",
+        "customfield_10015": "Fraud & Risk",
+        "issuelinks": [
+          {"type": {"name": "is implemented by"}, "outwardIssue": {"key": "FRD-311"}},
+          {"type": {"name": "is verified by"}, "outwardIssue": {"key": "TC-FRD-006"}}
+        ]
+      }
+    },
+    {
+      "key": "FRD-302",
+      "fields": {
+        "summary": "Suspicious activity reporting automation",
+        "description": "Automate the generation, review, and submission of Suspicious Activity Reports (SARs) and Currency Transaction Reports (CTRs) to FinCEN. Includes pre-population of SAR forms from case data, regulatory field validation, and batch filing via FinCEN BSA E-Filing system.",
+        "issuetype": {"name": "Story"},
+        "status": {"name": "To Do"},
+        "priority": {"name": "High"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "nkowalski", "displayName": "Nadia Kowalski", "emailAddress": "nadia.kowalski@mfs.example.invalid"},
+        "reporter": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "parent": {"key": "FRD-300"},
+        "created": "2026-09-05T09:00:00.000+0000",
+        "updated": "2026-09-28T09:00:00.000+0000",
+        "labels": ["sar", "ctr", "fincen", "automation"],
+        "components": [{"name": "mfs-aml-engine"}],
+        "fixVersions": [{"name": "2026.Q4-FraudPlatform"}],
+        "customfield_10014": "EPC-203",
+        "customfield_10015": "Fraud & Risk",
+        "issuelinks": [
+          {"type": {"name": "is implemented by"}, "outwardIssue": {"key": "FRD-321"}},
+          {"type": {"name": "is verified by"}, "outwardIssue": {"key": "TC-FRD-007"}}
+        ]
+      }
+    },
+    {
+      "key": "FRD-311",
+      "fields": {
+        "summary": "SAR form automation",
+        "description": "Automate the pre-population of FinCEN SAR forms from AML case data. Map internal case fields to SAR XML schema fields. Include narrative generation from detection rule outputs and supporting transaction evidence.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "In Progress"},
+        "priority": {"name": "High"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "psharma", "displayName": "Priya Sharma", "emailAddress": "priya.sharma@mfs.example.invalid"},
+        "parent": {"key": "FRD-301"},
+        "created": "2026-09-08T10:00:00.000+0000",
+        "updated": "2026-10-02T14:00:00.000+0000",
+        "labels": ["sar", "automation", "fincen"],
+        "components": [{"name": "mfs-aml-engine"}],
+        "customfield_10014": "EPC-203",
+        "customfield_10015": "Fraud & Risk"
+      }
+    },
+    {
+      "key": "FRD-321",
+      "fields": {
+        "summary": "CTR filing integration",
+        "description": "Implement automated Currency Transaction Report filing for transactions exceeding $10,000. Integrate with FinCEN BSA E-Filing system for batch submission. Include aggregation logic for multiple related transactions from the same customer within a business day.",
+        "issuetype": {"name": "Task"},
+        "status": {"name": "To Do"},
+        "priority": {"name": "Medium"},
+        "project": {"key": "FRD", "name": "Fraud Detection"},
+        "assignee": {"accountId": "nkowalski", "displayName": "Nadia Kowalski", "emailAddress": "nadia.kowalski@mfs.example.invalid"},
+        "parent": {"key": "FRD-302"},
+        "created": "2026-09-10T09:00:00.000+0000",
+        "updated": "2026-09-28T09:00:00.000+0000",
+        "labels": ["ctr", "fincen", "integration"],
+        "components": [{"name": "mfs-aml-engine"}],
+        "customfield_10014": "EPC-203",
+        "customfield_10015": "Fraud & Risk"
       }
     }
   ]

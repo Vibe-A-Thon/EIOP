@@ -1,48 +1,84 @@
 {
   "files": [
     {
-      "key": "TN-PATIENT-PORTAL-2026",
-      "name": "TechNova Patient Dashboard",
-      "last_modified": "2026-10-02T14:00:00Z",
-      "thumbnail_url": "https://figma.example.invalid/thumbnails/patient-dashboard.png",
-      "version": "38"
+      "key": "MFS-PAY-PORTAL-2026",
+      "name": "Payment Portal Redesign",
+      "last_modified": "2026-09-30T12:00:00.000Z",
+      "thumbnail_url": "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/mfs-pay-portal-thumb.png",
+      "version": "4186204512",
+      "role": "owner",
+      "editor_type": "figma"
     }
   ],
   "pages": [
     {
-      "file_key": "TN-PATIENT-PORTAL-2026",
-      "id": "20:100",
-      "name": "Appointment Booking Flow",
-      "type": "CANVAS"
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "id": "page-checkout",
+      "name": "Checkout Flow",
+      "node_id": "101:1",
+      "type": "CANVAS",
+      "children_count": 14,
+      "description": "Complete checkout flow with tokenized payment input, multi-currency selector, and order confirmation. Designed by Elena Torres (etorres). References PAY-101 tokenization and PAY-103 multi-currency support."
     },
     {
-      "file_key": "TN-PATIENT-PORTAL-2026",
-      "id": "20:200",
-      "name": "Patient Records Dashboard",
-      "type": "CANVAS"
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "id": "page-txn-history",
+      "name": "Transaction History",
+      "node_id": "102:1",
+      "type": "CANVAS",
+      "children_count": 9,
+      "description": "Transaction history view with filtering by date range, currency, status, and merchant. Shows tokenized card details (last 4 digits only). References PAY-101 tokenization display."
+    },
+    {
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "id": "page-settlement",
+      "name": "Settlement Dashboard",
+      "node_id": "103:1",
+      "type": "CANVAS",
+      "children_count": 11,
+      "description": "Settlement dashboard showing batch status, reconciliation results, and settlement file download. References PAY-301 batch processor and PAY-302 reconciliation. Designed by Elena Torres (etorres)."
     }
   ],
   "components": [
     {
-      "file_key": "TN-PATIENT-PORTAL-2026",
-      "component_id": "20:150",
-      "name": "Calendar Date Picker",
-      "description": "Accessible date picker with keyboard navigation for appointment scheduling. WCAG 2.1 AA compliant after HLTH-103 revision.",
-      "type": "COMPONENT"
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "component_id": "comp-payment-card",
+      "name": "PaymentCard",
+      "node_id": "201:1",
+      "description": "Payment card input component with PCI DSS compliant iframe for PAN entry. Displays tokenized card info (last 4 digits, brand icon). Used in Checkout Flow page.",
+      "containing_frame": {"name": "Checkout Flow"},
+      "created_at": "2026-08-15T09:00:00.000Z",
+      "updated_at": "2026-09-25T14:00:00.000Z"
     },
     {
-      "file_key": "TN-PATIENT-PORTAL-2026",
-      "component_id": "20:160",
-      "name": "Time Slot Selector",
-      "description": "Available appointment slots with provider availability. High contrast mode for accessibility.",
-      "type": "COMPONENT"
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "component_id": "comp-currency-selector",
+      "name": "CurrencySelector",
+      "node_id": "202:1",
+      "description": "Multi-currency dropdown selector with real-time FX rate display. Supports USD, EUR, GBP, JPY, CAD, AUD, CHF. Shows conversion preview before payment. References PAY-103.",
+      "containing_frame": {"name": "Checkout Flow"},
+      "created_at": "2026-09-01T10:00:00.000Z",
+      "updated_at": "2026-09-28T11:00:00.000Z"
     },
     {
-      "file_key": "TN-PATIENT-PORTAL-2026",
-      "component_id": "20:250",
-      "name": "Patient Record Card",
-      "description": "Summary card showing patient demographics, upcoming appointments, and recent visits. PHI fields masked by default.",
-      "type": "COMPONENT"
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "component_id": "comp-settlement-table",
+      "name": "SettlementTable",
+      "node_id": "203:1",
+      "description": "Settlement batch summary table showing batch ID, status, transaction count, total amount, and reconciliation status. Used in Settlement Dashboard page. References PAY-301, PAY-302.",
+      "containing_frame": {"name": "Settlement Dashboard"},
+      "created_at": "2026-09-10T09:00:00.000Z",
+      "updated_at": "2026-09-30T10:00:00.000Z"
+    },
+    {
+      "file_key": "MFS-PAY-PORTAL-2026",
+      "component_id": "comp-retry-banner",
+      "name": "RetryBanner",
+      "node_id": "204:1",
+      "description": "Banner component displayed when a payment is being retried. Shows retry count, circuit breaker status, and estimated completion time. References PAY-102 retry handler.",
+      "containing_frame": {"name": "Checkout Flow"},
+      "created_at": "2026-09-05T11:00:00.000Z",
+      "updated_at": "2026-09-27T09:00:00.000Z"
     }
   ]
 }

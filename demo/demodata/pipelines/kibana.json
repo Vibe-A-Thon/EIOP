@@ -1,0 +1,95 @@
+{
+  "saved_objects": [
+    {
+      "id": "fraud-perf-dashboard",
+      "type": "dashboard",
+      "version": "WzEyLDNd",
+      "updated_at": "2026-10-02T10:00:00Z",
+      "attributes": {
+        "title": "Fraud Detection Performance",
+        "description": "Real-time dashboard for fraud scoring engine performance metrics including latency, throughput, and accuracy",
+        "panelsJSON": "[{\"title\":\"Fraud Score Latency p95\",\"type\":\"metric\"},{\"title\":\"Scoring Throughput (req/sec)\",\"type\":\"tsvb\"},{\"title\":\"False Positive Rate Trend\",\"type\":\"line\"},{\"title\":\"Model Version Distribution\",\"type\":\"pie\"},{\"title\":\"Error Rate by Endpoint\",\"type\":\"bar\"}]"
+      },
+      "references": [
+        {"id": "fraud-logs-idx", "type": "index-pattern"}
+      ]
+    },
+    {
+      "id": "aml-alert-dashboard",
+      "type": "dashboard",
+      "version": "WzgsM10d",
+      "updated_at": "2026-10-01T14:00:00Z",
+      "attributes": {
+        "title": "AML Alert Analysis",
+        "description": "Dashboard for AML rule engine alerts, detection patterns, and case management metrics",
+        "panelsJSON": "[{\"title\":\"AML Alerts by Pattern Type\",\"type\":\"bar\"},{\"title\":\"Detection Confidence Distribution\",\"type\":\"histogram\"},{\"title\":\"Case Resolution Time\",\"type\":\"tsvb\"},{\"title\":\"SAR Filing Status\",\"type\":\"pie\"},{\"title\":\"Rule Engine Processing Time\",\"type\":\"metric\"}]"
+      },
+      "references": [
+        {"id": "fraud-logs-idx", "type": "index-pattern"}
+      ]
+    },
+    {
+      "id": "txn-monitor-dashboard",
+      "type": "dashboard",
+      "version": "WzE1LDNd",
+      "updated_at": "2026-10-02T11:00:00Z",
+      "attributes": {
+        "title": "Transaction Monitoring",
+        "description": "Real-time transaction monitoring dashboard showing velocity alerts, anomaly detections, and Kafka consumer health",
+        "panelsJSON": "[{\"title\":\"Transaction Volume (1min window)\",\"type\":\"tsvb\"},{\"title\":\"Velocity Alert Count by Dimension\",\"type\":\"bar\"},{\"title\":\"Anomaly Score Distribution\",\"type\":\"histogram\"},{\"title\":\"Kafka Consumer Lag\",\"type\":\"line\"},{\"title\":\"Alert Severity Breakdown\",\"type\":\"pie\"}]"
+      },
+      "references": [
+        {"id": "txn-monitor-idx", "type": "index-pattern"}
+      ]
+    },
+    {
+      "id": "fraud-logs-idx",
+      "type": "index-pattern",
+      "version": "WzQsM10d",
+      "updated_at": "2026-09-15T09:00:00Z",
+      "attributes": {
+        "title": "fraud-logs-*",
+        "timeFieldName": "@timestamp",
+        "fields": "[{\"name\":\"fraud_score\",\"type\":\"float\"},{\"name\":\"model_version\",\"type\":\"keyword\"},{\"name\":\"transaction_id\",\"type\":\"keyword\"},{\"name\":\"decision\",\"type\":\"keyword\"},{\"name\":\"latency_ms\",\"type\":\"integer\"},{\"name\":\"feature_count\",\"type\":\"integer\"}]"
+      }
+    },
+    {
+      "id": "txn-monitor-idx",
+      "type": "index-pattern",
+      "version": "WzUsM10d",
+      "updated_at": "2026-09-20T10:00:00Z",
+      "attributes": {
+        "title": "txn-monitor-*",
+        "timeFieldName": "@timestamp",
+        "fields": "[{\"name\":\"velocity_count\",\"type\":\"integer\"},{\"name\":\"dimension\",\"type\":\"keyword\"},{\"name\":\"window_size\",\"type\":\"keyword\"},{\"name\":\"anomaly_score\",\"type\":\"float\"},{\"name\":\"alert_severity\",\"type\":\"keyword\"},{\"name\":\"consumer_lag\",\"type\":\"long\"}]"
+      }
+    },
+    {
+      "id": "fraud-false-positives",
+      "type": "search",
+      "version": "WzcsM10d",
+      "updated_at": "2026-09-28T18:00:00Z",
+      "attributes": {
+        "title": "Fraud False Positives",
+        "description": "Saved search for investigating fraud scoring false positives. Filters for transactions scored > 0.5 that were later confirmed legitimate.",
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"bool\":{\"must\":[{\"range\":{\"fraud_score\":{\"gte\":0.5}}},{\"term\":{\"confirmed_outcome\":\"legitimate\"}}]}},\"index\":\"fraud-logs-idx\"}"
+        }
+      }
+    },
+    {
+      "id": "aml-alerts-search",
+      "type": "search",
+      "version": "WzgsM10d",
+      "updated_at": "2026-10-01T14:00:00Z",
+      "attributes": {
+        "title": "AML Alerts",
+        "description": "Saved search for AML rule engine alerts showing detection pattern type, confidence score, and case status.",
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"bool\":{\"must\":[{\"term\":{\"alert_type\":\"aml\"}},{\"range\":{\"detection_confidence\":{\"gte\":0.7}}}]}},\"index\":\"fraud-logs-idx\"}"
+        }
+      }
+    }
+  ],
+  "total": 7
+}

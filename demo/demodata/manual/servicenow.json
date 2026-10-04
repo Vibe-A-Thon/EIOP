@@ -1,81 +1,253 @@
 {
   "result": [
     {
-      "sys_id": "sn_inc_050201",
-      "number": "INC0050201",
-      "short_description": "Patient appointment data out of sync across portal and scheduling",
-      "description": "Multiple patients report appointment times showing differently in the portal vs the scheduling system. The patient-records-sync service appears to be dropping updates during concurrent writes. Approximately 340 appointments affected since 2026-09-28 15:00 UTC.",
-      "state": "6",
-      "priority": "1",
-      "impact": "2",
-      "urgency": "1",
+      "sys_id": "chg90101a1b2c3d4e5f6a7b8c9d0e1f2",
+      "number": "CHG0090101",
+      "type": "standard",
+      "short_description": "Deploy tokenization service to production",
+      "description": "Standard change to deploy the payment tokenization service (PAY-101) to the mfs-prod OpenShift namespace. Deploys updated container images to mfs-pay-pod-01 and mfs-pay-pod-02. Service uses svc-payment-api and svc-token-vault service accounts. Database migrations applied to mfs_payments_db on pghost-prod-01.mfs.internal for card_tokens and token_audit_log tables.",
+      "state": "closed",
+      "priority": "3 - Moderate",
+      "risk": "low",
+      "assigned_to": {
+        "display_value": "Raj Patel",
+        "value": "rpatel"
+      },
+      "assignment_group": {
+        "display_value": "DevOps & SRE",
+        "value": "grp-devops-sre"
+      },
       "category": "Software",
-      "subcategory": "Application",
-      "assignment_group": {"display_value": "HealthTech Platform SRE"},
-      "assigned_to": {"display_value": "Carlos Mendez"},
-      "opened_at": "2026-09-28 16:30:00",
-      "resolved_at": "2026-09-29 12:15:00",
-      "closed_at": "2026-09-29 14:00:00",
-      "resolution_notes": "Root cause: optimistic locking not applied to patient record sync. Fix deployed via HLTH-104 hotfix. 340 stale appointments corrected by reconciliation script.",
-      "cmdb_ci": {"display_value": "Patient Records Sync Service"},
-      "sys_updated_on": "2026-09-29 14:00:00",
-      "sys_mod_count": "12"
+      "subcategory": "Deployment",
+      "affected_ci": {
+        "display_value": "mfs-payment-gateway",
+        "value": "ci-mfs-payment-gateway"
+      },
+      "cmdb_ci_list": ["mfs-payment-gateway", "mfs-payments-db", "mfs-pay-pod-01", "mfs-pay-pod-02"],
+      "requested_by": {
+        "display_value": "Alex Kim",
+        "value": "akim"
+      },
+      "approval": "approved",
+      "cab_required": false,
+      "implementation_plan": "1. Deploy updated mfs-payment-gateway image to mfs-staging namespace\n2. Run smoke tests in staging\n3. Apply database migration to mfs_payments_db\n4. Rolling update to mfs-pay-pod-01, mfs-pay-pod-02 in mfs-prod\n5. Verify health checks and token generation\n6. Monitor error rates for 30 minutes",
+      "backout_plan": "1. Revert to previous container image tag\n2. Rollback database migration\n3. Verify service health",
+      "test_plan": "Execute TC-PAY-001 and TC-PAY-002 in staging before prod deployment",
+      "related_records": [
+        {"type": "jira", "key": "PAY-101"},
+        {"type": "gitlab_mr", "key": "!301"},
+        {"type": "qtest", "key": "TC-PAY-001,TC-PAY-002"}
+      ],
+      "sys_created_on": "2026-09-19T10:00:00.000Z",
+      "sys_updated_on": "2026-09-22T08:30:00.000Z",
+      "start_date": "2026-09-22T02:00:00.000Z",
+      "end_date": "2026-09-22T04:00:00.000Z",
+      "close_code": "successful",
+      "close_notes": "Tokenization service deployed successfully. All health checks passed. TC-PAY-001 and TC-PAY-002 passed in production."
     },
     {
-      "sys_id": "sn_inc_050215",
-      "number": "INC0050215",
-      "short_description": "PHI field encryption key rotation failed on secondary replica",
-      "description": "Automated key rotation for AES-256-GCM PHI encryption completed on primary but failed on the read replica due to connection timeout. Fallback to previous key succeeded. No data exposure.",
-      "state": "6",
-      "priority": "2",
-      "impact": "3",
-      "urgency": "2",
+      "sys_id": "chg90102b2c3d4e5f6a7b8c9d0e1f2a3",
+      "number": "CHG0090102",
+      "type": "standard",
+      "short_description": "Deploy retry handler to staging",
+      "description": "Standard change to deploy the idempotent payment retry handler (PAY-102) to the mfs-staging OpenShift namespace for validation. Includes circuit breaker configuration and retry ledger database migration.",
+      "state": "implement",
+      "priority": "3 - Moderate",
+      "risk": "low",
+      "assigned_to": {
+        "display_value": "Raj Patel",
+        "value": "rpatel"
+      },
+      "assignment_group": {
+        "display_value": "DevOps & SRE",
+        "value": "grp-devops-sre"
+      },
+      "category": "Software",
+      "subcategory": "Deployment",
+      "affected_ci": {
+        "display_value": "mfs-payment-gateway",
+        "value": "ci-mfs-payment-gateway"
+      },
+      "cmdb_ci_list": ["mfs-payment-gateway"],
+      "requested_by": {
+        "display_value": "Marcus Rivera",
+        "value": "mrivera"
+      },
+      "approval": "approved",
+      "cab_required": false,
+      "implementation_plan": "1. Deploy updated mfs-payment-gateway image to mfs-staging namespace\n2. Apply retry_ledger table migration to staging DB\n3. Configure circuit breaker parameters via ConfigMap\n4. Run TC-PAY-003 in staging\n5. Validate circuit breaker behavior under simulated failures",
+      "backout_plan": "1. Revert to previous container image tag in staging\n2. Rollback retry_ledger migration",
+      "test_plan": "Execute TC-PAY-003 in staging environment",
+      "related_records": [
+        {"type": "jira", "key": "PAY-102"},
+        {"type": "gitlab_mr", "key": "!302"},
+        {"type": "qtest", "key": "TC-PAY-003"}
+      ],
+      "sys_created_on": "2026-09-26T09:00:00.000Z",
+      "sys_updated_on": "2026-09-28T11:00:00.000Z",
+      "start_date": "2026-09-29T02:00:00.000Z",
+      "end_date": "2026-09-29T04:00:00.000Z"
+    },
+    {
+      "sys_id": "chg90201c3d4e5f6a7b8c9d0e1f2a3b4",
+      "number": "CHG0090201",
+      "type": "normal",
+      "short_description": "Enable data-at-rest encryption for cardholder data",
+      "description": "Normal change to enable AES-256-GCM encryption for cardholder data at rest in mfs_payments_db on pghost-prod-01.mfs.internal. This is a PCI DSS v4.0 compliance requirement (Req 3.4, 3.5). Requires CAB approval due to database-level changes affecting the cardholder_data table. Uses svc-token-vault service account for HSM key retrieval via mfs-vault-pod-01.",
+      "state": "closed",
+      "priority": "2 - High",
+      "risk": "moderate",
+      "assigned_to": {
+        "display_value": "Li Wei",
+        "value": "lwei"
+      },
+      "assignment_group": {
+        "display_value": "DevOps & SRE",
+        "value": "grp-devops-sre"
+      },
       "category": "Software",
       "subcategory": "Database",
-      "assignment_group": {"display_value": "HealthTech Platform SRE"},
-      "assigned_to": {"display_value": "Carlos Mendez"},
-      "opened_at": "2026-09-30 08:15:00",
-      "resolved_at": "2026-09-30 10:45:00",
-      "closed_at": "2026-09-30 11:00:00",
-      "resolution_notes": "Extended replica connection timeout from 30s to 120s. Key rotation retry succeeded. No PHI exposure confirmed by audit log review.",
-      "cmdb_ci": {"display_value": "Patient Records Database"},
-      "sys_updated_on": "2026-09-30 11:00:00",
-      "sys_mod_count": "6"
+      "affected_ci": {
+        "display_value": "mfs-token-vault",
+        "value": "ci-mfs-token-vault"
+      },
+      "cmdb_ci_list": ["mfs-token-vault", "mfs-payments-db", "pghost-prod-01", "mfs-vault-pod-01"],
+      "requested_by": {
+        "display_value": "David Okoye",
+        "value": "dokoye"
+      },
+      "approval": "approved",
+      "cab_required": true,
+      "cab_date": "2026-09-24T15:00:00.000Z",
+      "cab_decision": "approved",
+      "implementation_plan": "1. Backup mfs_payments_db cardholder_data table\n2. Enable pgcrypto extension on pghost-prod-01.mfs.internal\n3. Apply column-level encryption migration\n4. Deploy updated mfs-token-vault with encryption support to mfs-vault-pod-01\n5. Verify encryption via TC-PAY-005\n6. Enable TDE for mfs_payments_db tablespace\n7. Validate HSM key retrieval via svc-token-vault\n8. Monitor decryption latency for 1 hour",
+      "backout_plan": "1. Restore cardholder_data from backup\n2. Revert mfs-token-vault to previous version\n3. Disable pgcrypto extension if no other dependencies",
+      "test_plan": "Execute TC-PAY-005 post-deployment. Verify decryption latency < 10ms.",
+      "related_records": [
+        {"type": "jira", "key": "PAY-201"},
+        {"type": "gitlab_mr", "key": "!401"},
+        {"type": "qtest", "key": "TC-PAY-005"}
+      ],
+      "sys_created_on": "2026-09-20T10:00:00.000Z",
+      "sys_updated_on": "2026-09-26T22:30:00.000Z",
+      "start_date": "2026-09-26T02:00:00.000Z",
+      "end_date": "2026-09-26T06:00:00.000Z",
+      "close_code": "successful",
+      "close_notes": "Encryption at rest enabled successfully. All cardholder data now encrypted with AES-256-GCM. TC-PAY-005 passed. Decryption latency measured at 4ms p99."
     },
     {
-      "sys_id": "sn_chg_060301",
-      "number": "CHG0060301",
-      "short_description": "Emergency deploy: fix patient sync race condition",
-      "description": "Deploy hotfix for HLTH-104 to resolve the patient appointment data sync failure (INC0050201). Adds optimistic locking to the sync service write path.",
-      "state": "3",
-      "priority": "1",
+      "sys_id": "chg90301d4e5f6a7b8c9d0e1f2a3b4c5",
+      "number": "CHG0090301",
+      "type": "standard",
+      "short_description": "Deploy settlement batch processor",
+      "description": "Standard change to deploy the settlement batch processor (PAY-301) to mfs-staging for validation. The processor runs on mfs-settle-pod-01 using svc-settlement service account and writes settlement records to mfs_payments_db.",
+      "state": "authorize",
+      "priority": "3 - Moderate",
+      "risk": "low",
+      "assigned_to": {
+        "display_value": "Raj Patel",
+        "value": "rpatel"
+      },
+      "assignment_group": {
+        "display_value": "DevOps & SRE",
+        "value": "grp-devops-sre"
+      },
       "category": "Software",
-      "subcategory": "Application",
-      "assignment_group": {"display_value": "HealthTech Platform SRE"},
-      "assigned_to": {"display_value": "Kai Nakamura"},
-      "opened_at": "2026-09-29 08:00:00",
-      "resolved_at": "2026-09-29 11:30:00",
-      "closed_at": "2026-09-29 12:00:00",
-      "cmdb_ci": {"display_value": "Patient Records Sync Service"},
-      "sys_updated_on": "2026-09-29 12:00:00",
-      "sys_mod_count": "8"
+      "subcategory": "Deployment",
+      "affected_ci": {
+        "display_value": "mfs-settlement-engine",
+        "value": "ci-mfs-settlement-engine"
+      },
+      "cmdb_ci_list": ["mfs-settlement-engine", "mfs-settle-pod-01", "mfs-payments-db"],
+      "requested_by": {
+        "display_value": "Sarah Chen",
+        "value": "schen"
+      },
+      "approval": "requested",
+      "cab_required": false,
+      "implementation_plan": "1. Deploy mfs-settlement-engine to mfs-staging namespace\n2. Apply settlement_batches and settlement_records table migrations\n3. Configure batch processing parameters via ConfigMap\n4. Run TC-PAY-007 in staging\n5. Validate batch processing with 10K test transactions\n6. Verify ISO 8583 settlement file generation",
+      "backout_plan": "1. Remove mfs-settlement-engine deployment from staging\n2. Rollback settlement table migrations",
+      "test_plan": "Execute TC-PAY-007 end-to-end in staging",
+      "related_records": [
+        {"type": "jira", "key": "PAY-301"},
+        {"type": "gitlab_mr", "key": "!501"},
+        {"type": "qtest", "key": "TC-PAY-007"}
+      ],
+      "sys_created_on": "2026-09-29T10:00:00.000Z",
+      "sys_updated_on": "2026-09-30T09:00:00.000Z",
+      "start_date": "2026-10-03T02:00:00.000Z",
+      "end_date": "2026-10-03T04:00:00.000Z"
     },
     {
-      "sys_id": "sn_chg_060315",
-      "number": "CHG0060315",
-      "short_description": "Scheduled: extend PHI encryption to appointment metadata",
-      "description": "Extend AES-256-GCM encryption to cover appointment notes and provider comments. Part of HIPAA compliance hardening (HLTH-102).",
-      "state": "1",
-      "priority": "2",
+      "sys_id": "inc80101e5f6a7b8c9d0e1f2a3b4c5d6",
+      "number": "INC0080101",
+      "type": "incident",
+      "short_description": "Payment timeout spike on mfs-pay-pod-01",
+      "description": "P2 incident: Significant increase in payment processing timeouts observed on mfs-pay-pod-01 in mfs-prod namespace. Payment API response times spiked from 200ms p99 to 2500ms p99 at 2026-09-28 14:30 UTC. Approximately 15% of payment requests timing out at the 5-second gateway timeout threshold. Affected service: mfs-payment-gateway running under svc-payment-api service account. Initial investigation shows high connection wait times to mfs_payments_db on pghost-prod-01.mfs.internal.",
+      "state": "resolved",
+      "priority": "2 - High",
+      "impact": "2 - Medium",
+      "urgency": "2 - High",
+      "assigned_to": {
+        "display_value": "Li Wei",
+        "value": "lwei"
+      },
+      "assignment_group": {
+        "display_value": "DevOps & SRE",
+        "value": "grp-devops-sre"
+      },
       "category": "Software",
-      "subcategory": "Security",
-      "assignment_group": {"display_value": "HealthTech Platform SRE"},
-      "assigned_to": {"display_value": "Kai Nakamura"},
-      "opened_at": "2026-10-01 09:00:00",
-      "resolved_at": null,
-      "cmdb_ci": {"display_value": "Patient Records Database"},
-      "sys_updated_on": "2026-10-01 09:00:00",
-      "sys_mod_count": "2"
+      "subcategory": "Performance",
+      "affected_ci": {
+        "display_value": "mfs-payment-gateway",
+        "value": "ci-mfs-payment-gateway"
+      },
+      "cmdb_ci_list": ["mfs-payment-gateway", "mfs-pay-pod-01", "pghost-prod-01"],
+      "related_records": [
+        {"type": "change", "key": "CHG0090101"},
+        {"type": "jira", "key": "PAY-101"}
+      ],
+      "resolution_code": "Resolved",
+      "resolution_notes": "Root cause: Connection pool exhaustion on mfs-pay-pod-01 due to long-running tokenization queries after CHG0090101 deployment. Resolution: Increased connection pool max size from 20 to 50 and added query timeout of 3 seconds. Applied connection pool tuning to mfs-pay-pod-02 and mfs-pay-pod-03 preventatively.",
+      "sys_created_on": "2026-09-28T14:35:00.000Z",
+      "sys_updated_on": "2026-09-28T17:45:00.000Z",
+      "opened_at": "2026-09-28T14:35:00.000Z",
+      "resolved_at": "2026-09-28T17:45:00.000Z"
+    },
+    {
+      "sys_id": "inc80102f6a7b8c9d0e1f2a3b4c5d6e7",
+      "number": "INC0080102",
+      "type": "incident",
+      "short_description": "Token vault latency degradation",
+      "description": "P3 incident: Token vault service showing intermittent latency degradation on mfs-vault-pod-01 in mfs-prod namespace. Token retrieval operations via svc-token-vault service account experiencing 500ms+ response times (normal: < 50ms). HSM key retrieval appears to be the bottleneck. No data loss or security impact identified. Approximately 5% of token retrieval requests affected.",
+      "state": "in_progress",
+      "priority": "3 - Moderate",
+      "impact": "3 - Low",
+      "urgency": "3 - Low",
+      "assigned_to": {
+        "display_value": "David Okoye",
+        "value": "dokoye"
+      },
+      "assignment_group": {
+        "display_value": "Platform Engineering",
+        "value": "grp-platform-eng"
+      },
+      "category": "Software",
+      "subcategory": "Performance",
+      "affected_ci": {
+        "display_value": "mfs-token-vault",
+        "value": "ci-mfs-token-vault"
+      },
+      "cmdb_ci_list": ["mfs-token-vault", "mfs-vault-pod-01"],
+      "related_records": [
+        {"type": "jira", "key": "PAY-202"},
+        {"type": "change", "key": "CHG0090201"}
+      ],
+      "work_notes": "2026-09-30 10:00 - Investigating HSM connection pool configuration on mfs-vault-pod-01. Suspected cause: HSM session reuse not properly configured after CHG0090201 encryption enablement.\n2026-09-30 14:00 - Confirmed HSM PKCS#11 session pool was set to 5 concurrent sessions. Increasing to 20 for testing.",
+      "sys_created_on": "2026-09-30T09:15:00.000Z",
+      "sys_updated_on": "2026-09-30T14:30:00.000Z",
+      "opened_at": "2026-09-30T09:15:00.000Z",
+      "resolved_at": null
     }
   ]
 }

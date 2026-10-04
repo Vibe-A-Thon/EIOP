@@ -1,41 +1,82 @@
-# Pipeline Demo Data — Northstar Commerce
+# Pipeline Demo Data — MFS Fraud Detection Platform
 
-Scenario: **Northstar Retail Group** operates an e-commerce platform with checkout,
-risk decisioning, and payment services. The data covers a production latency incident
-after a risk service release, pipeline-driven CI/CD, and multi-service observability.
+Automated pipeline ingestion demo data for the **Meridian Financial Services (MFS)** Fraud Detection & AML Platform (FRD project).
 
-This folder demonstrates **automated pipeline ingestion** where a pipeline configuration
-orchestrates multi-source data loading with validation gates between stages.
+## Domain
 
-## Source Systems
+This folder contains demo data for the **Fraud Detection & AML Platform**, covering:
 
-| File | Source System | Connector | Records |
-|------|--------------|-----------|---------|
-| jira.json | Jira | JiraJsonConnector | 5 issues (SHOP project) |
-| gitlab.json | GitLab | GitLabJsonConnector | 4 MRs, 4 pipelines |
-| servicenow.json | ServiceNow | ServiceNowConnector | 2 incidents, 2 changes |
-| confluence.json | Confluence | ConfluenceConnector | 3 wiki pages |
-| figma.json | Figma | FigmaConnector | 1 file, 2 pages, 4 components |
-| qtest.json | qTest | qTestConnector | 2 suites, 4 test cases, 2 runs |
-| rally.json | Rally | RallyConnector | 1 epic, 2 features, 3 user stories |
-| code-graph.json | Code (JSON) | ScenarioPack loader | Checkout service code graph |
-| api-portal.json | API Portal | APIPortalConnector | 4 services, 8 endpoints |
-| observability.json | Grafana/Datadog/Kibana | Observability connectors | Production dashboards/monitors |
-| crawler-portal.json | Web Crawler | CrawlerConnector | 3 crawled developer portal pages |
-| pipeline-config.json | Pipeline | PipelineOrchestrator | 8-stage ingestion pipeline |
+- **ML Fraud Scoring Engine** (EPC-201 / FRD-100): Real-time fraud probability scoring using XGBoost models with feature extraction, model versioning, and A/B testing
+- **Transaction Monitoring System** (EPC-202 / FRD-200): Velocity-based threshold monitoring and statistical anomaly detection with Kafka-based alerting
+- **AML Compliance Engine** (EPC-203 / FRD-300): Anti-money laundering pattern detection (structuring, layering, integration) with automated SAR/CTR filing
 
-## Scenario Summary
+## Organization Context
 
-Northstar released checkout risk decisioning v2 (SHOP-301), which introduced a latency
-spike (INC0071042) due to unbounded retry fan-out to the Risk Decision API. The incident
-required an emergency change (CHG0081088) deploying a bounded fallback. The demo shows
-the full digital thread from Rally portfolio planning through code, CI/CD, deployment,
-observability, and incident resolution.
+**Organization:** Meridian Financial Services (MFS) — same organization as the `manual/` folder (which covers the Payment Gateway / PAY project).
 
-### Key Entities
-- **People:** Maya Chen (dev), Liam Patel (SRE), Jordan Blake (PM), Sam Torres (QA)
-- **Work:** SHOP-301 through SHOP-305 (checkout modernization stories/tasks)
-- **Incident:** INC0071042 — checkout latency spike after risk release
-- **Design:** Checkout Experience v2 (Figma)
-- **APIs:** Checkout API, Risk Decision API, Payment Auth API, Inventory API
-- **Tests:** Checkout regression, contract tests, resilience tests
+### Teams & People
+
+| Team | Role | Person | Username |
+|------|------|--------|----------|
+| Platform Engineering | Lead | Sarah Chen | schen |
+| Platform Engineering | Developer | David Okoye | dokoye |
+| Fraud & Risk | Lead | Priya Sharma | psharma |
+| Fraud & Risk | Developer | Nadia Kowalski | nkowalski |
+| Quality Engineering | Lead | James O'Brien | jobrien |
+| DevOps & SRE | Lead | Li Wei | lwei |
+| DevOps & SRE | DevOps | Raj Patel | rpatel |
+| UX Design | Designer | Elena Torres | etorres |
+
+### Infrastructure
+
+- **Databases:** mfs_fraud_db, mfs_aml_db (PostgreSQL on pghost-prod-02.mfs.internal)
+- **Service Accounts:** svc-fraud-engine, svc-txn-monitor, svc-aml-engine, svc-model-serving
+- **OpenShift Namespace:** mfs-prod, mfs-staging
+- **Pods:** mfs-fraud-pod-01, mfs-fraud-pod-02, mfs-txn-mon-pod-01, mfs-aml-pod-01, mfs-model-pod-01
+- **Kafka Topics:** mfs.txn.raw, mfs.txn.features, mfs.txn.enriched, mfs.alerts.txn
+
+## Files
+
+| File | Source System | Description |
+|------|--------------|-------------|
+| `rally.json` | Rally | 3 Epics (EPC-201/202/203), 3 Features, 2 User Stories |
+| `jira.json` | Jira | 18 issues: Features, Stories, Tasks (FRD-100 through FRD-321) |
+| `gitlab.json` | GitLab | 7 merge requests (!601-!802), 7 CI pipelines (9101-9302) |
+| `servicenow.json` | ServiceNow | 3 change requests (CHG), 2 incidents (INC) |
+| `confluence.json` | Confluence | 5 wiki pages: architecture, compliance, runbooks |
+| `figma.json` | Figma | 1 design file, 3 pages, 5 components |
+| `qtest.json` | qTest | 7 test cases (TC-FRD-001 to 007), 2 suites, 2 test runs |
+| `kibana.json` | Kibana | 3 dashboards, 2 index patterns, 2 saved searches |
+| `grafana.json` | Grafana | 2 dashboards, 4 alert rules, 3 datasources |
+| `datadog.json` | Datadog | 2 dashboards, 4 monitors |
+| `api-portal.json` | API Portal | 4 services, 13 endpoints |
+| `code-graph.json` | Code Graph | 10 files, 20 symbols, 10 deps, 18 edges |
+| `crawler-sites.json` | Web Crawler | 5 crawled pages from internal wikis |
+| `pipeline-config.json` | Pipeline Config | 15-stage automated ingestion pipeline |
+
+## Cross-Reference Map
+
+```
+Rally Epics → Jira Features:
+  EPC-201 → FRD-100 (ML Fraud Scoring Engine)
+  EPC-202 → FRD-200 (Real-time Transaction Monitoring)
+  EPC-203 → FRD-300 (AML Pattern Detection)
+
+Jira Stories → GitLab MRs → ServiceNow Changes:
+  FRD-101 → MR !601 → CHG0090401
+  FRD-201 → MR !701 → CHG0090501
+  FRD-301 → MR !801 → CHG0090601
+
+Jira Stories → qTest Test Cases:
+  FRD-101 → TC-FRD-001
+  FRD-102 → TC-FRD-002
+  FRD-103 → TC-FRD-003
+  FRD-201 → TC-FRD-004
+  FRD-202 → TC-FRD-005
+  FRD-301 → TC-FRD-006
+  FRD-302 → TC-FRD-007
+
+Incidents:
+  INC0080201 → mfs-fraud-engine (false positive spike after model update)
+  INC0080202 → mfs-txn-monitor (Kafka consumer lag)
+```

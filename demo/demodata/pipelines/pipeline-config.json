@@ -1,17 +1,24 @@
 {
-  "pipeline_id": "northstar-commerce-pipeline",
+  "pipeline_id": "mfs-fraud-platform-pipeline",
   "version": "2.0.0",
-  "description": "Automated multi-source ingestion pipeline for Northstar Commerce demo. Loads data from 12 source systems with validation gates between stages.",
+  "description": "Automated multi-source ingestion pipeline for MFS Fraud Detection platform demo. Loads data from 14 source systems with validation gates between stages.",
   "stages": [
     {
       "name": "meta-bootstrap",
-      "description": "Initialize meta graph with domains and ontology version",
+      "description": "Initialize meta graph with MFS Fraud Detection domain ontology",
       "action": "bootstrap_meta_graph",
       "required": true
     },
     {
+      "name": "rally-ingest",
+      "description": "Ingest Rally epics, features, and user stories (EPC-201, EPC-202, EPC-203)",
+      "action": "ingest_rally",
+      "source": "rally.json",
+      "required": true
+    },
+    {
       "name": "jira-ingest",
-      "description": "Ingest Jira work items (SHOP project) with project hierarchy",
+      "description": "Ingest Jira work items (FRD project) with project hierarchy and cross-references",
       "action": "ingest_jira",
       "source": "jira.json",
       "connector_config": "config/mappings/jira-mvp.yaml",
@@ -19,102 +26,86 @@
     },
     {
       "name": "gitlab-ingest",
-      "description": "Ingest GitLab merge requests, pipelines, and deployments",
+      "description": "Ingest GitLab merge requests, pipelines, and CI/CD jobs for mfs-fraud-engine",
       "action": "ingest_gitlab",
       "source": "gitlab.json",
       "required": true
     },
     {
       "name": "servicenow-ingest",
-      "description": "Ingest ServiceNow incidents and change requests",
+      "description": "Ingest ServiceNow changes (CHG0090401, CHG0090501, CHG0090601) and incidents (INC0080201, INC0080202)",
       "action": "ingest_servicenow",
       "source": "servicenow.json",
       "required": true
     },
     {
       "name": "confluence-ingest",
-      "description": "Ingest Confluence wiki pages for knowledge graph",
+      "description": "Ingest Confluence wiki pages for fraud detection knowledge graph",
       "action": "ingest_confluence",
       "source": "confluence.json",
       "required": true
     },
     {
       "name": "figma-ingest",
-      "description": "Ingest Figma design files, pages, and components",
+      "description": "Ingest Figma design files for fraud dashboard and AML case management UI",
       "action": "ingest_figma",
       "source": "figma.json",
       "required": false
     },
     {
+      "name": "qtest-ingest",
+      "description": "Ingest qTest test suites, cases (TC-FRD-001 through TC-FRD-007), and test runs",
+      "action": "ingest_qtest",
+      "source": "qtest.json",
+      "required": true
+    },
+    {
       "name": "code-graph-ingest",
-      "description": "Load code graph from JSON (code-as-JSON for code graph construction)",
+      "description": "Load code graph from JSON for mfs-fraud-engine repository",
       "action": "load_code_graph",
       "source": "code-graph.json",
       "required": true
     },
     {
       "name": "api-portal-ingest",
-      "description": "Ingest API service and endpoint definitions",
+      "description": "Ingest API service and endpoint definitions for Fraud, TxnMonitor, AML, and Model Management APIs",
       "action": "ingest_api_portal",
       "source": "api-portal.json",
       "required": true
     },
     {
-      "name": "observability-ingest",
-      "description": "Ingest Grafana dashboards, Datadog monitors, Kibana saved objects",
-      "action": "ingest_observability",
-      "source": "observability.json",
+      "name": "kibana-ingest",
+      "description": "Ingest Kibana dashboards, index patterns, and saved searches for fraud and AML monitoring",
+      "action": "ingest_kibana",
+      "source": "kibana.json",
       "required": false
     },
     {
-      "name": "qtest-ingest",
-      "description": "Ingest qTest test suites, cases, and runs",
-      "action": "ingest_qtest",
-      "source": "qtest.json",
+      "name": "grafana-ingest",
+      "description": "Ingest Grafana dashboards, alert rules, and datasources for fraud engine SLOs",
+      "action": "ingest_grafana",
+      "source": "grafana.json",
       "required": false
     },
     {
-      "name": "rally-ingest",
-      "description": "Ingest Rally epics, features, and user stories",
-      "action": "ingest_rally",
-      "source": "rally.json",
+      "name": "datadog-ingest",
+      "description": "Ingest Datadog dashboards and monitors for fraud engine and transaction monitor health",
+      "action": "ingest_datadog",
+      "source": "datadog.json",
       "required": false
     },
     {
       "name": "crawler-ingest",
-      "description": "Ingest crawled developer portal and status pages",
+      "description": "Ingest crawled pages from MFS fraud wiki, ML model registry, and AML compliance portal",
       "action": "ingest_crawler",
-      "source": "crawler-portal.json",
+      "source": "crawler-sites.json",
       "required": false
     },
     {
-      "name": "enterprise-pack",
-      "description": "Load validated enterprise scenario pack with cross-domain graph",
-      "action": "load_scenario_pack",
-      "source": "Demo/demodata/enterprise/scenario-pack.json",
+      "name": "cross-reference-validation",
+      "description": "Validate cross-references between all ingested systems: Jira-Rally epic links, Jira-GitLab MR links, ServiceNow-Jira change records, qTest-Jira test coverage",
+      "action": "validate_cross_references",
       "required": true
-    },
-    {
-      "name": "domain-linking",
-      "description": "Create cross-domain BELONGS_TO_DOMAIN edges",
-      "action": "link_domains",
-      "required": true
-    },
-    {
-      "name": "validation",
-      "description": "Run graph validation to verify integrity",
-      "action": "validate",
-      "required": false
     }
-  ],
-  "verification": {
-    "min_vertices": 80,
-    "min_edges": 60,
-    "required_labels": ["Project", "WorkItem", "Person", "Repository", "File", "CodeSymbol", "MergeRequest", "PipelineRun", "Incident", "ChangeRequest", "APIService", "Dashboard", "TestSuite", "DesignFile", "Document"],
-    "golden_path": {
-      "source": "urn:eoip:work:item:jira:EOIP-1",
-      "target": "urn:eoip:code:symbol:demo:service.py:compute_impact",
-      "max_depth": 6
-    }
-  }
+  ]
 }

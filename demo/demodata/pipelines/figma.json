@@ -1,54 +1,67 @@
 {
   "files": [
     {
-      "key": "NS-CHECKOUT-V2-2026",
-      "name": "Northstar Checkout Experience v2",
-      "last_modified": "2026-09-27T15:00:00Z",
-      "thumbnail_url": "https://figma.example.invalid/thumbnails/checkout-v2.png",
-      "version": "42"
+      "key": "MFS-FRAUD-DASHBOARD-2026",
+      "name": "MFS Fraud Detection Dashboard",
+      "last_modified": "2026-10-03T14:00:00Z",
+      "thumbnail_url": "https://figma.example.invalid/thumbnails/fraud-dashboard.png",
+      "version": "24"
     }
   ],
   "pages": [
     {
-      "file_key": "NS-CHECKOUT-V2-2026",
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
       "id": "30:100",
-      "name": "Checkout Flow",
+      "name": "Fraud Alerts Dashboard",
       "type": "CANVAS"
     },
     {
-      "file_key": "NS-CHECKOUT-V2-2026",
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
       "id": "30:200",
-      "name": "Risk Challenge States",
+      "name": "AML Case Management",
+      "type": "CANVAS"
+    },
+    {
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
+      "id": "30:300",
+      "name": "Model Performance",
       "type": "CANVAS"
     }
   ],
   "components": [
     {
-      "file_key": "NS-CHECKOUT-V2-2026",
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
       "component_id": "30:110",
-      "name": "Order Summary Card",
-      "description": "Displays order total, item count, and applied discounts. Includes estimated delivery.",
+      "name": "FraudScoreCard",
+      "description": "Card displaying individual transaction fraud score with color-coded severity indicator (green <0.3, yellow 0.3-0.7, orange 0.7-0.9, red >0.9). Shows contributing features and recommended action.",
       "type": "COMPONENT"
     },
     {
-      "file_key": "NS-CHECKOUT-V2-2026",
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
       "component_id": "30:120",
-      "name": "Payment Method Selector",
-      "description": "Card, wallet, and buy-now-pay-later payment options. Tokenized card display.",
+      "name": "AlertTable",
+      "description": "Sortable data table for fraud and AML alerts. Columns: timestamp, account, amount, fraud score, alert type, severity, status, assigned analyst. Supports bulk actions for acknowledge and escalate.",
       "type": "COMPONENT"
     },
     {
-      "file_key": "NS-CHECKOUT-V2-2026",
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
       "component_id": "30:210",
-      "name": "Risk Challenge Dialog",
-      "description": "3DS-style challenge dialog when risk score exceeds threshold. Timeout fallback messaging.",
+      "name": "CaseTimeline",
+      "description": "Vertical timeline component for AML case management. Shows detection event, analyst actions, evidence attachments, SAR filing status, and resolution. Connected to mfs_aml_db case records.",
       "type": "COMPONENT"
     },
     {
-      "file_key": "NS-CHECKOUT-V2-2026",
-      "component_id": "30:220",
-      "name": "Order Confirmation",
-      "description": "Post-authorization confirmation with order ID, delivery estimate, and decision evidence summary.",
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
+      "component_id": "30:310",
+      "name": "ModelMetrics",
+      "description": "Model performance metrics panel showing AUC-ROC, precision-recall curve, false positive rate trend, and score distribution histogram. Supports model version comparison for A/B test analysis.",
+      "type": "COMPONENT"
+    },
+    {
+      "file_key": "MFS-FRAUD-DASHBOARD-2026",
+      "component_id": "30:130",
+      "name": "VelocityChart",
+      "description": "Real-time velocity monitoring chart with sparklines for per-account, per-merchant, and per-device transaction rates across 1min, 5min, 1hr, 24hr windows. Threshold breach indicators shown as red markers.",
       "type": "COMPONENT"
     }
   ]

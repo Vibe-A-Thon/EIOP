@@ -1,0 +1,62 @@
+[
+  {
+    "url": "https://figma.mfs.internal/files/MFS-PAY-PORTAL-2026",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Payment Portal Design System - Figma",
+    "headings": [
+      "MFS Payment Portal Design System",
+      "Overview",
+      "Components",
+      "Color Tokens",
+      "Typography",
+      "Layout Grid"
+    ],
+    "text": "MFS Payment Portal Design System. Design system for the Meridian Financial Services customer-facing payment portal (mfs-customer-portal). Last modified: 2026-09-28 by Wei Zhang. Owner: Payments Core squad (Arjun Deshmukh). Overview. This design system provides the foundational components, tokens, and patterns used across the MFS customer portal. It is implemented in the mfs-customer-portal repository using React and Tailwind CSS. The design system supports both light and dark themes and meets WCAG 2.1 AA accessibility standards. Components. PaymentForm: Primary payment entry form with card number input, expiry, CVV, and amount fields. Implements inline validation using the validateCard function. Supports real-time fraud score display from FraudAlertBanner. Variants: standard (single payment), recurring (subscription setup), quick-pay (saved card). States: idle, validating, processing, success, error, fraud-blocked. TransactionRow: Table row component for displaying individual transactions in the TransactionHistory page. Shows formatted amount (formatCurrency), date (formatDate), status badge, and action buttons. Supports click-to-expand for transaction details. CardDisplay: Visual card representation showing masked card number (maskCardNumber), card brand logo, and expiry date. Supports card flip animation for CVV display. Variants: physical card, virtual card, expired card. FraudAlertBanner: Alert banner displayed when a transaction receives a high fraud score. Shows risk level, suggested action, and dismiss button (dismissAlert). Severity variants: warning (medium risk), danger (high risk), critical (critical risk). Color Tokens. Primary: MFS Blue #1B4F72 (brand primary, used for CTAs and navigation). Secondary: MFS Teal #148F77 (secondary actions, success states). Danger: #C0392B (error states, fraud alerts, destructive actions). Warning: #F39C12 (medium risk alerts, pending states). Success: #27AE60 (completed payments, approved transactions). Neutral: Gray scale from #F8F9FA to #212529. Dark theme overrides: Primary #5DADE2, Background #1A1A2E, Surface #16213E. Typography. Font family: Inter (headings), Source Sans Pro (body). Scale: 12px (caption), 14px (body small), 16px (body), 20px (h4), 24px (h3), 32px (h2), 40px (h1). Font weight: 400 (regular), 500 (medium), 600 (semibold), 700 (bold). Layout Grid. Base grid: 8px. Content max-width: 1280px. Sidebar: 280px fixed. Main content area: fluid with 24px gutter. Responsive breakpoints: 320px (mobile), 768px (tablet), 1024px (desktop), 1440px (wide).",
+    "links": [
+      "https://figma.mfs.internal/files/MFS-FRAUD-DASH-2026",
+      "https://figma.mfs.internal/files/MFS-PORTAL-REDESIGN-2026",
+      "https://gitlab.mfs.internal/mfs/customer-portal"
+    ]
+  },
+  {
+    "url": "https://figma.mfs.internal/files/MFS-FRAUD-DASH-2026",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Fraud Dashboard Design - Figma",
+    "headings": [
+      "MFS Fraud Dashboard",
+      "Overview",
+      "Dashboard Layout",
+      "Key Visualizations",
+      "Alert Management Panel",
+      "Model Performance View"
+    ],
+    "text": "MFS Fraud Dashboard. Internal dashboard design for the Meridian Financial Services fraud and compliance team. Last modified: 2026-09-25 by Omar Hassan. Owner: Fraud and Risk squad (Priya Natarajan). Overview. The fraud dashboard provides real-time visibility into fraud scoring, AML alerts, and model performance for the mfs-fraud-engine. It is used by the Fraud and Risk squad and the compliance team for daily operations. Data sources: mfs_fraud_db on pghost-prod-02.mfs.internal, fraud-scores and aml-alerts Kafka topics, MLflow registry at mlflow.mfs.internal. Dashboard Layout. Top bar: Global filters (date range, risk level, model version), real-time toggle, refresh interval. Left sidebar: Navigation (Overview, Fraud Scores, AML Alerts, Model Performance, Velocity Monitor, Reports). Main content: Responsive grid with draggable panels. The dashboard renders data from the mfs-fraud-engine via the Fraud Scoring API v2 at api-gateway.mfs.internal/fraud/v2. Key Visualizations. Real-Time Score Distribution: Histogram of fraud scores in the last hour, binned by risk level (low 0-0.3, medium 0.3-0.6, high 0.6-0.85, critical 0.85-1.0). Data from fraud_scores table. Transaction Velocity Heat Map: Heat map showing transaction velocity by hour-of-day and day-of-week. Color intensity represents deviation from baseline. Data from velocity_windows in redis-cluster.mfs.internal. Geographic Risk Map: World map with color-coded transaction origins. Highlights high-risk jurisdictions flagged by FeatureExtractor.extract_geo_risk. Fraud Score Trend: Time series showing average ml_score, rule_score, and final_score over the selected period. Includes model version annotations. AML Alert Funnel: Funnel chart showing alert flow: total -> open -> under_review -> cleared / escalated. Data from aml_alerts table. Alert Management Panel. Table of active AML alerts from mfs_fraud_db.aml_alerts. Columns: alert_id, txn_id, customer_id, rule_id (STRUCT-001, RAPID-001, GEO-001, MERCH-001), severity, status, created_at. Inline actions: Assign analyst, update status, add notes. Filter by status (open, under_review), severity, rule type, date range. Escalated alerts trigger SAR filing workflow. Model Performance View. Current production model: fraud-xgb-v4.2 (F1=0.9612, Precision=0.9734, Recall=0.9493, AUC-ROC=0.9891). Canary model: fraud-xgb-v4.3 (F1=0.9654, 5% traffic). Performance metrics: Confusion matrix, ROC curve, precision-recall curve. A/B comparison between production and canary model predictions. Weekly retraining metrics trend. Data from models table in mfs_fraud_db and MLflow at mlflow.mfs.internal:5000.",
+    "links": [
+      "https://figma.mfs.internal/files/MFS-PAY-PORTAL-2026",
+      "https://grafana.mfs.internal/d/fraud-engine-slo",
+      "https://api.mfs.internal/services/fraud-scoring-api"
+    ]
+  },
+  {
+    "url": "https://figma.mfs.internal/files/MFS-PORTAL-REDESIGN-2026",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Customer Portal Redesign - Figma",
+    "headings": [
+      "MFS Customer Portal Redesign",
+      "Project Overview",
+      "User Flows",
+      "Page Designs",
+      "Mobile Responsive Design",
+      "Accessibility"
+    ],
+    "text": "MFS Customer Portal Redesign. Complete redesign of the Meridian Financial Services customer portal (mfs-customer-portal). Project initiated: 2026-08-01. Target completion: 2026-11-15. Last modified: 2026-09-30 by Lisa Park. Design lead: Wei Zhang. Product owner: Samantha Rodriguez (Director of Engineering). Overview. The portal redesign aims to modernize the customer-facing payment experience, improve transaction visibility, and integrate real-time fraud protection feedback. The redesign will be implemented in the mfs-customer-portal repository (TypeScript/React). Key goals: Reduce payment completion time by 30%, improve transaction search and filtering, surface fraud protection status to customers, full mobile-first responsive design, WCAG 2.1 AA compliance. User Flows. Payment Flow: Dashboard -> PaymentForm -> Card validation (validateCard) -> Fraud check (checkFraudScore via fraudApi) -> Payment processing (createPayment via paymentApi) -> Confirmation. If fraud score is high, FraudAlertBanner is shown with additional verification step. Transaction Review Flow: Dashboard -> TransactionHistory (fetchTransactions) -> TransactionRow (expand) -> Transaction detail with timeline -> Dispute / Refund action. Card Management Flow: Dashboard -> CardDisplay (list cards) -> Add new card (tokenize via Token Vault) -> Set default card -> Remove card. Page Designs. Dashboard (src/pages/Dashboard.tsx): Summary cards showing account balance, recent transactions, pending payments, and fraud alerts. Quick-pay widget using PaymentForm (quick-pay variant). Recent activity feed showing last 5 transactions using TransactionRow component. Links to usePayment and useTransactions hooks. Transaction History (src/pages/TransactionHistory.tsx): Full transaction listing with search, date range filter, status filter, and amount range filter. Uses useTransactions hook with infinite scroll pagination. Each row uses TransactionRow component with expand-on-click for full details. Export to CSV functionality. Payment Page: Full PaymentForm component with saved card selector (CardDisplay). Amount entry with formatCurrency preview. Fraud score feedback via FraudAlertBanner integrated directly below the form. Mobile Responsive Design. Mobile-first approach using Tailwind CSS responsive utilities. Breakpoints: 320px (small phone), 375px (phone), 768px (tablet), 1024px (desktop). Payment form stacks vertically on mobile with full-width inputs. Transaction history uses card layout on mobile, table layout on desktop. Bottom navigation on mobile replaces sidebar. Accessibility. Color contrast ratios meet WCAG 2.1 AA (minimum 4.5:1 for text). All interactive elements are keyboard navigable. ARIA labels on all form inputs and buttons. Screen reader support for FraudAlertBanner severity announcements. Focus management on modal dialogs and page transitions.",
+    "links": [
+      "https://figma.mfs.internal/files/MFS-PAY-PORTAL-2026",
+      "https://gitlab.mfs.internal/mfs/customer-portal",
+      "https://wiki.mfs.internal/spaces/ENG/pages/overview"
+    ]
+  }
+]
