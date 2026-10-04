@@ -870,6 +870,32 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             raise HTTPException(422, str(exc)) from exc
         return {"name": name, "path": str(path), "status": "SAVED"}
 
+    @app.get("/api/v1/experts/{canonical_id:path}")
+    def experts_for_component(canonical_id: str):
+        """Evidence-ranked candidate experts for a component (GAP-REC-001)."""
+        from eoip.graph.expertise import find_experts
+
+        try:
+            return find_experts(store, canonical_id)
+        except ValueError as exc:
+            raise HTTPException(404, str(exc)) from exc
+
+    @app.get("/api/v1/knowledge/freshness")
+    def knowledge_freshness(stale_days: int = Query(default=90, ge=1, le=3650)):
+        """Stale-documentation detection for human review (GAP-FRESH-001..005)."""
+        from eoip.graph.expertise import freshness_report
+
+        return freshness_report(store, stale_days=stale_days)
+
+    @app.get("/api/v1/query/cache/stats")
+    def query_cache_stats():
+        """Semantic query cache metrics (GAP-CACHE; active only when EOIP_QUERY_CACHE=1)."""
+        from eoip.query.cache import SemanticQueryCache, cache_enabled
+
+        if not hasattr(app.state, "query_cache"):
+            app.state.query_cache = SemanticQueryCache()
+        return {"enabled": cache_enabled(), **app.state.query_cache.stats()}
+
     @app.get("/api/v1/process/cases")
     def process_cases(source_label: str = "WorkItem"):
         from eoip.graph.process_mining import extract_cases_from_graph

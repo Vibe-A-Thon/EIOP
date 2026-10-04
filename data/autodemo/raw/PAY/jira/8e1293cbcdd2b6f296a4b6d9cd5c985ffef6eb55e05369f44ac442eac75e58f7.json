@@ -1,0 +1,93 @@
+{
+  "captured_at": "2026-10-04T13:45:50.436455Z",
+  "event_id": "8e1293cbcdd2b6f296a4b6d9cd5c985ffef6eb55e05369f44ac442eac75e58f7",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-07-05T09:30:00.000+0000",
+      "customfield_10014": "EPC-101",
+      "customfield_10015": "Payment Services",
+      "description": "Modernize the payment gateway REST API to support tokenization, idempotent retries, and multi-currency processing. This feature tracks the full API overhaul under Epic EPC-101.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Feature",
+        "subtask": false
+      },
+      "labels": [
+        "payment-gateway",
+        "api",
+        "modernization"
+      ],
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "subtasks": [
+        {
+          "fields": {
+            "status": {
+              "name": "Done"
+            },
+            "summary": "Implement payment tokenization service"
+          },
+          "key": "PAY-101"
+        },
+        {
+          "fields": {
+            "status": {
+              "name": "In Progress"
+            },
+            "summary": "Build idempotent payment retry handler"
+          },
+          "key": "PAY-102"
+        },
+        {
+          "fields": {
+            "status": {
+              "name": "In Progress"
+            },
+            "summary": "Add multi-currency support"
+          },
+          "key": "PAY-103"
+        }
+      ],
+      "summary": "Payment Gateway API Modernization",
+      "updated": "2026-09-29T10:00:00.000+0000"
+    },
+    "id": "60100",
+    "key": "PAY-100",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60100"
+  },
+  "payload_hash": "60913ce2d5cb1364184912352a0d364e8fad5e25d66810cd13ea9eca44667203",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-100",
+  "source_system": "jira",
+  "source_version": "60913ce2d5cb1364184912352a0d364e8fad5e25d66810cd13ea9eca44667203"
+}

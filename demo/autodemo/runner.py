@@ -36,14 +36,18 @@ from eoip.graph.rag_router import RAGRouter
 from eoip.graph.agent_router import AgentRouter
 from eoip.intelligence.laya import LAYAEngine
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
+from eoip.contracts.query_plan import QueryPlan
+from eoip.query.eql import parse_and_execute
+from eoip.query.executor import QueryExecutor
+from eoip.query.nlq import NLQProcessor
 from eoip.validation.engine import ValidationEngine
 from eoip.validation.quality import QualityMetrics
 
 BANNER = r"""
-╔═══════════════════════════════════════════════════════════════════╗
-║  EOIP Automated Demo — Meridian Financial Services               ║
-║  Enterprise Operational Intelligence Platform                     ║
-╚═══════════════════════════════════════════════════════════════════╝
++-------------------------------------------------------------------+
+|  EOIP Automated Demo - Meridian Financial Services               |
+|  Enterprise Operational Intelligence Platform                    |
++-------------------------------------------------------------------+
 """
 
 # ---------------------------------------------------------------------------
@@ -264,13 +268,29 @@ def _load_crawler_data(
             result.record(f"crawler_{fname}", "SKIP", f"{fpath} not found")
             continue
 
-        pages = data.get("pages", data.get("results", []))
-        if isinstance(pages, list):
+        if isinstance(data, list):
+            count = len(data)
+        elif isinstance(data, dict):
+            pages = data.get("pages", data.get("results"))
+            if not isinstance(pages, list):
+                result.record(
+                    f"crawler_{fname}", "FAIL",
+                    "Crawler object must contain a list in 'pages' or 'results'",
+                )
+                continue
             count = len(pages)
         else:
-            count = 1
+            result.record(
+                f"crawler_{fname}", "FAIL",
+                f"Expected a JSON list or object, got {type(data).__name__}",
+            )
+            continue
+
         total_pages += count
-        result.record(f"crawler_{fname}", "PASS", f"{count} pages crawled")
+        result.record(
+            f"crawler_{fname}", "PASS" if count > 0 else "FAIL",
+            f"{count} pages loaded from crawler fixture",
+        )
         _print(f"  Crawler {fname}: {count} pages", verbose)
 
     result.record(
@@ -339,23 +359,35 @@ def _verify_rag(
         result.record("rag_load", "SKIP", "rag-demo-queries.json not found")
         return
 
-    queries = rag_data.get("queries", [])
+    queries = rag_data.get("queries") if isinstance(rag_data, dict) else None
+    if not isinstance(queries, list):
+        result.record("rag_load", "FAIL", "RAG fixture must contain a 'queries' list")
+        return
     result.record("rag_load", "PASS", f"{len(queries)} RAG pattern queries loaded")
 
     router = RAGRouter(store)
     routed = 0
-    for q in queries[:5]:
+    failed = 0
+    for index, q in enumerate(queries, start=1):
+        scenario_id = q.get("id", f"rag-{index}") if isinstance(q, dict) else f"rag-{index}"
         try:
+            if not isinstance(q, dict) or not isinstance(q.get("question"), str):
+                raise ValueError("Scenario must be an object with a question")
             res = router.route(q["question"], pattern=q.get("pattern"))
             routed += 1
-            _print(f"  RAG [{q['pattern']}]: routed -> {res.get('pattern', 'unknown')}", verbose)
+            result.record(
+                f"rag_{scenario_id}", "PASS",
+                f"Routed to {res.get('pattern', 'unknown')} without execution error",
+            )
+            _print(f"  RAG [{scenario_id}]: routed -> {res.get('pattern', 'unknown')}", verbose)
         except Exception as exc:
-            _print(f"  RAG [{q['pattern']}]: error -> {exc}", verbose)
+            failed += 1
+            result.record(f"rag_{scenario_id}", "FAIL", str(exc))
+            _print(f"  RAG [{scenario_id}]: error -> {exc}", verbose)
 
     result.record(
-        "rag_routing", "PASS" if routed > 0 else "FAIL",
-        f"{routed}/{min(5, len(queries))} RAG queries routed successfully "
-        f"(from {len(queries)} total patterns)",
+        "rag_routing", "PASS" if queries and failed == 0 else "FAIL",
+        f"{routed}/{len(queries)} RAG queries routed; {failed} failed",
     )
 
 
@@ -374,23 +406,35 @@ def _verify_agents(
         result.record("agent_load", "SKIP", "agent-scenarios.json not found")
         return
 
-    scenarios = agent_data.get("scenarios", [])
+    scenarios = agent_data.get("scenarios") if isinstance(agent_data, dict) else None
+    if not isinstance(scenarios, list):
+        result.record("agent_load", "FAIL", "Agent fixture must contain a 'scenarios' list")
+        return
     result.record("agent_load", "PASS", f"{len(scenarios)} agent scenarios loaded")
 
     router = AgentRouter(store)
     dispatched = 0
-    for sc in scenarios[:4]:
+    failed = 0
+    for index, sc in enumerate(scenarios, start=1):
+        scenario_id = sc.get("id", f"agent-{index}") if isinstance(sc, dict) else f"agent-{index}"
         try:
+            if not isinstance(sc, dict) or not isinstance(sc.get("question"), str):
+                raise ValueError("Scenario must be an object with a question")
             res = router.route(sc["question"], agent_type=sc.get("agent_type"))
             dispatched += 1
-            _print(f"  Agent [{sc['agent_type']}]: dispatched -> {res.get('agent_type', 'unknown')}", verbose)
+            result.record(
+                f"agent_{scenario_id}", "PASS",
+                f"Dispatched to {res.get('agent_type', 'unknown')} without execution error",
+            )
+            _print(f"  Agent [{scenario_id}]: dispatched -> {res.get('agent_type', 'unknown')}", verbose)
         except Exception as exc:
-            _print(f"  Agent [{sc['agent_type']}]: error -> {exc}", verbose)
+            failed += 1
+            result.record(f"agent_{scenario_id}", "FAIL", str(exc))
+            _print(f"  Agent [{scenario_id}]: error -> {exc}", verbose)
 
     result.record(
-        "agent_dispatch", "PASS" if dispatched > 0 else "FAIL",
-        f"{dispatched}/{min(4, len(scenarios))} agent scenarios dispatched "
-        f"(from {len(scenarios)} total scenarios)",
+        "agent_dispatch", "PASS" if scenarios and failed == 0 else "FAIL",
+        f"{dispatched}/{len(scenarios)} agent scenarios dispatched; {failed} failed",
     )
 
 
@@ -409,7 +453,10 @@ def _verify_laya(
         result.record("laya_load", "SKIP", "laya-scenarios.json not found")
         return
 
-    scenarios = laya_data.get("scenarios", [])
+    scenarios = laya_data.get("scenarios") if isinstance(laya_data, dict) else None
+    if not isinstance(scenarios, list):
+        result.record("laya_load", "FAIL", "LAYA fixture must contain a 'scenarios' list")
+        return
     result.record("laya_load", "PASS", f"{len(scenarios)} LAYA scenarios loaded")
 
     engine = LAYAEngine(store)
@@ -417,25 +464,35 @@ def _verify_laya(
     result.record("laya_capabilities", "PASS", f"{len(caps)} capabilities: {', '.join(sorted(caps.keys()))}")
 
     analyzed = 0
-    for sc in scenarios[:3]:
+    failed = 0
+    for index, sc in enumerate(scenarios, start=1):
+        scenario_id = sc.get("id", f"laya-{index}") if isinstance(sc, dict) else f"laya-{index}"
         try:
+            if not isinstance(sc, dict) or not isinstance(sc.get("question"), str):
+                raise ValueError("Scenario must be an object with a question")
             res = engine.analyze(
                 sc["question"],
                 capability=sc.get("capability", "entity_explanation"),
                 context_ids=sc.get("context_entities", []),
             )
             analyzed += 1
+            result.record(
+                f"laya_{scenario_id}", "PASS",
+                f"Analysis completed with confidence {res.confidence:.2f} "
+                f"and {len(res.evidence_refs)} evidence references",
+            )
             _print(
-                f"  LAYA [{sc['capability']}]: confidence={res.confidence:.2f}, "
+                f"  LAYA [{scenario_id}]: confidence={res.confidence:.2f}, "
                 f"evidence={len(res.evidence_refs)} refs", verbose,
             )
         except Exception as exc:
-            _print(f"  LAYA [{sc['capability']}]: error -> {exc}", verbose)
+            failed += 1
+            result.record(f"laya_{scenario_id}", "FAIL", str(exc))
+            _print(f"  LAYA [{scenario_id}]: error -> {exc}", verbose)
 
     result.record(
-        "laya_analysis", "PASS" if analyzed > 0 else "FAIL",
-        f"{analyzed}/{min(3, len(scenarios))} LAYA analyses completed "
-        f"(from {len(scenarios)} total scenarios)",
+        "laya_analysis", "PASS" if scenarios and failed == 0 else "FAIL",
+        f"{analyzed}/{len(scenarios)} LAYA analyses completed; {failed} failed",
     )
 
 
@@ -444,6 +501,7 @@ def _verify_laya(
 # ---------------------------------------------------------------------------
 def _verify_queries(
     result: DemoResult,
+    store: MemoryGraphStore,
     project_root: Path,
     verbose: bool,
 ):
@@ -453,13 +511,121 @@ def _verify_queries(
         result.record("query_load", "SKIP", "query-examples.json not found")
         return
 
-    examples = query_data.get("examples", [])
-    query_types = {ex["type"] for ex in examples}
+    examples = query_data.get("examples") if isinstance(query_data, dict) else None
+    if not isinstance(examples, list):
+        result.record("query_load", "FAIL", "Query fixture must contain an 'examples' list")
+        return
+
+    result.record("query_load", "PASS", f"{len(examples)} query examples loaded")
+    executor = QueryExecutor(store)
+    nlq = NLQProcessor(store, executor)
+    executed = 0
+    unsupported = 0
+    failed = 0
+    for index, example in enumerate(examples, start=1):
+        example_id = example.get("id", f"query-{index}") if isinstance(example, dict) else f"query-{index}"
+        if not isinstance(example, dict):
+            result.record(f"query_{example_id}", "FAIL", "Example must be a JSON object")
+            failed += 1
+            continue
+
+        kind = example.get("type")
+        try:
+            if kind == "search":
+                response = executor.execute(QueryPlan(
+                    intent="SEARCH", anchors=[example["query"]], max_depth=1,
+                    result_limit=25, evidence_mode="NONE",
+                ))
+            elif kind == "path":
+                response = executor.execute(QueryPlan(
+                    intent="PATH", anchors=[example["source"], example["target"]],
+                    max_depth=example.get("max_depth", 6), result_limit=25,
+                    evidence_mode="SUMMARY",
+                ))
+            elif kind == "impact":
+                response = executor.execute(QueryPlan(
+                    intent="IMPACT", anchors=[example["anchor"]],
+                    max_depth=example.get("max_depth", 4), result_limit=100,
+                    evidence_mode="SUMMARY",
+                ))
+            elif kind == "neighborhood":
+                response = executor.execute(QueryPlan(
+                    intent="NEIGHBORHOOD", anchors=[example["anchor"]],
+                    max_depth=example.get("max_depth", 1), result_limit=50,
+                    evidence_mode="SUMMARY",
+                ))
+            elif kind in {"traceability", "lineage"}:
+                anchor = example.get("source") or example.get("entity") or example.get("anchor")
+                response = executor.execute(QueryPlan(
+                    intent=kind.upper(), anchors=[anchor],
+                    max_depth=example.get("max_depth", 6), result_limit=100,
+                    evidence_mode="FULL" if kind == "traceability" else "SUMMARY",
+                ))
+            elif kind == "natural_language":
+                response = nlq.process(example["query"])
+                if response.result is None:
+                    raise ValueError(
+                        f"NLQ returned no graph result: {response.interpretation.explanation}"
+                    )
+            elif kind == "eql":
+                eql_query = example["query"]
+                response = parse_and_execute(store, eql_query)
+                if "error" in response:
+                    if "TRAVERSE" in eql_query.upper():
+                        unsupported += 1
+                        result.record(
+                            f"query_{example_id}", "SKIP",
+                            "Unsupported example: this EQL fixture uses TRAVERSE syntax, "
+                            "which the current EQL parser does not implement",
+                        )
+                        continue
+                    raise ValueError(response["error"])
+            elif kind in {"cross_domain", "temporal"}:
+                unsupported += 1
+                reason = (
+                    "cross-domain expected-domain assertions are not implemented by "
+                    "the current query runner"
+                    if kind == "cross_domain"
+                    else "date-window temporal queries are not available in QueryPlan"
+                )
+                result.record(f"query_{example_id}", "SKIP", f"Unsupported example: {reason}")
+                continue
+            else:
+                unsupported += 1
+                result.record(
+                    f"query_{example_id}", "SKIP",
+                    f"Unsupported query-example type: {kind!r}",
+                )
+                continue
+
+            nodes = getattr(response, "nodes", None)
+            paths = getattr(response, "paths", None)
+            if isinstance(response, dict):
+                nodes = response.get("nodes", response.get("results", nodes))
+                paths = response.get("paths", paths)
+            detail = (
+                f"Executed {kind}; {len(nodes) if isinstance(nodes, list) else 'n/a'} "
+                f"result entities, {len(paths) if isinstance(paths, list) else 'n/a'} paths"
+            )
+            if kind == "path" and not paths:
+                detail += "; no matching path returned"
+            result.record(f"query_{example_id}", "PASS", detail)
+            executed += 1
+            _print(f"  Query [{example_id}]: {detail}", verbose)
+        except Exception as exc:
+            failed += 1
+            result.record(f"query_{example_id}", "FAIL", str(exc))
+            _print(f"  Query [{example_id}]: error -> {exc}", verbose)
+
+    status = "PASS" if examples and failed == 0 else "FAIL"
     result.record(
-        "query_load", "PASS",
-        f"{len(examples)} query examples across {len(query_types)} types: {', '.join(sorted(query_types))}",
+        "query_execution", status,
+        f"{executed}/{len(examples)} executed; {unsupported} explicitly unsupported; {failed} failed",
     )
-    _print(f"  Query types: {sorted(query_types)}", verbose)
+    _print(
+        f"  Query examples: {executed} executed, {unsupported} unsupported, {failed} failed",
+        verbose,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -512,11 +678,11 @@ def _graph_comparison(
 
     result.record(
         "graph_growth", "PASS",
-        f"Before: {vertex_before}V/{edge_before}E → After: {v_after}V/{e_after}E "
+        f"Before: {vertex_before}V/{edge_before}E -> After: {v_after}V/{e_after}E "
         f"(+{v_after - vertex_before}V/+{e_after - edge_before}E)",
     )
     result.record("final_labels", "PASS", f"Vertex labels: {labels}")
-    _print(f"  Graph growth: {vertex_before}→{v_after} vertices, {edge_before}→{e_after} edges", verbose)
+    _print(f"  Graph growth: {vertex_before} to {v_after} vertices, {edge_before} to {e_after} edges", verbose)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -558,51 +724,51 @@ def run_demo(
 
     # ── Phase 2: Multi-source ingestion ───────────────────────────
     if mode in ("manual", "full"):
-        _print("═══ Manual ingestion: Payment Gateway (PAY) ═══", verbose)
+        _print("--- Manual ingestion: Payment Gateway (PAY) ---", verbose)
         _ingest_sources(result, store, project_root, MANUAL_DIR, "PAY-manual", verbose)
         _ingest_jira_into_graph(result, store, project_root, MANUAL_DIR, "PAY", data, verbose)
 
     if mode in ("pipeline", "full"):
-        _print("═══ Pipeline ingestion: Fraud Detection (FRD) ═══", verbose)
+        _print("--- Pipeline ingestion: Fraud Detection (FRD) ---", verbose)
         _ingest_sources(result, store, project_root, PIPELINE_DIR, "FRD-pipeline", verbose)
         _ingest_jira_into_graph(result, store, project_root, PIPELINE_DIR, "FRD", data, verbose)
 
     # ── Phase 3: Code-graph construction ──────────────────────────
     if mode == "full":
-        _print("═══ Code-graph construction ═══", verbose)
+        _print("--- Code-graph construction ---", verbose)
         _load_code_graphs(result, project_root, verbose)
 
     # ── Phase 4: Crawler data ─────────────────────────────────────
     if mode == "full":
-        _print("═══ Crawler data processing ═══", verbose)
+        _print("--- Crawler data processing ---", verbose)
         _load_crawler_data(result, project_root, verbose)
 
     # ── Phase 5: Graph verification ───────────────────────────────
-    _print("═══ Graph verification ═══", verbose)
+    _print("--- Graph verification ---", verbose)
     v_count, e_count = _verify_graph(result, store, verbose)
 
     # ── Phase 6: RAG routing ──────────────────────────────────────
     if mode == "full":
-        _print("═══ RAG pattern routing ═══", verbose)
+        _print("--- RAG pattern routing ---", verbose)
         _verify_rag(result, store, project_root, verbose)
 
     # ── Phase 7: Agent dispatch ───────────────────────────────────
     if mode == "full":
-        _print("═══ Agent dispatch ═══", verbose)
+        _print("--- Agent dispatch ---", verbose)
         _verify_agents(result, store, project_root, verbose)
 
     # ── Phase 8: LAYA analysis ────────────────────────────────────
     if mode == "full":
-        _print("═══ LAYA analysis ═══", verbose)
+        _print("--- LAYA analysis ---", verbose)
         _verify_laya(result, store, project_root, verbose)
 
     # ── Phase 9: Query examples ───────────────────────────────────
     if mode == "full":
-        _print("═══ Query examples ═══", verbose)
-        _verify_queries(result, project_root, verbose)
+        _print("--- Query examples ---", verbose)
+        _verify_queries(result, store, project_root, verbose)
 
     # ── Phase 10: Validation and quality ──────────────────────────
-    _print("═══ Validation & quality ═══", verbose)
+    _print("--- Validation & quality ---", verbose)
     _validate_graph(result, store, verbose)
 
     # ── Phase 11: Graph before/after comparison ───────────────────
@@ -618,7 +784,7 @@ def run_demo(
 
     summary = result.summary()
     if verbose:
-        print(f"\n{'═' * 60}")
+        print(f"\n{'=' * 60}")
         print(json.dumps(summary, indent=2))
 
     return summary
@@ -626,7 +792,7 @@ def run_demo(
 
 def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
-        description="Run EOIP automated demo — Meridian Financial Services",
+        description="Run EOIP automated demo - Meridian Financial Services",
     )
     parser.add_argument("--data-dir", type=str, default=None,
                         help="Working directory for captures and DLQ")
@@ -651,16 +817,16 @@ def main(argv: list[str] | None = None):
     skipped = summary["skipped"]
     duration = summary["duration_s"]
 
-    print(f"\n{'═' * 60}")
-    print(f"  EOIP Demo — Meridian Financial Services")
+    print(f"\n{'=' * 60}")
+    print(f"  EOIP Demo - Meridian Financial Services")
     print(f"  {passed}/{total} passed, {failed} failed, {skipped} skipped in {duration}s")
-    print(f"{'═' * 60}")
+    print(f"{'=' * 60}")
 
     if failed > 0:
         print("\nFailed steps:")
         for step in summary["steps"]:
             if step["status"] == "FAIL":
-                print(f"  ✗ [{step['phase']}] {step['step']} — {step['detail']}")
+                print(f"  X [{step['phase']}] {step['step']} - {step['detail']}")
         sys.exit(1)
 
 

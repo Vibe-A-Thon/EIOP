@@ -104,9 +104,10 @@ def promote_fact(
     """Promote a fact only when a rule, approval, or confidence signal exists."""
 
     target = normalize_trust_state(target_state)
-    if target in {TrustState.TRUSTED, TrustState.CERTIFIED, TrustState.REVIEWED}:
-        if not (rule_id or approver or (confidence is not None and confidence >= 0.8)):
-            raise ValueError("trust promotion requires rule_id, approver, or confidence >= 0.8")
+    if target in {TrustState.TRUSTED, TrustState.CERTIFIED, TrustState.REVIEWED} and not (
+        rule_id or approver or (confidence is not None and confidence >= 0.8)
+    ):
+        raise ValueError("trust promotion requires rule_id, approver, or confidence >= 0.8")
     updated = dict(properties)
     updated["trust_state"] = target.value
     updated["quarantine"] = False

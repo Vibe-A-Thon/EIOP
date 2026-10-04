@@ -169,6 +169,34 @@ def test_controlled_crawler_rejects_private_dns_resolution() -> None:
         crawler.crawl()
 
 
+@pytest.mark.req("G2-SRC-WEB-002", "G2-SEC-CRAWL-002")
+def test_controlled_crawler_can_authorize_private_intranet_targets_explicitly() -> None:
+    scope = CrawlScope(
+        start_urls=["https://docs.example.test/docs"],
+        allowed_hosts=["docs.example.test"],
+        allow_private_networks=True,
+        max_depth=0,
+    )
+    crawler = ControlledWebCrawler(
+        "docs-prod",
+        scope,
+        client=httpx.Client(
+            transport=httpx.MockTransport(
+                lambda request: httpx.Response(
+                    200, text="<html><body>Internal docs</body></html>",
+                    headers={"Content-Type": "text/html"},
+                )
+            )
+        ),
+        resolver=lambda _host: ["10.10.10.10"],
+    )
+
+    events = crawler.crawl()
+
+    assert len(events) == 1
+    assert events[0].source_record_id == "https://docs.example.test/docs"
+
+
 @pytest.mark.req("G2-EKAF-019")
 def test_controlled_crawler_enforces_rate_and_politeness_controls() -> None:
     pages = {
@@ -298,6 +326,12 @@ def test_source_operation_api_queues_registry_scoped_job(monkeypatch, tmp_path) 
     headers = {"Authorization": "Bearer " + "x" * 32}
     created = client.post("/api/v1/sources", json=_source().model_dump(mode="json"), headers=headers)
     assert created.status_code == 201
+    policy = client.put(
+        "/api/v1/sources/confluence-prod/schedule",
+        json={"max_concurrency": 4, "rate_limit_per_minute": 60, "paused": False},
+        headers=headers,
+    )
+    assert policy.status_code == 200
 
     response = client.post(
         "/api/v1/sources/confluence-prod/baseline",
@@ -314,6 +348,20 @@ def test_source_operation_api_queues_registry_scoped_job(monkeypatch, tmp_path) 
         "event_ids": [],
         "dry_run": True,
     }
+
+    dry_run = client.post(
+        "/api/v1/sources/confluence-prod/dry-run",
+        json={},
+        headers=headers,
+    )
+    assert dry_run.status_code == 202
+    dry_run_job = JobQueue(tmp_path).get(dry_run.json()["job_id"])
+    assert dry_run_job["payload"]["operation"] == "BASELINE"
+    assert dry_run_job["payload"]["dry_run"] is True
+
+    checkpoint = client.get("/api/v1/sources/confluence-prod/checkpoint", headers=headers)
+    assert checkpoint.status_code == 200
+    assert checkpoint.json()["source_id"] == "confluence-prod"
 
 
 @pytest.mark.req("G2-T0120", "G2-T0121", "G2-T0123")

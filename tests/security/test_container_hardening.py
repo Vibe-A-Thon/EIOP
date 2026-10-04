@@ -6,8 +6,9 @@ healthchecks, and private networks. These are structural tests against
 the compose manifest.
 """
 
-import yaml
 from pathlib import Path
+
+import yaml
 
 COMPOSE_PATH = Path(__file__).resolve().parents[2] / "deploy" / "docker-compose.yml"
 

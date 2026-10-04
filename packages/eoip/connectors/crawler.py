@@ -30,6 +30,7 @@ class CrawlScope(BaseModel):
     max_concurrency: int = Field(default=1, ge=1, le=16)
     rate_limit_per_minute: int = Field(default=60, ge=1, le=60_000)
     politeness_delay_ms: int = Field(default=0, ge=0, le=60_000)
+    allow_private_networks: bool = False
 
     @field_validator("allowed_hosts")
     @classmethod
@@ -225,7 +226,9 @@ class ControlledWebCrawler:
             raise ValueError("crawler target did not resolve")
         for address in addresses:
             ip = ipaddress.ip_address(address)
-            if not ip.is_global:
+            if ip.is_loopback or ip.is_link_local or ip.is_unspecified or ip.is_multicast:
+                raise ValueError("crawler target resolves to a blocked non-public local address")
+            if not ip.is_global and not self.scope.allow_private_networks:
                 raise ValueError("crawler target resolves to a non-public address")
 
     def _is_in_scope(self, url: str) -> bool:

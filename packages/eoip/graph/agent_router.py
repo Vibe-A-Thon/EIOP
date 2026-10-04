@@ -171,7 +171,7 @@ class GoalBasedAgent(BaseAgent):
                         actions=actions, highlight_ids=[i.canonical_id for i in affected[:10]],
                         reasoning=reasoning,
                     )
-                except Exception:
+                except Exception:  # noqa: BLE001 - resilient fallback must not fail the caller
                     reasoning.append("Blast radius computation failed, falling back to edge count")
             else:
                 reasoning.append("No entity selected — cannot assess impact")
@@ -189,7 +189,7 @@ class GoalBasedAgent(BaseAgent):
                     agent_type="goal_based", category="deliberative", confidence=0.75,
                     reasoning=reasoning,
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 - resilient fallback must not fail the caller
                 reasoning.append("Community detection failed")
 
         reasoning.append("Generic analysis — returning graph overview")
@@ -235,7 +235,7 @@ class ComplianceAgent(BaseAgent):
         edges = list(self._store.find_edges(limit=2000))
 
         issues = []
-        orphaned = set(v.get("vid") for v in vertices)
+        orphaned = {v.get("vid") for v in vertices}
         for e in edges:
             orphaned.discard(e.get("to_id"))
         if orphaned:
@@ -329,7 +329,7 @@ class EnsembleAgent(BaseAgent):
         ]
         results = [a.execute(query, context) for a in agents]
         best = max(results, key=lambda r: r.confidence)
-        all_highlights = list(set(h for r in results for h in r.highlight_ids))[:10]
+        all_highlights = list({h for r in results for h in r.highlight_ids})[:10]
         all_reasoning = [f"[{r.agent_type}] {r.answer[:80]}" for r in results]
 
         return AgentResult(

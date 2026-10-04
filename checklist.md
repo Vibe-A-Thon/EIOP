@@ -7,10 +7,25 @@ not the former "Phase 1 Complete" template label.
 
 | Ticket | Title | Priority | Status | Accountable role |
 |---|---|---|---|---|
+| [ticket-20261004-005](tickets/ticket-20261004-005.md) | Make the complete enterprise demo runnable in the web UI and console | P1 | In Progress | Senior Engineer |
 | [ticket-20261004-004](tickets/ticket-20261004-004.md) | Restore executable source-bound validation receipts | P1 | Blocked | Senior Engineer |
 | [ticket-20261004-003](tickets/ticket-20261004-003.md) | Reconcile current MVP acceptance evidence and remaining gates | P1 | In Progress | QA Lead |
 | [ticket-20261004-001](tickets/ticket-20261004-001.md) | Implement user import API endpoint and tests | P2 | Blocked | Product Manager |
 | [ticket-20261004-002](tickets/ticket-20261004-002.md) | Synchronize EOIP coordination documents and ticket contracts | P1 | Done | Senior Engineer |
+
+## Guided enterprise demo (ticket-20261004-005)
+
+- [x] Expose all eight live scenario records and capabilities in the authenticated web UI.
+- [x] Run each scenario through the existing graph-path API and show actual results or errors.
+- [x] Fix full console runner crawler-shape handling, loop truncation and failure accounting.
+- [x] Execute or explicitly mark unsupported query examples; do not count inventory as execution.
+- [x] Add focused runner and browser regression tests; run them and the web build.
+- [ ] Hand off for independent QA; Docker-backed/live acceptance remains separate.
+
+Author-executed evidence: focused graph/demo Python regressions passed in this
+continuation; full console mode passed 104/106 checks with 2 explicit skips and
+exit code 0. The guided-demo browser suite (5 tests) and web build passed in the
+prior implementation pass and were not rerun here. This is not independent QA.
 
 ## Coordination gate (ticket-20261004-002)
 

@@ -30,9 +30,6 @@ Requirement coverage:
 from __future__ import annotations
 
 import pytest
-from fastapi.testclient import TestClient
-
-from apps.api.app import create_app
 from eoip.agents.firewall import KnowledgeFirewall
 from eoip.graph.memory import MemoryGraphStore
 from eoip.provenance.evidence import EvidenceService
@@ -43,6 +40,9 @@ from eoip.provenance.trust import (
     quarantine_fact,
     trust_disclosure,
 )
+from fastapi.testclient import TestClient
+
+from apps.api.app import create_app
 
 
 @pytest.mark.req(

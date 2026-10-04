@@ -104,6 +104,7 @@ function Login({token, setToken, onSubmit, busy, health}) {
 function Sidebar({mode, onNavigate, collapsed, onToggle, stats}) {
   const items = [
     {id: 'app', label: 'Knowledge explorer', icon: 'search', hint: 'Search, traverse, and explain the enterprise graph'},
+    {id: 'demo', label: 'Guided demo', icon: 'spark', hint: 'Walk through all enterprise scenarios against the live graph'},
     {id: 'admin', label: 'Administration', icon: 'settings', hint: 'Operate ingestion, quality, audit, and ontology services'},
   ];
   return <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
@@ -116,12 +117,100 @@ function Sidebar({mode, onNavigate, collapsed, onToggle, stats}) {
 }
 
 function Topbar({mode, stats, onRefresh, onDisconnect, busy}) {
-  return <header className="topbar"><div><span className="breadcrumb">WORKSPACE <Icon name="chevron" size={12}/> {mode === 'app' ? 'KNOWLEDGE EXPLORER' : 'ADMINISTRATION'}</span><h1>{mode === 'app' ? 'Enterprise knowledge explorer' : 'Operations control center'}</h1></div><div className="topbar-actions">
+  const section = mode === 'demo' ? 'GUIDED DEMO' : mode === 'app' ? 'KNOWLEDGE EXPLORER' : 'ADMINISTRATION';
+  const title = mode === 'demo' ? 'Enterprise scenario walkthrough' : mode === 'app' ? 'Enterprise knowledge explorer' : 'Operations control center';
+  return <header className="topbar"><div><span className="breadcrumb">WORKSPACE <Icon name="chevron" size={12}/> {section}</span><h1>{title}</h1></div><div className="topbar-actions">
     <Tip text="Live status reported by the local worker"><div className="service-status"><span className="live-dot"/><span><small>SYSTEM STATUS</small><strong>{stats?.worker?.status || 'Connecting'}</strong></span></div></Tip>
     <IconButton label="Refresh live data" icon="refresh" onClick={onRefresh} disabled={busy}/>
     <Tip text="Open the local OpenAPI reference"><a className="icon-button" href="/docs" target="_blank" rel="noreferrer" aria-label="Open API documentation"><Icon name="code"/></a></Tip>
     <IconButton label="Disconnect this browser session" icon="logout" onClick={onDisconnect}/>
   </div></header>;
+}
+
+function GuidedDemo({api, run, busy}) {
+  const [catalog, setCatalog] = useState(null);
+  const [loadError, setLoadError] = useState('');
+  const [outcomes, setOutcomes] = useState({});
+
+  async function loadScenarios() {
+    setLoadError('');
+    try {
+      const response = await api('/api/v1/demo/scenarios');
+      if (!Array.isArray(response.scenarios)) {
+        throw new Error('The scenario catalog response did not contain a scenarios list.');
+      }
+      setCatalog(response);
+      setOutcomes({});
+    } catch (exception) {
+      setLoadError(exception.message || 'The scenario catalog could not be loaded.');
+      setCatalog(null);
+    }
+  }
+
+  useEffect(() => {
+    loadScenarios();
+  }, []);
+
+  function executeScenario(scenario) {
+    run(async () => {
+      setOutcomes(current => ({...current, [scenario.id]: {status: 'RUNNING'}}));
+      try {
+        const expectedPath = scenario.expected_path;
+        if (!Array.isArray(expectedPath) || expectedPath.length < 2) {
+          throw new Error('This scenario does not declare a valid entrypoint-to-target path.');
+        }
+        const response = await api('/api/v1/path', {
+          source_id: expectedPath[0],
+          target_id: expectedPath[expectedPath.length - 1],
+          max_depth: 8,
+        });
+        setOutcomes(current => ({...current, [scenario.id]: {status: 'COMPLETE', response}}));
+      } catch (exception) {
+        setOutcomes(current => ({
+          ...current,
+          [scenario.id]: {status: 'ERROR', error: exception.message || 'Path request failed.'},
+        }));
+        throw exception;
+      }
+    });
+  }
+
+  return <section className="guided-demo">
+    <div className="guided-demo-hero">
+      <div><span className="eyebrow">NORTHSTAR COMMERCE · END-TO-END SCENARIOS</span>
+        <h2>Follow the enterprise digital thread</h2>
+        <p>Choose a journey to run its declared entrypoint-to-target path against the current authoritative graph. Results and API errors below come directly from the live service.</p>
+      </div>
+      <button className="secondary-button" onClick={() => run(loadScenarios)} disabled={busy}>Refresh scenario catalog</button>
+    </div>
+    {loadError && <div className="guided-demo-state error" role="alert"><strong>Scenario catalog unavailable</strong><span>{loadError}</span></div>}
+    {!catalog && !loadError && <div className="guided-demo-state" role="status"><span className="spinner"/><span>Loading scenarios from the local API…</span></div>}
+    {catalog && catalog.scenarios.length === 0 && <div className="guided-demo-state" role="status"><strong>No enterprise scenarios available</strong><span>The local API returned an empty scenario catalog.</span></div>}
+    {catalog && catalog.scenarios.length > 0 && <>
+      <div className="guided-demo-summary"><strong>{catalog.title}</strong><span>{catalog.scenarios.length} scenarios · dataset {catalog.dataset_id} v{catalog.version}</span><span>{catalog.description}</span></div>
+      <div className="guided-demo-grid">{catalog.scenarios.map((scenario, index) => {
+        const outcome = outcomes[scenario.id];
+        const pathState = scenario.expected_path_state || [];
+        return <article className="guided-scenario" key={scenario.id} data-testid={`scenario-${scenario.id}`}>
+          <div className="guided-scenario-heading"><span className="guided-scenario-number">{String(index + 1).padStart(2, '0')}</span><StatusPill status={scenario.ready ? 'READY' : 'DATA MISSING'}/></div>
+          <h3>{scenario.title}</h3>
+          <p className="guided-scenario-audience">{scenario.audience}</p>
+          <p>{scenario.story}</p>
+          <div className="guided-capabilities">{(scenario.capabilities || []).map(capability => <span key={capability}>{capability}</span>)}</div>
+          <details className="guided-path"><summary>Declared path · {scenario.expected_path?.length || 0} entities</summary>
+            <ol>{(scenario.expected_path || []).map((entityId, pathIndex) => <li key={entityId}><StatusPill status={pathState[pathIndex]?.available ? 'AVAILABLE' : 'MISSING'}/><code title={entityId}>{entityId}</code></li>)}</ol>
+          </details>
+          <button className="primary-button guided-run" onClick={() => executeScenario(scenario)} disabled={busy || outcome?.status === 'RUNNING'}>Run declared path <Icon name="arrow" size={16}/></button>
+          {outcome && <div className={`guided-outcome ${outcome.status.toLowerCase()}`} role="status" aria-label={`${scenario.title} result`}>
+            {outcome.status === 'RUNNING' ? <><span className="spinner"/>Running live path query…</> :
+              outcome.status === 'ERROR' ? <><strong>API error</strong><span>{outcome.error}</span></> :
+                <><strong>{outcome.response.paths?.length ? 'Path returned' : 'No path returned'}</strong>
+                  <pre>{JSON.stringify(outcome.response, null, 2)}</pre></>}
+          </div>}
+        </article>;
+      })}</div>
+    </>}
+  </section>;
 }
 
 function GraphLegend({nodes}) {
@@ -551,7 +640,7 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
 export default function App() {
   const [token, setToken] = useState(sessionStorage.getItem('eoip-token') || '');
   const [authenticated, setAuthenticated] = useState(false);
-  const [mode, setMode] = useState(location.pathname.startsWith('/admin') ? 'admin' : 'app');
+  const [mode, setMode] = useState(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/demo') ? 'demo' : 'app');
   const [lens, setLens] = useState('graph');
   const [collapsed, setCollapsed] = useState(false);
   const [stats, setStats] = useState(null);
@@ -589,8 +678,8 @@ export default function App() {
 
   useEffect(() => {fetch('/health/ready').then(response => setHealth(response.ok ? 'ready' : 'unavailable')).catch(() => setHealth('unavailable'));}, []);
   useEffect(() => {if (!authenticated) return; const timer = setInterval(() => refresh().catch(() => {}), 15000); return () => clearInterval(timer);}, [authenticated, token]);
-  useEffect(() => {const onPop = () => setMode(location.pathname.startsWith('/admin') ? 'admin' : 'app'); addEventListener('popstate', onPop); return () => removeEventListener('popstate', onPop);}, []);
+  useEffect(() => {const onPop = () => setMode(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/demo') ? 'demo' : 'app'); addEventListener('popstate', onPop); return () => removeEventListener('popstate', onPop);}, []);
 
   if (!authenticated) return <><Login token={token} setToken={setToken} onSubmit={login} busy={busy} health={health}/>{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</>;
-  return <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''}`}><Sidebar mode={mode} onNavigate={navigate} collapsed={collapsed} onToggle={() => setCollapsed(value => !value)} stats={stats}/><div className="workspace"><Topbar mode={mode} stats={stats} onRefresh={() => run(refresh)} onDisconnect={disconnect} busy={busy}/><main>{mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy}/> : <Admin stats={stats} system={system} jobs={jobs} api={api} run={run} refresh={refresh} busy={busy}/>}</main><footer><span>EOIP · Evidence-backed enterprise intelligence</span><span>Local-first · Read-only graph experience · Policy bounded</span></footer></div>{busy && <div className="busy-bar" aria-label="Operation in progress"><span/></div>}{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</div>;
+  return <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''}`}><Sidebar mode={mode} onNavigate={navigate} collapsed={collapsed} onToggle={() => setCollapsed(value => !value)} stats={stats}/><div className="workspace"><Topbar mode={mode} stats={stats} onRefresh={() => run(refresh)} onDisconnect={disconnect} busy={busy}/><main>{mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy}/> : mode === 'demo' ? <GuidedDemo api={api} run={run} busy={busy}/> : <Admin stats={stats} system={system} jobs={jobs} api={api} run={run} refresh={refresh} busy={busy}/>}</main><footer><span>EOIP · Evidence-backed enterprise intelligence</span><span>Local-first · Read-only graph experience · Policy bounded</span></footer></div>{busy && <div className="busy-bar" aria-label="Operation in progress"><span/></div>}{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</div>;
 }

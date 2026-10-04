@@ -1,0 +1,84 @@
+{
+  "captured_at": "2026-10-04T14:47:08.050764Z",
+  "event_id": "bb607188b8bb5666a99e9ac012a3be686c9693173a8a15621efe096c3008c41f",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-settlement-engine"
+        }
+      ],
+      "created": "2026-08-05T08:30:00.000+0000",
+      "customfield_10014": "EPC-103",
+      "customfield_10015": "Platform Engineering",
+      "description": "Build a real-time settlement processing engine to replace the legacy T+1 batch system. Enables instant merchant payouts and real-time balance reconciliation. This feature is under Epic EPC-103.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Feature",
+        "subtask": false
+      },
+      "labels": [
+        "settlement",
+        "real-time",
+        "reconciliation"
+      ],
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "subtasks": [
+        {
+          "fields": {
+            "status": {
+              "name": "In Progress"
+            },
+            "summary": "Build settlement batch processor"
+          },
+          "key": "PAY-301"
+        },
+        {
+          "fields": {
+            "status": {
+              "name": "To Do"
+            },
+            "summary": "Real-time balance reconciliation"
+          },
+          "key": "PAY-302"
+        }
+      ],
+      "summary": "Real-time Settlement Processing",
+      "updated": "2026-09-30T15:45:00.000+0000"
+    },
+    "id": "60300",
+    "key": "PAY-300",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60300"
+  },
+  "payload_hash": "76901e6959ea986176d1030c7d22828d75198c4811e4b8775ea8d940825de00e",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-300",
+  "source_system": "jira",
+  "source_version": "76901e6959ea986176d1030c7d22828d75198c4811e4b8775ea8d940825de00e"
+}

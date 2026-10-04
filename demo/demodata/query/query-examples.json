@@ -37,15 +37,15 @@
     {
       "id": "query-nl-trace",
       "type": "natural_language",
-      "query": "How is the HSM key rotation implemented in code?",
-      "description": "NL query interpreted as path query from PAY-202 to code symbols",
-      "expected_intent": "path_query"
+      "query": "Trace the implementation of PAY-202 in the graph.",
+      "description": "NL query interpreted as a traceability query anchored on PAY-202",
+      "expected_intent": "traceability"
     },
     {
       "id": "query-nl-impact",
       "type": "natural_language",
-      "query": "What would be affected if we change the PaymentService.process_payment function?",
-      "description": "NL query interpreted as impact analysis",
+      "query": "What is the impact of PAY-202?",
+      "description": "NL impact query anchored on the HSM key-rotation work item",
       "expected_intent": "impact_analysis"
     },
     {

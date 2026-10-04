@@ -1,0 +1,53 @@
+{
+  "captured_at": "2026-10-04T14:43:26.424055Z",
+  "event_id": "c74759deac0d93ca4da7abbadcb467cc50df14fbad16651db65a1aa71af51a97",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-fraud-engine"
+        }
+      ],
+      "created": "2026-08-25T14:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Set up the A/B testing framework for model versioning. Implement traffic splitting logic with configurable percentages per model version, metric collection per variant, and statistical significance calculation for experiment conclusions.",
+      "issuetype": {
+        "name": "Task"
+      },
+      "labels": [
+        "ab-testing",
+        "framework"
+      ],
+      "parent": {
+        "key": "FRD-103"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "status": {
+        "name": "To Do"
+      },
+      "summary": "A/B test framework setup",
+      "updated": "2026-09-30T10:00:00.000+0000"
+    },
+    "key": "FRD-131"
+  },
+  "payload_hash": "27a51b96c4d1513b2e9bad6c2565af507cbce761a21bb19ebdb54a03befc1480",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-131",
+  "source_system": "jira",
+  "source_version": "27a51b96c4d1513b2e9bad6c2565af507cbce761a21bb19ebdb54a03befc1480"
+}

@@ -1,0 +1,66 @@
+{
+  "captured_at": "2026-10-04T14:43:26.266012Z",
+  "event_id": "6e4407ec1725622b33c1004477d8d0c97b8c32930adc9ed1eaf9a2032b446b47",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-settlement-engine"
+        }
+      ],
+      "created": "2026-08-15T10:00:00.000+0000",
+      "customfield_10015": "Payment Services",
+      "description": "Build the reconciliation report generator that produces daily and on-demand settlement reconciliation reports showing matched, unmatched, and discrepant transactions.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "reporting",
+        "reconciliation"
+      ],
+      "parent": {
+        "key": "PAY-302"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "To Do",
+        "statusCategory": {
+          "name": "To Do"
+        }
+      },
+      "story_points": 5,
+      "summary": "Reconciliation report generator",
+      "updated": "2026-09-30T08:00:00.000+0000"
+    },
+    "id": "60321",
+    "key": "PAY-321",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60321"
+  },
+  "payload_hash": "7adeb5e619cfd4bb1661798bf9a5542d3005d1b06ae08856e3a63fa7ec1e7a54",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-321",
+  "source_system": "jira",
+  "source_version": "7adeb5e619cfd4bb1661798bf9a5542d3005d1b06ae08856e3a63fa7ec1e7a54"
+}

@@ -1,8 +1,9 @@
 # EOIP Automated Demo — Meridian Financial Services
 
-Runs the full EOIP demo walkthrough non-interactively against an in-memory graph store.
-Loads data from 13 source systems across two domains (Payment Gateway and Fraud Detection),
-constructs code graphs, processes crawler data, and validates all platform capabilities.
+The batch launcher starts the Docker Desktop services, waits for health checks, opens the
+interactive EOIP web UI, then runs automated validation in a console against an in-memory
+graph store. The automated validation loads demo data from 13 source systems across two
+domains, constructs code graphs, processes crawler data, and checks platform capabilities.
 
 ## Usage
 
@@ -10,7 +11,7 @@ constructs code graphs, processes crawler data, and validates all platform capab
 # Full demo — both domains + all capabilities
 .\demo\autodemo\run-demo.bat
 
-# Or run directly with Python
+# Run just the automated validation directly with Python (without starting Docker)
 .\.venv\Scripts\python.exe -m demo.autodemo.runner --verbose
 
 # Manual ingestion only (Payment Gateway / PAY domain)
@@ -21,6 +22,9 @@ constructs code graphs, processes crawler data, and validates all platform capab
 
 # Save results to JSON
 .\.venv\Scripts\python.exe -m demo.autodemo.runner --output demo/autodemo/results.json
+
+# Run without writing captures into the default data/autodemo directory
+.\demo\autodemo\run-demo.bat manual --quiet --data-dir .tmp\demo-run
 ```
 
 ## What it tests

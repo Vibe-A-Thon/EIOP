@@ -1,0 +1,61 @@
+{
+  "captured_at": "2026-10-04T14:47:08.150495Z",
+  "event_id": "edac9ed7d5f66d88d1b16394a1b19de5903e18b2d75a4d4a2ff9d08c78d88edd",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-fraud-engine"
+        }
+      ],
+      "created": "2026-08-15T09:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Core machine learning fraud scoring engine with real-time feature extraction, model versioning, and A/B testing. Serves fraud probability scores via gRPC to downstream transaction processing services.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuetype": {
+        "name": "Feature"
+      },
+      "labels": [
+        "ml-platform",
+        "fraud",
+        "q4-priority"
+      ],
+      "priority": {
+        "name": "Critical"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "ML Fraud Scoring Engine",
+      "updated": "2026-10-02T10:00:00.000+0000"
+    },
+    "key": "FRD-100"
+  },
+  "payload_hash": "b84acec0412112735f12212c880efad8d4da13c69dba5275a50ba8258eb381b4",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-100",
+  "source_system": "jira",
+  "source_version": "b84acec0412112735f12212c880efad8d4da13c69dba5275a50ba8258eb381b4"
+}

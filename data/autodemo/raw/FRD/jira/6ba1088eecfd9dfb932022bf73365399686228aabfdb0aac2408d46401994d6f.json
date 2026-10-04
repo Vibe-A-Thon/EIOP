@@ -1,0 +1,82 @@
+{
+  "captured_at": "2026-10-04T13:45:50.511263Z",
+  "event_id": "6ba1088eecfd9dfb932022bf73365399686228aabfdb0aac2408d46401994d6f",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-txn-monitor"
+        }
+      ],
+      "created": "2026-08-22T09:00:00.000+0000",
+      "customfield_10014": "EPC-202",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Build an anomaly detection system that identifies unusual transaction patterns using statistical methods (Z-score, isolation forests) and generates alerts with severity classification. Alerts published to 'mfs.alerts.txn' Kafka topic and persisted to mfs_fraud_db for case management.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "FRD-221"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        },
+        {
+          "outwardIssue": {
+            "key": "TC-FRD-005"
+          },
+          "type": {
+            "name": "is verified by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story"
+      },
+      "labels": [
+        "anomaly-detection",
+        "alerting",
+        "ml"
+      ],
+      "parent": {
+        "key": "FRD-200"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "reporter": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "Anomaly detection alert system",
+      "updated": "2026-10-02T11:00:00.000+0000"
+    },
+    "key": "FRD-202"
+  },
+  "payload_hash": "9cc781aadf653c4bd82335819bd0a7a414a07d6e621ae013c101575227c9bade",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-202",
+  "source_system": "jira",
+  "source_version": "9cc781aadf653c4bd82335819bd0a7a414a07d6e621ae013c101575227c9bade"
+}

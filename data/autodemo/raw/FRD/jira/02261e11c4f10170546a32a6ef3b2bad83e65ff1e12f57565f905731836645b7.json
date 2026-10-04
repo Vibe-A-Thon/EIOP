@@ -1,0 +1,90 @@
+{
+  "captured_at": "2026-10-04T13:45:50.511263Z",
+  "event_id": "02261e11c4f10170546a32a6ef3b2bad83e65ff1e12f57565f905731836645b7",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-fraud-engine"
+        }
+      ],
+      "created": "2026-08-16T10:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Implement the end-to-end model training and serving pipeline for fraud scoring. Includes data preprocessing, feature engineering, model training with XGBoost, and model export to ONNX format for serving. Pipeline must integrate with MLflow for experiment tracking. Deploys to mfs-fraud-pod-01 and mfs-fraud-pod-02 in mfs-prod namespace.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "FRD-111"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        },
+        {
+          "outwardIssue": {
+            "key": "FRD-112"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        },
+        {
+          "outwardIssue": {
+            "key": "TC-FRD-001"
+          },
+          "type": {
+            "name": "is verified by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story"
+      },
+      "labels": [
+        "ml-pipeline",
+        "model-training",
+        "fraud"
+      ],
+      "parent": {
+        "key": "FRD-100"
+      },
+      "priority": {
+        "name": "Critical"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "reporter": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "status": {
+        "name": "Done"
+      },
+      "summary": "Build fraud scoring model pipeline",
+      "updated": "2026-09-28T17:00:00.000+0000"
+    },
+    "key": "FRD-101"
+  },
+  "payload_hash": "ba7325a24db27c28cd4a765ab29655bff5311c347c2f356e8192cc7008596aed",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-101",
+  "source_system": "jira",
+  "source_version": "ba7325a24db27c28cd4a765ab29655bff5311c347c2f356e8192cc7008596aed"
+}

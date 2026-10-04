@@ -1,0 +1,105 @@
+{
+  "captured_at": "2026-10-04T14:43:26.265009Z",
+  "event_id": "c7144120c8ef47ae47736ae51ea08cad421462a43fb150ef3e9121b4e68a247a",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "dokoye",
+        "displayName": "David Okoye",
+        "emailAddress": "dokoye@mfs.com"
+      },
+      "comment": {
+        "comments": [
+          {
+            "author": {
+              "displayName": "Li Wei"
+            },
+            "body": "CHG0090201 approved as Normal change. Requires CAB review completed 2026-09-24. Deployment scheduled for 2026-09-26 maintenance window.",
+            "created": "2026-09-24T16:00:00.000+0000"
+          }
+        ]
+      },
+      "components": [
+        {
+          "name": "mfs-token-vault"
+        }
+      ],
+      "created": "2026-07-20T09:00:00.000+0000",
+      "customfield_10014": "EPC-102",
+      "customfield_10015": "Platform Engineering",
+      "customfield_10050": "TC-PAY-005",
+      "description": "Implement AES-256-GCM encryption for all cardholder data stored in mfs_payments_db on pghost-prod-01.mfs.internal. Uses svc-token-vault service account for key retrieval from HSM.\n\nAcceptance Criteria:\n- All PAN, CVV, and expiry data encrypted at rest\n- Encryption/decryption latency < 10ms\n- Key stored in HSM, never in application memory beyond transaction scope\n- Audit log for all decryption operations in mfs_audit_db\n\nGitLab MR: !401\nChange Request: CHG0090201\nTest Case: TC-PAY-005",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "MR !401: Encrypt cardholder data at rest"
+            },
+            "key": "MR-401"
+          },
+          "type": {
+            "name": "GitLab MR",
+            "outward": "is developed in"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Update DB encryption at rest"
+            },
+            "key": "PAY-211"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "encryption",
+        "pci-dss",
+        "data-at-rest"
+      ],
+      "parent": {
+        "key": "PAY-200"
+      },
+      "priority": {
+        "name": "Critical"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": "2026-09-26T22:00:00.000+0000",
+      "status": {
+        "name": "Done",
+        "statusCategory": {
+          "name": "Done"
+        }
+      },
+      "story_points": 8,
+      "summary": "Encrypt cardholder data at rest",
+      "updated": "2026-09-26T22:00:00.000+0000"
+    },
+    "id": "60201",
+    "key": "PAY-201",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60201"
+  },
+  "payload_hash": "2a2b054895c47540659be98a25946b6dc3ac558f2175d48e9bf423bfd1349b5a",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-201",
+  "source_system": "jira",
+  "source_version": "2a2b054895c47540659be98a25946b6dc3ac558f2175d48e9bf423bfd1349b5a"
+}

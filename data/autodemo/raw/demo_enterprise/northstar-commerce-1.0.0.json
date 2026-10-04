@@ -2,7 +2,7 @@
   "captured_at": "2026-10-04T08:19:18.281303Z",
   "event_id": "northstar-commerce-1.0.0",
   "metadata": {
-    "fixture_path": "Demo/demodata/enterprise/scenario-pack.json"
+    "fixture_path": "demo/demodata/enterprise/scenario-pack.json"
   },
   "payload": {
     "dataset_id": "northstar-commerce",

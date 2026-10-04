@@ -21,11 +21,11 @@ def load_demo(store, data_dir, project_root=None):
         Path(data_dir) / "dlq",
     )
     jira_result = jira.ingest(
-        json.loads((root / "Demo/demodata/core/jira/sample-jira.json").read_text(encoding="utf-8"))
+        json.loads((root / "demo/demodata/core/jira/sample-jira.json").read_text(encoding="utf-8"))
     )
-    metadata = json.loads((root / "Demo/demodata/core/gitlab/sample-gitlab.json").read_text(encoding="utf-8"))
+    metadata = json.loads((root / "demo/demodata/core/gitlab/sample-gitlab.json").read_text(encoding="utf-8"))
     git_result = RepositoryIngestionService(store, capture).ingest(
-        root / "Demo/demodata/core/demo-repo", metadata=metadata
+        root / "demo/demodata/core/demo-repo", metadata=metadata
     )
 
     enterprise_result = load_demo_scenario_pack(

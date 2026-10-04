@@ -9,13 +9,13 @@ COPY packages ./packages
 RUN pip install --no-cache-dir --no-deps .
 COPY apps ./apps
 COPY config ./config
-COPY Demo ./Demo
+COPY demo ./demo
 COPY schemas ./schemas
 COPY scripts ./scripts
-RUN git -C Demo/demodata/core/demo-repo init -b main && \
-    git -C Demo/demodata/core/demo-repo add . && \
+RUN git -C demo/demodata/core/demo-repo init -b main && \
+    git -C demo/demodata/core/demo-repo add . && \
     GIT_AUTHOR_DATE=2026-10-01T00:00:00Z GIT_COMMITTER_DATE=2026-10-01T00:00:00Z \
-    git -C Demo/demodata/core/demo-repo -c user.name='EOIP Demo' -c user.email=demo@example.invalid commit -m 'EOIP-1 implement impact calculation; EOIP-2 retain evidence' && \
+    git -C demo/demodata/core/demo-repo -c user.name='EOIP Demo' -c user.email=demo@example.invalid commit -m 'EOIP-1 implement impact calculation; EOIP-2 retain evidence' && \
     useradd --uid 10001 --create-home eoip && mkdir -p /data && chown -R eoip:eoip /data /opt/eoip
 USER eoip
 CMD ["python", "-m", "uvicorn", "apps.api.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
