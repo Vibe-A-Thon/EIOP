@@ -1,0 +1,1116 @@
+﻿{
+    "auditDate":  "2026-10-04",
+    "branch":  "feature/audit-evidence-foundation",
+    "head":  "e671ae884a11cd6cb2e4c6d11fcd90761326f5a9",
+    "scope":  "Git-tracked and untracked nonignored .md/.txt metadata; full content review bounded and incomplete",
+    "trackedNonignoredMarkdownTextCount":  153,
+    "untrackedNonignoredMarkdownTextCount":  1,
+    "safeContentReviewTargetCount":  153,
+    "completeReadCount":  22,
+    "partialReadCount":  1,
+    "notReadCount":  130,
+    "withheldContentCount":  1,
+    "ignoredRuntimeDocumentationMetadata":  {
+                                                "totalFiles":  639,
+                                                "totalBytes":  3631431,
+                                                "byLocation":  {
+                                                                   ".pytest_cache":  1,
+                                                                   ".venv":  94,
+                                                                   "apps":  543,
+                                                                   "test-results":  1
+                                                               },
+                                                "contentReviewed":  false
+                                            },
+    "excluded":  [
+                     {
+                         "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\KGR-requirements.md",
+                         "excluded":  true,
+                         "reason":  "Explicitly excluded by audit instructions; content and hashes not accessed."
+                     },
+                     {
+                         "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\KGR-implementation-plan.md",
+                         "excluded":  true,
+                         "reason":  "Explicitly excluded by audit instructions; content and hashes not accessed."
+                     }
+                 ],
+    "documents":  [
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\00-specification-audit-and-enhancements.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\01-project-vision.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\02-scope-and-objectives.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\03-functional-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\04-non-functional-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\05-system-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\06-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\07-component-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\08-deployment-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\09-data-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\10-enterprise-ontology.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\11-graph-schema.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\12-meta-graph-design.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\13-relationship-model.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\14-temporal-graph.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\15-provenance-lineage.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\16-identity-resolution.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\17-code-graph.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\18-ingestion-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\19-connector-framework.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\20-jira-connector-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\21-confluence-connector-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\22-gitlab-connector-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\23-servicenow-connector-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\24-file-web-connectors.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\25-query-engine-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\26-query-engine-implementation.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\27-ontology-validation.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\28-graph-quality.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\29-rag-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\30-agent-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\31-multi-agent-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\32-memory-engineering.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\33-context-engineering.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\34-loop-engineering.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\35-graph-engineering.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\36-harness-engineering.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\37-graph-over-loop.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\38-loop-over-graph.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\39-mcp-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\40-human-control-model.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\41-xai-explainability.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\42-web-user-ui-ux.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\43-admin-ui-ux.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\44-vscode-extension.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\45-api-specification.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\46-security-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\47-threat-model.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\48-data-privacy.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\49-local-ai-model-strategy.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\50-observability.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\51-performance.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\52-scalability.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\53-backup-restore.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\54-devsecops.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\55-testing-strategy.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\56-rag-agent-evaluation.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\57-graph-validation-test-plan.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\58-end-to-end-test-plan.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\59-docker-deployment.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\60-operational-runbook.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\61-demo-playbook.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\62-risk-register.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\63-assumptions.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\64-decisions-and-adrs.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\65-glossary.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\66-phase-roadmap.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\67-implementation-plan.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\68-project-structure.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\69-dependency-license-sbom.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\70-acceptance-criteria.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\71-research-and-verification-basis.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\72-requirement-traceability.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\73-architecture-diagrams.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\74-data-contracts.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\75-self-review-and-gap-closure.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\DOCUMENTATION-INDEX.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-implementation-plan.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\README.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\01-system-context.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\02-container-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\03-ingestion-pipeline.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\04-enterprise-graph-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\05-meta-graph.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\06-code-graph.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\07-cross-domain-relationship-graph.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\08-query-execution.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\09-graphrag.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\10-agent-runtime.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\11-multi-agent-orchestration.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\12-mcp-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\13-human-control-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\14-web-ui-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\15-vscode-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\16-deployment.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\diagrams\\17-mvp-e2e-flow.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\examples\\demo_documentation.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\gaps-implementation.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\gaps-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\gaps2-implementation.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\gaps2-requirements.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-agent-memory.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-codegraph.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-connectors.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-experience.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-foundation.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-ingestion.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-mcp.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-ontology-graph.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-query.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-rag.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-security-ops.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\implementation\\wp-validation.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\knowgridflow-product-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\source-master-prompt.txt",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "partial",
+                          "reason":  "Partial/truncated view ranges; complete coverage could not be established."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\README.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\agent_runbook.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\apps\\vscode-extension\\README.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\checklist.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\context.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\61-demo-playbook.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\adr-001-g2-contract-and-revision-model.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\application-audit-2026-10-02.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\benchmarking.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\connectors-github.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\connectors-gitlab.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\deep-agents-xai.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\demo-readiness-audit-2026-10-03.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\deployment-verification.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\docker-local.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\eoip-development-audit-2026-10-03.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\g2-traceability.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\gap-audit-2026-10-02.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\docs\\phase-completion-audit-2026-10-03.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\examples\\demo-enterprise\\README.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\examples\\demo-enterprise\\wiki\\checkout-latency-runbook.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\examples\\demo-enterprise\\wiki\\checkout-risk-architecture.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\examples\\demo-repo\\README.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\handoff_template.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\instruction.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\memory.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\onboarding_checklist.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\onboarding_prompts.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\roles.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\secrets.example\\README.md",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "not_read",
+                          "reason":  "Not reviewed in full before bounded audit stop."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\secrets.example\\api-token.txt",
+                          "tracked":  true,
+                          "completeRead":  false,
+                          "readStatus":  "withheld",
+                          "reason":  "Credential-example content intentionally not read or hashed."
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\tickets\\requirements-map.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\tickets\\ticket-20261004-001.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\tickets\\ticket-20261004-002.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\tickets\\ticket-20261004-003.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\tickets\\ticket-template.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\todo-status.md",
+                          "tracked":  true,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      },
+                      {
+                          "fullPath":  "F:\\code\\EOIP\\EIOP\\tickets\\ticket-20261004-004.md",
+                          "tracked":  false,
+                          "completeRead":  true,
+                          "readStatus":  "complete",
+                          "reason":  null
+                      }
+                  ]
+}

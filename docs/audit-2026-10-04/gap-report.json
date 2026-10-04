@@ -1,0 +1,558 @@
+{
+  "audit": {
+    "date": "2026-10-04",
+    "repository": "Vibe-A-Thon/EIOP",
+    "branch": "feature/audit-evidence-foundation",
+    "head": "e671ae884a11cd6cb2e4c6d11fcd90761326f5a9",
+    "persona": "QA Lead",
+    "mode": "read-only bounded documentation audit",
+    "implementationOrBehavioralVerificationPerformed": false,
+    "testsRun": false,
+    "parentReportedValidationAtArtifactUpdate": {
+      "validationWrapper": "restored",
+      "focusedRegression": {"outcomes": 45, "status": "passed"},
+      "ruff": {"status": "passed", "exitCode": 0},
+      "editorProblems": {"count": 0, "status": "none reported"},
+      "fullPytest": {
+        "status": "completed",
+        "exitCode": 0,
+        "outcomes": 1106,
+        "passed": 1091,
+        "skipped": 15,
+        "failed": 0,
+        "errors": 0,
+        "receipt": "test-results\\audit-phase1-regression.xml",
+        "sourceBound": false,
+        "sourceBoundReason": "Source edits occurred during the run."
+      },
+      "sourceBoundRerun": {
+        "status": "BLOCKED",
+        "reason": "Concurrent source edits make stable-source verification unavailable for this publication.",
+        "publicationDecision": "User selected publication of this tooling phase with focused checks; record full source-bound validation as blocked."
+      },
+      "ci": {
+        "workflow": ".github\\workflows\\validation-evidence.yml",
+        "yamlStructure": "checked",
+        "remoteRunObserved": false,
+        "status": "not verified"
+      },
+      "gitOwnershipGuards": {
+        "status": "verified by parent report",
+        "redTests": 2,
+        "green": true,
+        "protectedPaths": [".git metadata", "secrets", "KGR documents", "tracked paths"],
+        "failureFound": "Git metadata output destinations were writable when they should not have been."
+      },
+      "auditIndependentlyVerifiedTheseResults": false
+    },
+    "workflowBoundary": {
+      "requiredStop": "first-phase PR/review",
+      "prReviewPerformedByThisAudit": false,
+      "advanceBeyondFirstPhaseReview": false
+    },
+    "externalServicesUsed": false
+  },
+  "coverage": {
+    "eligibleMarkdownTextInventory": {
+      "trackedNonignored": 153,
+      "untrackedNonignored": 1,
+      "safeContentReviewTarget": 153,
+      "completelyRead": 22,
+      "partiallyRead": 1,
+      "notRead": 130,
+      "withheldCredentialExample": 1,
+      "excludedKgrDocuments": 2
+    },
+    "readVersusBehavior": {
+      "documentsCompletelyRead": 22,
+      "requirementsWithRuntimeBehaviorVerified": 0,
+      "mvpRowsAssessmentPending": 28,
+      "note": "A document being read or a requirement being present in documentation is not implementation or runtime evidence."
+    },
+    "identifierExtraction": {
+      "distinctExplicitLiteralIdentifiers": 627,
+      "byFamily": {
+        "FR": 67,
+        "NFR": 14,
+        "MVP-FR": 28,
+        "GAP": 286,
+        "G2": 232
+      },
+      "method": "Literal-token scan across the core FR/NFR/MVP catalogs, four legacy gap catalogs, and requirements map.",
+      "semanticReviewComplete": false,
+      "rangeAndWildcardShorthandsExpanded": false,
+      "note": "The four legacy GAP/G2 catalogs were not completely read. Their token counts are mechanical inventory only; no completion status is inferred from them."
+    },
+    "ignoredRuntimeDocumentation": {
+      "files": 639,
+      "bytes": 3631431,
+      "contentRead": false,
+      "locations": {
+        ".pytest_cache": 1,
+        ".venv": 94,
+        "apps": 543,
+        "test-results": 1
+      }
+    }
+  },
+  "statusDefinitions": {
+    "assessment_pending": "No adequate current implementation and acceptance evidence was reviewed; this is not a finding of absence.",
+    "verified": "Requires current, directly attributable evidence that the full criterion passes.",
+    "partial": "Requires current evidence that some, but not all, of the criterion is satisfied.",
+    "missing": "Requires adequate evidence that the capability is absent or fails its criterion."
+  },
+  "mvpStatusCounts": {
+    "verified": 0,
+    "partial": 0,
+    "missing": 0,
+    "assessment_pending": 28
+  },
+  "requirementAssessmentCounts": {
+    "coreCatalogDistinctIdsExtracted": 109,
+    "coreCatalogIdsAssessmentPending": 109,
+    "frAndNfrIdsAssessmentPending": 81,
+    "mvpIdsAssessmentPending": 28,
+    "legacyGapAndG2LiteralIdsScanned": 518,
+    "legacyGapAndG2IdsSemanticallyReviewed": 0,
+    "legacyGapAndG2IdsAwaitingReconciliation": 518,
+    "coreCatalogIdsVerified": 0
+  },
+  "mvpRequirements": [
+    {
+      "id": "MVP-FR-001",
+      "title": "Apache HugeGraph local Docker",
+      "parents": ["FR-GRAPH-001"],
+      "planTask": "T01",
+      "criterion": "Compose starts HugeGraph, persisted data survives restart, and the graph service is internal-only by default.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "68-73", "traceabilityCsvLine": 2},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "No Compose/runtime/network inspection or restart test was performed.",
+      "riskPriority": "P0",
+      "recommendedChange": "Inspect the Compose service and network bindings, then record a clean start, graph write/read, restart persistence, and host-port exposure check."
+    },
+    {
+      "id": "MVP-FR-002",
+      "title": "Automatic graph schema initialization",
+      "parents": ["FR-GRAPH-003"],
+      "planTask": "T02",
+      "criterion": "Fresh startup initializes the expected schema; repeat startup is idempotent.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "74-79", "traceabilityCsvLine": 3},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Schema code and fresh/repeat startup behavior were not inspected or executed.",
+      "riskPriority": "P0",
+      "recommendedChange": "Capture schema-manifest coverage and test clean initialization, repeat initialization, and incompatible-version failure without data loss."
+    },
+    {
+      "id": "MVP-FR-003",
+      "title": "Jira JSON ingestion",
+      "parents": ["FR-CONN-002"],
+      "planTask": "T03",
+      "criterion": "Synthetic Jira fixture imports Project/WorkItem/Person and evidence records with configurable mapping and per-record validation.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "80-85", "traceabilityCsvLine": 4},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Fixtures, importer behavior, mapping configuration, and rejection evidence were not reviewed.",
+      "riskPriority": "P0",
+      "recommendedChange": "Run the synthetic fixture through the configured mapper; assert expected vertices, provenance, malformed-record isolation, and repeat-import idempotency."
+    },
+    {
+      "id": "MVP-FR-004",
+      "title": "Git repository/GitLab ingestion",
+      "parents": ["FR-CONN-003", "FR-CONN-004"],
+      "planTask": "T04",
+      "criterion": "The local demo repository and GitLab-style MR/pipeline fixture produce linked repository, ref, commit, MR, and pipeline facts.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "86-91", "traceabilityCsvLine": 5},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "No connector, fixture, or persisted graph links were checked.",
+      "riskPriority": "P0",
+      "recommendedChange": "Ingest a temporary local repository and fixture, then verify commit-to-MR/pipeline/work-item links and their evidence without network access."
+    },
+    {
+      "id": "MVP-FR-005",
+      "title": "Code parsing",
+      "parents": ["FR-CODE-001", "FR-CODE-002"],
+      "planTask": "T05",
+      "criterion": "Python and TypeScript demo files produce symbols, source ranges, imports/calls, and dependency edges without LLM parsing.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "92-97", "traceabilityCsvLine": 6},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Parser implementation and golden fixtures were not reviewed or run.",
+      "riskPriority": "P0",
+      "recommendedChange": "Run language-specific golden parser fixtures and compare exact symbol names, source ranges, and statically resolvable import/call edges."
+    },
+    {
+      "id": "MVP-FR-006",
+      "title": "Canonical entity generation",
+      "parents": ["FR-INGEST-002", "FR-GRAPH-004"],
+      "planTask": "T06",
+      "criterion": "Every imported canonical entity has stable canonical_id; identical re-ingestion adds no logical duplicate.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "98-103", "traceabilityCsvLine": 7},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Identity generation and duplicate/collision behavior were not inspected or tested.",
+      "riskPriority": "P0",
+      "recommendedChange": "Compare canonical IDs and logical vertex/edge counts across two identical imports; add explicit collision and ambiguous-source cases."
+    },
+    {
+      "id": "MVP-FR-007",
+      "title": "Jira graph",
+      "parents": ["FR-ONTO-001", "FR-GRAPH-002"],
+      "planTask": "T07",
+      "criterion": "The Jira project/work-item subgraph is queryable with provenance.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "104-109", "traceabilityCsvLine": 8},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Graph contents and provenance traversal were not inspected.",
+      "riskPriority": "P1",
+      "recommendedChange": "Query fixture project/work-item nodes and trace at least one returned fact to its source event and ingestion run."
+    },
+    {
+      "id": "MVP-FR-008",
+      "title": "Code graph",
+      "parents": ["FR-CODE-001", "FR-CODE-004"],
+      "planTask": "T08",
+      "criterion": "Repository→file→symbol and code-dependency subgraphs are queryable with exact source locations.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "110-115", "traceabilityCsvLine": 9},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Graph query results and source-location mapping were not inspected.",
+      "riskPriority": "P0",
+      "recommendedChange": "Verify a persisted repository/file/function path and dependency edge, including revision, path, and exact line/column range."
+    },
+    {
+      "id": "MVP-FR-009",
+      "title": "Meta graph",
+      "parents": ["FR-GRAPH-005"],
+      "planTask": "T09",
+      "criterion": "Sources, runs, domains, schema/ontology versions, validation, and quality records are queryable as meta graph.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "116-121", "traceabilityCsvLine": 10},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Meta-graph schema, data, and statistics derivation were not audited.",
+      "riskPriority": "P1",
+      "recommendedChange": "Reconcile a completed ingestion run, source/domain/version records, graph statistics, and validation run against their persisted meta-graph values."
+    },
+    {
+      "id": "MVP-FR-010",
+      "title": "Cross-graph linking",
+      "parents": ["FR-GRAPH-006"],
+      "planTask": "T10",
+      "criterion": "The full demo path is traversable forward and reverse with evidence.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "122-127", "traceabilityCsvLine": 11},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "No persisted end-to-end graph path or edge evidence was reviewed.",
+      "riskPriority": "P0",
+      "recommendedChange": "Assert the ordered Jira→MR→commit→file→function→dependency→pipeline→documentation path and its reverse traversal from fixture-backed graph data."
+    },
+    {
+      "id": "MVP-FR-011",
+      "title": "Provenance",
+      "parents": ["FR-PROV-001", "FR-PROV-002"],
+      "planTask": "T11",
+      "criterion": "Cross-domain edges carry evidence and creation status; lineage reaches source capture and run.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "128-133", "traceabilityCsvLine": 12},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Evidence coverage and lineage endpoints were not measured.",
+      "riskPriority": "P0",
+      "recommendedChange": "Measure evidence coverage over all demo bridge edges and trace representative deterministic and inferred facts to source capture/run."
+    },
+    {
+      "id": "MVP-FR-012",
+      "title": "Graph validation",
+      "parents": ["FR-VALID-001", "FR-VALID-002"],
+      "planTask": "T12",
+      "criterion": "Seeded invalid data yields expected findings; hard-invalid edges are prevented or quarantined.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "134-139", "traceabilityCsvLine": 13},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "No validation rules, seeded invalid graph, or UI result was inspected or executed.",
+      "riskPriority": "P0",
+      "recommendedChange": "Seed invalid endpoint/domain/provenance cases; assert hard-gate mutation rejection or quarantine and reconcile persisted findings with the admin view."
+    },
+    {
+      "id": "MVP-FR-013",
+      "title": "Query API",
+      "parents": ["FR-QUERY-001", "FR-QUERY-006"],
+      "planTask": "T13",
+      "criterion": "Versioned REST APIs return real entity/search/query/evidence data and enforce query policy.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "140-145", "traceabilityCsvLine": 14},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "API contracts, result origin, and policy enforcement were not checked.",
+      "riskPriority": "P0",
+      "recommendedChange": "Exercise versioned API entity/search/path requests against persisted fixtures, then test depth, result, timeout, and relationship-policy boundaries."
+    },
+    {
+      "id": "MVP-FR-014",
+      "title": "Impact analysis query",
+      "parents": ["FR-QUERY-003"],
+      "planTask": "T14",
+      "criterion": "Changing the demo function yields the golden blast-radius set and evidence paths within configured bounds.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "146-151", "traceabilityCsvLine": 15},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "No golden impact query, path evidence, or bounds test was executed.",
+      "riskPriority": "P0",
+      "recommendedChange": "Run the golden directional impact case; compare exact result set, inclusion paths, cycle handling, and configured depth/result/time caps."
+    },
+    {
+      "id": "MVP-FR-015",
+      "title": "Path query",
+      "parents": ["FR-QUERY-002"],
+      "planTask": "T15",
+      "criterion": "Jira issue→function path matches the golden ordered vertex/edge sequence.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "152-157", "traceabilityCsvLine": 16},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "The expected path and current query behavior were not checked.",
+      "riskPriority": "P0",
+      "recommendedChange": "Execute known, unknown, and over-depth path cases and compare the demo result with the documented ordered golden sequence."
+    },
+    {
+      "id": "MVP-FR-016",
+      "title": "Search/query UI",
+      "parents": ["FR-UI-001"],
+      "planTask": "T16",
+      "criterion": "Search/query UI uses real APIs and displays an error state when the API is unavailable, never demo fallback data.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "158-163", "traceabilityCsvLine": 17},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "UI behavior, API binding, and failure state were not inspected or run.",
+      "riskPriority": "P1",
+      "recommendedChange": "Trace UI data to API responses, then stop the API and verify a visible error/degraded state with no canned domain answers."
+    },
+    {
+      "id": "MVP-FR-017",
+      "title": "Graph visualizer",
+      "parents": ["FR-UI-002"],
+      "planTask": "T17",
+      "criterion": "Visualizer renders bounded real subgraphs, typed edges, highlighted paths, and provenance.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "164-169", "traceabilityCsvLine": 18},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "No visual/API integration or result-bound behavior was reviewed.",
+      "riskPriority": "P1",
+      "recommendedChange": "Render a persisted demo path, inspect node/edge types and evidence affordances, and verify the server/client cap blocks over-expansion."
+    },
+    {
+      "id": "MVP-FR-018",
+      "title": "Admin ingestion/validation UI",
+      "parents": ["FR-ADMIN-001", "FR-ADMIN-002"],
+      "planTask": "T18",
+      "criterion": "Admin screens show actual ingestion status/counts, graph statistics, validation findings, and quality values.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "170-175", "traceabilityCsvLine": 19},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Admin screens and backend/meta-graph reconciliation were not audited.",
+      "riskPriority": "P1",
+      "recommendedChange": "Reconcile each displayed run/count/finding/quality value against API and graph records; confirm route separation is not treated as authorization."
+    },
+    {
+      "id": "MVP-FR-019",
+      "title": "VS Code extension",
+      "parents": ["FR-VSCODE-001", "FR-VSCODE-002"],
+      "planTask": "T19",
+      "criterion": "Opening the demo symbol retrieves Jira/commit/dependency/document/evidence context and exact source range.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "176-181", "traceabilityCsvLine": 20},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Extension-host behavior and exact source navigation were not exercised.",
+      "riskPriority": "P1",
+      "recommendedChange": "Run an extension-host test on the canonical demo symbol and assert context fields, offline behavior, and exact file/range navigation."
+    },
+    {
+      "id": "MVP-FR-020",
+      "title": "Local GraphRAG",
+      "parents": ["FR-RAG-001", "FR-RAG-002", "FR-RAG-003"],
+      "planTask": "T20",
+      "criterion": "GraphRAG retrieves graph/document evidence and citations; model-down mode returns structured evidence/fallback.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "182-187", "traceabilityCsvLine": 21},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Retrieval, citations, local model execution, model-down behavior, and true-inference evidence were not checked.",
+      "riskPriority": "P0",
+      "recommendedChange": "Run a golden grounded question with local inference enabled, verify citations against graph/source evidence, then stop the model and verify structured fallback."
+    },
+    {
+      "id": "MVP-FR-021",
+      "title": "Useful read-only agent workflow",
+      "parents": ["FR-AGENT-003"],
+      "planTask": "T21",
+      "criterion": "TraceImpactAgent answers the demo request using allowlisted read tools within execution budgets.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "188-193", "traceabilityCsvLine": 22},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Agent contract, tool registry, output evidence, and budget enforcement were not inspected or run.",
+      "riskPriority": "P0",
+      "recommendedChange": "Execute the demo workflow; capture tool allowlist/audit evidence, citations, budget-exhaustion behavior, and a negative write-tool registration check."
+    },
+    {
+      "id": "MVP-FR-022",
+      "title": "MCP core graph access",
+      "parents": ["FR-MCP-001", "FR-MCP-002"],
+      "planTask": "T22",
+      "criterion": "MCP exposes the same entity/path/impact/evidence semantics as REST and advertises no write tool.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "194-199", "traceabilityCsvLine": 23},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "MCP tool schemas, REST parity, and capability list were not inspected or run.",
+      "riskPriority": "P0",
+      "recommendedChange": "Compare MCP and REST results for the same fixture-backed path/impact requests and assert capability enumeration contains no mutation tools."
+    },
+    {
+      "id": "MVP-FR-023",
+      "title": "Logging",
+      "parents": ["NFR-OPS-001"],
+      "planTask": "T23",
+      "criterion": "Correlation-aware structured logs cover startup, ingestion, query, validation, RAG/agent, and failures without secrets.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "200-205", "traceabilityCsvLine": 24},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Logs, correlation propagation, and redaction tests were not inspected.",
+      "riskPriority": "P1",
+      "recommendedChange": "Capture representative success/failure logs across each workflow, trace a single correlation ID, and test secret/token redaction."
+    },
+    {
+      "id": "MVP-FR-024",
+      "title": "Metrics",
+      "parents": ["NFR-OPS-002"],
+      "planTask": "T24",
+      "criterion": "Machine-readable local metrics expose ingestion/query/model/agent/failure counters and latencies.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "206-211", "traceabilityCsvLine": 25},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "No metrics endpoint, series coverage, or optional-observability profile was checked.",
+      "riskPriority": "P1",
+      "recommendedChange": "Scrape the local metrics endpoint after representative workflows and verify required counters/latencies while confirming observability remains optional."
+    },
+    {
+      "id": "MVP-FR-025",
+      "title": "Backup",
+      "parents": ["NFR-REL-002"],
+      "planTask": "T25",
+      "criterion": "A checksummed graph/application backup artifact is generated from the demo environment.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "212-217", "traceabilityCsvLine": 26},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "Backup command, artifact contents, checksum, and failure semantics were not reviewed or executed.",
+      "riskPriority": "P0",
+      "recommendedChange": "Create a backup from populated demo data, verify manifest/checksum and required state coverage, and assert failures cannot produce success-shaped receipts."
+    },
+    {
+      "id": "MVP-FR-026",
+      "title": "Restore",
+      "parents": ["NFR-REL-002"],
+      "planTask": "T26",
+      "criterion": "Restore into a clean graph reproduces expected counts and golden path/impact queries.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "218-223", "traceabilityCsvLine": 27},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "No clean-target restore, count comparison, or post-restore query was executed.",
+      "riskPriority": "P0",
+      "recommendedChange": "Restore into a verified empty target; compare expected graph counts and rerun golden path/impact queries from the restored state."
+    },
+    {
+      "id": "MVP-FR-027",
+      "title": "Automated tests",
+      "parents": ["NFR-MAINT-001"],
+      "planTask": "T27",
+      "criterion": "Unit, contract, integration, security, and E2E suites execute locally and produce a report.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "224-229", "traceabilityCsvLine": 28},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "This audit ran no tests and inspected no test/source binding. Parent reports 45 focused regression outcomes passed, Ruff exit 0, no editor problems, and full pytest exit 0 with 1,091 passed, 15 skipped, zero failures/errors (1,106 outcomes; receipt test-results\\audit-phase1-regression.xml). Source edits occurred during the full run, so it is not source-bound. User selected focused-check publication; full source-bound validation is BLOCKED because concurrent source edits make stable-source verification unavailable. Workflow YAML structure was checked but no remote CI run was observed. These reported checks do not yet establish the complete test requirement.",
+      "riskPriority": "P0",
+      "recommendedChange": "After the parent completes wrapper restoration, run the required suite groups from a clean checkout and retain machine-readable reports with commit, environment, and command provenance."
+    },
+    {
+      "id": "MVP-FR-028",
+      "title": "End-to-end demo",
+      "parents": ["FR-GRAPH-006", "FR-AGENT-003"],
+      "planTask": "T28",
+      "criterion": "A documented clean-reset demo runs ingestion→graph→query→UI→VS Code→GraphRAG→MCP→backup/restore from persisted data.",
+      "source": {"path": "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md", "lines": "230-235", "traceabilityCsvLine": 29},
+      "status": "assessment_pending",
+      "implementationEvidence": [],
+      "limitation": "No clean-reset demonstration, cross-surface run, or restored-state demonstration was performed.",
+      "riskPriority": "P0",
+      "recommendedChange": "Run the canonical clean-reset demo in sequence, preserve outputs for each surface, and finish by restoring a backup and repeating the golden trace/impact checks."
+    }
+  ],
+  "broaderRequirementCoverage": {
+    "coreCatalogs": {
+      "sourceFiles": [
+        "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\03-functional-requirements.md",
+        "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\04-non-functional-requirements.md",
+        "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\MVP-requirements.md"
+      ],
+      "ids": {"FR": 67, "NFR": 14, "MVP-FR": 28},
+      "status": "assessment_pending",
+      "reason": "Requirements were extracted from the normative catalogs, but current implementation and full acceptance evidence were not reviewed."
+    },
+    "legacyGapAndG2Catalogs": {
+      "sourceFiles": [
+        "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\gaps-requirements.md",
+        "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\gaps-implementation.md",
+        "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\gaps2-requirements.md",
+        "F:\\code\\EOIP\\EIOP\\EOIP-engg-doc-pkg\\gaps2-implementation.md"
+      ],
+      "explicitLiteralIds": {"GAP": 286, "G2": 232},
+      "status": "assessment_pending",
+      "reason": "These documents were identifier-scanned but not read in full; do not interpret their contents as current findings or requirements without reconciliation."
+    }
+  },
+  "knownAcceptanceGates": [
+    {"gate": "Live integration behavior", "scope": "Jira/Git/GitLab fixtures are required for MVP; live on-prem adapters and other source integrations need separate evidence.", "status": "assessment_pending"},
+    {"gate": "Local model inference", "scope": "GraphRAG model-on inference and model-down structured fallback require separate proof; local/model capability is not established by configuration alone.", "status": "assessment_pending"},
+    {"gate": "Temporal behavior", "scope": "MVP stores temporal/version fields and current-state queries; point-in-time reconstruction, snapshots, and diffs are Phase 5, not present-tense truth.", "status": "assessment_pending"},
+    {"gate": "Native DR/RPO/RTO", "scope": "MVP backup/restore acceptance is distinct from enterprise disaster-recovery targets, HA, and measured RPO/RTO; roadmap hardening is later-phase.", "status": "assessment_pending"},
+    {"gate": "VS Code extension", "scope": "Required in P1 and must be verified in an extension host with exact symbol range/context.", "status": "assessment_pending"},
+    {"gate": "Offline package and SBOM", "scope": "Offline/restricted operation and SBOM/dependency/license outputs are explicit acceptance concerns; staging images/models is not proof of a clean offline run.", "status": "assessment_pending"},
+    {"gate": "Performance", "scope": "The stated dataset/hardware and latency/readiness thresholds are targets, not measured claims; no benchmark was run.", "status": "assessment_pending"}
+  ],
+  "ambiguitiesAndResolutions": [
+    {"topic": "No RBAC versus authentication", "resolution": "No MVP role matrix does not imply unauthenticated deployment. Preserve single-user/local authentication, network isolation, and the explicit rule that URL namespaces are not authorization boundaries."},
+    {"topic": "MVP read-only versus administrative mutation", "resolution": "User/agent/MCP graph operations remain read-only. Administrative ingestion, validation, backup, restore, and schema functions are explicit application operations; this does not authorize arbitrary Gremlin or agent writes."},
+    {"topic": "Temporal fields versus temporal truth", "resolution": "MVP temporal/version fields and current-state views are not a claim of live or point-in-time truth. Graph snapshots/diffs and temporal intelligence are Phase 5."},
+    {"topic": "Synthetic tenant examples versus product authorization", "resolution": "Do not infer tenant isolation or RBAC from synthetic multi-tenant/demo data; authentication and isolation requirements stand independently."},
+    {"topic": "Canonical Demo paths", "resolution": "Use the user-resolved casing: Demo\\demodata\\manual, Demo\\demodata\\pipelines, Demo\\script\\script.md, presentation.pptx, and Demo\\autodemo."},
+    {"topic": "Benchmark numbers", "resolution": "Record thresholds as acceptance targets only. They become claims only after measured results include dataset, hardware, version, and percentile."},
+    {"topic": "Provided Jira source material", "resolution": "No supplied real Jira schema is claimed as analyzed; fixtures remain synthetic until a real source schema is provided and mapped."},
+    {"topic": "GAP/G2 legacy catalogs", "resolution": "Identifier scan is not authority reconciliation. Preserve existing IDs, read each catalog fully, resolve duplicates/superseded proposals, and map scope/phase before treating a legacy gap as active."}
+  ],
+  "recommendedPhases": [
+    {"phase": "P0", "focus": "Source-bind the restored validation/evidence harness with a stable rerun, freeze authoritative contract choices, inventory the complete current requirements, and establish attributable baseline evidence.", "references": ["ticket-20261004-004", "MVP-implementation-plan.md", "67-implementation-plan.md"]},
+    {"phase": "P1-MVP", "focus": "Prove all 28 integrated vertical-slice acceptance rows from persisted HugeGraph data, including no-egress, safe read surfaces, extension, local GraphRAG, MCP, backup/restore, and documented demo.", "references": ["MVP-FR-001..028", "T01..T28", "66-phase-roadmap.md"]},
+    {"phase": "P2", "focus": "Confluence/ServiceNow connectors and explicit RDF/OWL/JSON-LD interoperability adapter.", "references": ["FR-CONF-001", "FR-SNOW-001", "FR-GRAPH-010"]},
+    {"phase": "P3", "focus": "Evaluate optional local embeddings/vector retrieval and advanced RAG strategies against a reproducible baseline.", "references": ["FR-RAG-006"]},
+    {"phase": "P4", "focus": "Add multi-agent workflows only where justified, bounded by P1 tool/runtime controls.", "references": ["Phase roadmap"]},
+    {"phase": "P5", "focus": "Add snapshots/diffs and historical/point-in-time graph intelligence without presenting snapshots as live truth.", "references": ["FR-TEMP-001", "Phase roadmap"]},
+    {"phase": "P6", "focus": "Introduce explicit human approval and governed write automation, retaining separate read/write tool registries.", "references": ["FR-AGENT-004", "FR-AGENT-005", "Phase roadmap"]},
+    {"phase": "P7", "focus": "Evaluate enterprise RBAC/SSO, HA, quotas, tenancy/isolation and operational DR/SLO requirements.", "references": ["Phase roadmap"]},
+    {"phase": "P8+", "focus": "Controlled self-modifying proposals only with governance, sandboxing, evaluation, approval, and rollback.", "references": ["FR-AGENT-005"]}
+  ],
+  "limitations": [
+    "Only 22 of 153 safe-content-review-target .md/.txt files were completely read; one additional file was partially read and 130 were not read.",
+    "secrets.example\\api-token.txt was counted by path only; its contents and hash were withheld.",
+    "EOIP-engg-doc-pkg\\KGR-requirements.md and EOIP-engg-doc-pkg\\KGR-implementation-plan.md were excluded entirely; both were already modified in the worktree and were not read, hashed, or relied upon.",
+    "Ignored runtime/vendor documentation was counted from metadata only (639 files, 3,631,431 bytes) and not content-reviewed.",
+    "No source implementation or tests were inspected for acceptance, and this audit ran no tests/build/runtime/deployment.",
+    "Parent-reported latest focused regression: 45 outcomes passed; Ruff exit 0; no editor problems. Two initially failing Git metadata tests exposed writable Git metadata output destinations; the wrapper now protects .git metadata as well as secrets, KGR documents, and tracked paths, and both Git metadata tests are green. Parent documentation report docs\\validation-evidence-phase1.md separately records exact commands and boundaries. User selected publication of this tooling phase with focused checks; full source-bound validation is BLOCKED because concurrent source edits make stable-source verification unavailable. Historic ordinary full pytest result remains exit 0 with 1,091 passes, 15 skips, zero failures/errors (1,106 outcomes; receipt test-results\\audit-phase1-regression.xml); it is not source-bound. The validation-evidence workflow YAML structure was checked, but no remote CI run was observed. This audit did not independently verify these results.",
+    "The mandatory first-phase PR/review stop has not been performed by this audit; do not proceed beyond that review gate.",
+    "Current historic audit receipts, demo materials, source code, and test artifacts were not used as a substitute for current acceptance evidence.",
+    "The 627-ID count is a literal-token count, not a complete semantic requirement extraction; range shorthands and unreviewed documents may contain additional IDs or conflicts."
+  ],
+  "nextAuditActions": [
+    "Read the remaining 130 safe inventoried documents fully in bounded ranges, recording exact completion state and recovering every truncation.",
+    "Read and reconcile all four GAP/G2 documents plus 67-implementation-plan.md and MVP-implementation-plan.md; expand ranges and map canonical IDs to phases, tasks, tests, and acceptance criteria.",
+    "Full source-bound validation is BLOCKED for this focused-check publication; reassess only when a stable source snapshot is available, then inspect wrapper/source bindings and receipt metadata and obtain an observed remote CI result if CI is required.",
+    "Complete and review the first-phase PR/review gate; stop there and do not advance to later phases without the required review outcome.",
+    "Run the broader approved acceptance set from clean persisted state only after explicit test authorization; capture reports for fixtures, true local inference/model-down mode, extension host, no-egress/offline packaging, backup/restore, and measured benchmarks.",
+    "Update each assessment_pending row only with directly attributable current evidence; use Partial/Missing only when the measured scope supports that conclusion."
+  ]
+}

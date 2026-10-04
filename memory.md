@@ -1,19 +1,31 @@
 # EOIP Coordination Memory
 
-**Last session timestamp**: 2026-10-04T11:32:50.8200737+05:30
-**Last processed ticket**: ticket-20261004-002
-**Last processed status**: Done
-**Last commit hash**: b54127245c7af1189082648c5bce9cc0e4579df7
+**Last session timestamp**: 2026-10-04T12:17:13.0324741+05:30
+**Last processed ticket**: ticket-20261004-004
+**Last processed status**: Blocked
+**Last commit hash**: e671ae884a11cd6cb2e4c6d11fcd90761326f5a9
 **Active role**: Senior Engineer
-**Active ticket**: none
+**Active ticket**: ticket-20261004-004
 **Next ticket**: ticket-20261004-003
-**Publication**: not requested
+**Publication**: pending approval (publication authorized; phase review required)
 
 Current snapshot: [context](context.md); queue: [todo-status](todo-status.md);
 workflow: [instruction](instruction.md); personas: [roles](roles.md).
 This is delivery/session memory, not the application's persisted agent memory.
 
 ## Session start and reconciliation
+
+2026-10-04T11:50:38.0317919+05:30: comprehensive audit resumed after complete
+coordination/ticket reads. Actual HEAD is e671ae884a11cd6cb2e4c6d11fcd90761326f5a9;
+startup tree was clean. QA Lead started ticket-20261004-003 and confirmed the
+validation wrapper remains empty. Senior Engineer accepted ticket-20261004-004
+for the first bounded implementation phase. User authorizes branches, commits
+and PRs, then requires stopping for review before the next phase.
+Branch feature/audit-evidence-foundation was created. Subsequently both excluded
+KGR files appeared dirty; preserve those unrelated changes without reading them.
+User chose canonical Demo directory casing. GitHub CLI is unauthenticated;
+GitHub MCP identifies the authenticated user, so publication alternatives remain
+to be checked without exposing credentials. No deployment or reset performed.
 
 2026-10-04T11:26:00.419+05:30 (user request timestamp): Senior Engineer began
 [ticket-20261004-002](tickets/ticket-20261004-002.md), scoped to reading and
@@ -72,7 +84,7 @@ Do not reuse the former sample PR #12 or import-test failure as verified facts.
 - Real role catalog changes from the preceding session are retained; current
   context links it rather than duplicating obsolete persona lines.
 
-## Latest handoff
+## Prior handoff - coordination packet
 
 --- HANDOFF START ---
 
@@ -106,3 +118,34 @@ Completion boundary: Coordination synchronization only; product/phase/release ce
 Append future populated blocks using [handoff_template](handoff_template.md);
 keep this section's heading on the newest block and rename older sections to
 dated history headings so the context link always targets the latest handoff.
+
+## Latest handoff
+
+--- HANDOFF START ---
+
+Timestamp: 2026-10-04T12:17:13.0324741+05:30
+Role: Senior Engineer
+Persona: You are the Senior Engineer. Resolve EOIP's cross-component defects at their root while preserving tested contracts and behavior.
+Repository root: F:\code\EOIP\EIOP
+Branch: feature/audit-evidence-foundation
+Last commit: e671ae884a11cd6cb2e4c6d11fcd90761326f5a9 (pre-publication observation)
+Working tree: Fifteen owned tooling/CI/audit/coordination files await explicit staging. Concurrent API/query/UI/test/specification changes and both excluded KGR documents are unrelated and preserved, not read for this phase or staged. No pre-existing staged files observed.
+Current ticket: ticket-20261004-004; Blocked
+Last worked ticket: ticket-20261004-004; Blocked
+Checks executed: `& .\.venv\Scripts\python.exe -X utf8 -m pytest -q tests\unit\test_validation_source_binding.py tests\unit\test_requirement_evidence.py --junitxml=test-results\audit-evidence-focused.xml` exit 0, 45 passed. `& .\.venv\Scripts\python.exe -m ruff check scripts\validate_with_evidence.py tests\unit\test_validation_source_binding.py` exit 0. `& .\.venv\Scripts\python.exe -X utf8 -m pytest -q --junitxml=test-results\audit-phase1-regression.xml` exit 0, 1,106 outcomes/1,091 passes/15 skips/no failures/errors; source edits overlapped, so not final source-bound. Initial missing-export reproduction exit 2; child-staged ownership and Git metadata reproductions each exit 1 with two failed tests before fixes. Editor problems reported none; CI YAML structure assertions exit 0. Owned whitespace check exit 0.
+Historical evidence: Earlier 1,109-outcome receipts remain dated and are not this run. See [phase test report](docs/validation-evidence-phase1.md) for local receipt paths, exact commands and boundaries. Ignored receipts are not committed or portable to a fresh checkout.
+Checks not executed: Final source-bound full regression, remote CI, live/UI/extension/model/native recovery/no-egress/performance acceptance and independent QA review.
+Blockers / approvals: User explicitly chooses focused-tested phase publication with full source binding Blocked by concurrent unrelated edits. Branch/commit/PR publication authorized; no merge, shared deployment, reset or external source/model access authorized. Review stop before another phase is mandatory.
+Next ticket / owner: ticket-20261004-003; QA Lead after phase review; ticket-20261004-004 needs stable-source/full CI evidence and independent verifier before Done.
+
+Next actions:
+1. Publish only the fifteen owned files on the phase branch against dev_local; record the actual commit/push/PR result and leave unrelated changes unstaged.
+2. Stop for phase review. Inspect CI when available, retaining failed/skipped distinctions; do not infer CI from local tests or workflow presence.
+3. After approval, complete the 130 unread and one partially read safe documents, semantically reconcile GAP/G2 identifiers and assess all 109 core IDs/all 28 MVP rows. Continue verified implementation/demo work only under owned tickets.
+
+Reproduction / validation commands: Focused commands above and [runbook](agent_runbook.md). Run the source-bound full command only against stable sources; no passing source-bound receipt exists for this phase yet.
+Deployment changes: none; optional CI only, no new mandatory runtime/cloud dependency.
+Publication: pending approval (review gate; user authorizes publication, not yet performed at this observation)
+Completion boundary: Wrapper/focused tests restored; partial JSON/Markdown audit persisted. 22 documents fully read, one partial, 130 unread; 109 core IDs and all 28 MVP rows assessment_pending. No full audit, application completion, demo deliverables or independent acceptance is claimed.
+
+--- HANDOFF END ---
