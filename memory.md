@@ -1,12 +1,12 @@
 # EOIP Coordination Memory
 
-**Last session timestamp**: 2026-10-04T12:31:12.2191665+05:30
+**Last session timestamp**: 2026-10-04T16:00:14+05:30
 **Last processed ticket**: ticket-20261004-003
 **Last processed status**: In Progress
-**Last commit hash**: cb36bb667d02323617010361e277b0d2f9880fd0
-**Active role**: QA Lead
+**Last commit hash**: 47bc8516d76031481c637780ddf8952ca865f2e1
+**Active role**: Senior Engineer
 **Active ticket**: ticket-20261004-003
-**Next ticket**: resolve ticket-20261004-004 blocker/review as needed, then scoped implementation tickets
+**Next ticket**: resolve ticket-20261004-004 publication/CI/review blocker as needed, then scoped implementation tickets
 **Publication**: not requested for this audit update; prior phase publication/review remains pending
 
 Current snapshot: [context](context.md); queue: [todo-status](todo-status.md);
@@ -115,6 +115,7 @@ Completion boundary: Coordination synchronization only; product/phase/release ce
 
 --- HANDOFF END ---
 
+
 Append future populated blocks using [handoff_template](handoff_template.md);
 keep this section's heading on the newest block and rename older sections to
 dated history headings so the context link always targets the latest handoff.
@@ -150,7 +151,7 @@ Completion boundary: Wrapper/focused tests restored; partial JSON/Markdown audit
 
 --- HANDOFF END ---
 
-## Latest handoff
+## Prior handoff - full documentation gap scan
 
 --- HANDOFF START ---
 
@@ -176,5 +177,63 @@ Reproduction / validation commands: Use agent_runbook.md. For this audit artifac
 Deployment changes: none
 Publication: not requested for this audit update; no commit/push/PR performed
 Completion boundary: Full allowed documentation scan and conservative gap artifact created. No requirement is marked Done; no code implementation, demo artifact generation, broad test suite, CI, deployment or independent acceptance was completed.
+
+--- HANDOFF END ---
+
+## Prior handoff - MVP gap implementation closure before extension rerun
+
+--- HANDOFF START ---
+
+Timestamp: 2026-10-04T14:15:04+05:30
+Role: Senior Engineer
+Persona: You are the Senior Engineer. Resolve EOIP's cross-component defects at their root while preserving tested contracts and behavior.
+Repository root: F:\code\EOIP\EIOP
+Branch: feature/audit-evidence-foundation
+Last commit: 47bc8516d76031481c637780ddf8952ca865f2e1 (pre-session observation; no commit performed by this session)
+Working tree: Untracked files preserved and not staged: data/, demo/, docs/audit-2026-10-04/mvp-gap-report.{json,md}, tests/e2e/test_restart_safe.py, tests/performance/test_benchmark_publication.py, tests/security/test_container_hardening.py, tests/security/test_no_egress.py, test-results receipts, apps/vscode-extension/.vscode-test/, apps/vscode-extension/test/runTest.js (pinned test-harness edit, this session). Tracked tree clean.
+Current ticket: ticket-20261004-003; In Progress
+Last worked ticket: ticket-20261004-003; In Progress
+Checks executed: attached gap reports (mvp-gap-report.md/json, gap-report.md/json, full-doc-gap-report.md/json) read and analyzed; all five active_gaps_for_implementation items verified resolved — `pytest -q tests/security/test_no_egress.py tests/security/test_container_hardening.py tests/e2e/test_restart_safe.py tests/performance/test_benchmark_publication.py` exit 0 (23 passed); `python demo/autodemo/runner.py` 10/10 passed in 3.84s; stable-source full regression `python -X utf8 -m scripts.validate_with_evidence --project-root . --output test-results/audit-source-bound-validation.json --artifact test-results/audit-full-regression.xml -- python -X utf8 -m pytest -q --junitxml=test-results/audit-full-regression.xml` exit 0, Validation PASS, 1,207 outcomes / 0 failures / 0 errors / 15 skipped, content-bound at HEAD 47bc851. Extension-host acceptance attempted three ways, all exit 9: @vscode/test-electron downloaded builds (unpinned 1.140.0 and pinned 1.96.4) and the system-installed "Code.exe" all reject extension-host CLI flags ("bad option" for every argument; `--version` prints only a bare Electron/Node version v20.18.1/v24.21.0 instead of version/commit/arch), proving no genuine VS Code Electron build is available in this environment. Harness hardened by pinning version 1.96.4 with VSCODE_EXECUTABLE override preserved.
+Historical evidence: prior receipts remain dated (see "Evidence observed, not rerun"); the new source-bound receipt supersedes the blocked state for stable-source validation only.
+Checks not executed: remote CI observation, independent phase review, Docker stack re-certification at current HEAD, live local-model inference (no model configured), live browser/visual re-check, publication.
+Blockers / approvals: no publication requested or performed in this session (working-tree persistence only); live source/model/network actions and PR publication still require explicit approval. Extension-host verification is environment-blocked, not code-blocked.
+Next ticket / owner: ticket-20261004-003 remains with QA Lead; ticket-20261004-004's stable-source blocker now has a PASS receipt, but remote CI and independent review remain pending before Done.
+Next actions:
+  1. Observe a remote CI run of .github/workflows/validation-evidence.yml and record the actual result.
+  2. Obtain independent phase review for ticket-20261004-004, then re-triage the 5 Partial / 2 Missing core FRs (verification-bound: extension host needs a real VS Code build; UI/visual needs a rendered browser pass; live model needs a configured local model).
+  3. Run `& .\scripts\docker.ps1 test` against current HEAD when Docker re-certification is authorized.
+Reproduction / validation commands: see agent_runbook.md; exact commands and results above.
+Deployment changes: none
+Publication: not requested; no commit/push/PR performed
+Completion boundary: Attached-report gap closure verified at the implementation level (28/28 MVP-FR, 14/14 NFR, 4/4 demo artifacts with code+tests); stable-source full regression PASS. Independent QA acceptance, live-environment verification and release certification remain open; the two KGR scope exclusions were preserved and were not read, audited or changed.
+
+--- HANDOFF END ---
+
+## Latest handoff
+
+--- HANDOFF START ---
+
+Timestamp: 2026-10-04T16:00:14+05:30
+Role: Senior Engineer
+Persona: You are the Senior Engineer. Resolve EOIP's cross-component defects at their root while preserving tested contracts and behavior.
+Repository root: F:\code\EOIP\EIOP
+Branch: feature/audit-evidence-foundation
+Last commit: 47bc8516d76031481c637780ddf8952ca865f2e1 (pre-session observation; no commit performed by this session)
+Working tree: Owned tracked edits include `apps/vscode-extension/test/runTest.js`, `checklist.md`, `context.md`, `memory.md`, `todo-status.md`, `tickets/requirements-map.md`, `tickets/ticket-20261004-003.md`, `tickets/ticket-20261004-004.md`, `docs/61-demo-playbook.md`, `docs/validation-evidence-phase1.md`, the audit Markdown under `docs/audit-2026-10-04/`, and `docs/audit-2026-10-04/mvp-gap-report.json`. Untracked owned implementation/evidence files include `demo/`, including `demo/autodemo/README.md` and `demo/script/presentation.pptx`, `data/autodemo/raw/`, active-gap tests under `tests/e2e`, `tests/performance`, `tests/security`, and test-result receipts. Additional tracked modifications observed outside this pass: `deploy/Dockerfile`, `packages/eoip/demo.py`, `packages/eoip/demo_scenarios.py`, `tests/e2e/test_clean_recovery.py` and `tests/e2e/test_enterprise_demo_scenarios.py`; preserve them for coordination. A failed presentation-tool setup left `.tmp/presentation-build/package.json`; cleanup was blocked by command policy. No staged files, commit, push or PR at this observation.
+Current ticket: ticket-20261004-003; In Progress
+Last worked ticket: ticket-20261004-003; In Progress
+Checks executed: Attached audit docs were read/analyzed for the requested MVP/Core FR scope. `& .\.venv\Scripts\python.exe -X utf8 -m pytest -q tests\security\test_no_egress.py tests\security\test_container_hardening.py tests\e2e\test_restart_safe.py tests\performance\test_benchmark_publication.py` exit 0, 23 passed. `& .\.venv\Scripts\python.exe -X utf8 -m demo.autodemo.runner --verbose --output test-results\autodemo-current.json` exit 0, 10/10 passed. `& .\.venv\Scripts\python.exe -X utf8 -m pytest -q tests\unit\test_kgr_ai_intelligence.py tests\unit\test_kgr_competitive_parity.py` exit 0, 53 passed. `npm --prefix apps\web run build` exit 0, Vite build succeeded with chunk-size warning only. `npm --prefix apps\vscode-extension test` initially failed exit 1 because `ELECTRON_RUN_AS_NODE=1` leaked into `Code.exe`; `apps/vscode-extension/test/runTest.js` now deletes that variable before `runTests`, and the rerun exits 0 with `test-results/extension-host-dca6d363-9f4f-4d23-964f-c4b2b6a92c1c.json` reporting PASS, 4 passed, 0 failed. Final source-bound full regression via `scripts.validate_with_evidence` exits 0 with Validation PASS, 1,207 outcomes / 1,192 passed / 15 skipped / zero failures/errors, receipts `test-results/audit-source-bound-validation.json` and `test-results/audit-full-regression.xml`. Presentation skill setup attempted via `setup_artifact_tool_workspace.mjs` exit 1 because the bundled `@oai/artifact-tool` package is missing; fallback generated `demo/script/presentation.pptx` as an Open XML PPTX, and ZIP/XML structural validation exits 0 with 5 slides, 12 XML parts and `zip_bad=None`. Documentation sync then updated the audit Markdown files, `docs/validation-evidence-phase1.md`, `checklist.md`, `context.md`, `docs/61-demo-playbook.md`, `tickets/ticket-20261004-003.md`, `demo/autodemo/README.md` and this memory file; `git diff --check` on those Markdown paths exited 0.
+Historical evidence: Prior receipts remain dated. The new source-bound receipt supersedes the previous local blocker for stable-source validation, but it is content-bound rather than revision-bound because the checkout has uncommitted files.
+Checks not executed: Remote CI observation, independent phase review, Docker stack re-certification at current HEAD, live local-model inference, live browser/admin visual re-check, artifact-tool visual render verification for the PPTX, production deployment, commit, push or PR.
+Blockers / approvals: No publication requested or performed in this pass. Ticket-20261004-004 remains Blocked only for remote CI/publication/independent review. Ticket-20261004-003 remains In Progress for live-environment and independent acceptance gates. The two KGR scope exclusions were preserved and were not read or changed.
+Next ticket / owner: ticket-20261004-003 remains with QA Lead for acceptance reconciliation; ticket-20261004-004 remains with Senior Engineer for publication/CI/review closure if approved.
+Next actions:
+  1. Observe a remote CI run of `.github/workflows/validation-evidence.yml` and record the actual result.
+  2. Obtain independent review for ticket-20261004-004 before marking it Done.
+  3. Run authorized live Docker/API/web/model checks if release acceptance is requested; keep fixture/local results separate from live acceptance.
+Reproduction / validation commands: Use `agent_runbook.md`; exact commands and receipt paths are recorded above and in `docs/audit-2026-10-04/mvp-gap-report.json`.
+Deployment changes: none
+Publication: not requested; no commit/push/PR performed
+Completion boundary: Requested MVP/Core FR P1-MVP active implementation gaps are locally closed and synchronized in the MVP report. This is not independent QA acceptance, remote CI proof, live deployment certification or full-roadmap completion.
 
 --- HANDOFF END ---

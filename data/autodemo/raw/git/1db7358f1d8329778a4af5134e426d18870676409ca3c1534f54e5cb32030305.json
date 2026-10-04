@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.463004Z",
+  "event_id": "1db7358f1d8329778a4af5134e426d18870676409ca3c1534f54e5cb32030305",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "386eed483192090ef38715fc151240310c67d0c4",
+    "message": "confluence and ServiceNow fixture acquisition and scheduler-admission parity"
+  },
+  "payload_hash": "ad06ce4e11c4c3f0daf1c7308e0e4309c1d089dedfb1c47fa6a62c45314e6485",
+  "schema_version": "1.0",
+  "source_record_id": "demo:386eed483192090ef38715fc151240310c67d0c4",
+  "source_system": "git",
+  "source_version": "ad06ce4e11c4c3f0daf1c7308e0e4309c1d089dedfb1c47fa6a62c45314e6485"
+}

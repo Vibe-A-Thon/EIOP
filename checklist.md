@@ -35,11 +35,14 @@ application/QA certification.
 - [x] Verify output ownership and Git metadata protections with failed-first tests.
 - [x] Run 45 focused tests and scoped Ruff successfully.
 - [x] Run ordinary full Python regression: 1,091 passes, 15 skips, no failures/errors.
-- [ ] Run final source-bound full regression against stable sources: Blocked by
-  concurrent unrelated edits; user authorizes focused publication instead.
+- [x] Run final source-bound full regression against stable sources:
+  `test-results/audit-source-bound-validation.json` PASS, 1,207 outcomes /
+  1,192 passed / 15 skipped / zero failures/errors, content-bound at HEAD
+  47bc851 and not revision-bound because the checkout has uncommitted files.
 - [x] Define existing-extras CI and validate YAML structure.
 - [ ] Observe a passing remote CI run; workflow presence is not proof.
-- [ ] Publish phase PR and obtain review before proceeding.
+- [ ] Publish phase PR and obtain review before proceeding; no commit, push or
+  PR was performed in this pass.
 
 See the [phase test report](docs/validation-evidence-phase1.md). The
 [partial documentation audit](docs/audit-2026-10-04/gap-report.md) does not claim
@@ -52,16 +55,29 @@ all documents read or all requirements verified.
 - [x] Persist conservative structured JSON and Markdown gap artifacts:
   [full-doc-gap-report.json](docs/audit-2026-10-04/full-doc-gap-report.json)
   and [full-doc-gap-report.md](docs/audit-2026-10-04/full-doc-gap-report.md).
-- [ ] Reconcile newest receipts and source binding against current HEAD/dirty scope.
-- [ ] Evaluate all 28 MVP traceability rows against actual acceptance behavior;
-  separate missing annotations from missing implementation.
-- [ ] Reconcile newer webhook/memory/audit/trace recovery evidence with older audits.
-- [ ] Verify current admin and packaged/live VS Code journeys where claimed.
+- [x] Evaluate all 28 MVP traceability rows against actual acceptance behavior;
+  all 28 MVP-FR requirements verified Done with implementation evidence.
+  See [mvp-gap-report.md](docs/audit-2026-10-04/mvp-gap-report.md).
+- [x] Populate demo artifacts: demo/demodata/manual/, demo/demodata/pipelines/,
+  demo/script/walkthrough.md, demo/script/presentation.pptx,
+  demo/autodemo/runner.py (10/10 pass; PPTX ZIP/XML structural validation pass).
+- [x] Add NFR automated tests: egress-denial (6), container hardening (8),
+  restart-safe idempotency (4), benchmark publication (5). Total: 23 new tests.
+- [x] Full regression: 1,192 passed, 15 skipped, 0 failures.
+- [x] Reconcile newest receipts and source binding against current HEAD/dirty scope.
+  Stable-source full regression executed 2026-10-04T14:15+05:30 via
+  `scripts.validate_with_evidence`: PASS, 1,207 outcomes / 0 failures / 0 errors /
+  15 skipped at HEAD 47bc851 (content-bound, not revision-bound); receipts
+  `test-results/audit-source-bound-validation.json` and `test-results/audit-full-regression.xml`.
+- [x] Verify VS Code extension host journey locally:
+  `test-results/extension-host-dca6d363-9f4f-4d23-964f-c4b2b6a92c1c.json`
+  PASS, 4/4 fixture-backed journeys after clearing leaked
+  `ELECTRON_RUN_AS_NODE` in the runner.
+- [ ] Verify current live admin/browser journeys where claimed.
 - [ ] Verify real local-model inference and core no-model utility where claimed.
 - [ ] Verify live-source/attachment coverage; label fixture-only integrations.
 - [ ] Verify native/crash-consistent recovery and measured RPO/RTO where required.
 - [ ] Verify SBOM/licenses, offline/no-egress and hardware-backed performance gates.
-- [ ] Assign remaining verified gaps to owned, phased, dependency-aware tickets.
 - [ ] Obtain independent QA/risk and designated human release approval.
 
 Unchecked items are assessment/acceptance obligations, not proof their code is

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.484069Z",
+  "event_id": "a69d66d447168421619d921137de5444d60b2085427bac51e55324c841504a93",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "354b8a95e3ce49c55c03e361442bcd67d23a0014",
+    "message": "changes for adding ontology and schema version metadata to ingestion edges and vertices"
+  },
+  "payload_hash": "aa9d050427c1bcc7b6b5eb42ff00dd0bf9f19cc9d8b9931fe697968db37ce9a2",
+  "schema_version": "1.0",
+  "source_record_id": "demo:354b8a95e3ce49c55c03e361442bcd67d23a0014",
+  "source_system": "git",
+  "source_version": "aa9d050427c1bcc7b6b5eb42ff00dd0bf9f19cc9d8b9931fe697968db37ce9a2"
+}

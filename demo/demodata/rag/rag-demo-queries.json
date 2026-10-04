@@ -1,0 +1,127 @@
+{
+  "description": "RAG capability demonstration queries — shows all 17 RAG patterns with expected routing and graph context.",
+  "version": "1.0.0",
+  "queries": [
+    {
+      "id": "rag-simple",
+      "pattern": "simple",
+      "question": "What is EOIP-1?",
+      "expected_strategy": "keyword_match_1hop_bfs",
+      "expected_anchors": ["urn:eoip:work:item:jira:EOIP-1"],
+      "note": "Simple factual lookup — keyword match finds the entity directly"
+    },
+    {
+      "id": "rag-advanced",
+      "pattern": "advanced",
+      "question": "Which code changes were made for the checkout risk decision feature?",
+      "expected_strategy": "query_expansion_reranking_filtering",
+      "expected_anchors": ["urn:eoip:work:item:jira:PAY-142", "urn:eoip:code:file:northstar:services/checkout/risk.py"],
+      "note": "Query expansion needed — 'checkout risk decision' maps to PAY-142 and related code"
+    },
+    {
+      "id": "rag-graph",
+      "pattern": "graph",
+      "question": "What are the major communities in the Northstar enterprise graph?",
+      "expected_strategy": "community_summarize_merge",
+      "note": "Whole-graph question — requires community detection and summarization"
+    },
+    {
+      "id": "rag-hybrid",
+      "pattern": "hybrid",
+      "question": "Find documentation and code related to risk timeout handling",
+      "expected_strategy": "vector_graph_bm25",
+      "note": "Multi-modality — combines graph traversal with text retrieval across code and docs"
+    },
+    {
+      "id": "rag-corrective",
+      "pattern": "corrective",
+      "question": "What tests cover the checkout API?",
+      "expected_strategy": "retrieve_evaluate_corrective",
+      "note": "May need corrective retrieval if initial results miss test cases in qTest"
+    },
+    {
+      "id": "rag-self",
+      "pattern": "self",
+      "question": "Explain the failure modes of the risk decision boundary",
+      "expected_strategy": "retrieve_generate_self_evaluate",
+      "note": "Self-RAG verifies its own answer against the architecture document"
+    },
+    {
+      "id": "rag-adaptive",
+      "pattern": "adaptive",
+      "question": "What is the status of PAY-142?",
+      "expected_strategy": "classify_route_simplest",
+      "note": "Adaptive RAG routes to the simplest sufficient strategy for a status lookup"
+    },
+    {
+      "id": "rag-agentic",
+      "pattern": "agentic",
+      "question": "Investigate the root cause of the checkout latency incident and trace it to the responsible code change",
+      "expected_strategy": "plan_execute_evaluate_iterate",
+      "note": "Open-ended investigation requiring multi-step planning and execution"
+    },
+    {
+      "id": "rag-multihop",
+      "pattern": "multihop",
+      "question": "Trace EOIP-1 from requirement through code to deployment",
+      "expected_strategy": "graph_path_traversal_nhop",
+      "note": "Multi-hop path traversal: WorkItem → Commit → File → Pipeline → Deployment"
+    },
+    {
+      "id": "rag-hyde",
+      "pattern": "hyde",
+      "question": "How does the platform ensure patient data security?",
+      "expected_strategy": "hypothetical_document_retrieval",
+      "note": "Abstract query — HyDE generates a hypothetical document to improve retrieval"
+    },
+    {
+      "id": "rag-conversational",
+      "pattern": "conversational",
+      "question": "Tell me about the checkout API. Now what services does it depend on?",
+      "expected_strategy": "session_memory_context_carry",
+      "note": "Multi-turn conversation — second question requires context from the first"
+    },
+    {
+      "id": "rag-multistep",
+      "pattern": "multistep",
+      "question": "List all incidents caused by deployment changes and the test cases that should have caught them",
+      "expected_strategy": "decompose_sequential_aggregate",
+      "note": "Compound question decomposed into: find incidents, find deployments, find test coverage"
+    },
+    {
+      "id": "rag-branched",
+      "pattern": "branched",
+      "question": "What evidence supports the risk decision design?",
+      "expected_strategy": "parallel_branches_merge_best",
+      "note": "Multiple retrieval paths: architecture docs, test results, design files, runbooks"
+    },
+    {
+      "id": "rag-multimodal",
+      "pattern": "multimodal",
+      "question": "Show the relationship between the Figma design and the implemented checkout code",
+      "expected_strategy": "graph_code_documentation_diagrams",
+      "note": "Cross-domain query spanning design, code, and work items"
+    },
+    {
+      "id": "rag-speculative",
+      "pattern": "speculative",
+      "question": "What would happen if the risk service went down permanently?",
+      "expected_strategy": "multiple_drafts_verify_select",
+      "note": "Speculative RAG generates multiple answer drafts and selects the best-evidenced one"
+    },
+    {
+      "id": "rag-modular",
+      "pattern": "modular",
+      "question": "Summarize the test coverage for the checkout risk feature including automated and manual tests",
+      "expected_strategy": "search_retrieve_rerank_compress_generate",
+      "note": "Custom pipeline: search → retrieve → rerank → compress → generate"
+    },
+    {
+      "id": "rag-of-rags",
+      "pattern": "rag_of_rags",
+      "question": "Give me a complete audit trail for release 2026.10.1 from requirement to production with all evidence",
+      "expected_strategy": "meta_route_aggregate_resolve",
+      "note": "Meta-RAG orchestrates multiple patterns to build a comprehensive audit trail"
+    }
+  ]
+}

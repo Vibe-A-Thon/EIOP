@@ -1,0 +1,157 @@
+{
+  "description": "Code graph represented as JSON — Northstar Checkout services. Demonstrates code-as-JSON ingestion for constructing a code graph without parsing source files.",
+  "repository": {
+    "repo_id": "northstar-checkout",
+    "name": "northstar-checkout",
+    "source_uri": "https://gitlab.example.invalid/northstar/checkout",
+    "default_branch": "main"
+  },
+  "files": [
+    {
+      "path": "services/checkout/risk.py",
+      "language": "python",
+      "content_hash": "northstar-risk-v2",
+      "line_count": 95
+    },
+    {
+      "path": "services/checkout/api.py",
+      "language": "python",
+      "content_hash": "northstar-api-v2",
+      "line_count": 68
+    },
+    {
+      "path": "services/checkout/fallback.py",
+      "language": "python",
+      "content_hash": "northstar-fallback-v1",
+      "line_count": 52
+    },
+    {
+      "path": "services/inventory/reservation.py",
+      "language": "python",
+      "content_hash": "northstar-reservation-v1",
+      "line_count": 88
+    },
+    {
+      "path": "services/payment/authorize.py",
+      "language": "python",
+      "content_hash": "northstar-payment-v1",
+      "line_count": 74
+    },
+    {
+      "path": "frontend/src/pages/Checkout.tsx",
+      "language": "typescript",
+      "content_hash": "northstar-checkout-page-v2",
+      "line_count": 310
+    },
+    {
+      "path": "frontend/src/components/RiskChallenge.tsx",
+      "language": "typescript",
+      "content_hash": "northstar-risk-challenge-v1",
+      "line_count": 145
+    }
+  ],
+  "symbols": [
+    {
+      "qualified_name": "services.checkout.risk.score_order",
+      "symbol_kind": "function",
+      "name": "score_order",
+      "path": "services/checkout/risk.py",
+      "start_line": 6,
+      "end_line": 18
+    },
+    {
+      "qualified_name": "services.checkout.risk.authorize_order",
+      "symbol_kind": "function",
+      "name": "authorize_order",
+      "path": "services/checkout/risk.py",
+      "start_line": 21,
+      "end_line": 42
+    },
+    {
+      "qualified_name": "services.checkout.api.create_order",
+      "symbol_kind": "function",
+      "name": "create_order",
+      "path": "services/checkout/api.py",
+      "start_line": 8,
+      "end_line": 32
+    },
+    {
+      "qualified_name": "services.checkout.fallback.safe_refuse",
+      "symbol_kind": "function",
+      "name": "safe_refuse",
+      "path": "services/checkout/fallback.py",
+      "start_line": 10,
+      "end_line": 28
+    },
+    {
+      "qualified_name": "services.checkout.fallback.emit_timeout_trace",
+      "symbol_kind": "function",
+      "name": "emit_timeout_trace",
+      "path": "services/checkout/fallback.py",
+      "start_line": 31,
+      "end_line": 52
+    },
+    {
+      "qualified_name": "services.inventory.reservation.ReservationService",
+      "symbol_kind": "class",
+      "name": "ReservationService",
+      "path": "services/inventory/reservation.py",
+      "start_line": 12,
+      "end_line": 88
+    },
+    {
+      "qualified_name": "services.inventory.reservation.ReservationService.reserve",
+      "symbol_kind": "method",
+      "name": "reserve",
+      "path": "services/inventory/reservation.py",
+      "start_line": 24,
+      "end_line": 52
+    },
+    {
+      "qualified_name": "services.payment.authorize.authorize_payment",
+      "symbol_kind": "function",
+      "name": "authorize_payment",
+      "path": "services/payment/authorize.py",
+      "start_line": 10,
+      "end_line": 45
+    },
+    {
+      "qualified_name": "frontend.pages.Checkout",
+      "symbol_kind": "component",
+      "name": "Checkout",
+      "path": "frontend/src/pages/Checkout.tsx",
+      "start_line": 22,
+      "end_line": 310
+    },
+    {
+      "qualified_name": "frontend.components.RiskChallenge",
+      "symbol_kind": "component",
+      "name": "RiskChallenge",
+      "path": "frontend/src/components/RiskChallenge.tsx",
+      "start_line": 15,
+      "end_line": 145
+    }
+  ],
+  "dependencies": [
+    {"name": "httpx", "resolved": true, "language": "python"},
+    {"name": "fastapi", "resolved": true, "language": "python"},
+    {"name": "pydantic", "resolved": true, "language": "python"},
+    {"name": "structlog", "resolved": true, "language": "python"},
+    {"name": "react", "resolved": true, "language": "typescript"},
+    {"name": "@stripe/stripe-js", "resolved": true, "language": "typescript"}
+  ],
+  "edges": [
+    {"type": "CALLS", "from": "services.checkout.api.create_order", "to": "services.checkout.risk.authorize_order"},
+    {"type": "CALLS", "from": "services.checkout.risk.authorize_order", "to": "services.checkout.risk.score_order"},
+    {"type": "CALLS", "from": "services.checkout.api.create_order", "to": "services.checkout.fallback.safe_refuse"},
+    {"type": "CALLS", "from": "services.checkout.api.create_order", "to": "services.payment.authorize.authorize_payment"},
+    {"type": "CALLS", "from": "services.checkout.api.create_order", "to": "services.inventory.reservation.ReservationService.reserve"},
+    {"type": "CALLS", "from": "services.checkout.fallback.safe_refuse", "to": "services.checkout.fallback.emit_timeout_trace"},
+    {"type": "IMPORTS", "from": "services/checkout/api.py", "to": "fastapi"},
+    {"type": "IMPORTS", "from": "services/checkout/risk.py", "to": "httpx"},
+    {"type": "IMPORTS", "from": "services/checkout/fallback.py", "to": "structlog"},
+    {"type": "IMPORTS", "from": "services/payment/authorize.py", "to": "httpx"},
+    {"type": "IMPORTS", "from": "frontend/src/pages/Checkout.tsx", "to": "react"},
+    {"type": "IMPORTS", "from": "frontend/src/components/RiskChallenge.tsx", "to": "@stripe/stripe-js"}
+  ]
+}

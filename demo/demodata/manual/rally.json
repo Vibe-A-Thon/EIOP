@@ -1,0 +1,71 @@
+{
+  "QueryResult": {
+    "TotalResultCount": 5,
+    "Results": [
+      {
+        "ObjectID": 800100,
+        "FormattedID": "EPC1",
+        "Name": "HIPAA-Compliant Patient Portal",
+        "Description": "Deliver a fully HIPAA-compliant patient portal with secure records management, appointment booking, and provider communication.",
+        "ScheduleState": "In-Progress",
+        "PlanEstimate": 80.0,
+        "VersionId": "1",
+        "LastUpdateDate": "2026-10-01T09:00:00.000Z",
+        "Release": {"_refObjectName": "2026.Q4-HealthTech"},
+        "_type": "PortfolioItem/Epic"
+      },
+      {
+        "ObjectID": 800201,
+        "FormattedID": "F101",
+        "Name": "Patient records data layer with PHI encryption",
+        "Description": "Build the data layer that stores, encrypts, syncs and audits patient health information across services.",
+        "ScheduleState": "Accepted",
+        "PlanEstimate": 21.0,
+        "VersionId": "3",
+        "LastUpdateDate": "2026-09-29T16:00:00.000Z",
+        "Iteration": {"_refObjectName": "Sprint 26.39"},
+        "Release": {"_refObjectName": "2026.Q4-HealthTech"},
+        "_type": "PortfolioItem/Feature"
+      },
+      {
+        "ObjectID": 800202,
+        "FormattedID": "F102",
+        "Name": "Accessible appointment booking experience",
+        "Description": "WCAG 2.1 AA compliant appointment booking flow with calendar, time-slot selection, and confirmation.",
+        "ScheduleState": "In-Progress",
+        "PlanEstimate": 13.0,
+        "VersionId": "2",
+        "LastUpdateDate": "2026-10-03T11:00:00.000Z",
+        "Iteration": {"_refObjectName": "Sprint 26.40"},
+        "Release": {"_refObjectName": "2026.Q4-HealthTech"},
+        "_type": "PortfolioItem/Feature"
+      },
+      {
+        "ObjectID": 800301,
+        "FormattedID": "US501",
+        "Name": "Patient record sync with optimistic locking",
+        "Description": "Ensure all patient record updates use version-based optimistic locking to prevent race conditions.",
+        "ScheduleState": "Accepted",
+        "PlanEstimate": 5.0,
+        "VersionId": "4",
+        "LastUpdateDate": "2026-09-29T16:00:00.000Z",
+        "Iteration": {"_refObjectName": "Sprint 26.39"},
+        "Release": {"_refObjectName": "2026.Q4-HealthTech"},
+        "_type": "HierarchicalRequirement"
+      },
+      {
+        "ObjectID": 800302,
+        "FormattedID": "US502",
+        "Name": "Keyboard-navigable appointment calendar",
+        "Description": "Calendar date picker must be fully operable via keyboard with visible focus indicators and ARIA labels.",
+        "ScheduleState": "In-Progress",
+        "PlanEstimate": 3.0,
+        "VersionId": "1",
+        "LastUpdateDate": "2026-10-03T09:00:00.000Z",
+        "Iteration": {"_refObjectName": "Sprint 26.40"},
+        "Release": {"_refObjectName": "2026.Q4-HealthTech"},
+        "_type": "HierarchicalRequirement"
+      }
+    ]
+  }
+}

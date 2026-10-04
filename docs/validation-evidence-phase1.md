@@ -32,7 +32,7 @@ Git. Use the [runbook](../agent_runbook.md) to reproduce them.
 | Scoped Ruff | 0 | Both changed Python files passed | Console output |
 | Editor problems | n/a | No errors reported for the two Python files and CI YAML | Editor tool result |
 | CI YAML structure | 0 | Triggers, read-only permissions, Windows runner and always-upload step checked | In-process assertion output |
-| Final source-bound full regression | Blocked | Concurrent unrelated edits; user authorizes focused publication with this blocker recorded | None |
+| Final source-bound full regression | 0 | PASS: 1,207 outcomes, 1,192 passed, 15 skipped, zero failures/errors; content-bound at HEAD `47bc8516d76031481c637780ddf8952ca865f2e1`, not revision-bound because the checkout has uncommitted files | `test-results/audit-source-bound-validation.json`; `test-results/audit-full-regression.xml` |
 | Remote GitHub CI | Pending | Workflow added; no passing remote run observed | None yet |
 
 Exact focused command:
@@ -48,13 +48,19 @@ Exact ordinary full-regression command:
 & .\.venv\Scripts\python.exe -X utf8 -m pytest -q --junitxml=test-results\audit-phase1-regression.xml
 ```
 
-The ordinary full run overlapped source edits; it is not source-bound evidence
-for the final snapshot. Its 15 skipped checks are not passes. It also emitted an
-upstream Starlette/httpx deprecation warning and an intentional duplicate-ZIP
-fixture warning. Neither was suppressed or treated as a new product defect.
-Later API/query/UI/test/specification edits belong to other sessions and remain
-unstaged by this phase. The user chose focused publication rather than pausing
-those sessions for a final source-bound full rerun.
+Exact final source-bound full-regression command:
+
+```powershell
+& .\.venv\Scripts\python.exe -X utf8 -m scripts.validate_with_evidence --project-root . --output test-results\audit-source-bound-validation.json --artifact test-results\audit-full-regression.xml -- .\.venv\Scripts\python.exe -X utf8 -m pytest -q --junitxml=test-results\audit-full-regression.xml
+```
+
+The ordinary full run overlapped source edits; it remains historical evidence,
+not the final source-bound receipt. The later `scripts.validate_with_evidence`
+run supersedes that local blocker for source binding and records a content-bound
+PASS for the current dirty checkout. Its 15 skipped checks are not passes. It
+also emitted an upstream Starlette/httpx deprecation warning and an intentional
+duplicate-ZIP fixture warning. Neither was suppressed or treated as a new product
+defect.
 
 ## Coverage and limitations
 
@@ -64,9 +70,10 @@ HEAD changes, dirty-tree binding, missing/stale/fresh artifacts, old timestamps,
 output-path ownership, Git metadata refusal, case-insensitive protection, excluded-file non-reading,
 symlink non-dereferencing and post-command capture failure.
 
-No shared deployment, data reset, live external source, real model inference,
-native graph recovery, UI journey or extension-host verification was performed
-in this tooling phase. Author-executed tests are not independent QA approval.
+No shared deployment, data reset, live external source, real model inference or
+native graph recovery was performed in this tooling phase. A later MVP closure
+pass ran the web production build and VS Code extension-host journey, but those
+author-executed checks are still not independent QA approval.
 Before/after fingerprints do not detect transient edits reverted during a run.
 Dirty-tree content binding is not immutable revision certification, and fresh
 artifacts are not semantic acceptance or full requirement coverage.
@@ -78,8 +85,8 @@ other operating systems and repository-wide lint are outside this scoped check.
 
 ## Review stop
 
-Publish this bounded phase against the originating `dev_local` branch rather
-than including its unrelated history against `main`. Stop after the phase PR
-for review. Resume [ticket 003](../tickets/ticket-20261004-003.md) only after that
-gate; unread documentation, pending requirements, demo deliverables and later
-implementation phases must not be marked Completed by assumption.
+Publication and remote CI observation remain pending. Stop after the phase PR
+for review. [Ticket 003](../tickets/ticket-20261004-003.md) may use the local
+source-bound receipt as implementation evidence, but unread documentation,
+pending release gates and later implementation phases must not be marked
+Completed by assumption.

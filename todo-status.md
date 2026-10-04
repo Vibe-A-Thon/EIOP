@@ -6,22 +6,23 @@ P0-P3 are urgency priorities, not roadmap phases. ETAs are not agreed.
 
 | Ticket | Title | Priority | Status | Accountable role | Dependency / next action |
 |---|---|---|---|---|---|
-| [ticket-20261004-004](tickets/ticket-20261004-004.md) | Restore executable source-bound validation receipts | P1 | Blocked | Senior Engineer | 45 focused tests pass; user authorizes publication, but source-bound full regression is blocked by concurrent edits; CI/review pending |
-| [ticket-20261004-003](tickets/ticket-20261004-003.md) | Reconcile current MVP acceptance evidence and remaining gates | P1 | In Progress | QA Lead | Full allowed Markdown/text scan persisted; review 761 Partial/Missing extracted IDs, create scoped implementation tickets, then validate against stable sources |
+| [ticket-20261004-004](tickets/ticket-20261004-004.md) | Restore executable source-bound validation receipts | P1 | Blocked | Senior Engineer | Source-bound full regression now PASS locally; remote CI, publication and independent review pending |
+| [ticket-20261004-003](tickets/ticket-20261004-003.md) | Reconcile current MVP acceptance evidence and remaining gates | P1 | In Progress | QA Lead | MVP gap report active implementation gaps verified resolved locally; release/live/independent gates still pending |
 | [ticket-20261004-001](tickets/ticket-20261004-001.md) | Implement user import API endpoint and tests | P2 | Blocked | Product Manager | Unverified proposal; source/spec/code references do not exist; obtain a scope decision before implementation |
 | [ticket-20261004-002](tickets/ticket-20261004-002.md) | Synchronize EOIP coordination documents and ticket contracts | P1 | Done | Senior Engineer | Packet consistency verified; independent product acceptance not claimed |
 
 **Active ticket:** ticket-20261004-003. **Next ticket:** resolve ticket-20261004-004
-publication/review blocker as needed, then create scoped follow-up tickets from verified gaps.
+publication/CI/review blocker as needed, then create scoped follow-up tickets from verified gaps.
 Select the next dependency-ready ticket using [resume instructions](onboarding_prompts.md);
 change context's role/persona when actually starting it.
 
 ## Milestone boundaries
 
 - Coordination packet: scoped synchronization complete, not product completion.
-- Phase 1/MVP: implementation/evidence reconciliation pending in ticket-20261004-003.
-- Demo: prior bounded automated receipts exist; current deployment/journeys were
-  not re-certified by this tooling phase.
+- Phase 1/MVP: MVP gap-report implementation closure is locally verified; release
+  acceptance remains pending in ticket-20261004-003.
+- Demo: demo artifacts and automated demo were run locally; current deployed/live
+  journeys were not re-certified by this pass.
 - Release and full roadmap: not certified complete; no defensible total completion
   percentage is established here.
 

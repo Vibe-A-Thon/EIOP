@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.459359Z",
+  "event_id": "fc5b28811e9274e09b0c9e306446f0c866a9bb1522d2c810e68c5653b3b8c287",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "a5f7e417a0d7f9e2c8cd9226293e834b2bb9384b",
+    "message": "confluence body extraction and testing"
+  },
+  "payload_hash": "343d083d40a3ee311242172a77b4c5647d21dd8e4ece6b042a6c4880a7e23623",
+  "schema_version": "1.0",
+  "source_record_id": "demo:a5f7e417a0d7f9e2c8cd9226293e834b2bb9384b",
+  "source_system": "git",
+  "source_version": "343d083d40a3ee311242172a77b4c5647d21dd8e4ece6b042a6c4880a7e23623"
+}

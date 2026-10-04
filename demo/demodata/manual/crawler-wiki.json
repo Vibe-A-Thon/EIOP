@@ -1,0 +1,63 @@
+{
+  "description": "Mock crawled data from TechNova internal wiki and developer portal. Demonstrates the crawler capability for ingesting unstructured web content into the knowledge graph.",
+  "crawl_config": {
+    "source_system": "web_crawler",
+    "crawl_id": "technova-wiki-2026-10-04",
+    "seed_urls": [
+      "https://wiki.technova.example.invalid/patient-portal/",
+      "https://devportal.technova.example.invalid/apis/"
+    ],
+    "max_depth": 2,
+    "max_pages": 50,
+    "crawl_timestamp": "2026-10-04T06:00:00Z"
+  },
+  "pages": [
+    {
+      "url": "https://wiki.technova.example.invalid/patient-portal/architecture",
+      "title": "Patient Portal — Microservices Architecture",
+      "content_type": "text/html",
+      "last_modified": "2026-09-28T15:00:00Z",
+      "content_text": "The TechNova Patient Portal uses a microservices architecture with three core services: Patient Records API (manages demographics and PHI), Appointments API (scheduling and availability), and Notification Service (reminders). Services communicate via an internal event bus with exactly-once delivery semantics. All inter-service calls use mTLS. The Patient Records API owns the source of truth for all PHI data and enforces HIPAA access controls.",
+      "links_out": [
+        "https://wiki.technova.example.invalid/patient-portal/sync-design",
+        "https://wiki.technova.example.invalid/patient-portal/hipaa-controls"
+      ],
+      "metadata": {
+        "author": "Dr. Aisha Rahman",
+        "space": "Patient Portal",
+        "tags": ["architecture", "microservices", "hipaa"]
+      }
+    },
+    {
+      "url": "https://wiki.technova.example.invalid/patient-portal/sync-design",
+      "title": "Patient Records Sync — Event-Driven Design",
+      "content_type": "text/html",
+      "last_modified": "2026-09-29T16:00:00Z",
+      "content_text": "The sync service uses event-driven CQRS. Write operations go through the Patient Records API, which publishes domain events. Downstream consumers (Appointments, Billing) apply changes with optimistic locking. After the INC0050201 incident, all sync operations now carry a version field to prevent race conditions. The reconciliation job runs every 15 minutes to detect and correct any divergence.",
+      "links_out": [
+        "https://wiki.technova.example.invalid/patient-portal/architecture"
+      ],
+      "metadata": {
+        "author": "Kai Nakamura",
+        "space": "Patient Portal",
+        "tags": ["sync", "cqrs", "events", "incident-review"]
+      }
+    },
+    {
+      "url": "https://devportal.technova.example.invalid/apis/patient-records",
+      "title": "Patient Records API — Developer Guide",
+      "content_type": "text/html",
+      "last_modified": "2026-09-28T17:30:00Z",
+      "content_text": "The Patient Records API v2.1 provides CRUD operations for patient demographics, medical history, and appointments. Authentication uses OAuth 2.0 with SMART-on-FHIR scopes. All PHI fields are encrypted at rest using AES-256-GCM. Update operations require an If-Match header with the current record version for optimistic locking. Rate limit: 100 requests per minute per client. See the OpenAPI specification for full endpoint documentation.",
+      "links_out": [
+        "https://devportal.technova.example.invalid/apis/appointments",
+        "https://devportal.technova.example.invalid/apis/notifications"
+      ],
+      "metadata": {
+        "author": "TechNova Platform Team",
+        "space": "Developer Portal",
+        "tags": ["api", "patient-records", "developer-guide"]
+      }
+    }
+  ]
+}

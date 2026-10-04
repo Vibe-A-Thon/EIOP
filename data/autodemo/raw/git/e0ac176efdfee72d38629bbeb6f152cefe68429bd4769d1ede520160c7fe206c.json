@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.492132Z",
+  "event_id": "e0ac176efdfee72d38629bbeb6f152cefe68429bd4769d1ede520160c7fe206c",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "f5a2402c7a0ebdf199db28dfe1793aa944b136f8",
+    "message": "changes for new graph algorithms and centrality features"
+  },
+  "payload_hash": "1b61e3a21bd8ae4da02b516ec335f9a181c1f3fdeaff86690daba22cb1b7b5eb",
+  "schema_version": "1.0",
+  "source_record_id": "demo:f5a2402c7a0ebdf199db28dfe1793aa944b136f8",
+  "source_system": "git",
+  "source_version": "1b61e3a21bd8ae4da02b516ec335f9a181c1f3fdeaff86690daba22cb1b7b5eb"
+}

@@ -1,0 +1,60 @@
+{
+  "description": "Mock crawled data from Northstar developer portal and status page. Demonstrates the crawler capability for ingesting unstructured web content into the knowledge graph.",
+  "crawl_config": {
+    "source_system": "web_crawler",
+    "crawl_id": "northstar-devportal-2026-10-04",
+    "seed_urls": [
+      "https://devportal.northstar.example.invalid/apis/",
+      "https://status.northstar.example.invalid/"
+    ],
+    "max_depth": 2,
+    "max_pages": 50,
+    "crawl_timestamp": "2026-10-04T06:00:00Z"
+  },
+  "pages": [
+    {
+      "url": "https://devportal.northstar.example.invalid/apis/checkout",
+      "title": "Checkout API — Developer Guide",
+      "content_type": "text/html",
+      "last_modified": "2026-10-01T17:45:00Z",
+      "content_text": "The Checkout API creates and authorizes customer orders. It integrates with the Risk Decision API for fraud prevention and the Payment Authorization API for tokenized payments. All requests require OAuth 2.0 bearer authentication. Rate limit: 500 requests per minute. The POST /orders endpoint accepts an order payload and returns the authorization result with decision evidence. Timeout budget for the risk call is 250ms with one bounded retry.",
+      "links_out": [
+        "https://devportal.northstar.example.invalid/apis/risk",
+        "https://devportal.northstar.example.invalid/apis/payments"
+      ],
+      "metadata": {
+        "author": "Commerce Platform Team",
+        "space": "Developer Portal",
+        "tags": ["api", "checkout", "integration-guide"]
+      }
+    },
+    {
+      "url": "https://devportal.northstar.example.invalid/apis/risk",
+      "title": "Risk Decision API — Integration Guide",
+      "content_type": "text/html",
+      "last_modified": "2026-10-01T18:00:00Z",
+      "content_text": "The Risk Decision API v2 evaluates order risk using behavioral signals, account history, and device fingerprinting. It returns a score (0-100), an approve/review decision, and an array of contributing factors. The API does not receive or store card data. Consumers should implement a timeout fallback — the recommended budget is 250ms. Decision explanations are available via GET /v2/decisions/{id}/explain.",
+      "links_out": [
+        "https://devportal.northstar.example.invalid/apis/checkout"
+      ],
+      "metadata": {
+        "author": "Risk Engineering Team",
+        "space": "Developer Portal",
+        "tags": ["api", "risk", "fraud-prevention"]
+      }
+    },
+    {
+      "url": "https://status.northstar.example.invalid/checkout",
+      "title": "Checkout Service Status",
+      "content_type": "text/html",
+      "last_modified": "2026-10-02T09:30:00Z",
+      "content_text": "Checkout API: Operational. Last incident: INC0071042 on 2026-10-01 — checkout latency spike after risk service release. Duration: 52 minutes. Resolution: bounded fallback deployed via emergency change CHG0081088. Current uptime: 99.97% (30-day rolling). SLO target: 99.9%.",
+      "links_out": [],
+      "metadata": {
+        "author": "Commerce SRE",
+        "space": "Status Page",
+        "tags": ["status", "availability", "slo"]
+      }
+    }
+  ]
+}

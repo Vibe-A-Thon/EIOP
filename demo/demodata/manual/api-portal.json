@@ -1,0 +1,84 @@
+{
+  "services": [
+    {
+      "id": "svc-patient",
+      "name": "Patient Records API",
+      "version": "2.1.0",
+      "description": "CRUD operations for patient demographics, medical history, and PHI-encrypted records.",
+      "status": "production",
+      "updated_at": "2026-09-28T17:30:00Z"
+    },
+    {
+      "id": "svc-appointments",
+      "name": "Appointments API",
+      "version": "1.4.0",
+      "description": "Manages appointment scheduling, availability, and provider calendar integration.",
+      "status": "production",
+      "updated_at": "2026-10-01T10:00:00Z"
+    },
+    {
+      "id": "svc-notifications",
+      "name": "Notification Service API",
+      "version": "1.0.0",
+      "description": "Sends HIPAA-compliant appointment reminders via SMS and email. No PHI in message bodies.",
+      "status": "beta",
+      "updated_at": "2026-10-01T10:00:00Z"
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "ep-patient-get",
+      "service_id": "svc-patient",
+      "path": "/v2/patients/{patient_id}",
+      "method": "GET",
+      "description": "Retrieve patient record with PHI fields decrypted for authorized callers.",
+      "version": "2.1.0",
+      "updated_at": "2026-09-28T17:30:00Z"
+    },
+    {
+      "id": "ep-patient-put",
+      "service_id": "svc-patient",
+      "path": "/v2/patients/{patient_id}",
+      "method": "PUT",
+      "description": "Update patient record. Requires version header for optimistic locking.",
+      "version": "2.1.0",
+      "updated_at": "2026-09-29T12:00:00Z"
+    },
+    {
+      "id": "ep-patient-audit",
+      "service_id": "svc-patient",
+      "path": "/v2/patients/{patient_id}/audit-log",
+      "method": "GET",
+      "description": "Retrieve PHI access audit trail for a specific patient.",
+      "version": "2.1.0",
+      "updated_at": "2026-09-25T14:00:00Z"
+    },
+    {
+      "id": "ep-appt-create",
+      "service_id": "svc-appointments",
+      "path": "/v1/appointments",
+      "method": "POST",
+      "description": "Create a new appointment. Triggers sync to patient records service.",
+      "version": "1.4.0",
+      "updated_at": "2026-10-01T10:00:00Z"
+    },
+    {
+      "id": "ep-appt-slots",
+      "service_id": "svc-appointments",
+      "path": "/v1/providers/{provider_id}/slots",
+      "method": "GET",
+      "description": "List available appointment slots for a provider on a given date range.",
+      "version": "1.4.0",
+      "updated_at": "2026-09-20T09:00:00Z"
+    },
+    {
+      "id": "ep-notify-remind",
+      "service_id": "svc-notifications",
+      "path": "/v1/reminders",
+      "method": "POST",
+      "description": "Queue an appointment reminder. Message body contains only appointment time and location, no PHI.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-01T10:00:00Z"
+    }
+  ]
+}

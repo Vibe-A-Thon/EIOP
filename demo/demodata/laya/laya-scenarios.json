@@ -1,0 +1,46 @@
+{
+  "description": "LAYA (Local AI Yield Augmentation) capability demonstration — shows LLM-assisted enterprise knowledge analysis using existing local models.",
+  "version": "1.0.0",
+  "scenarios": [
+    {
+      "id": "laya-summarize-incident",
+      "capability": "incident_summary",
+      "question": "Summarize the checkout latency incident and its resolution",
+      "context_entities": ["urn:eoip:ops:incident:INC0012042", "urn:eoip:ops:change:CHG0031088"],
+      "expected_output_fields": ["summary", "root_cause", "resolution", "evidence_refs", "confidence"],
+      "fallback_mode": "structured_graph_summary"
+    },
+    {
+      "id": "laya-explain-decision",
+      "capability": "decision_explanation",
+      "question": "Why was the risk timeout fallback chosen over a rollback?",
+      "context_entities": ["urn:eoip:ops:change:CHG0031088", "urn:eoip:knowledge:kb:northstar:KB00192"],
+      "expected_output_fields": ["explanation", "alternatives_considered", "evidence_refs", "confidence"],
+      "fallback_mode": "evidence_chain_narrative"
+    },
+    {
+      "id": "laya-assess-readiness",
+      "capability": "release_readiness",
+      "question": "Is release 2026.10.1 ready for production?",
+      "context_entities": ["urn:eoip:cicd:release:northstar:2026.10.1"],
+      "expected_output_fields": ["verdict", "checklist", "blockers", "evidence_refs", "confidence"],
+      "fallback_mode": "structured_checklist"
+    },
+    {
+      "id": "laya-generate-runbook",
+      "capability": "runbook_generation",
+      "question": "Generate a runbook for handling patient data sync failures",
+      "context_entities": [],
+      "expected_output_fields": ["runbook", "steps", "related_entities", "confidence"],
+      "fallback_mode": "template_from_graph"
+    },
+    {
+      "id": "laya-risk-assessment",
+      "capability": "change_risk",
+      "question": "Assess the risk of deploying the async inventory reservation change",
+      "context_entities": [],
+      "expected_output_fields": ["risk_level", "factors", "mitigations", "evidence_refs", "confidence"],
+      "fallback_mode": "graph_dependency_analysis"
+    }
+  ]
+}

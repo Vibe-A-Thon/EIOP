@@ -186,7 +186,7 @@ The path from `EOIP-1` to `compute_impact` traverses:
 
 ## Enterprise sales scenarios
 
-The default demo job also loads the validated Northstar Commerce scenario pack at `examples/demo-enterprise/scenario-pack.json`. This is an executable corpus, not UI-only sample text. The live catalog endpoint reports readiness from persisted graph entities:
+The default demo job also loads the validated Northstar Commerce scenario pack at `demo/demodata/enterprise/scenario-pack.json`. This is an executable corpus, not UI-only sample text. The live catalog endpoint reports readiness from persisted graph entities:
 
 ```bash
 curl -H "Authorization: Bearer $TOKEN" \

@@ -1,0 +1,94 @@
+{
+  "grafana": {
+    "dashboards": [
+      {
+        "uid": "commerce-prod",
+        "title": "Commerce Production Overview",
+        "url": "/d/commerce-prod",
+        "version": 8,
+        "panels": [
+          {"title": "Checkout Request Rate", "type": "timeseries"},
+          {"title": "Risk Decision Latency p95", "type": "stat"},
+          {"title": "Payment Authorization Rate", "type": "timeseries"},
+          {"title": "Error Rate by Service", "type": "timeseries"},
+          {"title": "Inventory Reservation Queue Depth", "type": "gauge"}
+        ]
+      },
+      {
+        "uid": "checkout-slo",
+        "title": "Checkout SLO Dashboard",
+        "url": "/d/checkout-slo",
+        "version": 3,
+        "panels": [
+          {"title": "Availability SLI (99.9% target)", "type": "stat"},
+          {"title": "Latency SLI (p95 < 450ms)", "type": "stat"},
+          {"title": "Error Budget Remaining", "type": "gauge"},
+          {"title": "SLO Burn Rate", "type": "timeseries"}
+        ]
+      }
+    ]
+  },
+  "datadog": {
+    "monitors": [
+      {
+        "id": 8801,
+        "name": "Checkout p95 latency exceeds 450ms SLO",
+        "type": "metric alert",
+        "modified": "2026-10-01T18:12:00Z",
+        "created": "2026-08-01T09:00:00Z"
+      },
+      {
+        "id": 8802,
+        "name": "Risk decision timeout rate above 1%",
+        "type": "metric alert",
+        "modified": "2026-10-02T08:00:00Z",
+        "created": "2026-09-30T10:00:00Z"
+      },
+      {
+        "id": 8803,
+        "name": "Payment gateway error rate above 0.5%",
+        "type": "metric alert",
+        "modified": "2026-09-20T09:00:00Z",
+        "created": "2026-07-15T09:00:00Z"
+      },
+      {
+        "id": 8804,
+        "name": "Inventory reservation timeout > 200ms",
+        "type": "metric alert",
+        "modified": "2026-10-03T10:00:00Z",
+        "created": "2026-10-03T10:00:00Z"
+      }
+    ]
+  },
+  "kibana": {
+    "saved_objects": [
+      {
+        "id": "checkout-errors",
+        "type": "search",
+        "version": "WzU1LDNd",
+        "updated_at": "2026-10-01T18:15:00Z",
+        "attributes": {
+          "title": "Checkout Error Log Search"
+        }
+      },
+      {
+        "id": "risk-timeout-aggregate",
+        "type": "search",
+        "version": "WzU4LDNd",
+        "updated_at": "2026-10-01T18:15:00Z",
+        "attributes": {
+          "title": "Risk Decision Timeout Aggregate"
+        }
+      },
+      {
+        "id": "commerce-overview",
+        "type": "dashboard",
+        "version": "WzYwLDNd",
+        "updated_at": "2026-10-02T10:00:00Z",
+        "attributes": {
+          "title": "Commerce Application Dashboard"
+        }
+      }
+    ]
+  }
+}

@@ -14,9 +14,9 @@ from scripts.verify_restore import select_snapshot, verify_restored_snapshot
 def test_clean_demo_replay_and_complete_recovery(tmp_path):
     project = tmp_path / "project"
     root = Path(__file__).resolve().parents[2]
-    for directory in ("config/mappings", "examples/jira", "examples/gitlab", "examples/demo-repo"):
+    for directory in ("config/mappings", "Demo/demodata/core/jira", "Demo/demodata/core/gitlab", "Demo/demodata/core/demo-repo"):
         shutil.copytree(root / directory, project / directory, ignore=shutil.ignore_patterns(".git"))
-    repo = project / "examples" / "demo-repo"
+    repo = project / "Demo" / "demodata" / "core" / "demo-repo"
     for command in (
         ["init", "-b", "main"],
         ["add", "."],

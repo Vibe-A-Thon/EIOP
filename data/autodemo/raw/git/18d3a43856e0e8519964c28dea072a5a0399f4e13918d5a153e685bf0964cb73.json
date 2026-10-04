@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.455836Z",
+  "event_id": "18d3a43856e0e8519964c28dea072a5a0399f4e13918d5a153e685bf0964cb73",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "95535887a2529f11fda0fb298643c6672e1b6aef",
+    "message": "Confluence metadata handling, with new source metadata extraction, validation, and associated tests."
+  },
+  "payload_hash": "2acb7f111165412d53edd39cd1d0d100ad0ceea42b25e46aef89b34a08422819",
+  "schema_version": "1.0",
+  "source_record_id": "demo:95535887a2529f11fda0fb298643c6672e1b6aef",
+  "source_system": "git",
+  "source_version": "2acb7f111165412d53edd39cd1d0d100ad0ceea42b25e46aef89b34a08422819"
+}

@@ -17,6 +17,20 @@ Branch/HEAD: `feature/audit-evidence-foundation` / `cb36bb667d02323617010361e277
 - Missing: 653
 - Partial: 108
 
+## Post-Audit Reconciliation
+
+This generated scan remains a conservative documentation triage artifact from
+HEAD `cb36bb667d02323617010361e277b0d2f9880fd0`. A later MVP implementation
+evidence pass at HEAD `47bc8516d76031481c637780ddf8952ca865f2e1` is recorded in
+[mvp-gap-report.md](./mvp-gap-report.md): 28/28 MVP-FR, 62/62 Core FR P1-MVP,
+14/14 P1 NFR and 4/4 demo artifact groups are Done under code/test evidence.
+
+The rows below intentionally remain Partial/Missing under the stricter policy
+used by this full-document scan: no requirement is marked Done without full
+current acceptance and independent verification. Remote CI observation,
+independent review, live environment checks and broader GAP/G2 roadmap decisions
+remain outside this report.
+
 ## Ambiguities and Resolutions
 
 - **No RBAC versus authentication**: Preserve local authentication, secret hygiene, network isolation and audit; URL namespaces are not authorization.
@@ -24,7 +38,7 @@ Branch/HEAD: `feature/audit-evidence-foundation` / `cb36bb667d02323617010361e277
 - **Temporal fields versus point-in-time truth**: P1 temporal/version fields are current-state metadata; snapshots/diffs/as-of intelligence remain later phase until implemented and verified.
 - **Synthetic demo data versus enterprise tenancy**: Use multi-tenant demo data for scenario coverage only; do not claim product RBAC/tenant isolation from fixtures.
 - **Conflicting completion claims in historic audits**: Resolve against current HEAD, current tests, and independent acceptance receipts; historical green receipts remain dated evidence.
-- **Case-only Demo paths on Windows**: Use canonical Demo/demodata/manual, Demo/demodata/pipelines, Demo/script, and Demo/autodemo paths.
+- **Case-only demo paths on Windows**: Use canonical `demo/demodata/manual`, `demo/demodata/pipelines`, `demo/script`, and `demo/autodemo` paths.
 
 ## Highest Priority MVP Rows
 

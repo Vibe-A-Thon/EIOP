@@ -1,16 +1,16 @@
-**Persona**: You are the QA Lead. Own EOIP's independent validation coverage, requirement evidence and honest release/demo gates.
+**Persona**: You are the Senior Engineer. Resolve EOIP's cross-component defects at their root while preserving tested contracts and behavior.
 
 # EOIP Current Coordination Context
 
-**Snapshot timestamp**: 2026-10-04T12:31:12.2191665+05:30
-**Active role**: QA Lead
+**Snapshot timestamp**: 2026-10-04T14:44:54+05:30
+**Active role**: Senior Engineer
 **Repo root**: F:\code\EOIP\EIOP
 **Branch**: feature/audit-evidence-foundation
-**Last commit**: cb36bb667d02323617010361e277b0d2f9880fd0
+**Last commit**: 47bc8516d76031481c637780ddf8952ca865f2e1
 **Active ticket**: ticket-20261004-003
 **Last worked ticket**: ticket-20261004-003
 **Last worked status**: In Progress
-**Next ticket**: ticket-20261004-004 blocker resolution / phase review, then scoped implementation tickets
+**Next ticket**: ticket-20261004-004 publication/CI/review blocker, then scoped follow-up tickets
 **Next role**: QA Lead / Senior Engineer as assigned by ticket
 **Publication**: not requested for this audit update; prior phase publication/review remains pending
 
@@ -24,7 +24,7 @@ ticket-20261004-003. The allowed Markdown/text corpus was opened for a fresh
 structured scan, excluding the two KGR files and withholding secret-like example
 token content. The new full-document report is an audit artifact, not
 implementation or independent release acceptance.
-The user selected canonical `Demo\demodata`, `Demo\script` and `Demo\autodemo`
+The user selected canonical `demo\demodata`, `demo\script` and `demo\autodemo`
 paths because Windows cannot maintain three case-only root directories.
 No full application certification or primary deployment change is claimed.
 
@@ -58,13 +58,7 @@ Use the exact commands and approval/prerequisite classifications in
 Do not use generic `npm test`, `flake8`, fictitious shell scripts or assumed CI.
 
 Latest handoff and historical receipts: [memory](memory.md#latest-handoff).
-Historical author checks: 45 focused tests pass, scoped Ruff passes, and ordinary
-full Python regression has 1,106 outcomes (1,091 passed, 15 skipped, no failures
-or errors). The full run overlapped edits and is not source-bound. Final
-source-bound regression is Blocked by concurrent edits; the user explicitly
-authorizes focused publication with that limitation. Remote CI is pending. See the
-[phase test report](docs/validation-evidence-phase1.md). No UI/deployment/live
-readiness or whole-product acceptance was freshly certified.
+Stable-source full regression now PASS at HEAD 47bc851: 1,207 outcomes (1,192 passed, 15 skipped, zero failures/errors), receipt test-results/audit-source-bound-validation.json (content-bound, not revision-bound). All five active gaps from docs/audit-2026-10-04/mvp-gap-report are verified resolved (23 new NFR/security/e2e/performance tests pass; demo/autodemo 10/10). Demo script artifacts now include `demo/script/walkthrough.md` and `demo/script/presentation.pptx`; the PPTX passed ZIP/XML structural validation, while artifact-tool visual rendering is unavailable because the bundled package is missing locally. Web build passes, and VS Code extension host now passes locally after clearing a leaked ELECTRON_RUN_AS_NODE environment variable in the test runner: receipt test-results/extension-host-dca6d363-9f4f-4d23-964f-c4b2b6a92c1c.json records 4/4 journeys. Remote CI and independent review remain pending; no publication performed this session. See [phase test report](docs/validation-evidence-phase1.md).
 
 The fresh [full-document gap report](docs/audit-2026-10-04/full-doc-gap-report.md)
 and [structured JSON](docs/audit-2026-10-04/full-doc-gap-report.json) opened 156
@@ -77,22 +71,22 @@ dated bounded artifact.
 
 ## Working tree and next work
 
-- HEAD advanced during this session from `cbef5d392e3d395d1e9aeeac24b4ae67e55801b8`
-  to `cb36bb667d02323617010361e277b0d2f9880fd0` by another session. The new
-  commit message is "kgr changes and new export formats for interactive HTML and
-  graph report implemented"; this audit did not certify those changes.
-- Current unrelated dirty files observed: `apps/api/app.py`,
-  `tests/unit/test_kgr_ai_intelligence.py` and
-  `tests/unit/test_kgr_competitive_parity.py`. Preserve them unstaged unless
-  their owner assigns them to this work.
-- This session owns only `docs/audit-2026-10-04/full-doc-gap-report.md`,
-  `docs/audit-2026-10-04/full-doc-gap-report.json` and synchronized
-  coordination/handoff edits.
+- HEAD observed for this pass is `47bc8516d76031481c637780ddf8952ca865f2e1`.
+  Recheck before resuming because local report/demo/test artifacts remain uncommitted.
+- Current owned dirty/untracked scope includes the VS Code extension test runner
+  environment fix, MVP report synchronization, demo artifacts, active-gap tests
+  and coordination updates. Additional tracked modifications observed outside
+  this pass: `deploy/Dockerfile`, `packages/eoip/demo.py`,
+  `packages/eoip/demo_scenarios.py`, `tests/e2e/test_clean_recovery.py` and
+  `tests/e2e/test_enterprise_demo_scenarios.py`; preserve them for coordination.
+  A failed presentation-tool setup left `.tmp/presentation-build/package.json`;
+  removal was blocked by command policy. No staged files were observed before
+  this handoff.
 - No branch switch/create, commit, push, PR, reset, shared deployment, dependency
-  install, live source/model access or broad test run was performed.
-- Next: review the full report, decide which Missing/Partial items are active for
-  the current phase, create scoped implementation tickets, and run stable
-  source-bound validation before any Done or release claim.
+  install, live source/model access or Docker reset was performed.
+- Next: observe remote CI and independent review for ticket-20261004-004, then
+  decide whether the broader full-document gap report items are current-phase
+  requirements or later-roadmap proposals.
 
 For exact queue/status see [todo-status](todo-status.md), gates see
 [checklist](checklist.md), and field-level handoff rules see

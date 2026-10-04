@@ -1,0 +1,173 @@
+{
+  "description": "Code graph represented as JSON — TechNova Patient Portal services. Demonstrates code-as-JSON ingestion for constructing a code graph without parsing source files.",
+  "repository": {
+    "repo_id": "technova-patient-portal",
+    "name": "technova-patient-portal",
+    "source_uri": "https://gitlab.example.invalid/technova/patient-portal",
+    "default_branch": "main"
+  },
+  "files": [
+    {
+      "path": "services/patient/sync_service.py",
+      "language": "python",
+      "content_hash": "healthtech-sync-v2",
+      "line_count": 142
+    },
+    {
+      "path": "services/patient/encryption.py",
+      "language": "python",
+      "content_hash": "healthtech-enc-v1",
+      "line_count": 87
+    },
+    {
+      "path": "services/patient/models.py",
+      "language": "python",
+      "content_hash": "healthtech-models-v1",
+      "line_count": 65
+    },
+    {
+      "path": "services/appointments/booking.py",
+      "language": "python",
+      "content_hash": "healthtech-booking-v1",
+      "line_count": 110
+    },
+    {
+      "path": "services/appointments/reminders.py",
+      "language": "python",
+      "content_hash": "healthtech-reminders-v1",
+      "line_count": 58
+    },
+    {
+      "path": "frontend/src/components/AppointmentCalendar.tsx",
+      "language": "typescript",
+      "content_hash": "healthtech-calendar-v3",
+      "line_count": 245
+    },
+    {
+      "path": "frontend/src/components/PatientRecordCard.tsx",
+      "language": "typescript",
+      "content_hash": "healthtech-record-card-v1",
+      "line_count": 120
+    }
+  ],
+  "symbols": [
+    {
+      "qualified_name": "services.patient.sync_service.SyncService",
+      "symbol_kind": "class",
+      "name": "SyncService",
+      "path": "services/patient/sync_service.py",
+      "start_line": 15,
+      "end_line": 142
+    },
+    {
+      "qualified_name": "services.patient.sync_service.SyncService.sync_record",
+      "symbol_kind": "method",
+      "name": "sync_record",
+      "path": "services/patient/sync_service.py",
+      "start_line": 28,
+      "end_line": 68
+    },
+    {
+      "qualified_name": "services.patient.sync_service.SyncService.reconcile",
+      "symbol_kind": "method",
+      "name": "reconcile",
+      "path": "services/patient/sync_service.py",
+      "start_line": 70,
+      "end_line": 105
+    },
+    {
+      "qualified_name": "services.patient.encryption.encrypt_phi",
+      "symbol_kind": "function",
+      "name": "encrypt_phi",
+      "path": "services/patient/encryption.py",
+      "start_line": 12,
+      "end_line": 35
+    },
+    {
+      "qualified_name": "services.patient.encryption.rotate_key",
+      "symbol_kind": "function",
+      "name": "rotate_key",
+      "path": "services/patient/encryption.py",
+      "start_line": 38,
+      "end_line": 65
+    },
+    {
+      "qualified_name": "services.patient.models.PatientRecord",
+      "symbol_kind": "class",
+      "name": "PatientRecord",
+      "path": "services/patient/models.py",
+      "start_line": 8,
+      "end_line": 45
+    },
+    {
+      "qualified_name": "services.patient.models.Appointment",
+      "symbol_kind": "class",
+      "name": "Appointment",
+      "path": "services/patient/models.py",
+      "start_line": 48,
+      "end_line": 65
+    },
+    {
+      "qualified_name": "services.appointments.booking.BookingService",
+      "symbol_kind": "class",
+      "name": "BookingService",
+      "path": "services/appointments/booking.py",
+      "start_line": 10,
+      "end_line": 110
+    },
+    {
+      "qualified_name": "services.appointments.booking.BookingService.create_appointment",
+      "symbol_kind": "method",
+      "name": "create_appointment",
+      "path": "services/appointments/booking.py",
+      "start_line": 22,
+      "end_line": 58
+    },
+    {
+      "qualified_name": "services.appointments.reminders.send_reminder",
+      "symbol_kind": "function",
+      "name": "send_reminder",
+      "path": "services/appointments/reminders.py",
+      "start_line": 8,
+      "end_line": 42
+    },
+    {
+      "qualified_name": "frontend.components.AppointmentCalendar",
+      "symbol_kind": "component",
+      "name": "AppointmentCalendar",
+      "path": "frontend/src/components/AppointmentCalendar.tsx",
+      "start_line": 18,
+      "end_line": 245
+    },
+    {
+      "qualified_name": "frontend.components.PatientRecordCard",
+      "symbol_kind": "component",
+      "name": "PatientRecordCard",
+      "path": "frontend/src/components/PatientRecordCard.tsx",
+      "start_line": 12,
+      "end_line": 120
+    }
+  ],
+  "dependencies": [
+    {"name": "cryptography", "resolved": true, "language": "python"},
+    {"name": "sqlalchemy", "resolved": true, "language": "python"},
+    {"name": "pydantic", "resolved": true, "language": "python"},
+    {"name": "httpx", "resolved": true, "language": "python"},
+    {"name": "react", "resolved": true, "language": "typescript"},
+    {"name": "@radix-ui/react-calendar", "resolved": true, "language": "typescript"}
+  ],
+  "edges": [
+    {"type": "CALLS", "from": "services.patient.sync_service.SyncService.sync_record", "to": "services.patient.encryption.encrypt_phi"},
+    {"type": "CALLS", "from": "services.patient.sync_service.SyncService.sync_record", "to": "services.patient.models.PatientRecord"},
+    {"type": "CALLS", "from": "services.patient.sync_service.SyncService.reconcile", "to": "services.patient.models.Appointment"},
+    {"type": "CALLS", "from": "services.appointments.booking.BookingService.create_appointment", "to": "services.patient.sync_service.SyncService.sync_record"},
+    {"type": "CALLS", "from": "services.appointments.reminders.send_reminder", "to": "services.patient.models.Appointment"},
+    {"type": "IMPORTS", "from": "services/patient/sync_service.py", "to": "cryptography"},
+    {"type": "IMPORTS", "from": "services/patient/sync_service.py", "to": "sqlalchemy"},
+    {"type": "IMPORTS", "from": "services/patient/encryption.py", "to": "cryptography"},
+    {"type": "IMPORTS", "from": "services/patient/models.py", "to": "pydantic"},
+    {"type": "IMPORTS", "from": "services/appointments/booking.py", "to": "httpx"},
+    {"type": "IMPORTS", "from": "frontend/src/components/AppointmentCalendar.tsx", "to": "react"},
+    {"type": "IMPORTS", "from": "frontend/src/components/AppointmentCalendar.tsx", "to": "@radix-ui/react-calendar"}
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.479778Z",
+  "event_id": "192d40fe8ac0fb695fb9e7106714bd766a3eafc6f40d5c5e1a49c4d8a6b98830",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "9a70e5a24c06722c60f0f97a57e5187db6a7fe27",
+    "message": "changes for adding benchmarking and bulk load tests"
+  },
+  "payload_hash": "3d375ddef90400ffce69d278ea6a054a3f7830e039f729841b775b4f23cad164",
+  "schema_version": "1.0",
+  "source_record_id": "demo:9a70e5a24c06722c60f0f97a57e5187db6a7fe27",
+  "source_system": "git",
+  "source_version": "3d375ddef90400ffce69d278ea6a054a3f7830e039f729841b775b4f23cad164"
+}
