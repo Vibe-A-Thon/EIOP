@@ -115,6 +115,30 @@ class NLQueryRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1024)
 
 
+class GraphMergePayload(BaseModel):
+    strategy: str = Field(default="union", pattern="^(union|intersection|diff)$")
+    vertices: list[dict] = Field(default_factory=list)
+    edges: list[dict] = Field(default_factory=list)
+
+
+class RAGQueryRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=2000)
+    pattern: str | None = None
+    context: dict = Field(default_factory=dict)
+
+
+class AgentQueryRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=2000)
+    agent_type: str | None = None
+    context: dict = Field(default_factory=dict)
+
+
+class EngineeringRequest(BaseModel):
+    discipline: str = Field(min_length=1, max_length=100)
+    query: str = Field(min_length=1, max_length=2000)
+    context: dict = Field(default_factory=dict)
+
+
 class JsonIngestionRequest(BaseModel):
     data: dict | list = Field(...)
     source_label: str = Field(default="json_upload", max_length=128)
@@ -1078,13 +1102,8 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         ]}
 
     # --- Phase 12: Cross-project graph merge ---
-    class MergeRequest(BaseModel):
-        strategy: str = Field(default="union", pattern="^(union|intersection|diff)$")
-        vertices: list[dict] = Field(default_factory=list)
-        edges: list[dict] = Field(default_factory=list)
-
     @app.post("/api/v1/graph/merge")
-    def graph_merge(payload: MergeRequest):
+    def graph_merge(payload: GraphMergePayload):
         added_v = 0
         added_e = 0
         skipped = 0
@@ -1114,11 +1133,6 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         return {"added_vertices": added_v, "added_edges": added_e, "skipped": skipped, "strategy": payload.strategy}
 
     # --- Phase 13: RAG query endpoint ---
-    class RAGQueryRequest(BaseModel):
-        query: str = Field(min_length=1, max_length=2000)
-        pattern: str | None = None
-        context: dict = Field(default_factory=dict)
-
     @app.post("/api/v1/rag/query")
     def rag_query(payload: RAGQueryRequest):
         from eoip.graph.rag_router import RAGRouter
@@ -1131,11 +1145,6 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         return {"patterns": [{"name": p.name, "description": p.description} for p in RAG_PATTERNS]}
 
     # --- Phase 13: Agent query endpoint ---
-    class AgentQueryRequest(BaseModel):
-        query: str = Field(min_length=1, max_length=2000)
-        agent_type: str | None = None
-        context: dict = Field(default_factory=dict)
-
     @app.post("/api/v1/agents/query")
     def agents_query(payload: AgentQueryRequest):
         from eoip.graph.agent_router import AgentRouter
@@ -1148,11 +1157,6 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         return {"types": [{"name": a.name, "category": a.category, "description": a.description} for a in AGENT_TYPES]}
 
     # --- Phase 13: Engineering discipline endpoints ---
-    class EngineeringRequest(BaseModel):
-        discipline: str = Field(min_length=1, max_length=100)
-        query: str = Field(min_length=1, max_length=2000)
-        context: dict = Field(default_factory=dict)
-
     @app.post("/api/v1/engineering/{discipline}")
     def engineering_execute(discipline: str, payload: EngineeringRequest):
         from eoip.graph.engineering import EngineeringRouter

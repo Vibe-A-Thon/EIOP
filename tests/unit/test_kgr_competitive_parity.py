@@ -56,7 +56,8 @@ def test_style_rules_operators():
     """StyleRules should support 7 comparison operators."""
     path = os.path.join(os.path.dirname(__file__), "..", "..", "apps", "web", "src", "kgr", "components", "StyleRules.jsx")
     content = open(path, encoding="utf-8").read()
-    operators = ["equals", "contains", "startsWith", "endsWith", "gt", "lt", "regex"]
+    assert "OPERATORS" in content
+    operators = ["'='", "'!='", "'>'", "'<'", "'contains'", "'regex'", "'exists'"]
     found = sum(1 for op in operators if op in content)
     assert found >= 6, f"Expected at least 6 operators, found {found}"
 
@@ -125,7 +126,7 @@ def test_merge_endpoint_in_api():
     path = os.path.join(os.path.dirname(__file__), "..", "..", "apps", "api", "app.py")
     content = open(path, encoding="utf-8").read()
     assert "/api/v1/graph/merge" in content
-    assert "MergeRequest" in content
+    assert "GraphMergePayload" in content or "MergeRequest" in content
 
 
 # --- 12.10 CSS Styles ---

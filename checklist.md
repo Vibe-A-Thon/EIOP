@@ -47,6 +47,11 @@ all documents read or all requirements verified.
 
 ## Product acceptance gates (ticket-20261004-003)
 
+- [x] Open/read the allowed source Markdown/text corpus for a full documentation
+  gap scan, excluding the two KGR files and withholding secret-like token content.
+- [x] Persist conservative structured JSON and Markdown gap artifacts:
+  [full-doc-gap-report.json](docs/audit-2026-10-04/full-doc-gap-report.json)
+  and [full-doc-gap-report.md](docs/audit-2026-10-04/full-doc-gap-report.md).
 - [ ] Reconcile newest receipts and source binding against current HEAD/dirty scope.
 - [ ] Evaluate all 28 MVP traceability rows against actual acceptance behavior;
   separate missing annotations from missing implementation.
@@ -62,3 +67,6 @@ all documents read or all requirements verified.
 Unchecked items are assessment/acceptance obligations, not proof their code is
 absent. See [requirements map](tickets/requirements-map.md) and
 [memory evidence notes](memory.md#evidence-observed-not-rerun) for bounded history.
+The full-document gap report extracted 761 IDs/requirement-like IDs: 108 Partial,
+653 Missing and zero Done under the conservative policy; those labels are audit
+triage and not independent product acceptance.
