@@ -474,6 +474,34 @@ function activate(context) {
     });
     if (token) await context.secrets.store('eoip-token', token);
   });
+  command('eoip.nlq', async question => {
+    question = question ?? await vscode.window.showInputBox({prompt: 'Ask a read-only graph question', value: 'What is the impact of PAY-202?'});
+    if (question === undefined) return;
+    if (typeof question !== 'string' || !question.trim()) throw codedError('EOIP_INVALID_QUESTION', 'Enter a non-empty question.');
+    const result = await call('/api/v1/query/nl', {question: question.trim()});
+    if (!result.interpretation) throw codedError('EOIP_INVALID_RESPONSE', 'NLQ returned no interpretation.');
+    await show(result);
+    return result;
+  });
+  command('eoip.mcp', async options => {
+    if (options === undefined) {
+      const tool = await vscode.window.showQuickPick(['search', 'jira_issue', 'code_symbol'], {placeHolder: 'Choose a read-only MCP tool'});
+      if (!tool) return;
+      const query = await vscode.window.showInputBox({prompt: 'Search text, Jira key, or qualified symbol', value: 'PAY-202'});
+      if (query === undefined) return;
+      options = {tool, arguments: tool === 'search' ? {q: query, limit: 5} :
+        tool === 'jira_issue' ? {issue_key: query} : {qualified_name: query}};
+    }
+    if (!options || typeof options.tool !== 'string' || !options.arguments || typeof options.arguments !== 'object' || Array.isArray(options.arguments)) {
+      throw codedError('EOIP_INVALID_MCP_ARGUMENTS', 'Provide an MCP tool and an arguments object.');
+    }
+    const token = await context.secrets.get('eoip-token');
+    if (!token) throw codedError('EOIP_AUTH_REQUIRED', 'Run EOIP: Set Access Token first.');
+    const {callTool} = require('./mcp-client');
+    const result = await callTool(vscode.workspace.getConfiguration('eoip').get('mcpUrl'), token, options.tool, options.arguments);
+    await show(result);
+    return result;
+  });
   command('eoip.search', async () => {
     const query = await vscode.window.showInputBox({prompt: 'Issue key, symbol, or source path'});
     if (query) {

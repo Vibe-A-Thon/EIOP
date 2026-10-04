@@ -7,7 +7,7 @@ not the former "Phase 1 Complete" template label.
 
 | Ticket | Title | Priority | Status | Accountable role |
 |---|---|---|---|---|
-| [ticket-20261004-005](tickets/ticket-20261004-005.md) | Make the complete enterprise demo runnable in the web UI and console | P1 | In Progress | Senior Engineer |
+| [ticket-20261004-005](tickets/ticket-20261004-005.md) | Make the enterprise demo runnable in web, console and VS Code | P1 | In Progress | Senior Engineer |
 | [ticket-20261004-004](tickets/ticket-20261004-004.md) | Restore executable source-bound validation receipts | P1 | Blocked | Senior Engineer |
 | [ticket-20261004-003](tickets/ticket-20261004-003.md) | Reconcile current MVP acceptance evidence and remaining gates | P1 | In Progress | QA Lead |
 | [ticket-20261004-001](tickets/ticket-20261004-001.md) | Implement user import API endpoint and tests | P2 | Blocked | Product Manager |
@@ -20,12 +20,18 @@ not the former "Phase 1 Complete" template label.
 - [x] Fix full console runner crawler-shape handling, loop truncation and failure accounting.
 - [x] Execute or explicitly mark unsupported query examples; do not count inventory as execution.
 - [x] Add focused runner and browser regression tests; run them and the web build.
+- [x] Wire full launcher to isolated visible VS Code source extension with NLQ and actual read-only MCP calls.
+- [x] Verify 3 live desktop steps, 5 fixture host journeys and 4 native protocol/driver tests.
+- [x] Verify launcher dry-run starts no services/windows and reads no secrets.
+- [ ] Rebuild/install VSIX only with separate approval; this pass used the source extension.
 - [ ] Hand off for independent QA; Docker-backed/live acceptance remains separate.
 
 Author-executed evidence: focused graph/demo Python regressions passed in this
-continuation; full console mode passed 104/106 checks with 2 explicit skips and
+prior continuation; full console mode passed 104/106 checks with 2 explicit skips and
 exit code 0. The guided-demo browser suite (5 tests) and web build passed in the
-prior implementation pass and were not rerun here. This is not independent QA.
+prior implementation pass and were not rerun here. Current VS Code evidence is
+in the [desktop validation report](demo/autodemo/runtime-validation-report.md).
+This is not independent QA.
 
 ## Coordination gate (ticket-20261004-002)
 

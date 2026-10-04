@@ -231,6 +231,21 @@ Expected: Incident → mfs-payment-gateway → CHG0090101 → Pipeline 9001 → 
 
 ## Part 6: AI-Assisted Analysis (5 min)
 
+### VS Code live segment (included in full auto-demo)
+
+Watch the separate isolated EOIP 0.1.0 development-host window. First the NLQ
+command asks for the live intent-to-runtime anchor's impact (Northstar PAY-142)
+and shows the resolved plan and live graph
+answer. Then the MCP command displays server/protocol metadata, discovered
+tools, search results and lineage. These are real authenticated calls to the
+local deployed services, not the console's in-memory graph.
+
+Use `node .\demo\autodemo\vscode-demo.js` to replay only this segment once the
+services and a ready intent-to-runtime scenario are available. Inspect the generated live-demo receipt.
+The window closes after three steps; each result pauses for 2.5 seconds.
+This demonstrates the updated source plugin, not installation of the old VSIX
+or model inference. See [prerequisites and boundaries](../autodemo/README.md).
+
 ### 6.1 RAG pattern routing (17 patterns)
 
 EOIP routes queries to the optimal RAG pattern based on intent classification:

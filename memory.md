@@ -1,9 +1,9 @@
 # EOIP Coordination Memory
 
-**Last session timestamp**: 2026-10-04T20:21:37.8018964+05:30
+**Last session timestamp**: 2026-10-04T21:05:25.5450404+05:30
 **Last processed ticket**: ticket-20261004-005
 **Last processed status**: In Progress
-**Last commit hash**: dea10fc1d0a4d5bb8923b253d5e2c4af723e1c6b
+**Last commit hash**: 776b55789b33aaf8403aff3bec8778d10eb35bfb
 **Active role**: Senior Engineer
 **Active ticket**: ticket-20261004-005
 **Next ticket**: ticket-20261004-003 QA acceptance work after the demo handoff
@@ -238,7 +238,7 @@ Completion boundary: Requested MVP/Core FR P1-MVP active implementation gaps are
 
 --- HANDOFF END ---
 
-## Latest handoff
+## Prior handoff - full console repair
 
 --- HANDOFF START ---
 
@@ -264,5 +264,34 @@ Reproduction / validation commands: `& 'F:\code\EOIP\EIOP\.venv\Scripts\python.e
 Deployment changes: none.
 Publication: not requested; no commit/push/PR performed.
 Completion boundary: The reproduced full-console RAG/LAYA/NLQ failures are fixed and verified locally; full console reports 104/106 with two unsupported query types explicitly skipped. Focused Python tests pass. This does not certify independent QA, Docker/live-stack behavior, the entire application or full roadmap.
+
+--- HANDOFF END ---
+
+## Latest handoff
+
+--- HANDOFF START ---
+
+Timestamp: 2026-10-04T21:05:25.5450404+05:30
+Role: Senior Engineer
+Persona: You are the Senior Engineer. Resolve EOIP's cross-component defects at their root while preserving tested contracts and behavior.
+Repository root: F:\code\EOIP\EIOP
+Branch: feature/audit-evidence-foundation
+Last commit: 776b55789b33aaf8403aff3bec8778d10eb35bfb (observed HEAD; no commit made)
+Working tree: Startup was clean at this newer HEAD, superseding prior dirty snapshots. Owned changes: apps/vscode-extension commands, MCP client, manifest, test runner/suites, demo module and README; demo/autodemo launcher, desktop driver, README and runtime-validation-report.md; demo/script/walkthrough.md; ticket-005, requirements-map, queue, checklist, context and memory. No staging or unrelated changes.
+Current ticket: ticket-20261004-005; In Progress
+Last worked ticket: ticket-20261004-005; In Progress
+Checks executed: `Set-Location apps\vscode-extension; npm.cmd test` exit 0: 4 native tests and 5 real-host fixture journeys, receipt test-results/extension-host-9a3d8608-f8a2-40b3-afcf-05e175194980.json. `node .\demo\autodemo\vscode-demo.js` exit 0: 3 visible live NLQ/MCP steps, receipt test-results/vscode-live-demo-0356a3be-5f5b-42aa-99b7-5fbcf0632012.json with exit_code 0. Full and manual batch dry-run exit 0; node --check desktop scripts and git diff --check exit 0. Editor diagnostics reported no errors in checked JavaScript. API/MCP health probes returned status ok. Bare docker and Program Files fallback failed; documented user-local docker.exe info succeeded, version 29.8.1. Node version v26.8.2.
+Historical evidence: Initial new fixture suite failed its old POST allowlist; fixed for explicit read-only NLQ/MCP endpoints. One intervening host launch exited 1 without assertion detail; final two host runs passed. First live run failed on absent PAY-202; live catalog/search proved ready PAY-142, so driver now discovers that scenario. Final two live runs passed. Cached VS Code emits mutex/N-API/API-proposal warnings. Prior console 104/106 and web/browser evidence was not rerun.
+Checks not executed: Full batch Docker rebuild/console path, full Python regression, web build/browser tests, installed VSIX test, manual prompt behavior, all desktop/product scenarios, local model inference, remote CI and independent QA.
+Blockers / approvals: User approved separate visible isolated profile, not regular-profile changes. No Docker/service mutation, network download, extension install, branch/commit/push/PR or excluded KGR work performed. Installed VSIX packaging/install and full rebuild path need separate authorization; QA verdict pending.
+Next ticket / owner: ticket-20261004-005 verifier QA Lead pending; then resume QA-owned ticket-20261004-003. Ticket-004's remote CI/publication blocker remains separate.
+Next actions:
+  1. Independently replay `node .\demo\autodemo\vscode-demo.js` and review live receipt/visible NLQ and MCP output.
+  2. With separate approval, rebuild/install the VSIX and verify installed-package behavior; source host is not installed-plugin certification.
+  3. Review full launcher deployment path and the eight web journeys under ticket-005; retain In Progress until verifier acceptance.
+Reproduction / validation commands: `npm.cmd --prefix apps\vscode-extension test`; `node .\demo\autodemo\vscode-demo.js`; `.\demo\autodemo\run-demo.bat --mode full --dry-run`. Prerequisites/boundaries in demo/autodemo/README.md; detailed evidence in runtime-validation-report.md.
+Deployment changes: none; existing live local API/MCP used read-only.
+Publication: not requested; no commit/push/PR performed.
+Completion boundary: Requested source-extension NLQ/MCP auto-demo implemented and verified against live local services. Normal profile untouched; isolated profiles cleaned. Not whole-application, installed-VSIX or independent QA acceptance.
 
 --- HANDOFF END ---

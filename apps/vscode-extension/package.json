@@ -15,6 +15,14 @@
   "contributes": {
     "commands": [
       {
+        "command": "eoip.nlq",
+        "title": "EOIP: Natural Language Query"
+      },
+      {
+        "command": "eoip.mcp",
+        "title": "EOIP: Read-only MCP Tool"
+      },
+      {
         "command": "eoip.setToken",
         "title": "EOIP: Set Access Token"
       },
@@ -58,6 +66,11 @@
     "configuration": {
       "title": "EOIP",
       "properties": {
+        "eoip.mcpUrl": {
+          "type": "string",
+          "default": "http://localhost:8001/mcp",
+          "description": "Local stateless JSON Streamable HTTP MCP endpoint."
+        },
         "eoip.apiUrl": {
           "type": "string",
           "default": "http://localhost:8000",
@@ -73,7 +86,7 @@
   },
   "scripts": {
     "package": "vsce package --allow-missing-repository --out /output/eoip-context-0.1.0.vsix",
-    "test": "node ./test/runTest.js"
+    "test": "node --test ./test/mcp-client.test.js ./test/demo-driver.test.js && node ./test/runTest.js"
   },
   "devDependencies": {
     "@vscode/test-electron": "^3.1.0",

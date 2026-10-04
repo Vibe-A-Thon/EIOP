@@ -16,9 +16,15 @@ set "VERBOSE=--verbose"
 set "OUTPUT_FILE="
 set "DATA_DIR="
 set "PYTHON="
+set "DRY_RUN="
 
 :parse_args
 if "%~1"=="" goto :find_python
+if /i "%~1"=="--dry-run" (
+    set "DRY_RUN=1"
+    shift
+    goto :parse_args
+)
 if /i "%~1"=="--mode" (
     if "%~2"=="" goto :invalid_args
     set "MODE=%~2"
@@ -66,6 +72,8 @@ echo ERROR: Unknown argument "%~1".
 goto :invalid_args
 
 :find_python
+if /i not "%MODE%"=="full" if /i not "%MODE%"=="manual" if /i not "%MODE%"=="pipeline" goto :invalid_args
+if defined DRY_RUN goto :dry_run
 REM Try the project virtual environment first, then system Python.
 if exist "%PROJECT_ROOT%\.venv\Scripts\python.exe" (
     set "PYTHON=%PROJECT_ROOT%\.venv\Scripts\python.exe"
@@ -110,6 +118,11 @@ if defined OUTPUT_FILE if defined DATA_DIR (
 )
 set "EXIT_CODE=%ERRORLEVEL%"
 popd
+if "%EXIT_CODE%"=="0" if /i "%MODE%"=="full" (
+    echo Launching isolated visible VS Code NLQ and MCP demo...
+    node "%PROJECT_ROOT%\demo\autodemo\vscode-demo.js"
+    if errorlevel 1 set "EXIT_CODE=1"
+)
 
 if not "%EXIT_CODE%"=="0" (
     echo.
@@ -119,6 +132,15 @@ if not "%EXIT_CODE%"=="0" (
     echo Demo completed successfully.
 )
 exit /b %EXIT_CODE%
+
+:dry_run
+echo DRY RUN: mode=%MODE%; normal execution starts Docker, opens web UI, and runs console fixture checks.
+if /i "%MODE%"=="full" goto :dry_run_vscode
+exit /b 0
+
+:dry_run_vscode
+node "%PROJECT_ROOT%\demo\autodemo\vscode-demo.js" --dry-run
+exit /b %ERRORLEVEL%
 
 :invalid_args
 echo.
@@ -143,9 +165,11 @@ echo   --quiet           Suppress verbose output.
 echo   --output FILE     Write JSON results to a file.
 echo   --data-dir DIR    Store raw captures and DLQ files in this directory.
 echo   --help, -h        Show this help.
+echo   --dry-run         Print VS Code plan without services, secrets or windows.
 echo.
 echo The launcher starts Docker Desktop services, opens the web UI, then runs
-echo the automated console validation.
+echo the automated console validation. Full mode also launches the isolated
+echo visible VS Code extension demo against the live API and MCP services.
 echo.
 echo Examples:
 echo   run-demo.bat

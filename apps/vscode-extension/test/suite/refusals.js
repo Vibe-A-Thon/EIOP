@@ -7,6 +7,11 @@ async function run({inputs, document}) {
   const rejected = await vscode.commands.executeCommand('eoip.search');
   assert.equal(rejected.ok, false);
   assert.equal(rejected.code, 'EOIP_HTTP_401');
+  const nlq = await vscode.commands.executeCommand('eoip.nlq', 'What is the impact of EOIP-1?');
+  assert.equal(nlq.code, 'EOIP_HTTP_401');
+  const mcp = await vscode.commands.executeCommand('eoip.mcp', {tool: 'search', arguments: {q: 'EOIP-1'}});
+  assert.equal(mcp.ok, false);
+  assert.match(mcp.message, /HTTP 401/);
   inputs.push('test-token');
   await vscode.commands.executeCommand('eoip.setToken');
   const unsafe = await vscode.commands.executeCommand('eoip.openSource', {
