@@ -1,5 +1,8 @@
 """Phase 8 tests: what-if simulation — removal, isolation, component split + API."""
 
+from collections import Counter
+from unittest.mock import patch
+
 from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.whatif import WhatIfEngine
 
@@ -60,6 +63,35 @@ def test_remove_detects_component_split():
     engine = WhatIfEngine(store)
     result = engine.simulate_removal("urn:b")
     assert result.component_split is True
+
+
+def test_removal_reports_all_neighbor_components_without_mutating_graph():
+    store = MemoryGraphStore()
+    _build_hub(store)
+    before = (store.count_vertices(), store.count_edges())
+    result = WhatIfEngine(store).simulate_removal("urn:hub")
+    assert result.new_components == 3
+    assert result.broken_paths == 3
+    assert before == (store.count_vertices(), store.count_edges())
+
+
+def test_removal_visits_connected_region_once_and_refreshes_between_calls():
+    store = MemoryGraphStore()
+    _build_hub(store)
+    for index in range(2):
+        store.upsert_edge("DEPENDS_ON", f"urn:spoke-{index}", f"urn:spoke-{index + 1}", {})
+    engine = WhatIfEngine(store)
+    with patch.object(store, "edges_from", wraps=store.edges_from) as outgoing:
+        result = engine.simulate_removal("urn:hub")
+    assert result.broken_paths == 0
+    assert result.component_split is False
+    counts = Counter(call.args[0] for call in outgoing.call_args_list)
+    assert max(counts.values()) <= 4, "Repeated pairwise traversal re-reads the same region"
+    store.upsert_vertex("File", _file_props("urn:spoke-3"))
+    store.upsert_edge("DEPENDS_ON", "urn:hub", "urn:spoke-3", {})
+    result = engine.simulate_removal("urn:hub")
+    assert result.new_components == 2
+    assert result.broken_paths == 3
 
 
 # --- What-if isolation ---

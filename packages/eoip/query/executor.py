@@ -8,11 +8,12 @@ from __future__ import annotations
 
 import concurrent.futures
 import re
+from time import monotonic
 from uuid import uuid4
 
 from eoip.contracts.graph_result import GraphEdge, GraphNode, GraphPath, GraphResult, TraversalGraphResult
 from eoip.contracts.query_plan import QueryPlan
-from eoip.graph.store import GraphStore
+from eoip.graph.store import GraphQueryTimeout, GraphStore, graph_query_deadline
 from eoip.graph.traversal import GraphTraversal
 from eoip.query.policy import DEFAULT_POLICY, QueryPolicy
 
@@ -35,11 +36,16 @@ class QueryExecutor:
         if handler is None:
             raise PolicyViolation([f"No template registered for intent '{plan.intent}'"])
         timeout_s = plan.timeout_ms / 1000.0
+
+        def run():
+            with graph_query_deadline(monotonic() + timeout_s):
+                return handler(self._store, plan)
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-            future = pool.submit(handler, self._store, plan)
+            future = pool.submit(run)
             try:
                 return future.result(timeout=timeout_s)
-            except concurrent.futures.TimeoutError:
+            except (concurrent.futures.TimeoutError, GraphQueryTimeout):
                 raise QueryTimeout(plan.timeout_ms)
 
 
@@ -98,11 +104,15 @@ def _search(store: GraphStore, plan: QueryPlan) -> GraphResult:
     exact = _exact_matches(store, raw_query, label, include_deleted=include_deleted)
     seen = {v["canonical_id"] for v in exact}
     query = raw_query.casefold()
-    candidates = store.find_vertices(
+    projected_search = getattr(store, "find_search_candidates", None)
+    find_candidates = projected_search if callable(projected_search) else store.find_vertices
+    projection = {"properties": _SEARCHABLE_PROPS} if callable(projected_search) else {}
+    candidates = find_candidates(
         label=label,
         filters=filters or None,
         limit=5000,
         include_deleted=include_deleted,
+        **projection,
     )
     matches = [
         v
@@ -121,7 +131,16 @@ def _search(store: GraphStore, plan: QueryPlan) -> GraphResult:
         )
     )
     combined = exact + matches
-    nodes = [_to_node(v) for v in combined[: plan.result_limit]]
+    selected = combined[: plan.result_limit]
+    if callable(projected_search):
+        hydrated = []
+        for vertex in selected:
+            full_vertex = store.get_vertex(vertex["vid"])
+            if full_vertex is None:
+                raise RuntimeError("Search result disappeared before hydration")
+            hydrated.append(full_vertex)
+        selected = hydrated
+    nodes = [_to_node(v) for v in selected]
     return GraphResult(
         query_id=str(uuid4()),
         nodes=nodes,

@@ -31,7 +31,7 @@ def _package_bytes(name: str = "demo-ext") -> bytes:
         name=name,
         version="1.0.0",
         description="demo extension package",
-        provides={CapabilityKind.ENTITY_TYPE: ["DemoEntity"]},
+        provides={CapabilityKind.ONTOLOGIES: ["DemoEntity"]},
     )
     return build_package(manifest, {"demo/entity.yaml": b"name: DemoEntity\n"})
 
@@ -227,10 +227,10 @@ def test_marketplace_install_uninstall_round_trip(client: TestClient) -> None:
 
     listing = client.get("/api/v1/marketplace/installed")
     assert listing.status_code == 200
-    assert [p["name"] for p in listing.json()["packages"]] == ["demo-ext"]
+    assert [p["manifest"]["name"] for p in listing.json()["packages"]] == ["demo-ext"]
 
     search = client.get("/api/v1/marketplace/installed/search", params={"q": "demo"})
-    assert [p["name"] for p in search.json()["packages"]] == ["demo-ext"]
+    assert [p["manifest"]["name"] for p in search.json()["packages"]] == ["demo-ext"]
     miss = client.get("/api/v1/marketplace/installed/search", params={"q": "zzz"})
     assert miss.json()["packages"] == []
 

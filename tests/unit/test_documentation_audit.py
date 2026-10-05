@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.documentation_audit import build_audit, main, render_markdown
+from scripts.documentation_audit import build_audit, main, recorded_runtime_progress, render_markdown
 
 
 @pytest.fixture
@@ -26,6 +26,32 @@ def create(root, name, content):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     return path
+
+
+def test_runtime_progress_records_failures_skips_and_missing_receipts(repository):
+    create(repository, "test-results/enterprise-search-focused-junit.xml", """<testsuites>
+      <testsuite><testcase/><testcase><failure/></testcase>
+      <testcase><error/></testcase><testcase><skipped/></testcase></testsuite>
+    </testsuites>""")
+    create(repository, "demo/demodata/enterprise/scenario-pack.json", json.dumps({
+        "version": "test", "scenarios": [{}], "vertices": [{}, {}], "edges": [{}],
+    }))
+    create(repository, "test-results/enterprise-whatif-source-junit.xml",
+           "<testsuites><testsuite><testcase/></testsuite></testsuites>")
+    create(repository, "test-results/enterprise-code-ingestion-final-junit.xml",
+           "<testsuites><testsuite><testcase/></testsuite></testsuites>")
+    progress = recorded_runtime_progress(repository)
+    assert progress["seed"] == {
+        "version": "test", "scenarios": 1, "entities": 2, "relationships": 1,
+    }
+    receipt = progress["receipts"][1]
+    assert receipt["status"] == "RECORDED_FAILURE"
+    assert [receipt[key] for key in ("passed", "failed", "errors", "skipped")] == [1, 1, 1, 1]
+    assert len(receipt["sha256"]) == 64
+    assert progress["receipts"][2]["status"] == "UNVERIFIED"
+    assert progress["receipts"][-1]["status"] == "RECORDED_PASS"
+    assert progress["receipts"][-1]["passed"] == 1
+    assert progress["receipts"][-2]["status"] == "UNVERIFIED"
 
 
 @pytest.mark.req("REQ-001", "REQ-002")

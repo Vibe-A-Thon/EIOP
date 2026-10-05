@@ -6,6 +6,77 @@
 
 ## Audit inventory and method
 
+### Current enterprise remediation progress
+
+The current canonical Northstar pack is **1.2.0: 13 scenarios, 80 entities,
+134 relationships**, plus eight shared multi-step capability journeys.
+The persistent corpus contains **85 current Documents and 1,144 chunks**.
+These synthetic source/corpus counts are distinct from total retained graph
+counts and from verified product-requirement completion.
+
+The pre-what-if-fix complete regression passed **1,880 tests, 0 failed, 22 skipped
+(exit 0)** in 1,316.21 seconds, replacing both the earlier twelve-failure
+baseline and the later 1,874/1/22 checkpoint. The marketplace test's invalid
+capability and stale nested-manifest assertions were corrected; the combined
+query/schema/API/metrics suite passed **62 tests (exit 0)**. Audit reporting
+changed during the full run and separately passed 14 focused tests (exit 0).
+
+SEARCH now uses bounded Gremlin property projection and full selected-node
+hydration, retaining the original five-second budget. Real persisted-graph
+measurements were 3.450 seconds cold and 1.722/1.716 seconds warm. Administration
+validation avoids repeated endpoint reads, and EOIP metrics no longer disappear
+behind the HTTP metrics route. The actual administration rehearsal completed
+42 steps (exit 0); coverage is still PARTIAL, not certification of every API.
+Ingestion demonstrations reject nested failure receipts and incomplete batches.
+
+The fresh live source-extension rehearsal passed all **17 steps (exit 0)**:
+six NLQ intents and eleven MCP tools against the persisted graph. The earlier
+post-rebuild SEARCH timeout is retained as a failure receipt; a passing rerun
+does not establish a cold-start SLO. All six services are healthy and the
+enterprise explorer returns HTTP 200. The actual application rehearsal
+passed 166 steps, then failed its what-if request at the unchanged 120-second
+timeout (exit 1). Removal now partitions the remaining neighbor components
+once instead of repeating pairwise traversal; exact split-count, repeated-read,
+freshness and no-mutation regression tests are included. The what-if/metrics
+suite passed 22 tests (exit 0), with scoped Ruff clean. The deployed PAY-142
+simulation returned HTTP 200 in 15.903 seconds. The post-fix application
+rehearsal completed all 183 steps without failure (exit 0); operation coverage
+remains PARTIAL. Post-fix full regression passed 1,883 tests with 22 skips and
+zero failures (exit 0, 1,258.37 seconds). Audit receipt reporting changed during
+that run and independently passed 14 tests (exit 0). Pipeline rehearsal then
+failed after 187 passing steps: code-graph ingestion returned 53 structured
+endpoint errors (exit 1). The failure receipt is preserved. Code exports now
+have typed, repository-scoped facts and explicitly declared runtime dependencies;
+inline forward references are deferred until all entities exist. Original source
+edges and evidence are retained with their normalized ontology relationships.
+The manual export's formerly silent omission is covered by a regression test.
+Focused importer/API/audit tests passed 59 tests (exit 0), with scoped Ruff clean.
+Application services were rebuilt/recreated successfully (exit 0); all six
+services are healthy and API/web/enterprise explorer return HTTP 200.
+Live manual/pipeline code acceptance passed two tests (exit 0), including
+authentication refusal, exact ingestion counts, typed Hubble read-back and
+source-edge replay identity. Initial test-query errors remain recorded; the
+passing checks use bounded adjacency and physical HugeGraph edge labels.
+The demo now refuses incomplete code facts/relationships; 19 Node tests passed
+(exit 0). No graph volume was reset or deleted.
+Post-importer full regression passed 1,897 tests with 24 skips, no failures
+(exit 0, 1,467.13 seconds). The two added opt-in live cases have their separate
+passing receipt; only their query implementation changed during that full run,
+not production Python source.
+Fresh deployed pipeline rehearsal passed **213 steps, zero failures, exit 0**,
+including complete typed code-export and batch-ingestion acceptance. Coverage
+remains **PARTIAL: 66 of 271 operations demonstrated, 205 not demonstrated**.
+The corpus refresh loaded two changed assets and retained 83; its unchanged
+rerun loaded zero and retained all 85. Both commands exited 0. The complete
+2,474-vertex/6,897-edge physical identity sets remained exactly unchanged
+on that rerun. All current corpus Documents/chunks were then verified through
+Hubble (one live test passed, exit 0).
+Passing local regression is not
+remote CI evidence or proof that every documentation requirement is completed.
+See [the runtime evidence](hubble-runtime-validation.md) for current and
+historical measurements. The inventory and 2026-10-04 receipts below are
+historical snapshots, not current execution counts.
+
 The repository contains 138 Markdown files and 21,702 physical lines after adding the Northstar wiki and package guidance. The inventory comprises 117 engineering-package files, 14 operational/audit files under `docs/`, one application README, four example READMEs, and two root/other guides. The review covered every file heading and body, extracted requirement/status language, and reconciled claims against code, routes, tests, schemas, fixtures, deployment definitions, and runtime loaders.
 
 The documentation corpus references 28 unique `MVP-FR-*` identifiers, 83 unique `FR-*` identifiers, 19 `NFR-*` identifiers, 364 `G2-*` identifiers, 16 `FR-KGR-*` identifiers, and 82 implementation work packages. Counts overlap where specialized identifiers are also matched by a broader family; they describe documentation scope, not completion percentages.
@@ -18,8 +89,8 @@ The implementation has a strong Phase 1/MVP and KGR analytics surface, but the p
 
 This audit closes the data/readiness gap with an auto-loaded Northstar Commerce digital thread:
 
-- 8 audience-specific scenarios;
-- 56 curated cross-domain entities and 92 curated relationships;
+- 13 audience-specific scenarios;
+- 80 curated cross-domain entities and 134 curated relationships;
 - representative Jira, GitLab, Confluence, ServiceNow, Grafana/Datadog/Kibana, qTest, Figma, and API portal JSON;
 - runnable project code and tests, an OpenAPI contract, architecture wiki page, and incident runbook;
 - immutable raw capture, normalized mutation ingestion, domain membership, ingestion lineage, and deterministic edge identity;
@@ -40,7 +111,7 @@ Combined with the original fixture, the in-memory acceptance graph contains appr
 | Operations/observability | ServiceNow, Grafana, Datadog and Kibana connector vocabulary | Incident, alert, log, dashboard, deployment and change correlation is populated. |
 | Knowledge/RAG | Documents, sections, KB article, product page, GraphRAG retrieval | Architecture and runbook answers have graph lineage and evidence. |
 | KGR analytics | Blast radius, centrality, communities, paths, similarity, link prediction, k-core, components, what-if, anomalies and diff endpoints | The denser cross-domain subgraph gives each implemented analytic a meaningful demo target. |
-| Agents/MCP/VS Code | Governed agent runtime, read-only MCP tools, eight VS Code commands | Existing EOIP-1 journey remains the extension golden path; Northstar IDs work through API/MCP query surfaces. |
+| Agents/MCP/VS Code | Governed agent runtime, read-only MCP tools, eight VS Code commands | The Northstar PAY-142 source-extension journey passed all six NLQ intents and eleven MCP tools against the live graph. Packaged VSIX acceptance remains separate. |
 | Security/operations | bearer boundary, audit, DLQ/replay, metrics, backup/restore scripts | Demonstrable locally; do not equate fixture success with production accreditation. |
 
 ## Scenario acceptance matrix
@@ -69,7 +140,7 @@ The pack uses reserved `.invalid` hostnames and synthetic people, identifiers, m
 - G2 P6-P10 architecture conformance, causal intelligence, immune-system automation, full process mining, knowledge capsules, and advanced temporal/simulation experiences remain partial, planned, or uncertified.
 - Logical backup/restore is not native HugeGraph/RocksDB disaster recovery and does not yet prove complete configuration/job-state recovery.
 - Published smoke benchmarks are not a production-scale hardware certification, capacity guarantee, or customer SLO.
-- The real VS Code host suite uses an HTTP contract fixture; live HugeGraph plus manual rendered-UI acceptance remains a separate gate.
+- The live source-extension host rehearsal uses the real API/MCP and HugeGraph, not the HTTP contract fixture. It does not certify the installed VSIX or every rendered-UI behavior.
 - Optional LLM synthesis depends on locally configured models. Every golden scenario must remain demonstrable with deterministic graph behavior.
 - The governed `/api/v1/path` query uses a semantic relationship allowlist and does not return every cross-domain Northstar route. Use `/api/v1/graph/shortest-paths` for the incident, release, test and design scenarios until those query semantics are deliberately unified.
 
@@ -80,14 +151,14 @@ Before a sales session, require all of the following:
 1. `python -X utf8 -m pytest -q tests/e2e/test_enterprise_demo_scenarios.py` passes.
 2. The web production build passes.
 3. The Docker stack reports healthy and the demo job succeeds.
-4. `/api/v1/demo/scenarios` returns top-level `ready: true` and eight ready scenarios.
+4. `/api/v1/demo/scenarios` returns top-level `ready: true` and thirteen ready scenarios.
 5. Graph validation returns zero errors; any warning is explained before presentation.
 6. PAY-142 trace, INC0012042 correlation, Checkout API blast radius, and KB00192 retrieval are rehearsed against the exact deployed build.
 7. The presenter states whether source systems are offline fixtures or live configured connectors.
 
 This gate supports a credible demo of implemented capability while keeping roadmap and production-certification claims honest.
 
-## Verification executed in this audit
+## Historical verification executed on 2026-10-04
 
 - Runtime verification was refreshed on **2026-10-04** after rebuilding the primary Docker stack from the final working tree.
 - Full Dockerized Python regression: **1,008 passed, 15 skipped** in 138.32 seconds. The two emitted warnings are the known Starlette/httpx deprecation and the deliberate duplicate-ZIP security fixture.

@@ -8,6 +8,154 @@ merge or remote CI result is claimed.
 
 ## Summary
 
+### Current remediation checkpoint
+
+- Canonical seed **1.2.0: 13 scenarios, 80 entities, 134 relationships**.
+  Eight shared multi-step capability journeys cover business value, decisions,
+  process deviations, qualification failures and remediation, alongside the
+  existing delivery, operational, test, design, knowledge and analytics stories.
+- Current corpus: **85 files, 85 current Documents, 1,144 chunks**. These are
+  corpus counts, not totals for the retained development graph.
+- Pre-what-if-fix canonical regression passed: **1,880 passed, 0 failed, 22 skipped,
+  exit 0**, in 1,316.21 seconds. Evidence: [final-source JUnit](../test-results/enterprise-final-source-junit.xml).
+  This closes the historical twelve-failure gate and the later marketplace
+  round-trip failure. The marketplace test now checks the actual nested
+  manifest contract. Audit reporting was updated while this suite ran; its
+  separately executed suite passed 14 tests (exit 0).
+- Fresh focused regression: **62 passed, exit 0**, covering query execution,
+  HugeGraph schema/projection, extended API routes and deployment metrics.
+  Evidence: [focused JUnit](../test-results/enterprise-search-focused-junit.xml).
+- SEARCH uses a fixed-template, bound-property Gremlin projection with selected
+  vertex hydration. Real retained-graph measurements were **3.450 seconds cold,
+  1.722/1.716 seconds warm**, within the unchanged **5,000 ms** query budget.
+  Python casefold matching remains, including `STRASSE` matching `Straße`.
+- Live source-extension rehearsal now passed **17 steps, exit 0**: all six NLQ
+  intents and all eleven MCP tools, including protocol initialization and tool
+  discovery. Evidence: [live extension receipt](../test-results/vscode-live-demo-2026-10-05T12-25-16-846Z-d76e4713-2fc8-493b-8cc2-37fb484b97c9.json).
+  An earlier post-rebuild rehearsal failed SEARCH at 5,000 ms; the passing
+  rerun does not certify cold-start latency or the installed VSIX. Direct
+  complete NLQ inspection took 1.123 seconds on the retained graph. The API
+  constructs HugeGraphStore directly; the ingestion adapter is not in this path.
+- Validation reuses vertices already fetched during each run instead of
+  repeatedly fetching every relationship endpoint. Persistence errors propagate.
+  EOIP operation/job metrics are composed with HTTP metrics rather than shadowed.
+- The actual administration rehearsal completed **42 steps, exit 0**. Its
+  coverage verdict remains **PARTIAL** because not every administration API
+  is demonstrated. Ingestion receipts now reject nested errors and incomplete
+  file batches instead of treating HTTP success alone as completion.
+- The actual application rehearsal passed **166 steps** before failing on
+  step 167: the what-if API request exceeded its unchanged **120,000 ms**
+  timeout (exit 1). [Failure receipt](../test-results/enterprise-application-demo.json).
+  Removal repeatedly traversed the same remote graph for every neighbor pair.
+  The repair partitions neighboring components once per invocation, stops
+  when all neighbors are accounted for, and reports the exact split count.
+  Regression tests first reproduced repeated reads and the incorrect
+  three-spoke split count; the repaired what-if/metrics suite passed
+  **22 tests, exit 0**, with scoped Ruff clean.
+  [Focused receipt](../test-results/enterprise-whatif-fix-junit.xml).
+  Deployed PAY-142 removal now returned HTTP 200 in **15.903 seconds**.
+  The actual post-fix application rehearsal completed **183 passing steps,
+  zero failures, exit 0**, including what-if and subsequent analytics.
+  [Post-fix application receipt](../test-results/enterprise-application-whatif-fixed.json).
+  Its operation-coverage verdict remains **PARTIAL**, not all-product
+  certification. The earlier failure receipt is preserved.
+- Post-fix canonical regression passed **1,883 tests, 0 failed, 22 skipped,
+  exit 0**, in 1,258.37 seconds.
+  [Post-fix full JUnit](../test-results/enterprise-whatif-source-junit.xml).
+  Audit receipt reporting was extended during this run and independently
+  passed all **14 tests, exit 0**, with scoped Ruff clean. This snapshot
+  precedes the code-export importer repair below.
+- Pipeline rehearsal failed after **187 passing steps**, with one failed
+  code-graph import and **53 structured endpoint errors, exit 1**.
+  [Preserved failure receipt](../test-results/enterprise-pipeline-demo.json).
+  The importer previously treated a repository/files/symbols export as one
+  GenericEntity; the manual variant even reported success without importing
+  its code facts. New tests reproduced both cases and an inline forward-reference
+  defect. A code-export adapter now emits typed Repository, File, CodeSymbol,
+  Service and Dependency facts, resolving all declared endpoints before writes.
+  Inline relationships are applied after the complete entity batch.
+  Focused importer/API/audit validation passed **59 tests, exit 0**; scoped
+  Ruff passed. The rebuilt API/worker/MCP and unchanged graph/Hubble/web services
+  are healthy; API readiness, web and enterprise explorer return HTTP 200.
+  Live manual/pipeline code-export acceptance passed **2 tests, exit 0**:
+  invalid credentials rejected, exact entity/relationship counts, typed symbols
+  read through Hubble, and replay preserving each checked source edge.
+  [Live receipt](../test-results/enterprise-code-ingestion-live-junit.xml).
+  Initial live test queries used an unindexed property scan and then a logical
+  relationship label; both failures are retained. Final verification uses
+  source-vertex adjacency and the physical HugeGraph edge label without adding
+  indexes or changing the database.
+  Demo assertions now require every code-export declaration and relationship,
+  rejecting the former success-shaped generic wrapper. Node demo tests:
+  **19 passed, exit 0**. Post-importer full regression passed **1,897 tests,
+  24 skipped, zero failures, exit 0**, in 1,467.13 seconds.
+  [Full receipt](../test-results/enterprise-code-ingestion-final-junit.xml).
+  The two new opt-in live tests are skipped by the ordinary suite and have the
+  separate passing live receipt above. Only their query implementation changed
+  during the full run; production Python source remained unchanged.
+  Actual repaired pipeline rehearsal completed **213 passing steps, zero
+  failures, exit 0**, including exact code-export and batch-ingestion acceptance.
+  [Pipeline receipt](../test-results/enterprise-pipeline-code-fixed.json).
+  Operation coverage remains **PARTIAL: 66 of 271 operations demonstrated,
+  205 not demonstrated**. Passing steps are not all-operation certification.
+- Corpus refresh succeeded additively: **loaded 2 / retained 83**, followed by
+  **loaded 0 / retained 85** on the unchanged rerun. Both commands exited 0.
+  The current corpus contains 85 Documents and 1,144 chunks; historical source
+  revisions remain retained. A complete physical-ID comparison verified the
+  exact **2,474 vertex and 6,897 edge identity sets unchanged** on rerun.
+  [Retention receipt](../test-results/enterprise-code-corpus-retention.json).
+  Full current corpus Hubble read-back passed **1 test, exit 0**, checking every
+  expected Document/chunk and both Jira fixture sets.
+  [Corpus read-back](../test-results/enterprise-code-corpus-live-junit.xml).
+
+### Latest validation verdict
+
+```text
+environment:
+  docker: AVAILABLE - Docker 29.8.1; six services healthy
+  node: AVAILABLE - Node v26.8.2
+  playwright: AVAILABLE - existing toolchain and cached Chromium 1194
+  infra-tier: PRIMARY(Docker-based) - real retained HugeGraph/RocksDB
+  browser-tier: PRIMARY(Playwright) - actual headless pipeline rehearsal
+startup: PASS - exit_code: 0; application rebuild/recreation; API/web/Hubble HTTP 200
+integration: PASS - exit_code: 0; 59 focused tests and 3 live code/corpus cases
+e2e: PARTIAL - exit_code: 0; 213 pipeline steps passed, 0 failed; 66/271 operations
+regression: PASS - exit_code: 0; 1897 passed, 24 skipped, 0 failed
+retention: PASS - exit_code: 0; all 2474 vertex/6897 edge IDs unchanged on corpus reload
+overall: NEEDS_SIGNOFF - local repair gates pass; remaining operations, installed VSIX,
+  customer integrations, production SLOs and remote CI are not certified
+```
+
+### Code-export import contract
+
+Exports contain `repository` (a string or object with `repo_id`), `files`,
+`symbols`, `dependencies`, optional `runtime_dependencies`, and `edges`.
+Symbols accept `kind` or `symbol_kind` and require a declared file path.
+Code identities include the repository namespace, so equal symbol names in
+different repositories do not collide. Runtime dependencies require explicit
+`id` and human-readable `name`; missing endpoints and unsupported relation
+types produce errors before any export facts are written.
+
+`calls` becomes CALLS; imports to package dependencies become IMPORTS. Symbol
+imports/uses and runtime connection, deployment and service-account references
+become DEPENDS_ON within the existing ontology. Every source edge, including
+its original relation and evidence/metadata, is retained in `payload_json`.
+The runtime nodes represent declared dependency references, not independently
+verified Kubernetes deployments, service-account authorization or live external
+connections. The enriched fixtures explicitly declare these dependencies and
+the previously omitted payment HSM module. Old generic vertices remain retained.
+
+## Historical verification
+
+- All six deployed services became healthy and the enterprise explorer returned
+  HTTP 200 after the earlier app image rebuild. No remote
+  CI success or global requirement completion is asserted.
+
+### Historical 1.1.0 acceptance
+
+The following table and detailed receipts preserve earlier measurements; they
+are not current corpus totals or the latest remediation test counts.
+
 | Validation | Status | Exit code | Evidence |
 |---|---|---|---|
 | No-cache clean rebuild | PASS | 0 | Original 310 vertex IDs, 374 edge IDs and 14 raw/job file hashes retained |
@@ -28,12 +176,12 @@ merge or remote CI result is claimed.
 | Scoped Ruff, Compose validation, whitespace | PASS | 0 | Final scoped checks passed |
 | Canonical full Python regression | FAIL | 1 | 1,668 passed, 12 failed, 20 skipped, 0 errors |
 
-**Overall: FAIL for the full regression gate.** The requested Hubble deployment,
+**Historical overall: FAIL for the full regression gate.** The requested Hubble deployment,
 language, corpus, ingestion and data-retention acceptance checks passed. The
 broader regression gate is not green and has no waiver. Do not describe this
 phase as CI-passing or all application requirements as complete.
 
-## Environment and verdict
+## Historical environment and verdict
 
 ```text
 environment:
@@ -62,7 +210,7 @@ same saved Hubble connection and real persisted graph. A PROCESS-only scenario
 legitimately has one domain; the test verifies that each legend exactly matches
 its returned nodes rather than incorrectly requiring multiple domains everywhere.
 
-## Acceptance checklist
+## Historical 1.1.0 acceptance checklist
 
 | Requirement | Outcome | Evidence |
 |---|---|---|
@@ -84,9 +232,9 @@ its returned nodes rather than incorrectly requiring multiple domains everywhere
 Synthetic acceptance records are intentionally retained. No graph reset,
 schema clear, volume deletion or destructive cleanup was used.
 
-## Latest enterprise enrichment evidence
+## Historical 1.1.0 enterprise enrichment evidence
 
-The canonical Northstar seed is now **1.1.0: 11 scenarios, 70 entities and
+The canonical Northstar seed at this checkpoint was **1.1.0: 11 scenarios, 70 entities and
 114 relationships**. It includes business objectives/capabilities, alternative
 decisions and revision/outcome evidence, ordered incident-response steps and an
 approval-delay deviation. This is connected synthetic demonstration data, not
@@ -247,11 +395,12 @@ output, with all twelve failures named below. Exit code was 1.
 | Same file | Existing real graph journey no longer manually selects English | Gremlin result, JSON canonical IDs and WorkItem metadata |
 | Same file | Added saved `zh-CN` browser preference journey | Explicit preference remains after startup |
 
-## Full regression failures
+## Historical twelve-failure regression
 
-These areas have no source or test changes in the Hubble worktree diff. Their
-failures are outside the focused implementation; no unrelated fixes were made.
-No clean-checkout baseline reproduction or waiver is claimed.
+These were the original failures before the subsequent remediation. The latest
+complete local run passed 1,880 tests with no failures and 22 skips (exit 0).
+The earlier 1,874/1/22 checkpoint had a separate marketplace API round-trip
+failure, which is also resolved. Remote CI remains unverified.
 
 | Area | Failing test | Observed failure |
 |---|---|---|
@@ -275,7 +424,7 @@ for this corpus phase, and no full smoke success is claimed.
 ## Manual use
 
 1. Open **http://localhost:8088/enterprise.html** for named, colored, directed
-   exploration. Choose a business question or start the 11-scenario walkthrough.
+   exploration. Choose a business question or start the 13-scenario walkthrough.
    The separate [Hubble launcher](../demo/autodemo/run-demo-hubble.bat) prepares
    the real demo corpus and opens the automatic tour.
 2. For native Hubble, open **http://localhost:8088**, then **Visit** on the

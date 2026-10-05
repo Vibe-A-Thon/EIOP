@@ -1,3 +1,4 @@
+import json
 from threading import RLock
 from time import monotonic
 
@@ -262,6 +263,55 @@ def test_hugegraph_exact_property_lookup_serializes_json_filter():
     ]
 
 
+def test_hugegraph_search_projection_binds_inputs_and_decodes_single_properties():
+    store = HugeGraphStore.__new__(HugeGraphStore)
+    requests = []
+
+    def execute(gremlin, bindings):
+        requests.append((gremlin, bindings))
+        return [{"id": "one", "label": "WorkItem", "properties": {
+            "canonical_id": ["urn:test:one"], "name": ["Search result"],
+        }}]
+
+    store.execute_gremlin = execute
+    result = store.find_search_candidates(
+        properties={"name"}, label="WorkItem", filters={"summary": "'); g.V().drop(); //"},
+        include_deleted=True,
+    )
+    assert result[0]["properties"] == {
+        "canonical_id": "urn:test:one", "name": "Search result",
+    }
+    gremlin, bindings = requests[0]
+    assert "g.V().drop()" not in gremlin
+    assert bindings == {
+        "search_label": "WorkItem", "include_deleted": True,
+        "filter_values": {"summary": "'); g.V().drop(); //"},
+        "candidate_limit": 5000, "search_properties": ["canonical_id", "name"],
+    }
+
+
+def test_hugegraph_gremlin_uses_graph_space_alias_and_remaining_budget():
+    requests = []
+
+    def request(req):
+        requests.append(req)
+        return httpx.Response(200, json={"status": {"code": 200}, "result": {"data": [1]}})
+
+    store = HugeGraphStore("http://graph.invalid", graph="enterprise")
+    store.client.close()
+    store.client = httpx.Client(
+        base_url="http://graph.invalid", transport=httpx.MockTransport(request)
+    )
+    try:
+        with graph_query_deadline(monotonic() + 2):
+            assert store.execute_gremlin("g.V().limit(1).count()") == [1]
+        assert requests[0].url.path == "/gremlin"
+        assert json.loads(requests[0].content)["aliases"] == {"g": "__g_DEFAULT-enterprise"}
+        assert 0 < requests[0].extensions["timeout"]["read"] <= 2
+    finally:
+        store.close()
+
+
 def test_hugegraph_edge_decoding_caches_only_immutable_vertex_identity():
     store = HugeGraphStore.__new__(HugeGraphStore)
     store._identity_cache = {}
@@ -335,9 +385,7 @@ def test_hugegraph_edge_upsert_updates_matching_edge_key_instead_of_duplicating(
 
     store._request = request
 
-    edge = store.upsert_edge(
-        "CONTAINS", "out", "in", {"edge_key": "stable-key", "fact_key": "contains-1"}
-    )
+    edge = store.upsert_edge("CONTAINS", "out", "in", {"edge_key": "stable-key", "fact_key": "contains-1"})
 
     assert edge["eid"] == "edge-1"
     assert requests[0][0:2] == ("PUT", "/graph/edges/edge-1")

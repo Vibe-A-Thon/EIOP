@@ -509,14 +509,60 @@ class HugeGraphStore:
             and raw["properties"].get("is_current") is not False
         )
 
+    def find_search_candidates(
+        self, *, properties, label=None, filters=None, limit=5000, include_deleted=False
+    ):
+        if label is not None and label not in VERTEX_LABELS:
+            raise ValueError("Unknown vertex label")
+        if not 1 <= limit <= 5000:
+            raise ValueError("Search candidate limit must be between 1 and 5000")
+        gremlin = "g.V()"
+        if label is not None:
+            gremlin += ".hasLabel(search_label)"
+        if not include_deleted:
+            gremlin += ".not(__.has('deleted_at', neq('')))"
+        if filters:
+            gremlin += """.filter { v -> filter_values.every { key, value ->
+                (v.get().property(key).isPresent() ? v.get().value(key) : null) == value } }"""
+        gremlin += """.limit(candidate_limit).project('id', 'label', 'properties')
+            .by(id()).by(label()).by(valueMap(*search_properties))"""
+        rows = self.execute_gremlin(gremlin, {
+            "search_label": label,
+            "include_deleted": include_deleted,
+            "filter_values": filters or {},
+            "candidate_limit": limit,
+            "search_properties": sorted(set(properties) | {"canonical_id"}),
+        })
+        return [
+            self._vertex({
+                "id": row["id"],
+                "label": row["label"],
+                "properties": {key: values[0] for key, values in row["properties"].items()},
+            })
+            for row in rows
+        ]
+
     def execute_gremlin(self, gremlin: str, bindings: dict | None = None) -> list:
-        response = self.client.post(
-            "/apis/gremlin",
-            json={"gremlin": gremlin, "bindings": bindings or {}, "language": "gremlin-groovy"},
-            timeout=30,
-        )
+        remaining = remaining_query_seconds()
+        try:
+            response = self.client.post(
+                "/gremlin",
+                json={
+                    "gremlin": gremlin, "bindings": bindings or {}, "language": "gremlin-groovy",
+                    "aliases": {"g": f"__g_DEFAULT-{self.graph}"},
+                },
+                timeout=max(0.001, remaining) if remaining is not None else 30,
+            )
+        except httpx.TimeoutException as exc:
+            if remaining is None:
+                raise
+            raise GraphQueryTimeout("Graph traversal exceeded the query time budget") from exc
         response.raise_for_status()
-        return response.json().get("result", {}).get("data", [])
+        payload = response.json()
+        status = payload.get("status", {})
+        if status.get("code", 200) != 200:
+            raise RuntimeError(f"HugeGraph traversal failed: {status.get('message', status)}")
+        return payload["result"]["data"]
 
     def bulk_load(self, vertices, edges, *, batch_size=500):
         """Load a prevalidated logical snapshot through native batch POSTs.

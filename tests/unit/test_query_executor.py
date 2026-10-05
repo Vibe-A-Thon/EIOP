@@ -98,6 +98,37 @@ def test_search_resolves_file_by_path_lookup():
     assert any(node.id == "urn:test:file:1" for node in result.nodes)
 
 
+@pytest.mark.parametrize("query", ["TEST-1", "STRASSE", "urn:test:doc"])
+def test_projected_search_preserves_matching_order_filters_and_full_properties(query):
+    store = _loaded_store()
+    store.upsert_vertex("Document", {
+        "canonical_id": "urn:test:doc:1", "name": "Straße TEST-1",
+        "description": "Full result properties must be hydrated",
+    })
+    plan = QueryPlan(
+        intent="SEARCH", anchors=[query], max_depth=1, result_limit=10, evidence_mode="NONE",
+    )
+    expected = QueryExecutor(store).execute(plan)
+    calls = []
+
+    def project(*, properties, **kwargs):
+        calls.append(kwargs)
+        return [
+            {**vertex, "properties": {
+                key: value for key, value in vertex["properties"].items() if key in properties
+            }}
+            for vertex in store.find_vertices(**kwargs)
+        ]
+
+    store.find_search_candidates = project
+    result = QueryExecutor(store).execute(plan)
+    assert [node.model_dump() for node in result.nodes] == [
+        node.model_dump() for node in expected.nodes
+    ]
+    assert result.partial == expected.partial
+    assert calls == [{"label": None, "filters": None, "limit": 5000, "include_deleted": False}]
+
+
 def test_impact_result_exposes_impact_rationale_meta():
     store = _loaded_store()
     executor = QueryExecutor(store)

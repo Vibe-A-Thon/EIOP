@@ -120,6 +120,15 @@
   ],
   "symbols": [
     {
+      "qualified_name": "src.config.hsm_config",
+      "name": "HSM configuration module",
+      "kind": "module",
+      "path": "src/config/hsm_config.py",
+      "start_line": 1,
+      "end_line": 38,
+      "language": "python"
+    },
+    {
       "qualified_name": "src.services.tokenization_service.TokenizationService",
       "name": "TokenizationService",
       "kind": "class",
@@ -431,6 +440,19 @@
     {"name": "pydantic", "version": "2.5.3", "language": "python"},
     {"name": "prometheus-client", "version": "0.19.0", "language": "python"},
     {"name": "tenacity", "version": "8.2.3", "language": "python"}
+  ],
+  "runtime_dependencies": [
+    {"id": "pghost-prod-01.mfs.internal", "name": "Payments and audit PostgreSQL host"},
+    {"id": "kafka-broker.mfs.internal", "name": "MFS payment event streaming broker"},
+    {"id": "vault.mfs.internal", "name": "Webhook keys and secrets vault"},
+    {"id": "redis-cluster.mfs.internal", "name": "Payment idempotency and rate limiting cache"},
+    {"id": "mfs-pay-pod-01", "name": "Payments primary runtime"},
+    {"id": "mfs-pay-pod-02", "name": "Payments high availability runtime"},
+    {"id": "mfs-pay-pod-03", "name": "Payments analytics runtime"},
+    {"id": "svc-payment-api", "name": "Payments API service identity"},
+    {"id": "svc-token-vault", "name": "HSM and token vault service identity"},
+    {"id": "svc-webhook-dispatch", "name": "Webhook dispatch service identity"},
+    {"id": "svc-analytics", "name": "Read-only analytics service identity"}
   ],
   "edges": [
     {

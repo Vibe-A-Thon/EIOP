@@ -47,6 +47,25 @@ function requireGraph(value) {
   if (!Array.isArray(value?.nodes) || value.nodes.length === 0) throw new Error('No live graph nodes returned');
 }
 
+function requireIngestion(value, expectedFiles) {
+  if (!Number.isInteger(value?.entities_created) || value.entities_created < 0 ||
+      !Number.isInteger(value?.error_count) || value.error_count !== 0 ||
+      !Array.isArray(value.errors) || value.errors.length ||
+      (expectedFiles !== undefined && value.files_processed !== expectedFiles)) {
+    throw new Error('Ingestion returned missing counts, nested errors or an incomplete batch');
+  }
+}
+
+function requireCodeExport(value, data) {
+  requireIngestion(value, 1);
+  const entities = 2 + data.files.length + data.symbols.length +
+    (data.dependencies || []).length + (data.runtime_dependencies || []).length;
+  const relationships = data.files.length + data.symbols.length + data.edges.length;
+  if (value.entities_created !== entities || value.relationships_created !== relationships) {
+    throw new Error('Code export did not ingest every declared entity and relationship');
+  }
+}
+
 function requireAgent(value, types) {
   const executed = types.find(item => item.name === value.agent_type);
   if (!executed || value.category !== executed.category || !value.answer?.trim()) {
@@ -540,10 +559,11 @@ async function main(defaultMode, args = process.argv.slice(2)) {
         files.push({data, source_label: `client_demo_${folder}_${name}`});
         await step(`Live ${folder} ingestion: ${name}`, () => api('/api/v1/admin/ingestion/json',
           {data, source_label: `client_demo_${folder}_${name}`, pipeline_id: `client_demo_${folder}`},
-          value => {if (!Number.isInteger(value.entities_created)) throw new Error('Missing ingestion counts');}));
+          value => name === 'code-graph.json' ? requireCodeExport(value, data) : requireIngestion(value)));
       }
       await step('Live batch ingestion', () => api('/api/v1/admin/ingestion/json/batch',
-        {files, pipeline_id: `client_demo_${folder}_batch`}));
+        {files, pipeline_id: `client_demo_${folder}_batch`},
+        value => requireIngestion(value, files.length)));
       for (const format of ['rdf', 'rdf_xml', 'rdfs', 'owl', 'gremlin', 'cypher', 'gql', 'sparql']) {
         await step(`Graph export: ${format}`, () => api('/api/v1/graph/convert', {format_id: format, limit: 200},
           value => {if (!value.content?.length) throw new Error('Export contains no content');}));
@@ -591,4 +611,4 @@ async function main(defaultMode, args = process.argv.slice(2)) {
   }
 }
 
-module.exports = {main, options, requireGraph, requireAgent, requirePath, operationCoverage, SOURCE_FILES};
+module.exports = {main, options, requireGraph, requireIngestion, requireCodeExport, requireAgent, requirePath, operationCoverage, SOURCE_FILES};

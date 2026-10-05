@@ -14,6 +14,7 @@ import subprocess
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
+from xml.etree import ElementTree
 
 from eoip.jobs import write_json
 
@@ -29,6 +30,51 @@ EVIDENCE_ROOTS = {"packages", "apps", "scripts", "tests", "deploy", ".github"}
 EVIDENCE_SUFFIXES = {".py", ".ts", ".tsx", ".js", ".jsx", ".yml", ".yaml", ".toml", ".ps1"}
 MAX_FILE_BYTES = 8 * 1024 * 1024
 MAX_TOTAL_BYTES = 128 * 1024 * 1024
+
+
+def recorded_runtime_progress(root: Path) -> dict:
+    """Report recorded outcomes without promoting requirements or certifying CI."""
+    receipts = []
+    for name in (
+        "enterprise-stable-final-junit.xml",
+        "enterprise-search-focused-junit.xml",
+        "enterprise-final-source-junit.xml",
+        "enterprise-whatif-fix-junit.xml",
+        "enterprise-whatif-source-junit.xml",
+        "enterprise-code-ingestion-focused-junit.xml",
+        "enterprise-code-ingestion-final-junit.xml",
+    ):
+        path = root / "test-results" / name
+        if not path.is_file():
+            receipts.append({"path": path.relative_to(root).as_posix(), "status": "UNVERIFIED"})
+            continue
+        content = path.read_bytes()
+        cases = list(ElementTree.fromstring(content).iter("testcase"))
+        failed = sum(case.find("failure") is not None for case in cases)
+        errors = sum(case.find("error") is not None for case in cases)
+        skipped = sum(case.find("skipped") is not None for case in cases)
+        receipts.append({
+            "path": path.relative_to(root).as_posix(),
+            "status": "RECORDED_FAILURE" if failed or errors else "RECORDED_PASS",
+            "sha256": hashlib.sha256(content).hexdigest(),
+            "passed": len(cases) - failed - errors - skipped,
+            "failed": failed, "errors": errors, "skipped": skipped,
+        })
+    pack_path = root / "demo" / "demodata" / "enterprise" / "scenario-pack.json"
+    pack = json.loads(pack_path.read_text(encoding="utf-8")) if pack_path.is_file() else None
+    return {
+        "scope": "Recorded local JUnit outcomes and canonical seed inventory, not live graph totals.",
+        "limitations": [
+            "JUnit alone does not record the process exit code or certify remote CI.",
+            "Absent receipts are UNVERIFIED; no running test is treated as passing.",
+            "Seed inventory is not a product-requirement completion percentage.",
+        ],
+        "seed": {
+            "version": pack["version"], "scenarios": len(pack["scenarios"]),
+            "entities": len(pack["vertices"]), "relationships": len(pack["edges"]),
+        } if pack else {"status": "UNVERIFIED"},
+        "receipts": receipts,
+    }
 
 
 def _git(root: Path, *args: str) -> str:
@@ -183,6 +229,7 @@ def build_audit(root: Path) -> dict:
             "records": len(requirements),
             "by_status": dict(Counter(item["implementation_status"] for item in requirements)),
         },
+        "runtime_progress": recorded_runtime_progress(root),
         "documents": inventory, "excluded": excluded, "requirements": requirements,
     }
 
@@ -201,6 +248,25 @@ def render_markdown(report: dict) -> str:
         "| ID | Status | Severity / priority | Documentation | Code / test leads | Next action |",
         "|---|---|---|---|---|---|",
     ]
+    progress = report.get("runtime_progress")
+    if progress:
+        seed = progress["seed"]
+        insert_at = lines.index("## Requirement/evidence triage")
+        lines[insert_at:insert_at] = [
+            "## Recorded enterprise remediation progress", "",
+            progress["scope"], "", f"Canonical seed inventory: `{json.dumps(seed, sort_keys=True)}`.", "",
+            "| Local receipt | Outcome | Passed / failed / errors / skipped |",
+            "|---|---|---|",
+            *[
+                f"| {receipt['path']} | {receipt['status']} | "
+                + (
+                    f"{receipt['passed']} / {receipt['failed']} / {receipt['errors']} / {receipt['skipped']} |"
+                    if "passed" in receipt else "Not recorded |"
+                )
+                for receipt in progress["receipts"]
+            ],
+            "", *[f"- {item}" for item in progress["limitations"]], "",
+        ]
     for row in report["requirements"]:
         source = row["documentation_refs"][0]
         leads = row["implementation_leads"] + row["test_leads"]

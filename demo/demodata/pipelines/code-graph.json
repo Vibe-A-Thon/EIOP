@@ -408,6 +408,24 @@
     {"name": "grpcio", "version": "1.62.0", "type": "pypi"},
     {"name": "pydantic", "version": "2.6.0", "type": "pypi"}
   ],
+  "runtime_dependencies": [
+    {"id": "pghost-prod-02.mfs.internal:mfs_fraud_db", "name": "Fraud database on PostgreSQL production 02"},
+    {"id": "pghost-prod-03.mfs.internal:mfs_customers_db", "name": "Customers database on PostgreSQL production 03"},
+    {"id": "kafka-broker.mfs.internal", "name": "MFS transaction streaming broker"},
+    {"id": "mlflow.mfs.internal", "name": "MFS model registry and serving"},
+    {"id": "mfs-fraud-pod-01", "name": "Fraud scoring primary runtime"},
+    {"id": "mfs-fraud-pod-02", "name": "Fraud scoring secondary runtime"},
+    {"id": "mfs-kyc-pod-01", "name": "KYC verification runtime"},
+    {"id": "mfs-case-pod-01", "name": "Case management runtime"},
+    {"id": "mfs-aml-pod-01", "name": "AML rules runtime"},
+    {"id": "mfs-model-pod-01", "name": "Model inference runtime"},
+    {"id": "svc-fraud-engine", "name": "Fraud scoring service identity"},
+    {"id": "svc-kyc-engine", "name": "KYC verification service identity"},
+    {"id": "svc-case-engine", "name": "Case management service identity"},
+    {"id": "svc-aml-engine", "name": "AML rules service identity"},
+    {"id": "svc-model-serving", "name": "Model inference service identity"},
+    {"id": "svc-txn-monitor", "name": "Transaction monitoring service identity"}
+  ],
   "edges": [
     {"source": "services.scoring.fraud_scorer.FraudScorer.score_transaction", "target": "services.scoring.feature_extractor.FeatureExtractor.extract_features", "edge_type": "calls"},
     {"source": "services.scoring.fraud_scorer.FraudScorer.score_transaction", "target": "services.scoring.model_router.ModelRouter.route_request", "edge_type": "calls"},

@@ -1,6 +1,27 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {requireGraph, requireAgent, requirePath, operationCoverage} = require('../browser-demo');
+const {requireGraph, requireIngestion, requireCodeExport, requireAgent, requirePath, operationCoverage} = require('../browser-demo');
+
+test('ingestion cannot certify nested failures or incomplete batch receipts', () => {
+  const value = {entities_created: 2, error_count: 0, errors: [], files_processed: 3};
+  requireIngestion(value);
+  requireIngestion(value, 3);
+  for (const change of [{error_count: 1}, {errors: ['failed']}, {error_count: undefined},
+    {entities_created: -1}, {errors: undefined}, {files_processed: 2}]) {
+    assert.throws(() => requireIngestion({...value, ...change}, 3));
+  }
+});
+
+test('code ingestion cannot pass with a single generic wrapper or omitted source edges', () => {
+  const data = {files: [{path: 'main.py'}], symbols: [{name: 'run'}],
+    dependencies: [{name: 'library'}], runtime_dependencies: [{id: 'runtime'}], edges: [{}]};
+  const value = {entities_created: 6, relationships_created: 3, files_processed: 1,
+    error_count: 0, errors: []};
+  requireCodeExport(value, data);
+  assert.throws(() => requireCodeExport({...value, entities_created: 1, relationships_created: 0}, data));
+  assert.throws(() => requireCodeExport({...value, relationships_created: 2}, data));
+  assert.throws(() => requireCodeExport({...value, entities_created: 5}, data));
+});
 
 test('a successful HTTP response with empty graph cannot pass the demo', () => {
   for (const value of [{}, {nodes: []}, {nodes: 'fake'}]) assert.throws(() => requireGraph(value));

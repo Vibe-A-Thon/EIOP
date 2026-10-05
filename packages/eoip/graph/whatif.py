@@ -75,10 +75,12 @@ class WhatIfEngine:
             if not other_out and not other_in:
                 orphaned += 1
 
-        broken_paths = self._count_broken_paths(root["vid"], neighbor_vids)
-        component_split, new_components = self._check_component_split(
-            root["vid"], neighbor_vids
-        )
+        # Partition once instead of repeating remote BFS for every neighbor pair.
+        components = self._neighbor_components(root["vid"], neighbor_vids)
+        neighbor_count = sum(components)
+        broken_paths = (neighbor_count ** 2 - sum(size ** 2 for size in components)) // 2
+        component_split = len(components) > 1
+        new_components = len(components) if component_split else 0
 
         centrality_changes = self._compute_centrality_changes(
             canonical_id, neighbors
@@ -125,60 +127,36 @@ class WhatIfEngine:
             new_components=0,
         )
 
-    def _count_broken_paths(self, removed_vid: str, neighbor_vids: set[str]) -> int:
-        count = 0
-        vid_list = list(neighbor_vids)
-        for i in range(len(vid_list)):
-            for j in range(i + 1, len(vid_list)):
-                a, b = vid_list[i], vid_list[j]
-                if self._path_through(a, b, removed_vid):
-                    count += 1
-        return count
-
-    def _path_through(self, src_vid: str, tgt_vid: str, through_vid: str) -> bool:
-        visited: set[str] = {through_vid}
-        queue = deque([src_vid])
-        visited.add(src_vid)
-        while queue:
-            vid = queue.popleft()
-            if vid == tgt_vid:
-                return False
-            for edge in self._store.edges_from(vid):
-                next_vid = edge["in_v"]
-                if next_vid not in visited:
-                    visited.add(next_vid)
-                    queue.append(next_vid)
-            for edge in self._store.edges_to(vid):
-                next_vid = edge["out_v"]
-                if next_vid not in visited:
-                    visited.add(next_vid)
-                    queue.append(next_vid)
-        return True
-
-    def _check_component_split(
-        self, removed_vid: str, neighbor_vids: set[str]
-    ) -> tuple[bool, int]:
-        if len(neighbor_vids) < 2:
-            return False, 0
-        start = next(iter(neighbor_vids))
-        visited: set[str] = {removed_vid, start}
-        queue = deque([start])
-        while queue:
-            vid = queue.popleft()
-            for edge in self._store.edges_from(vid):
-                nxt = edge["in_v"]
-                if nxt not in visited:
-                    visited.add(nxt)
-                    queue.append(nxt)
-            for edge in self._store.edges_to(vid):
-                nxt = edge["out_v"]
-                if nxt not in visited:
-                    visited.add(nxt)
-                    queue.append(nxt)
-        unreachable = neighbor_vids - visited
-        if unreachable:
-            return True, 2
-        return False, 0
+    def _neighbor_components(self, removed_vid: str, neighbor_vids: set[str]) -> list[int]:
+        """Count root neighbors in each remaining weakly connected component."""
+        remaining = neighbor_vids - {removed_vid}
+        visited = {removed_vid}
+        components: list[int] = []
+        while remaining:
+            if len(remaining) == 1:
+                components.append(1)
+                break
+            start = next(iter(remaining))
+            visited.add(start)
+            queue = deque([start])
+            size = 0
+            while queue and remaining:
+                vid = queue.popleft()
+                if vid in remaining:
+                    remaining.remove(vid)
+                    size += 1
+                for edge in self._store.edges_from(vid):
+                    nxt = edge["in_v"]
+                    if nxt not in visited:
+                        visited.add(nxt)
+                        queue.append(nxt)
+                for edge in self._store.edges_to(vid):
+                    nxt = edge["out_v"]
+                    if nxt not in visited:
+                        visited.add(nxt)
+                        queue.append(nxt)
+            components.append(size)
+        return components
 
     def _compute_centrality_changes(
         self, removed_cid: str, neighbors: set[str]

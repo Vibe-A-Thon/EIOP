@@ -20,6 +20,7 @@ from typing import Any
 from eoip.contracts.graph_mutation import GraphMutation
 from eoip.contracts.normalized import NormalizedEntity
 from eoip.graph.store import GraphStore
+from eoip.ingestion.code_graph_json import normalize_code_export
 from eoip.ingestion.pipeline import apply_graph_mutation
 from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.validation.gate import MutationBlocked
@@ -131,11 +132,21 @@ class JsonProcessor:
     ) -> ProcessingResult:
         result = ProcessingResult()
         now = datetime.now(UTC).isoformat()
+        pending_relationships: list[dict] = []
+
+        if isinstance(data, dict) and all(key in data for key in ("repository", "files", "symbols")):
+            try:
+                data = normalize_code_export(data)
+            except ValueError as exc:
+                result.errors.append({"source_label": source_label, "error": str(exc)})
+                result.log.append(f"[ERR] Code export {source_label}: {exc}")
+                result.files_processed = 1
+                return result
 
         if isinstance(data, list):
             for i, item in enumerate(data):
                 if isinstance(item, dict):
-                    self._process_entity(item, result, source_label, pipeline_id, now)
+                    pending_relationships.extend(self._process_entity(item, result, source_label, pipeline_id, now))
                 else:
                     result.errors.append({"index": i, "error": "Expected object in array"})
         elif isinstance(data, dict):
@@ -143,16 +154,18 @@ class JsonProcessor:
                 entities = data.get("entities") or data.get("nodes") or []
                 for item in entities:
                     if isinstance(item, dict):
-                        self._process_entity(item, result, source_label, pipeline_id, now)
+                        pending_relationships.extend(self._process_entity(item, result, source_label, pipeline_id, now))
                 relationships = data.get("relationships") or data.get("edges") or []
                 for rel in relationships:
                     if isinstance(rel, dict):
-                        self._process_relationship(rel, result, now)
+                        pending_relationships.append(rel)
             else:
-                self._process_entity(data, result, source_label, pipeline_id, now)
+                pending_relationships.extend(self._process_entity(data, result, source_label, pipeline_id, now))
         else:
             result.errors.append({"error": "JSON root must be an object or array"})
 
+        for rel in pending_relationships:
+            self._process_relationship(rel, result, now)
         self._create_metadata_vertex(result, source_label, pipeline_id, now)
         result.files_processed = 1
         result.log.append(f"[{now}] Processing complete: {result.entities_created} entities, {result.relationships_created} relationships")
@@ -200,7 +213,7 @@ class JsonProcessor:
     def _process_entity(
         self, data: dict, result: ProcessingResult,
         source_label: str, pipeline_id: str, now: str,
-    ) -> None:
+    ) -> list[dict]:
         entity_type = _infer_entity_type(data)
         domain = _infer_domain(entity_type)
         cid = data.get("canonical_id") or _generate_canonical_id(entity_type, data)
@@ -248,8 +261,7 @@ class JsonProcessor:
             result.errors.append({"canonical_id": cid, "entity_type": entity_type, "error": str(exc)})
             result.log.append(f"[ERR] Entity {cid}: {exc}")
 
-        for rel in _extract_relationships(data, cid):
-            self._process_relationship(rel, result, now)
+        return _extract_relationships(data, cid)
 
     def _process_relationship(self, rel: dict, result: ProcessingResult, now: str) -> None:
         from_id = rel.get("from_id") or rel.get("source") or rel.get("from") or ""
