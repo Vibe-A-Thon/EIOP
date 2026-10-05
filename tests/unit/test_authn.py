@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import json
+import sys
 import time
 
 import pytest
@@ -195,9 +196,9 @@ class FakeRs256Verifier:
 
 
 def _make_oidc_token(payload, header=None):
-    header = {"alg": "RS256", "typ": "JWT", "kid": "key-1"}
-    header.update(header or {})
-    return (f"{_b64u(json.dumps(header).encode())}."
+    token_header = {"alg": "RS256", "typ": "JWT", "kid": "key-1"}
+    token_header.update(header or {})
+    return (f"{_b64u(json.dumps(token_header).encode())}."
             f"{_b64u(json.dumps(payload).encode())}.{_b64u(b'sig')}")
 
 
@@ -289,25 +290,11 @@ class TestOidcJwtValidator:
             validator.validate(token)
 
     def test_cryptography_verifier_not_available_path(self, monkeypatch):
-        import builtins
-        real_import = builtins.__import__
-
-        def block(name, *args, **kwargs):
-            if name.startswith("cryptography"):
-                raise ImportError("blocked")
-            return real_import(name, *args, **kwargs)
-
-        monkeypatch.delitem(__import__("sys").modules, "eoip.authn", False)
-        monkeypatch.setattr(builtins, "__import__", block)
-        import importlib
-        import eoip.authn as authn
-        importlib.reload(authn)
-        try:
-            with pytest.raises(AuthenticationUnavailable, match="not deployed"):
-                authn.CryptographyVerifier({"keys": []})
-        finally:
-            monkeypatch.undo()
-            importlib.reload(authn)
+        # A None entry in sys.modules forces ImportError on any
+        # `from cryptography... import` inside CryptographyVerifier.
+        monkeypatch.setitem(sys.modules, "cryptography", None)
+        with pytest.raises(AuthenticationUnavailable, match="not deployed"):
+            CryptographyVerifier({"keys": []})
 
 
 # --------------------------------------------------------------------------

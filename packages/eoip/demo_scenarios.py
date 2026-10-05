@@ -76,6 +76,11 @@ def validate_demo_scenario_pack(pack: dict, schema: dict) -> None:
             raise MutationBlocked(
                 f"invalid demo edge endpoints: {vertices[source]} -[{item['label']}]-> {vertices[target]}"
             )
+    connected = {frozenset((item["from"], item["to"])) for item in pack["edges"]}
+    for scenario in pack["scenarios"]:
+        for source, target in zip(scenario["expected_path"], scenario["expected_path"][1:]):
+            if frozenset((source, target)) not in connected:
+                raise ValueError(f"scenario {scenario['id']} has disconnected path: {source} -> {target}")
 
 
 def load_demo_scenario_pack(
@@ -124,6 +129,8 @@ def load_demo_scenario_pack(
             "ingestion_run_id": run_id,
             "last_seen": observed_at,
         }
+        if properties.get("evidence_key"):
+            properties["evidence_key"] = event_id
         loaded.append(graph.upsert_vertex(item["label"], properties))
 
     legacy_index = 0

@@ -19,6 +19,17 @@ from eoip.audit.redaction import redact_secrets
 _BUNDLE_SCHEMA = "urn:eoip:ops:support-bundle:v1"
 
 
+_SENSITIVE_ENV_PARTS = ("TOKEN", "SECRET", "PASSWORD", "PASS", "KEY", "CREDENTIAL")
+
+
+def _redact_env(name: str, value):
+    if value is None:
+        return None
+    if any(part in name.upper() for part in _SENSITIVE_ENV_PARTS):
+        return "***REDACTED***"
+    return value
+
+
 def _versions() -> dict[str, str]:
     versions = {
         "python": platform.python_version(),
@@ -73,7 +84,7 @@ def collect_support_bundle(
     - graph_stats: health/ping output from the graph store;
     - versions: Python, platform, and eoip package versions.
     """
-    config = redact_secrets({name: os.getenv(name) for name in env_vars})
+    config = redact_secrets({name: _redact_env(name, os.getenv(name)) for name in env_vars})
     bundle: dict[str, Any] = {
         "id": f"urn:eoip:ops:support-bundle:{int(time.time())}",
         "schema": _BUNDLE_SCHEMA,

@@ -30,7 +30,7 @@ test('guided Hubble displays all scenarios as live named connected domain graphs
   await expect(page.locator('#status')).toContainText('directed relationships displayed', {timeout: 65000});
   expect(await page.locator('#legend .badge').count()).toBeGreaterThan(1);
   const scenarios = await page.locator('#scenario option').evaluateAll(options => options.map(o => o.value));
-  expect(scenarios).toHaveLength(11);
+  expect(scenarios).toHaveLength(13);
   for (const scenario of scenarios) {
     await page.selectOption('#scenario', scenario);
     await expect(page.locator('#status')).toContainText('directed relationships displayed', {timeout: 65000});
@@ -57,6 +57,13 @@ test('guided Hubble displays all scenarios as live named connected domain graphs
   await expect(page.getByRole('button', {name: 'Maya Chen', exact: true})).toBeVisible();
   for (const response of responses) expect((await response.json()).status).toBe(200);
   expect(errors).toEqual([]);
+  await page.getByRole('button', {name: 'Start walkthrough', exact: true}).click();
+  await expect(page.locator('#status')).toContainText('directed relationships displayed', {timeout: 65000});
+  await page.getByRole('button', {name: 'Stop walkthrough', exact: true}).click();
+  await expect(page.getByRole('button', {name: 'Start walkthrough', exact: true})).toBeEnabled({timeout: 2000});
+  await page.getByRole('button', {name: 'Start walkthrough', exact: true}).click();
+  await page.getByRole('button', {name: 'Stop walkthrough', exact: true}).click();
+  await expect(page.getByRole('button', {name: 'Start walkthrough', exact: true})).toBeEnabled({timeout: 65000});
 });
 
 test('guided Hubble surfaces application errors instead of displaying fixture data', async ({page}) => {

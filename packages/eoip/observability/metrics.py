@@ -128,7 +128,15 @@ class Histogram(_MetricBase):
                 labels_str = self._render_labels(key)
                 for idx, bound in enumerate(self.buckets):
                     bound_str = "+Inf" if math.isinf(bound) else f"{bound:g}"
-                    lines.append(f'{self.name}_bucket{labels_str[:-1] + f',le="{bound_str}"}}' if labels_str else f'{{le="{bound_str}"}}' if False else f"{self.name}_bucket{{{','.join(f'{n}=\"{_escape_label(v)}\"' for n, v in zip(self.label_names, key)) + ',' if key else ''}le=\"{bound_str}\"}} {counts[idx]}")
+                    if key:
+                        inner = ",".join(
+                            f'{name}="{_escape_label(value)}"'
+                            for name, value in zip(self.label_names, key)
+                        )
+                        bucket_labels = "{" + inner + f',le="{bound_str}"}}'
+                    else:
+                        bucket_labels = f'{{le="{bound_str}"}}'
+                    lines.append(f"{self.name}_bucket{bucket_labels} {counts[idx]}")
                 lines.append(f"{self.name}_sum{labels_str} {self._sums[key]:g}")
                 lines.append(f"{self.name}_count{labels_str} {counts[-1]}")
         return "\n".join(lines)
@@ -180,11 +188,19 @@ def record_request(registry: Registry, *, method: str, path: str, status: int, d
     and ``http_requests_in_flight`` (the last is decremented after the call).
     """
     labels = {"method": method, "path": path, "status": str(status)}
-    registry.counter(
-        "http_requests_total", "Total HTTP requests handled.", ("method", "path", "status")
-    ).inc(**labels)
-    registry.histogram(
-        "http_request_duration_seconds", "HTTP request duration in seconds.", ("method", "path", "status")
+
+    def _family(kind, name, help_text):
+        existing = registry.get(name)
+        if existing is not None:
+            return existing
+        factory = registry.counter if kind == "counter" else registry.histogram
+        return factory(name, help_text, ("method", "path", "status"))
+
+    _family("counter", "http_requests_total", "Total HTTP requests handled.").inc(**labels)
+    _family(
+        "histogram",
+        "http_request_duration_seconds",
+        "HTTP request duration in seconds.",
     ).observe(duration_seconds, **labels)
 
 

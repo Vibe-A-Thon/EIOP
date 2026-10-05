@@ -190,6 +190,9 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
     extended_router, extended_state = build_extended_router(store)
     app.state.extended_state = extended_state
     app.include_router(extended_router)
+    from apps.api.extended import add_metrics_middleware
+
+    add_metrics_middleware(app, extended_state)
     from eoip.fileparse.api import build_router as build_file_router
     from eoip.runtime import data_root
 

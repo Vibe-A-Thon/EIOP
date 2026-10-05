@@ -23,6 +23,20 @@ test('coverage cannot certify unexecuted APIs or destructive operations', () => 
   assert.ok(coverage.slice(1).every(item => item.status === 'NOT_DEMONSTRATED' && item.reason));
 });
 
+test('coverage matches parameterized routes by method and segment, not loose prefixes', () => {
+  const schema = {paths: {
+    '/products/{product_id}/transition': {post: {}, delete: {}},
+    '/products/{product_id}': {get: {}},
+    '/products/all/extra': {get: {}},
+  }};
+  const coverage = operationCoverage(schema, new Set([
+    'POST /products/urn:demo:one/transition', 'GET /products/urn:demo:one?verbose=1',
+    'GET /products/all/extra/more',
+  ]));
+  assert.deepEqual(coverage.map(item => item.status),
+    ['DEMONSTRATED', 'NOT_DEMONSTRATED', 'DEMONSTRATED', 'NOT_DEMONSTRATED']);
+});
+
 test('agent aliases show their actual execution without accepting invalid results', () => {
   const types = [{name: 'simple_reflex', category: 'reactive'}];
   const result = {agent_type: 'simple_reflex', category: 'reactive', answer: 'Live graph analysis',

@@ -15,7 +15,8 @@ try {
   if (args.includes('--help') || args.includes('-h')) {
     console.log('Usage: run-demo.bat [full|manual|pipeline|admin] [--delay MS] [--headless] [--no-pause] [--dry-run] [--output FILE]');
     console.log('Full: visible enterprise walkthrough, both ingestion datasets, administration and isolated VS Code NLQ/MCP.');
-    console.log('Defaults: local Docker services, Edge browser, 2500 ms per result/window, pause before closing launcher.');
+    console.log('Defaults: local Docker services, Chrome browser, Next Step/key-controlled pacing, pause before closing launcher.');
+    console.log('--no-pause: automatically advance each step using --delay (default 2500 ms) and suppress final console pause.');
     console.log('Receipts distinguish demonstrated capabilities from unexecuted/prerequisite-dependent operations.');
   } else {
     const config = options(args, 'full');

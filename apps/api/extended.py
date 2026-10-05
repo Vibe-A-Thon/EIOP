@@ -18,9 +18,18 @@ Exposes, under ``/api/v1``:
 
 from __future__ import annotations
 
+import glob
 import json
+import os
+import time
+from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
+import yaml
+from eoip.audit.sink import AuditSink
+from eoip.authn import AuthenticationError, LocalIdentityProvider, TokenService
+from eoip.authz import PolicyEnforcer, RoleRegistry, UserStore
 from eoip.catalog.products import (
     KnowledgeProduct,
     KnowledgeProductCatalog,
@@ -28,6 +37,8 @@ from eoip.catalog.products import (
     ProductState,
     ProductValidationError,
 )
+from eoip.ci import KGCIPipeline
+from eoip.ci.pipeline import FAIL_ON_CHOICES
 from eoip.contracts.query_plan import QueryPlan
 from eoip.federation import (
     FederatedQueryPlanner,
@@ -36,16 +47,66 @@ from eoip.federation import (
     SourceCapability,
     SourceMode,
 )
-from eoip.graphtest.framework import GraphTestRunner, load_suite
 from eoip.graph.store import GraphStore
+from eoip.graphtest.framework import GraphTestRunner, load_suite
+from eoip.marketplace import (
+    DependencyConflict,
+    IntegrityError,
+    PackageInstaller,
+    PackageRegistry,
+)
+from eoip.models.embeddings import build_embedding_provider
+from eoip.models.governance import (
+    Feature,
+    GovernancePolicy,
+    HallucinationIncidentLog,
+    KillSwitch,
+    ModelEntry,
+    ModelOutput,
+    ModelRegistry,
+    PromptTemplate,
+    PromptTemplateRegistry,
+)
+from eoip.observability.metrics import Registry as MetricsRegistry
+from eoip.observability.metrics import record_request
+from eoip.ontology.packs import (
+    DEFAULT_PACKS_DIR,
+    METADATA_FILENAME,
+    list_installed_packs,
+    load_metadata,
+    load_ontology,
+    validate_pack,
+)
 from eoip.ontology.skos import MappingKind, SkosTaxonomy
+from eoip.ops import collect_support_bundle, plan_upgrade, run_preflight
 from eoip.query.intelligence import QueryIntelligence, TemplateBindingError
 from eoip.retrieval.service import retrieve
-from eoip.retrieval.vectors import build_search_index
+from eoip.retrieval.vectors import HashingEmbedder, build_search_index
 from eoip.search import FacetedSearch, SearchRequest, SearchResponse
 from eoip.truth import Claim, TruthStore
-from fastapi import APIRouter, HTTPException, Query, Response
+from fastapi import APIRouter, Body, HTTPException, Query, Response
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field, ValidationError
+
+_DEFAULT_POLICY_YAML = """
+policies:
+  - id: admin-full-access
+    role: admin
+    permission: admin:*
+    description: admins may perform any action
+  - id: steward-publish
+    role: steward
+    permission: ontology:publish
+  - id: steward-agents
+    role: steward
+    permission: agents:approve
+  - id: analyst-read
+    role: analyst
+    permission: graph:read
+  - id: viewer-read
+    role: viewer
+    permission: graph:read
+"""
 
 
 class ExtendedState:
@@ -96,6 +157,69 @@ class ExtendedState:
                 store,
             )
         )
+        self._init_pass2(Path(os.getenv("EOIP_DATA_DIR", ".data")))
+
+    def _init_pass2(self, data_dir: Path) -> None:
+        # -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------
+        self.identity_provider = LocalIdentityProvider()
+        self.token_service = TokenService()
+        self.role_registry = RoleRegistry()
+        self.user_store = UserStore()
+        self.policy_enforcer = PolicyEnforcer()
+        self.policy_enforcer.load_yaml(_DEFAULT_POLICY_YAML)
+        self.decision_log: list[dict] = []
+
+        # -- Model governance (§49) -------------------------------------------
+        self.model_registry = ModelRegistry()
+        self.template_registry = PromptTemplateRegistry()
+        self.governance_policy = GovernancePolicy(
+            groundedness_threshold=float(
+                os.getenv("EOIP_GOV_GROUNDEDNESS_THRESHOLD", "0.8")
+            ),
+            unsafe_action_threshold=float(
+                os.getenv("EOIP_GOV_UNSAFE_ACTION_THRESHOLD", "0.1")
+            ),
+        )
+        self.kill_switch = KillSwitch()
+        if os.getenv("EOIP_KILL_SWITCH", "").strip().lower() in (
+            "1", "true", "off", "disabled",
+        ):
+            self.kill_switch.disable_all("disabled via EOIP_KILL_SWITCH env")
+        incidents_dir = data_dir / "governance"
+        incidents_dir.mkdir(parents=True, exist_ok=True)
+        self.incident_log = HallucinationIncidentLog(
+            incidents_dir / "hallucination-incidents.jsonl"
+        )
+
+        # -- Marketplace (GAP-MKT-001..008) ------------------------------------
+        self.package_registry = PackageRegistry(
+            os.getenv("EOIP_REGISTRY_PATH")
+            or str(data_dir / "marketplace-registry.json")
+        )
+        install_key = os.getenv("EOIP_INSTALL_KEY")
+        self.package_installer = PackageInstaller(
+            self.package_registry, key=install_key.encode() if install_key else None
+        )
+
+        # -- KGCI (GAP-KGCI-001..004) -------------------------------------------
+        self.kgci_last_report: dict | None = None
+
+        # -- Metrics (GAP-OBS-003) ------------------------------------------------
+        self.metrics = MetricsRegistry()
+        self.metrics_renderers: list[Callable[[], str]] = [self.metrics.render]
+        self.metrics.counter(
+            "http_requests_total",
+            "Total HTTP requests handled.",
+            ("method", "path", "status"),
+        )
+        self.metrics.histogram(
+            "http_request_duration_seconds",
+            "HTTP request duration in seconds.",
+            ("method", "path", "status"),
+        )
+
+        # -- Audit sink for the support bundle (§47) -----------------------------
+        self.audit_sink = AuditSink(data_dir / "audit")
 
 
 def _store_labels(store: GraphStore) -> list[str]:
@@ -171,6 +295,80 @@ class RetrievalSearchRequest(BaseModel):
         default=None, pattern="^(keyword|vector|hybrid)$"
     )
     top_k: int = Field(default=10, ge=1, le=100)
+
+
+class AlgorithmRequest(BaseModel):
+    algorithm: str = Field(description="Algorithm name from registry")
+    source_id: str | None = None
+    target_id: str | None = None
+    canonical_ids: list[str] | None = None
+    max_depth: int = Field(default=4, ge=1, le=20)
+    limit: int = Field(default=20, ge=1, le=500)
+    k: int = Field(default=5, ge=1, le=50)
+    direction: str = Field(default="outgoing")
+    allowed_labels: list[str] | None = None
+    blocked_labels: list[str] | None = None
+
+
+class QueryLanguageRequest(BaseModel):
+    language: str = Field(description="Query language: eoql, osql, semantic")
+    query: str = Field(min_length=1)
+
+
+class SemanticPipelineRequest(BaseModel):
+    stages: list[str] | None = None
+    scope: dict[str, str] | None = None
+
+
+class AgentAnalyticsRequest(BaseModel):
+    algorithm: str = Field(default="all", description="Algorithm name or 'all' for swarm")
+    context_refs: list[str] = Field(default_factory=list)
+    budgets: dict[str, int] = Field(default_factory=dict)
+
+
+class LoginRequest(BaseModel):
+    username: str = Field(min_length=1, max_length=256)
+    password: str = Field(min_length=1, max_length=256)
+
+
+class AuthzUserRequest(BaseModel):
+    user_id: str = Field(min_length=1, max_length=512)
+    roles: list[str] = Field(default_factory=list, max_length=50)
+    attributes: dict[str, Any] = Field(default_factory=dict)
+
+
+class AuthzRoleRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=128)
+    description: str = ""
+    permissions: list[str] = Field(default_factory=list, max_length=100)
+
+
+class AuthzEvaluateRequest(BaseModel):
+    user_id: str = Field(min_length=1, max_length=512)
+    action: str = Field(min_length=1, max_length=256)
+    resource_attrs: dict[str, Any] = Field(default_factory=dict)
+
+
+class KillSwitchRequest(BaseModel):
+    enabled: bool
+    reason: str = ""
+
+
+class KillSwitchFeatureRequest(BaseModel):
+    enabled: bool
+    reason: str = ""
+
+
+class UpgradePlanRequest(BaseModel):
+    current_version: str = Field(min_length=1, max_length=64)
+    target_version: str = Field(min_length=1, max_length=64)
+    current_manifest: dict[str, Any] | None = None
+    target_manifest: dict[str, Any] | None = None
+
+
+class KGCIRunRequest(BaseModel):
+    ontology_dir: str | None = None
+    fail_on: str = "any"
 
 
 def _raise_skos(exc: Exception) -> None:
@@ -590,18 +788,6 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     # Graph Algorithms (extended)
     # ------------------------------------------------------------------
 
-    class AlgorithmRequest(BaseModel):
-        algorithm: str = Field(description="Algorithm name from registry")
-        source_id: str | None = None
-        target_id: str | None = None
-        canonical_ids: list[str] | None = None
-        max_depth: int = Field(default=4, ge=1, le=20)
-        limit: int = Field(default=20, ge=1, le=500)
-        k: int = Field(default=5, ge=1, le=50)
-        direction: str = Field(default="outgoing")
-        allowed_labels: list[str] | None = None
-        blocked_labels: list[str] | None = None
-
     @router.get("/api/v1/algorithms")
     def list_algorithms():
         from eoip.agents.graph_analytics import ALGORITHM_REGISTRY
@@ -637,10 +823,6 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     # Query Languages (EOQL, OSQL, Semantic QL)
     # ------------------------------------------------------------------
 
-    class QueryLanguageRequest(BaseModel):
-        language: str = Field(description="Query language: eoql, osql, semantic")
-        query: str = Field(min_length=1)
-
     @router.post("/api/v1/query/language")
     def query_language(payload: QueryLanguageRequest):
         from eoip.query.languages import parse_eoql, parse_osql, parse_semantic_query
@@ -666,10 +848,6 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     # Semantic Pipeline
     # ------------------------------------------------------------------
 
-    class SemanticPipelineRequest(BaseModel):
-        stages: list[str] | None = None
-        scope: dict[str, str] | None = None
-
     @router.post("/api/v1/admin/semantic-pipeline")
     def run_semantic_pipeline(payload: SemanticPipelineRequest):
         from eoip.ingestion.semantic_pipeline import PipelineStage, SemanticPipeline
@@ -693,11 +871,6 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     # ------------------------------------------------------------------
     # Agent-Driven Analytics
     # ------------------------------------------------------------------
-
-    class AgentAnalyticsRequest(BaseModel):
-        algorithm: str = Field(default="all", description="Algorithm name or 'all' for swarm")
-        context_refs: list[str] = Field(default_factory=list)
-        budgets: dict[str, int] = Field(default_factory=dict)
 
     @router.post("/api/v1/agents/analytics")
     def run_analytics_agent(payload: AgentAnalyticsRequest):
@@ -727,7 +900,399 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
         result = agent.execute(request, store)
         return result.model_dump() if hasattr(result, "model_dump") else {"status": result.status, "summary": result.summary, "data": result.data}
 
+    # -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------------
+
+    @router.post("/api/v1/auth/login")
+    def auth_login(payload: LoginRequest) -> dict[str, str]:
+        """GAP-SEC-001/004: exchange username/password for a bearer token.
+
+        Passwords are never logged. Authentication failures return 401."""
+        try:
+            principal = state.identity_provider.authenticate(
+                {"username": payload.username, "password": payload.password}
+            )
+        except AuthenticationError:
+            raise HTTPException(status_code=401, detail="invalid credentials")
+        return {"token": state.token_service.issue(principal)}
+
+    @router.get("/api/v1/auth/health")
+    def auth_health() -> dict[str, Any]:
+        """GAP-SEC-001: identity backend liveness (no secrets exposed)."""
+        return state.identity_provider.health()
+
+    # Note: /api/v1/authz/* routes have no local token check, matching the
+    # rest of this router; the deployment app (main.py) protects all
+    # /api/v1 paths via its bearer-token middleware.
+
+    @router.get("/api/v1/authz/users")
+    def authz_list_users() -> dict[str, Any]:
+        """GAP-SEC-006: list users in the authorization user store."""
+        return {
+            "users": [u.to_dict() for u in state.user_store.list_users()]
+        }
+
+    @router.post("/api/v1/authz/users", status_code=201)
+    def authz_create_user(payload: AuthzUserRequest) -> dict[str, Any]:
+        """GAP-SEC-006: create a user with roles (and optional attributes)."""
+        try:
+            user = state.user_store.create_user(
+                payload.user_id, payload.roles, payload.attributes
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc))
+        return user.to_dict()
+
+    @router.get("/api/v1/authz/users/export")
+    def authz_export_users() -> Response:
+        """GAP-SEC-006: deterministic JSON export of the user store."""
+        return Response(
+            content=state.user_store.export_json(), media_type="application/json"
+        )
+
+    @router.get("/api/v1/authz/roles")
+    def authz_list_roles() -> dict[str, Any]:
+        """GAP-SEC-005: list role definitions."""
+        return {"roles": state.role_registry.list_roles()}
+
+    @router.post("/api/v1/authz/roles", status_code=201)
+    def authz_create_role(payload: AuthzRoleRequest) -> dict[str, Any]:
+        """GAP-SEC-005: create a role with catalog-validated permissions."""
+        try:
+            return state.role_registry.create_role(
+                payload.name,
+                description=payload.description,
+                permissions=payload.permissions,
+            )
+        except ValueError as exc:
+            status = 409 if "already exists" in str(exc) else 422
+            raise HTTPException(status_code=status, detail=str(exc))
+
+    @router.get("/api/v1/authz/roles/export")
+    def authz_export_roles() -> Response:
+        """GAP-SEC-005: deterministic JSON export of the role registry."""
+        return Response(
+            content=state.role_registry.export_json(), media_type="application/json"
+        )
+
+    @router.get("/api/v1/authz/policies")
+    def authz_list_policies() -> dict[str, Any]:
+        """GAP-SEC-003: loaded policy-as-code statements."""
+        return {
+            "policies": [s.to_dict() for s in state.policy_enforcer.statements]
+        }
+
+    @router.post("/api/v1/authz/policies/reload")
+    def authz_reload_policies(
+        policy_yaml: str = Body(media_type="application/yaml"),
+    ) -> dict[str, Any]:
+        """GAP-SEC-003: load additional policy statements from YAML text."""
+        try:
+            loaded = state.policy_enforcer.load_yaml(policy_yaml)
+        except (yaml.YAMLError, KeyError, TypeError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc))
+        return {"loaded": loaded}
+
+    @router.get("/api/v1/authz/decisions")
+    def authz_decisions() -> dict[str, Any]:
+        """GAP-SEC-004: audit trail of authorization decisions (audit:read)."""
+        return {"decisions": list(state.decision_log)}
+
+    @router.post("/api/v1/authz/evaluate")
+    def authz_evaluate(payload: AuthzEvaluateRequest) -> dict[str, Any]:
+        """GAP-SEC-004: evaluate (user, action, resource attrs) and record
+        the default-deny decision for audit/debugging."""
+        user = state.user_store.get_user(payload.user_id)
+        if user is None:
+            raise HTTPException(status_code=404, detail=f"unknown user: {payload.user_id}")
+        decision = state.policy_enforcer.enforce(
+            user, payload.action, payload.resource_attrs
+        )
+        record = decision.to_audit_record()
+        state.decision_log.append(record)
+        return record
+
+    # -- Model governance (§49) -------------------------------------------------
+
+    @router.get("/api/v1/governance/models")
+    def governance_list_models() -> dict[str, Any]:
+        """§49.2: registered models with approval state."""
+        return {
+            "models": [m.model_dump() for m in state.model_registry.list_models()]
+        }
+
+    @router.post("/api/v1/governance/models", status_code=201)
+    def governance_register_model(entry: ModelEntry) -> dict[str, Any]:
+        """§49.2: register a model version."""
+        state.model_registry.register(entry)
+        return entry.model_dump()
+
+    @router.post("/api/v1/governance/models/{model_id}/approval")
+    def governance_approve_model(model_id: str) -> dict[str, Any]:
+        """§49.2: approve a registered model."""
+        try:
+            state.model_registry.approve(model_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        return {"model_id": model_id, "approved": True}
+
+    @router.delete("/api/v1/governance/models/{model_id}/approval")
+    def governance_revoke_model(model_id: str) -> dict[str, Any]:
+        """§49.2: revoke a model approval."""
+        try:
+            state.model_registry.revoke(model_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        return {"model_id": model_id, "approved": False}
+
+    @router.get("/api/v1/governance/templates")
+    def governance_list_templates() -> dict[str, Any]:
+        """§49.3: versioned prompt templates with content hashes."""
+        return {
+            "templates": [
+                t.model_dump() for t in state.template_registry.list_templates()
+            ]
+        }
+
+    @router.post("/api/v1/governance/templates", status_code=201)
+    def governance_register_template(template: PromptTemplate) -> dict[str, Any]:
+        """§49.3: register a prompt template version."""
+        return state.template_registry.register(template).model_dump()
+
+    @router.get("/api/v1/governance/kill-switch")
+    def governance_kill_switch_status() -> dict[str, Any]:
+        """§49.6: global + per-feature AI kill switch status."""
+        features = {f.value: state.kill_switch.is_enabled(f) for f in Feature}
+        return {
+            "global_enabled": any(features.values()),
+            "features": features,
+        }
+
+    @router.post("/api/v1/governance/kill-switch")
+    def governance_set_kill_switch(payload: KillSwitchRequest) -> dict[str, Any]:
+        """§49.6: enable/disable the global AI kill switch."""
+        if payload.enabled:
+            state.kill_switch.enable_all()
+        else:
+            state.kill_switch.disable_all(payload.reason or "disabled via API")
+        return {
+            "global_enabled": payload.enabled,
+            "features": {
+                f.value: state.kill_switch.is_enabled(f) for f in Feature
+            },
+        }
+
+    @router.post("/api/v1/governance/kill-switch/features/{feature}")
+    def governance_set_feature_kill_switch(
+        feature: str, payload: KillSwitchFeatureRequest
+    ) -> dict[str, Any]:
+        """§49.6: enable/disable one AI feature (rag, agents, nlq)."""
+        try:
+            parsed = Feature(feature)
+        except ValueError:
+            raise HTTPException(
+                status_code=422,
+                detail=f"unknown feature: {feature}; expected one of {[f.value for f in Feature]}",
+            )
+        if payload.enabled:
+            state.kill_switch.enable(parsed)
+        else:
+            state.kill_switch.disable(parsed, payload.reason)
+        return {"feature": parsed.value, "enabled": payload.enabled}
+
+    @router.get("/api/v1/governance/incidents")
+    def governance_incidents() -> dict[str, Any]:
+        """§49.8: recorded hallucination incidents (append-only JSONL)."""
+        return {"incidents": state.incident_log.read_all()}
+
+    @router.post("/api/v1/governance/evaluate")
+    def governance_evaluate(output: ModelOutput) -> dict[str, Any]:
+        """§49.5: evaluate a scored model output against governance thresholds."""
+        return state.governance_policy.evaluate(output).model_dump()
+
+    # -- Marketplace (GAP-MKT-001..008) ------------------------------------------
+
+    @router.get("/api/v1/marketplace/installed")
+    def marketplace_installed() -> dict[str, Any]:
+        """GAP-MKT-006: installed extension packages."""
+        return {
+            "packages": [r.to_dict() for r in state.package_registry.list()]
+        }
+
+    @router.get("/api/v1/marketplace/installed/search")
+    def marketplace_search(q: str = Query(default="", max_length=256)) -> dict[str, Any]:
+        """GAP-MKT-006: search installed packages by name/description."""
+        return {
+            "packages": [r.to_dict() for r in state.package_registry.search(q)]
+        }
+
+    @router.post("/api/v1/marketplace/install", status_code=201)
+    def marketplace_install(
+        package: bytes = Body(media_type="application/zip"),
+    ) -> dict[str, Any]:
+        """GAP-MKT-005/007: install a raw ``.eoipkg`` archive (zip bytes)."""
+        try:
+            manifest = state.package_installer.install(package)
+        except IntegrityError as exc:
+            raise HTTPException(status_code=422, detail=str(exc))
+        except DependencyConflict as exc:
+            raise HTTPException(status_code=409, detail=str(exc))
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc))
+        return manifest.model_dump()
+
+    @router.post("/api/v1/marketplace/uninstall/{name}")
+    def marketplace_uninstall(name: str) -> dict[str, Any]:
+        """GAP-MKT-006: uninstall a package (refuses with dependents)."""
+        try:
+            removed = state.package_installer.uninstall(name)
+        except DependencyConflict as exc:
+            raise HTTPException(status_code=409, detail=str(exc))
+        if not removed:
+            raise HTTPException(status_code=404, detail=f"package not installed: {name}")
+        return {"name": name, "uninstalled": True}
+
+    # -- Domain packs (GAP-DP-*) ---------------------------------------------------
+
+    @router.get("/api/v1/ontology/packs")
+    def ontology_list_packs() -> dict[str, Any]:
+        """GAP-DP-005: metadata for every installed domain pack."""
+        return {
+            "packs": [m.model_dump() for m in list_installed_packs()]
+        }
+
+    @router.get("/api/v1/ontology/packs/{name}")
+    def ontology_pack_detail(name: str) -> dict[str, Any]:
+        """GAP-DP-005: one domain pack with its validation result.
+
+        404 for unknown packs; 422 (with conflicts) when the pack is invalid."""
+        pack_dir = Path(DEFAULT_PACKS_DIR) / name
+        if not (pack_dir / METADATA_FILENAME).is_file():
+            raise HTTPException(status_code=404, detail=f"unknown domain pack: {name}")
+        metadata = load_metadata(pack_dir)
+        pack = load_ontology(pack_dir, metadata)
+        result = validate_pack(pack)
+        detail = {
+            "name": metadata.name,
+            "valid": result.valid,
+            "metadata": metadata.model_dump(),
+            "classes": sorted(pack.classes),
+            "extensions": list(result.extensions),
+            "conflicts": [c.model_dump() for c in result.conflicts],
+        }
+        if not result.valid:
+            raise HTTPException(status_code=422, detail=detail)
+        return detail
+
+    # -- KGCI (GAP-KGCI-001..004) ---------------------------------------------------
+
+    @router.post("/api/v1/kgci/run")
+    def kgci_run(payload: KGCIRunRequest | None = None) -> dict[str, Any]:
+        """GAP-KGCI-001..004: run the deterministic KG CI/CD pipeline
+        synchronously and return the aggregate report."""
+        payload = payload or KGCIRunRequest()
+        if payload.fail_on not in FAIL_ON_CHOICES:
+            raise HTTPException(
+                status_code=422,
+                detail=f"fail_on must be one of {list(FAIL_ON_CHOICES)}",
+            )
+        pipeline = KGCIPipeline(
+            ontology_dir=payload.ontology_dir,
+            scan_dirs=["packages/eoip", "config"],
+            output_dir=None,
+            fail_on=payload.fail_on,
+        )
+        report = pipeline.run()
+        state.kgci_last_report = report.to_dict()
+        return state.kgci_last_report
+
+    @router.get("/api/v1/kgci/report")
+    def kgci_last_report() -> dict[str, Any]:
+        """GAP-KGCI-004: the most recent KGCI report, if any."""
+        if state.kgci_last_report is None:
+            raise HTTPException(status_code=404, detail="no KGCI report has been run")
+        return state.kgci_last_report
+
+    # -- Ops (§47) -----------------------------------------------------------------
+
+    @router.get("/api/v1/ops/preflight")
+    def ops_preflight() -> dict[str, Any]:
+        """§47: startup/operational preflight checks (env, token config,
+        ontology files, graph store, disk, port)."""
+        report = run_preflight(
+            required_env=["EOIP_GRAPH_URL"],
+            ontology_paths=sorted(glob.glob("config/ontology/*.yaml")),
+            graph_store=store,
+            token_env="EOIP_API_TOKEN",
+            port=8000,
+        )
+        return report.to_dict()
+
+    @router.post("/api/v1/ops/upgrade-plan")
+    def ops_upgrade_plan(payload: UpgradePlanRequest) -> dict[str, Any]:
+        """§47: version-to-version upgrade plan with migration classification."""
+        return plan_upgrade(
+            payload.current_version,
+            payload.target_version,
+            current_manifest=payload.current_manifest,
+            target_manifest=payload.target_manifest,
+            graph_store=store,
+        )
+
+    @router.get("/api/v1/ops/support-bundle")
+    def ops_support_bundle() -> dict[str, Any]:
+        """§47: redacted health/support bundle (config, recent audit events,
+        graph store stats, versions)."""
+        return collect_support_bundle(
+            audit_sink=state.audit_sink, graph_store=store
+        )
+
+    # -- Metrics (GAP-OBS-003) -----------------------------------------------------
+
+    @router.get("/metrics", response_class=PlainTextResponse)
+    def metrics_render() -> str:
+        """GAP-OBS-003: Prometheus text exposition of request metrics."""
+        return "\n".join(render() for render in state.metrics_renderers)
+
+    # -- Embeddings health (GAP-SEARCH-001/§7.3) -----------------------------------
+
+    @router.get("/api/v1/health/embeddings")
+    def health_embeddings() -> dict[str, Any]:
+        """Embedding provider health; reports the deterministic hashing
+        fallback when no Ollama model is configured."""
+        provider = build_embedding_provider()
+        if provider is None:
+            return {
+                "provider": "hashing",
+                "healthy": True,
+                "dim": HashingEmbedder().dimensions,
+            }
+        try:
+            healthy = bool(provider.health())
+        except Exception:  # noqa: BLE001 - health probe must never fail the route
+            healthy = False
+        return {"provider": "ollama", "healthy": healthy, "dim": provider.dim}
+
     return router, state
+
+
+def add_metrics_middleware(app: Any, state: ExtendedState) -> None:
+    """Record request metrics into the state metrics registry (GAP-OBS-003)."""
+
+    @app.middleware("http")
+    async def eoip_metrics_middleware(request: Any, call_next: Any) -> Any:
+        started = time.perf_counter()
+        response = await call_next(request)
+        try:
+            record_request(
+                state.metrics,
+                method=request.method,
+                path=request.url.path,
+                status=response.status_code,
+                duration_seconds=time.perf_counter() - started,
+            )
+        except Exception:  # noqa: BLE001 - metrics must never break requests
+            pass
+        return response
 
 
 def ensure_extended(app, store: GraphStore) -> None:
@@ -739,3 +1304,4 @@ def ensure_extended(app, store: GraphStore) -> None:
     router, state = build_extended_router(store)
     app.state.extended_state = state
     app.include_router(router)
+    add_metrics_middleware(app, state)

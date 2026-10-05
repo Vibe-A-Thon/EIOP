@@ -24,9 +24,10 @@ import json
 import re
 import sys
 import time
+from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import yaml
 from pydantic import BaseModel, Field
@@ -71,7 +72,7 @@ QUALITY_SLO_DEFAULTS: dict[str, float] = {
 }
 
 # Simple offline secret detectors (GAP-KGCI-003): pattern + human name.
-SECRET_PATTERNS: list[tuple[str, "re.Pattern[str]"]] = [
+SECRET_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("aws-access-key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
     ("private-key-block", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
     ("slack-token", re.compile(r"\bxox[baprs]-[0-9A-Za-z-]{10,}\b")),
@@ -212,9 +213,20 @@ class KGCIPipeline:
             started_at=datetime.now(UTC).isoformat(),
             fail_on=self.fail_on,
         )
+        stage_methods = {
+            STAGE_LINT: self._stage_lint,
+            STAGE_SCHEMA: self._stage_schema,
+            STAGE_CONTRACTS: self._stage_contracts,
+            STAGE_INVARIANTS: self._stage_invariants,
+            STAGE_QUALITY: self._stage_quality,
+            STAGE_COMPAT: self._stage_compat,
+            STAGE_SECURITY: self._stage_security,
+            STAGE_MIGRATION: self._stage_migration,
+            STAGE_PUBLISH: self._stage_publish,
+        }
         for name in STAGE_ORDER:
             start = time.monotonic()
-            result = getattr(self, f"_stage_{name}")()
+            result = stage_methods[name]()
             result.duration_ms = int((time.monotonic() - start) * 1000)
             report.stages.append(result)
         report.finished_at = datetime.now(UTC).isoformat()

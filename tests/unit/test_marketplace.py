@@ -30,6 +30,7 @@ from eoip.marketplace.sample import (
     SAMPLE_PAYLOAD,
     sample_package_bytes,
 )
+from eoip.marketplace.packager import PackageBuildError
 
 KEY = b"test-install-key"
 
@@ -64,12 +65,21 @@ class TestBuild:
         assert reader.payload_files() == SAMPLE_PAYLOAD
 
     def test_build_rejects_empty_payload_and_bad_paths(self):
-        with pytest.raises(Exception):
+        with pytest.raises(PackageBuildError):
             build_package(SAMPLE_MANIFEST, {})
-        with pytest.raises(Exception):
+        with pytest.raises(PackageBuildError):
             build_package(SAMPLE_MANIFEST, {"../evil.txt": b"x"})
-        with pytest.raises(Exception):
-            build_package(SAMPLE_MANIFEST, {"manifest.json": b"x"})
+        with pytest.raises(PackageBuildError):
+            build_package(SAMPLE_MANIFEST, {"sub/../../evil.txt": b"x"})
+
+    @pytest.mark.parametrize("name", ["manifest.json", "checksums.json", "/manifest.json"])
+    def test_build_rejects_reserved_metadata_names(self, name):
+        with pytest.raises(PackageBuildError, match="reserved name"):
+            build_package(SAMPLE_MANIFEST, {name: b"x"})
+
+    def test_build_allows_nested_metadata_file(self):
+        payload = {"schemas/manifest.json": b"{}"}
+        assert PackageReader(build_package(SAMPLE_MANIFEST, payload)).payload_files() == payload
 
     def test_reject_non_archive(self):
         with pytest.raises(Exception):
@@ -248,7 +258,7 @@ class TestRegistry:
             "crm-pack",
             "hr-ontology-pack",
         ]
-        assert [r.manifest.name for r in registry.search("headcount")] == [
+        assert [r.manifest.name for r in registry.search("hr ontology")] == [
             "hr-ontology-pack"
         ]
         assert [r.manifest.name for r in registry.search("")] == [

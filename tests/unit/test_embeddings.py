@@ -68,7 +68,7 @@ class _Handler(BaseHTTPRequestHandler):
 @pytest.fixture
 def server():
     _Handler.fail = False
-    _Handler.vectors = lambda text: _fake_vector(len(text))
+    _Handler.vectors = staticmethod(lambda text: _fake_vector(len(text)))
     httpd = HTTPServer(("127.0.0.1", 0), _Handler)
     thread = threading.Thread(target=httpd.serve_forever, daemon=True)
     thread.start()
@@ -117,7 +117,7 @@ def test_ollama_provider_server_error_raises_model_unavailable(server):
 
 
 def test_ollama_provider_malformed_response_raises_model_unavailable(server):
-    _Handler.vectors = lambda text: "not-a-vector"
+    _Handler.vectors = staticmethod(lambda text: "not-a-vector")
     provider = _provider(server)
     with pytest.raises(ModelUnavailable):
         provider.embed(["x"])
@@ -129,7 +129,7 @@ def test_ollama_provider_malformed_response_raises_model_unavailable(server):
 def test_vector_index_with_real_embeddings_ranking(server):
     # Vectors keyed by first token so semantically similar texts are closer.
     table = {"payment": _fake_vector(1), "dashboard": _fake_vector(50)}
-    _Handler.vectors = lambda text: table[text.split()[0]]
+    _Handler.vectors = staticmethod(lambda text: table[text.split()[0]])
     index = VectorIndex(_provider(server))
     index.add("a", "payment reconciliation")
     index.add("b", "dashboard rendering")
@@ -142,7 +142,7 @@ def test_dimension_mismatch_between_add_and_query_falls_back(server):
     index = VectorIndex(provider)
     index.add("a", "short")  # dim _DIM
     # Shrink subsequent embeddings to simulate a model/dim change.
-    _Handler.vectors = lambda text: [0.5, 0.5]
+    _Handler.vectors = staticmethod(lambda text: [0.5, 0.5])
     index.add("b", "some other text")
     # Query embeds at dim 2 while stored "a" is dim _DIM; cosine zips to the
     # shorter length — no crash, deterministic result.
@@ -170,7 +170,7 @@ def test_build_vector_index_defaults_to_hashing():
 
 
 def test_build_search_index_with_embedder_uses_provider(server):
-    _Handler.vectors = lambda text: _fake_vector(len(text))
+    _Handler.vectors = staticmethod(lambda text: _fake_vector(len(text)))
     store = MemoryGraphStore()
     store.upsert_vertex(
         "Document",

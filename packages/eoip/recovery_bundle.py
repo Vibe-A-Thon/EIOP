@@ -126,6 +126,66 @@ def _add_references(references: dict[str, int], content: bytes) -> None:
         raise ValueError("Recovery model references exceed file bound")
 
 
+def _source_fingerprint(source: Path, expected: os.stat_result) -> tuple[str, int]:
+    hasher, size = hashlib.sha256(), 0
+    with source.open("rb") as incoming:
+        while chunk := incoming.read(CHUNK):
+            size += len(chunk)
+            if size > expected.st_size:
+                raise ValueError("Recovery source changed during backup")
+            hasher.update(chunk)
+    after = source.stat()
+    if size != expected.st_size or (
+        expected.st_size, expected.st_mtime_ns, expected.st_ino, expected.st_dev
+    ) != (
+        after.st_size, after.st_mtime_ns, after.st_ino, after.st_dev
+    ):
+        raise ValueError("Recovery source changed during backup")
+    return hasher.hexdigest(), size
+
+
+def _read_stable_metadata(source: Path, expected: os.stat_result) -> bytes:
+    content = source.read_bytes()
+    after = source.stat()
+    if len(content) != expected.st_size or (
+        expected.st_size, expected.st_mtime_ns, expected.st_ino, expected.st_dev
+    ) != (
+        after.st_size, after.st_mtime_ns, after.st_ino, after.st_dev
+    ):
+        raise ValueError("Recovery source changed during backup")
+    return content
+
+
+def _validate_source_assets(sources: list[tuple[str, Path]], max_bytes: int) -> int:
+    records, references, total = {}, {}, 0
+    folded_names = set()
+    for name, source in sources:
+        if name.casefold() in folded_names:
+            raise ValueError("Recovery asset paths collide")
+        folded_names.add(name.casefold())
+        before = source.stat()
+        limit = MAX_SNAPSHOT if name == "snapshot.json" else MAX_METADATA
+        if not name.startswith("models/blobs/") and before.st_size > limit:
+            raise ValueError("Recovery metadata exceeds byte bound")
+        total += before.st_size
+        if total > max_bytes:
+            raise ValueError("Recovery bundle exceeds byte bound")
+        records[name] = {"size": before.st_size}
+        if name.startswith(("config/", "models/manifests/")):
+            metadata = _read_stable_metadata(source, before)
+            if name.startswith("config/"):
+                _configuration(metadata, name)
+            else:
+                _add_references(references, metadata)
+        elif name.startswith("models/blobs/"):
+            sha, size = _source_fingerprint(source, before)
+            if sha != source.name[7:]:
+                raise ValueError("Recovery model weight checksum mismatch")
+            records[name]["size"] = size
+    _references(records, references)
+    return total
+
+
 def _sources(root: Path, prefix: str):
     if not root.exists():
         if prefix == "config":
@@ -164,6 +224,7 @@ def backup_bundle(store, data_dir, destination, *, config_dir, model_dir, max_by
                     if len(sources) >= MAX_FILES:
                         raise ValueError("Recovery bundle exceeds file bound")
                     sources.append(asset)
+            _validate_source_assets(sources, max_bytes)
             records, references, total = {}, {}, 0
             folded_names = set()
             with tempfile.NamedTemporaryFile(dir=destination.parent, suffix=".tmp", delete=False) as handle:

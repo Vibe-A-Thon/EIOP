@@ -84,20 +84,25 @@ class LeaderLease:
     def acquire(self) -> bool:
         """Take the lease if free or expired; False while another owner holds it."""
         now = time.monotonic()
+        self.path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            self._write(now + self.ttl_seconds)
-            return True
+            # Atomic create: fails if any owner (live or stale) holds the file.
+            fd = os.open(str(self.path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            record = self._read()
+            if record is not None and not self._expired(record, now):
+                return False
+            # Stale or unparseable lease: steal after expiry.
+            try:
+                self._write(now + self.ttl_seconds)
+                return True
+            except OSError:
+                return False
         except OSError:
-            pass
-        record = self._read()
-        if record is not None and not self._expired(record, now):
             return False
-        # Stale or unparseable lease: steal after expiry.
-        try:
-            self._write(now + self.ttl_seconds)
-            return True
-        except OSError:
-            return False
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            json.dump({"owner": self.owner_token, "expires_at": now + self.ttl_seconds}, handle)
+        return True
 
     def renew(self) -> bool:
         """Extend the lease; only the current owner may renew."""

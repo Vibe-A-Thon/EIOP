@@ -45,3 +45,29 @@ jobs:
           name: validation-evidence
           path: test-results/
           if-no-files-found: warn
+
+  kgci:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install existing development dependencies
+        run: python -m pip install -e ".[dev,codeparse,fileparse]"
+      - name: Run KG CI/CD pipeline (GAP-KGCI-001..004, release gates §16)
+        run: >-
+          python -X utf8 -m packages.eoip.ci
+          --ontology-dir config/ontology
+          --scan-dirs packages/eoip config
+          --graphtest-dir tests/graphtest
+          --output-dir test-results/kgci
+          --report test-results/kgci/kgci-report.json
+      - name: Retain KGCI report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kgci-report
+          path: test-results/kgci/
+          if-no-files-found: warn

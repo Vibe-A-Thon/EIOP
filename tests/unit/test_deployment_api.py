@@ -82,6 +82,8 @@ def test_metrics_include_operation_counts_failures_and_latency(monkeypatch, tmp_
     )
 
     metrics = api.get("/metrics").text
+    assert metrics.count("# HELP eoip_operations_total ") == 1
+    assert "# HELP http_requests_total" in metrics
     assert 'eoip_operations_total{operation="query",status="200"} 1.0' in metrics
     assert 'eoip_operations_total{operation="ingestion",status="202"} 1.0' in metrics
     assert 'eoip_operations_total{operation="model",status="404"} 1.0' in metrics

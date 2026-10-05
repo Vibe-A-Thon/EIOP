@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+from collections.abc import Callable
 
 from eoip.contracts.source_event import SourceEventV2
 from eoip.graph.evolution import GraphEvolutionEngine
@@ -99,7 +100,10 @@ def reconcile_document_references(
             )
 
 
-def document_reference_findings(store: GraphStore, edges: list[dict]) -> list[dict]:
+def document_reference_findings(
+    store: GraphStore, edges: list[dict], *, get_vertex: Callable[[str], dict | None] | None = None,
+) -> list[dict]:
+    get_vertex = get_vertex or store.get_vertex
     findings = []
     for edge in edges:
         properties = edge["properties"]
@@ -109,8 +113,8 @@ def document_reference_findings(store: GraphStore, edges: list[dict]) -> list[di
         ):
             continue
         baseline = json.loads(properties["payload_json"])
-        target = store.get_vertex(edge["in_v"])
-        document = store.get_vertex(edge["out_v"])
+        target = get_vertex(edge["in_v"])
+        document = get_vertex(edge["out_v"])
         if document is None or document["properties"].get("deleted_at"):
             continue
         if target is None:

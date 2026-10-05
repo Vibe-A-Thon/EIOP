@@ -1,9 +1,27 @@
 {
   "dataset_id": "northstar-commerce",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "title": "Northstar Commerce enterprise digital thread",
   "description": "A synthetic but internally consistent sales-demo corpus linking strategy, delivery, code, APIs, CI/CD, testing, design, knowledge, operations and evidence.",
   "scenarios": [
+    {
+      "id": "failed-quality-gate",
+      "title": "Explain a failed qualification without hiding the failure",
+      "audience": "QA, release management and risk",
+      "entrypoint": "urn:eoip:test:run:northstar:4820",
+      "story": "The October 2 resilience qualification failed one timeout test. Inspect the 127 passed, one failed and two skipped results, the affected requirement and the later successful retry. This is synthetic historical evidence, not a failing EOIP demo operation.",
+      "capabilities": ["negative-path evidence", "test intelligence", "release risk", "temporal comparison"],
+      "expected_path": ["urn:eoip:test:run:northstar:4820", "urn:eoip:test:case:northstar:TC-901", "urn:eoip:work:item:jira:PAY-155"]
+    },
+    {
+      "id": "verified-remediation",
+      "title": "Trace permanent remediation to a verified production release",
+      "audience": "SRE, engineering leadership and audit",
+      "entrypoint": "urn:eoip:cicd:release:northstar:2026.10.2",
+      "story": "Distinguish the October 1 emergency configuration mitigation from the October 3 permanent code fix. Follow the replacement release to its passing pipeline, deployment and commit; compare both versions without overwriting history.",
+      "capabilities": ["version lineage", "remediation verification", "CI/CD", "persistent evidence"],
+      "expected_path": ["urn:eoip:cicd:release:northstar:2026.10.2", "urn:eoip:cicd:pipeline:northstar:4822", "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.2"]
+    },
     {
       "id": "business-value",
       "title": "Connect business value to production evidence",
@@ -66,8 +84,8 @@
       "story": "Show the checkout service, its endpoints, downstream risk and payment services, monitors, documentation and contract tests.",
       "capabilities": ["blast-radius", "reverse-impact", "what-if", "centrality"],
       "expected_path": [
-        "urn:eoip:code:api-service:northstar:checkout",
         "urn:eoip:code:api-service:northstar:risk",
+        "urn:eoip:code:api-service:northstar:checkout",
         "urn:eoip:code:api-service:northstar:payments"
       ]
     },
@@ -109,6 +127,7 @@
         "urn:eoip:design:file:northstar:checkout",
         "urn:eoip:design:page:northstar:checkout-flow",
         "urn:eoip:design:component:northstar:payment-panel",
+        "urn:eoip:work:story:northstar:US-142",
         "urn:eoip:work:feature:northstar:FTR-42"
       ]
     },
@@ -140,6 +159,16 @@
     }
   ],
   "vertices": [
+    {"label": "Commit", "properties": {"canonical_id": "urn:eoip:code:commit:northstar:c0ffee155", "commit_sha": "c0ffee155c0ffee155c0ffee155c0ffee155c0f", "message": "PAY-155 bound retries and preserve safe refusal", "author_name": "Liam Patel", "author_email": "liam.patel@example.invalid", "created_at": "2026-10-03T09:00:00Z"}},
+    {"label": "PipelineRun", "properties": {"canonical_id": "urn:eoip:cicd:pipeline:northstar:4820", "name": "checkout-remediation-4820 failed qualification", "pipeline_status": "failed", "ref": "fix/PAY-155", "commit_sha": "c0ffee142c0ffee142c0ffee142c0ffee142c0f", "created_at": "2026-10-02T09:10:00Z"}},
+    {"label": "PipelineRun", "properties": {"canonical_id": "urn:eoip:cicd:pipeline:northstar:4822", "name": "checkout-remediation-4822 verified release", "pipeline_status": "success", "ref": "v2026.10.2", "commit_sha": "c0ffee155c0ffee155c0ffee155c0ffee155c0f", "created_at": "2026-10-03T10:00:00Z"}},
+    {"label": "Job", "properties": {"canonical_id": "urn:eoip:cicd:job:northstar:4822-resilience", "job_id": "4822-2", "name": "resilience-and-contract-tests", "status": "success", "stage": "test", "created_at": "2026-10-03T10:02:00Z", "duration_seconds": 318.0, "repo_id": "northstar-checkout"}},
+    {"label": "Job", "properties": {"canonical_id": "urn:eoip:cicd:job:northstar:4822-deploy", "job_id": "4822-4", "name": "deploy-approved-remediation", "status": "success", "stage": "deploy", "created_at": "2026-10-03T10:25:00Z", "duration_seconds": 91.0, "repo_id": "northstar-checkout"}},
+    {"label": "Artifact", "properties": {"canonical_id": "urn:eoip:cicd:artifact:northstar:checkout:2026.10.2", "name": "checkout-api:2026.10.2", "artifact_type": "container", "artifact_format": "OCI", "file_size": 189792256, "repo_id": "northstar-checkout", "url": "registry.example.invalid/northstar/checkout:2026.10.2"}},
+    {"label": "Release", "properties": {"canonical_id": "urn:eoip:cicd:release:northstar:2026.10.2", "name": "Northstar Checkout 2026.10.2 permanent remediation", "tag_name": "v2026.10.2", "published_at": "2026-10-03T10:20:00Z", "status": "released", "description": "Synthetic permanent code remediation after the emergency configuration mitigation.", "repo_id": "northstar-checkout"}},
+    {"label": "Deployment", "properties": {"canonical_id": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.2", "name": "checkout-api production 2026.10.2 verified recovery", "status": "succeeded", "environment": "production", "created_at": "2026-10-03T10:27:00Z", "commit_sha": "c0ffee155c0ffee155c0ffee155c0ffee155c0f", "deployable_id": "checkout-api:2026.10.2", "repo_id": "northstar-checkout"}},
+    {"label": "TestRun", "properties": {"canonical_id": "urn:eoip:test:run:northstar:4820", "name": "Failed resilience qualification before permanent fix", "test_run_id": "TR-4820", "execution_status": "Failed", "passed_count": 127, "failed_count": 1, "skipped_count": 2, "total_count": 130, "execution_time": 310.0, "source_system": "qtest", "created_at": "2026-10-02T09:12:00Z", "finished_at": "2026-10-02T09:17:10Z"}},
+    {"label": "TestRun", "properties": {"canonical_id": "urn:eoip:test:run:northstar:4822", "name": "Verified remediation including timeout resilience", "test_run_id": "TR-4822", "execution_status": "Passed", "passed_count": 130, "failed_count": 0, "skipped_count": 0, "total_count": 130, "execution_time": 318.0, "source_system": "qtest", "created_at": "2026-10-03T10:02:00Z", "finished_at": "2026-10-03T10:07:18Z"}},
     {"label": "BusinessObjective", "properties": {"canonical_id": "urn:eoip:business:objective:northstar:conversion", "name": "Increase successful checkout conversion", "description": "Synthetic portfolio objective: conversion percentage, not a measured production result.", "objective_type": "Growth", "strategic_priority": "High", "kpi_target": "98.5%", "kpi_actual": "96.2%", "owner_id": "urn:eoip:identity:person:maya.chen", "status": "At risk"}},
     {"label": "BusinessObjective", "properties": {"canonical_id": "urn:eoip:business:objective:northstar:resilience", "name": "Keep checkout p95 below 450 ms", "description": "Synthetic latency objective measured in milliseconds; 812 ms represents the incident peak.", "objective_type": "Resilience", "strategic_priority": "High", "kpi_target": "450 ms", "kpi_actual": "812 ms", "owner_id": "urn:eoip:identity:person:liam.patel", "status": "Remediated"}},
     {"label": "BusinessCapability", "properties": {"canonical_id": "urn:eoip:business:capability:northstar:trusted-checkout", "name": "Trusted digital checkout", "description": "Accept customer orders with explainable risk controls and bounded payment latency.", "capability_level": 2, "business_domain": "Commerce", "owner_id": "urn:eoip:identity:person:maya.chen", "status": "Operational"}},
@@ -212,6 +241,26 @@
     {"label": "Evidence", "properties": {"canonical_id": "urn:eoip:evidence:demo-enterprise:northstar-pack", "source_system": "demo_enterprise", "source_ref": "fixture://demo/demodata/enterprise/scenario-pack.json", "method": "SOURCE_EVENT", "captured_at": "2026-10-03T00:00:00Z", "mapper_version": "demo-pack/1.0", "confidence": 1.0, "evidence_key": "northstar-commerce-1.0.0"}}
   ],
   "edges": [
+    {"label": "IMPLEMENTS", "from": "urn:eoip:code:commit:northstar:c0ffee155", "to": "urn:eoip:work:item:jira:PAY-155", "properties": {"fact_key": "northstar:remediation-implements"}},
+    {"label": "SUCCEEDS", "from": "urn:eoip:code:commit:northstar:c0ffee155", "to": "urn:eoip:code:commit:northstar:c0ffee142", "properties": {"fact_key": "northstar:remediation-commit-history"}},
+    {"label": "MODIFIES", "from": "urn:eoip:code:commit:northstar:c0ffee155", "to": "urn:eoip:code:file:northstar:services/checkout/risk.py", "properties": {"fact_key": "northstar:remediation-file"}},
+    {"label": "AUTHORED_BY", "from": "urn:eoip:code:commit:northstar:c0ffee155", "to": "urn:eoip:identity:person:liam.patel", "properties": {"fact_key": "northstar:remediation-author"}},
+    {"label": "HAS_COMMIT", "from": "urn:eoip:code:repo:northstar-checkout", "to": "urn:eoip:code:commit:northstar:c0ffee155", "properties": {"fact_key": "northstar:remediation-repository"}},
+    {"label": "PRODUCED_BY", "from": "urn:eoip:cicd:pipeline:northstar:4820", "to": "urn:eoip:code:commit:northstar:c0ffee142", "properties": {"fact_key": "northstar:failed-pipeline-commit"}},
+    {"label": "PRODUCED_BY", "from": "urn:eoip:cicd:pipeline:northstar:4822", "to": "urn:eoip:code:commit:northstar:c0ffee155", "properties": {"fact_key": "northstar:recovery-pipeline-commit"}},
+    {"label": "EXECUTED_IN", "from": "urn:eoip:test:case:northstar:TC-901", "to": "urn:eoip:test:run:northstar:4820", "properties": {"fact_key": "northstar:failed-timeout-qualification"}},
+    {"label": "EXECUTED_IN", "from": "urn:eoip:test:case:northstar:TC-901", "to": "urn:eoip:test:run:northstar:4822", "properties": {"fact_key": "northstar:passed-timeout-qualification"}},
+    {"label": "TESTS", "from": "urn:eoip:test:run:northstar:4820", "to": "urn:eoip:work:item:jira:PAY-155", "properties": {"fact_key": "northstar:failed-requirement-qualification"}},
+    {"label": "TESTS", "from": "urn:eoip:test:run:northstar:4822", "to": "urn:eoip:work:item:jira:PAY-155", "properties": {"fact_key": "northstar:passed-requirement-qualification"}},
+    {"label": "HAS_JOB", "from": "urn:eoip:cicd:pipeline:northstar:4822", "to": "urn:eoip:cicd:job:northstar:4822-resilience", "properties": {"fact_key": "northstar:recovery-test-job"}},
+    {"label": "HAS_JOB", "from": "urn:eoip:cicd:pipeline:northstar:4822", "to": "urn:eoip:cicd:job:northstar:4822-deploy", "properties": {"fact_key": "northstar:recovery-deploy-job"}},
+    {"label": "PRODUCES", "from": "urn:eoip:cicd:job:northstar:4822-deploy", "to": "urn:eoip:cicd:artifact:northstar:checkout:2026.10.2", "properties": {"fact_key": "northstar:recovery-artifact"}},
+    {"label": "DEPLOYS", "from": "urn:eoip:cicd:job:northstar:4822-deploy", "to": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.2", "properties": {"fact_key": "northstar:recovery-job-deployment"}},
+    {"label": "DEPLOYS", "from": "urn:eoip:cicd:pipeline:northstar:4822", "to": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.2", "properties": {"fact_key": "northstar:recovery-pipeline-deployment"}},
+    {"label": "PRODUCED_BY", "from": "urn:eoip:cicd:release:northstar:2026.10.2", "to": "urn:eoip:cicd:pipeline:northstar:4822", "properties": {"fact_key": "northstar:recovery-release-pipeline"}},
+    {"label": "HAS_RELEASE", "from": "urn:eoip:code:repo:northstar-checkout", "to": "urn:eoip:cicd:release:northstar:2026.10.2", "properties": {"fact_key": "northstar:recovery-repository-release"}},
+    {"label": "MONITORS", "from": "urn:eoip:ops:monitor:northstar:checkout-latency", "to": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.2", "properties": {"fact_key": "northstar:recovery-monitor"}},
+    {"label": "TRACES_TO", "from": "urn:eoip:decision:northstar:bounded-risk", "to": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.2", "properties": {"fact_key": "northstar:decision-permanent-remediation"}},
     {"label": "TRACES_TO", "from": "urn:eoip:business:capability:northstar:trusted-checkout", "to": "urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.1", "properties": {"fact_key": "northstar:checkout-capability-production"}},
     {"label": "FULFILLS", "from": "urn:eoip:business:capability:northstar:trusted-checkout", "to": "urn:eoip:business:objective:northstar:conversion", "properties": {"fact_key": "northstar:conversion-capability"}},
     {"label": "FULFILLS", "from": "urn:eoip:business:capability:northstar:risk-control", "to": "urn:eoip:business:objective:northstar:resilience", "properties": {"fact_key": "northstar:resilience-capability"}},

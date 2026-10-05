@@ -47,7 +47,10 @@ def test_entire_corpus_is_ingested_and_existing_data_is_preserved(corpus):
     assert set(checkpoint["assets"]) == expected
     assert result["files"] == result["loaded"] == len(expected)
     assert result["retained"] == 0
-    assert result["enterprise_scenarios"] == 11
+    scenario_pack = json.loads(
+        (project / "demo" / "demodata" / "enterprise" / "scenario-pack.json").read_text(encoding="utf-8")
+    )
+    assert result["enterprise_scenarios"] == len(scenario_pack["scenarios"])
     assert store.get_vertex_by_canonical_id(marker["canonical_id"]) == marker
     for folder in ("manual", "pipelines"):
         issues = json.loads((project / "demo" / "demodata" / folder / "jira.json").read_text())["issues"]

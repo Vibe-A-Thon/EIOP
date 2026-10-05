@@ -7,6 +7,7 @@ Findings are persisted with the validation run.
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from uuid import uuid4
 
 from eoip.contracts.source_event import utc_now_iso
@@ -36,16 +37,22 @@ class ValidationEngine:
         vertices = [item for item in all_vertices if not item["properties"].get("deleted_at")]
         deleted_vertices = [item for item in all_vertices if item["properties"].get("deleted_at")]
         edges = self._store.find_edges(limit=self._edge_limit)
+        vertices_by_id: dict[str, dict | None] = {item["vid"]: item for item in all_vertices}
+
+        def get_vertex(vid: str) -> dict | None:
+            if vid not in vertices_by_id:
+                vertices_by_id[vid] = self._store.get_vertex(vid)
+            return vertices_by_id[vid]
 
         for vertex in vertices:
             findings.extend(self._check_vertex(vertex))
 
         for edge in edges:
-            findings.extend(self._check_edge(edge))
+            findings.extend(self._check_edge(edge, get_vertex))
 
         findings.extend(self._check_orphans(vertices, edges))
         findings.extend(self._check_deletion_conflicts(deleted_vertices, edges))
-        findings.extend(document_reference_findings(self._store, edges))
+        findings.extend(document_reference_findings(self._store, edges, get_vertex=get_vertex))
 
         quality = QualityMetrics.compute(vertices, edges, findings)
 
@@ -132,10 +139,10 @@ class ValidationEngine:
             if vertex["vid"] in active_edge_vertices
         ]
 
-    def _check_edge(self, edge: dict) -> list[dict]:
+    def _check_edge(self, edge: dict, get_vertex: Callable[[str], dict | None]) -> list[dict]:
         findings = []
-        out_node = self._store.get_vertex(edge["out_v"])
-        in_node = self._store.get_vertex(edge["in_v"])
+        out_node = get_vertex(edge["out_v"])
+        in_node = get_vertex(edge["in_v"])
 
         if out_node is None or in_node is None:
             findings.append(
@@ -259,7 +266,7 @@ class ValidationEngine:
                 entity_cid = finding.get("canonical_id")
                 if entity_cid:
                     entity = self._store.get_vertex_by_canonical_id(entity_cid)
-                    if entity:
+                    if entity and edge_endpoints_valid("VALIDATED_BY", entity["label"], "ValidationRun"):
                         self._store.upsert_edge(
                             "VALIDATED_BY",
                             entity["vid"],
@@ -271,3 +278,4 @@ class ValidationEngine:
                 "validation.persistence_failed",
                 extra={"event": "validation.persistence_failed", "run_id": result["run_id"]},
             )
+            raise

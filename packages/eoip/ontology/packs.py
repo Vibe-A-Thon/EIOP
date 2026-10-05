@@ -146,7 +146,12 @@ def load_ontology(pack_dir: Path, metadata: PackMetadata) -> DomainPack:
     )
 
 
-def validate_pack(pack: DomainPack, core: Any = manifest) -> PackValidationResult:
+def validate_pack(
+    pack: DomainPack,
+    core: Any = manifest,
+    *,
+    known_vertex_labels: set[str] | None = None,
+) -> PackValidationResult:
     """Validate a pack against the core ontology manifest (GAP-DP-002..004).
 
     Rules:
@@ -163,6 +168,9 @@ def validate_pack(pack: DomainPack, core: Any = manifest) -> PackValidationResul
     """
     conflicts: list[PackConflict] = []
     extensions: list[str] = []
+    known_labels = set(core.VERTEX_LABELS) | set(pack.classes)
+    if known_vertex_labels:
+        known_labels |= set(known_vertex_labels)
 
     if pack.ontology_version != core.ONTOLOGY_VERSION:
         conflicts.append(PackConflict(
@@ -228,11 +236,7 @@ def validate_pack(pack: DomainPack, core: Any = manifest) -> PackValidationResul
                     detail="new edge labels must declare non-empty out/in endpoint labels",
                 ))
             for endpoint in (*rel.out, *rel.in_):
-                known = (
-                    endpoint in core.VERTEX_LABELS
-                    or endpoint in pack.classes
-                    or endpoint == "*"
-                )
+                known = endpoint in known_labels or endpoint == "*"
                 if not known:
                     conflicts.append(PackConflict(
                         kind="relationship", name=edge,
@@ -281,11 +285,20 @@ def load_all_packs(packs_dir: str | Path = DEFAULT_PACKS_DIR) -> list[DomainPack
     merged into the ontology.
     """
     root = Path(packs_dir)
-    packs: list[DomainPack] = []
+    pending: list[tuple[Path, PackMetadata, DomainPack]] = []
     for child in sorted(root.iterdir()):
         if child.is_dir() and (child / METADATA_FILENAME).is_file():
-            pack, _ = load_pack(child)
-            packs.append(pack)
+            metadata = load_metadata(child)
+            pack = load_ontology(child, metadata)
+            pending.append((child, metadata, pack))
+    peer_labels = {label for _, _, pack in pending for label in pack.classes}
+    packs: list[DomainPack] = []
+    for child, metadata, pack in pending:
+        result = validate_pack(pack, known_vertex_labels=peer_labels)
+        if not result.valid:
+            details = "; ".join(f"{c.kind}:{c.name} ({c.detail})" for c in result.conflicts)
+            raise ValueError(f"domain pack {metadata.name!r} failed validation: {details}")
+        packs.append(pack)
     return packs
 
 

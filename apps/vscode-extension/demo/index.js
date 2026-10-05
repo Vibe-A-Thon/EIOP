@@ -138,6 +138,8 @@ async function run() {
       const question = journey.question(context.issueKey, symbolName, context);
       await step(`nlq-${journey.intent.toLowerCase()}`, `NLQ ${journey.intent}: ${question}`, async () => {
         const result = await vscode.commands.executeCommand('eoip.nlq', question);
+        assert.notEqual(result?.ok, false,
+          `NLQ ${journey.intent} command failed: ${result?.message || result?.code || 'unknown error'}`);
         assert.equal(result?.interpretation?.plan?.intent, journey.intent,
           'NLQ must select the expected query-plan intent.');
         for (const anchor of anchors) {

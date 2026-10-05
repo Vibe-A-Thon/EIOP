@@ -36,7 +36,7 @@ classes:
         in: [Vulnerability]
       TARGETS:
         out: [Threat]
-        in: [Service, ConfigurationItem, "*"]
+        in: [Service, "*"]
 
   SecurityFinding:
     description: A scanner or pentest finding with remediation tracking.

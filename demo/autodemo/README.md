@@ -1,8 +1,8 @@
 # EOIP client demonstrations
 
 Double-click the respective Windows launcher. It starts the repository Docker
-stack with bounded health checks, authenticates privately, opens a visible Edge
-browser and automatically presents paced steps in the application and a separate
+stack with bounded health checks, authenticates privately, opens a visible Chrome
+browser and presents user-paced steps in the application and a separate
 live-results window. The console remains open at the end, including on failure.
 No in-memory fixture runner is used as evidence for the live application.
 
@@ -13,13 +13,13 @@ No in-memory fixture runner is used as evidence for the live application.
 | `run-demo-pipeline.bat` | Enterprise application plus live pipeline-fixture JSON ingestion and administration |
 | `run-demo-admin.bat` | Separate administration, manual ingestion, format exports and governance |
 | `run-demo-vscode.bat` | Separate isolated VS Code extension demonstration |
-| `run-demo-hubble.bat` | Additive corpus loading and 11 named, color-coded live Hubble graph scenarios |
+| `run-demo-hubble.bat` | Additive corpus loading and 13 named, color-coded live Hubble graph scenarios |
 
 ## Prerequisites and safe operation
 
 - Node.js (22+), Docker Desktop running, and dependencies installed for the web
   application and VS Code extension using their existing package managers.
-- Microsoft Edge installed. `PLAYWRIGHT_CHANNEL` or
+- Google Chrome installed. `PLAYWRIGHT_CHANNEL` or
   `PLAYWRIGHT_EXECUTABLE_PATH` can select another already-installed browser.
   The launcher does not silently install dependencies or browser binaries.
 - `EOIP_API_TOKEN` in the process environment or `deploy/.env`. Tokens are never
@@ -33,16 +33,20 @@ No in-memory fixture runner is used as evidence for the live application.
   VS Code host, not an assertion that an older installed VSIX is updated.
   Cached VS Code and the extension's test-electron dependency are required.
 
-No reset, restore, deletion, arbitrary DLQ replay, cancellation, proposal
+No reset, restore, arbitrary deletion, arbitrary DLQ replay, cancellation, proposal
 approval, external connector credential acquisition or production mutation is
 automated. These require a separately approved, disposable scenario.
+The expanded application demo creates isolated synthetic truth claims, taxonomy
+concepts and a persisted knowledge product. It deletes only the query template
+created by that run, including on a failed template step.
 
 ## Visible sequences and coverage boundaries
 
 The application walks all ready Northstar Commerce stories: business intent to
 runtime, incident correlation, API blast radius, release governance, test
 intelligence, design to delivery, knowledge provenance, graph analytics,
-business objectives/capabilities, decision trade-offs and process deviations.
+business objectives/capabilities, decision trade-offs, process deviations,
+failed qualification gates and verified permanent remediation.
 Each story executes its declared path through the real UI and asserts the
 returned endpoints, then runs impact, lineage, neighborhood and traceability
 requests against the live API. Empty graph results fail.
@@ -77,6 +81,18 @@ reasoning. Many advertised types are aliases or supervisor delegations to
 shared implementations; this is not a demonstration of distinct autonomous
 behavior for each catalog entry.
 
+Additional multi-step journeys execute local federation planning, conflicting
+truth claims with authority resolution and read-back explanations, query-template
+binding/explanation/cost, faceted search, keyword retrieval evidence, graph
+assertions with an explicitly expected read-only violation, synthetic SKOS
+scheme/concept mapping and validation, and a Draft-to-Certified knowledge-product
+lifecycle with persisted read-back and lineage. EOQL and OSQL expose the same
+identified enterprise data and ontology. Truth/SKOS state is process-local and
+does not survive API restart or appear in Hubble. Products are persisted, but
+their source/consumer lineage entries are properties, not graph relationship
+edges. `Certified` is an application lifecycle state, not external certification.
+Federation uses local adapters; query cost is an estimate, not measured latency.
+
 The separate administration sequence demonstrates source/job inspection,
 validation, ontology schema, JSON-LD context, audit and DLQ inspection; real
 single-file and batch ingestion of 13 JSON source fixtures; all eight graph
@@ -101,14 +117,15 @@ the user's entire application-wide acceptance criterion.
 .\demo\autodemo\run-demo-admin.bat --delay 5000
 .\demo\autodemo\run-demo-pipeline.bat --delay 1000 --no-pause
 .\demo\autodemo\run-demo.bat --dry-run
-node .\demo\autodemo\application-demo.js --headless --delay 0
-node .\demo\autodemo\administration-demo.js --dataset pipelines --headless --delay 0
+node .\demo\autodemo\application-demo.js --headless --delay 0 --no-pause
+node .\demo\autodemo\administration-demo.js --dataset pipelines --headless --delay 0 --no-pause
 node --test .\demo\autodemo\tests\*.test.js
 ```
 
-Direct JavaScript commands use an already-running stack. Default pacing holds
-each results window and application window for 2.5 seconds. `--headless` is for
-validation, not client presentations. `--no-pause` suppresses the launcher's
+Direct JavaScript commands use an already-running stack. Default pacing waits
+for **Next Step**, Enter, Space or ArrowRight. `--headless` is for
+validation, not client presentations. `--no-pause` advances automatically using
+`--delay` (default 2.5 seconds) and suppresses the launcher's
 final console pause. `--dry-run` does not start services, access secrets, open
 windows, ingest data or write receipts. `--help` documents supported arguments.
 Legacy `--data-dir` / administration `--skip-ingest` are deliberately rejected:

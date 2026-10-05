@@ -203,7 +203,7 @@ class LocalIdentityProvider:
                  user_id: str | None = None) -> UserRecord:
         """Create a user with a freshly salted hash (GAP-SEC-001)."""
         record = UserRecord(
-            id=user_id or f"urn:eoip:authn:user:{username}",
+            id=user_id or f"urn:eoip:authn:principal:local:{username}",
             username=username,
             password_hash=hash_password(password),
             roles=tuple(roles),

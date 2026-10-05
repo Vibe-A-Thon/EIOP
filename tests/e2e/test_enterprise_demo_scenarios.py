@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import pytest
 
 from eoip.demo import load_demo
 from eoip.demo_scenarios import load_demo_scenario_pack, validate_demo_scenario_pack
@@ -32,7 +33,7 @@ def test_enterprise_pack_is_schema_and_ontology_valid():
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
     Draft202012Validator.check_schema(schema)
     validate_demo_scenario_pack(pack, schema)
-    assert len(pack["scenarios"]) == 11
+    assert len(pack["scenarios"]) == 13
     assert len(pack["vertices"]) >= 50
     assert len(pack["edges"]) >= 90
     for item in pack["vertices"]:
@@ -69,7 +70,7 @@ def test_corrected_pack_preserves_immutable_capture_and_business_identities(tmp_
     captures = list((tmp_path / "raw" / "demo_enterprise").glob("*.json"))
     assert len(captures) == 1
     original_bytes = captures[0].read_bytes()
-    pack["vertices"][0]["properties"]["description"] += " Corrected synthetic description."
+    pack["vertices"][0]["properties"]["description"] = "Corrected synthetic description."
     source.write_text(json.dumps(pack), encoding="utf-8")
     load_demo_scenario_pack(store, tmp_path, pack_path=source)
     load_demo_scenario_pack(store, tmp_path, pack_path=source)
@@ -84,8 +85,8 @@ def test_corrected_pack_preserves_immutable_capture_and_business_identities(tmp_
 def test_enrichment_preserves_legacy_edge_keys_and_names(tmp_path):
     pack = json.loads(PACK_PATH.read_text(encoding="utf-8"))
     original = dict(pack, version="1.0.0",
-                    vertices=pack["vertices"][14:], edges=pack["edges"][22:],
-                    scenarios=pack["scenarios"][3:])
+                    vertices=pack["vertices"][24:], edges=pack["edges"][42:],
+                    scenarios=pack["scenarios"][5:])
     store = MemoryGraphStore()
     legacy_path = tmp_path / "legacy.json"
     legacy_path.write_text(json.dumps(original), encoding="utf-8")
@@ -114,7 +115,7 @@ def test_business_decisions_and_ordered_process_paths(tmp_path):
         assert finder.all_shortest_paths(scenario["expected_path"][0], scenario["expected_path"][-1]), scenario["id"]
     pairs = {frozenset((e["out_cid"], e["in_cid"])) for e in store.find_edges(limit=10000)
              if e["label"] not in {"EVIDENCED_BY", "INGESTED_IN", "BELONGS_TO_DOMAIN"}}
-    for scenario in pack["scenarios"][:3]:
+    for scenario in pack["scenarios"]:
         assert all(frozenset(pair) in pairs for pair in
                    zip(scenario["expected_path"], scenario["expected_path"][1:])), scenario["id"]
     steps = {(e["out_cid"], e["in_cid"]) for e in store.find_edges(limit=10000)
@@ -127,9 +128,9 @@ def test_demo_loads_every_sales_scenario_with_clean_validation(tmp_path):
     store, result = _environment(tmp_path)
     enterprise = result["enterprise"]
     assert enterprise["run_status"] == "SUCCEEDED"
-    assert enterprise["vertices"] == 70
-    assert enterprise["edges"] == 114
-    assert len(enterprise["scenarios"]) == 11
+    assert enterprise["vertices"] == 80
+    assert enterprise["edges"] == 134
+    assert len(enterprise["scenarios"]) == 13
 
     validation = ValidationEngine(store).run()
     assert validation["valid"] is True
@@ -137,6 +138,30 @@ def test_demo_loads_every_sales_scenario_with_clean_validation(tmp_path):
     assert validation["quality"]["warning_count"] == 0
     assert validation["quality"]["evidence_coverage"] == 1.0
     assert validation["quality"]["provenance_coverage"] == 1.0
+
+
+def test_disconnected_declared_scenario_is_rejected_before_ingestion():
+    pack = json.loads(PACK_PATH.read_text(encoding="utf-8"))
+    schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    pack["scenarios"][0]["expected_path"][1] = "urn:eoip:identity:person:maya.chen"
+    with pytest.raises(ValueError, match="disconnected path"):
+        validate_demo_scenario_pack(pack, schema)
+
+
+def test_remediation_has_truthful_failed_and_passed_qualification_chronology(tmp_path):
+    store, _ = _environment(tmp_path)
+    def properties(cid):
+        return store.get_vertex_by_canonical_id(cid)["properties"]
+    failed = properties("urn:eoip:test:run:northstar:4820")
+    passed = properties("urn:eoip:test:run:northstar:4822")
+    commit = properties("urn:eoip:code:commit:northstar:c0ffee155")
+    deployment = properties("urn:eoip:cicd:deployment:northstar:checkout:prod:2026.10.2")
+    assert failed["failed_count"] == 1 and failed["execution_status"] == "Failed"
+    assert passed["failed_count"] == 0 and passed["skipped_count"] == 0
+    assert failed["finished_at"] < commit["created_at"] < passed["created_at"]
+    assert passed["finished_at"] < deployment["created_at"]
+    for run in (failed, passed):
+        assert run["passed_count"] + run["failed_count"] + run["skipped_count"] == run["total_count"]
 
 
 def test_intent_to_runtime_and_cross_domain_paths_exist(tmp_path):
@@ -191,7 +216,7 @@ def test_demo_catalog_endpoint_reports_live_readiness(tmp_path):
     body = response.json()
     assert body["dataset_id"] == "northstar-commerce"
     assert body["ready"] is True
-    assert len(body["scenarios"]) == 11
+    assert len(body["scenarios"]) == 13
     assert all(item["ready"] and item["available"] for item in body["scenarios"])
 
 

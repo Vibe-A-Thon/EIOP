@@ -1,6 +1,7 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const {randomUUID} = require('node:crypto');
+const {enterpriseJourneys} = require('./enterprise-journeys');
 
 const root = path.resolve(__dirname, '..', '..');
 const SOURCE_FILES = [
@@ -70,12 +71,21 @@ function requirePath(value, scenario) {
 }
 
 function operationCoverage(schema, exercised) {
+  const successful = [...exercised].map(operation => {
+    const separator = operation.indexOf(' ');
+    return {method: operation.slice(0, separator), route: operation.slice(separator + 1).split('?')[0]};
+  });
   return Object.entries(schema.paths).flatMap(([route, methods]) =>
     Object.keys(methods).filter(method => ['get', 'post', 'put', 'patch', 'delete'].includes(method))
       .map(method => {
         const id = `${method.toUpperCase()} ${route}`;
-        return {operation: id, status: exercised.has(id) ? 'DEMONSTRATED' : 'NOT_DEMONSTRATED',
-          reason: exercised.has(id) ? 'Successful live request' :
+        const segments = route.split('/');
+        const demonstrated = successful.some(item => item.method === method.toUpperCase() &&
+          item.route.split('/').length === segments.length && segments.every((segment, index) =>
+            /^\{[^{}]+\}$/.test(segment) ? item.route.split('/')[index].length > 0 :
+              item.route.split('/')[index] === segment));
+        return {operation: id, status: demonstrated ? 'DEMONSTRATED' : 'NOT_DEMONSTRATED',
+          reason: demonstrated ? 'Successful live request; not certification of every input or lifecycle' :
             'Requires a dedicated parameterized, stateful, destructive or external-service scenario'};
       }));
 }
@@ -98,7 +108,7 @@ async function main(defaultMode, args = process.argv.slice(2)) {
         : ['Authenticate', 'All ready enterprise scenarios: path, impact, lineage, neighborhood, traceability',
           'NLQ', 'Explorer lenses', 'Ten KGR graph views', 'All RAG patterns', 'All agent routing types',
           'Eight engineering disciplines', 'Graph analytics and intelligence API catalog'],
-      writes: ['Demo source ingestion only (admin/manual/pipeline); no delete, reset, approval or replay'],
+      writes: ['Isolated synthetic claims, taxonomy, product lifecycle and demo ingestion; only this run-created query template is deleted; no reset, approval or replay'],
       coverage: 'Receipt inventories every API operation; uncovered operations remain NOT_DEMONSTRATED'},
     null, 2));
     return;
@@ -340,7 +350,7 @@ async function main(defaultMode, args = process.argv.slice(2)) {
       if (config.noPause) {
         await page.waitForTimeout(config.delay);
       } else {
-        await page.waitForFunction(() => window.__eoipNext === true, {timeout: 0});
+        await page.waitForFunction(() => window.__eoipNext === true, null, {timeout: 0});
       }
       await page.evaluate(() => {
         if (window.__eoipKeyHandler) {
@@ -360,7 +370,7 @@ async function main(defaultMode, args = process.argv.slice(2)) {
     }
   }
   async function api(route, body, verify = () => {}, opts = {}) {
-    const method = body === undefined ? 'GET' : 'POST';
+    const method = opts.method || (body === undefined ? 'GET' : 'POST');
     const response = await context.request.fetch(`${config.apiURL}${route}`, {
       method, headers: {Authorization: `Bearer ${token}`}, ...(body === undefined ? {} : {data: body}),
       timeout: 120000,
@@ -368,7 +378,7 @@ async function main(defaultMode, args = process.argv.slice(2)) {
     if (!response.ok()) throw new Error(`${method} ${route} returned HTTP ${response.status()}`);
     const value = await response.json();
     if (value.error || value.status === 'FAILED') throw new Error(`${route} reported failure`);
-    if (value.error_count > 0 && !opts.allowErrors) throw new Error(`${route} reported failure`);
+    if (value.error_count > 0) throw new Error(`${route} reported ${value.error_count} ingestion errors`);
     verify(value);
     exercised.add(`${method} ${route.split('?')[0]}`);
     return value;
@@ -415,6 +425,7 @@ async function main(defaultMode, args = process.argv.slice(2)) {
     if (!anchor) throw new Error('The intent-to-runtime anchor is required for application demonstrations');
 
     if (config.mode !== 'admin') {
+      for (const [title, action] of enterpriseJourneys(api, anchor)) await step(title, action);
       await click('Guided demo');
       for (const scenario of catalog.scenarios) {
         await step(`${scenario.title} - ${scenario.audience}: ${scenario.story}`, async () => {
@@ -529,11 +540,10 @@ async function main(defaultMode, args = process.argv.slice(2)) {
         files.push({data, source_label: `client_demo_${folder}_${name}`});
         await step(`Live ${folder} ingestion: ${name}`, () => api('/api/v1/admin/ingestion/json',
           {data, source_label: `client_demo_${folder}_${name}`, pipeline_id: `client_demo_${folder}`},
-          value => {if (!Number.isInteger(value.entities_created)) throw new Error('Missing ingestion counts');},
-          {allowErrors: true}));
+          value => {if (!Number.isInteger(value.entities_created)) throw new Error('Missing ingestion counts');}));
       }
       await step('Live batch ingestion', () => api('/api/v1/admin/ingestion/json/batch',
-        {files, pipeline_id: `client_demo_${folder}_batch`}, () => {}, {allowErrors: true}));
+        {files, pipeline_id: `client_demo_${folder}_batch`}));
       for (const format of ['rdf', 'rdf_xml', 'rdfs', 'owl', 'gremlin', 'cypher', 'gql', 'sparql']) {
         await step(`Graph export: ${format}`, () => api('/api/v1/graph/convert', {format_id: format, limit: 200},
           value => {if (!value.content?.length) throw new Error('Export contains no content');}));

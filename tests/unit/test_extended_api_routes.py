@@ -46,6 +46,27 @@ def _client(store: MemoryGraphStore | None = None) -> TestClient:
     return TestClient(create_app(store))
 
 
+def test_openapi_resolves_all_extended_request_models() -> None:
+    client = _client()
+    response = client.get("/openapi.json")
+    assert response.status_code == 200
+    schema = response.json()
+    for route, model in [
+        ("/api/v1/algorithms/run", "AlgorithmRequest"),
+        ("/api/v1/query/language", "QueryLanguageRequest"),
+        ("/api/v1/admin/semantic-pipeline", "SemanticPipelineRequest"),
+        ("/api/v1/agents/analytics", "AgentAnalyticsRequest"),
+        ("/api/v1/agents/semantic-index", "AgentAnalyticsRequest"),
+    ]:
+        body = schema["paths"][route]["post"]["requestBody"]
+        assert body["content"]["application/json"]["schema"]["$ref"].endswith(f"/{model}")
+    response = client.post("/api/v1/query/language", json={
+        "language": "eoql", "query": "SELECT * FROM WorkItem LIMIT 1",
+    })
+    assert response.status_code == 200
+    assert response.json()["count"] == 1
+
+
 def test_federation_sources_and_query() -> None:
     client = _client()
     sources = client.get("/api/v1/federation/sources")

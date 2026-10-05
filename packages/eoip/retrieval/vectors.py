@@ -115,6 +115,8 @@ class HashingEmbedder:
 
 
 def cosine_similarity(a: list[float], b: list[float]) -> float:
+    if len(a) != len(b):
+        return 0.0
     return sum(x * y for x, y in zip(a, b))
 
 

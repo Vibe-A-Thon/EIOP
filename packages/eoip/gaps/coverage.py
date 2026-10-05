@@ -13,6 +13,7 @@ Implements:
 
 from __future__ import annotations
 
+import os
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass, field
@@ -40,6 +41,18 @@ DEFAULT_EVIDENCE_ROOTS = (
 DEFAULT_TEST_ROOTS = (Path("tests"),)
 SOURCE_EXTENSIONS = {".py", ".js", ".jsx", ".ts", ".tsx", ".ps1", ".yml", ".yaml", ".toml"}
 TEST_EXTENSIONS = SOURCE_EXTENSIONS | {".md"}
+SKIP_PATH_PARTS = {
+    ".git",
+    ".venv",
+    ".vscode-test",
+    "__pycache__",
+    "build",
+    "coverage",
+    "dist",
+    "node_modules",
+    ".pytest_cache",
+    ".ruff_cache",
+}
 
 PRIORITY_BY_PREFIX = {
     # P0 core differentiation
@@ -294,9 +307,7 @@ def _scan_evidence(
         absolute_root = repo_root / root
         if not absolute_root.exists():
             continue
-        for path in absolute_root.rglob("*"):
-            if not path.is_file() or path.suffix not in extensions or _skip_path(path):
-                continue
+        for path in _iter_evidence_files(absolute_root, extensions):
             try:
                 lines = path.read_text(encoding="utf-8").splitlines()
             except UnicodeDecodeError:
@@ -314,9 +325,18 @@ def _scan_evidence(
     return refs
 
 
+def _iter_evidence_files(root: Path, extensions: set[str]) -> Iterable[Path]:
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [name for name in dirnames if name not in SKIP_PATH_PARTS]
+        current_dir = Path(dirpath)
+        for filename in filenames:
+            path = current_dir / filename
+            if path.suffix in extensions and not _skip_path(path):
+                yield path
+
+
 def _skip_path(path: Path) -> bool:
-    skip_parts = {".git", ".venv", "__pycache__", "node_modules", ".pytest_cache"}
-    return bool(skip_parts.intersection(path.parts))
+    return bool(SKIP_PATH_PARTS.intersection(path.parts))
 
 
 def _id_sort_key(req_id: str) -> tuple[str, int]:

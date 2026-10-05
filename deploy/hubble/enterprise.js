@@ -10,6 +10,9 @@ const metaLabels = new Set(['Evidence', 'IngestionRun', 'GraphDomain', 'Validati
 let pack, connection, returned, query, positions, viewport, activeScenario;
 let loading = false;
 let touring = false;
+let tourGeneration = 0;
+let tourTimer;
+let finishTourDelay;
 const caption = vertex => {
   const p = vertex.properties;
   for (const key of ['display_name', 'name', 'summary', 'api_name', 'mr_title', 'message',
@@ -182,6 +185,7 @@ async function explore(cids, scenario) {
     returned = null; $('status').className = 'error'; $('status').textContent = error.message;
   } finally {
     loading = false; $('explore').disabled = false; $('scenario').disabled = false;
+    if (!touring) $('tour').disabled = false;
   }
 }
 function entities() {
@@ -211,17 +215,30 @@ $('export').onclick = () => {
 async function tour() {
   if (loading || touring) return;
   touring = true; $('tour').disabled = true; $('stop-tour').disabled = false;
+  const generation = ++tourGeneration;
   for (const scenario of pack.scenarios) {
-    if (!touring) break;
+    if (!touring || generation !== tourGeneration) break;
     $('scenario').value = scenario.id;
     await explore([...new Set(scenario.expected_path)], scenario);
-    if (!returned) break;
-    await new Promise(resolve => setTimeout(resolve, 15000));
+    if (!returned || !touring || generation !== tourGeneration) break;
+    await new Promise(resolve => {
+      finishTourDelay = () => {
+        clearTimeout(tourTimer);
+        finishTourDelay = undefined;
+        resolve();
+      };
+      tourTimer = setTimeout(finishTourDelay, 15000);
+    });
   }
+  if (generation !== tourGeneration) return;
   touring = false; $('tour').disabled = false; $('stop-tour').disabled = true;
 }
 $('tour').onclick = tour;
-$('stop-tour').onclick = () => { touring = false; $('stop-tour').disabled = true; };
+$('stop-tour').onclick = () => {
+  touring = false; tourGeneration++;
+  if (finishTourDelay) finishTourDelay();
+  $('tour').disabled = loading; $('stop-tour').disabled = true;
+};
 try {
   pack = await json('/enterprise-scenarios.json');
   const connections = await json('/api/v1.2/graph-connections?page_size=100');

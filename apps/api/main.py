@@ -476,10 +476,11 @@ def create_app():
             status_code=503,
         )
 
-    @app.get("/metrics", include_in_schema=False)
-    def metrics():
+    def runtime_metrics() -> str:
         observe_ingestion_jobs()
-        return Response(generate_latest(registry), media_type="text/plain; version=0.0.4")
+        return generate_latest(registry).decode("utf-8")
+
+    app.state.extended_state.metrics_renderers.append(runtime_metrics)
 
     @app.get("/api/v1/entities/{canonical_id:path}")
     def entity(canonical_id: str, include_deleted: bool = Query(default=False)):

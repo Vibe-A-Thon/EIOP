@@ -1,5 +1,8 @@
 """Tests for the validation engine and quality metrics."""
 
+from collections import Counter
+
+import pytest
 from eoip.graph.memory import MemoryGraphStore
 from eoip.validation.engine import ValidationEngine
 from eoip.validation.quality import QualityMetrics
@@ -170,3 +173,51 @@ def test_quality_metrics_computation():
     assert quality.evidence_coverage == 1.0
     assert quality.warning_count == 1
     assert quality.error_count == 0
+
+
+@pytest.mark.parametrize("vertex_limit", [1, 10_001])
+def test_validation_reuses_loaded_endpoints_with_bounded_fallback(monkeypatch, vertex_limit):
+    store = _seeded_store()
+    project = store.get_vertex_by_canonical_id("urn:test:project:1")
+    item = store.get_vertex_by_canonical_id("urn:test:item:1")
+    for index in range(10):
+        store.upsert_edge("CONTAINS", project["vid"], item["vid"], {
+            "fact_key": f"repeated-{index}", "creation_status": "DETERMINISTIC",
+        })
+    lookup_counts = Counter()
+    original = store.get_vertex
+
+    def get_vertex(vid):
+        lookup_counts[vid] += 1
+        return original(vid)
+
+    engine = ValidationEngine(store, vertex_limit=vertex_limit)
+    monkeypatch.setattr(store, "get_vertex", get_vertex)
+    monkeypatch.setattr(engine, "_persist_run", lambda result: None)
+    result = engine.run()
+    assert result["valid"]
+    assert result["partial"] is (vertex_limit == 1)
+    assert sum(lookup_counts.values()) == (1 if vertex_limit == 1 else 0)
+
+
+def test_unsupported_validation_link_does_not_abort_findings_persistence():
+    store = MemoryGraphStore()
+    store.upsert_vertex("GenericEntity", {
+        "canonical_id": "urn:test:generic:1", "name": "Unconnected source entity",
+    })
+    result = ValidationEngine(store).run()
+    assert result["findings"]
+    assert store.count_vertices("ValidationRun") == 1
+    assert store.count_vertices("ValidationFinding") == len(result["findings"])
+    assert store.find_edges(label="VALIDATED_BY") == []
+
+
+def test_validation_persistence_failure_is_not_reported_as_success(monkeypatch):
+    store = _seeded_store()
+
+    def fail_write(*args, **kwargs):
+        raise RuntimeError("storage unavailable")
+
+    monkeypatch.setattr(store, "upsert_vertex", fail_write)
+    with pytest.raises(RuntimeError, match="storage unavailable"):
+        ValidationEngine(store).run()

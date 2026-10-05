@@ -54,11 +54,11 @@ def build_package(
         normalized = rel_path.replace("\\", "/").lstrip("/")
         if not normalized or ".." in normalized.split("/"):
             raise PackageBuildError(f"invalid payload path: {rel_path!r}")
+        if normalized in (MANIFEST_FILENAME, CHECKSUMS_FILENAME):
+            raise PackageBuildError(f"payload path collides with reserved name: {normalized}")
         archive_path = f"{PAYLOAD_PREFIX}{normalized}"
         if archive_path in members:
             raise PackageBuildError(f"duplicate payload path: {archive_path}")
-        if archive_path in (MANIFEST_FILENAME, CHECKSUMS_FILENAME):
-            raise PackageBuildError(f"payload path collides with reserved name: {archive_path}")
         members[archive_path] = content
 
     members[CHECKSUMS_FILENAME] = json.dumps(
