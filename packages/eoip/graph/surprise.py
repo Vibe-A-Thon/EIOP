@@ -141,8 +141,9 @@ class SurpriseDetector:
         results: list[SurpriseResult] = []
         seen_pairs: set[tuple[str, str]] = set()
 
+        predictions = similarity.link_prediction_batch(sorted(adjacency), algorithm="common_neighbors", limit=limit)
         for source_id in sorted(adjacency):
-            for prediction in similarity.link_prediction(source_id, algorithm="common_neighbors", limit=limit):
+            for prediction in predictions[source_id]:
                 target_id = prediction["target_id"]
                 pair = tuple(sorted((source_id, target_id)))
                 if pair in seen_pairs:

@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 
@@ -202,13 +203,72 @@ def test_authenticated_recovery_readmission_endpoint(monkeypatch, tmp_path):
     assert "payload" not in result.json()
     assert api.post(url).status_code == 409
     assert api.post("/api/v1/admin/jobs/not-a-uuid/readmit").status_code == 404
-    webhook = queue.get(jobs[1]["job_id"])
-    webhook["kind"] = "SOURCE_WEBHOOK"
-    write_json(queue.root / f"{webhook['job_id']}.json", webhook)
-    refused = api.post(f"/api/v1/admin/jobs/{webhook['job_id']}/readmit")
+    unsupported = queue.get(jobs[1]["job_id"])
+    unsupported["kind"] = "UNSUPPORTED"
+    write_json(queue.root / f"{unsupported['job_id']}.json", unsupported)
+    refused = api.post(f"/api/v1/admin/jobs/{unsupported['job_id']}/readmit")
     assert refused.status_code == 409
-    assert "receipt recovery" in refused.json()["detail"]
-    assert queue.get(webhook["job_id"])["status"] == "HELD"
+    assert "cannot be re-admitted" in refused.json()["detail"]
+    assert queue.get(unsupported["job_id"])["status"] == "HELD"
+
+
+@pytest.mark.req("G2-T0122", "G2-T0123", "NFR-REL-002")
+def test_webhook_recovery_readmission_uses_restored_receipt(monkeypatch, tmp_path):
+    from tests.unit.test_deployment_api import client
+
+    source, target = tmp_path / "source", tmp_path / "target"
+    source_id = "jira-webhook"
+    delivery_id = "delivery-restore-1"
+    safe_delivery = hashlib.sha256(delivery_id.encode("utf-8")).hexdigest()
+    registry = SourceRegistry(source / "state" / "source-registry.json")
+    registry.create(SourceRegistryEntry(
+        source_id=source_id,
+        source_type="jira",
+        name="Jira Webhooks",
+        base_url="https://jira.example.test",
+        capabilities={"webhooks": True},
+        secret_refs={"webhook_hmac": "env://EOIP_JIRA_WEBHOOK_SECRET"},
+    ))
+    receipt_path = source / "receipts" / source_id / f"{safe_delivery}.json"
+    write_json(receipt_path, {
+        "receipt": {
+            "source_id": source_id,
+            "delivery_id": delivery_id,
+            "received_at": "2026-10-04T00:00:00+00:00",
+            "content_hash": "a" * 64,
+            "payload_ref": str(receipt_path),
+            "duplicate": False,
+        },
+        "payload": {"issue": {"key": "EOIP-1", "fields": {"summary": "Recovered"}}},
+        "metadata": {"event_name": "jira:issue_updated"},
+    })
+    queue = JobQueue(source)
+    submitted = queue.submit("SOURCE_WEBHOOK", {
+        "source_id": source_id,
+        "delivery_id": delivery_id,
+        "receipt_ref": str(receipt_path),
+    })
+    archive = tmp_path / "backup.json"
+    backup(MemoryGraphStore(), source, archive)
+    restore(MemoryGraphStore(), target, archive)
+
+    api = client(monkeypatch, target)
+    result = api.post(
+        f"/api/v1/admin/jobs/{submitted['job_id']}/readmit",
+        headers={
+            "Authorization": f"Bearer {os.environ['EOIP_API_TOKEN']}",
+            "X-Correlation-ID": "webhook-recovery",
+        },
+    )
+
+    assert result.status_code == 202
+    restored_receipt = target / "receipts" / source_id / f"{safe_delivery}.json"
+    restored_job = JobQueue(target).get(submitted["job_id"])
+    restored_document = json.loads(restored_receipt.read_text(encoding="utf-8"))
+    assert restored_job["status"] == "PENDING"
+    assert restored_job["correlation_id"] == "webhook-recovery"
+    assert restored_job["payload"]["receipt_ref"] == str(restored_receipt)
+    assert restored_document["receipt"]["payload_ref"] == str(restored_receipt)
 
 
 @pytest.mark.parametrize("control", ["disabled", "paused", "capability", "concurrency", "rate", "audit"])

@@ -62,3 +62,22 @@ Full auto-demo uses a disposable visible development host with the updated
 0.1.0 source extension. See [demo instructions](../../demo/autodemo/README.md).
 The existing VSIX is not rebuilt or installed by this demo. `npm test` also runs
 native Node protocol tests before the five real-host fixture journeys.
+
+To run the separate live NLQ/MCP presentation on Windows, double-click
+`demo/autodemo/run-demo-vscode.bat` or run it from a terminal. It starts the
+local Docker services, waits up to 60 seconds for API/MCP health, then checks
+that the `intent-to-runtime` and `knowledge-provenance` graph scenarios are
+already ready. It does not seed or preload the graph. Ingest the approved demo
+scenario pack first if either prerequisite is missing. Provide
+`EOIP_API_TOKEN` in the environment or `deploy/.env`.
+
+The presentation runs 17 live steps: NLQ `SEARCH`, `PATH`, `IMPACT`,
+`NEIGHBORHOOD`, `LINEAGE`, and `TRACEABILITY`, followed by all 11 read-only MCP
+tools supported by the extension. Each step is checked and recorded in a JSON
+receipt under `test-results/`; successful runs hold the visible result between
+steps and wait for **Close Demo** at the end. The default result hold is
+2500 ms; use `--delay MS` (0 through 60000) to change it. `--no-pause`
+disables the hold and final confirmation for unattended runs. Use `--dry-run`
+to inspect coverage, pacing, and prerequisites without starting services.
+This demonstrates the workspace source extension in an isolated
+visible VS Code development host; it does not install or certify a VSIX.

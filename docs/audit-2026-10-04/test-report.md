@@ -3,17 +3,19 @@
 ## Verified local results
 
 - Focused documentation-audit acceptance tests: **13 passed**.
+- Focused EKAF drift controls tests: **5 passed**.
+- Focused EKAF conflict/truth handoff tests: **24 passed**.
 - Scoped Ruff for the audit tool/tests: **passed**.
-- Documentation audit CLI regenerated the current ledger: **172 documents**,
-  **29,538 lines**, **1,428 candidate records**.
+- Documentation audit CLI regenerated the current ledger: **175 documents**,
+  **29,764 lines**, **1,431 candidate records**.
 - Source-bound full Python regression: **PASS**.
-  JUnit receipt records **1,518 test cases**, **1,487 passed**, **31 skipped**, **0 failures**,
-  **0 errors**, 260.590 seconds. The console emitted the existing duplicate ZIP
+  JUnit receipt records **1,543 test cases**, **1,519 passed**, **24 skipped**, **0 failures**,
+  **0 errors**, 409.854 seconds. The console emitted the existing duplicate ZIP
   member warning from `test_invalid_bundle_refused_before_graph_or_destination_writes`.
 - Source-binding receipt: **PASS**, command exit code 0,
   `source_content_bound=true`, `source_revision_bound=false`,
   `source_unchanged=true`.
-- Latest receipt completed after the audit-tool evidence-lead fix.
+- Latest receipt completed after webhook-recovery and current-tree audit updates.
   This supersedes the earlier execution; skips are excluded from the passed
   count. It certifies its tested snapshot, not subsequent edits.
 
@@ -63,15 +65,15 @@ Not run in this phase:
 ## Final scoped rerun
 
 The documentation inventory and source-bound regression were rerun after the
-audit-tool evidence-lead fix. Report/checklist wording edits after the receipt do
-not change executable source behavior.
+audit-tool evidence-lead fix and webhook-recovery implementation. Report/checklist
+wording edits after the receipt do not change executable source behavior.
 
-- Source HEAD: `0108cbea1e66e3c465fa3262a105baf12b0ea449`.
-- Tested source fingerprint:
-  `58fdc0511058751455511d7833be6da03053e7c396212a9618a03204a1486472`.
+- Source HEAD at receipt start: `28229963bc0753a5e173238ba473caa4f70ef1fd`.
+- Source-binding receipt: `PASS`; `source_content_bound=true`,
+  `source_revision_bound=false`, `source_unchanged=true`.
 - Local receipt: `test-results/audit-current-rerun-source-bound-validation.json`.
 - Local JUnit: `test-results/audit-current-rerun-regression.xml`.
-- Current documentation ledger: **172 documents, 29,538 lines**, including both
-  KGR catalogs. Candidate triage: **1,428 records** (230 Partial evidence maps,
-  1,198 Missing evidence maps). These are discovery counts, not verified atomic
+- Current documentation ledger: **175 documents, 29,764 lines**, including both
+  KGR catalogs. Candidate triage: **1,431 records** (238 Partial evidence maps,
+  1,193 Missing evidence maps). These are discovery counts, not verified atomic
   requirement or completion counts.

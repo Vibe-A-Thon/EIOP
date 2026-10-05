@@ -1,143 +1,106 @@
 @echo off
-REM EOIP VS Code Extension Demo
-REM Demonstrates the EOIP VS Code plugin (eoip-context-0.1.0)
-REM with NLQ (Natural Language Query) and MCP capabilities.
-
 setlocal
 
 set "SCRIPT_DIR=%~dp0"
 pushd "%SCRIPT_DIR%..\.." || exit /b 1
 set "PROJECT_ROOT=%CD%"
-popd
-
-set "PYTHON="
+set "DEMO_ARGS="
+set "NO_PAUSE="
 set "DRY_RUN="
+set "EXIT_CODE=0"
 
 :parse_args
-if "%~1"=="" goto :find_python
+if "%~1"=="" goto :args_parsed
 if /i "%~1"=="--dry-run" (
     set "DRY_RUN=1"
+    set "DEMO_ARGS=%DEMO_ARGS% --dry-run"
+    shift
+    goto :parse_args
+)
+if /i "%~1"=="--no-pause" (
+    set "NO_PAUSE=1"
+    set "DEMO_ARGS=%DEMO_ARGS% --no-pause"
     shift
     goto :parse_args
 )
 if /i "%~1"=="--help" goto :show_help
 if /i "%~1"=="-h" goto :show_help
 echo ERROR: Unknown argument "%~1".
-goto :invalid_args
+set "EXIT_CODE=2"
+goto :finish
 
-:find_python
-if defined DRY_RUN goto :dry_run
-if exist "%PROJECT_ROOT%\.venv\Scripts\python.exe" (
-    set "PYTHON=%PROJECT_ROOT%\.venv\Scripts\python.exe"
-) else (
-    where python >nul 2>&1
-    if errorlevel 1 (
-        echo ERROR: Python not found. Install Python 3.11+ or create a .venv.
-        exit /b 1
-    )
-    set "PYTHON=python"
-)
+:args_parsed
+if defined DRY_RUN goto :run_demo
 
 echo.
 echo ==============================================================
-echo   EOIP VS Code Extension Demo (eoip-context-0.1.0)
-echo   Meridian Financial Services
-echo   -----------------------------------------------------------
-echo   Demonstrates:
-echo     - NLQ impact analysis (natural language queries)
-echo     - MCP handshake (Model Context Protocol connection)
-echo     - MCP search (graph-aware code search)
-echo     - MCP lineage (full traceability chains)
-echo     - NLQ cross-domain queries (PAY + FRD)
-echo     - NLQ compliance queries (PCI DSS, audit)
-echo   -----------------------------------------------------------
-echo   Root: %PROJECT_ROOT%
+echo   EOIP Context 0.1.0 - Visible VS Code Live Demo
+echo   Workspace source extension; live API and MCP services
 echo ==============================================================
 echo.
+
+if not defined EOIP_API_URL set "EOIP_API_URL=http://localhost:8000"
+if not defined EOIP_MCP_URL set "EOIP_MCP_URL=http://localhost:8001/mcp"
 
 echo Starting Docker Desktop services (API + MCP)...
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%PROJECT_ROOT%\scripts\docker.ps1" up
 if errorlevel 1 (
-    echo.
     echo ERROR: EOIP could not be started. Review the Docker output above.
-    exit /b 1
+    set "EXIT_CODE=1"
+    goto :finish
 )
 
 echo.
-echo Waiting for MCP server at localhost:8001...
-:wait_mcp
-powershell.exe -NoProfile -Command "try { $r = Invoke-WebRequest -Uri 'http://localhost:8001/health' -TimeoutSec 5 -UseBasicParsing; if ($r.StatusCode -eq 200) { exit 0 } else { exit 1 } } catch { exit 1 }"
+echo Waiting up to 60 seconds for API and MCP readiness...
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$api=$env:EOIP_API_URL; $mcp=[Uri]$env:EOIP_MCP_URL; for($i=0; $i -lt 30; $i++){ try { Invoke-WebRequest -UseBasicParsing -TimeoutSec 2 -Uri ($api.TrimEnd('/') + '/health/ready') | Out-Null; Invoke-WebRequest -UseBasicParsing -TimeoutSec 2 -Uri ($mcp.GetLeftPart([UriPartial]::Authority) + '/health/live') | Out-Null; exit 0 } catch { Start-Sleep -Seconds 2 } }; exit 1"
 if errorlevel 1 (
-    echo   MCP not ready yet, retrying in 3s...
-    timeout /t 3 /nobreak >nul
-    goto :wait_mcp
+    echo ERROR: EOIP API or MCP did not become healthy within 60 seconds.
+    echo Check Docker service logs and the EOIP_API_URL / EOIP_MCP_URL configuration.
+    set "EXIT_CODE=1"
+    goto :finish
 )
-echo   MCP server is healthy.
 
+:run_demo
 echo.
-echo Pre-loading demo data for VS Code scenarios...
-pushd "%PROJECT_ROOT%" || exit /b 1
-"%PYTHON%" -X utf8 -m demo.autodemo.runner --mode full --quiet
-if errorlevel 1 (
-    echo WARNING: Data pre-load had failures, but VS Code demo will continue.
-)
-popd
-
-echo.
-echo Launching VS Code extension demo...
-node "%PROJECT_ROOT%\demo\autodemo\vscode-demo.js"
+echo Launching the visible EOIP VS Code demo...
+node "%PROJECT_ROOT%\demo\autodemo\vscode-demo.js"%DEMO_ARGS%
 set "EXIT_CODE=%ERRORLEVEL%"
-
 if not "%EXIT_CODE%"=="0" (
     echo.
-    echo VS Code extension demo completed with failures. Exit code: %EXIT_CODE%
+    echo VS Code live demo failed with exit code %EXIT_CODE%.
 ) else (
     echo.
-    echo VS Code extension demo completed successfully.
+    echo VS Code live demo finished. The JSON receipt is under test-results\.
 )
-exit /b %EXIT_CODE%
+goto :finish
 
-:dry_run
-node "%PROJECT_ROOT%\demo\autodemo\vscode-demo.js" --dry-run
-exit /b %ERRORLEVEL%
-
-:invalid_args
-echo.
-echo Run run-demo-vscode.bat --help for usage.
-exit /b 2
+:finish
+if not defined NO_PAUSE (
+    echo.
+    echo Exit code: %EXIT_CODE%
+    pause
+)
+popd
+endlocal & exit /b %EXIT_CODE%
 
 :show_help
 echo.
-echo EOIP VS Code Extension Demo (eoip-context-0.1.0)
+echo EOIP Context 0.1.0 visible VS Code live demo
+echo Usage: run-demo-vscode.bat [--dry-run] [--no-pause] [--help]
 echo.
-echo Usage: run-demo-vscode.bat [options]
+echo Default behavior starts local API/MCP services, then runs the workspace
+echo source extension in a disposable visible VS Code development host. It
+echo requires the intent-to-runtime and knowledge-provenance demo scenarios to
+echo already be ingested and ready. This launcher does not preload graph data.
 echo.
-echo Launches an isolated VS Code instance with the EOIP extension loaded,
-echo demonstrating Natural Language Query (NLQ) and Model Context Protocol
-echo (MCP) capabilities against the live EOIP API and MCP servers.
-echo.
-echo Demo Steps:
-echo   1. NLQ Impact      Natural language impact analysis query
-echo   2. MCP Handshake   Establish MCP connection to localhost:8001
-echo   3. MCP Search      Graph-aware code and artifact search
-echo   4. MCP Lineage     Full requirement-to-deployment traceability
-echo   5. NLQ Cross       Cross-domain query spanning PAY and FRD
-echo   6. NLQ Compliance  Compliance and audit query (PCI DSS)
-echo.
-echo Prerequisites:
-echo   - Node.js 18+ installed
-echo   - VS Code 1.96.4 cached in apps/vscode-extension/.vscode-test/
-echo   - Extension node_modules installed
-echo   - EOIP API running at localhost:8000
-echo   - EOIP MCP server running at localhost:8001
-echo   - EOIP_API_TOKEN in environment or deploy/.env
+echo Live coverage: NLQ SEARCH, PATH, IMPACT, NEIGHBORHOOD, LINEAGE and
+echo TRACEABILITY; plus all 11 read-only MCP tools supported by the extension.
 echo.
 echo Options:
-echo   --help, -h        Show this help.
-echo   --dry-run         Print plan without starting services.
+echo   --dry-run   Print the planned coverage without starting services.
+echo   --no-pause  Do not hold VS Code between steps or pause the console.
+echo   --help      Show this help.
 echo.
-echo Examples:
-echo   run-demo-vscode.bat
-echo   run-demo-vscode.bat --dry-run
-echo.
-exit /b 0
+set "NO_PAUSE=1"
+set "EXIT_CODE=0"
+goto :finish

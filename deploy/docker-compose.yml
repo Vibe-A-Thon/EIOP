@@ -31,7 +31,7 @@ services:
     networks: [backend]
     restart: unless-stopped
     healthcheck:
-      test: [CMD-SHELL, "curl -fsS http://localhost:8080/versions >/dev/null"]
+      test: [CMD-SHELL, "curl -fsS -u \"admin:$$PASSWORD\" http://localhost:8080/graphspaces/DEFAULT/graphs/hugegraph/schema/vertexlabels >/dev/null"]
       interval: 10s
       timeout: 5s
       retries: 30

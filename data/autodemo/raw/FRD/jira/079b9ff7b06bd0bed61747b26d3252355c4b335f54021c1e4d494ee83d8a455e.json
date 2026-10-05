@@ -1,0 +1,62 @@
+{
+  "captured_at": "2026-10-05T03:00:55.152631Z",
+  "event_id": "079b9ff7b06bd0bed61747b26d3252355c4b335f54021c1e4d494ee83d8a455e",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "dokoye",
+        "displayName": "David Okoye",
+        "emailAddress": "david.okoye@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "Case Management"
+        }
+      ],
+      "created": "2026-10-01T10:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "Fraud Operations",
+      "description": "Unified fraud case management system for fraud analysts with automated case routing, evidence aggregation, and disposition workflows. Supports end-to-end case lifecycle from alert triage to resolution.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuetype": {
+        "name": "Epic"
+      },
+      "labels": [
+        "case-management",
+        "fraud-ops",
+        "workflow"
+      ],
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection Platform"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "To Do"
+      },
+      "story_points": 34,
+      "summary": "Fraud Case Management System",
+      "updated": "2026-10-03T10:00:00.000+0000"
+    },
+    "key": "FRD-500"
+  },
+  "payload_hash": "e9ec6da97b71ade0e791410144bdd75a65661eac6636a2939431210f1199ac96",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-500",
+  "source_system": "jira",
+  "source_version": "e9ec6da97b71ade0e791410144bdd75a65661eac6636a2939431210f1199ac96"
+}

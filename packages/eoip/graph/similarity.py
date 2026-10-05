@@ -182,6 +182,28 @@ class SimilarityEngine:
             return []
 
         adj = self._all_vertex_neighbors()
+        return self._link_predictions(canonical_id, adj, algorithm, limit)
+
+    def link_prediction_batch(
+        self,
+        canonical_ids: list[str],
+        algorithm: str = "common_neighbors",
+        limit: int = 10,
+    ) -> dict[str, list[dict]]:
+        """Score multiple sources against one request-scoped graph snapshot."""
+        adj = self._all_vertex_neighbors()
+        return {
+            canonical_id: self._link_predictions(canonical_id, adj, algorithm, limit)
+            for canonical_id in canonical_ids
+        }
+
+    @staticmethod
+    def _link_predictions(
+        canonical_id: str,
+        adj: dict[str, set[str]],
+        algorithm: str,
+        limit: int,
+    ) -> list[dict]:
         root_nbrs = adj.get(canonical_id, set())
 
         predictions: list[dict] = []

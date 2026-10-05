@@ -163,6 +163,7 @@ function GuidedDemo({api, run, busy}) {
           source_id: expectedPath[0],
           target_id: expectedPath[expectedPath.length - 1],
           max_depth: 8,
+          ...(scenario.relationship_allowlist?.length ? {relationship_allowlist: scenario.relationship_allowlist} : {}),
         });
         setOutcomes(current => ({...current, [scenario.id]: {status: 'COMPLETE', response}}));
       } catch (exception) {

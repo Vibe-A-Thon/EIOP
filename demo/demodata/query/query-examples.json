@@ -141,8 +141,8 @@
     {
       "id": "query-eql-failed-tests",
       "type": "eql",
-      "query": "g.V().has('type','test_case').has('status','FAILED').out('tests').values('key')",
-      "description": "EQL query to find Jira keys linked to failed test cases",
+      "query": "FIND TestCase WHERE test_status = FAILED LIMIT 20",
+      "description": "EQL query to find test cases with failed status",
       "expected_intent": "structured_query"
     },
     {

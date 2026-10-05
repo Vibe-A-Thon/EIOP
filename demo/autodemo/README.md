@@ -1,119 +1,131 @@
-# EOIP Automated Demo — Meridian Financial Services
+# EOIP client demonstrations
 
-The batch launcher starts the Docker Desktop services, waits for health checks, opens the
-interactive EOIP web UI, then runs automated validation in a console against an in-memory
-graph store. The automated validation loads demo data from 13 source systems across two
-domains, constructs code graphs, processes crawler data, and checks platform capabilities.
+Double-click the respective Windows launcher. It starts the repository Docker
+stack with bounded health checks, authenticates privately, opens a visible Edge
+browser and automatically presents paced steps in the application and a separate
+live-results window. The console remains open at the end, including on failure.
+No in-memory fixture runner is used as evidence for the live application.
 
-## Usage
+| Launcher | Sequence |
+|---|---|
+| `run-demo.bat` | Enterprise application, administration/manual ingestion, administration/pipeline ingestion, then separate VS Code NLQ/MCP |
+| `run-demo-manual.bat` | Enterprise application plus live manual JSON ingestion and administration |
+| `run-demo-pipeline.bat` | Enterprise application plus live pipeline-fixture JSON ingestion and administration |
+| `run-demo-admin.bat` | Separate administration, manual ingestion, format exports and governance |
+| `run-demo-vscode.bat` | Separate isolated VS Code extension demonstration |
+
+## Prerequisites and safe operation
+
+- Node.js (22+), Docker Desktop running, and dependencies installed for the web
+  application and VS Code extension using their existing package managers.
+- Microsoft Edge installed. `PLAYWRIGHT_CHANNEL` or
+  `PLAYWRIGHT_EXECUTABLE_PATH` can select another already-installed browser.
+  The launcher does not silently install dependencies or browser binaries.
+- `EOIP_API_TOKEN` in the process environment or `deploy/.env`. Tokens are never
+  printed or put in demo receipts. Use a **dedicated local demo deployment**:
+  ingestion writes demo entities and captures to the configured persistent store.
+- All enterprise scenarios must be ready in the live scenario catalog. The
+  existing Docker bootstrap seeds them when `EOIP_LOAD_DEMO=true`. If an older
+  local environment disabled seeding, explicitly enable it in `deploy/.env`
+  and restart the stack. There is no fixture fallback on missing live data.
+- The extension demo uses the updated **0.1.0 source extension** in an isolated
+  VS Code host, not an assertion that an older installed VSIX is updated.
+  Cached VS Code and the extension's test-electron dependency are required.
+
+No reset, restore, deletion, arbitrary DLQ replay, cancellation, proposal
+approval, external connector credential acquisition or production mutation is
+automated. These require a separately approved, disposable scenario.
+
+## Visible sequences and coverage boundaries
+
+The application walks all ready Northstar Commerce stories: business intent to
+runtime, incident correlation, API blast radius, release governance, test
+intelligence, design to delivery, knowledge provenance, and graph analytics.
+Each story executes its declared path through the real UI and asserts the
+returned endpoints, then runs impact, lineage, neighborhood and traceability
+requests against the live API. Empty graph results fail.
+Cross-domain paths explicitly select the scenario corpus's ontology relationship
+labels through the policy-validated path request. The default traversal allowlist
+for other clients is unchanged. Startup checks authenticated schema access, not
+merely the HugeGraph metadata/version endpoint.
+
+It also demonstrates NLQ with nonempty graph results, navigation through seven
+explorer lenses and ten KGR graph views, every advertised RAG routing pattern
+and agent-routing type, eight engineering disciplines, and graph analytics
+(blast radius, reverse impact, centrality, communities, similarity, k-core,
+components, degree distribution, non-mutating what-if, anomalies, link
+prediction and surprises). Results are shown as real API JSON, not fabricated
+browser responses. **Routing is not model inference**. UI navigation is
+explicitly distinguished from executing every control in a view.
+RAG steps display the actual delegated execution pattern, evidence manifest and
+abstention decision; a corrective/adaptive route may legitimately execute a
+simple/hybrid stage. An explicit, reasoned abstention is shown as such, not as a
+generated answer.
+Agent steps likewise show the requested type separately from the executed
+implementation and validate its answer, category, confidence, actions and
+reasoning. Many advertised types are aliases or supervisor delegations to
+shared implementations; this is not a demonstration of distinct autonomous
+behavior for each catalog entry.
+
+The separate administration sequence demonstrates source/job inspection,
+validation, ontology schema, JSON-LD context, audit and DLQ inspection; real
+single-file and batch ingestion of 13 JSON source fixtures; all eight graph
+export formats; knowledge-firewall inspection; an evidence manifest; and
+governance/health catalogs. The Meridian PAY/FRD ingestion fixtures are separate
+from the Northstar scenario corpus. Pipeline mode ingests its pipeline JSON
+fixtures; it does not claim to run authenticated upstream polling/webhooks.
+
+Each browser receipt inventories **every operation in the live OpenAPI schema**
+as `DEMONSTRATED` or `NOT_DEMONSTRATED`. The latter remain visible at the end
+and are **not counted as completed**. Planned lenses, destructive recovery,
+stateful simulation/proposal lifecycles, every KGR control, external connectors,
+binary file-format samples/OCR/optional converters and model inference still
+require dedicated scenarios and prerequisites. Consequently the receipt is
+`PARTIAL` when those operations remain; successful selected steps do not certify
+the user's entire application-wide acceptance criterion.
+
+## Running and pacing
 
 ```powershell
-# Full demo — both domains + all capabilities
 .\demo\autodemo\run-demo.bat
-
-# Run just the automated validation directly with Python (without starting Docker)
-.\.venv\Scripts\python.exe -m demo.autodemo.runner --verbose
-
-# Manual ingestion only (Payment Gateway / PAY domain)
-.\demo\autodemo\run-demo.bat manual
-
-# Pipeline ingestion only (Fraud Detection / FRD domain)
-.\demo\autodemo\run-demo.bat pipeline
-
-# Save results to JSON
-.\.venv\Scripts\python.exe -m demo.autodemo.runner --output demo/autodemo/results.json
-
-# Run without writing captures into the default data/autodemo directory
-.\demo\autodemo\run-demo.bat manual --quiet --data-dir .tmp\demo-run
+.\demo\autodemo\run-demo-admin.bat --delay 5000
+.\demo\autodemo\run-demo-pipeline.bat --delay 1000 --no-pause
+.\demo\autodemo\run-demo.bat --dry-run
+node .\demo\autodemo\application-demo.js --headless --delay 0
+node .\demo\autodemo\administration-demo.js --dataset pipelines --headless --delay 0
+node --test .\demo\autodemo\tests\*.test.js
 ```
 
-## What it tests
+Direct JavaScript commands use an already-running stack. Default pacing holds
+each results window and application window for 2.5 seconds. `--headless` is for
+validation, not client presentations. `--no-pause` suppresses the launcher's
+final console pause. `--dry-run` does not start services, access secrets, open
+windows, ingest data or write receipts. `--help` documents supported arguments.
+Legacy `--data-dir` / administration `--skip-ingest` are deliberately rejected:
+captures now use the service configuration, and ingestion is part of this demo.
 
-### Phase 1 — Initialize
-1. Graph store initialization with meta-graph bootstrap
+Receipts are unique JSON files under `test-results`. `--output FILE` sets the
+browser receipt path; full mode writes numbered phase files to avoid overwrites.
+The extension writes its own receipt. Failures retain completed/failed step
+counts and a redacted error, exit nonzero, close automation-owned browsers and
+stop the remaining sequence. Docker services remain running for manual review.
+Exit zero means selected sequences executed, **not** universal feature coverage.
 
-### Phase 2 — Multi-Source Ingestion
-2. Manual folder ingestion: 13 source files (Rally, Jira, GitLab, ServiceNow, Confluence, Figma, qTest, Kibana, Grafana, Datadog, API Portal, Code Graph, Crawler)
-3. Pipeline folder ingestion: same 13 sources for the FRD domain
-4. Jira deep ingestion into graph store (PAY and FRD domains)
+The historical Python `runner.py` and `admin_runner.py` are not invoked by these
+launchers. The former remains a fixture test utility, not live ingestion.
+The latter is a legacy console helper, not the supported administration demo.
 
-### Phase 3 — Code Graph
-5. Code-graph JSON loading for 4 projects (mfs-payment-gateway, mfs-fraud-engine, mfs-common-libs, mfs-customer-portal)
+## Validation strategy
 
-### Phase 4 — Crawler
-6. Crawler data loading from 5 portal types (Wiki, API Portal, DB Schemas, Figma, Observability)
+Existing UI tests are retained without rewriting their journeys. New Node
+tests cover argument validation, dry-run isolation, strict path/graph assertions,
+launcher failure propagation and honest operation coverage; the existing
+Windows validation workflow runs them. Live acceptance runs the same browser
+scripts with zero delay against Docker services and validates all selected
+steps. There are no intercepted responses in the demonstration.
 
-### Phase 5 — Graph Verification
-7. Vertex and edge count verification
-8. Vertex label diversity check
-9. Impact analysis from PAY-* work items
-
-### Phase 6 — RAG Routing
-10. RAG pattern routing across 17 patterns (simple, advanced, graph, hybrid, etc.)
-
-### Phase 7 — Agent Dispatch
-11. Agent dispatch across 9 categories (tool-using, deliberative, enterprise, etc.)
-
-### Phase 8 — LAYA Analysis
-12. LAYA capability enumeration (8 capabilities)
-13. LAYA analysis execution (incident summary, release readiness, etc.)
-
-### Phase 9 — Query Examples
-14. Query type coverage (12 types: search, path, impact, NL, neighborhood, traceability, etc.)
-
-### Phase 10 — Validation & Quality
-15. Graph validation (zero errors expected)
-16. Quality metrics (evidence coverage, orphan rate)
-
-### Phase 11 — Graph Before/After
-17. Graph growth comparison (vertices and edges added during ingestion)
-18. Cross-domain link creation
-
-## Exit codes
-
-- `0` — all steps passed
-- `1` — one or more steps failed
-
-## VS Code NLQ and MCP (full mode)
-
-Full mode now runs a separate, visible VS Code window after successful console
-checks. The user-approved isolated profile does not modify your regular VS Code
-settings, SecretStorage or installed extensions. It loads the **updated 0.1.0
-source extension** from this checkout, not the previously packaged/installed VSIX.
-Repackaging/installing that VSIX is a separate action.
-
-The window shows JSON results for:
-1. **EOIP: Natural Language Query**: impact of the ready live intent-to-runtime
-   scenario anchor (currently Northstar PAY-142), including interpreted plan
-   and nonempty live graph results.
-2. **EOIP: Read-only MCP Tool**: actual JSON-RPC initialization, initialized
-   notification, tool discovery and search call.
-3. MCP lineage for the search result, with graph/provenance output.
-
-Each result stays visible for 2.5 seconds. This is command/editor automation
-inside the real VS Code host, not mouse-click simulation. It uses the existing
-API on port 8000 and stateless JSON Streamable HTTP MCP on port 8001; no model
-inference or graph writes are performed by this phase. The host closes after the
-sequence, and a unique `test-results/vscode-live-demo-*.json` receipt records the
-steps and live/fixture boundaries. Failures produce a nonzero launcher exit;
-there is no fixture fallback.
-
-Prerequisites: Node.js, existing extension `node_modules`, cached VS Code 1.96.4
-at `apps/vscode-extension/.vscode-test/vscode-win32-x64-archive-1.96.4/Code.exe`,
-running authenticated API/MCP, and a ready intent-to-runtime demo scenario. The demo does not
-download VS Code or install extensions. It passes the token privately to the
-isolated host, which stores it in that profile's SecretStorage; the profile is
-removed afterward. The launcher reads `EOIP_API_TOKEN` from the process
-environment or `deploy/.env` without printing it.
-
-```powershell
-# No Docker, secrets, ingestion, desktop window or captures:
-.\demo\autodemo\run-demo.bat --mode full --dry-run
-
-# Only the live VS Code portion; does not rebuild/start Docker:
-node .\demo\autodemo\vscode-demo.js
-```
-
-The console portion remains in-memory fixture validation. Live extension success
-does not certify every enterprise scenario, the installed VSIX, manual prompts,
-local-model inference or independent QA.
+Manual review: launch headful with default pacing; verify both windows are
+readable, each story appears in order, administration is visibly separate,
+the console remains open, and full mode transitions to isolated VS Code with
+NLQ/MCP results. Check the final receipts' uncovered-operation lists rather
+than inferring complete coverage from a successful console exit.

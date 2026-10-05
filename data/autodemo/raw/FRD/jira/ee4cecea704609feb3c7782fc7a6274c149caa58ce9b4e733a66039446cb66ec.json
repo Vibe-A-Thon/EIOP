@@ -1,0 +1,90 @@
+{
+  "captured_at": "2026-10-05T03:00:55.152631Z",
+  "event_id": "ee4cecea704609feb3c7782fc7a6274c149caa58ce9b4e733a66039446cb66ec",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "dokoye",
+        "displayName": "David Okoye",
+        "emailAddress": "david.okoye@mfs.example.invalid"
+      },
+      "comment": {
+        "comments": [
+          {
+            "author": {
+              "accountId": "dokoye",
+              "displayName": "David Okoye"
+            },
+            "body": "Change CHG0090801 approved for case management deployment. Case routing engine will be deployed to mfs-case-pod-01 with svc-case-engine service account.",
+            "created": "2026-10-03T14:00:00.000+0000"
+          }
+        ]
+      },
+      "components": [
+        {
+          "name": "Case Management"
+        }
+      ],
+      "created": "2026-10-02T11:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "Fraud Operations",
+      "customfield_10050": [
+        "TC-FRD-011",
+        "TC-FRD-012"
+      ],
+      "description": "Build a case routing engine that automatically assigns fraud cases to analysts based on priority scoring algorithms, case complexity assessment, and analyst workload balancing. Deployed on mfs-case-pod-01 under svc-case-engine.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "MR-1701"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story"
+      },
+      "labels": [
+        "case-routing",
+        "workflow"
+      ],
+      "parent": {
+        "key": "FRD-500"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection Platform"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "To Do"
+      },
+      "story_points": 8,
+      "summary": "Case routing engine with priority scoring",
+      "updated": "2026-10-03T10:00:00.000+0000"
+    },
+    "key": "FRD-501"
+  },
+  "payload_hash": "798df9925eac849170e7496f486cd1d6bef3037fedb1567ce652ac7a1efa4a2b",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-501",
+  "source_system": "jira",
+  "source_version": "798df9925eac849170e7496f486cd1d6bef3037fedb1567ce652ac7a1efa4a2b"
+}

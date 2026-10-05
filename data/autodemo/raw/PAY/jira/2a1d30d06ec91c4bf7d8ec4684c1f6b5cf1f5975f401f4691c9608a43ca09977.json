@@ -1,0 +1,82 @@
+{
+  "captured_at": "2026-10-05T03:00:26.266656Z",
+  "event_id": "2a1d30d06ec91c4bf7d8ec4684c1f6b5cf1f5975f401f4691c9608a43ca09977",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "evolkov",
+        "displayName": "Elena Volkov",
+        "emailAddress": "evolkov@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-09-16T09:00:00.000+0000",
+      "customfield_10014": "EPC-101",
+      "customfield_10015": "Payment Services",
+      "customfield_10050": "TC-PAY-012",
+      "description": "Implement a transaction analytics aggregation service that processes payment events from Kafka topic 'mfs.payment.events' and computes real-time metrics: transaction volume (hourly/daily/weekly), success/failure rates by payment method, average settlement time, refund rate by merchant. Aggregated data stored in mfs_payments_db.analytics_aggregates table on pghost-prod-01.mfs.internal. Uses svc-analytics service account on mfs-pay-pod-03.\n\nGitLab MR: !701\nTest Cases: TC-PAY-012",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "MR !701: Build transaction analytics aggregator"
+            },
+            "key": "MR-701"
+          },
+          "type": {
+            "name": "GitLab MR",
+            "outward": "is developed in"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "analytics",
+        "kafka",
+        "aggregation"
+      ],
+      "parent": {
+        "key": "PAY-500"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "To Do",
+        "statusCategory": {
+          "name": "To Do"
+        }
+      },
+      "story_points": 8,
+      "summary": "Build transaction analytics aggregator",
+      "updated": "2026-10-01T10:00:00.000+0000"
+    },
+    "id": "60501",
+    "key": "PAY-501",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60501"
+  },
+  "payload_hash": "aa9b751f2a7c007e820e64222708f1a0be80e974b10671497434bc9f689a705c",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-501",
+  "source_system": "jira",
+  "source_version": "aa9b751f2a7c007e820e64222708f1a0be80e974b10671497434bc9f689a705c"
+}

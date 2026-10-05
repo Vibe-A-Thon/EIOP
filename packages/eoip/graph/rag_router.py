@@ -325,7 +325,10 @@ class MultiHopRAG(BaseRAG):
             br = engine.blast_radius(selected_id, max_depth=3)
         except Exception:  # noqa: BLE001 - resilient fallback must not fail the caller
             return []
-        return [{"canonical_id": item.canonical_id, "label": item.label, "depth": item.depth} for item in (br.affected_items or [])[:20]]
+        return [
+            {"canonical_id": item.canonical_id, "label": item.label, "depth": item.path_depth}
+            for item in br.affected_details[:20]
+        ]
 
 
 class AdaptiveRAG(BaseRAG):

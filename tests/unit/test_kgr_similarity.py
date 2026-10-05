@@ -1,5 +1,6 @@
 """Phase 5 tests: similarity engine — Jaccard, Adamic-Adar, common neighbors + API."""
 
+import pytest
 from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.similarity import SimilarityEngine, SimilarityResult
 
@@ -127,3 +128,16 @@ def test_api_similarity_adamic_adar():
     assert resp.status_code == 200
     data = resp.json()
     assert isinstance(data, list)
+
+
+@pytest.mark.parametrize("algorithm", ["common_neighbors", "jaccard", "adamic_adar"])
+def test_batched_link_prediction_preserves_single_source_scores(algorithm):
+    store = MemoryGraphStore()
+    _build_triangle_with_extra(store)
+    engine = SimilarityEngine(store)
+    sources = ["urn:a", "urn:b", "urn:c", "urn:d", "urn:missing"]
+    expected = {
+        source: engine.link_prediction(source, algorithm=algorithm, limit=2)
+        for source in sources
+    }
+    assert engine.link_prediction_batch(sources, algorithm=algorithm, limit=2) == expected

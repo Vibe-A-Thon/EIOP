@@ -1,5 +1,7 @@
 """Phase 12 graph surprise detection tests."""
 
+from unittest.mock import patch
+
 from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.surprise import SurpriseDetector
 from fastapi.testclient import TestClient
@@ -88,3 +90,13 @@ def test_api_graph_surprises_returns_ranked_sections():
     assert body["counts"]["surprising_edges"] <= 5
     assert body["surprising_edges"]
     assert body["unexpected_absences"]
+
+
+def test_unexpected_absences_do_not_rescan_entire_graph_for_each_source():
+    store = MemoryGraphStore()
+    _build_surprise_graph(store)
+    vertex_count = len(store.find_vertices(limit=100))
+    with patch.object(store, "edges_from", wraps=store.edges_from) as edge_reads:
+        results = SurpriseDetector(store).unexpected_absences(limit=10)
+    assert results
+    assert edge_reads.call_count <= 2 * vertex_count

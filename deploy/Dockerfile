@@ -12,6 +12,7 @@ COPY config ./config
 COPY demo ./demo
 COPY schemas ./schemas
 COPY scripts ./scripts
+COPY EOIP-engg-doc-pkg/gaps-requirements.md EOIP-engg-doc-pkg/gaps-implementation.md EOIP-engg-doc-pkg/gaps2-requirements.md EOIP-engg-doc-pkg/gaps2-implementation.md ./EOIP-engg-doc-pkg/
 RUN git -C demo/demodata/core/demo-repo init -b main && \
     git -C demo/demodata/core/demo-repo add . && \
     GIT_AUTHOR_DATE=2026-10-01T00:00:00Z GIT_COMMITTER_DATE=2026-10-01T00:00:00Z \

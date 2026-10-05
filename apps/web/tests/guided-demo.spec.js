@@ -5,6 +5,7 @@ const scenarioPack = JSON.parse(readFileSync(
   new URL('../../../demo/demodata/enterprise/scenario-pack.json', import.meta.url),
   'utf8',
 ));
+const scenarioRelationships = [...new Set(scenarioPack.edges.map(edge => edge.label))].sort();
 
 async function stubAuthenticatedApi(page, {failPath = false, failCatalog = false, emptyCatalog = false, catalogDelayMs = 0} = {}) {
   const pathRequests = [];
@@ -34,6 +35,7 @@ async function stubAuthenticatedApi(page, {failPath = false, failCatalog = false
         scenarios: (emptyCatalog ? [] : scenarioPack.scenarios).map(scenario => ({
           ...scenario,
           ready: true,
+          relationship_allowlist: scenarioRelationships,
           expected_path_state: scenario.expected_path.map(canonical_id => ({canonical_id, available: true})),
         })),
       }});
@@ -90,6 +92,7 @@ test('guided demo lists and executes a live-contract path for every declared sce
     source_id: scenario.expected_path[0],
     target_id: scenario.expected_path.at(-1),
     max_depth: 8,
+    relationship_allowlist: scenarioRelationships,
   })));
 });
 

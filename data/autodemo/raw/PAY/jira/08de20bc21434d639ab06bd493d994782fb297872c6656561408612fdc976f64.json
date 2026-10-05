@@ -1,0 +1,68 @@
+{
+  "captured_at": "2026-10-05T03:00:26.267657Z",
+  "event_id": "08de20bc21434d639ab06bd493d994782fb297872c6656561408612fdc976f64",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "jokafor",
+        "displayName": "James Okafor",
+        "emailAddress": "jokafor@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-customer-portal"
+        }
+      ],
+      "created": "2026-09-16T10:00:00.000+0000",
+      "customfield_10014": "EPC-101",
+      "customfield_10015": "Payment Services",
+      "description": "Build a real-time settlement reporting dashboard showing settlement batch status, reconciliation results, and merchant payout timelines. Dashboard data sourced from analytics_aggregates and settlement_batches tables. Frontend component in mfs-customer-portal.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "settlement",
+        "reporting",
+        "dashboard"
+      ],
+      "parent": {
+        "key": "PAY-500"
+      },
+      "priority": {
+        "name": "Low"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "To Do",
+        "statusCategory": {
+          "name": "To Do"
+        }
+      },
+      "story_points": 5,
+      "summary": "Real-time settlement reporting dashboard",
+      "updated": "2026-10-01T10:00:00.000+0000"
+    },
+    "id": "60502",
+    "key": "PAY-502",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60502"
+  },
+  "payload_hash": "097fde2f51f276f229b1c716b5e68d4e1bdc7aa4e0ac11c69e9681bf6ca29f6e",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-502",
+  "source_system": "jira",
+  "source_version": "097fde2f51f276f229b1c716b5e68d4e1bdc7aa4e0ac11c69e9681bf6ca29f6e"
+}

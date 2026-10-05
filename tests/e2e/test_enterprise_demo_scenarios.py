@@ -125,3 +125,51 @@ def test_demo_catalog_endpoint_reports_live_readiness(tmp_path):
     assert body["ready"] is True
     assert len(body["scenarios"]) == 8
     assert all(item["ready"] and item["available"] for item in body["scenarios"])
+
+
+def test_all_declared_demo_paths_execute_through_policy_bounded_api(tmp_path):
+    store, _ = _environment(tmp_path)
+    client = TestClient(create_app(store))
+    scenarios = client.get("/api/v1/demo/scenarios").json()["scenarios"]
+    for scenario in scenarios:
+        response = client.post(
+            "/api/v1/path",
+            json={
+                "source_id": scenario["expected_path"][0],
+                "target_id": scenario["expected_path"][-1],
+                "max_depth": 8,
+                "relationship_allowlist": scenario["relationship_allowlist"],
+            },
+        )
+        assert response.status_code == 200, response.text
+        paths = response.json()["paths"]
+        assert paths, scenario["id"]
+        assert paths[0]["node_ids"][0] == scenario["expected_path"][0]
+        assert paths[0]["node_ids"][-1] == scenario["expected_path"][-1]
+    invalid = client.post(
+        "/api/v1/path",
+        json={
+            "source_id": scenarios[0]["expected_path"][0],
+            "target_id": scenarios[0]["expected_path"][-1],
+            "relationship_allowlist": ["NOT_AN_ONTOLOGY_EDGE"],
+        },
+    )
+    assert invalid.status_code == 422
+
+
+def test_multihop_demo_retrieves_blast_radius_evidence(tmp_path):
+    store, _ = _environment(tmp_path)
+    response = TestClient(create_app(store)).post(
+        "/api/v1/rag/query",
+        json={
+            "query": "checkout",
+            "pattern": "multihop",
+            "context": {"selected_id": "urn:eoip:work:item:jira:PAY-142"},
+        },
+    )
+    assert response.status_code == 200, response.text
+    result = response.json()
+    assert result["rag_pattern"] == "multihop"
+    assert result["sources"]
+    assert result["abstained"] is False
+    assert result["evidence_manifest"]["entity_count"] > 0

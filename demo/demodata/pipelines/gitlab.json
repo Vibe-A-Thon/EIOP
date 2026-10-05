@@ -276,6 +276,56 @@
         {"name": "build-image", "status": "skipped"},
         {"name": "deploy-staging", "status": "skipped"}
       ]
+    },
+    {
+      "id": 9508,
+      "name": "mfs-kyc-engine-ci",
+      "sha": "ddd8080808ddd8080808ddd8080808ddd8080808",
+      "ref": "feature/FRD-401-document-ocr",
+      "status": "success",
+      "created_at": "2026-10-03T10:01:00.000Z",
+      "finished_at": "2026-10-03T10:18:00.000Z",
+      "work_item_keys": ["FRD-401"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 35},
+        {"name": "unit-tests", "status": "success", "duration": 165},
+        {"name": "ocr-accuracy-tests", "status": "success", "duration": 280},
+        {"name": "build-image", "status": "success", "duration": 92},
+        {"name": "deploy-staging", "status": "success", "duration": 55}
+      ]
+    },
+    {
+      "id": 9509,
+      "name": "mfs-kyc-engine-ci",
+      "sha": "ddd9090909ddd9090909ddd9090909ddd9090909",
+      "ref": "feature/FRD-402-liveness-detection",
+      "status": "running",
+      "created_at": "2026-10-03T14:01:00.000Z",
+      "work_item_keys": ["FRD-402"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 32},
+        {"name": "unit-tests", "status": "success", "duration": 148},
+        {"name": "biometric-tests", "status": "running"},
+        {"name": "build-image", "status": "created"}
+      ]
+    },
+    {
+      "id": 9510,
+      "name": "mfs-case-engine-ci",
+      "sha": "eee1010101eee1010101eee1010101eee1010101",
+      "ref": "feature/FRD-501-case-routing",
+      "status": "success",
+      "created_at": "2026-10-03T11:01:00.000Z",
+      "finished_at": "2026-10-03T11:22:00.000Z",
+      "work_item_keys": ["FRD-501"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 38},
+        {"name": "unit-tests", "status": "success", "duration": 172},
+        {"name": "integration-tests", "status": "success", "duration": 310},
+        {"name": "case-workflow-tests", "status": "success", "duration": 95},
+        {"name": "build-image", "status": "success", "duration": 88},
+        {"name": "deploy-staging", "status": "success", "duration": 52}
+      ]
     }
   ]
 }

@@ -1,5 +1,6 @@
 """Uvicorn factory for the persistent deployment."""
 
+import hashlib
 import hmac
 import json
 import logging
@@ -7,6 +8,7 @@ import os
 import re
 from contextlib import asynccontextmanager
 from datetime import datetime
+from pathlib import Path
 from time import perf_counter
 from uuid import uuid4
 
@@ -223,6 +225,9 @@ def create_app():
     event_emitter = GraphEventEmitter(buffer_size=1000)
     app = query_app(store, dependencies=[Depends(HTTPBearer(auto_error=False))])
     app.state.event_emitter = event_emitter
+    from apps.api.extended import ensure_extended
+
+    ensure_extended(app, store)
     registry = CollectorRegistry()
     requests = Counter(
         "eoip_http_requests_total", "Completed HTTP requests", ["method", "status"], registry=registry
@@ -937,6 +942,48 @@ def create_app():
         except RuntimeError as exc:
             raise HTTPException(409, str(exc)) from exc
 
+    def readmit_webhook_job(job_id: str, held: dict, correlation_id: str) -> dict:
+        payload = held.get("payload")
+        if not isinstance(payload, dict):
+            raise TypeError("webhook recovery job payload is required")
+        source_id = payload.get("source_id")
+        delivery_id = payload.get("delivery_id")
+        receipt_ref = payload.get("receipt_ref")
+        if not all(isinstance(value, str) and value for value in (source_id, delivery_id, receipt_ref)):
+            raise TypeError("webhook recovery requires source_id, delivery_id and receipt_ref")
+        source = source_registry.get(source_id)
+        if not source.enabled or not source.capabilities.webhooks:
+            raise RuntimeError("source webhook capability is not enabled")
+        if source.source_type not in {"jira", "gitlab", "github"}:
+            raise ValueError("No webhook mapper is available for this source type")
+
+        receipt_dir = (data_root() / "receipts" / source_id).resolve()
+        original = Path(receipt_ref)
+        if original.suffix != ".json":
+            raise ValueError("webhook receipt reference must be a JSON file")
+        safe_delivery = hashlib.sha256(delivery_id.encode("utf-8")).hexdigest()
+        receipt_path = (receipt_dir / f"{safe_delivery}.json").resolve()
+        if receipt_path.parent != receipt_dir or original.name != receipt_path.name:
+            raise ValueError("webhook receipt reference does not match delivery id")
+        receipt_document = json.loads(receipt_path.read_text(encoding="utf-8"))
+        receipt = receipt_document.get("receipt")
+        if (
+            not isinstance(receipt, dict)
+            or receipt.get("source_id") != source_id
+            or receipt.get("delivery_id") != delivery_id
+            or not isinstance(receipt_document.get("payload"), dict)
+            or not isinstance(receipt_document.get("metadata", {}), dict)
+        ):
+            raise ValueError("webhook receipt does not match held job")
+
+        receipt_document["receipt"] = {**receipt, "payload_ref": str(receipt_path)}
+        write_json(receipt_path, receipt_document)
+        write_json(
+            queue.root / f"{job_id}.json",
+            {**held, "payload": {**payload, "receipt_ref": str(receipt_path)}},
+        )
+        return queue.readmit(job_id, correlation_id=correlation_id)
+
     @app.post("/api/v1/admin/jobs/{job_id}/readmit", status_code=202)
     def readmit_job(job_id: str, request: Request):
         try:
@@ -948,12 +995,14 @@ def create_app():
                 return acquisition_scheduler.readmit(
                     job_id, correlation_id=request.state.correlation_id
                 )
+            if held["kind"] == "SOURCE_WEBHOOK":
+                return readmit_webhook_job(
+                    job_id, held, correlation_id=request.state.correlation_id
+                )
             if held["kind"] not in {
                 "DEMO", "JIRA_JSON", "GITLAB_JSON", "REPLAY", "CONFLUENCE", "SERVICENOW",
             }:
-                raise RuntimeError(
-                    "Job kind cannot be re-admitted; webhook receipt recovery is required"
-                )
+                raise RuntimeError("Job kind cannot be re-admitted")
             return queue.readmit(job_id, correlation_id=request.state.correlation_id)
         except (SourceNotFoundError, FileNotFoundError):
             raise HTTPException(404, "Job or source not found") from None

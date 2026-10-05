@@ -20,6 +20,7 @@ class PathRequest(BaseModel):
     source_id: str = Field(min_length=1, max_length=512)
     target_id: str = Field(min_length=1, max_length=512)
     max_depth: int = Field(default=8, ge=1, le=8)
+    relationship_allowlist: list[str] = Field(default_factory=list, max_length=100)
 
 
 class ImpactRequest(BaseModel):
@@ -184,6 +185,11 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
     from eoip.graph.bitemporal import build_router as build_bitemporal_router
 
     app.include_router(build_bitemporal_router(store))
+    from apps.api.extended import build_extended_router
+
+    extended_router, extended_state = build_extended_router(store)
+    app.state.extended_state = extended_state
+    app.include_router(extended_router)
     from eoip.fileparse.api import build_router as build_file_router
     from eoip.runtime import data_root
 
@@ -235,6 +241,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             scenarios.append(
                 {
                     **item,
+                    "relationship_allowlist": sorted({edge["label"] for edge in pack["edges"]}),
                     "available": store.get_vertex_by_canonical_id(item["entrypoint"]) is not None,
                     "expected_path_state": path_state,
                     "ready": all(node["available"] for node in path_state),
@@ -285,6 +292,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             max_depth=payload.max_depth,
             result_limit=100,
             evidence_mode="SUMMARY",
+            relationship_allowlist=payload.relationship_allowlist,
         )
         try:
             return executor.execute(plan)
