@@ -1,0 +1,6 @@
+name: compliance
+version: "1.0.0"
+extends: core
+description: >-
+  Compliance pack: controls, policies, audit findings and evidence chains
+  extending core META/DECISION concepts for regulatory readiness.

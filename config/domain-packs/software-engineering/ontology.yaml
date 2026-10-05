@@ -1,0 +1,57 @@
+ontology_version: "0.4.0"
+schema_version: "1.2"
+
+domains:
+  - WORK
+  - CODE
+  - CICD
+
+classes:
+  WorkItem:
+    description: Extends core WorkItem with agile estimation fields.
+    extends_core: true
+    properties:
+      story_points: INT
+      epic_link: TEXT
+    relationships:
+      ESTIMATED_FOR:
+        out: [Sprint]
+        in: [WorkItem]
+
+  CodeReview:
+    description: A code-review cycle on a repository change.
+    properties:
+      review_id: TEXT
+      review_state: TEXT
+      reviewer_count: INT
+      canonical_id: TEXT
+      source_system: TEXT
+    relationships:
+      REVIEWS:
+        out: [CodeReview]
+        in: [Commit, MergeRequest]
+      RAISED_AGAINST:
+        out: [CodeReview]
+        in: [File, CodeSymbol]
+
+  ReleaseTrain:
+    description: A grouped, versioned release cut across repositories.
+    properties:
+      train_name: TEXT
+      release_date: DATE
+      canonical_id: TEXT
+      name: TEXT
+    relationships:
+      CARRIES:
+        out: [ReleaseTrain]
+        in: [Release, Deployment]
+
+validators:
+  - id: GAP-DP-SE-001
+    description: CodeReview must reference at least one Commit or MergeRequest.
+    applies_to: [CodeReview]
+    severity: ERROR
+  - id: GAP-DP-SE-002
+    description: WorkItem story_points must be non-negative when present.
+    applies_to: [WorkItem]
+    severity: WARNING

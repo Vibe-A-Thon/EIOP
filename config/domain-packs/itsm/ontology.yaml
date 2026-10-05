@@ -1,0 +1,60 @@
+ontology_version: "0.4.0"
+schema_version: "1.2"
+
+domains:
+  - OPS
+
+classes:
+  Incident:
+    description: Extends core Incident with ITIL problem linkage.
+    extends_core: true
+    properties:
+      problem_ref: TEXT
+      major_incident: BOOLEAN
+    relationships:
+      ESCALATES_TO:
+        out: [Incident]
+        in: [Incident]
+      LINKED_TO_PROBLEM:
+        out: [Incident]
+        in: [Problem]
+
+  Problem:
+    description: An ITIL problem record grouping related incidents.
+    properties:
+      problem_id: TEXT
+      root_cause: TEXT
+      canonical_id: TEXT
+      name: TEXT
+      status: TEXT
+      source_system: TEXT
+    relationships:
+      CAUSED_BY:
+        out: [Problem]
+        in: [ChangeRequest, Deployment]
+
+  ConfigurationItem:
+    description: A CMDB configuration item linked to services and incidents.
+    properties:
+      ci_id: TEXT
+      ci_class: TEXT
+      environment: TEXT
+      canonical_id: TEXT
+      name: TEXT
+    relationships:
+      IMPACTS:
+        out: [Incident]
+        in: [ConfigurationItem]
+      RUNS_ON:
+        out: [Service]
+        in: [ConfigurationItem]
+
+validators:
+  - id: GAP-DP-ITSM-001
+    description: Closed incidents must carry resolved_at.
+    applies_to: [Incident]
+    severity: ERROR
+  - id: GAP-DP-ITSM-002
+    description: Problem root_cause should be filled before closure.
+    applies_to: [Problem]
+    severity: WARNING

@@ -5,6 +5,13 @@ Author-executed on 2026-10-04, at checkout HEAD
 This is not independent QA, installed-VSIX acceptance or whole-product certification.
 Snapshot: `2026-10-04T21:05:25.5450404+05:30`.
 
+Update on 2026-10-05 at clean `dev_local` HEAD
+`e61d049c76131c41fe6fd99961a9344761478643`: `npm --prefix apps\vscode-extension test`
+exited 0 with 7 native protocol/driver tests and 5 real-host fixture journeys.
+Fresh fixture receipt:
+`test-results/extension-host-51c66c37-a20e-43e5-be80-f6dbd08b1efb.json`.
+The live desktop NLQ/MCP run below was not rerun in this continuation.
+
 | Check | Result | Exit code | Evidence |
 |---|---|---|---|
 | Native Node protocol and driver tests | PASS, 4 tests | 0 | `npm.cmd test` in `apps\vscode-extension` |

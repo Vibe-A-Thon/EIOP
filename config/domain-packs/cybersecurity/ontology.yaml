@@ -1,0 +1,70 @@
+ontology_version: "0.4.0"
+schema_version: "1.2"
+
+domains:
+  - CODE
+  - OPS
+
+classes:
+  Vulnerability:
+    description: A disclosed vulnerability affecting dependencies or services.
+    properties:
+      cve_id: TEXT
+      cvss_score: DOUBLE
+      exploit_available: BOOLEAN
+      canonical_id: TEXT
+      name: TEXT
+      severity: TEXT
+    relationships:
+      AFFECTS:
+        out: [Vulnerability]
+        in: [Dependency, Service, "*"]
+      FIXED_BY:
+        out: [Vulnerability]
+        in: [Commit, MergeRequest]
+
+  Threat:
+    description: A threat actor or campaign observed against assets.
+    properties:
+      threat_id: TEXT
+      threat_type: TEXT
+      canonical_id: TEXT
+      name: TEXT
+    relationships:
+      EXPLOITS:
+        out: [Threat]
+        in: [Vulnerability]
+      TARGETS:
+        out: [Threat]
+        in: [Service, ConfigurationItem, "*"]
+
+  SecurityFinding:
+    description: A scanner or pentest finding with remediation tracking.
+    properties:
+      finding_id: TEXT
+      scanner: TEXT
+      first_seen: DATE
+      canonical_id: TEXT
+      name: TEXT
+      severity: TEXT
+    relationships:
+      REMEDIATED_BY:
+        out: [SecurityFinding]
+        in: [WorkItem, ChangeRequest]
+
+  File:
+    description: Extends core File with secrets and IaC posture flags.
+    extends_core: true
+    properties:
+      contains_secrets: BOOLEAN
+      iac_kind: TEXT
+
+validators:
+  - id: GAP-DP-CYBER-001
+    description: Critical vulnerabilities must link a remediating work item.
+    applies_to: [Vulnerability]
+    severity: ERROR
+  - id: GAP-DP-CYBER-002
+    description: Files flagged contains_secrets should be quarantined.
+    applies_to: [File]
+    severity: WARNING

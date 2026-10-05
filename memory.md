@@ -1,9 +1,9 @@
 # EOIP Coordination Memory
 
-**Last session timestamp**: 2026-10-04T21:05:25.5450404+05:30
+**Last session timestamp**: 2026-10-05T11:08:14.1021060+05:30
 **Last processed ticket**: ticket-20261004-005
 **Last processed status**: In Progress
-**Last commit hash**: 776b55789b33aaf8403aff3bec8778d10eb35bfb
+**Last commit hash**: e61d049c76131c41fe6fd99961a9344761478643
 **Active role**: Senior Engineer
 **Active ticket**: ticket-20261004-005
 **Next ticket**: ticket-20261004-003 QA acceptance work after the demo handoff
@@ -267,7 +267,7 @@ Completion boundary: The reproduced full-console RAG/LAYA/NLQ failures are fixed
 
 --- HANDOFF END ---
 
-## Latest handoff
+## Prior handoff - VS Code source-extension demo
 
 --- HANDOFF START ---
 
@@ -293,5 +293,34 @@ Reproduction / validation commands: `npm.cmd --prefix apps\vscode-extension test
 Deployment changes: none; existing live local API/MCP used read-only.
 Publication: not requested; no commit/push/PR performed.
 Completion boundary: Requested source-extension NLQ/MCP auto-demo implemented and verified against live local services. Normal profile untouched; isolated profiles cleaned. Not whole-application, installed-VSIX or independent QA acceptance.
+
+--- HANDOFF END ---
+
+## Latest handoff
+
+--- HANDOFF START ---
+
+Timestamp: 2026-10-05T11:08:14.1021060+05:30
+Role: Senior Engineer
+Persona: You are the Senior Engineer. Resolve EOIP's cross-component defects at their root while preserving tested contracts and behavior.
+Repository root: F:\code\EIP\EIOP
+Branch: dev_local
+Last commit: e61d049c76131c41fe6fd99961a9344761478643
+Working tree: Startup was clean at HEAD e61d049. This continuation made coordination and evidence-report edits only: context.md, memory.md, todo-status.md, checklist.md, tickets/requirements-map.md, tickets/ticket-20261004-005.md and demo/autodemo/runtime-validation-report.md. No files staged; ignored local receipts/temp data may exist under test-results and .tmp.
+Current ticket: ticket-20261004-005; In Progress
+Last worked ticket: ticket-20261004-005; In Progress
+Checks executed: `git branch --show-current` exit 0 -> dev_local; `git rev-parse HEAD` exit 0 -> e61d049c76131c41fe6fd99961a9344761478643; startup `git status --short` exit 0 -> clean. `& .\.venv\Scripts\python.exe -X utf8 -m pytest -q tests\unit\test_autodemo_runner.py tests\unit\test_kgr_ai_intelligence.py tests\unit\test_query_nl.py tests\e2e\test_enterprise_demo_scenarios.py` exit 0 with only a Starlette/httpx deprecation warning. `npm --prefix apps\web run build` exit 0 with the existing Vite chunk-size warning. `node --test demo\autodemo\tests\*.test.js` exit 0, 11/11 passed. `npm --prefix apps\vscode-extension test` exit 0, 7 native protocol/driver tests and 5 real VS Code fixture journeys passed; receipt `test-results\extension-host-51c66c37-a20e-43e5-be80-f6dbd08b1efb.json`. `& .\.venv\Scripts\python.exe -X utf8 -m demo.autodemo.runner --mode full --data-dir .tmp\autodemo-current-check --output test-results\autodemo-current-ticket005.json` exit 0, 134/138 passed, 0 failed, 4 skipped. Pre-edit `git diff --check` exit 0.
+Historical evidence: Prior visible live desktop run passed 3 isolated NLQ/MCP steps against PAY-142 and remains recorded in demo/autodemo/runtime-validation-report.md; it was not rerun today. Prior guided-demo browser suite had 5 passing tests and was not rerun today.
+Checks not executed: Docker-backed live-stack verification, full project regression, Playwright/browser rerun in this continuation, installed VSIX package/install test, manual prompt behavior, local model inference, remote CI, independent QA/release signoff, commit/push/PR.
+Blockers / approvals: Ticket 005 remains In Progress because verifier QA acceptance, live-stack/Docker-backed acceptance and installed-VSIX validation are still pending. No authorization was given for Docker mutation, normal VS Code profile changes, VSIX install, branch changes, staging, commit, push or PR.
+Next ticket / owner: ticket-20261004-005 verifier QA Lead pending; then resume ticket-20261004-003 with QA Lead. Ticket-004 remote CI/publication/review blocker remains separate.
+Next actions:
+  1. QA Lead independently reruns/reviews the eight guided web scenarios and one real-contract path interaction using ticket-20261004-005 acceptance criteria.
+  2. With explicit approval and Docker prerequisites, run the Docker-backed/live-stack demo path and record the result separately from fixture/local evidence.
+  3. With explicit approval, rebuild/install the VSIX and verify installed-package behavior; source-host success is not installed-extension certification.
+Reproduction / validation commands: `& .\.venv\Scripts\python.exe -X utf8 -m pytest -q tests\unit\test_autodemo_runner.py tests\unit\test_kgr_ai_intelligence.py tests\unit\test_query_nl.py tests\e2e\test_enterprise_demo_scenarios.py`; `npm --prefix apps\web run build`; `node --test demo\autodemo\tests\*.test.js`; `npm --prefix apps\vscode-extension test`; `& .\.venv\Scripts\python.exe -X utf8 -m demo.autodemo.runner --mode full --data-dir .tmp\autodemo-current-check --output test-results\autodemo-current-ticket005.json`.
+Deployment changes: none.
+Publication: not requested; no commit/push/PR performed.
+Completion boundary: Current local fixture/source-extension/demo-runner evidence is green for ticket 005, but this is not independent QA, Docker/live-stack, installed-VSIX, whole-application or release acceptance.
 
 --- HANDOFF END ---

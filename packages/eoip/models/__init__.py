@@ -1,5 +1,46 @@
-"""Local model abstraction layer."""
+"""Local model abstraction layer and model governance (§49)."""
 
+from eoip.models.governance import (
+    EvaluationDataset,
+    Feature,
+    FeatureDisabled,
+    FeatureDisabledReason,
+    GovernancePolicy,
+    HallucinationIncident,
+    HallucinationIncidentLog,
+    KillSwitch,
+    ModelEntry,
+    ModelHealth,
+    ModelOutput,
+    ModelRegistry,
+    OutputClass,
+    PolicyVerdict,
+    PromptTemplate,
+    PromptTemplateRegistry,
+    classify_model_output,
+    hash_template,
+)
 from eoip.models.provider import LocalModelProvider, ModelResponse
 
-__all__ = ["LocalModelProvider", "ModelResponse"]
+__all__ = [
+    "EvaluationDataset",
+    "Feature",
+    "FeatureDisabled",
+    "FeatureDisabledReason",
+    "GovernancePolicy",
+    "HallucinationIncident",
+    "HallucinationIncidentLog",
+    "KillSwitch",
+    "LocalModelProvider",
+    "ModelEntry",
+    "ModelHealth",
+    "ModelOutput",
+    "ModelRegistry",
+    "ModelResponse",
+    "OutputClass",
+    "PolicyVerdict",
+    "PromptTemplate",
+    "PromptTemplateRegistry",
+    "classify_model_output",
+    "hash_template",
+]

@@ -1,0 +1,59 @@
+ontology_version: "0.4.0"
+schema_version: "1.2"
+
+domains:
+  - META
+  - DECISION
+  - PROCESS
+
+classes:
+  Control:
+    description: A compliance control mapped to services and processes.
+    properties:
+      control_id: TEXT
+      framework: TEXT
+      control_status: TEXT
+      canonical_id: TEXT
+      name: TEXT
+    relationships:
+      MITIGATES:
+        out: [Control]
+        in: [Risk, "*"]
+      APPLIES_TO:
+        out: [Control]
+        in: [Service, ProcessFlow]
+
+  Policy:
+    description: Extends the shared policy term with attestation linkage.
+    properties:
+      policy_id: TEXT
+      effective_date: DATE
+      review_date: DATE
+      canonical_id: TEXT
+      name: TEXT
+    relationships:
+      MANDATES:
+        out: [Policy]
+        in: [Control]
+      ATTESTED_BY:
+        out: [Policy]
+        in: [Person]
+
+  Risk:
+    description: A registered risk with inherent and residual scoring.
+    properties:
+      risk_id: TEXT
+      inherent_score: DOUBLE
+      residual_score: DOUBLE
+      canonical_id: TEXT
+      name: TEXT
+    relationships:
+      ACCEPTED_IN:
+        out: [Risk]
+        in: [Decision]
+
+validators:
+  - id: GAP-DP-COMP-001
+    description: Controls in scope must map to at least one policy.
+    applies_to: [Control]
+    severity: ERROR

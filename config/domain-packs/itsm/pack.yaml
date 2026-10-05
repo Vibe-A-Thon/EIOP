@@ -1,0 +1,6 @@
+name: itsm
+version: "1.0.0"
+extends: core
+description: >-
+  IT service management pack: extends OPS core concepts (Incident,
+  ChangeRequest, ServiceRequest) with ITIL problem, SLA and CMDB relationships.

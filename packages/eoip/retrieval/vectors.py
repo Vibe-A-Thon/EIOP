@@ -118,15 +118,50 @@ def cosine_similarity(a: list[float], b: list[float]) -> float:
     return sum(x * y for x, y in zip(a, b))
 
 
+class _BatchEmbedderAdapter:
+    """Adapt a batch ``EmbeddingProvider`` to single-text embedding.
+
+    GAP-SEARCH-001/§7.3: lets VectorIndex consume real embedding providers
+    without changing its single-text calling convention.
+    """
+
+    def __init__(self, provider: Any):
+        self._provider = provider
+
+    @property
+    def dimensions(self) -> int:
+        return getattr(self._provider, "dim", 0) or 0
+
+    def embed(self, text: str) -> list[float]:
+        return self._provider.embed([text])[0]
+
+    def embed_one(self, text: str) -> list[float]:
+        return self._provider.embed([text])[0]
+
+
 class VectorIndex:
     """In-memory vector index keyed by canonical entity ID."""
 
-    def __init__(self, embedder: HashingEmbedder | None = None):
-        self.embedder = embedder or HashingEmbedder()
+    def __init__(self, embedder: Any | None = None):
+        # HashingEmbedder by default, or an EmbeddingProvider-compatible
+        # backend (GAP-SEARCH-001/§7.3). Providers use a batch embed()
+        # signature, so adapt them to single-text embedding.
+        if embedder is None:
+            self.embedder: Any = HashingEmbedder()
+        elif isinstance(embedder, HashingEmbedder) or callable(getattr(embedder, "embed_one", None)):
+            self.embedder = embedder
+        else:
+            self.embedder = _BatchEmbedderAdapter(embedder)
         self._vectors: dict[str, list[float]] = {}
 
+    def _embed(self, text: str) -> list[float]:
+        embed_one = getattr(self.embedder, "embed_one", None)
+        if callable(embed_one):
+            return embed_one(text)
+        return self.embedder.embed(text)
+
     def add(self, entity_id: str, text: str) -> None:
-        self._vectors[entity_id] = self.embedder.embed(text)
+        self._vectors[entity_id] = self._embed(text)
 
     def remove(self, entity_id: str) -> None:
         self._vectors.pop(entity_id, None)
@@ -134,7 +169,7 @@ class VectorIndex:
     def search(self, query: str, top_k: int = 10) -> list[tuple[str, float]]:
         if not self._vectors:
             return []
-        query_vec = self.embedder.embed(query)
+        query_vec = self._embed(query)
         scores = [
             (entity_id, cosine_similarity(query_vec, vector))
             for entity_id, vector in self._vectors.items()
@@ -239,10 +274,25 @@ def entity_text(label: str, properties: dict) -> str:
     return " \n ".join(parts)
 
 
-def build_search_index(store, index: InMemorySearchIndex | None = None) -> InMemorySearchIndex:
+def build_vector_index(embedder: Any | None = None) -> VectorIndex:
+    """Provider-aware VectorIndex construction (GAP-SEARCH-001/§7.3).
+
+    Uses ``embedder`` (e.g. an OllamaEmbeddingProvider) when given, otherwise
+    the deterministic hashing embedder.
+    """
+    return VectorIndex(embedder)
+
+
+def build_search_index(
+    store,
+    index: InMemorySearchIndex | None = None,
+    embedder: Any | None = None,
+) -> InMemorySearchIndex:
     """Build a SearchIndex from the graph store. IDs are canonical entity IDs,
-    so hits always resolve back to authoritative graph entities (GAP-SEARCH-002)."""
-    index = index or InMemorySearchIndex()
+    so hits always resolve back to authoritative graph entities (GAP-SEARCH-002).
+    Pass ``embedder`` to embed via a real embedding provider; the deterministic
+    hashing embedder is used by default (GAP-SEARCH-001/§7.3)."""
+    index = index or InMemorySearchIndex(vector=VectorIndex(embedder))
     for vertex in store.find_vertices(limit=10_000, include_deleted=False):
         text = entity_text(vertex["label"], vertex.get("properties") or {})
         if text.strip():

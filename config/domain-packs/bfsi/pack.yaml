@@ -1,0 +1,6 @@
+name: bfsi
+version: "1.0.0"
+extends: core
+description: >-
+  Banking, financial services and insurance pack: trade, account and policy
+  concepts with regulatory relationship traces onto core WORK/BUSINESS terms.

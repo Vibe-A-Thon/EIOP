@@ -1,0 +1,6 @@
+name: data-governance
+version: "1.0.0"
+extends: core
+description: >-
+  Data governance pack: datasets, data products and lineage relationships
+  extending core KNOWLEDGE/META concepts for catalog and lineage analytics.

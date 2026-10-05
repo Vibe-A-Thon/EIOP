@@ -1,6 +1,6 @@
 # EOIP Coordination and Completion Checklist
 
-**Snapshot:** 2026-10-04. Status comes from real [tickets](tickets) and evidence,
+**Snapshot:** 2026-10-05. Status comes from real [tickets](tickets) and evidence,
 not the former "Phase 1 Complete" template label.
 
 ## Ticket rollup
@@ -26,12 +26,15 @@ not the former "Phase 1 Complete" template label.
 - [ ] Rebuild/install VSIX only with separate approval; this pass used the source extension.
 - [ ] Hand off for independent QA; Docker-backed/live acceptance remains separate.
 
-Author-executed evidence: focused graph/demo Python regressions passed in this
-prior continuation; full console mode passed 104/106 checks with 2 explicit skips and
-exit code 0. The guided-demo browser suite (5 tests) and web build passed in the
-prior implementation pass and were not rerun here. Current VS Code evidence is
-in the [desktop validation report](demo/autodemo/runtime-validation-report.md).
-This is not independent QA.
+Author-executed evidence on `dev_local` HEAD `e61d049`: focused graph/demo
+Python regressions exited 0; web production build exited 0 with the existing
+chunk-size warning; autodemo Node checks passed 11/11; full console mode exited
+0 with 134/138 passed, 0 failed and 4 explicit unsupported query-example skips;
+extension tests exited 0 with 7 native tests and 5 fixture host journeys. The
+prior guided-demo browser suite (5 tests) and live desktop NLQ/MCP run remain
+historical evidence and were not rerun here. Current VS Code evidence is in the
+[desktop validation report](demo/autodemo/runtime-validation-report.md). This
+is not independent QA.
 
 ## Coordination gate (ticket-20261004-002)
 

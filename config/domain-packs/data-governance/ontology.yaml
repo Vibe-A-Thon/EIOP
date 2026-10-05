@@ -1,0 +1,61 @@
+ontology_version: "0.4.0"
+schema_version: "1.2"
+
+domains:
+  - KNOWLEDGE
+  - META
+
+classes:
+  Dataset:
+    description: A governed logical dataset registered in the catalog.
+    properties:
+      dataset_id: TEXT
+      schema_ref: TEXT
+      freshness_slo: TEXT
+      canonical_id: TEXT
+      name: TEXT
+      owner: TEXT
+    relationships:
+      HAS_LINEAGE:
+        out: [Dataset]
+        in: [Dataset]
+      STORED_IN:
+        out: [Dataset]
+        in: [DataSource]
+
+  DataProduct:
+    description: A consumable data product built from governed datasets.
+    properties:
+      product_id: TEXT
+      sla_tier: TEXT
+      canonical_id: TEXT
+      name: TEXT
+      owner: TEXT
+    relationships:
+      BUILT_FROM:
+        out: [DataProduct]
+        in: [Dataset]
+      SERVES:
+        out: [DataProduct]
+        in: [BusinessCapability, "*"]
+
+  KnowledgeProduct:
+    description: Extends core KnowledgeProduct with governance quality scores.
+    extends_core: true
+    properties:
+      governance_score: DOUBLE
+      certified: BOOLEAN
+    relationships:
+      DERIVED_FROM:
+        out: [KnowledgeProduct]
+        in: [Dataset]
+
+validators:
+  - id: GAP-DP-DG-001
+    description: Certified datasets must have an owner.
+    applies_to: [Dataset]
+    severity: ERROR
+  - id: GAP-DP-DG-002
+    description: Lineage cycles (A -> B -> A) should be flagged.
+    applies_to: [Dataset]
+    severity: WARNING
