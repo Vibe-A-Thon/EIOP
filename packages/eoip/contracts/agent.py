@@ -174,3 +174,4 @@ class AgentResult(BaseModel):
     warnings: list[str] | None = None
     explanation: ExplanationEnvelope | None = None
     proposals: list[ChangeProposal] = Field(default_factory=list)
+    data: Any = None

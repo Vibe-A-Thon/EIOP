@@ -29,6 +29,18 @@ def read_demo_scenario_pack(project_root: str | Path | None = None) -> dict:
     return _read_json(root / DEFAULT_PACK)
 
 
+def demo_display_name(label: str, properties: dict) -> str:
+    """Resolve business captions without changing canonical or physical identities."""
+    for field in (
+        "display_name", "name", "summary", "api_name", "mr_title", "message",
+        "qualified_name", "branch_name", "tag_name", "incident_number", "path",
+        "run_kind", "evidence_key",
+    ):
+        if properties.get(field):
+            return str(properties[field])
+    return f"{label}: {properties['canonical_id'].rsplit(':', 1)[-1]}"
+
+
 def validate_demo_scenario_pack(pack: dict, schema: dict) -> None:
     """Validate JSON shape plus ontology labels, properties, endpoints and scenario paths."""
     Draft202012Validator(schema).validate(pack)
@@ -87,7 +99,7 @@ def load_demo_scenario_pack(
 
     serialized = json.dumps(pack, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
     digest = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
-    event_id = f"{pack['dataset_id']}-{pack['version']}"
+    event_id = f"{pack['dataset_id']}-{pack['version']}-{digest}"
     event = SourceEvent(
         event_id=event_id,
         source_system="demo_enterprise",
@@ -107,18 +119,23 @@ def load_demo_scenario_pack(
     for item in pack["vertices"]:
         properties = {
             **item["properties"],
+            "display_name": demo_display_name(item["label"], item["properties"]),
             "source_system": item["properties"].get("source_system", "demo_enterprise"),
             "ingestion_run_id": run_id,
             "last_seen": observed_at,
         }
         loaded.append(graph.upsert_vertex(item["label"], properties))
 
-    for index, item in enumerate(pack["edges"]):
+    legacy_index = 0
+    for item in pack["edges"]:
+        fact_key = item.get("properties", {}).get("fact_key")
+        if not fact_key:
+            # Preserve identities of the original 1.0 seed across additive revisions.
+            fact_key = f"demo:1.0.0:{legacy_index}:{item['label']}"
+            legacy_index += 1
         properties = {
             **item.get("properties", {}),
-            "fact_key": item.get("properties", {}).get(
-                "fact_key", f"demo:{pack['version']}:{index}:{item['label']}"
-            ),
+            "fact_key": fact_key,
             "source_system": "demo_enterprise",
             "source_ref": f"fixture://{DEFAULT_PACK.as_posix()}",
             "evidence_key": event_id,

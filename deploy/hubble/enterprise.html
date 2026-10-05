@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EOIP Enterprise Graph - Hubble</title>
+  <link rel="stylesheet" href="/enterprise.css">
+  <script type="module" src="/enterprise.js"></script>
+</head>
+<body>
+  <header>
+    <h1>EOIP Enterprise Graph</h1>
+    <p>Live Hubble / RocksDB data. Synthetic Northstar scenarios, not production measurements.</p>
+    <a id="native" href="/">Open native Hubble</a> | <a href="http://localhost:8080/app">EOIP application</a>
+  </header>
+  <main>
+    <section class="controls" aria-label="Graph controls">
+      <label>Business question <select id="scenario"></select></label>
+      <button id="tour">Start 11-scenario walkthrough</button>
+      <button id="stop-tour" disabled>Stop walkthrough</button>
+      <label>Find an entity by name <input id="search" type="search" placeholder="Checkout, Maya, approval..." /></label>
+      <label>Named entity <select id="entity"></select></label>
+      <button id="explore">Explore selected entity</button>
+      <label><input id="metadata" type="checkbox"> Show provenance and ingestion nodes</label>
+      <button id="zoom-in" aria-label="Zoom in">+</button>
+      <button id="zoom-out" aria-label="Zoom out">-</button>
+      <button id="fit">Fit graph</button>
+      <button id="export">Export returned graph JSON</button>
+    </section>
+    <p id="story"></p>
+    <p id="status" role="status" aria-live="polite">Connecting to Hubble...</p>
+    <div id="legend" aria-label="Domain color legend"></div>
+    <p>Arrows point from source to target. Labels describe relationships. Select a node or edge for facts and evidence. Drag nodes to untangle connections.</p>
+    <div class="workspace">
+      <div id="canvas"><svg id="graph" role="img" aria-label="Named enterprise relationship graph"></svg></div>
+      <aside><h2>Facts and provenance</h2><pre id="details">Select a node or relationship.</pre></aside>
+    </div>
+    <details>
+      <summary>Show the read-only Gremlin queries / use in native Hubble</summary>
+      <p>These generated queries fetch vertices AND relationships. A vertex-only query cannot display connectors. Results are bounded to 120 relationships; this is not an exhaustive graph export.</p>
+      <pre id="query"></pre>
+      <button id="copy">Copy relationship query</button>
+    </details>
+    <details><summary>Accessible relationship table</summary>
+      <table><thead><tr><th>Source name</th><th>Relationship</th><th>Target name</th></tr></thead><tbody id="relations"></tbody></table>
+    </details>
+  </main>
+</body>
+</html>

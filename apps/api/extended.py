@@ -586,6 +586,147 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
             raise HTTPException(status_code=422, detail=str(exc))
         return result.model_dump()
 
+    # ------------------------------------------------------------------
+    # Graph Algorithms (extended)
+    # ------------------------------------------------------------------
+
+    class AlgorithmRequest(BaseModel):
+        algorithm: str = Field(description="Algorithm name from registry")
+        source_id: str | None = None
+        target_id: str | None = None
+        canonical_ids: list[str] | None = None
+        max_depth: int = Field(default=4, ge=1, le=20)
+        limit: int = Field(default=20, ge=1, le=500)
+        k: int = Field(default=5, ge=1, le=50)
+        direction: str = Field(default="outgoing")
+        allowed_labels: list[str] | None = None
+        blocked_labels: list[str] | None = None
+
+    @router.get("/api/v1/algorithms")
+    def list_algorithms():
+        from eoip.agents.graph_analytics import ALGORITHM_REGISTRY
+        return {"algorithms": sorted(ALGORITHM_REGISTRY.keys()), "count": len(ALGORITHM_REGISTRY)}
+
+    @router.post("/api/v1/algorithms/run")
+    def run_algorithm(payload: AlgorithmRequest):
+        from eoip.graph.algorithms import GraphAlgorithms
+        algo = GraphAlgorithms(store)
+        dispatch = {
+            "ring_detection": lambda: [r.to_dict() for r in algo.detect_rings(max_length=payload.max_depth, limit=payload.limit)],
+            "intersection_detection": lambda: algo.detect_intersection(payload.source_id or "", payload.target_id or "", max_depth=payload.max_depth).to_dict(),
+            "weighted_shortest_path": lambda: (r.to_dict() if (r := algo.weighted_shortest_path(payload.source_id or "", payload.target_id or "")) else None),
+            "single_source_weighted": lambda: {k: v.to_dict() for k, v in algo.single_source_weighted_paths(payload.source_id or "", limit=payload.limit).items()},
+            "k_step_neighbors": lambda: algo.k_step_neighbors(payload.source_id or "", k=payload.k, limit=payload.limit).to_dict(),
+            "k_jump": lambda: algo.k_jump(payload.source_id or "", k=payload.k, walks=payload.limit),
+            "custom_path": lambda: algo.custom_path(payload.source_id or "", payload.target_id or "", allowed_labels=payload.allowed_labels, blocked_labels=payload.blocked_labels, max_depth=payload.max_depth, max_paths=payload.limit),
+            "ray_detection": lambda: algo.ray_detection(payload.source_id or "", direction=payload.direction, edge_labels=payload.allowed_labels, max_depth=payload.max_depth).to_dict(),
+            "co_neighbors": lambda: algo.co_neighbors(payload.source_id or "", payload.target_id or "").to_dict(),
+            "personal_rank": lambda: algo.personal_rank(payload.source_id or "", limit=payload.limit),
+            "neighbor_rank": lambda: algo.neighbor_rank(payload.source_id or "", limit=payload.limit),
+            "model_similarity": lambda: algo.model_similarity(payload.canonical_ids[:len(payload.canonical_ids)//2] if payload.canonical_ids else [], payload.canonical_ids[len(payload.canonical_ids)//2:] if payload.canonical_ids else []),
+        }
+        fn = dispatch.get(payload.algorithm)
+        if fn is None:
+            raise HTTPException(status_code=400, detail=f"Unknown algorithm: {payload.algorithm}. Available: {sorted(dispatch.keys())}")
+        try:
+            return {"algorithm": payload.algorithm, "result": fn()}
+        except Exception as exc:
+            raise HTTPException(status_code=422, detail=str(exc))
+
+    # ------------------------------------------------------------------
+    # Query Languages (EOQL, OSQL, Semantic QL)
+    # ------------------------------------------------------------------
+
+    class QueryLanguageRequest(BaseModel):
+        language: str = Field(description="Query language: eoql, osql, semantic")
+        query: str = Field(min_length=1)
+
+    @router.post("/api/v1/query/language")
+    def query_language(payload: QueryLanguageRequest):
+        from eoip.query.languages import parse_eoql, parse_osql, parse_semantic_query
+        dispatch = {
+            "eoql": lambda: parse_eoql(store, payload.query),
+            "osql": lambda: parse_osql(store, payload.query),
+            "semantic": lambda: parse_semantic_query(store, payload.query),
+        }
+        fn = dispatch.get(payload.language.lower())
+        if fn is None:
+            raise HTTPException(status_code=400, detail=f"Unknown language: {payload.language}. Available: {sorted(dispatch.keys())}")
+        return fn()
+
+    # ------------------------------------------------------------------
+    # Format Export (extended with SHACL, PGQL, OpenCypher)
+    # ------------------------------------------------------------------
+
+    @router.get("/api/v1/export/formats")
+    def list_export_formats():
+        return {"formats": ["rdf", "rdf_xml", "rdfs", "owl", "gremlin", "cypher", "opencypher", "gql", "sparql", "shacl", "pgql"]}
+
+    # ------------------------------------------------------------------
+    # Semantic Pipeline
+    # ------------------------------------------------------------------
+
+    class SemanticPipelineRequest(BaseModel):
+        stages: list[str] | None = None
+        scope: dict[str, str] | None = None
+
+    @router.post("/api/v1/admin/semantic-pipeline")
+    def run_semantic_pipeline(payload: SemanticPipelineRequest):
+        from eoip.ingestion.semantic_pipeline import PipelineStage, SemanticPipeline
+        pipeline = SemanticPipeline(store)
+        stages = None
+        if payload.stages:
+            stages = []
+            for s in payload.stages:
+                try:
+                    stages.append(PipelineStage(s))
+                except ValueError:
+                    raise HTTPException(status_code=400, detail=f"Unknown stage: {s}. Available: {[ps.value for ps in PipelineStage]}")
+        result = pipeline.run(stages=stages, scope=payload.scope or {})
+        return result.to_dict()
+
+    @router.get("/api/v1/admin/semantic-pipeline/stages")
+    def list_pipeline_stages():
+        from eoip.ingestion.semantic_pipeline import PipelineStage
+        return {"stages": [ps.value for ps in PipelineStage]}
+
+    # ------------------------------------------------------------------
+    # Agent-Driven Analytics
+    # ------------------------------------------------------------------
+
+    class AgentAnalyticsRequest(BaseModel):
+        algorithm: str = Field(default="all", description="Algorithm name or 'all' for swarm")
+        context_refs: list[str] = Field(default_factory=list)
+        budgets: dict[str, int] = Field(default_factory=dict)
+
+    @router.post("/api/v1/agents/analytics")
+    def run_analytics_agent(payload: AgentAnalyticsRequest):
+        from eoip.agents.graph_analytics import GraphAnalyticsAgent
+        from eoip.contracts.agent import AgentRequest
+        agent = GraphAnalyticsAgent()
+        request = AgentRequest(
+            request_id=f"api-analytics-{id(payload)}",
+            goal=payload.algorithm,
+            context_refs=payload.context_refs,
+            budgets=payload.budgets or None,
+        )
+        result = agent.execute(request, store)
+        return result.model_dump() if hasattr(result, "model_dump") else {"status": result.status, "summary": result.summary, "data": result.data}
+
+    @router.post("/api/v1/agents/semantic-index")
+    def run_semantic_index_agent(payload: AgentAnalyticsRequest):
+        from eoip.agents.semantic_index import SemanticIndexAgent
+        from eoip.contracts.agent import AgentRequest
+        agent = SemanticIndexAgent()
+        request = AgentRequest(
+            request_id=f"api-semantic-{id(payload)}",
+            goal=payload.algorithm,
+            context_refs=payload.context_refs,
+            budgets=payload.budgets or None,
+        )
+        result = agent.execute(request, store)
+        return result.model_dump() if hasattr(result, "model_dump") else {"status": result.status, "summary": result.summary, "data": result.data}
+
     return router, state
 
 

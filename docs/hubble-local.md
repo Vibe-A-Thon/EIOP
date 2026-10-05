@@ -58,6 +58,21 @@ allowlist only permits `hugegraph-server:8080`.
 
 ## View and query actual ingested data
 
+For readable names, directed labeled edges and domain colors, open
+**http://localhost:8088/enterprise.html** or the **EOIP Named Enterprise Graph**
+link in native Hubble. Choose one of 11 business questions or a named seed
+entity instead of entering physical IDs. The page queries the same persisted
+graph through Hubble, never a fixture substitute. Inspect node/edge facts,
+source evidence, the accessible relationship table and generated read-only
+Gremlin; toggle provenance nodes, drag nodes, zoom/fit or export returned JSON.
+Queries include edges and are bounded to 120 relationships.
+
+Double-click `demo\autodemo\run-demo-hubble.bat` to prepare the additive corpus
+and automatically walk through all 11 graph scenarios. Stop the walkthrough
+to investigate any scenario. Existing administration, ingestion and VS Code
+launchers remain separate; this view is not a claim that every application
+capability or production acceptance criterion has been demonstrated.
+
 Click **Visit** on **EOIP**. Under **Data Analysis**, use the Gremlin editor and
 **Execute Query**, then choose **Chart** or **Json**. To inspect schema, select
 **Metadata Configuration** and **Vertex Type**. These read-only example queries
@@ -98,7 +113,8 @@ entity back through both EOIP search and Hubble.
 This additive command rebuilds changed images as needed, waits for the stack,
 and loads the checked-in `demo/demodata` corpus into the existing RocksDB graph:
 
-- The existing typed core Jira/repository graph and eight enterprise scenarios.
+- The existing typed core Jira/repository graph and eleven enterprise scenarios,
+  including business alignment, decision alternatives and process deviations.
 - Native Jira WorkItems, projects and people from the manual PAY and pipeline
   FRD exports.
 - All source exports, Office documents, CSV/text, code, crawler, agent, query,

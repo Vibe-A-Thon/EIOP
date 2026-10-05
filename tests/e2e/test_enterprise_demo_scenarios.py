@@ -7,6 +7,7 @@ from eoip.graph.memory import MemoryGraphStore
 from eoip.graph.metrics import GraphMetricsEngine
 from eoip.graph.paths import GraphPathFinder
 from eoip.graph.traversal import GraphTraversal
+from eoip.ontology.manifest import PROPERTY_KEYS
 from eoip.validation.engine import ValidationEngine
 from fastapi.testclient import TestClient
 from jsonschema import Draft202012Validator
@@ -31,9 +32,13 @@ def test_enterprise_pack_is_schema_and_ontology_valid():
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
     Draft202012Validator.check_schema(schema)
     validate_demo_scenario_pack(pack, schema)
-    assert len(pack["scenarios"]) == 8
+    assert len(pack["scenarios"]) == 11
     assert len(pack["vertices"]) >= 50
     assert len(pack["edges"]) >= 90
+    for item in pack["vertices"]:
+        for key, value in item["properties"].items():
+            if PROPERTY_KEYS[key] == "TEXT":
+                assert isinstance(value, str), f"{item['label']}.{key} must match RocksDB TEXT schema"
 
 
 def test_all_source_fixtures_are_parseable_json():
@@ -55,13 +60,76 @@ def test_all_source_fixtures_are_parseable_json():
     )["openapi"] == "3.1.0"
 
 
+def test_corrected_pack_preserves_immutable_capture_and_business_identities(tmp_path):
+    pack = json.loads(PACK_PATH.read_text(encoding="utf-8"))
+    source = tmp_path / "pack.json"
+    source.write_text(json.dumps(pack), encoding="utf-8")
+    store = MemoryGraphStore()
+    load_demo_scenario_pack(store, tmp_path, pack_path=source)
+    captures = list((tmp_path / "raw" / "demo_enterprise").glob("*.json"))
+    assert len(captures) == 1
+    original_bytes = captures[0].read_bytes()
+    pack["vertices"][0]["properties"]["description"] += " Corrected synthetic description."
+    source.write_text(json.dumps(pack), encoding="utf-8")
+    load_demo_scenario_pack(store, tmp_path, pack_path=source)
+    load_demo_scenario_pack(store, tmp_path, pack_path=source)
+    assert captures[0].read_bytes() == original_bytes
+    assert len(list((tmp_path / "raw" / "demo_enterprise").glob("*.json"))) == 2
+    assert len([e for e in store.find_edges(limit=10000)
+                if e["properties"].get("fact_key", "").startswith("demo:1.0.0:")]) == 92
+    vertex = store.get_vertex_by_canonical_id(pack["vertices"][0]["properties"]["canonical_id"])
+    assert vertex["properties"]["description"].endswith("Corrected synthetic description.")
+
+
+def test_enrichment_preserves_legacy_edge_keys_and_names(tmp_path):
+    pack = json.loads(PACK_PATH.read_text(encoding="utf-8"))
+    original = dict(pack, version="1.0.0",
+                    vertices=pack["vertices"][14:], edges=pack["edges"][22:],
+                    scenarios=pack["scenarios"][3:])
+    store = MemoryGraphStore()
+    legacy_path = tmp_path / "legacy.json"
+    legacy_path.write_text(json.dumps(original), encoding="utf-8")
+    load_demo_scenario_pack(store, tmp_path, pack_path=legacy_path)
+    keys = {e["properties"]["edge_key"] for e in store.find_edges(limit=10000)
+            if e["properties"].get("fact_key", "").startswith("demo:")}
+    assert len(keys) == 92
+    load_demo_scenario_pack(store, tmp_path)
+    after = {e["properties"]["edge_key"] for e in store.find_edges(limit=10000)
+             if e["properties"].get("fact_key", "").startswith("demo:")}
+    assert after == keys
+    for v in store.find_vertices(limit=10000):
+        if v["canonical_id"] in {item["properties"]["canonical_id"] for item in pack["vertices"]}:
+            assert v["properties"]["display_name"]
+
+
+def test_business_decisions_and_ordered_process_paths(tmp_path):
+    store, _ = _environment(tmp_path)
+    vertices = {v["canonical_id"]: v for v in store.find_vertices(limit=10000)}
+    assert {"BUSINESS", "DECISION", "PROCESS"} <= {
+        v["properties"].get("graph_domain") for v in vertices.values()
+    }
+    pack = json.loads(PACK_PATH.read_text(encoding="utf-8"))
+    finder = GraphPathFinder(store)
+    for scenario in pack["scenarios"]:
+        assert finder.all_shortest_paths(scenario["expected_path"][0], scenario["expected_path"][-1]), scenario["id"]
+    pairs = {frozenset((e["out_cid"], e["in_cid"])) for e in store.find_edges(limit=10000)
+             if e["label"] not in {"EVIDENCED_BY", "INGESTED_IN", "BELONGS_TO_DOMAIN"}}
+    for scenario in pack["scenarios"][:3]:
+        assert all(frozenset(pair) in pairs for pair in
+                   zip(scenario["expected_path"], scenario["expected_path"][1:])), scenario["id"]
+    steps = {(e["out_cid"], e["in_cid"]) for e in store.find_edges(limit=10000)
+             if e["label"] == "PRECEDES"}
+    assert ("urn:eoip:process:step:northstar:triage", "urn:eoip:process:step:northstar:approve") in steps
+    assert ("urn:eoip:process:step:northstar:approve", "urn:eoip:process:step:northstar:deploy") in steps
+
+
 def test_demo_loads_every_sales_scenario_with_clean_validation(tmp_path):
     store, result = _environment(tmp_path)
     enterprise = result["enterprise"]
     assert enterprise["run_status"] == "SUCCEEDED"
-    assert enterprise["vertices"] == 56
-    assert enterprise["edges"] == 92
-    assert len(enterprise["scenarios"]) == 8
+    assert enterprise["vertices"] == 70
+    assert enterprise["edges"] == 114
+    assert len(enterprise["scenarios"]) == 11
 
     validation = ValidationEngine(store).run()
     assert validation["valid"] is True
@@ -123,7 +191,7 @@ def test_demo_catalog_endpoint_reports_live_readiness(tmp_path):
     body = response.json()
     assert body["dataset_id"] == "northstar-commerce"
     assert body["ready"] is True
-    assert len(body["scenarios"]) == 8
+    assert len(body["scenarios"]) == 11
     assert all(item["ready"] and item["available"] for item in body["scenarios"])
 
 

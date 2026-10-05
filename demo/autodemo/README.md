@@ -13,6 +13,7 @@ No in-memory fixture runner is used as evidence for the live application.
 | `run-demo-pipeline.bat` | Enterprise application plus live pipeline-fixture JSON ingestion and administration |
 | `run-demo-admin.bat` | Separate administration, manual ingestion, format exports and governance |
 | `run-demo-vscode.bat` | Separate isolated VS Code extension demonstration |
+| `run-demo-hubble.bat` | Additive corpus loading and 11 named, color-coded live Hubble graph scenarios |
 
 ## Prerequisites and safe operation
 
@@ -40,7 +41,8 @@ automated. These require a separately approved, disposable scenario.
 
 The application walks all ready Northstar Commerce stories: business intent to
 runtime, incident correlation, API blast radius, release governance, test
-intelligence, design to delivery, knowledge provenance, and graph analytics.
+intelligence, design to delivery, knowledge provenance, graph analytics,
+business objectives/capabilities, decision trade-offs and process deviations.
 Each story executes its declared path through the real UI and asserts the
 returned endpoints, then runs impact, lineage, neighborhood and traceability
 requests against the live API. Empty graph results fail.
@@ -48,6 +50,14 @@ Cross-domain paths explicitly select the scenario corpus's ontology relationship
 labels through the policy-validated path request. The default traversal allowlist
 for other clients is unchanged. Startup checks authenticated schema access, not
 merely the HugeGraph metadata/version endpoint.
+
+The separate Hubble launcher uses the normal persistent Docker deployment and
+opens `http://localhost:8088/enterprise.html?tour=1` in the default browser.
+It queries Hubble's saved connection for real vertices and edges, then advances
+every 15 seconds. Use Stop walkthrough for manual exploration. Named seed search,
+domain colors, directional relationship labels, node/edge provenance and
+inspectable Gremlin expose the same Northstar entities as the application.
+This sequence has no fixture-rendering fallback and does not delete volumes.
 
 It also demonstrates NLQ with nonempty graph results, navigation through seven
 explorer lenses and ten KGR graph views, every advertised RAG routing pattern

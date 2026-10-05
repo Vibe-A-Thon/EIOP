@@ -245,3 +245,131 @@ def test_full_centrality_degree_only():
     results = engine.full_centrality(["commit:C"], ["degree"])
     assert "commit:C" in results
     assert results["commit:C"].degree >= 4
+
+
+# --- Extended algorithms ---
+
+def _build_cycle_graph():
+    store = MemoryGraphStore()
+    nodes = {}
+    for n in ["A", "B", "C", "D", "E", "F"]:
+        nodes[n] = _vertex(store, "WorkItem", f"item:{n}", issue_key=f"{n}-1")
+    store.upsert_edge("PARENT_OF", nodes["A"]["vid"], nodes["B"]["vid"], {})
+    store.upsert_edge("PARENT_OF", nodes["B"]["vid"], nodes["C"]["vid"], {})
+    store.upsert_edge("PARENT_OF", nodes["C"]["vid"], nodes["D"]["vid"], {})
+    store.upsert_edge("PARENT_OF", nodes["D"]["vid"], nodes["A"]["vid"], {})
+    store.upsert_edge("PARENT_OF", nodes["B"]["vid"], nodes["E"]["vid"], {})
+    store.upsert_edge("PARENT_OF", nodes["E"]["vid"], nodes["F"]["vid"], {})
+    return store
+
+
+def test_extended_ring_detection():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    rings = algo.detect_rings(max_length=6, limit=10)
+    assert isinstance(rings, list)
+    for r in rings:
+        assert r.length >= 2
+        assert r.cycle[0] == r.cycle[-1]
+
+
+def test_extended_intersection_detection():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    result = algo.detect_intersection("item:A", "item:E", max_depth=3)
+    assert result.subgraph_a_root == "item:A"
+    assert isinstance(result.intersection_nodes, list)
+
+
+def test_extended_weighted_shortest_path():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    result = algo.weighted_shortest_path("item:A", "item:F")
+    assert result is not None
+    assert result.path[0] == "item:A"
+    assert result.path[-1] == "item:F"
+    assert result.hop_count == len(result.path) - 1
+
+
+def test_extended_single_source_weighted():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    results = algo.single_source_weighted_paths("item:A", limit=10)
+    assert isinstance(results, dict)
+    assert "item:A" not in results
+
+
+def test_extended_k_step_neighbors():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    result = algo.k_step_neighbors("item:A", k=2, limit=100)
+    assert result.center == "item:A"
+    assert result.total_count > 0
+
+
+def test_extended_k_jump():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    result = algo.k_jump("item:A", k=3, walks=20, seed=42)
+    assert isinstance(result, dict)
+
+
+def test_extended_custom_path():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    paths = algo.custom_path("item:A", "item:F", max_depth=5, max_paths=3)
+    assert isinstance(paths, list)
+    for p in paths:
+        assert p[0] == "item:A"
+        assert p[-1] == "item:F"
+
+
+def test_extended_ray_detection():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    result = algo.ray_detection("item:A", direction="outgoing", max_depth=5)
+    assert result.source == "item:A"
+    assert result.direction == "outgoing"
+    assert result.depth_reached >= 0
+
+
+def test_extended_co_neighbors():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    result = algo.co_neighbors("item:A", "item:C")
+    assert result.source == "item:A"
+    assert result.target == "item:C"
+
+
+def test_extended_personal_rank():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    results = algo.personal_rank("item:A", limit=5)
+    assert isinstance(results, list)
+
+
+def test_extended_neighbor_rank():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    results = algo.neighbor_rank("item:A", limit=5)
+    assert isinstance(results, list)
+
+
+def test_extended_model_similarity():
+    from eoip.graph.algorithms import GraphAlgorithms
+    store = _build_cycle_graph()
+    algo = GraphAlgorithms(store)
+    result = algo.model_similarity(["item:A", "item:B"], ["item:C", "item:D"])
+    assert "node_jaccard" in result
+    assert "combined_score" in result

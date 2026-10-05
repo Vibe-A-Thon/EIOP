@@ -47,7 +47,8 @@ services:
   hubble:
     image: eoip-hubble:local
     build:
-      context: ./hubble
+      context: ..
+      dockerfile: deploy/hubble/Dockerfile
     environment:
       SPRING_DATASOURCE_URL: jdbc:h2:file:/hubble/data/db;DB_CLOSE_ON_EXIT=FALSE
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health

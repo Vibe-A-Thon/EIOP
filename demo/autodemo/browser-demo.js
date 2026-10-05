@@ -411,7 +411,8 @@ async function main(defaultMode, args = process.argv.slice(2)) {
     if (!catalog.scenarios?.length || catalog.scenarios.some(item => !item.ready)) {
       throw new Error('Load the approved enterprise demo dataset: all declared scenarios must be ready');
     }
-    const anchor = catalog.scenarios[0].entrypoint;
+    const anchor = catalog.scenarios.find(item => item.id === 'intent-to-runtime')?.entrypoint;
+    if (!anchor) throw new Error('The intent-to-runtime anchor is required for application demonstrations');
 
     if (config.mode !== 'admin') {
       await click('Guided demo');
