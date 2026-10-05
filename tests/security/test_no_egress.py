@@ -52,7 +52,7 @@ def test_local_model_only_on_backend():
 def test_api_ports_bound_to_loopback():
     """API, MCP, and web ports must bind to 127.0.0.1 only."""
     compose = _load_compose()
-    for svc_name in ["eoip-api", "eoip-mcp", "eoip-web"]:
+    for svc_name in ["eoip-api", "eoip-mcp", "eoip-web", "hubble"]:
         svc = compose["services"][svc_name]
         ports = svc.get("ports", [])
         for port in ports:

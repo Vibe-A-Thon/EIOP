@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('up', 'test', 'status', 'logs', 'down', 'backup', 'backup-bundle', 'extension', 'restore-test', 'acceptance', 'recovery-acceptance', 'dlq-acceptance')]
+    [ValidateSet('up', 'rebuild', 'hubble-local-admin', 'demo-data', 'test', 'status', 'logs', 'down', 'backup', 'backup-bundle', 'extension', 'restore-test', 'acceptance', 'recovery-acceptance', 'dlq-acceptance')]
     [string]$Action = 'up'
 )
 $ErrorActionPreference = 'Stop'
@@ -43,7 +43,31 @@ function Invoke-Compose {
     if ($composeExitCode -ne 0) { throw "Docker Compose failed (exit $composeExitCode)." }
 }
 switch ($Action) {
-    'up' { Invoke-Compose -CommandArguments @('up', '--build', '-d', '--wait', '--wait-timeout', '420'); Write-Host 'EOIP: http://localhost:8080/app | API: http://localhost:8000/docs | MCP: http://localhost:8001/mcp' }
+    'up' { Invoke-Compose -CommandArguments @('up', '--build', '-d', '--wait', '--wait-timeout', '420'); Write-Host 'EOIP: http://localhost:8080/app | API: http://localhost:8000/docs | MCP: http://localhost:8001/mcp | Hubble: http://localhost:8088' }
+    'rebuild' {
+        Invoke-Compose -CommandArguments @('build', '--no-cache', 'eoip-api', 'eoip-web', 'hubble')
+        Invoke-Compose -CommandArguments @('up', '-d', '--force-recreate', '--wait', '--wait-timeout', '420')
+        Write-Host 'Clean rebuild complete. Existing graph, application, model and Hubble volumes were retained.'
+    }
+    'hubble-local-admin' {
+        if ($env:HUGEGRAPH_PASSWORD) { throw 'Unset the process HUGEGRAPH_PASSWORD override before rotating the local account.' }
+        $config = [System.IO.File]::ReadAllText($envFile)
+        if ([regex]::Matches($config, '(?m)^HUGEGRAPH_PASSWORD=[^\r\n]*').Count -ne 1) {
+            throw 'deploy/.env must contain exactly one HUGEGRAPH_PASSWORD entry.'
+        }
+        Invoke-Compose -CommandArguments @('build', 'schema-init', 'hubble')
+        Invoke-Compose -CommandArguments @('run', '--rm', '--no-deps', 'schema-init',
+            'python', '-m', 'scripts.setup_hubble', '--rotate-local-admin')
+        $config = [regex]::Replace($config, '(?m)^HUGEGRAPH_PASSWORD=[^\r\n]*', 'HUGEGRAPH_PASSWORD=admin')
+        [System.IO.File]::WriteAllText($envFile, $config, (New-Object System.Text.UTF8Encoding($false)))
+        Invoke-Compose -CommandArguments @('up', '-d', '--force-recreate', '--wait', '--wait-timeout', '420')
+        Write-Host 'Local graph connection: admin/admin. Hubble: http://localhost:8088. Never expose this demo account to a public network.'
+    }
+    'demo-data' {
+        Invoke-Compose -CommandArguments @('up', '--build', '-d', '--wait', '--wait-timeout', '420')
+        Invoke-Compose -CommandArguments @('exec', '-T', 'eoip-api', 'python', '-m', 'scripts.load_demo_corpus')
+        Write-Host 'Demo corpus loaded into the existing graph. Hubble: http://localhost:8088.'
+    }
     'test' {
         Invoke-Compose -CommandArguments @('--profile', 'test', 'build', 'tests', 'smoke', 'ui-tests')
         Invoke-Compose -CommandArguments @('--profile', 'test', 'run', '--rm', '--no-deps', 'tests')

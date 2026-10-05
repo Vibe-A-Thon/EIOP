@@ -44,12 +44,45 @@ services:
       hugegraph-server: {condition: service_healthy}
     restart: "no"
 
+  hubble:
+    image: eoip-hubble:local
+    build:
+      context: ./hubble
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:h2:file:/hubble/data/db;DB_CLOSE_ON_EXIT=FALSE
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health
+    volumes:
+      - hubble-data:/hubble/data
+      - hubble-uploads:/hubble/upload-files
+      - ./hubble/hugegraph-hubble.properties:/hubble/conf/hugegraph-hubble.properties:ro
+    networks: [backend, frontend]
+    ports: ["127.0.0.1:${EOIP_HUBBLE_PORT:-8088}:8088"]
+    depends_on:
+      hugegraph-server: {condition: service_healthy}
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD-SHELL, "curl -fsS http://localhost:8088/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 30s
+
+  hubble-init:
+    <<: *application
+    command: [python, -m, scripts.setup_hubble]
+    depends_on:
+      hubble: {condition: service_healthy}
+      schema-init: {condition: service_completed_successfully}
+    restart: "no"
+
   eoip-api:
     <<: *application
     networks: [backend, frontend]
     ports: ["127.0.0.1:${EOIP_API_PORT:-8000}:8000"]
     depends_on:
       schema-init: {condition: service_completed_successfully}
+      hubble-init: {condition: service_completed_successfully}
     restart: unless-stopped
     healthcheck:
       test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready', timeout=5)"]
@@ -212,3 +245,5 @@ volumes:
   application-data:
   model-data:
   metrics-data:
+  hubble-data:
+  hubble-uploads:

@@ -34,12 +34,13 @@ value later is not a graph password-rotation procedure.
 | Swagger API | http://localhost:8000/docs | Click Authorize and paste EOIP_API_TOKEN |
 | Read-only MCP | http://localhost:8001/mcp | Authorization: Bearer EOIP_API_TOKEN |
 | API readiness | http://localhost:8000/health/ready | No token |
+| HugeGraph Hubble | http://localhost:8088 | Existing EOIP graph connection; see [Hubble setup](hubble-local.md) |
 
 All published application ports bind to `127.0.0.1`. This is a local development
 authentication model: one token grants access to both query and administration
 operations. `/admin` is navigation, not a separate authorization boundary.
 
-Change `EOIP_WEB_PORT`, `EOIP_API_PORT`, or `EOIP_MCP_PORT` in `deploy/.env` if a
+Change `EOIP_WEB_PORT`, `EOIP_API_PORT`, `EOIP_MCP_PORT`, or `EOIP_HUBBLE_PORT` in `deploy/.env` if a
 port is occupied, then rerun startup. The API docs link in the web interface
 uses the default API port; visit the configured port directly if changed.
 
@@ -55,6 +56,8 @@ docker compose --env-file .env up --build -d --wait --wait-timeout 420
 | Service | Responsibility |
 |---|---|
 | hugegraph-server | HugeGraph 1.7.0 with RocksDB; no host port |
+| hubble | Hubble 1.7.0 with an English first-use default; local schema browser, graph visualization and direct Gremlin queries |
+| hubble-init | Idempotent connection registration against the existing DEFAULT/hugegraph; never initializes or clears graph data |
 | schema-init | One-time, idempotent property/vertex/edge/index bootstrap |
 | eoip-api | Search, QueryPlan execution, entities, bounded path/impact/lineage, GraphRAG retrieval, agent contracts, admin jobs/validation/ingestion, metrics |
 | eoip-worker | Single-worker durable filesystem queue; capture-first ingestion and demo loading |
@@ -62,10 +65,23 @@ docker compose --env-file .env up --build -d --wait --wait-timeout 420
 | eoip-mcp | Authenticated, read-only MCP façade over the application API |
 
 Docker named volumes hold graph storage and application raw events, DLQ,
-job records, worker state, and snapshots. `docker.ps1 down` removes this project's
+job records, worker state, snapshots, Hubble connection/query metadata and uploads.
+`docker.ps1 rebuild` performs a no-cache application/web/Hubble build and recreates services
+without deleting these volumes. `docker.ps1 down` removes this project's
 containers and networks while retaining volumes. Startup resumes interrupted
 RUNNING jobs and retries transient I/O/HTTP failures three times. Keep one worker
 replica: the filesystem queue does not implement multi-worker claiming.
+
+Run `.\scripts\docker.ps1 demo-data` to add the entire checked-in demo corpus to
+an existing graph without resetting it. This includes the typed core/enterprise
+seed and PAY/FRD Jira records, plus source-preserving documents and RAG chunks for
+the remaining exports, Office files and scenario catalogs. See
+[the complete corpus scope and repeatable loading behavior](hubble-local.md#load-all-available-demonstration-data).
+
+Do not run `docker compose down --volumes`, remove the named volumes, or prune
+volumes to clean-build the application. Deleting Docker images alone does not
+delete stored data. A fresh data deployment requires a separate, explicit
+data-deletion decision; normal startup, shutdown and rebuild never request it.
 
 ### Schema compatibility and startup refusal
 

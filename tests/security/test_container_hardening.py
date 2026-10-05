@@ -62,7 +62,7 @@ def test_all_long_running_services_have_healthchecks():
     compose = _load_compose()
     long_running = [
         "hugegraph-server", "eoip-api", "eoip-worker",
-        "eoip-mcp", "eoip-web",
+        "eoip-mcp", "eoip-web", "hubble",
     ]
     for svc_name in long_running:
         svc = compose["services"][svc_name]
@@ -106,3 +106,22 @@ def test_schema_init_no_restart():
     assert svc.get("restart") == "no", (
         "schema-init must have restart: no (one-shot)"
     )
+
+
+def test_hubble_retains_metadata_and_uploads_on_recreation():
+    compose = _load_compose()
+    hubble = compose["services"]["hubble"]
+    assert hubble["image"] == "eoip-hubble:local"
+    dockerfile = COMPOSE_PATH.parent / "hubble" / "Dockerfile"
+    assert "FROM hugegraph/hubble:1.7.0" in dockerfile.read_text(encoding="utf-8")
+    assert "hubble-data:/hubble/data" in hubble["volumes"]
+    assert "hubble-uploads:/hubble/upload-files" in hubble["volumes"]
+    assert "/hubble/data/db" in hubble["environment"]["SPRING_DATASOURCE_URL"]
+    assert hubble["environment"]["MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE"] == "health"
+    assert compose["services"]["hugegraph-server"]["volumes"] == [
+        "graph-data:/hugegraph-server/rocksdb-data"
+    ]
+    assert compose["services"]["hubble-init"]["restart"] == "no"
+    assert compose["services"]["eoip-api"]["depends_on"]["hubble-init"] == {
+        "condition": "service_completed_successfully"
+    }
