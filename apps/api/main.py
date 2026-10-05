@@ -1053,6 +1053,28 @@ def create_app():
         write_json(data_root() / "state/validation.json", result)
         return result
 
+    @app.post("/api/v1/admin/gremlin")
+    def admin_gremlin(payload: dict, request: Request):
+        if not os.getenv("EOIP_ADMIN_GREMLIN_ENABLED", "").lower() in ("1", "true", "yes"):
+            raise HTTPException(
+                403,
+                "Raw Gremlin endpoint is disabled by policy. "
+                "Set EOIP_ADMIN_GREMLIN_ENABLED=true to enable.",
+            )
+        gremlin = payload.get("gremlin", "")
+        if not isinstance(gremlin, str) or not gremlin.strip():
+            raise HTTPException(422, "A non-empty 'gremlin' string is required")
+        bindings = payload.get("bindings", {})
+        if not isinstance(bindings, dict):
+            raise HTTPException(422, "'bindings' must be a JSON object")
+        try:
+            result = store.execute_gremlin(gremlin, bindings)
+        except AttributeError:
+            raise HTTPException(501, "Underlying graph store does not support raw Gremlin execution")
+        except Exception as exc:
+            raise HTTPException(400, f"Gremlin execution error: {exc}")
+        return {"result": result}
+
     @app.get("/api/v1/agents")
     def list_agents():
         return {"agents": [contract.model_dump() for contract in agent_registry.list_contracts()]}

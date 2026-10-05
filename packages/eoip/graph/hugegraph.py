@@ -509,6 +509,15 @@ class HugeGraphStore:
             and raw["properties"].get("is_current") is not False
         )
 
+    def execute_gremlin(self, gremlin: str, bindings: dict | None = None) -> list:
+        response = self.client.post(
+            "/apis/gremlin",
+            json={"gremlin": gremlin, "bindings": bindings or {}, "language": "gremlin-groovy"},
+            timeout=30,
+        )
+        response.raise_for_status()
+        return response.json().get("result", {}).get("data", [])
+
     def bulk_load(self, vertices, edges, *, batch_size=500):
         """Load a prevalidated logical snapshot through native batch POSTs.
 

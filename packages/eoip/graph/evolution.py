@@ -29,6 +29,8 @@ class SemanticChangeEvent(BaseModel):
     source_event_id: str
     observed_at: str
     details: dict[str, Any] = Field(default_factory=dict)
+    before_state: dict[str, Any] | None = None
+    after_state: dict[str, Any] | None = None
     previous_hash: str | None = None
     entry_hash: str
 
@@ -65,7 +67,7 @@ class ChangeJournal:
         ]
         previous = None
         for record in records:
-            body = record.model_dump(exclude={"entry_hash"})
+            body = record.model_dump(exclude={"entry_hash", "before_state", "after_state"})
             expected = hashlib.sha256(
                 json.dumps(body, sort_keys=True, separators=(",", ":")).encode("utf-8")
             ).hexdigest()

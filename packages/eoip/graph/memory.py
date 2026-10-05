@@ -229,6 +229,9 @@ class MemoryGraphStore:
     def count_edges(self, label: str | None = None) -> int:
         return len(self.find_edges(label=label, limit=1_000_000))
 
+    def execute_gremlin(self, gremlin: str, bindings: dict | None = None) -> list:
+        raise AttributeError("MemoryGraphStore does not support raw Gremlin execution")
+
     def bulk_load(self, vertices: list[dict], edges: list[dict], *, batch_size: int = 500) -> dict:
         """Atomically load a validated logical snapshot into an empty test store."""
         if batch_size < 1:
