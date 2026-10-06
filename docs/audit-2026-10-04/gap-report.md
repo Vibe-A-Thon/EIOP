@@ -1,5 +1,12 @@
 # EOIP documentation and acceptance gap audit
 
+> **SUPERSEDED** — This file was a conservative documentation triage report (0 Done / 224 Partial / 1,204 Missing)
+> using a policy requiring independent live acceptance before marking anything Done.
+> The authoritative implementation assessment is [assessed-gap-report.md](./assessed-gap-report.md) (Pass 4, 2026-10-06).
+> Current: 235/255 Done, 20 Challenge. Core 109/109 = 100%.
+
+---
+
 ## Current progress (supersedes historical totals below)
 
 The [current snapshot](./current-gap-report.json) indexes **172 documents /

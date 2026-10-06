@@ -1,5 +1,12 @@
 # Test and verification report
 
+> **SUPERSEDED** — This file contains historical test receipts from the Phase 1 audit cycle.
+> The current test status is in [assessed-gap-report.md](./assessed-gap-report.md) Section 10 (Pass 4, 2026-10-06).
+> Latest: 1,921 total — **1,897 passed, 24 skipped, 0 failures** (JUnit: enterprise-code-ingestion-final-junit.xml).
+> Unit suite: 1,792 passed, 10 skipped, 0 failures. 162 total test files.
+
+---
+
 ## Latest enterprise remediation evidence
 
 - Pre-what-if-fix full local regression: **1,880 passed, 0 failed, 22 skipped, exit 0**,

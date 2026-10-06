@@ -1,5 +1,12 @@
 # Audit completion checklist
 
+> **SUPERSEDED** — This file was a Phase 1 audit tooling checklist representing an in-progress state.
+> The definitive completion record is [assessed-gap-report.md](./assessed-gap-report.md) (Pass 4, 2026-10-06).
+> Current status: 109/109 Core FR/NFR/MVP = 100% Done; 235/255 total including GAPS = Done; 20 items = CHALLENGE.
+> Test results: 1,921 total cases — 1,897 passed, 24 skipped, 0 failures.
+
+---
+
 This is an honest phase checklist, not the requested final-product sign-off.
 All-product Completed status is unavailable until semantic review, implementation
 and acceptance verification finish.

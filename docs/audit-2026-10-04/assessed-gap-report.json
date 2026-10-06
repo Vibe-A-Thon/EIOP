@@ -1,7 +1,8 @@
 {
   "metadata": {
     "generated": "2026-10-05",
-    "updated": "2026-10-05 (Pass 3 — thorough audit and correction)",
+    "updated": "2026-10-06 (Pass 4 — final comprehensive consolidation of all audit files)",
+    "supersedes": ["gap-report.md", "full-doc-gap-report.md", "mvp-gap-report.md", "current-gap-report.md", "completion-checklist.md", "test-report.md"],
     "scope": "67 FR + 14 NFR + 28 MVP + 286 GAP spec IDs + 232 G2 spec IDs",
     "method": "Multi-agent codebase verification against specification documents",
     "spec_sources": {
@@ -34,7 +35,29 @@
       "unit_tests_passed": 1792,
       "unit_tests_skipped": 10,
       "unit_tests_failed": 0,
-      "verified_at": "2026-10-05"
+      "full_regression_passed": 1897,
+      "full_regression_skipped": 24,
+      "full_regression_failed": 0,
+      "total_test_cases": 1921,
+      "junit_receipt": "test-results/enterprise-code-ingestion-final-junit.xml",
+      "verified_at": "2026-10-06",
+      "new_tests_this_cycle": [
+        {"file": "test_diff_hunk.py", "count": 10},
+        {"file": "test_strategy_registry.py", "count": 16},
+        {"file": "test_admin_gremlin.py", "count": 4},
+        {"file": "test_gaps_implementations.py", "count": 18},
+        {"file": "test_query_languages.py", "count": 29},
+        {"file": "test_graph_algorithms.py", "count": 12},
+        {"file": "test_semantic_pipeline.py", "count": 12},
+        {"file": "test_agent_analytics.py", "count": 14}
+      ]
+    },
+    "live_integration_evidence": {
+      "application_rehearsal": "183 steps passed, exit 0",
+      "pipeline_rehearsal": "213 steps passed, exit 0",
+      "source_extension": "17 steps passed (6 NLQ + 11 MCP tools), exit 0",
+      "admin_rehearsal": "42 steps passed, exit 0",
+      "corpus_retention": "2474 vertex / 6897 edge IDs unchanged across additive refresh"
     }
   },
   "requirements": [
@@ -201,6 +224,59 @@
       "test_file": "tests/unit/test_agent_analytics.py",
       "test_count": 14,
       "implemented_at": "2026-10-05"
+    },
+    "agent_catalog": {
+      "status": "Done",
+      "total_agents": 20,
+      "agents": [
+        {"name": "TraceImpactAgent", "file": "agents/trace_impact.py", "purpose": "Read-only impact analysis with ExplanationEnvelope"},
+        {"name": "BlastRadiusAgent", "file": "agents/blast_radius.py", "purpose": "Downstream impact computation"},
+        {"name": "AnomalyDetectionAgent", "file": "agents/anomaly.py", "purpose": "Graph anomaly detection"},
+        {"name": "CommunityDetectionAgent", "file": "agents/community.py", "purpose": "Community structure analysis"},
+        {"name": "SimilarityAgent", "file": "agents/similarity.py", "purpose": "Entity similarity ranking"},
+        {"name": "TestCoverageAgent", "file": "agents/test_coverage.py", "purpose": "Code-to-test coverage tracing"},
+        {"name": "IncidentCorrelationAgent", "file": "agents/incident_correlation.py", "purpose": "Incident-to-root cause correlation"},
+        {"name": "CatalogAgent", "file": "agents/catalog.py", "purpose": "Knowledge catalog management"},
+        {"name": "FirewallAgent", "file": "agents/firewall.py", "purpose": "Knowledge firewall enforcement"},
+        {"name": "EvaluationAgent", "file": "agents/evaluation.py", "purpose": "RAG evaluation runner"},
+        {"name": "GovernedAgent", "file": "agents/governed.py", "purpose": "Human-approval required changes"},
+        {"name": "OrchestratorAgent", "file": "agents/orchestration.py", "purpose": "Multi-agent workflow coordination"},
+        {"name": "ProposalAgent", "file": "agents/proposals.py", "purpose": "Change proposal management"},
+        {"name": "GraphAnalyticsAgent", "file": "agents/graph_analytics.py", "purpose": "30+ algorithm dispatcher; swarm mode"},
+        {"name": "SemanticIndexAgent", "file": "agents/semantic_index.py", "purpose": "Semantic pipeline runner"},
+        {"name": "MemoryAgent", "file": "agents/memory.py", "purpose": "Scoped memory management"},
+        {"name": "AgentRouter", "file": "agents/agent_router.py", "purpose": "Intent-based agent routing"},
+        {"name": "TraceAgent", "file": "agents/trace.py", "purpose": "Code lineage tracing"},
+        {"name": "KnowledgeDebtAgent", "file": "agents/knowledge_debt.py", "purpose": "Knowledge debt assessment"},
+        {"name": "ExpertiseAgent", "file": "graph/expertise.py", "purpose": "Domain expertise mapping"}
+      ]
+    },
+    "connector_catalog": {
+      "status": "Done",
+      "total_connectors": 24,
+      "connectors": [
+        "jira.py", "jira_json.py", "gitlab.py", "gitlab_json.py", "github.py",
+        "confluence.py", "servicenow.py", "datadog.py", "grafana.py", "kibana.py",
+        "figma.py", "rally.py", "qtest.py", "api_portal.py", "local_code.py",
+        "generic.py", "crawler.py", "otel.py", "runtime_infra.py", "sbom.py",
+        "cicd.py", "files.py", "webhook.py", "confluence_body.py"
+      ]
+    },
+    "phase_roadmap": {
+      "P0": "Done",
+      "P1_MVP": "Done",
+      "P2": "Done",
+      "P3": "Done",
+      "P4": "Done",
+      "Phase_C": "Done",
+      "GAPS_0_1": "37 Done / 8 Challenge",
+      "GAPS2_P0_P3": "68 Done / 12 Challenge",
+      "GAPS_2_plus": "241 future scope",
+      "GAPS2_P4_plus": "152 future scope",
+      "P5_temporal": "Future",
+      "P6_governed_action": "Partial (governed.py exists)",
+      "P7_enterprise_hardening": "Challenge (infra-limited)",
+      "P8_self_modification": "Disabled by design"
     }
   }
 }

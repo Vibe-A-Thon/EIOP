@@ -1,10 +1,21 @@
-# EIOP
+# EOIP — Enterprise Ontology & Intelligence Platform
 
-Enterprise Ontology & Intelligence Platform. The implementation lives at the
-repository root; the requirements and architecture handoff are in
-`EOIP-engg-doc-pkg/`.
+EOIP is a local-first enterprise knowledge graph platform that ingests from 24 source connectors (Jira, GitLab, GitHub, Confluence, ServiceNow, and more), links cross-domain facts into a typed property graph (HugeGraph + RocksDB), and answers questions about your codebase, work items, incidents, people, and deployments through a GraphRAG retrieval system and 20 bounded agents.
 
-Start the local Docker deployment from this directory: From the repository root, with Docker Desktop running in Linux-container mode:
+**Key capabilities:**
+- 24 source connectors with checkpoint-based incremental sync
+- 14 graph domains, 50+ vertex types, 30+ edge types
+- 6 query languages: EQL, NLQ, EOQL, OSQL, Semantic QL, raw Gremlin (admin)
+- 30+ graph algorithms: centrality, community, paths, similarity, blast radius, cycle detection
+- GraphRAG with 7 retrieval strategies, stable evidence citations, no mandatory vector DB
+- 20 bounded read-only agents with circuit breaker and budget enforcement
+- 12 export formats: RDF, OWL, JSON-LD 1.1, Cypher, Gremlin, SPARQL, SHACL, GQL, and more
+- MCP server with 17 read-only tools for VS Code / IDE integration
+- Full test suite: 1,897 passed, 24 skipped, 0 failures (1,921 total test cases)
+
+## Quick Start
+
+From the repository root, with Docker Desktop running in Linux-container mode:
 
 ```powershell
 .\scripts\docker.ps1 up
@@ -13,7 +24,6 @@ Start the local Docker deployment from this directory: From the repository root,
 The startup script finds Docker Desktop even when its CLI is missing from PATH,
 generates local credentials, builds the services, and waits for readiness.
 No host Python or Node installation is required.
-
 
 Open [the explorer](http://localhost:8080/app) or
 [administration](http://localhost:8080/admin). Enter `EOIP_API_TOKEN` from the
@@ -33,6 +43,26 @@ ingestion/validation run history (`GET /api/v1/ingestion/runs`,
 
 The demo worker loads Jira fixtures, a real Git repository, Python/TypeScript
 symbols, documentation, merge-request metadata, and pipeline metadata.
+
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [Architecture](docs/architecture.md) | System overview, Docker services, data flows, storage, security |
+| [API Reference](docs/api-reference.md) | All REST endpoints with request/response examples |
+| [Connectors](docs/connectors.md) | All 24 source connectors with configuration |
+| [Agents](docs/agents.md) | Agent framework, 20 agents, tool access policy |
+| [RAG](docs/rag.md) | GraphRAG retrieval system, 7 strategies, evidence citations |
+| [Query Engine](docs/query-engine.md) | 6 query languages, QueryPlan executor, safety policy |
+| [Graph Algorithms](docs/graph-algorithms.md) | 30+ algorithms: centrality, community, paths, similarity |
+| [Ontology](docs/ontology.md) | Vocabulary, vertex/edge labels, schema generation, SKOS |
+| [Ingestion](docs/ingestion.md) | Ingestion pipeline, DLQ, checkpointing, semantic pipeline |
+| [Code Graph](docs/code-graph.md) | Code parser, symbol extraction, CommitSymbolLink, diff hunks |
+| [File Parsing](docs/file-parsing.md) | .docx, .xlsx, .pptx, .pdf, .csv, .txt ingestion |
+| [Docker Local](docs/docker-local.md) | Full Docker runbook, backup/restore, VS Code extension |
+| [Deep Agents & XAI](docs/deep-agents-xai.md) | Agent contracts, orchestration, approval workflows |
+| [Benchmarking](docs/benchmarking.md) | Performance benchmarks |
+| [Audit Report](docs/audit-2026-10-04/assessed-gap-report.md) | Pass 4 — comprehensive completion audit (2026-10-06) |
 
 ## On-prem source connectors
 

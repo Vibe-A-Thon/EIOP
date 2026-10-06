@@ -1,5 +1,11 @@
 # EOIP MVP Gap Report — Structured Requirement Assessment
 
+> **SUPERSEDED** — This file correctly found 28/28 MVP + 62/62 FR + 14/14 NFR Done at code-evidence level.
+> It is now superseded by [assessed-gap-report.md](./assessed-gap-report.md) (Pass 4, 2026-10-06)
+> which extends coverage to GAPS (286 IDs) and GAPS2 (232 IDs) and consolidates all audit history.
+
+---
+
 **Generated:** 2026-10-04T19:30:00+05:30  
 **Branch:** `feature/audit-evidence-foundation`  
 **HEAD:** `47bc8516d76031481c637780ddf8952ca865f2e1`  

@@ -1,5 +1,12 @@
 # EOIP Full Documentation Gap Report
 
+> **SUPERSEDED** — This file used an ultra-conservative policy requiring independent QA + remote CI + live verification,
+> producing 0 Done / 108 Partial / 653 Missing across 761 IDs. This reflects the scan policy, not actual implementation.
+> The authoritative record is [assessed-gap-report.md](./assessed-gap-report.md) (Pass 4, 2026-10-06).
+> The `mvp-gap-report.md` (code-evidence policy) correctly found 109/109 core requirements Done.
+
+---
+
 ## Current progress (supersedes historical totals below)
 
 The [current snapshot](./current-gap-report.json) indexes **172 documents /
