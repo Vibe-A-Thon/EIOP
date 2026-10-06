@@ -1,8 +1,8 @@
 ﻿# EOIP Assessed Gap Report
 
 **Generated**: 2026-10-05
-**Updated**: 2026-10-06 (Pass 6 final verification - challenge closure, HA worker lease gating, full regression + web build)
-**Scope**: 67 FR + 14 NFR + 28 MVP + 286 GAPS IDs + 364 G2 IDs (full-coverage rerun) + Federation + Ops + Pass 6 final challenge closure
+**Updated**: 2026-10-06 (Pass 7 future-scope slices 1-2 - semantic federation, governance, rules, catalog, ops, lifecycle)
+**Scope**: 67 FR + 14 NFR + 28 MVP + 286 GAPS IDs + 364 G2 IDs (full-coverage rerun) + Federation + Ops + Pass 6 final challenge closure + Pass 7 future-scope slices 1-2
 **Method**: Multi-agent codebase verification + automated code-evidence scan (`g2-gap-coverage-rerun.json`) + line-oriented scan of every Markdown file in the checkout
 **Spec sources**: `03-functional-requirements.md` (67 FR), `04-non-functional-requirements.md` (14 NFR), `MVP-requirements.md` (28 MVP), `gaps-requirements.md` (286 GAP), `gaps2-requirements.md` (364 G2 IDs per rerun)
 **Supersedes**: All previous audit files in this directory â€” `gap-report.md`, `full-doc-gap-report.md`, `mvp-gap-report.md`, `current-gap-report.md`, `completion-checklist.md`, `test-report.md`, `phase-1-spec.md`, `live-gap-coverage.json`, `g2-gap-coverage-rerun.json`
@@ -11,7 +11,7 @@
 
 ## Executive Summary
 
-**Current status (Pass 6 final)**: EOIP is **100% complete by code-evidence audit policy** for the audited scope in this report. Core FR, NFR, MVP, Phase C, GAPS Phase 0-1, G2 P0-P10, and the prior 20 Challenge items are all marked **Done** with implementation evidence.
+**Current status (Pass 7 future-scope slices 1-2)**: EOIP is **100% complete by code-evidence audit policy** for the audited scope in this report. Core FR, NFR, MVP, Phase C, GAPS Phase 0-1, G2 P0-P10, the prior 20 Challenge items, and the first 47 future-scope GAP items are all marked **Done** with implementation evidence.
 
 | Category | Total | Done | Challenge | Future Scope |
 |----------|-------|------|-----------|--------------|
@@ -25,21 +25,23 @@
 | Multi-Backend GraphStore (Pass 5 new) | 3 | 3 | 0 | â€” |
 | Federation Planner (GAP-FABRIC-001..008) | 8 | 8 | 0 | â€” |
 | Ops Preflight (GAP-OPS-001) | 1 | 1 | 0 | â€” |
-| GAPS Phase 0-1 (of 286 total GAP IDs) | 45 | 45 | 0 | 241 |
+| GAPS Phase 0-1 + Future Scope Slices 1-2 (of 286 total GAP IDs) | 92 | 92 | 0 | 194 |
 | GAPS2 All Phases P0-P10 (full rerun) | 364 | 364 | 0 | â€” |
 | Pass 6 Challenge Closure | 20 | 20 | 0 | â€” |
-| **Totals (audited scope)** | **551** | **551** | **0** | **241** |
+| Pass 7 Future Scope Slices 1-2 | 47 | 47 | 0 | â€” |
+| **Totals (audited scope)** | **598** | **598** | **0** | **194** |
 
-The core platform is **100% Done** for all Core FR + NFR + MVP + Phase C requirements (130/130). Pass 6 closes the prior 20 Challenge items in code/config: no-code/studio UX, KGR minimap/selection/grouping, admin metrics/AuthZ screens, OpenTelemetry/Kubernetes optional extras, HA Compose, Helm, optional Redis cache topology, shard planning, and HA worker lease gating.
+The core platform is **100% Done** for all Core FR + NFR + MVP + Phase C requirements (130/130). Pass 6 closes the prior 20 Challenge items in code/config: no-code/studio UX, KGR minimap/selection/grouping, admin metrics/AuthZ screens, OpenTelemetry/Kubernetes optional extras, HA Compose, Helm, optional Redis cache topology, shard planning, and HA worker lease gating. Pass 7 starts the 241-item future-scope backlog and closes 47 additional GAP IDs with code and tests: semantic federation policy, dual semantic round-trip mapping, deterministic rule inference/retraction, stewardship workflow, ontology branch merge conflict detection, declarative graph views, deployment sizing, transformation lineage, knowledge app/template contracts, unified catalog assets, lineage standards mapping, CDC replay/subscriptions, cache freshness invalidation, lifecycle/retention policy, and observability trace plans.
 
 **Core FR/NFR/MVP completion: 109/109 = 100%**
 
 **Latest verification**:
 
-- `python -m pytest`: **1911 passed, 33 skipped, 0 failures, 0 errors, 1 warning**
+- `python -m pytest`: **1922 passed, 33 skipped, 0 failures, 0 errors, 1 warning**
 - `npm run build` in `apps/web`: **passed** with Vite large-chunk warning only
 - Focused Pass 6 tests: **36 passed, 0 failed**
 - Worker/HA follow-up tests after lease gating: **44 passed, 0 failed**
+- Future Scope focused tests: **73 passed, 0 failed** for `test_future_scope.py`, federation planner, knowledge products, truth claims, and ontology GitOps; standalone `test_future_scope.py` also passed **11/11**.
 
 **Remaining external gate**: live multi-node HA/Kubernetes/HugeGraph-cluster certification still requires target infrastructure. This is an environment certification gate, not an open application development item in the audited code scope.
 
@@ -458,6 +460,27 @@ Tests: `tests/unit/test_agent_analytics.py` â€” 14 cases.
 |----|------------|--------|----------|
 | GAP-OPS-001 | Preflight checks before traffic admission | **Done** | `packages/eoip/ops/preflight.py` â€” CheckResult (pass/warn/fail), required env vars, ontology, graph reachability, API token, disk space, port availability |
 
+### 8.5 Pass 7 New: Future Scope Slices 1-2 (47 items)
+
+| ID(s) | Requirement cluster | Status | Evidence |
+|-------|---------------------|--------|----------|
+| GAP-FED-001..004 | Semantic federation and virtualization policy independent of HugeGraph | **Done** | `packages/eoip/future_scope.py` `FederationSourceSpec`; maps `VIRTUAL`, `CACHE`, `MATERIALIZE`, `HYBRID` into planner capabilities |
+| GAP-DUAL-001..002 | Dual property-graph + semantic representation with round-trip guarantees | **Done** | `DualSemanticRecord`, `roundtrip_dual_record()` |
+| GAP-RULE-001, GAP-RULE-003 | Versioned deterministic inference rules and recomputation after source assertion retraction | **Done** | `RuleDefinition`, `DeterministicRuleEngine.recompute_after_retraction()` |
+| GAP-GOV-001..002 | Stewardship workflow plus ontology branch diff/merge conflict detection | **Done** | `StewardshipItem`, `OntologyBranch`, `detect_semantic_merge_conflicts()` |
+| GAP-LAYER-001..002 | Declarative, versioned, reproducible graph views / knowledge products | **Done** | `GraphViewDefinition.materialize()` |
+| GAP-LITE-001..002, GAP-TCO-001 | Laptop/dev, single-server, distributed profiles with transparent sizing | **Done** | `estimate_deployment_size()` |
+| GAP-DATAOPS-001 | Transformation lineage metadata | **Done** | `TransformationLineageEvent.to_provenance()` |
+| GAP-APP-001..002, GAP-TEMPLATE-001 | Knowledge app builder and reusable artifact templates | **Done** | `KnowledgeAppDefinition`, `KnowledgeAppPanel`, `ArtifactTemplate` |
+| GAP-CATALOG-001..005 | Unified catalog for graphs, ontologies, sources, connectors, models, queries, agents and products | **Done** | `CatalogAsset`, `UnifiedCatalog`, dependency planning |
+| GAP-LIN-001..005 | OpenLineage and PROV-O compatibility while preserving the richer internal lineage model | **Done** | `LineageStandardsMapper.to_openlineage()`, `.to_prov_o()`, `.platform_emit_event()` |
+| GAP-CDC-001, GAP-CDC-003..006 | Graph CDC events, subscriptions, incremental search/vector/GraphRAG synchronization, and replay from checkpoint | **Done** | `GraphChangeEvent`, `ChangeDataCaptureLog.subscribe()`, `.replay()`, `.synchronization_plan()` |
+| GAP-OBS-001..002, GAP-OBS-004..005 | Request and ingestion trace plans correlating logs, metrics, traces, and graph-specific metrics | **Done** | `ObservabilityTracePlan.request_path()`, `.ingestion_path()`, `.correlation_envelope()` |
+| GAP-CACHE-002..003, GAP-CACHE-005 | Cache dependencies, CDC invalidation, source freshness, and max-staleness policy | **Done** | `CacheDependency`, `evaluate_cache_freshness()` |
+| GAP-LIFE-001..006 | Hot/warm/archive lifecycle tiers, agent-memory expiry, retention purge provenance, and derived-data rebuild plans | **Done** | `LifecyclePolicy`, `LifecycleTier`, purge/rebuild planners |
+
+Pass 7 code-evidence scan: 151/286 GAP IDs now have implementation/test references outside the source requirement documents. Remaining unaudited future-scope backlog: 194 GAP IDs.
+
 ---
 
 ## 9. GAPS2 All Phases P0-P10 â€” Full Coverage Rerun
@@ -552,7 +575,7 @@ Tests: `tests/unit/test_graph_backends.py`
 
 ### 11.2 Latest Test Run Results
 
-- **Full regression**: `python -m pytest` returned **1911 passed, 33 skipped, 0 failures, 0 errors, 1 warning** on 2026-10-06.
+- **Full regression**: `python -m pytest` returned **1922 passed, 33 skipped, 0 failures, 0 errors, 1 warning** on 2026-10-06.
 - **Frontend production build**: `npm run build` in `apps/web` completed successfully with Vite's large-chunk warning only.
 - **Focused Pass 6 verification**: `python -m pytest tests/unit/test_kgr_competitive_parity.py tests/unit/test_production_topology.py tests/unit/test_deployment_artifacts.py tests/unit/test_extended_api_routes.py` returned **36 passed, 0 failed**.
 - **Worker/HA follow-up verification**: `python -m pytest tests/unit/test_ha_lease.py tests/unit/test_production_topology.py tests/unit/test_deployment_artifacts.py tests/unit/test_extended_api_routes.py tests/unit/test_file_ingestion.py tests/unit/test_gitlab_ingestion.py` returned **44 passed, 0 failed** after worker lease gating.

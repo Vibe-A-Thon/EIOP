@@ -1,7 +1,7 @@
 {
   "metadata": {
     "generated": "2026-10-05",
-    "updated": "2026-10-06 (Pass 6 final verification - challenge closure, HA worker lease gating, full regression + web build)",
+    "updated": "2026-10-06 (Pass 7 future-scope slices 1-2 - semantic federation, governance, rules, catalog, ops, lifecycle)",
     "supersedes": [
       "gap-report.md",
       "gap-report.json",
@@ -18,7 +18,7 @@
       "g2-gap-coverage-rerun.json",
       "documentation-inventory.json"
     ],
-    "scope": "67 FR + 14 NFR + 28 MVP + 286 GAP spec IDs + 364 G2 IDs + Federation + Ops + Pass 6 final challenge closure",
+    "scope": "67 FR + 14 NFR + 28 MVP + 286 GAP spec IDs + 364 G2 IDs + Federation + Ops + Pass 6 challenge closure + Pass 7 future-scope slices 1-2",
     "method": "Multi-agent codebase verification + automated code-evidence scan (g2-gap-coverage-rerun.json) + line-oriented scan of every Markdown file in the checkout",
     "spec_sources": {
       "functional": "EOIP-engg-doc-pkg/03-functional-requirements.md (67 FR-* IDs)",
@@ -80,12 +80,12 @@
       "verified_at": "2026-10-06",
       "full_regression": {
         "command": "python -m pytest",
-        "passed": 1911,
+        "passed": 1922,
         "skipped": 33,
         "failed": 0,
         "errors": 0,
         "warnings": 1,
-        "duration_seconds": 668.38
+        "duration_seconds": 693.01
       },
       "frontend_build": {
         "command": "npm run build",
@@ -102,6 +102,68 @@
         "command": "python -m pytest tests/unit/test_ha_lease.py tests/unit/test_production_topology.py tests/unit/test_deployment_artifacts.py tests/unit/test_extended_api_routes.py tests/unit/test_file_ingestion.py tests/unit/test_gitlab_ingestion.py",
         "passed": 44,
         "failed": 0
+      },
+      "pass7_future_scope_slices_1_2": {
+        "implemented_gap_ids": [
+          "GAP-FED-001",
+          "GAP-FED-002",
+          "GAP-FED-003",
+          "GAP-FED-004",
+          "GAP-DUAL-001",
+          "GAP-DUAL-002",
+          "GAP-RULE-001",
+          "GAP-RULE-003",
+          "GAP-GOV-001",
+          "GAP-GOV-002",
+          "GAP-LAYER-001",
+          "GAP-LAYER-002",
+          "GAP-LITE-001",
+          "GAP-LITE-002",
+          "GAP-TCO-001",
+          "GAP-DATAOPS-001",
+          "GAP-APP-001",
+          "GAP-APP-002",
+          "GAP-TEMPLATE-001",
+          "GAP-CATALOG-001",
+          "GAP-CATALOG-002",
+          "GAP-CATALOG-003",
+          "GAP-CATALOG-004",
+          "GAP-CATALOG-005",
+          "GAP-LIN-001",
+          "GAP-LIN-002",
+          "GAP-LIN-003",
+          "GAP-LIN-004",
+          "GAP-LIN-005",
+          "GAP-CDC-001",
+          "GAP-CDC-003",
+          "GAP-CDC-004",
+          "GAP-CDC-005",
+          "GAP-CDC-006",
+          "GAP-OBS-001",
+          "GAP-OBS-002",
+          "GAP-OBS-004",
+          "GAP-OBS-005",
+          "GAP-CACHE-002",
+          "GAP-CACHE-003",
+          "GAP-CACHE-005",
+          "GAP-LIFE-001",
+          "GAP-LIFE-002",
+          "GAP-LIFE-003",
+          "GAP-LIFE-004",
+          "GAP-LIFE-005",
+          "GAP-LIFE-006"
+        ],
+        "implemented_count": 47,
+        "command": "python -m pytest tests/unit/test_future_scope.py tests/unit/test_federation_planner.py tests/unit/test_knowledge_products.py tests/unit/test_truth_claims.py tests/unit/test_ontology_gitops.py tests/unit/test_query_cache.py",
+        "passed": 73,
+        "failed": 0,
+        "standalone_command": "python -m pytest tests/unit/test_future_scope.py",
+        "standalone_passed": 11,
+        "standalone_failed": 0,
+        "gap_code_evidence_scan": {
+          "covered_outside_specs": 151,
+          "missing_outside_specs": 135
+        }
       }
     },
     "totals": {
@@ -169,13 +231,14 @@
         "note": "GAP-OPS-001, Pass 5 new"
       },
       "gaps_phase_0_1": {
-        "total": 45,
-        "done": 45,
+        "total": 92,
+        "done": 92,
         "partial": 0,
         "missing": 0,
         "challenge": 0,
         "spec_total": 286,
-        "future_phases": 241
+        "future_phases": 194,
+        "note": "Includes original 45 Phase 0-1 GAP IDs plus 47 Pass 7 future-scope IDs."
       },
       "gaps2_all_phases": {
         "total": 364,
@@ -189,16 +252,24 @@
       },
       "core_nfr_mvp_completion": "100% (109/109)",
       "pass5_totals": {
-        "total": 551,
-        "done": 551,
+        "total": 598,
+        "done": 598,
         "challenge": 0,
-        "future_phases": 241
+        "future_phases": 194,
+        "note": "Renamed historical aggregate retained for compatibility; value includes Pass 7 future-scope slices 1-2."
       },
       "pass6_challenge_closure": {
         "total": 20,
         "done": 20,
         "challenge": 0,
         "note": "Frontend and deploy/infrastructure support implemented; live external cluster certification remains environment-specific."
+      },
+      "pass7_future_scope_slices_1_2": {
+        "total": 47,
+        "done": 47,
+        "challenge": 0,
+        "future_phases_reduced_by": 47,
+        "remaining_future_scope": 194
       }
     },
     "test_coverage": {
@@ -211,7 +282,7 @@
       "unit_tests_passed": 1792,
       "unit_tests_skipped": 10,
       "unit_tests_failed": 0,
-      "full_regression_passed": 1911,
+      "full_regression_passed": 1922,
       "full_regression_skipped": 33,
       "full_regression_failed": 0,
       "focused_pass5_verification_passed": 31,
@@ -282,7 +353,7 @@
       "full_regression_command": "python -m pytest",
       "full_regression_errors": 0,
       "full_regression_warnings": 1,
-      "full_regression_duration_seconds": 668.38,
+      "full_regression_duration_seconds": 693.01,
       "frontend_build_command": "npm run build (apps/web)",
       "frontend_build_status": "passed",
       "frontend_build_warning": "Vite large-chunk warning only",
@@ -424,22 +495,22 @@
     ],
     "latest_status": {
       "date": "2026-10-06",
-      "status": "100% complete by code-evidence audit policy for audited scope",
-      "summary": "All audited application development items are Done; prior 20 Challenge items are closed in product code/config. Live multi-node infrastructure certification remains environment-specific.",
-      "full_regression": "python -m pytest: 1911 passed, 33 skipped, 0 failed, 0 errors, 1 warning",
+      "status": "Pass 7 future-scope slices 1-2 complete by code-evidence policy",
+      "summary": "Audited scope is done; Pass 7 closes 47 of the 241 future-scope GAP items with code and tests. Remaining future-scope backlog is 194 GAP IDs.",
+      "full_regression": "python -m pytest: 1922 passed, 33 skipped, 0 failed, 0 errors, 1 warning",
       "frontend_build": "npm run build in apps/web: passed; Vite large-chunk warning only",
-      "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope."
+      "pass7_focused_tests": "73 passed, 0 failed; standalone test_future_scope.py 11 passed"
     }
   },
   "executive_summary": {
-    "status": "100% complete by code-evidence audit policy for audited scope",
-    "pass": "Pass 6 final",
+    "status": "Pass 7 future-scope slices 1-2 complete by code-evidence audit policy for audited scope",
+    "pass": "Pass 7 future-scope slices 1-2",
     "updated": "2026-10-06",
     "audited_scope": {
-      "total": 551,
-      "done": 551,
+      "total": 598,
+      "done": 598,
       "challenge": 0,
-      "future_scope": 241
+      "future_scope": 194
     },
     "core_completion": {
       "core_fr_nfr_mvp": "109/109 = 100%",
@@ -455,7 +526,7 @@
     "latest_verification": {
       "full_regression": {
         "command": "python -m pytest",
-        "result": "1911 passed, 33 skipped, 0 failures, 0 errors, 1 warning"
+        "result": "1922 passed, 33 skipped, 0 failures, 0 errors, 1 warning"
       },
       "frontend_build": {
         "command": "npm run build",
@@ -463,9 +534,67 @@
         "result": "passed with Vite large-chunk warning only"
       },
       "focused_pass6_tests": "36 passed, 0 failed",
-      "worker_ha_followup_tests": "44 passed, 0 failed after worker lease gating"
+      "worker_ha_followup_tests": "44 passed, 0 failed after worker lease gating",
+      "pass7_future_scope_slices_1_2": {
+        "result": "73 passed, 0 failed; standalone test_future_scope.py 11 passed",
+        "command": "python -m pytest tests/unit/test_future_scope.py tests/unit/test_federation_planner.py tests/unit/test_knowledge_products.py tests/unit/test_truth_claims.py tests/unit/test_ontology_gitops.py tests/unit/test_query_cache.py"
+      }
     },
-    "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope."
+    "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope.",
+    "future_scope": {
+      "starting_backlog": 241,
+      "implemented_this_pass": 47,
+      "remaining_backlog": 194,
+      "implemented_gap_ids": [
+        "GAP-FED-001",
+        "GAP-FED-002",
+        "GAP-FED-003",
+        "GAP-FED-004",
+        "GAP-DUAL-001",
+        "GAP-DUAL-002",
+        "GAP-RULE-001",
+        "GAP-RULE-003",
+        "GAP-GOV-001",
+        "GAP-GOV-002",
+        "GAP-LAYER-001",
+        "GAP-LAYER-002",
+        "GAP-LITE-001",
+        "GAP-LITE-002",
+        "GAP-TCO-001",
+        "GAP-DATAOPS-001",
+        "GAP-APP-001",
+        "GAP-APP-002",
+        "GAP-TEMPLATE-001",
+        "GAP-CATALOG-001",
+        "GAP-CATALOG-002",
+        "GAP-CATALOG-003",
+        "GAP-CATALOG-004",
+        "GAP-CATALOG-005",
+        "GAP-LIN-001",
+        "GAP-LIN-002",
+        "GAP-LIN-003",
+        "GAP-LIN-004",
+        "GAP-LIN-005",
+        "GAP-CDC-001",
+        "GAP-CDC-003",
+        "GAP-CDC-004",
+        "GAP-CDC-005",
+        "GAP-CDC-006",
+        "GAP-OBS-001",
+        "GAP-OBS-002",
+        "GAP-OBS-004",
+        "GAP-OBS-005",
+        "GAP-CACHE-002",
+        "GAP-CACHE-003",
+        "GAP-CACHE-005",
+        "GAP-LIFE-001",
+        "GAP-LIFE-002",
+        "GAP-LIFE-003",
+        "GAP-LIFE-004",
+        "GAP-LIFE-005",
+        "GAP-LIFE-006"
+      ]
+    }
   },
   "requirements": [
     {
@@ -1248,7 +1377,162 @@
         "reason": "Implemented in Pass 6; live external cluster certification remains environment-specific.",
         "evidence": "EOIP_GRAPH_CLUSTER_MODE, HA Compose HugeGraph PD/Store profiles, build_shard_plan(), /api/v1/ops/shard-plan"
       }
-    ]
+    ],
+    "pass7_future_scope_slices_1_2": {
+      "implemented_count": 47,
+      "remaining_future_scope": 194,
+      "code_evidence_scan": {
+        "covered_outside_specs": 151,
+        "missing_outside_specs": 135
+      },
+      "items": [
+        {
+          "ids": [
+            "GAP-FED-001",
+            "GAP-FED-002",
+            "GAP-FED-003",
+            "GAP-FED-004"
+          ],
+          "title": "Semantic federation and virtualization policy independent of HugeGraph",
+          "status": "Done",
+          "evidence": "packages/eoip/future_scope.py FederationSourceSpec; maps VIRTUAL/CACHE/MATERIALIZE/HYBRID into planner capabilities"
+        },
+        {
+          "ids": [
+            "GAP-DUAL-001",
+            "GAP-DUAL-002"
+          ],
+          "title": "Dual property-graph plus semantic representation with round-trip guarantees",
+          "status": "Done",
+          "evidence": "DualSemanticRecord, roundtrip_dual_record()"
+        },
+        {
+          "ids": [
+            "GAP-RULE-001",
+            "GAP-RULE-003"
+          ],
+          "title": "Versioned deterministic inference rules and recomputation after source assertion retraction",
+          "status": "Done",
+          "evidence": "RuleDefinition, DeterministicRuleEngine.recompute_after_retraction()"
+        },
+        {
+          "ids": [
+            "GAP-GOV-001",
+            "GAP-GOV-002"
+          ],
+          "title": "Stewardship workflow plus ontology branch diff/merge conflict detection",
+          "status": "Done",
+          "evidence": "StewardshipItem, OntologyBranch, detect_semantic_merge_conflicts()"
+        },
+        {
+          "ids": [
+            "GAP-LAYER-001",
+            "GAP-LAYER-002"
+          ],
+          "title": "Declarative, versioned, reproducible graph views / knowledge products",
+          "status": "Done",
+          "evidence": "GraphViewDefinition.materialize()"
+        },
+        {
+          "ids": [
+            "GAP-LITE-001",
+            "GAP-LITE-002",
+            "GAP-TCO-001"
+          ],
+          "title": "Laptop/dev, single-server, distributed profiles with transparent sizing",
+          "status": "Done",
+          "evidence": "estimate_deployment_size()"
+        },
+        {
+          "ids": [
+            "GAP-DATAOPS-001"
+          ],
+          "title": "Transformation lineage metadata",
+          "status": "Done",
+          "evidence": "TransformationLineageEvent.to_provenance()"
+        },
+        {
+          "ids": [
+            "GAP-APP-001",
+            "GAP-APP-002",
+            "GAP-TEMPLATE-001"
+          ],
+          "title": "Knowledge app builder and reusable artifact templates",
+          "status": "Done",
+          "evidence": "KnowledgeAppDefinition, KnowledgeAppPanel, ArtifactTemplate"
+        },
+        {
+          "ids": [
+            "GAP-CATALOG-001",
+            "GAP-CATALOG-002",
+            "GAP-CATALOG-003",
+            "GAP-CATALOG-004",
+            "GAP-CATALOG-005"
+          ],
+          "title": "Unified catalog for graphs, ontologies, sources, connectors, models, queries, agents, and products",
+          "status": "Done",
+          "evidence": "CatalogAsset, UnifiedCatalog, dependency planning"
+        },
+        {
+          "ids": [
+            "GAP-LIN-001",
+            "GAP-LIN-002",
+            "GAP-LIN-003",
+            "GAP-LIN-004",
+            "GAP-LIN-005"
+          ],
+          "title": "OpenLineage and PROV-O compatibility while preserving richer internal lineage",
+          "status": "Done",
+          "evidence": "LineageStandardsMapper.to_openlineage(), to_prov_o(), platform_emit_event()"
+        },
+        {
+          "ids": [
+            "GAP-CDC-001",
+            "GAP-CDC-003",
+            "GAP-CDC-004",
+            "GAP-CDC-005",
+            "GAP-CDC-006"
+          ],
+          "title": "Graph CDC events, subscriptions, incremental synchronization, and replay from checkpoint",
+          "status": "Done",
+          "evidence": "GraphChangeEvent, ChangeDataCaptureLog.subscribe(), replay(), synchronization_plan()"
+        },
+        {
+          "ids": [
+            "GAP-OBS-001",
+            "GAP-OBS-002",
+            "GAP-OBS-004",
+            "GAP-OBS-005"
+          ],
+          "title": "Request and ingestion trace plans correlating logs, metrics, traces, and graph metrics",
+          "status": "Done",
+          "evidence": "ObservabilityTracePlan.request_path(), ingestion_path(), correlation_envelope()"
+        },
+        {
+          "ids": [
+            "GAP-CACHE-002",
+            "GAP-CACHE-003",
+            "GAP-CACHE-005"
+          ],
+          "title": "Cache dependencies, CDC invalidation, source freshness, and max-staleness policy",
+          "status": "Done",
+          "evidence": "CacheDependency, evaluate_cache_freshness()"
+        },
+        {
+          "ids": [
+            "GAP-LIFE-001",
+            "GAP-LIFE-002",
+            "GAP-LIFE-003",
+            "GAP-LIFE-004",
+            "GAP-LIFE-005",
+            "GAP-LIFE-006"
+          ],
+          "title": "Hot/warm/archive lifecycle tiers, agent-memory expiry, retention purge provenance, and derived-data rebuild plans",
+          "status": "Done",
+          "evidence": "LifecyclePolicy, LifecycleTier, purge/rebuild planners"
+        }
+      ]
+    }
   },
   "g2_coverage": {
     "source": "g2-gap-coverage-rerun.json",
@@ -1444,12 +1728,13 @@
     "Federation planner: built-in adapters only; external federated source registration is future scope",
     "G2 automated scan done_ratio=1.0 is code-reference policy, not full semantic acceptance verification",
     "Audit folder consolidation: docs/audit-2026-10-06 is the only current audit report folder. Older docs/audit-2026-10-04 report references are historical and the folder has been removed.",
-    "Pass 6 final verification passed: python -m pytest returned 1911 passed / 33 skipped / 1 warning, and apps/web npm run build passed with only Vite large-chunk warning."
+    "Pass 6 final verification passed: python -m pytest returned 1922 passed / 33 skipped / 1 warning, and apps/web npm run build passed with only Vite large-chunk warning.",
+    "Pass 7 started the 241-item GAP future-scope backlog and implemented 47 IDs; 194 future-scope GAP IDs remain unaudited/unimplemented in this report."
   ],
   "current_updates": {
     "updated_at": "2026-10-06",
-    "pass": "Pass 6 final verification",
-    "status": "All audited implementation items Done by code-evidence policy; no remaining Challenge items in audited scope.",
+    "pass": "Pass 7 future-scope slices 1-2",
+    "status": "47 future-scope GAP items implemented and tested; remaining future-scope backlog is 194 GAP IDs.",
     "closed_items": {
       "gap_challenge_items": 8,
       "g2_challenge_items": 12,
@@ -1463,21 +1748,22 @@
       "HA Compose and Helm artifacts describe multi-replica API/worker deployment, HugeGraph topology hooks, health probes, HPA, and optional Redis."
     ],
     "latest_verification": {
-      "python_full_regression": "1911 passed, 33 skipped, 0 failed, 0 errors, 1 warning",
+      "python_full_regression": "1922 passed, 33 skipped, 0 failed, 0 errors, 1 warning",
       "web_build": "passed with Vite large-chunk warning only",
       "focused_pass6_tests": "36 passed, 0 failed",
-      "ha_worker_followup_tests": "44 passed, 0 failed"
+      "ha_worker_followup_tests": "44 passed, 0 failed",
+      "pass7_future_scope_slices_1_2": "73 passed, 0 failed; standalone test_future_scope.py 11 passed"
     },
     "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope.",
     "executive_summary": {
-      "status": "100% complete by code-evidence audit policy for audited scope",
-      "pass": "Pass 6 final",
+      "status": "Pass 7 future-scope slices 1-2 complete by code-evidence audit policy for audited scope",
+      "pass": "Pass 7 future-scope slices 1-2",
       "updated": "2026-10-06",
       "audited_scope": {
-        "total": 551,
-        "done": 551,
+        "total": 598,
+        "done": 598,
         "challenge": 0,
-        "future_scope": 241
+        "future_scope": 194
       },
       "core_completion": {
         "core_fr_nfr_mvp": "109/109 = 100%",
@@ -1493,7 +1779,7 @@
       "latest_verification": {
         "full_regression": {
           "command": "python -m pytest",
-          "result": "1911 passed, 33 skipped, 0 failures, 0 errors, 1 warning"
+          "result": "1922 passed, 33 skipped, 0 failures, 0 errors, 1 warning"
         },
         "frontend_build": {
           "command": "npm run build",
@@ -1501,9 +1787,121 @@
           "result": "passed with Vite large-chunk warning only"
         },
         "focused_pass6_tests": "36 passed, 0 failed",
-        "worker_ha_followup_tests": "44 passed, 0 failed after worker lease gating"
+        "worker_ha_followup_tests": "44 passed, 0 failed after worker lease gating",
+        "pass7_future_scope_slices_1_2": {
+          "result": "73 passed, 0 failed; standalone test_future_scope.py 11 passed",
+          "command": "python -m pytest tests/unit/test_future_scope.py tests/unit/test_federation_planner.py tests/unit/test_knowledge_products.py tests/unit/test_truth_claims.py tests/unit/test_ontology_gitops.py tests/unit/test_query_cache.py"
+        }
       },
-      "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope."
+      "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope.",
+      "future_scope": {
+        "starting_backlog": 241,
+        "implemented_this_pass": 47,
+        "remaining_backlog": 194,
+        "implemented_gap_ids": [
+          "GAP-FED-001",
+          "GAP-FED-002",
+          "GAP-FED-003",
+          "GAP-FED-004",
+          "GAP-DUAL-001",
+          "GAP-DUAL-002",
+          "GAP-RULE-001",
+          "GAP-RULE-003",
+          "GAP-GOV-001",
+          "GAP-GOV-002",
+          "GAP-LAYER-001",
+          "GAP-LAYER-002",
+          "GAP-LITE-001",
+          "GAP-LITE-002",
+          "GAP-TCO-001",
+          "GAP-DATAOPS-001",
+          "GAP-APP-001",
+          "GAP-APP-002",
+          "GAP-TEMPLATE-001",
+          "GAP-CATALOG-001",
+          "GAP-CATALOG-002",
+          "GAP-CATALOG-003",
+          "GAP-CATALOG-004",
+          "GAP-CATALOG-005",
+          "GAP-LIN-001",
+          "GAP-LIN-002",
+          "GAP-LIN-003",
+          "GAP-LIN-004",
+          "GAP-LIN-005",
+          "GAP-CDC-001",
+          "GAP-CDC-003",
+          "GAP-CDC-004",
+          "GAP-CDC-005",
+          "GAP-CDC-006",
+          "GAP-OBS-001",
+          "GAP-OBS-002",
+          "GAP-OBS-004",
+          "GAP-OBS-005",
+          "GAP-CACHE-002",
+          "GAP-CACHE-003",
+          "GAP-CACHE-005",
+          "GAP-LIFE-001",
+          "GAP-LIFE-002",
+          "GAP-LIFE-003",
+          "GAP-LIFE-004",
+          "GAP-LIFE-005",
+          "GAP-LIFE-006"
+        ]
+      }
+    },
+    "future_scope_progress": {
+      "starting_backlog": 241,
+      "implemented_this_pass": 47,
+      "remaining_backlog": 194,
+      "implemented_gap_ids": [
+        "GAP-FED-001",
+        "GAP-FED-002",
+        "GAP-FED-003",
+        "GAP-FED-004",
+        "GAP-DUAL-001",
+        "GAP-DUAL-002",
+        "GAP-RULE-001",
+        "GAP-RULE-003",
+        "GAP-GOV-001",
+        "GAP-GOV-002",
+        "GAP-LAYER-001",
+        "GAP-LAYER-002",
+        "GAP-LITE-001",
+        "GAP-LITE-002",
+        "GAP-TCO-001",
+        "GAP-DATAOPS-001",
+        "GAP-APP-001",
+        "GAP-APP-002",
+        "GAP-TEMPLATE-001",
+        "GAP-CATALOG-001",
+        "GAP-CATALOG-002",
+        "GAP-CATALOG-003",
+        "GAP-CATALOG-004",
+        "GAP-CATALOG-005",
+        "GAP-LIN-001",
+        "GAP-LIN-002",
+        "GAP-LIN-003",
+        "GAP-LIN-004",
+        "GAP-LIN-005",
+        "GAP-CDC-001",
+        "GAP-CDC-003",
+        "GAP-CDC-004",
+        "GAP-CDC-005",
+        "GAP-CDC-006",
+        "GAP-OBS-001",
+        "GAP-OBS-002",
+        "GAP-OBS-004",
+        "GAP-OBS-005",
+        "GAP-CACHE-002",
+        "GAP-CACHE-003",
+        "GAP-CACHE-005",
+        "GAP-LIFE-001",
+        "GAP-LIFE-002",
+        "GAP-LIFE-003",
+        "GAP-LIFE-004",
+        "GAP-LIFE-005",
+        "GAP-LIFE-006"
+      ]
     }
   }
 }
