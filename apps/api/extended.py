@@ -42,8 +42,8 @@ from eoip.ci.pipeline import FAIL_ON_CHOICES
 from eoip.contracts.query_plan import QueryPlan
 from eoip.federation import (
     FederatedQueryPlanner,
-    HugeGraphLocalAdapter,
     InMemoryDemoAdapter,
+    LocalGraphStoreAdapter,
     SourceCapability,
     SourceMode,
 )
@@ -145,9 +145,9 @@ class ExtendedState:
             )
         )
         self.planner.register(
-            HugeGraphLocalAdapter(
+            LocalGraphStoreAdapter(
                 SourceCapability(
-                    source_id="hugegraph-local",
+                    source_id=_store_source_id(store),
                     entity_types=list(_store_labels(store)),
                     pushdown_filters=False,
                     pushdown_projection=False,
@@ -227,6 +227,17 @@ def _store_labels(store: GraphStore) -> list[str]:
     for vertex in store.find_vertices(limit=50_000):
         labels.add(vertex["label"])
     return sorted(labels)
+
+
+def _store_source_id(store: GraphStore) -> str:
+    try:
+        ping = store.ping()
+    except Exception:  # noqa: BLE001 - backend discovery must not break router setup
+        ping = {}
+    backend = ping.get("backend") if isinstance(ping, dict) else None
+    if backend == "memory":
+        return "hugegraph-local"
+    return f"{backend or 'graph'}-local"
 
 
 class FederationQueryRequest(BaseModel):
@@ -1219,7 +1230,7 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
         """§47: startup/operational preflight checks (env, token config,
         ontology files, graph store, disk, port)."""
         report = run_preflight(
-            required_env=["EOIP_GRAPH_URL"],
+            required_env=[],
             ontology_paths=sorted(glob.glob("config/ontology/*.yaml")),
             graph_store=store,
             token_env="EOIP_API_TOKEN",

@@ -17,6 +17,71 @@ test('Hubble language bootstrap defaults to English and preserves preferences', 
   }
 });
 
+test('Hubble bundle exposes the Graph IDL studio launcher and static assets', () => {
+  const bootstrap = readFileSync(new URL('../../../deploy/hubble/default-language.js', import.meta.url), 'utf8');
+  const dockerfile = readFileSync(new URL('../../../deploy/hubble/Dockerfile', import.meta.url), 'utf8');
+  const page = readFileSync(new URL('../../../deploy/hubble/graph-idl.html', import.meta.url), 'utf8');
+
+  expect(bootstrap).toContain('/graph-idl.html');
+  expect(bootstrap).toContain('Graph IDL');
+  expect(dockerfile).toContain('graph-idl.html');
+  expect(dockerfile).toContain('graph-idl.css');
+  expect(dockerfile).toContain('graph-idl.js');
+  expect(page).toContain('Graph Integrated Development Studio');
+});
+
+test('Graph IDL renders a live Hubble-style graph with mocked graph APIs', async ({page}) => {
+  const files = new Map([
+    ['/graph-idl.html', ['text/html', readFileSync(new URL('../../../deploy/hubble/graph-idl.html', import.meta.url), 'utf8')]],
+    ['/graph-idl.css', ['text/css', readFileSync(new URL('../../../deploy/hubble/graph-idl.css', import.meta.url), 'utf8')]],
+    ['/graph-idl.js', ['text/javascript', readFileSync(new URL('../../../deploy/hubble/graph-idl.js', import.meta.url), 'utf8')]],
+  ]);
+  const vertices = [
+    {id: 'v1', label: 'WorkItem', properties: {canonical_id: 'urn:work:1', summary: 'Checkout conversion', graph_domain: 'WORK'}},
+    {id: 'v2', label: 'Service', properties: {canonical_id: 'urn:svc:1', name: 'Checkout API', graph_domain: 'CODE'}},
+  ];
+  const edges = [
+    {id: 'e1', label: 'IMPLEMENTS', source: 'v2', target: 'v1', properties: {creation_status: 'DETERMINISTIC'}},
+  ];
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.route('**/*', async route => {
+    const url = new URL(route.request().url());
+    if (files.has(url.pathname)) {
+      const [contentType, body] = files.get(url.pathname);
+      return route.fulfill({contentType, body});
+    }
+    if (url.pathname === '/api/v1.2/graph-connections') {
+      return route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({status: 200, data: {records: [{id: 7, host: 'hugegraph-server', graph: 'hugegraph'}]}}),
+      });
+    }
+    if (url.pathname.endsWith('/gremlin-query')) {
+      const request = JSON.parse(route.request().postData() || '{}');
+      const graph = request.content.startsWith('g.V()')
+        ? {vertices, edges: []}
+        : {vertices, edges};
+      return route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({status: 200, data: {graph_view: graph}}),
+      });
+    }
+    return route.abort();
+  });
+
+  await page.goto('http://graph-idl.test/graph-idl.html');
+  await expect(page.locator('#result-status')).toContainText('2 vertices / 1 relationships');
+  await expect(page.locator('.node')).toHaveCount(2);
+  await page.getByRole('button', {name: 'Table', exact: true}).click();
+  await expect(page.locator('#relations')).toContainText('IMPLEMENTS');
+  await page.getByRole('button', {name: 'RDF', exact: true}).click();
+  await expect(page.locator('#rdf-view')).toContainText('eoip:IMPLEMENTS');
+  await page.selectOption('#backend', 'neptune');
+  await expect(page.locator('#backend-status')).toContainText('Amazon Neptune');
+  expect(errors).toEqual([]);
+});
+
 test('guided Hubble displays all scenarios as live named connected domain graphs', async ({page}) => {
   test.skip(process.env.EOIP_RUNTIME_HUBBLE !== '1', 'Opt-in local Hubble administration test');
   test.setTimeout(180000);

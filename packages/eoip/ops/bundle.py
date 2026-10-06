@@ -10,9 +10,9 @@ from __future__ import annotations
 
 import os
 import platform
-import sys
 import time
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 from eoip.audit.redaction import redact_secrets
 
@@ -72,7 +72,14 @@ def collect_support_bundle(
     *,
     audit_sink: Any = None,
     graph_store: Any = None,
-    env_vars: Iterable[str] = ("EOIP_GRAPH_URL", "EOIP_API_TOKEN", "EOIP_ENV"),
+    env_vars: Iterable[str] = (
+        "EOIP_GRAPH_BACKEND",
+        "EOIP_GRAPH_CONFIG",
+        "EOIP_GRAPH_URL",
+        "EOIP_HUGEGRAPH_URL",
+        "EOIP_API_TOKEN",
+        "EOIP_ENV",
+    ),
     max_audit_events: int = 50,
     extra: dict[str, Any] | None = None,
 ) -> dict[str, Any]:

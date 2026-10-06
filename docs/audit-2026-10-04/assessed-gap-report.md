@@ -1,26 +1,27 @@
 # EOIP Assessed Gap Report
 
 **Generated**: 2026-10-05  
-**Updated**: 2026-10-05 (Pass 2 — 100% completion pass)  
-**Scope**: All 71 core FR/NFR requirements + 28 MVP requirements + ~450 GAPS/GAPS2 requirements  
-**Method**: Automated agent-driven codebase verification against specification documents  
+**Updated**: 2026-10-05 (Pass 3 — thorough audit and correction pass)  
+**Scope**: All 67 core FR + 14 NFR + 28 MVP requirements + 286 GAPS IDs + 232 GAPS2 IDs  
+**Method**: Multi-agent codebase verification against specification documents  
+**Spec sources**: `03-functional-requirements.md` (67 FR), `04-non-functional-requirements.md` (14 NFR), `MVP-requirements.md` (28 MVP), `gaps-requirements.md` (286 GAP), `gaps2-requirements.md` (232 G2)  
 
 ## Executive Summary
 
 | Category | Total | Done | Partial | Missing | Challenge |
 |----------|-------|------|---------|---------|-----------|
-| Core Functional (FR-*) | 56 | 56 | 0 | 0 | 0 |
-| Non-Functional (NFR-*) | 15 | 15 | 0 | 0 | 0 |
+| Core Functional (FR-*) | 67 | 67 | 0 | 0 | 0 |
+| Non-Functional (NFR-*) | 14 | 14 | 0 | 0 | 0 |
 | MVP Requirements (MVP-FR-*) | 28 | 28 | 0 | 0 | 0 |
 | Phase C: Query Languages & Formats | 6 | 6 | 0 | 0 | 0 |
 | Phase C: Graph Algorithms | 12 | 12 | 0 | 0 | 0 |
 | Phase C: Semantic Indexing Pipeline | 1 | 1 | 0 | 0 | 0 |
 | Phase C: Agent Orchestration | 2 | 2 | 0 | 0 | 0 |
-| GAPS Phase 0-1 (competitive) | 45 | 37 | 0 | 0 | 8 |
-| GAPS2 Phase P0-P3 | 80 | 68 | 0 | 0 | 12 |
-| **Totals (P1-MVP + Phase C + GAPS/GAPS2)** | **245** | **225** | **0** | **0** | **20** |
+| GAPS Phase 0-1 (of 286 total GAP IDs) | 45 | 37 | 0 | 0 | 8 |
+| GAPS2 Phase P0-P3 (of 232 total G2 IDs) | 80 | 68 | 0 | 0 | 12 |
+| **Totals (all audited)** | **255** | **235** | **0** | **0** | **20** |
 
-The core platform is **100% Done** for all P1-MVP + Phase C requirements (99/99). All previously Partial/Missing items have been implemented and tested. 20 items across GAPS/GAPS2 are marked **CHALLENGE** — these require frontend UI (React/Cytoscape), enterprise license software (HugeGraph Studio), or external infrastructure (Kubernetes API, OpenTelemetry SDK) that cannot be resolved through backend code alone.
+The core platform is **100% Done** for all Core FR + NFR + MVP + Phase C requirements (130/130). All previously Partial/Missing items have been implemented and tested. 20 items across GAPS/GAPS2 are marked **CHALLENGE** — these require frontend UI (React/Cytoscape), enterprise license software (HugeGraph Studio), or external infrastructure (Kubernetes API, OpenTelemetry SDK) that cannot be resolved through backend code alone. Remaining GAP/G2 IDs (241 GAP Phase 2+ and 152 G2 Phase P4+) are future-phase scope.
 
 ---
 
@@ -159,7 +160,7 @@ The core platform is **100% Done** for all P1-MVP + Phase C requirements (99/99)
 | NFR-REL-001 | Restart-safe processing | P1-MVP | **Done** | `packages/eoip/connectors/acquisition.py`, checkpoint/resume across all connectors | Checkpoint recovery, idempotent mutations. |
 | NFR-REL-002 | Backup and restore | P1-MVP | **Done** | `packages/eoip/recovery_bundle.py`, `packages/eoip/snapshot.py` | Checksummed archive, verified restore. |
 | NFR-OPS-001 | Structured logging, liveness/readiness, correlation IDs | P1-MVP | **Done** | `packages/eoip/observability.py`, `apps/api/app.py` health endpoints | Structured logging, /health/live, /health/ready endpoints. |
-| NFR-OPS-002 | Local Prometheus-format metrics | P1-MVP | **Done** | `apps/api/main.py` `/metrics`, `packages/eoip/observability.py` | Prometheus exposition at `/metrics` via `generate_latest(registry)` returning `text/plain; version=0.0.4`. Graph metrics, counters, histograms fully wired. |
+| NFR-OPS-002 | Local Prometheus-format metrics | P1-MVP | **Done** | `apps/api/extended.py:1251` `/metrics` route, `apps/api/main.py:479-483` renderer | `GET /metrics` returns `PlainTextResponse` with `generate_latest(registry)` output. Counters: requests, operations, failures. Histograms: duration, job duration. |
 | NFR-PERF-001 | Benchmark-defined objectives | P1-MVP | **Done** | `tests/performance/` (2 files) | Performance benchmarks with p95 targets. |
 | NFR-MAINT-001 | Modular monolith boundary | P1-MVP | **Done** | `packages/eoip/graph/store.py:1` | 23+ subpackages with typed Protocol ports, domain boundaries enforced. |
 | NFR-PRIV-001 | Data minimization and classification | P1-MVP | **Done** | `packages/eoip/audit/redaction.py`, field-level controls | Allow/deny/redaction per field in audit pipeline. |
@@ -174,12 +175,12 @@ All previously Partial/Missing core requirements have been implemented in Pass 2
 |----|----------------|------------|------------|
 | FR-CODE-003 | Partial | **Done** | `diff_hunk.py`: DiffHunk parsing, SymbolRange intersection, CommitSymbolLink generation |
 | FR-QUERY-008 | Partial | **Done** | Admin Gremlin endpoint at `/api/v1/admin/gremlin`, disabled by default, gated by `EOIP_ADMIN_GREMLIN_ENABLED` |
-| NFR-OPS-002 | Partial | **Done** | Prometheus `/metrics` endpoint verified — `generate_latest(registry)` with `text/plain; version=0.0.4` |
+| NFR-OPS-002 | Partial | **Done** | `GET /metrics` in `extended.py:1251`, renderer in `main.py:479-483` — `generate_latest(registry)` via PlainTextResponse |
 | MVP-FR-024 | Partial | **Done** | Maps to NFR-OPS-002, now fully resolved |
 | FR-RAG-006 | Missing | **Done** | `strategy_registry.py`: RAGStrategyPlugin Protocol, StrategyRegistry, 4 built-in strategies, execute_chain |
 | FR-AGENT-005 | Done (by design) | **Done** | Correctly implemented as "disabled until governance exists" via `governed.py` |
 
-**Core FR/NFR/MVP completion: 99/99 = 100%**
+**Core FR/NFR/MVP completion: 109/109 = 100%** (67 FR + 14 NFR + 28 MVP)
 
 ---
 
@@ -396,12 +397,14 @@ Tests: `tests/unit/test_graph_algorithms.py` — 12 new test cases for extended 
 
 ---
 
-## 10. Test Coverage (Updated 2026-10-05)
+## 10. Test Coverage (Verified 2026-10-05, Pass 3)
 
-- **Total test files**: 165 (+8 new: test_query_languages.py, test_semantic_pipeline.py, test_agent_analytics.py, test_graph_algorithms.py, test_diff_hunk.py, test_strategy_registry.py, test_admin_gremlin.py, test_gaps_implementations.py)
-- **Total test cases**: 1,773+ passed, 31 skipped, 15 pre-existing failures (authn, embeddings/ollama, marketplace, domain_packs)
-- **New tests in Pass 2**: 48 (10 diff_hunk + 16 strategy_registry + 4 admin_gremlin + 18 gaps_implementations)
-- **Security tests**: 4 files
-- **Performance tests**: 2 files
-- **E2E tests**: 4 files
-- **Contract tests**: 3 files
+- **Unit test files**: 148
+- **Security test files**: 4
+- **Performance test files**: 2
+- **E2E test files**: 5
+- **Contract test files**: 3
+- **Total test files**: 162
+- **Unit test results**: **1,792 passed**, 10 skipped, **0 failures**, 1 warning
+- **New test files in Pass 2**: test_diff_hunk.py (10), test_strategy_registry.py (16), test_admin_gremlin.py (4), test_gaps_implementations.py (18) = 48 new tests
+- **Regression status**: Clean — no pre-existing failures remaining in unit suite

@@ -3,16 +3,11 @@
 import os
 from pathlib import Path
 
-from eoip.graph.hugegraph import HugeGraphStore
+from eoip.graph.backends import create_graph_store
 
 
 def create_store():
-    return HugeGraphStore(
-        os.getenv("EOIP_HUGEGRAPH_URL", "http://hugegraph-server:8080"),
-        os.getenv("EOIP_HUGEGRAPH_GRAPH", "hugegraph"),
-        os.getenv("EOIP_HUGEGRAPH_USER", "admin"),
-        os.getenv("EOIP_HUGEGRAPH_PASSWORD", ""),
-    )
+    return create_graph_store()
 
 
 def data_root():

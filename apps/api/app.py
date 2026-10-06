@@ -7,6 +7,11 @@ from eoip.config import load_query_policy
 from eoip.contracts.graph_result import GraphResult, TraversalGraphResult
 from eoip.contracts.query_plan import QueryPlan
 from eoip.demo_scenarios import read_demo_scenario_pack
+from eoip.graph.backends import (
+    GraphBackendConfigurationError,
+    backend_capabilities,
+    resolve_graph_backend_config,
+)
 from eoip.graph.metrics import GraphMetricsEngine
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import VERTEX_LABELS
@@ -150,7 +155,7 @@ class JsonIngestionRequest(BaseModel):
 class FormatConvertRequest(BaseModel):
     format_id: str = Field(
         min_length=1, max_length=32,
-        pattern="^(rdf|rdf_xml|rdfs|owl|gremlin|cypher|gql|sparql)$",
+        pattern="^(rdf|rdf_xml|rdfs|owl|gremlin|cypher|opencypher|gql|sparql|shacl|pgql)$",
     )
     limit: int = Field(default=10000, ge=1, le=50000)
 
@@ -227,6 +232,32 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             response.status_code = 503
             return {"status": "not_ready"}
         return {"status": "ready"}
+
+    @app.get("/api/v1/graph/backend")
+    def graph_backend() -> dict:
+        try:
+            configured_backend, configured = resolve_graph_backend_config()
+        except GraphBackendConfigurationError as exc:
+            configured_backend, configured = "unknown", {"error": str(exc)}
+        ping = store.ping() if hasattr(store, "ping") else {}
+        active_backend = ping.get("backend") if isinstance(ping, dict) else configured_backend
+        return {
+            "configured_backend": configured_backend,
+            "active_backend": active_backend,
+            "connection": {
+                key: value
+                for key, value in configured.items()
+                if key not in {"password", "token", "secret", "api_key"}
+            },
+            "ping": ping,
+            "capabilities": backend_capabilities(active_backend)
+            if active_backend != "unknown"
+            else backend_capabilities(),
+        }
+
+    @app.get("/api/v1/graph/backends")
+    def graph_backends() -> dict:
+        return {"backends": backend_capabilities()}
 
     @app.get("/api/v1/demo/scenarios")
     def demo_scenarios():

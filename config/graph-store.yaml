@@ -1,0 +1,30 @@
+# EOIP graph backend selection.
+#
+# Switch primary to "neptune" to route all GraphStore-backed ingestion, query,
+# RAG, validation, and agent workflows through Amazon Neptune.
+# Env overrides:
+#   EOIP_GRAPH_BACKEND=neptune|hugegraph|memory
+#   EOIP_GRAPH_URL=https://example.cluster.region.neptune.amazonaws.com:8182
+#   EOIP_GRAPH_DATABASE=<logical-name>
+#   EOIP_GRAPH_USER / EOIP_GRAPH_PASSWORD
+primary: hugegraph
+
+connections:
+  hugegraph:
+    type: hugegraph
+    url: http://hugegraph-server:8080
+    graph: hugegraph
+    username: admin
+    password: ""
+
+  neptune:
+    type: neptune
+    url: https://your-neptune-endpoint:8182
+    database: neptune
+    open_cypher_path: /openCypher
+    sparql_path: /sparql
+    gremlin_path: /gremlin
+    verify_tls: true
+
+  memory:
+    type: memory

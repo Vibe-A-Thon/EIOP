@@ -339,17 +339,17 @@ class FormatConverter:
             lines.append(f"{shape_uri} a sh:NodeShape ;")
             lines.append(f"    sh:targetClass eoip:{lbl} ;")
             lines.append(f'    rdfs:label "{lbl} shape" ;')
-            lines.append(f"    sh:property [")
-            lines.append(f"        sh:path eoip:canonical_id ;")
-            lines.append(f"        sh:datatype xsd:string ;")
-            lines.append(f"        sh:minCount 1 ;")
-            lines.append(f"        sh:maxCount 1 ;")
-            lines.append(f"    ] ;")
+            lines.append("    sh:property [")
+            lines.append("        sh:path eoip:canonical_id ;")
+            lines.append("        sh:datatype xsd:string ;")
+            lines.append("        sh:minCount 1 ;")
+            lines.append("        sh:maxCount 1 ;")
+            lines.append("    ] ;")
             for prop in sorted(label_props.get(lbl, set())):
-                lines.append(f"    sh:property [")
+                lines.append("    sh:property [")
                 lines.append(f"        sh:path eoip:{prop} ;")
-                lines.append(f"        sh:datatype xsd:string ;")
-                lines.append(f"    ] ;")
+                lines.append("        sh:datatype xsd:string ;")
+                lines.append("    ] ;")
             lines[-1] = lines[-1].rstrip(" ;") + " ."
             lines.append("")
 
@@ -410,6 +410,9 @@ class FormatConverter:
             {"id": "owl", "label": "OWL Ontology", "ext": ".owl", "desc": "OWL ontology with classes and object properties"},
             {"id": "gremlin", "label": "Gremlin Script", "ext": ".groovy", "desc": "Apache TinkerPop Gremlin traversal"},
             {"id": "cypher", "label": "Cypher Script", "ext": ".cypher", "desc": "Neo4j Cypher MERGE statements"},
+            {"id": "opencypher", "label": "OpenCypher Script", "ext": ".cypher", "desc": "Vendor-neutral OpenCypher statements"},
             {"id": "gql", "label": "GQL Script", "ext": ".gql", "desc": "ISO GQL INSERT statements"},
             {"id": "sparql", "label": "SPARQL INSERT", "ext": ".sparql", "desc": "SPARQL INSERT DATA for RDF stores"},
+            {"id": "shacl", "label": "SHACL Shapes", "ext": ".ttl", "desc": "W3C SHACL node shapes"},
+            {"id": "pgql", "label": "PGQL Script", "ext": ".pgql", "desc": "Property Graph Query Language export"},
         ]

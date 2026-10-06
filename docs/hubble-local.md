@@ -67,6 +67,13 @@ source evidence, the accessible relationship table and generated read-only
 Gremlin; toggle provenance nodes, drag nodes, zoom/fit or export returned JSON.
 Queries include edges and are bounded to 120 relationships.
 
+For a broader graph-database workbench, open
+**http://localhost:8088/graph-idl.html** or the **Graph IDL** link in native
+Hubble. Graph Integrated Development Studio keeps live Hubble Gremlin reads for
+the current HugeGraph connection while presenting backend profiles, query
+language templates and property graph/table/RDF/JSON representations for
+HugeGraph, Neptune, Neo4j/OpenCypher, RDF stores and multi-model graph targets.
+
 Double-click `demo\autodemo\run-demo-hubble.bat` to prepare the additive corpus
 and automatically walk through all 11 graph scenarios. Stop the walkthrough
 to investigate any scenario. Existing administration, ingestion and VS Code

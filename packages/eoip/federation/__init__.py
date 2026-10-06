@@ -8,22 +8,24 @@ degrades gracefully when sources are offline.
 
 from eoip.federation.planner import (
     DataSourceAdapter,
+    FederatedQueryPlanner,
     FragmentResult,
     HugeGraphLocalAdapter,
     InMemoryDemoAdapter,
+    LocalGraphStoreAdapter,
     RoutingPlan,
     SourceCapability,
     SourceMode,
-    FederatedQueryPlanner,
 )
 
 __all__ = [
     "DataSourceAdapter",
+    "FederatedQueryPlanner",
     "FragmentResult",
     "HugeGraphLocalAdapter",
     "InMemoryDemoAdapter",
+    "LocalGraphStoreAdapter",
     "RoutingPlan",
     "SourceCapability",
     "SourceMode",
-    "FederatedQueryPlanner",
 ]

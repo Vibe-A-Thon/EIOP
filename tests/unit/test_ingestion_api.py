@@ -82,11 +82,13 @@ def test_available_formats(tmp_path):
     r = client.get("/api/v1/graph/formats", headers=HEADERS)
     assert r.status_code == 200
     formats = r.json()["formats"]
-    assert len(formats) == 8
+    assert len(formats) == 11
     ids = [f["id"] for f in formats]
     assert "rdf" in ids
     assert "cypher" in ids
     assert "sparql" in ids
+    assert "shacl" in ids
+    assert "pgql" in ids
 
 
 def test_convert_rdf(tmp_path):

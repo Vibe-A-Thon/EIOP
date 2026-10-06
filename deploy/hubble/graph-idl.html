@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Graph IDL - Hubble</title>
+  <link rel="stylesheet" href="/graph-idl.css">
+  <script type="module" src="/graph-idl.js"></script>
+</head>
+<body>
+  <header class="studio-header">
+    <div>
+      <p class="eyebrow">Polyglot Graph Laboratory</p>
+      <h1>Graph Integrated Development Studio</h1>
+      <p>Graph IDL gives Hubble a product-style workbench for graph database selection, query planning, live Gremlin reads, and multi-format data representations.</p>
+    </div>
+    <nav aria-label="Studio links">
+      <a id="native" href="/">Native Hubble</a>
+      <a href="/enterprise.html">Enterprise graph</a>
+      <a href="http://localhost:8080/app">EOIP application</a>
+    </nav>
+  </header>
+
+  <main class="studio-shell">
+    <section class="status-strip" aria-label="Runtime status">
+      <article>
+        <span>Connection</span>
+        <strong id="connection-status">Connecting...</strong>
+      </article>
+      <article>
+        <span>Primary Backend</span>
+        <strong id="backend-status">HugeGraph via Hubble</strong>
+      </article>
+      <article>
+        <span>Live Result</span>
+        <strong id="result-status">No query yet</strong>
+      </article>
+      <article>
+        <span>Representation</span>
+        <strong id="view-status">Property graph</strong>
+      </article>
+    </section>
+
+    <section class="studio-grid">
+      <aside class="side-panel" aria-label="Configuration">
+        <section class="panel-block">
+          <div class="section-title">
+            <p class="eyebrow">Database Target</p>
+            <h2>Backend Profile</h2>
+          </div>
+          <label>Graph database
+            <select id="backend"></select>
+          </label>
+          <div id="backend-card" class="info-card"></div>
+        </section>
+
+        <section class="panel-block">
+          <div class="section-title">
+            <p class="eyebrow">Language Target</p>
+            <h2>Query Surface</h2>
+          </div>
+          <label>Language
+            <select id="language"></select>
+          </label>
+          <label>Query intent
+            <select id="intent"></select>
+          </label>
+          <label>Seed canonical id
+            <input id="seed" type="search" placeholder="urn:eoip:demo:workitem:PAY-101">
+          </label>
+          <label>Limit
+            <input id="limit" type="number" min="5" max="300" step="5" value="80">
+          </label>
+        </section>
+
+        <section class="panel-block">
+          <div class="section-title">
+            <p class="eyebrow">Representations</p>
+            <h2>Data Views</h2>
+          </div>
+          <div class="segmented" role="tablist" aria-label="Representation mode">
+            <button class="active" data-view="graph" type="button">Graph</button>
+            <button data-view="table" type="button">Table</button>
+            <button data-view="rdf" type="button">RDF</button>
+            <button data-view="json" type="button">JSON</button>
+          </div>
+          <label class="toggle"><input id="metadata" type="checkbox"> Include provenance and meta nodes</label>
+          <label class="toggle"><input id="edges-only" type="checkbox"> Prefer relationships around seed</label>
+        </section>
+      </aside>
+
+      <section class="workbench">
+        <section class="query-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Query Studio</p>
+              <h2 id="query-heading">Portable query plan</h2>
+            </div>
+            <div class="actions">
+              <button id="generate" type="button">Generate</button>
+              <button id="execute" type="button">Run in Hubble</button>
+              <button id="copy" type="button">Copy</button>
+              <button id="export" type="button">Export JSON</button>
+            </div>
+          </div>
+          <textarea id="query" spellcheck="false" aria-label="Query editor"></textarea>
+          <p id="query-note" class="note"></p>
+        </section>
+
+        <section class="lens-tabs" aria-label="Analysis lenses">
+          <button class="active" data-lens="schema" type="button">Schema</button>
+          <button data-lens="lineage" type="button">Lineage</button>
+          <button data-lens="quality" type="button">Quality</button>
+          <button data-lens="migration" type="button">Migration</button>
+          <button data-lens="semantic" type="button">Semantic</button>
+        </section>
+
+        <section class="result-panel">
+          <div id="canvas" class="view-pane active" data-view-pane="graph">
+            <svg id="graph" role="img" aria-label="Graph IDL result graph"></svg>
+          </div>
+          <div id="table-view" class="view-pane" data-view-pane="table">
+            <table>
+              <thead><tr><th>Source</th><th>Relationship</th><th>Target</th><th>Trust</th></tr></thead>
+              <tbody id="relations"></tbody>
+            </table>
+          </div>
+          <pre id="rdf-view" class="view-pane" data-view-pane="rdf"></pre>
+          <pre id="json-view" class="view-pane" data-view-pane="json"></pre>
+        </section>
+      </section>
+
+      <aside class="inspector" aria-label="Inspector">
+        <section class="panel-block">
+          <div class="section-title">
+            <p class="eyebrow">Inspector</p>
+            <h2>Facts</h2>
+          </div>
+          <pre id="details">Select a node, edge, backend, or query language.</pre>
+        </section>
+        <section class="panel-block">
+          <div class="section-title">
+            <p class="eyebrow">Capabilities</p>
+            <h2>Compatibility</h2>
+          </div>
+          <div id="compatibility"></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

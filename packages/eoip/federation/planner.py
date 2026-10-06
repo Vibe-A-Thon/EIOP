@@ -10,7 +10,7 @@ continues with the rest (GAP-FABRIC-006), and an explainable routing plan
 
 Two built-in adapters keep the layer runnable without external systems:
 ``InMemoryDemoAdapter`` (deterministic in-memory rows) and
-``HugeGraphLocalAdapter`` (reads through a local ``GraphStore``).
+``LocalGraphStoreAdapter`` (reads through the configured local ``GraphStore``).
 """
 
 from __future__ import annotations
@@ -184,11 +184,11 @@ class InMemoryDemoAdapter:
         return out
 
 
-class HugeGraphLocalAdapter:
+class LocalGraphStoreAdapter:
     """Adapter over a local GraphStore, filtered by vertex label.
 
-    Uses ``find_vertices`` so it works against the in-memory HugeGraph-local
-    store implementation without a running server.
+    Uses ``find_vertices`` so it works against any configured GraphStore
+    implementation without a backend-specific query language.
     """
 
     def __init__(self, capability: SourceCapability, store: Any) -> None:
@@ -228,6 +228,9 @@ class HugeGraphLocalAdapter:
                     row = {k: row.get(k) for k in projection}
                 rows.append(row)
         return rows
+
+
+HugeGraphLocalAdapter = LocalGraphStoreAdapter
 
 
 def _matches(row: dict[str, Any], filters: dict[str, Any]) -> bool:

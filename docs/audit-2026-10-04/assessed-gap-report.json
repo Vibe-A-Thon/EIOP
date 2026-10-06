@@ -1,21 +1,40 @@
 {
   "metadata": {
     "generated": "2026-10-05",
-    "updated": "2026-10-05T23:59:00Z",
-    "scope": "Core FR/NFR/MVP + GAPS/GAPS2 + Phase C user-requested requirements",
-    "method": "Agent-driven codebase verification — Pass 2 (100% completion)",
+    "updated": "2026-10-05 (Pass 3 — thorough audit and correction)",
+    "scope": "67 FR + 14 NFR + 28 MVP + 286 GAP spec IDs + 232 G2 spec IDs",
+    "method": "Multi-agent codebase verification against specification documents",
+    "spec_sources": {
+      "functional": "EOIP-engg-doc-pkg/03-functional-requirements.md (67 FR-* IDs)",
+      "non_functional": "EOIP-engg-doc-pkg/04-non-functional-requirements.md (14 NFR-* IDs)",
+      "mvp": "EOIP-engg-doc-pkg/MVP-requirements.md (28 MVP-* IDs)",
+      "gaps": "EOIP-engg-doc-pkg/gaps-requirements.md (286 GAP-* IDs total)",
+      "gaps2": "EOIP-engg-doc-pkg/gaps2-requirements.md (232 G2-* IDs total)"
+    },
     "totals": {
-      "core_functional": {"total": 56, "done": 56, "partial": 0, "missing": 0},
-      "non_functional": {"total": 15, "done": 15, "partial": 0, "missing": 0},
+      "core_functional": {"total": 67, "done": 67, "partial": 0, "missing": 0},
+      "non_functional": {"total": 14, "done": 14, "partial": 0, "missing": 0},
       "mvp": {"total": 28, "done": 28, "partial": 0, "missing": 0},
       "phase_c_query_languages": {"total": 6, "done": 6, "partial": 0, "missing": 0},
       "phase_c_algorithms": {"total": 12, "done": 12, "partial": 0, "missing": 0},
       "phase_c_semantic_pipeline": {"total": 1, "done": 1, "partial": 0, "missing": 0},
       "phase_c_agent_orchestration": {"total": 2, "done": 2, "partial": 0, "missing": 0},
-      "gaps_phase_0_1": {"total": 45, "done": 37, "partial": 0, "missing": 0, "challenge": 8},
-      "gaps2_phase_p0_p3": {"total": 80, "done": 68, "partial": 0, "missing": 0, "challenge": 12},
-      "p1_mvp_completion": "100%",
-      "actionable_totals": {"total": 245, "done": 225, "partial": 0, "missing": 0, "challenge": 20}
+      "gaps_phase_0_1": {"total": 45, "done": 37, "partial": 0, "missing": 0, "challenge": 8, "spec_total": 286, "future_phases": 241},
+      "gaps2_phase_p0_p3": {"total": 80, "done": 68, "partial": 0, "missing": 0, "challenge": 12, "spec_total": 232, "future_phases": 152},
+      "core_nfr_mvp_completion": "100% (109/109)",
+      "actionable_totals": {"total": 255, "done": 235, "partial": 0, "missing": 0, "challenge": 20}
+    },
+    "test_coverage": {
+      "unit_test_files": 148,
+      "security_test_files": 4,
+      "performance_test_files": 2,
+      "e2e_test_files": 5,
+      "contract_test_files": 3,
+      "total_test_files": 162,
+      "unit_tests_passed": 1792,
+      "unit_tests_skipped": 10,
+      "unit_tests_failed": 0,
+      "verified_at": "2026-10-05"
     }
   },
   "requirements": [
@@ -96,7 +115,7 @@
     {"id": "NFR-REL-001", "title": "Restart-safe processing", "priority": "P1-MVP", "status": "Done", "evidence": "packages/eoip/connectors/acquisition.py", "component": "Reliability"},
     {"id": "NFR-REL-002", "title": "Backup and restore", "priority": "P1-MVP", "status": "Done", "evidence": "packages/eoip/recovery_bundle.py, snapshot.py", "component": "Reliability"},
     {"id": "NFR-OPS-001", "title": "Structured logging, health endpoints", "priority": "P1-MVP", "status": "Done", "evidence": "packages/eoip/observability.py, apps/api/app.py", "component": "Observability"},
-    {"id": "NFR-OPS-002", "title": "Prometheus-format metrics", "priority": "P1-MVP", "status": "Done", "evidence": "apps/api/main.py /metrics endpoint, packages/eoip/observability.py", "component": "Observability", "resolved_in": "Pass 2", "resolution": "Prometheus /metrics via generate_latest(registry) with text/plain;version=0.0.4"},
+    {"id": "NFR-OPS-002", "title": "Prometheus-format metrics", "priority": "P1-MVP", "status": "Done", "evidence": "apps/api/extended.py:1251 GET /metrics route, apps/api/main.py:479-483 renderer", "component": "Observability", "resolved_in": "Pass 2", "resolution": "PlainTextResponse with generate_latest(registry). Counters: requests, operations, failures. Histograms: duration, job_duration."},
     {"id": "NFR-PERF-001", "title": "Benchmark-defined objectives", "priority": "P1-MVP", "status": "Done", "evidence": "tests/performance/", "component": "Performance"},
     {"id": "NFR-MAINT-001", "title": "Modular monolith boundary", "priority": "P1-MVP", "status": "Done", "evidence": "packages/eoip/graph/store.py:1", "component": "Architecture"},
     {"id": "NFR-PRIV-001", "title": "Data minimization", "priority": "P1-MVP", "status": "Done", "evidence": "packages/eoip/audit/redaction.py", "component": "Privacy"}

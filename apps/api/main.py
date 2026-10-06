@@ -521,16 +521,42 @@ def create_app():
             media_type="application/ld+json",
         )
 
+    _stats_cache: dict = {"expires_at": 0.0, "payload": None}
+
     @app.get("/api/v1/admin/stats")
     def stats():
-        return {
-            "backend": "hugegraph",
-            "schema": store.schema_status(),
-            "vertices": store.count_vertices(),
-            "edges": store.count_edges(),
-            "labels": {label: store.count_vertices(label) for label in VERTEX_LABELS},
-            "worker": worker_status(),
-        }
+        # Per-label count queries against HugeGraph are full scans; compute them
+        # concurrently and serve a short-TTL cache so the UI's 15s polling
+        # refresh does not serialize dozens of scans.
+        import time
+        from concurrent.futures import ThreadPoolExecutor
+
+        now = time.monotonic()
+        if _stats_cache["payload"] is not None and now < _stats_cache["expires_at"]:
+            return _stats_cache["payload"]
+        finished = time.monotonic()
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            label_counts = dict(
+                zip(
+                    VERTEX_LABELS,
+                    pool.map(store.count_vertices, VERTEX_LABELS),
+                )
+            )
+            schema = pool.submit(store.schema_status)
+            vertices = pool.submit(store.count_vertices)
+            edges = pool.submit(store.count_edges)
+            payload = {
+                "backend": "hugegraph",
+                "schema": schema.result(),
+                "vertices": vertices.result(),
+                "edges": edges.result(),
+                "labels": label_counts,
+                "worker": worker_status(),
+            }
+        # TTL measured from completion so a slow first computation does not
+        # expire the cache immediately.
+        _stats_cache.update(expires_at=finished + 15.0, payload=payload)
+        return payload
 
     @app.get("/api/v1/admin/worker")
     def worker_status():

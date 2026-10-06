@@ -12,13 +12,14 @@ from __future__ import annotations
 import os
 import shutil
 import socket
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 import yaml
 
-DEFAULT_REQUIRED_ENV = ("EOIP_GRAPH_URL",)
+DEFAULT_REQUIRED_ENV: tuple[str, ...] = ()
 DEFAULT_TOKEN_ENV = "EOIP_API_TOKEN"
 DEFAULT_MIN_FREE_BYTES = 1 * 1024**3  # 1 GiB warning threshold
 

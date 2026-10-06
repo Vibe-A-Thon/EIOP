@@ -18,10 +18,10 @@ def _populated_store():
     return store
 
 
-def test_available_formats_returns_all_eight():
+def test_available_formats_returns_all_supported():
     formats = FormatConverter.available_formats()
     ids = [f["id"] for f in formats]
-    assert ids == ["rdf", "rdf_xml", "rdfs", "owl", "gremlin", "cypher", "gql", "sparql"]
+    assert ids == ["rdf", "rdf_xml", "rdfs", "owl", "gremlin", "cypher", "opencypher", "gql", "sparql", "shacl", "pgql"]
     for f in formats:
         assert f["label"]
         assert f["ext"].startswith(".")
