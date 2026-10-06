@@ -1,16 +1,67 @@
 {
   "metadata": {
     "generated": "2026-10-05",
-    "updated": "2026-10-06 (Pass 5 — multi-backend GraphStore, federation planner, G2 full-coverage rerun)",
+    "updated": "2026-10-06 (Pass 5 - multi-backend GraphStore, federation planner, G2 full-coverage rerun, repository-wide Markdown audit, audit-folder consolidation)",
     "supersedes": ["gap-report.md", "gap-report.json", "full-doc-gap-report.md", "full-doc-gap-report.json", "mvp-gap-report.md", "mvp-gap-report.json", "current-gap-report.md", "current-gap-report.json", "completion-checklist.md", "test-report.md", "phase-1-spec.md", "live-gap-coverage.json", "g2-gap-coverage-rerun.json", "documentation-inventory.json"],
     "scope": "67 FR + 14 NFR + 28 MVP + 286 GAP spec IDs + 364 G2 IDs (full-coverage rerun) + Federation (GAP-FABRIC-001..008) + Ops (GAP-OPS-001)",
-    "method": "Multi-agent codebase verification + automated code-evidence scan (g2-gap-coverage-rerun.json)",
+    "method": "Multi-agent codebase verification + automated code-evidence scan (g2-gap-coverage-rerun.json) + line-oriented scan of every Markdown file in the checkout",
     "spec_sources": {
       "functional": "EOIP-engg-doc-pkg/03-functional-requirements.md (67 FR-* IDs)",
       "non_functional": "EOIP-engg-doc-pkg/04-non-functional-requirements.md (14 NFR-* IDs)",
       "mvp": "EOIP-engg-doc-pkg/MVP-requirements.md (28 MVP-* IDs)",
       "gaps": "EOIP-engg-doc-pkg/gaps-requirements.md (286 GAP-* IDs total)",
       "gaps2": "EOIP-engg-doc-pkg/gaps2-requirements.md (364 G2-* IDs per full-coverage rerun)"
+    },
+    "repository_markdown_audit": {
+      "audit_date": "2026-10-06",
+      "markdown_files_read": 181,
+      "markdown_lines_read": 30387,
+      "heading_lines": 3002,
+      "table_rows": 3120,
+      "unique_requirement_like_ids_observed": 1047,
+      "gap_status_risk_signal_lines": 974,
+      "finding": "No new core FR/NFR/MVP implementation gaps were discovered by the repository-wide Markdown pass.",
+      "current_report_pair": [
+        "docs/audit-2026-10-06/assessed-gap-report.md",
+        "docs/audit-2026-10-06/assessed-gap-report.json"
+      ],
+      "removed_report_folder": "docs/audit-2026-10-04",
+      "historical_reference_note": "Older Markdown files may reference docs/audit-2026-10-04/gap-report.*, full-doc-gap-report.*, mvp-gap-report.*, or assessed-gap-report.*. Those references are historical audit provenance, not current report locations.",
+      "documentation_strata": [
+        {
+          "name": "Normative/spec docs",
+          "handling": "EOIP-engg-doc-pkg requirement, gaps, implementation work-package, and architecture docs define the requirement universe."
+        },
+        {
+          "name": "Current implementation docs",
+          "handling": "README.md, docs/api-reference.md, docs/connectors.md, docs/agents.md, docs/rag.md, docs/query-engine.md, docs/graph-algorithms.md, docs/ontology.md, docs/ingestion.md, docs/code-graph.md, and eoip-engg-doc-pkg/76-multi-backend.md align with Pass 5 implementation claims."
+        },
+        {
+          "name": "Historical audit/coordination docs",
+          "handling": "context.md, memory.md, checklist.md, tickets, and older audit docs preserve prior conservative statuses and pending-release language; treat as history unless they name a still-open external gate."
+        }
+      ]
+    },
+    "current_source_tree_verification": {
+      "pass5_evidence_files_confirmed": [
+        "packages/eoip/graph/backends.py",
+        "packages/eoip/graph/neptune.py",
+        "packages/eoip/federation/planner.py",
+        "packages/eoip/ops/preflight.py",
+        "packages/eoip/agents/tools.py",
+        "packages/eoip/runtime.py",
+        "config/graph-store.yaml",
+        "tests/unit/test_graph_backends.py",
+        "tests/unit/test_federation_planner.py",
+        "tests/unit/test_ops.py"
+      ],
+      "test_files_observed": 195,
+      "focused_verification": {
+        "date": "2026-10-06",
+        "command": "pytest -q tests/unit/test_graph_backends.py tests/unit/test_federation_planner.py tests/unit/test_ops.py",
+        "passed": 31,
+        "failed": 0
+      }
     },
     "totals": {
       "core_functional": {"total": 67, "done": 67, "partial": 0, "missing": 0},
@@ -41,6 +92,9 @@
       "full_regression_passed": 1897,
       "full_regression_skipped": 24,
       "full_regression_failed": 0,
+      "focused_pass5_verification_passed": 31,
+      "focused_pass5_verification_failed": 0,
+      "focused_pass5_verification_command": "pytest -q tests/unit/test_graph_backends.py tests/unit/test_federation_planner.py tests/unit/test_ops.py",
       "total_test_cases": 1921,
       "junit_receipt": "test-results/enterprise-code-ingestion-final-junit.xml",
       "verified_at": "2026-10-06",
@@ -250,6 +304,7 @@
     "20 Challenge items cannot be resolved through backend code alone",
     "Neptune backend requires AWS credentials and Neptune endpoint — not enabled in default Docker deployment",
     "Federation planner: built-in adapters only; external federated source registration is future scope",
-    "G2 automated scan done_ratio=1.0 is code-reference policy, not full semantic acceptance verification"
+    "G2 automated scan done_ratio=1.0 is code-reference policy, not full semantic acceptance verification",
+    "Audit folder consolidation: docs/audit-2026-10-06 is the only current audit report folder. Older docs/audit-2026-10-04 report references are historical and the folder has been removed."
   ]
 }

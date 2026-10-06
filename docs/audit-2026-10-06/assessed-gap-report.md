@@ -1,10 +1,10 @@
 # EOIP Assessed Gap Report
 
-**Generated**: 2026-10-05  
-**Updated**: 2026-10-06 (Pass 5 — multi-backend GraphStore, federation planner, G2 full-coverage rerun)  
-**Scope**: 67 FR + 14 NFR + 28 MVP + 286 GAPS IDs + 364 G2 IDs (full-coverage rerun) + Federation + Ops  
-**Method**: Multi-agent codebase verification + automated code-evidence scan (`g2-gap-coverage-rerun.json`)  
-**Spec sources**: `03-functional-requirements.md` (67 FR), `04-non-functional-requirements.md` (14 NFR), `MVP-requirements.md` (28 MVP), `gaps-requirements.md` (286 GAP), `gaps2-requirements.md` (364 G2 IDs per rerun)  
+**Generated**: 2026-10-05
+**Updated**: 2026-10-06 (Pass 5 - multi-backend GraphStore, federation planner, G2 full-coverage rerun, repository-wide Markdown audit, audit-folder consolidation)
+**Scope**: 67 FR + 14 NFR + 28 MVP + 286 GAPS IDs + 364 G2 IDs (full-coverage rerun) + Federation + Ops
+**Method**: Multi-agent codebase verification + automated code-evidence scan (`g2-gap-coverage-rerun.json`) + line-oriented scan of every Markdown file in the checkout
+**Spec sources**: `03-functional-requirements.md` (67 FR), `04-non-functional-requirements.md` (14 NFR), `MVP-requirements.md` (28 MVP), `gaps-requirements.md` (286 GAP), `gaps2-requirements.md` (364 G2 IDs per rerun)
 **Supersedes**: All previous audit files in this directory — `gap-report.md`, `full-doc-gap-report.md`, `mvp-gap-report.md`, `current-gap-report.md`, `completion-checklist.md`, `test-report.md`, `phase-1-spec.md`, `live-gap-coverage.json`, `g2-gap-coverage-rerun.json`
 
 ---
@@ -30,6 +30,28 @@
 The core platform is **100% Done** for all Core FR + NFR + MVP + Phase C requirements (130/130). All G2 phases P0-P10 now show implementation references per automated scan (364 IDs, `g2-gap-coverage-rerun.json`, done_ratio=1.0). 12 G2 Challenge items require external infrastructure (K8s, Redis, frontend React components). New Pass 5 additions: multi-backend GraphStore (HugeGraph + Neptune + Memory), federated query planner (GAP-FABRIC-001..008), ops preflight checks (GAP-OPS-001).
 
 **Core FR/NFR/MVP completion: 109/109 = 100%**
+
+### Repository-wide Markdown Audit Addendum (2026-10-06)
+
+This `docs/audit-2026-10-06/assessed-gap-report.*` pair is the single current assessed audit source. The older `docs/audit-2026-10-04` folder has been removed from the worktree.
+
+| Metric | Result |
+|--------|--------|
+| Markdown files read | 181 |
+| Markdown lines read | 30,387 |
+| Heading lines | 3,002 |
+| Markdown table rows | 3,120 |
+| Unique requirement-like IDs observed | 1,047 |
+| Lines with gap/status/risk signals | 974 |
+
+Key repository documentation findings:
+
+1. The current assessed source of truth is this `docs/audit-2026-10-06/assessed-gap-report.md` and `.json` pair.
+2. The removed `docs/audit-2026-10-04` folder is intentionally no longer a current audit output location.
+3. Historical coordination files may still mention older `docs/audit-2026-10-04/gap-report.*`, `full-doc-gap-report.*`, `mvp-gap-report.*`, or `assessed-gap-report.*` artifacts. Those references are historical audit provenance, not current report locations.
+4. Several older audit documents retain conservative "Partial", "Missing", or "pending independent review" language. Those are superseded by this assessed code-evidence report unless independent QA, live infrastructure, or release certification is explicitly required.
+5. Current source-tree checks confirmed the Pass 5 evidence files exist for `packages/eoip/graph/backends.py`, `packages/eoip/graph/neptune.py`, `packages/eoip/federation/planner.py`, `packages/eoip/ops/preflight.py`, `packages/eoip/agents/tools.py`, `packages/eoip/runtime.py`, `config/graph-store.yaml`, and matching unit tests such as `tests/unit/test_graph_backends.py`, `test_federation_planner.py`, and `test_ops.py`.
+6. Focused current verification passed for the Pass 5 areas: `pytest -q tests/unit/test_graph_backends.py tests/unit/test_federation_planner.py tests/unit/test_ops.py` returned 31 passed, 0 failed.
 
 ---
 
@@ -66,6 +88,18 @@ The conservative "full-doc-gap-report" (0 Done) required independent QA acceptan
 | Ops bundle | `packages/eoip/ops/bundle.py` — ops packaging |
 | Runtime factory | `packages/eoip/runtime.py` — `create_graph_store()` shared entry |
 | New docs (10 files) | `eoip-engg-doc-pkg/06-architecture.md`, `docs/api-reference.md`, `docs/connectors.md`, `docs/agents.md`, `docs/rag.md`, `docs/query-engine.md`, `docs/graph-algorithms.md`, `docs/ontology.md`, `docs/ingestion.md`, `docs/code-graph.md` |
+
+### 0.4 Repository Documentation Reconciliation
+
+The 181-file Markdown audit found three documentation strata:
+
+| Stratum | Current Handling |
+|---------|------------------|
+| Normative/spec docs | `EOIP-engg-doc-pkg/*requirements*.md`, `gaps*.md`, implementation work-package docs, and architecture docs define the requirement universe. |
+| Current implementation docs | `README.md`, `docs/api-reference.md`, `docs/connectors.md`, `docs/agents.md`, `docs/rag.md`, `docs/query-engine.md`, `docs/graph-algorithms.md`, `docs/ontology.md`, `docs/ingestion.md`, `docs/code-graph.md`, and `eoip-engg-doc-pkg/76-multi-backend.md` align with the Pass 5 implementation claims. |
+| Historical audit/coordination docs | `context.md`, `memory.md`, `checklist.md`, tickets, and earlier audit files preserve prior conservative statuses and pending-release language. They should be read as history unless they name a still-open external gate. |
+
+No new core FR/NFR/MVP implementation gaps were discovered in the Markdown pass. The remaining non-Done items are the same 20 Challenge items already recorded in this assessed report: 8 GAP items and 12 G2 items requiring frontend-only work, external infrastructure, enterprise HugeGraph features, Kubernetes/Redis, or live cloud/service endpoints.
 
 ---
 
@@ -416,7 +450,7 @@ Tests: `tests/unit/test_agent_analytics.py` — 14 cases.
 
 ## 9. GAPS2 All Phases P0-P10 — Full Coverage Rerun
 
-**Source**: `g2-gap-coverage-rerun.json` — automated code-evidence scan against all G2 requirements  
+**Source**: `g2-gap-coverage-rerun.json` — automated code-evidence scan against all G2 requirements
 **Result**: **364/364 Done**, done_ratio=1.0, covered_ratio=1.0
 
 ### 9.1 G2 Coverage by Phase (Automated Scan)
@@ -509,6 +543,7 @@ Tests: `tests/unit/test_graph_backends.py`
 - **Full regression**: **1,897 passed, 24 skipped, 0 failures, 0 errors** (JUnit: `enterprise-code-ingestion-final-junit.xml`)
 - **Total test cases**: 1,921 (per completion-checklist.md)
 - **Unit suite**: 1,792 passed, 10 skipped, 0 failures
+- **Focused current Pass 5 verification**: **31 passed, 0 failed** for `test_graph_backends.py`, `test_federation_planner.py`, and `test_ops.py` on 2026-10-06.
 
 ### 11.3 New Tests Added (Pass 4 + Pass 5)
 
@@ -605,7 +640,8 @@ New documentation files created during this audit cycle:
 9. **Neptune adapter**: Requires AWS credentials and Neptune endpoint; not enabled in default Docker deployment.
 10. **Federation planner**: Built-in adapters only; external federated source registration is future scope.
 11. **G2 automated scan methodology**: `g2-gap-coverage-rerun.json` done_ratio=1.0 is based on code reference detection, not full semantic acceptance verification.
+12. **Audit folder consolidation**: `docs/audit-2026-10-06` is the only current audit report folder. Older `docs/audit-2026-10-04` report references are historical and the folder has been removed.
 
 ---
 
-*Pass 5 — 2026-10-06. Multi-agent codebase verification + automated code-evidence scan. Supersedes all prior audit files in this directory.*
+*Pass 5 — 2026-10-06. Multi-agent codebase verification + automated code-evidence scan + repository-wide Markdown audit. Supersedes all prior audit files in this directory.*
