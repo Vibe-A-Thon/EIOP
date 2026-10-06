@@ -100,6 +100,8 @@ PRIORITY_BY_PREFIX = {
     "LIFE": "P2",
 }
 
+DEFAULT_GATE_BLOCKING_STATUSES = ("partial", "planned")
+
 
 @dataclass(frozen=True)
 class EvidenceRef:
@@ -136,6 +138,15 @@ class GapRequirement:
             return "partial"
         return "planned"
 
+    @property
+    def acceptance_issues(self) -> list[str]:
+        issues: list[str] = []
+        if not self.implementation_refs:
+            issues.append("missing_implementation_evidence")
+        if not self.test_refs:
+            issues.append("missing_test_evidence")
+        return issues
+
     def to_dict(self) -> dict:
         return {
             "requirement_id": self.requirement_id,
@@ -147,6 +158,7 @@ class GapRequirement:
             "phase": self.phase,
             "priority": self.priority,
             "status": self.status,
+            "acceptance_issues": self.acceptance_issues,
             "implementation_refs": [ref.to_dict() for ref in self.implementation_refs],
             "test_refs": [ref.to_dict() for ref in self.test_refs],
         }
@@ -166,13 +178,56 @@ class GapCoverageReport:
             "by_priority": by_priority,
             "by_phase": by_phase,
             "completion": {
+                "done": by_status.get("done", 0),
+                "partial": by_status.get("partial", 0),
+                "planned": by_status.get("planned", 0),
                 "done_ratio": _ratio(by_status.get("done", 0), len(self.requirements)),
                 "covered_ratio": _ratio(
                     by_status.get("done", 0) + by_status.get("partial", 0),
                     len(self.requirements),
                 ),
             },
+            "completion_gate": self.completion_gate(include_requirements=False),
             "requirements": [req.to_dict() for req in self.requirements],
+        }
+
+    def completion_gate(
+        self,
+        *,
+        max_priority: str = "P0",
+        blocking_statuses: Iterable[str] = DEFAULT_GATE_BLOCKING_STATUSES,
+        include_requirements: bool = True,
+    ) -> dict:
+        """Return a release gate over requirements that must be fully done.
+
+        ``max_priority=P1`` includes P0 and P1 requirements.  A requirement is
+        blocking when it is in one of ``blocking_statuses``; by default that
+        means either no implementation/test evidence or only one side present.
+        """
+        blocking_status_set = set(blocking_statuses)
+        max_rank = _priority_rank(max_priority)
+        blockers = [
+            req
+            for req in self.requirements
+            if _priority_rank(req.priority) <= max_rank and req.status in blocking_status_set
+        ]
+        blocker_ids = [req.requirement_id for req in blockers]
+        return {
+            "passed": not blockers,
+            "policy": {
+                "max_priority": max_priority,
+                "blocking_statuses": sorted(blocking_status_set),
+                "definition_of_done": [
+                    "requirement parsed from GAP source document",
+                    "implementation evidence found in product code",
+                    "test evidence found in automated tests",
+                ],
+            },
+            "blocked_total": len(blockers),
+            "by_status": _count_by(req.status for req in blockers),
+            "by_priority": _count_by(req.priority for req in blockers),
+            "blocking_requirement_ids": blocker_ids,
+            "blockers": [req.to_dict() for req in blockers] if include_requirements else [],
         }
 
 
@@ -363,6 +418,11 @@ def _count_by(values: Iterable[str]) -> dict[str, int]:
 
 def _ratio(numerator: int, denominator: int) -> float:
     return round(numerator / denominator, 4) if denominator else 0.0
+
+
+def _priority_rank(priority: str) -> int:
+    match = re.fullmatch(r"P(\d+)", priority.upper())
+    return int(match.group(1)) if match else 99
 
 
 def _rel(path: Path, repo_root: Path) -> str:

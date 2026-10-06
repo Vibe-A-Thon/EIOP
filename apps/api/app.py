@@ -1336,6 +1336,31 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         report["requirements"] = requirements if include_requirements else []
         return report
 
+    @app.get("/api/v1/gaps/completion-gate")
+    def gaps_completion_gate(
+        doc_set: str = Query(default="gap", pattern="^(gap|g2)$"),
+        max_priority: str = Query(default="P0", pattern="^P[0-9]+$"),
+        include_requirements: bool = Query(default=True),
+    ):
+        from eoip.gaps.coverage import (
+            G2_IMPLEMENTATION_DOC,
+            G2_REQUIREMENTS_DOC,
+            build_gap_coverage_report,
+        )
+
+        repo_root = Path(__file__).resolve().parents[2]
+        kwargs = (
+            {"requirements_doc": G2_REQUIREMENTS_DOC, "implementation_doc": G2_IMPLEMENTATION_DOC}
+            if doc_set == "g2"
+            else {}
+        )
+        gate = build_gap_coverage_report(repo_root, **kwargs).completion_gate(
+            max_priority=max_priority,
+            include_requirements=include_requirements,
+        )
+        gate["doc_set"] = doc_set
+        return gate
+
     @app.get("/api/v1/gaps/requirements/{requirement_id}")
     def gap_requirement(requirement_id: str, doc_set: str = Query(default="gap", pattern="^(gap|g2)$")):
         from eoip.gaps.coverage import (

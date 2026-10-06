@@ -36,6 +36,16 @@ def main() -> int:
         action="store_true",
         help="Return exit code 1 when any P0 GAP requirement has no code/test evidence",
     )
+    parser.add_argument(
+        "--fail-on-gate",
+        action="store_true",
+        help="Return exit code 1 when the configured completion gate fails",
+    )
+    parser.add_argument(
+        "--gate-priority",
+        default="P0",
+        help="Highest priority required by --fail-on-gate, e.g. P0 or P1",
+    )
     args = parser.parse_args()
 
     root = Path(args.project_root).resolve()
@@ -44,8 +54,13 @@ def main() -> int:
         if args.doc_set == "g2"
         else {}
     )
-    report = build_gap_coverage_report(root, **kwargs).to_dict()
+    coverage = build_gap_coverage_report(root, **kwargs)
+    report = coverage.to_dict()
     report["doc_set"] = args.doc_set
+    report["completion_gate"] = coverage.completion_gate(
+        max_priority=args.gate_priority,
+        include_requirements=False,
+    )
     payload = json.dumps(report, indent=2, sort_keys=True)
     if args.output:
         output = Path(args.output)
@@ -60,6 +75,8 @@ def main() -> int:
             for item in report["requirements"]
         )
         return 1 if has_planned_p0 else 0
+    if args.fail_on_gate:
+        return 0 if report["completion_gate"]["passed"] else 1
     return 0
 
 

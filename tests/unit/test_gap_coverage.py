@@ -17,16 +17,16 @@ import sys
 from pathlib import Path
 
 import pytest
-from eoip.gaps.g2_architecture import evaluate_g2_architecture_guardrails
-from eoip.gaps.g2_observability import (
-    g2_observability_contract,
-    validate_g2_observability_snapshot,
-)
 from eoip.gaps.coverage import (
     G2_IMPLEMENTATION_DOC,
     G2_REQUIREMENTS_DOC,
     build_gap_coverage_report,
     load_gap_requirements,
+)
+from eoip.gaps.g2_architecture import evaluate_g2_architecture_guardrails
+from eoip.gaps.g2_observability import (
+    g2_observability_contract,
+    validate_g2_observability_snapshot,
 )
 from eoip.graph.memory import MemoryGraphStore
 from fastapi.testclient import TestClient
@@ -78,9 +78,25 @@ def test_gap_coverage_report_distinguishes_code_and_test_evidence():
 
     assert report["total"] > 286
     assert set(report["by_status"]).issubset({"done", "partial", "planned"})
+    assert report["completion"]["done"] >= 1
+    assert report["completion_gate"]["passed"] is False
+    assert report["completion_gate"]["policy"]["max_priority"] == "P0"
     assert kgci["status"] == "done"
+    assert kgci["acceptance_issues"] == []
     assert any(ref["path"].endswith("packages/eoip/gaps/coverage.py") for ref in kgci["implementation_refs"])
     assert any(ref["path"].endswith("tests/unit/test_gap_coverage.py") for ref in kgci["test_refs"])
+
+
+@pytest.mark.req("GAP-KGCI-002", "GAP-KGCI-003")
+def test_gap_completion_gate_reports_blocking_acceptance_issues():
+    coverage = build_gap_coverage_report(Path.cwd())
+    gate = coverage.completion_gate(max_priority="P0")
+
+    assert gate["passed"] is False
+    assert gate["blocked_total"] >= 1
+    assert gate["blocking_requirement_ids"]
+    assert all(item["priority"] == "P0" for item in gate["blockers"])
+    assert all(item["acceptance_issues"] for item in gate["blockers"])
 
 
 @pytest.mark.req("GAP-KGCI-002")
@@ -211,6 +227,27 @@ def test_gap_coverage_cli_writes_json_and_can_fail_planned_p0(tmp_path):
     )
     assert gate.returncode == 1
 
+    configured_gate = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "scripts.gap_coverage",
+            "--project-root",
+            ".",
+            "--output",
+            str(tmp_path / "completion-gate.json"),
+            "--fail-on-gate",
+            "--gate-priority",
+            "P0",
+        ],
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    assert configured_gate.returncode == 1
+    gate_data = json.loads((tmp_path / "completion-gate.json").read_text(encoding="utf-8"))
+    assert gate_data["completion_gate"]["passed"] is False
+
 
 @pytest.mark.req("GAP-CP-009", "GAP-KGCI-002")
 def test_gap_coverage_api_exposes_filtered_report():
@@ -229,6 +266,13 @@ def test_gap_coverage_api_exposes_filtered_report():
     assert g2_summary.status_code == 200
     assert g2_summary.json()["doc_set"] == "g2"
     assert g2_summary.json()["total"] > 250
+
+    gate = client.get("/api/v1/gaps/completion-gate?max_priority=P0&include_requirements=false")
+    assert gate.status_code == 200
+    assert gate.json()["doc_set"] == "gap"
+    assert gate.json()["passed"] is False
+    assert gate.json()["blockers"] == []
+    assert gate.json()["blocked_total"] >= 1
 
     g2_item = client.get("/api/v1/gaps/requirements/G2-ARCH-001?doc_set=g2")
     assert g2_item.status_code == 200
