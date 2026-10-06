@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import GraphCanvas, {palette} from './GraphCanvas.jsx';
 import {Icon, Tip} from './icons.jsx';
 import KGRExplorer from './kgr/KGRExplorer.jsx';
@@ -795,7 +795,11 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [health, setHealth] = useState('checking');
 
-  async function api(path, body, method) {
+  // useCallback is required: child components (Studio, admin panels) hold
+  // `api`/`run` in effect dependency arrays. Recreating these closures on
+  // every render would re-fire those effects on each state change and starve
+  // the UI (observed as an infinite schema-reload loop clearing error toasts).
+  const api = useCallback(async (path, body, method) => {
     const response = await fetch(path, {method: method || (body === undefined ? 'GET' : 'POST'), headers: {'Authorization': `Bearer ${token}`, ...(body !== undefined ? {'Content-Type': 'application/json'} : {})}, ...(body !== undefined ? {body: JSON.stringify(body)} : {})});
     const contentType = response.headers.get('content-type') || '';
     const data = contentType.includes('json') ? await response.json() : await response.text();
@@ -806,11 +810,11 @@ export default function App() {
       throw exception;
     }
     return data;
-  }
-  async function run(action) {
+  }, [token]);
+  const run = useCallback(async action => {
     setBusy(true); setError(''); setErrorMeta('');
     try {await action();} catch (exception) {setError(exception.message || 'The operation could not be completed.'); setErrorMeta(exception.correlationId ? `Correlation ID: ${exception.correlationId}` : 'Check that the local API and graph services are available.');} finally {setBusy(false);}
-  }
+  }, []);
   async function refresh() {const [nextStats, nextSystem, nextJobs] = await Promise.all([api('/api/v1/admin/stats'), api('/api/v1/admin/system'), api('/api/v1/admin/jobs')]); setStats(nextStats); setSystem(nextSystem); setJobs(nextJobs);}
   async function login(event) {event.preventDefault(); await run(async () => {await refresh(); sessionStorage.setItem('eoip-token', token); setAuthenticated(true);});}
   function disconnect() {sessionStorage.removeItem('eoip-token'); setToken(''); setAuthenticated(false); setStats(null); setSystem(null); setGraph(emptyGraph); setSelected(null);}

@@ -288,6 +288,8 @@
       "focused_pass5_verification_passed": 31,
       "focused_pass5_verification_failed": 0,
       "focused_pass5_verification_command": "pytest -q tests/unit/test_graph_backends.py tests/unit/test_federation_planner.py tests/unit/test_ops.py",
+      "pass6_frontend_stability_fix": "apps/web/src/App.jsx api/run closures stabilized with useCallback; eliminated infinite child-effect re-render loop (schema reload ~22/s) that also cleared error toasts",
+      "pass6_playwright_e2e": {"passed": 14, "skipped": 5, "failed": 0, "command": "PLAYWRIGHT_BASE_URL=http://localhost:8080 npx playwright test", "verified_at": "2026-10-06"},
       "total_test_cases": 1921,
       "junit_receipt": "test-results/enterprise-code-ingestion-final-junit.xml",
       "verified_at": "2026-10-06",

@@ -1,4 +1,4 @@
-﻿# EOIP Assessed Gap Report
+# EOIP Assessed Gap Report
 
 **Generated**: 2026-10-05
 **Updated**: 2026-10-06 (Pass 7 future-scope slices 1-2 - semantic federation, governance, rules, catalog, ops, lifecycle)
@@ -579,6 +579,7 @@ Tests: `tests/unit/test_graph_backends.py`
 - **Frontend production build**: `npm run build` in `apps/web` completed successfully with Vite's large-chunk warning only.
 - **Focused Pass 6 verification**: `python -m pytest tests/unit/test_kgr_competitive_parity.py tests/unit/test_production_topology.py tests/unit/test_deployment_artifacts.py tests/unit/test_extended_api_routes.py` returned **36 passed, 0 failed**.
 - **Worker/HA follow-up verification**: `python -m pytest tests/unit/test_ha_lease.py tests/unit/test_production_topology.py tests/unit/test_deployment_artifacts.py tests/unit/test_extended_api_routes.py tests/unit/test_file_ingestion.py tests/unit/test_gitlab_ingestion.py` returned **44 passed, 0 failed** after worker lease gating.
+- **Pass 6 frontend stability fix verification**: fixed a real defect where `api`/`run` closures in `apps/web/src/App.jsx` were recreated every render, causing child effect dependencies to re-fire in an infinite loop (schema reload ~22/s, which also cleared user-visible error toasts). Stabilized with `useCallback`; full containerized Playwright e2e against the rebuilt stack returned **14 passed, 5 skipped, 0 failed** on 2026-10-06.
 - **Focused Pass 5 verification retained**: **31 passed, 0 failed** for `test_graph_backends.py`, `test_federation_planner.py`, and `test_ops.py` on 2026-10-06.
 
 ### 11.3 New Tests Added (Pass 4 + Pass 5 + Pass 6)
