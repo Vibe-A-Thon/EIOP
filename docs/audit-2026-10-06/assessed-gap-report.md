@@ -1,8 +1,8 @@
 ﻿# EOIP Assessed Gap Report
 
 **Generated**: 2026-10-05
-**Updated**: 2026-10-06 (Pass 6 - challenge closure: no-code/studio/admin UX, HA/Helm/cache topology, shard planning, AuthZ UI)
-**Scope**: 67 FR + 14 NFR + 28 MVP + 286 GAPS IDs + 364 G2 IDs (full-coverage rerun) + Federation + Ops + Pass 6 challenge closure
+**Updated**: 2026-10-06 (Pass 6 final verification - challenge closure, HA worker lease gating, full regression + web build)
+**Scope**: 67 FR + 14 NFR + 28 MVP + 286 GAPS IDs + 364 G2 IDs (full-coverage rerun) + Federation + Ops + Pass 6 final challenge closure
 **Method**: Multi-agent codebase verification + automated code-evidence scan (`g2-gap-coverage-rerun.json`) + line-oriented scan of every Markdown file in the checkout
 **Spec sources**: `03-functional-requirements.md` (67 FR), `04-non-functional-requirements.md` (14 NFR), `MVP-requirements.md` (28 MVP), `gaps-requirements.md` (286 GAP), `gaps2-requirements.md` (364 G2 IDs per rerun)
 **Supersedes**: All previous audit files in this directory â€” `gap-report.md`, `full-doc-gap-report.md`, `mvp-gap-report.md`, `current-gap-report.md`, `completion-checklist.md`, `test-report.md`, `phase-1-spec.md`, `live-gap-coverage.json`, `g2-gap-coverage-rerun.json`
@@ -10,6 +10,8 @@
 ---
 
 ## Executive Summary
+
+**Current status (Pass 6 final)**: EOIP is **100% complete by code-evidence audit policy** for the audited scope in this report. Core FR, NFR, MVP, Phase C, GAPS Phase 0-1, G2 P0-P10, and the prior 20 Challenge items are all marked **Done** with implementation evidence.
 
 | Category | Total | Done | Challenge | Future Scope |
 |----------|-------|------|-----------|--------------|
@@ -28,9 +30,18 @@
 | Pass 6 Challenge Closure | 20 | 20 | 0 | â€” |
 | **Totals (audited scope)** | **551** | **551** | **0** | **241** |
 
-The core platform is **100% Done** for all Core FR + NFR + MVP + Phase C requirements (130/130). Pass 6 closes the prior 20 Challenge items in code/config: no-code/studio UX, KGR minimap/selection/grouping, admin metrics/AuthZ screens, OpenTelemetry/Kubernetes optional extras, HA Compose, Helm, Redis cache topology, and shard planning. Live multi-node infrastructure certification remains environment-specific.
+The core platform is **100% Done** for all Core FR + NFR + MVP + Phase C requirements (130/130). Pass 6 closes the prior 20 Challenge items in code/config: no-code/studio UX, KGR minimap/selection/grouping, admin metrics/AuthZ screens, OpenTelemetry/Kubernetes optional extras, HA Compose, Helm, optional Redis cache topology, shard planning, and HA worker lease gating.
 
 **Core FR/NFR/MVP completion: 109/109 = 100%**
+
+**Latest verification**:
+
+- `python -m pytest`: **1911 passed, 33 skipped, 0 failures, 0 errors, 1 warning**
+- `npm run build` in `apps/web`: **passed** with Vite large-chunk warning only
+- Focused Pass 6 tests: **36 passed, 0 failed**
+- Worker/HA follow-up tests after lease gating: **44 passed, 0 failed**
+
+**Remaining external gate**: live multi-node HA/Kubernetes/HugeGraph-cluster certification still requires target infrastructure. This is an environment certification gate, not an open application development item in the audited code scope.
 
 ### Repository-wide Markdown Audit Addendum (2026-10-06)
 
@@ -70,7 +81,7 @@ Key repository documentation findings:
 | `current-gap-report.md` | Automated doc ID scan | **Superseded** â€” mechanical scan, not semantic review |
 | `live-gap-coverage.json` | GAP automated code scan (28/296 done by code ref) | **Superseded** â€” incorporated in Section 8 |
 | `g2-gap-coverage-rerun.json` | G2 automated code scan (364/364 done, done_ratio=1.0) | **Superseded** â€” incorporated in Section 9 |
-| `assessed-gap-report.md` (Pass 1-4) | Multi-agent verification | **Superseded by this Pass 5** |
+| `assessed-gap-report.md` (Pass 1-5) | Multi-agent verification | **Superseded by this Pass 6 final report** |
 
 ### 0.2 Policy Reconciliation
 
@@ -97,10 +108,10 @@ The 181-file Markdown audit found three documentation strata:
 | Stratum | Current Handling |
 |---------|------------------|
 | Normative/spec docs | `EOIP-engg-doc-pkg/*requirements*.md`, `gaps*.md`, implementation work-package docs, and architecture docs define the requirement universe. |
-| Current implementation docs | `README.md`, `docs/api-reference.md`, `docs/connectors.md`, `docs/agents.md`, `docs/rag.md`, `docs/query-engine.md`, `docs/graph-algorithms.md`, `docs/ontology.md`, `docs/ingestion.md`, `docs/code-graph.md`, and `eoip-engg-doc-pkg/76-multi-backend.md` align with the Pass 5 implementation claims. |
+| Current implementation docs | `README.md`, `docs/api-reference.md`, `docs/connectors.md`, `docs/agents.md`, `docs/rag.md`, `docs/query-engine.md`, `docs/graph-algorithms.md`, `docs/ontology.md`, `docs/ingestion.md`, `docs/code-graph.md`, and `eoip-engg-doc-pkg/76-multi-backend.md` align with the Pass 5 and Pass 6 implementation claims. |
 | Historical audit/coordination docs | `context.md`, `memory.md`, `checklist.md`, tickets, and earlier audit files preserve prior conservative statuses and pending-release language. They should be read as history unless they name a still-open external gate. |
 
-No new core FR/NFR/MVP implementation gaps were discovered in the Markdown pass. The remaining non-Done items are the same 20 Challenge items already recorded in this assessed report: 8 GAP items and 12 G2 items requiring frontend-only work, external infrastructure, enterprise HugeGraph features, Kubernetes/Redis, or live cloud/service endpoints.
+No new core FR/NFR/MVP implementation gaps were discovered in the Markdown pass. The prior 20 Challenge items recorded in earlier assessed states are now closed in Pass 6; live infrastructure exercises remain external certification gates.
 
 ---
 
@@ -425,8 +436,8 @@ Tests: `tests/unit/test_agent_analytics.py` â€” 14 cases.
 | GAP-NOCODE-001 | No-code connector builder UI | **Done** | Admin source onboarding and connector catalog UI in `apps/web/src/App.jsx` |
 | GAP-NOCODE-002 | No-code mapping designer | **Done** | `NoCodeStudio` mapping table designer with config-as-code preview |
 | GAP-NOCODE-003 | No-code pipeline orchestrator | **Done** | `NoCodeStudio` pipeline DAG editor |
-| GAP-PERF-001 | HugeGraph cluster horizontal scaling | **Done** | `packages/eoip/ops/production.py`, `/api/v1/ops/ha-topology`, `deploy/docker-compose.ha.yml`, Helm values |
-| GAP-PERF-002 | HugeGraph distributed storage backend | **Done** | `EOIP_GRAPH_CLUSTER_MODE`, Helm `hugegraph.cluster.storageBackend`, logical shard plan API |
+| GAP-PERF-001 | HugeGraph cluster horizontal scaling | **Done** | `packages/eoip/ops/production.py`, `/api/v1/ops/ha-topology`, `deploy/docker-compose.ha.yml`, Helm replica/HPA values, worker leader lease gating in `apps/worker/main.py` |
+| GAP-PERF-002 | HugeGraph distributed storage backend | **Done** | `EOIP_GRAPH_CLUSTER_MODE`, HA Compose HugeGraph PD/Store profiles, `build_shard_plan()`, `/api/v1/ops/shard-plan` |
 
 ### 8.3 Pass 5 New: Federation Planner (GAP-FABRIC-001..008)
 
@@ -484,10 +495,10 @@ Tests: `tests/unit/test_agent_analytics.py` â€” 14 cases.
 | G2-ADMIN-003 | Admin RBAC policy editor | **Done** | `AdminSecurity` YAML policy editor and authorization evaluator |
 | G2-SRC-OTEL-LIB | OpenTelemetry SDK integration | **Done** | `pyproject.toml` `otel`/`enterprise` extras; `connectors/otel.py` |
 | G2-SRC-K8S | Kubernetes API live discovery | **Done** | `pyproject.toml` `k8s`/`enterprise` extras; `connectors/runtime_infra.py` |
-| G2-DEPLOY-HA | High-availability deployment mode | **Done** | `deploy/docker-compose.ha.yml`, `packages/eoip/ops/production.py`, `/api/v1/ops/ha-topology` |
+| G2-DEPLOY-HA | High-availability deployment mode | **Done** | `deploy/docker-compose.ha.yml`, `packages/eoip/ops/production.py`, `/api/v1/ops/ha-topology`, worker lease gating in `apps/worker/main.py` |
 | G2-DEPLOY-HELM | Helm chart for Kubernetes | **Done** | `deploy/helm/eoip/Chart.yaml`, `values.yaml`, templates |
 | G2-SCALE-SHARD | Graph sharding / partitioning | **Done** | `build_shard_plan()` and `/api/v1/ops/shard-plan` |
-| G2-SCALE-CACHE | Distributed caching layer | **Done** | Redis HA overlay, Helm Redis, `CacheTopology` |
+| G2-SCALE-CACHE | Distributed caching layer | **Done** | optional Helm Redis, `CacheTopology`, `packages/eoip/query/distributed_cache.py`, `EOIP_REDIS_URL` wiring |
 
 ---
 
@@ -526,27 +537,28 @@ Tests: `tests/unit/test_graph_backends.py`
 
 ---
 
-## 11. Test Coverage (Verified 2026-10-06, Pass 5)
+## 11. Test Coverage (Verified 2026-10-06, Pass 6 Final)
 
 ### 11.1 Test Suite Summary
 
 | Category | Files | Result |
 |----------|-------|--------|
-| Unit tests | 148+ | **PASS** |
+| Unit tests | 195 observed | **PASS** |
 | Security tests | 4 | **PASS** |
 | Performance tests | 2 | **PASS** |
 | E2E tests | 5 | **PASS** |
 | Contract tests | 3 | **PASS** |
-| **Total** | **162+** | **PASS** |
+| **Total** | **195+ observed** | **PASS** |
 
 ### 11.2 Latest Test Run Results
 
-- **Full regression**: **1,897 passed, 24 skipped, 0 failures, 0 errors** (JUnit: `enterprise-code-ingestion-final-junit.xml`)
-- **Total test cases**: 1,921 (per completion-checklist.md)
-- **Unit suite**: 1,792 passed, 10 skipped, 0 failures
-- **Focused current Pass 5 verification**: **31 passed, 0 failed** for `test_graph_backends.py`, `test_federation_planner.py`, and `test_ops.py` on 2026-10-06.
+- **Full regression**: `python -m pytest` returned **1911 passed, 33 skipped, 0 failures, 0 errors, 1 warning** on 2026-10-06.
+- **Frontend production build**: `npm run build` in `apps/web` completed successfully with Vite's large-chunk warning only.
+- **Focused Pass 6 verification**: `python -m pytest tests/unit/test_kgr_competitive_parity.py tests/unit/test_production_topology.py tests/unit/test_deployment_artifacts.py tests/unit/test_extended_api_routes.py` returned **36 passed, 0 failed**.
+- **Worker/HA follow-up verification**: `python -m pytest tests/unit/test_ha_lease.py tests/unit/test_production_topology.py tests/unit/test_deployment_artifacts.py tests/unit/test_extended_api_routes.py tests/unit/test_file_ingestion.py tests/unit/test_gitlab_ingestion.py` returned **44 passed, 0 failed** after worker lease gating.
+- **Focused Pass 5 verification retained**: **31 passed, 0 failed** for `test_graph_backends.py`, `test_federation_planner.py`, and `test_ops.py` on 2026-10-06.
 
-### 11.3 New Tests Added (Pass 4 + Pass 5)
+### 11.3 New Tests Added (Pass 4 + Pass 5 + Pass 6)
 
 | File | Tests | Coverage |
 |------|-------|----------|
@@ -561,6 +573,9 @@ Tests: `tests/unit/test_graph_backends.py`
 | `test_graph_backends.py` | *new* | Backend registry, Neptune adapter, config loading |
 | `test_format_converter.py` | *new* | Format converter correctness |
 | `test_ingestion_api.py` | *new* | Ingestion API endpoints |
+| `test_production_topology.py` | *new* | HA topology, cache topology, shard plan, Helm summary |
+| `test_deployment_artifacts.py` | *new* | HA Compose and Helm chart structure |
+| `test_optional_integrations.py` | *new* | Optional OpenTelemetry, Kubernetes, Redis integration helpers |
 
 ### 11.4 Live Integration Evidence
 
@@ -607,7 +622,7 @@ Tests: `tests/unit/test_graph_backends.py`
 
 ---
 
-## 13. Documentation Inventory (Pass 5)
+## 13. Documentation Inventory (Pass 5 + Pass 6)
 
 New documentation files created during this audit cycle:
 
@@ -645,4 +660,4 @@ New documentation files created during this audit cycle:
 
 ---
 
-*Pass 6 - 2026-10-06. Challenge closure implementation + focused tests + web build. Supersedes all prior audit files in this directory.*
+*Pass 6 final - 2026-10-06. Challenge closure implementation + HA worker lease gating + full pytest regression + web build. Supersedes all prior audit files in this directory.*

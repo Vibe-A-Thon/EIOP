@@ -1,7 +1,7 @@
 {
   "metadata": {
     "generated": "2026-10-05",
-    "updated": "2026-10-06 (Pass 6 - challenge closure: no-code/studio/admin UX, HA/Helm/cache topology, shard planning, AuthZ UI)",
+    "updated": "2026-10-06 (Pass 6 final verification - challenge closure, HA worker lease gating, full regression + web build)",
     "supersedes": [
       "gap-report.md",
       "gap-report.json",
@@ -18,7 +18,7 @@
       "g2-gap-coverage-rerun.json",
       "documentation-inventory.json"
     ],
-    "scope": "67 FR + 14 NFR + 28 MVP + 286 GAP spec IDs + 364 G2 IDs + Federation + Ops + Pass 6 challenge closure",
+    "scope": "67 FR + 14 NFR + 28 MVP + 286 GAP spec IDs + 364 G2 IDs + Federation + Ops + Pass 6 final challenge closure",
     "method": "Multi-agent codebase verification + automated code-evidence scan (g2-gap-coverage-rerun.json) + line-oriented scan of every Markdown file in the checkout",
     "spec_sources": {
       "functional": "EOIP-engg-doc-pkg/03-functional-requirements.md (67 FR-* IDs)",
@@ -49,7 +49,7 @@
         },
         {
           "name": "Current implementation docs",
-          "handling": "README.md, docs/api-reference.md, docs/connectors.md, docs/agents.md, docs/rag.md, docs/query-engine.md, docs/graph-algorithms.md, docs/ontology.md, docs/ingestion.md, docs/code-graph.md, and eoip-engg-doc-pkg/76-multi-backend.md align with Pass 5 implementation claims."
+          "handling": "README.md, docs/api-reference.md, docs/connectors.md, docs/agents.md, docs/rag.md, docs/query-engine.md, docs/graph-algorithms.md, docs/ontology.md, docs/ingestion.md, docs/code-graph.md, and eoip-engg-doc-pkg/76-multi-backend.md align with Pass 5 and Pass 6 implementation claims."
         },
         {
           "name": "Historical audit/coordination docs",
@@ -75,6 +75,32 @@
         "date": "2026-10-06",
         "command": "pytest -q tests/unit/test_graph_backends.py tests/unit/test_federation_planner.py tests/unit/test_ops.py",
         "passed": 31,
+        "failed": 0
+      },
+      "verified_at": "2026-10-06",
+      "full_regression": {
+        "command": "python -m pytest",
+        "passed": 1911,
+        "skipped": 33,
+        "failed": 0,
+        "errors": 0,
+        "warnings": 1,
+        "duration_seconds": 668.38
+      },
+      "frontend_build": {
+        "command": "npm run build",
+        "working_directory": "apps/web",
+        "status": "passed",
+        "warning": "Vite reported chunks larger than 500 kB after minification."
+      },
+      "pass6_focused_verification": {
+        "command": "python -m pytest tests/unit/test_kgr_competitive_parity.py tests/unit/test_production_topology.py tests/unit/test_deployment_artifacts.py tests/unit/test_extended_api_routes.py",
+        "passed": 36,
+        "failed": 0
+      },
+      "ha_worker_followup_verification": {
+        "command": "python -m pytest tests/unit/test_ha_lease.py tests/unit/test_production_topology.py tests/unit/test_deployment_artifacts.py tests/unit/test_extended_api_routes.py tests/unit/test_file_ingestion.py tests/unit/test_gitlab_ingestion.py",
+        "passed": 44,
         "failed": 0
       }
     },
@@ -185,8 +211,8 @@
       "unit_tests_passed": 1792,
       "unit_tests_skipped": 10,
       "unit_tests_failed": 0,
-      "full_regression_passed": 1897,
-      "full_regression_skipped": 24,
+      "full_regression_passed": 1911,
+      "full_regression_skipped": 33,
       "full_regression_failed": 0,
       "focused_pass5_verification_passed": 31,
       "focused_pass5_verification_failed": 0,
@@ -229,17 +255,41 @@
         },
         {
           "file": "test_graph_backends.py",
-          "note": "Pass 5 new \u2014 backend registry, Neptune adapter"
+          "note": "Pass 5 new — backend registry, Neptune adapter"
         },
         {
           "file": "test_format_converter.py",
-          "note": "Pass 5 new \u2014 format converter correctness"
+          "note": "Pass 5 new — format converter correctness"
         },
         {
           "file": "test_ingestion_api.py",
-          "note": "Pass 5 new \u2014 ingestion API endpoints"
+          "note": "Pass 5 new — ingestion API endpoints"
+        },
+        {
+          "file": "test_production_topology.py",
+          "note": "Pass 6 new - HA topology, cache topology, shard plan, Helm summary"
+        },
+        {
+          "file": "test_deployment_artifacts.py",
+          "note": "Pass 6 new - HA Compose and Helm chart structure"
+        },
+        {
+          "file": "test_optional_integrations.py",
+          "note": "Pass 6 new - optional OpenTelemetry, Kubernetes, Redis integration helpers"
         }
-      ]
+      ],
+      "test_files_observed": 195,
+      "full_regression_command": "python -m pytest",
+      "full_regression_errors": 0,
+      "full_regression_warnings": 1,
+      "full_regression_duration_seconds": 668.38,
+      "frontend_build_command": "npm run build (apps/web)",
+      "frontend_build_status": "passed",
+      "frontend_build_warning": "Vite large-chunk warning only",
+      "focused_pass6_verification_passed": 36,
+      "focused_pass6_verification_failed": 0,
+      "ha_worker_followup_verification_passed": 44,
+      "ha_worker_followup_verification_failed": 0
     },
     "live_integration_evidence": {
       "application_rehearsal": "183 steps passed, exit 0",
@@ -293,7 +343,7 @@
     "documentation_inventory": [
       {
         "file": "eoip-engg-doc-pkg/06-architecture.md",
-        "coverage": "System overview, Docker services, data flows, security, storage \u2014 merged normative spec"
+        "coverage": "System overview, Docker services, data flows, security, storage — merged normative spec"
       },
       {
         "file": "docs/api-reference.md",
@@ -333,7 +383,7 @@
       },
       {
         "file": "eoip-engg-doc-pkg/76-multi-backend.md",
-        "coverage": "Multi-backend registry, Neptune adapter, config \u2014 Pass 5 new"
+        "coverage": "Multi-backend registry, Neptune adapter, config — Pass 5 new"
       },
       {
         "file": "README.md",
@@ -364,9 +414,58 @@
       {
         "component": "HA Compose and Helm artifacts",
         "module": "deploy/docker-compose.ha.yml, deploy/helm/eoip",
-        "note": "multi-replica services, Redis, health probes, Kubernetes manifests"
+        "note": "multi-replica services, optional Redis, health probes, Kubernetes manifests"
+      },
+      {
+        "component": "HA worker leader lease enforcement",
+        "module": "apps/worker/main.py, packages/eoip/ha.py",
+        "note": "Workers with EOIP_LEASE_PATH now only process jobs when holding or renewing the advisory lease; standbys idle and acquire after expiry."
       }
-    ]
+    ],
+    "latest_status": {
+      "date": "2026-10-06",
+      "status": "100% complete by code-evidence audit policy for audited scope",
+      "summary": "All audited application development items are Done; prior 20 Challenge items are closed in product code/config. Live multi-node infrastructure certification remains environment-specific.",
+      "full_regression": "python -m pytest: 1911 passed, 33 skipped, 0 failed, 0 errors, 1 warning",
+      "frontend_build": "npm run build in apps/web: passed; Vite large-chunk warning only",
+      "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope."
+    }
+  },
+  "executive_summary": {
+    "status": "100% complete by code-evidence audit policy for audited scope",
+    "pass": "Pass 6 final",
+    "updated": "2026-10-06",
+    "audited_scope": {
+      "total": 551,
+      "done": 551,
+      "challenge": 0,
+      "future_scope": 241
+    },
+    "core_completion": {
+      "core_fr_nfr_mvp": "109/109 = 100%",
+      "core_fr_nfr_mvp_phase_c": "130/130 = 100%"
+    },
+    "closed_in_pass6": {
+      "prior_challenge_items": 20,
+      "gap_challenge_items": 8,
+      "g2_challenge_items": 12,
+      "remaining_challenge_items": 0,
+      "summary": "Closed in code/config: no-code/studio UX, KGR minimap/selection/grouping, admin metrics/AuthZ screens, OpenTelemetry/Kubernetes optional extras, HA Compose, Helm, optional Redis cache topology, shard planning, and HA worker lease gating."
+    },
+    "latest_verification": {
+      "full_regression": {
+        "command": "python -m pytest",
+        "result": "1911 passed, 33 skipped, 0 failures, 0 errors, 1 warning"
+      },
+      "frontend_build": {
+        "command": "npm run build",
+        "working_directory": "apps/web",
+        "result": "passed with Vite large-chunk warning only"
+      },
+      "focused_pass6_tests": "36 passed, 0 failed",
+      "worker_ha_followup_tests": "44 passed, 0 failed after worker lease gating"
+    },
+    "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope."
   },
   "requirements": [
     {
@@ -566,7 +665,7 @@
       "title": "Multi-backend GraphStore registry",
       "priority": "P2",
       "status": "Done",
-      "evidence": "packages/eoip/graph/backends.py \u2014 hugegraph/neptune/memory, config/graph-store.yaml",
+      "evidence": "packages/eoip/graph/backends.py — hugegraph/neptune/memory, config/graph-store.yaml",
       "component": "Graph Core",
       "added_in": "Pass 5"
     },
@@ -575,7 +674,7 @@
       "title": "Amazon Neptune adapter",
       "priority": "P2",
       "status": "Done",
-      "evidence": "packages/eoip/graph/neptune.py \u2014 openCypher HTTPS, full GraphStore contract",
+      "evidence": "packages/eoip/graph/neptune.py — openCypher HTTPS, full GraphStore contract",
       "component": "Graph Core",
       "added_in": "Pass 5"
     },
@@ -656,7 +755,7 @@
       "title": "Commit-to-symbol linking",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "packages/eoip/codegraph/diff_hunk.py, ingestion/code.py \u2014 10 tests",
+      "evidence": "packages/eoip/codegraph/diff_hunk.py, ingestion/code.py — 10 tests",
       "component": "Code Graph"
     },
     {
@@ -776,7 +875,7 @@
       "title": "GraphRAG evidence retrieval",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "packages/eoip/retrieval/service.py:364-464 \u2014 EvidenceManifest, URN citations",
+      "evidence": "packages/eoip/retrieval/service.py:364-464 — EvidenceManifest, URN citations",
       "component": "RAG"
     },
     {
@@ -784,7 +883,7 @@
       "title": "Local model abstraction",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "packages/eoip/models/provider.py:1-91 \u2014 LocalModelProvider, Ollama",
+      "evidence": "packages/eoip/models/provider.py:1-91 — LocalModelProvider, Ollama",
       "component": "RAG"
     },
     {
@@ -792,7 +891,7 @@
       "title": "No mandatory vector DB",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "packages/eoip/retrieval/vectors.py:1-9 \u2014 InMemorySearchIndex",
+      "evidence": "packages/eoip/retrieval/vectors.py:1-9 — InMemorySearchIndex",
       "component": "RAG"
     },
     {
@@ -808,7 +907,7 @@
       "title": "Adaptive RAG strategy framework",
       "priority": "P3",
       "status": "Done",
-      "evidence": "packages/eoip/retrieval/strategy_registry.py \u2014 RAGStrategyPlugin, 4 built-ins, 16 tests",
+      "evidence": "packages/eoip/retrieval/strategy_registry.py — RAGStrategyPlugin, 4 built-ins, 16 tests",
       "component": "RAG"
     },
     {
@@ -824,7 +923,7 @@
       "title": "Bounded agent runtime",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "packages/eoip/agents/runtime.py:264-368 \u2014 budget clamping, circuit breaker",
+      "evidence": "packages/eoip/agents/runtime.py:264-368 — budget clamping, circuit breaker",
       "component": "Agents"
     },
     {
@@ -840,7 +939,7 @@
       "title": "Write/action approval boundary",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "packages/eoip/agents/runtime.py:42-67, contracts/tool.py:14-20 \u2014 READ_TOOLS frozenset",
+      "evidence": "packages/eoip/agents/runtime.py:42-67, contracts/tool.py:14-20 — READ_TOOLS frozenset",
       "component": "Agents"
     },
     {
@@ -848,7 +947,7 @@
       "title": "Controlled self-modification",
       "priority": "P8+",
       "status": "Done",
-      "evidence": "packages/eoip/agents/governed.py \u2014 disabled until governance exists",
+      "evidence": "packages/eoip/agents/governed.py — disabled until governance exists",
       "component": "Agents"
     },
     {
@@ -864,7 +963,7 @@
       "title": "MCP read server",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "apps/mcp/main.py \u2014 FastMCP, 17 read-only tools",
+      "evidence": "apps/mcp/main.py — FastMCP, 17 read-only tools",
       "component": "MCP"
     },
     {
@@ -912,7 +1011,7 @@
       "title": "VS Code context extension",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "apps/vscode-extension/extension.js (626 lines) \u2014 8 commands",
+      "evidence": "apps/vscode-extension/extension.js (626 lines) — 8 commands",
       "component": "VS Code"
     },
     {
@@ -930,7 +1029,7 @@
       "title": "No outbound data egress",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "tests/security/, models/provider.py \u2014 6 structural tests"
+      "evidence": "tests/security/, models/provider.py — 6 structural tests"
     },
     {
       "id": "NFR-SEC-002",
@@ -944,14 +1043,14 @@
       "title": "Input/file safety",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "packages/eoip/fileparse/, connectors/ \u2014 path validation, size limits"
+      "evidence": "packages/eoip/fileparse/, connectors/ — path validation, size limits"
     },
     {
       "id": "NFR-SEC-004",
       "title": "Prompt/tool injection defenses",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "packages/eoip/query/intelligence.py \u2014 forbids {}$\\ in params"
+      "evidence": "packages/eoip/query/intelligence.py — forbids {}$\\ in params"
     },
     {
       "id": "NFR-SEC-005",
@@ -965,7 +1064,7 @@
       "title": "Container hardening",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "tests/security/test_container_hardening.py \u2014 8 tests: non-root, read-only FS"
+      "evidence": "tests/security/test_container_hardening.py — 8 tests: non-root, read-only FS"
     },
     {
       "id": "NFR-SEC-007",
@@ -1014,7 +1113,7 @@
       "title": "Modular monolith boundary",
       "priority": "P1-MVP",
       "status": "Done",
-      "evidence": "packages/eoip/graph/store.py:1 \u2014 23+ subpackages with typed Protocol ports"
+      "evidence": "packages/eoip/graph/store.py:1 — 23+ subpackages with typed Protocol ports"
     },
     {
       "id": "NFR-PRIV-001",
@@ -1030,56 +1129,56 @@
         "id": "GAP-FABRIC-001",
         "title": "Source capability registry",
         "status": "Done",
-        "evidence": "packages/eoip/federation/planner.py \u2014 SourceCapability, SourceMode (LIVE/CACHE_TTL/MATERIALIZED/HYBRID)",
+        "evidence": "packages/eoip/federation/planner.py — SourceCapability, SourceMode (LIVE/CACHE_TTL/MATERIALIZED/HYBRID)",
         "added_in": "Pass 5"
       },
       {
         "id": "GAP-FABRIC-002",
         "title": "Federated source adapter protocol",
         "status": "Done",
-        "evidence": "federation/planner.py \u2014 SourceAdapter Protocol",
+        "evidence": "federation/planner.py — SourceAdapter Protocol",
         "added_in": "Pass 5"
       },
       {
         "id": "GAP-FABRIC-003",
         "title": "Cost-aware routing",
         "status": "Done",
-        "evidence": "federation/planner.py \u2014 authority + locality scores, prefer local/materialized",
+        "evidence": "federation/planner.py — authority + locality scores, prefer local/materialized",
         "added_in": "Pass 5"
       },
       {
         "id": "GAP-FABRIC-004",
         "title": "Fragment planner with pushdown",
         "status": "Done",
-        "evidence": "federation/planner.py \u2014 pushdown_filters, pushdown_projection",
+        "evidence": "federation/planner.py — pushdown_filters, pushdown_projection",
         "added_in": "Pass 5"
       },
       {
         "id": "GAP-FABRIC-005",
         "title": "Per-row provenance in merged results",
         "status": "Done",
-        "evidence": "federation/planner.py \u2014 provenance in FederatedResult",
+        "evidence": "federation/planner.py — provenance in FederatedResult",
         "added_in": "Pass 5"
       },
       {
         "id": "GAP-FABRIC-006",
         "title": "Offline degradation",
         "status": "Done",
-        "evidence": "federation/planner.py \u2014 marks unavailable sources, partial results continue",
+        "evidence": "federation/planner.py — marks unavailable sources, partial results continue",
         "added_in": "Pass 5"
       },
       {
         "id": "GAP-FABRIC-007",
         "title": "Explainable routing plan",
         "status": "Done",
-        "evidence": "federation/planner.py \u2014 RoutingPlan with fragment-level explanation",
+        "evidence": "federation/planner.py — RoutingPlan with fragment-level explanation",
         "added_in": "Pass 5"
       },
       {
         "id": "GAP-FABRIC-008",
         "title": "Built-in adapters",
         "status": "Done",
-        "evidence": "federation/planner.py \u2014 InMemoryDemoAdapter, LocalGraphStoreAdapter",
+        "evidence": "federation/planner.py — InMemoryDemoAdapter, LocalGraphStoreAdapter",
         "added_in": "Pass 5"
       }
     ],
@@ -1088,7 +1187,7 @@
         "id": "GAP-OPS-001",
         "title": "Preflight checks before traffic admission",
         "status": "Done",
-        "evidence": "packages/eoip/ops/preflight.py \u2014 CheckResult(pass/warn/fail), env vars, ontology, graph reachability, API token, disk space, port",
+        "evidence": "packages/eoip/ops/preflight.py — CheckResult(pass/warn/fail), env vars, ontology, graph reachability, API token, disk space, port",
         "added_in": "Pass 5"
       }
     ],
@@ -1139,15 +1238,15 @@
         "id": "GAP-PERF-001",
         "title": "HugeGraph cluster horizontal scaling",
         "status": "Done",
-        "reason": "Implemented in Pass 6 with UI/deployment support; live external infrastructure validation is environment-specific.",
-        "evidence": "apps/web/src/App.jsx; apps/web/src/kgr/KGRExplorer.jsx; packages/eoip/ops/production.py; deploy/docker-compose.ha.yml; deploy/helm/eoip"
+        "reason": "Implemented in Pass 6; live external cluster certification remains environment-specific.",
+        "evidence": "packages/eoip/ops/production.py, /api/v1/ops/ha-topology, deploy/docker-compose.ha.yml, Helm replica/HPA values, worker leader lease gating in apps/worker/main.py"
       },
       {
         "id": "GAP-PERF-002",
         "title": "HugeGraph distributed storage backend",
         "status": "Done",
-        "reason": "Implemented in Pass 6 with UI/deployment support; live external infrastructure validation is environment-specific.",
-        "evidence": "apps/web/src/App.jsx; apps/web/src/kgr/KGRExplorer.jsx; packages/eoip/ops/production.py; deploy/docker-compose.ha.yml; deploy/helm/eoip"
+        "reason": "Implemented in Pass 6; live external cluster certification remains environment-specific.",
+        "evidence": "EOIP_GRAPH_CLUSTER_MODE, HA Compose HugeGraph PD/Store profiles, build_shard_plan(), /api/v1/ops/shard-plan"
       }
     ]
   },
@@ -1307,7 +1406,7 @@
         "title": "High-availability deployment mode",
         "status": "Done",
         "reason": "Implemented in Pass 6 with product support; live service/cluster certification depends on target environment.",
-        "evidence": "apps/web/src/kgr/KGRExplorer.jsx; apps/web/src/GraphCanvas.jsx; apps/web/src/App.jsx; pyproject.toml optional extras; packages/eoip/ops/production.py; deploy/docker-compose.ha.yml; deploy/helm/eoip"
+        "evidence": "deploy/docker-compose.ha.yml, packages/eoip/ops/production.py, /api/v1/ops/ha-topology, worker lease gating in apps/worker/main.py"
       },
       {
         "id": "G2-DEPLOY-HELM",
@@ -1328,22 +1427,83 @@
         "title": "Distributed caching layer",
         "status": "Done",
         "reason": "Implemented in Pass 6 with product support; live service/cluster certification depends on target environment.",
-        "evidence": "apps/web/src/kgr/KGRExplorer.jsx; apps/web/src/GraphCanvas.jsx; apps/web/src/App.jsx; pyproject.toml optional extras; packages/eoip/ops/production.py; deploy/docker-compose.ha.yml; deploy/helm/eoip"
+        "evidence": "optional Helm Redis, CacheTopology, packages/eoip/query/distributed_cache.py, EOIP_REDIS_URL wiring"
       }
     ]
   },
   "constraints": [
-    "No RBAC in MVP \u2014 single-user/local auth only",
+    "No RBAC in MVP — single-user/local auth only",
     "Temporal fields store metadata only; point-in-time snapshot queries are future phase",
     "Demo fixtures are synthetic; do not imply product RBAC or tenant isolation",
-    "Local AI only \u2014 LocalModelProvider wraps Ollama; no cloud model integration",
+    "Local AI only — LocalModelProvider wraps Ollama; no cloud model integration",
     "Backup/restore is distinct from HA/DR guarantees",
     "VS Code extension.js provides 8 commands; VSIX marketplace distribution is out of scope",
     "Performance targets are benchmark thresholds; actual p95 depends on dataset size",
     "Pass 6 closes the prior 20 Challenge items in code/config; live HA/K8s/HugeGraph-cluster exercises still require target infrastructure",
-    "Neptune backend requires AWS credentials and Neptune endpoint \u2014 not enabled in default Docker deployment",
+    "Neptune backend requires AWS credentials and Neptune endpoint — not enabled in default Docker deployment",
     "Federation planner: built-in adapters only; external federated source registration is future scope",
     "G2 automated scan done_ratio=1.0 is code-reference policy, not full semantic acceptance verification",
-    "Audit folder consolidation: docs/audit-2026-10-06 is the only current audit report folder. Older docs/audit-2026-10-04 report references are historical and the folder has been removed."
-  ]
+    "Audit folder consolidation: docs/audit-2026-10-06 is the only current audit report folder. Older docs/audit-2026-10-04 report references are historical and the folder has been removed.",
+    "Pass 6 final verification passed: python -m pytest returned 1911 passed / 33 skipped / 1 warning, and apps/web npm run build passed with only Vite large-chunk warning."
+  ],
+  "current_updates": {
+    "updated_at": "2026-10-06",
+    "pass": "Pass 6 final verification",
+    "status": "All audited implementation items Done by code-evidence policy; no remaining Challenge items in audited scope.",
+    "closed_items": {
+      "gap_challenge_items": 8,
+      "g2_challenge_items": 12,
+      "remaining_challenge_items": 0
+    },
+    "latest_implementation_updates": [
+      "KGR explorer selection, viewport/minimap wiring, and combo grouping are integrated.",
+      "No-code studio, admin security/AuthZ, and live operations panels are available in the web app.",
+      "Production topology endpoints expose HA readiness, logical sharding plans, and Helm summaries.",
+      "HA worker lease gating prevents non-leader worker replicas from processing jobs.",
+      "HA Compose and Helm artifacts describe multi-replica API/worker deployment, HugeGraph topology hooks, health probes, HPA, and optional Redis."
+    ],
+    "latest_verification": {
+      "python_full_regression": "1911 passed, 33 skipped, 0 failed, 0 errors, 1 warning",
+      "web_build": "passed with Vite large-chunk warning only",
+      "focused_pass6_tests": "36 passed, 0 failed",
+      "ha_worker_followup_tests": "44 passed, 0 failed"
+    },
+    "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope.",
+    "executive_summary": {
+      "status": "100% complete by code-evidence audit policy for audited scope",
+      "pass": "Pass 6 final",
+      "updated": "2026-10-06",
+      "audited_scope": {
+        "total": 551,
+        "done": 551,
+        "challenge": 0,
+        "future_scope": 241
+      },
+      "core_completion": {
+        "core_fr_nfr_mvp": "109/109 = 100%",
+        "core_fr_nfr_mvp_phase_c": "130/130 = 100%"
+      },
+      "closed_in_pass6": {
+        "prior_challenge_items": 20,
+        "gap_challenge_items": 8,
+        "g2_challenge_items": 12,
+        "remaining_challenge_items": 0,
+        "summary": "Closed in code/config: no-code/studio UX, KGR minimap/selection/grouping, admin metrics/AuthZ screens, OpenTelemetry/Kubernetes optional extras, HA Compose, Helm, optional Redis cache topology, shard planning, and HA worker lease gating."
+      },
+      "latest_verification": {
+        "full_regression": {
+          "command": "python -m pytest",
+          "result": "1911 passed, 33 skipped, 0 failures, 0 errors, 1 warning"
+        },
+        "frontend_build": {
+          "command": "npm run build",
+          "working_directory": "apps/web",
+          "result": "passed with Vite large-chunk warning only"
+        },
+        "focused_pass6_tests": "36 passed, 0 failed",
+        "worker_ha_followup_tests": "44 passed, 0 failed after worker lease gating"
+      },
+      "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope."
+    }
+  }
 }
