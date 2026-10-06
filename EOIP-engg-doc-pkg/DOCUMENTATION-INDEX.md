@@ -85,6 +85,8 @@
 - `72-requirement-traceability.md` — Requirement Traceability Matrix
 - `73-architecture-diagrams.md` — Architecture Diagram Catalog
 - `74-data-contracts.md` — Data Contracts
+- `75-self-review-and-gap-closure.md` — Self-Review and Gap Closure
+- `76-multi-backend.md` — Multi-Backend GraphStore (HugeGraph, Neptune, Memory)
 - `MVP-implementation-plan.md` — MVP Implementation Plan
 - `MVP-requirements.md` — MVP Requirements
 - `README.md` — Enterprise Ontology & Intelligence Platform (EOIP) — Engineering Documentation Package

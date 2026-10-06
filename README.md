@@ -1,12 +1,14 @@
 # EOIP — Enterprise Ontology & Intelligence Platform
 
-EOIP is a local-first enterprise knowledge graph platform that ingests from 24 source connectors (Jira, GitLab, GitHub, Confluence, ServiceNow, and more), links cross-domain facts into a typed property graph (HugeGraph + RocksDB), and answers questions about your codebase, work items, incidents, people, and deployments through a GraphRAG retrieval system and 20 bounded agents.
+EOIP is a local-first enterprise knowledge graph platform that ingests from 24 source connectors (Jira, GitLab, GitHub, Confluence, ServiceNow, and more), links cross-domain facts into a typed property graph, and answers questions about your codebase, work items, incidents, people, and deployments through a GraphRAG retrieval system and 20 bounded agents.
 
 **Key capabilities:**
 - 24 source connectors with checkpoint-based incremental sync
+- Multi-backend graph store: Apache HugeGraph (default), Amazon Neptune, or in-memory — via `config/graph-store.yaml`
 - 14 graph domains, 50+ vertex types, 30+ edge types
 - 6 query languages: EQL, NLQ, EOQL, OSQL, Semantic QL, raw Gremlin (admin)
 - 30+ graph algorithms: centrality, community, paths, similarity, blast radius, cycle detection
+- Federated query planner with cost-aware routing, filter/projection pushdown, and per-row provenance
 - GraphRAG with 7 retrieval strategies, stable evidence citations, no mandatory vector DB
 - 20 bounded read-only agents with circuit breaker and budget enforcement
 - 12 export formats: RDF, OWL, JSON-LD 1.1, Cypher, Gremlin, SPARQL, SHACL, GQL, and more
@@ -48,7 +50,7 @@ symbols, documentation, merge-request metadata, and pipeline metadata.
 
 | Guide | Description |
 |-------|-------------|
-| [Architecture](docs/architecture.md) | System overview, Docker services, data flows, storage, security |
+| [Architecture](eoip-engg-doc-pkg/06-architecture.md) | System overview, Docker services, data flows, storage, security |
 | [API Reference](docs/api-reference.md) | All REST endpoints with request/response examples |
 | [Connectors](docs/connectors.md) | All 24 source connectors with configuration |
 | [Agents](docs/agents.md) | Agent framework, 20 agents, tool access policy |
@@ -58,11 +60,12 @@ symbols, documentation, merge-request metadata, and pipeline metadata.
 | [Ontology](docs/ontology.md) | Vocabulary, vertex/edge labels, schema generation, SKOS |
 | [Ingestion](docs/ingestion.md) | Ingestion pipeline, DLQ, checkpointing, semantic pipeline |
 | [Code Graph](docs/code-graph.md) | Code parser, symbol extraction, CommitSymbolLink, diff hunks |
+| [Multi-Backend](eoip-engg-doc-pkg/76-multi-backend.md) | HugeGraph, Neptune, memory backends — config and factory |
 | [File Parsing](docs/file-parsing.md) | .docx, .xlsx, .pptx, .pdf, .csv, .txt ingestion |
 | [Docker Local](docs/docker-local.md) | Full Docker runbook, backup/restore, VS Code extension |
 | [Deep Agents & XAI](docs/deep-agents-xai.md) | Agent contracts, orchestration, approval workflows |
 | [Benchmarking](docs/benchmarking.md) | Performance benchmarks |
-| [Audit Report](docs/audit-2026-10-04/assessed-gap-report.md) | Pass 4 — comprehensive completion audit (2026-10-06) |
+| [Audit Report](docs/audit-2026-10-06/assessed-gap-report.md) | Pass 5 — comprehensive completion audit (2026-10-06) |
 
 ## On-prem source connectors
 
