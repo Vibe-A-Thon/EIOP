@@ -1,0 +1,155 @@
+# Default values for the EOIP chart.
+# Reference: deploy/docker-compose.yml for the single-node equivalent.
+
+image:
+  registry: ""            # e.g. registry.example.com/team ; empty = Docker Hub/local
+  repository: eoip-app
+  tag: "local"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  name: ""
+
+# ---------------------------------------------------------------------------
+# Component replicas and resources
+# ---------------------------------------------------------------------------
+api:
+  replicaCount: 2
+  port: 8000
+  resources:
+    requests: { cpu: 250m, memory: 512Mi }
+    limits:   { cpu: "1",   memory: 1Gi }
+  podAnnotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  # HA default: spread API replicas across nodes (overridden by .affinity).
+  podAntiAffinity:
+    enabled: true
+    topologyKey: kubernetes.io/hostname
+
+mcp:
+  enabled: true
+  replicaCount: 1
+  port: 8001
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits:   { cpu: 500m, memory: 512Mi }
+  podAntiAffinity:
+    enabled: false
+    topologyKey: kubernetes.io/hostname
+
+worker:
+  enabled: true
+  replicaCount: 2
+  # Filesystem-advisory leader lease (packages/eoip/ha.py). Requires a
+  # ReadWriteMany volume shared by all worker replicas.
+  lease:
+    path: /data/leases/worker.lock
+    ttlSeconds: 30
+  resources:
+    requests: { cpu: 250m, memory: 512Mi }
+    limits:   { cpu: "1",   memory: 1Gi }
+  podAntiAffinity:
+    enabled: true
+    topologyKey: kubernetes.io/hostname
+
+# Shared data volume (worker lease + job state). Must be RWX for worker HA.
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteMany
+  size: 10Gi
+
+# ---------------------------------------------------------------------------
+# Application configuration (mirrors the compose `environment` block)
+# ---------------------------------------------------------------------------
+config:
+  dataDir: /data
+  loadDemo: "true"
+  apiToken: ""            # required; prefer existingSecret
+  existingSecret: ""      # name of a Secret with EOIP_API_TOKEN / EOIP_HUGEGRAPH_PASSWORD keys
+  extraEnv: []
+
+# ---------------------------------------------------------------------------
+# Graph store backends (rendered into graph-store.yaml ConfigMap)
+# ---------------------------------------------------------------------------
+hugegraph:
+  enabled: true
+  # In-cluster service name when using the hugegraph sub-chart or a manually
+  # deployed HugeGraph service; overridden by externalUrl.
+  url: http://hugegraph-server:8080
+  graph: hugegraph
+  username: admin
+  password: ""          # prefer config.existingSecret
+  # NOTE: the HugeGraph PD/Store distributed topology (G2-SCALE-SHARD) is an
+  # enterprise/infra deployment; this chart only consumes the client endpoint.
+
+neptune:
+  enabled: false
+  url: https://your-neptune-endpoint:8182
+  database: neptune
+  verifyTls: true
+  # Set config.graphBackend=neptune to route all graph traffic to Neptune.
+
+ollama:
+  enabled: false
+  url: http://ollama:11434
+  model: ""
+  existingSecret: ""
+
+graphBackend: hugegraph   # hugegraph | neptune | memory
+
+# ---------------------------------------------------------------------------
+# Optional distributed cache (G2-SCALE-CACHE). Deploys a single-replica Redis
+# and points EOIP_REDIS_URL at it. The app falls back to its in-memory cache
+# when disabled or unreachable (packages/eoip/query/distributed_cache.py).
+# ---------------------------------------------------------------------------
+redis:
+  enabled: false
+  url: redis://eoip-redis:6379/0
+  image: redis:8.2-alpine
+
+# ---------------------------------------------------------------------------
+# Service / ingress
+# ---------------------------------------------------------------------------
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: false
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: eoip.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# ---------------------------------------------------------------------------
+# HPA for the API tier (requires metrics-server)
+# ---------------------------------------------------------------------------
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities: { drop: ["ALL"] }

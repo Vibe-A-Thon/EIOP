@@ -1,0 +1,105 @@
+/* Graph explorer enhancements (G2-UX-GRAPH-001/002/003).
+   Theme is applied via the .eoip-theme-* wrapper class on the graph container. */
+
+.graph-enhancements {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.enh-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 8px;
+  border: 1px solid var(--graph-line, var(--line, #e6eaf1));
+  border-radius: 10px;
+  background: var(--graph-surface, var(--panel, #fff));
+}
+
+.enh-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--graph-line, var(--line, #e6eaf1));
+  border-radius: 8px;
+  background: var(--graph-surface, var(--panel, #fff));
+  color: var(--graph-text, var(--ink, #23304a));
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.enh-button:hover { border-color: #8a71ec; }
+.enh-button.is-active { background: var(--violet-soft, #f0edff); border-color: var(--violet, #7054e8); color: var(--violet-dark, #5137c5); }
+.enh-button:disabled { opacity: .5; cursor: not-allowed; }
+
+.enh-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--graph-text, var(--ink, #23304a));
+}
+
+.enh-field select {
+  width: auto;
+  height: 30px;
+  font-size: 12px;
+}
+
+.lasso-shell { position: relative; min-height: 0; }
+.lasso-shell.lasso-enabled { cursor: crosshair; }
+
+.lasso-rect {
+  position: absolute;
+  z-index: 60;
+  border: 1px dashed var(--violet, #7054e8);
+  background: rgba(112, 84, 232, .12);
+  pointer-events: none;
+}
+
+.graph-minimap {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 50;
+  border: 1px solid var(--graph-line, var(--line, #e6eaf1));
+  border-radius: 10px;
+  background: var(--graph-surface, var(--panel, #fff));
+  box-shadow: var(--shadow, 0 12px 36px rgba(35, 48, 74, .07));
+  cursor: pointer;
+}
+
+.graph-minimap-node { fill: var(--violet, #7054e8); opacity: .75; }
+.graph-minimap-viewport { fill: rgba(112, 84, 232, .14); stroke: var(--violet, #7054e8); stroke-width: 1.4; rx: 3; }
+
+/* Theme custom properties (G2-UX-GRAPH-002) */
+.eoip-graph-theme {
+  --graph-surface: #ffffff;
+  --graph-text: #23304a;
+  --graph-muted: #718096;
+  --graph-line: #e6eaf1;
+  --graph-edge: #b8c2d1;
+  --graph-canvas: #f5f7fb;
+}
+
+.eoip-theme-dark {
+  --graph-surface: #1a2236;
+  --graph-text: #e4e9f4;
+  --graph-muted: #8f9bb4;
+  --graph-line: #2c3550;
+  --graph-edge: #4a5878;
+  --graph-canvas: #111827;
+}
+
+.eoip-theme-dark .enh-button.is-active { background: #2b2f52; color: #b9aaff; }
+.eoip-theme-dark .graph-minimap-node { fill: #9a7dff; }
+
+/* Apply theme to the cytoscape canvas shell when nested inside the wrapper. */
+.eoip-graph-theme .canvas-shell { background: var(--graph-canvas); color: var(--graph-text); }

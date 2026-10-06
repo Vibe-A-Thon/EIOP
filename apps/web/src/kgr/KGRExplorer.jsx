@@ -16,7 +16,7 @@ import GraphHealth from './components/GraphHealth.jsx';
 import EdgeInspector from './components/EdgeInspector.jsx';
 import Minimap from './components/Minimap.jsx';
 import useGraphEvents from './hooks/useGraphEvents.js';
-import ComboNode, {groupByDomain, groupByType, groupByCommunity} from './components/ComboNode.jsx';
+import ComboNode, {applyComboNodes, groupByDomain, groupByType, groupByCommunity} from './components/ComboNode.jsx';
 import CodePanel from './components/CodePanel.jsx';
 import QueryBuilder from './components/QueryBuilder.jsx';
 import GeoMap from './components/GeoMap.jsx';
@@ -581,6 +581,16 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
   }, [setGraph]);
 
   const inspect = useCallback(async (node) => {
+    if (node?.isCombo) {
+      setSelected(node);
+      setSelectedEdge(null);
+      setDetail({
+        outgoing: [],
+        incoming: [],
+        combo_members: node.memberIds || [],
+      });
+      return;
+    }
     setSelected(node);
     setSelectedEdge(null);
     setBlastRadius(null);
@@ -755,6 +765,19 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
     (filters.edgeType === 'ALL' || e.type === filters.edgeType) &&
     (filters.trust === 'ALL' || String(e.creation_status || e.properties?.creation_status || 'DETERMINISTIC').toUpperCase() === filters.trust)
   ), [graph.edges, nodeIds, filters]);
+  const comboGroups = useMemo(() => {
+    if (comboMode === 'domain') return groupByDomain(displayedNodes);
+    if (comboMode === 'type') return groupByType(displayedNodes);
+    if (comboMode === 'community') return groupByCommunity(displayedNodes, communities);
+    return [];
+  }, [comboMode, displayedNodes, communities]);
+  const renderedGraph = useMemo(
+    () => applyComboNodes(displayedNodes, visibleEdges, comboGroups),
+    [displayedNodes, visibleEdges, comboGroups],
+  );
+  const renderedNodes = renderedGraph.nodes;
+  const renderedEdges = renderedGraph.edges;
+  const selectGraphNode = useCallback((node) => run(() => inspect(node)), [run, inspect]);
 
   return <div className="kgr-explorer" ref={explorerRef}>
     <GraphTypeSelector active={graphType} onSelect={setGraphType}/>
@@ -787,6 +810,10 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
               } catch {}
             }}
             multiSelectionCount={multiSelection.length}
+            selectionMode={lassoMode}
+            onSelectionModeChange={setLassoMode}
+            comboMode={comboMode}
+            onComboModeChange={setComboMode}
             onTogglePlaybooks={() => setShowPlaybooks(v => !v)}
             onToggleStyleRules={() => setShowStyleRules(v => !v)}
             onToggleAIExplorer={() => setShowAIExplorer(v => !v)}
@@ -798,17 +825,20 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
               });
             }}/>
           {renderProgress && <div className="render-progress-bar"><div className="render-progress-fill" style={{width: `${(renderedCount / Math.max(visibleNodes.length, 1)) * 100}%`}}/><span>{renderProgress}</span></div>}
+          {comboGroups.length > 0 && <ComboNode groups={comboGroups} onToggleExpand={() => setComboMode(null)} onRemoveGroup={() => setComboMode(null)}/>}
+          {lassoMode && <div className="selection-mode-banner"><Icon name="focus" size={13}/><span>Drag on the canvas to select multiple entities.</span>{multiSelection.length > 0 && <strong>{multiSelection.length} selected</strong>}</div>}
           {showGeoMode
-            ? <GeoMap elements={displayedNodes} edges={visibleEdges} onSelect={n => run(() => inspect(n))}/>
+            ? <GeoMap elements={renderedNodes} edges={renderedEdges} onSelect={selectGraphNode}/>
             : visibleNodes.length >= SIGMA_THRESHOLD
-              ? <SigmaRenderer nodes={displayedNodes} edges={visibleEdges}
-                  selectedId={selected?.id} onSelectNode={n => run(() => inspect(n))}
+              ? <SigmaRenderer nodes={renderedNodes} edges={renderedEdges}
+                  selectedId={selected?.id} onSelectNode={selectGraphNode}
                   onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}} onExpand={expand}
                   onViewportChange={setViewport} layout={layout}/>
-              : <GraphCanvas nodes={displayedNodes} edges={visibleEdges} paths={graph.paths || []}
+              : <GraphCanvas nodes={renderedNodes} edges={renderedEdges} paths={graph.paths || []}
                   selectedId={selected?.id} selectedEdgeId={selectedEdge?.id}
-                  onSelectNode={n => run(() => inspect(n))} onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}}
-                  onExpand={expand} cyRef={cyRef} layout={layout} onLayoutChange={setLayout} onViewportChange={setViewport}/>
+                  onSelectNode={selectGraphNode} onSelectEdge={e => {setSelectedEdge(e); setSelected(null);}}
+                  onExpand={expand} cyRef={cyRef} layout={layout} onLayoutChange={setLayout} onViewportChange={setViewport}
+                  selectionMode={lassoMode} onSelectionChange={nodes => setMultiSelection(nodes.map(node => node.id))}/>
           }
         </section>
         {showCodePanel && <CodePanel filePath={codeFile} apiBase={apiBase}

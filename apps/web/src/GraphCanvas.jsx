@@ -44,7 +44,8 @@ export function fisheyeDistort(positions, focusX, focusY, radius = 200, distorti
 export default function GraphCanvas({
   nodes = [], edges = [], paths = [], selectedId, selectedEdgeId,
   onSelectNode, onSelectEdge, onExpand, layout: requestedLayout, onLayoutChange,
-  semanticZoomLevel, fisheye,
+  semanticZoomLevel, fisheye, cyRef: externalCyRef, onViewportChange,
+  selectionMode = null, onSelectionChange,
 }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
@@ -89,7 +90,8 @@ export default function GraphCanvas({
         minZoom: 0.18,
         maxZoom: 3.5,
         wheelSensitivity: 0.24,
-        boxSelectionEnabled: false,
+        boxSelectionEnabled: Boolean(selectionMode),
+        selectionType: selectionMode ? 'additive' : 'single',
         style: [
           {selector: 'node', style: {
             'background-color': 'data(color)', 'label': 'data(label)', 'color': '#24324a',
@@ -134,20 +136,46 @@ export default function GraphCanvas({
       instance.on('tap', 'node', event => onSelectNode?.(event.target.data('node')));
       instance.on('tap', 'edge', event => onSelectEdge?.(event.target.data('edge')));
       instance.on('dbltap', 'node', event => onExpand?.(event.target.data('node')));
-      instance.on('zoom', () => {
+      const reportViewport = () => {
+        const extent = instance.extent();
+        onViewportChange?.({
+          zoom: instance.zoom(),
+          pan: instance.pan(),
+          x1: extent.x1,
+          y1: extent.y1,
+          x2: extent.x2,
+          y2: extent.y2,
+        });
+      };
+      instance.on('zoom pan', () => {
         instance.nodes().toggleClass('semantic-compact', instance.zoom() < .52);
         const level = getSemanticZoomLevel(instance.zoom());
         applySemanticZoom(instance, level);
+        reportViewport();
+      });
+      instance.on('boxselect select unselect', 'node', () => {
+        if (!onSelectionChange) return;
+        onSelectionChange(instance.nodes(':selected').map(node => node.data('node')));
       });
       cyRef.current = instance;
+      if (externalCyRef) externalCyRef.current = instance;
       setReady(true);
+      reportViewport();
     });
     return () => {
       cancelled = true;
       instance?.destroy();
       if (cyRef.current === instance) cyRef.current = null;
+      if (externalCyRef?.current === instance) externalCyRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+    cy.boxSelectionEnabled(Boolean(selectionMode));
+    cy.selectionType(selectionMode ? 'additive' : 'single');
+  }, [selectionMode]);
 
   useEffect(() => {
     const cy = cyRef.current;

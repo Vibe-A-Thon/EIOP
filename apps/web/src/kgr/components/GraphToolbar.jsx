@@ -32,7 +32,8 @@ const COLOR_BLIND_MODES = [
 ];
 
 export default function GraphToolbar({layout, onLayoutChange, sizeMode, onSizeModeChange, onFitAll, onToggleMinimap, onToggleFilters, onToggleEntityList, onExport,
-  fisheyeEnabled, onToggleFisheye, colorBlindMode, onColorBlindChange, onToggleTableView, onToggleDeepLink, multiSelectionCount, onTogglePlaybooks, onToggleStyleRules, onToggleAIExplorer, onToggleSurprises}) {
+  fisheyeEnabled, onToggleFisheye, colorBlindMode, onColorBlindChange, onToggleTableView, onToggleDeepLink, multiSelectionCount, onTogglePlaybooks, onToggleStyleRules, onToggleAIExplorer, onToggleSurprises,
+  selectionMode, onSelectionModeChange, comboMode, onComboModeChange}) {
   const [showSettings, setShowSettings] = useState(false);
 
   return <div className="kgr-graph-toolbar" role="toolbar" aria-label="Graph toolbar">
@@ -53,6 +54,16 @@ export default function GraphToolbar({layout, onLayoutChange, sizeMode, onSizeMo
     </div>
 
     <div className="toolbar-group">
+      <button className={`toolbar-button${selectionMode ? ' is-active' : ''}`} onClick={() => onSelectionModeChange && onSelectionModeChange(selectionMode ? null : 'box')} title="Toggle box/lasso selection"><Icon name="focus" size={14}/> Select</button>
+      <label className="select-control toolbar-select" title="Collapse repeated nodes into combo groups">
+        <Icon name="layers" size={14}/>
+        <select value={comboMode || 'none'} onChange={e => onComboModeChange && onComboModeChange(e.target.value === 'none' ? null : e.target.value)} aria-label="Combo grouping">
+          <option value="none">No groups</option>
+          <option value="domain">Group by domain</option>
+          <option value="type">Group by type</option>
+          <option value="community">Group by community</option>
+        </select>
+      </label>
       <button className={`toolbar-button${fisheyeEnabled ? ' is-active' : ''}`} onClick={onToggleFisheye} title="Toggle fisheye distortion (Shift+F)"><Icon name="focus" size={14}/> Fisheye</button>
       <button className="toolbar-button" onClick={onToggleTableView} title="Toggle table view (T)"><Icon name="database" size={14}/> Table</button>
       <button className="toolbar-button" onClick={onToggleDeepLink} title="Copy link to this view"><Icon name="link" size={14}/> Share</button>

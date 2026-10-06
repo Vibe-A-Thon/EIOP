@@ -184,13 +184,48 @@ def main():
 
     Thread(target=heartbeat, daemon=True).start()
     queue = JobQueue(root)
+
+    # Optional single-writer leader lease for multi-replica worker HA
+    # (G2-DEPLOY-HA). Advisory filesystem lease: only the holder processes
+    # jobs; others idle until the lease expires or is released.
+    lease = None
+    lease_path = os.getenv("EOIP_LEASE_PATH")
+    if lease_path:
+        from eoip.ha import LeaderLease
+
+        lease = LeaderLease(
+            lease_path,
+            ttl_seconds=float(os.getenv("EOIP_LEASE_TTL_SECONDS", "30")),
+        )
+        if not lease.acquire():
+            logger.warning(
+                "worker.lease_contended",
+                extra={
+                    "event": "worker.lease_contended",
+                    "operation": "startup",
+                    "correlation_id": str(uuid4()),
+                    "lease_path": lease_path,
+                },
+            )
+
+    def ensure_leader():
+        if lease is None:
+            return True
+        if lease.held:
+            return lease.renew()
+        return lease.acquire()
+
     if (
         os.getenv("EOIP_LOAD_DEMO", "true").lower() == "true"
+        and ensure_leader()
         and not store.get_vertex_by_canonical_id("urn:eoip:code:repo:demo")
         and not any(j["kind"] == "DEMO" and j["status"] in {"PENDING", "RUNNING"} for j in queue.list())
     ):
         queue.submit("DEMO")
     while running:
+        if not ensure_leader():
+            time.sleep(2)
+            continue
         for path in sorted(queue.root.glob("*.json")):
             job = json.loads(path.read_text())
             if job["status"] not in {"PENDING", "RUNNING"} or job.get("next_attempt", 0) > time.time():
@@ -290,6 +325,8 @@ def main():
                 },
             )
         time.sleep(2)
+    if lease is not None:
+        lease.release()
     store.close()
     logger.info(
         "worker.stopped",

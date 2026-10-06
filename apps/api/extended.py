@@ -78,7 +78,14 @@ from eoip.ontology.packs import (
     validate_pack,
 )
 from eoip.ontology.skos import MappingKind, SkosTaxonomy
-from eoip.ops import collect_support_bundle, plan_upgrade, run_preflight
+from eoip.ops import (
+    build_shard_plan,
+    collect_support_bundle,
+    default_ha_topology,
+    helm_release_summary,
+    plan_upgrade,
+    run_preflight,
+)
 from eoip.query.intelligence import QueryIntelligence, TemplateBindingError
 from eoip.retrieval.service import retrieve
 from eoip.retrieval.vectors import HashingEmbedder, build_search_index
@@ -380,6 +387,12 @@ class UpgradePlanRequest(BaseModel):
 class KGCIRunRequest(BaseModel):
     ontology_dir: str | None = None
     fail_on: str = "any"
+
+
+class ShardPlanRequest(BaseModel):
+    entity_count: int = Field(ge=0)
+    shard_count: int = Field(default=3, ge=1, le=1024)
+    strategy: str = Field(default="canonical_hash", min_length=1, max_length=64)
 
 
 def _raise_skos(exc: Exception) -> None:
@@ -1256,6 +1269,25 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
         return collect_support_bundle(
             audit_sink=state.audit_sink, graph_store=store
         )
+
+    @router.get("/api/v1/ops/ha-topology")
+    def ops_ha_topology() -> dict[str, Any]:
+        """G2-DEPLOY-HA/GAP-PERF-001: resolved HA topology readiness."""
+        return default_ha_topology().to_dict()
+
+    @router.post("/api/v1/ops/shard-plan")
+    def ops_shard_plan(payload: ShardPlanRequest) -> dict[str, Any]:
+        """G2-SCALE-SHARD: logical graph sharding plan with stable routing keys."""
+        return build_shard_plan(
+            payload.entity_count,
+            payload.shard_count,
+            strategy=payload.strategy,
+        )
+
+    @router.post("/api/v1/ops/helm-summary")
+    def ops_helm_summary(values: dict[str, Any] | None = None) -> dict[str, Any]:
+        """G2-DEPLOY-HELM: summarize Helm values for deployment review."""
+        return helm_release_summary(values or {})
 
     # -- Metrics (GAP-OBS-003) -----------------------------------------------------
 

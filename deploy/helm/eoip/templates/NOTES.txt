@@ -1,0 +1,32 @@
+{{- $apiSvc := printf "%s-api" (include "eoip.fullname" .) -}}
+Thank you for installing {{ .Chart.Name }} (appVersion {{ .Chart.AppVersion }}).
+
+Release: {{ .Release.Name }}  Namespace: {{ .Release.Namespace }}
+
+Components:
+  - api     : {{ .Values.api.replicaCount }} replica(s)  ->  {{ $apiSvc }}:{{ .Values.service.port }}
+{{- if .Values.mcp.enabled }}
+  - mcp     : {{ .Values.mcp.replicaCount }} replica(s)  ->  {{ include "eoip.fullname" . }}-mcp:{{ .Values.mcp.port }}
+{{- end }}
+{{- if .Values.worker.enabled }}
+  - worker  : {{ .Values.worker.replicaCount }} replica(s)  (leader lease at {{ .Values.worker.lease.path }})
+{{- end }}
+  - graph   : backend={{ .Values.graphBackend }}
+{{- if .Values.hpa.enabled }}
+  - hpa     : api scales {{ .Values.hpa.minReplicas }}..{{ .Values.hpa.maxReplicas }} replicas
+{{- end }}
+
+Access the API:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ $apiSvc }} {{ .Values.service.port }}:{{ .Values.service.port }}
+  curl -H "Authorization: Bearer $EOIP_API_TOKEN" http://localhost:{{ .Values.service.port }}/health/ready
+
+Notes / caveats:
+  1. HugeGraph itself is NOT deployed by this chart. Point
+     hugegraph.url (or neptune) at an existing backend.
+     HugeGraph PD/Store distributed sharding (G2-SCALE-SHARD /
+     GAP-PERF-001/002) requires HugeGraph enterprise/infra validation
+     before production use.
+  2. Worker HA relies on a filesystem-advisory leader lease
+     (packages/eoip/ha.py). The persistence volume MUST be ReadWriteMany
+     and shared by all worker replicas.
+  3. HPA requires metrics-server in the cluster.

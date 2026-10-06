@@ -327,6 +327,22 @@ def test_bitemporal_slice_endpoint_is_available() -> None:
     assert response.json()["coordinate"]["known_at"] in (None, "")
 
 
+def test_ops_production_topology_endpoints() -> None:
+    client = _client()
+    ha = client.get("/api/v1/ops/ha-topology")
+    assert ha.status_code == 200
+    assert ha.json()["api_replicas"] >= 2
+
+    shard = client.post("/api/v1/ops/shard-plan", json={"entity_count": 11, "shard_count": 4})
+    assert shard.status_code == 200
+    assert shard.json()["shard_count"] == 4
+    assert sum(item["estimated_entities"] for item in shard.json()["shards"]) == 11
+
+    helm = client.post("/api/v1/ops/helm-summary", json={"api": {"replicas": 3}})
+    assert helm.status_code == 200
+    assert helm.json()["api_replicas"] == 3
+
+
 def test_rag_query_response_includes_abstention_fields() -> None:
     client = _client()
     response = client.post("/api/v1/rag/query", json={"query": "what is EOIP-1?"})

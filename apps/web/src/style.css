@@ -783,6 +783,12 @@ tr:last-child td { border-bottom: 0; }
 .combo-node-controls { display: flex; gap: 6px; align-items: center; padding: 8px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; }
 .combo-node-controls button { font-size: 12px; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; }
 .combo-node-controls button.active { background: var(--violet-soft); border-color: var(--violet); color: var(--violet); }
+.combo-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #f8fafc; }
+.combo-header, .combo-group-row { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; }
+.combo-group-row { padding: 4px 6px; border-radius: 6px; background: #fff; border: 1px solid var(--line); }
+.combo-badge { min-width: 20px; height: 20px; display: inline-grid; place-items: center; border-radius: 10px; color: #5d4ab0; background: var(--violet-soft); font-size: 10px; font-weight: 700; }
+.selection-mode-banner { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; padding: 7px 10px; border-radius: 7px; color: #5947bd; background: var(--violet-soft); font-size: 11px; }
+.selection-mode-banner strong { margin-left: auto; }
 
 /* Phase 9-10: CodePanel */
 .code-panel-container { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; min-width: 320px; max-height: 600px; }
@@ -899,6 +905,32 @@ tr:last-child td { border-bottom: 0; }
 .processing-log .log-ok { color: #10a981; }
 .processing-log .log-err { color: #ec6b76; }
 .processing-log .log-info { color: #2589e8; }
+
+/* No-code Studio and enterprise admin controls */
+.no-code-studio { display: grid; gap: 12px; }
+.studio-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.studio-tabs button { min-height: 34px; display: inline-flex; align-items: center; gap: 7px; padding: 0 11px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: #66738a; font-size: 11px; font-weight: 700; }
+.studio-tabs button.active { color: #6048ce; border-color: #d7d0fa; background: var(--violet-soft); }
+.studio-canvas, .pipeline-dag, .query-console { display: grid; gap: 10px; }
+.schema-node-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.schema-node { min-height: 88px; display: grid; align-content: center; gap: 5px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: grab; }
+.schema-node.edge { border-color: #bfdbfe; background: #f0f7ff; }
+.schema-node span, .schema-node small { color: var(--muted); font-size: 10px; }
+.studio-inline-form, .security-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.security-form { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; margin-top: 10px; }
+.security-form.three { grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 0 10px; }
+.pipeline-dag { grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); align-items: start; padding: 10px; border: 1px dashed #ccd5e2; border-radius: 9px; background: #f8fafc; }
+.pipeline-node { min-height: 54px; display: grid; grid-template-columns: 26px minmax(0, 1fr) 28px; align-items: center; gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.pipeline-node > span { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: var(--violet); font-size: 10px; font-weight: 700; }
+.query-console textarea { font-family: 'Cascadia Code', Consolas, monospace; }
+.studio-export summary { cursor: pointer; color: #5d4ab0; font-size: 11px; font-weight: 700; }
+.policy-chip-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.policy-chip { display: inline-grid; gap: 2px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px; color: #53617a; background: #fff; font-size: 10px; }
+.preflight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+.preflight-card { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.preflight-card.fail { border-color: #f4cbd0; background: #fff5f6; }
+.preflight-card.warn { border-color: #f4dfa5; background: #fffaf0; }
+.preflight-card.pass { border-color: #caebdd; background: #f2fbf7; }
 
 /* === Phase 11: Color-Blind Safe Palettes === */
 :root[data-palette="deuteranopia"] {
