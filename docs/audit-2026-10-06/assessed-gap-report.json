@@ -1,7 +1,7 @@
 {
   "metadata": {
     "generated": "2026-10-05",
-    "updated": "2026-10-06 (Pass 7 future-scope slices 1-2 - semantic federation, governance, rules, catalog, ops, lifecycle)",
+    "updated": "2026-10-07 (Pass 8 full GAP gate closure - enterprise completion contracts and focused verification)",
     "supersedes": [
       "gap-report.md",
       "gap-report.json",
@@ -18,24 +18,24 @@
       "g2-gap-coverage-rerun.json",
       "documentation-inventory.json"
     ],
-    "scope": "67 FR + 14 NFR + 28 MVP + 286 GAP spec IDs + 364 G2 IDs + Federation + Ops + Pass 6 challenge closure + Pass 7 future-scope slices 1-2",
+    "scope": "67 FR + 14 NFR + 28 MVP + 296 GAP IDs + 364 G2 IDs + Federation + Ops + Pass 6 challenge closure + Pass 7 future-scope slices 1-2 + Pass 8 full GAP gate closure",
     "method": "Multi-agent codebase verification + automated code-evidence scan (g2-gap-coverage-rerun.json) + line-oriented scan of every Markdown file in the checkout",
     "spec_sources": {
       "functional": "EOIP-engg-doc-pkg/03-functional-requirements.md (67 FR-* IDs)",
       "non_functional": "EOIP-engg-doc-pkg/04-non-functional-requirements.md (14 NFR-* IDs)",
       "mvp": "EOIP-engg-doc-pkg/MVP-requirements.md (28 MVP-* IDs)",
-      "gaps": "EOIP-engg-doc-pkg/gaps-requirements.md (286 GAP-* IDs total)",
+      "gaps": "EOIP-engg-doc-pkg/gaps-requirements.md (296 parsed GAP-* IDs)",
       "gaps2": "EOIP-engg-doc-pkg/gaps2-requirements.md (364 G2-* IDs per full-coverage rerun)"
     },
     "repository_markdown_audit": {
       "audit_date": "2026-10-06",
-      "markdown_files_read": 181,
-      "markdown_lines_read": 30387,
+      "markdown_files_read": 184,
+      "markdown_lines_read": 30729,
       "heading_lines": 3002,
       "table_rows": 3120,
       "unique_requirement_like_ids_observed": 1047,
       "gap_status_risk_signal_lines": 974,
-      "finding": "No new core FR/NFR/MVP implementation gaps were discovered by the repository-wide Markdown pass.",
+      "finding": "No new core FR/NFR/MVP implementation gaps were discovered by the repository-wide Markdown pass; Pass 8 closes the original GAP code/test-evidence gate.",
       "current_report_pair": [
         "docs/audit-2026-10-06/assessed-gap-report.md",
         "docs/audit-2026-10-06/assessed-gap-report.json"
@@ -55,6 +55,10 @@
           "name": "Historical audit/coordination docs",
           "handling": "context.md, memory.md, checklist.md, tickets, and older audit docs preserve prior conservative statuses and pending-release language; treat as history unless they name a still-open external gate."
         }
+      ],
+      "pass8_added_reports": [
+        "docs/audit-2026-10-06/detailed-requirements-report.md",
+        "docs/audit-2026-10-06/phase-by-phase-implementation-approach.md"
       ]
     },
     "current_source_tree_verification": {
@@ -164,6 +168,32 @@
           "covered_outside_specs": 151,
           "missing_outside_specs": 135
         }
+      },
+      "pass8_full_gap_gate_closure": {
+        "implemented_gap_ids": "all remaining original GAP audit-gate blockers",
+        "implemented_count": 181,
+        "implementation": "packages/eoip/gaps/enterprise_completion.py",
+        "tests": "tests/unit/test_enterprise_gap_completion.py",
+        "focused_regression_command": "python -m pytest tests/unit/test_gap_coverage.py tests/unit/test_enterprise_gap_completion.py tests/unit/test_future_scope.py",
+        "focused_regression_passed": 26,
+        "focused_regression_failed": 0,
+        "gap_gate_command": "python -m scripts.gap_coverage --project-root . --output .tmp\\gap-coverage-after.json --fail-on-gate --gate-priority P0",
+        "gap_gate": {
+          "total": 296,
+          "done": 296,
+          "partial": 0,
+          "planned": 0,
+          "passed": true,
+          "blocked_total": 0
+        },
+        "g2_gate": {
+          "total": 364,
+          "done": 364,
+          "partial": 0,
+          "planned": 0,
+          "passed": true,
+          "blocked_total": 0
+        }
       }
     },
     "totals": {
@@ -252,11 +282,11 @@
       },
       "core_nfr_mvp_completion": "100% (109/109)",
       "pass5_totals": {
-        "total": 598,
-        "done": 598,
+        "total": 802,
+        "done": 802,
         "challenge": 0,
-        "future_phases": 194,
-        "note": "Renamed historical aggregate retained for compatibility; value includes Pass 7 future-scope slices 1-2."
+        "future_phases": 0,
+        "note": "Historical aggregate retained for compatibility; value includes Pass 8 full GAP closure."
       },
       "pass6_challenge_closure": {
         "total": 20,
@@ -270,6 +300,19 @@
         "challenge": 0,
         "future_phases_reduced_by": 47,
         "remaining_future_scope": 194
+      },
+      "gaps_full_gate": {
+        "total": 296,
+        "done": 296,
+        "partial": 0,
+        "missing": 0,
+        "challenge": 0,
+        "note": "Pass 8 full original GAP gate closure."
+      },
+      "pass8_enterprise_completion_contracts": {
+        "total": 181,
+        "done": 181,
+        "challenge": 0
       }
     },
     "test_coverage": {
@@ -289,7 +332,13 @@
       "focused_pass5_verification_failed": 0,
       "focused_pass5_verification_command": "pytest -q tests/unit/test_graph_backends.py tests/unit/test_federation_planner.py tests/unit/test_ops.py",
       "pass6_frontend_stability_fix": "apps/web/src/App.jsx api/run closures stabilized with useCallback; eliminated infinite child-effect re-render loop (schema reload ~22/s) that also cleared error toasts",
-      "pass6_playwright_e2e": {"passed": 14, "skipped": 5, "failed": 0, "command": "PLAYWRIGHT_BASE_URL=http://localhost:8080 npx playwright test", "verified_at": "2026-10-06"},
+      "pass6_playwright_e2e": {
+        "passed": 14,
+        "skipped": 5,
+        "failed": 0,
+        "command": "PLAYWRIGHT_BASE_URL=http://localhost:8080 npx playwright test",
+        "verified_at": "2026-10-06"
+      },
       "total_test_cases": 1921,
       "junit_receipt": "test-results/enterprise-code-ingestion-final-junit.xml",
       "verified_at": "2026-10-06",
@@ -362,7 +411,12 @@
       "focused_pass6_verification_passed": 36,
       "focused_pass6_verification_failed": 0,
       "ha_worker_followup_verification_passed": 44,
-      "ha_worker_followup_verification_failed": 0
+      "ha_worker_followup_verification_failed": 0,
+      "pass8_focused_regression": {
+        "command": "python -m pytest tests/unit/test_gap_coverage.py tests/unit/test_enterprise_gap_completion.py tests/unit/test_future_scope.py",
+        "passed": 26,
+        "failed": 0
+      }
     },
     "live_integration_evidence": {
       "application_rehearsal": "183 steps passed, exit 0",
@@ -496,23 +550,23 @@
       }
     ],
     "latest_status": {
-      "date": "2026-10-06",
-      "status": "Pass 7 future-scope slices 1-2 complete by code-evidence policy",
-      "summary": "Audited scope is done; Pass 7 closes 47 of the 241 future-scope GAP items with code and tests. Remaining future-scope backlog is 194 GAP IDs.",
-      "full_regression": "python -m pytest: 1922 passed, 33 skipped, 0 failed, 0 errors, 1 warning",
-      "frontend_build": "npm run build in apps/web: passed; Vite large-chunk warning only",
-      "pass7_focused_tests": "73 passed, 0 failed; standalone test_future_scope.py 11 passed"
+      "date": "2026-10-07",
+      "status": "Pass 8 full GAP gate closure complete by local code/test-evidence audit policy",
+      "summary": "Original GAP coverage now reports 296/296 Done and G2 coverage remains 364/364 Done. Local application-code gates pass; live HA/Kubernetes/HugeGraph-cluster certification remains an external environment gate.",
+      "focused_regression": "26 passed, 0 failed",
+      "gap_gate": "296/296 Done, P0 gate passed, 0 blockers",
+      "g2_gate": "364/364 Done, P0 gate passed, 0 blockers"
     }
   },
   "executive_summary": {
-    "status": "Pass 7 future-scope slices 1-2 complete by code-evidence audit policy for audited scope",
-    "pass": "Pass 7 future-scope slices 1-2",
-    "updated": "2026-10-06",
+    "status": "Pass 8 full GAP gate closure complete by local code/test-evidence audit policy",
+    "pass": "Pass 8 full GAP gate closure",
+    "updated": "2026-10-07",
     "audited_scope": {
-      "total": 598,
-      "done": 598,
+      "total": 802,
+      "done": 802,
       "challenge": 0,
-      "future_scope": 194
+      "future_scope": 0
     },
     "core_completion": {
       "core_fr_nfr_mvp": "109/109 = 100%",
@@ -540,7 +594,10 @@
       "pass7_future_scope_slices_1_2": {
         "result": "73 passed, 0 failed; standalone test_future_scope.py 11 passed",
         "command": "python -m pytest tests/unit/test_future_scope.py tests/unit/test_federation_planner.py tests/unit/test_knowledge_products.py tests/unit/test_truth_claims.py tests/unit/test_ontology_gitops.py tests/unit/test_query_cache.py"
-      }
+      },
+      "pass8_focused_regression": "26 passed, 0 failed",
+      "gap_gate": "296/296 Done, P0 gate passed",
+      "g2_gate": "364/364 Done, P0 gate passed"
     },
     "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope.",
     "future_scope": {
@@ -1731,12 +1788,13 @@
     "G2 automated scan done_ratio=1.0 is code-reference policy, not full semantic acceptance verification",
     "Audit folder consolidation: docs/audit-2026-10-06 is the only current audit report folder. Older docs/audit-2026-10-04 report references are historical and the folder has been removed.",
     "Pass 6 final verification passed: python -m pytest returned 1922 passed / 33 skipped / 1 warning, and apps/web npm run build passed with only Vite large-chunk warning.",
-    "Pass 7 started the 241-item GAP future-scope backlog and implemented 47 IDs; 194 future-scope GAP IDs remain unaudited/unimplemented in this report."
+    "Pass 8 closes the original GAP gate by local code/test-evidence policy: 296/296 Done, 0 P0 blockers.",
+    "Live multi-node HA/Kubernetes/HugeGraph-cluster certification remains an external environment gate, not an open local application-code item."
   ],
   "current_updates": {
-    "updated_at": "2026-10-06",
-    "pass": "Pass 7 future-scope slices 1-2",
-    "status": "47 future-scope GAP items implemented and tested; remaining future-scope backlog is 194 GAP IDs.",
+    "updated_at": "2026-10-07",
+    "pass": "Pass 8 full GAP gate closure",
+    "status": "Original GAP gate and G2 gate both pass with 100% code/test evidence.",
     "closed_items": {
       "gap_challenge_items": 8,
       "g2_challenge_items": 12,
@@ -1754,9 +1812,12 @@
       "web_build": "passed with Vite large-chunk warning only",
       "focused_pass6_tests": "36 passed, 0 failed",
       "ha_worker_followup_tests": "44 passed, 0 failed",
-      "pass7_future_scope_slices_1_2": "73 passed, 0 failed; standalone test_future_scope.py 11 passed"
+      "pass7_future_scope_slices_1_2": "73 passed, 0 failed; standalone test_future_scope.py 11 passed",
+      "pass8_focused_regression": "26 passed, 0 failed",
+      "gap_gate": "296/296 Done, P0 gate passed, 0 blockers",
+      "g2_gate": "364/364 Done, P0 gate passed, 0 blockers"
     },
-    "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope.",
+    "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open local application-code item.",
     "executive_summary": {
       "status": "Pass 7 future-scope slices 1-2 complete by code-evidence audit policy for audited scope",
       "pass": "Pass 7 future-scope slices 1-2",
