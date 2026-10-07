@@ -1,11 +1,11 @@
-"""Graph store port (NFR-MAINT-001: typed ports; HugeGraph is the only
-authoritative runtime store — FR-GRAPH-001).
+"""Graph store port (NFR-MAINT-001: typed ports).
 
 Implementations:
-- HugeGraphStore: production client over HugeGraph REST/Gremlin.
-- MemoryGraphStore: in-process store used ONLY by automated tests and local
-  developer harnesses. It is never a runtime substitute inside Docker
-  deployments (FR-GRAPH-001: no shadow DB fallback in production paths).
+- HugeGraphStore: client over HugeGraph REST/Gremlin.
+- NeptuneGraphStore: client over Amazon Neptune HTTPS endpoints.
+- Neo4jGraphStore: client over Neo4j transactional Cypher HTTP.
+- MemoryGraphStore: in-process store used by automated tests and explicit
+  local developer harnesses.
 """
 
 from __future__ import annotations

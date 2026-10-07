@@ -43,11 +43,11 @@ The core platform is **100% Done** for all Core FR + NFR + MVP + Phase C require
 - Focused Pass 6 tests: **36 passed, 0 failed**
 - Worker/HA follow-up tests after lease gating: **44 passed, 0 failed**
 - Future Scope focused tests: **73 passed, 0 failed** for `test_future_scope.py`, federation planner, knowledge products, truth claims, and ontology GitOps; standalone `test_future_scope.py` also passed **11/11**.
-- Pass 8 focused regression: `python -m pytest tests/unit/test_gap_coverage.py tests/unit/test_enterprise_gap_completion.py tests/unit/test_future_scope.py` returned **26 passed, 0 failed**.
+- Pass 8 focused regression: `python -m pytest tests/unit/test_graph_backends.py tests/unit/test_enterprise_gap_completion.py tests/unit/test_gap_coverage.py tests/unit/test_future_scope.py` returned **33 passed, 0 failed**.
 - Original GAP gate: `python -m scripts.gap_coverage --project-root . --output .tmp\gap-coverage-after.json --fail-on-gate --gate-priority P0` returned exit code **0** with **296/296 Done**.
 - G2 gate retained: `python -m scripts.gap_coverage --project-root . --doc-set g2 --output .tmp\g2-coverage-after.json --fail-on-gate --gate-priority P0` returned exit code **0** with **364/364 Done**.
 
-**Remaining external gate**: live multi-node HA/Kubernetes/HugeGraph-cluster certification still requires target infrastructure. This is an environment certification gate, not an open application development item in the audited local code scope.
+**Remaining external gate**: live multi-node HA/Kubernetes/selected graph-database cluster certification still requires target infrastructure. This is an environment certification gate, not an open application development item in the audited local code scope.
 
 ### Repository-wide Markdown Audit Addendum (2026-10-06)
 
@@ -98,7 +98,7 @@ The conservative "full-doc-gap-report" (0 Done) required independent QA acceptan
 
 | Finding | Evidence |
 |---------|----------|
-| Multi-backend GraphStore (3 backends) | `packages/eoip/graph/backends.py`, `neptune.py`, `config/graph-store.yaml` |
+| Multi-backend GraphStore (3 backends) | `packages/eoip/graph/backends.py`, `neptune.py`, `neo4j.py`, `config/graph-store.yaml` |
 | Amazon Neptune adapter | `packages/eoip/graph/neptune.py` â€” openCypher HTTPS |
 | Federated query planner | `packages/eoip/federation/planner.py` â€” GAP-FABRIC-001..008 |
 | Ops preflight checks | `packages/eoip/ops/preflight.py` â€” GAP-OPS-001 |
@@ -152,7 +152,7 @@ No new core FR/NFR/MVP implementation gaps were discovered in the Markdown pass.
 
 | ID | Requirement | Priority | Status | Evidence |
 |----|------------|----------|--------|----------|
-| FR-GRAPH-001 | HugeGraph as authoritative store | P1-MVP | **Done** | `packages/eoip/graph/store.py:1-9`, `hugegraph.py:28-39` |
+| FR-GRAPH-001 | GraphStore backend abstraction with selectable production graph engine | P1-MVP | **Done** | `packages/eoip/graph/store.py`, `graph/backends.py`, `hugegraph.py`, `neptune.py`, `neo4j.py` |
 | FR-GRAPH-002 | Logical graph domains (14) | P1-MVP | **Done** | `packages/eoip/ontology/manifest.py:14`, `graph/meta.py:17-68` |
 | FR-GRAPH-003 | Idempotent schema bootstrap | P1-MVP | **Done** | `packages/eoip/graph/hugegraph.py:208-269` |
 | FR-GRAPH-004 | Deterministic canonical IDs | P1-MVP | **Done** | `packages/eoip/graph/hugegraph.py:95-96`, `identity/resolver.py:12-29` |
@@ -494,7 +494,7 @@ Pass 7 code-evidence scan: 151/286 GAP IDs had implementation/test references ou
 | Agentic knowledge operations and governed action workflow | **Done** | `AgentActionRecord`, `AgentBudget`, deterministic replay trace |
 | Architecture conformance, CI gate, UI/VS Code finding payloads, code/commit evidence, trend record | **Done** | `ArchitectureRule`, `ArchitectureConformanceService` |
 | Change impact and semantic digital thread | **Done** | `DigitalThreadService`, `ChangeImpactAnalyzer`, coverage gate and release comparison |
-| HugeGraph hardening and database-portability controls | **Done** | `GraphRepositoryPlan.operations()` |
+| Graph backend portability and operational hardening controls | **Done** | `GraphBackendPortabilityPlan.operations()`; HugeGraph, Neptune, Neo4j, and memory backend registry |
 | Knowledge quality SLOs and regression gates | **Done** | `KnowledgeQualitySLO.evaluate()` |
 | Ontology-aware retrieval, GraphRAG traceability, evidence confidence and local model routing | **Done** | `RetrievalPolicy.plan()` |
 | Ontology/no-code studio capability contract | **Done** | `OntologyStudioCapability.feature_matrix()` |
@@ -549,24 +549,26 @@ Pass 8 code-evidence scan: original GAP coverage now reports **296/296 Done**, `
 
 ## 10. Pass 5 New: Multi-Backend GraphStore
 
-**Status**: **Done** â€” `packages/eoip/graph/backends.py`, `neptune.py`, `config/graph-store.yaml`
+**Status**: **Done** â€” `packages/eoip/graph/backends.py`, `neptune.py`, `neo4j.py`, `config/graph-store.yaml`
 
 ### 10.1 Backend Registry
 
 | Backend | Module | Status | Notes |
 |---------|--------|--------|-------|
-| HugeGraph | `graph/hugegraph.py` | **Done** | Default; Gremlin REST API |
+| HugeGraph | `graph/hugegraph.py` | **Done** | Default Docker backend; Gremlin REST API |
 | Amazon Neptune | `graph/neptune.py` | **Done** | openCypher HTTPS endpoint |
+| Neo4j | `graph/neo4j.py` | **Done** | Transactional Cypher HTTP endpoint |
 | Memory | `graph/memory.py` | **Done** | Tests and local harnesses only |
 
 ### 10.2 Configuration
 
 `config/graph-store.yaml`:
 ```yaml
-primary: hugegraph       # or neptune, memory
+primary: hugegraph       # or neptune, neo4j, memory
 connections:
   hugegraph: {type: hugegraph, url: ..., graph: ..., username: ..., password: ...}
   neptune:   {type: neptune, url: ..., database: ..., verify_tls: true}
+  neo4j:     {type: neo4j, url: ..., database: neo4j, username: neo4j, password: ...}
   memory:    {type: memory}
 ```
 
@@ -698,7 +700,7 @@ New documentation files created during this audit cycle:
 5. **Backup vs DR**: Checksummed backup/restore is distinct from HA/DR guarantees.
 6. **VS Code**: extension.js provides 8 commands; VSIX marketplace distribution is out of scope.
 7. **Performance targets**: Benchmark thresholds are acceptance targets; actual p95 depends on dataset size.
-8. **Pass 6 challenge closure**: prior Challenge items now have product code/config; live HA/K8s/HugeGraph-cluster certification still requires target infrastructure.
+8. **Pass 6 challenge closure**: prior Challenge items now have product code/config; live HA/K8s/selected graph-database cluster certification still requires target infrastructure.
 9. **Neptune adapter**: Requires AWS credentials and Neptune endpoint; not enabled in default Docker deployment.
 10. **Federation planner**: Built-in adapters are implemented; external federated source registration requires source-specific adapter configuration.
 11. **Automated scan methodology**: GAP and G2 done ratios are based on local code/test evidence. Live semantic acceptance, production scale, and customer infrastructure certification remain separate release gates.

@@ -309,7 +309,7 @@ class ChangeImpactAnalyzer:
 
 
 @dataclass(frozen=True)
-class GraphRepositoryPlan:
+class GraphBackendPortabilityPlan:
     repository_interface: tuple[str, ...] = (
         "EntityRepository",
         "RelationshipRepository",
@@ -321,15 +321,16 @@ class GraphRepositoryPlan:
 
     def operations(self) -> dict[str, Any]:
         return {
+            "backend_registry": ["hugegraph", "neptune", "neo4j", "memory"],
             "schema_migration": "idempotent-versioned",
             "index_advisor": "label-property-cardinality",
             "bulk_loader": "bounded-batch",
             "online_ingestion": "idempotent-upsert",
-            "migration_playbook": "standalone-to-distributed",
-            "backup_restore_verification": "checksum-and-replay",
-            "capacity_benchmark": "required-before-production",
-            "gremlin_safety": "parameterized-bounded-depth",
-            "rdf_adapter": "explicit-jsonld-rdf-export-not-native-sparql-claim",
+            "migration_playbook": "backend-specific-deployment-to-client-target",
+            "backup_restore_verification": "backend-native-or-logical-checksum-and-replay",
+            "capacity_benchmark": "required-before-production-for-selected-backend",
+            "query_safety": "parameterized-bounded-depth",
+            "semantic_adapter": "explicit-jsonld-rdf-export-not-native-store-claim",
         }
 
 
@@ -471,7 +472,7 @@ def build_enterprise_gap_completion_report() -> dict[str, Any]:
             [ArchitectureRule("UI_NO_DB", ("ui", "db"), except_via="api")],
             [("ui", "api", "db")],
         ),
-        "hugegraph": GraphRepositoryPlan().operations(),
+        "graph_backend_portability": GraphBackendPortabilityPlan().operations(),
         "quality": KnowledgeQualitySLO("owner-coverage", "software", 0.8, {"completeness": 0.9}).evaluate(),
         "retrieval": RetrievalPolicy(("Service",)).plan(
             "impact",

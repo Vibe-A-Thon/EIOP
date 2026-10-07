@@ -1,6 +1,6 @@
 # EOIP Multi-Backend GraphStore
 
-EOIP supports multiple graph storage backends, selected via configuration file or environment variable. The default backend is Apache HugeGraph; Amazon Neptune and an in-process Memory backend are also available.
+EOIP supports multiple graph storage backends, selected via configuration file or environment variable. The default Docker backend is Apache HugeGraph, and product deployments can select Amazon Neptune, Neo4j, or an in-process Memory backend for tests/local harnesses.
 
 ---
 
@@ -15,7 +15,7 @@ store = create_graph_store()                    # uses config/graph-store.yaml
 store = create_graph_store("custom-graph.yaml") # use a custom config
 
 caps = backend_capabilities()                   # capabilities for primary backend
-caps = backend_capabilities("neptune")          # capabilities for named backend
+caps = backend_capabilities("neo4j")            # capabilities for named backend
 ```
 
 `packages/eoip/runtime.py` re-exports this as `create_store()` — the common entry point for Docker service containers.
@@ -26,8 +26,9 @@ caps = backend_capabilities("neptune")          # capabilities for named backend
 
 | Backend | Module | Default | Transport | Use Case |
 |---------|--------|---------|-----------|---------|
-| `hugegraph` | `graph/hugegraph.py` | **Yes** | Gremlin REST API | All production deployments |
+| `hugegraph` | `graph/hugegraph.py` | **Yes** | Gremlin REST API | Docker/local and HugeGraph-standard deployments |
 | `neptune` | `graph/neptune.py` | No | openCypher HTTPS | AWS-managed Neptune deployments |
+| `neo4j` | `graph/neo4j.py` | No | Cypher HTTP | Client deployments standardized on Neo4j or Neo4j-compatible Cypher |
 | `memory` | `graph/memory.py` | No | In-process | Tests and local development harnesses |
 
 ---
@@ -36,7 +37,7 @@ caps = backend_capabilities("neptune")          # capabilities for named backend
 
 ```yaml
 # Primary backend — which backend create_graph_store() returns
-primary: hugegraph     # hugegraph | neptune | memory
+primary: hugegraph     # hugegraph | neptune | neo4j | memory
 
 connections:
   hugegraph:
@@ -55,6 +56,14 @@ connections:
     gremlin_path: /gremlin
     verify_tls: true
 
+  neo4j:
+    type: neo4j
+    url: http://neo4j:7474
+    database: neo4j
+    username: neo4j
+    password: ""
+    verify_tls: true
+
   memory:
     type: memory
 ```
@@ -63,11 +72,11 @@ connections:
 
 | Variable | Purpose |
 |----------|---------|
-| `EOIP_GRAPH_BACKEND` | Override backend by name (`hugegraph`, `neptune`, `memory`) |
-| `EOIP_GRAPH_URL` / `EOIP_NEPTUNE_URL` | Connection URL |
+| `EOIP_GRAPH_BACKEND` | Override backend by name (`hugegraph`, `neptune`, `neo4j`, `memory`) |
+| `EOIP_GRAPH_URL` / backend-specific URL vars | Connection URL |
 | `EOIP_GRAPH_DATABASE` | Logical database / graph name |
-| `EOIP_GRAPH_USER` | Username (HugeGraph) |
-| `EOIP_GRAPH_PASSWORD` | Password (HugeGraph) |
+| `EOIP_GRAPH_USER` | Username |
+| `EOIP_GRAPH_PASSWORD` | Password |
 
 Config selection order: `EOIP_GRAPH_BACKEND` env → `primary` in `graph-store.yaml` → legacy HugeGraph env vars (`EOIP_HUGEGRAPH_*`).
 
@@ -92,6 +101,21 @@ Neptune is not included in the default Docker deployment. To use it:
 1. Provision an Amazon Neptune cluster (engine version 1.3+ for full openCypher support)
 2. Set `EOIP_GRAPH_BACKEND=neptune` and `EOIP_NEPTUNE_URL=https://<endpoint>:8182`
 3. Ensure the EOIP runtime has network access and valid IAM credentials (for IAM auth) or VPC connectivity
+
+
+---
+
+## Neo4j Adapter (`packages/eoip/graph/neo4j.py`)
+
+`Neo4jGraphStore` implements the full `GraphStore` protocol using Neo4j's transactional Cypher HTTP API.
+
+### Key design points
+
+- **Vertices** are identified by `canonical_id` + `eoip_vid` property.
+- **Edges** are upserted using EOIP's deterministic `edge_key`.
+- **Identifier sanitization** rejects unsafe labels and property names.
+- All query operations use parameterized Cypher.
+- Docker deployments can enable the optional `neo4j` Compose profile and select `EOIP_GRAPH_BACKEND=neo4j`.
 
 ---
 
@@ -118,6 +142,7 @@ EOIP application-level query languages (EQL, EOQL, OSQL, Semantic QL, NLQ, Greml
 |---------|----------------|
 | HugeGraph | Gremlin (REST) |
 | Neptune | openCypher (HTTPS) |
+| Neo4j | Cypher (HTTP) |
 | Memory | Internal Python dict traversal |
 
 ---
@@ -151,4 +176,4 @@ The `format_converter.py` export layer is backend-agnostic:
 
 ## Tests
 
-`tests/unit/test_graph_backends.py` — covers backend registry, config loading, Neptune adapter contract, env var overrides, and memory backend correctness.
+`tests/unit/test_graph_backends.py` covers backend registry, config loading, Neptune and Neo4j adapter contracts, env var overrides, and memory backend correctness.

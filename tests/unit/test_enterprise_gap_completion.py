@@ -58,7 +58,7 @@ from eoip.gaps.enterprise_completion import (
     DigitalThreadService,
     EnterpriseReadinessProfile,
     EvidenceLedger,
-    GraphRepositoryPlan,
+    GraphBackendPortabilityPlan,
     KnowledgeQualitySLO,
     OntologyStudioCapability,
     RetrievalPolicy,
@@ -146,7 +146,7 @@ def test_architecture_hugegraph_quality_retrieval_studio_and_readiness_contracts
         [ArchitectureRule("UI_NO_DB", ("ui", "db"), except_via="api")],
         [("ui", "direct", "db")],
     )
-    graph_ops = GraphRepositoryPlan().operations()
+    graph_ops = GraphBackendPortabilityPlan().operations()
     quality = KnowledgeQualitySLO(
         "owner-coverage",
         "runtime",
@@ -166,8 +166,9 @@ def test_architecture_hugegraph_quality_retrieval_studio_and_readiness_contracts
     assert conformance["passed"] is False
     assert conformance["ci_exit_code"] == 1
     assert conformance["violations"][0]["commit"].startswith("urn:eoip:commit:")
-    assert graph_ops["gremlin_safety"] == "parameterized-bounded-depth"
-    assert graph_ops["rdf_adapter"].startswith("explicit-jsonld-rdf-export")
+    assert "neo4j" in graph_ops["backend_registry"]
+    assert graph_ops["query_safety"] == "parameterized-bounded-depth"
+    assert graph_ops["semantic_adapter"].startswith("explicit-jsonld-rdf-export")
     assert quality["score"] == 0.8
     assert retrieval["ranked"][0]["id"] == "graph"
     assert retrieval["contradiction_aware"] is True
@@ -186,7 +187,7 @@ def test_enterprise_gap_completion_report_is_deterministic_and_complete() -> Non
     assert first["digital_thread"]["gate_passed"] is True
     assert first["evidence"]["immutable"] is True
     assert first["architecture"]["passed"] is True
-    assert first["hugegraph"]["capacity_benchmark"] == "required-before-production"
+    assert first["graph_backend_portability"]["capacity_benchmark"] == "required-before-production-for-selected-backend"
     assert first["quality"]["regression_gate_passed"] is True
     assert first["retrieval"]["minimal_path"][0]["id"] == "graph-hit"
     assert first["studio"]["hide_rdf_complexity"] is True

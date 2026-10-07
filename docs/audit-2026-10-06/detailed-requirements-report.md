@@ -16,7 +16,7 @@ EOIP is complete by the repository's code/test-evidence policy for the local app
 | Original GAP-* | 296 | 296 | 0 | 0 | Passed |
 | G2-* | 364 | 364 | 0 | 0 | Passed |
 
-The remaining limitation is not an application-code gap: live multi-node HA, Kubernetes, and HugeGraph-cluster certification still require target infrastructure.
+The remaining limitation is not an application-code gap: live multi-node HA, Kubernetes, and selected graph-database cluster certification still require target infrastructure.
 
 ## Gap Closure Table
 
@@ -27,7 +27,7 @@ The remaining limitation is not an application-code gap: live multi-node HA, Kub
 | Architecture conformance | GAP-ARCH-001..006 | Missing | Done | Architecture rule evaluation, CI exit code, UI/VS Code payload |
 | Change intelligence | GAP-CHANGE-001..006 | Missing | Done | Evidence-backed change-impact analyzer and calibration |
 | Canonical contracts | GAP-CONTRACT-001..006, GAP-CP-001..008 | Missing | Done | Completion contracts plus existing schema/coverage machinery |
-| HugeGraph hardening | GAP-HG-001..010 | Partial/Missing | Done | Repository interface plan, migration/index/bulk/backup/safety controls |
+| Graph backend portability and operational hardening | GAP-HG-001..010 | Partial/Missing | Done | Backend-neutral GraphStore plan, migration/index/bulk/backup/safety controls, Neo4j/Neptune/HugeGraph selection |
 | Knowledge quality SLOs | GAP-KQ-001..006 | Missing | Done | Dimension-based SLO evaluation and regression gate |
 | GraphRAG/retrieval | GAP-KRAG-001..010, GAP-RET-001..006 | Partial/Missing | Done | Ontology-aware retrieval plan, ranking trace, evidence confidence |
 | Digital thread | GAP-SDT-001..008 | Partial/Missing | Done | Forward/reverse navigation, coverage gate, release comparison |
@@ -41,6 +41,8 @@ The remaining limitation is not an application-code gap: live multi-node HA, Kub
 | Command | Result |
 |---|---|
 | `python -m pytest tests/unit/test_enterprise_gap_completion.py` | 4 passed |
+| `python -m pytest tests/unit/test_graph_backends.py` | 7 passed |
+| `python -m pytest tests/unit/test_graph_backends.py tests/unit/test_enterprise_gap_completion.py tests/unit/test_gap_coverage.py tests/unit/test_future_scope.py` | 33 passed |
 | `python -m pytest tests/unit/test_gap_coverage.py tests/unit/test_enterprise_gap_completion.py tests/unit/test_future_scope.py` | 26 passed |
 | `python -m scripts.gap_coverage --project-root . --output .tmp\\gap-coverage-after.json --fail-on-gate --gate-priority P0` | passed |
 | `python -m scripts.gap_coverage --project-root . --doc-set g2 --output .tmp\\g2-coverage-after.json --fail-on-gate --gate-priority P0` | passed |
@@ -49,7 +51,7 @@ The remaining limitation is not an application-code gap: live multi-node HA, Kub
 
 | Constraint | Status | Notes |
 |---|---|---|
-| Live HA/Kubernetes/HugeGraph cluster certification | External gate | Requires real target infrastructure and failure drills. |
+| Live HA/Kubernetes/selected graph-database cluster certification | External gate | Requires real target infrastructure and failure drills. |
 | Third-party source credentials | External gate | Connectors support fixtures/local behavior; real systems need authorized credentials. |
 | Production performance claims | External gate | Benchmarks must be run on target data and hardware before publishing customer commitments. |
 | Security certification | External gate | Local security tests exist; formal penetration/compliance certification is outside this repository pass. |

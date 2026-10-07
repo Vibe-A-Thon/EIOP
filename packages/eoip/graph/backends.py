@@ -2,7 +2,8 @@
 
 This module is the product-facing selection layer: runtime code asks for the
 primary GraphStore, while deployment config decides whether that means
-HugeGraph, Neptune, an in-memory local store, or a future registered adapter.
+HugeGraph, Neptune, Neo4j, an in-memory local store, or a future registered
+adapter.
 """
 
 from __future__ import annotations
@@ -223,6 +224,18 @@ def _neptune_factory(config: dict[str, Any]) -> GraphStore:
     )
 
 
+def _neo4j_factory(config: dict[str, Any]) -> GraphStore:
+    from eoip.graph.neo4j import Neo4jGraphStore
+
+    return Neo4jGraphStore(
+        config.get("url", "http://localhost:7474"),
+        database=config.get("database") or config.get("graph") or "neo4j",
+        username=config.get("username", "neo4j"),
+        password=config.get("password", ""),
+        verify=bool(config.get("verify_tls", True)),
+    )
+
+
 def _memory_factory(config: dict[str, Any]) -> GraphStore:
     from eoip.graph.memory import MemoryGraphStore
 
@@ -259,6 +272,23 @@ def ensure_default_backends() -> None:
                 notes=[
                     "Uses Neptune openCypher HTTPS for EOIP GraphStore operations.",
                     "SPARQL and Gremlin are exposed for native database access where policy allows.",
+                ],
+            ),
+        )
+    )
+    register_backend(
+        GraphBackendDefinition(
+            "neo4j",
+            _neo4j_factory,
+            GraphBackendCapabilities(
+                backend="neo4j",
+                models=["property_graph"],
+                query_languages=["Cypher"],
+                native_query_language="Cypher",
+                architecture=["self_managed_or_managed", "property_graph"],
+                notes=[
+                    "Uses Neo4j transactional Cypher HTTP for EOIP GraphStore operations.",
+                    "Suitable for client deployments that standardize on Neo4j or Neo4j-compatible Cypher.",
                 ],
             ),
         )

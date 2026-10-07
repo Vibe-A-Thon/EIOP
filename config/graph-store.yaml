@@ -1,10 +1,11 @@
 # EOIP graph backend selection.
 #
-# Switch primary to "neptune" to route all GraphStore-backed ingestion, query,
-# RAG, validation, and agent workflows through Amazon Neptune.
+# Switch primary to the client-required graph backend to route all
+# GraphStore-backed ingestion, query, RAG, validation, and agent workflows
+# through that engine.
 # Env overrides:
-#   EOIP_GRAPH_BACKEND=neptune|hugegraph|memory
-#   EOIP_GRAPH_URL=https://example.cluster.region.neptune.amazonaws.com:8182
+#   EOIP_GRAPH_BACKEND=hugegraph|neptune|neo4j|memory
+#   EOIP_GRAPH_URL=<backend URL>
 #   EOIP_GRAPH_DATABASE=<logical-name>
 #   EOIP_GRAPH_USER / EOIP_GRAPH_PASSWORD
 primary: hugegraph
@@ -24,6 +25,14 @@ connections:
     open_cypher_path: /openCypher
     sparql_path: /sparql
     gremlin_path: /gremlin
+    verify_tls: true
+
+  neo4j:
+    type: neo4j
+    url: http://neo4j:7474
+    database: neo4j
+    username: neo4j
+    password: ""
     verify_tls: true
 
   memory:

@@ -4,7 +4,7 @@ EOIP is a local-first enterprise knowledge graph platform that ingests from 24 s
 
 **Key capabilities:**
 - 24 source connectors with checkpoint-based incremental sync
-- Multi-backend graph store: Apache HugeGraph (default), Amazon Neptune, or in-memory — via `config/graph-store.yaml`
+- Multi-backend graph store: Apache HugeGraph (default Docker backend), Amazon Neptune, Neo4j, or in-memory via `config/graph-store.yaml`
 - 14 graph domains, 50+ vertex types, 30+ edge types
 - 6 query languages: EQL, NLQ, EOQL, OSQL, Semantic QL, raw Gremlin (admin)
 - 30+ graph algorithms: centrality, community, paths, similarity, blast radius, cycle detection
@@ -60,7 +60,7 @@ symbols, documentation, merge-request metadata, and pipeline metadata.
 | [Ontology](docs/ontology.md) | Vocabulary, vertex/edge labels, schema generation, SKOS |
 | [Ingestion](docs/ingestion.md) | Ingestion pipeline, DLQ, checkpointing, semantic pipeline |
 | [Code Graph](docs/code-graph.md) | Code parser, symbol extraction, CommitSymbolLink, diff hunks |
-| [Multi-Backend](eoip-engg-doc-pkg/76-multi-backend.md) | HugeGraph, Neptune, memory backends — config and factory |
+| [Multi-Backend](eoip-engg-doc-pkg/76-multi-backend.md) | HugeGraph, Neptune, Neo4j, memory backends - config and factory |
 | [File Parsing](docs/file-parsing.md) | .docx, .xlsx, .pptx, .pdf, .csv, .txt ingestion |
 | [Docker Local](docs/docker-local.md) | Full Docker runbook, backup/restore, VS Code extension |
 | [Deep Agents & XAI](docs/deep-agents-xai.md) | Agent contracts, orchestration, approval workflows |

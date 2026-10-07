@@ -174,8 +174,8 @@
         "implemented_count": 181,
         "implementation": "packages/eoip/gaps/enterprise_completion.py",
         "tests": "tests/unit/test_enterprise_gap_completion.py",
-        "focused_regression_command": "python -m pytest tests/unit/test_gap_coverage.py tests/unit/test_enterprise_gap_completion.py tests/unit/test_future_scope.py",
-        "focused_regression_passed": 26,
+        "focused_regression_command": "python -m pytest tests/unit/test_graph_backends.py tests/unit/test_enterprise_gap_completion.py tests/unit/test_gap_coverage.py tests/unit/test_future_scope.py",
+        "focused_regression_passed": 33,
         "focused_regression_failed": 0,
         "gap_gate_command": "python -m scripts.gap_coverage --project-root . --output .tmp\\gap-coverage-after.json --fail-on-gate --gate-priority P0",
         "gap_gate": {
@@ -194,6 +194,14 @@
           "passed": true,
           "blocked_total": 0
         }
+      },
+      "neo4j_backend": {
+        "status": "implemented",
+        "implementation": "packages/eoip/graph/neo4j.py",
+        "registry": "packages/eoip/graph/backends.py",
+        "config": "config/graph-store.yaml",
+        "docker": "deploy/docker-compose.yml neo4j profile and generic EOIP_GRAPH_* env vars",
+        "tests": "tests/unit/test_graph_backends.py"
       }
     },
     "totals": {
@@ -413,8 +421,8 @@
       "ha_worker_followup_verification_passed": 44,
       "ha_worker_followup_verification_failed": 0,
       "pass8_focused_regression": {
-        "command": "python -m pytest tests/unit/test_gap_coverage.py tests/unit/test_enterprise_gap_completion.py tests/unit/test_future_scope.py",
-        "passed": 26,
+        "command": "python -m pytest tests/unit/test_graph_backends.py tests/unit/test_enterprise_gap_completion.py tests/unit/test_gap_coverage.py tests/unit/test_future_scope.py",
+        "passed": 33,
         "failed": 0
       }
     },
@@ -552,8 +560,8 @@
     "latest_status": {
       "date": "2026-10-07",
       "status": "Pass 8 full GAP gate closure complete by local code/test-evidence audit policy",
-      "summary": "Original GAP coverage now reports 296/296 Done and G2 coverage remains 364/364 Done. Local application-code gates pass; live HA/Kubernetes/HugeGraph-cluster certification remains an external environment gate.",
-      "focused_regression": "26 passed, 0 failed",
+      "summary": "Original GAP coverage now reports 296/296 Done and G2 coverage remains 364/364 Done. Local application-code gates pass; graph storage is backend-selectable across HugeGraph, Neptune, Neo4j, and memory; live HA/Kubernetes/selected graph-database cluster certification remains an external environment gate.",
+      "focused_regression": "33 passed, 0 failed",
       "gap_gate": "296/296 Done, P0 gate passed, 0 blockers",
       "g2_gate": "364/364 Done, P0 gate passed, 0 blockers"
     }
@@ -595,11 +603,11 @@
         "result": "73 passed, 0 failed; standalone test_future_scope.py 11 passed",
         "command": "python -m pytest tests/unit/test_future_scope.py tests/unit/test_federation_planner.py tests/unit/test_knowledge_products.py tests/unit/test_truth_claims.py tests/unit/test_ontology_gitops.py tests/unit/test_query_cache.py"
       },
-      "pass8_focused_regression": "26 passed, 0 failed",
+      "pass8_focused_regression": "33 passed, 0 failed",
       "gap_gate": "296/296 Done, P0 gate passed",
       "g2_gate": "364/364 Done, P0 gate passed"
     },
-    "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope.",
+    "remaining_external_gate": "Live multi-node HA/Kubernetes/selected graph-database cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope.",
     "future_scope": {
       "starting_backlog": 241,
       "implemented_this_pass": 47,
@@ -770,7 +778,7 @@
     },
     {
       "id": "FR-GRAPH-001",
-      "title": "HugeGraph authoritative store",
+      "title": "GraphStore backend abstraction with selectable production graph engine",
       "priority": "P1-MVP",
       "status": "Done",
       "evidence": "packages/eoip/graph/store.py:1-9, hugegraph.py:28-39",
@@ -1782,14 +1790,14 @@
     "Backup/restore is distinct from HA/DR guarantees",
     "VS Code extension.js provides 8 commands; VSIX marketplace distribution is out of scope",
     "Performance targets are benchmark thresholds; actual p95 depends on dataset size",
-    "Pass 6 closes the prior 20 Challenge items in code/config; live HA/K8s/HugeGraph-cluster exercises still require target infrastructure",
+    "Pass 6 closes the prior 20 Challenge items in code/config; live HA/K8s/selected graph-database cluster exercises still require target infrastructure",
     "Neptune backend requires AWS credentials and Neptune endpoint — not enabled in default Docker deployment",
     "Federation planner: built-in adapters only; external federated source registration is future scope",
     "G2 automated scan done_ratio=1.0 is code-reference policy, not full semantic acceptance verification",
     "Audit folder consolidation: docs/audit-2026-10-06 is the only current audit report folder. Older docs/audit-2026-10-04 report references are historical and the folder has been removed.",
     "Pass 6 final verification passed: python -m pytest returned 1922 passed / 33 skipped / 1 warning, and apps/web npm run build passed with only Vite large-chunk warning.",
     "Pass 8 closes the original GAP gate by local code/test-evidence policy: 296/296 Done, 0 P0 blockers.",
-    "Live multi-node HA/Kubernetes/HugeGraph-cluster certification remains an external environment gate, not an open local application-code item."
+    "Live multi-node HA/Kubernetes/selected graph-database cluster certification remains an external environment gate, not an open local application-code item."
   ],
   "current_updates": {
     "updated_at": "2026-10-07",
@@ -1805,7 +1813,8 @@
       "No-code studio, admin security/AuthZ, and live operations panels are available in the web app.",
       "Production topology endpoints expose HA readiness, logical sharding plans, and Helm summaries.",
       "HA worker lease gating prevents non-leader worker replicas from processing jobs.",
-      "HA Compose and Helm artifacts describe multi-replica API/worker deployment, HugeGraph topology hooks, health probes, HPA, and optional Redis."
+      "HA Compose and Helm artifacts describe multi-replica API/worker deployment, selected graph-backend topology hooks, health probes, HPA, and optional Redis.",
+      "Neo4j GraphStore adapter, backend registry entry, graph-store config, and Docker neo4j profile were added so graph storage can be selected per client requirement."
     ],
     "latest_verification": {
       "python_full_regression": "1922 passed, 33 skipped, 0 failed, 0 errors, 1 warning",
@@ -1813,11 +1822,11 @@
       "focused_pass6_tests": "36 passed, 0 failed",
       "ha_worker_followup_tests": "44 passed, 0 failed",
       "pass7_future_scope_slices_1_2": "73 passed, 0 failed; standalone test_future_scope.py 11 passed",
-      "pass8_focused_regression": "26 passed, 0 failed",
+      "pass8_focused_regression": "33 passed, 0 failed",
       "gap_gate": "296/296 Done, P0 gate passed, 0 blockers",
       "g2_gate": "364/364 Done, P0 gate passed, 0 blockers"
     },
-    "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open local application-code item.",
+    "remaining_external_gate": "Live multi-node HA/Kubernetes/selected graph-database cluster certification requires target infrastructure; this is an environment certification gate, not an open local application-code item.",
     "executive_summary": {
       "status": "Pass 7 future-scope slices 1-2 complete by code-evidence audit policy for audited scope",
       "pass": "Pass 7 future-scope slices 1-2",
@@ -1856,7 +1865,7 @@
           "command": "python -m pytest tests/unit/test_future_scope.py tests/unit/test_federation_planner.py tests/unit/test_knowledge_products.py tests/unit/test_truth_claims.py tests/unit/test_ontology_gitops.py tests/unit/test_query_cache.py"
         }
       },
-      "remaining_external_gate": "Live multi-node HA/Kubernetes/HugeGraph-cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope.",
+      "remaining_external_gate": "Live multi-node HA/Kubernetes/selected graph-database cluster certification requires target infrastructure; this is an environment certification gate, not an open application development item in the audited code scope.",
       "future_scope": {
         "starting_backlog": 241,
         "implemented_this_pass": 47,
