@@ -1,0 +1,7 @@
+name: manufacturing
+version: "1.0.0"
+extends: core
+description: >-
+  Manufacturing and supply chain pack: Part, BOM, Supplier, Plant, WorkOrder
+  and QualityEvent concepts (§19 manufacturing row, SR-COM-020/021) for
+  supplier-nonconformance impact and ISA-95-style production tracing.

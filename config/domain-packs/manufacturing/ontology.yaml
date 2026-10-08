@@ -1,0 +1,111 @@
+ontology_version: "0.4.0"
+schema_version: "1.2"
+
+domains:
+  - PROCESS
+  - OPS
+  - BUSINESS
+
+classes:
+  Part:
+    description: A manufactured or purchased part/component.
+    properties:
+      part_id: TEXT
+      part_number: TEXT
+      material: TEXT
+      canonical_id: TEXT
+      name: TEXT
+      source_system: TEXT
+    relationships:
+      USED_IN:
+        out: [Part]
+        in: [BOM]
+      SUPPLIED_BY:
+        out: [Part]
+        in: [Supplier]
+
+  BOM:
+    description: A bill of materials version listing component parts.
+    properties:
+      bom_id: TEXT
+      bom_revision: TEXT
+      canonical_id: TEXT
+      name: TEXT
+      source_system: TEXT
+    relationships:
+      ASSEMBLED_AT:
+        out: [BOM]
+        in: [Plant]
+
+  Supplier:
+    description: An external supplier of parts or materials.
+    properties:
+      supplier_id: TEXT
+      supplier_tier: TEXT
+      region: TEXT
+      canonical_id: TEXT
+      name: TEXT
+      source_system: TEXT
+    relationships:
+      SUPPLIES:
+        out: [Supplier]
+        in: [Part]
+
+  Plant:
+    description: A manufacturing plant or production facility.
+    properties:
+      plant_id: TEXT
+      plant_code: TEXT
+      region: TEXT
+      canonical_id: TEXT
+      name: TEXT
+      source_system: TEXT
+    relationships:
+      FABRICATES:
+        out: [Plant]
+        in: [Part]
+
+  WorkOrder:
+    description: A production work order executed on a plant line.
+    properties:
+      work_order_id: TEXT
+      wo_status: TEXT
+      planned_start: DATE
+      planned_end: DATE
+      quantity: INT
+      source_system: TEXT
+    relationships:
+      EXECUTES:
+        out: [WorkOrder]
+        in: [BOM]
+      RAISED:
+        out: [WorkOrder]
+        in: [QualityEvent]
+
+  QualityEvent:
+    description: A nonconformance, defect or quality inspection event.
+    properties:
+      quality_event_id: TEXT
+      defect_code: TEXT
+      severity: TEXT
+      event_timestamp: DATE
+      status: TEXT
+      source_system: TEXT
+    relationships:
+      NONCONFORMING_PART:
+        out: [QualityEvent]
+        in: [Part]
+
+validators:
+  - id: GAP-DP-MFG-001
+    description: Quality events must reference a nonconforming part.
+    applies_to: [QualityEvent]
+    severity: ERROR
+  - id: GAP-DP-MFG-002
+    description: Work orders must target a BOM assembled at a known plant.
+    applies_to: [WorkOrder]
+    severity: WARNING
+  - id: GAP-DP-MFG-003
+    description: Supplier region should be declared for traceability.
+    applies_to: [Supplier]
+    severity: INFO

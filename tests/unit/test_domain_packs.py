@@ -23,6 +23,8 @@ EXPECTED_PACKS = {
     "data-governance",
     "compliance",
     "cybersecurity",
+    "healthcare",
+    "manufacturing",
 }
 
 
@@ -32,7 +34,7 @@ def test_default_packs_dir_points_at_repo_config():
     assert (PACKS_DIR.parent / "ontology" / "ontology-v0.2.0.yaml").is_file()
 
 
-def test_all_six_packs_are_installed():
+def test_all_eight_packs_are_installed():
     metas = list_installed_packs()
     assert {m.name for m in metas} == EXPECTED_PACKS
     for meta in metas:

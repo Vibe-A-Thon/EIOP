@@ -1,0 +1,8 @@
+name: healthcare
+version: "1.0.0"
+extends: core
+description: >-
+  Healthcare and life sciences pack: Encounter, Order, Drug, Lot, Device,
+  Protocol and Site concepts (§19 healthcare row, SR-COM-020/021) extending
+  core OPS/PROCESS/BUSINESS terms for clinical operations, drug-recall lot
+  tracing and trial/site relationship queries.
