@@ -57,6 +57,27 @@ connections:
     assert config["url"] == "https://override.example:8182"
 
 
+def test_empty_generic_graph_env_does_not_hide_backend_specific_secret(tmp_path, monkeypatch):
+    cfg = tmp_path / "graph-store.yaml"
+    cfg.write_text(
+        """
+primary: hugegraph
+connections:
+  hugegraph:
+    type: hugegraph
+    url: http://hugegraph:8080
+""",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("EOIP_GRAPH_PASSWORD", "")
+    monkeypatch.setenv("EOIP_HUGEGRAPH_PASSWORD", "admin")
+
+    backend, config = resolve_graph_backend_config(cfg)
+
+    assert backend == "hugegraph"
+    assert config["password"] == "admin"
+
+
 def test_backend_capability_catalog_includes_neptune_and_app_languages():
     caps = backend_capabilities("neptune")
 

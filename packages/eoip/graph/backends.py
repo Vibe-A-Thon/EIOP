@@ -130,7 +130,7 @@ def _apply_env_overrides(name: str, config: dict[str, Any]) -> dict[str, Any]:
     def env(*keys: str) -> str | None:
         for key in keys:
             value = os.getenv(key)
-            if value is not None:
+            if value:
                 return value
         return None
 
