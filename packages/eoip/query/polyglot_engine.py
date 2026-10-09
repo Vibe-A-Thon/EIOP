@@ -208,17 +208,47 @@ class PolyglotQueryEngine:
         )
 
     def _nl_to_query(self, nl_text: str, target_dialect: QueryDialect) -> str:
-        """Translate Natural Language question into a target dialect query."""
+        """Translate Natural Language question into a target dialect query via pattern extraction."""
         low = nl_text.lower()
-        if "users" in low or "user" in low:
-            return "MATCH (u:User) RETURN u LIMIT 50"
-        if "services" in low or "microservices" in low:
-            return "MATCH (s:Service)-[:DEPENDS_ON]->(dep) RETURN s, dep"
-        if "incidents" in low or "errors" in low:
-            return "MATCH (i:Incident)-[:AFFECTS]->(target) RETURN i, target ORDER BY i.severity DESC"
-        if "blast radius" in low:
-            return "MATCH (start {id: 'target'})-[*1..3]->(impacted) RETURN impacted"
-        return "MATCH (n) RETURN n LIMIT 25"
+        entity_patterns = [
+            (r"\b(users?|people|persons?|employees?)\b", "User"),
+            (r"\b(services?|microservices?|apis?)\b", "Service"),
+            (r"\b(incidents?|errors?|failures?|outages?)\b", "Incident"),
+            (r"\b(teams?|groups?|departments?)\b", "Team"),
+            (r"\b(databases?|clusters?|stores?)\b", "Database"),
+            (r"\b(servers?|hosts?|nodes?|machines?)\b", "Server"),
+            (r"\b(applications?|apps?|systems?)\b", "Application"),
+            (r"\b(files?|documents?|artifacts?)\b", "Document"),
+        ]
+        relationship_patterns = [
+            (r"\b(depends?\s+on|requires?|needs?)\b", "DEPENDS_ON"),
+            (r"\b(owns?|manages?|maintains?)\b", "OWNS"),
+            (r"\b(affects?|impacts?|causes?)\b", "AFFECTS"),
+            (r"\b(connects?\s+to|calls?|invokes?)\b", "CONNECTS_TO"),
+            (r"\b(belongs?\s+to|member\s+of|part\s+of)\b", "BELONGS_TO"),
+        ]
+        labels: list[str] = []
+        for pattern, label in entity_patterns:
+            if re.search(pattern, low):
+                labels.append(label)
+        rel_type: str | None = None
+        for pattern, rel in relationship_patterns:
+            if re.search(pattern, low):
+                rel_type = rel
+                break
+        if not labels:
+            return "MATCH (n) RETURN n LIMIT 25"
+        primary = labels[0]
+        var = primary[0].lower()
+        if len(labels) > 1 and rel_type:
+            secondary = labels[1]
+            var2 = secondary[0].lower()
+            if var2 == var:
+                var2 = var2 + "2"
+            return f"MATCH ({var}:{primary})-[:{rel_type}]->({var2}:{secondary}) RETURN {var}, {var2} LIMIT 50"
+        if "how many" in low or "count" in low:
+            return f"MATCH ({var}:{primary}) RETURN count({var})"
+        return f"MATCH ({var}:{primary}) RETURN {var} LIMIT 50"
 
     def execute_query(
         self,
@@ -226,22 +256,61 @@ class PolyglotQueryEngine:
         store: Any = None,
         target_dialect: QueryDialect = QueryDialect.CYPHER,
     ) -> QueryExecutionResult:
-        """Execute polyglot query with automatic transpilation and simulated or live store execution."""
+        """Execute polyglot query with automatic transpilation and live store execution."""
         start_time = time.time()
         plan = self.transpile(query, target_dialect)
-
-        # Execute on store or fallback to simulated structured records
-        records = [
-            {"id": "node_101", "label": "Service", "properties": {"name": "PaymentGateway", "tier": "CRITICAL"}},
-            {"id": "node_102", "label": "Database", "properties": {"name": "PostgresCluster", "status": "ACTIVE"}},
-        ]
-
+        records: list[dict[str, Any]] = []
+        if store is not None:
+            records = self._execute_on_store(plan, store)
         duration = (time.time() - start_time) * 1000.0
         return QueryExecutionResult(
-            query=query,
-            plan=plan,
-            records=records,
-            total_records=len(records),
-            execution_time_ms=duration,
+            query=query, plan=plan, records=records,
+            total_records=len(records), execution_time_ms=duration,
             dialect_used=plan.target_dialect,
         )
+
+    def _execute_on_store(self, plan: TranspiledPlan, store: Any) -> list[dict[str, Any]]:
+        """Execute a transpiled plan against a GraphStore-compatible store."""
+        records: list[dict[str, Any]] = []
+        label_match = re.search(r"\((\w+):(\w+)", plan.executable_code)
+        label = label_match.group(2) if label_match else None
+        filters: dict[str, Any] = {}
+        where_match = re.search(
+            r"WHERE\s+\w+\.(\w+)\s*=\s*['\"]?([^'\"}\s]+)['\"]?",
+            plan.executable_code, re.IGNORECASE,
+        )
+        if where_match:
+            filters[where_match.group(1)] = where_match.group(2)
+        limit_match = re.search(r"LIMIT\s+(\d+)", plan.executable_code, re.IGNORECASE)
+        limit = int(limit_match.group(1)) if limit_match else 100
+        try:
+            vertices = store.find_vertices(
+                label=label, filters=filters if filters else None, limit=limit,
+            )
+            for v in vertices:
+                records.append({
+                    "id": v.get("vid", v.get("canonical_id", "")),
+                    "label": v.get("label", ""),
+                    "properties": v.get("properties", {}),
+                })
+        except Exception:
+            pass
+        edge_match = re.search(r"\[(?::)?(\w+)\]", plan.executable_code)
+        if edge_match and records:
+            edge_label = edge_match.group(1)
+            seed_vid = records[0].get("id", "")
+            try:
+                edges = store.edges_from(seed_vid, labels=[edge_label], limit=limit)
+                for e in edges:
+                    target_vid = e.get("in_v", "")
+                    target = store.get_vertex(target_vid) if target_vid else None
+                    if target:
+                        records.append({
+                            "id": target.get("vid", ""),
+                            "label": target.get("label", ""),
+                            "properties": target.get("properties", {}),
+                            "_edge": e.get("label", ""),
+                        })
+            except Exception:
+                pass
+        return records

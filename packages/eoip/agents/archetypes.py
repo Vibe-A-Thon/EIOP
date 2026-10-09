@@ -196,17 +196,43 @@ class RouterAgent(BaseAgent):
 class ToolCallingAgent(BaseAgent):
     def __init__(self, tools: dict[str, Callable] | None = None) -> None:
         super().__init__()
-        self.tools = tools or {"calc": lambda x: eval(str(x)), "echo": lambda x: f"Echo: {x}"}
+        self.tools: dict[str, Callable] = tools or {
+            "echo": lambda x: f"Echo: {x}",
+            "length": lambda x: len(str(x)),
+            "upper": lambda x: str(x).upper(),
+            "lower": lambda x: str(x).lower(),
+        }
+
+    def register_tool(self, name: str, func: Callable) -> None:
+        self.tools[name] = func
 
     def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
         tool_name = (context or {}).get("tool", "echo")
-        tool = self.tools.get(tool_name, lambda x: f"Tool {tool_name} not found")
-        result = tool(input_data)
+        tool = self.tools.get(tool_name)
+        if tool is None:
+            return AgentResponse(
+                agent_id=self.agent_id,
+                agent_type="ToolCallingAgent",
+                output={"error": f"Tool '{tool_name}' not registered", "available": list(self.tools.keys())},
+                confidence=0.0,
+                reasoning_trace=[f"Tool '{tool_name}' not found in registry"],
+            )
+        try:
+            result = tool(input_data)
+        except Exception as exc:
+            return AgentResponse(
+                agent_id=self.agent_id,
+                agent_type="ToolCallingAgent",
+                output={"error": f"Tool '{tool_name}' failed: {exc}"},
+                confidence=0.0,
+                reasoning_trace=[f"Tool '{tool_name}' raised {type(exc).__name__}"],
+            )
+        self.record_memory({"tool": tool_name, "input": str(input_data)[:100], "success": True})
         return AgentResponse(
             agent_id=self.agent_id,
             agent_type="ToolCallingAgent",
             output={"tool": tool_name, "result": result},
-            reasoning_trace=[f"Invoked tool '{tool_name}' with payload '{input_data}'"],
+            reasoning_trace=[f"Invoked tool '{tool_name}' successfully"],
         )
 
 
@@ -225,13 +251,34 @@ class FunctionCallingAgent(BaseAgent):
 # 9. RAG Agent: Information retrieval augmented generator
 class RAGAgent(BaseAgent):
     def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
-        evidence = (context or {}).get("evidence", ["Knowledge fact 1: Ontology v2.0 active."])
+        ctx = context or {}
+        evidence = ctx.get("evidence", [])
+        query = str(input_data)
+        query_tokens = set(query.lower().split())
+        relevant = []
+        for doc in evidence:
+            doc_tokens = set(str(doc).lower().split())
+            overlap = len(query_tokens & doc_tokens)
+            if overlap > 0:
+                relevant.append({"content": str(doc)[:200], "relevance": overlap})
+        relevant.sort(key=lambda x: x["relevance"], reverse=True)
+        top_evidence = relevant[:5]
+        confidence = min(1.0, len(top_evidence) * 0.2) if top_evidence else 0.1
+        if top_evidence:
+            answer = f"Based on {len(top_evidence)} relevant sources: {top_evidence[0]['content'][:100]}"
+        else:
+            answer = f"No relevant evidence found for: {query}"
+        self.record_memory({"query": query[:100], "evidence_count": len(top_evidence)})
         return AgentResponse(
             agent_id=self.agent_id,
             agent_type="RAGAgent",
-            output={"query": str(input_data), "answer": f"Answer grounded in {len(evidence)} evidence documents.", "sources": evidence},
-            confidence=0.92,
-            reasoning_trace=["Tri-modal retrieval executed -> Formulated grounded answer"],
+            output={"query": query, "answer": answer, "sources": top_evidence},
+            confidence=confidence,
+            reasoning_trace=[
+                f"Searched {len(evidence)} documents",
+                f"Found {len(top_evidence)} relevant matches",
+                f"Confidence: {confidence}",
+            ],
         )
 
 
@@ -327,12 +374,45 @@ class ConsensusAgent(BaseAgent):
 # 17. Critic Agent: Evaluates outputs for errors, bias, and quality
 class CriticAgent(BaseAgent):
     def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
-        quality_score = 0.88 if len(str(input_data)) > 10 else 0.45
+        text = str(input_data)
+        issues: list[str] = []
+        length_score = min(1.0, len(text) / 100.0) if text else 0.0
+        has_evidence = any(w in text.lower() for w in ["because", "evidence", "source", "according", "based on"])
+        evidence_score = 0.9 if has_evidence else 0.4
+        has_hedging = any(w in text.lower() for w in ["maybe", "perhaps", "might", "could be", "not sure"])
+        certainty_score = 0.5 if has_hedging else 0.9
+        has_structure = any(c in text for c in [".", ":", "-", "\n"])
+        structure_score = 0.8 if has_structure else 0.5
+        if length_score < 0.1:
+            issues.append("Output too short — lacks substance")
+        if not has_evidence:
+            issues.append("No evidence citations found")
+        if has_hedging:
+            issues.append("Contains hedging language — low confidence")
+        quality_score = round(
+            length_score * 0.2 + evidence_score * 0.3 +
+            certainty_score * 0.3 + structure_score * 0.2, 3
+        )
+        threshold = (context or {}).get("quality_threshold", 0.7)
         return AgentResponse(
             agent_id=self.agent_id,
             agent_type="CriticAgent",
-            output={"critique_score": quality_score, "passed": quality_score >= 0.7},
-            reasoning_trace=[f"Assessed quality score {quality_score} against rubric"],
+            output={
+                "critique_score": quality_score,
+                "passed": quality_score >= threshold,
+                "issues": issues,
+                "breakdown": {
+                    "length": round(length_score, 2),
+                    "evidence": round(evidence_score, 2),
+                    "certainty": round(certainty_score, 2),
+                    "structure": round(structure_score, 2),
+                },
+            },
+            reasoning_trace=[
+                f"Quality rubric: length={length_score:.2f}, evidence={evidence_score:.2f}, "
+                f"certainty={certainty_score:.2f}, structure={structure_score:.2f}",
+                f"Final score: {quality_score} (threshold: {threshold})",
+            ],
         )
 
 

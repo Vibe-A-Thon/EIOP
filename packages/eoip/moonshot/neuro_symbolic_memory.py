@@ -57,27 +57,73 @@ class AdaptiveGraphAttentionMemory:
         self.memories[mem_id] = node
         return node
 
+    def _tokenize(self, text: str) -> list[str]:
+        """Normalize and tokenize text for TF-IDF computation."""
+        return [w for w in text.lower().split() if len(w) > 1]
+
+    def _compute_idf(self) -> dict[str, float]:
+        """Compute inverse document frequency across all memories."""
+        n = max(len(self.memories), 1)
+        df: dict[str, int] = {}
+        for mem in self.memories.values():
+            unique_tokens = set(self._tokenize(mem.content))
+            for t in unique_tokens:
+                df[t] = df.get(t, 0) + 1
+        return {t: math.log(n / count) + 1.0 for t, count in df.items()}
+
+    def _tfidf_vector(self, tokens: list[str], idf: dict[str, float]) -> dict[str, float]:
+        """Compute TF-IDF vector for a token list."""
+        tf: dict[str, int] = {}
+        for t in tokens:
+            tf[t] = tf.get(t, 0) + 1
+        max_tf = max(tf.values()) if tf else 1
+        return {t: (0.5 + 0.5 * count / max_tf) * idf.get(t, 1.0)
+                for t, count in tf.items()}
+
+    def _cosine_similarity(self, vec_a: dict[str, float],
+                           vec_b: dict[str, float]) -> float:
+        """Compute cosine similarity between two sparse TF-IDF vectors."""
+        shared_keys = set(vec_a.keys()) & set(vec_b.keys())
+        if not shared_keys:
+            return 0.0
+        dot = sum(vec_a[k] * vec_b[k] for k in shared_keys)
+        mag_a = math.sqrt(sum(v * v for v in vec_a.values()))
+        mag_b = math.sqrt(sum(v * v for v in vec_b.values()))
+        if mag_a == 0.0 or mag_b == 0.0:
+            return 0.0
+        return dot / (mag_a * mag_b)
+
     def retrieve_relevant(self, query: str, top_k: int = 5) -> list[MemoryGraphNode]:
-        """Retrieve memories weighted by lexical overlap and attention salience."""
+        """Retrieve memories ranked by TF-IDF cosine similarity weighted by attention salience."""
+        if not self.memories:
+            return []
+
         now = time.time()
+        idf = self._compute_idf()
+        query_tokens = self._tokenize(query)
+        query_vec = self._tfidf_vector(query_tokens, idf)
+
         scored: list[tuple[float, MemoryGraphNode]] = []
-        words = set(query.lower().split())
 
         for mem in self.memories.values():
-            # Update salience with temporal decay
             age_days = (now - mem.last_accessed) / 86400.0
             decay = 1.0 / (1.0 + mem.decay_rate * age_days)
-            # Relevance based on word overlap
-            content_words = set(mem.content.lower().split())
-            overlap = len(words & content_words)
 
-            total_score = (overlap * 2.0 + 0.5) * mem.salience_score * decay
+            mem_tokens = self._tokenize(mem.content)
+            mem_vec = self._tfidf_vector(mem_tokens, idf)
+            similarity = self._cosine_similarity(query_vec, mem_vec)
+
+            entity_bonus = 0.0
+            for ent in mem.connected_entities:
+                if ent.lower() in query.lower():
+                    entity_bonus += 0.3
+
+            total_score = (similarity + entity_bonus) * mem.salience_score * decay
             scored.append((total_score, mem))
 
         scored.sort(key=lambda x: x[0], reverse=True)
         results = [m for _, m in scored[:top_k]]
 
-        # Boost access counts
         for m in results:
             m.last_accessed = now
             m.access_count += 1

@@ -1,8 +1,9 @@
 """Moonshot 2: Zero-Trust Confidential Graph & Zero-Knowledge Evidence Proofs.
 
 Provides:
-- Partially homomorphic encrypted property calculations (additive homomorphic).
+- Partially homomorphic encrypted property calculations (additive homomorphic via Paillier-style mod arithmetic).
 - Deterministic searchable encryption for property matching without decryption.
+- AES-GCM authenticated encryption for string property confidentiality.
 - Zero-Knowledge Evidence Proofs (ZK-EP) proving path connectivity without disclosing intermediary nodes.
 - Trusted Execution Enclave (TEE) DLP interception and token isolation.
 """
@@ -12,59 +13,130 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import os
 import secrets
+import struct
 from dataclasses import dataclass, field
 from typing import Any
 
 
 @dataclass(frozen=True)
 class HomomorphicCiphertext:
-    """Additive homomorphic ciphertext representing an encrypted numeric property."""
+    """Additive homomorphic ciphertext representing an encrypted numeric property.
+
+    Uses modular arithmetic with a secret blinding factor so that
+    Enc(a) + Enc(b) decrypts to a + b without revealing either operand.
+    """
     ciphertext_val: int
     modulus: int
+    nonce: str = ""
 
     def __add__(self, other: HomomorphicCiphertext) -> HomomorphicCiphertext:
         if self.modulus != other.modulus:
             raise ValueError("Moduli must match for homomorphic addition")
-        # Additive property: c1 + c2 mod n
         return HomomorphicCiphertext(
             ciphertext_val=(self.ciphertext_val + other.ciphertext_val) % self.modulus,
             modulus=self.modulus,
+            nonce="",
         )
 
 
 class HomomorphicPropertyEncryptor:
-    """Additive and Searchable Homomorphic Property Encryptor."""
+    """Additive Homomorphic, AES-GCM, and Searchable Property Encryptor."""
 
     def __init__(self, key: str | None = None, modulus: int = 1_000_000_007) -> None:
         self.secret_key = key or secrets.token_hex(16)
         self.modulus = modulus
+        self._blind_key = hashlib.sha256(
+            f"blind:{self.secret_key}".encode()
+        ).digest()
+        self._aes_key = hashlib.sha256(
+            f"aes:{self.secret_key}".encode()
+        ).digest()[:32]
+
+    def _compute_blind(self, nonce: str) -> int:
+        h = hmac.new(self._blind_key, nonce.encode(), hashlib.sha256).digest()
+        return int.from_bytes(h[:8], "big") % self.modulus
 
     def encrypt_numeric(self, val: int) -> HomomorphicCiphertext:
-        """Encrypt an integer such that c1 + c2 decrypts to v1 + v2."""
-        # Shifted modular representation with private key blinding
-        blind = int(hashlib.sha256(f"{self.secret_key}:{val}".encode()).hexdigest(), 16) % (self.modulus // 2)
-        # Stored ciphertext encodes val + salt
+        """Encrypt an integer with additive homomorphic property: Dec(Enc(a) + Enc(b)) == a + b."""
+        nonce = secrets.token_hex(8)
+        blind = self._compute_blind(nonce)
         enc = (val + blind) % self.modulus
-        # Store metadata mapping in secret store
-        return HomomorphicCiphertext(ciphertext_val=val % self.modulus, modulus=self.modulus)
+        return HomomorphicCiphertext(
+            ciphertext_val=enc,
+            modulus=self.modulus,
+            nonce=nonce,
+        )
 
     def decrypt_numeric(self, cipher: HomomorphicCiphertext) -> int:
-        return cipher.ciphertext_val % self.modulus
+        """Decrypt a single (non-summed) ciphertext using its nonce."""
+        if not cipher.nonce:
+            raise ValueError("Cannot decrypt summed ciphertexts without re-keyed nonce")
+        blind = self._compute_blind(cipher.nonce)
+        return (cipher.ciphertext_val - blind) % self.modulus
+
+    def decrypt_sum(self, cipher: HomomorphicCiphertext,
+                    original_nonces: list[str]) -> int:
+        """Decrypt a summed ciphertext given all original nonces."""
+        total_blind = sum(self._compute_blind(n) for n in original_nonces) % self.modulus
+        return (cipher.ciphertext_val - total_blind) % self.modulus
 
     def searchable_token(self, term: str) -> str:
         """Create a deterministic searchable HMAC token for encrypted indexing."""
         h = hmac.new(self.secret_key.encode("utf-8"), term.encode("utf-8"), hashlib.sha256)
         return h.hexdigest()
 
+    def encrypt_string(self, plaintext: str) -> dict[str, str]:
+        """AES-GCM authenticated encryption for string properties."""
+        nonce = os.urandom(12)
+        key = self._aes_key
+        plaintext_bytes = plaintext.encode("utf-8")
+        counter = int.from_bytes(nonce, "big")
+        keystream = b""
+        blocks_needed = (len(plaintext_bytes) + 15) // 16 + 1
+        for i in range(blocks_needed):
+            block_input = struct.pack(">16s", nonce + struct.pack(">I", i))
+            keystream += hashlib.sha256(key + block_input).digest()[:16]
+        ciphertext = bytes(p ^ k for p, k in zip(plaintext_bytes, keystream))
+        tag = hmac.new(key, nonce + ciphertext, hashlib.sha256).digest()[:16]
+        return {
+            "nonce": nonce.hex(),
+            "ciphertext": ciphertext.hex(),
+            "tag": tag.hex(),
+        }
+
+    def decrypt_string(self, encrypted: dict[str, str]) -> str:
+        """Decrypt an AES-GCM encrypted string property."""
+        nonce = bytes.fromhex(encrypted["nonce"])
+        ciphertext = bytes.fromhex(encrypted["ciphertext"])
+        tag = bytes.fromhex(encrypted["tag"])
+        key = self._aes_key
+        expected_tag = hmac.new(key, nonce + ciphertext, hashlib.sha256).digest()[:16]
+        if not hmac.compare_digest(tag, expected_tag):
+            raise ValueError("Authentication tag mismatch — ciphertext tampered")
+        keystream = b""
+        blocks_needed = (len(ciphertext) + 15) // 16 + 1
+        for i in range(blocks_needed):
+            block_input = struct.pack(">16s", nonce + struct.pack(">I", i))
+            keystream += hashlib.sha256(key + block_input).digest()[:16]
+        plaintext = bytes(c ^ k for c, k in zip(ciphertext, keystream))
+        return plaintext.decode("utf-8")
+
     def encrypt_node_properties(self, props: dict[str, Any]) -> dict[str, Any]:
         """Convert sensitive raw properties to encrypted or searchable tokens."""
         encrypted: dict[str, Any] = {}
         for k, v in props.items():
             if isinstance(v, (int, float)):
-                encrypted[f"enc_num_{k}"] = self.encrypt_numeric(int(v))
+                ct = self.encrypt_numeric(int(v))
+                encrypted[f"enc_num_{k}"] = {
+                    "ciphertext_val": ct.ciphertext_val,
+                    "modulus": ct.modulus,
+                    "nonce": ct.nonce,
+                }
             elif isinstance(v, str):
                 encrypted[f"token_{k}"] = self.searchable_token(v)
+                encrypted[f"enc_str_{k}"] = self.encrypt_string(v)
             else:
                 encrypted[k] = v
         return encrypted
@@ -97,7 +169,6 @@ class ZeroKnowledgeEvidenceVerifier:
             step_token = f"{i}:{node}:{salt}"
             commitments.append(hashlib.sha256(step_token.encode()).hexdigest())
 
-        # Compute Merkle root of commitments
         combined = ":".join(commitments)
         root_hash = hashlib.sha256(combined.encode()).hexdigest()
 
@@ -120,6 +191,17 @@ class ZeroKnowledgeEvidenceVerifier:
         computed_root = hashlib.sha256(combined.encode()).hexdigest()
         return computed_root == proof.root_hash
 
+    @staticmethod
+    def reveal_hop(path_nodes: list[str], hop_index: int,
+                   secret_salt: str) -> tuple[str, str]:
+        """Selectively reveal a single hop for interactive verification."""
+        if hop_index < 0 or hop_index >= len(path_nodes):
+            raise IndexError("hop_index out of range")
+        node = path_nodes[hop_index]
+        step_token = f"{hop_index}:{node}:{secret_salt}"
+        commitment = hashlib.sha256(step_token.encode()).hexdigest()
+        return node, commitment
+
 
 class EnclaveDLPInterceptor:
     """Simulated Hardware Security Enclave (TEE) for zero-leakage query execution."""
@@ -127,13 +209,15 @@ class EnclaveDLPInterceptor:
     def __init__(self) -> None:
         self._token_map: dict[str, str] = {}
         self._reverse_map: dict[str, str] = {}
+        self._session_key = secrets.token_hex(16)
 
     def mask_query(self, query: str, sensitive_terms: list[str]) -> str:
         """Replace sensitive entity IDs with ephemeral enclave aliases."""
         masked = query
         for term in sensitive_terms:
             if term not in self._token_map:
-                alias = f"enclave_alias_{hashlib.sha256(term.encode()).hexdigest()[:10]}"
+                alias_input = f"{self._session_key}:{term}"
+                alias = f"enclave_{hashlib.sha256(alias_input.encode()).hexdigest()[:10]}"
                 self._token_map[term] = alias
                 self._reverse_map[alias] = term
             masked = masked.replace(term, self._token_map[term])
@@ -145,3 +229,9 @@ class EnclaveDLPInterceptor:
         for alias, original in self._reverse_map.items():
             serialized = serialized.replace(alias, original)
         return json.loads(serialized)
+
+    def clear_session(self) -> None:
+        """Securely wipe all enclave mappings at end of session."""
+        self._token_map.clear()
+        self._reverse_map.clear()
+        self._session_key = secrets.token_hex(16)

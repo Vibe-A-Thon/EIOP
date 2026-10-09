@@ -85,78 +85,174 @@ class AutonomousComplianceTwin:
             components=components,
         )
 
+    def _check_control(self, control_id: str, system_stats: dict[str, Any]) -> tuple[bool, str]:
+        """Evaluate a single control by inspecting actual system state.
+
+        Returns (passed, evidence_summary). A control fails when the required
+        system_stats key is missing or explicitly False — never defaults to True.
+        """
+        checks: dict[str, tuple[str, str, str]] = {
+            "EU-AI-ACT-ART-12": (
+                "audit_logging_enabled",
+                "Audit logging active on all agent and query pipelines.",
+                "Audit logging is DISABLED or not configured.",
+            ),
+            "EU-AI-ACT-ART-14": (
+                "hitl_approval_required",
+                "Human approval boundary enforced on R3/R4 operations.",
+                "HITL gating is DISABLED — high-risk actions can execute without approval.",
+            ),
+            "EU-AI-ACT-ART-15": (
+                "no_egress_default",
+                "Air-gapped local model processing by default.",
+                "Egress controls are not enforced — data may leave the enclave.",
+            ),
+            "EU-AI-ACT-ART-13": (
+                "model_transparency_docs",
+                "Model documentation and AI-BOM registered for all deployed models.",
+                "Missing model transparency documentation or AI-BOM.",
+            ),
+            "SOC2-CC6.1": (
+                "tenant_isolation_active",
+                "Strict tenant namespace and principal checking enabled.",
+                "Tenant isolation is DISABLED or misconfigured.",
+            ),
+            "SOC2-CC7.1": (
+                "drift_monitoring_active",
+                "Continuous architecture drift scanning operational.",
+                "Drift monitoring is INACTIVE — architecture violations may go undetected.",
+            ),
+            "SOC2-CC7.2": (
+                "vulnerability_scan_age_days",
+                "Vulnerability scan completed within the last 7 days.",
+                "Last vulnerability scan is older than 7 days or has never run.",
+            ),
+            "SOC2-CC8.1": (
+                "change_management_active",
+                "Change management with approval workflow is operational.",
+                "Change management workflow is DISABLED.",
+            ),
+            "ISO42001-5.2": (
+                "ai_risk_assessment_complete",
+                "AI risk assessment completed and documented.",
+                "AI risk assessment not completed or documentation missing.",
+            ),
+            "HIPAA-164.312a": (
+                "encryption_at_rest",
+                "Data encrypted at rest with AES-256 or equivalent.",
+                "Encryption at rest is NOT enabled.",
+            ),
+            "GDPR-ART-25": (
+                "data_minimization_enforced",
+                "Data minimization controls active on PII processing pipelines.",
+                "Data minimization is NOT enforced on PII processing.",
+            ),
+            "GOV-GEN-01": (
+                "provenance_active",
+                "Evidence manifests attached to all knowledge responses.",
+                "Provenance tracking is INACTIVE.",
+            ),
+            "GOV-GEN-02": (
+                "rbac_enforced",
+                "Role-based access control enforced on all API endpoints.",
+                "RBAC is NOT enforced — open access on API endpoints.",
+            ),
+        }
+
+        spec = checks.get(control_id)
+        if not spec:
+            return False, f"Unknown control {control_id}"
+
+        stat_key, pass_evidence, fail_evidence = spec
+
+        if stat_key == "vulnerability_scan_age_days":
+            val = system_stats.get(stat_key)
+            if val is None or not isinstance(val, (int, float)) or val > 7:
+                return False, fail_evidence
+            return True, pass_evidence
+
+        val = system_stats.get(stat_key)
+        if val is None:
+            return False, f"{fail_evidence} (key '{stat_key}' not present in system stats)"
+        if not bool(val):
+            return False, fail_evidence
+        return True, pass_evidence
+
     def evaluate_compliance(
         self,
         framework: str,
         system_stats: dict[str, Any],
     ) -> dict[str, Any]:
-        """Evaluate continuous compliance posture against regulatory framework standards."""
+        """Evaluate continuous compliance posture against regulatory framework standards.
+
+        Controls are checked against actual system_stats values. Missing keys cause
+        controls to FAIL rather than defaulting to pass.
+        """
         framework_upper = framework.upper()
         evaluations: list[ControlEvaluation] = []
 
         if "EU_AI" in framework_upper or "EU" in framework_upper:
-            # EU AI Act Controls
-            evaluations.append(
-                ControlEvaluation(
-                    control_id="EU-AI-ACT-ART-12",
-                    framework="EU AI Act",
-                    title="Record-Keeping and Continuous Logging",
-                    passed=bool(system_stats.get("audit_logging_enabled", True)),
-                    evidence_summary="Audit logging active on all agent and query pipelines.",
-                    remediation_hint="Enable immutable audit log sink.",
-                )
-            )
-            evaluations.append(
-                ControlEvaluation(
-                    control_id="EU-AI-ACT-ART-14",
-                    framework="EU AI Act",
-                    title="Human-in-the-Loop Oversight for High-Risk Actions",
-                    passed=bool(system_stats.get("hitl_approval_required", True)),
-                    evidence_summary="Human approval boundary enforced on R3/R4 operations.",
-                    remediation_hint="Set HITL gating for destructive agent operations.",
-                )
-            )
-            evaluations.append(
-                ControlEvaluation(
-                    control_id="EU-AI-ACT-ART-15",
-                    framework="EU AI Act",
-                    title="Robustness, Cybersecurity and Egress Control",
-                    passed=bool(system_stats.get("no_egress_default", True)),
-                    evidence_summary="Air-gapped local model processing by default.",
-                    remediation_hint="Configure egress gateway allowlist.",
-                )
-            )
+            for cid, title in [
+                ("EU-AI-ACT-ART-12", "Record-Keeping and Continuous Logging"),
+                ("EU-AI-ACT-ART-13", "Model Transparency and AI-BOM"),
+                ("EU-AI-ACT-ART-14", "Human-in-the-Loop Oversight for High-Risk Actions"),
+                ("EU-AI-ACT-ART-15", "Robustness, Cybersecurity and Egress Control"),
+            ]:
+                passed, evidence = self._check_control(cid, system_stats)
+                evaluations.append(ControlEvaluation(
+                    control_id=cid, framework="EU AI Act", title=title,
+                    passed=passed, evidence_summary=evidence,
+                    remediation_hint="" if passed else f"Configure {cid} requirements.",
+                ))
+
         elif "SOC2" in framework_upper:
-            # SOC 2 Type II Controls
-            evaluations.append(
-                ControlEvaluation(
-                    control_id="SOC2-CC6.1",
-                    framework="SOC 2 Type II",
-                    title="Logical Access and Least Privilege",
-                    passed=bool(system_stats.get("tenant_isolation_active", True)),
-                    evidence_summary="Strict tenant namespace and principal checking enabled.",
-                )
-            )
-            evaluations.append(
-                ControlEvaluation(
-                    control_id="SOC2-CC7.1",
-                    framework="SOC 2 Type II",
-                    title="System Vulnerability and Drift Monitoring",
-                    passed=bool(system_stats.get("drift_monitoring_active", True)),
-                    evidence_summary="Continuous architecture drift scanning operational.",
-                )
-            )
+            for cid, title in [
+                ("SOC2-CC6.1", "Logical Access and Least Privilege"),
+                ("SOC2-CC7.1", "System Vulnerability and Drift Monitoring"),
+                ("SOC2-CC7.2", "Vulnerability Scanning Timeliness"),
+                ("SOC2-CC8.1", "Change Management"),
+            ]:
+                passed, evidence = self._check_control(cid, system_stats)
+                evaluations.append(ControlEvaluation(
+                    control_id=cid, framework="SOC 2 Type II", title=title,
+                    passed=passed, evidence_summary=evidence,
+                    remediation_hint="" if passed else f"Address {cid} requirement.",
+                ))
+
+        elif "ISO" in framework_upper and "42001" in framework_upper:
+            passed, evidence = self._check_control("ISO42001-5.2", system_stats)
+            evaluations.append(ControlEvaluation(
+                control_id="ISO42001-5.2", framework="ISO 42001",
+                title="AI Risk Assessment",
+                passed=passed, evidence_summary=evidence,
+            ))
+
+        elif "HIPAA" in framework_upper:
+            passed, evidence = self._check_control("HIPAA-164.312a", system_stats)
+            evaluations.append(ControlEvaluation(
+                control_id="HIPAA-164.312a", framework="HIPAA",
+                title="Encryption at Rest",
+                passed=passed, evidence_summary=evidence,
+            ))
+
+        elif "GDPR" in framework_upper:
+            passed, evidence = self._check_control("GDPR-ART-25", system_stats)
+            evaluations.append(ControlEvaluation(
+                control_id="GDPR-ART-25", framework="GDPR",
+                title="Data Protection by Design and Default",
+                passed=passed, evidence_summary=evidence,
+            ))
+
         else:
-            # General Enterprise Governance
-            evaluations.append(
-                ControlEvaluation(
-                    control_id="GOV-GEN-01",
-                    framework=framework,
-                    title="Data Integrity and Provenance Tracking",
-                    passed=bool(system_stats.get("provenance_active", True)),
-                    evidence_summary="Evidence manifests attached to all knowledge responses.",
-                )
-            )
+            for cid, title in [
+                ("GOV-GEN-01", "Data Integrity and Provenance Tracking"),
+                ("GOV-GEN-02", "Role-Based Access Control"),
+            ]:
+                passed, evidence = self._check_control(cid, system_stats)
+                evaluations.append(ControlEvaluation(
+                    control_id=cid, framework=framework, title=title,
+                    passed=passed, evidence_summary=evidence,
+                ))
 
         passed_count = sum(1 for e in evaluations if e.passed)
         score_pct = round((passed_count / max(1, len(evaluations))) * 100, 1)
@@ -166,6 +262,7 @@ class AutonomousComplianceTwin:
 
         return {
             "framework": framework,
+            "tenant_id": self.tenant_id,
             "compliance_score_percent": score_pct,
             "controls_passed": passed_count,
             "controls_total": len(evaluations),

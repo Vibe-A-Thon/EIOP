@@ -57,14 +57,14 @@ class BrainAnswer:
 class BrainOSKernel:
     """The central Enterprise Brain Operating System kernel."""
 
-    def __init__(self) -> None:
+    def __init__(self, graph_store: Any = None) -> None:
+        self.graph_store = graph_store
         self.loop_manager = EnterpriseLoopManager()
-        self.rag_suite = EnterpriseRAGSuite()
+        self.rag_suite = EnterpriseRAGSuite(graph_store=graph_store)
         self.polyglot_engine = PolyglotQueryEngine()
         self.db_registry = DatabaseAdapterRegistry()
         self.living_brain = LivingBrainAlgorithms()
 
-        # Brain OS Memory Subsystems
         self.working_memory: list[dict[str, Any]] = []
         self.episodic_memory: list[dict[str, Any]] = []
         self.semantic_memory: dict[str, Any] = {}
@@ -113,7 +113,7 @@ class BrainOSKernel:
 
         if is_structured_query and detected_dialect != QueryDialect.NL2QUERY:
             poly_query = PolyglotQuery(query_text=query, dialect=detected_dialect)
-            q_res = self.polyglot_engine.execute_query(poly_query)
+            q_res = self.polyglot_engine.execute_query(poly_query, store=self.graph_store)
             adapter = self.db_registry.get_adapter(target_db)
             db_res = adapter.execute_query(q_res.plan.executable_code)
 

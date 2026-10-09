@@ -531,13 +531,79 @@ class LdapProtocolFacade:
         raise NotImplementedError
 
 
-class SocketLdapProtocolFacade(LdapProtocolFacade):
-    """Placeholder TLS-socket facade.
+def _ber_length(length: int) -> bytes:
+    """BER definite-length encoding (short or long form)."""
+    if length < 0x80:
+        return bytes([length])
+    octets = []
+    val = length
+    while val > 0:
+        octets.append(val & 0xFF)
+        val >>= 8
+    octets.reverse()
+    return bytes([0x80 | len(octets)]) + bytes(octets)
 
-    NotAvailable path: real BER/DER LDAP wire-encoding is deployment-specific
-    and intentionally not shipped (GAP-SEC-003). Use this only with a
-    deployment-provided LDAP codec, or inject a custom facade in tests.
+
+def _ber_encode_string(tag: int, value: bytes) -> bytes:
+    """Encode a BER TLV with the given tag and value bytes."""
+    return bytes([tag]) + _ber_length(len(value)) + value
+
+
+def _ber_encode_integer(value: int) -> bytes:
+    """Encode a BER INTEGER."""
+    if value == 0:
+        payload = b"\x00"
+    else:
+        octets = []
+        v = value
+        while v > 0:
+            octets.append(v & 0xFF)
+            v >>= 8
+        octets.reverse()
+        if octets[0] & 0x80:
+            octets.insert(0, 0)
+        payload = bytes(octets)
+    return bytes([0x02]) + _ber_length(len(payload)) + payload
+
+
+def _ber_encode_sequence(contents: bytes) -> bytes:
+    """Wrap contents in a BER SEQUENCE."""
+    return bytes([0x30]) + _ber_length(len(contents)) + contents
+
+
+def _ber_decode_length(data: bytes, offset: int) -> tuple[int, int]:
+    """Decode a BER length. Returns (length, new_offset)."""
+    if data[offset] < 0x80:
+        return data[offset], offset + 1
+    num_octets = data[offset] & 0x7F
+    length = 0
+    for i in range(num_octets):
+        length = (length << 8) | data[offset + 1 + i]
+    return length, offset + 1 + num_octets
+
+
+def _ber_decode_integer(data: bytes, offset: int) -> tuple[int, int]:
+    """Decode a BER INTEGER. Returns (value, new_offset)."""
+    if data[offset] != 0x02:
+        raise ValueError(f"Expected INTEGER tag 0x02, got 0x{data[offset]:02x}")
+    length, off = _ber_decode_length(data, offset + 1)
+    value = int.from_bytes(data[off:off + length], "big", signed=True)
+    return value, off + length
+
+
+class SocketLdapProtocolFacade(LdapProtocolFacade):
+    """LDAP v3 Simple Bind over TLS-socket using stdlib-only BER encoding.
+
+    Implements the minimal LDAPv3 wire protocol (RFC 4511) for:
+    - BindRequest (Simple authentication)
+    - SearchRequest (for role/group lookup)
+    - UnbindRequest (graceful close)
+
+    No external LDAP library required. Supports LDAPS (TLS) connections.
     """
+
+    _LDAP_VERSION = 3
+    _message_id = 0
 
     def connect(self, host: str, port: int, *, use_tls: bool,
                 timeout: float) -> None:
@@ -547,20 +613,119 @@ class SocketLdapProtocolFacade(LdapProtocolFacade):
             self._sock = context.wrap_socket(raw, server_hostname=host)
         else:
             self._sock = raw
+        self._message_id = 0
+
+    def _next_message_id(self) -> int:
+        self._message_id += 1
+        return self._message_id
+
+    def _send_message(self, message_body: bytes) -> None:
+        msg_id = _ber_encode_integer(self._next_message_id())
+        envelope = _ber_encode_sequence(msg_id + message_body)
+        self._sock.sendall(envelope)
+
+    def _recv_message(self) -> tuple[int, int, bytes]:
+        """Receive and parse an LDAP message envelope.
+
+        Returns (message_id, result_code, raw_payload).
+        """
+        header = self._sock.recv(2)
+        if len(header) < 2:
+            raise AuthenticationUnavailable("LDAP server closed connection")
+
+        if header[0] != 0x30:
+            raise AuthenticationUnavailable(f"Expected SEQUENCE, got 0x{header[0]:02x}")
+
+        if header[1] & 0x80:
+            num_len_bytes = header[1] & 0x7F
+            len_bytes = self._sock.recv(num_len_bytes)
+            total_len = int.from_bytes(len_bytes, "big")
+        else:
+            total_len = header[1]
+
+        payload = b""
+        while len(payload) < total_len:
+            chunk = self._sock.recv(total_len - len(payload))
+            if not chunk:
+                break
+            payload += chunk
+
+        msg_id, off = _ber_decode_integer(payload, 0)
+
+        app_tag = payload[off]
+        _, off2 = _ber_decode_length(payload, off + 1)
+
+        result_code = 0
+        if off2 < len(payload) and payload[off2] == 0x0A:
+            enum_len, off3 = _ber_decode_length(payload, off2 + 1)
+            result_code = payload[off3]
+        elif off2 < len(payload):
+            try:
+                result_code, _ = _ber_decode_integer(payload, off2)
+            except (ValueError, IndexError):
+                pass
+
+        return msg_id, result_code, payload[off:]
 
     def bind(self, dn: str, password: str) -> bool:
-        raise AuthenticationUnavailable(
-            "SocketLdapProtocolFacade requires the deployment's LDAP wire "
-            "codec; inject a custom LdapProtocolFacade (GAP-SEC-003)")
+        """LDAPv3 Simple Bind (RFC 4511 Section 4.2)."""
+        version = _ber_encode_integer(self._LDAP_VERSION)
+        name = _ber_encode_string(0x04, dn.encode("utf-8"))
+        auth = _ber_encode_string(0x80, password.encode("utf-8"))
+        bind_request = bytes([0x60]) + _ber_length(
+            len(version) + len(name) + len(auth)
+        ) + version + name + auth
+
+        self._send_message(bind_request)
+        _, result_code, _ = self._recv_message()
+        return result_code == 0
 
     def search_roles(self, dn: str) -> list[str]:
-        raise AuthenticationUnavailable(
-            "SocketLdapProtocolFacade requires the deployment's LDAP wire "
-            "codec; inject a custom LdapProtocolFacade (GAP-SEC-003)")
+        """Search for memberOf attributes on the bound DN."""
+        base_dn = _ber_encode_string(0x04, dn.encode("utf-8"))
+        scope = _ber_encode_integer(0)  # baseObject
+        deref = _ber_encode_integer(0)  # neverDerefAliases
+        size_limit = _ber_encode_integer(0)
+        time_limit = _ber_encode_integer(10)
+        types_only = bytes([0x01, 0x01, 0x00])  # FALSE
+        filter_present = _ber_encode_string(0x87, b"objectClass")
+        attrs_seq = _ber_encode_sequence(
+            _ber_encode_string(0x04, b"memberOf")
+        )
+
+        search_body = (base_dn + scope + deref + size_limit +
+                        time_limit + types_only + filter_present + attrs_seq)
+        search_request = bytes([0x63]) + _ber_length(len(search_body)) + search_body
+
+        self._send_message(search_request)
+
+        roles: list[str] = []
+        while True:
+            _, result_code, raw = self._recv_message()
+            app_tag = raw[0] & 0x1F
+            if app_tag == 5:  # SearchResultDone
+                break
+            if app_tag == 4:  # SearchResultEntry
+                text = raw.decode("utf-8", errors="replace")
+                for segment in text.split("memberOf"):
+                    if segment and not segment[0].isalpha():
+                        cn_start = segment.find("cn=") or segment.find("CN=")
+                        if cn_start >= 0:
+                            cn_val = segment[cn_start + 3:]
+                            cn_end = cn_val.find(",")
+                            if cn_end > 0:
+                                roles.append(cn_val[:cn_end])
+
+        return roles
 
     def close(self) -> None:
         sock = getattr(self, "_sock", None)
         if sock is not None:
+            try:
+                unbind = bytes([0x42, 0x00])
+                self._send_message(unbind)
+            except OSError:
+                pass
             sock.close()
             self._sock = None
 

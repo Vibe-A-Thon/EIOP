@@ -212,7 +212,7 @@ class BitemporalStateMachine:
         return active_entities
 
     def diff_branches(self, branch_a: str, branch_b: str) -> dict[str, Any]:
-        """Compute structural differences between two branches."""
+        """Compute structural differences between two branches with real conflict detection."""
         if branch_a not in self._branches or branch_b not in self._branches:
             raise KeyError("Both branches must exist for diff calculation")
 
@@ -226,9 +226,42 @@ class BitemporalStateMachine:
         added_in_b = sorted(list(keys_b - keys_a))
         removed_in_b = sorted(list(keys_a - keys_b))
         modified: dict[str, dict[str, Any]] = {}
+        conflicts: list[dict[str, Any]] = []
+
+        fork_origin = self._fork_origins.get(branch_b, (branch_a, None))
+        fork_commit_id = fork_origin[1] if fork_origin[0] == branch_a else None
+
+        base_state: dict[str, dict[str, Any]] = {}
+        if fork_commit_id:
+            fork_commit = next(
+                (c for c in self._branches[branch_a] if c.commit_id == fork_commit_id),
+                None,
+            )
+            if fork_commit:
+                base_state = self.time_warp_replay(branch_a, valid_at=now, tx_at=fork_commit.tx_time)
 
         for k in keys_a & keys_b:
             if state_a[k] != state_b[k]:
+                base_val = base_state.get(k, {})
+                a_changed = state_a[k] != base_val
+                b_changed = state_b[k] != base_val
+                if a_changed and b_changed:
+                    conflicting_fields = []
+                    all_keys = set(state_a[k].keys()) | set(state_b[k].keys())
+                    for field in all_keys:
+                        va = state_a[k].get(field)
+                        vb = state_b[k].get(field)
+                        vbase = base_val.get(field)
+                        if va != vb and va != vbase and vb != vbase:
+                            conflicting_fields.append(field)
+                    if conflicting_fields:
+                        conflicts.append({
+                            "entity_id": k,
+                            "conflicting_fields": conflicting_fields,
+                            "branch_a_state": state_a[k],
+                            "branch_b_state": state_b[k],
+                            "base_state": base_val,
+                        })
                 modified[k] = {"before": state_a[k], "after": state_b[k]}
 
         return {
@@ -237,27 +270,54 @@ class BitemporalStateMachine:
             "added": added_in_b,
             "removed": removed_in_b,
             "modified": modified,
-            "has_conflicts": False,
+            "conflicts": conflicts,
+            "has_conflicts": len(conflicts) > 0,
         }
 
-    def merge_crdt(self, target_branch: str, source_branch: str, author: str = "merge-agent") -> BitemporalCommit | None:
-        """Merge source_branch into target_branch using Last-Write-Wins CRDT delta resolution."""
+    def merge_crdt(self, target_branch: str, source_branch: str,
+                   author: str = "merge-agent",
+                   force: bool = False) -> BitemporalCommit | None:
+        """Merge source_branch into target_branch using Last-Write-Wins CRDT delta resolution.
+
+        When both branches modify the same entity field, the delta with the later
+        tx_time wins (LWW). If force=False (default) and unresolvable conflicts
+        exist (identical tx_time on divergent values), raises ValueError.
+        """
         if target_branch not in self._branches or source_branch not in self._branches:
             raise KeyError("Target and source branches must exist")
+
+        diff = self.diff_branches(target_branch, source_branch)
+        if diff["has_conflicts"] and not force:
+            conflict_ids = [c["entity_id"] for c in diff["conflicts"]]
+            raise ValueError(
+                f"CRDT merge blocked: conflicting entities {conflict_ids}. "
+                f"Use force=True for LWW resolution or resolve manually."
+            )
 
         target_commits = {c.commit_id for c in self._branches[target_branch]}
         incoming_commits = [c for c in self._branches[source_branch] if c.commit_id not in target_commits]
 
         if not incoming_commits:
-            return None  # Nothing to merge
+            return None
 
-        # Collect unique deltas to apply
         all_new_deltas: list[BitemporalDelta] = []
-        for c in incoming_commits:
-            all_new_deltas.extend(c.deltas)
+        target_latest: dict[str, float] = {}
+        for c in self._branches[target_branch]:
+            for d in c.deltas:
+                target_latest[d.entity_id] = max(
+                    target_latest.get(d.entity_id, 0.0), d.tx_time
+                )
 
-        # Sort deltas by transaction time and sequence number
+        for c in incoming_commits:
+            for d in c.deltas:
+                target_tx = target_latest.get(d.entity_id, 0.0)
+                if d.tx_time >= target_tx:
+                    all_new_deltas.append(d)
+
         all_new_deltas.sort(key=lambda d: (d.tx_time, d.sequence_num))
+
+        if not all_new_deltas:
+            return None
 
         now = time.time()
         self._seq_counter += 1
@@ -268,7 +328,7 @@ class BitemporalStateMachine:
             commit_id=merge_commit_id,
             parent_id=parent,
             author=author,
-            message=f"Merged '{source_branch}' into '{target_branch}'",
+            message=f"Merged '{source_branch}' into '{target_branch}' (LWW-CRDT, {len(all_new_deltas)} deltas)",
             tx_time=now,
             deltas=all_new_deltas,
         )
