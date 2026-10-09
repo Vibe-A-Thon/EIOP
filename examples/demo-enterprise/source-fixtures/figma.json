@@ -1,7 +1,0 @@
-{
-  "key": "NS-CHECKOUT-2026",
-  "name": "Northstar Checkout Experience",
-  "lastModified": "2026-09-27T15:00:00Z",
-  "document": {"children": [{"id": "12:400", "name": "Checkout Flow", "type": "CANVAS"}]},
-  "components": {"12:488": {"name": "Payment and risk panel", "description": "Payment state with explainable risk challenge messaging."}}
-}

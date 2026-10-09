@@ -1,6 +1,0 @@
-{
-  "result": [
-    {"sys_id": "inc0012042", "number": "INC0012042", "short_description": "Checkout latency spike after risk release", "state": "Resolved", "priority": "1", "category": "Application", "subcategory": "Performance", "assignment_group": {"display_value": "Commerce SRE"}, "assigned_to": {"display_value": "Liam Patel"}, "opened_at": "2026-10-01 18:14:00", "resolved_at": "2026-10-01 19:04:00", "cmdb_ci": {"display_value": "Checkout API"}},
-    {"sys_id": "chg0031088", "number": "CHG0031088", "short_description": "Enable bounded risk timeout fallback", "state": "Closed", "priority": "2", "category": "Application", "subcategory": "Emergency change", "assignment_group": {"display_value": "Commerce SRE"}, "assigned_to": {"display_value": "Liam Patel"}, "opened_at": "2026-10-01 18:28:00", "resolved_at": "2026-10-01 19:10:00", "cmdb_ci": {"display_value": "Checkout API"}}
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "issues": [
-    {"key": "PAY-142", "fields": {"summary": "Add risk decision to checkout authorization", "description": "Call the risk API before payment authorization and retain explainable evidence.", "issuetype": {"name": "Story"}, "status": {"name": "Done"}, "project": {"key": "PAY", "name": "Northstar Payments Modernization"}, "assignee": {"accountId": "maya.chen", "displayName": "Maya Chen", "emailAddress": "maya.chen@example.invalid"}}},
-    {"key": "PAY-155", "fields": {"summary": "Harden risk timeout fallback", "description": "Fail safely when risk exceeds its latency budget.", "issuetype": {"name": "Task"}, "status": {"name": "In Progress"}, "project": {"key": "PAY", "name": "Northstar Payments Modernization"}, "assignee": {"accountId": "liam.patel", "displayName": "Liam Patel", "emailAddress": "liam.patel@example.invalid"}}}
-  ]
-}

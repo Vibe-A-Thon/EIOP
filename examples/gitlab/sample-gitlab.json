@@ -1,4 +1,0 @@
-{
-  "merge_requests": [{"iid": 42, "title": "EOIP-1 implement impact calculation", "source_branch": "feature/EOIP-1", "target_branch": "main", "merge_commit_sha": "HEAD"}],
-  "pipelines": [{"id": 9001, "name": "build-and-test", "sha": "HEAD", "status": "success"}]
-}

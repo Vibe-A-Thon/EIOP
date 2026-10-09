@@ -1,4 +1,0 @@
-{
-  "merge_requests": [{"iid": 142, "title": "PAY-142 add explainable risk authorization", "state": "merged", "source_branch": "feature/PAY-142-risk-decision", "target_branch": "main", "merge_commit_sha": "c0ffee142c0ffee142c0ffee142c0ffee142c0f", "work_item_keys": ["PAY-142"]}],
-  "pipelines": [{"id": 4815, "name": "checkout-main-4815", "status": "success", "ref": "v2026.10.1", "sha": "c0ffee142c0ffee142c0ffee142c0ffee142c0f", "work_item_keys": ["PAY-142"]}]
-}

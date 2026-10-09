@@ -1,5 +1,0 @@
-{
-  "grafana": {"dashboards": [{"uid": "commerce-prod", "title": "Commerce production overview", "tags": ["checkout", "risk", "payments"], "panels": 12}]},
-  "datadog": {"monitors": [{"id": 4412, "name": "Checkout latency exceeds SLO", "type": "metric alert", "query": "p95(last_10m):avg:checkout.request.duration{env:prod} > 450", "status": "enabled"}]},
-  "kibana": {"aggregates": [{"id": "risk-timeout-2026-10-01", "source": "checkout-api", "level": "ERROR", "signature": "risk_decision_timeout", "count": 438}]}
-}
