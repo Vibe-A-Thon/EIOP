@@ -2,9 +2,9 @@
 relationship discovery (SR-ING-010, SR-ING-012, SR-ING-013, SR-ING-016)."""
 
 import pytest
-
 from eoip.ingest.profile import (
     CARDINALITY_CAP,
+    DatasetProfile,
     SchemaProfiler,
     detect_key_candidates,
     diff_profiles,
@@ -12,7 +12,6 @@ from eoip.ingest.profile import (
     edge_class_for_method,
     profile_records,
     tag_edge,
-    DatasetProfile,
 )
 
 RECORDS = [
@@ -320,7 +319,7 @@ def test_build_router_exposes_expected_routes():
     pytest.importorskip("fastapi")
     from eoip.ingest.profile import build_router
     router = build_router()
-    routes = sorted(getattr(r, "path") for r in router.routes)
+    routes = sorted(r.path for r in router.routes)
     assert routes == [
         "/api/v1/ingest/profile",
         "/api/v1/ingest/profile/drift",

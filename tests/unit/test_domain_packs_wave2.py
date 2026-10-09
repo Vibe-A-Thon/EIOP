@@ -88,7 +88,7 @@ def test_wave2_pack_relationship_endpoints_are_known_labels():
 def test_wave2_packs_extend_core_without_collisions():
     from eoip.ontology import manifest
     for name in ("healthcare", "manufacturing"):
-        pack, result = load_pack(PACKS_DIR / name)
+        pack, _ = load_pack(PACKS_DIR / name)
         for label in pack.classes:
             assert label not in manifest.VERTEX_LABELS or \
                 pack.classes[label].extends_core

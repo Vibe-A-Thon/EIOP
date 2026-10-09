@@ -36,7 +36,8 @@ import json
 import re
 import uuid
 from collections import Counter
-from typing import Any, Iterable, Iterator, Literal, Mapping
+from collections.abc import Iterable, Iterator, Mapping
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -306,7 +307,7 @@ def detect_formats(value: str) -> list[str]:
     if ISO_DATETIME_PATTERN.match(value):
         try:
             from datetime import datetime
-            datetime.fromisoformat(value.replace("Z", "+00:00"))
+            datetime.fromisoformat(value[:-1] + "+00:00" if value.endswith("Z") else value)
             formats.append("iso_datetime")
         except ValueError:
             pass
@@ -330,9 +331,20 @@ class _FieldAccumulator:
     """Mutable per-path statistics used while streaming records."""
 
     __slots__ = (
-        "path", "kind", "types", "total", "nulls", "hashes", "capped",
-        "values", "raw", "top", "formats_seen", "item_types", "children",
+        "capped",
+        "children",
+        "formats_seen",
+        "hashes",
+        "item_types",
+        "kind",
         "max_depth",
+        "nulls",
+        "path",
+        "raw",
+        "top",
+        "total",
+        "types",
+        "values",
     )
 
     def __init__(self, path: str, kind: str) -> None:
@@ -363,7 +375,7 @@ class _FieldAccumulator:
             for fmt in detect_formats(value):
                 self.formats_seen.add(fmt)
         if isinstance(value, Mapping):
-            for key, child in value.items():
+            for key in value:
                 self.children.add(str(key))
             return
         if isinstance(value, (list, tuple)):
@@ -477,9 +489,7 @@ class SchemaProfiler:
             acc = self._acc(prefix, "array")
             acc.observe(value)
             for item in value:
-                if isinstance(item, Mapping):
-                    self._walk(f"{prefix}[]", item)
-                elif isinstance(item, (list, tuple)):
+                if isinstance(item, (Mapping, list, tuple)):
                     self._walk(f"{prefix}[]", item)
                 else:
                     self._acc(f"{prefix}[]", "scalar").observe(item)
@@ -599,7 +609,6 @@ def detect_key_candidates(
     Deterministic: candidates are sorted by (composite, -stability, fields).
     """
     singles: list[KeyCandidate] = []
-    fields = {f.path: f for f in report.fields}
     scalar_fields = [f for f in report.fields
                      if f.kind == "scalar" and not f.cardinality_capped]
     for f in scalar_fields:
@@ -992,8 +1001,8 @@ def build_router() -> Any:
 
 __all__ = [
     "CARDINALITY_CAP",
-    "DatasetProfile",
     "EDGE_CLASS_METHODS",
+    "DatasetProfile",
     "EdgeClassMethod",
     "EnumValue",
     "FieldDrift",

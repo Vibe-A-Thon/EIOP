@@ -1,0 +1,1162 @@
+{
+"SR-CON-001": {
+"text": "**Self-contained:** the default distribution MUST run with zero external network dependencies (no SaaS, no cloud API, no phone-home, no CDN assets, no package fetch at runtime).",
+"priority": "P0"
+},
+"SR-CON-002": {
+"text": "**Local-first:** all processing, storage, indexing, embedding, inference and UI serving happen inside the customer-controlled boundary by default; the system MUST function fully offline.",
+"priority": "P0"
+},
+"SR-CON-003": {
+"text": "**No egress by default:** outbound traffic MUST be denied by default via network policy and application-level egress gateway; any permitted egress is allowlisted, logged and attributable.",
+"priority": "P0"
+},
+"SR-CON-004": {
+"text": "**Everything configurable, safely:** every behavior in this document that says \"configurable\" MUST be a typed, versioned, validated, auditable setting with a safe default (§12.3).",
+"priority": "P0"
+},
+"SR-CON-005": {
+"text": "**LLM-optional:** ingestion, graph construction, validation, deterministic query, impact analysis, lineage and reporting MUST work with no LLM present.",
+"priority": "P0"
+},
+"SR-CON-006": {
+"text": "**Evidence-first:** every returned fact carries source, method (asserted/derived/inferred/curated), confidence, freshness and policy-filter notice.",
+"priority": "P0"
+},
+"SR-CON-007": {
+"text": "**Clean-room and license-clean:** study external products and papers for ideas only; produce an independent implementation, SBOM and license report per release.",
+"priority": "P0"
+},
+"SR-CON-008": {
+"text": "**Adapters over lock-in:** no component outside an adapter may import a vendor-specific graph, vector, model, bus or storage SDK. Enforced by architecture tests.",
+"priority": "P0"
+},
+"SR-CON-009": {
+"text": "**Vendor-neutral data ownership:** customers can export all data, ontology, config and audit trails in open formats at any time (§7.9).",
+"priority": "P0"
+},
+"SR-CON-010": {
+"text": "Cloud capabilities MUST be delivered as **Service Provider plugins** (e.g., object storage, managed graph DB, managed search, KMS/HSM, IdP, queue, LLM endpoint, monitoring sink) selectable per capability, per tenant.",
+"priority": "P0"
+},
+"SR-CON-011": {
+"text": "Every plugin MUST ship a **Data-Flow Manifest** declaring data classes sent/received, destinations, regions, retention and whether data can leave the tenant boundary. Installation MUST display it and require admin approval; the egress gateway enforces it at runtime.",
+"priority": "P0"
+},
+"SR-CON-012": {
+"text": "Provide reference adapters for the three hyperscalers' object storage, KMS, identity federation and managed graph/search where available (e.g., Amazon Neptune/OpenSearch/S3/KMS, Azure Blob/Key Vault/Entra ID/Cosmos Gremlin, GCP GCS/KMS/Cloud Identity).",
+"priority": "P1"
+},
+"SR-CON-013": {
+"text": "Provide infrastructure-as-code modules (Terraform/OpenTofu, Helm) for DP-3/DP-4 with security-hardened defaults, private networking, and no public endpoints by default.",
+"priority": "P1"
+},
+"SR-CON-014": {
+"text": "A tenant MUST be able to switch a capability between local and cloud providers via migration tooling (e.g., local object store → cloud bucket) with verification and rollback.",
+"priority": "P2"
+},
+"SR-ARC-001": {
+"text": "**Modular monolith first, service-extractable:** modules communicate through typed interfaces/events and MUST be separable into independently scalable services without code rewrite (preserves the prior `NFR-MAINT-001` boundary).",
+"priority": "P0"
+},
+"SR-ARC-002": {
+"text": "**Ports-and-adapters:** Graph Store, Vector Store, Search, Object Store, Relational Store, Event Bus, Model Provider, Identity Provider, Secret/KMS, Scheduler and Notification are ports with versioned contracts and a conformance test kit.",
+"priority": "P0"
+},
+"SR-ARC-003": {
+"text": "**Event backbone:** an append-only event log (pluggable: embedded log for DP-0; NATS JetStream/Kafka-class for clustered) carries ingestion, mutation, policy and audit events; consumers are idempotent (outbox pattern).",
+"priority": "P0"
+},
+"SR-ARC-004": {
+"text": "**Single canonical contract per concept:** one versioned schema registry for entities, edges, events, QueryPlan, agent contract, config and plugin manifest; all APIs and UIs derive from it (generated, not hand-copied).",
+"priority": "P0"
+},
+"SR-ARC-005": {
+"text": "**Distributed by design:** stateless API/query/worker tiers scale horizontally; stateful tiers (graph, vector, search, relational, object, log) support replication and partitioning per backend capability.",
+"priority": "P0"
+},
+"SR-ARC-006": {
+"text": "**Consistency model documented and tested:** strong consistency within a graph partition for writes and read-your-writes for the writer; eventual consistency for derived indexes (vector, search, materialized views) with measurable lag SLOs and a staleness indicator surfaced to users.",
+"priority": "P0"
+},
+"SR-ARC-007": {
+"text": "**Exactly-once effects** via idempotency keys, deterministic IDs and replay-safe mutations; at-least-once delivery acceptable at transport level.",
+"priority": "P0"
+},
+"SR-ARC-008": {
+"text": "**Hybrid logical clocks / bitemporal fields** on all mutations (valid time, transaction time) so federated and replayed data order deterministically.",
+"priority": "P1"
+},
+"SR-ARC-009": {
+"text": "**Federation:** queries MAY span multiple graph backends and multiple sites (hub-and-spoke or mesh) with partial-result semantics, per-site policy enforcement and no raw-data movement unless permitted.",
+"priority": "P2"
+},
+"SR-ARC-010": {
+"text": "**Sandboxed extension runtime:** plugins execute in isolated containers or WASM sandboxes with declared capabilities, CPU/memory/egress limits and signed manifests (§12.5).",
+"priority": "P0"
+},
+"SR-ARC-011": {
+"text": "**Architecture fitness tests** in CI: forbidden imports, layering rules, adapter-only vendor SDK usage, no hand-maintained inventories, no cross-tenant code paths without tenant context.",
+"priority": "P0"
+},
+"SR-ARC-012": {
+"text": "**Mandatory ADR process:** every decision that changes a port, a default component or a supported-backend tier needs an ADR with alternatives, license review and benchmark evidence.",
+"priority": "P0"
+},
+"SR-GDB-001": {
+"text": "All graph access MUST go through the **Graph Store Port** exposing: schema ops, bulk load, transactional upsert (idempotent by canonical ID), traversal, path, neighborhood, aggregation, full-scan with cursor, index management, snapshot/export, health and statistics.",
+"priority": "P0"
+},
+"SR-GDB-002": {
+"text": "Each adapter MUST publish a **Capability Manifest** (example in §5.6). The planner uses it to choose pushdown vs in-engine execution and to refuse or degrade unsupported plans *explicitly* (never silently).",
+"priority": "P0"
+},
+"SR-GDB-003": {
+"text": "A **backend-neutral conformance suite** (contract tests + golden queries + performance probes + failure injection) MUST gate every adapter. Backend-specific behavior (e.g., HugeGraph 1.7 not honoring UNIQUE edge indexes, requiring SECONDARY + sort-key emulation) is recorded in the manifest, not scattered in code.",
+"priority": "P0"
+},
+"SR-GDB-004": {
+"text": "**Certification tiers:** Tier A *Certified* (full conformance, benchmarked, HA validated, supported under SLA); Tier B *Compatible* (documented capability gaps); Tier C *Community/Experimental*. Marketing MUST NOT claim support beyond the tier.",
+"priority": "P0"
+},
+"SR-GDB-005": {
+"text": "**Polyglot persistence:** each logical graph domain (e.g., org, code, incident, lineage, meta) MAY bind to a different backend and tier (hot/warm/cold); cross-domain **bridge edges** are resolved by the federation layer.",
+"priority": "P1"
+},
+"SR-GDB-006": {
+"text": "**Online migration** between backends (export → verify counts/checksums/golden queries → dual-write or cutover → rollback) MUST be supported for Tier A pairs.",
+"priority": "P1"
+},
+"SR-GDB-007": {
+"text": "**Virtual/zero-ETL graph mode:** optionally expose existing relational/lakehouse data as a graph view through declarative mappings (OBDA/virtual-graph style) without copying data.",
+"priority": "P2"
+},
+"SR-GDB-008": {
+"text": "**Multi-model graph support:** property graph (LPG) and RDF are both first-class; RDF-star/reification patterns and LPG↔RDF round-trip mappings MUST be defined and tested.",
+"priority": "P1"
+},
+"SR-GDB-009": {
+"text": "**Graph versioning:** every mutation produces an `EntityRevision`; point-in-time (\"as-of\") reads and diffs between revisions MUST be supported (full snapshot/diff at P1).",
+"priority": "P1"
+},
+"SR-GDB-010": {
+"text": "**Embedded engine option** for DP-0/edge nodes with no server process, and an in-memory engine for tests only (selection is explicit configuration, never a silent fallback).",
+"priority": "P0"
+},
+"SR-GDB-011": {
+"text": "**Relational metadata/config store:** PostgreSQL as the clustered default, SQLite for single-node DP-0; ports allow customer-standard engines (SQL Server, Oracle, MySQL/MariaDB) at P2.",
+"priority": "P0"
+},
+"SR-GDB-012": {
+"text": "**Object/raw store:** filesystem (DP-0), S3-compatible (clustered), and cloud blob adapters. Raw captures are immutable, content-addressed (SHA-256), encrypted, and retention-managed.",
+"priority": "P0"
+},
+"SR-GDB-013": {
+"text": "**Event bus adapters:** embedded log, NATS JetStream-class, Kafka/Redpanda-class, RabbitMQ, cloud queues.",
+"priority": "P0/P1"
+},
+"SR-GDB-014": {
+"text": "**Cache:** in-process plus a Redis-protocol-compatible adapter; every cache key MUST include tenant, policy-version and graph-revision.",
+"priority": "P0"
+},
+"SR-GDB-015": {
+"text": "**Durable workflow engine** built in (retry, timers, human-approval steps, sagas); optional adapters for Temporal/Airflow/Dagster/Prefect-class orchestrators.",
+"priority": "P1"
+},
+"SR-GDB-016": {
+"text": "**Component license matrix:** every bundled and optional component is classified (permissive / weak copyleft / strong copyleft or network-copyleft / source-available / commercial). Anything other than permissive MUST NOT be bundled without legal sign-off and MUST be offered as bring-your-own where needed.",
+"priority": "P0"
+},
+"SR-VDB-001": {
+"text": "**Vector Store Port:** upsert/delete by ID with metadata, filtered kNN, hybrid (dense + sparse/BM25), namespace-per-tenant, snapshot/restore, index rebuild, embedding-model version tracking.",
+"priority": "P0"
+},
+"SR-VDB-002": {
+"text": "**Adapters:** embedded (FAISS/hnswlib/USearch/LanceDB-class), PostgreSQL pgvector, Qdrant, Milvus, Weaviate, Chroma, OpenSearch/Elasticsearch k-NN, Redis-compatible vector, Vespa, graph-native vector indexes (e.g., Neo4j), plus cloud-managed (Pinecone, Azure AI Search, Vertex AI Vector Search, Atlas Vector Search) under DP-3/4 only.",
+"priority": "P0 (embedded, pgvector) / P1 (rest)"
+},
+"SR-VDB-003": {
+"text": "**Index strategies configurable:** HNSW, IVF-PQ, DiskANN-class disk indexes, scalar/product/binary quantization, filtered-search strategies, per-collection recall/latency targets.",
+"priority": "P1"
+},
+"SR-VDB-004": {
+"text": "**Multi-vector and multimodal:** text, code, table, image, audio-transcript, and node/graph embeddings; late-interaction (ColBERT-style) and sparse-learned (SPLADE-style) as optional retrievers.",
+"priority": "P2"
+},
+"SR-VDB-005": {
+"text": "**Embedding governance:** embeddings are derived data; they inherit the classification and access policy of their source, are deleted when the source is erased (§14.3), and are re-generated on model change with versioned side-by-side indexes and cut-over.",
+"priority": "P0"
+},
+"SR-VDB-006": {
+"text": "**Full-text/search port:** BM25 keyword, phrase, fuzzy, facets, highlighting, multilingual analyzers; adapters for embedded engine (Tantivy/SQLite-FTS class), PostgreSQL FTS, OpenSearch/Elasticsearch class.",
+"priority": "P0"
+},
+"SR-VDB-007": {
+"text": "A deployment with **no vector store** MUST still pass the core NL acceptance suite using graph + full-text retrieval (degraded semantic recall is acceptable and MUST be signalled).",
+"priority": "P0"
+},
+"SR-QRY-001": {
+"text": "The compiler MUST accept EOQL, Gremlin, openCypher, GQL (subset first), SPARQL, SQL (analytics) and NL-produced plans, validate them against the ontology and the caller's policy, and lower them per the Capability Manifest.",
+"priority": "P0"
+},
+"SR-QRY-002": {
+"text": "**Never execute raw model- or user-generated graph queries** without schema-aware validation, policy rewrite, depth/timeout/expansion/cost limits and expensive-pattern detection. Raw dialect access is an admin-gated, audited feature.",
+"priority": "P0"
+},
+"SR-QRY-003": {
+"text": "**Query Explain:** every query returns (on request) the plan, chosen backend(s), pushdowns, estimated vs actual cost, and the generated dialect text.",
+"priority": "P0"
+},
+"SR-QRY-004": {
+"text": "**Dialect round-trip tests:** a golden corpus (≥ 500 queries per Tier A backend, growing) MUST prove IR → dialect semantic equivalence by result comparison on shared fixtures.",
+"priority": "P0"
+},
+"SR-QRY-005": {
+"text": "**Parameterization everywhere;** string-built queries are forbidden (injection defense).",
+"priority": "P0"
+},
+"SR-QRY-006": {
+"text": "**Saved queries, query libraries, templates and versioned \"question catalog\"** per tenant/workspace, shareable and permission-aware.",
+"priority": "P0"
+},
+"SR-QRY-007": {
+"text": "**Result envelope:** rows/graph/table/report + evidence IDs + method flags + freshness (as-of, lag) + coverage notes + policy filters applied.",
+"priority": "P0"
+},
+"SR-QRY-008": {
+"text": "**Graph algorithm library** callable from plans (≥ 60 algorithms by P1): shortest/k-shortest/all-simple paths, reachability, SCC/WCC, topological order and cycle detection, dominators/critical path, PageRank/personalized PageRank, betweenness/closeness/degree/eigenvector centrality, community detection (Leiden/Louvain/label propagation), triangle/clustering/k-core, similarity (Jaccard/cosine/Adamic-Adar), node embeddings (node2vec/GraphSAGE-class), link prediction, motif matching, temporal paths, flow/cut, subgraph isomorphism/pattern matching. Each declares complexity and sampling/approximation modes.",
+"priority": "P0 (core 30) / P1"
+},
+"SR-QRY-009": {
+"text": "**Incremental / precomputed accelerators:** transitive-closure or reachability indexes for impact queries, materialized views per persona, summary edges, and top-k caches, all invalidated by graph-revision events.",
+"priority": "P1"
+},
+"SR-QRY-010": {
+"text": "**Federated query** across backends and sites with per-source policy enforcement and partial results.",
+"priority": "P2"
+},
+"SR-QRY-011": {
+"text": "**Time travel:** `AS OF`, `BETWEEN`, `DIFF` over revisions for every query class where backends or the revision store allow.",
+"priority": "P1"
+},
+"SR-QRY-012": {
+"text": "**Multilingual query front-ends** (NL, EOQL) with locale-aware date/number handling.",
+"priority": "P1"
+},
+"SR-ING-001": {
+"text": "**Connector SDK** (Python and TypeScript at P0; Go/Java at P1) with a stable contract: `discover`, `authenticate`, `fetch(cursor)`, `schema`, `health`, `metrics`, `capabilities`, `deletion_semantics`; connectors run sandboxed with declared scopes.",
+"priority": "P0"
+},
+"SR-ING-002": {
+"text": "Resiliency: pagination, rate-limit adaptation, retry with jitter, circuit breaker, checkpoint/cursor, partial-failure isolation, DLQ, replay, dry-run, backfill and incremental sync.",
+"priority": "P0"
+},
+"SR-ING-003": {
+"text": "**Change capture:** polling, webhooks, CDC (log-based where the source supports it), file watchers, stream consumers; deletes handled by tombstones with configurable semantics (soft delete, retire edge, hard delete on policy).",
+"priority": "P0"
+},
+"SR-ING-004": {
+"text": "**Credential isolation:** connector secrets live only in the secret store, scoped per tenant/connector, rotated, never logged, never visible to plugins other than the owning connector.",
+"priority": "P0"
+},
+"SR-ING-005": {
+"text": "**Connector marketplace-ready packaging:** signed manifest, version, compatibility range, data-flow manifest, test fixtures, health contract.",
+"priority": "P1"
+},
+"SR-ING-006": {
+"text": "**Streaming and batch share one pipeline:** the same stages and mapping specs serve both; back-pressure and priority lanes per tenant.",
+"priority": "P0"
+},
+"SR-ING-007": {
+"text": "**Large-JSON handling:** streaming parse (never load whole file), gz/zstd/archive support, malformed-record quarantine with line/offset pointers, numeric precision and Unicode/timezone normalization, binary blob offload.",
+"priority": "P0"
+},
+"SR-ING-010": {
+"text": "The **Schema Profiler** MUST infer types, nullability, cardinality, uniqueness, enumerations, formats (email, UUID, URL, IP/CIDR, ISO date/time, currency, phone, IBAN, ARN/URN, git SHA, ticket keys like `ABC-123`, file paths), nesting shape, and drift across versions of a payload.",
+"priority": "P0"
+},
+"SR-ING-011": {
+"text": "**Entity detection:** record types from top-level arrays/envelopes/discriminator fields; nested objects classified as *embedded value*, *child entity*, or *reference* using a scored heuristic (key presence, size, reuse across parents, naming, user override).",
+"priority": "P0"
+},
+"SR-ING-012": {
+"text": "**Key detection:** natural/surrogate key candidates; composite keys; stability scoring across runs; canonical ID minting strategy per type (deterministic, namespaced, collision-safe).",
+"priority": "P0"
+},
+"SR-ING-013": {
+"text": "**Relationship discovery — explicit:** foreign-key-like fields, `$ref`/JSON Pointer, URLs to known entities, `*_id`/`parent`/`owner` conventions, join-table detection (junction → edge with properties), polymorphic `type`+`id` pairs, array-of-IDs, hierarchy via parent pointers or path strings.",
+"priority": "P0"
+},
+"SR-ING-014": {
+"text": "**Relationship discovery — statistical:** inclusion-dependency and value-overlap discovery across datasets (MinHash/LSH containment for scale), name and embedding-based schema matching, co-occurrence, temporal proximity, co-change coupling, mention extraction in text (entity linking).",
+"priority": "P0 (value overlap) / P1"
+},
+"SR-ING-015": {
+"text": "**Relationship discovery — operational:** service-call edges from traces/logs, config references (env var → secret → account), IaC dependency edges, build/runtime dependencies from SBOM and lockfiles, code call/import graphs (tree-sitter and SCIP/LSIF-class indexers), SQL lineage parsing, access-log derived usage edges.",
+"priority": "P0 (engineering set) / P1"
+},
+"SR-ING-016": {
+"text": "**Edge classes and honesty:** every edge is `ASSERTED` (source says so), `DERIVED` (deterministic rule), `INFERRED` (statistical/ML/LLM), or `CURATED` (human-approved), with confidence and method. Inferred edges are excluded from \"authoritative\" answers unless the query opts in. *(Analogous to Graphify's EXTRACTED / INFERRED / AMBIGUOUS confidence tags, extended with CURATED and DERIVED.)*",
+"priority": "P0"
+},
+"SR-ING-017": {
+"text": "**Ontology induction:** propose classes, properties, relation types and hierarchies from data; present for steward approval in the Mapping Studio; support *ontology-first*, *data-first* and *hybrid* modes.",
+"priority": "P1"
+},
+"SR-ING-018": {
+"text": "**Link prediction / graph completion** (heuristic and learned, e.g., translational and GNN-class models) proposes missing edges into a review queue; auto-assertion only above a tenant-configured threshold.",
+"priority": "P2"
+},
+"SR-ING-019": {
+"text": "**Mapping DSL:** declarative, versioned, diff-able mappings (YAML/JSON) with RML/R2RML and JSON-LD `@context` import/export; generated by inference, editable by humans, testable on samples.",
+"priority": "P0"
+},
+"SR-ING-020": {
+"text": "**Schema drift handling:** new/changed/removed fields trigger drift events, auto-compatible mapping updates when safe, and steward review when not; mappings are pinned per run for reproducibility.",
+"priority": "P0"
+},
+"SR-ING-030": {
+"text": "Deterministic rules first (exact keys, normalized emails/IDs), then probabilistic (blocking via sorted-neighborhood/canopy/LSH; pairwise similarity with string/phonetic/numeric/date/embedding features; Fellegi–Sunter-class scoring and/or trained classifiers).",
+"priority": "P0"
+},
+"SR-ING-031": {
+"text": "**Collective resolution** using graph context (shared neighbors, co-authorship, same repo/team) and transitive clustering with constraints; **survivorship rules** produce golden records with per-attribute source precedence.",
+"priority": "P1"
+},
+"SR-ING-032": {
+"text": "Every merge is **explainable, reversible (unmerge), audited**; three bands (auto-merge / human review / reject) with tenant-set thresholds and an active-learning review queue.",
+"priority": "P0"
+},
+"SR-ING-033": {
+"text": "**Cross-source ID crosswalk** persisted as first-class graph structure (`SAME_AS` with confidence and evidence) so aliases resolve at query time.",
+"priority": "P0"
+},
+"SR-ING-040": {
+"text": "Derived graphs are computed **incrementally** from mutation events; full rebuild MUST be possible and verified equivalent to the incremental result.",
+"priority": "P0"
+},
+"SR-ING-041": {
+"text": "**Graphify-class artifacts:** auto-generate portable `graph.json`, interactive HTML, and a markdown/wiki report per graph or subgraph; support export to Obsidian/Markdown vaults; support post-commit/post-merge hooks and PR-impact triage (rank open change requests by graph impact; flag overlapping-community conflicts).",
+"priority": "P1"
+},
+"SR-ING-042": {
+"text": "**Traversal-first retrieval** (no embeddings required) is the baseline retrieval mode; embeddings enhance recall but are never prerequisite (consistent with SR-CON-005).",
+"priority": "P0"
+},
+"SR-ING-043": {
+"text": "**Pre-aggregation:** per-type degree/centrality, per-edge-class reachability, and domain-to-domain bridge statistics are maintained to answer overview and impact questions within latency targets.",
+"priority": "P1"
+},
+"SR-ING-050": {
+"text": "Validation rules with severities (`INFO/WARN/ERROR/BLOCKER`), remediation suggestions, quarantine with replay, and a data-quality scorecard (completeness, freshness, uniqueness, consistency, confidence distribution) per source and per domain.",
+"priority": "P0"
+},
+"SR-ING-051": {
+"text": "**Freshness SLOs** per connector with alerting and a user-visible \"knowledge age\" on every answer.",
+"priority": "P0"
+},
+"SR-ING-052": {
+"text": "**Idempotency tests:** re-running an ingestion produces zero net graph change; interrupted runs resume without duplicates (restart-safe).",
+"priority": "P0"
+},
+"SR-ING-053": {
+"text": "**Reconciliation reports** (source counts vs graph counts, orphan edges, dangling references) on schedule.",
+"priority": "P0"
+},
+"SR-ING-060": {
+"text": "**Hostile-input posture:** parsers sandboxed; zip-bomb/path-traversal/XXE/deserialization defenses; file-type verification; size/time limits.",
+"priority": "P0"
+},
+"SR-ING-061": {
+"text": "**Indirect prompt injection defense:** ingested text is data, never instructions; extracted passages are fenced, scanned and flagged before any LLM sees them.",
+"priority": "P0"
+},
+"SR-ING-070": {
+"text": "Export formats: JSON/NDJSON, CSV, Parquet, GraphML, GEXF, GraphSON, openCypher bulk CSV, RDF (Turtle, N-Quads, JSON-LD, RDF-star), DOT/Mermaid, Markdown vault, interactive HTML; full-tenant export bundle (data + ontology + mappings + config + audit).",
+"priority": "P0"
+},
+"SR-ING-071": {
+"text": "BI/analytics access: read-only JDBC/ODBC SQL views, OData, GraphQL, Arrow Flight-class bulk endpoint, notebook (Jupyter) client libraries.",
+"priority": "P1"
+},
+"SR-ONT-001": {
+"text": "**Ontology service** stores ontologies as versioned artifacts (semantic versioning, diff, migration plans, deprecation lifecycle). Every graph element pins `ontology_version`.",
+"priority": "P0"
+},
+"SR-ONT-002": {
+"text": "**Import/export:** OWL 2 (RDF/XML, Turtle, Manchester), RDFS, SKOS, JSON Schema, JSON-LD contexts, LinkML-style schemas, Protégé project interop, CSV glossaries; export of the active ontology to OWL and SHACL shapes.",
+"priority": "P0"
+},
+"SR-ONT-003": {
+"text": "**Ontology Studio** (UI): visual class/property editor, relationship canvas, constraint editor, glossary/taxonomy manager, mapping designer, diff/merge, impact preview (\"what existing data breaks if I change this?\"), review-and-approve workflow with roles.",
+"priority": "P0"
+},
+"SR-ONT-004": {
+"text": "**Constraint validation** via SHACL-class shapes plus native rules; severity-based gates in ingestion; constraint violations visible as a graph-quality dashboard.",
+"priority": "P0"
+},
+"SR-ONT-005": {
+"text": "**Business glossary and taxonomy** (SKOS-compatible): terms, synonyms, multilingual labels, definitions, owners, approved-status; terms link to ontology concepts and to physical fields; NL layer uses the glossary for grounding.",
+"priority": "P0"
+},
+"SR-ONT-006": {
+"text": "**Ontology alignment/matching:** lexical, structural, embedding-assisted mapping between a customer's vocabulary and an industry standard, with confidence and steward review.",
+"priority": "P1"
+},
+"SR-ONT-007": {
+"text": "**Tenant-renamable terminology (white-label semantics):** a tenant may rename \"Service\" → \"Application\", \"Incident\" → \"Case\", etc., without changing the underlying canonical type.",
+"priority": "P0"
+},
+"SR-ONT-008": {
+"text": "**Ontology-driven generation:** GraphQL schema, REST resources, form UIs, validation, and docs generated from the ontology.",
+"priority": "P1"
+},
+"SR-ONT-009": {
+"text": "**Governed evolution:** proposals, review, approval, scheduled rollout, backward-compat checks, automatic data migration jobs, rollback.",
+"priority": "P0"
+},
+"SR-ONT-010": {
+"text": "**Catalog interoperability:** import/sync with data catalogs and glossaries (DataHub, OpenMetadata, Atlas, Collibra-class), CMDBs, enterprise-architecture repositories (ArchiMate/TOGAF models), and API registries.",
+"priority": "P1"
+},
+"SR-ONT-020": {
+"text": "**Inference tiers:** (a) graph-native derivations (transitive, inverse, symmetric, property chains), (b) rule-based (Datalog/SWRL-class) materialization with provenance, (c) OWL-RL/EL profile reasoning where RDF back-ends support it, (d) probabilistic/ML inference proposals. Every inferred fact is labeled `DERIVED` or `INFERRED` and explainable (\"why is this true?\" returns the rule and premises).",
+"priority": "P1"
+},
+"SR-ONT-021": {
+"text": "**Truth maintenance:** retraction of premises retracts conclusions; contradictions are surfaced as validation findings, never silently resolved.",
+"priority": "P1"
+},
+"SR-ONT-022": {
+"text": "**Temporal and defeasible semantics** for roles/ownership that change over time (valid-time intervals on edges).",
+"priority": "P1"
+},
+"SR-RAG-001": {
+"text": "**Router** chooses strategy per query class with a logged rationale; operators can override per tenant/workspace; unknown classes degrade to hybrid retrieval with a visible notice.",
+"priority": "P0"
+},
+"SR-RAG-002": {
+"text": "**GraphRAG patterns:** local (entity-neighborhood + attached documents), global (community-summary map-reduce), path-based, subgraph-as-context, and temporal.",
+"priority": "P0 (local) / P1"
+},
+"SR-RAG-003": {
+"text": "**Hybrid retrieval:** BM25 + dense (+ optional sparse-learned) with reciprocal-rank fusion, cross-encoder reranking (local models), metadata/policy filtering *before* ranking.",
+"priority": "P0"
+},
+"SR-RAG-004": {
+"text": "**Advanced strategies as plugins:** HyDE, query decomposition, step-back, RAG-Fusion, parent-child chunking, sentence-window, self-RAG/corrective-RAG, agentic RAG loops, long-context packing with budget manager.",
+"priority": "P1"
+},
+"SR-RAG-005": {
+"text": "**Graph-aware chunking:** chunk boundaries follow document structure and link to graph entities; every chunk carries `raw_id`, section path, classification, ontology links.",
+"priority": "P0"
+},
+"SR-RAG-006": {
+"text": "**Corrective verification:** before returning any LLM-generated assertion, verify entity/relationship claims against deterministic graph facts; unverifiable claims are removed or labeled.",
+"priority": "P0"
+},
+"SR-RAG-007": {
+"text": "**Context budget manager:** token-aware assembly, deduplication, evidence prioritization, and per-model context-window adaptation.",
+"priority": "P0"
+},
+"SR-RAG-008": {
+"text": "**Model-down fallback:** if no model is reachable, return deterministic results, retrieved evidence and templated narration with clear labeling (inherited `MVP-FR-020`).",
+"priority": "P0"
+},
+"SR-RAG-009": {
+"text": "**Caching:** semantic and exact caches keyed by tenant, policy version, graph revision and model version; invalidated by revision events.",
+"priority": "P1"
+},
+"SR-RAG-010": {
+"text": "**RAG evaluation harness** built in: retrieval precision/recall@k, MRR/nDCG, groundedness/faithfulness, citation precision, answer relevance, hallucination rate, latency, token cost; regression gates in CI.",
+"priority": "P0"
+},
+"SR-NLQ-001": {
+"text": "**Template/semantic-parser tier first:** common intents (§1.2) compile deterministically without an LLM; an LLM-assisted tier handles open-ended phrasing using constrained decoding against the ontology schema; both emit QueryPlan IR.",
+"priority": "P0"
+},
+"SR-NLQ-002": {
+"text": "**Intelligent suggestion engine (core differentiator):** when a question is ambiguous, under-specified, too broad, or maps to multiple plans, the system MUST present a ranked set of **candidate questions/queries** each with: plain-language paraphrase, the exact QueryPlan/dialect preview, expected result shape, entity bindings (with alternatives), estimated cost/latency, confidence, data-coverage note, and a permission check. The user selects and **fires** one (or edits first).",
+"priority": "P0"
+},
+"SR-NLQ-003": {
+"text": "**Entity disambiguation UX:** \"service account `abc`\" resolving to several entities (dev/prod, duplicates across systems) shows candidates with context and lets the user pin one for the session.",
+"priority": "P0"
+},
+"SR-NLQ-004": {
+"text": "**Answer modes:** (1) *Deterministic* — computed from the graph, exact, no LLM; (2) *Narrated* — deterministic facts + LLM wording; (3) *Exploratory investigation* — multi-step agent with visible plan and evidence trail; (4) *Report* — long-form, multi-section, charts/tables/citations, exportable. The UI states which mode produced the answer.",
+"priority": "P0"
+},
+"SR-NLQ-005": {
+"text": "**Depth bar (\"no shortness\"):** answers MUST include, as relevant: direct answer, supporting evidence and paths, assumptions, confidence and uncertainty, alternatives considered, recommended next actions, coverage gaps (\"sources not ingested that could change this\"), and suggested follow-up questions. Minimum answer-quality gates are enforced by the evaluation suite (SR-NLQ-010).",
+"priority": "P0"
+},
+"SR-NLQ-006": {
+"text": "**Explainability (XAI):** \"why?\" on any result returns the paths/rules/premises; counterfactuals (\"what would change the answer?\"); confidence decomposition (edge confidence, source freshness, coverage). Do not depend on exposing hidden model chain-of-thought.",
+"priority": "P0"
+},
+"SR-NLQ-007": {
+"text": "**Conversation context:** follow-ups, pronoun/ellipsis resolution, session and saved-investigation memory, pinned entities, branching (\"explore alternative\"), shareable investigation links respecting each viewer's permissions.",
+"priority": "P0"
+},
+"SR-NLQ-008": {
+"text": "**Reports:** templates (impact assessment, incident RCA, change-risk review, compliance evidence, executive brief), scheduled/recurring, parameterized, multi-format export (HTML, PDF, DOCX, PPTX, Markdown, JSON), evidence appendix with provenance, approval workflow, white-label styling.",
+"priority": "P0 (HTML/MD/PDF) / P1"
+},
+"SR-NLQ-009": {
+"text": "**Languages:** English at P0; multilingual NL (major European, Indic and East-Asian languages) via local multilingual models at P1, with glossary-term translation.",
+"priority": "P1"
+},
+"SR-NLQ-010": {
+"text": "**NL evaluation suite:** golden question sets per intent and per industry pack; metrics — intent accuracy, entity-link accuracy, plan validity rate, **execution accuracy** (result-set equality), groundedness, hallucination rate, refusal correctness, clarification precision, latency, tokens. Proposal gates: ≥ 95 % execution accuracy on Tier-1 deterministic intents; ≥ 0.95 groundedness on narrated answers; 0 policy-violating results in the adversarial set.",
+"priority": "P0"
+},
+"SR-NLQ-011": {
+"text": "**Safety:** refuse or constrain questions the user is not entitled to; never reveal existence of hidden entities (\"redaction notice\" lists the *fact* that filters applied, not the content).",
+"priority": "P0"
+},
+"SR-NLQ-012": {
+"text": "**Feedback loop:** thumbs/corrections/\"this edge is wrong\" feed a curation queue that improves mappings, aliases, intent templates and ranking, with steward approval.",
+"priority": "P1"
+},
+"SR-NLQ-013": {
+"text": "**Voice and chat surfaces:** same pipeline via chat apps (Teams/Slack-class), IDE chat, CLI, and optional speech I/O.",
+"priority": "P2"
+},
+"SR-NLQ-014": {
+"text": "**What-if simulation:** sandboxed copy-on-write overlay graph where users propose changes (delete service, rotate account, add dependency) and see propagated impact before acting; overlay never alters production truth.",
+"priority": "P1"
+},
+"SR-NLQ-015": {
+"text": "**Proactive suggestions:** based on role, current entity and usage graph, the UI proposes \"questions you might ask next\" (e.g., owners to notify, tests to run).",
+"priority": "P1"
+},
+"SR-LLM-001": {
+"text": "**Model Provider Port** for chat/completion, structured output (grammar/JSON-schema constrained), tool calling, embeddings, reranking, vision/OCR, speech; capability negotiation (context length, modalities, tools, determinism).",
+"priority": "P0"
+},
+"SR-LLM-002": {
+"text": "**Local/self-hosted by default.** Adapters for local runtimes (vLLM-, SGLang-, llama.cpp-, Ollama-, TGI-, ONNX Runtime-, OpenVINO-, TensorRT-LLM-class). **No external provider adapter is active until explicitly enabled by an authorized tenant administrator** (§10.2).",
+"priority": "P0"
+},
+"SR-LLM-003": {
+"text": "**Model registry:** per model — source, hash, license terms (open-weight licenses differ and some restrict commercial redistribution), intended tasks, hardware profile, evaluation scores, approval status; offline model bundles with signature verification.",
+"priority": "P0"
+},
+"SR-LLM-004": {
+"text": "**Task-based routing:** small/fast models for classification, extraction and routing; larger models for synthesis; fallbacks and circuit breakers; per-tenant model allowlists.",
+"priority": "P0"
+},
+"SR-LLM-005": {
+"text": "**Hardware reference configurations** (CPU-only small model; single-GPU; multi-GPU; air-gapped appliance) with sizing guidance, quantization options, throughput/latency benchmarks per release.",
+"priority": "P0"
+},
+"SR-LLM-006": {
+"text": "**Prompt/skill registry:** versioned prompts, schemas, few-shot sets; A/B and regression-evaluated; tenant overrides; prompt content never contains raw sensitive data unless policy allows.",
+"priority": "P0"
+},
+"SR-LLM-007": {
+"text": "**Embedding service** with model versioning, batch/online modes, multilingual and code models, and re-embedding jobs (SR-VDB-005).",
+"priority": "P0"
+},
+"SR-LLM-008": {
+"text": "**LLM observability:** per-call latency, tokens, cost, cache hits, refusals, guardrail triggers, quality scores — local telemetry only unless the tenant exports it.",
+"priority": "P0"
+},
+"SR-LLM-009": {
+"text": "**Guardrails:** input/output scanners (PII, secrets, injection patterns), tool allowlists, output schema validation, jailbreak/prompt-injection test corpus in CI (aligned with the OWASP LLM Top-10 categories).",
+"priority": "P0"
+},
+"SR-LLM-010": {
+"text": "**Egress Gateway** is the *only* path to any external model; enforced by network policy so bypass is technically impossible.",
+"priority": "P0"
+},
+"SR-LLM-011": {
+"text": "**Policy engine** evaluates every outbound call against the matrix, transforms the payload to the permitted level (schema-strip, aggregate, synthesize, tokenize, redact), and blocks on failure. Default is S0 for all tenants.",
+"priority": "P0"
+},
+"SR-LLM-012": {
+"text": "**Dry-run preview:** administrators and (for S6) requesters see the *exact* payload that would be sent before approval.",
+"priority": "P0"
+},
+"SR-LLM-013": {
+"text": "**Per-call Egress Manifest** (immutable): who, what data classes, which level, which fields/tokens, endpoint, region, byte counts, approval id, response hash. A \"what left the building\" report is exportable for auditors.",
+"priority": "P0"
+},
+"SR-LLM-014": {
+"text": "**DLP and canary testing:** outbound payloads are scanned (PII/secret/PHI patterns, entropy, customer-defined dictionaries); CI plants canary values in test tenants and fails the build if any canary appears in outbound traffic below the allowed level.",
+"priority": "P0"
+},
+"SR-LLM-015": {
+"text": "**Reversible tokenization vault** (local, per-tenant keys) re-identifies model responses locally; responses are also scanned before display.",
+"priority": "P0"
+},
+"SR-LLM-016": {
+"text": "**Kill switch and budgets:** global/tenant/endpoint disable, rate and cost budgets, anomaly alerts on egress volume.",
+"priority": "P0"
+},
+"SR-LLM-017": {
+"text": "**Consent and contract records:** enabling an endpoint records the signer, date, DPA reference, data-residency region and scope; changes require re-approval.",
+"priority": "P0"
+},
+"SR-LLM-018": {
+"text": "**Same policy applies to embeddings, OCR, speech, reranking and telemetry** — not only chat models.",
+"priority": "P0"
+},
+"SR-LLM-019": {
+"text": "**Local fallback:** on denial or outage, tasks fall back to local models or deterministic modes with a visible notice.",
+"priority": "P0"
+},
+"SR-LLM-020": {
+"text": "**Region and sovereignty pinning:** endpoints and processing regions are constrained per tenant/jurisdiction.",
+"priority": "P1"
+},
+"SR-AGT-001": {
+"text": "**Agent contract** (JSON schema): identity, purpose, allowed tools, input/output schemas, budgets (steps, tokens, time, expansions), risk class, approval mode, memory scope, evaluation hooks. Agents are data, versioned and reviewable.",
+"priority": "P0"
+},
+"SR-AGT-002": {
+"text": "**Bounded runtime:** tool allowlist, budget enforcement, circuit breaker, loop/stall detection, deterministic replay from traces.",
+"priority": "P0"
+},
+"SR-AGT-003": {
+"text": "**Autonomy modes:** HITL (human approves each action), HOTL (human monitors, can intervene), HIC (human in command; autonomy scoped by policy). Mode is a policy per agent × action risk class × tenant.",
+"priority": "P0"
+},
+"SR-AGT-004": {
+"text": "**Read/write separation:** default agents are read-only; any write/action tool requires an explicit approval boundary, audit and (where configured) dual control.",
+"priority": "P0"
+},
+"SR-AGT-005": {
+"text": "**MCP servers:** a read-only MCP server exposing graph, query, evidence and lineage tools; a separately governed action server; inventories generated from code; per-tenant auth and rate limits.",
+"priority": "P0"
+},
+"SR-AGT-006": {
+"text": "**Memory:** scoped (turn/session/user/workspace/tenant), policy-governed, expiring, inspectable and erasable; no cross-tenant memory.",
+"priority": "P0"
+},
+"SR-AGT-007": {
+"text": "**Agent registry & marketplace:** discover, install, evaluate and certify agents; signed packages; capability declarations.",
+"priority": "P1"
+},
+"SR-AGT-008": {
+"text": "**Multi-agent orchestration:** planner/critic/worker patterns, event-driven coordination, shared evidence blackboard, XAI trace per run.",
+"priority": "P1"
+},
+"SR-AGT-009": {
+"text": "**Controlled self-improvement is OFF by default;** proposals (prompt, mapping, ontology, rule changes) are generated as reviewable change requests, never self-applied.",
+"priority": "P0"
+},
+"SR-AGT-010": {
+"text": "**Specialist agent catalog** (starting set inherited from the codebase, plus new): DataQuality, OntologyReview, ConnectorDiagnosis, DocumentationFreshness, EvidenceVerification, ArchitectureConformance, QueryOptimization, GraphInvestigator, KnowledgeCurator, ChangeImpact, IncidentInvestigation; new: ComplianceMapper, ImpactSimulator, ExpertFinder, KnowledgeDebt, ReportWriter, OntologyInduction, ThreatPathAnalyst.",
+"priority": "P1"
+},
+"SR-AGT-011": {
+"text": "**RPA/workflow hooks:** approved agent outputs may trigger tickets, PR comments, notifications or runbook steps through connectors, always with human approval unless policy allows.",
+"priority": "P1"
+},
+"SR-AGT-020": {
+"text": "**Continuous sync and change detection:** the brain updates on source change; users can **watch** an entity, pattern or question and get alerts when answers change (\"continuous queries\").",
+"priority": "P1"
+},
+"SR-AGT-021": {
+"text": "**Drift and conformance detection:** docs vs code, architecture vs deployment, ontology vs data, policy vs access, declared vs observed dependencies.",
+"priority": "P1"
+},
+"SR-AGT-022": {
+"text": "**Freshness and knowledge-decay scoring:** per node/edge/source; stale knowledge is visibly flagged and down-ranked.",
+"priority": "P0"
+},
+"SR-AGT-023": {
+"text": "**Knowledge-debt and bus-factor analysis:** single-owner components, orphaned systems, undocumented critical dependencies.",
+"priority": "P1"
+},
+"SR-AGT-024": {
+"text": "**Expert finder and routing:** who knows/owns/changed what, with identity-resolved evidence; \"who should I ask?\".",
+"priority": "P1"
+},
+"SR-AGT-025": {
+"text": "**Risk scoring:** change risk = blast radius × fragility × test coverage × recent-incident correlation; surfaced in PR/change-request bots.",
+"priority": "P1"
+},
+"SR-AGT-026": {
+"text": "**Anomaly detection** on graph structure, ingestion patterns and access behavior.",
+"priority": "P2"
+},
+"SR-AGT-027": {
+"text": "**Digest and briefing:** scheduled personalized briefings (what changed, what's at risk, open items) per role.",
+"priority": "P1"
+},
+"SR-AGT-028": {
+"text": "**Onboarding and tours:** auto-generated \"map of this domain\" guides for newcomers from the graph.",
+"priority": "P2"
+},
+"SR-AGT-029": {
+"text": "**Digital-twin mode:** model processes/assets/organizations as simulatable graphs for scenario planning (links to SR-NLQ-014).",
+"priority": "P3"
+},
+"SR-TEN-001": {
+"text": "**Tenant context is mandatory** in every API, query, job, event, cache key, log line, metric label, agent call and plugin invocation; code paths without tenant context fail closed.",
+"priority": "P0"
+},
+"SR-TEN-002": {
+"text": "**Three isolation models**, selectable per tenant/edition: *Silo* (dedicated stack), *Bridge* (shared compute, dedicated data stores/namespaces), *Pool* (shared everything, logical isolation).",
+"priority": "P0 (Silo, Bridge) / P1 (Pool)"
+},
+"SR-TEN-003": {
+"text": "Isolation is enforced at **every layer:** graph (database/graph-space/namespace per tenant), vector (collection), search (index), relational (schema + row-level security), object (bucket/prefix), event topics, secrets, KMS keys, caches, logs, backups, exports.",
+"priority": "P0"
+},
+"SR-TEN-004": {
+"text": "**Automated cross-tenant penetration suite** (every endpoint, job type and plugin hook attempts cross-tenant reads/writes/side-channels) MUST pass in CI and before each release.",
+"priority": "P0"
+},
+"SR-TEN-005": {
+"text": "**Per-tenant keys** (envelope encryption; BYOK and hold-your-own-key options), **crypto-shredding** on tenant deletion.",
+"priority": "P0"
+},
+"SR-TEN-006": {
+"text": "**Noisy-neighbor control:** quotas (graph size, ingestion rate, concurrent queries, LLM tokens, storage), fair scheduling, priority lanes, per-tenant rate limits and circuit breakers.",
+"priority": "P0"
+},
+"SR-TEN-007": {
+"text": "**Tenant lifecycle:** provision (API + console + IaC), configure, suspend, resume, clone (staging), migrate (cluster/region), export, delete (verified, certificate of destruction).",
+"priority": "P0"
+},
+"SR-TEN-008": {
+"text": "**Per-tenant everything:** ontology extensions, connectors, mappings, model allowlist, egress policy, retention, region, SSO, branding, SLA tier, feature entitlements.",
+"priority": "P0"
+},
+"SR-TEN-009": {
+"text": "**Metering and entitlements:** local, tamper-evident usage meters (records ingested, graph size, queries, LLM tokens, storage, seats, connectors) with export for billing; entitlements enforce edition/module limits; offline-capable.",
+"priority": "P0"
+},
+"SR-TEN-010": {
+"text": "**Cross-tenant sharing (opt-in):** controlled sharing of ontologies, mappings, templates and anonymized benchmarks; never raw data; always explicit and auditable.",
+"priority": "P2"
+},
+"SR-WL-001": {
+"text": "**Brand tokens:** logo(s), favicon, app name, colors, typography, spacing, icon sets, node/edge visual styles per ontology type, light/dark themes — all via theme packages, no code change.",
+"priority": "P0"
+},
+"SR-WL-002": {
+"text": "**Domain and identity:** custom domains/CNAMEs, tenant-supplied TLS certs, branded login/SSO pages, branded transactional email, branded PDF/DOCX/PPTX/HTML reports.",
+"priority": "P0"
+},
+"SR-WL-003": {
+"text": "**Terminology and persona white-labelling:** tenant renames concepts (SR-ONT-007) and names/styles the AI assistant (name, tone, avatar, greeting) without altering safety behavior.",
+"priority": "P0"
+},
+"SR-WL-004": {
+"text": "**De-vendoring:** vendor identifiers removable from UI, docs, CLI binary names, container/image names, package names, API hostnames, error pages and installers; \"powered by\" is a licensed toggle.",
+"priority": "P0"
+},
+"SR-WL-005": {
+"text": "**OEM rebuild pipeline:** partners can produce rebranded, re-signed bundles/appliance images from a documented pipeline; partner-owned update channel and docs portal.",
+"priority": "P1"
+},
+"SR-WL-006": {
+"text": "**Localization packs:** UI strings, date/number formats, RTL, glossary translation; partner-supplied language packs.",
+"priority": "P0"
+},
+"SR-WL-007": {
+"text": "**Custom legal and onboarding content:** terms, privacy notices, welcome tours, help links.",
+"priority": "P0"
+},
+"SR-WL-008": {
+"text": "**Partner console:** create/branding/configure tenants, view fleet health and usage, apply partner policy floors, issue licenses, manage support entitlements.",
+"priority": "P1"
+},
+"SR-WL-009": {
+"text": "**Embeddable components:** iframe/web-component widgets (NL console, graph viewer, impact panel) with token-based auth for embedding in customer or partner portals.",
+"priority": "P1"
+},
+"SR-CFG-001": {
+"text": "**Layered configuration:** product default → edition → partner → tenant → business unit → workspace → user. Each setting is typed (JSON Schema), documented, validated, versioned and audited.",
+"priority": "P0"
+},
+"SR-CFG-002": {
+"text": "**Floors and ceilings:** upper layers may set security/compliance *floors* and *ceilings* lower layers cannot loosen (e.g., tenant cannot enable external LLMs beyond partner-allowed levels). Most-restrictive-wins for security settings.",
+"priority": "P0"
+},
+"SR-CFG-003": {
+"text": "**Effective-config explain:** \"why does this setting have this value?\" shows the layer chain and last change.",
+"priority": "P0"
+},
+"SR-CFG-004": {
+"text": "**Config as code:** export/import (YAML/JSON), GitOps promotion dev → stage → prod, diff, dry-run, rollback, change approval workflow.",
+"priority": "P0"
+},
+"SR-CFG-005": {
+"text": "**Feature flags and entitlements** distinct from configuration; flags never bypass policy.",
+"priority": "P0"
+},
+"SR-CFG-006": {
+"text": "**Hot reload** for non-structural settings; structural changes (backend bindings, ontology major versions) go through migration plans.",
+"priority": "P1"
+},
+"SR-EXT-001": {
+"text": "**Headless first:** every UI capability is available through public, versioned APIs — REST (OpenAPI 3.1), GraphQL (ontology-generated), gRPC (high-volume), WebSocket/SSE (streaming answers, subscriptions), webhooks, MCP, CLI.",
+"priority": "P0"
+},
+"SR-EXT-002": {
+"text": "API standards: semantic versioning, ≥ 12-month deprecation window, idempotency keys, cursor pagination, async job pattern, consistent error model, rate-limit headers, generated reference and SDKs.",
+"priority": "P0"
+},
+"SR-EXT-003": {
+"text": "**Admin APIs** cover tenants, users, config, branding, licenses, connectors, policies — enabling partner automation.",
+"priority": "P0"
+},
+"SR-EXT-004": {
+"text": "Official SDKs: Python, TypeScript at P0; Java/Kotlin, Go, .NET at P1; Jupyter/notebook integrations.",
+"priority": "P0/P1"
+},
+"SR-EXT-005": {
+"text": "**Integration surface:** Slack/Teams-class ChatOps, ITSM (ServiceNow/Jira), CI/CD bots (PR impact comments, merge-risk gates), SIEM, email, calendar, BI tools (SR-ING-071), IDE extensions (VS Code at P0; JetBrains at P1).",
+"priority": "P1"
+},
+"SR-EXT-010": {
+"text": "**Extension points:** connectors, parsers/extractors, relationship-discovery methods, identity-resolution matchers, graph algorithms, store adapters, query-dialect adapters, model providers, agents/skills, UI pages/widgets, report templates, validation/policy/ontology packs, notification channels, auth providers, export formats.",
+"priority": "P0 (core 8) / P1"
+},
+"SR-EXT-011": {
+"text": "**Isolation:** each plugin runs in a container or WASM sandbox with declared capabilities (network, filesystem, secrets, graph read/write scopes), CPU/memory/time limits, health checks and no ambient authority.",
+"priority": "P0"
+},
+"SR-EXT-012": {
+"text": "**Signed, versioned packages** with manifest, compatibility range, Data-Flow Manifest, SBOM and test fixtures; trust levels (first-party / certified partner / community / private).",
+"priority": "P0"
+},
+"SR-EXT-013": {
+"text": "**Plugin test kit** and scaffolding CLI; contract tests mandatory for marketplace listing.",
+"priority": "P1"
+},
+"SR-EXT-014": {
+"text": "**Marketplace** (online catalog for connected profiles; **offline catalog bundles** for air-gapped): ratings, security scan results, certification badges, revenue-share support.",
+"priority": "P1"
+},
+"SR-EXT-015": {
+"text": "**Low-code Studio:** visual pipeline, mapping, rule, agent and report builders that emit the same versioned artifacts as code.",
+"priority": "P1"
+},
+"SR-UX-001": {
+"text": "**No mock UI:** every screen reads live APIs; hardcoded demo data is allowed only in an explicit, labeled Demo Mode. UI acceptance tests assert real backend calls.",
+"priority": "P0"
+},
+"SR-UX-002": {
+"text": "**Graph visualization at scale:** WebGL rendering, level-of-detail and semantic zoom, bounded subgraph fetch, clustering/community collapse, multiple layouts (force, hierarchical, radial, geo), 2D/3D, minimap, path highlighting, blast-radius overlay; interactive at ≥ 50 k visible elements with LOD, ≥ 5 k fully detailed.",
+"priority": "P0"
+},
+"SR-UX-003": {
+"text": "**Alternate views:** table, matrix (dependency/DSM), tree/hierarchy, Sankey/flow, timeline/scrubber (temporal), geo-map, diff view between revisions.",
+"priority": "P1"
+},
+"SR-UX-004": {
+"text": "**Honest visual encoding:** edge style encodes class and confidence (asserted/derived/inferred/curated); freshness shading; provenance drawer (\"show evidence\") one click from any element or answer sentence.",
+"priority": "P0"
+},
+"SR-UX-005": {
+"text": "**NL console:** suggestion cards (SR-NLQ-002), query preview (EOQL + dialect), evidence panel, mode badge (deterministic/narrated/exploratory/report), follow-up chips, investigation canvas that pins entities, paths and findings.",
+"priority": "P0"
+},
+"SR-UX-006": {
+"text": "**Persona-based homes** and role-aware navigation (executive, architect, engineer, steward, auditor, admin), fully configurable.",
+"priority": "P1"
+},
+"SR-UX-007": {
+"text": "**Collaboration:** comments, annotations, @mentions, shared investigations/views, review of proposed ontology/mapping changes, activity feed.",
+"priority": "P1"
+},
+"SR-UX-008": {
+"text": "**Accessibility:** WCAG 2.2 AA, keyboard-first, screen-reader semantics for graph (alt text paths, tabular fallback), reduced-motion, color-blind-safe palettes.",
+"priority": "P0"
+},
+"SR-UX-009": {
+"text": "**Responsive and mobile read:** tablet/phone views for answers, alerts and approvals.",
+"priority": "P1"
+},
+"SR-UX-010": {
+"text": "**Onboarding:** guided setup wizard (connect → profile → map → validate → ask), sample-data sandbox, in-product help, \"what can I ask?\" explorer driven by the meta-graph.",
+"priority": "P0"
+},
+"SR-UX-011": {
+"text": "**Destructive-action safety:** confirmations with impact preview, undo where possible, dual control for configured classes.",
+"priority": "P0"
+},
+"SR-UX-012": {
+"text": "**Performance budget:** initial load ≤ 3 s on reference hardware over LAN; interactions ≤ 200 ms for local operations.",
+"priority": "P1"
+},
+"SR-SEC-001": {
+"text": "**Authentication:** OIDC, SAML 2.0, LDAP/AD, SCIM 2.0 provisioning, local break-glass accounts, MFA (TOTP, WebAuthn/FIDO2), scoped API keys, OAuth2 client credentials, mTLS service identities, short-lived tokens, session controls.",
+"priority": "P0"
+},
+"SR-SEC-002": {
+"text": "**Authorization:** RBAC + ABAC + relationship-based (Zanzibar-style) checks + classification-based mandatory access; evaluated by a policy engine (policy-as-code, OPA/Cedar-class) with a test and **\"what can this user see?\" simulation** tool.",
+"priority": "P0"
+},
+"SR-SEC-003": {
+"text": "**Element-level security:** policies apply to vertices, edges, properties and derived structures (embeddings, summaries, communities, caches); query-time policy rewriting and result filtering; field masking; purpose-based and time-bound (JIT) access; segregation of duties.",
+"priority": "P0"
+},
+"SR-SEC-004": {
+"text": "**Permission-aware ingestion and retrieval:** where the source provides ACLs/permissions, the connector ingests and maps them so answers include only what the asking user could access in the source system; unmapped ACLs default to deny. This MUST also govern RAG context assembly and community summaries (summaries of restricted content are themselves restricted).",
+"priority": "P0"
+},
+"SR-SEC-005": {
+"text": "**Access governance:** access reviews/certification campaigns, privileged-access workflows, break-glass with mandatory post-hoc review.",
+"priority": "P1"
+},
+"SR-SEC-006": {
+"text": "**Agent identities** are first-class principals with least-privilege roles and budgets; agents never inherit a human's full rights implicitly.",
+"priority": "P0"
+},
+"SR-SEC-010": {
+"text": "**Encryption:** TLS 1.3 externally, mTLS internally; at-rest encryption for all stores; field-level encryption for sensitive properties; KMS/HSM integration (PKCS#11, KMIP, cloud KMS adapters); rotation; optional FIPS 140-validated crypto modules.",
+"priority": "P0"
+},
+"SR-SEC-011": {
+"text": "**Secrets:** mounted files/secret store only; no secrets in environment variables, images, logs, graph or embeddings; automated secret scanning on ingested content with quarantine.",
+"priority": "P0"
+},
+"SR-SEC-012": {
+"text": "**Audit:** immutable, hash-chained, signed, exportable (WORM option, SIEM formats); covers authN/Z decisions, config, data access (detail configurable), policy decisions, egress manifests, admin and agent actions; retention configurable.",
+"priority": "P0"
+},
+"SR-SEC-013": {
+"text": "**Hardening:** non-root containers, read-only root FS, dropped capabilities, seccomp/AppArmor profiles, minimal signed base images, network segmentation, CIS-aligned benchmarks.",
+"priority": "P0"
+},
+"SR-SEC-014": {
+"text": "**Supply chain:** SBOM (CycloneDX/SPDX) per image and release, VEX, signed images/artifacts (Sigstore/cosign-class), SLSA-aligned provenance, pinned and reproducible builds, license scanning, dependency review.",
+"priority": "P0"
+},
+"SR-SEC-015": {
+"text": "**Secure SDLC:** threat models (STRIDE + LLM-specific + multi-tenant), SAST/DAST/SCA/fuzzing in CI, annual independent penetration test, vulnerability disclosure program, patch SLAs, security advisories channel.",
+"priority": "P0"
+},
+"SR-SEC-016": {
+"text": "**Web and API defenses:** CSP, CSRF/XSS protections, SSRF guards for connectors and model endpoints, input validation, request size/time limits, DoS and abuse controls.",
+"priority": "P0"
+},
+"SR-SEC-017": {
+"text": "**LLM-specific security:** prompt-injection and data-exfiltration test corpus, output filtering, tool-permission enforcement, context isolation per tenant/user (aligned with OWASP LLM Top-10 categories).",
+"priority": "P0"
+},
+"SR-PRV-001": {
+"text": "**Classification engine** at ingest (patterns, dictionaries, NER, ML; customer-extensible) labels PII/PHI/PCI/secrets/IP/legal-privileged/export-controlled; labels propagate to derived data.",
+"priority": "P0"
+},
+"SR-PRV-002": {
+"text": "**Data-subject requests:** locate a subject across graph, raw captures, vector/search indexes, caches, derived graphs, exports and backups (flagged); execute access/export, rectification and **erasure with propagation** (including embeddings and summaries) and produce proof.",
+"priority": "P0"
+},
+"SR-PRV-003": {
+"text": "**Retention and legal hold** per class/tenant/source; automated expiry with crypto-shred option.",
+"priority": "P0"
+},
+"SR-PRV-004": {
+"text": "**Purpose and consent tracking** where applicable; purpose limitation enforced in policy.",
+"priority": "P1"
+},
+"SR-PRV-005": {
+"text": "**Compliance from the graph:** auto-generate records of processing, data maps, data-flow diagrams, system-to-data-class inventories, cross-border transfer views and DPIA starter reports from the graph itself.",
+"priority": "P1"
+},
+"SR-PRV-006": {
+"text": "**Residency enforcement:** region pinning for storage, processing and model endpoints; cross-border transfer controls.",
+"priority": "P0"
+},
+"SR-PRV-007": {
+"text": "**Pseudonymization/anonymization services** (tokenization, k-anonymity checks, optional differential-privacy aggregates).",
+"priority": "P1"
+},
+"SR-GOV-001": {
+"text": "**Compliance Pack format:** control catalog, mapping to platform capabilities, automated evidence queries over the graph/audit, report templates, gap analysis.",
+"priority": "P1"
+},
+"SR-GOV-002": {
+"text": "**AI governance:** model cards, AI-BOM, evaluation records, intended-use and prohibited-use settings, human-oversight configuration, user-visible AI labeling, AI incident workflow.",
+"priority": "P0"
+},
+"SR-GOV-003": {
+"text": "**Change governance:** ontology, mapping, policy, model and agent changes use proposal → review → approval → rollout with audit and rollback.",
+"priority": "P0"
+},
+"SR-GOV-004": {
+"text": "**Roles:** data owners, stewards, custodians, ontology curators, security admins, auditors (read-only, tamper-evident views).",
+"priority": "P0"
+},
+"SR-GOV-005": {
+"text": "**Policy exceptions** are time-boxed, approved, visible and auto-expiring.",
+"priority": "P1"
+},
+"SR-NFR-001": {
+"text": "**Horizontal scale** for API, query, ingestion workers, agent runners, embedding and model-serving tiers; autoscaling policies (K8s) and manual sizing for appliances.",
+"priority": "P0"
+},
+"SR-NFR-002": {
+"text": "**Data scaling patterns:** graph partitioning/sharding per backend capability, read replicas, tenant-based partitioning, hot/warm/cold tiering, archive to object storage with rehydration, vector index sharding, search index lifecycle management.",
+"priority": "P1"
+},
+"SR-NFR-003": {
+"text": "**Query protection:** admission control, per-tenant concurrency, cost-based throttling, kill-runaway-query, result streaming and spill, plan caching.",
+"priority": "P0"
+},
+"SR-NFR-004": {
+"text": "**Graceful degradation matrix** (documented and tested): vector down → text/graph retrieval; model down → deterministic + evidence (SR-RAG-008); search down → graph-only; bus lag → stale-flag; one backend down → federated partial results with notice.",
+"priority": "P0"
+},
+"SR-NFR-005": {
+"text": "**Backup/restore:** native backend backups and logical checksummed archives; consistent multi-store snapshots (graph + vector + search + relational + object + event log) with crash-atomic recovery; point-in-time recovery via event log + revisions; restore drills automated with golden-query verification.",
+"priority": "P0"
+},
+"SR-NFR-006": {
+"text": "**Upgrades:** rolling and blue/green for clustered; offline signed upgrade bundles for air-gapped; versioned idempotent schema/ontology migrations; tested downgrade/rollback; compatibility matrix; LTS and stable channels (LTS ≥ 24 months).",
+"priority": "P0"
+},
+"SR-NFR-007": {
+"text": "**Chaos and soak testing:** node/zone failure, partition, slow disk, clock skew, backend restart mid-ingest; 7-day soak per release.",
+"priority": "P1"
+},
+"SR-NFR-008": {
+"text": "**Capacity planning tools:** sizing calculator and in-product forecasts (graph growth, index size, GPU needs) with reference architectures per tier.",
+"priority": "P1"
+},
+"SR-OPS-001": {
+"text": "**OpenTelemetry** metrics, logs and traces end-to-end (ingestion → mutation → query → answer); local sinks (Prometheus/Grafana/Loki/Tempo-class) bundled; customer sinks pluggable. Structured JSON logs with correlation IDs, no secrets, no raw sensitive values.",
+"priority": "P0"
+},
+"SR-OPS-002": {
+"text": "**Health and readiness** endpoints per service; dependency health roll-up; SLO dashboards and alert rules shipped as code.",
+"priority": "P0"
+},
+"SR-OPS-003": {
+"text": "**Support bundle:** one command/UI action produces a redacted diagnostic archive; customer reviews before sharing.",
+"priority": "P0"
+},
+"SR-OPS-004": {
+"text": "**Telemetry to vendor is OFF by default;** optional, opt-in, content-free usage statistics with a visible schema.",
+"priority": "P0"
+},
+"SR-OPS-005": {
+"text": "**Runbooks** for connector failure, DLQ drain, graph restore, schema/ontology migration rollback, model outage, egress incident, tenant isolation incident, key rotation, DR failover.",
+"priority": "P0"
+},
+"SR-OPS-006": {
+"text": "**Cost/FinOps views** for cloud profiles (storage, compute, LLM tokens) and capacity views for on-prem.",
+"priority": "P2"
+},
+"SR-DEP-001": {
+"text": "**Docker Compose** distribution for DP-0 with healthy-start verification and one-command clean-reset demo including backup/restore (inherited `MVP-FR-028`).",
+"priority": "P0"
+},
+"SR-DEP-002": {
+"text": "**Helm charts/operators** for Kubernetes (HA, autoscaling, network policies, pod security, PDBs) for DP-1…DP-4.",
+"priority": "P1"
+},
+"SR-DEP-003": {
+"text": "**Offline delivery:** signed OCI image archives, model bundles, ontology/industry packs, connector catalog, docs, license file, checksum manifest; verified by an installer **preflight checker** (OS, kernel, CPU/GPU, storage, ports, time sync, certificates).",
+"priority": "P0"
+},
+"SR-DEP-004": {
+"text": "**Appliance image** (hardware + software; CPU and GPU variants) with hardened OS, first-boot wizard, lifecycle updates.",
+"priority": "P2"
+},
+"SR-DEP-005": {
+"text": "**Native packages** (RPM/DEB) and VM images for customers without containers.",
+"priority": "P2"
+},
+"SR-DEP-006": {
+"text": "**Supported-platform matrix** (OS, kernel, Kubernetes, container runtime, browsers, GPUs) maintained and tested per release.",
+"priority": "P0"
+},
+"SR-DEP-007": {
+"text": "**Offline licensing:** signed license files encoding edition, modules, size tier, tenants, seats, expiry; grace periods; **no license check may ever delete or lock customer data** (read-only degrade only); usage export for manual reporting.",
+"priority": "P0"
+},
+"SR-DEP-008": {
+"text": "**Edge/federation package** for DP-6: small footprint, offline-first, delta/summary sync with conflict policies and bandwidth limits.",
+"priority": "P2"
+},
+"SR-DEP-009": {
+"text": "**Reference architectures and hardening guides** per profile and tier, including network diagrams for air-gapped and connected variants.",
+"priority": "P0"
+},
+"SR-QA-001": {
+"text": "Provide **synthetic dataset generators** per industry pack (referentially consistent, with planted ground-truth relationships, duplicates, drift, PII canaries and adversarial prompt-injection documents). No real customer data in test assets.",
+"priority": "P0"
+},
+"SR-QA-002": {
+"text": "Each generator exposes scale knobs (S/M/L/XL) and ground-truth answers for the golden question sets.",
+"priority": "P0"
+},
+"SR-QA-010": {
+"text": "Every `SR-` requirement maps to ≥ 1 executable acceptance test; the mapping is stored as structured data (test-ID → requirement-ID), **and references in comments or docstrings never count as evidence.**",
+"priority": "P0"
+},
+"SR-QA-011": {
+"text": "A requirement is `Done` only if its mapped tests pass **and** a mutation/negative check proves the test fails when the behavior is broken (sampled per release).",
+"priority": "P0"
+},
+"SR-QA-012": {
+"text": "Status dashboards MUST report three numbers separately: *tests passing*, *requirements with behavioral evidence*, *requirements with external-gate evidence*; a single \"% complete\" is prohibited.",
+"priority": "P0"
+},
+"SR-QA-013": {
+"text": "Generated inventories (API routes, tools, labels, algorithms, commands) come from code introspection; hand-written counts fail the docs build.",
+"priority": "P0"
+},
+"SR-QA-014": {
+"text": "Linters/type-checkers/security scanners run at zero-error policy on main (the prior baseline carried 165 lint errors, mostly mechanical).",
+"priority": "P0"
+},
+"SR-COM-001": {
+"text": "**Licensing models** supported by the entitlement system: perpetual + annual support, annual subscription, size-tier/usage-based, per-tenant (OEM/managed), seat-based add-ons, revenue-share/royalty for OEM.",
+"priority": "P0"
+},
+"SR-COM-002": {
+"text": "**PoC kit:** 30-day evaluation license, per-industry demo datasets, scripted demo flows, sizing tool, ROI calculator, 10-question \"prove it on your data\" workshop template.",
+"priority": "P0"
+},
+"SR-COM-003": {
+"text": "**Legal and procurement kit:** EULA, MSA, DPA, SLA, OEM and partner agreements, BAA template, security questionnaire answers (SIG/CAIQ-style), SBOM and third-party notices, export-control classification, accessibility conformance report.",
+"priority": "P0"
+},
+"SR-COM-004": {
+"text": "**Support:** Standard / Priority / Enterprise / Mission-critical tiers with response targets, escalation paths, named technical account managers, support-bundle workflow.",
+"priority": "P0"
+},
+"SR-COM-005": {
+"text": "**Services:** onboarding, connector development, ontology engineering, NL tuning, training, compliance-pack onboarding, managed operations.",
+"priority": "P0"
+},
+"SR-COM-006": {
+"text": "**Partner program:** certification tracks (implementer, connector developer, ontology engineer), partner portal, deal registration, co-marketing assets.",
+"priority": "P1"
+},
+"SR-COM-007": {
+"text": "**Documentation set:** admin, user, API/SDK, connector developer, ontology guide, security whitepaper, architecture, reference deployments, runbooks, compliance mappings, release notes, upgrade guides, training curriculum.",
+"priority": "P0"
+},
+"SR-COM-008": {
+"text": "**Sales artifacts:** datasheets per module and industry, battlecards, demo environments, reference architectures, case-study templates.",
+"priority": "P1"
+},
+"SR-COM-009": {
+"text": "**Lifecycle policy:** versioning, LTS, end-of-support, security-patch commitments published.",
+"priority": "P0"
+},
+"SR-COM-010": {
+"text": "**Strategy decisions to record as ADRs:** open-core vs source-available vs closed; trademark and white-label rights; third-party component redistribution rights; IP assignment for plugins and marketplace content.",
+"priority": "P0"
+},
+"SR-COM-020": {
+"text": "Pack SDK and signed distribution format: ontology layer, mapping templates, connector bundles, validation/policy rules, glossary, sample dataset generator, golden questions, report templates, compliance pack references.",
+"priority": "P0"
+},
+"SR-COM-021": {
+"text": "Ship the Software/IT pack and **two non-IT packs** at GA to prove horizontal applicability; remaining packs on the roadmap (§20).",
+"priority": "P0"
+}
+}

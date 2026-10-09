@@ -229,8 +229,9 @@ class EgressGateway:
         if region is not None and region != endpoint.region:
             deny(f"endpoint region {endpoint.region} violates jurisdiction pin {region}")
 
-        # 3. budgets (SR-LLM-016)
-        self._check_budgets(now, estimated_cost)
+        # 3. budgets (SR-LLM-016) - anomaly check includes this call's bytes
+        estimated_bytes = len(json.dumps(payload, sort_keys=True, default=str).encode("utf-8"))
+        self._check_budgets(now, estimated_cost, estimated_bytes)
 
         # 4. policy matrix (SR-LLM-011)
         decision = self.policy.evaluate(
@@ -313,7 +314,7 @@ class EgressGateway:
             return {k: self._reidentify(v) for k, v in response.items()}
         return response
 
-    def _check_budgets(self, now: float, estimated_cost: float) -> None:
+    def _check_budgets(self, now: float, estimated_cost: float, estimated_bytes: int = 0) -> None:
         if self.rate_limit_per_window:
             while self._window and now - self._window[0] > 60:
                 self._window.popleft()
@@ -326,7 +327,7 @@ class EgressGateway:
             while self._bytes_out_window and now - self._bytes_out_window[0][0] > 60:
                 self._bytes_out_window.popleft()
             window_bytes = sum(b for _, b in self._bytes_out_window)
-            if window_bytes > self.anomaly_bytes_threshold:
+            if window_bytes + estimated_bytes > self.anomaly_bytes_threshold:
                 self.audit({"event": "egress.anomaly",
                             "window_bytes": window_bytes,
                             "threshold": self.anomaly_bytes_threshold})

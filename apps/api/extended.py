@@ -47,8 +47,29 @@ from eoip.federation import (
     SourceCapability,
     SourceMode,
 )
+from eoip.branding.content import LegalContentRegistry
+from eoip.branding.localization import LocalizationRegistry
+from eoip.branding.router import build_router as build_branding_router
+from eoip.branding.terminology import TerminologyRegistry
+from eoip.branding.theme import ThemePackage, ThemeRegistry
+from eoip.compliance.router import build_router as build_compliance_router
+from eoip.config.layered import ConfigStore, FeatureFlagStore
+from eoip.config.router import build_router as build_config_router
+from eoip.egress.gateway import EgressGateway
+from eoip.egress.router import build_router as build_egress_router
 from eoip.graph.store import GraphStore
 from eoip.graphtest.framework import GraphTestRunner, load_suite
+from eoip.ingest.profile import build_router as build_ingest_profile_router
+from eoip.licensing.api import build_router as build_licensing_router
+from eoip.licensing.entitlements import EntitlementChecker
+from eoip.licensing.license_file import LicensePayload, sign_license, verify_license
+from eoip.licensing.meter import UsageMeter
+from eoip.privacy.router import build_router as build_privacy_router
+from eoip.qa.router import build_router as build_qa_router
+from eoip.reports.router import build_router as build_reports_router
+from eoip.suggest.router import build_router as build_suggest_router
+from eoip.tenancy.router import build_router as build_tenancy_router
+from eoip.tenancy.service import TenancyService
 from eoip.marketplace import (
     DependencyConflict,
     IntegrityError,
@@ -165,6 +186,7 @@ class ExtendedState:
             )
         )
         self._init_pass2(Path(os.getenv("EOIP_DATA_DIR", ".data")))
+        self._init_sr_wave(Path(os.getenv("EOIP_DATA_DIR", ".data")), store)
 
     def _init_pass2(self, data_dir: Path) -> None:
         # -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------
@@ -227,6 +249,65 @@ class ExtendedState:
 
         # -- Audit sink for the support bundle (§47) -----------------------------
         self.audit_sink = AuditSink(data_dir / "audit")
+
+    def _init_sr_wave(self, data_dir: Path, store: GraphStore) -> None:
+        # -- Super-Requirements (SR-*) commercial baseline, pass 9 ----------
+        # Each holder mirrors one eoip package's ``build_router`` factory; the
+        # routers themselves are mounted in ``build_extended_router`` below.
+
+        # Tenancy (SR-TEN-001/002/003/006/007/009): fail-closed tenant context,
+        # isolation models/placement, quotas, lifecycle, hash-chained metering.
+        self.tenancy_service = TenancyService()
+
+        # Licensing (SR-DEP-007, SR-COM-001, SR-TEN-009): checker from a signed
+        # license at EOIP_LICENSE_PATH when present; otherwise a permissive
+        # self-signed *development* license (documented default — production
+        # installs must ship a vendor-signed license file). Meter is the
+        # tamper-evident JSONL usage meter under the data dir.
+        license_path = os.getenv("EOIP_LICENSE_PATH", "").strip()
+        if license_path and Path(license_path).is_file():
+            license_doc = json.loads(Path(license_path).read_text(encoding="utf-8"))
+            vendor_key = os.getenv("EOIP_LICENSE_VENDOR_KEY", "eoip-dev-vendor-key")
+            self.entitlement_checker = EntitlementChecker(
+                verify_license(license_doc, vendor_key)
+            )
+        else:
+            dev_doc = sign_license(
+                LicensePayload(
+                    customer="EOIP development (default permissive dev license)",
+                    edition="enterprise",
+                    model="perpetual",
+                ),
+                "eoip-dev-vendor-key",
+            )
+            self.entitlement_checker = EntitlementChecker(
+                verify_license(dev_doc, "eoip-dev-vendor-key")
+            )
+        self.usage_meter = UsageMeter(data_dir / "meter")
+
+        # Layered config (SR-CFG-001..006): typed, layered, audited settings
+        # plus feature flags. In-memory persistence; export/import as code.
+        self.config_store = ConfigStore()
+        self.feature_flags = FeatureFlagStore(self.config_store)
+
+        # Egress gateway (SR-LLM-010..020, SR-CON-010/011): single policy-gated
+        # egress path. No transport is registered by default — external calls
+        # are disabled by design until an admin enables an endpoint with
+        # consent; dry-run calls still exercise policy + manifests + canaries.
+        self.egress_gateway = EgressGateway(tenant_id="platform-default")
+
+        # Branding (SR-WL-001/003/004-partial/006/007, SR-ONT-007): default
+        # theme, terminology, localization and legal-content registries.
+        self.branding_themes = ThemeRegistry(
+            default_theme=ThemePackage(
+                id="urn:eoip:branding:theme:eoip-default",
+                name="EOIP Default",
+                app_name="EOIP",
+            )
+        )
+        self.branding_terminology = TerminologyRegistry()
+        self.branding_locales = LocalizationRegistry()
+        self.branding_legal = LegalContentRegistry()
 
 
 def _store_labels(store: GraphStore) -> list[str]:
@@ -1314,6 +1395,69 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
         except Exception:  # noqa: BLE001 - health probe must never fail the route
             healthy = False
         return {"provider": "ollama", "healthy": healthy, "dim": provider.dim}
+
+    # ======================================================================
+    # SR wave (pass 9): Super-Requirements commercial baseline
+    # ======================================================================
+
+    # Tenancy (SR-TEN-001/002/003/006/007/009): fail-closed tenant context,
+    # isolation placement, quotas, lifecycle, hash-chained metering.
+    router.include_router(build_tenancy_router(state.tenancy_service))
+
+    # Licensing (SR-DEP-007, SR-COM-001, SR-TEN-009): license status, offline
+    # verify, module entitlement checks, tamper-evident usage meter.
+    router.include_router(
+        build_licensing_router(state.entitlement_checker, state.usage_meter)
+    )
+
+    # Layered config (SR-CFG-001..006): effective config, explain, set,
+    # bounds, audit, rollback, export/import/diff, feature flags.
+    router.include_router(build_config_router(state.config_store, state.feature_flags))
+
+    # Egress gateway (SR-LLM-010..020, SR-CON-010/011): policy matrix rules,
+    # dry-run/live calls, manifests, canaries, kill switch, provider plugins.
+    router.include_router(build_egress_router(state.egress_gateway))
+
+    # Branding (SR-WL-001/003/004-partial/006/007, SR-ONT-007): theme tokens,
+    # terminology rename/canonicalize, localized messages, legal content.
+    router.include_router(
+        build_branding_router(
+            state.branding_themes,
+            state.branding_terminology,
+            state.branding_locales,
+            state.branding_legal,
+        )
+    )
+
+    # Privacy (SR-PRV-001..004, 006 partials): ingest classification, DSAR
+    # locate/erase over the live graph store, consents, retention, residency.
+    # Person/WorkItem carry subject-bearing properties (email, owner);
+    # the default label list would only scan "Entity".
+    router.include_router(
+        build_privacy_router(
+            graph_store=store, graph_labels=["Person", "WorkItem"]
+        )
+    )
+
+    # Compliance packs (SR-GOV-001..005): GDPR/SOC2/ISO27001/HIPAA/CMMC
+    # skeleton packs, gap analysis, AI governance, change governance, roles.
+    router.include_router(build_compliance_router())
+
+    # Report generator (SR-NLQ-008): template render (HTML/MD/JSON in-product;
+    # PDF/DOCX/PPTX are External gates), schedules, live graph stats.
+    router.include_router(build_reports_router(graph_store=store))
+
+    # QA gate integrity (SR-QA-010..014): behavioral evidence registry,
+    # mutation checks, three-number dashboard, code introspection, policy gate.
+    router.include_router(build_qa_router())
+
+    # NL suggestion engine (SR-NLQ-002/003/004-partial): deterministic
+    # intent interpretations over the graph store with authz pre-check note.
+    router.include_router(build_suggest_router(store, state.policy_enforcer))
+
+    # Schema profiler (SR-ING-010/012/013/016-hook): dataset profile, drift,
+    # key candidates, relationship discovery.
+    router.include_router(build_ingest_profile_router())
 
     return router, state
 
