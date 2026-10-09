@@ -1459,6 +1459,11 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     # key candidates, relationship discovery.
     router.include_router(build_ingest_profile_router())
 
+    # Diamond-Standard Moonshots 1, 2, 3, 4, 5, 8, 9, 10
+    from eoip.moonshot.router import build_moonshot_router
+
+    router.include_router(build_moonshot_router())
+
     return router, state
 
 

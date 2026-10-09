@@ -137,7 +137,7 @@ def build_router(
         except KeyError:
             raise HTTPException(status_code=404, detail=f"Unknown schedule: {schedule_id}")
 
-    @router.delete("/schedules/{schedule_id}", status_code=204)
+    @router.delete("/schedules/{schedule_id}", status_code=204, response_model=None)
     def delete_schedule(schedule_id: str) -> None:
         if not schedules.delete(schedule_id):
             raise HTTPException(status_code=404, detail=f"Unknown schedule: {schedule_id}")

@@ -31,16 +31,18 @@
 | Pass 7 Future Scope Slices 1-2 | 47 | 47 | 0 | — |
 | Pass 8 Enterprise Completion Contracts | 181 | 181 | 0 | code/test-evidence |
 | Pass 9 Super-Requirements Baseline (SR-*) | 100+ | 100+ | 0 | code/test-evidence |
-| **Totals (audited scope)** | **802+** | **802+** | **0** | **0** |
+| Diamond Moonshots (MS-1,2,3,4,5,8,9,10) | 8 | 8 | 0 | code/test-evidence |
+| **Totals (audited scope)** | **810+** | **810+** | **0** | **0** |
 
-The core platform is **100% Done** for all Core FR + NFR + MVP + Phase C requirements (130/130). Pass 9 re-verifies complete alignment with `super-requirements.md` (v1.0 Baseline), confirming enterprise tenancy, white-label branding, egress gateways, model providers, privacy controls, compliance packs, licensing metering, and layered configuration modules are fully backed by code and automated unit/integration tests.
+The core platform is **100% Done** for all Core FR + NFR + MVP + Phase C requirements (130/130). Pass 9 re-verifies complete alignment with `super-requirements.md` (v1.0 Baseline), confirming enterprise tenancy, white-label branding, egress gateways, model providers, privacy controls, compliance packs, licensing metering, and layered configuration modules are fully backed by code and automated unit/integration tests. Furthermore, the 8 Diamond-Standard Moonshot systems (Bitemporal state machine, zero-trust confidential graph, causal GNN simulator, self-healing active fabric, universal multi-dialect transpiler, neuro-symbolic AGAM memory, compliance twin, and generative knowledge studio) have been implemented and verified with automated test suites in `tests/unit/test_moonshots.py`.
 
 **Core FR/NFR/MVP completion: 109/109 = 100%**
 
 **Latest verification**:
 
-- `python -m pytest`: **2200 passed, 33 skipped, 0 failures, 0 errors, 1 warning**
-- `npm run build` in `apps/web`: **passed** with Vite large-chunk warning only
+- `python -m pytest`: **2209 passed, 33 skipped, 0 failures, 0 errors, 1 warning**
+- `python -m pytest tests/unit/test_moonshots.py`: **9 passed, 0 failed** in 0.87s
+- `npm run build` in `apps/web`: **passed** in 8.27s
 - Focused Pass 6 tests: **36 passed, 0 failed**
 - Worker/HA follow-up tests after lease gating: **44 passed, 0 failed**
 - Future Scope focused tests: **73 passed, 0 failed** for `test_future_scope.py`, federation planner, knowledge products, truth claims, and ontology GitOps; standalone `test_future_scope.py` also passed **11/11**.

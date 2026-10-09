@@ -18,7 +18,7 @@
       "g2-gap-coverage-rerun.json",
       "documentation-inventory.json"
     ],
-    "scope": "67 FR + 14 NFR + 28 MVP + 296 GAP IDs + 364 G2 IDs + Super-Requirements (SR-*) + Federation + Ops + Pass 6-8 closure + Pass 9 SR verification",
+    "scope": "67 FR + 14 NFR + 28 MVP + 296 GAP IDs + 364 G2 IDs + Super-Requirements (SR-*) + Diamond Moonshots (MS-1,2,3,4,5,8,9,10) + Federation + Ops + Pass 6-9 closure",
     "method": "Multi-agent codebase verification + automated code-evidence scan (g2-gap-coverage-rerun.json) + line-oriented scan of every Markdown file in the checkout",
     "spec_sources": {
       "functional": "EOIP-engg-doc-pkg/03-functional-requirements.md (67 FR-* IDs)",

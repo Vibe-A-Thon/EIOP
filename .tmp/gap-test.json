@@ -2822,12 +2822,12 @@
         },
         {
           "excerpt": "# -- Federation (GAP-FABRIC-001..008) -----------------------------------",
-          "line": 413,
+          "line": 494,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-FABRIC-001: registered federated source capabilities.\"\"\"",
-          "line": 417,
+          "line": 498,
           "path": "apps/api/extended.py"
         }
       ],
@@ -2883,12 +2883,12 @@
         },
         {
           "excerpt": "# -- Federation (GAP-FABRIC-001..008) -----------------------------------",
-          "line": 413,
+          "line": 494,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-FABRIC-002..007: execute a federated query, returning merged",
-          "line": 424,
+          "line": 505,
           "path": "apps/api/extended.py"
         }
       ],
@@ -2949,12 +2949,12 @@
         },
         {
           "excerpt": "# -- Federation (GAP-FABRIC-001..008) -----------------------------------",
-          "line": 413,
+          "line": 494,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-FABRIC-002..007: execute a federated query, returning merged",
-          "line": 424,
+          "line": 505,
           "path": "apps/api/extended.py"
         }
       ],
@@ -3010,12 +3010,12 @@
         },
         {
           "excerpt": "# -- Federation (GAP-FABRIC-001..008) -----------------------------------",
-          "line": 413,
+          "line": 494,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-FABRIC-002..007: execute a federated query, returning merged",
-          "line": 424,
+          "line": 505,
           "path": "apps/api/extended.py"
         }
       ],
@@ -3076,12 +3076,12 @@
         },
         {
           "excerpt": "# -- Federation (GAP-FABRIC-001..008) -----------------------------------",
-          "line": 413,
+          "line": 494,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-FABRIC-002..007: execute a federated query, returning merged",
-          "line": 424,
+          "line": 505,
           "path": "apps/api/extended.py"
         }
       ],
@@ -3137,12 +3137,12 @@
         },
         {
           "excerpt": "# -- Federation (GAP-FABRIC-001..008) -----------------------------------",
-          "line": 413,
+          "line": 494,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-FABRIC-002..007: execute a federated query, returning merged",
-          "line": 424,
+          "line": 505,
           "path": "apps/api/extended.py"
         }
       ],
@@ -3198,12 +3198,12 @@
         },
         {
           "excerpt": "# -- Federation (GAP-FABRIC-001..008) -----------------------------------",
-          "line": 413,
+          "line": 494,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-FABRIC-002..007: execute a federated query, returning merged",
-          "line": 424,
+          "line": 505,
           "path": "apps/api/extended.py"
         }
       ],
@@ -3249,7 +3249,7 @@
         },
         {
           "excerpt": "# -- Federation (GAP-FABRIC-001..008) -----------------------------------",
-          "line": 413,
+          "line": 494,
           "path": "apps/api/extended.py"
         }
       ],
@@ -3971,17 +3971,17 @@
         },
         {
           "excerpt": "# -- SKOS taxonomy (GAP-TAX-001, GAP-GOV-003) ------------------------------",
-          "line": 700,
+          "line": 781,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-GOV-003: crosswalk mapping between two concepts.\"\"\"",
-          "line": 749,
+          "line": 830,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-GOV-003: list concept crosswalk mappings.\"\"\"",
-          "line": 760,
+          "line": 841,
           "path": "apps/api/extended.py"
         }
       ],
@@ -4813,17 +4813,17 @@
         },
         {
           "excerpt": "# -- KGCI (GAP-KGCI-001..004) -------------------------------------------",
-          "line": 211,
+          "line": 233,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- KGCI (GAP-KGCI-001..004) ---------------------------------------------------",
-          "line": 1210,
+          "line": 1291,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KGCI-001..004: run the deterministic KG CI/CD pipeline",
-          "line": 1214,
+          "line": 1295,
           "path": "apps/api/extended.py"
         },
         {
@@ -4899,17 +4899,17 @@
         },
         {
           "excerpt": "# -- KGCI (GAP-KGCI-001..004) -------------------------------------------",
-          "line": 211,
+          "line": 233,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- KGCI (GAP-KGCI-001..004) ---------------------------------------------------",
-          "line": 1210,
+          "line": 1291,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KGCI-001..004: run the deterministic KG CI/CD pipeline",
-          "line": 1214,
+          "line": 1295,
           "path": "apps/api/extended.py"
         },
         {
@@ -5030,17 +5030,17 @@
         },
         {
           "excerpt": "# -- KGCI (GAP-KGCI-001..004) -------------------------------------------",
-          "line": 211,
+          "line": 233,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- KGCI (GAP-KGCI-001..004) ---------------------------------------------------",
-          "line": 1210,
+          "line": 1291,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KGCI-001..004: run the deterministic KG CI/CD pipeline",
-          "line": 1214,
+          "line": 1295,
           "path": "apps/api/extended.py"
         },
         {
@@ -5116,22 +5116,22 @@
         },
         {
           "excerpt": "# -- KGCI (GAP-KGCI-001..004) -------------------------------------------",
-          "line": 211,
+          "line": 233,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- KGCI (GAP-KGCI-001..004) ---------------------------------------------------",
-          "line": 1210,
+          "line": 1291,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KGCI-001..004: run the deterministic KG CI/CD pipeline",
-          "line": 1214,
+          "line": 1295,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KGCI-004: the most recent KGCI report, if any.\"\"\"",
-          "line": 1234,
+          "line": 1315,
           "path": "apps/api/extended.py"
         }
       ],
@@ -5187,27 +5187,27 @@
         },
         {
           "excerpt": "# -- Knowledge products (GAP-KP-001..005) --------------------------------",
-          "line": 498,
+          "line": 579,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KP-001: create a knowledge product (assigns canonical id).\"\"\"",
-          "line": 523,
+          "line": 604,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KP-001: fetch one knowledge product.\"\"\"",
-          "line": 531,
+          "line": 612,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KP-001: update mutable fields of a knowledge product.\"\"\"",
-          "line": 539,
+          "line": 620,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KP-001: tombstone a knowledge product.\"\"\"",
-          "line": 550,
+          "line": 631,
           "path": "apps/api/extended.py"
         }
       ],
@@ -5273,12 +5273,12 @@
         },
         {
           "excerpt": "# -- Knowledge products (GAP-KP-001..005) --------------------------------",
-          "line": 498,
+          "line": 579,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KP-002: apply a lifecycle state transition.\"\"\"",
-          "line": 561,
+          "line": 642,
           "path": "apps/api/extended.py"
         }
       ],
@@ -5334,12 +5334,12 @@
         },
         {
           "excerpt": "# -- Knowledge products (GAP-KP-001..005) --------------------------------",
-          "line": 498,
+          "line": 579,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KP-003: list knowledge products with optional filters.\"\"\"",
-          "line": 508,
+          "line": 589,
           "path": "apps/api/extended.py"
         }
       ],
@@ -5395,17 +5395,17 @@
         },
         {
           "excerpt": "# -- Knowledge products (GAP-KP-001..005) --------------------------------",
-          "line": 498,
-          "path": "apps/api/extended.py"
-        },
-        {
-          "excerpt": "\"\"\"GAP-KP-004: export one product definition as JSON.\"\"\"",
           "line": 579,
           "path": "apps/api/extended.py"
         },
         {
+          "excerpt": "\"\"\"GAP-KP-004: export one product definition as JSON.\"\"\"",
+          "line": 660,
+          "path": "apps/api/extended.py"
+        },
+        {
           "excerpt": "\"\"\"GAP-KP-004: import a product definition (upserts by canonical id).\"\"\"",
-          "line": 588,
+          "line": 669,
           "path": "apps/api/extended.py"
         }
       ],
@@ -5461,12 +5461,12 @@
         },
         {
           "excerpt": "# -- Knowledge products (GAP-KP-001..005) --------------------------------",
-          "line": 498,
+          "line": 579,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-KP-005: source graphs -> product -> consumers lineage.\"\"\"",
-          "line": 571,
+          "line": 652,
           "path": "apps/api/extended.py"
         }
       ],
@@ -6559,12 +6559,12 @@
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------",
-          "line": 201,
+          "line": 223,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------------",
-          "line": 1136,
+          "line": 1217,
           "path": "apps/api/extended.py"
         }
       ],
@@ -6600,12 +6600,12 @@
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------",
-          "line": 201,
+          "line": 223,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------------",
-          "line": 1136,
+          "line": 1217,
           "path": "apps/api/extended.py"
         }
       ],
@@ -6646,12 +6646,12 @@
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------",
-          "line": 201,
+          "line": 223,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------------",
-          "line": 1136,
+          "line": 1217,
           "path": "apps/api/extended.py"
         }
       ],
@@ -6702,12 +6702,12 @@
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------",
-          "line": 201,
+          "line": 223,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------------",
-          "line": 1136,
+          "line": 1217,
           "path": "apps/api/extended.py"
         }
       ],
@@ -6758,17 +6758,17 @@
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------",
-          "line": 201,
+          "line": 223,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------------",
-          "line": 1136,
+          "line": 1217,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-MKT-005/007: install a raw ``.eoipkg`` archive (zip bytes).\"\"\"",
-          "line": 1156,
+          "line": 1237,
           "path": "apps/api/extended.py"
         }
       ],
@@ -6814,27 +6814,27 @@
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------",
-          "line": 201,
+          "line": 223,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------------",
-          "line": 1136,
+          "line": 1217,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-MKT-006: installed extension packages.\"\"\"",
-          "line": 1140,
+          "line": 1221,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-MKT-006: search installed packages by name/description.\"\"\"",
-          "line": 1147,
+          "line": 1228,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-MKT-006: uninstall a package (refuses with dependents).\"\"\"",
-          "line": 1169,
+          "line": 1250,
           "path": "apps/api/extended.py"
         }
       ],
@@ -6890,12 +6890,12 @@
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------",
-          "line": 201,
+          "line": 223,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------------",
-          "line": 1136,
+          "line": 1217,
           "path": "apps/api/extended.py"
         }
       ],
@@ -6941,12 +6941,12 @@
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------",
-          "line": 201,
+          "line": 223,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- Marketplace (GAP-MKT-001..008) ------------------------------------------",
-          "line": 1136,
+          "line": 1217,
           "path": "apps/api/extended.py"
         }
       ],
@@ -7178,22 +7178,22 @@
         },
         {
           "excerpt": "# -- Metrics (GAP-OBS-003) ------------------------------------------------",
-          "line": 214,
+          "line": 236,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- Metrics (GAP-OBS-003) -----------------------------------------------------",
-          "line": 1292,
+          "line": 1373,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-OBS-003: Prometheus text exposition of request metrics.\"\"\"",
-          "line": 1296,
+          "line": 1377,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"Record request metrics into the state metrics registry (GAP-OBS-003).\"\"\"",
-          "line": 1322,
+          "line": 1471,
           "path": "apps/api/extended.py"
         }
       ],
@@ -7658,12 +7658,12 @@
         },
         {
           "excerpt": "# -- Query intelligence (GAP-QI-001..008) --------------------------------",
-          "line": 594,
+          "line": 675,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-QI-001: explain a query plan (steps, fanout, indexes, risks).\"\"\"",
-          "line": 598,
+          "line": 679,
           "path": "apps/api/extended.py"
         }
       ],
@@ -7709,12 +7709,12 @@
         },
         {
           "excerpt": "# -- Query intelligence (GAP-QI-001..008) --------------------------------",
-          "line": 594,
+          "line": 675,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-QI-002: heuristic cost estimate for a query plan.\"\"\"",
-          "line": 603,
+          "line": 684,
           "path": "apps/api/extended.py"
         }
       ],
@@ -7760,12 +7760,12 @@
         },
         {
           "excerpt": "# -- Query intelligence (GAP-QI-001..008) --------------------------------",
-          "line": 594,
+          "line": 675,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-QI-003: recorded query history entries.\"\"\"",
-          "line": 608,
+          "line": 689,
           "path": "apps/api/extended.py"
         }
       ],
@@ -7811,12 +7811,12 @@
         },
         {
           "excerpt": "# -- Query intelligence (GAP-QI-001..008) --------------------------------",
-          "line": 594,
+          "line": 675,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-QI-004/005: slow-query report with top-N and index suggestions.\"\"\"",
-          "line": 618,
+          "line": 699,
           "path": "apps/api/extended.py"
         }
       ],
@@ -7857,7 +7857,7 @@
         },
         {
           "excerpt": "# -- Query intelligence (GAP-QI-001..008) --------------------------------",
-          "line": 594,
+          "line": 675,
           "path": "apps/api/extended.py"
         }
       ],
@@ -7898,7 +7898,7 @@
         },
         {
           "excerpt": "# -- Query intelligence (GAP-QI-001..008) --------------------------------",
-          "line": 594,
+          "line": 675,
           "path": "apps/api/extended.py"
         }
       ],
@@ -7944,32 +7944,32 @@
         },
         {
           "excerpt": "# -- Query intelligence (GAP-QI-001..008) --------------------------------",
-          "line": 594,
+          "line": 675,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-QI-007: list saved parameterized query templates.\"\"\"",
-          "line": 625,
+          "line": 706,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-QI-007: save a query template (policy-validated on bind).\"\"\"",
-          "line": 632,
+          "line": 713,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-QI-007: fetch one saved query template.\"\"\"",
-          "line": 653,
+          "line": 734,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-QI-007: delete a saved query template.\"\"\"",
-          "line": 661,
+          "line": 742,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-QI-007/008: bind named parameters into a validated QueryPlan.\"\"\"",
-          "line": 671,
+          "line": 752,
           "path": "apps/api/extended.py"
         }
       ],
@@ -8010,7 +8010,7 @@
         },
         {
           "excerpt": "# -- Query intelligence (GAP-QI-001..008) --------------------------------",
-          "line": 594,
+          "line": 675,
           "path": "apps/api/extended.py"
         }
       ],
@@ -8144,12 +8144,12 @@
         },
         {
           "excerpt": "# -- Retrieval strategies (GAP-RET-002/003/006) ----------------------------",
-          "line": 787,
+          "line": 868,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-RET-002/003/006: keyword / vector / hybrid retrieval with",
-          "line": 791,
+          "line": 872,
           "path": "apps/api/extended.py"
         }
       ],
@@ -8715,17 +8715,17 @@
         },
         {
           "excerpt": "# -- Faceted search (GAP-SEARCH-001..002) ---------------------------------",
-          "line": 679,
+          "line": 760,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEARCH-001/002: keyword search with semantic facet aggregation;",
-          "line": 683,
+          "line": 764,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- Embeddings health (GAP-SEARCH-001/\u00a77.3) -----------------------------------",
-          "line": 1299,
+          "line": 1380,
           "path": "apps/api/extended.py"
         }
       ],
@@ -8791,7 +8791,7 @@
         },
         {
           "excerpt": "# -- Faceted search (GAP-SEARCH-001..002) ---------------------------------",
-          "line": 679,
+          "line": 760,
           "path": "apps/api/extended.py"
         }
       ],
@@ -9013,12 +9013,12 @@
         },
         {
           "excerpt": "# -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------",
-          "line": 170,
+          "line": 192,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------------",
-          "line": 927,
+          "line": 1008,
           "path": "apps/api/extended.py"
         }
       ],
@@ -9134,22 +9134,22 @@
         },
         {
           "excerpt": "# -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------",
-          "line": 170,
+          "line": 192,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------------",
-          "line": 927,
+          "line": 1008,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEC-003: loaded policy-as-code statements.\"\"\"",
-          "line": 1003,
+          "line": 1084,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEC-003: load additional policy statements from YAML text.\"\"\"",
-          "line": 1012,
+          "line": 1093,
           "path": "apps/api/extended.py"
         }
       ],
@@ -9255,22 +9255,22 @@
         },
         {
           "excerpt": "# -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------",
-          "line": 170,
+          "line": 192,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------------",
-          "line": 927,
+          "line": 1008,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEC-004: audit trail of authorization decisions (audit:read).\"\"\"",
-          "line": 1021,
+          "line": 1102,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEC-004: evaluate (user, action, resource attrs) and record",
-          "line": 1026,
+          "line": 1107,
           "path": "apps/api/extended.py"
         }
       ],
@@ -9336,27 +9336,27 @@
         },
         {
           "excerpt": "# -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------",
-          "line": 170,
+          "line": 192,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------------",
-          "line": 927,
+          "line": 1008,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEC-005: list role definitions.\"\"\"",
-          "line": 978,
+          "line": 1059,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEC-005: create a role with catalog-validated permissions.\"\"\"",
-          "line": 983,
+          "line": 1064,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEC-005: deterministic JSON export of the role registry.\"\"\"",
-          "line": 996,
+          "line": 1077,
           "path": "apps/api/extended.py"
         }
       ],
@@ -9412,27 +9412,27 @@
         },
         {
           "excerpt": "# -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------",
-          "line": 170,
+          "line": 192,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "# -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------------",
-          "line": 927,
+          "line": 1008,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEC-006: list users in the authorization user store.\"\"\"",
-          "line": 953,
+          "line": 1034,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEC-006: create a user with roles (and optional attributes).\"\"\"",
-          "line": 960,
+          "line": 1041,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-SEC-006: deterministic JSON export of the user store.\"\"\"",
-          "line": 971,
+          "line": 1052,
           "path": "apps/api/extended.py"
         }
       ],
@@ -10041,37 +10041,37 @@
         },
         {
           "excerpt": "# -- SKOS taxonomy (GAP-TAX-001, GAP-GOV-003) ------------------------------",
-          "line": 700,
+          "line": 781,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TAX-001: create a SKOS ConceptScheme.\"\"\"",
-          "line": 704,
+          "line": 785,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TAX-001: list SKOS ConceptSchemes.\"\"\"",
-          "line": 715,
+          "line": 796,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TAX-001: add a SKOS Concept to a scheme.\"\"\"",
-          "line": 722,
+          "line": 803,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TAX-001: list SKOS Concepts, optionally filtered by scheme.\"\"\"",
-          "line": 739,
+          "line": 820,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TAX-001: SKOS integrity issues and prefLabel conflicts.\"\"\"",
-          "line": 767,
+          "line": 848,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TAX-001: export the taxonomy as SKOS JSON-LD.\"\"\"",
-          "line": 781,
+          "line": 862,
           "path": "apps/api/extended.py"
         }
       ],
@@ -10580,12 +10580,12 @@
         },
         {
           "excerpt": "# -- Truth model (GAP-TRUTH-001..010) ------------------------------------",
-          "line": 433,
+          "line": 514,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TRUTH-001: register a claim (immutable, conflict-preserving).\"\"\"",
-          "line": 437,
+          "line": 518,
           "path": "apps/api/extended.py"
         }
       ],
@@ -10631,7 +10631,7 @@
         },
         {
           "excerpt": "# -- Truth model (GAP-TRUTH-001..010) ------------------------------------",
-          "line": 433,
+          "line": 514,
           "path": "apps/api/extended.py"
         }
       ],
@@ -10677,12 +10677,12 @@
         },
         {
           "excerpt": "# -- Truth model (GAP-TRUTH-001..010) ------------------------------------",
-          "line": 433,
+          "line": 514,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TRUTH-003: the canonical assertion for a (subject, predicate).\"\"\"",
-          "line": 476,
+          "line": 557,
           "path": "apps/api/extended.py"
         }
       ],
@@ -10728,7 +10728,7 @@
         },
         {
           "excerpt": "# -- Truth model (GAP-TRUTH-001..010) ------------------------------------",
-          "line": 433,
+          "line": 514,
           "path": "apps/api/extended.py"
         }
       ],
@@ -10774,12 +10774,12 @@
         },
         {
           "excerpt": "# -- Truth model (GAP-TRUTH-001..010) ------------------------------------",
-          "line": 433,
+          "line": 514,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TRUTH-005: deterministic JSON snapshot of the truth store.\"\"\"",
-          "line": 492,
+          "line": 573,
           "path": "apps/api/extended.py"
         }
       ],
@@ -10825,12 +10825,12 @@
         },
         {
           "excerpt": "# -- Truth model (GAP-TRUTH-001..010) ------------------------------------",
-          "line": 433,
+          "line": 514,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TRUTH-006: all conflicting (subject, predicate) claim groups.\"\"\"",
-          "line": 445,
+          "line": 526,
           "path": "apps/api/extended.py"
         }
       ],
@@ -10876,12 +10876,12 @@
         },
         {
           "excerpt": "# -- Truth model (GAP-TRUTH-001..010) ------------------------------------",
-          "line": 433,
+          "line": 514,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TRUTH-007/008: resolve conflicting claims into a canonical",
-          "line": 460,
+          "line": 541,
           "path": "apps/api/extended.py"
         }
       ],
@@ -10927,7 +10927,7 @@
         },
         {
           "excerpt": "# -- Truth model (GAP-TRUTH-001..010) ------------------------------------",
-          "line": 433,
+          "line": 514,
           "path": "apps/api/extended.py"
         }
       ],
@@ -10973,7 +10973,7 @@
         },
         {
           "excerpt": "# -- Truth model (GAP-TRUTH-001..010) ------------------------------------",
-          "line": 433,
+          "line": 514,
           "path": "apps/api/extended.py"
         }
       ],
@@ -11019,12 +11019,12 @@
         },
         {
           "excerpt": "# -- Truth model (GAP-TRUTH-001..010) ------------------------------------",
-          "line": 433,
+          "line": 514,
           "path": "apps/api/extended.py"
         },
         {
           "excerpt": "\"\"\"GAP-TRUTH-010: why this fact was selected.\"\"\"",
-          "line": 487,
+          "line": 568,
           "path": "apps/api/extended.py"
         }
       ],
