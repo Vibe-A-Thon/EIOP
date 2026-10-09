@@ -50,6 +50,7 @@ from eoip.federation import (
 from eoip.branding.content import LegalContentRegistry
 from eoip.branding.localization import LocalizationRegistry
 from eoip.branding.router import build_router as build_branding_router
+from eoip.systems.router import build_systems_router
 from eoip.branding.terminology import TerminologyRegistry
 from eoip.branding.theme import ThemePackage, ThemeRegistry
 from eoip.compliance.router import build_router as build_compliance_router
@@ -1465,6 +1466,8 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
 
     from eoip.brain.router import build_brain_router
     router.include_router(build_brain_router())
+
+    router.include_router(build_systems_router())
 
     return router, state
 

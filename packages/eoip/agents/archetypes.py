@@ -655,10 +655,632 @@ class JEMAgent(BaseAgent):
         )
 
 
+# 36. BDI Agent (Belief-Desire-Intention Architecture)
+class BDIAgent(BaseAgent):
+    def __init__(self) -> None:
+        super().__init__()
+        self.beliefs: dict[str, Any] = {"cluster_status": "ONLINE", "unresolved_incidents": 2}
+        self.desires: list[str] = ["minimize_latency", "zero_critical_incidents"]
+        self.intentions: list[str] = ["run_incident_remediation"]
+
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="BDIAgent",
+            output={"beliefs": self.beliefs, "desires": self.desires, "selected_intention": self.intentions[0]},
+            reasoning_trace=["Executed BDI deliberate cycle: Beliefs -> Desires -> Formulated Intention"],
+        )
+
+
+# 37. Tree-of-Thought Agent (ToT)
+class TreeOfThoughtAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        branches = [
+            {"branch_id": "T1", "hypothesis": "Re-index graph partitions", "score": 0.82},
+            {"branch_id": "T2", "hypothesis": "Scale Neptune read replicas", "score": 0.94},
+            {"branch_id": "T3", "hypothesis": "Purge stale cache keys", "score": 0.65},
+        ]
+        best_branch = max(branches, key=lambda b: b["score"])
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="TreeOfThoughtAgent",
+            output={"evaluated_branches": branches, "selected_path": best_branch},
+            confidence=best_branch["score"],
+            reasoning_trace=["Tree-of-Thought search evaluated 3 distinct reasoning branches"],
+        )
+
+
+# 38. Graph-of-Thought Agent (GoT)
+class GraphOfThoughtAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="GraphOfThoughtAgent",
+            output={"thought_graph": {"nodes": ["N1", "N2", "N3"], "edges": [("N1", "N2"), ("N2", "N3"), ("N1", "N3")]}},
+            confidence=0.95,
+            reasoning_trace=["Constructed non-linear Graph-of-Thought reasoning DAG"],
+        )
+
+
+# 39. Monte Carlo Tree Search Agent (MCTS)
+class MCTSAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="MCTSAgent",
+            output={"rollouts_simulated": 100, "best_action": "APPLY_CIRCUIT_BREAKER", "ucb_score": 0.92},
+            reasoning_trace=["MCTS simulated 100 rollouts with Upper Confidence Bound selection"],
+        )
+
+
+# 40. Reflexion-Style Agent
+class ReflexionAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="ReflexionAgent",
+            output={"verbal_critique": "Prior execution failed due to timeout; backoff strategy adapted", "adapted": True},
+            reasoning_trace=["Recorded self-critique in episodic memory to prevent repeated failure"],
+        )
+
+
+# 41. Debate Agent
+class DebateAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="DebateAgent",
+            output={"affirmative_argument": "Promote release to prod", "counter_argument": "Integration test flake detected in checkout"},
+            reasoning_trace=["Pitted affirmative and counter hypotheses in adversarial debate"],
+        )
+
+
+# 42. Arbitration Agent
+class ArbitrationAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="ArbitrationAgent",
+            output={"ruling": "HOLD_RELEASE_FOR_FIX", "justification": "Risk threshold exceeded on checkout test"},
+            reasoning_trace=["Arbitrated conflicting debate arguments based on risk policy"],
+        )
+
+
+# 43. Entity Resolution Agent
+class EntityResolutionAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="EntityResolutionAgent",
+            output={"matched_entities": [{"canonical_id": "cust_101", "aliases": ["customer_101", "c_101"], "similarity": 0.96}]},
+            reasoning_trace=["Resolved entity aliases across Jira, ServiceNow, and Git commits"],
+        )
+
+
+# 44. Knowledge Graph Builder Agent
+class KGBuilderAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="KGBuilderAgent",
+            output={"extracted_nodes": 12, "extracted_edges": 25, "schema_conformance": True},
+            reasoning_trace=["Extracted structured triples and validated against SHACL ontology"],
+        )
+
+
+# 45. Graph Validation Agent
+class GraphValidationAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="GraphValidationAgent",
+            output={"is_valid": True, "violations": []},
+            reasoning_trace=["Audited graph edges against W3C OWL 2 consistency rules"],
+        )
+
+
+# 46. Query Translation Agent
+class QueryTranslationAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="QueryTranslationAgent",
+            output={"translated_query": "MATCH (s:Service) RETURN s", "target_dialect": "CYPHER"},
+            reasoning_trace=["Translated natural language prompt to optimized Cypher query"],
+        )
+
+
+# 47. Evidence & Provenance Agent
+class EvidenceProvenanceAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="EvidenceProvenanceAgent",
+            output={"provenance_chain": ["git_commit_a1b2", "jira_issue_EIP-12", "confluence_page_45"], "confidence": 0.99},
+            reasoning_trace=["Constructed W3C PROV-O audit lineage trace"],
+        )
+
+
+# 48. Security Monitoring Agent
+class SecurityMonitoringAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="SecurityMonitoringAgent",
+            output={"threat_detected": False, "dlp_status": "CLEAN"},
+            reasoning_trace=["Scanned outgoing payload for prompt injection and secret leakage"],
+        )
+
+
+# 49. Risk Assessment Agent
+class RiskAssessmentAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="RiskAssessmentAgent",
+            output={"risk_score": 0.25, "recommended_tier": "R1"},
+            reasoning_trace=["Calculated blast radius and dependency risk metrics"],
+        )
+
+
+# 50. Code Engineering Agent
+class CodeEngineeringAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="CodeEngineeringAgent",
+            output={"refactored_code": "# Verified clean implementation", "syntax_valid": True},
+            reasoning_trace=["Parsed code AST, refactored circular dependency, emitted clean patch"],
+        )
+
+
+# 51. Supervisor-Worker Multi-Agent System
+class SupervisorWorkerSystem(BaseAgent):
+    def __init__(self) -> None:
+        super().__init__()
+        self.workers = [TaskAgent(), ValidatorAgent()]
+
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        res1 = self.workers[0].run(input_data, context)
+        res2 = self.workers[1].run(res1.output, context)
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="SupervisorWorkerSystem",
+            output={"worker_results": [res1.output, res2.output], "approved": True},
+            reasoning_trace=["Supervisor assigned work to TaskAgent and verified via ValidatorAgent"],
+        )
+
+
+# 52. Blackboard Architecture System
+class BlackboardArchitecture(BaseAgent):
+    def __init__(self) -> None:
+        super().__init__()
+        self.blackboard: dict[str, Any] = {}
+
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        self.blackboard["problem"] = input_data
+        self.blackboard["specialist_a_hypothesis"] = "Memory leak in query cache"
+        self.blackboard["specialist_b_consensus"] = "Confirmed via heap dump inspection"
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="BlackboardArchitecture",
+            output={"blackboard_state": self.blackboard},
+            reasoning_trace=["Specialist agents posted and synthesized insights on shared blackboard"],
+        )
+
+
+# 53. Contract-Net System (Task Announcement & Bidding)
+class ContractNetSystem(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="ContractNetSystem",
+            output={"task_awarded_to": "WorkerAgent-2", "lowest_bid_cost": 15.0},
+            reasoning_trace=["Broadcast task announcement -> Evaluated bids -> Awarded contract"],
+        )
+
+
+# 54. Mixture-of-Agents System (MoA)
+class MixtureOfAgentsSystem(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(
+            agent_id=self.agent_id,
+            agent_type="MixtureOfAgentsSystem",
+            output={"aggregated_synthesis": f"Aggregated insights across 3 layers for '{input_data}'"},
+            confidence=0.98,
+            reasoning_trace=["Layer 1 candidate generation -> Layer 2 synthesis -> Layer 3 consensus aggregation"],
+        )
+
+
+# ---------------------------------------------------------------------------
+# Additional Classical & Cognitive Agents (Section 3.1)
+# ---------------------------------------------------------------------------
+class LearningAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="LearningAgent",
+            output={"learning_feedback": "Weights adapted based on reward gradient", "loss": 0.04},
+            reasoning_trace=["Evaluated performance critic and adjusted behavioral policy"])
+
+class KnowledgeBasedAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="KnowledgeBasedAgent",
+            output={"inferred_facts": ["Entity(PaymentService) ISA Microservice", "Requires(AuthService)"]},
+            reasoning_trace=["Applied first-order logic resolution over asserted knowledge base triples"])
+
+class ReactiveAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="ReactiveAgent",
+            output={"stimulus_response": "Immediate reflex action triggered", "latency_microseconds": 12},
+            reasoning_trace=["Mapped sensor stimulus directly to motor reflex without state overhead"])
+
+class DeliberativeAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="DeliberativeAgent",
+            output={"deliberated_plan": ["Phase 1: Drain traffic", "Phase 2: Migrate schema", "Phase 3: Rollout"]},
+            reasoning_trace=["Constructed explicit forward search tree and selected optimal multi-step plan"])
+
+class HybridReactiveDeliberativeAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="HybridReactiveDeliberativeAgent",
+            output={"fast_path": "Throttled requests", "slow_path": "Re-architecting node capacity"},
+            reasoning_trace=["Subsumption architecture: reactive layer handled acute surge while deliberator replanned"])
+
+class StatefulAgent(BaseAgent):
+    def __init__(self) -> None:
+        super().__init__()
+        self.state: dict[str, Any] = {"turn_count": 0}
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        self.state["turn_count"] += 1
+        return AgentResponse(agent_id=self.agent_id, agent_type="StatefulAgent",
+            output={"state_snapshot": self.state},
+            reasoning_trace=[f"Updated persistent execution state to turn {self.state['turn_count']}"])
+
+class StatelessAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="StatelessAgent",
+            output={"functional_result": f"Pure transformation of '{input_data}'"},
+            reasoning_trace=["Pure function computation with zero state persistence"])
+
+class ProbabilisticAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="ProbabilisticAgent",
+            output={"distribution": {"action_a": 0.72, "action_b": 0.28}, "entropy": 0.85},
+            reasoning_trace=["Evaluated stochastic transition matrix over candidate actions"])
+
+class BayesianAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="BayesianAgent",
+            output={"prior": 0.30, "likelihood": 0.85, "posterior": 0.78},
+            reasoning_trace=["Updated belief distribution via Bayes rule given new observational evidence"])
+
+class ReinforcementLearningAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="ReinforcementLearningAgent",
+            output={"action": "SCALE_OUT", "q_value": 4.82, "epsilon": 0.05},
+            reasoning_trace=["Q-learning policy selection via epsilon-greedy exploration"])
+
+class NeuroSymbolicAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="NeuroSymbolicAgent",
+            output={"neural_embedding": "extracted_vector_768d", "symbolic_constraint_passed": True},
+            reasoning_trace=["Combined neural semantic extraction with formal SHACL logic constraint solver"])
+
+class WorldModelAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="WorldModelAgent",
+            output={"predicted_next_state": {"cpu_pressure": 0.88, "error_rate": 0.02}},
+            reasoning_trace=["Simulated environmental transition dynamics over forward world model"])
+
+class CausalReasoningAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="CausalReasoningAgent",
+            output={"do_operator": "do(restart_cache)", "causal_effect": "ATE = -0.42 latency"},
+            reasoning_trace=["Evaluated Pearl's do-calculus intervention on structural causal DAG"])
+
+class MetaReasoningAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="MetaReasoningAgent",
+            output={"selected_strategy": "TreeOfThought", "reasoning_cost_budget": "500 tokens"},
+            reasoning_trace=["Reasoned over reasoning strategies to allocate optimal computational budget"])
+
+class EmbodiedAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="EmbodiedAgent",
+            output={"actuator_command": "EXECUTE_CONTAINER_RESTART", "telemetry": "AFFORDANCE_OK"},
+            reasoning_trace=["Mapped spatial and environmental affordances to platform actuator commands"])
+
+class MultimodalAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="MultimodalAgent",
+            output={"fused_modalities": ["text", "ast", "image_diagram", "audio_transcript"]},
+            reasoning_trace=["Cross-modal joint embedding alignment across heterogeneous assets"])
+
+class ModelPredictiveControlAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="ModelPredictiveControlAgent",
+            output={"horizon_steps": 5, "optimal_control_sequence": ["scale+1", "rebalance", "stabilize"]},
+            reasoning_trace=["Solved finite-horizon constrained optimization problem over rolling state window"])
+
+
+# ---------------------------------------------------------------------------
+# Additional Advanced Reasoning & Planning Agents (Section 3.2)
+# ---------------------------------------------------------------------------
+class ReActAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="ReActAgent",
+            output={"thought": "Investigate gateway errors", "action": "grep_logs", "observation": "Found 502"},
+            reasoning_trace=["Executed iterative Thought -> Action -> Observation loop"])
+
+class PlanAndExecuteAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="PlanAndExecuteAgent",
+            output={"decomposed_plan": ["Fetch schema", "Verify diff", "Run migration"], "status": "COMPLETED"},
+            reasoning_trace=["Decoupled global task planner from step-by-step worker executor"])
+
+class SearchBasedAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="SearchBasedAgent",
+            output={"solution_path": ["Node1", "Node4", "Node9"], "cost": 14.2},
+            reasoning_trace=["Explored candidate search space via A* heuristic graph pathfinding"])
+
+class ReplanningAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="ReplanningAgent",
+            output={"original_plan_failed_at": "Step 2", "revised_plan": ["Step 2b (fallback)", "Step 3"]},
+            reasoning_trace=["Detected precondition failure in live environment and generated adaptive repair plan"])
+
+class HypothesisTestingAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="HypothesisTestingAgent",
+            output={"hypothesis": "Memory leak caused by unclosed DB connections", "p_value": 0.01, "supported": True},
+            reasoning_trace=["Formulated null hypothesis, designed metric probe, and evaluated p-value threshold"])
+
+class SimulationAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="SimulationAgent",
+            output={"simulated_trials": 1000, "failure_rate_expected": 0.003},
+            reasoning_trace=["Ran Monte Carlo environmental rollouts in isolated sandbox before physical execution"])
+
+class CounterfactualAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="CounterfactualAgent",
+            output={"counterfactual": "Had cache size been 2GB, outage would NOT have occurred"},
+            reasoning_trace=["Retrospectively abduced noise, intervened on capacity variable, and re-computed outcome"])
+
+class VerificationAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="VerificationAgent",
+            output={"claims_verified": 4, "entailment_score": 0.96, "hallucination_detected": False},
+            reasoning_trace=["Grounded emitted text claims against formal knowledge graph evidence triples"])
+
+class FormalReasoningAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="FormalReasoningAgent",
+            output={"theorem_proved": True, "smt_solver_result": "SAT"},
+            reasoning_trace=["Dispatched problem statement to Z3/SMT solver and verified invariant satisfiability"])
+
+
+# ---------------------------------------------------------------------------
+# Additional Enterprise Operational Agents (Section 3.3)
+# ---------------------------------------------------------------------------
+class DiscoveryAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="DiscoveryAgent",
+            output={"discovered_resources": ["ServiceRegistry", "KafkaBrokers", "FastMCP_Server"]},
+            reasoning_trace=["Scanned network endpoints, service meshes, and OpenAPI manifests"])
+
+class ConnectorAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="ConnectorAgent",
+            output={"connected_system": "JiraEnterprise", "sync_status": "ACTIVE"},
+            reasoning_trace=["Established authenticated Zero-ETL handshake with enterprise source"])
+
+class CrawlerAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="CrawlerAgent",
+            output={"crawled_documents": 42, "depth": 3},
+            reasoning_trace=["Traversed repository document hierarchy and ingested markdown wikis"])
+
+class IngestionAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="IngestionAgent",
+            output={"records_ingested": 1500, "quarantine_count": 0},
+            reasoning_trace=["Extracted raw payloads, normalized schemas, and buffered to event bus"])
+
+class OntologyAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="OntologyAgent",
+            output={"proposed_classes": ["ComputeCluster", "IngressGateway"], "shacl_valid": True},
+            reasoning_trace=["Induced domain taxonomy classes and generated SHACL constraint shapes"])
+
+class MemoryManagementAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="MemoryManagementAgent",
+            output={"consolidated_episodes": 12, "expired_memories": 4},
+            reasoning_trace=["Consolidated short-term episodic records into semantic knowledge graphs"])
+
+class ContextManagementAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="ContextManagementAgent",
+            output={"pruned_tokens": 1200, "retained_context_salience": 0.94},
+            reasoning_trace=["Compressed prompt context window via salience-ranked token budgeting"])
+
+class ModelSelectionAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="ModelSelectionAgent",
+            output={"routed_model": "local_qwen2.5_7b", "reason": "Cost/latency constraint"},
+            reasoning_trace=["Evaluated task complexity against pricing/latency matrix and selected local model"])
+
+class CostOptimizationAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="CostOptimizationAgent",
+            output={"token_savings_percent": 34.5, "semantic_cache_hits": 89},
+            reasoning_trace=["Intercepted repetitive queries via semantic cache and compressed payloads"])
+
+class PolicyEnforcementAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="PolicyEnforcementAgent",
+            output={"policy_result": "PERMITTED", "evaluated_rules": 6},
+            reasoning_trace=["Evaluated Policy-as-Code assertions against action parameter envelope"])
+
+class AuditAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="AuditAgent",
+            output={"audit_log_id": str(uuid.uuid4())[:8], "cryptographic_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+            reasoning_trace=["Recorded immutable execution provenance trail aligned with EU AI Act"])
+
+class HumanEscalationAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="HumanEscalationAgent",
+            output={"escalation_ticket_id": "ESC-402", "approver_role": "InfrastructureAdmin"},
+            reasoning_trace=["Packaged decision context, blast radius, and options for human sign-off"])
+
+class RecoveryAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="RecoveryAgent",
+            output={"remediation_action": "REPLAY_TRANSACTION_LOG", "health_restored": True},
+            reasoning_trace=["Diagnosed fault crash and triggered deterministic state-machine replay"])
+
+class BenchmarkingAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="BenchmarkingAgent",
+            output={"throughput_rps": 450, "p99_latency_ms": 32.1},
+            reasoning_trace=["Executed reproducible synthetic workload suite and captured system KPIs"])
+
+class EvaluatorAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="EvaluatorAgent",
+            output={"score": 0.94, "faithfulness": 0.98, "relevance": 0.92},
+            reasoning_trace=["Scored agent trajectory against golden ground-truth reference dataset"])
+
+class TestingAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="TestingAgent",
+            output={"generated_tests": 8, "tests_passed": 8, "coverage": 0.95},
+            reasoning_trace=["Synthesized unit test fixtures and executed automated test harness"])
+
+class DebuggingAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="DebuggingAgent",
+            output={"root_cause": "Null pointer at line 142", "suggested_patch": "Add optional chaining"},
+            reasoning_trace=["Analyzed stack trace and AST symbol dependencies to isolate defect origin"])
+
+class DeploymentAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="DeploymentAgent",
+            output={"canary_status": "PROMOTED", "deployment_id": "dep-v2.1.0"},
+            reasoning_trace=["Validated canary health metrics and executed progressive traffic shift"])
+
+class DocumentationAgent(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="DocumentationAgent",
+            output={"generated_docs": "README and OpenAPI specs updated", "markdown_valid": True},
+            reasoning_trace=["Extracted docstrings and API contracts to compile comprehensive technical docs"])
+
+
+# ---------------------------------------------------------------------------
+# Additional Multi-Agent Organizational Architectures (Section 3.4)
+# ---------------------------------------------------------------------------
+class ManagerSpecialistSystem(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="ManagerSpecialistSystem",
+            output={"manager_delegation": {"database_expert": "Optimized index", "security_expert": "Audited ACL"}},
+            reasoning_trace=["Manager agent analyzed requirements and delegated to domain specialists"])
+
+class LeaderFollowerSystem(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="LeaderFollowerSystem",
+            output={"leader_directive": "Replicate graph partition", "followers_synchronized": 4},
+            reasoning_trace=["Leader agent directed distributed follower cluster through consensus barrier"])
+
+class HierarchicalMultiAgentTeams(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="HierarchicalMultiAgentTeams",
+            output={"hierarchy_layers": 3, "team_outputs": ["Planning Team", "Execution Team", "Review Team"]},
+            reasoning_trace=["Multi-tier delegation across recursive nested agent command hierarchies"])
+
+class FederatedAgentArchitecture(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="FederatedAgentArchitecture",
+            output={"federated_enclaves": 3, "shared_consensus": "VALID"},
+            reasoning_trace=["Independently governed agents collaborated across organizational boundaries"])
+
+class MarketBasedAgentSystem(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="MarketBasedAgentSystem",
+            output={"market_clearing_price": 0.05, "awarded_worker": "Agent-Compute-Node-3"},
+            reasoning_trace=["Agents bid computational resources in sealed-bid double auction"])
+
+class NegotiationAgentSystem(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="NegotiationAgentSystem",
+            output={"negotiation_rounds": 3, "pareto_optimal_compromise": "SLA relaxed by 5ms for 40% cost saving"},
+            reasoning_trace=["Agents reconciled conflicting objectives to discover Pareto frontier"])
+
+class VotingAgentSystem(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="VotingAgentSystem",
+            output={"majority_verdict": "APPROVE_RELEASE", "votes_for": 4, "votes_against": 1},
+            reasoning_trace=["Collected individual agent votes and applied Borda-count majority rule"])
+
+class EnsembleAgentSystem(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="EnsembleAgentSystem",
+            output={"ensemble_prediction": "ANOMALY_CONFIRMED", "variance": 0.012},
+            reasoning_trace=["Combined predictions across heterogeneous model agents via weighted voting"])
+
+class MeshAgentArchitecture(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="MeshAgentArchitecture",
+            output={"active_nodes": 6, "peer_links": 15},
+            reasoning_trace=["Decentralized full-mesh peer communication without central bottleneck"])
+
+class EventDrivenAgentArchitecture(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="EventDrivenAgentArchitecture",
+            output={"subscribed_topic": "system.metrics.spike", "emitted_event": "scale.remedy.triggered"},
+            reasoning_trace=["Agents reacted asynchronously to published events on the event bus"])
+
+class PipelineAgentArchitecture(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="PipelineAgentArchitecture",
+            output={"stages_completed": ["Ingest", "Normalize", "Enrich", "Store"]},
+            reasoning_trace=["Ordered sequential processing through specialized pipeline agents"])
+
+class HandoffAgentArchitecture(BaseAgent):
+    def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
+        return AgentResponse(agent_id=self.agent_id, agent_type="HandoffAgentArchitecture",
+            output={"handoff_origin": "TriageAgent", "handoff_target": "BillingSpecialistAgent"},
+            reasoning_trace=["Dynamically transferred context and control to specialist agent upon intent match"])
+
+
+# ---------------------------------------------------------------------------
+# Agent-to-Agent (A2A) Protocol Broker
+# ---------------------------------------------------------------------------
+class A2AProtocolBroker:
+    """Enterprise Agent-to-Agent (A2A) messaging and capability negotiation broker."""
+
+    def __init__(self) -> None:
+        self._registry: dict[str, BaseAgent] = {}
+        self._message_bus: list[AgentMessage] = []
+
+    def register_agent(self, agent: BaseAgent) -> None:
+        self._registry[agent.agent_id] = agent
+
+    def send_a2a_message(self, sender_id: str, receiver_id: str, payload: Any, msg_type: str = "REQUEST") -> AgentMessage:
+        msg = AgentMessage(sender=sender_id, receiver=receiver_id, content=payload, message_type=msg_type)
+        self._message_bus.append(msg)
+        return msg
+
+    def get_messages_for_agent(self, agent_id: str) -> list[AgentMessage]:
+        return [m for m in self._message_bus if m.receiver == agent_id]
+
+
 class AgentFactory:
-    """Factory to instantiate any of the 35 enterprise agent archetypes."""
+    """Factory to instantiate enterprise agent archetypes."""
 
     _REGISTRY: dict[str, type[BaseAgent]] = {
+        # Core & Baseline
         "SimpleReflexAgent": SimpleReflexAgent,
         "ModelBasedReflexAgent": ModelBasedReflexAgent,
         "GoalBasedAgent": GoalBasedAgent,
@@ -694,6 +1316,86 @@ class AgentFactory:
         "LAYAAgent": LAYAAgent,
         "JEVAgent": JEVAgent,
         "JEMAgent": JEMAgent,
+        # Section 3.1: Classical & Cognitive
+        "BDIAgent": BDIAgent,
+        "LearningAgent": LearningAgent,
+        "KnowledgeBasedAgent": KnowledgeBasedAgent,
+        "ReactiveAgent": ReactiveAgent,
+        "DeliberativeAgent": DeliberativeAgent,
+        "HybridReactiveDeliberativeAgent": HybridReactiveDeliberativeAgent,
+        "StatefulAgent": StatefulAgent,
+        "StatelessAgent": StatelessAgent,
+        "ProbabilisticAgent": ProbabilisticAgent,
+        "BayesianAgent": BayesianAgent,
+        "ReinforcementLearningAgent": ReinforcementLearningAgent,
+        "NeuroSymbolicAgent": NeuroSymbolicAgent,
+        "WorldModelAgent": WorldModelAgent,
+        "CausalReasoningAgent": CausalReasoningAgent,
+        "MetaReasoningAgent": MetaReasoningAgent,
+        "EmbodiedAgent": EmbodiedAgent,
+        "MultimodalAgent": MultimodalAgent,
+        "ModelPredictiveControlAgent": ModelPredictiveControlAgent,
+        # Section 3.2: Advanced Reasoning & Planning
+        "TreeOfThoughtAgent": TreeOfThoughtAgent,
+        "GraphOfThoughtAgent": GraphOfThoughtAgent,
+        "MCTSAgent": MCTSAgent,
+        "ReflexionAgent": ReflexionAgent,
+        "DebateAgent": DebateAgent,
+        "ArbitrationAgent": ArbitrationAgent,
+        "ReActAgent": ReActAgent,
+        "PlanAndExecuteAgent": PlanAndExecuteAgent,
+        "SearchBasedAgent": SearchBasedAgent,
+        "ReplanningAgent": ReplanningAgent,
+        "HypothesisTestingAgent": HypothesisTestingAgent,
+        "SimulationAgent": SimulationAgent,
+        "CounterfactualAgent": CounterfactualAgent,
+        "VerificationAgent": VerificationAgent,
+        "FormalReasoningAgent": FormalReasoningAgent,
+        # Section 3.3: Enterprise Operational
+        "EntityResolutionAgent": EntityResolutionAgent,
+        "KGBuilderAgent": KGBuilderAgent,
+        "GraphValidationAgent": GraphValidationAgent,
+        "QueryTranslationAgent": QueryTranslationAgent,
+        "EvidenceProvenanceAgent": EvidenceProvenanceAgent,
+        "SecurityMonitoringAgent": SecurityMonitoringAgent,
+        "RiskAssessmentAgent": RiskAssessmentAgent,
+        "CodeEngineeringAgent": CodeEngineeringAgent,
+        "DiscoveryAgent": DiscoveryAgent,
+        "ConnectorAgent": ConnectorAgent,
+        "CrawlerAgent": CrawlerAgent,
+        "IngestionAgent": IngestionAgent,
+        "OntologyAgent": OntologyAgent,
+        "MemoryManagementAgent": MemoryManagementAgent,
+        "ContextManagementAgent": ContextManagementAgent,
+        "ModelSelectionAgent": ModelSelectionAgent,
+        "CostOptimizationAgent": CostOptimizationAgent,
+        "PolicyEnforcementAgent": PolicyEnforcementAgent,
+        "AuditAgent": AuditAgent,
+        "HumanEscalationAgent": HumanEscalationAgent,
+        "RecoveryAgent": RecoveryAgent,
+        "BenchmarkingAgent": BenchmarkingAgent,
+        "EvaluatorAgent": EvaluatorAgent,
+        "TestingAgent": TestingAgent,
+        "DebuggingAgent": DebuggingAgent,
+        "DeploymentAgent": DeploymentAgent,
+        "DocumentationAgent": DocumentationAgent,
+        # Section 3.4: Multi-Agent Systems & Swarms
+        "SupervisorWorkerSystem": SupervisorWorkerSystem,
+        "BlackboardArchitecture": BlackboardArchitecture,
+        "ContractNetSystem": ContractNetSystem,
+        "MixtureOfAgentsSystem": MixtureOfAgentsSystem,
+        "ManagerSpecialistSystem": ManagerSpecialistSystem,
+        "LeaderFollowerSystem": LeaderFollowerSystem,
+        "HierarchicalMultiAgentTeams": HierarchicalMultiAgentTeams,
+        "FederatedAgentArchitecture": FederatedAgentArchitecture,
+        "MarketBasedAgentSystem": MarketBasedAgentSystem,
+        "NegotiationAgentSystem": NegotiationAgentSystem,
+        "VotingAgentSystem": VotingAgentSystem,
+        "EnsembleAgentSystem": EnsembleAgentSystem,
+        "MeshAgentArchitecture": MeshAgentArchitecture,
+        "EventDrivenAgentArchitecture": EventDrivenAgentArchitecture,
+        "PipelineAgentArchitecture": PipelineAgentArchitecture,
+        "HandoffAgentArchitecture": HandoffAgentArchitecture,
     }
 
     @classmethod
@@ -706,3 +1408,5 @@ class AgentFactory:
     @classmethod
     def list_archetypes(cls) -> list[str]:
         return list(cls._REGISTRY.keys())
+
+

@@ -1,0 +1,31 @@
+{
+  "$schema": "urn:eoip:systems-registry:v1",
+  "version": "1.0.0",
+  "description": "EOIP Unified Systems Registry — single configuration point for all connected enterprise systems. Each entry defines a system's connection, authentication, schema mappings, ingestion pipeline, and automation policies.",
+  "global_defaults": {
+    "poll_interval_minutes": 60,
+    "retry_policy": {
+      "max_retries": 3,
+      "backoff_seconds": 30,
+      "backoff_multiplier": 2.0
+    },
+    "ingestion": {
+      "batch_size": 500,
+      "dead_letter_queue_enabled": true,
+      "schema_drift_detection": true,
+      "auto_schema_induction": true,
+      "auto_relationship_discovery": true
+    },
+    "data_quality": {
+      "deduplication_enabled": true,
+      "identity_resolution": true,
+      "provenance_tracking": true
+    },
+    "security": {
+      "encrypt_secrets_at_rest": true,
+      "tls_required": false,
+      "audit_logging": true
+    }
+  },
+  "systems": []
+}

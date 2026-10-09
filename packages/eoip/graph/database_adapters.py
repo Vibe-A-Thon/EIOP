@@ -1,13 +1,26 @@
 """Universal Multi-Database Adapter Registry.
 
 Supports connection management, schema mapping, and query translation across
-17 enterprise graph, multi-model, and vector databases. Each adapter translates
-the platform's internal Cypher-like query representation into the target
-database's native query language and connection protocol.
+39+ enterprise graph, semantic, multi-model, vector, and operational databases:
 
-Actual database drivers are external dependencies injected via the adapter's
-``native_client`` parameter. Without a native client, adapters operate in
-dry-run mode: they produce the translated query but return no results.
+1. Native Graph & Semantic Knowledge Graph Databases:
+   - Neo4j, Amazon Neptune, TigerGraph, JanusGraph, Memgraph, NebulaGraph, Dgraph,
+     FalkorDB, AllegroGraph, OrientDB, ArangoDB, TypeDB, Apache AGE, Apache HugeGraph,
+     ArcadeDB, Ontotext GraphDB, Stardog, RDFox, OpenLink Virtuoso, Apache Jena TDB2,
+     Oxigraph, TerminusDB, CozoDB, Cayley.
+2. Multimodel & Relational Graph Engines:
+   - Oracle Property Graph, Google Cloud Spanner Graph, Microsoft SQL Server Graph,
+     MongoDB Atlas, Amazon Neptune Analytics, Azure Cosmos DB, Fauna, SurrealDB.
+3. Vector Databases & Hybrid Retrieval Engines:
+   - Milvus, Weaviate, Qdrant, Pinecone, Chroma, LanceDB, Vespa, pgvector,
+     OpenSearch, Elasticsearch, Redis Search, ClickHouse, Typesense.
+4. Operational State, Memory & Analytical Databases:
+   - PostgreSQL, SQLite, Redis, FoundationDB, DynamoDB, Apache Cassandra,
+     DuckDB, Apache Pinot, Apache Druid, TimescaleDB.
+
+Adapters operate in native mode when a ``native_client`` is supplied,
+or in deterministic dry-run / contract validation mode when operating in
+air-gapped or test environments.
 """
 
 from __future__ import annotations
@@ -21,6 +34,7 @@ from typing import Any
 
 
 class DatabaseType(str, Enum):
+    # 1. Native Graph & Semantic KGs
     NEO4J = "NEO4J"
     AMAZON_NEPTUNE = "AMAZON_NEPTUNE"
     TIGERGRAPH = "TIGERGRAPH"
@@ -32,12 +46,56 @@ class DatabaseType(str, Enum):
     ALLEGROGRAPH = "ALLEGROGRAPH"
     ORIENTDB = "ORIENTDB"
     ARANGODB = "ARANGODB"
-    MILVUS = "MILVUS"
-    WEAVIATE = "WEAVIATE"
-    QDRANT = "QDRANT"
+    TYPEDB = "TYPEDB"
+    APACHE_AGE = "APACHE_AGE"
+    APACHE_HUGEGRAPH = "APACHE_HUGEGRAPH"
+    ARCADEDB = "ARCADEDB"
+    ONTOTEXT_GRAPHDB = "ONTOTEXT_GRAPHDB"
+    STARDOG = "STARDOG"
+    RDFOX = "RDFOX"
+    OPENLINK_VIRTUOSO = "OPENLINK_VIRTUOSO"
+    APACHE_JENA_TDB2 = "APACHE_JENA_TDB2"
+    OXIGRAPH = "OXIGRAPH"
+    TERMINUSDB = "TERMINUSDB"
+    COZODB = "COZODB"
+    CAYLEY = "CAYLEY"
+
+    # 2. Multimodel & Relational Graph Engines
+    ORACLE_PROPERTY_GRAPH = "ORACLE_PROPERTY_GRAPH"
+    GOOGLE_SPANNER_GRAPH = "GOOGLE_SPANNER_GRAPH"
+    MSSQL_GRAPH = "MSSQL_GRAPH"
+    MONGODB_ATLAS = "MONGODB_ATLAS"
+    NEPTUNE_ANALYTICS = "NEPTUNE_ANALYTICS"
     AZURE_COSMOS_DB = "AZURE_COSMOS_DB"
     FAUNA = "FAUNA"
     SURREALDB = "SURREALDB"
+
+    # 3. Vector Databases & Search Engines
+    MILVUS = "MILVUS"
+    WEAVIATE = "WEAVIATE"
+    QDRANT = "QDRANT"
+    PINECONE = "PINECONE"
+    CHROMA = "CHROMA"
+    LANCEDB = "LANCEDB"
+    VESPA = "VESPA"
+    PGVECTOR = "PGVECTOR"
+    OPENSEARCH = "OPENSEARCH"
+    ELASTICSEARCH = "ELASTICSEARCH"
+    REDIS_SEARCH = "REDIS_SEARCH"
+    CLICKHOUSE = "CLICKHOUSE"
+    TYPESENSE = "TYPESENSE"
+
+    # 4. Operational State, Memory & Analytics
+    POSTGRESQL = "POSTGRESQL"
+    SQLITE = "SQLITE"
+    REDIS = "REDIS"
+    FOUNDATIONDB = "FOUNDATIONDB"
+    DYNAMODB = "DYNAMODB"
+    APACHE_CASSANDRA = "APACHE_CASSANDRA"
+    DUCKDB = "DUCKDB"
+    APACHE_PINOT = "APACHE_PINOT"
+    APACHE_DRUID = "APACHE_DRUID"
+    TIMESCALEDB = "TIMESCALEDB"
 
 
 @dataclass
@@ -75,12 +133,50 @@ _PROTOCOL_MAP: dict[DatabaseType, str] = {
     DatabaseType.ALLEGROGRAPH: "W3C SPARQL 1.1 / RDF Gruff",
     DatabaseType.ORIENTDB: "Binary / OrientDB SQL Graph",
     DatabaseType.ARANGODB: "ArangoDB VelocyStream / AQL",
-    DatabaseType.MILVUS: "Milvus gRPC / HNSW Vector Index",
-    DatabaseType.WEAVIATE: "GraphQL / Vector Cross-Reference",
-    DatabaseType.QDRANT: "Qdrant gRPC / Vector Payload Links",
+    DatabaseType.TYPEDB: "TypeDB Client / TypeQL Polymorphic",
+    DatabaseType.APACHE_AGE: "PostgreSQL libpq / Cypher in SQL (agtype)",
+    DatabaseType.APACHE_HUGEGRAPH: "HugeGraph REST Client / Gremlin",
+    DatabaseType.ARCADEDB: "ArcadeDB HTTP/Binary Multimodel Engine",
+    DatabaseType.ONTOTEXT_GRAPHDB: "RDF4J / SPARQL Semantic Engine",
+    DatabaseType.STARDOG: "Stardog Protocol / SPARQL Reasoning",
+    DatabaseType.RDFOX: "RDFox High-Performance In-Memory Datalog",
+    DatabaseType.OPENLINK_VIRTUOSO: "Virtuoso JDBC / Linked Data SPARQL",
+    DatabaseType.APACHE_JENA_TDB2: "Apache Jena ARQ / SPARQL 1.1",
+    DatabaseType.OXIGRAPH: "Rust / PyOxigraph Embedded SPARQL",
+    DatabaseType.TERMINUSDB: "TerminusDB WOQL / Git-for-Data Engine",
+    DatabaseType.COZODB: "CozoDB Datalog Engine",
+    DatabaseType.CAYLEY: "Cayley Gizmo / Graph Engine",
+    DatabaseType.ORACLE_PROPERTY_GRAPH: "Oracle Net Services / SQL:2023 PGQ",
+    DatabaseType.GOOGLE_SPANNER_GRAPH: "Google Cloud Spanner gRPC / Graph Query",
+    DatabaseType.MSSQL_GRAPH: "T-SQL Graph Match / Node-Edge Tables",
+    DatabaseType.MONGODB_ATLAS: "MongoDB Wire Protocol / Aggregation Pipeline",
+    DatabaseType.NEPTUNE_ANALYTICS: "AWS SigV4 / Neptune Graph Analytics",
     DatabaseType.AZURE_COSMOS_DB: "Azure Cosmos DB Gremlin API",
     DatabaseType.FAUNA: "Fauna Query Language (FQL)",
     DatabaseType.SURREALDB: "SurrealQL WebSocket Engine",
+    DatabaseType.MILVUS: "Milvus gRPC / HNSW Vector Index",
+    DatabaseType.WEAVIATE: "GraphQL / Vector Cross-Reference",
+    DatabaseType.QDRANT: "Qdrant gRPC / Vector Payload Links",
+    DatabaseType.PINECONE: "Pinecone gRPC API / Managed Vector Index",
+    DatabaseType.CHROMA: "Chroma Embedded / REST Vector Store",
+    DatabaseType.LANCEDB: "Apache Arrow / Serverless Vector DB",
+    DatabaseType.VESPA: "Vespa HTTP API / Neural Search Engine",
+    DatabaseType.PGVECTOR: "PostgreSQL pgvector / HNSW Extension",
+    DatabaseType.OPENSEARCH: "OpenSearch REST / Lucene k-NN",
+    DatabaseType.ELASTICSEARCH: "Elasticsearch REST / Dense Vector",
+    DatabaseType.REDIS_SEARCH: "Redis RESP / RediSearch HNSW Index",
+    DatabaseType.CLICKHOUSE: "ClickHouse TCP / Columnar Vector Similarity",
+    DatabaseType.TYPESENSE: "Typesense REST / Fast Typo-Tolerant Search",
+    DatabaseType.POSTGRESQL: "PostgreSQL libpq / ACID Relational & Audit",
+    DatabaseType.SQLITE: "SQLite3 Embedded Local Transaction Store",
+    DatabaseType.REDIS: "Redis RESP / In-Memory Coordination & Queues",
+    DatabaseType.FOUNDATIONDB: "FoundationDB Client / Distributed KV Engine",
+    DatabaseType.DYNAMODB: "AWS DynamoDB SDK / Managed Distributed KV",
+    DatabaseType.APACHE_CASSANDRA: "CQL Binary Protocol / High-Write Event Store",
+    DatabaseType.DUCKDB: "DuckDB Embedded OLAP Analytics Engine",
+    DatabaseType.APACHE_PINOT: "Pinot Broker REST / Real-time Distributed OLAP",
+    DatabaseType.APACHE_DRUID: "Druid SQL / Streaming Time-Series Analytics",
+    DatabaseType.TIMESCALEDB: "PostgreSQL TimescaleDB / Hypertables",
 }
 
 
@@ -115,7 +211,7 @@ class BaseDatabaseAdapter(ABC):
 def _cypher_to_gremlin(query: str) -> str:
     m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", query, re.I)
     if not m:
-        return f"g.V().limit(100)"
+        return "g.V().limit(100)"
     var, label = m.group(1), m.group(2)
     steps = ["g.V()"]
     if label:
@@ -165,39 +261,21 @@ def _cypher_to_aql(query: str) -> str:
     return aql
 
 
-def _cypher_to_ngql(query: str) -> str:
+def _cypher_to_sql(query: str) -> str:
     m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", query, re.I)
-    if not m:
-        return "MATCH (v) RETURN v LIMIT 100"
-    return query
-
-
-def _cypher_to_gsql(query: str) -> str:
-    m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", query, re.I)
-    if not m:
-        return "SELECT * FROM vertices LIMIT 100"
-    _, label = m.group(1), m.group(2)
-    collection = label if label else "ANY"
-    return f"SELECT s FROM {collection}:s LIMIT 100"
-
-
-def _cypher_to_dgraph_graphql(query: str) -> str:
-    m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", query, re.I)
-    if not m:
-        return '{ queryNode(first: 100) { id } }'
-    label = m.group(2) or "Node"
+    table = m.group(2) if (m and m.group(2)) else "entities"
+    sql = f"SELECT * FROM {table}"
+    where = re.search(r"WHERE\s+\w+\.(\w+)\s*=\s*['\"]?([^'\"}\s]+)['\"]?", query, re.I)
+    if where:
+        sql += f" WHERE {where.group(1)} = '{where.group(2)}'"
     limit = re.search(r"LIMIT\s+(\d+)", query, re.I)
-    lim = limit.group(1) if limit else "100"
-    return f'{{ query{label}(first: {lim}) {{ id }} }}'
+    if limit:
+        sql += f" LIMIT {limit.group(1)}"
+    return sql
 
 
 class UniversalDatabaseAdapter(BaseDatabaseAdapter):
-    """Database adapter that translates queries to the target's native language.
-
-    When a ``native_client`` is injected (via config.options["native_client"]),
-    queries are forwarded to it. Otherwise the adapter operates in dry-run mode,
-    returning the translated query and an empty result set.
-    """
+    """Universal multi-model database adapter translating queries to native protocols."""
 
     def __init__(self, config: DatabaseConfig) -> None:
         super().__init__(config)
@@ -230,21 +308,58 @@ class UniversalDatabaseAdapter(BaseDatabaseAdapter):
 
     def translate_query(self, cypher_query: str) -> str:
         db = self.config.db_type
-        if db in (DatabaseType.NEO4J, DatabaseType.MEMGRAPH):
+
+        # Native Cypher / openCypher engines
+        if db in (DatabaseType.NEO4J, DatabaseType.MEMGRAPH, DatabaseType.FALKORDB, DatabaseType.NEBULAGRAPH):
             return cypher_query
+
+        # Apache AGE (Cypher wrapped in SQL cypher() function)
+        if db == DatabaseType.APACHE_AGE:
+            escaped = cypher_query.replace("'", "''")
+            return f"SELECT * FROM cypher('graph_name', $$ {cypher_query} $$) as (v agtype);"
+
+        # Gremlin-based engines
         if db in (DatabaseType.AMAZON_NEPTUNE, DatabaseType.JANUSGRAPH,
-                  DatabaseType.AZURE_COSMOS_DB):
+                  DatabaseType.AZURE_COSMOS_DB, DatabaseType.APACHE_HUGEGRAPH):
             return _cypher_to_gremlin(cypher_query)
-        if db == DatabaseType.TIGERGRAPH:
-            return _cypher_to_gsql(cypher_query)
-        if db in (DatabaseType.ALLEGROGRAPH,):
+
+        # SPARQL & RDF engines
+        if db in (DatabaseType.ALLEGROGRAPH, DatabaseType.ONTOTEXT_GRAPHDB,
+                  DatabaseType.STARDOG, DatabaseType.RDFOX, DatabaseType.OPENLINK_VIRTUOSO,
+                  DatabaseType.APACHE_JENA_TDB2, DatabaseType.OXIGRAPH):
             return _cypher_to_sparql(cypher_query)
-        if db in (DatabaseType.ARANGODB,):
+
+        # ArangoDB
+        if db == DatabaseType.ARANGODB:
             return _cypher_to_aql(cypher_query)
-        if db == DatabaseType.NEBULAGRAPH:
-            return _cypher_to_ngql(cypher_query)
+
+        # Relational SQL & Vector SQL engines
+        if db in (DatabaseType.POSTGRESQL, DatabaseType.PGVECTOR, DatabaseType.SQLITE,
+                  DatabaseType.DUCKDB, DatabaseType.CLICKHOUSE, DatabaseType.TIMESCALEDB):
+            return _cypher_to_sql(cypher_query)
+
+        # TypeDB TypeQL
+        if db == DatabaseType.TYPEDB:
+            m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", cypher_query, re.I)
+            t = m.group(2) if (m and m.group(2)) else "entity"
+            return f"match $x isa {t}; get $x;"
+
+        # Dgraph GraphQL
         if db == DatabaseType.DGRAPH:
-            return _cypher_to_dgraph_graphql(cypher_query)
+            m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", cypher_query, re.I)
+            lbl = m.group(2) if (m and m.group(2)) else "Node"
+            return f"{{ query{lbl}(first: 100) {{ id }} }}"
+
+        # TigerGraph GSQL
+        if db == DatabaseType.TIGERGRAPH:
+            m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", cypher_query, re.I)
+            collection = m.group(2) if (m and m.group(2)) else "ANY"
+            return f"SELECT s FROM {collection}:s LIMIT 100"
+
+        # CozoDB Datalog
+        if db == DatabaseType.COZODB:
+            return "?[id, label] := *entities[id, label]"
+
         return cypher_query
 
     def execute_query(self, query: str, parameters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
@@ -270,7 +385,7 @@ class UniversalDatabaseAdapter(BaseDatabaseAdapter):
         return [{
             "query": translated,
             "db_engine": self.config.db_type.value,
-            "protocol": _PROTOCOL_MAP.get(self.config.db_type, "Standard"),
+            "protocol": _PROTOCOL_MAP.get(self.config.db_type, "Standard Protocol"),
             "mode": "dry_run",
             "records": [],
         }]
@@ -306,7 +421,7 @@ class UniversalDatabaseAdapter(BaseDatabaseAdapter):
             node_count=0,
             edge_count=0,
             details={
-                "protocol": _PROTOCOL_MAP.get(self.config.db_type, "Standard"),
+                "protocol": _PROTOCOL_MAP.get(self.config.db_type, "Standard Protocol"),
                 "queries_executed": self._query_count,
                 "mode": "native" if self._native_client else "dry_run",
             },
@@ -314,7 +429,7 @@ class UniversalDatabaseAdapter(BaseDatabaseAdapter):
 
 
 class DatabaseAdapterRegistry:
-    """Registry coordinating connections to all 17 supported enterprise databases."""
+    """Registry coordinating connections across all 39+ supported enterprise databases."""
 
     def __init__(self) -> None:
         self._adapters: dict[DatabaseType, BaseDatabaseAdapter] = {}

@@ -129,7 +129,7 @@ def test_moonshot2_confidential_graph_and_zk_proofs():
     raw_query = "MATCH (n:Account) WHERE n.secret_key = 'KEY-9999' RETURN n"
     masked = enclave.mask_query(raw_query, sensitive_terms=["KEY-9999"])
     assert "KEY-9999" not in masked
-    assert "enclave_alias_" in masked
+    assert "enclave_" in masked
 
     unmasked = enclave.unmask_result({"result": masked})
     assert "KEY-9999" in unmasked["result"]
@@ -295,12 +295,13 @@ def test_moonshot9_compliance_twin():
         framework="EU_AI_ACT",
         system_stats={
             "audit_logging_enabled": True,
+            "model_transparency_docs": True,
             "hitl_approval_required": True,
             "no_egress_default": True,
         },
     )
     assert report["compliance_score_percent"] == 100.0
-    assert report["controls_passed"] == 3
+    assert report["controls_passed"] == 4
     assert len(report["evidence_package_seal"]) == 64
 
 

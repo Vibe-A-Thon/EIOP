@@ -5,6 +5,7 @@ import QueryConsole from './QueryConsole.jsx';
 import ConnectorBuilder from './ConnectorBuilder.jsx';
 import MappingDesigner from './MappingDesigner.jsx';
 import PipelineOrchestrator from './PipelineOrchestrator.jsx';
+import SystemRegistry from './SystemRegistry.jsx';
 import './studio.css';
 
 const TABS = [
@@ -13,6 +14,7 @@ const TABS = [
   {id: 'connector', label: 'Connector Builder', icon: 'database', hint: 'GAP-NOCODE-001 — no-code connector manifest wizard'},
   {id: 'mapping', label: 'Mapping Designer', icon: 'link', hint: 'GAP-NOCODE-002 — field-to-vertex/edge mapping designer'},
   {id: 'pipeline', label: 'Pipeline Orchestrator', icon: 'activity', hint: 'GAP-NOCODE-003 — visual DAG editor for ingestion pipelines'},
+  {id: 'systems', label: 'System Registry', icon: 'server', hint: 'Unified system connection, onboarding, schema generation, and pipeline management'},
 ];
 
 /**
@@ -39,5 +41,6 @@ export default function Studio({api, run, busy}) {
     {tab === 'connector' && <ConnectorBuilder api={api} run={run}/>}
     {tab === 'mapping' && <MappingDesigner api={api} run={run}/>}
     {tab === 'pipeline' && <PipelineOrchestrator/>}
+    {tab === 'systems' && <SystemRegistry api={api} run={run} busy={busy}/>}
   </div>;
 }

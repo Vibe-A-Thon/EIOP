@@ -381,3 +381,71 @@ The implementation plan operationalizes the **KGR-G** requirements into structur
 | Parallel deep multi-hop 5+ hops | ❌ | ❌ | ❌ | ✅ GSQL | ✅ GraphBLAS | ✅ | ❌ | **✅ SciPy sparse matrix** |
 | W3C OWL/SHACL ontology | ❌ | ⚠️ Plugin | ✅ | ❌ | ❌ | ❌ | ❌ | **✅ Native** |
 | Self-healing + compliance twin | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ⚠️ | **✅ MS-4 + MS-9** |
+
+---
+
+## 11. Phase 9: Brain OS, Living Brain & Universal Multi-Model Federation (Weeks 18-20)
+**Target Requirements:** `KGR-G-021` through `KGR-G-027`
+
+### 11.1 Enterprise Control Loops Governance (`packages/eoip/agents/loops.py`)
+- **Objective:** Enforces 14 standard loops (HCTL, HITL-FE, HBTL, HATL, HITD, EITL, HITL, HOTL, HOOTL, HITA, HITC, HITI, MITL, HITP), 15 human participation patterns, and 23 autonomous execution loops (OODA, ReAct, Evaluator-Optimizer, etc.) with strict execution limits, cycle detection, and risk gating.
+- **Verification:** Unit tested in `tests/unit/test_brain_and_living_system.py::test_all_control_loops_and_patterns`.
+
+### 11.2 Multi-Archetype Agent Factory & A2A Broker (`packages/eoip/agents/archetypes.py`)
+- **Objective:** Provides instantiation and execution across 54 specialized agent archetypes and multi-agent swarms (Supervisor-Worker, Blackboard, Contract-Net, Mixture-of-Agents), coupled with an Agent-to-Agent (A2A) protocol broker for distributed messaging.
+- **Verification:** Unit tested in `tests/unit/test_brain_and_living_system.py::test_all_54_agent_archetypes_and_a2a`.
+
+### 11.3 45+ Modality Unified Enterprise RAG Suite (`packages/eoip/retrieval/rag_suite.py`)
+- **Objective:** High-precision retrieval across 45+ modalities: Graph, RAPTOR Tree, LightRAG, HippoRAG, PathRAG, Temporal RAG, Code RAG, Streaming RAG, FLARE, IRCoT, Contradiction-Aware, and Citation-Aware generation.
+- **Verification:** Unit tested in `tests/unit/test_brain_and_living_system.py::test_all_rag_modalities`.
+
+### 11.4 Polyglot Query Transpiler & NL2* Router (`packages/eoip/query/polyglot_engine.py`)
+- **Objective:** Multi-dialect detection and transpilation across 40+ dialects (SPARQL, Cypher, GQL, PromQL, LogQL, KQL, Gremlin, Datalog, SQL, etc.) and dedicated natural language to query translators.
+- **Verification:** Unit tested in `tests/unit/test_brain_and_living_system.py::test_all_query_dialects`.
+
+### 11.5 Universal 55-Database Registry (`packages/eoip/graph/database_adapters.py`)
+- **Objective:** Unified connection SPI and transpilation for 55 native graph, multimodel, vector, and operational databases.
+- **Verification:** Unit tested in `tests/unit/test_brain_and_living_system.py::test_all_database_adapters`.
+
+### 11.6 Living Brain Algorithms & Merkle Proofs (`packages/eoip/brain/living_brain_algorithms.py`)
+- **Objective:** Continuous unsupervised ontology induction, neuro-symbolic memory consolidation, and Merkle root snapshot computation.
+- **Verification:** Unit tested in `tests/unit/test_brain_and_living_system.py::test_living_brain_algorithms`.
+
+### 11.7 Brain OS Kernel Dual-Route Answering (`packages/eoip/brain/brain_os.py` & `packages/eoip/brain/router.py`)
+- **Objective:** Exposes `/api/v1/brain/ask` providing deterministic execution on formal query dialects and hybrid LLM-augmented answering on natural language questions, governed by safety loops.
+- **Verification:** Unit tested in `tests/unit/test_brain_and_living_system.py::test_brain_os_kernel`.
+
+---
+
+## 12. Complete Platform Verification Matrix (KGR-G-001 through KGR-G-027)
+
+| Requirement ID | Module / Component | Verification Test Suite | SLA / Target Metric | Quality Gate |
+|----------------|--------------------|-------------------------|---------------------|--------------|
+| `KGR-G-001` | `ingestion/polyglot_linker.py` | `test_polyglot_linker.py` | Cross-language symbol resolution | AST link PASS |
+| `KGR-G-002` | `ingestion/multimodal_audio.py` | `test_multimodal_audio.py` | Local Whisper/VLM indexing | Air-gap PASS |
+| `KGR-G-003` | `exporters/obsidian_vault.py` | `test_obsidian_vault.py` | Canvas & Markdown export | Export PASS |
+| `KGR-G-004` | `analytics/algorithms.py` | `test_graph_algorithms.py` | In-memory graph algorithms | Correctness PASS |
+| `KGR-G-005` | `moonshot/universal_transpiler.py` | `test_moonshots.py` | Zero-ETL virtual Cypher views | Virtualize PASS |
+| `KGR-G-006` | `moonshot/bitemporal_state_machine.py` | `test_moonshots.py` | 2D CRDT bitemporal branches | Merkle hash PASS |
+| `KGR-G-007` | `moonshot/self_healing.py` | `test_moonshots.py` | Autonomous drift repair | Reconcile PASS |
+| `KGR-G-008` | `moonshot/confidential_graph.py` | `test_moonshots.py` | Zero-Trust DLP sanitization | Redaction PASS |
+| `KGR-G-009` | `moonshot/neuro_symbolic_memory.py` | `test_moonshots.py` | AGAM neuro-symbolic memory | Subgraph PASS |
+| `KGR-G-010` | `moonshot/compliance_twin.py` | `test_moonshots.py` | AI-BOM & continuous compliance | EU AI Act PASS |
+| `KGR-G-011` | `verification/behavioral_gate.py` | `test_behavioral_gate.py` | Merge gate constraint validation | Behavioral PASS |
+| `KGR-G-012` | `ingestion/incremental_indexer.py` | `test_incremental_indexer.py` | ≤ 2.0s for ≤ 100 files | Commit hook PASS |
+| `KGR-G-013` | `graph/named_graph.py` | `test_cross_tenant_isolation.py` | Cryptographic tenant separation | Isolation PASS |
+| `KGR-G-014` | `moonshot/streaming_agent_memory.py` | `test_streaming_agent_memory.py` | Dual-timeline event streaming | Event order PASS |
+| `KGR-G-015` | `moonshot/ontology_induction.py` | `test_ontology_induction.py` | Unsupervised schema induction | Anti-drift PASS |
+| `KGR-G-016` | `graph/vector_graph.py` | `test_vector_graph.py` | Co-located HNSW vector graph | HNSW PASS |
+| `KGR-G-017` | `agents/mcp_pr_tools.py` | `test_mcp_pr_tools.py` | Cross-repo PR blast radius | Determinism PASS |
+| `KGR-G-018` | `analytics/parallel_multihop.py` | `test_parallel_multihop.py` | 5+ hop sparse matrix reachability | Matrix BFS PASS |
+| `KGR-G-019` | `agents/uncertainty_protocol.py` | `test_uncertainty_protocol.py` | Calibrated honest abstention | Uncertainty PASS |
+| `KGR-G-020` | `streaming/mutation_stream.py` | `test_mutation_stream.py` | Real-time SSE / webhook bus | SSE stream PASS |
+| `KGR-G-021` | `packages/eoip/agents/loops.py` | `test_brain_and_living_system.py` | 14 Loops + 15 Patterns + 23 Loops | Governance PASS |
+| `KGR-G-022` | `packages/eoip/agents/archetypes.py` | `test_brain_and_living_system.py` | 54 Agents & Swarms + A2A Broker | Archetypes PASS |
+| `KGR-G-023` | `packages/eoip/retrieval/rag_suite.py` | `test_brain_and_living_system.py` | 45+ Unified RAG Modalities | RAG Suite PASS |
+| `KGR-G-024` | `packages/eoip/query/polyglot_engine.py` | `test_brain_and_living_system.py` | 40+ Query Dialects & NL2* Family | Polyglot PASS |
+| `KGR-G-025` | `packages/eoip/graph/database_adapters.py` | `test_brain_and_living_system.py` | 55 Enterprise Database Engines | Adapters PASS |
+| `KGR-G-026` | `packages/eoip/brain/living_brain_algorithms.py` | `test_brain_and_living_system.py` | Ontology Induction & Merkle Proofs | Living Brain PASS |
+| `KGR-G-027` | `packages/eoip/brain/brain_os.py` | `test_brain_and_living_system.py` | Brain OS Deterministic / Hybrid Ask | Brain OS PASS |
+

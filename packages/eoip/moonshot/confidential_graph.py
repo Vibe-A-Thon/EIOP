@@ -30,14 +30,21 @@ class HomomorphicCiphertext:
     ciphertext_val: int
     modulus: int
     nonce: str = ""
+    _nonces: list[str] = field(default_factory=list)
+
+    def __post_init__(self) -> None:
+        if self.nonce and not self._nonces:
+            object.__setattr__(self, "_nonces", [self.nonce])
 
     def __add__(self, other: HomomorphicCiphertext) -> HomomorphicCiphertext:
         if self.modulus != other.modulus:
             raise ValueError("Moduli must match for homomorphic addition")
+        combined_nonces = self._nonces + other._nonces
         return HomomorphicCiphertext(
             ciphertext_val=(self.ciphertext_val + other.ciphertext_val) % self.modulus,
             modulus=self.modulus,
             nonce="",
+            _nonces=combined_nonces,
         )
 
 
@@ -70,11 +77,12 @@ class HomomorphicPropertyEncryptor:
         )
 
     def decrypt_numeric(self, cipher: HomomorphicCiphertext) -> int:
-        """Decrypt a single (non-summed) ciphertext using its nonce."""
-        if not cipher.nonce:
-            raise ValueError("Cannot decrypt summed ciphertexts without re-keyed nonce")
-        blind = self._compute_blind(cipher.nonce)
-        return (cipher.ciphertext_val - blind) % self.modulus
+        """Decrypt a ciphertext (single or summed) using its tracked nonces."""
+        nonces = cipher._nonces if cipher._nonces else ([cipher.nonce] if cipher.nonce else [])
+        if not nonces:
+            raise ValueError("Cannot decrypt: no nonces available")
+        total_blind = sum(self._compute_blind(n) for n in nonces) % self.modulus
+        return (cipher.ciphertext_val - total_blind) % self.modulus
 
     def decrypt_sum(self, cipher: HomomorphicCiphertext,
                     original_nonces: list[str]) -> int:

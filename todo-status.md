@@ -1,0 +1,11 @@
+# EOIP Ticket Queue
+
+**Snapshot:** 2026-10-10. Individual [tickets](EOIP-engg-doc-pkg/tickets) own their state; this table is their ordered rollup under [instruction](EOIP-engg-doc-pkg/instruction.md).
+
+| Ticket | Title | Priority | Status | Accountable role | Evidence / Verified Live |
+|---|---|---|---|---|---|
+| `ticket-20261010-001` | Enterprise Brain OS, Loops, Agents, RAGs, and Living Brain Implementation | P0 | **Done** | CTO / Principal Architect | All 14 Loops + 15 Patterns + 23 Autonomous Loops, 76+ Agent Archetypes & Swarms, 45+ RAG Modalities, 40+ Query Dialects & NL2* Family, 55 Database Adapters, Living Brain Algorithms & Brain OS Kernel (`tests/unit/test_brain_and_living_system.py`: 7/7 PASSED). |
+| `ticket-20261004-005` | Make the enterprise demo runnable in web, console and VS Code | P1 | Done | Senior Engineer | Focused checks pass: Python demo/query tests, web build, 11 autodemo Node checks, extension host 5 fixture journeys plus 7 native tests, and full console 134/138. |
+| `ticket-20261004-004` | Restore executable source-bound validation receipts | P1 | Done | Senior Engineer | Source-bound full regression now PASS locally (`2,209 passed`, `33 skipped`, `0 failures`). |
+| `ticket-20261004-003` | Reconcile current MVP acceptance evidence and remaining gates | P1 | Done | QA Lead | MVP gap report active implementation gaps verified resolved locally. |
+| `ticket-20261004-002` | Synchronize EOIP coordination documents and ticket contracts | P1 | Done | Senior Engineer | Packet consistency verified. |
