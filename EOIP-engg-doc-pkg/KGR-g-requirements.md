@@ -303,6 +303,281 @@ A rigorous gap analysis between EOIP's current baseline and competitor features 
 
 ---
 
+## 7b. Step 2 Extension: Additional Competitive Research (Post-Baseline Discovery)
+
+### 3.7 TigerGraph (Enterprise — Massively Parallel GSQL Engine)
+- **Primary Sources:** TigerGraph Buyer's Guide 2026; FalkorDB Architecture Comparison; NebulaGraph Enterprise Benchmark.
+- **Architecture & Mechanism:**
+  - Native C++ massively parallel graph engine with auto-partitioned, horizontally sharded distributed architecture.
+  - **GSQL:** Turing-complete procedural graph query language with native parallelism across partitions; openCypher also supported.
+  - Published benchmarks claim 40–337× faster than Neo4j on 5+ hop deep analytics queries (fraud, AML, supply chain). These are vendor-reported figures; independent verification required.
+- **Deficiencies & Critical Limitations:**
+  - No native OWL 2 / RDF / SHACL semantic reasoning; ontology integration requires external tooling.
+  - Proprietary licensing — no open-source edition; Savanna managed service starts at ~$45/GB/month.
+  - No code intelligence, AST parsing, or developer-centric tooling.
+
+### 3.8 FalkorDB (GraphBLAS Sparse Matrix Engine)
+- **Primary Sources:** FalkorDB 2026 benchmark report; FalkorDB GraphRAG SDK documentation; ArcadeDB comparative analysis.
+- **Architecture & Mechanism:**
+  - Rebuilt from RedisGraph on **GraphBLAS sparse adjacency matrices** (C/Rust engine) delivering up to 496× lower P50 latency vs Neo4j.
+  - **Native HNSW vector index co-located** with the property graph store — combined vector + graph traversal in a single engine, under 5ms.
+  - **Native multi-graph isolation:** each tenant or project receives a fully isolated named graph with cheap per-graph memory allocation (no per-server overhead).
+  - GraphRAG SDK: document ingestion, entity extraction, full-text + vector + graph retrieval, Cypher generation, and cited-answer workflows.
+  - Integrates with LangChain, LlamaIndex, Graphiti, and MCP.
+- **Deficiencies & Critical Limitations:**
+  - SSPL v1 license limits commercial SaaS redistribution.
+  - Younger ecosystem; limited formal enterprise support contracts.
+  - No native OWL/SHACL semantic reasoning.
+
+### 3.9 Memgraph (In-Memory Real-Time Streaming Graph)
+- **Primary Sources:** Memgraph 3.8+ release notes; Memgraph vs Neo4j FalkorDB benchmark; BSL 1.1 license.
+- **Architecture & Mechanism:**
+  - C++ in-memory graph engine with Cypher + Bolt compatibility (low-cost Neo4j migration path).
+  - **Atomic GraphRAG workflow** (v3.8+): integrated single-store vector index within the graph engine.
+  - **Streaming data support:** real-time CDC event processing, Kafka/Pulsar integration for live graph mutations. Latest: v3.12.0 (July 2026).
+- **Deficiencies & Critical Limitations:**
+  - BSL 1.1 license restricts some commercial use cases. Enterprise pricing starts at $25,000/year for 16GB.
+  - Memory-resident architecture demands significant RAM for large graphs.
+  - No code AST parsing, ontology reasoning, or air-gapped sovereign deployment model.
+
+### 3.10 Graphiti by Zep (Temporal Knowledge Graph for AI Agent Memory)
+- **Primary Sources:** Zep blog "Stop Using RAG for Agent Memory"; getzep/graphiti GitHub; arXiv:2501.13956; ICLR 2026 MemAgents Workshop.
+- **Architecture & Mechanism:**
+  - **Incremental real-time KG updates:** processes agent interaction events continuously without batch recomputation.
+  - **Dual-timeline fact tracking:** stores `event_time` (when it occurred) and `ingestion_time` (when the system learned it) separately, enabling precise temporal reasoning.
+  - **Hybrid retrieval:** semantic embeddings + BM25 + multi-hop graph traversal — zero LLM calls during retrieval.
+  - Supports Neo4j, FalkorDB, Kuzu, and Amazon Neptune as storage backends.
+- **Deficiencies & Critical Limitations:**
+  - Scoped to agent memory — not a general enterprise knowledge graph platform.
+  - No code AST parsing, SHACL validation, or enterprise multi-tenancy.
+  - Depends on external LLM for entity extraction (not air-gapped by default).
+
+### 3.11 Graphify Enterprise (Deeper Analysis — Formal Verification & PR Gate)
+- **Primary Sources:** graphify.com/enterprise; Graphify-Labs/graphify GitHub PRs #2867, #3693; YC S26 launch post; Graphify pricing page.
+- **Architecture & Mechanism:**
+  - **Formal Behavioral Verification at Merge Gate:** proves new behavior matches old using property-based testing / symbolic execution, or returns the concrete failing input. Currently advisory — cannot verify all complex type annotations.
+  - **PR-Level Graph Impact Triage:** `list_prs`, `get_pr_impact`, `triage_prs` MCP tools compute cross-repo blast radius at PR creation time.
+  - **Honest Abstain Pattern:** explicitly abstains rather than hallucinating — provenance-tagged responses with structured uncertainty.
+  - **Git Hook Incremental Re-Index:** only affected files re-parsed on each commit, enabling sub-second graph updates.
+  - **Team Streamable HTTP MCP:** shared graph server accessible by entire team over a single HTTP endpoint.
+- **Deficiencies & Critical Limitations:**
+  - Formal verification is advisory-only for complex codebases (complex type annotations cause abstains).
+  - No bitemporal reasoning, SHACL validation, semantic ontology, or enterprise compliance features.
+  - Early-access product; enterprise customers at Shopify, Datadog, JP Morgan are vendor-reported claims.
+
+### 3.12 LLM-Driven Ontology Induction (AutoSchemaKG / GrOIL — Academic Research)
+- **Primary Sources:** AutoSchemaKG (ACL 2026, arXiv:2505.23628); GrOIL (CIKM 2026); arXiv:2602.01276; Atlan Enterprise KG Guide 2026.
+- **Architecture & Mechanism:**
+  - **AutoSchemaKG (ACL 2026):** Fully autonomous KG construction with joint entity extraction and dynamic schema induction from 50M+ document corpora (900M+ nodes, 5.9B edges). 92% semantic alignment to human-crafted schemas with zero manual intervention.
+  - **GrOIL:** Graph-grounded domain ontology induction — OWL TBox induction, ABox population, LLM hallucination mitigation.
+  - Enterprise bottleneck: entity resolution and ontology alignment (not extraction) according to Atlan 2026 guide.
+  - SHACL validation gate critical for preventing ungoverned LLM-extracted relationships reaching production.
+- **Deficiencies & Critical Limitations:**
+  - AutoSchemaKG build cost: ~78,400 GPU hours for large-scale builds; expensive for enterprises.
+  - Type proliferation and semantic drift are known failure modes; require anti-drift guards.
+  - LLM-driven ontology F1 score: ~0.724 in structured domains (arXiv:2602.01276) — requires human validation.
+
+---
+
+## 4b. Step 3 Extension: Extended Feature Comparison Matrix (New Tools & New Dimensions)
+
+| Architectural Dimension | TigerGraph | FalkorDB | Memgraph | Graphiti (Zep) | Graphify Enterprise | **EOIP / KGR-G (New Target)** | Inclusion Status |
+|-------------------------|-----------|----------|----------|----------------|---------------------|-------------------------------|-----------------|
+| **17. Formal Behavioral Verification** | ❌ None | ❌ None | ❌ None | ❌ None | ⚠️ Advisory | **✅ SHACL-bound contract tests + behavioral proofs (`KGR-G-011`)** | **New Requirement** |
+| **18. Incremental Differential Re-Index** | ❌ None | ❌ None | ✅ CDC streaming | ✅ Per-event | ✅ Git hook | **✅ File-diff AST patch on every commit (`KGR-G-012`)** | **New Requirement** |
+| **19. Native Per-Tenant Multi-Graph Isolation** | ⚠️ Partitioned shards | ✅ Native multi-graph | ⚠️ Per-instance | ❌ None | ❌ None | **✅ Named-graph protocol all backends (`KGR-G-013`)** | **New Requirement** |
+| **20. Streaming Real-Time Temporal Agent Memory** | ❌ None | ⚠️ GraphRAG SDK | ⚠️ Streaming CDC | ✅ Graphiti core | ❌ None | **✅ Dual-timeline streaming AGAM (`KGR-G-014`)** | **New Requirement** |
+| **21. LLM-Assisted Dynamic Ontology Induction** | ❌ None | ❌ None | ❌ None | ⚠️ Entity types only | ❌ None | **✅ AutoSchemaKG + SHACL anti-drift guards (`KGR-G-015`)** | **New Requirement** |
+| **22. Co-Located HNSW Vector + Graph Index** | ❌ Separate TigerGraph ML | ✅ Native HNSW | ✅ Single-store (v3.8+) | ⚠️ Backend-dependent | ❌ None | **✅ VectorGraph adapter sub-5ms (`KGR-G-016`)** | **New Requirement** |
+| **23. PR-Level Cross-Repo Blast Radius Triage** | ❌ None | ❌ None | ❌ None | ❌ None | ✅ `triage_prs` MCP | **✅ Graph-semantic triage with risk scoring (`KGR-G-017`)** | **New Requirement** |
+| **24. Massively Parallel Deep Multi-Hop Analytics** | ✅ GSQL 40-337× | ✅ GraphBLAS sparse | ✅ In-memory parallel | ❌ None | ❌ None | **✅ SciPy/NumPy sparse 5+ hop engine (`KGR-G-018`)** | **New Requirement** |
+| **25. Calibrated Uncertainty & Honest Abstain** | ❌ None | ❌ None | ❌ None | ⚠️ Best-effort | ✅ Honest abstain | **✅ `confidence_score` + `abstain` in every MCP response (`KGR-G-019`)** | **New Requirement** |
+| **26. Real-Time Graph Mutation Streaming & Webhooks** | ⚠️ CDC triggers | ⚠️ Streams (Kafka) | ✅ Streaming CDC | ⚠️ Incremental events | ❌ None | **✅ SSE/WebSocket + webhook push air-gapped (`KGR-G-020`)** | **New Requirement** |
+
+---
+
+## 5b. Step 4 Extension: Additional Gap Analysis (Gaps 5–14)
+
+5. **Formal Behavioral Verification (Graphify Enterprise Gap):**
+   *Baseline:* Self-Healing Fabric (MS-4) detects architectural drift and generates Git PRs. It does not perform **formal behavioral verification** — proving that new code changes preserve prior contractual behavior. This gap is critical for enterprise merge gates.
+
+6. **Incremental Differential AST Re-Index (Graphify Core Gap):**
+   *Baseline:* Code graph ingestion (`code_graph.py`) performs full workspace re-parse on each run. Graphify achieves sub-second feedback loops by patching only changed file AST deltas on each commit. EOIP lacks this incremental capability.
+
+7. **Native Per-Tenant Multi-Graph Isolation (FalkorDB Gap):**
+   *Baseline:* Multi-tenancy uses namespace-scoped queries within a shared HugeGraph instance. FalkorDB's model of fully isolated named graph objects per tenant provides stronger isolation and lower overhead. EOIP's storage abstraction can support this but the named-graph isolation protocol is not yet formalized.
+
+8. **Streaming Real-Time Temporal Agent Memory (Graphiti Gap):**
+   *Baseline:* AGAM (MS-8) uses static snapshots with salience decay. Graphiti's approach of continuously streaming agent events with dual-timeline (event_time × ingestion_time) fact tracking eliminates batch-cycle latency for AI agents on fast-moving incident responses.
+
+9. **LLM-Assisted Dynamic Ontology Induction from Unstructured Text (AutoSchemaKG Gap):**
+   *Baseline:* MS-10 (Generative Studio) induces schemas from structured CSV/JSON. No capability exists for autonomous ontology induction from unstructured text corpora (wikis, architecture documents, meeting notes). This is the AutoSchemaKG (ACL 2026) approach — a significant gap for zero-configuration enterprise onboarding.
+
+10. **Co-Located HNSW VectorGraph (FalkorDB/Memgraph Gap):**
+    *Baseline:* Tri-modal RAG uses a separate vector store (ChromaDB/Qdrant). FalkorDB and Memgraph now provide HNSW vector indexes co-located in the graph engine, eliminating cross-store ETL and enabling sub-5ms unified queries. EOIP's pluggable abstraction can support this but is not yet implemented.
+
+11. **PR-Level Cross-Repo Graph Impact Triage (Graphify Enterprise Gap):**
+    *Baseline:* VS Code extension provides blast radius hover. Graphify Enterprise provides dedicated `list_prs`, `get_pr_impact`, `triage_prs` MCP tools that compute cross-repository blast radius at PR creation time. EOIP has the graph data but lacks the PR-scoped triage MCP tools.
+
+12. **Massively Parallel Deep Multi-Hop Analytics Engine (TigerGraph Gap):**
+    *Baseline:* Leiden, PageRank, and BFS run single-threaded in pure Python. TigerGraph's GSQL engine parallelizes 5+ hop traversals, achieving 40–337× speedup for fraud/AML/supply chain workloads. EOIP needs a SciPy sparse-matrix parallel kernel for deep multi-hop analytics.
+
+13. **Calibrated Uncertainty & Honest Abstain MCP Protocol (Graphify Enterprise Gap):**
+    *Baseline:* MCP server returns answers without structured confidence scoring or formal abstain mechanism. Graphify Enterprise's honest abstain pattern is critical for enterprise customers using AI agents in regulated environments where false confidence is worse than no answer.
+
+14. **Real-Time Graph Mutation Streaming & Webhook Notification (Memgraph Gap):**
+    *Baseline:* Ingestion is pull-based batch processing. Enterprise customers need push-based notification when graph entities of interest change (e.g., "alert me when any service my team owns gets a new dependency or vulnerability edge").
+
+---
+
+## 6b. Step 5 Extension: Transformation of New Competitor Strengths
+
+| Competitor Feature | Competitor Advantage | Competitor Weakness | EOIP / KGR-G Transformed Solution |
+|--------------------|----------------------|---------------------|-----------------------------------|
+| **TigerGraph Deep Analytics** | 40-337× faster on 5+ hop | Proprietary GSQL, no OWL/SHACL, expensive | **SciPy Sparse Parallel Multi-Hop Engine (`KGR-G-018`):** Open Python ecosystem with full ontology context. |
+| **FalkorDB HNSW Co-Location** | < 5ms vector + graph in one engine | SSPL license, no semantic reasoning | **VectorGraph Adapter (`KGR-G-016`):** HNSW within pluggable GraphStore abstraction, no license restrictions. |
+| **FalkorDB Multi-Graph** | Cheap per-tenant isolation | SSPL license | **Named-Graph Tenant Protocol (`KGR-G-013`):** Formalized across all backends (HugeGraph, Neo4j, Neptune, memory). |
+| **Memgraph Streaming CDC** | Real-time graph mutation events | Memory-hungry, BSL license, $25K+/year | **Open SSE Mutation Stream (`KGR-G-020`):** Apache-licensed SSE + webhooks, air-gapped, no Kafka required. |
+| **Graphiti Temporal Memory** | Real-time streaming agent KG | Not enterprise-grade, LLM-dependent extraction | **Streaming Temporal AGAM Extension (`KGR-G-014`):** Dual-timeline streaming update, batch-free, air-gapped. |
+| **Graphify Formal Verification** | Behavioral equivalence proof at merge gate | Advisory only, fails on complex types | **Full-Coverage Behavioral Gate (`KGR-G-011`):** SHACL contract tests + hypothesis testing + structured abstain with coverage scope. |
+| **Graphify Git Hook Re-Index** | Sub-second incremental graph updates | No semantic enrichment, static snapshot | **Smart Differential AST Patcher (`KGR-G-012`):** Cross-file symbol impact propagation, < 2s for ≤ 100 file commits. |
+| **AutoSchemaKG LLM Induction** | Zero-config schema from unstructured text | Expensive GPU, type proliferation, drift | **SHACL-Gated Ontology Induction (`KGR-G-015`):** SHACL validation at induction boundary + type consolidation guard. |
+| **Graphify Honest Abstain** | Trust through structured uncertainty | Advisory only | **Calibrated Uncertainty Protocol (`KGR-G-019`):** `confidence_score`, `uncertainty_reason`, `abstain`, `evidence_chain`, `coverage_percent` in every MCP response. |
+| **Graphify PR Triage** | Cross-repo blast radius at PR creation | No semantic context, advisory only | **Graph-Semantic PR Triage MCP (`KGR-G-017`):** Ontology context — data ownership, regulatory classification, downstream SLAs, risk-scored summaries. |
+
+---
+
+## 7c. New Requirements: KGR-G-011 through KGR-G-020
+
+### KGR-G-011: Formal Behavioral Verification at Merge Gate
+- **Classification:** Functional / Quality | **Priority:** P0 (Core)
+- **Description:** The system SHALL integrate a behavioral verification gate into the PR/merge workflow that combines SHACL contract testing, property-based hypothesis testing (`hypothesis` library), and AST contract diffing to prove that new code changes preserve prior ontology contracts. When a function, schema, or API endpoint cannot be formally verified due to type complexity, the gate SHALL emit a structured `abstain` record (scope, reason, confidence boundary) rather than a false positive.
+- **Verification Criteria:**
+  - Behavioral gate runs automatically for every PR touching ingestion, query, or ontology code paths.
+  - Successfully verifies behavioral equivalence for pure functions with typed primitive/collection signatures.
+  - Emits structured JSON `abstain` with `unverified_symbols`, `abstain_reason`, and `coverage_percent` when verification scope is exceeded.
+  - Blocking threshold configurable: R1 (peer) blocks on any verified failure; R0 (auto) blocks only on critical-path failures.
+- **Target Implementation:** `packages/eoip/verification/behavioral_gate.py` + CI hook
+
+### KGR-G-012: Incremental Differential AST Re-Index (Git Hook Integration)
+- **Classification:** Performance / Operational | **Priority:** P0 (Core)
+- **Description:** The system SHALL provide a git hook integration that detects which source files changed in the most recent commit diff, re-parses only those files' AST deltas using tree-sitter, propagates cross-file symbol impact through the existing graph, and applies a patch-style graph update — without triggering a full workspace re-ingestion.
+- **Verification Criteria:**
+  - Incremental re-index for a commit changing ≤ 100 files completes in < 2.0 seconds on standard CPU.
+  - Cross-file `CALLS` and `IMPORTS` edges correctly updated when a renamed/moved symbol is detected.
+  - Full correctness equivalence: incremental result matches full re-index result on the same commit set.
+  - Git hook installs cleanly via `eoip install-hooks` CLI command.
+- **Target Implementation:** `packages/eoip/ingestion/incremental_indexer.py` + `scripts/install_git_hooks.py`
+
+### KGR-G-013: Native Per-Tenant Named-Graph Isolation Protocol
+- **Classification:** Multi-Tenancy / Security | **Priority:** P0 (Core)
+- **Description:** The system SHALL formalize a Named-Graph Isolation Protocol in the `GraphStore` port, enabling each tenant to receive a fully isolated named graph instance (e.g., `g:<tenant_id>`) within the same backend process, sharing connection pools and memory without any possibility of cross-tenant data access. Implemented across HugeGraph, Neo4j, AWS Neptune, and In-Memory backends.
+- **Verification Criteria:**
+  - Tenant A's nodes and edges are completely invisible to Tenant B's queries across all backends.
+  - Named-graph creation and deletion complete in < 50ms.
+  - Cross-tenant isolation verified by adversarial query injection tests targeting cross-namespace traversal.
+  - Supports ≥ 1,000 named-graph tenants in a single HugeGraph instance.
+- **Target Implementation:** `packages/eoip/graph/named_graph.py` + backend adapter extensions
+
+### KGR-G-014: Streaming Temporal Agent Memory (Dual-Timeline Incremental Updates)
+- **Classification:** AI / Agentic | **Priority:** P1 (Enterprise)
+- **Description:** The system SHALL extend AGAM (MS-8) with a streaming real-time update path that processes agent interaction events continuously without batch recomputation, storing each fact with dual-timeline indexing: `event_time` (when the event occurred) and `ingestion_time` (when the system recorded it). Enables AI agents to query "what did the system know at time T?" vs "what actually happened at time T?" — critical for incident response.
+- **Verification Criteria:**
+  - Streaming agent events reflected in graph within < 500ms of arrival without triggering full rebuild.
+  - Point-in-time queries using `(event_time=T1, ingestion_time=T2)` coordinates return correct facts.
+  - Memory throughput: ≥ 500 agent events/second sustained ingestion rate.
+  - Backward compatible with existing AGAM salience decay.
+- **Target Implementation:** `packages/eoip/moonshot/streaming_agent_memory.py` + extension to `neuro_symbolic_memory.py`
+
+### KGR-G-015: LLM-Assisted Dynamic Ontology Induction with Anti-Drift Guards
+- **Classification:** Functional / AI | **Priority:** P1 (Enterprise)
+- **Description:** The system SHALL extend MS-10 (Generative Studio) to ingest unstructured text corpora (engineering wikis, architecture documents, meeting transcripts, incident post-mortems) and jointly extract entities and induce OWL/SHACL schema classes using a local LLM. The pipeline SHALL enforce: (a) type consolidation guard — merge semantically equivalent induced types into existing ontology classes; (b) SHACL validation gate — reject induced schemas violating existing constraints; (c) human review queue — route low-confidence inductions (< 0.6) for ontologist approval before persistence.
+- **Verification Criteria:**
+  - Induces entity types and relationships from a 50-page technical whitepaper with ≥ 80% semantic alignment to a human-curated reference schema.
+  - Type consolidation guard prevents ontology sprawl — induced type count grows ≤ 20% per corpus batch.
+  - SHACL validation gate rejects 100% of schema violations before persistence.
+  - Full pipeline operates air-gapped with local LLM (no cloud API calls).
+- **Target Implementation:** `packages/eoip/moonshot/ontology_induction.py` + extension to `generative_studio.py`
+
+### KGR-G-016: Co-Located HNSW Vector + Graph Index (VectorGraph Adapter)
+- **Classification:** Performance / Storage | **Priority:** P0 (Core)
+- **Description:** The system SHALL provide a VectorGraph adapter that co-locates an HNSW approximate nearest neighbor vector index within the same graph storage engine, eliminating cross-store ETL between the graph database and a separate vector database. Unified queries of the form "find the 10 nodes semantically closest to embedding E that are within 2 hops of node N" SHALL execute in a single query plan.
+- **Verification Criteria:**
+  - Combined vector similarity + 2-hop graph traversal executes in < 5ms at P95 on a 1M-node graph.
+  - HNSW index build over 500K node embeddings (768-dim) completes in < 120 seconds.
+  - Zero data duplication between vector index and property graph store — embeddings stored as node properties.
+  - Backward compatible with existing separate vector store configuration via adapter toggle.
+- **Target Implementation:** `packages/eoip/graph/vector_graph.py` + integration into `rag/engine.py`
+
+### KGR-G-017: PR-Level Cross-Repository Graph Impact Triage MCP Tools
+- **Classification:** Functional / Developer Tooling | **Priority:** P0 (Core)
+- **Description:** The system SHALL expose dedicated MCP tools for PR-level impact triage: `list_prs(repo, status)`, `get_pr_impact(pr_id)` returning full cross-repository blast radius as structured JSON subgraph, and `triage_prs(repo)` returning a risk-scored list of open PRs ranked by ontology-weighted change impact. Each PR impact response SHALL include: affected downstream services, data ownership classifications, regulatory flags, SLA impact scores, and suggested reviewers based on graph ownership attribution.
+- **Verification Criteria:**
+  - `get_pr_impact` responds in < 150ms for PRs affecting ≤ 5,000 graph nodes.
+  - Cross-repository blast radius correctly identifies dependencies across ≥ 3 connected repositories.
+  - Risk score is deterministic for identical PR diffs.
+  - MCP tool definitions conform to MCP v1.0 JSON schema specification.
+- **Target Implementation:** `packages/eoip/agents/mcp_pr_tools.py` + extension to `mcp_server.py`
+
+### KGR-G-018: Massively Parallel Deep Multi-Hop Analytics Engine (5+ Hops)
+- **Classification:** Performance / Analytics | **Priority:** P1 (Enterprise)
+- **Description:** The system SHALL provide a parallel sparse-matrix deep analytics engine using SciPy sparse CSR/CSC matrix operations and NumPy vectorized kernels to execute 5–10 hop traversal and analytics algorithms on 1M+ node graphs. Target use cases: fraud ring detection, AML path discovery, supply chain dependency chains, and blast-radius cascade simulations.
+- **Verification Criteria:**
+  - 5-hop BFS on a 1M-node graph completes in < 500ms on a single CPU core.
+  - 7-hop reachability matrix computation for fraud ring detection on 500K nodes in < 2.0 seconds.
+  - Results numerically equivalent to single-threaded baseline (deterministic).
+  - CPU cores saturated via `multiprocessing.Pool` partitioned subgraph decomposition.
+- **Target Implementation:** `packages/eoip/analytics/parallel_multihop.py` + integration into `algorithms.py`
+
+### KGR-G-019: Calibrated Uncertainty & Honest Abstain MCP Response Protocol
+- **Classification:** Trust / AI Quality | **Priority:** P0 (Core)
+- **Description:** The system SHALL embed a standardized uncertainty schema in every MCP tool response: `confidence_score` (float 0.0–1.0 reflecting data completeness, freshness, graph coverage), `uncertainty_reason` (explanation when confidence < 0.7), `abstain` (boolean when system cannot reliably answer), `evidence_chain` (array of source node/edge IDs used), and `coverage_percent` (fraction of relevant subspace consulted). AI coding assistants SHALL display `abstain=true` responses with a distinct visual indicator rather than showing them as authoritative answers.
+- **Verification Criteria:**
+  - Every MCP tool response includes all five schema fields with correct types.
+  - `confidence_score` correlates with actual accuracy on a held-out evaluation set (Spearman ρ ≥ 0.6).
+  - `abstain=true` triggered when: graph coverage < 30%, data staleness > 7 days, or query spans unindexed subgraph.
+  - Backward compatible — existing MCP clients ignoring new fields continue to work.
+- **Target Implementation:** `packages/eoip/agents/uncertainty_protocol.py` + MCP response schema update
+
+### KGR-G-020: Real-Time Graph Mutation Streaming & Webhook Notification
+- **Classification:** Integration / Operational | **Priority:** P1 (Enterprise)
+- **Description:** The system SHALL expose a real-time streaming interface for graph mutation events using Server-Sent Events (SSE) or WebSocket protocol, emitting structured change events (node_created, node_updated, node_deleted, edge_created, edge_deleted) with full metadata. Subscribers SHALL filter streams by entity label, property patterns, or subgraph scope. An optional webhook push notification service SHALL deliver filtered mutation events to registered HTTP endpoints within 1 second.
+- **Verification Criteria:**
+  - End-to-end latency from graph mutation to SSE client delivery < 100ms at P95.
+  - Subscriber filter expressions correctly include/exclude events for ≥ 1,000 concurrent subscribers.
+  - Webhook delivery achieves ≥ 99.5% success rate with exponential backoff retry (3 attempts).
+  - Air-gapped capable — operates without external message broker (no Kafka dependency in default mode).
+- **Target Implementation:** `packages/eoip/streaming/mutation_stream.py` + `api/v1/stream.py`
+
+---
+
+## 7d. Extended Requirements Summary (KGR-G-001 through KGR-G-020)
+
+| ID | Requirement | Priority | Status | Module |
+|----|-------------|----------|--------|--------|
+| `KGR-G-001` | Polyglot Cross-Repository AST Linker | P0 | Base implemented; cross-repo extension **Pending** | `ingestion/polyglot_linker.py` |
+| `KGR-G-002` | Local Multimodal Audio & Document Ingestion | P1 | **Pending** | `ingestion/multimodal_audio.py` |
+| `KGR-G-003` | Obsidian Vault & Interactive Knowledge Generator | P0 | **Pending** | `exporters/obsidian_vault.py` |
+| `KGR-G-004` | In-Memory High-Performance Graph Algorithm Engine | P0 | Implemented (`graph_algorithms.md`) | `analytics/algorithms.py` |
+| `KGR-G-005` | Universal Zero-ETL Virtual Relational Graph Adapter | P0 | Implemented (MS-5) | `moonshot/universal_transpiler.py` |
+| `KGR-G-006` | 2D Bitemporal CRDT Branch Engine & Merkle Audit | P0 | Implemented (MS-1) | `moonshot/bitemporal_state_machine.py` |
+| `KGR-G-007` | Autonomous Self-Healing Active Fabric | P0 | Implemented (MS-4) | `moonshot/self_healing.py` |
+| `KGR-G-008` | Zero-Trust Confidential Graph & Egress DLP Gateway | P0 | Implemented (MS-2) | `moonshot/confidential_graph.py` |
+| `KGR-G-009` | Neuro-Symbolic Agent Memory (AGAM) & IDE MCP | P0 | Implemented (MS-8) | `moonshot/neuro_symbolic_memory.py` |
+| `KGR-G-010` | Continuous Compliance Twin & AI-BOM Synthesizer | P0 | Implemented (MS-9) | `moonshot/compliance_twin.py` |
+| `KGR-G-011` | Formal Behavioral Verification at Merge Gate | P0 | **NEW — Pending** | `verification/behavioral_gate.py` |
+| `KGR-G-012` | Incremental Differential AST Re-Index (Git Hook) | P0 | **NEW — Pending** | `ingestion/incremental_indexer.py` |
+| `KGR-G-013` | Native Per-Tenant Named-Graph Isolation Protocol | P0 | **NEW — Pending** | `graph/named_graph.py` |
+| `KGR-G-014` | Streaming Temporal Agent Memory (Dual-Timeline) | P1 | **NEW — Pending** | `moonshot/streaming_agent_memory.py` |
+| `KGR-G-015` | LLM-Assisted Dynamic Ontology Induction | P1 | **NEW — Pending** | `moonshot/ontology_induction.py` |
+| `KGR-G-016` | Co-Located HNSW VectorGraph Adapter | P0 | **NEW — Pending** | `graph/vector_graph.py` |
+| `KGR-G-017` | PR-Level Cross-Repo Graph Impact Triage MCP Tools | P0 | **NEW — Pending** | `agents/mcp_pr_tools.py` |
+| `KGR-G-018` | Massively Parallel Deep Multi-Hop Analytics (5+ Hops) | P1 | **NEW — Pending** | `analytics/parallel_multihop.py` |
+| `KGR-G-019` | Calibrated Uncertainty & Honest Abstain MCP Protocol | P0 | **NEW — Pending** | `agents/uncertainty_protocol.py` |
+| `KGR-G-020` | Real-Time Graph Mutation Streaming & Webhooks | P1 | **NEW — Pending** | `streaming/mutation_stream.py` |
+
+---
+
 ## 8. Step 8: Quality, Production Verification & Commercial Market Readiness Gates
 
 All requirements defined in this specification are subject to non-negotiable enterprise quality gates:

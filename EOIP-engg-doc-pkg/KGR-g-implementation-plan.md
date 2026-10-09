@@ -188,5 +188,144 @@ The implementation plan operationalizes the **KGR-G** requirements into structur
   - Eliminates $1M+ annual Palantir SaaS bills.
   - Eliminates $50K+ Neo4j Enterprise cluster licensing per core.
   - Eliminates $10K/year per seat yFiles or Sourcegraph enterprise subscriptions.
+  - Eliminates $25K+/year Memgraph Enterprise cluster fees.
+  - Eliminates FalkorDB SSPL/TigerGraph proprietary licensing.
 - [x] **Developer Mindshare Integration:** Native MCP server compatibility with Claude Code, Cursor, Codex, and VS Code.
 - [x] **Enterprise Assurance:** Comprehensive automated test coverage (`2,209 passed tests`, `0 failures`).
+
+---
+
+## 6. Phase 6: Developer Velocity & Merge Intelligence (Weeks 11-12)
+**Target Requirements:** `KGR-G-011`, `KGR-G-012`, `KGR-G-017`
+
+### 6.1 Formal Behavioral Verification Gate (`packages/eoip/verification/behavioral_gate.py`)
+- **Objective:** Add a behavioral verification gate to the merge pipeline that proves behavioral equivalence of ontology-touching code changes using property-based testing and AST contract diffing, with a structured abstain path when verification scope is exceeded.
+- **Key Modules & Classes:**
+  - `BehavioralGate`: Orchestrates SHACL contract tests, `hypothesis`-based property tests, and AST signature diffing.
+  - `AbstractionScopeClassifier`: Determines which functions are in scope for full verification vs. structured abstain based on type annotation complexity.
+  - `AbstainRecord`: Structured JSON with `unverified_symbols`, `abstain_reason`, `coverage_percent`, and `blocking_threshold`.
+- **CI Integration:** Pre-merge hook emits a `behavioral-verification-report.json` artifact; R1+ Risk Level blocks merge on any verified failure.
+- **Verification Test:** `tests/unit/test_behavioral_gate.py` validating scope classification, abstain emission, and blocking behavior.
+
+### 6.2 Incremental Differential AST Re-Indexer (`packages/eoip/ingestion/incremental_indexer.py`)
+- **Objective:** Replace full workspace re-parse with a git-diff-driven incremental indexer that patches only changed-file AST deltas and propagates cross-file symbol impacts within the existing graph.
+- **Key Modules & Classes:**
+  - `IncrementalIndexer`: Parses `git diff --name-only HEAD~1` output and selectively re-runs tree-sitter parsing on changed files.
+  - `SymbolImpactPropagator`: Identifies cross-file CALLS/IMPORTS edges affected by renamed or deleted symbols and updates them atomically.
+  - `GitHookInstaller` (`scripts/install_git_hooks.py`): Registers `post-commit` and `post-merge` hooks that invoke incremental indexer.
+- **Performance Budget:** ≤ 2.0 seconds wall-clock for commits changing ≤ 100 files on standard CPU.
+- **Verification Test:** `tests/unit/test_incremental_indexer.py` asserting correctness equivalence with full re-index, symbol renaming propagation, and performance budget.
+
+### 6.3 PR-Level Impact Triage MCP Tools (`packages/eoip/agents/mcp_pr_tools.py`)
+- **Objective:** Expose `list_prs`, `get_pr_impact`, and `triage_prs` MCP tools that compute cross-repository blast radius, risk scores, regulatory flags, and owner notifications at PR creation time.
+- **Key Modules & Classes:**
+  - `PRImpactCalculator`: Traverses cross-repo dependency graph from changed symbols, computing ontology-weighted blast radius.
+  - `RiskScorer`: Deterministic scoring function combining: node count, ownership classifications, regulatory entity flags, and SLA tiers.
+  - `ReviewerSuggester`: Graph-based ownership traversal identifying team/person nodes with `OWNS` or `MAINTAINS` edges to affected services.
+- **MCP Schema:** Conforms to MCP v1.0 JSON schema. `get_pr_impact` responds in < 150ms for ≤ 5,000 affected nodes.
+- **Verification Test:** `tests/unit/test_mcp_pr_tools.py` validating cross-repo traversal, risk scoring determinism, and MCP schema compliance.
+
+---
+
+## 7. Phase 7: Storage Evolution & Streaming Infrastructure (Weeks 13-14)
+**Target Requirements:** `KGR-G-013`, `KGR-G-016`, `KGR-G-020`
+
+### 7.1 Named-Graph Tenant Isolation Protocol (`packages/eoip/graph/named_graph.py`)
+- **Objective:** Formalize the Named-Graph Isolation Protocol in the `GraphStore` port, providing fully isolated per-tenant named graph instances across all supported backends (HugeGraph, Neo4j, Neptune, In-Memory) without per-server overhead.
+- **Key Modules & Classes:**
+  - `NamedGraphStore`: Port-level named graph abstraction — `create_graph(tenant_id)`, `drop_graph(tenant_id)`, `switch_context(tenant_id)`.
+  - `CrossTenantIsolationGuard`: Middleware that intercepts all queries and verifies the active named-graph context matches the authenticated tenant.
+- **Security Contract:** Adversarial query injection tests confirm zero cross-tenant data visibility across all backends.
+- **Verification Test:** `tests/unit/test_named_graph.py` + `tests/security/test_cross_tenant_isolation.py`.
+
+### 7.2 Co-Located HNSW VectorGraph Adapter (`packages/eoip/graph/vector_graph.py`)
+- **Objective:** Embed an HNSW approximate nearest neighbor vector index within the graph storage engine, enabling sub-5ms unified vector similarity + graph traversal queries without cross-store ETL.
+- **Key Modules & Classes:**
+  - `VectorGraphAdapter`: Extends `GraphStore` with `upsert_embedding(node_id, vector)` and `vector_knn_neighbors(query_vector, k, hop_filter)`.
+  - `HNSWIndex`: Wraps `hnswlib` or `usearch` library for in-process approximate nearest neighbor search.
+  - `UnifiedVectorGraphPlanner`: Query planner that fuses KNN top-k retrieval with hop-bounded graph traversal in a single execution pass.
+- **Integration:** `rag/engine.py` updated to use `VectorGraphAdapter` as the default vector retrieval backend when available.
+- **Verification Test:** `tests/unit/test_vector_graph.py` asserting < 5ms P95 for combined vector + 2-hop query on 1M-node graph.
+
+### 7.3 Real-Time Graph Mutation Streaming (`packages/eoip/streaming/mutation_stream.py`)
+- **Objective:** Emit real-time Server-Sent Events (SSE) and optional webhook push notifications for graph mutation events (node/edge create, update, delete), with per-subscriber topic filtering and exponential backoff retry for webhook delivery.
+- **Key Modules & Classes:**
+  - `MutationEventBus`: In-process event bus that captures all `GraphStore` write operations and broadcasts to registered subscribers.
+  - `SSEStreamEndpoint` (`api/v1/stream.py`): FastAPI SSE endpoint with filter expression parsing (`label:Service AND property:team=payments`).
+  - `WebhookDeliveryWorker`: Background worker delivering filtered events to registered HTTP endpoints with ≥ 99.5% success rate.
+- **Air-Gap Requirement:** Default mode uses in-process event bus; Kafka/Pulsar integration is optional via `STREAM_BACKEND=kafka` config.
+- **Verification Test:** `tests/unit/test_mutation_stream.py` validating < 100ms P95 SSE delivery, filter accuracy, and webhook retry logic.
+
+---
+
+## 8. Phase 8: Intelligence Amplification (Weeks 15-17)
+**Target Requirements:** `KGR-G-014`, `KGR-G-015`, `KGR-G-018`, `KGR-G-019`
+
+### 8.1 Streaming Temporal Agent Memory (`packages/eoip/moonshot/streaming_agent_memory.py`)
+- **Objective:** Extend MS-8 AGAM with a streaming real-time update path using dual-timeline (`event_time` × `ingestion_time`) fact indexing, enabling AI agents to distinguish between "what actually happened" and "what the system knew" for precise incident response.
+- **Key Modules & Classes:**
+  - `StreamingMemoryIngester`: Async event consumer that processes agent interaction events and appends to the graph without full rebuild.
+  - `DualTimelineIndex`: B-tree secondary index on `(event_time, ingestion_time)` pairs for bitemporal point-in-time queries over the streaming memory store.
+- **Performance Budget:** ≥ 500 agent events/second sustained; < 500ms end-to-end fact propagation latency.
+- **Verification Test:** `tests/unit/test_streaming_agent_memory.py` verifying dual-timeline correctness and throughput benchmark.
+
+### 8.2 LLM-Assisted Ontology Induction (`packages/eoip/moonshot/ontology_induction.py`)
+- **Objective:** Extend MS-10 to ingest unstructured text corpora and jointly extract entities and induce OWL/SHACL schema classes using a local LLM, with type consolidation guard and SHACL anti-drift validation gate.
+- **Key Modules & Classes:**
+  - `CorpusOntologyInducer`: Splits text into semantic chunks, prompts local LLM for entity/relation extraction, and accumulates an induced schema graph.
+  - `TypeConsolidationGuard`: Computes embedding similarity between induced type candidates and existing ontology classes; merges semantically equivalent types.
+  - `InductionSHACLValidator`: Validates induced schema shapes against existing SHACL constraint graph; routes violations to human review queue.
+- **Air-Gap Requirement:** Uses local `llama-3.2` / `qwen2.5` models; no cloud API calls required.
+- **Verification Test:** `tests/unit/test_ontology_induction.py` using a 50-page engineering whitepaper as ground truth corpus.
+
+### 8.3 Massively Parallel Multi-Hop Analytics Engine (`packages/eoip/analytics/parallel_multihop.py`)
+- **Objective:** Provide SciPy CSR sparse matrix-based parallel execution of 5–10 hop traversal and analytics algorithms on 1M+ node graphs for fraud detection, AML, and supply chain use cases.
+- **Key Modules & Classes:**
+  - `ParallelMultiHopEngine`: Converts the graph adjacency to SciPy CSR sparse matrix representation; executes iterative matrix-vector products for BFS/reachability.
+  - `SubgraphPartitioner`: Decomposes large graphs into balanced subgraphs for `multiprocessing.Pool` parallel execution.
+  - `FraudRingDetector`: High-level algorithm combining multi-hop reachability with community detection to identify fraud ring structures.
+- **Performance Budget:** 5-hop BFS on 1M nodes < 500ms; 7-hop reachability on 500K nodes < 2.0 seconds.
+- **Verification Test:** `tests/unit/test_parallel_multihop.py` validating correctness equivalence and performance benchmarks.
+
+### 8.4 Calibrated Uncertainty & Honest Abstain MCP Protocol (`packages/eoip/agents/uncertainty_protocol.py`)
+- **Objective:** Embed a standardized uncertainty schema (`confidence_score`, `uncertainty_reason`, `abstain`, `evidence_chain`, `coverage_percent`) in every MCP tool response, enabling AI coding assistants to display uncertainty-aware answers.
+- **Key Modules & Classes:**
+  - `UncertaintySchemaEnforcer`: Middleware that wraps all MCP tool response objects and injects the five uncertainty fields based on real-time graph coverage metrics.
+  - `CoverageEstimator`: Computes `coverage_percent` by comparing the query's required subgraph scope against indexed graph extent.
+  - `StalenessSensor`: Monitors ingestion timestamps per entity type and triggers `abstain=true` when staleness exceeds the configured threshold (default 7 days).
+- **Verification Test:** `tests/unit/test_uncertainty_protocol.py` validating all five schema fields, Spearman correlation ≥ 0.6, and backward compatibility.
+
+---
+
+## 9. Extended Verification Matrix (KGR-G-011 through KGR-G-020)
+
+| Requirement ID | Module / Component | Verification Test Suite | SLA / Target Metric | Quality Gate |
+|----------------|--------------------|-------------------------|---------------------|--------------|
+| `KGR-G-011` | `verification/behavioral_gate.py` | `test_behavioral_gate.py` | Abstain JSON on scope exceeded | Structured abstain PASS |
+| `KGR-G-012` | `ingestion/incremental_indexer.py` | `test_incremental_indexer.py` | ≤ 2.0s for ≤ 100 file commit | Correctness equivalence PASS |
+| `KGR-G-013` | `graph/named_graph.py` | `test_cross_tenant_isolation.py` | Zero cross-tenant visibility | Adversarial injection PASS |
+| `KGR-G-014` | `moonshot/streaming_agent_memory.py` | `test_streaming_agent_memory.py` | ≥ 500 events/sec, < 500ms latency | Dual-timeline correctness PASS |
+| `KGR-G-015` | `moonshot/ontology_induction.py` | `test_ontology_induction.py` | ≥ 80% schema alignment; ≤ 20% type growth | SHACL gate + consolidation PASS |
+| `KGR-G-016` | `graph/vector_graph.py` | `test_vector_graph.py` | < 5ms P95 combined vector+2-hop | HNSW correctness PASS |
+| `KGR-G-017` | `agents/mcp_pr_tools.py` | `test_mcp_pr_tools.py` | < 150ms for ≤ 5K nodes; cross-repo ≥ 3 repos | Risk score determinism PASS |
+| `KGR-G-018` | `analytics/parallel_multihop.py` | `test_parallel_multihop.py` | 5-hop 1M nodes < 500ms; 7-hop 500K < 2s | Correctness + perf PASS |
+| `KGR-G-019` | `agents/uncertainty_protocol.py` | `test_uncertainty_protocol.py` | ρ ≥ 0.6; backward compat | Uncertainty schema PASS |
+| `KGR-G-020` | `streaming/mutation_stream.py` | `test_mutation_stream.py` | < 100ms SSE P95; ≥ 99.5% webhook | Air-gap capable PASS |
+
+---
+
+## 10. Updated Market Readiness Differentiators (KGR-G Complete)
+
+| Capability | Graphify | Neo4j | Stardog | TigerGraph | FalkorDB | Memgraph | Palantir | **EOIP (KGR-G Complete)** |
+|------------|---------|-------|---------|-----------|---------|---------|---------|--------------------------|
+| Air-gapped sovereign | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | **✅** |
+| Formal behavioral verification | ⚠️ Advisory | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ SHACL + hypothesis** |
+| Incremental AST re-index | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ < 2s git hook** |
+| Co-located HNSW vector+graph | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | **✅ VectorGraph adapter** |
+| Bitemporal 2D time warp | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ⚠️ | **✅ MS-1 + Streaming (KGR-G-014)** |
+| LLM ontology induction | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ⚠️ | **✅ SHACL-gated anti-drift** |
+| Calibrated uncertainty / honest abstain | ✅ Advisory | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ 5-field uncertainty schema** |
+| Real-time streaming graph mutations | ❌ | ❌ | ❌ | ⚠️ | ✅ Kafka | ✅ CDC | ❌ | **✅ SSE + webhook, no Kafka** |
+| Parallel deep multi-hop 5+ hops | ❌ | ❌ | ❌ | ✅ GSQL | ✅ GraphBLAS | ✅ | ❌ | **✅ SciPy sparse matrix** |
+| W3C OWL/SHACL ontology | ❌ | ⚠️ Plugin | ✅ | ❌ | ❌ | ❌ | ❌ | **✅ Native** |
+| Self-healing + compliance twin | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ⚠️ | **✅ MS-4 + MS-9** |

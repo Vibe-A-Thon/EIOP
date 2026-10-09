@@ -120,7 +120,60 @@ In accordance with enterprise requirements and architectural specifications, 8 a
 
 ---
 
-## 6. Verification Commands & Receipts
+## 6. KGR-G Requirements Status Tracking (KGR-G-001 through KGR-G-020)
+
+### 6.1 KGR-G-001 to KGR-G-010 — Implementation Evidence
+
+The following table maps each KGR-G requirement (defined in `EOIP-engg-doc-pkg/KGR-g-requirements.md`) to its implementation evidence within the verified platform baseline:
+
+| ID | Requirement | Implementation Evidence | Test Evidence | Status |
+|----|-------------|------------------------|---------------|--------|
+| `KGR-G-001` | Polyglot Cross-Repository AST Linker | `packages/eoip/ingestion/code_graph.py` — parses Python, TypeScript, JavaScript, Go, Java, Rust, C/C++. Cross-repo `polyglot_linker.py` extension **not yet created**. | `tests/unit/` code graph tests pass. Cross-repo linker tests pending. | **Base: IMPLEMENTED** / Cross-repo extension: **PENDING** |
+| `KGR-G-002` | Local Multimodal Audio & Document Ingestion | `multimodal_audio.py` module not yet created. Text/code/doc ingestion is live. | Audio transcription test pending. | **PENDING** |
+| `KGR-G-003` | Obsidian Vault & Interactive Knowledge Generator | Web UI exports Obsidian Vault format via multi-format export panel. `exporters/obsidian_vault.py` dedicated module not yet created. | Web export tests exist; dedicated vault exporter test pending. | **Partial (Web UI)** / Dedicated exporter: **PENDING** |
+| `KGR-G-004` | In-Memory High-Performance Graph Algorithm Engine | `graph_algorithms.md` implementation with Leiden, PageRank, BFS. Referenced in `analytics/algorithms.py`. | `tests/unit/test_graph_algorithms.py` — performance benchmarks pass. | **IMPLEMENTED** |
+| `KGR-G-005` | Universal Zero-ETL Virtual Relational Graph Adapter | `packages/eoip/moonshot/universal_transpiler.py` — MS-5 Universal Multi-Dialect Transpiler with Phantom Virtual Graph views. | `tests/unit/test_moonshots.py::test_universal_transpiler` — PASS | **IMPLEMENTED (MS-5)** |
+| `KGR-G-006` | 2D Bitemporal CRDT Branch Engine & Merkle Audit | `packages/eoip/moonshot/bitemporal_state_machine.py` — 2D temporal indexing (valid_time × transaction_time), CRDT merge, Merkle root. | `tests/unit/test_moonshots.py::test_bitemporal_state_machine` — PASS | **IMPLEMENTED (MS-1)** |
+| `KGR-G-007` | Autonomous Self-Healing Active Fabric | `packages/eoip/moonshot/self_healing.py` — drift detection, Git PR generation, Terraform HCL, R0-R4 approval gates. | `tests/unit/test_moonshots.py::test_self_healing_fabric` — PASS | **IMPLEMENTED (MS-4)** |
+| `KGR-G-008` | Zero-Trust Confidential Graph & Egress DLP Gateway | `packages/eoip/moonshot/confidential_graph.py` + `egress/gateway.py` — homomorphic encryption, HMAC blind index, DLP egress filter. | `tests/unit/test_moonshots.py::test_confidential_graph` + `test_egress_gateway.py` — PASS | **IMPLEMENTED (MS-2)** |
+| `KGR-G-009` | Neuro-Symbolic Agent Memory (AGAM) & IDE MCP Server | `packages/eoip/moonshot/neuro_symbolic_memory.py` + `agents/mcp_server.py` — salience decay, SHACL guardrails, MCP endpoints < 25ms. | `tests/unit/test_moonshots.py::test_neuro_symbolic_memory` — PASS | **IMPLEMENTED (MS-8)** |
+| `KGR-G-010` | Continuous Compliance Twin & AI-BOM Synthesizer | `packages/eoip/moonshot/compliance_twin.py` — AI-BOM (CycloneDX + SPDX 3.0), EU AI Act, SOC 2 Type II, ISO 42001, SHA-256 seals. | `tests/unit/test_moonshots.py::test_compliance_twin` — PASS | **IMPLEMENTED (MS-9)** |
+
+### 6.2 KGR-G-011 to KGR-G-020 — New Requirements (Pending Implementation)
+
+The following requirements were identified through extended competitive research (TigerGraph, FalkorDB, Memgraph, Graphiti, Graphify Enterprise, AutoSchemaKG) conducted on 2026-10-09. They represent the next phase of platform capabilities needed to surpass the competitive landscape.
+
+| ID | Requirement | Priority | Target Module | Phase |
+|----|-------------|----------|---------------|-------|
+| `KGR-G-011` | Formal Behavioral Verification at Merge Gate | P0 | `verification/behavioral_gate.py` | Phase 6 (Wks 11-12) |
+| `KGR-G-012` | Incremental Differential AST Re-Index (Git Hook) | P0 | `ingestion/incremental_indexer.py` | Phase 6 (Wks 11-12) |
+| `KGR-G-013` | Native Per-Tenant Named-Graph Isolation Protocol | P0 | `graph/named_graph.py` | Phase 7 (Wks 13-14) |
+| `KGR-G-014` | Streaming Temporal Agent Memory (Dual-Timeline) | P1 | `moonshot/streaming_agent_memory.py` | Phase 8 (Wks 15-17) |
+| `KGR-G-015` | LLM-Assisted Dynamic Ontology Induction | P1 | `moonshot/ontology_induction.py` | Phase 8 (Wks 15-17) |
+| `KGR-G-016` | Co-Located HNSW VectorGraph Adapter | P0 | `graph/vector_graph.py` | Phase 7 (Wks 13-14) |
+| `KGR-G-017` | PR-Level Cross-Repo Graph Impact Triage MCP Tools | P0 | `agents/mcp_pr_tools.py` | Phase 6 (Wks 11-12) |
+| `KGR-G-018` | Massively Parallel Deep Multi-Hop Analytics (5+ Hops) | P1 | `analytics/parallel_multihop.py` | Phase 8 (Wks 15-17) |
+| `KGR-G-019` | Calibrated Uncertainty & Honest Abstain MCP Protocol | P0 | `agents/uncertainty_protocol.py` | Phase 8 (Wks 15-17) |
+| `KGR-G-020` | Real-Time Graph Mutation Streaming & Webhooks | P1 | `streaming/mutation_stream.py` | Phase 7 (Wks 13-14) |
+
+---
+
+## 6b. Competitive Research Summary (2026-10-09)
+
+Extended competitive research conducted for KGR-G v2 extended analysis identified six additional tools not covered in the original KGR-G-001..010 baseline:
+
+| Tool | Category | Key Differentiators | EOIP Advantage |
+|------|----------|---------------------|----------------|
+| **TigerGraph Enterprise** | Parallel graph analytics | GSQL 40-337× faster on 5+ hop; massively parallel C++ | EOIP: SciPy sparse open-source alternative + OWL/SHACL ontology |
+| **FalkorDB** | GraphBLAS sparse engine | HNSW co-located with graph; native multi-graph; 496× Neo4j P50 | EOIP: Apache-licensed, semantic reasoning, air-gapped |
+| **Memgraph** | In-memory streaming graph | Atomic GraphRAG workflow (v3.8+); real-time CDC streaming | EOIP: No BSL/Kafka dependency; sovereign air-gapped mode |
+| **Graphiti (Zep)** | Temporal agent memory | Streaming real-time KG updates; dual-timeline fact tracking; no-LLM retrieval | EOIP: Enterprise multi-tenancy, SHACL guardrails, air-gapped |
+| **Graphify Enterprise** | Code knowledge graph + PR gate | Formal behavioral verification; honest abstain; git hook re-index; `triage_prs` MCP | EOIP: Full semantic ontology + compliance + self-healing + 2D bitemporality |
+| **AutoSchemaKG / GrOIL** | LLM ontology induction | 92% schema alignment from 50M docs; joint extraction + schema induction | EOIP: SHACL-gated anti-drift guard prevents type proliferation and semantic drift |
+
+---
+
+## 7. Verification Commands & Receipts
 
 To reproduce and verify the platform state independently, execute the following commands in the workspace root:
 
