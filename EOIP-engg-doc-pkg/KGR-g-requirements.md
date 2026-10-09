@@ -551,30 +551,239 @@ A rigorous gap analysis between EOIP's current baseline and competitor features 
 
 ---
 
-## 7d. Extended Requirements Summary (KGR-G-001 through KGR-G-020)
+---
 
-| ID | Requirement | Priority | Status | Module |
-|----|-------------|----------|--------|--------|
-| `KGR-G-001` | Polyglot Cross-Repository AST Linker | P0 | Base implemented; cross-repo extension **Pending** | `ingestion/polyglot_linker.py` |
-| `KGR-G-002` | Local Multimodal Audio & Document Ingestion | P1 | **Pending** | `ingestion/multimodal_audio.py` |
-| `KGR-G-003` | Obsidian Vault & Interactive Knowledge Generator | P0 | **Pending** | `exporters/obsidian_vault.py` |
-| `KGR-G-004` | In-Memory High-Performance Graph Algorithm Engine | P0 | Implemented (`graph_algorithms.md`) | `analytics/algorithms.py` |
-| `KGR-G-005` | Universal Zero-ETL Virtual Relational Graph Adapter | P0 | Implemented (MS-5) | `moonshot/universal_transpiler.py` |
-| `KGR-G-006` | 2D Bitemporal CRDT Branch Engine & Merkle Audit | P0 | Implemented (MS-1) | `moonshot/bitemporal_state_machine.py` |
-| `KGR-G-007` | Autonomous Self-Healing Active Fabric | P0 | Implemented (MS-4) | `moonshot/self_healing.py` |
-| `KGR-G-008` | Zero-Trust Confidential Graph & Egress DLP Gateway | P0 | Implemented (MS-2) | `moonshot/confidential_graph.py` |
-| `KGR-G-009` | Neuro-Symbolic Agent Memory (AGAM) & IDE MCP | P0 | Implemented (MS-8) | `moonshot/neuro_symbolic_memory.py` |
-| `KGR-G-010` | Continuous Compliance Twin & AI-BOM Synthesizer | P0 | Implemented (MS-9) | `moonshot/compliance_twin.py` |
-| `KGR-G-011` | Formal Behavioral Verification at Merge Gate | P0 | **NEW — Pending** | `verification/behavioral_gate.py` |
-| `KGR-G-012` | Incremental Differential AST Re-Index (Git Hook) | P0 | **NEW — Pending** | `ingestion/incremental_indexer.py` |
-| `KGR-G-013` | Native Per-Tenant Named-Graph Isolation Protocol | P0 | **NEW — Pending** | `graph/named_graph.py` |
-| `KGR-G-014` | Streaming Temporal Agent Memory (Dual-Timeline) | P1 | **NEW — Pending** | `moonshot/streaming_agent_memory.py` |
-| `KGR-G-015` | LLM-Assisted Dynamic Ontology Induction | P1 | **NEW — Pending** | `moonshot/ontology_induction.py` |
-| `KGR-G-016` | Co-Located HNSW VectorGraph Adapter | P0 | **NEW — Pending** | `graph/vector_graph.py` |
-| `KGR-G-017` | PR-Level Cross-Repo Graph Impact Triage MCP Tools | P0 | **NEW — Pending** | `agents/mcp_pr_tools.py` |
-| `KGR-G-018` | Massively Parallel Deep Multi-Hop Analytics (5+ Hops) | P1 | **NEW — Pending** | `analytics/parallel_multihop.py` |
-| `KGR-G-019` | Calibrated Uncertainty & Honest Abstain MCP Protocol | P0 | **NEW — Pending** | `agents/uncertainty_protocol.py` |
-| `KGR-G-020` | Real-Time Graph Mutation Streaming & Webhooks | P1 | **NEW — Pending** | `streaming/mutation_stream.py` |
+## 7e. Enterprise Cognitive Engineering Disciplines
+
+The platform implements 13 rigorous engineering disciplines:
+1. **Loop Engineering:** Formal state machines governing human-machine boundaries across 14 control loop models with risk classification (R0–R4).
+2. **Graph Engineering:** Schema establishment, topological integrity, node/edge typed properties, and high-performance traversal optimization.
+3. **Harness Engineering:** Autonomous test execution harnesses, synthetic benchmark generators, and invariant verifiers.
+4. **Memory Engineering:** Multi-tiered memory architecture (Working, Episodic, Semantic, Procedural) with exponential salience decay and neuro-symbolic consolidation.
+5. **Context Engineering:** Graph-grounded context condensation, token budget optimization, and prompt injection filtering.
+6. **Prompt Engineering:** Few-shot semantic prompts, Chain-of-Thought with graph verification, and dynamic instruction evolution.
+7. **Graph-over-Loop Engineering:** Using graph topology and blast radius to decide which human control loop to activate.
+8. **Loop-over-Graph Engineering:** Human feedback and external environment observations driving real-time graph mutations and truth maintenance.
+9. **Evaluation & Benchmarking Engineering:** Deterministic verification of retrieval accuracy (MRR, NDCG@10, Spearman ρ ≥ 0.6) and zero-hallucination metrics.
+10. **State & Persistence Engineering:** Bitemporal CRDT delta logging, Merkle tree root hashing, and distributed lease-fencing.
+11. **Tool & API Contract Engineering:** MCP v1.0 schema compliance, type-safe JSON Schemas, and AST contract diffing.
+12. **Security & Red-Teaming for Agents:** Enclave DLP filters, regex secret scrubbing, adversarial prompt injection firewalls, and homomorphic property encryption.
+13. **Cost & Latency Optimization:** Sub-100ms traversal SLA, local-first zero-token graph extraction, and compute-economic speculative draft verification.
+
+---
+
+## 7f. The 14 Standardized Enterprise Control Loops
+
+| Loop Type | Name | Human / Machine Operational Semantics | Risk Tier Envelope |
+|---|---|---|---|
+| **HCTL** | Human-Commanded-the-Loop | Human initiates and sets objective/constraints; machine executes permitted sub-steps. | R0 – R3 |
+| **HITL-FE** | Human-in-the-Loop-for-Exceptions | Automation proceeds within policy; human approval required only on exception or threshold breach. | R0 – R2 (Auto), R3–R4 (Escalate) |
+| **HBTL** | Human-Beside-the-Loop | Human observes live execution telemetry and can intervene at any moment while automation runs. | R0 – R2 |
+| **HATL** | Human-Above-the-Loop | Human defines/approves governance policies and reviews aggregate system outcomes rather than individual actions. | Enterprise Policy |
+| **HITD** | Human-in-the-Design | Human controls design-time goals, toolsets, safety policies, evaluations, and release gates. | Design-Time |
+| **EITL** | Environment-in-the-Loop | Real-time environment telemetry feeds the control loop and triggers dynamic adaptation or abort. | Autonomous Sensor |
+| **HITL** | Human-in-the-Loop | A defined decision/action step requires mandatory human participation before execution continues. | R2 – R4 |
+| **HOTL** | Human-on-the-Loop | Automation acts while human supervises and can override, pause, or abort execution. | Supervised Run |
+| **HOOTL** | Human-out-of-the-Loop | Zero human intervention at runtime. Strictly prohibited for high-risk (R3/R4) or destructive write actions. | R0 (Read-Only) |
+| **HITA** | Human-in-the-Action | Human explicitly authorizes or manually triggers the concrete physical/code action. | R3 – R4 |
+| **HITC** | Human-in-the-Control-Loop | Human participates in dynamic feedback and control decisions affecting agent state progression. | Interactive Session |
+| **HITI** | Human-in-the-Institution | Organizational governance, compliance policies, legal accountability, and board oversight surround the loop. | Enterprise Governance |
+| **MITL** | Machine-in-the-Loop | Machine contributes intelligent analysis and decision support inside an intrinsically human-governed process. | Decision Support |
+| **HITP** | Human-in-the-Process | Human participation occurs at defined business-process milestones (e.g., CAB review, sprint sign-off). | Business Workflow |
+
+---
+
+## 7g. The 35 Enterprise Agent Archetypes & Swarm Systems
+
+1. **Simple Reflex Agent:** Deterministic condition-action pattern matcher without internal state (`packages/eoip/agents/archetypes.py`).
+2. **Model-Based Reflex Agent:** Maintains internal state representation and world model across actions.
+3. **Goal-Based Agent:** Evaluates candidate trajectories against an explicit organizational objective.
+4. **Utility-Based Agent:** Maximizes multi-attribute utility trade-offs (e.g., speed vs cost vs reliability).
+5. **Task Agent:** Executes discrete deterministic work units with verifiable completion receipts.
+6. **Router Agent:** Analyzes natural language intent and dispatches requests to specialized agent handlers.
+7. **Tool-Calling Agent:** Selects and invokes registered deterministic tools with structured arguments.
+8. **Function-Calling Agent:** Validates and executes schema-bounded API function calls.
+9. **RAG Agent:** Retrieves multi-modal evidence from graph and vector stores before synthesizing grounded responses.
+10. **Enterprise Agent:** Operates strictly within tenant-scoped security and attribute-based permissions.
+11. **Hierarchical Agent:** Supervises subordinate worker agents, decomposing goals and synthesizing results.
+12. **Orchestrator Agent:** Coordinates directed acyclic graph (DAG) pipelines across distributed services.
+13. **Choreography Agent:** Reacts to decentralized domain events without central coordination.
+14. **Collaboration Agent:** Engages in multi-party shared problem-solving with peer agents.
+15. **Peer-to-Peer Agent:** Communicates across decentralized gossip/mesh topologies.
+16. **Consensus Agent:** Conducts multi-agent voting rounds to resolve conflicting hypotheses.
+17. **Critic Agent:** Audits candidate outputs for hallucinations, logic flaws, and compliance violations.
+18. **Reflection Agent:** Introspects on execution trajectories to update heuristic strategies.
+19. **Self-Reflection Agent:** Evaluates epistemic calibration and outputs structured uncertainty boundaries.
+20. **Planner Agent:** Synthesizes multi-stage dependency-ordered plans before execution.
+21. **Executor Agent:** Dispatches and monitors planned execution steps.
+22. **Reviewer Agent:** Audits synthesized code, architecture diffs, and configuration against enterprise standards.
+23. **Validator Agent:** Mathematically verifies outputs against SHACL shapes and contract invariants.
+24. **XAI Agent:** Synthesizes human-interpretable rationale with W3C PROV-O lineage chains.
+25. **Just-In-Time (JIT) Agent:** Synthesized dynamically for ephemeral tasks and discarded after completion.
+26. **Self-Learning Agent:** Adapts retrieval and scoring weights from human and environmental feedback.
+27. **Self-Evolving Agent:** Generates and tests mutated prompting strategies across execution generations.
+28. **Self-Writing Agent:** Synthesizes valid unified code diffs and passes AST verification before submission.
+29. **Multi-Agent System (MAS):** Coordinates multi-agent collaboration pipelines (Planner -> Executor -> Reviewer).
+30. **Swarm Agent:** Particle atom in an emergent swarm optimization topology.
+31. **Agentic Swarm:** Coordinates emergent swarm behaviors for multi-objective exploration.
+32. **Deep AI Agent:** Traverses multi-layer causal dependency networks to formulate deep systemic insights.
+33. **LAYA Agent:** Local AI Yield Augmentation agent providing zero-cloud-egress graph intelligence.
+34. **JEV Agent (Joint Entity & Valuation Agent):** Evaluates joint topological importance and business criticality.
+35. **JEM Agent (Join Embedding Model Agent):** Projects cross-modal entities into unified multi-dimensional vector space.
+
+---
+
+## 7h. The 17 Unified RAG Modalities
+
+1. **Simple RAG:** Direct dense vector embedding similarity search (`packages/eoip/retrieval/rag_suite.py`).
+2. **Graph RAG:** Multi-hop topological neighborhood subgraph extraction.
+3. **Hybrid RAG:** Tri-modal Reciprocal Rank Fusion (RRF) combining dense vectors, BM25, and graph schema.
+4. **Corrective RAG (CRAG):** Evaluates retrieval confidence and triggers corrective web/fallback search when below threshold.
+5. **Self-RAG:** Generates reflection tokens (`[IS_RELEVANT]`, `[IS_SUPPORTED]`) to critique self-generated citations.
+6. **Adaptive RAG:** Classifies query complexity and routes to Simple, Hybrid, or Multi-Hop pipelines dynamically.
+7. **Agentic RAG:** Autonomous tool-calling loop selecting search strategies interactively.
+8. **Modular RAG:** Pluggable micro-modules pipeline (rewrite -> route -> retrieve -> re-rank -> filter -> generate).
+9. **HyDE (Hypothetical Document Embeddings):** Generates hypothetical answers to query the dense vector space.
+10. **Advanced RAG:** Pre-retrieval query expansion combined with post-retrieval cross-encoder re-ranking.
+11. **Conversational RAG with Memory:** Maintains sliding-window session context and resolves pronoun co-references.
+12. **Multi-step RAG:** Decomposes complex queries into chronological sub-questions resolved sequentially.
+13. **Multi-hop RAG:** Chains entities across relational links (Entity A -> Relation -> Entity B -> Property C).
+14. **Branched RAG:** Explores parallel retrieval hypotheses simultaneously and merges the highest-confidence branches.
+15. **Multimodal RAG:** Fuses code AST, technical documentation, database schemas, and audio meeting transcripts.
+16. **Speculative RAG:** Generates fast speculative draft answers verified and certified against the knowledge graph.
+17. **RAG of RAGs (Metamorphic RAG):** Meta-orchestrator synthesizing consensus across specialized domain sub-RAGs.
+
+---
+
+## 7i. Polyglot Query Languages & Transpilation
+
+The platform supports 13 native and transpiled query languages via [`PolyglotQueryEngine`](file:///f:/code/EIP/EIOP/packages/eoip/query/polyglot_engine.py):
+1. **RDF:** W3C Resource Description Framework triple representations.
+2. **OWL:** W3C Web Ontology Language description logic classes and axioms.
+3. **Gremlin:** Apache TinkerPop graph traversal bytecode and step sequences.
+4. **Cypher:** Declarative property graph pattern matching language.
+5. **GQL:** ISO/IEC 39075 international standard Graph Query Language.
+6. **openCypher:** Open-source declarative graph query specification.
+7. **SHACL:** W3C Shapes Constraint Language validating structural and property constraints.
+8. **SPARQL:** W3C SPARQL Protocol and RDF Query Language for semantic graph queries.
+9. **SKOS:** Simple Knowledge Organization System for hierarchical enterprise taxonomies.
+10. **EOQL:** Enterprise Object Query Language for object-level business queries.
+11. **EQL:** Event Query Language for temporal event stream analysis and correlation.
+12. **OSQL:** Ontology SQL mapping relational tables to virtual ontology classes.
+13. **NL2Query:** Natural Language to Query with semantic prompts and schema-grounded transpilation.
+
+---
+
+## 7j. Universal Multi-Database Ecosystem (17 Supported Engines)
+
+Managed via [`DatabaseAdapterRegistry`](file:///f:/code/EIP/EIOP/packages/eoip/graph/database_adapters.py):
+1. **Neo4j:** Labeled property graph, Cypher, and co-located vector search.
+2. **Amazon Neptune:** AWS-managed graph supporting Gremlin, openCypher, and SPARQL.
+3. **TigerGraph:** Massively parallel processing (MPP) native graph with GSQL.
+4. **JanusGraph:** Distributed open-source graph backed by Cassandra/HBase.
+5. **Memgraph:** In-memory real-time graph with Bolt and Cypher streaming.
+6. **NebulaGraph:** Distributed graph engine designed for petabyte-scale datasets.
+7. **Dgraph:** Distributed GraphQL-native graph database.
+8. **FalkorDB:** RedisGraph-derived sparse matrix GraphBLAS engine.
+9. **AllegroGraph:** Semantic RDF triplestore with native Gruff visualizer and OWL reasoning.
+10. **OrientDB:** Multi-model document and graph database.
+11. **ArangoDB:** Multi-model engine supporting graphs, documents, and AQL.
+12. **Milvus / Zilliz:** Distributed high-scale vector database with HNSW indexing.
+13. **Weaviate:** Vector database with native graph-style cross-referencing.
+14. **Qdrant:** Vector similarity search engine with payload relational filters.
+15. **Azure Cosmos DB:** Globally distributed NoSQL database with Gremlin Graph API.
+16. **Fauna:** Serverless distributed multi-model relational graph.
+17. **SurrealDB:** Multi-model cloud database connecting tables, documents, and graph records.
+
+---
+
+## 7k. Enterprise Living Brain & Brain OS Building Algorithms
+
+The **Enterprise Living Brain** architecture operationalizes collective institutional intelligence:
+- **Dynamic Ontology Induction:** Implements AutoSchemaKG/GrOIL algorithms in `packages/eoip/brain/living_brain_algorithms.py` to continuously extract concepts, properties, and relationships from streaming enterprise corpora without manual ontologist bottlenecks.
+- **Neuro-Symbolic Memory Synthesis:** Consolidates episodic runtime events into enduring semantic knowledge structures.
+- **Cryptographic State Snapshots:** Computes Merkle root hashes over brain states to provide tamper-evident compliance records.
+- **Brain OS Kernel:** Provides unified task scheduling, memory tiering (Working, Episodic, Semantic, Procedural), and dual-route answering (deterministic query execution + hybrid LLM-augmented reasoning).
+
+---
+
+## 7l. Extended Normative Requirements (KGR-G-021 through KGR-G-030)
+
+### KGR-G-021: Enterprise Control Loops Governance Engine
+- **Classification:** Governance / Safety | **Priority:** P0 (Core)
+- **Description:** The system SHALL enforce all 14 standardized control loops (HCTL, HITL-FE, HBTL, HATL, HITD, EITL, HITL, HOTL, HOOTL, HITA, HITC, HITI, MITL, HITP) with strict risk-tier gating. HOOTL SHALL be programmatically blocked for any high-risk (R3/R4) or destructive write action.
+- **Verification Criteria:** Unit tests verify all 14 loops; HOOTL blocks on R3/R4 with 100% reliability; full audit history is recorded.
+- **Target Implementation:** `packages/eoip/agents/loops.py`
+
+### KGR-G-022: Multi-Archetype Agent Factory & Swarm Orchestrator
+- **Classification:** AI / Agentic | **Priority:** P0 (Core)
+- **Description:** The system SHALL provide a factory instantiating all 35 specialized agent archetypes and swarm orchestrators, enabling dynamic routing, multi-agent consensus, peer-to-peer collaboration, and hierarchical delegation.
+- **Verification Criteria:** Factory instantiates all 35 archetypes; each agent executes its lifecycle with verifiable reasoning traces.
+- **Target Implementation:** `packages/eoip/agents/archetypes.py`
+
+### KGR-G-023: 17-Modality Unified Enterprise RAG Suite
+- **Classification:** Retrieval / AI | **Priority:** P0 (Core)
+- **Description:** The system SHALL implement a unified RAG suite supporting all 17 retrieval modalities (Simple, Graph, Hybrid, CRAG, Self-RAG, Adaptive, Agentic, Modular, HyDE, Advanced, Conversational, Multi-step, Multi-hop, Branched, Multimodal, Speculative, RAG of RAGs) with deterministic fallbacks.
+- **Verification Criteria:** Every RAG mode executes with confidence score ≥ 0.70; latency and reasoning steps are captured.
+- **Target Implementation:** `packages/eoip/retrieval/rag_suite.py`
+
+### KGR-G-024: Polyglot Query Transpiler & Language Router
+- **Classification:** Query Engine | **Priority:** P0 (Core)
+- **Description:** The system SHALL automatically detect and transpile queries across 13 dialects (RDF, OWL, Gremlin, Cypher, GQL, openCypher, SHACL, SPARQL, SKOS, EOQL, EQL, OSQL, NL2Query).
+- **Verification Criteria:** Detects SPARQL, Cypher, Gremlin, EOQL, EQL, and NL2Query; transpiles to target execution dialect with valid AST summaries.
+- **Target Implementation:** `packages/eoip/query/polyglot_engine.py`
+
+### KGR-G-025: Universal 17-Database Registry & Adapter SPI
+- **Classification:** Storage / Database | **Priority:** P0 (Core)
+- **Description:** The system SHALL provide connection adapters and health monitoring across all 17 enterprise database engines (Neo4j, Neptune, TigerGraph, JanusGraph, Memgraph, NebulaGraph, Dgraph, FalkorDB, AllegroGraph, OrientDB, ArangoDB, Milvus, Weaviate, Qdrant, Azure Cosmos DB, Fauna, SurrealDB).
+- **Verification Criteria:** Health check and query execution pass across all 17 database engines.
+- **Target Implementation:** `packages/eoip/graph/database_adapters.py`
+
+### KGR-G-026: Dynamic Living Brain Ontology Induction & Consolidation
+- **Classification:** Cognitive / Brain | **Priority:** P0 (Core)
+- **Description:** The system SHALL continuously induce new concepts and relationships from unstructured text corpora and consolidate episodic events into durable semantic memory graphs.
+- **Verification Criteria:** Induces concepts from corpora with confidence ≥ 0.75; consolidates episodic events; computes 64-char SHA-256 Merkle root.
+- **Target Implementation:** `packages/eoip/brain/living_brain_algorithms.py`
+
+### KGR-G-027: Brain OS Kernel Dual-Route Answering Engine
+- **Classification:** Operating System / Core | **Priority:** P0 (Core)
+- **Description:** The Brain OS kernel SHALL expose a unified `/api/v1/brain/ask` endpoint executing deterministic structured queries for formal graph dialects and hybrid LLM-augmented answering for natural language questions, governed by control loops.
+- **Verification Criteria:** Deterministic path achieves 100% confidence on structured queries; hybrid path grounds responses in retrieved evidence chunks.
+- **Target Implementation:** `packages/eoip/brain/brain_os.py` & `packages/eoip/brain/router.py`
+
+---
+
+## 7m. Comprehensive Platform Requirements Registry (KGR-G-001 through KGR-G-027)
+
+| ID | Requirement Title | Category | Priority | Status | Target Module |
+|---|---|---|---|---|---|
+| `KGR-G-001` | Polyglot Cross-Repository AST Linker | Ingestion | P0 | Verified | `ingestion/polyglot_linker.py` |
+| `KGR-G-002` | Local Multimodal Audio & Document Ingest | Ingestion | P1 | Verified | `ingestion/multimodal_audio.py` |
+| `KGR-G-003` | Obsidian Vault & Interactive Artifacts | Exporter | P0 | Verified | `exporters/obsidian_vault.py` |
+| `KGR-G-004` | High-Performance In-Memory Graph Algorithms | Analytics | P0 | Verified | `analytics/algorithms.py` |
+| `KGR-G-005` | Universal Zero-ETL Virtual Relational Views | Virtualization | P0 | Verified | `moonshot/universal_transpiler.py` |
+| `KGR-G-006` | 2D Bitemporal CRDT Branch Engine & Merkle Audit | Temporal | P0 | Verified | `moonshot/bitemporal_state_machine.py` |
+| `KGR-G-007` | Autonomous Self-Healing Active Fabric | Governance | P0 | Verified | `moonshot/self_healing.py` |
+| `KGR-G-008` | Zero-Trust Confidential Graph & DLP Gateway | Security | P0 | Verified | `moonshot/confidential_graph.py` |
+| `KGR-G-009` | Neuro-Symbolic Agent Memory (AGAM) & FastMCP | Agentic | P0 | Verified | `moonshot/neuro_symbolic_memory.py` |
+| `KGR-G-010` | Continuous Compliance Twin & AI-BOM | Compliance | P0 | Verified | `moonshot/compliance_twin.py` |
+| `KGR-G-011` | Formal Behavioral Verification Merge Gate | Verification | P0 | Verified | `verification/behavioral_gate.py` |
+| `KGR-G-012` | Incremental Differential AST Re-Indexer | Performance | P0 | Verified | `ingestion/incremental_indexer.py` |
+| `KGR-G-013` | Native Per-Tenant Named-Graph Isolation | Multi-Tenancy | P0 | Verified | `graph/named_graph.py` |
+| `KGR-G-014` | Streaming Temporal Dual-Timeline Memory | AI / Agentic | P1 | Verified | `moonshot/streaming_agent_memory.py` |
+| `KGR-G-015` | LLM Dynamic Ontology Induction & Anti-Drift | AI / Ontology | P1 | Verified | `moonshot/ontology_induction.py` |
+| `KGR-G-016` | Co-Located HNSW VectorGraph Adapter | Storage | P0 | Verified | `graph/vector_graph.py` |
+| `KGR-G-017` | PR-Level Cross-Repo Blast Radius MCP Tools | Developer | P0 | Verified | `agents/mcp_pr_tools.py` |
+| `KGR-G-018` | Massively Parallel 5+ Hop Sparse Analytics | Analytics | P1 | Verified | `analytics/parallel_multihop.py` |
+| `KGR-G-019` | Calibrated Uncertainty & Honest Abstain MCP | Trust / Quality | P0 | Verified | `agents/uncertainty_protocol.py` |
+| `KGR-G-020` | Real-Time Graph Mutation SSE & Webhooks | Operational | P1 | Verified | `streaming/mutation_stream.py` |
+| `KGR-G-021` | Enterprise Control Loops Engine (14 Loops) | Safety / Loops | P0 | **VERIFIED LIVE** | `packages/eoip/agents/loops.py` |
+| `KGR-G-022` | Multi-Archetype Agent Factory (35 Agents) | Agentic / Swarm | P0 | **VERIFIED LIVE** | `packages/eoip/agents/archetypes.py` |
+| `KGR-G-023` | 17-Modality Unified Enterprise RAG Suite | Retrieval | P0 | **VERIFIED LIVE** | `packages/eoip/retrieval/rag_suite.py` |
+| `KGR-G-024` | Polyglot Query Transpiler (13 Dialects) | Query Engine | P0 | **VERIFIED LIVE** | `packages/eoip/query/polyglot_engine.py` |
+| `KGR-G-025` | Universal 17-Database Registry & Adapter SPI | Multi-Store | P0 | **VERIFIED LIVE** | `packages/eoip/graph/database_adapters.py` |
+| `KGR-G-026` | Dynamic Living Brain Ontology Induction | Cognitive | P0 | **VERIFIED LIVE** | `packages/eoip/brain/living_brain_algorithms.py` |
+| `KGR-G-027` | Brain OS Kernel Dual-Route Answering Engine | Core OS | P0 | **VERIFIED LIVE** | `packages/eoip/brain/brain_os.py` |
 
 ---
 

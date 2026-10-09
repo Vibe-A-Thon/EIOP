@@ -163,6 +163,51 @@ The implementation plan operationalizes the **KGR-G** requirements into structur
 
 ---
 
+---
+
+### Phase 6: Enterprise Cognitive Living Brain & Universal Brain OS
+**Target Requirements:** `KGR-G-021` through `KGR-G-027`
+
+#### 6.1 Enterprise Control Loops Engine (`packages/eoip/agents/loops.py`)
+- **Objective:** Enforce all 14 standardized human/machine/environment control loops with risk-tier gating.
+- **Key Capabilities:**
+  - HCTL, HITL-FE, HBTL, HATL, HITD, EITL, HITL, HOTL, HOOTL, HITA, HITC, HITI, MITL, HITP.
+  - Hard programmatic block on HOOTL for risk tiers R3/R4 or destructive actions.
+  - Audit logging of all decisions, overrides, and operator signatures.
+- **Verification Test:** `tests/unit/test_brain_and_living_system.py::test_all_14_control_loops` (PASS).
+
+#### 6.2 35 Agent Archetypes & Swarm Orchestrator (`packages/eoip/agents/archetypes.py`)
+- **Objective:** Provide a unified factory instantiating 35 specialized agent archetypes and swarm coordinators.
+- **Key Capabilities:**
+  - SimpleReflex, ModelBasedReflex, GoalBased, UtilityBased, Task, Router, ToolCalling, FunctionCalling, RAG, Enterprise, Hierarchical, Orchestrator, Choreography, Collaboration, PeerToPeer, Consensus, Critic, Reflection, SelfReflection, Planner, Executor, Reviewer, Validator, XAI, JustInTime, SelfLearning, SelfEvolving, SelfWriting, MultiAgentSystem, SwarmAgent, AgenticSwarm, DeepAIAgent, LAYAAgent, JEVAgent, JEMAgent.
+- **Verification Test:** `tests/unit/test_brain_and_living_system.py::test_all_35_agent_archetypes` (PASS).
+
+#### 6.3 17-Modality Enterprise RAG Suite (`packages/eoip/retrieval/rag_suite.py`)
+- **Objective:** Deliver all 17 retrieval modalities in a single coherent engine.
+- **Key Capabilities:**
+  - Simple, Graph, Hybrid, CRAG, Self-RAG, Adaptive, Agentic, Modular, HyDE, Advanced, Conversational, Multi-step, Multi-hop, Branched, Multimodal, Speculative, RAG of RAGs.
+- **Verification Test:** `tests/unit/test_brain_and_living_system.py::test_all_17_rag_modalities` (PASS).
+
+#### 6.4 Polyglot Query Transpiler (`packages/eoip/query/polyglot_engine.py`)
+- **Objective:** Translate and route across 13 graph, semantic, and natural language query dialects.
+- **Key Capabilities:**
+  - RDF, OWL, Gremlin, Cypher, GQL, openCypher, SHACL, SPARQL, SKOS, EOQL, EQL, OSQL, NL2Query.
+- **Verification Test:** `tests/unit/test_brain_and_living_system.py::test_all_13_query_dialects` (PASS).
+
+#### 6.5 Multi-Database Registry & Connection SPI (`packages/eoip/graph/database_adapters.py`)
+- **Objective:** Manage connection pooling and query translation across 17 enterprise database engines.
+- **Key Capabilities:**
+  - Neo4j, Neptune, TigerGraph, JanusGraph, Memgraph, NebulaGraph, Dgraph, FalkorDB, AllegroGraph, OrientDB, ArangoDB, Milvus, Weaviate, Qdrant, Azure Cosmos DB, Fauna, SurrealDB.
+- **Verification Test:** `tests/unit/test_brain_and_living_system.py::test_all_17_database_adapters` (PASS).
+
+#### 6.6 Living Brain Algorithms & Brain OS Kernel (`packages/eoip/brain/brain_os.py`)
+- **Objective:** Dual-route answering kernel executing deterministic queries and hybrid LLM-augmented reasoning.
+- **Key Capabilities:**
+  - AutoSchemaKG ontology induction, neuro-symbolic memory consolidation, Merkle snapshot sealing.
+- **Verification Test:** `tests/unit/test_brain_and_living_system.py::test_living_brain_algorithms` and `test_brain_os_kernel` (PASS).
+
+---
+
 ## 4. Verification Matrix & Quality Gates
 
 | Requirement ID | Module / Component | Verification Test Suite | SLA / Target Metric | Quality Gate |
@@ -177,6 +222,13 @@ The implementation plan operationalizes the **KGR-G** requirements into structur
 | `KGR-G-008` | `moonshot/confidential_graph.py` | `test_moonshots.py` | Additive crypto + DLP block | Zero plaintext leak PASS |
 | `KGR-G-009` | `moonshot/neuro_symbolic_memory.py` | `test_moonshots.py` | Salience decay + SHACL block | Guardrail PASS |
 | `KGR-G-010` | `moonshot/compliance_twin.py` | `test_moonshots.py` | CycloneDX + ISO 42001 seal | Audit seal PASS |
+| `KGR-G-021` | `agents/loops.py` | `test_brain_and_living_system.py` | All 14 loops; HOOTL gated | 100% PASS |
+| `KGR-G-022` | `agents/archetypes.py` | `test_brain_and_living_system.py` | All 35 agent archetypes | 100% PASS |
+| `KGR-G-023` | `retrieval/rag_suite.py` | `test_brain_and_living_system.py` | All 17 RAG modalities | 100% PASS |
+| `KGR-G-024` | `query/polyglot_engine.py` | `test_brain_and_living_system.py` | 13 query dialects transpiled | 100% PASS |
+| `KGR-G-025` | `graph/database_adapters.py` | `test_brain_and_living_system.py` | 17 database engines healthy | 100% PASS |
+| `KGR-G-026` | `brain/living_brain_algorithms.py` | `test_brain_and_living_system.py` | Induction + Merkle state | 100% PASS |
+| `KGR-G-027` | `brain/brain_os.py` | `test_brain_and_living_system.py` | Deterministic + Hybrid ask | 100% PASS |
 
 ---
 
