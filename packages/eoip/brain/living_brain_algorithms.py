@@ -351,3 +351,8 @@ class LivingBrainAlgorithms:
                 "induced_relationships": rel_count,
             },
         )
+
+
+# Enterprise alias for LivingBrainAlgorithms
+LivingBrainEngine = LivingBrainAlgorithms
+

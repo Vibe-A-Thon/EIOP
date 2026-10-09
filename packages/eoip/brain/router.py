@@ -123,5 +123,9 @@ def get_brain_snapshot() -> dict[str, Any]:
     }
 
 
-def build_brain_router() -> APIRouter:
+def build_brain_router(store: Any = None) -> APIRouter:
+    global _kernel
+    if store is not None:
+        _kernel = BrainOSKernel(graph_store=store)
     return router
+
