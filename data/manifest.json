@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "title": "EOIP Data Directory Manifest",
+  "description": "Index of all data artifacts in the EOIP data directory. Content-addressed files use SHA-256 filenames for deduplication and integrity verification.",
+  "generated_at": "2026-10-09T00:00:00Z",
+  "directories": {
+    "autodemo/raw": {
+      "description": "Content-addressed raw source events captured during autodemo pipeline runs. Each JSON file conforms to the source_event.schema.json contract.",
+      "storage_model": "content-addressed",
+      "hash_algorithm": "SHA-256",
+      "naming_convention": "{sha256-of-payload}.json",
+      "partitions": {
+        "FRD/jira": {
+          "description": "Jira issue events from the Fraud & Risk Detection (FRD) project in the MFS enterprise demo.",
+          "source_system": "jira",
+          "project_key": "FRD",
+          "file_count": 24,
+          "schema": "schemas/source_event.schema.json"
+        },
+        "PAY/jira": {
+          "description": "Jira issue events from the Payment Gateway (PAY) project in the MFS enterprise demo.",
+          "source_system": "jira",
+          "project_key": "PAY",
+          "file_count": 28,
+          "schema": "schemas/source_event.schema.json"
+        },
+        "git": {
+          "description": "Git commit events captured from the demo repository history.",
+          "source_system": "git",
+          "file_count": 41,
+          "schema": "schemas/source_event.schema.json"
+        },
+        "jira": {
+          "description": "Cross-project Jira events not partitioned by project key.",
+          "source_system": "jira",
+          "file_count": 2,
+          "schema": "schemas/source_event.schema.json"
+        },
+        "demo_enterprise": {
+          "description": "Northstar Commerce enterprise demo scenario pack with pre-built graph edges and vertices.",
+          "source_system": "demo_enterprise",
+          "file_count": 1,
+          "schema": "schemas/demo_scenario_pack.schema.json"
+        }
+      }
+    },
+    "ontology": {
+      "description": "Enterprise ontology seed data: type hierarchies, relationship constraints, and SHACL-equivalent validation rules.",
+      "files": {
+        "enterprise-type-hierarchy.json": "Canonical entity types and relationship types across 8 graph domains (code, work, knowledge, identity, operations, evidence, compliance, design).",
+        "relationship-constraints.json": "Cardinality, uniqueness, existence, temporal, and cross-domain constraint rules."
+      }
+    },
+    "seed": {
+      "description": "Default taxonomy and classification data for bootstrapping new EOIP deployments.",
+      "files": {
+        "default-taxonomy.json": "Standard taxonomies for work item statuses, priorities, incident severities, languages, compliance frameworks, and graph domains."
+      }
+    }
+  },
+  "integrity": {
+    "verification_command": "python -c \"import json, hashlib, pathlib; [print(f'{hashlib.sha256(p.read_bytes()).hexdigest()[:16]}  {p}') for p in sorted(pathlib.Path('data').rglob('*.json'))]\"",
+    "note": "Content-addressed files in autodemo/raw/ have filenames equal to their payload hash; verify with: sha256sum <file> and compare to filename."
+  }
+}

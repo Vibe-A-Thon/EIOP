@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:multihop_query:1.0",
+  "title": "MultihopQuery v1",
+  "description": "Parallel multi-hop traversal query specification (KGR-G-018). Supports 5+ hop traversals using CSR sparse matrix acceleration with optional fraud ring detection.",
+  "type": "object",
+  "required": ["schema_version", "query_id", "start_vertices", "max_hops"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "query_id": { "type": "string", "minLength": 1 },
+    "start_vertices": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Canonical IDs to begin traversal from."
+    },
+    "max_hops": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 20,
+      "description": "Maximum traversal depth. CSR acceleration engages at 5+ hops."
+    },
+    "direction": {
+      "type": "string",
+      "enum": ["OUTBOUND", "INBOUND", "BOTH"],
+      "default": "BOTH"
+    },
+    "edge_label_filter": {
+      "type": ["array", "null"],
+      "items": { "type": "string" },
+      "description": "Only traverse edges with these labels. null = all edges."
+    },
+    "vertex_label_filter": {
+      "type": ["array", "null"],
+      "items": { "type": "string" },
+      "description": "Only visit vertices with these labels. null = all vertices."
+    },
+    "property_filters": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "required": ["field", "operator", "value"],
+        "properties": {
+          "field": { "type": "string" },
+          "operator": { "type": "string", "enum": ["eq", "neq", "gt", "gte", "lt", "lte", "contains", "regex"] },
+          "value": {}
+        },
+        "additionalProperties": false
+      },
+      "description": "Property-level filters applied at each hop."
+    },
+    "dedup_strategy": {
+      "type": "string",
+      "enum": ["VERTEX", "PATH", "NONE"],
+      "default": "VERTEX",
+      "description": "VERTEX: each vertex visited once. PATH: all unique paths. NONE: allow revisits."
+    },
+    "parallelism": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "max_workers": { "type": "integer", "minimum": 1, "maximum": 64, "default": 4 },
+        "partition_strategy": {
+          "type": "string",
+          "enum": ["FRONTIER", "HASH", "RANGE"],
+          "default": "FRONTIER",
+          "description": "How the traversal frontier is split across workers."
+        }
+      },
+      "additionalProperties": false
+    },
+    "fraud_detection": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "min_ring_size": { "type": "integer", "minimum": 3, "default": 3 },
+        "max_ring_size": { "type": "integer", "minimum": 3, "default": 20 },
+        "ring_edge_labels": { "type": "array", "items": { "type": "string" }, "description": "Edge types that form fraud rings (e.g. TRANSFERS_TO, SHARES_DEVICE)." },
+        "min_cycle_weight": { "type": ["number", "null"], "description": "Minimum total edge weight for a cycle to be flagged." }
+      },
+      "additionalProperties": false,
+      "description": "Fraud ring detection parameters (cycle detection in the traversal subgraph)."
+    },
+    "result_format": {
+      "type": "string",
+      "enum": ["VERTICES", "PATHS", "SUBGRAPH", "ADJACENCY_MATRIX"],
+      "default": "VERTICES"
+    },
+    "result_limit": { "type": "integer", "minimum": 1, "maximum": 100000, "default": 1000 },
+    "timeout_ms": { "type": "integer", "minimum": 100, "maximum": 300000, "default": 30000 },
+    "tenant_id": { "type": "string", "default": "default" },
+    "metadata": { "type": "object", "default": {} }
+  },
+  "additionalProperties": false
+}

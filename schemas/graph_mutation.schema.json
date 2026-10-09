@@ -2,14 +2,34 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:eoip:schema:graph_mutation:1.0",
   "title": "GraphMutation v1",
+  "description": "Single graph mutation operation applied during ingestion or API write. Each mutation either upserts a vertex/edge into the graph or tombstones (soft-deletes) it. Mutations are the atomic unit of graph change tracking.",
   "type": "object",
   "required": ["mutation_id", "operation", "target_kind", "payload", "ingestion_run_id"],
   "properties": {
-    "mutation_id": { "type": "string", "minLength": 1 },
-    "operation": { "type": "string", "enum": ["UPSERT", "TOMBSTONE"] },
-    "target_kind": { "type": "string", "enum": ["VERTEX", "EDGE"] },
-    "payload": { "type": "object" },
-    "ingestion_run_id": { "type": "string", "minLength": 1 }
+    "mutation_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this mutation. Used for idempotency and audit trail correlation."
+    },
+    "operation": {
+      "type": "string",
+      "enum": ["UPSERT", "TOMBSTONE"],
+      "description": "UPSERT: create or update the entity. TOMBSTONE: soft-delete with retention of metadata for temporal queries."
+    },
+    "target_kind": {
+      "type": "string",
+      "enum": ["VERTEX", "EDGE"],
+      "description": "Whether this mutation targets a graph vertex (node) or edge (relationship)."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Entity data. For VERTEX: must include canonical_id and label. For EDGE: must include from_id, to_id, and label."
+    },
+    "ingestion_run_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of the ingestion pipeline run that produced this mutation. Links to process lineage."
+    }
   },
   "additionalProperties": false
 }

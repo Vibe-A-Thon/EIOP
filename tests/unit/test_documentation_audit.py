@@ -82,7 +82,7 @@ def test_mentions_never_establish_acceptance(repository):
 
 @pytest.mark.req("REQ-004")
 def test_audit_tooling_is_reported_as_phase_evidence_not_acceptance(repository):
-    create(repository, "docs/audit-2026-10-04/phase-1-spec.md", "REQ-004: persist reports.\n")
+    create(repository, "EOIP-engg-doc-pkg/audits/generated/phase-1-spec.md", "REQ-004: persist reports.\n")
     create(repository, "scripts/documentation_audit.py", "# REQ-004 implementation lead\n")
     create(repository, "tests/unit/test_documentation_audit.py", "# REQ-004 test lead\n")
 
@@ -99,7 +99,7 @@ def test_audit_tooling_is_reported_as_phase_evidence_not_acceptance(repository):
 def test_secrets_dependencies_reports_and_ignored_files_are_not_read(repository):
     for name in [
         "secrets.example/api-token.txt", "node_modules/library/readme.md",
-        "docs/audit-2026-10-04/current-gap-report.md", "test-results/report.txt",
+        "EOIP-engg-doc-pkg/audits/generated/current-gap-report.md", "test-results/report.txt",
     ]:
         create(repository, name, "invalid encoding placeholder")
         (repository / name).write_bytes(b"\xff")
@@ -113,7 +113,7 @@ def test_secrets_dependencies_reports_and_ignored_files_are_not_read(repository)
 
 @pytest.mark.req("REQ-001", "REQ-002")
 def test_historical_reports_are_read_but_not_recursive_obligations(repository):
-    create(repository, "docs/audit-2026-10-04/gap-report.md", "REQ-999 MUST be historical only.\n")
+    create(repository, "EOIP-engg-doc-pkg/audits/generated/gap-report.md", "REQ-999 MUST be historical only.\n")
     report = build_audit(repository)
     assert report["counts"]["documents"] == 2
     assert "REQ-999" not in {row["requirement_id"] for row in report["requirements"]}
@@ -132,7 +132,7 @@ def test_invalid_encoding_fails_instead_of_claiming_complete(repository):
 @pytest.mark.req("REQ-004")
 def test_cli_persists_consistent_json_and_markdown(repository):
     assert main(["--project-root", str(repository)]) == 0
-    directory = repository / "docs" / "audit-2026-10-04"
+    directory = repository / "EOIP-engg-doc-pkg" / "audits" / "generated"
     report = json.loads((directory / "current-gap-report.json").read_text(encoding="utf-8"))
     inventory = json.loads((directory / "documentation-inventory.json").read_text(encoding="utf-8"))
     assert inventory["documents"] == report["documents"]
@@ -155,7 +155,7 @@ def test_oversized_input_does_not_write_receipts(repository, monkeypatch):
     monkeypatch.setattr("scripts.documentation_audit.MAX_FILE_BYTES", 1)
     with pytest.raises(ValueError, match="file budget"):
         main(["--project-root", str(repository)])
-    assert not (repository / "docs").exists()
+    assert not (repository / "EOIP-engg-doc-pkg" / "audits" / "generated").exists()
 
 
 @pytest.mark.req("REQ-001")
@@ -172,7 +172,7 @@ def test_symlink_inputs_and_outputs_are_refused(repository, monkeypatch):
     monkeypatch.setattr(Path, "is_symlink", lambda path: path == input_path or original(path))
     with pytest.raises(ValueError, match="symlink input"):
         build_audit(repository)
-    output_path = repository / "docs" / "audit-2026-10-04" / "current-gap-report.md"
+    output_path = repository / "EOIP-engg-doc-pkg" / "audits" / "generated" / "current-gap-report.md"
     monkeypatch.setattr(Path, "is_symlink", lambda path: path == output_path or original(path))
     with pytest.raises(SystemExit):
         main(["--project-root", str(repository)])

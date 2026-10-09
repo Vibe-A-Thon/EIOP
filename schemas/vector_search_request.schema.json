@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:vector_search_request:1.0",
+  "title": "VectorSearchRequest v1",
+  "description": "Unified vector+graph search request for the co-located HNSW vector index (KGR-G-016). Supports vector-first, graph-first, and hybrid RRF query strategies.",
+  "type": "object",
+  "required": ["schema_version", "request_id", "strategy"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "strategy": {
+      "type": "string",
+      "enum": ["VECTOR_THEN_TRAVERSE", "GRAPH_THEN_VECTOR", "HYBRID_RRF"],
+      "description": "Query execution strategy. VECTOR_THEN_TRAVERSE: find nearest neighbors then expand graph. GRAPH_THEN_VECTOR: traverse graph then rank by vector similarity. HYBRID_RRF: Reciprocal Rank Fusion of both signals."
+    },
+    "vector_query": {
+      "type": "object",
+      "properties": {
+        "embedding": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 1,
+          "description": "Query embedding vector."
+        },
+        "text": {
+          "type": ["string", "null"],
+          "description": "Raw text to embed (if embedding is not pre-computed)."
+        },
+        "top_k": { "type": "integer", "minimum": 1, "maximum": 1000, "default": 10 },
+        "min_similarity": { "type": "number", "minimum": 0.0, "maximum": 1.0, "default": 0.0 },
+        "ef_search": { "type": "integer", "minimum": 1, "default": 200, "description": "HNSW ef parameter controlling recall/speed tradeoff." },
+        "entity_type_filter": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "Restrict vector search to these entity types."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Vector similarity search parameters."
+    },
+    "graph_query": {
+      "type": "object",
+      "properties": {
+        "start_vertices": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "Canonical IDs to begin graph traversal from."
+        },
+        "traversal_depth": { "type": "integer", "minimum": 0, "maximum": 10, "default": 2 },
+        "edge_filters": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "Edge labels to follow during traversal."
+        },
+        "vertex_filters": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "Vertex labels to include in results."
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["OUTBOUND", "INBOUND", "BOTH"],
+          "default": "BOTH"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Graph traversal parameters."
+    },
+    "hybrid_config": {
+      "type": "object",
+      "properties": {
+        "rrf_k": { "type": "integer", "minimum": 1, "default": 60, "description": "RRF constant controlling rank fusion sensitivity." },
+        "vector_weight": { "type": "number", "minimum": 0.0, "maximum": 1.0, "default": 0.5 },
+        "graph_weight": { "type": "number", "minimum": 0.0, "maximum": 1.0, "default": 0.5 }
+      },
+      "additionalProperties": false,
+      "description": "Hybrid search fusion parameters."
+    },
+    "result_limit": { "type": "integer", "minimum": 1, "maximum": 10000, "default": 20 },
+    "include_embeddings": { "type": "boolean", "default": false, "description": "Whether to include embedding vectors in results." },
+    "include_evidence": { "type": "boolean", "default": true },
+    "tenant_id": { "type": "string", "default": "default" },
+    "metadata": { "type": "object", "default": {} }
+  },
+  "additionalProperties": false
+}

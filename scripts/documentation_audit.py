@@ -20,7 +20,7 @@ from eoip.jobs import write_json
 
 ID_RE = re.compile(r"\b(?:MVP-FR|FR|NFR|GAP|G2|REQ)(?:-[A-Z0-9]+)*-\d{3}\b")
 NORMATIVE_RE = re.compile(r"\b(?:must|shall|required|acceptance criteria)\b", re.IGNORECASE)
-GENERATED_ROOT = Path("docs/audit-2026-10-04")
+GENERATED_ROOT = Path("EOIP-engg-doc-pkg/audits/generated")
 EXCLUDED_PARTS = {
     ".git", ".venv", "venv", "node_modules", "__pycache__", ".pytest_cache",
     ".ruff_cache", "test-results", "dist", "build", "state", "raw", "dlq",
@@ -294,7 +294,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("output directory must stay inside the repository")
     # Only the designated report folder is writable; prevent source-document overwrite.
     if output.resolve() != (root / GENERATED_ROOT).resolve():
-        parser.error("output directory must be docs/audit-2026-10-04")
+        parser.error("output directory must be EOIP-engg-doc-pkg/audits/generated")
     for filename in ("current-gap-report.json", "documentation-inventory.json", "current-gap-report.md"):
         destination = output / filename
         if destination.is_symlink() or (destination.exists() and not destination.is_file()):

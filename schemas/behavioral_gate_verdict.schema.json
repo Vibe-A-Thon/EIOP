@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:behavioral_gate_verdict:1.0",
+  "title": "BehavioralGateVerdict v1",
+  "description": "CI merge-gate verdict produced by the behavioral contract extraction and structured diffing pipeline (KGR-G-011). Captures contract changes, scope classification, and the gate decision.",
+  "type": "object",
+  "required": ["schema_version", "verdict_id", "commit_sha", "decision", "contracts_analyzed", "breaking_changes", "created_at"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "verdict_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this gate run."
+    },
+    "commit_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "Full Git commit SHA being evaluated."
+    },
+    "base_sha": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "Base commit SHA for diff comparison."
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "ABSTAIN"],
+      "description": "Gate outcome. ABSTAIN means the gate could not make a confident determination."
+    },
+    "abstain_reason": {
+      "type": ["string", "null"],
+      "description": "Explanation when decision is ABSTAIN (e.g., AST parse failure, scope ambiguity)."
+    },
+    "contracts_analyzed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total function/class contracts extracted and compared."
+    },
+    "breaking_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["function_path", "change_type", "severity"],
+        "properties": {
+          "function_path": { "type": "string", "description": "Fully qualified function/method path." },
+          "change_type": {
+            "type": "string",
+            "enum": ["SIGNATURE_CHANGED", "RETURN_TYPE_CHANGED", "EXCEPTION_ADDED", "PRECONDITION_ADDED", "POSTCONDITION_REMOVED", "BEHAVIOR_CHANGED"],
+            "description": "Category of contract violation."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+            "description": "Impact severity of the breaking change."
+          },
+          "before": { "type": "object", "description": "Contract state before the change." },
+          "after": { "type": "object", "description": "Contract state after the change." },
+          "scope_classification": {
+            "type": "string",
+            "enum": ["PUBLIC_API", "INTERNAL", "TEST", "GENERATED"],
+            "description": "Abstraction scope where the break occurs."
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "List of detected contract violations."
+    },
+    "files_analyzed": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Source files included in the analysis."
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Wall-clock time for the gate evaluation."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "metadata": { "type": "object", "default": {} }
+  },
+  "additionalProperties": false
+}

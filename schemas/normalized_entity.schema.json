@@ -2,17 +2,46 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:eoip:schema:normalized_entity:1.0",
   "title": "NormalizedEntity v1",
+  "description": "Canonical normalized entity produced by the ingestion pipeline. Maps raw source records to the enterprise ontology with creation provenance, confidence scoring, and multi-source deduplication tracking.",
   "type": "object",
   "required": ["schema_version", "canonical_id", "entity_type", "graph_domain", "source_refs", "properties"],
   "properties": {
     "schema_version": { "const": "1.0" },
-    "canonical_id": { "type": "string", "minLength": 1 },
-    "entity_type": { "type": "string", "minLength": 1 },
-    "graph_domain": { "type": "string", "minLength": 1 },
-    "source_refs": { "type": "array", "items": { "type": "string" } },
-    "creation_status": { "type": ["string", "null"], "enum": ["DETERMINISTIC", "INFERRED", "HUMAN_CONFIRMED", null] },
-    "confidence": { "type": ["number", "null"], "minimum": 0.0, "maximum": 1.0 },
-    "properties": { "type": "object" }
+    "canonical_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Platform-wide unique identifier. Preferred URN format: urn:eoip:{domain}:{type}:{local-id}."
+    },
+    "entity_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Vertex label from the enterprise ontology (e.g. CodeFile, JiraIssue, Person)."
+    },
+    "graph_domain": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Logical graph domain this entity belongs to (code, work, knowledge, identity, operations, evidence, compliance, design)."
+    },
+    "source_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "References to the source events that contributed to this entity. Enables multi-source deduplication tracking."
+    },
+    "creation_status": {
+      "type": ["string", "null"],
+      "enum": ["DETERMINISTIC", "INFERRED", "HUMAN_CONFIRMED", null],
+      "description": "How this entity was created. DETERMINISTIC: direct extraction from structured source. INFERRED: ML/heuristic inference. HUMAN_CONFIRMED: manually verified."
+    },
+    "confidence": {
+      "type": ["number", "null"],
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence that this entity is correctly mapped to the ontology. null when not computed."
+    },
+    "properties": {
+      "type": "object",
+      "description": "Domain-specific properties of this entity as defined by the ontology type hierarchy."
+    }
   },
   "additionalProperties": false
 }

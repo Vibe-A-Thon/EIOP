@@ -2,18 +2,51 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:eoip:schema:normalized_relationship:1.0",
   "title": "NormalizedRelationship v1",
+  "description": "Canonical normalized relationship (edge) between two entities in the enterprise knowledge graph. Produced by the ingestion pipeline with provenance tracking and confidence scoring.",
   "type": "object",
   "required": ["schema_version", "relationship_id", "relationship_type", "from_id", "to_id", "evidence_refs", "creation_status"],
   "properties": {
     "schema_version": { "const": "1.0" },
-    "relationship_id": { "type": "string", "minLength": 1 },
-    "relationship_type": { "type": "string", "minLength": 1 },
-    "from_id": { "type": "string", "minLength": 1 },
-    "to_id": { "type": "string", "minLength": 1 },
-    "evidence_refs": { "type": "array", "items": { "type": "string" } },
-    "creation_status": { "type": "string", "enum": ["DETERMINISTIC", "INFERRED", "HUMAN_CONFIRMED"] },
-    "confidence": { "type": ["number", "null"], "minimum": 0.0, "maximum": 1.0 },
-    "properties": { "type": ["object", "null"] }
+    "relationship_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this relationship."
+    },
+    "relationship_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Edge label from the enterprise ontology (e.g. DEPENDS_ON, AUTHORED_BY, IMPLEMENTS)."
+    },
+    "from_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical ID of the source vertex."
+    },
+    "to_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical ID of the target vertex."
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "References to evidence records supporting this relationship."
+    },
+    "creation_status": {
+      "type": "string",
+      "enum": ["DETERMINISTIC", "INFERRED", "HUMAN_CONFIRMED"],
+      "description": "How this relationship was established."
+    },
+    "confidence": {
+      "type": ["number", "null"],
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence that this relationship correctly represents the real-world connection."
+    },
+    "properties": {
+      "type": ["object", "null"],
+      "description": "Optional edge properties (e.g. weight, timestamp, metadata)."
+    }
   },
   "additionalProperties": false
 }

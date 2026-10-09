@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:mutation_stream_event:1.0",
+  "title": "MutationStreamEvent v1",
+  "description": "Real-time graph mutation event for SSE/WebSocket streaming and webhook delivery (KGR-G-020). Extends the base graph_mutation contract with streaming-specific fields: subscription filters, delivery tracking, and dead-letter metadata.",
+  "type": "object",
+  "required": ["schema_version", "event_id", "mutation_type", "entity_type", "entity_id", "timestamp"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "event_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Content-addressed event identifier (SHA-256 prefix of mutation_type + entity_id + timestamp)."
+    },
+    "mutation_type": {
+      "type": "string",
+      "enum": ["VERTEX_CREATED", "VERTEX_UPDATED", "VERTEX_DELETED", "EDGE_CREATED", "EDGE_UPDATED", "EDGE_DELETED", "SCHEMA_CHANGED"],
+      "description": "Category of graph mutation."
+    },
+    "entity_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Vertex label or edge label affected."
+    },
+    "entity_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical ID of the mutated entity."
+    },
+    "tenant_id": { "type": "string", "default": "default" },
+    "timestamp": {
+      "type": "number",
+      "description": "Unix epoch seconds when the mutation occurred."
+    },
+    "before": {
+      "type": ["object", "null"],
+      "description": "Entity state before the mutation (null for creates)."
+    },
+    "after": {
+      "type": ["object", "null"],
+      "description": "Entity state after the mutation (null for deletes)."
+    },
+    "diff": {
+      "type": ["object", "null"],
+      "properties": {
+        "added_properties": { "type": "object" },
+        "removed_properties": { "type": "array", "items": { "type": "string" } },
+        "changed_properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "old": {},
+              "new": {}
+            }
+          }
+        }
+      },
+      "additionalProperties": false,
+      "description": "Structured diff of property changes (for updates)."
+    },
+    "causation": {
+      "type": "object",
+      "properties": {
+        "ingestion_run_id": { "type": ["string", "null"] },
+        "actor_id": { "type": ["string", "null"] },
+        "source_event_id": { "type": ["string", "null"], "description": "Source event that triggered this mutation." },
+        "api_request_id": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false,
+      "description": "Causal chain linking this mutation to its origin."
+    },
+    "delivery": {
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "enum": ["SSE", "WEBSOCKET", "WEBHOOK", "INTERNAL"],
+          "description": "How this event was delivered."
+        },
+        "subscription_id": { "type": ["string", "null"] },
+        "attempt": { "type": "integer", "minimum": 1, "default": 1 },
+        "max_retries": { "type": "integer", "minimum": 0, "default": 3 },
+        "delivered_at": { "type": ["number", "null"], "description": "Unix epoch of successful delivery." },
+        "dlq": {
+          "type": "boolean",
+          "default": false,
+          "description": "True if this event was moved to the dead-letter queue after exhausting retries."
+        },
+        "hmac_signature": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "HMAC-SHA256 signature for webhook payload verification."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Delivery tracking metadata."
+    },
+    "metadata": { "type": "object", "default": {} }
+  },
+  "additionalProperties": false
+}
