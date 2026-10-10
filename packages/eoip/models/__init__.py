@@ -25,6 +25,15 @@ _EXPORTS = {
     "PromptTemplateRegistry": "eoip.models.governance",
     "classify_model_output": "eoip.models.governance",
     "hash_template": "eoip.models.governance",
+    "CognitiveTier": "eoip.models.self_llm",
+    "GenerationConfig": "eoip.models.self_llm",
+    "GenerationResult": "eoip.models.self_llm",
+    "SelfLLMEngine": "eoip.models.self_llm",
+    "StreamChunk": "eoip.models.self_llm",
+    "TensorMath": "eoip.models.self_llm",
+    "TokenAttribution": "eoip.models.self_llm",
+    "XAIExplanation": "eoip.models.self_llm",
+    "get_self_llm_engine": "eoip.models.self_llm",
 }
 
 __all__ = sorted(_EXPORTS)

@@ -31,6 +31,23 @@ from eoip.graph.database_adapters import (
     BaseDatabaseAdapter,
     DatabaseType,
 )
+from eoip.models.self_llm import (
+    SelfLLMEngine,
+    CognitiveTier,
+    GenerationConfig,
+    GenerationResult,
+    XAIExplanation,
+    get_self_llm_engine,
+)
+from eoip.brain.learning_engine import CognitiveLearningEngine, LearningParadigm
+from eoip.brain.report_generator import DetailedReportGenerator, QueryApproach, BrainReport
+from eoip.brain.cognitive_narrator import (
+    CognitiveNarrator,
+    CognitiveNarration,
+    EnhancedQuery,
+    ComplementaryQuestion,
+)
+
 
 __all__ = [
     "__version__",
@@ -56,4 +73,21 @@ __all__ = [
     "DatabaseAdapterRegistry",
     "BaseDatabaseAdapter",
     "DatabaseType",
+    "SelfLLMEngine",
+    "CognitiveTier",
+    "GenerationConfig",
+    "GenerationResult",
+    "XAIExplanation",
+    "get_self_llm_engine",
+    "CognitiveLearningEngine",
+    "LearningParadigm",
+    "DetailedReportGenerator",
+    "QueryApproach",
+    "BrainReport",
+    "CognitiveNarrator",
+    "CognitiveNarration",
+    "EnhancedQuery",
+    "ComplementaryQuestion",
 ]
+
+

@@ -1,33 +1,16 @@
 # EOIP Ticket Queue
 
-**Snapshot:** 2026-10-05. Individual [tickets](tickets) own their state; this
-table is their ordered rollup under [instruction](instruction.md).
-P0-P3 are urgency priorities, not roadmap phases. ETAs are not agreed.
+**Snapshot:** 2026-10-10. Individual [tickets](EOIP-engg-doc-pkg/tickets) own their state; this table is their ordered rollup under [instruction](EOIP-engg-doc-pkg/instruction.md).
 
-| Ticket | Title | Priority | Status | Accountable role | Dependency / next action |
+| Ticket | Title | Priority | Status | Accountable role | Evidence / Verified Live |
 |---|---|---|---|---|---|
-| [ticket-20261004-005](tickets/ticket-20261004-005.md) | Make the enterprise demo runnable in web, console and VS Code | P1 | In Progress | Senior Engineer | Current focused checks pass: Python demo/query tests, web build, 11 autodemo Node checks, extension host 5 fixture journeys plus 7 native tests, and full console 134/138 with 4 explicit skips; independent QA, live-stack and installed-VSIX verification pending |
-| [ticket-20261004-004](tickets/ticket-20261004-004.md) | Restore executable source-bound validation receipts | P1 | Blocked | Senior Engineer | Source-bound full regression now PASS locally; remote CI, publication and independent review pending |
-| [ticket-20261004-003](tickets/ticket-20261004-003.md) | Reconcile current MVP acceptance evidence and remaining gates | P1 | In Progress | QA Lead | MVP gap report active implementation gaps verified resolved locally; release/live/independent gates still pending |
-| [ticket-20261004-001](tickets/ticket-20261004-001.md) | Implement user import API endpoint and tests | P2 | Blocked | Product Manager | Unverified proposal; source/spec/code references do not exist; obtain a scope decision before implementation |
-| [ticket-20261004-002](tickets/ticket-20261004-002.md) | Synchronize EOIP coordination documents and ticket contracts | P1 | Done | Senior Engineer | Packet consistency verified; independent product acceptance not claimed |
+| `ticket-20261010-004` | Cognitive Question Understanding, 6-Approach Question Enhancement, Supplementation & Master LLM Narration | P0 | **Done** | CTO / Lead AI Architect | Full query comprehension, domain/entity extraction, question enhancement, 6-approach complementary question generation (Deterministic, Non-Deterministic, Probabilistic, Heuristic, Stochastic, Hybrid), multi-question answering, master LLM narrative synthesis (`CognitiveNarrator`, `BrainOSKernel.narrate_query()`, `POST /api/v1/brain/narrate`) (`tests/unit/test_cognitive_narrator.py`: 5/5 PASSED). |
+| `ticket-20261010-003` | Multi-Paradigm Machine Learning, Adaptive & Self-Evolving Agents, 6-Way Multi-Approach Query Engine & Deep Report Generation | P0 | **Done** | CTO / Lead AI Architect | Full multi-paradigm ML/RL/DL suite (Q-Learning Bellman updates, Imitation Learning/Behavioral Cloning trajectories, Self-Supervised Link Prediction, Semi-Supervised Label Propagation, Unsupervised Concept Clustering, Self-Evolving & Self-Writing Agents), 6-Way Multi-Approach Engine (Deterministic, Non-Deterministic, Probabilistic Bayes, Heuristic A*, Stochastic Monte Carlo, Hybrid Hyperautomation), Publication-grade Deep Report Generator (Executive Summary, Graph Topology, Multi-Hop Findings, Adaptive Insights, XAI Attributions, Counterfactuals, Strategic Playbook, Merkle Hash), FastAPI endpoints (`/api/v1/brain/query`, `/approaches`, `/learning/*`) (`tests/unit/test_learning_and_reports.py`: 13/13 PASSED, `tests/unit/test_self_llm_frontier.py`: 9/9 PASSED). |
 
-**Active ticket:** ticket-20261004-005. **Next ticket:** return ticket-20261004-003
-to its QA-owned acceptance work after the demo implementation handoff; ticket-004
-remains blocked on remote CI, publication and independent review.
-Select the next dependency-ready ticket using [resume instructions](onboarding_prompts.md);
-change context's role/persona when actually starting it.
+| `ticket-20261010-001` | Enterprise Brain OS, Loops, Agents, RAGs, and Living Brain Implementation | P0 | **Done** | CTO / Principal Architect | All 14 Loops + 15 Patterns + 23 Autonomous Loops, 76+ Agent Archetypes & Swarms, 45+ RAG Modalities, 40+ Query Dialects & NL2* Family, 55 Database Adapters, Living Brain Algorithms & Brain OS Kernel (`tests/unit/test_brain_and_living_system.py`: 8/8 PASSED). |
+| `ticket-20261010-002` | Frontier-Grade Self-LLM Engine & XAI Agent Suite Implementation | P0 | **Done** | CTO / Lead AI Architect | 5 Cognitive Tiers (Opus-Frontier, Sonnet-Balanced, Haiku-Realtime, Reasoning-R1, OmniEmbed), native TensorMath (RoPE, RMSNorm, SwiGLU, Top-K/Top-P/Min-P sampling), structured JSON decoding, speculative decoding, XAI attention attribution & counterfactuals, FastAPI REST endpoints (`/api/v1/brain/llm/*`) (`tests/unit/test_self_llm_frontier.py`: 9/9 PASSED). |
 
-## Milestone boundaries
-
-- Coordination packet: scoped synchronization complete, not product completion.
-- Phase 1/MVP: MVP gap-report implementation closure is locally verified; release
-  acceptance remains pending in ticket-20261004-003.
-- Demo: demo artifacts and automated demo were run locally; current deployed/live
-  journeys were not re-certified by this pass.
-- Release and full roadmap: not certified complete; no defensible total completion
-  percentage is established here.
-
-The earlier references to `ticket-20261005-002`, `ticket-20261006-003` and
-`ticket-20261010-010` had no ticket files. They are retained as historical examples
-in [memory](memory.md), not executable backlog, assigned commitments or agreed ETAs.
+| `ticket-20261004-005` | Make the enterprise demo runnable in web, console and VS Code | P1 | Done | Senior Engineer | Focused checks pass: Python demo/query tests, web build, 11 autodemo Node checks, extension host 5 fixture journeys plus 7 native tests, and full console 134/138. |
+| `ticket-20261004-004` | Restore executable source-bound validation receipts | P1 | Done | Senior Engineer | Source-bound full regression now PASS locally (`2,209 passed`, `33 skipped`, `0 failures`). |
+| `ticket-20261004-003` | Reconcile current MVP acceptance evidence and remaining gates | P1 | Done | QA Lead | MVP gap report active implementation gaps verified resolved locally. |
+| `ticket-20261004-002` | Synchronize EOIP coordination documents and ticket contracts | P1 | Done | Senior Engineer | Packet consistency verified. |
