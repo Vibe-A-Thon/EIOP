@@ -29,6 +29,7 @@ from eoip.models.self_llm import (
     get_self_llm_engine,
 )
 from eoip.brain.learning_engine import CognitiveLearningEngine, LearningParadigm
+from eoip.brain.graph_intelligence import GraphIntelligenceEngine
 
 
 class QueryApproach(str, enum.Enum):
@@ -102,19 +103,42 @@ class DetailedReportGenerator:
         report_id = str(uuid.uuid4())
         ctx = context or {}
 
-        # 1. Approach-Specific Analytical Execution
-        if approach == QueryApproach.DETERMINISTIC:
-            exec_data = self._execute_deterministic(query, graph_store)
-        elif approach == QueryApproach.NON_DETERMINISTIC:
-            exec_data = self._execute_non_deterministic(query, tier)
-        elif approach == QueryApproach.PROBABILISTIC:
-            exec_data = self._execute_probabilistic(query, graph_store)
-        elif approach == QueryApproach.HEURISTIC:
-            exec_data = self._execute_heuristic(query, graph_store)
-        elif approach == QueryApproach.STOCHASTIC:
-            exec_data = self._execute_stochastic(query, graph_store)
-        else:  # HYBRID / Hyperautomation
-            exec_data = self._execute_hybrid_hyperautomation(query, tier, graph_store)
+        # 1. Approach-Specific Analytical Execution (uses live graph when available)
+        gi = GraphIntelligenceEngine(graph_store=graph_store)
+        gi_used = False
+        if gi._has_store():
+            gi_findings = {
+                QueryApproach.DETERMINISTIC: gi.execute_deterministic,
+                QueryApproach.NON_DETERMINISTIC: gi.execute_non_deterministic,
+                QueryApproach.PROBABILISTIC: gi.execute_probabilistic,
+                QueryApproach.HEURISTIC: gi.execute_heuristic,
+                QueryApproach.STOCHASTIC: gi.execute_stochastic,
+                QueryApproach.HYBRID: gi.execute_hybrid,
+            }[approach](query)
+            if gi_findings.raw_evidence:
+                exec_data = {
+                    "methodology_desc": gi_findings.methodology,
+                    "discovered_entities": gi_findings.discovered_entities,
+                    "known_edges": gi_findings.known_edges,
+                    "findings": gi_findings.findings,
+                    "recommendations": gi_findings.recommendations,
+                    "confidence": gi_findings.confidence,
+                }
+                gi_used = True
+
+        if not gi_used:
+            if approach == QueryApproach.DETERMINISTIC:
+                exec_data = self._execute_deterministic(query, graph_store)
+            elif approach == QueryApproach.NON_DETERMINISTIC:
+                exec_data = self._execute_non_deterministic(query, tier)
+            elif approach == QueryApproach.PROBABILISTIC:
+                exec_data = self._execute_probabilistic(query, graph_store)
+            elif approach == QueryApproach.HEURISTIC:
+                exec_data = self._execute_heuristic(query, graph_store)
+            elif approach == QueryApproach.STOCHASTIC:
+                exec_data = self._execute_stochastic(query, graph_store)
+            else:
+                exec_data = self._execute_hybrid_hyperautomation(query, tier, graph_store)
 
         # 2. Frontier Neural Synthesis for the Executive Summary
         llm_config = GenerationConfig(

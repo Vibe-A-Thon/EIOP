@@ -25,6 +25,7 @@ from eoip.models.self_llm import get_self_llm_engine, CognitiveTier, GenerationC
 from eoip.brain.learning_engine import CognitiveLearningEngine, LearningParadigm
 from eoip.brain.report_generator import DetailedReportGenerator, QueryApproach, BrainReport
 from eoip.brain.cognitive_narrator import CognitiveNarrator, CognitiveNarration
+from eoip.brain.graph_intelligence import GraphIntelligenceEngine, ApproachFindings
 
 
 
@@ -79,6 +80,7 @@ class BrainOSKernel:
         self.learning_engine: CognitiveLearningEngine = CognitiveLearningEngine()
         self.report_generator: DetailedReportGenerator = DetailedReportGenerator(learning_engine=self.learning_engine)
         self.cognitive_narrator: CognitiveNarrator = CognitiveNarrator()
+        self.graph_intelligence: GraphIntelligenceEngine = GraphIntelligenceEngine(graph_store=graph_store)
 
         self.working_memory: list[dict[str, Any]] = []
 
@@ -250,6 +252,160 @@ class BrainOSKernel:
             context=context,
         )
 
+    def intelligent_query(
+        self,
+        query: str,
+        approach: str = "HYBRID",
+        tier: CognitiveTier = CognitiveTier.OPUS_FRONTIER,
+        context: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Unified intelligent query: understands the question, queries the live graph,
+        runs multi-approach analysis, and assembles a flowing LLM-style narrative answer.
+
+        This is the master endpoint that combines:
+        - Question understanding and enhancement (CognitiveNarrator)
+        - Live graph evidence gathering (GraphIntelligenceEngine)
+        - 6 analytical approaches with real data
+        - Self-LLM synthesis and XAI attribution
+        - Q-Learning policy updates
+        - Publication-grade markdown narration
+        """
+        start = time.time()
+        ctx = context or {}
+
+        approach_enum = QueryApproach.HYBRID
+        for qa in QueryApproach:
+            if qa.value == approach.upper():
+                approach_enum = qa
+                break
+
+        # 1. Question Understanding & Enhancement
+        enhanced = self.cognitive_narrator.analyze_and_enhance(query)
+
+        # 2. Live Graph Evidence Gathering
+        if approach_enum == QueryApproach.DETERMINISTIC:
+            graph_findings = self.graph_intelligence.execute_deterministic(query)
+        elif approach_enum == QueryApproach.PROBABILISTIC:
+            graph_findings = self.graph_intelligence.execute_probabilistic(query)
+        elif approach_enum == QueryApproach.HEURISTIC:
+            graph_findings = self.graph_intelligence.execute_heuristic(query)
+        elif approach_enum == QueryApproach.STOCHASTIC:
+            graph_findings = self.graph_intelligence.execute_stochastic(query)
+        elif approach_enum == QueryApproach.NON_DETERMINISTIC:
+            graph_findings = self.graph_intelligence.execute_non_deterministic(query)
+        else:
+            graph_findings = self.graph_intelligence.execute_hybrid(query)
+
+        # 3. Topology snapshot for context
+        topology = self.graph_intelligence.get_topology_snapshot()
+
+        # 4. Self-LLM Frontier Synthesis
+        evidence_context = "\n".join(
+            f"- {e.title} ({e.label}): {len(e.outbound_edges)} outbound, {len(e.inbound_edges)} inbound edges"
+            for e in graph_findings.raw_evidence[:10]
+        )
+        llm_gen = self.self_llm.generate(
+            prompt=enhanced.enhanced_formulation,
+            config=GenerationConfig(
+                tier=tier,
+                system_prompt=(
+                    "You are the Enterprise Living Brain answering with precision and eloquence. "
+                    "Ground every claim in the provided graph evidence. Deliver a comprehensive, "
+                    "multi-section answer as a frontier AI would."
+                ),
+                enable_xai=True,
+            ),
+            context=evidence_context,
+        )
+
+        # 5. Q-Learning Reward Update
+        reward = 1.0 if graph_findings.confidence > 0.8 else 0.5
+        q_val = self.learning_engine.q_learning.update(
+            query=query,
+            action=f"{approach_enum.value}_{tier.value}",
+            reward=reward,
+        )
+
+        # 6. Narration Assembly
+        narration = self.cognitive_narrator.narrate(query=query, tier=tier, context=ctx)
+
+        # 7. Build the unified response
+        latency_ms = (time.time() - start) * 1000.0
+
+        return {
+            "query": query,
+            "enhanced_formulation": enhanced.enhanced_formulation,
+            "detected_domain": enhanced.detected_domain.value,
+            "extracted_entities": enhanced.extracted_entities,
+            "intent_analysis": enhanced.intent_analysis,
+            "scope_boundary": enhanced.scope_boundary,
+            "approach": approach_enum.value,
+            "cognitive_tier": tier.value,
+            "graph_findings": {
+                "methodology": graph_findings.methodology,
+                "discovered_entities": graph_findings.discovered_entities,
+                "known_edges": [
+                    {"source": s, "relation": r, "target": t}
+                    for s, r, t in graph_findings.known_edges[:20]
+                ],
+                "findings": graph_findings.findings,
+                "recommendations": graph_findings.recommendations,
+                "confidence": graph_findings.confidence,
+                "metrics": graph_findings.metrics,
+            },
+            "topology": {
+                "total_vertices": topology.total_vertices,
+                "total_edges": topology.total_edges,
+                "label_distribution": topology.label_distribution,
+                "hub_vertices": topology.hub_vertices[:5],
+                "avg_degree": topology.avg_degree,
+                "density": topology.density,
+            },
+            "complementary_questions": [
+                {
+                    "approach": cq.approach,
+                    "question": cq.question,
+                    "rationale": cq.rationale,
+                    "answer": cq.answer,
+                    "confidence": cq.confidence,
+                    "evidence_points": cq.evidence_points,
+                }
+                for cq in enhanced.complementary_questions
+            ],
+            "llm_synthesis": llm_gen.content,
+            "reasoning_trace": llm_gen.reasoning_trace,
+            "xai_attribution": {
+                "token_attributions": [
+                    {"token": t.token, "salience": t.salience_score, "entity": t.grounded_entity}
+                    for t in (llm_gen.xai.token_attributions if llm_gen.xai else [])
+                ],
+                "neuro_symbolic_citations": llm_gen.xai.neuro_symbolic_citations if llm_gen.xai else [],
+                "counterfactuals": [
+                    {"premise": c.premise, "impact_delta": c.impact_delta, "explanation": c.explanation}
+                    for c in (llm_gen.xai.counterfactuals if llm_gen.xai else [])
+                ],
+                "uncertainty": {
+                    "epistemic": llm_gen.xai.epistemic_uncertainty if llm_gen.xai else 0.0,
+                    "aleatoric": llm_gen.xai.aleatoric_uncertainty if llm_gen.xai else 0.0,
+                } if llm_gen.xai else None,
+            },
+            "learning": {
+                "q_value": q_val,
+                "reward": reward,
+                "action": f"{approach_enum.value}_{tier.value}",
+            },
+            "narrative_markdown": narration.markdown_narrative,
+            "confidence_score": round(
+                (graph_findings.confidence + narration.confidence_score) / 2, 4
+            ),
+            "latency_ms": round(latency_ms, 2),
+            "metadata": {
+                "model_name": llm_gen.model_name,
+                "narration_id": narration.narration_id,
+                "evidence_count": len(graph_findings.raw_evidence),
+            },
+        }
+
     def get_system_telemetry(self) -> dict[str, Any]:
         """Returns comprehensive telemetry across all Brain OS subsystems."""
         snapshot = self.living_brain.compute_brain_snapshot()
@@ -278,6 +434,14 @@ class BrainOSKernel:
                     "COMPLEMENTARY_QUESTION_GENERATION",
                     "MULTI_PARADIGM_ANSWERING",
                     "PUBLICATION_GRADE_LLM_NARRATION",
+                ],
+            },
+            "graph_intelligence": {
+                "status": "OPERATIONAL",
+                "graph_store_connected": self.graph_intelligence._has_store(),
+                "approaches": [
+                    "DETERMINISTIC", "NON_DETERMINISTIC", "PROBABILISTIC",
+                    "HEURISTIC", "STOCHASTIC", "HYBRID",
                 ],
             },
             "learning_engine": self.learning_engine.get_learning_telemetry(),

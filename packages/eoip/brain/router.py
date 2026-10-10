@@ -23,6 +23,13 @@ router = APIRouter(prefix="/brain", tags=["Enterprise Brain OS"])
 _kernel = BrainOSKernel()
 
 
+class IntelligentQueryRequest(BaseModel):
+    query: str
+    approach: str = "HYBRID"
+    tier: str = "OPUS_FRONTIER"
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
 class BrainQueryReportRequest(BaseModel):
     query: str
     approach: str = "HYBRID"
@@ -88,6 +95,23 @@ class LLMTokenizeRequest(BaseModel):
 class LLMEmbedRequest(BaseModel):
     text: str
     dimensions: int = 1536
+
+
+@router.post("/intelligent-query")
+def intelligent_query(req: IntelligentQueryRequest) -> dict[str, Any]:
+    """Unified intelligent query: understands the question, queries the live graph,
+    runs multi-approach analysis, and returns a flowing LLM-style narrative answer."""
+    try:
+        tier_enum = CognitiveTier(req.tier.upper())
+    except ValueError:
+        tier_enum = CognitiveTier.OPUS_FRONTIER
+
+    return _kernel.intelligent_query(
+        query=req.query,
+        approach=req.approach.upper(),
+        tier=tier_enum,
+        context=req.context,
+    )
 
 
 @router.post("/ask")
