@@ -119,6 +119,42 @@ class QLearningEngine:
         self.total_updates += 1
         return new_q
 
+    def save(self, path: str) -> None:
+        """Persist Q-table and training state to a JSON file."""
+        import pathlib
+        data = {
+            "q_table": self.q_table,
+            "total_updates": self.total_updates,
+            "alpha": self.alpha,
+            "gamma": self.gamma,
+            "epsilon": self.epsilon,
+        }
+        pathlib.Path(path).parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+
+    def load(self, path: str) -> bool:
+        """Restore Q-table from a previously saved file. Returns False if not found."""
+        import pathlib
+        p = pathlib.Path(path)
+        if not p.exists():
+            return False
+        with open(p, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        self.q_table = data.get("q_table", {})
+        self.total_updates = data.get("total_updates", 0)
+        self.alpha = data.get("alpha", self.alpha)
+        self.gamma = data.get("gamma", self.gamma)
+        self.epsilon = data.get("epsilon", self.epsilon)
+        return True
+
+    def get_policy_summary(self) -> dict[str, str]:
+        """Returns the best action per state — the learned policy."""
+        return {
+            state: max(actions.keys(), key=lambda a: actions[a])
+            for state, actions in self.q_table.items()
+        }
+
 
 # ============================================================================
 # 2. Imitation Learning / Behavioral Cloning Engine
@@ -353,6 +389,53 @@ class CognitiveLearningEngine:
             ],
             outcome_rating=1.0,
         )
+
+    def save_state(self, directory: str) -> None:
+        """Persist all learning engine state to disk for durability across restarts."""
+        import pathlib
+        base = pathlib.Path(directory)
+        base.mkdir(parents=True, exist_ok=True)
+        self.q_learning.save(str(base / "q_learning.json"))
+        trajectories = []
+        for t in self.imitation_learning.trajectories:
+            trajectories.append({
+                "trajectory_id": t.trajectory_id,
+                "query": t.query,
+                "approach": t.approach,
+                "steps": t.steps,
+                "outcome_rating": t.outcome_rating,
+                "timestamp": t.timestamp,
+            })
+        with open(base / "imitation_learning.json", "w", encoding="utf-8") as f:
+            json.dump(trajectories, f, indent=2)
+
+    def load_state(self, directory: str) -> bool:
+        """Restore learning engine state from a previous save."""
+        import pathlib
+        base = pathlib.Path(directory)
+        if not base.exists():
+            return False
+        q_path = base / "q_learning.json"
+        if q_path.exists():
+            self.q_learning.load(str(q_path))
+        il_path = base / "imitation_learning.json"
+        if il_path.exists():
+            with open(il_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            llm = get_self_llm_engine()
+            for t in data:
+                embedding = llm.embed(t["query"], dimensions=64)
+                traj = ExpertTrajectory(
+                    trajectory_id=t["trajectory_id"],
+                    query=t["query"],
+                    embedding=embedding,
+                    approach=t["approach"],
+                    steps=t["steps"],
+                    outcome_rating=t["outcome_rating"],
+                    timestamp=t["timestamp"],
+                )
+                self.imitation_learning.trajectories.append(traj)
+        return True
 
     def get_learning_telemetry(self) -> dict[str, Any]:
         """Telemetry summarizing state of all learning algorithms."""

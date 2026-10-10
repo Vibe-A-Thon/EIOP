@@ -201,6 +201,26 @@ def get_learning_status() -> dict[str, Any]:
     return _kernel.learning_engine.get_learning_telemetry()
 
 
+@router.post("/learning/save")
+def save_learning_state(directory: str = "data/learning") -> dict[str, str]:
+    """Persist all learning engine state to disk for durability across restarts."""
+    _kernel.learning_engine.save_state(directory)
+    return {"status": "SAVED", "directory": directory}
+
+
+@router.post("/learning/load")
+def load_learning_state(directory: str = "data/learning") -> dict[str, Any]:
+    """Restore learning engine state from a previous save."""
+    loaded = _kernel.learning_engine.load_state(directory)
+    return {"status": "LOADED" if loaded else "NOT_FOUND", "directory": directory}
+
+
+@router.get("/learning/policy")
+def get_learned_policy() -> dict[str, str]:
+    """Returns the Q-Learning policy: best action per state."""
+    return _kernel.learning_engine.q_learning.get_policy_summary()
+
+
 @router.post("/learning/train")
 def train_learning_engine(req: LearningTrainRequest) -> dict[str, Any]:
     paradigm = req.paradigm.upper()

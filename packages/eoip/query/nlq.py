@@ -263,7 +263,7 @@ class NLQProcessor:
                 ),
                 result=result,
                 answer=_answer_eql(result),
-                confidence=0.92,
+                confidence=min(0.95, 0.8 + 0.03 * len(result.get("items", result.get("records", [])))),
                 followups=["Ask for impact, path, lineage, or traceability on a specific entity."],
             )
 
@@ -425,11 +425,14 @@ def _search_plan(anchor: str) -> QueryPlan:
 
 
 def _confidence_for(interpretation: NLInterpretation) -> float:
+    base = 0.5
     if interpretation.interpreted_via == "rules":
-        return 0.88
-    if interpretation.interpreted_via == "model":
-        return 0.72
-    return 0.45
+        base = 0.85
+    elif interpretation.interpreted_via == "model":
+        base = 0.70
+    if interpretation.plan and interpretation.plan.intent:
+        base = min(1.0, base + 0.05)
+    return round(base, 3)
 
 
 def _node_ids(nodes: list[GraphNode]) -> list[str]:

@@ -312,7 +312,7 @@ class GraphIntelligenceEngine:
             known_edges=edges,
             findings=findings,
             recommendations=self._recommendations_from_evidence(evidence, "heuristic"),
-            confidence=0.93 if evidence else 0.4,
+            confidence=self._compute_confidence(evidence, base=0.93),
             raw_evidence=evidence,
             metrics={"centrality_scores": dict(sorted(betweenness.items(), key=lambda x: x[1], reverse=True)[:10])},
         )
@@ -367,7 +367,7 @@ class GraphIntelligenceEngine:
             known_edges=edges,
             findings=findings,
             recommendations=self._recommendations_from_evidence(evidence, "stochastic"),
-            confidence=0.91 if evidence else 0.4,
+            confidence=self._compute_confidence(evidence, base=0.91),
             raw_evidence=evidence,
             metrics={"simulation_runs": 1000 if evidence else 0},
         )
@@ -411,7 +411,7 @@ class GraphIntelligenceEngine:
             known_edges=edges,
             findings=findings,
             recommendations=self._recommendations_from_evidence(evidence, "generative"),
-            confidence=0.88 if evidence else 0.4,
+            confidence=self._compute_confidence(evidence, base=0.88),
             raw_evidence=evidence,
         )
 
@@ -545,6 +545,15 @@ class GraphIntelligenceEngine:
         except Exception:
             pass
         return count
+
+    @staticmethod
+    def _compute_confidence(evidence: list[GraphEvidence], base: float = 0.9) -> float:
+        if not evidence:
+            return 0.5
+        edge_count = sum(len(e.outbound_edges) + len(e.inbound_edges) for e in evidence)
+        coverage = min(1.0, len(evidence) / 5.0)
+        richness = min(1.0, edge_count / 10.0)
+        return round(base * (0.5 + 0.3 * coverage + 0.2 * richness), 3)
 
     @staticmethod
     def _text_relevance(text: str, query: str) -> float:

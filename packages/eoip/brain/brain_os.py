@@ -26,6 +26,9 @@ from eoip.brain.learning_engine import CognitiveLearningEngine, LearningParadigm
 from eoip.brain.report_generator import DetailedReportGenerator, QueryApproach, BrainReport
 from eoip.brain.cognitive_narrator import CognitiveNarrator, CognitiveNarration
 from eoip.brain.graph_intelligence import GraphIntelligenceEngine, ApproachFindings
+from eoip.enterprise.circuit_breaker import get_circuit_breaker_registry
+from eoip.enterprise.audit import get_audit_log, AuditCategory
+from eoip.enterprise.cache import get_cache
 
 
 
@@ -79,7 +82,7 @@ class BrainOSKernel:
         self.self_llm: SelfLLMEngine = get_self_llm_engine()
         self.learning_engine: CognitiveLearningEngine = CognitiveLearningEngine()
         self.report_generator: DetailedReportGenerator = DetailedReportGenerator(learning_engine=self.learning_engine)
-        self.cognitive_narrator: CognitiveNarrator = CognitiveNarrator()
+        self.cognitive_narrator: CognitiveNarrator = CognitiveNarrator(graph_store=graph_store)
         self.graph_intelligence: GraphIntelligenceEngine = GraphIntelligenceEngine(graph_store=graph_store)
 
         self.working_memory: list[dict[str, Any]] = []
@@ -273,6 +276,12 @@ class BrainOSKernel:
         start = time.time()
         ctx = context or {}
 
+        cache = get_cache()
+        cache_key = cache.fingerprint(query, approach=approach, tier=tier.value)
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+
         approach_enum = QueryApproach.HYBRID
         for qa in QueryApproach:
             if qa.value == approach.upper():
@@ -332,7 +341,14 @@ class BrainOSKernel:
         # 7. Build the unified response
         latency_ms = (time.time() - start) * 1000.0
 
-        return {
+        get_audit_log().record(
+            category=AuditCategory.QUERY_EXECUTION,
+            action="intelligent_query",
+            resource=f"approach:{approach_enum.value}",
+            details={"query_length": len(query), "entities_found": len(graph_findings.discovered_entities)},
+        )
+
+        result = {
             "query": query,
             "enhanced_formulation": enhanced.enhanced_formulation,
             "detected_domain": enhanced.detected_domain.value,
@@ -403,8 +419,12 @@ class BrainOSKernel:
                 "model_name": llm_gen.model_name,
                 "narration_id": narration.narration_id,
                 "evidence_count": len(graph_findings.raw_evidence),
+                "cached": False,
             },
         }
+
+        cache.put(cache_key, result, ttl=120.0)
+        return result
 
     def get_system_telemetry(self) -> dict[str, Any]:
         """Returns comprehensive telemetry across all Brain OS subsystems."""
@@ -452,6 +472,17 @@ class BrainOSKernel:
                 "merkle_root": snapshot.merkle_root,
             },
             "database_health": {k: v.connected for k, v in db_health.items()},
+            "circuit_breakers": [
+                {"name": m.name, "state": m.state.value, "failures": m.failure_count}
+                for m in get_circuit_breaker_registry().all_metrics()
+            ],
+            "audit_log": get_audit_log().get_stats(),
+            "cache": {
+                "hits": get_cache().stats().hits,
+                "misses": get_cache().stats().misses,
+                "hit_rate": get_cache().stats().hit_rate,
+                "size": get_cache().stats().current_size,
+            },
         }
 
 

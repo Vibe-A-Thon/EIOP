@@ -460,4 +460,131 @@ def build_enterprise_router() -> APIRouter:
     def observability_metrics() -> dict[str, Any]:
         return _obs.snapshot()
 
+    # ── Health Probes ──────────────────────────────────────────────────
+
+    from eoip.enterprise.health import HealthProbe, HealthStatus, ComponentHealth
+
+    _health = HealthProbe(version="1.0.0")
+    _health.mark_startup_complete()
+
+    @router.get("/health/live", summary="Liveness probe",
+                description="Kubernetes-compatible liveness check.",
+                tags=["Health"])
+    def health_liveness() -> dict[str, Any]:
+        h = _health.check_liveness()
+        return _health.to_dict(h)
+
+    @router.get("/health/ready", summary="Readiness probe",
+                description="Kubernetes-compatible readiness check with subsystem health.",
+                tags=["Health"])
+    def health_readiness() -> dict[str, Any]:
+        h = _health.check_readiness()
+        return _health.to_dict(h)
+
+    @router.get("/health/startup", summary="Startup probe",
+                description="Kubernetes-compatible startup check.",
+                tags=["Health"])
+    def health_startup() -> dict[str, Any]:
+        h = _health.check_startup()
+        return _health.to_dict(h)
+
+    # ── Circuit Breakers ───────────────────────────────────────────────
+
+    from eoip.enterprise.circuit_breaker import get_circuit_breaker_registry
+
+    @router.get("/resilience/circuit-breakers", summary="Circuit breaker status",
+                description="View all circuit breakers and their current states.",
+                tags=["Resilience"])
+    def circuit_breaker_status() -> list[dict[str, Any]]:
+        reg = get_circuit_breaker_registry()
+        return [
+            {
+                "name": m.name,
+                "state": m.state.value,
+                "failure_count": m.failure_count,
+                "success_count": m.success_count,
+                "total_calls": m.total_calls,
+            }
+            for m in reg.all_metrics()
+        ]
+
+    @router.post("/resilience/circuit-breakers/reset", summary="Reset all circuit breakers",
+                 description="Force all circuit breakers back to CLOSED state.",
+                 tags=["Resilience"])
+    def circuit_breaker_reset() -> dict[str, str]:
+        get_circuit_breaker_registry().reset_all()
+        return {"status": "ALL_RESET"}
+
+    # ── Audit Log ──────────────────────────────────────────────────────
+
+    from eoip.enterprise.audit import get_audit_log, AuditCategory as AuditCat
+
+    @router.get("/audit/events", summary="Query audit events",
+                description="Query the tamper-evident audit log with filters.",
+                tags=["Audit"])
+    def audit_query(category: str | None = None, actor: str | None = None,
+                    resource: str | None = None, limit: int = Query(default=100, le=1000)) -> list[dict[str, Any]]:
+        log = get_audit_log()
+        cat = None
+        if category:
+            try:
+                cat = AuditCat(category)
+            except ValueError:
+                pass
+        return [e.to_dict() for e in log.query(category=cat, actor=actor, resource=resource, limit=limit)]
+
+    @router.get("/audit/stats", summary="Audit log statistics",
+                description="Chain integrity verification and event distribution.",
+                tags=["Audit"])
+    def audit_stats() -> dict[str, Any]:
+        return get_audit_log().get_stats()
+
+    @router.get("/audit/verify", summary="Verify audit chain integrity",
+                description="Cryptographically verify the hash chain of the audit log.",
+                tags=["Audit"])
+    def audit_verify() -> dict[str, Any]:
+        valid, count = get_audit_log().verify_chain()
+        return {"chain_valid": valid, "events_verified": count}
+
+    # ── Cache ──────────────────────────────────────────────────────────
+
+    from eoip.enterprise.cache import get_cache
+
+    @router.get("/cache/stats", summary="Cache statistics",
+                description="View intelligent cache hit rate, size, and eviction counts.",
+                tags=["Cache"])
+    def cache_stats() -> dict[str, Any]:
+        s = get_cache().stats()
+        return {
+            "hits": s.hits,
+            "misses": s.misses,
+            "evictions": s.evictions,
+            "current_size": s.current_size,
+            "max_size": s.max_size,
+            "hit_rate": s.hit_rate,
+        }
+
+    @router.post("/cache/clear", summary="Clear cache",
+                 description="Purge all cached results.",
+                 tags=["Cache"])
+    def cache_clear() -> dict[str, Any]:
+        removed = get_cache().clear()
+        return {"status": "CLEARED", "entries_removed": removed}
+
+    # ── Plugins ────────────────────────────────────────────────────────
+
+    from eoip.enterprise.plugin import get_plugin_registry
+
+    @router.get("/plugins", summary="List plugins",
+                description="View all registered plugins, their status, and capabilities.",
+                tags=["Plugins"])
+    def list_plugins() -> list[dict[str, Any]]:
+        return get_plugin_registry().list_all()
+
+    @router.get("/plugins/stats", summary="Plugin system stats",
+                description="Summary of plugin ecosystem health.",
+                tags=["Plugins"])
+    def plugin_stats() -> dict[str, Any]:
+        return get_plugin_registry().get_stats()
+
     return router

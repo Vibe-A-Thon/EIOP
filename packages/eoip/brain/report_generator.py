@@ -234,136 +234,139 @@ class DetailedReportGenerator:
     # Execution Approaches
     # ------------------------------------------------------------------------
 
+    @staticmethod
+    def _extract_query_entities(query: str) -> list[str]:
+        """Extract entity names from the query text for contextual reporting."""
+        import re
+        pascal = re.findall(r"\b[A-Z][a-zA-Z0-9_]+\b", query)
+        snake = re.findall(r"\b[a-z]+(?:_[a-z]+)+\b", query)
+        entities = list(dict.fromkeys(pascal + snake))
+        if not entities:
+            words = [w for w in re.findall(r"\b[A-Za-z]{4,}\b", query)
+                     if w.lower() not in {"what", "when", "where", "which", "about",
+                                          "evaluate", "analyze", "find", "conduct"}]
+            entities = words[:4]
+        return entities[:6] or ["TargetSystem"]
+
     def _execute_deterministic(self, query: str, store: Any) -> dict[str, Any]:
-        entities = ["AuthenticationService", "UserRegistry", "TokenVault", "DatabaseCluster"]
-        edges = [
-            ("AuthenticationService", "DEPENDS_ON", "UserRegistry"),
-            ("AuthenticationService", "VALIDATES_WITH", "TokenVault"),
-            ("UserRegistry", "PERSISTS_TO", "DatabaseCluster"),
-        ]
+        entities = self._extract_query_entities(query)
+        edges = [(entities[0], "RELATES_TO", e) for e in entities[1:3]] if len(entities) > 1 else []
         return {
             "methodology_desc": (
-                "Deterministic Graph Traversal: Validates formal schema axioms and executes "
-                "exact relational path traversals with 0% semantic variance and zero hallucination."
+                "Deterministic Graph Traversal: Schema axiom validation and exact relational "
+                "path traversals with zero semantic variance. No live graph data available — "
+                "analysis based on query-derived entities."
             ),
             "discovered_entities": entities,
             "known_edges": edges,
             "findings": [
-                "1. Verified strict acyclic dependency path from AuthenticationService to DatabaseCluster.",
-                "2. All node properties conform to SHACL cardinality constraints.",
-                "3. Invariant check passed: TokenVault has no outbound internet ingress.",
+                f"Query targets {len(entities)} entities: {', '.join(entities[:4])}.",
+                "No live graph store connected for deterministic verification. "
+                "Connect a graph backend to enable full schema conformance validation.",
+                "Recommendation: Populate the knowledge graph with domain entities to unlock "
+                "real deterministic path traversal and SHACL constraint verification.",
             ],
             "recommendations": [
-                "Preserve strict schema invariants on TokenVault.",
-                "Enforce database connection pooling limits at 250 connections.",
+                "Connect a live graph store (Neo4j, TigerGraph, Memgraph, or MemoryGraphStore) "
+                "for real deterministic analysis.",
+                f"Ingest {', '.join(entities[:3])} entities and their relationships into the graph.",
             ],
-            "confidence": 1.0,
+            "confidence": 0.35,
         }
 
     def _execute_non_deterministic(self, query: str, tier: CognitiveTier) -> dict[str, Any]:
-        entities = ["ServiceMesh", "MicroserviceFabric", "TelemetryCollector"]
-        edges = [("ServiceMesh", "ROUTES_TO", "MicroserviceFabric")]
+        entities = self._extract_query_entities(query)
+        edges = [(entities[0], "INTERACTS_WITH", e) for e in entities[1:2]] if len(entities) > 1 else []
         return {
             "methodology_desc": (
-                f"Non-Deterministic Generative Synthesis ({tier.value}): Employs frontier deep "
-                f"attention layers, Chain-of-Thought deliberation, and unconstrained semantic projection."
+                f"Non-Deterministic Generative Synthesis ({tier.value}): Frontier deep attention layers "
+                f"and Chain-of-Thought deliberation. No live graph data — analysis uses query context."
             ),
             "discovered_entities": entities,
             "known_edges": edges,
             "findings": [
-                "1. Emergent interaction patterns suggest high correlation between latency spikes and cross-region calls.",
-                "2. Dynamic semantic clustering indicates conceptual coupling between logging and billing subsystems.",
+                f"Generative analysis of entities: {', '.join(entities[:4])}.",
+                "No live graph store connected for emergent pattern detection. "
+                "Connect a graph backend to enable co-occurrence and semantic clustering analysis.",
+                "Populate domain entities to unlock generative synthesis with real interaction data.",
             ],
             "recommendations": [
-                "Decouple logging pipeline from synchronous billing path.",
-                "Deploy asynchronous event-driven queues to absorb traffic bursts.",
+                "Connect a live graph store for real emergent pattern discovery.",
+                f"Ingest interaction data for {', '.join(entities[:2])} to enable behavioral analysis.",
             ],
-            "confidence": 0.88,
+            "confidence": 0.3,
         }
 
     def _execute_probabilistic(self, query: str, store: Any) -> dict[str, Any]:
-        entities = ["PaymentGateway", "FraudDetectionService", "CardVault"]
-        edges = [("PaymentGateway", "CALLS", "FraudDetectionService")]
-        # Bayesian prior and likelihood
-        prior = 0.05
-        likelihood = 0.92
-        marginal = 0.12
-        posterior = (prior * likelihood) / marginal
+        entities = self._extract_query_entities(query)
+        edges = [(entities[0], "DEPENDS_ON", e) for e in entities[1:2]] if len(entities) > 1 else []
         return {
             "methodology_desc": (
-                "Probabilistic Bayesian Inference: Evaluates posterior probability distributions, "
-                "belief network propagating conditional risks, and confidence interval bounds."
+                "Probabilistic Bayesian Inference: Posterior probability distributions and "
+                "belief network risk propagation. No live graph data for statistical analysis."
             ),
             "discovered_entities": entities,
             "known_edges": edges,
             "findings": [
-                f"1. Calculated Bayesian posterior failure probability: P(Failure|Spike) = {posterior:.3f}.",
-                "2. Confidence interval bounds established at [0.312, 0.458] with 95% credible interval.",
-                "3. Shannon entropy of decision distribution: H(X) = 0.41 bits.",
+                f"Probabilistic analysis targets entities: {', '.join(entities[:4])}.",
+                "No live graph store connected for degree distribution and Bayesian risk computation. "
+                "Connect a graph backend to compute real posterior failure probabilities.",
+                "Real Bayesian analysis requires graph topology — populate with domain entities.",
             ],
             "recommendations": [
-                "Institute circuit-breaker when posterior risk exceeds P=0.25 threshold.",
-                "Provision warm standby replicas for FraudDetectionService.",
+                "Connect a live graph store to compute real degree distributions and risk posteriors.",
+                f"Model failure dependencies for {', '.join(entities[:2])} in the knowledge graph.",
             ],
-            "confidence": round(1.0 - posterior * 0.5, 3),
+            "confidence": 0.3,
         }
 
     def _execute_heuristic(self, query: str, store: Any) -> dict[str, Any]:
-        entities = ["ApiGateway", "AuthService", "OrderService", "InventoryService"]
-        edges = [
-            ("ApiGateway", "ROUTES_TO", "AuthService"),
-            ("ApiGateway", "ROUTES_TO", "OrderService"),
-            ("OrderService", "CALLS", "InventoryService"),
-        ]
+        entities = self._extract_query_entities(query)
+        edges = [(entities[0], "CONNECTS_TO", e) for e in entities[1:3]] if len(entities) > 1 else []
         return {
             "methodology_desc": (
-                "Heuristic Optimization & Centrality Search: Leverages A* pathfinding, PageRank "
-                "eigenvector centrality, and domain-expert rule heuristics to rank critical paths."
+                "Heuristic Optimization & Centrality Search: A* pathfinding and degree-centrality "
+                "ranking. No live graph data for real topology analysis."
             ),
             "discovered_entities": entities,
             "known_edges": edges,
             "findings": [
-                "1. A* pathfinding identified optimal path: ApiGateway -> OrderService -> InventoryService (Cost: 14ms).",
-                "2. Eigenvector centrality ranked ApiGateway as primary enterprise bridge (Score: 0.892).",
-                "3. Bottleneck heuristic flagged InventoryService as high-fan-in vulnerability.",
+                f"Heuristic analysis targets entities: {', '.join(entities[:4])}.",
+                "No live graph store connected for centrality computation and bottleneck identification. "
+                "Connect a graph backend for real A* pathfinding and PageRank analysis.",
+                "Real heuristic ranking requires graph edges — ingest relationship data.",
             ],
             "recommendations": [
-                "Introduce Redis edge cache in front of InventoryService.",
-                "Implement proactive rate limiting at ApiGateway.",
+                "Connect a live graph store for real centrality ranking and pathfinding.",
+                f"Map relationships between {', '.join(entities[:3])} for bottleneck detection.",
             ],
-            "confidence": 0.93,
+            "confidence": 0.3,
         }
 
     def _execute_stochastic(self, query: str, store: Any) -> dict[str, Any]:
-        entities = ["KafkaCluster", "ConsumerGroupA", "ConsumerGroupB", "DataWarehouse"]
-        edges = [
-            ("KafkaCluster", "EMITS_TO", "ConsumerGroupA"),
-            ("KafkaCluster", "EMITS_TO", "ConsumerGroupB"),
-        ]
-        rollouts = 50
-        simulated_latencies = [random.gauss(45.0, 8.0) for _ in range(rollouts)]
-        p99 = sorted(simulated_latencies)[int(rollouts * 0.99)]
+        entities = self._extract_query_entities(query)
+        edges = [(entities[0], "EMITS_TO", e) for e in entities[1:3]] if len(entities) > 1 else []
         return {
             "methodology_desc": (
-                f"Stochastic Monte Carlo Simulation: Conducted {rollouts} randomized rollouts and "
-                "random-walk graph samplings to simulate dynamic load variations and cascading drift."
+                "Stochastic Monte Carlo Simulation: Randomized perturbation trials and "
+                "resilience analysis. No live graph data for real simulation."
             ),
             "discovered_entities": entities,
             "known_edges": edges,
             "findings": [
-                f"1. Monte Carlo P99 simulated latency: {p99:.2f}ms across {rollouts} randomized trials.",
-                "2. Zero deadlock conditions observed in random walk state-space exploration.",
-                "3. Simulated partition failure demonstrated graceful degradation via fallback queues.",
+                f"Stochastic analysis targets entities: {', '.join(entities[:4])}.",
+                "No live graph store connected for Monte Carlo simulation. "
+                "Connect a graph backend to run real node-failure resilience tests.",
+                "Real stochastic simulation requires graph topology data — populate with entities and edges.",
             ],
             "recommendations": [
-                "Size buffer queues to accommodate P99 burst limits.",
-                "Calibrate auto-scaling thresholds at 55ms latency barrier.",
+                "Connect a live graph store for real Monte Carlo chaos simulation.",
+                f"Model failure propagation paths for {', '.join(entities[:2])} in the knowledge graph.",
             ],
-            "confidence": 0.91,
+            "confidence": 0.3,
         }
 
     def _execute_hybrid_hyperautomation(self, query: str, tier: CognitiveTier, store: Any) -> dict[str, Any]:
-        # Combines all approaches into unified hyperautomated output
         det = self._execute_deterministic(query, store)
         prob = self._execute_probabilistic(query, store)
         heur = self._execute_heuristic(query, store)
@@ -376,32 +379,34 @@ class DetailedReportGenerator:
         all_edges = det["known_edges"] + prob["known_edges"] + heur["known_edges"]
 
         combined_findings = [
-            f"[Deterministic Evidence] {det['findings'][0]}",
-            f"[Probabilistic Risk] {prob['findings'][0]}",
-            f"[Heuristic Ranking] {heur['findings'][0]}",
-            f"[Stochastic Simulation] {stoch['findings'][0]}",
-            f"[Neural Synthesis ({tier.value})] {non_det['findings'][0]}",
+            f"[Deterministic] {det['findings'][0]}",
+            f"[Probabilistic] {prob['findings'][0]}",
+            f"[Heuristic] {heur['findings'][0]}",
+            f"[Stochastic] {stoch['findings'][0]}",
+            f"[Generative ({tier.value})] {non_det['findings'][0]}",
         ]
 
-        combined_recs = [
-            "1. Enforce deterministic schema verification prior to any state modification.",
-            "2. Actuate circuit-breakers when probabilistic Bayesian risk spikes above threshold.",
-            "3. Optimize critical path caching along heuristic A* bottlenecks.",
-            "4. Provision buffer elasticity based on Monte Carlo stochastic P99 boundaries.",
-            "5. Apply continuous self-improving prompt adjustments via the learning engine.",
-        ]
+        sub_confidences = [det["confidence"], prob["confidence"], heur["confidence"],
+                           stoch["confidence"], non_det["confidence"]]
+        avg_confidence = sum(sub_confidences) / len(sub_confidences)
+
+        combined_recs = list(dict.fromkeys(
+            det["recommendations"][:1] + prob["recommendations"][:1] +
+            heur["recommendations"][:1] + stoch["recommendations"][:1] +
+            non_det["recommendations"][:1]
+        ))
 
         return {
             "methodology_desc": (
-                "Hybrid Hyperautomation: Orchestrates deterministic graph axioms, Bayesian probabilistic "
-                "risk scoring, heuristic A* pathfinding, stochastic Monte Carlo rollouts, and frontier "
-                f"neural cognitive deliberation ({tier.value}) into a unified verifiable execution fabric."
+                f"Hybrid Hyperautomation: Orchestrates all 5 analytical paradigms — deterministic, "
+                f"probabilistic, heuristic, stochastic, and generative ({tier.value}) — into a "
+                f"unified cross-paradigm analysis."
             ),
             "discovered_entities": all_entities,
             "known_edges": all_edges,
             "findings": combined_findings,
             "recommendations": combined_recs,
-            "confidence": 0.96,
+            "confidence": round(avg_confidence, 3),
         }
 
     # ------------------------------------------------------------------------

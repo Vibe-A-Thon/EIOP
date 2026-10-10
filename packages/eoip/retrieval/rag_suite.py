@@ -241,11 +241,12 @@ class EnterpriseRAGSuite:
             try:
                 edges = self.graph_store.edges_from(seed_vid, limit=limit)
                 for e in edges:
+                    edge_score = round(chunks[0].score * 0.75, 3) if chunks else 0.5
                     chunks.append(EvidenceChunk(
                         chunk_id=e.get("eid", ""),
                         content=f"Edge({e.get('out_cid', '')} -[{e.get('label', '')}]-> {e.get('in_cid', '')})",
                         source_type="graph_edge",
-                        score=0.7,
+                        score=edge_score,
                         metadata={"label": e.get("label", "")},
                         provenance="graph_edge",
                     ))
@@ -571,7 +572,7 @@ class EnterpriseRAGSuite:
         return RAGResult(
             query=query, mode=RAGMode.RAG_OF_RAGS,
             answer=self._synthesize_answer(query, all_c[:8], RAGMode.RAG_OF_RAGS),
-            evidence=all_c[:8], confidence=0.92,
+            evidence=all_c[:8], confidence=self._compute_confidence(all_c[:8]),
             reasoning_steps=[f"Meta-synthesis over 3 sub-RAG strategies: {len(all_c)} combined evidence items"],
         )
 
@@ -604,11 +605,12 @@ class EnterpriseRAGSuite:
         tree_clusters = []
         if len(chunks) >= 2:
             cluster_summary = " ".join(c.content[:80] for c in chunks[:2])
+            cluster_score = round(sum(c.score for c in chunks[:2]) / 2, 3)
             tree_clusters.append(EvidenceChunk(
                 chunk_id=f"raptor_root_cluster_{uuid.uuid4().hex[:6]}",
                 content=f"[RAPTOR Cluster Summary Level 1] {cluster_summary}",
                 source_type="raptor_cluster",
-                score=0.95,
+                score=cluster_score,
             ))
         all_ev = tree_clusters + chunks
         return RAGResult(
@@ -649,11 +651,12 @@ class EnterpriseRAGSuite:
         graph_items = self._retrieve_from_graph(query, hops=3, limit=8)
         nodes = [c for c in graph_items if c.source_type == "graph_node"]
         edges = [c for c in graph_items if c.source_type == "graph_edge"]
+        path_score = round(sum(c.score for c in graph_items) / max(len(graph_items), 1), 3) if graph_items else 0.5
         path_chunk = EvidenceChunk(
             chunk_id=f"path_{uuid.uuid4().hex[:6]}",
             content=f"[Knowledge Path] {' -> '.join(n.chunk_id for n in nodes[:3])} via {[e.content for e in edges[:2]]}",
             source_type="graph_path",
-            score=0.92,
+            score=path_score,
         )
         all_ev = [path_chunk] + graph_items
         return RAGResult(
@@ -680,7 +683,7 @@ class EnterpriseRAGSuite:
             chunk_id=f"lazy_entity_{tok}",
             content=f"On-demand induced entity: {tok}",
             source_type="lazy_graph_node",
-            score=0.75,
+            score=round(0.4 + 0.1 * min(len(tok), 4), 3),
         ) for tok in tokens[:3]]
         corpus_chunks = self._retrieve_from_corpus(query, top_k=3)
         all_ev = lazy_entities + corpus_chunks
@@ -706,17 +709,18 @@ class EnterpriseRAGSuite:
     def _global_search_graph_rag(self, query: str, ctx: dict[str, Any]) -> RAGResult:
         """GraphRAG Global Search: High-level community synthesis over entire graph topology."""
         chunks = self._retrieve_from_corpus(query, top_k=5)
+        top_score = chunks[0].score if chunks else 0.5
         community_summary = EvidenceChunk(
             chunk_id=f"community_c0",
             content=f"[Global Community Synthesis] High-level corpus rollup for '{query}'",
             source_type="community_summary",
-            score=0.98,
+            score=round(top_score * 0.95, 3),
         )
         all_ev = [community_summary] + chunks
         return RAGResult(
             query=query, mode=RAGMode.GLOBAL_SEARCH_GRAPHRAG,
             answer=self._synthesize_answer(query, all_ev, RAGMode.GLOBAL_SEARCH_GRAPHRAG),
-            evidence=all_ev, confidence=0.88,
+            evidence=all_ev, confidence=self._compute_confidence(all_ev),
             reasoning_steps=["Community report aggregation over all Leiden/Louvain partitions"],
         )
 
@@ -766,11 +770,12 @@ class EnterpriseRAGSuite:
     def _streaming_rag(self, query: str, ctx: dict[str, Any]) -> RAGResult:
         """Incorporates real-time streaming updates into retrieval pipeline."""
         chunks = self._retrieve_from_corpus(query, top_k=4)
+        stream_score = round(chunks[0].score, 3) if chunks else 0.5
         streaming_chunk = EvidenceChunk(
             chunk_id=f"stream_event_{uuid.uuid4().hex[:6]}",
             content=f"[Streaming Event Log] Real-time delta observed for {query}",
             source_type="stream_event",
-            score=0.99,
+            score=stream_score,
         )
         all_ev = [streaming_chunk] + chunks
         return RAGResult(
@@ -946,7 +951,7 @@ class EnterpriseRAGSuite:
         return RAGResult(
             query=query, mode=RAGMode.ACTIVE_RETRIEVAL,
             answer=self._synthesize_answer(query, chunks, RAGMode.ACTIVE_RETRIEVAL) if chunks else "Answered via parametric memory.",
-            evidence=chunks, confidence=0.89 if chunks else 0.70,
+            evidence=chunks, confidence=self._compute_confidence(chunks),
             reasoning_steps=[f"Active retrieval triggered: {needs_retrieval}"],
         )
 
@@ -984,7 +989,7 @@ class EnterpriseRAGSuite:
         return RAGResult(
             query=query, mode=RAGMode.CONTRADICTION_AWARE_RAG,
             answer=self._synthesize_answer(query, chunks, RAGMode.CONTRADICTION_AWARE_RAG),
-            evidence=chunks, confidence=0.75 if contradictions else 0.90,
+            evidence=chunks, confidence=self._compute_confidence(chunks),
             contradictions_detected=contradictions,
             reasoning_steps=["Contradiction detection cross-check executed across sources"],
         )

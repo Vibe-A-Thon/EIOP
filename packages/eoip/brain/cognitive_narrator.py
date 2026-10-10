@@ -31,6 +31,7 @@ from eoip.models.self_llm import (
     GenerationResult,
     get_self_llm_engine,
 )
+from eoip.brain.graph_intelligence import GraphIntelligenceEngine
 
 
 class QuestionDomain(str, enum.Enum):
@@ -121,8 +122,9 @@ class CognitiveNarrator:
     and delivers authoritative LLM-style narration for any inquiry.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, graph_store: Any = None) -> None:
         self.llm = get_self_llm_engine()
+        self.graph_intelligence = GraphIntelligenceEngine(graph_store=graph_store)
 
     # ------------------------------------------------------------------------
     # 1. Understanding & Question Enhancement
@@ -186,7 +188,7 @@ class CognitiveNarrator:
         if not all_found:
             # Fallback to key nouns
             words = [w for w in re.findall(r"\b[A-Za-z]{4,}\b", query) if w.lower() not in {"what", "when", "where", "which", "about", "there", "their", "should", "could", "would"}]
-            return words[:4] if words else ["EnterpriseSystem", "KnowledgeGraph"]
+            return words[:4] if words else ["TargetSystem"]
         return all_found[:6]
 
     def _formulate_enhanced_query(self, raw_query: str, domain: QuestionDomain, entities: list[str]) -> str:
@@ -226,103 +228,100 @@ class CognitiveNarrator:
         domain: QuestionDomain,
         entities: list[str],
     ) -> list[ComplementaryQuestion]:
-        e_primary = entities[0] if entities else "PrimaryService"
-        e_secondary = entities[1] if len(entities) > 1 else "DownstreamCluster"
+        e_primary = entities[0] if entities else "TargetSystem"
+        e_secondary = entities[1] if len(entities) > 1 else "DependencyGraph"
 
-        # 1. Deterministic Question
-        q_det = f"What are the immutable schema axioms, dependency invariants, and strict SHACL cardinality constraints governing {e_primary}?"
-        ans_det = (
-            f"Deterministic evaluation reveals {e_primary} maintains strict acyclic topological dependencies to {e_secondary}. "
-            f"All incoming and outgoing relationships conform to W3C OWL 2 schema definitions, with zero runtime cardinality violations "
-            f"and cryptographically verified schema contracts."
-        )
+        gi = self.graph_intelligence
+        has_data = gi._has_store()
 
-        # 2. Non-Deterministic / Generative Question
-        q_nondet = f"What emergent architectural paradigms, creative refactoring paths, and generative analogies best elevate the design of {e_primary}?"
-        ans_nondet = (
-            f"Generative neural synthesis proposes transitioning {e_primary} towards an event-driven reactive mesh with speculative caching. "
-            f"By abstracting point-to-point couplings into an immutable append-only event stream, the architecture gains self-organizing elasticity "
-            f"analogous to biological neural adaptation."
-        )
+        det = gi.execute_deterministic(query) if has_data else None
+        prob = gi.execute_probabilistic(query) if has_data else None
+        heur = gi.execute_heuristic(query) if has_data else None
+        stoch = gi.execute_stochastic(query) if has_data else None
+        gen = gi.execute_non_deterministic(query) if has_data else None
+        hyb = gi.execute_hybrid(query) if has_data else None
 
-        # 3. Probabilistic Question
-        q_prob = f"What is the Bayesian posterior probability distribution of cascading failures or performance degradation under peak load for {e_primary}?"
-        ans_prob = (
-            f"Bayesian risk modeling indicates a prior failure probability P(F) = 0.042, updating to P(F | L > 95%) = 0.178 under peak egress saturation. "
-            f"The 95% credible confidence interval bounds maximum round-trip latency variance between 45ms and 182ms, with epistemic uncertainty bounded at 0.08."
-        )
+        def _answer_from(findings: Any, fallback: str) -> str:
+            if findings and findings.findings:
+                return " ".join(findings.findings[:3])
+            return fallback
 
-        # 4. Heuristic Question
-        q_heur = f"Using A* pathfinding and operational rules of thumb, what is the optimal execution path and primary centrality bottleneck for {e_primary}?"
-        ans_heur = (
-            f"A* heuristic traversal identifies the optimal call path through {e_primary} -> {e_secondary} with an admissible cost metric h(n) = 3.4ms. "
-            f"Betweenness centrality ranking highlights {e_secondary} as the critical single-point choke-point, requiring immediate connection pool partitioning."
-        )
+        def _evidence_from(findings: Any, fallback: list[str]) -> list[str]:
+            if findings and findings.raw_evidence:
+                return [f"{e.title} ({e.label}): {len(e.outbound_edges)} outbound, "
+                        f"{len(e.inbound_edges)} inbound" for e in findings.raw_evidence[:3]]
+            return fallback
 
-        # 5. Stochastic Question
-        q_stoch = f"How does the system behave under Monte Carlo random-walk chaos perturbations and simulated network jitter across {e_primary}?"
-        ans_stoch = (
-            f"A 10,000-run Monte Carlo stochastic simulation introduces simulated network partitions and random jitter. "
-            f"The architecture demonstrated 99.98% survival resilience under random node drops, with simulated annealing convergence confirming "
-            f"that exponential backoff with jitter prevents catastrophic herd stampedes."
-        )
+        def _conf(findings: Any, fallback: float) -> float:
+            return findings.confidence if findings else fallback
 
-        # 6. Hybrid / Hyperautomation Question
-        q_hyb = f"How can autonomous hyperautomation loops orchestrate cross-system self-healing and human-in-the-loop governance for {e_primary}?"
-        ans_hyb = (
-            f"Hyperautomated orchestration combines deterministic SHACL gates with adaptive agent swarms. "
-            f"Upon drift detection, an autonomous agent synthesizes a remediation diff, verifies compliance via HITL-FE (Human-in-the-Loop Frontend) "
-            f"governance, and applies sovereign zero-downtime reconfiguration."
-        )
+        q_det = f"What are the verified schema constraints, dependency invariants, and structural topology governing {e_primary}?"
+        q_nondet = f"What emergent interaction patterns and architectural refactoring opportunities exist for {e_primary}?"
+        q_prob = f"What is the Bayesian failure risk distribution under peak load for {e_primary}?"
+        q_heur = f"What are the centrality bottlenecks and optimal execution paths for {e_primary}?"
+        q_stoch = f"How resilient is {e_primary} under Monte Carlo random node-failure perturbations?"
+        q_hyb = f"What unified cross-paradigm analysis reveals the full risk and optimization landscape for {e_primary}?"
 
         return [
             ComplementaryQuestion(
                 approach="DETERMINISTIC",
                 question=q_det,
-                rationale="Verifies invariant structural facts, formal ontologies, and zero-variance ground truth.",
-                answer=ans_det,
-                confidence=1.0,
-                evidence_points=[f"{e_primary} conforms to OWL 2 schema", "Zero cycle dependencies detected", "SHACL shape validation: 100% PASS"],
+                rationale="Verifies invariant structural facts and schema conformance from live graph data.",
+                answer=_answer_from(det,
+                    f"No live graph data available for {e_primary}. Connect a graph store "
+                    f"to verify schema constraints and dependency topology."),
+                confidence=_conf(det, 0.3),
+                evidence_points=_evidence_from(det, ["No graph store connected"]),
             ),
             ComplementaryQuestion(
                 approach="NON_DETERMINISTIC",
                 question=q_nondet,
-                rationale="Explores creative architectural possibilities, generative refactoring, and frontier hypotheses.",
-                answer=ans_nondet,
-                confidence=0.89,
-                evidence_points=["Event-driven pub/sub paradigm", "Speculative caching pattern", "Decoupled state synchronization"],
+                rationale="Identifies emergent co-occurrence patterns and generative design hypotheses.",
+                answer=_answer_from(gen,
+                    f"No live graph data available for emergent pattern analysis of {e_primary}. "
+                    f"Populate the knowledge graph to enable co-occurrence detection."),
+                confidence=_conf(gen, 0.3),
+                evidence_points=_evidence_from(gen, ["No graph store connected"]),
             ),
             ComplementaryQuestion(
                 approach="PROBABILISTIC",
                 question=q_prob,
-                rationale="Quantifies risk, Bayesian likelihoods, confidence intervals, and uncertainty envelopes.",
-                answer=ans_prob,
-                confidence=0.92,
-                evidence_points=["Bayesian posterior: P(F|load) = 0.178", "Credible interval: [45ms, 182ms]", "Epistemic uncertainty: 0.08"],
+                rationale="Computes Bayesian posterior failure probabilities and degree distribution risks.",
+                answer=_answer_from(prob,
+                    f"No live graph data for Bayesian risk modeling of {e_primary}. "
+                    f"Connect a graph store to compute real degree distributions and posterior probabilities."),
+                confidence=_conf(prob, 0.3),
+                evidence_points=_evidence_from(prob, ["No graph store connected"]),
             ),
             ComplementaryQuestion(
                 approach="HEURISTIC",
                 question=q_heur,
-                rationale="Applies domain rules of thumb, PageRank centrality, and A* shortest-path optimizations.",
-                answer=ans_heur,
-                confidence=0.95,
-                evidence_points=["A* optimal path cost: 3.4ms", "Betweenness centrality: 0.84", "Partitioned connection pooling"],
+                rationale="Ranks entities by degree centrality and identifies architectural bottlenecks.",
+                answer=_answer_from(heur,
+                    f"No live graph data for centrality ranking of {e_primary}. "
+                    f"Connect a graph store for real pathfinding and bottleneck analysis."),
+                confidence=_conf(heur, 0.3),
+                evidence_points=_evidence_from(heur, ["No graph store connected"]),
             ),
             ComplementaryQuestion(
                 approach="STOCHASTIC",
                 question=q_stoch,
-                rationale="Tests stability against random permutations, Monte Carlo simulations, and chaos perturbations.",
-                answer=ans_stoch,
-                confidence=0.94,
-                evidence_points=["10,000 Monte Carlo iterations", "99.98% chaos resilience", "Annealing temperature convergence"],
+                rationale="Tests resilience via Monte Carlo random perturbation and node-failure simulation.",
+                answer=_answer_from(stoch,
+                    f"No live graph data for stochastic simulation of {e_primary}. "
+                    f"Connect a graph store for real chaos resilience testing."),
+                confidence=_conf(stoch, 0.3),
+                evidence_points=_evidence_from(stoch, ["No graph store connected"]),
             ),
             ComplementaryQuestion(
                 approach="HYBRID",
                 question=q_hyb,
-                rationale="Unifies all dimensions into enterprise hyperautomation, self-healing, and governance.",
-                answer=ans_hyb,
-                confidence=0.97,
-                evidence_points=["HITL-FE governance loop active", "Automated drift remediation", "Sovereign audit Merkle trail"],
+                rationale="Unifies all paradigms into a cross-dimensional analysis and governance framework.",
+                answer=_answer_from(hyb,
+                    f"No live graph data for unified hyperautomation analysis of {e_primary}. "
+                    f"Connect a graph store and populate with domain entities for full cross-paradigm insight."),
+                confidence=_conf(hyb, 0.3),
+                evidence_points=_evidence_from(hyb, ["No graph store connected"]),
             ),
         ]
 

@@ -135,10 +135,13 @@ class LAYAEngine:
                 for e in context
                 if "canonical_id" in e.get("entity", {})
             ]
+            base_conf = 0.7
+            if evidence_refs:
+                base_conf = min(0.95, 0.7 + 0.05 * len(evidence_refs))
             return LAYAResult(
                 answer=response.content,
                 capability=capability,
-                confidence=0.85,
+                confidence=round(base_conf, 3),
                 evidence_refs=evidence_refs,
                 model_used=response.model,
                 fallback=False,
@@ -181,10 +184,12 @@ class LAYAEngine:
             + "\n".join(f"- {part}" for part in summary_parts)
         )
 
+        neighbor_count = sum(len(e.get("neighbors", [])) for e in context)
+        conf = min(0.75, 0.3 + 0.1 * len(context) + 0.02 * neighbor_count)
         return LAYAResult(
             answer=answer,
             capability=capability,
-            confidence=0.6,
+            confidence=round(conf, 3),
             evidence_refs=evidence_refs,
             fallback=True,
             metadata={"entities_analyzed": len(context)},
