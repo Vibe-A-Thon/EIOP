@@ -313,7 +313,7 @@ def run_admin_demo(
 
     if not _check_api_health(result, verbose):
         print("\nERROR: EOIP API is not reachable at localhost:8000.")
-        print("Start the platform with: scripts\\docker.ps1 up")
+        print("Start the platform with: scripts\\container.ps1 up")
         return result.summary()
 
     _print("--- Step 1: Graph Health ---", verbose)

@@ -10,7 +10,7 @@
 # YAML shape only; bring-up requires Docker with multiple nodes or replicas
 # on a single node, plus (for HugeGraph PD/Store) enterprise/infra images.
 #
-# Prerequisites: deploy/.env from scripts/docker.ps1.
+# Prerequisites: deploy/.env from scripts/container.ps1 (or scripts/docker.ps1).
 
 name: eoip-ha
 
@@ -22,8 +22,8 @@ x-application: &application
     target: runtime
   environment: &environment
     EOIP_HUGEGRAPH_URL: http://hugegraph-lb:8080
-    EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/docker.ps1 to create deploy/.env}
-    EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/docker.ps1 to create deploy/.env}
+    EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 to create deploy/.env}
+    EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/container.ps1 to create deploy/.env}
     EOIP_DATA_DIR: /data
     EOIP_LOAD_DEMO: ${EOIP_LOAD_DEMO:-true}
     EOIP_OLLAMA_MODEL: ${EOIP_OLLAMA_MODEL:-}
@@ -135,7 +135,7 @@ services:
     # HA application tier can be exercised without enterprise images.
     image: hugegraph/hugegraph:1.7.0
     environment:
-      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/docker.ps1 first}
+      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 first}
       HG_SERVER_MIN_FREE_MEMORY: "0"
     volumes:
       - graph-data:/hugegraph-server/rocksdb-data

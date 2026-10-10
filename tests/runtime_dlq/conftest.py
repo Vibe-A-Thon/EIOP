@@ -65,7 +65,7 @@ class LiveReplay:
 @pytest.fixture(scope="session")
 def live_replay():
     if os.getenv("EOIP_LIVE_DLQ_ACCEPTANCE") != "1":
-        pytest.skip("Run scripts/docker.ps1 dlq-acceptance for isolated live infrastructure")
+        pytest.skip("Run scripts/container.ps1 dlq-acceptance for isolated live infrastructure")
     assert os.environ["EOIP_API_URL"] == "http://dlq-api:8000"
     assert os.environ["EOIP_HUGEGRAPH_URL"] == "http://dlq-graph:8080"
     assert os.environ["EOIP_LOAD_DEMO"] == "false"

@@ -1,7 +1,7 @@
 x-graph: &graph
   image: hugegraph/hugegraph:1.7.0
   environment:
-    PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/docker.ps1 up first}
+    PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 up first}
     HG_SERVER_MIN_FREE_MEMORY: "0"
   networks: [acceptance]
   healthcheck:
@@ -24,7 +24,7 @@ services:
       target: runtime
     command: [python, -m, scripts.verify_clean_demo]
     environment:
-      EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/docker.ps1 up first}
+      EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 up first}
       EOIP_ACCEPTANCE_SOURCE_URL: http://source-graph:8080
       EOIP_ACCEPTANCE_TARGET_URL: http://target-graph:8080
       EOIP_ACCEPTANCE_REPORT: /results/${EOIP_ACCEPTANCE_RUN:?Set a unique acceptance run ID}.json

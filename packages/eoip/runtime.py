@@ -17,5 +17,5 @@ def data_root():
 def api_token():
     value = os.getenv("EOIP_API_TOKEN", "")
     if len(value) < 24:
-        raise RuntimeError("EOIP_API_TOKEN must contain at least 24 characters; run scripts/docker.ps1 first")
+        raise RuntimeError("EOIP_API_TOKEN must contain at least 24 characters; run scripts/container.ps1 first")
     return value

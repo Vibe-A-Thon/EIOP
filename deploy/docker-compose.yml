@@ -8,13 +8,13 @@ x-application: &application
     target: runtime
   environment: &environment
     EOIP_HUGEGRAPH_URL: http://hugegraph-server:8080
-    EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/docker.ps1 to create deploy/.env}
+    EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 (or scripts/docker.ps1) to create deploy/.env}
     EOIP_GRAPH_BACKEND: ${EOIP_GRAPH_BACKEND:-}
     EOIP_GRAPH_URL: ${EOIP_GRAPH_URL:-}
     EOIP_GRAPH_DATABASE: ${EOIP_GRAPH_DATABASE:-}
     EOIP_GRAPH_USER: ${EOIP_GRAPH_USER:-}
     EOIP_GRAPH_PASSWORD: ${EOIP_GRAPH_PASSWORD:-}
-    EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/docker.ps1 to create deploy/.env}
+    EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/container.ps1 (or scripts/docker.ps1) to create deploy/.env}
     EOIP_DATA_DIR: /data
     EOIP_LOAD_DEMO: ${EOIP_LOAD_DEMO:-true}
     EOIP_OLLAMA_MODEL: ${EOIP_OLLAMA_MODEL:-}
@@ -29,7 +29,7 @@ services:
   hugegraph-server:
     image: hugegraph/hugegraph:1.7.0
     environment:
-      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/docker.ps1 first}
+      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 first}
       HG_SERVER_MIN_FREE_MEMORY: "0"
     volumes:
       - graph-data:/hugegraph-server/rocksdb-data
@@ -197,7 +197,7 @@ services:
       dockerfile: Dockerfile.tests
     profiles: [test]
     environment:
-      EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/docker.ps1 first}
+      EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/container.ps1 first}
     volumes:
       - ../test-results/browser:/app/test-results
     networks: [backend]
@@ -216,7 +216,7 @@ services:
     image: hugegraph/hugegraph:1.7.0
     profiles: [restore-test]
     environment:
-      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/docker.ps1 first}
+      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 first}
       HG_SERVER_MIN_FREE_MEMORY: "0"
     networks: [backend]
     healthcheck:

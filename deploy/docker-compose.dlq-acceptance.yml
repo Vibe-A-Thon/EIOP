@@ -6,8 +6,8 @@ x-app: &app
     target: runtime
   environment: &environment
     EOIP_HUGEGRAPH_URL: http://dlq-graph:8080
-    EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/docker.ps1 up first}
-    EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/docker.ps1 up first}
+    EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 up first}
+    EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/container.ps1 up first}
     EOIP_DATA_DIR: /data
     EOIP_LOAD_DEMO: "false"
     EOIP_ACCEPTANCE_SOURCE_TOKEN: fixture-only-valid
@@ -50,7 +50,7 @@ services:
   dlq-graph:
     image: hugegraph/hugegraph:1.7.0
     environment:
-      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/docker.ps1 up first}
+      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 up first}
       HG_SERVER_MIN_FREE_MEMORY: "0"
     networks: [acceptance]
     healthcheck:

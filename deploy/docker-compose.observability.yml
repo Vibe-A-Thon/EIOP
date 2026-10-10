@@ -1,4 +1,4 @@
-version: "3.8"
+# Compose Specification (no version field — compatible with Docker, Podman, nerdctl).
 
 services:
   prometheus:

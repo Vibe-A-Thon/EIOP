@@ -31,7 +31,7 @@ EXPECTED_JOURNEYS = {
 
 def main():
     if os.getenv("EOIP_LIVE_DLQ_ACCEPTANCE") != "1":
-        raise RuntimeError("Run through scripts/docker.ps1 dlq-acceptance only")
+        raise RuntimeError("Run through scripts/container.ps1 dlq-acceptance only")
     report = Path(os.environ["EOIP_ACCEPTANCE_REPORT"])
     report.parent.mkdir(parents=True, exist_ok=True)
     junit = report.with_suffix(".xml")

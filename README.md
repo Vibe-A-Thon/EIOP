@@ -17,14 +17,26 @@ EOIP is a local-first enterprise knowledge graph platform that ingests from 24 s
 
 ## Quick Start
 
-From the repository root, with Docker Desktop running in Linux-container mode:
+From the repository root, with any OCI container runtime (Docker, Podman, nerdctl, or Finch):
 
 ```powershell
+# Auto-detects Docker, Podman, nerdctl, or Finch
+.\scripts\container.ps1 up
+.\scripts\container.ps1 test
+
+# Or use the backward-compatible Docker-specific wrapper:
 .\scripts\docker.ps1 up
-.\scripts\docker.ps1 test
+
+# On Linux / macOS:
+./scripts/container.sh up
+
+# See which runtimes are available:
+.\scripts\container.ps1 detect
+python -m scripts.detect_runtime --all
 ```
-The startup script finds Docker Desktop even when its CLI is missing from PATH,
-generates local credentials, builds the services, and waits for readiness.
+The startup script auto-discovers the container runtime even when its CLI is
+missing from standard PATH, generates local credentials, builds the services,
+and waits for readiness. Override with `$env:EOIP_CONTAINER_RUNTIME = 'podman'`.
 No host Python or Node installation is required.
 
 Open [the explorer](http://localhost:8080/app) or
