@@ -203,6 +203,10 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     app.include_router(build_file_router(store, data_root()))
 
+    from eoip.brain.router import build_brain_router
+    brain_router = build_brain_router(store)
+    app.include_router(brain_router, prefix="/api/v1")
+
     @app.middleware("http")
     async def add_correlation_id(request: Request, call_next):
         supplied = request.headers.get("X-Correlation-ID", "")

@@ -30,7 +30,7 @@ class RateLimiter:
     def __init__(self, name: str, config: RateLimitConfig | None = None) -> None:
         self.name = name
         self._config = config or RateLimitConfig()
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
         self._tokens = float(self._config.burst_size)
         self._last_refill = time.monotonic()

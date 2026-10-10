@@ -27,6 +27,8 @@ class BrainAskRequest(BaseModel):
 
 class InduceRequest(BaseModel):
     corpus: list[str]
+    confidence_threshold: float = 0.3
+
 
 
 @router.post("/ask")
@@ -97,7 +99,10 @@ def list_databases() -> list[str]:
 
 @router.post("/induce")
 def induce_ontology(req: InduceRequest) -> list[dict[str, Any]]:
-    concepts = _kernel.living_brain.induce_ontology_from_corpus(req.corpus)
+    concepts = _kernel.living_brain.induce_ontology_from_corpus(
+        req.corpus,
+        confidence_threshold=req.confidence_threshold,
+    )
     return [
         {
             "concept_id": c.concept_id,

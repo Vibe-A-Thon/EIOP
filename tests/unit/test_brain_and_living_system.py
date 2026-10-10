@@ -272,3 +272,83 @@ def test_brain_os_kernel():
     assert len(telemetry["supported_query_dialects"]) >= 71
     assert len(telemetry["supported_databases"]) >= 55
     assert len(telemetry["supported_databases"]) == len(DatabaseType)
+
+
+# ---------------------------------------------------------------------------
+# 8. Test Enterprise Brain OS API Endpoints via FastAPI TestClient
+# ---------------------------------------------------------------------------
+def test_brain_api_endpoints_via_testclient():
+    from fastapi.testclient import TestClient
+    from apps.api.app import create_app
+    from eoip.graph.memory import MemoryGraphStore
+
+    store = MemoryGraphStore()
+    app = create_app(store)
+    client = TestClient(app)
+
+    # 1. GET /api/v1/brain/telemetry
+    res = client.get("/api/v1/brain/telemetry")
+    assert res.status_code == 200
+    telemetry = res.json()
+    assert telemetry["status"] == "OPERATIONAL"
+    assert len(telemetry["supported_loops"]) == 14
+    assert len(telemetry["supported_agents"]) >= 76
+
+    # 2. GET /api/v1/brain/loops
+    res = client.get("/api/v1/brain/loops")
+    assert res.status_code == 200
+    assert len(res.json()) == 14
+
+    # 3. GET /api/v1/brain/agents
+    res = client.get("/api/v1/brain/agents")
+    assert res.status_code == 200
+    assert len(res.json()) >= 76
+
+    # 4. GET /api/v1/brain/rag-modes
+    res = client.get("/api/v1/brain/rag-modes")
+    assert res.status_code == 200
+    assert len(res.json()) >= 45
+
+    # 5. GET /api/v1/brain/dialects
+    res = client.get("/api/v1/brain/dialects")
+    assert res.status_code == 200
+    assert len(res.json()) >= 40
+
+    # 6. GET /api/v1/brain/databases
+    res = client.get("/api/v1/brain/databases")
+    assert res.status_code == 200
+    assert len(res.json()) >= 55
+
+    # 7. POST /api/v1/brain/ask
+    res = client.post(
+        "/api/v1/brain/ask",
+        json={
+            "query": "MATCH (s:Service) RETURN s",
+            "force_deterministic": True,
+            "target_database": "NEO4J",
+        },
+    )
+    assert res.status_code == 200
+    ans = res.json()
+    assert ans["mode"] == "DETERMINISTIC"
+
+    # 8. POST /api/v1/brain/induce
+    res = client.post(
+        "/api/v1/brain/induce",
+        json={
+            "corpus": [
+                "AuthenticationService manages UserAccount credentials and tokens.",
+                "PaymentGateway processes BillingTransaction records.",
+            ]
+        },
+    )
+    assert res.status_code == 200
+    assert len(res.json()) >= 1
+
+    # 9. GET /api/v1/brain/snapshot
+    res = client.get("/api/v1/brain/snapshot")
+    assert res.status_code == 200
+    snap = res.json()
+    assert "snapshot_id" in snap
+    assert "merkle_root" in snap
+

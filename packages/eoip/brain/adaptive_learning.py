@@ -103,7 +103,6 @@ class AdaptiveLearningEngine:
         )
         with self._lock:
             self._feedback.append(entry)
-            self._update_patterns(entry)
 
             if feedback_type == FeedbackType.CORRECTION and corrected_output is not None:
                 self._try_derive_rule(entry)
