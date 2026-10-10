@@ -10,6 +10,10 @@ from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any
 
+from eoip.enterprise.logging import get_logger
+
+_log = get_logger("brain.correlation_engine")
+
 
 class EventSeverity(str, Enum):
     INFO = "INFO"

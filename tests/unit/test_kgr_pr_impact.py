@@ -64,9 +64,11 @@ def test_pr_impact_empty_graph():
 
 # --- File viewer API ---
 
-def test_file_viewer_endpoint():
+def test_file_viewer_endpoint(tmp_path, monkeypatch):
+    (tmp_path / "sample.txt").write_text("hello\nworld\n", encoding="utf-8")
+    monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     client = TestClient(create_app(MemoryGraphStore()))
-    resp = client.get("/api/v1/files/apps/api/app.py")
+    resp = client.get("/api/v1/files/sample.txt")
     assert resp.status_code == 200
     data = resp.json()
     assert "content" in data

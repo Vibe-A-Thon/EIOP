@@ -10,6 +10,10 @@ from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any, Callable, Iterator
 
+from eoip.enterprise.logging import get_logger
+
+_log = get_logger("ingestion.batch_streaming")
+
 
 class BatchStatus(str, Enum):
     QUEUED = "QUEUED"

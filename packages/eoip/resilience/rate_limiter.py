@@ -8,6 +8,10 @@ from dataclasses import asdict, dataclass
 from enum import Enum
 from typing import Any
 
+from eoip.enterprise.logging import get_logger
+
+_log = get_logger("resilience.rate_limiter")
+
 
 class RateLimitStrategy(str, Enum):
     TOKEN_BUCKET = "TOKEN_BUCKET"

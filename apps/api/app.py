@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import logging
+import os
+from contextlib import asynccontextmanager
 from pathlib import Path
 from uuid import uuid4
 
@@ -183,8 +186,47 @@ class EvidenceManifestRequest(BaseModel):
     confidence_inputs: list[dict] = Field(default_factory=list, max_length=100)
 
 
+def _build_lifespan(store: GraphStore):
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        _logger = logging.getLogger("eoip.enterprise")
+        _logger.info("startup EOIP Enterprise Platform starting")
+        yield
+        _logger.info("shutdown EOIP Enterprise Platform shutting down")
+        if hasattr(store, "close"):
+            try:
+                store.close()
+            except Exception:
+                _logger.warning("shutdown graph store close failed", exc_info=True)
+        from eoip.enterprise.config import reset_enterprise_config
+        reset_enterprise_config()
+        _logger.info("shutdown complete")
+    return lifespan
+
+
 def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> FastAPI:
-    app = FastAPI(title="EOIP API", version="1.0.0", dependencies=dependencies or [])
+    app = FastAPI(
+        title="EOIP — Enterprise Ontology & Intelligence Platform",
+        version="1.0.0",
+        description=(
+            "Knowledge graph platform with enterprise resilience, "
+            "adaptive learning, predictive analytics, and multi-system correlation."
+        ),
+        dependencies=dependencies or [],
+        lifespan=_build_lifespan(store),
+    )
+    from starlette.middleware.cors import CORSMiddleware
+    allowed_origins = os.environ.get("EOIP_CORS_ORIGINS", "").split(",")
+    allowed_origins = [o.strip() for o in allowed_origins if o.strip()]
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=allowed_origins or ["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+        expose_headers=["X-Correlation-ID", "X-Response-Time-Ms"],
+    )
+
     executor = QueryExecutor(store, load_query_policy())
     app.state.graph_store = store
     from eoip.graph.bitemporal import build_router as build_bitemporal_router
@@ -207,6 +249,9 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
     brain_router = build_brain_router(store)
     app.include_router(brain_router, prefix="/api/v1")
 
+    from eoip.enterprise.middleware import install_enterprise_middleware
+    install_enterprise_middleware(app)
+
     @app.middleware("http")
     async def add_correlation_id(request: Request, call_next):
         supplied = request.headers.get("X-Correlation-ID", "")
@@ -220,9 +265,30 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     @app.exception_handler(QueryTimeout)
     async def handle_query_timeout(request, exc):
+        import json as _json
         return Response(
-            content='{"detail":"' + str(exc) + '"}',
+            content=_json.dumps({"detail": str(exc)}),
             status_code=504,
+            media_type="application/json",
+        )
+
+    @app.exception_handler(Exception)
+    async def global_exception_handler(request, exc):
+        import json as _json
+        import logging
+        logging.getLogger("eoip.enterprise").error(
+            "unhandled_exception path=%s error=%s", request.url.path, str(exc)
+        )
+        return Response(
+            content=_json.dumps({
+                "error": {
+                    "code": "EOIP-SYS-500",
+                    "message": "Internal server error",
+                    "category": "INFRASTRUCTURE",
+                    "severity": "HIGH",
+                }
+            }),
+            status_code=500,
             media_type="application/json",
         )
 
@@ -636,18 +702,18 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
     @app.get("/api/v1/files/{path:path}")
     def get_file(path: str):
-        import os
-        safe = os.path.normpath(path)
-        if safe.startswith("..") or os.path.isabs(safe):
-            raise HTTPException(400, "Invalid path")
-        try:
-            with open(safe, "r", encoding="utf-8", errors="replace") as f:
-                content = f.read(512_000)
-        except FileNotFoundError:
+        from eoip.runtime import data_root
+        allowed_root = data_root().resolve()
+        resolved = (allowed_root / path).resolve()
+        if not resolved.is_relative_to(allowed_root):
+            raise HTTPException(400, "Invalid path: outside allowed directory")
+        if not resolved.is_file():
             raise HTTPException(404, "File not found")
+        try:
+            content = resolved.read_text(encoding="utf-8", errors="replace")[:512_000]
         except OSError:
             raise HTTPException(500, "Could not read file")
-        return {"path": safe, "content": content, "lines": content.count("\n") + 1}
+        return {"path": str(resolved.relative_to(allowed_root)), "content": content, "lines": content.count("\n") + 1}
 
     @app.post("/api/v1/graph/diff")
     def graph_diff(payload: DiffRequest):

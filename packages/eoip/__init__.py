@@ -6,7 +6,7 @@ orchestration, polyglot query transpilation, 55-database integration, and
 living brain algorithms.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.0-rc.1"
 
 from eoip.brain.brain_os import BrainOSKernel
 from eoip.brain.living_brain_algorithms import LivingBrainEngine, LivingBrainAlgorithms

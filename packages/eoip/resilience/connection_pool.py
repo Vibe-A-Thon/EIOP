@@ -9,6 +9,10 @@ import uuid
 from dataclasses import asdict, dataclass, field
 from typing import Any, Callable, Protocol
 
+from eoip.enterprise.logging import get_logger
+
+_log = get_logger("resilience.connection_pool")
+
 
 class Connectable(Protocol):
     def connect(self) -> Any: ...

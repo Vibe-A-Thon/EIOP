@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eoip"
-version = "0.1.0"
+version = "1.0.0rc1"
 description = "Enterprise Ontology & Intelligence Platform (EOIP) — Phase 1 MVP vertical slice"
 requires-python = ">=3.11"
 dependencies = [
@@ -57,6 +57,8 @@ enterprise = [
 dev = [
   "pytest>=8.0,<9.0",
   "pytest-asyncio>=0.23,<1.0",
+  "pytest-cov>=5.0,<6.0",
+  "pytest-timeout>=2.3,<3.0",
   "respx>=0.21,<1.0",
   "ruff>=0.4,<1.0",
 ]
@@ -72,10 +74,42 @@ include = ["eoip*"]
 pythonpath = [".", "packages"]
 asyncio_mode = "auto"
 testpaths = ["tests"]
-addopts = "-q"
+addopts = "-q --strict-markers --tb=short"
 markers = [
   "req(id): tag a test with the requirement ID(s) it verifies",
+  "smoke: fast sanity check subset for CI fast-feedback",
+  "slow: tests that take >5s (excluded from default fast runs)",
+  "integration: requires running infrastructure (databases, services)",
+  "security: security baseline and vulnerability tests",
+  "performance: latency and throughput benchmarks",
+  "enterprise: enterprise feature tests (resilience, ingestion, intelligence)",
+  "eoip_requirement: tag a test with an EOIP requirement reference",
 ]
+filterwarnings = [
+  "ignore::pytest.PytestUnraisableExceptionWarning",
+]
+
+[tool.coverage.run]
+source = ["eoip"]
+omit = ["*/tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 70
+exclude_lines = [
+  "pragma: no cover",
+  "if TYPE_CHECKING:",
+  "if __name__ ==",
+  "@overload",
+]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 110

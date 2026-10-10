@@ -8,6 +8,12 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable
 
+from eoip.enterprise.logging import get_logger
+from eoip.enterprise.observability import get_metrics
+
+_log = get_logger("resilience.circuit_breaker")
+_obs = get_metrics()
+
 
 class CircuitState(str, Enum):
     CLOSED = "CLOSED"
@@ -37,6 +43,8 @@ class CircuitBreaker:
         self._last_failure_time: float = 0
         self._lock = threading.Lock()
         self._metrics = {"total_calls": 0, "total_failures": 0, "total_opens": 0, "total_resets": 0}
+        _log.info("initialized circuit_breaker=%s failure_threshold=%d timeout=%.1fs",
+                  name, self._config.failure_threshold, self._config.timeout_seconds)
 
     @property
     def state(self) -> CircuitState:
@@ -86,13 +94,17 @@ class CircuitBreaker:
             self._failure_count += 1
             self._last_failure_time = time.time()
             self._metrics["total_failures"] += 1
+            _obs.increment("circuit_breaker.failures", circuit=self.name)
 
             if self._state == CircuitState.HALF_OPEN:
                 self._state = CircuitState.OPEN
                 self._metrics["total_opens"] += 1
+                _log.warning("circuit OPEN (half-open failure) circuit=%s", self.name)
             elif self._failure_count >= self._config.failure_threshold:
                 self._state = CircuitState.OPEN
                 self._metrics["total_opens"] += 1
+                _log.warning("circuit OPEN (threshold reached) circuit=%s failures=%d",
+                             self.name, self._failure_count)
 
     def reset(self) -> None:
         with self._lock:

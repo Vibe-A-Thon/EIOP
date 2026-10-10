@@ -369,8 +369,11 @@ def test_metrics_progress_and_failure_counters():
 
 @pytest.fixture
 def client(tmp_path):
-    return TestClient(build_router(store=JsonCheckpointStore(tmp_path / "ck"),
-                                   queue=InMemoryApprovalQueue()))
+    from fastapi import FastAPI
+    app = FastAPI()
+    app.include_router(build_router(store=JsonCheckpointStore(tmp_path / "ck"),
+                                    queue=InMemoryApprovalQueue()))
+    return TestClient(app)
 
 
 def test_router_catalog(client):

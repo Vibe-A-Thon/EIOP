@@ -7,6 +7,10 @@ import time
 from dataclasses import asdict, dataclass
 from typing import Any, Callable
 
+from eoip.enterprise.logging import get_logger
+
+_log = get_logger("resilience.bulkhead")
+
 
 @dataclass
 class BulkheadConfig:

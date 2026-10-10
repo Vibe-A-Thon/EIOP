@@ -12,6 +12,10 @@ from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any
 
+from eoip.enterprise.logging import get_logger
+
+_log = get_logger("graph.snapshots")
+
 
 class SnapshotType(str, Enum):
     FULL = "FULL"
