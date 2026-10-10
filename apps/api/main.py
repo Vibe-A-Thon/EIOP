@@ -18,7 +18,7 @@ from eoip.agents.memory import MAX_TTL_SECONDS, FileMemoryStore, MemoryStorageEr
 from eoip.agents.runtime import AgentRuntime
 from eoip.audit.sink import AuditSink
 from eoip.config import load_agent_config, load_memory_policy
-from eoip.connectors.acquisition import AcquisitionPolicy, AcquisitionScheduler
+from eoip.connectors.acquisition import AcquisitionOperation, AcquisitionPolicy, AcquisitionScheduler
 from eoip.connectors.base import DiscoveryScope
 from eoip.connectors.config import connector_from_registry
 from eoip.connectors.errors import ConnectorError
@@ -271,8 +271,8 @@ def create_app():
             if not isinstance(job, dict):
                 raise TypeError(f"Invalid ingestion job record: {path.name}")
             job_id, kind, status = job.get("job_id"), job.get("kind"), job.get("status")
-            if not all(isinstance(value, str) for value in (job_id, kind, status)):
-                raise ValueError(f"Invalid ingestion job record: {path.name}")
+            if not (isinstance(job_id, str) and isinstance(kind, str) and isinstance(status, str)):
+                raise ValueError(f"Invalid ingestion job record: {path.name}")  # noqa: TRY004
             if status not in {"PENDING", "RUNNING", *terminal_statuses}:
                 raise ValueError(f"Invalid ingestion job status in record: {path.name}")
             previous_status = observed_job_states.get(job_id)
@@ -310,7 +310,9 @@ def create_app():
                 "correlation_id": str(uuid4()),
             },
         )
-        store.close()
+        close = getattr(store, "close", None)
+        if callable(close):
+            close()
 
     app.router.lifespan_context = lifespan
 
@@ -507,10 +509,11 @@ def create_app():
         if not store.tombstone_vertex(canonical_id):
             raise HTTPException(409, "Entity could not be tombstoned")
         deleted = store.get_vertex_by_canonical_id(canonical_id)
+        deleted_at = deleted.get("properties", {}).get("deleted_at") if deleted else None
         return {
             "canonical_id": canonical_id,
             "status": "DELETED",
-            "deleted_at": deleted["properties"]["deleted_at"],
+            "deleted_at": deleted_at,
         }
 
     @app.get("/api/v1/ontology/export")
@@ -760,7 +763,7 @@ def create_app():
 
     def submit_source_operation(
         source_id: str,
-        operation: str,
+        operation: AcquisitionOperation,
         payload: SourceOperationRequest,
         request: Request,
     ):
@@ -976,7 +979,11 @@ def create_app():
         source_id = payload.get("source_id")
         delivery_id = payload.get("delivery_id")
         receipt_ref = payload.get("receipt_ref")
-        if not all(isinstance(value, str) and value for value in (source_id, delivery_id, receipt_ref)):
+        if not (
+            isinstance(source_id, str) and source_id
+            and isinstance(delivery_id, str) and delivery_id
+            and isinstance(receipt_ref, str) and receipt_ref
+        ):
             raise TypeError("webhook recovery requires source_id, delivery_id and receipt_ref")
         source = source_registry.get(source_id)
         if not source.enabled or not source.capabilities.webhooks:
@@ -1094,11 +1101,12 @@ def create_app():
         bindings = payload.get("bindings", {})
         if not isinstance(bindings, dict):
             raise HTTPException(422, "'bindings' must be a JSON object")
-        try:
-            result = store.execute_gremlin(gremlin, bindings)
-        except AttributeError:
+        execute_gremlin = getattr(store, "execute_gremlin", None)
+        if not callable(execute_gremlin):
             raise HTTPException(501, "Underlying graph store does not support raw Gremlin execution")
-        except Exception as exc:
+        try:
+            result = execute_gremlin(gremlin, bindings)
+        except Exception as exc:  # noqa: BLE001
             raise HTTPException(400, f"Gremlin execution error: {exc}")
         return {"result": result}
 

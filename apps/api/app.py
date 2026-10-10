@@ -192,10 +192,10 @@ def _build_lifespan(store: GraphStore):
         _logger = logging.getLogger("eoip.enterprise")
         _logger.info("startup EOIP Enterprise Platform starting")
         yield
-        _logger.info("shutdown EOIP Enterprise Platform shutting down")
-        if hasattr(store, "close"):
+        close = getattr(store, "close", None)
+        if callable(close):
             try:
-                store.close()
+                close()
             except Exception:
                 _logger.warning("shutdown graph store close failed", exc_info=True)
         from eoip.enterprise.config import reset_enterprise_config
@@ -418,7 +418,9 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         if not result.nodes:
             raise HTTPException(status_code=404, detail="Entity not found")
-        return result
+        if isinstance(result, TraversalGraphResult):
+            return result
+        return TraversalGraphResult(**result.model_dump())
 
     @app.post("/api/v1/lineage", response_model=GraphResult)
     def lineage(payload: LineageRequest) -> GraphResult:
@@ -1390,12 +1392,14 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         )
 
         repo_root = Path(__file__).resolve().parents[2]
-        kwargs = (
-            {"requirements_doc": G2_REQUIREMENTS_DOC, "implementation_doc": G2_IMPLEMENTATION_DOC}
-            if doc_set == "g2"
-            else {}
-        )
-        report = build_gap_coverage_report(repo_root, **kwargs).to_dict()
+        if doc_set == "g2":
+            report = build_gap_coverage_report(
+                repo_root,
+                requirements_doc=G2_REQUIREMENTS_DOC,
+                implementation_doc=G2_IMPLEMENTATION_DOC,
+            ).to_dict()
+        else:
+            report = build_gap_coverage_report(repo_root).to_dict()
         report["doc_set"] = doc_set
         requirements = report["requirements"]
         if status:
@@ -1419,12 +1423,16 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         )
 
         repo_root = Path(__file__).resolve().parents[2]
-        kwargs = (
-            {"requirements_doc": G2_REQUIREMENTS_DOC, "implementation_doc": G2_IMPLEMENTATION_DOC}
+        rep = (
+            build_gap_coverage_report(
+                repo_root,
+                requirements_doc=G2_REQUIREMENTS_DOC,
+                implementation_doc=G2_IMPLEMENTATION_DOC,
+            )
             if doc_set == "g2"
-            else {}
+            else build_gap_coverage_report(repo_root)
         )
-        gate = build_gap_coverage_report(repo_root, **kwargs).completion_gate(
+        gate = rep.completion_gate(
             max_priority=max_priority,
             include_requirements=include_requirements,
         )
@@ -1441,12 +1449,16 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
 
         normalized = requirement_id.upper()
         repo_root = Path(__file__).resolve().parents[2]
-        kwargs = (
-            {"requirements_doc": G2_REQUIREMENTS_DOC, "implementation_doc": G2_IMPLEMENTATION_DOC}
+        rep = (
+            build_gap_coverage_report(
+                repo_root,
+                requirements_doc=G2_REQUIREMENTS_DOC,
+                implementation_doc=G2_IMPLEMENTATION_DOC,
+            )
             if doc_set == "g2"
-            else {}
+            else build_gap_coverage_report(repo_root)
         )
-        for item in build_gap_coverage_report(repo_root, **kwargs).to_dict()["requirements"]:
+        for item in rep.to_dict()["requirements"]:
             if item["requirement_id"] == normalized:
                 return item
         raise HTTPException(status_code=404, detail="GAP requirement not found")
@@ -1480,7 +1492,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         from eoip.gaps.g2_readiness import g2_readiness_report
 
         repo_root = Path(__file__).resolve().parents[2]
-        routes = {route.path for route in app.routes if hasattr(route, "path")}
+        routes = {str(getattr(route, "path", "")) for route in app.routes if getattr(route, "path", None)}
         return g2_readiness_report(repo_root=repo_root, available_routes=routes)
 
     # --- EQL: EOIP Query Language ---

@@ -45,12 +45,12 @@ def remaining_query_seconds() -> float | None:
     return None if deadline is None else max(0.0, deadline - monotonic())
 
 
-class Vertex(dict):
-    """A vertex record: {vid, canonical_id, label, properties}"""
+Vertex = dict[str, Any]
+"""A vertex record: {vid, canonical_id, label, properties}"""
 
 
-class Edge(dict):
-    """An edge record: {eid, label, out_v, in_v, out_cid, in_cid, properties}"""
+Edge = dict[str, Any]
+"""An edge record: {eid, label, out_v, in_v, out_cid, in_cid, properties}"""
 
 
 class GraphStore(Protocol):

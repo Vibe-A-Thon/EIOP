@@ -30,6 +30,11 @@ import yaml
 from eoip.audit.sink import AuditSink
 from eoip.authn import AuthenticationError, LocalIdentityProvider, TokenService
 from eoip.authz import PolicyEnforcer, RoleRegistry, UserStore
+from eoip.branding.content import LegalContentRegistry
+from eoip.branding.localization import LocalizationRegistry
+from eoip.branding.router import build_router as build_branding_router
+from eoip.branding.terminology import TerminologyRegistry
+from eoip.branding.theme import ThemePackage, ThemeRegistry
 from eoip.catalog.products import (
     KnowledgeProduct,
     KnowledgeProductCatalog,
@@ -39,7 +44,12 @@ from eoip.catalog.products import (
 )
 from eoip.ci import KGCIPipeline
 from eoip.ci.pipeline import FAIL_ON_CHOICES
+from eoip.compliance.router import build_router as build_compliance_router
+from eoip.config.layered import ConfigStore, FeatureFlagStore
+from eoip.config.router import build_router as build_config_router
 from eoip.contracts.query_plan import QueryPlan
+from eoip.egress.gateway import EgressGateway
+from eoip.egress.router import build_router as build_egress_router
 from eoip.federation import (
     FederatedQueryPlanner,
     InMemoryDemoAdapter,
@@ -47,17 +57,6 @@ from eoip.federation import (
     SourceCapability,
     SourceMode,
 )
-from eoip.branding.content import LegalContentRegistry
-from eoip.branding.localization import LocalizationRegistry
-from eoip.branding.router import build_router as build_branding_router
-from eoip.systems.router import build_systems_router
-from eoip.branding.terminology import TerminologyRegistry
-from eoip.branding.theme import ThemePackage, ThemeRegistry
-from eoip.compliance.router import build_router as build_compliance_router
-from eoip.config.layered import ConfigStore, FeatureFlagStore
-from eoip.config.router import build_router as build_config_router
-from eoip.egress.gateway import EgressGateway
-from eoip.egress.router import build_router as build_egress_router
 from eoip.graph.store import GraphStore
 from eoip.graphtest.framework import GraphTestRunner, load_suite
 from eoip.ingest.profile import build_router as build_ingest_profile_router
@@ -65,12 +64,6 @@ from eoip.licensing.api import build_router as build_licensing_router
 from eoip.licensing.entitlements import EntitlementChecker
 from eoip.licensing.license_file import LicensePayload, sign_license, verify_license
 from eoip.licensing.meter import UsageMeter
-from eoip.privacy.router import build_router as build_privacy_router
-from eoip.qa.router import build_router as build_qa_router
-from eoip.reports.router import build_router as build_reports_router
-from eoip.suggest.router import build_router as build_suggest_router
-from eoip.tenancy.router import build_router as build_tenancy_router
-from eoip.tenancy.service import TenancyService
 from eoip.marketplace import (
     DependencyConflict,
     IntegrityError,
@@ -108,10 +101,17 @@ from eoip.ops import (
     plan_upgrade,
     run_preflight,
 )
+from eoip.privacy.router import build_router as build_privacy_router
+from eoip.qa.router import build_router as build_qa_router
 from eoip.query.intelligence import QueryIntelligence, TemplateBindingError
+from eoip.reports.router import build_router as build_reports_router
 from eoip.retrieval.service import retrieve
 from eoip.retrieval.vectors import HashingEmbedder, build_search_index
 from eoip.search import FacetedSearch, SearchRequest, SearchResponse
+from eoip.suggest.router import build_router as build_suggest_router
+from eoip.systems.router import build_systems_router
+from eoip.tenancy.router import build_router as build_tenancy_router
+from eoip.tenancy.service import TenancyService
 from eoip.truth import Claim, TruthStore
 from fastapi import APIRouter, Body, HTTPException, Query, Response
 from fastapi.responses import PlainTextResponse
@@ -922,8 +922,9 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
             raise HTTPException(status_code=400, detail=f"Unknown algorithm: {payload.algorithm}. Available: {sorted(dispatch.keys())}")
         try:
             return {"algorithm": payload.algorithm, "result": fn()}
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             raise HTTPException(status_code=422, detail=str(exc))
+
 
     # ------------------------------------------------------------------
     # Query Languages (EOQL, OSQL, Semantic QL)
@@ -985,6 +986,7 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
         agent = GraphAnalyticsAgent()
         request = AgentRequest(
             request_id=f"api-analytics-{id(payload)}",
+            agent_id="graph-analytics",
             goal=payload.algorithm,
             context_refs=payload.context_refs,
             budgets=payload.budgets or None,
@@ -999,6 +1001,7 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
         agent = SemanticIndexAgent()
         request = AgentRequest(
             request_id=f"api-semantic-{id(payload)}",
+            agent_id="semantic-index",
             goal=payload.algorithm,
             context_refs=payload.context_refs,
             budgets=payload.budgets or None,
@@ -1490,8 +1493,9 @@ def add_metrics_middleware(app: Any, state: ExtendedState) -> None:
                 status=response.status_code,
                 duration_seconds=time.perf_counter() - started,
             )
-        except Exception:  # noqa: BLE001 - metrics must never break requests
+        except Exception:  # noqa: BLE001, S110 - metrics must never break requests
             pass
+
         return response
 
 

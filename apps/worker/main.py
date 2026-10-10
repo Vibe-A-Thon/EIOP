@@ -327,7 +327,9 @@ def main():
         time.sleep(2)
     if lease is not None:
         lease.release()
-    store.close()
+    close = getattr(store, "close", None)
+    if callable(close):
+        close()
     logger.info(
         "worker.stopped",
         extra={
