@@ -10,6 +10,12 @@
 
 **Current master backlog:** [../KGF-MASTER-BACKLOG.md](../KGF-MASTER-BACKLOG.md) is the active master completion backlog synthesizing [Audit-GAPS-CG-dev.md](Audit-GAPS-CG-dev.md) and the KnowGridFlow Conquest Plan. Current closure work should start from that backlog.
 
+**Current documentation sweep:** 231 first-party Markdown files / 47,000 lines
+were read mechanically on 2026-10-11, excluding `KGF-MASTER-BACKLOG.md` and
+local cache/venv directories. The working-tree backlog status at the time of
+this sweep is 167/516 tasks ticked: Phase 0 13/13, Phase 1 65/65, Phase 2
+88/130, Phase 8 1/17.
+
 ## Normative documents
 
 - `00-specification-audit-and-enhancements.md` — Specification Audit and Requirement Enhancements

@@ -6,6 +6,15 @@ Meridian Financial Services is modernizing its payment processing platform. This
 demo data covers the **Payment Gateway Modernization** initiative across three
 major epics:
 
+## How EOIP uses it
+
+This folder is used by the live manual-ingestion demo. The administration UI can
+submit these source files, the API captures immutable SourceEvent evidence,
+normalizes work/code/CI/test/design/ops/knowledge records, and exposes the
+resulting graph through explorer lenses, source/job inspection, validation,
+exports, lineage, impact, and GraphRAG. The data is deliberately synthetic and
+should not be treated as a customer export.
+
 1. **EPC-101: Payment Gateway V2 Migration** - Tokenization, retry handling,
    multi-currency support (Jira Feature PAY-100)
 2. **EPC-102: PCI DSS Compliance Upgrade** - Encryption at rest, HSM key

@@ -1,12 +1,23 @@
 # G2 implementation traceability
 
-Updated: 2026-10-05
+Updated: 2026-10-11
+
+Current overlay: the active backlog now records Phase 2 at 88/130 complete.
+This traceability page summarizes implemented G2 surfaces; live-credential
+acceptance remains a Phase 8 receipt item and is not implied by local tests.
 
 | Task / requirement | Implementation | Verification | Status |
 |---|---|---|---|
 | G2-T0001 contract audit | `docs/adr-001-g2-contract-and-revision-model.md` | compatibility table | Complete |
 | G2-T0002 SourceEvent v2 | `contracts/source_event.py`, `schemas/source_event_v2.schema.json` | `test_g2_contracts.py` | Complete |
 | G2-EKAF-003 exact SourceEvent envelope | `SourceEventV2` carries G2 aliases for `source_id`, `source_type`, `source_record_type`, `observed_time`, `evidence_ref` and `correlation_id` while preserving existing v1/v2 fields | `test_v2_event_exposes_g2_envelope_aliases` | Complete |
+| G2-EKAF-010 ordering tolerance | Late/duplicate observations are journaled and refused from current-state mutation according to graph evolution policy | `test_graph_evolution.py` | Complete |
+| G2-EKAF-014 dead-letter handling | Unified DLQ envelopes preserve source identity, stage, category, replay reference and safe errors across ingestion failures | `test_phase2_ingestion.py` | Complete |
+| G2-EKAF-016 deletion semantics | Source disappearance/delete events become tombstones, preserving historical access while excluding deleted facts from current views | `test_graph_evolution.py`, `test_jira_ingestion.py` | Complete |
+| G2-EKAF-023 permission-aware metadata | SourceEvent v2 carries permission metadata without credentials | `test_g2_contracts.py` | Complete |
+| G2-EKAF-024 content fingerprinting | Source content hashes drive identity/delta behavior and duplicate-event handling | `test_graph_evolution.py` | Complete |
+| G2-EKAF-025 attachment handling | File/attachment metadata is modeled without forcing binary download into graph truth | `test_file_ingestion.py` | Complete |
+| G2-EKAF-026 incremental graph enrichment | Source-owned records enrich canonical identities without duplicating entities | `test_identity_resolver.py` | Complete |
 | G2-T0003 revision model | `contracts/revision.py`, graph/relationship revision schemas | `test_g2_contracts.py` | Contract complete; engine is G2-P2 |
 | G2-T0004 source registry schema | `contracts/source_registry.py`, source registry/checkpoint schemas | `test_source_registry.py` | Complete |
 | G2-T0005 capability interfaces | `connectors/base.py` | fake connector protocol test | Complete |
@@ -38,6 +49,9 @@ Updated: 2026-10-05
 | G2-T0230..0232 change journal | fsynced hash-chain journal, cursor API/replay | integrity and API tests | Complete |
 | G2-T0240..0243 semantic event bus | post-journal bus plus independently checkpointed quality, cache-invalidation and admin-timeline consumers | consumer cursor/idempotency tests | Complete for local bus; external broker intentionally deferred pending measured need |
 | G2-T0250..0253 reconciliation | baseline comparison by canonical ID/content hash, safe missing/stale repair, orphan reporting and persisted report API | reconciliation unit/integration-path tests | Complete |
+| G2-EVENT-002..007 event model and streaming | graph evolution journal plus semantic consumers provide event identity, consumer cursors, idempotency, replay and cache/quality/admin-timeline propagation | `test_semantic_consumers_reconciliation.py` | Complete for local bus |
+| G2-SYNC-002..014 sync semantics | ordered baseline snapshots, deltas, delete/retire, missed-event repair, duplicate/late event handling, dependency-aware updates, watermarks, rebuild equivalence, pause/resume, backfill and selective rescan | `test_acquisition_fabric.py`, `test_acquisition_sync_semantics.py`, `test_semantic_consumers_reconciliation.py`, `test_phase2_api.py`, `test_file_ingestion.py`, `test_graph_evolution.py` | Complete for local/offline modes |
+| G2-SEC-CRAWL-002..012 crawler security | crawler scope, SSRF/redirect protections, archive/file safety, registry governance and audit evidence controls are covered by security tests | `tests/security/test_crawler_security.py` | Complete for local security controls |
 | G2-T0320 GitHub adapter | versioned REST discovery/baseline/poll/replay/reconcile connector | `test_github_connector.py`, registered baseline test | Complete without live-credential claim |
 | G2-T0321 GitHub webhook | HMAC/delivery/event-header gateway plus worker dispatch | webhook gateway tests and connector webhook tests | Complete |
 | G2-T0322 PR/Actions/release mapping | temporal Repository/Branch/Tag/Commit/MergeRequest/WorkItem/PipelineRun/Release graph and evidence | `test_github_ingestion.py` | Complete |

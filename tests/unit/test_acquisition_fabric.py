@@ -31,7 +31,7 @@ def _source(source_id: str = "confluence-prod") -> SourceRegistryEntry:
 
 @pytest.mark.req(
     "G2-T0110", "G2-T0111", "G2-T0112",
-    "G2-EKAF-005", "G2-EKAF-007", "G2-EKAF-008", "G2-EKAF-011", "G2-EKAF-013"
+    "G2-EKAF-005", "G2-EKAF-007", "G2-EKAF-008", "G2-EKAF-011", "G2-EKAF-013", "G2-SYNC-012"
 )
 def test_scheduler_admits_all_operation_types_and_enforces_controls(tmp_path) -> None:
     registry = SourceRegistry(tmp_path / "state" / "source-registry.json")
@@ -65,7 +65,7 @@ def test_scheduler_admits_all_operation_types_and_enforces_controls(tmp_path) ->
 
 @pytest.mark.req(
     "G2-T0201", "G2-T0202", "G2-T0203",
-    "G2-EKAF-004", "G2-EKAF-012", "FR-INGEST-004"
+    "G2-EKAF-004", "G2-EKAF-012", "FR-INGEST-004", "G2-SYNC-002"
 )
 def test_baseline_controller_persists_ordered_restart_manifest(tmp_path) -> None:
     path = tmp_path / "baseline.json"

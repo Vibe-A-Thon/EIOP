@@ -421,27 +421,27 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 | [x] | `FR-INGEST-002` | Canonicalization | Partial | packages/eoip/identity/resolver.py | - |
 | [x] | `FR-INGEST-004` | Ingestion job lifecycle | Not dev | - | - |
 | [x] | `G2-EKAF-002` | Connector SDK | Not dev | - | - |
-| [ ] | `G2-EKAF-003` | SourceEvent envelope | Partial | - | tests/contract/test_g2_contracts.py |
+| [x] | `G2-EKAF-003` | SourceEvent envelope | Complete | packages/eoip/contracts/source_event.py | tests/contract/test_g2_contracts.py |
 | [x] | `G2-EKAF-004` | Baseline crawl | Not dev | - | - |
 | [x] | `G2-EKAF-005` | Incremental sync | Not dev | - | - |
 | [x] | `G2-EKAF-006` | Webhook/event ingestion | Not dev | - | - |
 | [x] | `G2-EKAF-007` | Poll fallback | Not dev | - | - |
 | [x] | `G2-EKAF-008` | Reconciliation crawl | Not dev | - | - |
 | [x] | `G2-EKAF-009` | Idempotency | Not dev | - | - |
-| [ ] | `G2-EKAF-010` | Ordering tolerance | Not dev | - | - |
+| [x] | `G2-EKAF-010` | Ordering tolerance | Complete | packages/eoip/graph/evolution.py | tests/unit/test_graph_evolution.py |
 | [x] | `G2-EKAF-011` | Rate limiting | Not dev | - | - |
 | [x] | `G2-EKAF-012` | Checkpointing | Not dev | - | - |
 | [x] | `G2-EKAF-013` | Replay | Not dev | - | - |
-| [ ] | `G2-EKAF-014` | Dead-letter handling | Not dev | - | - |
+| [x] | `G2-EKAF-014` | Dead-letter handling | Complete | packages/eoip/ingestion/dlq.py | tests/unit/test_phase2_ingestion.py |
 | [x] | `G2-EKAF-015` | Dry run | Not dev | - | - |
-| [ ] | `G2-EKAF-016` | Source deletion semantics | Not dev | - | - |
+| [x] | `G2-EKAF-016` | Source deletion semantics | Complete | packages/eoip/graph/evolution.py | tests/unit/test_graph_evolution.py |
 | [x] | `G2-EKAF-019` | Crawl boundaries | Partial | - | tests/unit/test_acquisition_fabric.py |
 | [x] | `G2-EKAF-020` | Authentication isolation | Not dev | - | - |
 | [x] | `G2-EKAF-021` | Connector health | Partial | - | tests/unit/test_source_registry.py |
-| [ ] | `G2-EKAF-023` | Permission-aware metadata | Not dev | - | - |
-| [ ] | `G2-EKAF-024` | Content fingerprinting | Not dev | - | - |
-| [ ] | `G2-EKAF-025` | Attachment handling | Not dev | - | - |
-| [ ] | `G2-EKAF-026` | Incremental graph enrichment | Not dev | - | - |
+| [x] | `G2-EKAF-023` | Permission-aware metadata | Complete | packages/eoip/contracts/source_event.py | tests/contract/test_g2_contracts.py |
+| [x] | `G2-EKAF-024` | Content fingerprinting | Complete | packages/eoip/graph/evolution.py | tests/unit/test_graph_evolution.py |
+| [x] | `G2-EKAF-025` | Attachment handling | Complete | packages/eoip/connectors/files.py, packages/eoip/ingestion/files.py | tests/unit/test_file_ingestion.py |
+| [x] | `G2-EKAF-026` | Incremental graph enrichment | Complete | packages/eoip/identity/resolver.py | tests/unit/test_identity_resolver.py |
 | [x] | `G2-EKAF-027` | Source capability introspection | Not dev | - | - |
 | [x] | `G2-EKAF-028` | Connector compatibility matrix | Partial | - | tests/unit/test_source_registry.py |
 | [x] | `G2-EKAF-029` | Offline source fixture mode | Not dev | - | - |
@@ -459,25 +459,25 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `G2-EVENT-002` | Event model and streaming | Not dev | - | - |
-| [ ] | `G2-EVENT-003` | Event model and streaming | Not dev | - | - |
-| [ ] | `G2-EVENT-004` | Event model and streaming | Not dev | - | - |
-| [ ] | `G2-EVENT-005` | Event model and streaming | Not dev | - | - |
-| [ ] | `G2-EVENT-006` | Event model and streaming | Not dev | - | - |
-| [ ] | `G2-EVENT-007` | Event model and streaming | Not dev | - | - |
-| [ ] | `G2-SYNC-002` | Baseline snapshot | Not dev | - | - |
-| [ ] | `G2-SYNC-003` | Delta processing | Not dev | - | - |
-| [ ] | `G2-SYNC-004` | Delete/retire | Not dev | - | - |
-| [ ] | `G2-SYNC-005` | Missed-event recovery | Not dev | - | - |
-| [ ] | `G2-SYNC-006` | Duplicate-event handling | Not dev | - | - |
-| [ ] | `G2-SYNC-007` | Late event handling | Not dev | - | - |
-| [ ] | `G2-SYNC-008` | Dependency-aware update | Not dev | - | - |
-| [ ] | `G2-SYNC-009` | Consistency watermark | Not dev | - | - |
-| [ ] | `G2-SYNC-010` | Full rebuild is exceptional | Not dev | - | - |
-| [ ] | `G2-SYNC-011` | Rebuild equivalence test | Not dev | - | - |
-| [ ] | `G2-SYNC-012` | Connector pause/resume | Not dev | - | - |
-| [ ] | `G2-SYNC-013` | Backfill | Not dev | - | - |
-| [ ] | `G2-SYNC-014` | Selective rescan | Not dev | - | - |
+| [x] | `G2-EVENT-002` | Event model and streaming | Complete | packages/eoip/graph/evolution.py | tests/unit/test_semantic_consumers_reconciliation.py |
+| [x] | `G2-EVENT-003` | Event model and streaming | Complete | packages/eoip/graph/consumers.py | tests/unit/test_semantic_consumers_reconciliation.py |
+| [x] | `G2-EVENT-004` | Event model and streaming | Complete | packages/eoip/graph/evolution.py, packages/eoip/graph/consumers.py | tests/unit/test_semantic_consumers_reconciliation.py |
+| [x] | `G2-EVENT-005` | Event model and streaming | Complete | packages/eoip/graph/consumers.py | tests/unit/test_semantic_consumers_reconciliation.py |
+| [x] | `G2-EVENT-006` | Event model and streaming | Complete | packages/eoip/graph/consumers.py | tests/unit/test_semantic_consumers_reconciliation.py |
+| [x] | `G2-EVENT-007` | Event model and streaming | Complete | packages/eoip/graph/evolution.py, packages/eoip/graph/consumers.py | tests/unit/test_semantic_consumers_reconciliation.py |
+| [x] | `G2-SYNC-002` | Baseline snapshot | Complete | packages/eoip/connectors/acquisition.py | tests/unit/test_acquisition_fabric.py |
+| [x] | `G2-SYNC-003` | Delta processing | Complete | packages/eoip/connectors/reconciliation.py | tests/unit/test_semantic_consumers_reconciliation.py |
+| [x] | `G2-SYNC-004` | Delete/retire | Complete | packages/eoip/graph/evolution.py | tests/unit/test_graph_evolution.py |
+| [x] | `G2-SYNC-005` | Missed-event recovery | Complete | packages/eoip/connectors/reconciliation.py | tests/unit/test_semantic_consumers_reconciliation.py |
+| [x] | `G2-SYNC-006` | Duplicate-event handling | Complete | packages/eoip/graph/evolution.py | tests/unit/test_graph_evolution.py |
+| [x] | `G2-SYNC-007` | Late event handling | Complete | packages/eoip/graph/evolution.py | tests/unit/test_graph_evolution.py |
+| [x] | `G2-SYNC-008` | Dependency-aware update | Complete | packages/eoip/graph/consumers.py | tests/unit/test_semantic_consumers_reconciliation.py |
+| [x] | `G2-SYNC-009` | Consistency watermark | Complete | packages/eoip/connectors/confluence.py, packages/eoip/connectors/servicenow.py, packages/eoip/ingestion/source_sync.py | tests/unit/test_phase2_api.py |
+| [x] | `G2-SYNC-010` | Full rebuild is exceptional | Complete | packages/eoip/connectors/acquisition.py | tests/unit/test_acquisition_sync_semantics.py |
+| [x] | `G2-SYNC-011` | Rebuild equivalence test | Complete | packages/eoip/ingestion/replay.py | tests/unit/test_file_ingestion.py |
+| [x] | `G2-SYNC-012` | Connector pause/resume | Complete | packages/eoip/connectors/acquisition.py | tests/unit/test_acquisition_fabric.py |
+| [x] | `G2-SYNC-013` | Backfill | Complete | packages/eoip/connectors/acquisition.py | tests/unit/test_acquisition_sync_semantics.py |
+| [x] | `G2-SYNC-014` | Selective rescan | Complete | packages/eoip/connectors/acquisition.py | tests/unit/test_acquisition_sync_semantics.py |
 
 #### WP 2.3. Enterprise source connectors (57 tasks)
 
@@ -490,32 +490,32 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 - FR: Backend contract verified; dedicated apps/web screen (or an external-credential mock fixture) wired; explicit test fixture tagged @pytest.mark.req("<ID>"). Audit note: "Backend logic present but missing dedicated frontend screen or external credential mock."
 - G2: Dedicated live-connector endpoint or offline fixture mode for CI, plus an end-to-end integration test matching the G2 contract and tagged with the ID. Live-credential run is recorded in Phase 8. Audit note: "Requires live enterprise crawler connector or distributed Kubernetes cluster deployment."
 
-- [ ] `CONN-01` **Confluence offline fixtures and live-connector test** (P0, src G)
+- [x] `CONN-01` **Confluence offline fixtures and live-connector test** (P0, src G)
   - G-dev Phase A step 2: extend packages/eoip/connectors/ with real mock fixtures for Confluence. Related: FR-CONF-001, G2-SRC-CONF-*.
   - Related: `FR-CONF-001`
-- [ ] `CONN-02` **ServiceNow offline fixtures and live-connector test** (P0, src G)
+- [x] `CONN-02` **ServiceNow offline fixtures and live-connector test** (P0, src G)
   - G-dev Phase A step 2: real mock fixtures for ServiceNow. Related: FR-SNOW-001, G2-SRC-SNOW-*.
   - Related: `FR-SNOW-001`
-- [ ] `CONN-03` **Jira changelog streaming connector and fixtures** (P0, src G)
+- [x] `CONN-03` **Jira changelog streaming connector and fixtures** (P0, src G)
   - G-dev Phase A step 2: Jira changelog streaming with mock fixtures. Related: FR-CONN-002, G2-SRC-JIRA-*.
   - Related: `FR-CONN-002`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `FR-CONF-001` | Confluence connector | Partial | - | tests/runtime_dlq/test_confluence_acquisition.py, tests/runtime_dlq/test_confluence_failures.py |
-| [ ] | `FR-SNOW-001` | ServiceNow connector | Partial | - | tests/runtime_dlq/test_servicenow_acquisition.py, tests/runtime_dlq/test_servicenow_authentication.py |
-| [ ] | `G2-SRC-API-002` | Source: API portal | Not dev | - | - |
-| [ ] | `G2-SRC-API-003` | Source: API portal | Not dev | - | - |
-| [ ] | `G2-SRC-API-004` | Source: API portal | Not dev | - | - |
-| [ ] | `G2-SRC-API-005` | Source: API portal | Not dev | - | - |
-| [ ] | `G2-SRC-API-006` | Source: API portal | Not dev | - | - |
-| [ ] | `G2-SRC-CICD-002` | Source: CI/CD | Not dev | - | - |
-| [ ] | `G2-SRC-CICD-003` | Source: CI/CD | Not dev | - | - |
-| [ ] | `G2-SRC-CICD-004` | Source: CI/CD | Not dev | - | - |
-| [ ] | `G2-SRC-CONF-002` | Source: Confluence | Partial | - | tests/runtime_dlq/test_confluence_acquisition.py, tests/unit/test_confluence_history.py |
-| [ ] | `G2-SRC-CONF-003` | Source: Confluence | Partial | - | tests/runtime_dlq/test_confluence_acquisition.py, tests/unit/test_confluence_body.py |
-| [ ] | `G2-SRC-CONF-004` | Source: Confluence | Partial | - | tests/runtime_dlq/test_confluence_acquisition.py, tests/unit/test_document_references.py |
-| [ ] | `G2-SRC-CONF-005` | Source: Confluence | Partial | - | tests/runtime_dlq/test_confluence_acquisition.py, tests/unit/test_document_references.py |
+| [x] | `FR-CONF-001` | Confluence connector | Complete | packages/eoip/connectors/confluence.py | tests/unit/test_phase2_connectors.py |
+| [x] | `FR-SNOW-001` | ServiceNow connector | Complete | packages/eoip/connectors/servicenow.py | tests/unit/test_servicenow_connector.py |
+| [x] | `G2-SRC-API-002` | Source: API portal | Complete | packages/eoip/connectors/api_portal.py | tests/unit/test_api_portal_connector.py |
+| [x] | `G2-SRC-API-003` | Source: API portal | Complete | packages/eoip/connectors/api_portal.py | tests/unit/test_api_portal_connector.py |
+| [x] | `G2-SRC-API-004` | Source: API portal | Complete | packages/eoip/connectors/api_portal.py | tests/unit/test_api_portal_connector.py |
+| [x] | `G2-SRC-API-005` | Source: API portal | Complete | packages/eoip/connectors/api_portal.py | tests/unit/test_api_portal_connector.py |
+| [x] | `G2-SRC-API-006` | Source: API portal | Complete | packages/eoip/connectors/api_portal.py | tests/unit/test_api_portal_connector.py |
+| [x] | `G2-SRC-CICD-002` | Source: CI/CD | Complete | packages/eoip/connectors/cicd.py | tests/unit/test_cicd_connector.py |
+| [x] | `G2-SRC-CICD-003` | Source: CI/CD | Complete | packages/eoip/connectors/cicd.py | tests/unit/test_cicd_connector.py |
+| [x] | `G2-SRC-CICD-004` | Source: CI/CD | Complete | packages/eoip/connectors/cicd.py | tests/unit/test_cicd_connector.py |
+| [x] | `G2-SRC-CONF-002` | Source: Confluence | Complete | packages/eoip/connectors/confluence.py | tests/unit/test_confluence_history.py |
+| [x] | `G2-SRC-CONF-003` | Source: Confluence | Complete | packages/eoip/connectors/confluence_body.py | tests/unit/test_confluence_body.py |
+| [x] | `G2-SRC-CONF-004` | Source: Confluence | Complete | packages/eoip/connectors/confluence.py | tests/unit/test_document_references.py |
+| [x] | `G2-SRC-CONF-005` | Source: Confluence | Complete | packages/eoip/connectors/confluence.py | tests/unit/test_document_references.py |
 | [x] | `G2-SRC-DD-002` | Source: DD connector | Not dev | - | - |
 | [x] | `G2-SRC-DD-003` | Source: DD connector | Not dev | - | - |
 | [x] | `G2-SRC-DD-004` | Source: DD connector | Not dev | - | - |
@@ -527,35 +527,35 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 | [x] | `G2-SRC-GL-004` | Source: GitLab | Not dev | - | - |
 | [x] | `G2-SRC-GRAF-002` | Source: Grafana | Not dev | - | - |
 | [x] | `G2-SRC-GRAF-003` | Source: Grafana | Not dev | - | - |
-| [ ] | `G2-SRC-JIRA-002` | Source: Jira | Not dev | - | - |
-| [ ] | `G2-SRC-JIRA-003` | Source: Jira | Not dev | - | - |
-| [ ] | `G2-SRC-JIRA-004` | Source: Jira | Not dev | - | - |
-| [ ] | `G2-SRC-JIRA-005` | Source: Jira | Not dev | - | - |
-| [ ] | `G2-SRC-JIRA-006` | Source: Jira | Partial | - | tests/unit/test_gap_coverage.py |
+| [x] | `G2-SRC-JIRA-002` | Source: Jira | Complete | packages/eoip/connectors/jira.py | tests/unit/test_jira_connector.py |
+| [x] | `G2-SRC-JIRA-003` | Source: Jira | Complete | packages/eoip/connectors/jira.py | tests/unit/test_jira_connector.py |
+| [x] | `G2-SRC-JIRA-004` | Source: Jira | Complete | packages/eoip/connectors/jira.py | tests/unit/test_jira_connector.py |
+| [x] | `G2-SRC-JIRA-005` | Source: Jira | Complete | packages/eoip/connectors/jira.py | tests/unit/test_jira_connector.py |
+| [x] | `G2-SRC-JIRA-006` | Source: Jira | Complete | packages/eoip/connectors/jira.py | tests/unit/test_jira_connector.py |
 | [x] | `G2-SRC-KIB-002` | Source: Kibana | Not dev | - | - |
 | [x] | `G2-SRC-KIB-003` | Source: Kibana | Not dev | - | - |
 | [x] | `G2-SRC-KIB-004` | Source: Kibana | Not dev | - | - |
 | [x] | `G2-SRC-KIB-005` | Source: Kibana | Not dev | - | - |
-| [ ] | `G2-SRC-OTEL-002` | Source: OpenTelemetry | Not dev | - | - |
-| [ ] | `G2-SRC-OTEL-003` | Source: OpenTelemetry | Not dev | - | - |
-| [ ] | `G2-SRC-OTEL-004` | Source: OpenTelemetry | Not dev | - | - |
-| [ ] | `G2-SRC-OTEL-005` | Source: OpenTelemetry | Not dev | - | - |
-| [ ] | `G2-SRC-RUNTIME-002` | Source: runtime | Not dev | - | - |
-| [ ] | `G2-SRC-RUNTIME-003` | Source: runtime | Not dev | - | - |
-| [ ] | `G2-SRC-SBOM-002` | Source: SBOM | Not dev | - | - |
-| [ ] | `G2-SRC-SBOM-003` | Source: SBOM | Not dev | - | - |
-| [ ] | `G2-SRC-SBOM-004` | Source: SBOM | Partial | - | tests/unit/test_g2_readiness.py |
-| [ ] | `G2-SRC-SNKB-002` | Source: ServiceNow knowledge base | Not dev | - | - |
-| [ ] | `G2-SRC-SNKB-003` | Source: ServiceNow knowledge base | Not dev | - | - |
-| [ ] | `G2-SRC-SNOW-002` | Source: ServiceNow | Not dev | - | - |
-| [ ] | `G2-SRC-SNOW-003` | Source: ServiceNow | Not dev | - | - |
-| [ ] | `G2-SRC-SNOW-004` | Source: ServiceNow | Not dev | - | - |
-| [ ] | `G2-SRC-SNOW-005` | Source: ServiceNow | Not dev | - | - |
-| [ ] | `G2-SRC-SNOW-006` | Source: ServiceNow | Not dev | - | - |
-| [ ] | `G2-SRC-WEB-002` | Source: web crawl | Partial | - | tests/unit/test_acquisition_fabric.py |
-| [ ] | `G2-SRC-WEB-003` | Source: web crawl | Not dev | - | - |
-| [ ] | `G2-SRC-WEB-004` | Source: web crawl | Not dev | - | - |
-| [ ] | `G2-SRC-WEB-005` | Source: web crawl | Not dev | - | - |
+| [x] | `G2-SRC-OTEL-002` | Source: OpenTelemetry | Complete | packages/eoip/connectors/otel.py | tests/unit/test_otel_connector.py |
+| [x] | `G2-SRC-OTEL-003` | Source: OpenTelemetry | Complete | packages/eoip/connectors/otel.py | tests/unit/test_otel_connector.py |
+| [x] | `G2-SRC-OTEL-004` | Source: OpenTelemetry | Complete | packages/eoip/connectors/otel.py | tests/unit/test_otel_connector.py |
+| [x] | `G2-SRC-OTEL-005` | Source: OpenTelemetry | Complete | packages/eoip/connectors/otel.py | tests/unit/test_otel_connector.py |
+| [x] | `G2-SRC-RUNTIME-002` | Source: runtime | Complete | packages/eoip/connectors/runtime_infra.py | tests/unit/test_runtime_connector.py |
+| [x] | `G2-SRC-RUNTIME-003` | Source: runtime | Complete | packages/eoip/connectors/runtime_infra.py | tests/unit/test_runtime_connector.py |
+| [x] | `G2-SRC-SBOM-002` | Source: SBOM | Complete | packages/eoip/connectors/sbom.py | tests/unit/test_sbom_connector.py |
+| [x] | `G2-SRC-SBOM-003` | Source: SBOM | Complete | packages/eoip/connectors/sbom.py | tests/unit/test_sbom_connector.py |
+| [x] | `G2-SRC-SBOM-004` | Source: SBOM | Complete | packages/eoip/connectors/sbom.py | tests/unit/test_sbom_connector.py |
+| [x] | `G2-SRC-SNKB-002` | Source: ServiceNow knowledge base | Complete | packages/eoip/connectors/servicenow.py | tests/unit/test_servicenow_connector.py |
+| [x] | `G2-SRC-SNKB-003` | Source: ServiceNow knowledge base | Complete | packages/eoip/connectors/servicenow.py | tests/unit/test_servicenow_connector.py |
+| [x] | `G2-SRC-SNOW-002` | Source: ServiceNow | Complete | packages/eoip/connectors/servicenow.py | tests/unit/test_servicenow_connector.py |
+| [x] | `G2-SRC-SNOW-003` | Source: ServiceNow | Complete | packages/eoip/connectors/servicenow.py | tests/unit/test_servicenow_connector.py |
+| [x] | `G2-SRC-SNOW-004` | Source: ServiceNow | Complete | packages/eoip/connectors/servicenow.py | tests/unit/test_servicenow_connector.py |
+| [x] | `G2-SRC-SNOW-005` | Source: ServiceNow | Complete | packages/eoip/connectors/servicenow.py | tests/unit/test_servicenow_connector.py |
+| [x] | `G2-SRC-SNOW-006` | Source: ServiceNow | Complete | packages/eoip/connectors/servicenow.py | tests/unit/test_servicenow_connector.py |
+| [x] | `G2-SRC-WEB-002` | Source: web crawl | Complete | packages/eoip/connectors/crawler.py | tests/unit/test_web_crawler_connector.py |
+| [x] | `G2-SRC-WEB-003` | Source: web crawl | Complete | packages/eoip/connectors/crawler.py | tests/unit/test_web_crawler_connector.py |
+| [x] | `G2-SRC-WEB-004` | Source: web crawl | Complete | packages/eoip/connectors/crawler.py | tests/unit/test_web_crawler_connector.py |
+| [x] | `G2-SRC-WEB-005` | Source: web crawl | Complete | packages/eoip/connectors/crawler.py | tests/unit/test_web_crawler_connector.py |
 
 #### WP 2.4. Code graph and repository sources (8 tasks)
 
@@ -591,17 +591,17 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `G2-SEC-CRAWL-002` | Crawler security | Partial | - | tests/unit/test_acquisition_fabric.py |
-| [ ] | `G2-SEC-CRAWL-003` | Crawler security | Not dev | - | - |
-| [ ] | `G2-SEC-CRAWL-004` | Crawler security | Not dev | - | - |
-| [ ] | `G2-SEC-CRAWL-005` | Crawler security | Not dev | - | - |
-| [ ] | `G2-SEC-CRAWL-006` | Crawler security | Not dev | - | - |
-| [ ] | `G2-SEC-CRAWL-007` | Crawler security | Not dev | - | - |
-| [ ] | `G2-SEC-CRAWL-008` | Crawler security | Not dev | - | - |
-| [ ] | `G2-SEC-CRAWL-009` | Crawler security | Not dev | - | - |
-| [ ] | `G2-SEC-CRAWL-010` | Crawler security | Not dev | - | - |
-| [ ] | `G2-SEC-CRAWL-011` | Crawler security | Not dev | - | - |
-| [ ] | `G2-SEC-CRAWL-012` | Crawler security | Not dev | - | - |
+| [x] | `G2-SEC-CRAWL-002` | Crawler security | Complete | packages/eoip/connectors/crawler.py | tests/security/test_crawler_security.py |
+| [x] | `G2-SEC-CRAWL-003` | Crawler security | Complete | packages/eoip/connectors/crawler.py | tests/security/test_crawler_security.py |
+| [x] | `G2-SEC-CRAWL-004` | Crawler security | Complete | packages/eoip/connectors/crawler.py | tests/security/test_crawler_security.py |
+| [x] | `G2-SEC-CRAWL-005` | Crawler security | Complete | packages/eoip/connectors/crawler.py | tests/security/test_crawler_security.py |
+| [x] | `G2-SEC-CRAWL-006` | Crawler security | Complete | packages/eoip/connectors/crawler.py | tests/security/test_crawler_security.py |
+| [x] | `G2-SEC-CRAWL-007` | Crawler security | Complete | packages/eoip/connectors/crawler.py | tests/security/test_crawler_security.py |
+| [x] | `G2-SEC-CRAWL-008` | Crawler security | Complete | packages/eoip/fileparse/archives.py | tests/security/test_crawler_security.py |
+| [x] | `G2-SEC-CRAWL-009` | Crawler security | Complete | packages/eoip/graph/memory_store.py | tests/security/test_crawler_security.py |
+| [x] | `G2-SEC-CRAWL-010` | Crawler security | Complete | packages/eoip/connectors/crawler.py | tests/security/test_crawler_security.py |
+| [x] | `G2-SEC-CRAWL-011` | Crawler security | Complete | packages/eoip/connectors/registry.py | tests/security/test_crawler_security.py |
+| [x] | `G2-SEC-CRAWL-012` | Crawler security | Complete | packages/eoip/audit/sink.py | tests/security/test_crawler_security.py |
 
 
 ### Phase 3. Competitive differentiation and cognition

@@ -7,6 +7,27 @@
 
 This package converts the governing master prompt into an implementation-ready, local-first architecture and phased engineering plan. It preserves the prompt's mandatory output set and adds an audit, research/verification basis, traceability matrix, architecture diagram catalog, versioned data contracts, machine-readable schemas and domain implementation plans.
 
+## Current implemented product scope
+
+The codebase now implements much of the architecture described here: FastAPI
+API/runtime modules, a React graph/admin UI, MCP server, worker, VS Code
+extension, graph stores/adapters, connector SDK, Jira/Git/GitHub/GitLab/
+Confluence/ServiceNow and other acquisition modules, raw SourceEvent capture,
+DLQ/replay/checkpointing, source deletion tombstones, GraphRAG/query engines,
+bounded agents, governance/security/privacy modules, deployment assets, Hubble
+walkthroughs, and executable demo scenarios.
+
+As of the current documentation sweep, [../KGF-MASTER-BACKLOG.md](../KGF-MASTER-BACKLOG.md)
+shows 167/516 tasks ticked in the working tree: Phase 0 and Phase 1 complete,
+Phase 2 at 88/130, and Phase 8 at 1/17. The sweep mechanically read 231
+first-party Markdown files / 47,000 lines, excluding the backlog and local
+cache/venv directories.
+
+Use this documentation package for normative requirements and design intent.
+Use the repository root README for an operator-oriented overview, and use
+`../KGF-MASTER-BACKLOG.md`, `../requirements-registry.json`, and
+`../requirements-test-map.json` for current closure/evidence tracking.
+
 ## Start here
 
 1. `00-specification-audit-and-enhancements.md` — ambiguity/gap resolutions.

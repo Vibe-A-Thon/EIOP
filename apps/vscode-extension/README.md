@@ -5,6 +5,21 @@ files. Run **EOIP: Set Access Token** and enter `EOIP_API_TOKEN` from
 `deploy/.env`; the token is stored in VS Code SecretStorage. Set
 `eoip.repositoryRoot` to the local checkout matching the ingested repository.
 
+## What is implemented
+
+The extension is a read-only IDE surface over the EOIP API and MCP server. It
+supports active-file context, symbol lookup, Jira/source-to-code tracing,
+impact, lineage/provenance, GraphRAG retrieval, knowledge graph search,
+natural-language query, and approved MCP tool invocation. It uses the same
+Bearer token as the web/API stack, stores it in VS Code SecretStorage, and
+rejects write/admin tools.
+
+Source navigation is intentionally constrained. Links returned by EOIP must
+resolve under `eoip.repositoryRoot`; absolute paths, traversal, and symlinks
+escaping the workspace are refused. The extension can show prior successful
+context when the API is temporarily unavailable, but it does not mutate files or
+silently fabricate graph results.
+
 The **EOIP Context** view appears in Explorer. Place the caret within an indexed
 symbol and run **EOIP: Context for Active File**, or move the caret between
 symbols to refresh the view. It shows the current symbol and source range,

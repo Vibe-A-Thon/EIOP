@@ -310,3 +310,44 @@ def test_source_sync_checkpoint_is_saved_only_after_successful_non_dry_run(
     assert json.loads(checkpoint_path.read_text(encoding="utf-8"))["checkpoint"] == (
         "2026-10-03T00:00:00Z"
     )
+
+
+@pytest.mark.req("G2-EKAF-014")
+def test_dead_letter_handling_contract(tmp_path):
+    from eoip.contracts.source_event import SourceEventV2
+    from eoip.ingestion.dlq import write_dlq_record
+
+    dlq_dir = tmp_path / "dlq"
+    event = SourceEventV2(
+        event_id="failed-evt-1",
+        source_system="jira",
+        source_instance_id="jira-prod",
+        source_record_id="PROJ-99",
+        operation="UPSERT",
+        event_time="2026-10-01T00:00:00Z",
+        content_hash="hash123",
+        payload={"summary": "Broken"},
+    )
+    record_path = write_dlq_record(
+        dlq_dir,
+        event,
+        "Malformed schema property",
+        stage="mapping",
+        error_category="mapping_error",
+        mapping_version="v2.1.0",
+        correlation_id="run-corr-456",
+        retry_state="UNPROCESSED",
+        remediation_note="Field mapping version mismatch",
+        stack_trace="Traceback: ValueError",
+    )
+    assert record_path.is_file()
+    record = json.loads(record_path.read_text(encoding="utf-8"))
+    assert record["error_category"] == "mapping_error"
+    assert record["event_id"] == "failed-evt-1"
+    assert record["source_event"]["event_id"] == "failed-evt-1"
+    assert record["mapping_version"] == "v2.1.0"
+    assert record["correlation_id"] == "run-corr-456"
+    assert record["retry_state"] == "UNPROCESSED"
+    assert record["remediation_note"] == "Field mapping version mismatch"
+    assert record["stack_trace"] == "Traceback: ValueError"
+

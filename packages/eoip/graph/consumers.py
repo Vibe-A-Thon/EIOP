@@ -88,14 +88,24 @@ class SemanticConsumerRunner:
             after = int(checkpoint.get("cursor", 0))
             events = self.journal.read(after=after, limit=batch_size)
             if events:
-                consumer.consume(events)
-                checkpoint = {
-                    "consumer": consumer.name,
-                    "cursor": events[-1].cursor,
-                    "processed": int(checkpoint.get("processed", 0)) + len(events),
-                    "status": "HEALTHY",
-                    "updated_at": utc_now_iso(),
-                }
+                try:
+                    consumer.consume(events)
+                    checkpoint = {
+                        "consumer": consumer.name,
+                        "cursor": events[-1].cursor,
+                        "processed": int(checkpoint.get("processed", 0)) + len(events),
+                        "status": "HEALTHY",
+                        "updated_at": utc_now_iso(),
+                    }
+                except Exception as exc:
+                    checkpoint = {
+                        "consumer": consumer.name,
+                        "cursor": after,
+                        "processed": int(checkpoint.get("processed", 0)),
+                        "status": "FAILED",
+                        "error": str(exc),
+                        "updated_at": utc_now_iso(),
+                    }
                 write_json(checkpoint_path, checkpoint)
             else:
                 checkpoint = {

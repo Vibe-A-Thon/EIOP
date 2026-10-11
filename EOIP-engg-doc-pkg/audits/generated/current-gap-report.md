@@ -1,5 +1,13 @@
 # Current documentation audit - phase 1 evidence foundation
 
+> Current overlay, 2026-10-11: a later documentation sweep mechanically read
+> 231 first-party Markdown files / 47,000 lines, excluding
+> `KGF-MASTER-BACKLOG.md` and local cache/venv directories. The active backlog
+> in the working tree currently shows 167/516 tasks ticked: Phase 0 13/13,
+> Phase 1 65/65, Phase 2 88/130, Phase 8 1/17. The generated audit below is a
+> derived snapshot from its recorded generation time and may lag the working
+> tree until `python -m scripts.documentation_audit --project-root .` is rerun.
+
 Generated: `2026-10-11T12:22:55.878628+00:00`; source HEAD: `91af743a161a7141e4c305d5046935f8cf1a3f54`.
 
 Scope: All Git-listed first-party nonignored Markdown/text, including both KGR catalogs. Historical audit Markdown is read as evidence, not indexed as new product obligations. Current generated outputs are excluded from their own read receipts.

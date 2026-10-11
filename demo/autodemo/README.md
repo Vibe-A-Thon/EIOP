@@ -6,6 +6,20 @@ browser and presents user-paced steps in the application and a separate
 live-results window. The console remains open at the end, including on failure.
 No in-memory fixture runner is used as evidence for the live application.
 
+## What this demonstrates today
+
+The demos exercise the developed product surfaces rather than static mockups:
+the React explorer/admin UI, authenticated API, source/job inspection,
+manual and batch JSON ingestion, graph paths, impact, lineage, neighborhood,
+traceability, RAG routing, agent routing, governance/audit/DLQ views, export
+formats, Hubble graph visualization, and the read-only VS Code NLQ/MCP flow.
+
+The demo corpus is synthetic and intentionally local. It proves that the local
+stack can load and query coherent enterprise scenarios; it does not prove live
+customer connector credentials, production HA, final security certification, or
+release performance gates. Those remain Phase 8 receipt items in the master
+backlog.
+
 | Launcher | Sequence |
 |---|---|
 | `run-demo.bat` | Enterprise application, administration/manual ingestion, administration/pipeline ingestion, then separate VS Code NLQ/MCP |

@@ -13,7 +13,15 @@ from eoip.contracts.source_event import utc_now_iso
 from eoip.jobs import JobQueue, write_json
 from pydantic import BaseModel, ConfigDict, Field
 
-AcquisitionOperation = Literal["BASELINE", "POLL", "RECONCILE", "REPLAY"]
+AcquisitionOperation = Literal[
+    "BASELINE",
+    "POLL",
+    "RECONCILE",
+    "REPLAY",
+    "BACKFILL",
+    "RESCAN",
+    "FULL_REBUILD",
+]
 BaselineStage = Literal[
     "CREATED",
     "DISCOVERING",
@@ -25,6 +33,28 @@ BaselineStage = Literal[
     "COMPLETE",
     "FAILED",
 ]
+
+
+class SelectiveRescanFilter(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    source_id: str | None = None
+    entity_type: str | None = None
+    path: str | None = None
+    repository: str | None = None
+    project: str | None = None
+    time_range_start: str | None = None
+    time_range_end: str | None = None
+
+
+class BackfillSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    entity_type: str
+    mapping_version: str | None = None
+    start_cursor: str | None = None
+    end_cursor: str | None = None
+    max_records: int | None = Field(default=None, ge=1)
 
 
 class AcquisitionPolicy(BaseModel):
@@ -75,18 +105,43 @@ class AcquisitionScheduler:
         event_ids: list[str] | None = None,
         dry_run: bool = False,
         correlation_id: str | None = None,
+        maintenance: bool = False,
+        backfill_spec: dict | BackfillSpec | None = None,
+        rescan_filter: dict | SelectiveRescanFilter | None = None,
     ) -> dict:
         with self._lock:
-            self._check_admission(source_id, operation, event_ids)
+            self._check_admission(
+                source_id,
+                operation,
+                event_ids,
+                maintenance=maintenance,
+                backfill_spec=backfill_spec,
+                rescan_filter=rescan_filter,
+            )
+            payload = {
+                "source_id": source_id,
+                "operation": operation,
+                "checkpoint": checkpoint,
+                "event_ids": event_ids or [],
+                "dry_run": dry_run,
+            }
+            if maintenance:
+                payload["maintenance"] = True
+            if backfill_spec:
+                payload["backfill_spec"] = (
+                    backfill_spec.model_dump(mode="json")
+                    if hasattr(backfill_spec, "model_dump")
+                    else backfill_spec
+                )
+            if rescan_filter:
+                payload["rescan_filter"] = (
+                    rescan_filter.model_dump(mode="json")
+                    if hasattr(rescan_filter, "model_dump")
+                    else rescan_filter
+                )
             return self.queue.submit(
                 "SOURCE_OPERATION",
-                {
-                    "source_id": source_id,
-                    "operation": operation,
-                    "checkpoint": checkpoint,
-                    "event_ids": event_ids or [],
-                    "dry_run": dry_run,
-                },
+                payload,
                 correlation_id=correlation_id,
             )
 
@@ -99,13 +154,38 @@ class AcquisitionScheduler:
             if not isinstance(payload, dict) or not isinstance(payload.get("source_id"), str):
                 raise TypeError("source_id is required for source operation recovery")
             self._check_admission(
-                payload["source_id"], payload.get("operation"), payload.get("event_ids")
+                payload["source_id"],
+                payload.get("operation"),
+                payload.get("event_ids"),
+                maintenance=payload.get("maintenance", False),
+                backfill_spec=payload.get("backfill_spec"),
+                rescan_filter=payload.get("rescan_filter"),
             )
             return self.queue.readmit(job_id, correlation_id=correlation_id)
 
-    def _check_admission(self, source_id, operation, event_ids):
-        if operation not in {"BASELINE", "POLL", "RECONCILE", "REPLAY"}:
+    def _check_admission(
+        self,
+        source_id,
+        operation,
+        event_ids,
+        maintenance=False,
+        backfill_spec=None,
+        rescan_filter=None,
+    ):
+        if operation not in {
+            "BASELINE",
+            "POLL",
+            "RECONCILE",
+            "REPLAY",
+            "BACKFILL",
+            "RESCAN",
+            "FULL_REBUILD",
+        }:
             raise ValueError("unsupported source acquisition operation")
+        if operation == "FULL_REBUILD" and not maintenance:
+            raise ValueError(
+                "Full rebuild is exceptional: requires explicit maintenance authorization"
+            )
         source = self.registry.get(source_id)
         if not source.enabled:
             raise RuntimeError("source is disabled")
@@ -120,6 +200,10 @@ class AcquisitionScheduler:
             raise ValueError("source does not declare replay capability")
         if operation == "REPLAY" and not event_ids:
             raise ValueError("event_ids are required for replay")
+        if operation == "BACKFILL" and not backfill_spec:
+            raise ValueError("backfill_spec is required for backfill")
+        if operation == "RESCAN" and not rescan_filter:
+            raise ValueError("rescan_filter is required for selective rescan")
 
         jobs = self._source_jobs(source_id)
         active = [job for job in jobs if job.get("status") in {"PENDING", "RUNNING"}]

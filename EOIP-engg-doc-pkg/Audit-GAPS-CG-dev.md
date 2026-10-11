@@ -5,6 +5,14 @@
 **Workspace:** `F:\code\EIP\EIOP`  
 **Purpose:** Full current documentation/code audit, gap analysis, and closure backlog for implementation planning.
 
+> Current overlay, 2026-10-11: after this audit was merged into the master
+> backlog, the working tree advanced to 167/516 backlog tasks ticked. Phase 0
+> and Phase 1 are complete; Phase 2 is 88/130; Phase 8 is 1/17. The baseline
+> evidence below remains the audit receipt for this document, while
+> `KGF-MASTER-BACKLOG.md`, `requirements-registry.json`,
+> `requirements-test-map.json` and `available-status.md` carry the latest
+> closure/evidence state.
+
 ## Executive Summary
 
 This audit re-read the repository Markdown corpus and compared the documented requirements, status claims, architecture notes, demo expectations, and implementation plans against the current codebase, tests, API surfaces, config, schemas, web app, worker, MCP app, and VS Code extension.

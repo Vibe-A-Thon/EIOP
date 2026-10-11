@@ -1,18 +1,59 @@
 {
-  "G2-T0002": [
-    "tests/contract/test_g2_contracts.py"
+  "001": [
+    "tests/unit/test_requirement_evidence.py"
   ],
-  "G2-EKAF-003": [
-    "tests/contract/test_g2_contracts.py"
+  "CONN-01": [
+    "tests/unit/test_phase2_connectors.py"
   ],
-  "G2-T0003": [
-    "tests/contract/test_g2_contracts.py"
+  "CONN-02": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_offline_fixtures",
+    "tests/unit/test_servicenow_connector.py"
   ],
-  "G2-T0005": [
-    "tests/contract/test_g2_contracts.py"
+  "CONN-03": [
+    "tests/unit/test_jira_connector.py::test_jira_offline_fixtures_and_baseline",
+    "tests/unit/test_jira_connector.py"
+  ],
+  "FR-CODE-001": [
+    "tests/unit/test_code_parser.py",
+    "tests/unit/test_requirement_evidence.py"
+  ],
+  "FR-CODE-002": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "FR-CODE-003": [
+    "tests/unit/test_diff_hunk.py"
+  ],
+  "FR-CODE-004": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "FR-CODE-005": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "FR-CONF-001": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/runtime_dlq/test_confluence_failures.py",
+    "tests/runtime_dlq/test_confluence_rejection.py",
+    "tests/unit/test_confluence_body.py",
+    "tests/unit/test_confluence_body.py::test_invalid_body_is_captured_and_dlq_before_business_writes",
+    "tests/unit/test_confluence_body.py::test_structure_is_persisted_versioned_and_replayable",
+    "tests/unit/test_confluence_metadata.py",
+    "tests/unit/test_confluence_metadata.py::test_acquisition_completes_truncated_labels_without_following_remote_links",
+    "tests/unit/test_confluence_metadata.py::test_page_metadata_normalizes_labels_actors_and_source_timestamps",
+    "tests/unit/test_confluence_upstream_fixture.py",
+    "tests/unit/test_phase2_connectors.py",
+    "tests/unit/test_phase2_connectors.py::test_confluence_pagination_and_event_identity_are_stable",
+    "tests/unit/test_phase2_connectors.py::test_confluence_sync_emits_spaces_pages_and_attachment_metadata_incrementally",
+    "tests/unit/test_phase2_connectors.py::test_environment_configuration_rejects_missing_auth_without_echoing_secrets",
+    "tests/unit/test_phase2_ingestion.py",
+    "tests/unit/test_phase2_ingestion.py::test_confluence_mapping_rejection_is_captured_and_does_not_advance_batch",
+    "tests/unit/test_phase2_ingestion.py::test_confluence_sync_ingestion_persists_documents_and_provenance_idempotently",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[confluence]",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[servicenow]"
   ],
   "FR-CONN-001": [
-    "tests/contract/test_g2_contracts.py"
+    "tests/contract/test_g2_contracts.py",
+    "tests/contract/test_g2_contracts.py::test_fake_connector_satisfies_runtime_connector_protocol"
   ],
   "FR-CONN-002": [
     "tests/unit/test_jira_ingestion.py::test_dlq_record_uses_the_unified_envelope",
@@ -26,137 +67,90 @@
     "tests/unit/test_jira_ingestion.py::test_jira_source_reappearance_restores_current_view",
     "tests/unit/test_jira_ingestion.py::test_malformed_record_is_captured_and_quarantined_without_graph_mutation"
   ],
+  "FR-CONN-003": [
+    "tests/unit/test_github_connector.py"
+  ],
+  "FR-CONN-004": [
+    "tests/unit/test_gitlab_connector.py"
+  ],
+  "FR-CONN-005": [
+    "tests/unit/test_phase2_connectors.py",
+    "tests/unit/test_phase2_connectors.py::test_connector_errors_use_stable_categories_without_exposing_credentials"
+  ],
+  "FR-CONN-006": [
+    "tests/unit/test_confluence_history.py",
+    "tests/unit/test_confluence_history.py::test_old_captures_report_partial_history_and_invalid_complete_history_enters_dlq",
+    "tests/unit/test_confluence_metadata.py",
+    "tests/unit/test_confluence_metadata.py::test_metadata_persists_in_revisions_clears_on_update_and_is_replay_stable",
+    "tests/unit/test_document_references.py",
+    "tests/unit/test_document_references.py::test_fact_changes_not_observations_trigger_staleness_and_replay_cannot_rebase",
+    "tests/unit/test_phase2_ingestion.py",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[confluence]",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[servicenow]",
+    "tests/unit/test_replay.py"
+  ],
   "FR-CONN-007": [
     "tests/unit/test_jira_ingestion.py::test_jira_source_deletion_tombstones_without_hard_delete",
     "tests/unit/test_jira_ingestion.py::test_jira_source_reappearance_restores_current_view"
+  ],
+  "FR-GRAPH-": [
+    "tests/unit/test_requirement_evidence.py"
+  ],
+  "FR-GRAPH-001": [
+    "tests/unit/test_requirement_evidence.py"
+  ],
+  "FR-GRAPH-002": [
+    "tests/unit/test_meta_graph.py"
+  ],
+  "FR-GRAPH-003": [
+    "tests/unit/test_phase2_hugegraph_schema.py"
+  ],
+  "FR-GRAPH-005": [
+    "tests/unit/test_meta_graph.py"
+  ],
+  "FR-GRAPH-006": [
+    "tests/unit/test_graph_traversal.py"
+  ],
+  "FR-GRAPH-007": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "FR-GRAPH-008": [
+    "tests/unit/test_phase2_hugegraph_schema.py"
+  ],
+  "FR-GRAPH-009": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "FR-GRAPH-010": [
+    "tests/unit/test_phase2_rdf_export.py"
+  ],
+  "FR-ID-001": [
+    "tests/unit/test_identity_ingestion.py"
+  ],
+  "FR-ID-002": [
+    "tests/unit/test_identity_candidates.py"
   ],
   "FR-INGEST-001": [
     "tests/unit/test_jira_ingestion.py::test_jira_import_captures_evidence_and_is_idempotent",
     "tests/unit/test_jira_ingestion.py::test_malformed_record_is_captured_and_quarantined_without_graph_mutation"
   ],
-  "G2-EKAF-002": [
-    "tests/contract/test_g2_contracts.py"
+  "FR-INGEST-002": [
+    "tests/unit/test_identity_resolver.py",
+    "tests/unit/test_identity_resolver.py::test_email_resolution"
   ],
-  "G2-REQ-34": [
-    "tests/contract/test_g2_contracts.py"
-  ],
-  "NFR-MAINT-001": [
-    "tests/contract/test_graph_store_contract.py"
-  ],
-  "G2-T0220": [
-    "tests/e2e/test_clean_recovery.py",
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "G2-T0221": [
-    "tests/e2e/test_clean_recovery.py",
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "G2-T0223": [
-    "tests/e2e/test_clean_recovery.py",
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "G2-T0225": [
-    "tests/e2e/test_clean_recovery.py",
-    "tests/unit/test_document_references.py",
-    "tests/unit/test_graph_evolution.py",
-    "tests/unit/test_snapshots.py"
-  ],
-  "MVP-FR-028": [
-    "tests/e2e/test_demo_flow.py"
-  ],
-  "NFR-REL-001": [
-    "tests/e2e/test_restart_safe.py"
-  ],
-  "NFR-PERF-001": [
-    "tests/performance/test_benchmark_publication.py",
-    "tests/performance/test_benchmarks.py"
-  ],
-  "FR-CONF-001": [
-    "tests/runtime_dlq/test_confluence_acquisition.py",
-    "tests/runtime_dlq/test_confluence_failures.py",
-    "tests/runtime_dlq/test_confluence_rejection.py",
-    "tests/unit/test_confluence_body.py",
-    "tests/unit/test_confluence_metadata.py",
-    "tests/unit/test_confluence_upstream_fixture.py",
-    "tests/unit/test_phase2_connectors.py",
-    "tests/unit/test_phase2_ingestion.py"
-  ],
-  "G2-T0401": [
-    "tests/runtime_dlq/test_confluence_acquisition.py",
-    "tests/runtime_dlq/test_confluence_failures.py"
-  ],
-  "G2-T0402": [
-    "tests/runtime_dlq/test_confluence_acquisition.py",
-    "tests/runtime_dlq/test_confluence_failures.py",
-    "tests/runtime_dlq/test_confluence_rejection.py"
-  ],
-  "G2-T0403": [
-    "tests/runtime_dlq/test_confluence_acquisition.py",
-    "tests/unit/test_confluence_history.py"
-  ],
-  "G2-T0404": [
-    "tests/runtime_dlq/test_confluence_acquisition.py"
-  ],
-  "G2-SRC-CONF-003": [
-    "tests/runtime_dlq/test_confluence_acquisition.py",
-    "tests/unit/test_confluence_body.py"
-  ],
-  "G2-SRC-CONF-001": [
-    "tests/runtime_dlq/test_confluence_acquisition.py",
-    "tests/unit/test_confluence_metadata.py"
-  ],
-  "G2-SRC-CONF-002": [
-    "tests/runtime_dlq/test_confluence_acquisition.py",
-    "tests/unit/test_confluence_history.py"
-  ],
-  "G2-SRC-CONF-004": [
-    "tests/runtime_dlq/test_confluence_acquisition.py",
-    "tests/unit/test_document_references.py",
+  "FR-INGEST-003": [
+    "tests/unit/test_edge_dedup.py",
     "tests/unit/test_phase2_hugegraph_schema.py"
   ],
-  "G2-SRC-CONF-005": [
-    "tests/runtime_dlq/test_confluence_acquisition.py",
-    "tests/unit/test_document_references.py"
+  "FR-INGEST-004": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
   ],
-  "G2-T0112": [
-    "tests/runtime_dlq/test_confluence_rejection.py",
-    "tests/runtime_dlq/test_servicenow_rejection.py",
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-INGEST-005": [
+    "tests/unit/test_jira_ingestion.py"
   ],
-  "FR-SNOW-001": [
-    "tests/runtime_dlq/test_servicenow_acquisition.py",
-    "tests/runtime_dlq/test_servicenow_authentication.py",
-    "tests/runtime_dlq/test_servicenow_rejection.py",
-    "tests/unit/test_phase2_connectors.py",
-    "tests/unit/test_phase2_ingestion.py",
-    "tests/unit/test_servicenow_upstream_fixture.py"
-  ],
-  "G2-T0110": [
-    "tests/runtime_dlq/test_servicenow_acquisition.py",
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0203": [
-    "tests/runtime_dlq/test_servicenow_acquisition.py",
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "NFR-SEC-006": [
-    "tests/security/test_container_hardening.py"
-  ],
-  "NFR-SEC-001": [
-    "tests/security/test_no_egress.py",
-    "tests/security/test_verification_suite.py"
-  ],
-  "NFR-SEC-004": [
-    "tests/security/test_verification_suite.py"
-  ],
-  "NFR-SEC-002": [
-    "tests/security/test_verification_suite.py"
-  ],
-  "NFR-SEC-007": [
-    "tests/security/test_verification_suite.py"
-  ],
-  "NFR-SEC-003": [
-    "tests/security/test_verification_suite.py"
+  "FR-KGR-001": [
+    "tests/unit/test_documentation_audit.py"
   ],
   "FR-MCP-001": [
     "tests/security/test_verification_suite.py"
@@ -164,218 +158,149 @@
   "FR-MCP-002": [
     "tests/security/test_verification_suite.py"
   ],
-  "MVP-FR-022": [
-    "tests/security/test_verification_suite.py"
+  "FR-MEM-001": [
+    "tests/unit/test_agent_memory.py"
   ],
-  "G2-T0111": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-ONTO-001": [
+    "tests/unit/test_manifest_integrity.py"
   ],
-  "G2-EKAF-005": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-ONTO-002": [
+    "tests/unit/test_manifest_integrity.py"
   ],
-  "G2-EKAF-007": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-PROV-001": [
+    "tests/unit/test_gap_governance_controls.py"
   ],
-  "G2-EKAF-008": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-PROV-002": [
+    "tests/unit/test_provenance.py"
   ],
-  "G2-EKAF-011": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-QUERY-001": [
+    "tests/unit/test_query_executor.py"
   ],
-  "G2-EKAF-013": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-QUERY-002": [
+    "tests/unit/test_query_executor.py"
   ],
-  "G2-T0201": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-QUERY-003": [
+    "tests/unit/test_graph_traversal.py",
+    "tests/unit/test_query_executor.py"
   ],
-  "G2-T0202": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-QUERY-004": [
+    "tests/unit/test_query_executor.py"
   ],
-  "G2-EKAF-004": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-QUERY-005": [
+    "tests/unit/test_query_nl.py"
   ],
-  "G2-EKAF-012": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-QUERY-006": [
+    "tests/unit/test_query_policy.py"
   ],
-  "FR-INGEST-004": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0120": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0121": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0122": [
-    "tests/unit/test_acquisition_fabric.py",
-    "tests/unit/test_operational_recovery.py"
-  ],
-  "G2-EKAF-006": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-EKAF-009": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-EKAF-020": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0130": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0131": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0132": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0133": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0134": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0135": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-SEC-CRAWL-001": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-SEC-CRAWL-002": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-SRC-WEB-002": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-EKAF-019": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-EKAF-001": [
-    "tests/unit/test_acquisition_fabric.py",
-    "tests/unit/test_g2_readiness.py",
-    "tests/unit/test_source_registry.py"
-  ],
-  "G2-T0340": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0341": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-EKAF-015": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-EKAF-029": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-EKAF-030": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-T0123": [
-    "tests/unit/test_acquisition_fabric.py",
-    "tests/unit/test_operational_recovery.py"
-  ],
-  "G2-SRC-GH-002": [
-    "tests/unit/test_acquisition_fabric.py"
-  ],
-  "G2-SRC-GL-002": [
-    "tests/unit/test_acquisition_fabric.py"
+  "FR-QUERY-007": [
+    "tests/unit/test_query_executor.py"
   ],
   "FR-QUERY-008": [
     "tests/unit/test_admin_gremlin.py",
     "tests/unit/test_query_policy.py"
   ],
-  "NFR-PRIV-001": [
-    "tests/unit/test_agent_memory.py"
+  "FR-RAG-001": [
+    "tests/unit/test_retrieval.py"
   ],
-  "FR-MEM-001": [
-    "tests/unit/test_agent_memory.py"
+  "FR-RAG-002": [
+    "tests/unit/test_retrieval.py"
   ],
-  "GAP-SEC-001": [
-    "tests/unit/test_authn.py",
-    "tests/unit/test_authz.py"
+  "FR-RAG-003": [
+    "tests/unit/test_retrieval.py"
   ],
-  "GAP-SEC-003": [
-    "tests/unit/test_authn.py",
-    "tests/unit/test_authz.py"
+  "FR-RAG-004": [
+    "tests/unit/test_retrieval.py"
   ],
-  "H-04": [
-    "tests/unit/test_authz.py"
+  "FR-RAG-005": [
+    "tests/unit/test_retrieval_eval.py"
   ],
-  "GAP-SEC-002": [
-    "tests/unit/test_authz.py"
+  "FR-RAG-006": [
+    "tests/unit/test_strategy_registry.py"
   ],
-  "GAP-SEC-004": [
-    "tests/unit/test_authz.py"
+  "FR-SNOW-001": [
+    "tests/runtime_dlq/test_servicenow_acquisition.py",
+    "tests/runtime_dlq/test_servicenow_acquisition.py::test_servicenow_http_baseline_incremental_and_replay",
+    "tests/runtime_dlq/test_servicenow_authentication.py",
+    "tests/runtime_dlq/test_servicenow_rejection.py",
+    "tests/unit/test_phase2_connectors.py",
+    "tests/unit/test_phase2_connectors.py::test_servicenow_rejects_schema_drift_without_dropping_raw_record",
+    "tests/unit/test_phase2_connectors.py::test_servicenow_sync_paginates_supported_tables_and_maps_records",
+    "tests/unit/test_phase2_ingestion.py",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[confluence]",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[servicenow]",
+    "tests/unit/test_phase2_ingestion.py::test_servicenow_knowledge_records_are_persisted_as_documents",
+    "tests/unit/test_phase2_ingestion.py::test_servicenow_sync_ingestion_maps_work_items_and_links_run_evidence",
+    "tests/unit/test_phase2_ingestion.py::test_source_sync_checkpoint_is_saved_only_after_successful_non_dry_run",
+    "tests/unit/test_servicenow_connector.py::test_servicenow_offline_fixtures",
+    "tests/unit/test_servicenow_upstream_fixture.py",
+    "tests/unit/test_servicenow_connector.py"
   ],
-  "GAP-SEC-005": [
-    "tests/unit/test_authz.py"
+  "FR-VALID-001": [
+    "tests/unit/test_validation_engine.py"
   ],
-  "GAP-SEC-006": [
-    "tests/unit/test_authz.py"
+  "FR-VALID-002": [
+    "tests/unit/test_validation_engine.py"
   ],
-  "GAP-SEC-007": [
-    "tests/unit/test_authz.py"
+  "FR-VALID-003": [
+    "tests/unit/test_quality.py"
   ],
-  "GAP-TEMP-001": [
-    "tests/unit/test_bitemporal.py"
-  ],
-  "GAP-TEMP-002": [
-    "tests/unit/test_bitemporal.py"
-  ],
-  "GAP-TEMP-003": [
-    "tests/unit/test_bitemporal.py"
-  ],
-  "GAP-TEMP-004": [
-    "tests/unit/test_bitemporal.py"
-  ],
-  "GAP-TEMP-005": [
-    "tests/unit/test_bitemporal.py"
-  ],
-  "GAP-HG-004": [
-    "tests/unit/test_bulk_load.py",
-    "tests/unit/test_enterprise_gap_completion.py"
-  ],
-  "G2-EVOL-010": [
-    "tests/unit/test_bulk_load.py"
-  ],
-  "G2-CAP-001": [
-    "tests/unit/test_capsules.py",
+  "G2-ADMIN-001": [
     "tests/unit/test_g2_readiness.py"
   ],
-  "FR-CODE-001": [
-    "tests/unit/test_code_parser.py",
-    "tests/unit/test_requirement_evidence.py"
+  "G2-ADMIN-017": [
+    "tests/unit/test_g2_readiness.py"
   ],
-  "FR-CODE-002": [
-    "tests/unit/test_code_parser.py"
+  "G2-ARCH-001": [
+    "tests/unit/test_g2_readiness.py",
+    "tests/unit/test_gap_coverage.py"
   ],
-  "FR-CODE-004": [
-    "tests/unit/test_code_parser.py"
+  "G2-ARCH-002": [
+    "tests/unit/test_gap_coverage.py"
   ],
-  "FR-CODE-005": [
-    "tests/unit/test_code_parser.py"
+  "G2-ARCH-003": [
+    "tests/unit/test_gap_coverage.py"
   ],
-  "G2-SRC-CODE-002": [
-    "tests/unit/test_code_parser.py"
+  "G2-ARCH-004": [
+    "tests/unit/test_gap_coverage.py"
   ],
-  "G2-SRC-CODE-003": [
-    "tests/unit/test_code_parser.py"
+  "G2-ARCH-005": [
+    "tests/unit/test_gap_coverage.py"
   ],
-  "G2-SRC-CODE-004": [
-    "tests/unit/test_code_parser.py"
-  ],
-  "G2-SRC-CODE-005": [
-    "tests/unit/test_code_parser.py"
+  "G2-ARCH-006": [
+    "tests/unit/test_gap_coverage.py"
   ],
   "G2-ARCH-007": [
     "tests/unit/test_confluence_body.py",
-    "tests/unit/test_confluence_metadata.py"
-  ],
-  "FR-CONN-006": [
-    "tests/unit/test_confluence_history.py",
+    "tests/unit/test_confluence_body.py::test_body_removal_clears_current_structure_without_destroying_history",
     "tests/unit/test_confluence_metadata.py",
-    "tests/unit/test_document_references.py",
-    "tests/unit/test_phase2_ingestion.py",
-    "tests/unit/test_replay.py"
+    "tests/unit/test_confluence_metadata.py::test_metadata_persists_in_revisions_clears_on_update_and_is_replay_stable"
+  ],
+  "G2-ARCH-008": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-009": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-010": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-011": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-012": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-013": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-014": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-015": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCHC-001": [
+    "tests/unit/test_g2_readiness.py"
   ],
   "G2-ARCHC-002": [
     "tests/unit/test_conformance.py"
@@ -401,11 +326,398 @@
   "G2-ARCHC-009": [
     "tests/unit/test_conformance.py"
   ],
-  "G2-SRC-GRAF-002": [
-    "tests/unit/test_connectors_new.py"
+  "G2-CAP-001": [
+    "tests/unit/test_capsules.py",
+    "tests/unit/test_g2_readiness.py"
   ],
-  "G2-SRC-GRAF-003": [
-    "tests/unit/test_connectors_new.py"
+  "G2-CAUSE-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-EKAF-001": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_generic_web_and_file_connectors_share_source_connector_semantics",
+    "tests/unit/test_g2_readiness.py",
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-EKAF-002": [
+    "tests/contract/test_g2_contracts.py",
+    "tests/contract/test_g2_contracts.py::test_fake_connector_satisfies_runtime_connector_protocol"
+  ],
+  "G2-EKAF-003": [
+    "tests/contract/test_g2_contracts.py",
+    "tests/contract/test_g2_contracts.py::test_v2_event_exposes_g2_envelope_aliases"
+  ],
+  "G2-EKAF-004": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-EKAF-005": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-EKAF-006": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
+  ],
+  "G2-EKAF-007": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-EKAF-008": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-EKAF-009": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
+  ],
+  "G2-EKAF-010": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-EKAF-011": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-EKAF-012": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-EKAF-013": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-EKAF-014": [
+    "tests/unit/test_phase2_ingestion.py",
+    "tests/unit/test_phase2_ingestion.py::test_dead_letter_handling_contract"
+  ],
+  "G2-EKAF-015": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_source_operation_api_queues_registry_scoped_job"
+  ],
+  "G2-EKAF-016": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay"
+  ],
+  "G2-EKAF-017": [
+    "tests/unit/test_ekaf_drift.py"
+  ],
+  "G2-EKAF-018": [
+    "tests/unit/test_ekaf_drift.py"
+  ],
+  "G2-EKAF-019": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_enforces_rate_and_politeness_controls"
+  ],
+  "G2-EKAF-020": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
+  ],
+  "G2-EKAF-021": [
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-EKAF-022": [
+    "tests/unit/test_ekaf_conflicts.py"
+  ],
+  "G2-EKAF-023": [
+    "tests/contract/test_g2_contracts.py",
+    "tests/contract/test_g2_contracts.py::test_v1_source_event_upgrade_preserves_identity_and_hash"
+  ],
+  "G2-EKAF-024": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-EKAF-025": [
+    "tests/unit/test_file_ingestion.py",
+    "tests/unit/test_file_ingestion.py::test_binary_connector_scope_and_limits"
+  ],
+  "G2-EKAF-026": [
+    "tests/unit/test_identity_resolver.py",
+    "tests/unit/test_identity_resolver.py::test_same_person_by_email"
+  ],
+  "G2-EKAF-028": [
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-EKAF-029": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_source_operation_api_queues_registry_scoped_job"
+  ],
+  "G2-EKAF-030": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_source_operation_api_queues_registry_scoped_job"
+  ],
+  "G2-EVENT-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-EVENT-002": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-EVENT-003": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-EVENT-004": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-EVENT-005": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-EVENT-006": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_consumer_failure_does_not_corrupt_graph_state"
+  ],
+  "G2-EVENT-007": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-EVOL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-EVOL-010": [
+    "tests/unit/test_bulk_load.py"
+  ],
+  "G2-I2R-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-IMMUNE-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-JOURNAL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-KD-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-OBS-001": [
+    "tests/unit/test_g2_readiness.py",
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OBS-002": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OBS-003": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OBS-004": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OBS-005": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OBS-006": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OEVO-001": [
+    "tests/unit/test_g2_readiness.py",
+    "tests/unit/test_ontology_drift_review.py"
+  ],
+  "G2-PERF-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-PM-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-QOP-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-QOP-003": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-REL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-REL-005": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_change_journal_has_cursor_and_hash_chain_integrity"
+  ],
+  "G2-REL-007": [
+    "tests/unit/test_operational_recovery.py",
+    "tests/unit/test_recovery_bundle.py"
+  ],
+  "G2-REQ-34": [
+    "tests/contract/test_g2_contracts.py",
+    "tests/contract/test_g2_contracts.py::test_required_g2_schema_contracts_exist"
+  ],
+  "G2-SEC-CRAWL-001": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_rejects_private_dns_resolution"
+  ],
+  "G2-SEC-CRAWL-002": [
+    "tests/security/test_crawler_security.py::test_crawler_strict_target_allowlist",
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_can_authorize_private_intranet_targets_explicitly",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_rejects_private_dns_resolution",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SEC-CRAWL-003": [
+    "tests/security/test_crawler_security.py::test_crawler_blocks_automatic_internet_traversal",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SEC-CRAWL-004": [
+    "tests/security/test_crawler_security.py::test_crawler_secret_redaction_in_logs",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SEC-CRAWL-005": [
+    "tests/security/test_crawler_security.py::test_crawler_tls_validation_secure_by_default",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SEC-CRAWL-006": [
+    "tests/security/test_crawler_security.py::test_untrusted_document_parsing_is_quarantined_and_isolated",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SEC-CRAWL-007": [
+    "tests/security/test_crawler_security.py::test_crawler_content_size_limits",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SEC-CRAWL-008": [
+    "tests/security/test_crawler_security.py::test_crawler_archive_bomb_protection",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SEC-CRAWL-009": [
+    "tests/security/test_crawler_security.py::test_prompt_injection_tagged_as_data_not_instruction",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SEC-CRAWL-010": [
+    "tests/security/test_crawler_security.py::test_crawler_actions_are_read_only",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SEC-CRAWL-011": [
+    "tests/security/test_crawler_security.py::test_source_credentials_use_minimum_permissions",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SEC-CRAWL-012": [
+    "tests/security/test_crawler_security.py::test_all_outbound_source_access_is_auditable",
+    "tests/security/test_crawler_security.py"
+  ],
+  "G2-SIM-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SLO-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-API-002": [
+    "tests/unit/test_api_portal_connector.py::test_api_portal_service_catalog_discovery",
+    "tests/unit/test_api_portal_connector.py"
+  ],
+  "G2-SRC-API-003": [
+    "tests/unit/test_api_portal_connector.py::test_api_portal_endpoint_extraction_and_mapping",
+    "tests/unit/test_api_portal_connector.py"
+  ],
+  "G2-SRC-API-004": [
+    "tests/unit/test_api_portal_connector.py::test_api_portal_swagger_openapi_url_metadata",
+    "tests/unit/test_api_portal_connector.py"
+  ],
+  "G2-SRC-API-005": [
+    "tests/unit/test_api_portal_connector.py::test_api_portal_checkpoint_and_watermark_sync",
+    "tests/unit/test_api_portal_connector.py"
+  ],
+  "G2-SRC-API-006": [
+    "tests/unit/test_api_portal_connector.py::test_api_portal_schema_drift_and_error_handling",
+    "tests/unit/test_api_portal_connector.py"
+  ],
+  "G2-SRC-CICD-002": [
+    "tests/unit/test_cicd_connector.py::test_cicd_pipeline_discovery_and_extraction",
+    "tests/unit/test_cicd_connector.py"
+  ],
+  "G2-SRC-CICD-003": [
+    "tests/unit/test_cicd_connector.py::test_cicd_job_and_deployment_run_extraction",
+    "tests/unit/test_cicd_connector.py"
+  ],
+  "G2-SRC-CICD-004": [
+    "tests/unit/test_cicd_connector.py::test_cicd_checkpoint_health_and_envelope_validation",
+    "tests/unit/test_cicd_connector.py"
+  ],
+  "G2-SRC-CODE-002": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "G2-SRC-CODE-003": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "G2-SRC-CODE-004": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "G2-SRC-CODE-005": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "G2-SRC-CONF-001": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_confluence_metadata.py",
+    "tests/unit/test_confluence_metadata.py::test_acquisition_completes_truncated_labels_without_following_remote_links",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[history-value6]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[history-value7]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[history-value8]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value0]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value1]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value2]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value3]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value4]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value5]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[version-value10]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[version-value9]",
+    "tests/unit/test_confluence_metadata.py::test_metadata_persists_in_revisions_clears_on_update_and_is_replay_stable",
+    "tests/unit/test_confluence_metadata.py::test_page_metadata_normalizes_labels_actors_and_source_timestamps"
+  ],
+  "G2-SRC-CONF-002": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_confluence_history.py",
+    "tests/unit/test_confluence_history.py::test_complete_history_must_agree_with_current_version_metadata",
+    "tests/unit/test_confluence_history.py::test_history_limit_refuses_before_historical_requests",
+    "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-authentication_failed]",
+    "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-invalid_response0]",
+    "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-invalid_response1]",
+    "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-invalid_response2]",
+    "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-remote_error]",
+    "tests/unit/test_confluence_history.py::test_noninteger_current_version_refuses_before_historical_requests[2.0]",
+    "tests/unit/test_confluence_history.py::test_noninteger_current_version_refuses_before_historical_requests[True]",
+    "tests/unit/test_confluence_history.py::test_old_captures_report_partial_history_and_invalid_complete_history_enters_dlq",
+    "tests/unit/test_confluence_history.py::test_public_historical_content_is_captured_projected_and_replayed_offline"
+  ],
+  "G2-SRC-CONF-003": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_confluence_body.py",
+    "tests/unit/test_confluence_body.py::test_body_removal_clears_current_structure_without_destroying_history",
+    "tests/unit/test_confluence_body.py::test_invalid_body_is_captured_and_dlq_before_business_writes",
+    "tests/unit/test_confluence_body.py::test_invalid_storage_body_is_explicitly_rejected[<!DOCTYPE x><p>x</p>]",
+    "tests/unit/test_confluence_body.py::test_invalid_storage_body_is_explicitly_rejected[<p>&unknown;</p>]",
+    "tests/unit/test_confluence_body.py::test_invalid_storage_body_is_explicitly_rejected[<p>unclosed]",
+    "tests/unit/test_confluence_body.py::test_invalid_storage_body_is_explicitly_rejected[<table><tr><td colspan=\"zero\">x</td></tr></table>]",
+    "tests/unit/test_confluence_body.py::test_storage_body_extracts_exact_structure",
+    "tests/unit/test_confluence_body.py::test_storage_body_preserves_code_entities_and_ignores_active_content",
+    "tests/unit/test_confluence_body.py::test_storage_extraction_limits_fail_explicitly[body-size]",
+    "tests/unit/test_confluence_body.py::test_storage_extraction_limits_fail_explicitly[element-count]",
+    "tests/unit/test_confluence_body.py::test_storage_extraction_limits_fail_explicitly[nesting-depth]",
+    "tests/unit/test_confluence_body.py::test_structure_is_persisted_versioned_and_replayable",
+    "tests/unit/test_confluence_body.py::test_xhtml_namespace_empty_body_and_nested_tables"
+  ],
+  "G2-SRC-CONF-004": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_document_references.py",
+    "tests/unit/test_document_references.py::test_deleted_document_expires_links_and_old_replay_cannot_restore_it",
+    "tests/unit/test_document_references.py::test_exact_url_resolution_refuses_ambiguous_titles_and_unknown_references",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[APIEndpoint-properties2]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[APIService-properties1]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[CodeSymbol-properties6]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[File-properties5]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[Project-properties3]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[Service-properties0]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[WorkItem-properties4]",
+    "tests/unit/test_document_references.py::test_fact_changes_not_observations_trigger_staleness_and_replay_cannot_rebase",
+    "tests/unit/test_phase2_hugegraph_schema.py"
+  ],
+  "G2-SRC-CONF-005": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_document_references.py",
+    "tests/unit/test_document_references.py::test_deleted_document_expires_links_and_old_replay_cannot_restore_it",
+    "tests/unit/test_document_references.py::test_fact_changes_not_observations_trigger_staleness_and_replay_cannot_rebase",
+    "tests/unit/test_document_references.py::test_tombstone_staleness_is_exposed_by_existing_api_and_agent"
   ],
   "G2-SRC-DD-002": [
     "tests/unit/test_connectors_new.py"
@@ -415,6 +727,58 @@
   ],
   "G2-SRC-DD-004": [
     "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-GH-001": [
+    "tests/unit/test_github_connector.py"
+  ],
+  "G2-SRC-GH-002": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_api_accepts_native_github_signature_delivery_and_event_headers"
+  ],
+  "G2-SRC-GH-003": [
+    "tests/unit/test_github_connector.py"
+  ],
+  "G2-SRC-GH-004": [
+    "tests/unit/test_github_connector.py"
+  ],
+  "G2-SRC-GL-001": [
+    "tests/unit/test_gitlab_connector.py"
+  ],
+  "G2-SRC-GL-002": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_api_accepts_gitlab_standard_signature_and_rejects_stale_delivery"
+  ],
+  "G2-SRC-GL-003": [
+    "tests/unit/test_gitlab_connector.py"
+  ],
+  "G2-SRC-GL-004": [
+    "tests/unit/test_gitlab_connector.py"
+  ],
+  "G2-SRC-GRAF-002": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-GRAF-003": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-JIRA-002": [
+    "tests/unit/test_jira_connector.py::test_jira_issue_extraction_with_fields",
+    "tests/unit/test_jira_connector.py"
+  ],
+  "G2-SRC-JIRA-003": [
+    "tests/unit/test_jira_connector.py::test_jira_changelog_streaming_and_history",
+    "tests/unit/test_jira_connector.py"
+  ],
+  "G2-SRC-JIRA-004": [
+    "tests/unit/test_jira_connector.py::test_jira_project_version_and_metadata_hierarchy",
+    "tests/unit/test_jira_connector.py"
+  ],
+  "G2-SRC-JIRA-005": [
+    "tests/unit/test_jira_connector.py::test_jira_sprints_and_agile_metadata",
+    "tests/unit/test_jira_connector.py"
+  ],
+  "G2-SRC-JIRA-006": [
+    "tests/unit/test_jira_connector.py::test_jira_webhook_event_handling",
+    "tests/unit/test_jira_connector.py"
   ],
   "G2-SRC-KIB-002": [
     "tests/unit/test_connectors_new.py"
@@ -428,65 +792,407 @@
   "G2-SRC-KIB-005": [
     "tests/unit/test_connectors_new.py"
   ],
-  "H-06": [
-    "tests/unit/test_container_smoke_manifest.py"
+  "G2-SRC-OTEL-002": [
+    "tests/unit/test_otel_connector.py::test_otel_trace_span_extraction",
+    "tests/unit/test_otel_connector.py"
   ],
-  "NFR-SEC-005": [
-    "tests/unit/test_deployment_api.py"
+  "G2-SRC-OTEL-003": [
+    "tests/unit/test_otel_connector.py::test_otel_metric_descriptor_and_datapoint_ingestion",
+    "tests/unit/test_otel_connector.py"
   ],
-  "H-07": [
-    "tests/unit/test_deployment_api.py"
+  "G2-SRC-OTEL-004": [
+    "tests/unit/test_otel_connector.py::test_otel_graceful_handling_when_sdk_missing",
+    "tests/unit/test_otel_connector.py"
   ],
-  "H-08": [
-    "tests/unit/test_deployment_api.py"
+  "G2-SRC-OTEL-005": [
+    "tests/unit/test_otel_connector.py::test_otel_checkpoint_and_healthy_status",
+    "tests/unit/test_otel_connector.py"
   ],
-  "FR-CODE-003": [
-    "tests/unit/test_diff_hunk.py"
+  "G2-SRC-RUNTIME-002": [
+    "tests/unit/test_runtime_connector.py::test_runtime_infra_resource_discovery_and_extraction",
+    "tests/unit/test_runtime_connector.py"
   ],
-  "REQ-001": [
-    "tests/unit/test_documentation_audit.py"
+  "G2-SRC-RUNTIME-003": [
+    "tests/unit/test_runtime_connector.py::test_runtime_infra_dependency_handling_and_health",
+    "tests/unit/test_runtime_connector.py"
   ],
-  "REQ-002": [
-    "tests/unit/test_documentation_audit.py"
+  "G2-SRC-SBOM-002": [
+    "tests/unit/test_sbom_connector.py::test_sbom_spdx_package_extraction",
+    "tests/unit/test_sbom_connector.py"
   ],
-  "REQ-003": [
-    "tests/unit/test_documentation_audit.py"
+  "G2-SRC-SBOM-003": [
+    "tests/unit/test_sbom_connector.py::test_sbom_cyclonedx_component_extraction",
+    "tests/unit/test_sbom_connector.py"
   ],
-  "REQ-004": [
-    "tests/unit/test_documentation_audit.py"
+  "G2-SRC-SBOM-004": [
+    "tests/unit/test_sbom_connector.py::test_sbom_vulnerability_extraction_and_health",
+    "tests/unit/test_sbom_connector.py"
   ],
-  "REQ-005": [
-    "tests/unit/test_documentation_audit.py"
+  "G2-SRC-SNKB-002": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_kb_article_extraction",
+    "tests/unit/test_servicenow_connector.py"
   ],
-  "FR-KGR-001": [
-    "tests/unit/test_documentation_audit.py"
+  "G2-SRC-SNKB-003": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_kb_metadata_and_version",
+    "tests/unit/test_servicenow_connector.py"
+  ],
+  "G2-SRC-SNOW-002": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_incident_extraction",
+    "tests/unit/test_servicenow_connector.py"
+  ],
+  "G2-SRC-SNOW-003": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_problem_extraction",
+    "tests/unit/test_servicenow_connector.py"
+  ],
+  "G2-SRC-SNOW-004": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_change_request_extraction",
+    "tests/unit/test_servicenow_connector.py"
+  ],
+  "G2-SRC-SNOW-005": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_pagination_and_watermarks",
+    "tests/unit/test_servicenow_connector.py"
+  ],
+  "G2-SRC-SNOW-006": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_schema_drift",
+    "tests/unit/test_servicenow_connector.py"
+  ],
+  "G2-SRC-WEB-002": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_can_authorize_private_intranet_targets_explicitly",
+    "tests/unit/test_web_crawler_connector.py::test_web_crawler_scope_and_allowlist_boundaries",
+    "tests/unit/test_web_crawler_connector.py"
+  ],
+  "G2-SRC-WEB-003": [
+    "tests/unit/test_web_crawler_connector.py::test_web_crawler_html_structure_parsing",
+    "tests/unit/test_web_crawler_connector.py"
+  ],
+  "G2-SRC-WEB-004": [
+    "tests/unit/test_web_crawler_connector.py::test_web_crawler_politeness_delay_and_rate_limiting",
+    "tests/unit/test_web_crawler_connector.py"
+  ],
+  "G2-SRC-WEB-005": [
+    "tests/unit/test_web_crawler_connector.py::test_web_crawler_content_hashing_and_event_version",
+    "tests/unit/test_web_crawler_connector.py"
+  ],
+  "G2-SYNC-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SYNC-002": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-SYNC-003": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-SYNC-004": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay"
+  ],
+  "G2-SYNC-005": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-SYNC-006": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-SYNC-007": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-SYNC-008": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-SYNC-009": [
+    "tests/unit/test_phase2_api.py",
+    "tests/unit/test_phase2_api.py::test_source_sync_admin_routes_enqueue_only_safe_sync_options"
+  ],
+  "G2-SYNC-010": [
+    "tests/unit/test_acquisition_sync_semantics.py",
+    "tests/unit/test_acquisition_sync_semantics.py::test_full_rebuild_requires_explicit_maintenance_authorization"
+  ],
+  "G2-SYNC-011": [
+    "tests/unit/test_file_ingestion.py",
+    "tests/unit/test_file_ingestion.py::test_capture_graph_retrieval_and_idempotent_replay"
+  ],
+  "G2-SYNC-012": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-SYNC-013": [
+    "tests/unit/test_acquisition_sync_semantics.py",
+    "tests/unit/test_acquisition_sync_semantics.py::test_bounded_historical_backfill_submits_bounded_specification"
+  ],
+  "G2-SYNC-014": [
+    "tests/unit/test_acquisition_sync_semantics.py",
+    "tests/unit/test_acquisition_sync_semantics.py::test_selective_rescan_submits_filters_by_criteria"
+  ],
+  "G2-T0002": [
+    "tests/contract/test_g2_contracts.py",
+    "tests/contract/test_g2_contracts.py::test_v1_source_event_upgrade_preserves_identity_and_hash",
+    "tests/contract/test_g2_contracts.py::test_v2_event_requires_payload_reference_except_for_delete"
+  ],
+  "G2-T0003": [
+    "tests/contract/test_g2_contracts.py",
+    "tests/contract/test_g2_contracts.py::test_revision_contract_enforces_open_current_and_closed_historical_ranges"
+  ],
+  "G2-T0004": [
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-T0005": [
+    "tests/contract/test_g2_contracts.py",
+    "tests/contract/test_g2_contracts.py::test_fake_connector_satisfies_runtime_connector_protocol"
+  ],
+  "G2-T0101": [
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-T0102": [
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-T0110": [
+    "tests/runtime_dlq/test_servicenow_acquisition.py",
+    "tests/runtime_dlq/test_servicenow_acquisition.py::test_servicenow_http_baseline_incremental_and_replay",
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls",
+    "tests/unit/test_acquisition_fabric.py::test_source_operation_api_queues_registry_scoped_job"
+  ],
+  "G2-T0111": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-T0112": [
+    "tests/runtime_dlq/test_confluence_rejection.py",
+    "tests/runtime_dlq/test_servicenow_rejection.py",
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-T0120": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_api_uses_source_hmac_and_queues_only_new_delivery",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
+  ],
+  "G2-T0121": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_api_uses_source_hmac_and_queues_only_new_delivery",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
+  ],
+  "G2-T0122": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing",
+    "tests/unit/test_operational_recovery.py"
+  ],
+  "G2-T0123": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_api_uses_source_hmac_and_queues_only_new_delivery",
+    "tests/unit/test_operational_recovery.py"
+  ],
+  "G2-T0130": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0131": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0132": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0133": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0134": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0135": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0201": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-T0202": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-T0203": [
+    "tests/runtime_dlq/test_servicenow_acquisition.py",
+    "tests/runtime_dlq/test_servicenow_acquisition.py::test_servicenow_http_baseline_incremental_and_replay",
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-T0210": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-T0211": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-T0213": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe",
+    "tests/unit/test_graph_evolution.py::test_returning_to_prior_content_retains_all_revision_intervals"
+  ],
+  "G2-T0220": [
+    "tests/e2e/test_clean_recovery.py",
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_relationship_recreation_after_delete_does_not_materialize_tombstone_edge",
+    "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]"
+  ],
+  "G2-T0221": [
+    "tests/e2e/test_clean_recovery.py",
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_relationship_recreation_after_delete_does_not_materialize_tombstone_edge",
+    "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]"
+  ],
+  "G2-T0222": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-T0223": [
+    "tests/e2e/test_clean_recovery.py",
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]",
+    "tests/unit/test_graph_evolution.py::test_temporal_api_exposes_versions_as_of_diff_and_journal"
+  ],
+  "G2-T0224": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay",
+    "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
+    "tests/unit/test_graph_evolution.py::test_returning_to_prior_content_retains_all_revision_intervals",
+    "tests/unit/test_graph_evolution.py::test_temporal_api_exposes_versions_as_of_diff_and_journal",
+    "tests/unit/test_snapshots.py"
+  ],
+  "G2-T0225": [
+    "tests/e2e/test_clean_recovery.py",
+    "tests/unit/test_document_references.py",
+    "tests/unit/test_document_references.py::test_deleted_document_expires_links_and_old_replay_cannot_restore_it",
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe",
+    "tests/unit/test_graph_evolution.py::test_relationship_recreation_after_delete_does_not_materialize_tombstone_edge",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]",
+    "tests/unit/test_snapshots.py"
+  ],
+  "G2-T0230": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_change_journal_has_cursor_and_hash_chain_integrity"
+  ],
+  "G2-T0231": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_temporal_api_exposes_versions_as_of_diff_and_journal"
+  ],
+  "G2-T0232": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_change_journal_has_cursor_and_hash_chain_integrity"
+  ],
+  "G2-T0241": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-T0242": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-T0243": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-T0250": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-T0251": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-T0252": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-T0253": [
+    "tests/unit/test_semantic_consumers_reconciliation.py",
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-T0340": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_generic_web_and_file_connectors_share_source_connector_semantics"
+  ],
+  "G2-T0341": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_acquisition_fabric.py::test_generic_web_and_file_connectors_share_source_connector_semantics"
+  ],
+  "G2-T0401": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/runtime_dlq/test_confluence_failures.py"
+  ],
+  "G2-T0402": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/runtime_dlq/test_confluence_failures.py",
+    "tests/runtime_dlq/test_confluence_rejection.py"
+  ],
+  "G2-T0403": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_confluence_history.py",
+    "tests/unit/test_confluence_history.py::test_public_historical_content_is_captured_projected_and_replayed_offline"
+  ],
+  "G2-T0404": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay"
   ],
   "G2-T0405": [
-    "tests/unit/test_document_references.py"
+    "tests/unit/test_document_references.py",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[APIEndpoint-properties2]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[APIService-properties1]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[CodeSymbol-properties6]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[File-properties5]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[Project-properties3]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[Service-properties0]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[WorkItem-properties4]"
   ],
-  "GAP-DP-001": [
-    "tests/unit/test_domain_packs.py"
+  "G2-TEL-001": [
+    "tests/unit/test_g2_readiness.py"
   ],
-  "FR-INGEST-003": [
-    "tests/unit/test_edge_dedup.py",
-    "tests/unit/test_phase2_hugegraph_schema.py"
+  "G2-TIME-001": [
+    "tests/unit/test_g2_readiness.py"
   ],
-  "G2-EKAF-022": [
-    "tests/unit/test_ekaf_conflicts.py"
+  "G2-TWIN-001": [
+    "tests/unit/test_g2_readiness.py"
   ],
-  "G2-EKAF-017": [
-    "tests/unit/test_ekaf_drift.py"
-  ],
-  "G2-EKAF-018": [
-    "tests/unit/test_ekaf_drift.py"
-  ],
-  "GAP-SEARCH-001": [
-    "tests/unit/test_embeddings.py",
-    "tests/unit/test_extended_api_routes_pass2.py",
-    "tests/unit/test_search_facets.py"
-  ],
-  "H-03": [
-    "tests/unit/test_engineering_platform_router.py"
+  "G2-VSC-001": [
+    "tests/unit/test_g2_readiness.py"
   ],
   "GAP-AGOV-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -503,6 +1209,12 @@
   "GAP-AGOV-005": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-AGOV-006": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-AGOV-007": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
   "GAP-AGOV-008": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -514,6 +1226,12 @@
   ],
   "GAP-AGOV-011": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AGOV-012": [
+    "tests/unit/test_model_governance.py"
+  ],
+  "GAP-AI-001": [
+    "tests/unit/test_gap_governance_controls.py"
   ],
   "GAP-AKO-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -569,6 +1287,9 @@
   "GAP-ARCH-006": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-CACHE-001": [
+    "tests/unit/test_query_cache.py"
+  ],
   "GAP-CATALOG-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -580,6 +1301,9 @@
   ],
   "GAP-CATALOG-004": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CATALOG-005": [
+    "tests/unit/test_future_scope.py"
   ],
   "GAP-CDC-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -659,11 +1383,17 @@
   "GAP-CP-008": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-CP-009": [
+    "tests/unit/test_gap_coverage.py"
+  ],
   "GAP-DATAOPS-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
   "GAP-DBAGNOSTIC-001": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DP-001": [
+    "tests/unit/test_domain_packs.py"
   ],
   "GAP-DRIFT-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -707,6 +1437,9 @@
   "GAP-ER-004": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-ER-005": [
+    "tests/unit/test_identity_candidates.py"
+  ],
   "GAP-ER-006": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -725,6 +1458,12 @@
   "GAP-EXPORT-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-EXT-001": [
+    "tests/unit/test_marketplace.py"
+  ],
+  "GAP-FABRIC-001": [
+    "tests/unit/test_federation_planner.py"
+  ],
   "GAP-FED-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -734,11 +1473,20 @@
   "GAP-FED-003": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-FED-004": [
+    "tests/unit/test_future_scope.py"
+  ],
+  "GAP-FRESH-001": [
+    "tests/unit/test_expertise_freshness.py"
+  ],
   "GAP-GDS-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
   "GAP-GDS-002": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GITOPS-001": [
+    "tests/unit/test_ontology_gitops.py"
   ],
   "GAP-GOV-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -764,6 +1512,15 @@
   "GAP-GRAG-005": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-GRAG-006": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-GRAPHTEST-001": [
+    "tests/unit/test_graphtest_framework.py"
+  ],
+  "GAP-HA-001": [
+    "tests/unit/test_ha_lease.py"
+  ],
   "GAP-HG-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -771,6 +1528,10 @@
     "tests/unit/test_enterprise_gap_completion.py"
   ],
   "GAP-HG-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-HG-004": [
+    "tests/unit/test_bulk_load.py",
     "tests/unit/test_enterprise_gap_completion.py"
   ],
   "GAP-HG-005": [
@@ -793,6 +1554,58 @@
   ],
   "GAP-IDE-001": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KFW-001": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-002": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-003": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-004": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-005": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-006": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-007": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-008": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KGCI-001": [
+    "tests/unit/test_gap_coverage.py",
+    "tests/unit/test_kgci_pipeline.py"
+  ],
+  "GAP-KGCI-002": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "GAP-KGCI-003": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "GAP-KGCI-004": [
+    "tests/unit/test_kgci_pipeline.py"
+  ],
+  "GAP-KP-001": [
+    "tests/unit/test_knowledge_products.py"
+  ],
+  "GAP-KP-002": [
+    "tests/unit/test_knowledge_products.py"
+  ],
+  "GAP-KP-003": [
+    "tests/unit/test_knowledge_products.py"
+  ],
+  "GAP-KP-004": [
+    "tests/unit/test_knowledge_products.py"
+  ],
+  "GAP-KP-005": [
+    "tests/unit/test_knowledge_products.py"
   ],
   "GAP-KQ-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -829,6 +1642,10 @@
   ],
   "GAP-KRAG-006": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KRAG-007": [
+    "tests/unit/test_gap_governance_controls.py",
+    "tests/unit/test_rag_abstention.py"
   ],
   "GAP-KRAG-008": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -884,8 +1701,14 @@
   "GAP-LITE-002": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-LOOP-001": [
+    "tests/unit/test_loops_library.py"
+  ],
   "GAP-MIGRATION-001": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-MKT-001": [
+    "tests/unit/test_marketplace.py"
   ],
   "GAP-NLP-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -899,11 +1722,18 @@
   "GAP-NOCODE-003": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-NOTREAL-999": [
+    "tests/unit/test_gap_coverage.py"
+  ],
   "GAP-OBS-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
   "GAP-OBS-002": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-OBS-003": [
+    "tests/unit/test_extended_api_routes_pass2.py",
+    "tests/unit/test_metrics.py"
   ],
   "GAP-OBS-004": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -920,8 +1750,23 @@
   "GAP-PORT-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-PROV-001": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-PROV-002": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-PROV-003": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-PROV-004": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
   "GAP-PROV-005": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-PROV-006": [
+    "tests/unit/test_gap_governance_controls.py"
   ],
   "GAP-PROV-007": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -932,8 +1777,26 @@
   "GAP-PROV-009": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-QI-001": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "GAP-QI-002": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "GAP-QI-003": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "GAP-QI-004": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "GAP-QI-007": [
+    "tests/unit/test_query_intelligence.py"
+  ],
   "GAP-QUERY-001": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-REC-001": [
+    "tests/unit/test_expertise_freshness.py"
   ],
   "GAP-RET-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -955,6 +1818,9 @@
   ],
   "GAP-RULE-001": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-RULE-002": [
+    "tests/unit/test_gap_governance_controls.py"
   ],
   "GAP-RULE-003": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -984,6 +1850,40 @@
   "GAP-SDT-008": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-SEARCH-001": [
+    "tests/unit/test_embeddings.py",
+    "tests/unit/test_extended_api_routes_pass2.py",
+    "tests/unit/test_search_facets.py"
+  ],
+  "GAP-SEARCH-002": [
+    "tests/unit/test_search_facets.py"
+  ],
+  "GAP-SEC-001": [
+    "tests/unit/test_authn.py",
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-002": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-003": [
+    "tests/unit/test_authn.py",
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-004": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-005": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-006": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-007": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-012": [
+    "tests/unit/test_gap_coverage.py"
+  ],
   "GAP-SEM-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -998,6 +1898,9 @@
   ],
   "GAP-STUDIO-004": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-005": [
+    "tests/unit/test_skos_taxonomy.py"
   ],
   "GAP-STUDIO-006": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -1017,217 +1920,32 @@
   "GAP-STUDIO-011": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-TAX-001": [
+    "tests/unit/test_skos_taxonomy.py"
+  ],
   "GAP-TCO-001": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-TEMP-001": [
+    "tests/unit/test_bitemporal.py"
+  ],
+  "GAP-TEMP-002": [
+    "tests/unit/test_bitemporal.py"
+  ],
+  "GAP-TEMP-003": [
+    "tests/unit/test_bitemporal.py"
+  ],
+  "GAP-TEMP-004": [
+    "tests/unit/test_bitemporal.py"
+  ],
+  "GAP-TEMP-005": [
+    "tests/unit/test_bitemporal.py"
   ],
   "GAP-TEMP-006": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
   "GAP-TEMPLATE-001": [
     "tests/unit/test_enterprise_gap_completion.py"
-  ],
-  "GAP-UX-001": [
-    "tests/unit/test_enterprise_gap_completion.py"
-  ],
-  "GAP-REC-001": [
-    "tests/unit/test_expertise_freshness.py"
-  ],
-  "GAP-FRESH-001": [
-    "tests/unit/test_expertise_freshness.py"
-  ],
-  "GAP-OBS-003": [
-    "tests/unit/test_extended_api_routes_pass2.py",
-    "tests/unit/test_metrics.py"
-  ],
-  "GAP-FABRIC-001": [
-    "tests/unit/test_federation_planner.py"
-  ],
-  "GAP-FED-004": [
-    "tests/unit/test_future_scope.py"
-  ],
-  "GAP-CATALOG-005": [
-    "tests/unit/test_future_scope.py"
-  ],
-  "G2-ADMIN-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-ARCH-001": [
-    "tests/unit/test_g2_readiness.py",
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCHC-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-CAUSE-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-EVENT-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-EVOL-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-I2R-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-IMMUNE-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-JOURNAL-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-KD-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-OBS-001": [
-    "tests/unit/test_g2_readiness.py",
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-OEVO-001": [
-    "tests/unit/test_g2_readiness.py",
-    "tests/unit/test_ontology_drift_review.py"
-  ],
-  "G2-PERF-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-PM-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-QOP-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-REL-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-SIM-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-SLO-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-SYNC-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-TEL-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-TIME-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-TWIN-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-VSC-001": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "G2-ADMIN-017": [
-    "tests/unit/test_g2_readiness.py"
-  ],
-  "GAP-CP-009": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "GAP-KGCI-002": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "GAP-KGCI-003": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-002": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-003": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-004": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-005": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-008": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-009": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-010": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-012": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-013": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-014": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-015": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-006": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-ARCH-011": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-OBS-006": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-OBS-002": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-OBS-004": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "GAP-KGCI-001": [
-    "tests/unit/test_gap_coverage.py",
-    "tests/unit/test_kgci_pipeline.py"
-  ],
-  "GAP-SEC-012": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-QOP-003": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-OBS-003": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "G2-OBS-005": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "GAP-NOTREAL-999": [
-    "tests/unit/test_gap_coverage.py"
-  ],
-  "GAP-KFW-001": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-KFW-002": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-KFW-003": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-KFW-004": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-KFW-005": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-KFW-006": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-KFW-007": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-KFW-008": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-AGOV-006": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-AGOV-007": [
-    "tests/unit/test_gap_governance_controls.py"
   ],
   "GAP-TRUST-001": [
     "tests/unit/test_gap_governance_controls.py"
@@ -1244,343 +1962,230 @@
   "GAP-TRUST-005": [
     "tests/unit/test_gap_governance_controls.py"
   ],
-  "GAP-RULE-002": [
-    "tests/unit/test_gap_governance_controls.py"
+  "GAP-TRUTH-001": [
+    "tests/unit/test_truth_claims.py"
   ],
-  "FR-PROV-001": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-PROV-001": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-PROV-002": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-PROV-003": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-PROV-004": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-PROV-006": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-AI-001": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "GAP-KRAG-007": [
-    "tests/unit/test_gap_governance_controls.py",
-    "tests/unit/test_rag_abstention.py"
-  ],
-  "GAP-GRAG-006": [
-    "tests/unit/test_gap_governance_controls.py"
-  ],
-  "FR-CONN-003": [
-    "tests/unit/test_github_connector.py"
-  ],
-  "G2-SRC-GH-001": [
-    "tests/unit/test_github_connector.py"
-  ],
-  "G2-SRC-GH-003": [
-    "tests/unit/test_github_connector.py"
-  ],
-  "G2-SRC-GH-004": [
-    "tests/unit/test_github_connector.py"
-  ],
-  "FR-CONN-004": [
-    "tests/unit/test_gitlab_connector.py"
-  ],
-  "G2-SRC-GL-001": [
-    "tests/unit/test_gitlab_connector.py"
-  ],
-  "G2-SRC-GL-003": [
-    "tests/unit/test_gitlab_connector.py"
-  ],
-  "G2-SRC-GL-004": [
-    "tests/unit/test_gitlab_connector.py"
-  ],
-  "GAP-GRAPHTEST-001": [
-    "tests/unit/test_graphtest_framework.py"
-  ],
-  "G2-T0210": [
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "G2-T0211": [
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "G2-T0213": [
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "G2-T0222": [
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "FR-GRAPH-009": [
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "G2-T0224": [
-    "tests/unit/test_graph_evolution.py",
-    "tests/unit/test_snapshots.py"
-  ],
-  "NFR-REL-002": [
-    "tests/unit/test_graph_evolution.py",
-    "tests/unit/test_operational_recovery.py",
-    "tests/unit/test_recovery_bundle.py"
-  ],
-  "G2-T0230": [
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "G2-T0232": [
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "G2-REL-005": [
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "G2-T0231": [
-    "tests/unit/test_graph_evolution.py"
-  ],
-  "FR-GRAPH-006": [
-    "tests/unit/test_graph_traversal.py"
-  ],
-  "FR-QUERY-003": [
-    "tests/unit/test_graph_traversal.py",
-    "tests/unit/test_query_executor.py"
-  ],
-  "GAP-HA-001": [
-    "tests/unit/test_ha_lease.py"
-  ],
-  "GAP-ER-005": [
-    "tests/unit/test_identity_candidates.py"
-  ],
-  "FR-ID-002": [
-    "tests/unit/test_identity_candidates.py"
-  ],
-  "FR-ID-001": [
-    "tests/unit/test_identity_ingestion.py"
-  ],
-  "FR-INGEST-002": [
-    "tests/unit/test_identity_resolver.py"
-  ],
-  "FR-INGEST-005": [
-    "tests/unit/test_jira_ingestion.py"
-  ],
-  "GAP-KGCI-004": [
-    "tests/unit/test_kgci_pipeline.py"
-  ],
-  "GAP-KP-001": [
-    "tests/unit/test_knowledge_products.py"
-  ],
-  "GAP-KP-002": [
-    "tests/unit/test_knowledge_products.py"
-  ],
-  "GAP-KP-003": [
-    "tests/unit/test_knowledge_products.py"
-  ],
-  "GAP-KP-004": [
-    "tests/unit/test_knowledge_products.py"
-  ],
-  "GAP-KP-005": [
-    "tests/unit/test_knowledge_products.py"
-  ],
-  "H-05": [
-    "tests/unit/test_layered_config.py"
-  ],
-  "GAP-LOOP-001": [
-    "tests/unit/test_loops_library.py"
-  ],
-  "FR-ONTO-001": [
-    "tests/unit/test_manifest_integrity.py"
-  ],
-  "FR-ONTO-002": [
-    "tests/unit/test_manifest_integrity.py"
-  ],
-  "GAP-MKT-001": [
-    "tests/unit/test_marketplace.py"
-  ],
-  "GAP-EXT-001": [
-    "tests/unit/test_marketplace.py"
-  ],
-  "FR-GRAPH-002": [
-    "tests/unit/test_meta_graph.py"
-  ],
-  "FR-GRAPH-005": [
-    "tests/unit/test_meta_graph.py"
-  ],
-  "GAP-AGOV-012": [
-    "tests/unit/test_model_governance.py"
-  ],
-  "GAP-GITOPS-001": [
-    "tests/unit/test_ontology_gitops.py"
-  ],
-  "G2-REL-007": [
-    "tests/unit/test_operational_recovery.py",
-    "tests/unit/test_recovery_bundle.py"
-  ],
-  "FR-CONN-005": [
-    "tests/unit/test_phase2_connectors.py"
-  ],
-  "FR-GRAPH-008": [
-    "tests/unit/test_phase2_hugegraph_schema.py"
+  "GAP-UX-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
   ],
   "H-01": [
     "tests/unit/test_phase2_hugegraph_schema.py"
   ],
-  "FR-GRAPH-003": [
-    "tests/unit/test_phase2_hugegraph_schema.py"
+  "H-03": [
+    "tests/unit/test_engineering_platform_router.py"
   ],
-  "FR-GRAPH-010": [
-    "tests/unit/test_phase2_rdf_export.py"
+  "H-04": [
+    "tests/unit/test_authz.py"
   ],
-  "FR-PROV-002": [
-    "tests/unit/test_provenance.py"
+  "H-05": [
+    "tests/unit/test_layered_config.py"
   ],
-  "SR-QA-010": [
-    "tests/unit/test_qa_gate_integrity.py"
+  "H-06": [
+    "tests/unit/test_container_smoke_manifest.py"
   ],
-  "SR-QA-011": [
-    "tests/unit/test_qa_gate_integrity.py"
+  "H-07": [
+    "tests/unit/test_deployment_api.py"
   ],
-  "SR-QA-012": [
-    "tests/unit/test_qa_gate_integrity.py"
-  ],
-  "SR-QA-013": [
-    "tests/unit/test_qa_gate_integrity.py"
-  ],
-  "SR-QA-014": [
-    "tests/unit/test_qa_gate_integrity.py"
-  ],
-  "FR-VALID-003": [
-    "tests/unit/test_quality.py"
-  ],
-  "GAP-CACHE-001": [
-    "tests/unit/test_query_cache.py"
-  ],
-  "FR-QUERY-001": [
-    "tests/unit/test_query_executor.py"
-  ],
-  "FR-QUERY-004": [
-    "tests/unit/test_query_executor.py"
-  ],
-  "FR-QUERY-002": [
-    "tests/unit/test_query_executor.py"
-  ],
-  "FR-QUERY-007": [
-    "tests/unit/test_query_executor.py"
-  ],
-  "FR-GRAPH-007": [
-    "tests/unit/test_query_intelligence.py"
-  ],
-  "GAP-QI-001": [
-    "tests/unit/test_query_intelligence.py"
-  ],
-  "GAP-QI-002": [
-    "tests/unit/test_query_intelligence.py"
-  ],
-  "GAP-QI-003": [
-    "tests/unit/test_query_intelligence.py"
-  ],
-  "GAP-QI-004": [
-    "tests/unit/test_query_intelligence.py"
-  ],
-  "GAP-QI-007": [
-    "tests/unit/test_query_intelligence.py"
-  ],
-  "FR-QUERY-005": [
-    "tests/unit/test_query_nl.py"
-  ],
-  "FR-QUERY-006": [
-    "tests/unit/test_query_policy.py"
-  ],
-  "FR-GRAPH-001": [
-    "tests/unit/test_requirement_evidence.py"
-  ],
-  "FR-GRAPH-": [
-    "tests/unit/test_requirement_evidence.py"
-  ],
-  "001": [
-    "tests/unit/test_requirement_evidence.py"
+  "H-08": [
+    "tests/unit/test_deployment_api.py"
   ],
   "MVP-FR-001": [
     "tests/unit/test_requirement_evidence.py"
   ],
-  "FR-RAG-003": [
-    "tests/unit/test_retrieval.py"
-  ],
-  "FR-RAG-004": [
-    "tests/unit/test_retrieval.py"
-  ],
-  "FR-RAG-001": [
-    "tests/unit/test_retrieval.py"
-  ],
-  "FR-RAG-002": [
-    "tests/unit/test_retrieval.py"
-  ],
   "MVP-FR-020": [
     "tests/unit/test_retrieval.py"
   ],
-  "FR-RAG-005": [
-    "tests/unit/test_retrieval_eval.py"
+  "MVP-FR-022": [
+    "tests/security/test_verification_suite.py"
   ],
-  "GAP-SEARCH-002": [
-    "tests/unit/test_search_facets.py"
+  "MVP-FR-027": [
+    "tests/unit/test_validation_source_binding.py"
   ],
-  "G2-T0241": [
-    "tests/unit/test_semantic_consumers_reconciliation.py"
+  "MVP-FR-028": [
+    "tests/e2e/test_demo_flow.py"
   ],
-  "G2-T0242": [
-    "tests/unit/test_semantic_consumers_reconciliation.py"
+  "NFR-MAINT-001": [
+    "tests/contract/test_graph_store_contract.py"
   ],
-  "G2-T0243": [
-    "tests/unit/test_semantic_consumers_reconciliation.py"
+  "NFR-PERF-001": [
+    "tests/performance/test_benchmark_publication.py",
+    "tests/performance/test_benchmarks.py"
   ],
-  "G2-T0250": [
-    "tests/unit/test_semantic_consumers_reconciliation.py"
+  "NFR-PRIV-001": [
+    "tests/unit/test_agent_memory.py"
   ],
-  "G2-T0251": [
-    "tests/unit/test_semantic_consumers_reconciliation.py"
+  "NFR-REL-001": [
+    "tests/e2e/test_restart_safe.py"
   ],
-  "G2-T0252": [
-    "tests/unit/test_semantic_consumers_reconciliation.py"
-  ],
-  "G2-T0253": [
-    "tests/unit/test_semantic_consumers_reconciliation.py"
-  ],
-  "GAP-TAX-001": [
-    "tests/unit/test_skos_taxonomy.py"
-  ],
-  "GAP-STUDIO-005": [
-    "tests/unit/test_skos_taxonomy.py"
+  "NFR-REL-002": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]",
+    "tests/unit/test_operational_recovery.py",
+    "tests/unit/test_recovery_bundle.py"
   ],
   "NFR-REL-003": [
     "tests/unit/test_snapshots.py"
   ],
-  "G2-T0004": [
-    "tests/unit/test_source_registry.py"
+  "NFR-SEC-001": [
+    "tests/security/test_no_egress.py",
+    "tests/security/test_verification_suite.py"
   ],
-  "G2-T0101": [
-    "tests/unit/test_source_registry.py"
+  "NFR-SEC-002": [
+    "tests/security/test_verification_suite.py"
   ],
-  "G2-T0102": [
-    "tests/unit/test_source_registry.py"
+  "NFR-SEC-003": [
+    "tests/security/test_verification_suite.py"
   ],
-  "G2-EKAF-021": [
-    "tests/unit/test_source_registry.py"
+  "NFR-SEC-004": [
+    "tests/security/test_verification_suite.py"
   ],
-  "G2-EKAF-028": [
-    "tests/unit/test_source_registry.py"
+  "NFR-SEC-005": [
+    "tests/unit/test_deployment_api.py"
   ],
-  "FR-RAG-006": [
-    "tests/unit/test_strategy_registry.py"
+  "NFR-SEC-006": [
+    "tests/security/test_container_hardening.py"
   ],
-  "GAP-TRUTH-001": [
-    "tests/unit/test_truth_claims.py"
+  "NFR-SEC-007": [
+    "tests/security/test_verification_suite.py"
   ],
-  "FR-VALID-001": [
-    "tests/unit/test_validation_engine.py"
+  "REQ-001": [
+    "tests/unit/test_documentation_audit.py"
   ],
-  "FR-VALID-002": [
-    "tests/unit/test_validation_engine.py"
+  "REQ-002": [
+    "tests/unit/test_documentation_audit.py"
   ],
-  "MVP-FR-027": [
-    "tests/unit/test_validation_source_binding.py"
+  "REQ-003": [
+    "tests/unit/test_documentation_audit.py"
+  ],
+  "REQ-004": [
+    "tests/unit/test_documentation_audit.py"
+  ],
+  "REQ-005": [
+    "tests/unit/test_documentation_audit.py"
+  ],
+  "SR-QA-010": [
+    "tests/unit/test_qa_gate_integrity.py",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_collector_records_marker_and_call",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_docstring_references_never_count",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_explicit_call_declaration_drains",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_invalid_requirement_id_rejected",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_persistence_roundtrip",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_register_and_query_mapping",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_api_routes_from_real_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_generates_all_inventories_from_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_hand_written_counts_fail_validation",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_valid_snapshot_passes",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_assertion",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_requires_equality_assert",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_mutation_check_catches_broken_behavior",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_store_and_release_summary",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_result_serialization",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_ruff_runs_and_records_zero_error_status",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_zero_error_policy_met_on_clean_tree",
+    "tests/unit/test_qa_gate_integrity.py::TestRouter::test_router_routes",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "SR-QA-011": [
+    "tests/unit/test_qa_gate_integrity.py",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_collector_records_marker_and_call",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_docstring_references_never_count",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_explicit_call_declaration_drains",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_invalid_requirement_id_rejected",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_persistence_roundtrip",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_register_and_query_mapping",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_api_routes_from_real_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_generates_all_inventories_from_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_hand_written_counts_fail_validation",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_valid_snapshot_passes",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_assertion",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_requires_equality_assert",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_mutation_check_catches_broken_behavior",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_store_and_release_summary",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_result_serialization",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_ruff_runs_and_records_zero_error_status",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_zero_error_policy_met_on_clean_tree",
+    "tests/unit/test_qa_gate_integrity.py::TestRouter::test_router_routes",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "SR-QA-012": [
+    "tests/unit/test_qa_gate_integrity.py",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_collector_records_marker_and_call",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_docstring_references_never_count",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_explicit_call_declaration_drains",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_invalid_requirement_id_rejected",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_persistence_roundtrip",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_register_and_query_mapping",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_api_routes_from_real_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_generates_all_inventories_from_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_hand_written_counts_fail_validation",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_valid_snapshot_passes",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_assertion",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_requires_equality_assert",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_mutation_check_catches_broken_behavior",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_store_and_release_summary",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_result_serialization",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_ruff_runs_and_records_zero_error_status",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_zero_error_policy_met_on_clean_tree",
+    "tests/unit/test_qa_gate_integrity.py::TestRouter::test_router_routes",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "SR-QA-013": [
+    "tests/unit/test_qa_gate_integrity.py",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_collector_records_marker_and_call",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_docstring_references_never_count",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_explicit_call_declaration_drains",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_invalid_requirement_id_rejected",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_persistence_roundtrip",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_register_and_query_mapping",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_api_routes_from_real_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_generates_all_inventories_from_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_hand_written_counts_fail_validation",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_valid_snapshot_passes",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_assertion",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_requires_equality_assert",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_mutation_check_catches_broken_behavior",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_store_and_release_summary",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_result_serialization",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_ruff_runs_and_records_zero_error_status",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_zero_error_policy_met_on_clean_tree",
+    "tests/unit/test_qa_gate_integrity.py::TestRouter::test_router_routes",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "SR-QA-014": [
+    "tests/unit/test_qa_gate_integrity.py",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_collector_records_marker_and_call",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_docstring_references_never_count",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_explicit_call_declaration_drains",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_invalid_requirement_id_rejected",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_persistence_roundtrip",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_register_and_query_mapping",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_api_routes_from_real_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_generates_all_inventories_from_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_hand_written_counts_fail_validation",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_valid_snapshot_passes",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_assertion",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_requires_equality_assert",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_mutation_check_catches_broken_behavior",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_store_and_release_summary",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_result_serialization",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_ruff_runs_and_records_zero_error_status",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_zero_error_policy_met_on_clean_tree",
+    "tests/unit/test_qa_gate_integrity.py::TestRouter::test_router_routes",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
   ]
 }

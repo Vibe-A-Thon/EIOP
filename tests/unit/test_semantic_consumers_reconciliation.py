@@ -24,7 +24,10 @@ def _event(record_id: str, content: str) -> SourceEventV2:
     )
 
 
-@pytest.mark.req("G2-T0241", "G2-T0242", "G2-T0243")
+@pytest.mark.req(
+    "G2-T0241", "G2-T0242", "G2-T0243",
+    "G2-EVENT-002", "G2-EVENT-003", "G2-EVENT-004", "G2-EVENT-005", "G2-EVENT-007", "G2-SYNC-008"
+)
 def test_default_semantic_consumers_process_each_cursor_once(tmp_path) -> None:
     store = MemoryGraphStore()
     store.upsert_vertex(
@@ -61,7 +64,44 @@ def test_default_semantic_consumers_process_each_cursor_once(tmp_path) -> None:
     assert (tmp_path / "state" / "validation.json").exists()
 
 
-@pytest.mark.req("G2-T0250", "G2-T0251", "G2-T0252", "G2-T0253")
+@pytest.mark.req("G2-EVENT-006")
+def test_consumer_failure_does_not_corrupt_graph_state(tmp_path) -> None:
+    from eoip.graph.consumers import SemanticConsumerRunner
+
+    store = MemoryGraphStore()
+    store.upsert_vertex(
+        "WorkItem", {"canonical_id": "item-auth", "issue_key": "AUTH-1", "summary": "Authoritative"}
+    )
+    journal = ChangeJournal(tmp_path / "journal" / "semantic-changes.ndjson")
+    journal.append(
+        {
+            "graph_version": "v1",
+            "change_kind": "CREATE",
+            "target_kind": "ENTITY",
+            "target_id": "item-auth",
+            "source_event_id": "event-1",
+            "observed_at": "2026-10-03T00:00:00Z",
+            "details": {},
+        }
+    )
+
+    class FailingConsumer:
+        name = "failing-consumer"
+
+        def consume(self, events):
+            raise RuntimeError("Consumer crash simulation")
+
+    runner = SemanticConsumerRunner(journal, tmp_path / "state" / "event-consumers")
+    runner.register(FailingConsumer())
+    results = runner.run_once()
+
+    assert results["failing-consumer"]["status"] == "FAILED"
+    assert "Consumer crash simulation" in results["failing-consumer"]["error"]
+    # Authoritative graph state remains completely uncorrupted
+    assert store.get_vertex_by_canonical_id("item-auth")["properties"]["summary"] == "Authoritative"
+
+
+@pytest.mark.req("G2-T0250", "G2-T0251", "G2-T0252", "G2-T0253", "G2-SYNC-003", "G2-SYNC-005")
 def test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records() -> None:
     unchanged = _event("unchanged", "same")
     stale = _event("stale", "new")

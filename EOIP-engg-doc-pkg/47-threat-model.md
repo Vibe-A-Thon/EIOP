@@ -34,13 +34,13 @@ Assets: connector credentials; enterprise source content; raw capture; graph sch
 
 ## Residual-risk rule
 
-A local/trusted network is not treated as a complete control. Any exception to a security control is documented in the risk register with owner, expiry, environment and compensating control. Phase 1 does not claim enterprise multi-user authorization because RBAC is intentionally deferred.
+A local/trusted network is not treated as a complete control. Any exception to a security control is documented in the risk register with owner, expiry, environment and compensating control. The current codebase includes local RBAC/ABAC primitives and authz routes, but Phase 1 still does not claim production multi-user authorization until release hardening and Phase 8 security receipts are complete.
 
 ## Phase 1 security baseline
 
 - Runtime egress is denied by default; model/images/dependencies are staged before restricted deployment.
 - HugeGraph and local-model ports stay on an internal Docker network; only the web/API edge is exposed as configured.
-- Non-loopback profiles require local authentication even though RBAC is not implemented.
+- Non-loopback profiles require local authentication; the current codebase now includes local RBAC/ABAC primitives, policy evaluation, role/user export, signed token checks and `/api/v1/authz/*` management/evaluation routes. Production multi-user authorization still requires release hardening and Phase 8 security receipts.
 - Secrets are file-mounted/referenced and redacted from logs; example files contain placeholders only.
 - Source paths are allowlisted roots; path traversal/symlink escape/oversized input is rejected.
 - Model/retrieved text is untrusted data. It cannot create new tool permissions, arbitrary Gremlin or shell commands.

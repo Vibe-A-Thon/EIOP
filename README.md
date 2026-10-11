@@ -2,6 +2,52 @@
 
 EOIP is a local-first enterprise knowledge graph platform that ingests from 24 source connectors (Jira, GitLab, GitHub, Confluence, ServiceNow, and more), links cross-domain facts into a typed property graph, and answers questions about your codebase, work items, incidents, people, and deployments through a GraphRAG retrieval system and 20 bounded agents.
 
+## Current implementation picture
+
+The repository is no longer just an architecture package. It contains a working
+FastAPI runtime, React administration/explorer UI, MCP server, worker, VS Code
+extension, Hubble deployment assets, demo automation, and a broad Python test
+suite. The active completion ledger is [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md);
+the current working-tree backlog status is 167/516 tasks ticked: Phase 0 and
+Phase 1 are complete, Phase 2 is 88/130, Phase 8 has 1/17 release-gate task
+ticked, and later phases remain open.
+
+Implemented areas include:
+
+- API surface: `apps/api/app.py`, `main.py`, and `extended.py` expose graph,
+  query, retrieval, source registry, ingestion, governance, reporting,
+  operations, demo, and advanced engine routes.
+- Graph core: memory, HugeGraph, Neptune, Neo4j, bitemporal state, snapshots,
+  evolution, simulation, causal/what-if analysis, process mining, graph metrics,
+  schema migration, named graphs, and database adapter catalogs.
+- Acquisition fabric: source registry, connector SDK contracts, checkpointing,
+  dry-run/replay, rate limiting, webhook admission, offline fixtures, raw
+  SourceEvent capture, DLQ envelopes, idempotent canonical mutations, and Jira
+  source deletion tombstones that preserve history while hiding deleted records
+  from current views.
+- Source coverage: Jira JSON, local Git, GitHub, GitLab, Confluence,
+  ServiceNow, Datadog, Grafana, Kibana, API portal, code graph JSON, web crawl,
+  file parsing, CI/CD, SBOM, runtime and observability-oriented fixtures and
+  adapters.
+- Query and retrieval: QueryPlan execution, NL/NLQ, policy enforcement,
+  caching, polyglot query dialect support, GraphRAG/RAPTOR/LightRAG/HippoRAG/
+  PathRAG/LazyGraphRAG/DRIFT-style retrieval modules, evidence manifests, and
+  abstention behavior.
+- Intelligence and agents: bounded read-only agent runtime, loops, approvals,
+  learning/report services, cognitive narrator, memory engines, model
+  governance, XAI ledger, live causal engine, domain packs, compliance twin,
+  self-healing, confidential graph, and moonshot reference runtimes.
+- Enterprise readiness: authentication/authorization, audit sinks, egress and
+  privacy controls, tenancy, licensing, marketplace/plugins, source admission,
+  recovery bundles, backup/restore scripts, observability, deployment manifests,
+  and security test coverage.
+- User surfaces: Cytoscape graph explorer, admin source/job/review panels, KGR
+  views, report/export UI, Hubble graph walkthroughs, browser demo automation,
+  and a read-only VS Code context extension with MCP/NLQ journeys.
+- Current documentation sweep: 231 first-party Markdown files / 47,000 lines
+  read mechanically, excluding `KGF-MASTER-BACKLOG.md` and local cache/venv
+  directories.
+
 **Key capabilities:**
 - 24 source connectors with checkpoint-based incremental sync
 - Multi-backend graph store: Apache HugeGraph (default Docker backend), Amazon Neptune, Neo4j, or in-memory via `config/graph-store.yaml`
@@ -13,7 +59,12 @@ EOIP is a local-first enterprise knowledge graph platform that ingests from 24 s
 - 20 bounded read-only agents with circuit breaker and budget enforcement
 - 12 export formats: RDF, OWL, JSON-LD 1.1, Cypher, Gremlin, SPARQL, SHACL, GQL, and more
 - MCP server with 18 read-only tools for VS Code / IDE integration
-- Current audit evidence: `2843 passed`, `34 skipped`, `0 failures` in the Python suite; GAP/G2 coverage gates passed; the web build passed. See [Audit-GAPS-CG-dev.md](EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md) and [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md).
+- Current audit evidence: `2843 passed`, `34 skipped`, `0 failures` in the Python suite at the 2026-10-11 baseline; GAP/G2 coverage gates passed; the web build passed. See [Audit-GAPS-CG-dev.md](EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md) and [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md).
+
+Production claims still require the Phase 8 receipts in the master backlog:
+live external connector runs, Hubble/runtime validation on the final tree,
+browser E2E over the production bundle, VS Code extension-host acceptance,
+HA/backup/DR, security certification, and performance benchmark receipts.
 
 ## Quick Start
 

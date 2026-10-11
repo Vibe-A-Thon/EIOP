@@ -11,7 +11,7 @@ from eoip.contracts.source_registry import SourceCapabilities
 from pydantic import ValidationError
 
 
-@pytest.mark.req("G2-T0002")
+@pytest.mark.req("G2-T0002", "G2-EKAF-023")
 def test_v1_source_event_upgrade_preserves_identity_and_hash() -> None:
     legacy = SourceEvent(
         event_id="event-1",
@@ -40,6 +40,8 @@ def test_v1_source_event_upgrade_preserves_identity_and_hash() -> None:
     assert upgraded.observed_time == legacy.captured_at
     assert upgraded.operation == "UPDATE"
     assert upgraded.cursor == "cursor-7"
+    assert upgraded.permissions.visibility == "RESTRICTED"
+    assert upgraded.permissions.principal_refs == ["group:engineering"]
 
 
 @pytest.mark.req("G2-EKAF-003")

@@ -5,7 +5,14 @@ Copy this directory to `secrets/` and replace placeholder values with actual cre
 ## Files
 
 - `api-token.txt` — Bearer token for API/MCP authentication
-- Add connector-specific credentials as needed (e.g., `jira-token.txt`, `gitlab-token.txt`)
+- Add connector-specific credentials as needed, for example `jira-token.txt`,
+  `gitlab-token.txt`, `github-token.txt`, `confluence-token.txt`, or
+  `servicenow-token.txt`.
+
+EOIP's implemented connector paths also support environment/secret references
+for live Confluence and ServiceNow workers. Source registry entries and durable
+job payloads should contain options and opaque secret references only, never raw
+passwords or API tokens.
 
 ## Usage
 

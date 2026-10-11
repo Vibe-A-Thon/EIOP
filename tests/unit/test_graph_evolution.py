@@ -27,7 +27,7 @@ def _event(event_id: str, at: str, payload: dict, operation: str = "UPSERT") -> 
     )
 
 
-@pytest.mark.req("G2-T0210", "G2-T0211", "G2-T0213", "G2-T0222", "G2-T0225", "FR-GRAPH-009")
+@pytest.mark.req("G2-T0210", "G2-T0211", "G2-T0213", "G2-T0222", "G2-T0225", "FR-GRAPH-009", "G2-EKAF-010", "G2-EKAF-024", "G2-SYNC-006", "G2-SYNC-007")
 def test_entity_evolution_is_idempotent_temporal_and_late_event_safe(tmp_path) -> None:
     store = MemoryGraphStore()
     journal = ChangeJournal(tmp_path / "journal.ndjson")
@@ -164,7 +164,7 @@ def test_relationship_recreation_after_delete_does_not_materialize_tombstone_edg
     assert engine.as_of("2026-10-02T12:00:00Z")["relationships"] == []
 
 
-@pytest.mark.req("G2-T0225", "G2-T0224")
+@pytest.mark.req("G2-T0225", "G2-T0224", "G2-EKAF-016", "G2-SYNC-004")
 def test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay(tmp_path):
     store = MemoryGraphStore()
     engine = GraphEvolutionEngine(store, ChangeJournal(tmp_path / "journal.ndjson"))

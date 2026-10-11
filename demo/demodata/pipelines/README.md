@@ -2,6 +2,15 @@
 
 Automated pipeline ingestion demo data for the **Meridian Financial Services (MFS)** Fraud Detection & AML Platform (FRD project).
 
+## How EOIP uses it
+
+This folder supports the developed batch/pipeline ingestion demo. The platform
+can ingest these JSON exports through the local administration flow, capture raw
+SourceEvents, normalize records into graph entities and relationships, attach
+evidence/provenance, and make the resulting fraud-domain graph available to
+query, impact, lineage, RAG, export, and Hubble views. The pipeline config is a
+demo pipeline description; it is not an authenticated upstream polling run.
+
 ## Domain
 
 This folder contains demo data for the **Fraud Detection & AML Platform**, covering:

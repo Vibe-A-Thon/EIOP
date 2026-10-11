@@ -1,5 +1,11 @@
 # EOIP Assessed Gap Report
 
+> Current overlay, 2026-10-11: this is a historical assessed report and should
+> not be read as the current completion claim. The active master backlog is
+> `KGF-MASTER-BACKLOG.md`; the current working-tree status is 167/516 tasks
+> ticked, with Phase 0 and Phase 1 complete, Phase 2 at 88/130, and Phase 8 at
+> 1/17. Production claims still require the Phase 8 receipt set.
+
 **Generated**: 2026-10-05
 **Updated**: 2026-10-10 (Pass 11 Enterprise Brain OS, Loops, Agents, RAGs & Polyglot Engines Audit & 100% Closure)
 **Scope**: 67 FR + 14 NFR + 28 MVP + 296 GAP IDs + 364 G2 IDs + Super-Requirements (SR-*) + Diamond Moonshots (MS-1,2,3,4,5,8,9,10) + KGR-G-021..KGR-G-027 + 43 Engineering Workstreams + 15 Human Control Patterns + 23 Autonomous Loops + 76+ Agent Archetypes & Swarms + 45+ RAG Modalities + 40+ Query Dialects + 55 Database Adapters + Living Brain & Brain OS Kernel

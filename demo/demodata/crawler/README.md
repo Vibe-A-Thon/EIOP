@@ -9,6 +9,16 @@ Each JSON file is an array of crawled pages, representing what the crawler would
 capture from each portal. The data is content-rich and cross-references the same
 infrastructure, services, and people found in the code graph and other demo data.
 
+## How EOIP uses it
+
+The web-crawl acquisition path feeds page title, headings, body text, links,
+source URL, content type, status, and crawl boundaries into the same normalized
+graph/evidence pipeline used by other sources. In the current codebase this data
+is used to exercise source fixtures, crawl scope handling, provenance, RAG
+chunking, graph search, API/service/document relationships, and demo Hubble
+scenarios. It is synthetic and local; it is not proof of live crawling against an
+enterprise network.
+
 ## Source Portals
 
 | File | Portal | Pages | Content |

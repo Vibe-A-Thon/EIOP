@@ -15,6 +15,7 @@ from eoip.retrieval.vectors import KeywordIndex, VectorIndex
 from fastapi.testclient import TestClient
 
 
+@pytest.mark.req("G2-EKAF-025")
 def test_binary_connector_scope_and_limits(tmp_path):
     content = b"\xff\x00binary"
     (tmp_path / "actual.png").write_bytes(content)
@@ -35,6 +36,7 @@ def test_binary_connector_scope_and_limits(tmp_path):
         connector.fetch_record(str(tmp_path / "actual.png"))
 
 
+@pytest.mark.req("G2-SYNC-011")
 def test_capture_graph_retrieval_and_idempotent_replay(tmp_path):
     store = MemoryGraphStore()
     service = FileIngestionService(store, tmp_path)

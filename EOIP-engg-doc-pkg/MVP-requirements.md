@@ -254,7 +254,7 @@ flowchart LR
 
 - Runtime egress is denied by default; model/images/dependencies are staged before restricted deployment.
 - HugeGraph and local-model ports stay on an internal Docker network; only the web/API edge is exposed as configured.
-- Non-loopback profiles require local authentication even though RBAC is not implemented.
+- Non-loopback profiles require local authentication; the current codebase now includes local RBAC/ABAC primitives, policy evaluation, role/user export, signed token checks and `/api/v1/authz/*` management/evaluation routes. Production multi-user authorization still requires release hardening and Phase 8 security receipts.
 - Secrets are file-mounted/referenced and redacted from logs; example files contain placeholders only.
 - Source paths are allowlisted roots; path traversal/symlink escape/oversized input is rejected.
 - Model/retrieved text is untrusted data. It cannot create new tool permissions, arbitrary Gremlin or shell commands.

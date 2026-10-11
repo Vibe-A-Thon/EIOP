@@ -2,6 +2,13 @@
 
 # EOIP Current Coordination Context
 
+> Current overlay, 2026-10-11: this coordination snapshot is historical for the
+> ticket-20261004 flow. Current closure work is governed by
+> [../KGF-MASTER-BACKLOG.md](../KGF-MASTER-BACKLOG.md); the working tree now
+> shows 167/516 tasks ticked, with Phase 0 and Phase 1 complete, Phase 2 at
+> 88/130, and Phase 8 at 1/17. See [available-status.md](available-status.md)
+> for the current evidence-bound status.
+
 **Snapshot timestamp**: 2026-10-05T11:08:14.1021060+05:30
 **Active role**: Senior Engineer
 **Repo root**: F:\code\EIP\EIOP

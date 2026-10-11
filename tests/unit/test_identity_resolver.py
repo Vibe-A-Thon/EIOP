@@ -25,8 +25,10 @@ def test_display_name_fallback():
     assert identity.resolution_method == "display_name_fallback"
 
 
+@pytest.mark.req("G2-EKAF-026")
 def test_same_person_by_email():
     resolver = IdentityResolver()
     a = resolver.resolve_person(display_name="Alice", email="alice@example.com", source_system="jira")
     b = resolver.resolve_person(display_name="alice_dev", email="ALICE@EXAMPLE.COM", source_system="gitlab")
     assert resolver.is_same_person(a, b)
+    assert resolver.person_canonical_id(a) == resolver.person_canonical_id(b)

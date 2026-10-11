@@ -1,5 +1,12 @@
 # Local deployment verification
 
+> Current overlay, 2026-10-11: this page is a retained local deployment receipt
+> from 2026-10-02. For current project status, use
+> [../available-status.md](../available-status.md) and
+> [../../KGF-MASTER-BACKLOG.md](../../KGF-MASTER-BACKLOG.md). The current
+> working tree shows 167/516 backlog tasks ticked; Phase 8 release receipts are
+> still required before production claims.
+
 Verified on 2026-10-02 using the user's Docker Desktop Linux engine on Windows.
 Docker Engine: 29.8.1. Compose: v5.5.1. Database: HugeGraph 1.7.0 / RocksDB.
 

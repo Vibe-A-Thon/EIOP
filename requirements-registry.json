@@ -247,12 +247,16 @@
     "spec_source": "#### WP 2.3. Enterprise source connectors (57 tasks)",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/confluence.py"
+    ],
+    "test_files": [
+      "tests/unit/test_phase2_connectors.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "CONN-02",
@@ -262,12 +266,16 @@
     "spec_source": "#### WP 2.3. Enterprise source connectors (57 tasks)",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/servicenow.py"
+    ],
+    "test_files": [
+      "tests/unit/test_servicenow_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "CONN-03",
@@ -277,12 +285,16 @@
     "spec_source": "#### WP 2.3. Enterprise source connectors (57 tasks)",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/jira.py"
+    ],
+    "test_files": [
+      "tests/unit/test_jira_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "FR-ADMIN-001",
@@ -496,7 +508,9 @@
     "spec_source": "EOIP-engg-doc-pkg/03-functional-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/connectors/confluence.py"
+    ],
     "test_files": [
       "tests/runtime_dlq/test_confluence_acquisition.py",
       "tests/runtime_dlq/test_confluence_failures.py",
@@ -509,8 +523,8 @@
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "FR-CONN-001",
@@ -1364,19 +1378,22 @@
     "spec_source": "EOIP-engg-doc-pkg/03-functional-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/connectors/servicenow.py"
+    ],
     "test_files": [
       "tests/runtime_dlq/test_servicenow_acquisition.py",
       "tests/runtime_dlq/test_servicenow_authentication.py",
       "tests/runtime_dlq/test_servicenow_rejection.py",
       "tests/unit/test_phase2_connectors.py",
       "tests/unit/test_phase2_ingestion.py",
-      "tests/unit/test_servicenow_upstream_fixture.py"
+      "tests/unit/test_servicenow_upstream_fixture.py",
+      "tests/unit/test_servicenow_connector.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "FR-TEMP-001",
@@ -2466,14 +2483,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/contracts/source_event.py"
+    ],
     "test_files": [
+      "tests/contract/test_g2_contracts.py",
       "tests/contract/test_g2_contracts.py"
     ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EKAF-004",
@@ -2585,12 +2605,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution.py",
+      "tests/unit/test_graph_evolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EKAF-011",
@@ -2651,12 +2676,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ingestion/dlq.py"
+    ],
+    "test_files": [
+      "tests/unit/test_phase2_ingestion.py",
+      "tests/unit/test_phase2_ingestion.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EKAF-015",
@@ -2683,12 +2713,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution.py",
+      "tests/unit/test_graph_evolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EKAF-017",
@@ -2806,12 +2841,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/contracts/source_event.py"
+    ],
+    "test_files": [
+      "tests/contract/test_g2_contracts.py",
+      "tests/contract/test_g2_contracts.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EKAF-024",
@@ -2821,12 +2861,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution.py",
+      "tests/unit/test_graph_evolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EKAF-025",
@@ -2836,12 +2881,18 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/files.py",
+      "packages/eoip/ingestion/files.py"
+    ],
+    "test_files": [
+      "tests/unit/test_file_ingestion.py",
+      "tests/unit/test_file_ingestion.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EKAF-026",
@@ -2851,12 +2902,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/identity/resolver.py"
+    ],
+    "test_files": [
+      "tests/unit/test_identity_resolver.py",
+      "tests/unit/test_identity_resolver.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EKAF-027",
@@ -2951,12 +3007,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_semantic_consumers_reconciliation.py",
+      "tests/unit/test_semantic_consumers_reconciliation.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EVENT-003",
@@ -2966,12 +3027,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/consumers.py"
+    ],
+    "test_files": [
+      "tests/unit/test_semantic_consumers_reconciliation.py",
+      "tests/unit/test_semantic_consumers_reconciliation.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EVENT-004",
@@ -2981,12 +3047,18 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py",
+      "packages/eoip/graph/consumers.py"
+    ],
+    "test_files": [
+      "tests/unit/test_semantic_consumers_reconciliation.py",
+      "tests/unit/test_semantic_consumers_reconciliation.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EVENT-005",
@@ -2996,12 +3068,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/consumers.py"
+    ],
+    "test_files": [
+      "tests/unit/test_semantic_consumers_reconciliation.py",
+      "tests/unit/test_semantic_consumers_reconciliation.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EVENT-006",
@@ -3011,12 +3088,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/consumers.py"
+    ],
+    "test_files": [
+      "tests/unit/test_semantic_consumers_reconciliation.py",
+      "tests/unit/test_semantic_consumers_reconciliation.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EVENT-007",
@@ -3026,12 +3108,18 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py",
+      "packages/eoip/graph/consumers.py"
+    ],
+    "test_files": [
+      "tests/unit/test_semantic_consumers_reconciliation.py",
+      "tests/unit/test_semantic_consumers_reconciliation.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-EVOL-001",
@@ -4857,14 +4945,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
     "test_files": [
-      "tests/unit/test_acquisition_fabric.py"
+      "tests/unit/test_acquisition_fabric.py",
+      "tests/security/test_crawler_security.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SEC-CRAWL-003",
@@ -4874,12 +4965,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/security/test_crawler_security.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SEC-CRAWL-004",
@@ -4889,12 +4984,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/security/test_crawler_security.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SEC-CRAWL-005",
@@ -4904,12 +5003,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/security/test_crawler_security.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SEC-CRAWL-006",
@@ -4919,12 +5022,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/security/test_crawler_security.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SEC-CRAWL-007",
@@ -4934,12 +5041,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/security/test_crawler_security.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SEC-CRAWL-008",
@@ -4949,12 +5060,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/security/test_crawler_security.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SEC-CRAWL-009",
@@ -4964,12 +5079,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/security/test_crawler_security.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SEC-CRAWL-010",
@@ -4979,12 +5098,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/security/test_crawler_security.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SEC-CRAWL-011",
@@ -4994,12 +5117,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/security/test_crawler_security.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SEC-CRAWL-012",
@@ -5009,12 +5136,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.5. Crawler security (11 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/security/test_crawler_security.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SIM-001",
@@ -5233,12 +5364,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/api_portal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_api_portal_connector.py"
+    ],
     "api_route": "/api/v1/",
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-API-003",
@@ -5248,12 +5383,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/api_portal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_api_portal_connector.py"
+    ],
     "api_route": "/api/v1/",
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-API-004",
@@ -5263,12 +5402,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/api_portal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_api_portal_connector.py"
+    ],
     "api_route": "/api/v1/",
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-API-005",
@@ -5278,12 +5421,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/api_portal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_api_portal_connector.py"
+    ],
     "api_route": "/api/v1/",
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-API-006",
@@ -5293,12 +5440,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/api_portal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_api_portal_connector.py"
+    ],
     "api_route": "/api/v1/",
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-CICD-001",
@@ -5328,12 +5479,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/cicd.py"
+    ],
+    "test_files": [
+      "tests/unit/test_cicd_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-CICD-003",
@@ -5343,12 +5498,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/cicd.py"
+    ],
+    "test_files": [
+      "tests/unit/test_cicd_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-CICD-004",
@@ -5358,12 +5517,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/cicd.py"
+    ],
+    "test_files": [
+      "tests/unit/test_cicd_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-CODE-001",
@@ -5481,15 +5644,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/connectors/confluence.py"
+    ],
     "test_files": [
       "tests/runtime_dlq/test_confluence_acquisition.py",
       "tests/unit/test_confluence_history.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-CONF-003",
@@ -5499,15 +5664,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/connectors/confluence_body.py"
+    ],
     "test_files": [
       "tests/runtime_dlq/test_confluence_acquisition.py",
       "tests/unit/test_confluence_body.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-CONF-004",
@@ -5517,7 +5684,9 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/connectors/confluence.py"
+    ],
     "test_files": [
       "tests/runtime_dlq/test_confluence_acquisition.py",
       "tests/unit/test_document_references.py",
@@ -5525,8 +5694,8 @@
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-CONF-005",
@@ -5536,15 +5705,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/connectors/confluence.py"
+    ],
     "test_files": [
       "tests/runtime_dlq/test_confluence_acquisition.py",
       "tests/unit/test_document_references.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-DD-001",
@@ -5841,12 +6012,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/jira.py"
+    ],
+    "test_files": [
+      "tests/unit/test_jira_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-JIRA-003",
@@ -5856,12 +6031,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/jira.py"
+    ],
+    "test_files": [
+      "tests/unit/test_jira_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-JIRA-004",
@@ -5871,12 +6050,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/jira.py"
+    ],
+    "test_files": [
+      "tests/unit/test_jira_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-JIRA-005",
@@ -5886,12 +6069,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/jira.py"
+    ],
+    "test_files": [
+      "tests/unit/test_jira_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-JIRA-006",
@@ -5901,14 +6088,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/connectors/jira.py"
+    ],
     "test_files": [
-      "tests/unit/test_gap_coverage.py"
+      "tests/unit/test_gap_coverage.py",
+      "tests/unit/test_jira_connector.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-KIB-001",
@@ -6025,12 +6215,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/otel.py"
+    ],
+    "test_files": [
+      "tests/unit/test_otel_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-OTEL-003",
@@ -6040,12 +6234,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/otel.py"
+    ],
+    "test_files": [
+      "tests/unit/test_otel_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-OTEL-004",
@@ -6055,12 +6253,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/otel.py"
+    ],
+    "test_files": [
+      "tests/unit/test_otel_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-OTEL-005",
@@ -6070,12 +6272,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/otel.py"
+    ],
+    "test_files": [
+      "tests/unit/test_otel_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-RUNTIME-001",
@@ -6105,12 +6311,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/runtime_infra.py"
+    ],
+    "test_files": [
+      "tests/unit/test_runtime_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-RUNTIME-003",
@@ -6120,12 +6330,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/runtime_infra.py"
+    ],
+    "test_files": [
+      "tests/unit/test_runtime_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-SBOM-001",
@@ -6155,12 +6369,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/sbom.py"
+    ],
+    "test_files": [
+      "tests/unit/test_sbom_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-SBOM-003",
@@ -6170,12 +6388,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/sbom.py"
+    ],
+    "test_files": [
+      "tests/unit/test_sbom_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-SBOM-004",
@@ -6185,14 +6407,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/connectors/sbom.py"
+    ],
     "test_files": [
-      "tests/unit/test_g2_readiness.py"
+      "tests/unit/test_g2_readiness.py",
+      "tests/unit/test_sbom_connector.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-SNKB-001",
@@ -6221,12 +6446,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/servicenow.py"
+    ],
+    "test_files": [
+      "tests/unit/test_servicenow_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-SNKB-003",
@@ -6236,12 +6465,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/servicenow.py"
+    ],
+    "test_files": [
+      "tests/unit/test_servicenow_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-SNOW-001",
@@ -6270,12 +6503,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/servicenow.py"
+    ],
+    "test_files": [
+      "tests/unit/test_servicenow_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-SNOW-003",
@@ -6285,12 +6522,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/servicenow.py"
+    ],
+    "test_files": [
+      "tests/unit/test_servicenow_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-SNOW-004",
@@ -6300,12 +6541,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/servicenow.py"
+    ],
+    "test_files": [
+      "tests/unit/test_servicenow_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-SNOW-005",
@@ -6315,12 +6560,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/servicenow.py"
+    ],
+    "test_files": [
+      "tests/unit/test_servicenow_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-SNOW-006",
@@ -6330,12 +6579,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/servicenow.py"
+    ],
+    "test_files": [
+      "tests/unit/test_servicenow_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-WEB-001",
@@ -6364,14 +6617,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
     "test_files": [
-      "tests/unit/test_acquisition_fabric.py"
+      "tests/unit/test_acquisition_fabric.py",
+      "tests/unit/test_web_crawler_connector.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-WEB-003",
@@ -6381,12 +6637,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/unit/test_web_crawler_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-WEB-004",
@@ -6396,12 +6656,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/unit/test_web_crawler_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SRC-WEB-005",
@@ -6411,12 +6675,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.3. Enterprise source connectors (57 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/crawler.py"
+    ],
+    "test_files": [
+      "tests/unit/test_web_crawler_connector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-001",
@@ -6445,12 +6713,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/acquisition.py"
+    ],
+    "test_files": [
+      "tests/unit/test_acquisition_fabric.py",
+      "tests/unit/test_acquisition_fabric.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-003",
@@ -6460,12 +6733,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/reconciliation.py"
+    ],
+    "test_files": [
+      "tests/unit/test_semantic_consumers_reconciliation.py",
+      "tests/unit/test_semantic_consumers_reconciliation.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-004",
@@ -6475,12 +6753,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution.py",
+      "tests/unit/test_graph_evolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-005",
@@ -6490,12 +6773,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/reconciliation.py"
+    ],
+    "test_files": [
+      "tests/unit/test_semantic_consumers_reconciliation.py",
+      "tests/unit/test_semantic_consumers_reconciliation.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-006",
@@ -6505,12 +6793,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution.py",
+      "tests/unit/test_graph_evolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-007",
@@ -6520,12 +6813,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution.py",
+      "tests/unit/test_graph_evolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-008",
@@ -6535,12 +6833,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/consumers.py"
+    ],
+    "test_files": [
+      "tests/unit/test_semantic_consumers_reconciliation.py",
+      "tests/unit/test_semantic_consumers_reconciliation.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-009",
@@ -6550,12 +6853,19 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/confluence.py",
+      "packages/eoip/connectors/servicenow.py",
+      "packages/eoip/ingestion/source_sync.py"
+    ],
+    "test_files": [
+      "tests/unit/test_phase2_api.py",
+      "tests/unit/test_phase2_api.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-010",
@@ -6565,12 +6875,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/acquisition.py"
+    ],
+    "test_files": [
+      "tests/unit/test_acquisition_sync_semantics.py",
+      "tests/unit/test_acquisition_sync_semantics.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-011",
@@ -6580,12 +6895,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ingestion/replay.py"
+    ],
+    "test_files": [
+      "tests/unit/test_file_ingestion.py",
+      "tests/unit/test_file_ingestion.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-012",
@@ -6595,12 +6915,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/acquisition.py"
+    ],
+    "test_files": [
+      "tests/unit/test_acquisition_fabric.py",
+      "tests/unit/test_acquisition_fabric.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-013",
@@ -6610,12 +6935,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/acquisition.py"
+    ],
+    "test_files": [
+      "tests/unit/test_acquisition_sync_semantics.py",
+      "tests/unit/test_acquisition_sync_semantics.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-SYNC-014",
@@ -6625,12 +6955,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.2. Sync and event semantics (19 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/acquisition.py"
+    ],
+    "test_files": [
+      "tests/unit/test_acquisition_sync_semantics.py",
+      "tests/unit/test_acquisition_sync_semantics.py"
+    ],
     "api_route": null,
     "ui_surface": null,
     "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "status": "DEVELOPED"
   },
   {
     "id": "G2-TEL-001",

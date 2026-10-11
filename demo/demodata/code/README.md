@@ -10,6 +10,15 @@ describes a repository's file structure, symbols (classes, functions, methods,
 components), dependencies, infrastructure references, and call/import/containment
 edges.
 
+## How EOIP uses it
+
+The code graph ingestion path converts these JSON records into Repository, File,
+CodeSymbol, Dependency, service/infrastructure, and relationship facts. The
+resulting graph supports source-bound traceability, code impact, dependency
+navigation, VS Code context, Hubble walkthroughs, and cross-source links to Jira,
+GitLab, ServiceNow, API, observability, and documentation records. These files
+are fixtures for local verification, not harvested customer repositories.
+
 ## Source Repositories
 
 | File | Repository | Language | Files | Symbols | Edges |

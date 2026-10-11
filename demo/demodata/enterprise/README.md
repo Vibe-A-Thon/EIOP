@@ -2,6 +2,16 @@
 
 This directory is the executable, synthetic sales-demo corpus loaded by the normal EOIP `DEMO` worker job. It contains no real customer data or credentials.
 
+## How this maps to implemented EOIP features
+
+The pack drives the current enterprise demo surfaces: authenticated scenario
+readiness APIs, graph explorer lenses, Hubble visualization, GraphRAG evidence
+flows, impact/lineage/neighborhood/traceability calls, governance views,
+decision/process/business capability entities, code/CI/test/design/ops
+relationships, and persisted knowledge products. Loading is validated against
+the runtime ontology and graph mutation boundary, captures the source pack
+before writing, and remains idempotent.
+
 ## What is included
 
 - `scenario-pack.json` version 1.1.0 is the canonical graph seed: 11 stories, 70 entities, and 114 relationships across BUSINESS, DECISION, PROCESS, WORK, CODE, CICD, TEST, DESIGN, OPS, KNOWLEDGE, IDENTITY, and META.

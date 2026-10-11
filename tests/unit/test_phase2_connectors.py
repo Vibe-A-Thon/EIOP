@@ -13,7 +13,7 @@ def make_client(handler):
     )
 
 
-@pytest.mark.req("FR-CONF-001")
+@pytest.mark.req("FR-CONF-001", "CONN-01")
 def test_confluence_sync_emits_spaces_pages_and_attachment_metadata_incrementally():
     requests = []
     responses = {
