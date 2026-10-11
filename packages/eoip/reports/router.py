@@ -49,6 +49,24 @@ def build_router(
                 pass
         return ctx
 
+    @router.get("")
+    def reports_capability() -> dict[str, Any]:
+        """Summarize report-generation capabilities at the router root."""
+        return {
+            "service": "reports",
+            "templates": len(BUILTIN_TEMPLATES),
+            "supported_formats": ["html", "json", "markdown"],
+            "external_gated_formats": sorted(EXTERNAL_FORMATS),
+            "schedules": len(schedules.list()),
+            "routes": [
+                "GET /api/v1/reports",
+                "GET /api/v1/reports/templates",
+                "POST /api/v1/reports/render",
+                "GET /api/v1/reports/schedules",
+                "POST /api/v1/reports/schedules",
+            ],
+        }
+
     # -- templates ---------------------------------------------------------
     @router.get("/templates")
     def list_templates() -> list[dict[str, Any]]:

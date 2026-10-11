@@ -123,3 +123,12 @@ def test_product_capability_api_and_materialization() -> None:
     assert materialized.json()["upserted_requirements"] >= 1
     assert store.get_vertex_by_canonical_id("urn:eoip:product-capability:pic-001") is not None
     assert store.count_vertices(label="Requirement") >= 1
+
+
+def test_deployed_route_surface_contains_product_gate_routes() -> None:
+    store = MemoryGraphStore()
+    client = TestClient(create_app(store))
+    routes = {str(getattr(route, "path", "")) for route in client.app.routes}
+
+    assert "/api/v1/loops/catalog" in routes
+    assert "/api/v1/reports" in routes

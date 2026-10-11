@@ -170,6 +170,14 @@ def _client(tmp_path: Path):
 
 
 class TestReportsRouter:
+    def test_root_capability_endpoint(self, tmp_path: Path):
+        client = _client(tmp_path)
+        resp = client.get("/api/v1/reports")
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["service"] == "reports"
+        assert body["templates"] == 5
+
     def test_templates_endpoint(self, tmp_path: Path):
         client = _client(tmp_path)
         resp = client.get("/api/v1/reports/templates")

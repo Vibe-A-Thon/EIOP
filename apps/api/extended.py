@@ -64,6 +64,7 @@ from eoip.licensing.api import build_router as build_licensing_router
 from eoip.licensing.entitlements import EntitlementChecker
 from eoip.licensing.license_file import LicensePayload, sign_license, verify_license
 from eoip.licensing.meter import UsageMeter
+from eoip.loops.router import build_router as build_loops_router
 from eoip.marketplace import (
     DependencyConflict,
     IntegrityError,
@@ -1451,6 +1452,10 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     # PDF/DOCX/PPTX are External gates), schedules, live graph stats.
     router.include_router(build_reports_router(graph_store=store))
 
+    # Loop engineering catalog/runtime (GAP-LOOP-001..047): route-level
+    # product evidence for bounded agent loops and approval patterns.
+    router.include_router(build_loops_router())
+
     # QA gate integrity (SR-QA-010..014): behavioral evidence registry,
     # mutation checks, three-number dashboard, code introspection, policy gate.
     router.include_router(build_qa_router())
@@ -1477,6 +1482,11 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
 
     from eoip.enterprise.advanced_router import build_advanced_capabilities_router
     router.include_router(build_advanced_capabilities_router(store))
+
+    # Unified engineering/productivity platform surface. Routes are under
+    # /api/v1/platform and lazily import their engines on call.
+    from eoip.platform_router import build_platform_router
+    router.include_router(build_platform_router())
 
     return router, state
 
