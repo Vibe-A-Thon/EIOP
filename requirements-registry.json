@@ -539,12 +539,17 @@
     "spec_source": "EOIP-engg-doc-pkg/03-functional-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/jira_json.py",
+      "packages/eoip/ingestion/jira.py"
+    ],
+    "test_files": [
+      "tests/unit/test_jira_ingestion.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests/unit/test_jira_ingestion.py: 10 passed; verifies configured Jira JSON mapping, local fixture ingestion, malformed quarantine, duplicate idempotency, captured-event resume, and source deletion tombstones",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "FR-CONN-003",
@@ -628,12 +633,17 @@
     "spec_source": "EOIP-engg-doc-pkg/03-functional-requirements.md",
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/connectors/jira_json.py",
+      "packages/eoip/ingestion/jira.py"
+    ],
+    "test_files": [
+      "tests/unit/test_jira_ingestion.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "tests/unit/test_jira_ingestion.py: 10 passed; deletion source records are captured, tombstone current WorkItem views without hard delete, remain queryable with include_deleted, and are restored by a later non-deleted record",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "FR-GRAPH-001",
@@ -859,14 +869,16 @@
     "phase": "### Phase 2. Acquisition fabric and live connectors",
     "work_package": "#### WP 2.1. Connector SDK and acquisition framework (35 tasks)",
     "code_paths": [
-      "packages/eoip/contracts/graph_mutation.py",
-      "packages/eoip/contracts/source_event.py"
+      "packages/eoip/contracts/source_event.py",
+      "packages/eoip/ingestion/jira.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_jira_ingestion.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "tests/unit/test_jira_ingestion.py: 10 passed; raw SourceEvent envelopes are written before graph mutation, hashed, immutable on duplicate capture, and malformed records are captured before DLQ quarantine",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "FR-INGEST-002",

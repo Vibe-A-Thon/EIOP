@@ -138,18 +138,18 @@ class JiraIngestionService:
                     "issue_key": issue["project_key"],
                 },
             )
-            work_item = self.store.upsert_vertex(
-                "WorkItem",
-                {
-                    **shared,
-                    "canonical_id": work_item_cid,
-                    "issue_key": issue["issue_key"],
-                    "summary": issue["summary"],
-                    "description": issue["description"],
-                    "issue_type": issue["issue_type"],
-                    "status": issue["status"],
-                },
-            )
+            work_item_props = {
+                **shared,
+                "canonical_id": work_item_cid,
+                "issue_key": issue["issue_key"],
+                "summary": issue["summary"] or f"Deleted Jira issue {issue['issue_key']}",
+                "description": issue["description"],
+                "issue_type": issue["issue_type"],
+                "status": issue["status"],
+            }
+            if issue["deleted"]:
+                work_item_props["deleted_at"] = issue["deleted_at"] or event.captured_at
+            work_item = self.store.upsert_vertex("WorkItem", work_item_props)
             evidence = self.store.upsert_vertex(
                 "Evidence",
                 {
@@ -264,7 +264,7 @@ class JiraIngestionService:
                         **run_edge_props,
                     },
                 )
-            if issue["parent_key"]:
+            if issue["parent_key"] and not issue["deleted"]:
                 parent = work_items.get(issue["parent_key"]) or self.store.get_vertex_by_canonical_id(
                     f"urn:eoip:work:item:jira:{issue['parent_key']}"
                 )

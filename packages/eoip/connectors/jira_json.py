@@ -21,6 +21,8 @@ DEFAULT_MAPPING = {
     "assignee_name": "fields.assignee.displayName",
     "assignee_email": "fields.assignee.emailAddress",
     "parent_key": "fields.parent.key",
+    "deleted": "deleted",
+    "deleted_at": "deleted_at",
 }
 
 
@@ -83,15 +85,16 @@ class JiraJsonConnector:
         record = event.payload
         issue_key = self._value(record, "issue_key")
         summary = self._value(record, "summary")
+        deleted = self._bool_value(self._value(record, "deleted"))
         if not isinstance(issue_key, str) or not issue_key.strip():
             raise ValueError("missing required Jira issue key")
-        if not isinstance(summary, str) or not summary.strip():
+        if not deleted and (not isinstance(summary, str) or not summary.strip()):
             raise ValueError(f"{issue_key}: missing required summary")
         project_key = self._value(record, "project_key") or issue_key.split("-", 1)[0]
         project_name = self._value(record, "project_name") or project_key
         return {
             "issue_key": issue_key.strip(),
-            "summary": summary.strip(),
+            "summary": summary.strip() if isinstance(summary, str) and summary.strip() else None,
             "description": self._value(record, "description"),
             "issue_type": self._value(record, "issue_type"),
             "status": self._value(record, "status"),
@@ -101,6 +104,8 @@ class JiraJsonConnector:
             "assignee_name": self._value(record, "assignee_name"),
             "assignee_email": self._value(record, "assignee_email"),
             "parent_key": self._value(record, "parent_key"),
+            "deleted": deleted,
+            "deleted_at": self._value(record, "deleted_at"),
         }
 
     def _value(self, record: dict, field: str) -> Any:
@@ -110,3 +115,11 @@ class JiraJsonConnector:
                 return None
             value = value.get(part)
         return value
+
+    @staticmethod
+    def _bool_value(value: Any) -> bool:
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            return value.strip().casefold() in {"true", "1", "yes", "deleted"}
+        return False

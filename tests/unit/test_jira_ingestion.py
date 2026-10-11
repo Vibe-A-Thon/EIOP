@@ -1,8 +1,14 @@
 import json
+from pathlib import Path
+
+import pytest
 
 from eoip.connectors.jira_json import JiraJsonConnector
+from eoip.contracts.source_event import SourceEvent
 from eoip.graph.memory import MemoryGraphStore
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
+
+pytestmark = pytest.mark.req("FR-CONN-002")
 
 
 def _service(tmp_path) -> tuple[JiraIngestionService, MemoryGraphStore]:
@@ -12,6 +18,7 @@ def _service(tmp_path) -> tuple[JiraIngestionService, MemoryGraphStore]:
     return JiraIngestionService(store, connector, capture, tmp_path / "dlq"), store
 
 
+@pytest.mark.req("FR-INGEST-001")
 def test_jira_import_captures_evidence_and_is_idempotent(tmp_path) -> None:
     service, store = _service(tmp_path)
     document = {
@@ -47,6 +54,83 @@ def test_jira_import_captures_evidence_and_is_idempotent(tmp_path) -> None:
     assert json.loads(raw_files[0].read_text(encoding="utf-8"))["payload_hash"]
 
 
+def test_jira_import_accepts_configured_mapping_and_local_fixture(tmp_path) -> None:
+    store = MemoryGraphStore()
+    connector = JiraJsonConnector.from_yaml("config/mappings/jira-mvp.yaml")
+    service = JiraIngestionService(store, connector, FileEventCapture(tmp_path / "raw"), tmp_path / "dlq")
+    document = json.loads(
+        Path("demo/demodata/core/jira/sample-jira.json").read_text(encoding="utf-8")
+    )
+
+    result = service.ingest(document)
+
+    assert result["run_status"] == "SUCCEEDED"
+    assert result["records_accepted"] == 2
+    work_item = store.get_vertex_by_canonical_id("urn:eoip:work:item:jira:EOIP-1")
+    project = store.get_vertex_by_canonical_id("urn:eoip:work:project:jira:EOIP")
+    person = store.get_vertex_by_canonical_id("urn:eoip:identity:person:email:engineer@example.invalid")
+    assert work_item is not None
+    assert work_item["properties"]["summary"] == "Trace a requirement to its implementation"
+    assert work_item["properties"]["issue_type"] == "Story"
+    assert work_item["properties"]["status"] == "In Progress"
+    assert project is not None
+    assert project["properties"]["name"] == "Enterprise Ontology Intelligence Platform"
+    assert person is not None
+    assert store.count_edges("ASSIGNED_TO") == 1
+
+
+def test_jira_resume_replays_captured_events_without_regenerating_identity(tmp_path) -> None:
+    service, store = _service(tmp_path)
+    document = {"issues": [{"key": "EOIP-4", "fields": {"summary": "Resume import"}}]}
+
+    first = service.ingest(document)
+    captured_path = next((tmp_path / "raw" / "jira").glob("*.json"))
+    captured = SourceEvent.model_validate(json.loads(captured_path.read_text(encoding="utf-8")))
+    replay = service.ingest_events([captured])
+
+    assert first["run_status"] == replay["run_status"] == "SUCCEEDED"
+    assert first["records_accepted"] == replay["records_accepted"] == 1
+    assert store.count_vertices("WorkItem") == 1
+    assert store.count_vertices("Evidence") == 1
+    assert len(list((tmp_path / "raw" / "jira").glob("*.json"))) == 1
+    raw = json.loads(captured_path.read_text(encoding="utf-8"))
+    assert raw["event_id"] == captured.event_id
+    assert raw["payload_hash"] == captured.payload_hash
+
+
+@pytest.mark.req("FR-CONN-007")
+def test_jira_source_deletion_tombstones_without_hard_delete(tmp_path) -> None:
+    service, store = _service(tmp_path)
+    service.ingest({"issues": [{"key": "EOIP-7", "fields": {"summary": "Current issue"}}]})
+
+    result = service.ingest(
+        {"issues": [{"key": "EOIP-7", "deleted": True, "deleted_at": "2026-10-11T00:00:00Z"}]}
+    )
+
+    assert result["run_status"] == "SUCCEEDED"
+    assert store.count_vertices("WorkItem") == 0
+    hidden = store.get_vertex_by_canonical_id("urn:eoip:work:item:jira:EOIP-7")
+    assert hidden is not None
+    assert hidden["properties"]["deleted_at"] == "2026-10-11T00:00:00Z"
+    assert store.find_vertices("WorkItem", {"issue_key": "EOIP-7"}, include_deleted=True) == [hidden]
+    assert len(list((tmp_path / "raw" / "jira").glob("*.json"))) == 2
+
+
+@pytest.mark.req("FR-CONN-007")
+def test_jira_source_reappearance_restores_current_view(tmp_path) -> None:
+    service, store = _service(tmp_path)
+
+    service.ingest({"issues": [{"key": "EOIP-8", "deleted": True}]})
+    service.ingest({"issues": [{"key": "EOIP-8", "fields": {"summary": "Restored issue"}}]})
+
+    restored = store.get_vertex_by_canonical_id("urn:eoip:work:item:jira:EOIP-8")
+    assert restored is not None
+    assert restored["properties"]["summary"] == "Restored issue"
+    assert "deleted_at" not in restored["properties"]
+    assert store.find_vertices("WorkItem", {"issue_key": "EOIP-8"}) == [restored]
+
+
+@pytest.mark.req("FR-INGEST-001")
 def test_malformed_record_is_captured_and_quarantined_without_graph_mutation(tmp_path) -> None:
     service, store = _service(tmp_path)
 

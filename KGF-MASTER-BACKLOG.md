@@ -412,12 +412,12 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
 | [x] | `FR-CONN-001` | Connector SDK | Partial | packages/eoip/connectors/base.py | - |
-| [ ] | `FR-CONN-002` | Jira JSON connector | Not dev | - | - |
+| [x] | `FR-CONN-002` | Jira JSON connector | Not dev | packages/eoip/connectors/jira_json.py, packages/eoip/ingestion/jira.py | tests/unit/test_jira_ingestion.py |
 | [x] | `FR-CONN-003` | Git repository connector | Not dev | - | - |
 | [x] | `FR-CONN-004` | GitLab metadata adapter | Not dev | - | - |
 | [x] | `FR-CONN-005` | Connector resiliency | Not dev | - | - |
-| [ ] | `FR-CONN-007` | Source deletion semantics | Not dev | - | - |
-| [ ] | `FR-INGEST-001` | Raw capture | Partial | packages/eoip/contracts/graph_mutation.py, packages/eoip/contracts/source_event.py | - |
+| [x] | `FR-CONN-007` | Source deletion semantics | Not dev | packages/eoip/connectors/jira_json.py, packages/eoip/ingestion/jira.py | tests/unit/test_jira_ingestion.py |
+| [x] | `FR-INGEST-001` | Raw capture | Partial | packages/eoip/contracts/source_event.py, packages/eoip/ingestion/jira.py | tests/unit/test_jira_ingestion.py |
 | [x] | `FR-INGEST-002` | Canonicalization | Partial | packages/eoip/identity/resolver.py | - |
 | [x] | `FR-INGEST-004` | Ingestion job lifecycle | Not dev | - | - |
 | [x] | `G2-EKAF-002` | Connector SDK | Not dev | - | - |

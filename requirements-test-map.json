@@ -14,6 +14,26 @@
   "FR-CONN-001": [
     "tests/contract/test_g2_contracts.py"
   ],
+  "FR-CONN-002": [
+    "tests/unit/test_jira_ingestion.py::test_dlq_record_uses_the_unified_envelope",
+    "tests/unit/test_jira_ingestion.py::test_dry_run_validates_without_capture_or_graph_writes",
+    "tests/unit/test_jira_ingestion.py::test_jira_import_accepts_configured_mapping_and_local_fixture",
+    "tests/unit/test_jira_ingestion.py::test_jira_import_captures_evidence_and_is_idempotent",
+    "tests/unit/test_jira_ingestion.py::test_jira_ingestion_creates_belongs_to_domain_edges",
+    "tests/unit/test_jira_ingestion.py::test_jira_parent_relationship_is_created_even_when_parent_record_follows_child",
+    "tests/unit/test_jira_ingestion.py::test_jira_resume_replays_captured_events_without_regenerating_identity",
+    "tests/unit/test_jira_ingestion.py::test_jira_source_deletion_tombstones_without_hard_delete",
+    "tests/unit/test_jira_ingestion.py::test_jira_source_reappearance_restores_current_view",
+    "tests/unit/test_jira_ingestion.py::test_malformed_record_is_captured_and_quarantined_without_graph_mutation"
+  ],
+  "FR-CONN-007": [
+    "tests/unit/test_jira_ingestion.py::test_jira_source_deletion_tombstones_without_hard_delete",
+    "tests/unit/test_jira_ingestion.py::test_jira_source_reappearance_restores_current_view"
+  ],
+  "FR-INGEST-001": [
+    "tests/unit/test_jira_ingestion.py::test_jira_import_captures_evidence_and_is_idempotent",
+    "tests/unit/test_jira_ingestion.py::test_malformed_record_is_captured_and_quarantined_without_graph_mutation"
+  ],
   "G2-EKAF-002": [
     "tests/contract/test_g2_contracts.py"
   ],
