@@ -77,6 +77,9 @@ function QualityRing({label, value, tone = 'violet'}) {
 }
 
 function Login({token, setToken, onSubmit, busy, health}) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isValidLength = Boolean(token && token.trim().length >= 8);
+
   return <div className="login-page">
     <section className="login-story">
       <span className="product-mark large"><span className="mark-core">E</span><span className="mark-orbit"/></span>
@@ -96,8 +99,31 @@ function Login({token, setToken, onSubmit, busy, health}) {
         <h2 id="login-title">Connect your workspace</h2>
         <p>Use the local API access token generated for this deployment.</p>
         <form onSubmit={onSubmit}>
-          <label htmlFor="token">Access token <Tip text="Find EOIP_API_TOKEN in the generated deploy/.env file"><span className="help-dot">?</span></Tip></label>
-          <div className="input-with-icon"><Icon name="shield" size={17}/><input id="token" type="password" autoComplete="current-password" value={token} onChange={event => setToken(event.target.value)} placeholder="Paste EOIP_API_TOKEN" required/></div>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <label htmlFor="token">Access token <Tip text="Find EOIP_API_TOKEN in the generated deploy/.env file"><span className="help-dot">?</span></Tip></label>
+            {isValidLength && <span style={{fontSize: '10px', color: '#10b981', fontWeight: 600}}>Valid format ✓</span>}
+          </div>
+          <div className="input-with-icon">
+            <Icon name="shield" size={17}/>
+            <input 
+              id="token" 
+              type={showPassword ? "text" : "password"} 
+              autoComplete="current-password" 
+              value={token} 
+              onChange={event => setToken(event.target.value)} 
+              placeholder="Paste EOIP_API_TOKEN" 
+              required
+            />
+            <button 
+              type="button" 
+              className="input-action-btn" 
+              onClick={() => setShowPassword(v => !v)}
+              title={showPassword ? "Hide token" : "Show token"}
+              aria-label={showPassword ? "Hide token" : "Show token"}
+            >
+              <Icon name="eye" size={15}/>
+            </button>
+          </div>
           <button className="primary-button wide" disabled={busy} title="Authenticate with the local EOIP API">{busy ? <><span className="spinner small"/>Connecting…</> : <>Connect <Icon name="arrow" size={17}/></>}</button>
         </form>
         <div className="local-note"><Icon name="shield" size={15}/><span>Your token is stored only in this browser tab and is never sent outside the local deployment.</span></div>
@@ -228,11 +254,96 @@ function GraphLegend({nodes}) {
 
 function EntityInspector({selected, detail, selectedEdge, onImpact, onTrace, onLineage, busy}) {
   const [tab, setTab] = useState('overview');
-  useEffect(() => setTab('overview'), [selected?.id, selectedEdge?.id]);
+  const [copiedId, setCopiedId] = useState(false);
+  const [propFilter, setPropFilter] = useState('');
+
+  useEffect(() => {
+    setTab('overview');
+    setPropFilter('');
+  }, [selected?.id, selectedEdge?.id]);
+
   if (selectedEdge) return <section className="inspector panel" aria-label="Relationship inspector"><div className="inspector-heading"><span className="entity-symbol edge"><Icon name="link"/></span><div><span className="eyebrow">RELATIONSHIP</span><h2>{selectedEdge.type}</h2></div></div><div className="edge-route"><code title={selectedEdge.from_id}>{shortId(selectedEdge.from_id)}</code><span><Icon name="arrow" size={15}/></span><code title={selectedEdge.to_id}>{shortId(selectedEdge.to_id)}</code></div><h3>Why does this edge exist?</h3>{selectedEdge.properties?.source_ref || selectedEdge.properties?.evidence_key ? <div className="evidence-card"><Icon name="shield"/><div><strong>{selectedEdge.properties.source_ref || 'Graph evidence'}</strong><small>{selectedEdge.properties.evidence_key || 'Evidence key unavailable'}</small></div></div> : <p className="subtle">No direct evidence reference was returned for this relationship.</p>}<dl className="property-list">{Object.entries(selectedEdge.properties || {}).map(([key, value]) => <div key={key}><dt>{key.replaceAll('_', ' ')}</dt><dd>{String(value)}</dd></div>)}</dl></section>;
   if (!selected) return <section className="inspector panel"><EmptyState icon="focus" title="Select an entity">Choose a node on the map or an item in the result list to inspect its identity, properties, and evidence.</EmptyState></section>;
+  
   const evidenceEdges = [...(detail?.outgoing || []), ...(detail?.incoming || [])].filter(edge => edge.properties?.source_ref || edge.properties?.evidence_key);
-  return <section className="inspector panel" aria-label="Entity inspector"><div className="inspector-heading"><span className="entity-symbol" style={{'--entity-color': palette[selected.label] || '#64748b'}}>{displayLabel(selected).slice(0, 1).toUpperCase()}</span><div><span className="eyebrow">{selected.label}</span><h2>{displayLabel(selected)}</h2></div></div><div className="inspector-tabs" role="tablist"><button className={tab === 'overview' ? 'active' : ''} onClick={() => setTab('overview')} role="tab">Overview</button><button className={tab === 'evidence' ? 'active' : ''} onClick={() => setTab('evidence')} role="tab">Evidence <span>{evidenceEdges.length}</span></button></div>{tab === 'overview' ? <><code className="identity" title={selected.id}>{selected.id}</code><div className="inspector-actions"><button disabled={busy} onClick={onImpact} title="Traverse bounded downstream impact"><Icon name="activity" size={16}/>Explore impact</button><button className="secondary-button" disabled={busy} onClick={onTrace} title="Run the deterministic TraceImpact agent"><Icon name="spark" size={16}/>Run TraceImpact</button><IconButton label="Trace provenance lineage" icon="shield" onClick={onLineage} disabled={busy}/></div><h3>Entity properties</h3><dl className="property-list">{Object.entries(selected.properties || {}).map(([key, value]) => <div key={key}><dt>{key.replaceAll('_', ' ')}</dt><dd>{String(value)}</dd></div>)}</dl></> : <><p className="subtle">Source references returned for relationships connected to this entity.</p>{evidenceEdges.length ? <div className="evidence-stack">{evidenceEdges.map((edge, index) => <div className="evidence-card" key={edge.eid || edge.id || index}><Icon name="shield"/><div><strong>{edge.label || edge.type}</strong><small>{edge.properties?.source_ref || edge.properties?.evidence_key}</small></div></div>)}</div> : <EmptyState icon="shield" title="No direct evidence returned">Try the Evidence lens to retrieve a broader lineage chain.</EmptyState>}</>}</section>;
+  const allProps = Object.entries(selected.properties || {});
+  const filteredProps = propFilter ? allProps.filter(([k, v]) => k.toLowerCase().includes(propFilter.toLowerCase()) || String(v).toLowerCase().includes(propFilter.toLowerCase())) : allProps;
+
+  return <section className="inspector panel" aria-label="Entity inspector">
+    <div className="inspector-heading">
+      <span className="entity-symbol" style={{'--entity-color': palette[selected.label] || '#64748b'}}>
+        {displayLabel(selected).slice(0, 1).toUpperCase()}
+      </span>
+      <div>
+        <span className="eyebrow">{selected.label}</span>
+        <h2>{displayLabel(selected)}</h2>
+      </div>
+    </div>
+    <div className="inspector-tabs" role="tablist">
+      <button className={tab === 'overview' ? 'active' : ''} onClick={() => setTab('overview')} role="tab">Overview</button>
+      <button className={tab === 'evidence' ? 'active' : ''} onClick={() => setTab('evidence')} role="tab">Evidence <span>{evidenceEdges.length}</span></button>
+    </div>
+    {tab === 'overview' ? <>
+      <div className="identity-bar">
+        <code className="identity" title={selected.id}>{selected.id}</code>
+        <Tip text={copiedId ? "Copied ID!" : "Copy canonical ID"}>
+          <button 
+            type="button" 
+            className="copy-chip-btn" 
+            onClick={() => {
+              navigator.clipboard.writeText(selected.id);
+              setCopiedId(true);
+              setTimeout(() => setCopiedId(false), 2000);
+            }}
+          >
+            <Icon name={copiedId ? 'check' : 'copy'} size={13}/>
+          </button>
+        </Tip>
+      </div>
+      <div className="inspector-actions">
+        <button disabled={busy} onClick={onImpact} title="Traverse bounded downstream impact"><Icon name="activity" size={16}/>Explore impact</button>
+        <button className="secondary-button" disabled={busy} onClick={onTrace} title="Run the deterministic TraceImpact agent"><Icon name="spark" size={16}/>Run TraceImpact</button>
+        <IconButton label="Trace provenance lineage" icon="shield" onClick={onLineage} disabled={busy}/>
+      </div>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '20px 0 8px'}}>
+        <h3 style={{margin: 0}}>Entity properties ({filteredProps.length})</h3>
+        {allProps.length > 4 && (
+          <input 
+            type="text" 
+            placeholder="Filter props…" 
+            value={propFilter} 
+            onChange={e => setPropFilter(e.target.value)} 
+            className="prop-filter-box"
+          />
+        )}
+      </div>
+      <dl className="property-list">
+        {filteredProps.map(([key, value]) => (
+          <div key={key}>
+            <dt>{key.replaceAll('_', ' ')}</dt>
+            <dd>{String(value)}</dd>
+          </div>
+        ))}
+      </dl>
+    </> : <>
+      <p className="subtle">Source references returned for relationships connected to this entity.</p>
+      {evidenceEdges.length ? (
+        <div className="evidence-stack">
+          {evidenceEdges.map((edge, index) => (
+            <div className="evidence-card" key={edge.eid || edge.id || index}>
+              <Icon name="shield"/>
+              <div>
+                <strong>{edge.label || edge.type}</strong>
+                <small>{edge.properties?.source_ref || edge.properties?.evidence_key}</small>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState icon="shield" title="No direct evidence returned">Try the Evidence lens to retrieve a broader lineage chain.</EmptyState>
+      )}
+    </>}
+  </section>;
 }
 
 function SearchView({graph, selected, onInspect}) {
@@ -309,6 +420,16 @@ function AgentView({agents, selectedAgent, setSelectedAgent, goal, setGoal, sele
 }
 
 function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDetail, selectedEdge, setSelectedEdge, lens, setLens, api, run, busy}) {
+  useEffect(() => {
+    const handleKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('global-search-input')?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
   const [query, setQuery] = useState('');
   const [nlQuestion, setNlQuestion] = useState('');
   const [nlResult, setNlResult] = useState(null);
@@ -355,7 +476,103 @@ function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDet
   }
 
   return <>
-    <section className="hero-search"><div className="hero-copy"><span className="eyebrow"><i/>CONNECTED ENTERPRISE CONTEXT</span><h2>What do you want to understand?</h2><p>Find an issue, commit, symbol, file, person, or document—then follow the relationships that explain it.</p></div><form onSubmit={executeSearch} className="global-search"><Icon name="search" size={21}/><input aria-label="Search knowledge graph" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search by issue key, symbol, commit, or path…" required/><button disabled={busy} title="Search the persisted knowledge graph">Search graph <span>↵</span></button></form><form onSubmit={askNaturalLanguage} className="global-search nl-search"><Icon name="spark" size={21}/><input aria-label="Ask the knowledge graph" value={nlQuestion} onChange={event => setNlQuestion(event.target.value)} placeholder="Ask in plain language — e.g. what implements EOIP-1, what is impacted by a symbol…" required/><button disabled={busy} title="Interpret the question as a bounded, policy-checked QueryPlan">Ask graph <span>↵</span></button></form>{nlResult && <div className="inline-notice nl-interpretation" role="status"><Icon name={nlResult.interpretation?.plan ? 'check' : 'info'}/>{nlResult.interpretation?.plan ? <span>Interpreted as <strong>{nlResult.interpretation.plan.intent}</strong> plan{nlResult.interpretation.explanation ? ` — ${nlResult.interpretation.explanation}` : ''}{nlResult.result ? ` · ${nlResult.result.nodes?.length || 0} entities returned` : ''}</span> : <span>{nlResult.interpretation?.clarification || 'The question could not be mapped to a bounded query plan.'}</span>}</div>}</section>
+    <section className="hero-search">
+      <div className="hero-copy">
+        <span className="eyebrow"><i/>CONNECTED ENTERPRISE CONTEXT</span>
+        <h2>What do you want to understand?</h2>
+        <p>Find an issue, commit, symbol, file, person, or document—then follow the relationships that explain it.</p>
+      </div>
+      
+      <form onSubmit={executeSearch} className="global-search">
+        <Icon name="search" size={21}/>
+        <input 
+          id="global-search-input"
+          aria-label="Search knowledge graph" 
+          value={query} 
+          onChange={event => setQuery(event.target.value)} 
+          placeholder="Search by issue key, symbol, commit, or path… (Ctrl+K)" 
+          required
+        />
+        {query && (
+          <button 
+            type="button" 
+            className="input-clear-btn" 
+            onClick={() => setQuery('')} 
+            title="Clear search input"
+          >
+            <Icon name="close" size={14}/>
+          </button>
+        )}
+        <button disabled={busy} title="Search the persisted knowledge graph">Search graph <span>↵</span></button>
+      </form>
+      <div className="search-suggestions">
+        <span>Suggested:</span>
+        {['EOIP-1', 'Order', 'Payment', 'Service', 'Authentication'].map(item => (
+          <button 
+            key={item} 
+            type="button" 
+            onClick={() => {
+              setQuery(item);
+              run(async () => {
+                setGraph(await api(`/api/v1/search?q=${encodeURIComponent(item)}`));
+                setSelected(null); setSelectedEdge(null); setTrace(null);
+              });
+            }}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+
+      <form onSubmit={askNaturalLanguage} className="global-search nl-search" style={{marginTop: 12}}>
+        <Icon name="spark" size={21}/>
+        <input 
+          aria-label="Ask the knowledge graph" 
+          value={nlQuestion} 
+          onChange={event => setNlQuestion(event.target.value)} 
+          placeholder="Ask in plain language — e.g. what implements EOIP-1, what is impacted by a symbol…" 
+          required
+        />
+        {nlQuestion && (
+          <button 
+            type="button" 
+            className="input-clear-btn" 
+            onClick={() => setNlQuestion('')} 
+            title="Clear question input"
+          >
+            <Icon name="close" size={14}/>
+          </button>
+        )}
+        <button disabled={busy} title="Interpret the question as a bounded, policy-checked QueryPlan">Ask graph <span>↵</span></button>
+      </form>
+      <div className="search-suggestions" style={{marginTop: 8}}>
+        <span>Ask:</span>
+        {['What implements EOIP-1?', 'What is impacted by payment-svc?', 'Explain checkout dependencies'].map(item => (
+          <button 
+            key={item} 
+            type="button" 
+            onClick={() => {
+              setNlQuestion(item);
+              run(async () => {
+                const response = await api('/api/v1/query/nl', {question: item});
+                setNlResult(response);
+                if (response.result) {
+                  setGraph(response.result);
+                  setSelected(null); setSelectedEdge(null); setTrace(null);
+                }
+              });
+            }}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+
+      {nlResult && <div className="inline-notice nl-interpretation" role="status">
+        <Icon name={nlResult.interpretation?.plan ? 'check' : 'info'}/>
+        {nlResult.interpretation?.plan ? <span>Interpreted as <strong>{nlResult.interpretation.plan.intent}</strong> plan{nlResult.interpretation.explanation ? ` — ${nlResult.interpretation.explanation}` : ''}{nlResult.result ? ` · ${nlResult.result.nodes?.length || 0} entities returned` : ''}</span> : <span>{nlResult.interpretation?.clarification || 'The question could not be mapped to a bounded query plan.'}</span>}
+      </div>}
+    </section>
     <div className="metrics-grid"><MetricCard icon="database" eyebrow="ENTITIES" value={stats?.vertices ?? '—'} caption="Persisted canonical facts" tone="violet" tooltip="Canonical entities currently stored in HugeGraph"/><MetricCard icon="graph" eyebrow="RELATIONSHIPS" value={stats?.edges ?? '—'} caption="Typed semantic links" tone="blue" tooltip="Typed relationships currently stored in HugeGraph"/><MetricCard icon="layers" eyebrow="ENTITY TYPES" value={stats ? Object.values(stats.labels || {}).filter(value => value > 0).length : '—'} caption={`${Object.keys(stats?.labels || {}).length || 0} types available`} tone="mint" tooltip="Ontology entity types represented by at least one stored entity"/><MetricCard icon="activity" eyebrow="WORKER" value={stats?.worker?.status || 'Starting'} caption={stats?.worker?.updated_at ? `Updated ${formatTime(stats.worker.updated_at)}` : 'Background ingestion service'} tone="coral" tooltip="Current background ingestion worker state"/></div>
     <div className="lens-bar" role="tablist" aria-label="Explorer lenses"><div>{lenses.map(item => <Tip text={item.hint} key={item.id}><button role="tab" aria-selected={lens === item.id} className={lens === item.id ? 'active' : ''} onClick={() => setLens(item.id)}><Icon name={item.icon}/>{item.label}</button></Tip>)}<Tip text="Browse every documented experience lens and its implementation state"><button onClick={() => setLibraryOpen(true)}><Icon name="plus"/>All lenses</button></Tip></div><span className="context-actions"><span className="context-chip"><Icon name="focus" size={14}/>{selected ? displayLabel(selected) : 'No entity selected'}</span><IconButton label="Export the current local lens context" icon="upload" onClick={exportContext}/></span></div>
     {lens === 'search' && <SearchView graph={graph} selected={selected} onInspect={node => run(() => inspect(node))}/>}

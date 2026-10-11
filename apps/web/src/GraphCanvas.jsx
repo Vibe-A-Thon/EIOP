@@ -94,15 +94,17 @@ export default function GraphCanvas({
         selectionType: selectionMode ? 'additive' : 'single',
         style: [
           {selector: 'node', style: {
-            'background-color': 'data(color)', 'label': 'data(label)', 'color': '#24324a',
-            'font-family': 'Inter, Segoe UI, sans-serif', 'font-size': '10px', 'font-weight': 600,
-            'text-valign': 'bottom', 'text-margin-y': 8, 'text-wrap': 'ellipsis', 'text-max-width': '100px',
-            'width': 38, 'height': 38, 'border-width': 5, 'border-color': '#ffffff',
-            'shadow-blur': 10, 'shadow-color': '#334155', 'shadow-opacity': .14, 'shadow-offset-y': 3,
+            'background-color': 'data(color)', 'label': 'data(label)', 'color': '#1e293b',
+            'font-family': 'Inter, Segoe UI, sans-serif', 'font-size': '10.5px', 'font-weight': 600,
+            'text-valign': 'bottom', 'text-margin-y': 8, 'text-wrap': 'ellipsis', 'text-max-width': '110px',
+            'width': 40, 'height': 40, 'border-width': 4, 'border-color': '#ffffff',
+            'shadow-blur': 12, 'shadow-color': '#0f172a', 'shadow-opacity': .16, 'shadow-offset-y': 3,
+            'transition-property': 'background-color, border-width, border-color, width, height',
+            'transition-duration': '220ms',
           }},
           {selector: 'node:selected, node.selected', style: {
-            'border-width': 5, 'border-color': '#a78bfa', 'width': 48, 'height': 48,
-            'shadow-blur': 16, 'shadow-color': '#7c3aed', 'shadow-opacity': .35,
+            'border-width': 6, 'border-color': '#8b5cf6', 'width': 50, 'height': 50,
+            'shadow-blur': 24, 'shadow-color': '#7c3aed', 'shadow-opacity': .45,
           }},
           {selector: 'edge', style: {
             'width': 1.6, 'line-color': '#b8c2d1', 'target-arrow-color': '#94a3b8',
@@ -113,7 +115,8 @@ export default function GraphCanvas({
             'text-background-padding': '3px', 'text-rotation': 'autorotate',
           }},
           {selector: 'edge:selected, edge.selected', style: {
-            'width': 3, 'line-color': '#7c5cff', 'target-arrow-color': '#7c5cff', 'color': '#5b3fd6',
+            'width': 3.5, 'line-color': '#7c5cff', 'target-arrow-color': '#7c5cff', 'color': '#4c1d95',
+            'shadow-blur': 8, 'shadow-color': '#7c5cff', 'shadow-opacity': .35,
           }},
           {selector: 'edge.inferred', style: {'line-style': 'dashed', 'line-color': '#f59e0b', 'target-arrow-color': '#f59e0b'}},
           {selector: 'edge.evidenced', style: {'width': 2.2}},
