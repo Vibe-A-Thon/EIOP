@@ -86,6 +86,31 @@ class RecordMetricRequest(BaseModel):
     value: float = Field(description="Metric value")
 
 
+class FeatureFlagRequest(BaseModel):
+    name: str
+    description: str = ""
+    default_enabled: bool = False
+    rollout_percentage: float = 100.0
+
+
+class FlagEvalRequest(BaseModel):
+    flag_name: str
+    tenant_id: str | None = None
+
+
+class FlagOverrideRequest(BaseModel):
+    flag_name: str
+    tenant_id: str
+    enabled: bool
+
+
+class WebhookSubscribeRequest(BaseModel):
+    url: str
+    events: list[str]
+    secret: str = ""
+    max_retries: int = 3
+
+
 def build_enterprise_router() -> APIRouter:
     """Build the enterprise features router (features #9-#20)."""
     router = APIRouter(prefix="/api/v1/enterprise", tags=["Enterprise"])
@@ -609,21 +634,6 @@ def build_enterprise_router() -> APIRouter:
 
     from eoip.enterprise.feature_flags import get_feature_flags, FlagDefinition as FlagDef
 
-    class FeatureFlagRequest(BaseModel):
-        name: str
-        description: str = ""
-        default_enabled: bool = False
-        rollout_percentage: float = 100.0
-
-    class FlagEvalRequest(BaseModel):
-        flag_name: str
-        tenant_id: str | None = None
-
-    class FlagOverrideRequest(BaseModel):
-        flag_name: str
-        tenant_id: str
-        enabled: bool
-
     @router.get("/feature-flags", summary="List all feature flags",
                 description="View all defined feature flags with rollout configuration.",
                 tags=["Feature Flags"])
@@ -669,12 +679,6 @@ def build_enterprise_router() -> APIRouter:
     # ── Webhooks ──────────────────────────────────────────────────────
 
     from eoip.enterprise.webhooks import get_webhook_manager, WebhookEventType as WHEventType
-
-    class WebhookSubscribeRequest(BaseModel):
-        url: str
-        events: list[str]
-        secret: str = ""
-        max_retries: int = 3
 
     @router.get("/webhooks", summary="List webhook subscriptions",
                 description="View all registered webhook subscriptions.",

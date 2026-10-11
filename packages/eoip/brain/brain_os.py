@@ -32,6 +32,21 @@ from eoip.enterprise.cache import get_cache
 from eoip.enterprise.lifecycle import get_lifecycle_manager
 from eoip.enterprise.feature_flags import get_feature_flags
 from eoip.enterprise.webhooks import get_webhook_manager
+from eoip.notifications.hub import get_notification_hub
+from eoip.scheduling.executor import get_task_executor
+from eoip.incidents.manager import get_incident_manager
+from eoip.imports.engine import get_import_engine
+from eoip.model_management.registry import get_model_registry
+from eoip.maintenance.autonomous import get_maintenance_engine
+from eoip.streaming.event_stream import get_event_stream
+from eoip.integrations.bus import get_integration_bus
+from eoip.edge.runtime import get_edge_runtime
+from eoip.sdk.gateway import get_api_gateway
+from eoip.search.semantic import get_semantic_index
+from eoip.recovery.wal import get_wal
+from eoip.copilot.engine import get_copilot_engine
+from eoip.model_management.ai_ml_ops import get_aiml_ops
+from eoip.search.hybrid_engine import get_hybrid_search_engine
 
 
 
@@ -489,6 +504,21 @@ class BrainOSKernel:
             "lifecycle": get_lifecycle_manager().stats(),
             "feature_flags": get_feature_flags().stats(),
             "webhooks": get_webhook_manager().stats(),
+            "notifications": get_notification_hub().stats(),
+            "scheduled_tasks": get_task_executor().stats(),
+            "incidents": get_incident_manager().stats(),
+            "imports": get_import_engine().stats(),
+            "model_registry": get_model_registry().stats(),
+            "maintenance": get_maintenance_engine().stats(),
+            "event_stream": get_event_stream().stats(),
+            "integrations": get_integration_bus().stats(),
+            "edge_runtime": get_edge_runtime().stats(),
+            "api_gateway": get_api_gateway().stats(),
+            "semantic_search": get_semantic_index().stats(),
+            "wal_recovery": get_wal().stats(),
+            "copilot": get_copilot_engine().stats(),
+            "aiml_ops": get_aiml_ops().stats(),
+            "hybrid_search": get_hybrid_search_engine().stats(),
         }
 
 
