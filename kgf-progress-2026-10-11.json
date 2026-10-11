@@ -1,7 +1,7 @@
 {
   "app": "kgf-completion-board",
   "version": 1,
-  "saved": "2026-10-11T13:30:30.063Z",
+  "saved": "2026-10-11T13:51:38.472Z",
   "s": {
     "BASE-01": "done",
     "BASE-02": "done",
@@ -82,12 +82,9 @@
     "NFR-SEC-006": "done",
     "NFR-SEC-007": "done",
     "FR-CONN-001": "done",
-    "FR-CONN-002": "done",
     "FR-CONN-003": "done",
     "FR-CONN-004": "done",
     "FR-CONN-005": "done",
-    "FR-CONN-007": "done",
-    "FR-INGEST-001": "done",
     "FR-INGEST-002": "done",
     "FR-INGEST-004": "done",
     "G2-EKAF-002": "done",
@@ -131,7 +128,10 @@
     "G2-SRC-CODE-003": "done",
     "G2-SRC-CODE-004": "done",
     "G2-SRC-CODE-005": "done",
-    "REL-04": "done"
+    "REL-04": "done",
+    "FR-CONN-002": "done",
+    "FR-CONN-007": "done",
+    "FR-INGEST-001": "done"
   },
   "n": {},
   "g": {},
