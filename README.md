@@ -12,8 +12,8 @@ EOIP is a local-first enterprise knowledge graph platform that ingests from 24 s
 - GraphRAG with 7 retrieval strategies, stable evidence citations, no mandatory vector DB
 - 20 bounded read-only agents with circuit breaker and budget enforcement
 - 12 export formats: RDF, OWL, JSON-LD 1.1, Cypher, Gremlin, SPARQL, SHACL, GQL, and more
-- MCP server with 17 read-only tools for VS Code / IDE integration
-- Full test suite: 1,897 passed, 24 skipped, 0 failures (1,921 total test cases)
+- MCP server with 18 read-only tools for VS Code / IDE integration
+- Current audit evidence: `2843 passed`, `34 skipped`, `0 failures` in the Python suite; GAP/G2 coverage gates passed; the web build passed. See [Audit-GAPS-CG-dev.md](Audit-GAPS-CG-dev.md).
 
 ## Quick Start
 
@@ -62,21 +62,22 @@ symbols, documentation, merge-request metadata, and pipeline metadata.
 
 | Guide | Description |
 |-------|-------------|
-| [Architecture](eoip-engg-doc-pkg/06-architecture.md) | System overview, Docker services, data flows, storage, security |
-| [API Reference](docs/api-reference.md) | All REST endpoints with request/response examples |
-| [Connectors](docs/connectors.md) | All 24 source connectors with configuration |
-| [Agents](docs/agents.md) | Agent framework, 20 agents, tool access policy |
-| [RAG](docs/rag.md) | GraphRAG retrieval system, 7 strategies, evidence citations |
-| [Query Engine](docs/query-engine.md) | 6 query languages, QueryPlan executor, safety policy |
-| [Graph Algorithms](docs/graph-algorithms.md) | 30+ algorithms: centrality, community, paths, similarity |
-| [Ontology](docs/ontology.md) | Vocabulary, vertex/edge labels, schema generation, SKOS |
-| [Ingestion](docs/ingestion.md) | Ingestion pipeline, DLQ, checkpointing, semantic pipeline |
-| [Code Graph](docs/code-graph.md) | Code parser, symbol extraction, CommitSymbolLink, diff hunks |
-| [Multi-Backend](eoip-engg-doc-pkg/76-multi-backend.md) | HugeGraph, Neptune, Neo4j, memory backends - config and factory |
-| [File Parsing](docs/file-parsing.md) | .docx, .xlsx, .pptx, .pdf, .csv, .txt ingestion |
-| [Docker Local](docs/docker-local.md) | Full Docker runbook, backup/restore, VS Code extension |
-| [Deep Agents & XAI](docs/deep-agents-xai.md) | Agent contracts, orchestration, approval workflows |
-| [Benchmarking](docs/benchmarking.md) | Performance benchmarks |
+| [Architecture](EOIP-engg-doc-pkg/06-architecture.md) | System overview, Docker services, data flows, storage, security |
+| [API Reference](EOIP-engg-doc-pkg/reference/api-reference.md) | REST endpoints with request/response examples |
+| [Connectors](EOIP-engg-doc-pkg/reference/connectors.md) | Source connector configuration and behavior |
+| [Agents](EOIP-engg-doc-pkg/reference/agents.md) | Agent framework, runtime constraints, tool access policy |
+| [RAG](EOIP-engg-doc-pkg/reference/rag.md) | GraphRAG retrieval system, strategies, evidence citations |
+| [Query Engine](EOIP-engg-doc-pkg/reference/query-engine.md) | Query languages, QueryPlan executor, safety policy |
+| [Graph Algorithms](EOIP-engg-doc-pkg/reference/graph-algorithms.md) | Graph algorithms and metrics |
+| [Ontology](EOIP-engg-doc-pkg/reference/ontology.md) | Vocabulary, vertex/edge labels, schema generation, SKOS |
+| [Ingestion](EOIP-engg-doc-pkg/reference/ingestion.md) | Ingestion pipeline, DLQ, checkpointing, semantic pipeline |
+| [Code Graph](EOIP-engg-doc-pkg/reference/code-graph.md) | Code parser, symbol extraction, CommitSymbolLink, diff hunks |
+| [Multi-Backend](EOIP-engg-doc-pkg/76-multi-backend.md) | HugeGraph, Neptune, Neo4j, memory backends - config and factory |
+| [File Parsing](EOIP-engg-doc-pkg/reference/file-parsing.md) | .docx, .xlsx, .pptx, .pdf, .csv, .txt ingestion |
+| [Docker Local](EOIP-engg-doc-pkg/reference/docker-local.md) | Full Docker runbook, backup/restore, VS Code extension |
+| [Deep Agents & XAI](EOIP-engg-doc-pkg/reference/deep-agents-xai.md) | Agent contracts, orchestration, approval workflows |
+| [Benchmarking](EOIP-engg-doc-pkg/reference/benchmarking.md) | Performance benchmarks |
+| [Current Gap Audit](Audit-GAPS-CG-dev.md) | Current 2026-10-11 audit, stale-doc findings, and closure backlog |
 | [Audit Report](docs/audit-2026-10-06/assessed-gap-report.md) | Pass 5 — comprehensive completion audit (2026-10-06) |
 
 ## On-prem source connectors
@@ -84,7 +85,7 @@ symbols, documentation, merge-request metadata, and pipeline metadata.
 Actual local binary/text files can be converted into JSON, citation-aware RAG
 chunks, graph records, and keyword/vector artifacts using the `documents`
 connector or authenticated raw-file upload API. See
-[file parsing and ingestion](docs/file-parsing.md) for formats, local tool
+[file parsing and ingestion](EOIP-engg-doc-pkg/reference/file-parsing.md) for formats, local tool
 prerequisites, CLI/API examples, and explicit support limitations.
 
 The worker supports incremental Confluence Data Center and ServiceNow Table API
@@ -122,8 +123,8 @@ independently (default 5000, maximum 10000); inspect `export.partial`,
 before treating an export as complete. This is an export adapter: HugeGraph does
 not provide native RDF or SPARQL support.
 
-See [the Docker runbook](docs/docker-local.md) for Full instructions and current scope, services, tests,
+See [the Docker runbook](EOIP-engg-doc-pkg/reference/docker-local.md) for Full instructions and current scope, services, tests,
 backup/restore, the VS Code extension, optional profiles, and implementation limits.
 
-See the [Deep Agents and XAI guide](docs/deep-agents-xai.md) for governed agent contracts,
+See the [Deep Agents and XAI guide](EOIP-engg-doc-pkg/reference/deep-agents-xai.md) for governed agent contracts,
 bounded orchestration, evidence-linked explanations, and approval-only change proposals.

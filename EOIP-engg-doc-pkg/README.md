@@ -3,6 +3,8 @@
 **Baseline:** 0.1.0-architecture-baseline  
 **Generated:** 2026-10-01
 
+**Current audit overlay:** [../Audit-GAPS-CG-dev.md](../Audit-GAPS-CG-dev.md) is the active 2026-10-11 documentation/code gap backlog. This package is still the engineering baseline, but current implementation status is governed by the audit overlay.
+
 This package converts the governing master prompt into an implementation-ready, local-first architecture and phased engineering plan. It preserves the prompt's mandatory output set and adds an audit, research/verification basis, traceability matrix, architecture diagram catalog, versioned data contracts, machine-readable schemas and domain implementation plans.
 
 ## Start here

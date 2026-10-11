@@ -47,6 +47,18 @@ from eoip.recovery.wal import get_wal
 from eoip.copilot.engine import get_copilot_engine
 from eoip.model_management.ai_ml_ops import get_aiml_ops
 from eoip.search.hybrid_engine import get_hybrid_search_engine
+from eoip.features.engine import get_feature_engine
+from eoip.specs.engine import get_spec_engine
+from eoip.prompts.engine import get_prompt_engine
+from eoip.cost_optimization.engine import get_cost_engine
+from eoip.security.engine import get_security_engine
+from eoip.state.engine import get_state_engine
+from eoip.harness.engine import get_harness_engine
+from eoip.context.engine import get_context_engine
+from eoip.tools_contract.engine import get_tool_contract_engine
+from eoip.graph_loop.engine import get_graph_loop_engine
+from eoip.evaluation.engine import get_evaluation_engine
+from eoip.memory_eng.engine import get_memory_engine
 
 
 
@@ -519,6 +531,18 @@ class BrainOSKernel:
             "copilot": get_copilot_engine().stats(),
             "aiml_ops": get_aiml_ops().stats(),
             "hybrid_search": get_hybrid_search_engine().stats(),
+            "feature_engineering": get_feature_engine().stats(),
+            "spec_engineering": get_spec_engine().stats(),
+            "prompt_engineering": get_prompt_engine().stats(),
+            "cost_optimization": get_cost_engine().stats(),
+            "security_red_team": get_security_engine().stats(),
+            "state_persistence": get_state_engine().stats(),
+            "harness_engineering": get_harness_engine().stats(),
+            "context_engineering": get_context_engine().stats(),
+            "tool_contract_mcp": get_tool_contract_engine().stats(),
+            "graph_loop_engineering": get_graph_loop_engine().stats(),
+            "evaluation_benchmarking": get_evaluation_engine().stats(),
+            "memory_engineering": get_memory_engine().stats(),
         }
 
 

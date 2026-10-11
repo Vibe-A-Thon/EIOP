@@ -3,10 +3,12 @@
 **Project:** Enterprise Ontology & Intelligence Platform (EOIP)  
 **Baseline:** 0.1.0-architecture-baseline  
 **Date:** 2026-10-01  
-**Status:** Architecture baseline / engineering handoff  
+**Status:** Architecture baseline / engineering handoff; see current audit overlay
 **Purpose:** Inventory of generated engineering artifacts
 
 > This document is normative for its scope. Where it conflicts with the master specification, the master non-negotiable constraints win. “MVP” means the Phase 1 integrated vertical slice, not a mock-up.
+
+**Current audit overlay:** [../Audit-GAPS-CG-dev.md](../Audit-GAPS-CG-dev.md) is the active 2026-10-11 implementation/documentation gap backlog. Historical files in this package remain useful evidence, but current closure work should start from that audit.
 
 ## Normative documents
 

@@ -212,6 +212,79 @@ class HybridSearchUserContextRequest(BaseModel):
     expertise_domains: list[str] = Field(default_factory=list)
 
 
+class PromptRegisterRequest(BaseModel):
+    name: str = Field(min_length=1)
+    template: str = Field(min_length=1)
+    description: str = Field(default="")
+    author: str = Field(default="")
+    tags: list[str] = Field(default_factory=list)
+
+
+class PromptRenderRequest(BaseModel):
+    name: str = Field(min_length=1)
+    variables: dict[str, str] = Field(default_factory=dict)
+
+
+class SecurityScanRequest(BaseModel):
+    text: str = Field(min_length=1)
+
+
+class CostRecordRequest(BaseModel):
+    operation: str = Field(min_length=1)
+    model: str = Field(min_length=1)
+    tokens_in: int = Field(ge=0)
+    tokens_out: int = Field(ge=0)
+    cost_usd: float = Field(ge=0)
+    latency_ms: float = Field(ge=0)
+
+
+class ContextItemRequest(BaseModel):
+    item_id: str = Field(min_length=1)
+    content: str = Field(min_length=1)
+    priority: str = Field(default="MEDIUM")
+    source: str = Field(default="")
+
+
+class MemoryStoreRequest(BaseModel):
+    content: str = Field(min_length=1)
+    tier: str = Field(default="working")
+    tags: list[str] = Field(default_factory=list)
+    ttl_seconds: float | None = None
+
+
+class MemoryRecallRequest(BaseModel):
+    query: str = Field(min_length=1)
+    tier: str | None = None
+    limit: int = Field(default=10, ge=1, le=100)
+
+
+class FeatureExtractRequest(BaseModel):
+    entity_id: str = Field(min_length=1)
+    properties: dict[str, Any] = Field(default_factory=dict)
+    neighbors: list[str] = Field(default_factory=list)
+
+
+class SpecDefineRequest(BaseModel):
+    name: str = Field(min_length=1)
+    fields: dict[str, dict[str, Any]] = Field(default_factory=dict)
+    description: str = Field(default="")
+
+
+class EvalRunRequest(BaseModel):
+    prompt_name: str = Field(min_length=1)
+    rendered_text: str = Field(min_length=1)
+    reference: str = Field(default="")
+
+
+class ToolRegisterRequest(BaseModel):
+    name: str = Field(min_length=1)
+    description: str = Field(min_length=1)
+    schema: dict[str, Any] = Field(default_factory=dict)
+    version: str = Field(default="1.0.0")
+    category: str = Field(default="")
+    tags: list[str] = Field(default_factory=list)
+
+
 def build_platform_router() -> APIRouter:
     """Build the unified platform features router."""
     router = APIRouter(prefix="/api/v1/platform", tags=["Platform"])
@@ -1001,5 +1074,227 @@ def build_platform_router() -> APIRouter:
     def hybrid_search_stats() -> dict[str, Any]:
         from eoip.search.hybrid_engine import get_hybrid_search_engine
         return get_hybrid_search_engine().stats()
+
+    # ── Prompt Engineering ───────────────────────────────────────────
+
+    @router.post("/prompts/register", summary="Register prompt template",
+                 tags=["Prompt Engineering"])
+    def register_prompt(req: PromptRegisterRequest) -> dict[str, Any]:
+        from eoip.prompts.engine import get_prompt_engine
+        pv = get_prompt_engine().register(
+            req.name, req.template, description=req.description,
+            author=req.author, tags=req.tags,
+        )
+        return {"name": pv.name, "version": pv.version, "fingerprint": pv.fingerprint}
+
+    @router.post("/prompts/render", summary="Render prompt with variables",
+                 tags=["Prompt Engineering"])
+    def render_prompt(req: PromptRenderRequest) -> dict[str, Any]:
+        from eoip.prompts.engine import get_prompt_engine
+        result = get_prompt_engine().render(req.name, **req.variables)
+        if result is None:
+            raise HTTPException(404, f"Prompt '{req.name}' not found")
+        return {"rendered": result}
+
+    @router.get("/prompts/list", summary="List registered prompts",
+                tags=["Prompt Engineering"])
+    def list_prompts() -> dict[str, Any]:
+        from eoip.prompts.engine import get_prompt_engine
+        return {"prompts": get_prompt_engine().registry.list_prompts()}
+
+    @router.get("/prompts/stats", summary="Prompt engineering stats",
+                tags=["Prompt Engineering"])
+    def prompt_stats() -> dict[str, Any]:
+        from eoip.prompts.engine import get_prompt_engine
+        return get_prompt_engine().stats()
+
+    # ── Feature Engineering ──────────────────────────────────────────
+
+    @router.post("/features/extract", summary="Extract features for entity",
+                 tags=["Feature Engineering"])
+    def extract_features(req: FeatureExtractRequest) -> dict[str, Any]:
+        from eoip.features.engine import get_feature_engine
+        result = get_feature_engine().extract(
+            req.entity_id, req.properties, req.neighbors,
+        )
+        return {"entity_id": req.entity_id, "features": result}
+
+    @router.get("/features/stats", summary="Feature engineering stats",
+                tags=["Feature Engineering"])
+    def feature_stats() -> dict[str, Any]:
+        from eoip.features.engine import get_feature_engine
+        return get_feature_engine().stats()
+
+    # ── Spec Engineering ─────────────────────────────────────────────
+
+    @router.post("/specs/define", summary="Define entity specification",
+                 tags=["Spec Engineering"])
+    def define_spec(req: SpecDefineRequest) -> dict[str, Any]:
+        from eoip.specs.engine import get_spec_engine
+        spec = get_spec_engine().define_entity(req.name, req.fields,
+                                                description=req.description)
+        return {"name": spec.name, "fields": len(spec.fields),
+                "fingerprint": spec.fingerprint()}
+
+    @router.get("/specs/stats", summary="Spec engineering stats",
+                tags=["Spec Engineering"])
+    def spec_stats() -> dict[str, Any]:
+        from eoip.specs.engine import get_spec_engine
+        return get_spec_engine().stats()
+
+    # ── Security & Red-Teaming ───────────────────────────────────────
+
+    @router.post("/security/scan", summary="Scan input for threats",
+                 tags=["Security"])
+    def security_scan(req: SecurityScanRequest) -> dict[str, Any]:
+        from eoip.security.engine import get_security_engine
+        report = get_security_engine().scan(req.text)
+        return {
+            "threat_level": report.threat_level.value,
+            "detections": report.detections,
+            "sanitized": report.sanitized_text,
+        }
+
+    @router.post("/security/red-team", summary="Run red-team probe suite",
+                 tags=["Security"])
+    def run_red_team() -> dict[str, Any]:
+        from eoip.security.engine import get_security_engine
+        results = get_security_engine().run_red_team()
+        return {
+            "results": [{"probe_id": r.probe_id, "passed": r.passed,
+                          "blocked": r.blocked} for r in results],
+            "pass_rate": sum(1 for r in results if r.passed) / max(len(results), 1),
+        }
+
+    @router.get("/security/stats", summary="Security engine stats",
+                tags=["Security"])
+    def security_stats() -> dict[str, Any]:
+        from eoip.security.engine import get_security_engine
+        return get_security_engine().stats()
+
+    # ── Cost & Latency Optimization ──────────────────────────────────
+
+    @router.post("/cost/record", summary="Record cost event",
+                 tags=["Cost Optimization"])
+    def record_cost(req: CostRecordRequest) -> dict[str, Any]:
+        from eoip.cost_optimization.engine import get_cost_engine
+        alerts = get_cost_engine().record_operation(
+            req.operation, req.model, req.tokens_in, req.tokens_out,
+            req.cost_usd, req.latency_ms,
+        )
+        return {"recorded": True, "alerts": [a.message for a in alerts]}
+
+    @router.get("/cost/recommendations", summary="Get optimization recommendations",
+                tags=["Cost Optimization"])
+    def cost_recommendations() -> dict[str, Any]:
+        from eoip.cost_optimization.engine import get_cost_engine
+        recs = get_cost_engine().get_recommendations()
+        return {"recommendations": [
+            {"category": r.category, "description": r.description,
+             "savings_pct": r.estimated_savings_pct} for r in recs
+        ]}
+
+    @router.get("/cost/stats", summary="Cost optimization stats",
+                tags=["Cost Optimization"])
+    def cost_stats() -> dict[str, Any]:
+        from eoip.cost_optimization.engine import get_cost_engine
+        return get_cost_engine().stats()
+
+    # ── Context Engineering ──────────────────────────────────────────
+
+    @router.get("/context/stats", summary="Context engineering stats",
+                tags=["Context Engineering"])
+    def context_stats() -> dict[str, Any]:
+        from eoip.context.engine import get_context_engine
+        return get_context_engine().stats()
+
+    # ── State & Persistence ──────────────────────────────────────────
+
+    @router.get("/state/stats", summary="State & persistence stats",
+                tags=["State & Persistence"])
+    def state_stats() -> dict[str, Any]:
+        from eoip.state.engine import get_state_engine
+        return get_state_engine().stats()
+
+    # ── Harness Engineering ──────────────────────────────────────────
+
+    @router.get("/harness/stats", summary="Harness engineering stats",
+                tags=["Harness Engineering"])
+    def harness_stats() -> dict[str, Any]:
+        from eoip.harness.engine import get_harness_engine
+        return get_harness_engine().stats()
+
+    # ── Tool & API Contract / MCP ────────────────────────────────────
+
+    @router.post("/tools/register", summary="Register tool with schema",
+                 tags=["Tool Contract"])
+    def register_tool(req: ToolRegisterRequest) -> dict[str, Any]:
+        from eoip.tools_contract.engine import get_tool_contract_engine
+        get_tool_contract_engine().register_tool(
+            req.name, req.description, req.schema,
+            version=req.version, category=req.category, tags=req.tags,
+        )
+        return {"registered": True, "name": req.name}
+
+    @router.get("/tools/stats", summary="Tool contract stats",
+                tags=["Tool Contract"])
+    def tool_contract_stats() -> dict[str, Any]:
+        from eoip.tools_contract.engine import get_tool_contract_engine
+        return get_tool_contract_engine().stats()
+
+    # ── Graph-over-Loop & Loop-over-Graph ────────────────────────────
+
+    @router.get("/graph-loop/stats", summary="Graph-loop engineering stats",
+                tags=["Graph Loop"])
+    def graph_loop_stats() -> dict[str, Any]:
+        from eoip.graph_loop.engine import get_graph_loop_engine
+        return get_graph_loop_engine().stats()
+
+    # ── Evaluation & Benchmarking ────────────────────────────────────
+
+    @router.post("/eval/run", summary="Evaluate prompt quality",
+                 tags=["Evaluation"])
+    def run_eval(req: EvalRunRequest) -> dict[str, Any]:
+        from eoip.prompts.engine import get_prompt_engine
+        result = get_prompt_engine().evaluate(
+            req.prompt_name, req.rendered_text, req.reference,
+        )
+        return {"scores": result.scores, "overall": result.overall}
+
+    @router.get("/eval/stats", summary="Evaluation & benchmarking stats",
+                tags=["Evaluation"])
+    def eval_stats() -> dict[str, Any]:
+        from eoip.evaluation.engine import get_evaluation_engine
+        return get_evaluation_engine().stats()
+
+    # ── Memory Engineering ───────────────────────────────────────────
+
+    @router.post("/memory/store", summary="Store a memory entry",
+                 tags=["Memory Engineering"])
+    def store_memory(req: MemoryStoreRequest) -> dict[str, Any]:
+        from eoip.memory_eng.engine import get_memory_engine, MemoryTier
+        tier = MemoryTier(req.tier) if req.tier else MemoryTier.WORKING
+        entry = get_memory_engine().remember(
+            req.content, tier=tier, tags=req.tags, ttl=req.ttl_seconds,
+        )
+        return {"entry_id": entry.entry_id, "tier": entry.tier.value}
+
+    @router.post("/memory/recall", summary="Recall memories by query",
+                 tags=["Memory Engineering"])
+    def recall_memory(req: MemoryRecallRequest) -> dict[str, Any]:
+        from eoip.memory_eng.engine import get_memory_engine, MemoryTier
+        tier = MemoryTier(req.tier) if req.tier else None
+        entries = get_memory_engine().recall(req.query, tier=tier, limit=req.limit)
+        return {"entries": [
+            {"entry_id": e.entry_id, "content": e.content,
+             "tier": e.tier.value, "relevance": e.relevance}
+            for e in entries
+        ]}
+
+    @router.get("/memory/stats", summary="Memory engineering stats",
+                tags=["Memory Engineering"])
+    def memory_stats() -> dict[str, Any]:
+        from eoip.memory_eng.engine import get_memory_engine
+        return get_memory_engine().stats()
 
     return router
