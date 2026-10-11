@@ -378,8 +378,8 @@ class PromptEngineeringEngine:
     def register(self, name: str, template: str, **kwargs: Any) -> PromptVersion:
         return self._registry.register(name, template, **kwargs)
 
-    def render(self, name: str, **kwargs: Any) -> str | None:
-        pv = self._registry.get_active(name)
+    def render(self, prompt_name: str, **kwargs: Any) -> str | None:
+        pv = self._registry.get_active(prompt_name)
         return pv.render(**kwargs) if pv else None
 
     def create_experiment(self, prompt_name: str,
