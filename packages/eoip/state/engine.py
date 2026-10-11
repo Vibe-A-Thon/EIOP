@@ -1,4 +1,4 @@
-"""State and persistence engineering engine."""
+"""State and persistence engineering engine with event-sourcing and time-travel."""
 
 from __future__ import annotations
 
@@ -19,6 +19,15 @@ class StateEvent:
     payload: dict[str, Any]
     timestamp: float = field(default_factory=time.time)
 
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "event_id": self.event_id,
+            "stream": self.stream,
+            "operation": self.operation,
+            "payload": self.payload,
+            "timestamp": self.timestamp,
+        }
+
 
 @dataclass
 class StateSnapshot:
@@ -29,9 +38,19 @@ class StateSnapshot:
     checksum: str
     created_at: float = field(default_factory=time.time)
 
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "snapshot_id": self.snapshot_id,
+            "stream": self.stream,
+            "state": self.state,
+            "version": self.version,
+            "checksum": self.checksum,
+            "created_at": self.created_at,
+        }
+
 
 class StateEngine:
-    """Small event/snapshot facade used by platform engineering routes."""
+    """Event-sourcing, snapshotting, and time-travel persistence engine."""
 
     def __init__(self) -> None:
         self._lock = threading.Lock()
@@ -75,6 +94,57 @@ class StateEngine:
             self._state[snapshot.stream] = copy.deepcopy(snapshot.state)
             return True
 
+    def get_stream_state(self, stream: str) -> dict[str, Any]:
+        with self._lock:
+            return copy.deepcopy(self._state.get(stream, {}))
+
+    def get_stream_events(self, stream: str, limit: int = 50) -> list[StateEvent]:
+        with self._lock:
+            stream_events = [e for e in self._events if e.stream == stream]
+            return stream_events[-limit:]
+
+    def list_snapshots(self, stream: str | None = None) -> list[StateSnapshot]:
+        with self._lock:
+            if stream:
+                return [s for s in self._snapshots.values() if s.stream == stream]
+            return list(self._snapshots.values())
+
+    def time_travel_state(self, stream: str, target_timestamp: float) -> dict[str, Any]:
+        """Reconstruct state of stream by playing events up to target_timestamp."""
+        with self._lock:
+            target_events = [e for e in self._events if e.stream == stream and e.timestamp <= target_timestamp]
+        
+        reconstructed: dict[str, Any] = {}
+        for ev in target_events:
+            if ev.operation == "delete":
+                for key in ev.payload:
+                    reconstructed.pop(key, None)
+            else:
+                reconstructed.update(ev.payload)
+        return reconstructed
+
+    def diff_snapshots(self, snapshot_id_a: str, snapshot_id_b: str) -> dict[str, Any]:
+        """Compute delta between two snapshots."""
+        with self._lock:
+            snap_a = self._snapshots.get(snapshot_id_a)
+            snap_b = self._snapshots.get(snapshot_id_b)
+        if not snap_a or not snap_b:
+            raise ValueError("Both snapshots must exist to compute diff.")
+        
+        state_a = snap_a.state
+        state_b = snap_b.state
+        added = {k: state_b[k] for k in state_b if k not in state_a}
+        removed = {k: state_a[k] for k in state_a if k not in state_b}
+        modified = {k: {"before": state_a[k], "after": state_b[k]} for k in state_a if k in state_b and state_a[k] != state_b[k]}
+        
+        return {
+            "snapshot_a": snapshot_id_a,
+            "snapshot_b": snapshot_id_b,
+            "added": added,
+            "removed": removed,
+            "modified": modified,
+        }
+
     def stats(self) -> dict[str, Any]:
         with self._lock:
             return {
@@ -96,3 +166,4 @@ def get_state_engine() -> StateEngine:
             if _instance is None:
                 _instance = StateEngine()
     return _instance
+

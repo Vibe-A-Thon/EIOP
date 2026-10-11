@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # ── Pydantic request models (module-level for OpenAPI schema resolution) ──
@@ -277,12 +277,78 @@ class EvalRunRequest(BaseModel):
 
 
 class ToolRegisterRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=(), populate_by_name=True)
+
     name: str = Field(min_length=1)
     description: str = Field(min_length=1)
-    schema: dict[str, Any] = Field(default_factory=dict)
+    tool_schema: dict[str, Any] = Field(default_factory=dict, alias="schema")
     version: str = Field(default="1.0.0")
     category: str = Field(default="")
     tags: list[str] = Field(default_factory=list)
+
+    @property
+    def schema(self) -> dict[str, Any]:
+        return self.tool_schema
+
+    @property
+    def schema_def(self) -> dict[str, Any]:
+        return self.tool_schema
+
+
+
+class HarnessRunRequest(BaseModel):
+    pipeline: str = Field(default="default")
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
+class ContextBuildRequest(BaseModel):
+    query: str = Field(min_length=1)
+    token_budget: int = Field(default=4096, ge=128)
+    deduplicate: bool = Field(default=True)
+
+
+class ContextItemAddRequest(BaseModel):
+    item_id: str = Field(min_length=1)
+    content: str = Field(min_length=1)
+    priority: str = Field(default="MEDIUM")
+    source: str = Field(default="")
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class StateRecordRequest(BaseModel):
+    stream: str = Field(min_length=1)
+    operation: str = Field(default="upsert")
+    payload: dict[str, Any] = Field(default_factory=dict)
+
+
+class StateSnapshotRequest(BaseModel):
+    stream: str = Field(min_length=1)
+
+
+class StateRestoreRequest(BaseModel):
+    snapshot_id: str = Field(min_length=1)
+
+
+class GraphLoopExecuteRequest(BaseModel):
+    mode: str = Field(default="graph_over_loop")
+    query: str = Field(default="Execute topological loop traversal")
+    seed_ids: list[str] | None = None
+    max_iterations: int = Field(default=5, ge=1, le=50)
+    convergence_threshold: float = Field(default=0.01, ge=0.0001)
+
+
+class GraphLoopPlanRequest(BaseModel):
+    mode: str = Field(default="graph_over_loop")
+    seed_ids: list[str] | None = None
+
+
+class ToolValidateCallRequest(BaseModel):
+    tool_name: str = Field(min_length=1)
+    arguments: dict[str, Any] = Field(default_factory=dict)
+
+
+class BenchmarkRunRequest(BaseModel):
+    benchmark_name: str | None = None
 
 
 def build_platform_router() -> APIRouter:
@@ -1202,24 +1268,105 @@ def build_platform_router() -> APIRouter:
 
     # ── Context Engineering ──────────────────────────────────────────
 
+    @router.post("/context/build", summary="Build ranked & deduplicated context window",
+                 tags=["Context Engineering"])
+    def build_context_window(req: ContextBuildRequest) -> dict[str, Any]:
+        from eoip.context.engine import get_context_engine
+        win = get_context_engine().build_window(
+            query=req.query,
+            token_budget=req.token_budget,
+            deduplicate=req.deduplicate,
+        )
+        return win.to_dict()
+
+    @router.post("/context/item", summary="Add item to context candidates",
+                 tags=["Context Engineering"])
+    def add_context_item(req: ContextItemAddRequest) -> dict[str, Any]:
+        from eoip.context.engine import ContextItem, get_context_engine
+        item = ContextItem(
+            item_id=req.item_id,
+            content=req.content,
+            priority=req.priority,
+            source=req.source,
+            metadata=req.metadata,
+        )
+        get_context_engine().add_item(item)
+        return {"added": True, "item_id": item.item_id, "tokens": item.tokens}
+
+    @router.get("/context/items", summary="List registered context items",
+                 tags=["Context Engineering"])
+    def list_context_items() -> dict[str, Any]:
+        from eoip.context.engine import get_context_engine
+        items = get_context_engine().list_items()
+        return {"items": [i.to_dict() for i in items], "total": len(items)}
+
     @router.get("/context/stats", summary="Context engineering stats",
-                tags=["Context Engineering"])
+                 tags=["Context Engineering"])
     def context_stats() -> dict[str, Any]:
         from eoip.context.engine import get_context_engine
         return get_context_engine().stats()
 
     # ── State & Persistence ──────────────────────────────────────────
 
+    @router.post("/state/record", summary="Record event-sourcing state event",
+                 tags=["State & Persistence"])
+    def record_state_event(req: StateRecordRequest) -> dict[str, Any]:
+        from eoip.state.engine import get_state_engine
+        ev = get_state_engine().record(req.stream, req.operation, req.payload)
+        return ev.to_dict()
+
+    @router.post("/state/snapshot", summary="Create durable snapshot of stream state",
+                 tags=["State & Persistence"])
+    def snapshot_state_stream(req: StateSnapshotRequest) -> dict[str, Any]:
+        from eoip.state.engine import get_state_engine
+        snap = get_state_engine().snapshot(req.stream)
+        return snap.to_dict()
+
+    @router.post("/state/restore", summary="Restore stream state from snapshot",
+                 tags=["State & Persistence"])
+    def restore_state_snapshot(req: StateRestoreRequest) -> dict[str, Any]:
+        from eoip.state.engine import get_state_engine
+        success = get_state_engine().restore(req.snapshot_id)
+        if not success:
+            raise HTTPException(404, f"Snapshot '{req.snapshot_id}' not found")
+        return {"restored": True, "snapshot_id": req.snapshot_id}
+
+    @router.get("/state/stream/{stream}", summary="Get current materialized stream state",
+                 tags=["State & Persistence"])
+    def get_stream_state(stream: str) -> dict[str, Any]:
+        from eoip.state.engine import get_state_engine
+        return {"stream": stream, "state": get_state_engine().get_stream_state(stream)}
+
+    @router.get("/state/snapshots", summary="List saved state snapshots",
+                 tags=["State & Persistence"])
+    def list_snapshots(stream: str | None = None) -> dict[str, Any]:
+        from eoip.state.engine import get_state_engine
+        snaps = get_state_engine().list_snapshots(stream)
+        return {"snapshots": [s.to_dict() for s in snaps], "total": len(snaps)}
+
     @router.get("/state/stats", summary="State & persistence stats",
-                tags=["State & Persistence"])
+                 tags=["State & Persistence"])
     def state_stats() -> dict[str, Any]:
         from eoip.state.engine import get_state_engine
         return get_state_engine().stats()
 
     # ── Harness Engineering ──────────────────────────────────────────
 
+    @router.post("/harness/run", summary="Execute named pipeline or DAG",
+                 tags=["Harness Engineering"])
+    def run_harness_pipeline(req: HarnessRunRequest) -> dict[str, Any]:
+        from eoip.harness.engine import get_harness_engine
+        run = get_harness_engine().run(req.pipeline, req.context)
+        return run.to_dict()
+
+    @router.get("/harness/pipelines", summary="List registered harness pipelines",
+                 tags=["Harness Engineering"])
+    def list_harness_pipelines() -> dict[str, Any]:
+        from eoip.harness.engine import get_harness_engine
+        return {"pipelines": get_harness_engine().list_pipelines()}
+
     @router.get("/harness/stats", summary="Harness engineering stats",
-                tags=["Harness Engineering"])
+                 tags=["Harness Engineering"])
     def harness_stats() -> dict[str, Any]:
         from eoip.harness.engine import get_harness_engine
         return get_harness_engine().stats()
@@ -1230,22 +1377,60 @@ def build_platform_router() -> APIRouter:
                  tags=["Tool Contract"])
     def register_tool(req: ToolRegisterRequest) -> dict[str, Any]:
         from eoip.tools_contract.engine import get_tool_contract_engine
-        get_tool_contract_engine().register_tool(
-            req.name, req.description, req.schema,
+        contract = get_tool_contract_engine().register_tool(
+            req.name, req.description, req.schema_def,
             version=req.version, category=req.category, tags=req.tags,
         )
-        return {"registered": True, "name": req.name}
+        return {"registered": True, "name": req.name, "fingerprint": contract.fingerprint}
+
+    @router.get("/tools/mcp/manifest", summary="Export Model Context Protocol (MCP) server manifest",
+                 tags=["Tool Contract"])
+    def export_mcp_manifest() -> dict[str, Any]:
+        from eoip.tools_contract.engine import get_tool_contract_engine
+        return get_tool_contract_engine().export_mcp_manifest()
+
+    @router.post("/tools/validate-call", summary="Validate runtime parameters against tool schema",
+                 tags=["Tool Contract"])
+    def validate_tool_call(req: ToolValidateCallRequest) -> dict[str, Any]:
+        from eoip.tools_contract.engine import get_tool_contract_engine
+        res = get_tool_contract_engine().validate_call(req.tool_name, req.arguments)
+        return {"valid": res.valid, "errors": res.errors}
+
+    @router.get("/tools/list", summary="List registered tool contracts",
+                 tags=["Tool Contract"])
+    def list_tools() -> dict[str, Any]:
+        from eoip.tools_contract.engine import get_tool_contract_engine
+        tools = get_tool_contract_engine().list_tools()
+        return {"tools": [t.to_dict() for t in tools], "total": len(tools)}
 
     @router.get("/tools/stats", summary="Tool contract stats",
-                tags=["Tool Contract"])
+                 tags=["Tool Contract"])
     def tool_contract_stats() -> dict[str, Any]:
         from eoip.tools_contract.engine import get_tool_contract_engine
         return get_tool_contract_engine().stats()
 
     # ── Graph-over-Loop & Loop-over-Graph ────────────────────────────
 
+    @router.post("/graph-loop/execute", summary="Execute Graph-over-Loop or Loop-over-Graph algorithm",
+                 tags=["Graph Loop"])
+    def execute_graph_loop(req: GraphLoopExecuteRequest) -> dict[str, Any]:
+        from eoip.graph_loop.engine import get_graph_loop_engine
+        return get_graph_loop_engine().execute(
+            mode=req.mode,
+            query=req.query,
+            seed_ids=req.seed_ids,
+            max_iterations=req.max_iterations,
+            convergence_threshold=req.convergence_threshold,
+        )
+
+    @router.post("/graph-loop/plan", summary="Generate graph-loop execution plan",
+                 tags=["Graph Loop"])
+    def plan_graph_loop(req: GraphLoopPlanRequest) -> dict[str, Any]:
+        from eoip.graph_loop.engine import get_graph_loop_engine
+        return get_graph_loop_engine().plan(req.mode, req.seed_ids)
+
     @router.get("/graph-loop/stats", summary="Graph-loop engineering stats",
-                tags=["Graph Loop"])
+                 tags=["Graph Loop"])
     def graph_loop_stats() -> dict[str, Any]:
         from eoip.graph_loop.engine import get_graph_loop_engine
         return get_graph_loop_engine().stats()
@@ -1261,13 +1446,19 @@ def build_platform_router() -> APIRouter:
         )
         return {"scores": result.scores, "overall": result.overall}
 
+    @router.post("/eval/suite/run", summary="Run benchmark suite with regression detection",
+                 tags=["Evaluation"])
+    def run_eval_suite(req: BenchmarkRunRequest) -> dict[str, Any]:
+        from eoip.evaluation.engine import get_evaluation_engine
+        return get_evaluation_engine().run_standard_suite(req.benchmark_name)
+
     @router.get("/eval/stats", summary="Evaluation & benchmarking stats",
-                tags=["Evaluation"])
+                 tags=["Evaluation"])
     def eval_stats() -> dict[str, Any]:
         from eoip.evaluation.engine import get_evaluation_engine
         return get_evaluation_engine().stats()
 
-    # ── Memory Engineering ───────────────────────────────────────────
+    # ── Memory Engineering ───────────────────────────────────────
 
     @router.post("/memory/store", summary="Store a memory entry",
                  tags=["Memory Engineering"])
@@ -1292,7 +1483,7 @@ def build_platform_router() -> APIRouter:
         ]}
 
     @router.get("/memory/stats", summary="Memory engineering stats",
-                tags=["Memory Engineering"])
+                 tags=["Memory Engineering"])
     def memory_stats() -> dict[str, Any]:
         from eoip.memory_eng.engine import get_memory_engine
         return get_memory_engine().stats()
