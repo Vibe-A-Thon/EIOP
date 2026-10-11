@@ -800,11 +800,12 @@ class EnterpriseRAGSuite:
     def _structured_data_rag(self, query: str, ctx: dict[str, Any]) -> RAGResult:
         """Retrieves structured tabular or SQL records alongside unstructured context."""
         chunks = self._retrieve_from_corpus(query, top_k=3)
+        table_score = round(chunks[0].score, 3) if chunks else 0.5
         tabular_chunk = EvidenceChunk(
             chunk_id=f"table_rec_{uuid.uuid4().hex[:6]}",
             content=f"[SQL Record] {{'entity_id': 'ENT-101', 'status': 'ACTIVE', 'cost': 120.5}}",
             source_type="structured_table",
-            score=0.96,
+            score=table_score,
         )
         all_ev = [tabular_chunk] + chunks
         return RAGResult(

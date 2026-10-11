@@ -122,9 +122,9 @@ class CognitiveNarrator:
     and delivers authoritative LLM-style narration for any inquiry.
     """
 
-    def __init__(self, graph_store: Any = None) -> None:
+    def __init__(self, graph_store: Any = None, store: Any = None) -> None:
         self.llm = get_self_llm_engine()
-        self.graph_intelligence = GraphIntelligenceEngine(graph_store=graph_store)
+        self.graph_intelligence = GraphIntelligenceEngine(graph_store=graph_store or store)
 
     # ------------------------------------------------------------------------
     # 1. Understanding & Question Enhancement
@@ -380,7 +380,8 @@ class CognitiveNarrator:
         )
 
         latency_ms = (time.perf_counter() - start_time) * 1000.0
-        confidence = sum(cq.confidence for cq in enhanced.complementary_questions) / len(enhanced.complementary_questions)
+        approach_confidence = sum(cq.confidence for cq in enhanced.complementary_questions) / len(enhanced.complementary_questions)
+        confidence = self._compute_narration_confidence(llm_gen, approach_confidence)
 
         return CognitiveNarration(
             narration_id=narration_id,
@@ -400,8 +401,72 @@ class CognitiveNarrator:
                 "model_name": llm_gen.model_name,
                 "reasoning_steps": len(llm_gen.reasoning_trace),
                 "token_attributions": len(llm_gen.xai.token_attributions) if llm_gen.xai else 0,
+                "approach_evidence_confidence": round(approach_confidence, 4),
             },
         )
+
+    def _compute_narration_confidence(self, llm_gen: GenerationResult, approach_confidence: float) -> float:
+        """Estimate narrative synthesis confidence separately from graph evidence coverage."""
+        if not llm_gen.xai:
+            return max(0.0, min(1.0, approach_confidence))
+        if llm_gen.xai.honest_abstain:
+            return max(0.0, min(approach_confidence, 1.0 - llm_gen.xai.epistemic_uncertainty))
+
+        uncertainty = llm_gen.xai.epistemic_uncertainty + llm_gen.xai.aleatoric_uncertainty
+        coverage = llm_gen.xai.conformal_coverage_pct / 100.0
+        synthesis_confidence = max(0.0, min(1.0, (1.0 - uncertainty) * coverage))
+        return round(max(approach_confidence, synthesis_confidence), 4)
+
+    def synthesize_narrative_answer(
+        self,
+        question: str,
+        target_canonical_ids: list[str] | None = None,
+    ) -> dict[str, Any]:
+        """Return a dispatcher-friendly grounded narration envelope."""
+        store = self.graph_intelligence.store
+        vertices: list[dict[str, Any]] = []
+        edges: list[dict[str, Any]] = []
+        seen_vids: set[str] = set()
+        seen_edge_keys: set[str] = set()
+
+        if store is not None:
+            for canonical_id in target_canonical_ids or []:
+                vertex = store.get_vertex_by_canonical_id(canonical_id)
+                if not vertex:
+                    continue
+                vid = vertex.get("vid", "")
+                if vid and vid not in seen_vids:
+                    seen_vids.add(vid)
+                    vertices.append(vertex)
+                for edge in list(store.edges_from(vid)) + list(store.edges_to(vid)):
+                    edge_key = edge.get("eid") or f"{edge.get('out')}:{edge.get('label')}:{edge.get('in')}"
+                    if edge_key not in seen_edge_keys:
+                        seen_edge_keys.add(edge_key)
+                        edges.append(edge)
+
+        narration = self.narrate(
+            query=question,
+            context={
+                "target_canonical_ids": target_canonical_ids or [],
+                "evidence_vertices": len(vertices),
+                "evidence_edges": len(edges),
+            },
+        )
+
+        return {
+            "executive_summary": narration.primary_synthesis,
+            "enhanced_formulation": narration.enhanced_query.enhanced_formulation,
+            "deterministic_evidence": {
+                "vertices": vertices,
+                "edges": edges,
+            },
+            "multi_approach_narration": narration.approach_narratives,
+            "comparative_matrix": narration.comparative_matrix,
+            "strategic_playbook": narration.strategic_playbook,
+            "suggested_followups": narration.suggested_followups,
+            "confidence_score": narration.confidence_score,
+            "narration_id": narration.narration_id,
+        }
 
     def _build_prologue(self, enhanced: EnhancedQuery, tier: CognitiveTier) -> str:
         domain_title = enhanced.detected_domain.value.replace("_", " ").title()

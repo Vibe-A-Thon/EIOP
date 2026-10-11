@@ -168,7 +168,10 @@ def validate_pack(
     """
     conflicts: list[PackConflict] = []
     extensions: list[str] = []
-    known_labels = set(core.VERTEX_LABELS) | set(pack.classes)
+    core_vertex_labels = getattr(core, "CORE_VERTEX_LABELS", core.VERTEX_LABELS)
+    core_edge_labels = getattr(core, "CORE_EDGE_LABELS", core.EDGE_LABELS)
+    core_property_keys = getattr(core, "CORE_PROPERTY_KEYS", core.PROPERTY_KEYS)
+    known_labels = set(core_vertex_labels) | set(pack.classes)
     if known_vertex_labels:
         known_labels |= set(known_vertex_labels)
 
@@ -194,7 +197,7 @@ def validate_pack(
             ))
 
     for label, cls in pack.classes.items():
-        if label in core.VERTEX_LABELS:
+        if label in core_vertex_labels:
             if not cls.extends_core:
                 conflicts.append(PackConflict(
                     kind="class", name=label,
@@ -210,7 +213,7 @@ def validate_pack(
                     detail=f"invalid property type {ptype!r}",
                 ))
                 continue
-            core_type = core.PROPERTY_KEYS.get(prop)
+            core_type = core_property_keys.get(prop)
             if core_type is not None and core_type != ptype:
                 conflicts.append(PackConflict(
                     kind="property", name=f"{label}.{prop}",
@@ -220,7 +223,7 @@ def validate_pack(
             elif core_type == ptype and cls.extends_core:
                 extensions.append(f"property:{label}.{prop}")
         for edge, rel in cls.relationships.items():
-            spec = core.EDGE_LABELS.get(edge)
+            spec = core_edge_labels.get(edge)
             if spec is not None:
                 if not rel.extends_core:
                     conflicts.append(PackConflict(

@@ -6,24 +6,49 @@ domains:
   - OPS
 
 classes:
+  Asset:
+    extends_core: true
+    description: A protected infrastructure, application, or data asset in the security topology.
+    properties:
+      canonical_id: TEXT
+      name: TEXT
+      ip_address: TEXT
+      criticality: TEXT
+      resilience: DOUBLE
+      status: TEXT
+    relationships:
+      AFFECTED_BY:
+        extends_core: true
+        out: [Asset]
+        in: [Vulnerability, Incident]
+
   Vulnerability:
+    extends_core: true
     description: A disclosed vulnerability affecting dependencies or services.
     properties:
       cve_id: TEXT
       cvss_score: DOUBLE
       exploit_available: BOOLEAN
+      remediation_status: TEXT
       canonical_id: TEXT
       name: TEXT
       severity: TEXT
     relationships:
       AFFECTS:
+        extends_core: true
         out: [Vulnerability]
         in: [Dependency, Service, "*"]
+      IMPACTS:
+        extends_core: true
+        out: [Vulnerability]
+        in: [Asset, Service, Dependency, "*"]
       FIXED_BY:
+        extends_core: true
         out: [Vulnerability]
         in: [Commit, MergeRequest]
 
   Threat:
+    extends_core: true
     description: A threat actor or campaign observed against assets.
     properties:
       threat_id: TEXT
@@ -32,13 +57,16 @@ classes:
       name: TEXT
     relationships:
       EXPLOITS:
+        extends_core: true
         out: [Threat]
         in: [Vulnerability]
       TARGETS:
+        extends_core: true
         out: [Threat]
         in: [Service, "*"]
 
   SecurityFinding:
+    extends_core: true
     description: A scanner or pentest finding with remediation tracking.
     properties:
       finding_id: TEXT
@@ -49,6 +77,7 @@ classes:
       severity: TEXT
     relationships:
       REMEDIATED_BY:
+        extends_core: true
         out: [SecurityFinding]
         in: [WorkItem, ChangeRequest]
 
@@ -68,3 +97,8 @@ validators:
     description: Files flagged contains_secrets should be quarantined.
     applies_to: [File]
     severity: WARNING
+
+relationships:
+  AFFECTS:
+    out: [Incident]
+    in: [Asset, Service, "*"]

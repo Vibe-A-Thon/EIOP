@@ -486,32 +486,39 @@ class SelfLLMEngine:
             )
 
         # Neuro-symbolic evidence linkages
+        grounded_count = sum(1 for ta in token_attributions if ta.grounded_entity)
+        citation_conf = round(min(0.95, 0.5 + 0.05 * grounded_count), 3)
         citations = [
             {
                 "claim": f"Derived statement referencing '{words[0]}'" if words else "General assertion",
                 "triple": f"(urn:subject)-[:VERIFIED_BY]->(urn:evidence)",
-                "confidence": 0.94,
+                "confidence": citation_conf,
                 "source": "Enterprise Knowledge Graph (PROV-O)",
             }
         ]
 
         # Counterfactual reasoning
+        avg_salience = sum(ta.salience_score for ta in token_attributions) / max(len(token_attributions), 1)
         counterfactuals = [
             CounterfactualReasoning(
                 premise=f"Current query parameters",
                 alternative_hypothesis="If strict deterministic mode was forced",
-                impact_delta=-0.12,
+                impact_delta=round(-avg_salience * 0.15, 3),
                 explanation="Neural synthesis would be suppressed, restricting output strictly to exact graph pattern matches.",
             )
         ]
+
+        salience_variance = sum((ta.salience_score - avg_salience) ** 2 for ta in token_attributions) / max(len(token_attributions), 1)
+        epistemic = round(min(0.5, salience_variance + 0.01), 4)
+        aleatoric = round(min(0.3, (1.0 - avg_salience) * 0.1), 4)
 
         return XAIExplanation(
             token_attributions=token_attributions[:10],
             neuro_symbolic_citations=citations,
             counterfactuals=counterfactuals,
-            epistemic_uncertainty=0.04,
-            aleatoric_uncertainty=0.02,
-            conformal_coverage_pct=98.5,
+            epistemic_uncertainty=epistemic,
+            aleatoric_uncertainty=aleatoric,
+            conformal_coverage_pct=round(100.0 * (1.0 - epistemic - aleatoric), 1),
             honest_abstain=False,
         )
 
@@ -532,7 +539,8 @@ class SelfLLMEngine:
         # 2. Speculative decoding simulation (Haiku draft -> Opus verification)
         speculative_accepted = 0
         if cfg.tier == CognitiveTier.OPUS_FRONTIER:
-            speculative_accepted = 12  # 12 draft tokens verified in parallel
+            prompt_tokens = len(self.tokenize(prompt))
+            speculative_accepted = min(32, max(4, prompt_tokens // 3))
 
         # 3. Content generation
         content = self._generate_content_by_tier(prompt, cfg, context)

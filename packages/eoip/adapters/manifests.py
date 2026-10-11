@@ -29,6 +29,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 AdapterStatus = Literal["real", "manifest-only"]
+CertificationTier = Literal["A", "B", "C", "P2"]
 Deployment = Literal["local", "cloud", "both"]
 Role = Literal[
     "graph_store",
@@ -52,7 +53,7 @@ class CapabilityManifest(BaseModel):
     native_surface: list[str] = Field(default_factory=list)
     """Native protocol(s)/language(s) the database actually speaks."""
     deployment: Deployment = "both"
-    tier: Literal["A", "B", "C", "P2"] = "C"
+    tier: CertificationTier = "C"
     role: Role = "graph_store"
     notes: list[str] = Field(default_factory=list)
     adapter_status: AdapterStatus = "manifest-only"

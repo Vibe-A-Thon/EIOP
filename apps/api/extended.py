@@ -1475,6 +1475,9 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     from eoip.enterprise.router import build_enterprise_router
     router.include_router(build_enterprise_router())
 
+    from eoip.enterprise.advanced_router import build_advanced_capabilities_router
+    router.include_router(build_advanced_capabilities_router(store))
+
     return router, state
 
 

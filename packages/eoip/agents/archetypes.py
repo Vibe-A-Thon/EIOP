@@ -150,12 +150,15 @@ class UtilityBasedAgent(BaseAgent):
         ctx = context or {}
         options = ctx.get("options", [{"name": "A", "cost": 10, "speed": 90}, {"name": "B", "cost": 50, "speed": 99}])
         # Utility = 0.7 * speed - 0.3 * cost
-        best_option = max(options, key=lambda o: (0.7 * o.get("speed", 0)) - (0.3 * o.get("cost", 0)))
+        scored = [(o, (0.7 * o.get("speed", 0)) - (0.3 * o.get("cost", 0))) for o in options]
+        scored.sort(key=lambda x: x[1], reverse=True)
+        best_option = scored[0][0]
+        spread = (scored[0][1] - scored[-1][1]) / max(abs(scored[0][1]), 1) if len(scored) > 1 else 0.5
         return AgentResponse(
             agent_id=self.agent_id,
             agent_type="UtilityBasedAgent",
             output={"selected_option": best_option},
-            confidence=0.95,
+            confidence=round(min(0.95, 0.5 + spread * 0.4), 3),
             reasoning_trace=["Maximized objective utility score: 0.7*speed - 0.3*cost"],
         )
 
@@ -614,8 +617,8 @@ class DeepAIAgent(BaseAgent):
         return AgentResponse(
             agent_id=self.agent_id,
             agent_type="DeepAIAgent",
-            output={"reasoning_depth": depth, "deep_analysis": f"Deconstructed {input_data} across 4 causal layers."},
-            confidence=0.96,
+            output={"reasoning_depth": depth, "deep_analysis": f"Deconstructed {input_data} across {depth} causal layers."},
+            confidence=round(0.5 + 0.1 * depth, 3),
             reasoning_trace=["Traversed multi-tier causal GNN dependency web"],
         )
 
@@ -627,7 +630,7 @@ class LAYAAgent(BaseAgent):
             agent_id=self.agent_id,
             agent_type="LAYAAgent",
             output={"capability": "incident_summary", "answer": f"LAYA evidence summary for: {input_data}", "fallback": False},
-            confidence=0.94,
+            confidence=0.5,
             reasoning_trace=["Executed Local AI Yield Augmentation with zero cloud egress"],
         )
 
@@ -697,7 +700,7 @@ class GraphOfThoughtAgent(BaseAgent):
             agent_id=self.agent_id,
             agent_type="GraphOfThoughtAgent",
             output={"thought_graph": {"nodes": ["N1", "N2", "N3"], "edges": [("N1", "N2"), ("N2", "N3"), ("N1", "N3")]}},
-            confidence=0.95,
+            confidence=0.5,
             reasoning_trace=["Constructed non-linear Graph-of-Thought reasoning DAG"],
         )
 
@@ -887,7 +890,7 @@ class MixtureOfAgentsSystem(BaseAgent):
             agent_id=self.agent_id,
             agent_type="MixtureOfAgentsSystem",
             output={"aggregated_synthesis": f"Aggregated insights across 3 layers for '{input_data}'"},
-            confidence=0.98,
+            confidence=0.5,
             reasoning_trace=["Layer 1 candidate generation -> Layer 2 synthesis -> Layer 3 consensus aggregation"],
         )
 

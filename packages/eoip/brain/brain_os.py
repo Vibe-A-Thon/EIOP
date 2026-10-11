@@ -29,6 +29,9 @@ from eoip.brain.graph_intelligence import GraphIntelligenceEngine, ApproachFindi
 from eoip.enterprise.circuit_breaker import get_circuit_breaker_registry
 from eoip.enterprise.audit import get_audit_log, AuditCategory
 from eoip.enterprise.cache import get_cache
+from eoip.enterprise.lifecycle import get_lifecycle_manager
+from eoip.enterprise.feature_flags import get_feature_flags
+from eoip.enterprise.webhooks import get_webhook_manager
 
 
 
@@ -483,6 +486,9 @@ class BrainOSKernel:
                 "hit_rate": get_cache().stats().hit_rate,
                 "size": get_cache().stats().current_size,
             },
+            "lifecycle": get_lifecycle_manager().stats(),
+            "feature_flags": get_feature_flags().stats(),
+            "webhooks": get_webhook_manager().stats(),
         }
 
 

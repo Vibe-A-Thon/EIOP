@@ -15,7 +15,7 @@ from eoip.systems.schema_generator import AutoSchemaGenerator
 from eoip.systems.pipeline_factory import PipelineFactory
 from eoip.systems.auto_onboard import AutoOnboardOrchestrator
 
-router = APIRouter(prefix="/systems", tags=["Systems Registry"])
+router = APIRouter(prefix="/api/v1/systems", tags=["Systems Registry"])
 
 _CONFIG_PATH = Path("config/systems-registry.json")
 _registry = SystemsRegistry(str(_CONFIG_PATH))

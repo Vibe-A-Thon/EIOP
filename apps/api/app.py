@@ -1495,6 +1495,56 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         routes = {str(getattr(route, "path", "")) for route in app.routes if getattr(route, "path", None)}
         return g2_readiness_report(repo_root=repo_root, available_routes=routes)
 
+    @app.get("/api/v1/product/capabilities")
+    def product_capabilities():
+        """Report advanced product-readiness from real implementation evidence."""
+        from eoip.product.intelligence import build_product_capability_report
+
+        repo_root = Path(__file__).resolve().parents[2]
+        routes = {str(getattr(route, "path", "")) for route in app.routes if getattr(route, "path", None)}
+        return build_product_capability_report(
+            repo_root=repo_root,
+            store=store,
+            available_routes=routes,
+        )
+
+    @app.get("/api/v1/product/first-choice-gate")
+    def product_first_choice_gate():
+        """Compact gate for whether P0 product capabilities are enterprise-grade."""
+        from eoip.product.intelligence import build_product_capability_report
+
+        repo_root = Path(__file__).resolve().parents[2]
+        routes = {str(getattr(route, "path", "")) for route in app.routes if getattr(route, "path", None)}
+        report = build_product_capability_report(
+            repo_root=repo_root,
+            store=store,
+            available_routes=routes,
+        )
+        return {
+            "enterprise_grade_score": report["enterprise_grade_score"],
+            "first_choice_gate": report["first_choice_gate"],
+            "next_requirements": report["next_requirements"],
+        }
+
+    @app.post("/api/v1/product/capabilities/materialize")
+    def materialize_product_capabilities():
+        """Persist scanned product capabilities as BusinessCapability facts."""
+        from eoip.product.intelligence import (
+            build_product_capability_report,
+        )
+        from eoip.product.intelligence import (
+            materialize_product_capabilities as materialize,
+        )
+
+        repo_root = Path(__file__).resolve().parents[2]
+        routes = {str(getattr(route, "path", "")) for route in app.routes if getattr(route, "path", None)}
+        report = build_product_capability_report(
+            repo_root=repo_root,
+            store=store,
+            available_routes=routes,
+        )
+        return materialize(store, report)
+
     # --- EQL: EOIP Query Language ---
 
     @app.post("/api/v1/query/eql")

@@ -112,6 +112,7 @@ PROPERTY_KEYS: dict[str, str] = {
     "from_id": "TEXT",
     "to_id": "TEXT",
     "observed_at": "DATE",
+    "timestamp": "DATE",
     "is_current": "BOOLEAN",
     "previous_revision": "TEXT",
     "graph_version": "TEXT",
@@ -181,6 +182,9 @@ PROPERTY_KEYS: dict[str, str] = {
     "log_level": "TEXT",
     "log_source": "TEXT",
     "log_count": "LONG",
+    "criticality": "TEXT",
+    "resilience": "DOUBLE",
+    "coupling": "DOUBLE",
     # TEST domain properties
     "test_case_id": "TEXT",
     "test_type": "TEXT",
@@ -298,7 +302,8 @@ VERTEX_LABELS: dict[str, tuple[str, list[str], list[str]]] = {
     "File": ("CODE", ["canonical_id", "repo_id", "path"], ["language", "content_hash", "merge_request_id"]),
     "CodeSymbol": ("CODE", ["canonical_id", "qualified_name", "symbol_kind"], ["name", "repo_id", "path", "start_line", "end_line", "start_column", "end_column", "language", "parser_version"]),
     "Dependency": ("CODE", ["canonical_id", "name"], ["resolved", "language"]),
-    "Service": ("CODE", ["canonical_id", "service_id", "name"], ["description", "status", "source_system", "created_at", "modified_at"]),
+    "Service": ("CODE", ["canonical_id", "service_id", "name"], ["description", "status", "criticality", "resilience", "source_system", "created_at", "modified_at"]),
+    "Database": ("CODE", ["canonical_id", "name"], ["description", "status", "criticality", "resilience", "source_system", "created_at", "modified_at"]),
     "Document": ("KNOWLEDGE", ["canonical_id", "name", "path"], ["doc_format", "content_hash", "description", "repo_id", "payload_json", "parser_version"]),
     "KnowledgeSpace": ("KNOWLEDGE", ["canonical_id", "name", "space_key"], ["description"]),
     "DocumentSection": ("KNOWLEDGE", ["canonical_id", "name"], ["path", "section_index", "content_hash", "start_line", "end_line"]),
@@ -400,9 +405,9 @@ EDGE_LABELS: dict[str, tuple[list[str], list[str], list[str]]] = {
     "DEPLOYS": (["PipelineRun", "Job"], ["Deployment"], []),
     "MODIFIES": (["Commit", "MergeRequest"], ["File"], []),
     "DECLARES": (["File"], ["CodeSymbol"], []),
-    "CALLS": (["CodeSymbol"], ["CodeSymbol"], []),
+    "CALLS": (["CodeSymbol", "Service"], ["CodeSymbol", "Service"], ["coupling"]),
     "IMPORTS": (["File", "CodeSymbol"], ["Dependency"], []),
-    "DEPENDS_ON": (["CodeSymbol", "File", "Service"], ["Dependency", "CodeSymbol", "File", "Service"], []),
+    "DEPENDS_ON": (["CodeSymbol", "File", "Service", "Database"], ["Dependency", "CodeSymbol", "File", "Service", "Database"], ["coupling"]),
     "IMPLEMENTS": (["MergeRequest", "Commit"], ["WorkItem"], []),
     "REFERENCES": (["MergeRequest", "Commit", "Document", "DocumentSection", "WorkItem", "PipelineRun"], ["WorkItem", "Commit", "CodeSymbol", "Dependency", "File"], []),
     "DOCUMENTS": (["Document", "DocumentSection"], list(DOCUMENT_TARGET_LABELS), []),
@@ -469,6 +474,12 @@ INDEXES: list[dict] = [
         for label in DOCUMENT_TARGET_LABELS for key in ("url", "path", "source_uri")
     ),
 ]
+
+# Immutable core ontology snapshots used by pack validation even after runtime
+# domain-pack activation extends the live manifest dictionaries.
+CORE_PROPERTY_KEYS = dict(PROPERTY_KEYS)
+CORE_VERTEX_LABELS = dict(VERTEX_LABELS)
+CORE_EDGE_LABELS = dict(EDGE_LABELS)
 
 # Business vertex labels counted as "business" (non-meta) facts
 BUSINESS_LABELS = [

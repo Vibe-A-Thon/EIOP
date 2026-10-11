@@ -587,4 +587,135 @@ def build_enterprise_router() -> APIRouter:
     def plugin_stats() -> dict[str, Any]:
         return get_plugin_registry().get_stats()
 
+    # ── Lifecycle ─────────────────────────────────────────────────────
+
+    from eoip.enterprise.lifecycle import get_lifecycle_manager
+
+    @router.get("/lifecycle/status", summary="Application lifecycle status",
+                description="Current lifecycle phase, active requests, and component health.",
+                tags=["Lifecycle"])
+    def lifecycle_status() -> dict[str, Any]:
+        return get_lifecycle_manager().stats()
+
+    @router.post("/lifecycle/drain", summary="Initiate graceful drain",
+                 description="Begin draining active requests in preparation for shutdown.",
+                 tags=["Lifecycle"])
+    def lifecycle_drain() -> dict[str, Any]:
+        mgr = get_lifecycle_manager()
+        report = mgr.shutdown()
+        return {"status": "DRAINED", "report": report}
+
+    # ── Feature Flags ─────────────────────────────────────────────────
+
+    from eoip.enterprise.feature_flags import get_feature_flags, FlagDefinition as FlagDef
+
+    class FeatureFlagRequest(BaseModel):
+        name: str
+        description: str = ""
+        default_enabled: bool = False
+        rollout_percentage: float = 100.0
+
+    class FlagEvalRequest(BaseModel):
+        flag_name: str
+        tenant_id: str | None = None
+
+    class FlagOverrideRequest(BaseModel):
+        flag_name: str
+        tenant_id: str
+        enabled: bool
+
+    @router.get("/feature-flags", summary="List all feature flags",
+                description="View all defined feature flags with rollout configuration.",
+                tags=["Feature Flags"])
+    def list_feature_flags() -> list[dict[str, Any]]:
+        return get_feature_flags().list_flags()
+
+    @router.post("/feature-flags", summary="Define a feature flag",
+                 description="Create or update a feature flag with rollout percentage.",
+                 tags=["Feature Flags"])
+    def define_feature_flag(req: FeatureFlagRequest) -> dict[str, Any]:
+        get_feature_flags().define(FlagDef(
+            name=req.name,
+            description=req.description,
+            default_enabled=req.default_enabled,
+            rollout_percentage=req.rollout_percentage,
+        ))
+        return {"status": "DEFINED", "flag": req.name}
+
+    @router.post("/feature-flags/evaluate", summary="Evaluate a feature flag",
+                 description="Check if a feature flag is enabled for a given tenant.",
+                 tags=["Feature Flags"])
+    def evaluate_feature_flag(req: FlagEvalRequest) -> dict[str, Any]:
+        result = get_feature_flags().is_enabled(req.flag_name, tenant_id=req.tenant_id)
+        return {
+            "flag": result.flag_name,
+            "enabled": result.enabled,
+            "reason": result.reason,
+            "tenant_id": result.tenant_id,
+        }
+
+    @router.post("/feature-flags/override", summary="Set tenant override",
+                 description="Override a feature flag for a specific tenant.",
+                 tags=["Feature Flags"])
+    def set_flag_override(req: FlagOverrideRequest) -> dict[str, Any]:
+        get_feature_flags().set_override(req.flag_name, req.tenant_id, req.enabled)
+        return {"status": "OVERRIDE_SET", "flag": req.flag_name, "tenant": req.tenant_id}
+
+    @router.get("/feature-flags/stats", summary="Feature flag statistics",
+                tags=["Feature Flags"])
+    def feature_flag_stats() -> dict[str, Any]:
+        return get_feature_flags().stats()
+
+    # ── Webhooks ──────────────────────────────────────────────────────
+
+    from eoip.enterprise.webhooks import get_webhook_manager, WebhookEventType as WHEventType
+
+    class WebhookSubscribeRequest(BaseModel):
+        url: str
+        events: list[str]
+        secret: str = ""
+        max_retries: int = 3
+
+    @router.get("/webhooks", summary="List webhook subscriptions",
+                description="View all registered webhook subscriptions.",
+                tags=["Webhooks"])
+    def list_webhooks() -> list[dict[str, Any]]:
+        return get_webhook_manager().list_subscriptions()
+
+    @router.post("/webhooks/subscribe", summary="Register webhook",
+                 description="Subscribe to event notifications with HMAC-SHA256 signed delivery.",
+                 tags=["Webhooks"])
+    def subscribe_webhook(req: WebhookSubscribeRequest) -> dict[str, Any]:
+        events = []
+        for e in req.events:
+            try:
+                events.append(WHEventType(e))
+            except ValueError:
+                pass
+        if not events:
+            raise HTTPException(status_code=400, detail="No valid event types provided")
+        sub = get_webhook_manager().subscribe(
+            url=req.url, events=events, secret=req.secret, max_retries=req.max_retries,
+        )
+        return {"status": "SUBSCRIBED", "subscription_id": sub.subscription_id}
+
+    @router.delete("/webhooks/{subscription_id}", summary="Unsubscribe webhook",
+                   tags=["Webhooks"])
+    def unsubscribe_webhook(subscription_id: str) -> dict[str, Any]:
+        removed = get_webhook_manager().unsubscribe(subscription_id)
+        if not removed:
+            raise HTTPException(status_code=404, detail="Subscription not found")
+        return {"status": "UNSUBSCRIBED"}
+
+    @router.get("/webhooks/dead-letters", summary="View dead-letter queue",
+                description="Failed webhook deliveries awaiting manual review.",
+                tags=["Webhooks"])
+    def webhook_dead_letters(limit: int = Query(50, ge=1, le=500)) -> list[dict[str, Any]]:
+        return get_webhook_manager().get_dead_letters(limit=limit)
+
+    @router.get("/webhooks/stats", summary="Webhook delivery statistics",
+                tags=["Webhooks"])
+    def webhook_stats() -> dict[str, Any]:
+        return get_webhook_manager().stats()
+
     return router

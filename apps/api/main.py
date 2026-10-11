@@ -1106,6 +1106,8 @@ def create_app():
             raise HTTPException(501, "Underlying graph store does not support raw Gremlin execution")
         try:
             result = execute_gremlin(gremlin, bindings)
+        except AttributeError as exc:
+            raise HTTPException(501, str(exc))
         except Exception as exc:  # noqa: BLE001
             raise HTTPException(400, f"Gremlin execution error: {exc}")
         return {"result": result}

@@ -53,7 +53,7 @@ def check_edge(label: str, out_label: str, in_label: str, properties: dict) -> N
     if spec is None:
         raise MutationBlocked(f"unknown edge label: {label}", label=label)
     outs, ins, _props = spec
-    if out_label not in outs or in_label not in ins:
+    if ("*" not in outs and out_label not in outs) or ("*" not in ins and in_label not in ins):
         raise MutationBlocked(
             f"invalid endpoints for {label}: {out_label} -> {in_label}",
             label=label,
