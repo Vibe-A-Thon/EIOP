@@ -8,6 +8,7 @@ Docker environment.
 
 from pathlib import Path
 
+import pytest
 import yaml
 
 COMPOSE_PATH = Path(__file__).resolve().parents[2] / "deploy" / "docker-compose.yml"
@@ -17,6 +18,7 @@ def _load_compose():
     return yaml.safe_load(COMPOSE_PATH.read_text(encoding="utf-8"))
 
 
+@pytest.mark.req("NFR-SEC-001")
 def test_backend_network_is_internal():
     """The backend network must be declared as internal to block egress."""
     compose = _load_compose()

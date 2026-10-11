@@ -158,6 +158,7 @@ def test_template_crud(intel):
     assert intel.delete_template(t.template_id) is False
 
 
+@pytest.mark.req("FR-GRAPH-007")
 def test_template_binding_builds_plan(intel):
     t = intel.save_template("impact", "IMPACT", ["anchor"], max_depth=2, result_limit=5)
     plan = intel.bind_template(t, {"anchor": "urn:eoip:item:WorkItem:1"})

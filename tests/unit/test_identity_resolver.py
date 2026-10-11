@@ -1,8 +1,8 @@
-"""Tests for identity resolution."""
-
+import pytest
 from eoip.identity.resolver import IdentityResolver
 
 
+@pytest.mark.req("FR-INGEST-002")
 def test_email_resolution():
     resolver = IdentityResolver()
     identity = resolver.resolve_person(display_name="Alice", email="Alice@Example.com", source_system="jira")

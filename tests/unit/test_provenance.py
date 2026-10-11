@@ -1,5 +1,6 @@
 """Tests for the provenance evidence and lineage services."""
 
+import pytest
 from eoip.graph.memory import MemoryGraphStore
 from eoip.provenance.lineage import LineageService
 
@@ -27,6 +28,7 @@ def _store_with_lineage():
     return store
 
 
+@pytest.mark.req("FR-PROV-002")
 def test_lineage_traces_to_source():
     store = _store_with_lineage()
     service = LineageService(store)

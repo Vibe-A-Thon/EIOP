@@ -57,6 +57,7 @@ class TestGrafanaConnector:
         c = GrafanaConnector("https://grafana.example.com", token="tok")
         assert c.source_system == "grafana"
 
+    @pytest.mark.req("G2-SRC-GRAF-002", "G2-SRC-GRAF-003")
     def test_map_event_dashboard(self):
         from eoip.connectors.grafana import GrafanaConnector
         c = GrafanaConnector("https://grafana.example.com", token="tok")
@@ -75,6 +76,7 @@ class TestDatadogConnector:
         c = DatadogConnector("https://api.datadoghq.com", api_key="k", app_key="a")
         assert c.source_system == "datadog"
 
+    @pytest.mark.req("G2-SRC-DD-002", "G2-SRC-DD-003", "G2-SRC-DD-004")
     def test_map_event(self):
         from eoip.connectors.datadog import DatadogConnector
         c = DatadogConnector("https://api.datadoghq.com", api_key="k", app_key="a")
@@ -92,6 +94,7 @@ class TestKibanaConnector:
         c = KibanaConnector("https://kibana.example.com", token="tok")
         assert c.source_system == "kibana"
 
+    @pytest.mark.req("G2-SRC-KIB-002", "G2-SRC-KIB-003", "G2-SRC-KIB-004", "G2-SRC-KIB-005")
     def test_map_event(self):
         from eoip.connectors.kibana import KibanaConnector
         c = KibanaConnector("https://kibana.example.com", token="tok")

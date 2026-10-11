@@ -9,7 +9,7 @@ from eoip.graph.store import GraphQueryTimeout, graph_query_deadline
 from eoip.ontology.manifest import DOCUMENT_TARGET_LABELS, EDGE_LABELS, PROPERTY_KEYS, VERTEX_LABELS
 
 
-@pytest.mark.req("G2-SRC-CONF-004")
+@pytest.mark.req("G2-SRC-CONF-004", "FR-GRAPH-008")
 def test_document_reference_lookups_have_single_property_secondary_indexes():
     indexes = HugeGraphStore._schema_definitions()["indexlabels"]
     for label in DOCUMENT_TARGET_LABELS:
@@ -23,6 +23,7 @@ def test_document_reference_lookups_have_single_property_secondary_indexes():
             ), (label, key)
 
 
+@pytest.mark.req("H-01", "FR-GRAPH-003")
 def test_schema_bootstrap_appends_new_properties_to_existing_labels():
     store = HugeGraphStore.__new__(HugeGraphStore)
     store._lock = RLock()

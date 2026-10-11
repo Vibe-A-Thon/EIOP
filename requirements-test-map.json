@@ -1,0 +1,1566 @@
+{
+  "G2-T0002": [
+    "tests/contract/test_g2_contracts.py"
+  ],
+  "G2-EKAF-003": [
+    "tests/contract/test_g2_contracts.py"
+  ],
+  "G2-T0003": [
+    "tests/contract/test_g2_contracts.py"
+  ],
+  "G2-T0005": [
+    "tests/contract/test_g2_contracts.py"
+  ],
+  "FR-CONN-001": [
+    "tests/contract/test_g2_contracts.py"
+  ],
+  "G2-EKAF-002": [
+    "tests/contract/test_g2_contracts.py"
+  ],
+  "G2-REQ-34": [
+    "tests/contract/test_g2_contracts.py"
+  ],
+  "NFR-MAINT-001": [
+    "tests/contract/test_graph_store_contract.py"
+  ],
+  "G2-T0220": [
+    "tests/e2e/test_clean_recovery.py",
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "G2-T0221": [
+    "tests/e2e/test_clean_recovery.py",
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "G2-T0223": [
+    "tests/e2e/test_clean_recovery.py",
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "G2-T0225": [
+    "tests/e2e/test_clean_recovery.py",
+    "tests/unit/test_document_references.py",
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_snapshots.py"
+  ],
+  "MVP-FR-028": [
+    "tests/e2e/test_demo_flow.py"
+  ],
+  "NFR-REL-001": [
+    "tests/e2e/test_restart_safe.py"
+  ],
+  "NFR-PERF-001": [
+    "tests/performance/test_benchmark_publication.py",
+    "tests/performance/test_benchmarks.py"
+  ],
+  "FR-CONF-001": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_failures.py",
+    "tests/runtime_dlq/test_confluence_rejection.py",
+    "tests/unit/test_confluence_body.py",
+    "tests/unit/test_confluence_metadata.py",
+    "tests/unit/test_confluence_upstream_fixture.py",
+    "tests/unit/test_phase2_connectors.py",
+    "tests/unit/test_phase2_ingestion.py"
+  ],
+  "G2-T0401": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_failures.py"
+  ],
+  "G2-T0402": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/runtime_dlq/test_confluence_failures.py",
+    "tests/runtime_dlq/test_confluence_rejection.py"
+  ],
+  "G2-T0403": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/unit/test_confluence_history.py"
+  ],
+  "G2-T0404": [
+    "tests/runtime_dlq/test_confluence_acquisition.py"
+  ],
+  "G2-SRC-CONF-003": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/unit/test_confluence_body.py"
+  ],
+  "G2-SRC-CONF-001": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/unit/test_confluence_metadata.py"
+  ],
+  "G2-SRC-CONF-002": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/unit/test_confluence_history.py"
+  ],
+  "G2-SRC-CONF-004": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/unit/test_document_references.py",
+    "tests/unit/test_phase2_hugegraph_schema.py"
+  ],
+  "G2-SRC-CONF-005": [
+    "tests/runtime_dlq/test_confluence_acquisition.py",
+    "tests/unit/test_document_references.py"
+  ],
+  "G2-T0112": [
+    "tests/runtime_dlq/test_confluence_rejection.py",
+    "tests/runtime_dlq/test_servicenow_rejection.py",
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "FR-SNOW-001": [
+    "tests/runtime_dlq/test_servicenow_acquisition.py",
+    "tests/runtime_dlq/test_servicenow_authentication.py",
+    "tests/runtime_dlq/test_servicenow_rejection.py",
+    "tests/unit/test_phase2_connectors.py",
+    "tests/unit/test_phase2_ingestion.py",
+    "tests/unit/test_servicenow_upstream_fixture.py"
+  ],
+  "G2-T0110": [
+    "tests/runtime_dlq/test_servicenow_acquisition.py",
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0203": [
+    "tests/runtime_dlq/test_servicenow_acquisition.py",
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "NFR-SEC-006": [
+    "tests/security/test_container_hardening.py"
+  ],
+  "NFR-SEC-001": [
+    "tests/security/test_no_egress.py",
+    "tests/security/test_verification_suite.py"
+  ],
+  "NFR-SEC-004": [
+    "tests/security/test_verification_suite.py"
+  ],
+  "NFR-SEC-002": [
+    "tests/security/test_verification_suite.py"
+  ],
+  "NFR-SEC-007": [
+    "tests/security/test_verification_suite.py"
+  ],
+  "NFR-SEC-003": [
+    "tests/security/test_verification_suite.py"
+  ],
+  "FR-MCP-001": [
+    "tests/security/test_verification_suite.py"
+  ],
+  "FR-MCP-002": [
+    "tests/security/test_verification_suite.py"
+  ],
+  "MVP-FR-022": [
+    "tests/security/test_verification_suite.py"
+  ],
+  "G2-T0111": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-005": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-007": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-008": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-011": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-013": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0201": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0202": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-004": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-012": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "FR-INGEST-004": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0120": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0121": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0122": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_operational_recovery.py"
+  ],
+  "G2-EKAF-006": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-009": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-020": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0130": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0131": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0132": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0133": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0134": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0135": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-SEC-CRAWL-001": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-SEC-CRAWL-002": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-SRC-WEB-002": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-019": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-001": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_g2_readiness.py",
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-T0340": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0341": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-015": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-029": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-EKAF-030": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-T0123": [
+    "tests/unit/test_acquisition_fabric.py",
+    "tests/unit/test_operational_recovery.py"
+  ],
+  "G2-SRC-GH-002": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "G2-SRC-GL-002": [
+    "tests/unit/test_acquisition_fabric.py"
+  ],
+  "FR-QUERY-008": [
+    "tests/unit/test_admin_gremlin.py",
+    "tests/unit/test_query_policy.py"
+  ],
+  "NFR-PRIV-001": [
+    "tests/unit/test_agent_memory.py"
+  ],
+  "FR-MEM-001": [
+    "tests/unit/test_agent_memory.py"
+  ],
+  "GAP-SEC-001": [
+    "tests/unit/test_authn.py",
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-003": [
+    "tests/unit/test_authn.py",
+    "tests/unit/test_authz.py"
+  ],
+  "H-04": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-002": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-004": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-005": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-006": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-SEC-007": [
+    "tests/unit/test_authz.py"
+  ],
+  "GAP-TEMP-001": [
+    "tests/unit/test_bitemporal.py"
+  ],
+  "GAP-TEMP-002": [
+    "tests/unit/test_bitemporal.py"
+  ],
+  "GAP-TEMP-003": [
+    "tests/unit/test_bitemporal.py"
+  ],
+  "GAP-TEMP-004": [
+    "tests/unit/test_bitemporal.py"
+  ],
+  "GAP-TEMP-005": [
+    "tests/unit/test_bitemporal.py"
+  ],
+  "GAP-HG-004": [
+    "tests/unit/test_bulk_load.py",
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "G2-EVOL-010": [
+    "tests/unit/test_bulk_load.py"
+  ],
+  "G2-CAP-001": [
+    "tests/unit/test_capsules.py",
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "FR-CODE-001": [
+    "tests/unit/test_code_parser.py",
+    "tests/unit/test_requirement_evidence.py"
+  ],
+  "FR-CODE-002": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "FR-CODE-004": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "FR-CODE-005": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "G2-SRC-CODE-002": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "G2-SRC-CODE-003": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "G2-SRC-CODE-004": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "G2-SRC-CODE-005": [
+    "tests/unit/test_code_parser.py"
+  ],
+  "G2-ARCH-007": [
+    "tests/unit/test_confluence_body.py",
+    "tests/unit/test_confluence_metadata.py"
+  ],
+  "FR-CONN-006": [
+    "tests/unit/test_confluence_history.py",
+    "tests/unit/test_confluence_metadata.py",
+    "tests/unit/test_document_references.py",
+    "tests/unit/test_phase2_ingestion.py",
+    "tests/unit/test_replay.py"
+  ],
+  "G2-ARCHC-002": [
+    "tests/unit/test_conformance.py"
+  ],
+  "G2-ARCHC-003": [
+    "tests/unit/test_conformance.py"
+  ],
+  "G2-ARCHC-004": [
+    "tests/unit/test_conformance.py"
+  ],
+  "G2-ARCHC-005": [
+    "tests/unit/test_conformance.py"
+  ],
+  "G2-ARCHC-006": [
+    "tests/unit/test_conformance.py"
+  ],
+  "G2-ARCHC-007": [
+    "tests/unit/test_conformance.py"
+  ],
+  "G2-ARCHC-008": [
+    "tests/unit/test_conformance.py"
+  ],
+  "G2-ARCHC-009": [
+    "tests/unit/test_conformance.py"
+  ],
+  "G2-SRC-GRAF-002": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-GRAF-003": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-DD-002": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-DD-003": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-DD-004": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-KIB-002": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-KIB-003": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-KIB-004": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "G2-SRC-KIB-005": [
+    "tests/unit/test_connectors_new.py"
+  ],
+  "H-06": [
+    "tests/unit/test_container_smoke_manifest.py"
+  ],
+  "NFR-SEC-005": [
+    "tests/unit/test_deployment_api.py"
+  ],
+  "H-07": [
+    "tests/unit/test_deployment_api.py"
+  ],
+  "H-08": [
+    "tests/unit/test_deployment_api.py"
+  ],
+  "FR-CODE-003": [
+    "tests/unit/test_diff_hunk.py"
+  ],
+  "REQ-001": [
+    "tests/unit/test_documentation_audit.py"
+  ],
+  "REQ-002": [
+    "tests/unit/test_documentation_audit.py"
+  ],
+  "REQ-003": [
+    "tests/unit/test_documentation_audit.py"
+  ],
+  "REQ-004": [
+    "tests/unit/test_documentation_audit.py"
+  ],
+  "REQ-005": [
+    "tests/unit/test_documentation_audit.py"
+  ],
+  "FR-KGR-001": [
+    "tests/unit/test_documentation_audit.py"
+  ],
+  "G2-T0405": [
+    "tests/unit/test_document_references.py"
+  ],
+  "GAP-DP-001": [
+    "tests/unit/test_domain_packs.py"
+  ],
+  "FR-INGEST-003": [
+    "tests/unit/test_edge_dedup.py",
+    "tests/unit/test_phase2_hugegraph_schema.py"
+  ],
+  "G2-EKAF-022": [
+    "tests/unit/test_ekaf_conflicts.py"
+  ],
+  "G2-EKAF-017": [
+    "tests/unit/test_ekaf_drift.py"
+  ],
+  "G2-EKAF-018": [
+    "tests/unit/test_ekaf_drift.py"
+  ],
+  "GAP-SEARCH-001": [
+    "tests/unit/test_embeddings.py",
+    "tests/unit/test_extended_api_routes_pass2.py",
+    "tests/unit/test_search_facets.py"
+  ],
+  "H-03": [
+    "tests/unit/test_engineering_platform_router.py"
+  ],
+  "GAP-AGOV-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AGOV-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AGOV-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AGOV-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AGOV-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AGOV-008": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AGOV-009": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AGOV-010": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AGOV-011": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AKO-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AKO-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AKO-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AKO-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AKO-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AKO-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AKO-007": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AKO-008": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AKO-009": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-AKO-010": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-APP-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-APP-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ARCH-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ARCH-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ARCH-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ARCH-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ARCH-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ARCH-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CATALOG-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CATALOG-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CATALOG-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CATALOG-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CDC-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CDC-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CDC-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CDC-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CDC-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CDC-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CHANGE-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CHANGE-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CHANGE-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CHANGE-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CHANGE-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CHANGE-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CONTRACT-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CONTRACT-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CONTRACT-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CONTRACT-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CONTRACT-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CONTRACT-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CP-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CP-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CP-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CP-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CP-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CP-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CP-007": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-CP-008": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DATAOPS-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DBAGNOSTIC-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DRIFT-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DRIFT-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DRIFT-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DRIFT-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DRIFT-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DRIFT-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DRIFT-007": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DUAL-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-DUAL-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ENG-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ER-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ER-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ER-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ER-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ER-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ER-007": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ER-008": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ER-009": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-ER-010": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-EXPORT-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-FED-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-FED-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-FED-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GDS-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GDS-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GOV-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GOV-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GOV-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GRAG-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GRAG-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GRAG-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GRAG-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-GRAG-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-HG-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-HG-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-HG-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-HG-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-HG-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-HG-007": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-HG-008": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-HG-009": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-HG-010": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-IDE-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KQ-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KQ-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KQ-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KQ-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KQ-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KQ-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KRAG-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KRAG-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KRAG-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KRAG-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KRAG-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KRAG-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KRAG-008": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KRAG-009": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-KRAG-010": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LAYER-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LAYER-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIFE-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIFE-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIFE-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIFE-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIFE-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIFE-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIN-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIN-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIN-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIN-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LIN-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LITE-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-LITE-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-MIGRATION-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-NLP-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-NOCODE-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-NOCODE-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-NOCODE-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-OBS-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-OBS-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-OBS-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-OBS-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-OFFLINE-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-PACK-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-PORT-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-PROV-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-PROV-007": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-PROV-008": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-PROV-009": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-QUERY-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-RET-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-RET-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-RET-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-RET-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-RET-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-RET-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-RULE-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-RULE-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-SDT-001": [
+    "tests/unit/test_enterprise_gap_completion.py",
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "GAP-SDT-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-SDT-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-SDT-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-SDT-005": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-SDT-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-SDT-007": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-SDT-008": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-SEM-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-002": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-003": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-004": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-007": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-008": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-009": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-010": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-STUDIO-011": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-TCO-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-TEMP-006": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-TEMPLATE-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-UX-001": [
+    "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-REC-001": [
+    "tests/unit/test_expertise_freshness.py"
+  ],
+  "GAP-FRESH-001": [
+    "tests/unit/test_expertise_freshness.py"
+  ],
+  "GAP-OBS-003": [
+    "tests/unit/test_extended_api_routes_pass2.py",
+    "tests/unit/test_metrics.py"
+  ],
+  "GAP-FABRIC-001": [
+    "tests/unit/test_federation_planner.py"
+  ],
+  "GAP-FED-004": [
+    "tests/unit/test_future_scope.py"
+  ],
+  "GAP-CATALOG-005": [
+    "tests/unit/test_future_scope.py"
+  ],
+  "G2-ADMIN-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-ARCH-001": [
+    "tests/unit/test_g2_readiness.py",
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCHC-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-CAUSE-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-EVENT-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-EVOL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-I2R-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-IMMUNE-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-JOURNAL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-KD-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-OBS-001": [
+    "tests/unit/test_g2_readiness.py",
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OEVO-001": [
+    "tests/unit/test_g2_readiness.py",
+    "tests/unit/test_ontology_drift_review.py"
+  ],
+  "G2-PERF-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-PM-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-QOP-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-REL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SIM-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SLO-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SYNC-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-TEL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-TIME-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-TWIN-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-VSC-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-ADMIN-017": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "GAP-CP-009": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "GAP-KGCI-002": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "GAP-KGCI-003": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-002": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-003": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-004": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-005": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-008": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-009": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-010": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-012": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-013": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-014": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-015": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-006": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-ARCH-011": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OBS-006": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OBS-002": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OBS-004": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "GAP-KGCI-001": [
+    "tests/unit/test_gap_coverage.py",
+    "tests/unit/test_kgci_pipeline.py"
+  ],
+  "GAP-SEC-012": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-QOP-003": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OBS-003": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "G2-OBS-005": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "GAP-NOTREAL-999": [
+    "tests/unit/test_gap_coverage.py"
+  ],
+  "GAP-KFW-001": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-002": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-003": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-004": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-005": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-006": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-007": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KFW-008": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-AGOV-006": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-AGOV-007": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-TRUST-001": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-TRUST-002": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-TRUST-003": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-TRUST-004": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-TRUST-005": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-RULE-002": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "FR-PROV-001": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-PROV-001": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-PROV-002": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-PROV-003": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-PROV-004": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-PROV-006": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-AI-001": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "GAP-KRAG-007": [
+    "tests/unit/test_gap_governance_controls.py",
+    "tests/unit/test_rag_abstention.py"
+  ],
+  "GAP-GRAG-006": [
+    "tests/unit/test_gap_governance_controls.py"
+  ],
+  "FR-CONN-003": [
+    "tests/unit/test_github_connector.py"
+  ],
+  "G2-SRC-GH-001": [
+    "tests/unit/test_github_connector.py"
+  ],
+  "G2-SRC-GH-003": [
+    "tests/unit/test_github_connector.py"
+  ],
+  "G2-SRC-GH-004": [
+    "tests/unit/test_github_connector.py"
+  ],
+  "FR-CONN-004": [
+    "tests/unit/test_gitlab_connector.py"
+  ],
+  "G2-SRC-GL-001": [
+    "tests/unit/test_gitlab_connector.py"
+  ],
+  "G2-SRC-GL-003": [
+    "tests/unit/test_gitlab_connector.py"
+  ],
+  "G2-SRC-GL-004": [
+    "tests/unit/test_gitlab_connector.py"
+  ],
+  "GAP-GRAPHTEST-001": [
+    "tests/unit/test_graphtest_framework.py"
+  ],
+  "G2-T0210": [
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "G2-T0211": [
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "G2-T0213": [
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "G2-T0222": [
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "FR-GRAPH-009": [
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "G2-T0224": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_snapshots.py"
+  ],
+  "NFR-REL-002": [
+    "tests/unit/test_graph_evolution.py",
+    "tests/unit/test_operational_recovery.py",
+    "tests/unit/test_recovery_bundle.py"
+  ],
+  "G2-T0230": [
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "G2-T0232": [
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "G2-REL-005": [
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "G2-T0231": [
+    "tests/unit/test_graph_evolution.py"
+  ],
+  "FR-GRAPH-006": [
+    "tests/unit/test_graph_traversal.py"
+  ],
+  "FR-QUERY-003": [
+    "tests/unit/test_graph_traversal.py",
+    "tests/unit/test_query_executor.py"
+  ],
+  "GAP-HA-001": [
+    "tests/unit/test_ha_lease.py"
+  ],
+  "GAP-ER-005": [
+    "tests/unit/test_identity_candidates.py"
+  ],
+  "FR-ID-002": [
+    "tests/unit/test_identity_candidates.py"
+  ],
+  "FR-ID-001": [
+    "tests/unit/test_identity_ingestion.py"
+  ],
+  "FR-INGEST-002": [
+    "tests/unit/test_identity_resolver.py"
+  ],
+  "FR-INGEST-005": [
+    "tests/unit/test_jira_ingestion.py"
+  ],
+  "GAP-KGCI-004": [
+    "tests/unit/test_kgci_pipeline.py"
+  ],
+  "GAP-KP-001": [
+    "tests/unit/test_knowledge_products.py"
+  ],
+  "GAP-KP-002": [
+    "tests/unit/test_knowledge_products.py"
+  ],
+  "GAP-KP-003": [
+    "tests/unit/test_knowledge_products.py"
+  ],
+  "GAP-KP-004": [
+    "tests/unit/test_knowledge_products.py"
+  ],
+  "GAP-KP-005": [
+    "tests/unit/test_knowledge_products.py"
+  ],
+  "H-05": [
+    "tests/unit/test_layered_config.py"
+  ],
+  "GAP-LOOP-001": [
+    "tests/unit/test_loops_library.py"
+  ],
+  "FR-ONTO-001": [
+    "tests/unit/test_manifest_integrity.py"
+  ],
+  "FR-ONTO-002": [
+    "tests/unit/test_manifest_integrity.py"
+  ],
+  "GAP-MKT-001": [
+    "tests/unit/test_marketplace.py"
+  ],
+  "GAP-EXT-001": [
+    "tests/unit/test_marketplace.py"
+  ],
+  "FR-GRAPH-002": [
+    "tests/unit/test_meta_graph.py"
+  ],
+  "FR-GRAPH-005": [
+    "tests/unit/test_meta_graph.py"
+  ],
+  "GAP-AGOV-012": [
+    "tests/unit/test_model_governance.py"
+  ],
+  "GAP-GITOPS-001": [
+    "tests/unit/test_ontology_gitops.py"
+  ],
+  "G2-REL-007": [
+    "tests/unit/test_operational_recovery.py",
+    "tests/unit/test_recovery_bundle.py"
+  ],
+  "FR-CONN-005": [
+    "tests/unit/test_phase2_connectors.py"
+  ],
+  "FR-GRAPH-008": [
+    "tests/unit/test_phase2_hugegraph_schema.py"
+  ],
+  "H-01": [
+    "tests/unit/test_phase2_hugegraph_schema.py"
+  ],
+  "FR-GRAPH-003": [
+    "tests/unit/test_phase2_hugegraph_schema.py"
+  ],
+  "FR-GRAPH-010": [
+    "tests/unit/test_phase2_rdf_export.py"
+  ],
+  "FR-PROV-002": [
+    "tests/unit/test_provenance.py"
+  ],
+  "SR-QA-010": [
+    "tests/unit/test_qa_gate_integrity.py"
+  ],
+  "SR-QA-011": [
+    "tests/unit/test_qa_gate_integrity.py"
+  ],
+  "SR-QA-012": [
+    "tests/unit/test_qa_gate_integrity.py"
+  ],
+  "SR-QA-013": [
+    "tests/unit/test_qa_gate_integrity.py"
+  ],
+  "SR-QA-014": [
+    "tests/unit/test_qa_gate_integrity.py"
+  ],
+  "FR-VALID-003": [
+    "tests/unit/test_quality.py"
+  ],
+  "GAP-CACHE-001": [
+    "tests/unit/test_query_cache.py"
+  ],
+  "FR-QUERY-001": [
+    "tests/unit/test_query_executor.py"
+  ],
+  "FR-QUERY-004": [
+    "tests/unit/test_query_executor.py"
+  ],
+  "FR-QUERY-002": [
+    "tests/unit/test_query_executor.py"
+  ],
+  "FR-QUERY-007": [
+    "tests/unit/test_query_executor.py"
+  ],
+  "FR-GRAPH-007": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "GAP-QI-001": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "GAP-QI-002": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "GAP-QI-003": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "GAP-QI-004": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "GAP-QI-007": [
+    "tests/unit/test_query_intelligence.py"
+  ],
+  "FR-QUERY-005": [
+    "tests/unit/test_query_nl.py"
+  ],
+  "FR-QUERY-006": [
+    "tests/unit/test_query_policy.py"
+  ],
+  "FR-GRAPH-001": [
+    "tests/unit/test_requirement_evidence.py"
+  ],
+  "FR-GRAPH-": [
+    "tests/unit/test_requirement_evidence.py"
+  ],
+  "001": [
+    "tests/unit/test_requirement_evidence.py"
+  ],
+  "MVP-FR-001": [
+    "tests/unit/test_requirement_evidence.py"
+  ],
+  "FR-RAG-003": [
+    "tests/unit/test_retrieval.py"
+  ],
+  "FR-RAG-004": [
+    "tests/unit/test_retrieval.py"
+  ],
+  "FR-RAG-001": [
+    "tests/unit/test_retrieval.py"
+  ],
+  "FR-RAG-002": [
+    "tests/unit/test_retrieval.py"
+  ],
+  "MVP-FR-020": [
+    "tests/unit/test_retrieval.py"
+  ],
+  "FR-RAG-005": [
+    "tests/unit/test_retrieval_eval.py"
+  ],
+  "GAP-SEARCH-002": [
+    "tests/unit/test_search_facets.py"
+  ],
+  "G2-T0241": [
+    "tests/unit/test_semantic_consumers_reconciliation.py"
+  ],
+  "G2-T0242": [
+    "tests/unit/test_semantic_consumers_reconciliation.py"
+  ],
+  "G2-T0243": [
+    "tests/unit/test_semantic_consumers_reconciliation.py"
+  ],
+  "G2-T0250": [
+    "tests/unit/test_semantic_consumers_reconciliation.py"
+  ],
+  "G2-T0251": [
+    "tests/unit/test_semantic_consumers_reconciliation.py"
+  ],
+  "G2-T0252": [
+    "tests/unit/test_semantic_consumers_reconciliation.py"
+  ],
+  "G2-T0253": [
+    "tests/unit/test_semantic_consumers_reconciliation.py"
+  ],
+  "GAP-TAX-001": [
+    "tests/unit/test_skos_taxonomy.py"
+  ],
+  "GAP-STUDIO-005": [
+    "tests/unit/test_skos_taxonomy.py"
+  ],
+  "NFR-REL-003": [
+    "tests/unit/test_snapshots.py"
+  ],
+  "G2-T0004": [
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-T0101": [
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-T0102": [
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-EKAF-021": [
+    "tests/unit/test_source_registry.py"
+  ],
+  "G2-EKAF-028": [
+    "tests/unit/test_source_registry.py"
+  ],
+  "FR-RAG-006": [
+    "tests/unit/test_strategy_registry.py"
+  ],
+  "GAP-TRUTH-001": [
+    "tests/unit/test_truth_claims.py"
+  ],
+  "FR-VALID-001": [
+    "tests/unit/test_validation_engine.py"
+  ],
+  "FR-VALID-002": [
+    "tests/unit/test_validation_engine.py"
+  ],
+  "MVP-FR-027": [
+    "tests/unit/test_validation_source_binding.py"
+  ]
+}

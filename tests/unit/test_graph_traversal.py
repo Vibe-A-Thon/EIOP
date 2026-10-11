@@ -7,6 +7,7 @@ def _vertex(store: MemoryGraphStore, label: str, canonical_id: str) -> dict:
     return store.upsert_vertex(label, {"canonical_id": canonical_id, "name": canonical_id})
 
 
+@pytest.mark.req("FR-GRAPH-006")
 def test_find_path_returns_shortest_ordered_path_in_both_directions() -> None:
     store = MemoryGraphStore()
     issue = _vertex(store, "WorkItem", "issue:EOIP-1")
@@ -28,6 +29,7 @@ def test_find_path_returns_shortest_ordered_path_in_both_directions() -> None:
     assert [edge["label"] for edge in result["edges"]] == ["IMPLEMENTS", "MODIFIES", "DECLARES"]
 
 
+@pytest.mark.req("FR-QUERY-003")
 def test_impact_is_bounded_and_excludes_non_allowlisted_edges() -> None:
     store = MemoryGraphStore()
     root = _vertex(store, "CodeSymbol", "symbol:root")

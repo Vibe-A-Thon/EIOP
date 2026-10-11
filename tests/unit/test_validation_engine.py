@@ -21,6 +21,7 @@ def _seeded_store():
     return store
 
 
+@pytest.mark.req("FR-VALID-001", "FR-VALID-002")
 def test_valid_graph_passes_validation():
     store = _seeded_store()
     engine = ValidationEngine(store)

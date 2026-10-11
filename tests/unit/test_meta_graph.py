@@ -6,6 +6,7 @@ from eoip.graph.meta import DOMAINS, SchemaVersionConflict, bootstrap_meta_graph
 from eoip.ontology.manifest import ONTOLOGY_VERSION
 
 
+@pytest.mark.req("FR-GRAPH-002", "FR-GRAPH-005")
 def test_bootstrap_creates_domain_vertices():
     store = MemoryGraphStore()
     result = bootstrap_meta_graph(store)

@@ -52,6 +52,7 @@ def test_exact_expiry_purges_persistent_record_and_survives_restart(tmp_path):
     assert json.loads(store.path.read_text(encoding="utf-8"))["records"] == []
 
 
+@pytest.mark.req("NFR-PRIV-001")
 def test_scope_and_owner_are_exact_and_export_keeps_classification(tmp_path):
     store = FileMemoryStore(
         tmp_path, clock=lambda: datetime(2026, 10, 1, tzinfo=UTC)

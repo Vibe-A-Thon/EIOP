@@ -1,5 +1,4 @@
-"""Tests for architecture conformance engine (G2-P7)."""
-
+import pytest
 from eoip.graph.conformance import ArchRule, RuleKind, check_conformance, compile_rule, parse_rules
 from eoip.graph.memory import MemoryGraphStore
 from fastapi.testclient import TestClient
@@ -7,6 +6,7 @@ from fastapi.testclient import TestClient
 from apps.api.app import create_app
 
 
+@pytest.mark.req("G2-ARCHC-002")
 def test_parse_rules_basic():
     dsl = "RULE R1: CodeSymbol MUST_NOT_DEPEND Service"
     rules = parse_rules(dsl)
@@ -15,6 +15,7 @@ def test_parse_rules_basic():
     assert rules[0].kind == RuleKind.MUST_NOT_DEPEND
 
 
+@pytest.mark.req("G2-ARCHC-003")
 def test_parse_rules_with_severity_and_depth():
     dsl = "RULE R2: File MUST_HAVE TestCase SEVERITY WARNING DEPTH 3"
     rules = parse_rules(dsl)
@@ -83,6 +84,7 @@ def test_must_not_cross_violation():
     assert len(findings) >= 1
 
 
+@pytest.mark.req("G2-ARCHC-004")
 def test_check_conformance_all_pass():
     store = MemoryGraphStore()
     store.upsert_vertex("File", {"canonical_id": "urn:f1", "repo_id": "r1", "path": "a.py"})
@@ -92,6 +94,7 @@ def test_check_conformance_all_pass():
     assert result["errors"] == 0
 
 
+@pytest.mark.req("G2-ARCHC-005", "G2-ARCHC-006")
 def test_check_conformance_with_failure():
     store = MemoryGraphStore()
     f1 = store.upsert_vertex("File", {"canonical_id": "urn:f1", "repo_id": "r1", "path": "a.py"})
@@ -103,6 +106,7 @@ def test_check_conformance_with_failure():
     assert result["errors"] >= 1
 
 
+@pytest.mark.req("G2-ARCHC-007")
 def test_api_conformance_check_dsl():
     store = MemoryGraphStore()
     store.upsert_vertex("File", {"canonical_id": "urn:f1", "repo_id": "r1", "path": "a.py"})
@@ -160,6 +164,7 @@ def test_must_not_access_flags_only_direct_edges():
     assert access_direct["conformant"] is False
 
 
+@pytest.mark.req("G2-ARCHC-008", "G2-ARCHC-009")
 def test_api_conformance_ruleset_and_catalog(monkeypatch, tmp_path):
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     store = MemoryGraphStore()

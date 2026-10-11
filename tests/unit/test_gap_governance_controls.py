@@ -106,6 +106,7 @@ def test_trust_zones_quarantine_promote_filter_and_disclose_non_certified_facts(
 
 
 @pytest.mark.req(
+    "FR-PROV-001",
     "GAP-PROV-001",
     "GAP-PROV-002",
     "GAP-PROV-003",

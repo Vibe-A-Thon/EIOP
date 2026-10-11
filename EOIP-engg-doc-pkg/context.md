@@ -37,14 +37,14 @@ scope exclusions in instruction; no completion claim is made for excluded scope.
 
 | Component | Existing location |
 |---|---|
-| API | [apps/api/main.py](apps/api/main.py) |
-| Worker | [apps/worker/main.py](apps/worker/main.py) |
-| MCP | [apps/mcp/main.py](apps/mcp/main.py) |
-| Web user/admin UI | [apps/web](apps/web), [main.jsx](apps/web/src/main.jsx) |
-| VS Code extension | [apps/vscode-extension](apps/vscode-extension) |
-| Shared graph/contracts/ingestion/query/agents | [packages/eoip](packages/eoip) |
-| Local deployment | [Compose manifest](deploy/docker-compose.yml), [wrapper](scripts/docker.ps1) |
-| Requirements | [MVP requirements](EOIP-engg-doc-pkg/MVP-requirements.md), [traceability](EOIP-engg-doc-pkg/traceability/mvp-traceability.csv) |
+| API | [apps/api/main.py](../apps/api/main.py) |
+| Worker | [apps/worker/main.py](../apps/worker/main.py) |
+| MCP | [apps/mcp/main.py](../apps/mcp/main.py) |
+| Web user/admin UI | [apps/web](../apps/web), [main.jsx](../apps/web/src/main.jsx) |
+| VS Code extension | [apps/vscode-extension](../apps/vscode-extension) |
+| Shared graph/contracts/ingestion/query/agents | [packages/eoip](../packages/eoip) |
+| Local deployment | [Compose manifest](../deploy/docker-compose.yml), [wrapper](../scripts/docker.ps1) |
+| Requirements | [MVP requirements](MVP-requirements.md), [traceability](traceability/mvp-traceability.csv) |
 
 The default inspected endpoints are web `http://localhost:8080/app`, API
 `http://localhost:8000`, readiness `http://localhost:8000/health/ready` and MCP

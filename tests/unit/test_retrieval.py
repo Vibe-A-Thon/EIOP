@@ -1,7 +1,9 @@
+import pytest
 from eoip.graph.memory import MemoryGraphStore
 from eoip.retrieval.service import RetrievalStrategy, retrieve, select_strategy
 
 
+@pytest.mark.req("FR-RAG-003", "FR-RAG-004")
 def test_model_unavailable_retains_independent_graph_evidence(monkeypatch):
     monkeypatch.delenv("EOIP_OLLAMA_MODEL", raising=False)
     store = MemoryGraphStore()
@@ -18,6 +20,7 @@ def test_model_unavailable_retains_independent_graph_evidence(monkeypatch):
     assert result.warnings
 
 
+@pytest.mark.req("FR-RAG-001")
 def test_retrieval_router_selects_code_context_for_code_question():
     store = MemoryGraphStore()
     store.upsert_vertex(
@@ -42,6 +45,7 @@ def test_retrieval_router_selects_code_context_for_code_question():
     )
 
 
+@pytest.mark.req("FR-RAG-002", "MVP-FR-020")
 def test_code_context_preserves_relationship_evidence():
     store = MemoryGraphStore()
     source = store.upsert_vertex(

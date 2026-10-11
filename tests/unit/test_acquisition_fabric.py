@@ -29,7 +29,10 @@ def _source(source_id: str = "confluence-prod") -> SourceRegistryEntry:
     )
 
 
-@pytest.mark.req("G2-T0110", "G2-T0111", "G2-T0112")
+@pytest.mark.req(
+    "G2-T0110", "G2-T0111", "G2-T0112",
+    "G2-EKAF-005", "G2-EKAF-007", "G2-EKAF-008", "G2-EKAF-011", "G2-EKAF-013"
+)
 def test_scheduler_admits_all_operation_types_and_enforces_controls(tmp_path) -> None:
     registry = SourceRegistry(tmp_path / "state" / "source-registry.json")
     registry.create(_source())
@@ -60,7 +63,10 @@ def test_scheduler_admits_all_operation_types_and_enforces_controls(tmp_path) ->
     assert scheduler.policy("confluence-prod").paused is False
 
 
-@pytest.mark.req("G2-T0201", "G2-T0202", "G2-T0203")
+@pytest.mark.req(
+    "G2-T0201", "G2-T0202", "G2-T0203",
+    "G2-EKAF-004", "G2-EKAF-012", "FR-INGEST-004"
+)
 def test_baseline_controller_persists_ordered_restart_manifest(tmp_path) -> None:
     path = tmp_path / "baseline.json"
     controller = BaselineController(path, "jira-prod", {"mapping_version": "jira/2.0"})
@@ -76,7 +82,10 @@ def test_baseline_controller_persists_ordered_restart_manifest(tmp_path) -> None
     assert [item["stage"] for item in resumed["history"]] == list(BaselineController._ORDER)
 
 
-@pytest.mark.req("G2-T0120", "G2-T0121", "G2-T0122")
+@pytest.mark.req(
+    "G2-T0120", "G2-T0121", "G2-T0122",
+    "G2-EKAF-006", "G2-EKAF-009", "G2-EKAF-020"
+)
 def test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing(tmp_path) -> None:
     gateway = WebhookGateway(tmp_path)
     body = json.dumps({"event": "issue_updated", "id": "EOIP-1"}).encode()
@@ -312,7 +321,9 @@ def test_generic_web_and_file_connectors_share_source_connector_semantics(tmp_pa
         assert events[0].content_hash == events[0].payload_hash
 
 
-@pytest.mark.req("G2-T0110")
+@pytest.mark.req(
+    "G2-T0110", "G2-EKAF-015", "G2-EKAF-029", "G2-EKAF-030"
+)
 def test_source_operation_api_queues_registry_scoped_job(monkeypatch, tmp_path) -> None:
     from eoip.graph.memory import MemoryGraphStore
     from fastapi.testclient import TestClient

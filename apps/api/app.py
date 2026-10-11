@@ -266,10 +266,25 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
     @app.exception_handler(QueryTimeout)
     async def handle_query_timeout(request, exc):
         import json as _json
+        correlation_id = getattr(request.state, "correlation_id", None)
+        payload = {
+            "type": "https://eoip.dev/errors/query-timeout",
+            "title": "Query Timeout",
+            "status": 504,
+            "detail": str(exc),
+            "instance": str(request.url.path),
+            "correlation_id": correlation_id,
+            "error": {
+                "code": "EOIP-TIMEOUT-504",
+                "message": str(exc),
+                "category": "TIMEOUT",
+                "severity": "MEDIUM",
+            },
+        }
         return Response(
-            content=_json.dumps({"detail": str(exc)}),
+            content=_json.dumps(payload),
             status_code=504,
-            media_type="application/json",
+            media_type="application/problem+json",
         )
 
     @app.exception_handler(Exception)
@@ -279,17 +294,25 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         logging.getLogger("eoip.enterprise").error(
             "unhandled_exception path=%s error=%s", request.url.path, str(exc)
         )
+        correlation_id = getattr(request.state, "correlation_id", None)
+        payload = {
+            "type": "https://eoip.dev/errors/internal-server-error",
+            "title": "Internal Server Error",
+            "status": 500,
+            "detail": "Internal server error",
+            "instance": str(request.url.path),
+            "correlation_id": correlation_id,
+            "error": {
+                "code": "EOIP-SYS-500",
+                "message": "Internal server error",
+                "category": "INFRASTRUCTURE",
+                "severity": "HIGH",
+            },
+        }
         return Response(
-            content=_json.dumps({
-                "error": {
-                    "code": "EOIP-SYS-500",
-                    "message": "Internal server error",
-                    "category": "INFRASTRUCTURE",
-                    "severity": "HIGH",
-                }
-            }),
+            content=_json.dumps(payload),
             status_code=500,
-            media_type="application/json",
+            media_type="application/problem+json",
         )
 
     @app.get("/health/live")

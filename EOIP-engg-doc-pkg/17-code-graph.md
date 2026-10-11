@@ -15,6 +15,28 @@ The code graph is AST/symbol based. It records repositories, revisions, files, s
 Provenance is part of every mutation, not a separate report. Cross-domain links have evidence references to raw events, commits/diffs, parser output or mapping rules, plus ingestion/parser/ontology versions. API, UI, RAG and MCP return the same evidence identifiers so an answer can be audited independent of the LLM.
 
 
+## Concrete Implementation Modules (CG-CODE-01)
+
+The code graph is implemented across the following active production modules:
+- **`packages/eoip/ingestion/code.py`**: `CodeIngestionService` event-driven ingestion pipeline, transaction boundary, and vertex/edge mutations.
+- **`packages/eoip/ingestion/code_graph_json.py`**: Direct JSON code graph payload loader for repository symbols and dependencies.
+- **`packages/eoip/connectors/repository.py`**: Local Git repository connector, commit log parser, and diff analyzer.
+- **`packages/eoip/connectors/local_code.py`**: Local code filesystem crawler and source file event generator.
+- **`packages/eoip/codegraph/parser.py`**: `CodeParser`, `ParsedFile`, `ParsedSymbol`, and `ParsedCall` deterministic AST symbol extractor.
+- Reference documentation: [reference/code-graph.md](reference/code-graph.md).
+
+## Polyglot Parser Language Matrix (CG-CODE-02)
+
+The single source of truth for code parser coverage is derived from `packages/eoip/codegraph/parser.py` and tested in `tests/unit/test_code_parser.py`:
+
+| Language | Extensions | Parser Engine | Extraction Depth | Edge Types Emitted | Verification Test |
+|---|---|---|---|---|---|
+| Python | `.py` | `ast.parse` (Standard Library) | Full AST (classes, functions, async defs, methods, module docstrings) | `DEFINES`, `CALLS`, `IMPORTS`, `CONTAINS` | `tests/unit/test_code_parser.py` |
+| TypeScript | `.ts`, `.tsx` | tree-sitter / Regex fallback | Declarations (interfaces, classes, methods, functions, exports) | `DEFINES`, `CALLS`, `IMPORTS` | `tests/unit/test_code_parser.py` |
+| JavaScript | `.js`, `.jsx` | tree-sitter / Regex fallback | Declarations (classes, functions, arrow functions, CommonJS/ESM) | `DEFINES`, `CALLS`, `IMPORTS` | `tests/unit/test_code_parser.py` |
+
+Dynamic runtime behaviors and unresolved calls are marked `unresolved_calls` rather than hallucinated (FR-CODE-001).
+
 ## Applicable requirements
 
 | ID | Requirement | Phase | Completion signal |
@@ -40,3 +62,4 @@ Provenance is part of every mutation, not a separate report. Cross-domain links 
 - Error, security, logging and configuration paths are exercised.
 - Acceptance evidence is reproducible from a clean documented environment.
 - Deferred capabilities remain behind stable interfaces and are not represented as already implemented.
+

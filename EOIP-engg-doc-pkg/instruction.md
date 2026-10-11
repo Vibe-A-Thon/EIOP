@@ -13,11 +13,11 @@ or an explicit user scope/approval decision.
 
 | Subject | Authoritative file | Other files' responsibility |
 |---|---|---|
-| Product constraints and phase scope | [Master specification](EOIP-engg-doc-pkg/source-master-prompt.txt), [MVP requirements](EOIP-engg-doc-pkg/MVP-requirements.md), [roadmap](EOIP-engg-doc-pkg/66-phase-roadmap.md) | Link requirements; never silently rewrite scope |
+| Product constraints and phase scope | [Master specification](source-master-prompt.txt), [MVP requirements](MVP-requirements.md), [roadmap](66-phase-roadmap.md) | Link requirements; never silently rewrite scope |
 | Roles, persona text and ownership | [roles.md](roles.md) | Copy only the active persona; link the catalog instead of duplicating role lists |
 | Workflow, safety and status rules | [instruction.md](instruction.md) | Onboarding/runbook/templates must follow this contract |
 | Ticket details and status | Individual tickets in [tickets](tickets) | Roll up exact ID/title/status/owner/priority; do not invent tickets |
-| Requirement mappings | [requirements-map.md](tickets/requirements-map.md) and [MVP traceability](EOIP-engg-doc-pkg/traceability/mvp-traceability.csv) | Track only real IDs and qualified evidence |
+| Requirement mappings | [requirements-map.md](tickets/requirements-map.md) and [MVP traceability](traceability/mvp-traceability.csv) | Track only real IDs and qualified evidence |
 | Prioritized queue | [todo-status.md](todo-status.md) | Derive from existing tickets, dependencies and evidence |
 | Gate checklist | [checklist.md](checklist.md) | Distinguish coordination completion from product acceptance |
 | Current session snapshot | [context.md](context.md) | Use actual branch/HEAD/role and verified paths |
@@ -43,8 +43,8 @@ and existing ticket files. Read the selected task's applicable specs/code before
 changing it. Do not claim an entire repository audit from reading this packet.
 
 Retain the user's existing scope exclusions unless explicitly changed:
-[KGR requirements](EOIP-engg-doc-pkg/KGR-requirements.md) and
-[KGR implementation plan](EOIP-engg-doc-pkg/KGR-implementation-plan.md)
+[KGR requirements](KGR-requirements.md) and
+[KGR implementation plan](KGR-implementation-plan.md)
 must not be read, audited or changed under this coordination workflow.
 They are exclusions, not claims that their obligations have been completed.
 Report any resulting full-product assessment limitation.

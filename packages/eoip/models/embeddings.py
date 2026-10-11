@@ -112,13 +112,64 @@ class OllamaEmbeddingProvider:
             return False
 
 
-def build_embedding_provider() -> EmbeddingProvider | None:
-    """Construct an ``OllamaEmbeddingProvider`` from the environment.
+class SentenceTransformersEmbeddingProvider:
+    """EmbeddingProvider backed by local sentence-transformers models (H-02)."""
 
-    Returns ``None`` when no embedding model is configured
-    (``EOIP_OLLAMA_EMBED_MODEL`` unset), signalling the caller to fall back
-    to the deterministic hashing embedder (GAP-SEARCH-001/§7.3).
+    def __init__(self, model_name: str | None = None) -> None:
+        self._model_name = model_name or os.getenv("EOIP_SENTENCE_TRANSFORMER_MODEL", "all-MiniLM-L6-v2")
+        self._model = None
+        self._dim = 384
+
+    def _get_model(self):
+        if self._model is None:
+            try:
+                from sentence_transformers import SentenceTransformer
+                self._model = SentenceTransformer(self._model_name)
+                dim = getattr(self._model, "get_sentence_embedding_dimension", None)
+                if callable(dim):
+                    self._dim = int(dim())
+            except Exception as exc:
+                raise ModelUnavailable(f"sentence-transformers failed to load: {exc}") from exc
+        return self._model
+
+    @property
+    def model_name(self) -> str:
+        return self._model_name
+
+    @property
+    def dim(self) -> int:
+        return self._dim
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        if not texts:
+            return []
+        model = self._get_model()
+        vecs = model.encode(texts, convert_to_numpy=True).tolist()
+        return [[float(x) for x in v] for v in vecs]
+
+    def embed_one(self, text: str) -> list[float]:
+        return self.embed([text])[0]
+
+    def health(self) -> bool:
+        try:
+            self._get_model()
+            return True
+        except Exception:
+            return False
+
+
+def build_embedding_provider() -> EmbeddingProvider | None:
+    """Construct an embedding provider from the environment (H-02, GAP-SEARCH-001).
+
+    Checks for:
+    1. EOIP_SENTENCE_TRANSFORMER_MODEL or EOIP_EMBEDDING_PROVIDER == 'sentence-transformers'
+    2. EOIP_OLLAMA_EMBED_MODEL (defaults to Ollama)
+    Returns None when no provider is explicitly enabled, falling back to local deterministic embeddings.
     """
-    if not os.getenv("EOIP_OLLAMA_EMBED_MODEL"):
-        return None
-    return OllamaEmbeddingProvider()
+    provider_type = os.getenv("EOIP_EMBEDDING_PROVIDER", "").lower()
+    if provider_type == "sentence-transformers" or os.getenv("EOIP_SENTENCE_TRANSFORMER_MODEL"):
+        return SentenceTransformersEmbeddingProvider()
+    if os.getenv("EOIP_OLLAMA_EMBED_MODEL") or provider_type == "ollama":
+        return OllamaEmbeddingProvider()
+    return None
+

@@ -50,6 +50,7 @@ def _ttl_def(**kwargs) -> SettingDef:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.req("H-05")
 def test_layers_precedence_higher_wins() -> None:
     store = _store()
     store.register(_ttl_def())

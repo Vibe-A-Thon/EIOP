@@ -8,7 +8,7 @@
 
 > This document is normative for its scope. Where it conflicts with the master specification, the master non-negotiable constraints win. “MVP” means the Phase 1 integrated vertical slice, not a mock-up.
 
-**Current audit overlay:** [../Audit-GAPS-CG-dev.md](../Audit-GAPS-CG-dev.md) is the active 2026-10-11 implementation/documentation gap backlog. Historical files in this package remain useful evidence, but current closure work should start from that audit.
+**Current master backlog:** [../KGF-MASTER-BACKLOG.md](../KGF-MASTER-BACKLOG.md) is the active master completion backlog synthesizing [Audit-GAPS-CG-dev.md](Audit-GAPS-CG-dev.md) and the KnowGridFlow Conquest Plan. Current closure work should start from that backlog.
 
 ## Normative documents
 

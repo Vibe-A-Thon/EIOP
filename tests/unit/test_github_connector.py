@@ -22,6 +22,7 @@ def _repo():
     }
 
 
+@pytest.mark.req("FR-CONN-003", "G2-SRC-GH-001", "G2-SRC-GH-003", "G2-SRC-GH-004")
 def test_github_baseline_discovers_and_emits_versioned_engineering_events() -> None:
     requests = []
 

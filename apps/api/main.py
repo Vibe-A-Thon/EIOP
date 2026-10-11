@@ -472,10 +472,15 @@ def create_app():
         )
         return JSONResponse(
             {
+                "type": "https://eoip.dev/errors/graph-service-unavailable",
+                "title": "Graph Service Unavailable",
+                "status": 503,
                 "detail": "Graph service unavailable",
+                "instance": str(request.url.path),
                 "correlation_id": getattr(request.state, "correlation_id", None),
             },
             status_code=503,
+            media_type="application/problem+json",
         )
 
     def runtime_metrics() -> str:

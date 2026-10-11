@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+import pytest
 
 from eoip.platform_router import build_platform_router
 
@@ -14,6 +15,7 @@ def _client() -> TestClient:
     return TestClient(app)
 
 
+@pytest.mark.req("H-03")
 def test_platform_engineering_stats_endpoints_are_callable() -> None:
     client = _client()
     paths = [

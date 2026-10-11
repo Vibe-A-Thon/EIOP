@@ -210,45 +210,45 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 - MVP: Existing test annotated with @pytest.mark.req("<ID>"), acceptance criteria verified, and a new test added if none exists. Audit note: "Implemented via core services; lacks standalone explicit MVP requirement tag in test suite."
 
-- [ ] `BASE-01` **Create the requirement registry** (P0, src ADD+CG+G)
+- [x] `BASE-01` **Create the requirement registry** (P0, src ADD+CG+G)
   - Create requirements-registry.json: one row per ID in this backlog (826 audited requirements plus Plan/CG/REL tasks) with spec source, code paths, tests, API route, UI surface, evidence receipt and status. This is the machine form of CG-GAP-004 ("convert candidates into atomic requirements, map semantically to code/tests").
-- [ ] `BASE-02` **Add the @pytest.mark.req marker and a requirement-to-test map** (P0, src G)
+- [x] `BASE-02` **Add the @pytest.mark.req marker and a requirement-to-test map** (P0, src G)
   - Register a req marker in pytest config, add a conftest plugin that collects the IDs per test and emits requirements-test-map.json. From G-dev Phase A step 1 and the MVP remediation text.
   - Related: `MVP-FR-027`
-- [ ] `BASE-03` **Retro-tag existing tests with requirement IDs** (P0, src G)
+- [x] `BASE-03` **Retro-tag existing tests with requirement IDs** (P0, src G)
   - Tag all untagged tests in tests/ with the exact FR-*, G2-*, GAP-*, MVP-FR-* IDs they already cover (G-dev Phase A step 1). Most NOT_YET_DEVELOPED rows with "Test: None" are expected to flip to tagged-and-passing here without new code.
   - Related: `MVP-FR-027`
-- [ ] `BASE-04` **Verification sweep of all 434 audit-gap IDs** (P0, src ADD)
+- [x] `BASE-04` **Verification sweep of all 434 audit-gap IDs** (P0, src ADD)
   - For every gap ID: search the repo (ID, keywords, route, module), then classify as already implemented (tag only), needs code, needs live infrastructure, or roadmap. Record in the registry. This prevents rebuilding features the audits mislabelled (see conflict C8) and lets the later phases focus on real work.
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `MVP-FR-027` | Automated tests | Partial | - | tests/unit/test_validation_source_binding.py |
+| [x] | `MVP-FR-027` | Automated tests | Partial | - | tests/unit/test_validation_source_binding.py |
 
 #### WP 0.2. Documentation truth and drift reconciliation (8 tasks)
 
 **Goal.** Make this backlog and available-status.md the active status, triage the 1,199 unmapped documentation-audit records, fix stale paths/stack claims and code-graph docs. Historical audit files stay historical.
 
-- [ ] `CG-CODE-01` **Align code-graph docs to the real modules** (P1, src CG)
+- [x] `CG-CODE-01` **Align code-graph docs to the real modules** (P1, src CG)
   - EOIP-engg-doc-pkg/17-code-graph.md, reference/code-graph.md and the implementation work packages must point at packages/eoip/ingestion/code.py, code_graph_json.py, repository.py, local_code.py and packages/eoip/codegraph/*.
   - Related: `G2-SRC-CODE-002`
-- [ ] `CG-CODE-02` **Publish the exact polyglot parser language matrix** (P1, src CG)
+- [x] `CG-CODE-02` **Publish the exact polyglot parser language matrix** (P1, src CG)
   - Docs claim broad language coverage. Derive the matrix (language, parse depth, edge types, test file) from the current parser and code-ingestion tests, and use it as the single source of truth for each language claim.
   - Related: `FR-CODE-002`
-- [ ] `CG-DOC-01` **Point the live docs at this backlog** (P0, src CG)
+- [x] `CG-DOC-01` **Point the live docs at this backlog** (P0, src CG)
   - Update README.md, available-status.md, todo-status.md, EOIP-engg-doc-pkg/available-status.md, EOIP-engg-doc-pkg/todo-status.md, EOIP-engg-doc-pkg/DOCUMENTATION-INDEX.md and EOIP-engg-doc-pkg/README.md to reference the master backlog and the generated evidence files (current-gap-report.json/.md, documentation-inventory.json). Historical audit files stay historical and must not be silently rewritten.
-- [ ] `CG-GAP-003` **Reconcile documentation drift** (P0, src CG)
+- [x] `CG-GAP-003` **Reconcile documentation drift** (P0, src CG)
   - Status: Documentation drift. Gap: Current docs still contain stale or incorrect implementation paths and historical pass counts. Evidence: Older status docs referenced apps/console, packages/eoip/ontology/schema.py, packages/eoip/rag/engine.py and old pytest totals. Closure: Treat this backlog and available-status.md as active current status; reconcile older docs section by section instead of rewriting historical audit records.
   - Related: `CG-DOC-01`
-- [ ] `CG-GAP-004` **Triage the 1,199 unmapped documentation-audit records** (P0, src CG)
+- [x] `CG-GAP-004` **Triage the 1,199 unmapped documentation-audit records** (P0, src CG)
   - Status: Traceability gap. Gap: Conservative documentation audit indexed 1,199 candidate records without literal implementation/test leads (1,639 records: 440 Partial, 1,199 Missing). Evidence: python -m scripts.documentation_audit --project-root . Closure: Convert candidates into atomic requirements, map semantically to code/tests, retire false positives. Classify each as: true gap, duplicate historical claim, false positive, or roadmap item. Every true gap becomes a new task in the registry (loop-back rule).
   - Related: `BASE-01`, `REL-05`
-- [ ] `CG-GAP-005` **Markdown link-check pass (non-historical docs first)** (P1, src CG)
+- [x] `CG-GAP-005` **Markdown link-check pass (non-historical docs first)** (P1, src CG)
   - Status: Documentation link drift. Gap: Root README guide links were corrected, but historical/engineering package links still need a dedicated pass. Evidence: Earlier link audit found stale local Markdown links. Closure: Run a link checker after the audit and patch non-historical docs first. Re-run in Phase 8 (REL-13).
   - Related: `REL-13`
-- [ ] `CG-GAP-007` **Update web UX docs to the real stack** (P1, src CG)
+- [x] `CG-GAP-007` **Update web UX docs to the real stack** (P1, src CG)
   - Status: Web stack documentation drift. Gap: Older docs claim Next.js, TypeScript, Tailwind and 2D/3D Force-Graph; the current app is Vite + React + JavaScript/CSS with a Cytoscape-based graph UI. Evidence: apps/web/package.json, build output, and source tree. Closure: Update web UX docs to the current stack and describe any planned future stack separately. See DEC-02.
-- [ ] `CG-GAP-009` **Generated audit artifacts policy** (P2, src CG)
+- [x] `CG-GAP-009` **Generated audit artifacts policy** (P2, src CG)
   - Status: Generated artifacts are derived evidence. Gap: EOIP-engg-doc-pkg/audits/generated/* is generated by the audit script and useful, but is derived evidence. Evidence: Generated in the CG audit pass. Closure: Keep as audit evidence or add to a generated-artifact policy. Never treat generated output as source requirements. See DEC-05.
 
 
@@ -264,36 +264,36 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 **Depends on.** WP 0.1
 
-- [ ] `H-01` **HugeGraph adapter wiring** (P0, about 3 sessions, src CQ)
+- [x] `H-01` **HugeGraph adapter wiring** (P0, about 3 sessions, src CQ)
   - Connect graph/* modules to real Gremlin queries via hugegraph.py adapter
   - Related: `FR-GRAPH-007`
-- [ ] `H-02` **Real embedding integration** (P0, about 2 sessions, src CQ)
+- [x] `H-02` **Real embedding integration** (P0, about 2 sessions, src CQ)
   - Replace _hash_embed() with sentence-transformers or Ollama embeddings in semantic.py + hybrid_engine.py
-- [ ] `H-03` **Integration test suite** (P0, about 3 sessions, src CQ)
+- [x] `H-03` **Integration test suite** (P0, about 3 sessions, src CQ)
   - TestClient-based tests for all 143 API endpoints across platform_router + enterprise_router
-- [ ] `H-04` **Auth/RBAC enforcement** (P0, about 2 sessions, src CQ)
+- [x] `H-04` **Auth/RBAC enforcement** (P0, about 2 sessions, src CQ)
   - Wire authn/ JWT flows + authz/ RBAC policies onto all route handlers
   - Related: `NFR-SEC-005`
-- [ ] `H-05` **Configuration validation** (P0, about 1 session, src CQ)
+- [x] `H-05` **Configuration validation** (P0, about 1 session, src CQ)
   - Pydantic settings for all env vars, .env loading, config-as-code verification
-- [ ] `H-06` **Docker Compose smoke test** (P0, about 1 session, src CQ)
+- [x] `H-06` **Docker Compose smoke test** (P0, about 1 session, src CQ)
   - Verify deploy/docker-compose.yml boots HugeGraph + API + web, health checks pass
-- [ ] `H-07` **Error handling audit** (P0, about 1 session, src CQ)
+- [x] `H-07` **Error handling audit** (P0, about 1 session, src CQ)
   - Consistent error responses (RFC 7807), proper HTTP status codes, no stack traces in prod
-- [ ] `H-08` **OpenAPI schema publication** (P0, about 1 session, src CQ)
+- [x] `H-08` **OpenAPI schema publication** (P0, about 1 session, src CQ)
   - Published Swagger UI, generate Python/TypeScript SDK clients from spec
 
 #### WP 1.2. Route, scanner and operator-console closure (3 tasks)
 
 **Goal.** Make the product capability scanner pass the first-choice gate (PIC-002 loops catalog, PIC-010 reports root) and settle the apps/console question.
 
-- [ ] `CG-GAP-001` **Mount the loops catalog route (PIC-002)** (P0, src CG)
+- [x] `CG-GAP-001` **Mount the loops catalog route (PIC-002)** (P0, src CG)
   - Status: Partially developed. Gap: Product scanner expects /api/v1/loops/catalog; the deployment route table exposes /api/v1/brain/loops and the standalone eoip.loops.router is not mounted. Evidence: Route scan found /api/v1/brain/loops, not /api/v1/loops/catalog; packages/eoip/loops/router.py exists. Closure: Mount build_router() from eoip.loops.router, or update the scanner/docs to the supported Brain OS loops route. Add a route test.
   - Related: `REL-04`
-- [ ] `CG-GAP-002` **Add the reports root route (PIC-010)** (P1, src CG)
+- [x] `CG-GAP-002` **Add the reports root route (PIC-010)** (P1, src CG)
   - Status: Partially developed / scanner mismatch. Gap: Scanner expects exact /api/v1/reports; the app exposes /api/v1/reports/templates, /render, /export/{report_id} and schedule routes but no root index. Evidence: Route scan found report subroutes but not /api/v1/reports. Closure: Add GET /api/v1/reports summary route, or change the scanner expectation to a concrete subroute.
   - Related: `REL-04`
-- [ ] `CG-GAP-006` **Decide and close the apps/console question** (P1, src CG)
+- [x] `CG-GAP-006` **Decide and close the apps/console question** (P1, src CG)
   - Status: Operator console drift. Gap: Older docs mention apps/console; no apps/console directory exists. Evidence: Test-Path apps\console returned false. Closure: Either implement the console, move console capability into documented scripts/API (and the admin web UI), or mark the console as not shipped. See DEC-01.
 
 #### WP 1.3. Core graph, ontology, provenance and validation contracts (33 tasks)
@@ -309,39 +309,39 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `FR-GRAPH-002` | Logical graph domains | Partial | packages/eoip/graph/meta.py | - |
-| [ ] | `FR-GRAPH-003` | Schema bootstrap | Partial | - | tests/unit/test_phase2_hugegraph_schema.py |
-| [ ] | `FR-GRAPH-004` | Canonical identifiers | Not dev | - | - |
-| [ ] | `FR-GRAPH-005` | Meta graph | Partial | packages/eoip/graph/meta.py | - |
-| [ ] | `FR-GRAPH-006` | Cross-domain bridge edges | Not dev | - | - |
-| [ ] | `FR-GRAPH-007` | Gremlin repository | Not dev | - | - |
-| [ ] | `FR-GRAPH-008` | Index strategy | Partial | packages/eoip/ontology/manifest.py | - |
-| [ ] | `FR-GRAPH-009` | Graph version journal | Not dev | - | - |
-| [ ] | `FR-GRAPH-010` | RDF/OWL interoperability | Not dev | - | - |
-| [ ] | `FR-ONTO-001` | Enterprise ontology vocabulary | Partial | packages/eoip/ontology/manifest.py | - |
-| [ ] | `FR-ONTO-002` | Relationship semantics | Partial | packages/eoip/ontology/manifest.py | - |
-| [ ] | `FR-PROV-001` | Evidence model | Partial | packages/eoip/provenance/evidence.py | - |
-| [ ] | `FR-PROV-002` | Provenance traversal | Partial | packages/eoip/provenance/lineage.py | - |
-| [ ] | `FR-TEMP-001` | Bitemporal-ready fields | Not dev | - | - |
-| [ ] | `FR-VALID-001` | Graph validation rules | Partial | packages/eoip/validation/engine.py | - |
-| [ ] | `FR-VALID-002` | Validation gates | Partial | packages/eoip/ontology/manifest.py, packages/eoip/validation/engine.py | - |
-| [ ] | `G2-ARCH-002` | API/event first | Partial | packages/eoip/gaps/g2_architecture.py | - |
-| [ ] | `G2-ARCH-003` | Deterministic first | Partial | packages/eoip/gaps/g2_architecture.py | - |
-| [ ] | `G2-ARCH-004` | Preserve source fidelity | Partial | packages/eoip/gaps/g2_architecture.py | - |
-| [ ] | `G2-ARCH-005` | HugeGraph is semantic operational truth | Partial | packages/eoip/gaps/g2_architecture.py | - |
-| [ ] | `G2-ARCH-008` | Current and historical views | Partial | packages/eoip/gaps/g2_architecture.py | - |
-| [ ] | `G2-ARCH-009` | One semantic identity system | Partial | packages/eoip/gaps/g2_architecture.py | - |
-| [ ] | `G2-ARCH-012` | Incremental by default after baseline | Partial | packages/eoip/gaps/g2_architecture.py | - |
-| [ ] | `G2-ARCH-013` | Replayability | Partial | packages/eoip/gaps/g2_architecture.py | - |
-| [ ] | `G2-ARCH-014` | Source permissions respected | Partial | packages/eoip/gaps/g2_architecture.py | - |
-| [ ] | `G2-ARCHC-002` | Architecture rule catalog | Partial | packages/eoip/graph/rule_catalog.py | - |
-| [ ] | `G2-ARCHC-003` | Architecture rule catalog | Not dev | - | - |
-| [ ] | `G2-ARCHC-004` | Architecture rule catalog | Not dev | - | - |
-| [ ] | `G2-ARCHC-005` | Architecture rule catalog | Not dev | - | - |
-| [ ] | `G2-ARCHC-006` | Architecture rule catalog | Not dev | - | - |
-| [ ] | `G2-ARCHC-007` | Architecture rule catalog | Not dev | - | - |
-| [ ] | `G2-ARCHC-008` | Architecture rule catalog | Not dev | - | - |
-| [ ] | `G2-ARCHC-009` | Architecture rule catalog | Not dev | - | - |
+| [x] | `FR-GRAPH-002` | Logical graph domains | Partial | packages/eoip/graph/meta.py | - |
+| [x] | `FR-GRAPH-003` | Schema bootstrap | Partial | - | tests/unit/test_phase2_hugegraph_schema.py |
+| [x] | `FR-GRAPH-004` | Canonical identifiers | Not dev | - | - |
+| [x] | `FR-GRAPH-005` | Meta graph | Partial | packages/eoip/graph/meta.py | - |
+| [x] | `FR-GRAPH-006` | Cross-domain bridge edges | Not dev | - | - |
+| [x] | `FR-GRAPH-007` | Gremlin repository | Not dev | - | - |
+| [x] | `FR-GRAPH-008` | Index strategy | Partial | packages/eoip/ontology/manifest.py | - |
+| [x] | `FR-GRAPH-009` | Graph version journal | Not dev | - | - |
+| [x] | `FR-GRAPH-010` | RDF/OWL interoperability | Not dev | - | - |
+| [x] | `FR-ONTO-001` | Enterprise ontology vocabulary | Partial | packages/eoip/ontology/manifest.py | - |
+| [x] | `FR-ONTO-002` | Relationship semantics | Partial | packages/eoip/ontology/manifest.py | - |
+| [x] | `FR-PROV-001` | Evidence model | Partial | packages/eoip/provenance/evidence.py | - |
+| [x] | `FR-PROV-002` | Provenance traversal | Partial | packages/eoip/provenance/lineage.py | - |
+| [x] | `FR-TEMP-001` | Bitemporal-ready fields | Not dev | - | - |
+| [x] | `FR-VALID-001` | Graph validation rules | Partial | packages/eoip/validation/engine.py | - |
+| [x] | `FR-VALID-002` | Validation gates | Partial | packages/eoip/ontology/manifest.py, packages/eoip/validation/engine.py | - |
+| [x] | `G2-ARCH-002` | API/event first | Partial | packages/eoip/gaps/g2_architecture.py | - |
+| [x] | `G2-ARCH-003` | Deterministic first | Partial | packages/eoip/gaps/g2_architecture.py | - |
+| [x] | `G2-ARCH-004` | Preserve source fidelity | Partial | packages/eoip/gaps/g2_architecture.py | - |
+| [x] | `G2-ARCH-005` | HugeGraph is semantic operational truth | Partial | packages/eoip/gaps/g2_architecture.py | - |
+| [x] | `G2-ARCH-008` | Current and historical views | Partial | packages/eoip/gaps/g2_architecture.py | - |
+| [x] | `G2-ARCH-009` | One semantic identity system | Partial | packages/eoip/gaps/g2_architecture.py | - |
+| [x] | `G2-ARCH-012` | Incremental by default after baseline | Partial | packages/eoip/gaps/g2_architecture.py | - |
+| [x] | `G2-ARCH-013` | Replayability | Partial | packages/eoip/gaps/g2_architecture.py | - |
+| [x] | `G2-ARCH-014` | Source permissions respected | Partial | packages/eoip/gaps/g2_architecture.py | - |
+| [x] | `G2-ARCHC-002` | Architecture rule catalog | Partial | packages/eoip/graph/rule_catalog.py | - |
+| [x] | `G2-ARCHC-003` | Architecture rule catalog | Not dev | - | - |
+| [x] | `G2-ARCHC-004` | Architecture rule catalog | Not dev | - | - |
+| [x] | `G2-ARCHC-005` | Architecture rule catalog | Not dev | - | - |
+| [x] | `G2-ARCHC-006` | Architecture rule catalog | Not dev | - | - |
+| [x] | `G2-ARCHC-007` | Architecture rule catalog | Not dev | - | - |
+| [x] | `G2-ARCHC-008` | Architecture rule catalog | Not dev | - | - |
+| [x] | `G2-ARCHC-009` | Architecture rule catalog | Not dev | - | - |
 
 #### WP 1.4. Query, RAG and MCP core (13 tasks)
 
@@ -356,19 +356,19 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `FR-MCP-001` | MCP read server | Partial | apps/mcp/main.py | - |
-| [ ] | `FR-MCP-002` | MCP action separation | Partial | apps/mcp/main.py | - |
-| [ ] | `FR-QUERY-001` | Structured QueryPlan | Partial | packages/eoip/contracts/query_plan.py | - |
-| [ ] | `FR-QUERY-002` | Path query | Partial | packages/eoip/contracts/graph_result.py | - |
-| [ ] | `FR-QUERY-003` | Impact analysis | Partial | packages/eoip/contracts/graph_result.py | - |
-| [ ] | `FR-QUERY-004` | Entity search | Not dev | - | - |
-| [ ] | `FR-QUERY-007` | Query evidence envelope | Partial | packages/eoip/contracts/graph_result.py | - |
-| [ ] | `FR-RAG-001` | Retrieval router | Partial | packages/eoip/retrieval/service.py | - |
-| [ ] | `FR-RAG-002` | GraphRAG evidence retrieval | Partial | packages/eoip/models/provider.py, packages/eoip/retrieval/service.py | - |
-| [ ] | `FR-RAG-003` | Local model abstraction | Partial | packages/eoip/retrieval/service.py | - |
-| [ ] | `FR-RAG-004` | No mandatory vector DB in MVP | Not dev | - | - |
-| [ ] | `MVP-FR-020` | Local GraphRAG | Not dev | - | - |
-| [ ] | `MVP-FR-022` | MCP core graph access | Not dev | - | - |
+| [x] | `FR-MCP-001` | MCP read server | Partial | apps/mcp/main.py | - |
+| [x] | `FR-MCP-002` | MCP action separation | Partial | apps/mcp/main.py | - |
+| [x] | `FR-QUERY-001` | Structured QueryPlan | Partial | packages/eoip/contracts/query_plan.py | - |
+| [x] | `FR-QUERY-002` | Path query | Partial | packages/eoip/contracts/graph_result.py | - |
+| [x] | `FR-QUERY-003` | Impact analysis | Partial | packages/eoip/contracts/graph_result.py | - |
+| [x] | `FR-QUERY-004` | Entity search | Not dev | - | - |
+| [x] | `FR-QUERY-007` | Query evidence envelope | Partial | packages/eoip/contracts/graph_result.py | - |
+| [x] | `FR-RAG-001` | Retrieval router | Partial | packages/eoip/retrieval/service.py | - |
+| [x] | `FR-RAG-002` | GraphRAG evidence retrieval | Partial | packages/eoip/models/provider.py, packages/eoip/retrieval/service.py | - |
+| [x] | `FR-RAG-003` | Local model abstraction | Partial | packages/eoip/retrieval/service.py | - |
+| [x] | `FR-RAG-004` | No mandatory vector DB in MVP | Not dev | - | - |
+| [x] | `MVP-FR-020` | Local GraphRAG | Not dev | - | - |
+| [x] | `MVP-FR-022` | MCP core graph access | Not dev | - | - |
 
 #### WP 1.5. Security and privacy baseline (8 tasks)
 
@@ -382,14 +382,14 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `NFR-PRIV-001` | Data minimization and classification | Partial | - | tests/unit/test_agent_memory.py |
-| [ ] | `NFR-SEC-001` | No outbound enterprise-data egress | Partial | - | tests/security/test_no_egress.py, tests/security/test_verification_suite.py |
-| [ ] | `NFR-SEC-002` | Secret isolation | Partial | - | tests/security/test_verification_suite.py |
-| [ ] | `NFR-SEC-003` | Input/file safety | Not dev | - | - |
-| [ ] | `NFR-SEC-004` | Prompt/tool injection defenses | Partial | - | tests/security/test_verification_suite.py |
-| [ ] | `NFR-SEC-005` | Authentication without MVP RBAC | Not dev | - | - |
-| [ ] | `NFR-SEC-006` | Container hardening | Partial | - | tests/security/test_container_hardening.py |
-| [ ] | `NFR-SEC-007` | Audit events | Partial | packages/eoip/audit/sink.py | - |
+| [x] | `NFR-PRIV-001` | Data minimization and classification | Partial | - | tests/unit/test_agent_memory.py |
+| [x] | `NFR-SEC-001` | No outbound enterprise-data egress | Partial | - | tests/security/test_no_egress.py, tests/security/test_verification_suite.py |
+| [x] | `NFR-SEC-002` | Secret isolation | Partial | - | tests/security/test_verification_suite.py |
+| [x] | `NFR-SEC-003` | Input/file safety | Not dev | - | - |
+| [x] | `NFR-SEC-004` | Prompt/tool injection defenses | Partial | - | tests/security/test_verification_suite.py |
+| [x] | `NFR-SEC-005` | Authentication without MVP RBAC | Not dev | - | - |
+| [x] | `NFR-SEC-006` | Container hardening | Partial | - | tests/security/test_container_hardening.py |
+| [x] | `NFR-SEC-007` | Audit events | Partial | packages/eoip/audit/sink.py | - |
 
 
 ### Phase 2. Acquisition fabric and live connectors
@@ -411,41 +411,41 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `FR-CONN-001` | Connector SDK | Partial | packages/eoip/connectors/base.py | - |
+| [x] | `FR-CONN-001` | Connector SDK | Partial | packages/eoip/connectors/base.py | - |
 | [ ] | `FR-CONN-002` | Jira JSON connector | Not dev | - | - |
-| [ ] | `FR-CONN-003` | Git repository connector | Not dev | - | - |
-| [ ] | `FR-CONN-004` | GitLab metadata adapter | Not dev | - | - |
-| [ ] | `FR-CONN-005` | Connector resiliency | Not dev | - | - |
+| [x] | `FR-CONN-003` | Git repository connector | Not dev | - | - |
+| [x] | `FR-CONN-004` | GitLab metadata adapter | Not dev | - | - |
+| [x] | `FR-CONN-005` | Connector resiliency | Not dev | - | - |
 | [ ] | `FR-CONN-007` | Source deletion semantics | Not dev | - | - |
 | [ ] | `FR-INGEST-001` | Raw capture | Partial | packages/eoip/contracts/graph_mutation.py, packages/eoip/contracts/source_event.py | - |
-| [ ] | `FR-INGEST-002` | Canonicalization | Partial | packages/eoip/identity/resolver.py | - |
-| [ ] | `FR-INGEST-004` | Ingestion job lifecycle | Not dev | - | - |
-| [ ] | `G2-EKAF-002` | Connector SDK | Not dev | - | - |
+| [x] | `FR-INGEST-002` | Canonicalization | Partial | packages/eoip/identity/resolver.py | - |
+| [x] | `FR-INGEST-004` | Ingestion job lifecycle | Not dev | - | - |
+| [x] | `G2-EKAF-002` | Connector SDK | Not dev | - | - |
 | [ ] | `G2-EKAF-003` | SourceEvent envelope | Partial | - | tests/contract/test_g2_contracts.py |
-| [ ] | `G2-EKAF-004` | Baseline crawl | Not dev | - | - |
-| [ ] | `G2-EKAF-005` | Incremental sync | Not dev | - | - |
-| [ ] | `G2-EKAF-006` | Webhook/event ingestion | Not dev | - | - |
-| [ ] | `G2-EKAF-007` | Poll fallback | Not dev | - | - |
-| [ ] | `G2-EKAF-008` | Reconciliation crawl | Not dev | - | - |
-| [ ] | `G2-EKAF-009` | Idempotency | Not dev | - | - |
+| [x] | `G2-EKAF-004` | Baseline crawl | Not dev | - | - |
+| [x] | `G2-EKAF-005` | Incremental sync | Not dev | - | - |
+| [x] | `G2-EKAF-006` | Webhook/event ingestion | Not dev | - | - |
+| [x] | `G2-EKAF-007` | Poll fallback | Not dev | - | - |
+| [x] | `G2-EKAF-008` | Reconciliation crawl | Not dev | - | - |
+| [x] | `G2-EKAF-009` | Idempotency | Not dev | - | - |
 | [ ] | `G2-EKAF-010` | Ordering tolerance | Not dev | - | - |
-| [ ] | `G2-EKAF-011` | Rate limiting | Not dev | - | - |
-| [ ] | `G2-EKAF-012` | Checkpointing | Not dev | - | - |
-| [ ] | `G2-EKAF-013` | Replay | Not dev | - | - |
+| [x] | `G2-EKAF-011` | Rate limiting | Not dev | - | - |
+| [x] | `G2-EKAF-012` | Checkpointing | Not dev | - | - |
+| [x] | `G2-EKAF-013` | Replay | Not dev | - | - |
 | [ ] | `G2-EKAF-014` | Dead-letter handling | Not dev | - | - |
-| [ ] | `G2-EKAF-015` | Dry run | Not dev | - | - |
+| [x] | `G2-EKAF-015` | Dry run | Not dev | - | - |
 | [ ] | `G2-EKAF-016` | Source deletion semantics | Not dev | - | - |
-| [ ] | `G2-EKAF-019` | Crawl boundaries | Partial | - | tests/unit/test_acquisition_fabric.py |
-| [ ] | `G2-EKAF-020` | Authentication isolation | Not dev | - | - |
-| [ ] | `G2-EKAF-021` | Connector health | Partial | - | tests/unit/test_source_registry.py |
+| [x] | `G2-EKAF-019` | Crawl boundaries | Partial | - | tests/unit/test_acquisition_fabric.py |
+| [x] | `G2-EKAF-020` | Authentication isolation | Not dev | - | - |
+| [x] | `G2-EKAF-021` | Connector health | Partial | - | tests/unit/test_source_registry.py |
 | [ ] | `G2-EKAF-023` | Permission-aware metadata | Not dev | - | - |
 | [ ] | `G2-EKAF-024` | Content fingerprinting | Not dev | - | - |
 | [ ] | `G2-EKAF-025` | Attachment handling | Not dev | - | - |
 | [ ] | `G2-EKAF-026` | Incremental graph enrichment | Not dev | - | - |
-| [ ] | `G2-EKAF-027` | Source capability introspection | Not dev | - | - |
-| [ ] | `G2-EKAF-028` | Connector compatibility matrix | Partial | - | tests/unit/test_source_registry.py |
-| [ ] | `G2-EKAF-029` | Offline source fixture mode | Not dev | - | - |
-| [ ] | `G2-EKAF-030` | Source onboarding wizard | Not dev | - | - |
+| [x] | `G2-EKAF-027` | Source capability introspection | Not dev | - | - |
+| [x] | `G2-EKAF-028` | Connector compatibility matrix | Partial | - | tests/unit/test_source_registry.py |
+| [x] | `G2-EKAF-029` | Offline source fixture mode | Not dev | - | - |
+| [x] | `G2-EKAF-030` | Source onboarding wizard | Not dev | - | - |
 
 #### WP 2.2. Sync and event semantics (19 tasks)
 
@@ -516,26 +516,26 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 | [ ] | `G2-SRC-CONF-003` | Source: Confluence | Partial | - | tests/runtime_dlq/test_confluence_acquisition.py, tests/unit/test_confluence_body.py |
 | [ ] | `G2-SRC-CONF-004` | Source: Confluence | Partial | - | tests/runtime_dlq/test_confluence_acquisition.py, tests/unit/test_document_references.py |
 | [ ] | `G2-SRC-CONF-005` | Source: Confluence | Partial | - | tests/runtime_dlq/test_confluence_acquisition.py, tests/unit/test_document_references.py |
-| [ ] | `G2-SRC-DD-002` | Source: DD connector | Not dev | - | - |
-| [ ] | `G2-SRC-DD-003` | Source: DD connector | Not dev | - | - |
-| [ ] | `G2-SRC-DD-004` | Source: DD connector | Not dev | - | - |
-| [ ] | `G2-SRC-GH-002` | Source: GitHub | Partial | - | tests/unit/test_acquisition_fabric.py |
-| [ ] | `G2-SRC-GH-003` | Source: GitHub | Not dev | - | - |
-| [ ] | `G2-SRC-GH-004` | Source: GitHub | Not dev | - | - |
-| [ ] | `G2-SRC-GL-002` | Source: GitLab | Partial | - | tests/unit/test_acquisition_fabric.py |
-| [ ] | `G2-SRC-GL-003` | Source: GitLab | Not dev | - | - |
-| [ ] | `G2-SRC-GL-004` | Source: GitLab | Not dev | - | - |
-| [ ] | `G2-SRC-GRAF-002` | Source: Grafana | Not dev | - | - |
-| [ ] | `G2-SRC-GRAF-003` | Source: Grafana | Not dev | - | - |
+| [x] | `G2-SRC-DD-002` | Source: DD connector | Not dev | - | - |
+| [x] | `G2-SRC-DD-003` | Source: DD connector | Not dev | - | - |
+| [x] | `G2-SRC-DD-004` | Source: DD connector | Not dev | - | - |
+| [x] | `G2-SRC-GH-002` | Source: GitHub | Partial | - | tests/unit/test_acquisition_fabric.py |
+| [x] | `G2-SRC-GH-003` | Source: GitHub | Not dev | - | - |
+| [x] | `G2-SRC-GH-004` | Source: GitHub | Not dev | - | - |
+| [x] | `G2-SRC-GL-002` | Source: GitLab | Partial | - | tests/unit/test_acquisition_fabric.py |
+| [x] | `G2-SRC-GL-003` | Source: GitLab | Not dev | - | - |
+| [x] | `G2-SRC-GL-004` | Source: GitLab | Not dev | - | - |
+| [x] | `G2-SRC-GRAF-002` | Source: Grafana | Not dev | - | - |
+| [x] | `G2-SRC-GRAF-003` | Source: Grafana | Not dev | - | - |
 | [ ] | `G2-SRC-JIRA-002` | Source: Jira | Not dev | - | - |
 | [ ] | `G2-SRC-JIRA-003` | Source: Jira | Not dev | - | - |
 | [ ] | `G2-SRC-JIRA-004` | Source: Jira | Not dev | - | - |
 | [ ] | `G2-SRC-JIRA-005` | Source: Jira | Not dev | - | - |
 | [ ] | `G2-SRC-JIRA-006` | Source: Jira | Partial | - | tests/unit/test_gap_coverage.py |
-| [ ] | `G2-SRC-KIB-002` | Source: Kibana | Not dev | - | - |
-| [ ] | `G2-SRC-KIB-003` | Source: Kibana | Not dev | - | - |
-| [ ] | `G2-SRC-KIB-004` | Source: Kibana | Not dev | - | - |
-| [ ] | `G2-SRC-KIB-005` | Source: Kibana | Not dev | - | - |
+| [x] | `G2-SRC-KIB-002` | Source: Kibana | Not dev | - | - |
+| [x] | `G2-SRC-KIB-003` | Source: Kibana | Not dev | - | - |
+| [x] | `G2-SRC-KIB-004` | Source: Kibana | Not dev | - | - |
+| [x] | `G2-SRC-KIB-005` | Source: Kibana | Not dev | - | - |
 | [ ] | `G2-SRC-OTEL-002` | Source: OpenTelemetry | Not dev | - | - |
 | [ ] | `G2-SRC-OTEL-003` | Source: OpenTelemetry | Not dev | - | - |
 | [ ] | `G2-SRC-OTEL-004` | Source: OpenTelemetry | Not dev | - | - |
@@ -570,14 +570,14 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `FR-CODE-001` | Deterministic code parser | Partial | - | tests/unit/test_requirement_evidence.py |
-| [ ] | `FR-CODE-002` | Python and TypeScript MVP parsing | Not dev | - | - |
-| [ ] | `FR-CODE-004` | Call/import/dependency edges | Not dev | - | - |
-| [ ] | `FR-CODE-005` | Source navigation | Not dev | - | - |
-| [ ] | `G2-SRC-CODE-002` | Source: code repositories | Not dev | - | - |
-| [ ] | `G2-SRC-CODE-003` | Source: code repositories | Not dev | - | - |
-| [ ] | `G2-SRC-CODE-004` | Source: code repositories | Not dev | - | - |
-| [ ] | `G2-SRC-CODE-005` | Source: code repositories | Not dev | - | - |
+| [x] | `FR-CODE-001` | Deterministic code parser | Partial | - | tests/unit/test_requirement_evidence.py |
+| [x] | `FR-CODE-002` | Python and TypeScript MVP parsing | Not dev | - | - |
+| [x] | `FR-CODE-004` | Call/import/dependency edges | Not dev | - | - |
+| [x] | `FR-CODE-005` | Source navigation | Not dev | - | - |
+| [x] | `G2-SRC-CODE-002` | Source: code repositories | Not dev | - | - |
+| [x] | `G2-SRC-CODE-003` | Source: code repositories | Not dev | - | - |
+| [x] | `G2-SRC-CODE-004` | Source: code repositories | Not dev | - | - |
+| [x] | `G2-SRC-CODE-005` | Source: code repositories | Not dev | - | - |
 
 #### WP 2.5. Crawler security (11 tasks)
 
@@ -1217,7 +1217,7 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
   - python -m pytest with 0 failures (baseline: 2,843 passed, 34 skipped, 2 warnings) and npm run build passes (baseline: 167 modules, 8.35s). Conquest KPI: 3,500+ tests passing.
 - [ ] `REL-03` **GAP and G2 P0 coverage gates pass** (P0, src CG+CQ+ADD)
   - python -m scripts.gap_coverage ... --fail-on-gate --gate-priority P0 for the default set (296/296) and --doc-set g2 (364/364).
-- [ ] `REL-04` **Product capability scanner first-choice gate passes** (P0, src CG+CQ+ADD)
+- [x] `REL-04` **Product capability scanner first-choice gate passes** (P0, src CG+CQ+ADD)
   - Baseline score 0.9857 with the gate failing only on PIC-002. After CG-GAP-001/002 the gate must pass and PIC-002 and PIC-010 must be advanced-ready. (CG closure plan step 3.)
   - Related: `CG-GAP-001`, `CG-GAP-002`
 - [ ] `REL-05` **Documentation audit re-run and regenerated** (P0, src CG+CQ+ADD)

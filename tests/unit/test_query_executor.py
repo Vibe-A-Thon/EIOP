@@ -22,6 +22,7 @@ def _loaded_store():
     return store
 
 
+@pytest.mark.req("FR-QUERY-001", "FR-QUERY-004")
 def test_search_via_executor():
     store = _loaded_store()
     executor = QueryExecutor(store)
@@ -31,6 +32,7 @@ def test_search_via_executor():
     assert any(n.id == "urn:test:item:1" for n in result.nodes)
 
 
+@pytest.mark.req("FR-QUERY-001", "FR-QUERY-002", "FR-QUERY-007")
 def test_path_via_executor():
     store = _loaded_store()
     executor = QueryExecutor(store)
@@ -43,6 +45,7 @@ def test_path_via_executor():
     assert result.paths
 
 
+@pytest.mark.req("FR-QUERY-001", "FR-QUERY-003", "FR-QUERY-007")
 def test_impact_via_executor():
     store = _loaded_store()
     executor = QueryExecutor(store)

@@ -3,7 +3,7 @@
 **Baseline:** 0.1.0-architecture-baseline  
 **Generated:** 2026-10-01
 
-**Current audit overlay:** [../Audit-GAPS-CG-dev.md](../Audit-GAPS-CG-dev.md) is the active 2026-10-11 documentation/code gap backlog. This package is still the engineering baseline, but current implementation status is governed by the audit overlay.
+**Current master backlog:** [../KGF-MASTER-BACKLOG.md](../KGF-MASTER-BACKLOG.md) is the active master completion backlog synthesizing [Audit-GAPS-CG-dev.md](Audit-GAPS-CG-dev.md) and the KnowGridFlow Conquest Plan. Current implementation status and phase tasks are governed by this backlog.
 
 This package converts the governing master prompt into an implementation-ready, local-first architecture and phased engineering plan. It preserves the prompt's mandatory output set and adds an audit, research/verification basis, traceability matrix, architecture diagram catalog, versioned data contracts, machine-readable schemas and domain implementation plans.
 

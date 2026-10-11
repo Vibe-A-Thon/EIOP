@@ -10,6 +10,7 @@ import ast
 import json
 from pathlib import Path
 
+import pytest
 from eoip.agents.runtime import READ_TOOLS
 from eoip.contracts.query_plan import QueryPlan
 from eoip.graph.memory import MemoryGraphStore
@@ -59,6 +60,7 @@ def _mcp_tool_names() -> set[str]:
     return names
 
 
+@pytest.mark.req("NFR-SEC-001", "NFR-SEC-004")
 def test_prompt_injection_is_ingested_as_data_and_never_executed(tmp_path):
     """NFR-SEC-001: a poisoned Jira record is stored verbatim as content."""
     store = MemoryGraphStore()
@@ -98,6 +100,7 @@ def test_prompt_injection_is_ingested_as_data_and_never_executed(tmp_path):
     assert _mcp_tool_names() == EXPECTED_MCP_TOOLS
 
 
+@pytest.mark.req("NFR-SEC-002", "NFR-SEC-007")
 def test_audit_sink_redacts_canary_secrets_from_jsonl(tmp_path):
     """NFR-SEC-002: canary tokens never reach the persisted audit log."""
     from eoip.audit.sink import AuditSink
@@ -130,6 +133,7 @@ def test_audit_sink_redacts_canary_secrets_from_jsonl(tmp_path):
     assert records[0]["actor"] == "security-test"
 
 
+@pytest.mark.req("NFR-SEC-003", "NFR-SEC-004")
 def test_over_depth_request_is_rejected_with_422():
     """NFR-SEC-004: max_depth beyond the API bound is rejected."""
     from apps.api.app import create_app
@@ -141,6 +145,7 @@ def test_over_depth_request_is_rejected_with_422():
     assert response.status_code == 422
 
 
+@pytest.mark.req("NFR-SEC-003")
 def test_oversized_body_is_rejected_with_413(monkeypatch, tmp_path):
     """NFR-SEC-004: bodies over 4MB are rejected before parsing."""
     from apps.api import main
@@ -160,6 +165,7 @@ def test_oversized_body_is_rejected_with_413(monkeypatch, tmp_path):
     assert response.status_code == 413
 
 
+@pytest.mark.req("FR-MCP-001", "FR-MCP-002", "MVP-FR-022", "NFR-SEC-001", "NFR-SEC-004")
 def test_mcp_tool_surface_is_read_only():
     """NFR-SEC-001/004: the MCP facade advertises only read tools."""
     tools = _mcp_tool_names()

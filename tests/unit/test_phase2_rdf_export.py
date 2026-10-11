@@ -25,6 +25,7 @@ def _store_with_relationships():
     return store
 
 
+@pytest.mark.req("FR-GRAPH-010")
 def test_jsonld_export_maps_ontology_vertices_and_reified_relationships():
     document = export_jsonld(_store_with_relationships())
     graph = document["@graph"]

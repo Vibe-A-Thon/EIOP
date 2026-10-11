@@ -139,7 +139,7 @@ class FakeConnector:
         return iter(events)
 
 
-@pytest.mark.req("G2-T0005")
+@pytest.mark.req("G2-T0005", "FR-CONN-001", "G2-EKAF-002")
 def test_fake_connector_satisfies_runtime_connector_protocol() -> None:
     connector = FakeConnector()
     assert isinstance(connector, SourceConnector)

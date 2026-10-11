@@ -8,6 +8,7 @@ the compose manifest.
 
 from pathlib import Path
 
+import pytest
 import yaml
 
 COMPOSE_PATH = Path(__file__).resolve().parents[2] / "deploy" / "docker-compose.yml"
@@ -28,6 +29,7 @@ def _get_effective_service(compose, name):
     return svc
 
 
+@pytest.mark.req("NFR-SEC-006")
 def test_application_anchor_drops_all_capabilities():
     """The shared application anchor must drop ALL capabilities."""
     compose = _load_compose()

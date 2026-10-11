@@ -201,6 +201,7 @@ def test_servicenow_rejects_schema_drift_without_dropping_raw_record():
     assert exc_info.value.source_system == "servicenow"
 
 
+@pytest.mark.req("FR-CONN-005")
 def test_connector_errors_use_stable_categories_without_exposing_credentials():
     client = make_client(lambda request: httpx.Response(429, json={"error": "too many requests"}))
     connector = ServiceNowConnector(

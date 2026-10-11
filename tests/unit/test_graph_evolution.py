@@ -27,7 +27,7 @@ def _event(event_id: str, at: str, payload: dict, operation: str = "UPSERT") -> 
     )
 
 
-@pytest.mark.req("G2-T0210", "G2-T0211", "G2-T0213", "G2-T0222", "G2-T0225")
+@pytest.mark.req("G2-T0210", "G2-T0211", "G2-T0213", "G2-T0222", "G2-T0225", "FR-GRAPH-009")
 def test_entity_evolution_is_idempotent_temporal_and_late_event_safe(tmp_path) -> None:
     store = MemoryGraphStore()
     journal = ChangeJournal(tmp_path / "journal.ndjson")

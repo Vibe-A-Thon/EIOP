@@ -1,6 +1,17 @@
+import pytest
 from eoip.codegraph.parser import CodeParser
 
 
+@pytest.mark.req(
+    "FR-CODE-001",
+    "FR-CODE-002",
+    "FR-CODE-004",
+    "FR-CODE-005",
+    "G2-SRC-CODE-002",
+    "G2-SRC-CODE-003",
+    "G2-SRC-CODE-004",
+    "G2-SRC-CODE-005",
+)
 def test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls() -> None:
     source = "from helpers import normalize\n\ndef run():\n    return normalize()\n\ndef normalize():\n    return 'ok'\n"
     parser = CodeParser()

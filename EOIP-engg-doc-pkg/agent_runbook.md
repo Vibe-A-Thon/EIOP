@@ -45,16 +45,16 @@ before Python execution; do not install dependencies just to populate templates.
 | Isolated DLQ acceptance | `& .\scripts\docker.ps1 dlq-acceptance` | Builds disposable upstream/API/worker/graph fixtures |
 | MVP evidence mapping | `& .\.venv\Scripts\python.exe -X utf8 -m scripts.verify_requirement_evidence . EOIP-engg-doc-pkg\traceability\mvp-traceability.csv test-results\temporal-compatibility-full.xml --output test-results\coordination-requirement-evidence.json` | Uses an existing historical JUnit; output is not current-source certification; exit 1 means evidence gaps, not success |
 
-The actual tooling is defined in [pyproject.toml](pyproject.toml),
-[web package manifest](apps/web/package.json),
-[extension package manifest](apps/vscode-extension/package.json) and
-[Docker wrapper](scripts/docker.ps1).
-[Validation evidence CI](.github/workflows/validation-evidence.yml) installs the
+The actual tooling is defined in [pyproject.toml](../pyproject.toml),
+[web package manifest](../apps/web/package.json),
+[extension package manifest](../apps/vscode-extension/package.json) and
+[Docker wrapper](../scripts/docker.ps1).
+[Validation evidence CI](../.github/workflows/validation-evidence.yml) installs the
 existing development extras, runs scoped evidence-tooling lint and the full
 Python suite on Windows/Python 3.11, and retains receipts even on failure.
 Its presence is not a passing CI result; observe the published run separately.
 
-The [validation wrapper](scripts/validate_with_evidence.py) requires an explicit
+The [validation wrapper](../scripts/validate_with_evidence.py) requires an explicit
 argument vector after `--`; it does not run a shell or deploy implicitly. Do not
 put credentials in command arguments, which are recorded. Environment values
 and child stdout/stderr are not stored in receipts. Source fingerprints omit the
@@ -67,7 +67,7 @@ snapshots cannot detect transient edits that are reverted during execution.
 Command success/fresh artifacts do not certify artifact semantics, requirement
 completeness, live integrations or independent QA acceptance.
 
-For deployment/backup/restore details consult the [local Docker guide](docs/docker-local.md).
+For deployment/backup/restore details consult the [local Docker guide](reference/docker-local.md).
 Do not run primary backup/restore/reset commands merely as a routine handoff step.
 Never expose local secret values in tracking files or logs.
 

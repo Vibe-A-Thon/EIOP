@@ -22,6 +22,7 @@ def _project():
     }
 
 
+@pytest.mark.req("FR-CONN-004", "G2-SRC-GL-001", "G2-SRC-GL-003", "G2-SRC-GL-004")
 def test_gitlab_baseline_emits_repository_delivery_and_knowledge_events() -> None:
     requests = []
 

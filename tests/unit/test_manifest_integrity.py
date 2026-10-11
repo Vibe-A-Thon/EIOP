@@ -2,6 +2,7 @@
 undefined vertex labels or property keys, so the manifest must stay internally
 consistent (regression test for the schema-init bootstrap failure)."""
 
+import pytest
 from eoip.ontology.manifest import (
     DOMAINS,
     EDGE_LABELS,
@@ -11,6 +12,7 @@ from eoip.ontology.manifest import (
 )
 
 
+@pytest.mark.req("FR-ONTO-001", "FR-ONTO-002")
 def test_every_edge_endpoint_is_a_known_vertex_label():
     labels = set(VERTEX_LABELS)
     for edge_label, (outs, ins, _props) in EDGE_LABELS.items():

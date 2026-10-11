@@ -13,7 +13,7 @@ EOIP is a local-first enterprise knowledge graph platform that ingests from 24 s
 - 20 bounded read-only agents with circuit breaker and budget enforcement
 - 12 export formats: RDF, OWL, JSON-LD 1.1, Cypher, Gremlin, SPARQL, SHACL, GQL, and more
 - MCP server with 18 read-only tools for VS Code / IDE integration
-- Current audit evidence: `2843 passed`, `34 skipped`, `0 failures` in the Python suite; GAP/G2 coverage gates passed; the web build passed. See [Audit-GAPS-CG-dev.md](Audit-GAPS-CG-dev.md).
+- Current audit evidence: `2843 passed`, `34 skipped`, `0 failures` in the Python suite; GAP/G2 coverage gates passed; the web build passed. See [Audit-GAPS-CG-dev.md](EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md) and [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md).
 
 ## Quick Start
 
@@ -77,7 +77,8 @@ symbols, documentation, merge-request metadata, and pipeline metadata.
 | [Docker Local](EOIP-engg-doc-pkg/reference/docker-local.md) | Full Docker runbook, backup/restore, VS Code extension |
 | [Deep Agents & XAI](EOIP-engg-doc-pkg/reference/deep-agents-xai.md) | Agent contracts, orchestration, approval workflows |
 | [Benchmarking](EOIP-engg-doc-pkg/reference/benchmarking.md) | Performance benchmarks |
-| [Current Gap Audit](Audit-GAPS-CG-dev.md) | Current 2026-10-11 audit, stale-doc findings, and closure backlog |
+| [Current Gap Audit](EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md) | Current 2026-10-11 audit, stale-doc findings, and closure backlog |
+| [Master Completion Backlog](KGF-MASTER-BACKLOG.md) | Synthesized 516-task master closure backlog across all phases |
 | [Audit Report](docs/audit-2026-10-06/assessed-gap-report.md) | Pass 5 — comprehensive completion audit (2026-10-06) |
 
 ## On-prem source connectors

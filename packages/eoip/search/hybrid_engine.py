@@ -254,6 +254,26 @@ def _hash_embed(text: str, dim: int = 128) -> list[float]:
     return [x / norm for x in raw]
 
 
+def embed_text(text: str, dim: int = 128) -> list[float]:
+    """Embed text via configured model provider (Ollama / sentence-transformers) with offline fallback (H-02)."""
+    try:
+        from eoip.models.embeddings import build_embedding_provider
+        provider = build_embedding_provider()
+        if provider is not None:
+            vecs = provider.embed([text])
+            if vecs and len(vecs[0]) > 0:
+                v = vecs[0]
+                if len(v) == dim:
+                    return v
+                elif len(v) > dim:
+                    return v[:dim]
+                else:
+                    return v + [0.0] * (dim - len(v))
+    except Exception:
+        pass
+    return _hash_embed(text, dim)
+
+
 def _cosine(a: list[float], b: list[float]) -> float:
     if len(a) != len(b) or not a:
         return 0.0
@@ -276,7 +296,7 @@ class VectorSearchAdapter:
     def index(self, entity_id: str, text: str,
               vector: list[float] | None = None,
               entity_type: str = "", metadata: dict[str, Any] | None = None) -> None:
-        v = vector if vector and len(vector) == self._dim else _hash_embed(text, self._dim)
+        v = vector if vector and len(vector) == self._dim else embed_text(text, self._dim)
         self._vectors[entity_id] = v
         self._docs[entity_id] = {
             "text": text, "entity_type": entity_type,

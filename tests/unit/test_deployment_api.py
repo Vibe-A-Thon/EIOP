@@ -1,6 +1,7 @@
 import json
 import os
 
+import pytest
 from eoip.graph.memory import MemoryGraphStore
 from eoip.jobs import write_json
 from fastapi.testclient import TestClient
@@ -17,6 +18,7 @@ def client(monkeypatch, tmp_path):
     return TestClient(main.create_app())
 
 
+@pytest.mark.req("NFR-SEC-005", "H-07", "H-08")
 def test_admin_and_read_routes_require_token_and_jobs_are_durable(monkeypatch, tmp_path):
     api = client(monkeypatch, tmp_path)
     assert api.get("/health/live").status_code == 200

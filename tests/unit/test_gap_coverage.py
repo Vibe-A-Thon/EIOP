@@ -112,7 +112,20 @@ def test_g2_coverage_report_uses_selected_document_set():
     assert "GAP-SDT-001" not in ids
 
 
-@pytest.mark.req("G2-ARCH-001", "G2-ARCH-015")
+@pytest.mark.req(
+    "G2-ARCH-001",
+    "G2-ARCH-002",
+    "G2-ARCH-003",
+    "G2-ARCH-004",
+    "G2-ARCH-005",
+    "G2-ARCH-008",
+    "G2-ARCH-009",
+    "G2-ARCH-010",
+    "G2-ARCH-012",
+    "G2-ARCH-013",
+    "G2-ARCH-014",
+    "G2-ARCH-015",
+)
 def test_g2_architecture_guardrails_are_executable():
     report = evaluate_g2_architecture_guardrails()
 

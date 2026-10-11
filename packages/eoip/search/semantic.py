@@ -122,6 +122,26 @@ def _hash_embed(text: str, dim: int = 64) -> list[float]:
     return [x / norm for x in raw]
 
 
+def embed_text(text: str, dim: int = 64) -> list[float]:
+    """Embed text via configured model provider (Ollama / sentence-transformers) with offline fallback (H-02)."""
+    try:
+        from eoip.models.embeddings import build_embedding_provider
+        provider = build_embedding_provider()
+        if provider is not None:
+            vecs = provider.embed([text])
+            if vecs and len(vecs[0]) > 0:
+                v = vecs[0]
+                if len(v) == dim:
+                    return v
+                elif len(v) > dim:
+                    return v[:dim]
+                else:
+                    return v + [0.0] * (dim - len(v))
+    except Exception:
+        pass
+    return _hash_embed(text, dim)
+
+
 class SemanticVectorIndex:
     """In-memory vector index for semantic entity search."""
 
@@ -140,7 +160,7 @@ class SemanticVectorIndex:
                      entity_type: str = "", language: str = "en",
                      metadata: dict[str, Any] | None = None) -> None:
         if vector is None:
-            vector = _hash_embed(text, self._dim)
+            vector = embed_text(text, self._dim)
         if len(vector) != self._dim:
             raise ValueError(f"Vector dim {len(vector)} != index dim {self._dim}")
         with self._lock:

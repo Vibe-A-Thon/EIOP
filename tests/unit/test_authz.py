@@ -53,6 +53,7 @@ def store() -> UserStore:
 # Role hierarchy (GAP-SEC-002)
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("H-04")
 def test_builtin_roles_have_stable_urn_ids():
     reg = RoleRegistry()
     admin = reg.get_role("admin")
