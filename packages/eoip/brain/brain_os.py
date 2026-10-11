@@ -59,6 +59,7 @@ from eoip.tools_contract.engine import get_tool_contract_engine
 from eoip.graph_loop.engine import get_graph_loop_engine
 from eoip.evaluation.engine import get_evaluation_engine
 from eoip.memory_eng.engine import get_memory_engine
+from eoip.intelligence_eng.engine import get_intelligence_engine
 
 
 
@@ -543,6 +544,7 @@ class BrainOSKernel:
             "graph_loop_engineering": get_graph_loop_engine().stats(),
             "evaluation_benchmarking": get_evaluation_engine().stats(),
             "memory_engineering": get_memory_engine().stats(),
+            "intelligence_engineering": get_intelligence_engine().stats(),
         }
 
 

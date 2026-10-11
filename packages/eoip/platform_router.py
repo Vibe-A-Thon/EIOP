@@ -351,6 +351,22 @@ class BenchmarkRunRequest(BaseModel):
     benchmark_name: str | None = None
 
 
+class IntelligenceAnalyzeRequest(BaseModel):
+    query: str = Field(min_length=1)
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
+class IntelligencePlanRequest(BaseModel):
+    query: str = Field(min_length=1)
+    context: dict[str, Any] = Field(default_factory=dict)
+    override_autonomy: str | None = None
+
+
+class IntelligencePipelineRequest(BaseModel):
+    query: str = Field(min_length=1)
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
 class ReflectionSandboxRequest(BaseModel):
     step_id: str = Field(min_length=1)
     action_type: str = Field(min_length=1)
@@ -1539,6 +1555,72 @@ def build_platform_router() -> APIRouter:
     def memory_stats() -> dict[str, Any]:
         from eoip.memory_eng.engine import get_memory_engine
         return get_memory_engine().stats()
+
+    # ── Intelligence Engineering (System-Level Autonomy) ─────────────
+
+    @router.post("/intelligence/analyze", summary="Analyze task complexity and requirements",
+                 tags=["Intelligence Engineering"])
+    def intelligence_analyze(req: IntelligenceAnalyzeRequest) -> dict[str, Any]:
+        from eoip.intelligence_eng.engine import get_intelligence_engine
+        engine = get_intelligence_engine()
+        task = engine.analyze(req.query, req.context or None)
+        return {
+            "task_id": task.task_id,
+            "query": task.query,
+            "complexity": task.complexity.value,
+            "recommended_autonomy": task.recommended_autonomy.value,
+            "requires": {
+                "graph": task.requires_graph,
+                "rag": task.requires_rag,
+                "reasoning": task.requires_reasoning,
+                "memory": task.requires_memory,
+                "tools": task.requires_tools,
+                "security_check": task.requires_security_check,
+                "evaluation": task.requires_evaluation,
+            },
+            "is_write_operation": task.is_write_operation,
+            "is_multi_step": task.is_multi_step,
+            "estimated_cost_tier": task.estimated_cost_tier,
+            "confidence": task.confidence,
+        }
+
+    @router.post("/intelligence/plan", summary="Generate cognitive execution plan",
+                 tags=["Intelligence Engineering"])
+    def intelligence_plan(req: IntelligencePlanRequest) -> dict[str, Any]:
+        from eoip.intelligence_eng.engine import get_intelligence_engine, AutonomyLevel
+        engine = get_intelligence_engine()
+        override = None
+        if req.override_autonomy:
+            try:
+                override = AutonomyLevel(req.override_autonomy)
+            except ValueError:
+                override = None
+        plan = engine.plan(req.query, req.context or None, override)
+        return plan.to_dict()
+
+    @router.post("/intelligence/pipeline", summary="Run full cognitive pipeline (analyze → plan → execute)",
+                 tags=["Intelligence Engineering"])
+    def intelligence_pipeline(req: IntelligencePipelineRequest) -> dict[str, Any]:
+        from eoip.intelligence_eng.engine import get_intelligence_engine
+        return get_intelligence_engine().cognitive_pipeline(req.query, req.context or None)
+
+    @router.get("/intelligence/autonomy/{query}", summary="Get recommended autonomy level for a query",
+                tags=["Intelligence Engineering"])
+    def intelligence_autonomy(query: str) -> dict[str, Any]:
+        from eoip.intelligence_eng.engine import get_intelligence_engine
+        return get_intelligence_engine().get_autonomy_for_task(query)
+
+    @router.get("/intelligence/capabilities", summary="List all platform capabilities",
+                tags=["Intelligence Engineering"])
+    def intelligence_capabilities() -> dict[str, Any]:
+        from eoip.intelligence_eng.engine import get_intelligence_engine
+        return get_intelligence_engine().list_capabilities()
+
+    @router.get("/intelligence/stats", summary="Intelligence engineering stats",
+                tags=["Intelligence Engineering"])
+    def intelligence_stats() -> dict[str, Any]:
+        from eoip.intelligence_eng.engine import get_intelligence_engine
+        return get_intelligence_engine().stats()
 
     # ── Advanced Autonomous Intelligence Capabilities ────────────────
 
