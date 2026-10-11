@@ -5,6 +5,7 @@ import KGRExplorer from './kgr/KGRExplorer.jsx';
 import Studio from './studio/Studio.jsx';
 import AdminSecurityCenter from './admin/index.jsx';
 import GraphEnhancementToolbar from './kgr/enhancements/GraphEnhancementToolbar.jsx';
+import CognitiveHub from './cognitive/CognitiveHub.jsx';
 import './kgr/enhancements/enhancements.css';
 
 const emptyGraph = {nodes: [], edges: [], paths: [], evidence: [], warnings: [], partial: false};
@@ -108,6 +109,7 @@ function Login({token, setToken, onSubmit, busy, health}) {
 function Sidebar({mode, onNavigate, collapsed, onToggle, stats}) {
   const items = [
     {id: 'app', label: 'Knowledge explorer', icon: 'search', hint: 'Search, traverse, and explain the enterprise graph'},
+    {id: 'cognitive', label: 'Cognitive Engineering', icon: 'cpu', hint: '15 Engineering Disciplines, Sandboxing, Inoculation, Slicing & Attestation'},
     {id: 'demo', label: 'Guided demo', icon: 'spark', hint: 'Walk through all enterprise scenarios against the live graph'},
     {id: 'studio', label: 'Ontology studio', icon: 'layers', hint: 'Visual schema builder, query console, and no-code connector tooling'},
     {id: 'admin', label: 'Administration', icon: 'settings', hint: 'Operate ingestion, quality, audit, and ontology services'},
@@ -122,8 +124,8 @@ function Sidebar({mode, onNavigate, collapsed, onToggle, stats}) {
 }
 
 function Topbar({mode, stats, onRefresh, onDisconnect, busy}) {
-  const section = mode === 'demo' ? 'GUIDED DEMO' : mode === 'studio' ? 'ONTOLOGY STUDIO' : mode === 'app' ? 'KNOWLEDGE EXPLORER' : 'ADMINISTRATION';
-  const title = mode === 'demo' ? 'Enterprise scenario walkthrough' : mode === 'studio' ? 'Ontology studio and no-code builders' : mode === 'app' ? 'Enterprise knowledge explorer' : 'Operations control center';
+  const section = mode === 'cognitive' ? 'COGNITIVE ENGINEERING' : mode === 'demo' ? 'GUIDED DEMO' : mode === 'studio' ? 'ONTOLOGY STUDIO' : mode === 'app' ? 'KNOWLEDGE EXPLORER' : 'ADMINISTRATION';
+  const title = mode === 'cognitive' ? 'Cognitive AI & 15 Engineering Disciplines' : mode === 'demo' ? 'Enterprise scenario walkthrough' : mode === 'studio' ? 'Ontology studio and no-code builders' : mode === 'app' ? 'Enterprise knowledge explorer' : 'Operations control center';
   return <header className="topbar"><div><span className="breadcrumb">WORKSPACE <Icon name="chevron" size={12}/> {section}</span><h1>{title}</h1></div><div className="topbar-actions">
     <Tip text="Live status reported by the local worker"><div className="service-status"><span className="live-dot"/><span><small>SYSTEM STATUS</small><strong>{stats?.worker?.status || 'Connecting'}</strong></span></div></Tip>
     <IconButton label="Refresh live data" icon="refresh" onClick={onRefresh} disabled={busy}/>
@@ -780,7 +782,7 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
 export default function App() {
   const [token, setToken] = useState(sessionStorage.getItem('eoip-token') || '');
   const [authenticated, setAuthenticated] = useState(false);
-  const [mode, setMode] = useState(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/demo') ? 'demo' : location.pathname.startsWith('/studio') ? 'studio' : 'app');
+  const [mode, setMode] = useState(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/cognitive') ? 'cognitive' : location.pathname.startsWith('/demo') ? 'demo' : location.pathname.startsWith('/studio') ? 'studio' : 'app');
   const [lens, setLens] = useState('graph');
   const [collapsed, setCollapsed] = useState(false);
   const [stats, setStats] = useState(null);
@@ -822,8 +824,8 @@ export default function App() {
 
   useEffect(() => {fetch('/health/ready').then(response => setHealth(response.ok ? 'ready' : 'unavailable')).catch(() => setHealth('unavailable'));}, []);
   useEffect(() => {if (!authenticated) return; const timer = setInterval(() => refresh().catch(() => {}), 15000); return () => clearInterval(timer);}, [authenticated, token]);
-  useEffect(() => {const onPop = () => setMode(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/demo') ? 'demo' : location.pathname.startsWith('/studio') ? 'studio' : 'app'); addEventListener('popstate', onPop); return () => removeEventListener('popstate', onPop);}, []);
+  useEffect(() => {const onPop = () => setMode(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/cognitive') ? 'cognitive' : location.pathname.startsWith('/demo') ? 'demo' : location.pathname.startsWith('/studio') ? 'studio' : 'app'); addEventListener('popstate', onPop); return () => removeEventListener('popstate', onPop);}, []);
 
   if (!authenticated) return <><Login token={token} setToken={setToken} onSubmit={login} busy={busy} health={health}/>{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</>;
-  return <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''}`}><Sidebar mode={mode} onNavigate={navigate} collapsed={collapsed} onToggle={() => setCollapsed(value => !value)} stats={stats}/><div className="workspace"><Topbar mode={mode} stats={stats} onRefresh={() => run(refresh)} onDisconnect={disconnect} busy={busy}/><main>{mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy}/> : mode === 'demo' ? <GuidedDemo api={api} run={run} busy={busy}/> : mode === 'studio' ? <Studio api={api} run={run} busy={busy}/> : <Admin stats={stats} system={system} jobs={jobs} api={api} run={run} refresh={refresh} busy={busy}/>}</main><footer><span>EOIP · Evidence-backed enterprise intelligence</span><span>Local-first · Read-only graph experience · Policy bounded</span></footer></div>{busy && <div className="busy-bar" aria-label="Operation in progress"><span/></div>}{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</div>;
+  return <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''}`}><Sidebar mode={mode} onNavigate={navigate} collapsed={collapsed} onToggle={() => setCollapsed(value => !value)} stats={stats}/><div className="workspace"><Topbar mode={mode} stats={stats} onRefresh={() => run(refresh)} onDisconnect={disconnect} busy={busy}/><main>{mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy}/> : mode === 'cognitive' ? <CognitiveHub api={api} run={run} busy={busy} stats={stats}/> : mode === 'demo' ? <GuidedDemo api={api} run={run} busy={busy}/> : mode === 'studio' ? <Studio api={api} run={run} busy={busy}/> : <Admin stats={stats} system={system} jobs={jobs} api={api} run={run} refresh={refresh} busy={busy}/>}</main><footer><span>EOIP · Evidence-backed enterprise intelligence</span><span>Local-first · Read-only graph experience · Policy bounded</span></footer></div>{busy && <div className="busy-bar" aria-label="Operation in progress"><span/></div>}{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</div>;
 }
