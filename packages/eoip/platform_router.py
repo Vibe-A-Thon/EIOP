@@ -351,6 +351,58 @@ class BenchmarkRunRequest(BaseModel):
     benchmark_name: str | None = None
 
 
+class ReflectionSandboxRequest(BaseModel):
+    step_id: str = Field(min_length=1)
+    action_type: str = Field(min_length=1)
+    target_entity: str = Field(min_length=1)
+    proposed_payload: dict[str, Any] = Field(default_factory=dict)
+    agent_role: str = Field(default="analyst")
+    state: dict[str, Any] = Field(default_factory=dict)
+
+
+class JailbreakInoculateRequest(BaseModel):
+    target_prompt_name: str = Field(default="agent_system_directive")
+
+
+class GraphSliceRequest(BaseModel):
+    query: str = Field(min_length=1)
+    seed_ids: list[str] | None = None
+    attention_threshold: float = Field(default=0.35, ge=0.0, le=1.0)
+
+
+class BitemporalSlateRequest(BaseModel):
+    stream: str = Field(min_length=1)
+    past_timestamp: float
+    present_timestamp: float | None = None
+
+
+class PromptDistillRequest(BaseModel):
+    target_prompt_name: str = Field(min_length=1)
+    benchmark_name: str = Field(default="graph_rag_accuracy")
+
+
+class GraphRepairSentinelRequest(BaseModel):
+    nodes: list[dict[str, Any]] | None = None
+    edges: list[dict[str, Any]] | None = None
+
+
+class ExternalMCPConnectRequest(BaseModel):
+    server_name: str = Field(min_length=1)
+    transport: str = Field(default="http")
+    endpoint: str = Field(default="https://mcp.internal.enterprise/v1")
+    provided_tools: list[dict[str, Any]] | None = None
+
+
+class ToolAttestExecutionRequest(BaseModel):
+    tool_name: str = Field(min_length=1)
+    arguments: dict[str, Any] = Field(default_factory=dict)
+    caller_id: str = Field(default="agent-mesh-supervisor")
+
+
+class ToolVerifyAttestationRequest(BaseModel):
+    certificate_id: str = Field(min_length=1)
+
+
 def build_platform_router() -> APIRouter:
     """Build the unified platform features router."""
     router = APIRouter(prefix="/api/v1/platform", tags=["Platform"])
@@ -1487,5 +1539,100 @@ def build_platform_router() -> APIRouter:
     def memory_stats() -> dict[str, Any]:
         from eoip.memory_eng.engine import get_memory_engine
         return get_memory_engine().stats()
+
+    # ── Advanced Autonomous Intelligence Capabilities ────────────────
+
+    @router.post("/guardrails/reflection-sandbox", summary="Execute agent action inside formal invariance sandbox",
+                 tags=["Guardrails & Sandboxing"])
+    def execute_in_sandbox(req: ReflectionSandboxRequest) -> dict[str, Any]:
+        from eoip.security.reflection_sandbox import get_reflection_sandbox
+        res = get_reflection_sandbox().execute_step(
+            step_id=req.step_id,
+            action_type=req.action_type,
+            target_entity=req.target_entity,
+            proposed_payload=req.proposed_payload,
+            agent_role=req.agent_role,
+            state=req.state,
+        )
+        return res.to_dict()
+
+    @router.post("/guardrails/inoculate", summary="Inoculate prompt template with active defenses",
+                 tags=["Guardrails & Sandboxing"])
+    def inoculate_prompt(req: JailbreakInoculateRequest) -> dict[str, Any]:
+        from eoip.security.reflection_sandbox import get_jailbreak_inoculator
+        return get_jailbreak_inoculator().inoculate(req.target_prompt_name)
+
+    @router.post("/context/slice-graph", summary="Extract attention-weighted compressed subgraph context",
+                 tags=["Context Slicing"])
+    def slice_graph_context(req: GraphSliceRequest) -> dict[str, Any]:
+        from eoip.context.graph_slicing import get_attention_graph_slicer
+        window = get_attention_graph_slicer().slice_graph(
+            query=req.query,
+            seed_ids=req.seed_ids,
+            attention_threshold=req.attention_threshold,
+        )
+        return {
+            "query": window.query,
+            "total_candidates": window.total_candidates,
+            "retained_count": window.retained_count,
+            "compression_ratio": window.compression_ratio,
+            "rendered_context": window.rendered_context,
+            "entities": [{"id": e.entity_id, "label": e.label, "attention": e.attention_score} for e in window.entities],
+        }
+
+    @router.post("/context/bitemporal-slate", summary="Build comparative bitemporal delta context slate",
+                 tags=["Context Slicing"])
+    def build_bitemporal_slate(req: BitemporalSlateRequest) -> dict[str, Any]:
+        from eoip.context.graph_slicing import get_bitemporal_context_slate
+        return get_bitemporal_context_slate().build_slate(
+            stream=req.stream,
+            past_timestamp=req.past_timestamp,
+            present_timestamp=req.present_timestamp,
+        )
+
+    @router.post("/eval/distill-prompts", summary="Distill few-shot exemplars from benchmarks into prompt template",
+                 tags=["Autonomous Tuning"])
+    def distill_prompts(req: PromptDistillRequest) -> dict[str, Any]:
+        from eoip.evaluation.distillation_sentinel import get_continuous_prompt_distiller
+        return get_continuous_prompt_distiller().distill_from_benchmarks(
+            target_prompt_name=req.target_prompt_name,
+            benchmark_name=req.benchmark_name,
+        )
+
+    @router.post("/eval/graph-repair-sentinel", summary="Detect broken graph topologies and trigger repair loops",
+                 tags=["Autonomous Tuning"])
+    def run_graph_repair_sentinel(req: GraphRepairSentinelRequest) -> dict[str, Any]:
+        from eoip.evaluation.distillation_sentinel import get_graph_repair_sentinel
+        return get_graph_repair_sentinel().inspect_and_repair(
+            nodes=req.nodes,
+            edges=req.edges,
+        )
+
+    @router.post("/tools/mcp/connect-external", summary="Connect and discover tools from external MCP server",
+                 tags=["External MCP"])
+    def connect_external_mcp(req: ExternalMCPConnectRequest) -> dict[str, Any]:
+        from eoip.tools_contract.mcp_bridge import get_external_mcp_client
+        return get_external_mcp_client().connect_server(
+            server_name=req.server_name,
+            transport=req.transport,
+            endpoint=req.endpoint,
+            provided_tools=req.provided_tools,
+        )
+
+    @router.post("/tools/attest-execution", summary="Execute and cryptographically sign tool call attestation",
+                 tags=["External MCP"])
+    def attest_tool_execution(req: ToolAttestExecutionRequest) -> dict[str, Any]:
+        from eoip.tools_contract.mcp_bridge import get_external_mcp_client
+        return get_external_mcp_client().invoke_external_tool(
+            tool_name=req.tool_name,
+            arguments=req.arguments,
+            caller_id=req.caller_id,
+        )
+
+    @router.post("/tools/verify-attestation", summary="Verify HMAC-SHA256 signature of tool attestation certificate",
+                 tags=["External MCP"])
+    def verify_tool_attestation(req: ToolVerifyAttestationRequest) -> dict[str, Any]:
+        from eoip.tools_contract.mcp_bridge import get_tool_execution_attestor
+        return get_tool_execution_attestor().verify_certificate(req.certificate_id)
 
     return router

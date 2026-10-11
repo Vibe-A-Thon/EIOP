@@ -125,7 +125,7 @@ class GraphLoopEngine:
 
                 for nid, deg in current_degrees.items():
                     # Simulated Bellman/PageRank propagation step
-                    refined = deg * 0.85 + 0.15
+                    refined = deg * 0.4 + 0.6
                     delta = abs(refined - deg)
                     if delta > max_delta:
                         max_delta = delta
