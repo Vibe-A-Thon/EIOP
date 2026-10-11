@@ -719,10 +719,10 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 **Depends on.** WP 3.1
 
-- [ ] `GAP-AI` **Evidence-addressable RAG** (P1, about 2 sessions, src CQ)
+- [x] `GAP-AI` **Evidence-addressable RAG** (P1, about 2 sessions, src CQ)
   - ragx/ + retrieval/ exist — wire every answer to graph nodes, paths, and source records with citation chains
   - Related: `FR-RAG-002`, `FR-QUERY-007`
-- [ ] `GAP-DUAL` **Dual semantic model (RDF/OWL ↔ property graph)** (P1, about 2 sessions, src CQ)
+- [x] `GAP-DUAL` **Dual semantic model (RDF/OWL ↔ property graph)** (P1, about 2 sessions, src CQ)
   - ontology/rdf.py exists — add round-trip mapping, SHACL validation, RDF export/import
   - Related: `FR-GRAPH-010`
 - [ ] `GAP-FED` **Semantic federation layer** (P1, about 3 sessions, src CQ)

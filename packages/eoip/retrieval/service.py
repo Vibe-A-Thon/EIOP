@@ -6,6 +6,7 @@ and FR-RAG-003 (local model abstraction).
 
 from __future__ import annotations
 
+import hashlib
 import json
 from enum import Enum
 from uuid import uuid4
@@ -13,6 +14,7 @@ from uuid import uuid4
 from eoip.contracts.retrieval import RetrievalContext, RetrievalResult
 from eoip.graph.traversal import GraphTraversal
 from eoip.models.provider import LocalModelProvider, ModelUnavailable
+from eoip.provenance.evidence import EvidenceService
 from eoip.retrieval.vectors import (
     InMemorySearchIndex,
     RetrievalTrace,
@@ -227,6 +229,102 @@ def _entity_context(store, cid: str) -> RetrievalContext:
     )
 
 
+def _stable_path_id(node_ids: list[str], edge_ids: list[str]) -> str:
+    payload = json.dumps({"nodes": node_ids, "edges": edge_ids}, sort_keys=True, separators=(",", ":"))
+    return "urn:eoip:rag:path:" + hashlib.sha256(payload.encode()).hexdigest()[:16]
+
+
+def _node_source_refs(store, node: dict) -> list[str]:
+    refs = set()
+    props = node.get("properties") or {}
+    for key in ("source_ref", "evidence_key", "source_id", "source_uri"):
+        if props.get(key):
+            refs.add(str(props[key]))
+    try:
+        for edge in store.edges_from(node["vid"], labels=["EVIDENCED_BY"], limit=100):
+            edge_props = edge.get("properties") or {}
+            if edge_props.get("source_ref"):
+                refs.add(str(edge_props["source_ref"]))
+            if edge_props.get("evidence_key"):
+                refs.add(str(edge_props["evidence_key"]))
+            if edge.get("in_cid"):
+                refs.add(str(edge["in_cid"]))
+    except (KeyError, TypeError, AttributeError, ValueError):
+        pass
+    return sorted(refs)
+
+
+def _edge_source_refs(edge: dict) -> list[str]:
+    refs = set()
+    props = edge.get("properties") or {}
+    for key in ("source_ref", "evidence_key", "source_system"):
+        if props.get(key):
+            refs.add(str(props[key]))
+    return sorted(refs)
+
+
+def _citation_chain_for_node(store, node: dict, *, path: dict | None = None) -> dict:
+    path = path or {"vertices": [node], "edges": []}
+    path_nodes = [vertex["canonical_id"] for vertex in path.get("vertices", []) if vertex.get("canonical_id")]
+    path_edges = [edge["eid"] for edge in path.get("edges", []) if edge.get("eid")]
+    source_refs = set(_node_source_refs(store, node))
+    for vertex in path.get("vertices", []):
+        source_refs.update(_node_source_refs(store, vertex))
+    for edge in path.get("edges", []):
+        source_refs.update(_edge_source_refs(edge))
+    return {
+        "chain_id": _stable_path_id(path_nodes or [node["canonical_id"]], path_edges),
+        "node_ref": node["canonical_id"],
+        "path_id": _stable_path_id(path_nodes or [node["canonical_id"]], path_edges),
+        "path": {"node_ids": path_nodes or [node["canonical_id"]], "edge_ids": path_edges},
+        "source_refs": sorted(source_refs),
+    }
+
+
+def _attach_evidence_addressing(
+    store,
+    result: RetrievalResult,
+    *,
+    node_ids: list[str] | None = None,
+    edge_ids: list[str] | None = None,
+    paths: list[dict] | None = None,
+    query_plan: dict | None = None,
+) -> RetrievalResult:
+    nodes: list[dict] = []
+    for cid in node_ids or []:
+        vertex = store.get_vertex_by_canonical_id(cid) or store.get_vertex(cid)
+        if vertex:
+            nodes.append(vertex)
+    edge_ids = edge_ids or []
+    manifest = EvidenceService(store).build_manifest(
+        answer_id=result.retrieval_id,
+        node_ids=[node["canonical_id"] for node in nodes],
+        edge_ids=edge_ids,
+        evidence_refs=result.evidence_refs,
+        query_plan=query_plan or {"strategy": result.strategy},
+        confidence_inputs=[
+            {"name": "context_count", "value": len(result.contexts)},
+            {"name": "evidence_ref_count", "value": len(result.evidence_refs)},
+        ],
+    ).to_dict()
+    chains = [_citation_chain_for_node(store, node) for node in nodes]
+    for path in paths or []:
+        vertices = path.get("vertices", [])
+        if not vertices:
+            continue
+        chains.append(_citation_chain_for_node(store, vertices[-1], path=path))
+    seen: set[str] = set()
+    result.citation_chains = []
+    for chain in chains:
+        key = chain["chain_id"]
+        if key in seen:
+            continue
+        seen.add(key)
+        result.citation_chains.append(chain)
+    result.evidence_manifest = manifest
+    return result
+
+
 def _result_from_candidates(
     store,
     strategy: RetrievalStrategy,
@@ -246,8 +344,9 @@ def _result_from_candidates(
             citations=[],
         )
     )
-    return RetrievalResult(
-        retrieval_id=str(uuid4()),
+    retrieval_id = str(uuid4())
+    result = RetrievalResult(
+        retrieval_id=retrieval_id,
         strategy=strategy.value,
         contexts=contexts,
         evidence_refs=[cid for cid, _ in ranked],
@@ -270,6 +369,12 @@ def _result_from_candidates(
         ],
         graph={"source": None, "impacted": [], "truncated": False},
         trace=trace.to_dict(),
+    )
+    return _attach_evidence_addressing(
+        store,
+        result,
+        node_ids=[cid for cid, _ in ranked],
+        query_plan={"strategy": strategy.value, "question": question, "ranking_trace": trace.to_dict()},
     )
 
 
@@ -389,7 +494,7 @@ def retrieve(
             )
     strategy = select_strategy(canonical_id, question, store)
     if strategy == RetrievalStrategy.NONE:
-        return RetrievalResult(
+        empty = RetrievalResult(
             retrieval_id=str(uuid4()),
             strategy=strategy.value,
             contexts=[],
@@ -401,6 +506,11 @@ def retrieve(
             partial=False,
             facts=[],
             graph={"source": None, "impacted": [], "truncated": False},
+        )
+        return _attach_evidence_addressing(
+            store,
+            empty,
+            query_plan={"strategy": strategy.value, "question": question, "reason": "no canonical_id"},
         )
     result = GraphTraversal(store, max_depth=4, max_results=30).impact(canonical_id)
     if not result["source"]:
@@ -449,8 +559,9 @@ def retrieve(
                 generation = response.generation
             except ModelUnavailable:
                 warnings.append("Local generation unavailable; graph evidence remains available.")
-    return RetrievalResult(
-        retrieval_id=str(uuid4()),
+    retrieval_id = str(uuid4())
+    retrieval_result = RetrievalResult(
+        retrieval_id=retrieval_id,
         strategy=strategy.value,
         contexts=contexts,
         evidence_refs=refs,
@@ -461,4 +572,22 @@ def retrieve(
         partial=result["truncated"],
         facts=facts,
         graph=result,
+    )
+    path_items = [item["path"] for item in result["impacted"]]
+    edge_ids = sorted({edge["eid"] for edge in edges if edge.get("eid")})
+    node_ids = [node["canonical_id"] for node in nodes]
+    return _attach_evidence_addressing(
+        store,
+        retrieval_result,
+        node_ids=node_ids,
+        edge_ids=edge_ids,
+        paths=path_items,
+        query_plan={
+            "strategy": strategy.value,
+            "question": question,
+            "canonical_id": canonical_id,
+            "max_depth": 4,
+            "entities": len(nodes),
+            "edges": len(edges),
+        },
     )

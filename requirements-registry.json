@@ -8173,12 +8173,21 @@
     "spec_source": "#### WP 4.1. Intelligence amplification (Conquest Phase 3) (8 tasks)",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.1. Intelligence amplification (Conquest Phase 3) (8 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/retrieval/service.py",
+      "packages/eoip/contracts/retrieval.py",
+      "packages/eoip/provenance/evidence.py",
+      "schemas/retrieval_result.schema.json"
+    ],
+    "test_files": [
+      "tests/unit/test_evidence_addressable_rag.py",
+      "tests/unit/test_retrieval.py",
+      "tests/unit/test_retrieval_vector.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_evidence_addressable_rag.py tests/unit/test_retrieval.py tests/unit/test_retrieval_vector.py (20 passed); python -m ruff check packages/eoip/contracts/retrieval.py packages/eoip/retrieval/service.py tests/unit/test_evidence_addressable_rag.py (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-AI-001",
@@ -8189,14 +8198,16 @@
     "phase": "P1-MVP",
     "work_package": "",
     "code_paths": [
-      "packages/eoip/provenance/evidence.py"
+      "packages/eoip/retrieval/service.py",
+      "packages/eoip/provenance/evidence.py",
+      "packages/eoip/contracts/retrieval.py"
     ],
     "test_files": [
-      "tests/unit/test_gap_governance_controls.py"
+      "tests/unit/test_evidence_addressable_rag.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "Covered by GAP-AI closure: evidence manifest + citation-chain tests pass.",
     "status": "FULLY_DEVELOPED"
   },
   {
@@ -9458,12 +9469,20 @@
     "spec_source": "#### WP 4.1. Intelligence amplification (Conquest Phase 3) (8 tasks)",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.1. Intelligence amplification (Conquest Phase 3) (8 tasks)",
-    "code_paths": [],
-    "test_files": [],
-    "api_route": null,
+    "code_paths": [
+      "packages/eoip/ontology/rdf.py",
+      "apps/api/main.py"
+    ],
+    "test_files": [
+      "tests/unit/test_dual_semantic_model.py",
+      "tests/unit/test_phase2_rdf_export.py",
+      "tests/unit/test_new_endpoints.py",
+      "tests/unit/test_phase2_api.py"
+    ],
+    "api_route": "/api/v1/ontology/export, /api/v1/ontology/import, /api/v1/ontology/shacl, /api/v1/ontology/validate",
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_dual_semantic_model.py tests/unit/test_phase2_rdf_export.py tests/unit/test_new_endpoints.py::test_ontology_export_returns_jsonld tests/unit/test_new_endpoints.py::test_ontology_import_and_shacl_validation_endpoints tests/unit/test_phase2_api.py::test_ontology_export_requires_auth_and_returns_jsonld (12 passed); python -m ruff check packages\\eoip\\ontology\\rdf.py apps\\api\\main.py tests\\unit\\test_dual_semantic_model.py tests\\unit\\test_new_endpoints.py (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-DUAL-001",
@@ -9474,15 +9493,18 @@
     "phase": "P1-MVP",
     "work_package": "",
     "code_paths": [
-      "packages/eoip/future_scope.py",
-      "packages/eoip/gaps/enterprise_completion.py"
+      "packages/eoip/ontology/rdf.py",
+      "apps/api/main.py",
+      "packages/eoip/ontology/manifest.py"
     ],
     "test_files": [
-      "tests/unit/test_enterprise_gap_completion.py"
+      "tests/unit/test_dual_semantic_model.py",
+      "tests/unit/test_phase2_rdf_export.py",
+      "tests/unit/test_new_endpoints.py"
     ],
-    "api_route": null,
+    "api_route": "/api/v1/ontology/export, /api/v1/ontology/import, /api/v1/ontology/shacl, /api/v1/ontology/validate",
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "Covered by GAP-DUAL closure: JSON-LD export/import, manifest-derived SHACL shapes, and SHACL validation tests pass.",
     "status": "FULLY_DEVELOPED"
   },
   {
@@ -9494,15 +9516,14 @@
     "phase": "P1-MVP",
     "work_package": "",
     "code_paths": [
-      "packages/eoip/future_scope.py",
-      "packages/eoip/gaps/enterprise_completion.py"
+      "packages/eoip/ontology/rdf.py"
     ],
     "test_files": [
-      "tests/unit/test_enterprise_gap_completion.py"
+      "tests/unit/test_dual_semantic_model.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "Covered by GAP-DUAL closure: validate_jsonld_round_trip confirms supported WorkItem/Commit/IMPLEMENTS constructs survive JSON-LD round-trip.",
     "status": "FULLY_DEVELOPED"
   },
   {
@@ -14170,14 +14191,16 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.1. KGR-G-011..020 wiring (Conquest Phase 2) (10 tasks)",
     "code_paths": [
-      "streaming_agent_memory.py"
+      "packages/eoip/graph/named_graph.py",
+      "packages/eoip/tenancy/service.py",
+      "schemas/named_graph_config.schema.json"
     ],
     "test_files": [
-      "test_moonshots.py"
+      "tests/unit/test_named_graph_isolation.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "python -m pytest tests/unit/test_named_graph_isolation.py (5 passed)",
     "status": "FULLY_DEVELOPED"
   },
   {

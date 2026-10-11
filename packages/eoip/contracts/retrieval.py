@@ -26,3 +26,5 @@ class RetrievalResult(BaseModel):
     facts: list[dict] | None = None
     graph: dict | None = None
     trace: dict | None = None  # GAP-RET-006 retrieval trace
+    evidence_manifest: dict | None = None  # GAP-AI: nodes, paths, source records
+    citation_chains: list[dict] = []

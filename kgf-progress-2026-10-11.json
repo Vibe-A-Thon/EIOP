@@ -1,7 +1,7 @@
 {
   "app": "kgf-completion-board",
   "version": 1,
-  "saved": "2026-10-11T15:56:15.709Z",
+  "saved": "2026-10-12T00:00:00.000Z",
   "s": {
     "BASE-01": "done",
     "BASE-02": "done",
@@ -263,7 +263,9 @@
     "FR-AGENT-003": "done",
     "FR-AGENT-004": "done",
     "FR-AGENT-005": "done",
-    "MVP-FR-021": "done"
+    "MVP-FR-021": "done",
+    "GAP-AI": "done",
+    "GAP-DUAL": "done"
   },
   "n": {},
   "g": {},

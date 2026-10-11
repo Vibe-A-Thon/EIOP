@@ -29,7 +29,16 @@
     "partial": { "type": ["boolean", "null"] },
     "facts": { "type": ["array", "null"], "items": { "type": "object" } },
     "graph": { "type": ["object", "null"] },
-    "trace": { "type": ["object", "null"] }
+    "trace": { "type": ["object", "null"] },
+    "evidence_manifest": {
+      "type": ["object", "null"],
+      "description": "GAP-AI evidence-addressable answer manifest linking graph nodes, path edges, source records, trust and freshness."
+    },
+    "citation_chains": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Machine-readable citation chains from answer context to graph node/path/source record."
+    }
   },
   "additionalProperties": false
 }

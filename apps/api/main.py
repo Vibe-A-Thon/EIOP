@@ -38,7 +38,7 @@ from eoip.jobs import JobQueue, write_json
 from eoip.models.provider import LocalModelProvider
 from eoip.observability import configure_json_logging
 from eoip.ontology.manifest import VERTEX_LABELS
-from eoip.ontology.rdf import export_jsonld
+from eoip.ontology.rdf import export_jsonld, export_shacl_shapes, import_jsonld, validate_shacl
 from eoip.runtime import api_token, create_store, data_root
 from eoip.validation.engine import ValidationEngine
 from fastapi import Depends, HTTPException, Query, Request, WebSocket, WebSocketDisconnect
@@ -56,6 +56,7 @@ def _operation(path: str, body: bytes) -> str:
     if (
         path.startswith("/api/v1/admin/ingestion/")
         or path == "/api/v1/ingestion/jira-json"
+        or path == "/api/v1/ontology/import"
         or path == "/api/v1/admin/demo"
     ):
         return "ingestion"
@@ -80,6 +81,8 @@ def _operation(path: str, body: bytes) -> str:
         "/api/v1/neighborhood",
         "/api/v1/traceability",
         "/api/v1/ontology/export",
+        "/api/v1/ontology/shacl",
+        "/api/v1/ontology/validate",
         "/api/v1/ontology/diff",
         "/api/v1/knowledge/freshness",
         "/api/v1/query/cache/stats",
@@ -528,6 +531,24 @@ def create_app():
             content=json.dumps(document, ensure_ascii=False),
             media_type="application/ld+json",
         )
+
+    @app.post("/api/v1/ontology/import")
+    def ontology_import(document: dict, clear: bool = False):
+        try:
+            return import_jsonld(document, store, clear=clear)
+        except (RuntimeError, TypeError, ValueError, KeyError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @app.get("/api/v1/ontology/shacl")
+    def ontology_shacl():
+        return Response(
+            content=json.dumps(export_shacl_shapes(), ensure_ascii=False),
+            media_type="application/ld+json",
+        )
+
+    @app.get("/api/v1/ontology/validate")
+    def ontology_validate(limit: int = Query(default=5000, ge=1, le=10_000)):
+        return validate_shacl(store, limit=limit)
 
     _stats_cache: dict = {"expires_at": 0.0, "payload": None}
 

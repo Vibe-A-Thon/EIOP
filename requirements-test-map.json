@@ -137,7 +137,9 @@
     "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
   ],
   "FR-GRAPH-010": [
-    "tests/unit/test_phase2_rdf_export.py"
+    "tests/unit/test_dual_semantic_model.py::test_jsonld_import_reconstructs_supported_property_graph_records",
+    "tests/unit/test_phase2_rdf_export.py",
+    "tests/unit/test_phase2_rdf_export.py::test_jsonld_export_maps_ontology_vertices_and_reified_relationships"
   ],
   "FR-ID-001": [
     "tests/unit/test_identity_ingestion.py"
@@ -215,16 +217,20 @@
     "tests/unit/test_query_policy.py"
   ],
   "FR-RAG-001": [
-    "tests/unit/test_retrieval.py"
+    "tests/unit/test_retrieval.py",
+    "tests/unit/test_retrieval.py::test_retrieval_router_selects_code_context_for_code_question"
   ],
   "FR-RAG-002": [
-    "tests/unit/test_retrieval.py"
+    "tests/unit/test_retrieval.py",
+    "tests/unit/test_retrieval.py::test_code_context_preserves_relationship_evidence"
   ],
   "FR-RAG-003": [
-    "tests/unit/test_retrieval.py"
+    "tests/unit/test_retrieval.py",
+    "tests/unit/test_retrieval.py::test_model_unavailable_retains_independent_graph_evidence"
   ],
   "FR-RAG-004": [
-    "tests/unit/test_retrieval.py"
+    "tests/unit/test_retrieval.py",
+    "tests/unit/test_retrieval.py::test_model_unavailable_retains_independent_graph_evidence"
   ],
   "FR-RAG-005": [
     "tests/unit/test_retrieval_eval.py"
@@ -1350,6 +1356,11 @@
   "GAP-AGOV-012": [
     "tests/unit/test_model_governance.py"
   ],
+  "GAP-AI": [
+    "tests/unit/test_evidence_addressable_rag.py::test_graph_rag_answer_is_addressable_to_nodes_paths_and_source_records",
+    "tests/unit/test_evidence_addressable_rag.py::test_ranked_retrieval_answers_also_emit_evidence_manifest",
+    "tests/unit/test_evidence_addressable_rag.py::test_retrieval_result_schema_accepts_evidence_address_fields"
+  ],
   "GAP-AI-001": [
     "tests/unit/test_gap_governance_controls.py"
   ],
@@ -1536,10 +1547,22 @@
   "GAP-DRIFT-007": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-DUAL": [
+    "tests/unit/test_dual_semantic_model.py::test_jsonld_import_reconstructs_supported_property_graph_records",
+    "tests/unit/test_dual_semantic_model.py::test_round_trip_validator_confirms_lossless_supported_constructs",
+    "tests/unit/test_dual_semantic_model.py::test_shacl_shapes_expose_required_properties_and_relationship_ranges",
+    "tests/unit/test_dual_semantic_model.py::test_shacl_validator_reports_missing_required_properties"
+  ],
   "GAP-DUAL-001": [
+    "tests/unit/test_dual_semantic_model.py::test_jsonld_import_reconstructs_supported_property_graph_records",
+    "tests/unit/test_dual_semantic_model.py::test_round_trip_validator_confirms_lossless_supported_constructs",
+    "tests/unit/test_dual_semantic_model.py::test_shacl_shapes_expose_required_properties_and_relationship_ranges",
+    "tests/unit/test_dual_semantic_model.py::test_shacl_validator_reports_missing_required_properties",
     "tests/unit/test_enterprise_gap_completion.py"
   ],
   "GAP-DUAL-002": [
+    "tests/unit/test_dual_semantic_model.py::test_jsonld_import_reconstructs_supported_property_graph_records",
+    "tests/unit/test_dual_semantic_model.py::test_round_trip_validator_confirms_lossless_supported_constructs",
     "tests/unit/test_enterprise_gap_completion.py"
   ],
   "GAP-ENG-001": [
@@ -2177,7 +2200,8 @@
     "tests/unit/test_requirement_evidence.py"
   ],
   "MVP-FR-020": [
-    "tests/unit/test_retrieval.py"
+    "tests/unit/test_retrieval.py",
+    "tests/unit/test_retrieval.py::test_code_context_preserves_relationship_evidence"
   ],
   "MVP-FR-021": [
     "tests/unit/test_governed_agents.py::test_useful_read_only_agent_workflow"

@@ -8,6 +8,7 @@ from eoip.contracts.source_event import SourceEventV2
 from eoip.contracts.source_registry import SourceRegistryEntry
 from eoip.graph.memory import MemoryGraphStore
 from eoip.ingestion.jira import FileEventCapture, JiraIngestionService
+from eoip.ontology.rdf import export_jsonld
 from fastapi.testclient import TestClient
 
 
@@ -232,6 +233,28 @@ def test_ontology_export_returns_jsonld(tmp_path):
     data = r.json()
     assert "@context" in data
     assert "@graph" in data
+
+
+def test_ontology_import_and_shacl_validation_endpoints(tmp_path):
+    source = MemoryGraphStore()
+    source.upsert_vertex("WorkItem", {"canonical_id": "w1", "issue_key": "X-1", "summary": "Test"})
+    document = export_jsonld(source)
+    target = MemoryGraphStore()
+    app = _make_api_app(target, tmp_path)
+    client = TestClient(app)
+    headers = {"Authorization": "Bearer test-token-minimum-24-characters!!"}
+
+    imported = client.post("/api/v1/ontology/import", json=document, headers=headers)
+    shapes = client.get("/api/v1/ontology/shacl", headers=headers)
+    validation = client.get("/api/v1/ontology/validate?limit=10", headers=headers)
+
+    assert imported.status_code == 200
+    assert imported.json()["vertices"] == 1
+    assert target.get_vertex_by_canonical_id("w1")["properties"]["issue_key"] == "X-1"
+    assert shapes.status_code == 200
+    assert shapes.headers["content-type"].startswith("application/ld+json")
+    assert validation.status_code == 200
+    assert validation.json()["conforms"] is True
 
 
 def test_admin_system_status_reports_real_local_state(tmp_path, monkeypatch):
