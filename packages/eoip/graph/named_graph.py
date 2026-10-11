@@ -7,13 +7,12 @@ enforced boundary guards preventing cross-tenant data leakage.
 
 from __future__ import annotations
 
-import hashlib
 import logging
 import threading
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Protocol
+from typing import Any
 
 from eoip.graph.store import Edge, GraphStore, Vertex
 
@@ -22,6 +21,8 @@ log = logging.getLogger("eoip.graph.named_graph")
 
 class IsolationLevel(str, Enum):
     STRICT = "STRICT"
+    SHARED_READ = "SHARED_READ"
+    FEDERATED = "FEDERATED"
     SHARED_SCHEMA = "SHARED_SCHEMA"
     READ_ONLY_SHARED = "READ_ONLY_SHARED"
 
@@ -40,7 +41,7 @@ class TenantConfig:
 
     @property
     def namespace_prefix(self) -> str:
-        return f"ng:{self.tenant_id}:"
+        return f"g:{self.tenant_id}:"
 
 
 @dataclass
@@ -109,7 +110,7 @@ class CrossTenantIsolationGuard:
 
     @staticmethod
     def _extract_tenant(vid: str) -> str | None:
-        if vid.startswith("ng:"):
+        if vid.startswith(("g:", "ng:")):
             parts = vid.split(":", 2)
             if len(parts) >= 3:
                 return parts[1]
@@ -151,8 +152,13 @@ class NamedGraphStore:
     def stats(self) -> TenantStats:
         return self._stats
 
-    def _namespace_id(self, canonical_id: str) -> str:
-        if canonical_id.startswith(self._config.namespace_prefix):
+    def _namespace_id(self, canonical_id: str, *, operation: str = "namespace") -> str:
+        owner = CrossTenantIsolationGuard._extract_tenant(canonical_id)
+        if owner:
+            if owner != self.tenant_id:
+                violation = CrossTenantViolation(self.tenant_id, owner, operation)
+                self._guard._violations.append(violation)
+                raise violation
             return canonical_id
         return f"{self._config.namespace_prefix}{canonical_id}"
 
@@ -175,9 +181,7 @@ class NamedGraphStore:
         self._check_label(label)
         props = dict(properties)
         cid = props.get("canonical_id", "")
-        props["canonical_id"] = self._namespace_id(str(cid))
-        props["_tenant_id"] = self.tenant_id
-        props["_graph_name"] = self.graph_name
+        props["canonical_id"] = self._namespace_id(str(cid), operation="vertex_upsert")
 
         result = self._store.upsert_vertex(label, props)
         with self._lock:
@@ -186,15 +190,16 @@ class NamedGraphStore:
         return result
 
     def get_vertex(self, vid: str) -> Vertex | None:
-        namespaced = self._namespace_id(vid)
-        vertex = self._store.get_vertex(namespaced)
+        vertex = self._store.get_vertex(vid)
+        if vertex is None:
+            vertex = self._store.get_vertex_by_canonical_id(self._namespace_id(vid, operation="vertex_get"))
         if vertex:
             self._guard.validate_vertex_access(self.tenant_id, vertex)
         self._stats.last_access = time.time()
         return vertex
 
     def get_vertex_by_canonical_id(self, canonical_id: str) -> Vertex | None:
-        namespaced = self._namespace_id(canonical_id)
+        namespaced = self._namespace_id(canonical_id, operation="vertex_get_by_canonical_id")
         vertex = self._store.get_vertex_by_canonical_id(namespaced)
         if vertex:
             self._guard.validate_vertex_access(self.tenant_id, vertex)
@@ -206,17 +211,28 @@ class NamedGraphStore:
         filters: dict[str, Any] | None = None,
         limit: int = 100,
     ) -> list[Vertex]:
-        tenant_filters = dict(filters) if filters else {}
-        tenant_filters["_tenant_id"] = self.tenant_id
-        return self._store.find_vertices(label=label, filters=tenant_filters, limit=limit)
+        requested = dict(filters) if filters else {}
+        candidates = self._store.find_vertices(label=label, limit=1_000_000)
+        visible: list[Vertex] = []
+        for vertex in candidates:
+            cid = str(vertex.get("canonical_id") or vertex.get("properties", {}).get("canonical_id", ""))
+            if not cid.startswith(self._config.namespace_prefix):
+                continue
+            props = vertex.get("properties", {})
+            if requested and any(props.get(key) != value for key, value in requested.items()):
+                continue
+            visible.append(vertex)
+            if len(visible) >= limit:
+                break
+        self._stats.last_access = time.time()
+        return visible
 
     def upsert_edge(self, label: str, out_v: str, in_v: str, properties: dict) -> Edge:
-        ns_out = self._namespace_id(out_v)
-        ns_in = self._namespace_id(in_v)
+        ns_out = self._namespace_id(out_v, operation="edge_out")
+        ns_in = self._namespace_id(in_v, operation="edge_in")
         self._guard.validate_edge_creation(self.tenant_id, ns_out, ns_in)
 
         props = dict(properties)
-        props["_tenant_id"] = self.tenant_id
 
         result = self._store.upsert_edge(label, ns_out, ns_in, props)
         with self._lock:
@@ -225,19 +241,25 @@ class NamedGraphStore:
         return result
 
     def edges_from(self, vid: str, labels: list[str] | None = None, limit: int = 500) -> list[Edge]:
-        return self._store.edges_from(self._namespace_id(vid), labels=labels, limit=limit)
+        vertex = self._vertex_for_ref(vid, operation="edges_from")
+        if not vertex:
+            return []
+        return self._tenant_edges(self._store.edges_from(vertex["vid"], labels=labels, limit=limit))
 
     def edges_to(self, vid: str, labels: list[str] | None = None, limit: int = 500) -> list[Edge]:
-        return self._store.edges_to(self._namespace_id(vid), labels=labels, limit=limit)
+        vertex = self._vertex_for_ref(vid, operation="edges_to")
+        if not vertex:
+            return []
+        return self._tenant_edges(self._store.edges_to(vertex["vid"], labels=labels, limit=limit))
 
     def count_vertices(self, label: str | None = None) -> int:
         return len(self.find_vertices(label=label, limit=1_000_000))
 
     def count_edges(self, label: str | None = None) -> int:
-        return self._store.count_edges(label=label)
+        return len(self._tenant_edges(self._store.find_edges(label=label, limit=1_000_000)))
 
     def tombstone_vertex(self, canonical_id: str) -> bool:
-        return self._store.tombstone_vertex(self._namespace_id(canonical_id))
+        return self._store.tombstone_vertex(self._namespace_id(canonical_id, operation="vertex_tombstone"))
 
     def clear(self) -> None:
         vertices = self.find_vertices(limit=1_000_000)
@@ -248,6 +270,22 @@ class NamedGraphStore:
         with self._lock:
             self._stats.vertex_count = 0
             self._stats.edge_count = 0
+
+    def _vertex_for_ref(self, ref: str, *, operation: str) -> Vertex | None:
+        vertex = self._store.get_vertex(ref)
+        if vertex is None:
+            vertex = self._store.get_vertex_by_canonical_id(self._namespace_id(ref, operation=operation))
+        if vertex:
+            self._guard.validate_vertex_access(self.tenant_id, vertex)
+        return vertex
+
+    def _tenant_edges(self, edges: list[Edge]) -> list[Edge]:
+        prefix = self._config.namespace_prefix
+        return [
+            edge for edge in edges
+            if str(edge.get("out_cid", "")).startswith(prefix)
+            and str(edge.get("in_cid", "")).startswith(prefix)
+        ]
 
 
 class NamedGraphManager:

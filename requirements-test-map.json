@@ -1989,6 +1989,28 @@
   "H-08": [
     "tests/unit/test_deployment_api.py"
   ],
+  "KGR-G-011": [
+    "tests/unit/test_behavioral_gate.py::test_behavioral_gate_abstains_with_unverified_symbols_and_coverage",
+    "tests/unit/test_behavioral_gate.py::test_behavioral_gate_cli_writes_ci_report_for_git_diff",
+    "tests/unit/test_behavioral_gate.py::test_behavioral_gate_detects_observable_pure_function_change",
+    "tests/unit/test_behavioral_gate.py::test_behavioral_gate_fails_public_signature_break",
+    "tests/unit/test_behavioral_gate.py::test_behavioral_gate_supports_r0_and_r1_blocking_thresholds"
+  ],
+  "KGR-G-012": [
+    "tests/unit/test_incremental_indexer.py::test_incremental_index_event_matches_schema",
+    "tests/unit/test_incremental_indexer.py::test_incremental_indexer_handles_hundred_file_diff_under_two_seconds",
+    "tests/unit/test_incremental_indexer.py::test_incremental_indexer_matches_fresh_full_symbol_index_for_same_commit_set",
+    "tests/unit/test_incremental_indexer.py::test_incremental_indexer_updates_only_changed_files_and_propagates_cross_file_impact",
+    "tests/unit/test_incremental_indexer.py::test_install_hooks_command_writes_real_incremental_hook",
+    "tests/unit/test_incremental_indexer.py::test_run_incremental_index_writes_report_for_git_diff"
+  ],
+  "KGR-G-013": [
+    "tests/unit/test_named_graph_isolation.py::test_named_graph_blocks_adversarial_cross_namespace_edges",
+    "tests/unit/test_named_graph_isolation.py::test_named_graph_creation_deletion_latency_and_thousand_tenant_support",
+    "tests/unit/test_named_graph_isolation.py::test_named_graph_edges_and_counts_are_tenant_scoped",
+    "tests/unit/test_named_graph_isolation.py::test_named_graph_vertices_are_invisible_across_tenants",
+    "tests/unit/test_named_graph_isolation.py::test_tenancy_service_wires_named_graphs_to_tenant_facade"
+  ],
   "MVP-FR-001": [
     "tests/unit/test_requirement_evidence.py"
   ],

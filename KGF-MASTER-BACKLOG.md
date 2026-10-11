@@ -616,11 +616,11 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 **Depends on.** WP 1.1
 
-- [ ] `KGR-G-011` **Behavioral verification gate** (P0, about 2 sessions, src CQ)
+- [x] `KGR-G-011` **Behavioral verification gate** (P0, about 2 sessions, src CQ)
   - Formal verification at merge gate — verification/behavioral_gate.py exists, wire to CI pipeline
-- [ ] `KGR-G-012` **Incremental AST re-indexer** (P0, about 2 sessions, src CQ)
+- [x] `KGR-G-012` **Incremental AST re-indexer** (P0, about 2 sessions, src CQ)
   - Git-hook differential AST re-index — ingestion/incremental_indexer.py exists, add git hook + tests
-- [ ] `KGR-G-013` **Per-tenant named-graph isolation** (P0, about 1 session, src CQ)
+- [x] `KGR-G-013` **Per-tenant named-graph isolation** (P0, about 1 session, src CQ)
   - graph/named_graph.py exists — wire to tenancy/ and add isolation boundary tests
 - [ ] `KGR-G-014` **Streaming temporal agent memory** (P0, about 2 sessions, src CQ)
   - moonshot/streaming_agent_memory.py exists — integrate with agents/memory.py + dual-timeline tests

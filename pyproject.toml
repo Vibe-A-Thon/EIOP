@@ -19,6 +19,9 @@ dependencies = [
   "tree-sitter>=0.24,<1.0; platform_python_implementation == 'CPython'",
 ]
 
+[project.scripts]
+eoip = "eoip.cli:main"
+
 [project.optional-dependencies]
 fileparse = [
   "python-docx>=1.2,<2.0",
