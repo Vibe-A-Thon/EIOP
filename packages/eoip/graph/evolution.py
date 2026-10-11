@@ -46,8 +46,9 @@ class ChangeJournal:
             cursor = entries[-1].cursor + 1 if entries else 1
             previous_hash = entries[-1].entry_hash if entries else None
             body = {**event, "schema_version": "1.0", "cursor": cursor, "previous_hash": previous_hash}
+            hash_body = {k: v for k, v in body.items() if k not in ("entry_hash", "before_state", "after_state")}
             digest = hashlib.sha256(
-                json.dumps(body, sort_keys=True, separators=(",", ":")).encode("utf-8")
+                json.dumps(hash_body, sort_keys=True, separators=(",", ":")).encode("utf-8")
             ).hexdigest()
             record = SemanticChangeEvent(**body, entry_hash=digest)
             self.path.parent.mkdir(parents=True, exist_ok=True)

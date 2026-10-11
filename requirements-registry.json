@@ -334,12 +334,17 @@
     "spec_source": "EOIP-engg-doc-pkg/03-functional-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.3. Governed agents (6 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/contracts/agent.py",
+      "packages/eoip/agents/catalog.py"
+    ],
+    "test_files": [
+      "tests/unit/test_governed_agents.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_governed_agents.py::test_agent_contract_validation (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "FR-AGENT-002",
@@ -350,13 +355,16 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.3. Governed agents (6 tasks)",
     "code_paths": [
+      "packages/eoip/agents/runtime.py",
       "packages/eoip/loops/core.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_governed_agents.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_governed_agents.py::test_bounded_agent_runtime (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "FR-AGENT-003",
@@ -367,20 +375,15 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.3. Governed agents (6 tasks)",
     "code_paths": [
-      "packages/eoip/agents/__init__.py",
-      "packages/eoip/agents/anomaly.py",
-      "packages/eoip/agents/blast_radius.py",
-      "packages/eoip/agents/community.py",
-      "packages/eoip/agents/incident_correlation.py",
-      "packages/eoip/agents/similarity.py",
-      "packages/eoip/agents/test_coverage.py",
       "packages/eoip/agents/trace_impact.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_governed_agents.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_governed_agents.py::test_trace_impact_agent (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "FR-AGENT-004",
@@ -390,12 +393,17 @@
     "spec_source": "EOIP-engg-doc-pkg/03-functional-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.3. Governed agents (6 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/contracts/agent.py",
+      "packages/eoip/agents/catalog.py"
+    ],
+    "test_files": [
+      "tests/unit/test_governed_agents.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_governed_agents.py::test_write_action_approval_boundary (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "FR-AGENT-005",
@@ -405,12 +413,17 @@
     "spec_source": "EOIP-engg-doc-pkg/03-functional-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.3. Governed agents (6 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/contracts/agent.py",
+      "packages/eoip/agents/catalog.py"
+    ],
+    "test_files": [
+      "tests/unit/test_governed_agents.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_governed_agents.py::test_controlled_self_modification (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "FR-CODE-001",
@@ -2370,12 +2383,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/causal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_causal_reasoning.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_causal_reasoning.py::test_causal_relationship_classes_and_hypotheses (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-CAUSE-003",
@@ -2385,12 +2402,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/causal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_causal_reasoning.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_causal_reasoning.py::test_causal_hypotheses_no_silent_promotion_to_confirmed (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-CAUSE-004",
@@ -2400,12 +2421,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/causal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_causal_reasoning.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_causal_reasoning.py::test_causal_hypothesis_structure_and_alternatives (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-CAUSE-005",
@@ -2415,12 +2440,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/causal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_causal_reasoning.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_causal_reasoning.py::test_temporal_correlations_and_time_ordering (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-CAUSE-006",
@@ -2430,12 +2459,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/causal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_causal_reasoning.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_causal_reasoning.py::test_human_confirmation_and_rejection_preserved (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EKAF-001",
@@ -3148,12 +3181,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_evolve_relationship_validity_interval (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-003",
@@ -3163,12 +3200,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_observation_time_separated_from_event_time (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-004",
@@ -3178,12 +3219,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_relationship_removal_expires_assertion_without_erasing_history (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-005",
@@ -3193,12 +3238,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_relationship_update_represented_as_new_revision (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-006",
@@ -3208,12 +3257,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_current_views_exclude_expired_facts (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-007",
@@ -3223,12 +3276,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_historical_as_of_reconstruction (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-008",
@@ -3238,12 +3295,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_graph_diff_between_timestamps (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-009",
@@ -3254,13 +3315,16 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
     "code_paths": [
+      "packages/eoip/graph/evolution.py",
       "packages/eoip/contracts/revision.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_graph_mutation_source_references (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-010",
@@ -3270,14 +3334,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
     "test_files": [
-      "tests/unit/test_bulk_load.py"
+      "tests/unit/test_graph_evolution_family.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_atomic_batch_isolation (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-011",
@@ -3287,12 +3353,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_failed_batch_does_not_advance_checkpoint (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-012",
@@ -3302,12 +3372,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_relationship_preservation_means_history_not_stale_edges (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-013",
@@ -3317,12 +3391,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_previous_revision_links (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-014",
@@ -3332,12 +3410,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_tombstone_retired_status (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-015",
@@ -3347,12 +3429,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_rollback_and_replay_strategy (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-EVOL-016",
@@ -3362,12 +3448,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/schema_migration.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_evolution_family.py::test_schema_ontology_migration_strategy (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-API-001",
@@ -4068,12 +4158,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_change_journal_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_change_journal_family.py::test_journal_record_schema_and_integrity (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-JOURNAL-003",
@@ -4083,12 +4177,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_change_journal_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_change_journal_family.py::test_journal_query_by_entity_time_and_run (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-JOURNAL-004",
@@ -4098,12 +4196,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_change_journal_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_change_journal_family.py::test_journal_replay_into_derived_indices (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-JOURNAL-005",
@@ -4113,12 +4215,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_change_journal_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_change_journal_family.py::test_journal_configurable_retention (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-JOURNAL-006",
@@ -4128,12 +4234,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/evolution.py"
+    ],
+    "test_files": [
+      "tests/unit/test_change_journal_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_change_journal_family.py::test_journal_audit_incident_troubleshooting (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-KD-001",
@@ -4375,12 +4485,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ontology/drift.py"
+    ],
+    "test_files": [
+      "tests/unit/test_ontology_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_ontology_evolution_family.py::test_propose_new_ontology_definitions (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-OEVO-003",
@@ -4390,12 +4504,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ontology/drift.py"
+    ],
+    "test_files": [
+      "tests/unit/test_ontology_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_ontology_evolution_family.py::test_proposal_contents_and_impact_analysis (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-OEVO-004",
@@ -4405,12 +4523,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ontology/drift.py",
+      "packages/eoip/ontology/gitops.py"
+    ],
+    "test_files": [
+      "tests/unit/test_ontology_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_ontology_evolution_family.py::test_ontology_changes_require_human_review_and_governance (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-OEVO-005",
@@ -4420,12 +4543,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ontology/gitops.py"
+    ],
+    "test_files": [
+      "tests/unit/test_ontology_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_ontology_evolution_family.py::test_approved_ontology_changes_enter_gitops_workflow (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-OEVO-006",
@@ -4435,12 +4562,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ontology/drift.py"
+    ],
+    "test_files": [
+      "tests/unit/test_ontology_evolution_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_ontology_evolution_family.py::test_rejected_suggestions_preserved_as_feedback (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-PERF-001",
@@ -7118,12 +7249,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/bitemporal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_temporal_model_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_temporal_model_family.py::test_time_machine_state_as_of_t (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-TIME-003",
@@ -7133,12 +7268,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/bitemporal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_temporal_model_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_temporal_model_family.py::test_time_machine_compare_t1_vs_t2 (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-TIME-004",
@@ -7148,12 +7287,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/bitemporal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_temporal_model_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_temporal_model_family.py::test_time_machine_highlights_semantic_changes (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-TIME-005",
@@ -7163,12 +7306,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/bitemporal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_temporal_model_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_temporal_model_family.py::test_release_based_snapshots (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-TIME-006",
@@ -7178,12 +7325,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/bitemporal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_temporal_model_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_temporal_model_family.py::test_time_travel_schema_version_context (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-TIME-007",
@@ -7193,12 +7344,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.2. Temporal, causal and evolution families (36 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/bitemporal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_temporal_model_family.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_temporal_model_family.py::test_historical_mode_evidence_reflects_valid_time (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-TWIN-001",
@@ -14034,15 +14189,15 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.1. KGR-G-011..020 wiring (Conquest Phase 2) (10 tasks)",
     "code_paths": [
-      "living_brain_algorithms.py",
-      "ontology_induction.py"
+      "packages/eoip/agents/memory.py",
+      "packages/eoip/moonshot/streaming_agent_memory.py"
     ],
     "test_files": [
-      "test_brain_and_living_system.py"
+      "tests/unit/test_streaming_agent_memory.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "python -m pytest tests/unit/test_streaming_agent_memory.py (4 passed)",
     "status": "FULLY_DEVELOPED"
   },
   {
@@ -14054,14 +14209,14 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.1. KGR-G-011..020 wiring (Conquest Phase 2) (10 tasks)",
     "code_paths": [
-      "rag_suite.py"
+      "packages/eoip/moonshot/ontology_induction.py"
     ],
     "test_files": [
-      "test_brain_and_living_system.py"
+      "tests/unit/test_ontology_induction.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "python -m pytest tests/unit/test_ontology_induction.py (3 passed)",
     "status": "FULLY_DEVELOPED"
   },
   {
@@ -14073,14 +14228,14 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.1. KGR-G-011..020 wiring (Conquest Phase 2) (10 tasks)",
     "code_paths": [
-      "loops.py"
+      "packages/eoip/graph/vector_graph.py"
     ],
     "test_files": [
-      "test_brain_and_living_system.py"
+      "tests/unit/test_vector_graph.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "python -m pytest tests/unit/test_vector_graph.py (4 passed)",
     "status": "FULLY_DEVELOPED"
   },
   {
@@ -14092,14 +14247,15 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.1. KGR-G-011..020 wiring (Conquest Phase 2) (10 tasks)",
     "code_paths": [
-      "archetypes.py"
+      "packages/eoip/agents/mcp_pr_tools.py",
+      "packages/eoip/agents/tools.py"
     ],
     "test_files": [
-      "test_brain_and_living_system.py"
+      "tests/unit/test_mcp_pr_tools.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "python -m pytest tests/unit/test_mcp_pr_tools.py (4 passed)",
     "status": "FULLY_DEVELOPED"
   },
   {
@@ -14111,14 +14267,14 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.1. KGR-G-011..020 wiring (Conquest Phase 2) (10 tasks)",
     "code_paths": [
-      "polyglot_engine.py"
+      "packages/eoip/analytics/parallel_multihop.py"
     ],
     "test_files": [
-      "test_brain_and_living_system.py"
+      "tests/unit/test_parallel_multihop.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "python -m pytest tests/unit/test_parallel_multihop.py (5 passed)",
     "status": "FULLY_DEVELOPED"
   },
   {
@@ -14130,14 +14286,14 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.1. KGR-G-011..020 wiring (Conquest Phase 2) (10 tasks)",
     "code_paths": [
-      "database_adapters.py"
+      "packages/eoip/agents/uncertainty_protocol.py"
     ],
     "test_files": [
-      "test_brain_and_living_system.py"
+      "tests/unit/test_uncertainty_protocol.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "python -m pytest tests/unit/test_uncertainty_protocol.py (4 passed)",
     "status": "FULLY_DEVELOPED"
   },
   {
@@ -14149,14 +14305,14 @@
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.1. KGR-G-011..020 wiring (Conquest Phase 2) (10 tasks)",
     "code_paths": [
-      "brain_os.py"
+      "packages/eoip/streaming/mutation_stream.py"
     ],
     "test_files": [
-      "test_brain_and_living_system.py"
+      "tests/unit/test_mutation_stream.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "evidence_receipt": "python -m pytest tests/unit/test_mutation_stream.py (4 passed)",
     "status": "FULLY_DEVELOPED"
   },
   {
@@ -15193,12 +15349,17 @@
     "spec_source": "EOIP-engg-doc-pkg/MVP-requirements.md",
     "phase": "### Phase 3. Competitive differentiation and cognition",
     "work_package": "#### WP 3.3. Governed agents (6 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/agents/trace_impact.py",
+      "packages/eoip/agents/runtime.py"
+    ],
+    "test_files": [
+      "tests/unit/test_governed_agents.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_governed_agents.py::test_useful_read_only_agent_workflow (passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "MVP-FR-022",

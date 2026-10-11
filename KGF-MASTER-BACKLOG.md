@@ -622,19 +622,19 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
   - Git-hook differential AST re-index — ingestion/incremental_indexer.py exists, add git hook + tests
 - [x] `KGR-G-013` **Per-tenant named-graph isolation** (P0, about 1 session, src CQ)
   - graph/named_graph.py exists — wire to tenancy/ and add isolation boundary tests
-- [ ] `KGR-G-014` **Streaming temporal agent memory** (P0, about 2 sessions, src CQ)
+- [x] `KGR-G-014` **Streaming temporal agent memory** (P0, about 2 sessions, src CQ)
   - moonshot/streaming_agent_memory.py exists — integrate with agents/memory.py + dual-timeline tests
-- [ ] `KGR-G-015` **LLM ontology induction + SHACL** (P0, about 2 sessions, src CQ)
+- [x] `KGR-G-015` **LLM ontology induction + SHACL** (P0, about 2 sessions, src CQ)
   - moonshot/ontology_induction.py exists — add SHACL constraint generation + anti-drift validation
-- [ ] `KGR-G-016` **HNSW vector-graph adapter** (P0, about 2 sessions, src CQ)
+- [x] `KGR-G-016` **HNSW vector-graph adapter** (P0, about 2 sessions, src CQ)
   - graph/vector_graph.py exists — add real HNSW index, co-located with graph store
-- [ ] `KGR-G-017` **PR-level cross-repo impact triage** (P0, about 2 sessions, src CQ)
+- [x] `KGR-G-017` **PR-level cross-repo impact triage** (P0, about 2 sessions, src CQ)
   - agents/mcp_pr_tools.py exists — add cross-repo graph traversal + MCP tool registration
-- [ ] `KGR-G-018` **Parallel deep multi-hop analytics** (P0, about 1 session, src CQ)
+- [x] `KGR-G-018` **Parallel deep multi-hop analytics** (P0, about 1 session, src CQ)
   - analytics/parallel_multihop.py exists — test 5+ hop traversals, benchmark at scale
-- [ ] `KGR-G-019` **Calibrated uncertainty protocol** (P0, about 1 session, src CQ)
+- [x] `KGR-G-019` **Calibrated uncertainty protocol** (P0, about 1 session, src CQ)
   - agents/uncertainty_protocol.py exists — wire honest-abstain into MCP tool responses
-- [ ] `KGR-G-020` **Real-time graph mutation streaming** (P0, about 2 sessions, src CQ)
+- [x] `KGR-G-020` **Real-time graph mutation streaming** (P0, about 2 sessions, src CQ)
   - streaming/mutation_stream.py exists — add WebSocket endpoint + webhook delivery
 
 #### WP 3.2. Temporal, causal and evolution families (36 tasks)
@@ -649,42 +649,42 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `G2-CAUSE-002` | Causal reasoning | Not dev | - | - |
-| [ ] | `G2-CAUSE-003` | Causal reasoning | Not dev | - | - |
-| [ ] | `G2-CAUSE-004` | Causal reasoning | Not dev | - | - |
-| [ ] | `G2-CAUSE-005` | Causal reasoning | Not dev | - | - |
-| [ ] | `G2-CAUSE-006` | Causal reasoning | Not dev | - | - |
-| [ ] | `G2-EVOL-002` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-003` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-004` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-005` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-006` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-007` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-008` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-009` | Graph / knowledge evolution | Partial | packages/eoip/contracts/revision.py | - |
-| [ ] | `G2-EVOL-010` | Graph / knowledge evolution | Partial | - | tests/unit/test_bulk_load.py |
-| [ ] | `G2-EVOL-011` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-012` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-013` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-014` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-015` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-EVOL-016` | Graph / knowledge evolution | Not dev | - | - |
-| [ ] | `G2-JOURNAL-002` | Graph change journal | Not dev | - | - |
-| [ ] | `G2-JOURNAL-003` | Graph change journal | Not dev | - | - |
-| [ ] | `G2-JOURNAL-004` | Graph change journal | Not dev | - | - |
-| [ ] | `G2-JOURNAL-005` | Graph change journal | Not dev | - | - |
-| [ ] | `G2-JOURNAL-006` | Graph change journal | Not dev | - | - |
-| [ ] | `G2-OEVO-002` | Ontology evolution | Not dev | - | - |
-| [ ] | `G2-OEVO-003` | Ontology evolution | Not dev | - | - |
-| [ ] | `G2-OEVO-004` | Ontology evolution | Not dev | - | - |
-| [ ] | `G2-OEVO-005` | Ontology evolution | Not dev | - | - |
-| [ ] | `G2-OEVO-006` | Ontology evolution | Not dev | - | - |
-| [ ] | `G2-TIME-002` | Temporal model | Not dev | - | - |
-| [ ] | `G2-TIME-003` | Temporal model | Not dev | - | - |
-| [ ] | `G2-TIME-004` | Temporal model | Not dev | - | - |
-| [ ] | `G2-TIME-005` | Temporal model | Not dev | - | - |
-| [ ] | `G2-TIME-006` | Temporal model | Not dev | - | - |
-| [ ] | `G2-TIME-007` | Temporal model | Not dev | - | - |
+| [x] | `G2-CAUSE-002` | Causal reasoning | Not dev | - | - |
+| [x] | `G2-CAUSE-003` | Causal reasoning | Not dev | - | - |
+| [x] | `G2-CAUSE-004` | Causal reasoning | Not dev | - | - |
+| [x] | `G2-CAUSE-005` | Causal reasoning | Not dev | - | - |
+| [x] | `G2-CAUSE-006` | Causal reasoning | Not dev | - | - |
+| [x] | `G2-EVOL-002` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-003` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-004` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-005` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-006` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-007` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-008` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-009` | Graph / knowledge evolution | Partial | packages/eoip/contracts/revision.py | - |
+| [x] | `G2-EVOL-010` | Graph / knowledge evolution | Partial | - | tests/unit/test_bulk_load.py |
+| [x] | `G2-EVOL-011` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-012` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-013` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-014` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-015` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-EVOL-016` | Graph / knowledge evolution | Not dev | - | - |
+| [x] | `G2-JOURNAL-002` | Graph change journal | Not dev | - | - |
+| [x] | `G2-JOURNAL-003` | Graph change journal | Not dev | - | - |
+| [x] | `G2-JOURNAL-004` | Graph change journal | Not dev | - | - |
+| [x] | `G2-JOURNAL-005` | Graph change journal | Not dev | - | - |
+| [x] | `G2-JOURNAL-006` | Graph change journal | Not dev | - | - |
+| [x] | `G2-OEVO-002` | Ontology evolution | Not dev | - | - |
+| [x] | `G2-OEVO-003` | Ontology evolution | Not dev | - | - |
+| [x] | `G2-OEVO-004` | Ontology evolution | Not dev | - | - |
+| [x] | `G2-OEVO-005` | Ontology evolution | Not dev | - | - |
+| [x] | `G2-OEVO-006` | Ontology evolution | Not dev | - | - |
+| [x] | `G2-TIME-002` | Temporal model | Not dev | - | - |
+| [x] | `G2-TIME-003` | Temporal model | Not dev | - | - |
+| [x] | `G2-TIME-004` | Temporal model | Not dev | - | - |
+| [x] | `G2-TIME-005` | Temporal model | Not dev | - | - |
+| [x] | `G2-TIME-006` | Temporal model | Not dev | - | - |
+| [x] | `G2-TIME-007` | Temporal model | Not dev | - | - |
 
 #### WP 3.3. Governed agents (6 tasks)
 
@@ -699,12 +699,12 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `FR-AGENT-001` | Agent contract | Not dev | - | - |
-| [ ] | `FR-AGENT-002` | Bounded agent runtime | Partial | packages/eoip/loops/core.py | - |
-| [ ] | `FR-AGENT-003` | TraceImpact agent | Partial | packages/eoip/agents/anomaly.py, packages/eoip/agents/blast_radius.py | - |
-| [ ] | `FR-AGENT-004` | Write/action approval boundary | Not dev | - | - |
-| [ ] | `FR-AGENT-005` | Controlled self-modification | Not dev | - | - |
-| [ ] | `MVP-FR-021` | Useful read-only agent workflow | Not dev | - | - |
+| [x] | `FR-AGENT-001` | Agent contract | Not dev | - | - |
+| [x] | `FR-AGENT-002` | Bounded agent runtime | Partial | packages/eoip/loops/core.py | - |
+| [x] | `FR-AGENT-003` | TraceImpact agent | Partial | packages/eoip/agents/anomaly.py, packages/eoip/agents/blast_radius.py | - |
+| [x] | `FR-AGENT-004` | Write/action approval boundary | Not dev | - | - |
+| [x] | `FR-AGENT-005` | Controlled self-modification | Not dev | - | - |
+| [x] | `MVP-FR-021` | Useful read-only agent workflow | Not dev | - | - |
 
 
 ### Phase 4. Intelligence amplification

@@ -342,6 +342,13 @@ class UnifiedVectorGraphPlanner:
                 ))
         return results
 
+    def _resolve_vid(self, node_id: str) -> str:
+        if hasattr(self.store, "get_vertex_by_canonical_id"):
+            vertex = self.store.get_vertex_by_canonical_id(node_id)
+            if vertex and "vid" in vertex:
+                return vertex["vid"]
+        return node_id
+
     def _traverse_hops(self, vid: str, labels: list[str] | None, max_hops: int) -> dict[str, Any]:
         neighbors: list[dict[str, str]] = []
         visited: set[str] = {vid}
@@ -350,12 +357,13 @@ class UnifiedVectorGraphPlanner:
             current, depth = queue.pop(0)
             if depth >= max_hops:
                 continue
+            search_id = self._resolve_vid(current)
             try:
-                edges = self.store.edges_from(current, labels=labels, limit=50)
+                edges = self.store.edges_from(search_id, labels=labels, limit=50)
             except Exception:
                 continue
             for edge in edges:
-                target = str(edge.get("in_v") or edge.get("in_cid", ""))
+                target = str(edge.get("in_cid") or edge.get("in_v", ""))
                 if target and target not in visited:
                     visited.add(target)
                     neighbors.append({
@@ -373,12 +381,13 @@ class UnifiedVectorGraphPlanner:
             current, depth = queue.pop(0)
             if depth >= max_hops:
                 continue
+            search_id = self._resolve_vid(current)
             try:
-                edges = self.store.edges_from(current, labels=labels, limit=100)
+                edges = self.store.edges_from(search_id, labels=labels, limit=100)
             except Exception:
                 continue
             for edge in edges:
-                target = str(edge.get("in_v") or edge.get("in_cid", ""))
+                target = str(edge.get("in_cid") or edge.get("in_v", ""))
                 if target and target not in visited:
                     visited.add(target)
                     queue.append((target, depth + 1))

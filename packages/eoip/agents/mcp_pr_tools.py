@@ -137,6 +137,13 @@ class PRImpactCalculator:
             signals=self._compute_signals(pr, impacted),
         )
 
+    def _resolve_vid(self, node_id: str) -> str:
+        if hasattr(self.store, "get_vertex_by_canonical_id"):
+            vertex = self.store.get_vertex_by_canonical_id(node_id)
+            if vertex and "vid" in vertex:
+                return vertex["vid"]
+        return node_id
+
     def _find_entities_for_file(self, path: str, repo_id: str) -> list[dict[str, Any]]:
         vertices = self.store.find_vertex_by_property("CodeSymbol", "path", path)
         return [dict(v) for v in vertices]
@@ -157,16 +164,17 @@ class PRImpactCalculator:
             if depth >= self.max_depth:
                 continue
 
+            search_id = self._resolve_vid(current_id)
             try:
                 edges = self.store.edges_to(
-                    current_id,
+                    search_id,
                     labels=["DEPENDS_ON", "IMPORTS", "CALLS", "CROSS_REPO_DEPENDS_ON"],
                 )
             except Exception:
                 continue
 
             for edge in edges:
-                dep_id = str(edge.get("out_v") or edge.get("out_cid", ""))
+                dep_id = str(edge.get("out_cid") or edge.get("out_v", ""))
                 if dep_id and dep_id not in visited:
                     visited.add(dep_id)
                     vertex = self.store.get_vertex(dep_id) or self.store.get_vertex_by_canonical_id(dep_id)
@@ -189,9 +197,10 @@ class PRImpactCalculator:
             cid = str(v.get("canonical_id", ""))
             if not cid:
                 continue
-            owner_edges = self.store.edges_to(cid, labels=["OWNS", "MAINTAINS", "AUTHORED"])
+            search_id = self._resolve_vid(cid)
+            owner_edges = self.store.edges_to(search_id, labels=["OWNS", "MAINTAINS", "AUTHORED"])
             for edge in owner_edges:
-                owner_id = str(edge.get("out_v") or edge.get("out_cid", ""))
+                owner_id = str(edge.get("out_cid") or edge.get("out_v", ""))
                 owner_vertex = self.store.get_vertex(owner_id) or self.store.get_vertex_by_canonical_id(owner_id)
                 if owner_vertex:
                     owners.append(str(owner_vertex.get("name", owner_id)))
@@ -199,11 +208,12 @@ class PRImpactCalculator:
 
     def _find_owning_service(self, entity_id: str) -> str | None:
         try:
-            edges = self.store.edges_from(entity_id, labels=["PART_OF", "BELONGS_TO", "DEPLOYED_IN"])
+            search_id = self._resolve_vid(entity_id)
+            edges = self.store.edges_from(search_id, labels=["PART_OF", "BELONGS_TO", "DEPLOYED_IN"])
         except Exception:
             return None
         for edge in edges:
-            target_id = str(edge.get("in_v") or edge.get("in_cid", ""))
+            target_id = str(edge.get("in_cid") or edge.get("in_v", ""))
             target = self.store.get_vertex(target_id) or self.store.get_vertex_by_canonical_id(target_id)
             if target and target.get("label") in ("Service", "Microservice", "Application"):
                 return str(target.get("name", target_id))

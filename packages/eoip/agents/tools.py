@@ -140,4 +140,12 @@ def build_graph_tool_registry(store: GraphStore) -> ToolRegistry:
     register("anomaly", "Read bounded facts for anomaly analysis", search)
     register("test_coverage", "Read bounded facts for test coverage analysis", search)
     register("incident_correlation", "Read bounded facts for incident correlation", search)
+
+    from eoip.agents.mcp_pr_tools import MCPPRToolHandler
+    pr_handler = MCPPRToolHandler(store)
+    register("list_prs", "List pull requests in repository", pr_handler.list_prs)
+    register("get_pr_impact", "Calculate cross-repo graph impact of a pull request", pr_handler.get_pr_impact)
+    register("triage_prs", "Triage and rank multiple pull requests by graph impact risk", pr_handler.triage_prs)
+
     return registry
+

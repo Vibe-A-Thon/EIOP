@@ -293,3 +293,75 @@ class AgentResultCache:
             self._expire()
             item = self._records.get(run_id)
             return item[1].model_copy(deep=True) if item else None
+
+
+from eoip.moonshot.streaming_agent_memory import (  # noqa: E402
+    DualTimelineIndex,
+    MemoryEventType,
+    StreamingMemoryIngester,
+    TemporalMemoryEvent,
+)
+
+
+class StreamingAgentMemory:
+    """KGR-G-014: Streaming dual-timeline agent memory integrated with local memory policy."""
+
+    def __init__(
+        self,
+        *,
+        max_buffer_size: int = 10000,
+        policy: MemoryPolicy | None = None,
+        clock: Callable[[], datetime] | None = None,
+    ) -> None:
+        self.policy = policy or MemoryPolicy()
+        self._clock = clock or (lambda: datetime.now(UTC))
+        self.ingester = StreamingMemoryIngester(max_buffer_size=max_buffer_size)
+
+    def record_memory(
+        self,
+        agent_id: str,
+        content: dict[str, Any],
+        *,
+        event_id: str | None = None,
+        event_type: MemoryEventType = MemoryEventType.OBSERVATION,
+        event_time: float | None = None,
+        salience: float = 1.0,
+        ttl_seconds: int | None = None,
+    ) -> TemporalMemoryEvent:
+        now_ts = self._clock().timestamp()
+        event = TemporalMemoryEvent(
+            event_id=event_id or f"mem-{agent_id}-{now_ts}-{len(self.ingester.index._by_id)}",
+            agent_id=agent_id,
+            event_type=event_type,
+            content=content,
+            event_time=event_time if event_time is not None else now_ts,
+            ingestion_time=now_ts,
+            salience=salience,
+            ttl_seconds=ttl_seconds or self.policy.ttl_seconds,
+        )
+        return self.ingester.ingest(event)
+
+    def query_dual_timeline(
+        self,
+        *,
+        event_time_range: tuple[float, float] | None = None,
+        ingestion_time_range: tuple[float, float] | None = None,
+    ) -> list[TemporalMemoryEvent]:
+        events = list(self.ingester.index._by_id.values())
+        if event_time_range is not None:
+            start, end = event_time_range
+            events = [e for e in events if start <= e.event_time <= end]
+        if ingestion_time_range is not None:
+            start, end = ingestion_time_range
+            events = [e for e in events if start <= e.ingestion_time <= end]
+        return events
+
+    def get_agent_context(
+        self,
+        agent_id: str,
+        *,
+        max_events: int = 50,
+        min_salience: float = 0.1,
+    ) -> list[TemporalMemoryEvent]:
+        return self.ingester.query_context(agent_id, max_events=max_events, min_salience=min_salience)
+

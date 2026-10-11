@@ -23,6 +23,14 @@ class MigrationStatus(str, Enum):
     FAILED = "FAILED"
 
 
+class MigrationStrategy(str, Enum):
+    NO_MIGRATION = "NO_MIGRATION"
+    LAZY_MIGRATION = "LAZY_MIGRATION"
+    ONLINE_BACKFILL = "ONLINE_BACKFILL"
+    OFFLINE_MIGRATION = "OFFLINE_MIGRATION"
+    SOURCE_REPLAY = "SOURCE_REPLAY"
+
+
 class MigrationAction(str, Enum):
     ADD_VERTEX_TYPE = "ADD_VERTEX_TYPE"
     REMOVE_VERTEX_TYPE = "REMOVE_VERTEX_TYPE"
@@ -36,6 +44,20 @@ class MigrationAction(str, Enum):
     REMOVE_INDEX = "REMOVE_INDEX"
     ADD_CONSTRAINT = "ADD_CONSTRAINT"
     REMOVE_CONSTRAINT = "REMOVE_CONSTRAINT"
+
+
+@dataclass
+class MigrationPlanItem:
+    name: str
+    strategy: MigrationStrategy
+    description: str = ""
+
+
+@dataclass
+class MigrationPlan:
+    source_version: str
+    target_version: str
+    actions: list[MigrationPlanItem] = field(default_factory=list)
 
 
 @dataclass

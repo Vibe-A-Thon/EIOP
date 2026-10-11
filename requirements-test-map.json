@@ -13,6 +13,21 @@
     "tests/unit/test_jira_connector.py::test_jira_offline_fixtures_and_baseline",
     "tests/unit/test_jira_connector.py"
   ],
+  "FR-AGENT-001": [
+    "tests/unit/test_governed_agents.py::test_agent_contract_validation"
+  ],
+  "FR-AGENT-002": [
+    "tests/unit/test_governed_agents.py::test_bounded_agent_runtime"
+  ],
+  "FR-AGENT-003": [
+    "tests/unit/test_governed_agents.py::test_trace_impact_agent"
+  ],
+  "FR-AGENT-004": [
+    "tests/unit/test_governed_agents.py::test_write_action_approval_boundary"
+  ],
+  "FR-AGENT-005": [
+    "tests/unit/test_governed_agents.py::test_controlled_self_modification"
+  ],
   "FR-CODE-001": [
     "tests/unit/test_code_parser.py",
     "tests/unit/test_requirement_evidence.py"
@@ -333,6 +348,21 @@
   "G2-CAUSE-001": [
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-CAUSE-002": [
+    "tests/unit/test_causal_reasoning.py::test_causal_relationship_classes_and_hypotheses"
+  ],
+  "G2-CAUSE-003": [
+    "tests/unit/test_causal_reasoning.py::test_causal_hypotheses_no_silent_promotion_to_confirmed"
+  ],
+  "G2-CAUSE-004": [
+    "tests/unit/test_causal_reasoning.py::test_causal_hypothesis_structure_and_alternatives"
+  ],
+  "G2-CAUSE-005": [
+    "tests/unit/test_causal_reasoning.py::test_temporal_correlations_and_time_ordering"
+  ],
+  "G2-CAUSE-006": [
+    "tests/unit/test_causal_reasoning.py::test_human_confirmation_and_rejection_preserved"
+  ],
   "G2-EKAF-001": [
     "tests/unit/test_acquisition_fabric.py",
     "tests/unit/test_acquisition_fabric.py::test_generic_web_and_file_connectors_share_source_connector_semantics",
@@ -476,8 +506,50 @@
   "G2-EVOL-001": [
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-EVOL-002": [
+    "tests/unit/test_graph_evolution_family.py::test_evolve_relationship_validity_interval"
+  ],
+  "G2-EVOL-003": [
+    "tests/unit/test_graph_evolution_family.py::test_observation_time_separated_from_event_time"
+  ],
+  "G2-EVOL-004": [
+    "tests/unit/test_graph_evolution_family.py::test_relationship_removal_expires_assertion_without_erasing_history"
+  ],
+  "G2-EVOL-005": [
+    "tests/unit/test_graph_evolution_family.py::test_relationship_update_represented_as_new_revision"
+  ],
+  "G2-EVOL-006": [
+    "tests/unit/test_graph_evolution_family.py::test_current_views_exclude_expired_facts"
+  ],
+  "G2-EVOL-007": [
+    "tests/unit/test_graph_evolution_family.py::test_historical_as_of_reconstruction"
+  ],
+  "G2-EVOL-008": [
+    "tests/unit/test_graph_evolution_family.py::test_graph_diff_between_timestamps"
+  ],
+  "G2-EVOL-009": [
+    "tests/unit/test_graph_evolution_family.py::test_graph_mutation_source_references"
+  ],
   "G2-EVOL-010": [
-    "tests/unit/test_bulk_load.py"
+    "tests/unit/test_graph_evolution_family.py::test_atomic_batch_isolation"
+  ],
+  "G2-EVOL-011": [
+    "tests/unit/test_graph_evolution_family.py::test_failed_batch_does_not_advance_checkpoint"
+  ],
+  "G2-EVOL-012": [
+    "tests/unit/test_graph_evolution_family.py::test_relationship_preservation_means_history_not_stale_edges"
+  ],
+  "G2-EVOL-013": [
+    "tests/unit/test_graph_evolution_family.py::test_previous_revision_links"
+  ],
+  "G2-EVOL-014": [
+    "tests/unit/test_graph_evolution_family.py::test_tombstone_retired_status"
+  ],
+  "G2-EVOL-015": [
+    "tests/unit/test_graph_evolution_family.py::test_rollback_and_replay_strategy"
+  ],
+  "G2-EVOL-016": [
+    "tests/unit/test_graph_evolution_family.py::test_schema_ontology_migration_strategy"
   ],
   "G2-I2R-001": [
     "tests/unit/test_g2_readiness.py"
@@ -487,6 +559,21 @@
   ],
   "G2-JOURNAL-001": [
     "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-JOURNAL-002": [
+    "tests/unit/test_change_journal_family.py::test_journal_record_schema_and_integrity"
+  ],
+  "G2-JOURNAL-003": [
+    "tests/unit/test_change_journal_family.py::test_journal_query_by_entity_time_and_run"
+  ],
+  "G2-JOURNAL-004": [
+    "tests/unit/test_change_journal_family.py::test_journal_replay_into_derived_indices"
+  ],
+  "G2-JOURNAL-005": [
+    "tests/unit/test_change_journal_family.py::test_journal_configurable_retention"
+  ],
+  "G2-JOURNAL-006": [
+    "tests/unit/test_change_journal_family.py::test_journal_audit_incident_troubleshooting"
   ],
   "G2-KD-001": [
     "tests/unit/test_g2_readiness.py"
@@ -513,6 +600,21 @@
   "G2-OEVO-001": [
     "tests/unit/test_g2_readiness.py",
     "tests/unit/test_ontology_drift_review.py"
+  ],
+  "G2-OEVO-002": [
+    "tests/unit/test_ontology_evolution_family.py::test_propose_new_ontology_definitions"
+  ],
+  "G2-OEVO-003": [
+    "tests/unit/test_ontology_evolution_family.py::test_proposal_contents_and_impact_analysis"
+  ],
+  "G2-OEVO-004": [
+    "tests/unit/test_ontology_evolution_family.py::test_ontology_changes_require_human_review_and_governance"
+  ],
+  "G2-OEVO-005": [
+    "tests/unit/test_ontology_evolution_family.py::test_approved_ontology_changes_enter_gitops_workflow"
+  ],
+  "G2-OEVO-006": [
+    "tests/unit/test_ontology_evolution_family.py::test_rejected_suggestions_preserved_as_feedback"
   ],
   "G2-PERF-001": [
     "tests/unit/test_g2_readiness.py"
@@ -1187,6 +1289,24 @@
   ],
   "G2-TIME-001": [
     "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-TIME-002": [
+    "tests/unit/test_temporal_model_family.py::test_time_machine_state_as_of_t"
+  ],
+  "G2-TIME-003": [
+    "tests/unit/test_temporal_model_family.py::test_time_machine_compare_t1_vs_t2"
+  ],
+  "G2-TIME-004": [
+    "tests/unit/test_temporal_model_family.py::test_time_machine_highlights_semantic_changes"
+  ],
+  "G2-TIME-005": [
+    "tests/unit/test_temporal_model_family.py::test_release_based_snapshots"
+  ],
+  "G2-TIME-006": [
+    "tests/unit/test_temporal_model_family.py::test_time_travel_schema_version_context"
+  ],
+  "G2-TIME-007": [
+    "tests/unit/test_temporal_model_family.py::test_historical_mode_evidence_reflects_valid_time"
   ],
   "G2-TWIN-001": [
     "tests/unit/test_g2_readiness.py"
@@ -2011,11 +2131,56 @@
     "tests/unit/test_named_graph_isolation.py::test_named_graph_vertices_are_invisible_across_tenants",
     "tests/unit/test_named_graph_isolation.py::test_tenancy_service_wires_named_graphs_to_tenant_facade"
   ],
+  "KGR-G-014": [
+    "tests/unit/test_streaming_agent_memory.py::test_streaming_agent_memory_sliding_window_and_temporal_decay",
+    "tests/unit/test_streaming_agent_memory.py::test_streaming_agent_memory_episodes_and_retrieval",
+    "tests/unit/test_streaming_agent_memory.py::test_streaming_agent_memory_importance_cutoff",
+    "tests/unit/test_streaming_agent_memory.py::test_streaming_agent_memory_clear"
+  ],
+  "KGR-G-015": [
+    "tests/unit/test_ontology_induction.py::test_ontology_induction_flow",
+    "tests/unit/test_ontology_induction.py::test_ontology_induction_drift_detection",
+    "tests/unit/test_ontology_induction.py::test_ontology_induction_shacl_validation"
+  ],
+  "KGR-G-016": [
+    "tests/unit/test_vector_graph.py::test_hnsw_index_insert_and_search",
+    "tests/unit/test_vector_graph.py::test_hnsw_index_remove",
+    "tests/unit/test_vector_graph.py::test_unified_vector_then_traverse_colocated",
+    "tests/unit/test_vector_graph.py::test_traverse_then_vector_filter"
+  ],
+  "KGR-G-017": [
+    "tests/unit/test_mcp_pr_tools.py::test_mcp_pr_tools_registration",
+    "tests/unit/test_mcp_pr_tools.py::test_mcp_pr_tools_list_and_impact",
+    "tests/unit/test_mcp_pr_tools.py::test_mcp_pr_tools_triage",
+    "tests/unit/test_mcp_pr_tools.py::test_pr_impact_calculator_with_graph_store"
+  ],
+  "KGR-G-018": [
+    "tests/unit/test_parallel_multihop.py::test_sparse_graph_builder_and_csr",
+    "tests/unit/test_parallel_multihop.py::test_parallel_multihop_bfs_deep_traversal",
+    "tests/unit/test_parallel_multihop.py::test_influence_propagation",
+    "tests/unit/test_parallel_multihop.py::test_subgraph_partitioning_and_fraud_ring_detector",
+    "tests/unit/test_parallel_multihop.py::test_from_graph_store"
+  ],
+  "KGR-G-019": [
+    "tests/unit/test_uncertainty_protocol.py::test_uncertainty_protocol_high_confidence",
+    "tests/unit/test_uncertainty_protocol.py::test_uncertainty_protocol_abstain_on_no_evidence",
+    "tests/unit/test_uncertainty_protocol.py::test_uncertainty_protocol_contradictions_and_staleness",
+    "tests/unit/test_uncertainty_protocol.py::test_coverage_and_staleness_sensors"
+  ],
+  "KGR-G-020": [
+    "tests/unit/test_mutation_stream.py::test_mutation_event_sse_and_serialization",
+    "tests/unit/test_mutation_stream.py::test_subscription_filter",
+    "tests/unit/test_mutation_stream.py::test_mutation_event_bus_sse_delivery_and_replay",
+    "tests/unit/test_mutation_stream.py::test_webhook_registration"
+  ],
   "MVP-FR-001": [
     "tests/unit/test_requirement_evidence.py"
   ],
   "MVP-FR-020": [
     "tests/unit/test_retrieval.py"
+  ],
+  "MVP-FR-021": [
+    "tests/unit/test_governed_agents.py::test_useful_read_only_agent_workflow"
   ],
   "MVP-FR-022": [
     "tests/security/test_verification_suite.py"
