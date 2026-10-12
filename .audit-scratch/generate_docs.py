@@ -9,6 +9,9 @@ from pathlib import Path
 
 import yaml
 
+from eoip.ontology.manifest import DOMAINS, EDGE_LABELS, INDEXES, PROPERTY_KEYS, VERTEX_LABELS
+from eoip.query.polyglot_engine import QueryDialect
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRATCH = ROOT / ".audit-scratch"
@@ -943,6 +946,27 @@ for path in sorted(set(config_paths)):
         rendered = "[secret value omitted]" if sensitive else clean(json.dumps(value, ensure_ascii=True) if not isinstance(value, str) else value, 100)
         config_rows.append(f"| `{rel}:{line_no}` | `{clean(key,100)}` | {rendered} |")
 config_rows_text = "\n".join(config_rows)
+
+ontology_domains = ", ".join(f"`{x}`" for x in DOMAINS)
+ontology_vertices = ", ".join(f"`{x}`" for x in VERTEX_LABELS)
+ontology_edges = ", ".join(f"`{x}`" for x in EDGE_LABELS)
+ontology_properties = ", ".join(f"`{x}`" for x in PROPERTY_KEYS)
+ontology_indexes = ", ".join(
+    f"`{x['name']}` ({x['type']}; {x.get('label') or '*'}; {','.join(x['fields'])})" for x in INDEXES
+)
+connector_modules = ", ".join(
+    f"`{p.stem}`" for p in sorted((ROOT / "packages/eoip/connectors").glob("*.py"))
+    if p.stem != "__init__"
+)
+ingestion_modules = ", ".join(
+    f"`{p.stem}`" for p in sorted((ROOT / "packages/eoip/ingestion").glob("*.py"))
+    if p.stem != "__init__"
+)
+query_dialects = ", ".join(f"`{x.value}`" for x in QueryDialect)
+agent_modules = ", ".join(
+    f"`{p.stem}`" for p in sorted((ROOT / "packages/eoip/agents").glob("*.py"))
+    if p.stem != "__init__"
+)
 
 
 def make_ledger() -> str:
