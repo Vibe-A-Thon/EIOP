@@ -455,7 +455,8 @@
     "tests/unit/test_acquisition_fabric.py",
     "tests/unit/test_acquisition_fabric.py::test_generic_web_and_file_connectors_share_source_connector_semantics",
     "tests/unit/test_g2_readiness.py",
-    "tests/unit/test_source_registry.py"
+    "tests/unit/test_source_registry.py",
+    "tests/unit/test_source_registry.py::test_registry_entry_carries_g2_operational_metadata_without_secrets"
   ],
   "G2-EKAF-002": [
     "tests/contract/test_g2_contracts.py",
@@ -532,7 +533,8 @@
     "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
   ],
   "G2-EKAF-021": [
-    "tests/unit/test_source_registry.py"
+    "tests/unit/test_source_registry.py",
+    "tests/unit/test_source_registry.py::test_registry_entry_carries_g2_operational_metadata_without_secrets"
   ],
   "G2-EKAF-022": [
     "tests/unit/test_ekaf_conflicts.py"
@@ -554,7 +556,8 @@
     "tests/unit/test_identity_resolver.py::test_same_person_by_email"
   ],
   "G2-EKAF-028": [
-    "tests/unit/test_source_registry.py"
+    "tests/unit/test_source_registry.py",
+    "tests/unit/test_source_registry.py::test_registry_entry_carries_g2_operational_metadata_without_secrets"
   ],
   "G2-EKAF-029": [
     "tests/unit/test_acquisition_fabric.py",
@@ -1337,17 +1340,21 @@
     "tests/contract/test_g2_contracts.py::test_revision_contract_enforces_open_current_and_closed_historical_ranges"
   ],
   "G2-T0004": [
-    "tests/unit/test_source_registry.py"
+    "tests/unit/test_source_registry.py",
+    "tests/unit/test_source_registry.py::test_registry_crud_is_durable_and_never_stores_inline_secrets"
   ],
   "G2-T0005": [
     "tests/contract/test_g2_contracts.py",
     "tests/contract/test_g2_contracts.py::test_fake_connector_satisfies_runtime_connector_protocol"
   ],
   "G2-T0101": [
-    "tests/unit/test_source_registry.py"
+    "tests/unit/test_source_registry.py",
+    "tests/unit/test_source_registry.py::test_registry_crud_is_durable_and_never_stores_inline_secrets",
+    "tests/unit/test_source_registry.py::test_source_registry_api_crud_and_auth"
   ],
   "G2-T0102": [
-    "tests/unit/test_source_registry.py"
+    "tests/unit/test_source_registry.py",
+    "tests/unit/test_source_registry.py::test_registry_crud_is_durable_and_never_stores_inline_secrets"
   ],
   "G2-T0110": [
     "tests/runtime_dlq/test_servicenow_acquisition.py",

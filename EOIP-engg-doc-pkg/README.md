@@ -13,20 +13,37 @@ The codebase now implements much of the architecture described here: FastAPI
 API/runtime modules, a React graph/admin UI, MCP server, worker, VS Code
 extension, graph stores/adapters, connector SDK, Jira/Git/GitHub/GitLab/
 Confluence/ServiceNow and other acquisition modules, raw SourceEvent capture,
-DLQ/replay/checkpointing, source deletion tombstones, GraphRAG/query engines,
-bounded agents, governance/security/privacy modules, deployment assets, Hubble
-walkthroughs, and executable demo scenarios.
+DLQ/replay/checkpointing, source deletion tombstones, GraphRAG/query engines
+with evidence manifests and citation chains, dual JSON-LD/RDF/OWL/SHACL
+interoperability, semantic federation over local graph/file/REST/JDBC-style
+sources, bounded agents, governance/security/privacy modules, deployment
+assets, Hubble walkthroughs, and executable demo scenarios.
 
 As of the current documentation sweep, [../KGF-MASTER-BACKLOG.md](../KGF-MASTER-BACKLOG.md)
-shows 167/516 tasks ticked in the working tree: Phase 0 and Phase 1 complete,
-Phase 2 at 88/130, and Phase 8 at 1/17. The sweep mechanically read 231
-first-party Markdown files / 47,000 lines, excluding the backlog and local
-cache/venv directories.
+shows 516/516 tasks ticked in the working tree. The active evidence trail is
+maintained in `../requirements-registry.json` and
+`../requirements-test-map.json`; generated audit artifacts may lag until their
+scanner is rerun.
 
 Use this documentation package for normative requirements and design intent.
 Use the repository root README for an operator-oriented overview, and use
 `../KGF-MASTER-BACKLOG.md`, `../requirements-registry.json`, and
 `../requirements-test-map.json` for current closure/evidence tracking.
+
+## Recently implemented slices
+
+- Evidence-addressable GraphRAG answers now include graph node/path/source-record
+  addressing, evidence manifests, and citation chains.
+- The dual semantic model now supports bounded JSON-LD export, JSON-LD import,
+  manifest-derived SHACL shapes, SHACL validation, and round-trip checks for
+  supported ontology constructs.
+- The semantic federation layer now supports local graph, file, REST JSON, and
+  SQLite-backed JDBC-style sources; source/entity modes (`VIRTUAL`, `CACHE`,
+  `MATERIALIZE`, `HYBRID`); cache freshness; offline degradation; source policy
+  enforcement; and explainable per-row provenance.
+- The admin web UI includes an ontology/federation inspection surface backed by
+  live API calls. Demo fixtures remain isolated demo inputs and are not wired as
+  production federation rows.
 
 ## Start here
 

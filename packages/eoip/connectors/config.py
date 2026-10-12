@@ -148,7 +148,10 @@ def connector_from_registry(
         except (TypeError, ValueError) as exc:
             raise ConnectorError(entry.source_type, "configuration_error", correlation_id) from exc
     if connector_class is None:
-        raise ConnectorError(entry.source_type, "adapter_unavailable", correlation_id)
+        from eoip.connectors.factory import ConnectionFactory
+        return ConnectionFactory.get_instance().create_from_registry(
+            entry, environ=variables, correlation_id=correlation_id
+        )
 
     token = _resolve_registry_secret(entry, "token", variables, correlation_id)
     username = _resolve_registry_secret(entry, "username", variables, correlation_id)

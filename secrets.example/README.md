@@ -14,6 +14,12 @@ for live Confluence and ServiceNow workers. Source registry entries and durable
 job payloads should contain options and opaque secret references only, never raw
 passwords or API tokens.
 
+The current platform also includes semantic federation adapters for local graph,
+file, REST JSON and SQLite-backed JDBC-style sources. Register only opaque
+secret references or environment-derived headers/connection strings for live
+REST/JDBC-style sources. Demo fixtures do not require secrets and must not be
+promoted into production source definitions.
+
 ## Usage
 
 Mount via Docker Compose:

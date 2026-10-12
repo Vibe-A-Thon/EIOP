@@ -8,10 +8,14 @@ The active project picture lives outside this generated directory: use
 for phase-order completion work, `../../../requirements-registry.json` for
 requirement evidence, and `../../../requirements-test-map.json` for test tags.
 Generated reports may lag the working tree until the audit command is rerun.
-The current manual documentation sweep read 231 first-party Markdown files /
-47,000 lines and recorded the active backlog at 167/516 ticked. Treat the
+The active backlog is now 516/516 ticked in the working tree. Treat the
 generated report contents below that point as the last mechanical audit output,
 not as a live dashboard.
+
+Recent working-tree development that may not appear in regenerated artifacts yet
+includes evidence-addressable GraphRAG, JSON-LD import/SHACL validation/round
+trip checks, and semantic federation over local graph, file, REST, and
+SQLite-backed JDBC-style sources with source policy enforcement.
 
 ## Normative Rules
 1. **Derived Evidence:** These files represent snapshots of mechanical scanner passes across repository documentation, code symbols, routes, and test files.

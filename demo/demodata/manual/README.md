@@ -12,8 +12,10 @@ This folder is used by the live manual-ingestion demo. The administration UI can
 submit these source files, the API captures immutable SourceEvent evidence,
 normalizes work/code/CI/test/design/ops/knowledge records, and exposes the
 resulting graph through explorer lenses, source/job inspection, validation,
-exports, lineage, impact, and GraphRAG. The data is deliberately synthetic and
-should not be treated as a customer export.
+exports, JSON-LD/RDF/SHACL inspection, lineage, impact, semantic federation
+planning, and evidence-addressable GraphRAG. The data is deliberately synthetic,
+is loaded only through explicit demo/manual ingestion, and should not be treated
+as a customer export or production federation source.
 
 1. **EPC-101: Payment Gateway V2 Migration** - Tokenization, retry handling,
    multi-currency support (Jira Feature PAY-100)

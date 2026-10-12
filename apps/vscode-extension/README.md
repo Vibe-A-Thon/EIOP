@@ -14,6 +14,12 @@ natural-language query, and approved MCP tool invocation. It uses the same
 Bearer token as the web/API stack, stores it in VS Code SecretStorage, and
 rejects write/admin tools.
 
+Current backend responses include evidence-addressable GraphRAG metadata:
+answers can carry graph node IDs, paths, source-record references, evidence
+manifests and citation chains. The extension surfaces these through its
+read-only context/search/retrieval commands when the local API returns them; it
+does not synthesize missing citations.
+
 Source navigation is intentionally constrained. Links returned by EOIP must
 resolve under `eoip.repositoryRoot`; absolute paths, traversal, and symlinks
 escaping the workspace are refused. The extension can show prior successful
@@ -72,6 +78,11 @@ tools through an actual initialization/tools-list/tools-call exchange.
 Set `eoip.mcpUrl` (default `http://localhost:8001/mcp`) for EOIP's stateless JSON
 Streamable HTTP transport. Arbitrary agent/admin/write tools are refused.
 Both commands use the same SecretStorage token as other EOIP commands.
+
+The broader platform now also exposes dual JSON-LD/RDF/OWL/SHACL
+interoperability and semantic federation APIs in the web/admin surface. The
+extension remains intentionally read-only and focused on source context, graph
+querying, retrieval and approved MCP tools.
 
 Full auto-demo uses a disposable visible development host with the updated
 0.1.0 source extension. See [demo instructions](../../demo/autodemo/README.md).

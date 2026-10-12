@@ -8,9 +8,10 @@ The pack drives the current enterprise demo surfaces: authenticated scenario
 readiness APIs, graph explorer lenses, Hubble visualization, GraphRAG evidence
 flows, impact/lineage/neighborhood/traceability calls, governance views,
 decision/process/business capability entities, code/CI/test/design/ops
-relationships, and persisted knowledge products. Loading is validated against
-the runtime ontology and graph mutation boundary, captures the source pack
-before writing, and remains idempotent.
+relationships, ontology/SHACL inspection, federation planning views, evidence
+manifests, citation chains, and persisted knowledge products. Loading is
+validated against the runtime ontology and graph mutation boundary, captures the
+source pack before writing, and remains idempotent.
 
 ## What is included
 
@@ -55,7 +56,8 @@ test evidence, design and knowledge. They do not establish production-scale
 performance, semantic embedding quality, every normalized vendor connector,
 automated process mining or complete packaged VSIX/NLQ acceptance. Those
 capabilities must be demonstrated and verified separately; loaded fixtures are
-not execution evidence.
+not execution evidence. The pack may be used as an explicit demo source, but it
+is not wired into production federation or ontology behavior.
 
 ## Quick verification
 

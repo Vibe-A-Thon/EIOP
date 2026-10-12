@@ -7,7 +7,8 @@ from typing import Any, Literal
 from eoip.contracts.source_event import utc_now_iso
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-SourceType = Literal[
+# Standard built-in source types (extensible to any application via ConnectionFactory)
+KNOWN_SOURCE_TYPES = (
     "api_portal",
     "confluence",
     "datadog",
@@ -24,7 +25,15 @@ SourceType = Literal[
     "rally",
     "servicenow",
     "web",
-]
+    "azure_devops",
+    "asana",
+    "linear",
+    "trello",
+    "clickup",
+    "versionone",
+)
+
+SourceType = str
 
 AcquisitionMode = Literal["baseline", "poll", "webhook", "reconcile", "replay"]
 SourceHealth = Literal["UNKNOWN", "HEALTHY", "DEGRADED", "UNAVAILABLE", "MISCONFIGURED"]

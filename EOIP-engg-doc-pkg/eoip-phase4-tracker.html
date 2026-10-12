@@ -1,0 +1,477 @@
+<title>EOIP Phase 4 Tracker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky header with stats strip, filterable card grid below */
+:root {
+  --bg: #f6f7f9; --bg-card: #ffffff; --bg-header: #ffffff;
+  --fg: #1a1d23; --fg-muted: #6b7280; --fg-dim: #9ca3af;
+  --accent: #4f46e5; --accent-light: #e0e7ff;
+  --border: #e5e7eb; --border-focus: #4f46e5;
+  --p0: #dc2626; --p1: #ea580c; --p2: #2563eb; --p3: #6b7280;
+  --status-done: #059669; --status-progress: #d97706; --status-deferred: #9333ea; --status-not: #94a3b8;
+  --shadow: 0 1px 3px rgba(0,0,0,.06);
+  --radius: 8px;
+  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Menlo', monospace;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg: #0f1117; --bg-card: #1a1d27; --bg-header: #161822;
+  --fg: #e5e7eb; --fg-muted: #9ca3af; --fg-dim: #6b7280;
+  --accent: #818cf8; --accent-light: #1e1b4b;
+  --border: #2d3040; --border-focus: #818cf8;
+  --shadow: 0 1px 3px rgba(0,0,0,.3);
+  color-scheme: dark;
+}}
+:root[data-theme="dark"]{
+  --bg: #0f1117; --bg-card: #1a1d27; --bg-header: #161822;
+  --fg: #e5e7eb; --fg-muted: #9ca3af; --fg-dim: #6b7280;
+  --accent: #818cf8; --accent-light: #1e1b4b;
+  --border: #2d3040; --border-focus: #818cf8;
+  --shadow: 0 1px 3px rgba(0,0,0,.3);
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); padding-inline: 16px; padding-block: 0; }
+
+.header { position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg-header); border-bottom: 1px solid var(--border); padding: 14px 0 12px; z-index: 10; }
+.header h1 { font-size: 1.25rem; font-weight: 700; margin: 0; letter-spacing: -.02em; }
+.header-sub { font-size: .8rem; color: var(--fg-muted); margin-top: 2px; }
+
+.stats-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; min-width: 90px; box-shadow: var(--shadow); }
+.stat-num { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.stat-label { font-size: .7rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 3px; }
+.stat-num.p0 { color: var(--p0); } .stat-num.p1 { color: var(--p1); } .stat-num.p2 { color: var(--p2); } .stat-num.p3 { color: var(--p3); }
+.stat-num.done { color: var(--status-done); } .stat-num.progress { color: var(--status-progress); }
+
+.controls { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
+.search-box { flex: 1; min-width: 180px; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card); color: var(--fg); font-family: var(--font-body); font-size: .85rem; outline: none; }
+.search-box:focus { border-color: var(--border-focus); }
+.filter-btn { padding: 5px 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-card); color: var(--fg-muted); font-size: .75rem; font-family: var(--font-body); cursor: pointer; transition: all .15s; white-space: nowrap; }
+.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.phase-section { margin-top: 24px; }
+.phase-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.phase-title { font-size: 1rem; font-weight: 700; }
+.phase-bar-wrap { flex: 1; min-width: 120px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.phase-bar { height: 100%; background: var(--status-done); border-radius: 3px; transition: width .4s; }
+.phase-count { font-size: .75rem; color: var(--fg-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.req-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 6px; box-shadow: var(--shadow); overflow: hidden; transition: border-color .15s; }
+.req-card:hover { border-color: var(--accent); }
+.req-row { display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; flex-wrap: nowrap; }
+.req-id { font-family: var(--font-mono); font-size: .75rem; font-weight: 500; color: var(--accent); min-width: 80px; white-space: nowrap; }
+.req-title { flex: 1; font-size: .875rem; font-weight: 500; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: .65rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+.badge-p0 { background: #fef2f2; color: var(--p0); } .badge-p1 { background: #fff7ed; color: var(--p1); } .badge-p2 { background: #eff6ff; color: var(--p2); } .badge-p3 { background: #f3f4f6; color: var(--p3); }
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge-p0{background:#450a0a} :root:not([data-theme="light"]) .badge-p1{background:#431407} :root:not([data-theme="light"]) .badge-p2{background:#172554} :root:not([data-theme="light"]) .badge-p3{background:#1f2937}}
+:root[data-theme="dark"] .badge-p0{background:#450a0a} :root[data-theme="dark"] .badge-p1{background:#431407} :root[data-theme="dark"] .badge-p2{background:#172554} :root[data-theme="dark"] .badge-p3{background:#1f2937}
+
+.status-btn { padding: 3px 10px; border-radius: 10px; font-size: .65rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; border: none; cursor: pointer; font-family: var(--font-body); transition: all .15s; white-space: nowrap; }
+.status-not-started { background: #f1f5f9; color: var(--status-not); }
+.status-in-progress { background: #fef3c7; color: var(--status-progress); }
+.status-done { background: #d1fae5; color: var(--status-done); }
+.status-deferred { background: #f3e8ff; color: var(--status-deferred); }
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .status-not-started{background:#1e293b} :root:not([data-theme="light"]) .status-in-progress{background:#422006} :root:not([data-theme="light"]) .status-done{background:#064e3b} :root:not([data-theme="light"]) .status-deferred{background:#3b0764}}
+:root[data-theme="dark"] .status-not-started{background:#1e293b} :root[data-theme="dark"] .status-in-progress{background:#422006} :root[data-theme="dark"] .status-done{background:#064e3b} :root[data-theme="dark"] .status-deferred{background:#3b0764}
+
+.chevron { width: 16px; height: 16px; transition: transform .2s; color: var(--fg-dim); flex-shrink: 0; }
+.req-card.open .chevron { transform: rotate(90deg); }
+
+.req-detail { padding: 0 14px 14px; display: none; border-top: 1px solid var(--border); }
+.req-card.open .req-detail { display: block; }
+.detail-grid { display: grid; grid-template-columns: 100px 1fr; gap: 4px 12px; font-size: .8rem; margin-top: 10px; }
+.detail-label { color: var(--fg-muted); font-weight: 500; }
+.detail-val { min-width: 0; }
+.checklist { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-direction: column; gap: 4px; }
+.checklist li { display: flex; align-items: flex-start; gap: 6px; font-size: .8rem; line-height: 1.4; }
+.checklist input[type="checkbox"] { margin-top: 3px; accent-color: var(--accent); flex-shrink: 0; }
+.checklist li.checked { color: var(--fg-muted); text-decoration: line-through; }
+
+.complexity-badge { font-size: .7rem; padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+.complexity-high { background: #fef2f2; color: #b91c1c; }
+.complexity-medium { background: #fef9c3; color: #a16207; }
+.complexity-low { background: #dcfce7; color: #15803d; }
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .complexity-high{background:#450a0a;color:#fca5a5} :root:not([data-theme="light"]) .complexity-medium{background:#422006;color:#fde68a} :root:not([data-theme="light"]) .complexity-low{background:#064e3b;color:#86efac}}
+:root[data-theme="dark"] .complexity-high{background:#450a0a;color:#fca5a5} :root[data-theme="dark"] .complexity-medium{background:#422006;color:#fde68a} :root[data-theme="dark"] .complexity-low{background:#064e3b;color:#86efac}
+
+.empty-msg { text-align: center; color: var(--fg-muted); padding: 40px 0; font-size: .9rem; }
+.total-progress { margin-top: 14px; }
+.total-bar-wrap { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.total-bar { height: 100%; border-radius: 4px; transition: width .4s; }
+.total-bar-done { background: var(--status-done); }
+.total-bar-progress { background: var(--status-progress); }
+.total-label { font-size: .75rem; color: var(--fg-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+@media(max-width: 600px) {
+  .req-title { font-size: .8rem; }
+  .req-id { min-width: 60px; font-size: .7rem; }
+  .stats-strip { gap: 6px; }
+  .stat-card { padding: 8px 10px; min-width: 70px; }
+  .stat-num { font-size: 1.2rem; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .detail-label { font-weight: 600; }
+}
+</style>
+
+<div class="header">
+  <h1>EOIP Phase 4 Roadmap</h1>
+  <div class="header-sub">47 requirements across 7 phases &mdash; Enterprise Cognitive Intelligence Platform</div>
+  <div class="stats-strip" id="stats"></div>
+  <div class="total-progress" id="totalProgress"></div>
+  <div class="controls" id="controls"></div>
+</div>
+<div id="content"></div>
+
+<script>
+const REQUIREMENTS = [
+  // Phase 1
+  {id:"CORE-001",title:"Token Format Serialization Engines",phase:1,priority:"P0",category:"Token Economics",complexity:"High",
+   desc:"Build 7 token-efficient serialization engines (TOON, TRON, LEAN, ASON, ZON, ZOON, TSON) with auto-format selection and round-trip fidelity.",
+   path:"packages/eoip/token_formats/engine.py",deps:"None",
+   checks:["All 7 format strategies with serialize/deserialize","Auto-format selection based on payload","Round-trip fidelity guarantee","Token reduction benchmarks (30%+ vs JSON)","Thread-safe singleton get_token_format_engine()","Wired into brain_os.py and platform_router.py","Unit tests for all 7 formats"]},
+  {id:"CORE-002",title:"Verification & Guardrail Engineering",phase:1,priority:"P0",category:"Enterprise Trust",complexity:"High",
+   desc:"Standalone verification discipline: deterministic non-LLM validators grading agent outputs before loop progression. Dynamic guardrail injection for real-time semantic interception.",
+   path:"packages/eoip/verification/engine.py",deps:"None",
+   checks:["VerifierRegistry with register/compose","7+ built-in verification rules","DynamicGuardrailInjector","Integration at loop boundaries","Verification audit trail","Thread-safe singleton","Wired into brain_os.py and platform_router.py","Unit tests per rule type"]},
+  {id:"CORE-003",title:"Intent Router Engineering",phase:1,priority:"P0",category:"Cost Optimization",complexity:"High",
+   desc:"Fast intent classifier routing 60-70% of queries to cheap deterministic paths (graph lookup, cached answer) vs full agentic pipelines. Sub-10ms classification.",
+   path:"packages/eoip/routing/engine.py",deps:"CORE-001",
+   checks:["IntentClassifier with 8+ intent categories","Sub-10ms classification latency","RoutingDecision with cost/latency estimates","Feedback loop for accuracy tracking","Integration with cost_optimization","Thread-safe singleton","Wired into brain_os.py and platform_router.py","Unit tests"]},
+  {id:"CORE-004",title:"Graph-over-Graph Engineering",phase:1,priority:"P0",category:"Graph Intelligence",complexity:"High",
+   desc:"Meta-graph operations layering graphs: ontology over instance, temporal over current, compliance over data. Cross-layer queries and constraint propagation.",
+   path:"packages/eoip/graph_graph/engine.py",deps:"None",
+   checks:["GraphLayer abstraction with 7+ built-in types","Cross-layer query execution","Layer projection and merging","Layer diff for change detection","Constraint propagation across layers","Thread-safe singleton","Wired into brain_os.py and platform_router.py","Unit tests"]},
+  {id:"CORE-005",title:"Loop-over-Loop Engineering",phase:1,priority:"P1",category:"Meta-Orchestration",complexity:"Medium",
+   desc:"Supervisory loops orchestrating inner loops. Outer OODA supervising inner ReAct, meta-evaluation monitoring reasoning quality, adaptation switching underperforming strategies.",
+   path:"packages/eoip/intelligence_eng/engine.py (extend)",deps:"CORE-002",
+   checks:["SupervisoryLoop wrapping inner loops","LoopMonitor with real-time metrics","Dynamic strategy switching","Circuit-breaker integration","Unit tests"]},
+  {id:"CORE-006",title:"Token Budget Engineering",phase:1,priority:"P1",category:"Token Economics",complexity:"Medium",
+   desc:"Dynamic token allocation across cognitive pipeline stages. Budget policies (equal, proportional, priority-weighted, adaptive) with real-time reallocation.",
+   path:"packages/eoip/token_budget/engine.py",deps:"CORE-001",
+   checks:["TokenBudget with 4 allocation strategies","Real-time per-stage consumption tracking","Dynamic reallocation","Context compression triggers","Integration with intelligence_eng and cost_optimization","Thread-safe singleton","Wired into brain_os.py and platform_router.py","Unit tests"]},
+
+  // Phase 2
+  {id:"AGENT-001",title:"Cognitive Boundary Telemetry",phase:2,priority:"P1",category:"Agentic AI",complexity:"Medium",
+   desc:"Detect agent cognitive boundaries (confidence drop, hallucination, context overflow, tool failure streaks) with graceful handoff to higher-autonomy loops or humans.",
+   path:"packages/eoip/telemetry/adapter.py (extend)",deps:"None",
+   checks:["7+ boundary signal detectors","HandoffDecision with target selection","Integration with control loop autonomy levels","Telemetry event emission","Unit tests per signal"]},
+  {id:"AGENT-002",title:"Dynamic Entity & Community Extraction",phase:2,priority:"P1",category:"KG Construction",complexity:"High",
+   desc:"Real-time pipeline: document chunking → entity extraction → relation extraction → triple generation → community detection → KG update.",
+   path:"packages/eoip/extraction/engine.py",deps:"None",
+   checks:["Configurable chunking strategies","Entity extraction with types","Relation extraction producing triples","Community detection integration","Streaming mode","Thread-safe singleton","Wired into brain_os.py and platform_router.py","Unit tests"]},
+  {id:"AGENT-003",title:"Agent Communication Bus",phase:2,priority:"P2",category:"Agent Infrastructure",complexity:"Medium",
+   desc:"Typed agent message schemas, capability negotiation, persistent message queues with DLQ, pub/sub broadcast channels.",
+   path:"packages/eoip/agents/message_bus.py",deps:"None",
+   checks:["Typed message schemas with versioning","Capability negotiation protocol","Persistent message queue with DLQ","Pub/sub broadcast channels","Unit tests"]},
+  {id:"AGENT-004",title:"Parallel Fan-Out/Fan-In (MapReduce)",phase:2,priority:"P1",category:"Pipeline Engineering",complexity:"Medium",
+   desc:"Formalize parallel execution as first-class harness stages. Race-condition-safe state merging for fan-in.",
+   path:"packages/eoip/harness/engine.py (extend)",deps:"None",
+   checks:["FanOutStage splitting into parallel shards","FanInStage with conflict detection merge","Configurable parallelism and timeouts","Integration with harness engine","Unit tests with race conditions"]},
+  {id:"GRAPH-001",title:"Federated Graph Engineering",phase:2,priority:"P1",category:"Graph Intelligence",complexity:"High",
+   desc:"Cross-database KG federation querying Neo4j, Neptune, TigerGraph as one virtual graph. Query decomposition, result merging, pushdown optimization.",
+   path:"packages/eoip/federation/engine.py",deps:"None",
+   checks:["Virtual graph spanning 2+ backends","Query decomposition and result merging","Entity mapping across backends","Query pushdown optimization","Thread-safe singleton","Wired into brain_os.py and platform_router.py","Unit tests"]},
+  {id:"GRAPH-002",title:"Causal Inference over Graphs",phase:2,priority:"P2",category:"Graph Intelligence",complexity:"High",
+   desc:"Counterfactual reasoning with graph-native do-calculus. Intervention analysis and blast radius assessment for node/edge removal.",
+   path:"packages/eoip/causal/engine.py",deps:"None",
+   checks:["do-calculus intervention on graph entities","Counterfactual query execution","Blast radius analysis","Integration with existing causal reasoning","Unit tests"]},
+  {id:"GRAPH-003",title:"Knowledge Distillation Engineering",phase:2,priority:"P2",category:"Edge & Performance",complexity:"Medium",
+   desc:"Compress large graph subsets into compact queryable knowledge packages for edge deployment or fast retrieval.",
+   path:"packages/eoip/distillation/engine.py",deps:"GRAPH-001",
+   checks:["Distillation with configurable strategies","Portable knowledge packages","Edge deployment integration","Fidelity metrics (info loss)","Unit tests"]},
+  {id:"GRAPH-004",title:"Graph Neural Network Integration",phase:2,priority:"P2",category:"AI/ML & Graph",complexity:"High",
+   desc:"GNN-powered node classification, link prediction, graph embeddings (node2vec, TransE). Extends algorithms beyond deterministic methods.",
+   path:"packages/eoip/gnn/engine.py",deps:"None",
+   checks:["Graph embedding generation","Link prediction with confidence","Node classification","Integration with graph store","Unit tests"]},
+  {id:"GRAPH-005",title:"Temporal & Hybrid Retrieval Engineering",phase:2,priority:"P1",category:"Retrieval",complexity:"Medium",
+   desc:"TemporalIndex with fact validity windows. As-of and range queries combining with vector semantic and graph structural search.",
+   path:"packages/eoip/retrieval/temporal.py",deps:"None",
+   checks:["TemporalIndex with validity windows","As-of and range queries","Integration with state time-travel","Integration with hybrid search","Unit tests"]},
+  {id:"GRAPH-006",title:"OWL Reasoning & SHACL Validation",phase:2,priority:"P2",category:"Ontology",complexity:"High",
+   desc:"Runtime OWL DL classification and SHACL shape validation against live graph data with violation reporting.",
+   path:"packages/eoip/ontology/shacl_validator.py",deps:"None",
+   checks:["OWL subsumption and inference","SHACL shape validation","Violation report with severity","Integration with ontology mgmt","Unit tests"]},
+
+  // Phase 3
+  {id:"AI-001",title:"Advanced XAI Engine",phase:3,priority:"P1",category:"Explainable AI",complexity:"High",
+   desc:"Model-derived explainability: SHAP-like feature importance, decision trace graphs, confidence calibration, human-readable explanations.",
+   path:"packages/eoip/xai/engine.py",deps:"None",
+   checks:["Feature importance analysis","Decision trace graph generation","Confidence calibration","Human-readable explanation rendering","Thread-safe singleton","Wired into brain_os.py and platform_router.py","Unit tests"]},
+  {id:"AI-002",title:"Deep NLP Pipeline",phase:3,priority:"P2",category:"NLP",complexity:"Medium",
+   desc:"Transformer-ready NER interface, sentiment analysis, topic modeling, language detection, coreference resolution.",
+   path:"packages/eoip/nlp/pipeline.py (extend)",deps:"None",
+   checks:["Deep NER with configurable backends","Sentiment analysis","Topic modeling","Language detection","Unit tests"]},
+  {id:"AI-003",title:"Relation Extraction & Triple Generation",phase:3,priority:"P1",category:"KG Construction",complexity:"Medium",
+   desc:"Automated subject-predicate-object triple extraction from unstructured text with ontology validation and deduplication.",
+   path:"packages/eoip/extraction/relation_extractor.py",deps:"AGENT-002",
+   checks:["Pattern-based relation extraction","Triple generation with confidence","Ontology-aware validation","Deduplication","Unit tests"]},
+  {id:"AI-004",title:"Model A/B Testing & Canary Deployment",phase:3,priority:"P2",category:"MLOps",complexity:"Medium",
+   desc:"A/B testing with traffic splitting and statistical significance. Canary deployment with gradual rollout and automatic rollback.",
+   path:"packages/eoip/model_management/registry.py (extend)",deps:"None",
+   checks:["A/B experiment traffic splitting","Statistical significance testing","Canary with auto-rollback","Comparison metrics","Unit tests"]},
+  {id:"AI-005",title:"MLOps Experiment Tracking",phase:3,priority:"P2",category:"MLOps",complexity:"Medium",
+   desc:"Lightweight experiment tracking for prompt iterations, model comparisons, fine-tuning runs. Parameters, metrics, artifacts.",
+   path:"packages/eoip/mlops/experiment_tracker.py",deps:"None",
+   checks:["Experiment creation and run tracking","Parameter and metric logging","Artifact storage","Cross-run comparison","Unit tests"]},
+  {id:"AI-006",title:"Embedding Management & Versioning",phase:3,priority:"P2",category:"Vector Intelligence",complexity:"Medium",
+   desc:"Embedding lifecycle: versioned embeddings, drift detection, multi-modal fusion, dimension reduction.",
+   path:"packages/eoip/embeddings/engine.py",deps:"None",
+   checks:["Embedding versioning and registry","Drift detection","Multi-modal fusion","Dimension reduction","Unit tests"]},
+  {id:"AI-007",title:"Probabilistic Reasoning Integration",phase:3,priority:"P3",category:"Reasoning",complexity:"High",
+   desc:"Bayesian networks over knowledge graphs, uncertain fact propagation, probabilistic query answering with confidence intervals.",
+   path:"packages/eoip/reasoning/strategies.py (extend)",deps:"None",
+   checks:["Bayesian inference over graphs","Uncertainty propagation","Probabilistic query answering","Unit tests"]},
+
+  // Phase 4
+  {id:"INFRA-001",title:"Multi-Level Caching (L1+L2)",phase:4,priority:"P1",category:"Performance",complexity:"Medium",
+   desc:"L1 in-memory + L2 Redis cache hierarchy with read-through, write-through, distributed invalidation, and warming.",
+   path:"packages/eoip/enterprise/cache.py (extend)",deps:"None",
+   checks:["L1 + L2 cache hierarchy","Read-through and write-through","Distributed invalidation","Cache warming","Unit tests"]},
+  {id:"INFRA-002",title:"OAuth2/OIDC/SSO Integration",phase:4,priority:"P1",category:"Security",complexity:"High",
+   desc:"External IdP support: OAuth2 authorization code flow, OIDC discovery, SAML for enterprise SSO, JWT verification.",
+   path:"packages/eoip/authz/",deps:"None",
+   checks:["OAuth2 authorization code flow","OIDC discovery and verification","SAML adapter","JWT token validation","Unit tests"]},
+  {id:"INFRA-003",title:"CD Pipeline & GitOps Deployment",phase:4,priority:"P2",category:"DevOps",complexity:"Medium",
+   desc:"ArgoCD/Flux integration, staging environment, canary deployment, health check verification, automated rollback.",
+   path:"deploy/argocd/",deps:"None",
+   checks:["ArgoCD Application manifests","Staging and production configs","CD workflow in GitHub Actions","Health check verification","Automated rollback"]},
+  {id:"INFRA-004",title:"Log Aggregation",phase:4,priority:"P2",category:"Observability",complexity:"Low",
+   desc:"Structured JSON logging with correlation IDs, per-module log levels, Loki/ELK-compatible output, log sampling.",
+   path:"packages/eoip/observability/logging.py",deps:"None",
+   checks:["Structured JSON logging","Correlation ID propagation","Per-module log level control","Loki-compatible format","Unit tests"]},
+  {id:"INFRA-005",title:"Distributed Scheduling",phase:4,priority:"P2",category:"Infrastructure",complexity:"Medium",
+   desc:"HA scheduling: leader election, distributed task locking, dependency DAGs, failover and catch-up execution.",
+   path:"packages/eoip/scheduling/executor.py (extend)",deps:"None",
+   checks:["Leader election mechanism","Distributed task locking","Task dependency DAGs","Failover handling","Unit tests"]},
+  {id:"INFRA-006",title:"API Versioning & Client SDKs",phase:4,priority:"P2",category:"Developer Experience",complexity:"Medium",
+   desc:"Explicit API versioning (v1/v2 coexistence), deprecation headers, auto-generated Python/JS/Go client SDKs.",
+   path:"platform_router.py + sdk/",deps:"None",
+   checks:["API version coexistence","Deprecation headers","Generated Python SDK","Generated JavaScript SDK","SDK packaging"]},
+  {id:"INFRA-007",title:"Automated Backup & Restore Testing",phase:4,priority:"P2",category:"Reliability",complexity:"Medium",
+   desc:"Automated backup scheduling, integrity verification, restore testing, encryption at rest.",
+   path:"packages/eoip/recovery/",deps:"None",
+   checks:["Automated backup scheduling","Backup integrity verification","Automated restore testing","Encryption at rest","Unit tests"]},
+
+  // Phase 5
+  {id:"UI-001",title:"Component Library & Design System",phase:5,priority:"P1",category:"Frontend Architecture",complexity:"Medium",
+   desc:"Shared UI component library with Storybook documentation. Design tokens, theme-aware components.",
+   path:"apps/web/src/components/ui/",deps:"None",
+   checks:["10+ shared UI components","Storybook setup with stories","Design tokens file","Theme-aware components","Component documentation"]},
+  {id:"UI-002",title:"Internationalization (i18n)",phase:5,priority:"P2",category:"Global Readiness",complexity:"Medium",
+   desc:"react-i18next integration, locale files, language selector, RTL support, locale-aware date/number formatting.",
+   path:"apps/web/",deps:"UI-001",
+   checks:["i18n framework integrated","English locale file","Language selector","Locale formatting","2+ locale files"]},
+  {id:"UI-003",title:"Advanced Data Grid",phase:5,priority:"P2",category:"Data Presentation",complexity:"Low",
+   desc:"TanStack Table or ag-Grid for sorting, filtering, pagination, column resizing, virtual scrolling on 10K+ rows.",
+   path:"apps/web/src/components/",deps:"UI-001",
+   checks:["Grid with sort/filter/paginate","Virtual scrolling 10K+ rows","Column resize and reorder","Applied to 3+ tables"]},
+  {id:"UI-004",title:"Charting Library Integration",phase:5,priority:"P2",category:"Data Visualization",complexity:"Low",
+   desc:"Recharts or Chart.js replacing hand-rolled SVG charts. Line, bar, pie, scatter, radar, heatmap with theme-aware colors.",
+   path:"apps/web/src/components/",deps:"UI-001",
+   checks:["Charting library integrated","6+ chart types","Theme-aware","Applied to existing metrics"]},
+  {id:"UI-005",title:"PDF/CSV Export",phase:5,priority:"P2",category:"Enterprise Features",complexity:"Medium",
+   desc:"PDF generation for graph reports, CSV export for tabular data, report template system.",
+   path:"apps/web/src/",deps:"None",
+   checks:["PDF export for reports","CSV export for tabular data","Export buttons on data views","Report templates"]},
+  {id:"UI-006",title:"Visual Workflow Builder",phase:5,priority:"P3",category:"Low-Code",complexity:"High",
+   desc:"Drag-and-drop workflow builder using React Flow for harness pipelines, agent orchestrations, data flows.",
+   path:"apps/web/src/components/",deps:"UI-001",
+   checks:["Drag-and-drop canvas","10+ node types","Connection validation","Export to pipeline config"]},
+  {id:"UI-007",title:"Missing Dashboard Lenses (6)",phase:5,priority:"P2",category:"Dashboard",complexity:"High",
+   desc:"Timeline, Change, Runtime, Release, Process, Simulation lenses currently marked planned in App.jsx.",
+   path:"apps/web/src/lenses/",deps:"None",
+   checks:["TimelineLens implemented","ChangeLens implemented","RuntimeLens implemented","ReleaseLens implemented","ProcessLens implemented","SimulationLens implemented"]},
+  {id:"UI-008",title:"Search Analytics Dashboard",phase:5,priority:"P2",category:"Search Intelligence",complexity:"Medium",
+   desc:"Query analytics, click-through rates, zero-result tracking, relevance tuning controls, search A/B testing.",
+   path:"apps/web/src/components/",deps:"None",
+   checks:["Search event logging","Analytics dashboard","Relevance tuning controls","A/B testing for ranking"]},
+  {id:"UI-009",title:"Real-time Collaboration",phase:5,priority:"P3",category:"Collaboration",complexity:"High",
+   desc:"CRDT-based multi-user collaboration on graph exploration, presence indicators, shared cursors, annotation sync.",
+   path:"apps/web/src/",deps:"None",
+   checks:["Real-time state sync","Presence indicators","Shared graph exploration","Annotation sync"]},
+
+  // Phase 6
+  {id:"COMPLY-001",title:"Compliance-as-Code Graph Constraints",phase:6,priority:"P1",category:"Regulatory Compliance",complexity:"Medium",
+   desc:"GDPR/SOX/HIPAA rules as graph constraint patterns checked continuously against graph mutations.",
+   path:"packages/eoip/compliance/constraints.py",deps:"None",
+   checks:["Graph-pattern compliance rules","Continuous monitoring on mutations","Violation reporting with remediation","GDPR, SOX, HIPAA templates","Unit tests"]},
+  {id:"COMPLY-002",title:"Automated PII Detection & Anonymization",phase:6,priority:"P1",category:"Privacy",complexity:"Medium",
+   desc:"PII scanning across graph properties with k-anonymity, differential privacy, pseudonymization.",
+   path:"packages/eoip/privacy/",deps:"None",
+   checks:["PII detection across graph properties","k-anonymity implementation","Pseudonymization with token mapping","Scheduled scanning","Unit tests"]},
+  {id:"COMPLY-003",title:"Compliance Monitoring Dashboard",phase:6,priority:"P2",category:"Compliance",complexity:"Medium",
+   desc:"Real-time compliance posture, per-framework scores, attestation tracking, evidence collection, audit export.",
+   path:"apps/web/src/components/",deps:"COMPLY-001",
+   checks:["Per-framework compliance scores","Evidence collection","Attestation tracking","Audit export"]},
+  {id:"TEST-001",title:"Chaos Engineering Framework",phase:6,priority:"P2",category:"Reliability Testing",complexity:"Medium",
+   desc:"Fault injection for graph store failures, network partitions, agent timeouts, cascading failures with recovery verification.",
+   path:"tests/chaos/",deps:"None",
+   checks:["Fault injection framework","5+ chaos scenarios","Recovery verification","CI integration (optional)"]},
+  {id:"TEST-002",title:"Load Testing Framework",phase:6,priority:"P1",category:"Performance Testing",complexity:"Medium",
+   desc:"k6 or Locust load testing with concurrent query, bulk ingestion, agent swarm, RAG under load scenarios.",
+   path:"tests/load/",deps:"None",
+   checks:["Load test scripts","4+ load scenarios","Latency and throughput targets","CI-runnable (optional)"]},
+  {id:"TEST-003",title:"Property-Based & Fuzz Testing",phase:6,priority:"P2",category:"Testing Quality",complexity:"Medium",
+   desc:"Hypothesis-based property tests for serialization round-trips, query transpilation, graph operations.",
+   path:"tests/",deps:"CORE-001",
+   checks:["Hypothesis test suite","Fuzz tests for serialization","Property tests for query engine","CI integration"]},
+  {id:"TEST-004",title:"Performance Regression in CI",phase:6,priority:"P1",category:"Quality Gates",complexity:"Medium",
+   desc:"Automated benchmark comparison in CI with configurable regression thresholds and PR performance reports.",
+   path:".github/workflows/",deps:"None",
+   checks:["Benchmark runner in CI","Baseline comparison","Configurable thresholds","PR performance report"]},
+  {id:"TEST-005",title:"Accessibility Testing",phase:6,priority:"P2",category:"Accessibility",complexity:"Low",
+   desc:"axe-core integration, WCAG 2.1 AA compliance checking, accessibility CI gate.",
+   path:"apps/web/",deps:"UI-001",
+   checks:["axe-core test integration","WCAG 2.1 AA compliance","CI gate for a11y violations"]},
+
+  // Phase 7
+  {id:"MULTI-001",title:"Scoped Multi-Modal Engineering",phase:7,priority:"P3",category:"Multi-Modal",complexity:"Medium",
+   desc:"Image-to-graph extraction (diagrams to KG nodes) and graph-to-image rendering. NOT general multimodal perception.",
+   path:"packages/eoip/fileparse/engine.py (extend)",deps:"None",
+   checks:["Diagram parsing to graph nodes","Graph-to-image rendering","Integration with fileparse engine"]},
+  {id:"MULTI-002",title:"Knowledge & Memory Graph Engineering",phase:7,priority:"P2",category:"Memory",complexity:"Medium",
+   desc:"Graph-native memory storage, episodic memory graphs, memory consolidation via graph operations.",
+   path:"packages/eoip/memory_eng/engine.py (extend)",deps:"None",
+   checks:["Graph-native memory storage","Episodic memory graphs","Graph-based consolidation","Unit tests"]},
+];
+
+const PHASES = {
+  1:"High-Impact Core Engines",2:"Agentic AI & Graph Intelligence",3:"AI/ML Intelligence",
+  4:"Infrastructure & DevOps",5:"GUI/UI/UX",6:"Compliance, Security & Testing",7:"Multi-Modal & Advanced"
+};
+const STATUSES = ["Not Started","In Progress","Done","Deferred"];
+const STATUS_CLS = {"Not Started":"status-not-started","In Progress":"status-in-progress","Done":"status-done","Deferred":"status-deferred"};
+
+let state = {};
+function loadState(){try{state=JSON.parse(localStorage.getItem("eoip-tracker")||"{}") }catch(e){state={}}}
+function saveState(){try{localStorage.setItem("eoip-tracker",JSON.stringify(state))}catch(e){}}
+function getStatus(id){return state[id]?.status || "Not Started"}
+function setStatus(id,s){if(!state[id])state[id]={};state[id].status=s;saveState()}
+function getChecks(id){return state[id]?.checks || []}
+function toggleCheck(id,idx){if(!state[id])state[id]={checks:[]};if(!state[id].checks)state[id].checks=[];const i=state[id].checks.indexOf(idx);if(i>=0)state[id].checks.splice(i,1);else state[id].checks.push(idx);saveState()}
+
+let activePhase=0,activePriority="",activeStatus="",searchQ="";
+
+function cycleStatus(id){
+  const cur=getStatus(id);
+  const next=STATUSES[(STATUSES.indexOf(cur)+1)%STATUSES.length];
+  setStatus(id,next);render();
+}
+
+function render(){
+  const filtered=REQUIREMENTS.filter(r=>{
+    if(activePhase && r.phase!==activePhase) return false;
+    if(activePriority && r.priority!==activePriority) return false;
+    if(activeStatus && getStatus(r.id)!==activeStatus) return false;
+    if(searchQ){const q=searchQ.toLowerCase();if(!r.id.toLowerCase().includes(q)&&!r.title.toLowerCase().includes(q)&&!r.category.toLowerCase().includes(q)&&!r.desc.toLowerCase().includes(q))return false;}
+    return true;
+  });
+
+  const total=REQUIREMENTS.length;
+  const doneCount=REQUIREMENTS.filter(r=>getStatus(r.id)==="Done").length;
+  const progressCount=REQUIREMENTS.filter(r=>getStatus(r.id)==="In Progress").length;
+  const p0=REQUIREMENTS.filter(r=>r.priority==="P0").length;
+  const p1=REQUIREMENTS.filter(r=>r.priority==="P1").length;
+
+  document.getElementById("stats").innerHTML=`
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Total</div></div>
+    <div class="stat-card"><div class="stat-num done">${doneCount}</div><div class="stat-label">Done</div></div>
+    <div class="stat-card"><div class="stat-num progress">${progressCount}</div><div class="stat-label">In Progress</div></div>
+    <div class="stat-card"><div class="stat-num p0">${p0}</div><div class="stat-label">P0 Critical</div></div>
+    <div class="stat-card"><div class="stat-num p1">${p1}</div><div class="stat-label">P1 High</div></div>
+  `;
+
+  const donePct=Math.round(doneCount/total*100);
+  const progPct=Math.round(progressCount/total*100);
+  document.getElementById("totalProgress").innerHTML=`
+    <div class="total-bar-wrap"><div style="display:flex;height:100%">
+      <div class="total-bar total-bar-done" style="width:${donePct}%"></div>
+      <div class="total-bar total-bar-progress" style="width:${progPct}%"></div>
+    </div></div>
+    <div class="total-label">${donePct}% complete &middot; ${doneCount} done, ${progressCount} in progress, ${total-doneCount-progressCount-REQUIREMENTS.filter(r=>getStatus(r.id)==="Deferred").length} remaining</div>
+  `;
+
+  const ctrl=document.getElementById("controls");
+  ctrl.innerHTML=`<input class="search-box" placeholder="Search requirements…" value="${searchQ}" id="searchInput">`;
+  const phases=[0,1,2,3,4,5,6,7];
+  phases.forEach(p=>{
+    const label=p===0?"All Phases":`Phase ${p}`;
+    ctrl.innerHTML+=`<button class="filter-btn ${activePhase===p?'active':''}" data-phase="${p}">${label}</button>`;
+  });
+  ["","P0","P1","P2","P3"].forEach(p=>{
+    const label=p||"All Priority";
+    ctrl.innerHTML+=`<button class="filter-btn ${activePriority===p?'active':''}" data-priority="${p}">${label}</button>`;
+  });
+  STATUSES.concat([""]).reverse().forEach(s=>{
+    const label=s||"All Status";
+    ctrl.innerHTML+=`<button class="filter-btn ${activeStatus===s?'active':''}" data-status="${s}">${label}</button>`;
+  });
+
+  document.getElementById("searchInput").addEventListener("input",e=>{searchQ=e.target.value;render()});
+  ctrl.querySelectorAll("[data-phase]").forEach(b=>b.addEventListener("click",()=>{activePhase=parseInt(b.dataset.phase);render()}));
+  ctrl.querySelectorAll("[data-priority]").forEach(b=>b.addEventListener("click",()=>{activePriority=b.dataset.priority;render()}));
+  ctrl.querySelectorAll("[data-status]").forEach(b=>b.addEventListener("click",()=>{activeStatus=b.dataset.status;render()}));
+
+  const content=document.getElementById("content");
+  if(!filtered.length){content.innerHTML='<div class="empty-msg">No requirements match your filters.</div>';return;}
+
+  const byPhase={};
+  filtered.forEach(r=>{if(!byPhase[r.phase])byPhase[r.phase]=[];byPhase[r.phase].push(r);});
+
+  let html="";
+  Object.keys(byPhase).sort((a,b)=>a-b).forEach(phase=>{
+    const reqs=byPhase[phase];
+    const phaseAll=REQUIREMENTS.filter(r=>r.phase===parseInt(phase));
+    const phaseDone=phaseAll.filter(r=>getStatus(r.id)==="Done").length;
+    const phasePct=Math.round(phaseDone/phaseAll.length*100);
+
+    html+=`<div class="phase-section">
+      <div class="phase-header">
+        <span class="phase-title">Phase ${phase}: ${PHASES[phase]}</span>
+        <div class="phase-bar-wrap"><div class="phase-bar" style="width:${phasePct}%"></div></div>
+        <span class="phase-count">${phaseDone}/${phaseAll.length}</span>
+      </div>`;
+
+    reqs.forEach(r=>{
+      const status=getStatus(r.id);
+      const checks=getChecks(r.id);
+      html+=`<div class="req-card" id="card-${r.id}">
+        <div class="req-row" onclick="toggleCard('${r.id}')">
+          <span class="req-id">${r.id}</span>
+          <span class="req-title">${r.title}</span>
+          <span class="badge badge-${r.priority.toLowerCase()}">${r.priority}</span>
+          <span class="complexity-badge complexity-${r.complexity.toLowerCase()}">${r.complexity}</span>
+          <button class="status-btn ${STATUS_CLS[status]}" onclick="event.stopPropagation();cycleStatus('${r.id}')">${status}</button>
+          <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+        </div>
+        <div class="req-detail">
+          <p style="font-size:.85rem;margin:10px 0 0;line-height:1.5">${r.desc}</p>
+          <div class="detail-grid">
+            <span class="detail-label">Category</span><span class="detail-val">${r.category}</span>
+            <span class="detail-label">File Path</span><span class="detail-val" style="font-family:var(--font-mono);font-size:.75rem">${r.path}</span>
+            <span class="detail-label">Dependencies</span><span class="detail-val">${r.deps}</span>
+          </div>
+          <ul class="checklist">${r.checks.map((c,i)=>`<li class="${checks.includes(i)?'checked':''}"><input type="checkbox" ${checks.includes(i)?'checked':''} onchange="toggleCheck('${r.id}',${i});render()"> ${c}</li>`).join("")}</ul>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  content.innerHTML=html;
+
+  document.querySelectorAll(".req-card").forEach(card=>{
+    if(state[card.id.replace("card-","")]?.open) card.classList.add("open");
+  });
+}
+
+function toggleCard(id){
+  if(!state[id])state[id]={};
+  state[id].open=!state[id].open;
+  saveState();
+  const card=document.getElementById("card-"+id);
+  if(card) card.classList.toggle("open");
+}
+
+loadState();render();
+</script>

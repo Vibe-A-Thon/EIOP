@@ -8,9 +8,10 @@ The repository is no longer just an architecture package. It contains a working
 FastAPI runtime, React administration/explorer UI, MCP server, worker, VS Code
 extension, Hubble deployment assets, demo automation, and a broad Python test
 suite. The active completion ledger is [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md);
-the current working-tree backlog status is 167/516 tasks ticked: Phase 0 and
-Phase 1 are complete, Phase 2 is 88/130, Phase 8 has 1/17 release-gate task
-ticked, and later phases remain open.
+the current working-tree backlog status is 516/516 tasks ticked: all phases in
+the master completion backlog are marked complete. Treat
+`requirements-registry.json`, `requirements-test-map.json`, and the Phase 8
+receipt rows as the evidence trail behind that status.
 
 Implemented areas include:
 
@@ -31,8 +32,14 @@ Implemented areas include:
   adapters.
 - Query and retrieval: QueryPlan execution, NL/NLQ, policy enforcement,
   caching, polyglot query dialect support, GraphRAG/RAPTOR/LightRAG/HippoRAG/
-  PathRAG/LazyGraphRAG/DRIFT-style retrieval modules, evidence manifests, and
-  abstention behavior.
+  PathRAG/LazyGraphRAG/DRIFT-style retrieval modules, evidence manifests,
+  citation chains, graph-node/path/source-record addressing, and abstention
+  behavior.
+- Semantic interoperability and federation: JSON-LD/RDF/OWL export, JSON-LD
+  import back into the property graph, SHACL shape export/validation, round-trip
+  validation, source-policy-aware federation, VIRTUAL/CACHE/MATERIALIZE/HYBRID
+  source modes, file/REST/JDBC-style federation adapters, cost-aware routing,
+  cache freshness, offline degradation, and explainable per-row provenance.
 - Intelligence and agents: bounded read-only agent runtime, loops, approvals,
   learning/report services, cognitive narrator, memory engines, model
   governance, XAI ledger, live causal engine, domain packs, compliance twin,
@@ -44,9 +51,9 @@ Implemented areas include:
 - User surfaces: Cytoscape graph explorer, admin source/job/review panels, KGR
   views, report/export UI, Hubble graph walkthroughs, browser demo automation,
   and a read-only VS Code context extension with MCP/NLQ journeys.
-- Current documentation sweep: 231 first-party Markdown files / 47,000 lines
-  read mechanically, excluding `KGF-MASTER-BACKLOG.md` and local cache/venv
-  directories.
+- Current implementation ledger: `KGF-MASTER-BACKLOG.md`,
+  `requirements-registry.json`, and `requirements-test-map.json` track the
+  516/516 completed tasks and the evidence used to close them.
 
 **Key capabilities:**
 - 24 source connectors with checkpoint-based incremental sync
@@ -54,17 +61,19 @@ Implemented areas include:
 - 14 graph domains, 50+ vertex types, 30+ edge types
 - 6 query languages: EQL, NLQ, EOQL, OSQL, Semantic QL, raw Gremlin (admin)
 - 30+ graph algorithms: centrality, community, paths, similarity, blast radius, cycle detection
-- Federated query planner with cost-aware routing, filter/projection pushdown, and per-row provenance
-- GraphRAG with 7 retrieval strategies, stable evidence citations, no mandatory vector DB
+- Federated query planner with file/REST/JDBC-style adapters, policy controls,
+  cache freshness, cost-aware routing, filter/projection pushdown, and per-row provenance
+- GraphRAG with 7 retrieval strategies, stable evidence manifests and citation chains, no mandatory vector DB
 - 20 bounded read-only agents with circuit breaker and budget enforcement
-- 12 export formats: RDF, OWL, JSON-LD 1.1, Cypher, Gremlin, SPARQL, SHACL, GQL, and more
+- 12 export formats plus JSON-LD import, RDF/OWL/SHACL interoperability, and ontology round-trip validation
 - MCP server with 18 read-only tools for VS Code / IDE integration
 - Current audit evidence: `2843 passed`, `34 skipped`, `0 failures` in the Python suite at the 2026-10-11 baseline; GAP/G2 coverage gates passed; the web build passed. See [Audit-GAPS-CG-dev.md](EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md) and [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md).
 
-Production claims still require the Phase 8 receipts in the master backlog:
-live external connector runs, Hubble/runtime validation on the final tree,
-browser E2E over the production bundle, VS Code extension-host acceptance,
-HA/backup/DR, security certification, and performance benchmark receipts.
+Production claims should be read together with the Phase 8 receipts in the
+master backlog: live external connector runs, Hubble/runtime validation on the
+final tree, browser E2E over the production bundle, VS Code extension-host
+acceptance, HA/backup/DR, security certification, and performance benchmark
+receipts.
 
 ## Quick Start
 
@@ -99,7 +108,7 @@ The explorer uses an on-demand Cytoscape.js canvas with Search, Graph, Impact,
 Evidence, and Architecture lenses, typed legends, bounded expansion,
 relationship/trust filters, highlighted paths, exported local context, and
 responsive inspection panels. Administration includes live source/job,
-validation/quality, ontology, model/backup health, audit, and dead-letter
+validation/quality, ontology, semantic federation, model/backup health, audit, and dead-letter
 views; operational values are always read from the API. The API supports
 QueryPlan execution (`POST /api/v1/query`), provenance lineage
 (`POST /api/v1/lineage`), GraphRAG retrieval (`POST /api/v1/rag`), and
@@ -163,7 +172,7 @@ persisted with source-event evidence and containment lineage; page/article
 text is stored in the document description. Confluence attachment binaries are
 not downloaded by this connector.
 
-## RDF/OWL interoperability
+## RDF/OWL/SHACL interoperability
 
 The authenticated `GET /api/v1/ontology/export` endpoint returns a JSON-LD 1.1
 document containing the EOIP ontology vocabulary and graph data. It exports
@@ -172,8 +181,22 @@ represented both as direct relation triples and as reified assertions to retain
 edge properties. The optional `limit` query parameter bounds vertices and edges
 independently (default 5000, maximum 10000); inspect `export.partial`,
 `export.truncated_vertices`, `export.truncated_edges`, and `export.mapping_losses`
-before treating an export as complete. This is an export adapter: HugeGraph does
-not provide native RDF or SPARQL support.
+before treating an export as complete. `POST /api/v1/ontology/import` can import
+supported EOIP JSON-LD records back into the property graph, while
+`GET /api/v1/ontology/shacl` and `GET /api/v1/ontology/validate` expose
+manifest-derived SHACL shapes and validation findings. The dual model is an
+adapter layer over the property graph: HugeGraph remains the operational graph
+store and does not provide native RDF or SPARQL support.
+
+## Semantic federation
+
+The federation layer can query the local graph and explicitly registered
+external sources in one plan. Supported adapter classes include local graph,
+file, REST JSON, and SQLite-backed JDBC-style sources. Per-source/entity policy
+selects `VIRTUAL`, `CACHE`, `MATERIALIZE`, or `HYBRID` behavior; plans explain
+adapter kind, source URNs, cost, filter/projection pushdown, cache freshness,
+policy denials, degraded sources, and row-level provenance. Runtime API wiring
+does not register synthetic demo rows as production federation data.
 
 See [the Docker runbook](EOIP-engg-doc-pkg/reference/docker-local.md) for Full instructions and current scope, services, tests,
 backup/restore, the VS Code extension, optional profiles, and implementation limits.

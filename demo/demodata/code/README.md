@@ -16,8 +16,11 @@ The code graph ingestion path converts these JSON records into Repository, File,
 CodeSymbol, Dependency, service/infrastructure, and relationship facts. The
 resulting graph supports source-bound traceability, code impact, dependency
 navigation, VS Code context, Hubble walkthroughs, and cross-source links to Jira,
-GitLab, ServiceNow, API, observability, and documentation records. These files
-are fixtures for local verification, not harvested customer repositories.
+GitLab, ServiceNow, API, observability, and documentation records. The same
+facts can participate in evidence-addressable GraphRAG, JSON-LD/RDF/SHACL
+exports, semantic federation query plans, and admin quality views. These files
+are fixtures for local verification, not harvested customer repositories or
+production source registrations.
 
 ## Source Repositories
 

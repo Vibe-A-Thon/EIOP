@@ -12,13 +12,14 @@ The demos exercise the developed product surfaces rather than static mockups:
 the React explorer/admin UI, authenticated API, source/job inspection,
 manual and batch JSON ingestion, graph paths, impact, lineage, neighborhood,
 traceability, RAG routing, agent routing, governance/audit/DLQ views, export
-formats, Hubble graph visualization, and the read-only VS Code NLQ/MCP flow.
+formats, ontology JSON-LD/SHACL inspection, semantic federation source/plan
+inspection, Hubble graph visualization, and the read-only VS Code NLQ/MCP flow.
 
 The demo corpus is synthetic and intentionally local. It proves that the local
 stack can load and query coherent enterprise scenarios; it does not prove live
 customer connector credentials, production HA, final security certification, or
-release performance gates. Those remain Phase 8 receipt items in the master
-backlog.
+release performance gates by itself. Those are documented separately as Phase 8
+receipt items in the master backlog.
 
 | Launcher | Sequence |
 |---|---|
@@ -106,14 +107,19 @@ does not survive API restart or appear in Hubble. Products are persisted, but
 their source/consumer lineage entries are properties, not graph relationship
 edges. `Certified` is an application lifecycle state, not external certification.
 Federation uses local adapters; query cost is an estimate, not measured latency.
+The runtime federation registry does not inject demo rows; any demo federation
+step reads registered live/local sources or intentionally supplied fixture
+sources for that demonstration. RAG steps may show evidence manifests and
+citation chains when the selected route returns evidence-addressable results.
 
 The separate administration sequence demonstrates source/job inspection,
-validation, ontology schema, JSON-LD context, audit and DLQ inspection; real
-single-file and batch ingestion of 13 JSON source fixtures; all eight graph
-export formats; knowledge-firewall inspection; an evidence manifest; and
-governance/health catalogs. The Meridian PAY/FRD ingestion fixtures are separate
-from the Northstar scenario corpus. Pipeline mode ingests its pipeline JSON
-fixtures; it does not claim to run authenticated upstream polling/webhooks.
+validation, ontology schema, JSON-LD context, SHACL/federation inspection, audit
+and DLQ inspection; real single-file and batch ingestion of 13 JSON source
+fixtures; all eight graph export formats; knowledge-firewall inspection; an
+evidence manifest; and governance/health catalogs. The Meridian PAY/FRD
+ingestion fixtures are separate from the Northstar scenario corpus. Pipeline
+mode ingests its pipeline JSON fixtures; it does not claim to run authenticated
+upstream polling/webhooks.
 
 Each browser receipt inventories **every operation in the live OpenAPI schema**
 as `DEMONSTRATED` or `NOT_DEMONSTRATED`. The latter remain visible at the end

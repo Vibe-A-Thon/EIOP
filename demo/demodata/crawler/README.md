@@ -15,9 +15,11 @@ The web-crawl acquisition path feeds page title, headings, body text, links,
 source URL, content type, status, and crawl boundaries into the same normalized
 graph/evidence pipeline used by other sources. In the current codebase this data
 is used to exercise source fixtures, crawl scope handling, provenance, RAG
-chunking, graph search, API/service/document relationships, and demo Hubble
-scenarios. It is synthetic and local; it is not proof of live crawling against an
-enterprise network.
+chunking with evidence manifests, graph search, API/service/document
+relationships, semantic federation demos, ontology export/validation, and demo
+Hubble scenarios. It is synthetic and local; it is not proof of live crawling
+against an enterprise network and is not wired into production federation by
+default.
 
 ## Source Portals
 
