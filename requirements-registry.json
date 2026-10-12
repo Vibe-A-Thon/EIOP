@@ -2288,12 +2288,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/capsules.py"
+    ],
+    "test_files": [
+      "tests/unit/test_capsules.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_capsules.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-CAP-003",
@@ -2303,12 +2307,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/capsules.py"
+    ],
+    "test_files": [
+      "tests/unit/test_capsules.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_capsules.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-CAP-004",
@@ -2318,12 +2326,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/capsules.py"
+    ],
+    "test_files": [
+      "tests/unit/test_capsules.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_capsules.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-CAP-005",
@@ -2333,12 +2345,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/capsules.py"
+    ],
+    "test_files": [
+      "tests/unit/test_capsules.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_capsules.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-CAP-006",
@@ -2348,12 +2364,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/capsules.py"
+    ],
+    "test_files": [
+      "tests/unit/test_capsules.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_capsules.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-CAUSE-001",
@@ -3486,12 +3506,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/api_contracts.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": "/api/v1/",
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-API-003",
@@ -3501,12 +3525,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/api_contracts.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": "/api/v1/",
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-BIZ-001",
@@ -3536,12 +3564,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/business_intent.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-BIZ-003",
@@ -3551,12 +3583,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/business_intent.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-DEC-001",
@@ -3586,12 +3622,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/decisions.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-DEC-003",
@@ -3601,12 +3641,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/decisions.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-OBS-001",
@@ -3635,12 +3679,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/gaps/g2_observability.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-OBS-003",
@@ -3650,12 +3698,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/gaps/g2_observability.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-PROC-001",
@@ -3684,12 +3736,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/process_mining.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-PROC-003",
@@ -3699,12 +3755,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/process_mining.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-RUNTIME-001",
@@ -3733,12 +3793,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/runtime_topology.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-RUNTIME-003",
@@ -3748,12 +3812,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/runtime_topology.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-SEC-001",
@@ -3782,12 +3850,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/security_graph.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-SEC-003",
@@ -3797,12 +3869,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/security_graph.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-TEST-001",
@@ -3831,12 +3907,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/test_intelligence.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-GRAPH-TEST-003",
@@ -3846,12 +3926,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/test_intelligence.py"
+    ],
+    "test_files": [
+      "tests/unit/test_g2_domain_graphs.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_g2_domain_graphs.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-I2R-001",
@@ -3880,12 +3964,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/business_intent.py"
+    ],
+    "test_files": [
+      "tests/unit/test_i2r_intelligence.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_i2r_intelligence.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-I2R-003",
@@ -3895,12 +3983,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/twin.py"
+    ],
+    "test_files": [
+      "tests/unit/test_i2r_intelligence.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_i2r_intelligence.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-I2R-004",
@@ -3910,12 +4002,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/business_intent.py"
+    ],
+    "test_files": [
+      "tests/unit/test_i2r_intelligence.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_i2r_intelligence.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-I2R-005",
@@ -3925,12 +4021,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/business_intent.py"
+    ],
+    "test_files": [
+      "tests/unit/test_i2r_intelligence.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_i2r_intelligence.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-IMMUNE-001",
@@ -4273,12 +4373,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/knowledge_debt.py"
+    ],
+    "test_files": [
+      "tests/unit/test_knowledge_debt.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_knowledge_debt.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-KD-003",
@@ -4288,12 +4392,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/knowledge_debt.py"
+    ],
+    "test_files": [
+      "tests/unit/test_knowledge_debt.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_knowledge_debt.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-KD-004",
@@ -4303,12 +4411,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/knowledge_debt.py"
+    ],
+    "test_files": [
+      "tests/unit/test_knowledge_debt.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_knowledge_debt.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-KD-005",
@@ -4318,12 +4430,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/knowledge_debt.py"
+    ],
+    "test_files": [
+      "tests/unit/test_knowledge_debt.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_knowledge_debt.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-KD-006",
@@ -4333,12 +4449,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.4. G2 domain-graph and capability families (30 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/knowledge_debt.py"
+    ],
+    "test_files": [
+      "tests/unit/test_knowledge_debt.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_knowledge_debt.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-OBS-001",
@@ -4805,12 +4925,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/query_operators.py"
+    ],
+    "test_files": [
+      "tests/unit/test_question_operators_g2.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_question_operators_g2.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-QOP-003",
@@ -4820,14 +4944,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "packages/eoip/graph/query_operators.py"
+    ],
     "test_files": [
-      "tests/unit/test_gap_coverage.py"
+      "tests/unit/test_question_operators_g2.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_question_operators_g2.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-QOP-004",
@@ -4837,12 +4963,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/query_operators.py"
+    ],
+    "test_files": [
+      "tests/unit/test_question_operators_g2.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_question_operators_g2.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-QOP-005",
@@ -4852,12 +4982,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/query_operators.py"
+    ],
+    "test_files": [
+      "tests/unit/test_question_operators_g2.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_question_operators_g2.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-QOP-006",
@@ -4867,12 +5001,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/query_operators.py"
+    ],
+    "test_files": [
+      "tests/unit/test_question_operators_g2.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_question_operators_g2.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-QOP-007",
@@ -4882,12 +5020,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/query_operators.py"
+    ],
+    "test_files": [
+      "tests/unit/test_question_operators_g2.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_question_operators_g2.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-QOP-008",
@@ -4897,12 +5039,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/query_operators.py"
+    ],
+    "test_files": [
+      "tests/unit/test_question_operators_g2.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_question_operators_g2.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-QOP-009",
@@ -4912,12 +5058,16 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/query_operators.py"
+    ],
+    "test_files": [
+      "tests/unit/test_question_operators_g2.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_question_operators_g2.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "G2-REL-001",
@@ -8408,12 +8558,16 @@
     "spec_source": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
     "phase": "### Phase 5. Enterprise readiness and experience",
     "work_package": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/dashboards/builder.py"
+    ],
+    "test_files": [
+      "tests/unit/test_enterprise_readiness_wp51.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_enterprise_readiness_wp51.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-APP-001",
@@ -8672,12 +8826,16 @@
     "spec_source": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
     "phase": "### Phase 5. Enterprise readiness and experience",
     "work_package": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/catalog/products.py"
+    ],
+    "test_files": [
+      "tests/unit/test_enterprise_readiness_wp51.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_enterprise_readiness_wp51.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-CATALOG-001",
@@ -10370,12 +10528,16 @@
     "spec_source": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
     "phase": "### Phase 5. Enterprise readiness and experience",
     "work_package": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ontology/stewardship.py"
+    ],
+    "test_files": [
+      "tests/unit/test_enterprise_readiness_wp51.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_enterprise_readiness_wp51.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-GOV-001",
@@ -10560,12 +10722,16 @@
     "spec_source": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
     "phase": "### Phase 5. Enterprise readiness and experience",
     "work_package": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ha.py"
+    ],
+    "test_files": [
+      "tests/unit/test_enterprise_readiness_wp51.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_enterprise_readiness_wp51.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-HA-001",
@@ -10786,12 +10952,16 @@
     "spec_source": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
     "phase": "### Phase 5. Enterprise readiness and experience",
     "work_package": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "apps/vscode-extension/extension.js"
+    ],
+    "test_files": [
+      "tests/unit/test_enterprise_readiness_wp51.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_enterprise_readiness_wp51.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-IDE-001",
@@ -11970,12 +12140,16 @@
     "spec_source": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
     "phase": "### Phase 5. Enterprise readiness and experience",
     "work_package": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ontology/studio.py"
+    ],
+    "test_files": [
+      "tests/unit/test_enterprise_readiness_wp51.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_enterprise_readiness_wp51.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-NOCODE-001",
@@ -12458,11 +12632,13 @@
     "code_paths": [
       "packages/eoip/query/intelligence.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_query_intelligence_risks.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_query_intelligence_risks.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-QI-006",
@@ -12475,11 +12651,13 @@
     "code_paths": [
       "packages/eoip/query/intelligence.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_query_intelligence_risks.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_query_intelligence_risks.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-QI-007",
@@ -12512,11 +12690,13 @@
     "code_paths": [
       "packages/eoip/query/intelligence.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_query_intelligence_risks.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_query_intelligence_risks.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-QUERY",
@@ -13614,12 +13794,16 @@
     "spec_source": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
     "phase": "### Phase 5. Enterprise readiness and experience",
     "work_package": "#### WP 5.1. Enterprise readiness (Conquest Phase 4) (7 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ontology/industry_templates.py"
+    ],
+    "test_files": [
+      "tests/unit/test_enterprise_readiness_wp51.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_enterprise_readiness_wp51.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-TEMPLATE-001",
@@ -13766,12 +13950,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/truth/engine.py",
+      "packages/eoip/truth/models.py"
+    ],
+    "test_files": [
+      "tests/unit/test_truth_resolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_truth_resolution.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-TRUTH-003",
@@ -13782,13 +13971,16 @@
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
     "code_paths": [
-      "apps/api/extended.py"
+      "packages/eoip/truth/engine.py",
+      "packages/eoip/truth/models.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_truth_resolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_truth_resolution.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-TRUTH-004",
@@ -13798,12 +13990,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/truth/engine.py",
+      "packages/eoip/truth/models.py"
+    ],
+    "test_files": [
+      "tests/unit/test_truth_resolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_truth_resolution.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-TRUTH-005",
@@ -13814,13 +14011,16 @@
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
     "code_paths": [
-      "apps/api/extended.py"
+      "packages/eoip/truth/engine.py",
+      "packages/eoip/truth/models.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_truth_resolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_truth_resolution.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-TRUTH-006",
@@ -13831,13 +14031,16 @@
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
     "code_paths": [
-      "apps/api/extended.py"
+      "packages/eoip/truth/engine.py",
+      "packages/eoip/truth/models.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_truth_resolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_truth_resolution.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-TRUTH-007",
@@ -13848,13 +14051,16 @@
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
     "code_paths": [
-      "apps/api/extended.py"
+      "packages/eoip/truth/engine.py",
+      "packages/eoip/truth/models.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_truth_resolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_truth_resolution.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-TRUTH-008",
@@ -13864,12 +14070,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/truth/engine.py",
+      "packages/eoip/truth/models.py"
+    ],
+    "test_files": [
+      "tests/unit/test_truth_resolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_truth_resolution.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-TRUTH-009",
@@ -13879,12 +14090,17 @@
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/truth/engine.py",
+      "packages/eoip/truth/models.py"
+    ],
+    "test_files": [
+      "tests/unit/test_truth_resolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_truth_resolution.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-TRUTH-010",
@@ -13895,13 +14111,16 @@
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)",
     "code_paths": [
-      "apps/api/extended.py"
+      "packages/eoip/truth/engine.py",
+      "packages/eoip/truth/models.py"
     ],
-    "test_files": [],
+    "test_files": [
+      "tests/unit/test_truth_resolution.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=True",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_truth_resolution.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-UX-001",

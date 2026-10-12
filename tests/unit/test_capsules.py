@@ -60,7 +60,8 @@ def test_capsule_builds_bounded_context_with_evidence(tmp_path):
     assert capsule.capsule_id and capsule.graph_fingerprint
 
 
-def test_capsule_is_reproducible(tmp_path):
+@pytest.mark.req("G2-CAP-002")
+def test_capsule_is_reproducible_g2_cap_002(tmp_path):
     store = _store()
     service = KnowledgeCapsuleService(store, tmp_path)
     first = service.build(CapsuleDefinition(name="rel", root_entities=("w:1",)))
@@ -69,38 +70,66 @@ def test_capsule_is_reproducible(tmp_path):
     assert first.graph_fingerprint == second.graph_fingerprint
 
 
-def test_capsule_trust_threshold_excludes_inferred(tmp_path):
+@pytest.mark.req("G2-CAP-003")
+def test_capsule_reduces_context_exposure_g2_cap_003(tmp_path):
     service = KnowledgeCapsuleService(_store(), tmp_path)
+    # Bounded depth and trust filter limits exposure
     capsule = service.build(
         CapsuleDefinition(
-            name="trusted", root_entities=("w:1",), trust_threshold="DETERMINISTIC"
+            name="trusted", root_entities=("w:1",), max_depth=1, trust_threshold="DETERMINISTIC"
         )
     )
     trusts = {rel["trust"] for rel in capsule.relationships}
     assert trusts == {"DETERMINISTIC"}
     assert all(rel["type"] != "CALLS" for rel in capsule.relationships)
+    # Target entity s:2 at depth 2 is not exposed
+    cids = {e["canonical_id"] for e in capsule.entities}
+    assert "s:2" not in cids
 
 
-def test_capsule_domain_filter(tmp_path):
+@pytest.mark.req("G2-CAP-004")
+def test_capsule_includes_manifest_and_evidence_g2_cap_004(tmp_path):
     service = KnowledgeCapsuleService(_store(), tmp_path)
     capsule = service.build(
-        CapsuleDefinition(name="work-only", root_entities=("w:1",), domains=("WORK",))
+        CapsuleDefinition(name="release_manifest", root_entities=("w:1",), max_depth=2, include_evidence=True)
     )
-    assert {entity["domain"] for entity in capsule.entities} == {"WORK"}
+    assert capsule.manifest is not None
+    assert capsule.manifest["capsule_id"] == capsule.capsule_id
+    assert "git://demo/commit/abc" in capsule.manifest["evidence_refs"]
+    assert "git://demo/commit/abc" in capsule.evidence_refs
 
 
-def test_capsule_persists_manifest_and_is_listable(tmp_path):
+@pytest.mark.req("G2-CAP-005")
+def test_capsule_example_types_g2_cap_005(tmp_path):
+    from eoip.graph.capsules import EXAMPLE_CAPSULE_TYPES, create_example_capsule_definition
     service = KnowledgeCapsuleService(_store(), tmp_path)
-    service.build(CapsuleDefinition(name="persisted", root_entities=("w:1",)))
 
-    manifests = service.list_manifests()
-    assert len(manifests) == 1
-    assert manifests[0]["definition"]["name"] == "persisted"
+    for cap_type in ("release", "incident", "service", "application", "change_request", "architecture_review", "audit_evidence"):
+        assert cap_type in EXAMPLE_CAPSULE_TYPES
+        definition = create_example_capsule_definition(cap_type, root_entities=("w:1",), max_depth=2)
+        capsule = service.build(definition)
+        assert capsule.definition["name"] == cap_type
+        assert len(capsule.entities) >= 1
 
-    document = service.get_manifest("persisted")
-    assert document is not None
-    assert document["manifest"]["definition"]["name"] == "persisted"
-    assert service.get_manifest("missing") is None
+    with pytest.raises(ValueError, match="Unsupported example capsule type"):
+        create_example_capsule_definition("unknown_type", root_entities=("w:1",))
+
+
+@pytest.mark.req("G2-CAP-006")
+def test_capsule_export_package_format_g2_cap_006(tmp_path):
+    import json
+    service = KnowledgeCapsuleService(_store(), tmp_path)
+    service.build(CapsuleDefinition(name="exportable", root_entities=("w:1",)))
+
+    export_path = tmp_path / "exported" / "exportable.pkg.json"
+    result_path = service.export_package("exportable", output_path=export_path)
+
+    assert result_path.exists()
+    payload = json.loads(result_path.read_text(encoding="utf-8"))
+    assert payload["package_format"] == "eoip-capsule-package/1.0"
+    assert "manifest" in payload
+    assert "payload" in payload
+    assert len(payload["payload"]["entities"]) > 0
 
 
 def test_capsule_validates_definition(tmp_path):

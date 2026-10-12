@@ -222,3 +222,61 @@ class KnowledgeCapsuleService:
             return None
         document = json.loads(matches[-1].read_text(encoding="utf-8"))
         return document
+
+    def export_package(self, name: str, output_path: str | Path | None = None) -> Path:
+        """Exports capsule into an approved local package format (G2-CAP-006)."""
+        matches = sorted(self._root.glob(f"{name}--*.json"))
+        if not matches:
+            raise FileNotFoundError(f"Capsule package not found for {name}")
+        source_path = matches[-1]
+        raw = json.loads(source_path.read_text(encoding="utf-8"))
+
+        package_payload = {
+            "package_format": "eoip-capsule-package/1.0",
+            "capsule_id": raw.get("manifest", {}).get("capsule_id"),
+            "manifest": raw.get("manifest", {}),
+            "payload": {
+                "entities": raw.get("entities", []),
+                "relationships": raw.get("relationships", []),
+            },
+        }
+
+        if output_path is None:
+            dest = self._root / f"{name}.capsule.json"
+        else:
+            dest = Path(output_path)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+
+        dest.write_text(json.dumps(package_payload, indent=2, sort_keys=True), encoding="utf-8")
+        return dest
+
+
+EXAMPLE_CAPSULE_TYPES: tuple[str, ...] = (
+    "release",
+    "incident",
+    "service",
+    "application",
+    "change_request",
+    "architecture_review",
+    "audit_evidence",
+)
+
+
+def create_example_capsule_definition(
+    capsule_type: str,
+    root_entities: tuple[str, ...],
+    max_depth: int = 2,
+    **kwargs: Any,
+) -> CapsuleDefinition:
+    """Creates a standard capsule definition for supported example types (G2-CAP-005)."""
+    norm_type = capsule_type.lower().replace("-", "_").replace(" ", "_")
+    if norm_type not in EXAMPLE_CAPSULE_TYPES:
+        raise ValueError(
+            f"Unsupported example capsule type: {capsule_type}. Must be one of {EXAMPLE_CAPSULE_TYPES}"
+        )
+    return CapsuleDefinition(
+        name=norm_type,
+        root_entities=root_entities,
+        max_depth=max_depth,
+        **kwargs,
+    )

@@ -265,3 +265,166 @@ def query_context(store: GraphStore, entity_cid: str) -> dict:
         "where": {k: v for k, v in where.items() if v},
         "how": {k: v for k, v in how.items() if v},
     }
+
+
+def query_what_if(
+    store: GraphStore,
+    entity_cid: str,
+    hypothetical_change: dict | None = None,
+    *,
+    max_depth: int = 3,
+) -> dict:
+    """Structured WHAT IF: counterfactual simulation and blast radius analysis (G2-QOP-003).
+
+    Simulates the impact if an entity is removed, modified, or suffers outage.
+    Traces incoming dependencies and callers recursively.
+    """
+    from typing import Any
+
+    entity = store.get_vertex_by_canonical_id(entity_cid)
+    if not entity:
+        return {
+            "entity": entity_cid,
+            "hypothesis": hypothetical_change or {"action": "REMOVE"},
+            "simulated": False,
+            "error": "Entity not found",
+            "evidence": [],
+        }
+
+    hypothesis = hypothetical_change or {"action": "OUTAGE", "reason": "Simulated node failure"}
+
+    visited_cids = set()
+    queue = [(entity["vid"], 0)]
+    impacted: list[dict[str, Any]] = []
+    evidence: list[str] = []
+
+    while queue:
+        curr_vid, depth = queue.pop(0)
+        if depth >= max_depth:
+            continue
+        in_edges = store.find_edges(in_v=curr_vid, limit=500)
+        for edge in in_edges:
+            src = store.get_vertex(edge["out_v"])
+            if not src:
+                continue
+            src_cid = src["canonical_id"]
+            if src_cid not in visited_cids and src_cid != entity_cid:
+                visited_cids.add(src_cid)
+                queue.append((src["vid"], depth + 1))
+                rec = {
+                    "canonical_id": src_cid,
+                    "label": src["label"],
+                    "name": src["properties"].get("name", src_cid),
+                    "depth": depth + 1,
+                    "impact_channel": edge["label"],
+                }
+                impacted.append(rec)
+                evidence.append(f"{src['label']} '{src_cid}' depends on {entity_cid} via {edge['label']} at depth {depth + 1}")
+
+    blast_radius_score = min(1.0, round(len(impacted) / 10.0, 3))
+
+    return {
+        "entity": entity_cid,
+        "label": entity["label"],
+        "hypothesis": hypothesis,
+        "simulated": True,
+        "blast_radius_score": blast_radius_score,
+        "impacted_count": len(impacted),
+        "impacted_entities": impacted,
+        "evidence": evidence,
+    }
+
+
+def query_when(store: GraphStore, entity_cid: str) -> dict:
+    """Structured WHEN: temporal observations and lifecycle milestones (G2-QOP-005)."""
+    ctx = query_context(store, entity_cid)
+    if "error" in ctx:
+        return ctx
+    when = ctx.get("when", {})
+    evidence = [f"{k}: {v}" for k, v in when.items()]
+    return {
+        "entity": entity_cid,
+        "label": ctx.get("label"),
+        "when": when,
+        "evidence": evidence,
+    }
+
+
+def query_who(store: GraphStore, entity_cid: str) -> dict:
+    """Structured WHO: ownership, assignees, authors, and contributors (G2-QOP-006)."""
+    ctx = query_context(store, entity_cid)
+    if "error" in ctx:
+        return ctx
+    who = ctx.get("who", [])
+    evidence = [f"{item.get('role', 'contributor')}: {item.get('name') or item.get('email') or item.get('canonical_id')}" for item in who]
+    return {
+        "entity": entity_cid,
+        "label": ctx.get("label"),
+        "who": who,
+        "evidence": evidence,
+    }
+
+
+def query_where(store: GraphStore, entity_cid: str) -> dict:
+    """Structured WHERE: location, source system, repository, and domain (G2-QOP-007)."""
+    ctx = query_context(store, entity_cid)
+    if "error" in ctx:
+        return ctx
+    where = ctx.get("where", {})
+    evidence = [f"{k}: {v}" for k, v in where.items()]
+    return {
+        "entity": entity_cid,
+        "label": ctx.get("label"),
+        "where": where,
+        "evidence": evidence,
+    }
+
+
+def query_how(store: GraphStore, entity_cid: str) -> dict:
+    """Structured HOW: creation method, ingestion run, parser, and lineage (G2-QOP-008)."""
+    ctx = query_context(store, entity_cid)
+    if "error" in ctx:
+        return ctx
+    how = ctx.get("how", {})
+    evidence = [f"{k}: {v}" for k, v in how.items()]
+    return {
+        "entity": entity_cid,
+        "label": ctx.get("label"),
+        "how": how,
+        "evidence": evidence,
+    }
+
+
+def execute_question_operator(
+    store: GraphStore,
+    operator: str,
+    *args: Any,
+    **kwargs: Any,
+) -> dict[str, Any]:
+    """Execute question operator with structured result and evidence (G2-QOP-009)."""
+    from typing import Any
+
+    op = operator.upper().replace("-", "_")
+    dispatch = {
+        "WHY": query_why,
+        "WHY_NOT": query_why_not,
+        "WHAT_IF": query_what_if,
+        "WHAT_CHANGED": query_what_changed,
+        "WHEN": query_when,
+        "WHO": query_who,
+        "WHERE": query_where,
+        "HOW": query_how,
+        "CONTEXT": query_context,
+    }
+    fn = dispatch.get(op)
+    if not fn:
+        raise ValueError(f"Unknown question operator: {operator}. Supported: {sorted(dispatch.keys())}")
+
+    result = fn(store, *args, **kwargs)
+    evidence = result.get("evidence", result.get("reasons", []))
+    return {
+        "operator": op,
+        "status": "error" if "error" in result else "ok",
+        "result": result,
+        "evidence": evidence,
+    }

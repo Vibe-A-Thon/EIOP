@@ -83,3 +83,45 @@ def _has_path(document: dict[str, Any], dotted_path: str) -> bool:
             return False
         current = current[part]
     return current is not None
+
+
+def link_runtime_evidence(
+    store: Any,
+    target_cid: str,
+    evidence_cid: str,
+    *,
+    window_start: str,
+    window_end: str,
+    source_ref: str = "",
+) -> dict[str, Any]:
+    """Links runtime evidence to Deployments, Incidents or Services with a bounded observation window (G2-GRAPH-OBS-002, 003)."""
+    target = store.get_vertex_by_canonical_id(target_cid)
+    if not target:
+        raise ValueError(f"Target entity not found: {target_cid}")
+    if target["label"] not in ("Deployment", "Incident", "Service", "APIService"):
+        raise ValueError(f"Target must be Deployment, Incident, or Service, got {target['label']}")
+
+    ev = store.get_vertex_by_canonical_id(evidence_cid)
+    if not ev:
+        raise ValueError(f"Evidence vertex not found: {evidence_cid}")
+
+    fact_key = f"runtime_ev:{target_cid}:{evidence_cid}:{window_start}_{window_end}"
+    edge = store.upsert_edge(
+        "EVIDENCED_BY",
+        target["vid"],
+        ev["vid"],
+        {
+            "fact_key": fact_key,
+            "observed_at": window_start,
+            "source_ref": source_ref or f"window:{window_start}..{window_end}",
+            "creation_status": "DETERMINISTIC",
+        },
+    )
+    return {
+        "edge_id": edge["eid"],
+        "target": target_cid,
+        "evidence": evidence_cid,
+        "window_start": window_start,
+        "window_end": window_end,
+        "bounded_window": True,
+    }

@@ -85,3 +85,14 @@ def mark_done(entries: dict[str, dict]) -> None:
     _dump(PROGRESS, progress)
     backlog_p.write_text(backlog, encoding="utf-8")
     print(f"marked {len(entries)} done; total done = {len(progress['s'])}")
+
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) >= 3:
+        rid = sys.argv[1]
+        tf = sys.argv[2]
+        cps = sys.argv[3:] if len(sys.argv) > 3 else []
+        mark_done({rid: {"test_file": tf, "code_paths": cps}})
+    elif len(sys.argv) == 2 and sys.argv[1] in ("-h", "--help"):
+        print("Usage: python _mark_done.py <REQUIREMENT_ID> <TEST_FILE> [<CODE_PATH> ...]")

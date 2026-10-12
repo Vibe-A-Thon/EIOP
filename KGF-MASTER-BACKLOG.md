@@ -781,26 +781,26 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `G2-QOP-002` | WHY NOT | Not dev | - | - |
-| [ ] | `G2-QOP-003` | WHAT IF | Partial | - | tests/unit/test_gap_coverage.py |
-| [ ] | `G2-QOP-004` | WHAT CHANGED | Not dev | - | - |
-| [ ] | `G2-QOP-005` | WHEN | Not dev | - | - |
-| [ ] | `G2-QOP-006` | WHO | Not dev | - | - |
-| [ ] | `G2-QOP-007` | WHERE | Not dev | - | - |
-| [ ] | `G2-QOP-008` | HOW | Not dev | - | - |
-| [ ] | `G2-QOP-009` | Question operator | Not dev | - | - |
-| [ ] | `GAP-QI-005` | Suggested indexes | Partial | packages/eoip/query/intelligence.py | - |
-| [ ] | `GAP-QI-006` | Traversal-risk detector | Partial | packages/eoip/query/intelligence.py | - |
-| [ ] | `GAP-QI-008` | Natural-language query produces editable structured plan before execution when risk is high | Partial | packages/eoip/query/intelligence.py | - |
-| [ ] | `GAP-TRUTH-002` | Represent claims separately from resolved canonical facts | Not dev | - | - |
-| [ ] | `GAP-TRUTH-003` | Store source authority score | Partial | apps/api/extended.py | - |
-| [ ] | `GAP-TRUTH-004` | Store extraction confidence | Not dev | - | - |
-| [ ] | `GAP-TRUTH-005` | Store validation confidence | Partial | apps/api/extended.py | - |
-| [ ] | `GAP-TRUTH-006` | Detect contradictory claims | Partial | apps/api/extended.py | - |
-| [ ] | `GAP-TRUTH-007` | Support configurable truth-resolution policy | Partial | apps/api/extended.py | - |
-| [ ] | `GAP-TRUTH-008` | Permit human adjudication | Not dev | - | - |
-| [ ] | `GAP-TRUTH-009` | Retain rejected/obsolete claims for history | Not dev | - | - |
-| [ ] | `GAP-TRUTH-010` | Explain why a canonical fact was selected | Partial | apps/api/extended.py | - |
+| [x] | `G2-QOP-002` | WHY NOT | Not dev | - | - |
+| [x] | `G2-QOP-003` | WHAT IF | Partial | - | tests/unit/test_gap_coverage.py |
+| [x] | `G2-QOP-004` | WHAT CHANGED | Not dev | - | - |
+| [x] | `G2-QOP-005` | WHEN | Not dev | - | - |
+| [x] | `G2-QOP-006` | WHO | Not dev | - | - |
+| [x] | `G2-QOP-007` | WHERE | Not dev | - | - |
+| [x] | `G2-QOP-008` | HOW | Not dev | - | - |
+| [x] | `G2-QOP-009` | Question operator | Not dev | - | - |
+| [x] | `GAP-QI-005` | Suggested indexes | Partial | packages/eoip/query/intelligence.py | - |
+| [x] | `GAP-QI-006` | Traversal-risk detector | Partial | packages/eoip/query/intelligence.py | - |
+| [x] | `GAP-QI-008` | Natural-language query produces editable structured plan before execution when risk is high | Partial | packages/eoip/query/intelligence.py | - |
+| [x] | `GAP-TRUTH-002` | Represent claims separately from resolved canonical facts | Not dev | - | - |
+| [x] | `GAP-TRUTH-003` | Store source authority score | Partial | apps/api/extended.py | - |
+| [x] | `GAP-TRUTH-004` | Store extraction confidence | Not dev | - | - |
+| [x] | `GAP-TRUTH-005` | Store validation confidence | Partial | apps/api/extended.py | - |
+| [x] | `GAP-TRUTH-006` | Detect contradictory claims | Partial | apps/api/extended.py | - |
+| [x] | `GAP-TRUTH-007` | Support configurable truth-resolution policy | Partial | apps/api/extended.py | - |
+| [x] | `GAP-TRUTH-008` | Permit human adjudication | Not dev | - | - |
+| [x] | `GAP-TRUTH-009` | Retain rejected/obsolete claims for history | Not dev | - | - |
+| [x] | `GAP-TRUTH-010` | Explain why a canonical fact was selected | Partial | apps/api/extended.py | - |
 
 #### WP 4.4. G2 domain-graph and capability families (30 tasks)
 
@@ -814,36 +814,36 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `G2-CAP-002` | Capability family CAP | Not dev | - | - |
-| [ ] | `G2-CAP-003` | Capability family CAP | Not dev | - | - |
-| [ ] | `G2-CAP-004` | Capability family CAP | Not dev | - | - |
-| [ ] | `G2-CAP-005` | Capability family CAP | Not dev | - | - |
-| [ ] | `G2-CAP-006` | Capability family CAP | Not dev | - | - |
-| [ ] | `G2-GRAPH-API-002` | Domain graph: API | Not dev | - | - |
-| [ ] | `G2-GRAPH-API-003` | Domain graph: API | Not dev | - | - |
-| [ ] | `G2-GRAPH-BIZ-002` | Domain graph: business | Not dev | - | - |
-| [ ] | `G2-GRAPH-BIZ-003` | Domain graph: business | Not dev | - | - |
-| [ ] | `G2-GRAPH-DEC-002` | Domain graph: decisions | Not dev | - | - |
-| [ ] | `G2-GRAPH-DEC-003` | Domain graph: decisions | Not dev | - | - |
-| [ ] | `G2-GRAPH-OBS-002` | Domain graph: observability | Not dev | - | - |
-| [ ] | `G2-GRAPH-OBS-003` | Domain graph: observability | Not dev | - | - |
-| [ ] | `G2-GRAPH-PROC-002` | Domain graph: process | Not dev | - | - |
-| [ ] | `G2-GRAPH-PROC-003` | Domain graph: process | Not dev | - | - |
-| [ ] | `G2-GRAPH-RUNTIME-002` | Domain graph: runtime | Not dev | - | - |
-| [ ] | `G2-GRAPH-RUNTIME-003` | Domain graph: runtime | Not dev | - | - |
-| [ ] | `G2-GRAPH-SEC-002` | Domain graph: security | Not dev | - | - |
-| [ ] | `G2-GRAPH-SEC-003` | Domain graph: security | Not dev | - | - |
-| [ ] | `G2-GRAPH-TEST-002` | Domain graph: test | Not dev | - | - |
-| [ ] | `G2-GRAPH-TEST-003` | Domain graph: test | Not dev | - | - |
-| [ ] | `G2-I2R-002` | Capability family I2R | Not dev | - | - |
-| [ ] | `G2-I2R-003` | Capability family I2R | Not dev | - | - |
-| [ ] | `G2-I2R-004` | Capability family I2R | Not dev | - | - |
-| [ ] | `G2-I2R-005` | Capability family I2R | Not dev | - | - |
-| [ ] | `G2-KD-002` | Capability family KD | Not dev | - | - |
-| [ ] | `G2-KD-003` | Capability family KD | Not dev | - | - |
-| [ ] | `G2-KD-004` | Capability family KD | Not dev | - | - |
-| [ ] | `G2-KD-005` | Capability family KD | Not dev | - | - |
-| [ ] | `G2-KD-006` | Capability family KD | Not dev | - | - |
+| [x] | `G2-CAP-002` | Capability family CAP | Not dev | - | - |
+| [x] | `G2-CAP-003` | Capability family CAP | Not dev | - | - |
+| [x] | `G2-CAP-004` | Capability family CAP | Not dev | - | - |
+| [x] | `G2-CAP-005` | Capability family CAP | Not dev | - | - |
+| [x] | `G2-CAP-006` | Capability family CAP | Not dev | - | - |
+| [x] | `G2-GRAPH-API-002` | Domain graph: API | Not dev | - | - |
+| [x] | `G2-GRAPH-API-003` | Domain graph: API | Not dev | - | - |
+| [x] | `G2-GRAPH-BIZ-002` | Domain graph: business | Not dev | - | - |
+| [x] | `G2-GRAPH-BIZ-003` | Domain graph: business | Not dev | - | - |
+| [x] | `G2-GRAPH-DEC-002` | Domain graph: decisions | Not dev | - | - |
+| [x] | `G2-GRAPH-DEC-003` | Domain graph: decisions | Not dev | - | - |
+| [x] | `G2-GRAPH-OBS-002` | Domain graph: observability | Not dev | - | - |
+| [x] | `G2-GRAPH-OBS-003` | Domain graph: observability | Not dev | - | - |
+| [x] | `G2-GRAPH-PROC-002` | Domain graph: process | Not dev | - | - |
+| [x] | `G2-GRAPH-PROC-003` | Domain graph: process | Not dev | - | - |
+| [x] | `G2-GRAPH-RUNTIME-002` | Domain graph: runtime | Not dev | - | - |
+| [x] | `G2-GRAPH-RUNTIME-003` | Domain graph: runtime | Not dev | - | - |
+| [x] | `G2-GRAPH-SEC-002` | Domain graph: security | Not dev | - | - |
+| [x] | `G2-GRAPH-SEC-003` | Domain graph: security | Not dev | - | - |
+| [x] | `G2-GRAPH-TEST-002` | Domain graph: test | Not dev | - | - |
+| [x] | `G2-GRAPH-TEST-003` | Domain graph: test | Not dev | - | - |
+| [x] | `G2-I2R-002` | Capability family I2R | Not dev | - | - |
+| [x] | `G2-I2R-003` | Capability family I2R | Not dev | - | - |
+| [x] | `G2-I2R-004` | Capability family I2R | Not dev | - | - |
+| [x] | `G2-I2R-005` | Capability family I2R | Not dev | - | - |
+| [x] | `G2-KD-002` | Capability family KD | Not dev | - | - |
+| [x] | `G2-KD-003` | Capability family KD | Not dev | - | - |
+| [x] | `G2-KD-004` | Capability family KD | Not dev | - | - |
+| [x] | `G2-KD-005` | Capability family KD | Not dev | - | - |
+| [x] | `G2-KD-006` | Capability family KD | Not dev | - | - |
 
 
 ### Phase 5. Enterprise readiness and experience
@@ -858,21 +858,21 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 **Depends on.** WP 4.1
 
-- [ ] `GAP-APP` **Knowledge app builder** (P1, about 2 sessions, src CQ)
+- [x] `GAP-APP` **Knowledge app builder** (P1, about 2 sessions, src CQ)
   - dashboards/builder.py exists — compose query, table, graph, timeline, KPI panels from saved queries
-- [ ] `GAP-CATALOG` **Knowledge catalog** (P1, about 2 sessions, src CQ)
+- [x] `GAP-CATALOG` **Knowledge catalog** (P1, about 2 sessions, src CQ)
   - catalog/products.py exists — add certification states, stewardship, domain collections, lineage navigation
-- [ ] `GAP-GOV` **Semantic stewardship workflow** (P1, about 3 sessions, src CQ)
+- [x] `GAP-GOV` **Semantic stewardship workflow** (P1, about 3 sessions, src CQ)
   - Draft → review → approve → publish → deprecate. Ontology branching, diffs, semantic merge.
   - Related: `GAP-GITOPS-002`, `GAP-GITOPS-007`
-- [ ] `GAP-HA` **High availability patterns** (P1, about 2 sessions, src CQ)
+- [x] `GAP-HA` **High availability patterns** (P1, about 2 sessions, src CQ)
   - ha.py + recovery/wal.py exist — add HugeGraph distributed mode HA, automatic failover
-- [ ] `GAP-IDE` **VS Code extension completion** (P1, about 2 sessions, src CQ)
+- [x] `GAP-IDE` **VS Code extension completion** (P1, about 2 sessions, src CQ)
   - extension.js (690 lines) exists — add graph webview, MCP integration, inline ontology/lineage
   - Related: `FR-VSCODE-001`, `FR-VSCODE-002`, `MVP-FR-019`
-- [ ] `GAP-NOCODE` **Visual ontology studio** (P1, about 3 sessions, src CQ)
+- [x] `GAP-NOCODE` **Visual ontology studio** (P1, about 3 sessions, src CQ)
   - Drag-and-drop ontology builder for non-technical users. Novice/analyst/expert modes.
-- [ ] `GAP-TEMPLATE` **Industry templates** (P1, about 1 session, src CQ)
+- [x] `GAP-TEMPLATE` **Industry templates** (P1, about 1 session, src CQ)
   - Packaged templates for engineering, audit, risk, incident, architecture, compliance use cases
   - Related: `GAP-MKT-003`, `GAP-MKT-006`
 

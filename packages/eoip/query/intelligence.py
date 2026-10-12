@@ -378,6 +378,85 @@ class QueryIntelligence:
             suggestions=suggestions,
         )
 
+    # -- GAP-QI-005: suggested indexes --------------------------------------
+
+    def suggest_indexes(self, history: list[QueryHistoryEntry] | None = None) -> list[dict[str, Any]]:
+        """Recommend concrete secondary indexes based on query patterns (GAP-QI-005)."""
+        entries = history if history is not None else list(self._history)
+        recommendations = []
+        seen = set()
+
+        for e in entries:
+            if e.intent == "SEARCH":
+                for item_label, key in EXACT_INDEX_LOOKUPS:
+                    idx_key = (item_label, key)
+                    if idx_key not in seen:
+                        seen.add(idx_key)
+                        recommendations.append({
+                            "label": item_label,
+                            "property": key,
+                            "index_type": "SECONDARY_EXACT",
+                            "expected_impact": "high",
+                            "reason": f"Reduces SEARCH candidate scan over {item_label} to O(1) point lookup",
+                        })
+
+        if not recommendations:
+            for item_label, key in EXACT_INDEX_LOOKUPS:
+                recommendations.append({
+                    "label": item_label,
+                    "property": key,
+                    "index_type": "SECONDARY_EXACT",
+                    "expected_impact": "high",
+                    "reason": f"Covering point index on {item_label}.{key}",
+                })
+
+        return recommendations
+
+    # -- GAP-QI-006: traversal-risk detector -------------------------------
+
+    def detect_traversal_risks(self, plan: QueryPlan) -> list[str]:
+        """Detect traversal risks for a query plan (GAP-QI-006)."""
+        stats = self._graph_stats()
+        steps = self._build_steps(plan, stats)
+        total = sum(s.estimated_visited_vertices for s in steps)
+        return self._traversal_risks(plan, total, stats)
+
+    # -- GAP-QI-008: risk guard with editable plan -------------------------
+
+    def plan_with_risk_guard(self, plan_or_nlq: QueryPlan | str) -> dict[str, Any]:
+        """Produce editable structured plan before execution when risk is high (GAP-QI-008)."""
+        if isinstance(plan_or_nlq, str):
+            from eoip.query.nlq import NLQProcessor
+            nlq_res = NLQProcessor(self._store, self._executor).process(plan_or_nlq)
+            plan = nlq_res.interpretation.plan if nlq_res.interpretation else QueryPlan(intent="SEARCH", anchors=[plan_or_nlq])
+        else:
+            plan = plan_or_nlq
+
+        explained = self.explain(plan)
+        cost_grade = self.cost(plan).grade
+        risks = explained.traversal_risks
+        high_risk = cost_grade in {"HIGH", "SEVERE"} or len(risks) > 0 or len(explained.policy_violations) > 0
+
+        if high_risk:
+            return {
+                "risk_level": cost_grade if cost_grade in {"HIGH", "SEVERE"} else "HIGH",
+                "requires_confirmation": True,
+                "editable_plan": plan.model_dump(),
+                "traversal_risks": risks,
+                "policy_violations": explained.policy_violations,
+                "estimated_cost": explained.estimated_cost,
+                "message": "High traversal risk detected. Please review and edit the structured query plan before execution.",
+            }
+        else:
+            return {
+                "risk_level": cost_grade,
+                "requires_confirmation": False,
+                "plan": plan.model_dump(),
+                "traversal_risks": [],
+                "estimated_cost": explained.estimated_cost,
+                "message": "Low risk plan validated for execution.",
+            }
+
     # -- GAP-QI-007 / QI-008: saved parameterized templates ------------------
 
     def save_template(

@@ -223,3 +223,60 @@ def intent_to_runtime_chain(store: GraphStore, objective_cid: str) -> dict:
         "depth": max((c.get("edge") is not None for c in chain), default=0),
         "labels_present": sorted({c["label"] for c in chain}),
     }
+
+
+reverse_traversal = reverse_impact
+
+
+def flag_unowned_production_assets(store: GraphStore) -> list[dict]:
+    """Flag critical production assets without business/requirement ownership (G2-I2R-004)."""
+    findings: list[dict] = []
+    for label in ("Deployment", "Service"):
+        for v in store.find_vertices(label=label, limit=10_000):
+            props = v.get("properties", {})
+            is_prod = props.get("environment") == "production" or label == "Deployment"
+            if not is_prod:
+                continue
+            impact = reverse_impact(store, v["canonical_id"])
+            if not impact["capabilities"] and not impact["objectives"]:
+                findings.append({
+                    "canonical_id": v["canonical_id"],
+                    "label": label,
+                    "name": props.get("name") or v["canonical_id"],
+                    "issue": "Production asset has no business capability or objective link",
+                    "severity": "CRITICAL",
+                })
+    return findings
+
+
+def flag_untraced_critical_requirements(store: GraphStore) -> list[dict]:
+    """Flag business-critical requirements without runtime traceability (G2-I2R-005)."""
+    findings: list[dict] = []
+    for label in ("Requirement", "Feature", "UserStory"):
+        for v in store.find_vertices(label=label, limit=10_000):
+            props = v.get("properties", {})
+            is_critical = (
+                props.get("priority") in ("P0", "P1", "critical", "high")
+                or props.get("severity") in ("CRITICAL", "HIGH")
+                or props.get("strategic_priority") in ("P0", "P1", "critical", "high")
+            )
+            if not is_critical:
+                continue
+            edges = store.find_edges(out_v=v["vid"], limit=100) + store.find_edges(in_v=v["vid"], limit=100)
+            has_runtime = False
+            for e in edges:
+                peer_vid = e["in_v"] if e["out_v"] == v["vid"] else e["out_v"]
+                peer = store.get_vertex(peer_vid)
+                if peer and peer["label"] in ("Service", "Deployment", "PipelineRun", "BuildRecord"):
+                    has_runtime = True
+                    break
+            if not has_runtime:
+                findings.append({
+                    "canonical_id": v["canonical_id"],
+                    "label": label,
+                    "name": props.get("name", ""),
+                    "priority": props.get("priority") or props.get("severity") or props.get("strategic_priority"),
+                    "issue": "Critical requirement lacks runtime deployment or service traceability",
+                    "severity": "CRITICAL",
+                })
+    return findings

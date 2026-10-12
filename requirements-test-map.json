@@ -127,7 +127,8 @@
     "tests/unit/test_graph_traversal.py"
   ],
   "FR-GRAPH-007": [
-    "tests/unit/test_query_intelligence.py"
+    "tests/unit/test_query_intelligence.py",
+    "tests/unit/test_query_intelligence.py::test_template_binding_builds_plan"
   ],
   "FR-GRAPH-008": [
     "tests/unit/test_phase2_hugegraph_schema.py"
@@ -351,6 +352,21 @@
     "tests/unit/test_capsules.py",
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-CAP-002": [
+    "tests/unit/test_capsules.py::test_capsule_is_reproducible_g2_cap_002"
+  ],
+  "G2-CAP-003": [
+    "tests/unit/test_capsules.py::test_capsule_reduces_context_exposure_g2_cap_003"
+  ],
+  "G2-CAP-004": [
+    "tests/unit/test_capsules.py::test_capsule_includes_manifest_and_evidence_g2_cap_004"
+  ],
+  "G2-CAP-005": [
+    "tests/unit/test_capsules.py::test_capsule_example_types_g2_cap_005"
+  ],
+  "G2-CAP-006": [
+    "tests/unit/test_capsules.py::test_capsule_export_package_format_g2_cap_006"
+  ],
   "G2-CAUSE-001": [
     "tests/unit/test_g2_readiness.py"
   ],
@@ -557,8 +573,68 @@
   "G2-EVOL-016": [
     "tests/unit/test_graph_evolution_family.py::test_schema_ontology_migration_strategy"
   ],
+  "G2-GRAPH-API-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_api_002_contract_linking"
+  ],
+  "G2-GRAPH-API-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_api_003_breaking_changes"
+  ],
+  "G2-GRAPH-BIZ-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_biz_002_intent_to_technical"
+  ],
+  "G2-GRAPH-BIZ-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_biz_003_reverse_query"
+  ],
+  "G2-GRAPH-DEC-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_dec_002_adr_links"
+  ],
+  "G2-GRAPH-DEC-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_dec_003_why_architecture"
+  ],
+  "G2-GRAPH-OBS-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_obs_002_link_runtime_evidence"
+  ],
+  "G2-GRAPH-OBS-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_obs_003_bounded_observation_window"
+  ],
+  "G2-GRAPH-PROC-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_proc_002_designed_vs_observed"
+  ],
+  "G2-GRAPH-PROC-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_proc_003_deviations_and_bottlenecks"
+  ],
+  "G2-GRAPH-RUNTIME-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_runtime_002_temporal_service_calls"
+  ],
+  "G2-GRAPH-RUNTIME-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_runtime_003_compare_runtime_vs_static"
+  ],
+  "G2-GRAPH-SEC-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_sec_002_vulnerability_blast_radius"
+  ],
+  "G2-GRAPH-SEC-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_sec_003_preserve_scanner_provenance"
+  ],
+  "G2-GRAPH-TEST-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_test_002_change_impact_analysis"
+  ],
+  "G2-GRAPH-TEST-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_test_003_test_coverage_confidence_provenance"
+  ],
   "G2-I2R-001": [
     "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-I2R-002": [
+    "tests/unit/test_i2r_intelligence.py::test_reverse_traversal_g2_i2r_002"
+  ],
+  "G2-I2R-003": [
+    "tests/unit/test_i2r_intelligence.py::test_compute_coverage_for_missing_links_g2_i2r_003"
+  ],
+  "G2-I2R-004": [
+    "tests/unit/test_i2r_intelligence.py::test_flag_unowned_production_assets_g2_i2r_004"
+  ],
+  "G2-I2R-005": [
+    "tests/unit/test_i2r_intelligence.py::test_flag_untraced_critical_requirements_g2_i2r_005"
   ],
   "G2-IMMUNE-001": [
     "tests/unit/test_g2_readiness.py"
@@ -583,6 +659,21 @@
   ],
   "G2-KD-001": [
     "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-KD-002": [
+    "tests/unit/test_knowledge_debt.py::test_all_twelve_debt_categories_detected_g2_kd_002"
+  ],
+  "G2-KD-003": [
+    "tests/unit/test_knowledge_debt.py::test_debt_computed_by_dimensions_g2_kd_003"
+  ],
+  "G2-KD-004": [
+    "tests/unit/test_knowledge_debt.py::test_multidimensional_debt_facets_g2_kd_004"
+  ],
+  "G2-KD-005": [
+    "tests/unit/test_knowledge_debt.py::test_debt_trend_tracking_g2_kd_005"
+  ],
+  "G2-KD-006": [
+    "tests/unit/test_knowledge_debt.py::test_findings_link_remediation_and_evidence_g2_kd_006"
   ],
   "G2-OBS-001": [
     "tests/unit/test_g2_readiness.py",
@@ -631,8 +722,29 @@
   "G2-QOP-001": [
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-QOP-002": [
+    "tests/unit/test_question_operators_g2.py::test_operator_why_not"
+  ],
   "G2-QOP-003": [
-    "tests/unit/test_gap_coverage.py"
+    "tests/unit/test_question_operators_g2.py::test_operator_what_if_simulation"
+  ],
+  "G2-QOP-004": [
+    "tests/unit/test_question_operators_g2.py::test_operator_what_changed"
+  ],
+  "G2-QOP-005": [
+    "tests/unit/test_question_operators_g2.py::test_operator_when"
+  ],
+  "G2-QOP-006": [
+    "tests/unit/test_question_operators_g2.py::test_operator_who"
+  ],
+  "G2-QOP-007": [
+    "tests/unit/test_question_operators_g2.py::test_operator_where"
+  ],
+  "G2-QOP-008": [
+    "tests/unit/test_question_operators_g2.py::test_operator_how"
+  ],
+  "G2-QOP-009": [
+    "tests/unit/test_question_operators_g2.py::test_operator_dispatch_and_structured_evidence"
   ],
   "G2-REL-001": [
     "tests/unit/test_g2_readiness.py"
@@ -1394,6 +1506,9 @@
   "GAP-AKO-010": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-APP": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_app_dashboard_builder"
+  ],
   "GAP-APP-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -1432,6 +1547,9 @@
   ],
   "GAP-CACHE-005": [
     "tests/unit/test_cache_freshness_cdc.py::test_do_not_serve_stale_results_beyond_policy"
+  ],
+  "GAP-CATALOG": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_catalog_products_and_lineage"
   ],
   "GAP-CATALOG-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -1702,6 +1820,9 @@
   "GAP-GITOPS-001": [
     "tests/unit/test_ontology_gitops.py"
   ],
+  "GAP-GOV": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_gov_stewardship_workflow"
+  ],
   "GAP-GOV-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -1731,6 +1852,9 @@
   ],
   "GAP-GRAPHTEST-001": [
     "tests/unit/test_graphtest_framework.py"
+  ],
+  "GAP-HA": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_ha_leader_lease_failover"
   ],
   "GAP-HA-001": [
     "tests/unit/test_ha_lease.py"
@@ -1765,6 +1889,9 @@
   ],
   "GAP-HG-010": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-IDE": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_ide_extension_manifest_and_mcp_bridge"
   ],
   "GAP-IDE-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -1935,6 +2062,9 @@
   "GAP-NLP-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-NOCODE": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_nocode_visual_ontology_studio"
+  ],
   "GAP-NOCODE-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -2011,8 +2141,17 @@
   "GAP-QI-004": [
     "tests/unit/test_query_intelligence.py"
   ],
+  "GAP-QI-005": [
+    "tests/unit/test_query_intelligence_risks.py::test_suggested_indexes"
+  ],
+  "GAP-QI-006": [
+    "tests/unit/test_query_intelligence_risks.py::test_traversal_risk_detector"
+  ],
   "GAP-QI-007": [
     "tests/unit/test_query_intelligence.py"
+  ],
+  "GAP-QI-008": [
+    "tests/unit/test_query_intelligence_risks.py::test_nlq_produces_editable_plan_when_risk_is_high"
   ],
   "GAP-QUERY": [
     "tests/unit/test_unified_query_api.py::test_gremlin_traversal_is_really_executed",
@@ -2186,6 +2325,9 @@
   "GAP-TEMP-006": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GAP-TEMPLATE": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_template_industry_templates"
+  ],
   "GAP-TEMPLATE-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -2206,6 +2348,33 @@
   ],
   "GAP-TRUTH-001": [
     "tests/unit/test_truth_claims.py"
+  ],
+  "GAP-TRUTH-002": [
+    "tests/unit/test_truth_resolution.py::test_claims_represented_separately_from_canonical_facts"
+  ],
+  "GAP-TRUTH-003": [
+    "tests/unit/test_truth_resolution.py::test_store_source_authority_score"
+  ],
+  "GAP-TRUTH-004": [
+    "tests/unit/test_truth_resolution.py::test_store_extraction_confidence"
+  ],
+  "GAP-TRUTH-005": [
+    "tests/unit/test_truth_resolution.py::test_store_validation_confidence"
+  ],
+  "GAP-TRUTH-006": [
+    "tests/unit/test_truth_resolution.py::test_detect_contradictory_claims"
+  ],
+  "GAP-TRUTH-007": [
+    "tests/unit/test_truth_resolution.py::test_configurable_truth_resolution_policies"
+  ],
+  "GAP-TRUTH-008": [
+    "tests/unit/test_truth_resolution.py::test_permit_human_adjudication"
+  ],
+  "GAP-TRUTH-009": [
+    "tests/unit/test_truth_resolution.py::test_retain_rejected_and_obsolete_claims"
+  ],
+  "GAP-TRUTH-010": [
+    "tests/unit/test_truth_resolution.py::test_explain_why_canonical_fact_selected"
   ],
   "GAP-UX-001": [
     "tests/unit/test_enterprise_gap_completion.py"

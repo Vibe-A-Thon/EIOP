@@ -24,6 +24,8 @@ def map_tests_to_code(store: GraphStore) -> list[dict]:
                         "canonical_id": target["canonical_id"],
                         "label": target["label"],
                         "name": target["properties"].get("name") or target["properties"].get("qualified_name", ""),
+                        "confidence": edge["properties"].get("confidence", 1.0),
+                        "source_ref": edge["properties"].get("source_ref", ""),
                     })
         if targets:
             mappings.append({
