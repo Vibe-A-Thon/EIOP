@@ -37,6 +37,22 @@ $RuntimeCandidates = @(
     @{ Name = 'lima-nerdctl';  Cli = 'lima';     CliArgs = @('nerdctl'); ComposeProbes = @(@('lima','nerdctl','compose')) }
 )
 
+function Invoke-CommandVector {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Command,
+        [string[]]$Arguments = @()
+    )
+
+    if (-not $Command -or $Command.Count -eq 0) {
+        throw 'Command vector cannot be empty.'
+    }
+
+    $executable = $Command[0]
+    $baseArguments = if ($Command.Count -gt 1) { $Command[1..($Command.Count - 1)] } else { @() }
+    & $executable @baseArguments @Arguments
+}
+
 function Find-ContainerRuntime {
     $override = $env:EOIP_CONTAINER_RUNTIME
     $candidates = $RuntimeCandidates
@@ -81,7 +97,7 @@ function Find-ContainerRuntime {
         # Verify CLI responds
         $cliArgs = @($cli) + @(if ($c.CliArgs) { $c.CliArgs } else { @() })
         $previousPref = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
-        try { $versionOutput = & @cliArgs --version 2>$null; $rc = $LASTEXITCODE }
+        try { $versionOutput = Invoke-CommandVector -Command $cliArgs -Arguments @('--version') 2>$null; $rc = $LASTEXITCODE }
         finally { $ErrorActionPreference = $previousPref }
         if ($rc -ne 0 -or -not $versionOutput) { continue }
 
@@ -91,14 +107,14 @@ function Find-ContainerRuntime {
         if ($composeOverride) {
             $parts = $composeOverride -split ' '
             $previousPref = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
-            try { & @parts version 2>$null | Out-Null; $rc = $LASTEXITCODE }
+            try { Invoke-CommandVector -Command $parts -Arguments @('version') 2>$null | Out-Null; $rc = $LASTEXITCODE }
             finally { $ErrorActionPreference = $previousPref }
             if ($rc -eq 0) { $composeCmd = $parts }
         }
         if (-not $composeCmd) {
             foreach ($probe in $c.ComposeProbes) {
                 $previousPref = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
-                try { & @probe version 2>$null | Out-Null; $rc = $LASTEXITCODE }
+                try { Invoke-CommandVector -Command $probe -Arguments @('version') 2>$null | Out-Null; $rc = $LASTEXITCODE }
                 finally { $ErrorActionPreference = $previousPref }
                 if ($rc -eq 0) { $composeCmd = $probe; break }
             }
@@ -111,7 +127,7 @@ function Find-ContainerRuntime {
             ComposeCmd     = $composeCmd
             ComposeVersion = if ($composeCmd) {
                 $previousPref = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
-                try { $cv = & @composeCmd version 2>$null; ($cv -join ' ').Trim() }
+                try { $cv = Invoke-CommandVector -Command $composeCmd -Arguments @('version') 2>$null; ($cv -join ' ').Trim() }
                 finally { $ErrorActionPreference = $previousPref }
             } else { $null }
         }
@@ -201,7 +217,7 @@ function Invoke-Compose {
     $previousErrorPreference = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
     try {
-        & @composeCmd @composeArguments @CommandArguments
+        Invoke-CommandVector -Command $composeCmd -Arguments (@($composeArguments) + @($CommandArguments))
         $composeExitCode = $LASTEXITCODE
     }
     finally { $ErrorActionPreference = $previousErrorPreference }
@@ -215,7 +231,7 @@ function Invoke-Runtime {
     $previousErrorPreference = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
     try {
-        & @cliCmd @CommandArguments
+        Invoke-CommandVector -Command $cliCmd -Arguments @($CommandArguments)
         $rtExitCode = $LASTEXITCODE
     }
     finally { $ErrorActionPreference = $previousErrorPreference }
