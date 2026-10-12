@@ -72,7 +72,8 @@ def test_federation_sources_and_query() -> None:
     sources = client.get("/api/v1/federation/sources")
     assert sources.status_code == 200
     ids = {s["source_id"] for s in sources.json()["sources"]}
-    assert {"demo-memory", "hugegraph-local"} <= ids
+    assert "hugegraph-local" in ids
+    assert "demo-memory" not in ids
 
     response = client.post(
         "/api/v1/federation/query",

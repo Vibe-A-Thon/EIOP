@@ -1605,18 +1605,57 @@
     "tests/unit/test_marketplace.py"
   ],
   "GAP-FABRIC-001": [
-    "tests/unit/test_federation_planner.py"
+    "tests/unit/test_federation_planner.py",
+    "tests/unit/test_federation_planner.py::test_hugegraph_local_adapter_over_graph_store"
+  ],
+  "GAP-FABRIC-002": [
+    "tests/unit/test_federation_planner.py::test_fragment_planning_splits_per_source",
+    "tests/unit/test_federation_planner.py::test_source_capability_registry"
+  ],
+  "GAP-FABRIC-003": [
+    "tests/unit/test_federation_planner.py::test_cost_aware_routing_prefers_materialized"
+  ],
+  "GAP-FABRIC-004": [
+    "tests/unit/test_federation_planner.py::test_no_pushdown_where_unsupported",
+    "tests/unit/test_federation_planner.py::test_pushdown_filters_and_projection"
+  ],
+  "GAP-FABRIC-005": [
+    "tests/unit/test_federation_planner.py::test_cache_mode_serves_fresh_cached_rows_when_source_goes_offline",
+    "tests/unit/test_federation_planner.py::test_merge_attaches_row_provenance",
+    "tests/unit/test_federation_planner.py::test_merge_fills_missing_fields_across_sources"
+  ],
+  "GAP-FABRIC-006": [
+    "tests/unit/test_federation_planner.py::test_cache_mode_serves_fresh_cached_rows_when_source_goes_offline",
+    "tests/unit/test_federation_planner.py::test_offline_degradation_continues"
+  ],
+  "GAP-FABRIC-007": [
+    "tests/unit/test_federation_planner.py::test_duplicate_coverage_secondary_source",
+    "tests/unit/test_federation_planner.py::test_explainable_routing_plan"
+  ],
+  "GAP-FABRIC-008": [
+    "tests/unit/test_federation_planner.py::test_source_policy_enforces_role_purpose_filters_and_field_denial"
+  ],
+  "GAP-FED": [
+    "tests/unit/test_federation_planner.py::test_cache_mode_serves_fresh_cached_rows_when_source_goes_offline",
+    "tests/unit/test_federation_planner.py::test_entity_mode_policy_splits_virtual_cache_and_materialized_fragments",
+    "tests/unit/test_federation_planner.py::test_explainable_plan_distinguishes_hugegraph_and_live_sources",
+    "tests/unit/test_federation_planner.py::test_file_and_jdbc_adapters_query_external_sources_without_hugegraph"
   ],
   "GAP-FED-001": [
-    "tests/unit/test_enterprise_gap_completion.py"
+    "tests/unit/test_enterprise_gap_completion.py",
+    "tests/unit/test_federation_planner.py::test_file_and_jdbc_adapters_query_external_sources_without_hugegraph"
   ],
   "GAP-FED-002": [
-    "tests/unit/test_enterprise_gap_completion.py"
+    "tests/unit/test_enterprise_gap_completion.py",
+    "tests/unit/test_federation_planner.py::test_cache_mode_serves_fresh_cached_rows_when_source_goes_offline",
+    "tests/unit/test_federation_planner.py::test_entity_mode_policy_splits_virtual_cache_and_materialized_fragments"
   ],
   "GAP-FED-003": [
-    "tests/unit/test_enterprise_gap_completion.py"
+    "tests/unit/test_enterprise_gap_completion.py",
+    "tests/unit/test_federation_planner.py::test_explainable_plan_distinguishes_hugegraph_and_live_sources"
   ],
   "GAP-FED-004": [
+    "tests/unit/test_federation_planner.py::test_file_and_jdbc_adapters_query_external_sources_without_hugegraph",
     "tests/unit/test_future_scope.py"
   ],
   "GAP-FRESH-001": [

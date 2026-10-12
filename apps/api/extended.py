@@ -52,7 +52,6 @@ from eoip.egress.gateway import EgressGateway
 from eoip.egress.router import build_router as build_egress_router
 from eoip.federation import (
     FederatedQueryPlanner,
-    InMemoryDemoAdapter,
     LocalGraphStoreAdapter,
     SourceCapability,
     SourceMode,
@@ -85,6 +84,7 @@ from eoip.models.governance import (
 )
 from eoip.observability.metrics import Registry as MetricsRegistry
 from eoip.observability.metrics import record_request
+from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.ontology.packs import (
     DEFAULT_PACKS_DIR,
     METADATA_FILENAME,
@@ -150,34 +150,10 @@ class ExtendedState:
         self.skos = SkosTaxonomy()
         self.planner = FederatedQueryPlanner()
         self.planner.register(
-            InMemoryDemoAdapter(
-                SourceCapability(
-                    source_id="demo-memory",
-                    entity_types=["WorkItem", "Commit"],
-                    pushdown_filters=True,
-                    pushdown_projection=True,
-                    mode=SourceMode.MATERIALIZED,
-                ),
-                rows=[
-                    {
-                        "entity_type": "WorkItem",
-                        "canonical_id": "urn:eoip:demo:workitem:FED-1",
-                        "issue_key": "FED-1",
-                        "summary": "Federated demo work item",
-                    },
-                    {
-                        "entity_type": "Commit",
-                        "canonical_id": "urn:eoip:demo:commit:fed0001",
-                        "commit_sha": "fed0001",
-                        "message": "Federated demo commit",
-                    },
-                ],
-            )
-        )
-        self.planner.register(
             LocalGraphStoreAdapter(
                 SourceCapability(
                     source_id=_store_source_id(store),
+                    adapter_kind="hugegraph",
                     entity_types=list(_store_labels(store)),
                     pushdown_filters=False,
                     pushdown_projection=False,
@@ -316,7 +292,7 @@ def _store_labels(store: GraphStore) -> list[str]:
     labels: set[str] = set()
     for vertex in store.find_vertices(limit=50_000):
         labels.add(vertex["label"])
-    return sorted(labels)
+    return sorted(labels or set(VERTEX_LABELS))
 
 
 def _store_source_id(store: GraphStore) -> str:
@@ -335,6 +311,7 @@ class FederationQueryRequest(BaseModel):
     filters: dict[str, Any] = Field(default_factory=dict)
     projection: list[str] = Field(default_factory=list, max_length=50)
     merge_key: str = "canonical_id"
+    policy_context: dict[str, Any] = Field(default_factory=dict)
 
 
 class TruthResolveRequest(BaseModel):
@@ -511,6 +488,7 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
             filters=payload.filters,
             projection=payload.projection,
             merge_key=payload.merge_key,
+            policy_context=payload.policy_context,
         )
 
     # -- Truth model (GAP-TRUTH-001..010) ------------------------------------

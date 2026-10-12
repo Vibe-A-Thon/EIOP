@@ -725,7 +725,7 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 - [x] `GAP-DUAL` **Dual semantic model (RDF/OWL ↔ property graph)** (P1, about 2 sessions, src CQ)
   - ontology/rdf.py exists — add round-trip mapping, SHACL validation, RDF export/import
   - Related: `FR-GRAPH-010`
-- [ ] `GAP-FED` **Semantic federation layer** (P1, about 3 sessions, src CQ)
+- [x] `GAP-FED` **Semantic federation layer** (P1, about 3 sessions, src CQ)
   - federation/planner.py exists — add JDBC/REST/file adapters, virtual vs. materialized modes, explainable query plans
   - Related: `GAP-FABRIC-002`, `GAP-FABRIC-003`, `GAP-FABRIC-004`, `GAP-FABRIC-005`, `GAP-FABRIC-006`, `GAP-FABRIC-007`, `GAP-FABRIC-008`
 - [ ] `GAP-GDS` **Local graph analytics service** (P1, about 2 sessions, src CQ)
@@ -756,13 +756,13 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 | [ ] | `GAP-CACHE-003` | Invalidate using graph CDC | Partial | packages/eoip/future_scope.py | - |
 | [ ] | `GAP-CACHE-004` | Separate deterministic query cache from AI response cache | Partial | packages/eoip/query/cache.py | - |
 | [ ] | `GAP-CACHE-005` | Do not serve stale results beyond policy | Partial | packages/eoip/future_scope.py | - |
-| [ ] | `GAP-FABRIC-002` | Source capability registry | Partial | packages/eoip/federation/planner.py, apps/api/extended.py | - |
-| [ ] | `GAP-FABRIC-003` | Cost-aware query routing | Partial | packages/eoip/federation/planner.py | - |
-| [ ] | `GAP-FABRIC-004` | Push filters/projections to source where possible | Partial | packages/eoip/federation/planner.py | - |
-| [ ] | `GAP-FABRIC-005` | Local result cache with provenance/freshness | Partial | packages/eoip/federation/planner.py | - |
-| [ ] | `GAP-FABRIC-006` | Offline degradation strategy | Partial | packages/eoip/federation/planner.py | - |
-| [ ] | `GAP-FABRIC-007` | Explain query routing | Partial | packages/eoip/federation/planner.py | - |
-| [ ] | `GAP-FABRIC-008` | Enforce source-level data policies | Not dev | - | - |
+| [x] | `GAP-FABRIC-002` | Source capability registry | Partial | packages/eoip/federation/planner.py, apps/api/extended.py | - |
+| [x] | `GAP-FABRIC-003` | Cost-aware query routing | Partial | packages/eoip/federation/planner.py | - |
+| [x] | `GAP-FABRIC-004` | Push filters/projections to source where possible | Partial | packages/eoip/federation/planner.py | - |
+| [x] | `GAP-FABRIC-005` | Local result cache with provenance/freshness | Partial | packages/eoip/federation/planner.py | - |
+| [x] | `GAP-FABRIC-006` | Offline degradation strategy | Partial | packages/eoip/federation/planner.py | - |
+| [x] | `GAP-FABRIC-007` | Explain query routing | Partial | packages/eoip/federation/planner.py | - |
+| [x] | `GAP-FABRIC-008` | Enforce source-level data policies | Not dev | - | - |
 | [ ] | `GAP-FRESH-002` | Detect docs contradicted by code/config/runtime | Not dev | - | - |
 | [ ] | `GAP-FRESH-003` | Detect ownership changes | Not dev | - | - |
 | [ ] | `GAP-FRESH-004` | Detect deprecated APIs still referenced in docs | Not dev | - | - |
