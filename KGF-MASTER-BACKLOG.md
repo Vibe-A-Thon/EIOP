@@ -732,12 +732,12 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
   - graph/algorithms.py + analytics/ exist — package as pluggable analytics API with all standard algorithms
 - [x] `GAP-NLP` **Local NLP pipeline** (P1, about 2 sessions, src CQ)
   - Add entity extraction, tagging, classification, concept recommendation — all local, no cloud
-- [ ] `GAP-QUERY` **Unified semantic query API** (P1, about 2 sessions, src CQ)
+- [x] `GAP-QUERY` **Unified semantic query API** (P1, about 2 sessions, src CQ)
   - query/ has 6 languages — build single routing API across Gremlin, RDF, search, vector, federated
   - Related: `GAP-QI-005`, `GAP-QI-006`, `GAP-QI-008`
-- [ ] `GAP-REC` **Graph-aware recommendation engine** (P1, about 1 session, src CQ)
+- [x] `GAP-REC` **Graph-aware recommendation engine** (P1, about 1 session, src CQ)
   - graph/similarity.py exists — extend to expert, document, component, concept recommendations
-- [ ] `GAP-RULE` **Deterministic rules engine** (P1, about 2 sessions, src CQ)
+- [x] `GAP-RULE` **Deterministic rules engine** (P1, about 2 sessions, src CQ)
   - reasoning/ exists — add versioned inference policies, fact classification (asserted/inferred/model/human), retraction/recomputation
 
 #### WP 4.2. Federation, cache and freshness (15 tasks)
@@ -752,10 +752,10 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `GAP-CACHE-002` | Cache dependencies reference graph versions/source freshness | Partial | packages/eoip/future_scope.py | - |
-| [ ] | `GAP-CACHE-003` | Invalidate using graph CDC | Partial | packages/eoip/future_scope.py | - |
-| [ ] | `GAP-CACHE-004` | Separate deterministic query cache from AI response cache | Partial | packages/eoip/query/cache.py | - |
-| [ ] | `GAP-CACHE-005` | Do not serve stale results beyond policy | Partial | packages/eoip/future_scope.py | - |
+| [x] | `GAP-CACHE-002` | Cache dependencies reference graph versions/source freshness | Partial | packages/eoip/future_scope.py | - |
+| [x] | `GAP-CACHE-003` | Invalidate using graph CDC | Partial | packages/eoip/future_scope.py | - |
+| [x] | `GAP-CACHE-004` | Separate deterministic query cache from AI response cache | Partial | packages/eoip/query/cache.py | - |
+| [x] | `GAP-CACHE-005` | Do not serve stale results beyond policy | Partial | packages/eoip/future_scope.py | - |
 | [x] | `GAP-FABRIC-002` | Source capability registry | Partial | packages/eoip/federation/planner.py, apps/api/extended.py | - |
 | [x] | `GAP-FABRIC-003` | Cost-aware query routing | Partial | packages/eoip/federation/planner.py | - |
 | [x] | `GAP-FABRIC-004` | Push filters/projections to source where possible | Partial | packages/eoip/federation/planner.py | - |
@@ -763,10 +763,10 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 | [x] | `GAP-FABRIC-006` | Offline degradation strategy | Partial | packages/eoip/federation/planner.py | - |
 | [x] | `GAP-FABRIC-007` | Explain query routing | Partial | packages/eoip/federation/planner.py | - |
 | [x] | `GAP-FABRIC-008` | Enforce source-level data policies | Not dev | - | - |
-| [ ] | `GAP-FRESH-002` | Detect docs contradicted by code/config/runtime | Not dev | - | - |
-| [ ] | `GAP-FRESH-003` | Detect ownership changes | Not dev | - | - |
-| [ ] | `GAP-FRESH-004` | Detect deprecated APIs still referenced in docs | Not dev | - | - |
-| [ ] | `GAP-FRESH-005` | Recommend review—not silently rewrite authoritative docs | Not dev | - | - |
+| [x] | `GAP-FRESH-002` | Detect docs contradicted by code/config/runtime | Not dev | - | - |
+| [x] | `GAP-FRESH-003` | Detect ownership changes | Not dev | - | - |
+| [x] | `GAP-FRESH-004` | Detect deprecated APIs still referenced in docs | Not dev | - | - |
+| [x] | `GAP-FRESH-005` | Recommend review—not silently rewrite authoritative docs | Not dev | - | - |
 
 #### WP 4.3. Truth resolution, query intelligence and question operators (20 tasks)
 

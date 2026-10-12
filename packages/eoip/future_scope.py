@@ -235,21 +235,43 @@ class Fact:
         )
 
 
+FACT_STATUSES = frozenset({"ASSERTED", "INFERRED", "MODEL_GENERATED", "HUMAN_CONFIRMED"})
+
+
 class DeterministicRuleEngine:
-    """Apply rules and recompute inferences after retraction (GAP-RULE-003)."""
+    """Apply rules and recompute inferences after retraction (GAP-RULE-001..003)."""
 
-    def __init__(self, rules: list[RuleDefinition]) -> None:
+    def __init__(self, rules: list[RuleDefinition], active_version: str | None = None) -> None:
         self.rules = list(rules)
+        self.active_version = active_version
 
-    def infer(self, facts: list[Fact]) -> list[Fact]:
-        asserted = [fact.with_id() for fact in facts if fact.status == "ASSERTED"]
-        inferred: list[Fact] = []
-        for fact in asserted:
-            for rule in self.rules:
-                if all(getattr(fact, key) == value for key, value in rule.when.items()):
-                    payload = dict(rule.infer)
-                    inferred.append(
-                        Fact(
+    def filter_rules(self, version: str | None = None) -> list[RuleDefinition]:
+        v = version or self.active_version
+        if v is None:
+            return self.rules
+        return [r for r in self.rules if r.version == v]
+
+    def infer(self, facts: list[Fact], *, version: str | None = None, max_depth: int = 5) -> list[Fact]:
+        rules_to_run = sorted(self.filter_rules(version), key=lambda r: (r.rule_id, r.version))
+        active_facts: dict[str, Fact] = {f.with_id().fact_id: f.with_id() for f in facts}
+        inferred_facts: dict[str, Fact] = {}
+
+        for _ in range(max_depth):
+            newly_inferred: list[Fact] = []
+            for fact in list(active_facts.values()):
+                for rule in rules_to_run:
+                    allowed = rule.source_policy
+                    if allowed != "all":
+                        if isinstance(allowed, str) and fact.status != allowed:
+                            continue
+                        elif isinstance(allowed, (list, tuple, set)) and fact.status not in allowed:
+                            continue
+                    elif fact.status == "INFERRED":
+                        continue
+
+                    if all(getattr(fact, key, None) == value for key, value in rule.when.items()):
+                        payload = dict(rule.infer)
+                        new_fact = Fact(
                             subject=str(payload.get("subject", fact.subject)),
                             predicate=str(payload.get("predicate", fact.predicate)),
                             object=payload.get("object", fact.object),
@@ -257,19 +279,32 @@ class DeterministicRuleEngine:
                             status="INFERRED",
                             rule_id=f"{rule.rule_id}@{rule.version}",
                         ).with_id()
-                    )
-        return sorted(inferred, key=lambda item: item.fact_id)
+                        if new_fact.fact_id not in active_facts and new_fact.fact_id not in inferred_facts:
+                            newly_inferred.append(new_fact)
+                            inferred_facts[new_fact.fact_id] = new_fact
+            if not newly_inferred:
+                break
+            for nf in newly_inferred:
+                active_facts[nf.fact_id] = nf
+
+        return sorted(inferred_facts.values(), key=lambda item: item.fact_id)
 
     def recompute_after_retraction(
         self,
         facts: list[Fact],
         *,
         retracted_source_ids: set[str],
+        version: str | None = None,
     ) -> dict[str, Any]:
         remaining = [fact.with_id() for fact in facts if fact.source_id not in retracted_source_ids]
+        recomputed = self.infer(remaining, version=version)
         return {
             "asserted": [asdict(fact) for fact in remaining],
-            "inferred": [asdict(fact) for fact in self.infer(remaining)],
+            "by_status": {
+                status: [asdict(f) for f in remaining if f.status == status]
+                for status in FACT_STATUSES
+            },
+            "inferred": [asdict(fact) for fact in recomputed],
             "retracted_source_ids": sorted(retracted_source_ids),
         }
 

@@ -1421,6 +1421,18 @@
   "GAP-CACHE-001": [
     "tests/unit/test_query_cache.py"
   ],
+  "GAP-CACHE-002": [
+    "tests/unit/test_cache_freshness_cdc.py::test_cache_dependencies_reference_graph_version_and_source_freshness"
+  ],
+  "GAP-CACHE-003": [
+    "tests/unit/test_cache_freshness_cdc.py::test_invalidate_using_graph_cdc"
+  ],
+  "GAP-CACHE-004": [
+    "tests/unit/test_cache_freshness_cdc.py::test_separate_deterministic_query_cache_from_ai_response_cache"
+  ],
+  "GAP-CACHE-005": [
+    "tests/unit/test_cache_freshness_cdc.py::test_do_not_serve_stale_results_beyond_policy"
+  ],
   "GAP-CATALOG-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -1660,6 +1672,18 @@
   ],
   "GAP-FRESH-001": [
     "tests/unit/test_expertise_freshness.py"
+  ],
+  "GAP-FRESH-002": [
+    "tests/unit/test_freshness_drift_audit.py::test_detect_docs_contradicted_by_code_config_runtime"
+  ],
+  "GAP-FRESH-003": [
+    "tests/unit/test_freshness_drift_audit.py::test_detect_ownership_changes"
+  ],
+  "GAP-FRESH-004": [
+    "tests/unit/test_freshness_drift_audit.py::test_detect_deprecated_apis_still_referenced_in_docs"
+  ],
+  "GAP-FRESH-005": [
+    "tests/unit/test_freshness_drift_audit.py::test_recommend_review_not_silently_rewrite_authoritative_docs"
   ],
   "GAP-GDS": [
     "tests/unit/test_graph_analytics_service.py::test_catalog_lists_standard_algorithms",
@@ -1990,8 +2014,23 @@
   "GAP-QI-007": [
     "tests/unit/test_query_intelligence.py"
   ],
+  "GAP-QUERY": [
+    "tests/unit/test_unified_query_api.py::test_gremlin_traversal_is_really_executed",
+    "tests/unit/test_unified_query_api.py::test_gremlin_rejects_unsupported_and_invalid",
+    "tests/unit/test_unified_query_api.py::test_sparql_pattern_matching_and_joins",
+    "tests/unit/test_unified_query_api.py::test_search_and_vector_routes",
+    "tests/unit/test_unified_query_api.py::test_federated_route_with_filters",
+    "tests/unit/test_unified_query_api.py::test_eoql_route_and_uniform_envelope",
+    "tests/unit/test_unified_query_api.py::test_limit_truncation_and_mode_validation"
+  ],
   "GAP-QUERY-001": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-REC": [
+    "tests/unit/test_graph_recommender.py::test_recommend_documents",
+    "tests/unit/test_graph_recommender.py::test_recommend_experts",
+    "tests/unit/test_graph_recommender.py::test_recommend_components_and_all",
+    "tests/unit/test_graph_recommender.py::test_recommend_errors_and_boundaries"
   ],
   "GAP-REC-001": [
     "tests/unit/test_expertise_freshness.py"
@@ -2013,6 +2052,11 @@
   ],
   "GAP-RET-006": [
     "tests/unit/test_enterprise_gap_completion.py"
+  ],
+  "GAP-RULE": [
+    "tests/unit/test_deterministic_rule_engine.py::test_versioned_inference_policies",
+    "tests/unit/test_deterministic_rule_engine.py::test_distinguishes_fact_statuses",
+    "tests/unit/test_deterministic_rule_engine.py::test_retraction_and_recomputation"
   ],
   "GAP-RULE-001": [
     "tests/unit/test_enterprise_gap_completion.py"
