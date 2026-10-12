@@ -101,10 +101,11 @@ class AttestationRecord:
 
 
 class EvidenceCollector:
-    """Automates evidence gathering from graph entities for compliance audits."""
+    """Automates evidence gathering from graph entities with tamper-evident cryptographic hash-chaining."""
 
     def __init__(self) -> None:
         self._artifacts: dict[str, EvidenceArtifact] = {}
+        self._previous_hash = "0" * 64
         self._lock = threading.Lock()
 
     def collect_from_graph(
@@ -116,27 +117,27 @@ class EvidenceCollector:
         collected = []
         import hashlib
 
-        # Collect relevant vertices
-        for v in store.find_vertices():
-            props = v.get("properties", {})
-            cid = props.get("canonical_id", v.get("canonical_id", "unknown"))
-            lbl = v.get("label", "Unknown")
-            raw_data = f"{cid}:{lbl}:{props.get('modified_at', '')}"
-            prov_hash = hashlib.sha256(raw_data.encode("utf-8")).hexdigest()
+        with self._lock:
+            for v in store.find_vertices():
+                props = v.get("properties", {})
+                cid = props.get("canonical_id", v.get("canonical_id", "unknown"))
+                lbl = v.get("label", "Unknown")
+                raw_data = f"{cid}:{lbl}:{props.get('modified_at', '')}:{self._previous_hash}"
+                prov_hash = hashlib.sha256(raw_data.encode("utf-8")).hexdigest()
+                self._previous_hash = prov_hash
 
-            ev_id = f"EV-{control_id}-{cid}"
-            artifact = EvidenceArtifact(
-                evidence_id=ev_id,
-                control_id=control_id,
-                framework=framework,
-                graph_entity_id=cid,
-                entity_label=lbl,
-                provenance_hash=prov_hash,
-                metadata={"properties_count": len(props)},
-            )
-            with self._lock:
+                ev_id = f"EV-{control_id}-{cid}"
+                artifact = EvidenceArtifact(
+                    evidence_id=ev_id,
+                    control_id=control_id,
+                    framework=framework,
+                    graph_entity_id=cid,
+                    entity_label=lbl,
+                    provenance_hash=prov_hash,
+                    metadata={"properties_count": len(props), "previous_hash": self._previous_hash},
+                )
                 self._artifacts[ev_id] = artifact
-            collected.append(artifact)
+                collected.append(artifact)
         return collected
 
     def get_artifact(self, evidence_id: str) -> EvidenceArtifact | None:
@@ -228,13 +229,15 @@ class ContinuousComplianceDashboard:
             fw = v.framework.value if hasattr(v.framework, "value") else str(v.framework)
             violations_by_fw[fw] = violations_by_fw.get(fw, 0) + 1
 
-        all_frameworks = ["GDPR", "SOX", "HIPAA", "SOC2", "NIST_AI_RMF", "EU_AI_ACT"]
+        all_frameworks = ["GDPR", "SOX", "HIPAA", "SOC2", "ISO_27001", "ISO_42001", "NIST_AI_RMF", "EU_AI_ACT"]
         # Baseline controls count per standard
         framework_controls_count = {
             "GDPR": 10,
             "SOX": 8,
             "HIPAA": 12,
             "SOC2": 15,
+            "ISO_27001": 14,
+            "ISO_42001": 10,
             "NIST_AI_RMF": 10,
             "EU_AI_ACT": 10,
         }

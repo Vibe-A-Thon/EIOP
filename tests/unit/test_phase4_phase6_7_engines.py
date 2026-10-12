@@ -44,6 +44,7 @@ from eoip.memory_eng.engine import (
 from eoip.graph.memory import MemoryGraphStore
 
 
+@pytest.mark.req("COMPLY-001")
 class TestComply001ComplianceAsCode:
     """COMPLY-001: Compliance-as-Code Graph Constraints."""
 
@@ -75,6 +76,7 @@ class TestComply001ComplianceAsCode:
         assert "SOX-001" in rule_ids
 
 
+@pytest.mark.req("COMPLY-002")
 class TestComply002PIIDetectionAndAnonymization:
     """COMPLY-002: Automated PII Detection & Anonymization."""
 
@@ -120,6 +122,7 @@ class TestComply002PIIDetectionAndAnonymization:
         assert vault.de_pseudonymize(token) == "customer_ssn_12345"
 
 
+@pytest.mark.req("TEST-001")
 class TestChaos001FaultInjection:
     """TEST-001: Chaos Engineering Framework."""
 
@@ -153,6 +156,7 @@ class TestChaos001FaultInjection:
         assert injector.intercept("neptune_cluster", lambda: "healthy_data") == "healthy_data"
 
 
+@pytest.mark.req("MULTI-001")
 class TestMulti001DiagramParsingAndRendering:
     """MULTI-001: Scoped Multi-Modal Diagram-to-Graph & Rendering."""
 
@@ -191,6 +195,7 @@ class TestMulti001DiagramParsingAndRendering:
         assert "</svg>" in svg_out
 
 
+@pytest.mark.req("MULTI-002")
 class TestMulti002MemoryGraph:
     """MULTI-002: Knowledge & Memory Graph Engineering."""
 

@@ -338,9 +338,10 @@ class VerificationChainResult:
 class DynamicGuardrailInjector:
     """Intercepts agent tool/action intents in real-time against policy boundaries."""
 
-    def __init__(self, blocked_tools: list[str] | None = None) -> None:
+    def __init__(self, blocked_tools: list[str] | None = None, dry_run: bool = False) -> None:
         self.blocked_tools = set(blocked_tools or ["system_shutdown", "drop_database", "raw_exec"])
         self.interceptors: list[Callable[[str, dict[str, Any]], GuardrailInterception | None]] = []
+        self.dry_run = dry_run
 
     def register_interceptor(self, fn: Callable[[str, dict[str, Any]], GuardrailInterception | None]) -> None:
         self.interceptors.append(fn)
@@ -357,11 +358,19 @@ class DynamicGuardrailInjector:
             return None
         self.register_interceptor(_interceptor)
 
-    def intercept(self, tool_name: str, params: dict[str, Any]) -> GuardrailInterception:
+    def intercept(self, tool_name: str, params: dict[str, Any], tenant_id: str | None = None) -> GuardrailInterception:
         """Inspect and intercept tool invocation before execution."""
         # 1. Blocked tools check
         if tool_name.lower() in self.blocked_tools:
-            audit = hashlib.sha256(f"BLOCK:{tool_name}:{params}".encode()).hexdigest()
+            audit = hashlib.sha256(f"BLOCK:{tenant_id or 'default'}:{tool_name}:{params}".encode()).hexdigest()
+            if self.dry_run:
+                return GuardrailInterception(
+                    allowed=True,
+                    action="AUDIT_BLOCKED",
+                    intent_name=tool_name,
+                    reasons=[f"[DRY-RUN] Prohibited tool {tool_name} logged without blocking"],
+                    audit_hash=audit,
+                )
             return GuardrailInterception(
                 allowed=False,
                 action="BLOCK",
@@ -374,9 +383,12 @@ class DynamicGuardrailInjector:
         for interceptor in self.interceptors:
             res = interceptor(tool_name, params)
             if res and not res.allowed:
+                if self.dry_run:
+                    res.allowed = True
+                    res.action = "AUDIT_BLOCKED"
                 return res
 
-        audit = hashlib.sha256(f"ALLOW:{tool_name}:{params}".encode()).hexdigest()
+        audit = hashlib.sha256(f"ALLOW:{tenant_id or 'default'}:{tool_name}:{params}".encode()).hexdigest()
         return GuardrailInterception(
             allowed=True,
             action="ALLOW",

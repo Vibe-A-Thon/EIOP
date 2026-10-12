@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+import pytest
 
 from eoip.testing.perf_regression import (
     PerformanceRegressionDetector,
@@ -9,6 +10,7 @@ from eoip.testing.perf_regression import (
 )
 
 
+@pytest.mark.req("TEST-004")
 class TestPerfRegressionDetector:
     def test_pass_within_thresholds(self):
         detector = PerformanceRegressionDetector(

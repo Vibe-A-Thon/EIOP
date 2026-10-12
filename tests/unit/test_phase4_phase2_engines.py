@@ -103,6 +103,7 @@ from eoip.telemetry.adapter import (
 )
 
 
+@pytest.mark.req("AGENT-001")
 class TestAgent001CognitiveBoundaryTelemetry:
     """AGENT-001: Cognitive Boundary Telemetry."""
 
@@ -153,6 +154,8 @@ class TestAgent001CognitiveBoundaryTelemetry:
         assert len(events) >= 3
 
 
+@pytest.mark.req("AGENT-002")
+@pytest.mark.req("AI-003")
 class TestAgent002AndAi003Extraction:
     """AGENT-002: Dynamic Extraction Pipeline & AI-003: Relation Extraction."""
 
@@ -187,6 +190,7 @@ class TestAgent002AndAi003Extraction:
         assert len(res.communities) >= 1
 
 
+@pytest.mark.req("AGENT-003")
 class TestAgent003MessageBus:
     """AGENT-003: Agent Communication Bus."""
 
@@ -237,6 +241,7 @@ class TestAgent003MessageBus:
         assert len(received_payloads) == 1
 
 
+@pytest.mark.req("AGENT-004")
 class TestAgent004ParallelFanOutFanIn:
     """AGENT-004: Parallel Fan-Out/Fan-In (MapReduce)."""
 
@@ -271,6 +276,7 @@ class TestAgent004ParallelFanOutFanIn:
         assert len(run.context_output.get("processed_items", [])) == 5
 
 
+@pytest.mark.req("GRAPH-001")
 class TestGraph001Federation:
     """GRAPH-001: Federated Graph Engineering."""
 
@@ -285,6 +291,7 @@ class TestGraph001Federation:
         assert len(res["subquery_plans"]) >= 1
 
 
+@pytest.mark.req("GRAPH-002")
 class TestGraph002CausalInference:
     """GRAPH-002: Causal Inference over Graphs."""
 
@@ -310,6 +317,7 @@ class TestGraph002CausalInference:
         assert what_if["causal_effect"]["effect_size"] > 0.0
 
 
+@pytest.mark.req("GRAPH-003")
 class TestGraph003Distillation:
     """GRAPH-003: Knowledge Distillation Engineering."""
 
@@ -335,6 +343,7 @@ class TestGraph003Distillation:
         assert dep_res["status"] == "DEPLOYED"
 
 
+@pytest.mark.req("GRAPH-004")
 class TestGraph004GNNIntegration:
     """GRAPH-004: Graph Neural Network Integration."""
 
@@ -366,6 +375,7 @@ class TestGraph004GNNIntegration:
         assert cls_res["predicted_class"] == "Microservice"
 
 
+@pytest.mark.req("GRAPH-005")
 class TestGraph005TemporalRetrieval:
     """GRAPH-005: Temporal & Hybrid Retrieval."""
 
@@ -396,6 +406,7 @@ class TestGraph005TemporalRetrieval:
         assert [f.object_value for f in timeline] == ["PROVISIONING", "HEALTHY", "DEGRADED"]
 
 
+@pytest.mark.req("GRAPH-006")
 class TestGraph006OWLAndSHACLValidation:
     """GRAPH-006: OWL Reasoning & SHACL Runtime Validation."""
 

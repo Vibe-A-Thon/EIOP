@@ -72,6 +72,7 @@ from eoip.verification.engine import (
 )
 
 
+@pytest.mark.req("CORE-001")
 class TestCore001TokenFormats:
     """CORE-001: Token Format Serialization Engines."""
 
@@ -120,6 +121,7 @@ class TestCore001TokenFormats:
         assert "recommended_format" in bench
 
 
+@pytest.mark.req("CORE-002")
 class TestCore002Verification:
     """CORE-002: Verification & Guardrail Engineering."""
 
@@ -170,6 +172,7 @@ class TestCore002Verification:
         assert "Blocked" in reason
 
 
+@pytest.mark.req("CORE-003")
 class TestCore003IntentRouter:
     """CORE-003: Intent Router Engineering."""
 
@@ -203,6 +206,7 @@ class TestCore003IntentRouter:
         assert stats["total_routed_queries"] >= 1
 
 
+@pytest.mark.req("CORE-004")
 class TestCore004GraphOverGraph:
     """CORE-004: Graph-over-Graph Engineering."""
 
@@ -230,6 +234,7 @@ class TestCore004GraphOverGraph:
 
 
 
+@pytest.mark.req("CORE-005")
 class TestCore005LoopOverLoop:
     """CORE-005: Loop-over-Loop Engineering."""
 
@@ -290,6 +295,7 @@ class TestCore005LoopOverLoop:
             supervisor.execute(failing_task)
 
 
+@pytest.mark.req("CORE-006")
 class TestCore006TokenBudget:
     """CORE-006: Token Budget Engineering."""
 

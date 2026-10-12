@@ -2,8 +2,66 @@
   "001": [
     "tests/unit/test_requirement_evidence.py"
   ],
+  "AGENT-001": [
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent001CognitiveBoundaryTelemetry::test_all_seven_boundary_signals"
+  ],
+  "AGENT-002": [
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_chunker_and_entity_extractor",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_full_pipeline_and_communities",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_relation_extractor_triples"
+  ],
+  "AGENT-003": [
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent003MessageBus::test_broadcast_channel",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent003MessageBus::test_capability_negotiation",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent003MessageBus::test_queue_and_dlq_expiration"
+  ],
+  "AGENT-004": [
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent004ParallelFanOutFanIn::test_fan_out_fan_in_map_reduce"
+  ],
+  "AI-001": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI001AdvancedXAI::test_confidence_calibration",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI001AdvancedXAI::test_decision_trace_graph_and_critical_path",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI001AdvancedXAI::test_feature_importance_shapley"
+  ],
+  "AI-002": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI002DeepNLP::test_aspect_sentiment_analyzer",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI002DeepNLP::test_coreference_resolver",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI002DeepNLP::test_deep_entity_extractor",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI002DeepNLP::test_topic_modeler_and_language_detector"
+  ],
+  "AI-003": [
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_chunker_and_entity_extractor",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_full_pipeline_and_communities",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_relation_extractor_triples"
+  ],
+  "AI-004": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI004ModelABTestingAndCanary::test_ab_experiment_lifecycle_and_significance",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI004ModelABTestingAndCanary::test_canary_deployment_promotion_and_auto_rollback"
+  ],
+  "AI-005": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI005MLOpsExperimentTracking::test_experiment_runs_and_comparison"
+  ],
+  "AI-006": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI006EmbeddingManagement::test_embedding_fusion_and_dimension_reduction",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI006EmbeddingManagement::test_embedding_registry_and_drift_detection"
+  ],
+  "AI-007": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI007ProbabilisticReasoning::test_bayesian_graph_reasoning_and_strategy",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI007ProbabilisticReasoning::test_uncertainty_propagation"
+  ],
   "CG-GAP-008": [
     "tests/unit/test_production_release_gate_wp8.py::test_cg_gap_008_external_acceptance_receipts"
+  ],
+  "COMPLY-001": [
+    "tests/unit/test_phase4_phase6_7_engines.py::TestComply001ComplianceAsCode::test_compliance_rules_and_monitor"
+  ],
+  "COMPLY-002": [
+    "tests/unit/test_phase4_phase6_7_engines.py::TestComply002PIIDetectionAndAnonymization::test_anonymizer_and_pseudonymizer",
+    "tests/unit/test_phase4_phase6_7_engines.py::TestComply002PIIDetectionAndAnonymization::test_pii_scanner"
+  ],
+  "COMPLY-003": [
+    "tests/unit/test_phase4_compliance_and_search.py::TestContinuousComplianceDashboard::test_attestation_workflow",
+    "tests/unit/test_phase4_compliance_and_search.py::TestContinuousComplianceDashboard::test_framework_scoring_and_audit_export"
   ],
   "CONN-01": [
     "tests/unit/test_phase2_connectors.py"
@@ -15,6 +73,29 @@
   "CONN-03": [
     "tests/unit/test_jira_connector.py::test_jira_offline_fixtures_and_baseline",
     "tests/unit/test_jira_connector.py"
+  ],
+  "CORE-001": [
+    "tests/unit/test_phase4_core_engines.py::TestCore001TokenFormats::test_all_seven_strategies_roundtrip",
+    "tests/unit/test_phase4_core_engines.py::TestCore001TokenFormats::test_format_engine_auto_selection_and_benchmarks"
+  ],
+  "CORE-002": [
+    "tests/unit/test_phase4_core_engines.py::TestCore002Verification::test_builtin_rules_and_registry",
+    "tests/unit/test_phase4_core_engines.py::TestCore002Verification::test_dynamic_guardrail_interceptor"
+  ],
+  "CORE-003": [
+    "tests/unit/test_phase4_core_engines.py::TestCore003IntentRouter::test_router_engine_and_feedback",
+    "tests/unit/test_phase4_core_engines.py::TestCore003IntentRouter::test_sub10ms_intent_classification"
+  ],
+  "CORE-004": [
+    "tests/unit/test_phase4_core_engines.py::TestCore004GraphOverGraph::test_cross_layer_and_diff"
+  ],
+  "CORE-005": [
+    "tests/unit/test_phase4_core_engines.py::TestCore005LoopOverLoop::test_circuit_breaker_tripping",
+    "tests/unit/test_phase4_core_engines.py::TestCore005LoopOverLoop::test_supervisory_loop_execution_and_fallback"
+  ],
+  "CORE-006": [
+    "tests/unit/test_phase4_core_engines.py::TestCore006TokenBudget::test_context_compression_on_budget_exceed",
+    "tests/unit/test_phase4_core_engines.py::TestCore006TokenBudget::test_token_budget_allocation_and_reallocation"
   ],
   "FR-ADMIN-001": [
     "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_admin_001_ingestion_ui"
@@ -2737,6 +2818,25 @@
   "GAP-UX-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
+  "GRAPH-001": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph001Federation::test_catalog_and_federated_query"
+  ],
+  "GRAPH-002": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph002CausalInference::test_intervention_and_blast_radius"
+  ],
+  "GRAPH-003": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph003Distillation::test_distillation_package_and_deploy"
+  ],
+  "GRAPH-004": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph004GNNIntegration::test_embeddings_and_link_prediction"
+  ],
+  "GRAPH-005": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph005TemporalRetrieval::test_temporal_index_as_of_and_range"
+  ],
+  "GRAPH-006": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph006OWLAndSHACLValidation::test_owl_reasoner",
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph006OWLAndSHACLValidation::test_shacl_shape_validation"
+  ],
   "H-01": [
     "tests/unit/test_phase2_hugegraph_schema.py"
   ],
@@ -2758,6 +2858,31 @@
   ],
   "H-08": [
     "tests/unit/test_deployment_api.py"
+  ],
+  "INFRA-001": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra001MultiLevelCache::test_invalidation_broadcast_and_warming",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra001MultiLevelCache::test_l1_l2_hierarchy_and_promotion"
+  ],
+  "INFRA-002": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra002OAuthAndSSO::test_oauth_pkce_flow",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra002OAuthAndSSO::test_oidc_discovery_and_saml_adapter",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra002OAuthAndSSO::test_token_validator"
+  ],
+  "INFRA-004": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra004LogAggregation::test_sampling_filter",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra004LogAggregation::test_structured_json_logging_with_correlation"
+  ],
+  "INFRA-005": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra005DistributedScheduling::test_distributed_lock_and_task_dag",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra005DistributedScheduling::test_leader_election"
+  ],
+  "INFRA-006": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra006APIVersioning::test_api_versioning_and_headers",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra006APIVersioning::test_sdk_generation"
+  ],
+  "INFRA-007": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra007BackupAndRestore::test_automated_restore_drill",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra007BackupAndRestore::test_backup_encryption_and_integrity"
   ],
   "KGR-G-011": [
     "tests/unit/test_behavioral_gate.py::test_behavioral_gate_abstains_with_unverified_symbols_and_coverage",
@@ -2880,6 +3005,13 @@
   "MS-7": [
     "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_07_zk_privacy_mesh"
   ],
+  "MULTI-001": [
+    "tests/unit/test_phase4_phase6_7_engines.py::TestMulti001DiagramParsingAndRendering::test_graph_to_diagram_renderer",
+    "tests/unit/test_phase4_phase6_7_engines.py::TestMulti001DiagramParsingAndRendering::test_mermaid_parsing_and_loading"
+  ],
+  "MULTI-002": [
+    "tests/unit/test_phase4_phase6_7_engines.py::TestMulti002MemoryGraph::test_episodic_graph_and_consolidation"
+  ],
   "MVP-FR-001": [
     "tests/unit/test_requirement_evidence.py"
   ],
@@ -2962,6 +3094,12 @@
   ],
   "PERF-01": [
     "tests/unit/test_performance_reliability_and_operations_wp72.py::test_perf_01_formal_nfr_benchmark_suite"
+  ],
+  "PRE-001": [
+    "tests/unit/test_phase4_preflight.py::test_preflight_package_collision_and_baselines"
+  ],
+  "PRE-002": [
+    "tests/unit/test_phase4_preflight.py::test_preflight_requirements_registry_registered"
   ],
   "REL-01": [
     "tests/unit/test_production_release_gate_wp8.py::test_rel_01_release_checklist"
@@ -3157,6 +3295,91 @@
     "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
     "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
     "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "TEST-001": [
+    "tests/unit/test_phase4_phase6_7_engines.py::TestChaos001FaultInjection::test_chaos_fault_injection_and_recovery"
+  ],
+  "TEST-002": [
+    "tests/unit/test_phase4_load.py::test_load_test_runner_concurrent_queries"
+  ],
+  "TEST-003": [
+    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_all_formats_token_compression_ratio",
+    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_lean_serialization_round_trip",
+    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_toon_serialization_round_trip",
+    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_tron_serialization_round_trip"
+  ],
+  "TEST-004": [
+    "tests/unit/test_phase4_perf_regression.py::TestPerfRegressionDetector::test_baseline_save_and_load",
+    "tests/unit/test_phase4_perf_regression.py::TestPerfRegressionDetector::test_detect_latency_regression",
+    "tests/unit/test_phase4_perf_regression.py::TestPerfRegressionDetector::test_detect_throughput_drop",
+    "tests/unit/test_phase4_perf_regression.py::TestPerfRegressionDetector::test_pass_within_thresholds"
+  ],
+  "TEST-005": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-001": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-002": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-003": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-004": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-005": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-006": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-007": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-008": [
+    "tests/unit/test_phase4_compliance_and_search.py::TestSearchAnalyticsEngine::test_relevance_tuning_synonyms_and_boosts",
+    "tests/unit/test_phase4_compliance_and_search.py::TestSearchAnalyticsEngine::test_search_event_logging_and_summary"
+  ],
+  "UI-009": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
   ],
   "UI-01": [
     "tests/unit/test_web_ux_and_admin_wp53.py::test_ui_01_causal_blast_radius_dashboard"

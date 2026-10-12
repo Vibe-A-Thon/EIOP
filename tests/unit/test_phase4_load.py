@@ -6,6 +6,7 @@ from tests.load.load_runner import LoadTestRunner
 
 
 @pytest.mark.asyncio
+@pytest.mark.req("TEST-002")
 async def test_load_test_runner_concurrent_queries():
     runner = LoadTestRunner()
     call_count = 0

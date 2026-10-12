@@ -1,6 +1,7 @@
 """Unit Tests for Continuous Compliance Dashboard (COMPLY-003) & Search Analytics (UI-008)."""
 
 import json
+import pytest
 from eoip.compliance.dashboard import (
     AttestationStatus,
     AttestationWorkflow,
@@ -16,6 +17,7 @@ from eoip.search.analytics import (
 )
 
 
+@pytest.mark.req("COMPLY-003")
 class TestContinuousComplianceDashboard:
     def test_framework_scoring_and_audit_export(self):
         dashboard = ContinuousComplianceDashboard()
@@ -66,6 +68,7 @@ class TestContinuousComplianceDashboard:
         assert signed.reviewer_signature == "SIG-RSA-99214A"
 
 
+@pytest.mark.req("UI-008")
 class TestSearchAnalyticsEngine:
     def test_search_event_logging_and_summary(self):
         engine = SearchAnalyticsEngine()

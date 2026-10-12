@@ -86,11 +86,15 @@ class ComplianceRule:
         framework: ComplianceFramework,
         severity: ComplianceSeverity,
         description: str,
+        article: str = "",
+        version: str = "1.0",
     ) -> None:
         self.rule_id = rule_id
         self.framework = framework
         self.severity = severity
         self.description = description
+        self.article = article
+        self.version = version
 
     def evaluate(self, store: MemoryGraphStore) -> list[ComplianceViolation]:
         raise NotImplementedError
@@ -105,6 +109,8 @@ class GDPRRightToErasureRule(ComplianceRule):
             framework=ComplianceFramework.GDPR,
             severity=ComplianceSeverity.CRITICAL,
             description="Entities marked deleted_at must not have active dependent relations",
+            article="GDPR Article 17 (Right to Erasure)",
+            version="1.0",
         )
 
     def evaluate(self, store: MemoryGraphStore) -> list[ComplianceViolation]:
@@ -138,6 +144,8 @@ class SOXSegregationOfDutiesRule(ComplianceRule):
             framework=ComplianceFramework.SOX,
             severity=ComplianceSeverity.CRITICAL,
             description="Author of code change must not be the sole approver/deployer",
+            article="SOX Section 404 (Management Assessment of Internal Controls)",
+            version="1.0",
         )
 
     def evaluate(self, store: MemoryGraphStore) -> list[ComplianceViolation]:
@@ -171,6 +179,8 @@ class HIPAAMinimumNecessaryRule(ComplianceRule):
             framework=ComplianceFramework.HIPAA,
             severity=ComplianceSeverity.CRITICAL,
             description="Healthcare data stores must explicitly specify encryption at rest",
+            article="HIPAA Security Rule 45 CFR § 164.312(a)(2)(iv) (Encryption and Decryption)",
+            version="1.0",
         )
 
     def evaluate(self, store: MemoryGraphStore) -> list[ComplianceViolation]:
@@ -207,6 +217,8 @@ class SOC2AccessControlRule(ComplianceRule):
             framework=ComplianceFramework.SOC2,
             severity=ComplianceSeverity.WARNING,
             description="Critical production services must declare resilience tier",
+            article="AICPA SOC 2 Trust Services Criteria CC6.1",
+            version="1.0",
         )
 
     def evaluate(self, store: MemoryGraphStore) -> list[ComplianceViolation]:

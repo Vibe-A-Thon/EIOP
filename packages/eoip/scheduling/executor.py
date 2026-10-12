@@ -330,12 +330,14 @@ class DistributedLock:
     """Distributed mutual exclusion lock for task scheduling across replicas."""
 
     _global_locks: dict[str, tuple[str, float]] = {}  # lock_name -> (owner, expires_at)
+    _global_fencing_tokens: dict[str, int] = {}  # lock_name -> monotonic token
     _lock_mutex = threading.Lock()
 
     def __init__(self, lock_name: str, owner_id: str, ttl_seconds: float = 30.0) -> None:
         self.lock_name = lock_name
         self.owner_id = owner_id
         self.ttl_seconds = ttl_seconds
+        self.fencing_token: int = 0
 
     def acquire(self) -> bool:
         with self._lock_mutex:
@@ -343,8 +345,12 @@ class DistributedLock:
             current = self._global_locks.get(self.lock_name)
             if current is None or now > current[1]:
                 self._global_locks[self.lock_name] = (self.owner_id, now + self.ttl_seconds)
+                self._global_fencing_tokens[self.lock_name] = self._global_fencing_tokens.get(self.lock_name, 0) + 1
+                self.fencing_token = self._global_fencing_tokens[self.lock_name]
                 return True
-            return current[0] == self.owner_id
+            if current[0] == self.owner_id:
+                return True
+            return False
 
     def release(self) -> bool:
         with self._lock_mutex:

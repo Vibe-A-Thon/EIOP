@@ -44,6 +44,7 @@ json_objects = st.recursive(
 )
 
 
+@pytest.mark.req("TEST-003")
 class TestPropertyTokenFormatSerialization:
     """Hypothesis tests for Token Format round-trip fidelity & token sizing."""
 

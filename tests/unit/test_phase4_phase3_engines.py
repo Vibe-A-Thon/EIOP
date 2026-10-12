@@ -57,6 +57,7 @@ from eoip.reasoning.strategies import (
 )
 
 
+@pytest.mark.req("AI-001")
 class TestAI001AdvancedXAI:
     """AI-001: Advanced XAI Engine."""
 
@@ -118,6 +119,7 @@ class TestAI001AdvancedXAI:
         assert len(report.bins) > 0
 
 
+@pytest.mark.req("AI-002")
 class TestAI002DeepNLP:
     """AI-002: Deep NLP Pipeline."""
 
@@ -184,6 +186,7 @@ class TestAI002DeepNLP:
         assert len(clusters[0].mentions) >= 2
 
 
+@pytest.mark.req("AI-004")
 class TestAI004ModelABTestingAndCanary:
     """AI-004: Model A/B Testing & Canary Deployment."""
 
@@ -241,6 +244,7 @@ class TestAI004ModelABTestingAndCanary:
         assert canary.canary_traffic_pct == 0.0
 
 
+@pytest.mark.req("AI-005")
 class TestAI005MLOpsExperimentTracking:
     """AI-005: MLOps Experiment Tracking."""
 
@@ -281,6 +285,7 @@ class TestAI005MLOpsExperimentTracking:
         assert best_run.run_id == r2.run_id
 
 
+@pytest.mark.req("AI-006")
 class TestAI006EmbeddingManagement:
     """AI-006: Embedding Management & Versioning."""
 
@@ -325,6 +330,7 @@ class TestAI006EmbeddingManagement:
         assert reduced_norm == pytest.approx(1.0, rel=1e-2)
 
 
+@pytest.mark.req("AI-007")
 class TestAI007ProbabilisticReasoning:
     """AI-007: Probabilistic Reasoning Integration."""
 

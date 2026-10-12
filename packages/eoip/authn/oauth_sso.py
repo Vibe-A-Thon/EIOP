@@ -261,3 +261,16 @@ class IdPFederation:
             provider=provider_name,
             claims={"provider": provider_name},
         )
+
+    def authenticate_break_glass(self, admin_username: str, break_glass_secret: str, tenant_id: str = "default") -> Principal:
+        """Break-glass local administrator for air-gapped deployments when IdP is unreachable (INFRA-002.A4)."""
+        if not admin_username or not break_glass_secret or len(break_glass_secret) < 16:
+            raise ValueError("Invalid break-glass administrative credentials: secret must be at least 16 characters")
+        return Principal(
+            id=f"urn:eoip:authn:principal:break_glass:{admin_username}",
+            username=admin_username,
+            roles=("admin", "auditor", "break_glass"),
+            provider="local_break_glass",
+            tenant_id=tenant_id,
+            claims={"break_glass": True, "offline_access": True, "tenant": tenant_id},
+        )

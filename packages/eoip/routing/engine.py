@@ -174,7 +174,7 @@ class RouterEngine:
             cls._instance = cls()
         return cls._instance
 
-    def route(self, query: str, context: dict[str, Any] | None = None) -> RoutingDecision:
+    def route(self, query: str, context: dict[str, Any] | None = None, shadow_mode: bool = False) -> RoutingDecision:
         """Evaluate query and produce optimized routing decision."""
         start_t = time.perf_counter()
         intent, confidence = self.classifier.classify(query, context)
@@ -208,7 +208,7 @@ class RouterEngine:
             estimated_cost_usd=round(est_cost, 6),
             estimated_latency_ms=round(est_latency, 2),
             reason=f"Classified as {intent.value} with confidence {confidence:.2f} (routing overhead {latency_calc:.2f}ms)",
-            metadata={"classification_latency_ms": round(latency_calc, 3)},
+            metadata={"classification_latency_ms": round(latency_calc, 3), "shadow_mode": shadow_mode},
         )
         return decision
 

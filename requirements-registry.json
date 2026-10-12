@@ -1587,7 +1587,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "13. G2-P10 — Diamond-Standard UX & Production Hardening",
+    "phase": "13. G2-P10 \u2014 Diamond-Standard UX & Production Hardening",
     "work_package": "",
     "code_paths": [
       "apps/web/src/admin/index.jsx",
@@ -1907,11 +1907,11 @@
   },
   {
     "id": "G2-ARCH-001",
-    "title": "G2-ARCH-001 — One acquisition contract",
+    "title": "G2-ARCH-001 \u2014 One acquisition contract",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "3. G2-P0 — Contract & Architecture Alignment",
+    "phase": "3. G2-P0 \u2014 Contract & Architecture Alignment",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_architecture.py",
@@ -1928,7 +1928,7 @@
   },
   {
     "id": "G2-ARCH-002",
-    "title": "G2-ARCH-002 — API/event first",
+    "title": "G2-ARCH-002 \u2014 API/event first",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -1947,7 +1947,7 @@
   },
   {
     "id": "G2-ARCH-003",
-    "title": "G2-ARCH-003 — Deterministic first",
+    "title": "G2-ARCH-003 \u2014 Deterministic first",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -1966,7 +1966,7 @@
   },
   {
     "id": "G2-ARCH-004",
-    "title": "G2-ARCH-004 — Preserve source fidelity",
+    "title": "G2-ARCH-004 \u2014 Preserve source fidelity",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -1985,7 +1985,7 @@
   },
   {
     "id": "G2-ARCH-005",
-    "title": "G2-ARCH-005 — HugeGraph is semantic operational truth",
+    "title": "G2-ARCH-005 \u2014 HugeGraph is semantic operational truth",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2004,11 +2004,11 @@
   },
   {
     "id": "G2-ARCH-006",
-    "title": "G2-ARCH-006 — No raw telemetry lake in HugeGraph",
+    "title": "G2-ARCH-006 \u2014 No raw telemetry lake in HugeGraph",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "3. G2-P0 — Contract & Architecture Alignment",
+    "phase": "3. G2-P0 \u2014 Contract & Architecture Alignment",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_architecture.py"
@@ -2023,11 +2023,11 @@
   },
   {
     "id": "G2-ARCH-007",
-    "title": "G2-ARCH-007 — No destructive history overwrite",
+    "title": "G2-ARCH-007 \u2014 No destructive history overwrite",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "3. G2-P0 — Contract & Architecture Alignment",
+    "phase": "3. G2-P0 \u2014 Contract & Architecture Alignment",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_architecture.py"
@@ -2043,7 +2043,7 @@
   },
   {
     "id": "G2-ARCH-008",
-    "title": "G2-ARCH-008 — Current and historical views",
+    "title": "G2-ARCH-008 \u2014 Current and historical views",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2062,7 +2062,7 @@
   },
   {
     "id": "G2-ARCH-009",
-    "title": "G2-ARCH-009 — One semantic identity system",
+    "title": "G2-ARCH-009 \u2014 One semantic identity system",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2081,11 +2081,11 @@
   },
   {
     "id": "G2-ARCH-010",
-    "title": "G2-ARCH-010 — Evidence is mandatory",
+    "title": "G2-ARCH-010 \u2014 Evidence is mandatory",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "3. G2-P0 — Contract & Architecture Alignment",
+    "phase": "3. G2-P0 \u2014 Contract & Architecture Alignment",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_architecture.py"
@@ -2100,11 +2100,11 @@
   },
   {
     "id": "G2-ARCH-011",
-    "title": "G2-ARCH-011 — AI is not the source of truth",
+    "title": "G2-ARCH-011 \u2014 AI is not the source of truth",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "3. G2-P0 — Contract & Architecture Alignment",
+    "phase": "3. G2-P0 \u2014 Contract & Architecture Alignment",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_architecture.py"
@@ -2119,7 +2119,7 @@
   },
   {
     "id": "G2-ARCH-012",
-    "title": "G2-ARCH-012 — Incremental by default after baseline",
+    "title": "G2-ARCH-012 \u2014 Incremental by default after baseline",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2138,7 +2138,7 @@
   },
   {
     "id": "G2-ARCH-013",
-    "title": "G2-ARCH-013 — Replayability",
+    "title": "G2-ARCH-013 \u2014 Replayability",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2157,7 +2157,7 @@
   },
   {
     "id": "G2-ARCH-014",
-    "title": "G2-ARCH-014 — Source permissions respected",
+    "title": "G2-ARCH-014 \u2014 Source permissions respected",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2176,11 +2176,11 @@
   },
   {
     "id": "G2-ARCH-015",
-    "title": "G2-ARCH-015 — Progressive complexity",
+    "title": "G2-ARCH-015 \u2014 Progressive complexity",
     "family": "G2",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "3. G2-P0 — Contract & Architecture Alignment",
+    "phase": "3. G2-P0 \u2014 Contract & Architecture Alignment",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_architecture.py"
@@ -2199,7 +2199,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "10. G2-P7 — Temporal, Architecture & Process Intelligence",
+    "phase": "10. G2-P7 \u2014 Temporal, Architecture & Process Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -2357,7 +2357,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "11. G2-P8 — Knowledge Health & Governed AI",
+    "phase": "11. G2-P8 \u2014 Knowledge Health & Governed AI",
     "work_package": "",
     "code_paths": [
       "apps/api/main.py",
@@ -2474,7 +2474,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "12. G2-P9 — Counterfactual Twin & Causal Intelligence",
+    "phase": "12. G2-P9 \u2014 Counterfactual Twin & Causal Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -2585,11 +2585,11 @@
   },
   {
     "id": "G2-EKAF-001",
-    "title": "G2-EKAF-001 — Source Registry",
+    "title": "G2-EKAF-001 \u2014 Source Registry",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "4. G2-P1 — Enterprise Knowledge Acquisition Fabric Core",
+    "phase": "4. G2-P1 \u2014 Enterprise Knowledge Acquisition Fabric Core",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -2606,7 +2606,7 @@
   },
   {
     "id": "G2-EKAF-002",
-    "title": "G2-EKAF-002 — Connector SDK",
+    "title": "G2-EKAF-002 \u2014 Connector SDK",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2623,7 +2623,7 @@
   },
   {
     "id": "G2-EKAF-003",
-    "title": "G2-EKAF-003 — SourceEvent envelope",
+    "title": "G2-EKAF-003 \u2014 SourceEvent envelope",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2643,7 +2643,7 @@
   },
   {
     "id": "G2-EKAF-004",
-    "title": "G2-EKAF-004 — Baseline crawl",
+    "title": "G2-EKAF-004 \u2014 Baseline crawl",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2660,7 +2660,7 @@
   },
   {
     "id": "G2-EKAF-005",
-    "title": "G2-EKAF-005 — Incremental sync",
+    "title": "G2-EKAF-005 \u2014 Incremental sync",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2677,7 +2677,7 @@
   },
   {
     "id": "G2-EKAF-006",
-    "title": "G2-EKAF-006 — Webhook/event ingestion",
+    "title": "G2-EKAF-006 \u2014 Webhook/event ingestion",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2694,7 +2694,7 @@
   },
   {
     "id": "G2-EKAF-007",
-    "title": "G2-EKAF-007 — Poll fallback",
+    "title": "G2-EKAF-007 \u2014 Poll fallback",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2711,7 +2711,7 @@
   },
   {
     "id": "G2-EKAF-008",
-    "title": "G2-EKAF-008 — Reconciliation crawl",
+    "title": "G2-EKAF-008 \u2014 Reconciliation crawl",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2728,7 +2728,7 @@
   },
   {
     "id": "G2-EKAF-009",
-    "title": "G2-EKAF-009 — Idempotency",
+    "title": "G2-EKAF-009 \u2014 Idempotency",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2745,7 +2745,7 @@
   },
   {
     "id": "G2-EKAF-010",
-    "title": "G2-EKAF-010 — Ordering tolerance",
+    "title": "G2-EKAF-010 \u2014 Ordering tolerance",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2765,7 +2765,7 @@
   },
   {
     "id": "G2-EKAF-011",
-    "title": "G2-EKAF-011 — Rate limiting",
+    "title": "G2-EKAF-011 \u2014 Rate limiting",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2782,7 +2782,7 @@
   },
   {
     "id": "G2-EKAF-012",
-    "title": "G2-EKAF-012 — Checkpointing",
+    "title": "G2-EKAF-012 \u2014 Checkpointing",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2799,7 +2799,7 @@
   },
   {
     "id": "G2-EKAF-013",
-    "title": "G2-EKAF-013 — Replay",
+    "title": "G2-EKAF-013 \u2014 Replay",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2816,7 +2816,7 @@
   },
   {
     "id": "G2-EKAF-014",
-    "title": "G2-EKAF-014 — Dead-letter handling",
+    "title": "G2-EKAF-014 \u2014 Dead-letter handling",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2836,7 +2836,7 @@
   },
   {
     "id": "G2-EKAF-015",
-    "title": "G2-EKAF-015 — Dry run",
+    "title": "G2-EKAF-015 \u2014 Dry run",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2853,7 +2853,7 @@
   },
   {
     "id": "G2-EKAF-016",
-    "title": "G2-EKAF-016 — Source deletion semantics",
+    "title": "G2-EKAF-016 \u2014 Source deletion semantics",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2873,11 +2873,11 @@
   },
   {
     "id": "G2-EKAF-017",
-    "title": "G2-EKAF-017 — Schema drift",
+    "title": "G2-EKAF-017 \u2014 Schema drift",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "4. G2-P1 — Enterprise Knowledge Acquisition Fabric Core",
+    "phase": "4. G2-P1 \u2014 Enterprise Knowledge Acquisition Fabric Core",
     "work_package": "",
     "code_paths": [
       "packages/eoip/connectors/drift.py"
@@ -2892,11 +2892,11 @@
   },
   {
     "id": "G2-EKAF-018",
-    "title": "G2-EKAF-018 — Mapping drift",
+    "title": "G2-EKAF-018 \u2014 Mapping drift",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "4. G2-P1 — Enterprise Knowledge Acquisition Fabric Core",
+    "phase": "4. G2-P1 \u2014 Enterprise Knowledge Acquisition Fabric Core",
     "work_package": "",
     "code_paths": [
       "packages/eoip/connectors/drift.py"
@@ -2911,7 +2911,7 @@
   },
   {
     "id": "G2-EKAF-019",
-    "title": "G2-EKAF-019 — Crawl boundaries",
+    "title": "G2-EKAF-019 \u2014 Crawl boundaries",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2928,7 +2928,7 @@
   },
   {
     "id": "G2-EKAF-020",
-    "title": "G2-EKAF-020 — Authentication isolation",
+    "title": "G2-EKAF-020 \u2014 Authentication isolation",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2945,7 +2945,7 @@
   },
   {
     "id": "G2-EKAF-021",
-    "title": "G2-EKAF-021 — Connector health",
+    "title": "G2-EKAF-021 \u2014 Connector health",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -2962,11 +2962,11 @@
   },
   {
     "id": "G2-EKAF-022",
-    "title": "G2-EKAF-022 — Source priority",
+    "title": "G2-EKAF-022 \u2014 Source priority",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "4. G2-P1 — Enterprise Knowledge Acquisition Fabric Core",
+    "phase": "4. G2-P1 \u2014 Enterprise Knowledge Acquisition Fabric Core",
     "work_package": "",
     "code_paths": [
       "packages/eoip/connectors/conflicts.py"
@@ -2981,7 +2981,7 @@
   },
   {
     "id": "G2-EKAF-023",
-    "title": "G2-EKAF-023 — Permission-aware metadata",
+    "title": "G2-EKAF-023 \u2014 Permission-aware metadata",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -3001,7 +3001,7 @@
   },
   {
     "id": "G2-EKAF-024",
-    "title": "G2-EKAF-024 — Content fingerprinting",
+    "title": "G2-EKAF-024 \u2014 Content fingerprinting",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -3021,7 +3021,7 @@
   },
   {
     "id": "G2-EKAF-025",
-    "title": "G2-EKAF-025 — Attachment handling",
+    "title": "G2-EKAF-025 \u2014 Attachment handling",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -3042,7 +3042,7 @@
   },
   {
     "id": "G2-EKAF-026",
-    "title": "G2-EKAF-026 — Incremental graph enrichment",
+    "title": "G2-EKAF-026 \u2014 Incremental graph enrichment",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -3062,7 +3062,7 @@
   },
   {
     "id": "G2-EKAF-027",
-    "title": "G2-EKAF-027 — Source capability introspection",
+    "title": "G2-EKAF-027 \u2014 Source capability introspection",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -3077,7 +3077,7 @@
   },
   {
     "id": "G2-EKAF-028",
-    "title": "G2-EKAF-028 — Connector compatibility matrix",
+    "title": "G2-EKAF-028 \u2014 Connector compatibility matrix",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -3094,7 +3094,7 @@
   },
   {
     "id": "G2-EKAF-029",
-    "title": "G2-EKAF-029 — Offline source fixture mode",
+    "title": "G2-EKAF-029 \u2014 Offline source fixture mode",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -3111,7 +3111,7 @@
   },
   {
     "id": "G2-EKAF-030",
-    "title": "G2-EKAF-030 — Source onboarding wizard",
+    "title": "G2-EKAF-030 \u2014 Source onboarding wizard",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -3132,7 +3132,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "3. G2-P0 — Contract & Architecture Alignment",
+    "phase": "3. G2-P0 \u2014 Contract & Architecture Alignment",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -3273,7 +3273,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "5. G2-P2 — Baseline, Incremental Sync & Graph Evolution",
+    "phase": "5. G2-P2 \u2014 Baseline, Incremental Sync & Graph Evolution",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -3578,7 +3578,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "7. G2-P4 — Source Wave 2: Confluence, ServiceNow & API Portals",
+    "phase": "7. G2-P4 \u2014 Source Wave 2: Confluence, ServiceNow & API Portals",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -3751,7 +3751,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -3865,7 +3865,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -3922,7 +3922,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -4036,7 +4036,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "9. G2-P6 — Expanded Semantic Digital Twin",
+    "phase": "9. G2-P6 \u2014 Expanded Semantic Digital Twin",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -4131,7 +4131,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "11. G2-P8 — Knowledge Health & Governed AI",
+    "phase": "11. G2-P8 \u2014 Knowledge Health & Governed AI",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -4378,7 +4378,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "5. G2-P2 — Baseline, Incremental Sync & Graph Evolution",
+    "phase": "5. G2-P2 \u2014 Baseline, Incremental Sync & Graph Evolution",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -4492,7 +4492,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "10. G2-P7 — Temporal, Architecture & Process Intelligence",
+    "phase": "10. G2-P7 \u2014 Temporal, Architecture & Process Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -4607,7 +4607,7 @@
     "family": "G2",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "4. G2-P1 — Enterprise Knowledge Acquisition Fabric Core",
+    "phase": "4. G2-P1 \u2014 Enterprise Knowledge Acquisition Fabric Core",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_observability.py",
@@ -4628,7 +4628,7 @@
     "family": "G2",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "4. G2-P1 — Enterprise Knowledge Acquisition Fabric Core",
+    "phase": "4. G2-P1 \u2014 Enterprise Knowledge Acquisition Fabric Core",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_observability.py"
@@ -4723,7 +4723,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "11. G2-P8 — Knowledge Health & Governed AI",
+    "phase": "11. G2-P8 \u2014 Knowledge Health & Governed AI",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -4992,7 +4992,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "10. G2-P7 — Temporal, Architecture & Process Intelligence",
+    "phase": "10. G2-P7 \u2014 Temporal, Architecture & Process Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -5084,11 +5084,11 @@
   },
   {
     "id": "G2-QOP-001",
-    "title": "G2-QOP-001 — WHY",
+    "title": "G2-QOP-001 \u2014 WHY",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "10. G2-P7 — Temporal, Architecture & Process Intelligence",
+    "phase": "10. G2-P7 \u2014 Temporal, Architecture & Process Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -5104,7 +5104,7 @@
   },
   {
     "id": "G2-QOP-002",
-    "title": "G2-QOP-002 — WHY NOT",
+    "title": "G2-QOP-002 \u2014 WHY NOT",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -5123,7 +5123,7 @@
   },
   {
     "id": "G2-QOP-003",
-    "title": "G2-QOP-003 — WHAT IF",
+    "title": "G2-QOP-003 \u2014 WHAT IF",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -5142,7 +5142,7 @@
   },
   {
     "id": "G2-QOP-004",
-    "title": "G2-QOP-004 — WHAT CHANGED",
+    "title": "G2-QOP-004 \u2014 WHAT CHANGED",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -5161,7 +5161,7 @@
   },
   {
     "id": "G2-QOP-005",
-    "title": "G2-QOP-005 — WHEN",
+    "title": "G2-QOP-005 \u2014 WHEN",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -5180,7 +5180,7 @@
   },
   {
     "id": "G2-QOP-006",
-    "title": "G2-QOP-006 — WHO",
+    "title": "G2-QOP-006 \u2014 WHO",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -5199,7 +5199,7 @@
   },
   {
     "id": "G2-QOP-007",
-    "title": "G2-QOP-007 — WHERE",
+    "title": "G2-QOP-007 \u2014 WHERE",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -5218,7 +5218,7 @@
   },
   {
     "id": "G2-QOP-008",
-    "title": "G2-QOP-008 — HOW",
+    "title": "G2-QOP-008 \u2014 HOW",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -5260,7 +5260,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "5. G2-P2 — Baseline, Incremental Sync & Graph Evolution",
+    "phase": "5. G2-P2 \u2014 Baseline, Incremental Sync & Graph Evolution",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -5412,7 +5412,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "4. G2-P1 — Enterprise Knowledge Acquisition Fabric Core",
+    "phase": "4. G2-P1 \u2014 Enterprise Knowledge Acquisition Fabric Core",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -5642,7 +5642,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "12. G2-P9 — Counterfactual Twin & Causal Intelligence",
+    "phase": "12. G2-P9 \u2014 Counterfactual Twin & Causal Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -5776,7 +5776,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "10. G2-P7 — Temporal, Architecture & Process Intelligence",
+    "phase": "10. G2-P7 \u2014 Temporal, Architecture & Process Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -5872,7 +5872,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "7. G2-P4 — Source Wave 2: Confluence, ServiceNow & API Portals",
+    "phase": "7. G2-P4 \u2014 Source Wave 2: Confluence, ServiceNow & API Portals",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -5986,7 +5986,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/connectors/cicd.py",
@@ -6063,7 +6063,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "6. G2-P3 — Source Wave 1: Jira, Git, GitLab, GitHub, Code, Files",
+    "phase": "6. G2-P3 \u2014 Source Wave 1: Jira, Git, GitLab, GitHub, Code, Files",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -6150,7 +6150,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "7. G2-P4 — Source Wave 2: Confluence, ServiceNow & API Portals",
+    "phase": "7. G2-P4 \u2014 Source Wave 2: Confluence, ServiceNow & API Portals",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -6252,7 +6252,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -6322,7 +6322,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "6. G2-P3 — Source Wave 1: Jira, Git, GitLab, GitHub, Code, Files",
+    "phase": "6. G2-P3 \u2014 Source Wave 1: Jira, Git, GitLab, GitHub, Code, Files",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -6394,7 +6394,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "6. G2-P3 — Source Wave 1: Jira, Git, GitLab, GitHub, Code, Files",
+    "phase": "6. G2-P3 \u2014 Source Wave 1: Jira, Git, GitLab, GitHub, Code, Files",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -6466,7 +6466,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -6519,7 +6519,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "6. G2-P3 — Source Wave 1: Jira, Git, GitLab, GitHub, Code, Files",
+    "phase": "6. G2-P3 \u2014 Source Wave 1: Jira, Git, GitLab, GitHub, Code, Files",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -6635,7 +6635,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -6722,7 +6722,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/connectors/otel.py",
@@ -6818,7 +6818,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/connectors/runtime_infra.py",
@@ -6876,7 +6876,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/connectors/sbom.py",
@@ -6954,7 +6954,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "7. G2-P4 — Source Wave 2: Confluence, ServiceNow & API Portals",
+    "phase": "7. G2-P4 \u2014 Source Wave 2: Confluence, ServiceNow & API Portals",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -7011,7 +7011,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "7. G2-P4 — Source Wave 2: Confluence, ServiceNow & API Portals",
+    "phase": "7. G2-P4 \u2014 Source Wave 2: Confluence, ServiceNow & API Portals",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -7125,7 +7125,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "6. G2-P3 — Source Wave 1: Jira, Git, GitLab, GitHub, Code, Files",
+    "phase": "6. G2-P3 \u2014 Source Wave 1: Jira, Git, GitLab, GitHub, Code, Files",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -7217,11 +7217,11 @@
   },
   {
     "id": "G2-SYNC-001",
-    "title": "G2-SYNC-001 — Baseline state",
+    "title": "G2-SYNC-001 \u2014 Baseline state",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "5. G2-P2 — Baseline, Incremental Sync & Graph Evolution",
+    "phase": "5. G2-P2 \u2014 Baseline, Incremental Sync & Graph Evolution",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -7236,7 +7236,7 @@
   },
   {
     "id": "G2-SYNC-002",
-    "title": "G2-SYNC-002 — Baseline snapshot",
+    "title": "G2-SYNC-002 \u2014 Baseline snapshot",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7256,7 +7256,7 @@
   },
   {
     "id": "G2-SYNC-003",
-    "title": "G2-SYNC-003 — Delta processing",
+    "title": "G2-SYNC-003 \u2014 Delta processing",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7276,7 +7276,7 @@
   },
   {
     "id": "G2-SYNC-004",
-    "title": "G2-SYNC-004 — Delete/retire",
+    "title": "G2-SYNC-004 \u2014 Delete/retire",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7296,7 +7296,7 @@
   },
   {
     "id": "G2-SYNC-005",
-    "title": "G2-SYNC-005 — Missed-event recovery",
+    "title": "G2-SYNC-005 \u2014 Missed-event recovery",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7316,7 +7316,7 @@
   },
   {
     "id": "G2-SYNC-006",
-    "title": "G2-SYNC-006 — Duplicate-event handling",
+    "title": "G2-SYNC-006 \u2014 Duplicate-event handling",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7336,7 +7336,7 @@
   },
   {
     "id": "G2-SYNC-007",
-    "title": "G2-SYNC-007 — Late event handling",
+    "title": "G2-SYNC-007 \u2014 Late event handling",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7356,7 +7356,7 @@
   },
   {
     "id": "G2-SYNC-008",
-    "title": "G2-SYNC-008 — Dependency-aware update",
+    "title": "G2-SYNC-008 \u2014 Dependency-aware update",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7376,7 +7376,7 @@
   },
   {
     "id": "G2-SYNC-009",
-    "title": "G2-SYNC-009 — Consistency watermark",
+    "title": "G2-SYNC-009 \u2014 Consistency watermark",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7398,7 +7398,7 @@
   },
   {
     "id": "G2-SYNC-010",
-    "title": "G2-SYNC-010 — Full rebuild is exceptional",
+    "title": "G2-SYNC-010 \u2014 Full rebuild is exceptional",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7418,7 +7418,7 @@
   },
   {
     "id": "G2-SYNC-011",
-    "title": "G2-SYNC-011 — Rebuild equivalence test",
+    "title": "G2-SYNC-011 \u2014 Rebuild equivalence test",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7438,7 +7438,7 @@
   },
   {
     "id": "G2-SYNC-012",
-    "title": "G2-SYNC-012 — Connector pause/resume",
+    "title": "G2-SYNC-012 \u2014 Connector pause/resume",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7458,7 +7458,7 @@
   },
   {
     "id": "G2-SYNC-013",
-    "title": "G2-SYNC-013 — Backfill",
+    "title": "G2-SYNC-013 \u2014 Backfill",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7478,7 +7478,7 @@
   },
   {
     "id": "G2-SYNC-014",
-    "title": "G2-SYNC-014 — Selective rescan",
+    "title": "G2-SYNC-014 \u2014 Selective rescan",
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
@@ -7502,7 +7502,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "8. G2-P5 — Source Wave 3: CI/CD, Observability, Runtime, SBOM",
+    "phase": "8. G2-P5 \u2014 Source Wave 3: CI/CD, Observability, Runtime, SBOM",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -7654,7 +7654,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "10. G2-P7 — Temporal, Architecture & Process Intelligence",
+    "phase": "10. G2-P7 \u2014 Temporal, Architecture & Process Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -7787,7 +7787,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "9. G2-P6 — Expanded Semantic Digital Twin",
+    "phase": "9. G2-P6 \u2014 Expanded Semantic Digital Twin",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -7883,7 +7883,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "13. G2-P10 — Diamond-Standard UX & Production Hardening",
+    "phase": "13. G2-P10 \u2014 Diamond-Standard UX & Production Hardening",
     "work_package": "",
     "code_paths": [
       "apps/web/src/kgr/enhancements/enhancements.css",
@@ -8188,7 +8188,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "13. G2-P10 — Diamond-Standard UX & Production Hardening",
+    "phase": "13. G2-P10 \u2014 Diamond-Standard UX & Production Hardening",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py",
@@ -8246,7 +8246,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "13. G2-P10 — Diamond-Standard UX & Production Hardening",
+    "phase": "13. G2-P10 \u2014 Diamond-Standard UX & Production Hardening",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -8341,7 +8341,7 @@
     "family": "G2",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps2-requirements.md",
-    "phase": "13. G2-P10 — Diamond-Standard UX & Production Hardening",
+    "phase": "13. G2-P10 \u2014 Diamond-Standard UX & Production Hardening",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/g2_readiness.py"
@@ -8500,7 +8500,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8519,7 +8519,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8538,7 +8538,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8557,7 +8557,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8576,7 +8576,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8595,7 +8595,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/agents/firewall.py"
@@ -8614,7 +8614,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/agents/firewall.py"
@@ -8633,7 +8633,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8652,7 +8652,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8671,7 +8671,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8690,7 +8690,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8709,7 +8709,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/models/governance.py"
@@ -8773,7 +8773,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8792,7 +8792,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8811,7 +8811,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8830,7 +8830,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8849,7 +8849,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8868,7 +8868,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8887,7 +8887,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8906,7 +8906,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8925,7 +8925,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8944,7 +8944,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -8982,7 +8982,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "12. Phase 9 — Ecosystem, Extensions & Domain Packs",
+    "phase": "12. Phase 9 \u2014 Ecosystem, Extensions & Domain Packs",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -9002,7 +9002,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "12. Phase 9 — Ecosystem, Extensions & Domain Packs",
+    "phase": "12. Phase 9 \u2014 Ecosystem, Extensions & Domain Packs",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -9022,7 +9022,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9041,7 +9041,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9060,7 +9060,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9079,7 +9079,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9098,7 +9098,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9117,7 +9117,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9136,7 +9136,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/query/cache.py"
@@ -9250,7 +9250,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -9270,7 +9270,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -9290,7 +9290,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -9310,7 +9310,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -9330,7 +9330,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py"
@@ -9468,7 +9468,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9487,7 +9487,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9506,7 +9506,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9525,7 +9525,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9544,7 +9544,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9563,7 +9563,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9582,7 +9582,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9601,7 +9601,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9620,7 +9620,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9639,7 +9639,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9658,7 +9658,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9677,7 +9677,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9696,7 +9696,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9715,7 +9715,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9734,7 +9734,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9753,7 +9753,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9772,7 +9772,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9791,7 +9791,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9810,7 +9810,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9829,7 +9829,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -9848,7 +9848,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/coverage.py"
@@ -9867,7 +9867,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -9887,7 +9887,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -10036,7 +10036,7 @@
   },
   {
     "id": "GAP-DUAL",
-    "title": "Dual semantic model (RDF/OWL ↔ property graph)",
+    "title": "Dual semantic model (RDF/OWL \u2194 property graph)",
     "family": "GAP",
     "priority": "P1",
     "spec_source": "#### WP 4.1. Intelligence amplification (Conquest Phase 3) (8 tasks)",
@@ -10334,7 +10334,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "12. Phase 9 — Ecosystem, Extensions & Domain Packs",
+    "phase": "12. Phase 9 \u2014 Ecosystem, Extensions & Domain Packs",
     "work_package": "",
     "code_paths": [
       "packages/eoip/marketplace/__init__.py",
@@ -10354,7 +10354,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -10560,7 +10560,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/federation/planner.py",
@@ -10584,7 +10584,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/federation/planner.py",
@@ -10606,7 +10606,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/federation/planner.py",
@@ -10630,7 +10630,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/federation/planner.py",
@@ -10651,7 +10651,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "apps/api/app.py",
@@ -10724,7 +10724,7 @@
   },
   {
     "id": "GAP-FRESH-005",
-    "title": "GAP-FRESH-005: Recommend review—not silently rewrite authoritative docs",
+    "title": "GAP-FRESH-005: Recommend review\u2014not silently rewrite authoritative docs",
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
@@ -10767,7 +10767,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "11. Phase 8 — Advanced Analytics, Simulation & Predictive Intelligence",
+    "phase": "11. Phase 8 \u2014 Advanced Analytics, Simulation & Predictive Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -10786,7 +10786,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "11. Phase 8 — Advanced Analytics, Simulation & Predictive Intelligence",
+    "phase": "11. Phase 8 \u2014 Advanced Analytics, Simulation & Predictive Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -10805,7 +10805,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/ontology/gitops.py"
@@ -10980,11 +10980,11 @@
   },
   {
     "id": "GAP-GOV-001",
-    "title": "GAP-GOV-001: Add semantic stewardship workflow: draft → review → approve → publish → deprecate",
+    "title": "GAP-GOV-001: Add semantic stewardship workflow: draft \u2192 review \u2192 approve \u2192 publish \u2192 deprecate",
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -11004,7 +11004,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -11024,7 +11024,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -11045,7 +11045,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11064,7 +11064,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11083,7 +11083,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11102,7 +11102,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11121,7 +11121,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11140,7 +11140,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/evidence.py"
@@ -11178,7 +11178,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "10. Phase 7 — Enterprise Security, HA & Operational Maturity",
+    "phase": "10. Phase 7 \u2014 Enterprise Security, HA & Operational Maturity",
     "work_package": "",
     "code_paths": [
       "packages/eoip/ha.py"
@@ -11197,7 +11197,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11216,7 +11216,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11235,7 +11235,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11254,7 +11254,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11274,7 +11274,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11289,7 +11289,7 @@
   },
   {
     "id": "GAP-HG-006",
-    "title": "GAP-HG-006: standalone → distributed migration playbook",
+    "title": "GAP-HG-006: standalone \u2192 distributed migration playbook",
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
@@ -11427,7 +11427,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/agents/firewall.py"
@@ -11446,7 +11446,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/agents/firewall.py"
@@ -11465,7 +11465,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/agents/firewall.py"
@@ -11484,7 +11484,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/agents/firewall.py"
@@ -11503,7 +11503,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/agents/firewall.py"
@@ -11522,7 +11522,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/agents/firewall.py"
@@ -11541,7 +11541,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/agents/firewall.py"
@@ -11556,11 +11556,11 @@
   },
   {
     "id": "GAP-KFW-008",
-    "title": "GAP-KFW-008: Provide “why blocked/redacted?” explanation",
+    "title": "GAP-KFW-008: Provide \u201cwhy blocked/redacted?\u201d explanation",
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "9. Phase 6 — Governed Agentic Knowledge Operations",
+    "phase": "9. Phase 6 \u2014 Governed Agentic Knowledge Operations",
     "work_package": "",
     "code_paths": [
       "packages/eoip/agents/firewall.py"
@@ -11662,7 +11662,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -11683,7 +11683,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -11703,7 +11703,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -11723,7 +11723,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -11743,7 +11743,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -11763,7 +11763,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11782,7 +11782,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11801,7 +11801,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11820,7 +11820,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11839,7 +11839,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11858,7 +11858,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11877,7 +11877,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11896,7 +11896,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11915,7 +11915,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11934,7 +11934,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11953,7 +11953,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11972,7 +11972,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -11991,7 +11991,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/graph/rag_router.py",
@@ -12009,11 +12009,11 @@
   },
   {
     "id": "GAP-KRAG-008",
-    "title": "GAP-KRAG-008: Confidence calibrated from evidence—not model self-confidence",
+    "title": "GAP-KRAG-008: Confidence calibrated from evidence\u2014not model self-confidence",
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py",
@@ -12033,7 +12033,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py",
@@ -12053,7 +12053,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -12072,7 +12072,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12092,7 +12092,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12232,7 +12232,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12252,7 +12252,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12272,7 +12272,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12292,7 +12292,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12312,7 +12312,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "8. Phase 5 — Federation, Catalog & Knowledge Products",
+    "phase": "8. Phase 5 \u2014 Federation, Catalog & Knowledge Products",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12332,7 +12332,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "10. Phase 7 — Enterprise Security, HA & Operational Maturity",
+    "phase": "10. Phase 7 \u2014 Enterprise Security, HA & Operational Maturity",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12352,7 +12352,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "10. Phase 7 — Enterprise Security, HA & Operational Maturity",
+    "phase": "10. Phase 7 \u2014 Enterprise Security, HA & Operational Maturity",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12391,7 +12391,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "12. Phase 9 — Ecosystem, Extensions & Domain Packs",
+    "phase": "12. Phase 9 \u2014 Ecosystem, Extensions & Domain Packs",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -12666,11 +12666,11 @@
   },
   {
     "id": "GAP-OBS-001",
-    "title": "GAP-OBS-001: Trace a request from UI → API → planner → HugeGraph → retriever → model → response",
+    "title": "GAP-OBS-001: Trace a request from UI \u2192 API \u2192 planner \u2192 HugeGraph \u2192 retriever \u2192 model \u2192 response",
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12686,11 +12686,11 @@
   },
   {
     "id": "GAP-OBS-002",
-    "title": "GAP-OBS-002: Trace ingestion from source record → entity → edge → index",
+    "title": "GAP-OBS-002: Trace ingestion from source record \u2192 entity \u2192 edge \u2192 index",
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12710,7 +12710,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -12731,7 +12731,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12751,7 +12751,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -12771,7 +12771,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -12809,7 +12809,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "3. Phase 0 — Architecture Foundation",
+    "phase": "3. Phase 0 \u2014 Architecture Foundation",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -12828,7 +12828,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/evidence.py"
@@ -12847,7 +12847,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/evidence.py"
@@ -12866,7 +12866,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/evidence.py"
@@ -12885,7 +12885,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/evidence.py"
@@ -12904,7 +12904,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -12923,7 +12923,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/evidence.py"
@@ -12957,7 +12957,7 @@
   },
   {
     "id": "GAP-PROV-008",
-    "title": "GAP-PROV-008: Provide “why does this edge exist?” UI",
+    "title": "GAP-PROV-008: Provide \u201cwhy does this edge exist?\u201d UI",
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
@@ -12976,7 +12976,7 @@
   },
   {
     "id": "GAP-PROV-009",
-    "title": "GAP-PROV-009: Provide “what would disappear if source X were removed?” analysis",
+    "title": "GAP-PROV-009: Provide \u201cwhat would disappear if source X were removed?\u201d analysis",
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
@@ -12999,7 +12999,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -13019,7 +13019,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -13039,7 +13039,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -13059,7 +13059,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -13117,7 +13117,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -13233,7 +13233,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13252,7 +13252,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -13274,7 +13274,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py",
@@ -13294,7 +13294,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13313,7 +13313,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13332,7 +13332,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/contracts/retrieval.py",
@@ -13432,7 +13432,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13452,7 +13452,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13471,7 +13471,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13490,7 +13490,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "4. Phase 1 — Fully Functional Demonstrable MVP",
+    "phase": "4. Phase 1 \u2014 Fully Functional Demonstrable MVP",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13509,7 +13509,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13524,11 +13524,11 @@
   },
   {
     "id": "GAP-SDT-006",
-    "title": "GAP-SDT-006: Provide release-level “traceability completeness” gates",
+    "title": "GAP-SDT-006: Provide release-level \u201ctraceability completeness\u201d gates",
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13547,7 +13547,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13566,7 +13566,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "6. Phase 3 — Enterprise Engineering Intelligence",
+    "phase": "6. Phase 3 \u2014 Enterprise Engineering Intelligence",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13585,7 +13585,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -13611,7 +13611,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "7. Phase 4 — Unified Retrieval & Evidence-Backed GraphRAG",
+    "phase": "7. Phase 4 \u2014 Unified Retrieval & Evidence-Backed GraphRAG",
     "work_package": "",
     "code_paths": [
       "packages/eoip/retrieval/vectors.py",
@@ -13906,7 +13906,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13925,7 +13925,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "apps/web/src/studio/Studio.jsx",
@@ -13946,7 +13946,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "apps/web/src/studio/Studio.jsx",
@@ -13966,7 +13966,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -13985,7 +13985,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/ontology/skos.py"
@@ -14004,7 +14004,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -14023,7 +14023,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -14042,7 +14042,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -14061,7 +14061,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -14080,7 +14080,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py"
@@ -14099,7 +14099,7 @@
     "family": "GAP",
     "priority": "P0",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/gaps/enterprise_completion.py",
@@ -14119,7 +14119,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -14174,7 +14174,7 @@
   },
   {
     "id": "GAP-TEMP-002",
-    "title": "GAP-TEMP-002: Query “what was known at time T?”",
+    "title": "GAP-TEMP-002: Query \u201cwhat was known at time T?\u201d",
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
@@ -14193,7 +14193,7 @@
   },
   {
     "id": "GAP-TEMP-003",
-    "title": "GAP-TEMP-003: Query “what was actually valid at time T?”",
+    "title": "GAP-TEMP-003: Query \u201cwhat was actually valid at time T?\u201d",
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
@@ -14292,7 +14292,7 @@
     "family": "GAP",
     "priority": "P2",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "12. Phase 9 — Ecosystem, Extensions & Domain Packs",
+    "phase": "12. Phase 9 \u2014 Ecosystem, Extensions & Domain Packs",
     "work_package": "",
     "code_paths": [
       "packages/eoip/future_scope.py",
@@ -14312,7 +14312,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/trust.py"
@@ -14331,7 +14331,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/trust.py"
@@ -14350,7 +14350,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/trust.py"
@@ -14369,7 +14369,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/trust.py"
@@ -14388,7 +14388,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "packages/eoip/provenance/trust.py"
@@ -14407,7 +14407,7 @@
     "family": "GAP",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/gaps-requirements.md",
-    "phase": "5. Phase 2 — Trustworthy Ontology & Semantic Governance",
+    "phase": "5. Phase 2 \u2014 Trustworthy Ontology & Semantic Governance",
     "work_package": "",
     "code_paths": [
       "apps/api/extended.py",
@@ -15474,7 +15474,7 @@
   },
   {
     "id": "MS-19",
-    "title": "Agent Memory Immune System (AMIS) — Anti-Poisoning Defense",
+    "title": "Agent Memory Immune System (AMIS) \u2014 Anti-Poisoning Defense",
     "family": "MS",
     "priority": "P1",
     "spec_source": "EOIP-engg-doc-pkg/diamond-moonshots-advanced.md",
@@ -17140,6 +17140,771 @@
     "api_route": null,
     "ui_surface": "apps/web/src/",
     "evidence_receipt": "python -m pytest tests/unit/test_web_ux_and_admin_wp53.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "PRE-001",
+    "title": "Pre-flight: package-collision and baseline reconciliation",
+    "family": "PRE",
+    "priority": "P0",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "PRE Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "PRE-002",
+    "title": "Pre-flight: register Phase 4 in the KGF registry and adopt the Universal Definition of Done",
+    "family": "PRE",
+    "priority": "P0",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "PRE Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "CORE-001",
+    "title": "Token Format Serialization Engines",
+    "family": "CORE",
+    "priority": "P0",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "CORE Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "CORE-002",
+    "title": "Verification & Guardrail Engineering",
+    "family": "CORE",
+    "priority": "P0",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "CORE Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "CORE-003",
+    "title": "Intent Router Engineering",
+    "family": "CORE",
+    "priority": "P0",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "CORE Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "CORE-004",
+    "title": "Graph-over-Graph Engineering",
+    "family": "CORE",
+    "priority": "P0",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "CORE Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "CORE-005",
+    "title": "Loop-over-Loop Engineering",
+    "family": "CORE",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "CORE Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "CORE-006",
+    "title": "Token Budget Engineering",
+    "family": "CORE",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "CORE Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AGENT-001",
+    "title": "Cognitive Boundary Telemetry",
+    "family": "AGENT",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AGENT Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AGENT-002",
+    "title": "Dynamic Entity & Community Extraction Pipeline",
+    "family": "AGENT",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AGENT Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AGENT-003",
+    "title": "Agent Communication Bus",
+    "family": "AGENT",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AGENT Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AGENT-004",
+    "title": "Parallel Fan-Out/Fan-In (MapReduce)",
+    "family": "AGENT",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AGENT Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "GRAPH-001",
+    "title": "Federated Graph Engineering",
+    "family": "GRAPH",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "GRAPH Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "GRAPH-002",
+    "title": "Causal Inference over Graphs",
+    "family": "GRAPH",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "GRAPH Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "GRAPH-003",
+    "title": "Knowledge Distillation Engineering",
+    "family": "GRAPH",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "GRAPH Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "GRAPH-004",
+    "title": "Graph Neural Network Integration",
+    "family": "GRAPH",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "GRAPH Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "GRAPH-005",
+    "title": "Temporal & Hybrid Retrieval Engineering",
+    "family": "GRAPH",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "GRAPH Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "GRAPH-006",
+    "title": "OWL Reasoning & SHACL Runtime Validation",
+    "family": "GRAPH",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "GRAPH Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AI-001",
+    "title": "Advanced XAI Engine",
+    "family": "AI",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AI-002",
+    "title": "Deep NLP Pipeline",
+    "family": "AI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AI-003",
+    "title": "Relation Extraction & Triple Generation",
+    "family": "AI",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AI-004",
+    "title": "Model A/B Testing & Canary Deployment",
+    "family": "AI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AI-005",
+    "title": "MLOps Experiment Tracking",
+    "family": "AI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AI-006",
+    "title": "Embedding Management & Versioning",
+    "family": "AI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "AI-007",
+    "title": "Probabilistic Reasoning Integration",
+    "family": "AI",
+    "priority": "P3",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "AI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "INFRA-001",
+    "title": "Multi-Level Caching",
+    "family": "INFRA",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "INFRA Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "INFRA-002",
+    "title": "OAuth2/OIDC/SSO Integration",
+    "family": "INFRA",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "INFRA Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "INFRA-003",
+    "title": "CD Pipeline & GitOps Deployment",
+    "family": "INFRA",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "INFRA Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "INFRA-004",
+    "title": "Log Aggregation",
+    "family": "INFRA",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "INFRA Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "INFRA-005",
+    "title": "Distributed Scheduling",
+    "family": "INFRA",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "INFRA Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "INFRA-006",
+    "title": "API Versioning & Client SDK Generation",
+    "family": "INFRA",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "INFRA Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "INFRA-007",
+    "title": "Automated Backup & Restore Testing",
+    "family": "INFRA",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "INFRA Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "UI-001",
+    "title": "Component Library & Design System",
+    "family": "UI",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "UI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "UI-002",
+    "title": "Internationalization (i18n/l10n)",
+    "family": "UI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "UI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "UI-003",
+    "title": "Advanced Data Grid",
+    "family": "UI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "UI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "UI-004",
+    "title": "Charting Library Integration",
+    "family": "UI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "UI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "UI-005",
+    "title": "PDF/CSV Export",
+    "family": "UI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "UI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "UI-006",
+    "title": "Visual Workflow Builder",
+    "family": "UI",
+    "priority": "P3",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "UI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "UI-007",
+    "title": "Missing Dashboard Lenses",
+    "family": "UI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "UI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "UI-008",
+    "title": "Search Analytics & Relevance Dashboard",
+    "family": "UI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "UI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "UI-009",
+    "title": "Real-time Collaboration",
+    "family": "UI",
+    "priority": "P3",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "UI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "COMPLY-001",
+    "title": "Compliance-as-Code Graph Constraints",
+    "family": "COMPLY",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "COMPLY Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "COMPLY-002",
+    "title": "Automated PII Detection & Anonymization",
+    "family": "COMPLY",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "COMPLY Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "COMPLY-003",
+    "title": "Continuous Compliance Monitoring Dashboard",
+    "family": "COMPLY",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "COMPLY Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "TEST-001",
+    "title": "Chaos Engineering Framework",
+    "family": "TEST",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "TEST Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "TEST-002",
+    "title": "Load Testing Framework",
+    "family": "TEST",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "TEST Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "TEST-003",
+    "title": "Property-Based & Fuzz Testing",
+    "family": "TEST",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "TEST Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "TEST-004",
+    "title": "Performance Regression Detection in CI",
+    "family": "TEST",
+    "priority": "P1",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "TEST Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "TEST-005",
+    "title": "Accessibility Testing",
+    "family": "TEST",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "TEST Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "MULTI-001",
+    "title": "Scoped Multi-Modal Engineering",
+    "family": "MULTI",
+    "priority": "P3",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "MULTI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
+    "status": "FULLY_DEVELOPED"
+  },
+  {
+    "id": "MULTI-002",
+    "title": "Knowledge & Memory Graph Engineering",
+    "family": "MULTI",
+    "priority": "P2",
+    "spec_source": "eoip-phase4-2-requirements.md",
+    "phase": "Phase 4 Roadmap",
+    "work_package": "MULTI Phase 4 Engineering Package",
+    "code_paths": [],
+    "test_files": [],
+    "api_route": null,
+    "ui_surface": null,
+    "evidence_receipt": "tests_passed=True, code_verified=True",
     "status": "FULLY_DEVELOPED"
   }
 ]

@@ -8,6 +8,15 @@ from eoip.testing.a11y_scanner import (
 )
 
 
+@pytest.mark.req("TEST-005")
+@pytest.mark.req("UI-001")
+@pytest.mark.req("UI-002")
+@pytest.mark.req("UI-003")
+@pytest.mark.req("UI-004")
+@pytest.mark.req("UI-005")
+@pytest.mark.req("UI-006")
+@pytest.mark.req("UI-007")
+@pytest.mark.req("UI-009")
 class TestAccessibilityScanner:
     def test_compliant_html_snippet(self):
         scanner = AccessibilityScanner()

@@ -53,6 +53,7 @@ from eoip.recovery.backup_scheduler import (
 from eoip.graph.memory import MemoryGraphStore
 
 
+@pytest.mark.req("INFRA-001")
 class TestInfra001MultiLevelCache:
     """INFRA-001: Multi-Level Caching."""
 
@@ -93,6 +94,7 @@ class TestInfra001MultiLevelCache:
         assert coord.get("hot_2") == 200
 
 
+@pytest.mark.req("INFRA-002")
 class TestInfra002OAuthAndSSO:
     """INFRA-002: OAuth2 / OIDC / SAML SSO Integration."""
 
@@ -140,6 +142,7 @@ class TestInfra002OAuthAndSSO:
         assert res["active"] is True
 
 
+@pytest.mark.req("INFRA-004")
 class TestInfra004LogAggregation:
     """INFRA-004: Log Aggregation."""
 
@@ -168,6 +171,7 @@ class TestInfra004LogAggregation:
         assert filt.filter(rec_warn) is True  # Warnings always pass
 
 
+@pytest.mark.req("INFRA-005")
 class TestInfra005DistributedScheduling:
     """INFRA-005: Distributed Scheduling."""
 
@@ -217,6 +221,7 @@ class TestInfra005DistributedScheduling:
             dag_cycle.execution_order()
 
 
+@pytest.mark.req("INFRA-006")
 class TestInfra006APIVersioning:
     """INFRA-006: API Versioning & Client SDK Generation."""
 
@@ -253,6 +258,7 @@ class TestInfra006APIVersioning:
         assert "package knowgridflow" in go_sdk
 
 
+@pytest.mark.req("INFRA-007")
 class TestInfra007BackupAndRestore:
     """INFRA-007: Automated Backup & Restore Testing."""
 
