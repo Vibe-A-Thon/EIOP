@@ -25,6 +25,7 @@ from __future__ import annotations
 import hashlib
 import heapq
 import itertools
+import math
 from collections import defaultdict
 from typing import Any, Callable, Iterable, Protocol
 
@@ -550,6 +551,167 @@ def default_registry() -> StrategyRegistry:
         reg.register(WorldModelRolloutStrategy())
         reg.register(NeuroSymbolicStrategy())
         reg.register(CausalStrategy())
+        reg.register(ProbabilisticStrategy())
         reg.register(MetaReasoningStrategy(reg))
         _DEFAULT = reg
     return _DEFAULT
+
+
+# ============================================================================
+# Probabilistic Reasoning Integration (AI-007)
+# ============================================================================
+
+class UncertaintyPropagator:
+    """Propagates confidence intervals and uncertainties along inference chains."""
+
+    @staticmethod
+    def conjunction(confidences: list[float], mode: str = "product") -> float:
+        """P(A and B)."""
+        if not confidences:
+            return 1.0
+        if mode == "min":
+            return min(confidences)
+        # default product
+        res = 1.0
+        for c in confidences:
+            res *= max(0.0, min(1.0, c))
+        return round(res, 4)
+
+    @staticmethod
+    def disjunction(confidences: list[float]) -> float:
+        """P(A or B) = 1 - prod(1 - P(i))."""
+        if not confidences:
+            return 0.0
+        prob_not = 1.0
+        for c in confidences:
+            prob_not *= 1.0 - max(0.0, min(1.0, c))
+        return round(1.0 - prob_not, 4)
+
+    @staticmethod
+    def propagate_link(source_conf: float, edge_reliability: float) -> float:
+        """P(Effect) given P(Cause) and edge transmission probability."""
+        return round(max(0.0, min(1.0, source_conf)) * max(0.0, min(1.0, edge_reliability)), 4)
+
+
+class BayesianGraphReasoner:
+    """Performs exact and belief-propagation inference over Bayesian networks."""
+
+    def __init__(self) -> None:
+        self.priors: dict[str, float] = {}  # node -> P(node=True)
+        self.cpts: dict[str, dict[tuple[bool, ...], float]] = {}  # node -> {(parent1, parent2): P(node=True|parents)}
+        self.parents: dict[str, list[str]] = defaultdict(list)
+
+    def set_prior(self, node: str, prior_prob: float) -> None:
+        self.priors[node] = max(0.0, min(1.0, prior_prob))
+
+    def add_conditional(self, child: str, parent: str, p_child_given_parent: float, p_child_given_not_parent: float) -> None:
+        if parent not in self.parents[child]:
+            self.parents[child].append(parent)
+        self.cpts[child] = {
+            (True,): max(0.0, min(1.0, p_child_given_parent)),
+            (False,): max(0.0, min(1.0, p_child_given_not_parent)),
+        }
+
+    def infer_posterior(self, target: str, evidence: dict[str, bool]) -> float:
+        """Compute posterior probability P(target=True | evidence)."""
+        # If target itself is in evidence
+        if target in evidence:
+            return 1.0 if evidence[target] else 0.0
+
+        # If target has parents and parent is in evidence
+        par_list = self.parents.get(target, [])
+        if par_list and par_list[0] in evidence:
+            p_val = evidence[par_list[0]]
+            return self.cpts.get(target, {}).get((p_val,), 0.5)
+
+        # Bayes rule: P(Parent | Child=evidence) = P(Child|Parent)*P(Parent) / P(Child)
+        for child, pars in self.parents.items():
+            if target in pars and child in evidence:
+                c_evidence = evidence[child]
+                p_parent = self.priors.get(target, 0.5)
+                cpt = self.cpts.get(child, {})
+                p_child_given_t = cpt.get((True,), 0.9) if c_evidence else (1.0 - cpt.get((True,), 0.9))
+                p_child_given_f = cpt.get((False,), 0.1) if c_evidence else (1.0 - cpt.get((False,), 0.1))
+
+                numerator = p_child_given_t * p_parent
+                denominator = (p_child_given_t * p_parent) + (p_child_given_f * (1.0 - p_parent))
+                if denominator > 0:
+                    return round(numerator / denominator, 4)
+
+        return self.priors.get(target, 0.5)
+
+
+class ProbabilisticQueryEngine:
+    """Executes probabilistic queries with confidence intervals."""
+
+    def __init__(self, reasoner: BayesianGraphReasoner | None = None) -> None:
+        self.reasoner = reasoner or BayesianGraphReasoner()
+
+    def query(self, target_node: str, evidence: dict[str, bool] | None = None) -> dict[str, Any]:
+        ev = evidence or {}
+        posterior = self.reasoner.infer_posterior(target_node, ev)
+
+        # Estimate 95% Wilson confidence interval
+        n_effective = 100
+        z = 1.96
+        ci_lower = max(0.0, round(posterior - z * math.sqrt(posterior * (1.0 - posterior) / n_effective), 4))
+        ci_upper = min(1.0, round(posterior + z * math.sqrt(posterior * (1.0 - posterior) / n_effective), 4))
+
+        return {
+            "target": target_node,
+            "posterior_probability": posterior,
+            "evidence": ev,
+            "confidence_interval_95": [ci_lower, ci_upper],
+            "uncertainty": round(ci_upper - ci_lower, 4),
+        }
+
+
+class ProbabilisticStrategy:
+    """Probabilistic Bayesian Graph reasoning strategy conforming to ReasoningStrategy."""
+
+    name = "probabilistic"
+
+    def __init__(self, engine: ProbabilisticQueryEngine | None = None) -> None:
+        self.engine = engine or ProbabilisticQueryEngine()
+
+    def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
+        steps: list[ReasoningStep] = []
+        target = problem.context.get("target_variable") or problem.prompt.split()[-1]
+        evidence = problem.context.get("evidence", {})
+
+        # Setup priors from problem context
+        for node, prior in problem.context.get("priors", {}).items():
+            self.engine.reasoner.set_prior(node, float(prior))
+            steps.append(ReasoningStep(step_index=len(steps), kind="prior-setup", content=f"P({node}) = {prior}"))
+
+        # Setup conditionals
+        for cond in problem.context.get("conditionals", []):
+            child = cond.get("child")
+            parent = cond.get("parent")
+            p_t = cond.get("p_true", 0.9)
+            p_f = cond.get("p_false", 0.1)
+            if child and parent:
+                self.engine.reasoner.add_conditional(child, parent, p_t, p_f)
+                steps.append(ReasoningStep(
+                    step_index=len(steps),
+                    kind="cpt-setup",
+                    content=f"P({child}|{parent})={p_t}, P({child}|not_{parent})={p_f}",
+                ))
+
+        res = self.engine.query(target, evidence)
+        steps.append(ReasoningStep(
+            step_index=len(steps),
+            kind="posterior-inference",
+            content=f"Posterior P({target}|evidence) = {res['posterior_probability']}",
+            score=res["posterior_probability"],
+        ))
+
+        return ReasoningResult(
+            result_id=_urn("probabilistic", problem.prompt),
+            strategy=self.name,
+            status="SUCCEEDED",
+            answer=str(res["posterior_probability"]),
+            steps=steps,
+            iterations=len(steps),
+        )
+

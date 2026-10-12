@@ -1,0 +1,40 @@
+# Production Environment Overrides (INFRA-003)
+environment: production
+replicaCount: 5
+
+ingress:
+  enabled: true
+  className: nginx
+  tls:
+    - secretName: eoip-prod-tls
+      hosts:
+        - api.knowgridflow.enterprise.com
+  hosts:
+    - host: api.knowgridflow.enterprise.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  limits:
+    cpu: 4000m
+    memory: 8Gi
+  requests:
+    cpu: 1000m
+    memory: 2Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 5
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 75
+
+cache:
+  l2:
+    enabled: true
+    distributed: true
+    ttlSeconds: 3600
+
+ha:
+  leaderElection: true
+  redisDistributedLock: true

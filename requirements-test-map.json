@@ -273,10 +273,12 @@
     "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_ui_002_graph_explorer"
   ],
   "FR-VALID-001": [
-    "tests/unit/test_validation_engine.py"
+    "tests/unit/test_validation_engine.py",
+    "tests/unit/test_validation_engine.py::test_valid_graph_passes_validation"
   ],
   "FR-VALID-002": [
-    "tests/unit/test_validation_engine.py"
+    "tests/unit/test_validation_engine.py",
+    "tests/unit/test_validation_engine.py::test_valid_graph_passes_validation"
   ],
   "FR-VALID-003": [
     "tests/unit/test_quality.py"

@@ -60,6 +60,18 @@ from eoip.graph_loop.engine import get_graph_loop_engine
 from eoip.evaluation.engine import get_evaluation_engine
 from eoip.memory_eng.engine import get_memory_engine
 from eoip.intelligence_eng.engine import get_intelligence_engine
+from eoip.token_formats.engine import get_token_format_engine
+from eoip.verification.engine import get_verification_engine
+from eoip.routing.engine import get_router_engine
+from eoip.graph_graph.engine import get_graph_graph_engine
+from eoip.token_budget.engine import get_token_budget_engine
+from eoip.xai.engine import get_xai_engine
+from eoip.mlops.experiment_tracker import get_experiment_tracker
+from eoip.embeddings.engine import get_embedding_engine
+from eoip.causal.engine import get_causal_engine
+from eoip.federation.engine import get_federation_engine
+from eoip.distillation.engine import get_distillation_engine
+from eoip.gnn.engine import get_gnn_engine
 
 
 
@@ -116,11 +128,28 @@ class BrainOSKernel:
         self.cognitive_narrator: CognitiveNarrator = CognitiveNarrator(graph_store=graph_store)
         self.graph_intelligence: GraphIntelligenceEngine = GraphIntelligenceEngine(graph_store=graph_store)
 
+        # Phase 1 Core Engines
+        self.token_format_engine = get_token_format_engine()
+        self.verification_engine = get_verification_engine()
+        self.router_engine = get_router_engine()
+        self.graph_graph_engine = get_graph_graph_engine()
+        self.token_budget_engine = get_token_budget_engine()
+
+        # Phase 2 & Phase 3 Engines
+        self.xai_engine = get_xai_engine()
+        self.experiment_tracker = get_experiment_tracker()
+        self.embedding_engine = get_embedding_engine()
+        self.causal_engine = get_causal_engine(store=graph_store)
+        self.federation_engine = get_federation_engine()
+        self.distillation_engine = get_distillation_engine()
+        self.gnn_engine = get_gnn_engine()
+
         self.working_memory: list[dict[str, Any]] = []
 
         self.episodic_memory: list[dict[str, Any]] = []
         self.semantic_memory: dict[str, Any] = {}
         self.procedural_memory: dict[str, Any] = {}
+
 
     def ask(
         self,

@@ -419,7 +419,114 @@ class ToolVerifyAttestationRequest(BaseModel):
     certificate_id: str = Field(min_length=1)
 
 
+# ── Phase 1 Core Request Models (CORE-001 - CORE-006) ──────────────────
+
+
+class TokenFormatSerializeRequest(BaseModel):
+    payload: Any
+    format_name: str | None = None
+
+
+class TokenFormatDeserializeRequest(BaseModel):
+    data: str
+    format_name: str
+
+
+class VerificationCheckRequest(BaseModel):
+    output: Any
+    rules: list[str] = Field(default_factory=list)
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
+class GuardrailCheckRequest(BaseModel):
+    intent: str = Field(min_length=1)
+    parameters: dict[str, Any] = Field(default_factory=dict)
+    agent_id: str = Field(default="default")
+
+
+class RoutingClassifyRequest(BaseModel):
+    query: str = Field(min_length=1)
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
+class GraphLayerCreateRequest(BaseModel):
+    name: str = Field(min_length=1)
+    layer_type: str = Field(default="ONTOLOGY")
+    priority: int = Field(default=10)
+    schema_def: dict[str, Any] = Field(default_factory=dict)
+
+
+class CrossLayerQueryRequest(BaseModel):
+    source_layer: str = Field(min_length=1)
+    target_layer: str = Field(min_length=1)
+    relation_kind: str | None = None
+
+
+class SupervisoryLoopExecuteRequest(BaseModel):
+    composition_name: str = Field(min_length=1)
+    outer_loop_name: str = Field(default="OODA")
+    strategies: list[str] = Field(default_factory=lambda: ["react", "tree_of_thought"])
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
+class TokenBudgetAllocateRequest(BaseModel):
+    budget_id: str = Field(min_length=1)
+    stage_names: list[str] = Field(default_factory=lambda: ["reasoning", "rag", "verification"])
+    total_budget: int = Field(default=4000, ge=10)
+    policy: str = Field(default="PRIORITY_WEIGHTED")
+
+
+class TokenBudgetConsumeRequest(BaseModel):
+    budget_id: str = Field(min_length=1)
+    stage_name: str = Field(min_length=1)
+    tokens: int = Field(ge=0)
+    payload: Any = None
+
+
+class XAIExplainRequest(BaseModel):
+    inputs: dict[str, Any] = Field(default_factory=dict)
+    baseline: dict[str, Any] | None = None
+
+
+class XAICalibrateRequest(BaseModel):
+    predicted_probs: list[float] = Field(default_factory=list)
+    ground_truth: list[int] = Field(default_factory=list)
+    num_bins: int = Field(default=10, ge=2, le=50)
+
+
+class ExperimentCreateRequest(BaseModel):
+    name: str = Field(min_length=1)
+    description: str = Field(default="")
+    tags: dict[str, str] = Field(default_factory=dict)
+
+
+class RunStartRequest(BaseModel):
+    experiment_id: str = Field(min_length=1)
+    run_name: str = Field(default="")
+    tags: dict[str, str] = Field(default_factory=dict)
+
+
+class RunLogMetricRequest(BaseModel):
+    key: str = Field(min_length=1)
+    value: float
+    step: int = Field(default=0, ge=0)
+
+
+class EmbeddingRegisterRequest(BaseModel):
+    model_name: str = Field(min_length=1)
+    dimensions: int = Field(gt=0)
+    metric_type: str = Field(default="COSINE")
+
+
+class EmbeddingDriftRequest(BaseModel):
+    reference_vectors: list[list[float]] = Field(default_factory=list)
+    current_vectors: list[list[float]] = Field(default_factory=list)
+    ref_version: str = Field(default="v1")
+    curr_version: str = Field(default="v2")
+
+
 def build_platform_router() -> APIRouter:
+
     """Build the unified platform features router."""
     router = APIRouter(prefix="/api/v1/platform", tags=["Platform"])
 
@@ -1717,4 +1824,180 @@ def build_platform_router() -> APIRouter:
         from eoip.tools_contract.mcp_bridge import get_tool_execution_attestor
         return get_tool_execution_attestor().verify_certificate(req.certificate_id)
 
+    # ── Phase 1 Core Engines Endpoints (CORE-001 - CORE-006) ──────────
+
+    @router.post("/token-formats/serialize", summary="Serialize payload to token-efficient format", tags=["Token Formats"])
+    def serialize_token_format(req: TokenFormatSerializeRequest) -> dict[str, Any]:
+        from eoip.token_formats.engine import get_token_format_engine
+        engine = get_token_format_engine()
+        if req.format_name:
+            data = engine.serialize(req.payload, req.format_name)
+            est = engine.estimate_tokens(data)
+            return {"format": req.format_name, "serialized": data, "estimated_tokens": est}
+        chosen, data, ratio = engine.auto_serialize(req.payload)
+        return {"format": chosen, "serialized": data, "compression_ratio": ratio, "estimated_tokens": engine.estimate_tokens(data)}
+
+    @router.post("/token-formats/deserialize", summary="Deserialize payload from token format", tags=["Token Formats"])
+    def deserialize_token_format(req: TokenFormatDeserializeRequest) -> dict[str, Any]:
+        from eoip.token_formats.engine import get_token_format_engine
+        engine = get_token_format_engine()
+        obj = engine.deserialize(req.data, req.format_name)
+        return {"format": req.format_name, "payload": obj}
+
+    @router.post("/token-formats/benchmark", summary="Benchmark token reduction across all 7 formats vs JSON", tags=["Token Formats"])
+    def benchmark_token_formats(req: TokenFormatSerializeRequest) -> dict[str, Any]:
+        from eoip.token_formats.engine import get_token_format_engine
+        return get_token_format_engine().benchmark_all(req.payload)
+
+    @router.post("/verification/check", summary="Run verification rule chain against output", tags=["Verification"])
+    def verify_output(req: VerificationCheckRequest) -> dict[str, Any]:
+        from eoip.verification.engine import get_verification_engine
+        engine = get_verification_engine()
+        res = engine.verify(req.output, req.rules if req.rules else None, req.context)
+        return res.to_dict()
+
+    @router.post("/verification/guardrail-interception", summary="Inspect agent intent before action", tags=["Verification"])
+    def guardrail_check(req: GuardrailCheckRequest) -> dict[str, Any]:
+        from eoip.verification.engine import get_verification_engine
+        engine = get_verification_engine()
+        allowed, reason = engine.guardrail.intercept_intent(req.agent_id, req.intent, req.parameters)
+        return {"allowed": allowed, "reason": reason, "agent_id": req.agent_id}
+
+    @router.get("/verification/audit-trail", summary="Retrieve tamper-evident verification audit trail", tags=["Verification"])
+    def get_verification_audit(limit: int = 50) -> dict[str, Any]:
+        from eoip.verification.engine import get_verification_engine
+        return {"audit_trail": get_verification_engine().get_audit_trail(limit)}
+
+    @router.post("/routing/classify-and-route", summary="Fast deterministic intent routing front-door", tags=["Intent Router"])
+    def route_query(req: RoutingClassifyRequest) -> dict[str, Any]:
+        from eoip.routing.engine import get_router_engine
+        decision = get_router_engine().route(req.query, req.context)
+        return decision.to_dict()
+
+    @router.get("/routing/stats", summary="Intent router latency and cost feedback metrics", tags=["Intent Router"])
+    def routing_stats() -> dict[str, Any]:
+        from eoip.routing.engine import get_router_engine
+        return get_router_engine().stats()
+
+    @router.post("/graph-graph/layers", summary="Register or retrieve a graph layer", tags=["Graph-over-Graph"])
+    def create_graph_layer(req: GraphLayerCreateRequest) -> dict[str, Any]:
+        from eoip.graph_graph.engine import LayerType, get_graph_graph_engine
+        engine = get_graph_graph_engine()
+        layer = engine.get_or_create_layer(req.name, LayerType(req.layer_type.upper()), req.priority, req.schema_def)
+        return layer.to_dict()
+
+    @router.post("/graph-graph/cross-layer-query", summary="Execute cross-layer query", tags=["Graph-over-Graph"])
+    def cross_layer_query(req: CrossLayerQueryRequest) -> dict[str, Any]:
+        from eoip.graph_graph.engine import RelationKind, get_graph_graph_engine
+        kind = RelationKind(req.relation_kind.upper()) if req.relation_kind else None
+        matches = get_graph_graph_engine().cross_layer_query(req.source_layer, req.target_layer, kind)
+        return {"matches": matches, "count": len(matches)}
+
+    @router.post("/graph-graph/diff", summary="Compute diff between two layers", tags=["Graph-over-Graph"])
+    def diff_graph_layers(layer_a: str = Query(...), layer_b: str = Query(...)) -> dict[str, Any]:
+        from eoip.graph_graph.engine import get_graph_graph_engine
+        return get_graph_graph_engine().diff_layers(layer_a, layer_b)
+
+    @router.post("/intelligence/supervisory-loop", summary="Execute supervisory outer loop over inner loops", tags=["Intelligence Engineering"])
+    def execute_supervisory_loop(req: SupervisoryLoopExecuteRequest) -> dict[str, Any]:
+        from eoip.intelligence_eng.engine import LoopComposition, SupervisoryLoop
+        comp = LoopComposition(
+            name=req.composition_name,
+            outer_loop_name=req.outer_loop_name,
+            strategies=req.strategies,
+        )
+        supervisor = SupervisoryLoop(composition=comp)
+        res = supervisor.execute(
+            task_fn=lambda strat, ctx: {"status": "success", "strategy_executed": strat, "iterations": 2, "cost": 0.02, "quality": 0.95, "convergence": 0.98},
+            context=req.context,
+        )
+        return res.to_dict()
+
+    @router.post("/token-budget/allocate", summary="Allocate dynamic token budget across stages", tags=["Token Budget"])
+    def allocate_token_budget(req: TokenBudgetAllocateRequest) -> dict[str, Any]:
+        from eoip.token_budget.engine import BudgetPolicy, get_token_budget_engine
+        engine = get_token_budget_engine()
+        b = engine.create_budget(
+            budget_id=req.budget_id,
+            stage_names=req.stage_names,
+            total_budget=req.total_budget,
+            policy=BudgetPolicy(req.policy.upper()),
+        )
+        return b.to_dict()
+
+    @router.post("/token-budget/consume", summary="Record token consumption and check compression triggers", tags=["Token Budget"])
+    def consume_token_budget(req: TokenBudgetConsumeRequest) -> dict[str, Any]:
+        from eoip.token_budget.engine import get_token_budget_engine
+        return get_token_budget_engine().consume(
+            budget_id=req.budget_id,
+            stage_name=req.stage_name,
+            tokens=req.tokens,
+            context_payload=req.payload,
+        )
+
+    @router.get("/token-budget/stats", summary="Get token budget engine global stats", tags=["Token Budget"])
+    def get_token_budget_stats() -> dict[str, Any]:
+        from eoip.token_budget.engine import get_token_budget_engine
+        return get_token_budget_engine().stats()
+
+    # ── Phase 3: AI/ML Intelligence Enhancements ────────────────────────
+    @router.post("/xai/explain", summary="Generate Shapley-based feature attribution explanation", tags=["Explainable AI"])
+    def explain_decision(req: XAIExplainRequest) -> dict[str, Any]:
+        from eoip.xai.engine import get_xai_engine
+        # Default linear heuristic evaluator if external model not provided
+        def dummy_eval(features: dict[str, Any]) -> float:
+            return sum(float(v) for v in features.values() if isinstance(v, (int, float)))
+
+        engine = get_xai_engine()
+        return engine.explain(dummy_eval, req.inputs, req.baseline)
+
+    @router.post("/xai/calibrate", summary="Evaluate confidence calibration reliability", tags=["Explainable AI"])
+    def evaluate_calibration(req: XAICalibrateRequest) -> dict[str, Any]:
+        from eoip.xai.engine import get_xai_engine
+        engine = get_xai_engine()
+        rep = engine.calibrator.evaluate(req.predicted_probs, req.ground_truth, num_bins=req.num_bins)
+        return rep.to_dict()
+
+    @router.post("/mlops/experiments", summary="Create MLOps experiment", tags=["MLOps"])
+    def create_experiment(req: ExperimentCreateRequest) -> dict[str, Any]:
+        from eoip.mlops.experiment_tracker import get_experiment_tracker
+        tracker = get_experiment_tracker()
+        exp = tracker.create_experiment(req.name, req.description, req.tags)
+        return exp.to_dict()
+
+    @router.post("/mlops/runs/start", summary="Start experiment run", tags=["MLOps"])
+    def start_experiment_run(req: RunStartRequest) -> dict[str, Any]:
+        from eoip.mlops.experiment_tracker import get_experiment_tracker
+        tracker = get_experiment_tracker()
+        run = tracker.start_run(req.experiment_id, req.run_name, req.tags)
+        return run.to_dict()
+
+    @router.post("/mlops/runs/{run_id}/metrics", summary="Log run metric", tags=["MLOps"])
+    def log_run_metric(run_id: str, exp_id: str = Query(...), req: RunLogMetricRequest = ...) -> dict[str, Any]:
+        from eoip.mlops.experiment_tracker import get_experiment_tracker
+        tracker = get_experiment_tracker()
+        tracker.log_metric(exp_id, run_id, req.key, req.value, req.step)
+        return {"status": "logged", "key": req.key, "value": req.value}
+
+    @router.post("/embeddings/versions", summary="Register embedding model version", tags=["Embeddings"])
+    def register_embedding_version(req: EmbeddingRegisterRequest) -> dict[str, Any]:
+        from eoip.embeddings.engine import get_embedding_engine
+        engine = get_embedding_engine()
+        ver = engine.registry.register_version(req.model_name, req.dimensions, metric_type=req.metric_type)
+        return ver.to_dict()
+
+    @router.post("/embeddings/drift", summary="Detect semantic embedding drift", tags=["Embeddings"])
+    def detect_embedding_drift(req: EmbeddingDriftRequest) -> dict[str, Any]:
+        from eoip.embeddings.engine import get_embedding_engine
+        engine = get_embedding_engine()
+        rep = engine.drift_detector.detect_drift(
+            req.reference_vectors,
+            req.current_vectors,
+            ref_version_id=req.ref_version,
+            curr_version_id=req.curr_version,
+        )
+        return rep.to_dict()
+
     return router
+
+

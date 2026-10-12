@@ -171,7 +171,10 @@ class HarnessEngine:
             self._runs.append(run)
         return run
 
+    run_pipeline = run
+
     def stats(self) -> dict[str, Any]:
+
         with self._lock:
             return {
                 "engine": "harness_engineering",
@@ -182,7 +185,141 @@ class HarnessEngine:
             }
 
 
+# ── Parallel Fan-Out/Fan-In (MapReduce) (AGENT-004) ────────────────────
+
+import concurrent.futures
+from enum import Enum
+
+
+class MergeStrategy(str, Enum):
+    LAST_WRITE_WINS = "LAST_WRITE_WINS"
+    RECURSIVE_MERGE = "RECURSIVE_MERGE"
+    APPEND_LISTS = "APPEND_LISTS"
+    FAIL_ON_CONFLICT = "FAIL_ON_CONFLICT"
+
+
+@dataclass
+class StateSchema:
+    """Defines conflict detection and race-condition-safe state merging rules."""
+
+    default_strategy: MergeStrategy = MergeStrategy.RECURSIVE_MERGE
+    field_strategies: dict[str, MergeStrategy] = field(default_factory=dict)
+
+    def merge_states(self, states: list[dict[str, Any]]) -> tuple[dict[str, Any], list[str]]:
+        """Safely merge shard outputs into unified state with conflict detection."""
+        merged: dict[str, Any] = {}
+        conflicts: list[str] = []
+
+        for shard_idx, state in enumerate(states):
+            for key, val in state.items():
+                strat = self.field_strategies.get(key, self.default_strategy)
+
+                if key not in merged:
+                    merged[key] = val
+                    continue
+
+                existing = merged[key]
+
+                if strat == MergeStrategy.LAST_WRITE_WINS:
+                    merged[key] = val
+
+                elif strat == MergeStrategy.APPEND_LISTS:
+                    if not isinstance(existing, list):
+                        existing = [existing]
+                    if isinstance(val, list):
+                        existing.extend(val)
+                    else:
+                        existing.append(val)
+                    merged[key] = existing
+
+                elif strat == MergeStrategy.FAIL_ON_CONFLICT:
+                    if existing != val:
+                        conflicts.append(f"Conflict on '{key}': existing={existing} vs shard_{shard_idx}={val}")
+
+                else:  # RECURSIVE_MERGE
+                    if isinstance(existing, dict) and isinstance(val, dict):
+                        sub_merged, sub_conflicts = self.merge_states([existing, val])
+                        merged[key] = sub_merged
+                        conflicts.extend(sub_conflicts)
+                    elif isinstance(existing, list) and isinstance(val, list):
+                        merged[key] = existing + val
+                    elif isinstance(existing, (int, float)) and isinstance(val, (int, float)):
+                        merged[key] = existing + val  # Sum numerical aggregates
+                    else:
+                        merged[key] = val
+
+        return merged, conflicts
+
+
+class FanOutStage(PipelineStage):
+    """Splits work into parallel shards executed concurrently (Map stage)."""
+
+    def __init__(
+        self,
+        name: str,
+        shard_generator: Callable[[dict[str, Any]], list[Any]],
+        worker_fn: Callable[[Any, dict[str, Any]], dict[str, Any]],
+        max_workers: int = 4,
+        shard_timeout_sec: float = 10.0,
+        description: str = "Parallel Fan-Out Map Stage",
+    ) -> None:
+        self.shard_generator = shard_generator
+        self.worker_fn = worker_fn
+        self.max_workers = max_workers
+        self.shard_timeout_sec = shard_timeout_sec
+
+        def _handler(ctx: dict[str, Any]) -> dict[str, Any]:
+            shards = self.shard_generator(ctx)
+            results: list[dict[str, Any]] = []
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+                futures = {
+                    executor.submit(self.worker_fn, shard, ctx): idx
+                    for idx, shard in enumerate(shards)
+                }
+                for fut in concurrent.futures.as_completed(futures):
+                    idx = futures[fut]
+                    try:
+                        res = fut.result(timeout=self.shard_timeout_sec)
+                        results.append(res)
+                    except Exception as exc:
+                        results.append({"_shard_error": str(exc), "_shard_idx": idx})
+
+            return {**ctx, f"_{self.name}_shards": results, f"_{self.name}_shard_count": len(shards)}
+
+        super().__init__(name=name, handler=_handler, description=description)
+
+
+class FanInStage(PipelineStage):
+    """Collects and merges shard outputs with race-condition-safe StateSchema (Reduce stage)."""
+
+    def __init__(
+        self,
+        name: str,
+        fan_out_stage_name: str,
+        schema: StateSchema | None = None,
+        depends_on: list[str] | None = None,
+        description: str = "Parallel Fan-In Reduce Stage",
+    ) -> None:
+        self.fan_out_stage_name = fan_out_stage_name
+        self.schema = schema or StateSchema()
+        deps = depends_on or [fan_out_stage_name]
+
+        def _handler(ctx: dict[str, Any]) -> dict[str, Any]:
+            shard_results = ctx.get(f"_{self.fan_out_stage_name}_shards", [])
+            merged_state, conflicts = self.schema.merge_states(shard_results)
+            return {
+                **ctx,
+                **merged_state,
+                f"_{self.name}_conflicts": conflicts,
+                f"_{self.name}_merged_count": len(shard_results),
+            }
+
+        super().__init__(name=name, handler=_handler, depends_on=deps, description=description)
+
+
 _instance: HarnessEngine | None = None
+
 _lock = threading.Lock()
 
 

@@ -7,8 +7,9 @@ import hashlib
 import math
 import threading
 import time
+import uuid
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any, Callable
 
@@ -291,3 +292,123 @@ def get_memory_engine() -> MemoryEngine:
             if _instance is None:
                 _instance = MemoryEngine()
     return _instance
+
+
+# ============================================================================
+# Knowledge & Memory Graph Engineering (MULTI-002)
+# ============================================================================
+
+@dataclass
+class MemoryNode:
+    node_id: str
+    content: str
+    memory_type: str  # EPISODIC, SEMANTIC, PROCEDURAL
+    importance: float = 1.0
+    access_count: int = 1
+    timestamp: float = field(default_factory=time.time)
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+
+class MemoryGraph:
+    """Graph-native memory representation with temporal and causal links."""
+
+    def __init__(self) -> None:
+        self.nodes: dict[str, MemoryNode] = {}
+        self.edges: list[dict[str, Any]] = []  # source, target, relation, weight
+        self._lock = threading.Lock()
+
+    def add_node(
+        self,
+        node_id: str,
+        content: str,
+        memory_type: str = "EPISODIC",
+        importance: float = 1.0,
+        metadata: dict[str, Any] | None = None,
+    ) -> MemoryNode:
+        with self._lock:
+            node = MemoryNode(
+                node_id=node_id,
+                content=content,
+                memory_type=memory_type,
+                importance=importance,
+                metadata=metadata or {},
+            )
+            self.nodes[node_id] = node
+            return node
+
+    def link_nodes(self, source_id: str, target_id: str, relation: str = "TEMPORAL", weight: float = 1.0) -> None:
+        with self._lock:
+            self.edges.append({
+                "source": source_id,
+                "target": target_id,
+                "relation": relation,
+                "weight": weight,
+            })
+
+    def query_subgraph(self, memory_type: str | None = None, min_importance: float = 0.0) -> dict[str, Any]:
+        with self._lock:
+            matched_nodes = [
+                n for n in self.nodes.values()
+                if (memory_type is None or n.memory_type == memory_type) and n.importance >= min_importance
+            ]
+            matched_ids = {n.node_id for n in matched_nodes}
+            matched_edges = [
+                e for e in self.edges
+                if e["source"] in matched_ids and e["target"] in matched_ids
+            ]
+            return {
+                "nodes": [asdict(n) for n in matched_nodes],
+                "edges": matched_edges,
+            }
+
+
+class EpisodicMemoryGraph(MemoryGraph):
+    """Session-based chronological event graph linked with FOLLOWED_BY edges."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._last_event_id: str | None = None
+
+    def record_episode_step(self, step_name: str, payload: dict[str, Any], importance: float = 1.0) -> str:
+        step_id = f"ep_{uuid.uuid4().hex[:8]}" if 'uuid' in globals() else f"ep_{time.time()}"
+        self.add_node(
+            node_id=step_id,
+            content=step_name,
+            memory_type="EPISODIC",
+            importance=importance,
+            metadata=payload,
+        )
+        if self._last_event_id:
+            self.link_nodes(self._last_event_id, step_id, relation="FOLLOWED_BY")
+        self._last_event_id = step_id
+        return step_id
+
+
+class MemoryConsolidationGraph:
+    """Consolidates episodic experience traces into distilled semantic knowledge."""
+
+    def __init__(self, episodic_graph: MemoryGraph, long_term_graph: MemoryGraph | None = None) -> None:
+        self.episodic_graph = episodic_graph
+        self.long_term_graph = long_term_graph or MemoryGraph()
+
+    def consolidate(self, frequency_threshold: int = 2) -> int:
+        """Promote recurring episodic patterns to semantic memory nodes."""
+        content_counts: dict[str, int] = defaultdict(int)
+        for n in self.episodic_graph.nodes.values():
+            content_counts[n.content] += 1
+
+        consolidated_count = 0
+        for content, count in content_counts.items():
+            if count >= frequency_threshold:
+                sem_id = f"sem_{hashlib.sha256(content.encode()).hexdigest()[:8]}"
+                if sem_id not in self.long_term_graph.nodes:
+                    self.long_term_graph.add_node(
+                        node_id=sem_id,
+                        content=f"Consolidated Rule: {content}",
+                        memory_type="SEMANTIC",
+                        importance=min(2.0, 1.0 + (count * 0.2)),
+                        metadata={"origin_count": count},
+                    )
+                    consolidated_count += 1
+        return consolidated_count
+

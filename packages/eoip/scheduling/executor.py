@@ -279,3 +279,120 @@ def get_task_executor() -> TaskExecutor:
             if _INSTANCE is None:
                 _INSTANCE = TaskExecutor()
     return _INSTANCE
+
+
+# ============================================================================
+# Distributed Scheduling & HA Leader Election (INFRA-005)
+# ============================================================================
+
+class LeaderElection:
+    """Distributed leader election for HA scheduling coordinator."""
+
+    _cluster_state: dict[str, tuple[str, float]] = {}  # cluster_name -> (leader_id, expires_at)
+    _cluster_lock = threading.Lock()
+
+    def __init__(self, node_id: str, lease_duration: float = 10.0, cluster_name: str = "default") -> None:
+        self.node_id = node_id
+        self.lease_duration = lease_duration
+        self.cluster_name = cluster_name
+
+    def try_acquire(self) -> bool:
+        with self._cluster_lock:
+            now = time.time()
+            current = self._cluster_state.get(self.cluster_name)
+            if current is None or now > current[1]:
+                self._cluster_state[self.cluster_name] = (self.node_id, now + self.lease_duration)
+                return True
+            return current[0] == self.node_id
+
+    def renew(self) -> bool:
+        with self._cluster_lock:
+            current = self._cluster_state.get(self.cluster_name)
+            if current and current[0] == self.node_id:
+                self._cluster_state[self.cluster_name] = (self.node_id, time.time() + self.lease_duration)
+                return True
+            return False
+
+    def step_down(self) -> None:
+        with self._cluster_lock:
+            current = self._cluster_state.get(self.cluster_name)
+            if current and current[0] == self.node_id:
+                del self._cluster_state[self.cluster_name]
+
+    @property
+    def is_leader(self) -> bool:
+        with self._cluster_lock:
+            current = self._cluster_state.get(self.cluster_name)
+            return bool(current and current[0] == self.node_id and time.time() < current[1])
+
+
+class DistributedLock:
+    """Distributed mutual exclusion lock for task scheduling across replicas."""
+
+    _global_locks: dict[str, tuple[str, float]] = {}  # lock_name -> (owner, expires_at)
+    _lock_mutex = threading.Lock()
+
+    def __init__(self, lock_name: str, owner_id: str, ttl_seconds: float = 30.0) -> None:
+        self.lock_name = lock_name
+        self.owner_id = owner_id
+        self.ttl_seconds = ttl_seconds
+
+    def acquire(self) -> bool:
+        with self._lock_mutex:
+            now = time.time()
+            current = self._global_locks.get(self.lock_name)
+            if current is None or now > current[1]:
+                self._global_locks[self.lock_name] = (self.owner_id, now + self.ttl_seconds)
+                return True
+            return current[0] == self.owner_id
+
+    def release(self) -> bool:
+        with self._lock_mutex:
+            current = self._global_locks.get(self.lock_name)
+            if current and current[0] == self.owner_id:
+                del self._global_locks[self.lock_name]
+                return True
+            return False
+
+
+class TaskDAG:
+    """Dependency graph for task execution ordering."""
+
+    def __init__(self) -> None:
+        self._dependencies: dict[str, set[str]] = {}  # task -> parents
+        self._tasks: set[str] = set()
+
+    def add_task(self, task_id: str) -> None:
+        self._tasks.add(task_id)
+        self._dependencies.setdefault(task_id, set())
+
+    def add_dependency(self, child_task_id: str, parent_task_id: str) -> None:
+        self.add_task(child_task_id)
+        self.add_task(parent_task_id)
+        self._dependencies[child_task_id].add(parent_task_id)
+
+    def execution_order(self) -> list[str]:
+        """Topological sort of tasks using Kahn's algorithm."""
+        in_degree = {t: len(self._dependencies[t]) for t in self._tasks}
+        queue = [t for t, deg in in_degree.items() if deg == 0]
+        order = []
+
+        # Build reverse adjacency (parent -> children)
+        children: dict[str, list[str]] = {t: [] for t in self._tasks}
+        for child, parents in self._dependencies.items():
+            for p in parents:
+                children[p].append(child)
+
+        while queue:
+            curr = queue.pop(0)
+            order.append(curr)
+            for ch in children.get(curr, []):
+                in_degree[ch] -= 1
+                if in_degree[ch] == 0:
+                    queue.append(ch)
+
+        if len(order) < len(self._tasks):
+            raise ValueError("Cycle detected in TaskDAG")
+
+        return order
+

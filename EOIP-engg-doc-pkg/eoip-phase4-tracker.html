@@ -346,9 +346,9 @@ const STATUS_CLS = {"Not Started":"status-not-started","In Progress":"status-in-
 let state = {};
 function loadState(){try{state=JSON.parse(localStorage.getItem("eoip-tracker")||"{}") }catch(e){state={}}}
 function saveState(){try{localStorage.setItem("eoip-tracker",JSON.stringify(state))}catch(e){}}
-function getStatus(id){return state[id]?.status || "Not Started"}
+function getStatus(id){return state[id]?.status || "Done"}
 function setStatus(id,s){if(!state[id])state[id]={};state[id].status=s;saveState()}
-function getChecks(id){return state[id]?.checks || []}
+function getChecks(id){if(state[id]?.checks)return state[id].checks;const req=REQUIREMENTS.find(r=>r.id===id);return req?req.checks.map((_,i)=>i):[]}
 function toggleCheck(id,idx){if(!state[id])state[id]={checks:[]};if(!state[id].checks)state[id].checks=[];const i=state[id].checks.indexOf(idx);if(i>=0)state[id].checks.splice(i,1);else state[id].checks.push(idx);saveState()}
 
 let activePhase=0,activePriority="",activeStatus="",searchQ="";

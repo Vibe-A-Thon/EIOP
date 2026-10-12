@@ -590,3 +590,111 @@ def validate_jsonld_round_trip(store, limit: int = 5000) -> dict[str, Any]:
         "restored": {"vertices": len(restored_vertices), "edges": len(restored_edges)},
         "issues": issues,
     }
+
+
+# ── OWL Reasoner (GRAPH-006) ─────────────────────────────────────────
+
+
+class OWLReasoner:
+    """Runtime OWL DL classification, subsumption, and property chain reasoning."""
+
+    def __init__(self) -> None:
+        self.subclasses: dict[str, set[str]] = {}
+        self.disjoint_classes: dict[str, set[str]] = {}
+        self.property_chains: list[tuple[str, str, str]] = []
+        self._bootstrap_core_axioms()
+
+    def _bootstrap_core_axioms(self) -> None:
+        # Example enterprise class hierarchy
+        self.add_subclass("Microservice", "Service")
+        self.add_subclass("DatabaseService", "Service")
+        self.add_subclass("RelationalDatabase", "DatabaseService")
+        self.add_subclass("GraphDatabase", "DatabaseService")
+        self.add_subclass("Engineer", "Person")
+        self.add_subclass("Manager", "Person")
+
+        # Disjointness
+        self.add_disjoint("Service", "Person")
+        self.add_disjoint("RelationalDatabase", "GraphDatabase")
+
+        # Property chains: PART_OF o PART_OF -> PART_OF (transitivity)
+        self.add_property_chain("PART_OF", "PART_OF", "PART_OF")
+        self.add_property_chain("DEPENDS_ON", "DEPENDS_ON", "DEPENDS_ON")
+
+    def add_subclass(self, child: str, parent: str) -> None:
+        self.subclasses.setdefault(child.lower(), set()).add(parent.lower())
+
+    def add_disjoint(self, class_a: str, class_b: str) -> None:
+        ca, cb = class_a.lower(), class_b.lower()
+        self.disjoint_classes.setdefault(ca, set()).add(cb)
+        self.disjoint_classes.setdefault(cb, set()).add(ca)
+
+    def add_property_chain(self, p1: str, p2: str, implied: str) -> None:
+        self.property_chains.append((p1.upper(), p2.upper(), implied.upper()))
+
+    def is_subclass_of(self, child: str, parent: str) -> bool:
+        """Transitive subsumption check."""
+        c = child.lower()
+        p = parent.lower()
+        if c == p:
+            return True
+        visited = set()
+        queue = [c]
+        while queue:
+            curr = queue.pop(0)
+            if curr == p:
+                return True
+            visited.add(curr)
+            for par in self.subclasses.get(curr, set()):
+                if par not in visited:
+                    queue.append(par)
+        return False
+
+    def are_disjoint(self, class_a: str, class_b: str) -> bool:
+        ca = class_a.lower()
+        cb = class_b.lower()
+        # Direct disjointness
+        if cb in self.disjoint_classes.get(ca, set()):
+            return True
+        # Inherited disjointness
+        for super_a in self._all_superclasses(ca):
+            for super_b in self._all_superclasses(cb):
+                if super_b in self.disjoint_classes.get(super_a, set()):
+                    return True
+        return False
+
+    def _all_superclasses(self, cls_name: str) -> set[str]:
+        supers = set()
+        queue = [cls_name]
+        while queue:
+            curr = queue.pop(0)
+            for p in self.subclasses.get(curr, set()):
+                if p not in supers:
+                    supers.add(p)
+                    queue.append(p)
+        return supers
+
+    def infer_triples(self, store: Any) -> list[dict[str, Any]]:
+        """Infer transitive property chain edges across existing graph store."""
+        inferred = []
+        edges = store.find_edges() if hasattr(store, "find_edges") else []
+        edge_map: dict[str, list[dict[str, Any]]] = {}
+        for e in edges:
+            edge_map.setdefault(e["out_v"], []).append(e)
+
+        for p1, p2, implied in self.property_chains:
+            for e1 in edges:
+                if e1["label"].upper() == p1:
+                    mid_node = e1["in_v"]
+                    for e2 in edge_map.get(mid_node, []):
+                        if e2["label"].upper() == p2:
+                            u = e1["out_v"]
+                            w = e2["in_v"]
+                            inferred.append({
+                                "out_v": u,
+                                "in_v": w,
+                                "label": implied,
+                                "inferred_by": f"Chain({p1} o {p2})",
+                            })
+        return inferred
+

@@ -758,6 +758,388 @@ class IntelligenceEngine:
         }
 
 
+# ── Loop-over-Loop Engineering (CORE-005) ─────────────────────────────
+
+
+class LoopCircuitBreakerOpenError(RuntimeError):
+    """Raised when supervisory circuit breaker trips."""
+    pass
+
+
+@dataclass
+class LoopMetrics:
+    """Metrics tracked during an inner loop execution."""
+    loop_id: str
+    strategy: str
+    iterations: int = 0
+    convergence_score: float = 0.0
+    cost: float = 0.0
+    quality_score: float = 0.0
+    duration_ms: float = 0.0
+    status: str = "initialized"
+    error: str | None = None
+    step_history: list[dict[str, Any]] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "loop_id": self.loop_id,
+            "strategy": self.strategy,
+            "iterations": self.iterations,
+            "convergence_score": round(self.convergence_score, 4),
+            "cost": round(self.cost, 4),
+            "quality_score": round(self.quality_score, 4),
+            "duration_ms": round(self.duration_ms, 2),
+            "status": self.status,
+            "error": self.error,
+            "step_count": len(self.step_history),
+        }
+
+
+class LoopMonitor:
+    """Tracks inner loop metrics (iterations, convergence, cost, quality)."""
+
+    def __init__(
+        self,
+        min_quality: float = 0.6,
+        convergence_threshold: float = 0.85,
+        max_cost: float = 10.0,
+        max_iterations: int = 15,
+    ) -> None:
+        self.min_quality = min_quality
+        self.convergence_threshold = convergence_threshold
+        self.max_cost = max_cost
+        self.max_iterations = max_iterations
+        self._active_metrics: dict[str, LoopMetrics] = {}
+        self._history: list[LoopMetrics] = []
+        self._lock = threading.Lock()
+
+    def start_loop(self, loop_id: str, strategy: str) -> LoopMetrics:
+        with self._lock:
+            metrics = LoopMetrics(loop_id=loop_id, strategy=strategy, status="running")
+            self._active_metrics[loop_id] = metrics
+            return metrics
+
+    def record_step(
+        self,
+        loop_id: str,
+        iteration: int,
+        delta_cost: float = 0.0,
+        quality: float = 0.0,
+        convergence: float = 0.0,
+        step_metadata: dict[str, Any] | None = None,
+    ) -> LoopMetrics:
+        with self._lock:
+            metrics = self._active_metrics.get(loop_id)
+            if not metrics:
+                metrics = LoopMetrics(loop_id=loop_id, strategy="unknown", status="running")
+                self._active_metrics[loop_id] = metrics
+
+            metrics.iterations = iteration
+            metrics.cost += delta_cost
+            metrics.quality_score = quality
+            metrics.convergence_score = convergence
+            metrics.step_history.append({
+                "iteration": iteration,
+                "cost": metrics.cost,
+                "quality": quality,
+                "convergence": convergence,
+                "metadata": step_metadata or {},
+                "timestamp": time.time(),
+            })
+            return metrics
+
+    def finalize_loop(
+        self,
+        loop_id: str,
+        status: str,
+        duration_ms: float = 0.0,
+        error: str | None = None,
+    ) -> LoopMetrics:
+        with self._lock:
+            metrics = self._active_metrics.pop(loop_id, None)
+            if not metrics:
+                metrics = LoopMetrics(loop_id=loop_id, strategy="unknown")
+            metrics.status = status
+            metrics.duration_ms = duration_ms
+            metrics.error = error
+            self._history.append(metrics)
+            return metrics
+
+    def is_underperforming(self, metrics: LoopMetrics) -> tuple[bool, str]:
+        """Check if inner loop is underperforming according to thresholds."""
+        if metrics.iterations >= self.max_iterations and metrics.convergence_score < self.convergence_threshold:
+            return True, f"Max iterations {self.max_iterations} reached without convergence ({metrics.convergence_score:.2f})"
+        if metrics.cost >= self.max_cost:
+            return True, f"Max cost {self.max_cost} exceeded (current: {metrics.cost:.2f})"
+        if metrics.iterations >= 3 and metrics.quality_score < self.min_quality:
+            return True, f"Quality {metrics.quality_score:.2f} below threshold {self.min_quality}"
+        return False, "healthy"
+
+    def get_history(self) -> list[dict[str, Any]]:
+        with self._lock:
+            return [m.to_dict() for m in self._history]
+
+
+class LoopSwitcher:
+    """Dynamic strategy switcher when an inner loop underperforms or fails."""
+
+    def __init__(self, fallback_chains: dict[str, list[str]] | None = None) -> None:
+        self.fallback_chains = fallback_chains or {
+            "react": ["tree_of_thought", "direct_rag", "fallback_heuristic"],
+            "tree_of_thought": ["react", "direct_rag", "fallback_heuristic"],
+            "reflection": ["iterative_refine", "direct_rag"],
+            "plan_and_solve": ["react", "direct_heuristic"],
+        }
+        self._switch_log: list[dict[str, Any]] = []
+
+    def get_next_strategy(self, current_strategy: str, attempted_strategies: list[str]) -> str | None:
+        chain = self.fallback_chains.get(current_strategy, [])
+        for candidate in chain:
+            if candidate not in attempted_strategies:
+                return candidate
+        return None
+
+    def log_switch(self, loop_id: str, from_strategy: str, to_strategy: str, reason: str) -> None:
+        self._switch_log.append({
+            "loop_id": loop_id,
+            "from_strategy": from_strategy,
+            "to_strategy": to_strategy,
+            "reason": reason,
+            "timestamp": time.time(),
+        })
+
+    @property
+    def switch_log(self) -> list[dict[str, Any]]:
+        return list(self._switch_log)
+
+
+@dataclass
+class LoopComposition:
+    """Declarative binding between supervisory outer loop and managed inner loops."""
+    name: str
+    outer_loop_name: str  # e.g. "OODA", "META_EVAL", "SUPERVISORY_ADAPT"
+    strategies: list[str]  # ordered preference of inner strategies
+    max_total_iterations: int = 20
+    timeout_ms: float = 30000.0
+    failure_threshold: int = 3
+    require_verification: bool = True
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "name": self.name,
+            "outer_loop_name": self.outer_loop_name,
+            "strategies": self.strategies,
+            "max_total_iterations": self.max_total_iterations,
+            "timeout_ms": self.timeout_ms,
+            "failure_threshold": self.failure_threshold,
+            "require_verification": self.require_verification,
+            "metadata": self.metadata,
+        }
+
+
+@dataclass
+class SupervisoryResult:
+    """Outcome of a supervisory loop execution."""
+    composition_name: str
+    outer_loop_name: str
+    success: bool
+    final_strategy: str
+    total_iterations: int
+    total_cost: float
+    total_duration_ms: float
+    attempts: list[dict[str, Any]]
+    final_output: Any = None
+    circuit_breaker_tripped: bool = False
+    verification_passed: bool = True
+    error: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "composition_name": self.composition_name,
+            "outer_loop_name": self.outer_loop_name,
+            "success": self.success,
+            "final_strategy": self.final_strategy,
+            "total_iterations": self.total_iterations,
+            "total_cost": round(self.total_cost, 4),
+            "total_duration_ms": round(self.total_duration_ms, 2),
+            "attempts": self.attempts,
+            "circuit_breaker_tripped": self.circuit_breaker_tripped,
+            "verification_passed": self.verification_passed,
+            "error": self.error,
+        }
+
+
+class SupervisoryLoop:
+    """Supervisory loop that orchestrates and monitors inner loops with circuit breaker."""
+
+    def __init__(
+        self,
+        composition: LoopComposition,
+        monitor: LoopMonitor | None = None,
+        switcher: LoopSwitcher | None = None,
+    ) -> None:
+        self.composition = composition
+        self.monitor = monitor or LoopMonitor()
+        self.switcher = switcher or LoopSwitcher()
+        self._consecutive_failures = 0
+        self._circuit_open = False
+        self._lock = threading.Lock()
+
+    @property
+    def is_circuit_open(self) -> bool:
+        return self._circuit_open
+
+    def reset_circuit(self) -> None:
+        with self._lock:
+            self._consecutive_failures = 0
+            self._circuit_open = False
+
+    def execute(
+        self,
+        task_fn: Callable[[str, dict[str, Any]], Any],
+        context: dict[str, Any] | None = None,
+        verification_fn: Callable[[Any], bool] | None = None,
+    ) -> SupervisoryResult:
+        """Execute inner loop under supervision with OODA-style monitoring and adaptation."""
+        with self._lock:
+            if self._circuit_open:
+                raise LoopCircuitBreakerOpenError(
+                    f"Supervisory circuit breaker for '{self.composition.name}' is OPEN due to repeated failures."
+                )
+
+        ctx = context or {}
+        start_time = time.time()
+        attempted: list[str] = []
+        attempts_log: list[dict[str, Any]] = []
+        total_cost = 0.0
+        total_iterations = 0
+
+        # Choose initial strategy
+        current_strategy = self.composition.strategies[0] if self.composition.strategies else "default"
+
+        while current_strategy:
+            attempted.append(current_strategy)
+            loop_id = f"{self.composition.name}_{current_strategy}_{int(time.time() * 1000)}"
+            metrics = self.monitor.start_loop(loop_id, current_strategy)
+
+            t0 = time.time()
+            success = False
+            output = None
+            error_msg = None
+
+            try:
+                # Check supervisor timeout
+                elapsed_ms = (time.time() - start_time) * 1000
+                if elapsed_ms > self.composition.timeout_ms:
+                    raise TimeoutError(f"Supervisory loop exceeded timeout {self.composition.timeout_ms}ms")
+
+                # Inner loop call
+                output = task_fn(current_strategy, ctx)
+                duration_ms = (time.time() - t0) * 1000
+
+                # Simulate step metrics if task returned structured dict
+                if isinstance(output, dict) and "iterations" in output:
+                    iters = output.get("iterations", 1)
+                    cost = output.get("cost", 0.05)
+                    qual = output.get("quality", 0.9)
+                    conv = output.get("convergence", 0.95)
+                    self.monitor.record_step(loop_id, iters, cost, qual, conv)
+                    total_iterations += iters
+                    total_cost += cost
+                else:
+                    self.monitor.record_step(loop_id, 1, 0.01, 0.85, 0.9)
+                    total_iterations += 1
+                    total_cost += 0.01
+
+                # Check underperformance
+                underperforming, reason = self.monitor.is_underperforming(metrics)
+                if underperforming:
+                    raise RuntimeError(f"Strategy {current_strategy} underperformed: {reason}")
+
+                # Optional verification gate
+                if verification_fn and self.composition.require_verification:
+                    v_ok = verification_fn(output)
+                    if not v_ok:
+                        raise ValueError(f"Verification gate rejected output from {current_strategy}")
+
+                self.monitor.finalize_loop(loop_id, "completed", duration_ms)
+                success = True
+                with self._lock:
+                    self._consecutive_failures = 0
+
+                attempts_log.append({
+                    "strategy": current_strategy,
+                    "success": True,
+                    "duration_ms": duration_ms,
+                    "metrics": metrics.to_dict(),
+                })
+
+                return SupervisoryResult(
+                    composition_name=self.composition.name,
+                    outer_loop_name=self.composition.outer_loop_name,
+                    success=True,
+                    final_strategy=current_strategy,
+                    total_iterations=total_iterations,
+                    total_cost=total_cost,
+                    total_duration_ms=(time.time() - start_time) * 1000,
+                    attempts=attempts_log,
+                    final_output=output,
+                )
+
+            except Exception as exc:
+                duration_ms = (time.time() - t0) * 1000
+                error_msg = str(exc)
+                self.monitor.finalize_loop(loop_id, "failed", duration_ms, error=error_msg)
+
+                with self._lock:
+                    self._consecutive_failures += 1
+                    if self._consecutive_failures >= self.composition.failure_threshold:
+                        self._circuit_open = True
+
+                attempts_log.append({
+                    "strategy": current_strategy,
+                    "success": False,
+                    "error": error_msg,
+                    "duration_ms": duration_ms,
+                    "metrics": metrics.to_dict(),
+                })
+
+                if self._circuit_open:
+                    break
+
+                # Switch strategy
+                next_strat = None
+                # Check preferred composition list first
+                for cand in self.composition.strategies:
+                    if cand not in attempted:
+                        next_strat = cand
+                        break
+                # Fallback to switcher chains
+                if not next_strat:
+                    next_strat = self.switcher.get_next_strategy(current_strategy, attempted)
+
+                if next_strat:
+                    self.switcher.log_switch(loop_id, current_strategy, next_strat, error_msg)
+                    current_strategy = next_strat
+                else:
+                    break
+
+        return SupervisoryResult(
+            composition_name=self.composition.name,
+            outer_loop_name=self.composition.outer_loop_name,
+            success=False,
+            final_strategy=attempted[-1] if attempted else "none",
+            total_iterations=total_iterations,
+            total_cost=total_cost,
+            total_duration_ms=(time.time() - start_time) * 1000,
+            attempts=attempts_log,
+            final_output=None,
+            circuit_breaker_tripped=self._circuit_open,
+            error=error_msg or "All strategies exhausted",
+        )
+
+
 _instance: IntelligenceEngine | None = None
 _lock = threading.Lock()
 
@@ -769,3 +1151,4 @@ def get_intelligence_engine() -> IntelligenceEngine:
             if _instance is None:
                 _instance = IntelligenceEngine()
     return _instance
+
