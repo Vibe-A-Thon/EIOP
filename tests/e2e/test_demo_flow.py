@@ -5,6 +5,7 @@ Jira Story -> Merge Request -> Commit -> Source File -> Function -> Dependency -
 """
 
 
+import pytest
 from eoip.agents.runtime import AgentRegistry, AgentRuntime
 from eoip.agents.trace_impact import TraceImpactAgent
 from eoip.contracts.agent import AgentRequest
@@ -29,6 +30,7 @@ def _demo_environment(tmp_path):
     return store, data_dir, result
 
 
+@pytest.mark.req("MVP-FR-028")
 def test_full_demo_ingestion(tmp_path):
     store, _data_dir, result = _demo_environment(tmp_path)
     assert result["jira"]["records_accepted"] >= 2
@@ -38,6 +40,7 @@ def test_full_demo_ingestion(tmp_path):
     assert store.count_edges() >= 5
 
 
+@pytest.mark.req("MVP-FR-028")
 def test_cross_domain_evidence_path(tmp_path):
     store, _, _ = _demo_environment(tmp_path)
     issue_cid = "urn:eoip:work:item:jira:EOIP-1"

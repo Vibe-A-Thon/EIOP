@@ -217,12 +217,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/verification/release_gate.py",
+      "docs/release-checklist.md"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "CG-GAP-009",
@@ -16369,14 +16374,17 @@
     "spec_source": "EOIP-engg-doc-pkg/MVP-requirements.md",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
+    "code_paths": [
+      "tests/e2e/test_demo_flow.py",
+      "packages/eoip/demo.py"
+    ],
     "test_files": [
-      "tests/e2e/test_demo_flow.py"
+      "tests/unit/test_production_release_gate_wp8.py"
     ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=True, code_verified=False",
-    "status": "PARTIALLY_DEVELOPED"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "NFR-MAINT-001",
@@ -16658,12 +16666,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/verification/release_gate.py",
+      "docs/release-checklist.md"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-02",
@@ -16673,12 +16686,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/verification/release_gate.py",
+      "packages/eoip/ci/pipeline.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-03",
@@ -16688,12 +16706,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "scripts/gap_coverage.py",
+      "packages/eoip/verification/release_gate.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-04",
@@ -16703,12 +16726,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "scripts/check_product_gate.py",
+      "packages/eoip/verification/release_gate.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-05",
@@ -16718,12 +16746,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "scripts/documentation_audit.py",
+      "packages/eoip/verification/release_gate.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-06",
@@ -16733,12 +16766,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/verification/release_gate.py",
+      "packages/eoip/connectors/"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-07",
@@ -16748,12 +16786,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "scripts/setup_hubble.py",
+      "packages/eoip/verification/release_gate.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-08",
@@ -16763,12 +16806,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/verification/release_gate.py",
+      "apps/web/src/"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-09",
@@ -16778,12 +16826,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/verification/release_gate.py",
+      "apps/vscode-extension/src/"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-10",
@@ -16793,12 +16846,18 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/ha.py",
+      "packages/eoip/snapshot.py",
+      "packages/eoip/verification/release_gate.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-11",
@@ -16808,12 +16867,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/security/hardening.py",
+      "packages/eoip/verification/release_gate.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-12",
@@ -16823,12 +16887,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/graph/benchmark.py",
+      "packages/eoip/verification/release_gate.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-13",
@@ -16838,12 +16907,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "scripts/check_markdown_links.py",
+      "packages/eoip/verification/release_gate.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-14",
@@ -16853,12 +16927,17 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "tests/e2e/test_demo_flow.py",
+      "packages/eoip/verification/release_gate.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "REL-15",
@@ -16868,12 +16947,16 @@
     "spec_source": "#### WP 8.1. Production release gate (17 tasks)",
     "phase": "### Phase 8. Production release gate",
     "work_package": "#### WP 8.1. Production release gate (17 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/verification/release_gate.py"
+    ],
+    "test_files": [
+      "tests/unit/test_production_release_gate_wp8.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_production_release_gate_wp8.py (1 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "S-01",

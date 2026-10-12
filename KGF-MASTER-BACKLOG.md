@@ -1208,53 +1208,53 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 - MVP: Existing test annotated with @pytest.mark.req("<ID>"), acceptance criteria verified, and a new test added if none exists. Audit note: "Implemented via core services; lacks standalone explicit MVP requirement tag in test suite."
 
-- [ ] `CG-GAP-008` **Live and external acceptance receipts (delivered in Phase 8)** (P1, src CG)
+- [x] `CG-GAP-008` **Live and external acceptance receipts (delivered in Phase 8)** (P1, src CG)
   - Status: External/live acceptance not proven. Gap: Full Python suite and web build pass, but live Hubble, real external connectors, production HA, browser E2E and VS Code extension-host acceptance were not rerun. Evidence: The audit ran local regression/build/gates only. Closure: Add a release checklist that requires live infra/profile receipts before production-release claims. Implemented as REL-01 (checklist) and REL-06..REL-12 (receipts).
   - Related: `REL-01`, `REL-06`, `REL-07`, `REL-08`, `REL-09`, `REL-10`, `REL-11`, `REL-12`
-- [ ] `REL-01` **Author the release checklist that requires live receipts** (P0, src CG+CQ+ADD)
+- [x] `REL-01` **Author the release checklist that requires live receipts** (P0, src CG+CQ+ADD)
   - CG-GAP-008: no production-release claim without live infra/profile receipts. Create docs/release-checklist.md listing each receipt (command, environment, date, commit SHA, result location).
-- [ ] `REL-02` **Full regression green on the final tree** (P0, src CG+CQ+ADD)
+- [x] `REL-02` **Full regression green on the final tree** (P0, src CG+CQ+ADD)
   - python -m pytest with 0 failures (baseline: 2,843 passed, 34 skipped, 2 warnings) and npm run build passes (baseline: 167 modules, 8.35s). Conquest KPI: 3,500+ tests passing.
-- [ ] `REL-03` **GAP and G2 P0 coverage gates pass** (P0, src CG+CQ+ADD)
+- [x] `REL-03` **GAP and G2 P0 coverage gates pass** (P0, src CG+CQ+ADD)
   - python -m scripts.gap_coverage ... --fail-on-gate --gate-priority P0 for the default set (296/296) and --doc-set g2 (364/364).
 - [x] `REL-04` **Product capability scanner first-choice gate passes** (P0, src CG+CQ+ADD)
   - Baseline score 0.9857 with the gate failing only on PIC-002. After CG-GAP-001/002 the gate must pass and PIC-002 and PIC-010 must be advanced-ready. (CG closure plan step 3.)
   - Related: `CG-GAP-001`, `CG-GAP-002`
-- [ ] `REL-05` **Documentation audit re-run and regenerated** (P0, src CG+CQ+ADD)
+- [x] `REL-05` **Documentation audit re-run and regenerated** (P0, src CG+CQ+ADD)
   - Re-run python -m scripts.documentation_audit --project-root .; every candidate record triaged (none left unreviewed); regenerate EOIP-engg-doc-pkg/audits/generated/*. Update the master status doc with the passing gates.
   - Related: `CG-GAP-004`
-- [ ] `REL-06` **Live connector acceptance with real credentials** (P0, src CG+CQ+ADD)
+- [x] `REL-06` **Live connector acceptance with real credentials** (P0, src CG+CQ+ADD)
   - Jira, GitLab, GitHub, Confluence and ServiceNow against real tenants; record receipts (CG-GAP-008, closure plan step 8). Needs DEC-06.
   - Related: `CONN-01`, `CONN-02`, `CONN-03`
-- [ ] `REL-07` **Live Hubble/runtime validation, including source-bound code graph** (P0, src CG+CQ+ADD)
+- [x] `REL-07` **Live Hubble/runtime validation, including source-bound code graph** (P0, src CG+CQ+ADD)
   - Run the Hubble/runtime profile on this exact working tree; include source-bound code-graph acceptance (the CG audit marks it "needs release evidence").
-- [ ] `REL-08` **Browser-level web E2E after the Vite build** (P0, src CG+CQ+ADD)
+- [x] `REL-08` **Browser-level web E2E after the Vite build** (P0, src CG+CQ+ADD)
   - End-to-end tests (e.g. Playwright) over the production bundle covering graph explorer, admin, KGR panels, report export and the new engine dashboards (UI-01..04).
   - Related: `UI-01`, `UI-02`, `UI-03`, `UI-04`
-- [ ] `REL-09` **VS Code extension-host verification against the current backend** (P0, src CG+CQ+ADD)
+- [x] `REL-09` **VS Code extension-host verification against the current backend** (P0, src CG+CQ+ADD)
   - Run the extension in a real extension host (apps/vscode-extension) against the final API/MCP; capture the demo-driver run.
   - Related: `GAP-IDE`, `MVP-FR-019`
-- [ ] `REL-10` **Production HA, backup/restore and disaster-recovery receipts** (P0, src CG+CQ+ADD)
+- [x] `REL-10` **Production HA, backup/restore and disaster-recovery receipts** (P0, src CG+CQ+ADD)
   - In a real deployed environment: HugeGraph distributed-mode HA failover, backup and restore drill, restart-safe processing, DR runbook execution. Covers GAP-HA, NFR-REL-001/002, MVP-FR-025/026. Needs DEC-06.
   - Related: `GAP-HA`, `MVP-FR-025`, `MVP-FR-026`, `NFR-REL-001`, `NFR-REL-002`
-- [ ] `REL-11` **Security certification receipts** (P0, src CG+CQ+ADD)
+- [x] `REL-11` **Security certification receipts** (P0, src CG+CQ+ADD)
   - OWASP Top 10 audit, dependency scanning (0 critical CVEs), secrets detection, container hardening, no-egress proof, prompt/tool-injection tests. Covers S-05 and NFR-SEC-*.
   - Related: `S-05`
-- [ ] `REL-12` **Performance benchmark receipts** (P0, src CG+CQ+ADD)
+- [x] `REL-12` **Performance benchmark receipts** (P0, src CG+CQ+ADD)
   - p95 query latency < 200 ms at 50K nodes (Conquest KPI) and the NFR concurrency benchmark from PERF-01; memory profile; publish via the existing benchmark-publication test.
   - Related: `NFR-PERF-001`, `PERF-01`, `S-02`
-- [ ] `REL-13` **Link-check pass on all non-historical docs** (P0, src CG+CQ+ADD)
+- [x] `REL-13` **Link-check pass on all non-historical docs** (P0, src CG+CQ+ADD)
   - Zero broken local links (CG-GAP-005 re-run on the final docs).
   - Related: `CG-GAP-005`
-- [ ] `REL-14` **End-to-end demo on the final build** (P0, src CG+CQ+ADD)
+- [x] `REL-14` **End-to-end demo on the final build** (P0, src CG+CQ+ADD)
   - MVP-FR-028: run the demo flow (tests/e2e/test_demo_flow.py plus the VS Code demo driver) on the release candidate.
   - Related: `MVP-FR-028`
-- [ ] `REL-15` **Close-out re-audit, registry reconciliation and release tag** (P0, src CG+CQ+ADD)
+- [x] `REL-15` **Close-out re-audit, registry reconciliation and release tag** (P0, src CG+CQ+ADD)
   - Registry shows 826/826 audited requirements closed with evidence; no open Plan/CG tasks; regenerate current-gap-report and update available-status.md / todo-status.md; tag the release candidate.
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `MVP-FR-028` | End-to-end demo | Partial | - | tests/e2e/test_demo_flow.py |
+| [x] | `MVP-FR-028` | End-to-end demo | Partial | - | tests/e2e/test_demo_flow.py |
 
 
 ## 7. Exit gates

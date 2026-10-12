@@ -5,9 +5,10 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
-# Excluded historical directories
+# Excluded historical directories and legacy doc packages (CG-GAP-005, REL-13)
 EXCLUDED_DIRS = {
     "historical",
+    "EOIP-engg-doc-pkg",
     "node_modules",
     ".git",
     ".venv",
@@ -59,3 +60,6 @@ print(f"Total local links checked: {total_links}")
 print(f"Broken links found: {len(broken_links)}")
 for b in broken_links[:25]:
     print(f"  {b['file']} -> {b['target']} (text: {b.get('link_text', '')})")
+
+import sys
+sys.exit(1 if broken_links else 0)

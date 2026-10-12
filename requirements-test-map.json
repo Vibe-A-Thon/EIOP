@@ -2,6 +2,9 @@
   "001": [
     "tests/unit/test_requirement_evidence.py"
   ],
+  "CG-GAP-008": [
+    "tests/unit/test_production_release_gate_wp8.py::test_cg_gap_008_external_acceptance_receipts"
+  ],
   "CONN-01": [
     "tests/unit/test_phase2_connectors.py"
   ],
@@ -2900,7 +2903,7 @@
     "tests/unit/test_validation_source_binding.py"
   ],
   "MVP-FR-028": [
-    "tests/e2e/test_demo_flow.py"
+    "tests/unit/test_production_release_gate_wp8.py::test_mvp_fr_028_cross_domain_traceability_evidence"
   ],
   "NFR-MAINT-001": [
     "tests/contract/test_graph_store_contract.py"
@@ -2950,6 +2953,51 @@
   ],
   "PERF-01": [
     "tests/unit/test_performance_reliability_and_operations_wp72.py::test_perf_01_formal_nfr_benchmark_suite"
+  ],
+  "REL-01": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_01_release_checklist"
+  ],
+  "REL-02": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_02_regression_and_build"
+  ],
+  "REL-03": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_03_gap_and_g2_coverage_gates"
+  ],
+  "REL-04": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_04_product_capability_scanner"
+  ],
+  "REL-05": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_05_documentation_audit"
+  ],
+  "REL-06": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_06_live_connectors_acceptance"
+  ],
+  "REL-07": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_07_live_hubble_and_code_graph"
+  ],
+  "REL-08": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_08_browser_web_e2e"
+  ],
+  "REL-09": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_09_vscode_extension_host"
+  ],
+  "REL-10": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_10_production_ha_and_dr"
+  ],
+  "REL-11": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_11_security_certification"
+  ],
+  "REL-12": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_12_performance_benchmark_receipts"
+  ],
+  "REL-13": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_13_markdown_link_check"
+  ],
+  "REL-14": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_14_end_to_end_demo_flow"
+  ],
+  "REL-15": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_15_closeout_reconciliation"
   ],
   "REQ-001": [
     "tests/unit/test_documentation_audit.py"
