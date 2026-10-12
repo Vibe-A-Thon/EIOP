@@ -27,7 +27,13 @@ from eoip.authz.core import (
     role_inherited_roles,
     role_rank,
 )
-from eoip.authz.tokens import TokenError, TokenSigner
+from eoip.authz.tokens import (
+    TokenError,
+    TokenRevocationStore,
+    TokenSigner,
+    global_revocation_store,
+    has_scope,
+)
 
 __all__ = [
     "ADMIN_WILDCARD",
@@ -44,9 +50,12 @@ __all__ = [
     "PolicyStatement",
     "RoleRegistry",
     "TokenError",
+    "TokenRevocationStore",
     "TokenSigner",
     "User",
     "UserStore",
+    "global_revocation_store",
+    "has_scope",
     "load_policy_yaml",
     "permission_known",
     "role_inherited_roles",

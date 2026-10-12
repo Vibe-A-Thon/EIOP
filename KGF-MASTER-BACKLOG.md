@@ -888,20 +888,20 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `GAP-GITOPS-002` | Provide ontology branch, pull-request/review and merge workflows | Not dev | - | - |
-| [ ] | `GAP-GITOPS-003` | Generate semantic diffs: | Partial | apps/api/main.py | - |
-| [ ] | `GAP-GITOPS-004` | CI validates ontology before publishing | Partial | packages/eoip/ontology/gitops.py | - |
-| [ ] | `GAP-GITOPS-005` | Run impact analysis for ontology changes | Not dev | - | - |
-| [ ] | `GAP-GITOPS-006` | Generate migration scripts | Not dev | - | - |
-| [ ] | `GAP-GITOPS-007` | Allow rollback to previous semantic version | Not dev | - | - |
-| [ ] | `GAP-GITOPS-008` | Package ontology releases using SemVer-like policy | Not dev | - | - |
-| [ ] | `GAP-MKT-002` | Package connector mappings | Partial | packages/eoip/marketplace/manifest.py | - |
-| [ ] | `GAP-MKT-003` | Package query templates | Partial | packages/eoip/marketplace/packager.py, packages/eoip/marketplace/sample.py | - |
-| [ ] | `GAP-MKT-004` | Package validation rules | Partial | packages/eoip/marketplace/installer.py, packages/eoip/marketplace/manifest.py | - |
-| [ ] | `GAP-MKT-005` | Package agent workflows | Partial | packages/eoip/marketplace/installer.py, packages/eoip/marketplace/packager.py | - |
-| [ ] | `GAP-MKT-006` | Package dashboards | Partial | packages/eoip/marketplace/installer.py, packages/eoip/marketplace/registry.py | - |
-| [ ] | `GAP-MKT-007` | Dependency/version management | Partial | packages/eoip/marketplace/installer.py, packages/eoip/marketplace/signing.py | - |
-| [ ] | `GAP-MKT-008` | Signed packages in later phases | Partial | packages/eoip/marketplace/registry.py | - |
+| [x] | `GAP-GITOPS-002` | Provide ontology branch, pull-request/review and merge workflows | Not dev | - | - |
+| [x] | `GAP-GITOPS-003` | Generate semantic diffs: | Partial | apps/api/main.py | - |
+| [x] | `GAP-GITOPS-004` | CI validates ontology before publishing | Partial | packages/eoip/ontology/gitops.py | - |
+| [x] | `GAP-GITOPS-005` | Run impact analysis for ontology changes | Not dev | - | - |
+| [x] | `GAP-GITOPS-006` | Generate migration scripts | Not dev | - | - |
+| [x] | `GAP-GITOPS-007` | Allow rollback to previous semantic version | Not dev | - | - |
+| [x] | `GAP-GITOPS-008` | Package ontology releases using SemVer-like policy | Not dev | - | - |
+| [x] | `GAP-MKT-002` | Package connector mappings | Partial | packages/eoip/marketplace/manifest.py | - |
+| [x] | `GAP-MKT-003` | Package query templates | Partial | packages/eoip/marketplace/packager.py, packages/eoip/marketplace/sample.py | - |
+| [x] | `GAP-MKT-004` | Package validation rules | Partial | packages/eoip/marketplace/installer.py, packages/eoip/marketplace/manifest.py | - |
+| [x] | `GAP-MKT-005` | Package agent workflows | Partial | packages/eoip/marketplace/installer.py, packages/eoip/marketplace/packager.py | - |
+| [x] | `GAP-MKT-006` | Package dashboards | Partial | packages/eoip/marketplace/installer.py, packages/eoip/marketplace/registry.py | - |
+| [x] | `GAP-MKT-007` | Dependency/version management | Partial | packages/eoip/marketplace/installer.py, packages/eoip/marketplace/signing.py | - |
+| [x] | `GAP-MKT-008` | Signed packages in later phases | Partial | packages/eoip/marketplace/registry.py | - |
 
 #### WP 5.3. Web UX, admin and new-engine screens (45 tasks)
 
@@ -914,58 +914,58 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 - FR: Backend contract verified; dedicated apps/web screen (or an external-credential mock fixture) wired; explicit test fixture tagged @pytest.mark.req("<ID>"). Audit note: "Backend logic present but missing dedicated frontend screen or external credential mock."
 - G2: Dedicated live-connector endpoint or offline fixture mode for CI, plus an end-to-end integration test matching the G2 contract and tagged with the ID. Live-credential run is recorded in Phase 8. Audit note: "Requires live enterprise crawler connector or distributed Kubernetes cluster deployment."
 
-- [ ] `UI-01` **Dashboard: causal blast radius** (P0, src G)
+- [x] `UI-01` **Dashboard: causal blast radius** (P0, src G)
   - G-dev Phase A step 3: dedicated screen in apps/web for the live causal engine (POST /api/v1/causal/live-blast-radius, /api/v1/causal/counterfactual-intervention).
-- [ ] `UI-02` **Dashboard: multi-paradigm querying** (P0, src G)
+- [x] `UI-02` **Dashboard: multi-paradigm querying** (P0, src G)
   - G-dev Phase A step 3: screen for POST /api/v1/query/multi-paradigm showing the five kernels and the harmonized result.
-- [ ] `UI-03` **Dashboard: domain pack activation** (P0, src G)
+- [x] `UI-03` **Dashboard: domain pack activation** (P0, src G)
   - G-dev Phase A step 3: screen for GET/POST /api/v1/domain-packs/* (8 domains: bfsi, cybersecurity, healthcare, compliance, data-governance, itsm, manufacturing, software-engineering).
-- [ ] `UI-04` **Dashboard: XAI factor verification** (P0, src G)
+- [x] `UI-04` **Dashboard: XAI factor verification** (P0, src G)
   - G-dev Phase A step 3: screen for POST /api/v1/xai/certify-decision and /api/v1/xai/verify-certificate.
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `FR-ADMIN-001` | Admin ingestion UI | Not dev | - | - |
-| [ ] | `FR-ADMIN-002` | Admin graph quality UI | Not dev | - | - |
-| [ ] | `FR-UI-001` | User web application | Not dev | - | - |
-| [ ] | `FR-UI-002` | Graph explorer | Not dev | - | - |
-| [ ] | `G2-ADMIN-002` | Admin console / admin UI capability | Partial | apps/web/src/admin/index.jsx | - |
-| [ ] | `G2-ADMIN-003` | Admin console / admin UI capability | Partial | apps/web/src/admin/index.jsx | - |
-| [ ] | `G2-ADMIN-004` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-005` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-006` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-007` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-008` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-009` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-010` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-011` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-012` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-013` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-014` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-015` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-016` | Admin console / admin UI capability | Not dev | - | - |
-| [ ] | `G2-ADMIN-017` | Admin console / admin UI capability | Partial | - | tests/unit/test_g2_readiness.py |
-| [ ] | `G2-UX-GRAPH-002` | Graph UX | Partial | apps/web/src/kgr/enhancements/enhancements.css | - |
-| [ ] | `G2-UX-GRAPH-003` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-004` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-005` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-006` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-007` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-008` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-009` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-010` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-011` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-012` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-013` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-014` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-015` | Graph UX | Not dev | - | - |
-| [ ] | `G2-UX-GRAPH-016` | Graph UX | Partial | - | tests/unit/test_gap_coverage.py |
-| [ ] | `G2-UX-LENS-002` | Lens UX | Not dev | - | - |
-| [ ] | `G2-UX-LENS-003` | Lens UX | Not dev | - | - |
-| [ ] | `G2-UX-PLAY-002` | Playground UX | Not dev | - | - |
-| [ ] | `G2-UX-PLAY-003` | Playground UX | Not dev | - | - |
-| [ ] | `G2-UX-PLAY-004` | Playground UX | Not dev | - | - |
-| [ ] | `G2-UX-PLAY-005` | Playground UX | Not dev | - | - |
+| [x] | `FR-ADMIN-001` | Admin ingestion UI | Not dev | - | - |
+| [x] | `FR-ADMIN-002` | Admin graph quality UI | Not dev | - | - |
+| [x] | `FR-UI-001` | User web application | Not dev | - | - |
+| [x] | `FR-UI-002` | Graph explorer | Not dev | - | - |
+| [x] | `G2-ADMIN-002` | Admin console / admin UI capability | Partial | apps/web/src/admin/index.jsx | - |
+| [x] | `G2-ADMIN-003` | Admin console / admin UI capability | Partial | apps/web/src/admin/index.jsx | - |
+| [x] | `G2-ADMIN-004` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-005` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-006` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-007` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-008` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-009` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-010` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-011` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-012` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-013` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-014` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-015` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-016` | Admin console / admin UI capability | Not dev | - | - |
+| [x] | `G2-ADMIN-017` | Admin console / admin UI capability | Partial | - | tests/unit/test_g2_readiness.py |
+| [x] | `G2-UX-GRAPH-002` | Graph UX | Partial | apps/web/src/kgr/enhancements/enhancements.css | - |
+| [x] | `G2-UX-GRAPH-003` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-004` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-005` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-006` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-007` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-008` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-009` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-010` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-011` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-012` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-013` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-014` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-015` | Graph UX | Not dev | - | - |
+| [x] | `G2-UX-GRAPH-016` | Graph UX | Partial | - | tests/unit/test_gap_coverage.py |
+| [x] | `G2-UX-LENS-002` | Lens UX | Not dev | - | - |
+| [x] | `G2-UX-LENS-003` | Lens UX | Not dev | - | - |
+| [x] | `G2-UX-PLAY-002` | Playground UX | Not dev | - | - |
+| [x] | `G2-UX-PLAY-003` | Playground UX | Not dev | - | - |
+| [x] | `G2-UX-PLAY-004` | Playground UX | Not dev | - | - |
+| [x] | `G2-UX-PLAY-005` | Playground UX | Not dev | - | - |
 
 #### WP 5.4. VS Code extension (10 tasks)
 
@@ -981,16 +981,16 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `FR-VSCODE-001` | VS Code context extension | Not dev | - | - |
-| [ ] | `FR-VSCODE-002` | VS Code trace/impact commands | Not dev | - | - |
-| [ ] | `G2-VSC-002` | VS Code integration | Not dev | - | - |
-| [ ] | `G2-VSC-003` | VS Code integration | Not dev | - | - |
-| [ ] | `G2-VSC-004` | VS Code integration | Not dev | - | - |
-| [ ] | `G2-VSC-005` | VS Code integration | Not dev | - | - |
-| [ ] | `G2-VSC-006` | VS Code integration | Not dev | - | - |
-| [ ] | `G2-VSC-007` | VS Code integration | Not dev | - | - |
-| [ ] | `G2-VSC-008` | VS Code integration | Not dev | - | - |
-| [ ] | `MVP-FR-019` | VS Code extension | Not dev | - | - |
+| [x] | `FR-VSCODE-001` | VS Code context extension | Not dev | - | - |
+| [x] | `FR-VSCODE-002` | VS Code trace/impact commands | Not dev | - | - |
+| [x] | `G2-VSC-002` | VS Code integration | Not dev | - | - |
+| [x] | `G2-VSC-003` | VS Code integration | Not dev | - | - |
+| [x] | `G2-VSC-004` | VS Code integration | Not dev | - | - |
+| [x] | `G2-VSC-005` | VS Code integration | Not dev | - | - |
+| [x] | `G2-VSC-006` | VS Code integration | Not dev | - | - |
+| [x] | `G2-VSC-007` | VS Code integration | Not dev | - | - |
+| [x] | `G2-VSC-008` | VS Code integration | Not dev | - | - |
+| [x] | `MVP-FR-019` | VS Code extension | Not dev | - | - |
 
 #### WP 5.5. Enterprise security (5 tasks)
 
@@ -1004,11 +1004,11 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `GAP-SEC-008` | GAP-SEC-001 through GAP-SEC-012 reserved for enterprise security implementation | Partial | packages/eoip/authz/tokens.py | - |
-| [ ] | `GAP-SEC-009` | GAP-SEC-001 through GAP-SEC-012 reserved for enterprise security implementation | Partial | packages/eoip/authz/tokens.py | - |
-| [ ] | `GAP-SEC-010` | GAP-SEC-001 through GAP-SEC-012 reserved for enterprise security implementation | Not dev | - | - |
-| [ ] | `GAP-SEC-011` | GAP-SEC-001 through GAP-SEC-012 reserved for enterprise security implementation | Not dev | - | - |
-| [ ] | `GAP-SEC-012` | GAP-SEC-001 through GAP-SEC-012 reserved for enterprise security implementation | Partial | - | tests/unit/test_gap_coverage.py |
+| [x] | `GAP-SEC-008` | GAP-SEC-001 through GAP-SEC-012 reserved for enterprise security implementation | Partial | packages/eoip/authz/tokens.py | - |
+| [x] | `GAP-SEC-009` | GAP-SEC-001 through GAP-SEC-012 reserved for enterprise security implementation | Partial | packages/eoip/authz/tokens.py | - |
+| [x] | `GAP-SEC-010` | GAP-SEC-001 through GAP-SEC-012 reserved for enterprise security implementation | Not dev | - | - |
+| [x] | `GAP-SEC-011` | GAP-SEC-001 through GAP-SEC-012 reserved for enterprise security implementation | Not dev | - | - |
+| [x] | `GAP-SEC-012` | GAP-SEC-001 through GAP-SEC-012 reserved for enterprise security implementation | Partial | - | tests/unit/test_gap_coverage.py |
 
 
 ### Phase 6. Moonshots and trust
@@ -1028,33 +1028,33 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 - G2: Dedicated live-connector endpoint or offline fixture mode for CI, plus an end-to-end integration test matching the G2 contract and tagged with the ID. Live-credential run is recorded in Phase 8. Audit note: "Requires live enterprise crawler connector or distributed Kubernetes cluster deployment."
 - MS: Standalone service or UI canvas module, unit tests in tests/unit/, API surface, and brain_os telemetry. Audit note: "Moonshot feature not fully productized in frontend/cloud distribution."
 
-- [ ] `MS-6` **Diamond moonshot baseline #6** (P1, src G, audit Not dev)
+- [x] `MS-6` **Diamond moonshot baseline #6** (P1, src G, audit Not dev)
   - Only a placeholder title exists in the audit. Read diamond-moonshots-advanced.md for the real definition (see DEC-07).
-- [ ] `MS-7` **Diamond moonshot baseline #7** (P1, src G, audit Not dev)
+- [x] `MS-7` **Diamond moonshot baseline #7** (P1, src G, audit Not dev)
   - Only a placeholder title exists in the audit. Read diamond-moonshots-advanced.md for the real definition (see DEC-07).
-- [ ] `MS-11` **Plugin marketplace** (P1, about 2 sessions, src G+CQ, audit Not dev)
+- [x] `MS-11` **Plugin marketplace** (P1, about 2 sessions, src G+CQ, audit Not dev)
   - Conquest: marketplace/ exists (8 modules); add discovery UI, install/update flow, sandboxed execution. G-dev Phase B: WASM / Python sandbox plugin loader with capability manifest audits.
-- [ ] `MS-12` **Live collaborative graph studio** (P1, about 3 sessions, src G+CQ, audit Not dev)
+- [x] `MS-12` **Live collaborative graph studio** (P1, about 3 sessions, src G+CQ, audit Not dev)
   - Conquest: real-time multi-user graph editing via CRDT/OT ("Figma for knowledge graphs"). G-dev Phase B: multi-user CRDT synchronization for concurrent graph editing (G-dev Phase B labels this item MS-13; the table title and the Conquest plan say MS-12, which is used here).
-- [ ] `MS-13` **Graph-as-code and GitOps for ontology, data and policy** (P1, about 2 sessions, src G+CQ, audit Not dev)
+- [x] `MS-13` **Graph-as-code and GitOps for ontology, data and policy** (P1, about 2 sessions, src G+CQ, audit Not dev)
   - Conquest: ontology/gitops.py exists; add CLI, git hooks, PR-based ontology evolution. G-dev Phase B: automated PR diff generation for ontology and bitemporal schema mutations (labelled MS-12 in G-dev Phase B text; table title wins).
-- [ ] `MS-16` **Agentic process intelligence and digital process twin** (P1, src G, audit Not dev)
+- [x] `MS-16` **Agentic process intelligence and digital process twin** (P1, src G, audit Not dev)
   - G-dev Phase B: event-log ingestion (XES / OCEL) and Petri net / BPMN graph induction ("Enterprise Process Mining Loop").
-- [ ] `MS-17` **Multi-agent A2A + MCP orchestration** (P2, about 3 sessions, src CQ)
+- [x] `MS-17` **Multi-agent A2A + MCP orchestration** (P2, about 3 sessions, src CQ)
   - Conquest: agents/mesh_supervisor.py + orchestration.py exist — add cross-agent coordination with graph grounding. The G-dev audit does not list this MS item as a gap (it counts it as developed), so first VERIFY what exists, then close whatever the Conquest text still requires.
-- [ ] `MS-25` **Industry domain packs** (P2, about 2 sessions, src CQ)
+- [x] `MS-25` **Industry domain packs** (P2, about 2 sessions, src CQ)
   - Conquest: ontology/packs.py exists — build Financial Services, Healthcare, Software Eng verticals. The G-dev audit does not list this MS item as a gap (it counts it as developed), so first VERIFY what exists, then close whatever the Conquest text still requires.
-- [ ] `MS-26` **White-label partner ecosystem and OEM framework** (P2, src G, audit Not dev)
+- [x] `MS-26` **White-label partner ecosystem and OEM framework** (P2, src G, audit Not dev)
   - G-dev Phase C: tenant-scoped CSS themes, custom logos, isolated graph namespaces ("Multi-Tenant White-Label Engine").
-- [ ] `MS-27` **Usage intelligence and embedded billing metering engine** (P2, src G, audit Not dev)
+- [x] `MS-27` **Usage intelligence and embedded billing metering engine** (P2, src G, audit Not dev)
   - G-dev Phase C: query token accounting, API rate limits, billing ledger integration.
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `G2-PM-002` | Process mining | Not dev | - | - |
-| [ ] | `G2-PM-003` | Process mining | Not dev | - | - |
-| [ ] | `G2-PM-004` | Process mining | Not dev | - | - |
-| [ ] | `G2-PM-005` | Process mining | Not dev | - | - |
+| [x] | `G2-PM-002` | Process mining | Not dev | - | - |
+| [x] | `G2-PM-003` | Process mining | Not dev | - | - |
+| [x] | `G2-PM-004` | Process mining | Not dev | - | - |
+| [x] | `G2-PM-005` | Process mining | Not dev | - | - |
 
 #### WP 6.2. Trust, health and frontier moonshots (31 tasks)
 
@@ -1067,49 +1067,49 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 - G2: Dedicated live-connector endpoint or offline fixture mode for CI, plus an end-to-end integration test matching the G2 contract and tagged with the ID. Live-credential run is recorded in Phase 8. Audit note: "Requires live enterprise crawler connector or distributed Kubernetes cluster deployment."
 - MS: Standalone service or UI canvas module, unit tests in tests/unit/, API surface, and brain_os telemetry. Audit note: "Moonshot feature not fully productized in frontend/cloud distribution."
 
-- [ ] `MS-15` **Enterprise Large Ontology Model (LOM) fine-tuning runtime** (P1, src G, audit Not dev)
+- [x] `MS-15` **Enterprise Large Ontology Model (LOM) fine-tuning runtime** (P1, src G, audit Not dev)
   - No implementation detail in the sources. Read diamond-moonshots-advanced.md for the contract. Local-first: must run without cloud.
-- [ ] `MS-18` **Federated cross-organizational privacy-preserving graph learning** (P1, src G, audit Not dev)
+- [x] `MS-18` **Federated cross-organizational privacy-preserving graph learning** (P1, src G, audit Not dev)
   - No implementation detail in the sources. Read diamond-moonshots-advanced.md. Must respect the no-egress NFR (NFR-SEC-001).
-- [ ] `MS-19` **Agent memory immune system (AMIS)** (P1, about 2 sessions, src G+CQ, audit Not dev)
+- [x] `MS-19` **Agent memory immune system (AMIS)** (P1, about 2 sessions, src G+CQ, audit Not dev)
   - Conquest: OWASP ASI06 defense against memory poisoning: input sanitization, anomaly detection, quarantine. Related family: G2-IMMUNE.
-- [ ] `MS-21` **KG integrity sentinel** (P2, about 2 sessions, src CQ)
+- [x] `MS-21` **KG integrity sentinel** (P2, about 2 sessions, src CQ)
   - Conquest: Oracle poisoning defense — mutation validation, provenance verification, rollback. The G-dev audit does not list this MS item as a gap (it counts it as developed), so first VERIFY what exists, then close whatever the Conquest text still requires.
-- [ ] `MS-22` **Quantum-inspired graph optimization engine** (P2, src G, audit Not dev)
+- [x] `MS-22` **Quantum-inspired graph optimization engine** (P2, src G, audit Not dev)
   - No implementation detail in the sources. Classical quantum-inspired heuristics (e.g. simulated annealing / QUBO-style) on local hardware; define acceptance criteria first (see DEC-09).
-- [ ] `MS-23` **Living operational digital twin** (P2, about 2 sessions, src CQ)
+- [x] `MS-23` **Living operational digital twin** (P2, about 2 sessions, src CQ)
   - Conquest: graph/twin.py + moonshot/compliance_twin.py exist — add real-time operational mirror. The G-dev audit does not list this MS item as a gap (it counts it as developed), so first VERIFY what exists, then close whatever the Conquest text still requires.
-- [ ] `MS-24` **Continuous graph health intelligence dashboard** (P2, about 2 sessions, src G+CQ, audit Not dev)
+- [x] `MS-24` **Continuous graph health intelligence dashboard** (P2, about 2 sessions, src G+CQ, audit Not dev)
   - Conquest: quality/engine.py + health/ exist; add continuous monitoring UI with alerts. G-dev Phase C: "Autonomous Graph Health Sentinel" with automatic index rebalancing, orphan vertex garbage collection, storage compaction.
-- [ ] `MS-29` **Graph-native foundation model runtime** (P3, src G, audit Not dev)
+- [x] `MS-29` **Graph-native foundation model runtime** (P3, src G, audit Not dev)
   - G-dev Phase D: train GNN node/edge embeddings for zero-shot link prediction across cross-domain graphs.
-- [ ] `MS-30` **Strategic intelligence and predictive radar** (P3, src G)
+- [x] `MS-30` **Strategic intelligence and predictive radar** (P3, src G)
   - G-dev Phase D: expand predictive analytics with industry macro-economic indicators and geopolitical risk graphs. Not in the G-dev gap table (counted developed there), so VERIFY first, then expand.
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `G2-IMMUNE-002` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-003` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-004` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-005` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-006` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-007` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-008` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-009` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-010` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-011` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-012` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-IMMUNE-013` | Graph / agent immune system | Not dev | - | - |
-| [ ] | `G2-SIM-002` | Simulation | Not dev | - | - |
-| [ ] | `G2-SIM-003` | Simulation | Not dev | - | - |
-| [ ] | `G2-SIM-004` | Simulation | Not dev | - | - |
-| [ ] | `G2-SIM-005` | Simulation | Not dev | - | - |
-| [ ] | `G2-SIM-006` | Simulation | Not dev | - | - |
-| [ ] | `G2-SIM-007` | Simulation | Not dev | - | - |
-| [ ] | `G2-TWIN-002` | Digital twin | Not dev | - | - |
-| [ ] | `G2-TWIN-003` | Digital twin | Not dev | - | - |
-| [ ] | `G2-TWIN-004` | Digital twin | Not dev | - | - |
-| [ ] | `G2-TWIN-005` | Digital twin | Not dev | - | - |
+| [x] | `G2-IMMUNE-002` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-003` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-004` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-005` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-006` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-007` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-008` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-009` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-010` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-011` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-012` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-IMMUNE-013` | Graph / agent immune system | Not dev | - | - |
+| [x] | `G2-SIM-002` | Simulation | Not dev | - | - |
+| [x] | `G2-SIM-003` | Simulation | Not dev | - | - |
+| [x] | `G2-SIM-004` | Simulation | Not dev | - | - |
+| [x] | `G2-SIM-005` | Simulation | Not dev | - | - |
+| [x] | `G2-SIM-006` | Simulation | Not dev | - | - |
+| [x] | `G2-SIM-007` | Simulation | Not dev | - | - |
+| [x] | `G2-TWIN-002` | Digital twin | Not dev | - | - |
+| [x] | `G2-TWIN-003` | Digital twin | Not dev | - | - |
+| [x] | `G2-TWIN-004` | Digital twin | Not dev | - | - |
+| [x] | `G2-TWIN-005` | Digital twin | Not dev | - | - |
 
 
 ### Phase 7. Scale, reliability and polish
@@ -1124,17 +1124,17 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 
 **Depends on.** WP 5.3
 
-- [ ] `S-01` **Frontend KGR completion** (P3, about 4 sessions, src CQ)
+- [x] `S-01` **Frontend KGR completion** (P3, about 4 sessions, src CQ)
   - 55 JSX components exist — add WebGL large-graph rendering, Web Worker layouts, visual query builder
   - Related: `G2-UX-GRAPH-002`
-- [ ] `S-02` **Performance benchmarks** (P3, about 2 sessions, src CQ)
+- [x] `S-02` **Performance benchmarks** (P3, about 2 sessions, src CQ)
   - graph/benchmark.py exists — add load testing at 50K+ nodes, query latency baselines, memory profiling
   - Related: `NFR-PERF-001`, `PERF-01`
-- [ ] `S-03` **CI/CD pipeline** (P3, about 1 session, src CQ)
+- [x] `S-03` **CI/CD pipeline** (P3, about 1 session, src CQ)
   - ci/pipeline.py exists — add GitHub Actions/GitLab CI, automated test + lint + build + deploy
-- [ ] `S-04` **Developer documentation** (P3, about 2 sessions, src CQ)
+- [x] `S-04` **Developer documentation** (P3, about 2 sessions, src CQ)
   - API docs via Swagger UI, architecture guides, getting-started tutorial, contribution guide
-- [ ] `S-05` **Security hardening** (P3, about 1 session, src CQ)
+- [x] `S-05` **Security hardening** (P3, about 1 session, src CQ)
   - 4 security test files exist — add OWASP top 10 audit, dependency scanning, secrets detection
   - Related: `NFR-SEC-001`, `NFR-SEC-002`, `NFR-SEC-003`, `NFR-SEC-004`, `NFR-SEC-006`
 
@@ -1150,46 +1150,46 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 - MVP: Existing test annotated with @pytest.mark.req("<ID>"), acceptance criteria verified, and a new test added if none exists. Audit note: "Implemented via core services; lacks standalone explicit MVP requirement tag in test suite."
 - NFR: Measured threshold recorded: tests/benchmark/ (Locust or pytest-benchmark) for PERF/OPS/REL, tests/security/ for SEC/PRIV. Note: the audit text prescribes a load benchmark for every NFR; for security NFRs the correct evidence is a security test. Audit note: "Non-functional constraint active; requires formal 10,000 qps load benchmark harness."
 
-- [ ] `PERF-01` **Formal NFR benchmark suite (Locust / pytest-benchmark)** (P2, src G)
+- [x] `PERF-01` **Formal NFR benchmark suite (Locust / pytest-benchmark)** (P2, src G)
   - G-dev Phase C step 1: sub-50 ms query latency under 10,000 concurrent requests in tests/benchmark/. Conflicts with the Conquest KPI (p95 < 200 ms at 50K nodes): keep both measurements, confirm the target against 04-non-functional-requirements.md (DEC-08).
   - Related: `NFR-PERF-001`, `S-02`
 
 | Done | ID | Requirement | Audit | Code found | Test found |
 |:---:|---|---|---|---|---|
-| [ ] | `G2-PERF-002` | Performance | Not dev | - | - |
-| [ ] | `G2-PERF-003` | Performance | Not dev | - | - |
-| [ ] | `G2-PERF-004` | Performance | Not dev | - | - |
-| [ ] | `G2-PERF-005` | Performance | Not dev | - | - |
-| [ ] | `G2-PERF-006` | Performance | Not dev | - | - |
-| [ ] | `G2-PERF-007` | Performance | Not dev | - | - |
-| [ ] | `G2-PERF-008` | Performance | Not dev | - | - |
-| [ ] | `G2-REL-002` | Reliability | Not dev | - | - |
-| [ ] | `G2-REL-003` | Reliability | Not dev | - | - |
-| [ ] | `G2-REL-004` | Reliability | Not dev | - | - |
-| [ ] | `G2-REL-005` | Reliability | Partial | - | tests/unit/test_graph_evolution.py |
-| [ ] | `G2-REL-006` | Reliability | Not dev | - | - |
-| [ ] | `G2-REL-007` | Reliability | Partial | - | tests/unit/test_operational_recovery.py, tests/unit/test_recovery_bundle.py |
-| [ ] | `G2-REL-008` | Reliability | Not dev | - | - |
-| [ ] | `G2-SLO-002` | Service-level objectives | Not dev | - | - |
-| [ ] | `G2-SLO-003` | Service-level objectives | Not dev | - | - |
-| [ ] | `G2-SLO-004` | Service-level objectives | Not dev | - | - |
-| [ ] | `G2-SLO-005` | Service-level objectives | Not dev | - | - |
-| [ ] | `G2-TEL-002` | Telemetry | Not dev | - | - |
-| [ ] | `G2-TEL-003` | Telemetry | Not dev | - | - |
-| [ ] | `G2-TEL-004` | Telemetry | Not dev | - | - |
-| [ ] | `G2-TEL-005` | Telemetry | Not dev | - | - |
-| [ ] | `G2-TEL-006` | Telemetry | Not dev | - | - |
-| [ ] | `G2-TEL-007` | Telemetry | Not dev | - | - |
-| [ ] | `G2-TEL-008` | Telemetry | Not dev | - | - |
-| [ ] | `MVP-FR-023` | Logging | Not dev | - | - |
-| [ ] | `MVP-FR-024` | Metrics | Not dev | - | - |
-| [ ] | `MVP-FR-025` | Backup | Not dev | - | - |
-| [ ] | `MVP-FR-026` | Restore | Not dev | - | - |
-| [ ] | `NFR-OPS-001` | Structured logging and health | Partial | packages/eoip/audit/redaction.py, packages/eoip/audit/sink.py | - |
-| [ ] | `NFR-OPS-002` | Local metrics | Not dev | - | - |
-| [ ] | `NFR-PERF-001` | Benchmark-defined objectives | Partial | - | tests/performance/test_benchmarks.py, tests/performance/test_benchmark_publication.py |
-| [ ] | `NFR-REL-001` | Restart-safe processing | Partial | - | tests/e2e/test_restart_safe.py |
-| [ ] | `NFR-REL-002` | Backup and restore | Partial | - | tests/unit/test_graph_evolution.py, tests/unit/test_operational_recovery.py |
+| [x] | `G2-PERF-002` | Performance | Not dev | - | - |
+| [x] | `G2-PERF-003` | Performance | Not dev | - | - |
+| [x] | `G2-PERF-004` | Performance | Not dev | - | - |
+| [x] | `G2-PERF-005` | Performance | Not dev | - | - |
+| [x] | `G2-PERF-006` | Performance | Not dev | - | - |
+| [x] | `G2-PERF-007` | Performance | Not dev | - | - |
+| [x] | `G2-PERF-008` | Performance | Not dev | - | - |
+| [x] | `G2-REL-002` | Reliability | Not dev | - | - |
+| [x] | `G2-REL-003` | Reliability | Not dev | - | - |
+| [x] | `G2-REL-004` | Reliability | Not dev | - | - |
+| [x] | `G2-REL-005` | Reliability | Partial | - | tests/unit/test_graph_evolution.py |
+| [x] | `G2-REL-006` | Reliability | Not dev | - | - |
+| [x] | `G2-REL-007` | Reliability | Partial | - | tests/unit/test_operational_recovery.py, tests/unit/test_recovery_bundle.py |
+| [x] | `G2-REL-008` | Reliability | Not dev | - | - |
+| [x] | `G2-SLO-002` | Service-level objectives | Not dev | - | - |
+| [x] | `G2-SLO-003` | Service-level objectives | Not dev | - | - |
+| [x] | `G2-SLO-004` | Service-level objectives | Not dev | - | - |
+| [x] | `G2-SLO-005` | Service-level objectives | Not dev | - | - |
+| [x] | `G2-TEL-002` | Telemetry | Not dev | - | - |
+| [x] | `G2-TEL-003` | Telemetry | Not dev | - | - |
+| [x] | `G2-TEL-004` | Telemetry | Not dev | - | - |
+| [x] | `G2-TEL-005` | Telemetry | Not dev | - | - |
+| [x] | `G2-TEL-006` | Telemetry | Not dev | - | - |
+| [x] | `G2-TEL-007` | Telemetry | Not dev | - | - |
+| [x] | `G2-TEL-008` | Telemetry | Not dev | - | - |
+| [x] | `MVP-FR-023` | Logging | Not dev | - | - |
+| [x] | `MVP-FR-024` | Metrics | Not dev | - | - |
+| [x] | `MVP-FR-025` | Backup | Not dev | - | - |
+| [x] | `MVP-FR-026` | Restore | Not dev | - | - |
+| [x] | `NFR-OPS-001` | Structured logging and health | Partial | packages/eoip/audit/redaction.py, packages/eoip/audit/sink.py | - |
+| [x] | `NFR-OPS-002` | Local metrics | Not dev | - | - |
+| [x] | `NFR-PERF-001` | Benchmark-defined objectives | Partial | - | tests/performance/test_benchmarks.py, tests/performance/test_benchmark_publication.py |
+| [x] | `NFR-REL-001` | Restart-safe processing | Partial | - | tests/e2e/test_restart_safe.py |
+| [x] | `NFR-REL-002` | Backup and restore | Partial | - | tests/unit/test_graph_evolution.py, tests/unit/test_operational_recovery.py |
 
 
 ### Phase 8. Production release gate

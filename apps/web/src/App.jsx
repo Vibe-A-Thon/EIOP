@@ -6,6 +6,7 @@ import Studio from './studio/Studio.jsx';
 import AdminSecurityCenter from './admin/index.jsx';
 import GraphEnhancementToolbar from './kgr/enhancements/GraphEnhancementToolbar.jsx';
 import CognitiveHub from './cognitive/CognitiveHub.jsx';
+import EngineDashboardsHub from './dashboards/EngineDashboardsHub.jsx';
 import './kgr/enhancements/enhancements.css';
 
 const emptyGraph = {nodes: [], edges: [], paths: [], evidence: [], warnings: [], partial: false};
@@ -136,6 +137,7 @@ function Sidebar({mode, onNavigate, collapsed, onToggle, stats}) {
   const items = [
     {id: 'app', label: 'Knowledge explorer', icon: 'search', hint: 'Search, traverse, and explain the enterprise graph'},
     {id: 'cognitive', label: 'Cognitive Engineering', icon: 'cpu', hint: '15 Engineering Disciplines, Sandboxing, Inoculation, Slicing & Attestation'},
+    {id: 'dashboards', label: 'Cognitive Dashboards', icon: 'activity', hint: 'UI-01..04 · Live Causal Blast Radius, Multi-Paradigm Query, Domain Packs & XAI'},
     {id: 'demo', label: 'Guided demo', icon: 'spark', hint: 'Walk through all enterprise scenarios against the live graph'},
     {id: 'studio', label: 'Ontology studio', icon: 'layers', hint: 'Visual schema builder, query console, and no-code connector tooling'},
     {id: 'admin', label: 'Administration', icon: 'settings', hint: 'Operate ingestion, quality, audit, and ontology services'},
@@ -1005,7 +1007,7 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
 export default function App() {
   const [token, setToken] = useState(sessionStorage.getItem('eoip-token') || '');
   const [authenticated, setAuthenticated] = useState(false);
-  const [mode, setMode] = useState(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/cognitive') ? 'cognitive' : location.pathname.startsWith('/demo') ? 'demo' : location.pathname.startsWith('/studio') ? 'studio' : 'app');
+  const [mode, setMode] = useState(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/cognitive') ? 'cognitive' : location.pathname.startsWith('/dashboards') ? 'dashboards' : location.pathname.startsWith('/demo') ? 'demo' : location.pathname.startsWith('/studio') ? 'studio' : 'app');
   const [lens, setLens] = useState('graph');
   const [collapsed, setCollapsed] = useState(false);
   const [stats, setStats] = useState(null);
@@ -1047,8 +1049,8 @@ export default function App() {
 
   useEffect(() => {fetch('/health/ready').then(response => setHealth(response.ok ? 'ready' : 'unavailable')).catch(() => setHealth('unavailable'));}, []);
   useEffect(() => {if (!authenticated) return; const timer = setInterval(() => refresh().catch(() => {}), 15000); return () => clearInterval(timer);}, [authenticated, token]);
-  useEffect(() => {const onPop = () => setMode(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/cognitive') ? 'cognitive' : location.pathname.startsWith('/demo') ? 'demo' : location.pathname.startsWith('/studio') ? 'studio' : 'app'); addEventListener('popstate', onPop); return () => removeEventListener('popstate', onPop);}, []);
+  useEffect(() => {const onPop = () => setMode(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/cognitive') ? 'cognitive' : location.pathname.startsWith('/dashboards') ? 'dashboards' : location.pathname.startsWith('/demo') ? 'demo' : location.pathname.startsWith('/studio') ? 'studio' : 'app'); addEventListener('popstate', onPop); return () => removeEventListener('popstate', onPop);}, []);
 
   if (!authenticated) return <><Login token={token} setToken={setToken} onSubmit={login} busy={busy} health={health}/>{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</>;
-  return <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''}`}><Sidebar mode={mode} onNavigate={navigate} collapsed={collapsed} onToggle={() => setCollapsed(value => !value)} stats={stats}/><div className="workspace"><Topbar mode={mode} stats={stats} onRefresh={() => run(refresh)} onDisconnect={disconnect} busy={busy}/><main>{mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy}/> : mode === 'cognitive' ? <CognitiveHub api={api} run={run} busy={busy} stats={stats}/> : mode === 'demo' ? <GuidedDemo api={api} run={run} busy={busy}/> : mode === 'studio' ? <Studio api={api} run={run} busy={busy}/> : <Admin stats={stats} system={system} jobs={jobs} api={api} run={run} refresh={refresh} busy={busy}/>}</main><footer><span>EOIP · Evidence-backed enterprise intelligence</span><span>Local-first · Read-only graph experience · Policy bounded</span></footer></div>{busy && <div className="busy-bar" aria-label="Operation in progress"><span/></div>}{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</div>;
+  return <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''}`}><Sidebar mode={mode} onNavigate={navigate} collapsed={collapsed} onToggle={() => setCollapsed(value => !value)} stats={stats}/><div className="workspace"><Topbar mode={mode} stats={stats} onRefresh={() => run(refresh)} onDisconnect={disconnect} busy={busy}/><main>{mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy}/> : mode === 'cognitive' ? <CognitiveHub api={api} run={run} busy={busy} stats={stats}/> : mode === 'dashboards' ? <EngineDashboardsHub api={api} /> : mode === 'demo' ? <GuidedDemo api={api} run={run} busy={busy}/> : mode === 'studio' ? <Studio api={api} run={run} busy={busy}/> : <Admin stats={stats} system={system} jobs={jobs} api={api} run={run} refresh={refresh} busy={busy}/>}</main><footer><span>EOIP · Evidence-backed enterprise intelligence</span><span>Local-first · Read-only graph experience · Policy bounded</span></footer></div>{busy && <div className="busy-bar" aria-label="Operation in progress"><span/></div>}{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</div>;
 }

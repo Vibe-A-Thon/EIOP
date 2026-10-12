@@ -3,7 +3,7 @@
 Builds, signs, verifies, installs and uninstalls ``.eoipkg`` extension
 packages: zips with a Pydantic manifest, payload files, SHA-256 checksums,
 and an HMAC-SHA256 signature using a shared install key (asymmetric
-publisher signing is deferred to a later phase; see §45).
+publisher signing is supported alongside HMAC; see §45).
 """
 
 from eoip.marketplace.installer import (
@@ -24,6 +24,11 @@ from eoip.marketplace.packager import (
     PackageBuildError,
     PackageReader,
     build_package,
+    package_agent_workflow,
+    package_connector_mapping,
+    package_dashboard,
+    package_query_template,
+    package_validation_rules,
 )
 from eoip.marketplace.registry import InstalledRecord, PackageRegistry
 from eoip.marketplace.semver import (
@@ -39,6 +44,8 @@ from eoip.marketplace.signing import (
     SIGNATURE_FILENAME,
     default_install_key,
     sign,
+    sign_package_archive,
+    strip_signature,
     verify_signature,
 )
 
@@ -65,8 +72,15 @@ __all__ = [
     "build_package",
     "default_install_key",
     "matches_range",
+    "package_agent_workflow",
+    "package_connector_mapping",
+    "package_dashboard",
+    "package_query_template",
+    "package_validation_rules",
     "parse_range",
     "parse_version",
     "sign",
+    "sign_package_archive",
+    "strip_signature",
     "verify_signature",
 ]

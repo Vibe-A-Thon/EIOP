@@ -14,3 +14,23 @@ This package implements next-generation autonomous enterprise graph intelligence
 from __future__ import annotations
 
 __version__ = "2.0.0"
+
+from eoip.moonshot.federated_graph import FederatedGraphCoordinator, LocalFederatedGraphNode
+from eoip.moonshot.gfm_runtime import GraphFoundationModelHost
+from eoip.moonshot.health_dashboard import ContinuousGraphHealthDashboard
+from eoip.moonshot.lom_finetune import LargeOntologyModelFineTuningRuntime
+from eoip.moonshot.ocel_fusion import OCELProcessGraphFusionEngine
+from eoip.moonshot.quantum_optimizer import QuantumInspiredGraphOptimizer
+from eoip.moonshot.sentinel import KnowledgeGraphIntegritySentinel
+
+__all__ = [
+    "FederatedGraphCoordinator",
+    "LocalFederatedGraphNode",
+    "GraphFoundationModelHost",
+    "ContinuousGraphHealthDashboard",
+    "LargeOntologyModelFineTuningRuntime",
+    "OCELProcessGraphFusionEngine",
+    "QuantumInspiredGraphOptimizer",
+    "KnowledgeGraphIntegritySentinel",
+]
+

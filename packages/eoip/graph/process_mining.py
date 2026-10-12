@@ -178,3 +178,43 @@ def deviation_report(store: GraphStore, designed_steps: list[str] | None = None)
         "observed_paths": observed,
         "comparison": comparison,
     }
+
+
+def ingest_event_log(raw_events: list[dict]) -> list[ProcessCase]:
+    """Ingest event logs (XES / OCEL / tabular) into ProcessCases (G2-PM-002, MS-16)."""
+    by_case: dict[str, list[dict]] = defaultdict(list)
+    for evt in raw_events:
+        cid = str(evt.get("case_id") or evt.get("concept:name") or "default_case")
+        activity = str(evt.get("activity") or evt.get("to_value") or evt.get("label") or "step")
+        by_case[cid].append({
+            "event_id": str(evt.get("event_id") or len(by_case[cid]) + 1),
+            "label": activity,
+            "field": "status",
+            "to_value": activity,
+            "timestamp": str(evt.get("timestamp") or evt.get("time:timestamp") or ""),
+            "actor": str(evt.get("actor") or evt.get("org:resource") or ""),
+        })
+    cases: list[ProcessCase] = []
+    for cid, evts in by_case.items():
+        evts.sort(key=lambda e: e.get("timestamp", ""))
+        cases.append(ProcessCase(case_id=cid, events=evts))
+    return cases
+
+
+def discover_directly_follows_graph(cases: list[ProcessCase]) -> dict:
+    """Discover observed process paths and transition frequencies as a DFG (G2-PM-003)."""
+    return discover_process_paths(cases)
+
+
+def check_process_conformance(cases: list[ProcessCase], reference_model: list[str]) -> dict:
+    """Check conformance of observed cases against reference process model (G2-PM-004)."""
+    observed = discover_process_paths(cases)
+    return compare_to_designed_flow(observed, reference_model)
+
+
+def detect_process_bottlenecks(cases: list[ProcessCase]) -> list[dict]:
+    """Detect process transition bottlenecks and rework loops (G2-PM-005)."""
+    observed = discover_process_paths(cases)
+    comp = compare_to_designed_flow(observed, [])
+    return comp.get("bottlenecks", [])
+

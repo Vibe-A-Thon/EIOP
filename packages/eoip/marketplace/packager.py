@@ -1,4 +1,4 @@
-"""Packager: build .eoipkg archives (GAP-MKT-003, GAP-MKT-005).
+"""Packager: build .eoipkg archives (GAP-MKT-002..006).
 
 A ``.eoipkg`` is a zip archive containing:
 
@@ -16,8 +16,9 @@ import hashlib
 import io
 import json
 import zipfile
+from typing import Any
 
-from eoip.marketplace.manifest import PackageManifest
+from eoip.marketplace.manifest import CapabilityKind, PackageManifest
 
 MANIFEST_FILENAME = "manifest.json"
 CHECKSUMS_FILENAME = "checksums.json"
@@ -74,8 +75,122 @@ def build_package(
     return buffer.getvalue()
 
 
+# ---------------------------------------------------------------------------
+# Specialized Package Builders (GAP-MKT-002..006)
+# ---------------------------------------------------------------------------
+
+def package_connector_mapping(
+    name: str,
+    version: str,
+    mapping_id: str,
+    mapping_payload: dict[str, Any] | str,
+    description: str = "",
+) -> bytes:
+    """Package connector mappings (GAP-MKT-002)."""
+    content = (
+        json.dumps(mapping_payload, indent=2).encode("utf-8")
+        if isinstance(mapping_payload, dict)
+        else mapping_payload.encode("utf-8")
+    )
+    manifest = PackageManifest(
+        id=f"urn:eoip:marketplace:package:{name}",
+        name=name,
+        version=version,
+        description=description or f"Connector mapping for {mapping_id}",
+        provides={CapabilityKind.MAPPINGS: [mapping_id]},
+    )
+    return build_package(manifest, {f"mappings/{mapping_id}.json": content})
+
+
+def package_query_template(
+    name: str,
+    version: str,
+    template_id: str,
+    query_text: str,
+    description: str = "",
+) -> bytes:
+    """Package query templates (GAP-MKT-003)."""
+    manifest = PackageManifest(
+        id=f"urn:eoip:marketplace:package:{name}",
+        name=name,
+        version=version,
+        description=description or f"Query template {template_id}",
+        provides={CapabilityKind.QUERY_TEMPLATES: [template_id]},
+    )
+    return build_package(manifest, {f"query_templates/{template_id}.sql": query_text.encode("utf-8")})
+
+
+def package_validation_rules(
+    name: str,
+    version: str,
+    validator_id: str,
+    rules: dict[str, Any] | str,
+    description: str = "",
+) -> bytes:
+    """Package validation rules (GAP-MKT-004)."""
+    content = (
+        json.dumps(rules, indent=2).encode("utf-8")
+        if isinstance(rules, dict)
+        else rules.encode("utf-8")
+    )
+    manifest = PackageManifest(
+        id=f"urn:eoip:marketplace:package:{name}",
+        name=name,
+        version=version,
+        description=description or f"Validation rules for {validator_id}",
+        provides={CapabilityKind.VALIDATORS: [validator_id]},
+    )
+    return build_package(manifest, {f"validators/{validator_id}.json": content})
+
+
+def package_agent_workflow(
+    name: str,
+    version: str,
+    workflow_id: str,
+    workflow_spec: dict[str, Any] | str,
+    description: str = "",
+) -> bytes:
+    """Package agent workflows (GAP-MKT-005)."""
+    content = (
+        json.dumps(workflow_spec, indent=2).encode("utf-8")
+        if isinstance(workflow_spec, dict)
+        else workflow_spec.encode("utf-8")
+    )
+    manifest = PackageManifest(
+        id=f"urn:eoip:marketplace:package:{name}",
+        name=name,
+        version=version,
+        description=description or f"Agent workflow for {workflow_id}",
+        provides={CapabilityKind.AGENT_WORKFLOWS: [workflow_id]},
+    )
+    return build_package(manifest, {f"agent_workflows/{workflow_id}.json": content})
+
+
+def package_dashboard(
+    name: str,
+    version: str,
+    dashboard_id: str,
+    dashboard_spec: dict[str, Any] | str,
+    description: str = "",
+) -> bytes:
+    """Package dashboards (GAP-MKT-006)."""
+    content = (
+        json.dumps(dashboard_spec, indent=2).encode("utf-8")
+        if isinstance(dashboard_spec, dict)
+        else dashboard_spec.encode("utf-8")
+    )
+    manifest = PackageManifest(
+        id=f"urn:eoip:marketplace:package:{name}",
+        name=name,
+        version=version,
+        description=description or f"Dashboard layout for {dashboard_id}",
+        provides={CapabilityKind.DASHBOARDS: [dashboard_id]},
+    )
+    return build_package(manifest, {f"dashboards/{dashboard_id}.json": content})
+
+
 class PackageReader:
-    """Read and verify a .eoipkg archive in memory (GAP-MKT-005)."""
+    """Read and verify a .eoipkg archive in memory (GAP-MKT-002..008)."""
 
     def __init__(self, archive: bytes) -> None:
         try:
@@ -106,7 +221,6 @@ class PackageReader:
 
         Returns a list of mismatch descriptions (empty when intact).
         """
-
         try:
             recorded = json.loads(self._read(CHECKSUMS_FILENAME).decode("utf-8"))
         except (json.JSONDecodeError, UnicodeDecodeError) as exc:
@@ -121,3 +235,43 @@ class PackageReader:
             if actual != expected:
                 problems.append(f"checksum mismatch: {name}")
         return problems
+
+    def get_mappings(self) -> dict[str, str]:
+        """Extract connector mappings from payload (GAP-MKT-002)."""
+        return {
+            path: data.decode("utf-8")
+            for path, data in self.payload_files().items()
+            if path.startswith("mappings/")
+        }
+
+    def get_query_templates(self) -> dict[str, str]:
+        """Extract query templates from payload (GAP-MKT-003)."""
+        return {
+            path: data.decode("utf-8")
+            for path, data in self.payload_files().items()
+            if path.startswith("query_templates/")
+        }
+
+    def get_validators(self) -> dict[str, str]:
+        """Extract validator rules from payload (GAP-MKT-004)."""
+        return {
+            path: data.decode("utf-8")
+            for path, data in self.payload_files().items()
+            if path.startswith("validators/")
+        }
+
+    def get_agent_workflows(self) -> dict[str, str]:
+        """Extract agent workflows from payload (GAP-MKT-005)."""
+        return {
+            path: data.decode("utf-8")
+            for path, data in self.payload_files().items()
+            if path.startswith("agent_workflows/")
+        }
+
+    def get_dashboards(self) -> dict[str, str]:
+        """Extract dashboards from payload (GAP-MKT-006)."""
+        return {
+            path: data.decode("utf-8")
+            for path, data in self.payload_files().items()
+            if path.startswith("dashboards/")
+        }

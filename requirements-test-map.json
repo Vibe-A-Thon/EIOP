@@ -13,6 +13,12 @@
     "tests/unit/test_jira_connector.py::test_jira_offline_fixtures_and_baseline",
     "tests/unit/test_jira_connector.py"
   ],
+  "FR-ADMIN-001": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_admin_001_ingestion_ui"
+  ],
+  "FR-ADMIN-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_admin_002_graph_quality_ui"
+  ],
   "FR-AGENT-001": [
     "tests/unit/test_governed_agents.py::test_agent_contract_validation"
   ],
@@ -257,6 +263,12 @@
     "tests/unit/test_servicenow_upstream_fixture.py",
     "tests/unit/test_servicenow_connector.py"
   ],
+  "FR-UI-001": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_ui_001_user_web_application"
+  ],
+  "FR-UI-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_ui_002_graph_explorer"
+  ],
   "FR-VALID-001": [
     "tests/unit/test_validation_engine.py"
   ],
@@ -266,11 +278,62 @@
   "FR-VALID-003": [
     "tests/unit/test_quality.py"
   ],
+  "FR-VSCODE-001": [
+    "tests/unit/test_vscode_extension_wp54.py::test_fr_vscode_001_context_extension"
+  ],
+  "FR-VSCODE-002": [
+    "tests/unit/test_vscode_extension_wp54.py::test_fr_vscode_002_trace_impact_commands"
+  ],
   "G2-ADMIN-001": [
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-ADMIN-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_002_connector_wizard"
+  ],
+  "G2-ADMIN-003": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_003_reconciliation_status"
+  ],
+  "G2-ADMIN-004": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_004_checkpoint_viewer"
+  ],
+  "G2-ADMIN-005": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_005_dlq_replay_console"
+  ],
+  "G2-ADMIN-006": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_006_schema_drift_console"
+  ],
+  "G2-ADMIN-007": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_007_source_freshness_dashboard"
+  ],
+  "G2-ADMIN-008": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_008_graph_version_timeline"
+  ],
+  "G2-ADMIN-009": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_009_semantic_change_journal"
+  ],
+  "G2-ADMIN-010": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_010_event_consumer_health"
+  ],
+  "G2-ADMIN-011": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_011_mapping_preview"
+  ],
+  "G2-ADMIN-012": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_012_crawl_safety_preview"
+  ],
+  "G2-ADMIN-013": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_013_telemetry_extraction_controls"
+  ],
+  "G2-ADMIN-014": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_014_knowledge_slo_management"
+  ],
+  "G2-ADMIN-015": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_015_knowledge_debt_dashboard"
+  ],
+  "G2-ADMIN-016": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_016_ontology_evolution_proposals"
+  ],
   "G2-ADMIN-017": [
-    "tests/unit/test_g2_readiness.py"
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_017_simulation_workspace_manager"
   ],
   "G2-ARCH-001": [
     "tests/unit/test_g2_readiness.py",
@@ -639,6 +702,42 @@
   "G2-IMMUNE-001": [
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-IMMUNE-002": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_002_missing_mandatory_relationships"
+  ],
+  "G2-IMMUNE-003": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_003_contradictory_claims"
+  ],
+  "G2-IMMUNE-004": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_004_stale_documentation"
+  ],
+  "G2-IMMUNE-005": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_005_schema_drift"
+  ],
+  "G2-IMMUNE-006": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_006_unexpected_architecture_edges"
+  ],
+  "G2-IMMUNE-007": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_007_missing_ownership"
+  ],
+  "G2-IMMUNE-008": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_008_broken_provenance"
+  ],
+  "G2-IMMUNE-009": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_009_suspicious_ai_relationships"
+  ],
+  "G2-IMMUNE-010": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_010_graph_poisoning_anomalies"
+  ],
+  "G2-IMMUNE-011": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_011_quarantine_and_action_recommendation"
+  ],
+  "G2-IMMUNE-012": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_012_non_silent_rewrite_policy"
+  ],
+  "G2-IMMUNE-013": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_013_verifiable_explanatory_rationale"
+  ],
   "G2-JOURNAL-001": [
     "tests/unit/test_g2_readiness.py"
   ],
@@ -716,8 +815,41 @@
   "G2-PERF-001": [
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-PERF-002": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_002_incremental_update_latency_measured"
+  ],
+  "G2-PERF-003": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_003_graph_mutation_throughput_benchmarked"
+  ],
+  "G2-PERF-004": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_004_historical_state_reconstruction_latency"
+  ],
+  "G2-PERF-005": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_005_graph_diff_latency_benchmarked"
+  ],
+  "G2-PERF-006": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_006_crawler_concurrency_source_configurable"
+  ],
+  "G2-PERF-007": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_007_telemetry_adapters_aggregate_before_graph_write"
+  ],
+  "G2-PERF-008": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_008_incremental_processing_avoids_global_recompute"
+  ],
   "G2-PM-001": [
     "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-PM-002": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_g2_pm_002_event_log_ingestion"
+  ],
+  "G2-PM-003": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_g2_pm_003_process_path_discovery"
+  ],
+  "G2-PM-004": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_g2_pm_004_conformance_checking"
+  ],
+  "G2-PM-005": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_g2_pm_005_bottleneck_detection"
   ],
   "G2-QOP-001": [
     "tests/unit/test_g2_readiness.py"
@@ -749,13 +881,26 @@
   "G2-REL-001": [
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-REL-002": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_002_webhook_delivery_deduplicated"
+  ],
+  "G2-REL-003": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_003_missed_webhook_recovery_tested"
+  ],
+  "G2-REL-004": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_004_reconciliation_safe_to_rerun"
+  ],
   "G2-REL-005": [
-    "tests/unit/test_graph_evolution.py",
-    "tests/unit/test_graph_evolution.py::test_change_journal_has_cursor_and_hash_chain_integrity"
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_005_event_journal_corruption_detection"
+  ],
+  "G2-REL-006": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_006_backup_includes_graph_and_sync_metadata"
   ],
   "G2-REL-007": [
-    "tests/unit/test_operational_recovery.py",
-    "tests/unit/test_recovery_bundle.py"
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_007_restore_preserves_checkpoints"
+  ],
+  "G2-REL-008": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_008_restore_procedure_documents_event_replay"
   ],
   "G2-REQ-34": [
     "tests/contract/test_g2_contracts.py",
@@ -815,8 +960,38 @@
   "G2-SIM-001": [
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-SIM-002": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_002_hypothetical_mutations_without_base_mutation"
+  ],
+  "G2-SIM-003": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_003_supported_mutation_types"
+  ],
+  "G2-SIM-004": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_004_simulation_analysis_runs"
+  ],
+  "G2-SIM-005": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_005_compare_simulation_to_baseline"
+  ],
+  "G2-SIM-006": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_006_evidence_assumptions_uncertainty"
+  ],
+  "G2-SIM-007": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_007_simulation_reproducibility"
+  ],
   "G2-SLO-001": [
     "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SLO-002": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_slo_002_slos_configurable_by_domain"
+  ],
+  "G2-SLO-003": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_slo_003_slo_breach_creates_quality_finding"
+  ],
+  "G2-SLO-004": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_slo_004_dashboards_show_objective_trend_breached_assets"
+  ],
+  "G2-SLO-005": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_slo_005_slo_evaluation_reproducible_against_graph_version"
   ],
   "G2-SRC-API-002": [
     "tests/unit/test_api_portal_connector.py::test_api_portal_service_catalog_discovery",
@@ -1405,6 +1580,27 @@
   "G2-TEL-001": [
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-TEL-002": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_002_telemetry_derived_relationship_has_observation_window"
+  ],
+  "G2-TEL-003": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_003_telemetry_relationship_includes_source_evidence_ref"
+  ],
+  "G2-TEL-004": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_004_aggregation_fingerprints_for_repeated_logs"
+  ],
+  "G2-TEL-005": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_005_preserve_bounded_exemplar_trace_ids"
+  ],
+  "G2-TEL-006": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_006_configurable_retention_for_derived_facts"
+  ],
+  "G2-TEL-007": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_007_runtime_edge_expires_under_policy"
+  ],
+  "G2-TEL-008": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_008_explicit_confidence_coverage_status"
+  ],
   "G2-TIME-001": [
     "tests/unit/test_g2_readiness.py"
   ],
@@ -1429,8 +1625,104 @@
   "G2-TWIN-001": [
     "tests/unit/test_g2_readiness.py"
   ],
+  "G2-TWIN-002": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_twin_002_twin_comprehensive_ontology_coverage"
+  ],
+  "G2-TWIN-003": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_twin_003_twin_historical_revisions_and_state"
+  ],
+  "G2-TWIN-004": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_twin_004_derived_relationships_evidence_addressable"
+  ],
+  "G2-TWIN-005": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_twin_005_distinguish_intended_implemented_observed_inferred"
+  ],
+  "G2-UX-GRAPH-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_002_clustering_grouping"
+  ],
+  "G2-UX-GRAPH-003": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_003_folding_collapse_layouts"
+  ],
+  "G2-UX-GRAPH-004": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_004_progressive_expansion"
+  ],
+  "G2-UX-GRAPH-005": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_005_time_slider"
+  ],
+  "G2-UX-GRAPH-006": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_006_current_historical_toggle"
+  ],
+  "G2-UX-GRAPH-007": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_007_filters"
+  ],
+  "G2-UX-GRAPH-008": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_008_edge_confidence_indicators"
+  ],
+  "G2-UX-GRAPH-009": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_009_path_storytelling"
+  ],
+  "G2-UX-GRAPH-010": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_010_architecture_overlay"
+  ],
+  "G2-UX-GRAPH-011": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_011_runtime_topology_overlay"
+  ],
+  "G2-UX-GRAPH-012": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_012_release_comparison_overlay"
+  ],
+  "G2-UX-GRAPH-013": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_013_blast_radius_highlighting"
+  ],
+  "G2-UX-GRAPH-014": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_014_why_edge_exists"
+  ],
+  "G2-UX-GRAPH-015": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_015_where_entity_came_from"
+  ],
+  "G2-UX-GRAPH-016": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_016_path_evidence_bundle"
+  ],
+  "G2-UX-LENS-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_lens_002_context_preservation"
+  ],
+  "G2-UX-LENS-003": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_lens_003_shareable_query_definitions"
+  ],
+  "G2-UX-PLAY-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_play_002_playback_synchronization"
+  ],
+  "G2-UX-PLAY-003": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_play_003_pause_step_scrub"
+  ],
+  "G2-UX-PLAY-004": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_play_004_event_source_evidence_links"
+  ],
+  "G2-UX-PLAY-005": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_play_005_export_timeline_package"
+  ],
   "G2-VSC-001": [
     "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-VSC-002": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_002_runtime_services"
+  ],
+  "G2-VSC-003": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_003_architecture_conformance"
+  ],
+  "G2-VSC-004": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_004_impacted_tests"
+  ],
+  "G2-VSC-005": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_005_relevant_incidents"
+  ],
+  "G2-VSC-006": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_006_adr_rationale"
+  ],
+  "G2-VSC-007": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_007_quick_actions"
+  ],
+  "G2-VSC-008": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_008_bounded_telemetry_semantics"
   ],
   "GAP-AGOV-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -1820,6 +2112,27 @@
   "GAP-GITOPS-001": [
     "tests/unit/test_ontology_gitops.py"
   ],
+  "GAP-GITOPS-002": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_branch_pr_review_merge_workflow"
+  ],
+  "GAP-GITOPS-003": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_generate_semantic_diffs"
+  ],
+  "GAP-GITOPS-004": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_ci_validate_ontology_gate"
+  ],
+  "GAP-GITOPS-005": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_run_impact_analysis"
+  ],
+  "GAP-GITOPS-006": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_generate_migration_scripts"
+  ],
+  "GAP-GITOPS-007": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_rollback_to_previous_version"
+  ],
+  "GAP-GITOPS-008": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_package_ontology_release_semver_policy"
+  ],
   "GAP-GOV": [
     "tests/unit/test_enterprise_readiness_wp51.py::test_gap_gov_stewardship_workflow"
   ],
@@ -2051,6 +2364,27 @@
   "GAP-MKT-001": [
     "tests/unit/test_marketplace.py"
   ],
+  "GAP-MKT-002": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_package_connector_mappings"
+  ],
+  "GAP-MKT-003": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_package_query_templates"
+  ],
+  "GAP-MKT-004": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_package_validation_rules"
+  ],
+  "GAP-MKT-005": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_package_agent_workflows"
+  ],
+  "GAP-MKT-006": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_package_dashboards"
+  ],
+  "GAP-MKT-007": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_dependency_and_version_management"
+  ],
+  "GAP-MKT-008": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_signed_packages"
+  ],
   "GAP-NLP": [
     "tests/unit/test_local_nlp_pipeline.py::test_tokenization_and_identifier_splitting",
     "tests/unit/test_local_nlp_pipeline.py::test_entity_extraction_patterns_and_gazetteer",
@@ -2262,8 +2596,20 @@
   "GAP-SEC-007": [
     "tests/unit/test_authz.py"
   ],
+  "GAP-SEC-008": [
+    "tests/unit/test_enterprise_security_wp55.py::test_gap_sec_008_fail_closed_verification"
+  ],
+  "GAP-SEC-009": [
+    "tests/unit/test_enterprise_security_wp55.py::test_gap_sec_009_ephemeral_fallback_and_key_rotation"
+  ],
+  "GAP-SEC-010": [
+    "tests/unit/test_enterprise_security_wp55.py::test_gap_sec_010_token_revocation_store"
+  ],
+  "GAP-SEC-011": [
+    "tests/unit/test_enterprise_security_wp55.py::test_gap_sec_011_fine_grained_scopes_and_claims"
+  ],
   "GAP-SEC-012": [
-    "tests/unit/test_gap_coverage.py"
+    "tests/unit/test_enterprise_security_wp55.py::test_gap_sec_012_security_rest_api_and_dashboard"
   ],
   "GAP-SEM-001": [
     "tests/unit/test_enterprise_gap_completion.py"
@@ -2386,7 +2732,8 @@
     "tests/unit/test_engineering_platform_router.py"
   ],
   "H-04": [
-    "tests/unit/test_authz.py"
+    "tests/unit/test_authz.py",
+    "tests/unit/test_authz.py::test_builtin_roles_have_stable_urn_ids"
   ],
   "H-05": [
     "tests/unit/test_layered_config.py"
@@ -2464,8 +2811,68 @@
     "tests/unit/test_mutation_stream.py::test_mutation_event_bus_sse_delivery_and_replay",
     "tests/unit/test_mutation_stream.py::test_webhook_registration"
   ],
+  "MS-11": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_11_plugin_marketplace"
+  ],
+  "MS-12": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_12_collaborative_crdt_graph_studio"
+  ],
+  "MS-13": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_13_gitops_graph_as_code"
+  ],
+  "MS-15": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_15_large_ontology_model_finetune_runtime"
+  ],
+  "MS-16": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_16_agentic_process_intelligence"
+  ],
+  "MS-17": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_17_multi_agent_a2a_orchestration"
+  ],
+  "MS-18": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_18_federated_cross_org_privacy_preserving_learning"
+  ],
+  "MS-19": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_19_agent_memory_immune_system_amis"
+  ],
+  "MS-21": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_21_kg_integrity_sentinel"
+  ],
+  "MS-22": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_22_quantum_inspired_graph_optimizer"
+  ],
+  "MS-23": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_23_living_operational_digital_twin"
+  ],
+  "MS-24": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_24_continuous_graph_health_dashboard"
+  ],
+  "MS-25": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_25_industry_domain_packs"
+  ],
+  "MS-26": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_26_white_label_oem_framework"
+  ],
+  "MS-27": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_27_usage_intelligence_metering"
+  ],
+  "MS-29": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_29_graph_native_foundation_model_runtime"
+  ],
+  "MS-30": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_30_ocel_process_graph_fusion"
+  ],
+  "MS-6": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_06_spatial_lod_canvas"
+  ],
+  "MS-7": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_07_zk_privacy_mesh"
+  ],
   "MVP-FR-001": [
     "tests/unit/test_requirement_evidence.py"
+  ],
+  "MVP-FR-019": [
+    "tests/unit/test_vscode_extension_wp54.py::test_mvp_fr_019_extension_delivery"
   ],
   "MVP-FR-020": [
     "tests/unit/test_retrieval.py",
@@ -2477,6 +2884,18 @@
   "MVP-FR-022": [
     "tests/security/test_verification_suite.py"
   ],
+  "MVP-FR-023": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_mvp_fr_023_logging"
+  ],
+  "MVP-FR-024": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_mvp_fr_024_metrics"
+  ],
+  "MVP-FR-025": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_mvp_fr_025_backup"
+  ],
+  "MVP-FR-026": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_mvp_fr_026_restore"
+  ],
   "MVP-FR-027": [
     "tests/unit/test_validation_source_binding.py"
   ],
@@ -2486,26 +2905,23 @@
   "NFR-MAINT-001": [
     "tests/contract/test_graph_store_contract.py"
   ],
+  "NFR-OPS-001": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_nfr_ops_001_structured_logging_and_health"
+  ],
+  "NFR-OPS-002": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_nfr_ops_002_local_metrics"
+  ],
   "NFR-PERF-001": [
-    "tests/performance/test_benchmark_publication.py",
-    "tests/performance/test_benchmarks.py"
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_nfr_perf_001_benchmark_defined_objectives"
   ],
   "NFR-PRIV-001": [
     "tests/unit/test_agent_memory.py"
   ],
   "NFR-REL-001": [
-    "tests/e2e/test_restart_safe.py"
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_nfr_rel_001_restart_safe_processing"
   ],
   "NFR-REL-002": [
-    "tests/unit/test_graph_evolution.py",
-    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
-    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
-    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
-    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
-    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
-    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]",
-    "tests/unit/test_operational_recovery.py",
-    "tests/unit/test_recovery_bundle.py"
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_nfr_rel_002_backup_and_restore_procedure"
   ],
   "NFR-REL-003": [
     "tests/unit/test_snapshots.py"
@@ -2532,6 +2948,9 @@
   "NFR-SEC-007": [
     "tests/security/test_verification_suite.py"
   ],
+  "PERF-01": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_perf_01_formal_nfr_benchmark_suite"
+  ],
   "REQ-001": [
     "tests/unit/test_documentation_audit.py"
   ],
@@ -2546,6 +2965,21 @@
   ],
   "REQ-005": [
     "tests/unit/test_documentation_audit.py"
+  ],
+  "S-01": [
+    "tests/unit/test_scale_and_polish_wp71.py::test_s_01_frontend_kgr_completion"
+  ],
+  "S-02": [
+    "tests/unit/test_scale_and_polish_wp71.py::test_s_02_performance_benchmarks"
+  ],
+  "S-03": [
+    "tests/unit/test_scale_and_polish_wp71.py::test_s_03_cicd_pipeline"
+  ],
+  "S-04": [
+    "tests/unit/test_scale_and_polish_wp71.py::test_s_04_developer_documentation"
+  ],
+  "S-05": [
+    "tests/unit/test_scale_and_polish_wp71.py::test_s_05_security_hardening"
   ],
   "SR-QA-010": [
     "tests/unit/test_qa_gate_integrity.py",
@@ -2666,5 +3100,17 @@
     "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
     "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
     "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "UI-01": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_ui_01_causal_blast_radius_dashboard"
+  ],
+  "UI-02": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_ui_02_multi_paradigm_query_dashboard"
+  ],
+  "UI-03": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_ui_03_domain_pack_activation_dashboard"
+  ],
+  "UI-04": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_ui_04_xai_factor_verification_dashboard"
   ]
 }

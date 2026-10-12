@@ -53,6 +53,42 @@
       {
         "command": "eoip.openSource",
         "title": "EOIP: Open Symbol Source"
+      },
+      {
+        "command": "eoip.why",
+        "title": "EOIP: Why Does This Code Exist?"
+      },
+      {
+        "command": "eoip.whatChanged",
+        "title": "EOIP: What Changed?"
+      },
+      {
+        "command": "eoip.whereUsed",
+        "title": "EOIP: Where Used?"
+      },
+      {
+        "command": "eoip.services",
+        "title": "EOIP: Connected Runtime Services & Deployments"
+      },
+      {
+        "command": "eoip.conformance",
+        "title": "EOIP: Architecture Conformance Findings"
+      },
+      {
+        "command": "eoip.impactedTests",
+        "title": "EOIP: Impacted Tests"
+      },
+      {
+        "command": "eoip.incidents",
+        "title": "EOIP: Relevant Incidents & Errors"
+      },
+      {
+        "command": "eoip.adrRationale",
+        "title": "EOIP: Decision / ADR Rationale"
+      },
+      {
+        "command": "eoip.telemetrySummary",
+        "title": "EOIP: Bounded Semantic Telemetry Summary"
       }
     ],
     "views": {

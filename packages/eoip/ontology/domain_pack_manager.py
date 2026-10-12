@@ -81,8 +81,15 @@ class DomainPackLifecycleManager:
             "active": pack_name in self._active_packs,
         }
 
-    def activate_pack(self, pack_name: str, seed_live_topology: bool = True) -> dict[str, Any]:
+    def activate_pack(
+        self,
+        pack_name: str,
+        seed_live_topology: bool = True,
+        seed_sample_topology: bool | None = None,
+    ) -> dict[str, Any]:
         """Activates a domain pack, registers its classes, and optionally provisions real domain topology."""
+        if seed_sample_topology is not None:
+            seed_live_topology = seed_sample_topology
         pack_info = self.get_pack(pack_name)
         ontology_data = pack_info["ontology"]
         classes = ontology_data.get("classes", {})
@@ -242,30 +249,29 @@ class DomainPackLifecycleManager:
 
             elif pack_name == "healthcare":
                 v1 = self.store.upsert_vertex(
-                    "Patient",
+                    "Encounter",
                     {
-                        "canonical_id": "hc-patient-7719",
-                        "mrn": "MRN-909281",
-                        "status": "ADMITTED",
-                        "department": "CARDIOLOGY",
-                        "criticality": "HIGH",
+                        "canonical_id": "hc-enc-7719",
+                        "encounter_id": "ENC-909281",
+                        "encounter_type": "EMERGENCY",
+                        "status": "COMPLETED",
                     },
                 )
                 v2 = self.store.upsert_vertex(
-                    "Condition",
+                    "Order",
                     {
-                        "canonical_id": "hc-cond-i21",
-                        "icd10_code": "I21.9",
-                        "diagnosis": "Acute Myocardial Infarction",
-                        "clinical_status": "ACTIVE",
+                        "canonical_id": "hc-ord-5521",
+                        "order_id": "ORD-5521",
+                        "order_type": "MEDICATION",
+                        "status": "FULFILLED",
                     },
                 )
                 entities_created.extend([v1, v2])
                 e1 = self.store.upsert_edge(
-                    "DEPENDS_ON",
+                    "GENERATED",
                     v1["vid"],
                     v2["vid"],
-                    {"diagnosed_date": "2026-10-09"},
+                    {},
                 )
                 edges_created.append(e1)
 
@@ -303,6 +309,7 @@ class DomainPackLifecycleManager:
 
         return {
             "pack_name": pack_name,
+            "domain": pack_name,
             "status": "ACTIVATED",
             "classes_registered": registered_classes,
             "relationships_registered": sorted(set(registered_relationships)),

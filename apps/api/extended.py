@@ -1466,6 +1466,14 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     from eoip.platform_router import build_platform_router
     router.include_router(build_platform_router())
 
+    # GitOps and Marketplace routes (GAP-GITOPS-002..008, GAP-MKT-002..008)
+    from eoip.ontology.gitops_router import build_gitops_marketplace_router
+    router.include_router(build_gitops_marketplace_router())
+
+    # Enterprise Security routes (GAP-SEC-008..012)
+    from eoip.authz.security_router import build_security_router
+    router.include_router(build_security_router())
+
     return router, state
 
 
