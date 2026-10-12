@@ -10160,12 +10160,17 @@
     "spec_source": "#### WP 4.1. Intelligence amplification (Conquest Phase 3) (8 tasks)",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.1. Intelligence amplification (Conquest Phase 3) (8 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/analytics/service.py",
+      "packages/eoip/analytics/algorithms.py"
+    ],
+    "test_files": [
+      "tests/unit/test_graph_analytics_service.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_graph_analytics_service.py (6 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-GDS-001",
@@ -11903,12 +11908,16 @@
     "spec_source": "#### WP 4.1. Intelligence amplification (Conquest Phase 3) (8 tasks)",
     "phase": "### Phase 4. Intelligence amplification",
     "work_package": "#### WP 4.1. Intelligence amplification (Conquest Phase 3) (8 tasks)",
-    "code_paths": [],
-    "test_files": [],
+    "code_paths": [
+      "packages/eoip/nlp/pipeline.py"
+    ],
+    "test_files": [
+      "tests/unit/test_local_nlp_pipeline.py"
+    ],
     "api_route": null,
     "ui_surface": null,
-    "evidence_receipt": "tests_passed=False, code_verified=False",
-    "status": "ROADMAP"
+    "evidence_receipt": "python -m pytest tests/unit/test_local_nlp_pipeline.py (6 tagged tests passed)",
+    "status": "FULLY_DEVELOPED"
   },
   {
     "id": "GAP-NLP-001",

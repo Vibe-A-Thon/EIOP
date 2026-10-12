@@ -1661,6 +1661,14 @@
   "GAP-FRESH-001": [
     "tests/unit/test_expertise_freshness.py"
   ],
+  "GAP-GDS": [
+    "tests/unit/test_graph_analytics_service.py::test_catalog_lists_standard_algorithms",
+    "tests/unit/test_graph_analytics_service.py::test_components_triangles_and_kcore",
+    "tests/unit/test_graph_analytics_service.py::test_shortest_path_directed_and_weighted",
+    "tests/unit/test_graph_analytics_service.py::test_centrality_community_and_similarity",
+    "tests/unit/test_graph_analytics_service.py::test_plugin_registration_and_errors",
+    "tests/unit/test_graph_analytics_service.py::test_edge_label_filter_projects_subgraph"
+  ],
   "GAP-GDS-001": [
     "tests/unit/test_enterprise_gap_completion.py"
   ],
@@ -1891,6 +1899,14 @@
   ],
   "GAP-MKT-001": [
     "tests/unit/test_marketplace.py"
+  ],
+  "GAP-NLP": [
+    "tests/unit/test_local_nlp_pipeline.py::test_tokenization_and_identifier_splitting",
+    "tests/unit/test_local_nlp_pipeline.py::test_entity_extraction_patterns_and_gazetteer",
+    "tests/unit/test_local_nlp_pipeline.py::test_keyphrase_tagging_prefers_rare_terms",
+    "tests/unit/test_local_nlp_pipeline.py::test_classifier_trains_locally_and_abstains",
+    "tests/unit/test_local_nlp_pipeline.py::test_concept_recommendation_from_graph",
+    "tests/unit/test_local_nlp_pipeline.py::test_end_to_end_pipeline_is_local_and_serialisable"
   ],
   "GAP-NLP-001": [
     "tests/unit/test_enterprise_gap_completion.py"

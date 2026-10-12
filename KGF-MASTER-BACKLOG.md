@@ -728,9 +728,9 @@ Checkbox format used below (the tracker parses it): table rows start `| [ ] | \`
 - [x] `GAP-FED` **Semantic federation layer** (P1, about 3 sessions, src CQ)
   - federation/planner.py exists — add JDBC/REST/file adapters, virtual vs. materialized modes, explainable query plans
   - Related: `GAP-FABRIC-002`, `GAP-FABRIC-003`, `GAP-FABRIC-004`, `GAP-FABRIC-005`, `GAP-FABRIC-006`, `GAP-FABRIC-007`, `GAP-FABRIC-008`
-- [ ] `GAP-GDS` **Local graph analytics service** (P1, about 2 sessions, src CQ)
+- [x] `GAP-GDS` **Local graph analytics service** (P1, about 2 sessions, src CQ)
   - graph/algorithms.py + analytics/ exist — package as pluggable analytics API with all standard algorithms
-- [ ] `GAP-NLP` **Local NLP pipeline** (P1, about 2 sessions, src CQ)
+- [x] `GAP-NLP` **Local NLP pipeline** (P1, about 2 sessions, src CQ)
   - Add entity extraction, tagging, classification, concept recommendation — all local, no cloud
 - [ ] `GAP-QUERY` **Unified semantic query API** (P1, about 2 sessions, src CQ)
   - query/ has 6 languages — build single routing API across Gremlin, RDF, search, vector, federated
