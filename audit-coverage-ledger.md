@@ -13,7 +13,7 @@ This ledger is the proof-of-read inventory for `gaps-audit-cp.md` and `GUI-UIX-r
 | Repository files listed | 1,824 |
 | Fully read/indexed files | 1,490 |
 | Explicitly excluded files | 334 |
-| Fully read lines | 333,388 |
+| Fully read lines | 334,170 |
 | Markdown files listed | 219 |
 | Markdown files fully read | 207 |
 | Requirement records normalized | 2,603 |
@@ -27,7 +27,7 @@ This ledger is the proof-of-read inventory for `gaps-audit-cp.md` and `GUI-UIX-r
 
 | Top-level folder | Files | Fully read | Lines in fully read text |
 |---|---:|---:|---:|
-| `.` | 21 | 18 | 49,350 |
+| `.` | 21 | 18 | 50,132 |
 | `.github` | 2 | 2 | 138 |
 | `.tmp` | 109 | 0 | 0 |
 | `EOIP-engg-doc-pkg` | 226 | 221 | 54,201 |
@@ -42,6 +42,788 @@ This ledger is the proof-of-read inventory for `gaps-audit-cp.md` and `GUI-UIX-r
 | `scripts` | 103 | 103 | 7,230 |
 | `secrets.example` | 2 | 2 | 38 |
 | `tests` | 306 | 306 | 55,634 |
+
+## Module, Framework And Entry-Point Map
+
+| Module | Language/framework | Entry point / responsibility | Evidence |
+|---|---|---|---|
+| API | Python 3.11, FastAPI, Pydantic, Uvicorn | App factory, HTTP/WebSocket boundary and router assembly | `apps/api/main.py:1`; `apps/api/app.py:191` |
+| Domain platform | Python packages | Graph, ontology, ingestion, query, RAG, agents, governance and enterprise services | `packages/eoip/__init__.py:1` |
+| Worker | Python | Persistent acquisition/job execution sharing domain contracts | `deploy/docker-compose.yml:116` |
+| MCP | Python FastMCP/httpx | Read-only facade over authenticated API | `apps/mcp/main.py:1` |
+| Web | React/Vite JavaScript | Existing client inspected only for backend calls/security, not redesign input | `apps/web/package.json:1` |
+| VS Code | JavaScript extension + MCP client | Editor integration | `apps/vscode-extension/extension.js:1` |
+| Infrastructure | Docker Compose, Helm, PowerShell/shell | Local stack, optional services, deployment and operational wrappers | `deploy/docker-compose.yml:1`; `deploy/helm/eoip/Chart.yaml:1`; `scripts/container.ps1:1` |
+| Tests | pytest, Playwright/Vitest-compatible web tooling | Unit, security, integration, runtime and E2E verification | `tests/conftest.py:1`; `apps/web/playwright.config.js:1` |
+
+## Runtime Topology
+
+| Runtime | Port/exposure | State/dependency | Audit note |
+|---|---|---|---|
+| `eoip-api` | loopback `${EOIP_API_PORT:-8000}:8000` | GraphStore, filesystem application data, optional local model | 734 live REST operations plus one WebSocket. |
+| `eoip-worker` | internal | Shared graph/application volumes and connector endpoints | Background acquisition/jobs; durability varies by service. |
+| `eoip-mcp` | loopback `${EOIP_MCP_PORT:-8001}:8001` | Calls API with bearer token | Read-only facade (`apps/mcp/main.py:1`). |
+| `eoip-web` | loopback `${EOIP_WEB_PORT:-8080}:8080` | Static production bundle + API | Current design excluded from redesign input. |
+| HugeGraph | internal | RocksDB volume; default graph backend | Canonical reference backend, not externally published by default. |
+| Neo4j | optional profile/internal | Alternate graph volume | Adapter-supported, not the mandatory reference topology. |
+| Hubble | loopback `${EOIP_HUBBLE_PORT:-8088}:8088` | HugeGraph administration | External/browser receipt not rerun. |
+| Local model | internal/optional | Model volume | Real model availability and quality are deployment-dependent. |
+| Prometheus | loopback `9090` in metrics profile | Metrics volume | No production observability receipt in this audit. |
+
+Queues are implemented primarily through application job abstractions and persisted files rather than an independently catalogued broker. Graph backends include HugeGraph, Neo4j, Neptune and memory; vector/search/model adapters are configuration-selected. External dependencies include source-system APIs, optional external model endpoints and cloud graph services, all of which require deployment-specific credentials and egress policy.
+
+## Environment And Feature Configuration
+
+All 138 environment symbols found in source/config/docs are listed. Secret-like defaults are deliberately redacted; “no single literal default” means declarations disagree or defer to runtime and must be resolved before release.
+
+| Variable | Kind | Default/declaration | Evidence |
+|---|---|---|---|
+| `AWS_ACCESS_KEY` | `secret` | No single literal default found | `packages/eoip/egress/dlp.py:34` |
+| `AWS_IAM` | `configuration` | "aws_iam" | `packages/eoip/systems/registry.py:55` |
+| `AZURE_COSMOS_DB` | `configuration` | "AZURE_COSMOS_DB" | `packages/eoip/graph/database_adapters.py:69` |
+| `EOIP_ACCEPTANCE_CONFLUENCE_URL` | `configuration` | No single literal default found | `deploy/docker-compose.dlq-acceptance.yml:98` |
+| `EOIP_ACCEPTANCE_INVALID_TOKEN` | `secret` | [secret; no default reproduced] | `deploy/docker-compose.dlq-acceptance.yml:14` |
+| `EOIP_ACCEPTANCE_REPORT` | `configuration` | No single literal default found | `deploy/docker-compose.acceptance.yml:30` |
+| `EOIP_ACCEPTANCE_RUN` | `configuration` | $runId | `scripts/container.ps1:302` |
+| `EOIP_ACCEPTANCE_SOURCE_TOKEN` | `secret` | [secret; no default reproduced] | `deploy/docker-compose.dlq-acceptance.yml:13` |
+| `EOIP_ACCEPTANCE_SOURCE_URL` | `configuration` | No single literal default found | `deploy/docker-compose.acceptance.yml:28` |
+| `EOIP_ACCEPTANCE_TARGET_URL` | `configuration` | No single literal default found | `deploy/docker-compose.acceptance.yml:29` |
+| `EOIP_ADMIN_GREMLIN_ENABLED` | `feature/mode` | 1` | `EOIP-engg-doc-pkg/reference/api-reference.md:240` |
+| `EOIP_API_PORT` | `configuration` | 8000 | `deploy/.env.example:16` |
+| `EOIP_API_REPLICAS` | `configuration` | 2 | `packages/eoip/ops/production.py:81` |
+| `EOIP_API_TOKEN` | `secret` | [secret value omitted] | `deploy/.env.example:3` |
+| `EOIP_API_URL` | `configuration` | http://eoip-api:8000 | `apps/mcp/main.py:32` |
+| `EOIP_AUDIT_GENESIS` | `configuration` | No single literal default found | `packages/eoip/enterprise/audit.py:81` |
+| `EOIP_AUTHZ_TOKEN_SECRET` | `secret` | [secret value omitted] | `packages/eoip/authz/tokens.py:40` |
+| `EOIP_AUTH_REQUIRED` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:327` |
+| `EOIP_BEHAVIORAL_GATE_BASE_REF` | `configuration` | No single literal default found | `packages/eoip/verification/behavioral_gate.py:852` |
+| `EOIP_BEHAVIORAL_GATE_HEAD_REF` | `configuration` | HEAD | `packages/eoip/verification/behavioral_gate.py:853` |
+| `EOIP_BEHAVIORAL_GATE_RISK` | `configuration` | No single literal default found | `packages/eoip/verification/behavioral_gate.py:855` |
+| `EOIP_BENCHMARK_STORAGE_TYPE` | `configuration` | 'NVMe | `EOIP-engg-doc-pkg/reference/benchmarking.md:31` |
+| `EOIP_BUILD_DIRTY` | `configuration` | No single literal default found | `scripts/benchmark.py:152` |
+| `EOIP_BUILD_REVISION` | `configuration` | No single literal default found | `scripts/benchmark.py:151` |
+| `EOIP_CACHE_BACKEND` | `configuration` | local | `packages/eoip/ops/production.py:24` |
+| `EOIP_CACHE_MAX_ENTRIES` | `configuration` | 10000 | `packages/eoip/ops/production.py:27` |
+| `EOIP_CACHE_TTL_SECONDS` | `configuration` | 300 | `packages/eoip/ops/production.py:26` |
+| `EOIP_CB_FAILURE_THRESHOLD` | `configuration` | No single literal default found | `tests/unit/test_enterprise_infrastructure.py:107` |
+| `EOIP_COMMAND_FAILED` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:462` |
+| `EOIP_COMPOSE_COMMAND` | `configuration` | 'podman-compose' | `scripts/container.ps1:11` |
+| `EOIP_CONFIG_DIR` | `configuration` | /opt/eoip/config`, | `EOIP-engg-doc-pkg/reference/docker-local.md:636` |
+| `EOIP_CONFLUENCE` | `configuration` | No single literal default found | `packages/eoip/connectors/config.py:26` |
+| `EOIP_CONFLUENCE_PASSWORD` | `secret` | [secret; no default reproduced] | `deploy/.env.example:10` |
+| `EOIP_CONFLUENCE_PROD_TOKEN` | `secret` | [secret; no default reproduced] | `tests/unit/test_acquisition_fabric.py:28` |
+| `EOIP_CONFLUENCE_TOKEN` | `secret` | [secret; no default reproduced] | `deploy/.env.example:8` |
+| `EOIP_CONFLUENCE_URL` | `configuration` | https://confluence.example | `deploy/.env.example:7` |
+| `EOIP_CONFLUENCE_USERNAME` | `configuration` | No single literal default found | `deploy/.env.example:9` |
+| `EOIP_CONTAINER_RUNTIME` | `configuration` | podman | `deploy/.env.example:2` |
+| `EOIP_CONTEXT_FAILED` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:137` |
+| `EOIP_CORS_ORIGINS` | `configuration` | empty | `apps/api/app.py:219` |
+| `EOIP_DATA_DIR` | `configuration` | 'C:\recovery-target\data' | `EOIP-engg-doc-pkg/reference/docker-local.md:619` |
+| `EOIP_DATA_NS` | `configuration` | "urn:eoip:data:" | `packages/eoip/graph/format_converter.py:16` |
+| `EOIP_DEBUG` | `configuration` | No single literal default found | `tests/unit/test_enterprise_infrastructure.py:106` |
+| `EOIP_DEMO_API_URL` | `configuration` | No single literal default found | `apps/vscode-extension/demo/index.js:63` |
+| `EOIP_DEMO_CONTEXT` | `configuration` | No single literal default found | `apps/vscode-extension/demo/index.js:65` |
+| `EOIP_DEMO_DELAY_MS` | `configuration` | No single literal default found | `apps/vscode-extension/demo/index.js:67` |
+| `EOIP_DEMO_MCP_URL` | `configuration` | No single literal default found | `apps/vscode-extension/demo/index.js:64` |
+| `EOIP_DEMO_NO_PAUSE` | `configuration` | == | `apps/vscode-extension/demo/index.js:66` |
+| `EOIP_DEMO_RECEIPT` | `configuration` | No single literal default found | `apps/vscode-extension/demo/index.js:62` |
+| `EOIP_DEMO_TOKEN` | `secret` | [secret; no default reproduced] | `apps/vscode-extension/demo/index.js:61` |
+| `EOIP_EMBEDDING_PROVIDER` | `configuration` | = | `packages/eoip/models/embeddings.py:165` |
+| `EOIP_ENTITY_REQUIRED` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:520` |
+| `EOIP_ENV` | `configuration` | No single literal default found | `packages/eoip/ops/bundle.py:81` |
+| `EOIP_ENVIRONMENT` | `configuration` | No single literal default found | `tests/unit/test_enterprise_infrastructure.py:105` |
+| `EOIP_EXTENSION_RECEIPT` | `configuration` | No single literal default found | `apps/vscode-extension/test/runTest.js:27` |
+| `EOIP_GITHUB_TOKEN` | `secret` | [secret; no default reproduced] | `EOIP-engg-doc-pkg/reference/connectors-github.md:57` |
+| `EOIP_GITHUB_WEBHOOK_SECRET` | `secret` | [secret; no default reproduced] | `EOIP-engg-doc-pkg/reference/connectors-github.md:58` |
+| `EOIP_GITLAB_TOKEN` | `secret` | [secret; no default reproduced] | `EOIP-engg-doc-pkg/reference/connectors-gitlab.md:67` |
+| `EOIP_GITLAB_URL` | `configuration` | No single literal default found | `EOIP-engg-doc-pkg/reference/connectors.md:189` |
+| `EOIP_GITLAB_WEBHOOK_SIGNING` | `configuration` | No single literal default found | `EOIP-engg-doc-pkg/reference/connectors-gitlab.md:68` |
+| `EOIP_GOV_GROUNDEDNESS_THRESHOLD` | `configuration` | 0.8 | `apps/api/extended.py:184` |
+| `EOIP_GOV_UNSAFE_ACTION_THRESHOLD` | `configuration` | 0.1 | `apps/api/extended.py:187` |
+| `EOIP_GRAPH_` | `configuration` | No single literal default found | `EOIP-engg-doc-pkg/audits/audit-2026-10-06/assessed-gap-report.json:205` |
+| `EOIP_GRAPH_BACKEND` | `configuration` | neptune\|hugegraph\|memory`. | `EOIP-engg-doc-pkg/06-architecture.md:278` |
+| `EOIP_GRAPH_CLUSTER_MODE` | `feature/mode` | hugegraph-hstore | `packages/eoip/ops/production.py:84` |
+| `EOIP_GRAPH_CONFIG` | `configuration` | No single literal default found | `packages/eoip/graph/backends.py:101` |
+| `EOIP_GRAPH_DATABASE` | `configuration` | <logical-name> | `config/graph-store.yaml:9` |
+| `EOIP_GRAPH_NODES` | `configuration` | 3 | `packages/eoip/ops/production.py:85` |
+| `EOIP_GRAPH_PASSWORD` | `secret` | [secret; no default reproduced] | `EOIP-engg-doc-pkg/76-multi-backend.md:79` |
+| `EOIP_GRAPH_URL` | `configuration` | <backend | `config/graph-store.yaml:8` |
+| `EOIP_GRAPH_USER` | `configuration` | No single literal default found | `EOIP-engg-doc-pkg/76-multi-backend.md:78` |
+| `EOIP_HTTP_` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:366` |
+| `EOIP_HTTP_401` | `configuration` | No single literal default found | `apps/vscode-extension/test/suite/refusals.js:9` |
+| `EOIP_HUBBLE_PORT` | `configuration` | 8088 | `deploy/.env.example:18` |
+| `EOIP_HUGEGRAPH_` | `configuration` | No single literal default found | `EOIP-engg-doc-pkg/76-multi-backend.md:81` |
+| `EOIP_HUGEGRAPH_GRAPH` | `configuration` | hugegraph | `packages/eoip/graph/backends.py:118` |
+| `EOIP_HUGEGRAPH_PASSWORD` | `secret` | [secret value omitted] | `packages/eoip/graph/backends.py:120` |
+| `EOIP_HUGEGRAPH_URL` | `configuration` | 'http://hugegraph-server:8080' | `EOIP-engg-doc-pkg/reference/benchmarking.md:39` |
+| `EOIP_HUGEGRAPH_USER` | `configuration` | admin | `packages/eoip/graph/backends.py:119` |
+| `EOIP_INSTALL_KEY` | `secret` | No single literal default found | `apps/api/extended.py:206` |
+| `EOIP_INVALID_API_URL` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:334` |
+| `EOIP_INVALID_MCP_ARGUMENTS` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:496` |
+| `EOIP_INVALID_QUESTION` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:480` |
+| `EOIP_INVALID_RESPONSE` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:361` |
+| `EOIP_JIRA_TOKEN` | `secret` | [secret; no default reproduced] | `EOIP-engg-doc-pkg/reference/connectors.md:188` |
+| `EOIP_JIRA_URL` | `configuration` | No single literal default found | `EOIP-engg-doc-pkg/reference/connectors.md:187` |
+| `EOIP_JIRA_WEBHOOK_SECRET` | `secret` | [secret; no default reproduced] | `tests/unit/test_acquisition_fabric.py:388` |
+| `EOIP_KILL_SWITCH` | `configuration` | empty | `apps/api/extended.py:191` |
+| `EOIP_LEASE_PATH` | `configuration` | /leases/worker.lock`), | `EOIP-engg-doc-pkg/reference/deployment-ha.md:47` |
+| `EOIP_LEASE_TTL_SECONDS` | `configuration` | 30 | `apps/worker/main.py:198` |
+| `EOIP_LICENSE_KEY` | `secret` | No single literal default found | `packages/eoip/licensing/cli.py:7` |
+| `EOIP_LICENSE_KEY_FILE` | `secret` | No single literal default found | `packages/eoip/licensing/license_file.py:17` |
+| `EOIP_LICENSE_PATH` | `configuration` | empty | `apps/api/extended.py:245` |
+| `EOIP_LICENSE_VENDOR_KEY` | `secret` | eoip-dev-vendor-key | `apps/api/extended.py:248` |
+| `EOIP_LIVE_DLQ_ACCEPTANCE` | `configuration` | No single literal default found | `deploy/docker-compose.dlq-acceptance.yml:95` |
+| `EOIP_LOAD_DEMO` | `configuration` | true | `deploy/.env.example:5` |
+| `EOIP_MCP_PORT` | `configuration` | 8001 | `deploy/.env.example:17` |
+| `EOIP_MCP_REPLICAS` | `configuration` | 2 | `packages/eoip/ops/production.py:83` |
+| `EOIP_MISSING_VAR` | `configuration` | No single literal default found | `tests/unit/test_ops.py:57` |
+| `EOIP_NAMESPACE` | `configuration` | "urn:eoip:ontology:" | `packages/eoip/ontology/rdf.py:17` |
+| `EOIP_NEPTUNE_URL` | `configuration` | https://<endpoint>:8182` | `EOIP-engg-doc-pkg/76-multi-backend.md:102` |
+| `EOIP_NO_ACTIVE_EDITOR` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:92` |
+| `EOIP_NS` | `configuration` | "urn:eoip:ontology:" | `packages/eoip/graph/format_converter.py:15` |
+| `EOIP_OFFLINE` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:312` |
+| `EOIP_OLLAMA_EMBED_MODEL` | `feature/mode` | No single literal default found | `packages/eoip/models/embeddings.py:48` |
+| `EOIP_OLLAMA_MODEL` | `feature/mode` | empty | `packages/eoip/models/provider.py:30` |
+| `EOIP_OLLAMA_URL` | `configuration` | http://local-model:11434 | `packages/eoip/models/provider.py:31` |
+| `EOIP_OTEL_ENDPOINT` | `configuration` | No single literal default found | `packages/eoip/observability/otel.py:4` |
+| `EOIP_QA_COLLECTOR_OUT` | `configuration` | No single literal default found | `packages/eoip/qa/evidence.py:36` |
+| `EOIP_QUERY_CACHE` | `configuration` | 1).""" | `apps/api/app.py:1036` |
+| `EOIP_RAW_TELEMETRY_REFUSED` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:697` |
+| `EOIP_REDIS_URL` | `configuration` | empty | `packages/eoip/ops/production.py:25` |
+| `EOIP_REGISTRY_PATH` | `configuration` | No single literal default found | `apps/api/extended.py:203` |
+| `EOIP_REPOSITORY_ROOT_REQUIRED` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:731` |
+| `EOIP_RESPONSE_TOO_LARGE` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:353` |
+| `EOIP_RUNTIME_API_URL` | `configuration` | http://localhost:8000 | `tests/runtime_hubble/conftest.py:44` |
+| `EOIP_RUNTIME_HUBBLE` | `configuration` | 1`. | `EOIP-engg-doc-pkg/audits/reconstruction-audit-2026-10-07/consolidated-requirements.md:8178` |
+| `EOIP_RUNTIME_HUBBLE_URL` | `configuration` | http://localhost:8088 | `tests/runtime_hubble/conftest.py:56` |
+| `EOIP_RUNTIME_RUN_ID` | `configuration` | 'hubble-acceptance-20261005' | `EOIP-engg-doc-pkg/reference/hubble-runtime-validation.md:366` |
+| `EOIP_SENTENCE_TRANSFORMER_MODEL` | `feature/mode` | all-MiniLM-L6-v2 | `packages/eoip/models/embeddings.py:119` |
+| `EOIP_SERVICENOW` | `configuration` | No single literal default found | `packages/eoip/connectors/config.py:26` |
+| `EOIP_SERVICENOW_PASSWORD` | `secret` | [secret; no default reproduced] | `deploy/.env.example:14` |
+| `EOIP_SERVICENOW_TOKEN` | `secret` | [secret; no default reproduced] | `deploy/.env.example:12` |
+| `EOIP_SERVICENOW_URL` | `configuration` | https://instance.service-now.example | `deploy/.env.example:11` |
+| `EOIP_SERVICENOW_USERNAME` | `configuration` | No single literal default found | `deploy/.env.example:13` |
+| `EOIP_SOURCE_NOT_FOUND` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:153` |
+| `EOIP_SOURCE_OUTSIDE_REPOSITORY` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:158` |
+| `EOIP_SOURCE_REQUIRED` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:726` |
+| `EOIP_SYMBOL_NOT_FOUND` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:109` |
+| `EOIP_TARGET_REQUIRED` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:525` |
+| `EOIP_TIMEOUT` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:381` |
+| `EOIP_UNDEFINED` | `configuration` | No single literal default found | `tests/unit/test_ops.py:210` |
+| `EOIP_UNSAFE_SOURCE_PATH` | `configuration` | No single literal default found | `apps/vscode-extension/extension.js:735` |
+| `EOIP_WEB_PORT` | `configuration` | 8080 | `deploy/.env.example:15` |
+| `EOIP_WORKER_REPLICAS` | `configuration` | 2 | `packages/eoip/ops/production.py:82` |
+| `HUGEGRAPH_PASSWORD` | `secret` | [secret value omitted] | `deploy/.env.example:4` |
+| `NEO4J_AUTH` | `configuration` | neo4j/eoip-local-password | `deploy/docker-compose.yml:49` |
+| `REDIS_SEARCH` | `configuration` | "REDIS_SEARCH" | `packages/eoip/graph/database_adapters.py:84` |
+
+## Structured Configuration Keys
+
+The table flattens scalar/list defaults from operational files under `config/`, Helm values, `pyproject.toml` and `pyrightconfig.json`. Lists are summarized by length to avoid reproducing domain/example records; secret-like values are redacted. Runtime code defaults remain represented in the environment table above.
+
+| Source | Key | Default/value |
+|---|---|---|
+| `config/agents/trace-impact.yaml:1` | `agent_id` | TraceImpact |
+| `config/agents/trace-impact.yaml:2` | `description` | Deterministic read-only trace and impact analysis agent. Uses graph traversal to find connected enti... |
+| `config/agents/trace-impact.yaml:6` | `allowed_tools` | [list:5] |
+| `config/agents/trace-impact.yaml:14` | `budgets.max_steps` | 10 |
+| `config/agents/trace-impact.yaml:15` | `budgets.max_seconds` | 30 |
+| `config/agents/trace-impact.yaml:16` | `budgets.max_depth` | 8 |
+| `config/agents/trace-impact.yaml:17` | `budgets.max_results` | 100 |
+| `config/agents/trace-impact.yaml:19` | `read_only` | true |
+| `config/benchmarks/mvp-v1.json:2` | `schema_version` | eoip-benchmark-manifest/v1 |
+| `config/benchmarks/mvp-v1.json:3` | `manifest_id` | mvp-v1 |
+| `config/benchmarks/mvp-v1.json:4` | `requirement` | NFR-PERF-001 |
+| `config/benchmarks/mvp-v1.json:5` | `description` | EOIP MVP deterministic graph query benchmark |
+| `config/benchmarks/mvp-v1.json:7` | `dataset.generator` | scripts.benchmark_data |
+| `config/benchmarks/mvp-v1.json:8` | `dataset.seed` | 42 |
+| `config/benchmarks/mvp-v1.json:10` | `dataset.profiles.smoke` | s |
+| `config/benchmarks/mvp-v1.json:11` | `dataset.profiles.full` | baseline |
+| `config/benchmarks/mvp-v1.json:15` | `reference_hardware.cpu_logical_cores_available_to_docker` | 8 |
+| `config/benchmarks/mvp-v1.json:16` | `reference_hardware.memory_gib` | 32 |
+| `config/benchmarks/mvp-v1.json:17` | `reference_hardware.storage` | local NVMe or SSD |
+| `config/benchmarks/mvp-v1.json:19` | `bulk_batch_size` | 500 |
+| `config/benchmarks/mvp-v1.json:22` | `runs.smoke.warmups` | 3 |
+| `config/benchmarks/mvp-v1.json:23` | `runs.smoke.samples` | 20 |
+| `config/benchmarks/mvp-v1.json:22` | `runs.full.warmups` | 10 |
+| `config/benchmarks/mvp-v1.json:23` | `runs.full.samples` | 100 |
+| `config/benchmarks/mvp-v1.json:30` | `workloads` | [list:5] |
+| `config/domain-packs/bfsi/ontology.yaml:1` | `ontology_version` | 0.4.0 |
+| `config/domain-packs/bfsi/ontology.yaml:2` | `schema_version` | 1.2 |
+| `config/domain-packs/bfsi/ontology.yaml:4` | `domains` | [list:2] |
+| `config/domain-packs/bfsi/ontology.yaml:10` | `classes.Trade.description` | A financial trade or order executed on an instrument. |
+| `config/domain-packs/bfsi/ontology.yaml:12` | `classes.Trade.properties.trade_id` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:13` | `classes.Trade.properties.instrument` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:14` | `classes.Trade.properties.notional` | DOUBLE |
+| `config/domain-packs/bfsi/ontology.yaml:15` | `classes.Trade.properties.trade_date` | DATE |
+| `config/domain-packs/bfsi/ontology.yaml:16` | `classes.Trade.properties.canonical_id` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:17` | `classes.Trade.properties.name` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:20` | `classes.Trade.relationships.SETTLES_INTO.out` | [list:1] |
+| `config/domain-packs/bfsi/ontology.yaml:21` | `classes.Trade.relationships.SETTLES_INTO.in` | [list:1] |
+| `config/domain-packs/bfsi/ontology.yaml:10` | `classes.Settlement.description` | A settlement instruction and its lifecycle state. |
+| `config/domain-packs/bfsi/ontology.yaml:26` | `classes.Settlement.properties.settlement_id` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:27` | `classes.Settlement.properties.settlement_status` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:28` | `classes.Settlement.properties.settlement_date` | DATE |
+| `config/domain-packs/bfsi/ontology.yaml:16` | `classes.Settlement.properties.canonical_id` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:17` | `classes.Settlement.properties.name` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:20` | `classes.Settlement.relationships.FUNDS.out` | [list:1] |
+| `config/domain-packs/bfsi/ontology.yaml:21` | `classes.Settlement.relationships.FUNDS.in` | [list:1] |
+| `config/domain-packs/bfsi/ontology.yaml:10` | `classes.Account.description` | A customer or ledger account under a business capability. |
+| `config/domain-packs/bfsi/ontology.yaml:39` | `classes.Account.properties.account_number` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:40` | `classes.Account.properties.account_type` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:41` | `classes.Account.properties.currency` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:16` | `classes.Account.properties.canonical_id` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:17` | `classes.Account.properties.name` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:20` | `classes.Account.relationships.HELD_UNDER.out` | [list:1] |
+| `config/domain-packs/bfsi/ontology.yaml:21` | `classes.Account.relationships.HELD_UNDER.in` | [list:1] |
+| `config/domain-packs/bfsi/ontology.yaml:10` | `classes.Policy.description` | An insurance policy linked to knowledge documentation. |
+| `config/domain-packs/bfsi/ontology.yaml:52` | `classes.Policy.properties.policy_number` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:53` | `classes.Policy.properties.policy_type` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:54` | `classes.Policy.properties.premium` | DOUBLE |
+| `config/domain-packs/bfsi/ontology.yaml:16` | `classes.Policy.properties.canonical_id` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:17` | `classes.Policy.properties.name` | TEXT |
+| `config/domain-packs/bfsi/ontology.yaml:20` | `classes.Policy.relationships.GOVERNED_BY.out` | [list:1] |
+| `config/domain-packs/bfsi/ontology.yaml:21` | `classes.Policy.relationships.GOVERNED_BY.in` | [list:2] |
+| `config/domain-packs/bfsi/ontology.yaml:62` | `validators` | [list:1] |
+| `config/domain-packs/bfsi/pack.yaml:1` | `name` | bfsi |
+| `config/domain-packs/bfsi/pack.yaml:2` | `version` | 1.0.0 |
+| `config/domain-packs/bfsi/pack.yaml:3` | `extends` | core |
+| `config/domain-packs/bfsi/pack.yaml:4` | `description` | Banking, financial services and insurance pack: trade, account and policy concepts with regulatory r... |
+| `config/domain-packs/compliance/ontology.yaml:1` | `ontology_version` | 0.4.0 |
+| `config/domain-packs/compliance/ontology.yaml:2` | `schema_version` | 1.2 |
+| `config/domain-packs/compliance/ontology.yaml:4` | `domains` | [list:3] |
+| `config/domain-packs/compliance/ontology.yaml:11` | `classes.Control.description` | A compliance control mapped to services and processes. |
+| `config/domain-packs/compliance/ontology.yaml:13` | `classes.Control.properties.control_id` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:14` | `classes.Control.properties.framework` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:15` | `classes.Control.properties.control_status` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:16` | `classes.Control.properties.canonical_id` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:17` | `classes.Control.properties.name` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:20` | `classes.Control.relationships.MITIGATES.out` | [list:1] |
+| `config/domain-packs/compliance/ontology.yaml:21` | `classes.Control.relationships.MITIGATES.in` | [list:2] |
+| `config/domain-packs/compliance/ontology.yaml:20` | `classes.Control.relationships.APPLIES_TO.out` | [list:1] |
+| `config/domain-packs/compliance/ontology.yaml:21` | `classes.Control.relationships.APPLIES_TO.in` | [list:2] |
+| `config/domain-packs/compliance/ontology.yaml:11` | `classes.Policy.description` | Extends the shared policy term with attestation linkage. |
+| `config/domain-packs/compliance/ontology.yaml:29` | `classes.Policy.properties.policy_id` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:30` | `classes.Policy.properties.effective_date` | DATE |
+| `config/domain-packs/compliance/ontology.yaml:31` | `classes.Policy.properties.review_date` | DATE |
+| `config/domain-packs/compliance/ontology.yaml:16` | `classes.Policy.properties.canonical_id` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:17` | `classes.Policy.properties.name` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:20` | `classes.Policy.relationships.MANDATES.out` | [list:1] |
+| `config/domain-packs/compliance/ontology.yaml:21` | `classes.Policy.relationships.MANDATES.in` | [list:1] |
+| `config/domain-packs/compliance/ontology.yaml:20` | `classes.Policy.relationships.ATTESTED_BY.out` | [list:1] |
+| `config/domain-packs/compliance/ontology.yaml:21` | `classes.Policy.relationships.ATTESTED_BY.in` | [list:1] |
+| `config/domain-packs/compliance/ontology.yaml:11` | `classes.Risk.description` | A registered risk with inherent and residual scoring. |
+| `config/domain-packs/compliance/ontology.yaml:45` | `classes.Risk.properties.risk_id` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:46` | `classes.Risk.properties.inherent_score` | DOUBLE |
+| `config/domain-packs/compliance/ontology.yaml:47` | `classes.Risk.properties.residual_score` | DOUBLE |
+| `config/domain-packs/compliance/ontology.yaml:16` | `classes.Risk.properties.canonical_id` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:17` | `classes.Risk.properties.name` | TEXT |
+| `config/domain-packs/compliance/ontology.yaml:20` | `classes.Risk.relationships.ACCEPTED_IN.out` | [list:1] |
+| `config/domain-packs/compliance/ontology.yaml:21` | `classes.Risk.relationships.ACCEPTED_IN.in` | [list:1] |
+| `config/domain-packs/compliance/ontology.yaml:55` | `validators` | [list:1] |
+| `config/domain-packs/compliance/pack.yaml:1` | `name` | compliance |
+| `config/domain-packs/compliance/pack.yaml:2` | `version` | 1.0.0 |
+| `config/domain-packs/compliance/pack.yaml:3` | `extends` | core |
+| `config/domain-packs/compliance/pack.yaml:4` | `description` | Compliance pack: controls, policies, audit findings and evidence chains extending core META/DECISION... |
+| `config/domain-packs/cybersecurity/ontology.yaml:1` | `ontology_version` | 0.4.0 |
+| `config/domain-packs/cybersecurity/ontology.yaml:2` | `schema_version` | 1.2 |
+| `config/domain-packs/cybersecurity/ontology.yaml:4` | `domains` | [list:2] |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.Asset.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:11` | `classes.Asset.description` | A protected infrastructure, application, or data asset in the security topology. |
+| `config/domain-packs/cybersecurity/ontology.yaml:13` | `classes.Asset.properties.canonical_id` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:14` | `classes.Asset.properties.name` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:15` | `classes.Asset.properties.ip_address` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:16` | `classes.Asset.properties.criticality` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:17` | `classes.Asset.properties.resilience` | DOUBLE |
+| `config/domain-packs/cybersecurity/ontology.yaml:18` | `classes.Asset.properties.status` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.Asset.relationships.AFFECTED_BY.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:22` | `classes.Asset.relationships.AFFECTED_BY.out` | [list:1] |
+| `config/domain-packs/cybersecurity/ontology.yaml:23` | `classes.Asset.relationships.AFFECTED_BY.in` | [list:2] |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.Vulnerability.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:11` | `classes.Vulnerability.description` | A disclosed vulnerability affecting dependencies or services. |
+| `config/domain-packs/cybersecurity/ontology.yaml:29` | `classes.Vulnerability.properties.cve_id` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:30` | `classes.Vulnerability.properties.cvss_score` | DOUBLE |
+| `config/domain-packs/cybersecurity/ontology.yaml:31` | `classes.Vulnerability.properties.exploit_available` | BOOLEAN |
+| `config/domain-packs/cybersecurity/ontology.yaml:32` | `classes.Vulnerability.properties.remediation_status` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:13` | `classes.Vulnerability.properties.canonical_id` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:14` | `classes.Vulnerability.properties.name` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:35` | `classes.Vulnerability.properties.severity` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.Vulnerability.relationships.AFFECTS.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:22` | `classes.Vulnerability.relationships.AFFECTS.out` | [list:1] |
+| `config/domain-packs/cybersecurity/ontology.yaml:23` | `classes.Vulnerability.relationships.AFFECTS.in` | [list:3] |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.Vulnerability.relationships.IMPACTS.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:22` | `classes.Vulnerability.relationships.IMPACTS.out` | [list:1] |
+| `config/domain-packs/cybersecurity/ontology.yaml:23` | `classes.Vulnerability.relationships.IMPACTS.in` | [list:4] |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.Vulnerability.relationships.FIXED_BY.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:22` | `classes.Vulnerability.relationships.FIXED_BY.out` | [list:1] |
+| `config/domain-packs/cybersecurity/ontology.yaml:23` | `classes.Vulnerability.relationships.FIXED_BY.in` | [list:2] |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.Threat.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:11` | `classes.Threat.description` | A threat actor or campaign observed against assets. |
+| `config/domain-packs/cybersecurity/ontology.yaml:54` | `classes.Threat.properties.threat_id` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:55` | `classes.Threat.properties.threat_type` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:13` | `classes.Threat.properties.canonical_id` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:14` | `classes.Threat.properties.name` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.Threat.relationships.EXPLOITS.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:22` | `classes.Threat.relationships.EXPLOITS.out` | [list:1] |
+| `config/domain-packs/cybersecurity/ontology.yaml:23` | `classes.Threat.relationships.EXPLOITS.in` | [list:1] |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.Threat.relationships.TARGETS.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:22` | `classes.Threat.relationships.TARGETS.out` | [list:1] |
+| `config/domain-packs/cybersecurity/ontology.yaml:23` | `classes.Threat.relationships.TARGETS.in` | [list:2] |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.SecurityFinding.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:11` | `classes.SecurityFinding.description` | A scanner or pentest finding with remediation tracking. |
+| `config/domain-packs/cybersecurity/ontology.yaml:72` | `classes.SecurityFinding.properties.finding_id` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:73` | `classes.SecurityFinding.properties.scanner` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:74` | `classes.SecurityFinding.properties.first_seen` | DATE |
+| `config/domain-packs/cybersecurity/ontology.yaml:13` | `classes.SecurityFinding.properties.canonical_id` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:14` | `classes.SecurityFinding.properties.name` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:35` | `classes.SecurityFinding.properties.severity` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.SecurityFinding.relationships.REMEDIATED_BY.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:22` | `classes.SecurityFinding.relationships.REMEDIATED_BY.out` | [list:1] |
+| `config/domain-packs/cybersecurity/ontology.yaml:23` | `classes.SecurityFinding.relationships.REMEDIATED_BY.in` | [list:2] |
+| `config/domain-packs/cybersecurity/ontology.yaml:11` | `classes.File.description` | Extends core File with secrets and IaC posture flags. |
+| `config/domain-packs/cybersecurity/ontology.yaml:10` | `classes.File.extends_core` | true |
+| `config/domain-packs/cybersecurity/ontology.yaml:88` | `classes.File.properties.contains_secrets` | [secret value omitted] |
+| `config/domain-packs/cybersecurity/ontology.yaml:89` | `classes.File.properties.iac_kind` | TEXT |
+| `config/domain-packs/cybersecurity/ontology.yaml:91` | `validators` | [list:2] |
+| `config/domain-packs/cybersecurity/ontology.yaml:22` | `relationships.AFFECTS.out` | [list:1] |
+| `config/domain-packs/cybersecurity/ontology.yaml:23` | `relationships.AFFECTS.in` | [list:3] |
+| `config/domain-packs/cybersecurity/pack.yaml:1` | `name` | cybersecurity |
+| `config/domain-packs/cybersecurity/pack.yaml:2` | `version` | 1.0.0 |
+| `config/domain-packs/cybersecurity/pack.yaml:3` | `extends` | core |
+| `config/domain-packs/cybersecurity/pack.yaml:4` | `description` | Cybersecurity pack: vulnerabilities, threats, security findings and asset exposure extending core CO... |
+| `config/domain-packs/data-governance/ontology.yaml:1` | `ontology_version` | 0.4.0 |
+| `config/domain-packs/data-governance/ontology.yaml:2` | `schema_version` | 1.2 |
+| `config/domain-packs/data-governance/ontology.yaml:4` | `domains` | [list:2] |
+| `config/domain-packs/data-governance/ontology.yaml:10` | `classes.Dataset.description` | A governed logical dataset registered in the catalog. |
+| `config/domain-packs/data-governance/ontology.yaml:12` | `classes.Dataset.properties.dataset_id` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:13` | `classes.Dataset.properties.schema_ref` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:14` | `classes.Dataset.properties.freshness_slo` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:15` | `classes.Dataset.properties.canonical_id` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:16` | `classes.Dataset.properties.name` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:17` | `classes.Dataset.properties.owner` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:20` | `classes.Dataset.relationships.HAS_LINEAGE.out` | [list:1] |
+| `config/domain-packs/data-governance/ontology.yaml:21` | `classes.Dataset.relationships.HAS_LINEAGE.in` | [list:1] |
+| `config/domain-packs/data-governance/ontology.yaml:20` | `classes.Dataset.relationships.STORED_IN.out` | [list:1] |
+| `config/domain-packs/data-governance/ontology.yaml:21` | `classes.Dataset.relationships.STORED_IN.in` | [list:1] |
+| `config/domain-packs/data-governance/ontology.yaml:10` | `classes.DataProduct.description` | A consumable data product built from governed datasets. |
+| `config/domain-packs/data-governance/ontology.yaml:29` | `classes.DataProduct.properties.product_id` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:30` | `classes.DataProduct.properties.sla_tier` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:15` | `classes.DataProduct.properties.canonical_id` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:16` | `classes.DataProduct.properties.name` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:17` | `classes.DataProduct.properties.owner` | TEXT |
+| `config/domain-packs/data-governance/ontology.yaml:20` | `classes.DataProduct.relationships.BUILT_FROM.out` | [list:1] |
+| `config/domain-packs/data-governance/ontology.yaml:21` | `classes.DataProduct.relationships.BUILT_FROM.in` | [list:1] |
+| `config/domain-packs/data-governance/ontology.yaml:20` | `classes.DataProduct.relationships.SERVES.out` | [list:1] |
+| `config/domain-packs/data-governance/ontology.yaml:21` | `classes.DataProduct.relationships.SERVES.in` | [list:2] |
+| `config/domain-packs/data-governance/ontology.yaml:10` | `classes.KnowledgeProduct.description` | Extends core KnowledgeProduct with governance quality scores. |
+| `config/domain-packs/data-governance/ontology.yaml:44` | `classes.KnowledgeProduct.extends_core` | true |
+| `config/domain-packs/data-governance/ontology.yaml:46` | `classes.KnowledgeProduct.properties.governance_score` | DOUBLE |
+| `config/domain-packs/data-governance/ontology.yaml:47` | `classes.KnowledgeProduct.properties.certified` | BOOLEAN |
+| `config/domain-packs/data-governance/ontology.yaml:20` | `classes.KnowledgeProduct.relationships.DERIVED_FROM.out` | [list:1] |
+| `config/domain-packs/data-governance/ontology.yaml:21` | `classes.KnowledgeProduct.relationships.DERIVED_FROM.in` | [list:1] |
+| `config/domain-packs/data-governance/ontology.yaml:53` | `validators` | [list:2] |
+| `config/domain-packs/data-governance/pack.yaml:1` | `name` | data-governance |
+| `config/domain-packs/data-governance/pack.yaml:2` | `version` | 1.0.0 |
+| `config/domain-packs/data-governance/pack.yaml:3` | `extends` | core |
+| `config/domain-packs/data-governance/pack.yaml:4` | `description` | Data governance pack: datasets, data products and lineage relationships extending core KNOWLEDGE/MET... |
+| `config/domain-packs/healthcare/ontology.yaml:1` | `ontology_version` | 0.4.0 |
+| `config/domain-packs/healthcare/ontology.yaml:2` | `schema_version` | 1.2 |
+| `config/domain-packs/healthcare/ontology.yaml:4` | `domains` | [list:3] |
+| `config/domain-packs/healthcare/ontology.yaml:11` | `classes.Encounter.description` | A clinical encounter (visit, admission, telehealth session) linking patients (pseudonymous by defaul... |
+| `config/domain-packs/healthcare/ontology.yaml:15` | `classes.Encounter.properties.encounter_id` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:16` | `classes.Encounter.properties.encounter_type` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:17` | `classes.Encounter.properties.patient_ref` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:18` | `classes.Encounter.properties.started_at` | DATE |
+| `config/domain-packs/healthcare/ontology.yaml:19` | `classes.Encounter.properties.ended_at` | DATE |
+| `config/domain-packs/healthcare/ontology.yaml:20` | `classes.Encounter.properties.status` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:21` | `classes.Encounter.properties.source_system` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:24` | `classes.Encounter.relationships.OCCURRED_AT.out` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:25` | `classes.Encounter.relationships.OCCURRED_AT.in` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:24` | `classes.Encounter.relationships.GENERATED.out` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:25` | `classes.Encounter.relationships.GENERATED.in` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:11` | `classes.Order.description` | A clinical or pharmacy order (medication, lab, imaging). |
+| `config/domain-packs/healthcare/ontology.yaml:33` | `classes.Order.properties.order_id` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:34` | `classes.Order.properties.order_type` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:35` | `classes.Order.properties.ordered_at` | DATE |
+| `config/domain-packs/healthcare/ontology.yaml:20` | `classes.Order.properties.status` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:21` | `classes.Order.properties.source_system` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:24` | `classes.Order.relationships.PRESCRIBES.out` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:25` | `classes.Order.relationships.PRESCRIBES.in` | [list:2] |
+| `config/domain-packs/healthcare/ontology.yaml:24` | `classes.Order.relationships.FULFILLED_BY.out` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:25` | `classes.Order.relationships.FULFILLED_BY.in` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:11` | `classes.Drug.description` | A medication or pharmaceutical product. |
+| `config/domain-packs/healthcare/ontology.yaml:49` | `classes.Drug.properties.drug_id` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:50` | `classes.Drug.properties.drug_code` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:51` | `classes.Drug.properties.form` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:52` | `classes.Drug.properties.strength` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:53` | `classes.Drug.properties.manufacturer` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:21` | `classes.Drug.properties.source_system` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:24` | `classes.Drug.relationships.AVAILABLE_AS.out` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:25` | `classes.Drug.relationships.AVAILABLE_AS.in` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:11` | `classes.Lot.description` | A manufactured/recalled batch of a drug or consumable. |
+| `config/domain-packs/healthcare/ontology.yaml:63` | `classes.Lot.properties.lot_id` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:64` | `classes.Lot.properties.lot_number` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:65` | `classes.Lot.properties.expiry_date` | DATE |
+| `config/domain-packs/healthcare/ontology.yaml:66` | `classes.Lot.properties.recall_status` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:21` | `classes.Lot.properties.source_system` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:24` | `classes.Lot.relationships.RECALL_AFFECTS.out` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:25` | `classes.Lot.relationships.RECALL_AFFECTS.in` | [list:3] |
+| `config/domain-packs/healthcare/ontology.yaml:11` | `classes.Device.description` | A medical device or equipment unit tracked in operations. |
+| `config/domain-packs/healthcare/ontology.yaml:76` | `classes.Device.properties.device_id` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:77` | `classes.Device.properties.device_type` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:78` | `classes.Device.properties.model` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:79` | `classes.Device.properties.serial_number` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:21` | `classes.Device.properties.source_system` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:24` | `classes.Device.relationships.DEPLOYED_AT.out` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:25` | `classes.Device.relationships.DEPLOYED_AT.in` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:11` | `classes.Protocol.description` | A clinical protocol or care pathway governing encounters. |
+| `config/domain-packs/healthcare/ontology.yaml:89` | `classes.Protocol.properties.protocol_id` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:90` | `classes.Protocol.properties.protocol_name` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:91` | `classes.Protocol.properties.version` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:20` | `classes.Protocol.properties.status` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:21` | `classes.Protocol.properties.source_system` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:24` | `classes.Protocol.relationships.GOVERNS.out` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:25` | `classes.Protocol.relationships.GOVERNS.in` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:24` | `classes.Protocol.relationships.RUNS_AT.out` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:25` | `classes.Protocol.relationships.RUNS_AT.in` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:11` | `classes.Site.description` | A care site, clinic, hospital or trial site. |
+| `config/domain-packs/healthcare/ontology.yaml:105` | `classes.Site.properties.site_id` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:106` | `classes.Site.properties.site_type` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:107` | `classes.Site.properties.region` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:108` | `classes.Site.properties.canonical_id` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:109` | `classes.Site.properties.name` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:21` | `classes.Site.properties.source_system` | TEXT |
+| `config/domain-packs/healthcare/ontology.yaml:24` | `classes.Site.relationships.OPERATES_UNDER.out` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:25` | `classes.Site.relationships.OPERATES_UNDER.in` | [list:1] |
+| `config/domain-packs/healthcare/ontology.yaml:116` | `validators` | [list:3] |
+| `config/domain-packs/healthcare/pack.yaml:1` | `name` | healthcare |
+| `config/domain-packs/healthcare/pack.yaml:2` | `version` | 1.0.0 |
+| `config/domain-packs/healthcare/pack.yaml:3` | `extends` | core |
+| `config/domain-packs/healthcare/pack.yaml:4` | `description` | Healthcare and life sciences pack: Encounter, Order, Drug, Lot, Device, Protocol and Site concepts (... |
+| `config/domain-packs/itsm/ontology.yaml:1` | `ontology_version` | 0.4.0 |
+| `config/domain-packs/itsm/ontology.yaml:2` | `schema_version` | 1.2 |
+| `config/domain-packs/itsm/ontology.yaml:4` | `domains` | [list:1] |
+| `config/domain-packs/itsm/ontology.yaml:9` | `classes.Incident.description` | Extends core Incident with ITIL problem linkage. |
+| `config/domain-packs/itsm/ontology.yaml:10` | `classes.Incident.extends_core` | true |
+| `config/domain-packs/itsm/ontology.yaml:12` | `classes.Incident.properties.problem_ref` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:13` | `classes.Incident.properties.major_incident` | BOOLEAN |
+| `config/domain-packs/itsm/ontology.yaml:16` | `classes.Incident.relationships.ESCALATES_TO.out` | [list:1] |
+| `config/domain-packs/itsm/ontology.yaml:17` | `classes.Incident.relationships.ESCALATES_TO.in` | [list:1] |
+| `config/domain-packs/itsm/ontology.yaml:16` | `classes.Incident.relationships.LINKED_TO_PROBLEM.out` | [list:1] |
+| `config/domain-packs/itsm/ontology.yaml:17` | `classes.Incident.relationships.LINKED_TO_PROBLEM.in` | [list:1] |
+| `config/domain-packs/itsm/ontology.yaml:9` | `classes.Problem.description` | An ITIL problem record grouping related incidents. |
+| `config/domain-packs/itsm/ontology.yaml:25` | `classes.Problem.properties.problem_id` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:26` | `classes.Problem.properties.root_cause` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:27` | `classes.Problem.properties.canonical_id` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:28` | `classes.Problem.properties.name` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:29` | `classes.Problem.properties.status` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:30` | `classes.Problem.properties.source_system` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:16` | `classes.Problem.relationships.CAUSED_BY.out` | [list:1] |
+| `config/domain-packs/itsm/ontology.yaml:17` | `classes.Problem.relationships.CAUSED_BY.in` | [list:2] |
+| `config/domain-packs/itsm/ontology.yaml:9` | `classes.ConfigurationItem.description` | A CMDB configuration item linked to services and incidents. |
+| `config/domain-packs/itsm/ontology.yaml:39` | `classes.ConfigurationItem.properties.ci_id` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:40` | `classes.ConfigurationItem.properties.ci_class` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:41` | `classes.ConfigurationItem.properties.environment` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:27` | `classes.ConfigurationItem.properties.canonical_id` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:28` | `classes.ConfigurationItem.properties.name` | TEXT |
+| `config/domain-packs/itsm/ontology.yaml:16` | `classes.ConfigurationItem.relationships.IMPACTS.out` | [list:1] |
+| `config/domain-packs/itsm/ontology.yaml:17` | `classes.ConfigurationItem.relationships.IMPACTS.in` | [list:1] |
+| `config/domain-packs/itsm/ontology.yaml:16` | `classes.ConfigurationItem.relationships.RUNS_ON.out` | [list:1] |
+| `config/domain-packs/itsm/ontology.yaml:17` | `classes.ConfigurationItem.relationships.RUNS_ON.in` | [list:1] |
+| `config/domain-packs/itsm/ontology.yaml:52` | `validators` | [list:2] |
+| `config/domain-packs/itsm/pack.yaml:1` | `name` | itsm |
+| `config/domain-packs/itsm/pack.yaml:2` | `version` | 1.0.0 |
+| `config/domain-packs/itsm/pack.yaml:3` | `extends` | core |
+| `config/domain-packs/itsm/pack.yaml:4` | `description` | IT service management pack: extends OPS core concepts (Incident, ChangeRequest, ServiceRequest) with... |
+| `config/domain-packs/manufacturing/ontology.yaml:1` | `ontology_version` | 0.4.0 |
+| `config/domain-packs/manufacturing/ontology.yaml:2` | `schema_version` | 1.2 |
+| `config/domain-packs/manufacturing/ontology.yaml:4` | `domains` | [list:3] |
+| `config/domain-packs/manufacturing/ontology.yaml:11` | `classes.Part.description` | A manufactured or purchased part/component. |
+| `config/domain-packs/manufacturing/ontology.yaml:13` | `classes.Part.properties.part_id` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:14` | `classes.Part.properties.part_number` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:15` | `classes.Part.properties.material` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:16` | `classes.Part.properties.canonical_id` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:17` | `classes.Part.properties.name` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:18` | `classes.Part.properties.source_system` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:21` | `classes.Part.relationships.USED_IN.out` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:22` | `classes.Part.relationships.USED_IN.in` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:21` | `classes.Part.relationships.SUPPLIED_BY.out` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:22` | `classes.Part.relationships.SUPPLIED_BY.in` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:11` | `classes.BOM.description` | A bill of materials version listing component parts. |
+| `config/domain-packs/manufacturing/ontology.yaml:30` | `classes.BOM.properties.bom_id` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:31` | `classes.BOM.properties.bom_revision` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:16` | `classes.BOM.properties.canonical_id` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:17` | `classes.BOM.properties.name` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:18` | `classes.BOM.properties.source_system` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:21` | `classes.BOM.relationships.ASSEMBLED_AT.out` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:22` | `classes.BOM.relationships.ASSEMBLED_AT.in` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:11` | `classes.Supplier.description` | An external supplier of parts or materials. |
+| `config/domain-packs/manufacturing/ontology.yaml:43` | `classes.Supplier.properties.supplier_id` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:44` | `classes.Supplier.properties.supplier_tier` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:45` | `classes.Supplier.properties.region` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:16` | `classes.Supplier.properties.canonical_id` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:17` | `classes.Supplier.properties.name` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:18` | `classes.Supplier.properties.source_system` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:21` | `classes.Supplier.relationships.SUPPLIES.out` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:22` | `classes.Supplier.relationships.SUPPLIES.in` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:11` | `classes.Plant.description` | A manufacturing plant or production facility. |
+| `config/domain-packs/manufacturing/ontology.yaml:57` | `classes.Plant.properties.plant_id` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:58` | `classes.Plant.properties.plant_code` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:45` | `classes.Plant.properties.region` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:16` | `classes.Plant.properties.canonical_id` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:17` | `classes.Plant.properties.name` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:18` | `classes.Plant.properties.source_system` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:21` | `classes.Plant.relationships.FABRICATES.out` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:22` | `classes.Plant.relationships.FABRICATES.in` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:11` | `classes.WorkOrder.description` | A production work order executed on a plant line. |
+| `config/domain-packs/manufacturing/ontology.yaml:71` | `classes.WorkOrder.properties.work_order_id` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:72` | `classes.WorkOrder.properties.wo_status` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:73` | `classes.WorkOrder.properties.planned_start` | DATE |
+| `config/domain-packs/manufacturing/ontology.yaml:74` | `classes.WorkOrder.properties.planned_end` | DATE |
+| `config/domain-packs/manufacturing/ontology.yaml:75` | `classes.WorkOrder.properties.quantity` | INT |
+| `config/domain-packs/manufacturing/ontology.yaml:18` | `classes.WorkOrder.properties.source_system` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:21` | `classes.WorkOrder.relationships.EXECUTES.out` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:22` | `classes.WorkOrder.relationships.EXECUTES.in` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:21` | `classes.WorkOrder.relationships.RAISED.out` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:22` | `classes.WorkOrder.relationships.RAISED.in` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:11` | `classes.QualityEvent.description` | A nonconformance, defect or quality inspection event. |
+| `config/domain-packs/manufacturing/ontology.yaml:88` | `classes.QualityEvent.properties.quality_event_id` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:89` | `classes.QualityEvent.properties.defect_code` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:90` | `classes.QualityEvent.properties.severity` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:91` | `classes.QualityEvent.properties.event_timestamp` | DATE |
+| `config/domain-packs/manufacturing/ontology.yaml:92` | `classes.QualityEvent.properties.status` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:18` | `classes.QualityEvent.properties.source_system` | TEXT |
+| `config/domain-packs/manufacturing/ontology.yaml:21` | `classes.QualityEvent.relationships.NONCONFORMING_PART.out` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:22` | `classes.QualityEvent.relationships.NONCONFORMING_PART.in` | [list:1] |
+| `config/domain-packs/manufacturing/ontology.yaml:99` | `validators` | [list:3] |
+| `config/domain-packs/manufacturing/pack.yaml:1` | `name` | manufacturing |
+| `config/domain-packs/manufacturing/pack.yaml:2` | `version` | 1.0.0 |
+| `config/domain-packs/manufacturing/pack.yaml:3` | `extends` | core |
+| `config/domain-packs/manufacturing/pack.yaml:4` | `description` | Manufacturing and supply chain pack: Part, BOM, Supplier, Plant, WorkOrder and QualityEvent concepts... |
+| `config/domain-packs/software-engineering/ontology.yaml:1` | `ontology_version` | 0.4.0 |
+| `config/domain-packs/software-engineering/ontology.yaml:2` | `schema_version` | 1.2 |
+| `config/domain-packs/software-engineering/ontology.yaml:4` | `domains` | [list:3] |
+| `config/domain-packs/software-engineering/ontology.yaml:11` | `classes.WorkItem.description` | Extends core WorkItem with agile estimation fields. |
+| `config/domain-packs/software-engineering/ontology.yaml:12` | `classes.WorkItem.extends_core` | true |
+| `config/domain-packs/software-engineering/ontology.yaml:14` | `classes.WorkItem.properties.story_points` | INT |
+| `config/domain-packs/software-engineering/ontology.yaml:15` | `classes.WorkItem.properties.epic_link` | TEXT |
+| `config/domain-packs/software-engineering/ontology.yaml:18` | `classes.WorkItem.relationships.ESTIMATED_FOR.out` | [list:1] |
+| `config/domain-packs/software-engineering/ontology.yaml:19` | `classes.WorkItem.relationships.ESTIMATED_FOR.in` | [list:1] |
+| `config/domain-packs/software-engineering/ontology.yaml:11` | `classes.CodeReview.description` | A code-review cycle on a repository change. |
+| `config/domain-packs/software-engineering/ontology.yaml:24` | `classes.CodeReview.properties.review_id` | TEXT |
+| `config/domain-packs/software-engineering/ontology.yaml:25` | `classes.CodeReview.properties.review_state` | TEXT |
+| `config/domain-packs/software-engineering/ontology.yaml:26` | `classes.CodeReview.properties.reviewer_count` | INT |
+| `config/domain-packs/software-engineering/ontology.yaml:27` | `classes.CodeReview.properties.canonical_id` | TEXT |
+| `config/domain-packs/software-engineering/ontology.yaml:28` | `classes.CodeReview.properties.source_system` | TEXT |
+| `config/domain-packs/software-engineering/ontology.yaml:18` | `classes.CodeReview.relationships.REVIEWS.out` | [list:1] |
+| `config/domain-packs/software-engineering/ontology.yaml:19` | `classes.CodeReview.relationships.REVIEWS.in` | [list:2] |
+| `config/domain-packs/software-engineering/ontology.yaml:18` | `classes.CodeReview.relationships.RAISED_AGAINST.out` | [list:1] |
+| `config/domain-packs/software-engineering/ontology.yaml:19` | `classes.CodeReview.relationships.RAISED_AGAINST.in` | [list:2] |
+| `config/domain-packs/software-engineering/ontology.yaml:11` | `classes.ReleaseTrain.description` | A grouped, versioned release cut across repositories. |
+| `config/domain-packs/software-engineering/ontology.yaml:40` | `classes.ReleaseTrain.properties.train_name` | TEXT |
+| `config/domain-packs/software-engineering/ontology.yaml:41` | `classes.ReleaseTrain.properties.release_date` | DATE |
+| `config/domain-packs/software-engineering/ontology.yaml:27` | `classes.ReleaseTrain.properties.canonical_id` | TEXT |
+| `config/domain-packs/software-engineering/ontology.yaml:43` | `classes.ReleaseTrain.properties.name` | TEXT |
+| `config/domain-packs/software-engineering/ontology.yaml:18` | `classes.ReleaseTrain.relationships.CARRIES.out` | [list:1] |
+| `config/domain-packs/software-engineering/ontology.yaml:19` | `classes.ReleaseTrain.relationships.CARRIES.in` | [list:2] |
+| `config/domain-packs/software-engineering/ontology.yaml:49` | `validators` | [list:2] |
+| `config/domain-packs/software-engineering/pack.yaml:1` | `name` | software-engineering |
+| `config/domain-packs/software-engineering/pack.yaml:2` | `version` | 1.0.0 |
+| `config/domain-packs/software-engineering/pack.yaml:3` | `extends` | core |
+| `config/domain-packs/software-engineering/pack.yaml:4` | `description` | Software engineering pack: extends WORK/CODE/CICD core concepts with agile estimation, code-review a... |
+| `config/graph-store.yaml:11` | `primary` | hugegraph |
+| `config/graph-store.yaml:15` | `connections.hugegraph.type` | hugegraph |
+| `config/graph-store.yaml:16` | `connections.hugegraph.url` | http://hugegraph-server:8080 |
+| `config/graph-store.yaml:17` | `connections.hugegraph.graph` | hugegraph |
+| `config/graph-store.yaml:18` | `connections.hugegraph.username` | admin |
+| `config/graph-store.yaml:19` | `connections.hugegraph.password` | [secret value omitted] |
+| `config/graph-store.yaml:15` | `connections.neptune.type` | neptune |
+| `config/graph-store.yaml:16` | `connections.neptune.url` | https://your-neptune-endpoint:8182 |
+| `config/graph-store.yaml:24` | `connections.neptune.database` | neptune |
+| `config/graph-store.yaml:25` | `connections.neptune.open_cypher_path` | /openCypher |
+| `config/graph-store.yaml:26` | `connections.neptune.sparql_path` | /sparql |
+| `config/graph-store.yaml:27` | `connections.neptune.gremlin_path` | /gremlin |
+| `config/graph-store.yaml:28` | `connections.neptune.verify_tls` | true |
+| `config/graph-store.yaml:15` | `connections.neo4j.type` | neo4j |
+| `config/graph-store.yaml:16` | `connections.neo4j.url` | http://neo4j:7474 |
+| `config/graph-store.yaml:24` | `connections.neo4j.database` | neo4j |
+| `config/graph-store.yaml:18` | `connections.neo4j.username` | neo4j |
+| `config/graph-store.yaml:19` | `connections.neo4j.password` | [secret value omitted] |
+| `config/graph-store.yaml:28` | `connections.neo4j.verify_tls` | true |
+| `config/graph-store.yaml:15` | `connections.memory.type` | memory |
+| `config/mappings/gitlab-mvp.yaml:1` | `version` | 1.0 |
+| `config/mappings/gitlab-mvp.yaml:2` | `mapper_version` | gitlab-json/1.0 |
+| `config/mappings/gitlab-mvp.yaml:3` | `issue_key_pattern` | [A-Z][A-Z0-9]+-\d+ |
+| `config/mappings/jira-mvp.yaml:1` | `version` | 1.0 |
+| `config/mappings/jira-mvp.yaml:2` | `mapper_version` | jira-json/1.0 |
+| `config/mappings/jira-mvp.yaml:4` | `fields.issue_key` | key |
+| `config/mappings/jira-mvp.yaml:5` | `fields.summary` | fields.summary |
+| `config/mappings/jira-mvp.yaml:6` | `fields.description` | fields.description |
+| `config/mappings/jira-mvp.yaml:7` | `fields.issue_type` | fields.issuetype.name |
+| `config/mappings/jira-mvp.yaml:8` | `fields.status` | fields.status.name |
+| `config/mappings/jira-mvp.yaml:9` | `fields.project_key` | fields.project.key |
+| `config/mappings/jira-mvp.yaml:10` | `fields.project_name` | fields.project.name |
+| `config/mappings/jira-mvp.yaml:11` | `fields.assignee_id` | fields.assignee.accountId |
+| `config/mappings/jira-mvp.yaml:12` | `fields.assignee_name` | fields.assignee.displayName |
+| `config/mappings/jira-mvp.yaml:13` | `fields.assignee_email` | fields.assignee.emailAddress |
+| `config/mappings/jira-mvp.yaml:14` | `fields.parent_key` | fields.parent.key |
+| `config/memory-policy.yaml:1` | `schema_version` | 1.0 |
+| `config/memory-policy.yaml:2` | `ttl_seconds` | 2592000 |
+| `config/memory-policy.yaml:3` | `max_records` | 1000 |
+| `config/memory-policy.yaml:4` | `max_bytes` | 8388608 |
+| `config/ontology/ontology-v0.2.0.yaml:1` | `ontology_version` | 0.2.0 |
+| `config/ontology/ontology-v0.2.0.yaml:2` | `schema_version` | 1.0 |
+| `config/ontology/ontology-v0.2.0.yaml:4` | `domains` | [list:7] |
+| `config/ontology/ontology-v0.2.0.yaml:13` | `vertex_labels` | [list:22] |
+| `config/ontology/ontology-v0.2.0.yaml:37` | `edge_labels` | [list:20] |
+| `config/query-policies/default.yaml:1` | `policy_name` | default |
+| `config/query-policies/default.yaml:2` | `description` | Default query policy for MVP. Enforces read-only queries with bounded depth, result limits, and time... |
+| `config/query-policies/default.yaml:6` | `max_depth` | 8 |
+| `config/query-policies/default.yaml:7` | `max_results` | 500 |
+| `config/query-policies/default.yaml:8` | `max_timeout_ms` | 30000 |
+| `config/query-policies/default.yaml:9` | `read_only` | true |
+| `config/query-policies/default.yaml:11` | `allowed_intents` | [list:6] |
+| `config/query-policies/default.yaml:19` | `blocked_edges` | [list:0] |
+| `config/systems-registry.json:2` | `$schema` | urn:eoip:systems-registry:v1 |
+| `config/systems-registry.json:3` | `version` | 1.0.0 |
+| `config/systems-registry.json:4` | `description` | EOIP Unified Systems Registry — single configuration point for all connected enterprise systems. Eac... |
+| `config/systems-registry.json:6` | `global_defaults.poll_interval_minutes` | 60 |
+| `config/systems-registry.json:8` | `global_defaults.retry_policy.max_retries` | 3 |
+| `config/systems-registry.json:9` | `global_defaults.retry_policy.backoff_seconds` | 30 |
+| `config/systems-registry.json:10` | `global_defaults.retry_policy.backoff_multiplier` | 2.0 |
+| `config/systems-registry.json:13` | `global_defaults.ingestion.batch_size` | 500 |
+| `config/systems-registry.json:14` | `global_defaults.ingestion.dead_letter_queue_enabled` | true |
+| `config/systems-registry.json:15` | `global_defaults.ingestion.schema_drift_detection` | true |
+| `config/systems-registry.json:16` | `global_defaults.ingestion.auto_schema_induction` | true |
+| `config/systems-registry.json:17` | `global_defaults.ingestion.auto_relationship_discovery` | true |
+| `config/systems-registry.json:20` | `global_defaults.data_quality.deduplication_enabled` | true |
+| `config/systems-registry.json:21` | `global_defaults.data_quality.identity_resolution` | true |
+| `config/systems-registry.json:22` | `global_defaults.data_quality.provenance_tracking` | true |
+| `config/systems-registry.json:25` | `global_defaults.security.encrypt_secrets_at_rest` | [secret value omitted] |
+| `config/systems-registry.json:26` | `global_defaults.security.tls_required` | false |
+| `config/systems-registry.json:27` | `global_defaults.security.audit_logging` | true |
+| `config/systems-registry.json:30` | `systems` | [list:0] |
+| `deploy/helm/eoip/values.yaml:5` | `image.registry` |  |
+| `deploy/helm/eoip/values.yaml:6` | `image.repository` | eoip-app |
+| `deploy/helm/eoip/values.yaml:7` | `image.tag` | local |
+| `deploy/helm/eoip/values.yaml:8` | `image.pullPolicy` | IfNotPresent |
+| `deploy/helm/eoip/values.yaml:10` | `imagePullSecrets` | [secret value omitted] |
+| `deploy/helm/eoip/values.yaml:12` | `nameOverride` |  |
+| `deploy/helm/eoip/values.yaml:13` | `fullnameOverride` |  |
+| `deploy/helm/eoip/values.yaml:16` | `serviceAccount.create` | false |
+| `deploy/helm/eoip/values.yaml:17` | `serviceAccount.name` |  |
+| `deploy/helm/eoip/values.yaml:23` | `api.replicaCount` | 2 |
+| `deploy/helm/eoip/values.yaml:24` | `api.port` | 8000 |
+| `deploy/helm/eoip/values.yaml:1` | `api.resources.requests.cpu` | 250m |
+| `deploy/helm/eoip/values.yaml:1` | `api.resources.requests.memory` | 512Mi |
+| `deploy/helm/eoip/values.yaml:1` | `api.resources.limits.cpu` | 1 |
+| `deploy/helm/eoip/values.yaml:1` | `api.resources.limits.memory` | 1Gi |
+| `deploy/helm/eoip/values.yaml:30` | `api.tolerations` | [list:0] |
+| `deploy/helm/eoip/values.yaml:34` | `api.podAntiAffinity.enabled` | true |
+| `deploy/helm/eoip/values.yaml:35` | `api.podAntiAffinity.topologyKey` | kubernetes.io/hostname |
+| `deploy/helm/eoip/values.yaml:34` | `mcp.enabled` | true |
+| `deploy/helm/eoip/values.yaml:23` | `mcp.replicaCount` | 1 |
+| `deploy/helm/eoip/values.yaml:24` | `mcp.port` | 8001 |
+| `deploy/helm/eoip/values.yaml:1` | `mcp.resources.requests.cpu` | 100m |
+| `deploy/helm/eoip/values.yaml:1` | `mcp.resources.requests.memory` | 256Mi |
+| `deploy/helm/eoip/values.yaml:1` | `mcp.resources.limits.cpu` | 500m |
+| `deploy/helm/eoip/values.yaml:1` | `mcp.resources.limits.memory` | 512Mi |
+| `deploy/helm/eoip/values.yaml:34` | `mcp.podAntiAffinity.enabled` | false |
+| `deploy/helm/eoip/values.yaml:35` | `mcp.podAntiAffinity.topologyKey` | kubernetes.io/hostname |
+| `deploy/helm/eoip/values.yaml:34` | `worker.enabled` | true |
+| `deploy/helm/eoip/values.yaml:23` | `worker.replicaCount` | 2 |
+| `deploy/helm/eoip/values.yaml:54` | `worker.lease.path` | /data/leases/worker.lock |
+| `deploy/helm/eoip/values.yaml:55` | `worker.lease.ttlSeconds` | 30 |
+| `deploy/helm/eoip/values.yaml:1` | `worker.resources.requests.cpu` | 250m |
+| `deploy/helm/eoip/values.yaml:1` | `worker.resources.requests.memory` | 512Mi |
+| `deploy/helm/eoip/values.yaml:1` | `worker.resources.limits.cpu` | 1 |
+| `deploy/helm/eoip/values.yaml:1` | `worker.resources.limits.memory` | 1Gi |
+| `deploy/helm/eoip/values.yaml:34` | `worker.podAntiAffinity.enabled` | true |
+| `deploy/helm/eoip/values.yaml:35` | `worker.podAntiAffinity.topologyKey` | kubernetes.io/hostname |
+| `deploy/helm/eoip/values.yaml:34` | `persistence.enabled` | true |
+| `deploy/helm/eoip/values.yaml:66` | `persistence.storageClass` |  |
+| `deploy/helm/eoip/values.yaml:67` | `persistence.accessMode` | ReadWriteMany |
+| `deploy/helm/eoip/values.yaml:68` | `persistence.size` | 10Gi |
+| `deploy/helm/eoip/values.yaml:74` | `config.dataDir` | /data |
+| `deploy/helm/eoip/values.yaml:75` | `config.loadDemo` | true |
+| `deploy/helm/eoip/values.yaml:76` | `config.apiToken` | [secret value omitted] |
+| `deploy/helm/eoip/values.yaml:77` | `config.existingSecret` | [secret value omitted] |
+| `deploy/helm/eoip/values.yaml:78` | `config.extraEnv` | [list:0] |
+| `deploy/helm/eoip/values.yaml:34` | `hugegraph.enabled` | true |
+| `deploy/helm/eoip/values.yaml:87` | `hugegraph.url` | http://hugegraph-server:8080 |
+| `deploy/helm/eoip/values.yaml:88` | `hugegraph.graph` | hugegraph |
+| `deploy/helm/eoip/values.yaml:89` | `hugegraph.username` | admin |
+| `deploy/helm/eoip/values.yaml:90` | `hugegraph.password` | [secret value omitted] |
+| `deploy/helm/eoip/values.yaml:34` | `neptune.enabled` | false |
+| `deploy/helm/eoip/values.yaml:87` | `neptune.url` | https://your-neptune-endpoint:8182 |
+| `deploy/helm/eoip/values.yaml:97` | `neptune.database` | neptune |
+| `deploy/helm/eoip/values.yaml:98` | `neptune.verifyTls` | true |
+| `deploy/helm/eoip/values.yaml:34` | `ollama.enabled` | false |
+| `deploy/helm/eoip/values.yaml:87` | `ollama.url` | http://ollama:11434 |
+| `deploy/helm/eoip/values.yaml:104` | `ollama.model` |  |
+| `deploy/helm/eoip/values.yaml:77` | `ollama.existingSecret` | [secret value omitted] |
+| `deploy/helm/eoip/values.yaml:107` | `graphBackend` | hugegraph |
+| `deploy/helm/eoip/values.yaml:34` | `redis.enabled` | false |
+| `deploy/helm/eoip/values.yaml:87` | `redis.url` | redis://eoip-redis:6379/0 |
+| `deploy/helm/eoip/values.yaml:4` | `redis.image` | redis:8.2-alpine |
+| `deploy/helm/eoip/values.yaml:123` | `service.type` | ClusterIP |
+| `deploy/helm/eoip/values.yaml:24` | `service.port` | 8000 |
+| `deploy/helm/eoip/values.yaml:34` | `ingress.enabled` | false |
+| `deploy/helm/eoip/values.yaml:128` | `ingress.className` | nginx |
+| `deploy/helm/eoip/values.yaml:130` | `ingress.hosts` | [list:1] |
+| `deploy/helm/eoip/values.yaml:135` | `ingress.tls` | [list:0] |
+| `deploy/helm/eoip/values.yaml:34` | `hpa.enabled` | true |
+| `deploy/helm/eoip/values.yaml:142` | `hpa.minReplicas` | 2 |
+| `deploy/helm/eoip/values.yaml:143` | `hpa.maxReplicas` | 8 |
+| `deploy/helm/eoip/values.yaml:144` | `hpa.targetCPUUtilizationPercentage` | 70 |
+| `deploy/helm/eoip/values.yaml:145` | `hpa.targetMemoryUtilizationPercentage` | 80 |
+| `deploy/helm/eoip/values.yaml:148` | `podSecurityContext.runAsNonRoot` | true |
+| `deploy/helm/eoip/values.yaml:149` | `podSecurityContext.runAsUser` | 10001 |
+| `deploy/helm/eoip/values.yaml:150` | `podSecurityContext.runAsGroup` | 10001 |
+| `deploy/helm/eoip/values.yaml:151` | `podSecurityContext.fsGroup` | 10001 |
+| `deploy/helm/eoip/values.yaml:154` | `securityContext.allowPrivilegeEscalation` | false |
+| `deploy/helm/eoip/values.yaml:1` | `securityContext.capabilities.drop` | [list:1] |
+| `pyproject.toml:2` | `build-system.requires` | [list:1] |
+| `pyproject.toml:3` | `build-system.build-backend` | setuptools.build_meta |
+| `pyproject.toml:6` | `project.name` | eoip |
+| `pyproject.toml:7` | `project.version` | 1.0.0rc1 |
+| `pyproject.toml:8` | `project.description` | Enterprise Ontology & Intelligence Platform (EOIP) — Phase 1 MVP vertical slice |
+| `pyproject.toml:9` | `project.requires-python` | >=3.11 |
+| `pyproject.toml:10` | `project.dependencies` | [list:9] |
+| `pyproject.toml:23` | `project.scripts.eoip` | eoip.cli:main |
+| `pyproject.toml:26` | `project.optional-dependencies.fileparse` | [list:10] |
+| `pyproject.toml:38` | `project.optional-dependencies.codeparse` | [list:2] |
+| `pyproject.toml:42` | `project.optional-dependencies.otel` | [list:3] |
+| `pyproject.toml:47` | `project.optional-dependencies.k8s` | [list:1] |
+| `pyproject.toml:50` | `project.optional-dependencies.redis` | [list:1] |
+| `pyproject.toml:53` | `project.optional-dependencies.enterprise` | [list:5] |
+| `pyproject.toml:60` | `project.optional-dependencies.dev` | [list:6] |
+| `pyproject.toml:70` | `tool.setuptools.package-dir.` | packages |
+| `pyproject.toml:73` | `tool.setuptools.packages.find.where` | [list:1] |
+| `pyproject.toml:74` | `tool.setuptools.packages.find.include` | [list:1] |
+| `pyproject.toml:77` | `tool.pytest.ini_options.pythonpath` | [list:2] |
+| `pyproject.toml:78` | `tool.pytest.ini_options.asyncio_mode` | auto |
+| `pyproject.toml:79` | `tool.pytest.ini_options.testpaths` | [list:1] |
+| `pyproject.toml:80` | `tool.pytest.ini_options.addopts` | -q --strict-markers --tb=short |
+| `pyproject.toml:81` | `tool.pytest.ini_options.markers` | [list:8] |
+| `pyproject.toml:91` | `tool.pytest.ini_options.filterwarnings` | [list:1] |
+| `pyproject.toml:96` | `tool.coverage.run.source` | [list:1] |
+| `pyproject.toml:97` | `tool.coverage.run.omit` | [list:2] |
+| `pyproject.toml:100` | `tool.coverage.report.show_missing` | true |
+| `pyproject.toml:101` | `tool.coverage.report.fail_under` | 70 |
+| `pyproject.toml:102` | `tool.coverage.report.exclude_lines` | [list:4] |
+| `pyproject.toml:110` | `tool.mypy.python_version` | 3.11 |
+| `pyproject.toml:111` | `tool.mypy.warn_return_any` | true |
+| `pyproject.toml:112` | `tool.mypy.warn_unused_configs` | true |
+| `pyproject.toml:113` | `tool.mypy.disallow_untyped_defs` | false |
+| `pyproject.toml:114` | `tool.mypy.check_untyped_defs` | true |
+| `pyproject.toml:115` | `tool.mypy.ignore_missing_imports` | true |
+| `pyproject.toml:118` | `tool.ruff.line-length` | 110 |
+| `pyproject.toml:119` | `tool.ruff.target-version` | py311 |
+| `pyrightconfig.json:2` | `include` | [list:2] |
+| `pyrightconfig.json:6` | `exclude` | [list:3] |
+| `pyrightconfig.json:11` | `extraPaths` | [list:1] |
+| `pyrightconfig.json:14` | `typeCheckingMode` | basic |
 
 ## Exclusion Policy
 
@@ -315,7 +1097,7 @@ This ledger is the proof-of-read inventory for `gaps-audit-cp.md` and `GUI-UIX-r
 | `apps/web/tests/recovery-jobs.spec.js` | `.js` | 65 | `FULLY_READ` | - | Complete text read and indexed |
 | `apps/web/vite.config.js` | `.js` | 7 | `FULLY_READ` | - | Complete text read and indexed |
 | `apps/worker/main.py` | `.py` | 344 | `FULLY_READ` | - | Complete text read and indexed |
-| `audit-coverage-ledger.md` | `.md` | 1900 | `FULLY_READ` | - | current audit deliverable; generated and verified after source inventory |
+| `audit-coverage-ledger.md` | `.md` | 2682 | `FULLY_READ` | - | current audit deliverable; generated and verified after source inventory |
 | `available-status.md` | `.md` | 38 | `FULLY_READ` | BASE-01, BASE-02 | Complete text read and indexed |
 | `config/agents/trace-impact.yaml` | `.yaml` | 19 | `FULLY_READ` | - | Complete text read and indexed |
 | `config/architecture/default.rules` | `.rules` | 16 | `FULLY_READ` | - | Complete text read and indexed |
