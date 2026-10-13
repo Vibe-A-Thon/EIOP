@@ -2,7 +2,7 @@
 
 ## 1. Document Control
 
-**Version:** 1.0.0 | **Date:** 2026-10-13 | **Source:** `dev_local` / `350915b760bc2109352d9c59dc269460aa8227eb` | **Audit:** `gaps-audit-cp.md`  
+**Version:** 1.0.0 | **Date:** 2026-10-13 | **Source:** `dev_local` / `54e31304fd089e471cef83fbc4a5e89660a36195` | **Audit:** `gaps-audit-cp.md`  
 This is a build specification for a new frontend. Existing frontend visual design, route names and component choices are intentionally excluded. Backend contracts were independently confirmed from source and the live OpenAPI document.
 
 **Glossary:** ontology = governed types/relationships/constraints; entity = graph node instance; relationship = typed directed edge; meta-graph = graph of types; tenant = security/data boundary; workspace = tenant collaboration scope; view = persisted exploration state; lens = task-specific graph encoding/filter; evidence = source-backed node/edge/document attribution; principal = authenticated human/service identity.

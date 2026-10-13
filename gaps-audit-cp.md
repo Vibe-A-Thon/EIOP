@@ -1,7 +1,7 @@
 # EOIP / KGF Complete Requirements Gap Audit
 
 **Repository:** `EIOP`  
-**Branch / commit:** `dev_local` / `350915b760bc2109352d9c59dc269460aa8227eb`  
+**Branch / commit:** `dev_local` / `54e31304fd089e471cef83fbc4a5e89660a36195`  
 **Audit date:** 2026-10-13  
 **Auditor:** OpenAI Codex, GPT-5 coding agent  
 **Scope:** all first-party non-generated repository text/source/configuration plus every Markdown line; user-directed exclusions are demo/example content and demo/sample data. Existing audit documents are evidence, never proof. No application code was modified.
