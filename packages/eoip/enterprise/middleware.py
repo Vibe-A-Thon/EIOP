@@ -16,6 +16,7 @@ from fastapi.responses import JSONResponse
 
 from eoip.enterprise.exceptions import EnterpriseError, ErrorSeverity
 from eoip.enterprise.logging import get_logger, set_correlation_id, set_tenant_id
+from eoip.tenancy.context import TenantContextRequired, authorized_tenant
 
 logger = get_logger("middleware")
 
@@ -72,7 +73,35 @@ def install_enterprise_middleware(app: FastAPI) -> None:
         request.state.correlation_id = correlation_id
         set_correlation_id(correlation_id)
 
-        tenant_id = request.headers.get("X-Tenant-ID", "default")
+        import os
+
+        supplied_tenant = request.headers.get("X-Tenant-ID") or request.headers.get("X-Tenant-Id")
+        principal = getattr(request.state, "principal", None)
+        if principal:
+            try:
+                tenant_id = authorized_tenant(principal, supplied_tenant) or ""
+            except TenantContextRequired as exc:
+                return JSONResponse(
+                    status_code=403,
+                    content={
+                        "error": {
+                            "code": "EOIP-AUTHZ-003",
+                            "message": str(exc),
+                            "category": "AUTHORIZATION",
+                            "severity": "HIGH",
+                        },
+                        "correlation_id": correlation_id,
+                    },
+                )
+        elif supplied_tenant:
+            tenant_id = supplied_tenant
+        else:
+            env = os.getenv("EOIP_ENV", os.getenv("APP_ENV", "")).lower()
+            if env == "production":
+                tenant_id = ""
+            else:
+                tenant_id = getattr(request.state, "tenant_id", "default") or "default"
+
         request.state.tenant_id = tenant_id
         set_tenant_id(tenant_id)
 

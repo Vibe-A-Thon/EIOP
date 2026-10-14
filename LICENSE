@@ -1,0 +1,58 @@
+EOIP PROPRIETARY SOFTWARE NOTICE
+Document identifier: LicenseRef-EOIP-Proprietary
+Notice version: 1.0, 2026-10-14
+
+Copyright (c) 2026 Avyukthi AI and Murthy Ravinder kumar.
+All rights reserved in the original material owned by these rights holders.
+
+1. SCOPE
+
+This notice applies only to original EOIP / KnowGridFlow source code,
+documentation, configuration, and other material owned by the rights holders
+identified above, to the extent they have the right to license that material.
+It does not claim ownership of third-party software, contributions whose rights
+have not been acquired, fonts, images, datasets, model weights, customer data,
+or other separately licensed material.
+
+2. NO PUBLIC LICENSE GRANT
+
+The covered original material is proprietary, not offered under the Apache
+License or another public open-source license by this notice. Possession of
+the source, a download, a repository invitation, a payment, or a license key
+does not by itself grant a license under this notice.
+
+Use, reproduction, modification, distribution, sublicensing, and provision of
+hosted services using the covered material require authorization in an
+applicable written commercial agreement with a rights holder or its authorized
+licensor, except to the extent permitted by applicable law or an existing
+valid license. Such an agreement defines the customer, permitted deployment,
+scope, term, fees, and any source-access or redistribution rights.
+
+3. THIRD-PARTY RIGHTS ARE PRESERVED
+
+Third-party components remain subject to their own licenses and notices.
+Their applicable terms govern those components; this notice and any EOIP
+commercial restrictions do not reduce rights granted by those terms or excuse
+compliance with their conditions. Preserve applicable upstream copyright,
+license, attribution, patent, and source-availability notices.
+
+This notice does not establish that a particular combination of components
+may lawfully be distributed under proprietary terms. Unresolved compatibility
+and source-provision obligations must be resolved before distribution.
+
+4. EXISTING RIGHTS
+
+This notice does not revoke or replace rights validly granted under a previous
+license or agreement. Earlier releases and contributions must be reviewed
+separately. No third-party trademark or patent rights are granted by this notice.
+
+5. AGREEMENTS AND SUPPORT
+
+Applicable signed agreements and mandatory law govern warranties, support,
+liability, remedies, and termination. This notice alone makes no service,
+support, security, availability, or fitness commitment.
+
+See NOTICE and THIRD_PARTY_NOTICES.md for the third-party boundary, and
+LICENSING.md for the licensing document map and distribution procedure.
+The draft commercial terms and order form under licenses/ grant no rights
+unless completed, approved, and incorporated into an executed agreement.

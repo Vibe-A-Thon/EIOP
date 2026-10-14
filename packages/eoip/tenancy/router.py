@@ -24,7 +24,7 @@ Routes:
 
 from typing import Any
 
-from eoip.tenancy.context import resolve_context, tenant_context_dependency
+from eoip.tenancy.context import tenant_context_dependency
 from eoip.tenancy.isolation import (
     IsolationModel,
     IsolationPlacement,
@@ -49,13 +49,7 @@ def build_router(service: TenancyService):
 
     @router.get("/context")
     def get_context(request: Request) -> dict[str, Any]:
-        try:
-            ctx = resolve_context(
-                request.headers.get("X-Tenant-Id"),
-                request.headers.get("X-Principal"),
-            )
-        except Exception as exc:
-            raise _err(exc, 403) from exc
+        ctx = dep(request)
         return {"tenant_id": ctx.tenant_id, "urn": ctx.urn, "principal": ctx.principal}
 
     # -- isolation (SR-TEN-002/003) ----------------------------------------------

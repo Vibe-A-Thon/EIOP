@@ -1,0 +1,24 @@
+Enterprise Ontology & Intelligence Platform (EOIP / KnowGridFlow)
+Copyright (c) 2026 Avyukthi AI and Murthy Ravinder kumar.
+All rights reserved in their original material; see LICENSE.
+
+EOIP-owned material is proprietary. Third-party material is not relicensed
+by the EOIP proprietary notice or by an EOIP commercial agreement.
+
+This NOTICE identifies the licensing boundary. It is not a complete upstream
+attribution bundle, a compatibility determination, or permission to distribute
+every dependency selected by this repository.
+
+See LICENSING.md, THIRD_PARTY_NOTICES.md, and licenses/THIRD-PARTY-POLICY.md.
+Actual releases must also include the applicable version-specific upstream
+license texts, notices, and any required corresponding source or source offer.
+
+RELEASE REVIEW REQUIRED: requirements-fileparse.lock includes extract-msg
+0.56.1, identified upstream as GPL. The default deploy/Dockerfile installs
+that lockfile. Proprietary distribution of that image has not been cleared.
+Other dependencies, base images, external tools, assets, and model weights
+also require a release-specific review. Changing this notice does not clear
+them and does not remove their original licenses.
+
+The contracting entity and its authority must be confirmed in the executed
+commercial order form. No prior license grant is revoked by these documents.

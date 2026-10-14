@@ -21,6 +21,8 @@ jobs:
           pip install -e .[dev]
       - name: Run KG CI Pipeline Lint
         run: python -m eoip.ci --stages lint,schema_validation,security
+      - name: Validate CP Audit Registry
+        run: python -m scripts.build_requirements_registry --check
 
   test:
     needs: lint-and-validate
@@ -35,10 +37,20 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
+      - name: Install Optional Report Renderers
+        run: pip install -e .[reports]
       - name: Run Unit Tests
-        run: pytest tests/unit/ -v
+        run: python -m pytest tests/unit/ -v --junitxml=test-results/unit.xml --run-evidence=test-results/unit-receipt.json
+      - name: Verify Security Boundaries
+        run: python -m pytest tests/security/test_token_validation_contract.py tests/security/test_http_and_realtime_contract.py tests/security/test_cors_contract.py tests/integration/test_mcp_transport.py --timeout=60 --junitxml=test-results/security.xml --run-evidence=test-results/security-receipt.json
       - name: Verify QA Gate Integrity
         run: pytest tests/unit/test_qa_gate_integrity.py
+      - name: Retain Test Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-test-evidence
+          path: test-results/
 
   build-and-package:
     needs: test
@@ -54,3 +66,8 @@ jobs:
         run: |
           npm ci
           npm run build
+      - name: Verify Interactive Export Security
+        working-directory: apps/web
+        run: |
+          npx --no-install playwright install --with-deps chromium
+          npx --no-install playwright test tests/interactive-export-security.spec.js

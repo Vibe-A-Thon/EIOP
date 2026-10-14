@@ -12,8 +12,10 @@ styling are ADR-gated on top of this generator; the HTML renderer accepts a
 
 from __future__ import annotations
 
+import base64
 import html
 import json
+import os
 import uuid
 from typing import Any, Callable
 
@@ -265,8 +267,105 @@ def _sections_to_html(title: str, sections: list[ReportSection]) -> str:
     return "\n".join(parts)
 
 
+def _sections_to_pdf(title: str, sections: list[ReportSection]) -> bytes:
+    import io
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=letter, leftMargin=36, rightMargin=36, topMargin=36, bottomMargin=36)
+    styles = getSampleStyleSheet()
+    story = [Paragraph(html.escape(title), styles["Title"]), Spacer(1, 14)]
+
+    for section in sections:
+        story.append(Paragraph(html.escape(section.heading), styles["Heading2"]))
+        story.append(Spacer(1, 6))
+        if section.body_markdown:
+            story.append(Paragraph(html.escape(section.body_markdown), styles["Normal"]))
+            story.append(Spacer(1, 6))
+        for item in section.items:
+            story.append(Paragraph(f"• {html.escape(item)}", styles["Normal"]))
+            story.append(Spacer(1, 3))
+        if section.table:
+            cols = list(section.table.keys())
+            table_data = [[html.escape(c) for c in cols]]
+            num_rows = max((len(v) for v in section.table.values()), default=0)
+            for r in range(num_rows):
+                row = [html.escape(str(section.table[c][r])) if r < len(section.table[c]) else "" for c in cols]
+                table_data.append(row)
+            t = Table(table_data)
+            t.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.whitesmoke),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+                ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 6),
+                ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ]))
+            story.append(t)
+            story.append(Spacer(1, 10))
+    doc.build(story)
+    return buf.getvalue()
+
+
+def _sections_to_docx(title: str, sections: list[ReportSection]) -> bytes:
+    import io
+    import docx
+
+    doc = docx.Document()
+    doc.add_heading(title, level=0)
+
+    for section in sections:
+        doc.add_heading(section.heading, level=2)
+        if section.body_markdown:
+            doc.add_paragraph(section.body_markdown)
+        for item in section.items:
+            doc.add_paragraph(item, style="List Bullet")
+        if section.table:
+            cols = list(section.table.keys())
+            num_rows = max((len(v) for v in section.table.values()), default=0)
+            table = doc.add_table(rows=num_rows + 1, cols=len(cols))
+            table.style = "Table Grid"
+            for col_idx, col_name in enumerate(cols):
+                table.cell(0, col_idx).text = col_name
+            for row_idx in range(num_rows):
+                for col_idx, col_name in enumerate(cols):
+                    cell_val = str(section.table[col_name][row_idx]) if row_idx < len(section.table[col_name]) else ""
+                    table.cell(row_idx + 1, col_idx).text = cell_val
+
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()
+
+
+def _sections_to_pptx(title: str, sections: list[ReportSection]) -> bytes:
+    import io
+    from pptx import Presentation
+
+    prs = Presentation()
+    title_slide = prs.slides.add_slide(prs.slide_layouts[0])
+    title_slide.shapes.title.text = title
+
+    for section in sections:
+        slide = prs.slides.add_slide(prs.slide_layouts[1])
+        slide.shapes.title.text = section.heading
+        tf = slide.shapes.placeholders[1].text_frame
+        if section.body_markdown:
+            p = tf.paragraphs[0]
+            p.text = section.body_markdown
+        for item in section.items:
+            p = tf.add_paragraph()
+            p.text = f"• {item}"
+
+    buf = io.BytesIO()
+    prs.save(buf)
+    return buf.getvalue()
+
+
 class ReportGenerator:
-    """Renders parameterized templates to self-contained HTML / Markdown / JSON."""
+    """Renders parameterized templates to self-contained HTML / Markdown / JSON / PDF / DOCX / PPTX."""
 
     def render(
         self,
@@ -275,17 +374,21 @@ class ReportGenerator:
         *,
         report_format: str = "markdown",
         generated_at: str = "",
+        allow_external_formats: bool = False,
     ) -> RenderedReport:
         template = template_by_id(template_id)
         if template is None:
             raise KeyError(f"Unknown template: {template_id}")
         if report_format in EXTERNAL_FORMATS:
-            raise ValueError(
-                f"Format '{report_format}' is an External gate (SR-NLQ-008): "
-                f"supported formats are {SUPPORTED_FORMATS}"
-            )
-        if report_format not in SUPPORTED_FORMATS:
+            enable_ext = allow_external_formats or os.getenv("EOIP_ENABLE_EXTERNAL_REPORT_FORMATS", "").lower() in ("true", "1", "yes")
+            if not enable_ext:
+                raise ValueError(
+                    f"Format '{report_format}' is an External gate (SR-NLQ-008): "
+                    f"supported formats are {SUPPORTED_FORMATS}"
+                )
+        elif report_format not in SUPPORTED_FORMATS:
             raise ValueError(f"Unsupported format: {report_format}")
+
         for param in template.parameters:
             if param.required and param.name not in ctx.params:
                 raise ValueError(f"Missing required parameter: {param.name}")
@@ -296,6 +399,12 @@ class ReportGenerator:
             content = _sections_to_markdown(title, sections)
         elif report_format == "html":
             content = _sections_to_html(title, sections)
+        elif report_format == "pdf":
+            content = base64.b64encode(_sections_to_pdf(title, sections)).decode("ascii")
+        elif report_format == "docx":
+            content = base64.b64encode(_sections_to_docx(title, sections)).decode("ascii")
+        elif report_format == "pptx":
+            content = base64.b64encode(_sections_to_pptx(title, sections)).decode("ascii")
         else:  # json
             content = json.dumps(
                 {"title": title, "sections": [s.model_dump() for s in sections]},
@@ -311,3 +420,18 @@ class ReportGenerator:
             content=content,
             evidence_manifest=ctx.evidence_manifest,
         )
+
+    def render_bytes(
+        self,
+        template_id: str,
+        ctx: ReportContext,
+        *,
+        report_format: str = "pdf",
+        allow_external_formats: bool = False,
+    ) -> bytes:
+        """Render directly to raw binary bytes for download/export endpoints."""
+        report = self.render(template_id, ctx, report_format=report_format,
+                             allow_external_formats=allow_external_formats)
+        if report_format in EXTERNAL_FORMATS:
+            return base64.b64decode(report.content, validate=True)
+        return report.content.encode("utf-8")

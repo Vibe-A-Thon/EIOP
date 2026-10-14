@@ -24,6 +24,7 @@ import base64
 import hashlib
 import hmac
 import json
+import math
 import os
 import secrets
 import socket
@@ -95,12 +96,13 @@ class Principal:
     username: str
     roles: tuple[str, ...] = ()
     provider: str = "local"
+    tenant_id: str | None = None
     claims: dict[str, Any] = field(default_factory=dict, compare=False)
 
     def __repr__(self) -> str:  # never leak claims that may hold tokens
         return (
             f"Principal(id={self.id!r}, username={self.username!r}, "
-            f"roles={self.roles!r}, provider={self.provider!r})"
+            f"roles={self.roles!r}, provider={self.provider!r}, tenant_id={self.tenant_id!r})"
         )
 
 
@@ -317,6 +319,9 @@ class TokenService:
             "aud": audience or self._audience,
             "iss": self._issuer,
         }
+        if principal.tenant_id:
+            payload["tenant_id"] = principal.tenant_id
+            payload["tenant"] = principal.tenant_id
         header = {"alg": "HS256", "typ": "EOIP"}
         signing_input = (
             _b64u_encode(_canonical(header)) + "." +
@@ -328,13 +333,18 @@ class TokenService:
     def validate(self, token: str,
                  *, audience: str | None = None) -> dict[str, Any]:
         """Validate signature, expiry, issuer, and audience (GAP-SEC-004)."""
+        if not isinstance(token, str) or len(token) > 16_384:
+            raise TokenTampered("malformed token")
         try:
             header_b64, payload_b64, sig_b64 = token.split(".")
+            header = json.loads(_b64u_decode(header_b64))
             payload = json.loads(_b64u_decode(payload_b64))
-        except (ValueError, json.JSONDecodeError) as exc:
+            signing_input = f"{header_b64}.{payload_b64}".encode("ascii")
+        except (ValueError, UnicodeError, RecursionError) as exc:
             raise TokenTampered("malformed token") from exc
 
-        signing_input = f"{header_b64}.{payload_b64}".encode("ascii")
+        if not isinstance(header, dict) or header.get("alg") != "HS256" or not isinstance(payload, dict):
+            raise TokenTampered("unsupported header or claims")
         expected = self._signature(signing_input)
         try:
             supplied = _b64u_decode(sig_b64)
@@ -349,10 +359,29 @@ class TokenService:
         if payload.get("aud") != aud:
             raise TokenTampered("unexpected audience")
         exp = payload.get("exp")
-        if not isinstance(exp, (int, float)):
+        if (isinstance(exp, bool) or not isinstance(exp, (int, float))
+                or not 0 <= exp <= 253402300799 or not math.isfinite(exp)):
             raise TokenTampered("missing expiry")
-        if time.time() >= exp:
+        now = time.time()
+        if now >= exp:
             raise TokenExpired("token expired")
+        nbf = payload.get("nbf")
+        if nbf is not None:
+            if (isinstance(nbf, bool) or not isinstance(nbf, (int, float))
+                    or not 0 <= nbf <= 253402300799 or not math.isfinite(nbf)):
+                raise TokenTampered("invalid not-before")
+            if now < nbf:
+                raise TokenTampered("token is not active yet")
+        if not isinstance(payload.get("sub"), str) or not payload["sub"].strip():
+            raise TokenTampered("missing subject")
+        roles = payload.get("roles", [])
+        if not isinstance(roles, list) or any(not isinstance(role, str) or not role.strip() for role in roles):
+            raise TokenTampered("invalid roles")
+        for claim in ("tenant", "tenant_id", "username"):
+            if claim in payload and (not isinstance(payload[claim], str) or not payload[claim].strip()):
+                raise TokenTampered(f"invalid {claim}")
+        if payload.get("tenant") and payload.get("tenant_id") and payload["tenant"] != payload["tenant_id"]:
+            raise TokenTampered("conflicting tenant claims")
         return payload
 
 

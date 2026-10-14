@@ -94,6 +94,13 @@ class TestGenerator:
         with pytest.raises(ValueError, match="subject"):
             ReportGenerator().render("impact-assessment", ReportContext())
 
+    def test_render_bytes_obeys_gate_and_parameter_validation(self, monkeypatch):
+        monkeypatch.delenv("EOIP_ENABLE_EXTERNAL_REPORT_FORMATS", raising=False)
+        with pytest.raises(ValueError, match="External gate"):
+            ReportGenerator().render_bytes("executive-brief", ReportContext())
+        with pytest.raises(ValueError, match="subject"):
+            ReportGenerator().render_bytes("impact-assessment", ReportContext(), allow_external_formats=True)
+
     def test_unknown_template(self):
         with pytest.raises(KeyError):
             ReportGenerator().render("nope", ReportContext())
@@ -228,3 +235,68 @@ class TestReportsRouter:
         assert client.post(f"/api/v1/reports/schedules/{schedule_id}/mark-run").status_code == 200
         assert client.delete(f"/api/v1/reports/schedules/{schedule_id}").status_code == 204
         assert client.delete(f"/api/v1/reports/schedules/{schedule_id}").status_code == 404
+
+    def test_render_and_export_binary_formats(self, tmp_path: Path, monkeypatch):
+        import io
+        import zipfile
+
+        monkeypatch.setenv("EOIP_ENABLE_EXTERNAL_REPORT_FORMATS", "true")
+        client = _client(tmp_path)
+        for fmt in ("pdf", "docx", "pptx"):
+            resp = client.post(
+                "/api/v1/reports/render",
+                params={
+                    "template_id": "executive-brief",
+                    "report_format": fmt,
+                },
+                json={"narrative": f"Binary {fmt} content"},
+            )
+            assert resp.status_code == 200, resp.text
+            report_data = resp.json()
+            assert report_data["format"] == fmt
+            report_id = report_data["report_id"]
+
+            # Test export endpoint returns downloadable document
+            exp_resp = client.get(f"/api/v1/reports/export/{report_id}")
+            assert exp_resp.status_code == 200
+            assert len(exp_resp.content) > 100
+            if fmt == "pdf":
+                assert exp_resp.content.startswith(b"%PDF-")
+            else:
+                with zipfile.ZipFile(io.BytesIO(exp_resp.content)) as archive:
+                    assert archive.testzip() is None
+                    assert ("word/document.xml" if fmt == "docx" else "ppt/presentation.xml") in archive.namelist()
+            assert f"{report_id}.{fmt}" in exp_resp.headers["content-disposition"]
+
+    def test_request_cannot_enable_disabled_renderer(self, tmp_path: Path, monkeypatch):
+        monkeypatch.delenv("EOIP_ENABLE_EXTERNAL_REPORT_FORMATS", raising=False)
+        response = _client(tmp_path).post("/api/v1/reports/render", params={
+            "template_id": "executive-brief", "report_format": "pdf", "enable_external_formats": True,
+        }, json={})
+        assert response.status_code == 501
+
+    def test_missing_optional_renderer_returns_503(self, tmp_path: Path, monkeypatch):
+        from eoip.reports import generator
+
+        def unavailable(*args):
+            raise ImportError("renderer unavailable")
+
+        monkeypatch.setenv("EOIP_ENABLE_EXTERNAL_REPORT_FORMATS", "true")
+        monkeypatch.setattr(generator, "_sections_to_pdf", unavailable)
+        response = _client(tmp_path).post("/api/v1/reports/render", params={
+            "template_id": "executive-brief", "report_format": "pdf",
+        }, json={})
+        assert response.status_code == 503
+
+    def test_export_format_mismatch_is_not_silently_ignored(self, tmp_path: Path):
+        client = _client(tmp_path)
+        response = client.post("/api/v1/reports/render", params={
+            "template_id": "executive-brief", "report_format": "html",
+        }, json={})
+        report_id = response.json()["report_id"]
+        assert client.get(f"/api/v1/reports/export/{report_id}?report_format=pdf").status_code == 409
+
+    def test_export_unknown_report_returns_404(self, tmp_path: Path):
+        client = _client(tmp_path)
+        resp = client.get("/api/v1/reports/export/urn:eoip:reports:report:missing")
+        assert resp.status_code == 404

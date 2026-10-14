@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from eoip.brain.brain_os import BrainOSKernel
@@ -86,6 +88,7 @@ class LLMGenerateRequest(BaseModel):
     json_schema: dict[str, Any] | None = None
     enable_xai: bool = True
     context: str = ""
+    stream: bool = False
 
 
 class LLMTokenizeRequest(BaseModel):
@@ -416,13 +419,40 @@ def generate_llm(req: LLMGenerateRequest) -> dict[str, Any]:
 
 
 @router.post("/llm/stream")
-def stream_llm(req: LLMGenerateRequest) -> list[dict[str, Any]]:
+def stream_llm(req: LLMGenerateRequest, request: Request):
     try:
         tier_enum = CognitiveTier(req.tier)
     except ValueError:
         tier_enum = CognitiveTier.SONNET_BALANCED
 
     cfg = GenerationConfig(tier=tier_enum, system_prompt=req.system_prompt)
+    accept = request.headers.get("accept", "")
+    wants_sse = req.stream or "text/event-stream" in accept
+
+    if wants_sse:
+        def sse_event_stream():
+            for c in _kernel.self_llm.generate_stream(prompt=req.prompt, config=cfg, context=req.context):
+                chunk_data = {
+                    "chunk_id": c.chunk_id,
+                    "delta": c.delta,
+                    "index": c.index,
+                    "is_final": c.is_final,
+                    "accumulated": c.accumulated_content,
+                    "usage": c.usage,
+                }
+                yield f"data: {json.dumps(chunk_data)}\n\n"
+            yield "data: [DONE]\n\n"
+
+        return StreamingResponse(
+            sse_event_stream(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",
+            },
+        )
+
     chunks = list(_kernel.self_llm.generate_stream(prompt=req.prompt, config=cfg, context=req.context))
     return [
         {

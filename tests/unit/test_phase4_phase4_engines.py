@@ -137,9 +137,8 @@ class TestInfra002OAuthAndSSO:
 
     def test_token_validator(self):
         validator = TokenValidator(secret_key="my-secret-key")
-        # Token validation
-        res = validator.validate_token("token_string_with_sufficient_length")
-        assert res["active"] is True
+        with pytest.raises(ValueError, match="Invalid token"):
+            validator.validate_token("token_string_with_sufficient_length")
 
 
 @pytest.mark.req("INFRA-004")

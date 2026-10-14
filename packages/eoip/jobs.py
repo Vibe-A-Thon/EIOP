@@ -9,11 +9,11 @@ from uuid import UUID, uuid4
 from eoip.contracts.source_event import utc_now_iso
 
 
-def write_json(path: Path, value):
+def write_json(path: Path, value, *, indent: int | None = None):
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(f".{uuid4().hex}.tmp")
     with temporary.open("w", encoding="utf-8") as output:
-        json.dump(value, output, ensure_ascii=False)
+        json.dump(value, output, ensure_ascii=False, indent=indent)
         output.flush()
         os.fsync(output.fileno())
     os.replace(temporary, path)

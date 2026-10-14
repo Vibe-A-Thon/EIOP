@@ -23,8 +23,11 @@ provides the canonical context object and the fail-closed resolution rule.
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from typing import Any
+
+from eoip.authn import Principal
 
 TENANT_HEADER = "X-Tenant-Id"
 PRINCIPAL_HEADER = "X-Principal"
@@ -32,6 +35,23 @@ PRINCIPAL_HEADER = "X-Principal"
 
 class TenantContextRequired(RuntimeError):
     """Fail-closed error raised when tenant context is missing (SR-TEN-001)."""
+
+
+def authorized_tenant(principal: Principal, requested: str | None = None) -> str | None:
+    """A tenant role never grants access outside the signed tenant binding.
+
+    Only an unbound platform administrator may select a tenant or global scope.
+    This resolves identity scope; repositories must still enforce it on data.
+    """
+    if requested is not None and (not requested.strip() or len(requested) > 256):
+        raise TenantContextRequired("Invalid tenant selection")
+    if principal.tenant_id:
+        if requested and requested != principal.tenant_id:
+            raise TenantContextRequired("Cross-tenant access forbidden")
+        return principal.tenant_id
+    if not {"admin", "system"}.intersection(principal.roles):
+        raise TenantContextRequired("Authenticated principal has no tenant binding")
+    return requested
 
 
 @dataclass(frozen=True)
@@ -91,6 +111,11 @@ def tenant_context_dependency() -> Any:
 
     def _resolve(request: Request) -> TenantContext:
         try:
+            principal = getattr(request.state, "principal", None)
+            if principal is not None:
+                return resolve_context(authorized_tenant(principal, request.headers.get(TENANT_HEADER)), principal.id)
+            if os.environ.get("EOIP_ENV", os.environ.get("APP_ENV", "")).lower() == "production":
+                raise TenantContextRequired("Authenticated principal required")
             return resolve_context(
                 request.headers.get(TENANT_HEADER),
                 request.headers.get(PRINCIPAL_HEADER),

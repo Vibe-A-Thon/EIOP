@@ -2,8 +2,8 @@
 
 ``build_router(...)`` constructs the ``/api/v1/reports`` router. FastAPI is
 imported lazily inside the factory (pattern: ``eoip.graph.bitemporal``).
-Export endpoints serve HTML, Markdown and JSON; PDF/DOCX/PPTX are an
-External gate and return 501 with an explanatory detail.
+Exports serve the stored format. PDF/DOCX/PPTX require the reports extra
+and EOIP_ENABLE_EXTERNAL_REPORT_FORMATS; disabled formats return 501.
 """
 
 from __future__ import annotations
@@ -35,6 +35,7 @@ def build_router(
 
     schedules = schedule_store or ReportScheduleStore()
     generator = ReportGenerator()
+    rendered_store: dict[str, Any] = {}
 
     router = APIRouter(prefix="/api/v1/reports", tags=["reports"])
 
@@ -88,9 +89,11 @@ def build_router(
         report_format: str = Query(default="markdown"),
         generated_at: str = "",
     ) -> dict[str, Any]:
+        import os
         if template_by_id(template_id) is None:
             raise HTTPException(status_code=404, detail=f"Unknown template: {template_id}")
-        if report_format in EXTERNAL_FORMATS:
+        allow_ext = os.getenv("EOIP_ENABLE_EXTERNAL_REPORT_FORMATS", "").lower() in ("true", "1", "yes")
+        if report_format in EXTERNAL_FORMATS and not allow_ext:
             raise HTTPException(
                 status_code=501,
                 detail=(
@@ -104,21 +107,50 @@ def build_router(
                 _seed_context(ctx),
                 report_format=report_format,
                 generated_at=generated_at,
+                allow_external_formats=allow_ext,
             )
+            rendered_store[report.report_id] = report
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
+        except ImportError as exc:
+            raise HTTPException(status_code=503, detail="Report renderer unavailable; install eoip[reports]") from exc
         return report.model_dump()
 
     @router.get("/export/{report_id}")
-    def export_placeholder(report_id: str, report_format: str = Query(default="html")) -> dict[str, Any]:
-        # Report bodies are rendered statelessly via POST /render; this
-        # endpoint documents the export surface for the wiring step.
-        raise HTTPException(
-            status_code=501,
-            detail=(
-                f"Export of stored report '{report_id}' as '{report_format}' is "
-                "ADR-gated: render via POST /api/v1/reports/render instead."
-            ),
+    def export_report(report_id: str, report_format: str | None = Query(default=None)):
+        import base64
+        from fastapi.responses import Response
+
+        report = rendered_store.get(report_id)
+        if report is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Report '{report_id}' not found. Render via POST /api/v1/reports/render first.",
+            )
+        media_types = {
+            "html": "text/html; charset=utf-8",
+            "markdown": "text/markdown; charset=utf-8",
+            "json": "application/json",
+            "pdf": "application/pdf",
+            "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        }
+        fmt = report.format.lower()
+        if report_format is not None and report_format != fmt:
+            raise HTTPException(status_code=409, detail="Requested format differs from the stored artifact; render it first")
+        media_type = media_types.get(fmt, "application/octet-stream")
+        if fmt in ("pdf", "docx", "pptx"):
+            try:
+                body_bytes = base64.b64decode(report.content, validate=True)
+            except ValueError as exc:
+                raise HTTPException(status_code=500, detail="Stored report artifact is corrupt") from exc
+        else:
+            body_bytes = report.content.encode("utf-8")
+
+        return Response(
+            content=body_bytes,
+            media_type=media_type,
+            headers={"Content-Disposition": f'attachment; filename="{report_id}.{fmt}"'},
         )
 
     # -- schedules (SR-NLQ-008) ----------------------------------------------

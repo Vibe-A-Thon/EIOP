@@ -1,5 +1,6 @@
 """Uvicorn factory for the persistent deployment."""
 
+import asyncio
 import hashlib
 import hmac
 import json
@@ -9,7 +10,7 @@ import re
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
-from time import perf_counter
+from time import perf_counter, time
 from uuid import uuid4
 
 import httpx
@@ -17,6 +18,8 @@ from eoip.agents.catalog import build_agent_registry
 from eoip.agents.memory import MAX_TTL_SECONDS, FileMemoryStore, MemoryStorageError
 from eoip.agents.runtime import AgentRuntime
 from eoip.audit.sink import AuditSink
+from eoip.authn import Principal
+from eoip.authn.oauth_sso import TokenValidator
 from eoip.config import load_agent_config, load_memory_policy
 from eoip.connectors.acquisition import AcquisitionOperation, AcquisitionPolicy, AcquisitionScheduler
 from eoip.connectors.base import DiscoveryScope
@@ -40,6 +43,7 @@ from eoip.observability import configure_json_logging
 from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.ontology.rdf import export_jsonld, export_shacl_shapes, import_jsonld, validate_shacl
 from eoip.runtime import api_token, create_store, data_root
+from eoip.tenancy.context import TenantContextRequired, authorized_tenant
 from eoip.validation.engine import ValidationEngine
 from fastapi import Depends, HTTPException, Query, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, Response
@@ -211,6 +215,22 @@ class CapsuleRequest(BaseModel):
 def create_app():
     configure_json_logging()
     token = api_token()
+    token_validator = TokenValidator(token)
+
+    def authenticated_principal(supplied: str) -> Principal | None:
+        if not supplied or len(supplied) > 16_384:
+            return None
+        if hmac.compare_digest(supplied.encode("utf-8"), token.encode("utf-8")):
+            return Principal(id="urn:eoip:authn:principal:bootstrap", username="bootstrap-admin",
+                             roles=("admin", "system"), provider="secret")
+        try:
+            payload = token_validator.validate_token(supplied)
+        except ValueError:
+            return None
+        return Principal(id=payload["sub"], username=payload.get("username") or payload["sub"],
+                         roles=tuple(payload.get("roles", [])), provider="token",
+                         tenant_id=payload.get("tenant_id") or payload.get("tenant"), claims=payload)
+
     store = create_store()
     queue = JobQueue(data_root())
     source_registry = SourceRegistry(data_root() / "state" / "source-registry.json")
@@ -225,8 +245,14 @@ def create_app():
         store, agent_registry,
         memory_store=FileMemoryStore(data_root(), policy=load_memory_policy()),
     )
+    class SafeHTTPBearer(HTTPBearer):
+        async def __call__(self, request: Request = None):  # type: ignore[assignment]
+            if request is None:
+                return None
+            return await super().__call__(request)
+
     event_emitter = GraphEventEmitter(buffer_size=1000)
-    app = query_app(store, dependencies=[Depends(HTTPBearer(auto_error=False))])
+    app = query_app(store, dependencies=[Depends(SafeHTTPBearer(auto_error=False))])
     app.state.event_emitter = event_emitter
     from apps.api.extended import ensure_extended
 
@@ -338,10 +364,15 @@ def create_app():
             audit = None
             if operation != "other":
                 denied = status_code in {401, 403, 413, 422}
+                current_principal = getattr(request.state, "principal", None)
+                if status_code == 401 or current_principal is None:
+                    actor = "anonymous"
+                else:
+                    actor = current_principal.username or current_principal.id
                 audit = AuditEvent(
                     audit_id=request.state.audit_id,
                     event_type="policy_denial" if denied else operation,
-                    actor="anonymous" if status_code == 401 else "local-user",
+                    actor=actor,
                     correlation_id=correlation_id,
                     outcome="denied" if denied else "success" if status_code < 400 else "failure",
                     reason_code=f"http_{status_code}" if status_code >= 400 else None,
@@ -378,6 +409,20 @@ def create_app():
             )
 
         webhook_request = re.fullmatch(r"/api/v1/sources/[A-Za-z0-9][A-Za-z0-9._-]*/webhooks", request.url.path)
+        principal = None
+        supplied_auth = request.headers.get("authorization", "")
+        if supplied_auth.startswith("Bearer "):
+            supplied_token = supplied_auth[len("Bearer "):].strip()
+            principal = authenticated_principal(supplied_token)
+
+        request.state.principal = principal
+
+        if (request.method == "OPTIONS" and request.headers.get("origin")
+                and request.headers.get("access-control-request-method")):
+            response = await call_next(request)
+            record(response.status_code)
+            return response
+
         if request.url.path not in {
             "/health/live",
             "/health/ready",
@@ -386,8 +431,7 @@ def create_app():
             "/openapi.json",
             "/docs/oauth2-redirect",
         } and webhook_request is None:
-            supplied = request.headers.get("authorization", "").removeprefix("Bearer ")
-            if not hmac.compare_digest(supplied, token):
+            if principal is None:
                 record(401)
                 return JSONResponse({"detail": "A valid Bearer token is required"}, status_code=401)
         body = bytearray()
@@ -399,15 +443,20 @@ def create_app():
         request._body = bytes(body)
         operation = _operation(request.url.path, request._body)
         high_risk_admin = request.url.path.startswith(
-            ("/api/v1/admin/", "/api/v1/sources")
-        ) and request.method in {"POST", "PUT", "PATCH", "DELETE"}
+            ("/api/v1/admin", "/api/v1/sources", "/api/v1/authz", "/api/v1/security", "/api/v1/tenancy")
+        ) and request.method in {"POST", "PUT", "PATCH", "DELETE"} and webhook_request is None
         if high_risk_admin:
+            if principal is None or not {"admin", "system"}.intersection(principal.roles):
+                record(403)
+                return JSONResponse({"detail": "Administrative role required"}, status_code=403)
             try:
+                current_principal = getattr(request.state, "principal", None)
+                actor = current_principal.username if current_principal else "bootstrap-admin"
                 audit_sink.emit(
                     AuditEvent(
                         audit_id=str(uuid4()),
                         event_type="admin_intent",
-                        actor="local-user",
+                        actor=actor,
                         correlation_id=correlation_id,
                         outcome="authorized",
                         safe_summary="Authorized admin mutation accepted for execution",
@@ -1488,27 +1537,73 @@ def create_app():
 
     @app.websocket("/ws/graph/events")
     async def graph_events(websocket: WebSocket):
-        await websocket.accept()
-        queue_ws = event_emitter.subscribe()
+        token_param = websocket.query_params.get("token")
+        header = websocket.headers.get("authorization", "")
+        auth_header = header[len("Bearer "):].strip() if header.startswith("Bearer ") else ""
+        supplied = token_param or auth_header
+        principal = authenticated_principal(supplied)
+
+        if principal is None:
+            # Explicit route-level contract: reject unauthenticated handshake with standard WebSocket policy violation
+            await websocket.close(code=1008, reason="Authentication required")
+            return
+
         try:
+            tenant_id = authorized_tenant(principal, websocket.query_params.get("tenant_id")
+                                          or websocket.headers.get("x-tenant-id"))
+        except TenantContextRequired:
+            await websocket.close(code=1008, reason="Unauthorized tenant access")
+            return
+
+        queue_ws = event_emitter.subscribe()
+        pending = set()
+
+        async def wait_for_disconnect():
+            while (await websocket.receive())["type"] != "websocket.disconnect":
+                pass
+
+        try:
+            await websocket.accept()
+            disconnected = asyncio.create_task(wait_for_disconnect())
+            pending.add(disconnected)
             while True:
-                event = await queue_ws.get()
-                await websocket.send_json(event.to_dict())
+                next_event = asyncio.create_task(queue_ws.get())
+                pending.add(next_event)
+                expiry = principal.claims.get("exp")
+                timeout = max(0, expiry - time()) if expiry is not None else None
+                done, _ = await asyncio.wait(pending, timeout=timeout, return_when=asyncio.FIRST_COMPLETED)
+                if not done:
+                    await websocket.close(code=1008, reason="Authentication expired")
+                    break
+                if disconnected in done:
+                    break
+                event = next_event.result()
+                pending.remove(next_event)
+                if event.visible_to_tenant(tenant_id):
+                    await websocket.send_json(event.to_dict())
         except WebSocketDisconnect:
             pass
         finally:
             event_emitter.unsubscribe(queue_ws)
+            for task in pending:
+                task.cancel()
+            await asyncio.gather(*pending, return_exceptions=True)
 
     @app.get("/api/v1/graph/events")
     def poll_events(
+        request: Request,
         since: str = Query(default="", max_length=64),
         since_id: int = Query(default=0, ge=0),
         limit: int = Query(default=100, ge=1, le=1000),
     ):
+        try:
+            tenant_id = authorized_tenant(request.state.principal, request.headers.get("x-tenant-id"))
+        except TenantContextRequired as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
         if since_id > 0:
-            return {"events": event_emitter.events_since_id(since_id, limit=limit)}
+            return {"events": event_emitter.events_since_id(since_id, limit=limit, tenant_id=tenant_id)}
         if since:
-            return {"events": event_emitter.events_since(since, limit=limit)}
-        return {"events": event_emitter.recent_events(limit=limit)}
+            return {"events": event_emitter.events_since(since, limit=limit, tenant_id=tenant_id)}
+        return {"events": event_emitter.recent_events(limit=limit, tenant_id=tenant_id)}
 
     return app

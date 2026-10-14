@@ -19,14 +19,19 @@ function compressElements(nodes, edges) {
 
 export function generateInteractiveHTML(nodes, edges, options = {}) {
   const {title = 'KGR Graph Export', darkMode = true, communityHulls = true} = options;
-  const data = JSON.stringify(compressElements(nodes, edges));
+  const safeTitle = String(title).replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[ch]));
+  // JSON is inserted into a script element, whose closing tag HTML parses before JavaScript.
+  const data = JSON.stringify(compressElements(nodes, edges))
+    .replace(/[<>&\u2028\u2029]/g, ch => '\\u' + ch.charCodeAt(0).toString(16).padStart(4, '0'));
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${title}</title>
+<title>${safeTitle}</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0f172a;--fg:#e2e8f0;--panel:#1e293b;--line:#334155;--accent:#7c5cff;--muted:#64748b}
@@ -47,7 +52,7 @@ body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg)
 </head>
 <body>
 <div id="toolbar">
-  <strong style="font-size:13px">${title}</strong>
+  <strong style="font-size:13px">${safeTitle}</strong>
   <input type="text" id="search" placeholder="Search nodes...">
   <div id="type-filters"></div>
 </div>
@@ -66,7 +71,7 @@ types.forEach(t=>{
   cb.onchange=()=>{cb.checked?activeTypes.add(t):activeTypes.delete(t);render()};
   lbl.append(cb,' '+t);filtersEl.append(lbl);
 });
-const nodes=new Map(),nodePositions={};
+const nodes=new Map(),nodePositions=Object.create(null);
 D.n.forEach((n,i)=>{
   nodes.set(n.i,n);
   const angle=2*Math.PI*i/D.n.length;
@@ -119,10 +124,12 @@ canvas.addEventListener('click',e=>{
   if(closest){
     const ins=document.getElementById('inspector');ins.style.display='block';
     document.getElementById('ins-title').textContent=(closest.p.name||closest.i);
-    const props=document.getElementById('ins-props');props.innerHTML='';
+    const props=document.getElementById('ins-props');props.replaceChildren();
     Object.entries({type:closest.l,domain:closest.d,...closest.p,...closest.m}).forEach(([k,v])=>{
       if(v==null)return;const row=document.createElement('div');row.className='prop';
-      row.innerHTML='<dt>'+k+'</dt><dd>'+String(v).slice(0,60)+'</dd>';props.append(row);
+      const key=document.createElement('dt');key.textContent=k;
+      const value=document.createElement('dd');value.textContent=String(v).slice(0,60);
+      row.append(key,value);props.append(row);
     });
   }
 });

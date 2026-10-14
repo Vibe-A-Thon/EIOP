@@ -4,6 +4,7 @@ import logging
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
+from urllib.parse import urlsplit
 from uuid import uuid4
 
 from eoip.config import load_query_policy
@@ -218,9 +219,26 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
     from starlette.middleware.cors import CORSMiddleware
     allowed_origins = os.environ.get("EOIP_CORS_ORIGINS", "").split(",")
     allowed_origins = [o.strip() for o in allowed_origins if o.strip()]
+    production = os.environ.get("EOIP_ENV", os.environ.get("APP_ENV", "")).lower() == "production"
+    if not allowed_origins and not production:
+        allowed_origins = [
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:8080",
+            "http://127.0.0.1:8080",
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+        ]
+    for origin in allowed_origins:
+        parts = urlsplit(origin)
+        if (parts.scheme not in {"http", "https"} or not parts.hostname or parts.username or parts.password
+                or parts.path or parts.query or parts.fragment or "*" in origin
+                or any(char.isspace() for char in origin)):
+            raise ValueError("EOIP_CORS_ORIGINS must contain explicit HTTP(S) origins without paths or credentials")
+        _ = parts.port  # Validate the optional port, including its numeric range.
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=allowed_origins or ["*"],
+        allow_origins=allowed_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

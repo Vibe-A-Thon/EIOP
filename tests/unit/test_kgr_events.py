@@ -1,6 +1,8 @@
 """Phase 7 tests: event emitter — subscribe, emit, poll, filter."""
 
 
+import asyncio
+
 import pytest
 from eoip.events.emitter import EventType, GraphEvent, GraphEventEmitter
 
@@ -94,3 +96,44 @@ async def test_ring_buffer_overflow():
     all_events = emitter.recent_events(limit=10)
     assert len(all_events) == 3
     assert all_events[0]["data"]["i"] == 2
+
+
+@pytest.mark.asyncio
+async def test_sync_emit_from_worker_thread_before_first_queue_read():
+    emitter = GraphEventEmitter()
+    queue = emitter.subscribe()
+    event = GraphEvent("vertex_upserted", {"tenant_id": "alpha"})
+    await asyncio.to_thread(emitter.emit_sync, event)
+    assert await asyncio.wait_for(queue.get(), timeout=2) is event
+
+
+@pytest.mark.asyncio
+async def test_full_subscriber_queue_does_not_raise_in_event_loop():
+    emitter = GraphEventEmitter()
+    queue = emitter.subscribe()
+    event = GraphEvent("vertex_upserted", {})
+    for _ in range(queue.maxsize):
+        queue.put_nowait(event)
+    loop = asyncio.get_running_loop()
+    previous = loop.get_exception_handler()
+    errors = []
+    loop.set_exception_handler(lambda _, context: errors.append(context))
+    try:
+        await asyncio.to_thread(emitter.emit_sync, event)
+        await asyncio.sleep(0)
+        assert not errors
+        assert queue.qsize() == queue.maxsize
+    finally:
+        loop.set_exception_handler(previous)
+
+
+@pytest.mark.parametrize("tenant", ["alpha", "default"])
+def test_polling_filters_before_limit_and_rejects_ambiguous_events(tenant):
+    emitter = GraphEventEmitter()
+    first = GraphEvent("vertex_upserted", {"tenant_id": tenant})
+    emitter.emit_sync(first)
+    for data in ({}, {"tenant_id": "beta"}, {"tenant_id": tenant, "canonical_id": "g:beta:node:1"}):
+        emitter.emit_sync(GraphEvent("vertex_upserted", data))
+    assert emitter.recent_events(limit=1, tenant_id=tenant) == [first.to_dict()]
+    assert emitter.events_since("", limit=1, tenant_id=tenant) == [first.to_dict()]
+    assert emitter.events_since_id(0, limit=1, tenant_id=tenant) == [first.to_dict()]

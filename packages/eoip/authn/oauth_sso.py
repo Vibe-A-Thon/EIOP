@@ -20,7 +20,7 @@ import time
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
-from eoip.authn import Principal
+from eoip.authn import Principal, TokenError, TokenService
 
 logger = logging.getLogger("eoip.authn.oauth_sso")
 
@@ -207,31 +207,23 @@ class SAMLAdapter:
 
 
 class TokenValidator:
-    """Verifies enterprise tokens and claims."""
+    """Validate local signed tokens through the canonical token service.
 
-    def __init__(self, secret_key: str = "eoip-enterprise-default-secret") -> None:
-        self.secret_key = secret_key
+    External OIDC tokens use OidcJwtValidator with the configured issuer/JWKS.
+    """
+
+    def __init__(self, secret_key: str | None = None, *,
+                 issuer: str = "eoip-authn", audience: str = "eoip-api") -> None:
+        if not secret_key:
+            raise ValueError("An explicit signing secret is required")
+        self._service = TokenService(secret_key.encode("utf-8"), issuer=issuer, audience=audience)
 
     def validate_token(self, token_str: str) -> dict[str, Any]:
-        """Validate HMAC/JWT signed token."""
-        parts = token_str.split(".")
-        if len(parts) != 3:
-            # Fallback simple token validation
-            if len(token_str) >= 16:
-                return {"sub": "token_user", "active": True}
-            raise ValueError("Malformed token format")
-
-        header_b64, payload_b64, sig_b64 = parts
-        # Verify signature
-        expected_sig = hashlib.sha256(f"{header_b64}.{payload_b64}.{self.secret_key}".encode()).hexdigest()
-        if sig_b64 != expected_sig:
-            raise ValueError("Token signature verification failed")
-
-        payload = json.loads(base64.urlsafe_b64decode(payload_b64 + "==").decode())
-        if "exp" in payload and time.time() > payload["exp"]:
-            raise ValueError("Token has expired")
-
-        return payload
+        """Reject unsigned/opaque tokens and enforce configured token claims."""
+        try:
+            return self._service.validate(token_str)
+        except TokenError as exc:
+            raise ValueError(f"Invalid token: {exc}") from exc
 
 
 class IdPFederation:

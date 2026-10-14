@@ -235,7 +235,7 @@ class ExtendedState:
 
         # Tenancy (SR-TEN-001/002/003/006/007/009): fail-closed tenant context,
         # isolation models/placement, quotas, lifecycle, hash-chained metering.
-        self.tenancy_service = TenancyService()
+        self.tenancy_service = TenancyService(graph_store=store)
 
         # Licensing (SR-DEP-007, SR-COM-001, SR-TEN-009): checker from a signed
         # license at EOIP_LICENSE_PATH when present; otherwise a permissive

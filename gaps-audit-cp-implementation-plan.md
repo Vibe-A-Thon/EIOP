@@ -10,6 +10,8 @@ Repository inspected for this plan: `192e9a0a9e61a22a652930b5ad3684622e25e508`
 Source audit SHA-256: `affc9247d2383b02a4e9257e9bb85b9d20e81593f28c3e4d40d29323f17ed602`  
 Status: implementation instructions; no gap is closed merely by inclusion here.
 
+Execution update, 2026-10-14: partial implementation and a change audit are recorded in [Audit-GAPS-G-dev.md](Audit-GAPS-G-dev.md). The registry now preserves all 2,603 baseline records, with current statuses kept `UNTRIAGED` pending semantic reconciliation. Evidence tooling, selected security/tenant/event boundaries, safe HTML export, report format handling and regression coverage have progressed. No complete CP package or release gate is declared closed; the linked audit lists repaired defects, remaining blockers, verification scope and next implementation batches.
+
 Navigation: [Completion contract](#1-mission-and-completion-contract), [Baseline](#2-verified-planning-baseline), [Agent instructions](#3-agent-operating-instructions), [Shared contracts](#4-architecture-and-shared-contracts), [Phases](#5-phases-dependencies-and-exit-gates), [Work packages](#6-detailed-work-packages), [Validation](#7-validation-evidence-and-agent-handoff), [Finding crosswalk](#8-audit-finding-crosswalk), [Closeout](#9-release-closeout-checklist), [All requirement records](#appendix-a-complete-requirement-execution-index).
 
 ## 1. Mission and Completion Contract
@@ -952,7 +954,7 @@ npm --prefix apps/web ci
 npm --prefix apps/web run build
 ```
 
-Create the evidence output directory before invoking reporters that require it. Collection may update `requirements-test-map.json` through the current hook; CP-00/CP-02 must make generated changes deterministic and clearly owned.
+Create the evidence output directory before invoking reporters that require it. Current collection writes a requirement map only when explicitly passed `--requirements-map=requirements-test-map.json`; ordinary runs no longer update it. Use `--run-evidence=test-results/run-receipt.json` for source-bound execution outcomes. A collection map is not passing evidence. See the dated change audit for the remaining CP-00/CP-02 verification limitations.
 
 For browser execution, use the existing project configuration from `apps/web` and a real running application. Replace the example local port with the actual isolated test deployment; the existing config's default is a container hostname.
 

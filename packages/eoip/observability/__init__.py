@@ -1,13 +1,13 @@
 """Structured logging helpers shared by the API and worker."""
 
 import json
-import logging
+import logging as stdlib_logging
 from datetime import UTC, datetime
 
 from eoip.contracts.audit import AuditEvent
 
 
-class JsonLogFormatter(logging.Formatter):
+class JsonLogFormatter(stdlib_logging.Formatter):
     _fields = (
         "event",
         "correlation_id",
@@ -27,7 +27,7 @@ class JsonLogFormatter(logging.Formatter):
         "error_type",
     )
 
-    def format(self, record: logging.LogRecord) -> str:
+    def format(self, record: stdlib_logging.LogRecord) -> str:
         payload = {
             "timestamp": getattr(
                 record,
@@ -48,17 +48,17 @@ class JsonLogFormatter(logging.Formatter):
 
 
 def configure_json_logging() -> None:
-    logger = logging.getLogger("eoip")
-    logger.setLevel(logging.INFO)
+    logger = stdlib_logging.getLogger("eoip")
+    logger.setLevel(stdlib_logging.INFO)
     if any(isinstance(handler.formatter, JsonLogFormatter) for handler in logger.handlers):
         return
-    handler = logging.StreamHandler()
+    handler = stdlib_logging.StreamHandler()
     handler.setFormatter(JsonLogFormatter())
     logger.addHandler(handler)
     logger.propagate = False
 
 
-def log_audit_event(logger: logging.Logger, event: AuditEvent, **fields) -> None:
+def log_audit_event(logger: stdlib_logging.Logger, event: AuditEvent, **fields) -> None:
     logger.info(
         "audit.event",
         extra={
