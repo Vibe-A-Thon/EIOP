@@ -2,27 +2,20 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {Icon} from '../icons.jsx';
 
 export default function SchemaDriftAndFreshnessPanel({api}) {
+  const [error, setError] = useState('');
   const [subTab, setSubTab] = useState('drift');
-  const [driftFindings, setDriftFindings] = useState([
-    {source: 'Jira Software', field_name: 'customfield_10920_story_points', detected_type: 'DOUBLE', suggested_mapping: 'WorkItem.story_points', status: 'UNMAPPED', detected_at: '2026-10-12 04:15'},
-    {source: 'ServiceNow', field_name: 'u_vendor_risk_tier', detected_type: 'STRING', suggested_mapping: 'Vendor.risk_tier', status: 'REVIEW_NEEDED', detected_at: '2026-10-12 03:50'},
-    {source: 'GitLab', field_name: 'pipeline.variables.DEPLOY_ENV', detected_type: 'STRING', suggested_mapping: 'Deployment.environment', status: 'MAPPED', detected_at: '2026-10-12 02:10'},
-  ]);
-  const [sourceFreshness, setSourceFreshness] = useState([
-    {source_name: 'Jira Software', connector: 'jira-prod', last_synced: '2 mins ago', lag_seconds: 120, sla_target: '300s', status: 'FRESH'},
-    {source_name: 'GitHub Enterprise', connector: 'github-main', last_synced: '30 secs ago', lag_seconds: 30, sla_target: '60s', status: 'FRESH'},
-    {source_name: 'ServiceNow ITSM', connector: 'snow-itsm', last_synced: '14 mins ago', lag_seconds: 840, sla_target: '600s', status: 'LAGGING'},
-    {source_name: 'Confluence Wiki', connector: 'confluence-docs', last_synced: '5 mins ago', lag_seconds: 300, sla_target: '1800s', status: 'FRESH'},
-  ]);
+  const [driftFindings, setDriftFindings] = useState([]);
+  const [sourceFreshness, setSourceFreshness] = useState([]);
 
   const fetchDrift = useCallback(async () => {
     try {
-      const d = await api('/api/v1/ontology/drift', undefined, 'GET').catch(() => null);
+      setError('');
+      const d = await api('/api/v1/ontology/drift', undefined, 'GET');
       if (d && d.findings) setDriftFindings(d.findings);
-      const f = await api('/api/v1/sources/freshness', undefined, 'GET').catch(() => null);
+      const f = await api('/api/v1/sources/freshness', undefined, 'GET');
       if (f && f.sources) setSourceFreshness(f.sources);
-    } catch {
-      // fallback
+    } catch (exception) {
+      setError(exception.message || 'The service is unavailable.');
     }
   }, [api]);
 
@@ -32,6 +25,7 @@ export default function SchemaDriftAndFreshnessPanel({api}) {
 
   return (
     <div className="drift-freshness-panel card" style={{padding: '1.5rem', background: '#1c1c24', borderRadius: '8px', border: '1px solid #333'}}>
+      {error && <p role="alert" className="resource-error">{error}</p>}
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem'}}>
         <div>
           <h3 style={{margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem'}}>

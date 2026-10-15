@@ -3,7 +3,7 @@ import {test, expect} from '@playwright/test';
 async function proxyApiRequests(page) {
   if (!process.env.PLAYWRIGHT_API_PROXY) return;
   const target = new URL(process.env.PLAYWRIGHT_API_PROXY);
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const url = new URL(route.request().url());
     url.protocol = target.protocol;
     url.host = target.host;
@@ -37,7 +37,7 @@ async function stubApplicationApi(page) {
     contentType: 'application/json',
     body: '{"status":"ready"}',
   }));
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const request = route.request();
     const url = new URL(request.url());
     const path = url.pathname;
@@ -140,7 +140,7 @@ test('login, search, trace graph evidence, and administer persisted data', async
   await expect(page.getByRole('heading', {name: 'TraceImpact result'})).toBeVisible({timeout: 15000});
   await expect(page.getByText('connected entities within', {exact: false})).toBeVisible({timeout: 15000});
   await page.screenshot({path: 'test-results/explorer.png', fullPage: true});
-  await page.getByRole('button', {name: 'Administration'}).click();
+  await page.getByRole('link', {name: 'Administration', exact: true}).click();
   await expect(page.getByRole('heading', {name: 'Ingestion jobs'})).toBeVisible();
   await page.route('**/api/v1/connectors/catalog', route => route.fulfill({
     status: 200,

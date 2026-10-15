@@ -841,7 +841,7 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
                   selectionMode={lassoMode} onSelectionChange={nodes => setMultiSelection(nodes.map(node => node.id))}/>
           }
         </section>
-        {showCodePanel && <CodePanel filePath={codeFile} apiBase={apiBase}
+        {showCodePanel && <CodePanel filePath={codeFile} api={api}
           onSymbolClick={id => { const node = (graph.nodes || []).find(n => n.id === id); if (node) run(() => inspect(node)); }}
           onClose={() => setShowCodePanel(false)}/>}
         {showEntityList && <VirtualEntityList nodes={visibleNodes} selectedId={selected?.id}

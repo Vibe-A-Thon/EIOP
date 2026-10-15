@@ -12,7 +12,7 @@ test('held jobs require confirmation, show refusals, and support readmission and
   await page.route('**/health/ready', route => route.fulfill({
     status: 200, contentType: 'application/json', body: '{"status":"ready"}',
   }));
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const path = new URL(route.request().url()).pathname;
     let status = 200;
     let body = {};

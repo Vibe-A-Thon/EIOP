@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Icon} from '../icons.jsx';
+import {policyDocument} from '../shared/api/policies.ts';
 
 function EmptyState({icon = 'document', title, children}) {
   return <div className="empty-state"><span className="empty-icon"><Icon name={icon} size={22}/></span><strong>{title}</strong><p>{children}</p></div>;
@@ -15,8 +16,8 @@ function Pill({status}) {
 function decisionStatus(decision) {
   if (decision.decision) return decision.decision;
   if (decision.effect) return decision.effect;
-  if (decision.allowed === true) return 'ALLOW';
-  if (decision.allowed === false) return 'DENY';
+  if (decision.allowed === true || decision.allow === true) return 'ALLOW';
+  if (decision.allowed === false || decision.allow === false) return 'DENY';
   return 'UNKNOWN';
 }
 
@@ -39,7 +40,7 @@ export default function RbacPolicyEditor({api, run, busy}) {
       ]);
       const statements = policyData?.policies || [];
       setPolicies(statements);
-      const rendered = renderPolicyYaml(statements);
+      const rendered = policyDocument(statements);
       setYaml(rendered);
       setOriginalYaml(rendered);
       setSaveResult(null);
@@ -57,45 +58,16 @@ export default function RbacPolicyEditor({api, run, busy}) {
 
   useEffect(() => {load();}, [load]);
 
-  // Render loaded policy statements back into an editable YAML document.
-  function renderPolicyYaml(statements) {
-    const lines = ['# EOIP authorization policies (policy-as-code)', '# Save reloads and validates the policy set via POST /api/v1/authz/policies/reload.', 'policies:'];
-    for (const statement of statements) {
-      lines.push(`  - sid: ${JSON.stringify(String(statement.sid ?? statement.id ?? 'policy'))}`);
-      lines.push(`    effect: ${statement.effect === 'deny' ? 'deny' : 'allow'}`);
-      const actions = statement.actions || statement.action ? (Array.isArray(statement.actions) ? statement.actions : [statement.actions || statement.action]) : [];
-      if (actions.length) lines.push(`    actions: [${actions.map(action => JSON.stringify(String(action))).join(', ')}]`);
-      const resources = statement.resources || statement.resource ? (Array.isArray(statement.resources) ? statement.resources : [statement.resources || statement.resource]) : [];
-      if (resources.length) lines.push(`    resources: [${resources.map(resource => JSON.stringify(String(resource))).join(', ')}]`);
-      const roles = statement.roles || statement.role ? (Array.isArray(statement.roles) ? statement.roles : [statement.roles || statement.role]) : [];
-      if (roles.length) lines.push(`    roles: [${roles.map(role => JSON.stringify(String(role))).join(', ')}]`);
-      if (statement.description) lines.push(`    description: ${JSON.stringify(String(statement.description))}`);
-    }
-    return lines.join('\n') + '\n';
-  }
 
   async function save() {
     setSaving(true);
     setError('');
     setSaveResult(null);
     try {
-      const response = await fetch('/api/v1/authz/policies/reload', {
-        method: 'POST',
-        headers: {'Authorization': `Bearer ${sessionStorage.getItem('eoip-token') || ''}`, 'Content-Type': 'application/yaml'},
-        body: yaml,
-      });
-      if (!response.ok) {
-        let detail = `Reload failed (${response.status})`;
-        try {
-          const data = await response.json();
-          detail = typeof data?.detail === 'string' ? data.detail : JSON.stringify(data);
-        } catch { /* keep the status-based message */ }
-        throw new Error(detail);
-      }
-      const result = await response.json().catch(() => ({}));
-      setSaveResult({ok: true, loaded: result.loaded ?? null});
+      const result = await api('/api/v1/authz/policies/reload?replace_existing=true', yaml, 'POST', {contentType: 'application/yaml'});
       setOriginalYaml(yaml);
       await load();
+      setSaveResult({ok: true, loaded: result.loaded ?? null});
     } catch (exception) {
       setSaveResult({ok: false});
       setError(exception.message || 'The policy reload failed.');

@@ -1,35 +1,33 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Icon} from '../../icons.jsx';
 
-function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-export default function CodePanel({filePath, apiBase, highlightLines, onSymbolClick, onClose}) {
+export default function CodePanel({filePath, api, highlightLines, onClose}) {
   const [content, setContent] = useState(null);
   const [language, setLanguage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!filePath || !apiBase) return;
+    setContent(null);
+    if (!filePath || !api) return;
+    let active = true;
+    const controller = new AbortController();
     setLoading(true);
     setError(null);
-    fetch(`${apiBase}/api/v1/files/${encodeURIComponent(filePath)}`)
-      .then(r => {
-        if (!r.ok) throw new Error(`Failed to load file: ${r.status}`);
-        return r.json();
-      })
+    api(`/api/v1/files/${encodeURIComponent(filePath)}`, undefined, undefined, {signal: controller.signal})
       .then(data => {
-        setContent(data.content || '');
+        if (!active) return;
+        setContent(typeof data === 'string' ? data : data.content || '');
         setLanguage(data.language || filePath.split('.').pop() || '');
         setLoading(false);
       })
       .catch(err => {
+        if (!active || err.name === 'AbortError') return;
         setError(err.message);
         setLoading(false);
       });
-  }, [filePath, apiBase]);
+    return () => {active = false; controller.abort();};
+  }, [filePath, api]);
 
   const lines = (content || '').split('\n');
   const hlSet = new Set(highlightLines || []);
@@ -37,15 +35,15 @@ export default function CodePanel({filePath, apiBase, highlightLines, onSymbolCl
   return <section className="code-panel panel" aria-label="Code viewer">
     <div className="panel-heading">
       <div><span className="eyebrow">CODE VIEWER</span><h2>{filePath || 'No file selected'}</h2></div>
-      <button className="icon-button" onClick={onClose} title="Close code panel"><Icon name="close"/></button>
+      <button className="icon-button" onClick={onClose} aria-label="Close code panel" title="Close code panel"><Icon name="close"/></button>
     </div>
     {loading && <div className="code-loading">Loading file...</div>}
-    {error && <div className="code-error">{error}</div>}
+    {error && <div className="code-error" role="alert">{error}</div>}
     {content != null && <div className="code-content">
       <pre className={`code-block language-${language}`}>{lines.map((line, i) =>
         <div key={i} className={`code-line ${hlSet.has(i + 1) ? 'code-highlight' : ''}`}>
           <span className="code-gutter">{i + 1}</span>
-          <span className="code-text" dangerouslySetInnerHTML={{__html: escapeHtml(line)}}/>
+          <span className="code-text">{line}</span>
         </div>
       )}</pre>
     </div>}

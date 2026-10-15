@@ -1,13 +1,21 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import GraphCanvas, {palette} from './GraphCanvas.jsx';
+import React, {lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {palette} from './design-system/graph-palette.js';
 import {Icon, Tip} from './icons.jsx';
-import KGRExplorer from './kgr/KGRExplorer.jsx';
-import Studio from './studio/Studio.jsx';
-import AdminSecurityCenter from './admin/index.jsx';
+import Connection from './app/shell/Connection.jsx';
+import WorkspaceShell from './app/shell/WorkspaceShell.jsx';
+import RouteBoundary from './app/shell/RouteBoundary.jsx';
+import Appearance from './features/settings/Appearance.jsx';
+import {destinationFor, destinations} from './app/navigation.ts';
+import {createApiClient} from './shared/api/client.ts';
 import GraphEnhancementToolbar from './kgr/enhancements/GraphEnhancementToolbar.jsx';
-import CognitiveHub from './cognitive/CognitiveHub.jsx';
-import EngineDashboardsHub from './dashboards/EngineDashboardsHub.jsx';
 import './kgr/enhancements/enhancements.css';
+
+const GraphCanvas = lazy(() => import('./GraphCanvas.jsx'));
+const KGRExplorer = lazy(() => import('./kgr/KGRExplorer.jsx'));
+const Studio = lazy(() => import('./studio/Studio.jsx'));
+const AdminSecurityCenter = lazy(() => import('./admin/index.jsx'));
+const CognitiveHub = lazy(() => import('./cognitive/CognitiveHub.jsx'));
+const EngineDashboardsHub = lazy(() => import('./dashboards/EngineDashboardsHub.jsx'));
 
 const emptyGraph = {nodes: [], edges: [], paths: [], evidence: [], warnings: [], partial: false};
 const lenses = [
@@ -77,90 +85,6 @@ function QualityRing({label, value, tone = 'violet'}) {
   </div></Tip>;
 }
 
-function Login({token, setToken, onSubmit, busy, health}) {
-  const [showPassword, setShowPassword] = useState(false);
-  const isValidLength = Boolean(token && token.trim().length >= 8);
-
-  return <div className="login-page">
-    <section className="login-story">
-      <span className="product-mark large"><span className="mark-core">E</span><span className="mark-orbit"/></span>
-      <div className="kicker"><span/>ENTERPRISE KNOWLEDGE INTELLIGENCE</div>
-      <h1>See how every decision<br/>connects to delivery.</h1>
-      <p>Trace requirements, code, builds, evidence, and operational knowledge through one trusted, local-first graph.</p>
-      <div className="login-feature-grid">
-        <div><Icon name="graph"/><span><strong>Connected context</strong><small>Navigate typed relationships</small></span></div>
-        <div><Icon name="shield"/><span><strong>Evidence first</strong><small>Explain every material link</small></span></div>
-        <div><Icon name="database"/><span><strong>Local by design</strong><small>Your graph stays on premises</small></span></div>
-      </div>
-    </section>
-    <section className="login-card" aria-labelledby="login-title">
-      <div className="login-card-top"><span className={`health-orb ${health === 'ready' ? 'online' : ''}`}/><span>{health === 'ready' ? 'Local services are ready' : health === 'checking' ? 'Checking local services…' : 'Local service status unavailable'}</span></div>
-      <div className="login-card-body">
-        <span className="section-icon"><Icon name="link"/></span>
-        <h2 id="login-title">Connect your workspace</h2>
-        <p>Use the local API access token generated for this deployment.</p>
-        <form onSubmit={onSubmit}>
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-            <label htmlFor="token">Access token <Tip text="Find EOIP_API_TOKEN in the generated deploy/.env file"><span className="help-dot">?</span></Tip></label>
-            {isValidLength && <span style={{fontSize: '10px', color: '#10b981', fontWeight: 600}}>Valid format ✓</span>}
-          </div>
-          <div className="input-with-icon">
-            <Icon name="shield" size={17}/>
-            <input 
-              id="token" 
-              type={showPassword ? "text" : "password"} 
-              autoComplete="current-password" 
-              value={token} 
-              onChange={event => setToken(event.target.value)} 
-              placeholder="Paste EOIP_API_TOKEN" 
-              required
-            />
-            <button 
-              type="button" 
-              className="input-action-btn" 
-              onClick={() => setShowPassword(v => !v)}
-              title={showPassword ? "Hide token" : "Show token"}
-              aria-label={showPassword ? "Hide token" : "Show token"}
-            >
-              <Icon name="eye" size={15}/>
-            </button>
-          </div>
-          <button className="primary-button wide" disabled={busy} title="Authenticate with the local EOIP API">{busy ? <><span className="spinner small"/>Connecting…</> : <>Connect <Icon name="arrow" size={17}/></>}</button>
-        </form>
-        <div className="local-note"><Icon name="shield" size={15}/><span>Your token is stored only in this browser tab and is never sent outside the local deployment.</span></div>
-      </div>
-    </section>
-  </div>;
-}
-
-function Sidebar({mode, onNavigate, collapsed, onToggle, stats}) {
-  const items = [
-    {id: 'app', label: 'Knowledge explorer', icon: 'search', hint: 'Search, traverse, and explain the enterprise graph'},
-    {id: 'cognitive', label: 'Cognitive Engineering', icon: 'cpu', hint: '15 Engineering Disciplines, Sandboxing, Inoculation, Slicing & Attestation'},
-    {id: 'dashboards', label: 'Cognitive Dashboards', icon: 'activity', hint: 'UI-01..04 · Live Causal Blast Radius, Multi-Paradigm Query, Domain Packs & XAI'},
-    {id: 'demo', label: 'Guided demo', icon: 'spark', hint: 'Walk through all enterprise scenarios against the live graph'},
-    {id: 'studio', label: 'Ontology studio', icon: 'layers', hint: 'Visual schema builder, query console, and no-code connector tooling'},
-    {id: 'admin', label: 'Administration', icon: 'settings', hint: 'Operate ingestion, quality, audit, and ontology services'},
-  ];
-  return <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
-    <div className="brand-row"><span className="product-mark"><span className="mark-core">E</span><span className="mark-orbit"/></span><span className="brand-copy"><strong>EOIP</strong><small>Knowledge intelligence</small></span><IconButton label={collapsed ? 'Expand navigation' : 'Collapse navigation'} icon="menu" onClick={onToggle}/></div>
-    <div className="nav-label">WORKSPACE</div>
-    <nav aria-label="Primary navigation">{items.map(item => <Tip text={item.hint} key={item.id}><button className={mode === item.id ? 'active' : ''} onClick={() => onNavigate(item.id)} aria-current={mode === item.id ? 'page' : undefined}><Icon name={item.icon}/><span>{item.label}</span>{mode === item.id && <i/>}</button></Tip>)}</nav>
-    <div className="sidebar-card"><span className="sidebar-card-icon"><Icon name="database"/></span><div><strong>HugeGraph</strong><small>{stats ? `${stats.vertices} entities indexed` : 'Authoritative graph'}</small></div><span className="live-dot"/></div>
-    <div className="sidebar-footer"><div className="deployment"><span className="live-dot"/><span><strong>Local deployment</strong><small>No cloud dependency</small></span></div><span className="version">v0.1</span></div>
-  </aside>;
-}
-
-function Topbar({mode, stats, onRefresh, onDisconnect, busy}) {
-  const section = mode === 'cognitive' ? 'COGNITIVE ENGINEERING' : mode === 'demo' ? 'GUIDED DEMO' : mode === 'studio' ? 'ONTOLOGY STUDIO' : mode === 'app' ? 'KNOWLEDGE EXPLORER' : 'ADMINISTRATION';
-  const title = mode === 'cognitive' ? 'Cognitive AI & 15 Engineering Disciplines' : mode === 'demo' ? 'Enterprise scenario walkthrough' : mode === 'studio' ? 'Ontology studio and no-code builders' : mode === 'app' ? 'Enterprise knowledge explorer' : 'Operations control center';
-  return <header className="topbar"><div><span className="breadcrumb">WORKSPACE <Icon name="chevron" size={12}/> {section}</span><h1>{title}</h1></div><div className="topbar-actions">
-    <Tip text="Live status reported by the local worker"><div className="service-status"><span className="live-dot"/><span><small>SYSTEM STATUS</small><strong>{stats?.worker?.status || 'Connecting'}</strong></span></div></Tip>
-    <IconButton label="Refresh live data" icon="refresh" onClick={onRefresh} disabled={busy}/>
-    <Tip text="Open the local OpenAPI reference"><a className="icon-button" href="/docs" target="_blank" rel="noreferrer" aria-label="Open API documentation"><Icon name="code"/></a></Tip>
-    <IconButton label="Disconnect this browser session" icon="logout" onClick={onDisconnect}/>
-  </div></header>;
-}
 
 function GuidedDemo({api, run, busy}) {
   const [catalog, setCatalog] = useState(null);
@@ -422,16 +346,6 @@ function AgentView({agents, selectedAgent, setSelectedAgent, goal, setGoal, sele
 }
 
 function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDetail, selectedEdge, setSelectedEdge, lens, setLens, api, run, busy}) {
-  useEffect(() => {
-    const handleKey = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        document.getElementById('global-search-input')?.focus();
-      }
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, []);
   const [query, setQuery] = useState('');
   const [nlQuestion, setNlQuestion] = useState('');
   const [nlResult, setNlResult] = useState(null);
@@ -480,9 +394,7 @@ function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDet
   return <>
     <section className="hero-search">
       <div className="hero-copy">
-        <span className="eyebrow"><i/>CONNECTED ENTERPRISE CONTEXT</span>
-        <h2>What do you want to understand?</h2>
-        <p>Find an issue, commit, symbol, file, person, or document—then follow the relationships that explain it.</p>
+        <h2>Explore knowledge</h2>
       </div>
       
       <form onSubmit={executeSearch} className="global-search">
@@ -492,7 +404,7 @@ function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDet
           aria-label="Search knowledge graph" 
           value={query} 
           onChange={event => setQuery(event.target.value)} 
-          placeholder="Search by issue key, symbol, commit, or path… (Ctrl+K)" 
+          placeholder="Search entities and relationships"
           required
         />
         {query && (
@@ -1005,11 +917,12 @@ function Admin({stats, system, jobs, api, run, refresh, busy}) {
 }
 
 export default function App() {
-  const [token, setToken] = useState(sessionStorage.getItem('eoip-token') || '');
+  const [token, setToken] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
-  const [mode, setMode] = useState(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/cognitive') ? 'cognitive' : location.pathname.startsWith('/dashboards') ? 'dashboards' : location.pathname.startsWith('/demo') ? 'demo' : location.pathname.startsWith('/studio') ? 'studio' : 'app');
+  const [mode, setMode] = useState(() => destinationFor(location.pathname)?.id || 'not-found');
+  const [theme, setTheme] = useState('light');
+  const [reducedMotion, setReducedMotion] = useState(false);
   const [lens, setLens] = useState('graph');
-  const [collapsed, setCollapsed] = useState(false);
   const [stats, setStats] = useState(null);
   const [system, setSystem] = useState(null);
   const [jobs, setJobs] = useState([]);
@@ -1021,36 +934,74 @@ export default function App() {
   const [errorMeta, setErrorMeta] = useState('');
   const [busy, setBusy] = useState(false);
   const [health, setHealth] = useState('checking');
+  const operations = useRef(0);
 
   // useCallback is required: child components (Studio, admin panels) hold
   // `api`/`run` in effect dependency arrays. Recreating these closures on
   // every render would re-fire those effects on each state change and starve
   // the UI (observed as an infinite schema-reload loop clearing error toasts).
-  const api = useCallback(async (path, body, method) => {
-    const response = await fetch(path, {method: method || (body === undefined ? 'GET' : 'POST'), headers: {'Authorization': `Bearer ${token}`, ...(body !== undefined ? {'Content-Type': 'application/json'} : {})}, ...(body !== undefined ? {body: JSON.stringify(body)} : {})});
-    const contentType = response.headers.get('content-type') || '';
-    const data = contentType.includes('json') ? await response.json() : await response.text();
-    if (!response.ok) {
-      const message = typeof data?.detail === 'string' ? data.detail : typeof data === 'string' && data ? data : `Request failed (${response.status})`;
-      const exception = new Error(message);
-      exception.correlationId = response.headers.get('X-Correlation-ID');
-      throw exception;
-    }
-    return data;
-  }, [token]);
-  const run = useCallback(async action => {
-    setBusy(true); setError(''); setErrorMeta('');
-    try {await action();} catch (exception) {setError(exception.message || 'The operation could not be completed.'); setErrorMeta(exception.correlationId ? `Correlation ID: ${exception.correlationId}` : 'Check that the local API and graph services are available.');} finally {setBusy(false);}
+  const api = useMemo(() => createApiClient(token), [token]);
+  useEffect(() => () => api.dispose(), [api]);
+  useEffect(() => {
+    // Remove the obsolete credential without reading it back into the application.
+    try {sessionStorage.removeItem('eoip-token');} catch { /* storage may be unavailable */ }
   }, []);
-  async function refresh() {const [nextStats, nextSystem, nextJobs] = await Promise.all([api('/api/v1/admin/stats'), api('/api/v1/admin/system'), api('/api/v1/admin/jobs')]); setStats(nextStats); setSystem(nextSystem); setJobs(nextJobs);}
-  async function login(event) {event.preventDefault(); await run(async () => {await refresh(); sessionStorage.setItem('eoip-token', token); setAuthenticated(true);});}
-  function disconnect() {sessionStorage.removeItem('eoip-token'); setToken(''); setAuthenticated(false); setStats(null); setSystem(null); setGraph(emptyGraph); setSelected(null);}
-  function navigate(value) {setMode(value); history.pushState({}, '', `/${value}`);}
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.motion = reducedMotion ? 'reduce' : 'system';
+  }, [theme, reducedMotion]);
+  const run = useCallback(async action => {
+    operations.current += 1;
+    setBusy(true); setError(''); setErrorMeta('');
+    try {await action();} catch (exception) {
+      if (exception.name !== 'AbortError') {
+        setError(exception.message || 'The operation could not be completed.');
+        setErrorMeta(exception.correlationId ? `Correlation ID: ${exception.correlationId}` : 'Check that the local API and graph services are available.');
+      }
+    } finally {operations.current -= 1; setBusy(operations.current > 0);}
+  }, []);
+  const refresh = useCallback(async () => {
+    const [nextStats, nextSystem, nextJobs] = await Promise.all([api('/api/v1/admin/stats'), api('/api/v1/admin/system'), api('/api/v1/admin/jobs')]);
+    setStats(nextStats); setSystem(nextSystem); setJobs(nextJobs);
+  }, [api]);
+  async function login(event) {event.preventDefault(); await run(async () => {await refresh(); setAuthenticated(true);});}
+  function disconnect() {
+    api.dispose(); setToken(''); setAuthenticated(false); setStats(null); setSystem(null);
+    setJobs([]); setGraph(emptyGraph); setSelected(null); setSelectedEdge(null); setDetail(null);
+    setLens('graph'); setError(''); setErrorMeta(''); setTheme('light'); setReducedMotion(false);
+  }
+  function navigate(value) {
+    const destination = destinations.find(item => item.id === value);
+    if (!destination) return;
+    setMode(value); history.pushState({}, '', destination.path);
+  }
 
-  useEffect(() => {fetch('/health/ready').then(response => setHealth(response.ok ? 'ready' : 'unavailable')).catch(() => setHealth('unavailable'));}, []);
-  useEffect(() => {if (!authenticated) return; const timer = setInterval(() => refresh().catch(() => {}), 15000); return () => clearInterval(timer);}, [authenticated, token]);
-  useEffect(() => {const onPop = () => setMode(location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/cognitive') ? 'cognitive' : location.pathname.startsWith('/dashboards') ? 'dashboards' : location.pathname.startsWith('/demo') ? 'demo' : location.pathname.startsWith('/studio') ? 'studio' : 'app'); addEventListener('popstate', onPop); return () => removeEventListener('popstate', onPop);}, []);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/health/ready', {signal: controller.signal}).then(async response => {
+      const data = response.headers.get('content-type')?.includes('json') ? await response.json() : null;
+      setHealth(response.ok && data?.status === 'ready' ? 'ready' : 'unavailable');
+    }).catch(error => {if (error.name !== 'AbortError') setHealth('unavailable');});
+    return () => controller.abort();
+  }, []);
+  useEffect(() => {if (!authenticated) return; const timer = setInterval(() => {if (!document.hidden) refresh().catch(() => {});}, 15000); return () => clearInterval(timer);}, [authenticated, refresh]);
+  useEffect(() => {const onPop = () => setMode(destinationFor(location.pathname)?.id || 'not-found'); addEventListener('popstate', onPop); return () => removeEventListener('popstate', onPop);}, []);
 
-  if (!authenticated) return <><Login token={token} setToken={setToken} onSubmit={login} busy={busy} health={health}/>{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</>;
-  return <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''}`}><Sidebar mode={mode} onNavigate={navigate} collapsed={collapsed} onToggle={() => setCollapsed(value => !value)} stats={stats}/><div className="workspace"><Topbar mode={mode} stats={stats} onRefresh={() => run(refresh)} onDisconnect={disconnect} busy={busy}/><main>{mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy}/> : mode === 'cognitive' ? <CognitiveHub api={api} run={run} busy={busy} stats={stats}/> : mode === 'dashboards' ? <EngineDashboardsHub api={api} /> : mode === 'demo' ? <GuidedDemo api={api} run={run} busy={busy}/> : mode === 'studio' ? <Studio api={api} run={run} busy={busy}/> : <Admin stats={stats} system={system} jobs={jobs} api={api} run={run} refresh={refresh} busy={busy}/>}</main><footer><span>EOIP · Evidence-backed enterprise intelligence</span><span>Local-first · Read-only graph experience · Policy bounded</span></footer></div>{busy && <div className="busy-bar" aria-label="Operation in progress"><span/></div>}{error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>}</div>;
+  const alert = error && <div className="toast error-toast" role="alert"><span className="toast-icon"><Icon name="warning"/></span><div><strong>{error}</strong><small>{errorMeta}</small></div><IconButton label="Dismiss error" icon="close" onClick={() => setError('')}/></div>;
+  if (!authenticated) return <><Connection token={token} setToken={setToken} onSubmit={login} busy={busy} health={health}/>{alert}</>;
+  return <>
+    <WorkspaceShell mode={mode} onNavigate={navigate} onRefresh={() => run(refresh)} onDisconnect={disconnect} busy={busy}>
+      <RouteBoundary key={mode}><Suspense fallback={<div className="route-loading" role="status">Loading workspace...</div>}>
+        {mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy}/>
+          : mode === 'cognitive' ? <CognitiveHub api={api} run={run} busy={busy} stats={stats}/>
+          : mode === 'dashboards' ? <EngineDashboardsHub api={api}/>
+          : mode === 'demo' ? <GuidedDemo api={api} run={run} busy={busy}/>
+          : mode === 'studio' ? <Studio api={api} run={run} busy={busy}/>
+          : mode === 'admin' ? <Admin stats={stats} system={system} jobs={jobs} api={api} run={run} refresh={refresh} busy={busy}/>
+          : mode === 'settings' ? <Appearance theme={theme} setTheme={setTheme} reducedMotion={reducedMotion} setReducedMotion={setReducedMotion}/>
+          : <section className="empty-state"><h2>Page not found</h2><button className="secondary-button" onClick={() => navigate('app')}>Open knowledge explorer</button></section>}
+      </Suspense></RouteBoundary>
+    </WorkspaceShell>
+    {busy && <div className="busy-bar" aria-label="Operation in progress"><span/></div>}{alert}
+  </>;
 }

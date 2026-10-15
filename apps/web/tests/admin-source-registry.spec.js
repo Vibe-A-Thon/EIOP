@@ -29,7 +29,7 @@ test('admin source registry supports onboarding, discovery, and source operation
     body: '{"status":"ready"}',
   }));
 
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const url = new URL(route.request().url());
     const path = url.pathname;
     const method = route.request().method();

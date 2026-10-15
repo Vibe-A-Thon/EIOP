@@ -2,42 +2,27 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {Icon} from '../icons.jsx';
 
 export default function KnowledgeGovernanceAndSLOPanel({api}) {
+  const [error, setError] = useState('');
   const [subTab, setSubTab] = useState('quality');
-  const [slos, setSlos] = useState([
-    {name: 'Knowledge Freshness SLO', target: '99.5%', current: '99.8%', status: 'MEETING'},
-    {name: 'Provenance Completeness SLO', target: '99.0%', current: '99.2%', status: 'MEETING'},
-    {name: 'Schema Conformance SLO', target: '100.0%', current: '100.0%', status: 'MEETING'},
-    {name: 'Causal Lineage Reachability', target: '95.0%', current: '97.4%', status: 'MEETING'},
-  ]);
-  const [debtScore, setDebtScore] = useState({score: 18, rating: 'LOW', orphaned_nodes: 12, stale_docs: 4, missing_tests: 2});
-  const [proposals, setProposals] = useState([
-    {id: 'prop-101', title: 'Add SLO entity type in OPS domain', author: 'steward_dan', status: 'PENDING_REVIEW', submitted_at: '2026-10-12 03:00'},
-    {id: 'prop-102', title: 'Deprecate unencrypted secret property', author: 'security_lead', status: 'APPROVED', submitted_at: '2026-10-11 14:00'},
-  ]);
-  const [workspaces, setWorkspaces] = useState([
-    {id: 'sim-ws-prod-failover', name: 'EU-West AZ Outage Simulation', owner: 'ops_lead', forks_count: 2, created_at: '2026-10-12 02:00'},
-    {id: 'sim-ws-microservices-split', name: 'Monolith Decoupling Blast Radius', owner: 'arch_team', forks_count: 5, created_at: '2026-10-10 11:00'},
-  ]);
-  const [qualityStats, setQualityStats] = useState({
-    total_vertices: 18402,
-    total_edges: 42109,
-    schema_version: '1.4.0',
-    validation_pass_rate: '100%',
-    backup_status: 'HEALTHY (Last snapshot 30m ago)',
-  });
+  const [slos, setSlos] = useState([]);
+  const [debtScore, setDebtScore] = useState({});
+  const [proposals, setProposals] = useState([]);
+  const [workspaces, setWorkspaces] = useState([]);
+  const [qualityStats, setQualityStats] = useState({});
 
   const fetchData = useCallback(async () => {
     try {
-      const q = await api('/api/v1/graph/quality', undefined, 'GET').catch(() => null);
+      setError('');
+      const q = await api('/api/v1/graph/quality', undefined, 'GET');
       if (q && q.stats) setQualityStats(q.stats);
-      const d = await api('/api/v1/knowledge-debt/summary', undefined, 'GET').catch(() => null);
+      const d = await api('/api/v1/knowledge-debt/summary', undefined, 'GET');
       if (d) setDebtScore(d);
-      const p = await api('/api/v1/ontology/proposals', undefined, 'GET').catch(() => null);
+      const p = await api('/api/v1/ontology/proposals', undefined, 'GET');
       if (p && p.proposals) setProposals(p.proposals);
-      const w = await api('/api/v1/simulations', undefined, 'GET').catch(() => null);
+      const w = await api('/api/v1/simulations', undefined, 'GET');
       if (w && w.workspaces) setWorkspaces(w.workspaces);
-    } catch {
-      // fallback
+    } catch (exception) {
+      setError(exception.message || 'The service is unavailable.');
     }
   }, [api]);
 
@@ -47,6 +32,7 @@ export default function KnowledgeGovernanceAndSLOPanel({api}) {
 
   return (
     <div className="gov-slo-panel card" style={{padding: '1.5rem', background: '#1c1c24', borderRadius: '8px', border: '1px solid #333'}}>
+      {error && <p role="alert" className="resource-error">{error}</p>}
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem'}}>
         <div>
           <h3 style={{margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem'}}>

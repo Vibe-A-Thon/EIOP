@@ -2,33 +2,23 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {Icon} from '../icons.jsx';
 
 export default function GraphTimelineAndJournalPanel({api}) {
+  const [error, setError] = useState('');
   const [subTab, setSubTab] = useState('timeline');
-  const [versions, setVersions] = useState([
-    {version: 'v1.4.0', tag: 'release-2026-10-12', entities: 18402, edges: 42109, author: 'alice@enterprise.com', committed_at: '2026-10-12 04:00', summary: 'Added Incident & ChangeRequest domain mappings'},
-    {version: 'v1.3.2', tag: 'hotfix-auth-leak', entities: 18100, edges: 41200, author: 'bob@enterprise.com', committed_at: '2026-10-11 20:15', summary: 'Deprecate unencrypted API token attribute'},
-    {version: 'v1.3.0', tag: 'sprint-44-close', entities: 17950, edges: 40800, author: 'ci_bot', committed_at: '2026-10-10 18:00', summary: 'Reconciled 14 repositories and GitLab pipelines'},
-  ]);
-  const [journalEntries, setJournalEntries] = useState([
-    {event_id: 'scj-1002', change_kind: 'FACT_ASSERTED', entity_id: 'srv-auth-gw', entity_label: 'Service', bitemporal_valid_from: '2026-10-12T00:00:00Z', assertion_source: 'k8s-runtime-discovery', confidence: 0.99},
-    {event_id: 'scj-1003', change_kind: 'EDGE_CREATED', entity_id: 'srv-auth-gw -> db-users', entity_label: 'CONNECTS_TO', bitemporal_valid_from: '2026-10-12T01:30:00Z', assertion_source: 'otel-network-mesh', confidence: 0.95},
-    {event_id: 'scj-1004', change_kind: 'FACT_TOMBSTONED', entity_id: 'srv-legacy-v1', entity_label: 'Service', bitemporal_valid_from: '2026-10-12T03:00:00Z', assertion_source: 'decommission-pipeline', confidence: 1.0},
-  ]);
-  const [consumers, setConsumers] = useState([
-    {group_id: 'graph-index-builder', partition_count: 8, total_lag: 0, status: 'HEALTHY', rate_eps: 450},
-    {group_id: 'xai-attribution-ledger', partition_count: 4, total_lag: 2, status: 'HEALTHY', rate_eps: 120},
-    {group_id: 'lineage-aggregator', partition_count: 4, total_lag: 18, status: 'CATCHING_UP', rate_eps: 310},
-  ]);
+  const [versions, setVersions] = useState([]);
+  const [journalEntries, setJournalEntries] = useState([]);
+  const [consumers, setConsumers] = useState([]);
 
   const fetchData = useCallback(async () => {
     try {
-      const v = await api('/api/v1/graph/versions', undefined, 'GET').catch(() => null);
+      setError('');
+      const v = await api('/api/v1/graph/versions', undefined, 'GET');
       if (v && v.versions) setVersions(v.versions);
-      const j = await api('/api/v1/journal/entries', undefined, 'GET').catch(() => null);
+      const j = await api('/api/v1/journal/entries', undefined, 'GET');
       if (j && j.entries) setJournalEntries(j.entries);
-      const c = await api('/api/v1/events/consumers', undefined, 'GET').catch(() => null);
+      const c = await api('/api/v1/events/consumers', undefined, 'GET');
       if (c && c.consumers) setConsumers(c.consumers);
-    } catch {
-      // fallback
+    } catch (exception) {
+      setError(exception.message || 'The service is unavailable.');
     }
   }, [api]);
 
@@ -38,6 +28,7 @@ export default function GraphTimelineAndJournalPanel({api}) {
 
   return (
     <div className="timeline-journal-panel card" style={{padding: '1.5rem', background: '#1c1c24', borderRadius: '8px', border: '1px solid #333'}}>
+      {error && <p role="alert" className="resource-error">{error}</p>}
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem'}}>
         <div>
           <h3 style={{margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem'}}>

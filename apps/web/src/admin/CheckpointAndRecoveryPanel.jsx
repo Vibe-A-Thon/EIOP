@@ -2,27 +2,22 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {Icon} from '../icons.jsx';
 
 export default function CheckpointAndRecoveryPanel({api}) {
+  const [error, setError] = useState('');
   const [subTab, setSubTab] = useState('checkpoints');
-  const [checkpoints, setCheckpoints] = useState([
-    {connector_id: 'jira-prod', partition: 'issue-stream-0', offset: '1048291', high_watermark: '1048300', lag: 9, updated_at: '2026-10-12 05:02:14'},
-    {connector_id: 'github-org', partition: 'repo-commits-1', offset: '49201', high_watermark: '49201', lag: 0, updated_at: '2026-10-12 05:01:50'},
-    {connector_id: 'snow-itsm', partition: 'incidents-table-0', offset: '8492', high_watermark: '8495', lag: 3, updated_at: '2026-10-12 04:58:30'},
-  ]);
-  const [dlqEvents, setDlqEvents] = useState([
-    {event_id: 'err-evt-991', source: 'jira-prod', error_reason: 'Schema validation: missing mandatory summary key', payload_preview: '{"issue_key": "PROJ-891", "reporter": "alice"}', quarantined_at: '2026-10-12 04:22:11'},
-    {event_id: 'err-evt-992', source: 'snow-itsm', error_reason: 'Unparseable ISO timestamp format in resolved_at', payload_preview: '{"incident_number": "INC09182", "resolved_at": "invalid-ts"}', quarantined_at: '2026-10-12 04:35:09'},
-  ]);
+  const [checkpoints, setCheckpoints] = useState([]);
+  const [dlqEvents, setDlqEvents] = useState([]);
   const [replaying, setReplaying] = useState(false);
   const [message, setMessage] = useState(null);
 
   const fetchStatus = useCallback(async () => {
     try {
-      const cp = await api('/api/v1/ingestion/checkpoints', undefined, 'GET').catch(() => null);
+      setError('');
+      const cp = await api('/api/v1/ingestion/checkpoints', undefined, 'GET');
       if (cp && cp.checkpoints) setCheckpoints(cp.checkpoints);
-      const dlq = await api('/api/v1/ingestion/dlq', undefined, 'GET').catch(() => null);
+      const dlq = await api('/api/v1/ingestion/dlq', undefined, 'GET');
       if (dlq && dlq.events) setDlqEvents(dlq.events);
-    } catch {
-      // fallback
+    } catch (exception) {
+      setError(exception.message || 'The service is unavailable.');
     }
   }, [api]);
 
@@ -34,9 +29,12 @@ export default function CheckpointAndRecoveryPanel({api}) {
     setReplaying(true);
     setMessage(null);
     try {
-      await api('/api/v1/ingestion/dlq/replay', {event_ids: [eventId]}, 'POST').catch(() => null);
+      setError('');
+      await api('/api/v1/ingestion/dlq/replay', {event_ids: [eventId]}, 'POST');
       setMessage(`Replayed event ${eventId} successfully!`);
       setDlqEvents(prev => prev.filter(e => e.event_id !== eventId));
+    } catch (exception) {
+      setError(exception.message || 'Replay failed.');
     } finally {
       setReplaying(false);
     }
@@ -44,10 +42,14 @@ export default function CheckpointAndRecoveryPanel({api}) {
 
   const replayAll = async () => {
     setReplaying(true);
+    setMessage(null);
     try {
-      await api('/api/v1/ingestion/dlq/replay-all', {}, 'POST').catch(() => null);
+      setError('');
+      await api('/api/v1/ingestion/dlq/replay-all', {}, 'POST');
       setMessage('Dispatched full DLQ replay batch.');
       setDlqEvents([]);
+    } catch (exception) {
+      setError(exception.message || 'Replay failed.');
     } finally {
       setReplaying(false);
     }
@@ -55,6 +57,7 @@ export default function CheckpointAndRecoveryPanel({api}) {
 
   return (
     <div className="checkpoint-recovery-panel card" style={{padding: '1.5rem', background: '#1c1c24', borderRadius: '8px', border: '1px solid #333'}}>
+      {error && <p role="alert" className="resource-error">{error}</p>}
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem'}}>
         <div>
           <h3 style={{margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem'}}>

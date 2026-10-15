@@ -5,22 +5,19 @@ export default function IngestionReconciliationPanel({api}) {
   const [runs, setRuns] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filterType, setFilterType] = useState('ALL');
+  const [error, setError] = useState('');
 
   const fetchRuns = useCallback(async () => {
     setLoading(true);
+    setError('');
     try {
-      const data = await api('/api/v1/ingestion/runs', undefined, 'GET').catch(() => null);
-      if (data && data.runs) {
-        setRuns(data.runs);
-      } else {
-        setRuns([
-          {run_id: 'run-801', mode: 'BASELINE', source: 'Jira Software', status: 'COMPLETED', entities_ingested: 1420, errors: 0, duration: '42s', timestamp: '2026-10-12 04:30'},
-          {run_id: 'run-802', mode: 'INCREMENTAL', source: 'GitLab CI', status: 'RUNNING', entities_ingested: 312, errors: 0, duration: '14s', timestamp: '2026-10-12 04:45'},
-          {run_id: 'run-803', mode: 'RECONCILIATION', source: 'ServiceNow', status: 'COMPLETED', entities_ingested: 85, errors: 1, duration: '8s', timestamp: '2026-10-12 05:00'},
-        ]);
-      }
-    } catch {
-      // fallback mock runs
+      const data = await api('/api/v1/ingestion/runs', undefined, 'GET');
+      const items = Array.isArray(data) ? data : data?.runs;
+      if (!Array.isArray(items)) throw new Error('Ingestion runs returned an unsupported response.');
+      setRuns(items);
+    } catch (exception) {
+      setRuns([]);
+      setError(exception.message || 'Ingestion runs are unavailable.');
     } finally {
       setLoading(false);
     }
@@ -32,9 +29,12 @@ export default function IngestionReconciliationPanel({api}) {
 
   const triggerRun = async (mode) => {
     setLoading(true);
+    setError('');
     try {
-      await api('/api/v1/ingestion/trigger', {mode}, 'POST').catch(() => null);
-      fetchRuns();
+      await api('/api/v1/ingestion/trigger', {mode}, 'POST');
+      await fetchRuns();
+    } catch (exception) {
+      setError(exception.message || 'The ingestion run could not be started.');
     } finally {
       setLoading(false);
     }
@@ -44,6 +44,7 @@ export default function IngestionReconciliationPanel({api}) {
 
   return (
     <div className="ingestion-panel card" style={{padding: '1.5rem', background: '#1c1c24', borderRadius: '8px', border: '1px solid #333'}}>
+      {error && <p role="alert" className="resource-error">{error}</p>}
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
         <div>
           <h3 style={{margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem'}}>

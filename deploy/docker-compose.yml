@@ -21,6 +21,8 @@ x-application: &application
   volumes:
     - application-data:/data
   networks: [backend]
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
   init: true
   security_opt: [no-new-privileges:true]
   cap_drop: [ALL]
@@ -61,6 +63,7 @@ services:
 
   schema-init:
     <<: *application
+    networks: [backend, frontend]
     command: [python, -m, scripts.bootstrap_schema]
     depends_on:
       hugegraph-server: {condition: service_healthy}
@@ -115,6 +118,7 @@ services:
 
   eoip-worker:
     <<: *application
+    networks: [backend, frontend]
     command: [python, -m, apps.worker.main]
     environment:
       <<: *environment

@@ -1,261 +1,109 @@
-import React, {useState, useEffect} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Icon} from '../icons.jsx';
 
-export default function SecurityGovernanceDashboard({api, run, busy}) {
+export default function SecurityGovernanceDashboard({api}) {
   const [status, setStatus] = useState(null);
   const [matrix, setMatrix] = useState(null);
-  const [subject, setSubject] = useState('dev-lead@corp.internal');
-  const [selectedRole, setSelectedRole] = useState('analyst');
-  const [selectedScopes, setSelectedScopes] = useState('graph:read,graph:mutate');
-  const [issuedToken, setIssuedToken] = useState(null);
-  const [tokenToVerify, setTokenToVerify] = useState('');
-  const [verifyResult, setVerifyResult] = useState(null);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [subject, setSubject] = useState('');
+  const [tenant, setTenant] = useState('');
+  const [role, setRole] = useState('viewer');
+  const [scopes, setScopes] = useState('graph:read');
+  const [issued, setIssued] = useState(null);
+  const [verifyToken, setVerifyToken] = useState('');
+  const [verified, setVerified] = useState(null);
   const [revokeId, setRevokeId] = useState('');
-  const [revokeResult, setRevokeResult] = useState(null);
+  const [revokeReason, setRevokeReason] = useState('');
+  const [revoked, setRevoked] = useState(null);
+  const [confirmed, setConfirmed] = useState(false);
+  const mutation = useRef(false);
+  const alive = useRef(true);
+  useEffect(() => {alive.current = true; return () => {alive.current = false;};}, []);
 
-  useEffect(() => {
-    loadStatus();
-  }, []);
-
-  const loadStatus = async () => {
+  const load = useCallback(async () => {
+    setLoading(true); setError(''); setStatus(null); setMatrix(null);
     try {
-      const res = await (api ? api.get('/api/v1/security/status') : fetch('/api/v1/security/status').then(r => r.json()));
-      setStatus(res);
-      const mat = await (api ? api.get('/api/v1/security/policy-matrix') : fetch('/api/v1/security/policy-matrix').then(r => r.json()));
-      setMatrix(mat);
-    } catch (e) {
-      // offline / mock fallback
-      setStatus({
-        status: 'OPERATIONAL',
-        enforcement_mode: 'FAIL_CLOSED',
-        algorithm: 'HMAC-SHA256',
-        key_rotation_supported: true,
-        active_revocations_count: 0,
-        roles_registered: 4,
-        permissions_known: 12,
-      });
-      setMatrix({
-        roles_hierarchy: {
-          admin: {rank: 4, inherited_roles: ['viewer', 'analyst', 'steward', 'admin']},
-          steward: {rank: 3, inherited_roles: ['viewer', 'analyst', 'steward']},
-          analyst: {rank: 2, inherited_roles: ['viewer', 'analyst']},
-          viewer: {rank: 1, inherited_roles: ['viewer']},
-        },
-        all_permissions: ['graph:read', 'graph:mutate', 'ontology:publish', 'admin:*'],
-      });
-    }
-  };
+      const [posture, policies] = await Promise.all([api('/api/v1/security/status'), api('/api/v1/security/policy-matrix')]);
+      if (!posture || typeof posture.enforcement_mode !== 'string' || !policies?.roles_hierarchy) {
+        throw new Error('Security status is unavailable: the service returned an unsupported response.');
+      }
+      if (alive.current) {setStatus(posture); setMatrix(policies);}
+    } catch (exception) {
+      if (alive.current && exception.name !== 'AbortError') setError(exception.message || 'Security status is unavailable.');
+    } finally {if (alive.current) setLoading(false);}
+  }, [api]);
+  useEffect(() => {load();}, [load]);
 
-  const handleIssue = async () => {
-    try {
-      const payload = {
-        subject,
-        roles: [selectedRole],
-        scopes: selectedScopes.split(',').map(s => s.trim()).filter(Boolean),
-        tenant_id: 'prod-enterprise',
-        ttl_seconds: 3600,
-      };
-      const res = await (api ? api.post('/api/v1/security/tokens/issue', payload) : fetch('/api/v1/security/tokens/issue', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload),
-      }).then(r => r.json()));
-      setIssuedToken(res);
-      setTokenToVerify(res.token || '');
-    } catch (e) {
-      setIssuedToken({error: String(e)});
-    }
-  };
+  async function submit(event, action) {
+    event.preventDefault();
+    if (mutation.current) return;
+    mutation.current = true; setPending(true); setError('');
+    try {await action();}
+    catch (exception) {if (alive.current && exception.name !== 'AbortError') setError(exception.message || 'The operation failed.');}
+    finally {mutation.current = false; if (alive.current) setPending(false);}
+  }
 
-  const handleVerify = async () => {
-    try {
-      const payload = {
-        token: tokenToVerify,
-        required_scopes: ['graph:read'],
-      };
-      const res = await (api ? api.post('/api/v1/security/tokens/verify', payload) : fetch('/api/v1/security/tokens/verify', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload),
-      }).then(r => r.json()));
-      setVerifyResult(res);
-    } catch (e) {
-      setVerifyResult({valid: false, error: String(e)});
-    }
-  };
-
-  const handleRevoke = async () => {
-    try {
-      const payload = {
-        identifier: revokeId || (issuedToken?.jti) || 'test-jti',
-        reason: 'Compromised credential rotation',
-      };
-      const res = await (api ? api.post('/api/v1/security/tokens/revoke', payload) : fetch('/api/v1/security/tokens/revoke', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload),
-      }).then(r => r.json()));
-      setRevokeResult(res);
-      loadStatus();
-    } catch (e) {
-      setRevokeResult({revoked: false, error: String(e)});
-    }
-  };
-
-  return (
-    <div className="card" style={{padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.25rem'}}>
-      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color, #2d3748)', paddingBottom: '0.75rem'}}>
-        <div>
-          <h3 style={{margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-            <Icon name="shield" size={18} />
-            Enterprise Security & Token Governance
-          </h3>
-          <p style={{margin: '0.25rem 0 0', fontSize: '0.85rem', color: '#a0aec0'}}>
-            GAP-SEC-008..012 · Fail-closed token signing, key rotation, scoped ABAC, and CRL revocation
-          </p>
-        </div>
-        <button onClick={loadStatus} className="btn-secondary" style={{padding: '0.35rem 0.75rem', fontSize: '0.8rem'}}>
-          Refresh Status
-        </button>
+  return <section className="security-workspace" aria-labelledby="security-title">
+    <div className="panel-heading"><h2 id="security-title"><Icon name="shield"/> Enterprise Security &amp; Token Governance</h2>
+      <button className="secondary-button" onClick={load} disabled={loading || pending}><Icon name="refresh"/>Refresh status</button></div>
+    {loading && <p role="status">Loading security status...</p>}
+    {error && <p className="resource-error" role="alert">{error}</p>}
+    {status && <dl className="security-posture">
+      <div><dt>Enforcement posture</dt><dd>{status.enforcement_mode}</dd></div>
+      <div><dt>Signing algorithm</dt><dd>{status.algorithm || 'Unknown'}</dd></div>
+      <div><dt>Key rotation</dt><dd>{status.key_rotation_supported === true ? 'Supported' : status.key_rotation_supported === false ? 'Not supported' : 'Unknown'}</dd></div>
+      <div><dt>Active revocations</dt><dd>{status.active_revocations_count ?? 'Unknown'}</dd></div>
+    </dl>}
+    <div className="security-forms">
+      <form onSubmit={event => submit(event, async () => {
+        setIssued(null);
+        const result = await api('/api/v1/security/tokens/issue', {subject: subject.trim(), tenant_id: tenant.trim(),
+          roles: [role], scopes: scopes.split(',').map(value => value.trim()).filter(Boolean), ttl_seconds: 3600});
+        if (!result?.token || !result.jti) throw new Error('The token service did not confirm issuance.');
+        if (alive.current) {setIssued(result); setVerifyToken(result.token); setRevokeId(result.jti);}
+      })}>
+        <h3>Issue scoped token</h3>
+        <label>Subject<input required value={subject} onChange={event => setSubject(event.target.value)}/></label>
+        <label>Tenant ID<input required value={tenant} onChange={event => setTenant(event.target.value)}/></label>
+        <label>Role<select value={role} onChange={event => setRole(event.target.value)}>
+          {Object.keys(matrix?.roles_hierarchy || {viewer: {}}).map(name => <option key={name}>{name}</option>)}
+        </select></label>
+        <label>Scopes<input required value={scopes} onChange={event => setScopes(event.target.value)}/></label>
+        <button className="primary-button" disabled={pending || !matrix}><Icon name="key"/>Issue scoped token</button>
+        {issued && <><label>Issued token<input type="password" readOnly value={issued.token} autoComplete="off"/></label><output role="status">Issued token: {issued.jti}</output></>}
+      </form>
+      <div>
+        <form onSubmit={event => submit(event, async () => {
+          setVerified(null);
+          const result = await api('/api/v1/security/tokens/verify', {token: verifyToken, required_scopes: ['graph:read']});
+          if (typeof result?.valid !== 'boolean') throw new Error('The token service did not confirm verification.');
+          if (alive.current) setVerified(result);
+        })}>
+          <h3>Verify token</h3>
+          <label>Token to verify<input type="password" required autoComplete="off" value={verifyToken} onChange={event => setVerifyToken(event.target.value)}/></label>
+          <button className="secondary-button" disabled={pending}><Icon name="shieldCheck"/>Verify token</button>
+          {verified && <output role="status">{verified.valid ? 'Valid token' : 'Verification rejected'}</output>}
+        </form>
+        <form style={{marginTop: 24}} onSubmit={event => submit(event, async () => {
+          setRevoked(null);
+          const result = await api('/api/v1/security/tokens/revoke', {identifier: revokeId.trim(), reason: revokeReason.trim()});
+          if (result?.revoked !== true) throw new Error('The token service did not confirm revocation.');
+          if (alive.current) {setRevoked(result); setConfirmed(false); await load();}
+        })}>
+          <h3>Revoke token</h3>
+          <label>Token identifier<input required value={revokeId} onChange={event => {setRevokeId(event.target.value); setConfirmed(false);}}/></label>
+          <label>Reason<input required value={revokeReason} onChange={event => setRevokeReason(event.target.value)}/></label>
+          <label className="motion-choice"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)}/>Confirm revocation</label>
+          <button className="secondary-button" disabled={pending || !confirmed}><Icon name="lock"/>Revoke</button>
+          {revoked && <output role="status">Revocation recorded. Active revocations: {revoked.active_revocations ?? 'Unknown'}</output>}
+        </form>
       </div>
-
-      {status && (
-        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem'}}>
-          <div style={{background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.08)'}}>
-            <div style={{fontSize: '0.75rem', color: '#a0aec0'}}>Enforcement Posture</div>
-            <div style={{fontSize: '1.1rem', fontWeight: 600, color: '#48bb78'}}>{status.enforcement_mode}</div>
-          </div>
-          <div style={{background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.08)'}}>
-            <div style={{fontSize: '0.75rem', color: '#a0aec0'}}>Signing Algorithm</div>
-            <div style={{fontSize: '1.1rem', fontWeight: 600}}>{status.algorithm}</div>
-          </div>
-          <div style={{background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.08)'}}>
-            <div style={{fontSize: '0.75rem', color: '#a0aec0'}}>Key Rotation</div>
-            <div style={{fontSize: '1.1rem', fontWeight: 600, color: '#48bb78'}}>Supported</div>
-          </div>
-          <div style={{background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.08)'}}>
-            <div style={{fontSize: '0.75rem', color: '#a0aec0'}}>Active Revocations (CRL)</div>
-            <div style={{fontSize: '1.1rem', fontWeight: 600, color: status.active_revocations_count > 0 ? '#ed8936' : '#a0aec0'}}>
-              {status.active_revocations_count}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Token Issuance & Scopes */}
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem'}}>
-        <div style={{background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)'}}>
-          <h4 style={{margin: '0 0 0.75rem', fontSize: '0.95rem'}}>Issue Scoped Bearer Token (GAP-SEC-009, 011)</h4>
-          <div style={{display: 'flex', flexDirection: 'column', gap: '0.6rem'}}>
-            <div>
-              <label style={{fontSize: '0.75rem', color: '#a0aec0', display: 'block'}}>Subject (User / Service)</label>
-              <input
-                type="text"
-                value={subject}
-                onChange={e => setSubject(e.target.value)}
-                style={{width: '100%', padding: '0.4rem', fontSize: '0.85rem', background: '#1a202c', border: '1px solid #4a5568', color: '#fff', borderRadius: '4px'}}
-              />
-            </div>
-            <div>
-              <label style={{fontSize: '0.75rem', color: '#a0aec0', display: 'block'}}>Role</label>
-              <select
-                value={selectedRole}
-                onChange={e => setSelectedRole(e.target.value)}
-                style={{width: '100%', padding: '0.4rem', fontSize: '0.85rem', background: '#1a202c', border: '1px solid #4a5568', color: '#fff', borderRadius: '4px'}}
-              >
-                <option value="admin">admin</option>
-                <option value="steward">steward</option>
-                <option value="analyst">analyst</option>
-                <option value="viewer">viewer</option>
-              </select>
-            </div>
-            <div>
-              <label style={{fontSize: '0.75rem', color: '#a0aec0', display: 'block'}}>Scopes (comma-separated)</label>
-              <input
-                type="text"
-                value={selectedScopes}
-                onChange={e => setSelectedScopes(e.target.value)}
-                style={{width: '100%', padding: '0.4rem', fontSize: '0.85rem', background: '#1a202c', border: '1px solid #4a5568', color: '#fff', borderRadius: '4px'}}
-              />
-            </div>
-            <button onClick={handleIssue} className="btn-primary" style={{padding: '0.4rem', fontSize: '0.85rem'}}>
-              Issue Scoped Token
-            </button>
-            {issuedToken && (
-              <div style={{marginTop: '0.5rem', fontSize: '0.75rem', wordBreak: 'break-all', background: '#111', padding: '0.5rem', borderRadius: '4px'}}>
-                <span style={{color: '#48bb78'}}>Token:</span> {issuedToken.token?.slice(0, 40)}...<br />
-                <span style={{color: '#90cdf4'}}>JTI:</span> {issuedToken.jti}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Verification & Revocation */}
-        <div style={{background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)'}}>
-          <h4 style={{margin: '0 0 0.75rem', fontSize: '0.95rem'}}>Verify & Revoke Tokens (GAP-SEC-008, 010)</h4>
-          <div style={{display: 'flex', flexDirection: 'column', gap: '0.6rem'}}>
-            <div>
-              <label style={{fontSize: '0.75rem', color: '#a0aec0', display: 'block'}}>Token to Verify</label>
-              <input
-                type="text"
-                value={tokenToVerify}
-                onChange={e => setTokenToVerify(e.target.value)}
-                placeholder="Paste token string"
-                style={{width: '100%', padding: '0.4rem', fontSize: '0.85rem', background: '#1a202c', border: '1px solid #4a5568', color: '#fff', borderRadius: '4px'}}
-              />
-            </div>
-            <button onClick={handleVerify} className="btn-secondary" style={{padding: '0.4rem', fontSize: '0.85rem'}}>
-              Verify Token (Requires graph:read scope)
-            </button>
-            {verifyResult && (
-              <div style={{fontSize: '0.75rem', background: '#111', padding: '0.5rem', borderRadius: '4px'}}>
-                <span style={{color: verifyResult.valid ? '#48bb78' : '#f56565'}}>
-                  {verifyResult.valid ? 'VALID TOKEN' : 'VERIFICATION REJECTED'}
-                </span>
-                {verifyResult.payload && <div>Subject: {verifyResult.payload.sub} | Scopes: {verifyResult.payload.scopes?.join(', ')}</div>}
-              </div>
-            )}
-
-            <div style={{borderTop: '1px solid #2d3748', paddingTop: '0.6rem', marginTop: '0.4rem'}}>
-              <label style={{fontSize: '0.75rem', color: '#a0aec0', display: 'block'}}>Revoke Token JTI or Subject</label>
-              <div style={{display: 'flex', gap: '0.5rem'}}>
-                <input
-                  type="text"
-                  value={revokeId}
-                  onChange={e => setRevokeId(e.target.value)}
-                  placeholder="Enter JTI or subject"
-                  style={{flex: 1, padding: '0.4rem', fontSize: '0.85rem', background: '#1a202c', border: '1px solid #4a5568', color: '#fff', borderRadius: '4px'}}
-                />
-                <button onClick={handleRevoke} className="btn-secondary" style={{padding: '0.4rem 0.8rem', fontSize: '0.85rem', color: '#f56565'}}>
-                  Revoke
-                </button>
-              </div>
-              {revokeResult && (
-                <div style={{marginTop: '0.4rem', fontSize: '0.75rem', color: '#48bb78'}}>
-                  Revocation recorded. Active CRL count: {revokeResult.active_revocations}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Role Hierarchy Matrix */}
-      {matrix && matrix.roles_hierarchy && (
-        <div style={{background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)'}}>
-          <h4 style={{margin: '0 0 0.5rem', fontSize: '0.95rem'}}>Role Hierarchy & Inheritance Matrix (GAP-SEC-012)</h4>
-          <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem'}}>
-            {Object.entries(matrix.roles_hierarchy).map(([role, def]) => (
-              <div key={role} style={{background: '#1a202c', padding: '0.6rem', borderRadius: '4px', fontSize: '0.8rem'}}>
-                <strong style={{color: '#90cdf4'}}>{role}</strong> (Rank {def.rank})
-                <div style={{fontSize: '0.75rem', color: '#a0aec0', marginTop: '0.2rem'}}>
-                  Inherits: {def.inherited_roles?.join(' → ') || 'none'}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
-  );
+    {matrix && <div className="table-wrap" style={{marginTop: 24}}><table><caption>Role hierarchy and inheritance</caption>
+      <thead><tr><th>Role</th><th>Rank</th><th>Inherits</th></tr></thead><tbody>
+        {Object.entries(matrix.roles_hierarchy).map(([name, definition]) => <tr key={name}><td>{name}</td><td>{definition.rank}</td><td>{definition.inherited_roles?.join(', ') || 'None'}</td></tr>)}
+      </tbody></table></div>}
+  </section>;
 }

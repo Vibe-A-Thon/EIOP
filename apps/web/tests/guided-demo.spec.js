@@ -67,7 +67,7 @@ async function loginAndOpenDemo(page) {
   await page.goto('/app');
   await page.getByLabel('Access token').fill('test-token');
   await page.getByRole('button', {name: 'Connect', exact: true}).click();
-  await page.getByRole('button', {name: 'Guided demo'}).click();
+  await page.getByRole('link', {name: 'Guided demo', exact: true}).click();
   await expect(page.getByRole('heading', {name: 'Follow the enterprise digital thread'})).toBeVisible();
 }
 
@@ -112,7 +112,7 @@ test('guided demo makes catalog loading visible while the local API responds', a
   await page.goto('/app');
   await page.getByLabel('Access token').fill('test-token');
   await page.getByRole('button', {name: 'Connect', exact: true}).click();
-  await page.getByRole('button', {name: 'Guided demo'}).click();
+  await page.getByRole('link', {name: 'Guided demo', exact: true}).click();
   await expect(page.getByText('Loading scenarios from the local API…')).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Follow the enterprise digital thread'})).toBeVisible();
 });

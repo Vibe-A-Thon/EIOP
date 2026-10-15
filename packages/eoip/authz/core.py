@@ -175,7 +175,14 @@ def load_policy_yaml(text: str) -> list[PolicyStatement]:
               - {attribute: classification, op: in, value: [internal, public]}
     """
     data = yaml.safe_load(text) or {}
-    raw = data.get("policies", data if isinstance(data, list) else [])
+    if isinstance(data, list):
+        raw = data
+    elif isinstance(data, dict):
+        raw = data.get("policies", [])
+    else:
+        raise ValueError("Policy document must be an object or list")
+    if not isinstance(raw, list) or any(not isinstance(entry, dict) for entry in raw):
+        raise ValueError("Policies must be a list of objects")
     statements = []
     for entry in raw:
         statements.append(PolicyStatement.from_dict({
@@ -242,6 +249,15 @@ class PolicyEnforcer:
     def load_yaml(self, text: str) -> int:
         statements = load_policy_yaml(text)
         self._statements.extend(statements)
+        return len(statements)
+
+    def replace_yaml(self, text: str) -> int:
+        """Validate the entire replacement before changing the active policy set."""
+        statements = load_policy_yaml(text)
+        ids = [statement.policy_id for statement in statements]
+        if any(not policy_id for policy_id in ids) or len(ids) != len(set(ids)):
+            raise ValueError("Replacement policies require unique nonempty policy IDs")
+        self._statements = statements
         return len(statements)
 
     @property

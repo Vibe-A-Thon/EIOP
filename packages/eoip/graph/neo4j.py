@@ -127,6 +127,7 @@ class Neo4jGraphStore:
 
     def ensure_schema(self, manifest: dict | None = None) -> dict:
         self._cypher("CREATE CONSTRAINT eoip_canonical_id IF NOT EXISTS FOR (n:EOIPEntity) REQUIRE n.canonical_id IS UNIQUE")
+        self._cypher("CREATE INDEX eoip_vid_idx IF NOT EXISTS FOR (n:EOIPEntity) ON (n.eoip_vid)")
         return {"created": False, "initialized": True, "mode": "cypher-constraints"}
 
     def schema_status(self) -> dict:

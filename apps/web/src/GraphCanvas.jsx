@@ -1,13 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Icon, Tip} from './icons.jsx';
-
-const palette = {
-  WorkItem: '#7c5cff', Project: '#9a7dff', Person: '#ef6e91', Repository: '#0ea5e9',
-  Branch: '#38bdf8', Commit: '#2563eb', File: '#64748b', CodeSymbol: '#10b981',
-  Dependency: '#f59e0b', MergeRequest: '#8b5cf6', PipelineRun: '#f97316',
-  Document: '#14b8a6', DocumentSection: '#2dd4bf', Evidence: '#eab308',
-  IngestionRun: '#94a3b8', ValidationRun: '#22c55e', ValidationFinding: '#ef4444',
-};
+import {palette} from './design-system/graph-palette.js';
 
 const safeClass = name => String(name).toLowerCase().replace(/[^a-z0-9]/g, '');
 

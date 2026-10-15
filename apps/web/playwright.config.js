@@ -4,6 +4,7 @@ const executablePath = process.env.PLAYWRIGHT_EXECUTABLE_PATH || undefined;
 
 export default defineConfig({
   testDir: './tests',
+  testIgnore: ['**/unit/**'],
   timeout: 60000,
   expect: {timeout: 15000},
   workers: 1,

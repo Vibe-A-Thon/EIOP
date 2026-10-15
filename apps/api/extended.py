@@ -1079,10 +1079,12 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     @router.post("/api/v1/authz/policies/reload")
     def authz_reload_policies(
         policy_yaml: str = Body(media_type="application/yaml"),
+        replace_existing: bool = Query(default=False),
     ) -> dict[str, Any]:
         """GAP-SEC-003: load additional policy statements from YAML text."""
         try:
-            loaded = state.policy_enforcer.load_yaml(policy_yaml)
+            loaded = (state.policy_enforcer.replace_yaml(policy_yaml) if replace_existing
+                      else state.policy_enforcer.load_yaml(policy_yaml))
         except (yaml.YAMLError, KeyError, TypeError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc))
         return {"loaded": loaded}
