@@ -19,9 +19,9 @@ import math
 import re
 import time
 import uuid
+from collections.abc import Iterator
 from dataclasses import dataclass, field
-from typing import Any, AsyncIterator, Callable, Iterator
-
+from typing import Any
 
 # ============================================================================
 # 1. Cognitive Tiers & Frontier Profiles
@@ -291,7 +291,7 @@ class StreamChunk:
     accumulated_content: str
     tier: CognitiveTier
     xai_token_info: TokenAttribution | None = None
-    usage: dict[str, int] = field(default_factory=dict)
+    usage: dict[str, Any] = field(default_factory=dict)
 
 
 # ============================================================================
@@ -299,12 +299,14 @@ class StreamChunk:
 # ============================================================================
 
 class SelfLLMEngine:
-    """Enterprise-grade self-hosted LLM inference and reasoning engine.
+    """Enterprise-grade self-hosted LLM inference and reasoning engine (CP-19).
 
-    Provides frontier-level capabilities without requiring external SaaS dependencies.
+    Provides deterministic simulation mode and live model runtime integration.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, provider: Any | None = None) -> None:
+        self.is_simulation: bool = (provider is None or not getattr(provider, "available", False))
+        self.provider = provider
         self._vocab: dict[str, int] = {}
         self._inverse_vocab: dict[int, str] = {}
         self._weights_cache: dict[str, Any] = {}
@@ -491,7 +493,7 @@ class SelfLLMEngine:
         citations = [
             {
                 "claim": f"Derived statement referencing '{words[0]}'" if words else "General assertion",
-                "triple": f"(urn:subject)-[:VERIFIED_BY]->(urn:evidence)",
+                "triple": "(urn:subject)-[:VERIFIED_BY]->(urn:evidence)",
                 "confidence": citation_conf,
                 "source": "Enterprise Knowledge Graph (PROV-O)",
             }
@@ -501,7 +503,7 @@ class SelfLLMEngine:
         avg_salience = sum(ta.salience_score for ta in token_attributions) / max(len(token_attributions), 1)
         counterfactuals = [
             CounterfactualReasoning(
-                premise=f"Current query parameters",
+                premise="Current query parameters",
                 alternative_hypothesis="If strict deterministic mode was forced",
                 impact_delta=round(-avg_salience * 0.15, 3),
                 explanation="Neural synthesis would be suppressed, restricting output strictly to exact graph pattern matches.",
@@ -528,10 +530,48 @@ class SelfLLMEngine:
         config: GenerationConfig | None = None,
         context: str = "",
     ) -> GenerationResult:
-        """Synchronous frontier generation with deliberative reasoning and XAI."""
+        """Synchronous generation with live provider execution or deterministic simulation (CP-19)."""
         start_time = time.perf_counter()
         cfg = config or GenerationConfig()
         profile = TIER_PROFILES.get(cfg.tier, TIER_PROFILES[CognitiveTier.SONNET_BALANCED])
+
+        # If a live model provider is available, delegate to it
+        if self.provider is not None and getattr(self.provider, "available", False):
+            try:
+                system_prompt = cfg.system_prompt or f"You are an enterprise AI assistant operating in tier {cfg.tier.value}."
+                full_user = f"{context}\n\n{prompt}".strip() if context else prompt
+                resp = self.provider.generate(
+                    system_prompt=system_prompt,
+                    user_content=full_user,
+                    temperature=cfg.temperature,
+                    max_tokens=cfg.max_tokens,
+                )
+                latency_ms = (time.perf_counter() - start_time) * 1000.0
+                p_tokens = len(self.tokenize(prompt))
+                g_tokens = resp.tokens_used or len(self.tokenize(resp.content))
+                return GenerationResult(
+                    content=resp.content,
+                    tier=cfg.tier,
+                    model_name=resp.model or profile.name,
+                    tokens_generated=g_tokens,
+                    prompt_tokens=p_tokens,
+                    latency_ms=round(latency_ms, 2),
+                    time_to_first_token_ms=round(latency_ms * 0.25, 2),
+                    reasoning_trace=[f"[Live Provider] Inference executed via {resp.model}"],
+                    structured_json=None,
+                    xai=None,
+                    speculative_accepted_tokens=0,
+                    metadata={
+                        "execution_mode": "live",
+                        "is_simulation": False,
+                        "provider_model": resp.model,
+                        "context_window": profile.context_window,
+                        "hidden_dim": profile.hidden_dim,
+                        "supports_tools": profile.supports_tools,
+                    },
+                )
+            except (RuntimeError, ValueError, OSError):
+                pass  # Fallback to deterministic simulation
 
         # 1. Deliberative reasoning trace
         trace = self._deliberative_reasoning_pass(prompt, context, cfg.tier)
@@ -550,7 +590,7 @@ class SelfLLMEngine:
         if cfg.json_schema:
             try:
                 structured_data = json.loads(content)
-            except Exception:
+            except (json.JSONDecodeError, ValueError):
                 structured_data = {"raw_output": content}
 
         # 5. XAI Explanation & Attribution
@@ -577,6 +617,8 @@ class SelfLLMEngine:
             xai=xai_expl,
             speculative_accepted_tokens=speculative_accepted,
             metadata={
+                "execution_mode": "simulation",
+                "is_simulation": True,
                 "context_window": profile.context_window,
                 "hidden_dim": profile.hidden_dim,
                 "supports_tools": profile.supports_tools,
@@ -590,15 +632,17 @@ class SelfLLMEngine:
         context: str = "",
     ) -> Iterator[StreamChunk]:
         """Streaming generator yielding progressive token deltas with SSE/WebSocket compatibility."""
-        full_res = self.generate(prompt, config, context)
-        words = full_res.content.split(" ")
+        cfg = config or GenerationConfig()
+        content = self._generate_content_by_tier(prompt, cfg, context)
+        words = content.split(" ")
         accumulated: list[str] = []
 
         chunk_id = str(uuid.uuid4())
+        total_words = len(words)
         for idx, word in enumerate(words):
             delta = word if idx == 0 else " " + word
             accumulated.append(word)
-            is_final = (idx == len(words) - 1)
+            is_final = (idx == total_words - 1)
 
             yield StreamChunk(
                 chunk_id=chunk_id,
@@ -606,8 +650,12 @@ class SelfLLMEngine:
                 index=idx,
                 is_final=is_final,
                 accumulated_content=" ".join(accumulated),
-                tier=full_res.tier,
-                usage={"tokens": len(accumulated)},
+                tier=cfg.tier,
+                usage={
+                    "tokens": len(accumulated),
+                    "execution_mode": "simulation",
+                    "is_simulation": True,
+                },
             )
 
 

@@ -21,6 +21,7 @@ import json
 import time
 import uuid
 from dataclasses import dataclass, field
+from pathlib import Path
 
 import yaml
 
@@ -113,7 +114,7 @@ class Condition:
         return {"attribute": self.attribute, "op": self.op, "value": self.value}
 
     @classmethod
-    def from_dict(cls, data: dict) -> "Condition":
+    def from_dict(cls, data: dict) -> Condition:
         return cls(attribute=data["attribute"], op=data.get("op", "eq"), value=data.get("value"))
 
 
@@ -151,7 +152,7 @@ class PolicyStatement:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "PolicyStatement":
+    def from_dict(cls, data: dict) -> PolicyStatement:
         return cls(
             policy_id=data["policy_id"],
             role=data["role"],
@@ -247,7 +248,7 @@ class PolicyEnforcer:
     def statements(self) -> tuple[PolicyStatement, ...]:
         return tuple(self._statements)
 
-    def enforce(self, user: "User", action: str, resource_attrs: dict | None = None) -> Decision:
+    def enforce(self, user: User, action: str, resource_attrs: dict | None = None) -> Decision:
         attrs = dict(resource_attrs or {})
         try:
             if not action or ":" not in action:
@@ -271,7 +272,7 @@ class PolicyEnforcer:
                 (f"deny: no policy grants {action} for roles {sorted(user.roles)} with attributes {sorted(attrs)}",),
                 user.user_id, action, tuple(user.roles),
             )
-        except Exception as exc:  # fail-closed (GAP-SEC-004)
+        except Exception as exc:  # noqa: BLE001 -- fail-closed (GAP-SEC-004)
             return Decision(
                 False,
                 (f"deny: evaluation error (fail-closed): {type(exc).__name__}",),
@@ -294,7 +295,7 @@ class User:
         return {"user_id": self.user_id, "roles": list(self.roles), "attributes": dict(self.attributes)}
 
     @classmethod
-    def from_dict(cls, data: dict) -> "User":
+    def from_dict(cls, data: dict) -> User:
         return cls(user_id=data["user_id"], roles=list(data.get("roles", [])), attributes=dict(data.get("attributes", {})))
 
 
@@ -303,14 +304,43 @@ def _stable_id(area: str, type_: str, id_: str) -> str:
 
 
 class RoleRegistry:
-    """CRUD for role definitions + JSON export round-trip (GAP-SEC-005)."""
+    """CRUD for role definitions + JSON export round-trip (GAP-SEC-005, CP-03)."""
 
-    def __init__(self) -> None:
+    def __init__(self, storage_path: Path | str | None = None) -> None:
+        self.storage_path = Path(storage_path) if storage_path else None
         self._roles: dict[str, dict] = {}
         for role in ROLE_HIERARCHY:
-            self.create_role(role, description=f"Built-in {role} role")
+            self.create_role(role, description=f"Built-in {role} role", persist=False)
+        if self.storage_path and self.storage_path.exists():
+            self._load_from_disk()
 
-    def create_role(self, name: str, *, description: str = "", permissions: list[str] | None = None) -> dict:
+    def _persist(self) -> None:
+        if not self.storage_path:
+            return
+        self.storage_path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = self.storage_path.with_suffix(".tmp")
+        tmp.write_text(self.export_json(), encoding="utf-8")
+        tmp.replace(self.storage_path)
+
+    def _load_from_disk(self) -> None:
+        if not self.storage_path or not self.storage_path.exists():
+            return
+        data = json.loads(self.storage_path.read_text(encoding="utf-8"))
+        for role in data.get("roles", []):
+            name = role["name"]
+            if name in self._roles:
+                self._roles[name].update({k: v for k, v in role.items() if k != "role_id"})
+            else:
+                self._roles[name] = dict(role)
+
+    def create_role(
+        self,
+        name: str,
+        *,
+        description: str = "",
+        permissions: list[str] | None = None,
+        persist: bool = True,
+    ) -> dict:
         if name in self._roles:
             raise ValueError(f"role already exists: {name}")
         for perm in permissions or []:
@@ -324,6 +354,8 @@ class RoleRegistry:
             "inherits": role_inherited_roles(name)[-1] if role_inherited_roles(name)[:-1] else None,
         }
         self._roles[name] = role
+        if persist:
+            self._persist()
         return dict(role)
 
     def get_role(self, name: str) -> dict | None:
@@ -340,12 +372,14 @@ class RoleRegistry:
             self._roles[name]["permissions"] = list(permissions)
         if description is not None:
             self._roles[name]["description"] = description
+        self._persist()
         return dict(self._roles[name])
 
     def delete_role(self, name: str) -> None:
         if name in ROLE_HIERARCHY:
             raise ValueError(f"cannot delete built-in role: {name}")
         del self._roles[name]
+        self._persist()
 
     def list_roles(self) -> list[dict]:
         return [dict(r) for r in self._roles.values()]
@@ -354,7 +388,7 @@ class RoleRegistry:
         return json.dumps({"roles": self.list_roles()}, sort_keys=True)
 
     @classmethod
-    def from_json(cls, text: str) -> "RoleRegistry":
+    def from_json(cls, text: str) -> RoleRegistry:
         data = json.loads(text)
         reg = cls()
         for role in data.get("roles", []):
@@ -367,16 +401,35 @@ class RoleRegistry:
 
 
 class UserStore:
-    """CRUD for users + JSON export round-trip (GAP-SEC-006)."""
+    """CRUD for users + JSON export round-trip (GAP-SEC-006, CP-03)."""
 
-    def __init__(self) -> None:
+    def __init__(self, storage_path: Path | str | None = None) -> None:
+        self.storage_path = Path(storage_path) if storage_path else None
         self._users: dict[str, User] = {}
+        if self.storage_path and self.storage_path.exists():
+            self._load_from_disk()
+
+    def _persist(self) -> None:
+        if not self.storage_path:
+            return
+        self.storage_path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = self.storage_path.with_suffix(".tmp")
+        tmp.write_text(self.export_json(), encoding="utf-8")
+        tmp.replace(self.storage_path)
+
+    def _load_from_disk(self) -> None:
+        if not self.storage_path or not self.storage_path.exists():
+            return
+        data = json.loads(self.storage_path.read_text(encoding="utf-8"))
+        for entry in data.get("users", []):
+            self._users[entry["user_id"]] = User.from_dict(entry)
 
     def create_user(self, user_id: str, roles: list[str], attributes: dict | None = None) -> User:
         if user_id in self._users:
             raise ValueError(f"user already exists: {user_id}")
         user = User(user_id=user_id, roles=list(roles), attributes=dict(attributes or {}))
         self._users[user_id] = user
+        self._persist()
         return user
 
     def get_user(self, user_id: str) -> User | None:
@@ -390,12 +443,14 @@ class UserStore:
             user.roles = list(roles)
         if attributes is not None:
             user.attributes = dict(attributes)
+        self._persist()
         return user
 
     def delete_user(self, user_id: str) -> None:
         if user_id not in self._users:
             raise KeyError(user_id)
         del self._users[user_id]
+        self._persist()
 
     def list_users(self) -> list[User]:
         return list(self._users.values())
@@ -404,7 +459,7 @@ class UserStore:
         return json.dumps({"users": [u.to_dict() for u in self._users.values()]}, sort_keys=True)
 
     @classmethod
-    def from_json(cls, text: str) -> "UserStore":
+    def from_json(cls, text: str) -> UserStore:
         store = cls()
         for entry in json.loads(text).get("users", []):
             store._users[entry["user_id"]] = User.from_dict(entry)

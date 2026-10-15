@@ -54,11 +54,12 @@ class RevokeTokenRequest(BaseModel):
 def build_security_router(
     signer: TokenSigner | None = None,
     revocation_store: TokenRevocationStore | None = None,
+    role_registry: RoleRegistry | None = None,
 ) -> APIRouter:
     router = APIRouter(prefix="/api/v1/security", tags=["security"])
     rev_store = revocation_store or global_revocation_store()
     active_signer = signer or TokenSigner(revocation_store=rev_store)
-    roles = RoleRegistry()
+    roles = role_registry or RoleRegistry()
 
     @router.post("/tokens/issue")
     async def issue_token(req: IssueTokenRequest) -> dict[str, Any]:

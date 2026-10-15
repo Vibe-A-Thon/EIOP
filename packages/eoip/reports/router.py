@@ -18,24 +18,26 @@ from eoip.reports.generator import (
     template_by_id,
 )
 from eoip.reports.schedule import ReportScheduleStore
+from eoip.reports.store import ReportArtifactStore
 
 
 def build_router(
     *,
     graph_store: Any = None,
     schedule_store: ReportScheduleStore | None = None,
+    artifact_store: ReportArtifactStore | None = None,
 ):
     """Construct the ``/api/v1/reports`` FastAPI router.
 
     ``graph_store`` is optional; when provided, report contexts are seeded
-    with live vertex/edge counts. The schedule store defaults to the on-disk
-    JSON store under ``EOIP_DATA_DIR``.
+    with live vertex/edge counts. The schedule and artifact stores default
+    to durable disk-backed stores under ``EOIP_DATA_DIR`` (CP-03, CP-25).
     """
     from fastapi import APIRouter, HTTPException, Query
 
     schedules = schedule_store or ReportScheduleStore()
+    artifacts = artifact_store or ReportArtifactStore()
     generator = ReportGenerator()
-    rendered_store: dict[str, Any] = {}
 
     router = APIRouter(prefix="/api/v1/reports", tags=["reports"])
 
@@ -109,7 +111,10 @@ def build_router(
                 generated_at=generated_at,
                 allow_external_formats=allow_ext,
             )
-            rendered_store[report.report_id] = report
+            if hasattr(artifacts, "put"):
+                artifacts.put(report)
+            elif isinstance(artifacts, dict):
+                artifacts[report.report_id] = report
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
         except ImportError as exc:
@@ -119,9 +124,13 @@ def build_router(
     @router.get("/export/{report_id}")
     def export_report(report_id: str, report_format: str | None = Query(default=None)):
         import base64
+
         from fastapi.responses import Response
 
-        report = rendered_store.get(report_id)
+        if hasattr(artifacts, "get") or isinstance(artifacts, dict):
+            report = artifacts.get(report_id)
+        else:
+            report = None
         if report is None:
             raise HTTPException(
                 status_code=404,

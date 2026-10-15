@@ -13,7 +13,9 @@ behavior is not configurable here by design.
 
 from __future__ import annotations
 
+import json
 from enum import Enum
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -185,27 +187,59 @@ class ThemePackage(BaseModel):
 
 
 class ThemeRegistry:
-    """Resolves the active theme package for a tenant (SR-WL-001).
+    """Resolves the active theme package for a tenant (SR-WL-001, CP-03).
 
     Lookup order: tenant-specific theme id → platform default theme.
     """
 
-    def __init__(self, default_theme: ThemePackage | None = None):
+    def __init__(
+        self,
+        default_theme: ThemePackage | None = None,
+        storage_path: Path | str | None = None,
+    ):
+        self.storage_path = Path(storage_path) if storage_path else None
         self._themes: dict[str, ThemePackage] = {}
         self._tenant_theme: dict[str, str] = {}
         self._default_id: str | None = None
         if default_theme is not None:
-            self.register(default_theme, default=True)
+            self.register(default_theme, default=True, persist=False)
+        if self.storage_path and self.storage_path.exists():
+            self._load_from_disk()
 
-    def register(self, theme: ThemePackage, *, default: bool = False) -> None:
+    def _persist(self) -> None:
+        if not self.storage_path:
+            return
+        self.storage_path.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "default_id": self._default_id,
+            "tenant_theme": self._tenant_theme,
+            "themes": {k: v.model_dump(mode="json") for k, v in self._themes.items()},
+        }
+        tmp = self.storage_path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        tmp.replace(self.storage_path)
+
+    def _load_from_disk(self) -> None:
+        if not self.storage_path or not self.storage_path.exists():
+            return
+        data = json.loads(self.storage_path.read_text(encoding="utf-8"))
+        self._default_id = data.get("default_id", self._default_id)
+        self._tenant_theme.update(data.get("tenant_theme", {}))
+        for tid, tdict in data.get("themes", {}).items():
+            self._themes[tid] = ThemePackage.model_validate(tdict)
+
+    def register(self, theme: ThemePackage, *, default: bool = False, persist: bool = True) -> None:
         self._themes[theme.id] = theme
         if default or self._default_id is None:
             self._default_id = theme.id
+        if persist:
+            self._persist()
 
     def assign(self, tenant_id: str, theme_id: str) -> None:
         if theme_id not in self._themes:
             raise KeyError(f"unknown theme {theme_id}")
         self._tenant_theme[tenant_id] = theme_id
+        self._persist()
 
     def resolve(self, tenant_id: str | None = None, mode: ThemeMode = ThemeMode.LIGHT) -> ThemePackage:
         """Resolve the effective theme for a tenant (or the platform default)."""

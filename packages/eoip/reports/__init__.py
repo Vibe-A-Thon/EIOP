@@ -23,12 +23,14 @@ from eoip.reports.schedule import (
     ReportScheduleStore,
     next_run_after,
 )
+from eoip.reports.store import ReportArtifactStore
 
 __all__ = [
     "BUILTIN_TEMPLATES",
     "EXTERNAL_FORMATS",
     "SUPPORTED_FORMATS",
     "RenderedReport",
+    "ReportArtifactStore",
     "ReportContext",
     "ReportGenerator",
     "ReportParameter",

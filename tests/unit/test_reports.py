@@ -300,3 +300,33 @@ class TestReportsRouter:
         client = _client(tmp_path)
         resp = client.get("/api/v1/reports/export/urn:eoip:reports:report:missing")
         assert resp.status_code == 404
+
+    def test_report_artifact_store_persistence_and_reload(self, tmp_path: Path):
+        from eoip.reports.store import ReportArtifactStore
+        from eoip.reports.generator import RenderedReport
+
+        store1 = ReportArtifactStore(tmp_path / "reports")
+        rep = RenderedReport(
+            report_id="urn:eoip:reports:report:rep-1",
+            template="executive-brief",
+            title="Durable Report",
+            format="markdown",
+            generated_at="2026-10-14T12:00:00Z",
+            content="# Durable Content",
+        )
+        store1.put(rep)
+        assert (tmp_path / "reports" / "index.json").exists()
+
+        # Reload in a fresh store instance
+        store2 = ReportArtifactStore(tmp_path / "reports")
+        loaded = store2.get("urn:eoip:reports:report:rep-1")
+        assert loaded is not None
+        assert loaded.title == "Durable Report"
+        assert loaded.content == "# Durable Content"
+        assert len(store2.list()) == 1
+
+        # Delete
+        assert store2.delete("urn:eoip:reports:report:rep-1") is True
+        store3 = ReportArtifactStore(tmp_path / "reports")
+        assert store3.get("urn:eoip:reports:report:rep-1") is None
+

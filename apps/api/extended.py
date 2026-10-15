@@ -45,7 +45,7 @@ from eoip.catalog.products import (
 from eoip.ci import KGCIPipeline
 from eoip.ci.pipeline import FAIL_ON_CHOICES
 from eoip.compliance.router import build_router as build_compliance_router
-from eoip.config.layered import ConfigStore, FeatureFlagStore
+from eoip.config.layered import ConfigStore, FeatureFlagStore, FileConfigPersistence
 from eoip.config.router import build_router as build_config_router
 from eoip.contracts.query_plan import QueryPlan
 from eoip.egress.gateway import EgressGateway
@@ -167,11 +167,13 @@ class ExtendedState:
         self._init_sr_wave(Path(os.getenv("EOIP_DATA_DIR", ".data")), store)
 
     def _init_pass2(self, data_dir: Path) -> None:
-        # -- AuthN / AuthZ (GAP-SEC-001..006) --------------------------------
+        state_dir = data_dir / "state"
+        state_dir.mkdir(parents=True, exist_ok=True)
+        # -- AuthN / AuthZ (GAP-SEC-001..006, CP-03) ------------------------
         self.identity_provider = LocalIdentityProvider()
         self.token_service = TokenService()
-        self.role_registry = RoleRegistry()
-        self.user_store = UserStore()
+        self.role_registry = RoleRegistry(storage_path=state_dir / "roles.json")
+        self.user_store = UserStore(storage_path=state_dir / "users.json")
         self.policy_enforcer = PolicyEnforcer()
         self.policy_enforcer.load_yaml(_DEFAULT_POLICY_YAML)
         self.decision_log: list[dict] = []
@@ -263,9 +265,13 @@ class ExtendedState:
             )
         self.usage_meter = UsageMeter(data_dir / "meter")
 
-        # Layered config (SR-CFG-001..006): typed, layered, audited settings
-        # plus feature flags. In-memory persistence; export/import as code.
-        self.config_store = ConfigStore()
+        state_dir = data_dir / "state"
+        state_dir.mkdir(parents=True, exist_ok=True)
+        # Layered config (SR-CFG-001..006, CP-03): typed, layered, audited settings
+        # plus feature flags. Disk-backed atomic persistence via FileConfigPersistence.
+        self.config_store = ConfigStore(
+            persistence=FileConfigPersistence(state_dir / "config.json")
+        )
         self.feature_flags = FeatureFlagStore(self.config_store)
 
         # Egress gateway (SR-LLM-010..020, SR-CON-010/011): single policy-gated
@@ -274,14 +280,15 @@ class ExtendedState:
         # consent; dry-run calls still exercise policy + manifests + canaries.
         self.egress_gateway = EgressGateway(tenant_id="platform-default")
 
-        # Branding (SR-WL-001/003/004-partial/006/007, SR-ONT-007): default
+        # Branding (SR-WL-001/003/004-partial/006/007, SR-ONT-007, CP-03): default
         # theme, terminology, localization and legal-content registries.
         self.branding_themes = ThemeRegistry(
             default_theme=ThemePackage(
                 id="urn:eoip:branding:theme:eoip-default",
                 name="EOIP Default",
                 app_name="EOIP",
-            )
+            ),
+            storage_path=state_dir / "themes.json",
         )
         self.branding_terminology = TerminologyRegistry()
         self.branding_locales = LocalizationRegistry()
@@ -1472,7 +1479,7 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
 
     # Enterprise Security routes (GAP-SEC-008..012)
     from eoip.authz.security_router import build_security_router
-    router.include_router(build_security_router())
+    router.include_router(build_security_router(role_registry=state.role_registry))
 
     return router, state
 

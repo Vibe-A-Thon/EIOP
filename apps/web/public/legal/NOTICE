@@ -1,0 +1,12 @@
+EOIP / KnowGridFlow Web Application
+Copyright (c) 2026 Avyukthi AI and Murthy Ravinder kumar.
+See LICENSE in this directory for the first-party proprietary module notice.
+
+This application uses third-party components. Those components retain their
+original licenses and are not owned or relicensed by this notice.
+
+This is a preliminary boundary notice, not the final component-specific
+attribution/license bundle. A distributor must include all required upstream
+licenses/notices for the actual bundled JavaScript, fonts and other assets
+before external release. The repository's THIRD_PARTY_NOTICES.md and
+licenses/RELEASE-CHECKLIST.md track the unresolved preparation work.

@@ -51,6 +51,7 @@ import uuid
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from datetime import UTC
+from pathlib import Path
 from typing import Any, Literal, Protocol
 
 import jsonschema
@@ -311,6 +312,26 @@ class MemoryPersistence:
         return json.loads(json.dumps(self._snapshot))
 
 
+class FileConfigPersistence:
+    """Atomic filesystem persistence for layered configuration (CP-03)."""
+
+    def __init__(self, path: Path | str) -> None:
+        self.path = Path(path)
+
+    def save_snapshot(self, snapshot: dict[str, Any]) -> None:
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = self.path.with_suffix(".tmp")
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(snapshot, f, indent=2)
+        tmp.replace(self.path)
+
+    def load_snapshot(self) -> dict[str, Any]:
+        if not self.path.exists():
+            return {}
+        with open(self.path, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+
 # ---------------------------------------------------------------------------
 # Store
 # ---------------------------------------------------------------------------
@@ -335,13 +356,20 @@ def _utcnow() -> str:
 class ConfigStore:
     """Layered, typed, versioned, audited configuration store."""
 
-    def __init__(self, persistence: ConfigPersistence | None = None) -> None:
+    def __init__(
+        self,
+        persistence: ConfigPersistence | None = None,
+        *,
+        auto_restore: bool = True,
+    ) -> None:
         self._settings: dict[str, _SettingState] = {}
         self._flags: dict[str, FeatureFlag] = {}
         self._flag_changes: list[dict[str, Any]] = []
         self._persistence = persistence or MemoryPersistence()
         self._lock = threading.RLock()
         self._subscribers: dict[str, list[Callable[[EffectiveSetting], None]]] = {}
+        if auto_restore and persistence is not None:
+            self.restore()
 
     # -- setting definitions -------------------------------------------
 
@@ -682,10 +710,15 @@ class FeatureFlagStore:
     def __init__(self, config_store: ConfigStore | None = None) -> None:
         self._config = config_store
         self._flags: dict[str, FeatureFlag] = {}
+        if config_store and hasattr(config_store, "_flags") and config_store._flags:
+            self._flags.update(config_store._flags)
         self._changes: list[dict[str, Any]] = []
 
     def register(self, flag: FeatureFlag) -> None:
         self._flags[flag.key] = flag
+        if self._config is not None:
+            self._config._flags[flag.key] = flag
+            self._config._persist()
 
     def set(self, key: str, enabled: bool, *, actor: str = "system") -> FeatureFlag:
         flag = self._flags[key]
@@ -693,6 +726,9 @@ class FeatureFlagStore:
             {"key": key, "old": flag.enabled, "new": enabled, "actor": actor, "at": _utcnow()}
         )
         flag.enabled = enabled
+        if self._config is not None:
+            self._config._flags[key] = flag
+            self._config._persist()
         return flag
 
     def get(self, key: str) -> FeatureFlag:

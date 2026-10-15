@@ -5,6 +5,8 @@ WORKDIR /opt/eoip
 COPY requirements.lock requirements-fileparse.lock ./
 RUN pip install --no-cache-dir -r requirements.lock -r requirements-fileparse.lock
 COPY pyproject.toml ./
+COPY LICENSE NOTICE LICENSING.md THIRD_PARTY_NOTICES.md ./
+COPY licenses ./licenses
 COPY packages ./packages
 RUN pip install --no-cache-dir --no-deps .
 COPY apps ./apps

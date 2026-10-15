@@ -1,0 +1,24 @@
+EOIP PROPRIETARY MODULE NOTICE
+Identifier: LicenseRef-EOIP-Proprietary
+Copyright (c) 2026 Avyukthi AI and Murthy Ravinder kumar.
+All rights reserved in their original material.
+
+Original EOIP VS Code extension code owned by these rights holders is
+proprietary. It may be used or distributed only under an applicable written
+commercial agreement, an existing valid license, or rights permitted by
+applicable law. This notice does not itself grant a public license.
+
+Third-party libraries, assets and other separately licensed material remain
+subject to their own licenses. This notice does not claim ownership of that
+material, limit rights granted by its licenses, or establish compatibility of
+any combined distribution. Preserve required upstream licenses and notices.
+Earlier valid license grants are not revoked.
+
+The repository's root LICENSE contains the full first-party proprietary notice.
+Commercial terms must be completed and executed with an authorized licensor;
+unexecuted templates are not license grants. npm metadata "UNLICENSED" means
+no public license grant, not public domain or absence of commercial licensing.
+
+Distributors must include the applicable first-party notice and a complete
+artifact-specific third-party notice/license bundle. This module notice alone
+does not satisfy third-party attribution or source-delivery obligations.
