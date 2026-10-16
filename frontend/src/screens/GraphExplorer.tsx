@@ -289,12 +289,20 @@ export function GraphExplorer() {
           <span>{nodes.length} nodes</span>
           <span className="text-[var(--text-muted)]">·</span>
           <span>{visibleEdges.length} edges</span>
+          {meta.partial && (
+            <>
+              <span className="text-[var(--text-muted)]">·</span>
+              <span className="text-amber-400" title="Server returned a depth/limit-bounded subgraph">
+                bounded
+              </span>
+            </>
+          )}
         </div>
 
-        {/* Partial banner */}
-        {(meta.partial || (meta.warnings && meta.warnings.length > 0)) && (
+        {/* Warnings banner (only when the server reports explicit warnings) */}
+        {meta.warnings && meta.warnings.length > 0 && (
           <div className="absolute bottom-4 left-4 right-4 max-w-md">
-            <ResultBanner partial={meta.partial} warnings={meta.warnings} />
+            <ResultBanner warnings={meta.warnings} />
           </div>
         )}
 
