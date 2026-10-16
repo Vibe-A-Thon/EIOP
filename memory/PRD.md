@@ -49,11 +49,20 @@ with best-in-class graphics, transitions, animations, icons, and modular screens
 - **Schema**: ontology/schema versions, domains, vertex/edge label tables with instance counts + search.
 - **Command palette** (⌘K): live entity search + navigation.
 
+## Implemented (2026-06, iteration 2) — verified by testing agent at 100%
+- **Narrated streamed answers (Ask)**: Answer-mode toggle (Deterministic | Narrated). Narrated mode runs
+  `/query/nl` for grounding (matched entities + numbered "Grounding evidence" with hover) and streams a
+  live narration from `/brain/llm/stream` (SSE over POST) with a Stop button, client-side pacing, and
+  "Simulated (not model inference)" badge + footnote (deployment model is the simulator).
+- **Impact Paths (Graph Explorer)**: Explore | Impact-paths mode. Pick source + target entities, trace via
+  `/graph/shortest-paths`; renders a path subgraph + a paths-list panel (sequence chips → inspector).
+- **Saved Views (Graph Explorer)**: Save/open/delete named views (seeds + lens + fact filters) in
+  localStorage, namespaced `{principal, tenant, workspace}`, labeled "Saved on this device only".
+- **Ingestion Console (/ingestion)**: tabs — Ingestion runs (`/ingestion/runs`), Jobs (`/admin/jobs`,
+  cancel/readmit), Sources (`/sources` + 16-connector catalog from `/connectors/catalog`), DLQ (`/admin/dlq`).
+
 ## Prioritized backlog (next)
-- P1: Streamed/narrated answers in Ask via `/brain/llm/stream` (SSE) when a local model is available
-  (currently model `disabled`); graceful "Stream interrupted — regenerate".
-- P1: Paths & shortest-paths lens in Graph Explorer; saved views (Dexie, device-local per GUI-BE-030).
-- P1: SCR-017 Jobs, SCR-014 Sources, SCR-015 Ingestion (admin/steward path).
+- P1: Paths within-context overlay (highlight path on the full neighborhood, not only a path subgraph).
 - P2: Reports (SCR-019), Governance/Security (SCR-021), Tenant admin (SCR-022), Health (SCR-024).
 - P2: Full WCAG 2.2 AA audit (axe), ICU string externalization, screen-reader transcripts.
 - P2: Replace react-router-dom with TanStack Router for typed deep links `/t/:tenant/w/:workspace/...`.

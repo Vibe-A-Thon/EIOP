@@ -91,11 +91,14 @@ export function Ask() {
     setStreaming(true);
     setIsSimulation(false);
     const prompt = `Using the enterprise knowledge graph, answer the question with a concise, evidence-grounded explanation.\nQuestion: ${query}`;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     try {
       for await (const chunk of streamSSE("/brain/llm/stream", { prompt, max_tokens: 256, enable_xai: true }, ctrl.signal)) {
         if (chunk?.usage?.is_simulation) setIsSimulation(true);
         if (chunk?.accumulated) setNarration(chunk.accumulated);
         else if (chunk?.delta) setNarration((prev) => prev + chunk.delta);
+        // Pace the simulator's near-instant stream so the live typing + Stop are visible.
+        if (!reduceMotion) await new Promise((r) => setTimeout(r, 14));
       }
       setStreaming(false);
     } catch (err: any) {
