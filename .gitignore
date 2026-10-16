@@ -90,3 +90,8 @@ Desktop.ini
 *.swp
 *.swo
 *~
+*.env
+credentials.json
+*.pem
+*.key
+.credentials
