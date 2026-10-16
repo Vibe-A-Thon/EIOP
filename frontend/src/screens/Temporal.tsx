@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   History, Clock, GitCompareArrows, PlayCircle, Search, Loader2, Camera, RotateCcw, Trash2,
@@ -13,6 +13,7 @@ import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Page, PageHeader } from "../components/ui/Page";
 import { EmptyState } from "../components/ui/States";
+import { TimelineScrubber, type TimelineEvent } from "../components/TimelineScrubber";
 import { shortId, relativeTime, cn } from "../lib/utils";
 
 type Mode = "asof" | "compare" | "playback";
@@ -24,6 +25,7 @@ const MODES: { id: Mode; label: string; icon: any }[] = [
 
 const nowLocal = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 const toISO = (local: string) => { try { return new Date(local).toISOString(); } catch { return ""; } };
+const isoToLocal = (iso: string) => { try { const d = new Date(iso); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); } catch { return nowLocal(); } };
 
 export function Temporal() {
   const { session } = useAuth();
@@ -54,6 +56,31 @@ export function Temporal() {
   // Snapshots
   const snapshots = useQuery({ queryKey: [session?.tenant, "snapshots-temporal"], queryFn: () => apiFetch<any>("/enterprise/snapshots"), retry: false });
   const snapList: any[] = snapshots.data?.snapshots || [];
+
+  // Change-count timeline — real graph-shift events from ingestion runs (+ journal if present).
+  const runs = useQuery({ queryKey: [session?.tenant, "ingestion-runs-timeline"], queryFn: () => apiFetch<any>("/ingestion/runs?limit=100"), retry: false });
+  const journal = useQuery({ queryKey: [session?.tenant, "admin-timeline"], queryFn: () => apiFetch<any>("/admin/timeline?limit=200"), retry: false });
+  const timelineEvents: TimelineEvent[] = useMemo(() => {
+    const out: TimelineEvent[] = [];
+    const runList: any[] = Array.isArray(runs.data) ? runs.data : runs.data?.runs || [];
+    runList.forEach((r) => {
+      const iso = r.started_at || r.finished_at;
+      if (!iso) return;
+      const t = new Date(iso).getTime();
+      if (!Number.isFinite(t)) return;
+      const c = r.counts || {};
+      out.push({ iso, t, changes: (c.vertices || 0) + (c.edges || 0) || 1, label: r.run_kind || r.source_system || "ingestion", status: r.run_status });
+    });
+    const jList: any[] = Array.isArray(journal.data) ? journal.data : journal.data?.events || journal.data?.entries || [];
+    jList.forEach((e) => {
+      const iso = e.timestamp || e.at || e.created_at || e.occurred_at;
+      if (!iso) return;
+      const t = new Date(iso).getTime();
+      if (!Number.isFinite(t)) return;
+      out.push({ iso, t, changes: e.count || e.changes || 1, label: e.type || e.kind || "event", status: e.status });
+    });
+    return out.sort((a, b) => a.t - b.t);
+  }, [runs.data, journal.data]);
   const [snapName, setSnapName] = useState("");
   const [snapBusy, setSnapBusy] = useState(false);
   const [confirmRestore, setConfirmRestore] = useState<any | null>(null);
@@ -142,6 +169,21 @@ export function Temporal() {
           </button>
         ))}
       </div>
+
+      {/* Change-count histogram scrubber (SCR-010 TimelineScrubber) */}
+      {(mode === "asof" || mode === "compare") && (
+        <Card className="p-4">
+          <TimelineScrubber
+            events={timelineEvents}
+            mode={mode}
+            valueIso={toISO(validAt)}
+            fromIso={toISO(fromAt)}
+            toIso={toISO(toAt)}
+            onPick={(iso) => setValidAt(isoToLocal(iso))}
+            onRange={(f, t) => { setFromAt(isoToLocal(f)); setToAt(isoToLocal(t)); }}
+          />
+        </Card>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
