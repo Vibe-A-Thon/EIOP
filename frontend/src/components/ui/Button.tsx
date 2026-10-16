@@ -12,14 +12,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-[var(--accent)] text-black font-semibold hover:bg-[var(--accent-strong)] border border-transparent",
+    "bg-[var(--accent)] text-black font-semibold hover:bg-[var(--accent-strong)] border border-transparent shadow-[0_2px_12px_-4px_var(--accent)] hover:shadow-[0_4px_18px_-4px_var(--accent)]",
   secondary:
     "bg-[var(--bg-panel)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] border border-[var(--border-subtle)] hover:border-[var(--border-strong)]",
   outline:
     "bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-hover)] border border-[var(--border-strong)]",
   ghost: "bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] border border-transparent",
   danger:
-    "bg-[var(--danger)] text-white font-semibold hover:brightness-110 border border-transparent",
+    "bg-[var(--danger)] text-white font-semibold hover:brightness-110 border border-transparent shadow-[0_2px_12px_-4px_var(--danger)]",
 };
 
 const sizes: Record<Size, string> = {
@@ -33,7 +33,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     <button
       ref={ref}
       className={cn(
-        "inline-flex items-center rounded-sm font-body transition-colors duration-150 focus-ring disabled:opacity-40 disabled:cursor-not-allowed select-none",
+        "inline-flex items-center rounded-sm font-body transition-[background-color,border-color,box-shadow,transform,color,filter] duration-150 ease-out focus-ring select-none",
+        "active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 disabled:shadow-none",
         variants[variant],
         sizes[size],
         className,

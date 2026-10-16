@@ -1,3 +1,16 @@
 {
-  "schedules": []
+  "schedules": [
+    {
+      "created_by": "bootstrap-admin",
+      "enabled": true,
+      "last_run_at": null,
+      "name": "Weekly Impact Digest",
+      "params": {},
+      "recurrence": "weekly",
+      "report_format": "json",
+      "schedule_id": "urn:eoip:reports:schedule:d13b6c0a5c30",
+      "template_id": "impact-assessment",
+      "tenant_id": "default"
+    }
+  ]
 }

@@ -89,8 +89,10 @@ export function MetaGraph() {
     const el = schema.data?.edge_labels || {};
     const pairMap = new Map<string, { from: string; to: string; types: Set<string> }>();
     Object.entries(el).forEach(([etype, meta]: any) => {
-      const srcs: string[] = meta.source_labels?.length ? meta.source_labels : [...present];
-      const tgts: string[] = meta.target_labels?.length ? meta.target_labels : [...present];
+      const srcs: string[] = meta.source_labels || [];
+      const tgts: string[] = meta.target_labels || [];
+      // Only draw edges with explicitly declared endpoints (avoids an all-pairs hairball).
+      if (!srcs.length || !tgts.length) return;
       srcs.forEach((s) => tgts.forEach((t) => {
         if (!present.has(s) || !present.has(t)) return;
         const key = `${s}→${t}`;

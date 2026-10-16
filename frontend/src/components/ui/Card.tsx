@@ -1,11 +1,19 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "../../lib/utils";
 
-export function Card({ className, children, ...props }: HTMLAttributes<HTMLDivElement>) {
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  hover?: boolean;
+  glass?: boolean;
+}
+
+export function Card({ className, children, hover, glass, ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-md border border-[var(--border-subtle)] bg-[var(--bg-surface)]",
+        "rounded-md border border-[var(--border-subtle)] shadow-[0_1px_2px_-1px_hsl(var(--shadow-color)/0.4)]",
+        glass ? "bg-[var(--bg-surface)]/80 backdrop-blur-xl" : "bg-[var(--bg-surface)]",
+        hover &&
+          "transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:shadow-[0_8px_24px_-8px_hsl(var(--shadow-color)/0.6)]",
         className,
       )}
       {...props}

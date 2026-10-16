@@ -25,6 +25,7 @@
 
   --accent: #06b6d4;
   --accent-strong: #22d3ee;
+  --accent-ring: color-mix(in srgb, var(--accent) 22%, transparent);
 
   --success: #10b981;
   --info: #3b82f6;
@@ -104,6 +105,10 @@ body,
 body {
   margin: 0;
   background-color: var(--bg-void);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in srgb, var(--accent) 10%, transparent), transparent),
+    radial-gradient(ellipse 60% 50% at 100% 0%, color-mix(in srgb, var(--fact-inferred) 7%, transparent), transparent);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
@@ -171,6 +176,38 @@ body {
 .focus-ring:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* Inputs & selects: smooth, polished focus */
+input,
+select,
+textarea {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* Staggered list entrance */
+@keyframes kgf-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.kgf-stagger > * {
+  animation: kgf-rise 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.kgf-stagger > *:nth-child(1) { animation-delay: 0.02s; }
+.kgf-stagger > *:nth-child(2) { animation-delay: 0.06s; }
+.kgf-stagger > *:nth-child(3) { animation-delay: 0.1s; }
+.kgf-stagger > *:nth-child(4) { animation-delay: 0.14s; }
+.kgf-stagger > *:nth-child(5) { animation-delay: 0.18s; }
+.kgf-stagger > *:nth-child(6) { animation-delay: 0.22s; }
+
+.kgf-glass {
+  background: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  backdrop-filter: blur(16px);
 }
 
 [data-density="compact"] {

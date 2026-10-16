@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Network } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { apiFetch } from "../lib/api";
@@ -7,13 +8,23 @@ import { Card, Overline } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
 import { Page, PageHeader, Tabs } from "../components/ui/Page";
 import { EmptyState, ErrorState, LoadingState } from "../components/ui/States";
+import { OntologyDesigner } from "../components/OntologyDesigner";
 import { formatNumber } from "../lib/utils";
 
-type Tab = "overview" | "validation" | "drift" | "packs";
+type Tab = "overview" | "designer" | "validation" | "drift" | "packs";
 
 export function Ontology() {
   const { session } = useAuth();
-  const [tab, setTab] = useState<Tab>("overview");
+  const [params, setParams] = useSearchParams();
+  const [tab, setTab] = useState<Tab>((params.get("tab") as Tab) || "overview");
+
+  useEffect(() => {
+    const t = params.get("tab") as Tab;
+    if (t && t !== tab) setTab(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
+
+  const changeTab = (t: Tab) => { setTab(t); setParams(t === "overview" ? {} : { tab: t }, { replace: true }); };
 
   const schema = useQuery({ queryKey: [session?.tenant, "schema"], queryFn: () => apiFetch<any>("/graph/schema"), staleTime: 300_000 });
   const validate = useQuery({ queryKey: [session?.tenant, "ont-validate"], queryFn: () => apiFetch<any>("/ontology/validate?limit=50"), enabled: tab === "validation", retry: false });
@@ -26,23 +37,29 @@ export function Ontology() {
   return (
     <Page>
       <PageHeader title="Ontology" overline={`v${schema.data?.ontology_version ?? "—"} · schema v${schema.data?.schema_version ?? "—"}`} icon={<Network size={18} />} />
-      <Tabs testPrefix="ontology-tab" active={tab} onChange={setTab} tabs={[
-        { id: "overview", label: "Overview" }, { id: "validation", label: "Validation" }, { id: "drift", label: "Drift" }, { id: "packs", label: "Domain packs" },
+      <Tabs testPrefix="ontology-tab" active={tab} onChange={changeTab} tabs={[
+        { id: "overview", label: "Overview" }, { id: "designer", label: "Designer" }, { id: "validation", label: "Validation" }, { id: "drift", label: "Drift" }, { id: "packs", label: "Domain packs" },
       ]} />
 
       {tab === "overview" && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Card className="p-4"><Overline>Domains</Overline><p className="mt-1 font-heading text-2xl font-bold">{(schema.data?.domains || []).length}</p></Card>
-            <Card className="p-4"><Overline>Vertex labels</Overline><p className="mt-1 font-heading text-2xl font-bold">{formatNumber(Object.keys(schema.data?.vertex_labels || {}).length)}</p></Card>
-            <Card className="p-4"><Overline>Edge labels</Overline><p className="mt-1 font-heading text-2xl font-bold">{formatNumber(Object.keys(schema.data?.edge_labels || {}).length)}</p></Card>
-            <Card className="p-4"><Overline>Indexes</Overline><p className="mt-1 font-heading text-2xl font-bold">{(schema.data?.indexes || []).length}</p></Card>
+            <Card hover className="p-4"><Overline>Domains</Overline><p className="mt-1 font-heading text-2xl font-bold">{(schema.data?.domains || []).length}</p></Card>
+            <Card hover className="p-4"><Overline>Vertex labels</Overline><p className="mt-1 font-heading text-2xl font-bold">{formatNumber(Object.keys(schema.data?.vertex_labels || {}).length)}</p></Card>
+            <Card hover className="p-4"><Overline>Edge labels</Overline><p className="mt-1 font-heading text-2xl font-bold">{formatNumber(Object.keys(schema.data?.edge_labels || {}).length)}</p></Card>
+            <Card hover className="p-4"><Overline>Indexes</Overline><p className="mt-1 font-heading text-2xl font-bold">{(schema.data?.indexes || []).length}</p></Card>
           </div>
           <Card className="p-4">
             <Overline>Domains</Overline>
             <div className="mt-2 flex flex-wrap gap-1.5">{(schema.data?.domains || []).map((d: string) => <Badge key={d} tone="neutral">{d}</Badge>)}</div>
           </Card>
         </div>
+      )}
+
+      {tab === "designer" && (
+        schema.isLoading ? <LoadingState label="Loading ontology" />
+          : schema.error ? <ErrorState problem={schema.error} onRetry={schema.refetch} />
+          : <OntologyDesigner schema={schema.data} onRefetchSchema={() => schema.refetch()} />
       )}
 
       {tab === "validation" && (

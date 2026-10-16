@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "./lib/auth";
 import { AppShell } from "./shell/AppShell";
 import { SignIn } from "./screens/SignIn";
@@ -40,32 +41,42 @@ export default function App() {
 
   return (
     <AppShell>
-      <Routes>
-        <Route path="/" element={<Navigate to="/overview" replace />} />
-        <Route path="/overview" element={<Overview />} />
-        <Route path="/ask" element={<Ask />} />
-        <Route path="/graph" element={<GraphExplorer />} />
-        <Route path="/meta-graph" element={<MetaGraph />} />
-        <Route path="/entity/:id" element={<Entity360 />} />
-        <Route path="/query" element={<Query />} />
-        <Route path="/impact" element={<Impact />} />
-        <Route path="/changes" element={<Changes />} />
-        <Route path="/incidents" element={<Incidents />} />
-        <Route path="/ontology" element={<Ontology />} />
-        <Route path="/quality" element={<Quality />} />
-        <Route path="/snapshots" element={<Snapshots />} />
-        <Route path="/ingestion" element={<IngestionConsole />} />
-        <Route path="/agents" element={<Agents />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/health" element={<Health />} />
-        <Route path="/governance" element={<Governance />} />
-        <Route path="/tenant" element={<Tenant />} />
-        <Route path="/schema" element={<Schema />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/help" element={<Help />} />
-        <Route path="/signin" element={<Navigate to="/overview" replace />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Routes location={location}>
+            <Route path="/" element={<Navigate to="/overview" replace />} />
+            <Route path="/overview" element={<Overview />} />
+            <Route path="/ask" element={<Ask />} />
+            <Route path="/graph" element={<GraphExplorer />} />
+            <Route path="/meta-graph" element={<MetaGraph />} />
+            <Route path="/entity/:id" element={<Entity360 />} />
+            <Route path="/query" element={<Query />} />
+            <Route path="/impact" element={<Impact />} />
+            <Route path="/changes" element={<Changes />} />
+            <Route path="/incidents" element={<Incidents />} />
+            <Route path="/ontology" element={<Ontology />} />
+            <Route path="/quality" element={<Quality />} />
+            <Route path="/snapshots" element={<Snapshots />} />
+            <Route path="/ingestion" element={<IngestionConsole />} />
+            <Route path="/agents" element={<Agents />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/health" element={<Health />} />
+            <Route path="/governance" element={<Governance />} />
+            <Route path="/tenant" element={<Tenant />} />
+            <Route path="/schema" element={<Schema />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/signin" element={<Navigate to="/overview" replace />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </motion.div>
+      </AnimatePresence>
     </AppShell>
   );
 }

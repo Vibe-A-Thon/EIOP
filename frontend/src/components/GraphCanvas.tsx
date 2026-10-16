@@ -41,6 +41,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, Props>(function GraphCa
   ref,
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   const sigmaRef = useRef<Sigma | null>(null);
   const graphRef = useRef<any>(null);
 
@@ -99,6 +100,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, Props>(function GraphCa
         size: 6,
         color,
         _baseColor: color,
+        _domain: n.domain,
       });
     });
     edges.forEach((e) => {
@@ -144,12 +146,28 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, Props>(function GraphCa
     });
 
     renderer.on("clickNode", ({ node }) => onSelect(node));
-    renderer.on("enterNode", () => {
+    renderer.on("enterNode", ({ node, event }) => {
       if (containerRef.current) containerRef.current.style.cursor = "pointer";
+      const tip = tooltipRef.current;
+      if (!tip) return;
+      const a = graph.getNodeAttributes(node);
+      const dom = a._domain ? `<span style="color:${a._baseColor}">●</span> ${a._domain}` : "";
+      tip.innerHTML = `<div style="font-weight:600">${a.label ?? node}</div>${dom ? `<div style="opacity:.7;font-size:10px;margin-top:2px">${dom}</div>` : ""}`;
+      tip.style.opacity = "1";
+      tip.style.transform = "translateY(0) scale(1)";
+      if (event) { tip.style.left = `${event.x + 14}px`; tip.style.top = `${event.y + 12}px`; }
     });
     renderer.on("leaveNode", () => {
       if (containerRef.current) containerRef.current.style.cursor = "default";
+      if (tooltipRef.current) { tooltipRef.current.style.opacity = "0"; tooltipRef.current.style.transform = "translateY(4px) scale(0.98)"; }
     });
+
+    // Smooth camera entrance (zoom-in from slightly out).
+    if (!reduce && nodes.length > 1) {
+      const cam = renderer.getCamera();
+      cam.setState({ ...cam.getState(), ratio: 1.7 });
+      requestAnimationFrame(() => cam.animate({ ratio: 1 }, { duration: 650, easing: "cubicInOut" }));
+    }
 
     sigmaRef.current = renderer;
     graphRef.current = graph;
@@ -202,5 +220,14 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, Props>(function GraphCa
     renderer.refresh();
   }, [selectedId, highlightNodes, highlightEdges]);
 
-  return <div ref={containerRef} className="h-full w-full" data-testid="graph-canvas" />;
+  return (
+    <div className="relative h-full w-full">
+      <div ref={containerRef} className="h-full w-full" data-testid="graph-canvas" />
+      <div
+        ref={tooltipRef}
+        className="pointer-events-none absolute z-30 max-w-[200px] rounded-md border border-[var(--border-strong)] bg-[var(--bg-panel)]/95 px-2.5 py-1.5 text-xs text-[var(--text-primary)] shadow-2xl backdrop-blur-sm"
+        style={{ opacity: 0, transform: "translateY(4px) scale(0.98)", transition: "opacity .15s ease, transform .15s ease", left: 0, top: 0 }}
+      />
+    </div>
+  );
 });
