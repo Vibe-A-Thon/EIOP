@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.699149Z",
+  "event_id": "9bf29afe1eaa290c3712b29e2f5e06e60d2e516cde430e160dfb6e4665966d3a",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "fd858800bc098a8540b70431efec14adca057f45",
+    "message": "changes for graph - GDS"
+  },
+  "payload_hash": "00dd408696617a77765579cd47ac16ec178446cba60b433f257f10c251328c91",
+  "schema_version": "1.0",
+  "source_record_id": "demo:fd858800bc098a8540b70431efec14adca057f45",
+  "source_system": "git",
+  "source_version": "00dd408696617a77765579cd47ac16ec178446cba60b433f257f10c251328c91"
+}

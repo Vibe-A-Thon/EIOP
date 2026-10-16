@@ -1,0 +1,62 @@
+{
+  "captured_at": "2026-10-16T09:09:08.009443Z",
+  "event_id": "ac79e1025513d2e720433650614caba7f6978cf0dcc0c57388fbae31034c8ae0",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "KYC Engine"
+        }
+      ],
+      "created": "2026-10-01T09:00:00.000+0000",
+      "customfield_10014": "EPC-204",
+      "customfield_10015": "Identity & Compliance",
+      "description": "Automated document verification pipeline for KYC. Includes OCR extraction, document authenticity checks, liveness detection, and sanctions screening integration.",
+      "fixVersions": [
+        {
+          "name": "2027.Q1-IdentityPlatform"
+        }
+      ],
+      "issuetype": {
+        "name": "Epic"
+      },
+      "labels": [
+        "kyc",
+        "identity-verification",
+        "compliance"
+      ],
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection Platform"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "To Do"
+      },
+      "story_points": 21,
+      "summary": "KYC Document Verification Pipeline",
+      "updated": "2026-10-03T10:00:00.000+0000"
+    },
+    "key": "FRD-400"
+  },
+  "payload_hash": "f8978ca12147926fbde651f4424185090f9c40476d34c63c7388a61ede0295f5",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-400",
+  "source_system": "jira",
+  "source_version": "f8978ca12147926fbde651f4424185090f9c40476d34c63c7388a61ede0295f5"
+}

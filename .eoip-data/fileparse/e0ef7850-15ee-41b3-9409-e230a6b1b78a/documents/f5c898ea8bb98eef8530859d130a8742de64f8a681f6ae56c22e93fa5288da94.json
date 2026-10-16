@@ -1,0 +1,28 @@
+{
+  "document_id": "urn:eoip:knowledge:document:file:f5c898ea8bb98eef8530859d130a8742de64f8a681f6ae56c22e93fa5288da94",
+  "source_id": "demo_corpus",
+  "source_name": "service.py.txt",
+  "source_uri": "fixture://demo/demodata/core/demo-repo/service.py",
+  "parent_id": null,
+  "content_hash": "a58fabe873b1cc9980b691a9b8a8a1260fd5917b376570b4a19c279ee832eb1f",
+  "size_bytes": 188,
+  "format": "txt",
+  "media_type": "text/plain",
+  "parser_version": "fileparse/1.0",
+  "title": "service.py.txt",
+  "sections": [
+    {
+      "index": 0,
+      "kind": "text",
+      "text": "\"\"\"EOIP-1: Trace requirements to a bounded impact calculation.\"\"\"\nimport math\n\n\ndef normalize(value):\n    return math.floor(value)\n\n\ndef compute_impact(value):\n    return normalize(value)\n",
+      "locator": {
+        "line_start": 1,
+        "line_end": 10
+      }
+    }
+  ],
+  "tables": [],
+  "data": null,
+  "metadata": {},
+  "warnings": []
+}

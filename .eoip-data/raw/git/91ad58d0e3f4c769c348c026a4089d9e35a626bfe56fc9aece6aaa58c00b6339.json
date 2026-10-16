@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.657428Z",
+  "event_id": "91ad58d0e3f4c769c348c026a4089d9e35a626bfe56fc9aece6aaa58c00b6339",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "14ed009e8bae8d6adab101164c5603c83d9ae3d6",
+    "message": "audit scratching the repo"
+  },
+  "payload_hash": "c6be54d21a8b4a94205193a65fa2f477131ddd9f6f3c7b3596f4258fd003960a",
+  "schema_version": "1.0",
+  "source_record_id": "demo:14ed009e8bae8d6adab101164c5603c83d9ae3d6",
+  "source_system": "git",
+  "source_version": "c6be54d21a8b4a94205193a65fa2f477131ddd9f6f3c7b3596f4258fd003960a"
+}

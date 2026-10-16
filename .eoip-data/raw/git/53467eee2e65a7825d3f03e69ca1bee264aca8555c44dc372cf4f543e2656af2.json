@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.666787Z",
+  "event_id": "53467eee2e65a7825d3f03e69ca1bee264aca8555c44dc372cf4f543e2656af2",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "d6534dc9e36086611a9b7dc2bbbffee50af8378d",
+    "message": "changes for p4-2 enhancements for intelligence and AI"
+  },
+  "payload_hash": "1b3f1d49ce2ca81ef5093a98836564591b72aa725a1862b5d9c93c4d1f436cfe",
+  "schema_version": "1.0",
+  "source_record_id": "demo:d6534dc9e36086611a9b7dc2bbbffee50af8378d",
+  "source_system": "git",
+  "source_version": "1b3f1d49ce2ca81ef5093a98836564591b72aa725a1862b5d9c93c4d1f436cfe"
+}

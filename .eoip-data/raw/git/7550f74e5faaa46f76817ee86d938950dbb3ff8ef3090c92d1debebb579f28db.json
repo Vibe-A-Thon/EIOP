@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.637320Z",
+  "event_id": "7550f74e5faaa46f76817ee86d938950dbb3ff8ef3090c92d1debebb579f28db",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "df8223be9ecd0bd4d5871565a345079acd8b0d4e",
+    "message": "implementation plan changes for gaps-audit-cp"
+  },
+  "payload_hash": "bddbde40356aa52e5d8a487772a906dabc83fdeb67307507970aab4206cf1ff4",
+  "schema_version": "1.0",
+  "source_record_id": "demo:df8223be9ecd0bd4d5871565a345079acd8b0d4e",
+  "source_system": "git",
+  "source_version": "bddbde40356aa52e5d8a487772a906dabc83fdeb67307507970aab4206cf1ff4"
+}

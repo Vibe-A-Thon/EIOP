@@ -1,0 +1,14 @@
+{
+  "captured_at": "2026-10-16T09:09:06.595259Z",
+  "event_id": "e4f7634b6fe43a4a612964175f974f4be9c4fe2705e01b9e5b9ca8fc4940b1bb",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "repo_id": "demo"
+  },
+  "payload_hash": "7795d60031f8fc02fcc394f008e18f4bee6c6afcf8f31110eb838efb083a86c8",
+  "schema_version": "1.0",
+  "source_record_id": "demo:repo",
+  "source_system": "git",
+  "source_version": "7795d60031f8fc02fcc394f008e18f4bee6c6afcf8f31110eb838efb083a86c8"
+}

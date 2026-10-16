@@ -255,6 +255,7 @@ def create_app():
     event_emitter = GraphEventEmitter(buffer_size=1000, journal_path=journal_path)
     app = query_app(store, dependencies=[Depends(SafeHTTPBearer(auto_error=False))])
     app.state.event_emitter = event_emitter
+    app.state.store = store
     from apps.api.extended import ensure_extended
 
     ensure_extended(app, store)

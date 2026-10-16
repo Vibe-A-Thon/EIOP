@@ -1,0 +1,104 @@
+{
+  "captured_at": "2026-10-16T09:09:07.870288Z",
+  "event_id": "009eee60ad58a1c60749bb9e36ea7a09ad31f191bb45d9302b26c7e1558134b4",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "comment": {
+        "comments": [
+          {
+            "author": {
+              "displayName": "Raj Patel"
+            },
+            "body": "CHG0090301 submitted. Deployment to mfs-staging namespace for validation before prod rollout.",
+            "created": "2026-09-29T10:00:00.000+0000"
+          }
+        ]
+      },
+      "components": [
+        {
+          "name": "mfs-settlement-engine"
+        }
+      ],
+      "created": "2026-08-10T09:00:00.000+0000",
+      "customfield_10014": "EPC-103",
+      "customfield_10015": "Platform Engineering",
+      "customfield_10050": "TC-PAY-007",
+      "description": "Build the settlement batch processor that aggregates completed transactions and generates settlement files for acquiring banks. Runs on mfs-settle-pod-01 using svc-settlement service account.\n\nAcceptance Criteria:\n- Process up to 100K transactions per batch\n- Generate ISO 8583 settlement files\n- Batch completion within 5-minute SLA\n- Write settlement records to mfs_payments_db\n\nGitLab MR: !501\nChange Request: CHG0090301\nTest Case: TC-PAY-007",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "MR !501: Build settlement batch processor"
+            },
+            "key": "MR-501"
+          },
+          "type": {
+            "name": "GitLab MR",
+            "outward": "is developed in"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Build batch aggregation logic"
+            },
+            "key": "PAY-311"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "settlement",
+        "batch-processing"
+      ],
+      "parent": {
+        "key": "PAY-300"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "story_points": 13,
+      "summary": "Build settlement batch processor",
+      "updated": "2026-09-30T14:00:00.000+0000"
+    },
+    "id": "60301",
+    "key": "PAY-301",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60301"
+  },
+  "payload_hash": "db8ee9cf24a242975374618c714ef8a1329ed9353a9b8b0912424a87e081c99d",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-301",
+  "source_system": "jira",
+  "source_version": "db8ee9cf24a242975374618c714ef8a1329ed9353a9b8b0912424a87e081c99d"
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.809173Z",
+  "event_id": "885241c1365fea7ee90789f3787f8bf581c6a3a0e74f7b9369661374c1c63ed2",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "17f83b76292c4f2a2306585b9a96b9804b2d2019",
+    "message": "runtime detection and container orchestration using scripts/container.ps1"
+  },
+  "payload_hash": "0228aaa3b389934330984503c8b734170624f0e326226e226d0b6c7adff7618c",
+  "schema_version": "1.0",
+  "source_record_id": "demo:17f83b76292c4f2a2306585b9a96b9804b2d2019",
+  "source_system": "git",
+  "source_version": "0228aaa3b389934330984503c8b734170624f0e326226e226d0b6c7adff7618c"
+}

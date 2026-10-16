@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "parser_version": "fileparse/1.0",
+  "status": "SUCCEEDED",
+  "documents": [
+    {
+      "document_id": "urn:eoip:knowledge:document:file:0a817f767b195a1a4ff48f701643c0e3b847ded8278ed33f7f667aff7691eb9e",
+      "source_id": "demo_corpus",
+      "source_name": "README.md.txt",
+      "source_uri": "fixture://demo/demodata/code/README.md",
+      "parent_id": null,
+      "content_hash": "09c6a6068bb03c18e4c9d89fc08cc1c5094a3e26f6688be441462c5d1f5f0e0e",
+      "size_bytes": 3309,
+      "format": "txt",
+      "media_type": "text/plain",
+      "parser_version": "fileparse/1.0",
+      "title": "README.md.txt",
+      "sections": [
+        {
+          "index": 0,
+          "kind": "text",
+          "text": "# Code Graph Demo Data — Meridian Financial Services\n\nScenario: **Meridian Financial Services (MFS)** is a financial services company\noperating payment processing, fraud detection, and customer-facing portal\nservices. The data represents code structure as JSON files that the system\ningests to construct a code graph without parsing source files directly.\n\nThis folder demonstrates **code-as-JSON ingestion** where each JSON file\ndescribes a repository's file structure, symbols (classes, functions, methods,\ncomponents), dependencies, infrastructure references, and call/import/containment\nedges.\n\n## How EOIP uses it\n\nThe code graph ingestion path converts these JSON records into Repository, File,\nCodeSymbol, Dependency, service/infrastructure, and relationship facts. The\nresulting graph supports source-bound traceability, code impact, dependency\nnavigation, VS Code context, Hubble walkthroughs, and cross-source links to Jira,\nGitLab, ServiceNow, API, observability, and documentation records. The same\nfacts can participate in evidence-addressable GraphRAG, JSON-LD/RDF/SHACL\nexports, semantic federation query plans, and admin quality views. These files\nare fixtures for local verification, not harvested customer repositories or\nproduction source registrations.\n\n## Source Repositories\n\n| File | Repository | Language | Files | Symbols | Edges |\n|------|-----------|----------|-------|---------|-------|\n| mfs-payment-gateway.json | mfs-payment-gateway | Python | 13 | 33 | 66 |\n| mfs-fraud-engine.json | mfs-fraud-engine | Python | 13 | 29 | 62 |\n| mfs-common-libs.json | mfs-common-libs | Python | 8 | 24 | 43 |\n| mfs-customer-portal.json | mfs-customer-portal | TypeScript/React | 12 | 24 | 53 |\n\n## Key Infrastructure References\n\n- **Service accounts:** svc-payment-api, svc-fraud-engine, svc-customer-svc, svc-notification-svc\n- **Databases:** mfs_payments_db (pghost-prod-01), mfs_fraud_db (pghost-prod-02), mfs_audit_db (pghost-prod-03), mfs_customers_db (pghost-prod-04)\n- **OpenShift pods:** mfs-pay-pod-01, mfs-fraud-pod-01, mfs-portal-pod-01\n- **Kafka topics:** txn-events, fraud-scores, aml-alerts, payment-status, refund-requests\n- **Shared infra:** redis-cluster.mfs.internal, kafka-broker.mfs.internal, vault.mfs.internal, hsm-gateway.mfs.internal\n\n## Cross-Repository Connections\n\n- mfs-customer-portal CONNECTS_TO mfs-payment-gateway (via paymentApi service)\n- mfs-customer-portal CONNECTS_TO mfs-fraud-engine (via fraudApi service)\n- mfs-payment-gateway CONNECTS_TO kafka-broker (txn-events topic)\n- mfs-fraud-engine CONNECTS_TO kafka-broker (consumes txn-events, produces fraud-scores and aml-alerts)\n- All services DEPENDS_ON mfs-common-libs (auth, logging, config, metrics)\n\n## JSON Format\n\nEach file follows the format expected by the EOIP code graph ingestion:\n\n```json\n{\n  \"description\": \"...\",\n  \"repository\": { \"repo_id\", \"name\", \"source_uri\", \"default_branch\" },\n  \"files\": [ { \"path\", \"language\", \"content_hash\", \"line_count\" } ],\n  \"symbols\": [ { \"qualified_name\", \"symbol_kind\", \"name\", \"path\", \"start_line\", \"end_line\" } ],\n  \"dependencies\": [ { \"name\", \"resolved\", \"language\" } ],\n  \"infrastructure\": { \"service_account\", \"database\", \"pod\", ... },\n  \"edges\": [ { \"type\": \"CONTAINS|DECLARES|CALLS|IMPORTS|DEPENDS_ON|CONNECTS_TO|DEPLOYED_ON\", \"from\", \"to\" } ]\n}\n```\n",
+          "locator": {
+            "line_start": 1,
+            "line_end": 64
+          }
+        }
+      ],
+      "tables": [],
+      "data": null,
+      "metadata": {},
+      "warnings": []
+    }
+  ],
+  "chunks": [
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:7071f1abc7b27f4087e89e18409bef4059085ef67335ac6f77428c17a844d3c3",
+      "document_id": "urn:eoip:knowledge:document:file:0a817f767b195a1a4ff48f701643c0e3b847ded8278ed33f7f667aff7691eb9e",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/README.md",
+      "content_hash": "09c6a6068bb03c18e4c9d89fc08cc1c5094a3e26f6688be441462c5d1f5f0e0e",
+      "section_index": 0,
+      "start_char": 0,
+      "end_char": 1200,
+      "text": "# Code Graph Demo Data — Meridian Financial Services\n\nScenario: **Meridian Financial Services (MFS)** is a financial services company\noperating payment processing, fraud detection, and customer-facing portal\nservices. The data represents code structure as JSON files that the system\ningests to construct a code graph without parsing source files directly.\n\nThis folder demonstrates **code-as-JSON ingestion** where each JSON file\ndescribes a repository's file structure, symbols (classes, functions, methods,\ncomponents), dependencies, infrastructure references, and call/import/containment\nedges.\n\n## How EOIP uses it\n\nThe code graph ingestion path converts these JSON records into Repository, File,\nCodeSymbol, Dependency, service/infrastructure, and relationship facts. The\nresulting graph supports source-bound traceability, code impact, dependency\nnavigation, VS Code context, Hubble walkthroughs, and cross-source links to Jira,\nGitLab, ServiceNow, API, observability, and documentation records. The same\nfacts can participate in evidence-addressable GraphRAG, JSON-LD/RDF/SHACL\nexports, semantic federation query plans, and admin quality views. These files\nare fixtures for local verification,",
+      "locator": {
+        "line_start": 1,
+        "line_end": 64
+      },
+      "citations": [
+        "fixture://demo/demodata/code/README.md#section=0&chars=0:1200"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:04ef855976976d9cbc8e615b1f047dce8b9b7915a3a77a9165e38134d0ead71b",
+      "document_id": "urn:eoip:knowledge:document:file:0a817f767b195a1a4ff48f701643c0e3b847ded8278ed33f7f667aff7691eb9e",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/README.md",
+      "content_hash": "09c6a6068bb03c18e4c9d89fc08cc1c5094a3e26f6688be441462c5d1f5f0e0e",
+      "section_index": 0,
+      "start_char": 1050,
+      "end_char": 2250,
+      "text": "ssable GraphRAG, JSON-LD/RDF/SHACL\nexports, semantic federation query plans, and admin quality views. These files\nare fixtures for local verification, not harvested customer repositories or\nproduction source registrations.\n\n## Source Repositories\n\n| File | Repository | Language | Files | Symbols | Edges |\n|------|-----------|----------|-------|---------|-------|\n| mfs-payment-gateway.json | mfs-payment-gateway | Python | 13 | 33 | 66 |\n| mfs-fraud-engine.json | mfs-fraud-engine | Python | 13 | 29 | 62 |\n| mfs-common-libs.json | mfs-common-libs | Python | 8 | 24 | 43 |\n| mfs-customer-portal.json | mfs-customer-portal | TypeScript/React | 12 | 24 | 53 |\n\n## Key Infrastructure References\n\n- **Service accounts:** svc-payment-api, svc-fraud-engine, svc-customer-svc, svc-notification-svc\n- **Databases:** mfs_payments_db (pghost-prod-01), mfs_fraud_db (pghost-prod-02), mfs_audit_db (pghost-prod-03), mfs_customers_db (pghost-prod-04)\n- **OpenShift pods:** mfs-pay-pod-01, mfs-fraud-pod-01, mfs-portal-pod-01\n- **Kafka topics:** txn-events, fraud-scores, aml-alerts, payment-status, refund-requests\n- **Shared infra:** redis-cluster.mfs.internal, kafka-broker.mfs.internal, vault.mfs.internal, h",
+      "locator": {
+        "line_start": 1,
+        "line_end": 64
+      },
+      "citations": [
+        "fixture://demo/demodata/code/README.md#section=0&chars=1050:2250"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:6b8040711fa7cff56417737cda790e93b611da18c5c33c1d676923843eaa1c88",
+      "document_id": "urn:eoip:knowledge:document:file:0a817f767b195a1a4ff48f701643c0e3b847ded8278ed33f7f667aff7691eb9e",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/README.md",
+      "content_hash": "09c6a6068bb03c18e4c9d89fc08cc1c5094a3e26f6688be441462c5d1f5f0e0e",
+      "section_index": 0,
+      "start_char": 2100,
+      "end_char": 3300,
+      "text": "d-scores, aml-alerts, payment-status, refund-requests\n- **Shared infra:** redis-cluster.mfs.internal, kafka-broker.mfs.internal, vault.mfs.internal, hsm-gateway.mfs.internal\n\n## Cross-Repository Connections\n\n- mfs-customer-portal CONNECTS_TO mfs-payment-gateway (via paymentApi service)\n- mfs-customer-portal CONNECTS_TO mfs-fraud-engine (via fraudApi service)\n- mfs-payment-gateway CONNECTS_TO kafka-broker (txn-events topic)\n- mfs-fraud-engine CONNECTS_TO kafka-broker (consumes txn-events, produces fraud-scores and aml-alerts)\n- All services DEPENDS_ON mfs-common-libs (auth, logging, config, metrics)\n\n## JSON Format\n\nEach file follows the format expected by the EOIP code graph ingestion:\n\n```json\n{\n  \"description\": \"...\",\n  \"repository\": { \"repo_id\", \"name\", \"source_uri\", \"default_branch\" },\n  \"files\": [ { \"path\", \"language\", \"content_hash\", \"line_count\" } ],\n  \"symbols\": [ { \"qualified_name\", \"symbol_kind\", \"name\", \"path\", \"start_line\", \"end_line\" } ],\n  \"dependencies\": [ { \"name\", \"resolved\", \"language\" } ],\n  \"infrastructure\": { \"service_account\", \"database\", \"pod\", ... },\n  \"edges\": [ { \"type\": \"CONTAINS|DECLARES|CALLS|IMPORTS|DEPENDS_ON|CONNECTS_TO|DEPLOYED_ON\", \"from\", \"to\" } ]",
+      "locator": {
+        "line_start": 1,
+        "line_end": 64
+      },
+      "citations": [
+        "fixture://demo/demodata/code/README.md#section=0&chars=2100:3300"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:1a09d829e708d0c69dee4f405dffe7092f4ec63014227d2ec0b32e8adee8d8c0",
+      "document_id": "urn:eoip:knowledge:document:file:0a817f767b195a1a4ff48f701643c0e3b847ded8278ed33f7f667aff7691eb9e",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/README.md",
+      "content_hash": "09c6a6068bb03c18e4c9d89fc08cc1c5094a3e26f6688be441462c5d1f5f0e0e",
+      "section_index": 0,
+      "start_char": 3150,
+      "end_char": 3307,
+      "text": "vice_account\", \"database\", \"pod\", ... },\n  \"edges\": [ { \"type\": \"CONTAINS|DECLARES|CALLS|IMPORTS|DEPENDS_ON|CONNECTS_TO|DEPLOYED_ON\", \"from\", \"to\" } ]\n}\n```\n",
+      "locator": {
+        "line_start": 1,
+        "line_end": 64
+      },
+      "citations": [
+        "fixture://demo/demodata/code/README.md#section=0&chars=3150:3307"
+      ]
+    }
+  ],
+  "errors": []
+}

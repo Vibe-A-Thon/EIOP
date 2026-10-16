@@ -1,0 +1,125 @@
+{
+  "entities": [
+    {
+      "canonical_id": "urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d",
+      "entity_type": "Document",
+      "name": "FRD-Model-Performance-Metrics.csv",
+      "path": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv",
+      "doc_format": "csv",
+      "content_hash": "d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3",
+      "parser_version": "fileparse/1.0",
+      "description": "Model Version: v1.8 | Training Date: 2026-01-15 | AUC: 0.965 | Precision: 0.938 | Recall: 0.931 | F1 Score: 0.934 | False Positive Rate: 3.2% | Inference P99 (ms): 42 | Status: Retired\nModel Version: v1.9 | Training Date: 2026-03-20 | AUC: 0.971 | Precision: 0.945 | Recall: 0.94 | F1 Score: 0.942 | False Positive Rate: 2.8% | Inference P99 (ms): 40 | Status: Retired\nModel Version: v2.0 | Training Date: 2026-05-10 | AUC: 0.975 | Precision: 0.952 | Recall: 0.946 | F1 Score: 0.949 | False Positive Rate: 2.4% | Inference P99 (ms): 38 | Status: Retired\nModel Version: v2.1 | Training Date: 2026-07-15 | AUC: 0.978 | Precision: 0.955 | Recall: 0.948 | F1 Score: 0.951 | False Positive Rate: 2.1% | Inference P99 (ms): 36 | Status: Retired\nModel Version: v2.2 | Training Date: 2026-08-20 | AUC: 0.982 | Precision: 0.961 | Recall: 0.954 | F1 Score: 0.957 | False Positive Rate: 1.8% | Inference P99 (ms): 35 | Status: Champion\nModel Version: v2.3 | Training Date: 2026-09-25 | AUC: 0.985 | Precision: 0.948 | Recall: 0.967 | F1 Score: 0.957 | False Positive Rate: 4.2% | Inference P99 (ms): 34 | Status: Challenger (FP issue)",
+      "payload_json": "{\"document_id\": \"urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d\", \"source_id\": \"demo_corpus\", \"source_name\": \"FRD-Model-Performance-Metrics.csv\", \"source_uri\": \"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv\", \"parent_id\": null, \"content_hash\": \"d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3\", \"size_bytes\": 454, \"format\": \"csv\", \"media_type\": \"text/csv\", \"parser_version\": \"fileparse/1.0\", \"title\": \"FRD-Model-Performance-Metrics.csv\", \"sections\": [{\"index\": 0, \"kind\": \"table_row\", \"text\": \"Model Version: v1.8 | Training Date: 2026-01-15 | AUC: 0.965 | Precision: 0.938 | Recall: 0.931 | F1 Score: 0.934 | False Positive Rate: 3.2% | Inference P99 (ms): 42 | Status: Retired\", \"locator\": {\"table\": \"csv\", \"row\": 1}}, {\"index\": 1, \"kind\": \"table_row\", \"text\": \"Model Version: v1.9 | Training Date: 2026-03-20 | AUC: 0.971 | Precision: 0.945 | Recall: 0.94 | F1 Score: 0.942 | False Positive Rate: 2.8% | Inference P99 (ms): 40 | Status: Retired\", \"locator\": {\"table\": \"csv\", \"row\": 2}}, {\"index\": 2, \"kind\": \"table_row\", \"text\": \"Model Version: v2.0 | Training Date: 2026-05-10 | AUC: 0.975 | Precision: 0.952 | Recall: 0.946 | F1 Score: 0.949 | False Positive Rate: 2.4% | Inference P99 (ms): 38 | Status: Retired\", \"locator\": {\"table\": \"csv\", \"row\": 3}}, {\"index\": 3, \"kind\": \"table_row\", \"text\": \"Model Version: v2.1 | Training Date: 2026-07-15 | AUC: 0.978 | Precision: 0.955 | Recall: 0.948 | F1 Score: 0.951 | False Positive Rate: 2.1% | Inference P99 (ms): 36 | Status: Retired\", \"locator\": {\"table\": \"csv\", \"row\": 4}}, {\"index\": 4, \"kind\": \"table_row\", \"text\": \"Model Version: v2.2 | Training Date: 2026-08-20 | AUC: 0.982 | Precision: 0.961 | Recall: 0.954 | F1 Score: 0.957 | False Positive Rate: 1.8% | Inference P99 (ms): 35 | Status: Champion\", \"locator\": {\"table\": \"csv\", \"row\": 5}}, {\"index\": 5, \"kind\": \"table_row\", \"text\": \"Model Version: v2.3 | Training Date: 2026-09-25 | AUC: 0.985 | Precision: 0.948 | Recall: 0.967 | F1 Score: 0.957 | False Positive Rate: 4.2% | Inference P99 (ms): 34 | Status: Challenger (FP issue)\", \"locator\": {\"table\": \"csv\", \"row\": 6}}], \"tables\": [{\"name\": \"csv\", \"columns\": [\"Model Version\", \"Training Date\", \"AUC\", \"Precision\", \"Recall\", \"F1 Score\", \"False Positive Rate\", \"Inference P99 (ms)\", \"Status\"], \"rows\": [[\"v1.8\", \"2026-01-15\", \"0.965\", \"0.938\", \"0.931\", \"0.934\", \"3.2%\", \"42\", \"Retired\"], [\"v1.9\", \"2026-03-20\", \"0.971\", \"0.945\", \"0.94\", \"0.942\", \"2.8%\", \"40\", \"Retired\"], [\"v2.0\", \"2026-05-10\", \"0.975\", \"0.952\", \"0.946\", \"0.949\", \"2.4%\", \"38\", \"Retired\"], [\"v2.1\", \"2026-07-15\", \"0.978\", \"0.955\", \"0.948\", \"0.951\", \"2.1%\", \"36\", \"Retired\"], [\"v2.2\", \"2026-08-20\", \"0.982\", \"0.961\", \"0.954\", \"0.957\", \"1.8%\", \"35\", \"Champion\"], [\"v2.3\", \"2026-09-25\", \"0.985\", \"0.948\", \"0.967\", \"0.957\", \"4.2%\", \"34\", \"Challenger (FP issue)\"]], \"locator\": {}}], \"data\": null, \"metadata\": {}, \"warnings\": []}"
+    },
+    {
+      "canonical_id": "urn:eoip:knowledge:section:file:da947e22289a4bcf6666019bfcd58c9e4eed440d71eb4742e38b6dc37d537048",
+      "entity_type": "DocumentSection",
+      "name": "Section 0 (0:184)",
+      "path": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=0&chars=0:184",
+      "content": "Model Version: v1.8 | Training Date: 2026-01-15 | AUC: 0.965 | Precision: 0.938 | Recall: 0.931 | F1 Score: 0.934 | False Positive Rate: 3.2% | Inference P99 (ms): 42 | Status: Retired",
+      "section_index": 0,
+      "content_hash": "4dfca7c650fd8464fb095707faa1cf4545a62cdd0646ba7d598f8131942a5adc",
+      "payload_json": "{\"chunk_id\": \"urn:eoip:knowledge:section:file:da947e22289a4bcf6666019bfcd58c9e4eed440d71eb4742e38b6dc37d537048\", \"document_id\": \"urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d\", \"source_id\": \"demo_corpus\", \"source_uri\": \"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv\", \"content_hash\": \"d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3\", \"section_index\": 0, \"start_char\": 0, \"end_char\": 184, \"text\": \"Model Version: v1.8 | Training Date: 2026-01-15 | AUC: 0.965 | Precision: 0.938 | Recall: 0.931 | F1 Score: 0.934 | False Positive Rate: 3.2% | Inference P99 (ms): 42 | Status: Retired\", \"locator\": {\"table\": \"csv\", \"row\": 1}, \"citations\": [\"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=0&chars=0:184\"]}"
+    },
+    {
+      "canonical_id": "urn:eoip:knowledge:section:file:dabcfe203b2442f6096fd837021b772e032ff7b0d562b93e628c697ac6329acc",
+      "entity_type": "DocumentSection",
+      "name": "Section 1 (0:183)",
+      "path": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=1&chars=0:183",
+      "content": "Model Version: v1.9 | Training Date: 2026-03-20 | AUC: 0.971 | Precision: 0.945 | Recall: 0.94 | F1 Score: 0.942 | False Positive Rate: 2.8% | Inference P99 (ms): 40 | Status: Retired",
+      "section_index": 1,
+      "content_hash": "31a0c298dc27bbc3102c4aae56d1c4d9066219d89647433432b0478d8d3794d0",
+      "payload_json": "{\"chunk_id\": \"urn:eoip:knowledge:section:file:dabcfe203b2442f6096fd837021b772e032ff7b0d562b93e628c697ac6329acc\", \"document_id\": \"urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d\", \"source_id\": \"demo_corpus\", \"source_uri\": \"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv\", \"content_hash\": \"d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3\", \"section_index\": 1, \"start_char\": 0, \"end_char\": 183, \"text\": \"Model Version: v1.9 | Training Date: 2026-03-20 | AUC: 0.971 | Precision: 0.945 | Recall: 0.94 | F1 Score: 0.942 | False Positive Rate: 2.8% | Inference P99 (ms): 40 | Status: Retired\", \"locator\": {\"table\": \"csv\", \"row\": 2}, \"citations\": [\"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=1&chars=0:183\"]}"
+    },
+    {
+      "canonical_id": "urn:eoip:knowledge:section:file:200a74aee1cb6ffd58dda814849f0ab1d0649ff954e8c020ef4c47c6c1cdfa62",
+      "entity_type": "DocumentSection",
+      "name": "Section 2 (0:184)",
+      "path": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=2&chars=0:184",
+      "content": "Model Version: v2.0 | Training Date: 2026-05-10 | AUC: 0.975 | Precision: 0.952 | Recall: 0.946 | F1 Score: 0.949 | False Positive Rate: 2.4% | Inference P99 (ms): 38 | Status: Retired",
+      "section_index": 2,
+      "content_hash": "0777f22d992b3db39d0b14a955a1c2f9964230a3e9d1b164bd1bec086e40246b",
+      "payload_json": "{\"chunk_id\": \"urn:eoip:knowledge:section:file:200a74aee1cb6ffd58dda814849f0ab1d0649ff954e8c020ef4c47c6c1cdfa62\", \"document_id\": \"urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d\", \"source_id\": \"demo_corpus\", \"source_uri\": \"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv\", \"content_hash\": \"d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3\", \"section_index\": 2, \"start_char\": 0, \"end_char\": 184, \"text\": \"Model Version: v2.0 | Training Date: 2026-05-10 | AUC: 0.975 | Precision: 0.952 | Recall: 0.946 | F1 Score: 0.949 | False Positive Rate: 2.4% | Inference P99 (ms): 38 | Status: Retired\", \"locator\": {\"table\": \"csv\", \"row\": 3}, \"citations\": [\"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=2&chars=0:184\"]}"
+    },
+    {
+      "canonical_id": "urn:eoip:knowledge:section:file:6d55675a6bf4be6c717f1dfb088b53aac0465c79415773834f26df6864b474ca",
+      "entity_type": "DocumentSection",
+      "name": "Section 3 (0:184)",
+      "path": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=3&chars=0:184",
+      "content": "Model Version: v2.1 | Training Date: 2026-07-15 | AUC: 0.978 | Precision: 0.955 | Recall: 0.948 | F1 Score: 0.951 | False Positive Rate: 2.1% | Inference P99 (ms): 36 | Status: Retired",
+      "section_index": 3,
+      "content_hash": "9e6df336acd33357ba9617ccc3cc76c2075d495a099244e21d92c6c5d876006b",
+      "payload_json": "{\"chunk_id\": \"urn:eoip:knowledge:section:file:6d55675a6bf4be6c717f1dfb088b53aac0465c79415773834f26df6864b474ca\", \"document_id\": \"urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d\", \"source_id\": \"demo_corpus\", \"source_uri\": \"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv\", \"content_hash\": \"d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3\", \"section_index\": 3, \"start_char\": 0, \"end_char\": 184, \"text\": \"Model Version: v2.1 | Training Date: 2026-07-15 | AUC: 0.978 | Precision: 0.955 | Recall: 0.948 | F1 Score: 0.951 | False Positive Rate: 2.1% | Inference P99 (ms): 36 | Status: Retired\", \"locator\": {\"table\": \"csv\", \"row\": 4}, \"citations\": [\"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=3&chars=0:184\"]}"
+    },
+    {
+      "canonical_id": "urn:eoip:knowledge:section:file:03a07ef71f1d17054588097262d7db3bc94e0eb51d11ad6b9e19fc565d0dc4f8",
+      "entity_type": "DocumentSection",
+      "name": "Section 4 (0:185)",
+      "path": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=4&chars=0:185",
+      "content": "Model Version: v2.2 | Training Date: 2026-08-20 | AUC: 0.982 | Precision: 0.961 | Recall: 0.954 | F1 Score: 0.957 | False Positive Rate: 1.8% | Inference P99 (ms): 35 | Status: Champion",
+      "section_index": 4,
+      "content_hash": "635c23efa113a42c0a88ec68378a7b5e47609dd7d47a50d18db9e66edfecf60e",
+      "payload_json": "{\"chunk_id\": \"urn:eoip:knowledge:section:file:03a07ef71f1d17054588097262d7db3bc94e0eb51d11ad6b9e19fc565d0dc4f8\", \"document_id\": \"urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d\", \"source_id\": \"demo_corpus\", \"source_uri\": \"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv\", \"content_hash\": \"d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3\", \"section_index\": 4, \"start_char\": 0, \"end_char\": 185, \"text\": \"Model Version: v2.2 | Training Date: 2026-08-20 | AUC: 0.982 | Precision: 0.961 | Recall: 0.954 | F1 Score: 0.957 | False Positive Rate: 1.8% | Inference P99 (ms): 35 | Status: Champion\", \"locator\": {\"table\": \"csv\", \"row\": 5}, \"citations\": [\"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=4&chars=0:185\"]}"
+    },
+    {
+      "canonical_id": "urn:eoip:knowledge:section:file:11f36bc8e5788efd0a1e2688f0c68b9ce569c6042b28c564f84a06430c338a99",
+      "entity_type": "DocumentSection",
+      "name": "Section 5 (0:198)",
+      "path": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=5&chars=0:198",
+      "content": "Model Version: v2.3 | Training Date: 2026-09-25 | AUC: 0.985 | Precision: 0.948 | Recall: 0.967 | F1 Score: 0.957 | False Positive Rate: 4.2% | Inference P99 (ms): 34 | Status: Challenger (FP issue)",
+      "section_index": 5,
+      "content_hash": "da21bd7fd93df76825dbfbe4dc173212de8abdd0aa0c2850d38d3af12dcd4d6e",
+      "payload_json": "{\"chunk_id\": \"urn:eoip:knowledge:section:file:11f36bc8e5788efd0a1e2688f0c68b9ce569c6042b28c564f84a06430c338a99\", \"document_id\": \"urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d\", \"source_id\": \"demo_corpus\", \"source_uri\": \"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv\", \"content_hash\": \"d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3\", \"section_index\": 5, \"start_char\": 0, \"end_char\": 198, \"text\": \"Model Version: v2.3 | Training Date: 2026-09-25 | AUC: 0.985 | Precision: 0.948 | Recall: 0.967 | F1 Score: 0.957 | False Positive Rate: 4.2% | Inference P99 (ms): 34 | Status: Challenger (FP issue)\", \"locator\": {\"table\": \"csv\", \"row\": 6}, \"citations\": [\"fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=5&chars=0:198\"]}"
+    }
+  ],
+  "relationships": [
+    {
+      "from_id": "urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d",
+      "to_id": "urn:eoip:knowledge:section:file:da947e22289a4bcf6666019bfcd58c9e4eed440d71eb4742e38b6dc37d537048",
+      "type": "CONTAINS",
+      "properties": {
+        "source_ref": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=0&chars=0:184"
+      }
+    },
+    {
+      "from_id": "urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d",
+      "to_id": "urn:eoip:knowledge:section:file:dabcfe203b2442f6096fd837021b772e032ff7b0d562b93e628c697ac6329acc",
+      "type": "CONTAINS",
+      "properties": {
+        "source_ref": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=1&chars=0:183"
+      }
+    },
+    {
+      "from_id": "urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d",
+      "to_id": "urn:eoip:knowledge:section:file:200a74aee1cb6ffd58dda814849f0ab1d0649ff954e8c020ef4c47c6c1cdfa62",
+      "type": "CONTAINS",
+      "properties": {
+        "source_ref": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=2&chars=0:184"
+      }
+    },
+    {
+      "from_id": "urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d",
+      "to_id": "urn:eoip:knowledge:section:file:6d55675a6bf4be6c717f1dfb088b53aac0465c79415773834f26df6864b474ca",
+      "type": "CONTAINS",
+      "properties": {
+        "source_ref": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=3&chars=0:184"
+      }
+    },
+    {
+      "from_id": "urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d",
+      "to_id": "urn:eoip:knowledge:section:file:03a07ef71f1d17054588097262d7db3bc94e0eb51d11ad6b9e19fc565d0dc4f8",
+      "type": "CONTAINS",
+      "properties": {
+        "source_ref": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=4&chars=0:185"
+      }
+    },
+    {
+      "from_id": "urn:eoip:knowledge:document:file:683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d",
+      "to_id": "urn:eoip:knowledge:section:file:11f36bc8e5788efd0a1e2688f0c68b9ce569c6042b28c564f84a06430c338a99",
+      "type": "CONTAINS",
+      "properties": {
+        "source_ref": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv#section=5&chars=0:198"
+      }
+    }
+  ]
+}

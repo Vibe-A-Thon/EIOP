@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.774559Z",
+  "event_id": "94996f8afcb199edf304426a49bfe7ea95df79aa5b301df3d482e688ad913c79",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "eab5199dd1a3fb21d278b4e102c4b71db16f3606",
+    "message": "changes for engineering and new additional files"
+  },
+  "payload_hash": "e9ba6b42a4893144819565064ec991f58654d521e260df3e87b622ae3943e58c",
+  "schema_version": "1.0",
+  "source_record_id": "demo:eab5199dd1a3fb21d278b4e102c4b71db16f3606",
+  "source_system": "git",
+  "source_version": "e9ba6b42a4893144819565064ec991f58654d521e260df3e87b622ae3943e58c"
+}

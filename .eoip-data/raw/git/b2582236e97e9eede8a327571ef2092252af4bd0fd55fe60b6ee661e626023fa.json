@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.756583Z",
+  "event_id": "b2582236e97e9eede8a327571ef2092252af4bd0fd55fe60b6ee661e626023fa",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "b1e44fa0de48b652704a51a23be7399467947567",
+    "message": "new gui changes for the added functionalities"
+  },
+  "payload_hash": "6a8c43d5639176239ad21e64da4ce12c509b68c9c52d4021a9d6af4f5109a305",
+  "schema_version": "1.0",
+  "source_record_id": "demo:b1e44fa0de48b652704a51a23be7399467947567",
+  "source_system": "git",
+  "source_version": "6a8c43d5639176239ad21e64da4ce12c509b68c9c52d4021a9d6af4f5109a305"
+}

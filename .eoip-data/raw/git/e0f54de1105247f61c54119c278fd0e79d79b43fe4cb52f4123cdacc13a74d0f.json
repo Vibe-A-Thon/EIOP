@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.831577Z",
+  "event_id": "e0f54de1105247f61c54119c278fd0e79d79b43fe4cb52f4123cdacc13a74d0f",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "fd5a46cf280c5465f000ea4c727022d2feb57d0b",
+    "message": "changes for polyglot and query execution updates"
+  },
+  "payload_hash": "d40a93bfb5c1239c6df9dcdc6585c804a1f40b9d7f173aa5744daff31646e0f3",
+  "schema_version": "1.0",
+  "source_record_id": "demo:fd5a46cf280c5465f000ea4c727022d2feb57d0b",
+  "source_system": "git",
+  "source_version": "d40a93bfb5c1239c6df9dcdc6585c804a1f40b9d7f173aa5744daff31646e0f3"
+}

@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-16T09:09:08.256289Z",
+  "content_hash": "80bd15342823b5d80c30b57187c8bd3fb2d78bed0cb2b7847e9d2f18dd6185d4",
+  "correlation_id": null,
+  "cursor": null,
+  "event_id": "d8e9ebc6b80e47ae6297933ac61a8b6a0dcc7dc13b3f2b1af503db7d583eeb67",
+  "event_time": "2026-10-16T09:09:08.256289Z",
+  "evidence_ref": null,
+  "metadata": {
+    "connector": "fileparse/1.0",
+    "size_bytes": 1076
+  },
+  "observed_time": "2026-10-16T09:09:08.256289Z",
+  "operation": "UPSERT",
+  "payload": {
+    "content": "ewogICJyZXN1bHRzIjogWwogICAgewogICAgICAiaWQiOiAiMTIzNDUiLAogICAgICAidHlwZSI6ICJwYWdlIiwKICAgICAgInRpdGxlIjogIkVPSVAgQXJjaGl0ZWN0dXJlIE92ZXJ2aWV3IiwKICAgICAgInNwYWNlIjogeyJrZXkiOiAiRU9JUCIsICJuYW1lIjogIkVudGVycHJpc2UgT250b2xvZ3kgUGxhdGZvcm0ifSwKICAgICAgInZlcnNpb24iOiB7Im51bWJlciI6IDN9LAogICAgICAiYm9keSI6IHsKICAgICAgICAic3RvcmFnZSI6IHsKICAgICAgICAgICJ2YWx1ZSI6ICI8cD5UaGlzIGRvY3VtZW50IGRlc2NyaWJlcyB0aGUgaGlnaC1sZXZlbCBhcmNoaXRlY3R1cmUgb2YgdGhlIEVudGVycHJpc2UgT250b2xvZ3kgJmFtcDsgSW50ZWxsaWdlbmNlIFBsYXRmb3JtIChFT0lQKS48L3A+PGgyPkNvbXBvbmVudHM8L2gyPjx1bD48bGk+QVBJIEdhdGV3YXkgKEZhc3RBUEkpPC9saT48bGk+R3JhcGggU3RvcmUgKEh1Z2VHcmFwaCk8L2xpPjxsaT5XZWIgVUkgKFJlYWN0L0N5dG9zY2FwZSk8L2xpPjxsaT5NQ1AgRmFjYWRlPC9saT48L3VsPiIKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJfbGlua3MiOiB7IndlYnVpIjogIi9zcGFjZXMvRU9JUC9wYWdlcy8xMjM0NSJ9CiAgICB9LAogICAgewogICAgICAiaWQiOiAiMTIzNDYiLAogICAgICAidHlwZSI6ICJwYWdlIiwKICAgICAgInRpdGxlIjogIkVPSVAgRGVwbG95bWVudCBHdWlkZSIsCiAgICAgICJzcGFjZSI6IHsia2V5IjogIkVPSVAiLCAibmFtZSI6ICJFbnRlcnByaXNlIE9udG9sb2d5IFBsYXRmb3JtIn0sCiAgICAgICJ2ZXJzaW9uIjogeyJudW1iZXIiOiAxfSwKICAgICAgImJvZHkiOiB7CiAgICAgICAgInN0b3JhZ2UiOiB7CiAgICAgICAgICAidmFsdWUiOiAiPHA+RG9ja2VyIENvbXBvc2UgZGVwbG95bWVudCBpbnN0cnVjdGlvbnMgZm9yIHRoZSBFT0lQIHN0YWNrLjwvcD48aDI+UHJlcmVxdWlzaXRlczwvaDI+PHA+RG9ja2VyIDI0KywgOEdCIFJBTSBtaW5pbXVtLjwvcD4iCiAgICAgICAgfQogICAgICB9LAogICAgICAiX2xpbmtzIjogeyJ3ZWJ1aSI6ICIvc3BhY2VzL0VPSVAvcGFnZXMvMTIzNDYifQogICAgfQogIF0KfQo=",
+    "encoding": "base64",
+    "filename": "sample-confluence.json"
+  },
+  "payload_hash": "80bd15342823b5d80c30b57187c8bd3fb2d78bed0cb2b7847e9d2f18dd6185d4",
+  "payload_ref": null,
+  "permissions": {
+    "acl_hash": null,
+    "inherited_from": null,
+    "principal_refs": [],
+    "visibility": "UNKNOWN"
+  },
+  "schema_version": "2.0",
+  "source_id": "demo_corpus",
+  "source_instance_id": "demo_corpus",
+  "source_record_id": "fixture://demo/demodata/core/confluence/sample-confluence.json",
+  "source_record_type": "binary_file",
+  "source_system": "documents",
+  "source_type": "documents",
+  "source_version": "80bd15342823b5d80c30b57187c8bd3fb2d78bed0cb2b7847e9d2f18dd6185d4"
+}

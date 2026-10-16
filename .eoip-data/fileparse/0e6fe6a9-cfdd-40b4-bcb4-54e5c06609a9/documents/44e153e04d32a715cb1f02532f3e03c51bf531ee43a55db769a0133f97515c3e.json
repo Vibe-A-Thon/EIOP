@@ -1,0 +1,28 @@
+{
+  "document_id": "urn:eoip:knowledge:document:file:44e153e04d32a715cb1f02532f3e03c51bf531ee43a55db769a0133f97515c3e",
+  "source_id": "demo_corpus",
+  "source_name": "service.py.txt",
+  "source_uri": "fixture://demo/demodata/core/demo-repo/src/service.py",
+  "parent_id": null,
+  "content_hash": "146a2434578ddba9064392b23121b1652e13ec583832801c0e9b7837f820d637",
+  "size_bytes": 206,
+  "format": "txt",
+  "media_type": "text/plain",
+  "parser_version": "fileparse/1.0",
+  "title": "service.py.txt",
+  "sections": [
+    {
+      "index": 0,
+      "kind": "text",
+      "text": "from json import loads\n\n\ndef normalize(value: str) -> str:\n    return value.strip().lower()\n\n\ndef handle_request(payload: str) -> dict:\n    data = loads(payload)\n    return {\"name\": normalize(data[\"name\"])}",
+      "locator": {
+        "line_start": 1,
+        "line_end": 10
+      }
+    }
+  ],
+  "tables": [],
+  "data": null,
+  "metadata": {},
+  "warnings": []
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.778997Z",
+  "event_id": "4daf7bc00dc70b737afb5747770276476cf222cb234d7228fd7f3699797628bb",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "546524a2c85b32471a731a3d2591e48ee8316e18",
+    "message": "changes for hybrid search and intelligence"
+  },
+  "payload_hash": "f9274da68ff10eb2b66fa0914b039a83a7e1d38b5761db9b64030601d63d976a",
+  "schema_version": "1.0",
+  "source_record_id": "demo:546524a2c85b32471a731a3d2591e48ee8316e18",
+  "source_system": "git",
+  "source_version": "f9274da68ff10eb2b66fa0914b039a83a7e1d38b5761db9b64030601d63d976a"
+}

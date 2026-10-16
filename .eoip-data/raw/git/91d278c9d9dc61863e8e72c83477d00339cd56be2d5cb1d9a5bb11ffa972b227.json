@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.817643Z",
+  "event_id": "91d278c9d9dc61863e8e72c83477d00339cd56be2d5cb1d9a5bb11ffa972b227",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "ce7a20d14884c94c38e3c9a729339b7dd37c99c2",
+    "message": "20 new features added, including enterprise router integration."
+  },
+  "payload_hash": "157341f50c71e2e27190f8ab3b29040f8da8ff1fc10dd0936747bef5ba2d7936",
+  "schema_version": "1.0",
+  "source_record_id": "demo:ce7a20d14884c94c38e3c9a729339b7dd37c99c2",
+  "source_system": "git",
+  "source_version": "157341f50c71e2e27190f8ab3b29040f8da8ff1fc10dd0936747bef5ba2d7936"
+}

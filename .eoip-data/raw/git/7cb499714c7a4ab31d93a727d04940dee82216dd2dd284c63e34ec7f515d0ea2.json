@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.734377Z",
+  "event_id": "7cb499714c7a4ab31d93a727d04940dee82216dd2dd284c63e34ec7f515d0ea2",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "5525baff1b7d4b96c996be73dcb5257655280777",
+    "message": "Completed FR-INGEST-001, FR-CONN-007, FR-CONN-002."
+  },
+  "payload_hash": "acebee1830d73e93b2ac7c58fc7fd47ab71f2b22921045434b9521e1e8f32a9f",
+  "schema_version": "1.0",
+  "source_record_id": "demo:5525baff1b7d4b96c996be73dcb5257655280777",
+  "source_system": "git",
+  "source_version": "acebee1830d73e93b2ac7c58fc7fd47ab71f2b22921045434b9521e1e8f32a9f"
+}

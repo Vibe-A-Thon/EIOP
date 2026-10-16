@@ -1,0 +1,28 @@
+{
+  "document_id": "urn:eoip:knowledge:document:file:877a09b083c41e6e87442b206579ecc6a439c2899d0c2ea89ac8669d98ff5062",
+  "source_id": "demo_corpus",
+  "source_name": "client.ts.txt",
+  "source_uri": "fixture://demo/demodata/core/demo-repo/src/client.ts",
+  "parent_id": null,
+  "content_hash": "5ba2290214838e6338bff75b29dbda878995d0f1c4036fd72507298054138a82",
+  "size_bytes": 122,
+  "format": "txt",
+  "media_type": "text/plain",
+  "parser_version": "fileparse/1.0",
+  "title": "client.ts.txt",
+  "sections": [
+    {
+      "index": 0,
+      "kind": "text",
+      "text": "import { handleRequest } from \"./service\";\n\nexport function dispatch(payload: string) {\n  return handleRequest(payload);\n}",
+      "locator": {
+        "line_start": 1,
+        "line_end": 5
+      }
+    }
+  ],
+  "tables": [],
+  "data": null,
+  "metadata": {},
+  "warnings": []
+}

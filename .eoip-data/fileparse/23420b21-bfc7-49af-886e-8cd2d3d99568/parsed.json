@@ -1,0 +1,923 @@
+{
+  "schema_version": "1.0",
+  "parser_version": "fileparse/1.0",
+  "status": "SUCCEEDED",
+  "documents": [
+    {
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_name": "mfs-customer-portal.json",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "parent_id": null,
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "size_bytes": 14717,
+      "format": "json",
+      "media_type": "application/json",
+      "parser_version": "fileparse/1.0",
+      "title": "mfs-customer-portal.json",
+      "sections": [
+        {
+          "index": 0,
+          "kind": "json",
+          "text": "{\n  \"description\": \"Code graph represented as JSON — MFS Customer Portal. TypeScript/React single-page application for Meridian Financial Services customer-facing payment and transaction management.\",\n  \"repository\": {\n    \"repo_id\": \"mfs-customer-portal\",\n    \"name\": \"mfs-customer-portal\",\n    \"source_uri\": \"https://gitlab.mfs.internal/mfs/customer-portal\",\n    \"default_branch\": \"main\"\n  },\n  \"files\": [\n    {\n      \"path\": \"src/components/PaymentForm.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-payform-v4\",\n      \"line_count\": 268\n    },\n    {\n      \"path\": \"src/components/FraudAlertBanner.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-fraudbanner-v2\",\n      \"line_count\": 95\n    },\n    {\n      \"path\": \"src/components/TransactionRow.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-txnrow-v2\",\n      \"line_count\": 78\n    },\n    {\n      \"path\": \"src/components/CardDisplay.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-card-v1\",\n      \"line_count\": 62\n    },\n    {\n      \"path\": \"src/pages/TransactionHistory.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-txnhist-v3\",\n      \"line_count\": 186\n    },\n    {\n      \"path\": \"src/pages/Dashboard.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-dash-v2\",\n      \"line_count\": 152\n    },\n    {\n      \"path\": \"src/services/paymentApi.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-payapi-v3\",\n      \"line_count\": 124\n    },\n    {\n      \"path\": \"src/services/fraudApi.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-fraudapi-v2\",\n      \"line_count\": 82\n    },\n    {\n      \"path\": \"src/hooks/usePayment.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-usepay-v2\",\n      \"line_count\": 96\n    },\n    {\n      \"path\": \"src/hooks/useTransactions.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-usetxn-v1\",\n      \"line_count\": 68\n    },\n    {\n      \"path\": \"src/utils/format.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-format-v2\",\n      \"line_count\": 54\n    },\n    {\n      \"path\": \"src/utils/validation.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-validation-v1\",\n      \"line_count\": 72\n    }\n  ],\n  \"symbols\": [\n    {\n      \"qualified_name\": \"components.PaymentForm\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"PaymentForm\",\n      \"path\": \"src/components/PaymentForm.tsx\",\n      \"start_line\": 22,\n      \"end_line\": 268\n    },\n    {\n      \"qualified_name\": \"components.PaymentForm.handleSubmit\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"handleSubmit\",\n      \"path\": \"src/components/PaymentForm.tsx\",\n      \"start_line\": 48,\n      \"end_line\": 98\n    },\n    {\n      \"qualified_name\": \"components.PaymentForm.validateCard\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"validateCard\",\n      \"path\": \"src/components/PaymentForm.tsx\",\n      \"start_line\": 100,\n      \"end_line\": 138\n    },\n    {\n      \"qualified_name\": \"components.FraudAlertBanner\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"FraudAlertBanner\",\n      \"path\": \"src/components/FraudAlertBanner.tsx\",\n      \"start_line\": 12,\n      \"end_line\": 95\n    },\n    {\n      \"qualified_name\": \"components.FraudAlertBanner.dismissAlert\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"dismissAlert\",\n      \"path\": \"src/components/FraudAlertBanner.tsx\",\n      \"start_line\": 28,\n      \"end_line\": 42\n    },\n    {\n      \"qualified_name\": \"components.TransactionRow\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"TransactionRow\",\n      \"path\": \"src/components/TransactionRow.tsx\",\n      \"start_line\": 10,\n      \"end_line\": 78\n    },\n    {\n      \"qualified_name\": \"components.CardDisplay\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"CardDisplay\",\n      \"path\": \"src/components/CardDisplay.tsx\",\n      \"start_line\": 8,\n      \"end_line\": 62\n    },\n    {\n      \"qualified_name\": \"pages.TransactionHistory\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"TransactionHistory\",\n      \"path\": \"src/pages/TransactionHistory.tsx\",\n      \"start_line\": 18,\n      \"end_line\": 186\n    },\n    {\n      \"qualified_name\": \"pages.TransactionHistory.fetchTransactions\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"fetchTransactions\",\n      \"path\": \"src/pages/TransactionHistory.tsx\",\n      \"start_line\": 32,\n      \"end_line\": 64\n    },\n    {\n      \"qualified_name\": \"pages.Dashboard\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"Dashboard\",\n      \"path\": \"src/pages/Dashboard.tsx\",\n      \"start_line\": 16,\n      \"end_line\": 152\n    },\n    {\n      \"qualified_name\": \"services.paymentApi\",\n      \"symbol_kind\": \"module\",\n      \"name\": \"paymentApi\",\n      \"path\": \"src/services/paymentApi.ts\",\n      \"start_line\": 1,\n      \"end_line\": 124\n    },\n    {\n      \"qualified_name\": \"services.paymentApi.createPayment\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"createPayment\",\n      \"path\": \"src/services/paymentApi.ts\",\n      \"start_line\": 18,\n      \"end_line\": 48\n    },\n    {\n      \"qualified_name\": \"services.paymentApi.getPayment\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"getPayment\",\n      \"path\": \"src/services/paymentApi.ts\",\n      \"start_line\": 50,\n      \"end_line\": 72\n    },\n    {\n      \"qualified_name\": \"services.paymentApi.listPayments\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"listPayments\",\n      \"path\": \"src/services/paymentApi.ts\",\n      \"start_line\": 74,\n      \"end_line\": 98\n    },\n    {\n      \"qualified_name\": \"services.fraudApi\",\n      \"symbol_kind\": \"module\",\n      \"name\": \"fraudApi\",\n      \"path\": \"src/services/fraudApi.ts\",\n      \"start_line\": 1,\n      \"end_line\": 82\n    },\n    {\n      \"qualified_name\": \"services.fraudApi.checkFraudScore\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"checkFraudScore\",\n      \"path\": \"src/services/fraudApi.ts\",\n      \"start_line\": 14,\n      \"end_line\": 42\n    },\n    {\n      \"qualified_name\": \"services.fraudApi.reportFraud\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"reportFraud\",\n      \"path\": \"src/services/fraudApi.ts\",\n      \"start_line\": 44,\n      \"end_line\": 72\n    },\n    {\n      \"qualified_name\": \"hooks.usePayment\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"usePayment\",\n      \"path\": \"src/hooks/usePayment.ts\",\n      \"start_line\": 12,\n      \"end_line\": 96\n    },\n    {\n      \"qualified_name\": \"hooks.useTransactions\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"useTransactions\",\n      \"path\": \"src/hooks/useTransactions.ts\",\n      \"start_line\": 10,\n      \"end_line\": 68\n    },\n    {\n      \"qualified_name\": \"utils.format.formatCurrency\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"formatCurrency\",\n      \"path\": \"src/utils/format.ts\",\n      \"start_line\": 4,\n      \"end_line\": 18\n    },\n    {\n      \"qualified_name\": \"utils.format.formatDate\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"formatDate\",\n      \"path\": \"src/utils/format.ts\",\n      \"start_line\": 20,\n      \"end_line\": 34\n    },\n    {\n      \"qualified_name\": \"utils.format.maskCardNumber\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"maskCardNumber\",\n      \"path\": \"src/utils/format.ts\",\n      \"start_line\": 36,\n      \"end_line\": 48\n    },\n    {\n      \"qualified_name\": \"utils.validation.validateCardNumber\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"validateCardNumber\",\n      \"path\": \"src/utils/validation.ts\",\n      \"start_line\": 6,\n      \"end_line\": 28\n    },\n    {\n      \"qualified_name\": \"utils.validation.validateAmount\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"validateAmount\",\n      \"path\": \"src/utils/validation.ts\",\n      \"start_line\": 30,\n      \"end_line\": 48\n    }\n  ],\n  \"dependencies\": [\n    {\n      \"name\": \"react\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"react-dom\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"axios\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"@tanstack/react-query\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"tailwindcss\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"typescript\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"zod\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"react-router-dom\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    }\n  ],\n  \"infrastructure\": {\n    \"pod\": \"mfs-portal-pod-01\",\n    \"namespace\": \"mfs-portal\",\n    \"cluster\": \"ocp-prod-east.mfs.internal\",\n    \"api_gateway\": \"api-gateway.mfs.internal\",\n    \"upstream_services\": [\n      \"mfs-payment-gateway\",\n      \"mfs-fraud-engine\"\n    ],\n    \"cdn\": \"cdn.mfs.internal\"\n  },\n  \"edges\": [\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/PaymentForm.tsx\",\n      \"to\": \"components.PaymentForm\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/PaymentForm.tsx\",\n      \"to\": \"components.PaymentForm.handleSubmit\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/PaymentForm.tsx\",\n      \"to\": \"components.PaymentForm.validateCard\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/FraudAlertBanner.tsx\",\n      \"to\": \"components.FraudAlertBanner\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/FraudAlertBanner.tsx\",\n      \"to\": \"components.FraudAlertBanner.dismissAlert\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/TransactionRow.tsx\",\n      \"to\": \"components.TransactionRow\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/CardDisplay.tsx\",\n      \"to\": \"components.CardDisplay\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/pages/TransactionHistory.tsx\",\n      \"to\": \"pages.TransactionHistory\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/pages/TransactionHistory.tsx\",\n      \"to\": \"pages.TransactionHistory.fetchTransactions\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/pages/Dashboard.tsx\",\n      \"to\": \"pages.Dashboard\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/paymentApi.ts\",\n      \"to\": \"services.paymentApi.createPayment\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/paymentApi.ts\",\n      \"to\": \"services.paymentApi.getPayment\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/paymentApi.ts\",\n      \"to\": \"services.paymentApi.listPayments\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/fraudApi.ts\",\n      \"to\": \"services.fraudApi.checkFraudScore\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/fraudApi.ts\",\n      \"to\": \"services.fraudApi.reportFraud\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/hooks/usePayment.ts\",\n      \"to\": \"hooks.usePayment\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/hooks/useTransactions.ts\",\n      \"to\": \"hooks.useTransactions\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/utils/format.ts\",\n      \"to\": \"utils.format.formatCurrency\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/utils/format.ts\",\n      \"to\": \"utils.format.formatDate\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/utils/format.ts\",\n      \"to\": \"utils.format.maskCardNumber\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/utils/validation.ts\",\n      \"to\": \"utils.validation.validateCardNumber\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/utils/validation.ts\",\n      \"to\": \"utils.validation.validateAmount\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.PaymentForm.handleSubmit\",\n      \"to\": \"services.paymentApi.createPayment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.PaymentForm.handleSubmit\",\n      \"to\": \"services.fraudApi.checkFraudScore\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.PaymentForm.validateCard\",\n      \"to\": \"utils.validation.validateCardNumber\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.PaymentForm.validateCard\",\n      \"to\": \"utils.validation.validateAmount\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"pages.TransactionHistory.fetchTransactions\",\n      \"to\": \"services.paymentApi.listPayments\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"pages.Dashboard\",\n      \"to\": \"hooks.usePayment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"pages.Dashboard\",\n      \"to\": \"hooks.useTransactions\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"pages.TransactionHistory\",\n      \"to\": \"hooks.useTransactions\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"hooks.usePayment\",\n      \"to\": \"services.paymentApi.createPayment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"hooks.usePayment\",\n      \"to\": \"services.paymentApi.getPayment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"hooks.useTransactions\",\n      \"to\": \"services.paymentApi.listPayments\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.TransactionRow\",\n      \"to\": \"utils.format.formatCurrency\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.TransactionRow\",\n      \"to\": \"utils.format.formatDate\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.CardDisplay\",\n      \"to\": \"utils.format.maskCardNumber\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.FraudAlertBanner\",\n      \"to\": \"services.fraudApi.reportFraud\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/components/PaymentForm.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/components/PaymentForm.tsx\",\n      \"to\": \"zod\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/components/FraudAlertBanner.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/components/TransactionRow.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/components/CardDisplay.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/pages/TransactionHistory.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/pages/TransactionHistory.tsx\",\n      \"to\": \"@tanstack/react-query\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/pages/Dashboard.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/pages/Dashboard.tsx\",\n      \"to\": \"react-router-dom\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/services/paymentApi.ts\",\n      \"to\": \"axios\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/services/fraudApi.ts\",\n      \"to\": \"axios\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/hooks/usePayment.ts\",\n      \"to\": \"@tanstack/react-query\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/hooks/useTransactions.ts\",\n      \"to\": \"@tanstack/react-query\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"components.PaymentForm\",\n      \"to\": \"services.paymentApi\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"components.PaymentForm\",\n      \"to\": \"services.fraudApi\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"components.PaymentForm\",\n      \"to\": \"utils.validation.validateCardNumber\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"pages.TransactionHistory\",\n      \"to\": \"hooks.useTransactions\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"pages.TransactionHistory\",\n      \"to\": \"components.TransactionRow\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"pages.Dashboard\",\n      \"to\": \"hooks.usePayment\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"pages.Dashboard\",\n      \"to\": \"components.PaymentForm\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"pages.Dashboard\",\n      \"to\": \"components.FraudAlertBanner\"\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"services.paymentApi\",\n      \"to\": \"mfs-payment-gateway\",\n      \"properties\": {\n        \"protocol\": \"REST\",\n        \"base_url\": \"https://api-gateway.mfs.internal/payments/v2\"\n      }\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"services.fraudApi\",\n      \"to\": \"mfs-fraud-engine\",\n      \"properties\": {\n        \"protocol\": \"REST\",\n        \"base_url\": \"https://api-gateway.mfs.internal/fraud/v2\"\n      }\n    },\n    {\n      \"type\": \"DEPLOYED_ON\",\n      \"from\": \"mfs-customer-portal\",\n      \"to\": \"mfs-portal-pod-01\",\n      \"properties\": {\n        \"namespace\": \"mfs-portal\",\n        \"cluster\": \"ocp-prod-east.mfs.internal\"\n      }\n    }\n  ]\n}",
+          "locator": {}
+        }
+      ],
+      "tables": [],
+      "data": {
+        "description": "Code graph represented as JSON — MFS Customer Portal. TypeScript/React single-page application for Meridian Financial Services customer-facing payment and transaction management.",
+        "repository": {
+          "repo_id": "mfs-customer-portal",
+          "name": "mfs-customer-portal",
+          "source_uri": "https://gitlab.mfs.internal/mfs/customer-portal",
+          "default_branch": "main"
+        },
+        "files": [
+          {
+            "path": "src/components/PaymentForm.tsx",
+            "language": "typescript",
+            "content_hash": "mfs-portal-payform-v4",
+            "line_count": 268
+          },
+          {
+            "path": "src/components/FraudAlertBanner.tsx",
+            "language": "typescript",
+            "content_hash": "mfs-portal-fraudbanner-v2",
+            "line_count": 95
+          },
+          {
+            "path": "src/components/TransactionRow.tsx",
+            "language": "typescript",
+            "content_hash": "mfs-portal-txnrow-v2",
+            "line_count": 78
+          },
+          {
+            "path": "src/components/CardDisplay.tsx",
+            "language": "typescript",
+            "content_hash": "mfs-portal-card-v1",
+            "line_count": 62
+          },
+          {
+            "path": "src/pages/TransactionHistory.tsx",
+            "language": "typescript",
+            "content_hash": "mfs-portal-txnhist-v3",
+            "line_count": 186
+          },
+          {
+            "path": "src/pages/Dashboard.tsx",
+            "language": "typescript",
+            "content_hash": "mfs-portal-dash-v2",
+            "line_count": 152
+          },
+          {
+            "path": "src/services/paymentApi.ts",
+            "language": "typescript",
+            "content_hash": "mfs-portal-payapi-v3",
+            "line_count": 124
+          },
+          {
+            "path": "src/services/fraudApi.ts",
+            "language": "typescript",
+            "content_hash": "mfs-portal-fraudapi-v2",
+            "line_count": 82
+          },
+          {
+            "path": "src/hooks/usePayment.ts",
+            "language": "typescript",
+            "content_hash": "mfs-portal-usepay-v2",
+            "line_count": 96
+          },
+          {
+            "path": "src/hooks/useTransactions.ts",
+            "language": "typescript",
+            "content_hash": "mfs-portal-usetxn-v1",
+            "line_count": 68
+          },
+          {
+            "path": "src/utils/format.ts",
+            "language": "typescript",
+            "content_hash": "mfs-portal-format-v2",
+            "line_count": 54
+          },
+          {
+            "path": "src/utils/validation.ts",
+            "language": "typescript",
+            "content_hash": "mfs-portal-validation-v1",
+            "line_count": 72
+          }
+        ],
+        "symbols": [
+          {
+            "qualified_name": "components.PaymentForm",
+            "symbol_kind": "component",
+            "name": "PaymentForm",
+            "path": "src/components/PaymentForm.tsx",
+            "start_line": 22,
+            "end_line": 268
+          },
+          {
+            "qualified_name": "components.PaymentForm.handleSubmit",
+            "symbol_kind": "function",
+            "name": "handleSubmit",
+            "path": "src/components/PaymentForm.tsx",
+            "start_line": 48,
+            "end_line": 98
+          },
+          {
+            "qualified_name": "components.PaymentForm.validateCard",
+            "symbol_kind": "function",
+            "name": "validateCard",
+            "path": "src/components/PaymentForm.tsx",
+            "start_line": 100,
+            "end_line": 138
+          },
+          {
+            "qualified_name": "components.FraudAlertBanner",
+            "symbol_kind": "component",
+            "name": "FraudAlertBanner",
+            "path": "src/components/FraudAlertBanner.tsx",
+            "start_line": 12,
+            "end_line": 95
+          },
+          {
+            "qualified_name": "components.FraudAlertBanner.dismissAlert",
+            "symbol_kind": "function",
+            "name": "dismissAlert",
+            "path": "src/components/FraudAlertBanner.tsx",
+            "start_line": 28,
+            "end_line": 42
+          },
+          {
+            "qualified_name": "components.TransactionRow",
+            "symbol_kind": "component",
+            "name": "TransactionRow",
+            "path": "src/components/TransactionRow.tsx",
+            "start_line": 10,
+            "end_line": 78
+          },
+          {
+            "qualified_name": "components.CardDisplay",
+            "symbol_kind": "component",
+            "name": "CardDisplay",
+            "path": "src/components/CardDisplay.tsx",
+            "start_line": 8,
+            "end_line": 62
+          },
+          {
+            "qualified_name": "pages.TransactionHistory",
+            "symbol_kind": "component",
+            "name": "TransactionHistory",
+            "path": "src/pages/TransactionHistory.tsx",
+            "start_line": 18,
+            "end_line": 186
+          },
+          {
+            "qualified_name": "pages.TransactionHistory.fetchTransactions",
+            "symbol_kind": "function",
+            "name": "fetchTransactions",
+            "path": "src/pages/TransactionHistory.tsx",
+            "start_line": 32,
+            "end_line": 64
+          },
+          {
+            "qualified_name": "pages.Dashboard",
+            "symbol_kind": "component",
+            "name": "Dashboard",
+            "path": "src/pages/Dashboard.tsx",
+            "start_line": 16,
+            "end_line": 152
+          },
+          {
+            "qualified_name": "services.paymentApi",
+            "symbol_kind": "module",
+            "name": "paymentApi",
+            "path": "src/services/paymentApi.ts",
+            "start_line": 1,
+            "end_line": 124
+          },
+          {
+            "qualified_name": "services.paymentApi.createPayment",
+            "symbol_kind": "function",
+            "name": "createPayment",
+            "path": "src/services/paymentApi.ts",
+            "start_line": 18,
+            "end_line": 48
+          },
+          {
+            "qualified_name": "services.paymentApi.getPayment",
+            "symbol_kind": "function",
+            "name": "getPayment",
+            "path": "src/services/paymentApi.ts",
+            "start_line": 50,
+            "end_line": 72
+          },
+          {
+            "qualified_name": "services.paymentApi.listPayments",
+            "symbol_kind": "function",
+            "name": "listPayments",
+            "path": "src/services/paymentApi.ts",
+            "start_line": 74,
+            "end_line": 98
+          },
+          {
+            "qualified_name": "services.fraudApi",
+            "symbol_kind": "module",
+            "name": "fraudApi",
+            "path": "src/services/fraudApi.ts",
+            "start_line": 1,
+            "end_line": 82
+          },
+          {
+            "qualified_name": "services.fraudApi.checkFraudScore",
+            "symbol_kind": "function",
+            "name": "checkFraudScore",
+            "path": "src/services/fraudApi.ts",
+            "start_line": 14,
+            "end_line": 42
+          },
+          {
+            "qualified_name": "services.fraudApi.reportFraud",
+            "symbol_kind": "function",
+            "name": "reportFraud",
+            "path": "src/services/fraudApi.ts",
+            "start_line": 44,
+            "end_line": 72
+          },
+          {
+            "qualified_name": "hooks.usePayment",
+            "symbol_kind": "function",
+            "name": "usePayment",
+            "path": "src/hooks/usePayment.ts",
+            "start_line": 12,
+            "end_line": 96
+          },
+          {
+            "qualified_name": "hooks.useTransactions",
+            "symbol_kind": "function",
+            "name": "useTransactions",
+            "path": "src/hooks/useTransactions.ts",
+            "start_line": 10,
+            "end_line": 68
+          },
+          {
+            "qualified_name": "utils.format.formatCurrency",
+            "symbol_kind": "function",
+            "name": "formatCurrency",
+            "path": "src/utils/format.ts",
+            "start_line": 4,
+            "end_line": 18
+          },
+          {
+            "qualified_name": "utils.format.formatDate",
+            "symbol_kind": "function",
+            "name": "formatDate",
+            "path": "src/utils/format.ts",
+            "start_line": 20,
+            "end_line": 34
+          },
+          {
+            "qualified_name": "utils.format.maskCardNumber",
+            "symbol_kind": "function",
+            "name": "maskCardNumber",
+            "path": "src/utils/format.ts",
+            "start_line": 36,
+            "end_line": 48
+          },
+          {
+            "qualified_name": "utils.validation.validateCardNumber",
+            "symbol_kind": "function",
+            "name": "validateCardNumber",
+            "path": "src/utils/validation.ts",
+            "start_line": 6,
+            "end_line": 28
+          },
+          {
+            "qualified_name": "utils.validation.validateAmount",
+            "symbol_kind": "function",
+            "name": "validateAmount",
+            "path": "src/utils/validation.ts",
+            "start_line": 30,
+            "end_line": 48
+          }
+        ],
+        "dependencies": [
+          {
+            "name": "react",
+            "resolved": true,
+            "language": "typescript"
+          },
+          {
+            "name": "react-dom",
+            "resolved": true,
+            "language": "typescript"
+          },
+          {
+            "name": "axios",
+            "resolved": true,
+            "language": "typescript"
+          },
+          {
+            "name": "@tanstack/react-query",
+            "resolved": true,
+            "language": "typescript"
+          },
+          {
+            "name": "tailwindcss",
+            "resolved": true,
+            "language": "typescript"
+          },
+          {
+            "name": "typescript",
+            "resolved": true,
+            "language": "typescript"
+          },
+          {
+            "name": "zod",
+            "resolved": true,
+            "language": "typescript"
+          },
+          {
+            "name": "react-router-dom",
+            "resolved": true,
+            "language": "typescript"
+          }
+        ],
+        "infrastructure": {
+          "pod": "mfs-portal-pod-01",
+          "namespace": "mfs-portal",
+          "cluster": "ocp-prod-east.mfs.internal",
+          "api_gateway": "api-gateway.mfs.internal",
+          "upstream_services": [
+            "mfs-payment-gateway",
+            "mfs-fraud-engine"
+          ],
+          "cdn": "cdn.mfs.internal"
+        },
+        "edges": [
+          {
+            "type": "CONTAINS",
+            "from": "src/components/PaymentForm.tsx",
+            "to": "components.PaymentForm"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/components/PaymentForm.tsx",
+            "to": "components.PaymentForm.handleSubmit"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/components/PaymentForm.tsx",
+            "to": "components.PaymentForm.validateCard"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/components/FraudAlertBanner.tsx",
+            "to": "components.FraudAlertBanner"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/components/FraudAlertBanner.tsx",
+            "to": "components.FraudAlertBanner.dismissAlert"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/components/TransactionRow.tsx",
+            "to": "components.TransactionRow"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/components/CardDisplay.tsx",
+            "to": "components.CardDisplay"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/pages/TransactionHistory.tsx",
+            "to": "pages.TransactionHistory"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/pages/TransactionHistory.tsx",
+            "to": "pages.TransactionHistory.fetchTransactions"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/pages/Dashboard.tsx",
+            "to": "pages.Dashboard"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/services/paymentApi.ts",
+            "to": "services.paymentApi.createPayment"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/services/paymentApi.ts",
+            "to": "services.paymentApi.getPayment"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/services/paymentApi.ts",
+            "to": "services.paymentApi.listPayments"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/services/fraudApi.ts",
+            "to": "services.fraudApi.checkFraudScore"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/services/fraudApi.ts",
+            "to": "services.fraudApi.reportFraud"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/hooks/usePayment.ts",
+            "to": "hooks.usePayment"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/hooks/useTransactions.ts",
+            "to": "hooks.useTransactions"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/utils/format.ts",
+            "to": "utils.format.formatCurrency"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/utils/format.ts",
+            "to": "utils.format.formatDate"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/utils/format.ts",
+            "to": "utils.format.maskCardNumber"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/utils/validation.ts",
+            "to": "utils.validation.validateCardNumber"
+          },
+          {
+            "type": "CONTAINS",
+            "from": "src/utils/validation.ts",
+            "to": "utils.validation.validateAmount"
+          },
+          {
+            "type": "CALLS",
+            "from": "components.PaymentForm.handleSubmit",
+            "to": "services.paymentApi.createPayment"
+          },
+          {
+            "type": "CALLS",
+            "from": "components.PaymentForm.handleSubmit",
+            "to": "services.fraudApi.checkFraudScore"
+          },
+          {
+            "type": "CALLS",
+            "from": "components.PaymentForm.validateCard",
+            "to": "utils.validation.validateCardNumber"
+          },
+          {
+            "type": "CALLS",
+            "from": "components.PaymentForm.validateCard",
+            "to": "utils.validation.validateAmount"
+          },
+          {
+            "type": "CALLS",
+            "from": "pages.TransactionHistory.fetchTransactions",
+            "to": "services.paymentApi.listPayments"
+          },
+          {
+            "type": "CALLS",
+            "from": "pages.Dashboard",
+            "to": "hooks.usePayment"
+          },
+          {
+            "type": "CALLS",
+            "from": "pages.Dashboard",
+            "to": "hooks.useTransactions"
+          },
+          {
+            "type": "CALLS",
+            "from": "pages.TransactionHistory",
+            "to": "hooks.useTransactions"
+          },
+          {
+            "type": "CALLS",
+            "from": "hooks.usePayment",
+            "to": "services.paymentApi.createPayment"
+          },
+          {
+            "type": "CALLS",
+            "from": "hooks.usePayment",
+            "to": "services.paymentApi.getPayment"
+          },
+          {
+            "type": "CALLS",
+            "from": "hooks.useTransactions",
+            "to": "services.paymentApi.listPayments"
+          },
+          {
+            "type": "CALLS",
+            "from": "components.TransactionRow",
+            "to": "utils.format.formatCurrency"
+          },
+          {
+            "type": "CALLS",
+            "from": "components.TransactionRow",
+            "to": "utils.format.formatDate"
+          },
+          {
+            "type": "CALLS",
+            "from": "components.CardDisplay",
+            "to": "utils.format.maskCardNumber"
+          },
+          {
+            "type": "CALLS",
+            "from": "components.FraudAlertBanner",
+            "to": "services.fraudApi.reportFraud"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/components/PaymentForm.tsx",
+            "to": "react"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/components/PaymentForm.tsx",
+            "to": "zod"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/components/FraudAlertBanner.tsx",
+            "to": "react"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/components/TransactionRow.tsx",
+            "to": "react"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/components/CardDisplay.tsx",
+            "to": "react"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/pages/TransactionHistory.tsx",
+            "to": "react"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/pages/TransactionHistory.tsx",
+            "to": "@tanstack/react-query"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/pages/Dashboard.tsx",
+            "to": "react"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/pages/Dashboard.tsx",
+            "to": "react-router-dom"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/services/paymentApi.ts",
+            "to": "axios"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/services/fraudApi.ts",
+            "to": "axios"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/hooks/usePayment.ts",
+            "to": "@tanstack/react-query"
+          },
+          {
+            "type": "IMPORTS",
+            "from": "src/hooks/useTransactions.ts",
+            "to": "@tanstack/react-query"
+          },
+          {
+            "type": "DEPENDS_ON",
+            "from": "components.PaymentForm",
+            "to": "services.paymentApi"
+          },
+          {
+            "type": "DEPENDS_ON",
+            "from": "components.PaymentForm",
+            "to": "services.fraudApi"
+          },
+          {
+            "type": "DEPENDS_ON",
+            "from": "components.PaymentForm",
+            "to": "utils.validation.validateCardNumber"
+          },
+          {
+            "type": "DEPENDS_ON",
+            "from": "pages.TransactionHistory",
+            "to": "hooks.useTransactions"
+          },
+          {
+            "type": "DEPENDS_ON",
+            "from": "pages.TransactionHistory",
+            "to": "components.TransactionRow"
+          },
+          {
+            "type": "DEPENDS_ON",
+            "from": "pages.Dashboard",
+            "to": "hooks.usePayment"
+          },
+          {
+            "type": "DEPENDS_ON",
+            "from": "pages.Dashboard",
+            "to": "components.PaymentForm"
+          },
+          {
+            "type": "DEPENDS_ON",
+            "from": "pages.Dashboard",
+            "to": "components.FraudAlertBanner"
+          },
+          {
+            "type": "CONNECTS_TO",
+            "from": "services.paymentApi",
+            "to": "mfs-payment-gateway",
+            "properties": {
+              "protocol": "REST",
+              "base_url": "https://api-gateway.mfs.internal/payments/v2"
+            }
+          },
+          {
+            "type": "CONNECTS_TO",
+            "from": "services.fraudApi",
+            "to": "mfs-fraud-engine",
+            "properties": {
+              "protocol": "REST",
+              "base_url": "https://api-gateway.mfs.internal/fraud/v2"
+            }
+          },
+          {
+            "type": "DEPLOYED_ON",
+            "from": "mfs-customer-portal",
+            "to": "mfs-portal-pod-01",
+            "properties": {
+              "namespace": "mfs-portal",
+              "cluster": "ocp-prod-east.mfs.internal"
+            }
+          }
+        ]
+      },
+      "metadata": {},
+      "warnings": []
+    }
+  ],
+  "chunks": [
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:54b2faea8a27c15951d23304fb49b95bf8f8be7c4d1660d66ce909f4a21fbe32",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 0,
+      "end_char": 1200,
+      "text": "{\n  \"description\": \"Code graph represented as JSON — MFS Customer Portal. TypeScript/React single-page application for Meridian Financial Services customer-facing payment and transaction management.\",\n  \"repository\": {\n    \"repo_id\": \"mfs-customer-portal\",\n    \"name\": \"mfs-customer-portal\",\n    \"source_uri\": \"https://gitlab.mfs.internal/mfs/customer-portal\",\n    \"default_branch\": \"main\"\n  },\n  \"files\": [\n    {\n      \"path\": \"src/components/PaymentForm.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-payform-v4\",\n      \"line_count\": 268\n    },\n    {\n      \"path\": \"src/components/FraudAlertBanner.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-fraudbanner-v2\",\n      \"line_count\": 95\n    },\n    {\n      \"path\": \"src/components/TransactionRow.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-txnrow-v2\",\n      \"line_count\": 78\n    },\n    {\n      \"path\": \"src/components/CardDisplay.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-card-v1\",\n      \"line_count\": 62\n    },\n    {\n      \"path\": \"src/pages/TransactionHistory.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-txnhist-v",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=0:1200"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:58c314be7b6907dbb78aba312745c11d6c97b771ce1c6dce366b9d632d081b09",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 1050,
+      "end_char": 2250,
+      "text": "_count\": 62\n    },\n    {\n      \"path\": \"src/pages/TransactionHistory.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-txnhist-v3\",\n      \"line_count\": 186\n    },\n    {\n      \"path\": \"src/pages/Dashboard.tsx\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-dash-v2\",\n      \"line_count\": 152\n    },\n    {\n      \"path\": \"src/services/paymentApi.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-payapi-v3\",\n      \"line_count\": 124\n    },\n    {\n      \"path\": \"src/services/fraudApi.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-fraudapi-v2\",\n      \"line_count\": 82\n    },\n    {\n      \"path\": \"src/hooks/usePayment.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-usepay-v2\",\n      \"line_count\": 96\n    },\n    {\n      \"path\": \"src/hooks/useTransactions.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-usetxn-v1\",\n      \"line_count\": 68\n    },\n    {\n      \"path\": \"src/utils/format.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-format-v2\",\n      \"line_count\": 54\n    },\n    {\n      \"path\": \"src/utils/validation.ts\",\n      \"language\": \"typescript\",",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=1050:2250"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:dff548207679498d41c12e633464b64eb194f84bb176f2091ae3c546a936d213",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 2100,
+      "end_char": 3300,
+      "text": "  \"content_hash\": \"mfs-portal-format-v2\",\n      \"line_count\": 54\n    },\n    {\n      \"path\": \"src/utils/validation.ts\",\n      \"language\": \"typescript\",\n      \"content_hash\": \"mfs-portal-validation-v1\",\n      \"line_count\": 72\n    }\n  ],\n  \"symbols\": [\n    {\n      \"qualified_name\": \"components.PaymentForm\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"PaymentForm\",\n      \"path\": \"src/components/PaymentForm.tsx\",\n      \"start_line\": 22,\n      \"end_line\": 268\n    },\n    {\n      \"qualified_name\": \"components.PaymentForm.handleSubmit\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"handleSubmit\",\n      \"path\": \"src/components/PaymentForm.tsx\",\n      \"start_line\": 48,\n      \"end_line\": 98\n    },\n    {\n      \"qualified_name\": \"components.PaymentForm.validateCard\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"validateCard\",\n      \"path\": \"src/components/PaymentForm.tsx\",\n      \"start_line\": 100,\n      \"end_line\": 138\n    },\n    {\n      \"qualified_name\": \"components.FraudAlertBanner\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"FraudAlertBanner\",\n      \"path\": \"src/components/FraudAlertBanner.tsx\",\n      \"start_line\": 12,\n      \"end_line\": 95\n    },\n    {\n      \"qualified_name\": ",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=2100:3300"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:03c8cf2824cd0bb6fa9250a83b93209f35769fb5871ff4b8423751001bb18cf6",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 3150,
+      "end_char": 4350,
+      "text": "dAlertBanner\",\n      \"path\": \"src/components/FraudAlertBanner.tsx\",\n      \"start_line\": 12,\n      \"end_line\": 95\n    },\n    {\n      \"qualified_name\": \"components.FraudAlertBanner.dismissAlert\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"dismissAlert\",\n      \"path\": \"src/components/FraudAlertBanner.tsx\",\n      \"start_line\": 28,\n      \"end_line\": 42\n    },\n    {\n      \"qualified_name\": \"components.TransactionRow\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"TransactionRow\",\n      \"path\": \"src/components/TransactionRow.tsx\",\n      \"start_line\": 10,\n      \"end_line\": 78\n    },\n    {\n      \"qualified_name\": \"components.CardDisplay\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"CardDisplay\",\n      \"path\": \"src/components/CardDisplay.tsx\",\n      \"start_line\": 8,\n      \"end_line\": 62\n    },\n    {\n      \"qualified_name\": \"pages.TransactionHistory\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"TransactionHistory\",\n      \"path\": \"src/pages/TransactionHistory.tsx\",\n      \"start_line\": 18,\n      \"end_line\": 186\n    },\n    {\n      \"qualified_name\": \"pages.TransactionHistory.fetchTransactions\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"fetchTransactions\",\n      \"path\": \"sr",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=3150:4350"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:9e7e5da68001bcd54675fac8e4ee7c5b1c127e3bfc03678bcbed9b95f6173dd6",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 4200,
+      "end_char": 5400,
+      "text": " \"qualified_name\": \"pages.TransactionHistory.fetchTransactions\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"fetchTransactions\",\n      \"path\": \"src/pages/TransactionHistory.tsx\",\n      \"start_line\": 32,\n      \"end_line\": 64\n    },\n    {\n      \"qualified_name\": \"pages.Dashboard\",\n      \"symbol_kind\": \"component\",\n      \"name\": \"Dashboard\",\n      \"path\": \"src/pages/Dashboard.tsx\",\n      \"start_line\": 16,\n      \"end_line\": 152\n    },\n    {\n      \"qualified_name\": \"services.paymentApi\",\n      \"symbol_kind\": \"module\",\n      \"name\": \"paymentApi\",\n      \"path\": \"src/services/paymentApi.ts\",\n      \"start_line\": 1,\n      \"end_line\": 124\n    },\n    {\n      \"qualified_name\": \"services.paymentApi.createPayment\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"createPayment\",\n      \"path\": \"src/services/paymentApi.ts\",\n      \"start_line\": 18,\n      \"end_line\": 48\n    },\n    {\n      \"qualified_name\": \"services.paymentApi.getPayment\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"getPayment\",\n      \"path\": \"src/services/paymentApi.ts\",\n      \"start_line\": 50,\n      \"end_line\": 72\n    },\n    {\n      \"qualified_name\": \"services.paymentApi.listPayments\",\n      \"symbol_kind\": \"function\",\n      ",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=4200:5400"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:0889e48690e30db45408961572328de80bc0b422f90158e643ded4086b1fe0f0",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 5250,
+      "end_char": 6450,
+      "text": "start_line\": 50,\n      \"end_line\": 72\n    },\n    {\n      \"qualified_name\": \"services.paymentApi.listPayments\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"listPayments\",\n      \"path\": \"src/services/paymentApi.ts\",\n      \"start_line\": 74,\n      \"end_line\": 98\n    },\n    {\n      \"qualified_name\": \"services.fraudApi\",\n      \"symbol_kind\": \"module\",\n      \"name\": \"fraudApi\",\n      \"path\": \"src/services/fraudApi.ts\",\n      \"start_line\": 1,\n      \"end_line\": 82\n    },\n    {\n      \"qualified_name\": \"services.fraudApi.checkFraudScore\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"checkFraudScore\",\n      \"path\": \"src/services/fraudApi.ts\",\n      \"start_line\": 14,\n      \"end_line\": 42\n    },\n    {\n      \"qualified_name\": \"services.fraudApi.reportFraud\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"reportFraud\",\n      \"path\": \"src/services/fraudApi.ts\",\n      \"start_line\": 44,\n      \"end_line\": 72\n    },\n    {\n      \"qualified_name\": \"hooks.usePayment\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"usePayment\",\n      \"path\": \"src/hooks/usePayment.ts\",\n      \"start_line\": 12,\n      \"end_line\": 96\n    },\n    {\n      \"qualified_name\": \"hooks.useTransactions\",\n      \"symbol_kind\": \"fu",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=5250:6450"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:a660b8b27a55f6a6c555975e8f613122ae2f96f2fd706f1836aa3a3ed7c759a3",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 6300,
+      "end_char": 7500,
+      "text": "ks/usePayment.ts\",\n      \"start_line\": 12,\n      \"end_line\": 96\n    },\n    {\n      \"qualified_name\": \"hooks.useTransactions\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"useTransactions\",\n      \"path\": \"src/hooks/useTransactions.ts\",\n      \"start_line\": 10,\n      \"end_line\": 68\n    },\n    {\n      \"qualified_name\": \"utils.format.formatCurrency\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"formatCurrency\",\n      \"path\": \"src/utils/format.ts\",\n      \"start_line\": 4,\n      \"end_line\": 18\n    },\n    {\n      \"qualified_name\": \"utils.format.formatDate\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"formatDate\",\n      \"path\": \"src/utils/format.ts\",\n      \"start_line\": 20,\n      \"end_line\": 34\n    },\n    {\n      \"qualified_name\": \"utils.format.maskCardNumber\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"maskCardNumber\",\n      \"path\": \"src/utils/format.ts\",\n      \"start_line\": 36,\n      \"end_line\": 48\n    },\n    {\n      \"qualified_name\": \"utils.validation.validateCardNumber\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"validateCardNumber\",\n      \"path\": \"src/utils/validation.ts\",\n      \"start_line\": 6,\n      \"end_line\": 28\n    },\n    {\n      \"qualified_name\": \"utils.validat",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=6300:7500"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:c6493e392abc79818ea8ae167c62d7d1fa540e4f38b32004dc434d126da07af2",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 7350,
+      "end_char": 8550,
+      "text": "eCardNumber\",\n      \"path\": \"src/utils/validation.ts\",\n      \"start_line\": 6,\n      \"end_line\": 28\n    },\n    {\n      \"qualified_name\": \"utils.validation.validateAmount\",\n      \"symbol_kind\": \"function\",\n      \"name\": \"validateAmount\",\n      \"path\": \"src/utils/validation.ts\",\n      \"start_line\": 30,\n      \"end_line\": 48\n    }\n  ],\n  \"dependencies\": [\n    {\n      \"name\": \"react\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"react-dom\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"axios\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"@tanstack/react-query\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"tailwindcss\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"typescript\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"zod\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    },\n    {\n      \"name\": \"react-router-dom\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    }\n  ],\n  \"infrastructure\": {\n    \"pod\": \"mfs-portal-pod-01\",\n    \"namespace\": \"mfs",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=7350:8550"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:194627c128bee7d289e59e00865b1347421a3afa4e26bf0adc31202cd6e2ded7",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 8400,
+      "end_char": 9600,
+      "text": "er-dom\",\n      \"resolved\": true,\n      \"language\": \"typescript\"\n    }\n  ],\n  \"infrastructure\": {\n    \"pod\": \"mfs-portal-pod-01\",\n    \"namespace\": \"mfs-portal\",\n    \"cluster\": \"ocp-prod-east.mfs.internal\",\n    \"api_gateway\": \"api-gateway.mfs.internal\",\n    \"upstream_services\": [\n      \"mfs-payment-gateway\",\n      \"mfs-fraud-engine\"\n    ],\n    \"cdn\": \"cdn.mfs.internal\"\n  },\n  \"edges\": [\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/PaymentForm.tsx\",\n      \"to\": \"components.PaymentForm\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/PaymentForm.tsx\",\n      \"to\": \"components.PaymentForm.handleSubmit\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/PaymentForm.tsx\",\n      \"to\": \"components.PaymentForm.validateCard\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/FraudAlertBanner.tsx\",\n      \"to\": \"components.FraudAlertBanner\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/FraudAlertBanner.tsx\",\n      \"to\": \"components.FraudAlertBanner.dismissAlert\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/TransactionRow.tsx\",\n      \"to\": \"components.TransactionRow\"\n    },\n   ",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=8400:9600"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:f1aec5cf69563020745c00caaab8224a48d12c8414f5ac5891ca330d7a986084",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 9450,
+      "end_char": 10650,
+      "text": "issAlert\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/TransactionRow.tsx\",\n      \"to\": \"components.TransactionRow\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/components/CardDisplay.tsx\",\n      \"to\": \"components.CardDisplay\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/pages/TransactionHistory.tsx\",\n      \"to\": \"pages.TransactionHistory\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/pages/TransactionHistory.tsx\",\n      \"to\": \"pages.TransactionHistory.fetchTransactions\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/pages/Dashboard.tsx\",\n      \"to\": \"pages.Dashboard\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/paymentApi.ts\",\n      \"to\": \"services.paymentApi.createPayment\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/paymentApi.ts\",\n      \"to\": \"services.paymentApi.getPayment\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/paymentApi.ts\",\n      \"to\": \"services.paymentApi.listPayments\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/fraudApi.ts\",\n      \"to\": \"services.fraudApi.checkFraudScore\"\n    },\n    {\n      \"type\": \"CONTAI",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=9450:10650"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:6c7c8080a3bd109743ad42375244f16ab0d3d10bb0321259f65c4f29ac114700",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 10500,
+      "end_char": 11700,
+      "text": "      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/fraudApi.ts\",\n      \"to\": \"services.fraudApi.checkFraudScore\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/services/fraudApi.ts\",\n      \"to\": \"services.fraudApi.reportFraud\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/hooks/usePayment.ts\",\n      \"to\": \"hooks.usePayment\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/hooks/useTransactions.ts\",\n      \"to\": \"hooks.useTransactions\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/utils/format.ts\",\n      \"to\": \"utils.format.formatCurrency\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/utils/format.ts\",\n      \"to\": \"utils.format.formatDate\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/utils/format.ts\",\n      \"to\": \"utils.format.maskCardNumber\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/utils/validation.ts\",\n      \"to\": \"utils.validation.validateCardNumber\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"src/utils/validation.ts\",\n      \"to\": \"utils.validation.validateAmount\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.PaymentForm.handleSubmit\",\n      \"to\": \"services.paymentApi",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=10500:11700"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:15860fcb52969686244fde0f173df87827dd074247da5349e5b74c1d185ab1e2",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 11550,
+      "end_char": 12750,
+      "text": "s.validation.validateAmount\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.PaymentForm.handleSubmit\",\n      \"to\": \"services.paymentApi.createPayment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.PaymentForm.handleSubmit\",\n      \"to\": \"services.fraudApi.checkFraudScore\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.PaymentForm.validateCard\",\n      \"to\": \"utils.validation.validateCardNumber\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.PaymentForm.validateCard\",\n      \"to\": \"utils.validation.validateAmount\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"pages.TransactionHistory.fetchTransactions\",\n      \"to\": \"services.paymentApi.listPayments\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"pages.Dashboard\",\n      \"to\": \"hooks.usePayment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"pages.Dashboard\",\n      \"to\": \"hooks.useTransactions\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"pages.TransactionHistory\",\n      \"to\": \"hooks.useTransactions\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"hooks.usePayment\",\n      \"to\": \"services.paymentApi.createPayment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=11550:12750"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:2642353d1960d11607249c84add308f501753f4d9bbbc1c9e28ebf8dc666654e",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 12600,
+      "end_char": 13800,
+      "text": "{\n      \"type\": \"CALLS\",\n      \"from\": \"hooks.usePayment\",\n      \"to\": \"services.paymentApi.createPayment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"hooks.usePayment\",\n      \"to\": \"services.paymentApi.getPayment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"hooks.useTransactions\",\n      \"to\": \"services.paymentApi.listPayments\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.TransactionRow\",\n      \"to\": \"utils.format.formatCurrency\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.TransactionRow\",\n      \"to\": \"utils.format.formatDate\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.CardDisplay\",\n      \"to\": \"utils.format.maskCardNumber\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"components.FraudAlertBanner\",\n      \"to\": \"services.fraudApi.reportFraud\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/components/PaymentForm.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/components/PaymentForm.tsx\",\n      \"to\": \"zod\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/components/FraudAlertBanner.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"s",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=12600:13800"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:5df2c304d0215d49225e1bc62c70d2a8c3774fa05c44dc05738bdce4a0787d78",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 13650,
+      "end_char": 14850,
+      "text": "    \"type\": \"IMPORTS\",\n      \"from\": \"src/components/FraudAlertBanner.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/components/TransactionRow.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/components/CardDisplay.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/pages/TransactionHistory.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/pages/TransactionHistory.tsx\",\n      \"to\": \"@tanstack/react-query\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/pages/Dashboard.tsx\",\n      \"to\": \"react\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/pages/Dashboard.tsx\",\n      \"to\": \"react-router-dom\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/services/paymentApi.ts\",\n      \"to\": \"axios\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/services/fraudApi.ts\",\n      \"to\": \"axios\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/hooks/usePayment.ts\",\n      \"to\": \"@tanstack/react-query\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/hooks/useTransactions.ts\",\n      \"to\": \"@tanstack/react-query\"\n    },\n    ",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=13650:14850"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:45cbaf5f9ea8c35bfe7056b7bbb79eb54f249fbdd2141fad7ab56e349bba7fc4",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 14700,
+      "end_char": 15900,
+      "text": "stack/react-query\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"src/hooks/useTransactions.ts\",\n      \"to\": \"@tanstack/react-query\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"components.PaymentForm\",\n      \"to\": \"services.paymentApi\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"components.PaymentForm\",\n      \"to\": \"services.fraudApi\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"components.PaymentForm\",\n      \"to\": \"utils.validation.validateCardNumber\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"pages.TransactionHistory\",\n      \"to\": \"hooks.useTransactions\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"pages.TransactionHistory\",\n      \"to\": \"components.TransactionRow\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"pages.Dashboard\",\n      \"to\": \"hooks.usePayment\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"pages.Dashboard\",\n      \"to\": \"components.PaymentForm\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"pages.Dashboard\",\n      \"to\": \"components.FraudAlertBanner\"\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"services.paymentApi\",\n      \"to\": \"mfs-payment-gateway\",\n      \"propert",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=14700:15900"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:2ef34edba28e5f4b0cde78aa2e95f8c892dc7c1cb2a7e490bfdb7a5f937fe589",
+      "document_id": "urn:eoip:knowledge:document:file:0f58a6c36a315e384263adf5306bdefa7b0600fc4935f95c9c7d29e6599332d6",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/code/mfs-customer-portal.json",
+      "content_hash": "e0c308b44c971ca5b9989c557cd215e49fc58f91a9be1496dbf2332ee64bfdf6",
+      "section_index": 0,
+      "start_char": 15750,
+      "end_char": 16478,
+      "text": "nts.FraudAlertBanner\"\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"services.paymentApi\",\n      \"to\": \"mfs-payment-gateway\",\n      \"properties\": {\n        \"protocol\": \"REST\",\n        \"base_url\": \"https://api-gateway.mfs.internal/payments/v2\"\n      }\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"services.fraudApi\",\n      \"to\": \"mfs-fraud-engine\",\n      \"properties\": {\n        \"protocol\": \"REST\",\n        \"base_url\": \"https://api-gateway.mfs.internal/fraud/v2\"\n      }\n    },\n    {\n      \"type\": \"DEPLOYED_ON\",\n      \"from\": \"mfs-customer-portal\",\n      \"to\": \"mfs-portal-pod-01\",\n      \"properties\": {\n        \"namespace\": \"mfs-portal\",\n        \"cluster\": \"ocp-prod-east.mfs.internal\"\n      }\n    }\n  ]\n}",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/code/mfs-customer-portal.json#section=0&chars=15750:16478"
+      ]
+    }
+  ],
+  "errors": []
+}

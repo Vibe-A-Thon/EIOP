@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0",
+  "parser_version": "fileparse/1.0",
+  "status": "SUCCEEDED",
+  "documents": [
+    {
+      "document_id": "urn:eoip:knowledge:document:file:e57af2fd0a8c56ffad3ca3a3079ef64aea51f20e77165486211002c63b7d21ed",
+      "source_id": "demo_corpus",
+      "source_name": "rag-golden.json",
+      "source_uri": "fixture://demo/demodata/core/eval/rag-golden.json",
+      "parent_id": null,
+      "content_hash": "f46168f588bdb10207f96a6f8f0fe4a75e51d75647b942ce6206e4b2eb86bea8",
+      "size_bytes": 2399,
+      "format": "json",
+      "media_type": "application/json",
+      "parser_version": "fileparse/1.0",
+      "title": "rag-golden.json",
+      "sections": [
+        {
+          "index": 0,
+          "kind": "json",
+          "text": "{\n  \"dataset\": \"rag-golden\",\n  \"version\": 1,\n  \"description\": \"Golden RAG evaluation cases over the EOIP demo corpus (FR-RAG-005). Expected facts are canonical IDs (or unique substrings) that retrieval must surface as facts.\",\n  \"cases\": [\n    {\n      \"id\": \"eoip1-trace\",\n      \"question\": \"Trace EOIP-1 to its implementation code\",\n      \"canonical_id\": \"urn:eoip:work:item:jira:EOIP-1\",\n      \"expected_facts\": [\n        \"urn:eoip:work:item:jira:EOIP-1\",\n        \"urn:eoip:code:commit:demo:a61a4f70ab795521e00d0e63fc9d8581f334a394\",\n        \"urn:eoip:code:symbol:demo:service.py:compute_impact\",\n        \"urn:eoip:code:file:demo:service.py\"\n      ],\n      \"expected_evidence_min\": 1,\n      \"strategy\": \"code_context\"\n    },\n    {\n      \"id\": \"compute-impact-code\",\n      \"question\": \"Which code and helpers does the compute_impact function use?\",\n      \"canonical_id\": \"urn:eoip:code:symbol:demo:service.py:compute_impact\",\n      \"expected_facts\": [\n        \"urn:eoip:code:symbol:demo:service.py:compute_impact\",\n        \"urn:eoip:code:symbol:demo:service.py:normalize\",\n        \"urn:eoip:code:file:demo:service.py\",\n        \"urn:eoip:code:dependency:demo:math\"\n      ],\n      \"expected_evidence_min\": 1,\n      \"strategy\": \"code_context\"\n    },\n    {\n      \"id\": \"repo-dependencies\",\n      \"question\": \"Which external dependencies does the demo repository declare?\",\n      \"canonical_id\": \"urn:eoip:code:repo:demo\",\n      \"expected_facts\": [\n        \"urn:eoip:code:repo:demo\",\n        \"urn:eoip:code:dependency:demo:math\",\n        \"urn:eoip:code:dependency:demo:json\",\n        \"urn:eoip:code:dependency:demo:./service\"\n      ],\n      \"expected_evidence_min\": 1,\n      \"strategy\": \"code_context\"\n    },\n    {\n      \"id\": \"readme-doc\",\n      \"question\": \"Which requirement does the README document?\",\n      \"canonical_id\": \"urn:eoip:knowledge:document:demo:README.md\",\n      \"expected_facts\": [\n        \"urn:eoip:knowledge:document:demo:README.md\",\n        \"urn:eoip:work:item:jira:EOIP-1\",\n        \"urn:eoip:code:file:demo:service.py\"\n      ],\n      \"expected_evidence_min\": 1,\n      \"strategy\": \"document_context\"\n    },\n    {\n      \"id\": \"insufficient-evidence\",\n      \"question\": \"What is blocking EOIP-404 and which code implements it?\",\n      \"canonical_id\": \"urn:eoip:work:item:jira:EOIP-404\",\n      \"expected_facts\": [],\n      \"expected_evidence_min\": 0,\n      \"strategy\": null\n    }\n  ]\n}",
+          "locator": {}
+        }
+      ],
+      "tables": [],
+      "data": {
+        "dataset": "rag-golden",
+        "version": 1,
+        "description": "Golden RAG evaluation cases over the EOIP demo corpus (FR-RAG-005). Expected facts are canonical IDs (or unique substrings) that retrieval must surface as facts.",
+        "cases": [
+          {
+            "id": "eoip1-trace",
+            "question": "Trace EOIP-1 to its implementation code",
+            "canonical_id": "urn:eoip:work:item:jira:EOIP-1",
+            "expected_facts": [
+              "urn:eoip:work:item:jira:EOIP-1",
+              "urn:eoip:code:commit:demo:a61a4f70ab795521e00d0e63fc9d8581f334a394",
+              "urn:eoip:code:symbol:demo:service.py:compute_impact",
+              "urn:eoip:code:file:demo:service.py"
+            ],
+            "expected_evidence_min": 1,
+            "strategy": "code_context"
+          },
+          {
+            "id": "compute-impact-code",
+            "question": "Which code and helpers does the compute_impact function use?",
+            "canonical_id": "urn:eoip:code:symbol:demo:service.py:compute_impact",
+            "expected_facts": [
+              "urn:eoip:code:symbol:demo:service.py:compute_impact",
+              "urn:eoip:code:symbol:demo:service.py:normalize",
+              "urn:eoip:code:file:demo:service.py",
+              "urn:eoip:code:dependency:demo:math"
+            ],
+            "expected_evidence_min": 1,
+            "strategy": "code_context"
+          },
+          {
+            "id": "repo-dependencies",
+            "question": "Which external dependencies does the demo repository declare?",
+            "canonical_id": "urn:eoip:code:repo:demo",
+            "expected_facts": [
+              "urn:eoip:code:repo:demo",
+              "urn:eoip:code:dependency:demo:math",
+              "urn:eoip:code:dependency:demo:json",
+              "urn:eoip:code:dependency:demo:./service"
+            ],
+            "expected_evidence_min": 1,
+            "strategy": "code_context"
+          },
+          {
+            "id": "readme-doc",
+            "question": "Which requirement does the README document?",
+            "canonical_id": "urn:eoip:knowledge:document:demo:README.md",
+            "expected_facts": [
+              "urn:eoip:knowledge:document:demo:README.md",
+              "urn:eoip:work:item:jira:EOIP-1",
+              "urn:eoip:code:file:demo:service.py"
+            ],
+            "expected_evidence_min": 1,
+            "strategy": "document_context"
+          },
+          {
+            "id": "insufficient-evidence",
+            "question": "What is blocking EOIP-404 and which code implements it?",
+            "canonical_id": "urn:eoip:work:item:jira:EOIP-404",
+            "expected_facts": [],
+            "expected_evidence_min": 0,
+            "strategy": null
+          }
+        ]
+      },
+      "metadata": {},
+      "warnings": []
+    }
+  ],
+  "chunks": [
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:c1f46045acd00589170afd73b9e8f84f115cd07c4052ff63dae1d06d0e981919",
+      "document_id": "urn:eoip:knowledge:document:file:e57af2fd0a8c56ffad3ca3a3079ef64aea51f20e77165486211002c63b7d21ed",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/core/eval/rag-golden.json",
+      "content_hash": "f46168f588bdb10207f96a6f8f0fe4a75e51d75647b942ce6206e4b2eb86bea8",
+      "section_index": 0,
+      "start_char": 0,
+      "end_char": 1200,
+      "text": "{\n  \"dataset\": \"rag-golden\",\n  \"version\": 1,\n  \"description\": \"Golden RAG evaluation cases over the EOIP demo corpus (FR-RAG-005). Expected facts are canonical IDs (or unique substrings) that retrieval must surface as facts.\",\n  \"cases\": [\n    {\n      \"id\": \"eoip1-trace\",\n      \"question\": \"Trace EOIP-1 to its implementation code\",\n      \"canonical_id\": \"urn:eoip:work:item:jira:EOIP-1\",\n      \"expected_facts\": [\n        \"urn:eoip:work:item:jira:EOIP-1\",\n        \"urn:eoip:code:commit:demo:a61a4f70ab795521e00d0e63fc9d8581f334a394\",\n        \"urn:eoip:code:symbol:demo:service.py:compute_impact\",\n        \"urn:eoip:code:file:demo:service.py\"\n      ],\n      \"expected_evidence_min\": 1,\n      \"strategy\": \"code_context\"\n    },\n    {\n      \"id\": \"compute-impact-code\",\n      \"question\": \"Which code and helpers does the compute_impact function use?\",\n      \"canonical_id\": \"urn:eoip:code:symbol:demo:service.py:compute_impact\",\n      \"expected_facts\": [\n        \"urn:eoip:code:symbol:demo:service.py:compute_impact\",\n        \"urn:eoip:code:symbol:demo:service.py:normalize\",\n        \"urn:eoip:code:file:demo:service.py\",\n        \"urn:eoip:code:dependency:demo:math\"\n      ],\n      \"expected_evidence_m",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/core/eval/rag-golden.json#section=0&chars=0:1200"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:6a9d8a5e09bf3c8c4763006a51bb5dd010e2b790e69fd827718a0675c307c8dc",
+      "document_id": "urn:eoip:knowledge:document:file:e57af2fd0a8c56ffad3ca3a3079ef64aea51f20e77165486211002c63b7d21ed",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/core/eval/rag-golden.json",
+      "content_hash": "f46168f588bdb10207f96a6f8f0fe4a75e51d75647b942ce6206e4b2eb86bea8",
+      "section_index": 0,
+      "start_char": 1050,
+      "end_char": 2250,
+      "text": ":service.py:normalize\",\n        \"urn:eoip:code:file:demo:service.py\",\n        \"urn:eoip:code:dependency:demo:math\"\n      ],\n      \"expected_evidence_min\": 1,\n      \"strategy\": \"code_context\"\n    },\n    {\n      \"id\": \"repo-dependencies\",\n      \"question\": \"Which external dependencies does the demo repository declare?\",\n      \"canonical_id\": \"urn:eoip:code:repo:demo\",\n      \"expected_facts\": [\n        \"urn:eoip:code:repo:demo\",\n        \"urn:eoip:code:dependency:demo:math\",\n        \"urn:eoip:code:dependency:demo:json\",\n        \"urn:eoip:code:dependency:demo:./service\"\n      ],\n      \"expected_evidence_min\": 1,\n      \"strategy\": \"code_context\"\n    },\n    {\n      \"id\": \"readme-doc\",\n      \"question\": \"Which requirement does the README document?\",\n      \"canonical_id\": \"urn:eoip:knowledge:document:demo:README.md\",\n      \"expected_facts\": [\n        \"urn:eoip:knowledge:document:demo:README.md\",\n        \"urn:eoip:work:item:jira:EOIP-1\",\n        \"urn:eoip:code:file:demo:service.py\"\n      ],\n      \"expected_evidence_min\": 1,\n      \"strategy\": \"document_context\"\n    },\n    {\n      \"id\": \"insufficient-evidence\",\n      \"question\": \"What is blocking EOIP-404 and which code implements it?\",\n      ",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/core/eval/rag-golden.json#section=0&chars=1050:2250"
+      ]
+    },
+    {
+      "chunk_id": "urn:eoip:knowledge:section:file:0da05651a611572eeb50402c42c1de80c7c2d71d3cab88c2c4f1fabdc9446ca5",
+      "document_id": "urn:eoip:knowledge:document:file:e57af2fd0a8c56ffad3ca3a3079ef64aea51f20e77165486211002c63b7d21ed",
+      "source_id": "demo_corpus",
+      "source_uri": "fixture://demo/demodata/core/eval/rag-golden.json",
+      "content_hash": "f46168f588bdb10207f96a6f8f0fe4a75e51d75647b942ce6206e4b2eb86bea8",
+      "section_index": 0,
+      "start_char": 2100,
+      "end_char": 2398,
+      "text": "ocument_context\"\n    },\n    {\n      \"id\": \"insufficient-evidence\",\n      \"question\": \"What is blocking EOIP-404 and which code implements it?\",\n      \"canonical_id\": \"urn:eoip:work:item:jira:EOIP-404\",\n      \"expected_facts\": [],\n      \"expected_evidence_min\": 0,\n      \"strategy\": null\n    }\n  ]\n}",
+      "locator": {},
+      "citations": [
+        "fixture://demo/demodata/core/eval/rag-golden.json#section=0&chars=2100:2398"
+      ]
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.623309Z",
+  "event_id": "6bc8384e75cc0d01e477a6f86bf2394efb6cecd102b7ca3d1beabc736c2705be",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "9ca7dba3fd99f400e5ce6f7c3fe6436d5bd402ae",
+    "message": "GUI implementation plan changes"
+  },
+  "payload_hash": "76373528e16764a4ac06a8b240d4cd2990771eabf14bcc2457e3fd57cdbd76e0",
+  "schema_version": "1.0",
+  "source_record_id": "demo:9ca7dba3fd99f400e5ce6f7c3fe6436d5bd402ae",
+  "source_system": "git",
+  "source_version": "76373528e16764a4ac06a8b240d4cd2990771eabf14bcc2457e3fd57cdbd76e0"
+}

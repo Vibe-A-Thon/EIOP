@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.642524Z",
+  "event_id": "2a86376700e0d2ff667f8eeea113cecf69b23eda722b060cb0e4685b543af3c4",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "192e9a0a9e61a22a652930b5ad3684622e25e508",
+    "message": "changes for gaps audit and gui requirements"
+  },
+  "payload_hash": "537bf55167cc5ae88fcb52535a24171e325ef6467dd41ab0465596f969108498",
+  "schema_version": "1.0",
+  "source_record_id": "demo:192e9a0a9e61a22a652930b5ad3684622e25e508",
+  "source_system": "git",
+  "source_version": "537bf55167cc5ae88fcb52535a24171e325ef6467dd41ab0465596f969108498"
+}

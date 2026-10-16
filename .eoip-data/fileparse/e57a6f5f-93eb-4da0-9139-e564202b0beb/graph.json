@@ -1,0 +1,35 @@
+{
+  "entities": [
+    {
+      "canonical_id": "urn:eoip:knowledge:document:file:919963488f8fc75eb7cfaf49a1ed9e86caadc44054fbc8484b42a73250587fdb",
+      "entity_type": "Document",
+      "name": "merge-requests-pipelines.json",
+      "path": "fixture://demo/demodata/core/gitlab/merge-requests-pipelines.json",
+      "doc_format": "json",
+      "content_hash": "98a72cec41714a684a86621d675a9bf8a60c6d2ac898cfc2521da5515c807b34",
+      "parser_version": "fileparse/1.0",
+      "description": "{\n  \"merge_requests\": [\n    {\n      \"iid\": 17,\n      \"title\": \"EOIP-1 Add requirement trace endpoint\",\n      \"state\": \"merged\",\n      \"source_branch\": \"EOIP-1-trace-endpoint\",\n      \"target_branch\": \"main\",\n      \"merge_commit_sha\": \"0123456789abcdef0123456789abcdef01234567\",\n      \"description\": \"Implements the Jira story EOIP-1.\",\n      \"work_item_keys\": [\n        \"EOIP-1\"\n      ]\n    }\n  ],\n  \"pipelines\": [\n    {\n      \"id\": 204,\n      \"name\": \"test-and-build\",\n      \"status\": \"success\",\n      \"ref\": \"main\",\n      \"sha\": \"0123456789abcdef0123456789abcdef01234567\",\n      \"work_item_keys\": [\n        \"EOIP-1\"\n      ]\n    }\n  ]\n}",
+      "payload_json": "{\"document_id\": \"urn:eoip:knowledge:document:file:919963488f8fc75eb7cfaf49a1ed9e86caadc44054fbc8484b42a73250587fdb\", \"source_id\": \"demo_corpus\", \"source_name\": \"merge-requests-pipelines.json\", \"source_uri\": \"fixture://demo/demodata/core/gitlab/merge-requests-pipelines.json\", \"parent_id\": null, \"content_hash\": \"98a72cec41714a684a86621d675a9bf8a60c6d2ac898cfc2521da5515c807b34\", \"size_bytes\": 604, \"format\": \"json\", \"media_type\": \"application/json\", \"parser_version\": \"fileparse/1.0\", \"title\": \"merge-requests-pipelines.json\", \"sections\": [{\"index\": 0, \"kind\": \"json\", \"text\": \"{\\n  \\\"merge_requests\\\": [\\n    {\\n      \\\"iid\\\": 17,\\n      \\\"title\\\": \\\"EOIP-1 Add requirement trace endpoint\\\",\\n      \\\"state\\\": \\\"merged\\\",\\n      \\\"source_branch\\\": \\\"EOIP-1-trace-endpoint\\\",\\n      \\\"target_branch\\\": \\\"main\\\",\\n      \\\"merge_commit_sha\\\": \\\"0123456789abcdef0123456789abcdef01234567\\\",\\n      \\\"description\\\": \\\"Implements the Jira story EOIP-1.\\\",\\n      \\\"work_item_keys\\\": [\\n        \\\"EOIP-1\\\"\\n      ]\\n    }\\n  ],\\n  \\\"pipelines\\\": [\\n    {\\n      \\\"id\\\": 204,\\n      \\\"name\\\": \\\"test-and-build\\\",\\n      \\\"status\\\": \\\"success\\\",\\n      \\\"ref\\\": \\\"main\\\",\\n      \\\"sha\\\": \\\"0123456789abcdef0123456789abcdef01234567\\\",\\n      \\\"work_item_keys\\\": [\\n        \\\"EOIP-1\\\"\\n      ]\\n    }\\n  ]\\n}\", \"locator\": {}}], \"tables\": [], \"data\": {\"merge_requests\": [{\"iid\": 17, \"title\": \"EOIP-1 Add requirement trace endpoint\", \"state\": \"merged\", \"source_branch\": \"EOIP-1-trace-endpoint\", \"target_branch\": \"main\", \"merge_commit_sha\": \"0123456789abcdef0123456789abcdef01234567\", \"description\": \"Implements the Jira story EOIP-1.\", \"work_item_keys\": [\"EOIP-1\"]}], \"pipelines\": [{\"id\": 204, \"name\": \"test-and-build\", \"status\": \"success\", \"ref\": \"main\", \"sha\": \"0123456789abcdef0123456789abcdef01234567\", \"work_item_keys\": [\"EOIP-1\"]}]}, \"metadata\": {}, \"warnings\": []}"
+    },
+    {
+      "canonical_id": "urn:eoip:knowledge:section:file:6407540ea4e9711bc1c157bdd18f4caba7e84589eea8c376efcc78db17dc9145",
+      "entity_type": "DocumentSection",
+      "name": "Section 0 (0:636)",
+      "path": "fixture://demo/demodata/core/gitlab/merge-requests-pipelines.json#section=0&chars=0:636",
+      "content": "{\n  \"merge_requests\": [\n    {\n      \"iid\": 17,\n      \"title\": \"EOIP-1 Add requirement trace endpoint\",\n      \"state\": \"merged\",\n      \"source_branch\": \"EOIP-1-trace-endpoint\",\n      \"target_branch\": \"main\",\n      \"merge_commit_sha\": \"0123456789abcdef0123456789abcdef01234567\",\n      \"description\": \"Implements the Jira story EOIP-1.\",\n      \"work_item_keys\": [\n        \"EOIP-1\"\n      ]\n    }\n  ],\n  \"pipelines\": [\n    {\n      \"id\": 204,\n      \"name\": \"test-and-build\",\n      \"status\": \"success\",\n      \"ref\": \"main\",\n      \"sha\": \"0123456789abcdef0123456789abcdef01234567\",\n      \"work_item_keys\": [\n        \"EOIP-1\"\n      ]\n    }\n  ]\n}",
+      "section_index": 0,
+      "content_hash": "28f8f69a7fa21bb68f1cacb747745008690143daa7553a5f4359e848ac12e568",
+      "payload_json": "{\"chunk_id\": \"urn:eoip:knowledge:section:file:6407540ea4e9711bc1c157bdd18f4caba7e84589eea8c376efcc78db17dc9145\", \"document_id\": \"urn:eoip:knowledge:document:file:919963488f8fc75eb7cfaf49a1ed9e86caadc44054fbc8484b42a73250587fdb\", \"source_id\": \"demo_corpus\", \"source_uri\": \"fixture://demo/demodata/core/gitlab/merge-requests-pipelines.json\", \"content_hash\": \"98a72cec41714a684a86621d675a9bf8a60c6d2ac898cfc2521da5515c807b34\", \"section_index\": 0, \"start_char\": 0, \"end_char\": 636, \"text\": \"{\\n  \\\"merge_requests\\\": [\\n    {\\n      \\\"iid\\\": 17,\\n      \\\"title\\\": \\\"EOIP-1 Add requirement trace endpoint\\\",\\n      \\\"state\\\": \\\"merged\\\",\\n      \\\"source_branch\\\": \\\"EOIP-1-trace-endpoint\\\",\\n      \\\"target_branch\\\": \\\"main\\\",\\n      \\\"merge_commit_sha\\\": \\\"0123456789abcdef0123456789abcdef01234567\\\",\\n      \\\"description\\\": \\\"Implements the Jira story EOIP-1.\\\",\\n      \\\"work_item_keys\\\": [\\n        \\\"EOIP-1\\\"\\n      ]\\n    }\\n  ],\\n  \\\"pipelines\\\": [\\n    {\\n      \\\"id\\\": 204,\\n      \\\"name\\\": \\\"test-and-build\\\",\\n      \\\"status\\\": \\\"success\\\",\\n      \\\"ref\\\": \\\"main\\\",\\n      \\\"sha\\\": \\\"0123456789abcdef0123456789abcdef01234567\\\",\\n      \\\"work_item_keys\\\": [\\n        \\\"EOIP-1\\\"\\n      ]\\n    }\\n  ]\\n}\", \"locator\": {}, \"citations\": [\"fixture://demo/demodata/core/gitlab/merge-requests-pipelines.json#section=0&chars=0:636\"]}"
+    }
+  ],
+  "relationships": [
+    {
+      "from_id": "urn:eoip:knowledge:document:file:919963488f8fc75eb7cfaf49a1ed9e86caadc44054fbc8484b42a73250587fdb",
+      "to_id": "urn:eoip:knowledge:section:file:6407540ea4e9711bc1c157bdd18f4caba7e84589eea8c376efcc78db17dc9145",
+      "type": "CONTAINS",
+      "properties": {
+        "source_ref": "fixture://demo/demodata/core/gitlab/merge-requests-pipelines.json#section=0&chars=0:636"
+      }
+    }
+  ]
+}

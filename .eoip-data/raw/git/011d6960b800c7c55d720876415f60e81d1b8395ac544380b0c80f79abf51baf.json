@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.720967Z",
+  "event_id": "011d6960b800c7c55d720876415f60e81d1b8395ac544380b0c80f79abf51baf",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "10af3a4465dfeed4717b5304bd4f6478b5366128",
+    "message": "changes for phase 2 cg changes"
+  },
+  "payload_hash": "596596c19f61f32a39ba9a111845b563a5affc78528123fcc66a42ad8c8ed469",
+  "schema_version": "1.0",
+  "source_record_id": "demo:10af3a4465dfeed4717b5304bd4f6478b5366128",
+  "source_system": "git",
+  "source_version": "596596c19f61f32a39ba9a111845b563a5affc78528123fcc66a42ad8c8ed469"
+}

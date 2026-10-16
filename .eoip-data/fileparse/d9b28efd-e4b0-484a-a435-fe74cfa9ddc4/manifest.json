@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "status": "SUCCEEDED",
+  "parser_version": "fileparse/1.0",
+  "documents": 1,
+  "chunks": 1,
+  "errors": [],
+  "files": {
+    "chunks.jsonl": "01b12152ec3d0c4eac9d7f3bbc2d817ee29d34211b2784a0f0489eb2ac2a9f8a",
+    "documents/6db95304b329fb646723c7ee132dc0330f5c38c048d72a8e2ef7431ad2777c8d.json": "e5bfcff58c1d5937ae03ce692e677467d58fd890c4865643735e6d030e1dd8e6",
+    "graph.json": "5738a6ace2f8215dd81b0191b427ec8488bf4220b2564271911cc41f7391cdb4",
+    "keyword.jsonl": "94df5d1ff00aa3ba5ec89b9295ba8f210cfdff7f63c9aa5cc1253c7c2c048309",
+    "parsed.json": "73bd52055e55bd7686b3b9a0bf2e6769b6aa072cff849940ce21ebe7583e5558",
+    "vectors.jsonl": "f17ae69f92b7cf48caf722ed8b76a38e50d2dca4b9c66b4bbd5170aae0fc8dd7"
+  },
+  "embedding_model": "eoip-local-hashing-256",
+  "embedding_note": "Deterministic lexical hashing, not a trained semantic embedding model"
+}

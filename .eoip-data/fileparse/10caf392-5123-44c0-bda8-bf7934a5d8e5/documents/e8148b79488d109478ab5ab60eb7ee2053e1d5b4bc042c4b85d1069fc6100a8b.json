@@ -1,0 +1,1438 @@
+{
+  "document_id": "urn:eoip:knowledge:document:file:e8148b79488d109478ab5ab60eb7ee2053e1d5b4bc042c4b85d1069fc6100a8b",
+  "source_id": "demo_corpus",
+  "source_name": "mfs-payment-gateway.json",
+  "source_uri": "fixture://demo/demodata/code/mfs-payment-gateway.json",
+  "parent_id": null,
+  "content_hash": "225680198e81d12551f680e7ae1fa7f185e8da22e4b2e5ee9d8b474e7062d52c",
+  "size_bytes": 35167,
+  "format": "json",
+  "media_type": "application/json",
+  "parser_version": "fileparse/1.0",
+  "title": "mfs-payment-gateway.json",
+  "sections": [
+    {
+      "index": 0,
+      "kind": "json",
+      "text": "{\n  \"description\": \"Code graph represented as JSON — MFS Payment Gateway. Python microservice handling payment processing, card tokenization, and retry logic for Meridian Financial Services.\",\n  \"repository\": {\n    \"repo_id\": \"mfs-payment-gateway\",\n    \"name\": \"mfs-payment-gateway\",\n    \"source_uri\": \"https://gitlab.mfs.internal/mfs/payment-gateway\",\n    \"default_branch\": \"main\"\n  },\n  \"files\": [\n    {\n      \"path\": \"services/payment/service.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-pay-svc-v4\",\n      \"line_count\": 218\n    },\n    {\n      \"path\": \"services/payment/__init__.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-pay-init-v1\",\n      \"line_count\": 5\n    },\n    {\n      \"path\": \"services/tokenization/service.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-token-svc-v3\",\n      \"line_count\": 164\n    },\n    {\n      \"path\": \"services/tokenization/__init__.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-token-init-v1\",\n      \"line_count\": 3\n    },\n    {\n      \"path\": \"services/retry/handler.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-retry-v2\",\n      \"line_count\": 142\n    },\n    {\n      \"path\": \"api/routes.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-pay-api-v5\",\n      \"line_count\": 186\n    },\n    {\n      \"path\": \"api/middleware.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-pay-middleware-v2\",\n      \"line_count\": 74\n    },\n    {\n      \"path\": \"models/payment.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-pay-models-v3\",\n      \"line_count\": 112\n    },\n    {\n      \"path\": \"models/transaction.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-pay-txn-model-v2\",\n      \"line_count\": 68\n    },\n    {\n      \"path\": \"utils/db.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-pay-db-v2\",\n      \"line_count\": 95\n    },\n    {\n      \"path\": \"utils/hsm.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-pay-hsm-v1\",\n      \"line_count\": 78\n    },\n    {\n      \"path\": \"utils/kafka_producer.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-pay-kafka-v2\",\n      \"line_count\": 62\n    },\n    {\n      \"path\": \"config/settings.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-pay-config-v3\",\n      \"line_count\": 45\n    },\n    {\n      \"path\": \"services/webhook/dispatcher.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-webhook-dispatch-v1\",\n      \"line_count\": 156,\n      \"description\": \"Webhook event dispatcher with HMAC signing and delivery tracking\"\n    },\n    {\n      \"path\": \"services/webhook/retry_handler.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-webhook-retry-v1\",\n      \"line_count\": 98,\n      \"description\": \"Exponential backoff retry with max attempts and circuit breaker\"\n    },\n    {\n      \"path\": \"services/webhook/dlq.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-webhook-dlq-v1\",\n      \"line_count\": 72,\n      \"description\": \"Dead letter queue for failed webhook deliveries\"\n    },\n    {\n      \"path\": \"services/analytics/aggregator.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-analytics-agg-v1\",\n      \"line_count\": 184,\n      \"description\": \"Transaction analytics aggregation with time-bucketed metrics\"\n    },\n    {\n      \"path\": \"services/analytics/reporter.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-analytics-report-v1\",\n      \"line_count\": 112,\n      \"description\": \"Analytics reporting with merchant performance summaries\"\n    },\n    {\n      \"path\": \"services/settlement/batch_processor.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-settlement-batch-v1\",\n      \"line_count\": 210,\n      \"description\": \"Settlement batch processing with reconciliation\"\n    },\n    {\n      \"path\": \"services/settlement/reconciliation.py\",\n      \"language\": \"python\",\n      \"content_hash\": \"mfs-settlement-recon-v1\",\n      \"line_count\": 145,\n      \"description\": \"Settlement reconciliation with bank statement matching\"\n    }\n  ],\n  \"symbols\": [\n    {\n      \"qualified_name\": \"services.payment.service.PaymentService\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"PaymentService\",\n      \"path\": \"services/payment/service.py\",\n      \"start_line\": 22,\n      \"end_line\": 218\n    },\n    {\n      \"qualified_name\": \"services.payment.service.PaymentService.process_payment\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"process_payment\",\n      \"path\": \"services/payment/service.py\",\n      \"start_line\": 45,\n      \"end_line\": 98\n    },\n    {\n      \"qualified_name\": \"services.payment.service.PaymentService.validate_payment\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"validate_payment\",\n      \"path\": \"services/payment/service.py\",\n      \"start_line\": 100,\n      \"end_line\": 142\n    },\n    {\n      \"qualified_name\": \"services.payment.service.PaymentService.refund_payment\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"refund_payment\",\n      \"path\": \"services/payment/service.py\",\n      \"start_line\": 144,\n      \"end_line\": 195\n    },\n    {\n      \"qualified_name\": \"services.payment.service.PaymentService._publish_txn_event\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"_publish_txn_event\",\n      \"path\": \"services/payment/service.py\",\n      \"start_line\": 197,\n      \"end_line\": 218\n    },\n    {\n      \"qualified_name\": \"services.tokenization.service.TokenizationService\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"TokenizationService\",\n      \"path\": \"services/tokenization/service.py\",\n      \"start_line\": 18,\n      \"end_line\": 164\n    },\n    {\n      \"qualified_name\": \"services.tokenization.service.TokenizationService.tokenize_card\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"tokenize_card\",\n      \"path\": \"services/tokenization/service.py\",\n      \"start_line\": 32,\n      \"end_line\": 72\n    },\n    {\n      \"qualified_name\": \"services.tokenization.service.TokenizationService.detokenize\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"detokenize\",\n      \"path\": \"services/tokenization/service.py\",\n      \"start_line\": 74,\n      \"end_line\": 108\n    },\n    {\n      \"qualified_name\": \"services.tokenization.service.TokenizationService.rotate_token\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"rotate_token\",\n      \"path\": \"services/tokenization/service.py\",\n      \"start_line\": 110,\n      \"end_line\": 148\n    },\n    {\n      \"qualified_name\": \"services.retry.handler.RetryHandler\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"RetryHandler\",\n      \"path\": \"services/retry/handler.py\",\n      \"start_line\": 14,\n      \"end_line\": 142\n    },\n    {\n      \"qualified_name\": \"services.retry.handler.RetryHandler.execute_with_retry\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"execute_with_retry\",\n      \"path\": \"services/retry/handler.py\",\n      \"start_line\": 28,\n      \"end_line\": 68\n    },\n    {\n      \"qualified_name\": \"services.retry.handler.RetryHandler.circuit_breaker\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"circuit_breaker\",\n      \"path\": \"services/retry/handler.py\",\n      \"start_line\": 70,\n      \"end_line\": 105\n    },\n    {\n      \"qualified_name\": \"services.retry.handler.RetryHandler.backoff_strategy\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"backoff_strategy\",\n      \"path\": \"services/retry/handler.py\",\n      \"start_line\": 107,\n      \"end_line\": 132\n    },\n    {\n      \"qualified_name\": \"api.routes.PaymentAPI\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"PaymentAPI\",\n      \"path\": \"api/routes.py\",\n      \"start_line\": 16,\n      \"end_line\": 186\n    },\n    {\n      \"qualified_name\": \"api.routes.PaymentAPI.create_payment\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"create_payment\",\n      \"path\": \"api/routes.py\",\n      \"start_line\": 30,\n      \"end_line\": 82\n    },\n    {\n      \"qualified_name\": \"api.routes.PaymentAPI.get_payment\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"get_payment\",\n      \"path\": \"api/routes.py\",\n      \"start_line\": 84,\n      \"end_line\": 112\n    },\n    {\n      \"qualified_name\": \"api.routes.PaymentAPI.list_payments\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"list_payments\",\n      \"path\": \"api/routes.py\",\n      \"start_line\": 114,\n      \"end_line\": 148\n    },\n    {\n      \"qualified_name\": \"api.routes.PaymentAPI.process_refund\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"process_refund\",\n      \"path\": \"api/routes.py\",\n      \"start_line\": 150,\n      \"end_line\": 186\n    },\n    {\n      \"qualified_name\": \"models.payment.Payment\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"Payment\",\n      \"path\": \"models/payment.py\",\n      \"start_line\": 10,\n      \"end_line\": 52\n    },\n    {\n      \"qualified_name\": \"models.payment.PaymentStatus\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"PaymentStatus\",\n      \"path\": \"models/payment.py\",\n      \"start_line\": 54,\n      \"end_line\": 68\n    },\n    {\n      \"qualified_name\": \"models.payment.Currency\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"Currency\",\n      \"path\": \"models/payment.py\",\n      \"start_line\": 70,\n      \"end_line\": 82\n    },\n    {\n      \"qualified_name\": \"models.payment.RefundRequest\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"RefundRequest\",\n      \"path\": \"models/payment.py\",\n      \"start_line\": 84,\n      \"end_line\": 112\n    },\n    {\n      \"qualified_name\": \"models.transaction.Transaction\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"Transaction\",\n      \"path\": \"models/transaction.py\",\n      \"start_line\": 8,\n      \"end_line\": 42\n    },\n    {\n      \"qualified_name\": \"models.transaction.TransactionEvent\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"TransactionEvent\",\n      \"path\": \"models/transaction.py\",\n      \"start_line\": 44,\n      \"end_line\": 68\n    },\n    {\n      \"qualified_name\": \"utils.db.DBClient\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"DBClient\",\n      \"path\": \"utils/db.py\",\n      \"start_line\": 12,\n      \"end_line\": 95\n    },\n    {\n      \"qualified_name\": \"utils.db.DBClient.get_session\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"get_session\",\n      \"path\": \"utils/db.py\",\n      \"start_line\": 28,\n      \"end_line\": 42\n    },\n    {\n      \"qualified_name\": \"utils.db.DBClient.execute_query\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"execute_query\",\n      \"path\": \"utils/db.py\",\n      \"start_line\": 44,\n      \"end_line\": 68\n    },\n    {\n      \"qualified_name\": \"utils.hsm.HSMClient\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"HSMClient\",\n      \"path\": \"utils/hsm.py\",\n      \"start_line\": 10,\n      \"end_line\": 78\n    },\n    {\n      \"qualified_name\": \"utils.hsm.HSMClient.encrypt\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"encrypt\",\n      \"path\": \"utils/hsm.py\",\n      \"start_line\": 22,\n      \"end_line\": 38\n    },\n    {\n      \"qualified_name\": \"utils.hsm.HSMClient.decrypt\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"decrypt\",\n      \"path\": \"utils/hsm.py\",\n      \"start_line\": 40,\n      \"end_line\": 56\n    },\n    {\n      \"qualified_name\": \"utils.hsm.HSMClient.generate_key\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"generate_key\",\n      \"path\": \"utils/hsm.py\",\n      \"start_line\": 58,\n      \"end_line\": 72\n    },\n    {\n      \"qualified_name\": \"utils.kafka_producer.PaymentEventProducer\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"PaymentEventProducer\",\n      \"path\": \"utils/kafka_producer.py\",\n      \"start_line\": 8,\n      \"end_line\": 62\n    },\n    {\n      \"qualified_name\": \"utils.kafka_producer.PaymentEventProducer.publish\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"publish\",\n      \"path\": \"utils/kafka_producer.py\",\n      \"start_line\": 22,\n      \"end_line\": 48\n    },\n    {\n      \"qualified_name\": \"services.webhook.dispatcher.WebhookDispatcher\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"WebhookDispatcher\",\n      \"path\": \"services/webhook/dispatcher.py\",\n      \"start_line\": 16,\n      \"end_line\": 156\n    },\n    {\n      \"qualified_name\": \"services.webhook.dispatcher.WebhookDispatcher.dispatch\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"dispatch\",\n      \"path\": \"services/webhook/dispatcher.py\",\n      \"start_line\": 32,\n      \"end_line\": 78\n    },\n    {\n      \"qualified_name\": \"services.webhook.dispatcher.WebhookDispatcher.sign_payload\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"sign_payload\",\n      \"path\": \"services/webhook/dispatcher.py\",\n      \"start_line\": 80,\n      \"end_line\": 108\n    },\n    {\n      \"qualified_name\": \"services.webhook.dispatcher.WebhookDispatcher.verify_delivery\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"verify_delivery\",\n      \"path\": \"services/webhook/dispatcher.py\",\n      \"start_line\": 110,\n      \"end_line\": 148\n    },\n    {\n      \"qualified_name\": \"services.webhook.retry_handler.RetryHandler\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"RetryHandler\",\n      \"path\": \"services/webhook/retry_handler.py\",\n      \"start_line\": 12,\n      \"end_line\": 98\n    },\n    {\n      \"qualified_name\": \"services.webhook.retry_handler.RetryHandler.retry_with_backoff\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"retry_with_backoff\",\n      \"path\": \"services/webhook/retry_handler.py\",\n      \"start_line\": 24,\n      \"end_line\": 72\n    },\n    {\n      \"qualified_name\": \"services.webhook.dlq.DeadLetterQueue\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"DeadLetterQueue\",\n      \"path\": \"services/webhook/dlq.py\",\n      \"start_line\": 10,\n      \"end_line\": 72\n    },\n    {\n      \"qualified_name\": \"services.webhook.dlq.DeadLetterQueue.enqueue\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"enqueue\",\n      \"path\": \"services/webhook/dlq.py\",\n      \"start_line\": 22,\n      \"end_line\": 42\n    },\n    {\n      \"qualified_name\": \"services.webhook.dlq.DeadLetterQueue.replay\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"replay\",\n      \"path\": \"services/webhook/dlq.py\",\n      \"start_line\": 44,\n      \"end_line\": 68\n    },\n    {\n      \"qualified_name\": \"services.analytics.aggregator.AnalyticsAggregator\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"AnalyticsAggregator\",\n      \"path\": \"services/analytics/aggregator.py\",\n      \"start_line\": 18,\n      \"end_line\": 184\n    },\n    {\n      \"qualified_name\": \"services.analytics.aggregator.AnalyticsAggregator.aggregate\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"aggregate\",\n      \"path\": \"services/analytics/aggregator.py\",\n      \"start_line\": 34,\n      \"end_line\": 98\n    },\n    {\n      \"qualified_name\": \"services.analytics.aggregator.AnalyticsAggregator.flush_bucket\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"flush_bucket\",\n      \"path\": \"services/analytics/aggregator.py\",\n      \"start_line\": 100,\n      \"end_line\": 142\n    },\n    {\n      \"qualified_name\": \"services.analytics.reporter.AnalyticsReporter\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"AnalyticsReporter\",\n      \"path\": \"services/analytics/reporter.py\",\n      \"start_line\": 14,\n      \"end_line\": 112\n    },\n    {\n      \"qualified_name\": \"services.analytics.reporter.AnalyticsReporter.generate_report\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"generate_report\",\n      \"path\": \"services/analytics/reporter.py\",\n      \"start_line\": 28,\n      \"end_line\": 98\n    },\n    {\n      \"qualified_name\": \"services.settlement.batch_processor.SettlementBatchProcessor\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"SettlementBatchProcessor\",\n      \"path\": \"services/settlement/batch_processor.py\",\n      \"start_line\": 20,\n      \"end_line\": 210\n    },\n    {\n      \"qualified_name\": \"services.settlement.batch_processor.SettlementBatchProcessor.process_batch\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"process_batch\",\n      \"path\": \"services/settlement/batch_processor.py\",\n      \"start_line\": 38,\n      \"end_line\": 118\n    },\n    {\n      \"qualified_name\": \"services.settlement.batch_processor.SettlementBatchProcessor.create_payout\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"create_payout\",\n      \"path\": \"services/settlement/batch_processor.py\",\n      \"start_line\": 120,\n      \"end_line\": 178\n    },\n    {\n      \"qualified_name\": \"services.settlement.reconciliation.ReconciliationEngine\",\n      \"symbol_kind\": \"class\",\n      \"name\": \"ReconciliationEngine\",\n      \"path\": \"services/settlement/reconciliation.py\",\n      \"start_line\": 16,\n      \"end_line\": 145\n    },\n    {\n      \"qualified_name\": \"services.settlement.reconciliation.ReconciliationEngine.reconcile\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"reconcile\",\n      \"path\": \"services/settlement/reconciliation.py\",\n      \"start_line\": 30,\n      \"end_line\": 82\n    },\n    {\n      \"qualified_name\": \"services.settlement.reconciliation.ReconciliationEngine.match_transactions\",\n      \"symbol_kind\": \"method\",\n      \"name\": \"match_transactions\",\n      \"path\": \"services/settlement/reconciliation.py\",\n      \"start_line\": 84,\n      \"end_line\": 132\n    }\n  ],\n  \"dependencies\": [\n    {\n      \"name\": \"httpx\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    },\n    {\n      \"name\": \"sqlalchemy\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    },\n    {\n      \"name\": \"pydantic\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    },\n    {\n      \"name\": \"redis\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    },\n    {\n      \"name\": \"cryptography\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    },\n    {\n      \"name\": \"kafka-python\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    },\n    {\n      \"name\": \"uvicorn\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    },\n    {\n      \"name\": \"fastapi\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    },\n    {\n      \"name\": \"structlog\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    },\n    {\n      \"name\": \"prometheus-client\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    },\n    {\n      \"name\": \"alembic\",\n      \"resolved\": true,\n      \"language\": \"python\"\n    }\n  ],\n  \"infrastructure\": {\n    \"databases\": [\n      {\n        \"host\": \"pghost-prod-01.mfs.internal\",\n        \"name\": \"mfs_payments_db\",\n        \"service_account\": \"svc-payment-api\",\n        \"tables\": [\n          \"payments\",\n          \"payment_methods\",\n          \"tokens\",\n          \"idempotency_keys\",\n          \"webhook_registrations\",\n          \"webhook_delivery_log\",\n          \"webhook_dlq\",\n          \"analytics_aggregates\",\n          \"settlement_batches\",\n          \"reconciliation_records\"\n        ]\n      },\n      {\n        \"host\": \"pghost-prod-03.mfs.internal\",\n        \"name\": \"mfs_audit_db\",\n        \"service_account\": \"svc-payment-api\",\n        \"tables\": [\n          \"audit_log\",\n          \"access_log\",\n          \"compliance_events\"\n        ]\n      }\n    ],\n    \"message_queues\": [\n      {\n        \"type\": \"kafka\",\n        \"broker\": \"kafka-broker.mfs.internal:9092\",\n        \"topics\": [\n          \"mfs.payment.events\",\n          \"mfs.payment.settlements\",\n          \"mfs.payment.dlq\"\n        ]\n      },\n      {\n        \"type\": \"kafka\",\n        \"broker\": \"kafka-broker.mfs.internal:9092\",\n        \"consumer_groups\": [\n          \"mfs-webhook-dispatch\",\n          \"mfs-analytics-agg\",\n          \"mfs-settlement-proc\"\n        ]\n      }\n    ],\n    \"pods\": [\n      {\n        \"name\": \"mfs-pay-pod-01\",\n        \"namespace\": \"mfs-payments\",\n        \"replicas\": 4,\n        \"resources\": {\n          \"cpu\": \"2\",\n          \"memory\": \"4Gi\"\n        },\n        \"services\": [\n          \"payment-processing\",\n          \"tokenization\",\n          \"webhook-dispatch\"\n        ]\n      },\n      {\n        \"name\": \"mfs-pay-pod-02\",\n        \"namespace\": \"mfs-payments\",\n        \"replicas\": 2,\n        \"resources\": {\n          \"cpu\": \"2\",\n          \"memory\": \"4Gi\"\n        },\n        \"services\": [\n          \"payment-processing-secondary\"\n        ]\n      },\n      {\n        \"name\": \"mfs-pay-pod-03\",\n        \"namespace\": \"mfs-payments\",\n        \"replicas\": 2,\n        \"resources\": {\n          \"cpu\": \"1\",\n          \"memory\": \"2Gi\"\n        },\n        \"services\": [\n          \"analytics\",\n          \"settlement-processing\"\n        ]\n      }\n    ],\n    \"service_accounts\": [\n      \"svc-payment-api\",\n      \"svc-token-vault\",\n      \"svc-webhook-dispatch\",\n      \"svc-analytics\"\n    ],\n    \"secrets\": [\n      {\n        \"name\": \"payment-db-credentials\",\n        \"vault_path\": \"secret/mfs/payments/db\"\n      },\n      {\n        \"name\": \"webhook-signing-keys\",\n        \"vault_path\": \"secret/mfs/payments/webhook\"\n      },\n      {\n        \"name\": \"hsm-client-cert\",\n        \"vault_path\": \"secret/mfs/payments/hsm\"\n      }\n    ],\n    \"external_services\": [\n      {\n        \"name\": \"hsm-gateway.mfs.internal:8443\",\n        \"purpose\": \"Hardware Security Module for tokenization\"\n      },\n      {\n        \"name\": \"vault.mfs.internal\",\n        \"purpose\": \"Secrets management\"\n      },\n      {\n        \"name\": \"redis-cluster.mfs.internal\",\n        \"purpose\": \"Idempotency key cache and rate limiting\"\n      }\n    ]\n  },\n  \"edges\": [\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"services/payment/service.py\",\n      \"to\": \"services.payment.service.PaymentService\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"services/tokenization/service.py\",\n      \"to\": \"services.tokenization.service.TokenizationService\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"services/retry/handler.py\",\n      \"to\": \"services.retry.handler.RetryHandler\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"api/routes.py\",\n      \"to\": \"api.routes.PaymentAPI\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"models/payment.py\",\n      \"to\": \"models.payment.Payment\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"models/payment.py\",\n      \"to\": \"models.payment.PaymentStatus\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"models/payment.py\",\n      \"to\": \"models.payment.Currency\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"models/payment.py\",\n      \"to\": \"models.payment.RefundRequest\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"models/transaction.py\",\n      \"to\": \"models.transaction.Transaction\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"models/transaction.py\",\n      \"to\": \"models.transaction.TransactionEvent\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"utils/db.py\",\n      \"to\": \"utils.db.DBClient\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"utils/hsm.py\",\n      \"to\": \"utils.hsm.HSMClient\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"utils/kafka_producer.py\",\n      \"to\": \"utils.kafka_producer.PaymentEventProducer\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"services/webhook/dispatcher.py\",\n      \"to\": \"services.webhook.dispatcher.WebhookDispatcher\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"services/webhook/retry_handler.py\",\n      \"to\": \"services.webhook.retry_handler.RetryHandler\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"services/webhook/dlq.py\",\n      \"to\": \"services.webhook.dlq.DeadLetterQueue\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"services/analytics/aggregator.py\",\n      \"to\": \"services.analytics.aggregator.AnalyticsAggregator\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"services/analytics/reporter.py\",\n      \"to\": \"services.analytics.reporter.AnalyticsReporter\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"services/settlement/batch_processor.py\",\n      \"to\": \"services.settlement.batch_processor.SettlementBatchProcessor\"\n    },\n    {\n      \"type\": \"CONTAINS\",\n      \"from\": \"services/settlement/reconciliation.py\",\n      \"to\": \"services.settlement.reconciliation.ReconciliationEngine\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.payment.service.PaymentService\",\n      \"to\": \"services.payment.service.PaymentService.process_payment\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.payment.service.PaymentService\",\n      \"to\": \"services.payment.service.PaymentService.validate_payment\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.payment.service.PaymentService\",\n      \"to\": \"services.payment.service.PaymentService.refund_payment\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.payment.service.PaymentService\",\n      \"to\": \"services.payment.service.PaymentService._publish_txn_event\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.tokenization.service.TokenizationService\",\n      \"to\": \"services.tokenization.service.TokenizationService.tokenize_card\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.tokenization.service.TokenizationService\",\n      \"to\": \"services.tokenization.service.TokenizationService.detokenize\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.tokenization.service.TokenizationService\",\n      \"to\": \"services.tokenization.service.TokenizationService.rotate_token\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.retry.handler.RetryHandler\",\n      \"to\": \"services.retry.handler.RetryHandler.execute_with_retry\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.retry.handler.RetryHandler\",\n      \"to\": \"services.retry.handler.RetryHandler.circuit_breaker\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.retry.handler.RetryHandler\",\n      \"to\": \"services.retry.handler.RetryHandler.backoff_strategy\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"api.routes.PaymentAPI\",\n      \"to\": \"api.routes.PaymentAPI.create_payment\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"api.routes.PaymentAPI\",\n      \"to\": \"api.routes.PaymentAPI.get_payment\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"api.routes.PaymentAPI\",\n      \"to\": \"api.routes.PaymentAPI.list_payments\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"api.routes.PaymentAPI\",\n      \"to\": \"api.routes.PaymentAPI.process_refund\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.webhook.dispatcher.WebhookDispatcher\",\n      \"to\": \"services.webhook.dispatcher.WebhookDispatcher.dispatch\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.webhook.dispatcher.WebhookDispatcher\",\n      \"to\": \"services.webhook.dispatcher.WebhookDispatcher.sign_payload\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.webhook.dispatcher.WebhookDispatcher\",\n      \"to\": \"services.webhook.dispatcher.WebhookDispatcher.verify_delivery\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.webhook.retry_handler.RetryHandler\",\n      \"to\": \"services.webhook.retry_handler.RetryHandler.retry_with_backoff\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.webhook.dlq.DeadLetterQueue\",\n      \"to\": \"services.webhook.dlq.DeadLetterQueue.enqueue\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.webhook.dlq.DeadLetterQueue\",\n      \"to\": \"services.webhook.dlq.DeadLetterQueue.replay\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.analytics.aggregator.AnalyticsAggregator\",\n      \"to\": \"services.analytics.aggregator.AnalyticsAggregator.aggregate\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.analytics.aggregator.AnalyticsAggregator\",\n      \"to\": \"services.analytics.aggregator.AnalyticsAggregator.flush_bucket\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.analytics.reporter.AnalyticsReporter\",\n      \"to\": \"services.analytics.reporter.AnalyticsReporter.generate_report\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.settlement.batch_processor.SettlementBatchProcessor\",\n      \"to\": \"services.settlement.batch_processor.SettlementBatchProcessor.process_batch\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.settlement.batch_processor.SettlementBatchProcessor\",\n      \"to\": \"services.settlement.batch_processor.SettlementBatchProcessor.create_payout\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.settlement.reconciliation.ReconciliationEngine\",\n      \"to\": \"services.settlement.reconciliation.ReconciliationEngine.reconcile\"\n    },\n    {\n      \"type\": \"DECLARES\",\n      \"from\": \"services.settlement.reconciliation.ReconciliationEngine\",\n      \"to\": \"services.settlement.reconciliation.ReconciliationEngine.match_transactions\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"api.routes.PaymentAPI.create_payment\",\n      \"to\": \"services.payment.service.PaymentService.validate_payment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"api.routes.PaymentAPI.create_payment\",\n      \"to\": \"services.payment.service.PaymentService.process_payment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"api.routes.PaymentAPI.process_refund\",\n      \"to\": \"services.payment.service.PaymentService.refund_payment\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.payment.service.PaymentService.process_payment\",\n      \"to\": \"services.tokenization.service.TokenizationService.tokenize_card\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.payment.service.PaymentService.process_payment\",\n      \"to\": \"services.retry.handler.RetryHandler.execute_with_retry\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.payment.service.PaymentService.process_payment\",\n      \"to\": \"utils.db.DBClient.execute_query\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.payment.service.PaymentService.process_payment\",\n      \"to\": \"services.payment.service.PaymentService._publish_txn_event\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.payment.service.PaymentService.refund_payment\",\n      \"to\": \"utils.db.DBClient.execute_query\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.payment.service.PaymentService.refund_payment\",\n      \"to\": \"services.payment.service.PaymentService._publish_txn_event\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.payment.service.PaymentService._publish_txn_event\",\n      \"to\": \"utils.kafka_producer.PaymentEventProducer.publish\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.tokenization.service.TokenizationService.tokenize_card\",\n      \"to\": \"utils.hsm.HSMClient.encrypt\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.tokenization.service.TokenizationService.detokenize\",\n      \"to\": \"utils.hsm.HSMClient.decrypt\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.tokenization.service.TokenizationService.rotate_token\",\n      \"to\": \"utils.hsm.HSMClient.generate_key\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.tokenization.service.TokenizationService.rotate_token\",\n      \"to\": \"utils.hsm.HSMClient.encrypt\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.retry.handler.RetryHandler.execute_with_retry\",\n      \"to\": \"services.retry.handler.RetryHandler.circuit_breaker\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.retry.handler.RetryHandler.execute_with_retry\",\n      \"to\": \"services.retry.handler.RetryHandler.backoff_strategy\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.webhook.dispatcher.WebhookDispatcher.dispatch\",\n      \"to\": \"services.webhook.retry_handler.RetryHandler.retry_with_backoff\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.webhook.dispatcher.WebhookDispatcher.dispatch\",\n      \"to\": \"services.webhook.dispatcher.WebhookDispatcher.sign_payload\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.webhook.retry_handler.RetryHandler.retry_with_backoff\",\n      \"to\": \"services.webhook.dlq.DeadLetterQueue.enqueue\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.settlement.batch_processor.SettlementBatchProcessor.process_batch\",\n      \"to\": \"services.settlement.reconciliation.ReconciliationEngine.reconcile\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.settlement.reconciliation.ReconciliationEngine.reconcile\",\n      \"to\": \"services.settlement.reconciliation.ReconciliationEngine.match_transactions\"\n    },\n    {\n      \"type\": \"CALLS\",\n      \"from\": \"services.analytics.reporter.AnalyticsReporter.generate_report\",\n      \"to\": \"services.analytics.aggregator.AnalyticsAggregator.aggregate\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/payment/service.py\",\n      \"to\": \"sqlalchemy\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/payment/service.py\",\n      \"to\": \"pydantic\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/payment/service.py\",\n      \"to\": \"structlog\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/tokenization/service.py\",\n      \"to\": \"cryptography\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/tokenization/service.py\",\n      \"to\": \"redis\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/retry/handler.py\",\n      \"to\": \"redis\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/retry/handler.py\",\n      \"to\": \"structlog\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"api/routes.py\",\n      \"to\": \"fastapi\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"api/routes.py\",\n      \"to\": \"pydantic\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"models/payment.py\",\n      \"to\": \"pydantic\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"models/payment.py\",\n      \"to\": \"sqlalchemy\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"models/transaction.py\",\n      \"to\": \"pydantic\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"utils/db.py\",\n      \"to\": \"sqlalchemy\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"utils/hsm.py\",\n      \"to\": \"cryptography\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"utils/hsm.py\",\n      \"to\": \"httpx\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"utils/kafka_producer.py\",\n      \"to\": \"kafka-python\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/webhook/dispatcher.py\",\n      \"to\": \"httpx\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/webhook/dispatcher.py\",\n      \"to\": \"structlog\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/webhook/retry_handler.py\",\n      \"to\": \"structlog\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/webhook/dlq.py\",\n      \"to\": \"kafka-python\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/webhook/dlq.py\",\n      \"to\": \"structlog\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/analytics/aggregator.py\",\n      \"to\": \"sqlalchemy\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/analytics/aggregator.py\",\n      \"to\": \"structlog\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/analytics/aggregator.py\",\n      \"to\": \"services.payment.service.PaymentService\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/analytics/reporter.py\",\n      \"to\": \"pydantic\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/analytics/reporter.py\",\n      \"to\": \"structlog\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/settlement/batch_processor.py\",\n      \"to\": \"sqlalchemy\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/settlement/batch_processor.py\",\n      \"to\": \"structlog\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/settlement/batch_processor.py\",\n      \"to\": \"services.payment.service.PaymentService\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/settlement/reconciliation.py\",\n      \"to\": \"sqlalchemy\"\n    },\n    {\n      \"type\": \"IMPORTS\",\n      \"from\": \"services/settlement/reconciliation.py\",\n      \"to\": \"structlog\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.payment.service.PaymentService\",\n      \"to\": \"utils.db.DBClient\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.payment.service.PaymentService\",\n      \"to\": \"services.tokenization.service.TokenizationService\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.payment.service.PaymentService\",\n      \"to\": \"services.retry.handler.RetryHandler\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.payment.service.PaymentService\",\n      \"to\": \"utils.kafka_producer.PaymentEventProducer\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.tokenization.service.TokenizationService\",\n      \"to\": \"utils.hsm.HSMClient\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"api.routes.PaymentAPI\",\n      \"to\": \"services.payment.service.PaymentService\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.webhook.dispatcher.WebhookDispatcher\",\n      \"to\": \"services.webhook.retry_handler.RetryHandler\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.webhook.dispatcher.WebhookDispatcher\",\n      \"to\": \"utils.db.DBClient\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.webhook.retry_handler.RetryHandler\",\n      \"to\": \"services.webhook.dlq.DeadLetterQueue\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.analytics.aggregator.AnalyticsAggregator\",\n      \"to\": \"services.payment.service.PaymentService\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.analytics.aggregator.AnalyticsAggregator\",\n      \"to\": \"utils.db.DBClient\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.analytics.reporter.AnalyticsReporter\",\n      \"to\": \"services.analytics.aggregator.AnalyticsAggregator\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.settlement.batch_processor.SettlementBatchProcessor\",\n      \"to\": \"services.payment.service.PaymentService\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.settlement.batch_processor.SettlementBatchProcessor\",\n      \"to\": \"services.settlement.reconciliation.ReconciliationEngine\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.settlement.batch_processor.SettlementBatchProcessor\",\n      \"to\": \"utils.db.DBClient\"\n    },\n    {\n      \"type\": \"DEPENDS_ON\",\n      \"from\": \"services.settlement.reconciliation.ReconciliationEngine\",\n      \"to\": \"utils.db.DBClient\"\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"utils.db.DBClient\",\n      \"to\": \"mfs_payments_db\",\n      \"properties\": {\n        \"host\": \"pghost-prod-01.mfs.internal\",\n        \"service_account\": \"svc-payment-api\"\n      }\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"utils.kafka_producer.PaymentEventProducer\",\n      \"to\": \"kafka-broker.mfs.internal\",\n      \"properties\": {\n        \"topic\": \"txn-events\"\n      }\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"utils.hsm.HSMClient\",\n      \"to\": \"hsm-gateway.mfs.internal\",\n      \"properties\": {\n        \"port\": 8443\n      }\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"services.webhook.dispatcher.WebhookDispatcher\",\n      \"to\": \"kafka-broker.mfs.internal\",\n      \"properties\": {\n        \"topic\": \"mfs.payment.events\"\n      }\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"services.webhook.dlq.DeadLetterQueue\",\n      \"to\": \"kafka-broker.mfs.internal\",\n      \"properties\": {\n        \"topic\": \"mfs.payment.dlq\"\n      }\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"services.settlement.batch_processor.SettlementBatchProcessor\",\n      \"to\": \"kafka-broker.mfs.internal\",\n      \"properties\": {\n        \"topic\": \"mfs.payment.settlements\"\n      }\n    },\n    {\n      \"type\": \"CONNECTS_TO\",\n      \"from\": \"services.settlement.batch_processor.SettlementBatchProcessor\",\n      \"to\": \"mfs_payments_db\",\n      \"properties\": {\n        \"host\": \"pghost-prod-01.mfs.internal\",\n        \"service_account\": \"svc-payment-api\"\n      }\n    },\n    {\n      \"type\": \"DEPLOYED_ON\",\n      \"from\": \"mfs-payment-gateway\",\n      \"to\": \"mfs-pay-pod-01\",\n      \"properties\": {\n        \"namespace\": \"mfs-payments\",\n        \"cluster\": \"ocp-prod-east.mfs.internal\"\n      }\n    },\n    {\n      \"type\": \"DEPLOYED_ON\",\n      \"from\": \"mfs-payment-gateway\",\n      \"to\": \"mfs-pay-pod-02\",\n      \"properties\": {\n        \"namespace\": \"mfs-payments\",\n        \"cluster\": \"ocp-prod-east.mfs.internal\"\n      }\n    },\n    {\n      \"type\": \"DEPLOYED_ON\",\n      \"from\": \"mfs-payment-gateway\",\n      \"to\": \"mfs-pay-pod-03\",\n      \"properties\": {\n        \"namespace\": \"mfs-payments\",\n        \"cluster\": \"ocp-prod-east.mfs.internal\"\n      }\n    }\n  ]\n}",
+      "locator": {}
+    }
+  ],
+  "tables": [],
+  "data": {
+    "description": "Code graph represented as JSON — MFS Payment Gateway. Python microservice handling payment processing, card tokenization, and retry logic for Meridian Financial Services.",
+    "repository": {
+      "repo_id": "mfs-payment-gateway",
+      "name": "mfs-payment-gateway",
+      "source_uri": "https://gitlab.mfs.internal/mfs/payment-gateway",
+      "default_branch": "main"
+    },
+    "files": [
+      {
+        "path": "services/payment/service.py",
+        "language": "python",
+        "content_hash": "mfs-pay-svc-v4",
+        "line_count": 218
+      },
+      {
+        "path": "services/payment/__init__.py",
+        "language": "python",
+        "content_hash": "mfs-pay-init-v1",
+        "line_count": 5
+      },
+      {
+        "path": "services/tokenization/service.py",
+        "language": "python",
+        "content_hash": "mfs-token-svc-v3",
+        "line_count": 164
+      },
+      {
+        "path": "services/tokenization/__init__.py",
+        "language": "python",
+        "content_hash": "mfs-token-init-v1",
+        "line_count": 3
+      },
+      {
+        "path": "services/retry/handler.py",
+        "language": "python",
+        "content_hash": "mfs-retry-v2",
+        "line_count": 142
+      },
+      {
+        "path": "api/routes.py",
+        "language": "python",
+        "content_hash": "mfs-pay-api-v5",
+        "line_count": 186
+      },
+      {
+        "path": "api/middleware.py",
+        "language": "python",
+        "content_hash": "mfs-pay-middleware-v2",
+        "line_count": 74
+      },
+      {
+        "path": "models/payment.py",
+        "language": "python",
+        "content_hash": "mfs-pay-models-v3",
+        "line_count": 112
+      },
+      {
+        "path": "models/transaction.py",
+        "language": "python",
+        "content_hash": "mfs-pay-txn-model-v2",
+        "line_count": 68
+      },
+      {
+        "path": "utils/db.py",
+        "language": "python",
+        "content_hash": "mfs-pay-db-v2",
+        "line_count": 95
+      },
+      {
+        "path": "utils/hsm.py",
+        "language": "python",
+        "content_hash": "mfs-pay-hsm-v1",
+        "line_count": 78
+      },
+      {
+        "path": "utils/kafka_producer.py",
+        "language": "python",
+        "content_hash": "mfs-pay-kafka-v2",
+        "line_count": 62
+      },
+      {
+        "path": "config/settings.py",
+        "language": "python",
+        "content_hash": "mfs-pay-config-v3",
+        "line_count": 45
+      },
+      {
+        "path": "services/webhook/dispatcher.py",
+        "language": "python",
+        "content_hash": "mfs-webhook-dispatch-v1",
+        "line_count": 156,
+        "description": "Webhook event dispatcher with HMAC signing and delivery tracking"
+      },
+      {
+        "path": "services/webhook/retry_handler.py",
+        "language": "python",
+        "content_hash": "mfs-webhook-retry-v1",
+        "line_count": 98,
+        "description": "Exponential backoff retry with max attempts and circuit breaker"
+      },
+      {
+        "path": "services/webhook/dlq.py",
+        "language": "python",
+        "content_hash": "mfs-webhook-dlq-v1",
+        "line_count": 72,
+        "description": "Dead letter queue for failed webhook deliveries"
+      },
+      {
+        "path": "services/analytics/aggregator.py",
+        "language": "python",
+        "content_hash": "mfs-analytics-agg-v1",
+        "line_count": 184,
+        "description": "Transaction analytics aggregation with time-bucketed metrics"
+      },
+      {
+        "path": "services/analytics/reporter.py",
+        "language": "python",
+        "content_hash": "mfs-analytics-report-v1",
+        "line_count": 112,
+        "description": "Analytics reporting with merchant performance summaries"
+      },
+      {
+        "path": "services/settlement/batch_processor.py",
+        "language": "python",
+        "content_hash": "mfs-settlement-batch-v1",
+        "line_count": 210,
+        "description": "Settlement batch processing with reconciliation"
+      },
+      {
+        "path": "services/settlement/reconciliation.py",
+        "language": "python",
+        "content_hash": "mfs-settlement-recon-v1",
+        "line_count": 145,
+        "description": "Settlement reconciliation with bank statement matching"
+      }
+    ],
+    "symbols": [
+      {
+        "qualified_name": "services.payment.service.PaymentService",
+        "symbol_kind": "class",
+        "name": "PaymentService",
+        "path": "services/payment/service.py",
+        "start_line": 22,
+        "end_line": 218
+      },
+      {
+        "qualified_name": "services.payment.service.PaymentService.process_payment",
+        "symbol_kind": "method",
+        "name": "process_payment",
+        "path": "services/payment/service.py",
+        "start_line": 45,
+        "end_line": 98
+      },
+      {
+        "qualified_name": "services.payment.service.PaymentService.validate_payment",
+        "symbol_kind": "method",
+        "name": "validate_payment",
+        "path": "services/payment/service.py",
+        "start_line": 100,
+        "end_line": 142
+      },
+      {
+        "qualified_name": "services.payment.service.PaymentService.refund_payment",
+        "symbol_kind": "method",
+        "name": "refund_payment",
+        "path": "services/payment/service.py",
+        "start_line": 144,
+        "end_line": 195
+      },
+      {
+        "qualified_name": "services.payment.service.PaymentService._publish_txn_event",
+        "symbol_kind": "method",
+        "name": "_publish_txn_event",
+        "path": "services/payment/service.py",
+        "start_line": 197,
+        "end_line": 218
+      },
+      {
+        "qualified_name": "services.tokenization.service.TokenizationService",
+        "symbol_kind": "class",
+        "name": "TokenizationService",
+        "path": "services/tokenization/service.py",
+        "start_line": 18,
+        "end_line": 164
+      },
+      {
+        "qualified_name": "services.tokenization.service.TokenizationService.tokenize_card",
+        "symbol_kind": "method",
+        "name": "tokenize_card",
+        "path": "services/tokenization/service.py",
+        "start_line": 32,
+        "end_line": 72
+      },
+      {
+        "qualified_name": "services.tokenization.service.TokenizationService.detokenize",
+        "symbol_kind": "method",
+        "name": "detokenize",
+        "path": "services/tokenization/service.py",
+        "start_line": 74,
+        "end_line": 108
+      },
+      {
+        "qualified_name": "services.tokenization.service.TokenizationService.rotate_token",
+        "symbol_kind": "method",
+        "name": "rotate_token",
+        "path": "services/tokenization/service.py",
+        "start_line": 110,
+        "end_line": 148
+      },
+      {
+        "qualified_name": "services.retry.handler.RetryHandler",
+        "symbol_kind": "class",
+        "name": "RetryHandler",
+        "path": "services/retry/handler.py",
+        "start_line": 14,
+        "end_line": 142
+      },
+      {
+        "qualified_name": "services.retry.handler.RetryHandler.execute_with_retry",
+        "symbol_kind": "method",
+        "name": "execute_with_retry",
+        "path": "services/retry/handler.py",
+        "start_line": 28,
+        "end_line": 68
+      },
+      {
+        "qualified_name": "services.retry.handler.RetryHandler.circuit_breaker",
+        "symbol_kind": "method",
+        "name": "circuit_breaker",
+        "path": "services/retry/handler.py",
+        "start_line": 70,
+        "end_line": 105
+      },
+      {
+        "qualified_name": "services.retry.handler.RetryHandler.backoff_strategy",
+        "symbol_kind": "method",
+        "name": "backoff_strategy",
+        "path": "services/retry/handler.py",
+        "start_line": 107,
+        "end_line": 132
+      },
+      {
+        "qualified_name": "api.routes.PaymentAPI",
+        "symbol_kind": "class",
+        "name": "PaymentAPI",
+        "path": "api/routes.py",
+        "start_line": 16,
+        "end_line": 186
+      },
+      {
+        "qualified_name": "api.routes.PaymentAPI.create_payment",
+        "symbol_kind": "method",
+        "name": "create_payment",
+        "path": "api/routes.py",
+        "start_line": 30,
+        "end_line": 82
+      },
+      {
+        "qualified_name": "api.routes.PaymentAPI.get_payment",
+        "symbol_kind": "method",
+        "name": "get_payment",
+        "path": "api/routes.py",
+        "start_line": 84,
+        "end_line": 112
+      },
+      {
+        "qualified_name": "api.routes.PaymentAPI.list_payments",
+        "symbol_kind": "method",
+        "name": "list_payments",
+        "path": "api/routes.py",
+        "start_line": 114,
+        "end_line": 148
+      },
+      {
+        "qualified_name": "api.routes.PaymentAPI.process_refund",
+        "symbol_kind": "method",
+        "name": "process_refund",
+        "path": "api/routes.py",
+        "start_line": 150,
+        "end_line": 186
+      },
+      {
+        "qualified_name": "models.payment.Payment",
+        "symbol_kind": "class",
+        "name": "Payment",
+        "path": "models/payment.py",
+        "start_line": 10,
+        "end_line": 52
+      },
+      {
+        "qualified_name": "models.payment.PaymentStatus",
+        "symbol_kind": "class",
+        "name": "PaymentStatus",
+        "path": "models/payment.py",
+        "start_line": 54,
+        "end_line": 68
+      },
+      {
+        "qualified_name": "models.payment.Currency",
+        "symbol_kind": "class",
+        "name": "Currency",
+        "path": "models/payment.py",
+        "start_line": 70,
+        "end_line": 82
+      },
+      {
+        "qualified_name": "models.payment.RefundRequest",
+        "symbol_kind": "class",
+        "name": "RefundRequest",
+        "path": "models/payment.py",
+        "start_line": 84,
+        "end_line": 112
+      },
+      {
+        "qualified_name": "models.transaction.Transaction",
+        "symbol_kind": "class",
+        "name": "Transaction",
+        "path": "models/transaction.py",
+        "start_line": 8,
+        "end_line": 42
+      },
+      {
+        "qualified_name": "models.transaction.TransactionEvent",
+        "symbol_kind": "class",
+        "name": "TransactionEvent",
+        "path": "models/transaction.py",
+        "start_line": 44,
+        "end_line": 68
+      },
+      {
+        "qualified_name": "utils.db.DBClient",
+        "symbol_kind": "class",
+        "name": "DBClient",
+        "path": "utils/db.py",
+        "start_line": 12,
+        "end_line": 95
+      },
+      {
+        "qualified_name": "utils.db.DBClient.get_session",
+        "symbol_kind": "method",
+        "name": "get_session",
+        "path": "utils/db.py",
+        "start_line": 28,
+        "end_line": 42
+      },
+      {
+        "qualified_name": "utils.db.DBClient.execute_query",
+        "symbol_kind": "method",
+        "name": "execute_query",
+        "path": "utils/db.py",
+        "start_line": 44,
+        "end_line": 68
+      },
+      {
+        "qualified_name": "utils.hsm.HSMClient",
+        "symbol_kind": "class",
+        "name": "HSMClient",
+        "path": "utils/hsm.py",
+        "start_line": 10,
+        "end_line": 78
+      },
+      {
+        "qualified_name": "utils.hsm.HSMClient.encrypt",
+        "symbol_kind": "method",
+        "name": "encrypt",
+        "path": "utils/hsm.py",
+        "start_line": 22,
+        "end_line": 38
+      },
+      {
+        "qualified_name": "utils.hsm.HSMClient.decrypt",
+        "symbol_kind": "method",
+        "name": "decrypt",
+        "path": "utils/hsm.py",
+        "start_line": 40,
+        "end_line": 56
+      },
+      {
+        "qualified_name": "utils.hsm.HSMClient.generate_key",
+        "symbol_kind": "method",
+        "name": "generate_key",
+        "path": "utils/hsm.py",
+        "start_line": 58,
+        "end_line": 72
+      },
+      {
+        "qualified_name": "utils.kafka_producer.PaymentEventProducer",
+        "symbol_kind": "class",
+        "name": "PaymentEventProducer",
+        "path": "utils/kafka_producer.py",
+        "start_line": 8,
+        "end_line": 62
+      },
+      {
+        "qualified_name": "utils.kafka_producer.PaymentEventProducer.publish",
+        "symbol_kind": "method",
+        "name": "publish",
+        "path": "utils/kafka_producer.py",
+        "start_line": 22,
+        "end_line": 48
+      },
+      {
+        "qualified_name": "services.webhook.dispatcher.WebhookDispatcher",
+        "symbol_kind": "class",
+        "name": "WebhookDispatcher",
+        "path": "services/webhook/dispatcher.py",
+        "start_line": 16,
+        "end_line": 156
+      },
+      {
+        "qualified_name": "services.webhook.dispatcher.WebhookDispatcher.dispatch",
+        "symbol_kind": "method",
+        "name": "dispatch",
+        "path": "services/webhook/dispatcher.py",
+        "start_line": 32,
+        "end_line": 78
+      },
+      {
+        "qualified_name": "services.webhook.dispatcher.WebhookDispatcher.sign_payload",
+        "symbol_kind": "method",
+        "name": "sign_payload",
+        "path": "services/webhook/dispatcher.py",
+        "start_line": 80,
+        "end_line": 108
+      },
+      {
+        "qualified_name": "services.webhook.dispatcher.WebhookDispatcher.verify_delivery",
+        "symbol_kind": "method",
+        "name": "verify_delivery",
+        "path": "services/webhook/dispatcher.py",
+        "start_line": 110,
+        "end_line": 148
+      },
+      {
+        "qualified_name": "services.webhook.retry_handler.RetryHandler",
+        "symbol_kind": "class",
+        "name": "RetryHandler",
+        "path": "services/webhook/retry_handler.py",
+        "start_line": 12,
+        "end_line": 98
+      },
+      {
+        "qualified_name": "services.webhook.retry_handler.RetryHandler.retry_with_backoff",
+        "symbol_kind": "method",
+        "name": "retry_with_backoff",
+        "path": "services/webhook/retry_handler.py",
+        "start_line": 24,
+        "end_line": 72
+      },
+      {
+        "qualified_name": "services.webhook.dlq.DeadLetterQueue",
+        "symbol_kind": "class",
+        "name": "DeadLetterQueue",
+        "path": "services/webhook/dlq.py",
+        "start_line": 10,
+        "end_line": 72
+      },
+      {
+        "qualified_name": "services.webhook.dlq.DeadLetterQueue.enqueue",
+        "symbol_kind": "method",
+        "name": "enqueue",
+        "path": "services/webhook/dlq.py",
+        "start_line": 22,
+        "end_line": 42
+      },
+      {
+        "qualified_name": "services.webhook.dlq.DeadLetterQueue.replay",
+        "symbol_kind": "method",
+        "name": "replay",
+        "path": "services/webhook/dlq.py",
+        "start_line": 44,
+        "end_line": 68
+      },
+      {
+        "qualified_name": "services.analytics.aggregator.AnalyticsAggregator",
+        "symbol_kind": "class",
+        "name": "AnalyticsAggregator",
+        "path": "services/analytics/aggregator.py",
+        "start_line": 18,
+        "end_line": 184
+      },
+      {
+        "qualified_name": "services.analytics.aggregator.AnalyticsAggregator.aggregate",
+        "symbol_kind": "method",
+        "name": "aggregate",
+        "path": "services/analytics/aggregator.py",
+        "start_line": 34,
+        "end_line": 98
+      },
+      {
+        "qualified_name": "services.analytics.aggregator.AnalyticsAggregator.flush_bucket",
+        "symbol_kind": "method",
+        "name": "flush_bucket",
+        "path": "services/analytics/aggregator.py",
+        "start_line": 100,
+        "end_line": 142
+      },
+      {
+        "qualified_name": "services.analytics.reporter.AnalyticsReporter",
+        "symbol_kind": "class",
+        "name": "AnalyticsReporter",
+        "path": "services/analytics/reporter.py",
+        "start_line": 14,
+        "end_line": 112
+      },
+      {
+        "qualified_name": "services.analytics.reporter.AnalyticsReporter.generate_report",
+        "symbol_kind": "method",
+        "name": "generate_report",
+        "path": "services/analytics/reporter.py",
+        "start_line": 28,
+        "end_line": 98
+      },
+      {
+        "qualified_name": "services.settlement.batch_processor.SettlementBatchProcessor",
+        "symbol_kind": "class",
+        "name": "SettlementBatchProcessor",
+        "path": "services/settlement/batch_processor.py",
+        "start_line": 20,
+        "end_line": 210
+      },
+      {
+        "qualified_name": "services.settlement.batch_processor.SettlementBatchProcessor.process_batch",
+        "symbol_kind": "method",
+        "name": "process_batch",
+        "path": "services/settlement/batch_processor.py",
+        "start_line": 38,
+        "end_line": 118
+      },
+      {
+        "qualified_name": "services.settlement.batch_processor.SettlementBatchProcessor.create_payout",
+        "symbol_kind": "method",
+        "name": "create_payout",
+        "path": "services/settlement/batch_processor.py",
+        "start_line": 120,
+        "end_line": 178
+      },
+      {
+        "qualified_name": "services.settlement.reconciliation.ReconciliationEngine",
+        "symbol_kind": "class",
+        "name": "ReconciliationEngine",
+        "path": "services/settlement/reconciliation.py",
+        "start_line": 16,
+        "end_line": 145
+      },
+      {
+        "qualified_name": "services.settlement.reconciliation.ReconciliationEngine.reconcile",
+        "symbol_kind": "method",
+        "name": "reconcile",
+        "path": "services/settlement/reconciliation.py",
+        "start_line": 30,
+        "end_line": 82
+      },
+      {
+        "qualified_name": "services.settlement.reconciliation.ReconciliationEngine.match_transactions",
+        "symbol_kind": "method",
+        "name": "match_transactions",
+        "path": "services/settlement/reconciliation.py",
+        "start_line": 84,
+        "end_line": 132
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "httpx",
+        "resolved": true,
+        "language": "python"
+      },
+      {
+        "name": "sqlalchemy",
+        "resolved": true,
+        "language": "python"
+      },
+      {
+        "name": "pydantic",
+        "resolved": true,
+        "language": "python"
+      },
+      {
+        "name": "redis",
+        "resolved": true,
+        "language": "python"
+      },
+      {
+        "name": "cryptography",
+        "resolved": true,
+        "language": "python"
+      },
+      {
+        "name": "kafka-python",
+        "resolved": true,
+        "language": "python"
+      },
+      {
+        "name": "uvicorn",
+        "resolved": true,
+        "language": "python"
+      },
+      {
+        "name": "fastapi",
+        "resolved": true,
+        "language": "python"
+      },
+      {
+        "name": "structlog",
+        "resolved": true,
+        "language": "python"
+      },
+      {
+        "name": "prometheus-client",
+        "resolved": true,
+        "language": "python"
+      },
+      {
+        "name": "alembic",
+        "resolved": true,
+        "language": "python"
+      }
+    ],
+    "infrastructure": {
+      "databases": [
+        {
+          "host": "pghost-prod-01.mfs.internal",
+          "name": "mfs_payments_db",
+          "service_account": "svc-payment-api",
+          "tables": [
+            "payments",
+            "payment_methods",
+            "tokens",
+            "idempotency_keys",
+            "webhook_registrations",
+            "webhook_delivery_log",
+            "webhook_dlq",
+            "analytics_aggregates",
+            "settlement_batches",
+            "reconciliation_records"
+          ]
+        },
+        {
+          "host": "pghost-prod-03.mfs.internal",
+          "name": "mfs_audit_db",
+          "service_account": "svc-payment-api",
+          "tables": [
+            "audit_log",
+            "access_log",
+            "compliance_events"
+          ]
+        }
+      ],
+      "message_queues": [
+        {
+          "type": "kafka",
+          "broker": "kafka-broker.mfs.internal:9092",
+          "topics": [
+            "mfs.payment.events",
+            "mfs.payment.settlements",
+            "mfs.payment.dlq"
+          ]
+        },
+        {
+          "type": "kafka",
+          "broker": "kafka-broker.mfs.internal:9092",
+          "consumer_groups": [
+            "mfs-webhook-dispatch",
+            "mfs-analytics-agg",
+            "mfs-settlement-proc"
+          ]
+        }
+      ],
+      "pods": [
+        {
+          "name": "mfs-pay-pod-01",
+          "namespace": "mfs-payments",
+          "replicas": 4,
+          "resources": {
+            "cpu": "2",
+            "memory": "4Gi"
+          },
+          "services": [
+            "payment-processing",
+            "tokenization",
+            "webhook-dispatch"
+          ]
+        },
+        {
+          "name": "mfs-pay-pod-02",
+          "namespace": "mfs-payments",
+          "replicas": 2,
+          "resources": {
+            "cpu": "2",
+            "memory": "4Gi"
+          },
+          "services": [
+            "payment-processing-secondary"
+          ]
+        },
+        {
+          "name": "mfs-pay-pod-03",
+          "namespace": "mfs-payments",
+          "replicas": 2,
+          "resources": {
+            "cpu": "1",
+            "memory": "2Gi"
+          },
+          "services": [
+            "analytics",
+            "settlement-processing"
+          ]
+        }
+      ],
+      "service_accounts": [
+        "svc-payment-api",
+        "svc-token-vault",
+        "svc-webhook-dispatch",
+        "svc-analytics"
+      ],
+      "secrets": [
+        {
+          "name": "payment-db-credentials",
+          "vault_path": "secret/mfs/payments/db"
+        },
+        {
+          "name": "webhook-signing-keys",
+          "vault_path": "secret/mfs/payments/webhook"
+        },
+        {
+          "name": "hsm-client-cert",
+          "vault_path": "secret/mfs/payments/hsm"
+        }
+      ],
+      "external_services": [
+        {
+          "name": "hsm-gateway.mfs.internal:8443",
+          "purpose": "Hardware Security Module for tokenization"
+        },
+        {
+          "name": "vault.mfs.internal",
+          "purpose": "Secrets management"
+        },
+        {
+          "name": "redis-cluster.mfs.internal",
+          "purpose": "Idempotency key cache and rate limiting"
+        }
+      ]
+    },
+    "edges": [
+      {
+        "type": "CONTAINS",
+        "from": "services/payment/service.py",
+        "to": "services.payment.service.PaymentService"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "services/tokenization/service.py",
+        "to": "services.tokenization.service.TokenizationService"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "services/retry/handler.py",
+        "to": "services.retry.handler.RetryHandler"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "api/routes.py",
+        "to": "api.routes.PaymentAPI"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "models/payment.py",
+        "to": "models.payment.Payment"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "models/payment.py",
+        "to": "models.payment.PaymentStatus"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "models/payment.py",
+        "to": "models.payment.Currency"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "models/payment.py",
+        "to": "models.payment.RefundRequest"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "models/transaction.py",
+        "to": "models.transaction.Transaction"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "models/transaction.py",
+        "to": "models.transaction.TransactionEvent"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "utils/db.py",
+        "to": "utils.db.DBClient"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "utils/hsm.py",
+        "to": "utils.hsm.HSMClient"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "utils/kafka_producer.py",
+        "to": "utils.kafka_producer.PaymentEventProducer"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "services/webhook/dispatcher.py",
+        "to": "services.webhook.dispatcher.WebhookDispatcher"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "services/webhook/retry_handler.py",
+        "to": "services.webhook.retry_handler.RetryHandler"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "services/webhook/dlq.py",
+        "to": "services.webhook.dlq.DeadLetterQueue"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "services/analytics/aggregator.py",
+        "to": "services.analytics.aggregator.AnalyticsAggregator"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "services/analytics/reporter.py",
+        "to": "services.analytics.reporter.AnalyticsReporter"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "services/settlement/batch_processor.py",
+        "to": "services.settlement.batch_processor.SettlementBatchProcessor"
+      },
+      {
+        "type": "CONTAINS",
+        "from": "services/settlement/reconciliation.py",
+        "to": "services.settlement.reconciliation.ReconciliationEngine"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.payment.service.PaymentService",
+        "to": "services.payment.service.PaymentService.process_payment"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.payment.service.PaymentService",
+        "to": "services.payment.service.PaymentService.validate_payment"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.payment.service.PaymentService",
+        "to": "services.payment.service.PaymentService.refund_payment"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.payment.service.PaymentService",
+        "to": "services.payment.service.PaymentService._publish_txn_event"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.tokenization.service.TokenizationService",
+        "to": "services.tokenization.service.TokenizationService.tokenize_card"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.tokenization.service.TokenizationService",
+        "to": "services.tokenization.service.TokenizationService.detokenize"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.tokenization.service.TokenizationService",
+        "to": "services.tokenization.service.TokenizationService.rotate_token"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.retry.handler.RetryHandler",
+        "to": "services.retry.handler.RetryHandler.execute_with_retry"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.retry.handler.RetryHandler",
+        "to": "services.retry.handler.RetryHandler.circuit_breaker"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.retry.handler.RetryHandler",
+        "to": "services.retry.handler.RetryHandler.backoff_strategy"
+      },
+      {
+        "type": "DECLARES",
+        "from": "api.routes.PaymentAPI",
+        "to": "api.routes.PaymentAPI.create_payment"
+      },
+      {
+        "type": "DECLARES",
+        "from": "api.routes.PaymentAPI",
+        "to": "api.routes.PaymentAPI.get_payment"
+      },
+      {
+        "type": "DECLARES",
+        "from": "api.routes.PaymentAPI",
+        "to": "api.routes.PaymentAPI.list_payments"
+      },
+      {
+        "type": "DECLARES",
+        "from": "api.routes.PaymentAPI",
+        "to": "api.routes.PaymentAPI.process_refund"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.webhook.dispatcher.WebhookDispatcher",
+        "to": "services.webhook.dispatcher.WebhookDispatcher.dispatch"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.webhook.dispatcher.WebhookDispatcher",
+        "to": "services.webhook.dispatcher.WebhookDispatcher.sign_payload"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.webhook.dispatcher.WebhookDispatcher",
+        "to": "services.webhook.dispatcher.WebhookDispatcher.verify_delivery"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.webhook.retry_handler.RetryHandler",
+        "to": "services.webhook.retry_handler.RetryHandler.retry_with_backoff"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.webhook.dlq.DeadLetterQueue",
+        "to": "services.webhook.dlq.DeadLetterQueue.enqueue"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.webhook.dlq.DeadLetterQueue",
+        "to": "services.webhook.dlq.DeadLetterQueue.replay"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.analytics.aggregator.AnalyticsAggregator",
+        "to": "services.analytics.aggregator.AnalyticsAggregator.aggregate"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.analytics.aggregator.AnalyticsAggregator",
+        "to": "services.analytics.aggregator.AnalyticsAggregator.flush_bucket"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.analytics.reporter.AnalyticsReporter",
+        "to": "services.analytics.reporter.AnalyticsReporter.generate_report"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.settlement.batch_processor.SettlementBatchProcessor",
+        "to": "services.settlement.batch_processor.SettlementBatchProcessor.process_batch"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.settlement.batch_processor.SettlementBatchProcessor",
+        "to": "services.settlement.batch_processor.SettlementBatchProcessor.create_payout"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.settlement.reconciliation.ReconciliationEngine",
+        "to": "services.settlement.reconciliation.ReconciliationEngine.reconcile"
+      },
+      {
+        "type": "DECLARES",
+        "from": "services.settlement.reconciliation.ReconciliationEngine",
+        "to": "services.settlement.reconciliation.ReconciliationEngine.match_transactions"
+      },
+      {
+        "type": "CALLS",
+        "from": "api.routes.PaymentAPI.create_payment",
+        "to": "services.payment.service.PaymentService.validate_payment"
+      },
+      {
+        "type": "CALLS",
+        "from": "api.routes.PaymentAPI.create_payment",
+        "to": "services.payment.service.PaymentService.process_payment"
+      },
+      {
+        "type": "CALLS",
+        "from": "api.routes.PaymentAPI.process_refund",
+        "to": "services.payment.service.PaymentService.refund_payment"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.payment.service.PaymentService.process_payment",
+        "to": "services.tokenization.service.TokenizationService.tokenize_card"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.payment.service.PaymentService.process_payment",
+        "to": "services.retry.handler.RetryHandler.execute_with_retry"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.payment.service.PaymentService.process_payment",
+        "to": "utils.db.DBClient.execute_query"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.payment.service.PaymentService.process_payment",
+        "to": "services.payment.service.PaymentService._publish_txn_event"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.payment.service.PaymentService.refund_payment",
+        "to": "utils.db.DBClient.execute_query"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.payment.service.PaymentService.refund_payment",
+        "to": "services.payment.service.PaymentService._publish_txn_event"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.payment.service.PaymentService._publish_txn_event",
+        "to": "utils.kafka_producer.PaymentEventProducer.publish"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.tokenization.service.TokenizationService.tokenize_card",
+        "to": "utils.hsm.HSMClient.encrypt"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.tokenization.service.TokenizationService.detokenize",
+        "to": "utils.hsm.HSMClient.decrypt"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.tokenization.service.TokenizationService.rotate_token",
+        "to": "utils.hsm.HSMClient.generate_key"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.tokenization.service.TokenizationService.rotate_token",
+        "to": "utils.hsm.HSMClient.encrypt"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.retry.handler.RetryHandler.execute_with_retry",
+        "to": "services.retry.handler.RetryHandler.circuit_breaker"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.retry.handler.RetryHandler.execute_with_retry",
+        "to": "services.retry.handler.RetryHandler.backoff_strategy"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.webhook.dispatcher.WebhookDispatcher.dispatch",
+        "to": "services.webhook.retry_handler.RetryHandler.retry_with_backoff"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.webhook.dispatcher.WebhookDispatcher.dispatch",
+        "to": "services.webhook.dispatcher.WebhookDispatcher.sign_payload"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.webhook.retry_handler.RetryHandler.retry_with_backoff",
+        "to": "services.webhook.dlq.DeadLetterQueue.enqueue"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.settlement.batch_processor.SettlementBatchProcessor.process_batch",
+        "to": "services.settlement.reconciliation.ReconciliationEngine.reconcile"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.settlement.reconciliation.ReconciliationEngine.reconcile",
+        "to": "services.settlement.reconciliation.ReconciliationEngine.match_transactions"
+      },
+      {
+        "type": "CALLS",
+        "from": "services.analytics.reporter.AnalyticsReporter.generate_report",
+        "to": "services.analytics.aggregator.AnalyticsAggregator.aggregate"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/payment/service.py",
+        "to": "sqlalchemy"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/payment/service.py",
+        "to": "pydantic"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/payment/service.py",
+        "to": "structlog"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/tokenization/service.py",
+        "to": "cryptography"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/tokenization/service.py",
+        "to": "redis"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/retry/handler.py",
+        "to": "redis"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/retry/handler.py",
+        "to": "structlog"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "api/routes.py",
+        "to": "fastapi"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "api/routes.py",
+        "to": "pydantic"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "models/payment.py",
+        "to": "pydantic"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "models/payment.py",
+        "to": "sqlalchemy"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "models/transaction.py",
+        "to": "pydantic"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "utils/db.py",
+        "to": "sqlalchemy"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "utils/hsm.py",
+        "to": "cryptography"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "utils/hsm.py",
+        "to": "httpx"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "utils/kafka_producer.py",
+        "to": "kafka-python"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/webhook/dispatcher.py",
+        "to": "httpx"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/webhook/dispatcher.py",
+        "to": "structlog"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/webhook/retry_handler.py",
+        "to": "structlog"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/webhook/dlq.py",
+        "to": "kafka-python"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/webhook/dlq.py",
+        "to": "structlog"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/analytics/aggregator.py",
+        "to": "sqlalchemy"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/analytics/aggregator.py",
+        "to": "structlog"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/analytics/aggregator.py",
+        "to": "services.payment.service.PaymentService"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/analytics/reporter.py",
+        "to": "pydantic"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/analytics/reporter.py",
+        "to": "structlog"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/settlement/batch_processor.py",
+        "to": "sqlalchemy"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/settlement/batch_processor.py",
+        "to": "structlog"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/settlement/batch_processor.py",
+        "to": "services.payment.service.PaymentService"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/settlement/reconciliation.py",
+        "to": "sqlalchemy"
+      },
+      {
+        "type": "IMPORTS",
+        "from": "services/settlement/reconciliation.py",
+        "to": "structlog"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.payment.service.PaymentService",
+        "to": "utils.db.DBClient"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.payment.service.PaymentService",
+        "to": "services.tokenization.service.TokenizationService"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.payment.service.PaymentService",
+        "to": "services.retry.handler.RetryHandler"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.payment.service.PaymentService",
+        "to": "utils.kafka_producer.PaymentEventProducer"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.tokenization.service.TokenizationService",
+        "to": "utils.hsm.HSMClient"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "api.routes.PaymentAPI",
+        "to": "services.payment.service.PaymentService"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.webhook.dispatcher.WebhookDispatcher",
+        "to": "services.webhook.retry_handler.RetryHandler"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.webhook.dispatcher.WebhookDispatcher",
+        "to": "utils.db.DBClient"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.webhook.retry_handler.RetryHandler",
+        "to": "services.webhook.dlq.DeadLetterQueue"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.analytics.aggregator.AnalyticsAggregator",
+        "to": "services.payment.service.PaymentService"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.analytics.aggregator.AnalyticsAggregator",
+        "to": "utils.db.DBClient"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.analytics.reporter.AnalyticsReporter",
+        "to": "services.analytics.aggregator.AnalyticsAggregator"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.settlement.batch_processor.SettlementBatchProcessor",
+        "to": "services.payment.service.PaymentService"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.settlement.batch_processor.SettlementBatchProcessor",
+        "to": "services.settlement.reconciliation.ReconciliationEngine"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.settlement.batch_processor.SettlementBatchProcessor",
+        "to": "utils.db.DBClient"
+      },
+      {
+        "type": "DEPENDS_ON",
+        "from": "services.settlement.reconciliation.ReconciliationEngine",
+        "to": "utils.db.DBClient"
+      },
+      {
+        "type": "CONNECTS_TO",
+        "from": "utils.db.DBClient",
+        "to": "mfs_payments_db",
+        "properties": {
+          "host": "pghost-prod-01.mfs.internal",
+          "service_account": "svc-payment-api"
+        }
+      },
+      {
+        "type": "CONNECTS_TO",
+        "from": "utils.kafka_producer.PaymentEventProducer",
+        "to": "kafka-broker.mfs.internal",
+        "properties": {
+          "topic": "txn-events"
+        }
+      },
+      {
+        "type": "CONNECTS_TO",
+        "from": "utils.hsm.HSMClient",
+        "to": "hsm-gateway.mfs.internal",
+        "properties": {
+          "port": 8443
+        }
+      },
+      {
+        "type": "CONNECTS_TO",
+        "from": "services.webhook.dispatcher.WebhookDispatcher",
+        "to": "kafka-broker.mfs.internal",
+        "properties": {
+          "topic": "mfs.payment.events"
+        }
+      },
+      {
+        "type": "CONNECTS_TO",
+        "from": "services.webhook.dlq.DeadLetterQueue",
+        "to": "kafka-broker.mfs.internal",
+        "properties": {
+          "topic": "mfs.payment.dlq"
+        }
+      },
+      {
+        "type": "CONNECTS_TO",
+        "from": "services.settlement.batch_processor.SettlementBatchProcessor",
+        "to": "kafka-broker.mfs.internal",
+        "properties": {
+          "topic": "mfs.payment.settlements"
+        }
+      },
+      {
+        "type": "CONNECTS_TO",
+        "from": "services.settlement.batch_processor.SettlementBatchProcessor",
+        "to": "mfs_payments_db",
+        "properties": {
+          "host": "pghost-prod-01.mfs.internal",
+          "service_account": "svc-payment-api"
+        }
+      },
+      {
+        "type": "DEPLOYED_ON",
+        "from": "mfs-payment-gateway",
+        "to": "mfs-pay-pod-01",
+        "properties": {
+          "namespace": "mfs-payments",
+          "cluster": "ocp-prod-east.mfs.internal"
+        }
+      },
+      {
+        "type": "DEPLOYED_ON",
+        "from": "mfs-payment-gateway",
+        "to": "mfs-pay-pod-02",
+        "properties": {
+          "namespace": "mfs-payments",
+          "cluster": "ocp-prod-east.mfs.internal"
+        }
+      },
+      {
+        "type": "DEPLOYED_ON",
+        "from": "mfs-payment-gateway",
+        "to": "mfs-pay-pod-03",
+        "properties": {
+          "namespace": "mfs-payments",
+          "cluster": "ocp-prod-east.mfs.internal"
+        }
+      }
+    ]
+  },
+  "metadata": {},
+  "warnings": []
+}

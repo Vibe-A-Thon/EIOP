@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * KnowGridFlow — Swiss High-Density Data Workbench
+ * 4-theme semantic token system. Themes switch via [data-theme] on <html>.
+ * ------------------------------------------------------------------ */
+
+@theme {
+  --font-heading: "Outfit", "Manrope", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", monospace;
+}
+
+:root,
+[data-theme="dark"] {
+  --bg-void: #090b0e;
+  --bg-surface: #11141a;
+  --bg-panel: #181d26;
+  --bg-hover: #222936;
+  --border-subtle: #1f2836;
+  --border-strong: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --accent: #06b6d4;
+  --accent-strong: #22d3ee;
+
+  --success: #10b981;
+  --info: #3b82f6;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --neutral: #64748b;
+
+  --fact-deterministic: #06b6d4;
+  --fact-derived: #3b82f6;
+  --fact-inferred: #8b5cf6;
+  --fact-ambiguous: #f59e0b;
+  --fact-human: #10b981;
+  --fact-unknown: #6b7280;
+
+  --shadow-color: 0 0% 0%;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg-void: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-panel: #f1f5f9;
+  --bg-hover: #e2e8f0;
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --accent: #0891b2;
+  --accent-strong: #0e7490;
+  color-scheme: light;
+}
+
+[data-theme="hc-dark"] {
+  --bg-void: #000000;
+  --bg-surface: #0a0a0a;
+  --bg-panel: #141414;
+  --bg-hover: #262626;
+  --border-subtle: #525252;
+  --border-strong: #ffffff;
+  --text-primary: #ffffff;
+  --text-secondary: #e5e5e5;
+  --text-muted: #a3a3a3;
+
+  --accent: #22d3ee;
+  --accent-strong: #67e8f9;
+  color-scheme: dark;
+}
+
+[data-theme="hc-light"] {
+  --bg-void: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-panel: #f5f5f5;
+  --bg-hover: #e5e5e5;
+  --border-subtle: #000000;
+  --border-strong: #000000;
+  --text-primary: #000000;
+  --text-secondary: #171717;
+  --text-muted: #404040;
+
+  --accent: #0e7490;
+  --accent-strong: #155e75;
+  color-scheme: light;
+}
+
+* {
+  border-color: var(--border-subtle);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* Thin, calm scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+  border: 3px solid var(--bg-void);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+@keyframes kgf-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: kgf-fade-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes kgf-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.kgf-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-panel) 25%,
+    var(--bg-hover) 50%,
+    var(--bg-panel) 75%
+  );
+  background-size: 200% 100%;
+  animation: kgf-shimmer 1.4s linear infinite;
+}
+
+.font-heading { font-family: var(--font-heading); }
+.font-body { font-family: var(--font-body); }
+.font-mono { font-family: var(--font-mono); }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

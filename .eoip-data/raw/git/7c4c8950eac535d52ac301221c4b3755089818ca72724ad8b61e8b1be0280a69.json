@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.813269Z",
+  "event_id": "7c4c8950eac535d52ac301221c4b3755089818ca72724ad8b61e8b1be0280a69",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "6db6adb9a178d507f0093cc2618e203d8b5cb42f",
+    "message": "changes to be committed include updates to the EOIP Enterprise infrastructure, addition of new packages for agent architecture, brain, qlang, and ragx, as well as modifications to the API app and various other components."
+  },
+  "payload_hash": "ef9111441adc5448b0f8c66999ee47059e69d047661b97072756de20236b4456",
+  "schema_version": "1.0",
+  "source_record_id": "demo:6db6adb9a178d507f0093cc2618e203d8b5cb42f",
+  "source_system": "git",
+  "source_version": "ef9111441adc5448b0f8c66999ee47059e69d047661b97072756de20236b4456"
+}
