@@ -13,6 +13,7 @@ import {
   Route as RouteIcon,
   ScrollText,
   Settings,
+  Shapes,
   ShieldCheck,
   SlidersHorizontal,
   SquareStack,
@@ -45,6 +46,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "Explore",
     items: [
       { id: "graph", label: "Graph Explorer", to: "/graph", icon: Waypoints },
+      { id: "meta-graph", label: "Meta-graph", to: "/meta-graph", icon: Shapes },
       { id: "query", label: "Query", to: "/query", icon: TerminalSquare },
       { id: "impact", label: "Impact", to: "/impact", icon: Radar },
       { id: "changes", label: "Changes", to: "/changes", icon: GitCompareArrows },

@@ -206,6 +206,8 @@ export function GraphExplorer() {
     }
   }, []);
 
+  const [labelFilter, setLabelFilter] = useState<string | null>(null);
+
   const bootstrap = useCallback(async () => {
     setMode("explore");
     setLoading(true);
@@ -222,7 +224,28 @@ export function GraphExplorer() {
     }
   }, [loadNeighborhood]);
 
+  // Deep-link: /graph?label=Foo (from Meta-graph "Show instances") or /graph?seed=<id>.
+  const seedByLabel = useCallback(async (label: string) => {
+    setMode("explore");
+    setLabelFilter(label);
+    setLoading(true);
+    setError(null);
+    try {
+      const r = await apiFetch<any>(`/search?label=${encodeURIComponent(label)}&limit=25`);
+      const first = (r.nodes || [])[0];
+      if (!first) { setNodes([]); setEdges([]); setSeeds([]); setLoading(false); return; }
+      await loadNeighborhood(first.id);
+    } catch (e) {
+      setError(e); setLoading(false);
+    }
+  }, [loadNeighborhood]);
+
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const label = params.get("label");
+    const seed = params.get("seed");
+    if (label) { seedByLabel(label).catch(() => {}); return; }
+    if (seed) { loadNeighborhood(seed).catch((e) => setError(e)); return; }
     bootstrap().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -456,6 +479,12 @@ export function GraphExplorer() {
               />
               {searching && <Loader2 size={13} className="animate-spin text-[var(--text-muted)]" />}
             </div>
+            {labelFilter && (
+              <div className="absolute -bottom-7 left-0 flex items-center gap-1 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-2 py-0.5 text-[10px] text-cyan-300" data-testid="graph-label-filter">
+                <Filter size={10} /> label: {labelFilter}
+                <button onClick={() => { setLabelFilter(null); bootstrap(); }} className="ml-0.5 hover:text-white"><X size={11} /></button>
+              </div>
+            )}
             {results.length > 0 && (
               <div className="absolute z-20 mt-1 max-h-72 w-80 overflow-y-auto rounded-md border border-[var(--border-strong)] bg-[var(--bg-panel)] p-1 shadow-xl">
                 {results.map((r) => (
