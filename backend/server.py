@@ -1,6 +1,6 @@
 """Supervisor entrypoint shim.
 
-The Emergent platform's supervisor runs `uvicorn server:app` from /app/backend on
+The eoip platform's supervisor runs `uvicorn server:app` from /app/backend on
 port 8001. The real application is the EOIP FastAPI app defined in /app/apps/api.
 This shim wires the environment and re-exports that app as `app`.
 """
