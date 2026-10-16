@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   History, Clock, GitCompareArrows, PlayCircle, Search, Loader2, Camera, RotateCcw, Trash2,
@@ -85,6 +85,13 @@ export function Temporal() {
   const [snapBusy, setSnapBusy] = useState(false);
   const [confirmRestore, setConfirmRestore] = useState<any | null>(null);
   const [confirmText, setConfirmText] = useState("");
+
+  useEffect(() => {
+    if (!confirmRestore) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { setConfirmRestore(null); setConfirmText(""); } };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [confirmRestore]);
 
   const runAsof = async () => {
     const iso = toISO(validAt);

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   CheckCheck, CircleCheck, CircleX, GitBranch, GitCompareArrows, GitMerge, GitPullRequest,
   Loader2, Plus, Radar, RotateCcw, Shapes, Trash2, TriangleAlert,
@@ -83,6 +83,13 @@ export function OntologyDesigner({ schema, onRefetchSchema }: { schema: any; onR
   const [confirmRollback, setConfirmRollback] = useState(false);
   const [rollbackVersion, setRollbackVersion] = useState("1.0.0");
   const [rollbackText, setRollbackText] = useState("");
+
+  useEffect(() => {
+    if (!confirmPublish && !confirmRollback) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { setConfirmPublish(false); setConfirmRollback(false); } };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [confirmPublish, confirmRollback]);
 
   // change authoring form
   const [kind, setKind] = useState<ChangeKind>("add_vertex_label");

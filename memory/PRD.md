@@ -104,11 +104,20 @@ with best-in-class graphics, transitions, animations, icons, and modular screens
   (`/branding/terminology/canonicalize`). Publish/Rollback disabled with BACKEND-MISSING-018 note.
 - **Time Travel (SCR-010)** `/time`: bitemporal As-of (`/graph/as-of` + `/graph/bitemporal/slice`),
   Compare (`/graph/bitemporal/diff`), Playback (`/playback/stream` with scrubber + evidence), Snapshots
-  panel (list/create/delete/restore — restore is typed-confirm, admin).
+  panel (list/create/delete/restore — restore is typed-confirm, admin). **Change-count TimelineScrubber**
+  (`/app/frontend/src/components/TimelineScrubber.tsx`): real graph-shift histogram from `/ingestion/runs`
+  (+ `/admin/timeline`/`/graph/events` when present), bucketed with run markers; click-to-set valid-at
+  (As-of) and from/to handles (Compare).
 - **Global UI/UX polish**: route transitions (framer-motion AnimatePresence), Card `hover`/`glass` lift,
   Button active-press + glow, polished Loading/Empty/Skeleton states, GraphCanvas hover tooltip + camera
   entrance animation, premium radial background, input focus rings. All shared primitives → propagates to all screens.
 - Nav additions: Time Travel (Explore), Collaboration (Operate), Brand (Govern).
+
+## QA (iteration 5, 2026-06) — testing agent frontend E2E
+- `/app/test_reports/iteration_5.json`: **7/7 new flows PASS** (Meta-graph, Ontology Designer gitops,
+  Impact 3-modes, Reports+Schedules, Collaboration, Brand, Time Travel). No functional/blocking bugs.
+  One LOW UX nit found (Ontology publish/rollback dialogs ignored Escape) → FIXED (Escape-to-close added
+  to OntologyDesigner + Temporal restore dialogs) and self-test verified.
 
 ## Coverage note (updated)
 Full 27-screen catalog present. SCR-013 Meta-graph, SCR-010 Temporal/bitemporal, SCR-012 gitops lifecycle,
