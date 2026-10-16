@@ -24,6 +24,9 @@ import { Tenant } from "./screens/Tenant";
 import { Health } from "./screens/Health";
 import { Settings } from "./screens/Settings";
 import { Help } from "./screens/Help";
+import { Collaboration } from "./screens/Collaboration";
+import { Brand } from "./screens/Brand";
+import { Temporal } from "./screens/Temporal";
 import { NotFound } from "./screens/NotFound";
 
 export default function App() {
@@ -59,6 +62,7 @@ export default function App() {
             <Route path="/query" element={<Query />} />
             <Route path="/impact" element={<Impact />} />
             <Route path="/changes" element={<Changes />} />
+            <Route path="/time" element={<Temporal />} />
             <Route path="/incidents" element={<Incidents />} />
             <Route path="/ontology" element={<Ontology />} />
             <Route path="/quality" element={<Quality />} />
@@ -66,8 +70,10 @@ export default function App() {
             <Route path="/ingestion" element={<IngestionConsole />} />
             <Route path="/agents" element={<Agents />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/collaboration" element={<Collaboration />} />
             <Route path="/health" element={<Health />} />
             <Route path="/governance" element={<Governance />} />
+            <Route path="/brand" element={<Brand />} />
             <Route path="/tenant" element={<Tenant />} />
             <Route path="/schema" element={<Schema />} />
             <Route path="/settings" element={<Settings />} />

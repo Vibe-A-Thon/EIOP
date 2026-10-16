@@ -84,17 +84,46 @@ with best-in-class graphics, transitions, animations, icons, and modular screens
   Tenant (SCR-022), Platform Health (SCR-024), Settings (SCR-025, theme/density/motion/locale),
   Help & About (SCR-026), plus a 404 screen (SCR-027) and global 401 → sign-in handling.
 
-## Coverage note
-Most of the 27-screen catalog is now present and integrated. Deferred/partial (honest status):
-SCR-013 Meta-graph, SCR-020 Collaboration (blocked by BACKEND-MISSING-016), SCR-023 Brand publish
-(BACKEND-MISSING-018), and deep sub-flows (bitemporal, simulation/what-if, full gitops ontology
-lifecycle, marketplace, config-explain). AI narration remains SIMULATED (no inference model enabled).
+## Implemented (2026-06, iteration 5) — new feature screens + global UI/UX polish
+- **Meta-graph (SCR-013)** `/meta-graph`: type-level graph — vertex labels as nodes (grouped by domain),
+  edge labels collapsed to one connector per explicit (source,target) pair; keyboard-navigable types tree,
+  inspector (required/optional props, indexes, instance count), "Show instances" deep-link to Graph Explorer
+  (`/graph?label=`), count-mismatch warning (`/graph/schema` vs `/admin/stats`).
+- **Ontology gitops lifecycle (SCR-012, Designer tab)** `/ontology?tab=designer`: full draft → edit (manifest
+  changes) → validate/diff/impact (reconstructs base from `/graph/schema`, runs `/ontology/gitops/validate|diff|impact`)
+  → commit + request review (PR) → publish (merge, typed branch-name confirm) → rollback (typed confirm). Admin-gated.
+- **What-If Simulation (Impact)** `/impact`: mode toggle Blast radius (`/graph/blast-radius`) · Upstream
+  (`/graph/reverse-impact`) · What-if (`/graph/what-if` remove|isolate, non-mutating) with "Simulation — nothing
+  was changed" banner, broken edges / orphaned / component-split / centrality-delta panels.
+- **Report scheduling (SCR-019)** `/reports`: full schedule CRUD — create (template/name/recurrence/format),
+  list with due badge + last-run, mark-run, delete, all via `/reports/schedules*`.
+- **Collaboration (SCR-020)** `/collaboration`: spec-correct `MissingBackendState` (BACKEND-MISSING-016) with
+  working links to Share view / Reports / Activity — NO faked comments or presence, no network call.
+- **Brand (SCR-023)** `/brand`: read/preview branding (`/branding/theme`), draft editor (product name, accent
+  colour, assistant), live 4-theme preview with WCAG AA contrast gating, terminology rename preview
+  (`/branding/terminology/canonicalize`). Publish/Rollback disabled with BACKEND-MISSING-018 note.
+- **Time Travel (SCR-010)** `/time`: bitemporal As-of (`/graph/as-of` + `/graph/bitemporal/slice`),
+  Compare (`/graph/bitemporal/diff`), Playback (`/playback/stream` with scrubber + evidence), Snapshots
+  panel (list/create/delete/restore — restore is typed-confirm, admin).
+- **Global UI/UX polish**: route transitions (framer-motion AnimatePresence), Card `hover`/`glass` lift,
+  Button active-press + glow, polished Loading/Empty/Skeleton states, GraphCanvas hover tooltip + camera
+  entrance animation, premium radial background, input focus rings. All shared primitives → propagates to all screens.
+- Nav additions: Time Travel (Explore), Collaboration (Operate), Brand (Govern).
+
+## Coverage note (updated)
+Full 27-screen catalog present. SCR-013 Meta-graph, SCR-010 Temporal/bitemporal, SCR-012 gitops lifecycle,
+What-if simulation now fully implemented. SCR-020 Collaboration is a spec-mandated MissingBackendState
+(BACKEND-MISSING-016); SCR-023 Brand is read/preview with publish gated (BACKEND-MISSING-018).
+AI narration remains SIMULATED (no inference model enabled). Graph store is in-memory, so bitemporal/as-of
+and graph/versions often return empty slices (handled with honest empty states, never fabricated).
 
 ## Prioritized backlog (next)
-- P1: Meta-graph (SCR-013) + ontology gitops draft/PR lifecycle.
-- P2: Reports (SCR-019), Governance/Security (SCR-021), Tenant admin (SCR-022), Health (SCR-024).
+- P2: Marketplace packages (ontology gitops `/package-release`), config-explain, glossary/SKOS editor.
 - P2: Full WCAG 2.2 AA audit (axe), ICU string externalization, screen-reader transcripts.
-- P2: Replace react-router-dom with TanStack Router for typed deep links `/t/:tenant/w/:workspace/...`.
+- P2: Replace react-router-dom with TanStack Router for typed deep links.
+
+## Prior backlog (iteration ≤4, superseded items removed)
+- P2: Governance/Security (SCR-021), Tenant admin (SCR-022), Health (SCR-024) — all present.
 
 ## Notes
 - No external keys; local-first. Backend graph store is in-memory (ephemeral; reseeded on restart).
