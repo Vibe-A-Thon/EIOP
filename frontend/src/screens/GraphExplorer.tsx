@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Bookmark,
   BookmarkPlus,
@@ -19,7 +19,7 @@ import {
 import { useAuth } from "../lib/auth";
 import { apiFetch } from "../lib/api";
 import { useShell } from "../lib/shellStore";
-import { GraphCanvas, type GEdge, type GNode } from "../components/GraphCanvas";
+import { GraphCanvas, type GEdge, type GNode, type GraphCanvasHandle } from "../components/GraphCanvas";
 import { ResultBanner, EmptyState, ErrorState } from "../components/ui/States";
 import { ALL_FACT_CLASSES, FACT_META, factClassOf } from "../lib/factClass";
 import { listViews, saveView, deleteView, exportViews, importViews, type SavedView } from "../lib/savedViews";
@@ -147,11 +147,14 @@ export function GraphExplorer() {
   // Paths
   const [pathSource, setPathSource] = useState<Picked | null>(null);
   const [pathTarget, setPathTarget] = useState<Picked | null>(null);
+  const [pathTargetB, setPathTargetB] = useState<Picked | null>(null);
   const [paths, setPaths] = useState<string[][]>([]);
+  const [pathsB, setPathsB] = useState<string[][]>([]);
   const [pathLoading, setPathLoading] = useState(false);
   const [pathError, setPathError] = useState<string | null>(null);
   const [highlightNodes, setHighlightNodes] = useState<Set<string>>(new Set());
   const [highlightEdges, setHighlightEdges] = useState<Set<string>>(new Set());
+  const canvasRef = useRef<GraphCanvasHandle>(null);
 
   // Saved views
   const [views, setViews] = useState<SavedView[]>([]);
@@ -244,49 +247,59 @@ export function GraphExplorer() {
     };
   }, [query]);
 
-  // Trace shortest paths and highlight them on the full neighborhood graph.
+  // Trace shortest paths (to one or two targets) and highlight on the neighborhood.
   const runPaths = async () => {
     if (!pathSource || !pathTarget) return;
     setPathLoading(true);
     setPathError(null);
     setPaths([]);
+    setPathsB([]);
     setHighlightNodes(new Set());
     setHighlightEdges(new Set());
     try {
-      const [r, srcNb, tgtNb] = await Promise.all([
+      const sp = (tid: string) =>
         apiFetch<any>("/graph/shortest-paths", {
           method: "POST",
-          body: { source_id: pathSource.id, target_id: pathTarget.id, max_paths: 8, max_length: 12 },
-        }),
-        apiFetch<any>("/neighborhood", { method: "POST", body: { canonical_id: pathSource.id, max_depth: 1, result_limit: 80 } }).catch(() => ({ nodes: [], edges: [] })),
-        apiFetch<any>("/neighborhood", { method: "POST", body: { canonical_id: pathTarget.id, max_depth: 1, result_limit: 80 } }).catch(() => ({ nodes: [], edges: [] })),
+          body: { source_id: pathSource.id, target_id: tid, max_paths: 8, max_length: 12 },
+        }).then((r) => r.paths || []).catch(() => []);
+      const nb = (cid: string) =>
+        apiFetch<any>("/neighborhood", { method: "POST", body: { canonical_id: cid, max_depth: 1, result_limit: 80 } }).catch(() => ({ nodes: [], edges: [] }));
+
+      const [foundA, foundB, srcNb, tgtNb, tgtBNb] = await Promise.all([
+        sp(pathTarget.id),
+        pathTargetB ? sp(pathTargetB.id) : Promise.resolve([] as string[][]),
+        nb(pathSource.id),
+        nb(pathTarget.id),
+        pathTargetB ? nb(pathTargetB.id) : Promise.resolve({ nodes: [], edges: [] }),
       ]);
-      const found: string[][] = r.paths || [];
-      setPaths(found);
-      if (found.length === 0) {
+      setPaths(foundA);
+      setPathsB(foundB);
+      if (foundA.length === 0 && foundB.length === 0) {
         setPathError("No path found between these entities.");
         return;
       }
 
-      // Merge current graph + both endpoints' neighborhoods + path members for context.
       const nodeMap = new Map<string, GNode>(nodes.map((n) => [n.id, n]));
       const edgeMap = new Map<string, GEdge>(edges.filter((e) => e.type !== "PATH").map((e) => [e.id, e]));
-      [...(srcNb.nodes || []), ...(tgtNb.nodes || [])].forEach((n: GNode) => nodeMap.set(n.id, n));
-      [...(srcNb.edges || []), ...(tgtNb.edges || [])].forEach((e: GEdge) => edgeMap.set(e.id, e));
+      [...(srcNb.nodes || []), ...(tgtNb.nodes || []), ...(tgtBNb.nodes || [])].forEach((n: GNode) => nodeMap.set(n.id, n));
+      [...(srcNb.edges || []), ...(tgtNb.edges || []), ...(tgtBNb.edges || [])].forEach((e: GEdge) => edgeMap.set(e.id, e));
 
       const hiNodes = new Set<string>();
       const hiEdges = new Set<string>();
-      found.forEach((p, pi) => {
-        p.forEach((id, idx) => {
-          hiNodes.add(id);
-          if (!nodeMap.has(id)) nodeMap.set(id, { id, label: domainFromId(id), domain: domainFromId(id), properties: {} });
-          if (idx > 0) {
-            const eid = `path:${pi}:${idx}`;
-            edgeMap.set(eid, { id: eid, from_id: p[idx - 1], to_id: id, type: "PATH" });
-            hiEdges.add(eid);
-          }
+      const addPaths = (list: string[][], tag: string) =>
+        list.forEach((p, pi) => {
+          p.forEach((id, idx) => {
+            hiNodes.add(id);
+            if (!nodeMap.has(id)) nodeMap.set(id, { id, label: domainFromId(id), domain: domainFromId(id), properties: {} });
+            if (idx > 0) {
+              const eid = `path:${tag}:${pi}:${idx}`;
+              edgeMap.set(eid, { id: eid, from_id: p[idx - 1], to_id: id, type: "PATH" });
+              hiEdges.add(eid);
+            }
+          });
         });
-      });
+      addPaths(foundA, "a");
+      addPaths(foundB, "b");
       setNodes([...nodeMap.values()]);
       setEdges([...edgeMap.values()]);
       setHighlightNodes(hiNodes);
@@ -301,11 +314,23 @@ export function GraphExplorer() {
 
   const clearPaths = () => {
     setPaths([]);
+    setPathsB([]);
     setPathError(null);
     setHighlightNodes(new Set());
     setHighlightEdges(new Set());
     setEdges((prev) => prev.filter((e) => e.type !== "PATH"));
   };
+
+  // Overlap of path node-sets between the two targets (for compare).
+  const compare = useMemo(() => {
+    if (pathsB.length === 0) return null;
+    const setA = new Set(paths.flat());
+    const setB = new Set(pathsB.flat());
+    let shared = 0;
+    setA.forEach((id) => setB.has(id) && shared++);
+    const minHops = (l: string[][]) => (l.length ? Math.min(...l.map((p) => p.length - 1)) : 0);
+    return { a: { paths: paths.length, minHops: minHops(paths), reach: setA.size }, b: { paths: pathsB.length, minHops: minHops(pathsB), reach: setB.size }, shared };
+  }, [paths, pathsB]);
 
   const visibleEdges = useMemo(
     () => edges.filter((e) => e.type === "PATH" || !hiddenFacts.has(factClassOf(e.creation_status))),
@@ -344,6 +369,7 @@ export function GraphExplorer() {
       seeds,
       lens,
       hiddenFacts: [...hiddenFacts],
+      thumbnail: canvasRef.current?.getThumbnail(),
     });
     setViews(next);
     setNewViewName("");
@@ -457,14 +483,16 @@ export function GraphExplorer() {
           <div className="flex flex-1 flex-wrap items-center gap-2">
             <EntityPicker value={pathSource} placeholder="Source entity…" testId="path-source" onPick={setPathSource} />
             <RouteIcon size={14} className="text-[var(--text-muted)]" />
-            <EntityPicker value={pathTarget} placeholder="Target entity…" testId="path-target" onPick={setPathTarget} />
+            <EntityPicker value={pathTarget} placeholder="Target A…" testId="path-target" onPick={setPathTarget} />
+            <span className="font-mono text-[10px] text-[var(--text-muted)]">vs</span>
+            <EntityPicker value={pathTargetB} placeholder="Target B (compare)…" testId="path-target-b" onPick={setPathTargetB} />
             <button
               data-testid="path-run"
               onClick={runPaths}
               disabled={!pathSource || !pathTarget || pathLoading}
               className="flex items-center gap-1.5 rounded-sm bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-black transition-colors hover:bg-[var(--accent-strong)] disabled:opacity-40"
             >
-              {pathLoading ? <Loader2 size={13} className="animate-spin" /> : <RouteIcon size={13} />} Trace paths
+              {pathLoading ? <Loader2 size={13} className="animate-spin" /> : <RouteIcon size={13} />} {pathTargetB ? "Compare" : "Trace paths"}
             </button>
           </div>
         )}
@@ -527,12 +555,21 @@ export function GraphExplorer() {
                         <button
                           data-testid="graph-view-load"
                           onClick={() => loadView(v)}
-                          className="min-w-0 flex-1 text-left"
+                          className="flex min-w-0 flex-1 items-center gap-2 text-left"
                         >
-                          <p className="truncate text-xs font-medium">{v.name}</p>
-                          <p className="font-mono text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
-                            {v.seeds.length} seed{v.seeds.length === 1 ? "" : "s"} · {v.lens} lens
-                          </p>
+                          {v.thumbnail ? (
+                            <img src={v.thumbnail} alt="" className="h-9 w-16 shrink-0 rounded-sm border border-[var(--border-subtle)] object-cover" />
+                          ) : (
+                            <span className="grid h-9 w-16 shrink-0 place-items-center rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-void)] text-[var(--text-muted)]">
+                              <Bookmark size={13} />
+                            </span>
+                          )}
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-xs font-medium">{v.name}</span>
+                            <span className="block font-mono text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
+                              {v.seeds.length} seed{v.seeds.length === 1 ? "" : "s"} · {v.lens} lens
+                            </span>
+                          </span>
                         </button>
                         <button
                           onClick={() => setViews(deleteView(principal, tenant, workspace, v.id))}
@@ -606,6 +643,7 @@ export function GraphExplorer() {
           />
         ) : (
           <GraphCanvas
+            ref={canvasRef}
             nodes={nodes}
             edges={visibleEdges}
             colorOf={colorOf}
@@ -641,6 +679,28 @@ export function GraphExplorer() {
             </>
           )}
         </div>
+
+        {/* Path compare summary */}
+        {mode === "paths" && compare && (
+          <div className="absolute right-4 top-16 w-64 rounded-md border border-[var(--border-subtle)] bg-[var(--bg-panel)]/95 p-3 backdrop-blur" data-testid="path-compare">
+            <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-[var(--text-muted)]">Blast surface compare</div>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="rounded-sm border border-cyan-500/40 bg-cyan-500/10 p-2">
+                <p className="font-mono text-[9px] uppercase text-cyan-300">Target A</p>
+                <p className="mt-0.5"><strong className="font-heading text-sm">{compare.a.paths}</strong> paths</p>
+                <p className="text-[var(--text-muted)]">min {compare.a.minHops} hops · {compare.a.reach} nodes</p>
+              </div>
+              <div className="rounded-sm border border-fuchsia-500/40 bg-fuchsia-500/10 p-2">
+                <p className="font-mono text-[9px] uppercase text-fuchsia-300">Target B</p>
+                <p className="mt-0.5"><strong className="font-heading text-sm">{compare.b.paths}</strong> paths</p>
+                <p className="text-[var(--text-muted)]">min {compare.b.minHops} hops · {compare.b.reach} nodes</p>
+              </div>
+            </div>
+            <p className="mt-2 text-xs text-[var(--text-secondary)]">
+              <strong className="font-heading">{compare.shared}</strong> shared node{compare.shared === 1 ? "" : "s"} on both surfaces
+            </p>
+          </div>
+        )}
 
         {mode === "explore" && meta.warnings && meta.warnings.length > 0 && (
           <div className="absolute bottom-4 left-4 right-4 max-w-md">

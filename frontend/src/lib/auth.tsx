@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { apiFetch, setActiveTenant, setAuthToken } from "./api";
 
 export interface Principal {
@@ -70,6 +70,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setActiveTenant(tenant);
     setSession((prev) => (prev ? { ...prev, tenant, workspace } : prev));
   };
+
+  // On any 401 after sign-in, clear session and return to sign-in.
+  useEffect(() => {
+    const onUnauthorized = () => {
+      setSession((prev) => {
+        if (prev) {
+          setAuthToken(null);
+          setActiveTenant(null);
+          return null;
+        }
+        return prev;
+      });
+    };
+    window.addEventListener("kgf:unauthorized", onUnauthorized);
+    return () => window.removeEventListener("kgf:unauthorized", onUnauthorized);
+  }, []);
 
   return (
     <Ctx.Provider value={{ session, signIn, signOut, setScope }}>{children}</Ctx.Provider>

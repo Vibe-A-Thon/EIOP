@@ -1,9 +1,23 @@
 import {
-  LayoutDashboard,
-  MessagesSquare,
-  Waypoints,
-  Network,
+  Activity,
+  Bot,
   DatabaseZap,
+  FileBarChart,
+  GitCompareArrows,
+  HeartPulse,
+  LayoutDashboard,
+  LifeBuoy,
+  MessagesSquare,
+  Network,
+  Radar,
+  Route as RouteIcon,
+  ScrollText,
+  Settings,
+  ShieldCheck,
+  SlidersHorizontal,
+  SquareStack,
+  TerminalSquare,
+  Waypoints,
   type LucideIcon,
 } from "lucide-react";
 
@@ -12,13 +26,63 @@ export interface NavItem {
   label: string;
   to: string;
   icon: LucideIcon;
-  hint: string;
 }
 
-export const NAV_ITEMS: NavItem[] = [
-  { id: "overview", label: "Overview", to: "/overview", icon: LayoutDashboard, hint: "Dashboard" },
-  { id: "ask", label: "Ask", to: "/ask", icon: MessagesSquare, hint: "Natural-language query" },
-  { id: "graph", label: "Graph Explorer", to: "/graph", icon: Waypoints, hint: "Primary work surface" },
-  { id: "ingestion", label: "Ingestion", to: "/ingestion", icon: DatabaseZap, hint: "Sources, jobs & runs" },
-  { id: "schema", label: "Schema", to: "/schema", icon: Network, hint: "Ontology & labels" },
+export interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+export const NAV_GROUPS: NavGroup[] = [
+  {
+    label: "Workspace",
+    items: [
+      { id: "overview", label: "Overview", to: "/overview", icon: LayoutDashboard },
+      { id: "ask", label: "Ask", to: "/ask", icon: MessagesSquare },
+    ],
+  },
+  {
+    label: "Explore",
+    items: [
+      { id: "graph", label: "Graph Explorer", to: "/graph", icon: Waypoints },
+      { id: "query", label: "Query", to: "/query", icon: TerminalSquare },
+      { id: "impact", label: "Impact", to: "/impact", icon: Radar },
+      { id: "changes", label: "Changes", to: "/changes", icon: GitCompareArrows },
+      { id: "incidents", label: "Incidents", to: "/incidents", icon: Activity },
+    ],
+  },
+  {
+    label: "Knowledge",
+    items: [
+      { id: "ontology", label: "Ontology", to: "/ontology", icon: Network },
+      { id: "quality", label: "Quality", to: "/quality", icon: ShieldCheck },
+      { id: "snapshots", label: "Snapshots", to: "/snapshots", icon: SquareStack },
+    ],
+  },
+  {
+    label: "Operate",
+    items: [
+      { id: "ingestion", label: "Ingestion", to: "/ingestion", icon: DatabaseZap },
+      { id: "agents", label: "Agents", to: "/agents", icon: Bot },
+      { id: "reports", label: "Reports", to: "/reports", icon: FileBarChart },
+      { id: "health", label: "Health", to: "/health", icon: HeartPulse },
+    ],
+  },
+  {
+    label: "Govern",
+    items: [
+      { id: "governance", label: "Governance", to: "/governance", icon: ScrollText },
+      { id: "tenant", label: "Tenant", to: "/tenant", icon: SlidersHorizontal },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      { id: "settings", label: "Settings", to: "/settings", icon: Settings },
+      { id: "help", label: "Help & About", to: "/help", icon: LifeBuoy },
+    ],
+  },
 ];
+
+export const NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((g) => g.items);
+export const _routeIcons = { RouteIcon };

@@ -210,18 +210,32 @@ export function IngestionConsole() {
             ) : (
               <div className="divide-y divide-[var(--border-subtle)]">
                 {sourceList.map((s, i) => (
-                  <div key={s.source_id || i} className="flex items-center gap-3 px-4 py-3">
+                  <div key={s.source_id || i} className="flex items-center gap-3 px-4 py-3" data-testid={`source-row-${s.source_id}`}>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{s.name}</span>
                         <Badge tone="neutral">{s.source_type}</Badge>
                       </div>
-                      <p className="font-mono text-[10px] text-[var(--text-muted)]">{s.source_id}</p>
+                      <p className="font-mono text-[10px] text-[var(--text-muted)]">
+                        {s.source_id} · last baseline {relativeTime(s.last_successful_baseline)} · last sync {relativeTime(s.last_incremental_run)}
+                      </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-[11px] text-[var(--text-secondary)]">{s.health || "UNKNOWN"}</span>
-                      <StatusDot tone={HEALTH_TONE[s.health || "UNKNOWN"]} />
+                      <StatusDot tone={HEALTH_TONE[s.health || "UNKNOWN"]} pulse={s.health === "HEALTHY"} />
                     </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      data-testid={`source-resync-${s.source_id}`}
+                      onClick={async () => {
+                        await apiFetch(`/sources/${encodeURIComponent(s.source_id)}/sync`, { method: "POST", body: { dry_run: false } }).catch(() => {});
+                        refresh();
+                        setTab("jobs");
+                      }}
+                    >
+                      <RefreshCw size={12} /> Re-sync
+                    </Button>
                   </div>
                 ))}
               </div>

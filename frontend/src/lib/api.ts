@@ -105,6 +105,9 @@ export async function apiFetch<T = unknown>(path: string, opts: RequestOptions =
   });
 
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("kgf:unauthorized"));
+    }
     throw new ApiError(await normalizeError(res, correlationId));
   }
   if (res.status === 204) return undefined as T;

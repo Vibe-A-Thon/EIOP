@@ -4,6 +4,7 @@ export interface SavedView {
   seeds: string[];
   lens: "domain" | "fact";
   hiddenFacts: string[];
+  thumbnail?: string;
   createdAt: string;
 }
 
@@ -33,8 +34,7 @@ export function saveView(
     ...view,
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     createdAt: new Date().toISOString(),
-  };
-  const next = [entry, ...views].slice(0, 30);
+  };  const next = [entry, ...views].slice(0, 30);
   localStorage.setItem(keyFor(principal, tenant, workspace), JSON.stringify(next));
   return next;
 }
@@ -74,6 +74,7 @@ export function importViews(
       seeds: v.seeds,
       lens: v.lens === "fact" ? "fact" : "domain",
       hiddenFacts: Array.isArray(v.hiddenFacts) ? v.hiddenFacts : [],
+      thumbnail: typeof v.thumbnail === "string" ? v.thumbnail : undefined,
       createdAt: v.createdAt || new Date().toISOString(),
     };
     byId.set(entry.id, entry);

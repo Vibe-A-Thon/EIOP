@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import Graph from "graphology";
 import Sigma from "sigma";
 import forceAtlas2 from "graphology-layout-forceatlas2";
@@ -17,6 +17,10 @@ export interface GEdge {
   creation_status?: string;
 }
 
+export interface GraphCanvasHandle {
+  getThumbnail: (w?: number, h?: number) => string | undefined;
+}
+
 interface Props {
   nodes: GNode[];
   edges: GEdge[];
@@ -32,19 +36,52 @@ const DIM_NODE = "#2b3442";
 const DIM_EDGE = "#1b2430";
 const PATH_EDGE = "#22d3ee";
 
-export function GraphCanvas({
-  nodes,
-  edges,
-  colorOf,
-  edgeColorOf,
-  selectedId,
-  highlightNodes,
-  highlightEdges,
-  onSelect,
-}: Props) {
+export const GraphCanvas = forwardRef<GraphCanvasHandle, Props>(function GraphCanvas(
+  { nodes, edges, colorOf, edgeColorOf, selectedId, highlightNodes, highlightEdges, onSelect },
+  ref,
+) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sigmaRef = useRef<Sigma | null>(null);
   const graphRef = useRef<any>(null);
+
+  useImperativeHandle(ref, () => ({
+    getThumbnail: (w = 168, h = 96) => {
+      const graph = graphRef.current;
+      if (!graph || graph.order === 0) return undefined;
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      graph.forEachNode((_: string, a: any) => {
+        minX = Math.min(minX, a.x); maxX = Math.max(maxX, a.x);
+        minY = Math.min(minY, a.y); maxY = Math.max(maxY, a.y);
+      });
+      const pad = 8;
+      const sx = (maxX - minX) || 1;
+      const sy = (maxY - minY) || 1;
+      const map = (x: number, y: number) => [
+        pad + ((x - minX) / sx) * (w - 2 * pad),
+        pad + ((y - minY) / sy) * (h - 2 * pad),
+      ];
+      const off = document.createElement("canvas");
+      off.width = w; off.height = h;
+      const ctx = off.getContext("2d");
+      if (!ctx) return undefined;
+      ctx.fillStyle = "#0b0e13";
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "rgba(100,116,139,0.35)";
+      ctx.lineWidth = 0.6;
+      graph.forEachEdge((_: string, _a: any, s: string, t: string) => {
+        const sa = graph.getNodeAttributes(s), ta = graph.getNodeAttributes(t);
+        const [x1, y1] = map(sa.x, sa.y), [x2, y2] = map(ta.x, ta.y);
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      });
+      graph.forEachNode((_: string, a: any) => {
+        const [x, y] = map(a.x, a.y);
+        ctx.fillStyle = a._baseColor || a.color || "#06b6d4";
+        ctx.beginPath(); ctx.arc(x, y, Math.min(Math.max(a.size / 4, 1.5), 4), 0, Math.PI * 2); ctx.fill();
+      });
+      return off.toDataURL("image/jpeg", 0.6);
+    },
+  }));
+
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -166,4 +203,4 @@ export function GraphCanvas({
   }, [selectedId, highlightNodes, highlightEdges]);
 
   return <div ref={containerRef} className="h-full w-full" data-testid="graph-canvas" />;
-}
+});

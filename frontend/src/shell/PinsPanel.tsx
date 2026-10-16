@@ -1,4 +1,4 @@
-import { Copy, Download, Pin, Trash2, X } from "lucide-react";
+import { Copy, Download, FileText, Pin, Trash2, X } from "lucide-react";
 import { usePins } from "../lib/pinsStore";
 import { EmptyState } from "../components/ui/States";
 import { relativeTime } from "../lib/utils";
@@ -22,6 +22,35 @@ export function PinsPanel() {
     const a = document.createElement("a");
     a.href = url;
     a.download = `kgf-evidence-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportReport = () => {
+    const byQuestion = new Map<string, typeof pins>();
+    pins.forEach((p) => {
+      const q = p.question || "Unattributed evidence";
+      if (!byQuestion.has(q)) byQuestion.set(q, []);
+      byQuestion.get(q)!.push(p);
+    });
+    let md = `# Evidence Case Report\n\n_Generated ${new Date().toLocaleString()} · KnowGridFlow_\n\n`;
+    md += `**${pins.length} pinned fact${pins.length === 1 ? "" : "s"}** across ${byQuestion.size} question${byQuestion.size === 1 ? "" : "s"}.\n\n`;
+    let n = 1;
+    for (const [q, items] of byQuestion) {
+      md += `## ${q}\n\n`;
+      for (const p of items) {
+        md += `${n}. ${p.text}\n`;
+        if (p.source) md += `   - Source: \`${p.source}\`\n`;
+        n++;
+      }
+      md += `\n`;
+    }
+    md += `---\n_All facts are drawn from the local knowledge graph. Fact classes and provenance are available in the entity views._\n`;
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `kgf-case-report-${new Date().toISOString().slice(0, 10)}.md`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -59,6 +88,13 @@ export function PinsPanel() {
             className="flex items-center gap-1.5 rounded-sm border border-[var(--border-subtle)] px-2 py-1 text-xs transition-colors hover:border-[var(--border-strong)]"
           >
             <Download size={12} /> Export
+          </button>
+          <button
+            data-testid="pins-report"
+            onClick={exportReport}
+            className="flex items-center gap-1.5 rounded-sm border border-[var(--border-subtle)] px-2 py-1 text-xs transition-colors hover:border-[var(--border-strong)]"
+          >
+            <FileText size={12} /> Report
           </button>
           <button
             data-testid="pins-clear"

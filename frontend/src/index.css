@@ -172,3 +172,17 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+[data-density="compact"] {
+  font-size: 13px;
+}
+[data-density="comfortable"] {
+  font-size: 15px;
+}
+html.kgf-reduce-motion *,
+html.kgf-reduce-motion *::before,
+html.kgf-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
