@@ -30,6 +30,7 @@ export interface NavItem {
   label: string;
   to: string;
   icon: LucideIcon;
+  adminOnly?: boolean;
 }
 
 export interface NavGroup {
@@ -78,9 +79,9 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Govern",
     items: [
-      { id: "governance", label: "Governance", to: "/governance", icon: ScrollText },
-      { id: "brand", label: "Brand", to: "/brand", icon: Palette },
-      { id: "tenant", label: "Tenant", to: "/tenant", icon: SlidersHorizontal },
+      { id: "governance", label: "Governance", to: "/governance", icon: ScrollText, adminOnly: true },
+      { id: "brand", label: "Brand", to: "/brand", icon: Palette, adminOnly: true },
+      { id: "tenant", label: "Tenant", to: "/tenant", icon: SlidersHorizontal, adminOnly: true },
     ],
   },
   {

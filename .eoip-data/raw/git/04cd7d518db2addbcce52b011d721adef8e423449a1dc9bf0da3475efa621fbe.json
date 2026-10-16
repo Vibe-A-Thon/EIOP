@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T14:01:00.014602Z",
+  "event_id": "04cd7d518db2addbcce52b011d721adef8e423449a1dc9bf0da3475efa621fbe",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "1a808dfc01c05d0835890ece3c63fa0d84775f39",
+    "message": "checkpoint before testing_agent_full_stack\n\nEmergent-Commit-Key: a71c2ae5c465d1ec9170e623ec3bdd91c04956636ab6ac5006edf3e5d2e48ddb"
+  },
+  "payload_hash": "2c81f8cdbabb4715ca5025ab6d954522d5ea8b51b467185f2f56a1baca797d63",
+  "schema_version": "1.0",
+  "source_record_id": "demo:1a808dfc01c05d0835890ece3c63fa0d84775f39",
+  "source_system": "git",
+  "source_version": "2c81f8cdbabb4715ca5025ab6d954522d5ea8b51b467185f2f56a1baca797d63"
+}

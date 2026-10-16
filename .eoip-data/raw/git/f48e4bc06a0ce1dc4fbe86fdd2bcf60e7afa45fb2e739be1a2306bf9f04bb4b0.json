@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T14:01:00.000221Z",
+  "event_id": "f48e4bc06a0ce1dc4fbe86fdd2bcf60e7afa45fb2e739be1a2306bf9f04bb4b0",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "6a32a3eb372d6b65f7ec91969c806c0e07e7780f",
+    "message": "The requested items have been delivered and verified as follows:\n\n- **Snapshot Timeline (SCR-010)**: Implemented a new modular `TimelineScrubber` component integrated into Time Travel. This includes a real change-count histogram built from `/ingestion/runs` and supplemented by `/admin/timeline` and `/graph/events` when available. Features include run markers, a draggable As-of playhead, Compare from/to handles, and clickable temporal coordinate inputs.\n- **Full QA Pass**: The frontend testing agent ran through all new flows, achieving a 7/7 pass rate across Meta-graph, Ontology Designer gitops lifecycle, Impact 3 modes including what-if, Reports scheduling, Collaboration MissingBackendState, Brand contrast/terminology, and Time Travel features including as-of/compare/playback and snapshots. No functional or blocking bugs were identified.\n- Resolved a minor UX issue reported concerning publish/rollback confirm dialogs ignoring Escape key; Escape-to-close functionality has been added to OntologyDesigner and Temporal components and verified. The TypeScript compiler reports clean.\n\nNote: The bitemporal as-of/compare and graph/versions features, based on in-memory data stores, currently return empty slices which are displayed as honest empty states without any fabricated data. AI narration continues to be simulated.\n\nI have tested the application thoroughly within my capabilities. Please try these features and let me know if you encounter any issues or if further investigation with comprehensive testing is needed.\n\nNext steps:\n- Seed Graph History with a few historical entity revisions so that Time Travel's As-of/Compare/Playback and the scrubber histogram can show meaningful data instead of empty states.\n- Extract the typed-confirm pattern used in publish and snapshot restore dialogs into a shared component to maintain consistency.\n- Develop the Ontology Marketplace gitops package-release/import flow to enable stewards to share ontology packs across tenants.\n- Enhance performance of the Meta-graph list by virtualizing the types tree as label counts increase.\n\nAs an improvement, I can seed lightweight bitemporal history with timestamped entity revisions to allow the Time Travel scrubber and As-of/Compare views to visually reflect changes over time for demo and audit purposes if that would be helpful.\n\nEmergent-Commit-Key: 6bda49ce18329899fab9a5b12cb476714e486b73836ab5c14914bbeaa6cf8225"
+  },
+  "payload_hash": "f5c743c4569866c84db764defe6fc2b9cd595b9ee7e5634516dd11a411ad6905",
+  "schema_version": "1.0",
+  "source_record_id": "demo:6a32a3eb372d6b65f7ec91969c806c0e07e7780f",
+  "source_system": "git",
+  "source_version": "f5c743c4569866c84db764defe6fc2b9cd595b9ee7e5634516dd11a411ad6905"
+}

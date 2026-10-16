@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T14:01:00.061240Z",
+  "event_id": "b91195d0387ab99187ec477d2dd02face80540f695e671f3982b22008f17da75",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "632fbcb9ff70b1519076a7147428e05ef9b37610",
+    "message": "## Four more features shipped & verified against the real backend (4/4)\n\n- **Path Highlight on the neighborhood**: Impact-paths now renders the endpoints' full neighborhood and **highlights** the traced path (brightened nodes + cyan path edges) while **dimming** the surrounding context — done imperatively on the Sigma canvas. Switching back to Explore clears it.\n- **Evidence Pinning**: every evidence snippet in Ask has a pin button; pinned items collect in a right-side **\"Evidence board\"** drawer (top-bar count badge) with Copy, Export-JSON, remove, and Clear — for building a case.\n- **Source Onboarding**: a guided 3-step wizard launched from any connector card in the Ingestion Console — register the source (`POST /sources`) then kick off a **baseline ingestion** (`POST /sources/{id}/baseline`) and see the resulting job. URL-type connectors now require a base URL up front (fixes the 422 the tester caught).\n- **View Sharing**: saved graph views can be **exported to JSON and imported** back, so teammates can open the same picture.\n\nAll wired to real `/api/v1/*` data, TypeScript-strict clean, services healthy. Note: AI narration remains labeled **SIMULATED** since no inference model is enabled in this deployment (local-first).\n\n- Next Action Items:\n  - **Path Compare**: Let users trace paths to two different targets and compare the blast surfaces side by side\n  - **Case Export**: Turn the pinned Evidence board into a shareable report with the question, answer and citations\n  - **Source Health**: Show live health and last-run status for each registered source with a one-click re-sync\n  - **View Thumbnails**: Give each saved graph view a small preview image so they're easy to recognise\n\nEmergent-Commit-Key: 2dc8fb73acaae8be45ab845d8bd392ef6b1209694d527745465f23ebcc34820d"
+  },
+  "payload_hash": "46bce320cf75b083391bea34ffa13229d101340e6f8c88d52b09fc60224dd008",
+  "schema_version": "1.0",
+  "source_record_id": "demo:632fbcb9ff70b1519076a7147428e05ef9b37610",
+  "source_system": "git",
+  "source_version": "46bce320cf75b083391bea34ffa13229d101340e6f8c88d52b09fc60224dd008"
+}

@@ -34,20 +34,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setActiveTenant(tenant);
     let principal: Principal;
     try {
-      const res = await apiFetch<any>("/security/tokens/verify", {
-        method: "POST",
-        body: { token },
-      });
+      const me = await apiFetch<any>("/auth/whoami");
+      const roles: string[] = me.roles || [];
+      const topRole = roles.includes("superadmin")
+        ? "Super admin"
+        : me.is_admin
+          ? "Administrator"
+          : roles[0]
+            ? roles[0][0].toUpperCase() + roles[0].slice(1)
+            : "Member";
       principal = {
-        id: res.subject || res.payload?.sub || "principal",
-        username: res.payload?.username || res.subject || "user",
-        roles: res.roles || res.payload?.roles || [],
-        tenant_id: res.payload?.tenant_id ?? null,
-        label: "Signed in",
-        bootstrap: false,
+        id: me.id || "principal",
+        username: me.username || "user",
+        roles,
+        tenant_id: me.tenant_id ?? null,
+        label: `${topRole}${me.tenant_id ? ` · ${me.tenant_id}` : " · all tenants"}`,
+        bootstrap: me.provider === "asg" && me.username?.startsWith("bootstrap"),
       };
     } catch {
-      // Bootstrap tokens return 401 from verify → treat as deployment admin (spec §3.2)
       principal = {
         id: "urn:eoip:authn:principal:bootstrap",
         username: "bootstrap-admin",

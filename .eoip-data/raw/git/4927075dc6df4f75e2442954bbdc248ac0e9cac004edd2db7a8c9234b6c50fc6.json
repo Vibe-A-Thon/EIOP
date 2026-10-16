@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T14:01:00.052148Z",
+  "event_id": "4927075dc6df4f75e2442954bbdc248ac0e9cac004edd2db7a8c9234b6c50fc6",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "7849e98d8b0186199f6f1eccaafabf6da86187b7",
+    "message": "I have completed a significant expansion covering 4 enhancements and 14 new screens, all integrated with the real EOIP backend (no mocks). Initial tests by the testing agent indicate successful coverage of these enhancements and screens, as well as regression checks.\n\n**The 4 requested enhancements:**\n- **Path Compare**: Compare paths from a source to two targets with side-by-side blast surfaces (paths, minimum hops, reach, shared nodes), both highlighted on the graph.\n- **Case Export**: Export a shareable Markdown **case report** from the Evidence board, including questions, pinned facts, and citations.\n- **Source Health**: Display health and last baseline/sync times for each registered source with a **one-click Re-sync** option.\n- **View Thumbnails**: Saved graph views now include a live mini **preview image** for easier recognition.\n\n**New screens with real `/api/v1` integration:** Impact, Query (EQL), Changes, Incidents (with declare), Ontology, Quality, Agents, Reports, Snapshots (typed-confirm restore), Governance & Security, Tenant, Platform Health, Settings (theme/density/motion/locale), Help & About — plus a 404 page and navigation updated into 6 grouped sections.\n\n**Coverage note:** Some spec areas remain partial or deferred, including Meta-graph (013), Collaboration (020, pending backend capability), Brand publish (023, pending backend), and certain deep sub-flows such as bitemporal, what-if simulation, and full ontology gitops lifecycle. AI narration is still marked as **SIMULATED** because there is no inference model enabled yet in this deployment.\n\nI encourage testing the implemented features and screens to verify proper operation. Please let me know if any issues arise or if further in-depth investigation and comprehensive testing are needed.\n\n- **Next Action Items:**\n  - Add Meta-graph View (SCR-013) to visually explore label-to-label structure.\n  - Build and validate ontology drafts and support gitops publishing.\n  - Implement What-If Simulation for change modeling and blast radius preview.\n  - Enable report scheduling for recurring report generation and collection.\n\nEmergent-Commit-Key: a84269c04e5f21a7f7a5065e92c22e46fe7874ef8ca81e9df4eb800c4183f367"
+  },
+  "payload_hash": "1965df5dac2acca25e8b5fc2f2ca59fc9b4fde68091c5de4822a31540f31fd96",
+  "schema_version": "1.0",
+  "source_record_id": "demo:7849e98d8b0186199f6f1eccaafabf6da86187b7",
+  "source_system": "git",
+  "source_version": "1965df5dac2acca25e8b5fc2f2ca59fc9b4fde68091c5de4822a31540f31fd96"
+}

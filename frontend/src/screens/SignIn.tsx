@@ -14,7 +14,15 @@ import { apiFetch } from "../lib/api";
 import { Button } from "../components/ui/Button";
 import { StatusDot } from "../components/ui/Badge";
 
-const DEV_TOKEN = "eoip-local-dev-token-0123456789abcdef";
+const DEV_TOKEN = "eoip_sa_f86468fed910d947e69eba4c";
+
+const DEMO_ROLES: { label: string; role: string; token: string }[] = [
+  { label: "Super admin", role: "superadmin · all tenants", token: "eoip_sa_f86468fed910d947e69eba4c" },
+  { label: "Admin", role: "admin · default", token: "eoip_admin_75293814c25a2d4c1e57994c" },
+  { label: "Steward", role: "steward · default", token: "eoip_steward_449c1099ee3071aa8ce7fbed" },
+  { label: "Analyst", role: "analyst · default", token: "eoip_analyst_1d0019f09d075ddf8ad141dc" },
+  { label: "Viewer", role: "viewer · default", token: "eoip_viewer_9072655bae91c450d24fe204" },
+];
 
 export function SignIn() {
   const { signIn } = useAuth();
@@ -177,6 +185,29 @@ export function SignIn() {
           <p className="mt-5 text-center font-mono text-[10px] leading-relaxed text-[var(--text-muted)]">
             Tokens are held in memory only and never persisted to storage.
           </p>
+
+          <div className="mt-5 rounded-md border border-[var(--border-subtle)] bg-[var(--bg-panel)]/60 p-3" data-testid="signin-demo-roles">
+            <p className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+              <ShieldCheck size={12} /> Demo access · pick a role
+            </p>
+            <div className="grid grid-cols-1 gap-1">
+              {DEMO_ROLES.map((r) => (
+                <button
+                  key={r.role}
+                  type="button"
+                  data-testid={`signin-role-${r.label.toLowerCase().replace(" ", "-")}`}
+                  onClick={() => setToken(r.token)}
+                  className="flex items-center justify-between gap-2 rounded-sm border border-transparent px-2 py-1.5 text-left text-xs transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--bg-hover)]"
+                >
+                  <span className="font-medium text-[var(--text-primary)]">{r.label}</span>
+                  <span className="font-mono text-[10px] text-[var(--text-muted)]">{r.role}</span>
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 font-mono text-[9px] leading-relaxed text-[var(--text-muted)]">
+              Roles &amp; tenants are defined in <span className="text-[var(--text-secondary)]">Logins_credentials.keys</span> and enforced server-side.
+            </p>
+          </div>
         </form>
       </div>
     </div>

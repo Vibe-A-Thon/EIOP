@@ -3,10 +3,14 @@ import { motion } from "framer-motion";
 import { PanelLeftClose, PanelLeftOpen, Waypoints } from "lucide-react";
 import { NAV_GROUPS } from "./nav";
 import { useShell } from "../lib/shellStore";
+import { useAuth } from "../lib/auth";
 import { cn } from "../lib/utils";
 
 export function NavRail() {
   const { railCollapsed, toggleRail } = useShell();
+  const { session } = useAuth();
+  const roles = session?.principal.roles || [];
+  const isAdmin = roles.some((r) => r === "admin" || r === "system" || r === "superadmin");
 
   return (
     <nav
@@ -31,7 +35,10 @@ export function NavRail() {
       </div>
 
       <div className="flex-1 space-y-4 overflow-y-auto p-2">
-        {NAV_GROUPS.map((group) => (
+        {NAV_GROUPS.map((group) => {
+          const items = group.items.filter((item) => !item.adminOnly || isAdmin);
+          if (items.length === 0) return null;
+          return (
           <div key={group.label}>
             {!railCollapsed && (
               <p className="px-2.5 pb-1 pt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
@@ -39,7 +46,7 @@ export function NavRail() {
               </p>
             )}
             <div className="space-y-0.5">
-              {group.items.map((item) => (
+              {items.map((item) => (
                 <NavLink
                   key={item.id}
                   to={item.to}
@@ -71,7 +78,8 @@ export function NavRail() {
               ))}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <button

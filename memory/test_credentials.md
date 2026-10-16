@@ -1,32 +1,37 @@
-# Test Credentials — KnowGridFlow GUI
+# Test Credentials — KnowGridFlow / EOIP
 
-## App URLs
-- Frontend (preview): https://a832c397-f166-433b-a538-c85d71fb17f9.preview.emergentagent.com
-- Backend API base: `${REACT_APP_BACKEND_URL}/api/v1` (routes through ingress to port 8001)
+Auth is token-based (Authorization: Bearer <token>). Tokens are held in-memory in
+the browser; the ASG registry is defined in `/app/Logins_credentials.keys` and
+enforced server-side (RBAC). Sign-in: /signin → paste a token → Continue.
+The sign-in screen pre-fills the Super admin token and has quick-pick role buttons.
 
-## Authentication (SCR-001 Sign-in)
-The GUI authenticates with a Bearer access token held in memory only (no localStorage).
+## ASG demo tokens (role · tenant)
+- Super admin (full control, all tenants): `eoip_sa_f86468fed910d947e69eba4c`
+- Admin (default tenant):                  `eoip_admin_75293814c25a2d4c1e57994c`
+- Steward (default tenant):                `eoip_steward_449c1099ee3071aa8ce7fbed`
+- Analyst (default tenant):                `eoip_analyst_1d0019f09d075ddf8ad141dc`
+- Viewer (default tenant):                 `eoip_viewer_9072655bae91c450d24fe204`
 
-- **Access token (bootstrap deployment admin):** `eoip-local-dev-token-0123456789abcdef`
-- **Tenant:** `default`
-- The sign-in form at `/signin` pre-fills this token. Enter token → Continue.
-- This bootstrap token maps to principal `bootstrap-admin` with roles `admin, system`.
+## Fail-safe bootstrap superadmin (recovery)
+- Env `EOIP_API_TOKEN` (currently `eoip-local-dev-token-0123456789abcdef`) is ALWAYS
+  registered as a superadmin even if the keys file is missing/empty — cannot be
+  locked out. Works as a Bearer token exactly like the Super admin above.
 
-## Backend
-- EOIP FastAPI app served via `/app/backend/server.py` (re-exports `apps.api.main:create_app`).
-- Graph backend: in-memory (`EOIP_GRAPH_BACKEND=memory`), seeded with the core demo corpus
-  on startup (~226 vertices / ~721 edges).
-- No external API keys required (local-first).
+## RBAC expectations (server-enforced)
+- Reads (GET): any valid token → 200; invalid/none → 401.
+- Destructive ops require admin/system/superadmin → others get 403:
+  ontology gitops merge/rollback/package-release/migration, marketplace install/
+  build/uninstall, enterprise snapshots create/restore/delete, ontology import.
+- Tenant isolation: a tenant-bound principal cannot read/act on another tenant
+  (e.g. branding/theme?tenant_id=<other> → 403). Only superadmin is cross-tenant.
+- Admin-only nav (Governance, Brand, Tenant) is hidden for non-admin roles in the UI.
 
-## data-testid highlights
-- signin-token-input, signin-tenant-input, signin-submit-button
-- app-shell-nav-overview / -ask / -graph / -schema, app-shell-rail-toggle
-- global-search-trigger, command-palette-trigger, command-palette-input, command-palette-result
-- tenant-select-dropdown, backend-status-chip, theme-toggle-button, theme-option-*, principal-menu-trigger, signout-button
-- overview-ask-cta
-- ask-query-input, ask-submit-button, ask-boundary-badge, ask-suggestion-*, ask-result
-- graph-seed-search, graph-seed-result, graph-lens-domain / -fact, graph-expand-selected, graph-reset, graph-canvas, graph-filter-*
-- entity-360, entity-tab-overview/-relationships/-provenance/-impact/-raw
-- inspector-panel, inspector-close, inspector-open-full
-- activity-dock, activity-dock-toggle
-- schema-tab-vertex/-edge, schema-search
+## Key data-testids
+- signin: signin-token-input, signin-tenant-input, signin-submit-button,
+  signin-demo-roles, signin-role-super-admin/-admin/-steward/-analyst/-viewer
+- shell: app-shell-nav-rail, app-shell-nav-<id>, app-shell-rail-toggle
+- In-app navigation: after sign-in, navigate via left-rail <a href> links
+  (full page reloads drop the in-memory token and bounce to /signin).
+
+## Tenant
+- Default tenant id: `default` (maps to the seeded demo graph).

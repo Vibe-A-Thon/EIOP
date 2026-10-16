@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T14:01:00.170271Z",
+  "event_id": "b4e0e3777133ded440e7cbcdb790f8cfe49af3a9d32f8c81326d084400faf909",
+  "metadata": null,
+  "payload": {
+    "commit_sha": "0cba8dbe38131c2e0fd377dd56a5b8ee343c6762",
+    "content": "import { handleRequest } from \"./service\";\n\nexport function dispatch(payload: string) {\n  return handleRequest(payload);\n}",
+    "path": "src/client.ts"
+  },
+  "payload_hash": "7045a56417b490c333efa091b4a553b2b4389fc6786f2763128703b100b29f95",
+  "schema_version": "1.0",
+  "source_record_id": "demo:src/client.ts",
+  "source_system": "git",
+  "source_version": "7045a56417b490c333efa091b4a553b2b4389fc6786f2763128703b100b29f95"
+}
