@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-16T09:09:08.301218Z",
+  "content_hash": "5ba2290214838e6338bff75b29dbda878995d0f1c4036fd72507298054138a82",
+  "correlation_id": null,
+  "cursor": null,
+  "event_id": "877a09b083c41e6e87442b206579ecc6a439c2899d0c2ea89ac8669d98ff5062",
+  "event_time": "2026-10-16T09:09:08.301218Z",
+  "evidence_ref": null,
+  "metadata": {
+    "connector": "fileparse/1.0",
+    "size_bytes": 122
+  },
+  "observed_time": "2026-10-16T09:09:08.301218Z",
+  "operation": "UPSERT",
+  "payload": {
+    "content": "aW1wb3J0IHsgaGFuZGxlUmVxdWVzdCB9IGZyb20gIi4vc2VydmljZSI7CgpleHBvcnQgZnVuY3Rpb24gZGlzcGF0Y2gocGF5bG9hZDogc3RyaW5nKSB7CiAgcmV0dXJuIGhhbmRsZVJlcXVlc3QocGF5bG9hZCk7Cn0=",
+    "encoding": "base64",
+    "filename": "client.ts.txt"
+  },
+  "payload_hash": "5ba2290214838e6338bff75b29dbda878995d0f1c4036fd72507298054138a82",
+  "payload_ref": null,
+  "permissions": {
+    "acl_hash": null,
+    "inherited_from": null,
+    "principal_refs": [],
+    "visibility": "UNKNOWN"
+  },
+  "schema_version": "2.0",
+  "source_id": "demo_corpus",
+  "source_instance_id": "demo_corpus",
+  "source_record_id": "fixture://demo/demodata/core/demo-repo/src/client.ts",
+  "source_record_type": "binary_file",
+  "source_system": "documents",
+  "source_type": "documents",
+  "source_version": "5ba2290214838e6338bff75b29dbda878995d0f1c4036fd72507298054138a82"
+}

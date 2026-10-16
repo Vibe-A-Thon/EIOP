@@ -1,0 +1,43 @@
+{
+  "document_id": "urn:eoip:knowledge:document:file:b3ea49be2e67c6210b648b9c6048a46c88ffd503e24018b118a2418ab117ce52",
+  "source_id": "demo_corpus",
+  "source_name": "sample-gitlab.json",
+  "source_uri": "fixture://demo/demodata/core/gitlab/sample-gitlab.json",
+  "parent_id": null,
+  "content_hash": "fd6bb972d74809a893f7641be3f68f84bdf2eef66f0381a15e09336282e728e6",
+  "size_bytes": 267,
+  "format": "json",
+  "media_type": "application/json",
+  "parser_version": "fileparse/1.0",
+  "title": "sample-gitlab.json",
+  "sections": [
+    {
+      "index": 0,
+      "kind": "json",
+      "text": "{\n  \"merge_requests\": [\n    {\n      \"iid\": 42,\n      \"title\": \"EOIP-1 implement impact calculation\",\n      \"source_branch\": \"feature/EOIP-1\",\n      \"target_branch\": \"main\",\n      \"merge_commit_sha\": \"HEAD\"\n    }\n  ],\n  \"pipelines\": [\n    {\n      \"id\": 9001,\n      \"name\": \"build-and-test\",\n      \"sha\": \"HEAD\",\n      \"status\": \"success\"\n    }\n  ]\n}",
+      "locator": {}
+    }
+  ],
+  "tables": [],
+  "data": {
+    "merge_requests": [
+      {
+        "iid": 42,
+        "title": "EOIP-1 implement impact calculation",
+        "source_branch": "feature/EOIP-1",
+        "target_branch": "main",
+        "merge_commit_sha": "HEAD"
+      }
+    ],
+    "pipelines": [
+      {
+        "id": 9001,
+        "name": "build-and-test",
+        "sha": "HEAD",
+        "status": "success"
+      }
+    ]
+  },
+  "metadata": {},
+  "warnings": []
+}

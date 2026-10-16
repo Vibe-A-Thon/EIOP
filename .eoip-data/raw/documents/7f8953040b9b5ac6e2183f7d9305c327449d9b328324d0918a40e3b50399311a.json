@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-16T09:09:08.361884Z",
+  "content_hash": "56a85b0626d409c81aac9021debc65890a5ddbef799fa8f2d6d42a0a496bb039",
+  "correlation_id": null,
+  "cursor": null,
+  "event_id": "7f8953040b9b5ac6e2183f7d9305c327449d9b328324d0918a40e3b50399311a",
+  "event_time": "2026-10-16T09:09:08.361884Z",
+  "evidence_ref": null,
+  "metadata": {
+    "connector": "fileparse/1.0",
+    "size_bytes": 939
+  },
+  "observed_time": "2026-10-16T09:09:08.361884Z",
+  "operation": "UPSERT",
+  "payload": {
+    "content": "ewogICJpc3N1ZXMiOiBbCiAgICB7CiAgICAgICJrZXkiOiAiRU9JUC0xIiwKICAgICAgImZpZWxkcyI6IHsKICAgICAgICAic3VtbWFyeSI6ICJUcmFjZSBhIHJlcXVpcmVtZW50IHRvIGl0cyBpbXBsZW1lbnRhdGlvbiIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogIlRoZSBkZW1vIHN0b3J5IGxpbmtzIGEgSmlyYSB3b3JrIGl0ZW0gdG8gcmVwb3NpdG9yeSBjb2RlIGFuZCBzdXBwb3J0aW5nIGV2aWRlbmNlLiIsCiAgICAgICAgImlzc3VldHlwZSI6IHsibmFtZSI6ICJTdG9yeSJ9LAogICAgICAgICJzdGF0dXMiOiB7Im5hbWUiOiAiSW4gUHJvZ3Jlc3MifSwKICAgICAgICAicHJvamVjdCI6IHsia2V5IjogIkVPSVAiLCAibmFtZSI6ICJFbnRlcnByaXNlIE9udG9sb2d5IEludGVsbGlnZW5jZSBQbGF0Zm9ybSJ9LAogICAgICAgICJhc3NpZ25lZSI6IHsiYWNjb3VudElkIjogImRlbW8tZW5naW5lZXIiLCAiZGlzcGxheU5hbWUiOiAiRGVtbyBFbmdpbmVlciIsICJlbWFpbEFkZHJlc3MiOiAiZW5naW5lZXJAZXhhbXBsZS5pbnZhbGlkIn0KICAgICAgfQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJFT0lQLTIiLAogICAgICAiZmllbGRzIjogewogICAgICAgICJzdW1tYXJ5IjogIlNob3cgZXZpZGVuY2UgZm9yIGdyYXBoIHJlbGF0aW9uc2hpcHMiLAogICAgICAgICJkZXNjcmlwdGlvbiI6ICJFYWNoIGNyb3NzLWRvbWFpbiByZWxhdGlvbnNoaXAgbXVzdCBiZSB0cmFjZWFibGUgdG8gY2FwdHVyZWQgc291cmNlIGRhdGEuIiwKICAgICAgICAiaXNzdWV0eXBlIjogeyJuYW1lIjogIlRhc2sifSwKICAgICAgICAic3RhdHVzIjogeyJuYW1lIjogIlRvIERvIn0sCiAgICAgICAgInByb2plY3QiOiB7ImtleSI6ICJFT0lQIiwgIm5hbWUiOiAiRW50ZXJwcmlzZSBPbnRvbG9neSBJbnRlbGxpZ2VuY2UgUGxhdGZvcm0ifQogICAgICB9CiAgICB9CiAgXQp9",
+    "encoding": "base64",
+    "filename": "sample-jira.json"
+  },
+  "payload_hash": "56a85b0626d409c81aac9021debc65890a5ddbef799fa8f2d6d42a0a496bb039",
+  "payload_ref": null,
+  "permissions": {
+    "acl_hash": null,
+    "inherited_from": null,
+    "principal_refs": [],
+    "visibility": "UNKNOWN"
+  },
+  "schema_version": "2.0",
+  "source_id": "demo_corpus",
+  "source_instance_id": "demo_corpus",
+  "source_record_id": "fixture://demo/demodata/core/jira/sample-jira.json",
+  "source_record_type": "binary_file",
+  "source_system": "documents",
+  "source_type": "documents",
+  "source_version": "56a85b0626d409c81aac9021debc65890a5ddbef799fa8f2d6d42a0a496bb039"
+}

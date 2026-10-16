@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T14:01:00.157795Z",
+  "event_id": "eaa44b8d0c7fc9c41a719759442cb27d295d3623678c9416450e2ae5f9bf47cf",
+  "metadata": null,
+  "payload": {
+    "commit_sha": "0cba8dbe38131c2e0fd377dd56a5b8ee343c6762",
+    "content": "export function normalize(value: number) { return Math.floor(value); }\nexport function computeImpact(value: number) { return normalize(value); }\n",
+    "path": "client.ts"
+  },
+  "payload_hash": "32cbb25493d21a54a43bbce6742725a3e1806a755d2f8cc5f0176aab61c529cb",
+  "schema_version": "1.0",
+  "source_record_id": "demo:client.ts",
+  "source_system": "git",
+  "source_version": "32cbb25493d21a54a43bbce6742725a3e1806a755d2f8cc5f0176aab61c529cb"
+}

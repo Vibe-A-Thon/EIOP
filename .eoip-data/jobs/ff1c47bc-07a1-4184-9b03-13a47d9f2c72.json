@@ -1,0 +1,1 @@
+{"job_id": "ff1c47bc-07a1-4184-9b03-13a47d9f2c72", "kind": "SOURCE_OPERATION", "status": "PENDING", "created_at": "2026-10-16T10:07:00.376196Z", "correlation_id": "467e73a8-62ac-48ba-a270-dfabfa88de59", "tenant_id": null, "created_by": null, "payload": {"source_id": "web-test-714348", "operation": "BASELINE", "checkpoint": null, "event_ids": [], "dry_run": false}}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T14:01:00.070515Z",
+  "event_id": "e4d4e007a4e6c11ec6594f431d3c6e453f420746a50f883bbecd4f5fb4c1f838",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "462fc30e045ce581d6e525e5389fa409d3e16bbf",
+    "message": "## Four new features shipped & verified (verified with end-to-end tests against the backend)\n\n- **Narrated streamed answers (Ask)**: added Deterministic | Narrated toggle. Narrated mode streams a live narration from `/brain/llm/stream` (SSE) with client-side pacing and a Stop button. Note this deployment uses a built-in simulator, so the answer carries a **\"Simulated (not model inference)\"** badge.\n- **Impact Paths (Graph Explorer)**: new Explore | Impact-paths mode — users can pick source and target entities and trace shortest paths via `/graph/shortest-paths`; renders a path subgraph plus a paths-list panel (hop-by-hop chips → inspector).\n- **Saved Views (Graph Explorer)**: allows saving/opening/deleting named graph views (seeds + lens + fact filters), persisted per `{principal, tenant, workspace}`, labeled \"Saved on this device only\".\n- **Ingestion Console (new /ingestion screen + nav)**: includes tabs for Ingestion runs (real run records with vertex/edge counts & status), Jobs (cancel/readmit), Sources (+16-connector catalog), and Dead-letter queue.\n\nAll connected to real `/api/v1/*` data, TypeScript strict mode enforced, services currently healthy. The streaming narration remains clearly **SIMULATED** as no external or local inference model is active in this deployment.\n\nPlease test these features and let me know if any issues arise or further refinements are needed.\n\n- Next Action Items:\n  - **Path Highlight**: Highlight traced paths directly on the full neighborhood graph for better visibility.\n  - **Evidence Pinning**: Enable pinning key evidence snippets into a side panel to support case building.\n  - **Source Onboarding**: Add a guided flow to help users register a connector and run baseline ingestion.\n  - **View Sharing**: Support exporting and importing saved graph views to facilitate team collaboration.\n\nEmergent-Commit-Key: 32d2b3f4778af73e583195cb290aa2d5bfa1643586446f3ec95351d674a89aeb"
+  },
+  "payload_hash": "08382b3acc3e497f30a176747733f8da2109de9f1dd76b2f8e2a24518ccb99b0",
+  "schema_version": "1.0",
+  "source_record_id": "demo:462fc30e045ce581d6e525e5389fa409d3e16bbf",
+  "source_system": "git",
+  "source_version": "08382b3acc3e497f30a176747733f8da2109de9f1dd76b2f8e2a24518ccb99b0"
+}

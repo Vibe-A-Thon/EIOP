@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.725644Z",
+  "event_id": "cd0d223f2453dfd4e427b32a150f9fc5f1f419d77af3816dcb063d7eeab21f05",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "ed8718c055f9dc149c782cc1dd18f20f9b0bf68b",
+    "message": "gaps-phase 2 changes and documentation update"
+  },
+  "payload_hash": "9d2a1ec7f97944c74d8f3f2a017989ac829e3b8551733252f149793a2bd9986d",
+  "schema_version": "1.0",
+  "source_record_id": "demo:ed8718c055f9dc149c782cc1dd18f20f9b0bf68b",
+  "source_system": "git",
+  "source_version": "9d2a1ec7f97944c74d8f3f2a017989ac829e3b8551733252f149793a2bd9986d"
+}

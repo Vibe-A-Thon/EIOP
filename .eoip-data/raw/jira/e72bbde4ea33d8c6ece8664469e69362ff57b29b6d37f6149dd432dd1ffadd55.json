@@ -1,0 +1,124 @@
+{
+  "captured_at": "2026-10-16T09:09:07.869974Z",
+  "event_id": "e72bbde4ea33d8c6ece8664469e69362ff57b29b6d37f6149dd432dd1ffadd55",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "akim",
+        "displayName": "Alex Kim",
+        "emailAddress": "akim@mfs.com"
+      },
+      "comment": {
+        "comments": [
+          {
+            "author": {
+              "displayName": "Raj Patel"
+            },
+            "body": "Change request CHG0090101 has been approved and scheduled for deployment window 2026-09-22 02:00 UTC.",
+            "created": "2026-09-20T14:30:00.000+0000"
+          },
+          {
+            "author": {
+              "displayName": "James O'Brien"
+            },
+            "body": "Test cases TC-PAY-001 and TC-PAY-002 both passed in TR-PAY-001 Sprint 14 regression run.",
+            "created": "2026-09-21T10:15:00.000+0000"
+          }
+        ]
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-07-10T09:00:00.000+0000",
+      "customfield_10014": "EPC-101",
+      "customfield_10015": "Payment Services",
+      "customfield_10050": "TC-PAY-001,TC-PAY-002",
+      "description": "Implement a payment tokenization service that generates secure, irreversible tokens for cardholder PANs. The service must integrate with the HSM cluster for key management. Tokens stored in mfs_payments_db on pghost-prod-01.mfs.internal.\n\nAcceptance Criteria:\n- Tokenization latency < 50ms p99\n- Support for PCI DSS v4.0 token format\n- Integrate with svc-token-vault service account\n- Deploy to mfs-pay-pod-01, mfs-pay-pod-02\n\nGitLab MR: !301\nChange Request: CHG0090101\nTest Cases: TC-PAY-001, TC-PAY-002",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "MR !301: Implement payment tokenization service"
+            },
+            "key": "MR-301"
+          },
+          "type": {
+            "name": "GitLab MR",
+            "outward": "is developed in"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Write unit tests for tokenization"
+            },
+            "key": "PAY-111"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Configure HSM integration"
+            },
+            "key": "PAY-112"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "tokenization",
+        "pci-dss",
+        "payment-gateway"
+      ],
+      "parent": {
+        "key": "PAY-100"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "resolutiondate": "2026-09-22T08:30:00.000+0000",
+      "status": {
+        "name": "Done",
+        "statusCategory": {
+          "name": "Done"
+        }
+      },
+      "story_points": 8,
+      "summary": "Implement payment tokenization service",
+      "updated": "2026-09-22T08:30:00.000+0000"
+    },
+    "id": "60101",
+    "key": "PAY-101",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60101"
+  },
+  "payload_hash": "2e9a7f59fd23e9c57da3affcc56b29f0fd4755f18f1bf4da9dede963d6d2ebba",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-101",
+  "source_system": "jira",
+  "source_version": "2e9a7f59fd23e9c57da3affcc56b29f0fd4755f18f1bf4da9dede963d6d2ebba"
+}

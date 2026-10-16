@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.703768Z",
+  "event_id": "075d9f1cc4c4312409805ac34e87605d52dd523fb6d723fad787416d78069e4c",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "18862cba6a478db31f1b557a0216cf55f75029dc",
+    "message": "p3 changes and planner changes"
+  },
+  "payload_hash": "4c47022a56383e0ff33796837774346bda8f16116cae90650a44317ad5843bae",
+  "schema_version": "1.0",
+  "source_record_id": "demo:18862cba6a478db31f1b557a0216cf55f75029dc",
+  "source_system": "git",
+  "source_version": "4c47022a56383e0ff33796837774346bda8f16116cae90650a44317ad5843bae"
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.738584Z",
+  "event_id": "032debf5008d121474e3070bb8607e94eb18c1412ae59f2d3c7b1ceff06a6267",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "80aa0ecb11795b12b06cfa04c4635fa497c4c3bb",
+    "message": "changes for the gaps implementation from master backlog"
+  },
+  "payload_hash": "6a1f97393b97735a061a2818a27255fca2fb99683d47fdacc1f2f7975322653f",
+  "schema_version": "1.0",
+  "source_record_id": "demo:80aa0ecb11795b12b06cfa04c4635fa497c4c3bb",
+  "source_system": "git",
+  "source_version": "6a1f97393b97735a061a2818a27255fca2fb99683d47fdacc1f2f7975322653f"
+}

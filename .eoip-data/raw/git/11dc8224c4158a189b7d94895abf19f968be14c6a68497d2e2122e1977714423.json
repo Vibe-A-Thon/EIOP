@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.805129Z",
+  "event_id": "11dc8224c4158a189b7d94895abf19f968be14c6a68497d2e2122e1977714423",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "5913360db8c6d0cbfc49a40f232e423efbead6d8",
+    "message": "changes related to LLM and query handling and report generation"
+  },
+  "payload_hash": "177f5e7a214c17fe22765c31893aa528da4fa283939cd3985fd9eb5007cc0c1b",
+  "schema_version": "1.0",
+  "source_record_id": "demo:5913360db8c6d0cbfc49a40f232e423efbead6d8",
+  "source_system": "git",
+  "source_version": "177f5e7a214c17fe22765c31893aa528da4fa283939cd3985fd9eb5007cc0c1b"
+}

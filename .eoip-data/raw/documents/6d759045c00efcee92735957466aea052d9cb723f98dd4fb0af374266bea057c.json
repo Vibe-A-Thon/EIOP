@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-16T09:09:08.374780Z",
+  "content_hash": "8524c2d019be4af5eb70273548638d06f3f8687b0634fe0384fac865b19442a6",
+  "correlation_id": null,
+  "cursor": null,
+  "event_id": "6d759045c00efcee92735957466aea052d9cb723f98dd4fb0af374266bea057c",
+  "event_time": "2026-10-16T09:09:08.374780Z",
+  "evidence_ref": null,
+  "metadata": {
+    "connector": "fileparse/1.0",
+    "size_bytes": 1036
+  },
+  "observed_time": "2026-10-16T09:09:08.374780Z",
+  "operation": "UPSERT",
+  "payload": {
+    "content": "ewogICJyZXN1bHQiOiBbCiAgICB7CiAgICAgICJzeXNfaWQiOiAiYWJjMTIzZGVmNDU2IiwKICAgICAgIm51bWJlciI6ICJJTkMwMDEwMDAxIiwKICAgICAgInNob3J0X2Rlc2NyaXB0aW9uIjogIkVPSVAgQVBJIGxhdGVuY3kgc3Bpa2UgZHVyaW5nIHBlYWsgaG91cnMiLAogICAgICAic3RhdGUiOiAiMiIsCiAgICAgICJwcmlvcml0eSI6ICIyIiwKICAgICAgImNhdGVnb3J5IjogIlNvZnR3YXJlIiwKICAgICAgInN1YmNhdGVnb3J5IjogIkFwcGxpY2F0aW9uIiwKICAgICAgImFzc2lnbm1lbnRfZ3JvdXAiOiB7ImRpc3BsYXlfdmFsdWUiOiAiUGxhdGZvcm0gRW5naW5lZXJpbmcifSwKICAgICAgImFzc2lnbmVkX3RvIjogeyJkaXNwbGF5X3ZhbHVlIjogIkphbmUgRG9lIn0sCiAgICAgICJvcGVuZWRfYXQiOiAiMjAyNi0wOS0yOCAxNDozMDowMCIsCiAgICAgICJyZXNvbHZlZF9hdCI6IG51bGwsCiAgICAgICJjbWRiX2NpIjogeyJkaXNwbGF5X3ZhbHVlIjogIkVPSVAgQVBJIFNlcnZpY2UifQogICAgfSwKICAgIHsKICAgICAgInN5c19pZCI6ICJkZWY0NTZnaGk3ODkiLAogICAgICAibnVtYmVyIjogIkNIRzAwMjAwMDEiLAogICAgICAic2hvcnRfZGVzY3JpcHRpb24iOiAiVXBncmFkZSBIdWdlR3JhcGggdG8gdjEuMyBmb3IgaW1wcm92ZWQgcXVlcnkgcGVyZm9ybWFuY2UiLAogICAgICAic3RhdGUiOiAiMSIsCiAgICAgICJwcmlvcml0eSI6ICIzIiwKICAgICAgImNhdGVnb3J5IjogIlNvZnR3YXJlIiwKICAgICAgInN1YmNhdGVnb3J5IjogIkRhdGFiYXNlIiwKICAgICAgImFzc2lnbm1lbnRfZ3JvdXAiOiB7ImRpc3BsYXlfdmFsdWUiOiAiUGxhdGZvcm0gRW5naW5lZXJpbmcifSwKICAgICAgImFzc2lnbmVkX3RvIjogeyJkaXNwbGF5X3ZhbHVlIjogIkpvaG4gU21pdGgifSwKICAgICAgIm9wZW5lZF9hdCI6ICIyMDI2LTA5LTMwIDA5OjAwOjAwIiwKICAgICAgInJlc29sdmVkX2F0IjogbnVsbCwKICAgICAgImNtZGJfY2kiOiB7ImRpc3BsYXlfdmFsdWUiOiAiRU9JUCBHcmFwaCBTdG9yZSJ9CiAgICB9CiAgXQp9Cg==",
+    "encoding": "base64",
+    "filename": "sample-servicenow.json"
+  },
+  "payload_hash": "8524c2d019be4af5eb70273548638d06f3f8687b0634fe0384fac865b19442a6",
+  "payload_ref": null,
+  "permissions": {
+    "acl_hash": null,
+    "inherited_from": null,
+    "principal_refs": [],
+    "visibility": "UNKNOWN"
+  },
+  "schema_version": "2.0",
+  "source_id": "demo_corpus",
+  "source_instance_id": "demo_corpus",
+  "source_record_id": "fixture://demo/demodata/core/servicenow/sample-servicenow.json",
+  "source_record_type": "binary_file",
+  "source_system": "documents",
+  "source_type": "documents",
+  "source_version": "8524c2d019be4af5eb70273548638d06f3f8687b0634fe0384fac865b19442a6"
+}

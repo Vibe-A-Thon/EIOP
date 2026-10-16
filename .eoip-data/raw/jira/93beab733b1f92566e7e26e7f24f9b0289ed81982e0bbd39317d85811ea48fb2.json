@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-10-16T09:09:06.577773Z",
+  "event_id": "93beab733b1f92566e7e26e7f24f9b0289ed81982e0bbd39317d85811ea48fb2",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "demo-engineer",
+        "displayName": "Demo Engineer",
+        "emailAddress": "engineer@example.invalid"
+      },
+      "description": "The demo story links a Jira work item to repository code and supporting evidence.",
+      "issuetype": {
+        "name": "Story"
+      },
+      "project": {
+        "key": "EOIP",
+        "name": "Enterprise Ontology Intelligence Platform"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "Trace a requirement to its implementation"
+    },
+    "key": "EOIP-1"
+  },
+  "payload_hash": "0717bc495a0a2cf594d25f55d737c314413e30968220f2271323a845b85e62da",
+  "schema_version": "1.0",
+  "source_record_id": "EOIP-1",
+  "source_system": "jira",
+  "source_version": "0717bc495a0a2cf594d25f55d737c314413e30968220f2271323a845b85e62da"
+}

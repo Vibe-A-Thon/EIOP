@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.787756Z",
+  "event_id": "d09a2fe20be030467a7a4555d956d52027c3a2ceb844fdc0a010f03a5d6d202f",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "a119bbbd16a41c6f17020e882dbc073aa5359960",
+    "message": "real changes made to RAG suite scoring logic and evidence chunk ranking mechanisms."
+  },
+  "payload_hash": "55df4010892f95a1dbf2736683e1caafa5e3e381b319a2a7fcd1456659e74cc5",
+  "schema_version": "1.0",
+  "source_record_id": "demo:a119bbbd16a41c6f17020e882dbc073aa5359960",
+  "source_system": "git",
+  "source_version": "55df4010892f95a1dbf2736683e1caafa5e3e381b319a2a7fcd1456659e74cc5"
+}

@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-16T09:09:08.336899Z",
+  "content_hash": "98a72cec41714a684a86621d675a9bf8a60c6d2ac898cfc2521da5515c807b34",
+  "correlation_id": null,
+  "cursor": null,
+  "event_id": "919963488f8fc75eb7cfaf49a1ed9e86caadc44054fbc8484b42a73250587fdb",
+  "event_time": "2026-10-16T09:09:08.336899Z",
+  "evidence_ref": null,
+  "metadata": {
+    "connector": "fileparse/1.0",
+    "size_bytes": 604
+  },
+  "observed_time": "2026-10-16T09:09:08.336899Z",
+  "operation": "UPSERT",
+  "payload": {
+    "content": "ewogICJtZXJnZV9yZXF1ZXN0cyI6IFsKICAgIHsKICAgICAgImlpZCI6IDE3LAogICAgICAidGl0bGUiOiAiRU9JUC0xIEFkZCByZXF1aXJlbWVudCB0cmFjZSBlbmRwb2ludCIsCiAgICAgICJzdGF0ZSI6ICJtZXJnZWQiLAogICAgICAic291cmNlX2JyYW5jaCI6ICJFT0lQLTEtdHJhY2UtZW5kcG9pbnQiLAogICAgICAidGFyZ2V0X2JyYW5jaCI6ICJtYWluIiwKICAgICAgIm1lcmdlX2NvbW1pdF9zaGEiOiAiMDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWYwMTIzNDU2NyIsCiAgICAgICJkZXNjcmlwdGlvbiI6ICJJbXBsZW1lbnRzIHRoZSBKaXJhIHN0b3J5IEVPSVAtMS4iLAogICAgICAid29ya19pdGVtX2tleXMiOiBbIkVPSVAtMSJdCiAgICB9CiAgXSwKICAicGlwZWxpbmVzIjogWwogICAgewogICAgICAiaWQiOiAyMDQsCiAgICAgICJuYW1lIjogInRlc3QtYW5kLWJ1aWxkIiwKICAgICAgInN0YXR1cyI6ICJzdWNjZXNzIiwKICAgICAgInJlZiI6ICJtYWluIiwKICAgICAgInNoYSI6ICIwMTIzNDU2Nzg5YWJjZGVmMDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3IiwKICAgICAgIndvcmtfaXRlbV9rZXlzIjogWyJFT0lQLTEiXQogICAgfQogIF0KfQ==",
+    "encoding": "base64",
+    "filename": "merge-requests-pipelines.json"
+  },
+  "payload_hash": "98a72cec41714a684a86621d675a9bf8a60c6d2ac898cfc2521da5515c807b34",
+  "payload_ref": null,
+  "permissions": {
+    "acl_hash": null,
+    "inherited_from": null,
+    "principal_refs": [],
+    "visibility": "UNKNOWN"
+  },
+  "schema_version": "2.0",
+  "source_id": "demo_corpus",
+  "source_instance_id": "demo_corpus",
+  "source_record_id": "fixture://demo/demodata/core/gitlab/merge-requests-pipelines.json",
+  "source_record_type": "binary_file",
+  "source_system": "documents",
+  "source_type": "documents",
+  "source_version": "98a72cec41714a684a86621d675a9bf8a60c6d2ac898cfc2521da5515c807b34"
+}

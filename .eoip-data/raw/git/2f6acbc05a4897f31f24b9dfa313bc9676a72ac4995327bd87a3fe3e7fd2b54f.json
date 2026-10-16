@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.796311Z",
+  "event_id": "2f6acbc05a4897f31f24b9dfa313bc9676a72ac4995327bd87a3fe3e7fd2b54f",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "87337e7def6d941e8be58e6c96457db3a4dd81c6",
+    "message": "runtime fixes and improvements to the report generation logic"
+  },
+  "payload_hash": "a3950502458823581aa43550a513e910549b44b6bfef5e24ff8a927d6e4f9caf",
+  "schema_version": "1.0",
+  "source_record_id": "demo:87337e7def6d941e8be58e6c96457db3a4dd81c6",
+  "source_system": "git",
+  "source_version": "a3950502458823581aa43550a513e910549b44b6bfef5e24ff8a927d6e4f9caf"
+}

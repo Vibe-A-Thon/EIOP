@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.852965Z",
+  "event_id": "2c03d05a2f53d0abf15f20a81a8909da8e1e4cb50eb1dbe5634589ebf82aa16b",
+  "metadata": null,
+  "payload": {
+    "commit_sha": "ccf9e2891070b9b10eb05791ef8cf4cd1ca08731",
+    "content": "\"\"\"EOIP-1: Trace requirements to a bounded impact calculation.\"\"\"\nimport math\n\n\ndef normalize(value):\n    return math.floor(value)\n\n\ndef compute_impact(value):\n    return normalize(value)\n",
+    "path": "service.py"
+  },
+  "payload_hash": "e87bc68aa1ea39ef1c8fdad516e65221fdf70a5d446c236b0dcb047b58429db3",
+  "schema_version": "1.0",
+  "source_record_id": "demo:service.py",
+  "source_system": "git",
+  "source_version": "e87bc68aa1ea39ef1c8fdad516e65221fdf70a5d446c236b0dcb047b58429db3"
+}

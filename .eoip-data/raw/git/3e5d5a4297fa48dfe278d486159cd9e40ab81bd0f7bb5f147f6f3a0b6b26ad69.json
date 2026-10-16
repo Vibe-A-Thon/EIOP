@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.791964Z",
+  "event_id": "3e5d5a4297fa48dfe278d486159cd9e40ab81bd0f7bb5f147f6f3a0b6b26ad69",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "7e91b69e5b180c537ec5c644ff0747eae8204353",
+    "message": "changes for graph intelligence enhancements"
+  },
+  "payload_hash": "4e08455dcfb02a7a84005274a993d850bac14e60a3318879d181b57d273a563d",
+  "schema_version": "1.0",
+  "source_record_id": "demo:7e91b69e5b180c537ec5c644ff0747eae8204353",
+  "source_system": "git",
+  "source_version": "4e08455dcfb02a7a84005274a993d850bac14e60a3318879d181b57d273a563d"
+}

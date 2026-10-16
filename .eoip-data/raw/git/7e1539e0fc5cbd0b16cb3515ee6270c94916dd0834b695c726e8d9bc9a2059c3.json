@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.821825Z",
+  "event_id": "7e1539e0fc5cbd0b16cb3515ee6270c94916dd0834b695c726e8d9bc9a2059c3",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "4ad007172c6a1c84fc70018c10a29260ce691826",
+    "message": "implementation of customizations and enhancements to the enterprise features."
+  },
+  "payload_hash": "f7f5ef4f9a6a022783bd0124ab8e97746c26e6f71fe70a25454fbfead9c36c18",
+  "schema_version": "1.0",
+  "source_record_id": "demo:4ad007172c6a1c84fc70018c10a29260ce691826",
+  "source_system": "git",
+  "source_version": "f7f5ef4f9a6a022783bd0124ab8e97746c26e6f71fe70a25454fbfead9c36c18"
+}

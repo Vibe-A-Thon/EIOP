@@ -1,0 +1,72 @@
+{
+  "captured_at": "2026-10-16T09:09:08.009545Z",
+  "event_id": "4ae3465b3adff7febfe9f8dd31e2e516f94168a7093b22cf77313d6a2ce14cef",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "ML Scoring Engine"
+        }
+      ],
+      "created": "2026-10-03T08:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "ML Engineering",
+      "description": "After retraining XGBoost model v2.3 on Q3 2026 data, CNP false positive rate spiked from 1.8% to 4.2%, breaching the 2% SLO. Related to incident INC0080201.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "INC0080201"
+          },
+          "type": {
+            "name": "is caused by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Bug"
+      },
+      "labels": [
+        "ml-model",
+        "false-positive",
+        "slo-breach"
+      ],
+      "priority": {
+        "name": "Critical"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection Platform"
+      },
+      "reporter": {
+        "accountId": "lwei",
+        "displayName": "Li Wei",
+        "emailAddress": "li.wei@mfs.example.invalid"
+      },
+      "status": {
+        "name": "Open"
+      },
+      "story_points": 5,
+      "summary": "ML model false positive rate exceeds SLO after Q3 retraining",
+      "updated": "2026-10-03T14:00:00.000+0000"
+    },
+    "key": "FRD-901"
+  },
+  "payload_hash": "41addc644a8cfdaed6022802c3e501de3bd26ebd40dbdb7f445128050aea2bf2",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-901",
+  "source_system": "jira",
+  "source_version": "41addc644a8cfdaed6022802c3e501de3bd26ebd40dbdb7f445128050aea2bf2"
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.627744Z",
+  "event_id": "da0ae3d096cc4888e77396784b4535378628be48fefc14b47d71015a799f6920",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "edfa7aed607b8509da5801acc16490c97f5fe375",
+    "message": "changes for adding license documents and durable state persistence tests"
+  },
+  "payload_hash": "56b417fc8165e382885f098c69183d76ad8958415a638957c000e10ab15136df",
+  "schema_version": "1.0",
+  "source_record_id": "demo:edfa7aed607b8509da5801acc16490c97f5fe375",
+  "source_system": "git",
+  "source_version": "56b417fc8165e382885f098c69183d76ad8958415a638957c000e10ab15136df"
+}

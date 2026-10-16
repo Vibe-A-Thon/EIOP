@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.743060Z",
+  "event_id": "e8e1fbdd952f57346ce2db0073c5b9c7b67df22d291c08c32053dbbb8ce1ce7e",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "91af743a161a7141e4c305d5046935f8cf1a3f54",
+    "message": "intelligence engineering addition"
+  },
+  "payload_hash": "2734b4c3f56e8b46093511a96caec3ea7ee871bf640f512030f2146ed4eef601",
+  "schema_version": "1.0",
+  "source_record_id": "demo:91af743a161a7141e4c305d5046935f8cf1a3f54",
+  "source_system": "git",
+  "source_version": "2734b4c3f56e8b46093511a96caec3ea7ee871bf640f512030f2146ed4eef601"
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.685214Z",
+  "event_id": "0e21d4e9dc57c3e67c76f04b617d5d4d11ff131c2c484467f0f994ac6171058c",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "ba4b7f658b3b8ba974720776058f5dba480649da",
+    "message": "phase 5 GUI Changes and enhancements"
+  },
+  "payload_hash": "1d3a3b16b73a11cf28c6c982507fb7d2f2fd25aede0dafe2bd60b706f0cc5f02",
+  "schema_version": "1.0",
+  "source_record_id": "demo:ba4b7f658b3b8ba974720776058f5dba480649da",
+  "source_system": "git",
+  "source_version": "1d3a3b16b73a11cf28c6c982507fb7d2f2fd25aede0dafe2bd60b706f0cc5f02"
+}

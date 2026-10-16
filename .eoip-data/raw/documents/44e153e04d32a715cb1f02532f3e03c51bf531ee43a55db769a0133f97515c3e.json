@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-16T09:09:08.312232Z",
+  "content_hash": "146a2434578ddba9064392b23121b1652e13ec583832801c0e9b7837f820d637",
+  "correlation_id": null,
+  "cursor": null,
+  "event_id": "44e153e04d32a715cb1f02532f3e03c51bf531ee43a55db769a0133f97515c3e",
+  "event_time": "2026-10-16T09:09:08.312232Z",
+  "evidence_ref": null,
+  "metadata": {
+    "connector": "fileparse/1.0",
+    "size_bytes": 206
+  },
+  "observed_time": "2026-10-16T09:09:08.312232Z",
+  "operation": "UPSERT",
+  "payload": {
+    "content": "ZnJvbSBqc29uIGltcG9ydCBsb2FkcwoKCmRlZiBub3JtYWxpemUodmFsdWU6IHN0cikgLT4gc3RyOgogICAgcmV0dXJuIHZhbHVlLnN0cmlwKCkubG93ZXIoKQoKCmRlZiBoYW5kbGVfcmVxdWVzdChwYXlsb2FkOiBzdHIpIC0+IGRpY3Q6CiAgICBkYXRhID0gbG9hZHMocGF5bG9hZCkKICAgIHJldHVybiB7Im5hbWUiOiBub3JtYWxpemUoZGF0YVsibmFtZSJdKX0=",
+    "encoding": "base64",
+    "filename": "service.py.txt"
+  },
+  "payload_hash": "146a2434578ddba9064392b23121b1652e13ec583832801c0e9b7837f820d637",
+  "payload_ref": null,
+  "permissions": {
+    "acl_hash": null,
+    "inherited_from": null,
+    "principal_refs": [],
+    "visibility": "UNKNOWN"
+  },
+  "schema_version": "2.0",
+  "source_id": "demo_corpus",
+  "source_instance_id": "demo_corpus",
+  "source_record_id": "fixture://demo/demodata/core/demo-repo/src/service.py",
+  "source_record_type": "binary_file",
+  "source_system": "documents",
+  "source_type": "documents",
+  "source_version": "146a2434578ddba9064392b23121b1652e13ec583832801c0e9b7837f820d637"
+}

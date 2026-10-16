@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T14:01:00.079347Z",
+  "event_id": "229d528221be7f8b79d23bdaef7b99341949cd6e482bbf8fb16a56aceb8566b4",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "616ca83202315ef183ce5865465111376e39b94b",
+    "message": "## KnowGridFlow / EOIP — Initial GUI slice built and verified\n\nWe have rebuilt the GUI from scratch following the `GUI-cc-ghcp-requirements.md` and integrated it with the **real EOIP backend** (no mock data). Initial testing by the agent shows end-to-end functionality at this stage.\n\n**What was built**\n- The `eoip` FastAPI backend app runs on :8001 via `/app/backend/server.py` with in-memory graph data seeded for demo (~226 vertices / 721 edges). All screens read live `/api/v1/*` data.\n- Brand-new frontend (`/app/frontend`) using React 19 + TypeScript + Vite + TanStack Query + Zustand + Tailwind v4 + Lucide + framer-motion + **Sigma/Graphology WebGL graph**, designed for a distinctive \"Swiss High-Density Data Workbench\" look.\n- Key screens include: App Shell (nav rail, context bar, command palette ⌘K, inspector, activity dock), Sign-in (SCR-001), Overview (SCR-003), Ask with answer-mode and \"Local only\" badges (SCR-004), Graph Explorer, Entity 360 with 5 tabs including live blast-radius (SCR-006), and Schema.\n- Evidence-first with six fact-class badges, three independent system signals per error, and in-memory-only tokens (spec R5).\n\n**Note**: AI narration (streamed answers) is currently deferred since the deployment's local model is `disabled`; Ask uses deterministic graph engine for now.\n\nPlease review and test the current build. Let us know if any issues persist or further improvements are needed.\n\n- Next Action Items:\n  - Enable narrated streamed answers with evidence citation\n  - Add Impact Paths to trace shortest paths between graph entities\n  - Provide Saved Views to save/reopen graph layouts and filters\n  - Build Ingestion Console for Sources, Jobs, and data loading monitoring\n\nEmergent-Commit-Key: 32ba1b2a36bbf1c6eae25332de42f119fe072710eedb69915a7760a03e6fdc4b"
+  },
+  "payload_hash": "74e3e77db0180d1c023baf0a8b9c2038501fa090cd030e9bbff668ed60b16e3b",
+  "schema_version": "1.0",
+  "source_record_id": "demo:616ca83202315ef183ce5865465111376e39b94b",
+  "source_system": "git",
+  "source_version": "74e3e77db0180d1c023baf0a8b9c2038501fa090cd030e9bbff668ed60b16e3b"
+}

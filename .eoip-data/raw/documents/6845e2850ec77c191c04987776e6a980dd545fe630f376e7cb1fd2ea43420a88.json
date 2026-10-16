@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-16T09:09:08.267977Z",
+  "content_hash": "e18b1ca48db94f11acb7f74e1221f57e8b63316494433001f44514a5e572b4ca",
+  "correlation_id": null,
+  "cursor": null,
+  "event_id": "6845e2850ec77c191c04987776e6a980dd545fe630f376e7cb1fd2ea43420a88",
+  "event_time": "2026-10-16T09:09:08.267977Z",
+  "evidence_ref": null,
+  "metadata": {
+    "connector": "fileparse/1.0",
+    "size_bytes": 893
+  },
+  "observed_time": "2026-10-16T09:09:08.267977Z",
+  "operation": "UPSERT",
+  "payload": {
+    "content": "IyBFT0lQLTEgcmVxdWlyZW1lbnQgdHJhY2UKCmBzZXJ2aWNlLnB5YCBpbXBsZW1lbnRzIEVPSVAtMS4gYGNvbXB1dGVfaW1wYWN0YCBjYWxscyBgbm9ybWFsaXplYCwgd2hpY2ggdXNlcwp0aGUgUHl0aG9uIG1hdGggbW9kdWxlLiBFT0lQLTIgcmVxdWlyZXMgdGhlIHBhdGggdG8gcmV0YWluIHNvdXJjZSBldmlkZW5jZS4KClRoaXMgdGlueSByZXBvc2l0b3J5IGlzIGluZ2VzdGVkIGJ5IEVPSVAncyBsb2NhbCBHaXQvY29kZSBncmFwaCBwYXRoIHRvIHByb3ZlIHRoZQplbmQtdG8tZW5kIHJlcXVpcmVtZW50LXRvLWNvZGUgc3Rvcnk6IHdvcmsgaXRlbSAtPiBjb21taXQvZmlsZS9zeW1ib2wgLT4gaW1wYWN0CmFuZCBldmlkZW5jZS4gSXQgaXMgaW50ZW50aW9uYWxseSBzbWFsbCBzbyB0ZXN0cyBhbmQgdGhlIFZTIENvZGUgZXh0ZW5zaW9uIGNhbgpleGVyY2lzZSBzeW1ib2wgcmFuZ2VzLCBwcm92ZW5hbmNlLCBhbmQgc2FmZSB3b3Jrc3BhY2UtcmVsYXRpdmUgbmF2aWdhdGlvbgp3aXRob3V0IHJlbHlpbmcgb24gZXh0ZXJuYWwgcmVwb3NpdG9yaWVzLgoKVGhlIHNhbWUgaW5nZXN0ZWQgZmFjdHMgY2FuIG5vdyBiZSBjaXRlZCBieSBldmlkZW5jZS1hZGRyZXNzYWJsZSBHcmFwaFJBRywKZXhwb3J0ZWQgdGhyb3VnaCB0aGUgSlNPTi1MRC9SREYvU0hBQ0wgYWRhcHRlciwgYW5kIGluY2x1ZGVkIGluIHNlbWFudGljCmZlZGVyYXRpb24gcGxhbnMgd2hlbiB0aGUgbG9jYWwgZ3JhcGggc291cmNlIGlzIHF1ZXJpZWQuIFRoaXMgcmVwb3NpdG9yeSByZW1haW5zCmEgbG9jYWwgZml4dHVyZSBhbmQgaXMgbmV2ZXIgdHJlYXRlZCBhcyBwcm9kdWN0aW9uIGNvZGUgdW5sZXNzIGEgdXNlciBleHBsaWNpdGx5CmluZ2VzdHMgaXQgaW50byBhIHNlbGVjdGVkIGVudmlyb25tZW50Lgo=",
+    "encoding": "base64",
+    "filename": "README.md.txt"
+  },
+  "payload_hash": "e18b1ca48db94f11acb7f74e1221f57e8b63316494433001f44514a5e572b4ca",
+  "payload_ref": null,
+  "permissions": {
+    "acl_hash": null,
+    "inherited_from": null,
+    "principal_refs": [],
+    "visibility": "UNKNOWN"
+  },
+  "schema_version": "2.0",
+  "source_id": "demo_corpus",
+  "source_instance_id": "demo_corpus",
+  "source_record_id": "fixture://demo/demodata/core/demo-repo/README.md",
+  "source_record_type": "binary_file",
+  "source_system": "documents",
+  "source_type": "documents",
+  "source_version": "e18b1ca48db94f11acb7f74e1221f57e8b63316494433001f44514a5e572b4ca"
+}

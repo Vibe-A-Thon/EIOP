@@ -1,0 +1,67 @@
+{
+  "captured_at": "2026-10-16T09:09:07.870579Z",
+  "event_id": "9a51020a213f22fe26ecd3f5227507c7d7637023419bff7e2d3be2def9650039",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "evolkov",
+        "displayName": "Elena Volkov",
+        "emailAddress": "evolkov@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-09-17T09:00:00.000+0000",
+      "customfield_10015": "Payment Services",
+      "description": "Configure Kafka consumer group for analytics aggregation. Consumer group 'mfs-analytics-agg' reads from 'mfs.payment.events' topic with exactly-once semantics. Write aggregated results to PostgreSQL using batch inserts every 60 seconds.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "analytics",
+        "kafka",
+        "pipeline"
+      ],
+      "parent": {
+        "key": "PAY-501"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "To Do",
+        "statusCategory": {
+          "name": "To Do"
+        }
+      },
+      "story_points": 5,
+      "summary": "Set up analytics data pipeline",
+      "updated": "2026-10-01T09:00:00.000+0000"
+    },
+    "id": "60511",
+    "key": "PAY-511",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60511"
+  },
+  "payload_hash": "129dc870d89347f6b3c48bbee74307b776fd12c9c5390b67dc43675893258604",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-511",
+  "source_system": "jira",
+  "source_version": "129dc870d89347f6b3c48bbee74307b776fd12c9c5390b67dc43675893258604"
+}

@@ -1,0 +1,54 @@
+{
+  "captured_at": "2026-10-16T09:09:08.009411Z",
+  "event_id": "661e3d8d600adede5ccfa78407b864be06dae17fd8488521d35b5766c14486dd",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-aml-engine"
+        }
+      ],
+      "created": "2026-09-08T10:00:00.000+0000",
+      "customfield_10014": "EPC-203",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Automate the pre-population of FinCEN SAR forms from AML case data. Map internal case fields to SAR XML schema fields. Include narrative generation from detection rule outputs and supporting transaction evidence.",
+      "issuetype": {
+        "name": "Task"
+      },
+      "labels": [
+        "sar",
+        "automation",
+        "fincen"
+      ],
+      "parent": {
+        "key": "FRD-301"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "SAR form automation",
+      "updated": "2026-10-02T14:00:00.000+0000"
+    },
+    "key": "FRD-311"
+  },
+  "payload_hash": "4c551c76c6cd584b565a021e9c826560744a996012e038a0c66c90547794730d",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-311",
+  "source_system": "jira",
+  "source_version": "4c551c76c6cd584b565a021e9c826560744a996012e038a0c66c90547794730d"
+}

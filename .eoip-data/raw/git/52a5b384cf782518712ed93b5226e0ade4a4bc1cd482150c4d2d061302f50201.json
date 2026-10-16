@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.716384Z",
+  "event_id": "52a5b384cf782518712ed93b5226e0ade4a4bc1cd482150c4d2d061302f50201",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "ed51aaa57b156aae051b57b8c3993ded4116c65e",
+    "message": "grv changes in phase 2 and enhancements fixing"
+  },
+  "payload_hash": "89bc62736f12dbfd2b272f96d06d46dff2f974df052730a851b7de87b59a96de",
+  "schema_version": "1.0",
+  "source_record_id": "demo:ed51aaa57b156aae051b57b8c3993ded4116c65e",
+  "source_system": "git",
+  "source_version": "89bc62736f12dbfd2b272f96d06d46dff2f974df052730a851b7de87b59a96de"
+}

@@ -216,13 +216,17 @@ def create_app():
     configure_json_logging()
     token = api_token()
     token_validator = TokenValidator(token)
+    from apps.api.asg import load_asg, default_keys_path
+    asg = load_asg(default_keys_path(), token)
 
     def authenticated_principal(supplied: str) -> Principal | None:
         if not supplied or len(supplied) > 16_384:
             return None
-        if hmac.compare_digest(supplied.encode("utf-8"), token.encode("utf-8")):
-            return Principal(id="urn:eoip:authn:principal:bootstrap", username="bootstrap-admin",
-                             roles=("admin", "system"), provider="secret")
+        # ASG registry first (file-backed RBAC; includes the fail-safe bootstrap superadmin).
+        entry = asg.authenticate(supplied)
+        if entry is not None:
+            return Principal(id=entry.principal_id, username=entry.username,
+                             roles=entry.roles, provider="asg", tenant_id=entry.tenant_id)
         try:
             payload = token_validator.validate_token(supplied)
         except ValueError:
@@ -255,6 +259,7 @@ def create_app():
     event_emitter = GraphEventEmitter(buffer_size=1000, journal_path=journal_path)
     app = query_app(store, dependencies=[Depends(SafeHTTPBearer(auto_error=False))])
     app.state.event_emitter = event_emitter
+    app.state.store = store
     from apps.api.extended import ensure_extended
 
     ensure_extended(app, store)
@@ -443,9 +448,27 @@ def create_app():
                 return JSONResponse({"detail": "Request body too large"}, status_code=413)
         request._body = bytes(body)
         operation = _operation(request.url.path, request._body)
-        high_risk_admin = request.url.path.startswith(
-            ("/api/v1/admin", "/api/v1/sources", "/api/v1/authz", "/api/v1/security", "/api/v1/tenancy")
-        ) and request.method in {"POST", "PUT", "PATCH", "DELETE"} and webhook_request is None
+        _p = request.url.path
+        _mutating = request.method in {"POST", "PUT", "PATCH", "DELETE"} and webhook_request is None
+        high_risk_admin = _mutating and (
+            _p.startswith((
+                "/api/v1/admin", "/api/v1/sources", "/api/v1/authz",
+                "/api/v1/security", "/api/v1/tenancy",
+            ))
+            # Destructive ontology gitops operations (shared global state) — SEC-002
+            or _p.endswith("/merge")
+            or _p.startswith("/api/v1/ontology/gitops/rollback")
+            or _p.startswith("/api/v1/ontology/gitops/package-release")
+            or _p.startswith("/api/v1/ontology/gitops/migration")
+            # Marketplace install / build / uninstall — SEC-002
+            or _p.startswith("/api/v1/marketplace/packages/install")
+            or _p.startswith("/api/v1/marketplace/build/")
+            or (_p.startswith("/api/v1/marketplace/packages/") and request.method == "DELETE")
+            # Snapshot create / restore / delete — SEC-002
+            or _p.startswith("/api/v1/enterprise/snapshots")
+            # Destructive ontology import (can clear the graph) — SEC-002
+            or _p.startswith("/api/v1/ontology/import")
+        )
         if high_risk_admin:
             if principal is None or not {"admin", "system"}.intersection(principal.roles):
                 record(403)
@@ -585,6 +608,21 @@ def create_app():
             "canonical_id": canonical_id,
             "status": "DELETED",
             "deleted_at": deleted_at,
+        }
+
+    @app.get("/api/v1/auth/whoami")
+    def auth_whoami(request: Request):
+        p = getattr(request.state, "principal", None)
+        if p is None:
+            raise HTTPException(401, "A valid Bearer token is required")
+        return {
+            "id": p.id,
+            "username": p.username,
+            "roles": list(p.roles),
+            "tenant_id": p.tenant_id,
+            "provider": p.provider,
+            "is_superadmin": "superadmin" in p.roles,
+            "is_admin": bool({"admin", "system"}.intersection(p.roles)),
         }
 
     @app.get("/api/v1/ontology/export")

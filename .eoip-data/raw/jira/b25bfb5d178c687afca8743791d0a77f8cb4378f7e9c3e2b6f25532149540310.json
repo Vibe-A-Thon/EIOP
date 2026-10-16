@@ -1,0 +1,90 @@
+{
+  "captured_at": "2026-10-16T09:09:07.870604Z",
+  "event_id": "b25bfb5d178c687afca8743791d0a77f8cb4378f7e9c3e2b6f25532149540310",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "akim",
+        "displayName": "Alex Kim",
+        "emailAddress": "akim@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-09-28T14:00:00.000+0000",
+      "customfield_10014": "EPC-102",
+      "customfield_10015": "Payment Services",
+      "description": "Under high concurrency (>200 concurrent tokenization requests), the database connection pool in TokenizationService leaks connections. After approximately 30 minutes of sustained load, the pool is exhausted and new requests fail with ConnectionPoolExhaustedError. Root cause appears to be missing connection release in the error path of tokenize_card() method.\n\nSteps to reproduce:\n1. Run load test with 250 concurrent tokenization requests\n2. Monitor pghost-prod-01.mfs.internal connection count\n3. After ~30 minutes, observe connection count at max (100) with no release\n\nImpact: Production incident INC0080101 was caused by this bug.\nEnvironment: mfs-pay-pod-01, mfs-pay-pod-02\nDatabase: pghost-prod-01.mfs.internal/mfs_payments_db",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Implement payment tokenization service"
+            },
+            "key": "PAY-101"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "INC0080101: Connection pool exhaustion in payment gateway"
+            },
+            "key": "INC-080101"
+          },
+          "type": {
+            "name": "Causes",
+            "outward": "caused"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Bug",
+        "subtask": false
+      },
+      "labels": [
+        "bug",
+        "connection-pool",
+        "tokenization",
+        "production-incident"
+      ],
+      "priority": {
+        "name": "Critical"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "adesh",
+        "displayName": "Arjun Deshmukh",
+        "emailAddress": "adesh@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "summary": "Connection pool leak under concurrent tokenization requests",
+      "updated": "2026-10-03T16:00:00.000+0000"
+    },
+    "id": "60901",
+    "key": "PAY-901",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60901"
+  },
+  "payload_hash": "d0423b6e0e2c09e79e18cf8852622b0dd5b932ac9a67617d83c3564913912469",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-901",
+  "source_system": "jira",
+  "source_version": "d0423b6e0e2c09e79e18cf8852622b0dd5b932ac9a67617d83c3564913912469"
+}

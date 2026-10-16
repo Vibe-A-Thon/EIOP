@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T14:01:00.010184Z",
+  "event_id": "e1b3cebab4be233cee9cdd5c599007f5cf102fa0915e2340a1f015ddfb94b6b2",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "946895311a79208867945f63f03b5146f27a10db",
+    "message": "I have built the three remaining spec screens in sequence (Meta-graph, What-If, and Ontology gitops were already completed and smoke-tested earlier this session):\n\n- **Collaboration (SCR-020)**: spec-mandated MissingBackendState (BACKEND-MISSING-016) with working links, no faked data.\n- **Brand (SCR-023)**: live branding read/preview, 4-theme preview with WCAG AA contrast gating, terminology-rename preview; publish gated by BACKEND-MISSING-018.\n- **Time Travel / Bitemporal (SCR-010)**: As-of · Compare · Playback modes + snapshots (create/delete/typed-confirm restore), all on real `/graph/as-of`, `/graph/bitemporal/*`, `/playback/stream`, `/enterprise/snapshots`.\n\nAll are wired into navigation and routes, styled to fit the existing workbench, typechecked cleanly, and smoke-verified live. Per your instruction, the automated testing agent was not run — verification was through `tsc --noEmit` and one smoke screenshot per screen.\n\nI recommend running the frontend testing agent across the four new flows to comprehensively check for regressions before shipping. Please review and test these changes at your convenience, and let me know if you encounter any issues or want me to proceed with deeper testing.\n\nNext Action Items:\n- **Full QA Pass**: Run the frontend testing agent across the four new flows to lock in regressions before shipping\n- **Ontology Marketplace**: Add the gitops package-release/import flow so stewards can share ontology packs across tenants\n- **Snapshot Timeline**: Give Time Travel a visual change-count histogram scrubber so auditors can see when the graph shifted\n- **Brand Go-Live**: Wire real brand publish the moment BACKEND-MISSING-018 lands, with atomic theme swap and rollback\n\nPotential improvement: the in-memory graph returns empty bitemporal slices — would you like me to seed a few historical entity revisions so Time Travel's As-of/Compare/Playback demo includes real deltas instead of empty states?\n\nEmergent-Commit-Key: 94f5d003138b5a0304880cd14ae460fae722b392cdbe28529d1943fb24ca0f4c"
+  },
+  "payload_hash": "ffd8901de221015024efef022da82116e31bbaca5d5b360e85d2a4bf217c12ab",
+  "schema_version": "1.0",
+  "source_record_id": "demo:946895311a79208867945f63f03b5146f27a10db",
+  "source_system": "git",
+  "source_version": "ffd8901de221015024efef022da82116e31bbaca5d5b360e85d2a4bf217c12ab"
+}

@@ -1,0 +1,67 @@
+{
+  "captured_at": "2026-10-16T09:09:07.870234Z",
+  "event_id": "783d7e0c876aefd8d35998abbfd54566d0d315db9d1b62f11ce3957fcc720ddd",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "rpatel",
+        "displayName": "Raj Patel",
+        "emailAddress": "rpatel@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-token-vault"
+        }
+      ],
+      "created": "2026-07-24T08:00:00.000+0000",
+      "customfield_10015": "DevOps & SRE",
+      "description": "Create a Kubernetes CronJob that triggers HSM key rotation on a 90-day schedule. Must coordinate with mfs-vault-pod-01 to ensure no active encryption operations during key swap.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "scheduler",
+        "cronjob",
+        "key-rotation"
+      ],
+      "parent": {
+        "key": "PAY-202"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "dokoye",
+        "displayName": "David Okoye",
+        "emailAddress": "dokoye@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "story_points": 3,
+      "summary": "Create key rotation scheduler",
+      "updated": "2026-09-29T09:00:00.000+0000"
+    },
+    "id": "60221",
+    "key": "PAY-221",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60221"
+  },
+  "payload_hash": "53045fe421b93ff0773bc573d66250602cc87305ffbb8a771d707cca88d9dbd0",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-221",
+  "source_system": "jira",
+  "source_version": "53045fe421b93ff0773bc573d66250602cc87305ffbb8a771d707cca88d9dbd0"
+}

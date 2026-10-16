@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.694523Z",
+  "event_id": "183bbcb88336e6c935fee426989341de17f88e25d74b90ae3df1e50e075f3385",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "452c80f26368a92be6d05c6bdfb81d9d3277675d",
+    "message": "p4 changes and intelligence enhancements"
+  },
+  "payload_hash": "d36f285be344e8d3cdea334a8ce8a181710c7d1e538eb44a5f9a6826d8fbee38",
+  "schema_version": "1.0",
+  "source_record_id": "demo:452c80f26368a92be6d05c6bdfb81d9d3277675d",
+  "source_system": "git",
+  "source_version": "d36f285be344e8d3cdea334a8ce8a181710c7d1e538eb44a5f9a6826d8fbee38"
+}

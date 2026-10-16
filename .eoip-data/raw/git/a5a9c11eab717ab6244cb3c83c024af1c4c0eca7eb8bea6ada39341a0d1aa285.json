@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.826269Z",
+  "event_id": "a5a9c11eab717ab6244cb3c83c024af1c4c0eca7eb8bea6ada39341a0d1aa285",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "e7f4d86f45a58d19274e97bceece9e6fb92aaa9b",
+    "message": "changes for auto ingestion of schema and system registration"
+  },
+  "payload_hash": "70d2785d40c40f490e1ff5c60d065b15b9e84c0539df1adbc4d49fabffd9c01b",
+  "schema_version": "1.0",
+  "source_record_id": "demo:e7f4d86f45a58d19274e97bceece9e6fb92aaa9b",
+  "source_system": "git",
+  "source_version": "70d2785d40c40f490e1ff5c60d065b15b9e84c0539df1adbc4d49fabffd9c01b"
+}

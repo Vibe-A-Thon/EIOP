@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-16T09:09:08.591974Z",
+  "content_hash": "d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3",
+  "correlation_id": null,
+  "cursor": null,
+  "event_id": "683d44206e208115ccab833fa42719dc53f92d79a34ac5b79e001f7e96db945d",
+  "event_time": "2026-10-16T09:09:08.591974Z",
+  "evidence_ref": null,
+  "metadata": {
+    "connector": "fileparse/1.0",
+    "size_bytes": 454
+  },
+  "observed_time": "2026-10-16T09:09:08.591974Z",
+  "operation": "UPSERT",
+  "payload": {
+    "content": "TW9kZWwgVmVyc2lvbixUcmFpbmluZyBEYXRlLEFVQyxQcmVjaXNpb24sUmVjYWxsLEYxIFNjb3JlLEZhbHNlIFBvc2l0aXZlIFJhdGUsSW5mZXJlbmNlIFA5OSAobXMpLFN0YXR1cwp2MS44LDIwMjYtMDEtMTUsMC45NjUsMC45MzgsMC45MzEsMC45MzQsMy4yJSw0MixSZXRpcmVkCnYxLjksMjAyNi0wMy0yMCwwLjk3MSwwLjk0NSwwLjk0LDAuOTQyLDIuOCUsNDAsUmV0aXJlZAp2Mi4wLDIwMjYtMDUtMTAsMC45NzUsMC45NTIsMC45NDYsMC45NDksMi40JSwzOCxSZXRpcmVkCnYyLjEsMjAyNi0wNy0xNSwwLjk3OCwwLjk1NSwwLjk0OCwwLjk1MSwyLjElLDM2LFJldGlyZWQKdjIuMiwyMDI2LTA4LTIwLDAuOTgyLDAuOTYxLDAuOTU0LDAuOTU3LDEuOCUsMzUsQ2hhbXBpb24KdjIuMywyMDI2LTA5LTI1LDAuOTg1LDAuOTQ4LDAuOTY3LDAuOTU3LDQuMiUsMzQsQ2hhbGxlbmdlciAoRlAgaXNzdWUpCg==",
+    "encoding": "base64",
+    "filename": "FRD-Model-Performance-Metrics.csv"
+  },
+  "payload_hash": "d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3",
+  "payload_ref": null,
+  "permissions": {
+    "acl_hash": null,
+    "inherited_from": null,
+    "principal_refs": [],
+    "visibility": "UNKNOWN"
+  },
+  "schema_version": "2.0",
+  "source_id": "demo_corpus",
+  "source_instance_id": "demo_corpus",
+  "source_record_id": "fixture://demo/demodata/documents/FRD-Model-Performance-Metrics.csv",
+  "source_record_type": "binary_file",
+  "source_system": "documents",
+  "source_type": "documents",
+  "source_version": "d9ca5a7ed974d1869ee87f5cec9912099b4e86d324d82414e5cabc54f5d52fa3"
+}

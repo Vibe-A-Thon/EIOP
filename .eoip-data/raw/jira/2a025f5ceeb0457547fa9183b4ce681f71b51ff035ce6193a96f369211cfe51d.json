@@ -1,0 +1,67 @@
+{
+  "captured_at": "2026-10-16T09:09:07.870440Z",
+  "event_id": "2a025f5ceeb0457547fa9183b4ce681f71b51ff035ce6193a96f369211cfe51d",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "jokafor",
+        "displayName": "James Okafor",
+        "emailAddress": "jokafor@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-09-14T09:00:00.000+0000",
+      "customfield_10015": "Payment Services",
+      "description": "Create REST API endpoints for merchants to register, update, and delete webhook URLs. Endpoints: POST /api/v2/webhooks, GET /api/v2/webhooks, PUT /api/v2/webhooks/{id}, DELETE /api/v2/webhooks/{id}. Store registrations in mfs_payments_db.webhook_registrations table.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "webhook",
+        "api",
+        "configuration"
+      ],
+      "parent": {
+        "key": "PAY-401"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "akim",
+        "displayName": "Alex Kim",
+        "emailAddress": "akim@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "To Do",
+        "statusCategory": {
+          "name": "To Do"
+        }
+      },
+      "story_points": 3,
+      "summary": "Configure webhook endpoint registration API",
+      "updated": "2026-10-01T09:00:00.000+0000"
+    },
+    "id": "60411",
+    "key": "PAY-411",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60411"
+  },
+  "payload_hash": "13cb07565ea425bf114dfffc3b8ac49809a36da4b7b68e9d778e5ee25679ecc2",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-411",
+  "source_system": "jira",
+  "source_version": "13cb07565ea425bf114dfffc3b8ac49809a36da4b7b68e9d778e5ee25679ecc2"
+}

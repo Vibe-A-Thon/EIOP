@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.632625Z",
+  "event_id": "37f64738598ee821d065a6a9f9bb6e0f3f7b893b5ba8769a8536d93d70c685e3",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "56c2e0b0c440096ec21114540758c3726d628e9b",
+    "message": "Audited Gaps Changes and license creation"
+  },
+  "payload_hash": "3b337c922125b27ccdd0565638c75932d49044d47b9bc18a862cf228d69061f3",
+  "schema_version": "1.0",
+  "source_record_id": "demo:56c2e0b0c440096ec21114540758c3726d628e9b",
+  "source_system": "git",
+  "source_version": "3b337c922125b27ccdd0565638c75932d49044d47b9bc18a862cf228d69061f3"
+}

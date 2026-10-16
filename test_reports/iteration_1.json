@@ -1,0 +1,28 @@
+{
+  "summary": "First E2E frontend test of KnowGridFlow/EOIP GUI integrated with real backend. All critical flows verified: sign-in with pre-filled bootstrap token redirects to /overview; Overview shows real stats (Vertices=226, Edges=721, Density=0.0142, 75 vertex labels, 68 edge labels, Graph by domain bars, System signals ready/disabled/not_created, Recent activity panel); theme switch works; left-nav routing works (Overview/Ask/Graph/Schema); rail toggle works; Ask page shows 'Local only' badge, Deterministic/query_plan engine badge, matched entities with evidence; Graph Explorer renders Sigma WebGL canvas with 52 nodes/51 edges, domain/fact lens toggle; Command palette opens from global-search-trigger, live search returns 8 results for 'service', clicking navigates to Entity 360; Entity 360 renders all five tabs (overview/relationships/provenance/impact/raw) and loads real data; Schema shows ontology 0.4.0 / schema 1.2 with domain badges and vertex/edge tabs + search; activity-dock visible with 'Live updates: polling'; principal menu signout returns to /signin.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Ask page", "issues": ["Minor: evidence JSON blocks shown as raw single-line pre text - readable but could benefit from pretty-print formatting"]},
+      {"screen": "Graph Explorer", "issues": ["Shows 'Partial result — not all data was returned.' banner even when subgraph loads successfully - may confuse users; consider only showing when truncation genuinely happened"]}
+    ]
+  },
+  "test_report_links": ["/app/.screenshots/overview.png", "/app/.screenshots/ask.png", "/app/.screenshots/graph.png", "/app/.screenshots/entity.png", "/app/.screenshots/schema.png"],
+  "action_items": [
+    "(Optional) Consider suppressing 2 initial 401 console errors on /signin: auth.tsx tries /security/tokens/verify before fallback - works but noisy. Could switch to bootstrap-first or silence the fallback 401.",
+    "(Optional UX) Review 'Partial result' banner trigger logic on Graph Explorer so it only appears when results are actually truncated."
+  ],
+  "critical_code_review_comments": [
+    "Auth flow logs 401 errors to console on every sign-in due to verify-then-fallback pattern - functionally correct but creates noisy console; consider catching 401 silently or trying bootstrap first.",
+    "GraphExplorer: 'Partial result' warning appears even on normal subgraph loads - verify truncation detection logic."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (frontend-only test)", "frontend": "100%"},
+  "test_credentials": "Bearer token: eoip-local-dev-token-0123456789abcdef, tenant: default (pre-filled in sign-in)",
+  "seed_data_creation": "None - backend seeds ~226 vertices/721 edges automatically",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All happy-path flows (sign-in, overview, ask, graph, entity 360 all 5 tabs, schema, command palette, theme, nav, rail toggle, signout, activity dock) verified working against real backend. Only minor UX polish suggestions remain. On next iteration focus on: (a) edge cases like empty query, invalid entity ID, empty token sign-in, (b) Entity 360 impact tab blast-radius content validation, (c) command palette keyboard shortcuts (Cmd+K), (d) high-contrast themes."
+}

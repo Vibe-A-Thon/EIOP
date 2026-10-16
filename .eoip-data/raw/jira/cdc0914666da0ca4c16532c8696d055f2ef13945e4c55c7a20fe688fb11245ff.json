@@ -1,0 +1,78 @@
+{
+  "captured_at": "2026-10-16T09:09:08.009486Z",
+  "event_id": "cdc0914666da0ca4c16532c8696d055f2ef13945e4c55c7a20fe688fb11245ff",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "KYC Engine"
+        }
+      ],
+      "created": "2026-10-02T10:00:00.000+0000",
+      "customfield_10014": "EPC-204",
+      "customfield_10015": "Identity & Compliance",
+      "customfield_10050": [
+        "TC-FRD-010"
+      ],
+      "description": "Implement a liveness detection module for selfie verification during KYC onboarding. Uses biometric analysis to detect spoofing attempts and verify the person matches the document photo.",
+      "fixVersions": [
+        {
+          "name": "2027.Q1-IdentityPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "MR-1602"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story"
+      },
+      "labels": [
+        "kyc",
+        "biometric",
+        "liveness"
+      ],
+      "parent": {
+        "key": "FRD-400"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection Platform"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "To Do"
+      },
+      "story_points": 5,
+      "summary": "Build liveness detection for selfie verification",
+      "updated": "2026-10-03T10:00:00.000+0000"
+    },
+    "key": "FRD-402"
+  },
+  "payload_hash": "78ebe990e26f141b68550c0cd7a954b6248f9c0ed63d7c033c724124c5a0d6d0",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-402",
+  "source_system": "jira",
+  "source_version": "78ebe990e26f141b68550c0cd7a954b6248f9c0ed63d7c033c724124c5a0d6d0"
+}

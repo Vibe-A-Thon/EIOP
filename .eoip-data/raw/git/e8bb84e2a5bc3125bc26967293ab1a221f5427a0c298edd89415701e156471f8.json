@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.765796Z",
+  "event_id": "e8bb84e2a5bc3125bc26967293ab1a221f5427a0c298edd89415701e156471f8",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "c522889b105ed34f242833309519c2a4aed8a2b2",
+    "message": "addition of engineering capabilities"
+  },
+  "payload_hash": "379f0d37d844ef8edf9583fec94781da19acec9054081e92ab6a25fbe3a86984",
+  "schema_version": "1.0",
+  "source_record_id": "demo:c522889b105ed34f242833309519c2a4aed8a2b2",
+  "source_system": "git",
+  "source_version": "379f0d37d844ef8edf9583fec94781da19acec9054081e92ab6a25fbe3a86984"
+}

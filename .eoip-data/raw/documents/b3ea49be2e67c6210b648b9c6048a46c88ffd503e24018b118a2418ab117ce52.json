@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-16T09:09:08.349579Z",
+  "content_hash": "fd6bb972d74809a893f7641be3f68f84bdf2eef66f0381a15e09336282e728e6",
+  "correlation_id": null,
+  "cursor": null,
+  "event_id": "b3ea49be2e67c6210b648b9c6048a46c88ffd503e24018b118a2418ab117ce52",
+  "event_time": "2026-10-16T09:09:08.349579Z",
+  "evidence_ref": null,
+  "metadata": {
+    "connector": "fileparse/1.0",
+    "size_bytes": 267
+  },
+  "observed_time": "2026-10-16T09:09:08.349579Z",
+  "operation": "UPSERT",
+  "payload": {
+    "content": "ewogICJtZXJnZV9yZXF1ZXN0cyI6IFt7ImlpZCI6IDQyLCAidGl0bGUiOiAiRU9JUC0xIGltcGxlbWVudCBpbXBhY3QgY2FsY3VsYXRpb24iLCAic291cmNlX2JyYW5jaCI6ICJmZWF0dXJlL0VPSVAtMSIsICJ0YXJnZXRfYnJhbmNoIjogIm1haW4iLCAibWVyZ2VfY29tbWl0X3NoYSI6ICJIRUFEIn1dLAogICJwaXBlbGluZXMiOiBbeyJpZCI6IDkwMDEsICJuYW1lIjogImJ1aWxkLWFuZC10ZXN0IiwgInNoYSI6ICJIRUFEIiwgInN0YXR1cyI6ICJzdWNjZXNzIn1dCn0K",
+    "encoding": "base64",
+    "filename": "sample-gitlab.json"
+  },
+  "payload_hash": "fd6bb972d74809a893f7641be3f68f84bdf2eef66f0381a15e09336282e728e6",
+  "payload_ref": null,
+  "permissions": {
+    "acl_hash": null,
+    "inherited_from": null,
+    "principal_refs": [],
+    "visibility": "UNKNOWN"
+  },
+  "schema_version": "2.0",
+  "source_id": "demo_corpus",
+  "source_instance_id": "demo_corpus",
+  "source_record_id": "fixture://demo/demodata/core/gitlab/sample-gitlab.json",
+  "source_record_type": "binary_file",
+  "source_system": "documents",
+  "source_type": "documents",
+  "source_version": "fd6bb972d74809a893f7641be3f68f84bdf2eef66f0381a15e09336282e728e6"
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-16T09:09:06.603112Z",
+  "event_id": "5435749c0313b946c61b1223ccdf8f4505dab129244018fa16be027b76613b3d",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "ccf9e2891070b9b10eb05791ef8cf4cd1ca08731",
+    "message": "gui design requirement"
+  },
+  "payload_hash": "1301568ea95cd5ff8f6f16d33559e0c4a546015ea1db34460b9f10325a2d0bed",
+  "schema_version": "1.0",
+  "source_record_id": "demo:ccf9e2891070b9b10eb05791ef8cf4cd1ca08731",
+  "source_system": "git",
+  "source_version": "1301568ea95cd5ff8f6f16d33559e0c4a546015ea1db34460b9f10325a2d0bed"
+}
