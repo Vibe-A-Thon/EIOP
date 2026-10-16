@@ -52,18 +52,28 @@ class ReportArtifactStore:
             self._items[report.report_id] = report
             self._save()
 
-    def get(self, report_id: str) -> RenderedReport | None:
+    def get(self, report_id: str, tenant_id: str | None = None) -> RenderedReport | None:
         with self._lock:
-            return self._items.get(report_id)
+            report = self._items.get(report_id)
+            if report is None:
+                return None
+            if tenant_id and report.tenant_id and report.tenant_id != tenant_id:
+                return None
+            return report
 
-    def list(self) -> list[RenderedReport]:
+    def list(self, tenant_id: str | None = None) -> list[RenderedReport]:
         with self._lock:
-            return list(self._items.values())
+            if not tenant_id:
+                return list(self._items.values())
+            return [r for r in self._items.values() if not r.tenant_id or r.tenant_id == tenant_id]
 
-    def delete(self, report_id: str) -> bool:
+    def delete(self, report_id: str, tenant_id: str | None = None) -> bool:
         with self._lock:
-            if report_id in self._items:
-                del self._items[report_id]
-                self._save()
-                return True
-            return False
+            report = self._items.get(report_id)
+            if report is None:
+                return False
+            if tenant_id and report.tenant_id and report.tenant_id != tenant_id:
+                return False
+            del self._items[report_id]
+            self._save()
+            return True

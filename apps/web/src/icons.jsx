@@ -5,7 +5,7 @@ import {
   Copy, Cpu, Database, Download, Eye, EyeOff, FileText, Filter, Focus, GitBranch,
   Info, KeyRound, Layers, Link, Lock, LogOut, Menu, Minus, Network, Play,
   Plus, Radar, RefreshCw, Search, Settings, Shield, ShieldCheck, SlidersHorizontal,
-  Sparkles, Upload, Users, X, Zap,
+  Sparkles, TriangleAlert, Upload, Users, X, Zap,
 } from 'lucide-react';
 
 const registry = {
@@ -16,7 +16,7 @@ const registry = {
   key: KeyRound, layers: Layers, link: Link, lock: Lock, logout: LogOut,
   menu: Menu, minus: Minus, play: Play, plus: Plus, radar: Radar, refresh: RefreshCw,
   search: Search, settings: Settings, shield: Shield, shieldCheck: ShieldCheck,
-  sliders: SlidersHorizontal, spark: Sparkles, upload: Upload, users: Users, close: X, zap: Zap,
+  sliders: SlidersHorizontal, spark: Sparkles, upload: Upload, users: Users, warning: TriangleAlert, close: X, zap: Zap,
 };
 
 export function Icon({name, size = 18, className = ''}) {

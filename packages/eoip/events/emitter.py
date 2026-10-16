@@ -10,6 +10,10 @@ from enum import Enum
 from typing import Any
 
 
+import json
+from pathlib import Path
+
+
 class EventType(str, Enum):
     VERTEX_UPSERTED = "vertex_upserted"
     EDGE_UPSERTED = "edge_upserted"
@@ -54,11 +58,39 @@ class GraphEvent:
 
 
 class GraphEventEmitter:
-    def __init__(self, buffer_size: int = 1000):
+    def __init__(self, buffer_size: int = 1000, *, journal_path: str | Path | None = None):
         self._subscribers: list[asyncio.Queue] = []
         self._loops: dict[asyncio.Queue, asyncio.AbstractEventLoop | None] = {}
         self._lock = threading.RLock()
         self._ring_buffer: deque[GraphEvent] = deque(maxlen=buffer_size)
+        self._journal_path = Path(journal_path) if journal_path else None
+        if self._journal_path is not None:
+            self._journal_path.parent.mkdir(parents=True, exist_ok=True)
+            self._recover_journal()
+
+    def _recover_journal(self) -> None:
+        if not self._journal_path or not self._journal_path.exists():
+            return
+        highest_id = GraphEvent._counter
+        try:
+            with open(self._journal_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        rec = json.loads(line)
+                        ev_id = rec.get("event_id", 0)
+                        if ev_id > highest_id:
+                            highest_id = ev_id
+                        ev = GraphEvent(rec["type"], rec["data"], timestamp=rec.get("timestamp"))
+                        ev.event_id = ev_id
+                        self._ring_buffer.append(ev)
+                    except Exception:
+                        continue
+            GraphEvent._counter = highest_id
+        except Exception:
+            pass
 
     def subscribe(self) -> asyncio.Queue:
         q: asyncio.Queue = asyncio.Queue(maxsize=1000)
@@ -94,6 +126,12 @@ class GraphEventEmitter:
     def emit_sync(self, event: GraphEvent) -> None:
         with self._lock:
             self._ring_buffer.append(event)
+            if self._journal_path is not None:
+                try:
+                    with open(self._journal_path, "a", encoding="utf-8") as f:
+                        f.write(json.dumps(event.to_dict()) + "\n")
+                except Exception:
+                    pass
             subscribers = list(self._loops.items())
         try:
             current_loop = asyncio.get_running_loop()
@@ -122,13 +160,65 @@ class GraphEventEmitter:
         return results
 
     def events_since_id(self, since_id: int, limit: int = 100, *, tenant_id: str | None = None) -> list[dict]:
+        with self._lock:
+            buffer_events = list(self._ring_buffer)
+
+        # If journal exists and since_id predates current ring buffer, replay from journal
+        oldest_buffer_id = buffer_events[0].event_id if buffer_events else None
+        if (
+            self._journal_path is not None
+            and self._journal_path.exists()
+            and (oldest_buffer_id is None or since_id < oldest_buffer_id)
+        ):
+            results = []
+            try:
+                with open(self._journal_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        try:
+                            rec = json.loads(line)
+                        except Exception:
+                            continue
+                        ev_id = rec.get("event_id", 0)
+                        if ev_id > since_id:
+                            ev = GraphEvent(rec["type"], rec["data"], timestamp=rec.get("timestamp"))
+                            ev.event_id = ev_id
+                            if ev.visible_to_tenant(tenant_id):
+                                results.append(rec)
+                                if len(results) >= limit:
+                                    break
+                return results
+            except Exception:
+                pass
+
         results = []
-        for event in self._snapshot():
+        for event in buffer_events:
             if event.event_id > since_id and event.visible_to_tenant(tenant_id):
                 results.append(event.to_dict())
                 if len(results) >= limit:
                     break
         return results
+
+    def oldest_event_id(self) -> int | None:
+        with self._lock:
+            if self._journal_path is not None and self._journal_path.exists():
+                try:
+                    with open(self._journal_path, "r", encoding="utf-8") as f:
+                        for line in f:
+                            line = line.strip()
+                            if line:
+                                return json.loads(line).get("event_id")
+                except Exception:
+                    pass
+            return self._ring_buffer[0].event_id if self._ring_buffer else None
+
+    def has_gap(self, since_id: int) -> bool:
+        oldest = self.oldest_event_id()
+        if oldest is None:
+            return False
+        return since_id < (oldest - 1)
 
     def recent_events(self, limit: int = 50, *, tenant_id: str | None = None) -> list[dict]:
         events = [event for event in self._snapshot() if event.visible_to_tenant(tenant_id)][-limit:]

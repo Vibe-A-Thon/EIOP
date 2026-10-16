@@ -25,7 +25,7 @@ class JobQueue:
         self.root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
 
-    def submit(self, kind, payload=None, *, correlation_id=None):
+    def submit(self, kind, payload=None, *, correlation_id=None, tenant_id=None, created_by=None):
         job_id = str(uuid4())
         job = {
             "job_id": job_id,
@@ -33,18 +33,23 @@ class JobQueue:
             "status": "PENDING",
             "created_at": utc_now_iso(),
             "correlation_id": correlation_id or str(uuid4()),
+            "tenant_id": tenant_id,
+            "created_by": created_by,
             "payload": payload,
         }
         write_json(self.root / f"{job_id}.json", job)
         return {key: value for key, value in job.items() if key != "payload"}
 
-    def get(self, job_id):
+    def get(self, job_id, *, tenant_id=None):
         UUID(job_id)
-        return json.loads((self.root / f"{job_id}.json").read_text(encoding="utf-8"))
+        job = json.loads((self.root / f"{job_id}.json").read_text(encoding="utf-8"))
+        if tenant_id and job.get("tenant_id") and job["tenant_id"] != tenant_id:
+            raise PermissionError("Cross-tenant job access forbidden")
+        return job
 
-    def cancel(self, job_id):
+    def cancel(self, job_id, *, tenant_id=None):
         with self._lock:
-            job = self.get(job_id)
+            job = self.get(job_id, tenant_id=tenant_id)
             if job["status"] == "RUNNING":
                 raise RuntimeError("Running jobs cannot be cancelled safely")
             if job["status"] in {"PENDING", "HELD"}:
@@ -52,9 +57,9 @@ class JobQueue:
                 write_json(self.root / f"{job_id}.json", job)
             return {key: value for key, value in job.items() if key != "payload"}
 
-    def readmit(self, job_id, *, correlation_id=None):
+    def readmit(self, job_id, *, correlation_id=None, tenant_id=None):
         with self._lock:
-            job = self.get(job_id)
+            job = self.get(job_id, tenant_id=tenant_id)
             if job["status"] != "HELD":
                 raise RuntimeError("Only held recovery jobs can be re-admitted")
             if not isinstance(job.get("recovery"), dict):
@@ -67,8 +72,10 @@ class JobQueue:
             write_json(self.root / f"{job_id}.json", job)
             return {key: value for key, value in job.items() if key != "payload"}
 
-    def list(self):
+    def list(self, *, tenant_id=None):
         jobs = [json.loads(p.read_text(encoding="utf-8")) for p in self.root.glob("*.json")]
+        if tenant_id:
+            jobs = [j for j in jobs if not j.get("tenant_id") or j.get("tenant_id") == tenant_id]
         return [
             {k: v for k, v in job.items() if k != "payload"}
             for job in sorted(jobs, key=lambda j: j["created_at"], reverse=True)[:100]

@@ -251,7 +251,8 @@ def create_app():
                 return None
             return await super().__call__(request)
 
-    event_emitter = GraphEventEmitter(buffer_size=1000)
+    journal_path = data_root() / "state" / "events.jsonl"
+    event_emitter = GraphEventEmitter(buffer_size=1000, journal_path=journal_path)
     app = query_app(store, dependencies=[Depends(SafeHTTPBearer(auto_error=False))])
     app.state.event_emitter = event_emitter
     from apps.api.extended import ensure_extended
@@ -541,20 +542,33 @@ def create_app():
 
     app.state.extended_state.metrics_renderers.append(runtime_metrics)
 
+    def _scoped_store(req: Request):
+        tenant_id = getattr(req.state, "tenant_id", None)
+        if not tenant_id:
+            principal = getattr(req.state, "principal", None)
+            if principal and principal.tenant_id:
+                tenant_id = principal.tenant_id
+        if tenant_id and tenant_id not in ("system", "global", "default"):
+            from eoip.graph.named_graph import NamedGraphStore, TenantConfig
+            return NamedGraphStore(store, TenantConfig(tenant_id=tenant_id, graph_name=f"g:{tenant_id}"))
+        return store
+
     @app.get("/api/v1/entities/{canonical_id:path}")
-    def entity(canonical_id: str, include_deleted: bool = Query(default=False)):
-        result = store.get_vertex_by_canonical_id(canonical_id)
+    def entity(canonical_id: str, request: Request, include_deleted: bool = Query(default=False)):
+        target_store = _scoped_store(request)
+        result = target_store.get_vertex_by_canonical_id(canonical_id)
         if result is None or (result["properties"].get("deleted_at") and not include_deleted):
             raise HTTPException(404, "Entity not found")
         return {
             "entity": result,
-            "outgoing": store.edges_from(result["vid"]),
-            "incoming": store.edges_to(result["vid"]),
+            "outgoing": target_store.edges_from(result["vid"]),
+            "incoming": target_store.edges_to(result["vid"]),
         }
 
     @app.post("/api/v1/admin/entities/{canonical_id:path}/delete")
-    def delete_entity(canonical_id: str):
-        entity = store.get_vertex_by_canonical_id(canonical_id)
+    def delete_entity(canonical_id: str, request: Request):
+        target_store = _scoped_store(request)
+        entity = target_store.get_vertex_by_canonical_id(canonical_id)
         if entity is None:
             raise HTTPException(404, "Entity not found")
         if entity["properties"].get("deleted_at"):
@@ -563,9 +577,9 @@ def create_app():
                 "status": "ALREADY_DELETED",
                 "deleted_at": entity["properties"]["deleted_at"],
             }
-        if not store.tombstone_vertex(canonical_id):
+        if not target_store.tombstone_vertex(canonical_id):
             raise HTTPException(409, "Entity could not be tombstoned")
-        deleted = store.get_vertex_by_canonical_id(canonical_id)
+        deleted = target_store.get_vertex_by_canonical_id(canonical_id)
         deleted_at = deleted.get("properties", {}).get("deleted_at") if deleted else None
         return {
             "canonical_id": canonical_id,
@@ -574,17 +588,19 @@ def create_app():
         }
 
     @app.get("/api/v1/ontology/export")
-    def ontology_export(limit: int = Query(default=5000, ge=1, le=10_000)):
-        document = export_jsonld(store, limit=limit)
+    def ontology_export(request: Request, limit: int = Query(default=5000, ge=1, le=10_000)):
+        target_store = _scoped_store(request)
+        document = export_jsonld(target_store, limit=limit)
         return Response(
             content=json.dumps(document, ensure_ascii=False),
             media_type="application/ld+json",
         )
 
     @app.post("/api/v1/ontology/import")
-    def ontology_import(document: dict, clear: bool = False):
+    def ontology_import(document: dict, request: Request, clear: bool = False):
+        target_store = _scoped_store(request)
         try:
-            return import_jsonld(document, store, clear=clear)
+            return import_jsonld(document, target_store, clear=clear)
         except (RuntimeError, TypeError, ValueError, KeyError) as exc:
             raise HTTPException(422, str(exc)) from exc
 
@@ -596,8 +612,9 @@ def create_app():
         )
 
     @app.get("/api/v1/ontology/validate")
-    def ontology_validate(limit: int = Query(default=5000, ge=1, le=10_000)):
-        return validate_shacl(store, limit=limit)
+    def ontology_validate(request: Request, limit: int = Query(default=5000, ge=1, le=10_000)):
+        target_store = _scoped_store(request)
+        return validate_shacl(target_store, limit=limit)
 
     _stats_cache: dict = {"expires_at": 0.0, "payload": None}
 
@@ -720,8 +737,12 @@ def create_app():
         }
 
     @app.get("/api/v1/admin/jobs")
-    def jobs():
-        return queue.list()
+    def jobs(request: Request):
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        is_admin = principal and any(r in ("admin", "platform_admin") for r in getattr(principal, "roles", ()))
+        filter_tenant = None if (is_admin and tenant_id in ("system", "global")) else tenant_id
+        return queue.list(tenant_id=filter_tenant)
 
     @app.get("/api/v1/graph/versions")
     def graph_versions(limit: int = Query(default=100, ge=1, le=1000)):
@@ -1031,19 +1052,31 @@ def create_app():
         return {**receipt.model_dump(), "job_id": queued["job_id"]}
 
     @app.get("/api/v1/admin/jobs/{job_id}")
-    def job(job_id: str):
+    def job(job_id: str, request: Request):
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        is_admin = principal and any(r in ("admin", "platform_admin") for r in getattr(principal, "roles", ()))
+        filter_tenant = None if (is_admin and tenant_id in ("system", "global")) else tenant_id
         try:
-            result = queue.get(job_id)
+            result = queue.get(job_id, tenant_id=filter_tenant)
             return {k: v for k, v in result.items() if k != "payload"}
         except (ValueError, FileNotFoundError):
             raise HTTPException(404, "Job not found")
+        except PermissionError as exc:
+            raise HTTPException(403, str(exc))
 
     @app.post("/api/v1/admin/jobs/{job_id}/cancel")
-    def cancel_job(job_id: str):
+    def cancel_job(job_id: str, request: Request):
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        is_admin = principal and any(r in ("admin", "platform_admin") for r in getattr(principal, "roles", ()))
+        filter_tenant = None if (is_admin and tenant_id in ("system", "global")) else tenant_id
         try:
-            return queue.cancel(job_id)
+            return queue.cancel(job_id, tenant_id=filter_tenant)
         except (ValueError, FileNotFoundError):
             raise HTTPException(404, "Job not found")
+        except PermissionError as exc:
+            raise HTTPException(403, str(exc))
         except RuntimeError as exc:
             raise HTTPException(409, str(exc)) from exc
 
@@ -1122,39 +1155,67 @@ def create_app():
 
     @app.post("/api/v1/admin/ingestion/jira", status_code=202)
     def ingest(payload: IngestionRequest, request: Request):
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        actor = getattr(principal, "username", None) if principal else getattr(principal, "id", None) or "local-user"
         return queue.submit(
             "JIRA_JSON",
             payload.model_dump(),
             correlation_id=request.state.correlation_id,
+            tenant_id=tenant_id,
+            created_by=actor,
         )
 
     @app.post("/api/v1/admin/ingestion/gitlab", status_code=202)
     def ingest_gitlab(payload: GitLabIngestionRequest, request: Request):
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        actor = getattr(principal, "username", None) if principal else getattr(principal, "id", None) or "local-user"
         return queue.submit(
             "GITLAB_JSON",
             payload.model_dump(),
             correlation_id=request.state.correlation_id,
+            tenant_id=tenant_id,
+            created_by=actor,
         )
 
     @app.post("/api/v1/admin/ingestion/confluence", status_code=202)
     def ingest_confluence(payload: IncrementalSyncRequest, request: Request):
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        actor = getattr(principal, "username", None) if principal else getattr(principal, "id", None) or "local-user"
         return queue.submit(
             "CONFLUENCE",
             payload.model_dump(),
             correlation_id=request.state.correlation_id,
+            tenant_id=tenant_id,
+            created_by=actor,
         )
 
     @app.post("/api/v1/admin/ingestion/servicenow", status_code=202)
     def ingest_servicenow(payload: IncrementalSyncRequest, request: Request):
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        actor = getattr(principal, "username", None) if principal else getattr(principal, "id", None) or "local-user"
         return queue.submit(
             "SERVICENOW",
             payload.model_dump(),
             correlation_id=request.state.correlation_id,
+            tenant_id=tenant_id,
+            created_by=actor,
         )
 
     @app.post("/api/v1/admin/demo", status_code=202)
     def demo(request: Request):
-        return queue.submit("DEMO", correlation_id=request.state.correlation_id)
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        actor = getattr(principal, "username", None) if principal else getattr(principal, "id", None) or "local-user"
+        return queue.submit(
+            "DEMO",
+            correlation_id=request.state.correlation_id,
+            tenant_id=tenant_id,
+            created_by=actor,
+        )
 
     @app.post("/api/v1/admin/validation")
     def validate():
@@ -1403,11 +1464,12 @@ def create_app():
         }
 
     @app.post("/api/v1/rag")
-    def rag(payload: RetrievalRequest):
+    def rag(payload: RetrievalRequest, request: Request):
         from eoip.retrieval.service import retrieve
 
+        target_store = _scoped_store(request)
         try:
-            return retrieve(store, payload.canonical_id, payload.question, synthesize=payload.synthesize)
+            return retrieve(target_store, payload.canonical_id, payload.question, synthesize=payload.synthesize)
         except ValueError as exc:
             raise HTTPException(404, str(exc)) from exc
 
@@ -1510,8 +1572,9 @@ def create_app():
         }
 
     @app.get("/api/v1/validation/runs")
-    def validation_runs(limit: int = Query(default=100, ge=1, le=500)):
-        vertices = store.find_vertices(label="ValidationRun", limit=limit)
+    def validation_runs(request: Request, limit: int = Query(default=100, ge=1, le=500)):
+        target_store = _scoped_store(request)
+        vertices = target_store.find_vertices(label="ValidationRun", limit=limit)
         return [_run_summary(v) for v in sorted(
             vertices,
             key=lambda v: v["properties"].get("started_at") or "",
@@ -1519,8 +1582,9 @@ def create_app():
         )]
 
     @app.get("/api/v1/ingestion/runs")
-    def ingestion_runs(limit: int = Query(default=100, ge=1, le=500)):
-        vertices = store.find_vertices(label="IngestionRun", limit=limit)
+    def ingestion_runs(request: Request, limit: int = Query(default=100, ge=1, le=500)):
+        target_store = _scoped_store(request)
+        vertices = target_store.find_vertices(label="IngestionRun", limit=limit)
         return [_run_summary(v) for v in sorted(
             vertices,
             key=lambda v: v["properties"].get("started_at") or "",
@@ -1529,10 +1593,15 @@ def create_app():
 
     @app.post("/api/v1/ingestion/jira-json", status_code=202)
     def public_ingest_jira(payload: IngestionRequest, request: Request):
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        actor = getattr(principal, "username", None) if principal else getattr(principal, "id", None) or "local-user"
         return queue.submit(
             "JIRA_JSON",
             payload.model_dump(),
             correlation_id=request.state.correlation_id,
+            tenant_id=tenant_id,
+            created_by=actor,
         )
 
     @app.websocket("/ws/graph/events")

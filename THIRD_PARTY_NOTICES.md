@@ -34,6 +34,8 @@ Collect notices from the exact resolved build environment/artifacts. Missing pac
 
 ## Required Final Bundle
 
+GUI implementation additions, 2026-10-16: `lucide-react` 0.468.0 is a runtime dependency; its package-supplied license is retained at `apps/web/public/legal/third-party/lucide-react-0.468.0-LICENSE.txt` and copied by the web build. TypeScript 5.9.3 and `@axe-core/playwright` 4.10.2 are development tools in this batch. The axe Playwright package reports MPL-2.0 in its installed metadata; distinguish development/test tooling from distributed runtime code and review actual artifacts. This addition does not complete the release inventory or clear the existing distribution concerns.
+
 Each distributed artifact must have an associated component inventory recording name, version, source/provenance, artifact digest, shipped location, license expression/evidence, modifications, upstream copyright/NOTICE files, and required source/offer delivery.
 
 Include the full applicable license texts and required notices, preserving their wording. An SPDX identifier, website link, this index, or a generic MIT/Apache text without the component's required attribution is not a substitute for the required materials. Do not invent a source offer that cannot be fulfilled.

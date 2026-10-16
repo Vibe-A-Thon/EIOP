@@ -60,14 +60,30 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22.18.0'
       - name: Build Web Application
         working-directory: apps/web
         run: |
           npm ci
+          npm run typecheck
+          npm run test:unit
           npm run build
+      - name: Validate GUI Source Intake
+        run: node scripts/audit_gui.mjs --check
       - name: Verify Interactive Export Security
         working-directory: apps/web
         run: |
           npx --no-install playwright install --with-deps chromium
-          npx --no-install playwright test tests/interactive-export-security.spec.js
+          npx --no-install playwright test tests/interactive-export-security.spec.js tests/gui-foundations.spec.js tests/gui-graph-contracts.spec.js tests/gui-accessibility.spec.js --reporter=list,json
+        env:
+          EOIP_GUI_WEB_SERVER: '1'
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:5173
+          PLAYWRIGHT_JSON_OUTPUT_NAME: ../../test-results/gui-ci-browser.json
+      - name: Retain GUI Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gui-test-evidence
+          path: |
+            test-results/gui-*.json
+            apps/web/test-results/

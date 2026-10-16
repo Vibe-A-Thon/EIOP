@@ -2,11 +2,12 @@ import React, {useCallback, useState} from 'react';
 import {Icon} from '../../icons.jsx';
 import {generateInteractiveHTML} from '../export/InteractiveExport.js';
 import {generateGraphReport} from '../export/GraphReport.js';
+import {graphToGraphML, graphToGEXF, graphToCsv, graphPrintDocument} from '../export/GraphFormats.ts';
 
 const FORMATS = [
   {id: 'png', label: 'PNG Image', icon: 'focus', desc: 'Rasterized graph image at 2x resolution'},
   {id: 'svg', label: 'SVG Vector', icon: 'graph', desc: 'Scalable vector graphic'},
-  {id: 'pdf', label: 'PDF Report', icon: 'database', desc: 'Graph image + node table + metrics summary'},
+  {id: 'print', label: 'Print / Save as PDF', icon: 'document', desc: 'Browser print view of the loaded graph'},
   {id: 'json-ld', label: 'JSON-LD', icon: 'database', desc: 'Linked Data with EOIP ontology @context'},
   {id: 'graphml', label: 'GraphML', icon: 'layers', desc: 'Standard graph interchange XML'},
   {id: 'gexf', label: 'GEXF', icon: 'layers', desc: 'Gephi-compatible graph exchange format'},
@@ -19,58 +20,17 @@ const FORMATS = [
   {id: 'report', label: 'Graph Report', icon: 'activity', desc: '7-section Markdown analysis report'},
 ];
 
-function getAnnotations() {
-  const annotations = {};
-  try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith('kgr-note-')) {
-        const id = key.replace('kgr-note-', '');
-        annotations[id] = localStorage.getItem(key);
-      }
-    }
-  } catch {}
-  return annotations;
-}
-
 function graphToJsonLd(graph, annotations) {
   return JSON.stringify({
     '@context': {'@vocab': 'urn:eoip:ontology:', 'nodes': '@graph'},
     nodes: (graph.nodes || []).map(n => ({
-      '@id': n.id, '@type': n.label, ...n.properties,
+      ...n.properties, '@id': n.id, '@type': n.label,
       ...(annotations[n.id] ? {annotation: annotations[n.id]} : {}),
     })),
     edges: (graph.edges || []).map(e => ({
-      '@type': e.type, from: e.from_id, to: e.to_id, ...e.properties,
+      ...e.properties, '@id': e.id, '@type': e.type, from: e.from_id, to: e.to_id,
     })),
   }, null, 2);
-}
-
-function graphToGraphML(graph) {
-  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<graphml xmlns="http://graphml.graphstudio.org">\n<graph edgedefault="directed">\n';
-  for (const n of graph.nodes || []) {
-    xml += `  <node id="${n.id}"><data key="label">${n.label}</data></node>\n`;
-  }
-  for (const e of graph.edges || []) {
-    xml += `  <edge source="${e.from_id}" target="${e.to_id}"><data key="type">${e.type}</data></edge>\n`;
-  }
-  xml += '</graph>\n</graphml>';
-  return xml;
-}
-
-function graphToGEXF(graph) {
-  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<gexf xmlns="http://gexf.net/1.3" version="1.3">\n<graph defaultedgetype="directed">\n';
-  xml += '  <attributes class="node"><attribute id="0" title="label" type="string"/><attribute id="1" title="domain" type="string"/></attributes>\n';
-  xml += '  <nodes>\n';
-  for (const n of graph.nodes || []) {
-    xml += `    <node id="${n.id}" label="${n.properties?.name || n.label || n.id}"><attvalues><attvalue for="0" value="${n.label}"/><attvalue for="1" value="${n.domain || ''}"/></attvalues></node>\n`;
-  }
-  xml += '  </nodes>\n  <edges>\n';
-  (graph.edges || []).forEach((e, i) => {
-    xml += `    <edge id="${i}" source="${e.from_id}" target="${e.to_id}" label="${e.type}"/>\n`;
-  });
-  xml += '  </edges>\n</graph>\n</gexf>';
-  return xml;
 }
 
 function graphToObsidian(graph) {
@@ -143,14 +103,6 @@ function graphToCypher(graph) {
   return cypher;
 }
 
-function graphToCsv(graph) {
-  let nodes = 'id,label,domain\n';
-  for (const n of graph.nodes || []) nodes += `"${n.id}","${n.label}","${n.domain || ''}"\n`;
-  let edges = 'from_id,to_id,type\n';
-  for (const e of graph.edges || []) edges += `"${e.from_id}","${e.to_id}","${e.type}"\n`;
-  return {nodes, edges};
-}
-
 function download(content, filename, type = 'text/plain') {
   const blob = new Blob([content], {type});
   const url = URL.createObjectURL(blob);
@@ -161,31 +113,29 @@ function download(content, filename, type = 'text/plain') {
 
 export default function ExportMenu({graph, cyRef, onClose}) {
   const [format, setFormat] = useState('json-ld');
-  const [scope, setScope] = useState('visible');
-  const [includeAnnotations, setIncludeAnnotations] = useState(true);
+  const includeAnnotations = false;
+  const [error, setError] = useState('');
   const [exporting, setExporting] = useState(false);
 
   const doExport = useCallback(async () => {
     setExporting(true);
-    const annotations = includeAnnotations ? getAnnotations() : {};
+    setError('');
+    const annotations = {};
     try {
-      if (format === 'png' && cyRef?.current) {
+      if (format === 'png') {
+        if (!cyRef?.current?.png) throw new Error('Image export is unavailable for this renderer.');
         const blob = await cyRef.current.png({output: 'blob', scale: 2, full: true});
         download(blob, 'kgr-graph.png', 'image/png');
-      } else if (format === 'svg' && cyRef?.current) {
+      } else if (format === 'svg') {
+        if (!cyRef?.current?.svg) throw new Error('SVG export is unavailable for this renderer.');
         download(cyRef.current.svg({full: true}), 'kgr-graph.svg', 'image/svg+xml');
-      } else if (format === 'pdf') {
-        const nodes = graph.nodes || [];
-        const edges = graph.edges || [];
-        let html = `<html><head><title>KGR Graph Report</title><style>body{font-family:sans-serif;padding:20px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}th{background:#f0f0f0}h1,h2{margin:8px 0}</style></head><body>`;
-        html += `<h1>KGR Graph Report</h1><p>${nodes.length} entities, ${edges.length} relationships</p>`;
-        html += `<h2>Entities</h2><table><tr><th>ID</th><th>Label</th><th>Domain</th>${includeAnnotations ? '<th>Annotation</th>' : ''}</tr>`;
-        for (const n of nodes.slice(0, 200)) html += `<tr><td>${n.id}</td><td>${n.label}</td><td>${n.domain || ''}</td>${includeAnnotations ? `<td>${annotations[n.id] || ''}</td>` : ''}</tr>`;
-        html += `</table><h2>Relationships</h2><table><tr><th>From</th><th>To</th><th>Type</th></tr>`;
-        for (const e of edges.slice(0, 200)) html += `<tr><td>${e.from_id}</td><td>${e.to_id}</td><td>${e.type}</td></tr>`;
-        html += `</table></body></html>`;
-        const w = window.open('', '_blank');
-        if (w) { w.document.write(html); w.document.close(); w.print(); }
+      } else if (format === 'print') {
+        const preview = window.open('', '_blank');
+        if (!preview) throw new Error('Allow the print preview window, then try again.');
+        preview.opener = null;
+        preview.document.write(graphPrintDocument(graph));
+        preview.document.close();
+        preview.print();
       } else if (format === 'json-ld') {
         download(graphToJsonLd(graph, annotations), 'kgr-graph.jsonld', 'application/ld+json');
       } else if (format === 'graphml') {
@@ -206,7 +156,7 @@ export default function ExportMenu({graph, cyRef, onClose}) {
         download(graphToCypher(graph), 'kgr-graph.cypher', 'text/plain');
       } else if (format === 'clipboard') {
         const text = (graph.nodes || []).slice(0, 10).map(n => `- **${n.label}**: ${n.id}`).join('\n');
-        try { await navigator.clipboard.writeText(text); } catch {}
+        await navigator.clipboard.writeText(text);
       } else if (format === 'interactive') {
         const html = generateInteractiveHTML(graph.nodes || [], graph.edges || [], {title: 'KGR Interactive Export', annotations});
         download(html, 'kgr-interactive.html', 'text/html');
@@ -214,13 +164,15 @@ export default function ExportMenu({graph, cyRef, onClose}) {
         const md = generateGraphReport(graph.nodes || [], graph.edges || [], {title: 'KGR Graph Report', annotations});
         download(md, 'kgr-graph-report.md', 'text/markdown');
       }
+      if (onClose) onClose();
+    } catch (exception) {
+      setError(exception.message || 'Export failed.');
     } finally { setExporting(false); }
-    if (onClose) onClose();
-  }, [format, scope, graph, cyRef, onClose, includeAnnotations]);
+  }, [format, graph, cyRef, onClose, includeAnnotations]);
 
   return <div className="kgr-export-menu panel">
     <div className="panel-heading"><div><span className="eyebrow">EXPORT</span><h2>Export graph data</h2></div>
-      {onClose && <button className="icon-button" onClick={onClose}><Icon name="close"/></button>}
+      {onClose && <button className="icon-button" onClick={onClose} aria-label="Close export menu"><Icon name="close"/></button>}
     </div>
     <div className="export-formats">{FORMATS.map(f =>
       <label key={f.id} className={`export-format-option ${format === f.id ? 'selected' : ''}`}>
@@ -228,13 +180,9 @@ export default function ExportMenu({graph, cyRef, onClose}) {
         <Icon name={f.icon} size={16}/><div><strong>{f.label}</strong><small>{f.desc}</small></div>
       </label>
     )}</div>
-    <div className="export-scope">
-      <label><input type="radio" name="scope" value="visible" checked={scope === 'visible'} onChange={() => setScope('visible')}/> Visible graph</label>
-      <label><input type="radio" name="scope" value="full" checked={scope === 'full'} onChange={() => setScope('full')}/> Full graph</label>
-    </div>
-    <div className="export-options">
-      <label><input type="checkbox" checked={includeAnnotations} onChange={e => setIncludeAnnotations(e.target.checked)}/> Include annotations</label>
-    </div>
+    <p className="subtle">Loaded graph: {graph.nodes?.length || 0} entities, {graph.edges?.length || 0} relationships.</p>
+    <p className="subtle">Annotations are unavailable for export until their ownership is verified.</p>
+    {error && <p className="resource-error" role="alert">{error}</p>}
     <button className="primary-button" onClick={doExport} disabled={exporting}>
       <Icon name="database" size={16}/>{exporting ? 'Exporting...' : 'Export'}
     </button>

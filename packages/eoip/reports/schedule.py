@@ -49,6 +49,8 @@ class ReportSchedule(BaseModel):
     report_format: str = "markdown"
     enabled: bool = True
     last_run_at: str | None = None
+    tenant_id: str | None = None
+    created_by: str | None = None
 
     def is_due(self, now: datetime | None = None) -> bool:
         if not self.enabled:
@@ -91,6 +93,8 @@ class ReportScheduleStore:
         recurrence: Recurrence = "weekly",
         params: dict[str, Any] | None = None,
         report_format: str = "markdown",
+        tenant_id: str | None = None,
+        created_by: str | None = None,
     ) -> ReportSchedule:
         schedule = ReportSchedule(
             schedule_id=new_id("reports", "schedule"),
@@ -99,17 +103,26 @@ class ReportScheduleStore:
             recurrence=recurrence,
             params=params or {},
             report_format=report_format,
+            tenant_id=tenant_id,
+            created_by=created_by,
         )
         with self._lock:
             self._items[schedule.schedule_id] = schedule
             self._save()
         return schedule
 
-    def get(self, schedule_id: str) -> ReportSchedule | None:
-        return self._items.get(schedule_id)
+    def get(self, schedule_id: str, tenant_id: str | None = None) -> ReportSchedule | None:
+        schedule = self._items.get(schedule_id)
+        if schedule is None:
+            return None
+        if tenant_id and schedule.tenant_id and schedule.tenant_id != tenant_id:
+            return None
+        return schedule
 
-    def list(self) -> list[ReportSchedule]:
-        return list(self._items.values())
+    def list(self, tenant_id: str | None = None) -> list[ReportSchedule]:
+        if not tenant_id:
+            return list(self._items.values())
+        return [s for s in self._items.values() if not s.tenant_id or s.tenant_id == tenant_id]
 
     def due_schedules(self, now: datetime | None = None) -> list[ReportSchedule]:
         return [s for s in self._items.values() if s.is_due(now)]
@@ -123,9 +136,47 @@ class ReportScheduleStore:
             self._save()
             return schedule
 
-    def delete(self, schedule_id: str) -> bool:
+    def delete(self, schedule_id: str, tenant_id: str | None = None) -> bool:
         with self._lock:
+            schedule = self._items.get(schedule_id)
+            if schedule is None:
+                return False
+            if tenant_id and schedule.tenant_id and schedule.tenant_id != tenant_id:
+                return False
             existed = self._items.pop(schedule_id, None) is not None
             if existed:
                 self._save()
             return existed
+
+    def run_schedule(
+        self,
+        schedule_id: str,
+        generator: Any,
+        artifact_store: Any,
+        *,
+        tenant_id: str | None = None,
+        now: datetime | None = None,
+    ) -> Any:
+        schedule = self.get(schedule_id, tenant_id=tenant_id)
+        if schedule is None:
+            raise KeyError(f"Unknown schedule: {schedule_id}")
+
+        from eoip.reports.generator import ReportContext
+        ctx = ReportContext(
+            title=schedule.name,
+            params=schedule.params,
+            graph_stats=schedule.params.get("graph_stats", {}),
+        )
+
+        rendered = generator.render(
+            schedule.template_id,
+            ctx,
+            report_format=schedule.report_format,
+            allow_external_formats=True,
+            tenant_id=schedule.tenant_id,
+            created_by=schedule.created_by,
+        )
+        artifact_store.put(rendered)
+        self.mark_run(schedule_id, at=(now.isoformat() if now else None))
+        return rendered
+

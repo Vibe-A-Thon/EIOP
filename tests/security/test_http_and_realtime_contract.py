@@ -247,10 +247,15 @@ def test_viewer_cannot_mutate_administrative_surfaces(composed_app, path):
 
 
 def test_idle_websocket_disconnect_releases_subscription(composed_app):
+    import time
     app, client, service = composed_app
     token = service.issue(Principal("alice", "alice", ("viewer",), tenant_id="alpha"))
     with client.websocket_connect("/ws/graph/events", headers={"Authorization": f"Bearer {token}"}):
         assert app.state.event_emitter.subscriber_count == 1
+    for _ in range(50):
+        if app.state.event_emitter.subscriber_count == 0:
+            break
+        time.sleep(0.01)
     assert app.state.event_emitter.subscriber_count == 0
 
 
@@ -275,3 +280,99 @@ def test_websocket_closes_when_authenticated_token_expires(composed_app, monkeyp
             ws.receive_json()
         assert exc.value.code == 1008
     assert app.state.event_emitter.subscriber_count == 0
+
+
+def test_cross_tenant_isolation_on_entity_and_ontology_routes(composed_app):
+    from eoip.ontology.rdf import export_jsonld
+
+    app, client, service = composed_app
+    token_alpha = service.issue(Principal("alice", "alice", ("admin", "developer"), tenant_id="tenant-alpha"))
+    token_beta = service.issue(Principal("bob", "bob", ("admin", "developer"), tenant_id="tenant-beta"))
+
+    headers_alpha = {"Authorization": f"Bearer {token_alpha}"}
+    headers_beta = {"Authorization": f"Bearer {token_beta}"}
+
+    # Generate test JSON-LD payload with 1 WorkItem
+    source = MemoryGraphStore()
+    source.upsert_vertex("WorkItem", {"canonical_id": "item-101", "issue_key": "ALPHA-101", "summary": "Tenant Alpha WorkItem"})
+    doc = export_jsonld(source)
+
+    # 1. Tenant-alpha imports data
+    imp_resp = client.post("/api/v1/ontology/import", json=doc, headers=headers_alpha)
+    assert imp_resp.status_code == 200
+    assert imp_resp.json()["vertices"] == 1
+
+    # 2. Tenant-alpha can access the entity
+    get_alpha = client.get("/api/v1/entities/item-101", headers=headers_alpha)
+    assert get_alpha.status_code == 200
+    assert get_alpha.json()["entity"]["properties"]["issue_key"] == "ALPHA-101"
+
+    # 3. Tenant-beta CANNOT access the entity (404 Not Found)
+    get_beta = client.get("/api/v1/entities/item-101", headers=headers_beta)
+    assert get_beta.status_code == 404
+
+    # 4. Tenant-beta export does NOT include tenant-alpha's entity
+    export_beta = client.get("/api/v1/ontology/export", headers=headers_beta)
+    assert export_beta.status_code == 200
+    beta_nodes = [n for n in export_beta.json().get("@graph", []) if "eoip:entity/WorkItem" in n.get("@type", [])]
+    assert len(beta_nodes) == 0
+
+    # 5. Tenant-alpha export DOES include the entity
+    export_alpha = client.get("/api/v1/ontology/export", headers=headers_alpha)
+    assert export_alpha.status_code == 200
+    alpha_nodes = [n for n in export_alpha.json().get("@graph", []) if "eoip:entity/WorkItem" in n.get("@type", [])]
+    assert len(alpha_nodes) == 1
+
+    # 6. Tenant-beta cannot delete tenant-alpha's entity
+    del_beta = client.post("/api/v1/admin/entities/item-101/delete", headers=headers_beta)
+    assert del_beta.status_code == 404
+
+    # 7. Tenant-alpha can delete their entity
+    del_alpha = client.post("/api/v1/admin/entities/item-101/delete", headers=headers_alpha)
+    assert del_alpha.status_code == 200
+    assert del_alpha.json()["status"] == "DELETED"
+
+
+def test_admin_jobs_and_runs_cross_tenant_isolation(composed_app):
+    app, client, service = composed_app
+    token_alpha = service.issue(Principal("alice", "alice", ("admin",), tenant_id="tenant-alpha"))
+    token_beta = service.issue(Principal("bob", "bob", ("admin",), tenant_id="tenant-beta"))
+
+    headers_alpha = {"Authorization": f"Bearer {token_alpha}"}
+    headers_beta = {"Authorization": f"Bearer {token_beta}"}
+
+    # 1. Tenant-alpha submits an ingestion job
+    submit_resp = client.post(
+        "/api/v1/admin/ingestion/jira",
+        json={"document": {"issues": [{"key": "A-1"}]}},
+        headers=headers_alpha,
+    )
+    assert submit_resp.status_code == 202
+    job_id = submit_resp.json()["job_id"]
+    assert submit_resp.json()["tenant_id"] == "tenant-alpha"
+
+    # 2. Tenant-alpha lists jobs -> sees own job
+    jobs_alpha = client.get("/api/v1/admin/jobs", headers=headers_alpha)
+    assert jobs_alpha.status_code == 200
+    assert len([j for j in jobs_alpha.json() if j["job_id"] == job_id]) == 1
+
+    # 3. Tenant-beta lists jobs -> does NOT see tenant-alpha's job
+    jobs_beta = client.get("/api/v1/admin/jobs", headers=headers_beta)
+    assert jobs_beta.status_code == 200
+    assert len([j for j in jobs_beta.json() if j["job_id"] == job_id]) == 0
+
+    # 4. Tenant-beta tries to inspect tenant-alpha's job -> 403
+    job_get_beta = client.get(f"/api/v1/admin/jobs/{job_id}", headers=headers_beta)
+    assert job_get_beta.status_code == 403
+    assert "Cross-tenant" in job_get_beta.json()["detail"]
+
+    # 5. Tenant-beta tries to cancel tenant-alpha's job -> 403
+    cancel_beta = client.post(f"/api/v1/admin/jobs/{job_id}/cancel", headers=headers_beta)
+    assert cancel_beta.status_code == 403
+
+    # 6. Tenant-alpha cancels own job -> 200
+    cancel_alpha = client.post(f"/api/v1/admin/jobs/{job_id}/cancel", headers=headers_alpha)
+    assert cancel_alpha.status_code == 200
+    assert cancel_alpha.json()["status"] == "CANCELLED"
+
+

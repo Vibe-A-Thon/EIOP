@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from starlette.requests import Request
+
 from eoip.reports.generator import (
     BUILTIN_TEMPLATES,
     EXTERNAL_FORMATS,
@@ -33,7 +35,7 @@ def build_router(
     with live vertex/edge counts. The schedule and artifact stores default
     to durable disk-backed stores under ``EOIP_DATA_DIR`` (CP-03, CP-25).
     """
-    from fastapi import APIRouter, HTTPException, Query
+    from fastapi import APIRouter, HTTPException, Query, Request
 
     schedules = schedule_store or ReportScheduleStore()
     artifacts = artifact_store or ReportArtifactStore()
@@ -88,6 +90,7 @@ def build_router(
     def render_report(
         template_id: str,
         ctx: ReportContext,
+        request: Request,
         report_format: str = Query(default="markdown"),
         generated_at: str = "",
     ) -> dict[str, Any]:
@@ -111,6 +114,11 @@ def build_router(
                 generated_at=generated_at,
                 allow_external_formats=allow_ext,
             )
+            principal = getattr(request.state, "principal", None)
+            tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+            created_by = getattr(principal, "username", None) if principal else getattr(principal, "id", None) or "local-user"
+            report.tenant_id = tenant_id
+            report.created_by = created_by
             if hasattr(artifacts, "put"):
                 artifacts.put(report)
             elif isinstance(artifacts, dict):
@@ -122,12 +130,22 @@ def build_router(
         return report.model_dump()
 
     @router.get("/export/{report_id}")
-    def export_report(report_id: str, report_format: str | None = Query(default=None)):
+    def export_report(
+        report_id: str,
+        request: Request,
+        report_format: str | None = Query(default=None),
+    ):
         import base64
 
         from fastapi.responses import Response
 
-        if hasattr(artifacts, "get") or isinstance(artifacts, dict):
+        principal = getattr(request.state, "principal", None)
+        req_tenant = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        is_admin = principal and any(r in ("admin", "platform_admin") for r in getattr(principal, "roles", ()))
+
+        if hasattr(artifacts, "get"):
+            report = artifacts.get(report_id)
+        elif isinstance(artifacts, dict):
             report = artifacts.get(report_id)
         else:
             report = None
@@ -136,6 +154,9 @@ def build_router(
                 status_code=404,
                 detail=f"Report '{report_id}' not found. Render via POST /api/v1/reports/render first.",
             )
+        if report.tenant_id and req_tenant and report.tenant_id != req_tenant and not (is_admin and req_tenant in ("system", "global")):
+            raise HTTPException(status_code=403, detail="Cross-tenant access forbidden")
+
         media_types = {
             "html": "text/html; charset=utf-8",
             "markdown": "text/markdown; charset=utf-8",
@@ -164,24 +185,34 @@ def build_router(
 
     # -- schedules (SR-NLQ-008) ----------------------------------------------
     @router.get("/schedules")
-    def list_schedules() -> list[dict[str, Any]]:
-        return [s.model_dump() for s in schedules.list()]
+    def list_schedules(request: Request) -> list[dict[str, Any]]:
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        is_admin = principal and any(r in ("admin", "platform_admin") for r in getattr(principal, "roles", ()))
+        filter_tenant = None if (is_admin and tenant_id in ("system", "global")) else tenant_id
+        return [s.model_dump() for s in schedules.list(tenant_id=filter_tenant)]
 
     @router.post("/schedules", status_code=201)
     def create_schedule(
         template_id: str,
         name: str,
+        request: Request,
         recurrence: str = "weekly",
         params: dict[str, Any] | None = None,
         report_format: str = "markdown",
     ) -> dict[str, Any]:
         if template_by_id(template_id) is None:
             raise HTTPException(status_code=404, detail=f"Unknown template: {template_id}")
+        principal = getattr(request.state, "principal", None)
+        tenant_id = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        created_by = getattr(principal, "username", None) if principal else getattr(principal, "id", None) or "local-user"
         schedule = schedules.create(
             template_id, name,
             recurrence=recurrence,  # type: ignore[arg-type]
             params=params or {},
             report_format=report_format,
+            tenant_id=tenant_id,
+            created_by=created_by,
         )
         return schedule.model_dump()
 
@@ -196,9 +227,31 @@ def build_router(
         except KeyError:
             raise HTTPException(status_code=404, detail=f"Unknown schedule: {schedule_id}")
 
+    @router.post("/schedules/{schedule_id}/run", status_code=200)
+    def run_schedule(schedule_id: str, request: Request) -> dict[str, Any]:
+        principal = getattr(request.state, "principal", None)
+        req_tenant = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        is_admin = principal and any(r in ("admin", "platform_admin") for r in getattr(principal, "roles", ()))
+        schedule = schedules.get(schedule_id)
+        if schedule is None:
+            raise HTTPException(status_code=404, detail=f"Unknown schedule: {schedule_id}")
+        if schedule.tenant_id and req_tenant and schedule.tenant_id != req_tenant and not (is_admin and req_tenant in ("system", "global")):
+            raise HTTPException(status_code=403, detail="Cross-tenant access forbidden")
+        rendered = schedules.run_schedule(schedule_id, generator, artifacts, tenant_id=req_tenant)
+        return rendered.model_dump()
+
     @router.delete("/schedules/{schedule_id}", status_code=204, response_model=None)
-    def delete_schedule(schedule_id: str) -> None:
+    def delete_schedule(schedule_id: str, request: Request) -> None:
+        principal = getattr(request.state, "principal", None)
+        req_tenant = getattr(request.state, "tenant_id", None) or (principal.tenant_id if principal else None)
+        is_admin = principal and any(r in ("admin", "platform_admin") for r in getattr(principal, "roles", ()))
+        schedule = schedules.get(schedule_id)
+        if schedule is None:
+            raise HTTPException(status_code=404, detail=f"Unknown schedule: {schedule_id}")
+        if schedule.tenant_id and req_tenant and schedule.tenant_id != req_tenant and not (is_admin and req_tenant in ("system", "global")):
+            raise HTTPException(status_code=403, detail="Cross-tenant access forbidden")
         if not schedules.delete(schedule_id):
             raise HTTPException(status_code=404, detail=f"Unknown schedule: {schedule_id}")
 
     return router
+

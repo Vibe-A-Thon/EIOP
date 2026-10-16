@@ -10,3 +10,6 @@ attribution/license bundle. A distributor must include all required upstream
 licenses/notices for the actual bundled JavaScript, fonts and other assets
 before external release. The repository's THIRD_PARTY_NOTICES.md and
 licenses/RELEASE-CHECKLIST.md track the unresolved preparation work.
+
+Lucide React 0.468.0 is included in the web runtime. Its package-supplied
+license and attribution are available in third-party/lucide-react-0.468.0-LICENSE.txt.

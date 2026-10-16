@@ -228,13 +228,19 @@ class NamedGraphStore:
         return visible
 
     def upsert_edge(self, label: str, out_v: str, in_v: str, properties: dict) -> Edge:
-        ns_out = self._namespace_id(out_v, operation="edge_out")
-        ns_in = self._namespace_id(in_v, operation="edge_in")
-        self._guard.validate_edge_creation(self.tenant_id, ns_out, ns_in)
+        out_vertex = self._vertex_for_ref(out_v, operation="edge_out")
+        in_vertex = self._vertex_for_ref(in_v, operation="edge_in")
+        target_out = out_vertex["vid"] if out_vertex else self._namespace_id(out_v, operation="edge_out")
+        target_in = in_vertex["vid"] if in_vertex else self._namespace_id(in_v, operation="edge_in")
+        self._guard.validate_edge_creation(
+            self.tenant_id,
+            out_vertex.get("canonical_id", target_out) if out_vertex else target_out,
+            in_vertex.get("canonical_id", target_in) if in_vertex else target_in,
+        )
 
         props = dict(properties)
 
-        result = self._store.upsert_edge(label, ns_out, ns_in, props)
+        result = self._store.upsert_edge(label, target_out, target_in, props)
         with self._lock:
             self._stats.edge_count += 1
             self._stats.last_access = time.time()
@@ -251,6 +257,33 @@ class NamedGraphStore:
         if not vertex:
             return []
         return self._tenant_edges(self._store.edges_to(vertex["vid"], labels=labels, limit=limit))
+
+    def find_vertex_by_property(
+        self,
+        label: str,
+        key: str,
+        value: Any,
+        limit: int = 10,
+        include_deleted: bool = False,
+    ) -> list[Vertex]:
+        return self.find_vertices(label=label, filters={key: value}, limit=limit)
+
+    def find_edges(
+        self,
+        label: str | None = None,
+        out_v: str | None = None,
+        in_v: str | None = None,
+        limit: int = 500,
+        include_historical: bool = False,
+    ) -> list[Edge]:
+        edges = self._store.find_edges(
+            label=label,
+            out_v=out_v,
+            in_v=in_v,
+            limit=1_000_000,
+            include_historical=include_historical,
+        )
+        return self._tenant_edges(edges)[:limit]
 
     def count_vertices(self, label: str | None = None) -> int:
         return len(self.find_vertices(label=label, limit=1_000_000))

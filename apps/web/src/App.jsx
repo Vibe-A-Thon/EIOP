@@ -345,7 +345,7 @@ function AgentView({agents, selectedAgent, setSelectedAgent, goal, setGoal, sele
   </div>;
 }
 
-function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDetail, selectedEdge, setSelectedEdge, lens, setLens, api, run, busy}) {
+function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDetail, selectedEdge, setSelectedEdge, lens, setLens, api, run, busy, token}) {
   const [query, setQuery] = useState('');
   const [nlQuestion, setNlQuestion] = useState('');
   const [nlResult, setNlResult] = useState(null);
@@ -495,7 +495,7 @@ function Explorer({stats, graph, setGraph, selected, setSelected, detail, setDet
     {lens === 'evidence' && <EvidenceView source={source} setSource={setSource} selected={selected} lineage={lineage} rag={rag} question={question} setQuestion={setQuestion} onLineage={traceLineage} onRag={retrieve} onInspect={node => run(() => inspect(node))} busy={busy}/>} 
     {lens === 'architecture' && <ArchitectureView stats={stats} graph={graph}/>}
     {lens === 'agent' && <AgentView agents={agents} selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent} goal={agentGoal} setGoal={setAgentGoal} selected={selected} result={agentResult} onRun={runAgent} busy={busy} synthesize={agentSynthesize} setSynthesize={setAgentSynthesize}/>}
-    {lens === 'kgr' && <KGRExplorer graph={graph} setGraph={setGraph} api={api} run={run} busy={busy} stats={stats} apiBase={window.location.origin}/>}
+    {lens === 'kgr' && <KGRExplorer graph={graph} setGraph={setGraph} api={api} run={run} busy={busy} stats={stats} apiBase={window.location.origin} token={token}/>}
     <LensLibrary open={libraryOpen} onClose={() => setLibraryOpen(false)} onSelect={openCatalogLens}/>
   </>;
 }
@@ -992,7 +992,7 @@ export default function App() {
   return <>
     <WorkspaceShell mode={mode} onNavigate={navigate} onRefresh={() => run(refresh)} onDisconnect={disconnect} busy={busy}>
       <RouteBoundary key={mode}><Suspense fallback={<div className="route-loading" role="status">Loading workspace...</div>}>
-        {mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy}/>
+        {mode === 'app' ? <Explorer stats={stats} graph={graph} setGraph={setGraph} selected={selected} setSelected={setSelected} detail={detail} setDetail={setDetail} selectedEdge={selectedEdge} setSelectedEdge={setSelectedEdge} lens={lens} setLens={setLens} api={api} run={run} busy={busy} token={token}/>
           : mode === 'cognitive' ? <CognitiveHub api={api} run={run} busy={busy} stats={stats}/>
           : mode === 'dashboards' ? <EngineDashboardsHub api={api}/>
           : mode === 'demo' ? <GuidedDemo api={api} run={run} busy={busy}/>

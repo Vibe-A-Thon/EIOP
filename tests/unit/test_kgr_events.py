@@ -137,3 +137,48 @@ def test_polling_filters_before_limit_and_rejects_ambiguous_events(tenant):
     assert emitter.recent_events(limit=1, tenant_id=tenant) == [first.to_dict()]
     assert emitter.events_since("", limit=1, tenant_id=tenant) == [first.to_dict()]
     assert emitter.events_since_id(0, limit=1, tenant_id=tenant) == [first.to_dict()]
+
+
+def test_emitter_durable_journal_and_restart_recovery(tmp_path):
+    journal_path = tmp_path / "events.jsonl"
+    emitter1 = GraphEventEmitter(buffer_size=10, journal_path=journal_path)
+
+    # Emit 5 events
+    for i in range(5):
+        emitter1.emit_sync(GraphEvent("vertex_upserted", {"val": i, "tenant_id": "alpha"}))
+
+    assert journal_path.exists()
+    lines = journal_path.read_text(encoding="utf-8").strip().splitlines()
+    assert len(lines) == 5
+
+    # Simulate restart with fresh emitter pointing at same journal
+    emitter2 = GraphEventEmitter(buffer_size=10, journal_path=journal_path)
+    # Verify next emitted event has strictly higher event_id
+    next_event = GraphEvent("vertex_upserted", {"val": "next", "tenant_id": "alpha"})
+    emitter2.emit_sync(next_event)
+    assert next_event.event_id > 5
+
+    # Verify journal has 6 lines now
+    lines2 = journal_path.read_text(encoding="utf-8").strip().splitlines()
+    assert len(lines2) == 6
+
+
+def test_emitter_replay_across_buffer_overflow(tmp_path):
+    journal_path = tmp_path / "events.jsonl"
+    # Small buffer size of 3
+    emitter = GraphEventEmitter(buffer_size=3, journal_path=journal_path)
+
+    event_ids = []
+    for i in range(10):
+        ev = GraphEvent("vertex_upserted", {"val": i, "tenant_id": "alpha"})
+        emitter.emit_sync(ev)
+        event_ids.append(ev.event_id)
+
+    # Buffer only keeps last 3
+    assert len(emitter.recent_events(limit=10, tenant_id="alpha")) == 3
+
+    # But events_since_id from beginning can replay all 10 from journal!
+    replayed = emitter.events_since_id(event_ids[0] - 1, limit=20, tenant_id="alpha")
+    assert len(replayed) == 10
+    assert [e["data"]["val"] for e in replayed] == list(range(10))
+

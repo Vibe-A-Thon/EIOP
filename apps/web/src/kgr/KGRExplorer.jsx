@@ -411,7 +411,7 @@ function BlastRadiusView({data, onClose}) {
 
 const defaultFilters = {domain: 'ALL', label: 'ALL', edgeType: 'ALL', trust: 'ALL', evidence: 'ALL', source: 'ALL', minDegree: 0, searchText: '', temporal: {from: '', to: ''}, community: 'ALL'};
 
-export default function KGRExplorer({graph, setGraph, api, run, busy, stats, apiBase}) {
+export default function KGRExplorer({graph, setGraph, api, run, busy, stats, apiBase, token}) {
   const [graphType, setGraphType] = useState('knowledge');
   const [filters, setFilters] = useState(defaultFilters);
   const [selected, setSelected] = useState(null);
@@ -465,7 +465,7 @@ export default function KGRExplorer({graph, setGraph, api, run, busy, stats, api
   const explorerRef = useRef(null);
   const cyRef = useRef(null);
 
-  const {events: graphEvents, status: wsStatus, pause: pauseEvents, resume: resumeEvents, clear: clearEvents} = useGraphEvents(apiBase);
+  const {events: graphEvents, status: wsStatus, pause: pauseEvents, resume: resumeEvents, clear: clearEvents} = useGraphEvents(apiBase, token, api);
 
   useEffect(() => {run(async () => setSchema(await api('/api/v1/graph/schema')));}, []);
 

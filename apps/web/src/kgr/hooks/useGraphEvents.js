@@ -1,86 +1,50 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {createApiClient} from '../../shared/api/client.ts';
+import {mergeEvents} from '../../shared/events/merge.ts';
 
-const MAX_EVENTS = 1000;
-const RECONNECT_DELAYS = [1000, 2000, 4000, 8000, 16000, 30000];
-
-export default function useGraphEvents(apiBase) {
+export default function useGraphEvents(apiBase, token, request) {
+  const fallback = useMemo(() => request ? null : createApiClient(token || ''), [request, token]);
+  const api = request || fallback;
   const [events, setEvents] = useState([]);
   const [status, setStatus] = useState('disconnected');
-  const wsRef = useRef(null);
-  const reconnectAttempt = useRef(0);
-  const lastEventId = useRef(0);
   const paused = useRef(false);
-
-  const connect = useCallback(() => {
-    if (!apiBase) return;
-    const wsUrl = apiBase.replace(/^http/, 'ws') + '/ws/graph/events';
-    setStatus('connecting');
-
-    try {
-      const ws = new WebSocket(wsUrl);
-
-      ws.onopen = () => {
-        setStatus('connected');
-        reconnectAttempt.current = 0;
-        if (lastEventId.current > 0) {
-          fetch(`${apiBase}/api/v1/graph/events?since_id=${lastEventId.current}&limit=100`)
-            .then(r => r.json())
-            .then(data => {
-              if (data.events?.length) {
-                setEvents(prev => {
-                  const merged = [...prev, ...data.events];
-                  return merged.slice(-MAX_EVENTS);
-                });
-                const maxId = Math.max(...data.events.map(e => e.event_id));
-                if (maxId > lastEventId.current) lastEventId.current = maxId;
-              }
-            })
-            .catch(() => {});
-        }
-      };
-
-      ws.onmessage = (e) => {
-        if (paused.current) return;
-        try {
-          const event = JSON.parse(e.data);
-          if (event.event_id > lastEventId.current) {
-            lastEventId.current = event.event_id;
-          }
-          setEvents(prev => [...prev.slice(-(MAX_EVENTS - 1)), event]);
-        } catch (_) {}
-      };
-
-      ws.onclose = () => {
-        setStatus('disconnected');
-        wsRef.current = null;
-        const delay = RECONNECT_DELAYS[Math.min(reconnectAttempt.current, RECONNECT_DELAYS.length - 1)];
-        reconnectAttempt.current++;
-        setTimeout(connect, delay);
-      };
-
-      ws.onerror = () => {
-        ws.close();
-      };
-
-      wsRef.current = ws;
-    } catch (_) {
-      setStatus('error');
-    }
-  }, [apiBase]);
+  const cursor = useRef(0);
+  const snapshot = useRef([]);
+  useEffect(() => () => fallback?.dispose(), [fallback]);
 
   useEffect(() => {
-    connect();
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-        wsRef.current = null;
+    if (!apiBase || !api) return;
+    let active = true, stopped = false, timer, controller, failures = 0;
+    snapshot.current = [];
+    cursor.current = 0; paused.current = false;
+    setEvents([]); setStatus('connecting');
+    async function poll() {
+      if (!active) return;
+      if (paused.current || document.hidden) {timer = setTimeout(poll, 1000); return;}
+      controller = new AbortController();
+      let delay = 2000;
+      try {
+        const data = await api(`/api/v1/graph/events?since_id=${cursor.current}&limit=100`, undefined, undefined, {signal: controller.signal});
+        if (!active || paused.current) return;
+        if (data?.gap === true) {stopped = true; setStatus('stale'); return;}
+        const merged = mergeEvents(snapshot.current, data?.events, cursor.current);
+        snapshot.current = merged.events; cursor.current = merged.cursor;
+        setEvents(snapshot.current); setStatus('polling'); failures = 0;
+        if (data.events.length === 100) delay = 250;
+      } catch (error) {
+        if (!active || error.name === 'AbortError') return;
+        if (error.status === 401 || error.status === 403) {stopped = true; setStatus('unauthorized'); return;}
+        setStatus('disconnected');
+        delay = Math.min(30000, 1000 * 2 ** Math.min(++failures, 5)) * (.8 + Math.random() * .4);
+      } finally {
+        if (active && !stopped) timer = setTimeout(poll, delay);
       }
-    };
-  }, [connect]);
-
-  const pause = useCallback(() => { paused.current = true; }, []);
-  const resume = useCallback(() => { paused.current = false; }, []);
-  const clear = useCallback(() => setEvents([]), []);
-
+    }
+    poll();
+    return () => {active = false; clearTimeout(timer); controller?.abort();};
+  }, [apiBase, api]);
+  const pause = useCallback(() => {paused.current = true; setStatus('paused');}, []);
+  const resume = useCallback(() => {paused.current = false; setStatus('connecting');}, []);
+  const clear = useCallback(() => {snapshot.current = []; setEvents([]);}, []);
   return {events, status, pause, resume, clear};
 }

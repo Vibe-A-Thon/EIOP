@@ -51,7 +51,7 @@ export default function EventFeed({events, status, onPause, onResume, onClear, o
     return (events || []).filter(e => typeFilters[e.type] !== false).slice(-100);
   }, [events, typeFilters]);
 
-  const statusColor = status === 'connected' ? '#10a981' : status === 'connecting' ? '#df9d23' : '#ec6b76';
+  const statusColor = ['connected', 'polling'].includes(status) ? '#10a981' : status === 'connecting' ? '#df9d23' : '#ec6b76';
 
   const handlePauseToggle = useCallback(() => {
     if (isPaused) {
@@ -64,7 +64,7 @@ export default function EventFeed({events, status, onPause, onResume, onClear, o
   }, [isPaused, onPause, onResume]);
 
   if (collapsed) {
-    return <button className="event-feed-toggle" onClick={onToggle} title="Show event feed">
+    return <button className="event-feed-toggle" onClick={onToggle} title="Show event feed" aria-label="Show event feed">
       <Icon name="activity" size={14}/>
       <span className="event-feed-status-dot" style={{background: statusColor}}/>
       {events?.length > 0 && <span className="event-feed-badge">{events.length}</span>}
@@ -101,6 +101,7 @@ export default function EventFeed({events, status, onPause, onResume, onClear, o
         const color = EVENT_COLORS[e.type] || '#94a3b8';
         return <div key={e.event_id || i} className="event-feed-item"
           onClick={() => onNavigate && onNavigate(e)}
+          onKeyDown={event => {if (event.key === 'Enter' || event.key === ' ') {event.preventDefault(); onNavigate?.(e);}}}
           role="button" tabIndex={0}>
           <span className="event-icon" style={{color}}><Icon name={icon} size={14}/></span>
           <div className="event-info">

@@ -10,6 +10,12 @@ export default defineConfig({
   workers: 1,
   retries: 0,
   reporter: [['list']],
+  webServer: process.env.EOIP_GUI_WEB_SERVER === '1' ? {
+    command: 'npm run dev -- --host 127.0.0.1 --port 5173 --strictPort',
+    url: 'http://127.0.0.1:5173',
+    reuseExistingServer: !process.env.CI,
+    timeout: 60000,
+  } : undefined,
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://eoip-web:8080',
     channel: executablePath ? undefined : process.env.PLAYWRIGHT_CHANNEL || undefined,

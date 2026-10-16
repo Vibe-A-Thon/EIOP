@@ -61,6 +61,8 @@ class RenderedReport(BaseModel):
     generated_at: str
     content: str
     evidence_manifest: list[dict[str, Any]] = Field(default_factory=list)
+    tenant_id: str | None = None
+    created_by: str | None = None
 
 
 class ReportContext(BaseModel):
@@ -343,6 +345,7 @@ def _sections_to_docx(title: str, sections: list[ReportSection]) -> bytes:
 def _sections_to_pptx(title: str, sections: list[ReportSection]) -> bytes:
     import io
     from pptx import Presentation
+    from pptx.util import Inches
 
     prs = Presentation()
     title_slide = prs.slides.add_slide(prs.slide_layouts[0])
@@ -358,6 +361,24 @@ def _sections_to_pptx(title: str, sections: list[ReportSection]) -> bytes:
         for item in section.items:
             p = tf.add_paragraph()
             p.text = f"• {item}"
+        if section.table:
+            cols = list(section.table.keys())
+            num_rows = max((len(v) for v in section.table.values()), default=0)
+            if num_rows > 0:
+                rows_count = num_rows + 1
+                cols_count = len(cols)
+                left = Inches(0.8)
+                top = Inches(4.2) if (section.body_markdown or section.items) else Inches(2.0)
+                width = Inches(8.4)
+                height = Inches(min(3.0, 0.4 * rows_count))
+                table_shape = slide.shapes.add_table(rows_count, cols_count, left, top, width, height)
+                table = table_shape.table
+                for col_idx, col_name in enumerate(cols):
+                    table.cell(0, col_idx).text = str(col_name)
+                for row_idx in range(num_rows):
+                    for col_idx, col_name in enumerate(cols):
+                        val = str(section.table[col_name][row_idx]) if row_idx < len(section.table[col_name]) else ""
+                        table.cell(row_idx + 1, col_idx).text = val
 
     buf = io.BytesIO()
     prs.save(buf)
@@ -375,6 +396,8 @@ class ReportGenerator:
         report_format: str = "markdown",
         generated_at: str = "",
         allow_external_formats: bool = False,
+        tenant_id: str | None = None,
+        created_by: str | None = None,
     ) -> RenderedReport:
         template = template_by_id(template_id)
         if template is None:
@@ -419,6 +442,8 @@ class ReportGenerator:
             generated_at=generated_at,
             content=content,
             evidence_manifest=ctx.evidence_manifest,
+            tenant_id=tenant_id,
+            created_by=created_by,
         )
 
     def render_bytes(

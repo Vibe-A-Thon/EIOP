@@ -89,7 +89,7 @@ async function main() {
   const registry = sourceRegistry(await readFile(path.join(root, 'GUI-UIX-requirements.md')));
   const serialized = JSON.stringify(registry, null, 2) + '\n';
   if (process.argv.includes('--check')) {
-    if ((await readFile(registryPath, 'utf8')) !== serialized) throw new Error('GUI source registry is stale');
+    if ((await readFile(registryPath, 'utf8')).replaceAll('\r\n', '\n') !== serialized) throw new Error('GUI source registry is stale');
   } else {
     await mkdir(path.dirname(registryPath), {recursive: true});
     await writeFile(registryPath, serialized);

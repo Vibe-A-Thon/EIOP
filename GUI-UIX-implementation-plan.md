@@ -6,6 +6,8 @@ Primary source: [GUI-UIX-requirements.md](GUI-UIX-requirements.md), version 1.0.
 
 Related execution programme: [gaps-audit-cp-implementation-plan.md](gaps-audit-cp-implementation-plan.md). Historical findings: [gaps-audit-cp.md](gaps-audit-cp.md) and [Audit-GAPS-G-dev.md](Audit-GAPS-G-dev.md). Preserve their historical evidence and source bindings.
 
+Implementation follow-up, 2026-10-16: [GUI audit and first implementation batch](GUI-UIX-audit-2026-10-16.md). Structural intake now preserves all source IDs and nonblank lines; new shared GUI foundations, truthful administrative states, policy round-trip/replacement, selected keyboard behavior, event polling and export repairs have executable checks. GUI-00/01 and all feature packages remain partial until their full semantic, runtime and release acceptance passes. The follow-up records actual outcomes and open gaps; the package list below remains the complete target scope.
+
 ### Agent Start Here
 
 1. Read the [completion contract](#1-outcome-and-non-negotiable-completion-contract) and [known mapping problems](#23-correct-known-mapping-problems-before-wiring-screens).

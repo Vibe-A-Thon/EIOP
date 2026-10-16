@@ -330,3 +330,142 @@ class TestReportsRouter:
         store3 = ReportArtifactStore(tmp_path / "reports")
         assert store3.get("urn:eoip:reports:report:rep-1") is None
 
+    def test_pptx_section_table_rendering(self, monkeypatch):
+        import io
+        import pptx
+        monkeypatch.setenv("EOIP_ENABLE_EXTERNAL_REPORT_FORMATS", "true")
+        ctx = _ctx("executive-brief")
+        ctx.graph_stats = {"nodes": "12", "edges": "34"}
+        raw_bytes = ReportGenerator().render_bytes("executive-brief", ctx, report_format="pptx", allow_external_formats=True)
+        prs = pptx.Presentation(io.BytesIO(raw_bytes))
+        tables = [shape.table for slide in prs.slides for shape in slide.shapes if shape.has_table]
+        assert len(tables) >= 1
+        table = tables[0]
+        assert table.cell(0, 0).text == "metric"
+        assert table.cell(0, 1).text == "value"
+
+    def test_reports_and_schedules_cross_tenant_isolation(self, tmp_path: Path):
+        from fastapi import FastAPI
+        from fastapi.testclient import TestClient
+        from starlette.requests import Request
+        from eoip.reports.store import ReportArtifactStore
+        from eoip.reports.schedule import ReportScheduleStore
+
+        app = FastAPI()
+        art_store = ReportArtifactStore(tmp_path / "art")
+        sched_store = ReportScheduleStore(tmp_path / "sched.json")
+        app.include_router(build_router(schedule_store=sched_store, artifact_store=art_store))
+
+        # Middleware that binds tenant_id from header
+        @app.middleware("http")
+        async def tenant_middleware(request: Request, call_next):
+            tenant = request.headers.get("X-Tenant-ID")
+            if tenant:
+                request.state.tenant_id = tenant
+            return await call_next(request)
+
+        client = TestClient(app)
+
+        # 1. Tenant-alpha renders a report
+        render_resp = client.post(
+            "/api/v1/reports/render",
+            params={"template_id": "executive-brief", "report_format": "markdown"},
+            json={"narrative": "Alpha narrative."},
+            headers={"X-Tenant-ID": "tenant-alpha"},
+        )
+        assert render_resp.status_code == 200
+        report_id = render_resp.json()["report_id"]
+        assert render_resp.json()["tenant_id"] == "tenant-alpha"
+
+        # 2. Tenant-beta attempts to export tenant-alpha's report -> 403
+        resp_beta = client.get(f"/api/v1/reports/export/{report_id}", headers={"X-Tenant-ID": "tenant-beta"})
+        assert resp_beta.status_code == 403
+        assert "Cross-tenant access forbidden" in resp_beta.json()["detail"]
+
+        # 3. Tenant-alpha exports own report -> 200
+        resp_alpha = client.get(f"/api/v1/reports/export/{report_id}", headers={"X-Tenant-ID": "tenant-alpha"})
+        assert resp_alpha.status_code == 200
+        assert "Alpha narrative." in resp_alpha.text
+
+        # 4. Tenant-alpha creates a schedule
+        sched_resp = client.post(
+            "/api/v1/reports/schedules",
+            params={"template_id": "executive-brief", "name": "Alpha Weekly Brief"},
+            headers={"X-Tenant-ID": "tenant-alpha"},
+        )
+        assert sched_resp.status_code == 201
+        schedule_id = sched_resp.json()["schedule_id"]
+        assert sched_resp.json()["tenant_id"] == "tenant-alpha"
+
+        # 5. Tenant-beta lists schedules -> does NOT see tenant-alpha's schedule
+        list_beta = client.get("/api/v1/reports/schedules", headers={"X-Tenant-ID": "tenant-beta"})
+        assert list_beta.status_code == 200
+        assert len([s for s in list_beta.json() if s["schedule_id"] == schedule_id]) == 0
+
+        # 6. Tenant-alpha lists schedules -> DOES see schedule
+        list_alpha = client.get("/api/v1/reports/schedules", headers={"X-Tenant-ID": "tenant-alpha"})
+        assert list_alpha.status_code == 200
+        assert len([s for s in list_alpha.json() if s["schedule_id"] == schedule_id]) == 1
+
+        # 7. Tenant-beta attempts to delete tenant-alpha's schedule -> 403
+        del_beta = client.delete(f"/api/v1/reports/schedules/{schedule_id}", headers={"X-Tenant-ID": "tenant-beta"})
+        assert del_beta.status_code == 403
+
+        # 8. Tenant-alpha deletes own schedule -> 204
+        del_alpha = client.delete(f"/api/v1/reports/schedules/{schedule_id}", headers={"X-Tenant-ID": "tenant-alpha"})
+        assert del_alpha.status_code == 204
+
+    def test_schedule_run_execution_persists_artifact(self, tmp_path: Path):
+        from fastapi import FastAPI
+        from fastapi.testclient import TestClient
+        from starlette.requests import Request
+        from eoip.reports.store import ReportArtifactStore
+        from eoip.reports.schedule import ReportScheduleStore
+
+        app = FastAPI()
+        art_store = ReportArtifactStore(tmp_path / "art")
+        sched_store = ReportScheduleStore(tmp_path / "sched.json")
+        app.include_router(build_router(schedule_store=sched_store, artifact_store=art_store))
+
+        @app.middleware("http")
+        async def tenant_middleware(request: Request, call_next):
+            tenant = request.headers.get("X-Tenant-ID")
+            if tenant:
+                request.state.tenant_id = tenant
+            return await call_next(request)
+
+        client = TestClient(app)
+
+        # 1. Tenant-alpha creates a schedule
+        sched_resp = client.post(
+            "/api/v1/reports/schedules",
+            params={"template_id": "executive-brief", "name": "Monthly Exec", "report_format": "markdown"},
+            headers={"X-Tenant-ID": "tenant-alpha"},
+        )
+        assert sched_resp.status_code == 201
+        sched_id = sched_resp.json()["schedule_id"]
+
+        # 2. Tenant-beta attempts to trigger tenant-alpha's schedule -> 403
+        run_beta = client.post(f"/api/v1/reports/schedules/{sched_id}/run", headers={"X-Tenant-ID": "tenant-beta"})
+        assert run_beta.status_code == 403
+        assert "Cross-tenant access forbidden" in run_beta.json()["detail"]
+
+        # 3. Tenant-alpha runs their schedule -> 200
+        run_alpha = client.post(f"/api/v1/reports/schedules/{sched_id}/run", headers={"X-Tenant-ID": "tenant-alpha"})
+        assert run_alpha.status_code == 200
+        artifact = run_alpha.json()
+        assert artifact["template"] == "executive-brief"
+        assert artifact["tenant_id"] == "tenant-alpha"
+        assert artifact["report_id"]
+
+        # 4. Verify artifact exists in art_store and is retrievable by tenant-alpha
+        stored = art_store.get(artifact["report_id"], tenant_id="tenant-alpha")
+        assert stored is not None
+        assert stored.tenant_id == "tenant-alpha"
+
+        # 5. Verify tenant-beta cannot export the generated artifact
+        exp_beta = client.get(f"/api/v1/reports/export/{artifact['report_id']}", headers={"X-Tenant-ID": "tenant-beta"})
+        assert exp_beta.status_code == 403
+
+
+
