@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   ChevronDown,
   Database,
@@ -60,7 +61,7 @@ function ThemeMenu() {
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-40 mt-1 w-52 animate-fade-in rounded-md border border-[var(--border-strong)] bg-[var(--bg-panel)] p-1 shadow-xl">
+          <div className="absolute right-0 z-40 mt-1 w-52 kgf-pop rounded-md border border-[var(--border-strong)] bg-[var(--bg-panel)] p-1 shadow-2xl">
             {THEMES.map((t) => (
               <button
                 key={t.id}
@@ -93,7 +94,7 @@ export function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="flex h-14 shrink-0 items-center gap-3 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3">
+    <header className="kgf-sticky-blur flex h-14 shrink-0 items-center gap-3 border-b border-[var(--border-subtle)] px-3">
       {/* Scope */}
       <button
         data-testid="tenant-select-dropdown"
@@ -135,9 +136,15 @@ export function TopBar() {
       >
         <Pin size={16} />
         {pins.pins.length > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-[var(--accent)] px-1 font-mono text-[9px] font-bold text-black">
+          <motion.span
+            key={pins.pins.length}
+            initial={{ scale: 0.4, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 600, damping: 18 }}
+            className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-[var(--accent)] px-1 font-mono text-[9px] font-bold text-black shadow-[0_0_8px_-1px_var(--accent)]"
+          >
             {pins.pins.length}
-          </span>
+          </motion.span>
         )}
       </button>
 
@@ -167,7 +174,7 @@ export function TopBar() {
         {menuOpen && (
           <>
             <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
-            <div className="absolute right-0 z-40 mt-1 w-64 animate-fade-in rounded-md border border-[var(--border-strong)] bg-[var(--bg-panel)] p-1 shadow-xl">
+            <div className="absolute right-0 z-40 mt-1 w-64 kgf-pop rounded-md border border-[var(--border-strong)] bg-[var(--bg-panel)] p-1 shadow-2xl">
               <div className="px-2.5 py-2">
                 <p className="truncate text-sm font-medium">{session?.principal.username}</p>
                 <p className="truncate font-mono text-[10px] text-[var(--text-muted)]">

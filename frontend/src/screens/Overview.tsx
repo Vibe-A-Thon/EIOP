@@ -17,6 +17,7 @@ import { apiFetch } from "../lib/api";
 import { Card, Overline } from "../components/ui/Card";
 import { Badge, StatusDot } from "../components/ui/Badge";
 import { Skeleton } from "../components/ui/States";
+import { AnimatedCounter } from "../components/ui/AnimatedCounter";
 import { formatNumber, relativeTime } from "../lib/utils";
 
 function StatTile({
@@ -24,14 +25,16 @@ function StatTile({
   value,
   icon: Icon,
   loading,
+  decimals = 0,
 }: {
   label: string;
-  value: string;
+  value: number | null | undefined;
   icon: any;
   loading?: boolean;
+  decimals?: number;
 }) {
   return (
-    <Card className="p-4 transition-colors hover:border-[var(--border-strong)]">
+    <Card hover className="p-4">
       <div className="flex items-center justify-between">
         <Overline>{label}</Overline>
         <Icon size={15} className="text-[var(--text-muted)]" />
@@ -39,7 +42,9 @@ function StatTile({
       {loading ? (
         <Skeleton className="mt-3 h-8 w-20" />
       ) : (
-        <p className="mt-2 font-heading text-2xl font-bold tracking-tight">{value}</p>
+        <p className="mt-2 font-heading text-2xl font-bold tracking-tight">
+          <AnimatedCounter value={value} decimals={decimals} />
+        </p>
       )}
     </Card>
   );
@@ -118,33 +123,28 @@ export function Overview() {
   ] as const;
 
   return (
-    <div className="mx-auto max-w-[1400px] space-y-6 p-6">
+    <div className="kgf-ambient mx-auto max-w-[1400px] space-y-6 p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <Overline>Workbench · {session?.tenant} / {session?.workspace}</Overline>
-          <h1 className="mt-1 font-heading text-2xl font-bold tracking-tight">Overview</h1>
+          <h1 className="mt-1 font-heading text-3xl font-bold tracking-tight sm:text-4xl">Overview</h1>
         </div>
         <Link
           to="/ask"
           data-testid="overview-ask-cta"
-          className="flex items-center gap-2 rounded-sm bg-[var(--accent)] px-3.5 py-2 text-sm font-semibold text-black transition-colors hover:bg-[var(--accent-strong)]"
+          className="flex items-center gap-2 rounded-sm bg-[var(--accent)] px-3.5 py-2 text-sm font-semibold text-black shadow-[0_2px_14px_-4px_var(--accent)] transition-[background-color,box-shadow,transform] duration-150 hover:bg-[var(--accent-strong)] hover:shadow-[0_4px_20px_-4px_var(--accent)] active:scale-95"
         >
           <MessagesSquare size={15} /> Ask a question
         </Link>
       </div>
 
       {/* Stat tiles */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
-        <StatTile label="Vertices" value={formatNumber(stats.data?.vertex_count)} icon={Boxes} loading={stats.isLoading} />
-        <StatTile label="Edges" value={formatNumber(stats.data?.edge_count)} icon={GitFork} loading={stats.isLoading} />
-        <StatTile
-          label="Density"
-          value={stats.data ? stats.data.density?.toFixed(4) ?? "N/A" : "N/A"}
-          icon={Spline}
-          loading={stats.isLoading}
-        />
-        <StatTile label="Vertex labels" value={formatNumber(stats.data?.vertex_label_count)} icon={Layers} loading={stats.isLoading} />
-        <StatTile label="Edge labels" value={formatNumber(stats.data?.edge_label_count)} icon={Network} loading={stats.isLoading} />
+      <div className="kgf-stagger grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+        <StatTile label="Vertices" value={stats.data?.vertex_count} icon={Boxes} loading={stats.isLoading} />
+        <StatTile label="Edges" value={stats.data?.edge_count} icon={GitFork} loading={stats.isLoading} />
+        <StatTile label="Density" value={stats.data?.density} decimals={4} icon={Spline} loading={stats.isLoading} />
+        <StatTile label="Vertex labels" value={stats.data?.vertex_label_count} icon={Layers} loading={stats.isLoading} />
+        <StatTile label="Edge labels" value={stats.data?.edge_label_count} icon={Network} loading={stats.isLoading} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 import { PanelLeftClose, PanelLeftOpen, Waypoints } from "lucide-react";
 import { NAV_GROUPS } from "./nav";
 import { useShell } from "../lib/shellStore";
@@ -46,7 +47,7 @@ export function NavRail() {
                   title={railCollapsed ? item.label : undefined}
                   className={({ isActive }) =>
                     cn(
-                      "group relative flex items-center gap-3 rounded-sm px-2.5 py-1.5 text-sm transition-colors",
+                      "group relative flex items-center gap-3 rounded-sm px-2.5 py-1.5 text-sm transition-[background-color,color] duration-150",
                       isActive
                         ? "bg-[var(--bg-hover)] text-[var(--text-primary)]"
                         : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]",
@@ -56,9 +57,13 @@ export function NavRail() {
                   {({ isActive }) => (
                     <>
                       {isActive && (
-                        <span className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-full bg-[var(--accent)]" />
+                        <motion.span
+                          layoutId="nav-active-indicator"
+                          className="absolute left-0 top-1/2 h-5 w-[2.5px] -translate-y-1/2 rounded-full bg-[var(--accent)] shadow-[0_0_8px_0_var(--accent)]"
+                          transition={{ type: "spring", stiffness: 500, damping: 36 }}
+                        />
                       )}
-                      <item.icon size={16} className="shrink-0" />
+                      <item.icon size={16} className="shrink-0 transition-transform duration-150 group-hover:scale-110 group-active:scale-95" />
                       {!railCollapsed && <span className="truncate">{item.label}</span>}
                     </>
                   )}

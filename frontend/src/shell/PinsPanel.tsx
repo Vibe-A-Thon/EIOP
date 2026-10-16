@@ -58,7 +58,7 @@ export function PinsPanel() {
   return (
     <aside
       data-testid="pins-panel"
-      className="flex w-[340px] shrink-0 flex-col border-l border-[var(--border-subtle)] bg-[var(--bg-surface)] animate-fade-in"
+      className="flex w-[340px] shrink-0 flex-col border-l border-[var(--border-subtle)] bg-[var(--bg-surface)] kgf-slide-right"
     >
       <div className="flex h-11 shrink-0 items-center justify-between border-b border-[var(--border-subtle)] px-3">
         <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">

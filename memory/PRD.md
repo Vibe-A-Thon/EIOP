@@ -113,6 +113,21 @@ with best-in-class graphics, transitions, animations, icons, and modular screens
   entrance animation, premium radial background, input focus rings. All shared primitives → propagates to all screens.
 - Nav additions: Time Travel (Explore), Collaboration (Operate), Brand (Govern).
 
+## Visual/UX polish pass (iteration 6, 2026-06) — frontend only, no logic changes
+- **Global CSS primitives** (`index.css`): smooth scroll, on-brand focus rings, cyan-tinted branded
+  skeleton sweep, `.kgf-pop` (origin-top menu/dropdown entrance), `.kgf-tip`, `.kgf-slide-right` (drawers),
+  `.kgf-grain` (noise), `.kgf-ambient` (accent glow blobs), `.kgf-glow-accent`/`.kgf-selected` glows,
+  `.kgf-panel-glass` + `.kgf-sticky-blur`.
+- **Shared primitives**: Tabs now use a framer-motion `layoutId` sliding indicator; Button has glow + active
+  press (prior); new `AnimatedCounter` (easeOutCubic, reduced-motion aware) wired into Overview KPI tiles.
+- **Shell**: NavRail animated sliding active indicator (layoutId) + icon hover micro-motion; TopBar sticky
+  blur header, origin-top animated dropdowns, spring-animated pin badge; CommandPalette spring entrance;
+  Inspector + PinsPanel slide-in drawers.
+- **Overview dashboard**: ambient gradient atmosphere, staggered KPI tile entrance, animated counters,
+  larger commanding heading, glowing CTA.
+- Verified: `tsc --noEmit` clean; Overview/Graph/new screens smoke-screenshotted, no regressions. Per
+  instruction, the automated testing agent was NOT run for this visual pass.
+
 ## QA (iteration 5, 2026-06) — testing agent frontend E2E
 - `/app/test_reports/iteration_5.json`: **7/7 new flows PASS** (Meta-graph, Ontology Designer gitops,
   Impact 3-modes, Reports+Schedules, Collaboration, Brand, Time Travel). No functional/blocking bugs.

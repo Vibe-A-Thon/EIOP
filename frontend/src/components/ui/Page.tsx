@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { motion } from "framer-motion";
 import { Overline } from "./Card";
 
 export function PageHeader({
@@ -51,7 +52,13 @@ export function Tabs<T extends string>({
           className={`relative px-3 py-2.5 text-sm transition-colors ${active === t.id ? "text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"}`}
         >
           {t.label}
-          {active === t.id && <span className="absolute bottom-0 left-0 h-[2px] w-full rounded-full bg-[var(--accent)]" />}
+          {active === t.id && (
+            <motion.span
+              layoutId={`tab-indicator-${testPrefix}`}
+              className="absolute bottom-0 left-0 h-[2px] w-full rounded-full bg-[var(--accent)]"
+              transition={{ type: "spring", stiffness: 420, damping: 34 }}
+            />
+          )}
         </button>
       ))}
     </div>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { ArrowRight, CornerDownLeft, Search, Loader2 } from "lucide-react";
 import { useShell } from "../lib/shellStore";
 import { apiFetch } from "../lib/api";
@@ -84,7 +85,12 @@ export function CommandPalette() {
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh]" data-testid="command-palette">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => togglePalette(false)} />
-      <div className="relative w-full max-w-xl animate-fade-in overflow-hidden rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface)] shadow-2xl">
+      <motion.div
+        initial={{ opacity: 0, y: -12, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 420, damping: 32 }}
+        className="relative w-full max-w-xl overflow-hidden rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface)] shadow-2xl"
+      >
         <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] px-4">
           <Search size={17} className="text-[var(--text-muted)]" />
           <input
@@ -187,7 +193,7 @@ export function CommandPalette() {
           <span>↑↓ navigate</span>
           <span>esc close</span>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
