@@ -3,6 +3,7 @@ import {
   MessagesSquare,
   Waypoints,
   Network,
+  DatabaseZap,
   type LucideIcon,
 } from "lucide-react";
 
@@ -18,5 +19,6 @@ export const NAV_ITEMS: NavItem[] = [
   { id: "overview", label: "Overview", to: "/overview", icon: LayoutDashboard, hint: "Dashboard" },
   { id: "ask", label: "Ask", to: "/ask", icon: MessagesSquare, hint: "Natural-language query" },
   { id: "graph", label: "Graph Explorer", to: "/graph", icon: Waypoints, hint: "Primary work surface" },
+  { id: "ingestion", label: "Ingestion", to: "/ingestion", icon: DatabaseZap, hint: "Sources, jobs & runs" },
   { id: "schema", label: "Schema", to: "/schema", icon: Network, hint: "Ontology & labels" },
 ];

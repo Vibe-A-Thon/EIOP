@@ -1,23 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   CornerDownLeft,
+  Database,
   Lightbulb,
   Loader2,
   Lock,
+  MessageSquareText,
   Quote,
   Send,
   Sparkles,
+  Square,
 } from "lucide-react";
 import { useAuth } from "../lib/auth";
-import { apiFetch, type ApiProblem } from "../lib/api";
+import { apiFetch, streamSSE, type ApiProblem } from "../lib/api";
 import { Card, Overline } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
 import { AnswerModeBadge } from "../components/ModeBadges";
 import { FactClassBadge } from "../components/FactClassBadge";
 import { ErrorState } from "../components/ui/States";
-import { shortId } from "../lib/utils";
+import { cn, shortId } from "../lib/utils";
 
 interface NlResult {
   interpretation?: { plan?: any };
@@ -30,30 +33,31 @@ interface NlResult {
   warnings?: string[];
 }
 
-function deriveMode(r: NlResult): string {
-  if (!r.answer && (r.result?.partial || !r.interpretation?.plan)) return "Abstained";
-  if (r.engine && /model|llm|opus|frontier/i.test(r.engine)) return "Narrated";
-  return "Deterministic";
-}
+type Mode = "deterministic" | "narrated";
 
 export function Ask() {
   const { session } = useAuth();
   const navigate = useNavigate();
   const [question, setQuestion] = useState("");
+  const [mode, setMode] = useState<Mode>("deterministic");
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [result, setResult] = useState<NlResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ApiProblem | null>(null);
 
-  // Boundary badge — local only unless egress endpoints are enabled
+  // Narration stream state
+  const [narration, setNarration] = useState("");
+  const [streaming, setStreaming] = useState(false);
+  const [isSimulation, setIsSimulation] = useState(false);
+  const [streamInterrupted, setStreamInterrupted] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
+
   const egress = useQuery({
     queryKey: ["egress-endpoints"],
     queryFn: () => apiFetch<any>("/egress/endpoints"),
     retry: false,
   });
-  const enabledEgress = (egress.data?.endpoints || egress.data || []).filter?.(
-    (e: any) => e?.enabled,
-  );
+  const enabledEgress = (egress.data?.endpoints || []).filter?.((e: any) => e?.enabled);
   const boundary = egress.isError
     ? { label: "Egress status unknown", tone: "warning" as const }
     : enabledEgress && enabledEgress.length > 0
@@ -67,13 +71,38 @@ export function Ask() {
     staleTime: 300_000,
   });
   const starters: string[] = (() => {
-    const raw = intents.data?.intents || intents.data?.candidates || intents.data || [];
-    const list = Array.isArray(raw) ? raw : [];
-    return list
-      .map((i: any) => (typeof i === "string" ? i : i.example || i.question || i.label || i.name))
-      .filter(Boolean)
-      .slice(0, 6);
+    const raw = intents.data?.intents || [];
+    const seed = ["What implements EOIP-1?", "What changes if service.py changes?", "Why is EOIP-1 linked to the demo repo?"];
+    const fromIntents = (Array.isArray(raw) ? raw : []).slice(0, 3).map((i: string) => `Show me ${i} for the demo project`);
+    return [...seed, ...fromIntents].slice(0, 6);
   })();
+
+  const stopStream = () => {
+    abortRef.current?.abort();
+    setStreaming(false);
+  };
+
+  const runNarration = async (query: string) => {
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+    setNarration("");
+    setStreamInterrupted(false);
+    setStreaming(true);
+    setIsSimulation(false);
+    const prompt = `Using the enterprise knowledge graph, answer the question with a concise, evidence-grounded explanation.\nQuestion: ${query}`;
+    try {
+      for await (const chunk of streamSSE("/brain/llm/stream", { prompt, max_tokens: 256, enable_xai: true }, ctrl.signal)) {
+        if (chunk?.usage?.is_simulation) setIsSimulation(true);
+        if (chunk?.accumulated) setNarration(chunk.accumulated);
+        else if (chunk?.delta) setNarration((prev) => prev + chunk.delta);
+      }
+      setStreaming(false);
+    } catch (err: any) {
+      setStreaming(false);
+      if (err?.name !== "AbortError") setStreamInterrupted(true);
+    }
+  };
 
   const run = async (q: string) => {
     const query = q.trim();
@@ -82,19 +111,22 @@ export function Ask() {
     setLoading(true);
     setError(null);
     setResult(null);
+    setNarration("");
+    setStreamInterrupted(false);
     try {
       const r = await apiFetch<NlResult>("/query/nl", { method: "POST", body: { question: query } });
       setResult(r);
+      setLoading(false);
+      if (mode === "narrated") runNarration(query);
     } catch (err: any) {
       setError(err?.problem || { status: 0, title: "Error", detail: err?.message });
-    } finally {
       setLoading(false);
     }
   };
 
   const nodes: any[] = result?.result?.nodes || [];
   const evidence: any[] = result?.result?.evidence || result?.highlights || [];
-  const mode = result ? deriveMode(result) : null;
+  const detMode = result && (result.engine && /model|llm|opus|frontier/i.test(result.engine) ? "Narrated" : "Deterministic");
 
   return (
     <div className="mx-auto max-w-4xl space-y-5 p-6">
@@ -103,13 +135,32 @@ export function Ask() {
           <Overline>Evidence-first query</Overline>
           <h1 className="mt-1 font-heading text-2xl font-bold tracking-tight">Ask</h1>
         </div>
-        <Badge
-          tone={boundary.tone}
-          testId="ask-boundary-badge"
-          icon={<Lock size={11} />}
-        >
+        <Badge tone={boundary.tone} testId="ask-boundary-badge" icon={<Lock size={11} />}>
           {boundary.label}
         </Badge>
+      </div>
+
+      {/* Mode toggle */}
+      <div className="flex items-center gap-2">
+        <Overline>Answer mode</Overline>
+        <div className="flex items-center gap-1 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-void)] p-0.5">
+          {([
+            { id: "deterministic", label: "Deterministic", icon: Database },
+            { id: "narrated", label: "Narrated", icon: MessageSquareText },
+          ] as const).map((m) => (
+            <button
+              key={m.id}
+              data-testid={`ask-mode-${m.id}`}
+              onClick={() => setMode(m.id)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-[3px] px-2.5 py-1 text-xs transition-colors",
+                mode === m.id ? "bg-[var(--bg-hover)] text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-primary)]",
+              )}
+            >
+              <m.icon size={13} /> {m.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Composer */}
@@ -141,7 +192,6 @@ export function Ask() {
         </div>
       </Card>
 
-      {/* Suggestion cards */}
       {!result && !loading && starters.length > 0 && (
         <div>
           <div className="mb-2 flex items-center gap-1.5">
@@ -160,16 +210,13 @@ export function Ask() {
                 className="group flex items-start gap-2.5 rounded-md border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-3 text-left text-sm transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--bg-hover)]"
               >
                 <Sparkles size={14} className="mt-0.5 shrink-0 text-cyan-400" />
-                <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]">
-                  {s}
-                </span>
+                <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]">{s}</span>
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* Result */}
       {error && <ErrorState problem={error} onRetry={() => submitted && run(submitted)} />}
 
       {loading && (
@@ -182,12 +229,64 @@ export function Ask() {
 
       {result && (
         <div className="animate-fade-in space-y-4" data-testid="ask-result">
+          {/* Narrated streamed answer */}
+          {mode === "narrated" && (
+            <Card data-testid="ask-narration">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-subtle)] px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <AnswerModeBadge mode={isSimulation ? "Simulated" : "Narrated"} />
+                  {streaming && (
+                    <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-cyan-400">
+                      <Loader2 size={11} className="animate-spin" /> streaming
+                    </span>
+                  )}
+                </div>
+                {streaming && (
+                  <button
+                    data-testid="ask-stop-stream"
+                    onClick={stopStream}
+                    className="flex items-center gap-1.5 rounded-sm border border-[var(--border-strong)] px-2.5 py-1 text-xs transition-colors hover:bg-[var(--bg-hover)]"
+                  >
+                    <Square size={11} /> Stop
+                  </button>
+                )}
+              </div>
+              <div className="p-4">
+                {narration ? (
+                  <p className="whitespace-pre-wrap text-[15px] leading-relaxed">
+                    {narration}
+                    {streaming && <span className="ml-0.5 inline-block h-4 w-1.5 animate-pulse bg-[var(--accent)] align-middle" />}
+                  </p>
+                ) : streaming ? (
+                  <p className="text-sm text-[var(--text-muted)]">Generating narration…</p>
+                ) : null}
+
+                {streamInterrupted && (
+                  <div className="mt-3 flex items-center justify-between rounded-sm border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
+                    Stream interrupted — regenerate.
+                    <button
+                      data-testid="ask-regenerate"
+                      onClick={() => submitted && runNarration(submitted)}
+                      className="rounded-sm border border-amber-500/40 px-2 py-0.5 text-xs transition-colors hover:bg-amber-500/20"
+                    >
+                      Regenerate
+                    </button>
+                  </div>
+                )}
+                {isSimulation && !streaming && narration && (
+                  <p className="mt-3 font-mono text-[10px] text-[var(--text-muted)]">
+                    Generated by the development simulator — not model inference.
+                  </p>
+                )}
+              </div>
+            </Card>
+          )}
+
+          {/* Deterministic result */}
           <Card>
             <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border-subtle)] px-4 py-3">
-              {mode && <AnswerModeBadge mode={mode} />}
-              {result.engine && (
-                <Badge tone="neutral">engine: {result.engine}</Badge>
-              )}
+              {detMode && <AnswerModeBadge mode={detMode} />}
+              {result.engine && <Badge tone="neutral">engine: {result.engine}</Badge>}
               {result.confidence !== undefined && result.confidence !== null && (
                 <Badge tone="accent">
                   confidence: {typeof result.confidence === "number" ? result.confidence.toFixed(2) : result.confidence}
@@ -195,11 +294,8 @@ export function Ask() {
               )}
             </div>
             <div className="p-4">
-              <p className="mb-1 font-mono text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
-                Question
-              </p>
+              <p className="mb-1 font-mono text-[10px] uppercase tracking-wider text-[var(--text-muted)]">Question</p>
               <p className="mb-4 text-sm text-[var(--text-secondary)]">{submitted}</p>
-
               {result.answer ? (
                 <p className="whitespace-pre-wrap text-[15px] leading-relaxed">{result.answer}</p>
               ) : !result.interpretation?.plan ? (
@@ -208,7 +304,7 @@ export function Ask() {
                 </div>
               ) : (
                 <p className="text-sm text-[var(--text-muted)]">
-                  No narrative answer returned. Review the matched entities and evidence below.
+                  No narrative answer from the deterministic engine. Review matched entities and evidence below.
                 </p>
               )}
 
@@ -234,7 +330,6 @@ export function Ask() {
             </div>
           </Card>
 
-          {/* Matched entities */}
           {nodes.length > 0 && (
             <Card>
               <div className="border-b border-[var(--border-subtle)] px-4 py-3">
@@ -250,9 +345,7 @@ export function Ask() {
                     <span className="rounded-full border border-[var(--border-strong)] px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
                       {n.label}
                     </span>
-                    <span className="truncate text-sm">
-                      {n.properties?.name || n.properties?.title || shortId(n.id)}
-                    </span>
+                    <span className="truncate text-sm">{n.properties?.name || n.properties?.title || shortId(n.id)}</span>
                     <FactClassBadge creationStatus={n.properties?.creation_status} size="sm" />
                   </button>
                 ))}
@@ -260,24 +353,32 @@ export function Ask() {
             </Card>
           )}
 
-          {/* Evidence */}
           {evidence.length > 0 && (
             <Card>
               <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] px-4 py-3">
                 <Quote size={14} className="text-[var(--text-muted)]" />
-                <h3 className="font-heading text-sm font-semibold">Evidence ({evidence.length})</h3>
+                <h3 className="font-heading text-sm font-semibold">
+                  {mode === "narrated" ? "Grounding evidence" : "Evidence"} ({evidence.length})
+                </h3>
               </div>
               <div className="space-y-2 p-4">
                 {evidence.slice(0, 8).map((ev: any, i: number) => (
                   <div
                     key={i}
-                    className="rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-panel)] p-3 text-xs"
+                    data-testid={`ask-evidence-${i}`}
+                    title={ev.source_ref || ev.canonical_id || "evidence"}
+                    className="group rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-panel)] p-3 text-xs transition-colors hover:border-[var(--border-strong)]"
                   >
-                    <p className="text-[var(--text-secondary)]">
-                      {ev.fact_text || ev.text || ev.snippet || JSON.stringify(ev).slice(0, 180)}
-                    </p>
+                    <div className="flex items-start gap-2">
+                      <span className="mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-cyan-500/20 font-mono text-[9px] text-cyan-300">
+                        {i + 1}
+                      </span>
+                      <p className="text-[var(--text-secondary)]">
+                        {ev.fact_text || ev.text || ev.snippet || JSON.stringify(ev).slice(0, 180)}
+                      </p>
+                    </div>
                     {(ev.source_ref || ev.canonical_id) && (
-                      <p className="mt-1 break-all font-mono text-[10px] text-[var(--text-muted)]">
+                      <p className="mt-1 break-all pl-6 font-mono text-[10px] text-[var(--text-muted)]">
                         {ev.source_ref || ev.canonical_id}
                       </p>
                     )}

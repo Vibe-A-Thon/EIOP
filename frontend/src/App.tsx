@@ -7,6 +7,7 @@ import { Ask } from "./screens/Ask";
 import { GraphExplorer } from "./screens/GraphExplorer";
 import { Entity360 } from "./screens/Entity360";
 import { Schema } from "./screens/Schema";
+import { IngestionConsole } from "./screens/IngestionConsole";
 
 export default function App() {
   const { session } = useAuth();
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/graph" element={<GraphExplorer />} />
         <Route path="/entity/:id" element={<Entity360 />} />
         <Route path="/schema" element={<Schema />} />
+        <Route path="/ingestion" element={<IngestionConsole />} />
         <Route path="/signin" element={<Navigate to="/overview" replace />} />
         <Route path="*" element={<Navigate to="/overview" replace />} />
       </Routes>
