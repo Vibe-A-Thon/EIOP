@@ -7,6 +7,7 @@ import {
   LogOut,
   Monitor,
   Palette,
+  Pin,
   Search,
   TerminalSquare,
   UserRound,
@@ -14,6 +15,7 @@ import {
 import { useAuth } from "../lib/auth";
 import { useTheme, THEMES, type ThemeName } from "../lib/theme";
 import { useShell } from "../lib/shellStore";
+import { usePins } from "../lib/pinsStore";
 import { apiFetch } from "../lib/api";
 import { StatusDot } from "../components/ui/Badge";
 import { cn } from "../lib/utils";
@@ -86,6 +88,7 @@ function ThemeMenu() {
 export function TopBar() {
   const { session, signOut } = useAuth();
   const { togglePalette } = useShell();
+  const pins = usePins();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -123,6 +126,20 @@ export function TopBar() {
       </button>
 
       <BackendChip />
+
+      <button
+        data-testid="pins-trigger"
+        onClick={() => pins.setOpen(!pins.open)}
+        className="relative grid h-9 w-9 place-items-center rounded-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
+        title="Evidence board"
+      >
+        <Pin size={16} />
+        {pins.pins.length > 0 && (
+          <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-[var(--accent)] px-1 font-mono text-[9px] font-bold text-black">
+            {pins.pins.length}
+          </span>
+        )}
+      </button>
 
       <button
         data-testid="command-palette-trigger"

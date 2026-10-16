@@ -49,3 +49,36 @@ export function deleteView(
   localStorage.setItem(keyFor(principal, tenant, workspace), JSON.stringify(next));
   return next;
 }
+
+export function exportViews(views: SavedView[]): string {
+  return JSON.stringify({ kind: "kgf.views", version: 1, views }, null, 2);
+}
+
+/** Merge imported views into the current scope, de-duping by id. */
+export function importViews(
+  principal: string,
+  tenant: string,
+  workspace: string,
+  json: string,
+): SavedView[] {
+  const parsed = JSON.parse(json);
+  const incoming: SavedView[] = Array.isArray(parsed) ? parsed : parsed?.views || [];
+  if (!Array.isArray(incoming)) throw new Error("Invalid views file");
+  const current = listViews(principal, tenant, workspace);
+  const byId = new Map(current.map((v) => [v.id, v]));
+  for (const v of incoming) {
+    if (!v?.name || !Array.isArray(v?.seeds)) continue;
+    const entry: SavedView = {
+      id: v.id || `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      name: v.name,
+      seeds: v.seeds,
+      lens: v.lens === "fact" ? "fact" : "domain",
+      hiddenFacts: Array.isArray(v.hiddenFacts) ? v.hiddenFacts : [],
+      createdAt: v.createdAt || new Date().toISOString(),
+    };
+    byId.set(entry.id, entry);
+  }
+  const next = [...byId.values()].slice(0, 50);
+  localStorage.setItem(keyFor(principal, tenant, workspace), JSON.stringify(next));
+  return next;
+}

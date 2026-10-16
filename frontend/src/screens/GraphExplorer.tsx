@@ -3,6 +3,7 @@ import {
   Bookmark,
   BookmarkPlus,
   Crosshair,
+  Download,
   Filter,
   Layers,
   Loader2,
@@ -11,6 +12,7 @@ import {
   Search,
   Shrink,
   Trash2,
+  Upload,
   Waypoints,
   X,
 } from "lucide-react";
@@ -20,7 +22,7 @@ import { useShell } from "../lib/shellStore";
 import { GraphCanvas, type GEdge, type GNode } from "../components/GraphCanvas";
 import { ResultBanner, EmptyState, ErrorState } from "../components/ui/States";
 import { ALL_FACT_CLASSES, FACT_META, factClassOf } from "../lib/factClass";
-import { listViews, saveView, deleteView, type SavedView } from "../lib/savedViews";
+import { listViews, saveView, deleteView, exportViews, importViews, type SavedView } from "../lib/savedViews";
 import { cn, shortId } from "../lib/utils";
 
 const DOMAIN_COLORS: Record<string, string> = {
@@ -148,6 +150,8 @@ export function GraphExplorer() {
   const [paths, setPaths] = useState<string[][]>([]);
   const [pathLoading, setPathLoading] = useState(false);
   const [pathError, setPathError] = useState<string | null>(null);
+  const [highlightNodes, setHighlightNodes] = useState<Set<string>>(new Set());
+  const [highlightEdges, setHighlightEdges] = useState<Set<string>>(new Set());
 
   // Saved views
   const [views, setViews] = useState<SavedView[]>([]);
@@ -240,35 +244,53 @@ export function GraphExplorer() {
     };
   }, [query]);
 
-  // Build a renderable subgraph from shortest-path node-id arrays.
+  // Trace shortest paths and highlight them on the full neighborhood graph.
   const runPaths = async () => {
     if (!pathSource || !pathTarget) return;
     setPathLoading(true);
     setPathError(null);
     setPaths([]);
+    setHighlightNodes(new Set());
+    setHighlightEdges(new Set());
     try {
-      const r = await apiFetch<any>("/graph/shortest-paths", {
-        method: "POST",
-        body: { source_id: pathSource.id, target_id: pathTarget.id, max_paths: 8, max_length: 12 },
-      });
+      const [r, srcNb, tgtNb] = await Promise.all([
+        apiFetch<any>("/graph/shortest-paths", {
+          method: "POST",
+          body: { source_id: pathSource.id, target_id: pathTarget.id, max_paths: 8, max_length: 12 },
+        }),
+        apiFetch<any>("/neighborhood", { method: "POST", body: { canonical_id: pathSource.id, max_depth: 1, result_limit: 80 } }).catch(() => ({ nodes: [], edges: [] })),
+        apiFetch<any>("/neighborhood", { method: "POST", body: { canonical_id: pathTarget.id, max_depth: 1, result_limit: 80 } }).catch(() => ({ nodes: [], edges: [] })),
+      ]);
       const found: string[][] = r.paths || [];
       setPaths(found);
       if (found.length === 0) {
         setPathError("No path found between these entities.");
         return;
       }
-      const nodeMap = new Map<string, GNode>();
-      const edgeList: GEdge[] = [];
+
+      // Merge current graph + both endpoints' neighborhoods + path members for context.
+      const nodeMap = new Map<string, GNode>(nodes.map((n) => [n.id, n]));
+      const edgeMap = new Map<string, GEdge>(edges.filter((e) => e.type !== "PATH").map((e) => [e.id, e]));
+      [...(srcNb.nodes || []), ...(tgtNb.nodes || [])].forEach((n: GNode) => nodeMap.set(n.id, n));
+      [...(srcNb.edges || []), ...(tgtNb.edges || [])].forEach((e: GEdge) => edgeMap.set(e.id, e));
+
+      const hiNodes = new Set<string>();
+      const hiEdges = new Set<string>();
       found.forEach((p, pi) => {
         p.forEach((id, idx) => {
+          hiNodes.add(id);
           if (!nodeMap.has(id)) nodeMap.set(id, { id, label: domainFromId(id), domain: domainFromId(id), properties: {} });
           if (idx > 0) {
-            edgeList.push({ id: `${p[idx - 1]}->${id}:${pi}:${idx}`, from_id: p[idx - 1], to_id: id, type: "PATH" });
+            const eid = `path:${pi}:${idx}`;
+            edgeMap.set(eid, { id: eid, from_id: p[idx - 1], to_id: id, type: "PATH" });
+            hiEdges.add(eid);
           }
         });
       });
       setNodes([...nodeMap.values()]);
-      setEdges(edgeList);
+      setEdges([...edgeMap.values()]);
+      setHighlightNodes(hiNodes);
+      setHighlightEdges(hiEdges);
       setMeta({});
     } catch (err: any) {
       setPathError(err?.problem?.detail || err?.message || "Path query failed");
@@ -277,23 +299,29 @@ export function GraphExplorer() {
     }
   };
 
+  const clearPaths = () => {
+    setPaths([]);
+    setPathError(null);
+    setHighlightNodes(new Set());
+    setHighlightEdges(new Set());
+    setEdges((prev) => prev.filter((e) => e.type !== "PATH"));
+  };
+
   const visibleEdges = useMemo(
-    () => (mode === "paths" ? edges : edges.filter((e) => !hiddenFacts.has(factClassOf(e.creation_status)))),
-    [edges, hiddenFacts, mode],
+    () => edges.filter((e) => e.type === "PATH" || !hiddenFacts.has(factClassOf(e.creation_status))),
+    [edges, hiddenFacts],
   );
 
   const colorOf = useCallback(
-    (n: GNode) => (lens === "domain" || mode === "paths" ? domainColor(n.domain) : "#475569"),
-    [lens, mode],
+    (n: GNode) => (lens === "domain" ? domainColor(n.domain) : "#475569"),
+    [lens],
   );
   const edgeColorOf = useCallback(
     (e: GEdge) =>
-      mode === "paths"
-        ? "#06b6d4"
-        : lens === "fact"
-          ? getComputedStyle(document.documentElement).getPropertyValue(FACT_META[factClassOf(e.creation_status)].color.slice(4, -1)).trim() || "#475569"
-          : "#2a3748",
-    [lens, mode],
+      lens === "fact"
+        ? getComputedStyle(document.documentElement).getPropertyValue(FACT_META[factClassOf(e.creation_status)].color.slice(4, -1)).trim() || "#475569"
+        : "#2a3748",
+    [lens],
   );
 
   const activeDomains = useMemo(() => {
@@ -324,11 +352,37 @@ export function GraphExplorer() {
   const loadView = async (v: SavedView) => {
     setMode("explore");
     setViewsOpen(false);
+    clearPaths();
     setLens(v.lens);
     setHiddenFacts(new Set(v.hiddenFacts));
     if (v.seeds.length === 0) return;
     await loadNeighborhood(v.seeds[0], false);
     for (const s of v.seeds.slice(1)) await loadNeighborhood(s, true);
+  };
+
+  const handleExportViews = () => {
+    const blob = new Blob([exportViews(views)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `kgf-graph-views-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportViews = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        setViews(importViews(principal, tenant, workspace, String(reader.result)));
+      } catch {
+        /* ignore invalid file */
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
   };
 
   return (
@@ -351,7 +405,7 @@ export function GraphExplorer() {
               data-testid={`graph-mode-${m.id}`}
               onClick={() => {
                 setMode(m.id);
-                if (m.id === "explore") bootstrap();
+                if (m.id === "explore") clearPaths();
               }}
               className={cn(
                 "flex items-center gap-1.5 rounded-[3px] px-2.5 py-1 text-xs transition-colors",
@@ -490,8 +544,25 @@ export function GraphExplorer() {
                     ))
                   )}
                 </div>
-                <p className="mt-2 border-t border-[var(--border-subtle)] px-1 pt-2 font-mono text-[9px] text-[var(--text-muted)]">
-                  Saved on this device only.
+                <div className="mt-2 flex items-center gap-1.5 border-t border-[var(--border-subtle)] pt-2">
+                  <button
+                    data-testid="graph-view-export"
+                    onClick={handleExportViews}
+                    disabled={views.length === 0}
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-sm border border-[var(--border-subtle)] px-2 py-1.5 text-xs transition-colors hover:border-[var(--border-strong)] disabled:opacity-40"
+                  >
+                    <Download size={12} /> Export
+                  </button>
+                  <label
+                    data-testid="graph-view-import"
+                    className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-sm border border-[var(--border-subtle)] px-2 py-1.5 text-xs transition-colors hover:border-[var(--border-strong)]"
+                  >
+                    <Upload size={12} /> Import
+                    <input type="file" accept="application/json" className="hidden" onChange={handleImportViews} />
+                  </label>
+                </div>
+                <p className="mt-2 px-1 font-mono text-[9px] text-[var(--text-muted)]">
+                  Saved on this device only. Export to share with teammates.
                 </p>
               </div>
             </>
@@ -540,6 +611,8 @@ export function GraphExplorer() {
             colorOf={colorOf}
             edgeColorOf={edgeColorOf}
             selectedId={mode === "paths" ? pathSource?.id : inspectorEntityId}
+            highlightNodes={mode === "paths" ? highlightNodes : undefined}
+            highlightEdges={mode === "paths" ? highlightEdges : undefined}
             onSelect={openInspector}
           />
         )}

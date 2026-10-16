@@ -16,6 +16,7 @@ import { Badge, StatusDot } from "../components/ui/Badge";
 import { JobStatusBadge } from "../components/ModeBadges";
 import { LoadingState, ErrorState, EmptyState } from "../components/ui/States";
 import { Button } from "../components/ui/Button";
+import { SourceOnboarding } from "../components/SourceOnboarding";
 import { cn, relativeTime, shortId } from "../lib/utils";
 
 type Tab = "runs" | "jobs" | "sources" | "dlq";
@@ -38,6 +39,7 @@ export function IngestionConsole() {
   const { session } = useAuth();
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>("runs");
+  const [onboarding, setOnboarding] = useState<any | null>(null);
   const t = session?.tenant;
 
   const runs = useQuery({
@@ -227,13 +229,17 @@ export function IngestionConsole() {
           </Card>
 
           <div>
-            <Overline>Available connectors ({connectorList.length})</Overline>
+            <div className="mb-2 flex items-center justify-between">
+              <Overline>Available connectors ({connectorList.length})</Overline>
+              <span className="font-mono text-[10px] text-[var(--text-muted)]">Click a connector to connect it</span>
+            </div>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
               {connectorList.map((c: any) => (
-                <div
+                <button
                   key={c.id}
                   data-testid={`connector-${c.id}`}
-                  className="flex items-center gap-2.5 rounded-md border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-3 transition-colors hover:border-[var(--border-strong)]"
+                  onClick={() => setOnboarding(c)}
+                  className="flex items-center gap-2.5 rounded-md border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-3 text-left transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg-hover)]"
                 >
                   <div className="grid h-8 w-8 shrink-0 place-items-center rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-panel)] text-[var(--text-muted)]">
                     <Boxes size={15} />
@@ -242,7 +248,7 @@ export function IngestionConsole() {
                     <p className="truncate text-sm font-medium capitalize">{c.name || c.id}</p>
                     <p className="font-mono text-[9px] uppercase tracking-wider text-[var(--text-muted)]">{c.type}</p>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -273,6 +279,14 @@ export function IngestionConsole() {
             </div>
           )}
         </Card>
+      )}
+
+      {onboarding && (
+        <SourceOnboarding
+          connector={onboarding}
+          onClose={() => setOnboarding(null)}
+          onDone={refresh}
+        />
       )}
     </div>
   );

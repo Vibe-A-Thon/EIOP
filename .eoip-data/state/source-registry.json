@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "sources": [
+    {
+      "acquisition_modes": [
+        "baseline",
+        "replay"
+      ],
+      "allowed_scopes": [],
+      "base_url": "https://example.invalid",
+      "capabilities": {
+        "baseline": true,
+        "deletion_events": false,
+        "discovery": true,
+        "permission_events": false,
+        "polling": false,
+        "reconciliation": false,
+        "replay": true,
+        "webhooks": false
+      },
+      "checkpoint": null,
+      "compatibility": {},
+      "config": {},
+      "created_at": "2026-10-16T09:55:38.122801Z",
+      "enabled": true,
+      "excluded_scopes": [],
+      "freshness_slo_seconds": null,
+      "health": "UNKNOWN",
+      "last_incremental_run": null,
+      "last_successful_baseline": null,
+      "mapping_version": null,
+      "name": "Demo Web Source",
+      "parser_version": null,
+      "polling_frequency_seconds": null,
+      "reconciliation_schedule": null,
+      "schema_version": "1.0",
+      "secret_refs": {},
+      "source_id": "demo-web-1",
+      "source_type": "web",
+      "updated_at": "2026-10-16T09:55:38.122810Z",
+      "webhook_status": "UNCONFIGURED"
+    }
+  ]
+}

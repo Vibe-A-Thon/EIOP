@@ -8,6 +8,7 @@ import {
   Loader2,
   Lock,
   MessageSquareText,
+  Pin,
   Quote,
   Send,
   Sparkles,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { apiFetch, streamSSE, type ApiProblem } from "../lib/api";
+import { usePins } from "../lib/pinsStore";
 import { Card, Overline } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
 import { AnswerModeBadge } from "../components/ModeBadges";
@@ -38,6 +40,7 @@ type Mode = "deterministic" | "narrated";
 export function Ask() {
   const { session } = useAuth();
   const navigate = useNavigate();
+  const addPin = usePins((s) => s.addPin);
   const [question, setQuestion] = useState("");
   const [mode, setMode] = useState<Mode>("deterministic");
   const [submitted, setSubmitted] = useState<string | null>(null);
@@ -376,9 +379,23 @@ export function Ask() {
                       <span className="mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-cyan-500/20 font-mono text-[9px] text-cyan-300">
                         {i + 1}
                       </span>
-                      <p className="text-[var(--text-secondary)]">
+                      <p className="flex-1 text-[var(--text-secondary)]">
                         {ev.fact_text || ev.text || ev.snippet || JSON.stringify(ev).slice(0, 180)}
                       </p>
+                      <button
+                        data-testid={`ask-evidence-pin-${i}`}
+                        title="Pin to evidence board"
+                        onClick={() =>
+                          addPin({
+                            text: ev.fact_text || ev.text || ev.snippet || JSON.stringify(ev).slice(0, 180),
+                            source: ev.source_ref || ev.canonical_id,
+                            question: submitted || undefined,
+                          })
+                        }
+                        className="shrink-0 text-[var(--text-muted)] opacity-0 transition-colors hover:text-[var(--accent)] group-hover:opacity-100"
+                      >
+                        <Pin size={13} />
+                      </button>
                     </div>
                     {(ev.source_ref || ev.canonical_id) && (
                       <p className="mt-1 break-all pl-6 font-mono text-[10px] text-[var(--text-muted)]">
