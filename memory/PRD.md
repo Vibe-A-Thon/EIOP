@@ -73,8 +73,25 @@ with best-in-class graphics, transitions, animations, icons, and modular screens
 - **View Sharing**: Export all saved graph views to JSON and import them back (`exportViews`/`importViews`),
   for team collaboration; footnote "Saved on this device only. Export to share with teammates."
 
+## Implemented (2026-06, iteration 4) — verified by testing agent (4 enhancements + 14 screens, 0 bugs)
+- **Enhancements**: Path Compare (two targets, side-by-side blast-surface compare), Case Export
+  (Evidence board → Markdown report), Source Health (health + last-run + one-click re-sync),
+  View Thumbnails (live 2D-canvas preview stored with each saved view).
+- **Grouped navigation** (6 groups ≤7 per spec): Workspace, Explore, Knowledge, Operate, Govern, System.
+- **New screens** wired to real `/api/v1/*`: Impact (SCR-007), Query/EQL (SCR-011), Changes (SCR-008),
+  Incidents (SCR-009, with declare-modal), Ontology (SCR-012), Quality (SCR-016), Agents (SCR-018),
+  Reports (SCR-019), Snapshots (SCR-010, typed-confirm restore), Governance & Security (SCR-021),
+  Tenant (SCR-022), Platform Health (SCR-024), Settings (SCR-025, theme/density/motion/locale),
+  Help & About (SCR-026), plus a 404 screen (SCR-027) and global 401 → sign-in handling.
+
+## Coverage note
+Most of the 27-screen catalog is now present and integrated. Deferred/partial (honest status):
+SCR-013 Meta-graph, SCR-020 Collaboration (blocked by BACKEND-MISSING-016), SCR-023 Brand publish
+(BACKEND-MISSING-018), and deep sub-flows (bitemporal, simulation/what-if, full gitops ontology
+lifecycle, marketplace, config-explain). AI narration remains SIMULATED (no inference model enabled).
+
 ## Prioritized backlog (next)
-- P1: Within-context path highlight toggle (overlay vs isolated subgraph).
+- P1: Meta-graph (SCR-013) + ontology gitops draft/PR lifecycle.
 - P2: Reports (SCR-019), Governance/Security (SCR-021), Tenant admin (SCR-022), Health (SCR-024).
 - P2: Full WCAG 2.2 AA audit (axe), ICU string externalization, screen-reader transcripts.
 - P2: Replace react-router-dom with TanStack Router for typed deep links `/t/:tenant/w/:workspace/...`.
