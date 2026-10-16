@@ -1,0 +1,140 @@
+{
+  "dashboards": [
+    {
+      "id": "dash-fraud-perf",
+      "title": "Fraud Engine Performance",
+      "description": "Production performance dashboard for the MFS fraud scoring engine including latency, throughput, and model accuracy metrics",
+      "url": "/dashboard/dash-fraud-perf",
+      "created_at": "2026-08-20T09:00:00Z",
+      "modified_at": "2026-10-02T10:00:00Z",
+      "author_handle": "lwei",
+      "widgets": [
+        {"title": "Fraud Score p95 Latency", "type": "timeseries", "query": "p95:fraud.scoring.latency{service:mfs-fraud-engine,env:prod}"},
+        {"title": "Scoring Requests/sec", "type": "timeseries", "query": "sum:fraud.scoring.requests{service:mfs-fraud-engine,env:prod}.as_rate()"},
+        {"title": "False Positive Rate", "type": "query_value", "query": "avg:fraud.scoring.false_positive_rate{service:mfs-fraud-engine,env:prod}"},
+        {"title": "Model v2 AUC-ROC", "type": "query_value", "query": "avg:fraud.model.auc_roc{model_version:v2,env:prod}"},
+        {"title": "Feature Extraction Latency", "type": "timeseries", "query": "p95:fraud.feature_extraction.latency{service:mfs-fraud-engine,env:prod}"},
+        {"title": "Pod CPU Utilization", "type": "timeseries", "query": "avg:kubernetes.cpu.usage{pod_name:mfs-fraud-pod-*,namespace:mfs-prod}"},
+        {"title": "Pod Memory Usage", "type": "timeseries", "query": "avg:kubernetes.memory.usage{pod_name:mfs-fraud-pod-*,namespace:mfs-prod}"}
+      ]
+    },
+    {
+      "id": "dash-txn-monitor",
+      "title": "Transaction Monitor Health",
+      "description": "Health dashboard for the transaction velocity monitoring system including Kafka consumer metrics and alert generation rates",
+      "url": "/dashboard/dash-txn-monitor",
+      "created_at": "2026-09-01T09:00:00Z",
+      "modified_at": "2026-10-01T14:00:00Z",
+      "author_handle": "rpatel",
+      "widgets": [
+        {"title": "Kafka Consumer Lag", "type": "timeseries", "query": "max:kafka.consumer.lag{consumer_group:mfs-txn-monitor-cg,topic:mfs.txn.enriched}"},
+        {"title": "Transaction Processing Rate", "type": "timeseries", "query": "sum:txn.monitor.processed{service:mfs-txn-monitor,env:prod}.as_rate()"},
+        {"title": "Velocity Alerts Generated/min", "type": "timeseries", "query": "sum:txn.monitor.velocity_alerts{service:mfs-txn-monitor,env:prod}.as_rate()"},
+        {"title": "Anomaly Detection Latency p95", "type": "timeseries", "query": "p95:txn.monitor.anomaly_latency{service:mfs-txn-monitor,env:prod}"},
+        {"title": "Consumer Group Rebalance Events", "type": "timeseries", "query": "sum:kafka.consumer.rebalances{consumer_group:mfs-txn-monitor-cg}"},
+        {"title": "Alert Severity Distribution", "type": "toplist", "query": "sum:txn.monitor.alerts{service:mfs-txn-monitor} by {severity}"}
+      ]
+    },
+    {
+      "id": "dd-dash-frd-003",
+      "title": "ML Pipeline Monitoring",
+      "description": "End-to-end ML pipeline monitoring for fraud detection model training, feature extraction, model registry, and A/B testing",
+      "url": "/dashboard/dd-dash-frd-003",
+      "created_at": "2026-10-04T09:00:00Z",
+      "modified_at": "2026-10-04T09:00:00Z",
+      "author_handle": "nkowalski",
+      "widgets": [
+        {"title": "Model Training Duration", "type": "timeseries", "query": "avg:model.training.duration{service:mfs-fraud-engine,env:prod}"},
+        {"title": "Feature Extraction Throughput", "type": "timeseries", "query": "sum:feature.extraction.throughput{service:mfs-fraud-engine,env:prod}.as_rate()"},
+        {"title": "Model Registry Versions", "type": "query_value", "query": "max:model.registry.version_count{service:mfs-fraud-engine,env:prod}"},
+        {"title": "A/B Test Traffic Split", "type": "toplist", "query": "avg:model.ab_test.traffic_split{service:mfs-fraud-engine,env:prod} by {model_version}"}
+      ]
+    }
+  ],
+  "monitors": [
+    {
+      "id": 9901,
+      "name": "Fraud Scoring Latency SLO",
+      "type": "metric alert",
+      "query": "avg(last_5m):p95:fraud.scoring.latency{service:mfs-fraud-engine,env:prod} > 50",
+      "message": "Fraud scoring p95 latency exceeds 50ms SLO target. Check mfs-fraud-pod-01/02 resource utilization. @slack-fraud-oncall @pagerduty-fraud-risk",
+      "tags": ["service:mfs-fraud-engine", "team:fraud-risk", "env:prod"],
+      "priority": 1,
+      "created": "2026-08-20T09:00:00Z",
+      "modified": "2026-10-02T10:00:00Z",
+      "overall_state": "OK"
+    },
+    {
+      "id": 9902,
+      "name": "Fraud False Positive Rate",
+      "type": "metric alert",
+      "query": "avg(last_5m):avg:fraud.scoring.false_positive_rate{service:mfs-fraud-engine,env:prod} > 0.02",
+      "message": "Fraud scoring false positive rate exceeds 2% target. Possible model drift or stale feature data. See runbook: INC0080201 resolution. @slack-fraud-oncall @pagerduty-fraud-risk",
+      "tags": ["service:mfs-fraud-engine", "team:fraud-risk", "env:prod"],
+      "priority": 1,
+      "created": "2026-09-28T18:00:00Z",
+      "modified": "2026-10-02T10:00:00Z",
+      "overall_state": "OK"
+    },
+    {
+      "id": 9903,
+      "name": "Kafka Consumer Lag - Transaction Monitor",
+      "type": "metric alert",
+      "query": "avg(last_5m):max:kafka.consumer.lag{consumer_group:mfs-txn-monitor-cg,topic:mfs.txn.enriched} > 10000",
+      "message": "Transaction monitor Kafka consumer lag exceeds 10,000 messages. Real-time alerting delayed. Check consumer scaling and partition assignment. Related: INC0080202. @slack-platform-alerts",
+      "tags": ["service:mfs-txn-monitor", "team:platform-engineering", "env:prod"],
+      "priority": 2,
+      "created": "2026-09-20T10:00:00Z",
+      "modified": "2026-10-01T11:00:00Z",
+      "overall_state": "Alert"
+    },
+    {
+      "id": 9904,
+      "name": "AML Rule Engine Processing Time",
+      "type": "metric alert",
+      "query": "avg(last_10m):p95:aml.rule_engine.processing_time{service:mfs-aml-engine,env:prod} > 500",
+      "message": "AML rule engine p95 processing time exceeds 500ms. Check mfs_aml_db query performance on pghost-prod-02.mfs.internal. @slack-aml-alerts",
+      "tags": ["service:mfs-aml-engine", "team:fraud-risk", "env:prod"],
+      "priority": 2,
+      "created": "2026-09-10T09:00:00Z",
+      "modified": "2026-10-02T14:00:00Z",
+      "overall_state": "OK"
+    },
+    {
+      "id": 9905,
+      "name": "Model Retraining Duration Exceeded",
+      "type": "metric alert",
+      "query": "avg(last_15m):avg:model.training.duration{service:mfs-fraud-engine,env:prod} > 3600",
+      "message": "Model retraining duration exceeds 3600 seconds (1 hour). Check training data volume, GPU resource allocation, and hyperparameter search space. @slack-fraud-oncall @pagerduty-fraud-risk",
+      "tags": ["service:mfs-fraud-engine", "team:fraud-risk", "env:prod"],
+      "priority": 2,
+      "created": "2026-10-04T09:00:00Z",
+      "modified": "2026-10-04T09:00:00Z",
+      "overall_state": "OK"
+    },
+    {
+      "id": 9906,
+      "name": "Feature Store Staleness Alert",
+      "type": "metric alert",
+      "query": "avg(last_5m):avg:feature.store.staleness{service:mfs-fraud-engine,env:prod} > 300",
+      "message": "Feature store staleness exceeds 300 seconds (5 minutes). Features may be outdated, impacting model accuracy. Check Feast materialization jobs and Kafka consumer health. @slack-fraud-oncall @pagerduty-fraud-risk",
+      "tags": ["service:mfs-fraud-engine", "team:fraud-risk", "env:prod"],
+      "priority": 1,
+      "created": "2026-10-04T09:00:00Z",
+      "modified": "2026-10-04T09:00:00Z",
+      "overall_state": "OK"
+    },
+    {
+      "id": 9907,
+      "name": "Fraud Score Distribution Anomaly",
+      "type": "anomaly detection",
+      "query": "avg(last_15m):anomalies(avg:fraud.score.distribution{service:mfs-fraud-engine,env:prod}, 'agile', 3)",
+      "message": "Anomaly detected in fraud score distribution. The prediction score distribution has deviated significantly from historical patterns. Possible causes: data drift, feature pipeline issues, or upstream data quality changes. @slack-fraud-oncall @pagerduty-fraud-risk",
+      "tags": ["service:mfs-fraud-engine", "team:fraud-risk", "env:prod"],
+      "priority": 1,
+      "created": "2026-10-04T09:00:00Z",
+      "modified": "2026-10-04T09:00:00Z",
+      "overall_state": "OK"
+    }
+  ]
+}

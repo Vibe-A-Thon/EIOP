@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.550033Z",
+  "event_id": "79f6db39bdb63623e80b564dca02b461810dc4ed93d7652168877027b65cc67f",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "b899dbc9faffc31ffff89c8c8034dd537ec85b05",
+    "message": "Updated MCP transport test to use correct localhost port 8123 instead of the default port 80"
+  },
+  "payload_hash": "80cd3ebf423402d34e04e4a7b34f14a3401cb297fa0c0f61b48f8b4fe664abbe",
+  "schema_version": "1.0",
+  "source_record_id": "demo:b899dbc9faffc31ffff89c8c8034dd537ec85b05",
+  "source_system": "git",
+  "source_version": "80cd3ebf423402d34e04e4a7b34f14a3401cb297fa0c0f61b48f8b4fe664abbe"
+}

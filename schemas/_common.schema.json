@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:_common:1.0",
+  "title": "EOIP Common Definitions",
+  "description": "Reusable type definitions shared across all EOIP data contracts. Import via $ref to enforce consistent patterns for identifiers, timestamps, confidence scores, URNs, and provenance references.",
+  "$defs": {
+    "canonical_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^urn:eoip:[a-z][a-z0-9_-]*:[a-z][a-z0-9_-]*:.+$|^[a-zA-Z0-9_:.-]+$",
+      "description": "Platform-wide unique identifier. Preferred format is URN (urn:eoip:{domain}:{type}:{local-id}); legacy short-form IDs are also accepted."
+    },
+    "entity_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Z][a-zA-Z0-9_]*$",
+      "description": "PascalCase vertex label from the enterprise ontology (e.g. CodeFile, JiraIssue, Person)."
+    },
+    "relationship_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Z][A-Z0-9_]*$",
+      "description": "UPPER_SNAKE_CASE edge label from the enterprise ontology (e.g. DEPENDS_ON, AUTHORED_BY)."
+    },
+    "graph_domain": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "enum": ["code", "work", "knowledge", "identity", "operations", "evidence", "compliance", "design"],
+      "description": "Logical partition of the enterprise graph. Each domain groups related entity/relationship types."
+    },
+    "iso_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp with timezone (e.g. 2026-10-09T14:30:00Z)."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Calibrated probability score. 0.0 = no evidence, 1.0 = deterministic/human-confirmed."
+    },
+    "confidence_nullable": {
+      "type": ["number", "null"],
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Optional confidence score; null when confidence is not applicable or not yet computed."
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the data contract (major.minor)."
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "default": "default",
+      "description": "Namespace-level tenant identifier for multi-tenant isolation."
+    },
+    "provenance_ref": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "description": "URI or path pointing to the original source of a fact (e.g. git commit SHA, Jira issue URL, document path)."
+    },
+    "provenance_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/provenance_ref" },
+      "description": "Ordered list of provenance references establishing the evidence chain."
+    },
+    "hash_hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 hex digest used for content addressing and integrity verification."
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["NONE", "LOW", "MEDIUM", "HIGH", "CRITICAL"],
+      "description": "Qualitative risk classification per NIST SP 800-30 / ISO 31000."
+    },
+    "creation_status": {
+      "type": "string",
+      "enum": ["DETERMINISTIC", "INFERRED", "HUMAN_CONFIRMED"],
+      "description": "How this record was created: deterministic extraction, ML/heuristic inference, or human review."
+    },
+    "deletion_policy": {
+      "type": "string",
+      "enum": ["RETAIN", "TTL_EXPIRE", "ON_SOURCE_DELETE", "MANUAL"],
+      "description": "Governs when this record may be garbage-collected."
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "offset": { "type": "integer", "minimum": 0, "description": "Zero-based offset into the result set." },
+        "limit": { "type": "integer", "minimum": 1, "maximum": 10000, "description": "Maximum records to return." },
+        "total": { "type": "integer", "minimum": 0, "description": "Total matching records (may be estimated)." },
+        "cursor": { "type": ["string", "null"], "description": "Opaque cursor for keyset pagination." }
+      },
+      "additionalProperties": false,
+      "description": "Standard pagination envelope for list/search responses."
+    },
+    "error_detail": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$", "description": "Machine-readable error code." },
+        "message": { "type": "string", "description": "Human-readable error message." },
+        "field": { "type": ["string", "null"], "description": "JSON Pointer to the offending field, if applicable." },
+        "details": { "type": "object", "description": "Additional context for debugging." }
+      },
+      "additionalProperties": false,
+      "description": "Structured error following RFC 7807 / EOIP error contract."
+    }
+  }
+}

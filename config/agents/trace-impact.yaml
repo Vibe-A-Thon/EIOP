@@ -1,0 +1,19 @@
+agent_id: TraceImpact
+description: >
+  Deterministic read-only trace and impact analysis agent.
+  Uses graph traversal to find connected entities and their evidence paths.
+
+allowed_tools:
+  - search
+  - entity
+  - path
+  - impact
+  - lineage
+
+budgets:
+  max_steps: 10
+  max_seconds: 30
+  max_depth: 8
+  max_results: 100
+
+read_only: true

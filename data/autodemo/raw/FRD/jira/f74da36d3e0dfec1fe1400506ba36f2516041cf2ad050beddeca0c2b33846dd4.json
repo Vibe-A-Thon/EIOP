@@ -1,0 +1,61 @@
+{
+  "captured_at": "2026-10-04T13:45:50.511263Z",
+  "event_id": "f74da36d3e0dfec1fe1400506ba36f2516041cf2ad050beddeca0c2b33846dd4",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-txn-monitor"
+        }
+      ],
+      "created": "2026-08-18T09:00:00.000+0000",
+      "customfield_10014": "EPC-202",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Real-time transaction monitoring feature with velocity-based threshold detection, anomaly alerting, and configurable rule engine. Processes transactions from Kafka topic 'mfs.txn.enriched' and generates alerts to 'mfs.alerts.txn'.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuetype": {
+        "name": "Feature"
+      },
+      "labels": [
+        "transaction-monitoring",
+        "real-time",
+        "kafka"
+      ],
+      "priority": {
+        "name": "Critical"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "Real-time Transaction Monitoring",
+      "updated": "2026-10-01T14:00:00.000+0000"
+    },
+    "key": "FRD-200"
+  },
+  "payload_hash": "e4a2d4dfb4e0c228567bbad3fe34ad40313fd29f35998a4b00a315f3db1b4714",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-200",
+  "source_system": "jira",
+  "source_version": "e4a2d4dfb4e0c228567bbad3fe34ad40313fd29f35998a4b00a315f3db1b4714"
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.466393Z",
+  "event_id": "33972a7c31d312de6bdb3a78cb44042ff668f3ce9f2b1b03e55b8ebc9cd3eac9",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "7a8325358ff389c1187ce42e19ba5c49e74e1da7",
+    "message": "gap fixes and DLQ certification and ServiceNow fixture acquisition and scheduler-admission parity"
+  },
+  "payload_hash": "fa3801ad5cda167f3859720bb72d3de2f58ecf548560447057bcc74a20e4119d",
+  "schema_version": "1.0",
+  "source_record_id": "demo:7a8325358ff389c1187ce42e19ba5c49e74e1da7",
+  "source_system": "git",
+  "source_version": "fa3801ad5cda167f3859720bb72d3de2f58ecf548560447057bcc74a20e4119d"
+}

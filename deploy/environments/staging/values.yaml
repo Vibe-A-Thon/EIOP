@@ -1,0 +1,32 @@
+# Staging Environment Overrides (INFRA-003)
+environment: staging
+replicaCount: 2
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: staging.eoip.internal
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+cache:
+  l2:
+    enabled: true
+    distributed: true
+    ttlSeconds: 1800

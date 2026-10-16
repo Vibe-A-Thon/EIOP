@@ -1,0 +1,84 @@
+{
+  "captured_at": "2026-10-05T03:00:26.266656Z",
+  "event_id": "99608931076e3f901a4d1c4ad671418d0537e0838b47aa89254bb4d4619e7038",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-09-15T09:00:00.000+0000",
+      "customfield_10014": "EPC-101",
+      "customfield_10015": "Payment Services",
+      "description": "Build a comprehensive payment analytics and reporting platform. Aggregate transaction data for real-time dashboards, scheduled reports, and ad-hoc queries. Supports metrics including transaction volume, success rates, settlement times, refund rates, and merchant performance. Under Epic EPC-101.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Feature",
+        "subtask": false
+      },
+      "labels": [
+        "analytics",
+        "reporting",
+        "dashboards"
+      ],
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "To Do",
+        "statusCategory": {
+          "name": "To Do"
+        }
+      },
+      "subtasks": [
+        {
+          "fields": {
+            "status": {
+              "name": "To Do"
+            },
+            "summary": "Build transaction analytics aggregator"
+          },
+          "key": "PAY-501"
+        },
+        {
+          "fields": {
+            "status": {
+              "name": "To Do"
+            },
+            "summary": "Real-time settlement reporting dashboard"
+          },
+          "key": "PAY-502"
+        }
+      ],
+      "summary": "Payment Analytics & Reporting",
+      "updated": "2026-10-01T10:00:00.000+0000"
+    },
+    "id": "60500",
+    "key": "PAY-500",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60500"
+  },
+  "payload_hash": "2d803a7f2e0dcbc3930fc8d9ef9ad83c8d3fb7241f7d0531982c311fbd92581e",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-500",
+  "source_system": "jira",
+  "source_version": "2d803a7f2e0dcbc3930fc8d9ef9ad83c8d3fb7241f7d0531982c311fbd92581e"
+}

@@ -1,0 +1,92 @@
+# Python environments, bytecode, and setuptools output
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+
+# Python tooling and test reports
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pytype/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+coverage/
+coverage.xml
+junit.xml
+
+# React/TypeScript and VS Code extension dependencies and generated output
+# Keep dependency manifests and lockfiles in version control.
+node_modules/
+.npm/
+.vite/
+.eslintcache
+*.tsbuildinfo
+/apps/vscode-extension/out/
+*.vsix
+.vscode-test/
+playwright-report/
+test-results/
+blob-report/
+
+# Local environment settings; commit placeholder templates only
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+!.env.*.example
+!.env.*.sample
+!.env.*.template
+.envrc
+/secrets/
+/deploy/secrets/
+# deploy/secrets.example/ remains trackable.
+
+# Local runtime storage: graph volumes, raw capture, checkpoints, DLQ,
+# backups, exports, and downloaded models. Keep config and fixtures trackable.
+/.data/
+/.cache/
+/runtime/
+/volumes/
+/deploy/volumes/
+/raw/
+/state/
+/checkpoints/
+/dlq/
+/backups/
+/exports/
+/model-cache/
+*.gguf
+*.safetensors
+# packages/eoip/models/ is source code and must remain trackable.
+
+# Logs and local workbench/IDE state
+*.log
+*.log.*
+/.meridian/workbench/
+.idea/
+.vs/
+**/.vscode/*
+!**/.vscode/extensions.json
+!**/.vscode/launch.json
+!**/.vscode/settings.json
+!**/.vscode/tasks.json
+
+# Operating-system metadata and editor temporary files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~

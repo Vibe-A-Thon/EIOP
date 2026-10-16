@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.440600Z",
+  "event_id": "4d80b797882c9987ddae4c4c989240544fae0c274c5e4f7bc1f782de9edfc1c8",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "1153fc1bc43d9c4b408039b1c1ffcf82f3544d10",
+    "message": "gaps implementation and testing"
+  },
+  "payload_hash": "6953e1689e7ce804e5a63691201a17ab64745f77a8f481b00f3db27efa16c7b4",
+  "schema_version": "1.0",
+  "source_record_id": "demo:1153fc1bc43d9c4b408039b1c1ffcf82f3544d10",
+  "source_system": "git",
+  "source_version": "6953e1689e7ce804e5a63691201a17ab64745f77a8f481b00f3db27efa16c7b4"
+}

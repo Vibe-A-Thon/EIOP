@@ -1,0 +1,112 @@
+{
+  "captured_at": "2026-10-05T03:00:26.266656Z",
+  "event_id": "ec74c64168775a496bae83de1c3ee549820ddb4704855bdf5c065e1bfff5cc27",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "akim",
+        "displayName": "Alex Kim",
+        "emailAddress": "akim@mfs.com"
+      },
+      "comment": {
+        "comments": [
+          {
+            "author": {
+              "displayName": "Raj Patel"
+            },
+            "body": "Change request CHG0090401 has been approved. Deployment window scheduled for 2026-10-08 02:00 UTC.",
+            "created": "2026-10-01T11:00:00.000+0000"
+          },
+          {
+            "author": {
+              "displayName": "Lisa Park"
+            },
+            "body": "TC-PAY-009 passed in staging environment. TC-PAY-010 is currently in progress - expected completion by end of sprint.",
+            "created": "2026-10-02T15:30:00.000+0000"
+          }
+        ]
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-09-12T09:00:00.000+0000",
+      "customfield_10014": "EPC-104",
+      "customfield_10015": "Payment Services",
+      "customfield_10050": "TC-PAY-009,TC-PAY-010",
+      "description": "Implement the core webhook dispatcher service that sends HTTP POST notifications to registered merchant endpoints when payment events occur. Must support event types: payment.authorized, payment.captured, payment.refunded, payment.failed, payment.chargeback. The dispatcher reads from Kafka topic 'mfs.payment.events' and delivers to merchant-registered URLs stored in mfs_payments_db on pghost-prod-01.mfs.internal. Uses svc-webhook-dispatch service account.\n\nAcceptance Criteria:\n- Delivery latency < 500ms p95\n- Support HMAC-SHA256 signature verification\n- Configurable retry policy per merchant\n- Deploy to mfs-pay-pod-01, mfs-pay-pod-02\n\nGitLab MR: !601\nChange Request: CHG0090401\nTest Cases: TC-PAY-009, TC-PAY-010",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "MR !601: Implement payment webhook dispatcher"
+            },
+            "key": "MR-601"
+          },
+          "type": {
+            "name": "GitLab MR",
+            "outward": "is developed in"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Webhook retry with dead letter queue"
+            },
+            "key": "PAY-402"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "webhook",
+        "dispatcher",
+        "kafka"
+      ],
+      "parent": {
+        "key": "PAY-400"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "story_points": 8,
+      "summary": "Implement payment webhook dispatcher",
+      "updated": "2026-10-03T14:00:00.000+0000"
+    },
+    "id": "60401",
+    "key": "PAY-401",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60401"
+  },
+  "payload_hash": "101edd36f7c64e119a35c6af8eda85bed3bc3ecd7e9e0914e0520972a0d3b6cc",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-401",
+  "source_system": "jira",
+  "source_version": "101edd36f7c64e119a35c6af8eda85bed3bc3ecd7e9e0914e0520972a0d3b6cc"
+}

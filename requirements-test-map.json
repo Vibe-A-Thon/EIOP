@@ -1,0 +1,2692 @@
+{
+  "AGENT-001": [
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent001CognitiveBoundaryTelemetry::test_all_seven_boundary_signals"
+  ],
+  "AGENT-002": [
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_chunker_and_entity_extractor",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_full_pipeline_and_communities",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_relation_extractor_triples"
+  ],
+  "AGENT-003": [
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent003MessageBus::test_broadcast_channel",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent003MessageBus::test_capability_negotiation",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent003MessageBus::test_queue_and_dlq_expiration"
+  ],
+  "AGENT-004": [
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent004ParallelFanOutFanIn::test_fan_out_fan_in_map_reduce"
+  ],
+  "AI-001": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI001AdvancedXAI::test_confidence_calibration",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI001AdvancedXAI::test_decision_trace_graph_and_critical_path",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI001AdvancedXAI::test_feature_importance_shapley"
+  ],
+  "AI-002": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI002DeepNLP::test_aspect_sentiment_analyzer",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI002DeepNLP::test_coreference_resolver",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI002DeepNLP::test_deep_entity_extractor",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI002DeepNLP::test_topic_modeler_and_language_detector"
+  ],
+  "AI-003": [
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_chunker_and_entity_extractor",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_full_pipeline_and_communities",
+    "tests/unit/test_phase4_phase2_engines.py::TestAgent002AndAi003Extraction::test_relation_extractor_triples"
+  ],
+  "AI-004": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI004ModelABTestingAndCanary::test_ab_experiment_lifecycle_and_significance",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI004ModelABTestingAndCanary::test_canary_deployment_promotion_and_auto_rollback"
+  ],
+  "AI-005": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI005MLOpsExperimentTracking::test_experiment_runs_and_comparison"
+  ],
+  "AI-006": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI006EmbeddingManagement::test_embedding_fusion_and_dimension_reduction",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI006EmbeddingManagement::test_embedding_registry_and_drift_detection"
+  ],
+  "AI-007": [
+    "tests/unit/test_phase4_phase3_engines.py::TestAI007ProbabilisticReasoning::test_bayesian_graph_reasoning_and_strategy",
+    "tests/unit/test_phase4_phase3_engines.py::TestAI007ProbabilisticReasoning::test_uncertainty_propagation"
+  ],
+  "BASE-01": [
+    "tests/unit/test_cp_registry.py::test_alias_cycles_and_duplicate_clauses_are_rejected",
+    "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[column]",
+    "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[duplicate]",
+    "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[missing-source]",
+    "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[source-line]",
+    "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[traversal]",
+    "tests/unit/test_cp_registry.py::test_baseline_hash_and_count_are_enforced",
+    "tests/unit/test_cp_registry.py::test_checkbox_status_without_source_review_and_evidence_is_rejected[IMPLEMENTED]",
+    "tests/unit/test_cp_registry.py::test_checkbox_status_without_source_review_and_evidence_is_rejected[INTEGRATION_VERIFIED]",
+    "tests/unit/test_cp_registry.py::test_checkbox_status_without_source_review_and_evidence_is_rejected[READY]",
+    "tests/unit/test_cp_registry.py::test_checkbox_status_without_source_review_and_evidence_is_rejected[VERIFIED]",
+    "tests/unit/test_cp_registry.py::test_document_hashes_are_stable_across_checkout_line_endings",
+    "tests/unit/test_cp_registry.py::test_import_preserves_every_audit_column_and_escaped_pipes",
+    "tests/unit/test_cp_registry.py::test_migration_keeps_legacy_ids_and_metadata_without_claiming_completion",
+    "tests/unit/test_cp_registry.py::test_missing_and_altered_audit_records_fail_validation",
+    "tests/unit/test_cp_registry.py::test_plan_must_cover_exact_audit_set",
+    "tests/unit/test_cp_registry.py::test_real_registry_roundtrip_is_bounded_and_independent_of_git_history",
+    "tests/unit/test_cp_registry.py::test_registry_loader_rejects_duplicate_ids",
+    "tests/unit/test_cp_registry.py::test_registry_source_uses_pinned_snapshot_not_current_output",
+    "tests/unit/test_cp_registry.py::test_source_changes_require_explicit_reconciliation"
+  ],
+  "BASE-02": [
+    "tests/unit/test_pytest_execution_evidence.py::test_collect_only_is_not_execution_and_selection_is_explicit",
+    "tests/unit/test_pytest_execution_evidence.py::test_collection_error_preserves_inventory_but_records_failed_run",
+    "tests/unit/test_pytest_execution_evidence.py::test_deleted_test_is_removed_by_next_collection",
+    "tests/unit/test_pytest_execution_evidence.py::test_fail_skip_xfail_and_teardown_failures_never_count_as_pass[def test_bad():\\n    assert False\\n-FAILED]",
+    "tests/unit/test_pytest_execution_evidence.py::test_fail_skip_xfail_and_teardown_failures_never_count_as_pass[import pytest\\n@pytest.fixture\\ndef broken():\\n    yield\\n    assert False\\ndef test_teardown(broken):\\n    pass\\n-FAILED]",
+    "tests/unit/test_pytest_execution_evidence.py::test_fail_skip_xfail_and_teardown_failures_never_count_as_pass[import pytest\\n@pytest.mark.skip(reason=\"no infrastructure\")\\ndef test_skip():\\n    pass\\n-SKIPPED]",
+    "tests/unit/test_pytest_execution_evidence.py::test_fail_skip_xfail_and_teardown_failures_never_count_as_pass[import pytest\\n@pytest.mark.xfail\\ndef test_xfail():\\n    assert False\\n-XFAIL]",
+    "tests/unit/test_pytest_execution_evidence.py::test_pass_receipt_is_bound_to_source_and_replaces_stale_map",
+    "tests/unit/test_pytest_execution_evidence.py::test_receipt_tampering_and_missing_cases_are_rejected"
+  ],
+  "BASE-03": [
+    "tests/unit/test_pytest_execution_evidence.py::test_collect_only_is_not_execution_and_selection_is_explicit",
+    "tests/unit/test_pytest_execution_evidence.py::test_collection_error_preserves_inventory_but_records_failed_run",
+    "tests/unit/test_pytest_execution_evidence.py::test_deleted_test_is_removed_by_next_collection",
+    "tests/unit/test_pytest_execution_evidence.py::test_fail_skip_xfail_and_teardown_failures_never_count_as_pass[def test_bad():\\n    assert False\\n-FAILED]",
+    "tests/unit/test_pytest_execution_evidence.py::test_fail_skip_xfail_and_teardown_failures_never_count_as_pass[import pytest\\n@pytest.fixture\\ndef broken():\\n    yield\\n    assert False\\ndef test_teardown(broken):\\n    pass\\n-FAILED]",
+    "tests/unit/test_pytest_execution_evidence.py::test_fail_skip_xfail_and_teardown_failures_never_count_as_pass[import pytest\\n@pytest.mark.skip(reason=\"no infrastructure\")\\ndef test_skip():\\n    pass\\n-SKIPPED]",
+    "tests/unit/test_pytest_execution_evidence.py::test_fail_skip_xfail_and_teardown_failures_never_count_as_pass[import pytest\\n@pytest.mark.xfail\\ndef test_xfail():\\n    assert False\\n-XFAIL]",
+    "tests/unit/test_pytest_execution_evidence.py::test_pass_receipt_is_bound_to_source_and_replaces_stale_map",
+    "tests/unit/test_pytest_execution_evidence.py::test_receipt_tampering_and_missing_cases_are_rejected"
+  ],
+  "BASE-04": [
+    "tests/unit/test_cp_registry.py::test_alias_cycles_and_duplicate_clauses_are_rejected",
+    "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[column]",
+    "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[duplicate]",
+    "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[missing-source]",
+    "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[source-line]",
+    "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[traversal]",
+    "tests/unit/test_cp_registry.py::test_baseline_hash_and_count_are_enforced",
+    "tests/unit/test_cp_registry.py::test_checkbox_status_without_source_review_and_evidence_is_rejected[IMPLEMENTED]",
+    "tests/unit/test_cp_registry.py::test_checkbox_status_without_source_review_and_evidence_is_rejected[INTEGRATION_VERIFIED]",
+    "tests/unit/test_cp_registry.py::test_checkbox_status_without_source_review_and_evidence_is_rejected[READY]",
+    "tests/unit/test_cp_registry.py::test_checkbox_status_without_source_review_and_evidence_is_rejected[VERIFIED]",
+    "tests/unit/test_cp_registry.py::test_document_hashes_are_stable_across_checkout_line_endings",
+    "tests/unit/test_cp_registry.py::test_import_preserves_every_audit_column_and_escaped_pipes",
+    "tests/unit/test_cp_registry.py::test_migration_keeps_legacy_ids_and_metadata_without_claiming_completion",
+    "tests/unit/test_cp_registry.py::test_missing_and_altered_audit_records_fail_validation",
+    "tests/unit/test_cp_registry.py::test_plan_must_cover_exact_audit_set",
+    "tests/unit/test_cp_registry.py::test_real_registry_roundtrip_is_bounded_and_independent_of_git_history",
+    "tests/unit/test_cp_registry.py::test_registry_loader_rejects_duplicate_ids",
+    "tests/unit/test_cp_registry.py::test_registry_source_uses_pinned_snapshot_not_current_output",
+    "tests/unit/test_cp_registry.py::test_source_changes_require_explicit_reconciliation"
+  ],
+  "CG-GAP-008": [
+    "tests/unit/test_production_release_gate_wp8.py::test_cg_gap_008_external_acceptance_receipts"
+  ],
+  "COMPLY-001": [
+    "tests/unit/test_phase4_phase6_7_engines.py::TestComply001ComplianceAsCode::test_compliance_rules_and_monitor"
+  ],
+  "COMPLY-002": [
+    "tests/unit/test_phase4_phase6_7_engines.py::TestComply002PIIDetectionAndAnonymization::test_anonymizer_and_pseudonymizer",
+    "tests/unit/test_phase4_phase6_7_engines.py::TestComply002PIIDetectionAndAnonymization::test_pii_scanner"
+  ],
+  "COMPLY-003": [
+    "tests/unit/test_phase4_compliance_and_search.py::TestContinuousComplianceDashboard::test_attestation_workflow",
+    "tests/unit/test_phase4_compliance_and_search.py::TestContinuousComplianceDashboard::test_framework_scoring_and_audit_export"
+  ],
+  "CONN-01": [
+    "tests/unit/test_phase2_connectors.py::test_confluence_sync_emits_spaces_pages_and_attachment_metadata_incrementally"
+  ],
+  "CONN-02": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_offline_fixtures"
+  ],
+  "CONN-03": [
+    "tests/unit/test_jira_connector.py::test_jira_offline_fixtures_and_baseline"
+  ],
+  "CORE-001": [
+    "tests/unit/test_phase4_core_engines.py::TestCore001TokenFormats::test_all_seven_strategies_roundtrip",
+    "tests/unit/test_phase4_core_engines.py::TestCore001TokenFormats::test_format_engine_auto_selection_and_benchmarks"
+  ],
+  "CORE-002": [
+    "tests/unit/test_phase4_core_engines.py::TestCore002Verification::test_builtin_rules_and_registry",
+    "tests/unit/test_phase4_core_engines.py::TestCore002Verification::test_dynamic_guardrail_interceptor"
+  ],
+  "CORE-003": [
+    "tests/unit/test_phase4_core_engines.py::TestCore003IntentRouter::test_router_engine_and_feedback",
+    "tests/unit/test_phase4_core_engines.py::TestCore003IntentRouter::test_sub10ms_intent_classification"
+  ],
+  "CORE-004": [
+    "tests/unit/test_phase4_core_engines.py::TestCore004GraphOverGraph::test_cross_layer_and_diff"
+  ],
+  "CORE-005": [
+    "tests/unit/test_phase4_core_engines.py::TestCore005LoopOverLoop::test_circuit_breaker_tripping",
+    "tests/unit/test_phase4_core_engines.py::TestCore005LoopOverLoop::test_supervisory_loop_execution_and_fallback"
+  ],
+  "CORE-006": [
+    "tests/unit/test_phase4_core_engines.py::TestCore006TokenBudget::test_context_compression_on_budget_exceed",
+    "tests/unit/test_phase4_core_engines.py::TestCore006TokenBudget::test_token_budget_allocation_and_reallocation"
+  ],
+  "FR-ADMIN-001": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_admin_001_ingestion_ui"
+  ],
+  "FR-ADMIN-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_admin_002_graph_quality_ui"
+  ],
+  "FR-AGENT-001": [
+    "tests/unit/test_governed_agents.py::test_agent_contract_validation"
+  ],
+  "FR-AGENT-002": [
+    "tests/unit/test_governed_agents.py::test_bounded_agent_runtime"
+  ],
+  "FR-AGENT-003": [
+    "tests/unit/test_governed_agents.py::test_trace_impact_agent"
+  ],
+  "FR-AGENT-004": [
+    "tests/unit/test_governed_agents.py::test_write_action_approval_boundary"
+  ],
+  "FR-AGENT-005": [
+    "tests/unit/test_governed_agents.py::test_controlled_self_modification"
+  ],
+  "FR-CODE-001": [
+    "tests/unit/test_code_parser.py::test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls"
+  ],
+  "FR-CODE-002": [
+    "tests/unit/test_code_parser.py::test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls"
+  ],
+  "FR-CODE-004": [
+    "tests/unit/test_code_parser.py::test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls"
+  ],
+  "FR-CODE-005": [
+    "tests/unit/test_code_parser.py::test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls"
+  ],
+  "FR-CONF-001": [
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/runtime_dlq/test_confluence_failures.py::test_confluence_upstream_failures_are_persistent_and_nonmutating",
+    "tests/runtime_dlq/test_confluence_rejection.py::test_confluence_fetched_rejection_preserves_capture_and_checkpoint",
+    "tests/unit/test_confluence_body.py::test_invalid_body_is_captured_and_dlq_before_business_writes",
+    "tests/unit/test_confluence_body.py::test_structure_is_persisted_versioned_and_replayable",
+    "tests/unit/test_confluence_metadata.py::test_acquisition_completes_truncated_labels_without_following_remote_links",
+    "tests/unit/test_confluence_metadata.py::test_page_metadata_normalizes_labels_actors_and_source_timestamps",
+    "tests/unit/test_confluence_upstream_fixture.py::test_confluence_fixture_pagination_and_incremental_overlap",
+    "tests/unit/test_phase2_connectors.py::test_confluence_pagination_and_event_identity_are_stable",
+    "tests/unit/test_phase2_connectors.py::test_confluence_sync_emits_spaces_pages_and_attachment_metadata_incrementally",
+    "tests/unit/test_phase2_connectors.py::test_environment_configuration_rejects_missing_auth_without_echoing_secrets",
+    "tests/unit/test_phase2_ingestion.py::test_confluence_mapping_rejection_is_captured_and_does_not_advance_batch",
+    "tests/unit/test_phase2_ingestion.py::test_confluence_sync_ingestion_persists_documents_and_provenance_idempotently",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[confluence]",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[servicenow]"
+  ],
+  "FR-CONN-001": [
+    "tests/contract/test_g2_contracts.py::test_fake_connector_satisfies_runtime_connector_protocol"
+  ],
+  "FR-CONN-002": [
+    "tests/unit/test_jira_ingestion.py::test_dlq_record_uses_the_unified_envelope",
+    "tests/unit/test_jira_ingestion.py::test_dry_run_validates_without_capture_or_graph_writes",
+    "tests/unit/test_jira_ingestion.py::test_jira_import_accepts_configured_mapping_and_local_fixture",
+    "tests/unit/test_jira_ingestion.py::test_jira_import_captures_evidence_and_is_idempotent",
+    "tests/unit/test_jira_ingestion.py::test_jira_ingestion_creates_belongs_to_domain_edges",
+    "tests/unit/test_jira_ingestion.py::test_jira_parent_relationship_is_created_even_when_parent_record_follows_child",
+    "tests/unit/test_jira_ingestion.py::test_jira_resume_replays_captured_events_without_regenerating_identity",
+    "tests/unit/test_jira_ingestion.py::test_jira_source_deletion_tombstones_without_hard_delete",
+    "tests/unit/test_jira_ingestion.py::test_jira_source_reappearance_restores_current_view",
+    "tests/unit/test_jira_ingestion.py::test_malformed_record_is_captured_and_quarantined_without_graph_mutation"
+  ],
+  "FR-CONN-003": [
+    "tests/unit/test_github_connector.py::test_github_baseline_discovers_and_emits_versioned_engineering_events"
+  ],
+  "FR-CONN-004": [
+    "tests/unit/test_gitlab_connector.py::test_gitlab_baseline_emits_repository_delivery_and_knowledge_events"
+  ],
+  "FR-CONN-005": [
+    "tests/unit/test_phase2_connectors.py::test_connector_errors_use_stable_categories_without_exposing_credentials"
+  ],
+  "FR-CONN-006": [
+    "tests/unit/test_confluence_history.py::test_old_captures_report_partial_history_and_invalid_complete_history_enters_dlq",
+    "tests/unit/test_confluence_metadata.py::test_metadata_persists_in_revisions_clears_on_update_and_is_replay_stable",
+    "tests/unit/test_document_references.py::test_fact_changes_not_observations_trigger_staleness_and_replay_cannot_rebase",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[confluence]",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[servicenow]"
+  ],
+  "FR-CONN-007": [
+    "tests/unit/test_jira_ingestion.py::test_jira_source_deletion_tombstones_without_hard_delete",
+    "tests/unit/test_jira_ingestion.py::test_jira_source_reappearance_restores_current_view"
+  ],
+  "FR-GRAPH-002": [
+    "tests/unit/test_meta_graph.py::test_bootstrap_creates_domain_vertices"
+  ],
+  "FR-GRAPH-003": [
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_bootstrap_appends_new_properties_to_existing_labels",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_bootstrap_is_read_only_when_compatible",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_bootstrap_refuses_missing_compatibility_metadata[edgelabels-nullable_keys]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_bootstrap_refuses_missing_compatibility_metadata[propertykeys-data_type]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_bootstrap_refuses_missing_compatibility_metadata[vertexlabels-properties]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_bootstrap_rejects_new_required_property_on_existing_label",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[edgelabels-enable_label_index-False]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[edgelabels-frequency-SINGLE]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[edgelabels-sort_keys-value9]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[edgelabels-source_label-UnexpectedLabel]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[edgelabels-target_label-UnexpectedLabel]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[indexlabels-base_type-EDGE_LABEL]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[indexlabels-base_value-UnexpectedLabel]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[indexlabels-fields-value12]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[indexlabels-index_type-RANGE]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[propertykeys-cardinality-LIST]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[propertykeys-data_type-INT]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[vertexlabels-enable_label_index-False]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[vertexlabels-id_strategy-AUTOMATIC]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[vertexlabels-nullable_keys-value5]",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_incompatibility_blocks_all_mutations[vertexlabels-primary_keys-value3]"
+  ],
+  "FR-GRAPH-005": [
+    "tests/unit/test_meta_graph.py::test_bootstrap_creates_domain_vertices"
+  ],
+  "FR-GRAPH-006": [
+    "tests/unit/test_graph_traversal.py::test_find_path_returns_shortest_ordered_path_in_both_directions"
+  ],
+  "FR-GRAPH-007": [
+    "tests/unit/test_query_intelligence.py::test_template_binding_builds_plan"
+  ],
+  "FR-GRAPH-008": [
+    "tests/unit/test_phase2_hugegraph_schema.py::test_document_reference_lookups_have_single_property_secondary_indexes"
+  ],
+  "FR-GRAPH-009": [
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "FR-GRAPH-010": [
+    "tests/unit/test_dual_semantic_model.py::test_jsonld_import_reconstructs_supported_property_graph_records",
+    "tests/unit/test_phase2_rdf_export.py::test_jsonld_export_maps_ontology_vertices_and_reified_relationships"
+  ],
+  "FR-INGEST-001": [
+    "tests/unit/test_jira_ingestion.py::test_jira_import_captures_evidence_and_is_idempotent",
+    "tests/unit/test_jira_ingestion.py::test_malformed_record_is_captured_and_quarantined_without_graph_mutation"
+  ],
+  "FR-INGEST-002": [
+    "tests/unit/test_identity_resolver.py::test_email_resolution"
+  ],
+  "FR-INGEST-003": [
+    "tests/unit/test_phase2_hugegraph_schema.py::test_hugegraph_edge_upsert_updates_matching_edge_key_instead_of_duplicating"
+  ],
+  "FR-INGEST-004": [
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "FR-MCP-001": [
+    "tests/security/test_verification_suite.py::test_mcp_tool_surface_is_read_only"
+  ],
+  "FR-MCP-002": [
+    "tests/security/test_verification_suite.py::test_mcp_tool_surface_is_read_only"
+  ],
+  "FR-ONTO-001": [
+    "tests/unit/test_manifest_integrity.py::test_every_edge_endpoint_is_a_known_vertex_label"
+  ],
+  "FR-ONTO-002": [
+    "tests/unit/test_manifest_integrity.py::test_every_edge_endpoint_is_a_known_vertex_label"
+  ],
+  "FR-PROV-001": [
+    "tests/unit/test_gap_governance_controls.py::test_evidence_manifest_links_answer_to_nodes_edges_sources_and_trust"
+  ],
+  "FR-PROV-002": [
+    "tests/unit/test_provenance.py::test_lineage_traces_to_source"
+  ],
+  "FR-QUERY-001": [
+    "tests/unit/test_query_executor.py::test_impact_via_executor",
+    "tests/unit/test_query_executor.py::test_path_via_executor",
+    "tests/unit/test_query_executor.py::test_search_via_executor"
+  ],
+  "FR-QUERY-002": [
+    "tests/unit/test_query_executor.py::test_path_via_executor"
+  ],
+  "FR-QUERY-003": [
+    "tests/unit/test_graph_traversal.py::test_impact_is_bounded_and_excludes_non_allowlisted_edges",
+    "tests/unit/test_query_executor.py::test_impact_via_executor"
+  ],
+  "FR-QUERY-004": [
+    "tests/unit/test_query_executor.py::test_search_via_executor"
+  ],
+  "FR-QUERY-007": [
+    "tests/unit/test_query_executor.py::test_impact_via_executor",
+    "tests/unit/test_query_executor.py::test_path_via_executor"
+  ],
+  "FR-RAG-001": [
+    "tests/unit/test_retrieval.py::test_retrieval_router_selects_code_context_for_code_question"
+  ],
+  "FR-RAG-002": [
+    "tests/unit/test_retrieval.py::test_code_context_preserves_relationship_evidence"
+  ],
+  "FR-RAG-003": [
+    "tests/unit/test_retrieval.py::test_model_unavailable_retains_independent_graph_evidence"
+  ],
+  "FR-RAG-004": [
+    "tests/unit/test_retrieval.py::test_model_unavailable_retains_independent_graph_evidence"
+  ],
+  "FR-SNOW-001": [
+    "tests/runtime_dlq/test_servicenow_acquisition.py::test_servicenow_http_baseline_incremental_and_replay",
+    "tests/runtime_dlq/test_servicenow_authentication.py::test_servicenow_upstream_authentication_failure_is_persistent",
+    "tests/runtime_dlq/test_servicenow_rejection.py::test_servicenow_fetched_rejection_and_admission_controls",
+    "tests/unit/test_phase2_connectors.py::test_servicenow_rejects_schema_drift_without_dropping_raw_record",
+    "tests/unit/test_phase2_connectors.py::test_servicenow_sync_paginates_supported_tables_and_maps_records",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[confluence]",
+    "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[servicenow]",
+    "tests/unit/test_phase2_ingestion.py::test_servicenow_knowledge_records_are_persisted_as_documents",
+    "tests/unit/test_phase2_ingestion.py::test_servicenow_sync_ingestion_maps_work_items_and_links_run_evidence",
+    "tests/unit/test_phase2_ingestion.py::test_source_sync_checkpoint_is_saved_only_after_successful_non_dry_run",
+    "tests/unit/test_servicenow_connector.py::test_servicenow_offline_fixtures",
+    "tests/unit/test_servicenow_upstream_fixture.py::test_fixture_paginates_and_filters_incremental_queries"
+  ],
+  "FR-UI-001": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_ui_001_user_web_application"
+  ],
+  "FR-UI-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_ui_002_graph_explorer"
+  ],
+  "FR-VALID-001": [
+    "tests/unit/test_validation_engine.py::test_valid_graph_passes_validation"
+  ],
+  "FR-VALID-002": [
+    "tests/unit/test_validation_engine.py::test_valid_graph_passes_validation"
+  ],
+  "FR-VSCODE-001": [
+    "tests/unit/test_vscode_extension_wp54.py::test_fr_vscode_001_context_extension"
+  ],
+  "FR-VSCODE-002": [
+    "tests/unit/test_vscode_extension_wp54.py::test_fr_vscode_002_trace_impact_commands"
+  ],
+  "G2-ADMIN-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_002_connector_wizard"
+  ],
+  "G2-ADMIN-003": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_003_reconciliation_status"
+  ],
+  "G2-ADMIN-004": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_004_checkpoint_viewer"
+  ],
+  "G2-ADMIN-005": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_005_dlq_replay_console"
+  ],
+  "G2-ADMIN-006": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_006_schema_drift_console"
+  ],
+  "G2-ADMIN-007": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_007_source_freshness_dashboard"
+  ],
+  "G2-ADMIN-008": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_008_graph_version_timeline"
+  ],
+  "G2-ADMIN-009": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_009_semantic_change_journal"
+  ],
+  "G2-ADMIN-010": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_010_event_consumer_health"
+  ],
+  "G2-ADMIN-011": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_011_mapping_preview"
+  ],
+  "G2-ADMIN-012": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_012_crawl_safety_preview"
+  ],
+  "G2-ADMIN-013": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_013_telemetry_extraction_controls"
+  ],
+  "G2-ADMIN-014": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_014_knowledge_slo_management"
+  ],
+  "G2-ADMIN-015": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_015_knowledge_debt_dashboard"
+  ],
+  "G2-ADMIN-016": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_016_ontology_evolution_proposals"
+  ],
+  "G2-ADMIN-017": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_admin_017_simulation_workspace_manager"
+  ],
+  "G2-ARCH-001": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-002": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-003": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-004": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-005": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-006": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_report_profile_violations"
+  ],
+  "G2-ARCH-007": [
+    "tests/unit/test_confluence_body.py::test_body_removal_clears_current_structure_without_destroying_history",
+    "tests/unit/test_confluence_metadata.py::test_metadata_persists_in_revisions_clears_on_update_and_is_replay_stable"
+  ],
+  "G2-ARCH-008": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-009": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-010": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-011": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_report_profile_violations"
+  ],
+  "G2-ARCH-012": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-013": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-014": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCH-015": [
+    "tests/unit/test_gap_coverage.py::test_g2_architecture_guardrails_are_executable"
+  ],
+  "G2-ARCHC-002": [
+    "tests/unit/test_conformance.py::test_parse_rules_basic"
+  ],
+  "G2-ARCHC-003": [
+    "tests/unit/test_conformance.py::test_parse_rules_with_severity_and_depth"
+  ],
+  "G2-ARCHC-004": [
+    "tests/unit/test_conformance.py::test_check_conformance_all_pass"
+  ],
+  "G2-ARCHC-005": [
+    "tests/unit/test_conformance.py::test_check_conformance_with_failure"
+  ],
+  "G2-ARCHC-006": [
+    "tests/unit/test_conformance.py::test_check_conformance_with_failure"
+  ],
+  "G2-ARCHC-007": [
+    "tests/unit/test_conformance.py::test_api_conformance_check_dsl"
+  ],
+  "G2-ARCHC-008": [
+    "tests/unit/test_conformance.py::test_api_conformance_ruleset_and_catalog"
+  ],
+  "G2-ARCHC-009": [
+    "tests/unit/test_conformance.py::test_api_conformance_ruleset_and_catalog"
+  ],
+  "G2-CAP-002": [
+    "tests/unit/test_capsules.py::test_capsule_is_reproducible_g2_cap_002"
+  ],
+  "G2-CAP-003": [
+    "tests/unit/test_capsules.py::test_capsule_reduces_context_exposure_g2_cap_003"
+  ],
+  "G2-CAP-004": [
+    "tests/unit/test_capsules.py::test_capsule_includes_manifest_and_evidence_g2_cap_004"
+  ],
+  "G2-CAP-005": [
+    "tests/unit/test_capsules.py::test_capsule_example_types_g2_cap_005"
+  ],
+  "G2-CAP-006": [
+    "tests/unit/test_capsules.py::test_capsule_export_package_format_g2_cap_006"
+  ],
+  "G2-CAUSE-002": [
+    "tests/unit/test_causal_reasoning.py::test_causal_relationship_classes_and_hypotheses"
+  ],
+  "G2-CAUSE-003": [
+    "tests/unit/test_causal_reasoning.py::test_causal_hypotheses_no_silent_promotion_to_confirmed"
+  ],
+  "G2-CAUSE-004": [
+    "tests/unit/test_causal_reasoning.py::test_causal_hypothesis_structure_and_alternatives"
+  ],
+  "G2-CAUSE-005": [
+    "tests/unit/test_causal_reasoning.py::test_temporal_correlations_and_time_ordering"
+  ],
+  "G2-CAUSE-006": [
+    "tests/unit/test_causal_reasoning.py::test_human_confirmation_and_rejection_preserved"
+  ],
+  "G2-EKAF-001": [
+    "tests/unit/test_acquisition_fabric.py::test_generic_web_and_file_connectors_share_source_connector_semantics",
+    "tests/unit/test_source_registry.py::test_registry_entry_carries_g2_operational_metadata_without_secrets"
+  ],
+  "G2-EKAF-002": [
+    "tests/contract/test_g2_contracts.py::test_fake_connector_satisfies_runtime_connector_protocol"
+  ],
+  "G2-EKAF-003": [
+    "tests/contract/test_g2_contracts.py::test_v2_event_exposes_g2_envelope_aliases"
+  ],
+  "G2-EKAF-004": [
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-EKAF-005": [
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-EKAF-006": [
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
+  ],
+  "G2-EKAF-007": [
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-EKAF-008": [
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-EKAF-009": [
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
+  ],
+  "G2-EKAF-010": [
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-EKAF-011": [
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-EKAF-012": [
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-EKAF-013": [
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-EKAF-014": [
+    "tests/unit/test_phase2_ingestion.py::test_dead_letter_handling_contract"
+  ],
+  "G2-EKAF-015": [
+    "tests/unit/test_acquisition_fabric.py::test_source_operation_api_queues_registry_scoped_job"
+  ],
+  "G2-EKAF-016": [
+    "tests/unit/test_graph_evolution.py::test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay"
+  ],
+  "G2-EKAF-017": [
+    "tests/unit/test_ekaf_drift.py::test_payload_schema_is_stable_and_escapes_path_separators",
+    "tests/unit/test_ekaf_drift.py::test_schema_drift_classifies_compatible_and_additive_payloads",
+    "tests/unit/test_ekaf_drift.py::test_schema_drift_classifies_removed_or_container_changes_as_breaking",
+    "tests/unit/test_ekaf_drift.py::test_schema_drift_classifies_scalar_changes_as_potentially_breaking"
+  ],
+  "G2-EKAF-018": [
+    "tests/unit/test_ekaf_drift.py::test_mapping_drift_ledger_records_version_changes_and_builds_replay_plan"
+  ],
+  "G2-EKAF-019": [
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_enforces_rate_and_politeness_controls"
+  ],
+  "G2-EKAF-020": [
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
+  ],
+  "G2-EKAF-021": [
+    "tests/unit/test_source_registry.py::test_registry_entry_carries_g2_operational_metadata_without_secrets"
+  ],
+  "G2-EKAF-022": [
+    "tests/unit/test_ekaf_conflicts.py::test_acquisition_marks_non_conflicting_claim_sets_as_preserved_not_conflicting",
+    "tests/unit/test_ekaf_conflicts.py::test_acquisition_preserves_conflicting_source_claims_without_resolution"
+  ],
+  "G2-EKAF-023": [
+    "tests/contract/test_g2_contracts.py::test_v1_source_event_upgrade_preserves_identity_and_hash"
+  ],
+  "G2-EKAF-024": [
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-EKAF-025": [
+    "tests/unit/test_file_ingestion.py::test_binary_connector_scope_and_limits"
+  ],
+  "G2-EKAF-026": [
+    "tests/unit/test_identity_resolver.py::test_same_person_by_email"
+  ],
+  "G2-EKAF-028": [
+    "tests/unit/test_source_registry.py::test_registry_entry_carries_g2_operational_metadata_without_secrets"
+  ],
+  "G2-EKAF-029": [
+    "tests/unit/test_acquisition_fabric.py::test_source_operation_api_queues_registry_scoped_job"
+  ],
+  "G2-EKAF-030": [
+    "tests/unit/test_acquisition_fabric.py::test_source_operation_api_queues_registry_scoped_job"
+  ],
+  "G2-EVENT-002": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-EVENT-003": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-EVENT-004": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-EVENT-005": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-EVENT-006": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_consumer_failure_does_not_corrupt_graph_state"
+  ],
+  "G2-EVENT-007": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-EVOL-002": [
+    "tests/unit/test_graph_evolution_family.py::test_evolve_relationship_validity_interval"
+  ],
+  "G2-EVOL-003": [
+    "tests/unit/test_graph_evolution_family.py::test_observation_time_separated_from_event_time"
+  ],
+  "G2-EVOL-004": [
+    "tests/unit/test_graph_evolution_family.py::test_relationship_removal_expires_assertion_without_erasing_history"
+  ],
+  "G2-EVOL-005": [
+    "tests/unit/test_graph_evolution_family.py::test_relationship_update_represented_as_new_revision"
+  ],
+  "G2-EVOL-006": [
+    "tests/unit/test_graph_evolution_family.py::test_current_views_exclude_expired_facts"
+  ],
+  "G2-EVOL-007": [
+    "tests/unit/test_graph_evolution_family.py::test_historical_as_of_reconstruction"
+  ],
+  "G2-EVOL-008": [
+    "tests/unit/test_graph_evolution_family.py::test_graph_diff_between_timestamps"
+  ],
+  "G2-EVOL-009": [
+    "tests/unit/test_graph_evolution_family.py::test_graph_mutation_source_references"
+  ],
+  "G2-EVOL-010": [
+    "tests/unit/test_bulk_load.py::test_hugegraph_bulk_load_uses_bounded_native_batches",
+    "tests/unit/test_bulk_load.py::test_memory_bulk_load_validates_then_commits_atomically",
+    "tests/unit/test_graph_evolution_family.py::test_atomic_batch_isolation"
+  ],
+  "G2-EVOL-011": [
+    "tests/unit/test_graph_evolution_family.py::test_failed_batch_does_not_advance_checkpoint"
+  ],
+  "G2-EVOL-012": [
+    "tests/unit/test_graph_evolution_family.py::test_relationship_preservation_means_history_not_stale_edges"
+  ],
+  "G2-EVOL-013": [
+    "tests/unit/test_graph_evolution_family.py::test_previous_revision_links"
+  ],
+  "G2-EVOL-014": [
+    "tests/unit/test_graph_evolution_family.py::test_tombstone_retired_status"
+  ],
+  "G2-EVOL-015": [
+    "tests/unit/test_graph_evolution_family.py::test_rollback_and_replay_strategy"
+  ],
+  "G2-EVOL-016": [
+    "tests/unit/test_graph_evolution_family.py::test_schema_ontology_migration_strategy"
+  ],
+  "G2-GRAPH-API-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_api_002_contract_linking"
+  ],
+  "G2-GRAPH-API-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_api_003_breaking_changes"
+  ],
+  "G2-GRAPH-BIZ-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_biz_002_intent_to_technical"
+  ],
+  "G2-GRAPH-BIZ-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_biz_003_reverse_query"
+  ],
+  "G2-GRAPH-DEC-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_dec_002_adr_links"
+  ],
+  "G2-GRAPH-DEC-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_dec_003_why_architecture"
+  ],
+  "G2-GRAPH-OBS-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_obs_002_link_runtime_evidence"
+  ],
+  "G2-GRAPH-OBS-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_obs_003_bounded_observation_window"
+  ],
+  "G2-GRAPH-PROC-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_proc_002_designed_vs_observed"
+  ],
+  "G2-GRAPH-PROC-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_proc_003_deviations_and_bottlenecks"
+  ],
+  "G2-GRAPH-RUNTIME-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_runtime_002_temporal_service_calls"
+  ],
+  "G2-GRAPH-RUNTIME-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_runtime_003_compare_runtime_vs_static"
+  ],
+  "G2-GRAPH-SEC-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_sec_002_vulnerability_blast_radius"
+  ],
+  "G2-GRAPH-SEC-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_sec_003_preserve_scanner_provenance"
+  ],
+  "G2-GRAPH-TEST-002": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_test_002_change_impact_analysis"
+  ],
+  "G2-GRAPH-TEST-003": [
+    "tests/unit/test_g2_domain_graphs.py::test_g2_graph_test_003_test_coverage_confidence_provenance"
+  ],
+  "G2-I2R-002": [
+    "tests/unit/test_i2r_intelligence.py::test_reverse_traversal_g2_i2r_002"
+  ],
+  "G2-I2R-003": [
+    "tests/unit/test_i2r_intelligence.py::test_compute_coverage_for_missing_links_g2_i2r_003"
+  ],
+  "G2-I2R-004": [
+    "tests/unit/test_i2r_intelligence.py::test_flag_unowned_production_assets_g2_i2r_004"
+  ],
+  "G2-I2R-005": [
+    "tests/unit/test_i2r_intelligence.py::test_flag_untraced_critical_requirements_g2_i2r_005"
+  ],
+  "G2-IMMUNE-002": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_002_missing_mandatory_relationships"
+  ],
+  "G2-IMMUNE-003": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_003_contradictory_claims"
+  ],
+  "G2-IMMUNE-004": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_004_stale_documentation"
+  ],
+  "G2-IMMUNE-005": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_005_schema_drift"
+  ],
+  "G2-IMMUNE-006": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_006_unexpected_architecture_edges"
+  ],
+  "G2-IMMUNE-007": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_007_missing_ownership"
+  ],
+  "G2-IMMUNE-008": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_008_broken_provenance"
+  ],
+  "G2-IMMUNE-009": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_009_suspicious_ai_relationships"
+  ],
+  "G2-IMMUNE-010": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_010_graph_poisoning_anomalies"
+  ],
+  "G2-IMMUNE-011": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_011_quarantine_and_action_recommendation"
+  ],
+  "G2-IMMUNE-012": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_012_non_silent_rewrite_policy"
+  ],
+  "G2-IMMUNE-013": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_immune_013_verifiable_explanatory_rationale"
+  ],
+  "G2-JOURNAL-002": [
+    "tests/unit/test_change_journal_family.py::test_journal_record_schema_and_integrity"
+  ],
+  "G2-JOURNAL-003": [
+    "tests/unit/test_change_journal_family.py::test_journal_query_by_entity_time_and_run"
+  ],
+  "G2-JOURNAL-004": [
+    "tests/unit/test_change_journal_family.py::test_journal_replay_into_derived_indices"
+  ],
+  "G2-JOURNAL-005": [
+    "tests/unit/test_change_journal_family.py::test_journal_configurable_retention"
+  ],
+  "G2-JOURNAL-006": [
+    "tests/unit/test_change_journal_family.py::test_journal_audit_incident_troubleshooting"
+  ],
+  "G2-KD-002": [
+    "tests/unit/test_knowledge_debt.py::test_all_twelve_debt_categories_detected_g2_kd_002"
+  ],
+  "G2-KD-003": [
+    "tests/unit/test_knowledge_debt.py::test_debt_computed_by_dimensions_g2_kd_003"
+  ],
+  "G2-KD-004": [
+    "tests/unit/test_knowledge_debt.py::test_multidimensional_debt_facets_g2_kd_004"
+  ],
+  "G2-KD-005": [
+    "tests/unit/test_knowledge_debt.py::test_debt_trend_tracking_g2_kd_005"
+  ],
+  "G2-KD-006": [
+    "tests/unit/test_knowledge_debt.py::test_findings_link_remediation_and_evidence_g2_kd_006"
+  ],
+  "G2-OBS-001": [
+    "tests/unit/test_gap_coverage.py::test_g2_observability_contract_validates_required_metrics"
+  ],
+  "G2-OBS-002": [
+    "tests/unit/test_gap_coverage.py::test_g2_observability_contract_reports_missing_metrics"
+  ],
+  "G2-OBS-004": [
+    "tests/unit/test_gap_coverage.py::test_g2_observability_contract_reports_missing_metrics"
+  ],
+  "G2-OBS-006": [
+    "tests/unit/test_gap_coverage.py::test_g2_observability_contract_validates_required_metrics"
+  ],
+  "G2-OEVO-002": [
+    "tests/unit/test_ontology_evolution_family.py::test_propose_new_ontology_definitions"
+  ],
+  "G2-OEVO-003": [
+    "tests/unit/test_ontology_evolution_family.py::test_proposal_contents_and_impact_analysis"
+  ],
+  "G2-OEVO-004": [
+    "tests/unit/test_ontology_evolution_family.py::test_ontology_changes_require_human_review_and_governance"
+  ],
+  "G2-OEVO-005": [
+    "tests/unit/test_ontology_evolution_family.py::test_approved_ontology_changes_enter_gitops_workflow"
+  ],
+  "G2-OEVO-006": [
+    "tests/unit/test_ontology_evolution_family.py::test_rejected_suggestions_preserved_as_feedback"
+  ],
+  "G2-PERF-002": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_002_incremental_update_latency_measured"
+  ],
+  "G2-PERF-003": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_003_graph_mutation_throughput_benchmarked"
+  ],
+  "G2-PERF-004": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_004_historical_state_reconstruction_latency"
+  ],
+  "G2-PERF-005": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_005_graph_diff_latency_benchmarked"
+  ],
+  "G2-PERF-006": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_006_crawler_concurrency_source_configurable"
+  ],
+  "G2-PERF-007": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_007_telemetry_adapters_aggregate_before_graph_write"
+  ],
+  "G2-PERF-008": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_perf_008_incremental_processing_avoids_global_recompute"
+  ],
+  "G2-PM-002": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_g2_pm_002_event_log_ingestion"
+  ],
+  "G2-PM-003": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_g2_pm_003_process_path_discovery"
+  ],
+  "G2-PM-004": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_g2_pm_004_conformance_checking"
+  ],
+  "G2-PM-005": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_g2_pm_005_bottleneck_detection"
+  ],
+  "G2-QOP-002": [
+    "tests/unit/test_question_operators_g2.py::test_operator_why_not"
+  ],
+  "G2-QOP-003": [
+    "tests/unit/test_question_operators_g2.py::test_operator_what_if_simulation"
+  ],
+  "G2-QOP-004": [
+    "tests/unit/test_question_operators_g2.py::test_operator_what_changed"
+  ],
+  "G2-QOP-005": [
+    "tests/unit/test_question_operators_g2.py::test_operator_when"
+  ],
+  "G2-QOP-006": [
+    "tests/unit/test_question_operators_g2.py::test_operator_who"
+  ],
+  "G2-QOP-007": [
+    "tests/unit/test_question_operators_g2.py::test_operator_where"
+  ],
+  "G2-QOP-008": [
+    "tests/unit/test_question_operators_g2.py::test_operator_how"
+  ],
+  "G2-QOP-009": [
+    "tests/unit/test_question_operators_g2.py::test_operator_dispatch_and_structured_evidence"
+  ],
+  "G2-REL-002": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_002_webhook_delivery_deduplicated"
+  ],
+  "G2-REL-003": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_003_missed_webhook_recovery_tested"
+  ],
+  "G2-REL-004": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_004_reconciliation_safe_to_rerun"
+  ],
+  "G2-REL-005": [
+    "tests/unit/test_graph_evolution.py::test_change_journal_has_cursor_and_hash_chain_integrity",
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_005_event_journal_corruption_detection"
+  ],
+  "G2-REL-006": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_006_backup_includes_graph_and_sync_metadata"
+  ],
+  "G2-REL-007": [
+    "tests/unit/test_operational_recovery.py::test_operational_recovery_preserves_state_and_holds_active_jobs",
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_007_restore_preserves_checkpoints",
+    "tests/unit/test_recovery_bundle.py::test_bundle_restores_actual_weights_configuration_and_graph"
+  ],
+  "G2-REL-008": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_rel_008_restore_procedure_documents_event_replay"
+  ],
+  "G2-REQ-34": [
+    "tests/contract/test_g2_contracts.py::test_required_g2_schema_contracts_exist"
+  ],
+  "G2-SEC-CRAWL-001": [
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_rejects_private_dns_resolution"
+  ],
+  "G2-SEC-CRAWL-002": [
+    "tests/security/test_crawler_security.py::test_crawler_strict_target_allowlist",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_can_authorize_private_intranet_targets_explicitly",
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_rejects_private_dns_resolution"
+  ],
+  "G2-SEC-CRAWL-003": [
+    "tests/security/test_crawler_security.py::test_crawler_blocks_automatic_internet_traversal"
+  ],
+  "G2-SEC-CRAWL-004": [
+    "tests/security/test_crawler_security.py::test_crawler_secret_redaction_in_logs"
+  ],
+  "G2-SEC-CRAWL-005": [
+    "tests/security/test_crawler_security.py::test_crawler_tls_validation_secure_by_default"
+  ],
+  "G2-SEC-CRAWL-006": [
+    "tests/security/test_crawler_security.py::test_untrusted_document_parsing_is_quarantined_and_isolated"
+  ],
+  "G2-SEC-CRAWL-007": [
+    "tests/security/test_crawler_security.py::test_crawler_content_size_limits"
+  ],
+  "G2-SEC-CRAWL-008": [
+    "tests/security/test_crawler_security.py::test_crawler_archive_bomb_protection"
+  ],
+  "G2-SEC-CRAWL-009": [
+    "tests/security/test_crawler_security.py::test_prompt_injection_tagged_as_data_not_instruction"
+  ],
+  "G2-SEC-CRAWL-010": [
+    "tests/security/test_crawler_security.py::test_crawler_actions_are_read_only"
+  ],
+  "G2-SEC-CRAWL-011": [
+    "tests/security/test_crawler_security.py::test_source_credentials_use_minimum_permissions"
+  ],
+  "G2-SEC-CRAWL-012": [
+    "tests/security/test_crawler_security.py::test_all_outbound_source_access_is_auditable"
+  ],
+  "G2-SIM-002": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_002_hypothetical_mutations_without_base_mutation"
+  ],
+  "G2-SIM-003": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_003_supported_mutation_types"
+  ],
+  "G2-SIM-004": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_004_simulation_analysis_runs"
+  ],
+  "G2-SIM-005": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_005_compare_simulation_to_baseline"
+  ],
+  "G2-SIM-006": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_006_evidence_assumptions_uncertainty"
+  ],
+  "G2-SIM-007": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_sim_007_simulation_reproducibility"
+  ],
+  "G2-SLO-002": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_slo_002_slos_configurable_by_domain"
+  ],
+  "G2-SLO-003": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_slo_003_slo_breach_creates_quality_finding"
+  ],
+  "G2-SLO-004": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_slo_004_dashboards_show_objective_trend_breached_assets"
+  ],
+  "G2-SLO-005": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_slo_005_slo_evaluation_reproducible_against_graph_version"
+  ],
+  "G2-SRC-API-002": [
+    "tests/unit/test_api_portal_connector.py::test_api_portal_service_catalog_discovery"
+  ],
+  "G2-SRC-API-003": [
+    "tests/unit/test_api_portal_connector.py::test_api_portal_endpoint_extraction_and_mapping"
+  ],
+  "G2-SRC-API-004": [
+    "tests/unit/test_api_portal_connector.py::test_api_portal_swagger_openapi_url_metadata"
+  ],
+  "G2-SRC-API-005": [
+    "tests/unit/test_api_portal_connector.py::test_api_portal_checkpoint_and_watermark_sync"
+  ],
+  "G2-SRC-API-006": [
+    "tests/unit/test_api_portal_connector.py::test_api_portal_schema_drift_and_error_handling"
+  ],
+  "G2-SRC-CICD-002": [
+    "tests/unit/test_cicd_connector.py::test_cicd_pipeline_discovery_and_extraction"
+  ],
+  "G2-SRC-CICD-003": [
+    "tests/unit/test_cicd_connector.py::test_cicd_job_and_deployment_run_extraction"
+  ],
+  "G2-SRC-CICD-004": [
+    "tests/unit/test_cicd_connector.py::test_cicd_checkpoint_health_and_envelope_validation"
+  ],
+  "G2-SRC-CODE-002": [
+    "tests/unit/test_code_parser.py::test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls"
+  ],
+  "G2-SRC-CODE-003": [
+    "tests/unit/test_code_parser.py::test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls"
+  ],
+  "G2-SRC-CODE-004": [
+    "tests/unit/test_code_parser.py::test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls"
+  ],
+  "G2-SRC-CODE-005": [
+    "tests/unit/test_code_parser.py::test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls"
+  ],
+  "G2-SRC-CONF-001": [
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_confluence_metadata.py::test_acquisition_completes_truncated_labels_without_following_remote_links",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[history-value6]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[history-value7]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[history-value8]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value0]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value1]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value2]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value3]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value4]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[metadata-value5]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[version-value10]",
+    "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[version-value9]",
+    "tests/unit/test_confluence_metadata.py::test_metadata_persists_in_revisions_clears_on_update_and_is_replay_stable",
+    "tests/unit/test_confluence_metadata.py::test_page_metadata_normalizes_labels_actors_and_source_timestamps"
+  ],
+  "G2-SRC-CONF-002": [
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_confluence_history.py::test_complete_history_must_agree_with_current_version_metadata",
+    "tests/unit/test_confluence_history.py::test_history_limit_refuses_before_historical_requests",
+    "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-authentication_failed]",
+    "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-invalid_response0]",
+    "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-invalid_response1]",
+    "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-invalid_response2]",
+    "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-remote_error]",
+    "tests/unit/test_confluence_history.py::test_noninteger_current_version_refuses_before_historical_requests[2.0]",
+    "tests/unit/test_confluence_history.py::test_noninteger_current_version_refuses_before_historical_requests[True]",
+    "tests/unit/test_confluence_history.py::test_old_captures_report_partial_history_and_invalid_complete_history_enters_dlq",
+    "tests/unit/test_confluence_history.py::test_public_historical_content_is_captured_projected_and_replayed_offline"
+  ],
+  "G2-SRC-CONF-003": [
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_confluence_body.py::test_body_removal_clears_current_structure_without_destroying_history",
+    "tests/unit/test_confluence_body.py::test_invalid_body_is_captured_and_dlq_before_business_writes",
+    "tests/unit/test_confluence_body.py::test_invalid_storage_body_is_explicitly_rejected[<!DOCTYPE x><p>x</p>]",
+    "tests/unit/test_confluence_body.py::test_invalid_storage_body_is_explicitly_rejected[<p>&unknown;</p>]",
+    "tests/unit/test_confluence_body.py::test_invalid_storage_body_is_explicitly_rejected[<p>unclosed]",
+    "tests/unit/test_confluence_body.py::test_invalid_storage_body_is_explicitly_rejected[<table><tr><td colspan=\"zero\">x</td></tr></table>]",
+    "tests/unit/test_confluence_body.py::test_storage_body_extracts_exact_structure",
+    "tests/unit/test_confluence_body.py::test_storage_body_preserves_code_entities_and_ignores_active_content",
+    "tests/unit/test_confluence_body.py::test_storage_extraction_limits_fail_explicitly[body-size]",
+    "tests/unit/test_confluence_body.py::test_storage_extraction_limits_fail_explicitly[element-count]",
+    "tests/unit/test_confluence_body.py::test_storage_extraction_limits_fail_explicitly[nesting-depth]",
+    "tests/unit/test_confluence_body.py::test_structure_is_persisted_versioned_and_replayable",
+    "tests/unit/test_confluence_body.py::test_xhtml_namespace_empty_body_and_nested_tables"
+  ],
+  "G2-SRC-CONF-004": [
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_document_references.py::test_deleted_document_expires_links_and_old_replay_cannot_restore_it",
+    "tests/unit/test_document_references.py::test_exact_url_resolution_refuses_ambiguous_titles_and_unknown_references",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[APIEndpoint-properties2]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[APIService-properties1]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[CodeSymbol-properties6]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[File-properties5]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[Project-properties3]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[Service-properties0]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[WorkItem-properties4]",
+    "tests/unit/test_document_references.py::test_fact_changes_not_observations_trigger_staleness_and_replay_cannot_rebase",
+    "tests/unit/test_phase2_hugegraph_schema.py::test_document_reference_lookups_have_single_property_secondary_indexes"
+  ],
+  "G2-SRC-CONF-005": [
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_document_references.py::test_deleted_document_expires_links_and_old_replay_cannot_restore_it",
+    "tests/unit/test_document_references.py::test_fact_changes_not_observations_trigger_staleness_and_replay_cannot_rebase",
+    "tests/unit/test_document_references.py::test_tombstone_staleness_is_exposed_by_existing_api_and_agent"
+  ],
+  "G2-SRC-DD-002": [
+    "tests/unit/test_connectors_new.py::TestDatadogConnector::test_map_event"
+  ],
+  "G2-SRC-DD-003": [
+    "tests/unit/test_connectors_new.py::TestDatadogConnector::test_map_event"
+  ],
+  "G2-SRC-DD-004": [
+    "tests/unit/test_connectors_new.py::TestDatadogConnector::test_map_event"
+  ],
+  "G2-SRC-GH-001": [
+    "tests/unit/test_github_connector.py::test_github_baseline_discovers_and_emits_versioned_engineering_events"
+  ],
+  "G2-SRC-GH-002": [
+    "tests/unit/test_acquisition_fabric.py::test_webhook_api_accepts_native_github_signature_delivery_and_event_headers"
+  ],
+  "G2-SRC-GH-003": [
+    "tests/unit/test_github_connector.py::test_github_baseline_discovers_and_emits_versioned_engineering_events"
+  ],
+  "G2-SRC-GH-004": [
+    "tests/unit/test_github_connector.py::test_github_baseline_discovers_and_emits_versioned_engineering_events"
+  ],
+  "G2-SRC-GL-001": [
+    "tests/unit/test_gitlab_connector.py::test_gitlab_baseline_emits_repository_delivery_and_knowledge_events"
+  ],
+  "G2-SRC-GL-002": [
+    "tests/unit/test_acquisition_fabric.py::test_webhook_api_accepts_gitlab_standard_signature_and_rejects_stale_delivery"
+  ],
+  "G2-SRC-GL-003": [
+    "tests/unit/test_gitlab_connector.py::test_gitlab_baseline_emits_repository_delivery_and_knowledge_events"
+  ],
+  "G2-SRC-GL-004": [
+    "tests/unit/test_gitlab_connector.py::test_gitlab_baseline_emits_repository_delivery_and_knowledge_events"
+  ],
+  "G2-SRC-GRAF-002": [
+    "tests/unit/test_connectors_new.py::TestGrafanaConnector::test_map_event_dashboard"
+  ],
+  "G2-SRC-GRAF-003": [
+    "tests/unit/test_connectors_new.py::TestGrafanaConnector::test_map_event_dashboard"
+  ],
+  "G2-SRC-JIRA-002": [
+    "tests/unit/test_jira_connector.py::test_jira_issue_extraction_with_fields"
+  ],
+  "G2-SRC-JIRA-003": [
+    "tests/unit/test_jira_connector.py::test_jira_changelog_streaming_and_history"
+  ],
+  "G2-SRC-JIRA-004": [
+    "tests/unit/test_jira_connector.py::test_jira_project_version_and_metadata_hierarchy"
+  ],
+  "G2-SRC-JIRA-005": [
+    "tests/unit/test_jira_connector.py::test_jira_sprints_and_agile_metadata"
+  ],
+  "G2-SRC-JIRA-006": [
+    "tests/unit/test_jira_connector.py::test_jira_webhook_event_handling"
+  ],
+  "G2-SRC-KIB-002": [
+    "tests/unit/test_connectors_new.py::TestKibanaConnector::test_map_event"
+  ],
+  "G2-SRC-KIB-003": [
+    "tests/unit/test_connectors_new.py::TestKibanaConnector::test_map_event"
+  ],
+  "G2-SRC-KIB-004": [
+    "tests/unit/test_connectors_new.py::TestKibanaConnector::test_map_event"
+  ],
+  "G2-SRC-KIB-005": [
+    "tests/unit/test_connectors_new.py::TestKibanaConnector::test_map_event"
+  ],
+  "G2-SRC-OTEL-002": [
+    "tests/unit/test_otel_connector.py::test_otel_trace_span_extraction"
+  ],
+  "G2-SRC-OTEL-003": [
+    "tests/unit/test_otel_connector.py::test_otel_metric_descriptor_and_datapoint_ingestion"
+  ],
+  "G2-SRC-OTEL-004": [
+    "tests/unit/test_otel_connector.py::test_otel_graceful_handling_when_sdk_missing"
+  ],
+  "G2-SRC-OTEL-005": [
+    "tests/unit/test_otel_connector.py::test_otel_checkpoint_and_healthy_status"
+  ],
+  "G2-SRC-RUNTIME-002": [
+    "tests/unit/test_runtime_connector.py::test_runtime_infra_resource_discovery_and_extraction"
+  ],
+  "G2-SRC-RUNTIME-003": [
+    "tests/unit/test_runtime_connector.py::test_runtime_infra_dependency_handling_and_health"
+  ],
+  "G2-SRC-SBOM-002": [
+    "tests/unit/test_sbom_connector.py::test_sbom_spdx_package_extraction"
+  ],
+  "G2-SRC-SBOM-003": [
+    "tests/unit/test_sbom_connector.py::test_sbom_cyclonedx_component_extraction"
+  ],
+  "G2-SRC-SBOM-004": [
+    "tests/unit/test_sbom_connector.py::test_sbom_vulnerability_extraction_and_health"
+  ],
+  "G2-SRC-SNKB-002": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_kb_article_extraction"
+  ],
+  "G2-SRC-SNKB-003": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_kb_metadata_and_version"
+  ],
+  "G2-SRC-SNOW-002": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_incident_extraction"
+  ],
+  "G2-SRC-SNOW-003": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_problem_extraction"
+  ],
+  "G2-SRC-SNOW-004": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_change_request_extraction"
+  ],
+  "G2-SRC-SNOW-005": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_pagination_and_watermarks"
+  ],
+  "G2-SRC-SNOW-006": [
+    "tests/unit/test_servicenow_connector.py::test_servicenow_schema_drift"
+  ],
+  "G2-SRC-WEB-002": [
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_can_authorize_private_intranet_targets_explicitly",
+    "tests/unit/test_web_crawler_connector.py::test_web_crawler_scope_and_allowlist_boundaries"
+  ],
+  "G2-SRC-WEB-003": [
+    "tests/unit/test_web_crawler_connector.py::test_web_crawler_html_structure_parsing"
+  ],
+  "G2-SRC-WEB-004": [
+    "tests/unit/test_web_crawler_connector.py::test_web_crawler_politeness_delay_and_rate_limiting"
+  ],
+  "G2-SRC-WEB-005": [
+    "tests/unit/test_web_crawler_connector.py::test_web_crawler_content_hashing_and_event_version"
+  ],
+  "G2-SYNC-002": [
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-SYNC-003": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-SYNC-004": [
+    "tests/unit/test_graph_evolution.py::test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay"
+  ],
+  "G2-SYNC-005": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-SYNC-006": [
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-SYNC-007": [
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-SYNC-008": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-SYNC-009": [
+    "tests/unit/test_phase2_api.py::test_source_sync_admin_routes_enqueue_only_safe_sync_options"
+  ],
+  "G2-SYNC-010": [
+    "tests/unit/test_acquisition_sync_semantics.py::test_full_rebuild_requires_explicit_maintenance_authorization"
+  ],
+  "G2-SYNC-011": [
+    "tests/unit/test_file_ingestion.py::test_capture_graph_retrieval_and_idempotent_replay"
+  ],
+  "G2-SYNC-012": [
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-SYNC-013": [
+    "tests/unit/test_acquisition_sync_semantics.py::test_bounded_historical_backfill_submits_bounded_specification"
+  ],
+  "G2-SYNC-014": [
+    "tests/unit/test_acquisition_sync_semantics.py::test_selective_rescan_submits_filters_by_criteria"
+  ],
+  "G2-T0002": [
+    "tests/contract/test_g2_contracts.py::test_v1_source_event_upgrade_preserves_identity_and_hash",
+    "tests/contract/test_g2_contracts.py::test_v2_event_requires_payload_reference_except_for_delete"
+  ],
+  "G2-T0003": [
+    "tests/contract/test_g2_contracts.py::test_revision_contract_enforces_open_current_and_closed_historical_ranges"
+  ],
+  "G2-T0004": [
+    "tests/unit/test_source_registry.py::test_registry_crud_is_durable_and_never_stores_inline_secrets"
+  ],
+  "G2-T0005": [
+    "tests/contract/test_g2_contracts.py::test_fake_connector_satisfies_runtime_connector_protocol"
+  ],
+  "G2-T0101": [
+    "tests/unit/test_source_registry.py::test_registry_crud_is_durable_and_never_stores_inline_secrets",
+    "tests/unit/test_source_registry.py::test_source_registry_api_crud_and_auth"
+  ],
+  "G2-T0102": [
+    "tests/unit/test_source_registry.py::test_registry_crud_is_durable_and_never_stores_inline_secrets"
+  ],
+  "G2-T0110": [
+    "tests/runtime_dlq/test_servicenow_acquisition.py::test_servicenow_http_baseline_incremental_and_replay",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls",
+    "tests/unit/test_acquisition_fabric.py::test_source_operation_api_queues_registry_scoped_job"
+  ],
+  "G2-T0111": [
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-T0112": [
+    "tests/runtime_dlq/test_confluence_rejection.py::test_confluence_fetched_rejection_preserves_capture_and_checkpoint",
+    "tests/runtime_dlq/test_servicenow_rejection.py::test_servicenow_fetched_rejection_and_admission_controls",
+    "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
+  ],
+  "G2-T0120": [
+    "tests/unit/test_acquisition_fabric.py::test_webhook_api_uses_source_hmac_and_queues_only_new_delivery",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
+  ],
+  "G2-T0121": [
+    "tests/unit/test_acquisition_fabric.py::test_webhook_api_uses_source_hmac_and_queues_only_new_delivery",
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing"
+  ],
+  "G2-T0122": [
+    "tests/unit/test_acquisition_fabric.py::test_webhook_gateway_authenticates_persists_and_deduplicates_before_processing",
+    "tests/unit/test_operational_recovery.py::test_webhook_recovery_readmission_uses_restored_receipt"
+  ],
+  "G2-T0123": [
+    "tests/unit/test_acquisition_fabric.py::test_webhook_api_uses_source_hmac_and_queues_only_new_delivery",
+    "tests/unit/test_operational_recovery.py::test_webhook_recovery_readmission_uses_restored_receipt"
+  ],
+  "G2-T0130": [
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0131": [
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0132": [
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0133": [
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0134": [
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0135": [
+    "tests/unit/test_acquisition_fabric.py::test_controlled_crawler_extracts_deduplicated_allowlisted_pages_and_blocks_redirect_escape"
+  ],
+  "G2-T0201": [
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-T0202": [
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-T0203": [
+    "tests/runtime_dlq/test_servicenow_acquisition.py::test_servicenow_http_baseline_incremental_and_replay",
+    "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
+  ],
+  "G2-T0210": [
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-T0211": [
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-T0213": [
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe",
+    "tests/unit/test_graph_evolution.py::test_returning_to_prior_content_retains_all_revision_intervals"
+  ],
+  "G2-T0220": [
+    "tests/e2e/test_clean_recovery.py::test_disposable_temporal_upgrade_acceptance",
+    "tests/unit/test_graph_evolution.py::test_relationship_recreation_after_delete_does_not_materialize_tombstone_edge",
+    "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]"
+  ],
+  "G2-T0221": [
+    "tests/e2e/test_clean_recovery.py::test_disposable_temporal_upgrade_acceptance",
+    "tests/unit/test_graph_evolution.py::test_relationship_recreation_after_delete_does_not_materialize_tombstone_edge",
+    "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]"
+  ],
+  "G2-T0222": [
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
+  ],
+  "G2-T0223": [
+    "tests/e2e/test_clean_recovery.py::test_disposable_temporal_upgrade_acceptance",
+    "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]",
+    "tests/unit/test_graph_evolution.py::test_temporal_api_exposes_versions_as_of_diff_and_journal"
+  ],
+  "G2-T0224": [
+    "tests/unit/test_graph_evolution.py::test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay",
+    "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
+    "tests/unit/test_graph_evolution.py::test_returning_to_prior_content_retains_all_revision_intervals",
+    "tests/unit/test_graph_evolution.py::test_temporal_api_exposes_versions_as_of_diff_and_journal",
+    "tests/unit/test_snapshots.py::test_snapshot_preserves_tombstones_and_expired_relationships"
+  ],
+  "G2-T0225": [
+    "tests/e2e/test_clean_recovery.py::test_disposable_temporal_upgrade_acceptance",
+    "tests/unit/test_document_references.py::test_deleted_document_expires_links_and_old_replay_cannot_restore_it",
+    "tests/unit/test_graph_evolution.py::test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay",
+    "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe",
+    "tests/unit/test_graph_evolution.py::test_relationship_recreation_after_delete_does_not_materialize_tombstone_edge",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]",
+    "tests/unit/test_snapshots.py::test_snapshot_preserves_tombstones_and_expired_relationships"
+  ],
+  "G2-T0230": [
+    "tests/unit/test_graph_evolution.py::test_change_journal_has_cursor_and_hash_chain_integrity"
+  ],
+  "G2-T0231": [
+    "tests/unit/test_graph_evolution.py::test_temporal_api_exposes_versions_as_of_diff_and_journal"
+  ],
+  "G2-T0232": [
+    "tests/unit/test_graph_evolution.py::test_change_journal_has_cursor_and_hash_chain_integrity"
+  ],
+  "G2-T0241": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-T0242": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-T0243": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_default_semantic_consumers_process_each_cursor_once"
+  ],
+  "G2-T0250": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-T0251": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-T0252": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-T0253": [
+    "tests/unit/test_semantic_consumers_reconciliation.py::test_reconciler_detects_and_repairs_missing_stale_and_orphaned_records"
+  ],
+  "G2-T0340": [
+    "tests/unit/test_acquisition_fabric.py::test_generic_web_and_file_connectors_share_source_connector_semantics"
+  ],
+  "G2-T0341": [
+    "tests/unit/test_acquisition_fabric.py::test_generic_web_and_file_connectors_share_source_connector_semantics"
+  ],
+  "G2-T0401": [
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/runtime_dlq/test_confluence_failures.py::test_confluence_upstream_failures_are_persistent_and_nonmutating"
+  ],
+  "G2-T0402": [
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/runtime_dlq/test_confluence_failures.py::test_confluence_upstream_failures_are_persistent_and_nonmutating",
+    "tests/runtime_dlq/test_confluence_rejection.py::test_confluence_fetched_rejection_preserves_capture_and_checkpoint"
+  ],
+  "G2-T0403": [
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
+    "tests/unit/test_confluence_history.py::test_public_historical_content_is_captured_projected_and_replayed_offline"
+  ],
+  "G2-T0404": [
+    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay"
+  ],
+  "G2-T0405": [
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[APIEndpoint-properties2]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[APIService-properties1]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[CodeSymbol-properties6]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[File-properties5]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[Project-properties3]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[Service-properties0]",
+    "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[WorkItem-properties4]"
+  ],
+  "G2-TEL-002": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_002_telemetry_derived_relationship_has_observation_window"
+  ],
+  "G2-TEL-003": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_003_telemetry_relationship_includes_source_evidence_ref"
+  ],
+  "G2-TEL-004": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_004_aggregation_fingerprints_for_repeated_logs"
+  ],
+  "G2-TEL-005": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_005_preserve_bounded_exemplar_trace_ids"
+  ],
+  "G2-TEL-006": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_006_configurable_retention_for_derived_facts"
+  ],
+  "G2-TEL-007": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_007_runtime_edge_expires_under_policy"
+  ],
+  "G2-TEL-008": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_g2_tel_008_explicit_confidence_coverage_status"
+  ],
+  "G2-TIME-002": [
+    "tests/unit/test_temporal_model_family.py::test_time_machine_state_as_of_t"
+  ],
+  "G2-TIME-003": [
+    "tests/unit/test_temporal_model_family.py::test_time_machine_compare_t1_vs_t2"
+  ],
+  "G2-TIME-004": [
+    "tests/unit/test_temporal_model_family.py::test_time_machine_highlights_semantic_changes"
+  ],
+  "G2-TIME-005": [
+    "tests/unit/test_temporal_model_family.py::test_release_based_snapshots"
+  ],
+  "G2-TIME-006": [
+    "tests/unit/test_temporal_model_family.py::test_time_travel_schema_version_context"
+  ],
+  "G2-TIME-007": [
+    "tests/unit/test_temporal_model_family.py::test_historical_mode_evidence_reflects_valid_time"
+  ],
+  "G2-TWIN-002": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_twin_002_twin_comprehensive_ontology_coverage"
+  ],
+  "G2-TWIN-003": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_twin_003_twin_historical_revisions_and_state"
+  ],
+  "G2-TWIN-004": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_twin_004_derived_relationships_evidence_addressable"
+  ],
+  "G2-TWIN-005": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_g2_twin_005_distinguish_intended_implemented_observed_inferred"
+  ],
+  "G2-UX-GRAPH-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_002_clustering_grouping"
+  ],
+  "G2-UX-GRAPH-003": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_003_folding_collapse_layouts"
+  ],
+  "G2-UX-GRAPH-004": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_004_progressive_expansion"
+  ],
+  "G2-UX-GRAPH-005": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_005_time_slider"
+  ],
+  "G2-UX-GRAPH-006": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_006_current_historical_toggle"
+  ],
+  "G2-UX-GRAPH-007": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_007_filters"
+  ],
+  "G2-UX-GRAPH-008": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_008_edge_confidence_indicators"
+  ],
+  "G2-UX-GRAPH-009": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_009_path_storytelling"
+  ],
+  "G2-UX-GRAPH-010": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_010_architecture_overlay"
+  ],
+  "G2-UX-GRAPH-011": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_011_runtime_topology_overlay"
+  ],
+  "G2-UX-GRAPH-012": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_012_release_comparison_overlay"
+  ],
+  "G2-UX-GRAPH-013": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_013_blast_radius_highlighting"
+  ],
+  "G2-UX-GRAPH-014": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_014_why_edge_exists"
+  ],
+  "G2-UX-GRAPH-015": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_015_where_entity_came_from"
+  ],
+  "G2-UX-GRAPH-016": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_graph_016_path_evidence_bundle"
+  ],
+  "G2-UX-LENS-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_lens_002_context_preservation"
+  ],
+  "G2-UX-LENS-003": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_lens_003_shareable_query_definitions"
+  ],
+  "G2-UX-PLAY-002": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_play_002_playback_synchronization"
+  ],
+  "G2-UX-PLAY-003": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_play_003_pause_step_scrub"
+  ],
+  "G2-UX-PLAY-004": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_play_004_event_source_evidence_links"
+  ],
+  "G2-UX-PLAY-005": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_g2_ux_play_005_export_timeline_package"
+  ],
+  "G2-VSC-002": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_002_runtime_services"
+  ],
+  "G2-VSC-003": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_003_architecture_conformance"
+  ],
+  "G2-VSC-004": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_004_impacted_tests"
+  ],
+  "G2-VSC-005": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_005_relevant_incidents"
+  ],
+  "G2-VSC-006": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_006_adr_rationale"
+  ],
+  "G2-VSC-007": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_007_quick_actions"
+  ],
+  "G2-VSC-008": [
+    "tests/unit/test_vscode_extension_wp54.py::test_g2_vsc_008_bounded_telemetry_semantics"
+  ],
+  "GAP-AGOV-006": [
+    "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
+  ],
+  "GAP-AGOV-007": [
+    "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
+  ],
+  "GAP-AI": [
+    "tests/unit/test_evidence_addressable_rag.py::test_graph_rag_answer_is_addressable_to_nodes_paths_and_source_records",
+    "tests/unit/test_evidence_addressable_rag.py::test_ranked_retrieval_answers_also_emit_evidence_manifest",
+    "tests/unit/test_evidence_addressable_rag.py::test_retrieval_result_schema_accepts_evidence_address_fields"
+  ],
+  "GAP-AI-001": [
+    "tests/unit/test_gap_governance_controls.py::test_evidence_manifest_links_answer_to_nodes_edges_sources_and_trust"
+  ],
+  "GAP-APP": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_app_dashboard_builder"
+  ],
+  "GAP-CACHE-002": [
+    "tests/unit/test_cache_freshness_cdc.py::test_cache_dependencies_reference_graph_version_and_source_freshness"
+  ],
+  "GAP-CACHE-003": [
+    "tests/unit/test_cache_freshness_cdc.py::test_invalidate_using_graph_cdc"
+  ],
+  "GAP-CACHE-004": [
+    "tests/unit/test_cache_freshness_cdc.py::test_separate_deterministic_query_cache_from_ai_response_cache"
+  ],
+  "GAP-CACHE-005": [
+    "tests/unit/test_cache_freshness_cdc.py::test_do_not_serve_stale_results_beyond_policy"
+  ],
+  "GAP-CATALOG": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_catalog_products_and_lineage"
+  ],
+  "GAP-CP-009": [
+    "tests/unit/test_gap_coverage.py::test_g2_docs_are_loaded_from_heading_requirements",
+    "tests/unit/test_gap_coverage.py::test_gap_coverage_api_exposes_filtered_report",
+    "tests/unit/test_gap_coverage.py::test_gap_docs_are_loaded_as_machine_readable_contracts"
+  ],
+  "GAP-DUAL": [
+    "tests/unit/test_dual_semantic_model.py::test_jsonld_import_reconstructs_supported_property_graph_records",
+    "tests/unit/test_dual_semantic_model.py::test_round_trip_validator_confirms_lossless_supported_constructs",
+    "tests/unit/test_dual_semantic_model.py::test_shacl_shapes_expose_required_properties_and_relationship_ranges",
+    "tests/unit/test_dual_semantic_model.py::test_shacl_validator_reports_missing_required_properties"
+  ],
+  "GAP-DUAL-001": [
+    "tests/unit/test_dual_semantic_model.py::test_jsonld_import_reconstructs_supported_property_graph_records",
+    "tests/unit/test_dual_semantic_model.py::test_round_trip_validator_confirms_lossless_supported_constructs",
+    "tests/unit/test_dual_semantic_model.py::test_shacl_shapes_expose_required_properties_and_relationship_ranges",
+    "tests/unit/test_dual_semantic_model.py::test_shacl_validator_reports_missing_required_properties"
+  ],
+  "GAP-DUAL-002": [
+    "tests/unit/test_dual_semantic_model.py::test_jsonld_import_reconstructs_supported_property_graph_records",
+    "tests/unit/test_dual_semantic_model.py::test_round_trip_validator_confirms_lossless_supported_constructs"
+  ],
+  "GAP-FABRIC-001": [
+    "tests/unit/test_federation_planner.py::test_hugegraph_local_adapter_over_graph_store"
+  ],
+  "GAP-FABRIC-002": [
+    "tests/unit/test_federation_planner.py::test_fragment_planning_splits_per_source",
+    "tests/unit/test_federation_planner.py::test_source_capability_registry"
+  ],
+  "GAP-FABRIC-003": [
+    "tests/unit/test_federation_planner.py::test_cost_aware_routing_prefers_materialized"
+  ],
+  "GAP-FABRIC-004": [
+    "tests/unit/test_federation_planner.py::test_no_pushdown_where_unsupported",
+    "tests/unit/test_federation_planner.py::test_pushdown_filters_and_projection"
+  ],
+  "GAP-FABRIC-005": [
+    "tests/unit/test_federation_planner.py::test_cache_mode_serves_fresh_cached_rows_when_source_goes_offline",
+    "tests/unit/test_federation_planner.py::test_merge_attaches_row_provenance",
+    "tests/unit/test_federation_planner.py::test_merge_fills_missing_fields_across_sources"
+  ],
+  "GAP-FABRIC-006": [
+    "tests/unit/test_federation_planner.py::test_cache_mode_serves_fresh_cached_rows_when_source_goes_offline",
+    "tests/unit/test_federation_planner.py::test_offline_degradation_continues"
+  ],
+  "GAP-FABRIC-007": [
+    "tests/unit/test_federation_planner.py::test_duplicate_coverage_secondary_source",
+    "tests/unit/test_federation_planner.py::test_explainable_routing_plan"
+  ],
+  "GAP-FABRIC-008": [
+    "tests/unit/test_federation_planner.py::test_source_policy_enforces_role_purpose_filters_and_field_denial"
+  ],
+  "GAP-FED": [
+    "tests/unit/test_federation_planner.py::test_cache_mode_serves_fresh_cached_rows_when_source_goes_offline",
+    "tests/unit/test_federation_planner.py::test_entity_mode_policy_splits_virtual_cache_and_materialized_fragments",
+    "tests/unit/test_federation_planner.py::test_explainable_plan_distinguishes_hugegraph_and_live_sources",
+    "tests/unit/test_federation_planner.py::test_file_and_jdbc_adapters_query_external_sources_without_hugegraph"
+  ],
+  "GAP-FED-001": [
+    "tests/unit/test_federation_planner.py::test_file_and_jdbc_adapters_query_external_sources_without_hugegraph"
+  ],
+  "GAP-FED-002": [
+    "tests/unit/test_federation_planner.py::test_cache_mode_serves_fresh_cached_rows_when_source_goes_offline",
+    "tests/unit/test_federation_planner.py::test_entity_mode_policy_splits_virtual_cache_and_materialized_fragments"
+  ],
+  "GAP-FED-003": [
+    "tests/unit/test_federation_planner.py::test_explainable_plan_distinguishes_hugegraph_and_live_sources"
+  ],
+  "GAP-FED-004": [
+    "tests/unit/test_federation_planner.py::test_file_and_jdbc_adapters_query_external_sources_without_hugegraph"
+  ],
+  "GAP-FRESH-002": [
+    "tests/unit/test_freshness_drift_audit.py::test_detect_docs_contradicted_by_code_config_runtime"
+  ],
+  "GAP-FRESH-003": [
+    "tests/unit/test_freshness_drift_audit.py::test_detect_ownership_changes"
+  ],
+  "GAP-FRESH-004": [
+    "tests/unit/test_freshness_drift_audit.py::test_detect_deprecated_apis_still_referenced_in_docs"
+  ],
+  "GAP-FRESH-005": [
+    "tests/unit/test_freshness_drift_audit.py::test_recommend_review_not_silently_rewrite_authoritative_docs"
+  ],
+  "GAP-GDS": [
+    "tests/unit/test_graph_analytics_service.py::test_catalog_lists_standard_algorithms",
+    "tests/unit/test_graph_analytics_service.py::test_centrality_community_and_similarity",
+    "tests/unit/test_graph_analytics_service.py::test_components_triangles_and_kcore",
+    "tests/unit/test_graph_analytics_service.py::test_edge_label_filter_projects_subgraph",
+    "tests/unit/test_graph_analytics_service.py::test_plugin_registration_and_errors",
+    "tests/unit/test_graph_analytics_service.py::test_shortest_path_directed_and_weighted"
+  ],
+  "GAP-GITOPS-002": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_branch_pr_review_merge_workflow"
+  ],
+  "GAP-GITOPS-003": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_generate_semantic_diffs"
+  ],
+  "GAP-GITOPS-004": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_ci_validate_ontology_gate"
+  ],
+  "GAP-GITOPS-005": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_run_impact_analysis"
+  ],
+  "GAP-GITOPS-006": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_generate_migration_scripts"
+  ],
+  "GAP-GITOPS-007": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_rollback_to_previous_version"
+  ],
+  "GAP-GITOPS-008": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_gitops_package_ontology_release_semver_policy"
+  ],
+  "GAP-GOV": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_gov_stewardship_workflow"
+  ],
+  "GAP-GRAG-006": [
+    "tests/unit/test_gap_governance_controls.py::test_evidence_manifest_links_answer_to_nodes_edges_sources_and_trust"
+  ],
+  "GAP-HA": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_ha_leader_lease_failover"
+  ],
+  "GAP-HA-001": [
+    "tests/unit/test_ha_lease.py::test_acquire_and_hold",
+    "tests/unit/test_ha_lease.py::test_acquire_takes_expired_lease",
+    "tests/unit/test_ha_lease.py::test_module_docstring_documents_statelessness",
+    "tests/unit/test_ha_lease.py::test_positive_ttl_required",
+    "tests/unit/test_ha_lease.py::test_release_allows_takeover",
+    "tests/unit/test_ha_lease.py::test_release_by_non_owner_fails",
+    "tests/unit/test_ha_lease.py::test_renew_by_non_owner_fails",
+    "tests/unit/test_ha_lease.py::test_renew_extends_lease",
+    "tests/unit/test_ha_lease.py::test_second_acquire_rejected",
+    "tests/unit/test_ha_lease.py::test_steal_after_expiry",
+    "tests/unit/test_ha_lease.py::test_steal_refused_before_expiry"
+  ],
+  "GAP-HG-004": [
+    "tests/unit/test_bulk_load.py::test_hugegraph_bulk_load_uses_bounded_native_batches",
+    "tests/unit/test_bulk_load.py::test_memory_bulk_load_validates_then_commits_atomically"
+  ],
+  "GAP-IDE": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_ide_extension_manifest_and_mcp_bridge"
+  ],
+  "GAP-KFW-001": [
+    "tests/unit/test_gap_governance_controls.py::test_api_exposes_firewall_trust_states_and_evidence_manifest_controls",
+    "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
+  ],
+  "GAP-KFW-002": [
+    "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
+  ],
+  "GAP-KFW-003": [
+    "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
+  ],
+  "GAP-KFW-004": [
+    "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
+  ],
+  "GAP-KFW-005": [
+    "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
+  ],
+  "GAP-KFW-006": [
+    "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
+  ],
+  "GAP-KFW-007": [
+    "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
+  ],
+  "GAP-KFW-008": [
+    "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
+  ],
+  "GAP-KGCI-001": [
+    "tests/unit/test_gap_coverage.py::test_gap_coverage_cli_writes_json_and_can_fail_planned_p0"
+  ],
+  "GAP-KGCI-002": [
+    "tests/unit/test_gap_coverage.py::test_g2_coverage_report_uses_selected_document_set",
+    "tests/unit/test_gap_coverage.py::test_g2_docs_are_loaded_from_heading_requirements",
+    "tests/unit/test_gap_coverage.py::test_gap_completion_gate_reports_blocking_acceptance_issues",
+    "tests/unit/test_gap_coverage.py::test_gap_coverage_api_exposes_filtered_report",
+    "tests/unit/test_gap_coverage.py::test_gap_coverage_cli_writes_json_and_can_fail_planned_p0",
+    "tests/unit/test_gap_coverage.py::test_gap_coverage_report_distinguishes_code_and_test_evidence",
+    "tests/unit/test_gap_coverage.py::test_gap_docs_are_loaded_as_machine_readable_contracts"
+  ],
+  "GAP-KGCI-003": [
+    "tests/unit/test_gap_coverage.py::test_gap_completion_gate_reports_blocking_acceptance_issues",
+    "tests/unit/test_gap_coverage.py::test_gap_coverage_cli_writes_json_and_can_fail_planned_p0"
+  ],
+  "GAP-KRAG-007": [
+    "tests/unit/test_gap_governance_controls.py::test_api_exposes_firewall_trust_states_and_evidence_manifest_controls",
+    "tests/unit/test_gap_governance_controls.py::test_evidence_manifest_links_answer_to_nodes_edges_sources_and_trust"
+  ],
+  "GAP-MKT-002": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_package_connector_mappings"
+  ],
+  "GAP-MKT-003": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_package_query_templates"
+  ],
+  "GAP-MKT-004": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_package_validation_rules"
+  ],
+  "GAP-MKT-005": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_package_agent_workflows"
+  ],
+  "GAP-MKT-006": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_package_dashboards"
+  ],
+  "GAP-MKT-007": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_dependency_and_version_management"
+  ],
+  "GAP-MKT-008": [
+    "tests/unit/test_gitops_and_marketplace_wp52.py::test_marketplace_signed_packages"
+  ],
+  "GAP-NLP": [
+    "tests/unit/test_local_nlp_pipeline.py::test_classifier_trains_locally_and_abstains",
+    "tests/unit/test_local_nlp_pipeline.py::test_concept_recommendation_from_graph",
+    "tests/unit/test_local_nlp_pipeline.py::test_end_to_end_pipeline_is_local_and_serialisable",
+    "tests/unit/test_local_nlp_pipeline.py::test_entity_extraction_patterns_and_gazetteer",
+    "tests/unit/test_local_nlp_pipeline.py::test_keyphrase_tagging_prefers_rare_terms",
+    "tests/unit/test_local_nlp_pipeline.py::test_tokenization_and_identifier_splitting"
+  ],
+  "GAP-NOCODE": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_nocode_visual_ontology_studio"
+  ],
+  "GAP-OBS-003": [
+    "tests/unit/test_metrics.py::test_counter_increments",
+    "tests/unit/test_metrics.py::test_counter_rejects_negative",
+    "tests/unit/test_metrics.py::test_gauge_set_inc_dec",
+    "tests/unit/test_metrics.py::test_histogram_buckets_and_sum",
+    "tests/unit/test_metrics.py::test_label_escaping",
+    "tests/unit/test_metrics.py::test_record_request_creates_and_reuses_families",
+    "tests/unit/test_metrics.py::test_register_duplicate_rejected",
+    "tests/unit/test_metrics.py::test_render_prometheus_format",
+    "tests/unit/test_metrics.py::test_timed_request_marks_exception_as_500",
+    "tests/unit/test_metrics.py::test_timed_request_records_duration"
+  ],
+  "GAP-PROV-001": [
+    "tests/unit/test_gap_governance_controls.py::test_evidence_manifest_links_answer_to_nodes_edges_sources_and_trust"
+  ],
+  "GAP-PROV-002": [
+    "tests/unit/test_gap_governance_controls.py::test_evidence_manifest_links_answer_to_nodes_edges_sources_and_trust"
+  ],
+  "GAP-PROV-003": [
+    "tests/unit/test_gap_governance_controls.py::test_evidence_manifest_links_answer_to_nodes_edges_sources_and_trust"
+  ],
+  "GAP-PROV-004": [
+    "tests/unit/test_gap_governance_controls.py::test_evidence_manifest_links_answer_to_nodes_edges_sources_and_trust"
+  ],
+  "GAP-PROV-006": [
+    "tests/unit/test_gap_governance_controls.py::test_api_exposes_firewall_trust_states_and_evidence_manifest_controls",
+    "tests/unit/test_gap_governance_controls.py::test_evidence_manifest_links_answer_to_nodes_edges_sources_and_trust"
+  ],
+  "GAP-QI-005": [
+    "tests/unit/test_query_intelligence_risks.py::test_suggested_indexes"
+  ],
+  "GAP-QI-006": [
+    "tests/unit/test_query_intelligence_risks.py::test_traversal_risk_detector"
+  ],
+  "GAP-QI-008": [
+    "tests/unit/test_query_intelligence_risks.py::test_nlq_produces_editable_plan_when_risk_is_high"
+  ],
+  "GAP-QUERY": [
+    "tests/unit/test_unified_query_api.py::test_eoql_route_and_uniform_envelope",
+    "tests/unit/test_unified_query_api.py::test_federated_route_with_filters",
+    "tests/unit/test_unified_query_api.py::test_gremlin_rejects_unsupported_and_invalid",
+    "tests/unit/test_unified_query_api.py::test_gremlin_traversal_is_really_executed",
+    "tests/unit/test_unified_query_api.py::test_limit_truncation_and_mode_validation",
+    "tests/unit/test_unified_query_api.py::test_search_and_vector_routes",
+    "tests/unit/test_unified_query_api.py::test_sparql_pattern_matching_and_joins"
+  ],
+  "GAP-REC": [
+    "tests/unit/test_graph_recommender.py::test_recommend_components_and_all",
+    "tests/unit/test_graph_recommender.py::test_recommend_documents",
+    "tests/unit/test_graph_recommender.py::test_recommend_errors_and_boundaries",
+    "tests/unit/test_graph_recommender.py::test_recommend_experts"
+  ],
+  "GAP-RULE": [
+    "tests/unit/test_deterministic_rule_engine.py::test_distinguishes_fact_statuses",
+    "tests/unit/test_deterministic_rule_engine.py::test_retraction_and_recomputation",
+    "tests/unit/test_deterministic_rule_engine.py::test_versioned_inference_policies"
+  ],
+  "GAP-RULE-002": [
+    "tests/unit/test_gap_governance_controls.py::test_trust_zones_quarantine_promote_filter_and_disclose_non_certified_facts"
+  ],
+  "GAP-SEC-004": [
+    "tests/security/test_http_and_realtime_contract.py::test_brain_llm_stream_incremental_sse",
+    "tests/security/test_http_and_realtime_contract.py::test_enterprise_middleware_tenant_isolation_cross_tenant_denial",
+    "tests/security/test_http_and_realtime_contract.py::test_http_boundary_accepts_signed_token_and_emits_dynamic_audit_actor",
+    "tests/security/test_http_and_realtime_contract.py::test_http_boundary_rejects_tampered_or_expired_token",
+    "tests/security/test_http_and_realtime_contract.py::test_idle_websocket_disconnect_releases_subscription",
+    "tests/security/test_http_and_realtime_contract.py::test_stream_and_poll_hide_unscoped_and_other_tenant_events[default]",
+    "tests/security/test_http_and_realtime_contract.py::test_stream_and_poll_hide_unscoped_and_other_tenant_events[tenant-alpha]",
+    "tests/security/test_http_and_realtime_contract.py::test_tenancy_dependency_uses_signed_identity_not_spoofed_principal_header",
+    "tests/security/test_http_and_realtime_contract.py::test_unbound_viewer_and_tenant_admin_cannot_choose_another_tenant[None-roles0]",
+    "tests/security/test_http_and_realtime_contract.py::test_unbound_viewer_and_tenant_admin_cannot_choose_another_tenant[tenant-alpha-roles1]",
+    "tests/security/test_http_and_realtime_contract.py::test_viewer_cannot_mutate_administrative_surfaces[/api/v1/admin/demo]",
+    "tests/security/test_http_and_realtime_contract.py::test_viewer_cannot_mutate_administrative_surfaces[/api/v1/authz/roles]",
+    "tests/security/test_http_and_realtime_contract.py::test_viewer_cannot_mutate_administrative_surfaces[/api/v1/security/tokens/issue]",
+    "tests/security/test_http_and_realtime_contract.py::test_viewer_cannot_mutate_administrative_surfaces[/api/v1/sources]",
+    "tests/security/test_http_and_realtime_contract.py::test_websocket_authenticated_and_tenant_isolated",
+    "tests/security/test_http_and_realtime_contract.py::test_websocket_closes_when_authenticated_token_expires",
+    "tests/security/test_http_and_realtime_contract.py::test_websocket_unauthenticated_handshake_rejects_without_500",
+    "tests/security/test_token_validation_contract.py::test_arbitrary_malformed_or_unbounded_tokens_are_rejected[None]",
+    "tests/security/test_token_validation_contract.py::test_arbitrary_malformed_or_unbounded_tokens_are_rejected[]",
+    "tests/security/test_token_validation_contract.py::test_arbitrary_malformed_or_unbounded_tokens_are_rejected[a.b.c]",
+    "tests/security/test_token_validation_contract.py::test_arbitrary_malformed_or_unbounded_tokens_are_rejected[arbitrary-long-token-that-used-to-authenticate]",
+    "tests/security/test_token_validation_contract.py::test_arbitrary_malformed_or_unbounded_tokens_are_rejected[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]",
+    "tests/security/test_token_validation_contract.py::test_conflicting_tenant_claims_are_rejected",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[aud-another-api]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-1]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-None]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-True]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-inf]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-nan]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[iss-another-issuer]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-1791987038.0709026]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-nan]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[roles-admin]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[roles-value14]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[sub-]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[sub-value10]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[tenant-]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[tenant_id-value15]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[username-value17]",
+    "tests/security/test_token_validation_contract.py::test_no_implicit_signing_secret_and_wrong_signature_rejected",
+    "tests/security/test_token_validation_contract.py::test_unsigned_algorithm_and_non_object_claims_are_rejected",
+    "tests/security/test_token_validation_contract.py::test_valid_canonical_token_is_accepted"
+  ],
+  "GAP-SEC-008": [
+    "tests/unit/test_enterprise_security_wp55.py::test_gap_sec_008_fail_closed_verification"
+  ],
+  "GAP-SEC-009": [
+    "tests/unit/test_enterprise_security_wp55.py::test_gap_sec_009_ephemeral_fallback_and_key_rotation"
+  ],
+  "GAP-SEC-010": [
+    "tests/unit/test_enterprise_security_wp55.py::test_gap_sec_010_token_revocation_store"
+  ],
+  "GAP-SEC-011": [
+    "tests/unit/test_enterprise_security_wp55.py::test_gap_sec_011_fine_grained_scopes_and_claims"
+  ],
+  "GAP-SEC-012": [
+    "tests/unit/test_enterprise_security_wp55.py::test_gap_sec_012_security_rest_api_and_dashboard"
+  ],
+  "GAP-TEMP-001": [
+    "tests/unit/test_bitemporal.py::test_known_at_returns_latest_revision_observed_before_system_time"
+  ],
+  "GAP-TEMP-002": [
+    "tests/unit/test_bitemporal.py::test_valid_at_selects_revisions_whose_window_covers_valid_time"
+  ],
+  "GAP-TEMP-003": [
+    "tests/unit/test_bitemporal.py::test_slice_combines_valid_and_transaction_time"
+  ],
+  "GAP-TEMP-004": [
+    "tests/unit/test_bitemporal.py::test_topology_reconstructs_entity_and_edge_sets"
+  ],
+  "GAP-TEMP-005": [
+    "tests/unit/test_bitemporal.py::test_diff_between_coordinates_is_first_class"
+  ],
+  "GAP-TEMPLATE": [
+    "tests/unit/test_enterprise_readiness_wp51.py::test_gap_template_industry_templates"
+  ],
+  "GAP-TRUST-001": [
+    "tests/unit/test_gap_governance_controls.py::test_trust_zones_quarantine_promote_filter_and_disclose_non_certified_facts"
+  ],
+  "GAP-TRUST-002": [
+    "tests/unit/test_gap_governance_controls.py::test_trust_zones_quarantine_promote_filter_and_disclose_non_certified_facts"
+  ],
+  "GAP-TRUST-003": [
+    "tests/unit/test_gap_governance_controls.py::test_api_exposes_firewall_trust_states_and_evidence_manifest_controls",
+    "tests/unit/test_gap_governance_controls.py::test_trust_zones_quarantine_promote_filter_and_disclose_non_certified_facts"
+  ],
+  "GAP-TRUST-004": [
+    "tests/unit/test_gap_governance_controls.py::test_trust_zones_quarantine_promote_filter_and_disclose_non_certified_facts"
+  ],
+  "GAP-TRUST-005": [
+    "tests/unit/test_gap_governance_controls.py::test_evidence_manifest_links_answer_to_nodes_edges_sources_and_trust",
+    "tests/unit/test_gap_governance_controls.py::test_trust_zones_quarantine_promote_filter_and_disclose_non_certified_facts"
+  ],
+  "GAP-TRUTH-002": [
+    "tests/unit/test_truth_resolution.py::test_claims_represented_separately_from_canonical_facts"
+  ],
+  "GAP-TRUTH-003": [
+    "tests/unit/test_truth_resolution.py::test_store_source_authority_score"
+  ],
+  "GAP-TRUTH-004": [
+    "tests/unit/test_truth_resolution.py::test_store_extraction_confidence"
+  ],
+  "GAP-TRUTH-005": [
+    "tests/unit/test_truth_resolution.py::test_store_validation_confidence"
+  ],
+  "GAP-TRUTH-006": [
+    "tests/unit/test_truth_resolution.py::test_detect_contradictory_claims"
+  ],
+  "GAP-TRUTH-007": [
+    "tests/unit/test_truth_resolution.py::test_configurable_truth_resolution_policies"
+  ],
+  "GAP-TRUTH-008": [
+    "tests/unit/test_truth_resolution.py::test_permit_human_adjudication"
+  ],
+  "GAP-TRUTH-009": [
+    "tests/unit/test_truth_resolution.py::test_retain_rejected_and_obsolete_claims"
+  ],
+  "GAP-TRUTH-010": [
+    "tests/unit/test_truth_resolution.py::test_explain_why_canonical_fact_selected"
+  ],
+  "GRAPH-001": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph001Federation::test_catalog_and_federated_query"
+  ],
+  "GRAPH-002": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph002CausalInference::test_intervention_and_blast_radius"
+  ],
+  "GRAPH-003": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph003Distillation::test_distillation_package_and_deploy"
+  ],
+  "GRAPH-004": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph004GNNIntegration::test_embeddings_and_link_prediction"
+  ],
+  "GRAPH-005": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph005TemporalRetrieval::test_temporal_index_as_of_and_range"
+  ],
+  "GRAPH-006": [
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph006OWLAndSHACLValidation::test_owl_reasoner",
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph006OWLAndSHACLValidation::test_shacl_shape_validation"
+  ],
+  "H-01": [
+    "tests/unit/test_phase2_hugegraph_schema.py::test_schema_bootstrap_appends_new_properties_to_existing_labels"
+  ],
+  "H-03": [
+    "tests/unit/test_engineering_platform_router.py::test_platform_engineering_stats_endpoints_are_callable"
+  ],
+  "H-04": [
+    "tests/unit/test_authz.py::test_builtin_roles_have_stable_urn_ids"
+  ],
+  "H-05": [
+    "tests/unit/test_layered_config.py::test_layers_precedence_higher_wins"
+  ],
+  "H-06": [
+    "tests/unit/test_container_smoke_manifest.py::test_docker_compose_manifest_services_and_healthchecks_exist",
+    "tests/unit/test_container_smoke_manifest.py::test_smoke_test_script_is_present_and_executable"
+  ],
+  "H-07": [
+    "tests/unit/test_deployment_api.py::test_admin_and_read_routes_require_token_and_jobs_are_durable"
+  ],
+  "H-08": [
+    "tests/unit/test_deployment_api.py::test_admin_and_read_routes_require_token_and_jobs_are_durable"
+  ],
+  "INFRA-001": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra001MultiLevelCache::test_invalidation_broadcast_and_warming",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra001MultiLevelCache::test_l1_l2_hierarchy_and_promotion"
+  ],
+  "INFRA-002": [
+    "tests/security/test_token_validation_contract.py::test_arbitrary_malformed_or_unbounded_tokens_are_rejected[None]",
+    "tests/security/test_token_validation_contract.py::test_arbitrary_malformed_or_unbounded_tokens_are_rejected[]",
+    "tests/security/test_token_validation_contract.py::test_arbitrary_malformed_or_unbounded_tokens_are_rejected[a.b.c]",
+    "tests/security/test_token_validation_contract.py::test_arbitrary_malformed_or_unbounded_tokens_are_rejected[arbitrary-long-token-that-used-to-authenticate]",
+    "tests/security/test_token_validation_contract.py::test_arbitrary_malformed_or_unbounded_tokens_are_rejected[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]",
+    "tests/security/test_token_validation_contract.py::test_conflicting_tenant_claims_are_rejected",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[aud-another-api]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-1]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-None]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-True]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-inf]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-nan]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[iss-another-issuer]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-1791987038.0709026]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-nan]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[roles-admin]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[roles-value14]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[sub-]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[sub-value10]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[tenant-]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[tenant_id-value15]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[username-value17]",
+    "tests/security/test_token_validation_contract.py::test_no_implicit_signing_secret_and_wrong_signature_rejected",
+    "tests/security/test_token_validation_contract.py::test_unsigned_algorithm_and_non_object_claims_are_rejected",
+    "tests/security/test_token_validation_contract.py::test_valid_canonical_token_is_accepted",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra002OAuthAndSSO::test_oauth_pkce_flow",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra002OAuthAndSSO::test_oidc_discovery_and_saml_adapter",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra002OAuthAndSSO::test_token_validator"
+  ],
+  "INFRA-004": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra004LogAggregation::test_sampling_filter",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra004LogAggregation::test_structured_json_logging_with_correlation"
+  ],
+  "INFRA-005": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra005DistributedScheduling::test_distributed_lock_and_task_dag",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra005DistributedScheduling::test_leader_election"
+  ],
+  "INFRA-006": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra006APIVersioning::test_api_versioning_and_headers",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra006APIVersioning::test_sdk_generation"
+  ],
+  "INFRA-007": [
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra007BackupAndRestore::test_automated_restore_drill",
+    "tests/unit/test_phase4_phase4_engines.py::TestInfra007BackupAndRestore::test_backup_encryption_and_integrity"
+  ],
+  "KGR-G-011": [
+    "tests/unit/test_behavioral_gate.py::test_behavioral_gate_abstains_with_unverified_symbols_and_coverage",
+    "tests/unit/test_behavioral_gate.py::test_behavioral_gate_cli_writes_ci_report_for_git_diff",
+    "tests/unit/test_behavioral_gate.py::test_behavioral_gate_detects_observable_pure_function_change",
+    "tests/unit/test_behavioral_gate.py::test_behavioral_gate_fails_public_signature_break",
+    "tests/unit/test_behavioral_gate.py::test_behavioral_gate_supports_r0_and_r1_blocking_thresholds"
+  ],
+  "KGR-G-012": [
+    "tests/unit/test_incremental_indexer.py::test_incremental_index_event_matches_schema",
+    "tests/unit/test_incremental_indexer.py::test_incremental_indexer_handles_hundred_file_diff_under_two_seconds",
+    "tests/unit/test_incremental_indexer.py::test_incremental_indexer_matches_fresh_full_symbol_index_for_same_commit_set",
+    "tests/unit/test_incremental_indexer.py::test_incremental_indexer_updates_only_changed_files_and_propagates_cross_file_impact",
+    "tests/unit/test_incremental_indexer.py::test_install_hooks_command_writes_real_incremental_hook",
+    "tests/unit/test_incremental_indexer.py::test_run_incremental_index_writes_report_for_git_diff"
+  ],
+  "KGR-G-013": [
+    "tests/unit/test_named_graph_isolation.py::test_named_graph_blocks_adversarial_cross_namespace_edges",
+    "tests/unit/test_named_graph_isolation.py::test_named_graph_creation_deletion_latency_and_thousand_tenant_support",
+    "tests/unit/test_named_graph_isolation.py::test_named_graph_edges_and_counts_are_tenant_scoped",
+    "tests/unit/test_named_graph_isolation.py::test_named_graph_vertices_are_invisible_across_tenants",
+    "tests/unit/test_named_graph_isolation.py::test_tenancy_service_wires_named_graphs_to_tenant_facade"
+  ],
+  "KGR-G-014": [
+    "tests/unit/test_streaming_agent_memory.py::test_streaming_agent_memory_conflict_resolution",
+    "tests/unit/test_streaming_agent_memory.py::test_streaming_agent_memory_decay_and_pruning",
+    "tests/unit/test_streaming_agent_memory.py::test_streaming_agent_memory_dual_timeline_indexing",
+    "tests/unit/test_streaming_agent_memory.py::test_streaming_agent_memory_integration"
+  ],
+  "KGR-G-015": [
+    "tests/unit/test_ontology_induction.py::test_ontology_induction_anti_drift_validation",
+    "tests/unit/test_ontology_induction.py::test_ontology_induction_from_text",
+    "tests/unit/test_ontology_induction.py::test_ontology_type_consolidation"
+  ],
+  "KGR-G-016": [
+    "tests/unit/test_vector_graph.py::test_hnsw_index_insert_and_search",
+    "tests/unit/test_vector_graph.py::test_hnsw_index_removal",
+    "tests/unit/test_vector_graph.py::test_unified_graph_then_vector_colocated",
+    "tests/unit/test_vector_graph.py::test_unified_vector_then_traverse_colocated"
+  ],
+  "KGR-G-017": [
+    "tests/unit/test_mcp_pr_tools.py::test_mcp_pr_tools_invocation_through_registry",
+    "tests/unit/test_mcp_pr_tools.py::test_pr_impact_calculation_direct_and_transitive",
+    "tests/unit/test_mcp_pr_tools.py::test_pr_risk_scoring_and_reviewer_suggestion",
+    "tests/unit/test_mcp_pr_tools.py::test_triage_prs_ranking"
+  ],
+  "KGR-G-018": [
+    "tests/unit/test_parallel_multihop.py::test_from_graph_store",
+    "tests/unit/test_parallel_multihop.py::test_influence_propagation",
+    "tests/unit/test_parallel_multihop.py::test_parallel_multihop_bfs_deep_traversal",
+    "tests/unit/test_parallel_multihop.py::test_sparse_graph_builder_and_csr",
+    "tests/unit/test_parallel_multihop.py::test_subgraph_partitioning_and_fraud_ring_detector"
+  ],
+  "KGR-G-019": [
+    "tests/unit/test_uncertainty_protocol.py::test_coverage_and_staleness_sensors",
+    "tests/unit/test_uncertainty_protocol.py::test_uncertainty_protocol_abstain_on_no_evidence",
+    "tests/unit/test_uncertainty_protocol.py::test_uncertainty_protocol_contradictions_and_staleness",
+    "tests/unit/test_uncertainty_protocol.py::test_uncertainty_protocol_high_confidence"
+  ],
+  "KGR-G-020": [
+    "tests/unit/test_mutation_stream.py::test_mutation_event_bus_sse_delivery_and_replay",
+    "tests/unit/test_mutation_stream.py::test_mutation_event_sse_and_serialization",
+    "tests/unit/test_mutation_stream.py::test_subscription_filter",
+    "tests/unit/test_mutation_stream.py::test_webhook_registration"
+  ],
+  "MS-11": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_11_plugin_marketplace"
+  ],
+  "MS-12": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_12_collaborative_crdt_graph_studio"
+  ],
+  "MS-13": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_13_gitops_graph_as_code"
+  ],
+  "MS-15": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_15_large_ontology_model_finetune_runtime"
+  ],
+  "MS-16": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_16_agentic_process_intelligence"
+  ],
+  "MS-17": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_17_multi_agent_a2a_orchestration"
+  ],
+  "MS-18": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_18_federated_cross_org_privacy_preserving_learning"
+  ],
+  "MS-19": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_19_agent_memory_immune_system_amis"
+  ],
+  "MS-21": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_21_kg_integrity_sentinel"
+  ],
+  "MS-22": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_22_quantum_inspired_graph_optimizer"
+  ],
+  "MS-23": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_23_living_operational_digital_twin"
+  ],
+  "MS-24": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_24_continuous_graph_health_dashboard"
+  ],
+  "MS-25": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_25_industry_domain_packs"
+  ],
+  "MS-26": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_26_white_label_oem_framework"
+  ],
+  "MS-27": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_27_usage_intelligence_metering"
+  ],
+  "MS-29": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_29_graph_native_foundation_model_runtime"
+  ],
+  "MS-30": [
+    "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py::test_ms_30_ocel_process_graph_fusion"
+  ],
+  "MS-6": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_06_spatial_lod_canvas"
+  ],
+  "MS-7": [
+    "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py::test_ms_07_zk_privacy_mesh"
+  ],
+  "MULTI-001": [
+    "tests/unit/test_phase4_phase6_7_engines.py::TestMulti001DiagramParsingAndRendering::test_graph_to_diagram_renderer",
+    "tests/unit/test_phase4_phase6_7_engines.py::TestMulti001DiagramParsingAndRendering::test_mermaid_parsing_and_loading"
+  ],
+  "MULTI-002": [
+    "tests/unit/test_phase4_phase6_7_engines.py::TestMulti002MemoryGraph::test_episodic_graph_and_consolidation"
+  ],
+  "MVP-FR-019": [
+    "tests/unit/test_vscode_extension_wp54.py::test_mvp_fr_019_extension_delivery"
+  ],
+  "MVP-FR-020": [
+    "tests/unit/test_retrieval.py::test_code_context_preserves_relationship_evidence"
+  ],
+  "MVP-FR-021": [
+    "tests/unit/test_governed_agents.py::test_useful_read_only_agent_workflow"
+  ],
+  "MVP-FR-022": [
+    "tests/security/test_verification_suite.py::test_mcp_tool_surface_is_read_only"
+  ],
+  "MVP-FR-023": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_mvp_fr_023_logging"
+  ],
+  "MVP-FR-024": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_mvp_fr_024_metrics"
+  ],
+  "MVP-FR-025": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_mvp_fr_025_backup"
+  ],
+  "MVP-FR-026": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_mvp_fr_026_restore"
+  ],
+  "MVP-FR-027": [
+    "tests/unit/test_validation_source_binding.py::test_executes_command_and_persists_source_bound_fresh_artifact"
+  ],
+  "MVP-FR-028": [
+    "tests/e2e/test_demo_flow.py::test_cross_domain_evidence_path",
+    "tests/e2e/test_demo_flow.py::test_full_demo_ingestion",
+    "tests/unit/test_production_release_gate_wp8.py::test_mvp_fr_028_cross_domain_traceability_evidence"
+  ],
+  "NFR-OPS-001": [
+    "tests/unit/test_observability_import_order.py::test_configure_logging_after_child_module_import",
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_nfr_ops_001_structured_logging_and_health"
+  ],
+  "NFR-OPS-002": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_nfr_ops_002_local_metrics"
+  ],
+  "NFR-PERF-001": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_nfr_perf_001_benchmark_defined_objectives"
+  ],
+  "NFR-PRIV-001": [
+    "tests/unit/test_agent_memory.py::test_scope_and_owner_are_exact_and_export_keeps_classification"
+  ],
+  "NFR-REL-001": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_nfr_rel_001_restart_safe_processing"
+  ],
+  "NFR-REL-002": [
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-revert]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-delete]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-replace]",
+    "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]",
+    "tests/unit/test_operational_recovery.py::test_operational_recovery_preserves_state_and_holds_active_jobs",
+    "tests/unit/test_operational_recovery.py::test_webhook_recovery_readmission_uses_restored_receipt",
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_nfr_rel_002_backup_and_restore_procedure",
+    "tests/unit/test_recovery_bundle.py::test_bundle_restores_actual_weights_configuration_and_graph"
+  ],
+  "NFR-REL-003": [
+    "tests/unit/test_snapshots.py::test_restore_refuses_graph_containing_only_tombstones",
+    "tests/unit/test_snapshots.py::test_snapshot_preserves_tombstones_and_expired_relationships"
+  ],
+  "NFR-SEC-001": [
+    "tests/security/test_no_egress.py::test_backend_network_is_internal",
+    "tests/security/test_verification_suite.py::test_mcp_tool_surface_is_read_only",
+    "tests/security/test_verification_suite.py::test_prompt_injection_is_ingested_as_data_and_never_executed"
+  ],
+  "NFR-SEC-002": [
+    "tests/security/test_verification_suite.py::test_audit_sink_redacts_canary_secrets_from_jsonl"
+  ],
+  "NFR-SEC-003": [
+    "tests/security/test_verification_suite.py::test_over_depth_request_is_rejected_with_422",
+    "tests/security/test_verification_suite.py::test_oversized_body_is_rejected_with_413"
+  ],
+  "NFR-SEC-004": [
+    "tests/security/test_verification_suite.py::test_mcp_tool_surface_is_read_only",
+    "tests/security/test_verification_suite.py::test_over_depth_request_is_rejected_with_422",
+    "tests/security/test_verification_suite.py::test_prompt_injection_is_ingested_as_data_and_never_executed"
+  ],
+  "NFR-SEC-005": [
+    "tests/unit/test_deployment_api.py::test_admin_and_read_routes_require_token_and_jobs_are_durable"
+  ],
+  "NFR-SEC-006": [
+    "tests/security/test_container_hardening.py::test_application_anchor_drops_all_capabilities"
+  ],
+  "NFR-SEC-007": [
+    "tests/security/test_verification_suite.py::test_audit_sink_redacts_canary_secrets_from_jsonl"
+  ],
+  "PERF-01": [
+    "tests/unit/test_performance_reliability_and_operations_wp72.py::test_perf_01_formal_nfr_benchmark_suite"
+  ],
+  "PRE-001": [
+    "tests/unit/test_phase4_preflight.py::test_preflight_package_collision_and_baselines"
+  ],
+  "PRE-002": [
+    "tests/unit/test_phase4_preflight.py::test_preflight_requirements_registry_registered"
+  ],
+  "REL-01": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_01_release_checklist"
+  ],
+  "REL-02": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_02_regression_and_build"
+  ],
+  "REL-03": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_03_gap_and_g2_coverage_gates"
+  ],
+  "REL-04": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_04_product_capability_scanner"
+  ],
+  "REL-05": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_05_documentation_audit"
+  ],
+  "REL-06": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_06_live_connectors_acceptance"
+  ],
+  "REL-07": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_07_live_hubble_and_code_graph"
+  ],
+  "REL-08": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_08_browser_web_e2e"
+  ],
+  "REL-09": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_09_vscode_extension_host"
+  ],
+  "REL-10": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_10_production_ha_and_dr"
+  ],
+  "REL-11": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_11_security_certification"
+  ],
+  "REL-12": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_12_performance_benchmark_receipts"
+  ],
+  "REL-13": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_13_markdown_link_check"
+  ],
+  "REL-14": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_14_end_to_end_demo_flow"
+  ],
+  "REL-15": [
+    "tests/unit/test_production_release_gate_wp8.py::test_rel_15_closeout_reconciliation"
+  ],
+  "REQ-001": [
+    "tests/unit/test_documentation_audit.py::test_historical_reports_are_read_but_not_recursive_obligations",
+    "tests/unit/test_documentation_audit.py::test_invalid_encoding_fails_instead_of_claiming_complete",
+    "tests/unit/test_documentation_audit.py::test_nested_kgr_and_unnumbered_obligations_are_read",
+    "tests/unit/test_documentation_audit.py::test_oversized_input_does_not_write_receipts",
+    "tests/unit/test_documentation_audit.py::test_secrets_dependencies_reports_and_ignored_files_are_not_read",
+    "tests/unit/test_documentation_audit.py::test_symlink_inputs_and_outputs_are_refused",
+    "tests/unit/test_documentation_audit.py::test_total_input_budget_is_enforced"
+  ],
+  "REQ-002": [
+    "tests/unit/test_documentation_audit.py::test_historical_reports_are_read_but_not_recursive_obligations",
+    "tests/unit/test_documentation_audit.py::test_nested_kgr_and_unnumbered_obligations_are_read"
+  ],
+  "REQ-003": [
+    "tests/unit/test_documentation_audit.py::test_mentions_never_establish_acceptance"
+  ],
+  "REQ-004": [
+    "tests/unit/test_documentation_audit.py::test_audit_tooling_is_reported_as_phase_evidence_not_acceptance",
+    "tests/unit/test_documentation_audit.py::test_cli_cannot_overwrite_source_directory",
+    "tests/unit/test_documentation_audit.py::test_cli_persists_consistent_json_and_markdown",
+    "tests/unit/test_documentation_audit.py::test_oversized_input_does_not_write_receipts",
+    "tests/unit/test_documentation_audit.py::test_real_cli_subprocess_and_bad_destination",
+    "tests/unit/test_documentation_audit.py::test_symlink_inputs_and_outputs_are_refused"
+  ],
+  "REQ-005": [
+    "tests/unit/test_documentation_audit.py::test_ci_installs_native_parser_extra"
+  ],
+  "S-01": [
+    "tests/unit/test_scale_and_polish_wp71.py::test_s_01_frontend_kgr_completion"
+  ],
+  "S-02": [
+    "tests/unit/test_scale_and_polish_wp71.py::test_s_02_performance_benchmarks"
+  ],
+  "S-03": [
+    "tests/unit/test_scale_and_polish_wp71.py::test_s_03_cicd_pipeline"
+  ],
+  "S-04": [
+    "tests/unit/test_scale_and_polish_wp71.py::test_s_04_developer_documentation"
+  ],
+  "S-05": [
+    "tests/unit/test_scale_and_polish_wp71.py::test_s_05_security_hardening"
+  ],
+  "SR-QA-010": [
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_collector_records_marker_and_call",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_docstring_references_never_count",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_explicit_call_declaration_drains",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_invalid_requirement_id_rejected",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_persistence_roundtrip",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_register_and_query_mapping",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_api_routes_from_real_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_generates_all_inventories_from_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_hand_written_counts_fail_validation",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_valid_snapshot_passes",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_assertion",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_requires_equality_assert",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_mutation_check_catches_broken_behavior",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_store_and_release_summary",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_result_serialization",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_ruff_runs_and_records_zero_error_status",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_zero_error_policy_met_on_clean_tree",
+    "tests/unit/test_qa_gate_integrity.py::TestRouter::test_router_routes",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "SR-QA-011": [
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_collector_records_marker_and_call",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_docstring_references_never_count",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_explicit_call_declaration_drains",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_invalid_requirement_id_rejected",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_persistence_roundtrip",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_register_and_query_mapping",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_api_routes_from_real_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_generates_all_inventories_from_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_hand_written_counts_fail_validation",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_valid_snapshot_passes",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_assertion",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_requires_equality_assert",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_mutation_check_catches_broken_behavior",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_store_and_release_summary",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_result_serialization",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_ruff_runs_and_records_zero_error_status",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_zero_error_policy_met_on_clean_tree",
+    "tests/unit/test_qa_gate_integrity.py::TestRouter::test_router_routes",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "SR-QA-012": [
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_collector_records_marker_and_call",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_docstring_references_never_count",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_explicit_call_declaration_drains",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_invalid_requirement_id_rejected",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_persistence_roundtrip",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_register_and_query_mapping",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_api_routes_from_real_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_generates_all_inventories_from_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_hand_written_counts_fail_validation",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_valid_snapshot_passes",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_assertion",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_requires_equality_assert",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_mutation_check_catches_broken_behavior",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_store_and_release_summary",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_result_serialization",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_ruff_runs_and_records_zero_error_status",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_zero_error_policy_met_on_clean_tree",
+    "tests/unit/test_qa_gate_integrity.py::TestRouter::test_router_routes",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "SR-QA-013": [
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_collector_records_marker_and_call",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_docstring_references_never_count",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_explicit_call_declaration_drains",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_invalid_requirement_id_rejected",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_persistence_roundtrip",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_register_and_query_mapping",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_api_routes_from_real_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_generates_all_inventories_from_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_hand_written_counts_fail_validation",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_valid_snapshot_passes",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_assertion",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_requires_equality_assert",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_mutation_check_catches_broken_behavior",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_store_and_release_summary",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_result_serialization",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_ruff_runs_and_records_zero_error_status",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_zero_error_policy_met_on_clean_tree",
+    "tests/unit/test_qa_gate_integrity.py::TestRouter::test_router_routes",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "SR-QA-014": [
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_collector_records_marker_and_call",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_docstring_references_never_count",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_explicit_call_declaration_drains",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_invalid_requirement_id_rejected",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_persistence_roundtrip",
+    "tests/unit/test_qa_gate_integrity.py::TestBehavioralEvidenceRegistry::test_register_and_query_mapping",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_api_routes_from_real_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_generates_all_inventories_from_code",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_hand_written_counts_fail_validation",
+    "tests/unit/test_qa_gate_integrity.py::TestCodeIntrospection::test_valid_snapshot_passes",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_assertion",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_flip_requires_equality_assert",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_mutation_check_catches_broken_behavior",
+    "tests/unit/test_qa_gate_integrity.py::TestMutationChecks::test_store_and_release_summary",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_result_serialization",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_ruff_runs_and_records_zero_error_status",
+    "tests/unit/test_qa_gate_integrity.py::TestPolicyGate::test_zero_error_policy_met_on_clean_tree",
+    "tests/unit/test_qa_gate_integrity.py::TestRouter::test_router_routes",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_external_gate_persistence",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_no_single_percent_complete",
+    "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
+  ],
+  "SR-TEN-001": [
+    "tests/security/test_http_and_realtime_contract.py::test_brain_llm_stream_incremental_sse",
+    "tests/security/test_http_and_realtime_contract.py::test_enterprise_middleware_tenant_isolation_cross_tenant_denial",
+    "tests/security/test_http_and_realtime_contract.py::test_http_boundary_accepts_signed_token_and_emits_dynamic_audit_actor",
+    "tests/security/test_http_and_realtime_contract.py::test_http_boundary_rejects_tampered_or_expired_token",
+    "tests/security/test_http_and_realtime_contract.py::test_idle_websocket_disconnect_releases_subscription",
+    "tests/security/test_http_and_realtime_contract.py::test_stream_and_poll_hide_unscoped_and_other_tenant_events[default]",
+    "tests/security/test_http_and_realtime_contract.py::test_stream_and_poll_hide_unscoped_and_other_tenant_events[tenant-alpha]",
+    "tests/security/test_http_and_realtime_contract.py::test_tenancy_dependency_uses_signed_identity_not_spoofed_principal_header",
+    "tests/security/test_http_and_realtime_contract.py::test_unbound_viewer_and_tenant_admin_cannot_choose_another_tenant[None-roles0]",
+    "tests/security/test_http_and_realtime_contract.py::test_unbound_viewer_and_tenant_admin_cannot_choose_another_tenant[tenant-alpha-roles1]",
+    "tests/security/test_http_and_realtime_contract.py::test_viewer_cannot_mutate_administrative_surfaces[/api/v1/admin/demo]",
+    "tests/security/test_http_and_realtime_contract.py::test_viewer_cannot_mutate_administrative_surfaces[/api/v1/authz/roles]",
+    "tests/security/test_http_and_realtime_contract.py::test_viewer_cannot_mutate_administrative_surfaces[/api/v1/security/tokens/issue]",
+    "tests/security/test_http_and_realtime_contract.py::test_viewer_cannot_mutate_administrative_surfaces[/api/v1/sources]",
+    "tests/security/test_http_and_realtime_contract.py::test_websocket_authenticated_and_tenant_isolated",
+    "tests/security/test_http_and_realtime_contract.py::test_websocket_closes_when_authenticated_token_expires",
+    "tests/security/test_http_and_realtime_contract.py::test_websocket_unauthenticated_handshake_rejects_without_500"
+  ],
+  "TEST-001": [
+    "tests/unit/test_phase4_phase6_7_engines.py::TestChaos001FaultInjection::test_chaos_fault_injection_and_recovery"
+  ],
+  "TEST-002": [
+    "tests/unit/test_phase4_load.py::test_load_test_runner_concurrent_queries"
+  ],
+  "TEST-003": [
+    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_all_formats_token_compression_ratio",
+    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_lean_serialization_round_trip",
+    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_toon_serialization_round_trip",
+    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_tron_serialization_round_trip"
+  ],
+  "TEST-004": [
+    "tests/unit/test_phase4_perf_regression.py::TestPerfRegressionDetector::test_baseline_save_and_load",
+    "tests/unit/test_phase4_perf_regression.py::TestPerfRegressionDetector::test_detect_latency_regression",
+    "tests/unit/test_phase4_perf_regression.py::TestPerfRegressionDetector::test_detect_throughput_drop",
+    "tests/unit/test_phase4_perf_regression.py::TestPerfRegressionDetector::test_pass_within_thresholds"
+  ],
+  "TEST-005": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-001": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-002": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-003": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-004": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-005": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-006": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-007": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-008": [
+    "tests/unit/test_phase4_compliance_and_search.py::TestSearchAnalyticsEngine::test_relevance_tuning_synonyms_and_boosts",
+    "tests/unit/test_phase4_compliance_and_search.py::TestSearchAnalyticsEngine::test_search_event_logging_and_summary"
+  ],
+  "UI-009": [
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_compliant_html_snippet",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_contrast_ratio_calculation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_empty_button_without_aria_label",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_missing_img_alt_violation",
+    "tests/unit/test_phase4_accessibility.py::TestAccessibilityScanner::test_unlabeled_input"
+  ],
+  "UI-01": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_ui_01_causal_blast_radius_dashboard"
+  ],
+  "UI-02": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_ui_02_multi_paradigm_query_dashboard"
+  ],
+  "UI-03": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_ui_03_domain_pack_activation_dashboard"
+  ],
+  "UI-04": [
+    "tests/unit/test_web_ux_and_admin_wp53.py::test_ui_04_xai_factor_verification_dashboard"
+  ],
+  "§47": [
+    "tests/unit/test_ops.py::test_preflight_all_pass",
+    "tests/unit/test_ops.py::test_preflight_dead_graph_store_fails",
+    "tests/unit/test_ops.py::test_preflight_low_disk_warns",
+    "tests/unit/test_ops.py::test_preflight_missing_env_fails",
+    "tests/unit/test_ops.py::test_preflight_missing_token_warns_not_fails",
+    "tests/unit/test_ops.py::test_preflight_port_unavailable_fails",
+    "tests/unit/test_ops.py::test_preflight_report_to_dict",
+    "tests/unit/test_ops.py::test_preflight_unparseable_ontology_fails",
+    "tests/unit/test_ops.py::test_support_bundle_redacts_extra",
+    "tests/unit/test_ops.py::test_support_bundle_structure",
+    "tests/unit/test_ops.py::test_support_bundle_without_sources",
+    "tests/unit/test_ops.py::test_upgrade_plan_basic",
+    "tests/unit/test_ops.py::test_upgrade_plan_classifies_breaking_changes",
+    "tests/unit/test_ops.py::test_upgrade_plan_rejects_downgrade",
+    "tests/unit/test_ops.py::test_upgrade_plan_rejects_unparseable_version",
+    "tests/unit/test_ops.py::test_upgrade_plan_with_graph_store_precheck"
+  ]
+}

@@ -1,0 +1,19 @@
+policy_name: default
+description: >
+  Default query policy for MVP. Enforces read-only queries with bounded
+  depth, result limits, and timeout constraints.
+
+max_depth: 8
+max_results: 500
+max_timeout_ms: 30000
+read_only: true
+
+allowed_intents:
+  - SEARCH
+  - PATH
+  - IMPACT
+  - NEIGHBORHOOD
+  - LINEAGE
+  - TRACEABILITY
+
+blocked_edges: []

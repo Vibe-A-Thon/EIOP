@@ -1,0 +1,53 @@
+============================================================
+  MFS Payment Gateway — Deployment Checklist
+  Meridian Financial Services
+============================================================
+
+PRE-DEPLOYMENT
+--------------
+[ ] Verify all CI/CD pipeline stages passed (lint, test, build, staging)
+[ ] Confirm change approval in ServiceNow (CHG number: _________)
+[ ] Verify rollback plan is documented and tested
+[ ] Confirm on-call team is aware (payments-oncall PagerDuty rotation)
+[ ] Verify database migrations are idempotent
+[ ] Check Grafana dashboards for baseline metrics
+[ ] Confirm Kibana log queries are ready for monitoring
+[ ] Verify Vault secrets are rotated (if applicable)
+
+DEPLOYMENT STEPS
+-----------------
+[ ] Scale down mfs-pay-pod-02 (secondary) first
+[ ] Deploy new image to mfs-pay-pod-02
+[ ] Verify health check passes on mfs-pay-pod-02
+[ ] Run smoke tests against mfs-pay-pod-02
+[ ] Scale down mfs-pay-pod-01 (primary)
+[ ] Deploy new image to mfs-pay-pod-01
+[ ] Verify health check passes on mfs-pay-pod-01
+[ ] Deploy to mfs-pay-pod-03 (analytics/settlement) if applicable
+[ ] Verify all pods are healthy in OpenShift console
+
+POST-DEPLOYMENT
+----------------
+[ ] Monitor Grafana payment-gateway-slo dashboard for 30 minutes
+[ ] Verify transaction success rate > 99.9%
+[ ] Check Kibana for ERROR level logs in payment-logs-*
+[ ] Verify webhook delivery success rate > 99.5%
+[ ] Confirm Datadog monitors are green
+[ ] Update ServiceNow change record to Closed
+[ ] Send deployment notification to #mfs-releases Slack channel
+
+ROLLBACK TRIGGERS
+------------------
+- Transaction success rate drops below 99%
+- P99 latency exceeds 500ms for 5+ minutes
+- Error rate exceeds 1% for 3+ minutes
+- Database connection pool exceeds 80%
+- Any P1 incident triggered
+
+ROLLBACK PROCEDURE
+-------------------
+1. oc rollback mfs-payment-gateway -n mfs-payments (on ocp-prod-east)
+2. Verify previous image is running on all pods
+3. Run smoke tests against rolled-back pods
+4. Update ServiceNow change to "Backed Out"
+5. Create incident record for root cause analysis

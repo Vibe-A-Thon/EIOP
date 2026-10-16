@@ -1,0 +1,39 @@
+# Compose Specification (no version field — compatible with Docker, Podman, nerdctl).
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - eoip-internal
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.0.0
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD:-admin}"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - eoip-internal
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  eoip-internal:
+    external: true
+    name: deploy_eoip-internal

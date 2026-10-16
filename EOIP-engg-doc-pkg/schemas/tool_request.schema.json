@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ToolRequest",
+  "type": "object",
+  "required": [
+    "tool_call_id",
+    "tool_name",
+    "arguments"
+  ],
+  "properties": {
+    "tool_call_id": {
+      "type": "string"
+    },
+    "tool_name": {
+      "type": "string"
+    },
+    "arguments": {
+      "type": "object"
+    },
+    "risk_level": {
+      "type": "string"
+    }
+  }
+}

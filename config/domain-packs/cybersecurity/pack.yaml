@@ -1,0 +1,6 @@
+name: cybersecurity
+version: "1.0.0"
+extends: core
+description: >-
+  Cybersecurity pack: vulnerabilities, threats, security findings and asset
+  exposure extending core CODE/OPS concepts for security posture analytics.

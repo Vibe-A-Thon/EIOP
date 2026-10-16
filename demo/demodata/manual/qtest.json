@@ -1,0 +1,471 @@
+{
+  "items": [
+    {
+      "id": 80001,
+      "pid": "TS-PAY-001",
+      "name": "PAY Regression Suite",
+      "item_type": "test-suite",
+      "description": "Regression test suite for the MFS Payment Gateway modernization project. Covers tokenization, retry handling, and multi-currency functionality.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "properties": [
+        {"field_name": "Status", "field_value_name": "Active"}
+      ],
+      "test_case_count": 4,
+      "test_case_ids": ["TC-PAY-001", "TC-PAY-002", "TC-PAY-003", "TC-PAY-004"],
+      "last_modified_date": "2026-09-28T10:00:00.000Z",
+      "created_date": "2026-07-20T09:00:00.000Z"
+    },
+    {
+      "id": 80002,
+      "pid": "TS-PAY-002",
+      "name": "PCI Compliance Suite",
+      "item_type": "test-suite",
+      "description": "PCI DSS v4.0 compliance test suite covering encryption at rest, HSM key management, and cardholder data protection for the MFS token vault.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "properties": [
+        {"field_name": "Status", "field_value_name": "Active"}
+      ],
+      "test_case_count": 4,
+      "test_case_ids": ["TC-PAY-005", "TC-PAY-006", "TC-PAY-007", "TC-PAY-008"],
+      "last_modified_date": "2026-09-30T09:00:00.000Z",
+      "created_date": "2026-08-01T09:00:00.000Z"
+    },
+    {
+      "id": 70001,
+      "pid": "TC-PAY-001",
+      "name": "Payment tokenization happy path",
+      "item_type": "test-case",
+      "description": "Verify that a valid cardholder PAN is correctly tokenized and stored in mfs_payments_db. Token must be irreversible and PCI DSS v4.0 compliant.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "parent_id": 80001,
+      "properties": [
+        {"field_name": "Status", "field_value_name": "PASSED"},
+        {"field_name": "Priority", "field_value_name": "High"},
+        {"field_name": "Type", "field_value_name": "Functional"},
+        {"field_name": "Automation", "field_value_name": "Automated"},
+        {"field_name": "Jira Link", "field_value_name": "PAY-101"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Send POST /api/v2/tokens with valid PAN 4111111111111111", "expected_result": "Response 201 with token_id starting with 'tok_mfs_'"},
+        {"order": 2, "description": "Verify token_id format matches PCI DSS v4.0 token specification", "expected_result": "Token format is valid and irreversible"},
+        {"order": 3, "description": "Query mfs_payments_db.card_tokens table for the generated token", "expected_result": "Token record exists with encrypted PAN and correct last_four='1111'"},
+        {"order": 4, "description": "Send GET /api/v2/tokens/{token_id}", "expected_result": "Response 200 with token metadata, no raw PAN in response"},
+        {"order": 5, "description": "Verify token_audit_log entry was created", "expected_result": "Audit log contains tokenization event with timestamp and svc-token-vault identity"},
+        {"order": 6, "description": "Send POST /api/v2/payments with the generated token_id", "expected_result": "Payment processes successfully using the token"},
+        {"order": 7, "description": "Verify tokenization latency from response headers", "expected_result": "X-Tokenization-Time header shows < 50ms"}
+      ],
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/integration/test_tokenization.py::test_happy_path"},
+      "last_modified_date": "2026-09-21T10:00:00.000Z",
+      "created_date": "2026-07-20T09:30:00.000Z"
+    },
+    {
+      "id": 70002,
+      "pid": "TC-PAY-002",
+      "name": "Tokenization error handling",
+      "item_type": "test-case",
+      "description": "Verify tokenization service correctly handles invalid input: malformed PANs, expired cards, and unsupported card brands.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "parent_id": 80001,
+      "properties": [
+        {"field_name": "Status", "field_value_name": "PASSED"},
+        {"field_name": "Priority", "field_value_name": "High"},
+        {"field_name": "Type", "field_value_name": "Negative"},
+        {"field_name": "Automation", "field_value_name": "Automated"},
+        {"field_name": "Jira Link", "field_value_name": "PAY-101"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Send POST /api/v2/tokens with malformed PAN '12345'", "expected_result": "Response 400 with error code PAY-001 'Invalid token'"},
+        {"order": 2, "description": "Send POST /api/v2/tokens with PAN failing Luhn check", "expected_result": "Response 400 with Luhn validation error"},
+        {"order": 3, "description": "Send POST /api/v2/tokens with expired card (expiry_month=01, expiry_year=2020)", "expected_result": "Response 400 with card expired error"},
+        {"order": 4, "description": "Verify no token records created in mfs_payments_db for invalid inputs", "expected_result": "No new rows in card_tokens table"},
+        {"order": 5, "description": "Verify error events logged in token_audit_log", "expected_result": "Audit log contains error events with appropriate error codes"}
+      ],
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/integration/test_tokenization.py::test_error_handling"},
+      "last_modified_date": "2026-09-21T10:30:00.000Z",
+      "created_date": "2026-07-20T10:00:00.000Z"
+    },
+    {
+      "id": 70003,
+      "pid": "TC-PAY-003",
+      "name": "Retry handler with circuit breaker",
+      "item_type": "test-case",
+      "description": "Verify the idempotent retry handler correctly retries failed payments with exponential backoff and the circuit breaker opens after threshold failures.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "parent_id": 80001,
+      "properties": [
+        {"field_name": "Status", "field_value_name": "PASSED"},
+        {"field_name": "Priority", "field_value_name": "High"},
+        {"field_name": "Type", "field_value_name": "Functional"},
+        {"field_name": "Automation", "field_value_name": "Automated"},
+        {"field_name": "Jira Link", "field_value_name": "PAY-102"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Submit payment that will fail on first attempt (simulate gateway timeout)", "expected_result": "Payment recorded as failed, retry scheduled"},
+        {"order": 2, "description": "Verify retry with same idempotency_key does not create duplicate charge", "expected_result": "Same payment_id returned, no duplicate in gateway_ledger"},
+        {"order": 3, "description": "Verify exponential backoff timing (1s, 2s, 4s)", "expected_result": "Retry intervals match configured backoff schedule"},
+        {"order": 4, "description": "Submit 5 consecutive failing payments to trigger circuit breaker", "expected_result": "Circuit breaker transitions to OPEN state after 5th failure"},
+        {"order": 5, "description": "Submit payment while circuit breaker is OPEN", "expected_result": "Immediate rejection with error code PAY-005"},
+        {"order": 6, "description": "Wait 30 seconds and verify HALF_OPEN probe", "expected_result": "Circuit breaker allows one probe request through"}
+      ],
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/integration/test_retry_handler.py::test_circuit_breaker"},
+      "last_modified_date": "2026-09-27T14:00:00.000Z",
+      "created_date": "2026-07-25T09:00:00.000Z"
+    },
+    {
+      "id": 70004,
+      "pid": "TC-PAY-004",
+      "name": "Multi-currency conversion",
+      "item_type": "test-case",
+      "description": "Verify multi-currency payment processing with real-time FX rate conversion for all supported currency pairs.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "parent_id": 80001,
+      "properties": [
+        {"field_name": "Status", "field_value_name": "PASSED"},
+        {"field_name": "Priority", "field_value_name": "Medium"},
+        {"field_name": "Type", "field_value_name": "Functional"},
+        {"field_name": "Automation", "field_value_name": "Automated"},
+        {"field_name": "Jira Link", "field_value_name": "PAY-103"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "GET /api/v2/currencies/rates and verify all 7 currencies returned", "expected_result": "Rates returned for USD, EUR, GBP, JPY, CAD, AUD, CHF"},
+        {"order": 2, "description": "Submit EUR to USD payment conversion of 100.00 EUR", "expected_result": "Payment processed with converted USD amount"},
+        {"order": 3, "description": "Verify conversion accuracy within 0.01% of reference rate", "expected_result": "Converted amount matches expected value within tolerance"},
+        {"order": 4, "description": "Verify conversion_audit record in mfs_audit_db", "expected_result": "Audit record with source_currency, target_currency, rate, and amounts"},
+        {"order": 5, "description": "Submit payment with unsupported currency (BTC)", "expected_result": "Response 400 with error code PAY-003"},
+        {"order": 6, "description": "Simulate FX rate provider outage", "expected_result": "System falls back to last known good rate"},
+        {"order": 7, "description": "Verify fallback rate age is within acceptable window (< 5 minutes)", "expected_result": "Fallback rate used with warning in response headers"},
+        {"order": 8, "description": "Verify settlement in original currency option", "expected_result": "Settlement record reflects original EUR amount when opted"}
+      ],
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/integration/test_multicurrency.py::test_conversion"},
+      "last_modified_date": "2026-09-28T16:00:00.000Z",
+      "created_date": "2026-08-05T09:00:00.000Z"
+    },
+    {
+      "id": 70005,
+      "pid": "TC-PAY-005",
+      "name": "Cardholder data encryption verification",
+      "item_type": "test-case",
+      "description": "Verify that all cardholder data (PAN, CVV, expiry) is encrypted at rest in mfs_payments_db using AES-256-GCM via HSM-managed keys.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "parent_id": 80002,
+      "properties": [
+        {"field_name": "Status", "field_value_name": "PASSED"},
+        {"field_name": "Priority", "field_value_name": "Critical"},
+        {"field_name": "Type", "field_value_name": "Security"},
+        {"field_name": "Automation", "field_value_name": "Automated"},
+        {"field_name": "Jira Link", "field_value_name": "PAY-201"},
+        {"field_name": "PCI Requirement", "field_value_name": "3.4, 3.5"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Insert cardholder data via API and query raw database column values", "expected_result": "Raw column values are ciphertext, not readable PAN/CVV"},
+        {"order": 2, "description": "Verify encryption algorithm is AES-256-GCM by checking pgcrypto metadata", "expected_result": "Encryption metadata confirms AES-256-GCM"},
+        {"order": 3, "description": "Verify decryption requires HSM key via svc-token-vault on mfs-vault-pod-01", "expected_result": "Decryption succeeds only with valid HSM session"},
+        {"order": 4, "description": "Verify decryption audit log entry in mfs_audit_db", "expected_result": "Audit record with timestamp, user, and operation type"},
+        {"order": 5, "description": "Verify decryption latency < 10ms", "expected_result": "Average decryption time under 10ms across 100 operations"}
+      ],
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/security/test_encryption.py::test_data_at_rest"},
+      "last_modified_date": "2026-09-26T22:30:00.000Z",
+      "created_date": "2026-08-10T09:00:00.000Z"
+    },
+    {
+      "id": 70006,
+      "pid": "TC-PAY-006",
+      "name": "HSM key rotation without downtime",
+      "item_type": "test-case",
+      "description": "Verify that HSM encryption key rotation completes without service downtime and all existing data is re-encrypted with the new key.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "parent_id": 80002,
+      "properties": [
+        {"field_name": "Status", "field_value_name": "PASSED"},
+        {"field_name": "Priority", "field_value_name": "Critical"},
+        {"field_name": "Type", "field_value_name": "Security"},
+        {"field_name": "Automation", "field_value_name": "Semi-Automated"},
+        {"field_name": "Jira Link", "field_value_name": "PAY-202"},
+        {"field_name": "PCI Requirement", "field_value_name": "3.5, 3.6"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Trigger key rotation via KeyRotationScheduler on mfs-vault-pod-01", "expected_result": "New key generated in HSM, dual-key mode enabled"},
+        {"order": 2, "description": "Verify existing data is readable during rotation (dual-key read)", "expected_result": "All existing cardholder records decrypt successfully during rotation"},
+        {"order": 3, "description": "Verify new data is encrypted with new key", "expected_result": "New records use new key ID in encryption metadata"},
+        {"order": 4, "description": "Verify re-encryption batch completes for all existing records", "expected_result": "All records re-encrypted with new key, old key references cleared"}
+      ],
+      "automation": {"status": "Semi-Automated", "framework": "pytest", "script_path": "tests/security/test_key_rotation.py::test_zero_downtime"},
+      "last_modified_date": "2026-09-29T15:00:00.000Z",
+      "created_date": "2026-08-15T09:00:00.000Z"
+    },
+    {
+      "id": 70007,
+      "pid": "TC-PAY-007",
+      "name": "Settlement batch end-to-end",
+      "item_type": "test-case",
+      "description": "End-to-end test for the settlement batch processor: transaction aggregation, ISO 8583 file generation, submission, and confirmation.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "parent_id": 80002,
+      "properties": [
+        {"field_name": "Status", "field_value_name": "IN_PROGRESS"},
+        {"field_name": "Priority", "field_value_name": "High"},
+        {"field_name": "Type", "field_value_name": "End-to-End"},
+        {"field_name": "Automation", "field_value_name": "Automated"},
+        {"field_name": "Jira Link", "field_value_name": "PAY-301"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Create 1000 test payment transactions in gateway_ledger", "expected_result": "1000 COMPLETED transactions in mfs_payments_db.gateway_ledger"},
+        {"order": 2, "description": "Trigger settlement batch via POST /api/v2/settlements/batch", "expected_result": "Batch created with status PENDING, batch_id returned"},
+        {"order": 3, "description": "Verify BatchAggregator groups transactions by merchant and currency", "expected_result": "Correct aggregation groupings in settlement_batches table"},
+        {"order": 4, "description": "Verify ISO 8583 settlement file generated", "expected_result": "Valid ISO 8583 file with correct transaction count and totals"},
+        {"order": 5, "description": "Verify SFTP transmission to acquirer endpoint", "expected_result": "File successfully uploaded to acquirer SFTP"},
+        {"order": 6, "description": "Simulate acquirer confirmation response", "expected_result": "Batch status transitions to CONFIRMED"},
+        {"order": 7, "description": "Verify settlement_records created for each transaction", "expected_result": "1000 settlement records with correct amounts and statuses"},
+        {"order": 8, "description": "Verify batch completion within 5-minute SLA", "expected_result": "Total batch processing time < 300 seconds"},
+        {"order": 9, "description": "Verify state machine transitions logged", "expected_result": "PENDING -> AGGREGATING -> GENERATING -> SUBMITTED -> CONFIRMED all logged"}
+      ],
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/integration/test_settlement.py::test_e2e_batch"},
+      "last_modified_date": "2026-09-30T14:00:00.000Z",
+      "created_date": "2026-08-20T09:00:00.000Z"
+    },
+    {
+      "id": 70008,
+      "pid": "TC-PAY-008",
+      "name": "Balance reconciliation accuracy",
+      "item_type": "test-case",
+      "description": "Verify balance reconciliation engine correctly matches gateway ledger entries against settlement records and flags discrepancies.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "parent_id": 80002,
+      "properties": [
+        {"field_name": "Status", "field_value_name": "NOT_RUN"},
+        {"field_name": "Priority", "field_value_name": "High"},
+        {"field_name": "Type", "field_value_name": "Functional"},
+        {"field_name": "Automation", "field_value_name": "Automated"},
+        {"field_name": "Jira Link", "field_value_name": "PAY-302"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Create matching gateway ledger and settlement records for 500 transactions", "expected_result": "500 matched pairs in test data"},
+        {"order": 2, "description": "Introduce 5 discrepant records (amount mismatches > $0.01)", "expected_result": "5 known discrepancies seeded"},
+        {"order": 3, "description": "Trigger reconciliation via settlement batch completion event", "expected_result": "Reconciliation engine processes all records"},
+        {"order": 4, "description": "Verify 495 records marked as matched", "expected_result": "495 MATCHED records in reconciliation_results table"},
+        {"order": 5, "description": "Verify 5 records flagged as discrepant", "expected_result": "5 DISCREPANT records with correct discrepancy amounts"},
+        {"order": 6, "description": "Verify discrepancy alert sent via svc-notification-svc", "expected_result": "Alert notification delivered with discrepancy summary"}
+      ],
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/integration/test_reconciliation.py::test_accuracy"},
+      "last_modified_date": "2026-09-30T09:00:00.000Z",
+      "created_date": "2026-08-25T09:00:00.000Z"
+    },
+    {
+      "id": 90001,
+      "pid": "TR-PAY-001",
+      "name": "Sprint 14 Regression",
+      "item_type": "test-run",
+      "description": "Sprint 14 regression test run covering tokenization, retry handling, multi-currency, and PCI compliance test cases.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "properties": [
+        {"field_name": "Status", "field_value_name": "COMPLETED"},
+        {"field_name": "Environment", "field_value_name": "mfs-staging"},
+        {"field_name": "Build", "field_value_name": "mfs-payment-gateway:sprint14-rc2"}
+      ],
+      "test_case_results": [
+        {"test_case_pid": "TC-PAY-001", "status": "PASSED", "execution_time_ms": 4200},
+        {"test_case_pid": "TC-PAY-002", "status": "PASSED", "execution_time_ms": 3100},
+        {"test_case_pid": "TC-PAY-003", "status": "PASSED", "execution_time_ms": 8500},
+        {"test_case_pid": "TC-PAY-004", "status": "PASSED", "execution_time_ms": 6200},
+        {"test_case_pid": "TC-PAY-005", "status": "PASSED", "execution_time_ms": 5100},
+        {"test_case_pid": "TC-PAY-006", "status": "PASSED", "execution_time_ms": 12300},
+        {"test_case_pid": "TC-PAY-007", "status": "IN_PROGRESS", "execution_time_ms": null},
+        {"test_case_pid": "TC-PAY-008", "status": "NOT_RUN", "execution_time_ms": null}
+      ],
+      "total_cases": 8,
+      "passed": 6,
+      "failed": 0,
+      "in_progress": 1,
+      "not_run": 1,
+      "started_date": "2026-09-28T08:00:00.000Z",
+      "completed_date": null,
+      "last_modified_date": "2026-09-30T14:00:00.000Z",
+      "created_date": "2026-09-28T08:00:00.000Z"
+    },
+    {
+      "id": 90002,
+      "pid": "TR-PAY-002",
+      "name": "PCI Compliance Audit",
+      "item_type": "test-run",
+      "description": "PCI DSS v4.0 compliance audit test run covering encryption, key management, and data protection requirements.",
+      "project_id": 50001,
+      "project_name": "MFS Payment Gateway",
+      "properties": [
+        {"field_name": "Status", "field_value_name": "COMPLETED"},
+        {"field_name": "Environment", "field_value_name": "mfs-prod"},
+        {"field_name": "Build", "field_value_name": "mfs-token-vault:pci-audit-1"}
+      ],
+      "test_case_results": [
+        {"test_case_pid": "TC-PAY-005", "status": "PASSED", "execution_time_ms": 5400},
+        {"test_case_pid": "TC-PAY-006", "status": "PASSED", "execution_time_ms": 15200}
+      ],
+      "total_cases": 2,
+      "passed": 2,
+      "failed": 0,
+      "in_progress": 0,
+      "not_run": 0,
+      "started_date": "2026-09-27T09:00:00.000Z",
+      "completed_date": "2026-09-27T11:00:00.000Z",
+      "last_modified_date": "2026-09-27T11:00:00.000Z",
+      "created_date": "2026-09-27T09:00:00.000Z"
+    },
+    {
+      "id": 30003,
+      "pid": "TS-PAY-003",
+      "name": "Webhook & Analytics Test Suite",
+      "item_type": "test-suite",
+      "description": "Functional test cases for the webhook notification system and payment analytics features",
+      "project_id": 100,
+      "project_name": "Payment Gateway Modernization",
+      "properties": [
+        {"field_name": "Status", "field_value_name": "Active"},
+        {"field_name": "Planned Release", "field_value_name": "Q4 2026 - Payment Gateway v2"}
+      ],
+      "test_case_count": 4,
+      "test_case_ids": ["TC-PAY-009", "TC-PAY-010", "TC-PAY-011", "TC-PAY-012"],
+      "last_modified_date": "2026-10-03T14:00:00.000Z",
+      "created_date": "2026-09-28T10:00:00.000Z",
+      "web_url": "https://qtest.mfs.internal/p/100/portal/project#tab=testdesign&object=3&id=30003"
+    },
+    {
+      "id": 70009,
+      "pid": "TC-PAY-009",
+      "name": "Webhook dispatch for payment.authorized event",
+      "item_type": "test-case",
+      "description": "Verify that the WebhookDispatcher correctly delivers a payment.authorized event notification to a registered merchant endpoint with proper HMAC signature.",
+      "project_id": 100,
+      "project_name": "Payment Gateway Modernization",
+      "parent_id": "TS-PAY-003",
+      "properties": [
+        {"field_name": "Status", "field_value_name": "Active"},
+        {"field_name": "Priority", "field_value_name": "High"},
+        {"field_name": "Type", "field_value_name": "Functional"},
+        {"field_name": "Automation", "field_value_name": "Automated"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Register merchant webhook URL via POST /api/v2/webhooks with callback_url and event_types=['payment.authorized']", "expected_result": "Response 201 with registration_id and active=true"},
+        {"order": 2, "description": "Process a payment.authorized event by submitting a successful payment transaction", "expected_result": "Payment authorized and event published to mfs.payment.events Kafka topic"},
+        {"order": 3, "description": "Verify HTTP POST delivered to merchant callback URL within 500ms", "expected_result": "Webhook delivered with status_code 200, response_time_ms < 500 in webhook_delivery_log"},
+        {"order": 4, "description": "Verify X-MFS-Signature HMAC header is present and valid", "expected_result": "X-MFS-Signature header contains valid HMAC-SHA256 signature computed with merchant signing secret from vault.mfs.internal"}
+      ],
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/webhook/test_dispatch.py"},
+      "last_modified_date": "2026-10-01T12:00:00.000Z",
+      "created_date": "2026-09-28T10:30:00.000Z"
+    },
+    {
+      "id": 70010,
+      "pid": "TC-PAY-010",
+      "name": "Webhook HMAC signature verification",
+      "item_type": "test-case",
+      "description": "Verify that the HMAC-SHA256 signature generated by the WebhookDispatcher can be independently verified using the merchant's signing secret from Vault.",
+      "project_id": 100,
+      "project_name": "Payment Gateway Modernization",
+      "parent_id": "TS-PAY-003",
+      "properties": [
+        {"field_name": "Status", "field_value_name": "Active"},
+        {"field_name": "Priority", "field_value_name": "High"},
+        {"field_name": "Type", "field_value_name": "Functional"},
+        {"field_name": "Automation", "field_value_name": "Automated"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Generate a test webhook payload with known content for a payment.captured event", "expected_result": "Test payload created with deterministic fields for signature verification"},
+        {"order": 2, "description": "Compute HMAC-SHA256 of the payload using the merchant signing secret retrieved from vault.mfs.internal at path secret/mfs/webhooks/{merchant_id}/signing_key", "expected_result": "HMAC-SHA256 signature computed successfully using the Vault-stored secret"},
+        {"order": 3, "description": "Verify the computed signature matches the X-MFS-Signature header value on the delivered webhook", "expected_result": "Signatures match exactly using constant-time comparison, confirming payload integrity and authenticity"}
+      ],
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/webhook/test_signature.py"},
+      "last_modified_date": "2026-10-01T12:30:00.000Z",
+      "created_date": "2026-09-28T11:00:00.000Z"
+    },
+    {
+      "id": 70011,
+      "pid": "TC-PAY-011",
+      "name": "Webhook retry and dead letter queue",
+      "item_type": "test-case",
+      "description": "Verify that failed webhook deliveries are retried with exponential backoff and moved to the dead letter queue after exhausting all retry attempts.",
+      "project_id": 100,
+      "project_name": "Payment Gateway Modernization",
+      "parent_id": "TS-PAY-003",
+      "properties": [
+        {"field_name": "Status", "field_value_name": "Active"},
+        {"field_name": "Priority", "field_value_name": "High"},
+        {"field_name": "Type", "field_value_name": "Functional"},
+        {"field_name": "Automation", "field_value_name": "Manual"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Register a webhook with an unreachable callback URL (e.g., https://unreachable.example.com/webhook)", "expected_result": "Registration created successfully with active=true in webhook_registrations table"},
+        {"order": 2, "description": "Trigger a payment event that matches the registered webhook event types", "expected_result": "Payment event published to mfs.payment.events Kafka topic and picked up by WebhookDispatcher"},
+        {"order": 3, "description": "Verify 5 retry attempts occur with exponential backoff intervals (1s, 2s, 4s, 8s, 16s)", "expected_result": "webhook_delivery_log shows 5 delivery attempts with increasing timestamps matching backoff schedule"},
+        {"order": 4, "description": "Verify event is moved to DLQ after max retries are exhausted", "expected_result": "New entry created in webhook_dlq table on pghost-prod-01.mfs.internal with retry_attempts=5"},
+        {"order": 5, "description": "Verify DLQ entry contains the original payload and error details", "expected_result": "DLQ record payload field contains original event JSON and error_details field contains connection error information"}
+      ],
+      "automation": {"status": "Manual", "framework": null, "script_path": null},
+      "last_modified_date": "2026-10-02T09:00:00.000Z",
+      "created_date": "2026-09-29T10:00:00.000Z"
+    },
+    {
+      "id": 70012,
+      "pid": "TC-PAY-012",
+      "name": "Transaction analytics aggregation accuracy",
+      "item_type": "test-case",
+      "description": "Verify that the analytics aggregation pipeline correctly computes transaction counts, success rates, and settlement times from raw payment events.",
+      "project_id": 100,
+      "project_name": "Payment Gateway Modernization",
+      "parent_id": "TS-PAY-003",
+      "properties": [
+        {"field_name": "Status", "field_value_name": "Active"},
+        {"field_name": "Priority", "field_value_name": "High"},
+        {"field_name": "Type", "field_value_name": "Functional"},
+        {"field_name": "Automation", "field_value_name": "Automated"}
+      ],
+      "test_steps": [
+        {"order": 1, "description": "Publish 100 payment events to Kafka topic mfs.payment.events with known outcomes (80 success, 15 failed, 5 refunded)", "expected_result": "100 events published and consumed by mfs-analytics-agg consumer group"},
+        {"order": 2, "description": "Wait for aggregation cycle to complete (60 seconds)", "expected_result": "Aggregation flush triggered and results written to analytics_aggregates table"},
+        {"order": 3, "description": "Query analytics_aggregates table on pghost-prod-01.mfs.internal for the test time bucket", "expected_result": "Aggregated row returned with matching dimension_key and time_bucket"},
+        {"order": 4, "description": "Verify counts, success rates, and settlement times match expected values", "expected_result": "transaction_count=100, success_count=80, failure_count=15, refund_count=5, avg_settlement_ms within 5% tolerance of expected value"}
+      ],
+      "automation": {"status": "Automated", "framework": "pytest", "script_path": "tests/analytics/test_aggregator.py"},
+      "last_modified_date": "2026-10-03T14:00:00.000Z",
+      "created_date": "2026-09-30T10:00:00.000Z"
+    },
+    {
+      "id": 90003,
+      "pid": "TR-PAY-003",
+      "name": "Sprint 26.15 Webhook & Analytics Regression",
+      "item_type": "test-run",
+      "description": "Sprint 26.15 regression test run covering webhook dispatch, HMAC signature verification, retry/DLQ handling, and analytics aggregation.",
+      "project_id": 100,
+      "project_name": "Payment Gateway Modernization",
+      "properties": [
+        {"field_name": "Status", "field_value_name": "COMPLETED"},
+        {"field_name": "Environment", "field_value_name": "mfs-staging"},
+        {"field_name": "Build", "field_value_name": "mfs-payment-gateway:sprint26.15-rc1"}
+      ],
+      "test_case_results": [
+        {"test_case_pid": "TC-PAY-009", "status": "PASSED", "execution_time_ms": 1234},
+        {"test_case_pid": "TC-PAY-010", "status": "PASSED", "execution_time_ms": 456},
+        {"test_case_pid": "TC-PAY-011", "status": "FAILED", "execution_time_ms": 35000, "defect_summary": "Webhook retry backoff timing exceeded expected intervals; 4th retry delayed by 12s instead of 8s due to thread pool contention on mfs-pay-pod-01"},
+        {"test_case_pid": "TC-PAY-012", "status": "PASSED", "execution_time_ms": 72000}
+      ],
+      "total_cases": 4,
+      "passed": 3,
+      "failed": 1,
+      "in_progress": 0,
+      "not_run": 0,
+      "started_date": "2026-10-03T09:00:00.000Z",
+      "completed_date": "2026-10-03T11:30:00.000Z",
+      "last_modified_date": "2026-10-03T11:30:00.000Z",
+      "created_date": "2026-10-03T09:00:00.000Z"
+    }
+  ]
+}

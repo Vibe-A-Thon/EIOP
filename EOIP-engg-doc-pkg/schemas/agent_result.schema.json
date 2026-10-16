@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentResult",
+  "type": "object",
+  "required": [
+    "request_id",
+    "status",
+    "summary",
+    "evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2.0",
+      "default": "2.0"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "SUCCEEDED",
+        "PARTIAL",
+        "FAILED",
+        "DENIED",
+        "CANCELLED"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tool_calls": {
+      "type": "array"
+    },
+    "warnings": {
+      "type": "array"
+    },
+    "run_id": {
+      "type": ["string", "null"]
+    },
+    "explanation": {
+      "type": ["object", "null"],
+      "description": "Evidence-linked decision summary. Hidden chain-of-thought is never included."
+    },
+    "proposals": {
+      "type": "array"
+    }
+  }
+}

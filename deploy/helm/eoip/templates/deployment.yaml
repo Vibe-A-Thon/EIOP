@@ -1,0 +1,154 @@
+{{- /*
+Deployments for the three EOIP application tiers:
+  - api    (stateless HTTP, uvicorn :8000)
+  - mcp    (optional, uvicorn :8001)
+  - worker (durable-job consumer, leader lease via EOIP_LEASE_PATH)
+The image runs as non-root user eoip (uid 10001); see deploy/Dockerfile.
+*/ -}}
+{{- $components := list "api" }}
+{{- if .Values.mcp.enabled }}{{ $components = append $components "mcp" }}{{ end }}
+{{- if .Values.worker.enabled }}{{ $components = append $components "worker" }}{{ end }}
+{{- range $components }}
+{{- $cfg := index $.Values . }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eoip.fullname" $ | default (printf "%s-%s" $.Release.Name .) }}-{{ . }}
+  labels:
+    {{- include "eoip.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ . }}
+spec:
+  replicas: {{ $cfg.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "eoip.componentLabels" (dict "root" $ "component" .) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "eoip.componentLabels" (dict "root" $ "component" .) | nindent 8 }}
+      {{- with $cfg.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: eoip-{{ . }}
+          image: {{ include "eoip.image" $ | quote }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          {{- if eq . "api" }}
+          command: ["python", "-m", "uvicorn", "apps.api.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "{{ $cfg.port | quote }}"]
+          {{- else if eq . "mcp" }}
+          command: ["python", "-m", "uvicorn", "apps.mcp.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "{{ $cfg.port | quote }}"]
+          {{- else }}
+          command: ["python", "-m", "apps.worker.main"]
+          {{- end }}
+          env:
+            - name: EOIP_DATA_DIR
+              value: {{ $.Values.config.dataDir | quote }}
+            - name: EOIP_LOAD_DEMO
+              value: {{ $.Values.config.loadDemo | quote }}
+            - name: EOIP_GRAPH_BACKEND
+              value: {{ $.Values.graphBackend | quote }}
+            {{- if $.Values.hugegraph.enabled }}
+            - name: EOIP_HUGEGRAPH_URL
+              value: {{ $.Values.hugegraph.url | quote }}
+            {{- end }}
+            {{- if $.Values.neptune.enabled }}
+            - name: EOIP_GRAPH_URL
+              value: {{ $.Values.neptune.url | quote }}
+            {{- end }}
+            {{- if eq . "worker" }}
+            - name: EOIP_LEASE_PATH
+              value: {{ $cfg.lease.path | quote }}
+            - name: EOIP_LEASE_TTL_SECONDS
+              value: {{ $cfg.lease.ttlSeconds | quote }}
+            {{- end }}
+            {{- if $.Values.ollama.enabled }}
+            - name: EOIP_OLLAMA_URL
+              value: {{ $.Values.ollama.url | quote }}
+            - name: EOIP_OLLAMA_MODEL
+              value: {{ $.Values.ollama.model | quote }}
+            {{- end }}
+            {{- if $.Values.redis.enabled }}
+            - name: EOIP_REDIS_URL
+              value: {{ $.Values.redis.url | quote }}
+            {{- end }}
+            {{- if $.Values.config.existingSecret }}
+            - name: EOIP_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.config.existingSecret | quote }}
+                  key: EOIP_API_TOKEN
+            - name: EOIP_HUGEGRAPH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.config.existingSecret | quote }}
+                  key: EOIP_HUGEGRAPH_PASSWORD
+            {{- else }}
+            - name: EOIP_API_TOKEN
+              value: {{ required "config.apiToken (or config.existingSecret) is required" $.Values.config.apiToken | quote }}
+            - name: EOIP_HUGEGRAPH_PASSWORD
+              value: {{ $.Values.hugegraph.password | quote }}
+            {{- end }}
+            {{- with $.Values.config.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ $cfg.port }}
+          {{- if eq . "worker" }}
+          volumeMounts:
+            - name: data
+              mountPath: {{ $.Values.config.dataDir }}
+          {{- else }}
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 6
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 6
+            failureThreshold: 3
+          {{- end }}
+          resources:
+            {{- toYaml $cfg.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml $.Values.securityContext | nindent 12 }}
+      {{- if eq . "worker" }}
+      volumes:
+        - name: data
+          {{- if $.Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "eoip.fullname" $ | default $.Release.Name }}-data
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+      {{- end }}
+      affinity:
+        {{- if $cfg.affinity }}
+        {{- toYaml $cfg.affinity | nindent 8 }}
+        {{- else }}
+        {{- include "eoip.podAntiAffinity" (dict "root" $ "component" . "cfg" $cfg) | nindent 8 }}
+        {{- end }}
+      {{- with $cfg.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $cfg.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

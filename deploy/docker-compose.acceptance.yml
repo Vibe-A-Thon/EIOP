@@ -1,0 +1,46 @@
+x-graph: &graph
+  image: hugegraph/hugegraph:1.7.0
+  environment:
+    PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 up first}
+    HG_SERVER_MIN_FREE_MEMORY: "0"
+  networks: [acceptance]
+  healthcheck:
+    test: [CMD-SHELL, "curl -fsS http://localhost:8080/versions >/dev/null"]
+    interval: 5s
+    timeout: 5s
+    retries: 60
+    start_period: 60s
+
+services:
+  source-graph:
+    <<: *graph
+  target-graph:
+    <<: *graph
+  acceptance: &acceptance
+    image: eoip-app:local
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: runtime
+    command: [python, -m, scripts.verify_clean_demo]
+    environment:
+      EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 up first}
+      EOIP_ACCEPTANCE_SOURCE_URL: http://source-graph:8080
+      EOIP_ACCEPTANCE_TARGET_URL: http://target-graph:8080
+      EOIP_ACCEPTANCE_REPORT: /results/${EOIP_ACCEPTANCE_RUN:?Set a unique acceptance run ID}.json
+    volumes: ["../test-results:/results"]
+    networks: [acceptance]
+    depends_on:
+      source-graph: {condition: service_healthy}
+      target-graph: {condition: service_healthy}
+    init: true
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+  recovery-acceptance:
+    <<: *acceptance
+    profiles: [recovery-test]
+    command: [python, -m, scripts.verify_recovery_bundle]
+
+networks:
+  acceptance:
+    internal: true

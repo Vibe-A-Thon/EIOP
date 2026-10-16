@@ -1,0 +1,160 @@
+{
+  "description": "Agent capability demonstration scenarios — shows agent types across 9 categories with graph-based analysis. Uses Meridian Financial Services (MFS) demo data.",
+  "version": "2.0.0",
+  "organization": "Meridian Financial Services",
+  "scenarios": [
+    {
+      "id": "agent-trace-impact",
+      "agent_type": "retrieval",
+      "category": "tool_using",
+      "title": "Trace and Impact Analysis",
+      "question": "Trace PAY-101 to its implementation and assess the blast radius of changing TokenizationService.tokenize_card()",
+      "expected_tools": ["search_entity", "find_path", "impact_analysis"],
+      "expected_output": "Path from WorkItem PAY-101 through MR !301 → Commit → File → CodeSymbol, plus dependent entities across payment gateway"
+    },
+    {
+      "id": "agent-incident-root-cause",
+      "agent_type": "goal_based",
+      "category": "deliberative",
+      "title": "Incident Root Cause Analysis",
+      "question": "What caused INC0080101 (payment timeout spike) and which deployment introduced the regression?",
+      "expected_tools": ["search_entity", "neighbors", "find_path"],
+      "expected_output": "Incident → affected CI mfs-payment-gateway → recent CHG0090101 → Pipeline 9001 → MR !301 → PAY-101 tokenization change chain"
+    },
+    {
+      "id": "agent-compliance-check",
+      "agent_type": "compliance",
+      "category": "enterprise",
+      "title": "PCI DSS Compliance Verification",
+      "question": "Verify that all cardholder data handling meets PCI DSS encryption and key management requirements",
+      "expected_tools": ["search_entity", "neighbors", "get_entity"],
+      "expected_output": "Compliance check against PAY-201 encryption at rest, PAY-202 HSM key rotation, token vault architecture, audit trail in mfs_audit_db"
+    },
+    {
+      "id": "agent-release-governance",
+      "agent_type": "workflow",
+      "category": "orchestration",
+      "title": "Release Governance Check",
+      "question": "Is the Payment Gateway v2 release ready? Check all test suites, pipeline status, monitoring, and documentation completeness",
+      "expected_tools": ["search_entity", "find_path", "neighbors"],
+      "expected_output": "Multi-step workflow: TC-PAY-007 IN_PROGRESS and TC-PAY-008 NOT_RUN are blockers; Grafana dashboards configured; Confluence docs present but runbook needs update"
+    },
+    {
+      "id": "agent-anomaly-detection",
+      "agent_type": "monitor",
+      "category": "autonomous",
+      "title": "Graph Anomaly Detection",
+      "question": "Find orphan vertices, disconnected components, and suspicious patterns in the MFS enterprise graph",
+      "expected_tools": ["search_entity", "neighbors", "graph_analytics"],
+      "expected_output": "Anomalies: mfs-customer-portal code entities not linked to any Jira story; settlement engine has no Kibana dashboard; some Figma components not linked to code"
+    },
+    {
+      "id": "agent-design-trace",
+      "agent_type": "design_trace",
+      "category": "reactive",
+      "title": "Design-to-Implementation Traceability",
+      "question": "Which Figma designs have been implemented and which are pending for the payment portal?",
+      "expected_tools": ["search_entity", "neighbors", "find_path"],
+      "expected_output": "PaymentCard → PaymentForm.tsx (implemented), CurrencySelector → (no code link yet), SettlementTable → (partially implemented)"
+    },
+    {
+      "id": "agent-knowledge-provenance",
+      "agent_type": "provenance",
+      "category": "meta_cognitive",
+      "title": "Knowledge Provenance Audit",
+      "question": "How was the payment gateway architecture documentation created and when was it last verified?",
+      "expected_tools": ["search_entity", "get_entity", "lineage_trace"],
+      "expected_output": "Confluence page created by Sarah Chen on 2026-08-15, last edited 2026-09-28, linked to 3 code repos, 2 API specs, not verified since PAY-103 multicurrency addition"
+    },
+    {
+      "id": "agent-blast-radius",
+      "agent_type": "blast_radius",
+      "category": "collaboration",
+      "title": "Change Blast Radius Assessment",
+      "question": "What is the blast radius of upgrading sqlalchemy in mfs-common-libs?",
+      "expected_tools": ["search_entity", "impact_analysis", "neighbors"],
+      "expected_output": "Affects mfs-payment-gateway (DBClient), mfs-fraud-engine (model storage), mfs-settlement-engine; 4 pipelines, 2 ServiceNow changes needed, 12 test cases to re-run"
+    },
+    {
+      "id": "agent-peer-review",
+      "agent_type": "peer_review",
+      "category": "collaboration",
+      "title": "Cross-Domain Peer Review",
+      "question": "Review the fraud engine's interaction with the payment gateway — are there circular dependencies or missing error handlers?",
+      "expected_tools": ["search_entity", "find_path", "neighbors"],
+      "expected_output": "FraudAPI calls PaymentAPI for transaction data; no circular dependency found; missing error handler in FraudScorer when payment service is unavailable"
+    },
+    {
+      "id": "agent-test-coverage",
+      "agent_type": "test_coverage",
+      "category": "tool_using",
+      "title": "Test Coverage Gap Analysis",
+      "question": "Analyze test coverage gaps for the webhook notification system across unit, integration, and E2E tests",
+      "expected_tools": ["graph_query", "test_mapping", "coverage_analysis"],
+      "expected_output": "Coverage percentages per test tier (unit, integration, E2E), untested code paths in webhook handlers, recommendations for priority test additions"
+    },
+    {
+      "id": "agent-incident-correlation",
+      "agent_type": "incident_correlation",
+      "category": "deliberative",
+      "title": "Incident-Deployment Correlation",
+      "question": "Correlate incident INC0080103 with recent deployments and changes to identify contributing factors",
+      "expected_tools": ["incident_timeline", "change_correlation", "deployment_history"],
+      "expected_output": "Timeline of INC0080103 mapped to recent CHG records and pipeline deployments, contributing factor ranking with confidence scores"
+    },
+    {
+      "id": "agent-security-scan",
+      "agent_type": "security_scan",
+      "category": "enterprise",
+      "title": "Service Account Permission Scan",
+      "question": "Scan service account permissions across all pods and identify any over-privileged access patterns",
+      "expected_tools": ["service_account_audit", "permission_analysis", "compliance_check"],
+      "expected_output": "List of service accounts with their permission scopes, flagged over-privileged accounts, least-privilege violation details, remediation recommendations"
+    },
+    {
+      "id": "agent-deployment-readiness",
+      "agent_type": "deployment_readiness",
+      "category": "orchestration",
+      "title": "Production Deployment Readiness Assessment",
+      "question": "Assess production readiness for the webhook notification system deployment (CHG0090401)",
+      "expected_tools": ["test_results", "dependency_check", "rollback_plan", "approval_status"],
+      "expected_output": "Readiness checklist with pass/fail status for each gate: test results, dependency compatibility, rollback plan existence, CAB approval status"
+    },
+    {
+      "id": "agent-knowledge-debt",
+      "agent_type": "knowledge_debt",
+      "category": "meta_cognitive",
+      "title": "Knowledge Debt Identification",
+      "question": "Identify knowledge debt in the payment gateway codebase - undocumented services, stale wiki pages, missing architecture decisions",
+      "expected_tools": ["documentation_audit", "staleness_check", "coverage_gap"],
+      "expected_output": "Knowledge debt inventory: undocumented services count, stale Confluence pages with last-updated dates, missing ADRs, documentation coverage percentage"
+    },
+    {
+      "id": "agent-service-dependency",
+      "agent_type": "service_dependency",
+      "category": "reactive",
+      "title": "Service Dependency Mapping",
+      "question": "Map all service dependencies for mfs-payment-gateway including database connections, Kafka topics, and external services",
+      "expected_tools": ["dependency_graph", "infrastructure_map", "connection_audit"],
+      "expected_output": "Complete dependency map: database connections (pghost-prod-01, mfs_payments_db), Kafka topics (payment.events, fraud.scores), external service integrations, health check endpoints"
+    },
+    {
+      "id": "agent-timeline-reconstruction",
+      "agent_type": "timeline_reconstruction",
+      "category": "deliberative",
+      "title": "Incident Timeline Reconstruction",
+      "question": "Reconstruct the complete timeline of events leading to the connection pool leak (PAY-901) from first detection to resolution",
+      "expected_tools": ["event_timeline", "log_correlation", "change_history"],
+      "expected_output": "Chronological event timeline: first alert timestamp, escalation events, diagnostic steps, root cause identification, fix deployment, verification — with evidence links"
+    },
+    {
+      "id": "agent-compliance-audit",
+      "agent_type": "compliance_audit",
+      "category": "enterprise",
+      "title": "PCI DSS Payment Path Compliance Audit",
+      "question": "Audit PCI DSS compliance for the payment processing path from API ingress to database storage",
+      "expected_tools": ["encryption_audit", "access_control_check", "logging_verification", "network_segmentation"],
+      "expected_output": "PCI DSS compliance report: encryption at rest and in transit status, access control findings, audit logging completeness, network segmentation verification, overall compliance score"
+    }
+  ]
+}

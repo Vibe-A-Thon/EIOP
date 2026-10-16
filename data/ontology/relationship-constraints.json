@@ -1,0 +1,54 @@
+{
+  "$schema": "urn:eoip:schema:_common:1.0",
+  "schema_version": "1.0",
+  "ontology_id": "urn:eoip:ontology:constraints:1.0",
+  "title": "EOIP Relationship Constraints & Validation Rules",
+  "description": "SHACL-equivalent constraint rules for the enterprise ontology. Enforced at ingestion time and by the ontology drift detector.",
+  "created_at": "2026-10-09T00:00:00Z",
+  "cardinality_constraints": [
+    { "relationship": "AUTHORED_BY", "from": "Commit", "to": "Person", "min": 1, "max": 1, "description": "Every commit must have exactly one author." },
+    { "relationship": "CONTAINS", "from": "Repository", "to": "CodeFile", "min": 0, "max": null, "description": "A repository can contain any number of files." },
+    { "relationship": "CHILD_OF", "from": "WorkItem", "to": "WorkItem", "min": 0, "max": 1, "description": "A work item has at most one parent." },
+    { "relationship": "LEADS", "from": "Person", "to": "Team", "min": 0, "max": 1, "description": "A team has at most one lead." },
+    { "relationship": "DEPLOYED_TO", "from": "Deployment", "to": "Environment", "min": 1, "max": 1, "description": "Every deployment targets exactly one environment." }
+  ],
+  "uniqueness_constraints": [
+    { "entity_type": "Repository", "property": "url", "scope": "GLOBAL", "description": "Repository URLs must be globally unique." },
+    { "entity_type": "Person", "property": "email", "scope": "ORGANIZATION", "description": "Email addresses must be unique within an organization." },
+    { "entity_type": "WorkItem", "property": "key", "scope": "PROJECT", "description": "Work item keys must be unique within a project." },
+    { "entity_type": "Commit", "property": "sha", "scope": "REPOSITORY", "description": "Commit SHAs must be unique within a repository." }
+  ],
+  "existence_constraints": [
+    { "entity_type": "CodeFile", "required_relationships": ["CONTAINS"], "direction": "INBOUND", "description": "Every CodeFile must belong to a Repository." },
+    { "entity_type": "Deployment", "required_relationships": ["DEPLOYED_TO"], "direction": "OUTBOUND", "description": "Every Deployment must target an Environment." },
+    { "entity_type": "TestCase", "required_relationships": ["CONTAINS"], "direction": "INBOUND", "description": "Every TestCase must belong to a TestSuite." }
+  ],
+  "temporal_constraints": [
+    { "entity_type": "Sprint", "rule": "end_date >= start_date", "description": "Sprint end date must be after start date." },
+    { "entity_type": "Incident", "rule": "resolved_at IS NULL OR resolved_at >= created_at", "description": "Incident resolution must be after creation." },
+    { "entity_type": "Deployment", "rule": "deployed_at IS NOT NULL", "description": "Every deployment must have a deployment timestamp." }
+  ],
+  "cross_domain_rules": [
+    {
+      "rule_id": "XD-001",
+      "description": "A Commit that IMPLEMENTS a WorkItem must modify at least one CodeFile in the WorkItem's project repository.",
+      "from_domain": "work",
+      "to_domain": "code",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "XD-002",
+      "description": "An Incident with severity CRITICAL must have at least one RESOLVED_BY Commit within the SLA window.",
+      "from_domain": "operations",
+      "to_domain": "code",
+      "severity": "VIOLATION"
+    },
+    {
+      "rule_id": "XD-003",
+      "description": "A Service with tier P1 must have at least one associated Runbook.",
+      "from_domain": "operations",
+      "to_domain": "knowledge",
+      "severity": "WARNING"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eoip.local/schemas/demo_scenario_pack.schema.json",
+  "title": "EOIP enterprise demo scenario pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["dataset_id", "version", "title", "scenarios", "vertices", "edges"],
+  "properties": {
+    "dataset_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "description": {"type": "string"},
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "audience", "entrypoint", "story", "capabilities", "expected_path"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "title": {"type": "string", "minLength": 1},
+          "audience": {"type": "string", "minLength": 1},
+          "entrypoint": {"type": "string", "minLength": 1},
+          "story": {"type": "string", "minLength": 1},
+          "capabilities": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "expected_path": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    },
+    "vertices": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "properties"],
+        "properties": {
+          "label": {"type": "string", "minLength": 1},
+          "properties": {
+            "type": "object",
+            "required": ["canonical_id"],
+            "properties": {"canonical_id": {"type": "string", "minLength": 1}},
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "from", "to"],
+        "properties": {
+          "label": {"type": "string", "minLength": 1},
+          "from": {"type": "string", "minLength": 1},
+          "to": {"type": "string", "minLength": 1},
+          "properties": {"type": "object", "additionalProperties": true}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:streaming_memory_event:1.0",
+  "title": "StreamingMemoryEvent v1",
+  "description": "Dual-timeline streaming memory event (KGR-G-014). Records agent memory with both event_time (when the fact occurred) and ingestion_time (when it was recorded), plus salience decay metadata.",
+  "type": "object",
+  "required": ["schema_version", "memory_id", "event_time", "ingestion_time", "content_type", "content", "salience"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "memory_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this memory event."
+    },
+    "agent_id": {
+      "type": ["string", "null"],
+      "description": "Agent that produced or consumed this memory."
+    },
+    "session_id": {
+      "type": ["string", "null"],
+      "description": "Session context for memory scoping."
+    },
+    "event_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the underlying fact or observation occurred in the real world."
+    },
+    "ingestion_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this memory was ingested into the streaming memory store."
+    },
+    "content_type": {
+      "type": "string",
+      "enum": ["OBSERVATION", "DECISION", "FACT", "HYPOTHESIS", "CORRECTION", "SUMMARY"],
+      "description": "Semantic category of the memory content."
+    },
+    "content": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string", "description": "Natural language content of the memory." },
+        "structured": { "type": ["object", "null"], "description": "Optional structured data alongside text." },
+        "embedding_vector": {
+          "type": ["array", "null"],
+          "items": { "type": "number" },
+          "description": "Pre-computed embedding for vector similarity retrieval."
+        }
+      },
+      "additionalProperties": false
+    },
+    "salience": {
+      "type": "object",
+      "required": ["initial_score", "decay_function"],
+      "properties": {
+        "initial_score": { "type": "number", "minimum": 0.0, "maximum": 1.0, "description": "Starting salience when ingested." },
+        "current_score": { "type": ["number", "null"], "minimum": 0.0, "maximum": 1.0, "description": "Current decayed salience. Computed at query time." },
+        "decay_function": {
+          "type": "string",
+          "enum": ["EXPONENTIAL", "LINEAR", "STEP", "NONE"],
+          "description": "How salience decays over time."
+        },
+        "half_life_seconds": { "type": ["number", "null"], "minimum": 0, "description": "Time for salience to halve (exponential decay)." },
+        "access_count": { "type": "integer", "minimum": 0, "default": 0, "description": "Number of times this memory was retrieved (boosts salience)." },
+        "last_accessed_at": { "type": ["string", "null"], "format": "date-time" },
+        "pinned": { "type": "boolean", "default": false, "description": "If true, salience never decays below a minimum threshold." }
+      },
+      "additionalProperties": false
+    },
+    "provenance_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Evidence chain linking to source facts."
+    },
+    "supersedes": {
+      "type": ["string", "null"],
+      "description": "Memory ID that this event corrects or supersedes (conflict resolution)."
+    },
+    "tenant_id": { "type": "string", "default": "default" },
+    "metadata": { "type": "object", "default": {} }
+  },
+  "additionalProperties": false
+}

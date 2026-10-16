@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:retrieval_result:1.0",
+  "title": "RetrievalResult v1",
+  "type": "object",
+  "required": ["retrieval_id", "strategy", "evidence_refs"],
+  "properties": {
+    "retrieval_id": { "type": "string", "minLength": 1 },
+    "strategy": { "type": "string", "minLength": 1 },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "ref", "text"],
+        "properties": {
+          "kind": { "type": "string" },
+          "ref": { "type": "string" },
+          "text": { "type": "string" },
+          "citations": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidence_refs": { "type": "array", "items": { "type": "string" } },
+    "metrics": { "type": ["object", "null"] },
+    "answer": { "type": ["string", "null"] },
+    "warnings": { "type": ["array", "null"], "items": { "type": "string" } },
+    "generation": { "type": ["string", "null"] },
+    "partial": { "type": ["boolean", "null"] },
+    "facts": { "type": ["array", "null"], "items": { "type": "object" } },
+    "graph": { "type": ["object", "null"] },
+    "trace": { "type": ["object", "null"] },
+    "evidence_manifest": {
+      "type": ["object", "null"],
+      "description": "GAP-AI evidence-addressable answer manifest linking graph nodes, path edges, source records, trust and freshness."
+    },
+    "citation_chains": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Machine-readable citation chains from answer context to graph node/path/source record."
+    }
+  },
+  "additionalProperties": false
+}

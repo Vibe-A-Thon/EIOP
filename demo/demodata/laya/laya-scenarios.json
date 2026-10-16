@@ -1,0 +1,133 @@
+{
+  "description": "LAYA (Local AI Yield Augmentation) capability demonstration — shows LLM-assisted enterprise knowledge analysis using existing local models. Uses Meridian Financial Services (MFS) demo data.",
+  "version": "2.0.0",
+  "organization": "Meridian Financial Services",
+  "scenarios": [
+    {
+      "id": "laya-summarize-incident",
+      "capability": "incident_summary",
+      "question": "Summarize the payment timeout spike incident (INC0080101) and its resolution",
+      "context_entities": ["urn:eoip:ops:incident:INC0080101", "urn:eoip:ops:change:CHG0090101"],
+      "expected_output_fields": ["summary", "root_cause", "resolution", "evidence_refs", "confidence"],
+      "fallback_mode": "structured_graph_summary",
+      "note": "Traces INC0080101 → mfs-payment-gateway → CHG0090101 tokenization deployment → MR !301 → PAY-101"
+    },
+    {
+      "id": "laya-explain-decision",
+      "capability": "decision_explanation",
+      "question": "Why was HSM key rotation chosen over software-based key management for PCI DSS compliance?",
+      "context_entities": ["urn:eoip:work:item:jira:PAY-202", "urn:eoip:knowledge:page:confluence:pci-dss-compliance"],
+      "expected_output_fields": ["explanation", "alternatives_considered", "evidence_refs", "confidence"],
+      "fallback_mode": "evidence_chain_narrative",
+      "note": "Draws from Confluence PCI DSS checklist, PAY-202 story description, and architecture docs"
+    },
+    {
+      "id": "laya-assess-readiness",
+      "capability": "release_readiness",
+      "question": "Is the Payment Gateway V2 release ready for production?",
+      "context_entities": ["urn:eoip:work:feature:jira:PAY-100", "urn:eoip:work:feature:jira:PAY-200", "urn:eoip:work:feature:jira:PAY-300"],
+      "expected_output_fields": ["verdict", "checklist", "blockers", "evidence_refs", "confidence"],
+      "fallback_mode": "structured_checklist",
+      "note": "Checks: TC-PAY-007 IN_PROGRESS (blocker), TC-PAY-008 NOT_RUN (blocker), all pipelines green, Grafana dashboards configured"
+    },
+    {
+      "id": "laya-generate-runbook",
+      "capability": "runbook_generation",
+      "question": "Generate a runbook for handling payment gateway timeout incidents",
+      "context_entities": ["urn:eoip:ops:incident:INC0080101", "urn:eoip:code:api-service:mfs:payment-gateway"],
+      "expected_output_fields": ["runbook", "steps", "related_entities", "confidence"],
+      "fallback_mode": "template_from_graph",
+      "note": "Uses incident history, Grafana dashboards, pod topology, DB connection info, and existing Confluence runbook as inputs"
+    },
+    {
+      "id": "laya-risk-assessment",
+      "capability": "change_risk",
+      "question": "Assess the risk of deploying the fraud scoring model v2 (FRD-101)",
+      "context_entities": ["urn:eoip:work:item:jira:FRD-101", "urn:eoip:ops:change:CHG0090401"],
+      "expected_output_fields": ["risk_level", "factors", "mitigations", "evidence_refs", "confidence"],
+      "fallback_mode": "graph_dependency_analysis",
+      "note": "Analyzes: blast radius across mfs-fraud-engine dependents, previous incident INC0080201 (false positive spike), Kafka consumer impact, model rollback plan"
+    },
+    {
+      "id": "laya-entity-explanation",
+      "capability": "entity_explanation",
+      "question": "What is mfs-common-libs and how does it connect to other systems?",
+      "context_entities": ["urn:eoip:code:repo:mfs-common-libs"],
+      "expected_output_fields": ["explanation", "connections", "evidence_refs", "confidence"],
+      "fallback_mode": "graph_neighborhood_summary",
+      "note": "Explains the shared library's role: AuthClient used by all services, AuditLogger for compliance, MetricsCollector for observability"
+    },
+    {
+      "id": "laya-gap-analysis",
+      "capability": "gap_analysis",
+      "question": "What are the testing coverage gaps across the MFS platform?",
+      "context_entities": [],
+      "expected_output_fields": ["gaps", "severity", "recommendations", "evidence_refs", "confidence"],
+      "fallback_mode": "coverage_matrix_analysis",
+      "note": "Identifies: settlement batch (TC-PAY-007 incomplete), SAR reporting (TC-FRD-007 not run), mfs-customer-portal has no test cases"
+    },
+    {
+      "id": "laya-trend-summary",
+      "capability": "trend_summary",
+      "question": "Summarize the deployment and incident trends for Meridian Financial Services this quarter",
+      "context_entities": [],
+      "expected_output_fields": ["trends", "patterns", "anomalies", "evidence_refs", "confidence"],
+      "fallback_mode": "temporal_aggregation",
+      "note": "Aggregates: deployment frequency, incident rate, mean time to recovery, change failure rate from ServiceNow and GitLab data"
+    },
+    {
+      "id": "laya-domain-comparison",
+      "capability": "domain_comparison",
+      "question": "Compare the architectural patterns used in the payment gateway vs fraud detection platform",
+      "context_entities": ["urn:eoip:code:api-service:mfs:payment-gateway", "urn:eoip:code:api-service:mfs:fraud-engine"],
+      "expected_output_fields": ["comparison_matrix", "shared_patterns", "divergences", "recommendations"],
+      "fallback_mode": "structured_comparison",
+      "note": "Compares architecture, patterns, libraries, and design decisions between mfs-payment-gateway and mfs-fraud-engine"
+    },
+    {
+      "id": "laya-architecture-explanation",
+      "capability": "architecture_explanation",
+      "question": "Explain the end-to-end data flow from a payment transaction to fraud score to settlement",
+      "context_entities": ["urn:eoip:code:symbol:mfs-payment-gateway:payment.service:PaymentService", "urn:eoip:code:symbol:mfs-fraud-engine:scoring.engine:FraudScoringEngine", "urn:eoip:code:symbol:mfs-settlement-engine:batch.processor:SettlementBatchProcessor"],
+      "expected_output_fields": ["data_flow_diagram", "latency_analysis", "failure_modes"],
+      "fallback_mode": "graph_flow_narrative",
+      "note": "Traces data flow: PaymentService ingests transaction, FraudScoringEngine evaluates risk, SettlementBatchProcessor completes settlement"
+    },
+    {
+      "id": "laya-risk-prediction",
+      "capability": "risk_prediction",
+      "question": "Predict which components are most likely to cause an outage based on recent change velocity and test coverage",
+      "context_entities": ["urn:eoip:code:api-service:mfs:payment-gateway", "urn:eoip:code:api-service:mfs:fraud-engine", "urn:eoip:code:repo:mfs-common-libs"],
+      "expected_output_fields": ["risk_scores", "contributing_factors", "mitigation_actions"],
+      "fallback_mode": "risk_model_analysis",
+      "note": "Computes risk scores using change frequency, test coverage gaps, incident history, and dependency complexity for each component"
+    },
+    {
+      "id": "laya-compliance-audit",
+      "capability": "compliance_audit",
+      "question": "Generate a PCI DSS compliance evidence report for the payment tokenization path",
+      "context_entities": ["urn:eoip:code:symbol:mfs-payment-gateway:tokenization.service:TokenizationService", "urn:eoip:infra:service-account:svc-token-vault", "urn:eoip:infra:service:hsm-gateway"],
+      "expected_output_fields": ["compliance_findings", "evidence_map", "gaps", "remediation_plan"],
+      "fallback_mode": "compliance_evidence_chain",
+      "note": "Maps PCI DSS requirements to evidence: TokenizationService encryption, token vault access controls, HSM key management procedures"
+    },
+    {
+      "id": "laya-team-capacity",
+      "capability": "team_capacity",
+      "question": "Analyze team workload distribution and identify bottleneck risks for the Q4 release",
+      "context_entities": ["urn:eoip:work:sprint:jira:Sprint-26.14", "urn:eoip:work:sprint:jira:Sprint-26.15", "urn:eoip:work:sprint:jira:Sprint-26.16"],
+      "expected_output_fields": ["workload_distribution", "bottleneck_analysis", "recommendations"],
+      "fallback_mode": "workload_aggregation",
+      "note": "Analyzes story point distribution, assignment density, and cross-team dependencies across Q4 sprints"
+    },
+    {
+      "id": "laya-migration-whatif",
+      "capability": "migration_whatif",
+      "question": "What if we migrate from PostgreSQL to CockroachDB for the payment database - what's the impact analysis?",
+      "context_entities": ["urn:eoip:infra:db-server:pghost-prod-01.mfs.internal", "urn:eoip:infra:database:mfs_payments_db", "urn:eoip:infra:service-account:svc-payment-api"],
+      "expected_output_fields": ["affected_services", "schema_compatibility", "performance_implications", "migration_steps", "rollback_plan"],
+      "fallback_mode": "impact_simulation",
+      "note": "Simulates PostgreSQL to CockroachDB migration: identifies all services using pghost-prod-01, schema compatibility issues, connection string changes, and phased migration plan"
+    }
+  ]
+}

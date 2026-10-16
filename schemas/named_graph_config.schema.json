@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:named_graph_config:1.0",
+  "title": "NamedGraphConfig v1",
+  "description": "Per-tenant named-graph isolation configuration (KGR-G-013). Defines namespace prefixing, access policies, and cross-tenant isolation boundaries.",
+  "type": "object",
+  "required": ["schema_version", "tenant_id", "namespace", "isolation_level", "created_at"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "description": "Unique tenant identifier."
+    },
+    "namespace": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,63}$",
+      "description": "Namespace prefix applied to all canonical_ids within this tenant's graph."
+    },
+    "display_name": {
+      "type": ["string", "null"],
+      "maxLength": 256,
+      "description": "Human-readable tenant name."
+    },
+    "isolation_level": {
+      "type": "string",
+      "enum": ["STRICT", "SHARED_READ", "FEDERATED"],
+      "description": "STRICT: complete isolation. SHARED_READ: can read shared ontology. FEDERATED: cross-tenant queries with ACL."
+    },
+    "quota": {
+      "type": "object",
+      "properties": {
+        "max_vertices": { "type": ["integer", "null"], "minimum": 0, "description": "Maximum vertex count. null = unlimited." },
+        "max_edges": { "type": ["integer", "null"], "minimum": 0 },
+        "max_storage_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "max_queries_per_minute": { "type": ["integer", "null"], "minimum": 0 }
+      },
+      "additionalProperties": false,
+      "description": "Resource quotas for this tenant's graph partition."
+    },
+    "allowed_domains": {
+      "type": ["array", "null"],
+      "items": { "type": "string" },
+      "description": "Graph domains this tenant can access. null = all domains."
+    },
+    "cross_tenant_policies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["target_tenant", "permission"],
+        "properties": {
+          "target_tenant": { "type": "string", "description": "Tenant ID that can be accessed." },
+          "permission": { "type": "string", "enum": ["READ", "READ_WRITE", "NONE"] },
+          "allowed_entity_types": { "type": ["array", "null"], "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      },
+      "description": "Explicit cross-tenant access grants."
+    },
+    "encryption": {
+      "type": "object",
+      "properties": {
+        "at_rest": { "type": "boolean", "default": true },
+        "key_id": { "type": ["string", "null"], "description": "KMS key identifier for tenant-specific encryption." }
+      },
+      "additionalProperties": false
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": "object", "default": {} }
+  },
+  "additionalProperties": false
+}

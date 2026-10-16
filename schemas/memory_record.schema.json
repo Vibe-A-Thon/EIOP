@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:memory_record:1.0",
+  "title": "MemoryRecord v1",
+  "type": "object",
+  "required": ["memory_id", "kind", "scope", "owner", "source", "created_at", "provenance_refs", "classification"],
+  "properties": {
+    "memory_id": { "type": "string", "minLength": 1 },
+    "kind": { "type": "string", "minLength": 1 },
+    "scope": { "type": "string", "minLength": 1 },
+    "owner": { "type": "string", "minLength": 1 },
+    "source": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "ttl_seconds": { "type": ["integer", "null"] },
+    "provenance_refs": { "type": "array", "items": { "type": "string" } },
+    "confidence": { "type": ["number", "null"], "minimum": 0.0, "maximum": 1.0 },
+    "classification": { "type": "string", "minLength": 1 },
+    "deletion_policy": { "type": ["string", "null"] },
+    "content": {}
+  },
+  "additionalProperties": false
+}

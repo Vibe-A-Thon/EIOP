@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:tool_result:2.0",
+  "title": "ToolResult v2",
+  "type": "object",
+  "required": ["tool_call_id", "status"],
+  "properties": {
+    "schema_version": { "type": "string", "default": "2.0" },
+    "tool_call_id": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["SUCCEEDED", "FAILED", "DENIED", "TIMEOUT"] },
+    "result": {},
+    "evidence_refs": { "type": ["array", "null"], "items": { "type": "string" } },
+    "error": { "type": ["object", "null"] },
+    "duration_ms": { "type": "integer", "minimum": 0, "default": 0 }
+  },
+  "additionalProperties": false
+}

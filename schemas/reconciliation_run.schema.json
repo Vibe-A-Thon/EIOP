@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:reconciliation_run:1.0",
+  "title": "ReconciliationRun v1",
+  "type": "object",
+  "required": ["schema_version", "reconciliation_id", "source_id", "started_at", "finished_at", "source_records", "graph_records", "unchanged", "missing", "stale", "orphaned", "repaired", "status"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "reconciliation_id": {"type": "string", "minLength": 1},
+    "source_id": {"type": "string", "minLength": 1},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "checkpoint": {"type": ["string", "null"]},
+    "source_records": {"type": "integer", "minimum": 0},
+    "graph_records": {"type": "integer", "minimum": 0},
+    "unchanged": {"type": "array", "items": {"type": "string"}},
+    "missing": {"type": "array", "items": {"type": "string"}},
+    "stale": {"type": "array", "items": {"type": "string"}},
+    "orphaned": {"type": "array", "items": {"type": "string"}},
+    "repaired": {"type": "array", "items": {"type": "string"}},
+    "status": {"enum": ["MATCHED", "DRIFT_FOUND", "REPAIRED", "PARTIAL"]}
+  },
+  "additionalProperties": false
+}

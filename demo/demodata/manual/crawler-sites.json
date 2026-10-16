@@ -1,0 +1,196 @@
+[
+  {
+    "url": "https://wiki.mfs.internal/architecture/payment-gateway-v2",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Payment Gateway V2 Architecture - MFS Internal Wiki",
+    "headings": [
+      "Payment Gateway V2 Architecture",
+      "System Overview",
+      "Component Topology",
+      "Service Accounts",
+      "Database Architecture",
+      "Deployment Model"
+    ],
+    "text": "Payment Gateway V2 Architecture\n\nThe MFS Payment Gateway V2 is a modernized payment processing platform deployed on OpenShift in the mfs-prod namespace. It handles payment tokenization, multi-currency processing, and settlement operations for Meridian Financial Services.\n\nSystem Overview\nThe gateway processes card-present and card-not-present transactions through a microservices architecture. Key services include the tokenization service, retry handler with circuit breaker, currency exchange service, and settlement batch processor.\n\nComponent Topology\nThe production deployment consists of:\n- mfs-pay-pod-01: Primary payment processing (active)\n- mfs-pay-pod-02: Secondary payment processing (active)\n- mfs-pay-pod-03: Overflow payment processing (standby)\n- mfs-vault-pod-01: Token vault and HSM integration\n- mfs-settle-pod-01: Settlement batch processing\n\nAll pods run in the mfs-prod OpenShift namespace with a staging mirror in mfs-staging.\n\nService Accounts\nThe gateway uses dedicated service accounts for authentication and authorization:\n- svc-payment-api: Payment gateway API operations, authenticated via OAuth2 client credentials\n- svc-token-vault: HSM key retrieval and token vault operations, authenticated via mTLS + OAuth2\n- svc-settlement: Settlement batch processing and file generation\n- svc-notification-svc: Alert and notification delivery for payment events and reconciliation discrepancies\n\nDatabase Architecture\nPrimary database: mfs_payments_db (PostgreSQL 15) hosted on pghost-prod-01.mfs.internal. Contains tables for card_tokens, cardholder_data (encrypted with AES-256-GCM), retry_ledger, currency_rates, settlement_batches, settlement_records, and gateway_ledger.\n\nAudit database: mfs_audit_db (PostgreSQL 15) co-located on pghost-prod-01.mfs.internal. Stores token_audit_log, conversion_audit, and reconciliation_results.\n\nDeployment Model\nDeployments are managed through OpenShift with rolling updates. Change management follows the ServiceNow ITSM process (standard and normal changes). Recent deployments include CHG0090101 (tokenization), CHG0090102 (retry handler), CHG0090201 (encryption at rest), and CHG0090301 (settlement batch).",
+    "links": [
+      "https://wiki.mfs.internal/architecture/payment-gateway-v2/api-reference",
+      "https://wiki.mfs.internal/runbooks/payment-timeouts",
+      "https://wiki.mfs.internal/compliance/pci-dss-v4",
+      "https://grafana.mfs.internal/d/pay-gateway-slos/payment-gateway-slos",
+      "https://confluence.mfs.internal/spaces/PAY/pages/98501/Payment+Gateway+Architecture"
+    ],
+    "crawled_at": "2026-09-30T06:00:00.000Z",
+    "content_length": 2850
+  },
+  {
+    "url": "https://wiki.mfs.internal/runbooks/payment-timeouts",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Runbook: Payment Gateway Timeouts - MFS Internal Wiki",
+    "headings": [
+      "Runbook: Payment Gateway Timeouts",
+      "Symptom Detection",
+      "Triage Steps",
+      "Common Root Causes",
+      "Resolution Procedures",
+      "Escalation Path",
+      "Post-Incident Review"
+    ],
+    "text": "Runbook: Payment Gateway Timeouts\n\nThis runbook covers the diagnosis and resolution of payment processing timeout incidents on the MFS Payment Gateway.\n\nSymptom Detection\nTimeout incidents are typically detected via:\n- Grafana alert: Payment API Latency P99 > 200ms (alert-pay-latency)\n- Datadog monitor: Payment API Latency P99 (monitor 550001)\n- Kibana dashboard: Payment Gateway Performance (dashboard-pay-gateway-perf)\n- Customer reports of payment failures or slow checkout\n\nTriage Steps\n1. Check current P99 latency on Grafana Payment Gateway SLOs dashboard\n2. Identify affected pods: oc get pods -n mfs-prod -l app=mfs-payment-gateway\n3. Check pod resource utilization (CPU, memory, network)\n4. Review recent deployments in ServiceNow change records\n5. Check database connection status to pghost-prod-01.mfs.internal\n\nCommon Root Causes\n\n1. Connection Pool Exhaustion (most common)\nAfter the tokenization deployment (CHG0090101), connection pool exhaustion was observed on mfs-pay-pod-01 due to longer-running tokenization queries against mfs_payments_db. The INC0080101 incident was resolved by increasing the HikariCP connection pool from 20 to 50 connections and adding a 3-second query timeout.\n\nDiagnosis: Check HikariCP metrics via Prometheus - hikari_connections_active should be below maximum-pool-size.\n\n2. HSM Session Saturation\nToken vault latency degradation (INC0080102) was traced to insufficient PKCS#11 session pool size on mfs-vault-pod-01 after the encryption-at-rest deployment (CHG0090201). The svc-token-vault service account sessions were saturated at 5 concurrent sessions.\n\nDiagnosis: Check HSM session metrics on mfs-vault-pod-01. Session pool should be set to 20.\n\n3. Circuit Breaker Tripped\nIf the retry handler circuit breaker is in OPEN state, new payment requests are immediately rejected. Check circuit breaker state via GET /actuator/circuitbreakers on the affected pod.\n\nResolution: Circuit breaker auto-recovers via half-open probe every 30 seconds. If underlying issue persists, address root cause first.\n\nResolution Procedures\n- Connection pool: Update ConfigMap spring.datasource.hikari.maximum-pool-size and restart deployment\n- HSM sessions: Update svc-token-vault PKCS#11 session pool configuration\n- Circuit breaker: Resolve underlying failure, breaker recovers automatically\n\nEscalation Path\n- L1: DevOps & SRE - Li Wei (lwei), Raj Patel (rpatel)\n- L2: Platform Engineering - Sarah Chen (schen), David Okoye (dokoye)\n- L3: Payment Services - Marcus Rivera (mrivera), Alex Kim (akim)\n\nPost-Incident Review\nAll P2+ incidents require a post-incident review within 48 hours. Document timeline, root cause, resolution, and preventive measures in Confluence.",
+    "links": [
+      "https://wiki.mfs.internal/architecture/payment-gateway-v2",
+      "https://grafana.mfs.internal/d/pay-gateway-slos/payment-gateway-slos",
+      "https://confluence.mfs.internal/spaces/PAY/pages/98505/Incident+Runbook+Payment+Timeouts"
+    ],
+    "crawled_at": "2026-09-30T06:05:00.000Z",
+    "content_length": 3200
+  },
+  {
+    "url": "https://api-portal.mfs.internal/swagger/payment-gateway/v2",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Payment Gateway API v2 - Swagger UI - MFS API Portal",
+    "headings": [
+      "Payment Gateway API v2",
+      "Tokenization",
+      "Payments",
+      "Currency",
+      "Settlement",
+      "Authentication",
+      "Error Codes"
+    ],
+    "text": "Payment Gateway API v2\n\nOpenAPI 3.0 specification for the MFS Payment Gateway API v2.\n\nBase URL: https://api.mfs.internal/payment/v2\nAuthentication: OAuth2 Client Credentials via svc-payment-api service account\n\nTokenization\nPOST /api/v2/tokens - Create a payment token from cardholder PAN. Returns an irreversible PCI DSS v4.0 compliant token.\nGET /api/v2/tokens/{token_id} - Retrieve token metadata (last four digits, brand, creation date). Never returns raw PAN data.\n\nPayments\nPOST /api/v2/payments - Process a payment using a previously created token. Supports idempotency keys for safe retries.\nPOST /api/v2/payments/{payment_id}/retry - Retry a failed payment with circuit breaker protection.\nGET /api/v2/payments/{payment_id}/status - Check payment processing status.\n\nCurrency\nGET /api/v2/currencies/rates - Get current FX exchange rates for supported currencies (USD, EUR, GBP, JPY, CAD, AUD, CHF).\nPOST /api/v2/payments/convert - Process a payment with automatic currency conversion.\n\nSettlement\nPOST /api/v2/settlements/batch - Trigger a settlement batch for pending transactions. Requires svc-settlement service account.\nGET /api/v2/settlements/{batch_id} - Get settlement batch status.\n\nAuthentication\nAll endpoints require a valid OAuth2 bearer token obtained via client credentials flow using the svc-payment-api service account.\n\nError Codes\nPAY-001: Invalid token\nPAY-002: Insufficient funds\nPAY-003: Currency not supported\nPAY-004: Duplicate idempotency key\nPAY-005: Circuit breaker open\nPAY-006: Settlement batch in progress",
+    "links": [
+      "https://api-portal.mfs.internal/swagger/payment-gateway/v2/openapi.json",
+      "https://api-portal.mfs.internal/swagger/token-vault/v1",
+      "https://api-portal.mfs.internal/swagger/settlement/v1"
+    ],
+    "crawled_at": "2026-09-30T06:10:00.000Z",
+    "content_length": 1800
+  },
+  {
+    "url": "https://wiki.mfs.internal/database/mfs-payments-db-schema",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "mfs_payments_db Schema Documentation - MFS Internal Wiki",
+    "headings": [
+      "mfs_payments_db Schema Documentation",
+      "Connection Details",
+      "Tables",
+      "card_tokens",
+      "cardholder_data",
+      "retry_ledger",
+      "currency_rates",
+      "gateway_ledger",
+      "settlement_batches",
+      "settlement_records",
+      "Extensions",
+      "Backup and Recovery"
+    ],
+    "text": "mfs_payments_db Schema Documentation\n\nSchema documentation for the MFS Payments database hosted on PostgreSQL 15.\n\nConnection Details\nHost: pghost-prod-01.mfs.internal\nPort: 5432\nDatabase: mfs_payments_db\nService accounts with access: svc-payment-api (read/write), svc-token-vault (read/write to cardholder_data), svc-settlement (read/write to settlement tables)\nConnection pool: HikariCP with max 50 connections per pod (updated after INC0080101)\n\nTables\n\ncard_tokens\nStores tokenized payment card references. Created by TokenizationService.\nColumns: token_id (PK, varchar), encrypted_pan (bytea), last_four (varchar(4)), brand (varchar), cardholder_name_hash (varchar), created_at (timestamp), expires_at (timestamp)\nIndex: idx_card_tokens_created_at on created_at\n\ncardholder_data\nStores encrypted cardholder data (PCI DSS Req 3.4). All sensitive columns encrypted with AES-256-GCM.\nColumns: id (PK, bigserial), token_id (FK to card_tokens), encrypted_pan (bytea), encrypted_cvv (bytea), encrypted_expiry (bytea), encryption_key_id (varchar), iv (bytea), auth_tag (bytea), created_at (timestamp)\nEncryption: AES-256-GCM via pgcrypto extension, keys managed by HSM through svc-token-vault\n\nretry_ledger\nTracks idempotent retry state for payment operations.\nColumns: idempotency_key (PK, varchar), transaction_id (varchar), merchant_id (varchar), attempt_count (int), last_attempt_at (timestamp), status (varchar), circuit_breaker_state (varchar)\n\ncurrency_rates\nCaches FX exchange rates with 60-second TTL.\nColumns: id (PK, serial), source_currency (varchar(3)), target_currency (varchar(3)), rate (decimal), fetched_at (timestamp), expires_at (timestamp)\n\ngateway_ledger\nMaster ledger for all payment transactions processed by the gateway.\nColumns: payment_id (PK, varchar), token_id (FK), amount (decimal), currency (varchar(3)), merchant_id (varchar), status (varchar), idempotency_key (varchar), created_at (timestamp), completed_at (timestamp)\n\nsettlement_batches\nSettlement batch metadata.\nColumns: batch_id (PK, varchar), status (varchar), transaction_count (int), total_amount (decimal), currency (varchar(3)), acquirer (varchar), created_at (timestamp), completed_at (timestamp)\n\nsettlement_records\nIndividual settlement records linked to batches.\nColumns: id (PK, bigserial), batch_id (FK), payment_id (FK to gateway_ledger), amount (decimal), currency (varchar(3)), merchant_id (varchar), status (varchar), settled_at (timestamp)\n\nExtensions\n- pgcrypto: Enabled for column-level encryption (CHG0090201)\n- pg_stat_statements: Query performance monitoring\n\nBackup and Recovery\nDaily automated backups at 02:00 UTC. Point-in-time recovery available via WAL archiving. RPO: 5 minutes, RTO: 30 minutes.",
+    "links": [
+      "https://wiki.mfs.internal/architecture/payment-gateway-v2",
+      "https://wiki.mfs.internal/database/mfs-audit-db-schema"
+    ],
+    "crawled_at": "2026-09-30T06:15:00.000Z",
+    "content_length": 3100
+  },
+  {
+    "url": "https://grafana.mfs.internal/d/pay-gateway-slos/payment-gateway-slos",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Payment Gateway SLOs - Grafana - MFS Monitoring",
+    "headings": [
+      "Payment Gateway SLOs",
+      "Payment API Latency P99",
+      "Payment Success Rate",
+      "Tokenization Throughput",
+      "Circuit Breaker Status"
+    ],
+    "text": "Payment Gateway SLOs Dashboard\n\nReal-time SLO monitoring for the MFS Payment Gateway deployed in the mfs-prod OpenShift namespace.\n\nPayment API Latency P99\nCurrent P99 latency across all payment gateway pods (mfs-pay-pod-01, mfs-pay-pod-02, mfs-pay-pod-03). SLO target: < 200ms. Data source: MFS Prometheus (prometheus.mfs.internal:9090).\nQuery: histogram_quantile(0.99, rate(payment_api_request_duration_seconds_bucket{namespace='mfs-prod'}[5m]))\nAlert: Fires when P99 > 200ms for 5 consecutive minutes (alert-pay-latency). Notifies DevOps & SRE team.\n\nPayment Success Rate\nPercentage of successful payment transactions. SLO target: > 99.9%. Includes all payment processing endpoints authenticated via svc-payment-api service account.\nQuery: sum(rate(payment_api_requests_total{status='success',namespace='mfs-prod'}[5m])) / sum(rate(payment_api_requests_total{namespace='mfs-prod'}[5m])) * 100\n\nTokenization Throughput\nToken creation rate per second across all payment pods. Reflects tokenization workload via TokenizationService backed by svc-token-vault and HSM on mfs-vault-pod-01.\n\nCircuit Breaker Status\nCurrent state of the payment retry circuit breaker on each pod. States: 0=CLOSED (healthy), 1=OPEN (tripped), 2=HALF_OPEN (probing). Circuit breaker opens after 5 consecutive failures, probes every 30 seconds.",
+    "links": [
+      "https://grafana.mfs.internal/d/settlement-processing/settlement-processing",
+      "https://grafana.mfs.internal/alerting/list",
+      "https://prometheus.mfs.internal:9090"
+    ],
+    "crawled_at": "2026-09-30T06:20:00.000Z",
+    "content_length": 1650
+  },
+  {
+    "url": "https://dbdocs.mfs.internal/mfs_payments_db/tables",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "mfs_payments_db - Table Reference",
+    "headings": [
+      "mfs_payments_db - Table Reference",
+      "payments",
+      "payment_methods",
+      "tokens",
+      "idempotency_keys",
+      "webhook_registrations",
+      "webhook_delivery_log",
+      "webhook_dlq",
+      "analytics_aggregates",
+      "settlement_batches"
+    ],
+    "text": "mfs_payments_db - Table Reference\n\nComplete table reference for mfs_payments_db on pghost-prod-01.mfs.internal.\n\npayments\nCore payments table tracking all transaction lifecycle states.\nColumns: id (PK, uuid), amount (decimal(19,4)), currency (varchar(3)), status (varchar - pending/authorized/captured/failed/refunded), merchant_id (varchar), created_at (timestamptz), updated_at (timestamptz)\nIndexes: idx_payments_merchant_id, idx_payments_status, idx_payments_created_at\n\npayment_methods\nPayment method details linked to individual payments.\nColumns: id (PK, uuid), payment_id (FK to payments), type (varchar - card/bank/wallet), last_four (varchar(4)), token_id (FK to tokens)\nIndex: idx_payment_methods_payment_id\n\ntokens\nTokenized cardholder data with HSM key references.\nColumns: id (PK, uuid), pan_hash (varchar(64)), token_value (varchar), created_at (timestamptz), hsm_key_id (varchar)\nIndex: idx_tokens_pan_hash\n\nidempotency_keys\nIdempotency key tracking for safe payment retries.\nColumns: key (PK, varchar(64)), payment_id (FK to payments), created_at (timestamptz), expires_at (timestamptz)\nIndex: idx_idempotency_keys_expires_at\n\nwebhook_registrations\nMerchant webhook registration configurations.\nColumns: id (PK, uuid), merchant_id (varchar), url (text), events (jsonb - array of subscribed event types), secret_vault_path (varchar - path in vault.mfs.internal for HMAC signing secret), created_at (timestamptz)\nIndexes: idx_webhook_registrations_merchant_id\n\nwebhook_delivery_log\nDelivery attempt log for all webhook dispatches.\nColumns: id (PK, uuid), registration_id (FK to webhook_registrations), event_id (varchar), status (varchar - pending/delivered/failed/dlq), http_status (int), latency_ms (int), created_at (timestamptz)\nIndexes: idx_webhook_delivery_log_registration_id, idx_webhook_delivery_log_status\n\nwebhook_dlq\nDead letter queue for webhook deliveries that exhausted all retries.\nColumns: id (PK, uuid), delivery_log_id (FK to webhook_delivery_log), payload (jsonb), error (text), retry_count (int), created_at (timestamptz)\nIndex: idx_webhook_dlq_created_at\n\nanalytics_aggregates\nPre-computed analytics aggregates for dashboard queries.\nColumns: id (PK, uuid), dimension_key (varchar - merchant_id or currency), time_bucket (timestamptz - hourly buckets), transaction_count (int), success_count (int), failure_count (int), avg_settlement_ms (decimal)\nIndexes: idx_analytics_aggregates_dimension_key, idx_analytics_aggregates_time_bucket\n\nsettlement_batches\nSettlement batch metadata for reconciliation.\nColumns: id (PK, uuid), batch_date (date), merchant_id (varchar), total_amount (decimal(19,4)), status (varchar - pending/processing/completed/failed), created_at (timestamptz)\nIndexes: idx_settlement_batches_merchant_id, idx_settlement_batches_batch_date\n\nService Accounts:\n- svc-payment-api: read/write access to all tables\n- svc-analytics: read-only access to payments, analytics_aggregates, settlement_batches",
+    "links": [
+      "https://dbdocs.mfs.internal/mfs_payments_db/tables/payments",
+      "https://dbdocs.mfs.internal/mfs_payments_db/tables/webhook_registrations",
+      "https://dbdocs.mfs.internal/mfs_payments_db/tables/analytics_aggregates",
+      "https://wiki.mfs.internal/database/mfs-payments-db-schema",
+      "https://wiki.mfs.internal/architecture/payment-gateway-v2"
+    ],
+    "crawled_at": "2026-10-01T08:00:00.000Z",
+    "content_length": 3850
+  },
+  {
+    "url": "https://ocp-prod-east.mfs.internal/console/project/mfs-payments/overview",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "mfs-payments Namespace - Pod Overview",
+    "headings": [
+      "mfs-payments Namespace - Pod Overview",
+      "Pod Topology",
+      "Services",
+      "ConfigMaps and Secrets",
+      "Ingress"
+    ],
+    "text": "mfs-payments Namespace - Pod Overview\n\nPod topology for mfs-payments namespace on ocp-prod-east.mfs.internal cluster.\n\nPod Topology\n\nmfs-pay-pod-01\nWorkloads: payment processing, tokenization, webhook dispatch\nReplicas: 4\nResources: 2 CPU / 4Gi memory per replica\nStatus: Running\n\nmfs-pay-pod-02\nWorkloads: payment processing secondary\nReplicas: 2\nResources: 2 CPU / 4Gi memory per replica\nStatus: Running\n\nmfs-pay-pod-03\nWorkloads: analytics workload\nReplicas: 2\nResources: 1 CPU / 2Gi memory per replica\nStatus: Running\n\nServices\n\nmfs-payment-gateway\nType: ClusterIP\nPort: 8080\nTargets: mfs-pay-pod-01, mfs-pay-pod-02\nSelector: app=mfs-payment-gateway\n\nmfs-analytics\nType: ClusterIP\nPort: 8081\nTargets: mfs-pay-pod-03\nSelector: app=mfs-analytics\n\nConfigMaps and Secrets\n\nConfigMaps:\n- payment-config: Payment processing configuration (timeouts, retry limits, circuit breaker thresholds)\n- webhook-config: Webhook dispatch configuration (delivery timeouts, max retries, DLQ settings)\n- analytics-config: Analytics aggregation configuration (time buckets, dimension keys, retention)\n\nSecrets:\n- payment-db-credentials: PostgreSQL credentials for pghost-prod-01.mfs.internal (rotated via vault.mfs.internal)\n- webhook-signing-keys: HMAC signing keys for webhook payload signatures (synced from vault.mfs.internal)\n\nIngress\napi-gateway.mfs.internal -> mfs-payment-gateway service (port 8080)\nTLS termination at ingress controller with Let's Encrypt certificate",
+    "links": [
+      "https://ocp-prod-east.mfs.internal/console/project/mfs-payments",
+      "https://ocp-prod-east.mfs.internal/console/project/mfs-payments/pods/mfs-pay-pod-01",
+      "https://ocp-prod-east.mfs.internal/console/project/mfs-payments/pods/mfs-pay-pod-02",
+      "https://ocp-prod-east.mfs.internal/console/project/mfs-payments/pods/mfs-pay-pod-03",
+      "https://grafana.mfs.internal/d/pay-gateway-slos/payment-gateway-slos",
+      "https://grafana.mfs.internal/d/mfs-analytics/analytics-dashboard"
+    ],
+    "crawled_at": "2026-10-01T08:30:00.000Z",
+    "content_length": 2400
+  },
+  {
+    "url": "https://wiki.mfs.internal/spaces/OPS/pages/incident-response-payment",
+    "content_type": "text/html",
+    "status_code": 200,
+    "title": "Payment Gateway - Incident Response Playbook",
+    "headings": [
+      "Payment Gateway - Incident Response Playbook",
+      "P1 Response SLA",
+      "Escalation Path",
+      "Diagnostic Tools",
+      "Common Issues and Resolution",
+      "Rollback Procedures"
+    ],
+    "text": "Payment Gateway - Incident Response Playbook\n\nComprehensive incident response playbook for the MFS Payment Gateway.\n\nP1 Response SLA\n- Acknowledge: 15 minutes from alert firing\n- Mitigate: 1 hour from acknowledgement\n- Resolve: 4 hours from mitigation (best effort)\n- Post-incident review: within 48 hours of resolution\n\nEscalation Path\n1. On-call engineer: payments-oncall PagerDuty rotation (primary responder)\n2. Squad lead: Arjun Deshmukh (payments squad lead, available 08:00-22:00 IST)\n3. Platform: Marcus Thompson (platform engineering lead, available 08:00-20:00 EST)\n4. VP Engineering: David Kim (final escalation, P1 only)\n\nDiagnostic Tools\n- Grafana: payment-gateway-slo dashboard (https://grafana.mfs.internal/d/pay-gateway-slos) - latency P99, success rate, circuit breaker state\n- Kibana: query 'service:mfs-payment-gateway AND level:ERROR' for error log analysis (https://kibana.mfs.internal)\n- Datadog APM: distributed traces for payment request lifecycle (https://app.datadoghq.com/apm/traces?service=mfs-payment-gateway)\n- OpenShift console: pod health and resource utilization on ocp-prod-east.mfs.internal\n\nCommon Issues and Resolution\n\n1. Database Connection Exhaustion\nSymptom: Increasing latency and connection timeout errors in application logs.\nDiagnosis: Check pghost-prod-01.mfs.internal connection count via pg_stat_activity. Compare active connections against max_connections (200) and HikariCP pool size (50 per pod).\nResolution: If connection usage exceeds 80% threshold, restart pods sequentially using oc rollout restart deployment/mfs-payment-gateway -n mfs-payments. If persistent, increase pool size in payment-config ConfigMap.\n\n2. Tokenization HSM Timeout\nSymptom: TokenizationService latency spike, PKCS#11 session timeout errors.\nDiagnosis: Verify hsm-gateway.mfs.internal:8443 health endpoint. Check HSM session pool metrics on mfs-vault-pod-01.\nResolution: Restart svc-token-vault sessions. If HSM is unresponsive, escalate to Platform Engineering.\n\n3. Kafka Producer Errors\nSymptom: Payment events not reaching webhook dispatcher, consumer lag increasing.\nDiagnosis: Check kafka-broker.mfs.internal broker health via kafka-manager. Verify topic mfs.payment.events partition status.\nResolution: If broker is unhealthy, restart affected broker. If topic partitions are offline, reassign partitions.\n\n4. Webhook Delivery Failures\nSymptom: DLQ depth increasing, merchants reporting missing notifications.\nDiagnosis: Check webhook_dlq table depth. Verify merchant endpoint health via webhook test endpoint (POST /webhooks/{id}/test).\nResolution: If merchant endpoint is down, pause deliveries. Once restored, replay DLQ entries via DeadLetterQueue.replay().\n\n5. Redis Connection Errors\nSymptom: Idempotency key lookups failing, duplicate payment risk.\nDiagnosis: Verify redis-cluster.mfs.internal cluster status using redis-cli cluster info. Check CLUSTER_STATE and connected_clients.\nResolution: If cluster state is not 'ok', check for failed nodes and perform failover. Restart affected pods to re-establish connections.\n\nRollback Procedures\n- GitLab CI/CD: Trigger rollback-production job in the mfs-payment-gateway pipeline to deploy the previous stable version.\n- OpenShift manual: oc rollback deployment/mfs-payment-gateway -n mfs-payments on ocp-prod-east.mfs.internal.\n- Database: Rollback migrations via Alembic downgrade if schema changes caused the incident. Coordinate with DBA team.",
+    "links": [
+      "https://grafana.mfs.internal/d/pay-gateway-slos/payment-gateway-slos",
+      "https://kibana.mfs.internal/app/discover#/?service=mfs-payment-gateway",
+      "https://wiki.mfs.internal/runbooks/payment-timeouts",
+      "https://wiki.mfs.internal/architecture/payment-gateway-v2",
+      "https://ocp-prod-east.mfs.internal/console/project/mfs-payments/overview"
+    ],
+    "crawled_at": "2026-10-01T09:00:00.000Z",
+    "content_length": 4200
+  }
+]

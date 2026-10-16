@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.444628Z",
+  "event_id": "b0c74dc2a5b108c58a4f7d9621c97cf06a0ef81797015174742285562cfa1eee",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "496eef793acf6750b66658ae4a0b2413b7d30560",
+    "message": "evolution changes and query enhancements in the EOIP system implemented"
+  },
+  "payload_hash": "5f68add363e50ee52be10dd121ce50b26b2bd83b0603a079203d2c2fdf9ae990",
+  "schema_version": "1.0",
+  "source_record_id": "demo:496eef793acf6750b66658ae4a0b2413b7d30560",
+  "source_system": "git",
+  "source_version": "5f68add363e50ee52be10dd121ce50b26b2bd83b0603a079203d2c2fdf9ae990"
+}

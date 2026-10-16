@@ -1,0 +1,83 @@
+{
+  "captured_at": "2026-10-04T13:45:50.512571Z",
+  "event_id": "718cb98c4fee5665640d616e70681405fba01bf8e9618908301f5c438704d14c",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-aml-engine"
+        }
+      ],
+      "created": "2026-09-05T09:00:00.000+0000",
+      "customfield_10014": "EPC-203",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Automate the generation, review, and submission of Suspicious Activity Reports (SARs) and Currency Transaction Reports (CTRs) to FinCEN. Includes pre-population of SAR forms from case data, regulatory field validation, and batch filing via FinCEN BSA E-Filing system.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "FRD-321"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        },
+        {
+          "outwardIssue": {
+            "key": "TC-FRD-007"
+          },
+          "type": {
+            "name": "is verified by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story"
+      },
+      "labels": [
+        "sar",
+        "ctr",
+        "fincen",
+        "automation"
+      ],
+      "parent": {
+        "key": "FRD-300"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "reporter": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "status": {
+        "name": "To Do"
+      },
+      "summary": "Suspicious activity reporting automation",
+      "updated": "2026-09-28T09:00:00.000+0000"
+    },
+    "key": "FRD-302"
+  },
+  "payload_hash": "fed71f3431ad8d4af770896ed2856fa8ce027ed8f3cb4e86cf5509e6e6b1f46f",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-302",
+  "source_system": "jira",
+  "source_version": "fed71f3431ad8d4af770896ed2856fa8ce027ed8f3cb4e86cf5509e6e6b1f46f"
+}

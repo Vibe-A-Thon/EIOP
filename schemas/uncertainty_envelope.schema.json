@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:uncertainty_envelope:1.0",
+  "title": "UncertaintyEnvelope v1",
+  "description": "Calibrated uncertainty scoring wrapper for every MCP response (KGR-G-019). Includes evidence chains, coverage estimation, staleness detection, and abstain protocol.",
+  "type": "object",
+  "required": ["schema_version", "envelope_id", "confidence", "evidence_chain", "coverage", "staleness", "abstain"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "envelope_id": { "type": "string", "minLength": 1 },
+    "request_id": {
+      "type": ["string", "null"],
+      "description": "MCP request that produced this response."
+    },
+    "confidence": {
+      "type": "object",
+      "required": ["overall", "method"],
+      "properties": {
+        "overall": { "type": "number", "minimum": 0.0, "maximum": 1.0, "description": "Aggregate confidence across all evidence." },
+        "method": {
+          "type": "string",
+          "enum": ["BAYESIAN", "FREQUENCY", "HEURISTIC", "EXPERT_CALIBRATED"],
+          "description": "How the confidence score was computed."
+        },
+        "breakdown": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "required": ["dimension", "score"],
+            "properties": {
+              "dimension": { "type": "string", "description": "What this sub-score measures (e.g. data_quality, temporal_coverage, source_diversity)." },
+              "score": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+              "weight": { "type": "number", "minimum": 0.0, "maximum": 1.0, "default": 1.0 }
+            },
+            "additionalProperties": false
+          },
+          "description": "Per-dimension confidence breakdown."
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence_chain": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_type", "reference", "relevance"],
+        "properties": {
+          "source_type": {
+            "type": "string",
+            "enum": ["GRAPH_VERTEX", "GRAPH_EDGE", "DOCUMENT", "CODE", "TEST", "COMMIT", "TICKET", "API_RESPONSE", "HUMAN_ASSERTION"],
+            "description": "Category of evidence source."
+          },
+          "reference": { "type": "string", "description": "URI or canonical_id pointing to the evidence." },
+          "relevance": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "freshness": {
+            "type": ["string", "null"],
+            "enum": ["FRESH", "RECENT", "STALE", "UNKNOWN", null],
+            "description": "How current this evidence is relative to the query."
+          },
+          "excerpt": { "type": ["string", "null"], "maxLength": 1024, "description": "Relevant snippet from the evidence source." }
+        },
+        "additionalProperties": false
+      },
+      "description": "Ordered chain of evidence supporting the response, strongest first."
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["estimated_completeness"],
+      "properties": {
+        "estimated_completeness": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Estimated fraction of relevant information captured (0.0 = unknown territory, 1.0 = comprehensive)."
+        },
+        "known_gaps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Identified areas where evidence is missing or insufficient."
+        },
+        "domains_covered": { "type": "array", "items": { "type": "string" } },
+        "domains_missing": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "staleness": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["FRESH", "RECENT", "STALE", "UNKNOWN"],
+          "description": "Overall data freshness assessment."
+        },
+        "oldest_evidence_at": { "type": ["string", "null"], "format": "date-time" },
+        "newest_evidence_at": { "type": ["string", "null"], "format": "date-time" },
+        "staleness_threshold_hours": { "type": "number", "minimum": 0, "description": "Hours after which evidence is considered stale." }
+      },
+      "additionalProperties": false
+    },
+    "abstain": {
+      "type": "object",
+      "required": ["should_abstain"],
+      "properties": {
+        "should_abstain": {
+          "type": "boolean",
+          "description": "True when the system determines it cannot provide a reliable answer."
+        },
+        "reason": {
+          "type": ["string", "null"],
+          "enum": ["INSUFFICIENT_EVIDENCE", "CONFLICTING_EVIDENCE", "OUT_OF_SCOPE", "STALE_DATA", "LOW_CONFIDENCE", null]
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Confidence threshold below which abstention is triggered."
+        },
+        "recommendation": {
+          "type": ["string", "null"],
+          "description": "What the user should do instead (e.g., consult a specific source, wait for data refresh)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "metadata": { "type": "object", "default": {} }
+  },
+  "additionalProperties": false
+}

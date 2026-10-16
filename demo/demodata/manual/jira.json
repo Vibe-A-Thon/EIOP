@@ -1,0 +1,866 @@
+{
+  "issues": [
+    {
+      "key": "PAY-100",
+      "id": "60100",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60100",
+      "fields": {
+        "summary": "Payment Gateway API Modernization",
+        "description": "Modernize the payment gateway REST API to support tokenization, idempotent retries, and multi-currency processing. This feature tracks the full API overhaul under Epic EPC-101.",
+        "issuetype": {"name": "Feature", "subtask": false},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "labels": ["payment-gateway", "api", "modernization"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10014": "EPC-101",
+        "customfield_10015": "Payment Services",
+        "issuelinks": [],
+        "subtasks": [
+          {"key": "PAY-101", "fields": {"summary": "Implement payment tokenization service", "status": {"name": "Done"}}},
+          {"key": "PAY-102", "fields": {"summary": "Build idempotent payment retry handler", "status": {"name": "In Progress"}}},
+          {"key": "PAY-103", "fields": {"summary": "Add multi-currency support", "status": {"name": "In Progress"}}}
+        ],
+        "created": "2026-07-05T09:30:00.000+0000",
+        "updated": "2026-09-29T10:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-101",
+      "id": "60101",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60101",
+      "fields": {
+        "summary": "Implement payment tokenization service",
+        "description": "Implement a payment tokenization service that generates secure, irreversible tokens for cardholder PANs. The service must integrate with the HSM cluster for key management. Tokens stored in mfs_payments_db on pghost-prod-01.mfs.internal.\n\nAcceptance Criteria:\n- Tokenization latency < 50ms p99\n- Support for PCI DSS v4.0 token format\n- Integrate with svc-token-vault service account\n- Deploy to mfs-pay-pod-01, mfs-pay-pod-02\n\nGitLab MR: !301\nChange Request: CHG0090101\nTest Cases: TC-PAY-001, TC-PAY-002",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "Done", "statusCategory": {"name": "Done"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "akim", "displayName": "Alex Kim", "emailAddress": "akim@mfs.com"},
+        "reporter": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "parent": {"key": "PAY-100"},
+        "labels": ["tokenization", "pci-dss", "payment-gateway"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10014": "EPC-101",
+        "customfield_10015": "Payment Services",
+        "customfield_10050": "TC-PAY-001,TC-PAY-002",
+        "issuelinks": [
+          {
+            "type": {"name": "GitLab MR", "outward": "is developed in"},
+            "outwardIssue": {"key": "MR-301", "fields": {"summary": "MR !301: Implement payment tokenization service"}}
+          },
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-111", "fields": {"summary": "Write unit tests for tokenization"}}
+          },
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-112", "fields": {"summary": "Configure HSM integration"}}
+          }
+        ],
+        "comment": {
+          "comments": [
+            {
+              "author": {"displayName": "Raj Patel"},
+              "body": "Change request CHG0090101 has been approved and scheduled for deployment window 2026-09-22 02:00 UTC.",
+              "created": "2026-09-20T14:30:00.000+0000"
+            },
+            {
+              "author": {"displayName": "James O'Brien"},
+              "body": "Test cases TC-PAY-001 and TC-PAY-002 both passed in TR-PAY-001 Sprint 14 regression run.",
+              "created": "2026-09-21T10:15:00.000+0000"
+            }
+          ]
+        },
+        "story_points": 8,
+        "created": "2026-07-10T09:00:00.000+0000",
+        "updated": "2026-09-22T08:30:00.000+0000",
+        "resolutiondate": "2026-09-22T08:30:00.000+0000"
+      }
+    },
+    {
+      "key": "PAY-102",
+      "id": "60102",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60102",
+      "fields": {
+        "summary": "Build idempotent payment retry handler",
+        "description": "Build an idempotent retry handler with circuit breaker pattern for payment processing. Must prevent duplicate charges during network failures and gateway timeouts. Uses svc-payment-api service account.\n\nAcceptance Criteria:\n- Idempotency key based on transaction ID + merchant ID\n- Circuit breaker opens after 5 consecutive failures\n- Half-open state probes every 30 seconds\n- Retry with exponential backoff (max 3 retries)\n\nGitLab MR: !302\nChange Request: CHG0090102\nTest Case: TC-PAY-003",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "parent": {"key": "PAY-100"},
+        "labels": ["retry", "circuit-breaker", "idempotency"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10014": "EPC-101",
+        "customfield_10015": "Payment Services",
+        "customfield_10050": "TC-PAY-003",
+        "issuelinks": [
+          {
+            "type": {"name": "GitLab MR", "outward": "is developed in"},
+            "outwardIssue": {"key": "MR-302", "fields": {"summary": "MR !302: Build idempotent payment retry handler"}}
+          },
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-121", "fields": {"summary": "Add retry circuit breaker config"}}
+          }
+        ],
+        "comment": {
+          "comments": [
+            {
+              "author": {"displayName": "Raj Patel"},
+              "body": "CHG0090102 submitted for approval. Deployment to mfs-staging namespace first.",
+              "created": "2026-09-26T09:00:00.000+0000"
+            }
+          ]
+        },
+        "story_points": 5,
+        "created": "2026-07-12T10:00:00.000+0000",
+        "updated": "2026-09-28T11:20:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-103",
+      "id": "60103",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60103",
+      "fields": {
+        "summary": "Add multi-currency support",
+        "description": "Add multi-currency support to the payment gateway, including real-time exchange rate lookups and currency conversion at point of transaction. Must support USD, EUR, GBP, JPY, CAD, AUD, CHF.\n\nAcceptance Criteria:\n- Real-time FX rates from approved rate provider\n- Currency conversion accuracy within 0.01%\n- Support for settlement in original or converted currency\n- Audit trail for all conversions in mfs_audit_db\n\nGitLab MR: !303\nTest Case: TC-PAY-004",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "akim", "displayName": "Alex Kim", "emailAddress": "akim@mfs.com"},
+        "reporter": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "parent": {"key": "PAY-100"},
+        "labels": ["multi-currency", "fx-rates", "payment-gateway"],
+        "components": [{"name": "mfs-payment-gateway"}, {"name": "mfs-common-libs"}],
+        "customfield_10014": "EPC-101",
+        "customfield_10015": "Payment Services",
+        "customfield_10050": "TC-PAY-004",
+        "issuelinks": [
+          {
+            "type": {"name": "GitLab MR", "outward": "is developed in"},
+            "outwardIssue": {"key": "MR-303", "fields": {"summary": "MR !303: Add multi-currency support"}}
+          },
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-131", "fields": {"summary": "Currency exchange rate service"}}
+          }
+        ],
+        "story_points": 8,
+        "created": "2026-07-14T11:00:00.000+0000",
+        "updated": "2026-09-29T09:45:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-111",
+      "id": "60111",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60111",
+      "fields": {
+        "summary": "Write unit tests for tokenization",
+        "description": "Write comprehensive unit tests for the payment tokenization service including edge cases for malformed PANs, expired cards, and concurrent tokenization requests.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "Done", "statusCategory": {"name": "Done"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "jobrien", "displayName": "James O'Brien", "emailAddress": "jobrien@mfs.com"},
+        "reporter": {"accountId": "akim", "displayName": "Alex Kim", "emailAddress": "akim@mfs.com"},
+        "parent": {"key": "PAY-101"},
+        "labels": ["testing", "unit-tests"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10015": "Quality Engineering",
+        "issuelinks": [],
+        "story_points": 3,
+        "created": "2026-07-15T09:00:00.000+0000",
+        "updated": "2026-09-18T14:00:00.000+0000",
+        "resolutiondate": "2026-09-18T14:00:00.000+0000"
+      }
+    },
+    {
+      "key": "PAY-112",
+      "id": "60112",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60112",
+      "fields": {
+        "summary": "Configure HSM integration",
+        "description": "Configure the Hardware Security Module (HSM) integration for the tokenization service. Set up key pairs, configure PKCS#11 interface, and validate cryptographic operations via svc-token-vault service account.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "Done", "statusCategory": {"name": "Done"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "dokoye", "displayName": "David Okoye", "emailAddress": "dokoye@mfs.com"},
+        "reporter": {"accountId": "akim", "displayName": "Alex Kim", "emailAddress": "akim@mfs.com"},
+        "parent": {"key": "PAY-101"},
+        "labels": ["hsm", "security", "configuration"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10015": "Platform Engineering",
+        "issuelinks": [],
+        "story_points": 5,
+        "created": "2026-07-15T09:30:00.000+0000",
+        "updated": "2026-09-19T16:45:00.000+0000",
+        "resolutiondate": "2026-09-19T16:45:00.000+0000"
+      }
+    },
+    {
+      "key": "PAY-121",
+      "id": "60121",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60121",
+      "fields": {
+        "summary": "Add retry circuit breaker config",
+        "description": "Configure the circuit breaker parameters for the payment retry handler. Define thresholds, timeout durations, and half-open probe intervals in the application configuration.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "reporter": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "parent": {"key": "PAY-102"},
+        "labels": ["circuit-breaker", "configuration"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10015": "Payment Services",
+        "issuelinks": [],
+        "story_points": 2,
+        "created": "2026-07-16T10:00:00.000+0000",
+        "updated": "2026-09-27T11:30:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-131",
+      "id": "60131",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60131",
+      "fields": {
+        "summary": "Currency exchange rate service",
+        "description": "Build a currency exchange rate service that fetches real-time FX rates from the approved provider API and caches them with a 60-second TTL. Must support rate fallback to last known good rate.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "akim", "displayName": "Alex Kim", "emailAddress": "akim@mfs.com"},
+        "reporter": {"accountId": "akim", "displayName": "Alex Kim", "emailAddress": "akim@mfs.com"},
+        "parent": {"key": "PAY-103"},
+        "labels": ["fx-rates", "currency", "caching"],
+        "components": [{"name": "mfs-payment-gateway"}, {"name": "mfs-common-libs"}],
+        "customfield_10015": "Payment Services",
+        "issuelinks": [],
+        "story_points": 5,
+        "created": "2026-07-18T08:00:00.000+0000",
+        "updated": "2026-09-28T15:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-200",
+      "id": "60200",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60200",
+      "fields": {
+        "summary": "PCI DSS Token Vault Implementation",
+        "description": "Implement a PCI DSS v4.0 compliant token vault for secure cardholder data storage with HSM-based encryption key management. This feature covers encryption at rest and key rotation under Epic EPC-102.",
+        "issuetype": {"name": "Feature", "subtask": false},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "Critical"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "dokoye", "displayName": "David Okoye", "emailAddress": "dokoye@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "labels": ["pci-dss", "token-vault", "encryption"],
+        "components": [{"name": "mfs-token-vault"}],
+        "customfield_10014": "EPC-102",
+        "customfield_10015": "Platform Engineering",
+        "issuelinks": [],
+        "subtasks": [
+          {"key": "PAY-201", "fields": {"summary": "Encrypt cardholder data at rest", "status": {"name": "Done"}}},
+          {"key": "PAY-202", "fields": {"summary": "Implement HSM key rotation", "status": {"name": "In Progress"}}}
+        ],
+        "created": "2026-07-18T11:00:00.000+0000",
+        "updated": "2026-09-27T09:15:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-201",
+      "id": "60201",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60201",
+      "fields": {
+        "summary": "Encrypt cardholder data at rest",
+        "description": "Implement AES-256-GCM encryption for all cardholder data stored in mfs_payments_db on pghost-prod-01.mfs.internal. Uses svc-token-vault service account for key retrieval from HSM.\n\nAcceptance Criteria:\n- All PAN, CVV, and expiry data encrypted at rest\n- Encryption/decryption latency < 10ms\n- Key stored in HSM, never in application memory beyond transaction scope\n- Audit log for all decryption operations in mfs_audit_db\n\nGitLab MR: !401\nChange Request: CHG0090201\nTest Case: TC-PAY-005",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "Done", "statusCategory": {"name": "Done"}},
+        "priority": {"name": "Critical"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "dokoye", "displayName": "David Okoye", "emailAddress": "dokoye@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "parent": {"key": "PAY-200"},
+        "labels": ["encryption", "pci-dss", "data-at-rest"],
+        "components": [{"name": "mfs-token-vault"}],
+        "customfield_10014": "EPC-102",
+        "customfield_10015": "Platform Engineering",
+        "customfield_10050": "TC-PAY-005",
+        "issuelinks": [
+          {
+            "type": {"name": "GitLab MR", "outward": "is developed in"},
+            "outwardIssue": {"key": "MR-401", "fields": {"summary": "MR !401: Encrypt cardholder data at rest"}}
+          },
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-211", "fields": {"summary": "Update DB encryption at rest"}}
+          }
+        ],
+        "comment": {
+          "comments": [
+            {
+              "author": {"displayName": "Li Wei"},
+              "body": "CHG0090201 approved as Normal change. Requires CAB review completed 2026-09-24. Deployment scheduled for 2026-09-26 maintenance window.",
+              "created": "2026-09-24T16:00:00.000+0000"
+            }
+          ]
+        },
+        "story_points": 8,
+        "created": "2026-07-20T09:00:00.000+0000",
+        "updated": "2026-09-26T22:00:00.000+0000",
+        "resolutiondate": "2026-09-26T22:00:00.000+0000"
+      }
+    },
+    {
+      "key": "PAY-202",
+      "id": "60202",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60202",
+      "fields": {
+        "summary": "Implement HSM key rotation",
+        "description": "Implement automated HSM key rotation for the token vault encryption keys. Must support zero-downtime rotation with re-encryption of existing data using the new key.\n\nAcceptance Criteria:\n- Automated key rotation every 90 days\n- Zero-downtime key swap with dual-key read support\n- Re-encryption batch process for existing data\n- Full audit trail in mfs_audit_db\n\nGitLab MR: !402\nTest Case: TC-PAY-006",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "dokoye", "displayName": "David Okoye", "emailAddress": "dokoye@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "parent": {"key": "PAY-200"},
+        "labels": ["hsm", "key-rotation", "encryption"],
+        "components": [{"name": "mfs-token-vault"}],
+        "customfield_10014": "EPC-102",
+        "customfield_10015": "Platform Engineering",
+        "customfield_10050": "TC-PAY-006",
+        "issuelinks": [
+          {
+            "type": {"name": "GitLab MR", "outward": "is developed in"},
+            "outwardIssue": {"key": "MR-402", "fields": {"summary": "MR !402: Implement HSM key rotation"}}
+          },
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-221", "fields": {"summary": "Create key rotation scheduler"}}
+          }
+        ],
+        "story_points": 8,
+        "created": "2026-07-22T10:00:00.000+0000",
+        "updated": "2026-09-29T14:30:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-211",
+      "id": "60211",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60211",
+      "fields": {
+        "summary": "Update DB encryption at rest",
+        "description": "Update the PostgreSQL database encryption configuration on pghost-prod-01.mfs.internal for mfs_payments_db. Enable TDE and configure pgcrypto extension for column-level encryption of cardholder data tables.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "Done", "statusCategory": {"name": "Done"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "dokoye", "displayName": "David Okoye", "emailAddress": "dokoye@mfs.com"},
+        "reporter": {"accountId": "dokoye", "displayName": "David Okoye", "emailAddress": "dokoye@mfs.com"},
+        "parent": {"key": "PAY-201"},
+        "labels": ["database", "encryption", "postgresql"],
+        "components": [{"name": "mfs-token-vault"}],
+        "customfield_10015": "Platform Engineering",
+        "issuelinks": [],
+        "story_points": 3,
+        "created": "2026-07-22T11:00:00.000+0000",
+        "updated": "2026-09-25T10:00:00.000+0000",
+        "resolutiondate": "2026-09-25T10:00:00.000+0000"
+      }
+    },
+    {
+      "key": "PAY-221",
+      "id": "60221",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60221",
+      "fields": {
+        "summary": "Create key rotation scheduler",
+        "description": "Create a Kubernetes CronJob that triggers HSM key rotation on a 90-day schedule. Must coordinate with mfs-vault-pod-01 to ensure no active encryption operations during key swap.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "rpatel", "displayName": "Raj Patel", "emailAddress": "rpatel@mfs.com"},
+        "reporter": {"accountId": "dokoye", "displayName": "David Okoye", "emailAddress": "dokoye@mfs.com"},
+        "parent": {"key": "PAY-202"},
+        "labels": ["scheduler", "cronjob", "key-rotation"],
+        "components": [{"name": "mfs-token-vault"}],
+        "customfield_10015": "DevOps & SRE",
+        "issuelinks": [],
+        "story_points": 3,
+        "created": "2026-07-24T08:00:00.000+0000",
+        "updated": "2026-09-29T09:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-300",
+      "id": "60300",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60300",
+      "fields": {
+        "summary": "Real-time Settlement Processing",
+        "description": "Build a real-time settlement processing engine to replace the legacy T+1 batch system. Enables instant merchant payouts and real-time balance reconciliation. This feature is under Epic EPC-103.",
+        "issuetype": {"name": "Feature", "subtask": false},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "labels": ["settlement", "real-time", "reconciliation"],
+        "components": [{"name": "mfs-settlement-engine"}],
+        "customfield_10014": "EPC-103",
+        "customfield_10015": "Platform Engineering",
+        "issuelinks": [],
+        "subtasks": [
+          {"key": "PAY-301", "fields": {"summary": "Build settlement batch processor", "status": {"name": "In Progress"}}},
+          {"key": "PAY-302", "fields": {"summary": "Real-time balance reconciliation", "status": {"name": "To Do"}}}
+        ],
+        "created": "2026-08-05T08:30:00.000+0000",
+        "updated": "2026-09-30T15:45:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-301",
+      "id": "60301",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60301",
+      "fields": {
+        "summary": "Build settlement batch processor",
+        "description": "Build the settlement batch processor that aggregates completed transactions and generates settlement files for acquiring banks. Runs on mfs-settle-pod-01 using svc-settlement service account.\n\nAcceptance Criteria:\n- Process up to 100K transactions per batch\n- Generate ISO 8583 settlement files\n- Batch completion within 5-minute SLA\n- Write settlement records to mfs_payments_db\n\nGitLab MR: !501\nChange Request: CHG0090301\nTest Case: TC-PAY-007",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "parent": {"key": "PAY-300"},
+        "labels": ["settlement", "batch-processing"],
+        "components": [{"name": "mfs-settlement-engine"}],
+        "customfield_10014": "EPC-103",
+        "customfield_10015": "Platform Engineering",
+        "customfield_10050": "TC-PAY-007",
+        "issuelinks": [
+          {
+            "type": {"name": "GitLab MR", "outward": "is developed in"},
+            "outwardIssue": {"key": "MR-501", "fields": {"summary": "MR !501: Build settlement batch processor"}}
+          },
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-311", "fields": {"summary": "Build batch aggregation logic"}}
+          }
+        ],
+        "comment": {
+          "comments": [
+            {
+              "author": {"displayName": "Raj Patel"},
+              "body": "CHG0090301 submitted. Deployment to mfs-staging namespace for validation before prod rollout.",
+              "created": "2026-09-29T10:00:00.000+0000"
+            }
+          ]
+        },
+        "story_points": 13,
+        "created": "2026-08-10T09:00:00.000+0000",
+        "updated": "2026-09-30T14:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-302",
+      "id": "60302",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60302",
+      "fields": {
+        "summary": "Real-time balance reconciliation",
+        "description": "Implement real-time balance reconciliation between the payment gateway ledger and acquiring bank settlement records. Must detect and flag discrepancies within 60 seconds.\n\nAcceptance Criteria:\n- Reconcile balances in real-time as settlement batches complete\n- Flag discrepancies > $0.01 for manual review\n- Generate reconciliation reports in mfs_audit_db\n- Dashboard integration via Grafana\n\nGitLab MR: !502\nTest Case: TC-PAY-008",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "To Do", "statusCategory": {"name": "To Do"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "parent": {"key": "PAY-300"},
+        "labels": ["reconciliation", "real-time", "audit"],
+        "components": [{"name": "mfs-settlement-engine"}],
+        "customfield_10014": "EPC-103",
+        "customfield_10015": "Payment Services",
+        "customfield_10050": "TC-PAY-008",
+        "issuelinks": [
+          {
+            "type": {"name": "GitLab MR", "outward": "is developed in"},
+            "outwardIssue": {"key": "MR-502", "fields": {"summary": "MR !502: Real-time balance reconciliation"}}
+          },
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-321", "fields": {"summary": "Reconciliation report generator"}}
+          }
+        ],
+        "story_points": 8,
+        "created": "2026-08-12T10:00:00.000+0000",
+        "updated": "2026-09-30T09:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-311",
+      "id": "60311",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60311",
+      "fields": {
+        "summary": "Build batch aggregation logic",
+        "description": "Implement the batch aggregation logic that groups completed transactions by merchant, currency, and acquiring bank for settlement file generation.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "parent": {"key": "PAY-301"},
+        "labels": ["aggregation", "batch"],
+        "components": [{"name": "mfs-settlement-engine"}],
+        "customfield_10015": "Platform Engineering",
+        "issuelinks": [],
+        "story_points": 5,
+        "created": "2026-08-14T09:00:00.000+0000",
+        "updated": "2026-09-29T16:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-321",
+      "id": "60321",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60321",
+      "fields": {
+        "summary": "Reconciliation report generator",
+        "description": "Build the reconciliation report generator that produces daily and on-demand settlement reconciliation reports showing matched, unmatched, and discrepant transactions.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "To Do", "statusCategory": {"name": "To Do"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "reporter": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "parent": {"key": "PAY-302"},
+        "labels": ["reporting", "reconciliation"],
+        "components": [{"name": "mfs-settlement-engine"}],
+        "customfield_10015": "Payment Services",
+        "issuelinks": [],
+        "story_points": 5,
+        "created": "2026-08-15T10:00:00.000+0000",
+        "updated": "2026-09-30T08:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-400",
+      "id": "60400",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60400",
+      "fields": {
+        "summary": "Webhook Notification System",
+        "description": "Build a real-time webhook notification system for payment events. Merchants receive HTTP callbacks for transaction state changes (authorized, captured, refunded, failed). Includes retry logic, dead letter queue, and delivery monitoring. Part of the Merchant Integration Platform initiative under Epic EPC-104.",
+        "issuetype": {"name": "Feature", "subtask": false},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "reporter": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "labels": ["webhook", "merchant-integration", "notifications"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10014": "EPC-104",
+        "customfield_10015": "Payment Services",
+        "issuelinks": [],
+        "subtasks": [
+          {"key": "PAY-401", "fields": {"summary": "Implement payment webhook dispatcher", "status": {"name": "In Progress"}}},
+          {"key": "PAY-402", "fields": {"summary": "Webhook retry with dead letter queue", "status": {"name": "To Do"}}}
+        ],
+        "created": "2026-09-10T09:00:00.000+0000",
+        "updated": "2026-10-03T14:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-401",
+      "id": "60401",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60401",
+      "fields": {
+        "summary": "Implement payment webhook dispatcher",
+        "description": "Implement the core webhook dispatcher service that sends HTTP POST notifications to registered merchant endpoints when payment events occur. Must support event types: payment.authorized, payment.captured, payment.refunded, payment.failed, payment.chargeback. The dispatcher reads from Kafka topic 'mfs.payment.events' and delivers to merchant-registered URLs stored in mfs_payments_db on pghost-prod-01.mfs.internal. Uses svc-webhook-dispatch service account.\n\nAcceptance Criteria:\n- Delivery latency < 500ms p95\n- Support HMAC-SHA256 signature verification\n- Configurable retry policy per merchant\n- Deploy to mfs-pay-pod-01, mfs-pay-pod-02\n\nGitLab MR: !601\nChange Request: CHG0090401\nTest Cases: TC-PAY-009, TC-PAY-010",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "akim", "displayName": "Alex Kim", "emailAddress": "akim@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "parent": {"key": "PAY-400"},
+        "labels": ["webhook", "dispatcher", "kafka"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10014": "EPC-104",
+        "customfield_10015": "Payment Services",
+        "customfield_10050": "TC-PAY-009,TC-PAY-010",
+        "issuelinks": [
+          {
+            "type": {"name": "GitLab MR", "outward": "is developed in"},
+            "outwardIssue": {"key": "MR-601", "fields": {"summary": "MR !601: Implement payment webhook dispatcher"}}
+          },
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-402", "fields": {"summary": "Webhook retry with dead letter queue"}}
+          }
+        ],
+        "comment": {
+          "comments": [
+            {
+              "author": {"displayName": "Raj Patel"},
+              "body": "Change request CHG0090401 has been approved. Deployment window scheduled for 2026-10-08 02:00 UTC.",
+              "created": "2026-10-01T11:00:00.000+0000"
+            },
+            {
+              "author": {"displayName": "Lisa Park"},
+              "body": "TC-PAY-009 passed in staging environment. TC-PAY-010 is currently in progress - expected completion by end of sprint.",
+              "created": "2026-10-02T15:30:00.000+0000"
+            }
+          ]
+        },
+        "story_points": 8,
+        "created": "2026-09-12T09:00:00.000+0000",
+        "updated": "2026-10-03T14:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-402",
+      "id": "60402",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60402",
+      "fields": {
+        "summary": "Webhook retry with dead letter queue",
+        "description": "Implement exponential backoff retry logic for failed webhook deliveries. After max retries (configurable, default 5), failed events are moved to a dead letter queue for manual investigation. DLQ stored in mfs_payments_db.webhook_dlq table on pghost-prod-01.mfs.internal. Admin UI shows DLQ entries with retry/discard actions.\n\nAcceptance Criteria:\n- Exponential backoff: 1s, 2s, 4s, 8s, 16s\n- DLQ entries include original payload, error, attempt count\n- Admin API for DLQ management\n- Deploy to mfs-pay-pod-01, mfs-pay-pod-02\n\nGitLab MR: !602\nChange Request: CHG0090501\nTest Cases: TC-PAY-011",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "To Do", "statusCategory": {"name": "To Do"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "wzhang", "displayName": "Wei Zhang", "emailAddress": "wzhang@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "parent": {"key": "PAY-400"},
+        "labels": ["webhook", "retry", "dlq"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10014": "EPC-104",
+        "customfield_10015": "Payment Services",
+        "customfield_10050": "TC-PAY-011",
+        "issuelinks": [
+          {
+            "type": {"name": "GitLab MR", "outward": "is developed in"},
+            "outwardIssue": {"key": "MR-602", "fields": {"summary": "MR !602: Webhook retry with dead letter queue"}}
+          },
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-401", "fields": {"summary": "Implement payment webhook dispatcher"}}
+          }
+        ],
+        "story_points": 5,
+        "created": "2026-09-12T10:00:00.000+0000",
+        "updated": "2026-10-01T09:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-411",
+      "id": "60411",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60411",
+      "fields": {
+        "summary": "Configure webhook endpoint registration API",
+        "description": "Create REST API endpoints for merchants to register, update, and delete webhook URLs. Endpoints: POST /api/v2/webhooks, GET /api/v2/webhooks, PUT /api/v2/webhooks/{id}, DELETE /api/v2/webhooks/{id}. Store registrations in mfs_payments_db.webhook_registrations table.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "To Do", "statusCategory": {"name": "To Do"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "jokafor", "displayName": "James Okafor", "emailAddress": "jokafor@mfs.com"},
+        "reporter": {"accountId": "akim", "displayName": "Alex Kim", "emailAddress": "akim@mfs.com"},
+        "parent": {"key": "PAY-401"},
+        "labels": ["webhook", "api", "configuration"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10015": "Payment Services",
+        "issuelinks": [],
+        "story_points": 3,
+        "created": "2026-09-14T09:00:00.000+0000",
+        "updated": "2026-10-01T09:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-412",
+      "id": "60412",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60412",
+      "fields": {
+        "summary": "Implement webhook signature verification",
+        "description": "Implement HMAC-SHA256 signature generation for webhook payloads. Each merchant receives a unique signing secret stored in HashiCorp Vault at vault.mfs.internal. The X-MFS-Signature header contains the HMAC digest for payload verification.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "To Do", "statusCategory": {"name": "To Do"}},
+        "priority": {"name": "High"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "evolkov", "displayName": "Elena Volkov", "emailAddress": "evolkov@mfs.com"},
+        "reporter": {"accountId": "akim", "displayName": "Alex Kim", "emailAddress": "akim@mfs.com"},
+        "parent": {"key": "PAY-401"},
+        "labels": ["webhook", "security", "hmac"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10015": "Payment Services",
+        "issuelinks": [],
+        "story_points": 3,
+        "created": "2026-09-14T10:00:00.000+0000",
+        "updated": "2026-10-01T09:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-500",
+      "id": "60500",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60500",
+      "fields": {
+        "summary": "Payment Analytics & Reporting",
+        "description": "Build a comprehensive payment analytics and reporting platform. Aggregate transaction data for real-time dashboards, scheduled reports, and ad-hoc queries. Supports metrics including transaction volume, success rates, settlement times, refund rates, and merchant performance. Under Epic EPC-101.",
+        "issuetype": {"name": "Feature", "subtask": false},
+        "status": {"name": "To Do", "statusCategory": {"name": "To Do"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "reporter": {"accountId": "schen", "displayName": "Sarah Chen", "emailAddress": "schen@mfs.com"},
+        "labels": ["analytics", "reporting", "dashboards"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10014": "EPC-101",
+        "customfield_10015": "Payment Services",
+        "issuelinks": [],
+        "subtasks": [
+          {"key": "PAY-501", "fields": {"summary": "Build transaction analytics aggregator", "status": {"name": "To Do"}}},
+          {"key": "PAY-502", "fields": {"summary": "Real-time settlement reporting dashboard", "status": {"name": "To Do"}}}
+        ],
+        "created": "2026-09-15T09:00:00.000+0000",
+        "updated": "2026-10-01T10:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-501",
+      "id": "60501",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60501",
+      "fields": {
+        "summary": "Build transaction analytics aggregator",
+        "description": "Implement a transaction analytics aggregation service that processes payment events from Kafka topic 'mfs.payment.events' and computes real-time metrics: transaction volume (hourly/daily/weekly), success/failure rates by payment method, average settlement time, refund rate by merchant. Aggregated data stored in mfs_payments_db.analytics_aggregates table on pghost-prod-01.mfs.internal. Uses svc-analytics service account on mfs-pay-pod-03.\n\nGitLab MR: !701\nTest Cases: TC-PAY-012",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "To Do", "statusCategory": {"name": "To Do"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "evolkov", "displayName": "Elena Volkov", "emailAddress": "evolkov@mfs.com"},
+        "reporter": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "parent": {"key": "PAY-500"},
+        "labels": ["analytics", "kafka", "aggregation"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10014": "EPC-101",
+        "customfield_10015": "Payment Services",
+        "customfield_10050": "TC-PAY-012",
+        "issuelinks": [
+          {
+            "type": {"name": "GitLab MR", "outward": "is developed in"},
+            "outwardIssue": {"key": "MR-701", "fields": {"summary": "MR !701: Build transaction analytics aggregator"}}
+          }
+        ],
+        "story_points": 8,
+        "created": "2026-09-16T09:00:00.000+0000",
+        "updated": "2026-10-01T10:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-502",
+      "id": "60502",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60502",
+      "fields": {
+        "summary": "Real-time settlement reporting dashboard",
+        "description": "Build a real-time settlement reporting dashboard showing settlement batch status, reconciliation results, and merchant payout timelines. Dashboard data sourced from analytics_aggregates and settlement_batches tables. Frontend component in mfs-customer-portal.",
+        "issuetype": {"name": "Story", "subtask": false},
+        "status": {"name": "To Do", "statusCategory": {"name": "To Do"}},
+        "priority": {"name": "Low"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "jokafor", "displayName": "James Okafor", "emailAddress": "jokafor@mfs.com"},
+        "reporter": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "parent": {"key": "PAY-500"},
+        "labels": ["settlement", "reporting", "dashboard"],
+        "components": [{"name": "mfs-customer-portal"}],
+        "customfield_10014": "EPC-101",
+        "customfield_10015": "Payment Services",
+        "issuelinks": [],
+        "story_points": 5,
+        "created": "2026-09-16T10:00:00.000+0000",
+        "updated": "2026-10-01T10:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-511",
+      "id": "60511",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60511",
+      "fields": {
+        "summary": "Set up analytics data pipeline",
+        "description": "Configure Kafka consumer group for analytics aggregation. Consumer group 'mfs-analytics-agg' reads from 'mfs.payment.events' topic with exactly-once semantics. Write aggregated results to PostgreSQL using batch inserts every 60 seconds.",
+        "issuetype": {"name": "Task", "subtask": true},
+        "status": {"name": "To Do", "statusCategory": {"name": "To Do"}},
+        "priority": {"name": "Medium"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "evolkov", "displayName": "Elena Volkov", "emailAddress": "evolkov@mfs.com"},
+        "reporter": {"accountId": "mrivera", "displayName": "Marcus Rivera", "emailAddress": "mrivera@mfs.com"},
+        "parent": {"key": "PAY-501"},
+        "labels": ["analytics", "kafka", "pipeline"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10015": "Payment Services",
+        "issuelinks": [],
+        "story_points": 5,
+        "created": "2026-09-17T09:00:00.000+0000",
+        "updated": "2026-10-01T09:00:00.000+0000",
+        "resolutiondate": null
+      }
+    },
+    {
+      "key": "PAY-901",
+      "id": "60901",
+      "self": "https://jira.mfs.internal/rest/api/2/issue/60901",
+      "fields": {
+        "summary": "Connection pool leak under concurrent tokenization requests",
+        "description": "Under high concurrency (>200 concurrent tokenization requests), the database connection pool in TokenizationService leaks connections. After approximately 30 minutes of sustained load, the pool is exhausted and new requests fail with ConnectionPoolExhaustedError. Root cause appears to be missing connection release in the error path of tokenize_card() method.\n\nSteps to reproduce:\n1. Run load test with 250 concurrent tokenization requests\n2. Monitor pghost-prod-01.mfs.internal connection count\n3. After ~30 minutes, observe connection count at max (100) with no release\n\nImpact: Production incident INC0080101 was caused by this bug.\nEnvironment: mfs-pay-pod-01, mfs-pay-pod-02\nDatabase: pghost-prod-01.mfs.internal/mfs_payments_db",
+        "issuetype": {"name": "Bug", "subtask": false},
+        "status": {"name": "In Progress", "statusCategory": {"name": "In Progress"}},
+        "priority": {"name": "Critical"},
+        "project": {"key": "PAY", "name": "Payment Gateway Modernization"},
+        "assignee": {"accountId": "akim", "displayName": "Alex Kim", "emailAddress": "akim@mfs.com"},
+        "reporter": {"accountId": "adesh", "displayName": "Arjun Deshmukh", "emailAddress": "adesh@mfs.com"},
+        "labels": ["bug", "connection-pool", "tokenization", "production-incident"],
+        "components": [{"name": "mfs-payment-gateway"}],
+        "customfield_10014": "EPC-102",
+        "customfield_10015": "Payment Services",
+        "issuelinks": [
+          {
+            "type": {"name": "Relates", "outward": "relates to"},
+            "outwardIssue": {"key": "PAY-101", "fields": {"summary": "Implement payment tokenization service"}}
+          },
+          {
+            "type": {"name": "Causes", "outward": "caused"},
+            "outwardIssue": {"key": "INC-080101", "fields": {"summary": "INC0080101: Connection pool exhaustion in payment gateway"}}
+          }
+        ],
+        "created": "2026-09-28T14:00:00.000+0000",
+        "updated": "2026-10-03T16:00:00.000+0000",
+        "resolutiondate": null
+      }
+    }
+  ]
+}

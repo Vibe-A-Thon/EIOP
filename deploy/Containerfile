@@ -1,0 +1,33 @@
+# OCI-standard Containerfile — identical to Dockerfile.
+# Podman, Buildah, and other OCI tools prefer this filename.
+# Kept in sync: any change here must be mirrored in deploy/Dockerfile.
+
+FROM python:3.11.14-slim-bookworm AS runtime
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/opt/eoip:/opt/eoip/packages
+RUN apt-get update && apt-get install -y --no-install-recommends git curl && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt/eoip
+COPY requirements.lock requirements-fileparse.lock ./
+RUN pip install --no-cache-dir -r requirements.lock -r requirements-fileparse.lock
+COPY pyproject.toml ./
+COPY packages ./packages
+RUN pip install --no-cache-dir --no-deps .
+COPY apps ./apps
+COPY config ./config
+COPY demo ./demo
+COPY schemas ./schemas
+COPY scripts ./scripts
+COPY EOIP-engg-doc-pkg/gaps-requirements.md EOIP-engg-doc-pkg/gaps-implementation.md EOIP-engg-doc-pkg/gaps2-requirements.md EOIP-engg-doc-pkg/gaps2-implementation.md ./EOIP-engg-doc-pkg/
+RUN git -C demo/demodata/core/demo-repo init -b main && \
+    git -C demo/demodata/core/demo-repo add . && \
+    GIT_AUTHOR_DATE=2026-10-01T00:00:00Z GIT_COMMITTER_DATE=2026-10-01T00:00:00Z \
+    git -C demo/demodata/core/demo-repo -c user.name='EOIP Demo' -c user.email=demo@example.invalid commit -m 'EOIP-1 implement impact calculation; EOIP-2 retain evidence' && \
+    useradd --uid 10001 --create-home eoip && mkdir -p /data && chown -R eoip:eoip /data /opt/eoip
+USER eoip
+CMD ["python", "-m", "uvicorn", "apps.api.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+
+FROM runtime AS test
+USER root
+RUN pip install --no-cache-dir '.[dev]'
+COPY tests ./tests
+USER eoip
+CMD ["python", "-m", "pytest", "-q"]

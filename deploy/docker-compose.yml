@@ -1,0 +1,278 @@
+name: eoip
+
+x-application: &application
+  image: eoip-app:local
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile
+    target: runtime
+  environment: &environment
+    EOIP_HUGEGRAPH_URL: http://hugegraph-server:8080
+    EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 (or scripts/docker.ps1) to create deploy/.env}
+    EOIP_GRAPH_BACKEND: ${EOIP_GRAPH_BACKEND:-}
+    EOIP_GRAPH_URL: ${EOIP_GRAPH_URL:-}
+    EOIP_GRAPH_DATABASE: ${EOIP_GRAPH_DATABASE:-}
+    EOIP_GRAPH_USER: ${EOIP_GRAPH_USER:-}
+    EOIP_GRAPH_PASSWORD: ${EOIP_GRAPH_PASSWORD:-}
+    EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/container.ps1 (or scripts/docker.ps1) to create deploy/.env}
+    EOIP_DATA_DIR: /data
+    EOIP_LOAD_DEMO: ${EOIP_LOAD_DEMO:-true}
+    EOIP_OLLAMA_MODEL: ${EOIP_OLLAMA_MODEL:-}
+  volumes:
+    - application-data:/data
+  networks: [backend]
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+  init: true
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+
+services:
+  hugegraph-server:
+    image: hugegraph/hugegraph:1.7.0
+    environment:
+      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 first}
+      HG_SERVER_MIN_FREE_MEMORY: "0"
+    volumes:
+      - graph-data:/hugegraph-server/rocksdb-data
+    networks: [backend]
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD-SHELL, "curl -fsS -u \"admin:$$PASSWORD\" http://localhost:8080/graphspaces/DEFAULT/graphs/hugegraph/schema/vertexlabels >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  neo4j:
+    image: neo4j:5-community
+    profiles: [neo4j]
+    environment:
+      NEO4J_AUTH: ${NEO4J_AUTH:-neo4j/eoip-local-password}
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+    networks: [backend]
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD-SHELL, "wget -q -O /dev/null http://localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  schema-init:
+    <<: *application
+    networks: [backend, frontend]
+    command: [python, -m, scripts.bootstrap_schema]
+    depends_on:
+      hugegraph-server: {condition: service_healthy}
+    restart: "no"
+
+  hubble:
+    image: eoip-hubble:local
+    build:
+      context: ..
+      dockerfile: deploy/hubble/Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:h2:file:/hubble/data/db;DB_CLOSE_ON_EXIT=FALSE
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health
+    volumes:
+      - hubble-data:/hubble/data
+      - hubble-uploads:/hubble/upload-files
+      - ./hubble/hugegraph-hubble.properties:/hubble/conf/hugegraph-hubble.properties:ro
+    networks: [backend, frontend]
+    ports: ["127.0.0.1:${EOIP_HUBBLE_PORT:-8088}:8088"]
+    depends_on:
+      hugegraph-server: {condition: service_healthy}
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD-SHELL, "curl -fsS http://localhost:8088/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 30s
+
+  hubble-init:
+    <<: *application
+    command: [python, -m, scripts.setup_hubble]
+    depends_on:
+      hubble: {condition: service_healthy}
+      schema-init: {condition: service_completed_successfully}
+    restart: "no"
+
+  eoip-api:
+    <<: *application
+    networks: [backend, frontend]
+    ports: ["127.0.0.1:${EOIP_API_PORT:-8000}:8000"]
+    depends_on:
+      schema-init: {condition: service_completed_successfully}
+      hubble-init: {condition: service_completed_successfully}
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 12
+
+  eoip-worker:
+    <<: *application
+    networks: [backend, frontend]
+    command: [python, -m, apps.worker.main]
+    environment:
+      <<: *environment
+      EOIP_CONFLUENCE_URL: ${EOIP_CONFLUENCE_URL:-}
+      EOIP_CONFLUENCE_TOKEN: ${EOIP_CONFLUENCE_TOKEN:-}
+      EOIP_CONFLUENCE_USERNAME: ${EOIP_CONFLUENCE_USERNAME:-}
+      EOIP_CONFLUENCE_PASSWORD: ${EOIP_CONFLUENCE_PASSWORD:-}
+      EOIP_SERVICENOW_URL: ${EOIP_SERVICENOW_URL:-}
+      EOIP_SERVICENOW_TOKEN: ${EOIP_SERVICENOW_TOKEN:-}
+      EOIP_SERVICENOW_USERNAME: ${EOIP_SERVICENOW_USERNAME:-}
+      EOIP_SERVICENOW_PASSWORD: ${EOIP_SERVICENOW_PASSWORD:-}
+    depends_on:
+      schema-init: {condition: service_completed_successfully}
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, python, -c, "from pathlib import Path; import time; p=Path('/data/state/worker.json'); assert time.time()-p.stat().st_mtime < 180"]
+      interval: 15s
+      timeout: 5s
+      retries: 15
+      start_period: 90s
+
+  eoip-mcp:
+    <<: *application
+    networks: [backend, frontend]
+    command: [python, -m, uvicorn, "apps.mcp.main:create_app", --factory, --host, 0.0.0.0, --port, "8001"]
+    ports: ["127.0.0.1:${EOIP_MCP_PORT:-8001}:8001"]
+    depends_on:
+      eoip-api: {condition: service_healthy}
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8001/health/live', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 12
+
+  eoip-web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile
+    ports: ["127.0.0.1:${EOIP_WEB_PORT:-8080}:8080"]
+    networks: [backend, frontend]
+    depends_on:
+      eoip-api: {condition: service_healthy}
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD-SHELL, "wget -q -O /dev/null http://127.0.0.1:8080/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  tests:
+    <<: *application
+    image: eoip-tests:local
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: test
+    profiles: [test]
+    command: [python, -m, pytest]
+
+  smoke:
+    <<: *application
+    profiles: [test]
+    command: [python, -m, scripts.smoke_test]
+    depends_on:
+      eoip-api: {condition: service_healthy}
+      eoip-mcp: {condition: service_healthy}
+      eoip-web: {condition: service_healthy}
+
+  local-model:
+    image: ollama/ollama:0.12.3
+    profiles: [ai]
+    volumes: ["model-data:/root/.ollama"]
+    networks: [backend]
+    restart: unless-stopped
+
+  ui-tests:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile.tests
+    profiles: [test]
+    environment:
+      EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/container.ps1 first}
+    volumes:
+      - ../test-results/browser:/app/test-results
+    networks: [backend]
+    depends_on:
+      eoip-web: {condition: service_healthy}
+    init: true
+
+  extension-build:
+    build:
+      context: ../apps/vscode-extension
+    profiles: [tools]
+    volumes:
+      - ../apps/vscode-extension/dist:/output
+
+  restore-graph:
+    image: hugegraph/hugegraph:1.7.0
+    profiles: [restore-test]
+    environment:
+      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 first}
+      HG_SERVER_MIN_FREE_MEMORY: "0"
+    networks: [backend]
+    healthcheck:
+      test: [CMD-SHELL, "curl -fsS http://localhost:8080/versions >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  bundle-backup:
+    <<: *application
+    profiles: [tools]
+    command: [python, -m, scripts.backup, --bundle, --config-dir, /opt/eoip/config, --model-dir, /model-source/models]
+    volumes:
+      - application-data:/data
+      - model-data:/model-source:ro
+    depends_on:
+      hugegraph-server: {condition: service_healthy}
+
+  restore-check:
+    <<: *application
+    profiles: [restore-test]
+    environment:
+      <<: *environment
+      EOIP_HUGEGRAPH_URL: http://restore-graph:8080
+      EOIP_DATA_DIR: /tmp/restore
+    volumes: ["application-data:/source:ro"]
+    command: [python, -m, scripts.verify_restore]
+    depends_on:
+      restore-graph: {condition: service_healthy}
+
+  prometheus:
+    image: prom/prometheus:v3.6.0
+    profiles: [observability]
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - metrics-data:/prometheus
+    networks: [backend, frontend]
+    ports: ["127.0.0.1:9090:9090"]
+    restart: unless-stopped
+
+networks:
+  frontend:
+  backend:
+    internal: true
+
+volumes:
+  graph-data:
+  application-data:
+  model-data:
+  metrics-data:
+  hubble-data:
+  hubble-uploads:
+  neo4j-data:
+  neo4j-logs:

@@ -1,0 +1,67 @@
+{
+  "captured_at": "2026-10-05T03:00:26.266656Z",
+  "event_id": "58cef4de48cc448c4e4f1dbf664e859e59cae73e38d1b7f8a3c2b7e2e16b62d0",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "evolkov",
+        "displayName": "Elena Volkov",
+        "emailAddress": "evolkov@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-09-14T10:00:00.000+0000",
+      "customfield_10015": "Payment Services",
+      "description": "Implement HMAC-SHA256 signature generation for webhook payloads. Each merchant receives a unique signing secret stored in HashiCorp Vault at vault.mfs.internal. The X-MFS-Signature header contains the HMAC digest for payload verification.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "webhook",
+        "security",
+        "hmac"
+      ],
+      "parent": {
+        "key": "PAY-401"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "akim",
+        "displayName": "Alex Kim",
+        "emailAddress": "akim@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "To Do",
+        "statusCategory": {
+          "name": "To Do"
+        }
+      },
+      "story_points": 3,
+      "summary": "Implement webhook signature verification",
+      "updated": "2026-10-01T09:00:00.000+0000"
+    },
+    "id": "60412",
+    "key": "PAY-412",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60412"
+  },
+  "payload_hash": "01136902dce8b8da64b7e70859b3ea74b493ed2eef176821c713349d71fcbf94",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-412",
+  "source_system": "jira",
+  "source_version": "01136902dce8b8da64b7e70859b3ea74b493ed2eef176821c713349d71fcbf94"
+}

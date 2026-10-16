@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:agent_request:2.0",
+  "title": "AgentRequest v2",
+  "type": "object",
+  "required": ["request_id", "agent_id", "goal"],
+  "properties": {
+    "schema_version": { "type": "string", "default": "2.0" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "agent_id": { "type": "string", "minLength": 1 },
+    "goal": { "type": "string", "minLength": 1 },
+    "context_refs": { "type": ["array", "null"], "items": { "type": "string" } },
+    "budgets": { "type": ["object", "null"] },
+    "actor_id": { "type": "string", "default": "anonymous" },
+    "correlation_id": { "type": ["string", "null"] },
+    "parent_run_id": { "type": ["string", "null"] },
+    "recursion_depth": { "type": "integer", "minimum": 0, "default": 0 },
+    "dry_run": { "type": "boolean", "default": false },
+    "metadata": { "type": "object", "default": {} }
+  },
+  "additionalProperties": false
+}

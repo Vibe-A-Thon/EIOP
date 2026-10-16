@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:knowledge_debt_finding:1.0",
+  "title": "KnowledgeDebtFinding v1",
+  "type": "object",
+  "required": ["schema_version", "finding_id", "category", "severity", "canonical_id", "description"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "finding_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "category": {"enum": ["unowned_component", "undocumented_api", "unlinked_requirement", "unlinked_implementation", "stale_document", "unresolved_identity", "broken_provenance", "low_confidence_inference", "missing_test", "missing_architecture_mapping", "unknown_production_owner", "stale_runbook"]},
+    "severity": {"enum": ["INFO", "WARNING", "ERROR", "CRITICAL"]},
+    "canonical_id": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "scope": {"type": ["string", "null"], "maxLength": 512},
+    "description": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "remediation": {"type": ["string", "null"], "maxLength": 4096},
+    "evidence_refs": {"type": "array", "items": {"type": "string", "maxLength": 4096}},
+    "detected_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,7 @@
+name: software-engineering
+version: "1.0.0"
+extends: core
+description: >-
+  Software engineering pack: extends WORK/CODE/CICD core concepts with agile
+  estimation, code-review and release-quality relationships for engineering
+  delivery analytics.

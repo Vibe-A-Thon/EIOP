@@ -1,0 +1,94 @@
+{
+  "captured_at": "2026-10-05T03:00:26.266656Z",
+  "event_id": "970110360a1552b6b6d3abc5cd6479f69057a06ba898f5a39426e9c083c783b0",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "wzhang",
+        "displayName": "Wei Zhang",
+        "emailAddress": "wzhang@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-09-12T10:00:00.000+0000",
+      "customfield_10014": "EPC-104",
+      "customfield_10015": "Payment Services",
+      "customfield_10050": "TC-PAY-011",
+      "description": "Implement exponential backoff retry logic for failed webhook deliveries. After max retries (configurable, default 5), failed events are moved to a dead letter queue for manual investigation. DLQ stored in mfs_payments_db.webhook_dlq table on pghost-prod-01.mfs.internal. Admin UI shows DLQ entries with retry/discard actions.\n\nAcceptance Criteria:\n- Exponential backoff: 1s, 2s, 4s, 8s, 16s\n- DLQ entries include original payload, error, attempt count\n- Admin API for DLQ management\n- Deploy to mfs-pay-pod-01, mfs-pay-pod-02\n\nGitLab MR: !602\nChange Request: CHG0090501\nTest Cases: TC-PAY-011",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "MR !602: Webhook retry with dead letter queue"
+            },
+            "key": "MR-602"
+          },
+          "type": {
+            "name": "GitLab MR",
+            "outward": "is developed in"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Implement payment webhook dispatcher"
+            },
+            "key": "PAY-401"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "webhook",
+        "retry",
+        "dlq"
+      ],
+      "parent": {
+        "key": "PAY-400"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "To Do",
+        "statusCategory": {
+          "name": "To Do"
+        }
+      },
+      "story_points": 5,
+      "summary": "Webhook retry with dead letter queue",
+      "updated": "2026-10-01T09:00:00.000+0000"
+    },
+    "id": "60402",
+    "key": "PAY-402",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60402"
+  },
+  "payload_hash": "103962c3390bbbb5cf4a41314081fada894f11f6af62baf7c6d87160b3125f1c",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-402",
+  "source_system": "jira",
+  "source_version": "103962c3390bbbb5cf4a41314081fada894f11f6af62baf7c6d87160b3125f1c"
+}

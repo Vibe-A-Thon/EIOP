@@ -1,0 +1,128 @@
+ontology_version: "0.4.0"
+schema_version: "1.2"
+
+domains:
+  - OPS
+  - PROCESS
+  - BUSINESS
+
+classes:
+  Encounter:
+    description: >-
+      A clinical encounter (visit, admission, telehealth session) linking
+      patients (pseudonymous by default), sites and orders.
+    properties:
+      encounter_id: TEXT
+      encounter_type: TEXT
+      patient_ref: TEXT
+      started_at: DATE
+      ended_at: DATE
+      status: TEXT
+      source_system: TEXT
+    relationships:
+      OCCURRED_AT:
+        out: [Encounter]
+        in: [Site]
+      GENERATED:
+        out: [Encounter]
+        in: [Order]
+
+  Order:
+    description: A clinical or pharmacy order (medication, lab, imaging).
+    properties:
+      order_id: TEXT
+      order_type: TEXT
+      ordered_at: DATE
+      status: TEXT
+      source_system: TEXT
+    relationships:
+      PRESCRIBES:
+        out: [Order]
+        in: [Drug, Device]
+      FULFILLED_BY:
+        out: [Order]
+        in: [Encounter]
+
+  Drug:
+    description: A medication or pharmaceutical product.
+    properties:
+      drug_id: TEXT
+      drug_code: TEXT
+      form: TEXT
+      strength: TEXT
+      manufacturer: TEXT
+      source_system: TEXT
+    relationships:
+      AVAILABLE_AS:
+        out: [Drug]
+        in: [Lot]
+
+  Lot:
+    description: A manufactured/recalled batch of a drug or consumable.
+    properties:
+      lot_id: TEXT
+      lot_number: TEXT
+      expiry_date: DATE
+      recall_status: TEXT
+      source_system: TEXT
+    relationships:
+      RECALL_AFFECTS:
+        out: [Lot]
+        in: [Site, Protocol, Order]
+
+  Device:
+    description: A medical device or equipment unit tracked in operations.
+    properties:
+      device_id: TEXT
+      device_type: TEXT
+      model: TEXT
+      serial_number: TEXT
+      source_system: TEXT
+    relationships:
+      DEPLOYED_AT:
+        out: [Device]
+        in: [Site]
+
+  Protocol:
+    description: A clinical protocol or care pathway governing encounters.
+    properties:
+      protocol_id: TEXT
+      protocol_name: TEXT
+      version: TEXT
+      status: TEXT
+      source_system: TEXT
+    relationships:
+      GOVERNS:
+        out: [Protocol]
+        in: [Encounter]
+      RUNS_AT:
+        out: [Protocol]
+        in: [Site]
+
+  Site:
+    description: A care site, clinic, hospital or trial site.
+    properties:
+      site_id: TEXT
+      site_type: TEXT
+      region: TEXT
+      canonical_id: TEXT
+      name: TEXT
+      source_system: TEXT
+    relationships:
+      OPERATES_UNDER:
+        out: [Site]
+        in: [Protocol]
+
+validators:
+  - id: GAP-DP-HC-001
+    description: Recalled lots must carry a recall_status and link to at least one affected entity.
+    applies_to: [Lot]
+    severity: ERROR
+  - id: GAP-DP-HC-002
+    description: Encounters must reference a site and a pseudonymous patient_ref.
+    applies_to: [Encounter]
+    severity: WARNING
+  - id: GAP-DP-HC-003
+    description: Drug lots must have an expiry_date before dispensing linkage.
+    applies_to: [Lot]
+    severity: WARNING

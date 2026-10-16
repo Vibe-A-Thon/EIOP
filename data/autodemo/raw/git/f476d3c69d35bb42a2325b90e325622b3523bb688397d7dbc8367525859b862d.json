@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.437533Z",
+  "event_id": "f476d3c69d35bb42a2325b90e325622b3523bb688397d7dbc8367525859b862d",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "b54127245c7af1189082648c5bce9cc0e4579df7",
+    "message": "md files and agent agreement handoffs have been added."
+  },
+  "payload_hash": "6292d992f7c3bbec90e56fae02ac40336400c767b9d76da1ea087dd6222db451",
+  "schema_version": "1.0",
+  "source_record_id": "demo:b54127245c7af1189082648c5bce9cc0e4579df7",
+  "source_system": "git",
+  "source_version": "6292d992f7c3bbec90e56fae02ac40336400c767b9d76da1ea087dd6222db451"
+}

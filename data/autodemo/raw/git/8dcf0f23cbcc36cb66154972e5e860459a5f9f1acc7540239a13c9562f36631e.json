@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.452053Z",
+  "event_id": "8dcf0f23cbcc36cb66154972e5e860459a5f9f1acc7540239a13c9562f36631e",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "5ccc71a47bcb5f641acdd7e7ced47323f9782bd8",
+    "message": "changes for kgr and recovery bundle and ingestion improvements"
+  },
+  "payload_hash": "c849344fc2480ab40e8b5c7d545be98727f9042ba4cd86ec3ee5857639f6b815",
+  "schema_version": "1.0",
+  "source_record_id": "demo:5ccc71a47bcb5f641acdd7e7ced47323f9782bd8",
+  "source_system": "git",
+  "source_version": "c849344fc2480ab40e8b5c7d545be98727f9042ba4cd86ec3ee5857639f6b815"
+}

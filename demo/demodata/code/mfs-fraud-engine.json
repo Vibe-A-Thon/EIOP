@@ -1,0 +1,424 @@
+{
+  "description": "Code graph represented as JSON — MFS Fraud Engine. Python ML-powered fraud scoring, AML rule evaluation, and real-time feature extraction for Meridian Financial Services.",
+  "repository": {
+    "repo_id": "mfs-fraud-engine",
+    "name": "mfs-fraud-engine",
+    "source_uri": "https://gitlab.mfs.internal/mfs/fraud-engine",
+    "default_branch": "main"
+  },
+  "files": [
+    {
+      "path": "engine/scorer.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-scorer-v3",
+      "line_count": 195
+    },
+    {
+      "path": "engine/velocity.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-velocity-v2",
+      "line_count": 138
+    },
+    {
+      "path": "engine/__init__.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-engine-init-v1",
+      "line_count": 4
+    },
+    {
+      "path": "models/fraud_model.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-model-v2",
+      "line_count": 86
+    },
+    {
+      "path": "models/alert.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-alert-v1",
+      "line_count": 52
+    },
+    {
+      "path": "features/extractor.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-features-v4",
+      "line_count": 224
+    },
+    {
+      "path": "features/stream.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-stream-v2",
+      "line_count": 112
+    },
+    {
+      "path": "features/__init__.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-feat-init-v1",
+      "line_count": 3
+    },
+    {
+      "path": "rules/aml_engine.py",
+      "language": "python",
+      "content_hash": "mfs-aml-engine-v3",
+      "line_count": 178
+    },
+    {
+      "path": "rules/rule_config.py",
+      "language": "python",
+      "content_hash": "mfs-rule-config-v2",
+      "line_count": 64
+    },
+    {
+      "path": "serving/server.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-serving-v2",
+      "line_count": 145
+    },
+    {
+      "path": "serving/health.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-health-v1",
+      "line_count": 38
+    },
+    {
+      "path": "config/settings.py",
+      "language": "python",
+      "content_hash": "mfs-fraud-config-v2",
+      "line_count": 52
+    }
+  ],
+  "symbols": [
+    {
+      "qualified_name": "engine.scorer.FraudScorer",
+      "symbol_kind": "class",
+      "name": "FraudScorer",
+      "path": "engine/scorer.py",
+      "start_line": 18,
+      "end_line": 195
+    },
+    {
+      "qualified_name": "engine.scorer.FraudScorer.score_transaction",
+      "symbol_kind": "method",
+      "name": "score_transaction",
+      "path": "engine/scorer.py",
+      "start_line": 35,
+      "end_line": 88
+    },
+    {
+      "qualified_name": "engine.scorer.FraudScorer.evaluate_rules",
+      "symbol_kind": "method",
+      "name": "evaluate_rules",
+      "path": "engine/scorer.py",
+      "start_line": 90,
+      "end_line": 132
+    },
+    {
+      "qualified_name": "engine.scorer.FraudScorer.aggregate_signals",
+      "symbol_kind": "method",
+      "name": "aggregate_signals",
+      "path": "engine/scorer.py",
+      "start_line": 134,
+      "end_line": 168
+    },
+    {
+      "qualified_name": "engine.scorer.FraudScorer._publish_score_event",
+      "symbol_kind": "method",
+      "name": "_publish_score_event",
+      "path": "engine/scorer.py",
+      "start_line": 170,
+      "end_line": 195
+    },
+    {
+      "qualified_name": "engine.velocity.VelocityMonitor",
+      "symbol_kind": "class",
+      "name": "VelocityMonitor",
+      "path": "engine/velocity.py",
+      "start_line": 12,
+      "end_line": 138
+    },
+    {
+      "qualified_name": "engine.velocity.VelocityMonitor.check_velocity",
+      "symbol_kind": "method",
+      "name": "check_velocity",
+      "path": "engine/velocity.py",
+      "start_line": 28,
+      "end_line": 62
+    },
+    {
+      "qualified_name": "engine.velocity.VelocityMonitor.update_window",
+      "symbol_kind": "method",
+      "name": "update_window",
+      "path": "engine/velocity.py",
+      "start_line": 64,
+      "end_line": 95
+    },
+    {
+      "qualified_name": "engine.velocity.VelocityMonitor.get_threshold",
+      "symbol_kind": "method",
+      "name": "get_threshold",
+      "path": "engine/velocity.py",
+      "start_line": 97,
+      "end_line": 118
+    },
+    {
+      "qualified_name": "features.extractor.FeatureExtractor",
+      "symbol_kind": "class",
+      "name": "FeatureExtractor",
+      "path": "features/extractor.py",
+      "start_line": 16,
+      "end_line": 224
+    },
+    {
+      "qualified_name": "features.extractor.FeatureExtractor.extract_velocity",
+      "symbol_kind": "method",
+      "name": "extract_velocity",
+      "path": "features/extractor.py",
+      "start_line": 32,
+      "end_line": 78
+    },
+    {
+      "qualified_name": "features.extractor.FeatureExtractor.extract_amount_pattern",
+      "symbol_kind": "method",
+      "name": "extract_amount_pattern",
+      "path": "features/extractor.py",
+      "start_line": 80,
+      "end_line": 132
+    },
+    {
+      "qualified_name": "features.extractor.FeatureExtractor.extract_geo_risk",
+      "symbol_kind": "method",
+      "name": "extract_geo_risk",
+      "path": "features/extractor.py",
+      "start_line": 134,
+      "end_line": 178
+    },
+    {
+      "qualified_name": "features.extractor.FeatureExtractor.build_feature_vector",
+      "symbol_kind": "method",
+      "name": "build_feature_vector",
+      "path": "features/extractor.py",
+      "start_line": 180,
+      "end_line": 224
+    },
+    {
+      "qualified_name": "features.stream.KafkaConsumer",
+      "symbol_kind": "class",
+      "name": "KafkaConsumer",
+      "path": "features/stream.py",
+      "start_line": 10,
+      "end_line": 112
+    },
+    {
+      "qualified_name": "features.stream.KafkaConsumer.consume_events",
+      "symbol_kind": "method",
+      "name": "consume_events",
+      "path": "features/stream.py",
+      "start_line": 24,
+      "end_line": 62
+    },
+    {
+      "qualified_name": "features.stream.KafkaConsumer.process_batch",
+      "symbol_kind": "method",
+      "name": "process_batch",
+      "path": "features/stream.py",
+      "start_line": 64,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "rules.aml_engine.AMLRuleEngine",
+      "symbol_kind": "class",
+      "name": "AMLRuleEngine",
+      "path": "rules/aml_engine.py",
+      "start_line": 14,
+      "end_line": 178
+    },
+    {
+      "qualified_name": "rules.aml_engine.AMLRuleEngine.evaluate_aml_rules",
+      "symbol_kind": "method",
+      "name": "evaluate_aml_rules",
+      "path": "rules/aml_engine.py",
+      "start_line": 28,
+      "end_line": 72
+    },
+    {
+      "qualified_name": "rules.aml_engine.AMLRuleEngine.check_structuring",
+      "symbol_kind": "method",
+      "name": "check_structuring",
+      "path": "rules/aml_engine.py",
+      "start_line": 74,
+      "end_line": 118
+    },
+    {
+      "qualified_name": "rules.aml_engine.AMLRuleEngine.flag_suspicious",
+      "symbol_kind": "method",
+      "name": "flag_suspicious",
+      "path": "rules/aml_engine.py",
+      "start_line": 120,
+      "end_line": 158
+    },
+    {
+      "qualified_name": "serving.server.ModelServing",
+      "symbol_kind": "class",
+      "name": "ModelServing",
+      "path": "serving/server.py",
+      "start_line": 16,
+      "end_line": 145
+    },
+    {
+      "qualified_name": "serving.server.ModelServing.predict",
+      "symbol_kind": "method",
+      "name": "predict",
+      "path": "serving/server.py",
+      "start_line": 30,
+      "end_line": 68
+    },
+    {
+      "qualified_name": "serving.server.ModelServing.load_model",
+      "symbol_kind": "method",
+      "name": "load_model",
+      "path": "serving/server.py",
+      "start_line": 70,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "serving.server.ModelServing.get_model_version",
+      "symbol_kind": "method",
+      "name": "get_model_version",
+      "path": "serving/server.py",
+      "start_line": 100,
+      "end_line": 118
+    },
+    {
+      "qualified_name": "models.fraud_model.FraudScore",
+      "symbol_kind": "class",
+      "name": "FraudScore",
+      "path": "models/fraud_model.py",
+      "start_line": 8,
+      "end_line": 48
+    },
+    {
+      "qualified_name": "models.fraud_model.RiskLevel",
+      "symbol_kind": "class",
+      "name": "RiskLevel",
+      "path": "models/fraud_model.py",
+      "start_line": 50,
+      "end_line": 62
+    },
+    {
+      "qualified_name": "models.alert.AMLAlert",
+      "symbol_kind": "class",
+      "name": "AMLAlert",
+      "path": "models/alert.py",
+      "start_line": 6,
+      "end_line": 38
+    },
+    {
+      "qualified_name": "models.alert.SuspiciousActivity",
+      "symbol_kind": "class",
+      "name": "SuspiciousActivity",
+      "path": "models/alert.py",
+      "start_line": 40,
+      "end_line": 52
+    }
+  ],
+  "dependencies": [
+    {"name": "scikit-learn", "resolved": true, "language": "python"},
+    {"name": "xgboost", "resolved": true, "language": "python"},
+    {"name": "kafka-python", "resolved": true, "language": "python"},
+    {"name": "sqlalchemy", "resolved": true, "language": "python"},
+    {"name": "redis", "resolved": true, "language": "python"},
+    {"name": "numpy", "resolved": true, "language": "python"},
+    {"name": "pandas", "resolved": true, "language": "python"},
+    {"name": "pydantic", "resolved": true, "language": "python"},
+    {"name": "fastapi", "resolved": true, "language": "python"},
+    {"name": "structlog", "resolved": true, "language": "python"},
+    {"name": "prometheus-client", "resolved": true, "language": "python"}
+  ],
+  "infrastructure": {
+    "service_account": "svc-fraud-engine",
+    "database": {
+      "name": "mfs_fraud_db",
+      "host": "pghost-prod-02.mfs.internal",
+      "port": 5432,
+      "type": "postgresql"
+    },
+    "pod": "mfs-fraud-pod-01",
+    "namespace": "mfs-fraud",
+    "cluster": "ocp-prod-east.mfs.internal",
+    "redis": "redis-cluster.mfs.internal:6379",
+    "kafka_broker": "kafka-broker.mfs.internal:9092",
+    "kafka_topics": ["txn-events", "fraud-scores", "aml-alerts"],
+    "model_registry": "mlflow.mfs.internal:5000"
+  },
+  "edges": [
+    {"type": "CONTAINS", "from": "engine/scorer.py", "to": "engine.scorer.FraudScorer"},
+    {"type": "CONTAINS", "from": "engine/velocity.py", "to": "engine.velocity.VelocityMonitor"},
+    {"type": "CONTAINS", "from": "features/extractor.py", "to": "features.extractor.FeatureExtractor"},
+    {"type": "CONTAINS", "from": "features/stream.py", "to": "features.stream.KafkaConsumer"},
+    {"type": "CONTAINS", "from": "rules/aml_engine.py", "to": "rules.aml_engine.AMLRuleEngine"},
+    {"type": "CONTAINS", "from": "serving/server.py", "to": "serving.server.ModelServing"},
+    {"type": "CONTAINS", "from": "models/fraud_model.py", "to": "models.fraud_model.FraudScore"},
+    {"type": "CONTAINS", "from": "models/fraud_model.py", "to": "models.fraud_model.RiskLevel"},
+    {"type": "CONTAINS", "from": "models/alert.py", "to": "models.alert.AMLAlert"},
+    {"type": "CONTAINS", "from": "models/alert.py", "to": "models.alert.SuspiciousActivity"},
+    {"type": "DECLARES", "from": "engine.scorer.FraudScorer", "to": "engine.scorer.FraudScorer.score_transaction"},
+    {"type": "DECLARES", "from": "engine.scorer.FraudScorer", "to": "engine.scorer.FraudScorer.evaluate_rules"},
+    {"type": "DECLARES", "from": "engine.scorer.FraudScorer", "to": "engine.scorer.FraudScorer.aggregate_signals"},
+    {"type": "DECLARES", "from": "engine.scorer.FraudScorer", "to": "engine.scorer.FraudScorer._publish_score_event"},
+    {"type": "DECLARES", "from": "engine.velocity.VelocityMonitor", "to": "engine.velocity.VelocityMonitor.check_velocity"},
+    {"type": "DECLARES", "from": "engine.velocity.VelocityMonitor", "to": "engine.velocity.VelocityMonitor.update_window"},
+    {"type": "DECLARES", "from": "engine.velocity.VelocityMonitor", "to": "engine.velocity.VelocityMonitor.get_threshold"},
+    {"type": "DECLARES", "from": "features.extractor.FeatureExtractor", "to": "features.extractor.FeatureExtractor.extract_velocity"},
+    {"type": "DECLARES", "from": "features.extractor.FeatureExtractor", "to": "features.extractor.FeatureExtractor.extract_amount_pattern"},
+    {"type": "DECLARES", "from": "features.extractor.FeatureExtractor", "to": "features.extractor.FeatureExtractor.extract_geo_risk"},
+    {"type": "DECLARES", "from": "features.extractor.FeatureExtractor", "to": "features.extractor.FeatureExtractor.build_feature_vector"},
+    {"type": "DECLARES", "from": "features.stream.KafkaConsumer", "to": "features.stream.KafkaConsumer.consume_events"},
+    {"type": "DECLARES", "from": "features.stream.KafkaConsumer", "to": "features.stream.KafkaConsumer.process_batch"},
+    {"type": "DECLARES", "from": "rules.aml_engine.AMLRuleEngine", "to": "rules.aml_engine.AMLRuleEngine.evaluate_aml_rules"},
+    {"type": "DECLARES", "from": "rules.aml_engine.AMLRuleEngine", "to": "rules.aml_engine.AMLRuleEngine.check_structuring"},
+    {"type": "DECLARES", "from": "rules.aml_engine.AMLRuleEngine", "to": "rules.aml_engine.AMLRuleEngine.flag_suspicious"},
+    {"type": "DECLARES", "from": "serving.server.ModelServing", "to": "serving.server.ModelServing.predict"},
+    {"type": "DECLARES", "from": "serving.server.ModelServing", "to": "serving.server.ModelServing.load_model"},
+    {"type": "DECLARES", "from": "serving.server.ModelServing", "to": "serving.server.ModelServing.get_model_version"},
+    {"type": "CALLS", "from": "engine.scorer.FraudScorer.score_transaction", "to": "features.extractor.FeatureExtractor.build_feature_vector"},
+    {"type": "CALLS", "from": "engine.scorer.FraudScorer.score_transaction", "to": "serving.server.ModelServing.predict"},
+    {"type": "CALLS", "from": "engine.scorer.FraudScorer.score_transaction", "to": "engine.scorer.FraudScorer.evaluate_rules"},
+    {"type": "CALLS", "from": "engine.scorer.FraudScorer.score_transaction", "to": "engine.scorer.FraudScorer.aggregate_signals"},
+    {"type": "CALLS", "from": "engine.scorer.FraudScorer.score_transaction", "to": "engine.scorer.FraudScorer._publish_score_event"},
+    {"type": "CALLS", "from": "engine.scorer.FraudScorer.evaluate_rules", "to": "rules.aml_engine.AMLRuleEngine.evaluate_aml_rules"},
+    {"type": "CALLS", "from": "engine.scorer.FraudScorer.evaluate_rules", "to": "engine.velocity.VelocityMonitor.check_velocity"},
+    {"type": "CALLS", "from": "features.extractor.FeatureExtractor.extract_velocity", "to": "engine.velocity.VelocityMonitor.check_velocity"},
+    {"type": "CALLS", "from": "features.extractor.FeatureExtractor.build_feature_vector", "to": "features.extractor.FeatureExtractor.extract_velocity"},
+    {"type": "CALLS", "from": "features.extractor.FeatureExtractor.build_feature_vector", "to": "features.extractor.FeatureExtractor.extract_amount_pattern"},
+    {"type": "CALLS", "from": "features.extractor.FeatureExtractor.build_feature_vector", "to": "features.extractor.FeatureExtractor.extract_geo_risk"},
+    {"type": "CALLS", "from": "features.stream.KafkaConsumer.consume_events", "to": "features.stream.KafkaConsumer.process_batch"},
+    {"type": "CALLS", "from": "features.stream.KafkaConsumer.process_batch", "to": "engine.scorer.FraudScorer.score_transaction"},
+    {"type": "CALLS", "from": "rules.aml_engine.AMLRuleEngine.evaluate_aml_rules", "to": "rules.aml_engine.AMLRuleEngine.check_structuring"},
+    {"type": "CALLS", "from": "rules.aml_engine.AMLRuleEngine.evaluate_aml_rules", "to": "rules.aml_engine.AMLRuleEngine.flag_suspicious"},
+    {"type": "IMPORTS", "from": "engine/scorer.py", "to": "scikit-learn"},
+    {"type": "IMPORTS", "from": "engine/scorer.py", "to": "numpy"},
+    {"type": "IMPORTS", "from": "engine/scorer.py", "to": "structlog"},
+    {"type": "IMPORTS", "from": "engine/velocity.py", "to": "redis"},
+    {"type": "IMPORTS", "from": "features/extractor.py", "to": "pandas"},
+    {"type": "IMPORTS", "from": "features/extractor.py", "to": "numpy"},
+    {"type": "IMPORTS", "from": "features/stream.py", "to": "kafka-python"},
+    {"type": "IMPORTS", "from": "rules/aml_engine.py", "to": "sqlalchemy"},
+    {"type": "IMPORTS", "from": "rules/aml_engine.py", "to": "pydantic"},
+    {"type": "IMPORTS", "from": "serving/server.py", "to": "xgboost"},
+    {"type": "IMPORTS", "from": "serving/server.py", "to": "fastapi"},
+    {"type": "IMPORTS", "from": "serving/server.py", "to": "prometheus-client"},
+    {"type": "IMPORTS", "from": "models/fraud_model.py", "to": "pydantic"},
+    {"type": "IMPORTS", "from": "models/alert.py", "to": "pydantic"},
+    {"type": "DEPENDS_ON", "from": "engine.scorer.FraudScorer", "to": "features.extractor.FeatureExtractor"},
+    {"type": "DEPENDS_ON", "from": "engine.scorer.FraudScorer", "to": "serving.server.ModelServing"},
+    {"type": "DEPENDS_ON", "from": "engine.scorer.FraudScorer", "to": "rules.aml_engine.AMLRuleEngine"},
+    {"type": "DEPENDS_ON", "from": "engine.scorer.FraudScorer", "to": "engine.velocity.VelocityMonitor"},
+    {"type": "DEPENDS_ON", "from": "features.stream.KafkaConsumer", "to": "engine.scorer.FraudScorer"},
+    {"type": "DEPENDS_ON", "from": "features.extractor.FeatureExtractor", "to": "engine.velocity.VelocityMonitor"},
+    {"type": "CONNECTS_TO", "from": "features.stream.KafkaConsumer", "to": "kafka-broker.mfs.internal", "properties": {"topic": "txn-events"}},
+    {"type": "CONNECTS_TO", "from": "engine.scorer.FraudScorer", "to": "kafka-broker.mfs.internal", "properties": {"topic": "fraud-scores"}},
+    {"type": "CONNECTS_TO", "from": "rules.aml_engine.AMLRuleEngine", "to": "mfs_fraud_db", "properties": {"host": "pghost-prod-02.mfs.internal", "service_account": "svc-fraud-engine"}},
+    {"type": "CONNECTS_TO", "from": "rules.aml_engine.AMLRuleEngine", "to": "kafka-broker.mfs.internal", "properties": {"topic": "aml-alerts"}},
+    {"type": "CONNECTS_TO", "from": "engine.velocity.VelocityMonitor", "to": "redis-cluster.mfs.internal", "properties": {"port": 6379}},
+    {"type": "DEPLOYED_ON", "from": "mfs-fraud-engine", "to": "mfs-fraud-pod-01", "properties": {"namespace": "mfs-fraud", "cluster": "ocp-prod-east.mfs.internal"}}
+  ]
+}

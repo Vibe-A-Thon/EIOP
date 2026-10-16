@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:evidence:1.0",
+  "title": "Evidence v1",
+  "description": "Evidence record linking an assertion or graph entity to a verifiable source artifact. Every fact in the EOIP knowledge graph should be traceable to at least one evidence record, establishing provenance from source system through parser to graph.",
+  "type": "object",
+  "required": ["evidence_id", "source_system", "source_ref", "captured_at", "method"],
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this evidence record."
+    },
+    "source_system": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Origin system where the evidence was captured (e.g. jira, gitlab, confluence, git, servicenow)."
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "URI or identifier within the source system pointing to the original artifact (e.g. issue URL, commit SHA, page ID)."
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this evidence was captured from the source system."
+    },
+    "method": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Extraction method used (e.g. api_poll, webhook, git_hook, file_watch, manual)."
+    },
+    "parser_version": {
+      "type": ["string", "null"],
+      "description": "Version of the parser that processed the raw source data."
+    },
+    "mapper_version": {
+      "type": ["string", "null"],
+      "description": "Version of the mapper that normalized source data into graph entities."
+    },
+    "confidence": {
+      "type": ["number", "null"],
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence that this evidence correctly supports the linked assertion. 1.0 = deterministic extraction."
+    }
+  },
+  "additionalProperties": false
+}

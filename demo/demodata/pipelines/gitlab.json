@@ -1,0 +1,331 @@
+{
+  "merge_requests": [
+    {
+      "iid": 601,
+      "title": "FRD-101 implement fraud scoring model pipeline",
+      "source_branch": "feature/FRD-101-fraud-scoring",
+      "target_branch": "main",
+      "state": "merged",
+      "merge_commit_sha": "aaa1010101aaa1010101aaa1010101aaa1010101",
+      "author": {"username": "nkowalski", "name": "Nadia Kowalski"},
+      "reviewers": [{"username": "psharma", "name": "Priya Sharma"}],
+      "approved_by": [{"username": "schen", "name": "Sarah Chen"}],
+      "created_at": "2026-09-15T09:00:00.000Z",
+      "merged_at": "2026-09-27T14:30:00.000Z",
+      "description": "Implements the end-to-end fraud scoring model pipeline.\n\n## Changes\n- XGBoost model training pipeline with Optuna hyperparameter tuning\n- ONNX export for production serving on mfs-fraud-pod-01 and mfs-fraud-pod-02\n- MLflow experiment tracking integration\n- Feature preprocessing pipeline reading from mfs_fraud_db on pghost-prod-02.mfs.internal\n- Service account: svc-fraud-engine\n- Deployment target: mfs-prod namespace\n\n## Database\n- Reads training data from mfs_fraud_db.fraud_transactions\n- Writes model metadata to mfs_fraud_db.model_registry\n\nRelated: FRD-101, CHG0090401",
+      "work_item_keys": ["FRD-101"]
+    },
+    {
+      "iid": 602,
+      "title": "FRD-102 real-time feature extraction service",
+      "source_branch": "feature/FRD-102-feature-extraction",
+      "target_branch": "main",
+      "state": "merged",
+      "merge_commit_sha": "aaa2020202aaa2020202aaa2020202aaa2020202",
+      "author": {"username": "psharma", "name": "Priya Sharma"},
+      "reviewers": [{"username": "dokoye", "name": "David Okoye"}],
+      "approved_by": [{"username": "schen", "name": "Sarah Chen"}],
+      "created_at": "2026-09-18T11:00:00.000Z",
+      "merged_at": "2026-09-30T16:00:00.000Z",
+      "description": "Real-time feature extraction service for fraud scoring.\n\n## Changes\n- Kafka consumer for 'mfs.txn.raw' topic\n- Feature computation: velocity, merchant risk, device fingerprint, geolocation anomaly\n- Writes enriched features to 'mfs.txn.features' topic\n- Service runs on mfs-fraud-pod-01 under svc-fraud-engine\n- Shared utilities in mfs-common-libs\n\n## Infrastructure\n- Pod: mfs-fraud-pod-01 (mfs-prod namespace)\n- DB: reads reference data from mfs_fraud_db on pghost-prod-02.mfs.internal\n\nRelated: FRD-102",
+      "work_item_keys": ["FRD-102"]
+    },
+    {
+      "iid": 603,
+      "title": "FRD-103 model versioning and A/B testing framework",
+      "source_branch": "feature/FRD-103-model-versioning",
+      "target_branch": "main",
+      "state": "open",
+      "merge_commit_sha": null,
+      "author": {"username": "nkowalski", "name": "Nadia Kowalski"},
+      "reviewers": [{"username": "psharma", "name": "Priya Sharma"}],
+      "approved_by": [{"username": "lwei", "name": "Li Wei"}],
+      "created_at": "2026-09-22T10:00:00.000Z",
+      "updated_at": "2026-10-02T09:00:00.000Z",
+      "description": "Model versioning system with A/B testing traffic splitting.\n\n## Changes\n- Model registry with version metadata and performance baselines\n- Traffic router with configurable split percentages\n- Metric collection per model variant\n- Automated rollback when new model underperforms baseline\n- Integration with svc-model-serving on mfs-model-pod-01\n\n## Database\n- Model versions stored in mfs_fraud_db.model_versions\n- A/B test results in mfs_fraud_db.ab_test_results\n\nRelated: FRD-103",
+      "work_item_keys": ["FRD-103"]
+    },
+    {
+      "iid": 701,
+      "title": "FRD-201 transaction velocity monitor implementation",
+      "source_branch": "feature/FRD-201-velocity-monitor",
+      "target_branch": "main",
+      "state": "merged",
+      "merge_commit_sha": "bbb4040404bbb4040404bbb4040404bbb4040404",
+      "author": {"username": "psharma", "name": "Priya Sharma"},
+      "reviewers": [{"username": "schen", "name": "Sarah Chen"}],
+      "approved_by": [{"username": "lwei", "name": "Li Wei"}],
+      "created_at": "2026-09-20T09:00:00.000Z",
+      "merged_at": "2026-09-29T15:00:00.000Z",
+      "description": "Transaction velocity monitoring with sliding time windows.\n\n## Changes\n- Velocity tracking per account, merchant, and device dimensions\n- Sliding windows: 1min, 5min, 1hr, 24hr\n- Configurable threshold rules in YAML with hot-reload\n- Kafka consumer for 'mfs.txn.enriched' topic\n- Alert publishing to 'mfs.alerts.txn' topic\n\n## Infrastructure\n- Pod: mfs-txn-mon-pod-01 (mfs-prod namespace)\n- Service account: svc-txn-monitor\n- DB: mfs_fraud_db on pghost-prod-02.mfs.internal\n\nRelated: FRD-201, CHG0090501",
+      "work_item_keys": ["FRD-201"]
+    },
+    {
+      "iid": 702,
+      "title": "FRD-202 anomaly detection alert system",
+      "source_branch": "feature/FRD-202-anomaly-alerts",
+      "target_branch": "main",
+      "state": "open",
+      "merge_commit_sha": null,
+      "author": {"username": "nkowalski", "name": "Nadia Kowalski"},
+      "reviewers": [{"username": "psharma", "name": "Priya Sharma"}],
+      "approved_by": [{"username": "schen", "name": "Sarah Chen"}],
+      "created_at": "2026-09-25T10:00:00.000Z",
+      "updated_at": "2026-10-02T11:00:00.000Z",
+      "description": "Anomaly detection system with statistical pattern analysis.\n\n## Changes\n- Z-score based anomaly detection on transaction amounts and frequencies\n- Isolation forest model for multivariate anomaly detection\n- Severity classification: HIGH (>0.9), MEDIUM (0.7-0.9), LOW (<0.7)\n- Alert routing to 'mfs.alerts.txn' Kafka topic\n- Alert persistence to mfs_fraud_db.alerts table\n\n## Infrastructure\n- Pod: mfs-txn-mon-pod-01 (mfs-prod namespace)\n- Service account: svc-txn-monitor\n\nRelated: FRD-202",
+      "work_item_keys": ["FRD-202"]
+    },
+    {
+      "iid": 801,
+      "title": "FRD-301 AML rule engine implementation",
+      "source_branch": "feature/FRD-301-aml-rules",
+      "target_branch": "main",
+      "state": "open",
+      "merge_commit_sha": null,
+      "author": {"username": "psharma", "name": "Priya Sharma"},
+      "reviewers": [{"username": "nkowalski", "name": "Nadia Kowalski"}],
+      "approved_by": [{"username": "schen", "name": "Sarah Chen"}],
+      "created_at": "2026-09-28T10:00:00.000Z",
+      "updated_at": "2026-10-02T14:00:00.000Z",
+      "description": "Core AML rule engine for pattern detection.\n\n## Changes\n- Structuring detection: identifies split transactions below $10,000 threshold\n- Layering detection: tracks rapid inter-account fund movements\n- Integration pattern detection: flags funds merged into legitimate transactions\n- Rule definitions in declarative YAML with version history\n\n## Infrastructure\n- Pod: mfs-aml-pod-01 (mfs-prod namespace)\n- Service account: svc-aml-engine\n- DB: mfs_aml_db on pghost-prod-02.mfs.internal\n\nRelated: FRD-301, CHG0090601",
+      "work_item_keys": ["FRD-301"]
+    },
+    {
+      "iid": 802,
+      "title": "FRD-302 suspicious activity reporting automation",
+      "source_branch": "feature/FRD-302-sar-reporting",
+      "target_branch": "main",
+      "state": "open",
+      "merge_commit_sha": null,
+      "author": {"username": "nkowalski", "name": "Nadia Kowalski"},
+      "reviewers": [{"username": "psharma", "name": "Priya Sharma"}],
+      "approved_by": [{"username": "lwei", "name": "Li Wei"}],
+      "created_at": "2026-10-01T09:00:00.000Z",
+      "updated_at": "2026-10-02T10:00:00.000Z",
+      "description": "Automated SAR/CTR generation and FinCEN filing.\n\n## Changes\n- SAR form pre-population from AML case data\n- CTR auto-filing for transactions > $10,000\n- FinCEN BSA E-Filing system integration\n- Narrative generation from detection rule outputs\n- Batch submission with retry logic\n\n## Infrastructure\n- Pod: mfs-aml-pod-01 (mfs-prod namespace)\n- Service account: svc-aml-engine\n- DB: mfs_aml_db on pghost-prod-02.mfs.internal\n\nRelated: FRD-302",
+      "work_item_keys": ["FRD-302"]
+    },
+    {
+      "iid": 1601,
+      "title": "FRD-401 document OCR extraction pipeline",
+      "source_branch": "feature/FRD-401-document-ocr",
+      "target_branch": "main",
+      "state": "open",
+      "merge_commit_sha": null,
+      "author": {"username": "nkowalski", "name": "Nadia Kowalski"},
+      "reviewers": [{"username": "psharma", "name": "Priya Sharma"}],
+      "approved_by": [{"username": "schen", "name": "Sarah Chen"}],
+      "created_at": "2026-10-02T09:00:00.000Z",
+      "updated_at": "2026-10-03T10:00:00.000Z",
+      "description": "Implements document OCR extraction pipeline for KYC verification.\n\n## Changes\n- Tesseract OCR integration for document text extraction\n- Support for passport, driver's license, and national ID documents\n- Document data written to document_verifications table in mfs_customers_db on pghost-prod-03.mfs.internal\n- Service runs on mfs-kyc-pod-01 under svc-kyc-engine\n\n## Infrastructure\n- Pod: mfs-kyc-pod-01 (mfs-prod namespace)\n- Service account: svc-kyc-engine\n- DB: mfs_customers_db on pghost-prod-03.mfs.internal\n\nRelated: FRD-401",
+      "work_item_keys": ["FRD-401"]
+    },
+    {
+      "iid": 1602,
+      "title": "FRD-402 liveness detection module",
+      "source_branch": "feature/FRD-402-liveness-detection",
+      "target_branch": "main",
+      "state": "open",
+      "merge_commit_sha": null,
+      "author": {"username": "psharma", "name": "Priya Sharma"},
+      "reviewers": [{"username": "nkowalski", "name": "Nadia Kowalski"}],
+      "approved_by": [],
+      "created_at": "2026-10-02T10:00:00.000Z",
+      "updated_at": "2026-10-03T10:00:00.000Z",
+      "description": "Implements liveness detection module for selfie verification.\n\n## Changes\n- AWS Rekognition integration for liveness detection\n- Liveness results stored in liveness_results table\n- Anti-spoofing checks for photo and video replay attacks\n- Service runs under svc-kyc-engine\n\n## Infrastructure\n- Pod: mfs-kyc-pod-01 (mfs-prod namespace)\n- Service account: svc-kyc-engine\n\nRelated: FRD-402",
+      "work_item_keys": ["FRD-402"]
+    },
+    {
+      "iid": 1701,
+      "title": "FRD-501 case routing engine",
+      "source_branch": "feature/FRD-501-case-routing",
+      "target_branch": "main",
+      "state": "open",
+      "merge_commit_sha": null,
+      "author": {"username": "dokoye", "name": "David Okoye"},
+      "reviewers": [{"username": "psharma", "name": "Priya Sharma"}, {"username": "lwei", "name": "Li Wei"}],
+      "approved_by": [],
+      "created_at": "2026-10-02T11:00:00.000Z",
+      "updated_at": "2026-10-03T10:00:00.000Z",
+      "description": "Implements case routing engine with priority scoring.\n\n## Changes\n- Priority scoring algorithm for fraud case assignment\n- Automated case routing based on analyst workload and specialization\n- Case data stored in mfs_fraud_db.fraud_cases\n- Service runs on mfs-case-pod-01 under svc-case-engine\n\n## Infrastructure\n- Pod: mfs-case-pod-01 (mfs-prod namespace)\n- Service account: svc-case-engine\n- DB: mfs_fraud_db on pghost-prod-02.mfs.internal\n\nRelated: FRD-501, CHG0090801",
+      "work_item_keys": ["FRD-501"]
+    }
+  ],
+  "pipelines": [
+    {
+      "id": 9101,
+      "name": "mfs-fraud-engine-ci",
+      "sha": "aaa1010101aaa1010101aaa1010101aaa1010101",
+      "ref": "main",
+      "status": "success",
+      "created_at": "2026-09-27T14:31:00.000Z",
+      "finished_at": "2026-09-27T14:48:00.000Z",
+      "work_item_keys": ["FRD-101"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 45},
+        {"name": "unit-tests", "status": "success", "duration": 182},
+        {"name": "integration-tests", "status": "success", "duration": 340},
+        {"name": "model-validation", "status": "success", "duration": 120},
+        {"name": "build-image", "status": "success", "duration": 95},
+        {"name": "deploy-staging", "status": "success", "duration": 60}
+      ]
+    },
+    {
+      "id": 9102,
+      "name": "mfs-fraud-engine-ci",
+      "sha": "aaa2020202aaa2020202aaa2020202aaa2020202",
+      "ref": "main",
+      "status": "success",
+      "created_at": "2026-09-30T16:01:00.000Z",
+      "finished_at": "2026-09-30T16:15:00.000Z",
+      "work_item_keys": ["FRD-102"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 42},
+        {"name": "unit-tests", "status": "success", "duration": 195},
+        {"name": "integration-tests", "status": "success", "duration": 410},
+        {"name": "kafka-consumer-test", "status": "success", "duration": 88},
+        {"name": "build-image", "status": "success", "duration": 102},
+        {"name": "deploy-staging", "status": "success", "duration": 55}
+      ]
+    },
+    {
+      "id": 9103,
+      "name": "mfs-fraud-engine-ci",
+      "sha": "aaa3030303aaa3030303aaa3030303aaa3030303",
+      "ref": "feature/FRD-103-model-versioning",
+      "status": "running",
+      "created_at": "2026-10-02T09:01:00.000Z",
+      "work_item_keys": ["FRD-103"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 40},
+        {"name": "unit-tests", "status": "success", "duration": 210},
+        {"name": "integration-tests", "status": "running"},
+        {"name": "ab-test-validation", "status": "created"},
+        {"name": "build-image", "status": "created"},
+        {"name": "deploy-staging", "status": "created"}
+      ]
+    },
+    {
+      "id": 9201,
+      "name": "mfs-txn-monitor-ci",
+      "sha": "bbb4040404bbb4040404bbb4040404bbb4040404",
+      "ref": "main",
+      "status": "success",
+      "created_at": "2026-09-29T15:01:00.000Z",
+      "finished_at": "2026-09-29T15:18:00.000Z",
+      "work_item_keys": ["FRD-201"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 38},
+        {"name": "unit-tests", "status": "success", "duration": 165},
+        {"name": "kafka-integration-tests", "status": "success", "duration": 285},
+        {"name": "velocity-threshold-tests", "status": "success", "duration": 92},
+        {"name": "build-image", "status": "success", "duration": 88},
+        {"name": "deploy-staging", "status": "success", "duration": 52}
+      ]
+    },
+    {
+      "id": 9202,
+      "name": "mfs-txn-monitor-ci",
+      "sha": "bbb5050505bbb5050505bbb5050505bbb5050505",
+      "ref": "feature/FRD-202-anomaly-alerts",
+      "status": "success",
+      "created_at": "2026-10-02T11:01:00.000Z",
+      "finished_at": "2026-10-02T11:16:00.000Z",
+      "work_item_keys": ["FRD-202"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 35},
+        {"name": "unit-tests", "status": "success", "duration": 178},
+        {"name": "anomaly-model-tests", "status": "success", "duration": 225},
+        {"name": "alert-routing-tests", "status": "success", "duration": 68},
+        {"name": "build-image", "status": "success", "duration": 90},
+        {"name": "deploy-staging", "status": "success", "duration": 48}
+      ]
+    },
+    {
+      "id": 9301,
+      "name": "mfs-aml-engine-ci",
+      "sha": "ccc6060606ccc6060606ccc6060606ccc6060606",
+      "ref": "feature/FRD-301-aml-rules",
+      "status": "success",
+      "created_at": "2026-10-02T14:01:00.000Z",
+      "finished_at": "2026-10-02T14:22:00.000Z",
+      "work_item_keys": ["FRD-301"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 40},
+        {"name": "unit-tests", "status": "success", "duration": 198},
+        {"name": "rule-engine-tests", "status": "success", "duration": 355},
+        {"name": "compliance-validation", "status": "success", "duration": 142},
+        {"name": "build-image", "status": "success", "duration": 95},
+        {"name": "deploy-staging", "status": "success", "duration": 58}
+      ]
+    },
+    {
+      "id": 9302,
+      "name": "mfs-aml-engine-ci",
+      "sha": "ccc7070707ccc7070707ccc7070707ccc7070707",
+      "ref": "feature/FRD-302-sar-reporting",
+      "status": "failed",
+      "created_at": "2026-10-02T10:01:00.000Z",
+      "finished_at": "2026-10-02T10:12:00.000Z",
+      "work_item_keys": ["FRD-302"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 38},
+        {"name": "unit-tests", "status": "success", "duration": 145},
+        {"name": "sar-form-validation", "status": "failed", "duration": 210},
+        {"name": "fincen-integration-tests", "status": "skipped"},
+        {"name": "build-image", "status": "skipped"},
+        {"name": "deploy-staging", "status": "skipped"}
+      ]
+    },
+    {
+      "id": 9508,
+      "name": "mfs-kyc-engine-ci",
+      "sha": "ddd8080808ddd8080808ddd8080808ddd8080808",
+      "ref": "feature/FRD-401-document-ocr",
+      "status": "success",
+      "created_at": "2026-10-03T10:01:00.000Z",
+      "finished_at": "2026-10-03T10:18:00.000Z",
+      "work_item_keys": ["FRD-401"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 35},
+        {"name": "unit-tests", "status": "success", "duration": 165},
+        {"name": "ocr-accuracy-tests", "status": "success", "duration": 280},
+        {"name": "build-image", "status": "success", "duration": 92},
+        {"name": "deploy-staging", "status": "success", "duration": 55}
+      ]
+    },
+    {
+      "id": 9509,
+      "name": "mfs-kyc-engine-ci",
+      "sha": "ddd9090909ddd9090909ddd9090909ddd9090909",
+      "ref": "feature/FRD-402-liveness-detection",
+      "status": "running",
+      "created_at": "2026-10-03T14:01:00.000Z",
+      "work_item_keys": ["FRD-402"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 32},
+        {"name": "unit-tests", "status": "success", "duration": 148},
+        {"name": "biometric-tests", "status": "running"},
+        {"name": "build-image", "status": "created"}
+      ]
+    },
+    {
+      "id": 9510,
+      "name": "mfs-case-engine-ci",
+      "sha": "eee1010101eee1010101eee1010101eee1010101",
+      "ref": "feature/FRD-501-case-routing",
+      "status": "success",
+      "created_at": "2026-10-03T11:01:00.000Z",
+      "finished_at": "2026-10-03T11:22:00.000Z",
+      "work_item_keys": ["FRD-501"],
+      "jobs": [
+        {"name": "lint", "status": "success", "duration": 38},
+        {"name": "unit-tests", "status": "success", "duration": 172},
+        {"name": "integration-tests", "status": "success", "duration": 310},
+        {"name": "case-workflow-tests", "status": "success", "duration": 95},
+        {"name": "build-image", "status": "success", "duration": 88},
+        {"name": "deploy-staging", "status": "success", "duration": 52}
+      ]
+    }
+  ]
+}

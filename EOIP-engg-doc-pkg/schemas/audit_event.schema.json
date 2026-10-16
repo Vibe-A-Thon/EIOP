@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AuditEvent",
+  "type": "object",
+  "required": [
+    "audit_id",
+    "timestamp",
+    "event_type",
+    "actor",
+    "correlation_id",
+    "outcome"
+  ],
+  "properties": {
+    "audit_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string"
+    },
+    "actor": {
+      "type": "string"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "resource_refs": {
+      "type": "array"
+    },
+    "outcome": {
+      "type": "string"
+    },
+    "reason_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "safe_summary": {
+      "type": "string"
+    }
+  }
+}

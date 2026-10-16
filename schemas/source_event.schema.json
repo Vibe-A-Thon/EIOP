@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:source_event:1.0",
+  "title": "SourceEvent v1",
+  "type": "object",
+  "required": ["schema_version", "event_id", "source_system", "source_record_id", "captured_at", "payload_hash", "payload"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "event_id": { "type": "string", "minLength": 1 },
+    "source_system": { "type": "string", "minLength": 1 },
+    "source_record_id": { "type": "string", "minLength": 1 },
+    "source_version": { "type": ["string", "null"] },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "payload_hash": { "type": "string", "minLength": 1 },
+    "payload": { "type": "object" },
+    "metadata": { "type": ["object", "null"] }
+  },
+  "additionalProperties": false
+}

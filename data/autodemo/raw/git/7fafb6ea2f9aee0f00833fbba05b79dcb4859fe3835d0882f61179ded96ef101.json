@@ -1,0 +1,29 @@
+{
+  "captured_at": "2026-10-04T08:19:18.244307Z",
+  "event_id": "7fafb6ea2f9aee0f00833fbba05b79dcb4859fe3835d0882f61179ded96ef101",
+  "metadata": null,
+  "payload": {
+    "merge_requests": [
+      {
+        "iid": 42,
+        "merge_commit_sha": "HEAD",
+        "source_branch": "feature/EOIP-1",
+        "target_branch": "main",
+        "title": "EOIP-1 implement impact calculation"
+      }
+    ],
+    "pipelines": [
+      {
+        "id": 9001,
+        "name": "build-and-test",
+        "sha": "HEAD",
+        "status": "success"
+      }
+    ]
+  },
+  "payload_hash": "4e0bcca1831e2d55f6c9a6cf707d6837c3fb46d6df5deeee3f8773e731419f15",
+  "schema_version": "1.0",
+  "source_record_id": "demo:gitlab-metadata",
+  "source_system": "git",
+  "source_version": "4e0bcca1831e2d55f6c9a6cf707d6837c3fb46d6df5deeee3f8773e731419f15"
+}

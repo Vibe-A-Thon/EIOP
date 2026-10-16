@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.902446Z",
+  "event_id": "dfc587353f8b7837bfc24e244f0e07870767dddd96caef0f188baa76cc8149b6",
+  "metadata": null,
+  "payload": {
+    "commit_sha": "47bc8516d76031481c637780ddf8952ca865f2e1",
+    "content": "# EOIP-1 requirement trace\n\n`service.py` implements EOIP-1. `compute_impact` calls `normalize`, which uses\nthe Python math module. EOIP-2 requires the path to retain source evidence.\n",
+    "path": "README.md"
+  },
+  "payload_hash": "a701325dee50be2582dff2a4a3daddf755a3cc3453bc32714b26022033d61e23",
+  "schema_version": "1.0",
+  "source_record_id": "demo:README.md",
+  "source_system": "git",
+  "source_version": "a701325dee50be2582dff2a4a3daddf755a3cc3453bc32714b26022033d61e23"
+}

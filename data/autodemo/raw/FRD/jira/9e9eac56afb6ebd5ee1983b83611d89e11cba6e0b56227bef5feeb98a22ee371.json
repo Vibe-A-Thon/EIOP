@@ -1,0 +1,53 @@
+{
+  "captured_at": "2026-10-04T13:45:50.512571Z",
+  "event_id": "9e9eac56afb6ebd5ee1983b83611d89e11cba6e0b56227bef5feeb98a22ee371",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-txn-monitor"
+        }
+      ],
+      "created": "2026-08-25T10:00:00.000+0000",
+      "customfield_10014": "EPC-202",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Implement a configurable rule engine for transaction velocity thresholds. Rules are defined in YAML and hot-reloaded without service restart. Supports per-account, per-merchant, and per-device dimensions with separate thresholds per time window.",
+      "issuetype": {
+        "name": "Task"
+      },
+      "labels": [
+        "rules-engine",
+        "configuration"
+      ],
+      "parent": {
+        "key": "FRD-201"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "status": {
+        "name": "Done"
+      },
+      "summary": "Velocity rule configuration engine",
+      "updated": "2026-09-28T14:00:00.000+0000"
+    },
+    "key": "FRD-211"
+  },
+  "payload_hash": "b99e494eade74d7d9ca6db6489d79109c6399b8ea39342bf196a2450afd11ad5",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-211",
+  "source_system": "jira",
+  "source_version": "b99e494eade74d7d9ca6db6489d79109c6399b8ea39342bf196a2450afd11ad5"
+}

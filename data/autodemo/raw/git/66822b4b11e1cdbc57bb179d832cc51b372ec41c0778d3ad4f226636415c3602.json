@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.433952Z",
+  "event_id": "66822b4b11e1cdbc57bb179d832cc51b372ec41c0778d3ad4f226636415c3602",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "e671ae884a11cd6cb2e4c6d11fcd90761326f5a9",
+    "message": "md file changes for agent handoffs and coordination have been added."
+  },
+  "payload_hash": "f1ced256a50deda55e883553a6744c1be97055f60a59bfded4fca13e19555b19",
+  "schema_version": "1.0",
+  "source_record_id": "demo:e671ae884a11cd6cb2e4c6d11fcd90761326f5a9",
+  "source_system": "git",
+  "source_version": "f1ced256a50deda55e883553a6744c1be97055f60a59bfded4fca13e19555b19"
+}

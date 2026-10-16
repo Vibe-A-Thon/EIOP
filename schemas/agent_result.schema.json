@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:agent_result:2.0",
+  "title": "AgentResult v2",
+  "type": "object",
+  "required": [
+    "request_id",
+    "summary",
+    "evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "default": "2.0"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "SUCCEEDED",
+        "PARTIAL",
+        "FAILED",
+        "DENIED",
+        "CANCELLED"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "run_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tool_calls": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "warnings": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "explanation": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "proposals": {
+      "type": "array",
+      "default": []
+    },
+    "data": {
+      "description": "Optional structured payload returned by the agent.",
+      "title": "Data"
+    }
+  },
+  "additionalProperties": false
+}

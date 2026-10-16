@@ -1,0 +1,129 @@
+{
+  "schema_version": "eoip-benchmark-result/v1",
+  "created_at": "2026-10-03T06:58:54.606426+00:00",
+  "requirement": "NFR-PERF-001",
+  "manifest": {
+    "id": "mvp-v1",
+    "schema_version": "eoip-benchmark-manifest/v1",
+    "path": "config/benchmarks/mvp-v1.json"
+  },
+  "software": {
+    "eoip_git_revision": "354b8a95e3ce49c55c03e361442bcd67d23a0014",
+    "working_tree_dirty": true
+  },
+  "backend": "memory",
+  "run": "full",
+  "dataset": {
+    "scale": "baseline",
+    "seed": 42,
+    "vertices": 47140,
+    "edges": 223940,
+    "work_items": 2000,
+    "repos": 10,
+    "commits": 15000,
+    "files_symbols": 25000,
+    "document_sections": 5000
+  },
+  "hardware": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "architecture": "AMD64",
+    "python": "3.11.9",
+    "cpu_model": "Intel64 Family 6 Model 142 Stepping 12, GenuineIntel",
+    "cpu_logical_cores": 8,
+    "memory_total_bytes": 16897630208,
+    "storage_type": "NVMe SSD",
+    "storage_total_bytes": 62913490944,
+    "storage_free_bytes_at_start": 10071048192,
+    "containerized": false
+  },
+  "configuration": {
+    "samples": 100,
+    "warmups": 10,
+    "api_url": null,
+    "hugegraph_url": null
+  },
+  "preparation": {
+    "duration_seconds": 6.092,
+    "logical_mutations": 271080,
+    "logical_mutations_per_second": 44496.671
+  },
+  "workloads": [
+    {
+      "samples": 100,
+      "warmups": 10,
+      "latency_ms": {
+        "min": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.001,
+        "max": 0.001
+      },
+      "throughput_operations_per_second": 1231526.986,
+      "id": "indexed_entity_lookup",
+      "kind": "store_lookup",
+      "target_p95_ms": 500.0,
+      "status": "passed"
+    },
+    {
+      "samples": 100,
+      "warmups": 10,
+      "latency_ms": {
+        "min": 24.996,
+        "p50": 30.735,
+        "p95": 39.839,
+        "p99": 47.626,
+        "max": 49.965
+      },
+      "throughput_operations_per_second": 31.393,
+      "id": "standard_search",
+      "kind": "query_plan",
+      "target_p95_ms": 1000.0,
+      "status": "passed"
+    },
+    {
+      "id": "standard_api_search",
+      "status": "skipped",
+      "reason": "--api-url was not supplied",
+      "target_p95_ms": 1000
+    },
+    {
+      "samples": 100,
+      "warmups": 10,
+      "latency_ms": {
+        "min": 0.416,
+        "p50": 0.448,
+        "p95": 0.526,
+        "p99": 0.699,
+        "max": 1.672
+      },
+      "throughput_operations_per_second": 2113.178,
+      "id": "bounded_path",
+      "kind": "query_plan",
+      "target_p95_ms": 2000.0,
+      "status": "passed"
+    },
+    {
+      "samples": 100,
+      "warmups": 10,
+      "latency_ms": {
+        "min": 11.453,
+        "p50": 12.951,
+        "p95": 16.945,
+        "p99": 156.093,
+        "max": 160.403
+      },
+      "throughput_operations_per_second": 61.359,
+      "id": "bounded_impact",
+      "kind": "query_plan",
+      "target_p95_ms": 2000.0,
+      "status": "passed"
+    }
+  ],
+  "resources": {
+    "client_process_cpu_seconds": 11.297,
+    "client_peak_rss_bytes": 278712320,
+    "storage_bytes_consumed": 0,
+    "scope": "benchmark client process; server/container metrics require external collection"
+  },
+  "status": "passed"
+}

@@ -1,0 +1,275 @@
+{
+  "services": [
+    {
+      "id": "svc-pay-gateway-v2",
+      "name": "Payment Gateway API",
+      "version": "2.0.0",
+      "description": "MFS Payment Gateway API v2 for tokenized payment processing, multi-currency support, and idempotent retry handling.",
+      "swagger_url": "https://api-portal.mfs.internal/swagger/payment-gateway/v2/openapi.json",
+      "base_url": "https://api.mfs.internal/payment/v2",
+      "status": "active",
+      "owner": "Payment Services",
+      "contact": "mrivera@mfs.com",
+      "authentication": "OAuth2 Client Credentials (svc-payment-api)",
+      "updated_at": "2026-09-29T10:00:00.000Z",
+      "created_at": "2026-07-10T09:00:00.000Z"
+    },
+    {
+      "id": "svc-token-vault-v1",
+      "name": "Token Vault API",
+      "version": "1.0.0",
+      "description": "MFS Token Vault API for PCI DSS compliant cardholder data tokenization and HSM key management.",
+      "swagger_url": "https://api-portal.mfs.internal/swagger/token-vault/v1/openapi.json",
+      "base_url": "https://api.mfs.internal/vault/v1",
+      "status": "active",
+      "owner": "Platform Engineering",
+      "contact": "dokoye@mfs.com",
+      "authentication": "mTLS + OAuth2 (svc-token-vault)",
+      "updated_at": "2026-09-27T09:00:00.000Z",
+      "created_at": "2026-07-20T09:00:00.000Z"
+    },
+    {
+      "id": "svc-settlement-v1",
+      "name": "Settlement API",
+      "version": "1.0.0",
+      "description": "MFS Settlement API for batch settlement processing, reconciliation, and settlement file management.",
+      "swagger_url": "https://api-portal.mfs.internal/swagger/settlement/v1/openapi.json",
+      "base_url": "https://api.mfs.internal/settlement/v1",
+      "status": "beta",
+      "owner": "Platform Engineering",
+      "contact": "schen@mfs.com",
+      "authentication": "OAuth2 Client Credentials (svc-settlement)",
+      "updated_at": "2026-09-30T15:00:00.000Z",
+      "created_at": "2026-08-10T09:00:00.000Z"
+    },
+    {
+      "id": "svc-webhook-api-v1",
+      "name": "Webhook API v1",
+      "version": "1.0.0",
+      "description": "Merchant webhook registration and management API. Allows merchants to register callback URLs for payment event notifications, manage webhook configurations, and inspect delivery logs.",
+      "swagger_url": "https://api.mfs.internal/catalog/webhook-api/v1/swagger.json",
+      "base_url": "https://api.mfs.internal/webhook/v1",
+      "status": "active",
+      "owner": "Payments Core",
+      "contact": "payments-core@mfs.internal",
+      "authentication": "Bearer Token + HMAC Signature",
+      "updated_at": "2026-10-02T15:00:00.000Z",
+      "created_at": "2026-09-28T10:00:00.000Z"
+    },
+    {
+      "id": "svc-analytics-api-v1",
+      "name": "Analytics API v1",
+      "version": "1.0.0-beta",
+      "description": "Payment analytics and reporting API. Provides aggregated transaction metrics, settlement summaries, and merchant performance data for dashboards and scheduled reports.",
+      "swagger_url": "https://api.mfs.internal/catalog/analytics-api/v1/swagger.json",
+      "base_url": "https://api.mfs.internal/analytics/v1",
+      "status": "beta",
+      "owner": "Payments Core",
+      "contact": "payments-core@mfs.internal",
+      "authentication": "Bearer Token",
+      "updated_at": "2026-10-04T09:00:00.000Z",
+      "created_at": "2026-10-03T14:00:00.000Z"
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "ep-tokens-create",
+      "service_id": "svc-pay-gateway-v2",
+      "path": "/api/v2/tokens",
+      "method": "POST",
+      "name": "Create Payment Token",
+      "description": "Tokenize cardholder PAN data. Returns an irreversible token for use in payment processing.",
+      "version": "2.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-tokens-get",
+      "service_id": "svc-pay-gateway-v2",
+      "path": "/api/v2/tokens/{token_id}",
+      "method": "GET",
+      "name": "Get Token Metadata",
+      "description": "Retrieve token metadata (last four digits, brand, creation date). Never returns raw PAN.",
+      "version": "2.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-payments-create",
+      "service_id": "svc-pay-gateway-v2",
+      "path": "/api/v2/payments",
+      "method": "POST",
+      "name": "Process Payment",
+      "description": "Process a payment using a previously created token. Supports idempotency keys for safe retries.",
+      "version": "2.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-payments-retry",
+      "service_id": "svc-pay-gateway-v2",
+      "path": "/api/v2/payments/{payment_id}/retry",
+      "method": "POST",
+      "name": "Retry Payment",
+      "description": "Retry a failed payment with idempotency guarantee. Subject to circuit breaker policy.",
+      "version": "2.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-payments-status",
+      "service_id": "svc-pay-gateway-v2",
+      "path": "/api/v2/payments/{payment_id}/status",
+      "method": "GET",
+      "name": "Payment Status",
+      "description": "Check payment processing status and details.",
+      "version": "2.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-currencies-rates",
+      "service_id": "svc-pay-gateway-v2",
+      "path": "/api/v2/currencies/rates",
+      "method": "GET",
+      "name": "Get Exchange Rates",
+      "description": "Get current FX rates for supported currencies (USD, EUR, GBP, JPY, CAD, AUD, CHF).",
+      "version": "2.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-payments-convert",
+      "service_id": "svc-pay-gateway-v2",
+      "path": "/api/v2/payments/convert",
+      "method": "POST",
+      "name": "Process Payment with Currency Conversion",
+      "description": "Process a payment with automatic currency conversion at current FX rate.",
+      "version": "2.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-vault-encrypt",
+      "service_id": "svc-token-vault-v1",
+      "path": "/api/v1/vault/encrypt",
+      "method": "POST",
+      "name": "Encrypt Data",
+      "description": "Encrypt cardholder data using HSM-managed AES-256-GCM key.",
+      "version": "1.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-vault-decrypt",
+      "service_id": "svc-token-vault-v1",
+      "path": "/api/v1/vault/decrypt",
+      "method": "POST",
+      "name": "Decrypt Data",
+      "description": "Decrypt cardholder data using HSM-managed key. All operations are audit-logged.",
+      "version": "1.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-settlement-batch",
+      "service_id": "svc-settlement-v1",
+      "path": "/api/v1/settlements/batch",
+      "method": "POST",
+      "name": "Trigger Settlement Batch",
+      "description": "Trigger a settlement batch for pending transactions. Aggregates by merchant, currency, and acquirer.",
+      "version": "1.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-settlement-status",
+      "service_id": "svc-settlement-v1",
+      "path": "/api/v1/settlements/{batch_id}",
+      "method": "GET",
+      "name": "Settlement Batch Status",
+      "description": "Get settlement batch status including transaction count, total amount, and reconciliation state.",
+      "version": "1.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-001",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks",
+      "method": "POST",
+      "name": "Register Webhook URL",
+      "description": "Register a new webhook callback URL for a merchant to receive payment event notifications.",
+      "version": "1.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-002",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks",
+      "method": "GET",
+      "name": "List Registered Webhooks",
+      "description": "List all registered webhook configurations for the authenticated merchant.",
+      "version": "1.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-003",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks/{id}",
+      "method": "PUT",
+      "name": "Update Webhook Configuration",
+      "description": "Update an existing webhook configuration including callback URL, subscribed events, and retry policy.",
+      "version": "1.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-004",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks/{id}",
+      "method": "DELETE",
+      "name": "Deregister Webhook",
+      "description": "Deregister a webhook and stop all future event deliveries to the configured callback URL.",
+      "version": "1.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-005",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks/{id}/deliveries",
+      "method": "GET",
+      "name": "Get Delivery Log",
+      "description": "Retrieve the delivery log for a webhook including HTTP status, latency, and retry attempts.",
+      "version": "1.0.0",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-webhook-006",
+      "service_id": "svc-webhook-api-v1",
+      "path": "/webhooks/{id}/test",
+      "method": "POST",
+      "name": "Send Test Webhook",
+      "description": "Send a test webhook event to the configured callback URL to verify connectivity and HMAC signature validation.",
+      "version": "1.0.0",
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-analytics-001",
+      "service_id": "svc-analytics-api-v1",
+      "path": "/metrics/transactions",
+      "method": "GET",
+      "name": "Transaction Volume and Success Rates",
+      "description": "Retrieve aggregated transaction volume, success rates, and failure breakdowns over configurable time windows.",
+      "version": "1.0.0-beta",
+      "response_content_type": "application/json"
+    },
+    {
+      "id": "ep-analytics-002",
+      "service_id": "svc-analytics-api-v1",
+      "path": "/metrics/settlement",
+      "method": "GET",
+      "name": "Settlement Batch Summaries",
+      "description": "Retrieve settlement batch summaries including total amounts, transaction counts, and reconciliation status by merchant and date range.",
+      "version": "1.0.0-beta",
+      "response_content_type": "application/json"
+    }
+  ]
+}

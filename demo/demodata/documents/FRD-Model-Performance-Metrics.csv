@@ -1,0 +1,7 @@
+Model Version,Training Date,AUC,Precision,Recall,F1 Score,False Positive Rate,Inference P99 (ms),Status
+v1.8,2026-01-15,0.965,0.938,0.931,0.934,3.2%,42,Retired
+v1.9,2026-03-20,0.971,0.945,0.94,0.942,2.8%,40,Retired
+v2.0,2026-05-10,0.975,0.952,0.946,0.949,2.4%,38,Retired
+v2.1,2026-07-15,0.978,0.955,0.948,0.951,2.1%,36,Retired
+v2.2,2026-08-20,0.982,0.961,0.954,0.957,1.8%,35,Champion
+v2.3,2026-09-25,0.985,0.948,0.967,0.957,4.2%,34,Challenger (FP issue)

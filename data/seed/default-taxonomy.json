@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "taxonomy_id": "urn:eoip:taxonomy:default:1.0",
+  "title": "EOIP Default Taxonomy",
+  "description": "Standard classification hierarchies used for entity categorization, priority mapping, and status normalization across heterogeneous source systems.",
+  "created_at": "2026-10-09T00:00:00Z",
+  "taxonomies": {
+    "work_item_status": {
+      "description": "Normalized work item lifecycle statuses mapped from Jira, Azure DevOps, Linear, GitHub Issues, etc.",
+      "values": [
+        { "canonical": "BACKLOG", "description": "Not yet planned for a sprint/iteration.", "aliases": ["To Do", "New", "Open", "Icebox", "Triage"] },
+        { "canonical": "PLANNED", "description": "Scheduled for a specific sprint/iteration.", "aliases": ["Selected for Development", "Ready", "Committed", "Accepted"] },
+        { "canonical": "IN_PROGRESS", "description": "Actively being worked on.", "aliases": ["In Development", "Active", "Doing", "Started", "WIP"] },
+        { "canonical": "IN_REVIEW", "description": "Implementation complete, awaiting review.", "aliases": ["In Review", "Code Review", "PR Open", "Awaiting Review", "Peer Review"] },
+        { "canonical": "IN_TEST", "description": "Under QA/testing.", "aliases": ["Testing", "QA", "In QA", "Validation", "UAT"] },
+        { "canonical": "DONE", "description": "Completed and verified.", "aliases": ["Done", "Closed", "Resolved", "Complete", "Shipped", "Released"] },
+        { "canonical": "BLOCKED", "description": "Cannot proceed due to dependencies.", "aliases": ["Blocked", "Impediment", "On Hold", "Waiting"] },
+        { "canonical": "CANCELLED", "description": "Will not be implemented.", "aliases": ["Won't Do", "Cancelled", "Rejected", "Declined", "Duplicate"] }
+      ]
+    },
+    "priority": {
+      "description": "Normalized priority levels.",
+      "values": [
+        { "canonical": "CRITICAL", "numeric": 1, "description": "System-down, data-loss, security breach.", "aliases": ["P0", "Blocker", "Highest", "Urgent", "Showstopper"] },
+        { "canonical": "HIGH", "numeric": 2, "description": "Major feature broken, no workaround.", "aliases": ["P1", "Critical", "Major", "High"] },
+        { "canonical": "MEDIUM", "numeric": 3, "description": "Feature degraded, workaround exists.", "aliases": ["P2", "Normal", "Medium", "Standard"] },
+        { "canonical": "LOW", "numeric": 4, "description": "Minor issue, cosmetic, or nice-to-have.", "aliases": ["P3", "Minor", "Low", "Trivial"] },
+        { "canonical": "INFORMATIONAL", "numeric": 5, "description": "Enhancement suggestion, not a defect.", "aliases": ["P4", "Enhancement", "Wish", "Suggestion"] }
+      ]
+    },
+    "incident_severity": {
+      "description": "Normalized incident severity following industry standards (PagerDuty/OpsGenie/ServiceNow conventions).",
+      "values": [
+        { "canonical": "SEV1", "description": "Complete service outage or data breach. All hands. Customer-impacting.", "sla_response_minutes": 15, "sla_resolution_hours": 4 },
+        { "canonical": "SEV2", "description": "Major degradation, partial outage. Core functionality impaired.", "sla_response_minutes": 30, "sla_resolution_hours": 8 },
+        { "canonical": "SEV3", "description": "Minor degradation, non-critical functionality affected.", "sla_response_minutes": 120, "sla_resolution_hours": 24 },
+        { "canonical": "SEV4", "description": "Cosmetic issue, no functional impact.", "sla_response_minutes": 480, "sla_resolution_hours": 72 }
+      ]
+    },
+    "code_language": {
+      "description": "Supported programming languages for code graph ingestion.",
+      "values": [
+        { "canonical": "python", "extensions": [".py", ".pyi", ".pyx"], "parser": "tree-sitter-python" },
+        { "canonical": "typescript", "extensions": [".ts", ".tsx"], "parser": "tree-sitter-typescript" },
+        { "canonical": "javascript", "extensions": [".js", ".jsx", ".mjs", ".cjs"], "parser": "tree-sitter-javascript" },
+        { "canonical": "java", "extensions": [".java"], "parser": "tree-sitter-java" },
+        { "canonical": "go", "extensions": [".go"], "parser": "tree-sitter-go" },
+        { "canonical": "rust", "extensions": [".rs"], "parser": "tree-sitter-rust" },
+        { "canonical": "csharp", "extensions": [".cs"], "parser": "tree-sitter-c-sharp" },
+        { "canonical": "cpp", "extensions": [".cpp", ".cc", ".cxx", ".hpp", ".h"], "parser": "tree-sitter-cpp" },
+        { "canonical": "ruby", "extensions": [".rb"], "parser": "tree-sitter-ruby" },
+        { "canonical": "kotlin", "extensions": [".kt", ".kts"], "parser": "tree-sitter-kotlin" },
+        { "canonical": "swift", "extensions": [".swift"], "parser": "tree-sitter-swift" },
+        { "canonical": "scala", "extensions": [".scala", ".sc"], "parser": "tree-sitter-scala" }
+      ]
+    },
+    "compliance_framework": {
+      "description": "Supported regulatory and compliance frameworks.",
+      "values": [
+        { "canonical": "SOC2", "full_name": "SOC 2 Type II", "authority": "AICPA", "categories": ["Security", "Availability", "Processing Integrity", "Confidentiality", "Privacy"] },
+        { "canonical": "ISO27001", "full_name": "ISO/IEC 27001:2022", "authority": "ISO", "categories": ["Information Security Management"] },
+        { "canonical": "PCI_DSS", "full_name": "PCI DSS v4.0", "authority": "PCI SSC", "categories": ["Cardholder Data Protection"] },
+        { "canonical": "GDPR", "full_name": "General Data Protection Regulation", "authority": "EU", "categories": ["Data Protection", "Privacy"] },
+        { "canonical": "HIPAA", "full_name": "Health Insurance Portability and Accountability Act", "authority": "HHS", "categories": ["PHI Protection"] },
+        { "canonical": "NIST_CSF", "full_name": "NIST Cybersecurity Framework 2.0", "authority": "NIST", "categories": ["Identify", "Protect", "Detect", "Respond", "Recover", "Govern"] },
+        { "canonical": "FedRAMP", "full_name": "Federal Risk and Authorization Management Program", "authority": "GSA", "categories": ["Cloud Security"] },
+        { "canonical": "EU_AI_ACT", "full_name": "EU Artificial Intelligence Act", "authority": "EU", "categories": ["AI Risk Classification", "Transparency", "Accountability"] }
+      ]
+    },
+    "graph_domain": {
+      "description": "Logical partitions of the enterprise knowledge graph.",
+      "values": [
+        { "canonical": "code", "description": "Source code, repositories, builds, CI/CD.", "color": "#4A90D9" },
+        { "canonical": "work", "description": "Project management, sprints, releases.", "color": "#F5A623" },
+        { "canonical": "knowledge", "description": "Documents, wikis, ADRs, runbooks.", "color": "#7ED321" },
+        { "canonical": "identity", "description": "People, teams, organizations.", "color": "#9013FE" },
+        { "canonical": "operations", "description": "Services, deployments, incidents.", "color": "#D0021B" },
+        { "canonical": "evidence", "description": "Tests, quality gates, compliance checks.", "color": "#50E3C2" },
+        { "canonical": "compliance", "description": "Regulatory frameworks, controls, policies.", "color": "#B8E986" },
+        { "canonical": "design", "description": "UI/UX designs, prototypes, components.", "color": "#BD10E0" }
+      ]
+    }
+  }
+}

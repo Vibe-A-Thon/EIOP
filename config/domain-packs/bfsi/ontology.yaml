@@ -1,0 +1,66 @@
+ontology_version: "0.4.0"
+schema_version: "1.2"
+
+domains:
+  - BUSINESS
+  - WORK
+
+classes:
+  Trade:
+    description: A financial trade or order executed on an instrument.
+    properties:
+      trade_id: TEXT
+      instrument: TEXT
+      notional: DOUBLE
+      trade_date: DATE
+      canonical_id: TEXT
+      name: TEXT
+    relationships:
+      SETTLES_INTO:
+        out: [Trade]
+        in: [Settlement]
+
+  Settlement:
+    description: A settlement instruction and its lifecycle state.
+    properties:
+      settlement_id: TEXT
+      settlement_status: TEXT
+      settlement_date: DATE
+      canonical_id: TEXT
+      name: TEXT
+    relationships:
+      FUNDS:
+        out: [Settlement]
+        in: [Account]
+
+  Account:
+    description: A customer or ledger account under a business capability.
+    properties:
+      account_number: TEXT
+      account_type: TEXT
+      currency: TEXT
+      canonical_id: TEXT
+      name: TEXT
+    relationships:
+      HELD_UNDER:
+        out: [Account]
+        in: [BusinessCapability]
+
+  Policy:
+    description: An insurance policy linked to knowledge documentation.
+    properties:
+      policy_number: TEXT
+      policy_type: TEXT
+      premium: DOUBLE
+      canonical_id: TEXT
+      name: TEXT
+    relationships:
+      GOVERNED_BY:
+        out: [Policy]
+        in: [Document, KBArticle]
+
+validators:
+  - id: GAP-DP-BFSI-001
+    description: Settlements must settle within T+2 of trade_date.
+    applies_to: [Trade, Settlement]
+    severity: ERROR

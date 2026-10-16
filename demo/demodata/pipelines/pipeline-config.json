@@ -1,0 +1,111 @@
+{
+  "pipeline_id": "mfs-fraud-platform-pipeline",
+  "version": "2.0.0",
+  "description": "Automated multi-source ingestion pipeline for MFS Fraud Detection platform demo. Loads data from 14 source systems with validation gates between stages.",
+  "stages": [
+    {
+      "name": "meta-bootstrap",
+      "description": "Initialize meta graph with MFS Fraud Detection domain ontology",
+      "action": "bootstrap_meta_graph",
+      "required": true
+    },
+    {
+      "name": "rally-ingest",
+      "description": "Ingest Rally epics, features, and user stories (EPC-201, EPC-202, EPC-203)",
+      "action": "ingest_rally",
+      "source": "rally.json",
+      "required": true
+    },
+    {
+      "name": "jira-ingest",
+      "description": "Ingest Jira work items (FRD project) with project hierarchy and cross-references",
+      "action": "ingest_jira",
+      "source": "jira.json",
+      "connector_config": "config/mappings/jira-mvp.yaml",
+      "required": true
+    },
+    {
+      "name": "gitlab-ingest",
+      "description": "Ingest GitLab merge requests, pipelines, and CI/CD jobs for mfs-fraud-engine",
+      "action": "ingest_gitlab",
+      "source": "gitlab.json",
+      "required": true
+    },
+    {
+      "name": "servicenow-ingest",
+      "description": "Ingest ServiceNow changes (CHG0090401, CHG0090501, CHG0090601) and incidents (INC0080201, INC0080202)",
+      "action": "ingest_servicenow",
+      "source": "servicenow.json",
+      "required": true
+    },
+    {
+      "name": "confluence-ingest",
+      "description": "Ingest Confluence wiki pages for fraud detection knowledge graph",
+      "action": "ingest_confluence",
+      "source": "confluence.json",
+      "required": true
+    },
+    {
+      "name": "figma-ingest",
+      "description": "Ingest Figma design files for fraud dashboard and AML case management UI",
+      "action": "ingest_figma",
+      "source": "figma.json",
+      "required": false
+    },
+    {
+      "name": "qtest-ingest",
+      "description": "Ingest qTest test suites, cases (TC-FRD-001 through TC-FRD-007), and test runs",
+      "action": "ingest_qtest",
+      "source": "qtest.json",
+      "required": true
+    },
+    {
+      "name": "code-graph-ingest",
+      "description": "Load code graph from JSON for mfs-fraud-engine repository",
+      "action": "load_code_graph",
+      "source": "code-graph.json",
+      "required": true
+    },
+    {
+      "name": "api-portal-ingest",
+      "description": "Ingest API service and endpoint definitions for Fraud, TxnMonitor, AML, and Model Management APIs",
+      "action": "ingest_api_portal",
+      "source": "api-portal.json",
+      "required": true
+    },
+    {
+      "name": "kibana-ingest",
+      "description": "Ingest Kibana dashboards, index patterns, and saved searches for fraud and AML monitoring",
+      "action": "ingest_kibana",
+      "source": "kibana.json",
+      "required": false
+    },
+    {
+      "name": "grafana-ingest",
+      "description": "Ingest Grafana dashboards, alert rules, and datasources for fraud engine SLOs",
+      "action": "ingest_grafana",
+      "source": "grafana.json",
+      "required": false
+    },
+    {
+      "name": "datadog-ingest",
+      "description": "Ingest Datadog dashboards and monitors for fraud engine and transaction monitor health",
+      "action": "ingest_datadog",
+      "source": "datadog.json",
+      "required": false
+    },
+    {
+      "name": "crawler-ingest",
+      "description": "Ingest crawled pages from MFS fraud wiki, ML model registry, and AML compliance portal",
+      "action": "ingest_crawler",
+      "source": "crawler-sites.json",
+      "required": false
+    },
+    {
+      "name": "cross-reference-validation",
+      "description": "Validate cross-references between all ingested systems: Jira-Rally epic links, Jira-GitLab MR links, ServiceNow-Jira change records, qTest-Jira test coverage",
+      "action": "validate_cross_references",
+      "required": true
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.546230Z",
+  "event_id": "46adf5a80321660014aa682df3a7cc9e38f33c3a8cb9034b888d09b32cb74600",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "7e3da1b3c2b20c0b6d4f696b5e6080238464837a",
+    "message": "mvp implementation gaps"
+  },
+  "payload_hash": "35e85fb4d9bf08e3cc1df524938cbf3a238bbab6cbc5468a8e919f43773ea618",
+  "schema_version": "1.0",
+  "source_record_id": "demo:7e3da1b3c2b20c0b6d4f696b5e6080238464837a",
+  "source_system": "git",
+  "source_version": "35e85fb4d9bf08e3cc1df524938cbf3a238bbab6cbc5468a8e919f43773ea618"
+}

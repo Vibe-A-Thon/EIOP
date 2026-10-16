@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:graph_revision:1.0",
+  "title": "GraphRevision v1",
+  "type": "object",
+  "required": ["schema_version", "canonical_id", "entity_type", "revision", "properties", "source_event_id"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "canonical_id": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "entity_type": {"type": "string", "minLength": 1, "maxLength": 128},
+    "revision": {"$ref": "#/$defs/revision"},
+    "properties": {"type": "object"},
+    "source_event_id": {"type": "string", "minLength": 1, "maxLength": 512}
+  },
+  "$defs": {
+    "revision": {
+      "type": "object",
+      "required": ["revision_id", "valid_from", "observed_at", "is_current"],
+      "properties": {
+        "revision_id": {"type": "string", "minLength": 1, "maxLength": 512},
+        "valid_from": {"type": "string", "format": "date-time"},
+        "valid_to": {"type": ["string", "null"], "format": "date-time"},
+        "observed_at": {"type": "string", "format": "date-time"},
+        "is_current": {"type": "boolean"},
+        "previous_revision": {"type": ["string", "null"], "maxLength": 512},
+        "source_version": {"type": ["string", "null"], "maxLength": 512}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

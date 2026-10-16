@@ -1,0 +1,8 @@
+{
+  "test_suites": [{"id": "TS-88", "name": "Checkout regression"}],
+  "test_cases": [
+    {"id": "TC-884", "name": "Low-risk order is automatically authorized", "status": "Approved", "automation_status": "Automated", "covers": ["PAY-142", "POST /orders"]},
+    {"id": "TC-901", "name": "Risk timeout uses safe fallback", "status": "Approved", "automation_status": "Automated", "covers": ["PAY-155"]}
+  ],
+  "test_runs": [{"id": "TR-4815", "name": "Pipeline 4815 qTest execution", "status": "Passed", "passed": 128, "failed": 0, "skipped": 2}]
+}

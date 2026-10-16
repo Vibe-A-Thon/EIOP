@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.429556Z",
+  "event_id": "4edbd6ed955d023d730ab00b237b776d676518eb0158f001520f7bf178af8f06",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "cbef5d392e3d395d1e9aeeac24b4ae67e55801b8",
+    "message": "ticket-20261004-004: Restore validation and audit evidence foundation\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+  },
+  "payload_hash": "9aa112a064df539e55752e554e70c08dad94d5459c467b51dfc0b72b58421757",
+  "schema_version": "1.0",
+  "source_record_id": "demo:cbef5d392e3d395d1e9aeeac24b4ae67e55801b8",
+  "source_system": "git",
+  "source_version": "9aa112a064df539e55752e554e70c08dad94d5459c467b51dfc0b72b58421757"
+}

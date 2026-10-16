@@ -1,0 +1,228 @@
+"""Read-only MCP facade using the same authenticated REST/query API (FR-MCP-001, FR-MCP-002)."""
+
+import hmac
+import os
+
+import httpx
+from eoip.runtime import api_token
+from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import JSONResponse
+from starlette.routing import Route
+
+
+def create_app():
+    token = api_token()
+    mcp = FastMCP(
+        "EOIP",
+        stateless_http=True,
+        json_response=True,
+        transport_security=TransportSecuritySettings(
+            allowed_hosts=["localhost:*", "127.0.0.1:*", "eoip-mcp:*"],
+            allowed_origins=["http://localhost:*", "http://127.0.0.1:*"],
+        ),
+    )
+
+    async def call(method, path, **kwargs):
+        from mcp.shared.exceptions import McpError
+        from mcp.types import ErrorData
+
+        async with httpx.AsyncClient(
+            base_url=os.getenv("EOIP_API_URL", "http://eoip-api:8000"),
+            timeout=60,
+            headers={"Authorization": f"Bearer {token}"},
+            trust_env=False,
+        ) as client:
+            try:
+                response = await client.request(method, path, **kwargs)
+                response.raise_for_status()
+            except httpx.HTTPStatusError as exc:
+                try:
+                    detail = exc.response.json().get("detail", exc.response.text)
+                except ValueError:
+                    detail = exc.response.text
+                raise McpError(
+                    ErrorData(
+                        code=exc.response.status_code,
+                        message=f"EOIP API error {exc.response.status_code}: {detail}",
+                    )
+                ) from exc
+            except httpx.HTTPError as exc:
+                raise McpError(
+                    ErrorData(code=503, message=f"EOIP API unavailable: {type(exc).__name__}")
+                ) from exc
+            return response.json()
+
+    @mcp.tool()
+    async def search(q: str, limit: int = 25) -> dict:
+        """Search persisted entities by identifier, name, or source path."""
+        return await call("GET", "/api/v1/search", params={"q": q, "limit": limit})
+
+    @mcp.tool()
+    async def entity(canonical_id: str) -> dict:
+        """Read an entity and its incoming/outgoing evidence relationships."""
+        from urllib.parse import quote
+
+        return await call("GET", "/api/v1/entities/" + quote(canonical_id, safe=""))
+
+    @mcp.tool()
+    async def path(source_id: str, target_id: str, max_depth: int = 8) -> dict:
+        """Find a bounded shortest path with source evidence."""
+        return await call(
+            "POST",
+            "/api/v1/path",
+            json={"source_id": source_id, "target_id": target_id, "max_depth": max_depth},
+        )
+
+    @mcp.tool()
+    async def impact(canonical_id: str, max_depth: int = 4) -> dict:
+        """Return bounded graph impact and evidence paths."""
+        return await call(
+            "POST", "/api/v1/impact", json={"canonical_id": canonical_id, "max_depth": max_depth}
+        )
+
+    @mcp.tool()
+    async def lineage(
+        canonical_id: str,
+        max_depth: int = 4,
+        result_limit: int = 100,
+    ) -> dict:
+        """Trace an entity to its source evidence and ingestion run."""
+        return await call(
+            "POST",
+            "/api/v1/lineage",
+            json={
+                "canonical_id": canonical_id,
+                "max_depth": max_depth,
+                "result_limit": result_limit,
+            },
+        )
+
+    @mcp.tool()
+    async def trace_impact(canonical_id: str, max_depth: int = 4) -> dict:
+        """Run the deterministic, read-only TraceImpact agent."""
+        return await call(
+            "POST", "/api/v1/agents/trace-impact", json={"canonical_id": canonical_id, "max_depth": max_depth}
+        )
+
+    @mcp.tool()
+    async def list_agents() -> dict:
+        """List governed Deep Agents, capabilities, risk, and execution budgets."""
+        return await call("GET", "/api/v1/agents")
+
+    @mcp.tool()
+    async def run_agent(
+        agent_id: str,
+        goal: str,
+        context_refs: list[str] | None = None,
+        dry_run: bool = False,
+        synthesize: bool = False,
+    ) -> dict:
+        """Run an allowlisted agent; mutations can only be returned as inert proposals."""
+        from urllib.parse import quote
+
+        return await call(
+            "POST",
+            "/api/v1/agents/" + quote(agent_id, safe="") + "/runs",
+            json={
+                "goal": goal,
+                "context_refs": context_refs or [],
+                "dry_run": dry_run,
+                "synthesize": synthesize,
+            },
+        )
+
+    @mcp.tool()
+    async def agent_explanation(run_id: str) -> dict:
+        """Return evidence, confidence, uncertainty, and policy decisions for an agent run."""
+        from urllib.parse import quote
+
+        return await call(
+            "GET",
+            "/api/v1/agents/runs/" + quote(run_id, safe="") + "/explanation",
+        )
+
+    @mcp.tool()
+    async def blast_radius(canonical_id: str, max_depth: int = 4) -> dict:
+        """Compute the bounded dependency blast radius for a canonical entity."""
+        return await call(
+            "POST",
+            "/api/v1/graph/blast-radius",
+            json={"canonical_id": canonical_id, "max_depth": max_depth},
+        )
+
+    @mcp.tool()
+    async def graph_surprises(limit: int = 20) -> dict:
+        """Find surprising edges and high-similarity missing graph links."""
+        return await call("POST", "/api/v1/graph/surprises", json={"limit": limit})
+
+    @mcp.tool()
+    async def validate_ontology() -> dict:
+        """Run ontology/graph validation and return findings with quality metrics."""
+        return await call("POST", "/api/v1/admin/validation", json={})
+
+    @mcp.tool()
+    async def neighbors(
+        canonical_id: str,
+        max_depth: int = 1,
+        result_limit: int = 50,
+    ) -> dict:
+        """Return the bounded direct neighborhood of an entity with evidence."""
+        return await call(
+            "POST",
+            "/api/v1/neighborhood",
+            json={
+                "canonical_id": canonical_id,
+                "max_depth": max_depth,
+                "result_limit": result_limit,
+            },
+        )
+
+    @mcp.tool()
+    async def document(canonical_id: str) -> dict:
+        """Read a knowledge document/space entity and its contained sections."""
+        from urllib.parse import quote
+
+        return await call("GET", "/api/v1/entities/" + quote(canonical_id, safe=""))
+
+    @mcp.tool()
+    async def code_symbol(qualified_name: str) -> dict:
+        """Look up a code symbol by qualified name and return graph context."""
+        return await call("GET", "/api/v1/search", params={"q": qualified_name, "limit": 5})
+
+    @mcp.tool()
+    async def jira_issue(issue_key: str) -> dict:
+        """Look up a Jira issue by key and return graph context with linked entities."""
+        return await call("GET", "/api/v1/search", params={"q": issue_key, "limit": 5})
+
+    @mcp.tool()
+    async def evidence(canonical_id: str) -> dict:
+        """Retrieve source evidence and provenance for a specific entity."""
+        return await call(
+            "POST",
+            "/api/v1/lineage",
+            json={"canonical_id": canonical_id, "max_depth": 2, "result_limit": 50},
+        )
+
+    @mcp.tool()
+    async def query(plan: dict) -> dict:
+        """Execute a validated QueryPlan against the graph."""
+        return await call("POST", "/api/v1/query", json=plan)
+
+    app = mcp.streamable_http_app()
+
+    class TokenBoundary(BaseHTTPMiddleware):
+        async def dispatch(self, request, call_next):
+            if request.url.path != "/health/live" and not hmac.compare_digest(
+                request.headers.get("authorization", "").removeprefix("Bearer "), token
+            ):
+                return JSONResponse({"detail": "A valid Bearer token is required"}, status_code=401)
+            return await call_next(request)
+
+    async def health(request):
+        return JSONResponse({"status": "ok"})
+
+    app.routes.append(Route("/health/live", health))
+    app.add_middleware(TokenBoundary)
+    return app

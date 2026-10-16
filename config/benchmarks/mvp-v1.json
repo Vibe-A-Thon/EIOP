@@ -1,0 +1,60 @@
+{
+  "schema_version": "eoip-benchmark-manifest/v1",
+  "manifest_id": "mvp-v1",
+  "requirement": "NFR-PERF-001",
+  "description": "EOIP MVP deterministic graph query benchmark",
+  "dataset": {
+    "generator": "scripts.benchmark_data",
+    "seed": 42,
+    "profiles": {
+      "smoke": "s",
+      "full": "baseline"
+    }
+  },
+  "reference_hardware": {
+    "cpu_logical_cores_available_to_docker": 8,
+    "memory_gib": 32,
+    "storage": "local NVMe or SSD"
+  },
+  "bulk_batch_size": 500,
+  "runs": {
+    "smoke": {
+      "warmups": 3,
+      "samples": 20
+    },
+    "full": {
+      "warmups": 10,
+      "samples": 100
+    }
+  },
+  "workloads": [
+    {
+      "id": "indexed_entity_lookup",
+      "kind": "store_lookup",
+      "target_p95_ms": 500
+    },
+    {
+      "id": "standard_search",
+      "kind": "query_plan",
+      "intent": "SEARCH",
+      "target_p95_ms": 1000
+    },
+    {
+      "id": "standard_api_search",
+      "kind": "http_api",
+      "target_p95_ms": 1000
+    },
+    {
+      "id": "bounded_path",
+      "kind": "query_plan",
+      "intent": "PATH",
+      "target_p95_ms": 2000
+    },
+    {
+      "id": "bounded_impact",
+      "kind": "query_plan",
+      "intent": "IMPACT",
+      "target_p95_ms": 2000
+    }
+  ]
+}

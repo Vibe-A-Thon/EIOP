@@ -1,0 +1,431 @@
+<title>EOIP Roles Dashboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg:#f5f6f8;--bg2:#fff;--bg3:#f0f1f4;--fg:#111827;--fg2:#6b7280;--fg3:#9ca3af;
+  --accent:#4338ca;--accent-l:#e0e7ff;--border:#e5e7eb;
+  --red:#dc2626;--orange:#ea580c;--blue:#2563eb;--gray:#6b7280;
+  --green:#059669;--yellow:#d97706;--purple:#7c3aed;--slate:#64748b;
+  --r:8px;--shadow:0 1px 2px rgba(0,0,0,.05);
+  --font:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c0d12;--bg2:#161823;--bg3:#1e2030;--fg:#e5e7eb;--fg2:#9ca3af;--fg3:#6b7280;
+  --accent:#818cf8;--accent-l:#1e1b4b;--border:#2a2d3e;--shadow:0 1px 3px rgba(0,0,0,.3);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0c0d12;--bg2:#161823;--bg3:#1e2030;--fg:#e5e7eb;--fg2:#9ca3af;--fg3:#6b7280;
+  --accent:#818cf8;--accent-l:#1e1b4b;--border:#2a2d3e;--shadow:0 1px 3px rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);padding-inline:16px;padding-block:0}
+*{box-sizing:border-box}
+.hdr{position:sticky;top:env(safe-area-inset-top,0);background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 0;z-index:10}
+.hdr h1{font-size:1.15rem;font-weight:700;margin:0;letter-spacing:-.02em}
+.hdr-sub{font-size:.75rem;color:var(--fg2);margin-top:2px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}
+.tab{padding:5px 12px;border:1px solid var(--border);border-radius:20px;background:var(--bg);color:var(--fg2);font-size:.72rem;font-family:var(--font);cursor:pointer;white-space:nowrap;transition:all .15s}
+.tab:hover{border-color:var(--accent);color:var(--accent)}
+.tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.kpi-row{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;min-width:80px;box-shadow:var(--shadow)}
+.kpi-n{font-size:1.4rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.kpi-l{font-size:.65rem;color:var(--fg2);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.bar-w{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px}
+.bar-f{height:100%;border-radius:3px;transition:width .4s}
+.bar-g{background:var(--green)}.bar-y{background:var(--yellow)}
+.sect{margin-top:18px}
+.sect-h{font-size:.9rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sect-badge{font-size:.65rem;background:var(--accent-l);color:var(--accent);padding:2px 8px;border-radius:10px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:4px;box-shadow:var(--shadow);overflow:hidden}
+.card:hover{border-color:var(--accent)}
+.crow{display:flex;align-items:center;gap:6px;padding:8px 12px;cursor:pointer;flex-wrap:nowrap}
+.cid{font-family:var(--mono);font-size:.7rem;font-weight:500;color:var(--accent);min-width:95px;white-space:nowrap}
+.ctitle{flex:1;font-size:.8rem;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pri{display:inline-block;padding:1px 7px;border-radius:8px;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.pri-P0{background:#fef2f2;color:var(--red)}.pri-P1{background:#fff7ed;color:var(--orange)}.pri-P2{background:#eff6ff;color:var(--blue)}.pri-P3{background:#f3f4f6;color:var(--gray)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .pri-P0{background:#450a0a} :root:not([data-theme="light"]) .pri-P1{background:#431407} :root:not([data-theme="light"]) .pri-P2{background:#172554} :root:not([data-theme="light"]) .pri-P3{background:#1f2937}}
+:root[data-theme="dark"] .pri-P0{background:#450a0a}:root[data-theme="dark"] .pri-P1{background:#431407}:root[data-theme="dark"] .pri-P2{background:#172554}:root[data-theme="dark"] .pri-P3{background:#1f2937}
+.sbtn{padding:2px 9px;border-radius:8px;font-size:.6rem;font-weight:600;text-transform:uppercase;border:none;cursor:pointer;font-family:var(--font);white-space:nowrap}
+.s-ns{background:#f1f5f9;color:var(--slate)}.s-ip{background:#fef3c7;color:var(--yellow)}.s-dn{background:#d1fae5;color:var(--green)}.s-bl{background:#fee2e2;color:var(--red)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .s-ns{background:#1e293b} :root:not([data-theme="light"]) .s-ip{background:#422006} :root:not([data-theme="light"]) .s-dn{background:#064e3b} :root:not([data-theme="light"]) .s-bl{background:#450a0a}}
+:root[data-theme="dark"] .s-ns{background:#1e293b}:root[data-theme="dark"] .s-ip{background:#422006}:root[data-theme="dark"] .s-dn{background:#064e3b}:root[data-theme="dark"] .s-bl{background:#450a0a}
+.chev{width:14px;height:14px;transition:transform .2s;color:var(--fg3);flex-shrink:0}
+.card.open .chev{transform:rotate(90deg)}
+.cdet{padding:0 12px 12px;display:none;border-top:1px solid var(--border);font-size:.78rem;line-height:1.5;margin-top:0}
+.card.open .cdet{display:block}
+.cdet p{margin:8px 0 0}
+.dg{display:grid;grid-template-columns:90px 1fr;gap:3px 10px;margin-top:8px;font-size:.75rem}
+.dl{color:var(--fg2);font-weight:500}.dv{min-width:0}
+.risk-tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:.6rem;font-weight:600}
+.risk-crit{background:#fef2f2;color:#991b1b}.risk-high{background:#fff7ed;color:#9a3412}.risk-med{background:#fef9c3;color:#854d0e}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .risk-crit{background:#450a0a;color:#fca5a5} :root:not([data-theme="light"]) .risk-high{background:#431407;color:#fdba74} :root:not([data-theme="light"]) .risk-med{background:#422006;color:#fde68a}}
+:root[data-theme="dark"] .risk-crit{background:#450a0a;color:#fca5a5}:root[data-theme="dark"] .risk-high{background:#431407;color:#fdba74}:root[data-theme="dark"] .risk-med{background:#422006;color:#fde68a}
+.search{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--fg);font-family:var(--font);font-size:.8rem;outline:none;margin-top:10px}
+.search:focus{border-color:var(--accent)}
+.empty{text-align:center;color:var(--fg2);padding:30px 0;font-size:.85rem}
+.export-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.export-btn{padding:5px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--fg2);font-size:.72rem;cursor:pointer;font-family:var(--font)}
+.export-btn:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:600px){.cid{min-width:70px;font-size:.65rem}.ctitle{font-size:.75rem}.kpi{padding:8px 10px;min-width:65px}.kpi-n{font-size:1.1rem}}
+</style>
+
+<div class="hdr">
+  <h1>EOIP Roles & Responsibilities</h1>
+  <div class="hdr-sub">15 roles, 200+ tasks across SDLC & AIDLC lifecycle</div>
+  <div class="kpi-row" id="kpis"></div>
+  <div class="bar-w" id="masterBar"><div class="bar-f bar-g" id="masterFill" style="width:0"></div></div>
+  <div class="tabs" id="roleTabs"></div>
+  <input class="search" placeholder="Search tasks, roles, deliverables..." id="searchBox">
+  <div class="export-row">
+    <button class="export-btn" onclick="exportJSON()">Export JSON</button>
+    <button class="export-btn" onclick="exportReport()">Weekly Report</button>
+  </div>
+</div>
+<div id="content"></div>
+
+<script>
+const ROLES=[
+{id:"CEO",name:"CEO",group:"Executive",tasks:[
+{id:"TASK-CEO-001",title:"Define product vision — Enterprise Cognitive Intelligence Platform",pri:"P0",del:"Product vision document",risk:"",dep:""},
+{id:"TASK-CEO-002",title:"Validate $14.4B TAM with market research",pri:"P0",del:"TAM validation report",risk:"Overestimated TAM erodes credibility",dep:""},
+{id:"TASK-CEO-003",title:"Competitive positioning vs Palantir, Databricks, Neo4j",pri:"P0",del:"Competitive battlecards",risk:"",dep:"CTO"},
+{id:"TASK-CEO-004",title:"Define pricing strategy (Community/Professional/Enterprise/OEM)",pri:"P1",del:"Pricing model with margin analysis",risk:"Underpricing",dep:"Licensing Mgr"},
+{id:"TASK-CEO-005",title:"Prepare investor pitch with Phase 4 as product moat",pri:"P1",del:"Investor deck, financial model",risk:"Dilution",dep:""},
+{id:"TASK-CEO-006",title:"Pursue strategic partnerships (cloud providers, SIs)",pri:"P1",del:"Partnership pipeline 5+ prospects",risk:"",dep:"Legal"},
+{id:"TASK-CEO-007",title:"Establish advisory board (3-5 domain experts)",pri:"P2",del:"Signed advisors",risk:"",dep:""},
+{id:"TASK-CEO-008",title:"Approve go-to-market strategy and launch timeline",pri:"P0",del:"Signed-off GTM plan",risk:"",dep:"Marketing Mgr, CTO"},
+{id:"TASK-CEO-009",title:"Define success metrics: ARR, NPS, churn targets",pri:"P1",del:"KPI dashboard",risk:"",dep:""},
+{id:"TASK-CEO-010",title:"Establish design partner program (3-5 partners)",pri:"P1",del:"Design partner agreements",risk:"",dep:"Legal"},
+{id:"TASK-CEO-011",title:"Hire key roles: VP Eng, VP Sales, Head of AI",pri:"P1",del:"Hiring plan",risk:"Bus factor = 1",dep:""},
+{id:"TASK-CEO-012",title:"IP protection strategy — patents before disclosure",pri:"P0",del:"Patent filings",risk:"Competitors copy unprotected innovations",dep:"Legal"},
+{id:"TASK-CEO-013",title:"Define data residency policy for global customers",pri:"P1",del:"Data sovereignty policy",risk:"",dep:"Security Officer"},
+]},
+{id:"CTO",name:"CTO",group:"Executive",tasks:[
+{id:"TASK-CTO-001",title:"Maintain system architecture across 21+ disciplines",pri:"P0",del:"Architecture Decision Records",risk:"",dep:""},
+{id:"TASK-CTO-002",title:"Define scalability targets: 10K users, 100M nodes, sub-second queries",pri:"P0",del:"Scalability design doc",risk:"In-memory stores won't scale",dep:""},
+{id:"TASK-CTO-003",title:"Evaluate technology stack (graph DBs, vector stores, LLMs)",pri:"P0",del:"Tech evaluation matrix",risk:"",dep:"Lead AI Eng"},
+{id:"TASK-CTO-004",title:"Design multi-region deployment architecture",pri:"P1",del:"Multi-region diagram",risk:"",dep:"INFRA-003"},
+{id:"TASK-CTO-005",title:"Establish code review standards and quality gates",pri:"P0",del:"Engineering handbook",risk:"Inconsistent quality across 509 files",dep:""},
+{id:"TASK-CTO-006",title:"Define API design standards for 133+ paths",pri:"P0",del:"API design guide",risk:"",dep:"INFRA-006"},
+{id:"TASK-CTO-007",title:"Technical debt management and prioritization",pri:"P1",del:"Tech debt register",risk:"",dep:""},
+{id:"TASK-CTO-008",title:"Establish DORA metrics (deploy freq, lead time, MTTR)",pri:"P1",del:"DORA dashboard",risk:"",dep:"INFRA-003"},
+{id:"TASK-CTO-009",title:"Evaluate Graph-over-Graph feasibility and performance",pri:"P0",del:"PoC with benchmarks",risk:"Cross-layer complexity explosion",dep:""},
+{id:"TASK-CTO-010",title:"Validate token format compression on production payloads",pri:"P0",del:"Benchmark report",risk:"",dep:"CORE-001"},
+{id:"TASK-CTO-011",title:"Design Intent Router for sub-10ms classification",pri:"P0",del:"Classifier architecture doc",risk:"",dep:""},
+{id:"TASK-CTO-012",title:"Evaluate GNN feasibility — library, training, inference latency",pri:"P2",del:"GNN feasibility report",risk:"GPU infrastructure required",dep:""},
+{id:"TASK-CTO-013",title:"Approve security architecture (auth, encryption, keys)",pri:"P0",del:"Security architecture doc",risk:"",dep:"Security Officer"},
+{id:"TASK-CTO-014",title:"Define data classification framework",pri:"P1",del:"Classification policy",risk:"",dep:"COMPLY-002"},
+{id:"TASK-CTO-015",title:"Define DR architecture: RPO < 1h, RTO < 4h",pri:"P1",del:"DR runbook",risk:"",dep:"INFRA-007"},
+{id:"TASK-CTO-016",title:"Design observability stack (Prometheus, Loki, OTel, Grafana)",pri:"P1",del:"Observability architecture",risk:"",dep:"INFRA-004"},
+{id:"TASK-CTO-017",title:"Define SLA targets per API endpoint category",pri:"P1",del:"SLA document",risk:"",dep:""},
+{id:"TASK-CTO-018",title:"Establish feature flag strategy",pri:"P2",del:"Feature flag governance",risk:"",dep:""},
+]},
+{id:"DM",name:"Delivery Manager",group:"Executive",tasks:[
+{id:"TASK-DM-001",title:"Create sprint plans for 7 phases (47 requirements)",pri:"P0",del:"Sprint backlog per phase",risk:"",dep:"CTO, Architect"},
+{id:"TASK-DM-002",title:"Define Definition of Done per requirement type",pri:"P0",del:"DoD checklist",risk:"",dep:""},
+{id:"TASK-DM-003",title:"Track dependency chains across phases",pri:"P0",del:"Dependency graph, critical path",risk:"",dep:""},
+{id:"TASK-DM-004",title:"Manage AI Agent coding workflow and verification",pri:"P0",del:"AI Agent task queue",risk:"AI code semantic errors",dep:"CORE-002"},
+{id:"TASK-DM-005",title:"Define release cadence (bi-weekly feature, monthly stable)",pri:"P1",del:"Release calendar",risk:"",dep:""},
+{id:"TASK-DM-006",title:"Establish release gate checklist",pri:"P1",del:"Release gate doc",risk:"",dep:""},
+{id:"TASK-DM-007",title:"Manage changelog and release notes",pri:"P2",del:"CHANGELOG.md",risk:"",dep:""},
+{id:"TASK-DM-008",title:"Weekly status reports (burndown, risks, blockers)",pri:"P1",del:"Status template",risk:"",dep:""},
+{id:"TASK-DM-009",title:"Sprint retrospectives with action items",pri:"P2",del:"Retro notes",risk:"",dep:""},
+{id:"TASK-DM-010",title:"Maintain project risk register",pri:"P1",del:"Risk register",risk:"",dep:""},
+{id:"TASK-DM-011",title:"Define escalation paths (4h → Lead Dev, 1d → CTO, 2d → CEO)",pri:"P1",del:"Escalation policy",risk:"",dep:""},
+{id:"TASK-DM-012",title:"Track phase completion vs milestones",pri:"P1",del:"Milestone tracker",risk:"",dep:""},
+{id:"TASK-DM-013",title:"Capacity planning: 47 requirements vs dev capacity",pri:"P0",del:"Resource allocation matrix",risk:"Single developer bottleneck",dep:""},
+{id:"TASK-DM-014",title:"Coordinate cross-role handoffs (RACI matrix)",pri:"P1",del:"RACI matrix",risk:"",dep:""},
+]},
+{id:"ARCH",name:"Architect",group:"Engineering",tasks:[
+{id:"TASK-ARCH-001",title:"Design Graph-over-Graph layer architecture",pri:"P0",del:"Architecture doc with sequence diagrams",risk:"O(n*m) complexity",dep:""},
+{id:"TASK-ARCH-002",title:"Design Token Format Engine architecture",pri:"P0",del:"Format strategy interface spec",risk:"",dep:""},
+{id:"TASK-ARCH-003",title:"Design Verification Engine pipeline",pri:"P0",del:"Verification pipeline architecture",risk:"",dep:""},
+{id:"TASK-ARCH-004",title:"Design Intent Router classification architecture",pri:"P0",del:"Router architecture with latency budget",risk:"",dep:""},
+{id:"TASK-ARCH-005",title:"Design Federated Graph query decomposition",pri:"P1",del:"Federation architecture",risk:"",dep:""},
+{id:"TASK-ARCH-006",title:"Define API contract standards for 100+ new endpoints",pri:"P0",del:"API contract template",risk:"",dep:""},
+{id:"TASK-ARCH-007",title:"Design API versioning strategy (v1/v2 coexistence)",pri:"P1",del:"API versioning spec",risk:"",dep:""},
+{id:"TASK-ARCH-008",title:"Define event schema standards (CloudEvents)",pri:"P1",del:"Event schema spec",risk:"",dep:""},
+{id:"TASK-ARCH-009",title:"Design temporal index schema for GRAPH-005",pri:"P1",del:"Temporal data model",risk:"",dep:""},
+{id:"TASK-ARCH-010",title:"Design multi-level cache topology (L1+L2 Redis)",pri:"P1",del:"Cache architecture",risk:"",dep:""},
+{id:"TASK-ARCH-011",title:"Design embedding versioning schema",pri:"P2",del:"Embedding data model",risk:"",dep:""},
+{id:"TASK-ARCH-012",title:"Define engine-to-engine integration patterns",pri:"P0",del:"Integration pattern catalog",risk:"Tight coupling via imports",dep:""},
+{id:"TASK-ARCH-013",title:"Design Agent Communication Bus topology",pri:"P2",del:"Message bus architecture",risk:"",dep:""},
+{id:"TASK-ARCH-014",title:"Design Fan-Out/Fan-In state merge protocol",pri:"P1",del:"Parallel execution architecture",risk:"",dep:""},
+{id:"TASK-ARCH-015",title:"Define per-engine performance budgets",pri:"P1",del:"Performance budget matrix",risk:"",dep:""},
+{id:"TASK-ARCH-016",title:"Design for horizontal scalability",pri:"P1",del:"Scalability assessment",risk:"",dep:""},
+{id:"TASK-ARCH-017",title:"Define per-engine observability requirements",pri:"P2",del:"Observability contract",risk:"",dep:""},
+]},
+{id:"LD",name:"Lead Developer",group:"Engineering",tasks:[
+{id:"TASK-LD-001",title:"Implement Token Format Engines (CORE-001)",pri:"P0",del:"engine.py with 7 formats",risk:"",dep:""},
+{id:"TASK-LD-002",title:"Implement Verification Engine (CORE-002)",pri:"P0",del:"engine.py with 7+ rules",risk:"",dep:""},
+{id:"TASK-LD-003",title:"Implement Intent Router (CORE-003)",pri:"P0",del:"engine.py with classifier",risk:"",dep:"CORE-001"},
+{id:"TASK-LD-004",title:"Implement Graph-over-Graph (CORE-004)",pri:"P0",del:"engine.py with layers",risk:"",dep:""},
+{id:"TASK-LD-005",title:"Implement Loop-over-Loop (CORE-005)",pri:"P1",del:"SupervisoryLoop extension",risk:"",dep:"CORE-002"},
+{id:"TASK-LD-006",title:"Implement Token Budget (CORE-006)",pri:"P1",del:"engine.py with budgets",risk:"",dep:"CORE-001"},
+{id:"TASK-LD-007",title:"Establish AI code review checklist",pri:"P0",del:"Review checklist",risk:"AI produces subtly buggy code",dep:""},
+{id:"TASK-LD-008",title:"Enforce consistent engine pattern across 21+ engines",pri:"P0",del:"Engine template doc",risk:"",dep:""},
+{id:"TASK-LD-009",title:"Define Pydantic model standards for APIs",pri:"P1",del:"Pydantic conventions doc",risk:"",dep:""},
+{id:"TASK-LD-010",title:"Establish Git branching strategy",pri:"P1",del:"Git workflow doc",risk:"",dep:""},
+{id:"TASK-LD-011",title:"Oversee Phase 2 engine implementations",pri:"P1",del:"Code reviews completed",risk:"",dep:"Phase 1"},
+{id:"TASK-LD-012",title:"Oversee Phase 3 engine implementations",pri:"P1",del:"Code reviews completed",risk:"",dep:"Phase 2"},
+{id:"TASK-LD-013",title:"100% code review coverage, < 24h turnaround",pri:"P0",del:"Review metrics",risk:"",dep:""},
+{id:"TASK-LD-014",title:"Fix pre-existing test failures",pri:"P1",del:"Tests passing",risk:"",dep:""},
+{id:"TASK-LD-015",title:"Optimize import chain (60-120s pytest collection)",pri:"P2",del:"Import profiling report",risk:"Slow test feedback",dep:""},
+{id:"TASK-LD-016",title:"Standardize error handling / exception hierarchy",pri:"P2",del:"Exception hierarchy doc",risk:"",dep:""},
+]},
+{id:"DEV",name:"Developer",group:"Engineering",tasks:[
+{id:"TASK-DEV-001",title:"Token Format Engines implementation (7 formats)",pri:"P0",del:"token_formats/engine.py",risk:"",dep:""},
+{id:"TASK-DEV-002",title:"Verification Engine implementation",pri:"P0",del:"verification/engine.py",risk:"",dep:""},
+{id:"TASK-DEV-003",title:"Intent Router implementation",pri:"P0",del:"routing/engine.py",risk:"",dep:"CORE-001"},
+{id:"TASK-DEV-004",title:"Graph-over-Graph implementation",pri:"P0",del:"graph_graph/engine.py",risk:"",dep:""},
+{id:"TASK-DEV-005",title:"Loop-over-Loop implementation",pri:"P1",del:"intelligence_eng extend",risk:"",dep:"CORE-002"},
+{id:"TASK-DEV-006",title:"Token Budget implementation",pri:"P1",del:"token_budget/engine.py",risk:"",dep:"CORE-001"},
+{id:"TASK-DEV-007",title:"Cognitive Boundary Telemetry",pri:"P1",del:"telemetry extend",risk:"",dep:""},
+{id:"TASK-DEV-008",title:"Entity Extraction Pipeline",pri:"P1",del:"extraction/engine.py",risk:"",dep:""},
+{id:"TASK-DEV-009",title:"Agent Message Bus",pri:"P2",del:"agents/message_bus.py",risk:"",dep:""},
+{id:"TASK-DEV-010",title:"Fan-Out/Fan-In Stages",pri:"P1",del:"harness extend",risk:"",dep:""},
+{id:"TASK-DEV-011",title:"Federated Graph Engine",pri:"P1",del:"federation/engine.py",risk:"",dep:""},
+{id:"TASK-DEV-012",title:"Temporal Retrieval",pri:"P1",del:"retrieval/temporal.py",risk:"",dep:""},
+{id:"TASK-DEV-031",title:"Fix test_deployed_route_surface (wire /api/v1/loops/catalog)",pri:"P1",del:"Test passing",risk:"",dep:""},
+{id:"TASK-DEV-032",title:"Fix test_intelligent_query latency assertion",pri:"P2",del:"Test passing",risk:"",dep:""},
+]},
+{id:"LAI",name:"Lead AI Engineer",group:"AI/ML",tasks:[
+{id:"TASK-LAI-001",title:"Design XAI Engine architecture",pri:"P1",del:"XAI architecture spec",risk:"",dep:""},
+{id:"TASK-LAI-002",title:"Design GNN Integration architecture",pri:"P2",del:"GNN feasibility report",risk:"GPU required",dep:""},
+{id:"TASK-LAI-003",title:"Design Embedding Management lifecycle",pri:"P2",del:"Embedding architecture",risk:"",dep:""},
+{id:"TASK-LAI-004",title:"Define AI evaluation framework and golden datasets",pri:"P0",del:"AI evaluation playbook",risk:"",dep:""},
+{id:"TASK-LAI-005",title:"Optimize RAG quality across 64 modes",pri:"P1",del:"RAG benchmark report",risk:"",dep:""},
+{id:"TASK-LAI-006",title:"Design Temporal Retrieval + RAG integration",pri:"P1",del:"Temporal RAG design",risk:"",dep:""},
+{id:"TASK-LAI-007",title:"Optimize hybrid search (7 modalities) relevance",pri:"P1",del:"Search quality report",risk:"",dep:""},
+{id:"TASK-LAI-008",title:"Design cognitive boundary detection algorithms",pri:"P1",del:"Boundary signal spec",risk:"",dep:""},
+{id:"TASK-LAI-009",title:"Design Intent Router classifier (features, training)",pri:"P0",del:"Classifier design",risk:"",dep:""},
+{id:"TASK-LAI-010",title:"Evaluate 9 reasoning strategies effectiveness",pri:"P2",del:"Strategy benchmark matrix",risk:"",dep:""},
+{id:"TASK-LAI-011",title:"Design A/B testing for models",pri:"P2",del:"A/B test architecture",risk:"",dep:""},
+{id:"TASK-LAI-012",title:"Design experiment tracking (lightweight MLOps)",pri:"P2",del:"Tracker architecture",risk:"",dep:""},
+{id:"TASK-LAI-013",title:"Define model drift monitoring strategy",pri:"P2",del:"Drift playbook",risk:"",dep:""},
+{id:"TASK-LAI-014",title:"Design Entity Extraction pipeline",pri:"P1",del:"Extraction design",risk:"",dep:""},
+{id:"TASK-LAI-015",title:"Design Relation Extraction patterns",pri:"P1",del:"Relation extraction design",risk:"",dep:""},
+{id:"TASK-LAI-016",title:"Design Causal Inference algorithms",pri:"P2",del:"Causal algorithm spec",risk:"",dep:""},
+]},
+{id:"AIE",name:"AI Engineer",group:"AI/ML",tasks:[
+{id:"TASK-AIE-001",title:"Implement Intent Router classifier",pri:"P0",del:"routing/engine.py classifier",risk:"",dep:"LAI-009"},
+{id:"TASK-AIE-002",title:"Implement Cognitive Boundary Detection",pri:"P1",del:"telemetry signals",risk:"",dep:"LAI-008"},
+{id:"TASK-AIE-003",title:"Implement Entity Extraction pipeline",pri:"P1",del:"extraction/engine.py",risk:"",dep:"LAI-014"},
+{id:"TASK-AIE-004",title:"Implement GNN embeddings (node2vec, TransE)",pri:"P2",del:"gnn/engine.py",risk:"",dep:"LAI-002"},
+{id:"TASK-AIE-005",title:"Implement Temporal Retrieval",pri:"P1",del:"retrieval/temporal.py",risk:"",dep:"LAI-006"},
+{id:"TASK-AIE-006",title:"Implement XAI Engine",pri:"P1",del:"xai/engine.py",risk:"",dep:"LAI-001"},
+{id:"TASK-AIE-007",title:"Implement Deep NLP pipeline extensions",pri:"P2",del:"nlp/pipeline.py extend",risk:"",dep:""},
+{id:"TASK-AIE-008",title:"Implement Relation Extraction",pri:"P1",del:"extraction/relation_extractor.py",risk:"",dep:"LAI-015"},
+{id:"TASK-AIE-009",title:"Implement MLOps Experiment Tracker",pri:"P2",del:"mlops/experiment_tracker.py",risk:"",dep:"LAI-012"},
+{id:"TASK-AIE-010",title:"Implement Embedding Management",pri:"P2",del:"embeddings/engine.py",risk:"",dep:"LAI-003"},
+{id:"TASK-AIE-011",title:"Optimize RAG precision and RRF weights",pri:"P1",del:"Tuned parameters",risk:"",dep:""},
+{id:"TASK-AIE-012",title:"Optimize prompt templates for top 5 operations",pri:"P1",del:"Optimized prompts",risk:"",dep:""},
+{id:"TASK-AIE-013",title:"Build golden evaluation dataset (100+ cases)",pri:"P1",del:"tests/golden/",risk:"",dep:""},
+]},
+{id:"QAL",name:"QA Lead",group:"QA",tasks:[
+{id:"TASK-QAL-001",title:"Define test pyramid (70% unit, 20% integration, 10% e2e)",pri:"P0",del:"Test strategy doc",risk:"",dep:""},
+{id:"TASK-QAL-002",title:"Define quality gates per Phase 4 requirement",pri:"P0",del:"Quality gate matrix",risk:"",dep:""},
+{id:"TASK-QAL-003",title:"Test data management strategy",pri:"P1",del:"Test data catalog",risk:"In-memory != production",dep:""},
+{id:"TASK-QAL-004",title:"Define regression suite for 21+ engines",pri:"P0",del:"Automated regression suite",risk:"",dep:""},
+{id:"TASK-QAL-005",title:"Phase 1 test plan (token fuzz, verification, classification)",pri:"P0",del:"Phase 1 test plan",risk:"",dep:""},
+{id:"TASK-QAL-006",title:"Phase 2 test plan (extraction, federation, temporal)",pri:"P1",del:"Phase 2 test plan",risk:"",dep:""},
+{id:"TASK-QAL-007",title:"Phase 6 test infrastructure (chaos, load, fuzz, perf, a11y)",pri:"P1",del:"Test infra setup",risk:"",dep:""},
+{id:"TASK-QAL-008",title:"Load testing framework (k6/Locust)",pri:"P1",del:"tests/load/ scripts",risk:"",dep:""},
+{id:"TASK-QAL-009",title:"Chaos engineering framework",pri:"P2",del:"tests/chaos/ framework",risk:"",dep:""},
+{id:"TASK-QAL-010",title:"Performance regression detection in CI",pri:"P1",del:"CI benchmark job",risk:"",dep:""},
+{id:"TASK-QAL-011",title:"API contract testing for 133+ endpoints",pri:"P1",del:"Contract test suite",risk:"",dep:""},
+{id:"TASK-QAL-012",title:"Quality metrics dashboard (coverage, pass rate, defect density)",pri:"P1",del:"Quality dashboard",risk:"",dep:""},
+{id:"TASK-QAL-013",title:"Defect triage: P0 4h, P1 24h, P2 sprint, P3 backlog",pri:"P1",del:"Defect process doc",risk:"",dep:""},
+]},
+{id:"QAE",name:"QA Engineer",group:"QA",tasks:[
+{id:"TASK-QA-001",title:"Unit tests: Token Format round-trip fidelity",pri:"P0",del:"Test results",risk:"",dep:"CORE-001"},
+{id:"TASK-QA-002",title:"Unit tests: Verification rule types + composition",pri:"P0",del:"Test results",risk:"",dep:"CORE-002"},
+{id:"TASK-QA-003",title:"Unit tests: Intent Router classification accuracy",pri:"P0",del:"Test results",risk:"",dep:"CORE-003"},
+{id:"TASK-QA-004",title:"Unit tests: Graph-over-Graph cross-layer queries",pri:"P0",del:"Test results",risk:"",dep:"CORE-004"},
+{id:"TASK-QA-005",title:"Regression test full suite after Phase 1",pri:"P0",del:"Zero new failures",risk:"",dep:"Phase 1"},
+{id:"TASK-QA-016",title:"Integration: Brain OS telemetry for all engines",pri:"P1",del:"Telemetry verified",risk:"",dep:""},
+{id:"TASK-QA-017",title:"Integration: Platform Router API schema validation",pri:"P1",del:"All endpoints validated",risk:"",dep:""},
+{id:"TASK-QA-019",title:"Hypothesis property tests for token formats",pri:"P2",del:"Property test suite",risk:"",dep:"CORE-001"},
+{id:"TASK-QA-020",title:"k6 load test scripts for critical endpoints",pri:"P1",del:"Load test scripts",risk:"",dep:""},
+{id:"TASK-QA-021",title:"Playwright e2e for new dashboard lenses",pri:"P2",del:"e2e tests",risk:"",dep:"UI-007"},
+]},
+{id:"SEC",name:"Security Officer",group:"Security & Legal",tasks:[
+{id:"TASK-SEC-001",title:"STRIDE threat model for 21+ engines, 133+ APIs",pri:"P0",del:"Threat model doc",risk:"",dep:""},
+{id:"TASK-SEC-002",title:"Agent tool execution security policy",pri:"P0",del:"Agent security policy",risk:"",dep:"CORE-002"},
+{id:"TASK-SEC-003",title:"Encryption standards (AES-256, TLS 1.3, key rotation)",pri:"P0",del:"Encryption standards doc",risk:"",dep:""},
+{id:"TASK-SEC-005",title:"API security controls (rate limit, CORS, validation)",pri:"P0",del:"API security checklist",risk:"",dep:""},
+{id:"TASK-SEC-006",title:"SOC 2 Type II readiness assessment",pri:"P0",del:"SOC 2 gap analysis",risk:"Blocks enterprise sales",dep:""},
+{id:"TASK-SEC-007",title:"GDPR compliance review",pri:"P0",del:"GDPR assessment",risk:"",dep:""},
+{id:"TASK-SEC-008",title:"HIPAA compliance assessment",pri:"P1",del:"HIPAA readiness",risk:"",dep:""},
+{id:"TASK-SEC-009",title:"Compliance-as-Code rule templates (GDPR, SOX, HIPAA)",pri:"P1",del:"Rule templates",risk:"",dep:"COMPLY-001"},
+{id:"TASK-SEC-011",title:"Vulnerability management program",pri:"P0",del:"Vuln mgmt policy",risk:"",dep:""},
+{id:"TASK-SEC-012",title:"Incident response plan",pri:"P0",del:"IR playbook",risk:"",dep:""},
+{id:"TASK-SEC-013",title:"Security review of token format deserialization",pri:"P0",del:"Security review report",risk:"Deserialization attacks",dep:"CORE-001"},
+{id:"TASK-SEC-015",title:"Data classification policy",pri:"P0",del:"Classification policy",risk:"",dep:""},
+{id:"TASK-SEC-016",title:"Multi-tenancy isolation review",pri:"P0",del:"Isolation assessment",risk:"",dep:""},
+]},
+{id:"LEGAL",name:"Legal Counsel",group:"Security & Legal",tasks:[
+{id:"TASK-LEGAL-001",title:"Patent strategy — file provisionals for 5+ innovations",pri:"P0",del:"Patent applications",risk:"IP unprotected before market",dep:""},
+{id:"TASK-LEGAL-002",title:"Trademark registration (EOIP, KnowGridFlow)",pri:"P1",del:"Trademark applications",risk:"",dep:""},
+{id:"TASK-LEGAL-003",title:"Trade secret inventory with access controls",pri:"P1",del:"Trade secret register",risk:"",dep:""},
+{id:"TASK-LEGAL-004",title:"Dependency license audit (GPL, Apache, MIT)",pri:"P0",del:"License audit report",risk:"GPL contamination",dep:""},
+{id:"TASK-LEGAL-005",title:"Open-source contribution policy",pri:"P1",del:"OS policy doc",risk:"",dep:""},
+{id:"TASK-LEGAL-006",title:"Graph DB connector license review (Neo4j GPL)",pri:"P1",del:"License risk assessment",risk:"GPL isolation needed",dep:""},
+{id:"TASK-LEGAL-007",title:"Draft Enterprise License Agreement",pri:"P1",del:"ELA template",risk:"",dep:""},
+{id:"TASK-LEGAL-009",title:"Draft GDPR Data Processing Agreement",pri:"P0",del:"DPA template",risk:"",dep:""},
+{id:"TASK-LEGAL-010",title:"Draft HIPAA BAA template",pri:"P1",del:"BAA template",risk:"",dep:""},
+{id:"TASK-LEGAL-011",title:"EU AI Act compliance assessment",pri:"P1",del:"AI Act risk classification",risk:"High-risk classification",dep:""},
+{id:"TASK-LEGAL-013",title:"AI agent liability framework",pri:"P1",del:"Liability framework",risk:"Agent harmful decisions",dep:""},
+{id:"TASK-LEGAL-015",title:"IP assignment in employment/contractor agreements",pri:"P0",del:"IP assignment clauses",risk:"",dep:""},
+]},
+{id:"LIC",name:"Licensing Manager",group:"Security & Legal",tasks:[
+{id:"TASK-LIC-001",title:"Feature matrix per edition (Community/Pro/Enterprise/OEM)",pri:"P0",del:"Feature matrix",risk:"",dep:""},
+{id:"TASK-LIC-002",title:"License enforcement for Phase 4 features",pri:"P1",del:"Entitlement checks",risk:"",dep:"Phase 1"},
+{id:"TASK-LIC-003",title:"Metering model (API calls, nodes, agents, tokens)",pri:"P1",del:"Metering spec",risk:"",dep:""},
+{id:"TASK-LIC-004",title:"Trial/freemium conversion funnel design",pri:"P1",del:"Conversion funnel",risk:"",dep:""},
+{id:"TASK-LIC-005",title:"LLM provider evaluation (OpenAI, Anthropic, open-source)",pri:"P1",del:"Vendor comparison",risk:"Provider lock-in",dep:""},
+{id:"TASK-LIC-006",title:"Graph DB licensing cost analysis",pri:"P1",del:"DB cost analysis",risk:"",dep:""},
+{id:"TASK-LIC-009",title:"TCO analysis: self-hosted vs cloud vs hybrid",pri:"P1",del:"TCO report",risk:"",dep:""},
+{id:"TASK-LIC-010",title:"Token cost model (savings per 1M API calls)",pri:"P1",del:"Cost savings projection",risk:"",dep:"CORE-001"},
+{id:"TASK-LIC-012",title:"Dependency license inventory and renewals",pri:"P1",del:"License inventory",risk:"",dep:""},
+]},
+{id:"MKT",name:"Marketing Manager",group:"Marketing",tasks:[
+{id:"TASK-MKT-001",title:"GTM strategy — segments, personas, value props",pri:"P0",del:"GTM strategy doc",risk:"",dep:""},
+{id:"TASK-MKT-002",title:"Competitive positioning vs Palantir, Neo4j, Databricks",pri:"P0",del:"Positioning framework",risk:"New category hard to explain",dep:""},
+{id:"TASK-MKT-003",title:"Competitive battlecards for sales",pri:"P1",del:"Battlecards per competitor",risk:"",dep:""},
+{id:"TASK-MKT-004",title:"PLG strategy for Community edition",pri:"P1",del:"PLG funnel design",risk:"",dep:""},
+{id:"TASK-MKT-005",title:"Thought leadership content plan (blogs, whitepapers)",pri:"P1",del:"Content calendar",risk:"",dep:""},
+{id:"TASK-MKT-006",title:"Product demo video (3-5 min)",pri:"P1",del:"Demo video",risk:"",dep:"Stable product"},
+{id:"TASK-MKT-008",title:"Define MQL criteria and nurture workflow",pri:"P1",del:"Lead scoring model",risk:"",dep:""},
+{id:"TASK-MKT-009",title:"Launch developer community (Discord/Slack)",pri:"P1",del:"Community launch plan",risk:"",dep:""},
+{id:"TASK-MKT-010",title:"Conference strategy (KGC, AI Summit, GraphConnect)",pri:"P2",del:"Event calendar",risk:"",dep:""},
+{id:"TASK-MKT-011",title:"Analyst engagement (Gartner, Forrester)",pri:"P1",del:"Analyst briefing deck",risk:"",dep:""},
+{id:"TASK-MKT-013",title:"Brand guidelines (logo, colors, voice)",pri:"P1",del:"Brand book",risk:"",dep:""},
+{id:"TASK-MKT-014",title:"Marketing website launch",pri:"P1",del:"Website launch plan",risk:"",dep:""},
+]},
+{id:"MKE",name:"Marketing Executive",group:"Marketing",tasks:[
+{id:"TASK-MKE-001",title:"Write blog series (4-6 posts) on differentiators",pri:"P1",del:"Blog posts published",risk:"",dep:"MKT-005"},
+{id:"TASK-MKE-002",title:"Product datasheets per edition tier",pri:"P1",del:"4 datasheets",risk:"",dep:"LIC-001"},
+{id:"TASK-MKE-003",title:"Technical whitepaper: Token Economics in Enterprise AI",pri:"P2",del:"Whitepaper",risk:"",dep:"CORE-001 benchmarks"},
+{id:"TASK-MKE-004",title:"Sales presentation deck (15-20 slides)",pri:"P1",del:"Sales deck",risk:"",dep:"MKT-002"},
+{id:"TASK-MKE-005",title:"Product documentation site content",pri:"P1",del:"Docs site content",risk:"",dep:"Stable API"},
+{id:"TASK-MKE-006",title:"Execute launch campaign (email, social, PR)",pri:"P1",del:"Campaign live",risk:"",dep:"MKT-001"},
+{id:"TASK-MKE-009",title:"Set up developer community (Discord/Slack)",pri:"P1",del:"Community live",risk:"",dep:"MKT-009"},
+{id:"TASK-MKE-010",title:"Tutorial video series (install, first graph, first agent)",pri:"P2",del:"Video series",risk:"",dep:"Stable product"},
+{id:"TASK-MKE-012",title:"Marketing analytics (traffic, conversion, content perf)",pri:"P2",del:"Monthly report template",risk:"",dep:""},
+]},
+];
+
+const GROUPS=["Executive","Engineering","AI/ML","QA","Security & Legal","Marketing"];
+const STS=["Not Started","In Progress","Completed","Blocked"];
+const S_CLS={"Not Started":"s-ns","In Progress":"s-ip","Completed":"s-dn","Blocked":"s-bl"};
+
+let st={};
+function ld(){try{st=JSON.parse(localStorage.getItem("eoip-roles")||"{}")}catch(e){st={}}}
+function sv(){try{localStorage.setItem("eoip-roles",JSON.stringify(st))}catch(e){}}
+function gs(id){return st[id]||"Not Started"}
+function ss(id){const c=gs(id),n=STS[(STS.indexOf(c)+1)%STS.length];st[id]=n;sv();render()}
+
+let curRole="ALL",q="";
+
+function render(){
+  const allTasks=[];
+  ROLES.forEach(r=>r.tasks.forEach(t=>allTasks.push({...t,role:r.id,roleName:r.name,group:r.group})));
+  const filtered=allTasks.filter(t=>{
+    if(curRole!=="ALL"&&t.role!==curRole)return false;
+    if(q){const s=q.toLowerCase();if(!t.id.toLowerCase().includes(s)&&!t.title.toLowerCase().includes(s)&&!t.del.toLowerCase().includes(s)&&!t.roleName.toLowerCase().includes(s))return false;}
+    return true;
+  });
+
+  const total=allTasks.length;
+  const done=allTasks.filter(t=>gs(t.id)==="Completed").length;
+  const ip=allTasks.filter(t=>gs(t.id)==="In Progress").length;
+  const blocked=allTasks.filter(t=>gs(t.id)==="Blocked").length;
+  const p0=allTasks.filter(t=>t.pri==="P0").length;
+
+  document.getElementById("kpis").innerHTML=`
+    <div class="kpi"><div class="kpi-n">${total}</div><div class="kpi-l">Tasks</div></div>
+    <div class="kpi"><div class="kpi-n" style="color:var(--green)">${done}</div><div class="kpi-l">Done</div></div>
+    <div class="kpi"><div class="kpi-n" style="color:var(--yellow)">${ip}</div><div class="kpi-l">In Progress</div></div>
+    <div class="kpi"><div class="kpi-n" style="color:var(--red)">${blocked}</div><div class="kpi-l">Blocked</div></div>
+    <div class="kpi"><div class="kpi-n" style="color:var(--red)">${p0}</div><div class="kpi-l">P0 Critical</div></div>
+    <div class="kpi"><div class="kpi-n">${ROLES.length}</div><div class="kpi-l">Roles</div></div>`;
+
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById("masterFill").style.width=pct+"%";
+
+  let tabsH=`<button class="tab ${curRole==="ALL"?"on":""}" onclick="curRole='ALL';render()">All Roles</button>`;
+  ROLES.forEach(r=>{
+    const rc=r.tasks.length,rd=r.tasks.filter(t=>gs(t.id)==="Completed").length;
+    tabsH+=`<button class="tab ${curRole===r.id?"on":""}" onclick="curRole='${r.id}';render()">${r.name} (${rd}/${rc})</button>`;
+  });
+  document.getElementById("roleTabs").innerHTML=tabsH;
+
+  const byGroup={};
+  filtered.forEach(t=>{
+    const k=t.group+"|"+t.roleName;
+    if(!byGroup[k])byGroup[k]={group:t.group,role:t.roleName,roleId:t.role,tasks:[]};
+    byGroup[k].tasks.push(t);
+  });
+
+  let html="";
+  if(!filtered.length){html='<div class="empty">No tasks match your filters.</div>';}
+  else Object.values(byGroup).forEach(g=>{
+    const gd=g.tasks.filter(t=>gs(t.id)==="Completed").length;
+    const gp=g.tasks.length?Math.round(gd/g.tasks.length*100):0;
+    html+=`<div class="sect"><div class="sect-h">${g.role} <span class="sect-badge">${g.group}</span>
+      <span style="font-size:.72rem;color:var(--fg2);margin-left:auto;font-variant-numeric:tabular-nums">${gd}/${g.tasks.length} (${gp}%)</span></div>`;
+    g.tasks.forEach(t=>{
+      const s=gs(t.id);
+      html+=`<div class="card" id="c-${t.id}"><div class="crow" onclick="toggle('${t.id}')">
+        <span class="cid">${t.id}</span><span class="ctitle">${t.title}</span>
+        <span class="pri pri-${t.pri}">${t.pri}</span>
+        <button class="sbtn ${S_CLS[s]}" onclick="event.stopPropagation();ss('${t.id}')">${s}</button>
+        <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+      </div><div class="cdet">
+        <div class="dg">
+          <span class="dl">Role</span><span class="dv">${g.role}</span>
+          <span class="dl">Deliverable</span><span class="dv">${t.del}</span>
+          <span class="dl">Dependencies</span><span class="dv">${t.dep||"None"}</span>
+          ${t.risk?`<span class="dl">Risk</span><span class="dv"><span class="risk-tag risk-high">${t.risk}</span></span>`:""}
+        </div>
+      </div></div>`;
+    });
+    html+=`</div>`;
+  });
+  document.getElementById("content").innerHTML=html;
+  document.querySelectorAll(".card").forEach(c=>{if(st["o_"+c.id.slice(2)])c.classList.add("open")});
+}
+function toggle(id){st["o_"+id]=!st["o_"+id];sv();const c=document.getElementById("c-"+id);if(c)c.classList.toggle("open")}
+
+function exportJSON(){
+  const data=ROLES.map(r=>({role:r.name,group:r.group,tasks:r.tasks.map(t=>({...t,status:gs(t.id)}))}));
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const ta=document.createElement("textarea");
+  ta.value=JSON.stringify(data,null,2);document.body.appendChild(ta);ta.select();
+  try{document.execCommand("copy")}catch(e){}
+  document.body.removeChild(ta);
+  URL.revokeObjectURL(url);
+}
+
+function exportReport(){
+  const allT=[];ROLES.forEach(r=>r.tasks.forEach(t=>allT.push({...t,role:r.name})));
+  const done=allT.filter(t=>gs(t.id)==="Completed");
+  const ip=allT.filter(t=>gs(t.id)==="In Progress");
+  const blocked=allT.filter(t=>gs(t.id)==="Blocked");
+  let rpt=`EOIP Weekly Report — ${new Date().toISOString().slice(0,10)}\n${"=".repeat(50)}\n\n`;
+  rpt+=`Total: ${allT.length} | Done: ${done.length} | In Progress: ${ip.length} | Blocked: ${blocked.length}\n\n`;
+  if(done.length){rpt+=`COMPLETED:\n`;done.forEach(t=>rpt+=`  [${t.id}] ${t.title} (${t.role})\n`);rpt+="\n";}
+  if(ip.length){rpt+=`IN PROGRESS:\n`;ip.forEach(t=>rpt+=`  [${t.id}] ${t.title} (${t.role})\n`);rpt+="\n";}
+  if(blocked.length){rpt+=`BLOCKED:\n`;blocked.forEach(t=>rpt+=`  [${t.id}] ${t.title} (${t.role}) — ${t.risk||t.dep}\n`);rpt+="\n";}
+  const ta=document.createElement("textarea");ta.value=rpt;document.body.appendChild(ta);ta.select();
+  try{document.execCommand("copy")}catch(e){}
+  document.body.removeChild(ta);
+}
+
+document.getElementById("searchBox").addEventListener("input",e=>{q=e.target.value;render()});
+ld();render();
+</script>

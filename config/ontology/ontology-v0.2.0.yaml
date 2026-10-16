@@ -1,0 +1,57 @@
+ontology_version: "0.2.0"
+schema_version: "1.0"
+
+domains:
+  - META
+  - WORK
+  - CODE
+  - CICD
+  - KNOWLEDGE
+  - IDENTITY
+  - AGENT
+
+vertex_labels:
+  - DataSource
+  - IngestionRun
+  - GraphDomain
+  - OntologyVersion
+  - Evidence
+  - ValidationRun
+  - ValidationFinding
+  - Project
+  - WorkItem
+  - Person
+  - Repository
+  - Branch
+  - Commit
+  - MergeRequest
+  - PipelineRun
+  - File
+  - CodeSymbol
+  - Dependency
+  - Document
+  - KnowledgeSpace
+  - DocumentSection
+  - AgentRun
+
+edge_labels:
+  - CONTAINS
+  - PARENT_OF
+  - ASSIGNED_TO
+  - AUTHORED_BY
+  - HAS_BRANCH
+  - HAS_COMMIT
+  - HAS_MERGE_REQUEST
+  - MODIFIES
+  - DECLARES
+  - CALLS
+  - IMPORTS
+  - DEPENDS_ON
+  - IMPLEMENTS
+  - REFERENCES
+  - DOCUMENTS
+  - EVIDENCED_BY
+  - INGESTED_IN
+  - BELONGS_TO_DOMAIN
+  - VALIDATED_BY
+  - PRODUCED_BY

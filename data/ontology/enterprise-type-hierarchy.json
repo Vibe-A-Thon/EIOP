@@ -1,0 +1,151 @@
+{
+  "$schema": "urn:eoip:schema:_common:1.0",
+  "schema_version": "1.0",
+  "ontology_id": "urn:eoip:ontology:enterprise:1.0",
+  "title": "EOIP Enterprise Ontology Type Hierarchy",
+  "description": "Canonical entity types and relationship types for the EOIP enterprise knowledge graph. This seed file bootstraps the ontology for new deployments.",
+  "created_at": "2026-10-09T00:00:00Z",
+  "domains": {
+    "code": {
+      "description": "Source code, repositories, builds, and CI/CD artifacts.",
+      "entity_types": [
+        { "name": "Repository", "parent": null, "properties": ["canonical_id", "name", "url", "default_branch", "language", "visibility"] },
+        { "name": "CodeFile", "parent": null, "properties": ["canonical_id", "path", "language", "size_bytes", "last_modified"] },
+        { "name": "Function", "parent": "Symbol", "properties": ["canonical_id", "name", "signature", "return_type", "complexity", "line_start", "line_end"] },
+        { "name": "Class", "parent": "Symbol", "properties": ["canonical_id", "name", "bases", "method_count", "line_start", "line_end"] },
+        { "name": "Symbol", "parent": null, "properties": ["canonical_id", "name", "kind", "qualified_name", "visibility"] },
+        { "name": "Module", "parent": null, "properties": ["canonical_id", "name", "path", "exports"] },
+        { "name": "Commit", "parent": null, "properties": ["canonical_id", "sha", "message", "author", "authored_at", "files_changed"] },
+        { "name": "Branch", "parent": null, "properties": ["canonical_id", "name", "head_sha", "is_default"] },
+        { "name": "PullRequest", "parent": null, "properties": ["canonical_id", "title", "state", "author", "created_at", "merged_at", "reviewers"] },
+        { "name": "Pipeline", "parent": null, "properties": ["canonical_id", "name", "status", "duration_seconds", "triggered_by"] },
+        { "name": "BuildArtifact", "parent": null, "properties": ["canonical_id", "name", "type", "size_bytes", "checksum"] }
+      ],
+      "relationship_types": [
+        { "name": "CONTAINS", "from": "Repository", "to": "CodeFile", "cardinality": "ONE_TO_MANY" },
+        { "name": "DEFINES", "from": "CodeFile", "to": "Symbol", "cardinality": "ONE_TO_MANY" },
+        { "name": "IMPORTS", "from": "Symbol", "to": "Symbol", "cardinality": "MANY_TO_MANY" },
+        { "name": "CALLS", "from": "Function", "to": "Function", "cardinality": "MANY_TO_MANY" },
+        { "name": "INHERITS_FROM", "from": "Class", "to": "Class", "cardinality": "MANY_TO_MANY" },
+        { "name": "MODIFIES", "from": "Commit", "to": "CodeFile", "cardinality": "MANY_TO_MANY" },
+        { "name": "AUTHORED_BY", "from": "Commit", "to": "Person", "cardinality": "MANY_TO_ONE" },
+        { "name": "TARGETS", "from": "PullRequest", "to": "Branch", "cardinality": "MANY_TO_ONE" },
+        { "name": "TRIGGERS", "from": "Commit", "to": "Pipeline", "cardinality": "ONE_TO_MANY" },
+        { "name": "PRODUCES", "from": "Pipeline", "to": "BuildArtifact", "cardinality": "ONE_TO_MANY" }
+      ]
+    },
+    "work": {
+      "description": "Project management: epics, stories, tasks, sprints, releases.",
+      "entity_types": [
+        { "name": "Project", "parent": null, "properties": ["canonical_id", "name", "key", "methodology", "status"] },
+        { "name": "Epic", "parent": "WorkItem", "properties": ["canonical_id", "key", "summary", "status", "priority"] },
+        { "name": "Story", "parent": "WorkItem", "properties": ["canonical_id", "key", "summary", "status", "priority", "story_points"] },
+        { "name": "Task", "parent": "WorkItem", "properties": ["canonical_id", "key", "summary", "status", "priority", "assignee"] },
+        { "name": "Bug", "parent": "WorkItem", "properties": ["canonical_id", "key", "summary", "status", "severity", "environment"] },
+        { "name": "WorkItem", "parent": null, "properties": ["canonical_id", "key", "summary", "status", "priority", "created_at", "updated_at"] },
+        { "name": "Sprint", "parent": null, "properties": ["canonical_id", "name", "start_date", "end_date", "goal"] },
+        { "name": "Release", "parent": null, "properties": ["canonical_id", "version", "release_date", "status"] }
+      ],
+      "relationship_types": [
+        { "name": "CONTAINS", "from": "Project", "to": "WorkItem", "cardinality": "ONE_TO_MANY" },
+        { "name": "CHILD_OF", "from": "WorkItem", "to": "WorkItem", "cardinality": "MANY_TO_ONE" },
+        { "name": "ASSIGNED_TO", "from": "WorkItem", "to": "Person", "cardinality": "MANY_TO_ONE" },
+        { "name": "BLOCKS", "from": "WorkItem", "to": "WorkItem", "cardinality": "MANY_TO_MANY" },
+        { "name": "PART_OF_SPRINT", "from": "WorkItem", "to": "Sprint", "cardinality": "MANY_TO_ONE" },
+        { "name": "INCLUDED_IN", "from": "WorkItem", "to": "Release", "cardinality": "MANY_TO_ONE" },
+        { "name": "IMPLEMENTED_BY", "from": "WorkItem", "to": "Commit", "cardinality": "MANY_TO_MANY" },
+        { "name": "TESTED_BY", "from": "WorkItem", "to": "TestCase", "cardinality": "MANY_TO_MANY" }
+      ]
+    },
+    "knowledge": {
+      "description": "Documents, wiki pages, runbooks, architecture decisions.",
+      "entity_types": [
+        { "name": "Document", "parent": null, "properties": ["canonical_id", "title", "path", "format", "author", "created_at", "updated_at"] },
+        { "name": "WikiPage", "parent": "Document", "properties": ["canonical_id", "title", "space", "version", "author"] },
+        { "name": "ADR", "parent": "Document", "properties": ["canonical_id", "title", "status", "decision", "consequences"] },
+        { "name": "Runbook", "parent": "Document", "properties": ["canonical_id", "title", "service", "severity", "last_validated"] },
+        { "name": "APISpec", "parent": "Document", "properties": ["canonical_id", "title", "version", "format", "endpoints_count"] }
+      ],
+      "relationship_types": [
+        { "name": "REFERENCES", "from": "Document", "to": "Document", "cardinality": "MANY_TO_MANY" },
+        { "name": "DOCUMENTS", "from": "Document", "to": "Symbol", "cardinality": "MANY_TO_MANY" },
+        { "name": "SUPERSEDES", "from": "Document", "to": "Document", "cardinality": "ONE_TO_ONE" },
+        { "name": "AUTHORED_BY", "from": "Document", "to": "Person", "cardinality": "MANY_TO_ONE" }
+      ]
+    },
+    "identity": {
+      "description": "People, teams, organizations, and service accounts.",
+      "entity_types": [
+        { "name": "Person", "parent": null, "properties": ["canonical_id", "name", "email", "role", "department"] },
+        { "name": "Team", "parent": null, "properties": ["canonical_id", "name", "lead", "domain"] },
+        { "name": "Organization", "parent": null, "properties": ["canonical_id", "name", "industry", "size"] },
+        { "name": "ServiceAccount", "parent": null, "properties": ["canonical_id", "name", "service", "permissions"] }
+      ],
+      "relationship_types": [
+        { "name": "MEMBER_OF", "from": "Person", "to": "Team", "cardinality": "MANY_TO_MANY" },
+        { "name": "LEADS", "from": "Person", "to": "Team", "cardinality": "ONE_TO_ONE" },
+        { "name": "BELONGS_TO", "from": "Team", "to": "Organization", "cardinality": "MANY_TO_ONE" },
+        { "name": "OWNS", "from": "Team", "to": "Repository", "cardinality": "ONE_TO_MANY" }
+      ]
+    },
+    "operations": {
+      "description": "Services, deployments, incidents, and observability.",
+      "entity_types": [
+        { "name": "Service", "parent": null, "properties": ["canonical_id", "name", "tier", "language", "endpoints"] },
+        { "name": "Deployment", "parent": null, "properties": ["canonical_id", "service", "environment", "version", "deployed_at", "status"] },
+        { "name": "Incident", "parent": null, "properties": ["canonical_id", "title", "severity", "status", "impacted_services", "created_at", "resolved_at"] },
+        { "name": "Alert", "parent": null, "properties": ["canonical_id", "name", "severity", "source", "triggered_at"] },
+        { "name": "Environment", "parent": null, "properties": ["canonical_id", "name", "tier", "region"] }
+      ],
+      "relationship_types": [
+        { "name": "DEPENDS_ON", "from": "Service", "to": "Service", "cardinality": "MANY_TO_MANY" },
+        { "name": "DEPLOYED_TO", "from": "Deployment", "to": "Environment", "cardinality": "MANY_TO_ONE" },
+        { "name": "IMPACTS", "from": "Incident", "to": "Service", "cardinality": "MANY_TO_MANY" },
+        { "name": "TRIGGERED_BY", "from": "Alert", "to": "Service", "cardinality": "MANY_TO_ONE" },
+        { "name": "RESOLVED_BY", "from": "Incident", "to": "Commit", "cardinality": "MANY_TO_MANY" },
+        { "name": "OPERATED_BY", "from": "Service", "to": "Team", "cardinality": "MANY_TO_ONE" }
+      ]
+    },
+    "evidence": {
+      "description": "Test results, compliance checks, quality gates.",
+      "entity_types": [
+        { "name": "TestSuite", "parent": null, "properties": ["canonical_id", "name", "framework", "file_path"] },
+        { "name": "TestCase", "parent": null, "properties": ["canonical_id", "name", "status", "duration_ms", "suite"] },
+        { "name": "QualityGate", "parent": null, "properties": ["canonical_id", "name", "status", "threshold", "actual_value"] },
+        { "name": "ComplianceCheck", "parent": null, "properties": ["canonical_id", "framework", "control_id", "status", "evidence_ref"] }
+      ],
+      "relationship_types": [
+        { "name": "CONTAINS", "from": "TestSuite", "to": "TestCase", "cardinality": "ONE_TO_MANY" },
+        { "name": "VALIDATES", "from": "TestCase", "to": "Symbol", "cardinality": "MANY_TO_MANY" },
+        { "name": "COVERS", "from": "TestCase", "to": "WorkItem", "cardinality": "MANY_TO_MANY" },
+        { "name": "GUARDS", "from": "QualityGate", "to": "Pipeline", "cardinality": "MANY_TO_ONE" }
+      ]
+    },
+    "compliance": {
+      "description": "Regulatory frameworks, controls, policies.",
+      "entity_types": [
+        { "name": "Framework", "parent": null, "properties": ["canonical_id", "name", "version", "authority"] },
+        { "name": "Control", "parent": null, "properties": ["canonical_id", "control_id", "title", "description", "category"] },
+        { "name": "Policy", "parent": null, "properties": ["canonical_id", "name", "version", "effective_date", "status"] }
+      ],
+      "relationship_types": [
+        { "name": "DEFINES", "from": "Framework", "to": "Control", "cardinality": "ONE_TO_MANY" },
+        { "name": "IMPLEMENTS", "from": "Policy", "to": "Control", "cardinality": "MANY_TO_MANY" },
+        { "name": "EVIDENCED_BY", "from": "Control", "to": "ComplianceCheck", "cardinality": "ONE_TO_MANY" }
+      ]
+    },
+    "design": {
+      "description": "UI/UX designs, prototypes, and design system components.",
+      "entity_types": [
+        { "name": "DesignFile", "parent": null, "properties": ["canonical_id", "name", "tool", "url", "version"] },
+        { "name": "Component", "parent": null, "properties": ["canonical_id", "name", "category", "variant_count"] },
+        { "name": "Screen", "parent": null, "properties": ["canonical_id", "name", "flow", "status"] }
+      ],
+      "relationship_types": [
+        { "name": "CONTAINS", "from": "DesignFile", "to": "Screen", "cardinality": "ONE_TO_MANY" },
+        { "name": "USES", "from": "Screen", "to": "Component", "cardinality": "MANY_TO_MANY" },
+        { "name": "IMPLEMENTS", "from": "CodeFile", "to": "Screen", "cardinality": "MANY_TO_ONE" }
+      ]
+    }
+  }
+}

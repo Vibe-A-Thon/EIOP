@@ -1,0 +1,97 @@
+{
+  "captured_at": "2026-10-04T14:47:08.049758Z",
+  "event_id": "38b64383fc9dcf7b7348fb5577c6b4ba45b0698486040b5c4f00841979407a27",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "akim",
+        "displayName": "Alex Kim",
+        "emailAddress": "akim@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        },
+        {
+          "name": "mfs-common-libs"
+        }
+      ],
+      "created": "2026-07-14T11:00:00.000+0000",
+      "customfield_10014": "EPC-101",
+      "customfield_10015": "Payment Services",
+      "customfield_10050": "TC-PAY-004",
+      "description": "Add multi-currency support to the payment gateway, including real-time exchange rate lookups and currency conversion at point of transaction. Must support USD, EUR, GBP, JPY, CAD, AUD, CHF.\n\nAcceptance Criteria:\n- Real-time FX rates from approved rate provider\n- Currency conversion accuracy within 0.01%\n- Support for settlement in original or converted currency\n- Audit trail for all conversions in mfs_audit_db\n\nGitLab MR: !303\nTest Case: TC-PAY-004",
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "MR !303: Add multi-currency support"
+            },
+            "key": "MR-303"
+          },
+          "type": {
+            "name": "GitLab MR",
+            "outward": "is developed in"
+          }
+        },
+        {
+          "outwardIssue": {
+            "fields": {
+              "summary": "Currency exchange rate service"
+            },
+            "key": "PAY-131"
+          },
+          "type": {
+            "name": "Relates",
+            "outward": "relates to"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story",
+        "subtask": false
+      },
+      "labels": [
+        "multi-currency",
+        "fx-rates",
+        "payment-gateway"
+      ],
+      "parent": {
+        "key": "PAY-100"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "mrivera",
+        "displayName": "Marcus Rivera",
+        "emailAddress": "mrivera@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "story_points": 8,
+      "summary": "Add multi-currency support",
+      "updated": "2026-09-29T09:45:00.000+0000"
+    },
+    "id": "60103",
+    "key": "PAY-103",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60103"
+  },
+  "payload_hash": "9d472681450113c308399c5e3124410c5a9749bf1bc289d118a2dcf052397e30",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-103",
+  "source_system": "jira",
+  "source_version": "9d472681450113c308399c5e3124410c5a9749bf1bc289d118a2dcf052397e30"
+}

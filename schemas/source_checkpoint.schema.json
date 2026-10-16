@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:source_checkpoint:1.0",
+  "title": "SourceCheckpoint v1",
+  "type": "object",
+  "required": ["schema_version", "source_id", "cursor", "committed_at", "baseline_complete", "metadata"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "source_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "cursor": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "last_event_id": {"type": ["string", "null"], "maxLength": 512},
+    "committed_at": {"type": "string", "format": "date-time"},
+    "baseline_complete": {"type": "boolean"},
+    "metadata": {"type": "object"}
+  },
+  "additionalProperties": false
+}

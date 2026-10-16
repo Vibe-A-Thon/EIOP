@@ -1,0 +1,82 @@
+{
+  "captured_at": "2026-10-04T14:47:08.152175Z",
+  "event_id": "414ffac40e9e13fcfad3d0be00c61c9bda2fc829a5605a75b3cd65981deeddbc",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-aml-engine"
+        }
+      ],
+      "created": "2026-09-02T10:00:00.000+0000",
+      "customfield_10014": "EPC-203",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Implement the core AML rule engine that detects structuring (transactions split to stay under reporting thresholds), layering (rapid movement through multiple accounts), and integration patterns (funds merged into legitimate-appearing transactions). Rules operate on mfs_aml_db data. Engine runs on mfs-aml-pod-01 under svc-aml-engine account.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "FRD-311"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        },
+        {
+          "outwardIssue": {
+            "key": "TC-FRD-006"
+          },
+          "type": {
+            "name": "is verified by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story"
+      },
+      "labels": [
+        "aml",
+        "rules-engine",
+        "compliance"
+      ],
+      "parent": {
+        "key": "FRD-300"
+      },
+      "priority": {
+        "name": "Critical"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "AML rule engine implementation",
+      "updated": "2026-10-02T14:00:00.000+0000"
+    },
+    "key": "FRD-301"
+  },
+  "payload_hash": "26029708b627513d865d1ebb2bc99484e79ed5ae960660423ac05361f582e80f",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-301",
+  "source_system": "jira",
+  "source_version": "26029708b627513d865d1ebb2bc99484e79ed5ae960660423ac05361f582e80f"
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:knowledge_slo:1.0",
+  "title": "KnowledgeSLO v1",
+  "type": "object",
+  "required": ["schema_version", "slo_id", "metric", "operator", "threshold", "scope"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "slo_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "name": {"type": ["string", "null"], "maxLength": 512},
+    "metric": {"type": "string", "minLength": 1, "maxLength": 128},
+    "operator": {"enum": ["gte", "lte", "gt", "lt", "eq"]},
+    "threshold": {"type": "number"},
+    "scope": {"type": "object"},
+    "graph_version": {"type": ["string", "null"], "maxLength": 128},
+    "current_value": {"type": ["number", "null"]},
+    "status": {"enum": ["UNKNOWN", "MET", "BREACHED"]},
+    "breached_assets": {"type": "array", "items": {"type": "string", "maxLength": 2048}},
+    "evaluated_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

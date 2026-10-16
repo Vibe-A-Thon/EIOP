@@ -1,0 +1,29 @@
+mvp_requirement,title,parent_requirements,implementation_task
+MVP-FR-001,Apache HugeGraph local Docker,FR-GRAPH-001,T01
+MVP-FR-002,Automatic graph schema initialization,FR-GRAPH-003,T02
+MVP-FR-003,Jira JSON ingestion,FR-CONN-002,T03
+MVP-FR-004,Git repository/GitLab ingestion,"FR-CONN-003,FR-CONN-004",T04
+MVP-FR-005,Code parsing,"FR-CODE-001,FR-CODE-002",T05
+MVP-FR-006,Canonical entity generation,"FR-INGEST-002,FR-GRAPH-004",T06
+MVP-FR-007,Jira graph,"FR-ONTO-001,FR-GRAPH-002",T07
+MVP-FR-008,Code graph,"FR-CODE-001,FR-CODE-004",T08
+MVP-FR-009,Meta graph,FR-GRAPH-005,T09
+MVP-FR-010,Cross-graph linking,FR-GRAPH-006,T10
+MVP-FR-011,Provenance,"FR-PROV-001,FR-PROV-002",T11
+MVP-FR-012,Graph validation,"FR-VALID-001,FR-VALID-002",T12
+MVP-FR-013,Query API,"FR-QUERY-001,FR-QUERY-006",T13
+MVP-FR-014,Impact analysis query,FR-QUERY-003,T14
+MVP-FR-015,Path query,FR-QUERY-002,T15
+MVP-FR-016,Search/query UI,FR-UI-001,T16
+MVP-FR-017,Graph visualizer,FR-UI-002,T17
+MVP-FR-018,Admin ingestion/validation UI,"FR-ADMIN-001,FR-ADMIN-002",T18
+MVP-FR-019,VS Code extension,"FR-VSCODE-001,FR-VSCODE-002",T19
+MVP-FR-020,Local GraphRAG,"FR-RAG-001,FR-RAG-002,FR-RAG-003",T20
+MVP-FR-021,Useful read-only agent workflow,FR-AGENT-003,T21
+MVP-FR-022,MCP core graph access,"FR-MCP-001,FR-MCP-002",T22
+MVP-FR-023,Logging,NFR-OPS-001,T23
+MVP-FR-024,Metrics,NFR-OPS-002,T24
+MVP-FR-025,Backup,NFR-REL-002,T25
+MVP-FR-026,Restore,NFR-REL-002,T26
+MVP-FR-027,Automated tests,NFR-MAINT-001,T27
+MVP-FR-028,End-to-end demo,"FR-GRAPH-006,FR-AGENT-003",T28

@@ -1,0 +1,66 @@
+{
+  "captured_at": "2026-10-04T14:47:08.049758Z",
+  "event_id": "2799468994d0add861a025dcb19118be001615d1ee247dabaf252b403be41c18",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "jobrien",
+        "displayName": "James O'Brien",
+        "emailAddress": "jobrien@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-07-15T09:00:00.000+0000",
+      "customfield_10015": "Quality Engineering",
+      "description": "Write comprehensive unit tests for the payment tokenization service including edge cases for malformed PANs, expired cards, and concurrent tokenization requests.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "testing",
+        "unit-tests"
+      ],
+      "parent": {
+        "key": "PAY-101"
+      },
+      "priority": {
+        "name": "Medium"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "akim",
+        "displayName": "Alex Kim",
+        "emailAddress": "akim@mfs.com"
+      },
+      "resolutiondate": "2026-09-18T14:00:00.000+0000",
+      "status": {
+        "name": "Done",
+        "statusCategory": {
+          "name": "Done"
+        }
+      },
+      "story_points": 3,
+      "summary": "Write unit tests for tokenization",
+      "updated": "2026-09-18T14:00:00.000+0000"
+    },
+    "id": "60111",
+    "key": "PAY-111",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60111"
+  },
+  "payload_hash": "3d9d70df54dee936e7612105be6249cbcb0e2c824cc1f2864acda744c0d028a3",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-111",
+  "source_system": "jira",
+  "source_version": "3d9d70df54dee936e7612105be6249cbcb0e2c824cc1f2864acda744c0d028a3"
+}

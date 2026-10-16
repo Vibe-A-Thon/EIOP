@@ -1,0 +1,358 @@
+{
+  "description": "Code graph represented as JSON — MFS Customer Portal. TypeScript/React single-page application for Meridian Financial Services customer-facing payment and transaction management.",
+  "repository": {
+    "repo_id": "mfs-customer-portal",
+    "name": "mfs-customer-portal",
+    "source_uri": "https://gitlab.mfs.internal/mfs/customer-portal",
+    "default_branch": "main"
+  },
+  "files": [
+    {
+      "path": "src/components/PaymentForm.tsx",
+      "language": "typescript",
+      "content_hash": "mfs-portal-payform-v4",
+      "line_count": 268
+    },
+    {
+      "path": "src/components/FraudAlertBanner.tsx",
+      "language": "typescript",
+      "content_hash": "mfs-portal-fraudbanner-v2",
+      "line_count": 95
+    },
+    {
+      "path": "src/components/TransactionRow.tsx",
+      "language": "typescript",
+      "content_hash": "mfs-portal-txnrow-v2",
+      "line_count": 78
+    },
+    {
+      "path": "src/components/CardDisplay.tsx",
+      "language": "typescript",
+      "content_hash": "mfs-portal-card-v1",
+      "line_count": 62
+    },
+    {
+      "path": "src/pages/TransactionHistory.tsx",
+      "language": "typescript",
+      "content_hash": "mfs-portal-txnhist-v3",
+      "line_count": 186
+    },
+    {
+      "path": "src/pages/Dashboard.tsx",
+      "language": "typescript",
+      "content_hash": "mfs-portal-dash-v2",
+      "line_count": 152
+    },
+    {
+      "path": "src/services/paymentApi.ts",
+      "language": "typescript",
+      "content_hash": "mfs-portal-payapi-v3",
+      "line_count": 124
+    },
+    {
+      "path": "src/services/fraudApi.ts",
+      "language": "typescript",
+      "content_hash": "mfs-portal-fraudapi-v2",
+      "line_count": 82
+    },
+    {
+      "path": "src/hooks/usePayment.ts",
+      "language": "typescript",
+      "content_hash": "mfs-portal-usepay-v2",
+      "line_count": 96
+    },
+    {
+      "path": "src/hooks/useTransactions.ts",
+      "language": "typescript",
+      "content_hash": "mfs-portal-usetxn-v1",
+      "line_count": 68
+    },
+    {
+      "path": "src/utils/format.ts",
+      "language": "typescript",
+      "content_hash": "mfs-portal-format-v2",
+      "line_count": 54
+    },
+    {
+      "path": "src/utils/validation.ts",
+      "language": "typescript",
+      "content_hash": "mfs-portal-validation-v1",
+      "line_count": 72
+    }
+  ],
+  "symbols": [
+    {
+      "qualified_name": "components.PaymentForm",
+      "symbol_kind": "component",
+      "name": "PaymentForm",
+      "path": "src/components/PaymentForm.tsx",
+      "start_line": 22,
+      "end_line": 268
+    },
+    {
+      "qualified_name": "components.PaymentForm.handleSubmit",
+      "symbol_kind": "function",
+      "name": "handleSubmit",
+      "path": "src/components/PaymentForm.tsx",
+      "start_line": 48,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "components.PaymentForm.validateCard",
+      "symbol_kind": "function",
+      "name": "validateCard",
+      "path": "src/components/PaymentForm.tsx",
+      "start_line": 100,
+      "end_line": 138
+    },
+    {
+      "qualified_name": "components.FraudAlertBanner",
+      "symbol_kind": "component",
+      "name": "FraudAlertBanner",
+      "path": "src/components/FraudAlertBanner.tsx",
+      "start_line": 12,
+      "end_line": 95
+    },
+    {
+      "qualified_name": "components.FraudAlertBanner.dismissAlert",
+      "symbol_kind": "function",
+      "name": "dismissAlert",
+      "path": "src/components/FraudAlertBanner.tsx",
+      "start_line": 28,
+      "end_line": 42
+    },
+    {
+      "qualified_name": "components.TransactionRow",
+      "symbol_kind": "component",
+      "name": "TransactionRow",
+      "path": "src/components/TransactionRow.tsx",
+      "start_line": 10,
+      "end_line": 78
+    },
+    {
+      "qualified_name": "components.CardDisplay",
+      "symbol_kind": "component",
+      "name": "CardDisplay",
+      "path": "src/components/CardDisplay.tsx",
+      "start_line": 8,
+      "end_line": 62
+    },
+    {
+      "qualified_name": "pages.TransactionHistory",
+      "symbol_kind": "component",
+      "name": "TransactionHistory",
+      "path": "src/pages/TransactionHistory.tsx",
+      "start_line": 18,
+      "end_line": 186
+    },
+    {
+      "qualified_name": "pages.TransactionHistory.fetchTransactions",
+      "symbol_kind": "function",
+      "name": "fetchTransactions",
+      "path": "src/pages/TransactionHistory.tsx",
+      "start_line": 32,
+      "end_line": 64
+    },
+    {
+      "qualified_name": "pages.Dashboard",
+      "symbol_kind": "component",
+      "name": "Dashboard",
+      "path": "src/pages/Dashboard.tsx",
+      "start_line": 16,
+      "end_line": 152
+    },
+    {
+      "qualified_name": "services.paymentApi",
+      "symbol_kind": "module",
+      "name": "paymentApi",
+      "path": "src/services/paymentApi.ts",
+      "start_line": 1,
+      "end_line": 124
+    },
+    {
+      "qualified_name": "services.paymentApi.createPayment",
+      "symbol_kind": "function",
+      "name": "createPayment",
+      "path": "src/services/paymentApi.ts",
+      "start_line": 18,
+      "end_line": 48
+    },
+    {
+      "qualified_name": "services.paymentApi.getPayment",
+      "symbol_kind": "function",
+      "name": "getPayment",
+      "path": "src/services/paymentApi.ts",
+      "start_line": 50,
+      "end_line": 72
+    },
+    {
+      "qualified_name": "services.paymentApi.listPayments",
+      "symbol_kind": "function",
+      "name": "listPayments",
+      "path": "src/services/paymentApi.ts",
+      "start_line": 74,
+      "end_line": 98
+    },
+    {
+      "qualified_name": "services.fraudApi",
+      "symbol_kind": "module",
+      "name": "fraudApi",
+      "path": "src/services/fraudApi.ts",
+      "start_line": 1,
+      "end_line": 82
+    },
+    {
+      "qualified_name": "services.fraudApi.checkFraudScore",
+      "symbol_kind": "function",
+      "name": "checkFraudScore",
+      "path": "src/services/fraudApi.ts",
+      "start_line": 14,
+      "end_line": 42
+    },
+    {
+      "qualified_name": "services.fraudApi.reportFraud",
+      "symbol_kind": "function",
+      "name": "reportFraud",
+      "path": "src/services/fraudApi.ts",
+      "start_line": 44,
+      "end_line": 72
+    },
+    {
+      "qualified_name": "hooks.usePayment",
+      "symbol_kind": "function",
+      "name": "usePayment",
+      "path": "src/hooks/usePayment.ts",
+      "start_line": 12,
+      "end_line": 96
+    },
+    {
+      "qualified_name": "hooks.useTransactions",
+      "symbol_kind": "function",
+      "name": "useTransactions",
+      "path": "src/hooks/useTransactions.ts",
+      "start_line": 10,
+      "end_line": 68
+    },
+    {
+      "qualified_name": "utils.format.formatCurrency",
+      "symbol_kind": "function",
+      "name": "formatCurrency",
+      "path": "src/utils/format.ts",
+      "start_line": 4,
+      "end_line": 18
+    },
+    {
+      "qualified_name": "utils.format.formatDate",
+      "symbol_kind": "function",
+      "name": "formatDate",
+      "path": "src/utils/format.ts",
+      "start_line": 20,
+      "end_line": 34
+    },
+    {
+      "qualified_name": "utils.format.maskCardNumber",
+      "symbol_kind": "function",
+      "name": "maskCardNumber",
+      "path": "src/utils/format.ts",
+      "start_line": 36,
+      "end_line": 48
+    },
+    {
+      "qualified_name": "utils.validation.validateCardNumber",
+      "symbol_kind": "function",
+      "name": "validateCardNumber",
+      "path": "src/utils/validation.ts",
+      "start_line": 6,
+      "end_line": 28
+    },
+    {
+      "qualified_name": "utils.validation.validateAmount",
+      "symbol_kind": "function",
+      "name": "validateAmount",
+      "path": "src/utils/validation.ts",
+      "start_line": 30,
+      "end_line": 48
+    }
+  ],
+  "dependencies": [
+    {"name": "react", "resolved": true, "language": "typescript"},
+    {"name": "react-dom", "resolved": true, "language": "typescript"},
+    {"name": "axios", "resolved": true, "language": "typescript"},
+    {"name": "@tanstack/react-query", "resolved": true, "language": "typescript"},
+    {"name": "tailwindcss", "resolved": true, "language": "typescript"},
+    {"name": "typescript", "resolved": true, "language": "typescript"},
+    {"name": "zod", "resolved": true, "language": "typescript"},
+    {"name": "react-router-dom", "resolved": true, "language": "typescript"}
+  ],
+  "infrastructure": {
+    "pod": "mfs-portal-pod-01",
+    "namespace": "mfs-portal",
+    "cluster": "ocp-prod-east.mfs.internal",
+    "api_gateway": "api-gateway.mfs.internal",
+    "upstream_services": ["mfs-payment-gateway", "mfs-fraud-engine"],
+    "cdn": "cdn.mfs.internal"
+  },
+  "edges": [
+    {"type": "CONTAINS", "from": "src/components/PaymentForm.tsx", "to": "components.PaymentForm"},
+    {"type": "CONTAINS", "from": "src/components/PaymentForm.tsx", "to": "components.PaymentForm.handleSubmit"},
+    {"type": "CONTAINS", "from": "src/components/PaymentForm.tsx", "to": "components.PaymentForm.validateCard"},
+    {"type": "CONTAINS", "from": "src/components/FraudAlertBanner.tsx", "to": "components.FraudAlertBanner"},
+    {"type": "CONTAINS", "from": "src/components/FraudAlertBanner.tsx", "to": "components.FraudAlertBanner.dismissAlert"},
+    {"type": "CONTAINS", "from": "src/components/TransactionRow.tsx", "to": "components.TransactionRow"},
+    {"type": "CONTAINS", "from": "src/components/CardDisplay.tsx", "to": "components.CardDisplay"},
+    {"type": "CONTAINS", "from": "src/pages/TransactionHistory.tsx", "to": "pages.TransactionHistory"},
+    {"type": "CONTAINS", "from": "src/pages/TransactionHistory.tsx", "to": "pages.TransactionHistory.fetchTransactions"},
+    {"type": "CONTAINS", "from": "src/pages/Dashboard.tsx", "to": "pages.Dashboard"},
+    {"type": "CONTAINS", "from": "src/services/paymentApi.ts", "to": "services.paymentApi.createPayment"},
+    {"type": "CONTAINS", "from": "src/services/paymentApi.ts", "to": "services.paymentApi.getPayment"},
+    {"type": "CONTAINS", "from": "src/services/paymentApi.ts", "to": "services.paymentApi.listPayments"},
+    {"type": "CONTAINS", "from": "src/services/fraudApi.ts", "to": "services.fraudApi.checkFraudScore"},
+    {"type": "CONTAINS", "from": "src/services/fraudApi.ts", "to": "services.fraudApi.reportFraud"},
+    {"type": "CONTAINS", "from": "src/hooks/usePayment.ts", "to": "hooks.usePayment"},
+    {"type": "CONTAINS", "from": "src/hooks/useTransactions.ts", "to": "hooks.useTransactions"},
+    {"type": "CONTAINS", "from": "src/utils/format.ts", "to": "utils.format.formatCurrency"},
+    {"type": "CONTAINS", "from": "src/utils/format.ts", "to": "utils.format.formatDate"},
+    {"type": "CONTAINS", "from": "src/utils/format.ts", "to": "utils.format.maskCardNumber"},
+    {"type": "CONTAINS", "from": "src/utils/validation.ts", "to": "utils.validation.validateCardNumber"},
+    {"type": "CONTAINS", "from": "src/utils/validation.ts", "to": "utils.validation.validateAmount"},
+    {"type": "CALLS", "from": "components.PaymentForm.handleSubmit", "to": "services.paymentApi.createPayment"},
+    {"type": "CALLS", "from": "components.PaymentForm.handleSubmit", "to": "services.fraudApi.checkFraudScore"},
+    {"type": "CALLS", "from": "components.PaymentForm.validateCard", "to": "utils.validation.validateCardNumber"},
+    {"type": "CALLS", "from": "components.PaymentForm.validateCard", "to": "utils.validation.validateAmount"},
+    {"type": "CALLS", "from": "pages.TransactionHistory.fetchTransactions", "to": "services.paymentApi.listPayments"},
+    {"type": "CALLS", "from": "pages.Dashboard", "to": "hooks.usePayment"},
+    {"type": "CALLS", "from": "pages.Dashboard", "to": "hooks.useTransactions"},
+    {"type": "CALLS", "from": "pages.TransactionHistory", "to": "hooks.useTransactions"},
+    {"type": "CALLS", "from": "hooks.usePayment", "to": "services.paymentApi.createPayment"},
+    {"type": "CALLS", "from": "hooks.usePayment", "to": "services.paymentApi.getPayment"},
+    {"type": "CALLS", "from": "hooks.useTransactions", "to": "services.paymentApi.listPayments"},
+    {"type": "CALLS", "from": "components.TransactionRow", "to": "utils.format.formatCurrency"},
+    {"type": "CALLS", "from": "components.TransactionRow", "to": "utils.format.formatDate"},
+    {"type": "CALLS", "from": "components.CardDisplay", "to": "utils.format.maskCardNumber"},
+    {"type": "CALLS", "from": "components.FraudAlertBanner", "to": "services.fraudApi.reportFraud"},
+    {"type": "IMPORTS", "from": "src/components/PaymentForm.tsx", "to": "react"},
+    {"type": "IMPORTS", "from": "src/components/PaymentForm.tsx", "to": "zod"},
+    {"type": "IMPORTS", "from": "src/components/FraudAlertBanner.tsx", "to": "react"},
+    {"type": "IMPORTS", "from": "src/components/TransactionRow.tsx", "to": "react"},
+    {"type": "IMPORTS", "from": "src/components/CardDisplay.tsx", "to": "react"},
+    {"type": "IMPORTS", "from": "src/pages/TransactionHistory.tsx", "to": "react"},
+    {"type": "IMPORTS", "from": "src/pages/TransactionHistory.tsx", "to": "@tanstack/react-query"},
+    {"type": "IMPORTS", "from": "src/pages/Dashboard.tsx", "to": "react"},
+    {"type": "IMPORTS", "from": "src/pages/Dashboard.tsx", "to": "react-router-dom"},
+    {"type": "IMPORTS", "from": "src/services/paymentApi.ts", "to": "axios"},
+    {"type": "IMPORTS", "from": "src/services/fraudApi.ts", "to": "axios"},
+    {"type": "IMPORTS", "from": "src/hooks/usePayment.ts", "to": "@tanstack/react-query"},
+    {"type": "IMPORTS", "from": "src/hooks/useTransactions.ts", "to": "@tanstack/react-query"},
+    {"type": "DEPENDS_ON", "from": "components.PaymentForm", "to": "services.paymentApi"},
+    {"type": "DEPENDS_ON", "from": "components.PaymentForm", "to": "services.fraudApi"},
+    {"type": "DEPENDS_ON", "from": "components.PaymentForm", "to": "utils.validation.validateCardNumber"},
+    {"type": "DEPENDS_ON", "from": "pages.TransactionHistory", "to": "hooks.useTransactions"},
+    {"type": "DEPENDS_ON", "from": "pages.TransactionHistory", "to": "components.TransactionRow"},
+    {"type": "DEPENDS_ON", "from": "pages.Dashboard", "to": "hooks.usePayment"},
+    {"type": "DEPENDS_ON", "from": "pages.Dashboard", "to": "components.PaymentForm"},
+    {"type": "DEPENDS_ON", "from": "pages.Dashboard", "to": "components.FraudAlertBanner"},
+    {"type": "CONNECTS_TO", "from": "services.paymentApi", "to": "mfs-payment-gateway", "properties": {"protocol": "REST", "base_url": "https://api-gateway.mfs.internal/payments/v2"}},
+    {"type": "CONNECTS_TO", "from": "services.fraudApi", "to": "mfs-fraud-engine", "properties": {"protocol": "REST", "base_url": "https://api-gateway.mfs.internal/fraud/v2"}},
+    {"type": "DEPLOYED_ON", "from": "mfs-customer-portal", "to": "mfs-portal-pod-01", "properties": {"namespace": "mfs-portal", "cluster": "ocp-prod-east.mfs.internal"}}
+  ]
+}

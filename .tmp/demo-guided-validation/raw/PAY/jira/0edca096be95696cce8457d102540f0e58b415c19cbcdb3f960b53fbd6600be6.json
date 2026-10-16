@@ -1,0 +1,66 @@
+{
+  "captured_at": "2026-10-04T14:43:26.266012Z",
+  "event_id": "0edca096be95696cce8457d102540f0e58b415c19cbcdb3f960b53fbd6600be6",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-settlement-engine"
+        }
+      ],
+      "created": "2026-08-14T09:00:00.000+0000",
+      "customfield_10015": "Platform Engineering",
+      "description": "Implement the batch aggregation logic that groups completed transactions by merchant, currency, and acquiring bank for settlement file generation.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "aggregation",
+        "batch"
+      ],
+      "parent": {
+        "key": "PAY-301"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "schen@mfs.com"
+      },
+      "resolutiondate": null,
+      "status": {
+        "name": "In Progress",
+        "statusCategory": {
+          "name": "In Progress"
+        }
+      },
+      "story_points": 5,
+      "summary": "Build batch aggregation logic",
+      "updated": "2026-09-29T16:00:00.000+0000"
+    },
+    "id": "60311",
+    "key": "PAY-311",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60311"
+  },
+  "payload_hash": "d74c65883987007d580eec0c9653fb1ac7eaedc59cfd812226f730c41a2e7cd0",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-311",
+  "source_system": "jira",
+  "source_version": "d74c65883987007d580eec0c9653fb1ac7eaedc59cfd812226f730c41a2e7cd0"
+}

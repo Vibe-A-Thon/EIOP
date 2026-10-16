@@ -1,0 +1,143 @@
+{
+  "description": "Mock crawled data from MFS Fraud Detection internal wiki, ML model registry, and AML compliance portal. Demonstrates the crawler capability for ingesting unstructured web content into the knowledge graph.",
+  "crawl_config": {
+    "source_system": "web_crawler",
+    "crawl_id": "mfs-fraud-wiki-2026-10-04",
+    "seed_urls": [
+      "https://fraud.mfs.internal/wiki/",
+      "https://mlregistry.mfs.internal/models/",
+      "https://aml-compliance.mfs.internal/"
+    ],
+    "max_depth": 2,
+    "max_pages": 50,
+    "crawl_timestamp": "2026-10-04T06:00:00Z"
+  },
+  "pages": [
+    {
+      "url": "https://fraud.mfs.internal/wiki/fraud-scoring-architecture",
+      "title": "Fraud Scoring Engine Architecture",
+      "content_type": "text/html",
+      "last_modified": "2026-10-02T10:00:00Z",
+      "content_text": "The MFS Fraud Scoring Engine is a real-time ML service that evaluates every financial transaction for fraud probability. The engine uses an XGBoost model (v2) exported to ONNX format for cross-platform serving. Feature extraction computes 47 fraud-relevant signals from raw transaction data ingested via Kafka topic mfs.txn.raw. Enriched features are published to mfs.txn.features for downstream consumption. The scoring service runs on mfs-fraud-pod-01 and mfs-fraud-pod-02 in the mfs-prod OpenShift namespace under the svc-fraud-engine service account. Model metadata and version history are stored in mfs_fraud_db.model_registry on pghost-prod-02.mfs.internal. SLA: p95 scoring latency < 50ms, false positive rate < 2%.",
+      "links_out": [
+        "https://fraud.mfs.internal/wiki/feature-extraction",
+        "https://mlregistry.mfs.internal/models/fraud-scorer-v2"
+      ],
+      "metadata": {
+        "author": "Priya Sharma",
+        "space": "Fraud Wiki",
+        "tags": ["architecture", "fraud-scoring", "ml-model"]
+      }
+    },
+    {
+      "url": "https://fraud.mfs.internal/wiki/feature-extraction",
+      "title": "Real-time Feature Extraction Pipeline",
+      "content_type": "text/html",
+      "last_modified": "2026-10-01T14:00:00Z",
+      "content_text": "The feature extraction service computes fraud-relevant features from raw transaction data in real time. It consumes from Kafka topic mfs.txn.raw and publishes enriched events to mfs.txn.features. Features include: transaction velocity (per-account, per-merchant, per-device across 1min/5min/1hr/24hr windows), merchant risk score (from reference table in mfs_fraud_db.merchant_risk), device fingerprint similarity score, and geolocation anomaly score. The service runs on mfs-fraud-pod-01 under svc-fraud-engine. Known issue: merchant_risk reference table staleness caused false positive spike (INC0080201). Mitigation: automated staleness check added to pipeline startup.",
+      "links_out": [
+        "https://fraud.mfs.internal/wiki/fraud-scoring-architecture",
+        "https://fraud.mfs.internal/wiki/velocity-monitoring"
+      ],
+      "metadata": {
+        "author": "Nadia Kowalski",
+        "space": "Fraud Wiki",
+        "tags": ["feature-engineering", "kafka", "real-time"]
+      }
+    },
+    {
+      "url": "https://fraud.mfs.internal/wiki/velocity-monitoring",
+      "title": "Transaction Velocity Monitoring",
+      "content_type": "text/html",
+      "last_modified": "2026-09-30T16:00:00Z",
+      "content_text": "The transaction velocity monitoring system tracks per-account, per-merchant, and per-device transaction rates over sliding time windows. Configurable thresholds are defined in YAML and hot-reloaded without service restart. The system consumes enriched transactions from Kafka topic mfs.txn.enriched via consumer group mfs-txn-monitor-cg and publishes alerts to mfs.alerts.txn. Alert persistence uses mfs_fraud_db.alerts table on pghost-prod-02.mfs.internal. Deployed on mfs-txn-mon-pod-01 in mfs-prod namespace under svc-txn-monitor service account. Current issue: Kafka consumer lag after partition scaling from 12 to 24 (INC0080202).",
+      "links_out": [
+        "https://fraud.mfs.internal/wiki/feature-extraction",
+        "https://fraud.mfs.internal/wiki/anomaly-detection"
+      ],
+      "metadata": {
+        "author": "Priya Sharma",
+        "space": "Fraud Wiki",
+        "tags": ["velocity", "monitoring", "kafka"]
+      }
+    },
+    {
+      "url": "https://mlregistry.mfs.internal/models/fraud-scorer-v2",
+      "title": "Model: Fraud Scorer v2",
+      "content_type": "text/html",
+      "last_modified": "2026-09-28T17:00:00Z",
+      "content_text": "Model Name: fraud-scorer-v2. Algorithm: XGBoost. Format: ONNX. Training Data: 6 months of labeled transactions from mfs_fraud_db.fraud_transactions. Features: 47. Performance: AUC-ROC 0.967, Precision 0.94, Recall 0.91, False Positive Rate 1.4%. Hyperparameters optimized via Optuna (200 trials). Deployed via CHG0090401. A/B testing framework (FRD-103) supports concurrent version deployment with configurable traffic split. Automated rollback triggers when candidate model FP rate exceeds baseline by >0.5%. Previous incident: INC0080201 false positive spike caused by stale merchant risk reference data, not model issue.",
+      "links_out": [
+        "https://fraud.mfs.internal/wiki/fraud-scoring-architecture"
+      ],
+      "metadata": {
+        "author": "Nadia Kowalski",
+        "space": "ML Model Registry",
+        "tags": ["model", "xgboost", "onnx", "fraud"]
+      }
+    },
+    {
+      "url": "https://aml-compliance.mfs.internal/framework",
+      "title": "AML Compliance Framework",
+      "content_type": "text/html",
+      "last_modified": "2026-10-02T14:00:00Z",
+      "content_text": "The MFS AML Compliance Framework implements FinCEN Bank Secrecy Act requirements for detecting and reporting suspicious financial activity. Detection patterns: Structuring (AML-STRUCT-001) identifies transactions split below $10,000 CTR threshold. Layering (AML-LAYER-001) tracks rapid inter-account fund movements. Integration (AML-INTEG-001) flags illicit funds merged into legitimate transactions. The AML rule engine runs on mfs-aml-pod-01 in mfs-prod namespace under svc-aml-engine service account. Case data and detection results stored in mfs_aml_db on pghost-prod-02.mfs.internal. SAR auto-generation pre-populates FinCEN forms from case data (FRD-311). CTR auto-filing handles transactions exceeding $10,000 with same-day aggregation (FRD-321). Filing via FinCEN BSA E-Filing system.",
+      "links_out": [
+        "https://fraud.mfs.internal/wiki/fraud-scoring-architecture"
+      ],
+      "metadata": {
+        "author": "Priya Sharma",
+        "space": "AML Compliance Portal",
+        "tags": ["aml", "compliance", "fincen", "bsa"]
+      }
+    },
+    {
+      "url": "https://mlflow.mfs.internal/models/fraud-scoring-xgboost",
+      "title": "MLflow - fraud-scoring-xgboost Model Registry",
+      "content_type": "text/html",
+      "last_modified": "2026-10-03T11:00:00Z",
+      "content_text": "MLflow Model Registry: fraud-scoring-xgboost. Current champion model: v2.2 (promoted 2026-09-15). Challenger model: v2.3 (staged 2026-10-01, elevated false positives observed during shadow testing at 2.1% vs 1.4% baseline). Performance baselines: v2.2 AUC-ROC 0.971, Precision 0.95, Recall 0.92, FP Rate 1.4%. v2.3 AUC-ROC 0.973, Precision 0.96, Recall 0.93, FP Rate 2.1%. Training data: 2M labeled transactions from Q1-Q3 2026. Training parameters: max_depth=8, learning_rate=0.05, n_estimators=500, subsample=0.8, colsample_bytree=0.7, reg_alpha=0.1, reg_lambda=1.0. Features: 47 input features sourced from mfs.txn.features Kafka topic. Feature categories: transaction (amount, currency, merchant_category, channel), velocity (1min_count, 5min_count, 1hr_count, 24hr_count), device (fingerprint_hash, ip_geo_distance, browser_entropy), account (age_days, history_length, avg_txn_amount), merchant (risk_score, category_code, country_risk). Model artifacts stored in S3: s3://mfs-mlflow/models/fraud-scoring-xgboost/. Experiment tracking: https://mlflow.mfs.internal/experiments/42.",
+      "links_out": [
+        "https://mlflow.mfs.internal/experiments/42",
+        "https://fraud.mfs.internal/wiki/fraud-scoring-architecture"
+      ],
+      "metadata": {
+        "author": "Nadia Kowalski",
+        "space": "MLflow Registry",
+        "tags": ["mlflow", "model-registry", "xgboost", "champion-challenger"]
+      }
+    },
+    {
+      "url": "https://feast.mfs.internal/feature-services/fraud-features",
+      "title": "Feast Feature Store - Fraud Feature Service",
+      "content_type": "text/html",
+      "last_modified": "2026-10-02T16:00:00Z",
+      "content_text": "Feast Feature Store: Fraud Feature Service. 47 features serving the fraud-scoring-xgboost model. Feature categories: Transaction features (8): amount, currency, merchant_category, channel, is_international, is_card_present, transaction_type, time_of_day. Velocity features (12): account_1min_count, account_5min_count, account_1hr_count, account_24hr_count, merchant_1min_count, merchant_5min_count, merchant_1hr_count, merchant_24hr_count, device_1min_count, device_5min_count, device_1hr_count, device_24hr_count. Device features (8): fingerprint_hash, ip_geo_latitude, ip_geo_longitude, ip_geo_distance_from_home, browser_entropy, device_age_days, is_known_device, device_type. Account features (10): account_age_days, account_history_length, avg_txn_amount_30d, max_txn_amount_30d, std_txn_amount_30d, account_risk_tier, previous_fraud_count, last_password_change_days, mfa_enabled, account_type. Merchant features (9): merchant_risk_score, merchant_category_code, merchant_country_risk, merchant_txn_volume_30d, merchant_fraud_rate_90d, merchant_age_days, is_new_merchant_for_account, merchant_avg_txn_amount, merchant_chargeback_rate. Feature materialization: online store backed by Redis (feast-redis.mfs.internal:6379), offline store backed by BigQuery. Streaming source: mfs.txn.features Kafka topic. Materialization lag SLO: < 60 seconds. Feature freshness monitoring via Prometheus metrics exposed at /metrics endpoint.",
+      "links_out": [
+        "https://fraud.mfs.internal/wiki/feature-extraction",
+        "https://mlflow.mfs.internal/models/fraud-scoring-xgboost"
+      ],
+      "metadata": {
+        "author": "Priya Sharma",
+        "space": "Feature Store",
+        "tags": ["feast", "feature-store", "fraud-features", "ml-features"]
+      }
+    },
+    {
+      "url": "https://dbdocs.mfs.internal/mfs_fraud_db/tables",
+      "title": "mfs_fraud_db - Table Reference",
+      "content_type": "text/html",
+      "last_modified": "2026-10-01T09:00:00Z",
+      "content_text": "Database: mfs_fraud_db. Host: pghost-prod-02.mfs.internal. Port: 5432. Tables: fraud_transactions (columns: txn_id, account_id, amount, currency, merchant_id, channel, timestamp, is_international, card_present, txn_type). fraud_scores (columns: score_id, txn_id, fraud_score, model_version, decision, latency_ms, feature_count, scored_at, features_json). model_registry (columns: model_id, model_name, version, algorithm, format, auc_roc, precision_val, recall_val, fp_rate, status, promoted_at, training_data_start, training_data_end). model_versions (columns: version_id, model_id, version_tag, artifact_uri, training_params_json, metrics_json, created_at, stage). velocity_windows (columns: window_id, account_id, dimension, window_size, count, last_updated). alerts (columns: alert_id, alert_type, severity, account_id, txn_ids, pattern_type, detection_confidence, created_at, resolved_at, analyst_id). aml_cases (columns: case_id, alert_ids, account_id, pattern_type, risk_level, status, assigned_analyst, opened_at, closed_at, resolution). sar_filings (columns: filing_id, case_id, fincen_form_type, filing_status, generated_at, submitted_at, confirmation_number). fraud_cases (columns: case_id, txn_ids, account_id, fraud_type, amount_total, status, investigator_id, opened_at, resolved_at). case_evidence (columns: evidence_id, case_id, evidence_type, source_system, content_json, collected_at). All tables use UTC timestamps. Primary replication: streaming to pghost-prod-02-replica.mfs.internal. Backup schedule: daily full + hourly incremental to S3.",
+      "links_out": [
+        "https://fraud.mfs.internal/wiki/fraud-scoring-architecture",
+        "https://aml-compliance.mfs.internal/framework"
+      ],
+      "metadata": {
+        "author": "Li Wei",
+        "space": "Database Documentation",
+        "tags": ["database", "schema", "postgresql", "fraud-db"]
+      }
+    }
+  ]
+}

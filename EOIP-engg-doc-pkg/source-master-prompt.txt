@@ -1,0 +1,2374 @@
+MASTER ENGINEERING / ARCHITECTURE / PRODUCT BUILD PROMPT
+=========================================================
+
+ROLE
+----
+
+Act simultaneously as:
+
+- Principal Enterprise Architect
+- Principal Solution Architect
+- CTO / Technology Leader
+- AI/ML Research Architect
+- Knowledge Graph / Ontology Architect
+- Agentic AI Architect
+- GraphRAG / RAG Architect
+- Data Architect
+- Backend Architect
+- Frontend Architect
+- Developer Tooling Architect
+- DevSecOps Architect
+- Security Architect
+- Product Manager
+- Business Analyst
+- Technical Program Manager
+- Senior Python / TypeScript / Graph Engineer
+- QA / Performance / Reliability Engineer
+
+Your mission is NOT merely to produce conceptual documentation.
+
+Your mission is to design a production-oriented, implementable, local-first enterprise ontology and enterprise intelligence platform and produce the complete requirements, architecture, implementation plans, data models, APIs, graph models, agent designs, RAG designs, UI specifications, Docker deployment specifications, validation plans, test plans, runbooks and phased delivery plans needed for an engineering team or coding AI agent to actually build it.
+
+The final system must be capable of evolving from a fully functional demonstrable MVP into a large enterprise platform phase by phase without requiring a fundamental architectural rewrite.
+
+
+======================================================================
+NON-NEGOTIABLE CONSTRAINTS
+======================================================================
+
+1. NO CLOUD SERVICES.
+
+2. The entire platform must be capable of running on-premises / local infrastructure.
+
+3. Use Docker containers.
+
+4. Use Docker Compose for the MVP.
+
+5. Apache HugeGraph must be the primary graph database and the authoritative graph/ontology store.
+
+6. Do not introduce Neo4j, Neptune, Cosmos DB, Amazon services, Azure services, GCP services or SaaS dependencies as required infrastructure.
+
+7. Additional local/self-hosted components may be proposed ONLY when they solve a clearly identified problem that HugeGraph should not solve.
+
+8. Every additional infrastructure component must be justified.
+
+9. Minimize infrastructure complexity in the MVP.
+
+10. Do not implement RBAC for the MVP.
+
+11. Different applications/views may use separate URL patterns and screen-switch modes.
+
+12. Explicitly state that URL separation is NOT a security authorization boundary.
+
+13. MVP deployment may assume:
+    - trusted enterprise network,
+    - development environment,
+    - single-user environment,
+    - or controlled demonstration environment.
+
+14. Even without RBAC, implement:
+    - authentication where appropriate,
+    - secret protection,
+    - network isolation,
+    - TLS where appropriate,
+    - audit logs,
+    - agent/tool action controls,
+    - destructive-action confirmation,
+    - secure configuration,
+    - data sanitization.
+
+15. NO enterprise production data may leave the local environment.
+
+16. AI inference should be LOCAL-FIRST.
+
+17. Support local/self-hosted models through a model abstraction layer.
+
+18. External LLM endpoints must be disabled in the MVP.
+
+19. The architecture MAY include an optional provider abstraction for future use, but:
+    - it must be disabled by default,
+    - no real enterprise data can be transmitted,
+    - only approved synthetic/redacted information may ever be sent if such functionality is later enabled.
+
+20. Prefer deterministic algorithms, graph algorithms, parsers, rules and conventional software engineering whenever an LLM is unnecessary.
+
+21. Use LLMs only where they materially improve functionality.
+
+22. The system must remain useful even when no LLM is available.
+
+23. Clean-room implementation is mandatory.
+
+24. Study capabilities and ideas from existing products, open-source projects, research papers and industry systems, but:
+    - do not copy proprietary source code,
+    - do not plagiarize implementations,
+    - respect licenses,
+    - document inspirations,
+    - build an independently engineered implementation.
+
+25. Generate SBOM/dependency/license documentation.
+
+26. The architecture must support offline or highly restricted-network deployment.
+
+
+======================================================================
+SOURCE MATERIAL HANDLING
+======================================================================
+
+A system already generates or will generate Jira JSON.
+
+If an actual Jira JSON file is supplied:
+
+1. Analyze its structure.
+2. Derive entities.
+3. Derive relationships.
+4. Derive identifiers.
+5. Derive timestamps.
+6. Identify missing fields.
+7. Map it into the enterprise ontology.
+8. Create ingestion mappings.
+9. Create validation rules.
+10. Use it as part of the MVP demo dataset.
+
+If Jira JSON is NOT actually supplied:
+
+DO NOT invent that it was analyzed.
+
+Instead:
+
+- define an expected Jira canonical schema,
+- generate synthetic sample data,
+- clearly mark assumptions,
+- make the importer configurable when the real JSON becomes available.
+
+
+######################################################################
+SEQUENCE 1 — ENTERPRISE ONTOLOGY / ENTERPRISE KNOWLEDGE GRAPH PLATFORM
+######################################################################
+
+I want to build something conceptually comparable to the capabilities offered by systems such as Graphify and other enterprise knowledge graph / ontology / graph intelligence platforms.
+
+However:
+
+DO NOT copy source code.
+
+Study concepts, features, workflows and requirements, improve upon them and create an independent architecture and implementation.
+
+The target must be a comprehensive ENTERPRISE ONTOLOGY AND INTELLIGENCE PLATFORM.
+
+
+======================================================================
+1.1 ENTERPRISE DATA SOURCES
+======================================================================
+
+Support a connector architecture for sources including:
+
+- Jira
+- Confluence
+- Git repositories
+- GitLab
+- GitLab merge requests
+- GitLab issues
+- GitLab tags
+- GitLab branches
+- GitLab pipelines
+- GitLab Pages / project documentation
+- ServiceNow
+- Change Requests
+- Incidents
+- Problems
+- Knowledge Base articles
+- project documentation
+- Markdown
+- text
+- JSON
+- YAML
+- XML
+- HTML
+- PDFs where practical
+- source-code repositories
+- local file systems
+- enterprise websites/intranets
+- CI/CD metadata
+- application/service metadata
+- architecture documents
+- build manifests
+- configuration files
+- test results
+- deployment metadata
+
+Design a connector SDK so additional enterprise connectors can be added later without modifying core graph logic.
+
+
+======================================================================
+1.2 CONNECTOR CAPABILITIES
+======================================================================
+
+Every connector should support, where applicable:
+
+- API token authentication
+- username/password only when unavoidable
+- MCP-based connectivity where appropriate
+- configurable API endpoints
+- pagination
+- rate-limit handling
+- retries
+- exponential backoff
+- incremental synchronization
+- checkpointing
+- resumable ingestion
+- full synchronization
+- delta synchronization
+- timestamp-based synchronization
+- change detection
+- deduplication
+- idempotency
+- source version tracking
+- source deletion handling
+- schema-change detection
+- dead-letter processing
+- connector health status
+- connector metrics
+- connector audit logs
+- dry-run mode
+- replay capability
+
+Never hardcode source-system credentials.
+
+Use:
+- Docker secrets,
+- environment references,
+- mounted secret files,
+or another documented local secret mechanism.
+
+
+======================================================================
+1.3 INGESTION ARCHITECTURE
+======================================================================
+
+Design the following logical pipeline:
+
+Source
+  ↓
+Connector
+  ↓
+Raw Capture
+  ↓
+Canonicalization
+  ↓
+Parsing
+  ↓
+Entity Extraction
+  ↓
+Identity Resolution
+  ↓
+Relationship Extraction
+  ↓
+Ontology Mapping
+  ↓
+Semantic Linking
+  ↓
+Validation
+  ↓
+Graph Mutation
+  ↓
+Indexing
+  ↓
+Meta-Graph / Provenance Update
+  ↓
+Quality Metrics
+
+Raw and normalized representations must remain traceable.
+
+For every generated entity or relationship retain, where applicable:
+
+- source system
+- source identifier
+- source URL/reference
+- extraction timestamp
+- ingestion job
+- parser version
+- transformation version
+- ontology version
+- confidence
+- evidence
+- creator
+- generated-by method
+- deterministic vs inferred status
+- validity interval
+- last observed timestamp
+- provenance chain
+
+
+======================================================================
+1.4 ENTERPRISE ONTOLOGY
+======================================================================
+
+Construct an enterprise ontology capable of representing at minimum:
+
+ORGANIZATION
+- Enterprise
+- BusinessUnit
+- Department
+- Team
+- Person
+- Role
+- Ownership
+
+WORK MANAGEMENT
+- Project
+- Program
+- Epic
+- Feature
+- Story
+- Task
+- Bug
+- JiraIssue
+- Sprint
+- Requirement
+- ChangeRequest
+
+CODE
+- Repository
+- Branch
+- Tag
+- Commit
+- MergeRequest
+- PullRequest
+- File
+- Directory
+- Package
+- Module
+- Namespace
+- Class
+- Interface
+- Function
+- Method
+- Variable
+- API
+- Endpoint
+- Dependency
+
+CI/CD
+- Pipeline
+- PipelineRun
+- Build
+- Test
+- Artifact
+- Deployment
+- Environment
+
+OPERATIONS
+- Service
+- Application
+- Component
+- Incident
+- Problem
+- Change
+- Alert
+
+KNOWLEDGE
+- Document
+- WikiPage
+- ConfluencePage
+- KBArticle
+- ArchitectureDocument
+- ADR
+- Runbook
+
+AI / AGENT
+- Agent
+- Tool
+- Prompt
+- Memory
+- Workflow
+- Plan
+- Action
+- Observation
+- Decision
+- Evidence
+
+
+======================================================================
+1.5 REQUIRED GRAPH TYPES
+======================================================================
+
+Do not create one giant undifferentiated graph.
+
+Design multiple logical graph domains including:
+
+1. Jira Graph
+2. Code Graph
+3. Documentation Graph
+4. Service/Runtime Graph
+5. CI/CD Graph
+6. Organization/Ownership Graph
+7. Change Graph
+8. Requirement Graph
+9. Architecture Graph
+10. Dependency Graph
+11. Provenance Graph
+12. Temporal Graph
+13. Identity Graph
+14. Semantic Relationships Graph
+15. Agent/Action Graph
+16. Meta Graph
+
+
+======================================================================
+1.6 META GRAPH
+======================================================================
+
+Create a META GRAPH that knows about:
+
+- graphs
+- graph domains
+- schemas
+- ontology versions
+- datasets
+- data sources
+- ingestion runs
+- graph versions
+- graph partitions
+- graph statistics
+- data lineage
+- ownership
+- freshness
+- validation state
+- quality score
+
+The meta graph must enable traversal such as:
+
+Enterprise
+→ project
+→ Jira graph
+→ issue
+→ merge request
+→ commit
+→ file
+→ function
+→ service
+→ deployment
+→ environment
+→ incident
+
+The query system should use the meta graph to identify which underlying graph/domain needs to be traversed instead of blindly searching everything.
+
+
+======================================================================
+1.7 RELATIONSHIP MODEL
+======================================================================
+
+Implement explicit semantic and conceptual relationships.
+
+Include:
+
+- association
+- domain-specific relationship
+- equivalence
+- identity
+- alias
+- subsumption
+- parent/child
+- hierarchical relationship
+- inverse
+- symmetric
+- transitive
+- meronymy / composition
+- dependency
+- requirement traceability
+- implementation
+- ownership
+- authorship
+- reviewer
+- approval
+- trigger
+- cause
+- effect
+- temporal
+- precedes
+- follows
+- concurrent
+- aggregation
+- derivation
+- provenance
+- lineage
+- dimensional join
+- contextual slicing
+- cross-domain bridge
+- security relationship
+- deployment relationship
+- test relationship
+
+Every relationship should support metadata such as:
+
+- confidence
+- source
+- evidence
+- creation method
+- timestamp
+- first observed
+- last observed
+- ontology rule
+- validation status
+
+
+======================================================================
+1.8 CROSS-ENTERPRISE TRACEABILITY
+======================================================================
+
+The system must establish end-to-end links such as:
+
+Change Request
+→ Project
+→ Jira Epic
+→ Jira Story
+→ Developer
+→ Team
+→ Merge Request
+→ Reviewer
+→ Commit
+→ Tag
+→ Branch
+→ Source File
+→ Function
+→ Dependency
+→ Build
+→ Test
+→ Pipeline
+→ Deployment
+→ Service
+→ Environment
+→ Incident
+→ Problem
+→ Knowledge Article
+→ Wiki Documentation
+
+Support forward and reverse traversal.
+
+Examples:
+
+"What code implements JIRA-123?"
+
+"What Jira stories are impacted if function X changes?"
+
+"What incidents are historically associated with this service?"
+
+"Which change request introduced this code?"
+
+"Who owns all components downstream of API X?"
+
+"What documentation is potentially outdated because this module changed?"
+
+"Which deployment contains commit ABC?"
+
+"What is the blast radius of modifying library X?"
+
+
+======================================================================
+1.9 CODE GRAPH
+======================================================================
+
+Build a real code graph instead of merely indexing files.
+
+Support parsing using deterministic parsers such as Tree-sitter or suitable AST tooling.
+
+Model:
+
+repository
+→ directory
+→ file
+→ class
+→ function
+→ method
+→ call
+→ import
+→ dependency
+→ API
+→ tests
+→ configuration
+→ build
+→ deployment
+
+Support:
+
+- symbol extraction
+- AST mapping
+- references
+- callers
+- callees
+- imports
+- inheritance
+- interface implementation
+- dependency detection
+- test coverage mapping where available
+- git blame/provenance where appropriate
+- commit-to-symbol relationships
+- Jira-to-code linking
+- documentation-to-code linking
+
+
+======================================================================
+1.10 IDENTITY RESOLUTION
+======================================================================
+
+Implement deterministic and probabilistic identity resolution.
+
+Examples:
+
+"Murthy Reddy" in Jira
+"R. Murthy" in Git
+an email address in GitLab
+a ServiceNow user identifier
+
+may represent the same Person node.
+
+Use:
+
+- canonical IDs
+- source aliases
+- deterministic matching
+- configurable fuzzy matching
+- confidence scoring
+- merge candidates
+- human confirmation where confidence is inadequate
+
+Never silently merge ambiguous identities.
+
+
+======================================================================
+1.11 TEMPORAL GRAPH
+======================================================================
+
+Enterprise topology changes over time.
+
+Support:
+
+- valid_from
+- valid_to
+- first_seen
+- last_seen
+- created_at
+- modified_at
+- deleted_at
+- source_version
+
+Allow questions such as:
+
+"What did the dependency graph look like before release X?"
+
+"What changed between graph version A and B?"
+
+"Which components became connected after deployment Y?"
+
+
+======================================================================
+1.12 GRAPH VERSIONING
+======================================================================
+
+Implement:
+
+- schema version
+- ontology version
+- ingestion version
+- entity revision
+- edge revision
+- graph snapshots or reproducible rebuild strategy
+- change journal
+- diff generation
+- rollback/replay strategy
+
+Specify exactly what the MVP implements versus what becomes Phase 2+.
+
+
+======================================================================
+1.13 APACHE HUGEGRAPH
+======================================================================
+
+Apache HugeGraph is the authoritative graph database.
+
+Create detailed designs for:
+
+- property keys
+- vertex labels
+- edge labels
+- indexes
+- composite indexes
+- uniqueness strategy
+- graph namespaces/logical domains
+- schema initialization
+- schema migration
+- bulk loading
+- transactional mutation strategy
+- query patterns
+- backup
+- restore
+- compaction/maintenance where applicable
+- performance testing
+- capacity assumptions
+
+Use Gremlin as the primary graph traversal language.
+
+Do not claim HugeGraph natively supports something unless verified.
+
+Where RDF/OWL/SPARQL interoperability is needed, design an explicit translation/export/query compatibility layer rather than pretending it is a native HugeGraph capability.
+
+
+======================================================================
+1.14 RDF / OWL / ONTOLOGY INTEROPERABILITY
+======================================================================
+
+Provide:
+
+- RDF export
+- OWL ontology representation where useful
+- ontology vocabulary
+- ontology mappings
+- namespace strategy
+- ontology versioning
+- import/export tools
+- constraint validation
+
+If SPARQL support is included, document the actual adapter/translation mechanism.
+
+
+======================================================================
+1.15 QUERY ENGINE
+======================================================================
+
+Build a Query Engine above HugeGraph.
+
+It must support:
+
+1. Gremlin queries
+2. structured query APIs
+3. natural-language query interpretation
+4. graph path queries
+5. provenance queries
+6. temporal queries
+7. impact analysis
+8. blast-radius analysis
+9. dependency queries
+10. traceability queries
+11. ownership queries
+12. semantic relationship queries
+13. multi-hop queries
+14. graph comparison
+15. graph quality queries
+16. ontology validation
+
+Create a safe NL-to-query mechanism.
+
+Never directly execute unrestricted model-generated graph queries.
+
+Use:
+
+NL Query
+→ intent extraction
+→ query plan
+→ schema-aware validation
+→ policy check
+→ bounded Gremlin generation
+→ query cost/risk validation
+→ execution
+→ evidence/result generation
+
+
+======================================================================
+1.16 QUERY SAFETY
+======================================================================
+
+Implement:
+
+- traversal depth limit
+- result limit
+- execution timeout
+- query cancellation
+- expensive-query detection
+- mutation restrictions
+- query templates
+- validated parameterization
+- read-only mode
+- administrative mutation endpoint separation
+- audit trail
+
+
+======================================================================
+1.17 ONTOLOGY VALIDATION ENGINE
+======================================================================
+
+Build validation capable of detecting:
+
+- orphan nodes
+- impossible relationships
+- duplicate identities
+- broken provenance
+- missing mandatory edges
+- cardinality violations
+- schema violations
+- type violations
+- cycles where prohibited
+- stale information
+- conflicting information
+- dangling references
+- invalid cross-source mappings
+- low-confidence inferred links
+- disconnected graph regions
+
+Provide:
+
+- validation rules
+- validation execution
+- severity
+- evidence
+- suggested remediation
+- historical validation trends
+
+
+======================================================================
+1.18 GRAPH QUALITY
+======================================================================
+
+Create measurable graph-quality metrics:
+
+- completeness
+- correctness
+- consistency
+- freshness
+- connectivity
+- duplication
+- orphan rate
+- provenance coverage
+- evidence coverage
+- confidence distribution
+- schema compliance
+- relationship precision
+- relationship recall where benchmark data exists
+
+
+######################################################################
+SEQUENCE 2 — RAG + AI ENGINEERING
+######################################################################
+
+Build the RAG and retrieval architecture as a modular framework.
+
+Support the following strategies where they provide genuine value:
+
+1. Simple RAG
+2. Graph RAG
+3. Hybrid RAG
+4. Corrective RAG / CRAG
+5. Self-RAG
+6. Adaptive RAG
+7. Agentic RAG
+8. Modular RAG
+9. HyDE
+10. Advanced RAG
+11. Conversational RAG with memory
+12. Multi-step RAG
+13. Multi-hop RAG
+14. Branched RAG
+15. Multimodal RAG
+16. Speculative RAG
+17. RAG of RAGs
+
+DO NOT instantiate all RAG patterns simply because they are listed.
+
+Build a common RAG framework and select strategies dynamically based on request type.
+
+
+======================================================================
+2.1 RETRIEVAL ROUTER
+======================================================================
+
+Create a Retrieval Router capable of deciding among:
+
+- direct graph query
+- keyword retrieval
+- semantic retrieval
+- graph traversal
+- hybrid graph + text retrieval
+- multi-hop reasoning
+- document retrieval
+- code retrieval
+- metadata retrieval
+- no retrieval required
+
+The router should avoid unnecessary LLM/token usage.
+
+
+======================================================================
+2.2 GRAPH RAG
+======================================================================
+
+GraphRAG should retrieve:
+
+- entities
+- relationships
+- paths
+- neighborhoods
+- subgraphs
+- provenance
+- evidence
+- documents attached to graph entities
+
+Responses must cite their graph evidence internally using entity IDs, relationship IDs, document references or source links.
+
+
+======================================================================
+2.3 LOCAL EMBEDDINGS
+======================================================================
+
+If embeddings are required:
+
+- use self-hosted/local embedding models,
+- isolate the embedding provider behind an interface,
+- never transmit enterprise text externally.
+
+HugeGraph remains the graph source of truth.
+
+If a separate local vector index materially improves retrieval, make it optional and justify it.
+
+Do not make another database mandatory for the MVP unless necessary.
+
+
+======================================================================
+2.4 RAG EVALUATION
+======================================================================
+
+Measure:
+
+- retrieval precision
+- retrieval recall
+- context relevance
+- evidence coverage
+- groundedness
+- hallucination rate
+- answer correctness
+- latency
+- token consumption
+- graph traversal cost
+
+
+======================================================================
+2.5 ENGINEERING DISCIPLINES
+======================================================================
+
+Explicitly design and document:
+
+- Loop Engineering
+- Graph Engineering
+- Harness Engineering
+- Memory Engineering
+- Context Engineering
+- Prompt Engineering
+- Graph-over-Loop Engineering
+- Loop-over-Graph Engineering
+
+Define each term operationally.
+
+For each provide:
+
+- purpose
+- architecture
+- runtime behavior
+- APIs
+- data model
+- examples
+- failure conditions
+- observability
+- evaluation methodology
+
+Avoid buzzword-only documentation.
+
+
+######################################################################
+SEQUENCE 3 — AGENTIC AI / AI AGENTS
+######################################################################
+
+Create an extensible enterprise agent framework.
+
+Support patterns including:
+
+- Simple Reflex Agent
+- Model-Based Reflex Agent
+- Goal-Based Agent
+- Utility-Based Agent
+- Task Agent
+- Router Agent
+- Tool-Calling Agent
+- Function-Calling Agent
+- RAG Agent
+- Enterprise Agent
+- Hierarchical Agent
+- Orchestrator Agent
+- Choreography Agent
+- Collaboration Agent
+- Peer-to-Peer Agent
+- Consensus Agent
+- Critic Agent
+- Reflection Agent
+- Self-Reflection Agent
+- Planner Agent
+- Executor Agent
+- Reviewer Agent
+- Validator Agent
+- XAI Agent
+- Just-In-Time Agent
+- Self-Learning Agent
+- Self-Evolving Agent
+- Self-Writing Agent
+- Multi-Agent System
+- Swarm Agent
+- Agentic Swarm
+
+Treat self-learning/self-evolving/self-writing functionality as CONTROLLED capabilities.
+
+Agents must never autonomously modify production code, policies, prompts or their own execution logic without validation, sandboxing, tests and an approval mechanism.
+
+
+======================================================================
+3.1 AGENT EXECUTION MODEL
+======================================================================
+
+Use a common Agent Contract containing:
+
+- agent_id
+- type
+- purpose
+- inputs
+- outputs
+- capabilities
+- allowed tools
+- prohibited tools
+- model requirement
+- memory policy
+- planning policy
+- execution policy
+- human-control policy
+- timeout
+- budget
+- retry policy
+- failure policy
+- evidence requirements
+- audit metadata
+
+
+======================================================================
+3.2 AGENT LIFECYCLE
+======================================================================
+
+Design:
+
+Request
+→ Route
+→ Context
+→ Plan
+→ Validate Plan
+→ Execute Tool
+→ Observe
+→ Evaluate
+→ Replan if required
+→ Produce Result
+→ Explain
+→ Audit
+→ Persist permitted memory
+
+
+======================================================================
+3.3 MULTI-AGENT ORCHESTRATION
+======================================================================
+
+Support:
+
+- supervisor/worker
+- hierarchical delegation
+- DAG workflow
+- sequential workflow
+- parallel workflow
+- consensus
+- critic/reviewer
+- planner/executor
+- map/reduce
+- debate where justified
+- swarm coordination
+- event-driven coordination
+
+Prevent unbounded agent loops.
+
+Define:
+
+- maximum steps
+- maximum retries
+- recursion depth
+- time budget
+- compute budget
+- model budget
+- termination criteria
+- circuit breaker
+
+
+======================================================================
+3.4 XAI
+======================================================================
+
+Provide explainability using:
+
+- sources
+- graph paths
+- retrieved evidence
+- rule decisions
+- tool calls
+- confidence
+- uncertainty
+- rejected alternatives where appropriate
+- decision summaries
+
+Do NOT depend on exposing hidden model chain-of-thought.
+
+Do NOT persist private chain-of-thought.
+
+When reasoning transparency is needed, store concise, safe, user-facing rationale/evidence summaries instead.
+
+
+======================================================================
+3.5 MCP
+======================================================================
+
+Expose platform functionality through Model Context Protocol where appropriate.
+
+Potential MCP tools/resources include:
+
+- search_entity
+- get_entity
+- get_neighbors
+- traverse_graph
+- find_path
+- query_graph
+- impact_analysis
+- blast_radius
+- get_code_context
+- get_jira_context
+- get_document_context
+- get_lineage
+- validate_ontology
+- retrieve_evidence
+- search_code
+- inspect_service
+- execute_approved_workflow
+
+Separate:
+
+READ TOOLS
+from
+WRITE/ACTION TOOLS.
+
+Write/destructive actions require stronger validation and human confirmation.
+
+
+======================================================================
+3.6 JEV CAPABILITY
+======================================================================
+
+The source requirement references "JEV capabilities."
+
+Treat JEV as a user-defined/internal execution capability unless a formal specification is supplied.
+
+Create a JEV abstraction that may represent capabilities such as:
+
+- autonomous task planning
+- repository inspection
+- tool execution
+- iterative implementation
+- testing
+- validation
+- debugging
+- artifact generation
+
+Implement these capabilities locally when practical.
+
+Where implementation is not practical, create an adapter architecture allowing a compatible local model/agent system to emulate the required behavior.
+
+Clearly document assumptions instead of inventing an undocumented JEV specification.
+
+
+======================================================================
+3.7 ROBOTIC PROCESS AUTOMATION
+======================================================================
+
+Provide an optional local RPA capability for deterministic enterprise workflows.
+
+Use conventional automation before agents where the task is deterministic.
+
+Agentic automation should not replace a simpler deterministic workflow without justification.
+
+
+######################################################################
+SEQUENCE 4 — AGENT LAYERS + HUMAN CONTROL
+######################################################################
+
+Every enterprise agent should conceptually contain the following layers:
+
+1. Cognitive Layer
+2. Memory Layer
+3. Tool & Action Layer
+4. Planning & Execution Layer
+5. Interaction & Guardrail Layer
+6. Multi-Agent & Collaboration Layer
+
+
+======================================================================
+4.1 COGNITIVE LAYER
+======================================================================
+
+Capabilities:
+
+- persona
+- goals
+- task interpretation
+- planning
+- reasoning strategies
+- ReAct-style action/observation pattern
+- decomposition
+- reflection
+- critique
+- verification
+- uncertainty management
+
+Reasoning implementation may internally use advanced planning strategies, but external logs should contain decision summaries/evidence rather than hidden chain-of-thought.
+
+
+======================================================================
+4.2 MEMORY LAYER
+======================================================================
+
+Design:
+
+- working memory
+- short-term memory
+- long-term memory
+- semantic memory
+- episodic memory
+- procedural memory
+- persistent memory
+- conversation memory
+- task memory
+
+Every memory entry requires:
+
+- scope
+- owner
+- source
+- timestamp
+- TTL where applicable
+- provenance
+- confidence
+- security classification
+- deletion policy
+
+Prevent uncontrolled accumulation of agent-generated memory.
+
+
+======================================================================
+4.3 TOOL & ACTION LAYER
+======================================================================
+
+Implement:
+
+- tool registry
+- MCP tools
+- graph-query tools
+- connector tools
+- code tools
+- document tools
+- ticket tools
+- workflow tools
+- deterministic utilities
+
+Each tool requires:
+
+- input schema
+- output schema
+- permissions/policy
+- risk level
+- timeout
+- retry
+- idempotency
+- audit trail
+
+
+======================================================================
+4.4 PLANNING & EXECUTION LAYER
+======================================================================
+
+Support:
+
+- task decomposition
+- DAG plans
+- dependency-aware execution
+- retries
+- fallback
+- checkpoints
+- resume
+- cancellation
+- plan validation
+- replanning
+- compensation/rollback where applicable
+
+
+======================================================================
+4.5 INTERACTION & GUARDRAIL LAYER
+======================================================================
+
+Implement:
+
+- input validation
+- output validation
+- prompt-injection protection
+- tool injection protection
+- secret detection
+- PII detection
+- policy enforcement
+- query bounds
+- action approval
+- rate limits
+- execution limits
+- audit
+
+
+======================================================================
+4.6 HUMAN CONTROL MODES
+======================================================================
+
+The requirement includes multiple human/machine control patterns.
+
+Support the supplied terminology as configurable policy models:
+
+- HCTL — Human-Commanded-the-Loop
+- HITL-FE — Human-in-the-Loop-for-Exceptions
+- HBTL — Human-Beside-the-Loop
+- HATL — Human-Above-the-Loop
+- HITD — Human-in-the-Design
+- EITL — Environment-in-the-Loop
+- HITL — Human-in-the-Loop
+- HOTL — Human-on-the-Loop
+- HOOTL — Human-out-of-the-Loop
+- HITA — Human-in-the-Action
+- HITC — Human-in-the-Control-Loop
+- HITI — Human-in-the-Institution
+- MITL — Machine-in-the-Loop
+- HITP — Human-in-the-Process
+
+Some of these labels may not be standardized industry terminology.
+
+Therefore:
+
+1. create a glossary,
+2. define precise semantics for this platform,
+3. avoid falsely presenting every term as an established standard,
+4. map them into concrete approval/supervision policies.
+
+Example control dimensions:
+
+- who initiates
+- who approves
+- who supervises
+- when intervention occurs
+- action risk
+- reversibility
+- automated execution allowed?
+- timeout behavior
+- exception path
+- evidence required
+
+
+######################################################################
+SEQUENCE 5 — PRODUCT EXPERIENCES, MVP AND DELIVERY
+######################################################################
+
+The system must produce multiple GUIs/interfaces.
+
+All interfaces must use the enterprise ontology/query platform as the authoritative source.
+
+
+======================================================================
+5.1 WEB USER APPLICATION
+======================================================================
+
+Audience:
+
+- Business Analysts
+- Developers
+- Solution Architects
+- Enterprise Architects
+- Technical Leads
+- Project Managers
+- Program Managers
+- Directors
+- Executives
+- Risk Assessors
+- Auditors
+
+Capabilities:
+
+- natural-language search
+- structured query builder
+- visual graph exploration
+- node details
+- relationship details
+- source/evidence viewer
+- multi-hop traversal
+- graph filtering
+- timeline view
+- provenance view
+- impact analysis
+- blast radius
+- requirement traceability
+- architecture exploration
+- change analysis
+- saved queries
+- query history
+- result export
+- confidence visualization
+- graph-quality indicators
+- simple/advanced screen switch
+
+
+======================================================================
+5.2 ADMIN / SERVER / ENGINEERING WEB APPLICATION
+======================================================================
+
+Audience:
+
+- Platform developers
+- Infra engineers
+- DevOps
+- Data engineers
+- AI engineers
+- AI architects
+- GenAI architects
+- Enterprise architects
+- Administrators
+
+Capabilities:
+
+- connector management
+- ingestion status
+- ingestion history
+- pipeline health
+- graph statistics
+- schema viewer
+- schema editor where safe
+- ontology browser
+- ontology validation
+- quality dashboard
+- index management
+- query diagnostics
+- query performance
+- graph maintenance
+- backup
+- restore
+- agent registry
+- tool registry
+- MCP registry
+- model configuration
+- local model health
+- prompt/configuration management
+- RAG diagnostics
+- memory diagnostics
+- audit logs
+- observability
+- runtime configuration
+
+
+======================================================================
+5.3 VS CODE EXTENSION
+======================================================================
+
+Build a production-oriented VS Code extension.
+
+Provide:
+
+- sidebar
+- editor Webview
+- graph explorer
+- chat
+- current-file context
+- current-symbol context
+- Jira context
+- requirement traceability
+- commit history
+- graph relationships
+- callers/callees
+- dependency impact
+- architecture context
+- related documentation
+- related incidents
+- provenance
+- local Agent/RAG interaction
+- MCP tool execution
+- approved quick actions
+
+Examples:
+
+"Why does this function exist?"
+
+"Which Jira story requested this code?"
+
+"What will be affected if I change this method?"
+
+"Show all documentation related to this module."
+
+"Which incidents involved this component?"
+
+"Show the execution path from Jira requirement to this code."
+
+
+======================================================================
+5.4 URL STRUCTURE / SCREEN SWITCHING
+======================================================================
+
+No RBAC for this build.
+
+Use distinct URL namespaces such as:
+
+/app/*
+/admin/*
+/api/*
+/mcp/*
+
+and provide screen modes such as:
+
+Simple
+Advanced
+Graph
+Developer
+Architecture
+
+Do not claim route separation itself provides authorization.
+
+
+======================================================================
+5.5 API LAYER
+======================================================================
+
+Create versioned APIs such as:
+
+/api/v1/entities
+/api/v1/relationships
+/api/v1/query
+/api/v1/search
+/api/v1/graph
+/api/v1/path
+/api/v1/impact
+/api/v1/blast-radius
+/api/v1/lineage
+/api/v1/ontology
+/api/v1/validation
+/api/v1/connectors
+/api/v1/ingestion
+/api/v1/agents
+/api/v1/rag
+/api/v1/memory
+/api/v1/tools
+/api/v1/audit
+
+Provide OpenAPI documentation.
+
+
+======================================================================
+5.6 OBSERVABILITY
+======================================================================
+
+Implement locally:
+
+- structured logs
+- metrics
+- distributed tracing where valuable
+- health checks
+- readiness checks
+- connector health
+- ingestion statistics
+- query latency
+- graph traversal metrics
+- model latency
+- RAG metrics
+- agent execution metrics
+- tool-call metrics
+- failure rates
+
+Prefer local/self-hosted observability components.
+
+Prometheus/Grafana/OpenTelemetry may be used where justified.
+
+
+======================================================================
+5.7 SECURITY
+======================================================================
+
+Produce a threat model covering:
+
+- connector credentials
+- graph database
+- APIs
+- local LLMs
+- prompts
+- agent tools
+- MCP
+- VS Code extension
+- web applications
+- ingestion files
+- malicious documents
+- prompt injection
+- graph poisoning
+- poisoned documentation
+- tool abuse
+- command injection
+- path traversal
+- SSRF
+- secrets leakage
+- dependency risk
+
+Implement:
+
+- least-privilege processes
+- network restrictions
+- egress disabled by default
+- container hardening
+- non-root containers where possible
+- secrets isolation
+- API validation
+- secure file handling
+- local audit logs
+- SBOM
+- dependency scanning
+
+
+======================================================================
+5.8 RELIABILITY
+======================================================================
+
+Support:
+
+- restart-safe workers
+- checkpointing
+- idempotency
+- partial-failure handling
+- retries
+- dead-letter handling
+- graceful degradation
+- backup
+- restore
+- disaster recovery documentation
+- graph rebuild from sources where possible
+
+
+======================================================================
+5.9 PERFORMANCE
+======================================================================
+
+Define measurable performance objectives.
+
+Do NOT simply claim arbitrary performance numbers.
+
+Create benchmark datasets and measure:
+
+- ingestion throughput
+- node creation/sec
+- edge creation/sec
+- query p50
+- query p95
+- query p99
+- traversal depth
+- memory usage
+- CPU usage
+- storage size
+- local model latency
+- RAG latency
+
+Specify MVP target numbers after defining a representative test dataset.
+
+
+======================================================================
+5.10 DATA QUALITY + PROVENANCE
+======================================================================
+
+Every AI-generated relationship must distinguish:
+
+DETERMINISTIC
+INFERRED
+HUMAN-CONFIRMED
+
+Store evidence.
+
+Do not present inferred relations as facts without indication.
+
+
+######################################################################
+FULL DOCUMENTATION DELIVERABLES
+######################################################################
+
+I want full requirements and implementation and other supporting and all the needed md files.. then i also want an MVP-requirements.md file and its respective implementation file (this mvp should be fully functional and demonstratable and the other features and functionalities i'll add on top of it over phase after phase development.
+
+
+Generate at minimum:
+
+01-project-vision.md
+02-scope-and-objectives.md
+03-functional-requirements.md
+04-non-functional-requirements.md
+05-system-requirements.md
+06-architecture.md
+07-component-architecture.md
+08-deployment-architecture.md
+09-data-architecture.md
+10-enterprise-ontology.md
+11-graph-schema.md
+12-meta-graph-design.md
+13-relationship-model.md
+14-temporal-graph.md
+15-provenance-lineage.md
+16-identity-resolution.md
+17-code-graph.md
+18-ingestion-architecture.md
+19-connector-framework.md
+20-jira-connector-requirements.md
+21-confluence-connector-requirements.md
+22-gitlab-connector-requirements.md
+23-servicenow-connector-requirements.md
+24-file-web-connectors.md
+25-query-engine-requirements.md
+26-query-engine-implementation.md
+27-ontology-validation.md
+28-graph-quality.md
+29-rag-architecture.md
+30-agent-architecture.md
+31-multi-agent-architecture.md
+32-memory-engineering.md
+33-context-engineering.md
+34-loop-engineering.md
+35-graph-engineering.md
+36-harness-engineering.md
+37-graph-over-loop.md
+38-loop-over-graph.md
+39-mcp-architecture.md
+40-human-control-model.md
+41-xai-explainability.md
+42-web-user-ui-ux.md
+43-admin-ui-ux.md
+44-vscode-extension.md
+45-api-specification.md
+46-security-architecture.md
+47-threat-model.md
+48-data-privacy.md
+49-local-ai-model-strategy.md
+50-observability.md
+51-performance.md
+52-scalability.md
+53-backup-restore.md
+54-devsecops.md
+55-testing-strategy.md
+56-rag-agent-evaluation.md
+57-graph-validation-test-plan.md
+58-end-to-end-test-plan.md
+59-docker-deployment.md
+60-operational-runbook.md
+61-demo-playbook.md
+62-risk-register.md
+63-assumptions.md
+64-decisions-and-adrs.md
+65-glossary.md
+66-phase-roadmap.md
+67-implementation-plan.md
+68-project-structure.md
+69-dependency-license-sbom.md
+70-acceptance-criteria.md
+
+AND MANDATORILY:
+
+MVP-requirements.md
+MVP-implementation-plan.md
+
+If useful, generate domain-specific implementation plans corresponding to the requirement documents instead of relying only on one giant implementation plan.
+
+
+######################################################################
+MVP — NON-NEGOTIABLE REQUIREMENT
+######################################################################
+
+The MVP must NOT be a mockup.
+
+The MVP must NOT be a collection of disconnected prototypes.
+
+The MVP must NOT consist of UI screens backed by hardcoded data.
+
+The MVP must be a SMALL BUT REAL END-TO-END VERTICAL SLICE of the architecture.
+
+It must be:
+
+- runnable,
+- functional,
+- integrated,
+- repeatable,
+- testable,
+- demonstratable,
+- dockerized,
+- documented.
+
+
+======================================================================
+MVP FUNCTIONAL SCOPE
+======================================================================
+
+Build the minimum capabilities necessary to demonstrate the platform properly.
+
+MANDATORY MVP:
+
+1. Apache HugeGraph running locally through Docker.
+
+2. Graph schema initialization.
+
+3. Jira JSON ingestion.
+
+4. Git repository/GitLab ingestion.
+
+5. Code parsing.
+
+6. Canonical entity generation.
+
+7. Jira graph.
+
+8. Code graph.
+
+9. Meta graph.
+
+10. Cross-graph linking.
+
+11. Provenance.
+
+12. Graph validation.
+
+13. Query API.
+
+14. Impact-analysis query.
+
+15. Path query.
+
+16. Search/query UI.
+
+17. Graph visualizer.
+
+18. Admin ingestion/validation UI.
+
+19. VS Code extension.
+
+20. Local GraphRAG capability.
+
+21. At least one useful agent workflow.
+
+22. MCP access to core graph-query capabilities.
+
+23. Logging.
+
+24. Metrics.
+
+25. Backup.
+
+26. Restore.
+
+27. Automated tests.
+
+28. End-to-end demo.
+
+
+======================================================================
+MVP END-TO-END DEMONSTRATION
+======================================================================
+
+The demonstrator should prove a flow resembling:
+
+Jira Story
+→ Merge Request
+→ Commit
+→ Source File
+→ Function
+→ Dependency
+→ Build/Pipeline
+→ Documentation
+
+Then demonstrate:
+
+1. User selects a Jira issue.
+
+2. System displays the corresponding graph.
+
+3. User asks:
+   "What code implements this requirement?"
+
+4. Query engine finds the relevant graph path.
+
+5. User asks:
+   "What could be affected if this function is changed?"
+
+6. Impact engine calculates the blast radius.
+
+7. User opens the corresponding file in VS Code.
+
+8. VS Code extension displays:
+   - Jira issue
+   - related commits
+   - functions
+   - dependencies
+   - documentation
+   - graph context.
+
+9. User asks a GraphRAG question.
+
+10. Local RAG retrieves graph/document evidence.
+
+11. System answers with supporting references/evidence.
+
+12. Admin UI demonstrates:
+    - ingestion status,
+    - graph statistics,
+    - validation,
+    - graph quality.
+
+13. MCP client retrieves the same contextual graph information.
+
+This must operate using real persisted graph information rather than hardcoded demo responses.
+
+
+======================================================================
+MVP ACCEPTANCE CRITERIA
+======================================================================
+
+MVP is accepted only when:
+
+- docker compose up starts the required stack,
+- schema is initialized automatically,
+- sample Jira data can be imported,
+- sample Git repository can be analyzed,
+- HugeGraph contains the expected vertices/edges,
+- duplicate ingestion is idempotent,
+- cross-domain edges are visible,
+- graph queries return correct paths,
+- impact analysis produces evidence-backed output,
+- Web User App uses actual backend APIs,
+- Admin UI displays real system state,
+- VS Code extension retrieves real context,
+- GraphRAG retrieves real graph evidence,
+- MCP tools execute real queries,
+- local model operation is demonstrated,
+- no cloud dependency exists,
+- tests run successfully,
+- backup works,
+- restore works,
+- demonstration can be repeated from documented steps.
+
+
+######################################################################
+MVP IMPLEMENTATION PLAN
+######################################################################
+
+MVP-implementation-plan.md must include:
+
+1. architecture baseline
+2. repository structure
+3. service boundaries
+4. dependency graph
+5. Docker architecture
+6. HugeGraph setup
+7. graph schema
+8. connector implementation
+9. canonical model
+10. identity strategy
+11. code parser
+12. semantic linker
+13. query API
+14. validation engine
+15. GraphRAG
+16. MCP server
+17. Web User UI
+18. Admin UI
+19. VS Code extension
+20. security controls
+21. observability
+22. automated testing
+23. E2E testing
+24. demo dataset
+25. demo scenario
+26. backup/restore
+27. release packaging
+28. definition of done
+
+For every implementation task specify:
+
+- objective
+- dependencies
+- files/modules
+- interfaces
+- implementation steps
+- tests
+- acceptance criteria
+- expected output
+- failure handling
+
+
+######################################################################
+PHASED ROADMAP
+######################################################################
+
+Do not push every requested feature into MVP.
+
+Design:
+
+PHASE 0
+Architecture, schemas, development foundation.
+
+PHASE 1
+Fully functional demonstrable MVP.
+
+PHASE 2
+Additional enterprise connectors and ontology depth.
+
+PHASE 3
+Advanced GraphRAG and retrieval routing.
+
+PHASE 4
+Advanced agents and multi-agent workflows.
+
+PHASE 5
+Temporal intelligence, graph analytics and deeper impact analysis.
+
+PHASE 6
+Advanced human-control policies and automation.
+
+PHASE 7
+Enterprise hardening, scaling and operational maturity.
+
+PHASE 8+
+Advanced/self-improving capabilities only after strong governance exists.
+
+For every deferred feature identify:
+- target phase,
+- dependency,
+- migration effect,
+- architecture preparation required in MVP.
+
+
+######################################################################
+TECHNOLOGY BASELINE
+######################################################################
+
+Use this as the default stack unless there is a compelling technical reason to change it:
+
+Backend:
+- Python
+- FastAPI
+- Pydantic
+- async APIs where appropriate
+
+Graph:
+- Apache HugeGraph
+- Gremlin
+
+Code parsing:
+- Tree-sitter and/or language-specific deterministic parsers
+
+Frontend:
+- React
+- TypeScript
+
+Graph visualization:
+- Cytoscape.js, D3.js or equivalent local/open-source library
+
+VS Code:
+- TypeScript
+- VS Code Extension API
+- Webview where appropriate
+
+AI:
+- local/self-hosted models
+- provider abstraction
+- local embedding models when required
+
+Protocol:
+- REST
+- WebSocket/SSE where necessary
+- MCP
+
+Packaging:
+- Docker
+- Docker Compose
+
+Testing:
+- pytest
+- frontend unit/component tests
+- contract tests
+- E2E tests
+
+Documentation:
+- Markdown
+- Mermaid diagrams
+
+All frontend dependencies and assets must be capable of being served locally.
+
+
+######################################################################
+ENGINEERING PRINCIPLES
+######################################################################
+
+Apply:
+
+- modular monolith where appropriate for MVP,
+- microservices only when independently deployable boundaries provide genuine value,
+- dependency inversion,
+- clean architecture where useful,
+- schema-first design,
+- API-first interfaces,
+- typed contracts,
+- deterministic processing,
+- idempotency,
+- reproducibility,
+- observability,
+- explainability,
+- provenance,
+- testability,
+- configuration-driven behavior,
+- secure defaults.
+
+Avoid unnecessary distributed-system complexity in Phase 1.
+
+
+######################################################################
+OUTPUT QUALITY RULES
+######################################################################
+
+Do not produce vague statements such as:
+
+"Implement robust security."
+"Use best practices."
+"Add scalability."
+"Use AI to improve results."
+
+For every requirement explain:
+
+WHAT must exist.
+WHY it exists.
+HOW it behaves.
+WHAT data/interfaces it uses.
+HOW it fails.
+HOW it is tested.
+HOW we know it is complete.
+
+
+######################################################################
+REQUIREMENT IDENTIFIERS
+######################################################################
+
+Give every significant requirement a stable identifier such as:
+
+FR-GRAPH-001
+FR-CONN-001
+FR-QUERY-001
+FR-RAG-001
+FR-AGENT-001
+FR-MCP-001
+FR-UI-001
+FR-VSCODE-001
+NFR-SEC-001
+NFR-PERF-001
+NFR-OPS-001
+MVP-FR-001
+
+Implementation-plan tasks must map back to requirement IDs.
+
+Tests must map back to requirement IDs.
+
+Acceptance criteria must map back to requirement IDs.
+
+Create a traceability matrix:
+
+Requirement
+→ Architecture Component
+→ Implementation Task
+→ Test
+→ Acceptance Criterion
+
+
+######################################################################
+ARCHITECTURE DIAGRAMS
+######################################################################
+
+Generate Mermaid diagrams for:
+
+1. system context
+2. container architecture
+3. ingestion pipeline
+4. enterprise graph architecture
+5. meta graph
+6. code graph
+7. cross-domain relationship graph
+8. query execution
+9. GraphRAG
+10. agent runtime
+11. multi-agent orchestration
+12. MCP architecture
+13. human-control architecture
+14. Web UI architecture
+15. VS Code architecture
+16. deployment
+17. MVP E2E flow
+
+
+######################################################################
+DATA CONTRACTS
+######################################################################
+
+Define versioned contracts for:
+
+- source event
+- normalized entity
+- normalized relationship
+- graph mutation
+- graph query
+- graph result
+- retrieval result
+- evidence
+- agent request
+- agent result
+- tool request
+- tool result
+- memory record
+- audit event
+
+Provide JSON examples.
+
+
+######################################################################
+TESTING
+######################################################################
+
+Include:
+
+- unit tests
+- parser tests
+- connector contract tests
+- graph-schema tests
+- graph integrity tests
+- ontology tests
+- identity-resolution tests
+- relationship-generation tests
+- provenance tests
+- ingestion idempotency tests
+- recovery tests
+- query correctness tests
+- traversal-limit tests
+- GraphRAG evaluation
+- agent evaluation
+- MCP tests
+- UI tests
+- VS Code tests
+- security tests
+- Docker startup tests
+- backup/restore tests
+- end-to-end tests
+- performance tests
+
+
+######################################################################
+DEFINITION OF DONE
+######################################################################
+
+A feature is not complete merely because code exists.
+
+For a feature to be DONE:
+
+- implementation exists,
+- interfaces are documented,
+- automated tests pass,
+- errors are handled,
+- logging exists,
+- configuration exists,
+- security impact is addressed,
+- documentation exists,
+- acceptance criteria pass,
+- requirement traceability exists.
+
+
+######################################################################
+FINAL EXECUTION INSTRUCTIONS
+######################################################################
+
+First analyze this entire specification.
+
+Then:
+
+STEP 1
+Identify ambiguities, conflicts, risks and missing requirements.
+
+STEP 2
+Enhance the requirements without violating the explicit constraints.
+
+STEP 3
+Create the full target architecture.
+
+STEP 4
+Define the complete file/document structure.
+
+STEP 5
+Generate the full requirements documents.
+
+STEP 6
+Generate the corresponding implementation plans.
+
+STEP 7
+Generate MVP-requirements.md.
+
+STEP 8
+Generate MVP-implementation-plan.md.
+
+STEP 9
+Ensure MVP is a real, integrated vertical slice rather than a mock/prototype.
+
+STEP 10
+Generate the phase-by-phase roadmap for everything excluded from MVP.
+
+STEP 11
+Generate requirement-to-implementation-to-test traceability.
+
+STEP 12
+Review the entire output as:
+- Enterprise Architect
+- Security Architect
+- AI Architect
+- Graph Architect
+- Senior Developer
+- QA Architect
+- DevOps Architect
+
+STEP 13
+Identify gaps in your own generated solution.
+
+STEP 14
+Correct those gaps before considering the documentation complete.
+
+
+######################################################################
+IMPORTANT FINAL RULE
+######################################################################
+
+Do NOT optimize for producing the largest possible architecture.
+
+Optimize for:
+
+CORRECTNESS
++ EXTENSIBILITY
++ TRACEABILITY
++ LOCAL-FIRST OPERATION
++ SECURITY
++ DEMONSTRABILITY
++ IMPLEMENTABILITY
++ MAINTAINABILITY
+
+The MVP should be the smallest architecture that proves the complete enterprise ontology concept end-to-end while establishing foundations that later phases can safely extend.

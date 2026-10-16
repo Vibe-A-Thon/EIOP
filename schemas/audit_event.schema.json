@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:audit_event:1.0",
+  "title": "AuditEvent v1",
+  "description": "Immutable audit trail event for compliance, governance, and forensic tracking. Every significant action in the EOIP platform generates an audit event: graph mutations, agent actions, tool invocations, access grants, and configuration changes.",
+  "type": "object",
+  "required": ["audit_id", "timestamp", "event_type", "actor", "correlation_id", "outcome"],
+  "properties": {
+    "audit_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique, immutable identifier for this audit event. Never reused."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the audited action occurred."
+    },
+    "event_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Category of the audited action (e.g. GRAPH_MUTATION, AGENT_ACTION, TOOL_INVOCATION, ACCESS_GRANT, CONFIG_CHANGE, AUTH_EVENT)."
+    },
+    "actor": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identity of the actor who performed the action (user ID, agent ID, or service account)."
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Request-scoped correlation ID linking related audit events across a single operation or workflow."
+    },
+    "resource_refs": {
+      "type": ["array", "null"],
+      "items": { "type": "string" },
+      "description": "Canonical IDs or URIs of resources affected by this action."
+    },
+    "outcome": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Result of the action (e.g. SUCCESS, DENIED, ERROR, PARTIAL, ABSTAINED)."
+    },
+    "reason_code": {
+      "type": ["string", "null"],
+      "description": "Machine-readable reason code for denials or errors (e.g. INSUFFICIENT_PRIVILEGE, QUOTA_EXCEEDED, POLICY_VIOLATION)."
+    },
+    "safe_summary": {
+      "type": ["string", "null"],
+      "description": "Human-readable summary safe for display in audit logs. Must not contain PII, secrets, or sensitive payload data."
+    }
+  },
+  "additionalProperties": false
+}

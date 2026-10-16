@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:graph_result:1.0",
+  "title": "GraphResult v1",
+  "type": "object",
+  "required": ["query_id", "partial"],
+  "properties": {
+    "query_id": { "type": "string", "minLength": 1 },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "domain": { "type": ["string", "null"] },
+          "properties": { "type": "object" }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "from_id", "to_id"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "from_id": { "type": "string" },
+          "to_id": { "type": "string" },
+          "creation_status": { "type": ["string", "null"] },
+          "properties": { "type": "object" }
+        }
+      }
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path_id", "node_ids", "edge_ids"],
+        "properties": {
+          "path_id": { "type": "string" },
+          "node_ids": { "type": "array", "items": { "type": "string" } },
+          "edge_ids": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "evidence": { "type": "array", "items": { "type": "object" } },
+    "partial": { "type": "boolean", "default": false },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

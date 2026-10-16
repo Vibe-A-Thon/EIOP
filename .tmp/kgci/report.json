@@ -1,0 +1,130 @@
+{
+  "fail_on": "any",
+  "failed_stages": [],
+  "finished_at": "2026-10-05T10:04:26.830459+00:00",
+  "id": "urn:eoip:cicd:report:cb1be349",
+  "ontology_version": "0.4.0",
+  "passed": true,
+  "stages": [
+    {
+      "details": {
+        "files_linted": 1
+      },
+      "duration_ms": 0,
+      "findings": [],
+      "stage": "lint",
+      "status": "passed"
+    },
+    {
+      "details": {
+        "edge_labels": 68,
+        "vertex_labels": 74
+      },
+      "duration_ms": 0,
+      "findings": [],
+      "stage": "schema_validation",
+      "status": "passed"
+    },
+    {
+      "details": {},
+      "duration_ms": 0,
+      "findings": [
+        {
+          "message": "no contract directory configured",
+          "severity": "info",
+          "subject": ""
+        }
+      ],
+      "stage": "contract_checks",
+      "status": "skipped"
+    },
+    {
+      "details": {},
+      "duration_ms": 0,
+      "findings": [
+        {
+          "message": "no graphtest directory configured",
+          "severity": "info",
+          "subject": ""
+        }
+      ],
+      "stage": "graph_invariants",
+      "status": "skipped"
+    },
+    {
+      "details": {
+        "metrics": {
+          "completeness": null,
+          "duplicate_rate": null,
+          "error_count": 0,
+          "evidence_coverage": null,
+          "freshness": null,
+          "orphan_rate": null,
+          "provenance_coverage": null,
+          "schema_compliance": null,
+          "total_edges": 0,
+          "total_findings": 0,
+          "total_vertices": 0,
+          "warning_count": 0
+        },
+        "slos": {
+          "duplicate_rate_max": 0.1,
+          "error_count_max": 0.0,
+          "evidence_coverage_min": 0.5,
+          "orphan_rate_max": 0.25,
+          "provenance_coverage_min": 0.5,
+          "schema_compliance_min": 0.9
+        }
+      },
+      "duration_ms": 734,
+      "findings": [],
+      "stage": "quality_gates",
+      "status": "passed"
+    },
+    {
+      "details": {},
+      "duration_ms": 0,
+      "findings": [
+        {
+          "message": "no baseline manifest configured",
+          "severity": "info",
+          "subject": ""
+        }
+      ],
+      "stage": "compatibility",
+      "status": "skipped"
+    },
+    {
+      "details": {
+        "files_scanned": 250
+      },
+      "duration_ms": 2906,
+      "findings": [],
+      "stage": "security",
+      "status": "passed"
+    },
+    {
+      "details": {},
+      "duration_ms": 0,
+      "findings": [
+        {
+          "message": "no baseline manifest configured",
+          "severity": "info",
+          "subject": ""
+        }
+      ],
+      "stage": "migration",
+      "status": "skipped"
+    },
+    {
+      "details": {
+        "artifact": ".tmp\\kgci\\ontology-artifacts\\ontology-0.4.0.json"
+      },
+      "duration_ms": 31,
+      "findings": [],
+      "stage": "publish",
+      "status": "passed"
+    }
+  ],
+  "started_at": "2026-10-05T10:04:23.154810+00:00"
+}

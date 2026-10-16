@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:relationship_revision:1.0",
+  "title": "RelationshipRevision v1",
+  "type": "object",
+  "required": ["schema_version", "relationship_id", "relationship_type", "from_id", "to_id", "revision", "properties", "evidence_refs", "source_event_id"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "relationship_id": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "relationship_type": {"type": "string", "minLength": 1, "maxLength": 128},
+    "from_id": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "to_id": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "revision": {"$ref": "graph_revision.schema.json#/$defs/revision"},
+    "properties": {"type": "object"},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "source_event_id": {"type": "string", "minLength": 1, "maxLength": 512}
+  },
+  "additionalProperties": false
+}

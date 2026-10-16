@@ -1,0 +1,156 @@
+{
+  "description": "Query capability demonstration — shows structured, NL, path, impact, and search query types. Uses Meridian Financial Services (MFS) demo data.",
+  "version": "2.0.0",
+  "organization": "Meridian Financial Services",
+  "examples": [
+    {
+      "id": "query-search-entity",
+      "type": "search",
+      "query": "PAY-101",
+      "description": "Search for a Jira story by issue key",
+      "expected_results": ["WorkItem with canonical_id urn:eoip:work:item:jira:PAY-101 — Implement payment tokenization service"]
+    },
+    {
+      "id": "query-path-trace",
+      "type": "path",
+      "source": "urn:eoip:work:item:jira:PAY-101",
+      "target": "urn:eoip:code:symbol:mfs-payment-gateway:tokenization.service:tokenize_card",
+      "max_depth": 6,
+      "description": "Find path from Jira story to code function",
+      "expected_path": ["WorkItem → MergeRequest → Commit → File → CodeSymbol"]
+    },
+    {
+      "id": "query-impact-blast",
+      "type": "impact",
+      "anchor": "urn:eoip:code:symbol:mfs-payment-gateway:tokenization.service:tokenize_card",
+      "max_depth": 3,
+      "description": "Compute blast radius of changing tokenize_card()",
+      "expected_labels": ["File", "CodeSymbol", "Dependency", "WorkItem", "TestCase"]
+    },
+    {
+      "id": "query-nl-simple",
+      "type": "natural_language",
+      "query": "What is PAY-201 about?",
+      "description": "Simple NL query interpreted as entity lookup",
+      "expected_intent": "entity_lookup"
+    },
+    {
+      "id": "query-nl-trace",
+      "type": "natural_language",
+      "query": "Trace the implementation of PAY-202 in the graph.",
+      "description": "NL query interpreted as a traceability query anchored on PAY-202",
+      "expected_intent": "traceability"
+    },
+    {
+      "id": "query-nl-impact",
+      "type": "natural_language",
+      "query": "What is the impact of PAY-202?",
+      "description": "NL impact query anchored on the HSM key-rotation work item",
+      "expected_intent": "impact_analysis"
+    },
+    {
+      "id": "query-neighborhood",
+      "type": "neighborhood",
+      "anchor": "urn:eoip:ops:incident:INC0080101",
+      "max_depth": 2,
+      "description": "Explore the neighborhood around the payment timeout incident",
+      "expected_labels": ["Incident", "Change", "Pipeline", "MergeRequest", "WorkItem", "Person"]
+    },
+    {
+      "id": "query-traceability",
+      "type": "traceability",
+      "source": "urn:eoip:work:epic:rally:EPC-101",
+      "description": "Full traceability chain from Rally epic to production deployment",
+      "expected_chain": ["Epic → Feature → Story → MergeRequest → Pipeline → Deployment → Pod"]
+    },
+    {
+      "id": "query-lineage",
+      "type": "lineage",
+      "entity": "urn:eoip:code:api-service:mfs:payment-gateway",
+      "description": "Trace the provenance lineage of the Payment Gateway API entity",
+      "expected_sources": ["api-portal", "swagger", "gitlab"]
+    },
+    {
+      "id": "query-eql-structured",
+      "type": "eql",
+      "query": "FIND WorkItem WHERE status = 'In Progress' AND project_key = 'PAY' TRAVERSE IMPLEMENTS TO CodeSymbol",
+      "description": "Structured EQL query: find in-progress PAY stories and their implementing code",
+      "expected_intent": "structured_query"
+    },
+    {
+      "id": "query-cross-domain",
+      "type": "cross_domain",
+      "query": "Which test cases in qTest cover the fraud scoring API endpoints?",
+      "description": "Cross-domain query spanning qTest (test), API Portal (api), and GitLab (code)",
+      "expected_domains": ["test", "api", "code"]
+    },
+    {
+      "id": "query-temporal",
+      "type": "temporal",
+      "query": "What changed in the payment gateway between September 15 and October 1, 2026?",
+      "description": "Temporal query across MRs, deployments, and incidents in a time window",
+      "expected_intent": "temporal_diff"
+    },
+    {
+      "id": "query-search-frd",
+      "type": "search",
+      "query": "FRD fraud scoring model",
+      "description": "Search for fraud scoring model artifacts across FRD domain",
+      "expected_results": ["WorkItem FRD-101 — Fraud Scoring Model v2", "CodeSymbol FraudScoringEngine in mfs-fraud-engine"]
+    },
+    {
+      "id": "query-path-kyc-pod",
+      "type": "path",
+      "source": "urn:eoip:work:epic:rally:EPC-204",
+      "target": "urn:eoip:infra:pod:mfs-kyc-pod-01",
+      "max_depth": 8,
+      "description": "Trace the path from KYC epic through implementation to production pod",
+      "expected_path": ["Epic → Feature → Story → MergeRequest → Pipeline → Deployment → Pod"]
+    },
+    {
+      "id": "query-impact-fraud-db",
+      "type": "impact",
+      "anchor": "urn:eoip:infra:db-server:pghost-prod-02.mfs.internal",
+      "max_depth": 4,
+      "description": "Analyze blast radius of fraud database failure",
+      "expected_labels": ["Database", "Pod", "ServiceAccount", "Pipeline", "Incident"]
+    },
+    {
+      "id": "query-nlq-change-frequency",
+      "type": "nlq",
+      "query": "which services have the highest change frequency in the last 2 sprints?",
+      "description": "Natural language query about change velocity",
+      "expected_intent": "temporal_aggregation"
+    },
+    {
+      "id": "query-neighborhood-fraud-engine",
+      "type": "neighborhood",
+      "anchor": "urn:eoip:infra:service-account:svc-fraud-engine",
+      "max_depth": 2,
+      "description": "Show all entities within 2 hops of the fraud engine service account",
+      "expected_labels": ["ServiceAccount", "Pod", "Database", "Pipeline", "CodeSymbol"]
+    },
+    {
+      "id": "query-comparison-coverage",
+      "type": "comparison",
+      "query": "compare test coverage PAY vs FRD",
+      "description": "Cross-domain test coverage comparison",
+      "expected_domains": ["test", "code"],
+      "expected_intent": "comparative_analysis"
+    },
+    {
+      "id": "query-eql-failed-tests",
+      "type": "eql",
+      "query": "FIND TestCase WHERE test_status = FAILED LIMIT 20",
+      "description": "EQL query to find test cases with failed status",
+      "expected_intent": "structured_query"
+    },
+    {
+      "id": "query-traceability-frd",
+      "type": "traceability",
+      "source": "urn:eoip:work:item:jira:FRD-401",
+      "description": "Full traceability from requirement through code to test to deployment",
+      "expected_chain": ["Story → MergeRequest → Commit → File → CodeSymbol → TestCase → Pipeline → Deployment"]
+    }
+  ]
+}

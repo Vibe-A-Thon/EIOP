@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:simulation_spec:1.0",
+  "title": "SimulationSpec v1",
+  "type": "object",
+  "required": ["schema_version", "simulation_id", "base_graph_version", "mutations"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "simulation_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "description": {"type": ["string", "null"], "maxLength": 4096},
+    "base_graph_version": {"type": "string", "minLength": 1, "maxLength": 128},
+    "rules_version": {"type": ["string", "null"], "maxLength": 128},
+    "created_at": {"type": "string", "format": "date-time"},
+    "mutations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind"],
+        "properties": {
+          "kind": {"enum": ["add_vertex", "modify_vertex", "remove_vertex", "add_edge", "remove_edge", "remove_edge_between"]},
+          "label": {"type": ["string", "null"], "maxLength": 128},
+          "target_id": {"type": ["string", "null"], "maxLength": 2048},
+          "out_v": {"type": ["string", "null"], "maxLength": 2048},
+          "in_v": {"type": ["string", "null"], "maxLength": 2048},
+          "properties": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "metadata": {"type": "object"}
+  },
+  "additionalProperties": false
+}

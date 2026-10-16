@@ -1,0 +1,2291 @@
+{
+  "artifact_type": "urn:eoip:cicd:artifact:ontology",
+  "manifest": {
+    "edge_labels": {
+      "ALERTS_ON": {
+        "in": [
+          "Dashboard",
+          "MonitorRule"
+        ],
+        "out": [
+          "AlertEvent"
+        ]
+      },
+      "ASSIGNED_TO": {
+        "in": [
+          "Person"
+        ],
+        "out": [
+          "ChangeRequest",
+          "Epic",
+          "Feature",
+          "File",
+          "Incident",
+          "ServiceRequest",
+          "TestCase",
+          "UserStory",
+          "WorkItem"
+        ]
+      },
+      "AUTHORED_BY": {
+        "in": [
+          "Person"
+        ],
+        "out": [
+          "Comment",
+          "Commit",
+          "MergeRequest",
+          "WorkItemChange"
+        ]
+      },
+      "BELONGS_TO_DOMAIN": {
+        "in": [
+          "GraphDomain"
+        ],
+        "out": [
+          "APIConnection",
+          "APIEndpoint",
+          "APIService",
+          "AlertEvent",
+          "Alternative",
+          "Artifact",
+          "Branch",
+          "BusinessCapability",
+          "BusinessObjective",
+          "ChangeRequest",
+          "CodeSymbol",
+          "Comment",
+          "Commit",
+          "Dashboard",
+          "Decision",
+          "DecisionOutcome",
+          "Dependency",
+          "Deployment",
+          "DesignComponent",
+          "DesignFile",
+          "DesignPage",
+          "Document",
+          "DocumentSection",
+          "Epic",
+          "Evidence",
+          "Feature",
+          "File",
+          "Incident",
+          "IssueType",
+          "Job",
+          "KBArticle",
+          "KnowledgeSpace",
+          "LogAggregate",
+          "MergeRequest",
+          "Metric",
+          "MonitorRule",
+          "Organization",
+          "Person",
+          "PipelineRun",
+          "ProcessEvent",
+          "ProcessFlow",
+          "ProcessStep",
+          "ProdPage",
+          "Project",
+          "Release",
+          "Repository",
+          "Service",
+          "ServiceRequest",
+          "Sprint",
+          "Status",
+          "Tag",
+          "TestCase",
+          "TestCycle",
+          "TestRun",
+          "TestSuite",
+          "UserStory",
+          "Version",
+          "WorkItem",
+          "WorkItemChange"
+        ]
+      },
+      "BLOCKS": {
+        "in": [
+          "WorkItem"
+        ],
+        "out": [
+          "WorkItem"
+        ]
+      },
+      "CALLS": {
+        "in": [
+          "CodeSymbol"
+        ],
+        "out": [
+          "CodeSymbol"
+        ]
+      },
+      "CHILD_OF": {
+        "in": [
+          "Epic",
+          "Feature"
+        ],
+        "out": [
+          "Feature",
+          "UserStory"
+        ]
+      },
+      "CLONES": {
+        "in": [
+          "WorkItem"
+        ],
+        "out": [
+          "WorkItem"
+        ]
+      },
+      "CONNECTS_TO": {
+        "in": [
+          "APIService"
+        ],
+        "out": [
+          "APIConnection",
+          "APIService"
+        ]
+      },
+      "CONTAINS": {
+        "in": [
+          "APIEndpoint",
+          "DesignComponent",
+          "DesignPage",
+          "Document",
+          "DocumentSection",
+          "Feature",
+          "File",
+          "Project",
+          "Repository",
+          "TestCase",
+          "TestRun",
+          "UserStory",
+          "WorkItem"
+        ],
+        "out": [
+          "APIService",
+          "Dashboard",
+          "DataSource",
+          "DesignFile",
+          "Document",
+          "Epic",
+          "KnowledgeSpace",
+          "Organization",
+          "Project",
+          "Repository",
+          "TestCycle",
+          "TestSuite"
+        ]
+      },
+      "CORRELATES_WITH": {
+        "in": [
+          "AlertEvent",
+          "Dashboard",
+          "Incident",
+          "LogAggregate"
+        ],
+        "out": [
+          "Incident"
+        ]
+      },
+      "COVERS": {
+        "in": [
+          "Epic",
+          "Feature",
+          "UserStory",
+          "WorkItem"
+        ],
+        "out": [
+          "TestCycle",
+          "TestSuite"
+        ]
+      },
+      "DECIDES": {
+        "in": [
+          "APIEndpoint",
+          "APIService",
+          "CodeSymbol",
+          "Deployment",
+          "File",
+          "Repository",
+          "Service"
+        ],
+        "out": [
+          "Decision"
+        ]
+      },
+      "DECLARES": {
+        "in": [
+          "CodeSymbol"
+        ],
+        "out": [
+          "File"
+        ]
+      },
+      "DECOMPOSES_INTO": {
+        "in": [
+          "BusinessCapability",
+          "BusinessObjective"
+        ],
+        "out": [
+          "BusinessCapability",
+          "BusinessObjective"
+        ]
+      },
+      "DEPENDS_ON": {
+        "in": [
+          "CodeSymbol",
+          "Dependency",
+          "File",
+          "Service"
+        ],
+        "out": [
+          "CodeSymbol",
+          "File",
+          "Service"
+        ]
+      },
+      "DEPLOYS": {
+        "in": [
+          "Deployment"
+        ],
+        "out": [
+          "Job",
+          "PipelineRun"
+        ]
+      },
+      "DESIGNS": {
+        "in": [
+          "Epic",
+          "Feature",
+          "UserStory",
+          "WorkItem"
+        ],
+        "out": [
+          "DesignComponent",
+          "DesignFile",
+          "DesignPage"
+        ]
+      },
+      "DEVIATES_FROM": {
+        "in": [
+          "ProcessStep"
+        ],
+        "out": [
+          "ProcessEvent"
+        ]
+      },
+      "DOCUMENTS": {
+        "in": [
+          "APIEndpoint",
+          "APIService",
+          "CodeSymbol",
+          "File",
+          "Project",
+          "Service",
+          "WorkItem"
+        ],
+        "out": [
+          "Document",
+          "DocumentSection"
+        ]
+      },
+      "DOCUMENTS_API": {
+        "in": [
+          "APIEndpoint",
+          "APIService"
+        ],
+        "out": [
+          "Document",
+          "KBArticle",
+          "ProdPage"
+        ]
+      },
+      "DUPLICATES": {
+        "in": [
+          "WorkItem"
+        ],
+        "out": [
+          "WorkItem"
+        ]
+      },
+      "EVIDENCED_BY": {
+        "in": [
+          "Evidence"
+        ],
+        "out": [
+          "APIConnection",
+          "APIEndpoint",
+          "APIService",
+          "AlertEvent",
+          "Alternative",
+          "Artifact",
+          "Branch",
+          "BusinessCapability",
+          "BusinessObjective",
+          "ChangeRequest",
+          "CodeSymbol",
+          "Comment",
+          "Commit",
+          "Dashboard",
+          "Decision",
+          "DecisionOutcome",
+          "Dependency",
+          "Deployment",
+          "DesignComponent",
+          "DesignFile",
+          "DesignPage",
+          "Document",
+          "DocumentSection",
+          "Epic",
+          "Feature",
+          "File",
+          "Incident",
+          "IssueType",
+          "Job",
+          "KBArticle",
+          "KnowledgeSpace",
+          "LogAggregate",
+          "MergeRequest",
+          "Metric",
+          "MonitorRule",
+          "Organization",
+          "Person",
+          "PipelineRun",
+          "ProcessEvent",
+          "ProcessFlow",
+          "ProcessStep",
+          "ProdPage",
+          "Project",
+          "Release",
+          "Repository",
+          "Service",
+          "ServiceRequest",
+          "Sprint",
+          "Status",
+          "Tag",
+          "TestCase",
+          "TestCycle",
+          "TestRun",
+          "TestSuite",
+          "UserStory",
+          "Version",
+          "WorkItem",
+          "WorkItemChange"
+        ]
+      },
+      "EXECUTED_IN": {
+        "in": [
+          "TestCycle",
+          "TestRun"
+        ],
+        "out": [
+          "TestCase"
+        ]
+      },
+      "EXPOSES": {
+        "in": [
+          "APIEndpoint"
+        ],
+        "out": [
+          "APIService"
+        ]
+      },
+      "FIXED_IN": {
+        "in": [
+          "Version"
+        ],
+        "out": [
+          "WorkItem"
+        ]
+      },
+      "FULFILLS": {
+        "in": [
+          "BusinessObjective"
+        ],
+        "out": [
+          "APIService",
+          "BusinessCapability",
+          "Deployment",
+          "Service"
+        ]
+      },
+      "HAS_ALTERNATIVE": {
+        "in": [
+          "Alternative"
+        ],
+        "out": [
+          "Decision"
+        ]
+      },
+      "HAS_BRANCH": {
+        "in": [
+          "Branch"
+        ],
+        "out": [
+          "Repository"
+        ]
+      },
+      "HAS_CHANGE": {
+        "in": [
+          "WorkItemChange"
+        ],
+        "out": [
+          "WorkItem"
+        ]
+      },
+      "HAS_COMMENT": {
+        "in": [
+          "Comment"
+        ],
+        "out": [
+          "WorkItem"
+        ]
+      },
+      "HAS_COMMIT": {
+        "in": [
+          "Commit"
+        ],
+        "out": [
+          "Branch",
+          "Repository"
+        ]
+      },
+      "HAS_ISSUE_TYPE": {
+        "in": [
+          "IssueType"
+        ],
+        "out": [
+          "Project"
+        ]
+      },
+      "HAS_JOB": {
+        "in": [
+          "Job"
+        ],
+        "out": [
+          "PipelineRun"
+        ]
+      },
+      "HAS_MERGE_REQUEST": {
+        "in": [
+          "MergeRequest"
+        ],
+        "out": [
+          "Repository"
+        ]
+      },
+      "HAS_OUTCOME": {
+        "in": [
+          "DecisionOutcome"
+        ],
+        "out": [
+          "Decision"
+        ]
+      },
+      "HAS_RELEASE": {
+        "in": [
+          "Release"
+        ],
+        "out": [
+          "Repository"
+        ]
+      },
+      "HAS_SPRINT": {
+        "in": [
+          "Sprint"
+        ],
+        "out": [
+          "Project"
+        ]
+      },
+      "HAS_STATUS": {
+        "in": [
+          "Status"
+        ],
+        "out": [
+          "Project",
+          "WorkItem"
+        ]
+      },
+      "HAS_STEP": {
+        "in": [
+          "ProcessStep"
+        ],
+        "out": [
+          "ProcessFlow"
+        ]
+      },
+      "HAS_TAG": {
+        "in": [
+          "Tag"
+        ],
+        "out": [
+          "Repository"
+        ]
+      },
+      "HAS_VERSION": {
+        "in": [
+          "Version"
+        ],
+        "out": [
+          "Project"
+        ]
+      },
+      "IMPLEMENTS": {
+        "in": [
+          "WorkItem"
+        ],
+        "out": [
+          "Commit",
+          "MergeRequest"
+        ]
+      },
+      "IMPORTS": {
+        "in": [
+          "Dependency"
+        ],
+        "out": [
+          "CodeSymbol",
+          "File"
+        ]
+      },
+      "INGESTED_IN": {
+        "in": [
+          "IngestionRun"
+        ],
+        "out": [
+          "APIConnection",
+          "APIEndpoint",
+          "APIService",
+          "AlertEvent",
+          "Alternative",
+          "Artifact",
+          "Branch",
+          "BusinessCapability",
+          "BusinessObjective",
+          "ChangeRequest",
+          "CodeSymbol",
+          "Comment",
+          "Commit",
+          "Dashboard",
+          "Decision",
+          "DecisionOutcome",
+          "Dependency",
+          "Deployment",
+          "DesignComponent",
+          "DesignFile",
+          "DesignPage",
+          "Document",
+          "DocumentSection",
+          "Epic",
+          "Feature",
+          "File",
+          "Incident",
+          "IssueType",
+          "Job",
+          "KBArticle",
+          "KnowledgeSpace",
+          "LogAggregate",
+          "MergeRequest",
+          "Metric",
+          "MonitorRule",
+          "Organization",
+          "Person",
+          "PipelineRun",
+          "ProcessEvent",
+          "ProcessFlow",
+          "ProcessStep",
+          "ProdPage",
+          "Project",
+          "Release",
+          "Repository",
+          "Service",
+          "ServiceRequest",
+          "Sprint",
+          "Status",
+          "Tag",
+          "TestCase",
+          "TestCycle",
+          "TestRun",
+          "TestSuite",
+          "UserStory",
+          "Version",
+          "WorkItem",
+          "WorkItemChange"
+        ]
+      },
+      "IN_SPRINT": {
+        "in": [
+          "Sprint"
+        ],
+        "out": [
+          "WorkItem"
+        ]
+      },
+      "LOGGED_BY": {
+        "in": [
+          "APIService",
+          "Deployment",
+          "Repository"
+        ],
+        "out": [
+          "LogAggregate"
+        ]
+      },
+      "MODIFIES": {
+        "in": [
+          "File"
+        ],
+        "out": [
+          "Commit",
+          "MergeRequest"
+        ]
+      },
+      "MONITORS": {
+        "in": [
+          "APIService",
+          "Deployment",
+          "PipelineRun",
+          "Repository"
+        ],
+        "out": [
+          "Dashboard",
+          "MonitorRule"
+        ]
+      },
+      "OF_TYPE": {
+        "in": [
+          "IssueType"
+        ],
+        "out": [
+          "WorkItem"
+        ]
+      },
+      "PARENT_OF": {
+        "in": [
+          "WorkItem"
+        ],
+        "out": [
+          "WorkItem"
+        ]
+      },
+      "PART_OF_SUITE": {
+        "in": [
+          "TestSuite"
+        ],
+        "out": [
+          "TestCase"
+        ]
+      },
+      "PRECEDES": {
+        "in": [
+          "ProcessStep"
+        ],
+        "out": [
+          "ProcessStep"
+        ]
+      },
+      "PRODUCED_BY": {
+        "in": [
+          "Commit",
+          "Job",
+          "MergeRequest",
+          "PipelineRun"
+        ],
+        "out": [
+          "Deployment",
+          "Document",
+          "DocumentSection",
+          "PipelineRun",
+          "Release"
+        ]
+      },
+      "PRODUCES": {
+        "in": [
+          "Artifact"
+        ],
+        "out": [
+          "Job"
+        ]
+      },
+      "REALIZES": {
+        "in": [
+          "BusinessCapability"
+        ],
+        "out": [
+          "APIService",
+          "Epic",
+          "Feature",
+          "Project",
+          "Service",
+          "UserStory",
+          "WorkItem"
+        ]
+      },
+      "REFERENCES": {
+        "in": [
+          "CodeSymbol",
+          "Commit",
+          "Dependency",
+          "File",
+          "WorkItem"
+        ],
+        "out": [
+          "Commit",
+          "Document",
+          "DocumentSection",
+          "MergeRequest",
+          "PipelineRun",
+          "WorkItem"
+        ]
+      },
+      "REPORTED_BY": {
+        "in": [
+          "Person"
+        ],
+        "out": [
+          "WorkItem"
+        ]
+      },
+      "RESOLVES": {
+        "in": [
+          "AlertEvent",
+          "Incident"
+        ],
+        "out": [
+          "ChangeRequest",
+          "Commit",
+          "MergeRequest"
+        ]
+      },
+      "SUCCEEDS": {
+        "in": [
+          "Commit"
+        ],
+        "out": [
+          "Commit"
+        ]
+      },
+      "SUPERSEDES": {
+        "in": [
+          "Decision"
+        ],
+        "out": [
+          "Decision"
+        ]
+      },
+      "TESTS": {
+        "in": [
+          "APIEndpoint",
+          "CodeSymbol",
+          "Epic",
+          "Feature",
+          "File",
+          "UserStory",
+          "WorkItem"
+        ],
+        "out": [
+          "TestCase",
+          "TestRun"
+        ]
+      },
+      "TRACES_TO": {
+        "in": [
+          "APIService",
+          "CodeSymbol",
+          "Deployment",
+          "Epic",
+          "Feature",
+          "File",
+          "PipelineRun",
+          "Service",
+          "TestCase",
+          "UserStory",
+          "WorkItem"
+        ],
+        "out": [
+          "BusinessCapability",
+          "BusinessObjective",
+          "Decision",
+          "Requirement"
+        ]
+      },
+      "TRIGGERED_BY": {
+        "in": [
+          "ChangeRequest",
+          "Commit",
+          "Deployment",
+          "PipelineRun"
+        ],
+        "out": [
+          "AlertEvent",
+          "Incident"
+        ]
+      },
+      "TRIGGERS_PROCESS": {
+        "in": [
+          "ProcessFlow",
+          "ProcessStep"
+        ],
+        "out": [
+          "ProcessEvent"
+        ]
+      },
+      "USES_COMPONENT": {
+        "in": [
+          "DesignComponent"
+        ],
+        "out": [
+          "DesignPage"
+        ]
+      },
+      "VALIDATED_BY": {
+        "in": [
+          "ValidationRun"
+        ],
+        "out": [
+          "APIConnection",
+          "APIEndpoint",
+          "APIService",
+          "AlertEvent",
+          "Alternative",
+          "Artifact",
+          "BusinessCapability",
+          "BusinessObjective",
+          "ChangeRequest",
+          "CodeSymbol",
+          "Comment",
+          "Commit",
+          "Dashboard",
+          "Decision",
+          "DecisionOutcome",
+          "Deployment",
+          "DesignComponent",
+          "DesignFile",
+          "DesignPage",
+          "Document",
+          "DocumentSection",
+          "Epic",
+          "Feature",
+          "File",
+          "Incident",
+          "IssueType",
+          "Job",
+          "KBArticle",
+          "LogAggregate",
+          "MergeRequest",
+          "Metric",
+          "MonitorRule",
+          "PipelineRun",
+          "ProcessEvent",
+          "ProcessFlow",
+          "ProcessStep",
+          "ProdPage",
+          "Project",
+          "Release",
+          "Repository",
+          "Service",
+          "ServiceRequest",
+          "Sprint",
+          "Status",
+          "Tag",
+          "TestCase",
+          "TestCycle",
+          "TestRun",
+          "TestSuite",
+          "UserStory",
+          "Version",
+          "WorkItem",
+          "WorkItemChange"
+        ]
+      },
+      "VISUALIZES": {
+        "in": [
+          "APIService",
+          "Metric",
+          "MonitorRule"
+        ],
+        "out": [
+          "Dashboard"
+        ]
+      }
+    },
+    "property_keys": {
+      "access_policy": "TEXT",
+      "actor": "TEXT",
+      "actor_id": "TEXT",
+      "actual_duration": "DOUBLE",
+      "agent_id": "TEXT",
+      "alert_status": "TEXT",
+      "alternatives_considered": "TEXT",
+      "api_method": "TEXT",
+      "api_name": "TEXT",
+      "api_path": "TEXT",
+      "api_protocol": "TEXT",
+      "api_version": "TEXT",
+      "apis": "TEXT",
+      "approval_status": "TEXT",
+      "artifact_format": "TEXT",
+      "artifact_type": "TEXT",
+      "assigned_group": "TEXT",
+      "author_email": "TEXT",
+      "author_name": "TEXT",
+      "automation_status": "TEXT",
+      "branch_name": "TEXT",
+      "budgets": "TEXT",
+      "build_number": "TEXT",
+      "business_domain": "TEXT",
+      "canonical_id": "TEXT",
+      "capability_level": "INT",
+      "captured_at": "DATE",
+      "category": "TEXT",
+      "change_id": "TEXT",
+      "change_kind": "TEXT",
+      "change_type": "TEXT",
+      "closed_at": "DATE",
+      "comment_id": "TEXT",
+      "commit_sha": "TEXT",
+      "completed_at": "DATE",
+      "component_type": "TEXT",
+      "conclusion": "TEXT",
+      "confidence": "DOUBLE",
+      "constraints": "TEXT",
+      "consumers": "TEXT",
+      "content": "TEXT",
+      "content_hash": "TEXT",
+      "correlation_id": "TEXT",
+      "counts": "TEXT",
+      "coverage_score": "DOUBLE",
+      "created_at": "DATE",
+      "creation_status": "TEXT",
+      "dashboard_id": "TEXT",
+      "dashboard_type": "TEXT",
+      "dashboard_url": "TEXT",
+      "dashboards": "TEXT",
+      "decision_date": "DATE",
+      "decision_status": "TEXT",
+      "default_branch": "TEXT",
+      "deleted_at": "DATE",
+      "deployable_id": "TEXT",
+      "description": "TEXT",
+      "deviation_type": "TEXT",
+      "display_name": "TEXT",
+      "doc_format": "TEXT",
+      "domain": "TEXT",
+      "downstream_service": "TEXT",
+      "duration_seconds": "DOUBLE",
+      "edge_key": "TEXT",
+      "email": "TEXT",
+      "end_column": "INT",
+      "end_date": "DATE",
+      "end_line": "INT",
+      "entity_type": "TEXT",
+      "environment": "TEXT",
+      "event_timestamp": "DATE",
+      "evidence_key": "TEXT",
+      "execution_status": "TEXT",
+      "execution_time": "DOUBLE",
+      "expected_duration": "DOUBLE",
+      "external_id": "TEXT",
+      "fact_class": "TEXT",
+      "fact_key": "TEXT",
+      "failed_count": "INT",
+      "field_name": "TEXT",
+      "figma_file_key": "TEXT",
+      "figma_node_id": "TEXT",
+      "file_size": "LONG",
+      "finished_at": "DATE",
+      "first_seen": "DATE",
+      "frame_name": "TEXT",
+      "freshness_slo": "TEXT",
+      "from_id": "TEXT",
+      "from_value": "TEXT",
+      "goal": "TEXT",
+      "graph_domain": "TEXT",
+      "graph_version": "TEXT",
+      "impact": "TEXT",
+      "incident_number": "TEXT",
+      "ingestion_run_id": "TEXT",
+      "is_current": "BOOLEAN",
+      "is_designed": "BOOLEAN",
+      "issue_key": "TEXT",
+      "issue_type": "TEXT",
+      "issue_type_id": "TEXT",
+      "iteration_name": "TEXT",
+      "job_id": "TEXT",
+      "kpi_actual": "TEXT",
+      "kpi_target": "TEXT",
+      "language": "TEXT",
+      "last_ingestion_run": "DATE",
+      "last_modified_by": "TEXT",
+      "last_seen": "DATE",
+      "link_direction": "TEXT",
+      "link_type": "TEXT",
+      "log_count": "LONG",
+      "log_level": "TEXT",
+      "log_source": "TEXT",
+      "mapper_version": "TEXT",
+      "media_type": "TEXT",
+      "merge_request_id": "TEXT",
+      "message": "TEXT",
+      "method": "TEXT",
+      "metric_id": "TEXT",
+      "metric_name": "TEXT",
+      "metric_unit": "TEXT",
+      "metric_value": "DOUBLE",
+      "modified_at": "DATE",
+      "monitor_id": "TEXT",
+      "monitor_type": "TEXT",
+      "mr_iid": "INT",
+      "mr_title": "TEXT",
+      "name": "TEXT",
+      "objective_type": "TEXT",
+      "observed_at": "DATE",
+      "ontology_version": "TEXT",
+      "outcome": "TEXT",
+      "owner": "TEXT",
+      "owner_id": "TEXT",
+      "page_name": "TEXT",
+      "page_status": "TEXT",
+      "page_url": "TEXT",
+      "panel_count": "INT",
+      "parent_shas": "TEXT",
+      "parser_version": "TEXT",
+      "passed_count": "INT",
+      "path": "TEXT",
+      "payload_json": "TEXT",
+      "pipeline_id": "TEXT",
+      "pipeline_status": "TEXT",
+      "plan_estimate": "DOUBLE",
+      "planned_end": "DATE",
+      "planned_start": "DATE",
+      "pr_author": "TEXT",
+      "pr_id": "TEXT",
+      "pr_title": "TEXT",
+      "previous_revision": "TEXT",
+      "priority": "TEXT",
+      "process_type": "TEXT",
+      "product_state": "TEXT",
+      "project_key": "TEXT",
+      "published_at": "DATE",
+      "qualified_name": "TEXT",
+      "quality_slo": "TEXT",
+      "quarantine": "BOOLEAN",
+      "quarantine_reason": "TEXT",
+      "rally_formatted_id": "TEXT",
+      "rally_id": "TEXT",
+      "rationale": "TEXT",
+      "records_accepted": "INT",
+      "records_rejected": "INT",
+      "ref": "TEXT",
+      "registry_source_id": "TEXT",
+      "relationship_id": "TEXT",
+      "relationship_type": "TEXT",
+      "release_date": "DATE",
+      "release_name": "TEXT",
+      "released": "BOOLEAN",
+      "remediation": "TEXT",
+      "repo_id": "TEXT",
+      "request_id": "TEXT",
+      "resolution_notes": "TEXT",
+      "resolved": "BOOLEAN",
+      "resolved_at": "DATE",
+      "revision_id": "TEXT",
+      "risk_level": "TEXT",
+      "rule_id": "TEXT",
+      "run_kind": "TEXT",
+      "run_status": "TEXT",
+      "schedule_state": "TEXT",
+      "schema_version": "TEXT",
+      "section_index": "INT",
+      "service_id": "TEXT",
+      "severity": "TEXT",
+      "skipped_count": "INT",
+      "source_aliases": "TEXT",
+      "source_branch": "TEXT",
+      "source_connector": "TEXT",
+      "source_event_id": "TEXT",
+      "source_graphs": "TEXT",
+      "source_id": "TEXT",
+      "source_ref": "TEXT",
+      "source_system": "TEXT",
+      "source_uri": "TEXT",
+      "source_version": "TEXT",
+      "space_key": "TEXT",
+      "sprint_id": "TEXT",
+      "stage": "TEXT",
+      "start_column": "INT",
+      "start_date": "DATE",
+      "start_line": "INT",
+      "started_at": "DATE",
+      "status": "TEXT",
+      "status_id": "TEXT",
+      "step_order": "INT",
+      "strategic_priority": "TEXT",
+      "subcategory": "TEXT",
+      "subject_id": "TEXT",
+      "summary": "TEXT",
+      "superseded_by": "TEXT",
+      "swagger_url": "TEXT",
+      "symbol_kind": "TEXT",
+      "tag_name": "TEXT",
+      "target_branch": "TEXT",
+      "test_case_id": "TEXT",
+      "test_cycle_id": "TEXT",
+      "test_run_id": "TEXT",
+      "test_status": "TEXT",
+      "test_suite_id": "TEXT",
+      "test_type": "TEXT",
+      "thread_depth": "INT",
+      "threshold": "DOUBLE",
+      "thumbnail_url": "TEXT",
+      "to_id": "TEXT",
+      "to_value": "TEXT",
+      "total_count": "INT",
+      "trust_approver": "TEXT",
+      "trust_confidence": "DOUBLE",
+      "trust_rule_id": "TEXT",
+      "trust_state": "TEXT",
+      "trust_updated_at": "DATE",
+      "unit": "TEXT",
+      "updated_at": "DATE",
+      "upstream_service": "TEXT",
+      "urgency": "TEXT",
+      "url": "TEXT",
+      "valid_from": "DATE",
+      "valid_to": "DATE",
+      "verified": "BOOLEAN",
+      "version_id": "TEXT",
+      "visibility": "TEXT"
+    },
+    "vertex_labels": {
+      "APIConnection": {
+        "domain": "CODE",
+        "optional": [
+          "api_protocol",
+          "description",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "downstream_service",
+          "upstream_service"
+        ]
+      },
+      "APIEndpoint": {
+        "domain": "CODE",
+        "optional": [
+          "api_protocol",
+          "api_version",
+          "description",
+          "source_system"
+        ],
+        "required": [
+          "api_method",
+          "api_name",
+          "api_path",
+          "canonical_id"
+        ]
+      },
+      "APIService": {
+        "domain": "CODE",
+        "optional": [
+          "api_version",
+          "created_at",
+          "description",
+          "modified_at",
+          "source_system",
+          "status",
+          "swagger_url"
+        ],
+        "required": [
+          "api_name",
+          "canonical_id"
+        ]
+      },
+      "AgentRun": {
+        "domain": "AGENT",
+        "optional": [
+          "budgets",
+          "finished_at",
+          "run_status",
+          "started_at"
+        ],
+        "required": [
+          "agent_id",
+          "canonical_id",
+          "goal"
+        ]
+      },
+      "AlertEvent": {
+        "domain": "OPS",
+        "optional": [
+          "alert_status",
+          "created_at",
+          "description",
+          "resolved_at",
+          "severity",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "Alternative": {
+        "domain": "DECISION",
+        "optional": [
+          "description",
+          "outcome",
+          "rationale",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "Artifact": {
+        "domain": "CICD",
+        "optional": [
+          "artifact_format",
+          "artifact_type",
+          "file_size",
+          "repo_id",
+          "url"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "Branch": {
+        "domain": "CODE",
+        "optional": [
+          "repo_id"
+        ],
+        "required": [
+          "branch_name",
+          "canonical_id"
+        ]
+      },
+      "BuildRecord": {
+        "domain": "CICD",
+        "optional": [
+          "build_number",
+          "created_at",
+          "duration_seconds",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "BusinessCapability": {
+        "domain": "BUSINESS",
+        "optional": [
+          "business_domain",
+          "capability_level",
+          "created_at",
+          "description",
+          "modified_at",
+          "owner_id",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "BusinessObjective": {
+        "domain": "BUSINESS",
+        "optional": [
+          "created_at",
+          "description",
+          "kpi_actual",
+          "kpi_target",
+          "modified_at",
+          "objective_type",
+          "owner_id",
+          "source_system",
+          "status",
+          "strategic_priority"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "ChangeRequest": {
+        "domain": "OPS",
+        "optional": [
+          "approval_status",
+          "closed_at",
+          "created_at",
+          "description",
+          "modified_at",
+          "planned_end",
+          "planned_start",
+          "risk_level",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "change_type",
+          "name"
+        ]
+      },
+      "CodeSymbol": {
+        "domain": "CODE",
+        "optional": [
+          "end_column",
+          "end_line",
+          "language",
+          "name",
+          "parser_version",
+          "path",
+          "repo_id",
+          "start_column",
+          "start_line"
+        ],
+        "required": [
+          "canonical_id",
+          "qualified_name",
+          "symbol_kind"
+        ]
+      },
+      "Comment": {
+        "domain": "WORK",
+        "optional": [
+          "created_at",
+          "modified_at",
+          "source_id",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "comment_id",
+          "content"
+        ]
+      },
+      "Commit": {
+        "domain": "CODE",
+        "optional": [
+          "author_email",
+          "author_name",
+          "created_at",
+          "merge_request_id",
+          "message",
+          "parent_shas",
+          "pr_author",
+          "pr_title"
+        ],
+        "required": [
+          "canonical_id",
+          "commit_sha"
+        ]
+      },
+      "Dashboard": {
+        "domain": "OPS",
+        "optional": [
+          "created_at",
+          "dashboard_id",
+          "dashboard_url",
+          "description",
+          "modified_at",
+          "panel_count",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "dashboard_type",
+          "name"
+        ]
+      },
+      "DataSource": {
+        "domain": "META",
+        "optional": [
+          "description",
+          "source_uri"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "source_system"
+        ]
+      },
+      "Decision": {
+        "domain": "DECISION",
+        "optional": [
+          "alternatives_considered",
+          "constraints",
+          "created_at",
+          "decision_date",
+          "decision_status",
+          "description",
+          "modified_at",
+          "outcome",
+          "rationale",
+          "source_system",
+          "superseded_by"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "DecisionOutcome": {
+        "domain": "DECISION",
+        "optional": [
+          "decision_date",
+          "description",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "Dependency": {
+        "domain": "CODE",
+        "optional": [
+          "language",
+          "resolved"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "Deployment": {
+        "domain": "CICD",
+        "optional": [
+          "commit_sha",
+          "created_at",
+          "deployable_id",
+          "environment",
+          "ref",
+          "repo_id",
+          "status",
+          "url"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "DesignComponent": {
+        "domain": "DESIGN",
+        "optional": [
+          "description",
+          "figma_file_key",
+          "figma_node_id",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "component_type",
+          "name"
+        ]
+      },
+      "DesignFile": {
+        "domain": "DESIGN",
+        "optional": [
+          "created_at",
+          "description",
+          "figma_file_key",
+          "last_modified_by",
+          "modified_at",
+          "source_system",
+          "thumbnail_url"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "DesignPage": {
+        "domain": "DESIGN",
+        "optional": [
+          "figma_file_key",
+          "figma_node_id",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "page_name"
+        ]
+      },
+      "Document": {
+        "domain": "KNOWLEDGE",
+        "optional": [
+          "content_hash",
+          "description",
+          "doc_format",
+          "parser_version",
+          "payload_json",
+          "repo_id"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "path"
+        ]
+      },
+      "DocumentSection": {
+        "domain": "KNOWLEDGE",
+        "optional": [
+          "content_hash",
+          "end_line",
+          "path",
+          "section_index",
+          "start_line"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "EntityRevision": {
+        "domain": "META",
+        "optional": [
+          "entity_type",
+          "graph_version",
+          "previous_revision",
+          "source_version",
+          "valid_from",
+          "valid_to"
+        ],
+        "required": [
+          "canonical_id",
+          "is_current",
+          "observed_at",
+          "payload_json",
+          "revision_id",
+          "source_event_id",
+          "subject_id"
+        ]
+      },
+      "Epic": {
+        "domain": "WORK",
+        "optional": [
+          "created_at",
+          "description",
+          "modified_at",
+          "plan_estimate",
+          "rally_formatted_id",
+          "rally_id",
+          "release_name",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "Evidence": {
+        "domain": "META",
+        "optional": [
+          "captured_at",
+          "confidence",
+          "evidence_key",
+          "mapper_version",
+          "parser_version"
+        ],
+        "required": [
+          "canonical_id",
+          "method",
+          "source_ref",
+          "source_system"
+        ]
+      },
+      "Feature": {
+        "domain": "WORK",
+        "optional": [
+          "created_at",
+          "description",
+          "iteration_name",
+          "modified_at",
+          "plan_estimate",
+          "rally_formatted_id",
+          "rally_id",
+          "release_name",
+          "schedule_state",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "File": {
+        "domain": "CODE",
+        "optional": [
+          "content_hash",
+          "language",
+          "merge_request_id"
+        ],
+        "required": [
+          "canonical_id",
+          "path",
+          "repo_id"
+        ]
+      },
+      "GenericEntity": {
+        "domain": "INTEGRATION",
+        "optional": [
+          "created_at",
+          "description",
+          "entity_type",
+          "last_ingestion_run",
+          "modified_at",
+          "pipeline_id",
+          "source_connector",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "GraphDomain": {
+        "domain": "META",
+        "optional": [
+          "description"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "GraphVersion": {
+        "domain": "META",
+        "optional": [
+          "change_kind",
+          "counts",
+          "source_event_id"
+        ],
+        "required": [
+          "canonical_id",
+          "created_at",
+          "graph_version"
+        ]
+      },
+      "Incident": {
+        "domain": "OPS",
+        "optional": [
+          "assigned_group",
+          "category",
+          "closed_at",
+          "created_at",
+          "description",
+          "impact",
+          "modified_at",
+          "priority",
+          "resolution_notes",
+          "resolved_at",
+          "source_system",
+          "status",
+          "subcategory",
+          "urgency"
+        ],
+        "required": [
+          "canonical_id",
+          "incident_number",
+          "summary"
+        ]
+      },
+      "IngestionRun": {
+        "domain": "META",
+        "optional": [
+          "completed_at",
+          "counts",
+          "finished_at",
+          "ingestion_run_id",
+          "pipeline_id",
+          "records_accepted",
+          "records_rejected",
+          "source_connector",
+          "source_system",
+          "started_at"
+        ],
+        "required": [
+          "canonical_id",
+          "run_kind",
+          "run_status"
+        ]
+      },
+      "IssueType": {
+        "domain": "WORK",
+        "optional": [
+          "description",
+          "project_key"
+        ],
+        "required": [
+          "canonical_id",
+          "issue_type_id",
+          "name"
+        ]
+      },
+      "Job": {
+        "domain": "CICD",
+        "optional": [
+          "commit_sha",
+          "created_at",
+          "duration_seconds",
+          "ref",
+          "repo_id",
+          "stage",
+          "status",
+          "url"
+        ],
+        "required": [
+          "canonical_id",
+          "job_id",
+          "name"
+        ]
+      },
+      "KBArticle": {
+        "domain": "KNOWLEDGE",
+        "optional": [
+          "category",
+          "content",
+          "created_at",
+          "description",
+          "modified_at",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "KnowledgeProduct": {
+        "domain": "KNOWLEDGE",
+        "optional": [
+          "access_policy",
+          "apis",
+          "consumers",
+          "created_at",
+          "dashboards",
+          "description",
+          "domain",
+          "freshness_slo",
+          "ontology_version",
+          "product_state",
+          "quality_slo",
+          "source_graphs",
+          "updated_at"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "owner"
+        ]
+      },
+      "KnowledgeSpace": {
+        "domain": "KNOWLEDGE",
+        "optional": [
+          "description"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "space_key"
+        ]
+      },
+      "LogAggregate": {
+        "domain": "OPS",
+        "optional": [
+          "created_at",
+          "description",
+          "log_count",
+          "log_level",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "log_source"
+        ]
+      },
+      "MergeRequest": {
+        "domain": "CICD",
+        "optional": [
+          "source_branch",
+          "status",
+          "target_branch"
+        ],
+        "required": [
+          "canonical_id",
+          "mr_iid",
+          "mr_title"
+        ]
+      },
+      "Metric": {
+        "domain": "OPS",
+        "optional": [
+          "created_at",
+          "description",
+          "metric_id",
+          "modified_at",
+          "source_system",
+          "unit"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "MonitorRule": {
+        "domain": "OPS",
+        "optional": [
+          "created_at",
+          "description",
+          "modified_at",
+          "monitor_id",
+          "source_system",
+          "status",
+          "threshold"
+        ],
+        "required": [
+          "canonical_id",
+          "monitor_type",
+          "name"
+        ]
+      },
+      "OntologyVersion": {
+        "domain": "META",
+        "optional": [
+          "schema_version"
+        ],
+        "required": [
+          "canonical_id",
+          "ontology_version"
+        ]
+      },
+      "Organization": {
+        "domain": "IDENTITY",
+        "optional": [
+          "external_id",
+          "source_system",
+          "url"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "Person": {
+        "domain": "IDENTITY",
+        "optional": [
+          "email",
+          "source_aliases"
+        ],
+        "required": [
+          "canonical_id",
+          "display_name"
+        ]
+      },
+      "PipelineRun": {
+        "domain": "CICD",
+        "optional": [
+          "commit_sha",
+          "created_at",
+          "pipeline_status",
+          "ref"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "ProcessEvent": {
+        "domain": "PROCESS",
+        "optional": [
+          "actor",
+          "description",
+          "deviation_type",
+          "event_timestamp",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "ProcessFlow": {
+        "domain": "PROCESS",
+        "optional": [
+          "created_at",
+          "description",
+          "is_designed",
+          "modified_at",
+          "process_type",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "ProcessStep": {
+        "domain": "PROCESS",
+        "optional": [
+          "actor",
+          "actual_duration",
+          "description",
+          "expected_duration",
+          "source_system",
+          "status",
+          "step_order"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "ProdPage": {
+        "domain": "KNOWLEDGE",
+        "optional": [
+          "created_at",
+          "description",
+          "modified_at",
+          "page_status",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "page_url"
+        ]
+      },
+      "Project": {
+        "domain": "WORK",
+        "optional": [
+          "display_name",
+          "issue_key"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "RelationshipRevision": {
+        "domain": "META",
+        "optional": [
+          "graph_version",
+          "previous_revision",
+          "source_version",
+          "valid_from",
+          "valid_to"
+        ],
+        "required": [
+          "canonical_id",
+          "from_id",
+          "is_current",
+          "observed_at",
+          "payload_json",
+          "relationship_id",
+          "relationship_type",
+          "revision_id",
+          "source_event_id",
+          "to_id"
+        ]
+      },
+      "Release": {
+        "domain": "CICD",
+        "optional": [
+          "description",
+          "external_id",
+          "published_at",
+          "repo_id",
+          "status",
+          "url"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "tag_name"
+        ]
+      },
+      "Repository": {
+        "domain": "CODE",
+        "optional": [
+          "source_uri"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "repo_id"
+        ]
+      },
+      "Requirement": {
+        "domain": "WORK",
+        "optional": [
+          "created_at",
+          "description",
+          "modified_at",
+          "priority",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "SemanticChange": {
+        "domain": "META",
+        "optional": [
+          "relationship_id",
+          "source_event_id",
+          "subject_id"
+        ],
+        "required": [
+          "canonical_id",
+          "change_kind",
+          "graph_version",
+          "observed_at",
+          "payload_json"
+        ]
+      },
+      "Service": {
+        "domain": "CODE",
+        "optional": [
+          "created_at",
+          "description",
+          "modified_at",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "service_id"
+        ]
+      },
+      "ServiceRequest": {
+        "domain": "OPS",
+        "optional": [
+          "category",
+          "closed_at",
+          "created_at",
+          "description",
+          "modified_at",
+          "priority",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "Sprint": {
+        "domain": "WORK",
+        "optional": [
+          "description",
+          "end_date",
+          "project_key",
+          "start_date",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "sprint_id"
+        ]
+      },
+      "Status": {
+        "domain": "WORK",
+        "optional": [
+          "description",
+          "project_key"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "status_id"
+        ]
+      },
+      "Tag": {
+        "domain": "CODE",
+        "optional": [
+          "commit_sha",
+          "source_system"
+        ],
+        "required": [
+          "canonical_id",
+          "repo_id",
+          "tag_name"
+        ]
+      },
+      "TestCase": {
+        "domain": "TEST",
+        "optional": [
+          "automation_status",
+          "created_at",
+          "description",
+          "modified_at",
+          "source_system",
+          "test_case_id",
+          "test_status",
+          "test_type"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "TestCycle": {
+        "domain": "TEST",
+        "optional": [
+          "description",
+          "end_date",
+          "source_system",
+          "start_date",
+          "status",
+          "test_cycle_id"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "TestRun": {
+        "domain": "TEST",
+        "optional": [
+          "created_at",
+          "execution_status",
+          "execution_time",
+          "failed_count",
+          "finished_at",
+          "passed_count",
+          "skipped_count",
+          "source_system",
+          "test_run_id",
+          "total_count"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "TestSuite": {
+        "domain": "TEST",
+        "optional": [
+          "created_at",
+          "description",
+          "source_system",
+          "test_suite_id"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "UserStory": {
+        "domain": "WORK",
+        "optional": [
+          "created_at",
+          "description",
+          "iteration_name",
+          "modified_at",
+          "plan_estimate",
+          "rally_formatted_id",
+          "rally_id",
+          "schedule_state",
+          "source_system",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name"
+        ]
+      },
+      "ValidationFinding": {
+        "domain": "META",
+        "optional": [
+          "description",
+          "remediation"
+        ],
+        "required": [
+          "canonical_id",
+          "rule_id",
+          "severity"
+        ]
+      },
+      "ValidationRun": {
+        "domain": "META",
+        "optional": [
+          "counts",
+          "finished_at",
+          "started_at"
+        ],
+        "required": [
+          "canonical_id",
+          "run_status"
+        ]
+      },
+      "Version": {
+        "domain": "WORK",
+        "optional": [
+          "description",
+          "project_key",
+          "release_date",
+          "released",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "name",
+          "version_id"
+        ]
+      },
+      "WorkItem": {
+        "domain": "WORK",
+        "optional": [
+          "created_at",
+          "deleted_at",
+          "description",
+          "issue_type",
+          "modified_at",
+          "status"
+        ],
+        "required": [
+          "canonical_id",
+          "issue_key",
+          "summary"
+        ]
+      },
+      "WorkItemChange": {
+        "domain": "WORK",
+        "optional": [
+          "created_at",
+          "from_value",
+          "source_id",
+          "source_system",
+          "to_value"
+        ],
+        "required": [
+          "canonical_id",
+          "change_id",
+          "field_name"
+        ]
+      }
+    }
+  },
+  "ontology_version": "0.4.0",
+  "published_at": "2026-10-05T10:04:26.807366+00:00"
+}

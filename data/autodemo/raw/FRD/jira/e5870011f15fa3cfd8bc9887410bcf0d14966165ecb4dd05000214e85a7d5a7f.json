@@ -1,0 +1,85 @@
+{
+  "captured_at": "2026-10-04T13:45:50.511263Z",
+  "event_id": "e5870011f15fa3cfd8bc9887410bcf0d14966165ecb4dd05000214e85a7d5a7f",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "psharma",
+        "displayName": "Priya Sharma",
+        "emailAddress": "priya.sharma@mfs.example.invalid"
+      },
+      "components": [
+        {
+          "name": "mfs-fraud-engine"
+        },
+        {
+          "name": "mfs-common-libs"
+        }
+      ],
+      "created": "2026-08-20T09:00:00.000+0000",
+      "customfield_10014": "EPC-201",
+      "customfield_10015": "Fraud & Risk",
+      "description": "Build a low-latency feature extraction service that computes fraud-relevant features from incoming transaction data in real time. Features include transaction velocity, merchant risk score, device fingerprint similarity, and geolocation anomaly score. Service reads from Kafka topic 'mfs.txn.raw' and writes enriched features to 'mfs.txn.features'. Uses svc-fraud-engine service account on mfs-fraud-pod-01.",
+      "fixVersions": [
+        {
+          "name": "2026.Q4-FraudPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "FRD-121"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        },
+        {
+          "outwardIssue": {
+            "key": "TC-FRD-002"
+          },
+          "type": {
+            "name": "is verified by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story"
+      },
+      "labels": [
+        "feature-engineering",
+        "kafka",
+        "real-time"
+      ],
+      "parent": {
+        "key": "FRD-100"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "In Progress"
+      },
+      "summary": "Real-time feature extraction service",
+      "updated": "2026-10-01T14:00:00.000+0000"
+    },
+    "key": "FRD-102"
+  },
+  "payload_hash": "90e8acac0e025169158de59168af7afe3e397b2d0fc4a46ce708f761b5e1cb93",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-102",
+  "source_system": "jira",
+  "source_version": "90e8acac0e025169158de59168af7afe3e397b2d0fc4a46ce708f761b5e1cb93"
+}

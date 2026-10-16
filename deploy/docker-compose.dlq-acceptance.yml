@@ -1,0 +1,112 @@
+x-app: &app
+  image: eoip-app:local
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile
+    target: runtime
+  environment: &environment
+    EOIP_HUGEGRAPH_URL: http://dlq-graph:8080
+    EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 up first}
+    EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/container.ps1 up first}
+    EOIP_DATA_DIR: /data
+    EOIP_LOAD_DEMO: "false"
+    EOIP_ACCEPTANCE_SOURCE_TOKEN: fixture-only-valid
+    EOIP_ACCEPTANCE_INVALID_TOKEN: fixture-only-invalid
+  volumes: ["dlq-data:/data"]
+  networks: [acceptance]
+  init: true
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+
+services:
+  dlq-confluence:
+    image: eoip-dlq-tests:local
+    command: [python, -m, tests.runtime_dlq.confluence_upstream]
+    environment:
+      EOIP_ACCEPTANCE_SOURCE_TOKEN: fixture-only-valid
+    networks: [acceptance]
+    init: true
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8091/health', timeout=5)"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+  dlq-upstream:
+    image: eoip-dlq-tests:local
+    command: [python, -m, tests.runtime_dlq.servicenow_upstream]
+    environment:
+      EOIP_ACCEPTANCE_SOURCE_TOKEN: fixture-only-valid
+    networks: [acceptance]
+    init: true
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8090/health', timeout=5)"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+  dlq-graph:
+    image: hugegraph/hugegraph:1.7.0
+    environment:
+      PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 up first}
+      HG_SERVER_MIN_FREE_MEMORY: "0"
+    networks: [acceptance]
+    healthcheck:
+      test: [CMD-SHELL, "curl -fsS http://localhost:8080/versions >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+  schema-init:
+    <<: *app
+    command: [python, -m, scripts.bootstrap_schema]
+    depends_on:
+      dlq-graph: {condition: service_healthy}
+  dlq-api:
+    <<: *app
+    depends_on:
+      schema-init: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready', timeout=5)"]
+      interval: 5s
+      timeout: 6s
+      retries: 24
+  dlq-worker:
+    <<: *app
+    command: [python, -m, apps.worker.main]
+    depends_on:
+      schema-init: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, "from pathlib import Path; import time; assert time.time()-Path('/data/state/worker.json').stat().st_mtime < 180"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+  acceptance:
+    <<: *app
+    image: eoip-dlq-tests:local
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: test
+    environment:
+      <<: *environment
+      EOIP_LIVE_DLQ_ACCEPTANCE: "1"
+      EOIP_API_URL: http://dlq-api:8000
+      EOIP_ACCEPTANCE_SOURCE_URL: http://dlq-upstream:8090
+      EOIP_ACCEPTANCE_CONFLUENCE_URL: http://dlq-confluence:8091
+      EOIP_ACCEPTANCE_REPORT: /results/${EOIP_ACCEPTANCE_RUN:?Set unique acceptance ID}.json
+    volumes: ["dlq-data:/data", "../test-results:/results"]
+    command: [python, -m, scripts.verify_live_dlq]
+    depends_on:
+      dlq-api: {condition: service_healthy}
+      dlq-worker: {condition: service_healthy}
+      dlq-upstream: {condition: service_healthy}
+      dlq-confluence: {condition: service_healthy}
+
+networks:
+  acceptance:
+    internal: true
+volumes:
+  dlq-data:

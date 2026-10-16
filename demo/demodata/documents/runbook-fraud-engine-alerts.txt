@@ -1,0 +1,54 @@
+============================================================
+  MFS Fraud Engine — Alert Runbook
+  Meridian Financial Services
+============================================================
+
+ALERT: Fraud Score Latency P99 > 50ms
+---------------------------------------
+Severity: CRITICAL
+Dashboard: grafana.mfs.internal/d/model-serving-slo
+Steps:
+  1. Check mfs-fraud-pod-01/02 CPU and memory utilization
+  2. Verify ONNX Runtime health: curl mfs-fraud-pod-01:8080/health
+  3. Check Kafka consumer lag on mfs.txn.features topic
+  4. If CPU > 80%: scale up replicas (oc scale --replicas=4)
+  5. If memory > 85%: restart pod (oc delete pod)
+  6. If Kafka lag > 10000: check feature extraction pipeline
+Escalation: Nadia Kowalski -> Sarah Chen -> VP Engineering
+
+ALERT: False Positive Rate > 2%
+---------------------------------
+Severity: CRITICAL
+Dashboard: grafana.mfs.internal/d/model-serving-slo
+Steps:
+  1. Check current model version in MLflow (mlflow.mfs.internal)
+  2. Compare prediction score distribution vs baseline
+  3. Check feature freshness in Feast feature store
+  4. If model v2.3 is active: rollback to v2.2 champion
+  5. Run model validation notebook for drift analysis
+  6. Create INC ticket referencing FP rate metrics
+Escalation: Nadia Kowalski -> Sarah Chen
+
+ALERT: AML Rule Engine Downtime
+---------------------------------
+Severity: HIGH
+Dashboard: grafana.mfs.internal/d/aml-monitoring
+Steps:
+  1. Check mfs-aml-pod-01 status in OpenShift
+  2. Verify mfs_aml_db connectivity on pghost-prod-02
+  3. Check svc-aml-engine service account validity
+  4. Restart pod if health check failing
+  5. If DB unreachable: engage DBA team
+Escalation: Priya Sharma -> Sarah Chen
+
+ALERT: Webhook DLQ Depth > 100
+---------------------------------
+Severity: WARNING
+Dashboard: grafana.mfs.internal/d/webhook-delivery-slo
+Steps:
+  1. Check webhook_dlq table row count
+  2. Identify top failing merchant endpoints
+  3. Verify merchant webhook URLs are reachable
+  4. If merchant side: notify merchant support team
+  5. If MFS side: check svc-webhook-dispatch logs in Kibana
+  6. Replay DLQ entries after root cause is fixed

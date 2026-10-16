@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eoip:schema:knowledge_capsule:1.0",
+  "title": "KnowledgeCapsule v1",
+  "type": "object",
+  "required": ["schema_version", "capsule_id", "name", "root_entities", "created_at", "traversal"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "capsule_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "name": {"type": "string", "minLength": 1, "maxLength": 256},
+    "created_at": {"type": "string", "format": "date-time"},
+    "graph_version": {"type": ["string", "null"], "maxLength": 128},
+    "root_entities": {"type": "array", "minItems": 1, "items": {"type": "string", "maxLength": 2048}},
+    "traversal": {
+      "type": "object",
+      "required": ["max_depth", "include_evidence"],
+      "properties": {
+        "max_depth": {"type": "integer", "minimum": 0, "maximum": 10},
+        "domains": {"type": "array", "items": {"type": "string", "maxLength": 128}},
+        "time_window": {"type": ["string", "null"], "maxLength": 256},
+        "trust_threshold": {"type": ["string", "null"], "maxLength": 64},
+        "include_evidence": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "entity_count": {"type": "integer", "minimum": 0},
+    "relationship_count": {"type": "integer", "minimum": 0},
+    "evidence_refs": {"type": "array", "items": {"type": "string", "maxLength": 4096}},
+    "security_policy": {"type": "object"},
+    "metadata": {"type": "object"}
+  },
+  "additionalProperties": false
+}

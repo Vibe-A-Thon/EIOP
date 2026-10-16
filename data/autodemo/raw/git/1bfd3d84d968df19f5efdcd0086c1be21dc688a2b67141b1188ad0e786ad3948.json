@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.534157Z",
+  "event_id": "1bfd3d84d968df19f5efdcd0086c1be21dc688a2b67141b1188ad0e786ad3948",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "3feefdd57c3a2be2275c086cf716f022530d1114",
+    "message": "changes for GUI updates to include dead-letter queue and ontology schema sections"
+  },
+  "payload_hash": "0acc2ffd11d95d05dea4e1f937216cb8ccf46364e6dbe84a051f26534b681620",
+  "schema_version": "1.0",
+  "source_record_id": "demo:3feefdd57c3a2be2275c086cf716f022530d1114",
+  "source_system": "git",
+  "source_version": "0acc2ffd11d95d05dea4e1f937216cb8ccf46364e6dbe84a051f26534b681620"
+}

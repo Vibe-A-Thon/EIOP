@@ -1,0 +1,251 @@
+{
+  "services": [
+    {
+      "id": "svc-fraud-scoring",
+      "name": "Fraud Scoring API",
+      "version": "2.0.0",
+      "description": "Real-time fraud probability scoring for financial transactions using ML models. Returns fraud score (0-1), decision (approve/review/decline), and contributing feature explanations.",
+      "status": "production",
+      "owner": "Fraud & Risk",
+      "updated_at": "2026-09-28T17:00:00Z"
+    },
+    {
+      "id": "svc-txn-monitor",
+      "name": "Transaction Monitor API",
+      "version": "1.0.0",
+      "description": "Transaction velocity monitoring and anomaly detection API. Provides real-time velocity queries, alert management, and threshold configuration.",
+      "status": "production",
+      "owner": "Fraud & Risk",
+      "updated_at": "2026-09-30T16:00:00Z"
+    },
+    {
+      "id": "svc-aml-engine",
+      "name": "AML Engine API",
+      "version": "1.0.0",
+      "description": "Anti-money laundering pattern detection and regulatory reporting API. Manages AML rules, case creation, and FinCEN SAR/CTR filing.",
+      "status": "beta",
+      "owner": "Fraud & Risk",
+      "updated_at": "2026-10-02T14:00:00Z"
+    },
+    {
+      "id": "svc-model-mgmt",
+      "name": "Model Management API",
+      "version": "1.0.0",
+      "description": "ML model lifecycle management API. Handles model registration, version management, A/B test configuration, and performance monitoring.",
+      "status": "production",
+      "owner": "Fraud & Risk",
+      "updated_at": "2026-10-02T09:00:00Z"
+    },
+    {
+      "id": "svc-kyc-api-v1",
+      "name": "KYC API v1",
+      "version": "1.0.0-beta",
+      "description": "KYC document verification and identity check API. Provides document upload with OCR extraction, liveness detection via AWS Rekognition, sanctions screening against OFAC/PEP lists, and end-to-end identity verification workflow management.",
+      "base_url": "https://api.mfs.internal/kyc/v1",
+      "status": "beta",
+      "owner": "Identity & Compliance",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "svc-case-api-v1",
+      "name": "Case Management API v1",
+      "version": "1.0.0",
+      "description": "Fraud case lifecycle management API. Provides case creation, evidence aggregation from multiple detection sources, analyst assignment with workload balancing, priority-based routing, and disposition recording for fraud investigation workflows.",
+      "base_url": "https://api.mfs.internal/cases/v1",
+      "status": "active",
+      "owner": "Fraud Operations",
+      "updated_at": "2026-10-03T11:00:00Z"
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "ep-fraud-score",
+      "service_id": "svc-fraud-scoring",
+      "path": "/v2/fraud/score",
+      "method": "POST",
+      "description": "Score a transaction for fraud probability. Accepts transaction payload with amount, merchant, device, and geolocation data. Returns fraud score, decision, and feature contributions.",
+      "version": "2.0.0",
+      "updated_at": "2026-09-28T17:00:00Z"
+    },
+    {
+      "id": "ep-fraud-score-get",
+      "service_id": "svc-fraud-scoring",
+      "path": "/v2/fraud/score/{transaction_id}",
+      "method": "GET",
+      "description": "Retrieve a previously computed fraud score by transaction ID. Includes full feature breakdown and model version used.",
+      "version": "2.0.0",
+      "updated_at": "2026-09-28T17:00:00Z"
+    },
+    {
+      "id": "ep-fraud-explain",
+      "service_id": "svc-fraud-scoring",
+      "path": "/v2/fraud/score/{transaction_id}/explain",
+      "method": "GET",
+      "description": "Get detailed SHAP-based explanation of fraud score contributing factors for a specific transaction.",
+      "version": "2.0.0",
+      "updated_at": "2026-09-28T17:00:00Z"
+    },
+    {
+      "id": "ep-velocity-query",
+      "service_id": "svc-txn-monitor",
+      "path": "/v1/monitor/velocity/{account_id}",
+      "method": "GET",
+      "description": "Query current transaction velocity for an account across all time windows (1min, 5min, 1hr, 24hr) and dimensions (account, merchant, device).",
+      "version": "1.0.0",
+      "updated_at": "2026-09-30T16:00:00Z"
+    },
+    {
+      "id": "ep-alerts-list",
+      "service_id": "svc-txn-monitor",
+      "path": "/v1/monitor/alerts",
+      "method": "GET",
+      "description": "List transaction monitoring alerts with filtering by severity, status, time range, and dimension. Supports pagination.",
+      "version": "1.0.0",
+      "updated_at": "2026-09-30T16:00:00Z"
+    },
+    {
+      "id": "ep-alert-ack",
+      "service_id": "svc-txn-monitor",
+      "path": "/v1/monitor/alerts/{alert_id}/acknowledge",
+      "method": "POST",
+      "description": "Acknowledge a transaction monitoring alert. Stops escalation timer and assigns to the acknowledging analyst.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-02T11:00:00Z"
+    },
+    {
+      "id": "ep-aml-cases",
+      "service_id": "svc-aml-engine",
+      "path": "/v1/aml/cases",
+      "method": "GET",
+      "description": "List AML cases with filtering by pattern type (structuring, layering, integration), status, confidence score, and date range.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-02T14:00:00Z"
+    },
+    {
+      "id": "ep-aml-case-detail",
+      "service_id": "svc-aml-engine",
+      "path": "/v1/aml/cases/{case_id}",
+      "method": "GET",
+      "description": "Get detailed AML case including detection rule match, supporting transactions, and timeline of analyst actions.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-02T14:00:00Z"
+    },
+    {
+      "id": "ep-aml-sar-generate",
+      "service_id": "svc-aml-engine",
+      "path": "/v1/aml/cases/{case_id}/sar",
+      "method": "POST",
+      "description": "Generate a pre-populated SAR form from AML case data. Returns SAR XML matching FinCEN schema for review before filing.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-02T14:00:00Z"
+    },
+    {
+      "id": "ep-aml-sar-file",
+      "service_id": "svc-aml-engine",
+      "path": "/v1/aml/filings",
+      "method": "POST",
+      "description": "Submit SAR or CTR filing to FinCEN BSA E-Filing system. Supports single and batch submission. Returns filing confirmation numbers.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-02T14:00:00Z"
+    },
+    {
+      "id": "ep-model-list",
+      "service_id": "svc-model-mgmt",
+      "path": "/v1/models",
+      "method": "GET",
+      "description": "List registered fraud detection models with version history, performance metrics, and deployment status.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-02T09:00:00Z"
+    },
+    {
+      "id": "ep-model-deploy",
+      "service_id": "svc-model-mgmt",
+      "path": "/v1/models/{model_id}/deploy",
+      "method": "POST",
+      "description": "Deploy a model version to production. Supports traffic split configuration for A/B testing between model versions.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-02T09:00:00Z"
+    },
+    {
+      "id": "ep-model-abtest",
+      "service_id": "svc-model-mgmt",
+      "path": "/v1/models/ab-tests",
+      "method": "GET",
+      "description": "List active and completed A/B tests with per-variant metrics (AUC-ROC, false positive rate, latency) and statistical significance.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-02T09:00:00Z"
+    },
+    {
+      "id": "ep-kyc-submit-verification",
+      "service_id": "svc-kyc-api-v1",
+      "path": "/v1/verifications",
+      "method": "POST",
+      "description": "Submit a document for KYC verification. Accepts document image (passport, driver's license, national ID) with metadata. Initiates OCR extraction, authenticity scoring, and returns a verification ID for status polling. Supports multipart/form-data upload.",
+      "version": "1.0.0-beta",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "ep-kyc-get-verification",
+      "service_id": "svc-kyc-api-v1",
+      "path": "/v1/verifications/{id}",
+      "method": "GET",
+      "description": "Get verification status and results for a submitted document. Returns OCR extracted fields, confidence scores, authenticity score, and current verification status (pending, approved, rejected, manual_review).",
+      "version": "1.0.0-beta",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "ep-kyc-liveness",
+      "service_id": "svc-kyc-api-v1",
+      "path": "/v1/verifications/{id}/liveness",
+      "method": "POST",
+      "description": "Submit liveness check for a verification. Accepts selfie image or video for passive and active liveness detection via AWS Rekognition. Performs face match against document photo. Returns liveness score, spoof detection result, and face match similarity score.",
+      "version": "1.0.0-beta",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "ep-kyc-sanctions-screen",
+      "service_id": "svc-kyc-api-v1",
+      "path": "/v1/sanctions/screen",
+      "method": "GET",
+      "description": "Screen an individual against sanctions lists (OFAC SDN, PEP, EU Sanctions, UN Sanctions). Accepts name, date of birth, and nationality. Returns match results with similarity scores using Jaro-Winkler fuzzy matching. Threshold configurable (default 0.88).",
+      "version": "1.0.0-beta",
+      "updated_at": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": "ep-cases-list",
+      "service_id": "svc-case-api-v1",
+      "path": "/v1/cases",
+      "method": "GET",
+      "description": "List fraud cases with filtering by priority (P1-P4), status (open, assigned, investigating, disposed), assigned analyst, date range, and source type. Supports pagination and sorting by risk score, priority, or creation date.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-03T11:00:00Z"
+    },
+    {
+      "id": "ep-cases-create",
+      "service_id": "svc-case-api-v1",
+      "path": "/v1/cases",
+      "method": "POST",
+      "description": "Create a new fraud case. Accepts initial evidence references, risk score, and source detection type. Automatically assigns priority based on risk score (>= 0.9: P1, 0.7-0.9: P2, 0.5-0.7: P3, < 0.5: P4) and routes to appropriate investigation queue.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-03T11:00:00Z"
+    },
+    {
+      "id": "ep-cases-assign",
+      "service_id": "svc-case-api-v1",
+      "path": "/v1/cases/{id}/assign",
+      "method": "PUT",
+      "description": "Assign a fraud case to an analyst. Accepts analyst ID and optional reassignment reason. Validates analyst availability and workload capacity before assignment. Updates case status to 'assigned' and notifies the analyst via configured channels.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-03T11:00:00Z"
+    },
+    {
+      "id": "ep-cases-disposition",
+      "service_id": "svc-case-api-v1",
+      "path": "/v1/cases/{id}/disposition",
+      "method": "POST",
+      "description": "Record final disposition for a fraud case. Accepts outcome (confirmed_fraud, false_positive, inconclusive), analyst notes, and supporting evidence references. Updates case status to 'disposed' and triggers downstream actions (SAR filing for confirmed fraud, model feedback for false positives).",
+      "version": "1.0.0",
+      "updated_at": "2026-10-03T11:00:00Z"
+    }
+  ]
+}

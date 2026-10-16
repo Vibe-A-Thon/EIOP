@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "eoip.fullname" . }}-graph-store
+  labels:
+    {{- include "eoip.labels" . | nindent 4 }}
+data:
+  graph-store.yaml: |
+    # Rendered by the eoip Helm chart. Mirrors config/graph-store.yaml;
+    # switch graphBackend in values.yaml to route to Neptune.
+    primary: {{ .Values.graphBackend }}
+    connections:
+      hugegraph:
+        type: hugegraph
+        url: {{ .Values.hugegraph.url | quote }}
+        graph: {{ .Values.hugegraph.graph | quote }}
+        username: {{ .Values.hugegraph.username | quote }}
+        password: ""
+      neptune:
+        type: neptune
+        url: {{ .Values.neptune.url | quote }}
+        database: {{ .Values.neptune.database | quote }}
+        open_cypher_path: /openCypher
+        sparql_path: /sparql
+        gremlin_path: /gremlin
+        verify_tls: {{ .Values.neptune.verifyTls }}
+      memory:
+        type: memory

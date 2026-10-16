@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evidence",
+  "type": "object",
+  "required": [
+    "evidence_id",
+    "source_system",
+    "source_ref",
+    "captured_at",
+    "method"
+  ],
+  "properties": {
+    "evidence_id": {
+      "type": "string"
+    },
+    "source_system": {
+      "type": "string"
+    },
+    "source_ref": {
+      "type": "string"
+    },
+    "captured_at": {
+      "type": "string"
+    },
+    "method": {
+      "type": "string"
+    },
+    "parser_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mapper_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "confidence": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  }
+}

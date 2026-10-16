@@ -1,0 +1,184 @@
+{
+  "total_steps": 25,
+  "passed": 25,
+  "failed": 0,
+  "skipped": 0,
+  "duration_s": 0.19,
+  "steps": [
+    {
+      "phase": "Initialize",
+      "step": "init_store",
+      "status": "PASS",
+      "detail": "MemoryGraphStore created, meta-graph bootstrapped",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_rally.json",
+      "status": "PASS",
+      "detail": "8 records from PAY-manual/rally.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_jira.json",
+      "status": "PASS",
+      "detail": "18 records from PAY-manual/jira.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_gitlab.json",
+      "status": "PASS",
+      "detail": "7 records from PAY-manual/gitlab.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_servicenow.json",
+      "status": "PASS",
+      "detail": "6 records from PAY-manual/servicenow.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_confluence.json",
+      "status": "PASS",
+      "detail": "1 records from PAY-manual/confluence.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_figma.json",
+      "status": "PASS",
+      "detail": "11 records from PAY-manual/figma.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_qtest.json",
+      "status": "PASS",
+      "detail": "12 records from PAY-manual/qtest.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_kibana.json",
+      "status": "PASS",
+      "detail": "6 records from PAY-manual/kibana.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_grafana.json",
+      "status": "PASS",
+      "detail": "4 records from PAY-manual/grafana.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_datadog.json",
+      "status": "PASS",
+      "detail": "6 records from PAY-manual/datadog.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_api-portal.json",
+      "status": "PASS",
+      "detail": "14 records from PAY-manual/api-portal.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_code-graph.json",
+      "status": "PASS",
+      "detail": "12 records from PAY-manual/code-graph.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "load_crawler-sites.json",
+      "status": "PASS",
+      "detail": "5 records from PAY-manual/crawler-sites.json",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Ingest PAY-manual",
+      "step": "ingest_PAY-manual_total",
+      "status": "PASS",
+      "detail": "110 total records from PAY-manual",
+      "elapsed_s": 0.02
+    },
+    {
+      "phase": "Graph Ingest PAY",
+      "step": "jira_graph_PAY",
+      "status": "PASS",
+      "detail": "18 Jira records ingested into graph (PAY)",
+      "elapsed_s": 0.17
+    },
+    {
+      "phase": "Graph Verification",
+      "step": "vertex_count",
+      "status": "PASS",
+      "detail": "62 vertices in graph",
+      "elapsed_s": 0.17
+    },
+    {
+      "phase": "Graph Verification",
+      "step": "edge_count",
+      "status": "PASS",
+      "detail": "155 edges in graph",
+      "elapsed_s": 0.17
+    },
+    {
+      "phase": "Graph Verification",
+      "step": "vertex_labels",
+      "status": "PASS",
+      "detail": "Labels: ['DataSource', 'Evidence', 'GraphDomain', 'IngestionRun', 'OntologyVersion', 'Person', 'Project', 'WorkItem']",
+      "elapsed_s": 0.17
+    },
+    {
+      "phase": "Graph Verification",
+      "step": "impact_pay",
+      "status": "PASS",
+      "detail": "Impact from urn:eoip:work:project:jira:PAY: 3 affected entities",
+      "elapsed_s": 0.17
+    },
+    {
+      "phase": "Validation & Quality",
+      "step": "validation",
+      "status": "PASS",
+      "detail": "0 findings, 0 errors",
+      "elapsed_s": 0.17
+    },
+    {
+      "phase": "Validation & Quality",
+      "step": "quality_metrics",
+      "status": "PASS",
+      "detail": "evidence_coverage=0.00, orphan_rate=0.27",
+      "elapsed_s": 0.17
+    },
+    {
+      "phase": "Graph Before/After",
+      "step": "graph_growth",
+      "status": "PASS",
+      "detail": "Before: 18V/0E \u2192 After: 63V/155E (+45V/+155E)",
+      "elapsed_s": 0.17
+    },
+    {
+      "phase": "Graph Before/After",
+      "step": "final_labels",
+      "status": "PASS",
+      "detail": "Vertex labels: ['DataSource', 'Evidence', 'GraphDomain', 'IngestionRun', 'OntologyVersion', 'Person', 'Project', 'ValidationRun', 'WorkItem']",
+      "elapsed_s": 0.17
+    },
+    {
+      "phase": "Cross-Domain Links",
+      "step": "link_domains",
+      "status": "PASS",
+      "detail": "Cross-domain edges created",
+      "elapsed_s": 0.19
+    }
+  ]
+}

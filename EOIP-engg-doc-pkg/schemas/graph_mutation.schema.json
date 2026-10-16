@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GraphMutation",
+  "type": "object",
+  "required": [
+    "mutation_id",
+    "operation",
+    "target_kind",
+    "payload",
+    "ingestion_run_id"
+  ],
+  "properties": {
+    "mutation_id": {
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "UPSERT",
+        "TOMBSTONE"
+      ]
+    },
+    "target_kind": {
+      "enum": [
+        "VERTEX",
+        "EDGE"
+      ]
+    },
+    "payload": {
+      "type": "object"
+    },
+    "ingestion_run_id": {
+      "type": "string"
+    }
+  }
+}

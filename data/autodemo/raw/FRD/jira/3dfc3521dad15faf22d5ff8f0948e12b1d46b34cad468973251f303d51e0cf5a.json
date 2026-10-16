@@ -1,0 +1,91 @@
+{
+  "captured_at": "2026-10-05T03:00:55.152631Z",
+  "event_id": "3dfc3521dad15faf22d5ff8f0948e12b1d46b34cad468973251f303d51e0cf5a",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "nkowalski",
+        "displayName": "Nadia Kowalski",
+        "emailAddress": "nadia.kowalski@mfs.example.invalid"
+      },
+      "comment": {
+        "comments": [
+          {
+            "author": {
+              "accountId": "nkowalski",
+              "displayName": "Nadia Kowalski"
+            },
+            "body": "Deploying to mfs-kyc-pod-01 in mfs-prod namespace under svc-kyc-engine. OCR pipeline will use Tesseract for document text extraction and write results to document_verifications table in mfs_customers_db on pghost-prod-03.mfs.internal.",
+            "created": "2026-10-03T11:00:00.000+0000"
+          }
+        ]
+      },
+      "components": [
+        {
+          "name": "KYC Engine"
+        }
+      ],
+      "created": "2026-10-02T09:00:00.000+0000",
+      "customfield_10014": "EPC-204",
+      "customfield_10015": "Identity & Compliance",
+      "customfield_10050": [
+        "TC-FRD-008",
+        "TC-FRD-009"
+      ],
+      "description": "Build an automated document OCR extraction pipeline for KYC identity verification. Supports passport, driver's license, and national ID document types. Deploying to mfs-kyc-pod-01 in mfs-prod namespace under svc-kyc-engine service account.",
+      "fixVersions": [
+        {
+          "name": "2027.Q1-IdentityPlatform"
+        }
+      ],
+      "issuelinks": [
+        {
+          "outwardIssue": {
+            "key": "MR-1601"
+          },
+          "type": {
+            "name": "is implemented by"
+          }
+        }
+      ],
+      "issuetype": {
+        "name": "Story"
+      },
+      "labels": [
+        "kyc",
+        "ocr",
+        "document-processing"
+      ],
+      "parent": {
+        "key": "FRD-400"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "FRD",
+        "name": "Fraud Detection Platform"
+      },
+      "reporter": {
+        "accountId": "schen",
+        "displayName": "Sarah Chen",
+        "emailAddress": "sarah.chen@mfs.example.invalid"
+      },
+      "status": {
+        "name": "To Do"
+      },
+      "story_points": 8,
+      "summary": "Implement document OCR extraction",
+      "updated": "2026-10-03T10:00:00.000+0000"
+    },
+    "key": "FRD-401"
+  },
+  "payload_hash": "370e0c73dc231d89f382b0197b9076e39708fa5e147299a1bb2440731e0df726",
+  "schema_version": "1.0",
+  "source_record_id": "FRD-401",
+  "source_system": "jira",
+  "source_version": "370e0c73dc231d89f382b0197b9076e39708fa5e147299a1bb2440731e0df726"
+}

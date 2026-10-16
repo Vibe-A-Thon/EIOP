@@ -1,0 +1,67 @@
+{
+  "captured_at": "2026-10-04T13:45:50.437454Z",
+  "event_id": "25194f19a9882950e5dccee4bb06f660b3958c6d5bc47b3b2db9e2bf20a2b4db",
+  "metadata": {
+    "mapper_version": "jira-json/1.0"
+  },
+  "payload": {
+    "fields": {
+      "assignee": {
+        "accountId": "dokoye",
+        "displayName": "David Okoye",
+        "emailAddress": "dokoye@mfs.com"
+      },
+      "components": [
+        {
+          "name": "mfs-payment-gateway"
+        }
+      ],
+      "created": "2026-07-15T09:30:00.000+0000",
+      "customfield_10015": "Platform Engineering",
+      "description": "Configure the Hardware Security Module (HSM) integration for the tokenization service. Set up key pairs, configure PKCS#11 interface, and validate cryptographic operations via svc-token-vault service account.",
+      "issuelinks": [],
+      "issuetype": {
+        "name": "Task",
+        "subtask": true
+      },
+      "labels": [
+        "hsm",
+        "security",
+        "configuration"
+      ],
+      "parent": {
+        "key": "PAY-101"
+      },
+      "priority": {
+        "name": "High"
+      },
+      "project": {
+        "key": "PAY",
+        "name": "Payment Gateway Modernization"
+      },
+      "reporter": {
+        "accountId": "akim",
+        "displayName": "Alex Kim",
+        "emailAddress": "akim@mfs.com"
+      },
+      "resolutiondate": "2026-09-19T16:45:00.000+0000",
+      "status": {
+        "name": "Done",
+        "statusCategory": {
+          "name": "Done"
+        }
+      },
+      "story_points": 5,
+      "summary": "Configure HSM integration",
+      "updated": "2026-09-19T16:45:00.000+0000"
+    },
+    "id": "60112",
+    "key": "PAY-112",
+    "self": "https://jira.mfs.internal/rest/api/2/issue/60112"
+  },
+  "payload_hash": "ba00defad15b8383fee0894d23b490ee79a32132142d134e8e7d2f8c28aad529",
+  "schema_version": "1.0",
+  "source_record_id": "PAY-112",
+  "source_system": "jira",
+  "source_version": "ba00defad15b8383fee0894d23b490ee79a32132142d134e8e7d2f8c28aad529"
+}

@@ -1,0 +1,125 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "EOIP API",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000"
+    }
+  ],
+  "paths": {
+    "/api/v1/search": {
+      "get": {
+        "summary": "Search canonical entities",
+        "parameters": [
+          {"name": "q", "in": "query", "required": true, "schema": {"type": "string"}},
+          {"name": "label", "in": "query", "schema": {"type": "string"}},
+          {"name": "limit", "in": "query", "schema": {"type": "integer", "default": 25}}
+        ],
+        "responses": {
+          "200": {"description": "Search results"}
+        }
+      }
+    },
+    "/api/v1/query": {
+      "post": {
+        "summary": "Execute a validated QueryPlan",
+        "responses": {
+          "200": {"description": "Graph result"},
+          "422": {"description": "Invalid/policy-denied plan"}
+        }
+      }
+    },
+    "/api/v1/path": {
+      "post": {
+        "summary": "Find bounded graph paths",
+        "responses": {
+          "200": {"description": "Paths + evidence"}
+        }
+      }
+    },
+    "/api/v1/impact": {
+      "post": {
+        "summary": "Compute bounded impact/blast radius",
+        "responses": {
+          "200": {"description": "Impact result + evidence"}
+        }
+      }
+    },
+    "/api/v1/lineage": {
+      "post": {
+        "summary": "Resolve provenance/lineage",
+        "responses": {
+          "200": {"description": "Lineage result"}
+        }
+      }
+    },
+    "/api/v1/rag": {
+      "post": {
+        "summary": "GraphRAG retrieval with optional local synthesis",
+        "responses": {
+          "200": {"description": "Retrieval result"}
+        }
+      }
+    },
+    "/api/v1/validation/runs": {
+      "get": {
+        "summary": "List validation runs",
+        "responses": {
+          "200": {"description": "Validation run list"}
+        }
+      }
+    },
+    "/api/v1/ingestion/runs": {
+      "get": {
+        "summary": "List ingestion runs",
+        "responses": {
+          "200": {"description": "Ingestion run list"}
+        }
+      }
+    },
+    "/api/v1/ingestion/jira-json": {
+      "post": {
+        "summary": "Start Jira JSON ingestion",
+        "responses": {
+          "202": {"description": "Job accepted"}
+        }
+      }
+    },
+    "/api/v1/agents/trace-impact": {
+      "post": {
+        "summary": "Run read-only TraceImpactAgent",
+        "responses": {
+          "200": {"description": "Agent result"}
+        }
+      }
+    },
+    "/api/v1/ontology/export": {
+      "get": {
+        "summary": "Export ontology as JSON-LD",
+        "responses": {
+          "200": {"description": "JSON-LD document"}
+        }
+      }
+    },
+    "/health/live": {
+      "get": {
+        "summary": "Liveness",
+        "responses": {
+          "200": {"description": "Alive"}
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "summary": "Readiness",
+        "responses": {
+          "200": {"description": "Ready"},
+          "503": {"description": "Not ready"}
+        }
+      }
+    }
+  }
+}

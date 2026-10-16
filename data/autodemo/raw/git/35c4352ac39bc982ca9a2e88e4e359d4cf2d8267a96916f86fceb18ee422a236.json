@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-04T08:19:11.514668Z",
+  "event_id": "35c4352ac39bc982ca9a2e88e4e359d4cf2d8267a96916f86fceb18ee422a236",
+  "metadata": null,
+  "payload": {
+    "branch": "feature/audit-evidence-foundation",
+    "commit_sha": "07dd74abe03e117352255139c41671bc1d17f614",
+    "message": "gui changes seen in the web application components."
+  },
+  "payload_hash": "f1c09c84b2d269caa2b072c8034b4119fdd62a4a74e56864e71be846ba1164fd",
+  "schema_version": "1.0",
+  "source_record_id": "demo:07dd74abe03e117352255139c41671bc1d17f614",
+  "source_system": "git",
+  "source_version": "f1c09c84b2d269caa2b072c8034b4119fdd62a4a74e56864e71be846ba1164fd"
+}
