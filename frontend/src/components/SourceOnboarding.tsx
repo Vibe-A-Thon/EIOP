@@ -27,6 +27,10 @@ export function SourceOnboarding({
   const [error, setError] = useState<string | null>(null);
   const [job, setJob] = useState<any>(null);
 
+  // api/crawler connectors require a reachable base URL (backend 422s without one).
+  const requiresUrl = connector.type === "api" || connector.type === "crawler" || connector.id === "web";
+  const urlMissing = requiresUrl && !baseUrl.trim();
+
   const create = async () => {
     setBusy(true);
     setError(null);
@@ -117,14 +121,21 @@ export function SourceOnboarding({
                 />
               </label>
               <label className="block">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-muted)]">Base URL (optional)</span>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
+                  Base URL {requiresUrl ? <span className="text-[var(--danger)]">*</span> : "(optional)"}
+                </span>
                 <input
                   data-testid="onboard-base-url"
                   value={baseUrl}
                   onChange={(e) => setBaseUrl(e.target.value)}
-                  placeholder="https://…"
-                  className="mt-1 h-9 w-full rounded-sm border border-[var(--border-strong)] bg-[var(--bg-void)] px-2.5 font-mono text-sm outline-none focus:border-[var(--accent)]"
+                  placeholder={requiresUrl ? "https://your-instance.example.com" : "https://…"}
+                  className={`mt-1 h-9 w-full rounded-sm border bg-[var(--bg-void)] px-2.5 font-mono text-sm outline-none focus:border-[var(--accent)] ${urlMissing ? "border-[var(--danger)]" : "border-[var(--border-strong)]"}`}
                 />
+                {urlMissing && (
+                  <span className="mt-1 block text-[10px] text-[var(--danger)]">
+                    This connector requires a base URL.
+                  </span>
+                )}
               </label>
               <p className="font-mono text-[10px] leading-relaxed text-[var(--text-muted)]">
                 Credentials are never entered here — they are referenced from the deployment's secret store.
@@ -182,7 +193,7 @@ export function SourceOnboarding({
           </button>
           <div className="flex gap-2">
             {step === 1 && (
-              <Button variant="primary" data-testid="onboard-next" onClick={() => setStep(2)} disabled={!sourceId.trim() || !name.trim()}>
+              <Button variant="primary" data-testid="onboard-next" onClick={() => setStep(2)} disabled={!sourceId.trim() || !name.trim() || urlMissing}>
                 Review <ArrowRight size={14} />
               </Button>
             )}

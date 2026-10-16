@@ -61,8 +61,20 @@ with best-in-class graphics, transitions, animations, icons, and modular screens
 - **Ingestion Console (/ingestion)**: tabs — Ingestion runs (`/ingestion/runs`), Jobs (`/admin/jobs`,
   cancel/readmit), Sources (`/sources` + 16-connector catalog from `/connectors/catalog`), DLQ (`/admin/dlq`).
 
+## Implemented (2026-06, iteration 3) — verified by testing agent (4/4 features)
+- **Path Highlight on neighborhood**: Impact-paths now merges both endpoints' neighborhoods and
+  highlights the traced path (bright nodes + cyan edges) while dimming context, via a Sigma decoration
+  effect in `GraphCanvas` (`highlightNodes`/`highlightEdges`). Switching to Explore clears it.
+- **Evidence Pinning**: Pin buttons on Ask evidence items push snippets to a right-side "Evidence board"
+  drawer (zustand `pinsStore`), with top-bar count badge, copy, export-JSON, remove, and clear.
+- **Source Onboarding**: 3-step wizard (details → review → create via `POST /sources`, then
+  `POST /sources/{id}/baseline`) launched from any connector card in the Ingestion Console. URL-type
+  connectors (api/crawler/web) require a base URL (client-side guard; prevents backend 422).
+- **View Sharing**: Export all saved graph views to JSON and import them back (`exportViews`/`importViews`),
+  for team collaboration; footnote "Saved on this device only. Export to share with teammates."
+
 ## Prioritized backlog (next)
-- P1: Paths within-context overlay (highlight path on the full neighborhood, not only a path subgraph).
+- P1: Within-context path highlight toggle (overlay vs isolated subgraph).
 - P2: Reports (SCR-019), Governance/Security (SCR-021), Tenant admin (SCR-022), Health (SCR-024).
 - P2: Full WCAG 2.2 AA audit (axe), ICU string externalization, screen-reader transcripts.
 - P2: Replace react-router-dom with TanStack Router for typed deep links `/t/:tenant/w/:workspace/...`.
