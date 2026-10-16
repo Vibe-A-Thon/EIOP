@@ -1,0 +1,635 @@
+<title>Ontology Landscape Scorecard</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --plane:#f9f9f7; --surface:#fcfcfb; --surface-2:#f2f2ef;
+  --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --ring:rgba(11,11,11,0.10);
+  --accent:#2a78d6;
+  --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  /* sequential blue ramp — magnitude 1..5, light surface: light = low */
+  --s1:#cde2fb; --s2:#9ec5f4; --s3:#5598e7; --s4:#2a78d6; --s5:#184f95;
+  --s1-ink:#0b0b0b; --s2-ink:#0b0b0b; --s3-ink:#0b0b0b; --s4-ink:#ffffff; --s5-ink:#ffffff;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --plane:#0d0d0d; --surface:#1a1a19; --surface-2:#222221;
+    --ink:#f0efec; --ink-2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --ring:rgba(255,255,255,0.10);
+    --accent:#3987e5;
+    /* dark surface: dark = low, bright = high */
+    --s1:#104281; --s2:#184f95; --s3:#256abf; --s4:#3987e5; --s5:#86b6ef;
+    --s1-ink:#f0efec; --s2-ink:#f0efec; --s3-ink:#f0efec; --s4-ink:#0b0b0b; --s5-ink:#0b0b0b;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --plane:#0d0d0d; --surface:#1a1a19; --surface-2:#222221;
+  --ink:#f0efec; --ink-2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --ring:rgba(255,255,255,0.10);
+  --accent:#3987e5;
+  --s1:#104281; --s2:#184f95; --s3:#256abf; --s4:#3987e5; --s5:#86b6ef;
+  --s1-ink:#f0efec; --s2-ink:#f0efec; --s3-ink:#f0efec; --s4-ink:#0b0b0b; --s5-ink:#0b0b0b;
+}
+*{box-sizing:border-box}
+body{background:var(--plane); color:var(--ink); font-family:var(--font);
+     padding-inline:16px; padding-block:0; margin:0; line-height:1.5}
+.wrap{max-width:1500px; margin:0 auto}
+
+header{padding-block:20px 12px}
+h1{font-size:1.45rem; font-weight:700; letter-spacing:-.02em; margin:0; text-wrap:balance}
+.sub{color:var(--ink-2); font-size:.85rem; margin-top:4px; max-width:70ch}
+.meta{color:var(--muted); font-size:.72rem; margin-top:6px}
+
+/* ---- stat tiles ---- */
+.tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:8px; margin-top:16px}
+.tile{background:var(--surface); border:1px solid var(--ring); border-radius:var(--r); padding:12px 14px; min-width:0}
+.tile-v{font-size:1.7rem; font-weight:700; line-height:1.05; letter-spacing:-.02em}
+.tile-l{font-size:.68rem; color:var(--ink-2); text-transform:uppercase; letter-spacing:.07em; margin-top:3px}
+.tile-n{font-size:.7rem; color:var(--muted); margin-top:4px}
+
+/* ---- tabs ---- */
+nav.tabs{display:flex; gap:4px; flex-wrap:wrap; margin-top:18px; border-bottom:1px solid var(--grid)}
+.tab{padding:8px 14px; border:none; border-bottom:2px solid transparent; background:none;
+     color:var(--ink-2); font:500 .83rem var(--font); cursor:pointer; white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--accent); border-bottom-color:var(--accent); font-weight:600}
+
+/* ---- controls ---- */
+.controls{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:14px 0 10px}
+select,input[type=search]{padding:6px 10px; border:1px solid var(--axis); border-radius:8px;
+  background:var(--surface); color:var(--ink); font:400 .8rem var(--font); outline:none}
+select:focus,input:focus{border-color:var(--accent)}
+input[type=search]{flex:1; min-width:170px}
+.btn{padding:6px 12px; border:1px solid var(--axis); border-radius:8px; background:var(--surface);
+     color:var(--ink-2); font:500 .78rem var(--font); cursor:pointer}
+.btn:hover{border-color:var(--accent); color:var(--accent)}
+
+/* ---- scale legend ---- */
+.legend{display:flex; align-items:center; gap:8px; font-size:.72rem; color:var(--ink-2); flex-wrap:wrap}
+.legend-steps{display:flex; border-radius:5px; overflow:hidden; border:1px solid var(--ring)}
+.legend-steps span{width:30px; height:17px; display:grid; place-items:center;
+  font-size:.64rem; font-weight:600; font-variant-numeric:tabular-nums}
+
+/* ---- heatmap ---- */
+.scroll{overflow-x:auto; background:var(--surface); border:1px solid var(--ring); border-radius:var(--r)}
+table{border-collapse:separate; border-spacing:2px; font-size:.74rem; width:100%}
+thead th{position:sticky; top:0; background:var(--surface); z-index:2; padding:8px 4px;
+  font-weight:600; color:var(--ink-2); font-size:.66rem; text-align:center; vertical-align:bottom;
+  white-space:nowrap; border-bottom:1px solid var(--grid)}
+thead th.tool-h{text-align:left; left:0; z-index:3; min-width:190px; padding-left:12px}
+tbody th{position:sticky; left:0; background:var(--surface); z-index:1; text-align:left;
+  font-weight:500; padding:4px 10px 4px 12px; white-space:nowrap; font-size:.75rem;
+  border-right:1px solid var(--grid); max-width:230px; overflow:hidden; text-overflow:ellipsis}
+tbody tr.eoip th{font-weight:700; color:var(--accent)}
+tbody tr.eoip td{outline:1px solid var(--accent); outline-offset:-2px}
+td.cell{width:30px; min-width:30px; height:25px; text-align:center; border-radius:4px;
+  font-weight:600; font-variant-numeric:tabular-nums; cursor:default}
+td.mean{background:var(--surface-2); color:var(--ink); font-weight:700; min-width:42px}
+.s-1{background:var(--s1); color:var(--s1-ink)} .s-2{background:var(--s2); color:var(--s2-ink)}
+.s-3{background:var(--s3); color:var(--s3-ink)} .s-4{background:var(--s4); color:var(--s4-ink)}
+.s-5{background:var(--s5); color:var(--s5-ink)}
+
+/* ---- tooltip ---- */
+#tip{position:fixed; pointer-events:none; opacity:0; transition:opacity .1s;
+  background:var(--surface); color:var(--ink); border:1px solid var(--ring);
+  border-radius:7px; padding:7px 10px; font-size:.74rem; z-index:50; max-width:260px;
+  box-shadow:0 4px 14px rgba(0,0,0,.14)}
+#tip b{display:block; font-size:.78rem; margin-bottom:2px}
+#tip .tv{color:var(--ink-2)}
+
+/* ---- cards (backlog / inversions) ---- */
+.cards{display:flex; flex-direction:column; gap:5px}
+.card{background:var(--surface); border:1px solid var(--ring); border-radius:var(--r); overflow:hidden}
+.crow{display:flex; align-items:center; gap:9px; padding:9px 12px; cursor:pointer}
+.crow:hover{background:var(--surface-2)}
+.cid{font:600 .72rem var(--font); color:var(--accent); min-width:76px; font-variant-numeric:tabular-nums}
+.ctitle{flex:1; font-size:.83rem; font-weight:500; min-width:0}
+.pill{padding:1px 8px; border-radius:9px; font-size:.64rem; font-weight:600; white-space:nowrap;
+      border:1px solid transparent}
+.p-P0{color:var(--critical); border-color:var(--critical)}
+.p-P1{color:var(--serious); border-color:var(--serious)}
+.p-P2{color:var(--warning); border-color:var(--warning)}
+.p-P3{color:var(--muted); border-color:var(--axis)}
+.cx{font-size:.66rem; color:var(--muted); font-weight:600; min-width:18px; text-align:center}
+.sbtn{padding:2px 9px; border-radius:9px; font:600 .64rem var(--font); border:1px solid var(--axis);
+      background:var(--surface); color:var(--ink-2); cursor:pointer; white-space:nowrap}
+.sbtn[data-s="Done"]{color:var(--good); border-color:var(--good)}
+.sbtn[data-s="Active"]{color:var(--warning); border-color:var(--warning)}
+.sbtn[data-s="Blocked"]{color:var(--critical); border-color:var(--critical)}
+.cdet{display:none; padding:0 12px 12px 12px; font-size:.79rem; border-top:1px solid var(--grid)}
+.card.open .cdet{display:block}
+.card.open .chev{transform:rotate(90deg)}
+.chev{width:13px; height:13px; color:var(--muted); transition:transform .18s; flex-shrink:0}
+.dl{display:grid; grid-template-columns:104px 1fr; gap:3px 12px; margin-top:9px}
+.dl dt{color:var(--ink-2); font-weight:500; font-size:.74rem}
+.dl dd{margin:0; min-width:0}
+.ac{margin:8px 0 0; padding-left:17px}
+.ac li{margin:3px 0; color:var(--ink-2)}
+code{background:var(--surface-2); padding:1px 5px; border-radius:4px; font-size:.86em;
+     font-family:ui-monospace,'SF Mono',Menlo,monospace}
+
+/* ---- inversion table ---- */
+.itable{width:100%; border-collapse:collapse; font-size:.79rem; background:var(--surface)}
+.itable th{text-align:left; padding:9px 11px; font-size:.68rem; text-transform:uppercase;
+  letter-spacing:.06em; color:var(--ink-2); border-bottom:1px solid var(--grid); font-weight:600}
+.itable td{padding:9px 11px; border-bottom:1px solid var(--grid); vertical-align:top}
+.itable tr:last-child td{border-bottom:none}
+.won{color:var(--good); font-weight:600; font-size:.7rem; white-space:nowrap}
+.todo{color:var(--ink-2); font-size:.7rem; white-space:nowrap}
+
+.note{background:var(--surface); border:1px solid var(--ring); border-left:3px solid var(--accent);
+  border-radius:8px; padding:11px 14px; font-size:.81rem; margin:12px 0; color:var(--ink-2)}
+.note b{color:var(--ink)}
+footer{color:var(--muted); font-size:.7rem; padding:26px 0 30px; border-top:1px solid var(--grid); margin-top:26px}
+[hidden]{display:none!important}
+@media(max-width:620px){
+  h1{font-size:1.2rem}
+  .tile-v{font-size:1.35rem}
+  thead th.tool-h, tbody th{min-width:140px; max-width:150px}
+  .cid{min-width:66px; font-size:.67rem}
+  .ctitle{font-size:.78rem}
+  .dl{grid-template-columns:1fr}
+}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Ontology Landscape Scorecard</h1>
+  <p class="sub">EOIP / KnowGridFlow benchmarked against 55 ontology platforms across 22 enterprise-readiness
+     dimensions, with the derived engineering backlog and cons-to-pros inversion blueprint.</p>
+  <p class="meta">Generated 2026-10-16 · Companion to <code>ontology-competitive-analysis.md</code> ·
+     Scores are indicative; vendor-sourced claims are not independently audited.</p>
+
+  <div class="tiles">
+    <div class="tile"><div class="tile-v" style="color:var(--critical)">2.9</div>
+      <div class="tile-l">EOIP today</div><div class="tile-n">weighted mean of 22</div></div>
+    <div class="tile"><div class="tile-v" style="color:var(--warning)">3.6</div>
+      <div class="tile-l">After Q1</div><div class="tile-n">ONT-001/004/007</div></div>
+    <div class="tile"><div class="tile-v" style="color:var(--good)">4.2</div>
+      <div class="tile-l">After Q3</div><div class="tile-n">full roadmap</div></div>
+    <div class="tile"><div class="tile-v">7<span style="font-size:.9rem;color:var(--muted)">/20</span></div>
+      <div class="tile-l">Inversions won</div><div class="tile-n">ship marketing, not code</div></div>
+    <div class="tile"><div class="tile-v">20</div>
+      <div class="tile-l">Backlog items</div><div class="tile-n">ONT-001 … ONT-020</div></div>
+    <div class="tile"><div class="tile-v" style="color:var(--critical)">3</div>
+      <div class="tile-l">Blockers</div><div class="tile-n">no RDF I/O · toy reasoner · pseudo-SHACL</div></div>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true"  data-p="scorecard">Scorecard</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="backlog">Backlog</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="inversions">Inversions</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="gaps">Gap analysis</button>
+  </nav>
+</header>
+
+<!-- ============ SCORECARD ============ -->
+<section id="p-scorecard">
+  <div class="controls">
+    <select id="fCat"></select>
+    <select id="fSort">
+      <option value="Mean">Sort: overall mean</option>
+      <option value="__cat">Sort: category</option>
+      <option value="Expressivity">Sort: data model &amp; expressivity</option>
+      <option value="Reasoning">Sort: reasoning &amp; inference</option>
+      <option value="Interop">Sort: interoperability</option>
+      <option value="Differentiators">Sort: differentiators</option>
+      <option value="Cost">Sort: licensing &amp; cost</option>
+      <option value="LegalRisk">Sort: legal / IP safety</option>
+    </select>
+    <input type="search" id="fQ" placeholder="Filter tools…" aria-label="Filter tools">
+    <span class="legend">
+      <span>Score</span>
+      <span class="legend-steps" aria-hidden="true">
+        <span class="s-1">1</span><span class="s-2">2</span><span class="s-3">3</span><span class="s-4">4</span><span class="s-5">5</span>
+      </span>
+      <span>1 absent → 5 best-in-class</span>
+    </span>
+  </div>
+  <div class="scroll"><table id="heat"><thead></thead><tbody></tbody></table></div>
+  <p class="meta" style="margin-top:8px">Every cell prints its value, so the score never depends on colour alone.
+     Hover a cell for detail. EOIP rows are outlined.</p>
+</section>
+
+<!-- ============ BACKLOG ============ -->
+<section id="p-backlog" hidden>
+  <div class="controls">
+    <select id="bPri"><option value="">All priorities</option><option>P0</option><option>P1</option><option>P2</option></select>
+    <select id="bTier"><option value="">All tiers</option><option>Tier 0 — Credibility</option><option>Tier 1 — Differentiators</option><option>Tier 2 — Completeness</option></select>
+    <button class="btn" id="bReset">Reset status</button>
+  </div>
+  <div class="cards" id="blist"></div>
+</section>
+
+<!-- ============ INVERSIONS ============ -->
+<section id="p-inversions" hidden>
+  <div class="note"><b>Seven of twenty inversions are already won.</b> They need positioning, not engineering —
+    the capability exists in the repository today and no competitor in this study matches it.</div>
+  <div class="scroll"><table class="itable" id="itab"></table></div>
+</section>
+
+<!-- ============ GAPS ============ -->
+<section id="p-gaps" hidden>
+  <div class="note"><b>Read the shape, not the mean.</b> EOIP's profile is bimodal — best-in-class on
+    extensibility, cost and differentiators; bottom-of-market on ecosystem, migration and support.
+    That is the profile of a pre-launch platform with a real moat, not a weak product.</div>
+  <div class="scroll"><table class="itable" id="gtab"></table></div>
+</section>
+
+<footer>
+  Status changes are stored in this browser only — they are not shared with other viewers and are not
+  read back by Claude. Export the markdown document for a durable record.
+</footer>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+// ---------- source of truth: the same CSV shipped alongside this file ----------
+const CSV = `Tool,Category,License,CoreFunc,Architecture,Expressivity,Reasoning,Interop,Performance,Extensibility,Security,Usability,Deployment,Cost,Limitations,Ecosystem,MigrationEffort,Differentiators,Observability,CICD,BackupDR,LegalRisk,A11yI18n,SupportSLA,KPIs,Mean,ThreatToEOIP,PrimaryLesson
+EOIP (baseline today),Target Platform,Proprietary,4,4,2,2,2,3,5,4,3,3,5,2,1,1,5,4,3,3,3,2,1,2,2.9,-,Bimodal profile: world-class moat + bottom-of-market standards
+EOIP (post Q1),Target Platform,Proprietary,5,4,4,4,4,3,5,4,3,3,5,3,1,4,5,4,4,3,4,2,1,3,3.6,-,Standards parity removes blockers F1-F3
+EOIP (post Q3),Target Platform,Proprietary,5,5,5,4,5,4,5,5,4,4,5,4,2,4,5,5,4,4,4,3,3,4,4.2,-,Superset of TopBraid EDG at lower cost
+Protege 5.6,1 Authoring,BSD,5,4,5,5,5,3,5,2,4,2,5,2,5,1,4,1,2,2,5,3,2,2,3.3,Low,Reasoner port + round-trip target
+WebProtege,1 Authoring,AGPL,4,4,5,5,5,3,4,3,4,3,5,3,4,2,3,2,3,3,1,3,2,2,3.3,Low,AGPL - never integrate
+TopBraid Composer,1 Authoring,Commercial,4,4,5,4,5,3,4,3,4,3,2,3,3,3,4,2,3,3,4,3,4,3,3.4,Low,Eclipse IDE pattern
+OntoStudio,1 Authoring,Commercial,3,3,4,4,3,3,3,3,3,2,2,3,1,3,3,2,2,2,4,2,2,2,2.7,None,F-Logic rules - declining
+Fluent Editor,1 Authoring,Commercial,3,3,4,4,3,3,2,2,4,2,2,3,1,3,4,1,2,2,4,3,2,2,2.7,None,Controlled Natural Language worth stealing
+Ontosphere,1 Authoring,Open Source,3,4,4,3,4,3,4,2,4,4,5,3,2,3,4,2,3,2,4,3,1,2,3.2,Low,MCP hook for agents - table stakes
+Graphologi,1 Authoring,Commercial,4,4,4,3,4,3,3,3,5,4,2,3,2,3,3,2,3,3,4,3,3,3,3.2,Low,Polyhierarchy UX
+Chowlk / OnToology,1 Authoring,Open Source,3,3,3,2,4,3,3,2,3,4,5,3,2,3,4,2,5,2,5,2,1,2,3.0,Medium,Overlaps GitOps - EOIP is a superset
+TopBraid EDG,2 Governance,Commercial,5,4,5,4,5,4,4,5,4,3,2,3,3,3,4,3,4,4,4,3,4,4,3.8,HIGH,Closest competitor - SHACL as metamodel
+VocBench 3,2 Governance,Open Source,4,3,5,3,5,3,3,4,4,3,5,3,2,3,3,2,3,3,5,5,2,3,3.4,Low,Multilingual RBAC workflow
+PoolParty (Graphwise),2 Governance,Commercial,4,4,4,3,4,4,4,4,5,3,2,3,4,3,4,3,3,3,4,4,4,3,3.6,Med-High,NLP taxonomy expansion + GraphRAG
+Progress Semaphore,2 Governance,Commercial,4,4,4,3,3,4,3,4,3,3,2,3,3,3,4,3,3,3,4,3,4,3,3.3,Medium,PII redaction at petabyte scale
+Synaptica Graphite,2 Governance,Commercial,3,3,4,2,4,3,3,3,5,3,2,3,2,3,3,2,3,3,4,3,3,3,3.0,Low,ISO 25964 crosswalk mapping
+SciBite CenTree/TERMite,2 Governance,Commercial,4,4,4,3,4,4,3,4,4,3,1,3,3,2,5,3,3,3,4,2,4,3,3.3,Low,Vertical depth = domain pack pattern
+Data Harmony,2 Governance,Commercial,3,3,4,3,3,3,2,3,3,2,2,3,2,2,3,2,2,3,4,3,3,3,2.8,Low,Rule-based indexing
+Semantic Arts gist,2 Governance,CC-BY,3,3,5,3,5,3,3,2,3,4,5,3,3,4,5,1,2,2,5,2,2,2,3.2,None,ADOPT as domain pack
+Reltio Ontology Builder,2 Governance,Commercial,4,4,3,2,3,4,3,4,4,4,2,3,3,2,3,3,3,4,4,3,4,3,3.3,Low,MDM schema-to-ontology automation
+Ontotext GraphDB,3 Triplestore,Commercial,5,5,5,4,5,4,4,4,4,4,3,3,4,3,4,4,4,4,4,3,4,4,4.0,Medium,Forward-chaining; certify as backend
+Stardog 12.x,3 Triplestore,Commercial,5,5,5,5,5,4,4,4,4,4,2,3,4,3,5,4,4,4,4,3,4,4,4.0,Medium,Query-time reasoning + proof trees
+Franz AllegroGraph,3 Triplestore,Commercial,4,5,5,5,4,4,4,4,3,3,2,3,3,3,5,3,3,4,4,2,4,3,3.6,Low,Neuro-symbolic: Prolog + vectors
+Apache Jena TDB2/Fuseki,3 Triplestore,Apache 2.0,4,4,5,3,5,3,5,3,3,4,5,3,5,3,3,3,4,3,5,2,2,3,3.6,Low,REFERENCE BACKEND - zero licence risk
+OpenLink Virtuoso,3 Triplestore,GPLv2,4,5,5,3,5,5,3,3,2,3,4,3,3,3,4,2,3,3,2,2,3,3,3.3,Low,GPLv2 - network boundary only
+Eclipse RDF4J,3 Triplestore,EPL/BSD,4,5,5,3,5,3,5,3,3,4,5,3,4,3,3,3,4,3,5,2,2,3,3.6,Low,Sail pluggable storage = port pattern
+Amazon Neptune,3 Triplestore,Commercial,4,4,4,2,4,4,2,5,3,5,3,3,4,3,3,5,4,5,4,3,5,4,3.8,Medium,Managed ops; weak inference
+Progress MarkLogic,3 Triplestore,Commercial,4,4,4,3,4,4,3,5,3,3,1,3,3,3,4,3,3,4,4,3,4,3,3.4,Low,Universal index JSON/XML/RDF
+TerminusDB 12.x,3 Triplestore,DISPUTED,3,4,3,2,3,3,3,3,3,4,5,3,2,3,5,2,4,4,1,2,2,2,3.0,Low,Git-like data versioning - BLOCKED
+Neo4j + n10s,3 Triplestore,GPLv3,3,4,3,2,3,4,4,4,4,4,3,3,5,4,3,4,4,4,2,3,4,4,3.5,Medium,GPLv3 - wire protocol only
+Ontop,4 OBDA,Apache 2.0,4,5,4,4,5,4,3,3,2,3,5,3,3,3,5,2,3,2,5,1,2,3,3.3,Low,OBDA unfold-optimise-emit = CML blueprint
+Timbr.ai,4 OBDA,Commercial,4,4,4,3,4,4,3,3,4,4,2,3,2,3,4,3,3,3,4,2,3,3,3.3,Medium,SQL-native semantic views for BI
+Anzo / AnzoGraph (Altair),4 OBDA,Commercial,4,5,4,3,4,5,3,4,4,3,2,3,3,4,4,3,3,4,4,2,4,4,3.6,Medium,MPP distributed graph compute
+Morph-KGC,4 OBDA,Apache 2.0,3,4,4,2,5,4,3,2,2,4,5,3,2,3,4,2,3,2,5,1,1,3,3.0,Low,Vectorised Pandas materialisation
+RMLStreamer / SDM-RDFizer,4 OBDA,Open Source,3,4,4,2,5,4,3,2,2,4,5,3,2,3,4,2,3,2,5,1,1,3,3.0,Low,Streaming RML over Kafka/Flink
+Karma,4 OBDA,Open Source,3,3,4,2,4,2,3,2,3,2,5,2,2,2,4,1,2,2,5,2,1,2,2.7,None,ML mapping - never productised; EOIP should
+Palantir Foundry / AIP,5 Operational,Commercial,5,5,3,3,3,5,4,5,5,4,1,4,5,1,5,5,5,5,3,4,5,5,4.0,HIGHEST,Ontology as agent safety boundary
+Microsoft Fabric,5 Operational,Commercial,4,5,3,2,3,5,3,5,4,5,3,4,5,2,4,5,4,5,4,4,5,4,3.9,High,Bundling distribution advantage
+Oracle AI Data Platform,5 Operational,Commercial,4,5,4,4,4,5,3,5,3,4,2,4,4,2,4,4,4,5,4,4,5,4,4.0,Medium,Trillion-triple scale inside the DB
+Cosmo Tech,5 Operational,Commercial,3,4,3,3,2,4,3,3,3,3,2,3,2,2,5,3,3,3,4,2,4,3,3.1,Low,Simulation over ontology graph
+Cinchapi Concourse,5 Operational,Open Core,3,4,3,2,3,4,3,3,3,3,3,3,2,3,4,2,3,4,3,2,3,3,3.0,Low,Temporal time-travel records
+Essential Cloud,5 Operational,Commercial,3,3,3,2,3,2,2,3,3,3,4,3,2,3,3,2,2,3,4,2,3,3,2.8,Low,EA meta-model capability mapping
+OpenMetadata,6 Catalog,Apache 2.0,4,4,3,2,4,4,4,4,4,4,5,3,4,3,4,4,4,3,5,3,2,4,3.7,Medium,MCP server pattern - study it
+data.world,6 Catalog,Commercial,4,4,5,3,5,4,3,4,4,5,2,3,3,3,4,4,3,4,4,3,4,4,3.7,Medium,RDF-native catalog backplane
+Collibra,6 Catalog,Commercial,5,4,2,1,3,4,3,5,4,4,1,3,5,2,4,4,4,4,4,4,5,5,3.6,Low,Governance workflow depth
+Alation,6 Catalog,Commercial,4,4,2,1,3,4,3,4,4,4,2,3,4,2,4,4,3,4,4,3,4,4,3.3,Low,Behavioural intelligence from query logs
+OvalEdge,6 Catalog,Commercial,3,3,3,2,3,3,3,3,3,3,3,3,3,3,4,3,3,3,4,2,3,3,3.0,Low,Automated synonym resolution
+DataHub,6 Catalog,Apache 2.0,4,5,3,2,4,4,4,3,3,4,5,3,4,3,4,4,4,3,5,2,2,3,3.5,Medium,Kafka event-driven metadata
+Apache Atlas,6 Catalog,Apache 2.0,3,3,3,2,3,3,3,3,2,2,5,2,3,3,2,3,3,3,5,2,2,2,2.8,Low,Typed meta-model + classification tags
+ROBOT,7 CI/CD,BSD,4,3,5,4,5,3,4,1,2,4,5,2,4,2,4,1,5,2,5,1,1,2,3.1,Low,CLI ontology build pipeline
+pySHACL,7 CI/CD,Apache 2.0,3,3,5,2,5,3,3,2,2,4,5,2,3,3,2,1,4,1,5,1,1,2,2.8,None,ADOPT - reference SHACL implementation
+TopBraid SHACL API,7 CI/CD,Apache 2.0,3,3,5,2,5,3,3,2,2,4,5,2,2,3,2,1,4,1,5,1,2,2,2.8,None,JVM only - not needed
+OOPS! Pitfall Scanner,7 CI/CD,Open Source,3,2,4,2,4,2,2,1,3,3,5,2,2,2,4,1,3,1,5,1,1,2,2.5,None,BUILD EQUIVALENT - ONT-013
+Widoco / LODE,7 CI/CD,Apache/MIT,3,2,4,1,4,3,2,1,4,4,5,2,2,2,3,1,3,1,5,3,1,2,2.6,None,BUILD EQUIVALENT - ONT-014
+Mondeca,8 Enrichment,Commercial,3,3,4,3,4,3,3,3,3,3,2,3,2,3,3,2,2,3,4,3,3,3,3.0,Low,Content-to-ontology classification
+Diffbot,8 Enrichment,Commercial,4,4,3,2,3,5,2,3,4,5,2,3,4,2,5,4,3,4,4,2,3,4,3.4,Low,Autonomous web-to-entity extraction
+DeepOnto,8 Enrichment,Apache 2.0,3,3,4,4,4,2,4,2,2,3,5,2,3,2,5,1,3,1,5,1,1,3,2.9,None,ADOPT - BERT ontology alignment
+spaCy / Textacy,8 Enrichment,MIT,4,4,2,1,3,4,5,3,4,4,5,2,5,2,3,2,4,2,5,3,2,3,3.3,None,Entity linking to custom KB`;
+
+const DIM_LABEL={CoreFunc:"Core functionality",Architecture:"Architecture & internals",
+ Expressivity:"Data model & expressivity",Reasoning:"Reasoning & inference",Interop:"Interoperability & standards",
+ Performance:"Performance & scalability",Extensibility:"Extensibility",Security:"Security & governance",
+ Usability:"Usability & tooling",Deployment:"Deployment & ops",Cost:"Licensing & cost",
+ Limitations:"Known limitations",Ecosystem:"Ecosystem & community",MigrationEffort:"Migration effort",
+ Differentiators:"Differentiators",Observability:"Observability",CICD:"CI/CD & testing",
+ BackupDR:"Backup & DR",LegalRisk:"Legal / IP safety",A11yI18n:"Accessibility & i18n",
+ SupportSLA:"Support & SLAs",KPIs:"KPIs & metrics"};
+const DIM_SHORT={CoreFunc:"Core",Architecture:"Arch",Expressivity:"Expr",Reasoning:"Reas",Interop:"Intop",
+ Performance:"Perf",Extensibility:"Ext",Security:"Sec",Usability:"UX",Deployment:"Depl",Cost:"Cost",
+ Limitations:"Lim",Ecosystem:"Eco",MigrationEffort:"Migr",Differentiators:"Diff",Observability:"Obs",
+ CICD:"CI/CD",BackupDR:"DR",LegalRisk:"Legal",A11yI18n:"A11y",SupportSLA:"SLA",KPIs:"KPI"};
+const DIMS=Object.keys(DIM_LABEL);
+
+function parseCSV(t){
+  const lines=t.trim().split("\n"), head=lines[0].split(",");
+  return lines.slice(1).map(l=>{
+    const c=[]; let cur="",q=false;
+    for(const ch of l){
+      if(ch==='"'){q=!q} else if(ch===","&&!q){c.push(cur);cur=""} else cur+=ch;
+    }
+    c.push(cur);
+    return Object.fromEntries(head.map((h,i)=>[h,(c[i]??"").trim()]));
+  });
+}
+const ROWS=parseCSV(CSV);
+const CATS=[...new Set(ROWS.map(r=>r.Category))];
+
+// ---------- backlog ----------
+const BACKLOG=[
+ {id:"ONT-001",t:"W3C serialization bridge (rdflib)",p:"P0",cx:"M",tier:"Tier 0 — Credibility",dep:"none",
+  path:"ontology/serialization.py",
+  d:"Add rdflib (BSD). Support Turtle, RDF/XML, N-Triples, N-Quads, JSON-LD and TriG. Map LPG ↔ RDF losslessly where possible; reify edge properties only when the edge actually carries properties, so simple edges avoid the reification tax.",
+  ac:["Round-trips gist, schema.org, FOAF, Dublin Core and a 10k-triple SKOS thesaurus",
+      "Fidelity ≥ 99% on node/edge/property counts, with losses enumerated in a report",
+      "POST /ontology/import accepts all six formats; export emits valid output",
+      "Output opens in Protégé 5.6 without error"],
+  why:"Unlocks every external ontology. Without it FIBO, gist, SNOMED and every customer's existing model are unimportable — the single largest commercial blocker."},
+ {id:"ONT-004",t:"Conformant SHACL via pySHACL",p:"P0",cx:"S",tier:"Tier 0 — Credibility",dep:"ONT-001",
+  path:"ontology/shacl_validator.py",
+  d:"Emit real SHACL — sh:datatype, sh:nodeKind, sh:minCount/maxCount, sh:pattern, sh:class, sh:in. Move eoip:allowedEndpointPairs onto conformant sh:targetObjectsOf + sh:class. Keep the existing report type as the public API and delegate execution to pySHACL.",
+  ac:["Exported shapes pass the W3C SHACL test-suite parser",
+      "Report matches pySHACL sh:ValidationReport structure",
+      "An invalid fixture produces violations identical to reference pySHACL output",
+      "Existing /ontology/validate callers unchanged (contract test)"],
+  why:"Current export is SHACL-shaped but not SHACL: a conformant processor would find almost no constraints. Small fix, high leverage."},
+ {id:"ONT-007",t:"Pluggable reasoner port (ELK default)",p:"P0",cx:"M",tier:"Tier 0 — Credibility",dep:"ONT-001",
+  path:"ontology/reasoning/",
+  d:"Define a ReasonerPort protocol (classify, is_consistent, unsatisfiable_classes, realize, explain) with ELK (Apache 2.0), native-fallback and Fuseki adapters. Delete the hardcoded demo axioms and load axioms from the manifest and installed domain packs instead.",
+  ac:["Classifies a 20k-class ontology in under 60s",
+      "Detects unsatisfiable classes on a known-inconsistent fixture",
+      "No hardcoded domain axioms remain anywhere in ontology/",
+      "Air-gap mode degrades explicitly, never silently"],
+  why:"The current reasoner hardcodes Microservice/Engineer/RelationalDatabase and does transitive subsumption only. It fails a technical buyer's first ten-minute probe."},
+ {id:"ONT-005",t:"Connector Mapping Language (CML)",p:"P0",cx:"L",tier:"Tier 1 — Differentiators",dep:"ONT-001",
+  path:"ontology/mapping/",
+  d:"An RML-inspired YAML mapping from connector payload (JSON/XML/CSV/row) to ontology classes, properties and relations, with provenance and governance annotations. Templates are a restricted grammar — never eval.",
+  ac:["A new enterprise source is onboarded by writing one YAML file, no Python",
+      "Jira, Confluence and ServiceNow mappings expressed in CML and passing parity tests",
+      "≥ 10k records/s on 1M Jira issues",
+      "PII fields declared in CML are honoured by the export filter"],
+  why:"Today the payload→ontology mapping is implicit inside 38 hand-written connectors. That does not scale to 'any enterprise system'. Highest architectural leverage after ONT-001."},
+ {id:"ONT-009",t:"Governed Action layer (write-back)",p:"P0",cx:"L",tier:"Tier 1 — Differentiators",dep:"ONT-005",
+  path:"ontology/actions/",
+  d:"OntologyAction: a typed, permissioned, ontology-bound operation with SHACL preconditions, declared effects, a target connector for write-back, an approval policy keyed to the existing AutonomyLevel ladder, and an immutable audit receipt.",
+  ac:["Destructive actions require HCTL autonomy and produce an approval receipt",
+      "Preconditions evaluated as SHACL before execution",
+      "Idempotency key prevents duplicate write-back",
+      "Every invocation is auditable end to end"],
+  why:"The only axis where Palantir AIP is genuinely ahead. EOIP's 14-level autonomy ladder is a finer-grained safety model than anything in AIP once Actions exist."},
+ {id:"ONT-012",t:"Position & document Ontology-as-Code",p:"P0",cx:"XS",tier:"Tier 1 — Differentiators",dep:"none",
+  path:"docs / marketing",
+  d:"No engineering. Document and market the existing GitOps layer: branch, PR, review gate, semantic diff, impact analysis, migration generation, rollback receipt, semver computation and release packaging.",
+  ac:["Comparison table vs TopBraid EDG, Protégé and Chowlk/OnToology published",
+      "Capability named and claimed in positioning (TASK-MKT-002)",
+      "Gated so no standards claim ships before ONT-019 passes"],
+  why:"793 lines already built and no competitor matches it. TopBraid EDG has workflow but not git semantics; TerminusDB has git semantics on data but not governed ontology change. Pure positioning win."},
+ {id:"ONT-006",t:"AI-suggested CML mappings",p:"P1",cx:"M",tier:"Tier 1 — Differentiators",dep:"ONT-005",
+  path:"ontology/mapping/suggest.py",
+  d:"Sample a connector's payloads and propose a CML mapping — class assignment, property paths, datatypes and relation candidates — with confidence scores for human curation.",
+  ac:["≥ 70% of suggested property maps accepted without edit on Jira and ServiceNow",
+      "Confidence surfaced per suggestion",
+      "Human curation always required before activation"],
+  why:"Kills Palantir's implementation-time advantage: critics cite months-to-a-year builds requiring manual relationship modelling. Novel and patentable."},
+ {id:"ONT-002",t:"SPARQL 1.1 endpoint over the LPG store",p:"P1",cx:"L",tier:"Tier 1 — Differentiators",dep:"ONT-001",
+  path:"ontology/sparql/",
+  d:"Translate SPARQL 1.1 into the existing property-graph query plan. Enforce a cost estimator, hard timeout and result caps reusing token_budget so queries cannot run away.",
+  ac:["Passes the W3C SPARQL protocol test suite",
+      "SP2Bench runs with no query exceeding 30s",
+      "Tableau and Power BI connect successfully",
+      "Unbounded property-path queries are rejected with a clear error, not a hang"],
+  why:"RFP checkbox, BI tool access and federation. Positioned for interop, not hot paths."},
+ {id:"ONT-003",t:"RDF backend port (Fuseki reference)",p:"P1",cx:"M",tier:"Tier 1 — Differentiators",dep:"ONT-001",
+  path:"graph/backends.py",
+  d:"Extend the existing backend registry with an RDF store port. Apache Jena Fuseki (Apache 2.0) as the reference implementation; GraphDB as the certified commercial option.",
+  ac:["Same ontology API works against Fuseki and the in-memory store",
+      "A customer's existing GraphDB can be targeted by configuration alone",
+      "No GPL/AGPL code linked into the distributed core"],
+  why:"Do not build a twelfth triplestore. Turning GraphDB and Stardog into supported backends converts competitors into distribution channels."},
+ {id:"ONT-008",t:"Hybrid materialize / virtualize reasoning",p:"P1",cx:"M",tier:"Tier 1 — Differentiators",dep:"ONT-007",
+  path:"ontology/reasoning/hybrid.py",
+  d:"Formalise the accidental hybrid already present: materialise cheap stable inferences (transitivity, inverse, symmetry) at write time; evaluate expensive or volatile rules at query time, chosen per rule by a cost model.",
+  ac:["Per-rule strategy is explicit and configurable",
+      "TBox change does not trigger full recomputation",
+      "Cost model documented and benchmarked against pure forward and pure backward chaining"],
+  why:"GraphDB stalls on TBox change; Stardog pays per-query latency. The hybrid avoids both and is defensible IP."},
+ {id:"ONT-011",t:"MCP server for ontology + Actions",p:"P1",cx:"S",tier:"Tier 1 — Differentiators",dep:"ONT-009",
+  path:"ontology/mcp_server.py",
+  d:"Expose the ontology, graph and governed Actions over Model Context Protocol so any agent framework can ground on EOIP. Wiring over the existing tools_contract and sdk packages.",
+  ac:["Claude, LangGraph and an internal copilot can all ground against the ontology",
+      "Actions exposed through MCP respect the same autonomy gates as direct invocation"],
+  why:"OpenMetadata and Ontosphere both ship this; it is becoming table stakes. Roughly two weeks of wiring, not invention."},
+ {id:"ONT-013",t:"Ontology pitfall scanner",p:"P1",cx:"M",tier:"Tier 1 — Differentiators",dep:"ONT-001",
+  path:"ontology/lint/",
+  d:"An OOPS!-class linter detecting missing domain/range, circular hierarchies, equivalent-class loops, unconnected elements and naming inconsistency. Wires into gitops PR validation as a quality gate.",
+  ac:["Detects at least 20 antipattern classes",
+      "Runs as a gitops PR gate and blocks merge on severity ≥ error",
+      "Findings carry a remediation hint"],
+  why:"Completes the Ontology-as-Code story. ROBOT, pySHACL, OOPS! and Widoco are four tools a team must assemble; EOIP is the integrated product they imply."},
+ {id:"ONT-010",t:"Ship gist, FIBO and schema.org as domain packs",p:"P1",cx:"S",tier:"Tier 2 — Completeness",dep:"ONT-001",
+  path:"packs/",
+  d:"Package the gist upper ontology (CC-BY, attribution required), FIBO (MIT) and schema.org as first-class installable domain packs.",
+  ac:["Each pack installs and validates cleanly","gist attribution notice present in docs"],
+  why:"gist solves the 'what are the root classes' problem every enterprise ontology project burns a quarter on. One week of work, instantly credible with semantic-web buyers."},
+ {id:"ONT-016",t:"SKOS RDF import / export",p:"P1",cx:"S",tier:"Tier 2 — Completeness",dep:"ONT-001",
+  path:"ontology/skos.py",
+  d:"Wire the existing, faithful SKOS object model to the ONT-001 serialization bridge so real SKOS thesauri can be read and written.",
+  ac:["Imports a 10k-concept SKOS thesaurus and re-exports it losslessly","SKOS-XL labels preserved"],
+  why:"The SKOS model is already correct; only the RDF I/O is missing. Cheap completion."},
+ {id:"ONT-018",t:"PROV-O provenance on every mined triple",p:"P1",cx:"M",tier:"Tier 2 — Completeness",dep:"ONT-005",
+  path:"ontology/mapping/executor.py",
+  d:"Emit W3C PROV-O wasDerivedFrom / wasGeneratedBy / wasAttributedTo for every triple produced by a CML mapping, linking back to the source system, connector run and payload.",
+  ac:["Every mined triple traces to a source system and extraction run",
+      "Provenance survives RDF export"],
+  why:"Corporate data governance requires knowing where every assertion came from. Also a prerequisite for trustworthy agent grounding."},
+ {id:"ONT-019",t:"OWL round-trip certification CI gate",p:"P1",cx:"S",tier:"Tier 2 — Completeness",dep:"ONT-001",
+  path:"tests/",
+  d:"A CI job that round-trips a fixed corpus of reference ontologies and fails the build on fidelity regression. Publishes the honest loss report.",
+  ac:["Runs on every PR touching ontology/","Fails on >1% fidelity regression",
+      "Loss report published, not hidden"],
+  why:"Risk OR6: all standards messaging is gated on this passing. Marketing must not claim compliance before it is green."},
+ {id:"ONT-020",t:"Ontology benchmark harness",p:"P1",cx:"M",tier:"Tier 2 — Completeness",dep:"ONT-002",
+  path:"tests/benchmarks/ontology/",
+  d:"LUBM, BSBM and SP2Bench with committed generator commands, fixed seeds and expected-output hashes. Regression gate fails the build on >10% latency regression.",
+  ac:["LUBM-10k loads at ≥ 50k triples/s","Q1–Q14 p95 under 500ms","Results published"],
+  why:"No published benchmarks exist today, which makes every performance claim unfalsifiable in an RFP."},
+ {id:"ONT-014",t:"HTML ontology documentation generator",p:"P2",cx:"M",tier:"Tier 2 — Completeness",dep:"ONT-001",
+  path:"ontology/documentation",
+  d:"A Widoco-class generator producing cross-referenced HTML specifications with diagrams and provenance metadata from the ontology manifest.",
+  ac:["Generates a browsable spec for any installed domain pack","Publishable as static files"],
+  why:"Documentation is a developer's first impression and currently absent beyond auto-generated OpenAPI."},
+ {id:"ONT-015",t:"DeepOnto alignment for pack merging",p:"P2",cx:"L",tier:"Tier 2 — Completeness",dep:"ONT-007",
+  path:"ontology/alignment/",
+  d:"Transformer-based ontology alignment and subsumption prediction to match classes across domain packs and propose hierarchy for mined entities.",
+  ac:["Proposes alignments between two overlapping packs with confidence scores",
+      "Human review required before any merge is applied"],
+  why:"Serves two needs at once: merging domain packs without conflicts, and inducing hierarchy from mined entities."},
+ {id:"ONT-017",t:"R2RML / RML import to CML",p:"P2",cx:"M",tier:"Tier 2 — Completeness",dep:"ONT-005",
+  path:"ontology/mapping/r2rml_import.py",
+  d:"Translate existing R2RML and RML mappings into CML so customers migrating from Ontop, Morph-KGC or RMLStreamer keep their investment.",
+  ac:["Imports a non-trivial R2RML mapping and produces equivalent triples",
+      "Unsupported constructs reported, never silently dropped"],
+  why:"Removes a migration barrier for exactly the buyers most likely to understand EOIP's value."},
+];
+
+const INVERSIONS=[
+ ["I1","RDF cannot give identity to parallel same-type relationships; reification bloat","All triplestores","Native LPG — edges have identity and properties at no cost. \"No reification tax.\"","won"],
+ ["I2","SPARQL reasoning offers no termination guarantee","Triplestores","Hard token and time budgets with graceful degradation via token_budget and the control loops","ONT-002"],
+ ["I3","Triplestores are weak at traversal (conceded by Ontotext)","Triplestores","Traversal-native: paths, algorithms, community detection, process mining","won"],
+ ["I4","Forward chaining stalls on TBox change — full recompute","GraphDB","Hybrid: materialise stable inferences, rewrite volatile ones at query time","ONT-008"],
+ ["I5","Query-time reasoning costs per-query latency","Stardog, Ontop","Same hybrid, decided per rule by a cost model","ONT-008"],
+ ["I6","Ontology tools assume the data has already arrived","Protégé, TopBraid, VocBench","38 connectors, universal factory and crawler — the ontology goes to the data","won"],
+ ["I7","OBDA limited to OWL 2 QL over relational sources","Ontop","CML maps any connector payload, with a per-source materialise/virtualise choice","ONT-005"],
+ ["I8","A new source means a new hand-written integration","Everyone","A new source means a YAML file","ONT-005"],
+ ["I9","ML-assisted mapping never productised","Karma","AI-suggested mappings from sampled payloads","ONT-006"],
+ ["I10","Proprietary formats; migrating out is hard","Palantir, Reltio, Collibra","Every artifact exports to an open standard","ONT-001/004"],
+ ["I11","High TCO; per-seat pricing cliffs","Palantir, MarkLogic","Self-hostable, four-tier licensing, published TCO calculator","TASK-LIC-009"],
+ ["I12","Months-to-a-year implementations; manual relationship modelling","Palantir","Ontology induction mines the model; humans curate it","ONT-006"],
+ ["I13","Agent tooling described as basic","Palantir AIP","35 agent types, 14 control loops, 9 reasoning strategies, verification engine","won"],
+ ["I14","Ontology CI/CD needs four separate CLI tools assembled","ROBOT + pySHACL + OOPS! + Widoco","One integrated governed workflow","ONT-013/014"],
+ ["I15","Change workflow without version-control semantics","TopBraid EDG","Branch, PR, merge, semver, rollback receipt","won"],
+ ["I16","No migration scripts generated on schema change","All","generate_ontology_migration_script","won"],
+ ["I17","Ontology silently drifts from reality","All","Structural and embedding drift detection driving evolution proposals","won"],
+ ["I18","Catalogs describe but cannot reason","Collibra, Alation, Atlas","Catalog, ontology, reasoner and agents in one system","ONT-007"],
+ ["I19","WebProtégé is AGPL; Neo4j CE is GPLv3; Virtuoso is GPLv2","—","Permissive-only policy; ELK over HermiT; Fuseki over Neo4j as reference","ONT-003"],
+ ["I20","Verticals locked to specialist tools","SciBite, Data Harmony","Domain packs and industry templates make a vertical a config artifact","ONT-010"],
+];
+
+const GAPS=[
+ ["F1","Cannot read any ontology produced by the outside world","No rdflib / pySHACL / owlready2 anywhere in the dependency tree","FIBO, gist, schema.org, SNOMED and every customer's existing ontology are unimportable","critical","ONT-001"],
+ ["F2","The OWL reasoner is a demo, not a reasoner","rdf.py:598-700 — hardcodes Microservice, Engineer, RelationalDatabase; transitive subsumption and 2-step chains only","Any claim of OWL reasoning fails a buyer's first ten-minute probe; reputational risk exceeds the functional gap","critical","ONT-007"],
+ ["F3","SHACL output is SHACL-shaped, not SHACL","rdf.py:369-425 — mixes eoip:allowedEndpointPairs and omits sh:datatype, sh:nodeKind, sh:maxCount, sh:pattern","A conformant processor validates the document and finds almost no constraints; interop claims are not defensible","serious","ONT-004"],
+ ["F4","Ontology GitOps is best-in-class and unmarketed","gitops.py — 793 lines: branches, PRs, semantic diff, impact analysis, migration generation, rollback receipts, semver, release packaging","No competitor matches it. This is the headline differentiator and nobody outside the team knows it exists","good","ONT-012"],
+ ["F5","Connector reach exceeds every ontology vendor studied","38 connector modules plus a 1,135-line universal factory, plus multi-format parsing of Office, media, diagrams and archives","Ontology vendors assume data arrives; EOIP goes and gets it. Combined with F4 this is the defensible category position","good","ONT-005"],
+];
+
+// ---------- state ----------
+let ST={};
+try{ST=JSON.parse(localStorage.getItem("eoip-ont")||"{}")}catch(e){ST={}}
+const save=()=>{try{localStorage.setItem("eoip-ont",JSON.stringify(ST))}catch(e){}};
+const STATUSES=["Open","Active","Done","Blocked"];
+const getS=id=>ST[id]||"Open";
+
+// ---------- heatmap ----------
+const tip=document.getElementById("tip");
+function showTip(e,html){tip.innerHTML=html;tip.style.opacity="1";moveTip(e)}
+function moveTip(e){
+  const r=tip.getBoundingClientRect();
+  let x=e.clientX+14, y=e.clientY+14;
+  if(x+r.width>innerWidth-8) x=e.clientX-r.width-14;
+  if(y+r.height>innerHeight-8) y=e.clientY-r.height-14;
+  tip.style.left=x+"px"; tip.style.top=y+"px";
+}
+const hideTip=()=>{tip.style.opacity="0"};
+
+function renderHeat(){
+  const cat=document.getElementById("fCat").value;
+  const sort=document.getElementById("fSort").value;
+  const q=document.getElementById("fQ").value.toLowerCase();
+  let rows=ROWS.filter(r=>(!cat||r.Category===cat)&&(!q||r.Tool.toLowerCase().includes(q)||r.PrimaryLesson.toLowerCase().includes(q)));
+  if(sort==="__cat") rows.sort((a,b)=>a.Category.localeCompare(b.Category)||b.Mean-a.Mean);
+  else rows.sort((a,b)=>parseFloat(b[sort])-parseFloat(a[sort]));
+
+  document.querySelector("#heat thead").innerHTML =
+    `<tr><th class="tool-h">Tool (${rows.length})</th>`+
+    DIMS.map(d=>`<th title="${DIM_LABEL[d]}">${DIM_SHORT[d]}</th>`).join("")+
+    `<th title="Weighted mean of all 22 dimensions">Mean</th></tr>`;
+
+  document.querySelector("#heat tbody").innerHTML = rows.map(r=>{
+    const isE=r.Category==="Target Platform";
+    return `<tr class="${isE?"eoip":""}"><th title="${r.License} · ${r.PrimaryLesson}">${r.Tool}</th>`+
+      DIMS.map(d=>{
+        const v=r[d];
+        return `<td class="cell s-${v}" data-t="${r.Tool}" data-d="${DIM_LABEL[d]}" data-v="${v}" data-l="${r.PrimaryLesson}">${v}</td>`;
+      }).join("")+
+      `<td class="mean">${r.Mean}</td></tr>`;
+  }).join("");
+}
+document.addEventListener("mouseover",e=>{
+  const c=e.target.closest("td.cell"); if(!c)return;
+  showTip(e,`<b>${c.dataset.t}</b><span class="tv">${c.dataset.d}</span><div style="margin-top:4px"><b style="display:inline;font-size:1.05rem">${c.dataset.v}</b> <span class="tv">/ 5</span></div>`);
+});
+document.addEventListener("mousemove",e=>{if(tip.style.opacity==="1"&&e.target.closest("td.cell"))moveTip(e)});
+document.addEventListener("mouseout",e=>{if(e.target.closest("td.cell"))hideTip()});
+
+// ---------- backlog ----------
+function renderBacklog(){
+  const p=document.getElementById("bPri").value, t=document.getElementById("bTier").value;
+  const list=BACKLOG.filter(b=>(!p||b.p===p)&&(!t||b.tier===t));
+  document.getElementById("blist").innerHTML=list.map(b=>{
+    const s=getS(b.id), open=ST["o_"+b.id];
+    return `<div class="card ${open?"open":""}" id="c-${b.id}">
+      <div class="crow" data-tog="${b.id}">
+        <span class="cid">${b.id}</span>
+        <span class="ctitle">${b.t}</span>
+        <span class="pill p-${b.p}">${b.p}</span>
+        <span class="cx" title="Complexity">${b.cx}</span>
+        <button class="sbtn" data-s="${s}" data-cyc="${b.id}">${s}</button>
+        <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+      </div>
+      <div class="cdet">
+        <p style="margin:9px 0 0">${b.d}</p>
+        <dl class="dl">
+          <dt>Tier</dt><dd>${b.tier}</dd>
+          <dt>Path</dt><dd><code>${b.path}</code></dd>
+          <dt>Depends on</dt><dd>${b.dep}</dd>
+          <dt>Why it matters</dt><dd>${b.why}</dd>
+        </dl>
+        <div style="margin-top:9px;font-size:.74rem;color:var(--ink-2);font-weight:600">Acceptance criteria</div>
+        <ul class="ac">${b.ac.map(a=>`<li>${a}</li>`).join("")}</ul>
+      </div></div>`;
+  }).join("");
+}
+document.addEventListener("click",e=>{
+  const cyc=e.target.closest("[data-cyc]");
+  if(cyc){e.stopPropagation();const id=cyc.dataset.cyc;
+    ST[id]=STATUSES[(STATUSES.indexOf(getS(id))+1)%STATUSES.length];save();renderBacklog();return}
+  const tg=e.target.closest("[data-tog]");
+  if(tg){const id=tg.dataset.tog;ST["o_"+id]=!ST["o_"+id];save();
+    document.getElementById("c-"+id)?.classList.toggle("open");return}
+});
+document.getElementById("bReset").onclick=()=>{
+  BACKLOG.forEach(b=>{delete ST[b.id]});save();renderBacklog();
+};
+
+// ---------- inversions ----------
+document.getElementById("itab").innerHTML =
+ `<thead><tr><th>#</th><th>Competitor weakness</th><th>Who</th><th>EOIP inversion</th><th>Status</th></tr></thead><tbody>`+
+ INVERSIONS.map(([n,con,who,inv,st])=>`<tr><td style="color:var(--muted);font-weight:600">${n}</td>
+   <td>${con}</td><td style="color:var(--ink-2)">${who}</td><td>${inv}</td>
+   <td>${st==="won"?'<span class="won">✓ Already won</span>':'<span class="todo">'+st+'</span>'}</td></tr>`).join("")+
+ `</tbody>`;
+
+// ---------- gaps ----------
+document.getElementById("gtab").innerHTML =
+ `<thead><tr><th>#</th><th>Finding</th><th>Evidence</th><th>Consequence</th><th>Fix</th></tr></thead><tbody>`+
+ GAPS.map(([n,f,ev,c,sev,fix])=>{
+   const col=sev==="critical"?"var(--critical)":sev==="serious"?"var(--serious)":"var(--good)";
+   const icon=sev==="good"?"✓":"!";
+   return `<tr><td style="color:${col};font-weight:700">${icon} ${n}</td>
+     <td style="font-weight:600">${f}</td>
+     <td style="color:var(--ink-2);font-size:.75rem"><code>${ev}</code></td>
+     <td style="color:var(--ink-2)">${c}</td>
+     <td style="white-space:nowrap;font-weight:600;color:var(--accent)">${fix}</td></tr>`;
+ }).join("")+`</tbody>`;
+
+// ---------- tabs ----------
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",String(x===b)));
+  ["scorecard","backlog","inversions","gaps"].forEach(p=>{
+    document.getElementById("p-"+p).hidden = (p!==b.dataset.p);
+  });
+});
+
+// ---------- init ----------
+const fc=document.getElementById("fCat");
+fc.innerHTML=`<option value="">All categories (${ROWS.length} tools)</option>`+
+  CATS.map(c=>`<option value="${c}">${c} (${ROWS.filter(r=>r.Category===c).length})</option>`).join("");
+["fCat","fSort","fQ"].forEach(id=>document.getElementById(id).addEventListener("input",renderHeat));
+["bPri","bTier"].forEach(id=>document.getElementById(id).addEventListener("input",renderBacklog));
+renderHeat(); renderBacklog();
+</script>

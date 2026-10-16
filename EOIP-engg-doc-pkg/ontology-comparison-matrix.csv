@@ -1,0 +1,59 @@
+Tool,Category,License,CoreFunc,Architecture,Expressivity,Reasoning,Interop,Performance,Extensibility,Security,Usability,Deployment,Cost,Limitations,Ecosystem,MigrationEffort,Differentiators,Observability,CICD,BackupDR,LegalRisk,A11yI18n,SupportSLA,KPIs,Mean,ThreatToEOIP,PrimaryLesson
+EOIP (baseline today),Target Platform,Proprietary,4,4,2,2,2,3,5,4,3,3,5,2,1,1,5,4,3,3,3,2,1,2,2.9,-,Bimodal profile: world-class moat + bottom-of-market standards
+EOIP (post Q1 ONT-001/004/007),Target Platform,Proprietary,5,4,4,4,4,3,5,4,3,3,5,3,1,4,5,4,4,3,4,2,1,3,3.6,-,Standards parity removes credibility blockers F1-F3
+EOIP (post Q3 full roadmap),Target Platform,Proprietary,5,5,5,4,5,4,5,5,4,4,5,4,2,4,5,5,4,4,4,3,3,4,4.2,-,Superset of TopBraid EDG at lower cost
+Protege 5.6,1 Authoring,BSD,5,4,5,5,5,3,5,2,4,2,5,2,5,1,4,1,2,2,5,3,2,2,3.3,Low,Reasoner port + round-trip target
+WebProtege,1 Authoring,AGPL,4,4,5,5,5,3,4,3,4,3,5,3,4,2,3,2,3,3,1,3,2,2,3.3,Low,AGPL - never integrate
+TopBraid Composer,1 Authoring,Commercial,4,4,5,4,5,3,4,3,4,3,2,3,3,3,4,2,3,3,4,3,4,3,3.4,Low,Eclipse IDE pattern
+OntoStudio,1 Authoring,Commercial,3,3,4,4,3,3,3,3,3,2,2,3,1,3,3,2,2,2,4,2,2,2,2.7,None,F-Logic rules - declining
+Fluent Editor,1 Authoring,Commercial,3,3,4,4,3,3,2,2,4,2,2,3,1,3,4,1,2,2,4,3,2,2,2.7,None,Controlled Natural Language idea worth stealing
+Ontosphere,1 Authoring,Open Source,3,4,4,3,4,3,4,2,4,4,5,3,2,3,4,2,3,2,4,3,1,2,3.2,Low,MCP hook for agents - becoming table stakes
+Graphologi,1 Authoring,Commercial,4,4,4,3,4,3,3,3,5,4,2,3,2,3,3,2,3,3,4,3,3,3,3.2,Low,Polyhierarchy UX
+Chowlk / OnToology,1 Authoring,Open Source,3,3,3,2,4,3,3,2,3,4,5,3,2,3,4,2,5,2,5,2,1,2,3.0,Medium,Overlaps GitOps - EOIP is a superset
+TopBraid EDG,2 Governance,Commercial,5,4,5,4,5,4,4,5,4,3,2,3,3,3,4,3,4,4,4,3,4,4,3.8,HIGH,Closest competitor - SHACL as universal metamodel
+VocBench 3,2 Governance,Open Source,4,3,5,3,5,3,3,4,4,3,5,3,2,3,3,2,3,3,5,5,2,3,3.4,Low,Multilingual RBAC workflow
+PoolParty (Graphwise),2 Governance,Commercial,4,4,4,3,4,4,4,4,5,3,2,3,4,3,4,3,3,3,4,4,4,3,3.6,Medium-High,NLP-driven taxonomy expansion + GraphRAG
+Progress Semaphore,2 Governance,Commercial,4,4,4,3,3,4,3,4,3,3,2,3,3,3,4,3,3,3,4,3,4,3,3.3,Medium,PII redaction at petabyte scale
+Synaptica Graphite,2 Governance,Commercial,3,3,4,2,4,3,3,3,5,3,2,3,2,3,3,2,3,3,4,3,3,3,3.0,Low,ISO 25964 crosswalk mapping
+SciBite CenTree/TERMite,2 Governance,Commercial,4,4,4,3,4,4,3,4,4,3,1,3,3,2,5,3,3,3,4,2,4,3,3.3,Low (vertical),Vertical depth = domain pack pattern
+Data Harmony,2 Governance,Commercial,3,3,4,3,3,3,2,3,3,2,2,3,2,2,3,2,2,3,4,3,3,3,2.8,Low,Rule-based indexing
+Semantic Arts gist,2 Governance,CC-BY,3,3,5,3,5,3,3,2,3,4,5,3,3,4,5,1,2,2,5,2,2,2,3.2,None,ADOPT as domain pack - solves root-class problem
+Reltio Ontology Builder,2 Governance,Commercial,4,4,3,2,3,4,3,4,4,4,2,3,3,2,3,3,3,4,4,3,4,3,3.3,Low,MDM schema-to-ontology automation
+Ontotext GraphDB,3 Triplestore,Commercial/CE,5,5,5,4,5,4,4,4,4,4,3,3,4,3,4,4,4,4,4,3,4,4,4.0,Medium,Forward-chaining materialization; certify as backend
+Stardog 12.x,3 Triplestore,Commercial,5,5,5,5,5,4,4,4,4,4,2,3,4,3,5,4,4,4,4,3,4,4,4.0,Medium,Query-time reasoning + proof trees + virtual graphs
+Franz AllegroGraph,3 Triplestore,Commercial,4,5,5,5,4,4,4,4,3,3,2,3,3,3,5,3,3,4,4,2,4,3,3.6,Low,Neuro-symbolic: Prolog + vectors
+Apache Jena TDB2/Fuseki,3 Triplestore,Apache 2.0,4,4,5,3,5,3,5,3,3,4,5,3,5,3,3,3,4,3,5,2,2,3,3.6,Low,REFERENCE RDF BACKEND - zero license risk
+OpenLink Virtuoso,3 Triplestore,GPLv2/Comm,4,5,5,3,5,5,3,3,2,3,4,3,3,3,4,2,3,3,2,2,3,3,3.3,Low,GPLv2 - network boundary only
+Eclipse RDF4J,3 Triplestore,EPL/BSD,4,5,5,3,5,3,5,3,3,4,5,3,4,3,3,3,4,3,5,2,2,3,3.6,Low,Sail pluggable-storage architecture = port pattern
+Amazon Neptune,3 Triplestore,Commercial,4,4,4,2,4,4,2,5,3,5,3,3,4,3,3,5,4,5,4,3,5,4,3.8,Medium,Managed ops; weak inference
+Progress MarkLogic,3 Triplestore,Commercial,4,4,4,3,4,4,3,5,3,3,1,3,3,3,4,3,3,4,4,3,4,3,3.4,Low,Universal index across JSON/XML/RDF
+TerminusDB 12.x,3 Triplestore,DISPUTED,3,4,3,2,3,3,3,3,3,4,5,3,2,3,5,2,4,4,1,2,2,2,3.0,Low,Git-like data versioning - BLOCKED pending Legal
+Neo4j + n10s,3 Triplestore,GPLv3 CE,3,4,3,2,3,4,4,4,4,4,3,3,5,4,3,4,4,4,2,3,4,4,3.5,Medium,GPLv3 - never link; wire-protocol only
+Ontop,4 OBDA,Apache 2.0,4,5,4,4,5,4,3,3,2,3,5,3,3,3,5,2,3,2,5,1,2,3,3.3,Low,OBDA unfold-optimize-emit = CML blueprint
+Timbr.ai,4 OBDA,Commercial,4,4,4,3,4,4,3,3,4,4,2,3,2,3,4,3,3,3,4,2,3,3,3.3,Medium,SQL-native semantic views for BI tools
+Anzo / AnzoGraph (Altair),4 OBDA,Commercial,4,5,4,3,4,5,3,4,4,3,2,3,3,4,4,3,3,4,4,2,4,4,3.6,Medium,MPP distributed graph compute
+Morph-KGC,4 OBDA,Apache 2.0,3,4,4,2,5,4,3,2,2,4,5,3,2,3,4,2,3,2,5,1,1,3,3.0,Low,Vectorized Pandas triple materialization
+RMLStreamer / SDM-RDFizer,4 OBDA,Open Source,3,4,4,2,5,4,3,2,2,4,5,3,2,3,4,2,3,2,5,1,1,3,3.0,Low,Streaming RML over Kafka/Flink
+Karma,4 OBDA,Open Source,3,3,4,2,4,2,3,2,3,2,5,2,2,2,4,1,2,2,5,2,1,2,2.7,None,ML-assisted mapping - never productized; EOIP should
+Palantir Foundry / AIP,5 Operational,Commercial,5,5,3,3,3,5,4,5,5,4,1,4,5,1,5,5,5,5,3,4,5,5,4.0,HIGHEST,Ontology as agent safety boundary + Actions layer
+Microsoft Fabric semantic layer,5 Operational,Commercial,4,5,3,2,3,5,3,5,4,5,3,4,5,2,4,5,4,5,4,4,5,4,3.9,High,Bundling distribution advantage
+Oracle AI Data Platform,5 Operational,Commercial,4,5,4,4,4,5,3,5,3,4,2,4,4,2,4,4,4,5,4,4,5,4,4.0,Medium,Trillion-triple scale inside the DB
+Cosmo Tech,5 Operational,Commercial,3,4,3,3,2,4,3,3,3,3,2,3,2,2,5,3,3,3,4,2,4,3,3.1,Low (vertical),Simulation over ontology graph
+Cinchapi Concourse,5 Operational,Comm/OpenCore,3,4,3,2,3,4,3,3,3,3,3,3,2,3,4,2,3,4,3,2,3,3,3.0,Low,Temporal/time-travel operational records
+Essential Cloud,5 Operational,Commercial,3,3,3,2,3,2,2,3,3,3,4,3,2,3,3,2,2,3,4,2,3,3,2.8,Low,EA meta-model for capability mapping
+OpenMetadata,6 Catalog,Apache 2.0,4,4,3,2,4,4,4,4,4,4,5,3,4,3,4,4,4,3,5,3,2,4,3.7,Medium,MCP server pattern - study it
+data.world,6 Catalog,Commercial,4,4,5,3,5,4,3,4,4,5,2,3,3,3,4,4,3,4,4,3,4,4,3.7,Medium,RDF-native catalog backplane
+Collibra,6 Catalog,Commercial,5,4,2,1,3,4,3,5,4,4,1,3,5,2,4,4,4,4,4,4,5,5,3.6,Low,Governance workflow depth
+Alation,6 Catalog,Commercial,4,4,2,1,3,4,3,4,4,4,2,3,4,2,4,4,3,4,4,3,4,4,3.3,Low,Behavioral intelligence from query logs
+OvalEdge,6 Catalog,Commercial,3,3,3,2,3,3,3,3,3,3,3,3,3,3,4,3,3,3,4,2,3,3,3.0,Low,Automated synonym resolution agents
+DataHub,6 Catalog,Apache 2.0,4,5,3,2,4,4,4,3,3,4,5,3,4,3,4,4,4,3,5,2,2,3,3.5,Medium,Kafka event-driven metadata streaming
+Apache Atlas,6 Catalog,Apache 2.0,3,3,3,2,3,3,3,3,2,2,5,2,3,3,2,3,3,3,5,2,2,2,2.8,Low,Typed meta-model + classification tags
+ROBOT,7 CI/CD,BSD,4,3,5,4,5,3,4,1,2,4,5,2,4,2,4,1,5,2,5,1,1,2,3.1,Low,CLI ontology build pipeline
+pySHACL,7 CI/CD,Apache 2.0,3,3,5,2,5,3,3,2,2,4,5,2,3,3,2,1,4,1,5,1,1,2,2.8,None,ADOPT - reference SHACL implementation
+TopBraid SHACL API,7 CI/CD,Apache 2.0,3,3,5,2,5,3,3,2,2,4,5,2,2,3,2,1,4,1,5,1,2,2,2.8,None,JVM only - not needed for Python stack
+OOPS! Pitfall Scanner,7 CI/CD,Open Source,3,2,4,2,4,2,2,1,3,3,5,2,2,2,4,1,3,1,5,1,1,2,2.5,None,BUILD EQUIVALENT - ONT-013
+Widoco / LODE,7 CI/CD,Apache/MIT,3,2,4,1,4,3,2,1,4,4,5,2,2,2,3,1,3,1,5,3,1,2,2.6,None,BUILD EQUIVALENT - ONT-014
+Mondeca,8 Enrichment,Commercial,3,3,4,3,4,3,3,3,3,3,2,3,2,3,3,2,2,3,4,3,3,3,3.0,Low,Content-to-ontology auto-classification
+Diffbot,8 Enrichment,Commercial,4,4,3,2,3,5,2,3,4,5,2,3,4,2,5,4,3,4,4,2,3,4,3.4,Low,Autonomous web-to-entity extraction
+DeepOnto,8 Enrichment,Apache 2.0,3,3,4,4,4,2,4,2,2,3,5,2,3,2,5,1,3,1,5,1,1,3,2.9,None,ADOPT - BERT ontology alignment + subsumption prediction
+spaCy / Textacy,8 Enrichment,MIT,4,4,2,1,3,4,5,3,4,4,5,2,5,2,3,2,4,2,5,3,2,3,3.3,None,Entity linking pipeline to custom KB
