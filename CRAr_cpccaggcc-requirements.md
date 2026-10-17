@@ -4,15 +4,17 @@
 |---|---|
 | Document | `CRAr_cpccaggcc-requirements.md` — the single canonical requirements specification |
 | Companion | `CRAr_cpccaggcc-implementation.md` (how to build and prove it), `CRAr_cpccaggcc-tracker.html` (progress view), `ontology-analysis-dashboard.html` (analysis view) |
-| Version | 3.0-COMBINED |
-| Date | 2026-10-17 (Asia/Calcutta) |
+| Version | 3.2-COMBINED |
+| Date | 2026-10-18 (Asia/Calcutta) for v3.2 and v3.1; v3.0 dated 2026-10-17 |
 | Status | Development specification. **Every clause starts OPEN.** Nothing in this document is accepted by the act of writing it. |
 | Owner | Vikram (Avyukthi AI); files credited to Ravaleedhar Reddy |
-| Baseline revision named by sources | `ccf9e2891070b9b10eb05791ef8cf4cd1ca08731` (must be re-captured by the agent; see CRA-001) |
+| Baseline revision named by sources | `ccf9e2891070b9b10eb05791ef8cf4cd1ca08731` (must be re-captured by the agent; see CRA-001). HEAD observed when v3.1 was prepared (2026-10-18): `d771fd66ab57d7e860b17f301815fb2421152688` |
+| Change in 3.1 | Module M10 (CRA-043..CRA-045), 12 appended `[GN]`/`[PRM]` clauses, gaps G19-G21, conflicts X-34..X-42, decisions H-15..H-17, scenarios E13-E14, CRA-005.8 origin corrected, re-measured repository facts; see section 22 |
+| Change in 3.2 | Decisions applied: H-15 accepted (tiered CPU-first numerical stack, delegated), H-16 accepted (CUDA packages not redistributed), H-17 open with an interim CPU-only policy; CRA-043.11, CRA-044.13 and CRA-026.13 added; decision records in `docs/decisions/`; see section 22 |
 
 ### Contents
 
-0. How this document was produced · 1. Objective and scope · 2. Completion contract · 3. Agent protocol · 4. Baseline and gaps · 5. Defaults, profiles, quality gates · 6. Canonical contracts · 7. Detailed requirements CRA-001..CRA-042 · 8. Architecture · 9. Connection factory coverage · 10. Multiformat acquisition · 11. API surface · 12. Threat register · 13. Licensing decisions · 14. Benchmarks and QA · 15. Observability and operations · 16. Gates, roadmap, cost · 17. Scenarios and release checklist · 18. Conflicts and human decisions · 19. Traceability · 20. Reproduction probe and fixtures · 21. Source coverage
+0. How this document was produced · 1. Objective and scope · 2. Completion contract · 3. Agent protocol · 4. Baseline and gaps · 5. Defaults, profiles, quality gates · 6. Canonical contracts · 7. Detailed requirements CRA-001..CRA-042 · 8. Architecture · 9. Connection factory coverage · 10. Multiformat acquisition · 11. API surface · 12. Threat register · 13. Licensing decisions · 14. Benchmarks and QA · 15. Observability and operations · 16. Gates, roadmap, cost · 17. Scenarios and release checklist · 18. Conflicts and human decisions · 19. Traceability · 20. Reproduction probe and fixtures · 21. Source coverage · 22. Change log
 
 ## 0. How This Document Was Produced and How to Read It
 
@@ -28,19 +30,22 @@
 | 6 | `ontology-analysis-dashboard.html` | 636 lines | `1109fa46de1fa836c0cf5d3d8ce78baeaf6a0d5ba1f9a7bebb223dd81d2acba8` | Scorecard/backlog/inversions/gaps view of OCA | OCA |
 | 7 | `competitive-research-matrix.csv` | 55 rows x 31 columns | `69965d8f6cb308e94fa963e150573e5a8da078ae0b2adef566bbaadc4bf96162` | Evidence-qualified scores (7 dims scored, 15 ND) | CRA |
 | 8 | `ontology-comparison-matrix.csv` | 58 rows x 28 columns | `e4ca9dce070c298bf7450e018579b12e866abaf8e411badbc78efcd72334c4a3` | Indicative scores incl. 3 EOIP rows | OCA |
+| 9 | `crarprompt.txt` | 610 lines | `c1e36628113e68929fb4b4600a3fe65fcc674bacd79315cc0d8bf716af215155` | The original attachment (role, rubric, 16 deliverables, eight tool categories, enterprise-source list) and its closing instruction on deterministic semantics plus probabilistic AI; previously consumed through CRAr.md, final instruction now traced explicitly (v3.1) | PRM |
+| 10 | `EOIP-engg-doc-pkg/Graph-Neurons-requirements.md` | 1233 lines; 36 requirements GN-001..GN-706 | `d4c5f674844aa7987a0e623f327df46be4878d8662ba8eedb5b3bc879a1413a7` | Neural-fabric engineering spec: tiered numerical stack, anti-stub verification, learned graph models on graphs, meta-graphs, living brain and ontology; repository-measured hash-stub finding (v3.1) Revised v1.1 for decisions H-15..H-17 (v3.2). | GN |
+| 11 | `EOIP-engg-doc-pkg/Graph-Neurons-implementation-plan.md` | 454 lines | `a5cc120ce71607576bc14af41b36094e6f834c9b878ed8640fa5b8e2327157e3` | Phases, evidence ledger, prohibitions and risks NR1-NR18 for the neural fabric (v3.1) Revised v1.1 for decisions H-15..H-17 (v3.2). | GN |
 
 ### 0.2 Combination rules (binding)
 
 1. **CRAr.md is the base.** Its 40 requirements and 210 numbered clauses are reproduced **verbatim** with their original numbers (`CRA-020.3` means the same obligation in CRAr.md and here).
-2. **Additions are appended, never renumbered.** Content from AGG, OCA and CRA that adds a concrete obligation is appended as further numbered clauses after the CRAr clauses, each tagged with its origin (`[AGG]`, `[OCA]`, `[CRA]`, `[RES]`). `[RES]` marks a reconciliation decision made in this document.
-3. **Two new requirements** carry obligations no source requirement owned: **CRA-041** (truthful positioning, claims and disclosure governance — ONT-012, OR6, patent candidates) and **CRA-042** (competitive research qualification and maintenance — ND scores, version pins, license conflicts). Total: **42 requirements**.
+2. **Additions are appended, never renumbered.** Content from AGG, OCA and CRA that adds a concrete obligation is appended as further numbered clauses after the CRAr clauses, each tagged with its origin (`[AGG]`, `[OCA]`, `[CRA]`, `[RES]`, and from v3.1 `[GN]` for Graph-Neurons and `[PRM]` for the original prompt). `[RES]` marks a reconciliation decision made in this document.
+3. **Two new requirements** carry obligations no source requirement owned: **CRA-041** (truthful positioning, claims and disclosure governance — ONT-012, OR6, patent candidates) and **CRA-042** (competitive research qualification and maintenance — ND scores, version pins, license conflicts). Total: **42 requirements**. **v3.1** adds Module M10 with three requirements that no existing requirement owned — **CRA-043** (numerical compute stack), **CRA-044** (learned graph intelligence) and **CRA-045** (deterministic–probabilistic boundary) — plus clauses appended to CRA-001/014/023/025/026/028/035/036/037. Total: **45 requirements**.
 4. **Contradictions are never silently merged.** Each is recorded in the conflict register (section 18) with the binding resolution. Where a decision belongs to a human (budget, SLA, legal, product identity) it becomes a decision item `H-xx` and the dependent clauses stay BLOCKED until it is recorded.
 5. **Evidence discipline wins over aspiration.** Where AGG/OCA state a capability, score or number without evidence, it is adopted only as a *target*, *default* or *hypothesis*, never as a fact or completion claim.
 6. **The ONT-001..ONT-020 backlog, F1-F5 findings, I1-I20 inversions, G01-G18 gaps and INV-01..INV-55 inversions** are all traced to requirement clauses (section 19). Nothing from any source is dropped.
 
 ### 0.3 Precedence when two statements conflict
 
-`Normative W3C/IETF standard` > `PROBE/LOCAL evidence (CRA, CRAr)` > `repository-measured facts (OCA)` > `documented vendor facts (DOC)` > `this document's [RES] decisions` > `aggregated targets (AGG)` > `indicative scores`. A later human decision recorded in the ledger (`H-xx`) overrides `[RES]` decisions in its scope.
+`Normative W3C/IETF standard` > `PROBE/LOCAL evidence (CRA, CRAr)` > `repository-measured facts (OCA)` > `documented vendor facts (DOC)` > `this document's [RES] decisions` > `aggregated targets (AGG)` > `indicative scores`. A later human decision recorded in the ledger (`H-xx`) overrides `[RES]` decisions in its scope. `[GN]` repository-measured facts rank with OCA; `[GN]` design defaults and thresholds rank with AGG targets (adopted as defaults, never as facts). Where Graph-Neurons and this document differ, this document governs (X-34..X-42).
 
 ### 0.4 Glossary
 
@@ -55,6 +60,11 @@
 | ND | Not determined; never a zero, never averaged |
 | LPG | Labeled property graph (EOIP's current native model) |
 | CML | Connector Mapping Language (ONT-005) — YAML front-end of the mapping IR |
+| GN / PRM | Origin tags (v3.1): Graph-Neurons specification and plan / the original prompt (`crarprompt.txt`) |
+| Producer class | Deterministic (exact parsing, validation, reasoning, query, traversal, mapping) or probabilistic (embeddings, LLMs, learned graph models, OCR/ASR/vision, sampled traversal) — CRA-045.1 |
+| Dual path | Running the deterministic path beside the probabilistic one and reporting CORROBORATED, DISPUTED or UNCORROBORATED — CRA-045.3 |
+| Anti-stub probes | Loss descent, parameter change, label-permutation control and structural coherence — the four checks proving a learned model learned (CRA-044.3) |
+| Tier N0-N3 | Optional numerical-stack extras: `numerics`, `neural`, `neural-text`, `neural-research` (CRA-043.1) |
 
 ## 1. Objective, Scope and Authority
 
@@ -67,6 +77,10 @@ Develop a commercially distributed, modular enterprise knowledge graph and ontol
 5. Preserves source permissions, provenance, revisions, deletions and no-egress boundaries across every derivative, and exposes accessible, truthful, governed operational workflows including approved write-back actions.
 
 **Strategic position (OCA verdict, adopted):** become standards-compatible at the boundary while widening the moat in the middle — enterprise source coverage, ontology-as-code lifecycle, multi-format ingestion and agentic grounding. Do **not** build a new native quad store, DL tableau reasoner, Protégé-class editor or VocBench-class thesaurus suite; integrate qualified engines behind ports.
+
+**Deterministic and probabilistic semantics (v3.1).** The original attachment closes with: *"my architecture should be capable enough to handle deterministic semantics (W3C standard ontologies, schema enforcement) and probabilistic AI (vector embeddings, LLM context windows, and graph traversals)."* Item 4 above states the unification; v3.1 assigns owners to the parts no requirement held: **CRA-045** (the boundary, promotion rules and dual-path arbitration), **CRA-026.10-026.12** (LLM context windows), **CRA-043** (the numerical substrate that every probabilistic capability presupposes and the repository does not have) and **CRA-044** (learned models over the graph planes). Graph traversal is deterministic as an exact algorithm and part of the probabilistic pipeline when it assembles LLM context or uses learned or sampled weights; it keeps its exactness label in both uses (CRA-045).
+
+**Compute policy (v3.2, decisions H-15 to H-17).** EOIP distributes CPU-only numerical builds, never redistributes CUDA packages, and qualifies every binding gate on CPU-only hardware. GPU acceleration is optional, customer-provisioned and unqualified until H-17 is decided (CRA-043.2, CRA-043.11; `docs/decisions/`).
 
 **Not authorized by this document:** production crawling, customer-data export, source-system write-back, paid cloud provisioning, publication of claims, open-sourcing, or public disclosure of patent-candidate mechanisms. Each needs environment access, business authorization and the gates in CRA-027, CRA-040 and CRA-041.
 
@@ -155,15 +169,15 @@ Validity rules (the ledger verifier must enforce all): every `evidence_files` en
 }
 ```
 
-Item kinds: `clause`, `acceptance`, `scenario` (E01-E12), `decision` (H-01..H-14), `research` (R-C01..R-C55), `conflict` (X-01..X-33). The tracker HTML reads and writes this format.
+Item kinds: `clause`, `acceptance`, `scenario` (E01-E14), `decision` (H-01..H-17), `research` (R-C01..R-C55), `conflict` (X-01..X-42). The tracker HTML reads and writes this format.
 
 ### 2.5 Refusal conditions (release is refused if any is observed)
 
-Fabricated examples presented as live results; invalid data accepted as conformant; unsupported features treated as pass; cross-tenant or cross-ACL leak (including via inference, counts, vectors, events, exports or raw downloads); uncontrolled egress; unbounded parser/plugin execution; unauthorized or replayed action; unqualified durable-store fallback to memory; missing, stale or source-changed receipts; required test skipped; unsigned or tampered release; unresolved required license or regulatory approval; external claim without CRA-041 evidence.
+Fabricated examples presented as live results; invalid data accepted as conformant; unsupported features treated as pass; cross-tenant or cross-ACL leak (including via inference, counts, vectors, events, exports or raw downloads); uncontrolled egress; unbounded parser/plugin execution; unauthorized or replayed action; unqualified durable-store fallback to memory; missing, stale or source-changed receipts; required test skipped; unsigned or tampered release; unresolved required license or regulatory approval; external claim without CRA-041 evidence; learned model promoted without passing its anti-stub probes and baselines (CRA-044); probabilistic output exposed as an asserted fact, or context truncation not disclosed (CRA-045, CRA-026); an `nvidia-*` package in any distributed artifact (H-16); a binding gate met only with a GPU while H-17 is open (CRA-043.11).
 
 ## 3. Agent Execution Protocol (summary; full procedure in the implementation document)
 
-1. Read this entire file, the implementation file, and the relevant existing CP/GUI plans (`GUI-UIX-implementation-plan.md`, `GUI-UIX-audit-2026-10-16.md`, `LICENSING.md`) before editing. Capture `git status` and `HEAD`; preserve concurrent work. Do not infer completion from earlier audit labels.
+1. Read this entire file, the implementation file, and the relevant existing CP/GUI plans (`GUI-UIX-implementation-plan.md`, `GUI-UIX-audit-2026-10-16.md`, `LICENSING.md`) and, for Module M10, `EOIP-engg-doc-pkg/Graph-Neurons-requirements.md` and `Graph-Neurons-implementation-plan.md` before editing. Capture `git status` and `HEAD`; preserve concurrent work. Do not infer completion from earlier audit labels.
 2. Enumerate existing composed routes, contracts (`packages/eoip/contracts/`), stores, connectors, validators, model providers, frontend screens and real tests. Identify one canonical owner per capability and extend it before creating anything new.
 3. Create the clause-level ledger, dependency map and decision records. Implement Gate A then Gate B foundations, then one complete source -> evidence -> accepted graph -> query -> UI journey (E01) before widening.
 4. For each change define inputs/outputs, tenant boundary, persistence, cancellation, compatibility, resource limits and negative cases before writing production code.
@@ -180,14 +194,15 @@ Fabricated examples presented as live results; invalid data accepted as conforma
 | API/runtime | `pyproject.toml`: Python >=3.11, FastAPI, Pydantic v2, httpx, Uvicorn, MCP; `platform_router.py` 133+ paths | Reuse; dependency ranges are not locked versions |
 | Graph | `packages/eoip/graph/store.py`, `backends.py:189-245`: HugeGraph, Neo4j, Neptune, memory; LPG with manifest-governed labels (`ontology/manifest.py`, 505 LOC) | Reuse the adapter boundary; capability strings are not conformance |
 | Ontology | 14 modules ~3,400 LOC: `gitops.py` 793, `rdf.py` 700, `skos.py` 450, `gitops_router.py` 376, `packs.py` 326, `domain_pack_manager.py` 323, `shacl_validator.py` 194, `studio.py` 177, `drift.py` 152, `stewardship.py` 151, `industry_templates.py` 139, `embedding_drift.py` 134, `schema_gen.py` 127 | GitOps, drift and schema-gen are differentiators; RDF I/O, reasoning and SHACL are not standards-grade |
-| Acquisition | `connectors/` 38 modules, `factory.py` 1,135 LOC, 8 application categories; base, registry, webhooks, crawlers | Factory exists; generic REST fallback is not arbitrary-system support |
+| Acquisition | `connectors/` 38 modules (measured 2026-10-18: 38 `.py` files including `__init__.py` and infrastructure such as base, config, errors, registry and sync; CRA-001.13), `factory.py` 1,135 LOC, 8 application categories; base, registry, webhooks, crawlers | Factory exists; generic REST fallback is not arbitrary-system support |
 | Files | `fileparse/` 13 modules incl. `engine.py`, text/office/archive/email/image adapters, budgets | Real paths exist; tool-dependent formats and media qualification partial |
-| Retrieval/models | Hashing vector index default; optional Ollama and sentence-transformers | Hashing is not semantic embedding |
+| Retrieval/models | Hashing vector index default; optional Ollama and sentence-transformers; `gnn/engine.py` node2vec/TransE are SHA-256 digests (G19) | Hashing is not semantic embedding or graph learning |
+| Numerical stack | None: no numpy, scipy, scikit-learn, torch, torch-geometric or networkx declared or importable (measured 2026-10-18) | Introduce as tiered optional extras (CRA-043), never core |
 | Query | `qlang/`: EQL, EOQL, OSQL, JQLite, JSONPath, Lucene, taxonomy DSL; **no SPARQL** | Restricted grammars; names do not prove SPARQL/SQL/Cypher equivalence |
 | Cognitive | `brain/`, `intelligence_eng/`, 35 agent types, 14 control loops, 9 reasoning strategies, verification engine, `tools_contract/`, `sdk/`, `authz/`, `token_budget/`, `graph_graph/`, `moonshot/ontology_induction.py` | Existing assets to reuse; capabilities still need receipts before claims |
 | Frontend | React/Vite, 90+ components, 146 ARIA attributes, zero i18n; GUI audit partial | Rich UI is not complete journeys |
 | Ops/security | Tenancy, policy, jobs, reports, egress, observability (Prometheus/OTel present, alerting absent), WAL exists, no DR drills | Reuse and audit |
-| Tests | 239 test files; collection 60-120 s; some pre-existing failures | Track, do not delete |
+| Tests | 239 test files asserted; 302 `test_*.py` measured at `d771fd6` on 2026-10-18 (CRA-001.13); collection 60-120 s; some pre-existing failures | Track, do not delete |
 | Licensing | `LicenseRef-EOIP-Proprietary`, `LICENSING.md`; dependency audit pending; `extract-msg` unresolved | Owned code commercial; upstream terms separate |
 
 ### 4.2 Gaps and findings (all closed through requirements)
@@ -217,6 +232,9 @@ Fabricated examples presented as live results; invalid data accepted as conforma
 | G16 | Governance/jobs/recovery modules not qualified (CRA) | — | CRA-003, CRA-031..033, CRA-040 |
 | G17 | Component/distribution licensing unresolved (CRA) | `LICENSING.md` | CRA-035 |
 | G18 | Target scale, measured workload and staffing not supplied (CRA) | — | CRA-001, CRA-036, H-01, H-10 |
+| G19 | `gnn/engine.py` presents node2vec, TransE, link prediction and node classification but computes SHA-256 digests of identifiers and walk strings: no objective, optimiser or learning; structurally identical nodes receive uncorrelated vectors (GN, LOCAL, measured 2026-10-18) | `gnn/engine.py:33-131` | CRA-044, CRA-025.9 |
+| G20 | No numerical stack: numpy, scipy, scikit-learn, torch, torch-geometric and networkx are absent from `pyproject.toml` and the environment, although CRA-014, CRA-023.6/023.7, CRA-025 and CRA-026 presuppose one (GN, LOCAL) | import check; `pyproject.toml` | CRA-043 |
+| G21 | No requirement owned the deterministic–probabilistic boundary: dual-path arbitration, promotion of probabilistic output, and LLM context-window limits, tokenizer-accurate budgets and truncation disclosure were unspecified (PRM) | `crarprompt.txt` closing instruction; section 1 item 4 | CRA-045, CRA-026.10-026.12 |
 
 ## 5. Chosen Defaults, Profiles and Quality Gates
 
@@ -231,6 +249,10 @@ Fabricated examples presented as live results; invalid data accepted as conforma
 | Reasoning | ELK (EL) default classifier; Jena rules for RL; Openllet/HermiT optional; native subset labelled | Profile mismatch rejected |
 | Source data | Source-authoritative ACL and revision; metadata-only discovery first | Broader scopes separately authorized |
 | AI | Provider-disabled / no-egress until an approved provider is configured | Explicit provider/model revision |
+| Numerical stack | Tiered optional extras N0-N3 (H-15 accepted); CPU-only builds in every distributed artifact (H-16); never a core dependency | GPU optional, customer-provisioned and unqualified until H-17; every binding gate met on CPU (CRA-043.11) |
+| Probabilistic output | `proposed` knowledge state; dual path wherever a deterministic path exists | Promotion only through deterministic validation plus review (CRA-045) |
+| LLM context window | Limits from the model manifest; budgets measured with the model tokenizer; reduction disclosed | Per model revision (CRA-026.10-026.12) |
+| Learned models | Anti-stub probes, five baselines and calibration before promotion | Thresholds change only by recorded review (CRA-044) |
 | Publishing | Stage -> validate -> review when required -> publish exact revision | Low-risk auto-publication only via audited rule |
 | Query | 30 s online deadline; 4 GiB memory; 10,000 rows/page; depth 3; longer work is a job | Tenant quotas and source limits only lower these |
 | Acquisition | 2 concurrent operations per source; 120 req/min unless vendor says less; full-jitter backoff 1-300 s | Vendor limits, Retry-After, budgets |
@@ -255,6 +277,7 @@ Fabricated examples presented as live results; invalid data accepted as conforma
 | Concurrent users | 5 | 100 | 500 | — |
 | Source instances | 2 | 20 | 100 | — |
 | Reference compute (starting experiment) | 8 vCPU, 32 GiB | 3 x 16 vCPU / 128 GiB data nodes + separate API/workers | 3 x 32 vCPU / 256 GiB + measured API/workers/index | AGG P2: 6 x 32 vCPU / 256 GiB |
+| Accelerator (v3.2) | none — CPU only | none — CPU only | none — CPU only | GPU only after H-17 |
 | Point read p95 | <= 250 ms | <= 250 ms | <= 500 ms | < 20 ms (P1 and P2) |
 | Bounded graph page p95 | <= 750 ms (1-hop) | <= 1 s | <= 2 s | P1 < 150 ms, P2 < 250 ms |
 | Approved query suite p95 | — | <= 3 s | <= 10 s | P1 < 1.5 s, P2 < 3 s |
@@ -277,6 +300,10 @@ Count asserted, inferred, named graphs, raw bytes, vector bytes, replicas, index
 | Visual diagram candidates | Relation precision >= 0.95, recall >= 0.85 | Human review before publication |
 | AI-suggested mappings (ONT-006) | >= 70% property maps accepted unedited (Jira, ServiceNow) | Never auto-activated |
 | Pitfall lint (ONT-013) | >= 20 antipattern classes with gold fixtures | Error severity blocks merge |
+| Learned link prediction / classification (CRA-044) | Primary metric >= common-neighbours + 0.05 and >= rule baseline + 0.05; ECE <= 0.10; label-permutation gap >= 0.10 | AUPRC primary; five baselines; type-constrained negatives |
+| Seeded reproducibility (CRA-043) | Same seed in separate processes reproduces metrics within 1e-4 | Non-deterministic kernels listed in the receipt |
+| Explanation faithfulness (CRA-044.10) | >= 95% of predictions with evidence paths; removing the evidence subgraph lowers the score >= 50% | Otherwise labelled not faithful |
+| Context assembly (CRA-026.10-026.12) | 100% of reduced contexts disclosed; zero mid-assertion cuts; manifest token count equals the model tokenizer count | Restricted evidence filtered before budgeting |
 
 Start with at least 200 independently annotated items per enabled AI task (>= 50 per release-critical stratum), negative/unanswerable/adversarial cases, two-reviewer adjudication and uncertainty intervals.
 
@@ -299,6 +326,9 @@ Reuse `packages/eoip/contracts/` through compatible extensions; do not create du
 | QueryResult | dialect/profile/plan, authorized scope, revision/freshness/watermark, pagination/partial state, evidence, actual execution metrics |
 | ActionIntent | action_id, action_shape_iri, target_system_id, idempotency_key (16-128), parameters + parameters_sha256, preconditions, source/base/policy revisions, status (PROPOSED, STAGED, APPROVED, EXECUTING, COMPLETED, FAILED, COMPENSATED, UNKNOWN_OUTCOME), requested_by, approved_by, approval timestamp/signature/nonce/expiry, dry_run, read_back query, compensation_action_id, tenant_id |
 | CapabilityEntry | capability_id, provider_id, provider_version, profile, state (section CRA-001), last_probe_at, receipt_ref |
+| ModelLineage | model_id, model_version, producer_class (deterministic, probabilistic), trained_at, graph_snapshot_id, code_commit, seed_bundle, environment_digest, calibrator_id (nullable), gate_report_ref |
+| DualPathResult | question digest, deterministic result or `none_available`, probabilistic result, agreement (CORROBORATED, DISPUTED, UNCORROBORATED), evidence and producer class for each path |
+| ContextManifest | model revision, tokenizer, max input/output tokens, ordered evidence entries (assertion_id, locator, tokens), template revision, retrieval parameters, reduction applied, omitted count, digest |
 
 Reference Pydantic v2 skeleton (merge into existing contracts, do not duplicate):
 
@@ -424,6 +454,8 @@ class ActionIntent(BaseModel):
 
 Note: `datetime.utcnow` (used in CRAragg) is deprecated in Python 3.12+; use timezone-aware `datetime.now(timezone.utc)` as above.
 
+Graph-Neurons `AssertionStatus` and `PredictedEdge` (GN-002) are implemented as a mapping onto `CanonicalAssertion`/`KnowledgeState`, never as a parallel enum (X-34): OBSERVED -> asserted, DERIVED -> inferred, PREDICTED -> proposed, REJECTED -> rejected, CONFIRMED -> asserted with the promotion approver and prior `proposed` state recorded.
+
 ## 7. Detailed Requirements
 
 All requirements and clauses start **OPEN**. Existing code paths are investigation/reuse locations only, not proof of acceptance. Dependencies are order constraints, not permission to block independent work. Universal non-evidence (applies to every clause): Existence of a file, class, function, route, test file, test name, UI control, registry entry or commit message. Mock, stub, fake, hashing or in-memory substitutes standing in for the real backend/provider. Skipped, xfailed, errored or timed-out required tests; results from a different backend or a stale artifact. Screenshots, markdown ticks, tracker/dashboard state or agent self-assessment without an independently reviewed receipt.
@@ -451,9 +483,10 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - **CRA-001.7** `[RES]` Capability state is exactly one of `SUPPORTED_QUALIFIED`, `SUPPORTED_UNQUALIFIED`, `DISABLED`, `UNAVAILABLE`, `UNLICENSED`, `UNSUPPORTED`. `SUPPORTED_QUALIFIED` can only be set by the ledger verifier from an ACCEPTED receipt; it can never be authored in configuration.
 - **CRA-001.8** `[AGG]` A request needing a capability that is not usable returns a structured error and never an empty success: unsupported construct in a valid request -> HTTP 422 `UNSUPPORTED_CAPABILITY` naming `unsupported_construct`; configured but down -> HTTP 503 `CAPABILITY_UNAVAILABLE`; not entitled -> HTTP 403 `CAPABILITY_NOT_ENTITLED`; disabled by configuration -> HTTP 409 `CAPABILITY_DISABLED`.
 - **CRA-001.9** `[RES]` Ledger location: `.audit-scratch/ledger.json`; receipts: `.audit-scratch/receipts/<clause-id>/<run-id>.json` (one directory per clause so repeated runs are retained). The ledger references each receipt by SHA-256. The CRAragg single-file path `.audit-scratch/receipts/{clause_id}.json` is accepted as a read-only legacy alias only.
-- **CRA-001.10** `[RES]` The ledger covers every clause `CRA-xxx.n` of CRA-001..CRA-042, every acceptance obligation `CRA-xxx.A`, end-to-end scenarios E01-E12, human decisions H-01..H-14 and research records R-C01..R-C55. The tracker HTML (`CRAr_cpccaggcc-tracker.html`) imports and exports this exact schema; the tracker is a view and is never evidence.
+- **CRA-001.10** `[RES]` The ledger covers every clause `CRA-xxx.n` of CRA-001..CRA-042, every acceptance obligation `CRA-xxx.A`, end-to-end scenarios E01-E12, human decisions H-01..H-14 and research records R-C01..R-C55. (v3.1: CRA-001..CRA-045, E01-E14, H-01..H-17, X-01..X-42.) The tracker HTML (`CRAr_cpccaggcc-tracker.html`) imports and exports this exact schema; the tracker is a view and is never evidence.
 - **CRA-001.11** `[OCA]` Re-measure, at the pinned baseline commit, the repository facts asserted by the source analyses and record measured value versus asserted value: Python requirement (pyproject `>=3.11` vs asserted 3.12+), 587 `.py` files under `packages/`, 133+ API paths, 38 connector modules, `connectors/factory.py` 1,135 LOC with 8 application categories, `ontology/` 14 modules ~3,400 LOC, 13 `fileparse/` modules, 239 test files, 90+ React components, 146 ARIA attributes, zero i18n. Discrepancies are recorded, never silently corrected.
 - **CRA-001.12** `[CRA]` Run the G01-G03 reproduction probe (combined requirements section 19) at baseline and store its raw output as the baseline defect receipt; later remediation receipts must reference it.
+- **CRA-001.13** `[GN]` Record the facts re-measured at `d771fd66ab57d7e860b17f301815fb2421152688` on 2026-10-18 beside the asserted values (CRA-001.11): 302 `test_*.py` files (asserted 239); 38 `.py` files in `connectors/` including `__init__.py` and infrastructure modules (base, config, errors, registry, conflicts, drift, reconciliation, sync), so '38 connector modules' overstates the connector count; no numerical library declared or importable (G20); hash-based embeddings in `gnn/engine.py` (G19); demo axioms still in `ontology/rdf.py` (G04). These feed the CRA-001.11 facts file; they do not correct the sources.
 
 **Configuration defaults:**
 
@@ -468,6 +501,7 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - `[CRAr]` inspect an actual instance where a provider is disabled, unavailable and healthy; the UI/API must accurately distinguish all three. Corrupt a receipt or change source during verification and demonstrate that acceptance is rejected. Ledger coverage must reconcile all 40 requirements and their children without treating coverage as completion.
 - `[MERGED]` Ledger verifier rejects, with distinct reason codes, fixture ledgers containing: an ACCEPTED clause with no receipt; a receipt whose artifact digest does not match; a receipt whose `source_unchanged_during_run` is false; a receipt with `tests_skipped > 0` for a required test; a receipt older than the referenced artifact.
 - `[MERGED]` `GET /api/v1/capabilities` (or the existing equivalent route) returns all six states for a fixture configuration and the UI renders each distinctly.
+- `[GN]` The facts file reproduces the five CRA-001.13 values from commands stored with the receipt.
 
 **Not evidence of completion:**
 
@@ -625,7 +659,7 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - **CRA-005.5** `[CRAr]` Demonstrate bounded baseline and incremental acquisition, pagination, rate limits, ACL-only change, deleted/renamed items, attachments and replay. A generic Agile profile cannot substitute for actual vendor semantics.
 - **CRA-005.6** `[AGG]` Jira: Cloud REST API v3 and a separately pinned Data Center REST version; webhooks for issue created/updated/deleted and comment events; incremental JQL `updated >= watermark` with an overlap window (default 5 min) and deduplication by issue ID plus updated timestamp. Map Issue, Project, Sprint, Component, Version, Worklog, User and issue links (blocks, is blocked by, relates to, duplicates, clones) to a reviewed `jira:` vocabulary package; issue security levels and project permission schemes populate `acl_vector`; attachments go to the raw vault.
 - **CRA-005.7** `[AGG]` Rally: WSAPI v2.0; HierarchicalRequirement, Defect, Task, Iteration, Release, Milestone and PortfolioItem types; preserve parent/child epic hierarchies, defect associations and workspace/project scope.
-- **CRA-005.8** `[CRAr]` qTest: projects, test cases, test runs, executions/results and defect links; `qtest:verifiesRequirement` links to Jira issues only when the identifier resolves to an ingested Jira resource; definitions and executions remain distinct entity types.
+- **CRA-005.8** `[AGG]` qTest: projects, test cases, test runs, executions/results and defect links; `qtest:verifiesRequirement` links to Jira issues only when the identifier resolves to an ingested Jira resource; definitions and executions remain distinct entity types.
 - **CRA-005.9** `[OCA]` All three adapters express payload-to-ontology mapping in CML (CRA-017), with a parity test proving the CML output equals the previous hand-coded mapping output on a fixture corpus.
 
 **Configuration defaults:**
@@ -952,11 +986,13 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - **CRA-014.6** `[AGG]` OCR for PNG, JPG/JPEG, TIFF, WEBP and scanned PDF using a license-reviewed engine (Tesseract or PaddleOCR candidates); each line/paragraph carries a normalized bounding box `[ymin, xmin, ymax, xmax]` in 0.0-1.0 plus page number and confidence.
 - **CRA-014.7** `[AGG]` Audio/video: audio extraction with FFmpeg (build flags determine LGPL/GPL obligations, reviewed under CRA-035) for MP4, MKV, MP3, WAV, M4A; transcription with a locally hosted Whisper-family model in an isolated worker; segments carry start/end milliseconds.
 - **CRA-014.8** `[AGG]` All OCR/ASR/vision models run on-premises or inside the customer VPC from hash-pinned offline bundles; zero external API calls in no-egress mode.
+- **CRA-014.9** `[GN]` OCR, ASR and vision models require the CRA-043 tiers they depend on plus offline bundles; a missing tier sets the task capability to UNAVAILABLE with the tier named, never a metadata-only result labelled as understanding.
 
 **Acceptance obligation CRA-014.A** (only after every clause above is ACCEPTED):
 
 - `[CRAr]` real permitted media files, degraded scans/noise/unsupported codecs and large/hostile inputs. Verify no external call in no-egress mode, correct evidence locators, timeout cleanup and dependency-unavailable states. File metadata alone does not satisfy OCR/transcription/understanding.
 - `[MERGED]` Searching a spoken phrase returns the exact media file and millisecond timestamp, visible only to authorized principals (AGG).
+- `[GN]` With the required tier absent, OCR/ASR requests return 503 naming the tier; with it present and networking disabled, transcription succeeds from the offline bundle.
 
 **Not evidence of completion:**
 
@@ -1271,6 +1307,7 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - **CRA-023.6** `[AGG]` Candidate generation combines deterministic keys (email, employee ID, account ID) with probabilistic features (Jaro-Winkler and normalized labels, embedding similarity, neighbourhood structural similarity) and always supports a NIL/no-match outcome.
 - **CRA-023.7** `[OCA]` Schema/pack alignment uses a DeepOnto (BERTMap/BERTSubs) service in an isolated GPU/CPU worker (ONT-015); entity linking in text uses spaCy EntityLinker with a tenant-scoped knowledge base generated from the graph (INV-54). All outputs are candidates.
 - **CRA-023.8** `[AGG]` An immutable `IdentityMergeLedger` records every merge/split; a split restores the original nodes, edges, evidence and dependent inferences atomically.
+- **CRA-023.9** `[GN]` The probabilistic features of CRA-023.6 (embedding similarity, neighbourhood structural similarity) and the alignment worker of CRA-023.7 require CRA-043 tiers and, for structural similarity, a CRA-044 model that passed its anti-stub probes; when unavailable the candidate generator reports the reduced feature set used and never substitutes hash or random similarity.
 
 **Configuration defaults:**
 
@@ -1282,6 +1319,7 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 
 - `[CRAr]` ambiguous abbreviations, same-name entities, conflicting identifiers and wrong high-confidence matches. Merge then split across restart and compare every edge/evidence/reference with the original. Denied/rejected candidates must never appear as accepted facts.
 - `[MERGED]` Merge two entities, query unified properties, split, and verify the original state is restored exactly (AGG).
+- `[GN]` With the structural model unavailable, candidates list only deterministic and lexical features and the response names the missing feature.
 
 **Not evidence of completion:**
 
@@ -1349,6 +1387,8 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - **CRA-025.5** `[CRAr]` Evaluate recall@k/nDCG/latency by domain/language and ACL selectivity using a labelled corpus. Record corpus splits and model/config changes; do not use graph proximity as relevance gold automatically.
 - **CRA-025.6** `[AGG]` Configurable dense providers (local sentence-transformers models or approved external) plus BM25 sparse retrieval; fusion by Reciprocal Rank Fusion (k = 60 default) with optional graph-centrality signal; vector stores (Qdrant or pgvector candidates) partitioned by tenant.
 - **CRA-025.7** `[RES]` The deterministic hashing embedder is renamed and labelled `test-hashing`; the production profile refuses it at startup.
+- **CRA-025.8** `[GN]` Graph-structure embeddings (CRA-044) and text embeddings are distinct index families with separate metadata (model, snapshot, dimension, metric) under CRA-025.1; similarity search never mixes vectors from different families or model versions.
+- **CRA-025.9** `[GN]` The hash-based vectors of `packages/eoip/gnn/engine.py` (`_deterministic_vector`, `embed_node2vec`, `embed_transe`) fall under CRA-025.7: removed from production paths, retained only as the `HashBaseline` test fixture and refused by the production profile at startup (X-40).
 
 **Configuration defaults:**
 
@@ -1360,6 +1400,7 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 
 - `[CRAr]` real configured provider, missing provider, vector shape errors, source delete/ACL change, re-embedding crash and rollback. Demonstrate no cross-tenant vector neighbor/count/answer leakage and correct read-back after restart/rebuild.
 - `[MERGED]` Vector search returns relevant chunks with exact document citations and no cross-tenant neighbours (AGG + CRAr).
+- `[GN]` Starting the production profile with the hash embedder or graph hash vectors configured fails startup with a named error; a query mixing two embedding families is rejected.
 
 **Not evidence of completion:**
 
@@ -1386,17 +1427,25 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - **CRA-026.7** `[AGG]` GraphRAG pipeline: vector entry points -> bounded multi-hop traversal (default depth 2, max 200 nodes) -> ACL pruning -> context assembly; every sentence cites a `CanonicalAssertion` ID and an `EvidenceLocator`.
 - **CRA-026.8** `[RES]` Abstention: when evidence is insufficient or calibrated confidence is below the configured threshold the answer states that it cannot be answered from authorized knowledge. The AGG threshold 0.85 is the initial value only after calibration on the held-out set; gates are CRAr's evidence precision >= 0.98, coverage >= 0.95 and abstention >= 0.95 (X-15).
 - **CRA-026.9** `[AGG]` Air-gapped deployments route generation only to self-hosted model servers (vLLM, Ollama or TGI candidates) with zero external traffic.
+- **CRA-026.10** `[PRM]` Context-window governance per configured model: maximum input and output token limits come from the provider/model manifest and are recorded with the model revision; budgets are measured with that model's own tokenizer (character or word estimates are not budgets); a context that would exceed the limit is reduced by a declared policy (prioritize evidence, then deduplicate, then drop whole lowest-priority items) and never overflows silently or is cut mid-assertion.
+- **CRA-026.11** `[PRM]` Reduction is disclosed: when authorized evidence is dropped to fit the window, the answer states that evidence was omitted and how many items, and offers the omitted list to the principal; an answer built from a reduced context is not labelled complete. Restricted evidence is filtered before budgeting so the budget and the omission count never reveal its existence.
+- **CRA-026.12** `[PRM]` Each answer stores a `ContextManifest` (section 6) — ordered `assertion_id`/EvidenceLocator entries with token counts, template revision, retrieval parameters and the reduction applied — referenced by digest from the answer so the exact context can be rebuilt under the same authorization.
+- **CRA-026.13** `[RES]` Self-hosted generation under the H-17 interim policy: the qualified air-gapped generation path uses CPU-capable inference runtimes (llama.cpp/Ollama-class candidates, subject to CRA-035 review); the GPU-oriented servers named in CRA-026.9 (vLLM, TGI) stay `UNQUALIFIED` until H-17; quality gates are measured on CPU reference hardware and latency is recorded against the CRA-036 manifest target, with model size chosen to meet them.
 
 **Configuration defaults:**
 
 | Setting | Default | Origin |
 |---|---|---|
 | traversal | depth 2, max 200 nodes | AGG |
+| context reduction policy | prioritize -> deduplicate -> drop whole lowest-priority items | PRM |
+| self-hosted generation runtime | CPU-capable (H-17 interim) | RES |
 
 **Acceptance obligation CRA-026.A** (only after every clause above is ACCEPTED):
 
 - `[CRAr]` real local or approved external model traces with actual responses, malicious documents, missing evidence, contradictory sources, unavailable provider and cancellation. Verify the cited span supports the claim and is visible to the current principal at delivery. No scripted canned answers qualify provider integration.
 - `[MERGED]` Prompt-injection documents fail to hijack the model or leak unauthorized facts (AGG).
+- `[PRM]` With authorized evidence exceeding the model context limit, the answer discloses the omission count, the context manifest reproduces the prompt token count with the model tokenizer, and no assertion is cut mid-statement; a restricted item never changes the budget or the disclosed count for an unauthorized principal.
+- `[RES]` In an air-gapped, GPU-free environment the qualified CPU runtime produces a grounded, cited answer and its latency is recorded against the CRA-036 manifest target; selecting a GPU-only server reports `UNQUALIFIED`.
 
 **Not evidence of completion:**
 
@@ -1462,11 +1511,13 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - **CRA-028.6** `[AGG]` Historical reads use an explicit `as_of` parameter on the query API (and an `eoip:asOf` service parameter for SPARQL, because standard SPARQL has no AS OF clause), returning the authorized state at that valid/transaction time.
 - **CRA-028.7** `[AGG]` Deterministic graph algorithms (BFS, Dijkstra, PageRank, Tarjan SCC) replace heuristic random-walk summaries for impact paths (G14); existing `graph/paths.py`, `algorithms.py`, `community.py`, `process_mining.py` are reused and qualified.
 - **CRA-028.8** `[AGG]` Blast-radius output lists impacted services, teams and processes with severity scores explicitly labelled heuristic unless a validated model exists.
+- **CRA-028.9** `[GN]` Learned impact propagation (CRA-044) is returned as a proposed, labelled estimate beside the deterministic blast radius of CRA-028.7/028.8 with its dual-path status (CRA-045.3); it never replaces or reorders the deterministic result.
 
 **Acceptance obligation CRA-028.A** (only after every clause above is ACCEPTED):
 
 - `[CRAr]` late events, corrections, clock skew, merges/splits, permission changes and retention across historical reads. Repeat seeded runs, compare sensitivity/gold scenarios, cancel expensive work and ensure simulated facts cannot enter asserted production knowledge without review.
 - `[MERGED]` A point-in-time query shows a since-deleted node in the historical view only to principals authorized at both times (AGG + CRAr).
+- `[GN]` For a change event both the deterministic blast radius and the learned estimate are returned; a node present only in the learned estimate is labelled proposed and uncorroborated.
 
 **Not evidence of completion:**
 
@@ -1696,11 +1747,13 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - **CRA-035.6** `[AGG]` Generate CycloneDX or SPDX SBOMs for Python, npm/browser bundles, containers, JVM workers, models and datasets with tools such as syft and a license checker; CI fails on unapproved licenses.
 - **CRA-035.7** `[OCA]` Copyleft policy: GPL/AGPL code is never linked into or bundled with the distributed core; GPL/AGPL servers (Neo4j Community GPLv3, Virtuoso OSE GPLv2) are reachable only over network protocols; WebProtégé is not integrated; HermiT (LGPL) is an optional separately installed plugin; TerminusDB is blocked pending Legal; SNOMED-CT is customer-provided only.
 - **CRA-035.8** `[OCA]` Dependency decision table (section 13) is the authoritative allowlist input to the CI license gate; every row cites the exact artifact and license snapshot.
+- **CRA-035.9** `[GN]` The numerical stack (section 13 rows for numpy, scipy, scikit-learn, torch, torch-geometric, transformers, sentence-transformers, snntorch) enters the SBOM per tier; CUDA-dependent `nvidia-*` packages are excluded from every artifact EOIP distributes (decision H-16 accepted: not redistributable); DGL and networkx are not added.
 
 **Acceptance obligation CRA-035.A** (only after every clause above is ACCEPTED):
 
 - `[CRAr]` inspect actual wheel/image/browser/VSIX/air-gap artifacts and compare embedded inventories/notices with SBOM. Tamper with a plugin/artifact and reject activation. Obtain documented legal/owner approvals; agent-written licensing documents alone cannot clear distribution rights.
 - `[MERGED]` `syft` (or equivalent) SBOM of the built image matches the dependency decision table; a test dependency with an AGPL license fails the CI gate (AGG + OCA).
+- `[GN]` The SBOM of the default CPU image contains no `nvidia-*` package; adding one to any distributed build fails the license gate.
 
 **Not evidence of completion:**
 
@@ -1728,11 +1781,13 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - **CRA-036.7** `[OCA]` Benchmark suites with committed generator commands, fixed seeds and expected-output hashes under `tests/benchmarks/ontology/` (ONT-020): LUBM (load >= 50k triples/s; Q1-Q14 p95 < 500 ms), BSBM (>= 1,000 QMpH at 100M triples), SP2Bench (no query > 30 s at 50M), SHACL throughput, classification, round-trip fidelity, CML throughput.
 - **CRA-036.8** `[RES]` Binding latency gates are the CRAr profile targets (P0/P1/P2). AGG/OCA stricter numbers (point read p95 < 20 ms at P1/P2; P2 bounded 2-hop p95 < 250 ms; ingestion > 50,000 triples/s at P2) are stretch objectives recorded in the manifest; they become binding only by decision H-01 (X-05, X-06).
 - **CRA-036.9** `[AGG]` Sustained 4-hour load test (wrk and/or Locust) per profile with memory-stability checks; CI regression gate fails on > 10% p95 latency regression versus the last accepted run (OCA).
+- **CRA-036.10** `[GN]` Learned-model qualification follows CRA-044.5: primary metrics, the five mandatory baselines, calibration error and at least three seeded trials with variability are part of the benchmark manifest; results without baselines do not qualify.
 
 **Acceptance obligation CRA-036.A** (only after every clause above is ACCEPTED):
 
 - `[CRAr]` raw machine-readable results and independent expected-answer checks bound to manifests. Any wrong answer, leakage, required timeout or missing artifact fails the corresponding gate even when median latency is fast. Vendor benchmark PDFs are comparison evidence, not EOIP execution results.
 - `[MERGED]` Machine-readable benchmark report with raw trials, oracle checks and manifests stored as receipts (AGG + CRAr).
+- `[GN]` Model benchmark receipts contain the baseline rows and three seeded trials with variability.
 
 **Not evidence of completion:**
 
@@ -1761,6 +1816,7 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 - **CRA-037.8** `[RES]` Hygiene thresholds from AGG (line coverage >= 85% for `packages/eoip`, mutation score >= 80% on semantic core) are CI hygiene gates only; meeting them never constitutes acceptance evidence (X-18).
 - **CRA-037.9** `[AGG]` Zero-skip policy: CI fails when a required test is skipped, xfailed without an open defect ID, errors or times out.
 - **CRA-037.10** `[OCA]` Track and reduce test collection time (currently 60-120 s) and quarantine known pre-existing failures with tracked IDs rather than deleting them.
+- **CRA-037.11** `[GN]` Anti-stub probes (CRA-044.3) are a required QA layer for every learned component, including retrieval embedders and rerankers; the probe harness has its own negative test and must fail the hash stub.
 
 **Configuration defaults:**
 
@@ -1773,6 +1829,7 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 
 - `[CRAr]` deliberately tamper with a result, reuse stale artifacts, skip a required test, run against memory instead of production backend, edit source mid-run and fail a negative case. The gate must refuse acceptance each time. Verify every claimed ACCEPTED clause can be independently reproduced/read back.
 - `[MERGED]` The gate refuses acceptance when a required test is skipped, a receipt is tampered, an artifact is stale or the source changed mid-run (CRAr + AGG).
+- `[GN]` Substituting the hash stub for a trained model in CI makes the gate refuse acceptance.
 
 **Not evidence of completion:**
 
@@ -1927,6 +1984,139 @@ All requirements and clauses start **OPEN**. Existing code paths are investigati
 
 - Existence of a file, class, function, route, test file, test name, UI control, registry entry or commit message.
 
+### 7.10 Module M10 — Probabilistic intelligence substrate and neuro-symbolic arbitration
+
+Added in v3.1. These requirements own obligations no earlier requirement held: the numerical stack every probabilistic capability presupposes (G20), learned models over the graph planes with proof that they learned (G19), and the boundary between deterministic semantics and probabilistic AI named by the original prompt (G21). `EOIP-engg-doc-pkg/Graph-Neurons-requirements.md` (GN-REQ-v1) is the detailed engineering reference; section 19.7 maps every GN requirement to a clause here.
+
+#### CRA-043. Numerical Compute Stack, Determinism and Hardware Profiles
+
+*Aggregated title: (new in v3.1) Tiered Numerical Substrate for Probabilistic AI*
+
+| Priority | Depends on | Gate | Module | Gaps | ONT | I | INV | Conflicts | Decisions |
+|---|---|---|---|---|---|---|---|---|---|
+| P0 | CRA-001/002/035 | B (Safe platform) | M10 | G20 | — | — | — | X-39, X-42 | H-15, H-16, H-17 |
+
+**Base statement:** Priority P0. Depends on CRA-001/002/035. Sources GN-010..GN-016 and G20. CRA-014 (OCR/ASR), CRA-023.6/023.7 (embedding and structural similarity, DeepOnto), CRA-025 (dense retrieval), CRA-026 (local models) and CRA-044 all presuppose a numerical stack the repository does not have.
+
+**Clauses** (each is an independently tracked acceptance obligation):
+
+- **CRA-043.1** `[GN]` Introduce the numerical stack as four separately installable optional extras, never as core dependencies: N0 `numerics` (numpy, scipy, scikit-learn; installed-size budget <= 150 MB), N1 `neural` (N0 plus CPU-only torch and torch-geometric; installed-size budget <= 2.5 GB), N2 `neural-text` (N1 plus transformers and sentence-transformers), N3 `neural-research` (N1 plus snntorch; research environments only, never in customer profiles, bundles or images — H-15). Tiers compose through self-referencing extras with exactly one version constraint per package. `pip install -e .` must resolve to an unchanged package set, proven by diffing `pip freeze`.
+- **CRA-043.2** `[GN]` CPU-only builds are the only builds EOIP distributes (decision H-16, accepted 2026-10-18: CUDA packages cannot be redistributed; `docs/decisions/ADR-H16-no-cuda-redistribution.md`). No `nvidia-*` package, CUDA runtime or CUDA-enabled torch build appears in any EOIP wheel, distribution lock file, offline bundle, container image or mirror, and EOIP documentation publishes no CUDA install command. A CUDA build the customer installs from upstream under their own NVIDIA terms is detected as `TORCH_CUDA`, reported as unqualified and never required.
+- **CRA-043.3** `[GN]` Provide a hash-pinned lock file (`requirements-neural.lock` via `pip-compile --generate-hashes` or the project's equivalent) and an offline wheel bundle per supported platform and tier. Installation from the bundle succeeds on a network-isolated host, and no model weights are fetched at first run (CRA-014.3, CRA-040.2). The lock file, every bundle manifest and every image SBOM are scanned and must list zero `nvidia-*` packages (H-16).
+- **CRA-043.4** `[GN]` Register each tier as capabilities (CRA-001). A missing tier is capability state `UNAVAILABLE`, returned as HTTP 503 `CAPABILITY_UNAVAILABLE` with the missing tier and its install command in `details` (X-39). Endpoints declare their minimum tier, so N0-only deployments keep metrics, baselines and embedding lookup working. Silent fallback to a non-learned heuristic or to hashing is prohibited (CRA-025.2).
+- **CRA-043.5** `[GN]` Array discipline: float32 for stored and served vectors; float64 only for metric accumulation; no Python-level element loops in hot paths (similarity, normalization, aggregation, batching); `list[float]` only at serialization boundaries; every array crossing a module boundary is checked finite.
+- **CRA-043.6** `[GN]` Determinism: a single seeding entry point seeds Python, numpy, torch and CUDA, enables deterministic algorithms where available, records any operation that fell back to a non-deterministic kernel, and stores the seed bundle and an environment capture (library versions, BLAS vendor, device, thread counts) in every training and evaluation receipt.
+- **CRA-043.7** `[GN]` BLAS thread governance: `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS` and `NUMEXPR_NUM_THREADS` are set together before numpy is first imported. Serving processes default to 1 thread per worker; training and batch workers to min(8, CPU count). The effective count is reported by the capability route.
+- **CRA-043.8** `[GN]` Numerical stability: max-subtracted softmax, epsilon-guarded logarithms and normalizations, int64 node indices, and a documented result for empty inputs; no reduction returns NaN.
+- **CRA-043.9** `[GN]` Memory and accelerator lifecycle: estimate peak memory before training or full-graph inference and refuse, naming a workable batch size, when the estimate exceeds 80% of available memory; release accelerator memory after each job; derive batch sizes from measured capacity, never hardcode them; record peak RSS and accelerator memory in performance receipts. All numerical and model work runs in CRA-002 `heavy` workers, never in the API process.
+- **CRA-043.10** `[RES]` Qualify the platform matrix by CI jobs, not assertion: Linux x86_64 (N0-N2 required), Windows x86_64 and macOS arm64 (N0-N1 required), Linux arm64 (N0 required). No platform requires a GPU; a customer-provisioned GPU job, if run, is labelled unqualified and non-binding (H-17).
+- **CRA-043.11** `[RES]` CPU-first qualification (decision H-15 accepted; H-17 open): every binding gate in sections 5.2 and 5.3 and in CRA-026, CRA-043 and CRA-044 is qualified on CPU-only reference hardware with no GPU visible to the process, and receipts record `device=cpu`. Results obtained with a GPU are recorded separately and are non-binding until H-17 is decided; a capability that meets its gates only with a GPU is `UNQUALIFIED` in CPU profiles. Interim policy: `docs/decisions/ADR-H17-gpu-availability.md`.
+
+**Configuration defaults:**
+
+| Setting | Default | Origin |
+|---|---|---|
+| distributed builds | CPU-only; zero `nvidia-*` packages (H-16) | GN |
+| accelerator | none required; GPU unqualified until H-17 | RES |
+| serving BLAS threads | 1 per worker | GN |
+| training BLAS threads | min(8, CPU count) | GN |
+| stored vector dtype | float32 | GN |
+| memory refusal threshold | 80% of available | GN |
+
+**Acceptance obligation CRA-043.A** (only after every clause above is ACCEPTED):
+
+- `[GN]` In four isolated environments (no extras, N0, N0+N1, N0+N1+N2) the capability route reports the correct tier; core EOIP imports and serves in the empty environment; an N0-only endpoint returns 200 and an N1 endpoint returns 503 naming the tier. Two runs with the same seed in separate processes reproduce metrics within 1e-4 and a different seed changes them. An oversized job is refused before allocation. Offline installation from the wheel bundle succeeds with networking disabled. An oversubscription probe (concurrent inference with and without thread limits) is measured and recorded.
+- `[GN]` The lock file, every offline bundle manifest and the default image SBOM list zero `nvidia-*` packages, and a fixture lock file containing one fails the licence gate; every acceptance run above executes on a host with no GPU visible and its receipt records `device=cpu`.
+
+**Not evidence of completion:**
+
+- Existence of a file, class, function, route, test file, test name, UI control, registry entry or commit message.
+- A dependency entry for torch that was never installed in a clean environment; GPU figures quoted from vendor documentation.
+
+#### CRA-044. Learned Graph Intelligence over the Graph Planes
+
+*Aggregated title: (new in v3.1) Neural Fabric — GNN, Transformer, Temporal, Convolutional, Generative and Spiking Models on Graphs*
+
+| Priority | Depends on | Gate | Module | Gaps | ONT | I | INV | Conflicts | Decisions |
+|---|---|---|---|---|---|---|---|---|---|
+| P1 | CRA-003/019/020/023/025/043/045 | F (Usable value) | M10 | G12, G19 | — | — | INV-19, INV-53 | X-34, X-35, X-36, X-37, X-38, X-40, X-41 | H-17 |
+
+**Base statement:** Priority P1. Depends on CRA-003/019/020/023/025/043/045. Sources GN-001..GN-007, GN-101..GN-706, the two neural-architecture research inputs summarised in Graph-Neurons, and G19. Where GN-REQ-v1 and this document differ, this document governs (X-34..X-41).
+
+**Clauses** (each is an independently tracked acceptance obligation):
+
+- **CRA-044.1** `[GN]` Remove the hash-based graph embedding stand-ins from production paths. `GraphEmbedder._deterministic_vector`, `embed_node2vec` and `embed_transe` in `packages/eoip/gnn/engine.py` compute SHA-256 digests of identifiers and walk strings with no objective, optimiser or learning. Retain them only as the `HashBaseline` test fixture, and keep `get_gnn_engine()` importable as a thin re-export of the new implementation so existing callers do not break (X-40).
+- **CRA-044.2** `[GN]` Map the four graph levels of the research inputs onto the graph planes of section 8.2 — GL0 instance graph to planes 1-2; GL1 meta-graph to plane 3; GL2 living brain (the cross-source unified graph) to plane 2 across sources; GL3 enterprise ontology to plane 3 axioms and shapes; the temporal axis GLT to plane 7 — and train only on authorized, policy-epoch-bound snapshots of those planes. A parallel temporal store duplicating plane 2 is not permitted.
+- **CRA-044.3** `[GN]` Every learned model passes four anti-stub probes before any quality claim: loss descent (final loss <= 70% of initial); parameter change (>= 90% of tensors move); label-permutation control (the true-label primary metric beats the permuted-label metric by >= 0.10 absolute); structural coherence (two automorphic nodes have embedding cosine >= 0.90). The probe harness must itself score the existing hash stub as failing all four.
+- **CRA-044.4** `[GN]` Snapshot and split discipline: content-addressed snapshots; strictly event-time temporal splits validated on every batch, so a deliberately leaked edge raises; type-constrained negative sampling against `ontology/manifest.py:edge_endpoints_valid` as the default for every reported metric.
+- **CRA-044.5** `[GN]` Evaluation discipline: AUPRC is primary for link prediction and anomaly detection and AUROC is never reported alone; Macro-F1 for node classification; time-filtered MRR for temporal prediction. Five baselines are reported beside every model on the same split: random, degree, common-neighbours/Adamic-Adar, `HashBaseline`, and the existing deterministic rule or traversal. A score becomes a probability only after calibration on the validation split with expected calibration error <= 0.10.
+- **CRA-044.6** `[GN]` Core encoders: R-GCN with basis decomposition (defaults 2 layers, 128 hidden units, 30 bases) and inductive GraphSAGE for continuously ingested entities, the latter proven by embedding new nodes with an unchanged weight hash. A model that does not beat both the common-neighbours and rule baselines by >= 0.05 on the primary metric is recorded FAILED with its numbers, not shipped.
+- **CRA-044.7** `[GN]` Bake-off-gated architectures, each promoted only on a measured margin over the R-GCN default on the same split and otherwise recorded FAILED: relational graph attention (attention weights retrievable per prediction); heterogeneous graph transformer (>= 0.03 on a fixture spanning >= 3 domains); GraphGPS-style local-plus-global transformer (>= 0.03 on tasks with shortest-path distance >= 4; no dense O(n^2) attention above 10,000 nodes); path-aware knowledge-graph attention; GRU/LSTM event encoders and temporal graph networks; recurrent event networks; ChebNet spectral filters for ontology structural anomalies (zero false positives on a clean control); ConvE completion (parameter efficiency measured, not cited); vision encoders feeding CRA-015 candidates.
+- **CRA-044.8** `[GN]` Generative and spiking work: an adversarial plausibility discriminator may act as a write-path quality filter (precision >= 0.80 at recall >= 0.70; <= 5 ms per triple; flagged triples quarantined for review, never deleted; the ontology domain/range veto overrides the learned score) only after CRA-044.6 is ACCEPTED. Triple generators and spiking-network encoders are research-only, run in a sandbox tenant with an import-graph test proving no production dependency, and report measured efficiency on the hardware in use. "Not justified" is an acceptable recorded outcome.
+- **CRA-044.9** `[GN]` Model lineage and lifecycle: models, embeddings and calibrators are registered with snapshot ID, code commit, seed bundle, environment, training-data scope and gate report, extending `packages/eoip/mlops/experiment_tracker.py`. Promotion requires every gate in clauses 3-6 plus the security and explainability gates; rollback restores the prior version and serving reflects it within 60 s. Graph-embedding vectors are a rebuildable plane-8 projection in the vector store chosen under CRA-025.6, partitioned by tenant (X-41).
+- **CRA-044.10** `[GN]` Explainability: >= 95% of served predictions carry evidence paths, and a faithfulness probe shows that removing the identified evidence subgraph lowers the prediction score by >= 50%; otherwise the explanation is reported as not faithful.
+- **CRA-044.11** `[GN]` Incremental operation and failure-mode guards: graph changes invalidate only the affected k-hop embeddings; retraining is triggered by measured drift, scheduled evaluation or quality degradation, not by every write. Oversmoothing (default depth 2; embedding variance measured at 2, 4 and 8 layers), oversquashing (long-range accuracy reported separately) and popularity shortcuts (degree baseline mandatory) are measured, not assumed away.
+- **CRA-044.12** `[RES]` Every model output enters the knowledge model only as `knowledge_state=proposed` with `ModelLineage` (CRA-045). The GN-002 `AssertionStatus` is implemented as a mapping onto `KnowledgeState`, not as a parallel enum (X-34).
+- **CRA-044.13** `[RES]` CPU feasibility (decisions H-15, H-17): every architecture records its training time, inference latency and peak memory on CPU reference hardware, and defaults are chosen for CPU (neighbour sampling where full-batch training misses its budget). An architecture that meets its bake-off margin or budgets only with a GPU is recorded `DEFERRED (H-17)` with its CPU numbers and is never promoted to a CPU profile; those numbers are inputs to H-17.
+
+**Configuration defaults:**
+
+| Setting | Default | Origin |
+|---|---|---|
+| R-GCN depth / hidden / bases | 2 / 128 / 30 | GN |
+| negative sampling | type-constrained, ratio 1 | GN |
+| primary link metric | AUPRC | GN |
+| calibration ECE ceiling | 0.10 | GN |
+| promotion lift | +0.05 over common-neighbours and rule baselines | GN |
+
+**Acceptance obligation CRA-044.A** (only after every clause above is ACCEPTED):
+
+- `[GN]` On the frozen reference snapshot: the anti-stub harness fails the existing hash stub on all four probes and passes the R-GCN model on all four; the receipt shows all five baselines beside the model with AUPRC primary; a deliberately leaked split raises; new nodes are embedded without a weight-hash change; a prediction appears only as a proposed assertion with lineage and evidence paths and never in an asserted-only query; removing its evidence subgraph at least halves its score; an unauthorized principal cannot infer a restricted node through embeddings, neighbour counts, latency or error differences (CRA-003); `grep -r _deterministic_vector packages/` finds it only under `tests/`.
+- `[GN]` The R-GCN default meets its gates on CPU-only reference hardware (receipt `device=cpu`); every architecture recorded `DEFERRED (H-17)` carries its CPU measurements.
+
+**Not evidence of completion:**
+
+- Existence of a file, class, function, route, test file, test name, UI control, registry entry or commit message.
+- A checkpoint or headline metric without the five baselines and the anti-stub report; an AUROC figure on its own; a notebook result.
+
+#### CRA-045. Deterministic–Probabilistic Boundary and Neuro-Symbolic Arbitration
+
+*Aggregated title: (new in v3.1) Dual-Path Semantics — W3C Determinism plus Probabilistic AI*
+
+| Priority | Depends on | Gate | Module | Gaps | ONT | I | INV | Conflicts | Decisions |
+|---|---|---|---|---|---|---|---|---|---|
+| P0 | CRA-003/016/019/020/024/025/026/043 | F (Usable value) | M10 | G21 | — | I2, I18 | INV-19 | X-34, X-35, X-36 | — |
+
+**Base statement:** Priority P0. Depends on CRA-003/016/019/020/024/025/026/043. Source: the closing instruction of the original attachment, `crarprompt.txt` — *"my architecture should be capable enough to handle deterministic semantics (W3C standard ontologies, schema enforcement) and probabilistic AI (vector embeddings, LLM context windows, and graph traversals)"* — and G21. Interpretation (binding): graph traversal is deterministic when executed as an exact algorithm (CRA-024, CRA-028.7) and belongs to the probabilistic pipeline when it assembles LLM context (CRA-026.7) or uses learned or sampled weights (CRA-028.4, CRA-044); the traversal result keeps its exactness label in both uses.
+
+**Clauses** (each is an independently tracked acceptance obligation):
+
+- **CRA-045.1** `[PRM]` Classify every producer of knowledge or answers as deterministic (RDF parsing and serialization, SHACL validation, profile-qualified reasoning, exact query and traversal, deterministic mapping) or probabilistic (embeddings and similarity, LLM generation and extraction, learned graph models, OCR/ASR/vision, sampled or heuristic traversal, alignment suggestions). The class is part of each producer's capability registration (CRA-001) and appears in every result payload.
+- **CRA-045.2** `[PRM]` Probabilistic output is never asserted directly. It enters as `knowledge_state=proposed` with `ModelLineage`, calibrated confidence where calibration exists, and evidence. Promotion to `asserted` requires deterministic validation — SHACL (CRA-020), profile and consistency checks (CRA-019), identity rules (CRA-023) — followed by the review policy of CRA-022. A promoted assertion keeps its probabilistic origin and its approver.
+- **CRA-045.3** `[PRM]` Dual-path answering: wherever an exact deterministic path exists for a question (SPARQL/EQL query, bounded traversal, entailment check), it runs beside the probabilistic path and both results are returned with their producer class. Agreement is reported as `CORROBORATED`, disagreement as `DISPUTED` with both results and their evidence, and a probabilistic-only answer as `UNCORROBORATED`. Disagreement is shown to the user, never resolved silently in favour of either path.
+- **CRA-045.4** `[PRM]` Deterministic constraints bound probabilistic proposals before display: a candidate that violates ontology domain/range, disjointness or a SHACL constraint is shown as rejected-by-constraint with the violated shape or axiom, not as a ranked suggestion.
+- **CRA-045.5** `[PRM]` Separation holds in storage, query and export: asserted-only queries, the SPARQL endpoint and RDF exports exclude proposed statements unless the caller explicitly asks for them, and exported proposed statements carry their knowledge state and lineage in a named graph (`urn:eoip:proposed:{tenant}`) so they cannot be mistaken for facts downstream.
+- **CRA-045.6** `[PRM]` Calibration honesty: a raw model output is labelled `score`, never `probability` or `confidence`, until a calibrator exists for that model and task with recorded calibration error (CRA-026.6, CRA-044.5).
+- **CRA-045.7** `[PRM]` Reproducibility: every probabilistic result records model or provider revision, input or prompt digest, context-manifest digest (CRA-026.12), seed where applicable and the deterministic inputs (snapshot, ontology and policy revisions), so a reviewer can rerun it; non-reproducible providers are labelled as such.
+- **CRA-045.8** `[RES]` Explanations state which path produced each part of an answer and, for probabilistic parts, the evidence and calibration status. The GUI (CRA-030) shows deterministic and probabilistic results side by side with distinct text labels, not colour alone.
+
+**Configuration defaults:**
+
+| Setting | Default | Origin |
+|---|---|---|
+| probabilistic output state | proposed | PRM |
+| dual path | on wherever a deterministic path exists | PRM |
+| proposed statements in exports | excluded unless requested; named graph when included | RES |
+
+**Acceptance obligation CRA-045.A** (only after every clause above is ACCEPTED):
+
+- `[PRM]` For a fixture question with a known exact answer, the API returns the deterministic and the probabilistic result with producer classes; injecting a misleading embedding neighbour produces `DISPUTED`, not a silent override; a probabilistic candidate violating a SHACL shape is shown as rejected-by-constraint; an asserted-only SPARQL query and a TriG export contain no proposed statements; a proposal promoted through review keeps its lineage and approver; an uncalibrated score is never labelled a probability in the API or UI.
+
+**Not evidence of completion:**
+
+- Existence of a file, class, function, route, test file, test name, UI control, registry entry or commit message.
+- A `knowledge_state` column no query filters on; UI copy labelling a raw score as confidence.
+
 ## 8. Target Architecture and Module Boundaries
 
 ### 8.1 Planes
@@ -1959,6 +2149,8 @@ Enterprise systems -- push/webhooks/CDC --+-- bounded poll/crawl agents
                    Accessible modular React workbenches (truthful states, i18n, WCAG 2.2 AA)
 
 Cross-cutting: TrustedScope + policy epochs, secrets/egress, audit, budgets, telemetry, recovery, SBOM/licensing, entitlements.
+Probabilistic plane (v3.1): numerical-tier workers (CRA-043) host embedding, learned-graph, OCR/ASR and local-model work;
+their outputs return to the staged-candidate stage as proposals, and dual-path arbitration (CRA-045) sits at the query/answer layer.
 ```
 
 ### 8.2 Graph planes (AGG, adopted)
@@ -1972,9 +2164,11 @@ Cross-cutting: TrustedScope + policy epochs, secrets/egress, audit, budgets, tel
 | 5 | Lineage graph | Data movement from sources through transforms to dashboards | Canonical + catalog layers |
 | 6 | Policy and security graph | ACLs, classifications, tenants, policy epochs | Source-authoritative + policy store |
 | 7 | Temporal and event graph | valid/transaction time, events, corrections | Journal + canonical |
-| 8 | Vector similarity index | Dense/sparse embeddings of chunks/entities | Derived projection, rebuildable |
+| 8 | Vector similarity index | Dense/sparse text embeddings of chunks/entities and graph-structure embeddings (CRA-044) | Derived projection, rebuildable |
 
 A meta-graph is not the data graph relabelled: its objects are models, types, predicates, mappings, profiles and versions.
+
+Graph levels used by the neural-fabric inputs map onto these planes (CRA-044.2): GL0 instance graph -> planes 1-2; GL1 meta-graph -> plane 3; GL2 living brain -> plane 2 across sources; GL3 enterprise ontology -> plane 3 axioms and shapes; temporal axis GLT -> plane 7. Learned models read authorized snapshots of these planes and write only proposals and plane-8 projections.
 
 ### 8.3 State ownership
 
@@ -1990,6 +2184,7 @@ A meta-graph is not the data graph relabelled: its objects are models, types, pr
 | Query/retrieval | Typed plan, filtered results, evidence selection | Remote unrestricted execution of user strings |
 | Action executor | Specific authorized side effects and compensation journal | General privileged code execution |
 | GUI | Task state, accessible views, authorized drafts | Truth, capability or authorization decisions |
+| Numerical / model worker (v3.1) | Training runs, model artifacts, embeddings as rebuildable projections, gate reports | Asserted facts, tenant routing, API-process memory |
 
 ### 8.4 Target module layout (OCA, extended)
 
@@ -2011,6 +2206,11 @@ packages/eoip/ontology/
 packages/eoip/capabilities/                  CRA-001 registry + discovery route
 packages/eoip/workers/                       CRA-002 supervisor, resource classes, worker protocol
 packages/eoip/acceptance/ (or tools/acceptance/)  CRA-001/037 ledger + receipt verifier
+packages/eoip/neural/                        CRA-043/044/045 (v3.1): numerics.py, runtime.py, contracts.py, antistub.py,
+                                             featurestore.py, datasets.py, evaluation.py, registry.py, encoders/, temporal/,
+                                             conv/, transformer/, generative/, spiking/, explain/, fusion.py, security.py,
+                                             router.py  (detail: GN-REQ-v1 section 1.2)
+packages/eoip/gnn/engine.py                  CRA-044.1: thin re-export of eoip.neural; hash functions move to tests only
 ```
 
 All paths for new modules are proposals: the agent must first search for an existing canonical owner and extend it (CRAr protocol step 2).
@@ -2078,6 +2278,12 @@ Images and video do not automatically yield correct engineering topology. Preser
 | POST `/api/v1/actions/execute`, POST `/api/v1/actions/{id}/approve`, GET `/api/v1/actions` | Governed actions (aliases `/ontology/actions/...`) | CRA-027 |
 | GET `/metrics` | Prometheus text format | CRA-032 |
 | MCP server | Ontology, graph, actions with identical gates | CRA-039 |
+| GET `/api/v1/neural/runtime` | Numerical tier, backend, device, BLAS threads | CRA-043 |
+| POST `/api/v1/neural/predict/links`, `/predict/impact`, `/classify/node`, `/anomaly/scan` | Learned predictions returned as proposed assertions with lineage | CRA-044 |
+| GET `/api/v1/neural/explain/{prediction_id}` | Evidence subgraph and faithfulness status | CRA-044 |
+| GET `/api/v1/neural/models`, POST `/api/v1/neural/models/{id}/promote`, `/rollback` | Model registry with gate reports | CRA-044 |
+| POST `/api/v1/answers` (or the existing ask route) | Dual-path answer with producer classes and context-manifest digest | CRA-026/045 |
+| POST `/api/v1/proposals/{id}/promote`, `/reject` | Proposed -> asserted only through validation and review | CRA-045 |
 
 Proposed OpenAPI 3.1 fragment for the semantic validation job (CRA section 11.4, retained):
 
@@ -2139,6 +2345,10 @@ Every status/download/cancel URL requires the same trusted scope. Error payloads
 | Tampered update / supply chain | Signed manifests, SBOM, provenance | Modified image/plugin/config, dependency confusion | CRA-002/035 |
 | Silent data loss | Checksums, loss ledger, partial states, reconciliation | Unsupported type, dropped mapping, failed projection | CRA-010/016/017 |
 | Retention / deletion failure | Derivative inventory and deletion workflow incl. backups | Delete subject, check every store | CRA-040 |
+| Embedding / model membership inference | Entitlement filtering before featurization and training; embeddings influenced by restricted neighbours never served to unentitled principals | Probe existence via neighbour counts, latency, error text | CRA-003/044 |
+| Training-data poisoning | Train only on accepted plane 2/3 snapshots; anti-stub and baseline gates; drift monitoring | Inject crafted edges through a source | CRA-044 |
+| Context-window evidence displacement | Restricted evidence filtered before budgeting; disclosed reduction; retrieved text cannot change priority | Oversized malicious document crowds out evidence | CRA-026/045 |
+| Accelerator / memory exhaustion | Pre-allocation memory estimate and refusal; heavy workers only | Oversized training or full-graph job | CRA-043 |
 
 ## 13. Licensing and Dependency Decisions
 
@@ -2162,7 +2372,7 @@ Every status/download/cancel URL requires the same trusted scope. Error payloads
 | Ontop, Morph-KGC | Apache-2.0 | Candidate adapters | — |
 | RMLStreamer / SDM-RDFizer | Open source (verify each) | Candidates | Separate licenses |
 | Karma | Apache-2.0, archived 2025-04-16 | Do not adopt runtime | Concept only |
-| DeepOnto | Apache-2.0 | Optional alignment worker | GPU/JVM bridge |
+| DeepOnto | Apache-2.0 | Optional alignment worker | CPU mode qualified until H-17; JVM bridge |
 | spaCy / textacy | MIT | Adopt with model license review | Models separate |
 | extract-msg | Unresolved | Disabled | H-09, X-16 |
 | FFmpeg | LGPL/GPL by build | Reviewed build only | — |
@@ -2170,6 +2380,15 @@ Every status/download/cancel URL requires the same trusted scope. Error payloads
 | FIBO, schema.org | Verify exact artifacts | Packs after verification | X-30 |
 | SNOMED-CT | Affiliate license | Customer-provided only | Never redistribute |
 | LODE / WIDOCO | ISC (legacy LODE) / Apache-2.0 | Doc generation candidates | X-02 |
+| numpy, scipy, scikit-learn | BSD-3 | Adopt as tier N0 optional extra | Never core (CRA-043) |
+| torch | BSD-3 | Adopt as tier N1; CPU-only builds distributed (H-15, H-16) | CUDA builds never distributed |
+| torch-geometric | MIT | Adopt as tier N1 | — |
+| transformers, sentence-transformers | Apache-2.0 | Adopt as tier N2 | Model weights licensed separately |
+| snntorch | MIT | Tier N3, research sandbox only | — |
+| `nvidia-*` CUDA runtime packages | NVIDIA Software License Agreement | **Never bundled, mirrored or redistributed (H-16 decided 2026-10-18)** | Customer-provisioned only; unqualified until H-17 |
+| llama.cpp / Ollama, whisper.cpp / faster-whisper | MIT per upstream (verify exact artifacts) | Candidate CPU inference runtimes for generation and ASR (CRA-026.13, CRA-014) | CRA-035 and CRA-042 review before adoption |
+| DGL | Apache-2.0 | Do not add | PyG sufficient |
+| networkx | BSD-3 | Prefer not to add | Baselines implemented with numpy |
 
 A process or network boundary is not a blanket copyleft exemption; obligations depend on the actual integration and distribution (SaaS and installed). Publicly readable source is not permission to copy. No patent freedom-to-operate opinion is given. Clean-room rule: record public facts and independent designs; never copy proprietary code or UI assets.
 
@@ -2182,6 +2401,8 @@ Measure p50/p95/p99, successful/failed/cancelled counts, timeouts, CPU, peak RSS
 Benchmark targets (manifest values, OCA + AGG): LUBM load >= 50k triples/s and Q1-Q14 p95 < 500 ms; BSBM >= 1,000 QMpH at 100M; SP2Bench no query > 30 s at 50M; SHACL >= 20k nodes/s (10M nodes, 500 shapes); ELK classification of 20k classes/150k axioms < 60 s; round-trip per section 5.3; CML >= 10k records/s; batch materialization >= 100k triples/s; OBDA point query < 50 ms; sustained 4-hour load stability; CI regression gate > 10% p95.
 
 QA layers: unit; property/fuzz (Hypothesis); differential semantics across independent engines; contract; real-backend and vendor-sandbox integration; security/tenancy; real-browser workflow and accessibility (Playwright + axe + manual AT); migration/restore; chaos; performance. Mocks are a separate labelled category. A skipped, xfailed, mocked-at-boundary, stale, unseeded or wrong-backend test cannot qualify a requirement.
+
+Learned-model evaluation (CRA-043/044, v3.1): frozen, content-addressed reference snapshot; event-time splits validated per batch; type-constrained negatives; the five mandatory baselines; AUPRC, Macro-F1 or time-filtered MRR as primary; calibration error; at least three seeded trials; independently authored fixtures (known graph with removed edges, automorphic node pair, leaky split, clean and broken ontology, implausible triples, multi-domain graph). A model that only ties the degree baseline learned popularity and fails.
 
 ## 15. Observability, Delivery, Recovery and Operations
 
@@ -2202,11 +2423,11 @@ Support proposals (decision H-08): CRAr tiers (community/no SLA; standard busine
 | Gate | Name | Requirements | Required exit evidence |
 |---|---|---|---|
 | A | Truthful baseline | CRA-001, CRA-042 | Complete open ledger; real capability discovery; agreed defaults; research records pinned for chosen dependencies |
-| B | Safe platform | CRA-002/003/031/032/035/040 | Principal/scope, isolated worker, durable state, supply-chain and privacy negative tests |
+| B | Safe platform | CRA-002/003/031/032/035/040/043 | Principal/scope, isolated worker, durable state, supply-chain and privacy negative tests; numerical tiers installable with truthful capability states; CPU-only builds with zero `nvidia-*` packages in distributed artifacts |
 | C | First acquisition slice | CRA-004/010/011/012/013 + one real source | Push/pull -> raw -> parse -> staged evidence -> replay after crash |
 | D | Semantic core | CRA-016/017/018/019/020 | Independent syntax/term/entailment/shape correctness; no invalid publication |
 | E | Governed knowledge | CRA-021/022/023/028/029 | Reviewed release, source conflict, identity undo, historical authorization |
-| F | Usable value | CRA-024/025/026/030 | Real query/answer/evidence/save/export with denial and restart |
+| F | Usable value | CRA-024/025/026/030/044/045 | Real query/answer/evidence/save/export with denial and restart; dual-path answers; a learned model passing anti-stub and baseline gates on CPU-only hardware |
 | G | Named sources, media and actions | CRA-005..009/014/015/027 | Every named adapter/media task qualified or explicitly blocked |
 | H | Deploy and migrate | CRA-033/034/039 (+035) | Actual artifact install, migration, rollback, restore and SDK task |
 | I | Independent acceptance | CRA-036/037/038/041 + remaining GUI/CP | Stable-revision real-profile evidence; manual reviews; support readiness; claims register |
@@ -2237,9 +2458,10 @@ Cycles are iteration boundaries, not deadlocks: CRA-031 provides the durable sub
 | M9 | Modular accessible GUI | 30 |
 | M10 | Performance, HA/restore, supply chain, both deployment modes | 35 |
 | M11 | Independent acceptance, support, rollout | 25 |
-| | **Total** | **432** (range 350-700 until M0/M2 recalibration) |
+| M12 | Numerical substrate, learned graph intelligence and dual-path arbitration (v3.1: CRA-043, CRA-044, CRA-045, CRA-026.10-026.12) | 46 |
+| | **Total** | **478** (range 380-770 until M0/M2 recalibration; M12 range 30-70, bake-off-gated work in CRA-044.7/044.8 only if pursued) |
 
-With 8 FTE at 70% availability: about 63-125 working weeks before critical-path and vendor constraints. AGG's three-quarter milestone plan (M0-M9) is an optimistic alternative, not a commitment. Cost: `engineering = sum(person_weeks x loaded_rate)`; `runtime = compute + storage + model/provider + backup + network + observability + commercial engines/support`; `programme = engineering + runtime + security/legal/accessibility reviews + licensed datasets/sandboxes + contingency`. AGG's indicative AWS P1 baseline (~USD 49,560/year infrastructure) is an unverified estimate; rates and quotes are inputs (H-10).
+With 8 FTE at 70% availability: about 68-138 working weeks before critical-path and vendor constraints. AGG's three-quarter milestone plan (M0-M9) is an optimistic alternative, not a commitment. Cost: `engineering = sum(person_weeks x loaded_rate)`; `runtime = compute + storage + model/provider + backup + network + observability + commercial engines/support`; `programme = engineering + runtime + security/legal/accessibility reviews + licensed datasets/sandboxes + contingency`. AGG's indicative AWS P1 baseline (~USD 49,560/year infrastructure) is an unverified estimate; rates and quotes are inputs (H-10). Runtime estimates assume CPU-only compute until H-17; any GPU cost is a separate scenario.
 
 ## 17. End-to-End Scenarios and Release Checklist
 
@@ -2257,6 +2479,8 @@ With 8 FTE at 70% availability: about 63-125 working weeks before critical-path 
 | E10 | Media | Office/email/archives/images/audio/video/diagram processing | Bounds, locators, dependency readiness, reviewed candidates and no covert egress |
 | E11 | Deletion | Delete/revoke while jobs run, rebuild indexes and restore old backup | No resurrection, reviewed hold policy and complete derivative accounting |
 | E12 | Customization | Install qualified connector/parser/UI/provider plugin and change theme/locale | No core edit required, compatible contracts, sandbox, accessibility and rollback |
+| E13 | Neuro-symbolic arbitration | Ask a question with a known exact answer; run deterministic and probabilistic paths; inject a misleading embedding neighbour; try to publish a model proposal that violates a shape | Both results with producer classes; DISPUTED surfaced; constraint rejection shown; asserted-only query and export exclude proposals |
+| E14 | Numerical tiers and learned model | On a host with no GPU, install core only, then N0, then N1 from the offline bundle; train and evaluate the default graph model; substitute the hash stub | Correct tier states and 503s; seeded reproducibility; anti-stub probes pass for the model and fail for the stub; five baselines reported; zero `nvidia-*` packages in the bundle; receipts record `device=cpu` |
 
 Final acceptance uses real permitted backends and source/model integrations; small synthetic fixtures serve fast tests. E01's API return values never substitute for E07/E08 evidence.
 
@@ -2301,25 +2525,39 @@ Release handoff: exact commit/source inventory; reproducible build and artifact 
 | X-31 | Supersession claims | AGG claims to supersede all prior research; CRAr is the evidence-based execution spec. | This combined document is canonical; sources retained as inputs. | DECIDED | all |
 | X-32 | Benchmark tooling | AGG: wrk with a Lua SPARQL script; OCA: LUBM/BSBM/SP2Bench; CRA: LUBM/BSBM/WatDiv + W3C suites. | Union adopted; licenses of datasets verified before acquisition. | DECIDED | CRA-036 |
 | X-33 | Repository facts | OCA counts (587 files, 38 connectors, 239 tests, etc.) vs CRA 'not re-audited'. | Re-measured at pinned commit under CRA-001. | DECIDED | CRA-001 |
+| X-34 | Assertion status vocabulary | GN-002: `AssertionStatus` OBSERVED/DERIVED/PREDICTED/REJECTED/CONFIRMED. Section 6: `KnowledgeState` asserted/inferred/proposed/rejected/historical. | `KnowledgeState` is canonical; GN statuses are a mapping (OBSERVED->asserted, DERIVED->inferred, PREDICTED->proposed, REJECTED->rejected, CONFIRMED->asserted with promotion approver); no parallel enum. | DECIDED | CRA-044/045 |
+| X-35 | Completion evidence format | GN: markdown Evidence Ledger `EOIP-engg-doc-pkg/evidence/GN-<id>.md`. This spec: JSON receipts under `.audit-scratch/receipts/`. | JSON receipts are the only acceptance evidence; a GN markdown ledger may be generated from receipts as a readable view and is never evidence. | DECIDED | CRA-001/044 |
+| X-36 | Verification taxonomy | GN: levels V1-V7. This spec: lifecycle states plus 11 evidence categories. | Section 2 governs; GN V2-V7 map onto positive/negative, performance, integration and deployment categories; V5 anti-stub is required evidence for learned components (CRA-044.3, CRA-037.11); V1 is never evidence. | DECIDED | CRA-037/044 |
+| X-37 | Learned-model quality gates | GN-006/007 thresholds (baseline +0.05, ECE <= 0.10, permutation gap >= 0.10) absent from section 5.3. | Adopted into section 5.3 as initial task-manifest gates; change only by recorded review. | DECIDED | CRA-036/044 |
+| X-38 | Neural route prefix | GN-704: `/neural/...`. This spec: versioned `/api/v1/...` for new canonical routes (CRA-027.9 precedent). | Canonical `/api/v1/neural/...` with GN paths as suffixes; public versioning per CRA-039.1. | DECIDED | CRA-039/044 |
+| X-39 | Missing-tier error | GN-001: HTTP 503. CRA-001.8: distinct code per capability state. | A missing installed tier is capability state UNAVAILABLE -> HTTP 503 `CAPABILITY_UNAVAILABLE` with tier and install command in details. | DECIDED | CRA-001/043 |
+| X-40 | Hash embeddings disposition | GN-101: delete. CRA-025.7: rename `test-hashing`, refuse in production. X-28 precedent. | Removed from production paths; retained only as the `HashBaseline` fixture; production profile refuses at startup. | DECIDED | CRA-025/044 |
+| X-41 | Embedding storage | GN-004: feature store defaulting to a graph-store sidecar. Section 5.1 and CRA-025.6: durable store, Qdrant/pgvector candidates, tenant-partitioned. | Graph embeddings are a rebuildable plane-8 projection in the CRA-025.6 vector store, tenant-partitioned; no new database without a decision record. | DECIDED | CRA-025/044 |
+| X-42 | Effort and roadmap | GN plan: relative effort only. Section 16.3: no stage for the numerical stack or learned models. | Planning stage M12 added (46 person-weeks, range 30-70); inputs per H-10. | DECIDED | Section 16 |
 
 ### 18.2 Human decisions (dependent clauses stay BLOCKED until recorded in the ledger)
 
-| ID | Decision needed | Owner | Blocks |
-|---|---|---|---|
-| H-01 | Confirm target scale and whether stretch latency objectives (p95 < 20 ms) become binding | CTO | CRA-036, X-05/X-06 |
-| H-02 | Air-gap: may customer deployments run JVM worker sidecars (ELK, OWL API, ROBOT)? | CTO / Security | CRA-019 |
-| H-03 | Is write-back (CRA-027) in v1 scope or read-only until SOC 2? | Security Officer | CRA-027 |
-| H-04 | TerminusDB license verification; remove or admit | Legal | CRA-035, X-21 |
-| H-05 | Accept gating all standards messaging on certification (OR6) | Marketing + Legal | CRA-041 |
-| H-06 | Identify Fortuna product, API, auth and data contract | Product owner | CRA-009, X-14 |
-| H-07 | Identify the API Portal product(s) in use | Product owner | CRA-007, X-13 |
-| H-08 | Approve support tiers, response objectives, availability and service credits | Commercial + Counsel | CRA-038, X-08 |
-| H-09 | Clear extract-msg and other open component distribution terms | Legal | CRA-013/035, X-16 |
-| H-10 | Approve staffing, rates and budget inputs for the cost model | Delivery manager | CRAr section 17 |
-| H-11 | Approve vendor sandbox / licensed test access per named source | Procurement | CRA-005..009 |
-| H-12 | Patent provisional filing decisions before any public disclosure | Legal / IP | CRA-041 |
-| H-13 | Approve legal basis for Slack private channels / DMs if ever needed | Legal / Compliance | CRA-006 |
-| H-14 | Choose the durable event backbone per deployment profile (DB outbox vs Kafka/Redpanda) | Architect | CRA-010/031, INV-44 |
+| ID | Decision needed | Owner | Blocks | Status |
+|---|---|---|---|---|
+| H-01 | Confirm target scale and whether stretch latency objectives (p95 < 20 ms) become binding | CTO | CRA-036, X-05/X-06 | OPEN |
+| H-02 | Air-gap: may customer deployments run JVM worker sidecars (ELK, OWL API, ROBOT)? | CTO / Security | CRA-019 | OPEN |
+| H-03 | Is write-back (CRA-027) in v1 scope or read-only until SOC 2? | Security Officer | CRA-027 | OPEN |
+| H-04 | TerminusDB license verification; remove or admit | Legal | CRA-035, X-21 | OPEN |
+| H-05 | Accept gating all standards messaging on certification (OR6) | Marketing + Legal | CRA-041 | OPEN |
+| H-06 | Identify Fortuna product, API, auth and data contract | Product owner | CRA-009, X-14 | OPEN |
+| H-07 | Identify the API Portal product(s) in use | Product owner | CRA-007, X-13 | OPEN |
+| H-08 | Approve support tiers, response objectives, availability and service credits | Commercial + Counsel | CRA-038, X-08 | OPEN |
+| H-09 | Clear extract-msg and other open component distribution terms | Legal | CRA-013/035, X-16 | OPEN |
+| H-10 | Approve staffing, rates and budget inputs for the cost model | Delivery manager | CRAr section 17 | OPEN |
+| H-11 | Approve vendor sandbox / licensed test access per named source | Procurement | CRA-005..009 | OPEN |
+| H-12 | Patent provisional filing decisions before any public disclosure | Legal / IP | CRA-041 | OPEN |
+| H-13 | Approve legal basis for Slack private channels / DMs if ever needed | Legal / Compliance | CRA-006 | OPEN |
+| H-14 | Choose the durable event backbone per deployment profile (DB outbox vs Kafka/Redpanda) | Architect | CRA-010/031, INV-44 | OPEN |
+| H-15 | Adopt the tiered numerical stack (N0-N3) as optional extras — **accepted 2026-10-18**: CPU-first; N0 required where probabilistic features are enabled; N1/N2 CPU-only builds; N3 research only; every binding gate qualified on CPU (`docs/decisions/ADR-H15-numerical-stack-tiers.md`; decided by the engineering agent under delegation from Ravaleedhar Reddy) | CTO / Product owner | CRA-043 | DECIDED |
+| H-16 | Redistribution of CUDA `nvidia-*` packages — **decided 2026-10-18: not redistributed** in any EOIP artifact; customer-provisioned CUDA only, unqualified (`docs/decisions/ADR-H16-no-cuda-redistribution.md`; decided by Ravaleedhar Reddy) | Legal | CRA-043.2, CRA-043.3, CRA-035.9 | DECIDED |
+| H-17 | Select GPU availability per deployment profile (none, optional, required) — **open**; interim CPU-only policy in force (`docs/decisions/ADR-H17-gpu-availability.md`) | CTO / Infrastructure | CRA-043.10, CRA-043.11, CRA-044.13, CRA-026.13 | OPEN |
+
+Rows marked DECIDED are recorded in `docs/decisions/`. Import `docs/decisions/decisions-ledger-import.json` into the tracker, or merge its items into `.audit-scratch/ledger.json`, to record them in the ledger.
 
 ## 19. Traceability
 
@@ -2327,11 +2565,11 @@ Release handoff: exact commit/source inventory; reproducible build and artifact 
 
 | ID | Title | P | Gate | Module | Clauses | CRAr / added |
 |---|---|---|---|---|---|---|
-| CRA-001 | Baseline, Decisions and Acceptance Ledger | P0 | A | M1 | 13 | 5 / 7 |
+| CRA-001 | Baseline, Decisions and Acceptance Ledger | P0 | A | M1 | 14 | 5 / 8 |
 | CRA-002 | Modularity and Safe Plugin Runtime | P0 | B | M1 | 12 | 6 / 5 |
 | CRA-003 | Identity, Scope and Derived-Data Authorization | P0 | B | M1 | 13 | 6 / 6 |
 | CRA-004 | Connection Factory and Conformance SDK | P0 | C | M2 | 13 | 6 / 6 |
-| CRA-005 | Work-Tracking and Test-System Adapters | P1 | G | M2 | 10 | 6 / 3 |
+| CRA-005 | Work-Tracking and Test-System Adapters | P1 | G | M2 | 10 | 5 / 4 |
 | CRA-006 | Wiki, Content, Chat and Document Repositories | P1 | G | M2 | 9 | 5 / 3 |
 | CRA-007 | Code, Build, Artifact and API-Portal Adapters | P1 | G | M2 | 10 | 5 / 4 |
 | CRA-008 | Observability and Operational-System Adapters | P1 | G | M2 | 10 | 5 / 4 |
@@ -2340,7 +2578,7 @@ Release handoff: exact commit/source inventory; reproducible build and artifact 
 | CRA-011 | Safe Push, Crawl and Network Access | P0 | C | M3 | 9 | 5 / 3 |
 | CRA-012 | Safe Text, Structured Data and Office Parsing | P0 | C | M3 | 10 | 5 / 4 |
 | CRA-013 | Email, Containers and Nested Provenance | P0 | C | M3 | 9 | 5 / 3 |
-| CRA-014 | Images, Audio and Video | P1 | G | M3 | 9 | 5 / 3 |
+| CRA-014 | Images, Audio and Video | P1 | G | M3 | 10 | 5 / 4 |
 | CRA-015 | Engineering Diagram Semantics | P1 | G | M3 | 9 | 5 / 3 |
 | CRA-016 | RDF Terms, Parsing and Standards Fidelity | P0 | D | M4 | 11 | 5 / 5 |
 | CRA-017 | Mapping IR, RDF/LPG Projection and OBDA Inputs | P0 | D | M4 | 12 | 5 / 6 |
@@ -2349,28 +2587,31 @@ Release handoff: exact commit/source inventory; reproducible build and artifact 
 | CRA-020 | Transactional Shape Validation | P0 | D | M4 | 12 | 6 / 5 |
 | CRA-021 | Vocabulary, Taxonomy and Multilingual Stewardship | P1 | E | M5 | 9 | 5 / 3 |
 | CRA-022 | Ontology and Mapping Change Governance | P1 | E | M5 | 10 | 5 / 4 |
-| CRA-023 | Canonical Identity, Alignment and Reversible Resolution | P1 | E | M5 | 9 | 5 / 3 |
+| CRA-023 | Canonical Identity, Alignment and Reversible Resolution | P1 | E | M5 | 10 | 5 / 4 |
 | CRA-024 | Typed Query, Federation and Semantic Planning | P1 | F | M5 | 12 | 6 / 5 |
-| CRA-025 | Search, Embeddings and Projection Fidelity | P1 | F | M6 | 8 | 5 / 2 |
-| CRA-026 | Evidence-Bound AI and Ontology Learning | P1 | F | M6 | 10 | 6 / 3 |
+| CRA-025 | Search, Embeddings and Projection Fidelity | P1 | F | M6 | 10 | 5 / 4 |
+| CRA-026 | Evidence-Bound AI and Ontology Learning | P1 | F | M6 | 14 | 6 / 7 |
 | CRA-027 | Governed Actions and Write-Back | P1 | G | M6 | 10 | 5 / 4 |
-| CRA-028 | Temporal Knowledge, Impact and Simulation | P1 | E | M6 | 9 | 5 / 3 |
+| CRA-028 | Temporal Knowledge, Impact and Simulation | P1 | E | M6 | 10 | 5 / 4 |
 | CRA-029 | Catalog, Lineage and Enterprise Context | P1 | E | M7 | 9 | 5 / 3 |
 | CRA-030 | Modular, Accessible and Truthful GUI | P1 | F | M7 | 10 | 6 / 3 |
 | CRA-031 | Durable Jobs, Publication and Event Delivery | P0 | B | M8 | 8 | 5 / 2 |
 | CRA-032 | Observability and Operational Truth | P0 | B | M8 | 9 | 5 / 3 |
 | CRA-033 | Backup, Restore and Failure Recovery | P0 | H | M8 | 8 | 5 / 2 |
 | CRA-034 | Migration, Portability and Rollback | P1 | H | M8 | 9 | 5 / 3 |
-| CRA-035 | Commercial Packaging and Supply-Chain Compliance | P0 | B | M8 | 9 | 5 / 3 |
-| CRA-036 | Correctness, Performance and Scale Qualification | P0 | I | M8 | 10 | 6 / 3 |
-| CRA-037 | Independent QA and Evidence Verification | P0 | I | M8 | 11 | 6 / 4 |
+| CRA-035 | Commercial Packaging and Supply-Chain Compliance | P0 | B | M8 | 10 | 5 / 4 |
+| CRA-036 | Correctness, Performance and Scale Qualification | P0 | I | M8 | 11 | 6 / 4 |
+| CRA-037 | Independent QA and Evidence Verification | P0 | I | M8 | 12 | 6 / 5 |
 | CRA-038 | Support, Service Objectives and Operator Readiness | P1 | I | M8 | 9 | 5 / 3 |
 | CRA-039 | Public APIs, SDKs and Developer Ecosystem | P1 | H | M8 | 9 | 5 / 3 |
 | CRA-040 | Privacy, Retention, Deletion and No-Egress Guarantees | P0 | B | M8 | 8 | 5 / 2 |
 | CRA-041 | Truthful Positioning, Competitive Claims and Disclosure Governance | P1 | I | M9 | 8 | 0 / 7 |
 | CRA-042 | Competitive Research Qualification and Maintenance | P1 | A | M9 | 8 | 0 / 7 |
+| CRA-043 | Numerical Compute Stack, Determinism and Hardware Profiles | P0 | B | M10 | 12 | 0 / 11 |
+| CRA-044 | Learned Graph Intelligence over the Graph Planes | P1 | F | M10 | 14 | 0 / 13 |
+| CRA-045 | Deterministic–Probabilistic Boundary and Neuro-Symbolic Arbitration | P0 | F | M10 | 9 | 0 / 8 |
 
-Totals: 42 requirements, 372 clauses (211 verbatim from CRAr.md, 161 added), 42 acceptance obligations, 12 scenarios, 14 human decisions, 33 conflict records, 55 research records.
+Totals (v3.2): 45 requirements, 417 clauses (210 verbatim from CRAr.md, 207 added), 45 acceptance obligations, 14 scenarios, 17 human decisions (2 decided), 42 conflict records, 55 research records.
 
 ### 19.2 ONT backlog -> requirements
 
@@ -2527,6 +2768,40 @@ Evidence scores are from `competitive-research-matrix.csv` (D01 core, D03 model,
 | 15 | Cons-to-pros | Sections 19.3-19.4 | Hypotheses labelled |
 | 16 | Appendices/reproduction | Sections 0, 20 | External evaluations open |
 
+### 19.7 Graph-Neurons requirements -> requirements (v3.1)
+
+`GN-REQ-v1` remains the detailed engineering reference; acceptance is tracked only through the clauses below.
+
+| GN | Title (abridged) | Requirement clauses | Note |
+|---|---|---|---|
+| GN-010 | Numerical stack provisioning and platform matrix | CRA-043.1, 043.2, 043.3, 043.10, 043.11 | Tiers N0-N3, CPU-only distribution (H-16) |
+| GN-011 | Array backend and dtype discipline | CRA-043.5 | float32 storage, no Python loops |
+| GN-012 | Determinism and reproducibility | CRA-043.6 | Cross-process 1e-4 gate (section 5.3) |
+| GN-013 | BLAS thread governance | CRA-043.7 | Set before numpy import |
+| GN-014 | Air-gapped installation | CRA-043.3 | Wheel bundle + hash lock |
+| GN-015 | Numerical correctness and stability | CRA-043.8 | — |
+| GN-016 | Memory and tensor lifecycle | CRA-043.9 | Refuse before allocation |
+| GN-001 | Neural runtime and degradation contract | CRA-043.4 | X-39 |
+| GN-002 | Assertion contract (prediction is not fact) | CRA-044.12, CRA-045.2 | X-34 |
+| GN-003 | Anti-stub harness | CRA-044.3, CRA-037.11 | Must fail the hash stub |
+| GN-004 | Versioned feature and embedding store | CRA-044.9, CRA-025.8 | X-41 |
+| GN-005 | Snapshots, temporal splits, negative sampling | CRA-044.4 | — |
+| GN-006 | Evaluation harness and calibration | CRA-044.5, CRA-036.10 | X-37 |
+| GN-007 | Model registry, promotion, rollback | CRA-044.9 | — |
+| GN-101, GN-102 | R-GCN (replaces hash stub), GraphSAGE | CRA-044.1, 044.6, CRA-025.9 | X-40 |
+| GN-103, GN-104, GN-201, GN-202 | R-GAT, HGT, graph transformer, path-aware attention | CRA-044.7 | Bake-off gated |
+| GN-203 | Natural-language bridge | CRA-026, CRA-045.3 | Grounded, cited, dual path |
+| GN-301, GN-302, GN-303 | GRU/LSTM, TGN, RE-Net | CRA-044.7, CRA-028.9 | Bake-off gated |
+| GN-401, GN-402, GN-403 | ChebNet, ConvE, vision bridge | CRA-044.7, CRA-015 | Bake-off gated |
+| GN-501 | Adversarial quality discriminator | CRA-044.8 | After CRA-044.6 |
+| GN-502, GN-601 | Triple generator, spiking encoder | CRA-044.8 | Research sandbox |
+| GN-701 | Explainability | CRA-044.10 | Faithfulness probe |
+| GN-702 | Fusion and arbitration | CRA-045.3 | DISPUTED surfaced |
+| GN-703 | Security and entitlements | CRA-003, CRA-044.A | Membership-inference probe |
+| GN-704 | API surface | Section 11 | X-38 |
+| GN-705 | Performance budgets | CRA-036 | Manifest targets |
+| GN-706 | Known failure-mode guards | CRA-044.11 | — |
+
 ## 20. Reproduction Probe and Independent Semantic Fixture
 
 Baseline defect probe (run from repository root, PowerShell; it reproduces the defect and is not a passing acceptance test):
@@ -2627,5 +2902,39 @@ Normative references: [RDF 1.1 Concepts](https://www.w3.org/TR/rdf11-concepts/),
 | ontology-analysis-dashboard.html | Scorecard, backlog, inversions, gaps | Updated dashboard + tracker |
 | competitive-research-matrix.csv | 55 rows | Section 19.4; dashboard; tracker R-items |
 | ontology-comparison-matrix.csv | 58 rows | Section 19.4 indicative mean; dashboard |
+| crarprompt.txt | Closing instruction: deterministic semantics plus probabilistic AI | Section 1; CRA-045; CRA-026.10-026.12; G21 |
+| Graph-Neurons-requirements.md | 0.3 hash-stub finding; 0.5 measured baseline | G19, G20; CRA-001.13; CRA-044.1; CRA-025.9 |
+| Graph-Neurons-requirements.md | 1.3, 3.1 GN-010..GN-016 numerical stack | CRA-043; section 13 |
+| Graph-Neurons-requirements.md | 2, 3.2-10 GN-001..GN-007, GN-101..GN-706 | CRA-044, CRA-045; appended `[GN]` clauses; section 19.7 |
+| Graph-Neurons-implementation-plan.md | Phases, evidence ledger, prohibitions, risks NR1-NR18 | Implementation guide WP-043..WP-045; X-35, X-36 |
+
+## 22. Change Log
+
+### v3.2-COMBINED (2026-10-18)
+
+| Change | Where | Reason |
+|---|---|---|
+| H-15 **accepted**: tiered CPU-first numerical stack as optional extras; N3 never shipped to customers | Section 18.2; `docs/decisions/ADR-H15-numerical-stack-tiers.md` | Decision delegated to the engineering agent by the owner |
+| H-16 **accepted**: CUDA `nvidia-*` packages are not redistributed in any artifact | CRA-043.2, CRA-043.3, CRA-035.9, section 13; `ADR-H16-no-cuda-redistribution.md` | Owner decision: redistribution not possible |
+| H-17 **open**; interim CPU-only policy | CRA-043.10; new CRA-043.11, CRA-044.13, CRA-026.13; section 5.2 accelerator row; `ADR-H17-gpu-availability.md` | GPU availability unknown |
+| Status column added to the decisions table | Section 18.2 | Make decided and open items explicit |
+| Install-size figures replaced by measured budgets (N0 <= 150 MB, N1 CPU <= 2.5 GB) | CRA-043.1 | Earlier ~70 MB and ~2 GB figures were unmeasured; ~2 GB described CUDA builds |
+| Graph-Neurons documents revised to v1.1 and their SHA-256 refreshed | Section 0.1 rows 10-11 | Keep the engineering reference consistent with the decisions |
+| Gate B/F exit evidence, E14 and section 16.3 updated for CPU-only qualification | Sections 16, 17 | Consequence of H-16 and H-17 |
+
+### v3.1-COMBINED (2026-10-18)
+
+| Change | Where | Reason |
+|---|---|---|
+| Module M10 with CRA-043 (numerical stack), CRA-044 (learned graph intelligence), CRA-045 (deterministic–probabilistic boundary) | Section 7.10 | Closing instruction of `crarprompt.txt` had no owning requirement; Graph-Neurons specification not yet combined |
+| 12 appended clauses: CRA-001.13, 014.9, 023.9, 025.8-025.9, 026.10-026.12, 028.9, 035.9, 036.10, 037.11 | Section 7 | Existing requirements depended on capabilities v3.0 did not specify |
+| Gaps G19 (hash-based GNN), G20 (no numerical stack), G21 (unowned boundary) | Section 4.2 | Repository measurement at `d771fd6` and prompt trace |
+| Conflicts X-34..X-42; decisions H-15..H-17; scenarios E13-E14 | Sections 17, 18 | Graph-Neurons vs this specification reconciled explicitly |
+| CRA-005.8 origin `[CRAr]` -> `[AGG]` | CRA-005 | Text originates in `competitive-research-analysis-agg.md`; CRAr.md has five CRA-005 clauses. Restores the 210-verbatim count stated in section 0.2 |
+| Re-measured facts (302 test files vs 239 asserted; connector-file composition; numerical stack absent) | Section 4.1; CRA-001.13 | CRA-001.11 records discrepancies instead of correcting sources |
+| CRA-001.10 coverage ranges extended | CRA-001 | Ledger must cover the new items |
+| Section 19.1 counts regenerated; section 19.7 GN map added | Section 19 | Traceability |
+| Sources 9-11 added with SHA-256 | Section 0.1 | Provenance |
+| The previous `EOIP-engg-doc-pkg/ontology-analysis-dashboard.html` (source 6, SHA `1109fa46…`) remains recoverable from git commit `a9d1c0f`; that path now carries a synchronized copy of the combined dashboard | Companion files | The previous version showed 'already won' inversions and unlabelled self-scores that CRA-041.3/041.7 prohibit externally |
 
 *End of requirements document. Completion is observable, reproducible and authorized behaviour in the actual supported deployment — not the volume of code or documentation produced.*

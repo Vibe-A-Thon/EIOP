@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | Document | `CRAr_cpccaggcc-implementation.md` |
-| Implements | `CRAr_cpccaggcc-requirements.md` v3.0-COMBINED (42 requirements, all clauses `CRA-xxx.n`, acceptance obligations `CRA-xxx.A`) |
+| Implements | `CRAr_cpccaggcc-requirements.md` v3.2-COMBINED (45 requirements, all clauses `CRA-xxx.n`, acceptance obligations `CRA-xxx.A`) |
 | Progress view | `CRAr_cpccaggcc-tracker.html` (imports/exports the ledger format of section 2) |
-| Date | 2026-10-17 |
+| Date | 2026-10-18 (v3.2 and v3.1); v3.0 dated 2026-10-17 |
 | Audience | Any AI coding agent or engineer implementing EOIP/KGF |
 
 ## 0. Rules That Override Everything Else in This Guide
@@ -36,7 +36,7 @@ Create `.audit-scratch/` first and add it to `.gitignore` except for `ledger.jso
 
 ### 1.2 Read before editing
 
-Read completely: `CRAr_cpccaggcc-requirements.md`, this guide, `LICENSING.md`, `GUI-UIX-implementation-plan.md`, `GUI-UIX-audit-2026-10-16.md` and any existing CP/GUI requirement files. Do not infer completion from earlier audit labels.
+Read completely: `CRAr_cpccaggcc-requirements.md`, this guide, `LICENSING.md`, `GUI-UIX-implementation-plan.md`, `GUI-UIX-audit-2026-10-16.md` and any existing CP/GUI requirement files. For Module M10 (WP-043..WP-045) also read `EOIP-engg-doc-pkg/Graph-Neurons-requirements.md` and `Graph-Neurons-implementation-plan.md`; where they differ from the requirements document, the requirements document governs (conflicts X-34..X-42). Do not infer completion from earlier audit labels.
 
 ### 1.3 Verify every search lead (re-measure, CRA-001.11)
 
@@ -68,6 +68,11 @@ for mod in ("eoip.platform_router", "apps.api.main", "eoip.api"):
         print(mod, "not importable:", type(e).__name__)
 PY
 find tests -name "test_*.py" | wc -l
+# Numerical stack and learned-model stand-ins (CRA-001.13, G19, G20)
+grep -nE '"(numpy|scipy|scikit-learn|torch|torch-geometric|networkx)' pyproject.toml || echo "no numerical stack declared"
+python -c "import numpy" 2>&1 | tail -1
+grep -n "_deterministic_vector\|hashlib.sha256" packages/eoip/gnn/engine.py
+ls packages/eoip/connectors/*.py | wc -l   # 38 at d771fd6, includes __init__ and infrastructure modules
 ```
 
 For each asserted fact in requirements section 4.1 record `asserted`, `measured`, `match` in `.audit-scratch/baseline/facts.json`. A mismatch is data, not an error to "fix" in documents.
@@ -82,6 +87,7 @@ Run the probe from requirements section 20 (`PYTHONPATH=.:packages` on Linux/mac
 - Pin new dependencies in the project's existing dependency file with exact versions and record them in `docs/decisions/` plus the SBOM (CRA-035). Candidate pins to evaluate (verify latest stable at implementation time and record the chosen version): `rdflib`, `pyshacl`, `defusedxml`, `hypothesis`, `pytest-timeout`, `jsonschema`, `cyclonedx-bom` or `syft` (binary).
 - JVM workers (ELK, OWL API, ROBOT, optional TopBraid SHACL API): pinned JDK in a separate worker image; never on the API host process (subject to H-02).
 - Frontend: existing React/Vite toolchain; add Playwright and `@axe-core/playwright` as dev dependencies if absent.
+- Numerical stack (WP-043, v3.1): optional extras only — `numerics` (N0), `neural` (N1), `neural-text` (N2), `neural-research` (N3); install CPU-only torch (`--extra-index-url https://download.pytorch.org/whl/cpu`) — the only build EOIP distributes; never add a CUDA build or any `nvidia-*` package to a lock file, bundle or image (H-16); never add numpy or torch to core `dependencies`; qualification runners have no GPU (H-17 interim, CRA-043.11).
 
 ## 2. Acceptance Infrastructure (Work Package WP-00 — first thing to build)
 
@@ -139,7 +145,34 @@ OUT.write_text(json.dumps({"schema": "eoip-ledger-v3", "created_at": now(), "ite
 print(f"seeded {len(unique)} items")
 ```
 
-Expected count after seeding equals the tracker's item count (528 in v3.0: 372 clauses + 42 acceptance + 12 scenarios + 14 decisions + 33 conflicts + 55 research). A different count means the parser or the document changed; investigate before continuing.
+Expected count after seeding equals the tracker's item count (**590 in v3.2**: 417 clauses + 45 acceptance + 14 scenarios + 17 decisions + 42 conflicts + 55 research; 587 in v3.1; 528 in v3.0). A different count means the parser or the document changed; investigate before continuing.
+
+**Upgrading an existing v3.0 ledger.** `seed_ledger.py` refuses to overwrite. Add the v3.1 items with a migration that never changes an existing item's state or receipts:
+
+```python
+"""tools/acceptance/migrate_ledger.py — add items present in the requirements but absent from the ledger.
+Run from the repository root. Never changes an existing item's state, evidence or receipts."""
+import json, subprocess, sys, tempfile
+from pathlib import Path
+
+req = Path("CRAr_cpccaggcc-requirements.md").resolve()
+seed = Path("tools/acceptance/seed_ledger.py").resolve()
+led = Path(".audit-scratch/ledger.json")
+cur = json.loads(led.read_text(encoding="utf-8"))
+with tempfile.TemporaryDirectory() as d:  # seed_ledger writes <cwd>/.audit-scratch/ledger.json
+    subprocess.run([sys.executable, str(seed), str(req)], cwd=d, check=True)
+    fresh = json.loads((Path(d) / ".audit-scratch/ledger.json").read_text(encoding="utf-8"))
+have = {i["id"]: i for i in cur["items"]}
+added = [i for i in fresh["items"] if i["id"] not in have]
+for i in fresh["items"]:  # origin corrections such as CRA-005.8 CRAr -> AGG
+    if i["id"] in have and i.get("origin") and have[i["id"]].get("origin") != i["origin"]:
+        have[i["id"]]["origin"] = i["origin"]
+cur["items"].extend(added)
+led.write_text(json.dumps(cur, indent=2), encoding="utf-8")
+print(f"added {len(added)} items")  # expect 62 from v3.0, 3 from v3.1
+```
+
+Then record the decided human decisions: import `docs/decisions/decisions-ledger-import.json` into the tracker (Ledger tab) or merge its items into `.audit-scratch/ledger.json`. It sets H-15 and H-16 to ACCEPTED with decider, ADR reference and date, and H-17 to BLOCKED with the missing input.
 
 ### 2.3 `run_and_receipt.py` (reference implementation)
 
@@ -291,14 +324,15 @@ Each work package (WP) below names: clauses covered, inspect-first leads, build 
 
 | WP | Gate | Requirement | Title | P | Clauses | Depends on | Human decisions |
 |---|---|---|---|---|---|---|---|
-| WP-001 | A | CRA-001 | Baseline, Decisions and Acceptance Ledger | P0 | 12 | none | — |
+| WP-001 | A | CRA-001 | Baseline, Decisions and Acceptance Ledger | P0 | 13 | none | — |
 | WP-042 | A | CRA-042 | Competitive Research Qualification and Maintenance | P1 | 7 | CRA-001 | — |
 | WP-002 | B | CRA-002 | Modularity and Safe Plugin Runtime | P0 | 11 | CRA-001 | — |
 | WP-003 | B | CRA-003 | Identity, Scope and Derived-Data Authorization | P0 | 12 | CRA-001/002 | — |
 | WP-031 | B | CRA-031 | Durable Jobs, Publication and Event Delivery | P0 | 7 | CRA-002/003 | — |
 | WP-032 | B | CRA-032 | Observability and Operational Truth | P0 | 8 | CRA-001/003/031 | — |
-| WP-035 | B | CRA-035 | Commercial Packaging and Supply-Chain Compliance | P0 | 8 | CRA-001/002 | H-04 |
+| WP-035 | B | CRA-035 | Commercial Packaging and Supply-Chain Compliance | P0 | 9 | CRA-001/002 | H-04 |
 | WP-040 | B | CRA-040 | Privacy, Retention, Deletion and No-Egress Guarantees | P0 | 7 | CRA-003/010/018/031 | — |
+| WP-043 | B | CRA-043 | Numerical Compute Stack, Determinism and Hardware Profiles | P0 | 11 | CRA-001/002/035 | H-15, H-16, H-17 |
 | WP-004 | C | CRA-004 | Connection Factory and Conformance SDK | P0 | 12 | CRA-002/003 | — |
 | WP-010 | C | CRA-010 | Durable Source Events and Incremental Synchronization | P0 | 8 | CRA-003/004/031 | H-14 |
 | WP-011 | C | CRA-011 | Safe Push, Crawl and Network Access | P0 | 8 | CRA-003/004 | — |
@@ -311,26 +345,28 @@ Each work package (WP) below names: clauses covered, inspect-first leads, build 
 | WP-020 | D | CRA-020 | Transactional Shape Validation | P0 | 11 | CRA-002/016/018/031 | — |
 | WP-021 | E | CRA-021 | Vocabulary, Taxonomy and Multilingual Stewardship | P1 | 8 | CRA-018/020/022 | — |
 | WP-022 | E | CRA-022 | Ontology and Mapping Change Governance | P1 | 9 | CRA-003/018/019/020/031 | — |
-| WP-023 | E | CRA-023 | Canonical Identity, Alignment and Reversible Resolution | P1 | 8 | CRA-003/010/016/019/022 | — |
-| WP-028 | E | CRA-028 | Temporal Knowledge, Impact and Simulation | P1 | 8 | CRA-010/019/023/031 | — |
+| WP-023 | E | CRA-023 | Canonical Identity, Alignment and Reversible Resolution | P1 | 9 | CRA-003/010/016/019/022 | — |
+| WP-028 | E | CRA-028 | Temporal Knowledge, Impact and Simulation | P1 | 9 | CRA-010/019/023/031 | — |
 | WP-029 | E | CRA-029 | Catalog, Lineage and Enterprise Context | P1 | 8 | CRA-003/010/017/018/024/031 | — |
 | WP-024 | F | CRA-024 | Typed Query, Federation and Semantic Planning | P1 | 11 | CRA-003/016/017/019/031 | — |
-| WP-025 | F | CRA-025 | Search, Embeddings and Projection Fidelity | P1 | 7 | CRA-003/010/018/023/031 | — |
-| WP-026 | F | CRA-026 | Evidence-Bound AI and Ontology Learning | P1 | 9 | CRA-003/014/019/020/023/025/040 | — |
+| WP-025 | F | CRA-025 | Search, Embeddings and Projection Fidelity | P1 | 9 | CRA-003/010/018/023/031 | — |
+| WP-026 | F | CRA-026 | Evidence-Bound AI and Ontology Learning | P1 | 13 | CRA-003/014/019/020/023/025/040 | — |
 | WP-030 | F | CRA-030 | Modular, Accessible and Truthful GUI | P1 | 9 | CRA-001/003 and the domain requirement exposed by each screen | — |
+| WP-045 | F | CRA-045 | Deterministic–Probabilistic Boundary and Neuro-Symbolic Arbitration | P0 | 8 | CRA-003/016/019/020/024/025/026/043 | — |
+| WP-044 | F | CRA-044 | Learned Graph Intelligence over the Graph Planes | P1 | 13 | CRA-003/019/020/023/025/043/045 | H-17 |
 | WP-005 | G | CRA-005 | Work-Tracking and Test-System Adapters | P1 | 9 | CRA-004/010/011 | H-11 |
 | WP-006 | G | CRA-006 | Wiki, Content, Chat and Document Repositories | P1 | 8 | CRA-004/010/011/012/013 | H-11, H-13 |
 | WP-007 | G | CRA-007 | Code, Build, Artifact and API-Portal Adapters | P1 | 9 | CRA-004/010/011 | H-07, H-11 |
 | WP-008 | G | CRA-008 | Observability and Operational-System Adapters | P1 | 9 | CRA-004/010/011/040 | H-11 |
 | WP-009 | G | CRA-009 | Warehouses, Catalog Federation and Custom Systems | P1 | 8 | CRA-004/024/029 | H-06, H-11 |
-| WP-014 | G | CRA-014 | Images, Audio and Video | P1 | 8 | CRA-002/012/026/035/040 | — |
+| WP-014 | G | CRA-014 | Images, Audio and Video | P1 | 9 | CRA-002/012/026/035/040 | — |
 | WP-015 | G | CRA-015 | Engineering Diagram Semantics | P1 | 8 | CRA-012/014/016/017 | — |
 | WP-027 | G | CRA-027 | Governed Actions and Write-Back | P1 | 9 | CRA-003/004/022/031/040 | H-03 |
 | WP-033 | H | CRA-033 | Backup, Restore and Failure Recovery | P0 | 7 | CRA-018/031/032/040 | — |
 | WP-034 | H | CRA-034 | Migration, Portability and Rollback | P1 | 8 | CRA-016/017/018/022/033/035 | — |
 | WP-039 | H | CRA-039 | Public APIs, SDKs and Developer Ecosystem | P1 | 8 | CRA-001/002/003/035/037 | — |
-| WP-036 | I | CRA-036 | Correctness, Performance and Scale Qualification | P0 | 9 | the feature under qualification and CRA-001/032/037 | H-01 |
-| WP-037 | I | CRA-037 | Independent QA and Evidence Verification | P0 | 10 | CRA-001 and each changed feature | — |
+| WP-036 | I | CRA-036 | Correctness, Performance and Scale Qualification | P0 | 10 | the feature under qualification and CRA-001/032/037 | H-01 |
+| WP-037 | I | CRA-037 | Independent QA and Evidence Verification | P0 | 11 | CRA-001 and each changed feature | — |
 | WP-038 | I | CRA-038 | Support, Service Objectives and Operator Readiness | P1 | 8 | CRA-032/033/035/037 | H-08 |
 | WP-041 | I | CRA-041 | Truthful Positioning, Competitive Claims and Disclosure Governance | P1 | 7 | CRA-001/035/036/037/042 | H-05, H-12 |
 
@@ -338,7 +374,7 @@ WP-00 (acceptance infrastructure, section 2) precedes all of them.
 
 ### Gate A — Truthful baseline
 
-#### WP-001 — Capability registry, decisions and ledger (CRA-001.1-001.12, CRA-001.A)
+#### WP-001 — Capability registry, decisions and ledger (CRA-001.1-001.13, CRA-001.A)
 
 - **Inspect first:** `packages/eoip/graph/backends.py` (capability/export lists, lines ~189-245), any existing `/capabilities`, `/health` or feature-flag routes, `packages/eoip/contracts/`, provider registries for models/connectors/parsers.
 - **Build:**
@@ -353,6 +389,7 @@ WP-00 (acceptance infrastructure, section 2) precedes all of them.
 - **Tests:** `tests/unit/test_capability_registry.py` (all six states; config cannot set QUALIFIED; probe exceptions become UNAVAILABLE; unsupported construct error payload names the construct); `tests/integration/test_capabilities_route.py` (disabled vs unavailable vs healthy provider on a real instance; tenant without entitlement sees UNLICENSED); `tests/acceptance/test_verify_ledger.py` (section 2.4 rules).
 - **Acceptance run:** start the real API with one provider disabled, one pointing at a stopped service and one healthy; capture `GET /api/v1/capabilities`; corrupt a receipt and edit a source file during a run — verifier rejects both.
 - **Not done if:** any capability claims SUPPORTED_QUALIFIED without ledger backing; any route returns an empty 200 for an unsupported construct.
+- **v3.1 addition (CRA-001.13):** record the re-measured facts (302 test files; connector-file composition; numerical stack absent; hash-based `gnn/engine.py`; demo axioms in `rdf.py`) in `.audit-scratch/baseline/facts.json` together with the commands that produced them.
 
 #### WP-042 — Competitive research records (CRA-042.1-042.7, CRA-042.A)
 
@@ -405,16 +442,32 @@ WP-00 (acceptance infrastructure, section 2) precedes all of them.
 - **Build:** correlation IDs propagated source event -> job -> parser -> semantic run -> publication -> projection -> query/action using OpenTelemetry context; metrics listed in CRA-032.6 with bounded labels; `traceparent` on every response; structured audit log sink separate from best-effort telemetry; dashboards (Grafana JSON committed under `ops/dashboards/`) and alert rules (`ops/alerts/*.yaml`) each linked to a runbook; unknown/stale telemetry rendered as UNKNOWN, never zero; redaction filters for credentials, query literals and prompts.
 - **Tests:** trigger a real failed connector, a validator timeout, a stuck lease and a policy-stale index; assert trace correlation, alert firing and absence of secrets in logs/metrics/bundles (`tests/integration/test_observability_truth.py`); collector absent/backpressure test proving no critical-path failure.
 
-#### WP-035 — Packaging and supply chain (CRA-035.1-035.8, CRA-035.A)
+#### WP-035 — Packaging and supply chain (CRA-035.1-035.9, CRA-035.A)
 
 - **Build:** SBOM generation in CI for wheel, container images, browser bundle, VSIX (if shipped), JVM worker image, models and datasets (CycloneDX JSON); license policy file `compliance/license-policy.yaml` derived from requirements section 13; CI gate failing on denied licenses or unknown licenses in shipped artifacts; NOTICE aggregation (online and offline); artifact signing and provenance (e.g. Sigstore/cosign or the project's PKI) with verification on install; air-gap bundle build without runtime downloads; entitlement flags that disable modules truthfully (capability state UNLICENSED).
 - **Tests:** tamper with a plugin/artifact -> activation refused; add an AGPL test dependency -> gate fails; compare embedded inventories with SBOM.
 - **Human gates:** Legal approvals for open items (H-04, H-09, X-01, X-02, X-21, X-30) — clauses depending on them stay BLOCKED; agent-written license text never clears rights.
+- **v3.1 addition (CRA-035.9):** numerical-stack packages appear in the per-tier SBOM; the license gate denies `nvidia-*` packages in every distributed artifact (H-16 decided) and denies DGL and networkx.
 
 #### WP-040 — Privacy, retention, deletion and no-egress (CRA-040.1-040.7, CRA-040.A)
 
 - **Build:** classification model on source data and every derivative; retention/hold policy store; egress policy enforced in one outbound HTTP/DNS layer used by connectors, parsers, model calls, linting, telemetry, docs and support bundles (no direct `requests`/`httpx` use outside it — add a lint rule); derivative inventory index (subject/source -> every assertion, inference, raw object, index/vector entry, cache, answer, export, job, trace, backup reference); deletion workflow job with legal-hold conflict escalation and scoped report; replay/restore/re-embed guards consulting a tombstone registry so deleted content is never resurrected.
 - **Tests:** delete and revoke a subject while jobs and streams are active; restore an older backup and replay events; sweep every store; run a packet/socket monitor (e.g. `nsenter` + `ss`/eBPF or a recording proxy) during full ingestion + GraphRAG in no-egress mode and assert zero external bytes (`tests/integration/test_no_egress.py`, `tests/integration/test_erasure_cascade.py`).
+
+#### WP-043 — Numerical compute stack (CRA-043.1-043.11, CRA-043.A)
+
+- **Inspect first:** `pyproject.toml` optional-dependencies (existing pattern: `fileparse`, `codeparse`, `otel`, `k8s`, `redis`, `enterprise`); confirm at baseline that `python -c "import numpy"` fails; the Python-loop `_cosine_similarity` in `packages/eoip/gnn/engine.py`; the WP-002 worker supervisor.
+- **Build:**
+  1. Extras `numerics`, `neural`, `neural-text`, `neural-research` composing through `eoip[numerics]` and so on, with exactly one version constraint per package; CPU-only builds are the only builds distributed and EOIP documentation publishes no CUDA install command (H-16, `docs/decisions/ADR-H16-no-cuda-redistribution.md`).
+  2. `requirements-neural.lock` with hashes; `scripts/build_wheel_bundle.sh <platform> <tier>` producing an offline bundle with a SHA-256 manifest.
+  3. `packages/eoip/neural/runtime.py`: `NeuralTier` (NONE, NUMERICS, NEURAL, TEXT, RESEARCH), `get_runtime()` (cached, never raises), `require_tier()`; each tier registered in the CapabilityRegistry (WP-001); a missing tier yields 503 `CAPABILITY_UNAVAILABLE` with tier and install command in `details`.
+  4. `packages/eoip/neural/numerics.py`: float32 policy, vectorized cosine and normalization, `assert_finite`, stable softmax and logarithms, `seed_everything()`, `capture_environment()`.
+  5. Thread governance in each process entry point before any numpy import (serving 1, training min(8, CPU count)); all four environment variables set together.
+  6. Memory estimator with refusal at 80%, accelerator-memory release after each job, all numerical work dispatched to `heavy` workers.
+  7. CI jobs for the CRA-043.10 platform matrix.
+  8. Licence-gate scan of `requirements-neural.lock`, every bundle manifest and every image SBOM for `nvidia-*` (must be zero, H-16); all qualification jobs run on runners with no GPU visible and receipts record `device=cpu` (CRA-043.11).
+- **Tests:** `tests/neural/test_runtime_tiers.py` (four isolated environments), `tests/neural/test_numerics.py` (dtype, finiteness, softmax over [1000, 1001], empty inputs), `tests/neural/test_determinism.py` (same seed across processes within 1e-4; a different seed differs), `tests/neural/test_threads.py` (variables set before import; oversubscription probe recorded), `tests/neural/test_memory_guard.py`, `tests/integration/test_offline_wheel_bundle.py` (networking disabled), `tests/contract/test_core_install_unchanged.py` (`pip freeze` of `pip install -e .` equals the committed baseline), `tests/compliance/test_no_cuda_packages.py` (lock file, bundle manifest and image SBOM contain zero `nvidia-*`; a fixture lock file containing one fails the gate).
+- **Not done if:** numpy or torch appears in core `dependencies`; any endpoint fabricates a result when a tier is missing; a reported metric lacks its seed bundle and environment capture; any distributed artifact contains an `nvidia-*` package; a gate was met only with a GPU.
 
 ### Gate C — First acquisition slice
 
@@ -548,15 +601,17 @@ def chunk_text(text: str, size: int, overlap: int) -> list[tuple[int, int]]:
 - **Pitfall scanner (`ontology/lint/`):** rule plug-ins, each with ID, severity, description, remediation hint and gold fixtures. Minimum 20 rules, e.g.: P01 missing rdfs:label; P02 missing definition/comment; P03 missing domain; P04 missing range; P05 circular subclass hierarchy; P06 equivalent-class loop; P07 class with no instances/subclasses/references (unconnected); P08 property with no usage; P09 inverse-property conflict; P10 deprecated term used in active axioms; P11 naming convention violation (configurable); P12 duplicate labels within scheme/language; P13 multiple domains intended as union (warning); P14 literal used where IRI expected; P15 undeclared namespace prefix use; P16 import not pinned; P17 functional property with multiple values in fixtures; P18 disjointness contradiction with subclassing; P19 orphan SHACL shape (target class absent); P20 shape targeting deprecated class; P21 label language tag missing. Runs offline only.
 - **Tests:** `tests/semantic/test_lint_rules.py` (each rule positive/negative), `tests/integration/test_gitops_pr_gate.py` (unsatisfiable class PR blocked with report; two editors conflict; reviewer denies; approval expires; policy changes; publication crash; consumer fails; rollback restores business queries without claiming to undo external actions).
 
-#### WP-023 — Identity, alignment and reversible resolution (CRA-023.1-023.8, CRA-023.A)
+#### WP-023 — Identity, alignment and reversible resolution (CRA-023.1-023.9, CRA-023.A)
 
 - **Build:** scoped source identity table (source_instance, external_id, tenant) -> canonical ID with aliases; candidate generator combining deterministic keys and probabilistic features (CRA-023.6) with NIL; never `owl:sameAs` from label/vector similarity alone; approval for high-impact merges; consistency/constraint checks on proposed mappings; conflicting source claims preserved; `IdentityMergeLedger` with atomic merge/split (relationships, evidence, provenance, temporal history) and dependent inference/index rebuild; DeepOnto alignment worker (ONT-015) for schema/pack alignment; spaCy EntityLinker with tenant-scoped KB built from the graph for text mentions.
 - **Tests:** `tests/semantic/test_identity_resolution.py` (ambiguous abbreviations, same-name entities, conflicting identifiers, wrong high-confidence match rejected; merge then split across restart compares every edge/evidence/reference with the original; rejected candidates never appear as facts); evaluation report against the linking gate (precision >= 0.99, recall >= 0.80) per tenant/domain/language.
+- **v3.1 addition (CRA-023.9):** the candidate generator reports the feature set actually used; structural similarity only from a CRA-044 model whose anti-stub probes passed; never hash or random similarity.
 
-#### WP-028 — Temporal knowledge, impact and simulation (CRA-028.1-028.8, CRA-028.A)
+#### WP-028 — Temporal knowledge, impact and simulation (CRA-028.1-028.9, CRA-028.A)
 
 - **Build:** valid time and transaction/observation time on assertions; corrections and retractions as new records (never in-place overwrite); authorized `as_of` reads (API parameter; SPARQL service parameter `eoip:asOf`) constrained by retention/holds; version diffs; separation in API/GUI of observed relationships, deterministic impact, heuristic paths, stochastic estimates and simulation outputs; deterministic algorithms (BFS, Dijkstra, PageRank, Tarjan SCC) via existing `graph/` modules; simulations require versioned assumptions, inputs, seed, uncertainty and validation; path evidence preserved hop by hop; simulated facts never enter asserted knowledge without review.
 - **Tests:** `tests/semantic/test_temporal_simulation.py` (late events, corrections, clock skew, merges/splits, permission changes, retention across historical reads; seeded repeatability; cancellation of expensive work).
+- **v3.1 addition (CRA-028.9):** the learned impact estimate (WP-044) is returned beside the deterministic blast radius with its dual-path status (WP-045) and never reorders it.
 
 #### WP-029 — Catalog, lineage and enterprise context (CRA-029.1-029.8, CRA-029.A)
 
@@ -580,21 +635,55 @@ def chunk_text(text: str, size: int, overlap: int) -> list[tuple[int, int]]:
   9. BI connectivity test procedure for Tableau and Power BI (recorded session, receipt with screenshots *plus* query logs; screenshots alone insufficient).
 - **Tests:** `tests/query/test_query_semantics_oracle.py` (independent result corpus: optional/join/null/cardinality/path/aggregate/order/limit, source failures, injection), W3C SPARQL protocol tests in scope, SP2Bench in-scope queries under 30 s, cost-limit and cancellation releasing backend resources, federated Jira x Snowflake join, warmed-endpoint benchmarks separate from CLI startup.
 
-#### WP-025 — Search, embeddings and projection fidelity (CRA-025.1-025.7, CRA-025.A)
+#### WP-025 — Search, embeddings and projection fidelity (CRA-025.1-025.9, CRA-025.A)
 
 - **Build:** index metadata (scope, source/ontology/policy revision, provider/model/tokenizer, dimension, normalization, metric); provider registry with `test-hashing` refused in production profile; dimension mismatch -> hard error; ACL filtering during candidate generation and at delivery; scoped caches with policy epoch; resumable indexing, deletion, re-embedding into a shadow index, evaluation, atomic cutover/rollback; watermarks and stale/unavailable states; BM25 + dense fusion with RRF (k=60) and optional graph-centrality feature.
 - **Tests:** `tests/retrieval/test_hybrid_vector_search.py` (real configured provider; missing provider; vector shape errors; source delete/ACL change; re-embedding crash and rollback; no cross-tenant neighbours/counts/answers; read-back after restart/rebuild); evaluation report recall@k/nDCG/latency by domain/language/ACL selectivity on a labelled corpus.
+- **v3.1 additions (CRA-025.8-025.9):** separate index families for text and graph-structure embeddings with family/model/version metadata and rejection of mixed-family queries; the production profile refuses the `gnn/engine.py` hash vectors at startup.
 
-#### WP-026 — Evidence-bound AI and ontology learning (CRA-026.1-026.9, CRA-026.A)
+#### WP-026 — Evidence-bound AI and ontology learning (CRA-026.1-026.13, CRA-026.A)
 
 - **Build:** knowledge_state separation (proposed vs asserted vs inferred) for every model output with provider/model/prompt/tool/config revisions and evidence spans; bounded authorized context builder (token budget, evidence prioritization, freshness, conflicts) using GraphRAG traversal defaults (depth 2, max 200 nodes); clause-level citations to `assertion_id` + EvidenceLocator verified visible at delivery; abstention per CRA-026.8; true streaming with cancellation (no timer-simulated tokens; cancelled partial output never saved as complete); egress/DLP policy before any provider call; retrieved documents and tool outputs treated as untrusted data (system prompt and tool policy unaffected by content); local model serving option (vLLM/Ollama/TGI) for air-gap; usage/cost metering without raw data.
 - **Tests:** `tests/ai/test_graphrag_grounding.py` with real local or approved model traces: malicious documents (prompt injection), missing evidence (abstain), contradictory sources (report conflict), unavailable provider (UNAVAILABLE), cancellation; evaluation harness computing evidence precision/coverage, abstention, calibration and drift on held-out data; a check that each cited span supports the claim (human-adjudicated sample + automated entailment check where available).
+- **v3.1 additions (CRA-026.10-026.12):** model manifest with input/output token limits; budgeting with that model's tokenizer; reduction policy prioritize -> deduplicate -> drop whole lowest-priority items; restricted evidence filtered before budgeting; omission disclosed in the answer; `ContextManifest` stored by digest. Tests: `tests/ai/test_context_window.py` (overflow fixture; manifest token count equals tokenizer count; no mid-assertion cut; a restricted item changes neither the budget nor the disclosed count).
+- **v3.2 addition (CRA-026.13):** qualify a CPU-capable self-hosted generation runtime (llama.cpp/Ollama-class, after CRA-035 review); vLLM and TGI report `UNQUALIFIED` until H-17. Test: `tests/ai/test_cpu_generation_airgap.py` (GPU-free, networking disabled, grounded cited answer, latency recorded).
 
 #### WP-030 — Modular, accessible, truthful GUI (CRA-030.1-030.9, CRA-030.A)
 
 - **Inspect first:** the React app, the 27-screen obligations in GUI plans, shared transport/shell, legacy modules, existing tests; `GUI-UIX-audit-2026-10-16.md`.
 - **Build:** task routes (sources, ingestion review, ontology/vocabulary authoring, validation/reasoning, graph/entity/evidence, query/answer, changes/impact, actions/jobs, governance, reports, settings, support) on shared typed API clients generated from OpenAPI (CRA-039); capability-aware navigation (WP-001 states); explicit loading/empty/partial/stale/denied/error/success states; no example data presented as real; simple forms and expert views (Manchester syntax editor, SPARQL workbench) over the same server state; graph/table/tree equivalence with bounded scenes, keyboard navigation, focus identity, screen-reader names; i18n framework with pseudo-locale and RTL; reduced motion honoured in CSS and JS graph animation; versioned scoped preferences (theme, density, locale, white-label) with asset validation and contrast checks; Playwright E2E and axe suites as `npm run test:e2e` and `npm run test:a11y`.
 - **Tests:** real browser against real services and the built artifact (desktop and mobile; four supported themes; reduced motion; keyboard); journeys source -> review -> publish -> ask -> evidence -> authorized export/action with failure/restart cases; manual AT review records (NVDA/JAWS/VoiceOver as available) — automated axe passes are necessary but not sufficient.
+
+#### WP-045 — Deterministic–probabilistic boundary (CRA-045.1-045.8, CRA-045.A)
+
+- **Inspect first:** every use of `knowledge_state`; every model, LLM and embedding call site (`brain/`, `ragx/`, `retrieval/`, `nlp/`, `extraction/`, `gnn/`, `intelligence_eng/`); existing query routes; the WP-026 GraphRAG context builder.
+- **Build:**
+  1. Producer-class field on every capability registration and result payload.
+  2. One proposal path: probabilistic producers write `proposed` assertions with `ModelLineage`; the promotion endpoint runs SHACL (WP-020), profile and consistency checks (WP-019) and identity rules (WP-023), then CRA-022 review.
+  3. Dual-path orchestrator: each question type declares whether a deterministic path exists (query template, bounded traversal, entailment check); both run concurrently under the same TrustedScope; results are compared by declared equivalence (set equality of answer IRIs, declared numeric tolerance) and emitted as `DualPathResult`.
+  4. Constraint pre-filter on proposals before display (domain/range, disjointness, SHACL) producing rejected-by-constraint records.
+  5. Asserted-only default in EQL, SPARQL and exports; `include=proposed` must be explicit; proposed statements export into `urn:eoip:proposed:{tenant}`.
+  6. Field naming that separates `score` from `probability`/`confidence`, plus a UI copy lint.
+  7. Reproducibility record per probabilistic result (model revision, input digest, context-manifest digest, seed, deterministic input revisions).
+- **Tests:** `tests/ai/test_dual_path.py` (known-answer fixture; misleading neighbour -> DISPUTED; probabilistic-only -> UNCORROBORATED), `tests/semantic/test_proposal_promotion.py` (shape-violating proposal rejected; promotion keeps lineage and approver), `tests/contract/test_asserted_only_queries.py` (SPARQL, EQL and TriG exclude proposed statements), `tests/e2e/test_dual_path_ui.spec.ts` (side-by-side text labels, not colour alone).
+- **Not done if:** any probabilistic producer can write `asserted`; a disagreement is resolved silently; an export mixes proposed statements into fact graphs.
+
+#### WP-044 — Learned graph intelligence (CRA-044.1-044.13, CRA-044.A)
+
+- **Inspect first:** `packages/eoip/gnn/engine.py` (hash stub; grep every `get_gnn_engine()` caller before changing it), `packages/eoip/embeddings/`, `mlops/experiment_tracker.py`, `xai/engine.py`, `graph/bitemporal.py`, `ontology/manifest.py:edge_endpoints_valid`, the vector store selected in WP-025.
+- **Order (Graph-Neurons plan):** fixtures and frozen reference snapshot -> anti-stub harness (first receipt shows the hash stub failing all four probes) -> splits and negatives -> evaluation with five baselines -> registry -> R-GCN and GraphSAGE -> explainability -> bake-offs (CRA-044.7) -> discriminator (CRA-044.8) -> research sandbox.
+- **Build:**
+  1. Independently authored fixtures under `tests/fixtures/neural/` (known graph with five removed edges, automorphic node pair, leaky split, clean and broken ontology, implausible triples, multi-domain graph); content-addressed reference snapshot under `artifacts/neural/snapshots/`, frozen.
+  2. `neural/antistub.py` with the four probes; `neural/datasets.py` (snapshots, event-time splits with per-batch validator, type-constrained negatives); `neural/evaluation.py` (AUPRC primary, five baselines, isotonic calibration, ECE); `neural/registry.py` extending the experiment tracker with promotion gates and rollback.
+  3. `neural/encoders/rgcn.py` and `graphsage.py` on PyTorch Geometric; hash functions removed from production code and kept in `tests/neural/baselines.py` as `HashBaseline`; `gnn/engine.py` re-exports the new engine.
+  4. Predictions written through the WP-045 proposal path with `ModelLineage`; graph embeddings stored as a tenant-partitioned plane-8 projection in the WP-025 vector store under their own index family.
+  5. `neural/explain/explainer.py` with the faithfulness probe.
+  6. k-hop invalidation, drift-triggered retraining, and recorded oversmoothing, oversquashing and popularity measurements.
+  7. Bake-off and research items only after steps 1-6 are ACCEPTED; each ends as a promoted model or a FAILED record with numbers.
+- **Tests:** `tests/neural/test_antistub.py` (fails the hash stub; passes a trivially trained model), `tests/neural/test_splits.py` (leak injection raises), `tests/neural/test_evaluation.py` (AUPRC hand-verified; AUROC-only report refused), `tests/neural/test_rgcn.py`, `tests/neural/test_graphsage_inductive.py`, `tests/neural/test_explain_faithfulness.py`, `tests/security/test_embedding_membership_inference.py` (counts, latency, error text), `tests/integration/test_gnn_engine_compat.py` (existing `get_gnn_engine()` callers unchanged).
+- **Commands:** `python tools/acceptance/run_and_receipt.py --clause CRA-044.6 --profile P0 --artifact "dist/eoip-*.whl" --backend <vector-store> --engine torch-geometric --engine-version <pin> -- python -m pytest tests/neural/test_rgcn.py --junitxml {junit}`; receipts carry the WP-043 seed bundle and environment capture.
+- **Not done if:** a shipped model lacks the five baselines or the anti-stub report; `_deterministic_vector` remains on a production import path; a prediction appears in an asserted-only query.
+- **v3.2 addition (CRA-044.13):** record CPU training time, inference latency and peak memory per architecture on GPU-free runners; an architecture that needs a GPU is recorded `DEFERRED (H-17)` with its CPU numbers.
 
 ### Gate G — Named sources, media and actions
 
@@ -625,10 +714,11 @@ All adapters below reuse WP-004 (factory/SDK), WP-010 (events), WP-011 (push/cra
 - **Build:** per CRA-009.6-009.8; metadata-only, sampled and virtual modes with separate permissions; sampling and query history opt-in and redacted; cost cancellation; external catalog integration through public APIs with precedence mapping; generic protocol adapters certified through the conformance runner; Fortuna blocked with missing-input reason until H-06.
 - **Tests:** virtual vs materialized equivalence under masking/null/join; source denial; drift; cost cancellation.
 
-#### WP-014 — Images, audio, video (CRA-014.1-014.8, CRA-014.A)
+#### WP-014 — Images, audio, video (CRA-014.1-014.9, CRA-014.A)
 
 - **Build:** capability per task (image metadata, OCR, ASR, video decode/frame sampling, visual extraction) rather than one multimodal flag; heavy workers with duration/resolution/frame/sample/output budgets; offline hash-pinned model bundles; progress based on actual work; explicit partial output; unsupported/low-quality segments preserved; outputs proposed unless policy approves.
 - **Tests:** permitted real media, degraded scans/noise/unsupported codecs, large/hostile inputs; no external calls in no-egress mode (WP-040 monitor); locators correct; timeout cleanup; WER/CER and entity precision/recall on licensed held-out corpora against section 5.3 gates.
+- **v3.1 addition (CRA-014.9):** OCR/ASR/vision capabilities declare their CRA-043 minimum tier; a missing tier returns 503 naming the tier; models come from the WP-043 offline bundles.
 
 #### WP-015 — Engineering diagram semantics (CRA-015.1-015.8, CRA-015.A)
 
@@ -661,15 +751,17 @@ All adapters below reuse WP-004 (factory/SDK), WP-010 (events), WP-011 (push/cra
 
 ### Gate I — Independent acceptance
 
-#### WP-036 — Correctness, performance and scale qualification (CRA-036.1-036.9, CRA-036.A)
+#### WP-036 — Correctness, performance and scale qualification (CRA-036.1-036.10, CRA-036.A)
 
 - **Build:** workload harness `benchmarks/` with pinned dataset generators (LUBM, BSBM, SP2Bench, WatDiv after license verification; synthetic enterprise/ACL corpus), seeds, expected-answer oracles, hardware/OS/runtime/engine/config/artifact manifests; P0 -> P1 -> P2 qualification in order; measurement of p50/p95/p99, throughput, failures, cancels, lag, peak resources, amplification, cost; cold/warm, concurrency, skew, ACL selectivity, updates/deletes, failure/restart; >= 3 trials with variability; 4-hour sustained load (wrk/Locust); CI regression gate (> 10% p95).
 - **Rule:** any wrong answer, leak, required timeout or missing artifact fails the gate even if latency is fast; stretch objectives reported separately.
+- **v3.1 addition (CRA-036.10):** model benchmarks include the five baselines, calibration error and at least three seeded trials (WP-043, WP-044).
 
-#### WP-037 — Independent QA and evidence verification (CRA-037.1-037.10, CRA-037.A)
+#### WP-037 — Independent QA and evidence verification (CRA-037.1-037.11, CRA-037.A)
 
 - **Build:** test suites labelled by scope (unit, property/fuzz, differential, contract, real-backend, vendor, security, browser, migration/restore, chaos, performance); independent oracles in `tests/oracles/` that never import production code; build-once/promote-digest pipeline; WP-00 verifier wired as the final CI stage; Hypothesis fuzzing and mutation testing (e.g. `mutmut`) on semantic core; coverage/mutation hygiene thresholds (85%/80%) reported, not used as acceptance; zero-skip enforcement; collection-time tracking; quarantine list with defect IDs for pre-existing failures.
 - **Tests:** deliberately tamper with a result, reuse a stale artifact, skip a required test, run against memory instead of the production backend, edit source mid-run and fail a negative case: the gate refuses each time.
+- **v3.1 addition (CRA-037.11):** anti-stub probes run in CI for every learned component, and a hash-stub substitution test proves the gate refuses acceptance.
 
 #### WP-038 — Support and operator readiness (CRA-038.1-038.8, CRA-038.A)
 
@@ -689,6 +781,7 @@ All adapters below reuse WP-004 (factory/SDK), WP-010 (events), WP-011 (push/cra
 - Timezone-aware UTC datetimes only.
 - Every new configuration key documented with default, origin tag (CRAr/AGG/OCA/RES) and the lower-only override rule where applicable.
 - Every new module has a capability registration (WP-001) and a ledger entry in its WP notes.
+- Probabilistic producers (v3.1): declare producer class and minimum numerical tier; write only `proposed` assertions with `ModelLineage`; float32 arrays, `assert_finite` at module boundaries, seeds and environment captured on every training or evaluation run (WP-043, WP-045).
 
 ## 5. Test Taxonomy and Directory Layout
 
@@ -705,6 +798,8 @@ All adapters below reuse WP-004 (factory/SDK), WP-010 (events), WP-011 (push/cra
 | `tests/perf/`, `benchmarks/` | Performance/scale | Yes, with manifests |
 | `tests/mock/` | Mock-only component tests | **No** |
 | `tests/acceptance/` | Ledger verifier tests | Yes, for CRA-001/037 |
+| `tests/neural/` (v3.1) | Numerical tiers, anti-stub probes, learned-model evaluation against baselines | Yes, with the stated tier and frozen snapshot |
+| `tests/fixtures/neural/` (v3.1) | Independently authored graph-learning fixtures | Support evidence |
 
 Fixtures that encode expected answers are authored independently of the implementation (separate author or derived from standards test suites) and carry a license note.
 
@@ -712,7 +807,7 @@ Fixtures that encode expected answers are authored independently of the implemen
 
 1. Static: lint, type check, license-header check, egress-lint (no direct HTTP clients), secret scan.
 2. Contracts: OpenAPI diff, schema validation, SDK generation check.
-3. Unit + property/fuzz (with `--timeout`).
+3. Unit + property/fuzz (with `--timeout`); numerical tier matrix (no extras, N0, N0+N1) and anti-stub probes for every learned component (CRA-043, CRA-044.3, CRA-037.11).
 4. Independent semantics: differential RDF/SHACL/reasoning tests against second engines.
 5. Real-backend integration (profile P0 backends in CI; P1 in staging).
 6. Security/tenancy suites.
@@ -749,7 +844,9 @@ Fixtures that encode expected answers are authored independently of the implemen
 - [ ] Raw correctness/security/performance/browser results and manual review records.
 - [ ] Operational playbooks rehearsed by a non-implementer.
 - [ ] Claims register: every external statement evidenced and approved.
-- [ ] Known limitations and blocked/deferred work with owners; human decisions H-01..H-14 status.
+- [ ] Known limitations and blocked/deferred work with owners; human decisions H-01..H-17 status.
+- [ ] Gate report (anti-stub probes, five baselines, calibration, seeds) for every promoted learned model; proposed versus asserted separation demonstrated (CRA-044, CRA-045).
+- [ ] No distributed artifact contains an `nvidia-*` package; every binding gate was met on GPU-free hardware (H-16, H-17).
 
 ## Appendix A — Clause-by-Clause Verification Checklist
 
@@ -769,6 +866,7 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-001.10 | RES | The ledger covers every clause `CRA-xxx.n` of CRA-001..CRA-042, every acceptance obligation `CRA-xxx.A`, end-to-end scenarios E01-E12, human decisions… | WP-001 | tests/acceptance/test_verify_ledger.py, tests/integration/test_capabilities_route.py | design, implementation, positive, negative, review, authorization, failure/recovery, integration |
 | CRA-001.11 | OCA | Re-measure, at the pinned baseline commit, the repository facts asserted by the source analyses and record measured value versus asserted value: Pytho… | WP-001 | tests/acceptance/test_verify_ledger.py, tests/integration/test_capabilities_route.py | design, implementation, positive, negative, review, authorization, failure/recovery, integration |
 | CRA-001.12 | CRA | Run the G01-G03 reproduction probe (combined requirements section 19) at baseline and store its raw output as the baseline defect receipt; later remed… | WP-001 | tests/acceptance/test_verify_ledger.py, tests/integration/test_capabilities_route.py | design, implementation, positive, negative, review, authorization, failure/recovery, integration |
+| CRA-001.13 | GN | Record the facts re-measured at `d771fd66ab57d7e860b17f301815fb2421152688` on 2026-10-18 beside the asserted values (CRA-001.11): 302 `test_*.py` file… | WP-001 | tests/acceptance/test_verify_ledger.py, tests/integration/test_capabilities_route.py | design, implementation, positive, negative, review, authorization, failure/recovery, integration |
 | CRA-001.A | MERGED | [CRAr] inspect an actual instance where a provider is disabled, unavailable and healthy; the UI/API must accurately distinguish all three. Corrupt a r… | WP-001 | tests/acceptance/test_verify_ledger.py, tests/integration/test_capabilities_route.py | design, implementation, positive, negative, review, authorization, failure/recovery, integration |
 | CRA-002.1 | CRAr | Define versioned interfaces for connector, parser, mapper, graph store, semantic engine, search/vector index, model provider, workflow/action and UI c… | WP-002 | tests/integration/test_plugin_lifecycle.py, tests/perf/health_probe.py | design, implementation, positive, negative, review, authorization, failure/recovery, integration |
 | CRA-002.2 | CRAr | Keep heavy parsers, JVM reasoners, native codecs, model/GPU work and untrusted extensions outside the request process. Enforce CPU/memory/time/output/… | WP-002 | tests/integration/test_plugin_lifecycle.py, tests/perf/health_probe.py | design, implementation, positive, negative, review, authorization, failure/recovery, integration |
@@ -815,7 +913,7 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-005.5 | CRAr | Demonstrate bounded baseline and incremental acquisition, pagination, rate limits, ACL-only change, deleted/renamed items, attachments and replay. A g… | WP-005 | tests/integration/connectors/test_jira.py | design, implementation, positive, negative, review, integration (vendor sandbox), authorization, failure/recovery |
 | CRA-005.6 | AGG | Jira: Cloud REST API v3 and a separately pinned Data Center REST version; webhooks for issue created/updated/deleted and comment events; incremental J… | WP-005 | tests/integration/connectors/test_jira.py | design, implementation, positive, negative, review, integration (vendor sandbox), authorization, failure/recovery |
 | CRA-005.7 | AGG | Rally: WSAPI v2.0; HierarchicalRequirement, Defect, Task, Iteration, Release, Milestone and PortfolioItem types; preserve parent/child epic hierarchie… | WP-005 | tests/integration/connectors/test_jira.py | design, implementation, positive, negative, review, integration (vendor sandbox), authorization, failure/recovery |
-| CRA-005.8 | CRAr | qTest: projects, test cases, test runs, executions/results and defect links; `qtest:verifiesRequirement` links to Jira issues only when the identifier… | WP-005 | tests/integration/connectors/test_jira.py | design, implementation, positive, negative, review, integration (vendor sandbox), authorization, failure/recovery |
+| CRA-005.8 | AGG | qTest: projects, test cases, test runs, executions/results and defect links; `qtest:verifiesRequirement` links to Jira issues only when the identifier… | WP-005 | tests/integration/connectors/test_jira.py | design, implementation, positive, negative, review, integration (vendor sandbox), authorization, failure/recovery |
 | CRA-005.9 | OCA | All three adapters express payload-to-ontology mapping in CML (CRA-017), with a parity test proving the CML output equals the previous hand-coded mapp… | WP-005 | tests/integration/connectors/test_jira.py | design, implementation, positive, negative, review, integration (vendor sandbox), authorization, failure/recovery |
 | CRA-005.A | MERGED | [CRAr] one live/sandbox end-to-end journey per product and selected edition, followed by restart/replay and access revocation. If a sandbox is unavail… | WP-005 | tests/integration/connectors/test_jira.py | design, implementation, positive, negative, review, integration (vendor sandbox), authorization, failure/recovery |
 | CRA-006.1 | CRAr | Provide generic wiki acquisition plus Confluence-specific spaces, pages, versions, links, comments and attachments with inherited/restricted-page perm… | WP-006 | see WP | design, implementation, positive, negative, review, integration (vendor sandbox), authorization, failure/recovery |
@@ -901,6 +999,7 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-014.6 | AGG | OCR for PNG, JPG/JPEG, TIFF, WEBP and scanned PDF using a license-reviewed engine (Tesseract or PaddleOCR candidates); each line/paragraph carries a n… | WP-014 | see WP | design, implementation, positive, negative, review, integration, negative (hostile inputs), performance, failure/recovery |
 | CRA-014.7 | AGG | Audio/video: audio extraction with FFmpeg (build flags determine LGPL/GPL obligations, reviewed under CRA-035) for MP4, MKV, MP3, WAV, M4A; transcript… | WP-014 | see WP | design, implementation, positive, negative, review, integration, negative (hostile inputs), performance, failure/recovery |
 | CRA-014.8 | AGG | All OCR/ASR/vision models run on-premises or inside the customer VPC from hash-pinned offline bundles; zero external API calls in no-egress mode. | WP-014 | see WP | design, implementation, positive, negative, review, integration, negative (hostile inputs), performance, failure/recovery |
+| CRA-014.9 | GN | OCR, ASR and vision models require the CRA-043 tiers they depend on plus offline bundles; a missing tier sets the task capability to UNAVAILABLE with … | WP-014 | see WP | design, implementation, positive, negative, review, integration, negative (hostile inputs), performance, failure/recovery |
 | CRA-014.A | MERGED | [CRAr] real permitted media files, degraded scans/noise/unsupported codecs and large/hostile inputs. Verify no external call in no-egress mode, correc… | WP-014 | see WP | design, implementation, positive, negative, review, integration, negative (hostile inputs), performance, failure/recovery |
 | CRA-015.1 | CRAr | Support notation-specific structured diagrams, initially diagrams.net/Chowlk-compatible conceptual diagrams plus declared Mermaid/PlantUML subsets; re… | WP-015 | see WP | design, implementation, positive, negative, review, integration, negative (hostile inputs), performance, failure/recovery |
 | CRA-015.2 | CRAr | Parse components, ports, containment, directions, cardinalities, sequence/event meaning and labels only where supported. Never silently coerce every b… | WP-015 | see WP | design, implementation, positive, negative, review, integration, negative (hostile inputs), performance, failure/recovery |
@@ -996,6 +1095,7 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-023.6 | AGG | Candidate generation combines deterministic keys (email, employee ID, account ID) with probabilistic features (Jaro-Winkler and normalized labels, emb… | WP-023 | tests/semantic/test_identity_resolution.py | design, implementation, positive, negative, review, integration, authorization, workflow |
 | CRA-023.7 | OCA | Schema/pack alignment uses a DeepOnto (BERTMap/BERTSubs) service in an isolated GPU/CPU worker (ONT-015); entity linking in text uses spaCy EntityLink… | WP-023 | tests/semantic/test_identity_resolution.py | design, implementation, positive, negative, review, integration, authorization, workflow |
 | CRA-023.8 | AGG | An immutable `IdentityMergeLedger` records every merge/split; a split restores the original nodes, edges, evidence and dependent inferences atomically… | WP-023 | tests/semantic/test_identity_resolution.py | design, implementation, positive, negative, review, integration, authorization, workflow |
+| CRA-023.9 | GN | The probabilistic features of CRA-023.6 (embedding similarity, neighbourhood structural similarity) and the alignment worker of CRA-023.7 require CRA-… | WP-023 | tests/semantic/test_identity_resolution.py | design, implementation, positive, negative, review, integration, authorization, workflow |
 | CRA-023.A | MERGED | [CRAr] ambiguous abbreviations, same-name entities, conflicting identifiers and wrong high-confidence matches. Merge then split across restart and com… | WP-023 | tests/semantic/test_identity_resolution.py | design, implementation, positive, negative, review, integration, authorization, workflow |
 | CRA-024.1 | CRAr | Publish an exact grammar/capability manifest per dialect/backend: supported EQL/EOQL/OSQL subsets, qualified SPARQL and optional SQL/Cypher/Gremlin/GQ… | WP-024 | tests/query/test_query_semantics_oracle.py | design, implementation, positive, negative, review, integration, authorization, workflow |
 | CRA-024.2 | CRAr | Use typed parsed plans and parameterization; reject unsupported constructs and unauthorized operations. No concatenated raw user strings enter privile… | WP-024 | tests/query/test_query_semantics_oracle.py | design, implementation, positive, negative, review, integration, authorization, workflow |
@@ -1016,6 +1116,8 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-025.5 | CRAr | Evaluate recall@k/nDCG/latency by domain/language and ACL selectivity using a labelled corpus. Record corpus splits and model/config changes; do not u… | WP-025 | tests/retrieval/test_hybrid_vector_search.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-025.6 | AGG | Configurable dense providers (local sentence-transformers models or approved external) plus BM25 sparse retrieval; fusion by Reciprocal Rank Fusion (k… | WP-025 | tests/retrieval/test_hybrid_vector_search.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-025.7 | RES | The deterministic hashing embedder is renamed and labelled `test-hashing`; the production profile refuses it at startup. | WP-025 | tests/retrieval/test_hybrid_vector_search.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
+| CRA-025.8 | GN | Graph-structure embeddings (CRA-044) and text embeddings are distinct index families with separate metadata (model, snapshot, dimension, metric) under… | WP-025 | tests/retrieval/test_hybrid_vector_search.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
+| CRA-025.9 | GN | The hash-based vectors of `packages/eoip/gnn/engine.py` (`_deterministic_vector`, `embed_node2vec`, `embed_transe`) fall under CRA-025.7: removed from… | WP-025 | tests/retrieval/test_hybrid_vector_search.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-025.A | MERGED | [CRAr] real configured provider, missing provider, vector shape errors, source delete/ACL change, re-embedding crash and rollback. Demonstrate no cros… | WP-025 | tests/retrieval/test_hybrid_vector_search.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-026.1 | CRAr | Keep extraction/classification/alignment/answer suggestions distinct from asserted facts and logical entailments. Record provider/model/prompt/tool/co… | WP-026 | tests/ai/test_graphrag_grounding.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-026.2 | CRAr | Build bounded authorized context with token budgets, evidence prioritization, freshness and conflicts. Emit clause-level evidence links to actual perm… | WP-026 | tests/ai/test_graphrag_grounding.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
@@ -1026,6 +1128,10 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-026.7 | AGG | GraphRAG pipeline: vector entry points -> bounded multi-hop traversal (default depth 2, max 200 nodes) -> ACL pruning -> context assembly; every sente… | WP-026 | tests/ai/test_graphrag_grounding.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-026.8 | RES | Abstention: when evidence is insufficient or calibrated confidence is below the configured threshold the answer states that it cannot be answered from… | WP-026 | tests/ai/test_graphrag_grounding.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-026.9 | AGG | Air-gapped deployments route generation only to self-hosted model servers (vLLM, Ollama or TGI candidates) with zero external traffic. | WP-026 | tests/ai/test_graphrag_grounding.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
+| CRA-026.10 | PRM | Context-window governance per configured model: maximum input and output token limits come from the provider/model manifest and are recorded with the … | WP-026 | tests/ai/test_graphrag_grounding.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
+| CRA-026.11 | PRM | Reduction is disclosed: when authorized evidence is dropped to fit the window, the answer states that evidence was omitted and how many items, and off… | WP-026 | tests/ai/test_graphrag_grounding.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
+| CRA-026.12 | PRM | Each answer stores a `ContextManifest` (section 6) — ordered `assertion_id`/EvidenceLocator entries with token counts, template revision, retrieval pa… | WP-026 | tests/ai/test_graphrag_grounding.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
+| CRA-026.13 | RES | Self-hosted generation under the H-17 interim policy: the qualified air-gapped generation path uses CPU-capable inference runtimes (llama.cpp/Ollama-c… | WP-026 | tests/ai/test_graphrag_grounding.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-026.A | MERGED | [CRAr] real local or approved external model traces with actual responses, malicious documents, missing evidence, contradictory sources, unavailable p… | WP-026 | tests/ai/test_graphrag_grounding.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-027.1 | CRAr | Define declarative action types, target source/capability, allowed argument schema, preconditions, risk class, execution scope, approval rules and com… | WP-027 | tests/integration/test_action_outbox.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-027.2 | CRAr | Default all sources to read-only. Write-back and source-policy provisioning require explicit configuration, separate permissions and qualified vendor … | WP-027 | tests/integration/test_action_outbox.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
@@ -1045,6 +1151,7 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-028.6 | AGG | Historical reads use an explicit `as_of` parameter on the query API (and an `eoip:asOf` service parameter for SPARQL, because standard SPARQL has no A… | WP-028 | tests/semantic/test_temporal_simulation.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-028.7 | AGG | Deterministic graph algorithms (BFS, Dijkstra, PageRank, Tarjan SCC) replace heuristic random-walk summaries for impact paths (G14); existing `graph/p… | WP-028 | tests/semantic/test_temporal_simulation.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-028.8 | AGG | Blast-radius output lists impacted services, teams and processes with severity scores explicitly labelled heuristic unless a validated model exists. | WP-028 | tests/semantic/test_temporal_simulation.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
+| CRA-028.9 | GN | Learned impact propagation (CRA-044) is returned as a proposed, labelled estimate beside the deterministic blast radius of CRA-028.7/028.8 with its du… | WP-028 | tests/semantic/test_temporal_simulation.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-028.A | MERGED | [CRAr] late events, corrections, clock skew, merges/splits, permission changes and retention across historical reads. Repeat seeded runs, compare sens… | WP-028 | tests/semantic/test_temporal_simulation.py | design, implementation, positive, negative, review, integration, authorization, workflow, failure/recovery |
 | CRA-029.1 | CRAr | Maintain technical assets, business terms, owners, classifications, quality observations and lineage as typed linked entities with source/freshness an… | WP-029 | tests/integration/test_catalog_layers.py | design, implementation, positive, negative, review, workflow (real browser), accessibility, deployment |
 | CRA-029.2 | CRAr | Distinguish observed/base metadata, human curation and effective merged view; define field-level precedence, conflict and reset-to-source behavior. A … | WP-029 | tests/integration/test_catalog_layers.py | design, implementation, positive, negative, review, workflow (real browser), accessibility, deployment |
@@ -1107,6 +1214,7 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-035.6 | AGG | Generate CycloneDX or SPDX SBOMs for Python, npm/browser bundles, containers, JVM workers, models and datasets with tools such as syft and a license c… | WP-035 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-035.7 | OCA | Copyleft policy: GPL/AGPL code is never linked into or bundled with the distributed core; GPL/AGPL servers (Neo4j Community GPLv3, Virtuoso OSE GPLv2)… | WP-035 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-035.8 | OCA | Dependency decision table (section 13) is the authoritative allowlist input to the CI license gate; every row cites the exact artifact and license sna… | WP-035 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
+| CRA-035.9 | GN | The numerical stack (section 13 rows for numpy, scipy, scikit-learn, torch, torch-geometric, transformers, sentence-transformers, snntorch) enters the… | WP-035 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-035.A | MERGED | [CRAr] inspect actual wheel/image/browser/VSIX/air-gap artifacts and compare embedded inventories/notices with SBOM. Tamper with a plugin/artifact and… | WP-035 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-036.1 | CRAr | Implement a reproducible workload harness with pinned dataset/generator/license, seed, expected answers, hardware/OS/runtime, engine/config and built-… | WP-036 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-036.2 | CRAr | Qualify P0 then P1 then P2 separately using the research profiles. Count asserted/inferred triples, raw/index/vector/history bytes, replicas and cold/… | WP-036 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
@@ -1117,6 +1225,7 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-036.7 | OCA | Benchmark suites with committed generator commands, fixed seeds and expected-output hashes under `tests/benchmarks/ontology/` (ONT-020): LUBM (load >=… | WP-036 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-036.8 | RES | Binding latency gates are the CRAr profile targets (P0/P1/P2). AGG/OCA stricter numbers (point read p95 < 20 ms at P1/P2; P2 bounded 2-hop p95 < 250 m… | WP-036 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-036.9 | AGG | Sustained 4-hour load test (wrk and/or Locust) per profile with memory-stability checks; CI regression gate fails on > 10% p95 latency regression vers… | WP-036 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
+| CRA-036.10 | GN | Learned-model qualification follows CRA-044.5: primary metrics, the five mandatory baselines, calibration error and at least three seeded trials with … | WP-036 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-036.A | MERGED | [CRAr] raw machine-readable results and independent expected-answer checks bound to manifests. Any wrong answer, leakage, required timeout or missing … | WP-036 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-037.1 | CRAr | Maintain unit/property/fuzz, differential semantics, contract, real-backend/vendor integration, security/tenancy, real browser, migration/restore, cha… | WP-037 | tests/oracles/ | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-037.2 | CRAr | Separate mock tests from actual integration; independently author gold fixtures/oracles so implementation and expected output do not share the same fa… | WP-037 | tests/oracles/ | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
@@ -1128,6 +1237,7 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-037.8 | RES | Hygiene thresholds from AGG (line coverage >= 85% for `packages/eoip`, mutation score >= 80% on semantic core) are CI hygiene gates only; meeting them… | WP-037 | tests/oracles/ | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-037.9 | AGG | Zero-skip policy: CI fails when a required test is skipped, xfailed without an open defect ID, errors or times out. | WP-037 | tests/oracles/ | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-037.10 | OCA | Track and reduce test collection time (currently 60-120 s) and quarantine known pre-existing failures with tracked IDs rather than deleting them. | WP-037 | tests/oracles/ | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
+| CRA-037.11 | GN | Anti-stub probes (CRA-044.3) are a required QA layer for every learned component, including retrieval embedders and rerankers; the probe harness has i… | WP-037 | tests/oracles/ | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-037.A | MERGED | [CRAr] deliberately tamper with a result, reuse stale artifacts, skip a required test, run against memory instead of production backend, edit source m… | WP-037 | tests/oracles/ | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-038.1 | CRAr | Define supported versions/deployments, lifecycle/deprecation, service ownership, incident severity, escalation and customer versus vendor responsibili… | WP-038 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
 | CRA-038.2 | CRAr | Implement documented incident, scaling, upgrade, backup/restore, credential compromise, poisoned data/model and projection-lag playbooks with diagnost… | WP-038 | see WP | design, implementation, positive, negative, review, integration, failure/recovery, deployment, performance |
@@ -1171,27 +1281,65 @@ Every row must end ACCEPTED with a receipt before its requirement can be accepte
 | CRA-042.6 | RES | Record unavailable or contradictory sources (for example the OnToology site timing out, Fabric preview limits, vendor marketing scale claims) as expli… | WP-042 | tests/research/test_validate_research.py | design, implementation, positive, negative, review, workflow, review (Legal/Marketing) |
 | CRA-042.7 | RES | Refresh every research record at least every 6 months or on a major competitor release; each refresh produces a dated delta entry. Stale records (>6 m… | WP-042 | tests/research/test_validate_research.py | design, implementation, positive, negative, review, workflow, review (Legal/Marketing) |
 | CRA-042.A | MERGED | [RES] Run the research-dataset validator: every score is an integer 1-5 with rationale or `ND` with a named gap; no record lacks a reviewed date; no t… | WP-042 | tests/research/test_validate_research.py | design, implementation, positive, negative, review, workflow, review (Legal/Marketing) |
+| CRA-043.1 | GN | Introduce the numerical stack as four separately installable optional extras, never as core dependencies: N0 `numerics` (numpy, scipy, scikit-learn; i… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.2 | GN | CPU-only builds are the only builds EOIP distributes (decision H-16, accepted 2026-10-18: CUDA packages cannot be redistributed; `docs/decisions/ADR-H… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.3 | GN | Provide a hash-pinned lock file (`requirements-neural.lock` via `pip-compile --generate-hashes` or the project's equivalent) and an offline wheel bund… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.4 | GN | Register each tier as capabilities (CRA-001). A missing tier is capability state `UNAVAILABLE`, returned as HTTP 503 `CAPABILITY_UNAVAILABLE` with the… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.5 | GN | Array discipline: float32 for stored and served vectors; float64 only for metric accumulation; no Python-level element loops in hot paths (similarity,… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.6 | GN | Determinism: a single seeding entry point seeds Python, numpy, torch and CUDA, enables deterministic algorithms where available, records any operation… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.7 | GN | BLAS thread governance: `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS` and `NUMEXPR_NUM_THREADS` are set together before numpy is first … | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.8 | GN | Numerical stability: max-subtracted softmax, epsilon-guarded logarithms and normalizations, int64 node indices, and a documented result for empty inpu… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.9 | GN | Memory and accelerator lifecycle: estimate peak memory before training or full-graph inference and refuse, naming a workable batch size, when the esti… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.10 | RES | Qualify the platform matrix by CI jobs, not assertion: Linux x86_64 (N0-N2 required), Windows x86_64 and macOS arm64 (N0-N1 required), Linux arm64 (N0… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.11 | RES | CPU-first qualification (decision H-15 accepted; H-17 open): every binding gate in sections 5.2 and 5.3 and in CRA-026, CRA-043 and CRA-044 is qualifi… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-043.A | MERGED | [GN] In four isolated environments (no extras, N0, N0+N1, N0+N1+N2) the capability route reports the correct tier; core EOIP imports and serves in the… | WP-043 | tests/neural/test_runtime_tiers.py, tests/neural/test_determinism.py, tests/integration/test_offline_wheel_bundle.py | design, implementation, positive, negative, review, integration, failure/recovery, performance, deployment |
+| CRA-044.1 | GN | Remove the hash-based graph embedding stand-ins from production paths. `GraphEmbedder._deterministic_vector`, `embed_node2vec` and `embed_transe` in `… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.2 | GN | Map the four graph levels of the research inputs onto the graph planes of section 8.2 — GL0 instance graph to planes 1-2; GL1 meta-graph to plane 3; G… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.3 | GN | Every learned model passes four anti-stub probes before any quality claim: loss descent (final loss <= 70% of initial); parameter change (>= 90% of te… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.4 | GN | Snapshot and split discipline: content-addressed snapshots; strictly event-time temporal splits validated on every batch, so a deliberately leaked edg… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.5 | GN | Evaluation discipline: AUPRC is primary for link prediction and anomaly detection and AUROC is never reported alone; Macro-F1 for node classification;… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.6 | GN | Core encoders: R-GCN with basis decomposition (defaults 2 layers, 128 hidden units, 30 bases) and inductive GraphSAGE for continuously ingested entiti… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.7 | GN | Bake-off-gated architectures, each promoted only on a measured margin over the R-GCN default on the same split and otherwise recorded FAILED: relation… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.8 | GN | Generative and spiking work: an adversarial plausibility discriminator may act as a write-path quality filter (precision >= 0.80 at recall >= 0.70; <=… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.9 | GN | Model lineage and lifecycle: models, embeddings and calibrators are registered with snapshot ID, code commit, seed bundle, environment, training-data … | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.10 | GN | Explainability: >= 95% of served predictions carry evidence paths, and a faithfulness probe shows that removing the identified evidence subgraph lower… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.11 | GN | Incremental operation and failure-mode guards: graph changes invalidate only the affected k-hop embeddings; retraining is triggered by measured drift,… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.12 | RES | Every model output enters the knowledge model only as `knowledge_state=proposed` with `ModelLineage` (CRA-045). The GN-002 `AssertionStatus` is implem… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.13 | RES | CPU feasibility (decisions H-15, H-17): every architecture records its training time, inference latency and peak memory on CPU reference hardware, and… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-044.A | MERGED | [GN] On the frozen reference snapshot: the anti-stub harness fails the existing hash stub on all four probes and passes the R-GCN model on all four; t… | WP-044 | tests/neural/test_antistub.py, tests/neural/test_rgcn.py, tests/security/test_embedding_membership_inference.py | design, implementation, positive, negative, review, authorization, integration, performance |
+| CRA-045.1 | PRM | Classify every producer of knowledge or answers as deterministic (RDF parsing and serialization, SHACL validation, profile-qualified reasoning, exact … | WP-045 | tests/ai/test_dual_path.py, tests/contract/test_asserted_only_queries.py, tests/e2e/test_dual_path_ui.spec.ts | design, implementation, positive, negative, review, authorization, integration, workflow |
+| CRA-045.2 | PRM | Probabilistic output is never asserted directly. It enters as `knowledge_state=proposed` with `ModelLineage`, calibrated confidence where calibration … | WP-045 | tests/ai/test_dual_path.py, tests/contract/test_asserted_only_queries.py, tests/e2e/test_dual_path_ui.spec.ts | design, implementation, positive, negative, review, authorization, integration, workflow |
+| CRA-045.3 | PRM | Dual-path answering: wherever an exact deterministic path exists for a question (SPARQL/EQL query, bounded traversal, entailment check), it runs besid… | WP-045 | tests/ai/test_dual_path.py, tests/contract/test_asserted_only_queries.py, tests/e2e/test_dual_path_ui.spec.ts | design, implementation, positive, negative, review, authorization, integration, workflow |
+| CRA-045.4 | PRM | Deterministic constraints bound probabilistic proposals before display: a candidate that violates ontology domain/range, disjointness or a SHACL const… | WP-045 | tests/ai/test_dual_path.py, tests/contract/test_asserted_only_queries.py, tests/e2e/test_dual_path_ui.spec.ts | design, implementation, positive, negative, review, authorization, integration, workflow |
+| CRA-045.5 | PRM | Separation holds in storage, query and export: asserted-only queries, the SPARQL endpoint and RDF exports exclude proposed statements unless the calle… | WP-045 | tests/ai/test_dual_path.py, tests/contract/test_asserted_only_queries.py, tests/e2e/test_dual_path_ui.spec.ts | design, implementation, positive, negative, review, authorization, integration, workflow |
+| CRA-045.6 | PRM | Calibration honesty: a raw model output is labelled `score`, never `probability` or `confidence`, until a calibrator exists for that model and task wi… | WP-045 | tests/ai/test_dual_path.py, tests/contract/test_asserted_only_queries.py, tests/e2e/test_dual_path_ui.spec.ts | design, implementation, positive, negative, review, authorization, integration, workflow |
+| CRA-045.7 | PRM | Reproducibility: every probabilistic result records model or provider revision, input or prompt digest, context-manifest digest (CRA-026.12), seed whe… | WP-045 | tests/ai/test_dual_path.py, tests/contract/test_asserted_only_queries.py, tests/e2e/test_dual_path_ui.spec.ts | design, implementation, positive, negative, review, authorization, integration, workflow |
+| CRA-045.8 | RES | Explanations state which path produced each part of an answer and, for probabilistic parts, the evidence and calibration status. The GUI (CRA-030) sho… | WP-045 | tests/ai/test_dual_path.py, tests/contract/test_asserted_only_queries.py, tests/e2e/test_dual_path_ui.spec.ts | design, implementation, positive, negative, review, authorization, integration, workflow |
+| CRA-045.A | MERGED | [PRM] For a fixture question with a known exact answer, the API returns the deterministic and the probabilistic result with producer classes; injectin… | WP-045 | tests/ai/test_dual_path.py, tests/contract/test_asserted_only_queries.py, tests/e2e/test_dual_path_ui.spec.ts | design, implementation, positive, negative, review, authorization, integration, workflow |
 
 ## Appendix B — External Inputs and Human Decisions That Block Clauses
 
 Do not guess these. Record the decision in the ledger (`kind: decision`) with the decider, date and reference; until then dependent clauses remain BLOCKED and the agent continues with independent work.
 
-| ID | Decision | Owner | Blocks |
-|---|---|---|---|
-| H-01 | Confirm target scale and whether stretch latency objectives (p95 < 20 ms) become binding | CTO | CRA-036, X-05/X-06 |
-| H-02 | Air-gap: may customer deployments run JVM worker sidecars (ELK, OWL API, ROBOT)? | CTO / Security | CRA-019 |
-| H-03 | Is write-back (CRA-027) in v1 scope or read-only until SOC 2? | Security Officer | CRA-027 |
-| H-04 | TerminusDB license verification; remove or admit | Legal | CRA-035, X-21 |
-| H-05 | Accept gating all standards messaging on certification (OR6) | Marketing + Legal | CRA-041 |
-| H-06 | Identify Fortuna product, API, auth and data contract | Product owner | CRA-009, X-14 |
-| H-07 | Identify the API Portal product(s) in use | Product owner | CRA-007, X-13 |
-| H-08 | Approve support tiers, response objectives, availability and service credits | Commercial + Counsel | CRA-038, X-08 |
-| H-09 | Clear extract-msg and other open component distribution terms | Legal | CRA-013/035, X-16 |
-| H-10 | Approve staffing, rates and budget inputs for the cost model | Delivery manager | CRAr section 17 |
-| H-11 | Approve vendor sandbox / licensed test access per named source | Procurement | CRA-005..009 |
-| H-12 | Patent provisional filing decisions before any public disclosure | Legal / IP | CRA-041 |
-| H-13 | Approve legal basis for Slack private channels / DMs if ever needed | Legal / Compliance | CRA-006 |
-| H-14 | Choose the durable event backbone per deployment profile (DB outbox vs Kafka/Redpanda) | Architect | CRA-010/031, INV-44 |
+| ID | Decision | Owner | Blocks | Status |
+|---|---|---|---|---|
+| H-01 | Confirm target scale and whether stretch latency objectives (p95 < 20 ms) become binding | CTO | CRA-036, X-05/X-06 | OPEN |
+| H-02 | Air-gap: may customer deployments run JVM worker sidecars (ELK, OWL API, ROBOT)? | CTO / Security | CRA-019 | OPEN |
+| H-03 | Is write-back (CRA-027) in v1 scope or read-only until SOC 2? | Security Officer | CRA-027 | OPEN |
+| H-04 | TerminusDB license verification; remove or admit | Legal | CRA-035, X-21 | OPEN |
+| H-05 | Accept gating all standards messaging on certification (OR6) | Marketing + Legal | CRA-041 | OPEN |
+| H-06 | Identify Fortuna product, API, auth and data contract | Product owner | CRA-009, X-14 | OPEN |
+| H-07 | Identify the API Portal product(s) in use | Product owner | CRA-007, X-13 | OPEN |
+| H-08 | Approve support tiers, response objectives, availability and service credits | Commercial + Counsel | CRA-038, X-08 | OPEN |
+| H-09 | Clear extract-msg and other open component distribution terms | Legal | CRA-013/035, X-16 | OPEN |
+| H-10 | Approve staffing, rates and budget inputs for the cost model | Delivery manager | CRAr section 17 | OPEN |
+| H-11 | Approve vendor sandbox / licensed test access per named source | Procurement | CRA-005..009 | OPEN |
+| H-12 | Patent provisional filing decisions before any public disclosure | Legal / IP | CRA-041 | OPEN |
+| H-13 | Approve legal basis for Slack private channels / DMs if ever needed | Legal / Compliance | CRA-006 | OPEN |
+| H-14 | Choose the durable event backbone per deployment profile (DB outbox vs Kafka/Redpanda) | Architect | CRA-010/031, INV-44 | OPEN |
+| H-15 | Adopt the tiered numerical stack (N0-N3) as optional extras — **accepted 2026-10-18**: CPU-first; N0 required where probabilistic features are enabled; N1/N2 CPU-only builds; N3 research only; every binding gate qualified on CPU (`docs/decisions/ADR-H15-numerical-stack-tiers.md`; decided by the engineering agent under delegation from Ravaleedhar Reddy) | CTO / Product owner | CRA-043 | DECIDED |
+| H-16 | Redistribution of CUDA `nvidia-*` packages — **decided 2026-10-18: not redistributed** in any EOIP artifact; customer-provisioned CUDA only, unqualified (`docs/decisions/ADR-H16-no-cuda-redistribution.md`; decided by Ravaleedhar Reddy) | Legal | CRA-043.2, CRA-043.3, CRA-035.9 | DECIDED |
+| H-17 | Select GPU availability per deployment profile (none, optional, required) — **open**; interim CPU-only policy in force (`docs/decisions/ADR-H17-gpu-availability.md`) | CTO / Infrastructure | CRA-043.10, CRA-043.11, CRA-044.13, CRA-026.13 | OPEN |
 
 ## Appendix C — Prompt Template for a Coding Agent Session
 
@@ -1202,7 +1350,9 @@ Rules: (1) proof is execution with receipts, never file or test names; (2) verif
 before use; (3) no mocks, hashing fakes, in-memory fallbacks or skips to pass; (4) never change
 expected results without an independent oracle; (5) extend canonical owners, do not duplicate;
 (6) GPL/AGPL never linked; (7) gitops.py/manifest.py/packs.py via ports only; (8) mark BLOCKED with
-the exact missing input when an external dependency is absent and continue other work.
+the exact missing input when an external dependency is absent and continue other work; (9) learned models need
+anti-stub probes and the five baselines, and probabilistic output stays `proposed` until validated (CRA-044/045); (10) distribute CPU-only builds, never CUDA
+packages, and let no gate depend on a GPU (H-16, H-17).
 Deliver: code + tests + receipts via tools/acceptance/run_and_receipt.py + ledger updates +
 a short report listing clause states, receipts, failures and limitations. Do not report completion
 percentages derived from file counts.

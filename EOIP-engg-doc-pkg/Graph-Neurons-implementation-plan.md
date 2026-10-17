@@ -3,6 +3,7 @@
 > **Document ID**: GN-PLAN-v1
 > **Date**: 2026-10-16
 > **Pairs with**: `Graph-Neurons-requirements.md` (GN-REQ-v1) — read that first
+> **Revision**: v1.1 (2026-10-18) — CPU-only distribution (H-16), CPU-first qualification (H-15, H-17 interim); see GN-REQ §0.6
 > **Audience**: the AI coding agent executing this work, and the human who signs it off
 > **Purpose**: how the work is sequenced, how it is proven done, and what disqualifies a completion claim
 
@@ -157,10 +158,10 @@ Phase 6  Quality gate (GAN)  GN-501          │
 Phase 7  Research sandbox    GN-502,601,202,303
 ```
 
-> **Phase 0a requires only tier N0 (~70 MB: numpy, scipy, sklearn).** PyTorch is not needed until
+> **Phase 0a requires only tier N0 (numpy, scipy, sklearn).** PyTorch is not needed until
 > Phase 1. This is deliberate: the entire verification substrate — baselines, metrics, calibration,
 > feature store, anti-stub harness — must be installable and runnable in CI and on developer laptops
-> without a 2 GB download. If Phase 0a is correctly built, you can prove the hash stub fails before
+> without installing torch. If Phase 0a is correctly built, you can prove the hash stub fails before
 > torch is ever installed.
 
 ### Phase 0a — Numerical Substrate `GN-010 … GN-016`
@@ -174,6 +175,7 @@ Exit gate — all must be true:
 - [ ] All four extras (`numerics`, `neural`, `neural-text`, `neural-research`) resolve on Linux x86_64 / py3.11
 - [ ] `requirements-neural.lock` exists with `--generate-hashes`; offline install from a wheel cache succeeds
 - [ ] Default install is **CPU-only** — `torch.version.cuda` is `None`
+- [ ] Lock file and offline bundle contain **zero `nvidia-*` packages** (H-16); all Phase 0 measurements taken on a host with no GPU visible (H-17 interim)
 - [ ] `GN-011`: `cosine_matrix` over 100k×128 in < 20 ms, with the speedup factor over the old Python-loop version recorded
 - [ ] `GN-011`: `grep -rn "for i in range(dim" packages/eoip/neural/` → zero hits
 - [ ] `GN-012`: same seed across **separate processes** reproduces metrics within 1e-4; different seed produces different metrics
@@ -184,7 +186,7 @@ Exit gate — all must be true:
 
 > **The sequencing payoff:** by the end of Phase 0a you can run the anti-stub harness against the
 > existing hash stub and watch all four probes fail — using only numpy. That is the cheapest
-> possible proof that the verification regime works, obtained before committing to a 2 GB dependency.
+> possible proof that the verification regime works, obtained before installing torch at all.
 
 ### Phase 0b — Contracts & Harness `GN-001 … GN-007`
 
@@ -318,14 +320,16 @@ ledger must be re-run. Version it; never edit it in place.
 | Add a dependency not in the §1.3 licence table | Standing GPL/AGPL prohibition |
 | Introduce a second graph ML framework (DGL) | PyG is sufficient; two is maintenance waste |
 | Make any tier a core dependency | Breaks air-gap and edge deployments; core must stay at 9 packages |
-| Add numpy to core "because it's small" | 70 MB is not small for edge; it is tier N0 for a reason |
+| Add numpy to core "because it's small" | It changes every install, including edge and air-gapped ones; it is tier N0 for a reason |
 | Write a Python loop over array elements in a hot path | 50–200× slower than numpy; this is how `_cosine_similarity` got slow |
 | Use float64 for stored embeddings | Doubles memory for no accuracy gain; float32 is the policy |
 | Set `OMP_NUM_THREADS` after importing numpy | Has no effect; BLAS reads it at import |
 | Set only `OMP_NUM_THREADS` | Ineffective half-fix; all four vars must be set together |
 | Train without recording the seed and environment | Makes the Evidence Ledger unreproducible and therefore worthless |
-| Ship CUDA wheels as the install default | NVIDIA SLA redistribution terms; ~5× larger; CPU is the default |
-| Leave transitive deps unpinned | 2 GB tree, supply-chain risk, irreproducible builds |
+| Ship, bundle, mirror or redistribute any CUDA / `nvidia-*` package | Not permitted — decision H-16 (`docs/decisions/ADR-H16-no-cuda-redistribution.md`) |
+| Make any binding gate depend on a GPU | GPU availability is unknown (H-17); CPU-first policy (ADR-H15) |
+| Publish a CUDA install command in EOIP documentation | Customer-provisioned GPUs are unsupported until H-17 |
+| Leave transitive deps unpinned | Large transitive tree, supply-chain risk, irreproducible builds |
 | Return NaN from a reduction | Propagates silently and surfaces three layers away as a meaningless prediction |
 | Exceed 2 GNN layers by default | Oversmoothing |
 | Delete a flagged triple | Quarantine and surface it instead |
@@ -386,10 +390,12 @@ Copy this into each ledger. These are the house conventions, verified not assume
 | NR12 | **BLAS oversubscription** — N workers × M BLAS threads collapses throughput | **High** | High | `GN-013`; looks like a mystery perf bug, is a config error |
 | NR13 | Metrics irreproducible; ledgers unverifiable | **High** | **Critical** | `GN-012` cross-process determinism test |
 | NR14 | Silent NaN reaches a prediction and looks plausible | Medium | High | `GN-015` `assert_finite` at every module boundary |
-| NR15 | CUDA wheels pulled by default; NVIDIA SLA redistribution exposure | Medium | High | CPU index is the documented default; Legal review before any bundled appliance |
-| NR16 | Air-gap install broken by a 2 GB PyPI-dependent tree | Medium | High | `GN-014` wheel bundle + hash-pinned lockfile |
+| NR15 | CUDA packages enter a distributed artifact | **Closed by H-16** | High | CPU-only builds everywhere; CI licence gate rejects any `nvidia-*` in lock files, bundles and images |
+| NR16 | Air-gap install broken by a large PyPI-dependent tree | Medium | High | `GN-014` wheel bundle + hash-pinned lockfile |
 | NR17 | float64 creep doubles memory and breaks budgets | Medium | Medium | dtype assertion in `FeatureStore.put` |
 | NR18 | Numpy added to core "just for convenience" | Medium | Medium | CI diffs the core resolved package set against a committed baseline |
+| NR19 | An architecture meets its margin only with a GPU | Medium | Medium | Recorded `DEFERRED (H-17)` with CPU numbers; CPU-feasible defaults and neighbour sampling (ADR-H15) |
+| NR20 | CPU training misses the full-retrain budget at P1/P2 scale | Medium | High | Mini-batch neighbour sampling; budget breach recorded and raised to H-17 as GPU evidence |
 
 ---
 
@@ -413,8 +419,8 @@ Not a schedule — a relative shape. Multiply by your team's actual throughput.
 optional expansions, each justified by its own bake-off. A programme that completes Phases 0–2
 honestly is far more valuable than one that touches all six architectures without measuring any.
 
-**30% of the total effort (Phases 0a + 0b) needs only a 70 MB dependency tier.** Front-loading that
-work means the verification regime is proven before the 2 GB commitment, and CI stays fast for the
+**30% of the total effort (Phases 0a + 0b) needs only tier N0.** Front-loading that
+work means the verification regime is proven before torch is installed, and CI stays fast for the
 majority of the programme.
 
 ---
@@ -434,6 +440,8 @@ without inspecting a single source file:
 - [ ] `pip install -e ".[numerics]"` → metrics, baselines and embedding lookup work **without torch**
 - [ ] `pip install -e ".[neural]"` → neural routes return real predictions; `torch.version.cuda is None` on the default index
 - [ ] Offline install from the wheel bundle succeeds on a network-isolated machine
+- [ ] No distributed artifact (lock file, wheel bundle, image) contains an `nvidia-*` package (H-16)
+- [ ] Every binding gate was met on a host with no GPU; any GPU results are reported separately as non-binding (H-17)
 - [ ] Every ledger records its seed and `capture_environment()`; one metric picked at random is re-run and reproduces within 1e-4
 - [ ] `grep -rn "for i in range(dim" packages/eoip/neural/` returns zero hits
 - [ ] Audit query confirms zero neural-origin `OBSERVED` assertions

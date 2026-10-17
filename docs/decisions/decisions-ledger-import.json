@@ -1,0 +1,61 @@
+{
+  "schema": "eoip-ledger-v3",
+  "exported_at": "2026-10-18T00:00:00Z",
+  "source": "docs/decisions (H-15, H-16, H-17) — import into CRAr_cpccaggcc-tracker.html or merge into .audit-scratch/ledger.json",
+  "items": [
+    {
+      "id": "H-15",
+      "kind": "decision",
+      "parent": null,
+      "origin": "GN",
+      "state": "ACCEPTED",
+      "owner": "CTO / Product owner",
+      "blocked_by": [],
+      "receipts": [],
+      "evidence": {
+        "decided_by": "Claude (engineering agent), delegated by Ravaleedhar Reddy",
+        "decision_ref": "docs/decisions/ADR-H15-numerical-stack-tiers.md",
+        "review_date": "2026-10-18"
+      },
+      "notes": "Adopt tiered CPU-first numerical stack as optional extras: N0 required where probabilistic features are enabled; N1/N2 CPU-only builds; N3 research only; all binding gates qualified on CPU.",
+      "history": [],
+      "updated_at": "2026-10-18T00:00:00Z"
+    },
+    {
+      "id": "H-16",
+      "kind": "decision",
+      "parent": null,
+      "origin": "GN",
+      "state": "ACCEPTED",
+      "owner": "Legal",
+      "blocked_by": [],
+      "receipts": [],
+      "evidence": {
+        "decided_by": "Ravaleedhar Reddy",
+        "decision_ref": "docs/decisions/ADR-H16-no-cuda-redistribution.md",
+        "review_date": "2026-10-18"
+      },
+      "notes": "CUDA / nvidia-* packages are not redistributed in any EOIP artifact. Customer-provisioned CUDA builds are unqualified and never required.",
+      "history": [],
+      "updated_at": "2026-10-18T00:00:00Z"
+    },
+    {
+      "id": "H-17",
+      "kind": "decision",
+      "parent": null,
+      "origin": "GN",
+      "state": "BLOCKED",
+      "owner": "CTO / Infrastructure",
+      "blocked_by": [
+        "GPU availability per deployment profile unknown; interim CPU-only policy in docs/decisions/ADR-H17-gpu-availability.md"
+      ],
+      "receipts": [],
+      "evidence": {
+        "decision_ref": "docs/decisions/ADR-H17-gpu-availability.md"
+      },
+      "notes": "Needs: customer hardware survey, measured CPU qualification results, workload volumes, CPU-vs-GPU cost comparison, Legal position for SaaS GPU use.",
+      "history": [],
+      "updated_at": "2026-10-18T00:00:00Z"
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 > **Document ID**: GN-REQ-v1
 > **Date**: 2026-10-16
 > **Status**: Ready for implementation
+> **Revision**: v1.1 (2026-10-18) — compute decisions H-15/H-16/H-17 applied (§0.6)
 > **Companion**: `Graph-Neurons-implementation-plan.md` (sequencing, gates, evidence protocol)
 > **Audience**: AI coding agents and the human reviewers who sign off their work
 > **Scope**: CNN, RNN, GNN, Transformer, GAN and SNN architectures operating within, across and
@@ -79,6 +80,16 @@ module that writes `OBSERVED` edges is a P0 defect regardless of its accuracy. S
 | Existing test suite | 302 `test_*.py` files — must stay green | `find tests -name "test_*.py"` |
 | Engine pattern | double-checked-locking singleton + `get_<name>_engine()` | `packages/eoip/gnn/engine.py:257-300` |
 | Existing packages to extend | `gnn/`, `embeddings/`, `mlops/`, `xai/`, `nlp/`, `extraction/`, `causal/`, `graph_graph/`, `reasoning/` | directory listing |
+
+### 0.6 Compute decisions — binding (2026-10-18)
+
+| Decision | Outcome | Consequence for this document |
+|---|---|---|
+| **H-15** numerical stack | **Accepted** — tiered, CPU-first, optional extras (`docs/decisions/ADR-H15-numerical-stack-tiers.md`) | N0 required wherever probabilistic features are enabled; N1/N2 CPU-only builds; N3 research environments only, never shipped to customers |
+| **H-16** CUDA redistribution | **Accepted** — CUDA / `nvidia-*` packages are **not** redistributed (`ADR-H16-no-cuda-redistribution.md`) | No `nvidia-*` package in any lock file, wheel bundle, image or mirror EOIP distributes; customer-provisioned CUDA builds are detected but unqualified and never required |
+| **H-17** GPU availability | **Open** — interim CPU-only policy (`ADR-H17-gpu-availability.md`) | Every budget, threshold and Done-when measurement in this document is taken on CPU-only hardware; GPU results are non-binding; an architecture that meets its margin only with a GPU is recorded `DEFERRED (H-17)`, not promoted |
+
+The combined specification `CRAr_cpccaggcc-requirements.md` (v3.2) carries these as CRA-043.11, CRA-044.13 and CRA-026.13.
 
 ---
 
@@ -158,18 +169,18 @@ change deliberately, in tiers.
 **Decision: the numerical stack is introduced as FOUR separately-installable tiers, not one
 monolithic extra.** The core platform's nine pure-Python dependencies remain untouched.
 
-Rationale for tiering rather than a single `neural` extra: numpy + scipy + sklearn together are
-~70 MB, pure CPU, no platform matrix, and are sufficient for the entire Phase 0 foundation
-(feature store, metrics, calibration, baselines, anti-stub harness). PyTorch is ~2 GB with a
-CUDA/ROCm/CPU wheel matrix. Forcing the 2 GB install on a user who only wants the evaluation harness
-is a design error. Splitting them means **Phase 0 installs everywhere, including edge and CI**.
+Rationale for tiering rather than a single `neural` extra: numpy + scipy + sklearn are pure CPU,
+have no platform matrix, and are sufficient for the entire Phase 0 foundation (feature store,
+metrics, calibration, baselines, anti-stub harness). PyTorch is a much larger install even as a
+CPU-only build. Forcing it on a user who only wants the evaluation harness is a design error.
+Install sizes are budgets to be measured (GN-010 V7), not assumed figures. Splitting them means **Phase 0 installs everywhere, including edge and CI**.
 
 | Tier | Extra name | Size | Unlocks | Needed from |
 |---|---|---:|---|---|
-| **N0** | `numerics` | ~70 MB | Feature store, vector ops, metrics, calibration, baselines, anti-stub harness, ChebNet eigendecomposition | **Phase 0** |
-| **N1** | `neural` | ~2 GB | All trained models: GNN, Transformer, RNN, CNN, GAN | Phase 1 |
-| **N2** | `neural-text` | ~1 GB | NL bridge, text embeddings, entity extraction | Phase 2 |
-| **N3** | `neural-research` | ~50 MB | SNN sandbox only | Phase 7 |
+| **N0** | `numerics` | ≤ 150 MB budget | Feature store, vector ops, metrics, calibration, baselines, anti-stub harness, ChebNet eigendecomposition | **Phase 0** |
+| **N1** | `neural` | ≤ 2.5 GB budget, CPU-only build | All trained models: GNN, Transformer, RNN, CNN, GAN | Phase 1 |
+| **N2** | `neural-text` | measured; model weights separate | NL bridge, text embeddings, entity extraction | Phase 2 |
+| **N3** | `neural-research` | measured | SNN sandbox only — never shipped to customers (H-15) | Phase 7 |
 
 `[project.optional-dependencies]` additions to `pyproject.toml`:
 
@@ -217,11 +228,13 @@ neural-research = [
 Any dependency not in this table requires a Legal check before use. The repository carries a
 standing GPL/AGPL prohibition — see `ontology-competitive-analysis.md` §8.1.
 
-> **Transitive licence risk is real here.** `torch` pulls `nvidia-*` CUDA packages under the NVIDIA
-> Software Licence Agreement, which is **not** a standard OSS licence and restricts redistribution.
-> If EOIP is ever shipped as a bundled appliance rather than pip-installed by the customer, Legal
-> must review CUDA redistribution terms. `GN-010` requires the CPU-only wheel index as the default
-> for exactly this reason.
+> **CUDA packages are not redistributed (decision H-16, 2026-10-18).** CUDA builds of `torch` pull
+> `nvidia-*` packages under the NVIDIA Software Licence Agreement, which restricts redistribution.
+> EOIP therefore distributes **CPU-only** builds in every artifact — wheels, lock files, offline
+> bundles and container images — and the CI licence gate rejects any `nvidia-*` package in them.
+> A customer may install a CUDA build from upstream into their own environment under their own
+> acceptance of NVIDIA's terms; EOIP detects it but never requires it, and it is unqualified until
+> H-17 is decided.
 
 ---
 
@@ -302,27 +315,28 @@ one of them addresses a failure that is invisible in development and expensive i
 
 **Binding constraints:**
 
-1. **CPU wheels are the default.** `pip install "eoip[neural]"` must resolve to CPU-only torch. GPU
-   is opt-in via an explicit index URL, because the CUDA wheels carry NVIDIA SLA terms (§1.3) and
-   are ~5× larger. Document both:
+1. **CPU-only is the only build EOIP distributes (H-15, H-16).** `pip install "eoip[neural]"`
+   resolves to CPU-only torch, and every EOIP artifact contains CPU builds only:
 
    ```bash
-   # CPU (default, all platforms)
+   # The supported install (all platforms)
    pip install "eoip[neural]" --extra-index-url https://download.pytorch.org/whl/cpu
-   # CUDA 12.4 (opt-in, Linux/Windows x86_64 only)
-   pip install "eoip[neural]" --extra-index-url https://download.pytorch.org/whl/cu124
    ```
 
+   EOIP documentation does not publish a CUDA install command and EOIP never hosts or mirrors
+   CUDA packages. A customer-provisioned GPU (H-16 §3) is detected at runtime, reported as
+   `TORCH_CUDA` in `RuntimeCapabilities`, and is unqualified until H-17.
+
 2. **A hash-pinned lockfile is mandatory** at `requirements-neural.lock`, generated with
-   `pip-compile --generate-hashes`. Unpinned transitive dependencies in a 2 GB tree are a supply-chain
+   `pip-compile --generate-hashes`. Unpinned transitive dependencies in a tree this large are a supply-chain
    risk and a reproducibility hole.
 3. The platform support matrix must be **tested, not asserted**:
 
-   | Platform | Python | Tier N0 | Tier N1 CPU | Tier N1 CUDA |
+   | Platform | Python | Tier N0 | Tier N1 CPU | GPU (customer-provisioned) |
    |---|---|---|---|---|
-   | Linux x86_64 | 3.11, 3.12 | required | required | required |
-   | Windows x86_64 | 3.11, 3.12 | required | required | best-effort |
-   | macOS arm64 | 3.11, 3.12 | required | required | n/a (MPS instead) |
+   | Linux x86_64 | 3.11, 3.12 | required | required | not required; unqualified (H-17) |
+   | Windows x86_64 | 3.11, 3.12 | required | required | not required; unqualified (H-17) |
+   | macOS arm64 | 3.11, 3.12 | required | required | not required (MPS detected, unqualified) |
    | Linux arm64 | 3.11 | required | best-effort | n/a |
 
 4. `pip install -e .` (no extras) must remain **unchanged in resolved-package count**. Adding numpy
@@ -333,6 +347,8 @@ one of them addresses a failure that is invisible in development and expensive i
 - [ ] V3: `pip install -e .` resolves to exactly the same package set as before this change — proven by diffing `pip freeze` before and after
 - [ ] V3: `requirements-neural.lock` exists with `--generate-hashes`; install from it succeeds offline from a local wheel cache
 - [ ] V3: CPU default verified — `python -c "import torch; print(torch.version.cuda)"` prints `None` after a default install
+- [ ] V3: **No CUDA in distributed artifacts (H-16)** — scanning `requirements-neural.lock`, every offline bundle manifest and every image SBOM finds zero `nvidia-*` packages; a fixture lock file containing one fails the CI licence gate
+- [ ] V4: **CPU-only qualification (H-17 interim)** — every measurement in this programme is recorded with `device=cpu` from a host where no GPU is visible
 - [ ] V4: Platform matrix exercised in CI for at least Linux x86_64 and Windows x86_64 on Python 3.11 and 3.12 — four jobs, all green
 - [ ] V7: Install size recorded per tier; N0 ≤ 150 MB, N1 CPU ≤ 2.5 GB
 
@@ -462,11 +478,12 @@ performance bug, not a configuration error.
 
 **Priority** P1 · **Path** `docs/install-neural-airgap.md`, `scripts/build_wheel_bundle.sh`
 
-EOIP targets air-gapped enterprise deployments. A 2 GB dependency tree that assumes PyPI reachability
-breaks that promise silently.
+EOIP targets air-gapped enterprise deployments. A large dependency tree that assumes PyPI reachability
+breaks that promise silently. Bundles contain CPU-only builds and no `nvidia-*` package (H-16).
 
 **Done when:**
 - [ ] V2: `scripts/build_wheel_bundle.sh` produces a self-contained wheel bundle for a named platform/tier
+- [ ] V3: The bundle manifest lists zero `nvidia-*` packages and the build fails if one is resolved (H-16)
 - [ ] V3: On a network-isolated machine (or a container with networking disabled), `pip install --no-index --find-links=./wheels "eoip[neural]"` succeeds
 - [ ] V3: Bundle manifest lists every wheel with its SHA-256, matching `requirements-neural.lock`
 - [ ] V7: Bundle size recorded per tier and platform
@@ -510,14 +527,15 @@ Silent numerical bugs are the hardest class to detect because the output remains
 1. Before any training or full-graph inference, estimate peak memory and compare against available.
    If the estimate exceeds 80% of available, **refuse with a clear message naming the required
    batch size** — do not start and OOM twenty minutes later.
-2. GPU memory is explicitly released after each job (`torch.cuda.empty_cache()` plus dropping
-   references). A long-lived serving process that leaks GPU memory across requests dies at 3 a.m.
+2. When a customer-provisioned GPU is present (unqualified, H-17), GPU memory is explicitly released
+   after each job (`torch.cuda.empty_cache()` plus dropping references). A long-lived serving process
+   that leaks GPU memory across requests dies at 3 a.m. The CPU guards are the binding ones.
 3. Batch sizing is **derived from `RuntimeCapabilities.max_nodes_in_memory`**, never hardcoded.
-4. Peak RSS and peak GPU memory are recorded in every Evidence Ledger `V7` section.
+4. Peak RSS is recorded in every Evidence Ledger `V7` section, plus peak GPU memory when a GPU was present.
 
 **Done when:**
 - [ ] V3: A deliberately oversized job is refused **before** allocation, with a message naming a workable batch size
-- [ ] V3: GPU memory returns to baseline ± 50 MB after 10 sequential inference jobs — proven by sampling `torch.cuda.memory_allocated()`
+- [ ] V3 (non-binding, only where a customer-provisioned GPU is present): GPU memory returns to baseline ± 50 MB after 10 sequential inference jobs — proven by sampling `torch.cuda.memory_allocated()`
 - [ ] V7: Peak RSS recorded for training and inference at 10k / 100k nodes
 - [ ] V3: On a CPU-only machine, all memory guards still function (no CUDA-only code path)
 
@@ -542,7 +560,7 @@ class NeuralTier(str, Enum):
     RESEARCH  = "research"   # N3: + snntorch
 
 class NeuralBackend(str, Enum):
-    TORCH_CUDA  = "torch_cuda"
+    TORCH_CUDA  = "torch_cuda"    # customer-provisioned only (H-16); unqualified until H-17
     TORCH_MPS   = "torch_mps"
     TORCH_CPU   = "torch_cpu"
     NUMPY_ONLY  = "numpy_only"    # N0 present, N1 absent — valid state, not an error
@@ -1171,7 +1189,9 @@ accessors, and a `stats()` method on every engine wired into `brain_os.py` telem
 | Full retrain | 4 h | 1M edges |
 | Incremental embedding refresh | 30 s | 1k changed nodes |
 
-**Done when:** every row measured and recorded; any breach either fixed or formally accepted with a written rationale.
+All budgets are measured on **CPU-only reference hardware** (H-17 interim policy). GPU measurements, where a customer-provisioned GPU exists, are recorded separately and are non-binding.
+
+**Done when:** every row measured and recorded on CPU; any breach either fixed or formally accepted with a written rationale.
 
 ### GN-706 — Known Failure Modes: Explicit Guards
 **Priority** P1
@@ -1202,6 +1222,7 @@ This programme is complete when:
 8. **No Python-level numeric loops remain** in neural hot paths — `grep` gate in `GN-011` is clean.
 9. **BLAS threads are governed** — the oversubscription probe in `GN-013` is recorded.
 10. Requirements that failed their thresholds are **documented as failed**, not quietly dropped.
+11. **Compute decisions hold (§0.6):** every binding gate was met on CPU-only hardware, and no distributed artifact contains an `nvidia-*` package. Architectures that needed a GPU are recorded `DEFERRED (H-17)` with their CPU numbers.
 
 > **Point 7 is what makes the rest of this document meaningful.** An Evidence Ledger full of numbers
 > that cannot be reproduced is decoration. Determinism is not a nice-to-have here; it is the
