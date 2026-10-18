@@ -1,0 +1,22 @@
+profile: P1
+name: Enterprise Profile (Initial Release Gate)
+binding:
+  asserted_triples: 50000000
+  classes: 10000
+  axioms: 75000
+  concurrent_users: 100
+  source_instances: 20
+  reference_compute: "3 x 16 vCPU / 128 GiB data nodes + separate API/workers"
+  accelerator: "none — CPU only"
+  point_read_p95_ms: 250
+  bounded_graph_page_p95_ms: 1000
+  approved_query_suite_p95_ms: 3000
+  accepted_to_searchable_p95_ms: 60000
+  ingestion_throughput_triples_per_s: 25000
+  availability_objective: "99.9% monthly (proposal, not SLA)"
+  rpo_rto: "<= 15 min / <= 4 h"
+stretch:
+  point_read_p95_ms: 20
+  bounded_graph_page_p95_ms: 150
+  approved_query_suite_p95_ms: 1500
+  availability_objective: "99.99%"

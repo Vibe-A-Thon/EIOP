@@ -1,0 +1,64 @@
+{
+  "$schema": "https://eoip.enterprise.internal/schemas/verification-receipt-v3.json",
+  "receipt_id": "rcpt-3304db73-e226-458f-9316-8656b7bb785c",
+  "requirement_clause": "CRA-003.A",
+  "state_claimed": "ACCEPTED",
+  "profile": "P0",
+  "source_commit": "d679799d5d9fac9820f36d357b6c2c3a4846ef21",
+  "source_tree_dirty": true,
+  "source_fingerprint": "252a490e30b72279ed1aae58efdd11aa6576a253130243c9ca5ad78cadc66049",
+  "source_unchanged_during_run": true,
+  "artifact_digest": "24021173b06c0358f94d82d00c9b9b2ced505373eb42670d9266c2d2752c5eb0",
+  "artifact_path": "dist/eoip-1.0.0rc1-py3-none-any.whl",
+  "artifact_mtime": "2026-10-18T00:11:14.306732+00:00",
+  "runtime": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "python_version": "3.11.9",
+    "backend": "memory",
+    "engine": "",
+    "engine_version": ""
+  },
+  "fixture": {
+    "id": ""
+  },
+  "execution": {
+    "command": [
+      "pytest",
+      "tests/security/test_tenancy_and_derivation_acls.py",
+      "--junitxml",
+      ".audit-scratch/evidence/CRA-003.A/run-20261018T001422Z-a6b5f8e7/junit.xml"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-18T00:14:22.507907+00:00",
+    "completed_at": "2026-10-18T00:14:25.628909+00:00"
+  },
+  "results": {
+    "tests_total": 6,
+    "tests_failed": 0,
+    "tests_errors": 0,
+    "tests_skipped": 0,
+    "tests_xfailed": 0,
+    "tests_passed": 6
+  },
+  "evidence_files": [
+    {
+      "path": ".audit-scratch/evidence/CRA-003.A/run-20261018T001422Z-a6b5f8e7/junit.xml",
+      "sha256": "6dea8c5e475fe763158701bdff37231033ffd3706e18558d9d0daae3b56c5676"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-003.A/run-20261018T001422Z-a6b5f8e7/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-003.A/run-20261018T001422Z-a6b5f8e7/stdout.txt",
+      "sha256": "d63237774c65fc901fd0ebb62540828a244bb73733c69a712e524d5c50cc22de"
+    }
+  ],
+  "verified_invariants": [],
+  "negative_cases": [],
+  "evidence_categories": {},
+  "limitations": [],
+  "producer": "antigravity-agent",
+  "reviewer": "AcceptanceAuditor",
+  "review_signature": "ACCEPTED-AUDIT"
+}

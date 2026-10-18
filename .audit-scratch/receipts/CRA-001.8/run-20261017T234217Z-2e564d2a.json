@@ -1,0 +1,66 @@
+{
+  "$schema": "https://eoip.enterprise.internal/schemas/verification-receipt-v3.json",
+  "receipt_id": "rcpt-3c473b96-c78d-49fc-beb1-8e42e0bb5133",
+  "requirement_clause": "CRA-001.8",
+  "state_claimed": "ACCEPTED",
+  "profile": "P0",
+  "source_commit": "d679799d5d9fac9820f36d357b6c2c3a4846ef21",
+  "source_tree_dirty": true,
+  "source_fingerprint": "888796bcb44ab6ef50b3a75c96ea6987e8cb8e4e5606059d3ae23356be29fb31",
+  "source_unchanged_during_run": true,
+  "artifact_digest": "b9c04f8265dcde4950c9a424bc560ab2a55b0ded601a456c0b9e3ac40fee9a85",
+  "artifact_path": "dist/eoip-1.0.0rc1-py3-none-any.whl",
+  "artifact_mtime": "2026-10-17T23:41:11.633373+00:00",
+  "runtime": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "python_version": "3.11.9",
+    "backend": "memory-harness",
+    "engine": "",
+    "engine_version": ""
+  },
+  "fixture": {
+    "id": ""
+  },
+  "execution": {
+    "command": [
+      "python",
+      "-m",
+      "pytest",
+      "tests/integration/test_capabilities_route.py",
+      "--junitxml",
+      ".audit-scratch/evidence/CRA-001.8/run-20261017T234217Z-2e564d2a/junit.xml"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-17T23:42:17.297555+00:00",
+    "completed_at": "2026-10-17T23:42:22.264556+00:00"
+  },
+  "results": {
+    "tests_total": 2,
+    "tests_failed": 0,
+    "tests_errors": 0,
+    "tests_skipped": 0,
+    "tests_xfailed": 0,
+    "tests_passed": 2
+  },
+  "evidence_files": [
+    {
+      "path": ".audit-scratch/evidence/CRA-001.8/run-20261017T234217Z-2e564d2a/junit.xml",
+      "sha256": "1d57c669d8db43e5aa81e5519e63804d169bbf13c34e6e3fb5bd4b0c77ad448a"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-001.8/run-20261017T234217Z-2e564d2a/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-001.8/run-20261017T234217Z-2e564d2a/stdout.txt",
+      "sha256": "b9e346a60566db9b534d6a0869bed7de03ace8cd12d3aa2412b87a9a964f7155"
+    }
+  ],
+  "verified_invariants": [],
+  "negative_cases": [],
+  "evidence_categories": {},
+  "limitations": [],
+  "producer": "antigravity-agent",
+  "reviewer": "Lead-Architect",
+  "review_signature": "sig-7890abc"
+}

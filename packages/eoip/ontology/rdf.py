@@ -622,27 +622,24 @@ class OWLReasoner:
         self.add_property_chain("DEPENDS_ON", "DEPENDS_ON", "DEPENDS_ON")
 
     def add_subclass(self, child: str, parent: str) -> None:
-        self.subclasses.setdefault(child.lower(), set()).add(parent.lower())
+        self.subclasses.setdefault(child, set()).add(parent)
 
     def add_disjoint(self, class_a: str, class_b: str) -> None:
-        ca, cb = class_a.lower(), class_b.lower()
-        self.disjoint_classes.setdefault(ca, set()).add(cb)
-        self.disjoint_classes.setdefault(cb, set()).add(ca)
+        self.disjoint_classes.setdefault(class_a, set()).add(class_b)
+        self.disjoint_classes.setdefault(class_b, set()).add(class_a)
 
     def add_property_chain(self, p1: str, p2: str, implied: str) -> None:
-        self.property_chains.append((p1.upper(), p2.upper(), implied.upper()))
+        self.property_chains.append((p1, p2, implied))
 
     def is_subclass_of(self, child: str, parent: str) -> bool:
-        """Transitive subsumption check."""
-        c = child.lower()
-        p = parent.lower()
-        if c == p:
+        """Transitive subsumption check preserving case-sensitivity of IRIs (G03, CRA-016.2)."""
+        if child == parent:
             return True
         visited = set()
-        queue = [c]
+        queue = [child]
         while queue:
             curr = queue.pop(0)
-            if curr == p:
+            if curr == parent:
                 return True
             visited.add(curr)
             for par in self.subclasses.get(curr, set()):
@@ -651,14 +648,11 @@ class OWLReasoner:
         return False
 
     def are_disjoint(self, class_a: str, class_b: str) -> bool:
-        ca = class_a.lower()
-        cb = class_b.lower()
-        # Direct disjointness
-        if cb in self.disjoint_classes.get(ca, set()):
+        """Disjointness check preserving case-sensitivity of IRIs."""
+        if class_b in self.disjoint_classes.get(class_a, set()):
             return True
-        # Inherited disjointness
-        for super_a in self._all_superclasses(ca):
-            for super_b in self._all_superclasses(cb):
+        for super_a in self._all_superclasses(class_a):
+            for super_b in self._all_superclasses(class_b):
                 if super_b in self.disjoint_classes.get(super_a, set()):
                     return True
         return False

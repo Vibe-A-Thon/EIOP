@@ -35,6 +35,19 @@ from eoip.authz.tokens import (
     has_scope,
 )
 
+from eoip.authz.pdp import (
+    FactPremise,
+    DerivationVisibilityResult,
+    PolicyEpochRegistry,
+    ScopeViolationError,
+    can_read,
+    format_indistinguishable_not_found,
+    get_policy_epoch_registry,
+    inject_and_validate_query_scope,
+    tenant_graph_iri,
+    visible_derived_fact,
+)
+
 __all__ = [
     "ADMIN_WILDCARD",
     "CLASSIFICATION_ORDER",
@@ -60,4 +73,14 @@ __all__ = [
     "permission_known",
     "role_inherited_roles",
     "role_rank",
+    "FactPremise",
+    "DerivationVisibilityResult",
+    "PolicyEpochRegistry",
+    "ScopeViolationError",
+    "can_read",
+    "format_indistinguishable_not_found",
+    "get_policy_epoch_registry",
+    "inject_and_validate_query_scope",
+    "tenant_graph_iri",
+    "visible_derived_fact",
 ]

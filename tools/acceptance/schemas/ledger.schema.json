@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EOIPLedgerV3",
+  "type": "object",
+  "required": ["schema", "created_at", "items"],
+  "properties": {
+    "schema": { "type": "string", "const": "eoip-ledger-v3" },
+    "created_at": { "type": "string" },
+    "exported_at": { "type": "string" },
+    "source": { "type": "string" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "state", "updated_at"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string", "enum": ["clause", "acceptance", "scenario", "decision", "conflict", "research"] },
+          "parent": { "type": ["string", "null"] },
+          "origin": { "type": "string" },
+          "state": { "type": "string", "enum": ["OPEN", "DESIGNED", "IMPLEMENTED", "VERIFIED", "ACCEPTED", "BLOCKED", "FAILED", "UNQUALIFIED", "DEFERRED", "WAIVED"] },
+          "owner": { "type": ["string", "null"] },
+          "blocked_by": { "type": "array", "items": { "type": "string" } },
+          "receipts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": { "type": "string" },
+                "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+              }
+            }
+          },
+          "notes": { "type": "string" },
+          "evidence": { "type": "object" },
+          "history": { "type": "array" },
+          "updated_at": { "type": "string" }
+        }
+      }
+    }
+  }
+}

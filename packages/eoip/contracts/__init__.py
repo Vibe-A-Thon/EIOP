@@ -21,6 +21,22 @@ from eoip.contracts.revision import GraphRevision, RelationshipRevision, Revisio
 from eoip.contracts.source_event import PermissionMetadata, SourceEvent, SourceEventV2, upgrade_source_event
 from eoip.contracts.source_registry import SourceCapabilities, SourceCheckpoint, SourceRegistryEntry
 from eoip.contracts.tool import ToolContract, ToolRequest, ToolResult
+from eoip.contracts.canonical import (
+    PrincipalType,
+    TrustedScope,
+    TermKind,
+    RDFTerm,
+    EvidenceLocator,
+    KnowledgeState,
+    CanonicalAssertion,
+    ActionStatus,
+    ActionIntent,
+    ProducerClass,
+    ModelLineage,
+    AgreementState,
+    DualPathResult,
+    ContextManifest,
+)
 
 __all__ = [
     "AgentBudgets",

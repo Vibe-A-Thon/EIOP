@@ -1,0 +1,78 @@
+id: C54
+tool_family: spaCy / textacy
+category: 8_enrichment
+reviewed_at: '2026-10-18'
+review_baseline: public docs reviewed 2026-10-16; exact execution artifacts unpinned
+pinned_artifact: spacy>=3.7.0
+license_snapshot: reviewed
+confidence: documented_scope_medium_or_ND
+primary_evidence_url: https://spacy.io/api/entitylinker/
+inversion_id: INV-54
+requirements: CRA-021/023/026/035/036
+scores:
+  D01:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D02:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D03:
+    score: 2
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D04:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D05:
+    score: 3
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D06:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D07:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D08:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D09:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D10:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D11:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D12:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D13:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D14:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D15:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D16:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D17:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D18:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D19:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D20:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D21:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54
+  D22:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C54

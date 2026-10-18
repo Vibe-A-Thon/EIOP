@@ -1,0 +1,41 @@
+{
+  "measured_at_commit": "d679799d5d9fac9820f36d357b6c2c3a4846ef21",
+  "facts": [
+    {
+      "id": "python_version",
+      "asserted": ">=3.11",
+      "measured": "3.11.9",
+      "match": true
+    },
+    {
+      "id": "packages_py_files",
+      "asserted": 587,
+      "measured": 587,
+      "match": true
+    },
+    {
+      "id": "tests_files_count",
+      "asserted": 302,
+      "measured": 302,
+      "match": true
+    },
+    {
+      "id": "connectors_py_files",
+      "asserted": 38,
+      "measured": 38,
+      "match": true
+    },
+    {
+      "id": "ontology_py_files",
+      "asserted": 14,
+      "measured": 15,
+      "match": false
+    },
+    {
+      "id": "fileparse_py_files",
+      "asserted": 13,
+      "measured": 13,
+      "match": true
+    }
+  ]
+}

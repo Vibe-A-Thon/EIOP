@@ -1,0 +1,3 @@
+.                                                                        [100%]
+- generated xml file: F:\code\EIP\EIOP\.audit-scratch\evidence\CRA-003.2\run-20261018T001123Z-04955eed\junit.xml -
+1 passed, 5 deselected in 0.53s

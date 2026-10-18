@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VerificationReceiptV3",
+  "type": "object",
+  "required": [
+    "receipt_id",
+    "requirement_clause",
+    "state_claimed",
+    "profile",
+    "source_commit",
+    "source_tree_dirty",
+    "source_fingerprint",
+    "source_unchanged_during_run",
+    "artifact_digest",
+    "runtime",
+    "fixture",
+    "execution",
+    "results",
+    "evidence_files",
+    "producer"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "receipt_id": { "type": "string" },
+    "requirement_clause": { "type": "string" },
+    "state_claimed": { "type": "string", "enum": ["VERIFIED", "ACCEPTED"] },
+    "profile": { "type": "string", "enum": ["P0", "P1", "P2"] },
+    "source_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "source_tree_dirty": { "type": "boolean" },
+    "source_fingerprint": { "type": "string" },
+    "source_unchanged_during_run": { "type": "boolean" },
+    "artifact_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "artifact_path": { "type": "string" },
+    "artifact_mtime": { "type": "string" },
+    "runtime": {
+      "type": "object",
+      "required": ["os", "python_version", "backend"],
+      "properties": {
+        "os": { "type": "string" },
+        "python_version": { "type": "string" },
+        "backend": { "type": "string" },
+        "engine": { "type": "string" },
+        "engine_version": { "type": "string" },
+        "config_digest": { "type": "string" }
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "digest": { "type": "string" },
+        "license": { "type": "string" }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "required": ["command", "exit_code", "started_at", "completed_at"],
+      "properties": {
+        "command": { "type": "array", "items": { "type": "string" } },
+        "exit_code": { "type": "integer" },
+        "started_at": { "type": "string" },
+        "completed_at": { "type": "string" }
+      }
+    },
+    "results": {
+      "type": "object",
+      "required": ["tests_total"],
+      "properties": {
+        "tests_total": { "type": "integer" },
+        "tests_passed": { "type": "integer" },
+        "tests_failed": { "type": "integer" },
+        "tests_skipped": { "type": "integer" },
+        "tests_xfailed": { "type": "integer" },
+        "tests_errors": { "type": "integer" },
+        "duration_ms": { "type": "number" }
+      }
+    },
+    "verified_invariants": { "type": "array", "items": { "type": "string" } },
+    "negative_cases": { "type": "array" },
+    "evidence_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "evidence_categories": { "type": "object" },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "producer": { "type": "string" },
+    "reviewer": { "type": ["string", "null"] },
+    "review_signature": { "type": ["string", "null"] }
+  }
+}

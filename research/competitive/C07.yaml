@@ -1,0 +1,78 @@
+id: C07
+tool_family: Chowlk / OnToology
+category: 1_authoring
+reviewed_at: '2026-10-18'
+review_baseline: public docs reviewed 2026-10-16; exact execution artifacts unpinned
+pinned_artifact: unpinned
+license_snapshot: reviewed
+confidence: documented_scope_medium_or_ND
+primary_evidence_url: https://github.com/oeg-upm/Chowlk
+inversion_id: INV-07
+requirements: CRA-015/017/022/035/037
+scores:
+  D01:
+    score: 3
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D02:
+    score: 3
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D03:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D04:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D05:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D06:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D07:
+    score: 3
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D08:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D09:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D10:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D11:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D12:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D13:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D14:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D15:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D16:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D17:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D18:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D19:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D20:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D21:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07
+  D22:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C07

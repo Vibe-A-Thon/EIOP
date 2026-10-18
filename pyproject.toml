@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=77"]
+requires = ["setuptools>=65.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,8 +7,7 @@ name = "eoip"
 version = "1.0.0rc1"
 description = "Enterprise Ontology & Intelligence Platform (EOIP) — Phase 1 MVP vertical slice"
 requires-python = ">=3.11"
-license = "LicenseRef-EOIP-Proprietary"
-license-files = ["LICENSE", "NOTICE", "LICENSING.md", "THIRD_PARTY_NOTICES.md", "licenses/*.md"]
+license = { text = "LicenseRef-EOIP-Proprietary" }
 dependencies = [
   "fastapi>=0.110,<1.0",
   "uvicorn[standard]>=0.29,<1.0",
@@ -76,6 +75,7 @@ dev = [
 
 [tool.setuptools]
 package-dir = { "" = "packages" }
+license-files = ["LICENSE", "NOTICE", "LICENSING.md", "THIRD_PARTY_NOTICES.md", "licenses/*.md"]
 
 [tool.setuptools.packages.find]
 where = ["packages"]

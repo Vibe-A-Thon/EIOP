@@ -165,6 +165,48 @@ class SHACLValidator:
                             fix_suggestion=f"Update '{prop_name}' to one of {allowed_set}",
                         ))
 
+                # 4. Check min_counts constraint (G01)
+                for prop_name, min_cnt in shape.min_counts.items():
+                    val = props.get(prop_name)
+                    if val is None and prop_name in v:
+                        val = v[prop_name]
+                    if val is None:
+                        cnt = 0
+                    elif isinstance(val, (list, tuple, set)):
+                        cnt = len(val)
+                    else:
+                        cnt = 1
+                    if cnt < min_cnt:
+                        violations.append(SHACLViolation(
+                            shape_id=shape.shape_id,
+                            focus_node=cid,
+                            path=prop_name,
+                            message=f"Focus node '{cid}' has {cnt} values for '{prop_name}', minimum count is {min_cnt}",
+                            severity=shape.severity.value,
+                            fix_suggestion=f"Provide at least {min_cnt} values for '{prop_name}' on node '{cid}'",
+                        ))
+
+                # 5. Check max_counts constraint (G01)
+                for prop_name, max_cnt in shape.max_counts.items():
+                    val = props.get(prop_name)
+                    if val is None and prop_name in v:
+                        val = v[prop_name]
+                    if val is None:
+                        cnt = 0
+                    elif isinstance(val, (list, tuple, set)):
+                        cnt = len(val)
+                    else:
+                        cnt = 1
+                    if cnt > max_cnt:
+                        violations.append(SHACLViolation(
+                            shape_id=shape.shape_id,
+                            focus_node=cid,
+                            path=prop_name,
+                            message=f"Focus node '{cid}' has {cnt} values for '{prop_name}', maximum count is {max_cnt}",
+                            severity=shape.severity.value,
+                            fix_suggestion=f"Reduce values for '{prop_name}' to at most {max_cnt} on node '{cid}'",
+                        ))
+
         conforms = len(violations) == 0
         return SHACLValidationReport(
             conforms=conforms,
@@ -175,19 +217,20 @@ class SHACLValidator:
 
     def _check_datatype(self, value: Any, expected_type: str) -> bool:
         t = expected_type.lower()
-        if t in ("string", "str"):
+        if t in ("string", "str", "xsd:string", "http://www.w3.org/2001/xmlschema#string"):
             return isinstance(value, str)
-        if t in ("int", "integer"):
+        if t in ("int", "integer", "xsd:integer", "xsd:int", "http://www.w3.org/2001/xmlschema#integer"):
             return isinstance(value, int) and not isinstance(value, bool)
-        if t in ("float", "double", "number"):
+        if t in ("float", "double", "number", "xsd:float", "xsd:double", "xsd:decimal"):
             return isinstance(value, (int, float)) and not isinstance(value, bool)
-        if t in ("bool", "boolean"):
+        if t in ("bool", "boolean", "xsd:boolean", "http://www.w3.org/2001/xmlschema#boolean"):
             return isinstance(value, bool)
         if t in ("list", "array"):
             return isinstance(value, (list, tuple))
         if t in ("dict", "object"):
             return isinstance(value, dict)
-        return True
+        # G02 fix: Unknown or unsupported datatypes must return False and be rejected
+        return False
 
 
 def get_shacl_validator() -> SHACLValidator:

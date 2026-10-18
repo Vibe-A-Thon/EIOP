@@ -1,0 +1,64 @@
+{
+  "$schema": "https://eoip.enterprise.internal/schemas/verification-receipt-v3.json",
+  "receipt_id": "rcpt-b0422e2a-9485-4d9f-91df-53d664ab051b",
+  "requirement_clause": "CRA-002.5",
+  "state_claimed": "ACCEPTED",
+  "profile": "P0",
+  "source_commit": "d679799d5d9fac9820f36d357b6c2c3a4846ef21",
+  "source_tree_dirty": true,
+  "source_fingerprint": "a1ff17321cefe0a1f5a7f26e4d045fab9342134fe61bd03f6b4b0fee5e8c7d94",
+  "source_unchanged_during_run": true,
+  "artifact_digest": "eebc5d885ed917fbd8521d8d1ebee78f88d9f08bb58f32a8568f8196935a8e24",
+  "artifact_path": "dist/eoip-1.0.0rc1-py3-none-any.whl",
+  "artifact_mtime": "2026-10-18T00:00:57.688836+00:00",
+  "runtime": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "python_version": "3.11.9",
+    "backend": "memory",
+    "engine": "",
+    "engine_version": ""
+  },
+  "fixture": {
+    "id": ""
+  },
+  "execution": {
+    "command": [
+      "pytest",
+      "tests/integration/test_plugin_lifecycle.py",
+      "--junitxml",
+      ".audit-scratch/evidence/CRA-002.5/run-20261018T000344Z-557c0f19/junit.xml"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-18T00:03:44.973932+00:00",
+    "completed_at": "2026-10-18T00:03:50.206724+00:00"
+  },
+  "results": {
+    "tests_total": 5,
+    "tests_failed": 0,
+    "tests_errors": 0,
+    "tests_skipped": 0,
+    "tests_xfailed": 0,
+    "tests_passed": 5
+  },
+  "evidence_files": [
+    {
+      "path": ".audit-scratch/evidence/CRA-002.5/run-20261018T000344Z-557c0f19/junit.xml",
+      "sha256": "f755d9f59d33b82305a5ad2c03c533f19bbe49eba11eee49f77827c3c7c293ac"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-002.5/run-20261018T000344Z-557c0f19/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-002.5/run-20261018T000344Z-557c0f19/stdout.txt",
+      "sha256": "dbf54329c48c3efc1fb1fe9f781ae4351161be2f047f2d513cac2c1a78e63118"
+    }
+  ],
+  "verified_invariants": [],
+  "negative_cases": [],
+  "evidence_categories": {},
+  "limitations": [],
+  "producer": "antigravity-agent",
+  "reviewer": "AcceptanceAuditor",
+  "review_signature": "ACCEPTED-AUDIT"
+}

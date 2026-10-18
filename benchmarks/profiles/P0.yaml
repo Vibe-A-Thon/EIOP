@@ -1,0 +1,19 @@
+profile: P0
+name: Developer Profile
+binding:
+  asserted_triples: 1000000
+  classes: 1000
+  axioms: 10000
+  concurrent_users: 5
+  source_instances: 2
+  reference_compute: "8 vCPU, 32 GiB"
+  accelerator: "none — CPU only"
+  point_read_p95_ms: 250
+  bounded_graph_page_p95_ms: 750
+  approved_query_suite_p95_ms: null
+  accepted_to_searchable_p95_ms: null
+  ingestion_throughput_triples_per_s: 5000
+  availability_objective: null
+  rpo_rto: null
+stretch:
+  notes: "Developer local workstation profile, memory and single-node persistence harness"

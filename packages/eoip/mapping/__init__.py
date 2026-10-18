@@ -1,0 +1,29 @@
+"""Mapping package — Connector Mapping Language (CML), Mapping IR, and LPG/RDF projection engine."""
+
+from eoip.mapping.ir import (
+    MappingIR,
+    SubjectMapIR,
+    PropertyMapIR,
+    RelationMapIR,
+    ProvenanceConfigIR,
+)
+from eoip.mapping.cml import (
+    CMLParseError,
+    parse_and_compile_cml,
+    safe_apply_template,
+)
+from eoip.mapping.executor import (
+    execute_mapping,
+)
+
+__all__ = [
+    "MappingIR",
+    "SubjectMapIR",
+    "PropertyMapIR",
+    "RelationMapIR",
+    "ProvenanceConfigIR",
+    "CMLParseError",
+    "parse_and_compile_cml",
+    "safe_apply_template",
+    "execute_mapping",
+]

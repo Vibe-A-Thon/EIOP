@@ -1,0 +1,23 @@
+profile: P2
+name: Scale Qualification Profile
+binding:
+  asserted_triples: 500000000
+  classes: 20000
+  axioms: 150000
+  concurrent_users: 500
+  source_instances: 100
+  reference_compute: "3 x 32 vCPU / 256 GiB + measured API/workers/index"
+  accelerator: "none — CPU only"
+  point_read_p95_ms: 500
+  bounded_graph_page_p95_ms: 2000
+  approved_query_suite_p95_ms: 10000
+  accepted_to_searchable_p95_ms: "measured"
+  ingestion_throughput_triples_per_s: 50000
+  availability_objective: "measured"
+  rpo_rto: "separate qualification"
+stretch:
+  reference_compute: "6 x 32 vCPU / 256 GiB"
+  point_read_p95_ms: 20
+  bounded_graph_page_p95_ms: 250
+  approved_query_suite_p95_ms: 3000
+  rpo_rto: "4 h for 500M restore"

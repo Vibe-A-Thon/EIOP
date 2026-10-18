@@ -1,0 +1,78 @@
+id: C27
+tool_family: Ontop
+category: 4_obda_mapping
+reviewed_at: '2026-10-18'
+review_baseline: public docs reviewed 2026-10-16; exact execution artifacts unpinned
+pinned_artifact: ontop-v5.1.0
+license_snapshot: reviewed
+confidence: documented_scope_medium_or_ND
+primary_evidence_url: https://github.com/ontop/ontop
+inversion_id: INV-27
+requirements: CRA-017/019/024/036
+scores:
+  D01:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D02:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D03:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D04:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D05:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D06:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D07:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D08:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D09:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D10:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D11:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D12:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D13:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D14:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D15:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D16:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D17:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D18:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D19:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D20:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D21:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27
+  D22:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C27

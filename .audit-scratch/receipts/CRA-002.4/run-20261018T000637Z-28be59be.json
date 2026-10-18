@@ -1,0 +1,66 @@
+{
+  "$schema": "https://eoip.enterprise.internal/schemas/verification-receipt-v3.json",
+  "receipt_id": "rcpt-b4bb175e-ac8f-43b2-829d-515e94e7dbc6",
+  "requirement_clause": "CRA-002.4",
+  "state_claimed": "ACCEPTED",
+  "profile": "P0",
+  "source_commit": "d679799d5d9fac9820f36d357b6c2c3a4846ef21",
+  "source_tree_dirty": true,
+  "source_fingerprint": "3cbcbac0e39a722413b6487595f67aa3e7dbde84a9d137befabf691dd1869c3c",
+  "source_unchanged_during_run": true,
+  "artifact_digest": "eebc5d885ed917fbd8521d8d1ebee78f88d9f08bb58f32a8568f8196935a8e24",
+  "artifact_path": "dist/eoip-1.0.0rc1-py3-none-any.whl",
+  "artifact_mtime": "2026-10-18T00:00:57.688836+00:00",
+  "runtime": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "python_version": "3.11.9",
+    "backend": "memory",
+    "engine": "",
+    "engine_version": ""
+  },
+  "fixture": {
+    "id": ""
+  },
+  "execution": {
+    "command": [
+      "pytest",
+      "tests/unit/test_plugin_manifest.py",
+      "-k",
+      "test_declarative_config_rejects_code_injection",
+      "--junitxml",
+      ".audit-scratch/evidence/CRA-002.4/run-20261018T000637Z-28be59be/junit.xml"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-18T00:06:38.224045+00:00",
+    "completed_at": "2026-10-18T00:06:43.068744+00:00"
+  },
+  "results": {
+    "tests_total": 1,
+    "tests_failed": 0,
+    "tests_errors": 0,
+    "tests_skipped": 0,
+    "tests_xfailed": 0,
+    "tests_passed": 1
+  },
+  "evidence_files": [
+    {
+      "path": ".audit-scratch/evidence/CRA-002.4/run-20261018T000637Z-28be59be/junit.xml",
+      "sha256": "62a27ce294efbbbb4457d0d9d8a0750a05ce90ceb83b13b2d141bf92c732cbc2"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-002.4/run-20261018T000637Z-28be59be/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-002.4/run-20261018T000637Z-28be59be/stdout.txt",
+      "sha256": "ee1d949cc2197a4e5d082453a61dd700c57e967c4235d0617cd2423ab1685ed6"
+    }
+  ],
+  "verified_invariants": [],
+  "negative_cases": [],
+  "evidence_categories": {},
+  "limitations": [],
+  "producer": "antigravity-agent",
+  "reviewer": "AcceptanceAuditor",
+  "review_signature": "ACCEPTED-AUDIT"
+}

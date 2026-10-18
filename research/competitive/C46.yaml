@@ -1,0 +1,78 @@
+id: C46
+tool_family: ROBOT
+category: 7_ontology_ci
+reviewed_at: '2026-10-18'
+review_baseline: public docs reviewed 2026-10-16; exact execution artifacts unpinned
+pinned_artifact: unpinned
+license_snapshot: reviewed
+confidence: documented_scope_medium_or_ND
+primary_evidence_url: https://robot.obolibrary.org/reason.html
+inversion_id: INV-46
+requirements: CRA-018/019/022/035/037
+scores:
+  D01:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D02:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D03:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D04:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D05:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D06:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D07:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D08:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D09:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D10:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D11:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D12:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D13:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D14:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D15:
+    score: 4
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D16:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D17:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D18:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D19:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D20:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D21:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46
+  D22:
+    score: ND
+    rationale: competitive-research-analysis.md section 5.1 and dossier C46

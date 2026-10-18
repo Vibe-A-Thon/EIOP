@@ -242,6 +242,30 @@ def _memory_factory(config: dict[str, Any]) -> GraphStore:
     return MemoryGraphStore()
 
 
+def _fuseki_factory(config: dict[str, Any]) -> GraphStore:
+    from eoip.graph.rdf_backend import FusekiGraphStore
+
+    return FusekiGraphStore(
+        endpoint_url=config.get("url", "http://localhost:3030/ds"),
+        dataset=config.get("dataset") or config.get("graph") or "ds",
+        username=config.get("username", ""),
+        password=config.get("password", ""),
+        timeout=float(config.get("timeout", 30.0)),
+    )
+
+
+def _graphdb_factory(config: dict[str, Any]) -> GraphStore:
+    from eoip.graph.rdf_backend import GraphDBGraphStore
+
+    return GraphDBGraphStore(
+        endpoint_url=config.get("url", "http://localhost:7200"),
+        repository=config.get("repository") or config.get("graph") or "eoip",
+        username=config.get("username", ""),
+        password=config.get("password", ""),
+        timeout=float(config.get("timeout", 30.0)),
+    )
+
+
 def ensure_default_backends() -> None:
     if _REGISTRY:
         return
@@ -307,3 +331,38 @@ def ensure_default_backends() -> None:
             ),
         )
     )
+    register_backend(
+        GraphBackendDefinition(
+            "fuseki",
+            _fuseki_factory,
+            GraphBackendCapabilities(
+                backend="fuseki",
+                models=["rdf"],
+                query_languages=["SPARQL"],
+                native_query_language="SPARQL",
+                architecture=["rdf_triple_store", "sparql_1_1_http"],
+                notes=[
+                    "Apache Jena Fuseki reference RDF store adapter (CRA-002.10, ONT-003).",
+                    "GPL/AGPL servers are reachable only over network protocol and never linked, vendored or bundled.",
+                ],
+            ),
+        )
+    )
+    register_backend(
+        GraphBackendDefinition(
+            "graphdb",
+            _graphdb_factory,
+            GraphBackendCapabilities(
+                backend="graphdb",
+                models=["rdf"],
+                query_languages=["SPARQL"],
+                native_query_language="SPARQL",
+                architecture=["certified_commercial_rdf_store", "sparql_1_1_http"],
+                notes=[
+                    "Ontotext GraphDB certified commercial RDF adapter (CRA-002.10, ONT-003).",
+                    "Capability state UNQUALIFIED until CRA-024 receipts.",
+                ],
+            ),
+        )
+    )
+
