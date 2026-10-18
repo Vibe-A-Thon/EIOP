@@ -13,6 +13,11 @@ RALLY_TYPES = {
     "user_story": "HierarchicalRequirement",
     "feature": "PortfolioItem/Feature",
     "epic": "PortfolioItem/Epic",
+    "defect": "Defect",
+    "task": "Task",
+    "iteration": "Iteration",
+    "release": "Release",
+    "milestone": "Milestone",
 }
 
 
@@ -132,6 +137,14 @@ class RallyConnector(RestConnector):
         object_id = record.get("ObjectID")
         if object_id is None:
             raise ValueError("Rally record requires ObjectID")
+
+        parent = record.get("Parent") or record.get("PortfolioItem")
+        parent_id = parent.get("FormattedID") if isinstance(parent, dict) else None
+        req = record.get("Requirement")
+        req_id = req.get("FormattedID") if isinstance(req, dict) else None
+        workspace = record.get("Workspace", {}).get("Name") if isinstance(record.get("Workspace"), dict) else self.workspace
+        project = record.get("Project", {}).get("Name") if isinstance(record.get("Project"), dict) else self.project
+
         return {
             "kind": kind,
             "record_id": str(object_id),
@@ -140,6 +153,10 @@ class RallyConnector(RestConnector):
             "schedule_state": record.get("ScheduleState"),
             "plan_estimate": record.get("PlanEstimate"),
             "formatted_id": record.get("FormattedID"),
+            "parent_formatted_id": parent_id,
+            "defect_requirement": req_id,
+            "workspace": workspace,
+            "project": project,
             "iteration": record.get("Iteration", {}).get("_refObjectName") if isinstance(record.get("Iteration"), dict) else None,
             "release": record.get("Release", {}).get("_refObjectName") if isinstance(record.get("Release"), dict) else None,
         }

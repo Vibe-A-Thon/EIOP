@@ -512,6 +512,17 @@
       "description": "Unified vector+graph search with HNSW, hybrid RRF, and multi-strategy queries.",
       "requirement_id": "KGR-G-016",
       "python_contract": "packages/eoip/graph/vector_graph.py"
+    },
+    {
+      "name": "Warrant",
+      "file": "warrant.schema.json",
+      "id": "kgf://schemas/warrant/1.0",
+      "version": "1.0",
+      "domain": "provenance",
+      "status": "DRAFT",
+      "description": "Typed provenance, authority, validity, consequence and operator record shared by IP and ASPEII workstreams.",
+      "requirement_id": "REQ-WAR-010",
+      "python_contract": "packages/eoip/contracts/warrant.py"
     }
   ]
 }

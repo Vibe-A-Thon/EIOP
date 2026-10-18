@@ -19,9 +19,10 @@ from eoip.connectors.base import (
     DiscoveryResult,
     DiscoveryScope,
 )
-from eoip.connectors.errors import ConnectorError
-from eoip.contracts.source_event import SourceEventV2, utc_now_iso
+from eoip.contracts.source_event import PermissionMetadata, SourceEventV2, utc_now_iso
 from eoip.contracts.source_registry import SourceCapabilities
+import hmac
+import time
 
 
 class GitHubConnector:
@@ -71,6 +72,33 @@ class GitHubConnector:
         }
         self._client = client or httpx.Client(timeout=30, follow_redirects=False, trust_env=False)
         self._owns_client = client is None
+        self._seen_deliveries: dict[str, float] = {}
+
+    @staticmethod
+    def verify_webhook_signature(payload_bytes: bytes, signature_header: str, secret: str) -> bool:
+        """Verify GitHub HMAC-SHA256 signature (X-Hub-Signature-256) per CRA-007.2."""
+        if not signature_header or not signature_header.startswith("sha256="):
+            return False
+        expected = "sha256=" + hmac.new(secret.encode("utf-8"), payload_bytes, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, signature_header)
+
+    def check_replay_protection(
+        self,
+        delivery_id: str,
+        timestamp_epoch: float | None = None,
+        max_age_seconds: float = 300.0,
+    ) -> bool:
+        """Check delivery ID against cache and reject replays or expired requests (CRA-007.2)."""
+        now = time.time()
+        ts = timestamp_epoch if timestamp_epoch is not None else now
+        if abs(now - ts) > max_age_seconds:
+            return False
+        if delivery_id in self._seen_deliveries:
+            return False
+        self._seen_deliveries[delivery_id] = ts
+        cutoff = now - max_age_seconds
+        self._seen_deliveries = {k: v for k, v in self._seen_deliveries.items() if v >= cutoff}
+        return True
 
     def close(self) -> None:
         if self._owns_client:
@@ -301,6 +329,47 @@ class GitHubConnector:
             f"github:{self.source_id}:{repository}:{kind}:{record_id}:{content_hash}:{operation}".encode()
         ).hexdigest()
         event_time = self._record_time(payload)
+
+        # Determine visibility and ACL vector (CRA-007.6)
+        is_private = payload.get("private", True)
+        if isinstance(payload.get("repository"), dict):
+            is_private = payload["repository"].get("private", is_private)
+        visibility_str = str(payload.get("visibility") or ("private" if is_private else "public")).lower()
+
+        if visibility_str == "public":
+            visibility = "PUBLIC"
+            acl_vector = ["role:everyone"]
+        elif visibility_str == "internal":
+            visibility = "INTERNAL"
+            acl_vector = [f"github:org:{repository.split('/')[0]}"]
+        else:
+            visibility = "RESTRICTED"
+            acl_vector = [f"github:repo:{repository}"]
+
+        permissions = PermissionMetadata(
+            visibility=visibility,
+            principal_refs=acl_vector,
+            inherited_from=f"github:repo:{repository}",
+        )
+
+        metadata = {
+            "mapper_version": self.mapper_version,
+            "record_kind": kind,
+            "repository": repository,
+            "record_id": record_id,
+            "ref_type": payload.get("ref_type"),
+            "acl_vector": acl_vector,
+            "visibility": visibility,
+        }
+        # Separate immutable commit references from moving-branch observations (CRA-007.1)
+        if kind == "commit":
+            metadata["immutable"] = True
+            metadata["commit_sha"] = record_id
+        elif kind == "branch":
+            metadata["moving_ref"] = True
+            metadata["branch_name"] = record_id
+            metadata["target_commit"] = (payload.get("commit") or {}).get("sha")
+
         return SourceEventV2(
             event_id=event_id,
             source_system="github",
@@ -312,14 +381,9 @@ class GitHubConnector:
             captured_at=utc_now_iso(),
             content_hash=content_hash,
             cursor=cursor or event_time,
+            permissions=permissions,
             payload=payload if operation != "DELETE" else None,
-            metadata={
-                "mapper_version": self.mapper_version,
-                "record_kind": kind,
-                "repository": repository,
-                "record_id": record_id,
-                "ref_type": payload.get("ref_type"),
-            },
+            metadata=metadata,
         )
 
     @staticmethod

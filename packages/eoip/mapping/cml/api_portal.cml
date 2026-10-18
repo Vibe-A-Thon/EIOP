@@ -1,0 +1,36 @@
+source: api_portal
+version: "1.0.0"
+id: cml_api_portal_1_0_0
+
+subject_map:
+  template: "urn:eoip:api:service:{service_id}"
+  class: "https://enterprise-ontology.org/schema/eoip#Service"
+  graph: "urn:eoip:graph:api"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields: []
+
+property_maps:
+  - path: "service_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#serviceId"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "api_name"
+    predicate: "https://enterprise-ontology.org/schema/eoip#serviceName"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "api_version"
+    predicate: "https://enterprise-ontology.org/schema/eoip#version"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+
+relation_maps:
+  - path: "endpoint_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#exposesEndpoint"
+    object_template: "urn:eoip:api:endpoint:{endpoint_id}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Endpoint"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:api-portal-connector"

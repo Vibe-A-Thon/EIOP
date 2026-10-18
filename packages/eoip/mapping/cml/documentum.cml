@@ -1,0 +1,43 @@
+source: documentum
+version: "1.0.0"
+id: cml_documentum_1_0_0
+
+subject_map:
+  template: "urn:eoip:documentum:sysobject:{r_object_id}"
+  class: "https://enterprise-ontology.org/schema/eoip#Document"
+  graph: "urn:eoip:graph:ecm"
+
+governance:
+  classification: "RESTRICTED"
+  pii_fields:
+    - "owner_name"
+
+property_maps:
+  - path: "r_object_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#objectId"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "object_name"
+    predicate: "https://enterprise-ontology.org/schema/eoip#title"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "i_chronicle_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#chronicleId"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+  - path: "r_version_label"
+    predicate: "https://enterprise-ontology.org/schema/eoip#version"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+  - path: "legal_hold"
+    predicate: "https://enterprise-ontology.org/schema/eoip#legalHold"
+    datatype: "http://www.w3.org/2001/XMLSchema#boolean"
+
+relation_maps:
+  - path: "parent_container_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#locatedIn"
+    object_template: "urn:eoip:documentum:folder:{parent_container_id}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Folder"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:documentum-connector"

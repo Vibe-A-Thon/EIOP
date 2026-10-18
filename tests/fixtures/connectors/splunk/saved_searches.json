@@ -1,0 +1,17 @@
+{
+  "saved_searches": [
+    {
+      "name": "payments_error_rate",
+      "app": "payments_monitoring",
+      "search": "index=prod service=payments-api-service status>=500 | eval auth_token=\"ghp_ABC123456789012345678\" | stats count by host",
+      "is_scheduled": true,
+      "cron_schedule": "*/5 * * * *"
+    },
+    {
+      "name": "db_connection_diagnostic",
+      "app": "database_ops",
+      "search": "index=db_logs uri=\"postgres://admin:superSecretP@ss123@db.prod.internal:5432/payments\" user_email=\"alice.smith@example.com\" error=\"connection reset\"",
+      "is_scheduled": false
+    }
+  ]
+}

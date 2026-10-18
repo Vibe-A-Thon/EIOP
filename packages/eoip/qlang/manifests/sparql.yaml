@@ -1,0 +1,26 @@
+dialect: SPARQL
+backend: fuseki
+supported_constructs:
+  - SELECT
+  - DISTINCT
+  - WHERE
+  - BGP
+  - OPTIONAL
+  - FILTER
+  - BOUNDED_PROPERTY_PATH
+  - ORDER_BY
+  - LIMIT
+  - OFFSET
+  - ASK
+  - CONSTRUCT
+  - DESCRIBE
+  - GRAPH
+unsupported_constructs:
+  - UNBOUNDED_PROPERTY_PATH
+  - UPDATE_UNGOVERNED
+  - SPARQL_SERVICE_UNAUTHORIZED
+capabilities:
+  parameterization: true
+  protocol_version: "1.1"
+  max_property_path_depth: 3
+  default_limit: 10000

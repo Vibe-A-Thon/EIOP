@@ -20,6 +20,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "packages"))
 
 import pytest
+from eoip.capabilities.model import CapabilityUnavailableError
+from eoip.neural.runtime import NeuralTier
 
 from eoip.agents.message_bus import (
     AgentMessageBus,
@@ -347,7 +349,7 @@ class TestGraph003Distillation:
 class TestGraph004GNNIntegration:
     """GRAPH-004: Graph Neural Network Integration."""
 
-    def test_embeddings_and_link_prediction(self):
+    def test_unqualified_neural_inference_fails_closed(self):
         store = MemoryGraphStore()
         store.upsert_vertex("Service", {"canonical_id": "srv_a", "service_id": "srv_a", "name": "AuthService", "description": "Microservice"})
         store.upsert_vertex("Service", {"canonical_id": "srv_b", "service_id": "srv_b", "name": "PaymentService", "description": "Microservice"})
@@ -357,22 +359,15 @@ class TestGraph004GNNIntegration:
         store.upsert_edge("CALLS", "srv_b", "srv_c", {})
 
         gnn = GNNEngine()
-        # Node2vec embeddings
-        embs = gnn.compute_embeddings(store, model_type=EmbeddingModelType.NODE2VEC, dimensions=16)
-        assert len(embs) == 3
-        assert len(embs["srv_a"]) == 16
+        with pytest.raises(CapabilityUnavailableError) as error:
+            gnn.compute_embeddings(store, model_type=EmbeddingModelType.NODE2VEC, dimensions=16)
+        assert error.value.code == "CAPABILITY_UNAVAILABLE"
+        assert error.value.details["capability_id"] == f"tier.{NeuralTier.NEURAL.value}"
 
-        # TransE embeddings
-        transe = gnn.compute_embeddings(store, model_type=EmbeddingModelType.TRANSE, dimensions=16)
-        assert len(transe) == 3
-
-        # Link prediction
-        preds = gnn.predict_links(store, "srv_a", top_k=2)
-        assert isinstance(preds, list)
-
-        # Node classification via message passing
-        cls_res = gnn.classify_node(store, "srv_c")
-        assert cls_res["predicted_class"] == "Microservice"
+        with pytest.raises(CapabilityUnavailableError):
+            gnn.predict_links(store, "srv_a", top_k=2)
+        with pytest.raises(CapabilityUnavailableError):
+            gnn.classify_node(store, "srv_c")
 
 
 @pytest.mark.req("GRAPH-005")

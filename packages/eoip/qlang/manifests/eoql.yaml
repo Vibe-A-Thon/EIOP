@@ -1,0 +1,22 @@
+dialect: EOQL
+backend: graph_store
+supported_constructs:
+  - SELECT
+  - FROM
+  - WHERE
+  - JOIN
+  - TRAVERSE
+  - AGGREGATE
+  - LIMIT
+  - BY
+unsupported_constructs:
+  - CROSS_JOIN
+  - RAW_SCRIPT
+  - DROP_TABLE
+  - EXEC
+capabilities:
+  parameterization: true
+  streaming: false
+  pushdown: true
+  max_depth: 3
+  default_limit: 50

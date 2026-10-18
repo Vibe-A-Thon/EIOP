@@ -105,6 +105,16 @@ def test_trust_zones_quarantine_promote_filter_and_disclose_non_certified_facts(
     assert disclosure["minimum_state"] == TrustState.INFERRED.value
 
 
+@pytest.mark.parametrize("evidence", [
+    {"confidence": 1.0},
+    {"rule_id": "arbitrary-rule-name"},
+    {"approver": "arbitrary-reviewer-name"},
+])
+def test_generic_trust_helper_cannot_certify_without_verified_record(evidence):
+    with pytest.raises(ValueError, match="independently verified certification record"):
+        promote_fact({"creation_status": "MODEL_GENERATED"}, TrustState.CERTIFIED, **evidence)
+
+
 @pytest.mark.req(
     "FR-PROV-001",
     "GAP-PROV-001",

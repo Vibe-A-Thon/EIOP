@@ -25,6 +25,9 @@ coverage/
 coverage.xml
 junit.xml
 
+# Local audit scratch files and generated evidence
+/.audit-scratch/
+
 # React/TypeScript and VS Code extension dependencies and generated output
 # Keep dependency manifests and lockfiles in version control.
 node_modules/

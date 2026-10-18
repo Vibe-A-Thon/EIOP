@@ -16,6 +16,7 @@ def test_task_memory_http_minimization_and_corruption_refusal(live_replay):
     run_id = response.json()["run_id"]
     path = f"/api/v1/agents/runs/{run_id}/memory"
     store = FileMemoryStore(live.root)
+    owner = live.get(f"/api/v1/agents/runs/{run_id}")["trace"]["actor_id"]
     original = store.path.read_bytes()
     try:
         assert live.client.get(path, headers={"Authorization": ""}).status_code == 401
@@ -32,6 +33,6 @@ def test_task_memory_http_minimization_and_corruption_refusal(live_replay):
         assert refused.json()["detail"] == "Task memory storage is unavailable"
     finally:
         store.path.write_bytes(original)
-        store.delete(run_id, scope="agent:TraceImpact", owner="local-user")
+        store.delete(run_id, scope="agent:TraceImpact", owner=owner)
     assert live.client.get(path).status_code == 404
     assert live.get(f"/api/v1/agents/runs/{run_id}")["trace"]["run_id"] == run_id

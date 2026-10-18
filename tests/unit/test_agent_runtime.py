@@ -4,6 +4,8 @@ import pytest
 from eoip.agents.runtime import AgentRegistry, AgentRuntime
 from eoip.agents.trace_impact import TraceImpactAgent
 from eoip.contracts.agent import AgentRequest, AgentResult
+from eoip.agents.tools import ToolRegistry
+from eoip.contracts.tool import ToolContract, ToolRequest
 from eoip.graph.memory import MemoryGraphStore
 
 
@@ -207,3 +209,33 @@ def test_registry_rejects_write_tools():
     registry = AgentRegistry()
     with pytest.raises(ValueError):
         registry.register(WriteAgent())
+
+
+def test_approval_required_tool_rejects_unresolved_approval_id():
+    calls = []
+    tools = ToolRegistry()
+    tools.register(
+        ToolContract(
+            name="dangerous_write",
+            description="A consequential write tool",
+            risk_level="R2",
+            read_only=False,
+        ),
+        lambda arguments: (calls.append(arguments) or {"changed": True}, []),
+    )
+
+    result = tools.invoke(
+        ToolRequest(
+            tool_call_id="call-1",
+            tool_name="dangerous_write",
+            arguments={"target": "resource-1"},
+            actor_id="agent-1",
+            approval_id="fabricated-approval-id",
+        ),
+        allowed_tools={"dangerous_write"},
+        remaining_seconds=1,
+    )
+
+    assert result.status == "DENIED"
+    assert result.error == {"code": "APPROVAL_NOT_VERIFIED"}
+    assert calls == []

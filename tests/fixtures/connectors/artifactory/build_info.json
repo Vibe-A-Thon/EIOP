@@ -1,0 +1,33 @@
+{
+  "buildInfo": {
+    "name": "core-platform-pipeline",
+    "number": "42",
+    "started": "2026-03-01T12:30:00.000Z",
+    "durationMillis": 120000,
+    "vcs": [
+      {
+        "url": "https://github.com/acme/core-platform.git",
+        "revision": "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678",
+        "branch": "main"
+      }
+    ],
+    "modules": [
+      {
+        "id": "acme:core-platform:1.0.0",
+        "artifacts": [
+          {
+            "name": "core-platform-1.0.0.jar",
+            "type": "jar",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      }
+    ],
+    "properties": {
+      "buildInfo.env.BUILD_URL": "https://ci.acme.corp/job/42",
+      "buildInfo.env.DEPLOY_TARGET": "production-us-east",
+      "buildInfo.env.DB_PASSWORD": "super-secret-password-12345",
+      "buildInfo.env.API_KEY": "secret-token-abcdef"
+    }
+  }
+}

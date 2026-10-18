@@ -1,0 +1,21 @@
+dialect: EQL
+backend: memory-harness
+supported_constructs:
+  - FIND
+  - NEIGHBORS
+  - PATH
+  - IMPACT
+  - FILTER
+  - DEPTH
+  - LIMIT
+  - LABEL
+unsupported_constructs:
+  - RECURSIVE_CYCLE
+  - EVAL_CODE
+  - DROP_SCHEMA
+capabilities:
+  parameterization: true
+  streaming: false
+  pushdown: true
+  max_depth: 3
+  default_limit: 100

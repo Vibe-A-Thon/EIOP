@@ -1,0 +1,39 @@
+source: rally
+version: "1.0.0"
+id: cml_rally_1_0_0
+
+subject_map:
+  template: "urn:eoip:rally:artifact:{FormattedID}"
+  class: "https://enterprise-ontology.org/schema/eoip#WorkItem"
+  graph: "urn:eoip:graph:work"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields: []
+
+property_maps:
+  - path: "FormattedID"
+    predicate: "https://enterprise-ontology.org/schema/eoip#issueKey"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "Name"
+    predicate: "https://enterprise-ontology.org/schema/eoip#summary"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "ScheduleState"
+    predicate: "https://enterprise-ontology.org/schema/eoip#status"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+  - path: "CreationDate"
+    predicate: "https://enterprise-ontology.org/schema/eoip#createdAt"
+    datatype: "http://www.w3.org/2001/XMLSchema#dateTime"
+
+relation_maps:
+  - path: "parent_formatted_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#childOf"
+    object_template: "urn:eoip:rally:artifact:{parent_formatted_id}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#WorkItem"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:rally-connector"

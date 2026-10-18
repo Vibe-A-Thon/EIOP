@@ -1,0 +1,42 @@
+{
+  "repository": {
+    "id": 10101,
+    "name": "core-platform",
+    "full_name": "acme/core-platform",
+    "private": true,
+    "visibility": "private",
+    "default_branch": "main"
+  },
+  "commits": [
+    {
+      "sha": "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678",
+      "commit": {
+        "author": {
+          "name": "Alice Developer",
+          "email": "alice@acme.corp",
+          "date": "2026-03-01T12:00:00Z"
+        },
+        "message": "PROJ-101: Implement token bucket rate limiting on ingress"
+      }
+    },
+    {
+      "sha": "f1e2d3c4b5a60718293a4b5c6d7e8f9012345678",
+      "commit": {
+        "author": {
+          "name": "Bob Reviewer",
+          "email": "bob@acme.corp",
+          "date": "2026-03-02T14:00:00Z"
+        },
+        "message": "Merge branch 'feature/rate-limit' into main; fixes UNKNOWN-999"
+      }
+    }
+  ],
+  "branches": [
+    {
+      "name": "main",
+      "commit": {
+        "sha": "f1e2d3c4b5a60718293a4b5c6d7e8f9012345678"
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+source: slack
+version: "1.0.0"
+id: cml_slack_1_0_0
+
+subject_map:
+  template: "urn:eoip:slack:message:{channel_id}:{ts}"
+  class: "https://enterprise-ontology.org/schema/eoip#Message"
+  graph: "urn:eoip:graph:chat"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields:
+    - "user"
+
+property_maps:
+  - path: "text"
+    predicate: "https://enterprise-ontology.org/schema/eoip#text"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "ts"
+    predicate: "https://enterprise-ontology.org/schema/eoip#timestamp"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "channel_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#channelId"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+
+relation_maps:
+  - path: "channel_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#postedIn"
+    object_template: "urn:eoip:slack:channel:{channel_id}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Channel"
+  - path: "thread_parent"
+    predicate: "https://enterprise-ontology.org/schema/eoip#repliesTo"
+    object_template: "urn:eoip:slack:message:{channel_id}:{thread_parent}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Message"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:slack-connector"

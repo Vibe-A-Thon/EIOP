@@ -1,0 +1,29 @@
+dialect: GREMLIN
+backend: graph_store
+supported_constructs:
+  - V
+  - E
+  - has
+  - hasLabel
+  - hasNot
+  - out
+  - in
+  - both
+  - outE
+  - inE
+  - outV
+  - inV
+  - values
+  - id
+  - label
+  - limit
+  - dedup
+  - count
+unsupported_constructs:
+  - sideEffect_eval
+  - unbounded_repeat
+  - lambda_filter
+capabilities:
+  parameterization: true
+  max_hops: 3
+  default_limit: 100

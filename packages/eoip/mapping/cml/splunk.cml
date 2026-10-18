@@ -1,0 +1,37 @@
+source: splunk
+version: "1.0.0"
+id: cml_splunk_1_0_0
+
+subject_map:
+  template: "urn:eoip:splunk:savedsearch:{name}"
+  class: "https://enterprise-ontology.org/schema/eoip#SavedSearch"
+  graph: "urn:eoip:graph:observability"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields:
+    - "owner"
+
+property_maps:
+  - path: "name"
+    predicate: "https://enterprise-ontology.org/schema/eoip#searchName"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "app"
+    predicate: "https://enterprise-ontology.org/schema/eoip#splunkApp"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "search"
+    predicate: "https://enterprise-ontology.org/schema/eoip#searchQuery"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+
+relation_maps:
+  - path: "app"
+    predicate: "https://enterprise-ontology.org/schema/eoip#monitorsService"
+    object_template: "urn:eoip:cmdb:service:{app}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Service"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:splunk-connector"

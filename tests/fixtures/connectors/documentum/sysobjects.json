@@ -1,0 +1,57 @@
+{
+  "entries": [
+    {
+      "id": "urn:dctm:sysobject:090000018001a1b1",
+      "title": "Corporate Quality Policy 2026",
+      "content": {
+        "properties": {
+          "r_object_id": "090000018001a1b1",
+          "object_name": "Corporate Quality Policy 2026.pdf",
+          "r_object_type": "dm_document",
+          "i_chronicle_id": "0900000180000001",
+          "r_version_label": ["2.0", "CURRENT"],
+          "r_content_size": 524288,
+          "acl_name": "quality_assurance_acl",
+          "acl_domain": "corp_domain",
+          "r_immutable_flag": false,
+          "r_creation_date": "2026-01-15T08:00:00Z",
+          "r_modify_date": "2026-02-01T14:30:00Z",
+          "renditions": [
+            {
+              "format": "pdf",
+              "content_size": 524288,
+              "modifier": "pdf_rendition_service"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "urn:dctm:sysobject:090000018001a2c2",
+      "title": "Litigation Evidence Dossier",
+      "content": {
+        "properties": {
+          "r_object_id": "090000018001a2c2",
+          "object_name": "Litigation Evidence Dossier.pdf",
+          "r_object_type": "dm_document",
+          "i_chronicle_id": "0900000180000002",
+          "r_version_label": ["1.0", "CURRENT"],
+          "r_content_size": 1048576,
+          "acl_name": "legal_hold_acl",
+          "acl_domain": "corp_domain",
+          "r_immutable_flag": true,
+          "legal_hold": true,
+          "r_retention_until": "2036-12-31T23:59:59Z",
+          "r_creation_date": "2026-02-10T11:00:00Z",
+          "r_modify_date": "2026-02-10T11:00:00Z",
+          "renditions": [
+            {
+              "format": "pdf",
+              "content_size": 1048576
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

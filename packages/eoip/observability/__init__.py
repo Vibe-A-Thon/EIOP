@@ -67,3 +67,29 @@ def log_audit_event(logger: stdlib_logging.Logger, event: AuditEvent, **fields) 
             **fields,
         },
     )
+
+
+from eoip.observability.truth import (
+    AlertRule,
+    AuditRecord,
+    ObservabilitySink,
+    OperationalHealthStatus,
+    TelemetryCollectorBackpressureError,
+    TraceContext,
+    redact_sensitive_telemetry,
+    render_operational_metric,
+)
+
+__all__ = [
+    "JsonLogFormatter",
+    "configure_json_logging",
+    "log_audit_event",
+    "TraceContext",
+    "ObservabilitySink",
+    "AuditRecord",
+    "TelemetryCollectorBackpressureError",
+    "OperationalHealthStatus",
+    "render_operational_metric",
+    "redact_sensitive_telemetry",
+    "AlertRule",
+]

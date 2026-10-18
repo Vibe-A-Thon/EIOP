@@ -1,0 +1,37 @@
+source: kibana
+version: "1.0.0"
+id: cml_kibana_1_0_0
+
+subject_map:
+  template: "urn:eoip:kibana:savedobject:{object_id}"
+  class: "https://enterprise-ontology.org/schema/eoip#Dashboard"
+  graph: "urn:eoip:graph:observability"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields:
+    - "author"
+
+property_maps:
+  - path: "title"
+    predicate: "https://enterprise-ontology.org/schema/eoip#title"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "type"
+    predicate: "https://enterprise-ontology.org/schema/eoip#objectType"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "space_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#spaceId"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+
+relation_maps:
+  - path: "space_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#locatedInSpace"
+    object_template: "urn:eoip:kibana:space:{space_id}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Space"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:kibana-connector"

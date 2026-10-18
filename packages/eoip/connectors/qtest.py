@@ -102,21 +102,53 @@ class QTestConnector(RestConnector):
 
         return SyncBatch(events=events, next_checkpoint=next_checkpoint)
 
-    def map_event(self, event) -> dict[str, Any]:
-        record = event.payload
-        kind = (event.metadata or {}).get("record_kind")
-        if kind not in self.resource_types:
-            raise ValueError("unsupported qTest record kind")
+    def map_event(self, event, jira_resolver: Any | None = None) -> dict[str, Any]:
+        record = event.payload or {}
+        kind = (event.metadata or {}).get("record_kind") or "test_case"
+        if kind not in self.resource_types and kind not in ("test_case", "test-cases", "test_run", "test-runs"):
+            raise ValueError(f"unsupported qTest record kind: {kind}")
         record_id = record.get("id")
         if record_id is None:
             raise ValueError("qTest record requires id")
-        return {
+
+        # Distinguish test definition vs execution entity type (CRA-005.3, CRA-005.8)
+        if kind in ("test_case", "test-cases"):
+            entity_type = "TestCase"
+        elif kind in ("test_run", "test-runs"):
+            entity_type = "TestRun"
+        elif kind in ("test_suite", "test-suites"):
+            entity_type = "TestSuite"
+        else:
+            entity_type = "TestCycle"
+
+        result: dict[str, Any] = {
             "kind": kind,
+            "entity_type": entity_type,
             "test_case_id": str(record_id),
             "name": record.get("name"),
             "status": record.get("status") or _nested_status(record),
             "automation_status": record.get("automation") or record.get("automation_status"),
+            "pid": record.get("pid"),
+            "description": record.get("description"),
         }
+
+        # Cross-system requirement & defect links (CRA-005.8)
+        defect_links: list[str] = []
+        links = record.get("links") or []
+        for lnk in links:
+            if isinstance(lnk, dict):
+                rel = lnk.get("rel")
+                target_id = str(lnk.get("id", ""))
+                target_type = str(lnk.get("type", "")).lower()
+                if rel == "defect":
+                    defect_links.append(f"{target_type}:{target_id}")
+                elif rel == "requirement" and target_type == "jira":
+                    # Links to Jira issues ONLY when identifier resolves to an ingested Jira resource
+                    if jira_resolver and (callable(jira_resolver) and jira_resolver(target_id) or hasattr(jira_resolver, "__contains__") and target_id in jira_resolver):
+                        result["verifiesRequirement"] = f"urn:eoip:jira:issue:{target_id}"
+
+        result["defect_links"] = defect_links
+        return result
 
 
 def _nested_status(record: dict) -> str | None:

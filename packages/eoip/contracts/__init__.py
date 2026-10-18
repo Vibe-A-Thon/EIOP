@@ -37,6 +37,16 @@ from eoip.contracts.canonical import (
     DualPathResult,
     ContextManifest,
 )
+from eoip.contracts.aspeii import (
+    ASPEIIActionCertificate,
+    ASPEIIActionIntent,
+    ASPEIIApprovalDecision,
+    ASPEIIObligationResult,
+    ActionReference,
+    canonical_action_bytes,
+    canonical_action_digest,
+)
+from eoip.contracts.warrant import Warrant
 
 __all__ = [
     "AgentBudgets",
@@ -70,5 +80,13 @@ __all__ = [
     "ToolContract",
     "ToolRequest",
     "ToolResult",
+    "ASPEIIActionIntent",
+    "ASPEIIActionCertificate",
+    "ASPEIIApprovalDecision",
+    "ASPEIIObligationResult",
+    "ActionReference",
+    "canonical_action_bytes",
+    "canonical_action_digest",
+    "Warrant",
     "upgrade_source_event",
 ]

@@ -28,7 +28,13 @@ from eoip.connectors.base import (
     DiscoveryScope,
     SourceConnector,
 )
-from eoip.connectors.errors import ConnectorError
+from eoip.connectors.errors import (
+    ConnectorAuthFailedError,
+    ConnectorError,
+    ConnectorSpecializationFailedError,
+    ConnectorVersionUnsupportedError,
+    UnsupportedCapabilityError,
+)
 from eoip.contracts.source_event import SourceEventV2, utc_now_iso
 from eoip.contracts.source_registry import SourceCapabilities, SourceRegistryEntry
 
@@ -653,6 +659,51 @@ class ConnectionFactory:
             ),
         )
 
+        self.register(
+            "splunk",
+            spec=ApplicationSpec(
+                app_id="splunk",
+                name="Splunk",
+                category=ApplicationCategory.OBSERVABILITY,
+                aliases=["splunk_enterprise", "splunk_cloud"],
+                auth_methods=["token", "basic"],
+                description="Splunk saved searches, alerts, and dashboards under strict query budgets",
+            ),
+        )
+
+        self.register(
+            "snowflake",
+            spec=ApplicationSpec(
+                app_id="snowflake",
+                name="Snowflake",
+                category=ApplicationCategory.CUSTOM_REST,
+                aliases=["snowflake_dw", "snowflake_cloud"],
+                auth_methods=["token", "basic", "keypair"],
+                description="Snowflake Data Cloud warehouse and catalog integration",
+            ),
+        )
+
+        self.register(
+            "fortuna",
+            spec=ApplicationSpec(
+                app_id="fortuna",
+                name="Fortuna",
+                category=ApplicationCategory.CUSTOM_REST,
+                description="Fortuna blocked product adapter pending Decision H-06",
+            ),
+        )
+
+        self.register(
+            "custom_system",
+            spec=ApplicationSpec(
+                app_id="custom_system",
+                name="Custom Protocol System",
+                category=ApplicationCategory.CUSTOM_REST,
+                aliases=["generic_custom", "custom_protocol"],
+                description="Generic multi-protocol adapter (REST, GraphQL, SOAP, JDBC, File, Kafka)",
+            ),
+        )
+
         # 6. Quality & Testing
         self.register(
             "qtest",
@@ -821,6 +872,13 @@ class ConnectionFactory:
             ("grafana", ["grafana.net", "grafana"]),
             ("qtest", ["qtest", "qtestnet.com"]),
             ("figma", ["figma.com", "figma"]),
+            ("slack", ["slack.com", "slack"]),
+            ("documentum", ["documentum", "dctm"]),
+            ("artifactory", ["artifactory", "jfrog"]),
+            ("splunk", ["splunk", "splunkcloud.com"]),
+            ("snowflake", ["snowflake", "snowflakecomputing.com"]),
+            ("fortuna", ["fortuna"]),
+            ("custom_system", ["custom_system", "custom_proto"]),
         ]
         for app_id, indicators in detection_rules:
             if any(ind in lower for ind in indicators):
@@ -880,8 +938,21 @@ class ConnectionFactory:
                     **kwargs,
                 )
             except Exception as exc:
+                if type(exc).__name__ == "FortunaConnectorBlockedError":
+                    raise exc
+                if cfg.get("fallback_policy") != "explicit":
+                    logger.error(
+                        "Specialization failed for %s without explicit fallback policy: %s (G07 closure)",
+                        canonical_id,
+                        exc,
+                    )
+                    raise ConnectorSpecializationFailedError(
+                        source_system=canonical_id,
+                        reason=str(exc),
+                        correlation_id=correlation_id or "default-corr-id",
+                    ) from exc
                 logger.warning(
-                    "Error instantiating specialized connector for %s: %s; falling back to generic",
+                    "Explicit fallback policy active. Specialization failed for %s: %s; downgrading to generic",
                     canonical_id,
                     exc,
                 )
@@ -949,6 +1020,33 @@ class ConnectionFactory:
             if canonical_id in ("web", "crawler"):
                 from eoip.connectors.generic import WebSourceConnector
                 return WebSourceConnector
+            if canonical_id == "slack":
+                from eoip.connectors.slack import SlackConnector
+                return SlackConnector
+            if canonical_id in ("documentum", "dctm"):
+                from eoip.connectors.documentum import DocumentumConnector
+                return DocumentumConnector
+            if canonical_id in ("artifactory", "jfrog"):
+                from eoip.connectors.artifactory import ArtifactoryConnector
+                return ArtifactoryConnector
+            if canonical_id in ("splunk", "splunk_enterprise", "splunk_cloud"):
+                from eoip.connectors.splunk import SplunkConnector
+                return SplunkConnector
+            if canonical_id == "grafana":
+                from eoip.connectors.grafana import GrafanaConnector
+                return GrafanaConnector
+            if canonical_id == "kibana":
+                from eoip.connectors.kibana import KibanaConnector
+                return KibanaConnector
+            if canonical_id in ("snowflake", "snowflake_dw", "snowflake_cloud"):
+                from eoip.connectors.snowflake import SnowflakeConnector
+                return SnowflakeConnector
+            if canonical_id == "fortuna":
+                from eoip.connectors.fortuna import FortunaConnector
+                return FortunaConnector
+            if canonical_id in ("custom_system", "generic_custom", "custom_protocol"):
+                from eoip.connectors.custom_system import GenericCustomSystemConnector
+                return GenericCustomSystemConnector
         except ImportError as exc:
             logger.debug("Optional connector %s not importable: %s", canonical_id, exc)
         return None
@@ -1041,6 +1139,141 @@ class ConnectionFactory:
                 username=username,
                 password=password,
                 page_size=int(config.get("page_size", 100)),
+            )
+
+        # Slack
+        if canonical_id == "slack":
+            return cls_or_fn(
+                source_id,
+                token or "",
+                base_url=base_url or "https://slack.com/api",
+                enable_private_channels=bool(config.get("enable_private_channels", False)),
+                enable_direct_messages=bool(config.get("enable_direct_messages", False)),
+                compliance_approval_ref=config.get("compliance_approval_ref"),
+                channels=list(config.get("channels", [])) or None,
+                client=client,
+            )
+
+        # Documentum
+        if canonical_id in ("documentum", "dctm"):
+            return cls_or_fn(
+                source_id,
+                base_url,
+                repository=str(config.get("repository", "repo")),
+                username=username,
+                password=password,
+                token=token,
+                cabinets=list(config.get("cabinets", [])) or None,
+                client=client,
+            )
+
+        # Artifactory
+        if canonical_id in ("artifactory", "jfrog"):
+            return cls_or_fn(
+                source_id,
+                base_url,
+                token=token,
+                username=username,
+                password=password,
+                repositories=list(config.get("repositories", [])) or None,
+                client=client,
+            )
+
+        # Splunk
+        if canonical_id in ("splunk", "splunk_enterprise", "splunk_cloud"):
+            from eoip.connectors.splunk import SearchBudget
+            budget = None
+            if "budget" in config:
+                b_cfg = config["budget"]
+                budget = SearchBudget(
+                    max_results=int(b_cfg.get("max_results", 1000)),
+                    timeout_seconds=float(b_cfg.get("timeout_seconds", 30.0)),
+                    max_search_span_hours=int(b_cfg.get("max_search_span_hours", 72)),
+                )
+            return cls_or_fn(
+                source_id,
+                base_url,
+                token=token,
+                username=username,
+                password=password,
+                app=str(config.get("app", "search")),
+                budget=budget,
+                client=client,
+            )
+
+        # Grafana
+        if canonical_id == "grafana":
+            return cls_or_fn(
+                base_url,
+                token=token,
+                page_size=int(config.get("page_size", 1000)),
+                fetch_alerts=bool(config.get("fetch_alerts", True)),
+                fetch_datasources=bool(config.get("fetch_datasources", True)),
+                client=client,
+            )
+
+        # Kibana
+        if canonical_id == "kibana":
+            return cls_or_fn(
+                base_url,
+                token=token,
+                space_id=config.get("space_id"),
+                page_size=int(config.get("page_size", 100)),
+                client=client,
+            )
+
+        # Snowflake
+        if canonical_id in ("snowflake", "snowflake_dw", "snowflake_cloud"):
+            from eoip.connectors.snowflake import SnowflakeCostGuard, SnowflakeMode
+            mode_str = str(config.get("mode", "metadata_only"))
+            mode = SnowflakeMode(mode_str) if mode_str in [m.value for m in SnowflakeMode] else SnowflakeMode.METADATA_ONLY
+            cost_guard = None
+            if "cost_guard" in config:
+                cg = config["cost_guard"]
+                cost_guard = SnowflakeCostGuard(
+                    max_credits=float(cg.get("max_credits", 5.0)),
+                    statement_timeout_seconds=float(cg.get("statement_timeout_seconds", 30.0)),
+                    max_result_rows=int(cg.get("max_result_rows", 5000)),
+                )
+            return cls_or_fn(
+                source_id,
+                account=str(config.get("account", base_url)),
+                warehouse=str(config.get("warehouse", "COMPUTE_WH")),
+                database=str(config.get("database", "PROD_DB")),
+                schema=str(config.get("schema", "PUBLIC")),
+                role=str(config.get("role", "PUBLIC")),
+                mode=mode,
+                cost_guard=cost_guard,
+                opt_in_sampling=bool(config.get("opt_in_sampling", False)),
+                opt_in_query_history=bool(config.get("opt_in_query_history", False)),
+                sql_version=str(config.get("sql_version", "snowflake-sql/2024.1")),
+                token=token,
+                username=username,
+                password=password,
+                client=client,
+            )
+
+        # Fortuna
+        if canonical_id == "fortuna":
+            return cls_or_fn(**kwargs)
+
+        # Custom System
+        if canonical_id in ("custom_system", "generic_custom", "custom_protocol"):
+            from eoip.connectors.custom_system import CustomProtocol, ProtocolEndpointConfig
+            proto_str = str(config.get("protocol", "rest_openapi"))
+            proto = CustomProtocol(proto_str) if proto_str in [p.value for p in CustomProtocol] else CustomProtocol.REST
+            endpoint_cfg = ProtocolEndpointConfig(
+                protocol=proto,
+                endpoint_url=base_url,
+                auth_type=str(config.get("auth_type", "bearer")),
+                credentials=dict(config.get("credentials", {})),
+                options=dict(config.get("options", {})),
+            )
+            return cls_or_fn(
+                source_id=source_id,
+                config=endpoint_cfg,
+                mapping=config.get("mapping"),
+                client=client,
             )
 
         # Default direct instantiation

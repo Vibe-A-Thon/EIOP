@@ -9,12 +9,15 @@ from typing import Any
 from eoip.connectors.errors import ConnectorError
 from eoip.connectors.rest import RestConnector, parse_utc, utc_timestamp
 from eoip.connectors.sync import SyncBatch
+from eoip.contracts.source_event import PermissionMetadata, SourceEventV2, utc_now_iso
 
 DEFAULT_TABLES = {
     "incident": "incident",
     "problem": "problem",
     "change": "change_request",
     "knowledge": "kb_knowledge",
+    "cmdb_ci": "cmdb_ci",
+    "cmdb_rel_ci": "cmdb_rel_ci",
 }
 
 DEFAULT_FIELDS = {
@@ -134,6 +137,100 @@ class ServiceNowConnector(RestConnector):
             "state": record.get(self.field_mapping["state"]),
             "updated_at": record.get(self.field_mapping["updated_at"]),
         }
+
+    def make_event(
+        self,
+        record_kind: str,
+        source_record_id: str,
+        payload: dict,
+        source_version: str | int | None,
+        *,
+        operation: str = "UPSERT",
+        permissions: PermissionMetadata | None = None,
+    ) -> SourceEventV2:
+        import hashlib
+        import json
+        payload_json = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        payload_hash = hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
+        event_id = hashlib.sha256(
+            f"{self.source_system}:{record_kind}:{source_record_id}:{payload_hash}:{operation}".encode()
+        ).hexdigest()
+        captured_at = utc_now_iso()
+
+        if permissions is None:
+            domain = str(payload.get("sys_domain") or "global")
+            principals = [f"servicenow:domain:{domain}"]
+            if record_kind.startswith("cmdb"):
+                principals.append("servicenow:role:cmdb_read")
+            else:
+                principals.append("servicenow:role:itil")
+            permissions = PermissionMetadata(
+                visibility="RESTRICTED" if domain != "global" else "INTERNAL",
+                principal_refs=principals,
+                inherited_from=f"servicenow:domain:{domain}",
+            )
+
+        return SourceEventV2(
+            event_id=event_id,
+            source_system=self.source_system,
+            source_instance_id=self.instance_id,
+            source_record_id=source_record_id,
+            operation=operation,
+            source_version=str(source_version) if source_version is not None else payload_hash,
+            event_time=captured_at,
+            captured_at=captured_at,
+            content_hash=payload_hash,
+            permissions=permissions,
+            payload=payload if operation != "DELETE" else None,
+            metadata={
+                "mapper_version": self.mapper_version,
+                "record_kind": record_kind,
+                "source_instance_id": self.instance_id,
+                "acl_vector": list(permissions.principal_refs),
+            },
+        )
+
+    @staticmethod
+    def detect_cmdb_cycles(relations: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Detect directed cycles in CMDB CI relations and return data-quality findings without dropping edges (CRA-008.9)."""
+        from collections import defaultdict
+        adj = defaultdict(list)
+        for rel in relations:
+            parent = rel.get("parent")
+            child = rel.get("child")
+            if parent and child:
+                adj[str(parent)].append(str(child))
+
+        visited: dict[str, int] = {}
+        stack: list[str] = []
+        cycles: list[list[str]] = []
+
+        def dfs(node: str):
+            visited[node] = 1
+            stack.append(node)
+            for neighbor in adj.get(node, []):
+                if visited.get(neighbor) == 1:
+                    idx = stack.index(neighbor)
+                    cycles.append(stack[idx:] + [neighbor])
+                elif not visited.get(neighbor):
+                    dfs(neighbor)
+            stack.pop()
+            visited[node] = 2
+
+        for node in list(adj.keys()):
+            if not visited.get(node):
+                dfs(node)
+
+        findings = []
+        for c in cycles:
+            findings.append({
+                "type": "CMDB_DEPENDENCY_CYCLE",
+                "severity": "HIGH",
+                "cycle_path": c,
+                "cycle_length": len(c) - 1,
+                "description": f"Circular dependency detected in CMDB: {' -> '.join(c)}",
+            })
+        return findings
 
     @staticmethod
     def _sn_time(value) -> str:

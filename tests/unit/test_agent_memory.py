@@ -280,6 +280,43 @@ def test_memory_api_requires_auth_and_returns_classified_record(tmp_path, monkey
         assert restarted.get(path, headers=headers).json() == recovered.json()
 
 
+def test_agent_api_binds_run_owner_to_authenticated_principal(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from apps.api import main
+    from eoip.authn import Principal, TokenService
+    from eoip.graph.memory import MemoryGraphStore
+
+    graph = MemoryGraphStore()
+    graph.upsert_vertex("WorkItem", {"canonical_id": "urn:test:item:principal"})
+    secret = "test-token-with-at-least-24-characters"
+    principal = Principal(
+        id="urn:eoip:authn:principal:alice",
+        username="alice",
+        roles=("admin",),
+        tenant_id="tenant-a",
+    )
+    token = TokenService(secret.encode("utf-8"), issuer="eoip-authn", audience="eoip-api").issue(
+        principal
+    )
+    monkeypatch.setattr(main, "api_token", lambda: secret)
+    monkeypatch.setattr(main, "create_store", lambda: graph)
+    monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
+
+    with TestClient(main.create_app()) as api:
+        headers = {"Authorization": f"Bearer {token}"}
+        response = api.post(
+            "/api/v1/agents/TraceImpact/runs",
+            headers=headers,
+            json={"goal": "Trace this", "context_refs": ["urn:test:item:principal"]},
+        )
+        assert response.status_code == 200
+        run_id = response.json()["run_id"]
+        trace = api.get(f"/api/v1/agents/runs/{run_id}", headers=headers).json()["trace"]
+
+    assert trace["actor_id"] == principal.id
+
+
 def _concurrent_writer(root, memory_id):
     store = FileMemoryStore(root, clock=lambda: datetime(2026, 10, 1, tzinfo=UTC))
     store.put(record(memory_id=memory_id))

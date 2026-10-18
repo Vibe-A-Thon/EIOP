@@ -1,0 +1,38 @@
+{
+  "saved_objects": [
+    {
+      "id": "dash-payments-overview",
+      "type": "dashboard",
+      "attributes": {
+        "title": "Payments API Operations Dashboard",
+        "description": "Real-time metrics for svc:payments-api-service and microservice dependencies",
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"service: payments-api-service AND status: failure\"}}"
+        }
+      },
+      "references": [
+        {
+          "name": "kibanaSavedObjectMeta.searchSourceJSON.index",
+          "type": "index-pattern",
+          "id": "idx-pat-payments-logs"
+        }
+      ],
+      "updated_at": "2026-10-18T10:00:00.000Z",
+      "version": "WzEwMSwxXQ=="
+    },
+    {
+      "id": "search-auth-proxy-failures",
+      "type": "search",
+      "attributes": {
+        "title": "Auth Proxy 401 Spikes",
+        "description": "Monitors payments-auth-proxy error counts",
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"cmdb_ci:payments-auth-proxy\"}}"
+        }
+      },
+      "updated_at": "2026-10-18T10:15:00.000Z",
+      "version": "WzEwMiwxXQ=="
+    }
+  ],
+  "total": 2
+}

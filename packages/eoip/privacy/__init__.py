@@ -48,7 +48,21 @@ from eoip.privacy.retention import (
     RetentionPolicy,
 )
 
+from eoip.privacy.governance import (
+    AntiResurrectionRegistry,
+    EgressViolationError,
+    ErasureCascadeEngine,
+    GraphPlane,
+    HandlingPolicy,
+    LawfulBasis,
+    LicenseKind,
+    NetworkSocketMonitor,
+    PlanePurgeDetail,
+    ScopedErasureReport,
+)
+
 __all__ = [
+    "AntiResurrectionRegistry",
     "ClassificationEngine",
     "ClassificationResult",
     "ClassifiedField",
@@ -57,10 +71,18 @@ __all__ = [
     "DataClass",
     "DetectorKind",
     "DetectorRule",
+    "EgressViolationError",
+    "ErasureCascadeEngine",
     "ErasureProof",
     "ErasurePropagator",
     "ExpiryAction",
     "ExpiryDecision",
+    "GraphPlane",
+    "HandlingPolicy",
+    "LawfulBasis",
+    "LicenseKind",
+    "NetworkSocketMonitor",
+    "PlanePurgeDetail",
     "Purpose",
     "RegionSet",
     "ResidencyAspect",
@@ -71,6 +93,7 @@ __all__ = [
     "RetainableRecord",
     "RetentionEngine",
     "RetentionPolicy",
+    "ScopedErasureReport",
     "SensitivityLabel",
     "SubjectAccessReport",
     "SubjectHit",

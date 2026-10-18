@@ -1,0 +1,44 @@
+source: artifactory
+version: "1.0.0"
+id: cml_artifactory_1_0_0
+
+subject_map:
+  template: "urn:eoip:artifactory:artifact:{sha256}"
+  class: "https://enterprise-ontology.org/schema/eoip#Artifact"
+  graph: "urn:eoip:graph:artifacts"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields: []
+
+property_maps:
+  - path: "sha256"
+    predicate: "https://enterprise-ontology.org/schema/eoip#sha256"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "name"
+    predicate: "https://enterprise-ontology.org/schema/eoip#artifactName"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "repo"
+    predicate: "https://enterprise-ontology.org/schema/eoip#repositoryKey"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "size"
+    predicate: "https://enterprise-ontology.org/schema/eoip#sizeBytes"
+    datatype: "http://www.w3.org/2001/XMLSchema#integer"
+
+relation_maps:
+  - path: "built_from_commit"
+    predicate: "https://enterprise-ontology.org/schema/eoip#builtFromCommit"
+    object_template: "urn:eoip:git:commit:{built_from_commit}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Commit"
+  - path: "repo"
+    predicate: "https://enterprise-ontology.org/schema/eoip#storedInRepository"
+    object_template: "urn:eoip:artifactory:repo:{repo}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Repository"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:artifactory-connector"

@@ -105,6 +105,7 @@ def extract_storage_body(body: str, page_url: str) -> dict[str, Any]:
     result: dict[str, Any] = {
         "schema_version": "1.0", "parser_version": PARSER_VERSION,
         "headings": [], "anchors": [], "links": [], "code_snippets": [], "tables": [],
+        "diagnostics": {"unsupported_macros": []},
     }
     pre_children = {id(child) for pre in root.iter("pre") for child in pre.iter() if child is not pre}
     for element in root.iter():
@@ -160,6 +161,9 @@ def extract_storage_body(body: str, page_url: str) -> dict[str, Any]:
                         "language": parameters.get("language", ""),
                         "text": "".join(content.itertext()),
                     })
+            else:
+                if name:
+                    result["diagnostics"]["unsupported_macros"].append(name)
         elif tag in {"pre", "code"} and id(element) not in pre_children:
             result["code_snippets"].append({
                 "language": element.get("data-language", ""), "text": "".join(element.itertext()),

@@ -1,0 +1,45 @@
+source: confluence
+version: "1.0.0"
+id: cml_confluence_1_0_0
+
+subject_map:
+  template: "urn:eoip:confluence:page:{content_id}"
+  class: "https://enterprise-ontology.org/schema/eoip#Document"
+  graph: "urn:eoip:graph:content"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields:
+    - "author"
+    - "last_modifier"
+
+property_maps:
+  - path: "title"
+    predicate: "https://enterprise-ontology.org/schema/eoip#title"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "space_key"
+    predicate: "https://enterprise-ontology.org/schema/eoip#spaceKey"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "version"
+    predicate: "https://enterprise-ontology.org/schema/eoip#version"
+    datatype: "http://www.w3.org/2001/XMLSchema#integer"
+  - path: "status"
+    predicate: "https://enterprise-ontology.org/schema/eoip#status"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+
+relation_maps:
+  - path: "parent_id"
+    predicate: "https://enterprise-ontology.org/schema/eoip#childOf"
+    object_template: "urn:eoip:confluence:page:{parent_id}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Document"
+  - path: "space_key"
+    predicate: "https://enterprise-ontology.org/schema/eoip#locatedIn"
+    object_template: "urn:eoip:confluence:space:{space_key}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Space"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:confluence-connector"

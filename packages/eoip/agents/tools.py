@@ -42,8 +42,9 @@ class ToolRegistry:
         contract = self._contracts.get(request.tool_name)
         if contract is None or request.tool_name not in allowed_tools:
             return self._denied(request, started, "TOOL_NOT_ALLOWED")
-        if contract.approval_required and not request.approval_id:
-            return self._denied(request, started, "APPROVAL_REQUIRED")
+        if contract.approval_required:
+            code = "APPROVAL_REQUIRED" if not request.approval_id else "APPROVAL_NOT_VERIFIED"
+            return self._denied(request, started, code)
         if remaining_seconds <= 0:
             return ToolResult(
                 tool_call_id=request.tool_call_id,

@@ -50,11 +50,25 @@ def parse_image(content: bytes, out: Extraction) -> None:
 
 def email_members(content: bytes, suffix: str, out: Extraction) -> Iterator[tuple[str, bytes]]:
     if suffix == ".msg":
+        if not out.options.enable_msg:
+            raise ParseError("unlicensed_adapter", "MSG parsing is disabled under CRA-035 / Conflict X-16 licensing policy")
         errors = dependency("extract_msg.exceptions")
         try:
             yield from _email_members(content, suffix, out)
         except (errors.InvalidFileFormatError, errors.UnsupportedMSGTypeError) as exc:
             raise ParseError("invalid_email", "MSG is malformed or is not a supported Outlook message") from exc
+    elif suffix == ".mbox":
+        import mailbox
+        with TemporaryDirectory(prefix="eoip-mbox-") as temporary:
+            path = Path(temporary) / "input.mbox"
+            path.write_bytes(content)
+            mbox = mailbox.mbox(str(path))
+            try:
+                messages = [(f"message_{idx + 1}.eml", msg.as_bytes()) for idx, msg in enumerate(mbox)]
+            finally:
+                mbox.close()
+        for name, msg_bytes in messages:
+            yield name, msg_bytes
     else:
         yield from _email_members(content, suffix, out)
 
@@ -93,6 +107,19 @@ def _email_members(content: bytes, suffix: str, out: Extraction) -> Iterator[tup
     if not message.keys():
         raise ParseError("invalid_format", "EML has no message headers")
     out.document.title = str(message.get("Subject", "")) or out.document.title
+    out.document.metadata["subject"] = str(message.get("Subject", ""))
+    out.document.metadata["from"] = str(message.get("From", ""))
+    out.document.metadata["to"] = str(message.get("To", ""))
+    if "Cc" in message:
+        out.document.metadata["cc"] = str(message.get("Cc", ""))
+    if "Bcc" in message:
+        out.document.metadata["bcc"] = str(message.get("Bcc", ""))
+    out.document.metadata["date"] = str(message.get("Date", ""))
+    out.document.metadata["message_id"] = str(message.get("Message-ID", ""))
+    if "In-Reply-To" in message:
+        out.document.metadata["in_reply_to"] = str(message.get("In-Reply-To", ""))
+    if "References" in message:
+        out.document.metadata["references"] = str(message.get("References", ""))
     out.document.metadata["headers"] = {str(key): str(value) for key, value in message.items()}
     parts = list(message.walk())
     if len(parts) > out.options.max_members:

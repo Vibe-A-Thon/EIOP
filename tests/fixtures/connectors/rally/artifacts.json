@@ -1,0 +1,43 @@
+{
+  "QueryResult": {
+    "_rallyAPIMajor": "2",
+    "_rallyAPIMinor": "0",
+    "TotalResultCount": 2,
+    "StartIndex": 1,
+    "PageSize": 200,
+    "Results": [
+      {
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/hierarchicalrequirement/20001",
+        "_refObjectName": "US-101: Distributed query planner caching",
+        "_type": "HierarchicalRequirement",
+        "ObjectID": 20001,
+        "FormattedID": "US-101",
+        "Name": "Distributed query planner caching",
+        "Description": "Implement L1/L2 query cache",
+        "ScheduleState": "In-Progress",
+        "PlanEstimate": 5.0,
+        "Workspace": {"_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/workspace/999", "Name": "Engineering"},
+        "Project": {"_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/project/888", "Name": "Query Engine"},
+        "Parent": {"_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/portfolioitem/feature/30001", "FormattedID": "F-50"},
+        "LastUpdateDate": "2026-03-02T16:00:00.000Z",
+        "CreationDate": "2026-03-01T08:00:00.000Z"
+      },
+      {
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/defect/40001",
+        "_refObjectName": "DE-201: Cache key collision on anonymous queries",
+        "_type": "Defect",
+        "ObjectID": 40001,
+        "FormattedID": "DE-201",
+        "Name": "Cache key collision on anonymous queries",
+        "Description": "Ensure salt contains tenant ID",
+        "State": "Open",
+        "Severity": "Major",
+        "Requirement": {"_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/hierarchicalrequirement/20001", "FormattedID": "US-101"},
+        "Workspace": {"_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/workspace/999", "Name": "Engineering"},
+        "Project": {"_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/project/888", "Name": "Query Engine"},
+        "LastUpdateDate": "2026-03-02T17:00:00.000Z",
+        "CreationDate": "2026-03-02T11:00:00.000Z"
+      }
+    ]
+  }
+}

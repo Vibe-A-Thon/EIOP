@@ -1,0 +1,16 @@
+dialect: GRAPHQL
+backend: shapes_generator
+supported_constructs:
+  - query
+  - fields
+  - nested_selection
+  - arguments
+  - pagination_limit
+unsupported_constructs:
+  - mutation_ungoverned
+  - subscription_arbitrary
+  - introspection_secret_fields
+capabilities:
+  parameterization: true
+  shapes_grounded: true
+  default_limit: 100

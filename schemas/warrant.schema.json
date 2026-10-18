@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "kgf://schemas/warrant/1.0",
+  "title": "Warrant",
+  "type": "object",
+  "required": ["warrant_id", "tenant_id", "subject", "grounds", "status", "validity", "authority", "consequence", "operator", "parents", "created_at", "schema_version"],
+  "properties": {
+    "warrant_id": {"type": "string", "format": "uuid"},
+    "tenant_id": {"type": "string"},
+    "schema_version": {"const": "1.0"},
+    "subject": {
+      "type": "object",
+      "required": ["kind", "ref"],
+      "properties": {
+        "kind": {"enum": ["proposition", "assertion", "action", "answer"]},
+        "ref": {"type": "string"},
+        "text": {"type": "string", "maxLength": 4000},
+        "hash": {"type": "string", "description": "sha256 of normalized text or canonical JSON of the subject"}
+      }
+    },
+    "grounds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "id"],
+        "properties": {
+          "kind": {"enum": ["graph_node", "graph_edge", "graph_property", "source_record", "doc_span", "tool_receipt", "attestation", "model_run", "rule"]},
+          "id": {"type": "string"},
+          "version": {"type": "string"},
+          "span": {"type": "object", "properties": {"start": {"type": "integer"}, "end": {"type": "integer"}}},
+          "hash": {"type": "string"}
+        }
+      }
+    },
+    "status": {"enum": ["OBSERVED", "ATTESTED", "PREDICTED", "GENERATED", "HEARSAY", "UNKNOWN"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "validity": {
+      "type": "object",
+      "required": ["valid_from"],
+      "properties": {
+        "valid_from": {"type": "string", "format": "date-time"},
+        "valid_to": {"type": ["string", "null"], "format": "date-time"},
+        "lease_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": ["principal_id", "scopes", "delegation_chain"],
+      "properties": {
+        "principal_id": {"type": "string"},
+        "scopes": {"type": "array", "items": {"$ref": "#/$defs/scope"}},
+        "delegation_chain": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "consequence": {
+      "type": "object",
+      "required": ["kappa"],
+      "properties": {
+        "kappa": {"type": "number", "minimum": 0},
+        "impact_run_id": {"type": ["string", "null"]},
+        "action_class": {"enum": ["READ_ONLY", "ADVISORY", "INTERNAL_WRITE", "EXTERNAL_WRITE", "IRREVERSIBLE"]}
+      }
+    },
+    "operator": {
+      "type": "object",
+      "required": ["operator_id", "class", "version"],
+      "properties": {
+        "operator_id": {"type": "string"},
+        "class": {"enum": ["OBSERVER", "COMPUTATION", "MODEL", "GENERATOR", "HUMAN"]},
+        "version": {"type": "string"}
+      }
+    },
+    "parents": {"type": "array", "items": {"type": "string", "format": "uuid"}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "signature": {"type": ["string", "null"], "description": "Ed25519 signature over canonical JSON without this field; required on export"}
+  },
+  "$defs": {
+    "scope": {
+      "type": "object",
+      "required": ["action", "resource_type", "selector"],
+      "properties": {
+        "action": {"type": "string", "description": "e.g. read, write, delete, execute:<tool_id>"},
+        "resource_type": {"type": "string", "description": "ontology type IRI or '*'"},
+        "selector": {"type": "string", "description": "KGF filter expression; '*' for all"}
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+schema: "eoip-restricted-patent-register-v1"
+classification: "CONFIDENTIAL_RESTRICTED"
+governance_reference: "CRA-041.6, Decision H-12, OCA Section 8.3"
+updated_at: "2026-10-18T00:00:00Z"
+
+patent_candidates:
+  - candidate_id: "PAT-001"
+    title: "semver from semantic diff"
+    mechanism_summary: "Automated semantic version calculation derived from graph ontological breaking changes and dependent entity impacts."
+    legal_decision_id: "H-12"
+    legal_decision_status: "PENDING"
+    public_disclosure_permitted: false
+    filing_reference: null
+    updated_at: "2026-10-18T00:00:00Z"
+
+  - candidate_id: "PAT-002"
+    title: "migration-script generation from ontology diff"
+    mechanism_summary: "Deterministic generation of forward and backward data/graph migration transformations from semantic schema differences."
+    legal_decision_id: "H-12"
+    legal_decision_status: "PENDING"
+    public_disclosure_permitted: false
+    filing_reference: null
+    updated_at: "2026-10-18T00:00:00Z"
+
+  - candidate_id: "PAT-003"
+    title: "hybrid per-rule materialize/virtualize reasoning with a cost model"
+    mechanism_summary: "Dynamic query-time rule partitioning between forward-chained materialized views and backward-chained SPARQL rewrites based on selectivity cost estimators."
+    legal_decision_id: "H-12"
+    legal_decision_status: "PENDING"
+    public_disclosure_permitted: false
+    filing_reference: null
+    updated_at: "2026-10-18T00:00:00Z"
+
+  - candidate_id: "PAT-004"
+    title: "AI-suggested declarative source-to-ontology mappings"
+    mechanism_summary: "Zero-data-leakage schema mapping inference generating R2RML/RML declarations from relational catalogs and sample metadata."
+    legal_decision_id: "H-12"
+    legal_decision_status: "PENDING"
+    public_disclosure_permitted: false
+    filing_reference: null
+    updated_at: "2026-10-18T00:00:00Z"
+
+  - candidate_id: "PAT-005"
+    title: "combined structural plus embedding drift driving evolution proposals"
+    mechanism_summary: "Multi-modal drift detector computing joint distribution shifts over graph topology and vector semantic spaces to synthesize ontology expansion candidates."
+    legal_decision_id: "H-12"
+    legal_decision_status: "PENDING"
+    public_disclosure_permitted: false
+    filing_reference: null
+    updated_at: "2026-10-18T00:00:00Z"

@@ -30,3 +30,21 @@ def test_require_unavailable_tier_raises_503():
     assert exc_info.value.status_code == 503
     assert exc_info.value.code == "CAPABILITY_UNAVAILABLE"
     assert "neural-research" in exc_info.value.details["reason"]
+
+@pytest.mark.parametrize(
+    ("packages", "expected"),
+    [
+        ({"numpy", "scipy"}, NeuralTier.NONE),
+        ({"numpy", "scipy", "sklearn"}, NeuralTier.NUMERICS),
+        ({"numpy", "scipy", "sklearn", "torch"}, NeuralTier.NUMERICS),
+        ({"numpy", "scipy", "sklearn", "torch", "torch_geometric"}, NeuralTier.NEURAL),
+        ({"numpy", "scipy", "sklearn", "torch", "torch_geometric", "transformers"}, NeuralTier.NEURAL),
+    ],
+)
+def test_partial_install_does_not_claim_a_higher_tier(monkeypatch, packages, expected):
+    from eoip.neural import runtime
+
+    monkeypatch.setattr(runtime, "_CACHED_RUNTIME", None)
+    monkeypatch.setattr(runtime, "_probe_import", lambda name: name in packages)
+
+    assert runtime.get_runtime().tier == expected

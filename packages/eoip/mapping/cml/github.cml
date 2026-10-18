@@ -1,0 +1,41 @@
+source: github
+version: "1.0.0"
+id: cml_github_1_0_0
+
+subject_map:
+  template: "urn:eoip:github:commit:{repository}:{record_id}"
+  class: "https://enterprise-ontology.org/schema/eoip#Commit"
+  graph: "urn:eoip:graph:code"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields:
+    - "author_email"
+    - "committer_email"
+
+property_maps:
+  - path: "commit_sha"
+    predicate: "https://enterprise-ontology.org/schema/eoip#sha"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "message"
+    predicate: "https://enterprise-ontology.org/schema/eoip#message"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+  - path: "author_name"
+    predicate: "https://enterprise-ontology.org/schema/eoip#author"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+
+relation_maps:
+  - path: "repository"
+    predicate: "https://enterprise-ontology.org/schema/eoip#belongsToRepository"
+    object_template: "urn:eoip:github:repo:{repository}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Repository"
+  - path: "referenced_issue"
+    predicate: "https://enterprise-ontology.org/schema/eoip#referencesIssue"
+    object_template: "urn:eoip:jira:issue:{referenced_issue}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#WorkItem"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:github-connector"

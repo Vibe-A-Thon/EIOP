@@ -1,0 +1,136 @@
+schema: "eoip-claims-register-v1"
+version: "1.0.0"
+updated_at: "2026-10-18T00:00:00Z"
+
+claims:
+  - id: "CLM-RDF-001"
+    wording: "Conformant RDF 1.1 Turtle and XML graph parsing, serialization, and storage."
+    category: "standards"
+    scope:
+      profile: "P0"
+      edition: "enterprise"
+      deployment: "all"
+    evidence_refs:
+      - kind: "ledger_clause"
+        ref_id: "CRA-016.1"
+    owner: "Ontology Lead"
+    approvals:
+      - role: "Legal"
+        reviewer: "Legal Officer"
+        status: "APPROVED"
+        timestamp: "2026-10-18T00:00:00Z"
+      - role: "Marketing"
+        reviewer: "Marketing Director"
+        status: "APPROVED"
+        timestamp: "2026-10-18T00:00:00Z"
+    expiry: "2028-10-18T00:00:00Z"
+    status: "APPROVED"
+    metadata:
+      standard: "RDF 1.1"
+
+  - id: "CLM-SHACL-001"
+    wording: "SHACL Core constraint validation and shape conformance reporting for enterprise ontologies."
+    category: "standards"
+    scope:
+      profile: "P0"
+      edition: "enterprise"
+      deployment: "all"
+    evidence_refs:
+      - kind: "ledger_clause"
+        ref_id: "CRA-020.1"
+    owner: "Ontology Lead"
+    approvals:
+      - role: "Legal"
+        reviewer: "Legal Officer"
+        status: "APPROVED"
+        timestamp: "2026-10-18T00:00:00Z"
+      - role: "Marketing"
+        reviewer: "Marketing Director"
+        status: "APPROVED"
+        timestamp: "2026-10-18T00:00:00Z"
+    expiry: "2028-10-18T00:00:00Z"
+    status: "APPROVED"
+    metadata:
+      standard: "SHACL Core"
+
+  - id: "CLM-INV-001"
+    wording: "Native LPG representation provides direct edge properties without RDF reification bloat."
+    category: "inversion"
+    scope:
+      profile: "P0"
+      edition: "all"
+      deployment: "all"
+    evidence_refs:
+      - kind: "ledger_clause"
+        ref_id: "CRA-016.1"
+      - kind: "ledger_clause"
+        ref_id: "CRA-017.1"
+    owner: "Graph Architect"
+    approvals:
+      - role: "Legal"
+        reviewer: "Legal Officer"
+        status: "APPROVED"
+        timestamp: "2026-10-18T00:00:00Z"
+      - role: "Marketing"
+        reviewer: "Marketing Director"
+        status: "APPROVED"
+        timestamp: "2026-10-18T00:00:00Z"
+    expiry: "2028-10-18T00:00:00Z"
+    status: "APPROVED"
+    metadata:
+      inversions:
+        - "I1"
+
+  - id: "CLM-GITOPS-001"
+    wording: "Ontology-as-Code GitOps lifecycle with semantic branch diff, automated PR gates, and rollback receipts."
+    category: "positioning"
+    scope:
+      profile: "P0"
+      edition: "all"
+      deployment: "all"
+    evidence_refs:
+      - kind: "ledger_clause"
+        ref_id: "CRA-022.1"
+      - kind: "ledger_clause"
+        ref_id: "CRA-022.2"
+    owner: "Lead Developer"
+    approvals:
+      - role: "Legal"
+        reviewer: "Legal Officer"
+        status: "APPROVED"
+        timestamp: "2026-10-18T00:00:00Z"
+      - role: "Marketing"
+        reviewer: "Marketing Director"
+        status: "APPROVED"
+        timestamp: "2026-10-18T00:00:00Z"
+    expiry: "2028-10-18T00:00:00Z"
+    status: "APPROVED"
+    metadata:
+      ont_pkg: "ONT-012"
+
+competitor_data:
+  - competitor: "Palantir Foundry"
+    metric: "TCO"
+    value: "Consultancy claimed 4x lower TCO"
+    source: "Vendor negotiation consultant report"
+    is_vendor_source: true
+    verification_status: "UNVERIFIED"
+    legal_approved: false
+    permitted_for_external_use: false
+
+scorecards:
+  - matrix_name: "ontology-comparison-matrix.csv"
+    self_score: "2.9"
+    purpose: "INTERNAL_PLANNING_ONLY"
+    cra_042_rescored: false
+    scoring_method: null
+    scoring_date: null
+    evidence_confidence: null
+
+  - matrix_name: "master-matrix"
+    self_score: "3.6"
+    purpose: "INTERNAL_PLANNING_ONLY"
+    cra_042_rescored: false
+    scoring_method: null
+    scoring_date: null
+    evidence_confidence: null

@@ -1,0 +1,171 @@
+version: "1.0"
+policy_name: "EOIP Commercial Packaging and Supply-Chain License Policy"
+derived_from: "CRAr_cpccaggcc-requirements.md Section 13"
+
+allowed_licenses:
+  - "MIT"
+  - "Apache-2.0"
+  - "BSD-3-Clause"
+  - "BSD-2-Clause"
+  - "ISC"
+  - "CC-BY-4.0"
+  - "PSF-2.0"
+  - "Python-2.0"
+  - "EDL-1.0"
+  - "Unlicense"
+  - "0BSD"
+
+denied_licenses:
+  - "GPL-1.0-only"
+  - "GPL-1.0-or-later"
+  - "GPL-2.0-only"
+  - "GPL-2.0-or-later"
+  - "GPL-3.0-only"
+  - "GPL-3.0-or-later"
+  - "AGPL-1.0-only"
+  - "AGPL-1.0-or-later"
+  - "AGPL-3.0-only"
+  - "AGPL-3.0-or-later"
+  - "SSPL-1.0"
+  - "CPAL-1.0"
+
+conditional_licenses:
+  LGPL:
+    licenses:
+      - "LGPL-2.1-only"
+      - "LGPL-2.1-or-later"
+      - "LGPL-3.0-only"
+      - "LGPL-3.0-or-later"
+    policy: "Optional plugin only; never statically linked or bundled in distributed core"
+
+forbidden_packages:
+  - "nvidia-*"
+  - "cuda-*"
+  - "dgl"
+  - "networkx"
+  - "terminusdb-client"
+  - "webprotege"
+
+unresolved_packages:
+  extract-msg:
+    status: "DISABLED"
+    reason: "License unresolved (H-09, X-16); disabled in production and fileparse pipelines until legal resolution"
+  terminusdb:
+    status: "BLOCKED"
+    reason: "License terms disputed (H-04, X-21); blocked pending Legal clearance"
+  snomed-ct:
+    status: "CUSTOMER_PROVIDED_ONLY"
+    reason: "Affiliate license; customer-provided only, never redistributed"
+
+components:
+  rdflib:
+    license: "BSD-3-Clause"
+    decision: "ADOPT_PINNED"
+    tier: "core"
+  pyshacl:
+    license: "Apache-2.0"
+    decision: "ADOPT_WORKER"
+    tier: "worker"
+  elk:
+    license: "Apache-2.0"
+    decision: "ADOPT_JVM_WORKER"
+    tier: "jvm_worker"
+  openllet:
+    license: "Apache-2.0"
+    decision: "OPTIONAL_ADAPTER"
+    tier: "research"
+  hermit:
+    license: "LGPL-3.0-only"
+    decision: "OPTIONAL_PLUGIN_ONLY"
+    tier: "plugin"
+    notes: "Never bundled in distributed core"
+  owlapi:
+    license: "Apache-2.0"
+    decision: "WORKER_DEPENDENCY"
+    tier: "jvm_worker"
+  robot:
+    license: "BSD-3-Clause"
+    decision: "CI_WORKER_TOOLING"
+    tier: "tooling"
+  topbraid-shacl-api:
+    license: "Apache-2.0"
+    decision: "DIFFERENTIAL_ORACLE"
+    tier: "jvm_worker"
+  apache-jena:
+    license: "Apache-2.0"
+    decision: "REFERENCE_RDF_BACKEND"
+    tier: "service"
+  eclipse-rdf4j:
+    license: "EDL-1.0"
+    decision: "ACCEPTABLE"
+    tier: "service"
+  graphdb:
+    license: "Commercial"
+    decision: "CERTIFIED_EXTERNAL_BACKEND"
+    tier: "external"
+  neo4j-community:
+    license: "GPL-3.0-only"
+    decision: "NETWORK_PROTOCOL_ONLY"
+    tier: "network_service"
+    notes: "Network protocol only; never linked or bundled into distributed core"
+  virtuoso-ose:
+    license: "GPL-2.0-only"
+    decision: "NETWORK_PROTOCOL_ONLY"
+    tier: "network_service"
+    notes: "Network protocol only; never linked or bundled"
+  webprotege:
+    license: "AGPL-3.0-only"
+    decision: "DO_NOT_INTEGRATE"
+    tier: "prohibited"
+  terminusdb:
+    license: "Disputed"
+    decision: "BLOCKED_PENDING_LEGAL"
+    tier: "prohibited"
+  deeponto:
+    license: "Apache-2.0"
+    decision: "OPTIONAL_ALIGNMENT_WORKER"
+    tier: "worker"
+  spacy:
+    license: "MIT"
+    decision: "ADOPT"
+    tier: "worker"
+  textacy:
+    license: "Apache-2.0"
+    decision: "ADOPT"
+    tier: "worker"
+  numpy:
+    license: "BSD-3-Clause"
+    decision: "ADOPT_N0_OPTIONAL"
+    tier: "N0"
+    notes: "Never in core dependencies"
+  scipy:
+    license: "BSD-3-Clause"
+    decision: "ADOPT_N0_OPTIONAL"
+    tier: "N0"
+    notes: "Never in core dependencies"
+  scikit-learn:
+    license: "BSD-3-Clause"
+    decision: "ADOPT_N0_OPTIONAL"
+    tier: "N0"
+    notes: "Never in core dependencies"
+  torch:
+    license: "BSD-3-Clause"
+    decision: "ADOPT_N1_OPTIONAL_CPU_ONLY"
+    tier: "N1"
+    notes: "CPU-only builds distributed (H-15, H-16); CUDA builds never distributed"
+  torch-geometric:
+    license: "MIT"
+    decision: "ADOPT_N1_OPTIONAL"
+    tier: "N1"
+  transformers:
+    license: "Apache-2.0"
+    decision: "ADOPT_N2_OPTIONAL"
+    tier: "N2"
+  sentence-transformers:
+    license: "Apache-2.0"
+    decision: "ADOPT_N2_OPTIONAL"
+    tier: "N2"
+  snntorch:
+    license: "MIT"
+    decision: "ADOPT_N3_RESEARCH_ONLY"
+    tier: "N3"

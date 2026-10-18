@@ -30,6 +30,7 @@ This disposition concerns licensing review, not whether the application compiles
 
 - [ ] Inventory exact artifacts, transitive packages, base images, native utilities, fonts, assets, datasets and models.
 - [ ] Resolve `extract-msg` and the actual default Docker image's GPL-related compatibility obligations.
+- [ ] Review the optional N0 numerical wheel bundle's bundled GCC runtime (GPL-3.0-or-later with GCC exception), OpenBLAS/LAPACK notices, and Microsoft runtime terms for each shipped platform.
 - [ ] Review all other copyleft, source-available, custom, unknown and conflicting licenses.
 - [ ] Record the approved license option for multi-licensed components.
 - [ ] Collect exact upstream texts/notices and preserve modification attributions where required.

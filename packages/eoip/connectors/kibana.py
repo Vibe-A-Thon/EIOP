@@ -8,6 +8,7 @@ from typing import Any
 from eoip.connectors.errors import ConnectorError
 from eoip.connectors.rest import RestConnector, parse_utc, utc_timestamp
 from eoip.connectors.sync import SyncBatch
+from eoip.contracts.source_event import PermissionMetadata, SourceEventV2, utc_now_iso
 
 KIBANA_OBJECT_TYPES = {
     "dashboard": "dashboard",
@@ -105,6 +106,79 @@ class KibanaConnector(RestConnector):
 
         return SyncBatch(events=events, next_checkpoint=next_checkpoint)
 
+    def make_event(
+        self,
+        record_kind: str,
+        source_record_id: str,
+        payload: dict,
+        source_version: str | int | None,
+        *,
+        operation: str = "UPSERT",
+        permissions: PermissionMetadata | None = None,
+    ) -> SourceEventV2:
+        import hashlib
+        import json
+        payload_json = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        payload_hash = hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
+        event_id = hashlib.sha256(
+            f"{self.source_system}:{record_kind}:{source_record_id}:{payload_hash}:{operation}".encode()
+        ).hexdigest()
+        captured_at = utc_now_iso()
+
+        effective_space = self.space_id or "default"
+        if permissions is None:
+            permissions = PermissionMetadata(
+                visibility="INTERNAL",
+                principal_refs=[f"kibana:space:{effective_space}"],
+                inherited_from=f"kibana:space:{effective_space}",
+            )
+
+        return SourceEventV2(
+            event_id=event_id,
+            source_system=self.source_system,
+            source_instance_id=self.instance_id,
+            source_record_id=source_record_id,
+            operation=operation,
+            source_version=str(source_version) if source_version is not None else payload_hash,
+            event_time=captured_at,
+            captured_at=captured_at,
+            content_hash=payload_hash,
+            permissions=permissions,
+            payload=payload if operation != "DELETE" else None,
+            metadata={
+                "mapper_version": self.mapper_version,
+                "record_kind": record_kind,
+                "space_id": effective_space,
+                "acl_vector": list(permissions.principal_refs),
+                # CRA-008.3: Dashboard authorization is strictly separate from backing index authority
+                "index_authority_separated": True,
+                "backing_indices_authorized": False,
+            },
+        )
+
+    @staticmethod
+    def extract_service_proposals(record: dict[str, Any]) -> list[dict[str, Any]]:
+        """Extract proposals linking dashboard panels to CMDB services with evidence (CRA-008.7)."""
+        import re
+        attributes = record.get("attributes", {}) if isinstance(record.get("attributes"), dict) else {}
+        text = " ".join([
+            str(record.get("id") or ""),
+            str(attributes.get("title") or ""),
+            str(attributes.get("description") or ""),
+            str(attributes.get("kibanaSavedObjectMeta", {}).get("searchSourceJSON") or ""),
+        ])
+        proposals = []
+        for pat in [r"\b(?:svc|service|cmdb_ci)[:=\s]+([a-zA-Z0-9_\-\.]+)\b", r"\b([a-zA-Z0-9_\-]+-service)\b"]:
+            for m in re.finditer(pat, text, re.IGNORECASE):
+                svc_name = m.group(1).lower()
+                proposals.append({
+                    "proposed_target": f"cmdb:service:{svc_name}",
+                    "relationship": "visualizesEntity",
+                    "evidence_snippet": text[max(0, m.start() - 20) : min(len(text), m.end() + 20)],
+                    "status": "PROPOSED",
+                })
+        return proposals
+
     def map_event(self, event) -> dict[str, Any]:
         record = event.payload
         kind = (event.metadata or {}).get("record_kind")
@@ -121,4 +195,7 @@ class KibanaConnector(RestConnector):
             "object_id": str(object_id),
             "title": attributes.get("title") or record.get("title"),
             "type": record.get("type"),
+            "space_id": (event.metadata or {}).get("space_id", "default"),
+            "index_authority_separated": (event.metadata or {}).get("index_authority_separated", True),
+            "service_proposals": self.extract_service_proposals(record),
         }

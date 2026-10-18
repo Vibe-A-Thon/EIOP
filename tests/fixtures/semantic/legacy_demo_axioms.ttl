@@ -1,0 +1,15 @@
+# Legacy Demo Axioms Fixture (CRA-019.9)
+# Moved from production OWLReasoner._bootstrap_core_axioms() to test fixture
+@prefix ex: <urn:example:> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+ex:Microservice rdfs:subClassOf ex:Service .
+ex:DatabaseService rdfs:subClassOf ex:Service .
+ex:RelationalDatabase rdfs:subClassOf ex:DatabaseService .
+ex:GraphDatabase rdfs:subClassOf ex:DatabaseService .
+ex:Engineer rdfs:subClassOf ex:Person .
+ex:Manager rdfs:subClassOf ex:Person .
+
+ex:Service owl:disjointWith ex:Person .
+ex:RelationalDatabase owl:disjointWith ex:GraphDatabase .

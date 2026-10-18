@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -27,8 +28,8 @@ from eoip.evaluation.distillation_sentinel import (
 )
 from eoip.tools_contract.mcp_bridge import (
     ExternalMCPClient,
+    MCPHostNotAllowed,
     ToolExecutionAttestor,
-    get_external_mcp_client,
     get_tool_execution_attestor,
 )
 from eoip.state.engine import get_state_engine
@@ -154,40 +155,22 @@ def test_feature_6_graph_repair_sentinel() -> None:
 
 # ── Feature 7: Universal External MCP Client ─────────────────────
 
-def test_feature_7_external_mcp_client() -> None:
-    client = get_external_mcp_client()
-    server_info = client.connect_server(
-        server_name="kubernetes_cluster",
-        transport="http",
-        endpoint="https://k8s-mcp.internal/v1",
-        provided_tools=[
-            {
-                "name": "k8s_get_pods",
-                "description": "List pods in namespace",
-                "schema": {
-                    "type": "object",
-                    "properties": {"namespace": {"type": "string"}},
-                    "required": ["namespace"],
-                },
-            }
-        ],
-    )
-    assert server_info["status"] == "connected"
-    assert "k8s_get_pods" in server_info["tools_registered"]
-
-    inv_res = client.invoke_external_tool(
-        tool_name="k8s_get_pods",
-        arguments={"namespace": "production"},
-        caller_id="test-mesh",
-    )
-    assert inv_res["output"]["status"] == "success"
-    assert inv_res["attestation"]["certificate_id"].startswith("attest-")
+@pytest.mark.asyncio
+async def test_feature_7_external_mcp_client_rejects_unconfigured_host() -> None:
+    client = ExternalMCPClient(allowed_hosts=set())
+    with pytest.raises(MCPHostNotAllowed):
+        await client.connect_server(
+            server_name="kubernetes_cluster",
+            transport="streamable-http",
+            endpoint="https://k8s-mcp.internal/v1",
+        )
+    assert client.list_connected_servers() == []
 
 
 # ── Feature 8: Cryptographic Tool Attestation ────────────────────
 
 def test_feature_8_cryptographic_tool_attestation() -> None:
-    attestor = get_tool_execution_attestor()
+    attestor = ToolExecutionAttestor(signing_secret="test-hmac-key-for-integrity-only-32")
     cert = attestor.attest_execution(
         tool_name="deploy_canary",
         arguments={"service": "checkout", "traffic_percent": 10},
@@ -266,13 +249,12 @@ def test_feature_9_advanced_capabilities_api_endpoints() -> None:
     assert repair_resp.status_code == 200
     assert repair_resp.json()["status"] == "repaired"
 
-    # 7. External MCP connect endpoint
+    # 7. External MCP connect requires an authenticated configured operator.
     mcp_resp = client.post(
         "/api/v1/platform/tools/mcp/connect-external",
         json={"server_name": "github_enterprise", "endpoint": "https://mcp.github.com"},
     )
-    assert mcp_resp.status_code == 200
-    assert mcp_resp.json()["status"] == "connected"
+    assert mcp_resp.status_code == 401
 
     # 8. Tool attest & verify endpoints
     attest_resp = client.post(
@@ -283,12 +265,4 @@ def test_feature_9_advanced_capabilities_api_endpoints() -> None:
             "caller_id": "test-suite",
         },
     )
-    assert attest_resp.status_code == 200
-    cert_id = attest_resp.json()["attestation"]["certificate_id"]
-
-    verify_resp = client.post(
-        "/api/v1/platform/tools/verify-attestation",
-        json={"certificate_id": cert_id},
-    )
-    assert verify_resp.status_code == 200
-    assert verify_resp.json()["valid"] is True
+    assert attest_resp.status_code == 401

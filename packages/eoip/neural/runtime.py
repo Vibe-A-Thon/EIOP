@@ -22,7 +22,10 @@ class NeuralRuntime(BaseModel):
     has_sklearn: bool
     has_torch: bool
     has_torch_geometric: bool
+    has_tokenizers: bool
     has_transformers: bool
+    has_sentence_transformers: bool
+    has_snntorch: bool
     torch_device: str = "cpu"
     python_version: str
     os_platform: str
@@ -47,21 +50,26 @@ def get_runtime() -> NeuralRuntime:
     has_sk = _probe_import("sklearn")
     has_torch = _probe_import("torch")
     has_pyg = _probe_import("torch_geometric")
+    has_tokenizers = _probe_import("tokenizers")
     has_tf = _probe_import("transformers")
+    has_sentence_tf = _probe_import("sentence_transformers")
+    has_snntorch = _probe_import("snntorch")
 
     # Determine highest available tier
     tier = NeuralTier.NONE
-    if has_np and has_sp:
+    if has_np and has_sp and has_sk:
         tier = NeuralTier.NUMERICS
-        if has_torch and has_sk:
+        if has_torch and has_pyg:
             tier = NeuralTier.NEURAL
-            if has_tf:
+            if has_tokenizers and has_tf and has_sentence_tf:
                 tier = NeuralTier.TEXT
+                if has_snntorch:
+                    tier = NeuralTier.RESEARCH
 
     device = "cpu"
     if has_torch:
         try:
-            import torch
+            torch = importlib.import_module("torch")
             # H-16: EOIP distributes CPU-only builds
             device = "cpu"
         except Exception:
@@ -74,7 +82,10 @@ def get_runtime() -> NeuralRuntime:
         has_sklearn=has_sk,
         has_torch=has_torch,
         has_torch_geometric=has_pyg,
+        has_tokenizers=has_tokenizers,
         has_transformers=has_tf,
+        has_sentence_transformers=has_sentence_tf,
+        has_snntorch=has_snntorch,
         torch_device=device,
         python_version=platform.python_version(),
         os_platform=platform.platform(),
@@ -107,8 +118,9 @@ def register_neural_capabilities() -> None:
     
     tiers = [
         (NeuralTier.NUMERICS, "CRA-043.1", lambda: get_runtime().has_numpy),
-        (NeuralTier.NEURAL, "CRA-043.1", lambda: get_runtime().has_torch),
-        (NeuralTier.TEXT, "CRA-043.1", lambda: get_runtime().has_transformers),
+        (NeuralTier.NEURAL, "CRA-043.1", lambda: get_runtime().has_torch and get_runtime().has_torch_geometric),
+        (NeuralTier.TEXT, "CRA-043.1", lambda: get_runtime().has_tokenizers and get_runtime().has_transformers and get_runtime().has_sentence_transformers),
+        (NeuralTier.RESEARCH, "CRA-043.1", lambda: get_runtime().has_snntorch),
     ]
     for tier, clause, probe in tiers:
         reg.register(

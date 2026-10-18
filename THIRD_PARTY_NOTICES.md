@@ -9,6 +9,8 @@ Third-party authors retain their rights. The EOIP proprietary notice applies onl
 | Component group | Repository evidence | Required release action |
 |---|---|---|
 | Python API/runtime | `pyproject.toml`, `requirements.lock` | Inspect exact installed release distributions and their transitive dependencies; retain license/notice texts and provenance |
+| Optional numerical N0 tier | `pyproject.toml` extra `numerics`; `requirements-neural.lock` (generation pending) | Review the exact resolved wheel set and bundled native-library notices before distribution; see the specific N0 findings below |
+| RDF serialization and canonical actions | `rdflib==7.6.0` (BSD-3-Clause), `rfc8785==0.1.4` (Apache-2.0), `licenses/rdflib-7.6.0.md`, `licenses/rfc8785-0.1.4.md` | Verify the resolved artifacts and included license texts in each shipped wheel/image; this source index does not itself constitute release clearance |
 | Optional document/archive/email parsing | `pyproject.toml` fileparse extra, `requirements-fileparse.lock` | Resolve copyleft and executable-tool obligations; do not assume optional means absent from delivery |
 | Report generation | `pyproject.toml` reports extra | Inventory ReportLab, python-docx, python-pptx, dependencies and embedded fonts separately |
 | Web runtime | `apps/web/package.json`, `apps/web/package-lock.json` | Inventory actual bundled code, including React, React DOM, Cytoscape, Graphology, Sigma and transitive runtime modules |
@@ -17,6 +19,12 @@ Third-party authors retain their rights. The EOIP proprietary notice applies onl
 | Models, fonts, images, datasets and native utilities | Actual release and configured runtime assets | Collect each component's own terms, provenance, commercial permissions and redistribution restrictions |
 
 The specification `EOIP-engg-doc-pkg/69-dependency-license-sbom.md` describes a governance process. It is not a populated, approved SBOM for the current release.
+
+## Optional Numerical N0 Development Profile
+
+The new `numerics` extra was installed and exercised on Windows x86_64 / Python 3.11 with NumPy 2.4.6, SciPy 1.17.1, and scikit-learn 1.9.1. Their exact upstream license files from those installed wheels are retained at `licenses/numpy-2.4.6-LICENSE.txt`, `licenses/scipy-1.17.1-LICENSE.txt`, and `licenses/scikit-learn-1.9.1-COPYING.txt`; each repository copy was SHA-256 compared with its source file in the installed distribution.
+
+The NumPy and SciPy Windows wheel license files report bundled OpenBLAS (BSD-3-Clause), LAPACK (BSD-3-Clause-Open-MPI), and GCC runtime files under `GPL-3.0-or-later WITH GCC-exception-3.1`; the scikit-learn wheel also reports Microsoft Visual C++ runtime files. This is a transitive binary-wheel notice and compatibility review item, not a conclusion that the N0 distribution is cleared or prohibited. Assess the exact artifacts and delivery mode under `licenses/THIRD-PARTY-POLICY.md` before distribution. The current development wheel set must not be presented as a cleared commercial release.
 
 ## Known Distribution Concern
 

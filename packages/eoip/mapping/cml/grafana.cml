@@ -1,0 +1,41 @@
+source: grafana
+version: "1.0.0"
+id: cml_grafana_1_0_0
+
+subject_map:
+  template: "urn:eoip:grafana:dashboard:{dashboard_uid}"
+  class: "https://enterprise-ontology.org/schema/eoip#Dashboard"
+  graph: "urn:eoip:graph:observability"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields:
+    - "createdBy"
+    - "updatedBy"
+
+property_maps:
+  - path: "dashboard_uid"
+    predicate: "https://enterprise-ontology.org/schema/eoip#dashboardUid"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "title"
+    predicate: "https://enterprise-ontology.org/schema/eoip#title"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "url"
+    predicate: "https://enterprise-ontology.org/schema/eoip#url"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+  - path: "folder"
+    predicate: "https://enterprise-ontology.org/schema/eoip#folder"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+
+relation_maps:
+  - path: "folder"
+    predicate: "https://enterprise-ontology.org/schema/eoip#locatedInFolder"
+    object_template: "urn:eoip:grafana:folder:{folder}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Folder"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:grafana-connector"

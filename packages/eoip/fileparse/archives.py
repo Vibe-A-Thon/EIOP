@@ -31,6 +31,10 @@ def checked_zip(content: bytes, options: ParseOptions) -> zipfile.ZipFile:
                 raise ParseError("encrypted_file", "Encrypted ZIP/Office files require a decrypted local copy")
             if stat.S_ISLNK(entry.external_attr >> 16):
                 raise ParseError("unsafe_member", "ZIP symlinks are not supported")
+            if entry.compress_size > 0:
+                ratio = entry.file_size / entry.compress_size
+                if ratio > 100 and entry.file_size > 1_000_000:
+                    raise ParseError("size_limit", f"ZIP member compression ratio {ratio:.1f}:1 exceeds 100:1 limit")
             total += entry.file_size
             if total > options.max_expanded_bytes or entry.file_size > options.max_expanded_bytes:
                 raise ParseError("size_limit", "ZIP uncompressed bytes exceed max_expanded_bytes")
@@ -74,6 +78,18 @@ def archive_members(content: bytes, filename: str, suffix: str, options: ParseOp
         name = filename[:-3]
         if name.endswith(".tgz") or not name:
             raise ParseError("invalid_archive", "GZIP needs a filename indicating its uncompressed format")
+        yield name, data
+    elif suffix == ".bz2":
+        import bz2
+        try:
+            data = bz2.decompress(content)
+        except OSError as exc:
+            raise ParseError("invalid_archive", f"BZ2 decompression failed: {exc}") from exc
+        if len(data) > options.max_expanded_bytes:
+            raise ParseError("size_limit", "BZ2 expanded bytes exceed max_expanded_bytes")
+        name = filename[:-4] if filename.endswith(".bz2") else filename
+        if not name:
+            raise ParseError("invalid_archive", "BZ2 needs a filename indicating its uncompressed format")
         yield name, data
     elif suffix == ".rar":
         rarfile = dependency("rarfile")

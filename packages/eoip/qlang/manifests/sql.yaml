@@ -1,0 +1,24 @@
+dialect: SQL
+backend: datafusion
+supported_constructs:
+  - SELECT
+  - FROM
+  - WHERE
+  - INNER_JOIN
+  - LEFT_JOIN
+  - GROUP_BY
+  - ORDER_BY
+  - LIMIT
+  - AGGREGATE_COUNT
+  - AGGREGATE_SUM
+  - AGGREGATE_AVG
+unsupported_constructs:
+  - DROP
+  - ALTER
+  - EXEC
+  - INSERT_DIRECT
+  - TRUNCATE
+capabilities:
+  parameterization: true
+  pushdown: true
+  default_limit: 1000

@@ -1,0 +1,68 @@
+{
+  "expand": "schema,names",
+  "startAt": 0,
+  "maxResults": 50,
+  "total": 2,
+  "issues": [
+    {
+      "id": "10001",
+      "key": "PROJ-101",
+      "self": "https://jira.example.org/rest/api/3/issue/10001",
+      "fields": {
+        "summary": "Implement rate limiting across API gateways",
+        "description": "Ensure token bucket rate limiting is active.",
+        "issuetype": {"id": "1", "name": "Story", "subtask": false},
+        "status": {"id": "3", "name": "In Progress"},
+        "project": {"id": "100", "key": "PROJ", "name": "Platform Core"},
+        "assignee": {"accountId": "usr-123", "displayName": "Alice Smith", "emailAddress": "alice@example.org"},
+        "reporter": {"accountId": "usr-456", "displayName": "Bob Jones", "emailAddress": "bob@example.org"},
+        "created": "2026-03-01T10:00:00.000Z",
+        "updated": "2026-03-02T15:30:00.000Z",
+        "labels": ["security", "gateway"],
+        "security": {"id": "sec-01", "name": "Restricted"},
+        "attachment": [
+          {
+            "id": "att-99",
+            "filename": "arch_spec.pdf",
+            "size": 1048576,
+            "mimeType": "application/pdf",
+            "content": "https://jira.example.org/rest/api/3/attachment/content/att-99"
+          }
+        ],
+        "issuelinks": [
+          {
+            "id": "link-1",
+            "type": {"name": "Blocks", "inward": "is blocked by", "outward": "blocks"},
+            "outwardIssue": {"id": "10002", "key": "PROJ-102"}
+          }
+        ]
+      }
+    },
+    {
+      "id": "10002",
+      "key": "PROJ-102",
+      "self": "https://jira.example.org/rest/api/3/issue/10002",
+      "fields": {
+        "summary": "Gateway performance regression benchmark",
+        "description": "Benchmark throughput under high concurrency.",
+        "issuetype": {"id": "2", "name": "Task", "subtask": false},
+        "status": {"id": "1", "name": "Open"},
+        "project": {"id": "100", "key": "PROJ", "name": "Platform Core"},
+        "assignee": {"accountId": "usr-456", "displayName": "Bob Jones", "emailAddress": "bob@example.org"},
+        "reporter": {"accountId": "usr-123", "displayName": "Alice Smith", "emailAddress": "alice@example.org"},
+        "created": "2026-03-02T09:00:00.000Z",
+        "updated": "2026-03-02T12:00:00.000Z",
+        "labels": ["performance"],
+        "security": null,
+        "attachment": [],
+        "issuelinks": [
+          {
+            "id": "link-1",
+            "type": {"name": "Blocks", "inward": "is blocked by", "outward": "blocks"},
+            "inwardIssue": {"id": "10001", "key": "PROJ-101"}
+          }
+        ]
+      }
+    }
+  ]
+}

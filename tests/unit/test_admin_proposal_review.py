@@ -2,6 +2,7 @@
 
 from uuid import uuid4
 
+from eoip.authn import Principal, TokenService
 from eoip.contracts.agent import ChangeProposal
 from eoip.contracts.source_event import utc_now_iso
 from eoip.graph.memory import MemoryGraphStore
@@ -23,6 +24,17 @@ def client(monkeypatch, tmp_path):
 
 def _headers():
     return {"Authorization": f"Bearer {TOKEN}"}
+
+
+def _signed_headers(username, roles):
+    service = TokenService(TOKEN.encode("utf-8"), issuer="eoip-authn", audience="eoip-api")
+    principal = Principal(
+        id=f"urn:eoip:authn:principal:{username}",
+        username=username,
+        roles=roles,
+        provider="local",
+    )
+    return {"Authorization": f"Bearer {service.issue(principal)}"}
 
 
 def _proposal(proposal_id="p-1"):
@@ -75,13 +87,13 @@ def test_pending_proposal_can_be_approved_and_is_inert(monkeypatch, tmp_path):
 
     approve = api.post(
         f"/api/v1/agents/proposals/{proposals[0]['proposal_id']}/approve",
-        headers=_headers(),
-        json={"actor_id": "admin@example.invalid"},
+        headers=_signed_headers("reviewer", ("admin",)),
+        json={"actor_id": "forged-reviewer"},
     )
     assert approve.status_code == 200
     body = approve.json()
     assert body["status"] == "APPROVED"
-    assert body["approved_by"] == "admin@example.invalid"
+    assert body["approved_by"] == "reviewer"
     assert body["decided_at"]
 
     # Approval is a state change only: the patch is never executed by the API.
@@ -98,25 +110,45 @@ def test_rejection_and_unknown_and_double_decision_paths(monkeypatch, tmp_path):
 
     reject = api.post(
         f"/api/v1/agents/proposals/{proposal_id}/reject",
-        headers=_headers(),
-        json={"actor_id": "admin@example.invalid"},
+        headers=_signed_headers("reviewer", ("admin",)),
+        json={"actor_id": "forged-reviewer"},
     )
     assert reject.status_code == 200
     assert reject.json()["status"] == "REJECTED"
 
     double = api.post(
         f"/api/v1/agents/proposals/{proposal_id}/approve",
-        headers=_headers(),
-        json={"actor_id": "admin@example.invalid"},
+        headers=_signed_headers("reviewer", ("admin",)),
+        json={"actor_id": "forged-reviewer"},
     )
     assert double.status_code == 409
 
     missing = api.post(
         f"/api/v1/agents/proposals/{uuid4()}/approve",
-        headers=_headers(),
-        json={"actor_id": "admin@example.invalid"},
+        headers=_signed_headers("reviewer", ("admin",)),
+        json={"actor_id": "forged-reviewer"},
     )
     assert missing.status_code == 404
 
     invalid_status = api.get("/api/v1/agents/proposals?status=MAYBE", headers=_headers())
     assert invalid_status.status_code == 422
+
+
+def test_non_admin_cannot_decide_proposal(monkeypatch, tmp_path):
+    api = _seed_drift(monkeypatch, tmp_path)
+    api.post("/api/v1/ontology/proposals", headers=_headers())
+    proposals = api.get("/api/v1/agents/proposals?status=PENDING", headers=_headers()).json()[
+        "proposals"
+    ]
+    proposal_id = proposals[0]["proposal_id"]
+
+    response = api.post(
+        f"/api/v1/agents/proposals/{proposal_id}/approve",
+        headers=_signed_headers("analyst", ("analyst",)),
+        json={"actor_id": "forged-admin"},
+    )
+
+    assert response.status_code == 403
+    assert api.get(
+        f"/api/v1/agents/proposals?status=PENDING", headers=_headers()
+    ).json()["proposals"]

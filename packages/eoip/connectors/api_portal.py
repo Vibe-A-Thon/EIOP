@@ -10,16 +10,29 @@ from eoip.connectors.rest import RestConnector, parse_utc, utc_timestamp
 from eoip.connectors.sync import SyncBatch
 
 
+CANDIDATE_PROFILES = ("kong", "apigee", "swaggerhub", "openapi3_crawler")
+PROPOSED_VOCABULARY = ("api:Service", "api:Endpoint", "api:Operation", "api:SchemaModel")
+EXECUTABLE_MIME_TYPES = {
+    "application/x-msdownload", "application/x-dosexec", "application/x-executable",
+    "application/x-elf", "application/x-sh", "application/x-csh", "application/x-bat"
+}
+
+
 class APIPortalConnector(RestConnector):
-    """Connector for a generic API portal or gateway exposing Swagger/OpenAPI service catalogs."""
+    """Connector for a generic API portal or gateway exposing Swagger/OpenAPI service catalogs.
+
+    Remains UNQUALIFIED until the specific API Portal product is identified (Decision H-07, CRA-007.9).
+    """
 
     source_system = "api_portal"
     mapper_version = "api-portal/1.0"
+    qualification_status = "UNQUALIFIED"  # Decision H-07
 
     def __init__(
         self,
         portal_url: str,
         *,
+        provider_profile: str = "openapi3_crawler",
         service_ids: list[str] | None = None,
         services_path: str = "/api/v1/services",
         endpoints_path: str = "/api/v1/services/{service_id}/endpoints",
@@ -28,11 +41,22 @@ class APIPortalConnector(RestConnector):
     ) -> None:
         if not 1 <= page_size <= 1000:
             raise ValueError("page_size must be between 1 and 1000")
+        if provider_profile not in CANDIDATE_PROFILES:
+            raise ValueError(f"unknown API portal candidate profile: {provider_profile}; must be one of {CANDIDATE_PROFILES}")
+        self.provider_profile = provider_profile
         self.service_ids = list(service_ids) if service_ids else []
         self.services_path = services_path
         self.endpoints_path = endpoints_path
         super().__init__(portal_url, **kwargs)
         self.page_size = page_size
+
+    @staticmethod
+    def validate_content_safety(content: bytes, mime_type: str | None = None) -> None:
+        """Reject unsupported binaries and untrusted executable content (CRA-007.5)."""
+        if mime_type in EXECUTABLE_MIME_TYPES:
+            raise ValueError(f"unsupported executable binary content rejected: {mime_type}")
+        if content.startswith(b"MZ") or content.startswith(b"\x7fELF"):
+            raise ValueError("unsupported executable binary content rejected (magic bytes)")
 
     def sync(
         self,

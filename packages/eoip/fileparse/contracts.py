@@ -34,6 +34,8 @@ class ParseOptions(BaseModel):
     tesseract_path: str | None = None
     libreoffice_path: str | None = None
     tool_timeout_seconds: int = Field(default=60, ge=1, le=300)
+    enable_pdf: bool = False
+    enable_msg: bool = True
 
     @model_validator(mode="after")
     def validate_overlap(self) -> ParseOptions:
@@ -79,6 +81,13 @@ class ParsedDocument(BaseModel):
     data: JsonValue = None
     metadata: dict[str, JsonValue] = Field(default_factory=dict)
     warnings: list[str] = Field(default_factory=list)
+    raw_bytes_base64: str | None = None
+    readiness: str = "AVAILABLE"
+
+    @property
+    def raw_bytes(self) -> bytes | None:
+        import base64
+        return base64.b64decode(self.raw_bytes_base64) if self.raw_bytes_base64 else None
 
 
 class RagChunk(BaseModel):
@@ -95,6 +104,22 @@ class RagChunk(BaseModel):
     text: str
     locator: dict[str, JsonValue]
     citations: list[str]
+    evidence_locator: dict[str, JsonValue] = Field(default_factory=dict)
+
+    def to_evidence_locator(self):
+        from eoip.contracts.canonical import EvidenceLocator
+        return EvidenceLocator(
+            document_id=self.document_id,
+            source_system=self.source_id,
+            source_revision=str(self.evidence_locator.get("source_revision") or self.content_hash[:16]),
+            page_number=self.evidence_locator.get("page_number") or self.locator.get("page") or self.locator.get("page_number"),
+            slide_number=self.evidence_locator.get("slide_number") or self.locator.get("slide") or self.locator.get("slide_number"),
+            sheet_name=str(self.evidence_locator.get("sheet_name") or self.locator.get("sheet") or self.locator.get("sheet_name")) if (self.evidence_locator.get("sheet_name") or self.locator.get("sheet") or self.locator.get("sheet_name")) else None,
+            cell=str(self.evidence_locator.get("cell") or self.locator.get("cell")) if (self.evidence_locator.get("cell") or self.locator.get("cell")) else None,
+            paragraph_index=self.evidence_locator.get("paragraph_index") or self.locator.get("paragraph") or self.locator.get("block"),
+            char_start=self.start_char,
+            char_end=self.end_char,
+        )
 
 
 class FileIssue(BaseModel):

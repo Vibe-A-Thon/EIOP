@@ -17,6 +17,9 @@ from eoip.connectors.rest import RestConnector, parse_utc, utc_timestamp
 from eoip.connectors.sync import SyncBatch
 
 
+from eoip.contracts.source_event import PermissionMetadata, SourceEventV2, utc_now_iso
+
+
 class ConfluenceConnector(RestConnector):
     source_system = "confluence"
     mapper_version = "confluence-dc/1.2"
@@ -97,6 +100,104 @@ class ConfluenceConnector(RestConnector):
 
         return SyncBatch(events=events, next_checkpoint=next_checkpoint)
 
+    def make_event(
+        self,
+        record_kind: str,
+        source_record_id: str,
+        payload: dict,
+        source_version: str | int | None,
+        *,
+        operation: str = "UPSERT",
+        permissions: PermissionMetadata | None = None,
+    ) -> SourceEventV2:
+        import hashlib
+        payload_json = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        payload_hash = hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
+        event_id = hashlib.sha256(
+            f"{self.source_system}:{record_kind}:{source_record_id}:{payload_hash}:{operation}".encode()
+        ).hexdigest()
+        captured_at = utc_now_iso()
+
+        if permissions is None:
+            permissions = self._extract_permissions(record_kind, payload)
+
+        return SourceEventV2(
+            event_id=event_id,
+            source_system=self.source_system,
+            source_instance_id=self.instance_id,
+            source_record_id=source_record_id,
+            operation=operation,
+            source_version=str(source_version) if source_version is not None else payload_hash,
+            event_time=captured_at,
+            captured_at=captured_at,
+            content_hash=payload_hash,
+            permissions=permissions,
+            payload=payload if operation != "DELETE" else None,
+            metadata={
+                "mapper_version": self.mapper_version,
+                "record_kind": record_kind,
+                "source_instance_id": self.instance_id,
+                "acl_vector": list(permissions.principal_refs),
+            },
+        )
+
+    def _extract_permissions(self, record_kind: str, payload: dict) -> PermissionMetadata:
+        if record_kind == "space":
+            space_key = str(payload.get("key", "UNKNOWN"))
+            return PermissionMetadata(
+                visibility="INTERNAL",
+                principal_refs=[f"confluence:space:{space_key}"],
+                inherited_from=f"confluence:space:{space_key}",
+            )
+
+        space_key = str(self._nested(payload, "space.key") or payload.get("space_key") or "UNKNOWN")
+        restrictions = payload.get("restrictions") or {}
+        read_restrictions = restrictions.get("read", {}).get("restrictions", {})
+        user_restrictions = read_restrictions.get("user", {}).get("results", [])
+        group_restrictions = read_restrictions.get("group", {}).get("results", [])
+
+        if user_restrictions or group_restrictions:
+            principals = []
+            for u in user_restrictions:
+                uk = u.get("userKey") or u.get("username")
+                if uk:
+                    principals.append(f"confluence:user:{uk}")
+            for g in group_restrictions:
+                gn = g.get("name")
+                if gn:
+                    principals.append(f"confluence:group:{gn}")
+            return PermissionMetadata(
+                visibility="RESTRICTED",
+                principal_refs=principals,
+                inherited_from=None,
+            )
+
+        return PermissionMetadata(
+            visibility="INTERNAL",
+            principal_refs=[f"confluence:space:{space_key}"],
+            inherited_from=f"confluence:space:{space_key}",
+        )
+
+    def make_permission_event(
+        self,
+        record_kind: str,
+        content_id: str,
+        restrictions: dict[str, Any],
+        space_key: str = "GLOBAL",
+    ) -> SourceEventV2:
+        """Emit independent PERMISSION_UPDATE SourceEventV2 without content change (CRA-006.4)."""
+        payload = {"id": content_id, "space": {"key": space_key}, "restrictions": restrictions}
+        permissions = self._extract_permissions(record_kind, payload)
+        source_record_id = f"{self.instance_id}:{record_kind}:{content_id}"
+        return self.make_event(
+            record_kind=record_kind,
+            source_record_id=source_record_id,
+            payload=payload,
+            source_version=f"perm:{utc_now_iso()}",
+            operation="PERMISSION_UPDATE",
+            permissions=permissions,
+        )
+
     def map_event(self, event) -> dict[str, Any]:
         record = event.payload
         kind = (event.metadata or {}).get("record_kind")
@@ -133,6 +234,42 @@ class ConfluenceConnector(RestConnector):
                 "url": self._nested(record, "_links.webui"),
                 "source_metadata": extract_page_metadata(record),
                 "source_history": extract_page_history(record, self.base_url),
+            }
+        if kind == "blogpost":
+            space_key = self._nested(record, "space.key")
+            self._required_value(record, "id", "blogpost id")
+            self._required_value(record, "title", "blogpost title")
+            self._required_value({"space_key": space_key}, "space_key", "blogpost space key")
+            version = record.get("version")
+            body = self._nested(record, "body.storage.value")
+            ancestors = record.get("ancestors", [])
+            return {
+                "kind": "blogpost",
+                "content_id": str(record["id"]),
+                "title": record["title"],
+                "space_key": str(space_key),
+                "status": record.get("status"),
+                "version": version.get("number") if isinstance(version, dict) else None,
+                "updated_at": version.get("when") if isinstance(version, dict) else None,
+                "body": body,
+                "parent_ids": [str(item["id"]) for item in ancestors if isinstance(item, dict) and item.get("id")],
+                "url": self._nested(record, "_links.webui"),
+                "source_metadata": extract_page_metadata(record),
+                "source_history": extract_page_history(record, self.base_url),
+            }
+        if kind == "comment":
+            container_id = self._nested(record, "container.id")
+            self._required_value(record, "id", "comment id")
+            version = record.get("version")
+            body = self._nested(record, "body.storage.value")
+            return {
+                "kind": "comment",
+                "content_id": str(record["id"]),
+                "container_id": str(container_id) if container_id else None,
+                "version": version.get("number") if isinstance(version, dict) else None,
+                "updated_at": version.get("when") if isinstance(version, dict) else None,
+                "body": body,
+                "url": self._nested(record, "_links.webui"),
             }
         if kind == "attachment":
             space_key = self._nested(record, "space.key")

@@ -8,9 +8,10 @@ cognitive copilot, and AI/ML ops into a single FastAPI router.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
+from eoip.authz import User as AuthzUser
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -403,10 +404,11 @@ class GraphRepairSentinelRequest(BaseModel):
 
 
 class ExternalMCPConnectRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     server_name: str = Field(min_length=1)
-    transport: str = Field(default="http")
-    endpoint: str = Field(default="https://mcp.internal.enterprise/v1")
-    provided_tools: list[dict[str, Any]] | None = None
+    transport: Literal["http", "streamable-http", "stdio"] = Field(default="streamable-http")
+    endpoint: str | None = Field(default=None, min_length=1, max_length=2048)
 
 
 class ToolAttestExecutionRequest(BaseModel):
@@ -1799,30 +1801,54 @@ def build_platform_router() -> APIRouter:
 
     @router.post("/tools/mcp/connect-external", summary="Connect and discover tools from external MCP server",
                  tags=["External MCP"])
-    def connect_external_mcp(req: ExternalMCPConnectRequest) -> dict[str, Any]:
-        from eoip.tools_contract.mcp_bridge import get_external_mcp_client
-        return get_external_mcp_client().connect_server(
-            server_name=req.server_name,
-            transport=req.transport,
-            endpoint=req.endpoint,
-            provided_tools=req.provided_tools,
+    async def connect_external_mcp(req: ExternalMCPConnectRequest, request: Request) -> dict[str, Any]:
+        _require_mcp_operator(request)
+        from eoip.tools_contract.mcp_bridge import (
+            MCPBridgeError,
+            MCPHostNotAllowed,
+            get_external_mcp_client,
         )
 
-    @router.post("/tools/attest-execution", summary="Execute and cryptographically sign tool call attestation",
+        try:
+            return await get_external_mcp_client().connect_server(
+                server_name=req.server_name,
+                transport=req.transport,
+                endpoint=req.endpoint,
+            )
+        except MCPHostNotAllowed as exc:
+            raise HTTPException(403, str(exc)) from exc
+        except MCPBridgeError as exc:
+            raise HTTPException(503, str(exc)) from exc
+
+    @router.post("/tools/attest-execution", summary="Invoke an allowlisted external MCP read tool",
                  tags=["External MCP"])
-    def attest_tool_execution(req: ToolAttestExecutionRequest) -> dict[str, Any]:
-        from eoip.tools_contract.mcp_bridge import get_external_mcp_client
-        return get_external_mcp_client().invoke_external_tool(
-            tool_name=req.tool_name,
-            arguments=req.arguments,
-            caller_id=req.caller_id,
+    async def attest_tool_execution(req: ToolAttestExecutionRequest, request: Request) -> dict[str, Any]:
+        actor_id = _require_mcp_operator(request)
+        from eoip.tools_contract.mcp_bridge import (
+            MCPBridgeError,
+            MCPToolUnavailable,
+            get_external_mcp_client,
         )
+
+        try:
+            return await get_external_mcp_client().invoke_external_tool(
+                tool_name=req.tool_name,
+                arguments=req.arguments,
+                caller_id=actor_id,
+            )
+        except MCPToolUnavailable as exc:
+            raise HTTPException(403, str(exc)) from exc
+        except MCPBridgeError as exc:
+            raise HTTPException(503, str(exc)) from exc
 
     @router.post("/tools/verify-attestation", summary="Verify HMAC-SHA256 signature of tool attestation certificate",
                  tags=["External MCP"])
     def verify_tool_attestation(req: ToolVerifyAttestationRequest) -> dict[str, Any]:
         from eoip.tools_contract.mcp_bridge import get_tool_execution_attestor
-        return get_tool_execution_attestor().verify_certificate(req.certificate_id)
+        try:
+            return get_tool_execution_attestor().verify_certificate(req.certificate_id)
+        except RuntimeError as exc:
+            raise HTTPException(503, "Legacy HMAC integrity verification is not configured") from exc
 
     # ── Phase 1 Core Engines Endpoints (CORE-001 - CORE-006) ──────────
 
@@ -1999,5 +2025,27 @@ def build_platform_router() -> APIRouter:
         return rep.to_dict()
 
     return router
+
+
+def _require_mcp_operator(request: Request) -> str:
+    principal = getattr(request.state, "principal", None)
+    if principal is None:
+        raise HTTPException(401, "A valid authenticated principal is required")
+    extended_state = getattr(request.app.state, "extended_state", None)
+    if extended_state is None:
+        raise HTTPException(503, "Authorization policy service is unavailable")
+    decision = extended_state.policy_enforcer.enforce(
+        AuthzUser(
+            user_id=principal.id,
+            roles=list(principal.roles),
+            attributes={"tenant_id": principal.tenant_id},
+        ),
+        "agents:approve",
+        {"tenant_id": principal.tenant_id},
+    )
+    extended_state.decision_log.append(decision.to_audit_record())
+    if not decision.allow:
+        raise HTTPException(403, "MCP operator permission required")
+    return principal.username or principal.id
 
 

@@ -11,20 +11,26 @@ Enforces the 4 anti-stub probes:
 from __future__ import annotations
 
 import hashlib
+import importlib
 import math
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.optim as optim
+
+try:
+    torch = importlib.import_module("torch")
+    nn = importlib.import_module("torch.nn")
+except ImportError:
+    torch = None
+    nn = None
 
 from eoip.neural.numerics import (
     cosine_similarity,
     ensure_float32,
     seed_everything,
 )
+from eoip.neural.runtime import NeuralTier, require_tier
 
 
 @dataclass
@@ -61,9 +67,9 @@ class HashBaseline:
         # Hash stub has no learned parameters
         return []
 
-    def get_training_loss(self) -> tuple[float, float]:
-        # Hash stub has no loss function / constant 0
-        return 0.0, 0.0
+    def get_training_loss(self) -> None:
+        """The hash baseline has no training objective or observed loss."""
+        return None
 
 
 class AntiStubHarness:
@@ -80,8 +86,8 @@ class AntiStubHarness:
 
     def probe_parameter_change(
         self,
-        initial_params: list[np.ndarray | torch.Tensor],
-        final_params: list[np.ndarray | torch.Tensor],
+        initial_params: list[Any],
+        final_params: list[Any],
         threshold: float = 1e-4,
     ) -> tuple[bool, float]:
         """Probe 2: >= 90% of parameter tensors must move (norm diff > threshold)."""
@@ -92,8 +98,9 @@ class AntiStubHarness:
         total_tensors = len(initial_params)
 
         for p_init, p_final in zip(initial_params, final_params):
-            arr_init = p_init.detach().cpu().numpy() if isinstance(p_init, torch.Tensor) else np.asarray(p_init)
-            arr_final = p_final.detach().cpu().numpy() if isinstance(p_final, torch.Tensor) else np.asarray(p_final)
+            is_tensor = torch is not None and isinstance(p_init, torch.Tensor)
+            arr_init = p_init.detach().cpu().numpy() if is_tensor else np.asarray(p_init)
+            arr_final = p_final.detach().cpu().numpy() if is_tensor else np.asarray(p_final)
             diff_norm = float(np.linalg.norm(arr_final - arr_init))
             if diff_norm > threshold:
                 moved_count += 1
@@ -122,21 +129,36 @@ class AntiStubHarness:
         passed = (cos_sim >= 0.90)
         return passed, cos_sim
 
-    def evaluate_hash_stub(self, hash_model: HashBaseline) -> AntiStubReport:
+    def evaluate_hash_stub(self, hash_model: Any) -> AntiStubReport:
         """CRA-044.3: The probe harness must score the existing hash stub as failing all four probes."""
-        # 1. Loss descent: hash stub has no loss reduction (0.0 / 0.0 -> False)
-        loss_passed, loss_red = self.probe_loss_descent(0.0, 0.0)
+        loss_observations = hash_model.get_training_loss()
+        if loss_observations is None:
+            loss_passed, loss_red = False, None
+        else:
+            loss_passed, loss_red = self.probe_loss_descent(*loss_observations)
 
-        # 2. Parameter change: hash stub has 0 parameters (-> False)
         param_passed, param_pct = self.probe_parameter_change([], [])
 
-        # 3. Label permutation: hash stub embedding yields random accuracy on true and permuted (diff < 0.10)
-        true_score = 0.51
-        permuted_score = 0.50
+        # Compare held-out classifiers over actual identifier-hash vectors and permuted labels.
+        from sklearn.linear_model import LogisticRegression
+
+        sample_count = 4096
+        node_ids = [f"node-{index}" for index in range(sample_count)]
+        embeddings = np.stack([hash_model.embed_node(node_id) for node_id in node_ids])
+        labels = np.arange(sample_count, dtype=np.int32) % 2
+        permutation = np.random.default_rng(20261016).permutation(sample_count)
+        train_ids, test_ids = permutation[:3072], permutation[3072:]
+        permuted_labels = np.random.default_rng(20261017).permutation(labels)
+
+        def held_out_accuracy(targets: np.ndarray) -> float:
+            classifier = LogisticRegression(random_state=20261016, max_iter=200)
+            classifier.fit(embeddings[train_ids], targets[train_ids])
+            return float(np.mean(classifier.predict(embeddings[test_ids]) == targets[test_ids]))
+
+        true_score = held_out_accuracy(labels)
+        permuted_score = held_out_accuracy(permuted_labels)
         label_passed, label_diff = self.probe_label_permutation(true_score, permuted_score)
 
-        # 4. Structural coherence: symmetric nodes in C4 graph (node_0 and node_2)
-        # Hash stub hashes string IDs "node_0" and "node_2" independently
         emb_0 = hash_model.embed_node("node_0")
         emb_2 = hash_model.embed_node("node_2")
         struct_passed, struct_sim = self.probe_structural_coherence(emb_0, emb_2)
@@ -153,29 +175,43 @@ class AntiStubHarness:
             metrics={
                 "loss_reduction_pct": loss_red,
                 "parameters_moved_pct": param_pct,
+                "true_label_accuracy": true_score,
+                "permuted_label_accuracy": permuted_score,
                 "label_metric_delta": label_diff,
                 "automorphic_cosine_similarity": struct_sim,
             },
         )
 
 
-class SimpleLearnedGNN(nn.Module):
-    """Reference learned graph neural network encoder on CPU (CRA-044.6).
+_TORCH_MODEL_CLASS: Any = None
 
-    Implements a 2-layer message passing network:
-    H^(1) = ReLU(A_norm @ X @ W1)
-    H^(2) = A_norm @ H^(1) @ W2
-    """
 
-    def __init__(self, in_features: int, hidden_dim: int = 16, out_dim: int = 8) -> None:
-        super().__init__()
-        self.fc1 = nn.Linear(in_features, hidden_dim, bias=True)
-        self.fc2 = nn.Linear(hidden_dim, out_dim, bias=True)
-        self.relu = nn.ReLU()
+class SimpleLearnedGNN:
+    """Lazily construct the Torch-only reference encoder when N1 is installed."""
 
-    def forward(self, adj_norm: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
-        # Message passing layer 1
-        h1 = self.relu(torch.matmul(adj_norm, self.fc1(x)))
-        # Message passing layer 2
-        h2 = torch.matmul(adj_norm, self.fc2(h1))
-        return h2
+    def __new__(
+        cls,
+        in_features: int,
+        hidden_dim: int = 16,
+        out_dim: int = 8,
+    ) -> Any:
+        if torch is None or nn is None:
+            require_tier(NeuralTier.NEURAL)
+        global _TORCH_MODEL_CLASS
+        if _TORCH_MODEL_CLASS is None:
+            torch_module: Any = torch
+            nn_module: Any = nn
+
+            class TorchSimpleLearnedGNN(nn_module.Module):
+                def __init__(self) -> None:
+                    super().__init__()
+                    self.fc1 = nn_module.Linear(in_features, hidden_dim, bias=True)
+                    self.fc2 = nn_module.Linear(hidden_dim, out_dim, bias=True)
+                    self.relu = nn_module.ReLU()
+
+                def forward(self, adj_norm: Any, x: Any) -> Any:
+                    h1 = self.relu(torch_module.matmul(adj_norm, self.fc1(x)))
+                    return torch_module.matmul(adj_norm, self.fc2(h1))
+
+            _TORCH_MODEL_CLASS = TorchSimpleLearnedGNN
+        return _TORCH_MODEL_CLASS()

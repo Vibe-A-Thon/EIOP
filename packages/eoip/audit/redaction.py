@@ -23,7 +23,8 @@ _SECRET_PATTERN = re.compile(
 def redact_secrets(record: dict) -> dict:
     result = {}
     for key, value in record.items():
-        if key.lower() in _SECRET_KEYS:
+        k_lower = key.lower()
+        if k_lower in _SECRET_KEYS or any(s in k_lower for s in ("token", "secret", "password", "credential")):
             result[key] = "***REDACTED***"
         elif isinstance(value, str):
             result[key] = _SECRET_PATTERN.sub(r"\1***REDACTED***", value)

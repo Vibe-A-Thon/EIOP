@@ -101,9 +101,15 @@ def promote_fact(
     approver: str | None = None,
     confidence: float | None = None,
 ) -> dict[str, Any]:
-    """Promote a fact only when a rule, approval, or confidence signal exists."""
+    """Promote non-certified trust states from supplied signals.
+
+    CERTIFIED requires a separately verified certification record and cannot be
+    granted by this generic helper.
+    """
 
     target = normalize_trust_state(target_state)
+    if target == TrustState.CERTIFIED:
+        raise ValueError("CERTIFIED requires an independently verified certification record")
     if target in {TrustState.TRUSTED, TrustState.CERTIFIED, TrustState.REVIEWED} and not (
         rule_id or approver or (confidence is not None and confidence >= 0.8)
     ):

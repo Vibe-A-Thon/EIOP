@@ -7,6 +7,7 @@ from typing import Any
 from urllib.parse import quote, unquote
 
 from eoip.ontology.manifest import (
+    DOMAINS,
     EDGE_LABELS,
     ONTOLOGY_VERSION,
     PROPERTY_KEYS,
@@ -366,8 +367,18 @@ def import_jsonld(document: dict[str, Any], store, *, clear: bool = False) -> di
     }
 
 
+_XSD_TYPE_MAP = {
+    "TEXT": "xsd:string",
+    "INT": "xsd:integer",
+    "LONG": "xsd:integer",
+    "DOUBLE": "xsd:double",
+    "BOOLEAN": "xsd:boolean",
+    "DATE": "xsd:dateTime",
+}
+
+
 def export_shacl_shapes() -> dict[str, Any]:
-    """Export manifest-derived SHACL node and relationship shapes as JSON-LD."""
+    """Export manifest-derived SHACL node and relationship shapes as JSON-LD (CRA-020.8)."""
     graph: list[dict[str, Any]] = [
         {
             "@id": "urn:eoip:shacl",
@@ -376,47 +387,120 @@ def export_shacl_shapes() -> dict[str, Any]:
         }
     ]
     for label, (_domain, required, optional) in sorted(VERTEX_LABELS.items()):
+        prop_shapes: list[dict[str, Any]] = []
+        for name in required:
+            dt = _XSD_TYPE_MAP.get(PROPERTY_KEYS.get(name, "TEXT"), "xsd:string")
+            ps: dict[str, Any] = {
+                "sh:path": f"eoip:property/{quote(name, safe='')}",
+                "sh:minCount": 1,
+                "sh:maxCount": 1,
+                "sh:datatype": dt,
+                "sh:nodeKind": "sh:Literal",
+            }
+            if name == "canonical_id":
+                ps["sh:pattern"] = r"^[A-Za-z0-9_.:/-]+$"
+            elif name == "graph_domain":
+                ps["sh:in"] = list(DOMAINS)
+            prop_shapes.append(ps)
+
+        for name in optional:
+            dt = _XSD_TYPE_MAP.get(PROPERTY_KEYS.get(name, "TEXT"), "xsd:string")
+            ps = {
+                "sh:path": f"eoip:property/{quote(name, safe='')}",
+                "sh:minCount": 0,
+                "sh:maxCount": 1,
+                "sh:datatype": dt,
+                "sh:nodeKind": "sh:Literal",
+            }
+            if name == "graph_domain":
+                ps["sh:in"] = list(DOMAINS)
+            prop_shapes.append(ps)
+
         graph.append(
             {
                 "@id": f"eoip:shape/{label}",
                 "@type": "sh:NodeShape",
                 "sh:targetClass": f"eoip:entity/{label}",
-                "sh:property": [
-                    {
-                        "sh:path": f"eoip:property/{quote(name, safe='')}",
-                        "sh:minCount": 1,
-                    }
-                    for name in required
-                ],
+                "sh:nodeKind": "sh:IRI",
+                "sh:class": f"eoip:entity/{label}",
+                "sh:property": prop_shapes,
                 "optionalProperty": optional,
             }
         )
+
     for label, (out_labels, in_labels, properties) in sorted(EDGE_LABELS.items()):
+        # 1. Conformant subject endpoint shape
+        graph.append({
+            "@id": f"eoip:shape/relation/{label}/subject",
+            "@type": "sh:NodeShape",
+            "sh:targetSubjectsOf": f"eoip:relation/{quote(label, safe='')}",
+            "sh:nodeKind": "sh:IRI",
+            **({"sh:class": f"eoip:entity/{out_labels[0]}"} if len(out_labels) == 1 else {
+                "sh:or": [{"sh:class": f"eoip:entity/{ol}"} for ol in out_labels]
+            }),
+        })
+
+        # 2. Conformant object endpoint shape
+        graph.append({
+            "@id": f"eoip:shape/relation/{label}/object",
+            "@type": "sh:NodeShape",
+            "sh:targetObjectsOf": f"eoip:relation/{quote(label, safe='')}",
+            "sh:nodeKind": "sh:IRI",
+            **({"sh:class": f"eoip:entity/{in_labels[0]}"} if len(in_labels) == 1 else {
+                "sh:or": [{"sh:class": f"eoip:entity/{il}"} for il in in_labels]
+            }),
+        })
+
+        # 3. Relationship property shapes and backwards-compatible endpoint pairs
+        edge_prop_shapes = []
+        for name in properties:
+            dt = _XSD_TYPE_MAP.get(PROPERTY_KEYS.get(name, "TEXT"), "xsd:string")
+            edge_prop_shapes.append({
+                "sh:path": f"eoip:property/{quote(name, safe='')}",
+                "sh:minCount": 1,
+                "sh:maxCount": 1,
+                "sh:datatype": dt,
+                "sh:nodeKind": "sh:Literal",
+            })
+
         graph.append(
             {
                 "@id": f"eoip:shape/relation/{label}",
                 "@type": "eoip:RelationshipShape",
                 "sh:path": f"eoip:relation/{quote(label, safe='')}",
+                "sh:nodeKind": "sh:IRI",
                 "allowedEndpointPairs": [
                     [out_label, in_label] for out_label in out_labels for in_label in in_labels
                 ],
-                "sh:property": [
-                    {
-                        "sh:path": f"eoip:property/{quote(name, safe='')}",
-                        "sh:minCount": 1,
-                    }
-                    for name in properties
-                ],
+                "sh:property": edge_prop_shapes,
             }
         )
+
+    # 4. Extension profile metadata entry (CRA-020.8 F3)
+    graph.append({
+        "@id": "urn:eoip:profile:extension",
+        "@type": "owl:Ontology",
+        "rdfs:comment": "EOIP SHACL Extension Profile containing property-graph endpoint annotations (F3)",
+        "eoip:relationshipExtensions": [
+            {
+                "relation": f"eoip:relation/{quote(lbl, safe='')}",
+                "allowedEndpointPairs": [[ol, il] for ol in ols for il in ils],
+            }
+            for lbl, (ols, ils, _) in sorted(EDGE_LABELS.items())
+        ],
+    })
+
     return {
         "@context": {
             "eoip": EOIP_NAMESPACE,
             "owl": OWL_NAMESPACE,
             "sh": SHACL_NAMESPACE,
+            "xsd": XSD_NAMESPACE,
+            "rdfs": RDFS_NAMESPACE,
             "ontologyVersion": "eoip:ontologyVersion",
             "allowedEndpointPairs": {"@id": "eoip:allowedEndpointPairs", "@type": "@json"},
             "optionalProperty": {"@id": "eoip:optionalProperty", "@type": "@json"},
+            "relationshipExtensions": {"@id": "eoip:relationshipExtensions", "@type": "@json"},
         },
         "@graph": graph,
     }
@@ -605,19 +689,9 @@ class OWLReasoner:
         self._bootstrap_core_axioms()
 
     def _bootstrap_core_axioms(self) -> None:
-        # Example enterprise class hierarchy
-        self.add_subclass("Microservice", "Service")
-        self.add_subclass("DatabaseService", "Service")
-        self.add_subclass("RelationalDatabase", "DatabaseService")
-        self.add_subclass("GraphDatabase", "DatabaseService")
-        self.add_subclass("Engineer", "Person")
-        self.add_subclass("Manager", "Person")
-
-        # Disjointness
-        self.add_disjoint("Service", "Person")
-        self.add_disjoint("RelationalDatabase", "GraphDatabase")
-
-        # Property chains: PART_OF o PART_OF -> PART_OF (transitivity)
+        # Production axioms come from manifest and installed packages (CRA-019.9).
+        # Hardcoded domain axioms (Microservice, Engineer, etc.) moved to test fixture.
+        # General transitivity property chains:
         self.add_property_chain("PART_OF", "PART_OF", "PART_OF")
         self.add_property_chain("DEPENDS_ON", "DEPENDS_ON", "DEPENDS_ON")
 

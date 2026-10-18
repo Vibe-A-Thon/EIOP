@@ -1,0 +1,45 @@
+source: servicenow
+version: "1.0.0"
+id: cml_servicenow_1_0_0
+
+subject_map:
+  template: "urn:eoip:servicenow:record:{record_id}"
+  class: "https://enterprise-ontology.org/schema/eoip#ConfigurationItem"
+  graph: "urn:eoip:graph:operations"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields:
+    - "caller_id"
+    - "opened_by"
+    - "assigned_to"
+
+property_maps:
+  - path: "number"
+    predicate: "https://enterprise-ontology.org/schema/eoip#recordNumber"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "short_description"
+    predicate: "https://enterprise-ontology.org/schema/eoip#summary"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+  - path: "state"
+    predicate: "https://enterprise-ontology.org/schema/eoip#status"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+  - path: "sys_domain"
+    predicate: "https://enterprise-ontology.org/schema/eoip#domainScope"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+
+relation_maps:
+  - path: "cmdb_ci"
+    predicate: "https://enterprise-ontology.org/schema/eoip#affectsCI"
+    object_template: "urn:eoip:servicenow:ci:{cmdb_ci}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#ConfigurationItem"
+  - path: "parent"
+    predicate: "https://enterprise-ontology.org/schema/eoip#dependsOn"
+    object_template: "urn:eoip:servicenow:ci:{parent}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#ConfigurationItem"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:servicenow-connector"

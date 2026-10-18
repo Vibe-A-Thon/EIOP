@@ -1,0 +1,45 @@
+source: jira
+version: "1.0.0"
+id: cml_jira_1_0_0
+
+subject_map:
+  template: "urn:eoip:jira:issue:{key}"
+  class: "https://enterprise-ontology.org/schema/eoip#WorkItem"
+  graph: "urn:eoip:graph:work"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields:
+    - "reporter_email"
+    - "assignee_email"
+
+property_maps:
+  - path: "key"
+    predicate: "https://enterprise-ontology.org/schema/eoip#issueKey"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "summary"
+    predicate: "https://enterprise-ontology.org/schema/eoip#summary"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "status"
+    predicate: "https://enterprise-ontology.org/schema/eoip#status"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+  - path: "created"
+    predicate: "https://enterprise-ontology.org/schema/eoip#createdAt"
+    datatype: "http://www.w3.org/2001/XMLSchema#dateTime"
+
+relation_maps:
+  - path: "project_key"
+    predicate: "https://enterprise-ontology.org/schema/eoip#belongsToProject"
+    object_template: "urn:eoip:jira:project:{project_key}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Project"
+  - path: "blocked_issue_key"
+    predicate: "https://enterprise-ontology.org/schema/eoip#blocks"
+    object_template: "urn:eoip:jira:issue:{blocked_issue_key}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#WorkItem"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:jira-connector"

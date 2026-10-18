@@ -21,7 +21,7 @@ from eoip.connectors.base import (
 )
 from eoip.connectors.crawler import ControlledWebCrawler, CrawlScope
 from eoip.connectors.errors import ConnectorError
-from eoip.contracts.source_event import SourceEventV2, utc_now_iso
+from eoip.contracts.source_event import PermissionMetadata, SourceEventV2, utc_now_iso
 from eoip.contracts.source_registry import SourceCapabilities
 
 
@@ -501,6 +501,41 @@ class GitLabConnector:
             f"gitlab:{self.source_id}:{project}:{kind}:{record_id}:{content_hash}:{operation}".encode()
         ).hexdigest()
         event_time = self._record_time(payload)
+
+        # Determine visibility and ACL vector (CRA-007.6)
+        visibility_val = str(payload.get("visibility") or ("private" if payload.get("private", True) else "public")).lower()
+        if visibility_val == "public":
+            visibility = "PUBLIC"
+            acl_vector = ["role:everyone"]
+        elif visibility_val == "internal":
+            visibility = "INTERNAL"
+            acl_vector = [f"gitlab:group:{project.split('/')[0]}"]
+        else:
+            visibility = "RESTRICTED"
+            acl_vector = [f"gitlab:project:{project}"]
+
+        permissions = PermissionMetadata(
+            visibility=visibility,
+            principal_refs=acl_vector,
+            inherited_from=f"gitlab:project:{project}",
+        )
+
+        metadata = {
+            "mapper_version": self.mapper_version,
+            "record_kind": kind,
+            "project": project,
+            "record_id": record_id,
+            "acl_vector": acl_vector,
+            "visibility": visibility,
+        }
+        if kind == "commit":
+            metadata["immutable"] = True
+            metadata["commit_sha"] = record_id
+        elif kind == "branch":
+            metadata["moving_ref"] = True
+            metadata["branch_name"] = record_id
+            metadata["target_commit"] = (payload.get("commit") or {}).get("id")
+
         return SourceEventV2(
             event_id=event_id,
             source_system="gitlab",
@@ -518,13 +553,9 @@ class GitLabConnector:
             captured_at=utc_now_iso(),
             content_hash=content_hash,
             cursor=cursor or event_time,
+            permissions=permissions,
             payload=payload if operation != "DELETE" else None,
-            metadata={
-                "mapper_version": self.mapper_version,
-                "record_kind": kind,
-                "project": project,
-                "record_id": record_id,
-            },
+            metadata=metadata,
         )
 
     @staticmethod

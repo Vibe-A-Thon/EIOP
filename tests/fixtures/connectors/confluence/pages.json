@@ -1,0 +1,61 @@
+{
+  "results": [
+    {
+      "id": "1001",
+      "type": "page",
+      "status": "current",
+      "title": "Architecture Overview",
+      "space": {"key": "ARCH", "name": "Architecture"},
+      "version": {"number": 1, "when": "2026-03-01T10:00:00.000Z"},
+      "ancestors": [],
+      "body": {
+        "storage": {
+          "value": "<p>System design document.</p><ac:structured-macro ac:name=\"code\"><ac:parameter ac:name=\"language\">python</ac:parameter><ac:plain-text-body><![CDATA[def hello(): pass]]></ac:plain-text-body></ac:structured-macro>",
+          "representation": "storage"
+        }
+      },
+      "metadata": {
+        "labels": {"results": [{"name": "architecture"}, {"name": "design"}]}
+      },
+      "_links": {
+        "webui": "/spaces/ARCH/pages/1001/Architecture+Overview"
+      }
+    },
+    {
+      "id": "1002",
+      "type": "page",
+      "status": "current",
+      "title": "Confidential Security Architecture",
+      "space": {"key": "ARCH", "name": "Architecture"},
+      "version": {"number": 2, "when": "2026-03-02T12:00:00.000Z"},
+      "ancestors": [{"id": "1001", "title": "Architecture Overview"}],
+      "body": {
+        "storage": {
+          "value": "<p>Confidential security specifications.</p><ac:structured-macro ac:name=\"unsupported-plugin-macro\"><ac:parameter ac:name=\"data\">sensitive</ac:parameter></ac:structured-macro>",
+          "representation": "storage"
+        }
+      },
+      "metadata": {
+        "labels": {"results": [{"name": "confidential"}, {"name": "security"}]}
+      },
+      "restrictions": {
+        "read": {
+          "restrictions": {
+            "user": {
+              "results": [{"userKey": "sec_officer_01", "username": "secadmin"}]
+            },
+            "group": {
+              "results": [{"name": "security-team"}]
+            }
+          }
+        }
+      },
+      "_links": {
+        "webui": "/spaces/ARCH/pages/1002/Confidential+Security+Architecture"
+      }
+    }
+  ],
+  "start": 0,
+  "limit": 25,
+  "size": 2
+}

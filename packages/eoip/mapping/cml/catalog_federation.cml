@@ -1,0 +1,38 @@
+source: catalog_federation
+version: "1.0.0"
+id: cml_catalog_federation_1_0_0
+
+subject_map:
+  template: "urn:eoip:catalog:entity:{urn}"
+  class: "https://enterprise-ontology.org/schema/eoip#CatalogEntity"
+  graph: "urn:eoip:graph:catalog"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields:
+    - "owner"
+
+property_maps:
+  - path: "name"
+    predicate: "https://enterprise-ontology.org/schema/eoip#name"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "type"
+    predicate: "https://enterprise-ontology.org/schema/eoip#entityType"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "source_catalog"
+    predicate: "https://enterprise-ontology.org/schema/eoip#sourceCatalog"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+
+relation_maps:
+  - path: "source_catalog"
+    predicate: "https://enterprise-ontology.org/schema/eoip#federatedFrom"
+    object_template: "urn:eoip:catalog:provider:{source_catalog}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#CatalogProvider"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:catalog-federation-engine"

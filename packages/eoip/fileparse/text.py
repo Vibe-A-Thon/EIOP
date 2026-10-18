@@ -99,6 +99,42 @@ def parse_text(content: bytes, suffix: str, out: Extraction) -> None:
                 out.section("xml", element.text.strip(), element=element.tag, element_index=index)
             if element.tail and element.tail.strip():
                 out.section("xml", element.tail.strip(), element=element.tag, element_index=index, tail=True)
+    elif suffix == ".tsv":
+        try:
+            reader = csv.reader(io.StringIO(text, newline=""), delimiter="\t", strict=True)
+            columns = next(reader, [])
+            rows = []
+            for row in reader:
+                if len(rows) >= out.options.max_rows:
+                    raise ParseError("row_limit", "TSV exceeds max_rows")
+                if len(row) != len(columns):
+                    raise ParseError("invalid_csv", "TSV row width differs from the header")
+                rows.append(row)
+        except csv.Error as exc:
+            raise ParseError("invalid_csv", "TSV is malformed or exceeds the local CSV field-size limit") from exc
+        out.table("tsv", columns, rows)
+    elif suffix in {".yaml", ".yml"}:
+        yaml = dependency("yaml")
+        try:
+            data = yaml.safe_load(text)
+        except Exception as exc:
+            raise ParseError("invalid_format", f"YAML is malformed: {exc}") from exc
+        out.document.data = data
+        out.section("yaml", json.dumps(data, default=str, ensure_ascii=False, indent=2))
+    elif suffix == ".jsonld":
+        try:
+            data = json.loads(text)
+        except Exception as exc:
+            raise ParseError("invalid_format", f"JSON-LD is malformed: {exc}") from exc
+        out.document.data = data
+        out.document.metadata["jsonld_context"] = data.get("@context") if isinstance(data, dict) else None
+        out.section("jsonld", json.dumps(data, default=str, ensure_ascii=False, indent=2))
+    elif suffix in {".md", ".markdown"}:
+        lines = text.splitlines()
+        out.section("markdown", text, line_start=1, line_end=len(lines))
+    elif suffix in {".adoc", ".asciidoc"}:
+        lines = text.splitlines()
+        out.section("asciidoc", text, line_start=1, line_end=len(lines))
     elif suffix == ".rtf":
         if not text.lstrip().startswith("{\\rtf"):
             raise ParseError("invalid_format", "RTF header is missing")

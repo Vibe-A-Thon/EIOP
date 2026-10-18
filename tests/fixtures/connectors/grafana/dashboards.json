@@ -1,0 +1,60 @@
+{
+  "dashboards": [
+    {
+      "id": 1,
+      "uid": "graf-pay-01",
+      "title": "Payments Tier Microservice Health",
+      "url": "/d/graf-pay-01/payments-tier-microservice-health",
+      "folderTitle": "Payments Engineering",
+      "folderUid": "folder-payments",
+      "panels": [
+        {
+          "id": 10,
+          "title": "API Request Rate (svc:payments-api-service)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "sum(rate(http_requests_total{service=\"payments-api-service\"}[5m]))",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "title": "Database Connection Pool Usage",
+          "type": "gauge",
+          "targets": [
+            {
+              "expr": "db_pool_active{cmdb_ci=\"payments-db-cluster\"}",
+              "refId": "B"
+            }
+          ]
+        }
+      ],
+      "version": 4
+    }
+  ],
+  "datasources": [
+    {
+      "id": 5,
+      "uid": "ds-prometheus-prod",
+      "name": "Prometheus Production",
+      "type": "prometheus",
+      "url": "http://prometheus.prod.internal:9090",
+      "access": "proxy",
+      "basicAuth": true,
+      "basicAuthUser": "prom_reader",
+      "basicAuthPassword": "super_secret_auth_password_do_not_leak",
+      "password": "another_db_secret_password",
+      "secureJsonData": {
+        "httpHeaderValue1": "Bearer topSecretBearerToken12345"
+      },
+      "jsonData": {
+        "httpMethod": "POST",
+        "customAuthToken": "secret_embedded_token_98765",
+        "tlsSkipVerify": false
+      },
+      "version": 2
+    }
+  ]
+}

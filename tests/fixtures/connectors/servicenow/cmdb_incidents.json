@@ -1,0 +1,75 @@
+{
+  "configuration_items": [
+    {
+      "sys_id": "ci-101",
+      "name": "payments-api-service",
+      "sys_class_name": "cmdb_ci_service",
+      "sys_domain": "global",
+      "status": "operational"
+    },
+    {
+      "sys_id": "ci-102",
+      "name": "payments-db-cluster",
+      "sys_class_name": "cmdb_ci_database",
+      "sys_domain": "global",
+      "status": "operational"
+    },
+    {
+      "sys_id": "ci-103",
+      "name": "payments-auth-proxy",
+      "sys_class_name": "cmdb_ci_appl",
+      "sys_domain": "domain-secret-finance",
+      "status": "operational"
+    }
+  ],
+  "ci_relationships": [
+    {
+      "parent": "ci-101",
+      "child": "ci-102",
+      "type": "Depends on::Used by"
+    },
+    {
+      "parent": "ci-102",
+      "child": "ci-103",
+      "type": "Depends on::Used by"
+    },
+    {
+      "parent": "ci-103",
+      "child": "ci-101",
+      "type": "Depends on::Used by"
+    }
+  ],
+  "incidents": [
+    {
+      "sys_id": "inc-9001",
+      "number": "INC009001",
+      "short_description": "Payments API latency degradation",
+      "description": "API latency increased above 2500ms for payments service",
+      "state": "2",
+      "cmdb_ci": "ci-101",
+      "sys_domain": "global",
+      "sys_updated_on": "2026-10-18 10:00:00"
+    },
+    {
+      "sys_id": "inc-9002",
+      "number": "INC009002",
+      "short_description": "Finance confidential auth token failure",
+      "description": "Auth proxy failure in restricted finance partition",
+      "state": "1",
+      "cmdb_ci": "ci-103",
+      "sys_domain": "domain-secret-finance",
+      "sys_updated_on": "2026-10-18 10:15:00"
+    }
+  ],
+  "change_requests": [
+    {
+      "sys_id": "chg-5001",
+      "number": "CHG005001",
+      "short_description": "Deploy payments-api v2.4.1",
+      "state": "closed",
+      "cmdb_ci": "ci-101",
+      "sys_domain": "global",
+      "sys_updated_on": "2026-10-18 09:30:00"
+    }
+  ]
+}

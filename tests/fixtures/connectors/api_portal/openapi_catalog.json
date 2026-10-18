@@ -1,0 +1,20 @@
+{
+  "total": 1,
+  "services": [
+    {
+      "id": "svc-payments-v1",
+      "name": "Payments Service",
+      "version": "1.2.0",
+      "updated_at": "2026-03-01T00:00:00Z",
+      "swagger_url": "https://api-portal.example.org/specs/payments-v1.yaml"
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "ep-charge",
+      "path": "/v1/charges",
+      "method": "POST",
+      "version": "1.2.0"
+    }
+  ]
+}

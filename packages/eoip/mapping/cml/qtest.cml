@@ -1,0 +1,36 @@
+source: qtest
+version: "1.0.0"
+id: cml_qtest_1_0_0
+
+subject_map:
+  template: "urn:eoip:qtest:testcase:{pid}"
+  class: "https://enterprise-ontology.org/schema/eoip#TestCase"
+  graph: "urn:eoip:graph:test"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields: []
+
+property_maps:
+  - path: "pid"
+    predicate: "https://enterprise-ontology.org/schema/eoip#testCaseId"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "name"
+    predicate: "https://enterprise-ontology.org/schema/eoip#name"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "description"
+    predicate: "https://enterprise-ontology.org/schema/eoip#description"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+
+relation_maps:
+  - path: "verified_jira_key"
+    predicate: "https://enterprise-ontology.org/schema/eoip#tests"
+    object_template: "urn:eoip:jira:issue:{verified_jira_key}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#WorkItem"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:qtest-connector"

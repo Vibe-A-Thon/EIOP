@@ -1,0 +1,17 @@
+dialect: OSQL
+backend: ontology_engine
+supported_constructs:
+  - SELECT
+  - INSTANCE_OF
+  - SUBCLASS_OF
+  - PROPERTY
+  - RESTRICTION
+  - FILTER
+  - LIMIT
+unsupported_constructs:
+  - ARBITRARY_MUTATION
+  - UNBOUNDED_RECURSION
+capabilities:
+  parameterization: true
+  reasoning: true
+  max_depth: 3

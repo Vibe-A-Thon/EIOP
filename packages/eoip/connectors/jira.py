@@ -18,7 +18,7 @@ from eoip.connectors.base import (
     DiscoveryScope,
 )
 from eoip.connectors.errors import ConnectorError
-from eoip.contracts.source_event import SourceEventV2, utc_now_iso
+from eoip.contracts.source_event import PermissionMetadata, SourceEventV2, utc_now_iso
 from eoip.contracts.source_registry import SourceCapabilities
 
 DEFAULT_FIELDS = [
@@ -61,6 +61,7 @@ class JiraConnector:
         include_sprints: bool = False,
         page_size: int = 100,
         max_pages: int = 1000,
+        overlap_minutes: int = 5,
         client: httpx.Client | None = None,
     ) -> None:
         parsed = urlsplit(base_url)
@@ -89,6 +90,7 @@ class JiraConnector:
         self.include_sprints = include_sprints
         self.page_size = page_size
         self.max_pages = max_pages
+        self.overlap_minutes = max(0, overlap_minutes)
         self._headers = {"Accept": "application/json", "User-Agent": "EOIP-Jira-Connector/1.0"}
         auth = None
         if token:
@@ -286,8 +288,19 @@ class JiraConnector:
         quoted = ",".join(f'"{key}"' for key in self.projects)
         clauses = [f"project in ({quoted})"]
         if checkpoint:
-            clauses.append(f'updated >= "{checkpoint}"')
+            effective_checkpoint = checkpoint
+            try:
+                from datetime import datetime, timedelta
+                clean_cp = checkpoint.replace("Z", "+00:00")
+                cp_dt = datetime.fromisoformat(clean_cp)
+                cp_dt = cp_dt - timedelta(minutes=self.overlap_minutes)
+                effective_checkpoint = cp_dt.strftime("%Y-%m-%d %H:%M")
+            except Exception:
+                effective_checkpoint = checkpoint
+            clauses.append(f'updated >= "{effective_checkpoint}"')
         jql = " AND ".join(clauses) + " ORDER BY updated ASC, key ASC"
+        seen_issues: set[tuple[str, str]] = set()
+
         if self.search_mode == "enhanced":
             token = None
             for _page in range(self.max_pages):
@@ -306,7 +319,14 @@ class JiraConnector:
                 issues = document.get("issues") if isinstance(document, dict) else None
                 if not isinstance(issues, list) or any(not isinstance(item, dict) for item in issues):
                     raise ConnectorError("jira", "invalid_response", self.source_id)
-                yield from issues
+                for issue in issues:
+                    issue_id = str(issue.get("id") or issue.get("key") or "")
+                    updated = str((issue.get("fields") or {}).get("updated") or "")
+                    dedup_key = (issue_id, updated)
+                    if dedup_key in seen_issues:
+                        continue
+                    seen_issues.add(dedup_key)
+                    yield issue
                 token = document.get("nextPageToken")
                 if document.get("isLast") is True or not token:
                     return
@@ -326,7 +346,14 @@ class JiraConnector:
             issues = document.get("issues") if isinstance(document, dict) else None
             if not isinstance(issues, list) or any(not isinstance(item, dict) for item in issues):
                 raise ConnectorError("jira", "invalid_response", self.source_id)
-            yield from issues
+            for issue in issues:
+                issue_id = str(issue.get("id") or issue.get("key") or "")
+                updated = str((issue.get("fields") or {}).get("updated") or "")
+                dedup_key = (issue_id, updated)
+                if dedup_key in seen_issues:
+                    continue
+                seen_issues.add(dedup_key)
+                yield issue
             start_at += len(issues)
             if not issues or start_at >= int(document.get("total", start_at)):
                 return
@@ -482,23 +509,57 @@ class JiraConnector:
             f"jira:{self.source_id}:{project}:{kind}:{record_id}:{content_hash}:{operation}".encode()
         ).hexdigest()
         event_time = self._record_time(payload)
+
+        # Extract security level & ACL vector (CRA-005.1, CRA-005.6)
+        fields = payload.get("fields") if isinstance(payload.get("fields"), dict) else {}
+        security = fields.get("security")
+        acl_vector: list[str] = [f"jira:project:{project}"]
+        visibility = "INTERNAL"
+        if isinstance(security, dict) and security.get("id"):
+            sec_id = str(security["id"])
+            acl_vector.append(f"jira:security_level:{sec_id}")
+            visibility = "RESTRICTED"
+
+        # Attachment metadata for raw vault (CRA-005.6)
+        attachments = fields.get("attachment")
+        attachment_refs = []
+        if isinstance(attachments, list):
+            for att in attachments:
+                if isinstance(att, dict) and att.get("id"):
+                    attachment_refs.append({
+                        "id": str(att["id"]),
+                        "filename": att.get("filename"),
+                        "size": att.get("size"),
+                        "mimeType": att.get("mimeType"),
+                        "vault_uri": f"vault://jira/{self.source_id}/attachment/{att['id']}",
+                    })
+
+        permissions = PermissionMetadata(
+            visibility=visibility,
+            principal_refs=acl_vector,
+            inherited_from=f"jira:project:{project}",
+        )
+
         return SourceEventV2(
             event_id=event_id,
             source_system="jira",
             source_instance_id=self.source_id,
             source_record_id=f"{project}:{kind}:{record_id}",
             operation=operation,
-            source_version=str(payload.get("updated") or payload.get("id") or content_hash),
+            source_version=str((payload.get("fields") or {}).get("updated") or payload.get("updated") or payload.get("id") or content_hash),
             event_time=event_time,
             captured_at=utc_now_iso(),
             content_hash=content_hash,
             cursor=cursor or event_time,
+            permissions=permissions,
             payload=payload if operation != "DELETE" else None,
             metadata={
                 "mapper_version": self.mapper_version,
                 "record_kind": kind,
                 "project": project,
                 "record_id": record_id,
+                "acl_vector": acl_vector,
+                "attachments": attachment_refs,
             },
         )
 

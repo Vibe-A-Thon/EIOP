@@ -1,0 +1,42 @@
+{
+  "entities": [
+    {
+      "source_catalog": "openmetadata",
+      "entity_urn": "urn:openmetadata:dataset:prod_db.finance.customer_transactions",
+      "entity_type": "table",
+      "name": "customer_transactions",
+      "description": "Financial records for credit and debit customer transactions (from OpenMetadata)",
+      "owner": "finance-data-team@example.com",
+      "tags": ["pii", "finance", "openmetadata_verified"],
+      "custom_properties": {
+        "tier": "Tier-1",
+        "retention_days": "2555"
+      }
+    },
+    {
+      "source_catalog": "datahub",
+      "entity_urn": "urn:datahub:dataset:prod_db.finance.customer_transactions",
+      "entity_type": "table",
+      "name": "customer_transactions",
+      "description": "Authoritative DataHub description: Customer transaction records with PCI compliance",
+      "owner": "lead-cfo-analyst@example.com",
+      "tags": ["pci-dss", "sox-compliant", "datahub_curated"],
+      "custom_properties": {
+        "tier": "Tier-1",
+        "compliance_officer": "auditor_sec_ops"
+      }
+    },
+    {
+      "source_catalog": "apache_atlas",
+      "entity_urn": "urn:atlas:dataset:prod_db.finance.customer_transactions",
+      "entity_type": "table",
+      "name": "customer_transactions",
+      "description": "Legacy Atlas description",
+      "owner": null,
+      "tags": ["legacy_hive_import"],
+      "custom_properties": {
+        "atlas_guid": "a1b2c3d4-atlas-001"
+      }
+    }
+  ]
+}

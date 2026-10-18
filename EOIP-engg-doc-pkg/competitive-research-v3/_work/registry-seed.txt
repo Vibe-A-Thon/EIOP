@@ -1,0 +1,330 @@
+# cat|tier|slug|name|worker|tier reason
+C01|A|apache-hugegraph|Apache HugeGraph (Server, Hubble, Loader, Computer, Vermeer, HugeGraph-AI, HugeGraph-ML, storage adapters)|W01|Current reference backend; deep baseline study required by §6
+C01|A|neo4j|Neo4j (Community/Enterprise, GDS, Bloom, NeoDash, Aura, NVL)|W02|Required supported backend; market reference LPG
+C01|A|amazon-neptune|Amazon Neptune (Database, Neptune Analytics, RDF/SPARQL mode)|W03|Required supported backend
+C01|B|azure-cosmos-db-gremlin|Azure Cosmos DB for Apache Gremlin|W03|Gremlin-compatible managed option; cloud-only reference
+C01|A|memgraph|Memgraph (with MAGE)|W04|Candidate backend; in-memory Cypher competitor with GraphRAG positioning
+C01|A|falkordb|FalkorDB|W04|RedisGraph successor lineage; GraphRAG-oriented candidate backend
+C01|C|redisgraph|RedisGraph (historical)|W04|End-of-life; lessons only
+C01|A|tigergraph|TigerGraph|W05|Direct enterprise graph competitor (distributed analytics, GSQL)
+C01|A|janusgraph|JanusGraph|W05|Backend we already have an adapter for (adapters/janusgraph.py)
+C01|B|kuzu|Kùzu and successors/forks|W06|Embedded columnar/WCOJ architecture reference; archived 2025 per §5.1
+C01|B|arangodb|ArangoDB|W06|Multi-model reference; licence change relevance
+C01|B|nebulagraph|NebulaGraph|W06|Distributed LPG reference
+C01|B|arcadedb|ArcadeDB|W06|Apache-2.0 multi-model with Gremlin/Cypher/SQL; reuse candidate
+C01|B|apache-age|Apache AGE|W06|Graph on PostgreSQL; candidate backend for Postgres shops
+C01|B|typedb|TypeDB (TypeQL)|W06|Strong typing/inference reference for the mutation-gateway inversion
+C01|B|terminusdb|TerminusDB|W06|Git-like versioned graph reference (cross-ref C13)
+C01|B|dgraph|Dgraph|W07|Distributed GraphQL-native graph; ownership changes
+C01|B|graphscope|GraphScope / GraphScope Flex|W07|Modular graph computing stack (cross-ref C12)
+C01|B|oracle-graph|Oracle Graph (PGX / Property Graph, SQL/PGQ)|W07|Enterprise RDBMS graph incl. SQL/PGQ
+C01|B|spanner-graph|Google Spanner Graph|W07|GQL in a distributed RDBMS; cloud reference
+C01|B|puppygraph|PuppyGraph|W07|Graph query over SQL/lake without ETL; OBDA-like competitor
+C01|C|tugraph|TuGraph|W07|Ant Group LPG; narrow relevance outside CN market
+C01|C|ultipa|Ultipa|W07|Commercial HTAP graph; narrow relevance
+C01|C|surrealdb|SurrealDB|W07|Multi-model DB with graph relations; adjacent
+C01|C|sap-hana-graph|SAP HANA Graph|W07|ERP-embedded graph; adjacent
+C01|C|aerospike-graph|Aerospike Graph|W07|Gremlin over Aerospike; adjacent
+C01|C|duckpgq|DuckPGQ|W07|SQL/PGQ research extension for DuckDB
+C01|C|cozodb|CozoDB|W07|Embedded Datalog+graph+vector; activity to verify
+C01|C|helixdb|HelixDB|W07|Young graph-vector DB
+C01|C|galaxybase|Galaxybase|W07|Commercial CN graph DB
+C01|C|orientdb|OrientDB (historical)|W07|Historical lessons
+C02|A|stardog|Stardog (incl. Voicebox)|W08|Leading commercial knowledge-graph platform; reasoning/virtualisation competitor
+C02|A|ontotext-graphdb|Ontotext GraphDB|W08|Leading triplestore; we have a GraphDB adapter
+C02|A|apache-jena|Apache Jena (TDB2, Fuseki, rules, SHACL)|W08|OSS reference stack; we have a Fuseki adapter
+C02|B|allegrograph|AllegroGraph|W09|Commercial RDF + neuro-symbolic positioning
+C02|B|eclipse-rdf4j|Eclipse RDF4J|W09|Java RDF framework; reuse reference
+C02|B|openlink-virtuoso|OpenLink Virtuoso|W09|Long-lived RDF/SQL hybrid; scale reference
+C02|B|rdfox|RDFox|W09|Incremental Datalog materialisation reference for the tiered-reasoning inversion
+C02|B|oxigraph|Oxigraph|W09|Embeddable Rust SPARQL store; reuse candidate for optional RDF sidecar
+C02|B|qlever|QLever|W09|High-performance SPARQL engine for very large KGs
+C02|B|anzo|Altair Graph Studio / Anzo / AnzoGraph|W09|Enterprise knowledge graph; ownership change to verify
+C02|C|blazegraph|Blazegraph|W09|Maintenance and Wikidata migration history to verify
+C02|C|millenniumdb|MillenniumDB|W09|Research engine
+C02|C|corese|Corese|W09|Inria semantic engine
+C02|C|hdt|HDT (compressed RDF)|W09|Compressed RDF format
+C02|C|comunica|Comunica|W09|Federated SPARQL client framework
+C02|C|nemo|Nemo (Datalog reasoner)|W09|Rust Datalog reasoner
+C02|C|vlog|VLog|W09|Datalog reasoner; activity to verify
+C02|C|souffle|Soufflé|W09|Datalog compiler; reference for rule compilation
+C03|A|protege|Protégé and WebProtégé|W10|Leading ontology editor; seed inversion target
+C03|A|topbraid-edg|TopBraid EDG|W10|Leading enterprise ontology governance; seed inversion target
+C03|A|poolparty|PoolParty|W10|Leading taxonomy/thesaurus platform
+C03|A|metaphactory|metaphactory|W10|Knowledge-graph app/governance platform
+C03|B|vocbench|VocBench 3|W11|OSS collaborative SKOS/OWL editor
+C03|B|timbr|Timbr.ai|W11|Ontology-based semantic layer over SQL
+C03|B|linkml|LinkML|W11|Schema-as-code; ontology-as-code reference
+C03|B|robot-odk|ROBOT and Ontology Development Kit (ODK)|W11|Ontology CI/release tooling reference
+C03|B|pyshacl|pySHACL|W11|Python SHACL engine; reuse candidate (BL-29)
+C03|B|owl-reasoners|OWL reasoners: ELK, HermiT, Openllet/Pellet, Konclude, FaCT++|W11|Profile-bounded reasoning reference (BL-30)
+C03|B|wikibase|Wikibase and Semantic MediaWiki|W11|Collaborative KG authoring at scale
+C03|C|owl-api|OWL API|W11|Java ontology API
+C03|C|owlready2|Owlready2|W11|Python ontology library (licence to verify)
+C03|C|oops|OOPS! ontology pitfall scanner|W11|Linting reference
+C03|C|skos-tooling|SKOS tooling (Skosmos, skosify, qSKOS)|W11|Vocabulary publishing/QA
+C03|C|widoco|Widoco|W11|Ontology documentation generator
+C03|C|grafo|Gra.fo|W11|Visual collaborative modelling SaaS
+C03|C|ontotext-refine|Ontotext Refine|W11|RDF-ising OpenRefine fork
+C03|C|ontoportal|OntoPortal / BioPortal|W11|Ontology repository platform
+C03|C|ontouml|OntoUML ecosystem|W11|Conceptual modelling reference
+C03|C|kbpedia|KBpedia|W11|Upper KG reference
+C03|C|upper-ontologies|Upper/domain ontologies (BFO, gist, DOLCE, schema.org, FIBO, W3C ORG)|W11|Design references for the enterprise ontology
+C04|A|senzing|Senzing|W12|Leading embeddable entity-resolution engine
+C04|A|splink|Splink|W12|OSS probabilistic record linkage; REUSE candidate (BL-36)
+C04|A|zingg|Zingg|W12|OSS ML entity resolution; REUSE candidate
+C04|A|ontop|Ontop|W12|Leading OBDA/virtual KG engine; seed inversion target
+C04|B|dedupe|Dedupe|W13|Python active-learning dedupe
+C04|B|jedai|JedAI|W13|ER toolkit (blocking research)
+C04|B|ditto|Ditto (deep entity matching)|W13|Transformer matching reference
+C04|B|llm-entity-matching|LLM-assisted entity matching (approach)|W13|Approach record
+C04|B|rml-tools|RML ecosystem: RMLMapper, RML-Streamer, YARRRML, Morph-KGC, SDM-RDFizer|W13|Declarative mapping reference (BL-33)
+C04|B|openrefine|OpenRefine and Wikidata reconciliation|W13|Data cleaning/reconciliation reference
+C04|B|ontology-alignment|Ontology alignment: LogMap, AgreementMakerLight, OAEI systems|W13|Alignment reference
+C04|B|schema-inference|JSON/CSV schema inference and automatic ER detection tools|W13|Directly relevant to J12
+C04|C|sparql-generate|SPARQL-Generate|W13|Mapping language
+C04|C|karma|Karma|W13|Semi-automatic mapping (activity to verify)
+C04|C|magellan|py_entitymatching (Magellan)|W13|EM research toolkit
+C04|C|recordlinkage|recordlinkage (Python)|W13|Small linkage library
+C05|B|apache-tika|Apache Tika|W14|Document parsing reuse candidate
+C05|B|unstructured|Unstructured|W14|Document partitioning reuse candidate
+C05|B|docling|Docling|W14|Layout-aware parsing reuse candidate
+C05|C|marker|Marker|W14|PDF-to-markdown (licence to verify)
+C05|B|spacy|spaCy|W14|Local NLP pipeline reuse candidate
+C05|B|gliner|GLiNER|W14|Zero-shot local NER
+C05|C|rebel-relik|REBEL and ReLiK|W14|Relation extraction models
+C05|C|coref-event-table|Coreference, event and table extraction tooling|W14|Approach record
+C05|B|llm-schema-extraction|LLM schema-guided extraction (Neo4j LLM Graph Builder, LlamaIndex extractors)|W14|Competitor extraction pattern
+C05|B|presidio|Microsoft Presidio|W14|PII detection reuse candidate (BL-46)
+C05|B|secret-scanners|Secret scanners (gitleaks, TruffleHog, detect-secrets)|W14|Secret detection at ingest
+C06|B|atlan|Atlan|W15|Active metadata/context-graph competitor
+C06|B|collibra|Collibra|W15|Governance leader
+C06|B|data-world|data.world|W15|KG-based catalog (ownership to verify)
+C06|B|datahub|DataHub|W15|OSS metadata graph; reuse/benchmark reference
+C06|B|openmetadata|OpenMetadata|W15|OSS catalog
+C06|B|apache-atlas|Apache Atlas|W15|OSS lineage catalog (name collision resolved)
+C06|B|microsoft-purview|Microsoft Purview|W15|Enterprise governance
+C06|C|ovaledge|OvalEdge|W15|Catalog
+C06|C|actian-dip|Actian Data Intelligence Platform|W15|Naming after acquisitions to verify
+C06|C|egeria|Egeria|W15|OSS metadata exchange
+C06|C|amundsen|Amundsen|W15|OSS discovery (activity to verify)
+C06|C|unity-catalog|Unity Catalog (OSS)|W15|Lakehouse catalog
+C06|C|apache-polaris|Apache Polaris|W15|Iceberg catalog
+C06|C|alation|Alation|W15|Catalog
+C06|C|informatica-claire|Informatica (CLAIRE/IDMC)|W15|Catalog/MDM
+C06|C|google-dataplex|Google Dataplex|W15|Cloud catalog
+C07|A|palantir-foundry|Palantir Foundry Ontology and AIP|W16|Closest operational-ontology competitor
+C07|A|glean-enterprise|Glean (enterprise search and work graph)|W16|Closest enterprise-knowledge competitor
+C07|A|atlassian-rovo|Atlassian Rovo and Teamwork Graph|W16|Work-graph competitor over Jira/Confluence
+C07|A|microsoft-graph-copilot-fabric|Microsoft Graph, M365 Copilot connectors, Fabric graph/ontology|W17|Default buyer comparison
+C07|A|servicenow-kg|ServiceNow knowledge graph and CMDB|W17|ITSM knowledge graph competitor
+C07|A|onyx|Onyx (formerly Danswer)|W17|OSS self-hosted enterprise search competitor
+C07|B|sap-knowledge-graph|SAP knowledge graph|W18|Shipped-vs-announced to verify
+C07|B|salesforce-data-cloud|Salesforce Data Cloud|W18|Customer data graph
+C07|B|diffbot|Diffbot Knowledge Graph|W18|Web-scale KG
+C07|B|writer-kg|Writer Knowledge Graph|W18|Graph-based RAG product
+C07|B|azure-digital-twins|Azure Digital Twins and DTDL|W18|Twin graph and modelling language
+C07|C|eclipse-ditto|Eclipse Ditto|W18|Digital twin framework
+C07|B|process-mining|Object-centric process mining: Celonis, PM4Py, OCEL 2.0|W18|Event-graph patterns for org intelligence
+C07|C|ona|Organisational network analysis (pattern)|W18|Graph pattern record
+C08|A|microsoft-graphrag|Microsoft GraphRAG and LazyGraphRAG|W19|GraphRAG reference; seed inversion target
+C08|A|lightrag|LightRAG|W19|Dual-level graph retrieval
+C08|A|hipporag|HippoRAG and HippoRAG 2|W19|PPR-based memory retrieval
+C08|A|neo4j-graphrag|Neo4j GraphRAG package|W19|Vendor GraphRAG library
+C08|A|graphiti-zep|Zep and Graphiti|W20|Temporal agent memory graph; seed inversion target
+C08|A|cognee|Cognee|W20|Memory/KG pipeline competitor
+C08|A|mem0|Mem0|W20|Agent memory with graph mode
+C08|A|letta|Letta (MemGPT)|W20|Stateful agent memory
+C08|A|llamaindex-pgi|LlamaIndex PropertyGraphIndex|W21|Widely used GraphRAG framework
+C08|A|openspg-kag|OpenSPG / KAG|W21|Knowledge-augmented generation with schema
+C08|B|fast-graphrag|fast-graphrag|W21|PPR GraphRAG variant
+C08|B|whyhow|WhyHow.AI|W21|Schema-guided KG for RAG (status to verify)
+C08|B|raptor|RAPTOR|W21|Tree-summarisation retrieval
+C08|B|think-on-graph|Think-on-Graph|W21|LLM-guided graph exploration
+C08|B|ragflow|RAGFlow|W21|OSS RAG engine with graph mode
+C08|B|haystack|Haystack|W21|OSS RAG framework
+C08|B|text-to-query|Text-to-query systems (Text2Cypher, text-to-Gremlin, text-to-SPARQL)|W21|Directly relevant to J11
+C08|B|langchain-langgraph|LangChain and LangGraph|W21|Ubiquitous orchestration (cross-ref C09)
+C08|C|nano-graphrag|nano-graphrag|W35|Minimal GraphRAG
+C08|C|infranodus|InfraNodus|W35|Text network analysis SaaS
+C08|C|contextclue|ContextClue Graph Builder|W35|Vendor/scope to verify
+C08|C|harmony-mcp|Harmony MCP|W35|Existence/owner to verify
+C08|C|mempalace|MemPalace|W35|Existence/owner to verify
+C08|C|mythos|MythOS|W35|Existence/owner to verify; not Claude Mythos
+C08|C|claude-mem|claude-mem|W35|Personal/community project to verify
+C08|C|g-retriever|G-Retriever|W35|Research
+C08|C|pathrag|PathRAG|W35|Research
+C08|C|minirag|MiniRAG|W35|Research
+C08|C|structrag|StructRAG|W35|Research
+C08|C|r2r|R2R|W35|RAG system
+C08|C|kotaemon|Kotaemon|W35|RAG UI
+C08|C|txtai|txtai|W35|Embeddings DB/RAG
+C08|C|langmem|LangMem|W35|Memory library
+C08|C|a-mem|A-MEM|W35|Agentic memory research
+C09|A|mcp|Model Context Protocol (incl. graph-database MCP servers)|W22|Protocol we expose (apps/mcp)
+C09|B|a2a|Agent2Agent (A2A)|W22|Agent interop protocol
+C09|B|agent-frameworks|Agent frameworks: AutoGen/AG2, Microsoft Agent Framework/Semantic Kernel, CrewAI, OpenAI Agents SDK, Claude Agent SDK, Google ADK, PydanticAI|W22|Orchestration references
+C09|B|dspy|DSPy|W22|Programmatic prompt optimisation
+C09|A|ollama|Ollama|W22|Local model runtime already in compose
+C09|B|llama-cpp|llama.cpp|W22|CPU-first inference
+C09|B|vllm-sglang|vLLM and SGLang|W22|GPU serving references
+C09|B|hf-tei|Hugging Face Text Embeddings Inference|W22|Local embedding serving
+C09|B|onnx-runtime|ONNX Runtime|W22|CPU inference runtime
+C09|B|local-embeddings|Local embedding and reranker models (BGE, E5, GTE, Nomic, Jina, ColBERT-style)|W22|Replaces hashing embedder (BL-14)
+C09|B|guardrails|Guardrails: NeMo Guardrails, Llama Guard, prompt-injection defences|W22|Agent safety
+C10|A|qdrant|Qdrant|W23|Vector DB candidate (multi-vector-store requirement)
+C10|A|pgvector|pgvector|W23|Vector in PostgreSQL candidate
+C10|A|opensearch|OpenSearch (k-NN, full-text)|W23|Apache-2.0 hybrid search candidate
+C10|B|milvus|Milvus|W23|Distributed vector DB
+C10|B|weaviate|Weaviate|W23|Vector DB with hybrid search
+C10|B|lancedb|LanceDB|W23|Embedded vector DB
+C10|B|elasticsearch|Elasticsearch|W23|Search reference (licence to verify)
+C10|B|vespa|Vespa|W23|Hybrid ranking engine
+C10|C|chroma|Chroma|W23|Embedded vector store
+C10|C|tantivy-lucene|Tantivy and Lucene|W23|Full-text libraries
+C10|C|native-graph-vector|Native vector indexes inside graph engines|W23|Cross-ref engine dives
+C11|A|pyg|PyTorch Geometric|W24|N1 tier reuse (Graph-Neurons programme)
+C11|B|dgl|DGL|W24|GNN framework (activity to verify)
+C11|B|pykeen|PyKEEN|W24|KG embedding library
+C11|B|ultra|ULTRA (KG foundation model)|W24|Inductive link prediction
+C11|B|relbench|Relational deep learning (RelBench)|W24|Relational-DB learning benchmark
+C11|C|graphstorm|GraphStorm|W24|Large-scale GNN
+C11|C|ampligraph|AmpliGraph|W24|KGE library
+C11|C|dgl-ke|DGL-KE|W24|KGE (activity to verify)
+C11|C|pyg-temporal|PyTorch Geometric Temporal|W24|Temporal GNN
+C11|C|graphgym|GraphGym|W24|GNN design space
+C11|C|graph-transformers|Graph transformers (Graphormer, GraphGPS)|W24|Architecture references
+C11|C|tgn|Temporal GNNs (TGN and frameworks)|W24|Temporal link prediction
+C11|C|torchkge-libkge|TorchKGE and LibKGE|W24|KGE libraries
+C11|C|neuro-symbolic|Neuro-symbolic frameworks (Scallop, DeepProbLog, Logic Tensor Networks)|W24|Research references
+C12|A|tinkerpop|Apache TinkerPop / Gremlin|W25|Our primary backend query language
+C12|B|networkx|NetworkX|W33|Algorithm reference/reuse
+C12|B|igraph|igraph|W33|Fast algorithm library (GPL to verify)
+C12|B|rustworkx|Rustworkx|W33|Apache-2.0 fast algorithms
+C12|B|graphblas|GraphBLAS (SuiteSparse)|W33|Linear-algebra graph engine
+C12|B|raphtory|Raphtory|W33|Temporal graph analytics
+C12|C|graphx-graphframes|GraphX and GraphFrames (Spark)|W33|Distributed analytics
+C12|C|cugraph|RAPIDS cuGraph|W33|GPU analytics (CPU-only policy)
+C12|C|graphology|Graphology|W33|JS graph library in our UI
+C12|C|ligra-gap|Ligra and GAP benchmark suite|W33|Algorithmic references
+C13|B|openlineage-marquez|OpenLineage and Marquez|W25|Lineage standard + reference server
+C13|B|prov-o|W3C PROV / PROV-O|W25|Provenance model we emit (mapping/executor.py)
+C13|B|event-sourcing|Event sourcing, CQRS and bitemporal modelling (pattern)|W25|Living-graph mechanics reference
+C13|B|xtdb|XTDB|W25|Bitemporal database reference
+C13|B|datomic|Datomic|W25|Immutable fact store reference
+C13|B|dolt|Dolt|W25|Git-for-data reference
+C13|C|fluree|Fluree|W25|Ledger graph DB
+C13|C|lakefs|lakeFS|W25|Data versioning
+C13|C|table-time-travel|Apache Iceberg / Delta Lake time travel|W25|Snapshot semantics
+C13|C|spline|Spline|W25|Spark lineage
+C13|C|aeong|AeonG-style temporal graph research|W25|Research reference
+C14|B|debezium|Debezium|W26|CDC reference
+C14|B|kafka|Apache Kafka and Kafka Connect|W26|Event bus option (BL-60)
+C14|B|nats|NATS|W26|Lightweight bus option
+C14|B|airbyte|Airbyte|W26|Connector ecosystem (licence to verify)
+C14|B|temporal|Temporal (durable workflows)|W26|Durable workflow reference
+C14|C|redpanda|Redpanda and Redpanda Connect (Benthos)|W26|Kafka-compatible
+C14|C|flink|Apache Flink|W26|Stream processing
+C14|C|nifi|Apache NiFi|W26|Flow-based ingestion
+C14|C|seatunnel|Apache SeaTunnel|W26|Data integration
+C14|C|orchestrators|Dagster, Airflow, Prefect|W26|Batch orchestration
+C14|C|dlt-meltano|dlt, Meltano/Singer, Apache Hop|W26|ELT tooling
+C19|B|keycloak|Keycloak / OIDC / SAML|W34|Self-hosted IdP
+C19|B|opa|Open Policy Agent / Rego|W34|Policy-as-code
+C19|B|rebac|ReBAC engines: OpenFGA, SpiceDB, Permify|W34|Permission-aware retrieval (BL-18)
+C19|B|cedar-cerbos|Cedar and Cerbos|W34|Policy languages/engines
+C19|B|vault-openbao|HashiCorp Vault and OpenBao|W34|Secrets (licence to verify)
+C19|B|supply-chain|Supply chain: Sigstore/cosign, Syft, Grype, Trivy, SLSA, in-toto|W34|SBOM and signing
+C19|B|opentelemetry|OpenTelemetry, Prometheus, Grafana|W34|Observability stack
+C19|B|llm-threat-guidance|OWASP Top 10 for LLM Apps, agentic-AI guidance, MITRE ATLAS|W34|Threat model references
+C19|C|auth-aware-search|Authorization-aware search (pattern)|W34|Pattern record
+C15|A|sourcegraph|Sourcegraph / Cody|W27|Code intelligence leader
+C15|A|tree-sitter|Tree-sitter|W27|Parser reuse (BL-42)
+C15|A|scip-lsif|SCIP and LSIF|W27|Precise code-index formats
+C15|B|glean-meta|Glean (Meta code indexing)|W27|OSS code fact store (name collision resolved)
+C15|B|codeql|CodeQL|W27|Code-as-data query (licence to verify)
+C15|B|joern|Joern|W27|Code property graph
+C15|B|semgrep|Semgrep|W27|Pattern code analysis
+C15|B|greptile|Greptile|W27|Code-review AI over code graph
+C15|B|augment-context|Augment Context Engine|W27|Commercial code context
+C15|B|stack-graphs|GitHub stack-graphs|W27|Incremental name resolution
+C15|C|kythe|Kythe|W27|Cross-reference indexing
+C15|C|lsp|Language Server Protocol ecosystems|W27|Protocol
+C15|B|graphify|Graphify (repo to pin)|W28|Named code-graph tool
+C15|B|codegraph|CodeGraph (repo to pin)|W28|Named code-graph tool
+C15|C|code-review-graph|code-review-graph (repo to pin)|W28|Named tool
+C15|C|repomix|Repomix|W28|Repo packing for LLMs
+C15|C|grepai|grepai (repo to pin)|W28|Named tool
+C15|C|gitnexus|GitNexus (repo to pin)|W28|Named tool
+C15|B|openrewrite|OpenRewrite / Moderne|W28|Lossless semantic trees
+C15|B|cast-imaging|CAST Imaging|W28|Enterprise architecture code graph
+C15|B|backstage|Backstage, Port, Cortex (software catalogs)|W28|Service/ownership graph
+C15|B|dependency-track|Dependency-Track, SBOM graphs, deps.dev, OSV|W28|Dependency risk graph
+C15|C|srcml|srcML|W28|Code-as-XML
+C15|C|scitools-understand|SciTools Understand|W28|Code analysis
+C15|C|sonarqube|SonarQube|W28|Code quality
+C15|C|repo-maps|Aider repo map and IDE indexes (Cursor, Continue)|W28|Context packing patterns
+C16|B|cytoscape|Cytoscape and Cytoscape.js|W29|Used in our UI
+C16|B|sigma|Sigma.js|W29|Used in our UI (WebGL)
+C16|B|yfiles|yFiles|W29|Commercial diagramming SDK
+C16|B|keylines-regraph|KeyLines and ReGraph (Cambridge Intelligence)|W29|Commercial graph viz SDK
+C16|B|linkurious|Linkurious Enterprise and Ogma|W29|Investigation product
+C16|B|graphxr|Kineviz GraphXR|W29|Visual analytics
+C16|B|gephi|Gephi|W29|Seed inversion target
+C16|B|graphistry|Graphistry|W29|GPU visual analytics
+C16|C|graphviz|Graphviz|W29|Layout
+C16|C|constellation|Constellation|W29|Analysis app
+C16|C|yed|yEd|W29|Desktop editor
+C16|C|citespace-vosviewer|CiteSpace and VOSviewer|W29|Bibliometric viz
+C16|C|cosmograph|Cosmograph / cosmos.gl|W29|GPU force layout
+C16|C|d3|D3.js|W29|Viz toolkit
+C16|C|vis-network|vis-network|W29|Network viz
+C16|C|antv-g6|AntV G6|W29|Graph viz
+C16|C|neo4j-nvl|Neo4j NVL|W29|Vendor viz library
+C16|C|react-force-graph-reagraph|react-force-graph and Reagraph|W29|React graph viz
+C16|C|layout-engines|Layout engines: ELK/elkjs, Dagre, WebCola, ForceAtlas2|W29|Layouts
+C16|C|kumu-thebrain|Kumu and TheBrain|W29|Systems mapping
+C17|C|atlas-research|"Atlas" research-mapping product (identity to resolve)|W31|Ambiguous name
+C17|C|researchrabbit|ResearchRabbit|W31|Literature mapping
+C17|C|connected-papers|Connected Papers|W31|Literature mapping
+C17|B|openalex|OpenAlex|W31|Open scholarly graph (import source)
+C17|B|wikidata|Wikidata|W31|Open KG reference
+C17|C|semantic-scholar|Semantic Scholar|W31|Scholarly graph
+C17|C|litmaps-inciteful|Litmaps and Inciteful|W31|Citation mapping
+C17|B|scite|scite|W31|Supporting vs contrasting citations (contradiction tracking)
+C17|C|elicit-consensus|Elicit and Consensus|W31|AI research assistants
+C17|B|obsidian|Obsidian|W31|PKM; we export to Obsidian (exporters/obsidian_vault.py)
+C17|C|pkm-tools|Logseq, Tana, Roam Research, Heptabase|W31|PKM references
+C18|B|rdf|RDF 1.1/1.2, RDF-star, serialisations (Turtle, TriG, N-Triples, N-Quads, JSON-LD)|W30|Interchange
+C18|B|owl2|RDFS and OWL 2 profiles (EL, QL, RL, DL)|W30|Semantics
+C18|B|shacl|SHACL Core / SHACL-SPARQL / SHACL 1.2|W30|Validation (BL-29)
+C18|B|sparql|SPARQL 1.1/1.2|W30|Query
+C18|B|opencypher|Cypher / openCypher|W30|Query
+C18|B|gql|ISO/IEC 39075 GQL|W30|Query standard
+C18|B|sql-pgq|SQL/PGQ (ISO/IEC 9075-16)|W30|Query standard
+C18|B|pg-schema|PG-Schema and LPG schema proposals|W30|Schema
+C18|B|odrl-dpv|ODRL and DPV|W30|Usage/privacy policy vocabularies
+C18|C|skos-std|SKOS|W30|Vocabulary
+C18|C|dcat-schemaorg|DCAT and schema.org|W30|Catalog vocabularies
+C18|C|graphql|GraphQL|W30|API query (BL-58)
+C18|C|graph-formats|GraphAr, GraphML, GEXF|W30|Graph interchange
+C18|C|tabular-formats|CSV, Parquet, Apache Arrow|W30|Tabular interchange
+C18|C|api-specs|OpenAPI and AsyncAPI|W30|API description
+C18|C|ngsi-ld|NGSI-LD|W30|Context information API
+C18|C|geosparql-owltime|GeoSPARQL and OWL-Time|W30|Spatial/temporal vocabularies
+C18|C|cloudevents|CloudEvents|W30|Event envelope
+C18|C|verifiable-credentials|W3C Verifiable Credentials|W30|Signed provenance
+C20|B|ldbc|LDBC (SNB Interactive/BI, FinBench, Graphalytics, SPB)|W32|Graph benchmarks
+C20|B|graphrag-bench|GraphRAG-Bench|W32|GraphRAG evaluation
+C20|B|ragas|RAGAS|W32|RAG evaluation
+C20|B|beir|BEIR|W32|Retrieval benchmark
+C20|B|text2cypher-bench|Text2Cypher / CypherBench-style sets|W32|NL-to-query evaluation (J11)
+C20|C|memory-benchmarks|LoCoMo and LongMemEval|W32|Agent memory evaluation
+C20|C|rdf-benchmarks|LUBM, BSBM, WatDiv, gMark|W32|RDF benchmarks
+C20|C|ogb|Open Graph Benchmark|W32|Graph ML benchmark
+C20|C|multihop-qa|HotpotQA, 2WikiMultiHopQA, MuSiQue, MultiHop-RAG, CRAG, STaRK, KILT|W32|QA benchmarks
+C20|C|mteb|MTEB|W32|Embedding benchmark
+C20|C|rag-evaluators|ARES and TruLens|W32|RAG evaluators
+C20|C|code-benchmarks|SWE-bench, RepoBench, CrossCodeEval, CodeSearchNet|W32|Code benchmarks
+C20|C|oaei-er-datasets|OAEI and standard entity-resolution datasets|W32|Alignment/ER evaluation
+C20|C|shacl-test-suites|W3C SHACL, JSON-LD and OWL test suites|W32|Conformance suites (ADD)

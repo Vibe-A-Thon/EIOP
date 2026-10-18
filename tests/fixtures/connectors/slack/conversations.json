@@ -1,0 +1,48 @@
+{
+  "ok": true,
+  "channels": [
+    {
+      "id": "C01GENERAL",
+      "name": "general",
+      "is_channel": true,
+      "is_group": false,
+      "is_im": false,
+      "is_private": false,
+      "num_members": 42
+    },
+    {
+      "id": "C02SECRET",
+      "name": "exec-confidential",
+      "is_channel": false,
+      "is_group": true,
+      "is_im": false,
+      "is_private": true,
+      "num_members": 3
+    }
+  ],
+  "messages": [
+    {
+      "type": "message",
+      "user": "U01ALICE",
+      "text": "Hello <@U02BOB>, please check out <@U03CAROL> regarding Jira ticket PROJ-101.",
+      "ts": "1710000000.000100",
+      "reply_count": 1,
+      "thread_ts": "1710000000.000100",
+      "files": [
+        {
+          "id": "F01DIAGRAM",
+          "name": "network-plan.png",
+          "mimetype": "image/png",
+          "size": 204800
+        }
+      ]
+    },
+    {
+      "type": "message",
+      "user": "U02BOB",
+      "text": "Acknowledged, reviewing the diagram now.",
+      "ts": "1710000050.000200",
+      "thread_ts": "1710000000.000100"
+    }
+  ]
+}

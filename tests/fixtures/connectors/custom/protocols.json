@@ -1,0 +1,27 @@
+{
+  "rest_item": {
+    "id": "order-1001",
+    "customer": "cust-8822",
+    "amount": 99.50,
+    "status": "COMPLETED"
+  },
+  "graphql_item": {
+    "id": "gql-product-55",
+    "name": "Enterprise Cloud Node",
+    "sku": "SKU-CLOUD-0055",
+    "price": 1200.00
+  },
+  "soap_envelope": "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"><soap:Body><AccountInfo><id>ACC-9911</id><balance>54000.00</balance></AccountInfo></soap:Body></soap:Envelope>",
+  "database_row": {
+    "id": "row-776",
+    "table": "INVENTORY_ITEMS",
+    "quantity": 420
+  },
+  "kafka_event": {
+    "id": "evt-payment-processed-001",
+    "topic": "payments.events.v1",
+    "partition": 3,
+    "offset": 99120,
+    "timestamp": "2026-10-18T10:00:00Z"
+  }
+}

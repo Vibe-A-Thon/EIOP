@@ -18,7 +18,8 @@ def test_task_memory_http_persistence_expiry_and_trace_survival(live_replay):
     try:
         assert live.client.get(path, headers={"Authorization": ""}).status_code == 401
         recovered = live.get(path)
-        persisted = store.get(run_id, scope="agent:TraceImpact", owner="local-user")
+        owner = live.get(f"/api/v1/agents/runs/{run_id}")["trace"]["actor_id"]
+        persisted = store.get(run_id, scope="agent:TraceImpact", owner=owner)
         assert persisted.model_dump() == recovered
         assert recovered["ttl_seconds"] == 3
         assert recovered["content"]["status"] == response.json()["status"]
@@ -31,8 +32,8 @@ def test_task_memory_http_persistence_expiry_and_trace_survival(live_replay):
             time.sleep(0.2)
         else:
             raise AssertionError("Task memory remained readable beyond its TTL")
-        assert store.get(run_id, scope="agent:TraceImpact", owner="local-user") is None
+        assert store.get(run_id, scope="agent:TraceImpact", owner=owner) is None
         assert live.get(f"/api/v1/agents/runs/{run_id}")["trace"]["run_id"] == run_id
         assert live.store.get_vertex_by_canonical_id(f"urn:eoip:agent:run:{run_id}") is not None
     finally:
-        store.delete(run_id, scope="agent:TraceImpact", owner="local-user")
+        store.delete(run_id, scope="agent:TraceImpact", owner=owner)

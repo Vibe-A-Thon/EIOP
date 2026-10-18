@@ -1,0 +1,21 @@
+dialect: OPENCYPHER
+backend: graph_store
+supported_constructs:
+  - MATCH
+  - WHERE
+  - RETURN
+  - WITH
+  - ORDER_BY
+  - LIMIT
+  - SKIP
+  - COUNT
+  - BOUNDED_RELATIONSHIP
+unsupported_constructs:
+  - UNBOUNDED_RELATIONSHIP_PATH
+  - LOAD_CSV
+  - APOC_RUN
+  - CALL_DB
+capabilities:
+  parameterization: true
+  max_hops: 3
+  default_limit: 100

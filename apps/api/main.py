@@ -18,6 +18,7 @@ from eoip.agents.catalog import build_agent_registry
 from eoip.agents.memory import MAX_TTL_SECONDS, FileMemoryStore, MemoryStorageError
 from eoip.agents.runtime import AgentRuntime
 from eoip.audit.sink import AuditSink
+from eoip.authz import User as AuthzUser
 from eoip.authn import Principal
 from eoip.authn.oauth_sso import TokenValidator
 from eoip.config import load_agent_config, load_memory_policy
@@ -64,7 +65,12 @@ def _operation(path: str, body: bytes) -> str:
         or path == "/api/v1/admin/demo"
     ):
         return "ingestion"
-    if path == "/api/v1/admin/validation":
+    if path in {
+        "/api/v1/admin/validation",
+        "/ontology/validate/shacl",
+        "/api/v1/ontology/validate/shacl",
+        "/api/v1/semantic/validations",
+    }:
         return "validation"
     if path.startswith("/api/v1/agents/"):
         return "agent"
@@ -434,6 +440,8 @@ def create_app():
             "/health/ready",
             "/metrics",
             "/docs",
+            "/ontology/docs",
+            "/api/v1/ontology/docs",
             "/openapi.json",
             "/docs/oauth2-redirect",
         } and webhook_request is None:
@@ -653,6 +661,97 @@ def create_app():
     def ontology_validate(request: Request, limit: int = Query(default=5000, ge=1, le=10_000)):
         target_store = _scoped_store(request)
         return validate_shacl(target_store, limit=limit)
+
+    @app.get("/ontology/docs", response_class=Response)
+    @app.get("/api/v1/ontology/docs", response_class=Response)
+    def ontology_docs():
+        from eoip.ontology.doc_generator import WidocoOntologyDocGenerator
+        generator = WidocoOntologyDocGenerator()
+        html_doc = generator.generate_html()
+        return Response(content=html_doc, media_type="text/html; charset=utf-8")
+
+    @app.post("/ontology/validate/shacl")
+    @app.post("/api/v1/ontology/validate/shacl")
+    def shacl_validate_post(body: dict, request: Request):
+        from eoip.ontology.shacl_validator import (
+            SHACLValidator,
+            SHACLShape,
+            SHACLSeverity,
+            SHACLSetupError,
+            UNSUPPORTED_CONSTRAINT,
+        )
+        from eoip.graph.memory import MemoryGraphStore
+
+        if body.get("mock_validator_down") is True:
+            raise HTTPException(503, "Validator service is temporarily unavailable")
+
+        profile = body.get("profile", "shacl-core-2017")
+        validator = SHACLValidator(profile=profile)
+        shapes_data = body.get("shapes", [])
+        if isinstance(shapes_data, list):
+            for sd in shapes_data:
+                try:
+                    validator.register_shape(SHACLShape(
+                        shape_id=sd.get("shape_id", "CustomShape"),
+                        target_class=sd.get("target_class", ""),
+                        required_properties=sd.get("required_properties", []),
+                        property_types=sd.get("property_types", {}),
+                        min_counts=sd.get("min_counts", {}),
+                        max_counts=sd.get("max_counts", {}),
+                        allowed_values=sd.get("allowed_values", {}),
+                        patterns=sd.get("patterns", {}),
+                        unsupported_components=sd.get("unsupported_components", []),
+                        severity=SHACLSeverity(sd.get("severity", "VIOLATION")),
+                    ))
+                except SHACLSetupError as exc:
+                    raise HTTPException(422, f"Invalid shape setup: {exc}") from exc
+
+        target_store = _scoped_store(request)
+        if "data" in body and isinstance(body["data"], list):
+            test_store = MemoryGraphStore()
+            for v in body["data"]:
+                props = dict(v.get("properties", {}))
+                props["canonical_id"] = v.get("canonical_id") or props.get("canonical_id")
+                test_store.upsert_vertex(v.get("label", "Entity"), props)
+            report = validator.validate(test_store)
+        else:
+            report = validator.validate(target_store)
+
+        if report.status == UNSUPPORTED_CONSTRAINT:
+            return JSONResponse(
+                status_code=422,
+                content={"detail": "UNSUPPORTED_CONSTRAINT", "report": report.to_dict()},
+            )
+        if not report.conforms:
+            return JSONResponse(
+                status_code=422,
+                content={"detail": "SHACL_VIOLATION", "report": report.to_dict()},
+            )
+        return report.to_dict()
+
+    @app.post("/api/v1/semantic/validations", status_code=202)
+    def async_semantic_validation(payload: dict, request: Request):
+        idempotency_key = request.headers.get("Idempotency-Key") or request.headers.get("idempotency-key")
+        if not idempotency_key or not idempotency_key.strip():
+            raise HTTPException(400, "Idempotency-Key header is required")
+
+        job_id = f"val-{uuid4().hex[:16]}"
+        job_record = {
+            "job_id": job_id,
+            "idempotency_key": idempotency_key.strip(),
+            "kind": "SEMANTIC_VALIDATION",
+            "status": "PENDING",
+            "payload": payload,
+            "created_at": datetime.now().isoformat(),
+        }
+        jobs_dir = data_root() / "jobs"
+        jobs_dir.mkdir(parents=True, exist_ok=True)
+        (jobs_dir / f"{job_id}.json").write_text(json.dumps(job_record), encoding="utf-8")
+        return {
+            "job_id": job_id,
+            "status": "PENDING",
+            "idempotency_key": idempotency_key.strip(),
+        }
 
     _stats_cache: dict = {"expires_at": 0.0, "payload": None}
 
@@ -1294,6 +1393,9 @@ def create_app():
     def run_agent(agent_id: str, payload: AgentRunRequest, request: Request):
         if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{1,127}", agent_id):
             raise HTTPException(404, "Agent not found")
+        principal = getattr(request.state, "principal", None)
+        if principal is None:
+            raise HTTPException(401, "A valid authenticated principal is required")
         if (
             payload.memory_ttl_seconds is not None
             and payload.memory_ttl_seconds > agent_runtime.memory_store.policy.ttl_seconds
@@ -1305,7 +1407,7 @@ def create_app():
             goal=payload.goal,
             context_refs=payload.context_refs,
             budgets=payload.budgets,
-            actor_id="local-user",
+            actor_id=principal.id,
             correlation_id=request.state.correlation_id,
             dry_run=payload.dry_run,
             metadata={
@@ -1359,11 +1461,34 @@ def create_app():
             item.model_dump() for item in agent_runtime.proposal_store.list(status=status)
         ]}
 
+    def authorized_review_actor(request: Request) -> str:
+        principal = getattr(request.state, "principal", None)
+        if principal is None:
+            raise HTTPException(401, "A valid authenticated principal is required")
+        extended_state = getattr(request.app.state, "extended_state", None)
+        if extended_state is None:
+            raise HTTPException(503, "Authorization policy service is unavailable")
+        decision = extended_state.policy_enforcer.enforce(
+            AuthzUser(
+                user_id=principal.id,
+                roles=list(principal.roles),
+                attributes={"tenant_id": principal.tenant_id},
+            ),
+            "agents:approve",
+            {"tenant_id": principal.tenant_id},
+        )
+        extended_state.decision_log.append(decision.to_audit_record())
+        if not decision.allow:
+            raise HTTPException(403, "Proposal review permission required")
+        return principal.username or principal.id
+
     @app.post("/api/v1/agents/proposals/{proposal_id}/approve")
-    def approve_agent_proposal(proposal_id: str, payload: ProposalDecisionRequest):
+    def approve_agent_proposal(
+        proposal_id: str, payload: ProposalDecisionRequest, request: Request
+    ):
         try:
             return agent_runtime.proposal_store.decide(
-                proposal_id, actor_id=payload.actor_id, approve=True
+                proposal_id, actor_id=authorized_review_actor(request), approve=True
             ).model_dump()
         except KeyError as exc:
             raise HTTPException(404, "Proposal not found") from exc
@@ -1371,10 +1496,12 @@ def create_app():
             raise HTTPException(409, str(exc)) from exc
 
     @app.post("/api/v1/agents/proposals/{proposal_id}/reject")
-    def reject_agent_proposal(proposal_id: str, payload: ProposalDecisionRequest):
+    def reject_agent_proposal(
+        proposal_id: str, payload: ProposalDecisionRequest, request: Request
+    ):
         try:
             return agent_runtime.proposal_store.decide(
-                proposal_id, actor_id=payload.actor_id, approve=False
+                proposal_id, actor_id=authorized_review_actor(request), approve=False
             ).model_dump()
         except KeyError as exc:
             raise HTTPException(404, "Proposal not found") from exc
@@ -1416,13 +1543,17 @@ def create_app():
         return {"candidates": [item.to_dict() for item in store_q.list(status=status)]}
 
     @app.post("/api/v1/identity/candidates/{candidate_id}/decide")
-    def decide_identity_candidate(candidate_id: str, payload: ProposalDecisionRequest):
+    def decide_identity_candidate(
+        candidate_id: str, payload: ProposalDecisionRequest, request: Request
+    ):
         """Human review decision for an identity-merge candidate (GAP-ER-005/010)."""
         from eoip.identity.candidates import IdentityCandidateStore
 
         store_q = IdentityCandidateStore(data_root() / "state" / "identity-candidates.json")
         try:
-            candidate = store_q.decide(candidate_id, approve=True, reviewer=payload.actor_id)
+            candidate = store_q.decide(
+                candidate_id, approve=True, reviewer=authorized_review_actor(request)
+            )
         except KeyError as exc:
             raise HTTPException(404, "Candidate not found") from exc
         except ValueError as exc:
@@ -1430,12 +1561,16 @@ def create_app():
         return candidate.to_dict()
 
     @app.post("/api/v1/identity/candidates/{candidate_id}/reject")
-    def reject_identity_candidate(candidate_id: str, payload: ProposalDecisionRequest):
+    def reject_identity_candidate(
+        candidate_id: str, payload: ProposalDecisionRequest, request: Request
+    ):
         from eoip.identity.candidates import IdentityCandidateStore
 
         store_q = IdentityCandidateStore(data_root() / "state" / "identity-candidates.json")
         try:
-            candidate = store_q.decide(candidate_id, approve=False, reviewer=payload.actor_id)
+            candidate = store_q.decide(
+                candidate_id, approve=False, reviewer=authorized_review_actor(request)
+            )
         except KeyError as exc:
             raise HTTPException(404, "Candidate not found") from exc
         except ValueError as exc:

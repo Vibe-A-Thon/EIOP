@@ -9,6 +9,16 @@ from eoip.ai.boundary import (
     filter_asserted_only,
     validate_and_promote_proposal,
 )
+from eoip.ai.graphrag import (
+    ContextManifest,
+    EgressDLPFilter,
+    EgressPolicyViolationError,
+    GraphRAGPipeline,
+    GroundedAnswer,
+    ModelManifest,
+    ModelUnqualifiedError,
+    PromptInjectionFence,
+)
 
 __all__ = [
     "ConstraintViolationError",
@@ -18,4 +28,13 @@ __all__ = [
     "export_trig_quads",
     "filter_asserted_only",
     "validate_and_promote_proposal",
+    "ContextManifest",
+    "EgressDLPFilter",
+    "EgressPolicyViolationError",
+    "GraphRAGPipeline",
+    "GroundedAnswer",
+    "ModelManifest",
+    "ModelUnqualifiedError",
+    "PromptInjectionFence",
 ]
+

@@ -1,0 +1,80 @@
+{
+  "tables": [
+    {
+      "table_catalog": "PROD_DB",
+      "table_schema": "FINANCE",
+      "table_name": "CUSTOMER_TRANSACTIONS",
+      "table_type": "BASE TABLE",
+      "row_count": 1420500,
+      "columns": [
+        {
+          "column_name": "TRANSACTION_ID",
+          "data_type": "VARCHAR(64)",
+          "is_nullable": "NO",
+          "is_masked": false
+        },
+        {
+          "column_name": "ACCOUNT_NUMBER",
+          "data_type": "VARCHAR(32)",
+          "is_nullable": "NO",
+          "is_masked": true,
+          "masking_policy": "POLICY_MASK_ACCOUNT_NUM"
+        },
+        {
+          "column_name": "CUSTOMER_EMAIL",
+          "data_type": "VARCHAR(128)",
+          "is_nullable": "YES",
+          "is_masked": false
+        },
+        {
+          "column_name": "AMOUNT_USD",
+          "data_type": "NUMBER(12,2)",
+          "is_nullable": "NO",
+          "is_masked": false
+        }
+      ]
+    },
+    {
+      "table_catalog": "PROD_DB",
+      "table_schema": "ANALYTICS",
+      "table_name": "DAILY_REVENUE_SUMMARY",
+      "table_type": "VIEW",
+      "row_count": null,
+      "columns": [
+        {
+          "column_name": "REPORT_DATE",
+          "data_type": "DATE",
+          "is_nullable": "NO",
+          "is_masked": false
+        },
+        {
+          "column_name": "TOTAL_REVENUE",
+          "data_type": "NUMBER(14,2)",
+          "is_nullable": "NO",
+          "is_masked": false
+        }
+      ]
+    }
+  ],
+  "sample_rows": [
+    {
+      "TRANSACTION_ID": "TX-998811",
+      "ACCOUNT_NUMBER": "1234-5678-9012",
+      "CUSTOMER_EMAIL": "alice.williams@customer.example.com",
+      "AMOUNT_USD": 250.75
+    }
+  ],
+  "query_history": [
+    {
+      "query_id": "01b3c4d5-0001-2a3b-0000-00001234abcd",
+      "query_text": "INSERT INTO ANALYTICS.DAILY_REVENUE_SUMMARY SELECT date_trunc('day', created_at), sum(amount) FROM FINANCE.CUSTOMER_TRANSACTIONS WHERE token='ghp_SECRET_TOKEN_IN_QUERY_998877' GROUP BY 1",
+      "user_name": "ETL_SERVICE_USER",
+      "role_name": "TRANSFORM_ROLE",
+      "warehouse_name": "ETL_WH",
+      "execution_status": "SUCCESS",
+      "start_time": "2026-10-18 04:00:00",
+      "end_time": "2026-10-18 04:00:15",
+      "total_elapsed_time": 15000
+    }
+  ]
+}

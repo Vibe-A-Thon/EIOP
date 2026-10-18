@@ -38,6 +38,14 @@ from eoip.compliance.dashboard import (
     ReadinessTier,
     get_compliance_dashboard,
 )
+from eoip.compliance.sbom import (
+    EntitlementEnforcer,
+    SbomComponent,
+    SbomComplianceResult,
+    SbomManager,
+    compute_sha256,
+    verify_artifact_provenance,
+)
 
 __all__ = [
     "AIGovernanceStore",
@@ -49,6 +57,7 @@ __all__ = [
     "CompliancePack",
     "ContinuousComplianceDashboard",
     "Control",
+    "EntitlementEnforcer",
     "EvaluationRecord",
     "EvidenceArtifact",
     "EvidenceCollector",
@@ -64,9 +73,15 @@ __all__ = [
     "ReadinessTier",
     "RoleDefinition",
     "RolesRegistry",
+    "SbomComponent",
+    "SbomComplianceResult",
+    "SbomManager",
     "builtin_packs",
+    "compute_sha256",
     "evaluate_control",
     "get_compliance_dashboard",
     "pack_by_framework",
     "run_gap_analysis",
+    "verify_artifact_provenance",
 ]
+

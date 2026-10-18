@@ -1,0 +1,41 @@
+source: snowflake
+version: "1.0.0"
+id: cml_snowflake_1_0_0
+
+subject_map:
+  template: "urn:eoip:snowflake:table:{full_name}"
+  class: "https://enterprise-ontology.org/schema/eoip#Dataset"
+  graph: "urn:eoip:graph:catalog"
+
+governance:
+  classification: "INTERNAL"
+  pii_fields:
+    - "owner"
+
+property_maps:
+  - path: "table_name"
+    predicate: "https://enterprise-ontology.org/schema/eoip#tableName"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "database"
+    predicate: "https://enterprise-ontology.org/schema/eoip#databaseName"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "schema"
+    predicate: "https://enterprise-ontology.org/schema/eoip#schemaName"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+    required: true
+  - path: "warehouse"
+    predicate: "https://enterprise-ontology.org/schema/eoip#warehouse"
+    datatype: "http://www.w3.org/2001/XMLSchema#string"
+
+relation_maps:
+  - path: "database"
+    predicate: "https://enterprise-ontology.org/schema/eoip#containedInDatabase"
+    object_template: "urn:eoip:snowflake:db:{database}"
+    object_class: "https://enterprise-ontology.org/schema/eoip#Database"
+
+provenance:
+  emit: true
+  confidence: 1.0
+  agent: "urn:eoip:agent:snowflake-connector"

@@ -240,3 +240,37 @@ class GraphDBGraphStore(FusekiGraphStore):
         info = super().ping()
         info["backend"] = "graphdb"
         return info
+
+
+def create_rdf_store_from_config(config: dict[str, Any]) -> FusekiGraphStore | GraphDBGraphStore:
+    """Instantiate an RDF store backend by configuration alone (CRA-024.11, ONT-003).
+
+    Supports Apache Jena Fuseki reference and Ontotext GraphDB certified adapter.
+    """
+    backend = config.get("backend", "fuseki").lower()
+    endpoint = config.get("endpoint_url", "http://localhost:3030/ds" if backend == "fuseki" else "http://localhost:7200")
+    username = config.get("username", "")
+    password = config.get("password", "")
+    timeout = float(config.get("timeout", 30.0))
+
+    if backend == "graphdb":
+        repo = config.get("repository", "eoip")
+        return GraphDBGraphStore(
+            endpoint_url=endpoint,
+            repository=repo,
+            username=username,
+            password=password,
+            timeout=timeout,
+        )
+    elif backend == "fuseki":
+        ds = config.get("dataset", "ds")
+        return FusekiGraphStore(
+            endpoint_url=endpoint,
+            dataset=ds,
+            username=username,
+            password=password,
+            timeout=timeout,
+        )
+    else:
+        raise ValueError(f"Unsupported RDF backend: {backend}. Supported: 'fuseki', 'graphdb'")
+

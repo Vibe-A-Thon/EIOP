@@ -1,17 +1,17 @@
 """Tests for the anti-stub verification harness and four probes (CRA-044.3, CRA-044.A)."""
 
+import importlib
+from importlib import import_module
+from typing import Any
 import numpy as np
 import pytest
-import torch
-import torch.nn as nn
-import torch.optim as optim
 
 from eoip.neural.antistub import (
     AntiStubHarness,
-    HashBaseline,
     SimpleLearnedGNN,
 )
 from eoip.neural.numerics import cosine_similarity, seed_everything
+HashBaseline: Any = import_module("tests.neural.baselines").HashBaseline
 
 
 @pytest.fixture
@@ -29,10 +29,19 @@ def test_hash_stub_fails_all_four_anti_stub_probes(harness):
     assert report.parameter_change_passed is False, "Hash stub has no parameters; must fail parameter change!"
     assert report.label_permutation_passed is False, "Hash stub has no learning objective; must fail label permutation!"
     assert report.structural_coherence_passed is False, "Hash stub hashes string IDs independently; must fail structural coherence!"
+    assert report.metrics["loss_reduction_pct"] is None
+    assert report.metrics["parameters_moved_pct"] == 0.0
+    assert report.metrics["label_metric_delta"] < 0.10
+    assert report.metrics["automorphic_cosine_similarity"] < 0.90
 
 
 def test_real_gnn_passes_all_four_anti_stub_probes(harness):
     """CRA-044.3, CRA-044.A: A real learned model passes all four anti-stub probes on CPU."""
+    pytest.importorskip("torch")
+    torch = importlib.import_module("torch")
+    nn = importlib.import_module("torch.nn")
+    optim = importlib.import_module("torch.optim")
+
     seed_everything(42)
 
     # Automorphic 4-cycle graph (C4): 0-1-2-3-0
@@ -116,6 +125,10 @@ def test_real_gnn_passes_all_four_anti_stub_probes(harness):
 
 def test_cpu_only_execution_discipline():
     """CRA-043.11, CRA-044.13: Every model executes exclusively on CPU with device=cpu."""
+    pytest.importorskip("torch")
+    torch = importlib.import_module("torch")
+    from eoip.neural.antistub import SimpleLearnedGNN
+
     device = torch.device("cpu")
     model = SimpleLearnedGNN(in_features=2, hidden_dim=8, out_dim=2).to(device)
     x = torch.randn(4, 2, device=device)
