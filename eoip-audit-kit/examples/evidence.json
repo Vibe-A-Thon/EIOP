@@ -1,0 +1,265 @@
+{
+  "schema_version": "1.1.0",
+  "proof_policy_version": "1.1.0",
+  "project": "EOIP (kgf)",
+  "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd",
+  "generated_at": "2026-10-19T14:00:00Z",
+  "generated_by": {
+    "agent_id": "agent-remediation-07",
+    "role": "remediation-agent",
+    "prompt_hash": "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+  },
+  "baseline_commit": "1111222233334444555566667777888899990000",
+  "notes": "Sample evidence for proof policy 1.1.0 demo. Not a real EOIP audit.",
+  "evidence_items": [
+    {
+      "requirement_id": "REQ-FUNC-0001",
+      "evidence_id": "EVI-0001",
+      "proof_tier": "L2",
+      "type": "test_run",
+      "summary": "Unit tests for document ingest pipeline pass locally.",
+      "links": [
+        {
+          "kind": "test",
+          "url": "tests/unit/test_ingest.py",
+          "label": "test_ingest_happy_path"
+        }
+      ],
+      "repro_command": "pytest tests/unit/test_ingest.py::test_ingest_happy_path -q",
+      "expected_result": "1 passed",
+      "actual_result": "1 passed in 0.42s",
+      "confidence": 0.92,
+      "redaction_status": "clean",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd"
+    },
+    {
+      "requirement_id": "REQ-FUNC-0001",
+      "evidence_id": "EVI-0002",
+      "proof_tier": "L3",
+      "type": "ci_run",
+      "summary": "CI unit job green on audited commit.",
+      "links": [
+        {
+          "kind": "ci",
+          "url": "https://ci.example.local/jobs/unit/runs/45821",
+          "label": "unit job run 45821"
+        }
+      ],
+      "repro_command": "gh run view 45821 --repo org/eoip",
+      "expected_result": "conclusion=success",
+      "actual_result": "conclusion=success",
+      "confidence": 0.97,
+      "redaction_status": "clean",
+      "ci_job": "unit",
+      "ci_run_id": "45821",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd"
+    },
+    {
+      "requirement_id": "REQ-SEC-0002",
+      "evidence_id": "EVI-0003",
+      "proof_tier": "L1",
+      "type": "code_link",
+      "summary": "JWT middleware present at auth/middleware.py:40-88 (does not count toward closure under 1.1).",
+      "links": [
+        {
+          "kind": "code",
+          "url": "src/auth/middleware.py#L40-L88",
+          "label": "JWT verify"
+        }
+      ],
+      "repro_command": "rg -n \"verify_jwt\" src/auth/",
+      "expected_result": "Middleware referenced",
+      "actual_result": "Found at middleware.py:52",
+      "confidence": 0.7,
+      "redaction_status": "clean",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd",
+      "notes": "L1 ignored for Partial/Implemented under proof policy 1.1."
+    },
+    {
+      "requirement_id": "REQ-SEC-0002",
+      "evidence_id": "EVI-0004",
+      "proof_tier": "L2",
+      "type": "test_run",
+      "summary": "Authz negative tests for unauthorized roles.",
+      "links": [
+        {
+          "kind": "test",
+          "url": "tests/security/test_authz.py",
+          "label": "test_forbid_viewer_write"
+        }
+      ],
+      "repro_command": "pytest tests/security/test_authz.py -q",
+      "expected_result": "3 passed",
+      "actual_result": "3 passed",
+      "confidence": 0.9,
+      "redaction_status": "clean",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd"
+    },
+    {
+      "requirement_id": "REQ-SEC-0002",
+      "evidence_id": "EVI-0005",
+      "proof_tier": "L3",
+      "type": "ci_run",
+      "summary": "Security test job green on audited commit.",
+      "links": [
+        {
+          "kind": "ci",
+          "url": "https://ci.example.local/jobs/security/runs/45830",
+          "label": "security job"
+        }
+      ],
+      "repro_command": "gh run view 45830",
+      "expected_result": "success",
+      "actual_result": "success",
+      "confidence": 0.95,
+      "redaction_status": "clean",
+      "ci_job": "security",
+      "ci_run_id": "45830",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd"
+    },
+    {
+      "requirement_id": "REQ-SEC-0002",
+      "evidence_id": "EVI-0006",
+      "proof_tier": "L5",
+      "type": "independent_review",
+      "summary": "Independent security reviewer signed off Critical authz controls.",
+      "links": [
+        {
+          "kind": "doc",
+          "url": "audit-output/evidence/reviews/req-sec-0002-signoff.md",
+          "label": "dual-control signoff"
+        }
+      ],
+      "confidence": 0.99,
+      "redaction_status": "clean",
+      "reviewer_id": "rev-hash-7c9e",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd",
+      "notes": "reviewer_id distinct from agent-remediation-07."
+    },
+    {
+      "requirement_id": "REQ-AI-0003",
+      "evidence_id": "EVI-0007a",
+      "proof_tier": "L2",
+      "type": "test_run",
+      "summary": "Unit test asserts redaction middleware strips email before LLM client.",
+      "links": [
+        {
+          "kind": "test",
+          "url": "tests/ai/test_redact.py",
+          "label": "test_redact_email"
+        }
+      ],
+      "repro_command": "pytest tests/ai/test_redact.py -q",
+      "expected_result": "1 passed",
+      "actual_result": "1 passed",
+      "confidence": 0.9,
+      "redaction_status": "clean",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd"
+    },
+    {
+      "requirement_id": "REQ-AI-0003",
+      "evidence_id": "EVI-0007",
+      "proof_tier": "L4",
+      "type": "runtime_log",
+      "summary": "Non-prod redaction middleware logs show PII stripped before LLM call.",
+      "links": [
+        {
+          "kind": "artifact",
+          "url": "audit-output/evidence/runtime/redaction-sample.log",
+          "label": "sanitized redaction log"
+        }
+      ],
+      "repro_command": "kubectl logs deploy/eoip-api -n staging --tail=200 | rg REDACT",
+      "expected_result": "REDACT_OK entries without raw PII",
+      "actual_result": "12 REDACT_OK; 0 raw email/ssn matches",
+      "confidence": 0.88,
+      "redaction_status": "redacted",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd",
+      "notes": "L2+L4 path (no CI LLM e2e). Residual: prompt versioning gate."
+    },
+    {
+      "requirement_id": "REQ-COMP-0004",
+      "evidence_id": "EVI-0008",
+      "proof_tier": "L1",
+      "type": "negative_proof",
+      "summary": "Absence: no license scan job or SBOM artifact found in CI or repo.",
+      "links": [
+        {
+          "kind": "other",
+          "url": "audit-output/evidence/absence/license-scan.txt",
+          "label": "absence search log"
+        }
+      ],
+      "repro_command": "rg -n \"license|sbom|cyclonedx\" .github/ workflows/ || true",
+      "expected_result": "License/SBOM pipeline present",
+      "actual_result": "0 matches",
+      "confidence": 0.95,
+      "redaction_status": "clean",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd",
+      "notes": "Supports Not Implemented under 1.1."
+    },
+    {
+      "requirement_id": "REQ-NFR-0005",
+      "evidence_id": "EVI-0009",
+      "proof_tier": "L2",
+      "type": "test_run",
+      "summary": "Backup restore drill script exits 0 in staging dry-run.",
+      "links": [
+        {
+          "kind": "test",
+          "url": "scripts/dr/restore_drill.sh",
+          "label": "restore drill"
+        }
+      ],
+      "repro_command": "./scripts/dr/restore_drill.sh --env staging --dry-run",
+      "expected_result": "exit 0; RPO<=24h asserted",
+      "actual_result": "exit 0",
+      "confidence": 0.85,
+      "redaction_status": "clean",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd",
+      "notes": "L2 only \u2014 Partial when residual_gaps listed (missing RTO test + L3/L4)."
+    },
+    {
+      "requirement_id": "REQ-INFRA-0006",
+      "evidence_id": "EVI-0010",
+      "proof_tier": "L3",
+      "type": "ci_run",
+      "summary": "IaC plan job validates k8s manifests on PR.",
+      "links": [
+        {
+          "kind": "ci",
+          "url": "https://ci.example.local/jobs/iac-plan/runs/45701",
+          "label": "iac-plan"
+        }
+      ],
+      "repro_command": "gh run view 45701",
+      "expected_result": "success",
+      "actual_result": "success",
+      "confidence": 0.93,
+      "redaction_status": "clean",
+      "ci_job": "iac-plan",
+      "ci_run_id": "45701",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd"
+    },
+    {
+      "requirement_id": "REQ-INFRA-0006",
+      "evidence_id": "EVI-0011",
+      "proof_tier": "L2",
+      "type": "test_run",
+      "summary": "kubeconform validates manifests.",
+      "links": [
+        {
+          "kind": "test",
+          "url": "deploy/k8s/",
+          "label": "kubeconform"
+        }
+      ],
+      "repro_command": "kubeconform -strict deploy/k8s/",
+      "expected_result": "all valid",
+      "actual_result": "all valid",
+      "confidence": 0.9,
+      "redaction_status": "clean",
+      "git_commit": "a1b2c3d4e5f6789012345678901234567890abcd"
+    }
+  ]
+}

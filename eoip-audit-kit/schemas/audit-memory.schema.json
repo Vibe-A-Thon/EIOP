@@ -1,0 +1,371 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://eoip-audit-kit.local/schemas/audit-memory.schema.json",
+  "title": "EOIP Audit Memory",
+  "description": "Audit continuity. Proof policy 1.1.0. Never store secrets/PII. Delta audits read this first.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "proof_policy_version",
+    "repo",
+    "baseline_commit",
+    "last_audit_date",
+    "health_score",
+    "requirements",
+    "agents",
+    "import_history",
+    "changelog",
+    "open_locks"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.1.0"
+    },
+    "repo": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Repository URL or path identifier (no credentials in URL)."
+    },
+    "baseline_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{7,40}$",
+      "description": "Commit of the last completed audit baseline."
+    },
+    "last_audit_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "health_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "0\u2013100 composite health from implemented %, critical open, evidence coverage."
+    },
+    "project": {
+      "type": "string",
+      "description": "Optional project display name."
+    },
+    "environment_matrix": {
+      "type": "object",
+      "description": "Environments considered in the last audit.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "audited": {
+            "type": "boolean"
+          },
+          "commit": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/RequirementMemory"
+      },
+      "description": "Keyed by requirement_id (REQ-TYPE-NNNN)."
+    },
+    "agents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/AgentHandoff"
+      }
+    },
+    "import_history": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ImportRecord"
+      }
+    },
+    "changelog": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ChangelogEntry"
+      }
+    },
+    "open_locks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Lock"
+      },
+      "description": "Active claim/locks for multi-agent handoff. Stale locks (>24h) may be released by Audit Lead."
+    },
+    "proof_policy_version": {
+      "type": "string",
+      "const": "1.1.0",
+      "description": "Closure rules version aligned with evidence bundles."
+    },
+    "audited_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{7,40}$",
+      "description": "Commit currently under audit; evidence with other commits is stale."
+    }
+  },
+  "definitions": {
+    "RequirementMemory": {
+      "type": "object",
+      "required": [
+        "status",
+        "proof_tier_achieved",
+        "last_verified_commit"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "Implemented",
+            "Partially Implemented",
+            "Not Implemented",
+            "Ambiguous",
+            "Not Applicable"
+          ]
+        },
+        "proof_tier_achieved": {
+          "type": "string",
+          "enum": [
+            "L0",
+            "L1",
+            "L2",
+            "L3",
+            "L4",
+            "L5"
+          ],
+          "description": "Highest valid proof tier currently supporting the status."
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "Critical",
+            "High",
+            "Medium",
+            "Low"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Functional",
+            "Non-Functional",
+            "Security",
+            "Compliance",
+            "AI",
+            "Infra"
+          ]
+        },
+        "owners": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Hashed or opaque owner ids only."
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "residual_gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "last_verified_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{7,40}$"
+        },
+        "files_touched": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Paths last mapped to this requirement; used by delta audit."
+        },
+        "estimate_hours": {
+          "type": "number",
+          "minimum": 0
+        },
+        "notes": {
+          "type": "string"
+        },
+        "dual_control_signoff": {
+          "type": "object",
+          "description": "Required for Critical closures (L5 + independent reviewer).",
+          "properties": {
+            "primary_agent_id": {
+              "type": "string"
+            },
+            "reviewer_id": {
+              "type": "string"
+            },
+            "signed_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    },
+    "AgentHandoff": {
+      "type": "object",
+      "required": [
+        "agent_id",
+        "role",
+        "timestamp",
+        "action"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "prompt_hash": {
+          "type": "string"
+        },
+        "redacted_input_ref": {
+          "type": "string"
+        },
+        "output_ref": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "claimed",
+            "released",
+            "completed",
+            "handoff",
+            "delta_audit",
+            "full_audit"
+          ]
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Requirement ids or file globs claimed."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "ImportRecord": {
+      "type": "object",
+      "required": [
+        "file",
+        "imported_by",
+        "timestamp",
+        "git_commit"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "imported_by": {
+          "type": "string",
+          "description": "Opaque actor id."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "git_commit": {
+          "type": "string"
+        },
+        "items_applied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "conflicts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "ChangelogEntry": {
+      "type": "object",
+      "required": [
+        "timestamp",
+        "actor",
+        "change"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "change": {
+          "type": "string"
+        },
+        "requirement_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Lock": {
+      "type": "object",
+      "required": [
+        "lock_id",
+        "agent_id",
+        "scope",
+        "claimed_at",
+        "expires_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "lock_id": {
+          "type": "string"
+        },
+        "agent_id": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "claimed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

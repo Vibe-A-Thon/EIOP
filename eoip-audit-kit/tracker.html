@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EOIP (kgf) — Audit Executive Tracker</title>
+<style>
+:root {
+  --bg: #0f1419;
+  --surface: #1a2332;
+  --surface2: #243044;
+  --border: #2d3a4f;
+  --text: #e7ecf3;
+  --muted: #8b9bb4;
+  --accent: #3b82f6;
+  --accent2: #06b6d4;
+  --ok: #22c55e;
+  --warn: #f59e0b;
+  --bad: #ef4444;
+  --crit: #f43f5e;
+  --partial: #a78bfa;
+  --radius: 10px;
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
+a { color: var(--accent2); }
+header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, #152033 0%, #1a2332 60%);
+  display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;
+}
+header h1 { margin: 0; font-size: 1.25rem; font-weight: 650; letter-spacing: 0.02em; }
+header .sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+button, .btn {
+  appearance: none; border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text); padding: 0.45rem 0.85rem; border-radius: 8px; cursor: pointer;
+  font-size: 0.85rem; font-weight: 560;
+}
+button.primary { background: var(--accent); border-color: #2563eb; }
+button:hover { filter: brightness(1.08); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+main { padding: 1.25rem 1.5rem 3rem; max-width: 1400px; margin: 0 auto; }
+.kpis {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;
+}
+@media (max-width: 900px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .kpis { grid-template-columns: 1fr; } }
+.kpi {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+}
+.kpi .label { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.kpi .value { font-size: 1.75rem; font-weight: 700; margin-top: 0.35rem; }
+.kpi .hint { color: var(--muted); font-size: 0.75rem; margin-top: 0.2rem; }
+.toolbar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.85rem; align-items: center;
+}
+.toolbar input, .toolbar select {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.65rem; border-radius: 8px; font-size: 0.85rem;
+}
+.toolbar input[type="search"] { min-width: 200px; flex: 1; }
+.banner {
+  display: none; margin-bottom: 0.85rem; padding: 0.75rem 1rem; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface2); font-size: 0.9rem;
+}
+.banner.show { display: block; }
+.banner.err { border-color: var(--bad); background: #3f1d24; }
+.banner.ok { border-color: var(--ok); background: #163222; }
+.banner.warn { border-color: var(--warn); background: #3a2e12; }
+.table-wrap {
+  overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
+}
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 1100px; }
+th, td { padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+th {
+  position: sticky; top: 0; background: var(--surface2); cursor: pointer; user-select: none;
+  white-space: nowrap; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);
+}
+th:hover { color: var(--text); }
+tr:hover td { background: rgba(59, 130, 246, 0.06); }
+tr.expanded td { background: rgba(6, 182, 212, 0.06); }
+.badge {
+  display: inline-block; padding: 0.15rem 0.45rem; border-radius: 999px; font-size: 0.72rem; font-weight: 650;
+}
+.st-Implemented { background: #14532d; color: #86efac; }
+.st-Partial { background: #4c1d95; color: #ddd6fe; }
+.st-NotImplemented { background: #7f1d1d; color: #fecaca; }
+.st-Ambiguous { background: #78350f; color: #fde68a; }
+.st-NotApplicable { background: #334155; color: #cbd5e1; }
+.sev-Critical { color: var(--crit); font-weight: 700; }
+.sev-High { color: #fb923c; font-weight: 650; }
+.sev-Medium { color: #fbbf24; }
+.sev-Low { color: var(--muted); }
+.tier { font-family: var(--mono); font-size: 0.8rem; }
+.mono { font-family: var(--mono); font-size: 0.78rem; }
+.evidence-panel {
+  display: none; padding: 0.75rem 1rem 1rem; background: #121a26; border-bottom: 1px solid var(--border);
+}
+.evidence-panel.open { display: block; }
+.evidence-item {
+  border: 1px solid var(--border); border-radius: 8px; padding: 0.65rem 0.8rem; margin: 0.4rem 0;
+  background: var(--surface);
+}
+.evidence-item h4 { margin: 0 0 0.35rem; font-size: 0.85rem; }
+.meta { color: var(--muted); font-size: 0.75rem; }
+.footer-note { margin-top: 1rem; color: var(--muted); font-size: 0.8rem; }
+dialog {
+  border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text);
+  padding: 1.25rem; max-width: 480px; width: 90%;
+}
+dialog::backdrop { background: rgba(0,0,0,0.55); }
+dialog label { display: block; margin: 0.75rem 0 0.25rem; font-size: 0.85rem; color: var(--muted); }
+dialog textarea, dialog select {
+  width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  border-radius: 8px; padding: 0.5rem; font-family: var(--font);
+}
+dialog .row { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem; }
+.trail { margin-top: 1.25rem; }
+.trail details { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.85rem; }
+.trail pre { white-space: pre-wrap; font-size: 0.72rem; color: var(--muted); max-height: 180px; overflow: auto; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>EOIP (kgf) Audit Executive Tracker</h1>
+    <div class="sub">Offline dashboard · Proof policy <strong>1.1.0</strong> · Import evidence / audit-memory · Stale-commit detection</div>
+  </div>
+  <div class="actions">
+    <button class="primary" type="button" id="btnImportEvidence">Import Evidence JSON</button>
+    <button type="button" id="btnImportMemory">Import Audit Memory</button>
+    <button type="button" id="btnExportCsv">Export CSV</button>
+    <button type="button" id="btnReset">Reset to Seed</button>
+    <input type="file" id="fileEvidence" accept="application/json,.json" hidden />
+    <input type="file" id="fileMemory" accept="application/json,.json" hidden />
+  </div>
+</header>
+<main>
+  <div id="banner" class="banner" role="status"></div>
+  <section class="kpis" aria-label="Executive KPIs">
+    <div class="kpi"><div class="label">% Implemented</div><div class="value" id="kpiImpl">—</div><div class="hint" id="kpiImplHint"></div></div>
+    <div class="kpi"><div class="label">Critical Open</div><div class="value" id="kpiCrit">—</div><div class="hint">Critical &amp; not Implemented</div></div>
+    <div class="kpi"><div class="label">Evidence Coverage</div><div class="value" id="kpiTier">—</div><div class="hint">Avg max proof tier</div></div>
+    <div class="kpi"><div class="label">Requirements Total</div><div class="value" id="kpiTotal">—</div><div class="hint" id="kpiHealth"></div></div>
+  </section>
+  <div class="toolbar">
+    <input type="search" id="search" placeholder="Search ID, title, owner, comments…" aria-label="Search" />
+    <select id="filterStatus" aria-label="Filter status"><option value="">All statuses</option></select>
+    <select id="filterSeverity" aria-label="Filter severity"><option value="">All severities</option></select>
+    <select id="filterType" aria-label="Filter type"><option value="">All types</option></select>
+    <select id="filterTier" aria-label="Filter tier"><option value="">All tiers</option>
+      <option>L0</option><option>L1</option><option>L2</option><option>L3</option><option>L4</option><option>L5</option>
+    </select>
+  </div>
+  <div class="table-wrap">
+    <table id="reqTable" aria-label="Requirements">
+      <thead>
+        <tr>
+          <th data-key="id">ID</th>
+          <th data-key="title">Title</th>
+          <th data-key="type">Type</th>
+          <th data-key="severity">Severity</th>
+          <th data-key="status">Status</th>
+          <th data-key="proof_tier">Proof Tier</th>
+          <th data-key="owner">Owner</th>
+          <th data-key="estimate">Estimate</th>
+          <th data-key="ac">Acceptance Criteria</th>
+          <th data-key="ev_count">Evidence</th>
+          <th data-key="links">Links</th>
+          <th data-key="comments">Comments</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <p class="footer-note">
+    <strong>Proof policy 1.1.0:</strong> L1 never closes Partial/Implemented.
+    Partial needs ≥ L2 + explicit residual_gaps. Implemented needs L2 + (L3 on same commit OR L4).
+    Critical Implemented needs L3 + L5 (reviewer ≠ producer). Stale evidence (commit ≠ audited) is flagged and ignored.
+    Manual overrides require justification. Seed data is fictional.
+  </p>
+  <section class="trail">
+    <details>
+      <summary>Import / override audit trail (localStorage)</summary>
+      <pre id="trailPre">No imports yet.</pre>
+    </details>
+  </section>
+</main>
+
+<dialog id="overrideDialog">
+  <form method="dialog" id="overrideForm">
+    <h3 style="margin:0">Manual status override</h3>
+    <p class="meta" id="overrideReq"></p>
+    <label for="overrideStatus">New status</label>
+    <select id="overrideStatus" required>
+      <option>Implemented</option>
+      <option>Partially Implemented</option>
+      <option>Not Implemented</option>
+      <option>Ambiguous</option>
+      <option>Not Applicable</option>
+    </select>
+    <label for="overrideWhy">Justification (required)</label>
+    <textarea id="overrideWhy" rows="4" required placeholder="Why override automatic proof rules?"></textarea>
+    <div class="row">
+      <button type="submit" value="cancel">Cancel</button>
+      <button class="primary" type="submit" value="ok">Save override</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function () {
+  "use strict";
+
+  const STORAGE_KEY = "eoip-audit-tracker-v1";
+  const TIER_RANK = { L0: 0, L1: 1, L2: 2, L3: 3, L4: 4, L5: 5 };
+
+  const PROOF_POLICY_VERSION = "1.1.0";
+  const SEED = [
+    {
+      id: "REQ-FUNC-0001", title: "Document ingest pipeline", type: "Functional", severity: "High",
+      status: "Not Implemented", proof_tier: "L0", owner: "owner-hash-a11", estimate: 16,
+      ac: "Ingest PDF/DOCX; emit normalized JSON; reject malware types",
+      links: { code: "src/ingest/", test: "", ci: "" },
+      comments: "Seed: awaiting L2+(L3|L4).",
+      evidence: [], residual_gaps: ["Missing tests", "No CI mapping"], manual_override: null, stale: false
+    },
+    {
+      id: "REQ-SEC-0002", title: "Role-based authorization on write APIs", type: "Security", severity: "Critical",
+      status: "Not Implemented", proof_tier: "L0", owner: "owner-hash-b22", estimate: 24,
+      ac: "Viewer cannot write; Admin can; 403 on deny; audit log entry",
+      links: { code: "src/auth/middleware.py", test: "", ci: "" },
+      comments: "Critical — L3+L5 dual-control required.",
+      evidence: [], residual_gaps: ["No authz tests", "No independent review"], manual_override: null, stale: false
+    },
+    {
+      id: "REQ-AI-0003", title: "LLM egress redaction before model calls", type: "AI", severity: "High",
+      status: "Not Implemented", proof_tier: "L0", owner: "owner-hash-c33", estimate: 20,
+      ac: "PII stripped; redaction log; block call if redact fails",
+      links: { code: "src/redact/", test: "", ci: "" },
+      comments: "Will demo L2+L4 Implemented path on evidence import.",
+      evidence: [], residual_gaps: ["Prompt versioning CI gate missing", "Human-in-the-loop policy not signed"], manual_override: null, stale: false
+    },
+    {
+      id: "REQ-COMP-0004", title: "SBOM and license CI gate", type: "Compliance", severity: "Medium",
+      status: "Not Implemented", proof_tier: "L0", owner: "owner-hash-d44", estimate: 12,
+      ac: "CycloneDX SBOM on release; fail on forbidden licenses / critical CVEs",
+      links: { code: "", test: "", ci: "" },
+      comments: "Expect negative_proof → NI.",
+      evidence: [], residual_gaps: ["No SBOM", "No license job"], manual_override: null, stale: false
+    },
+    {
+      id: "REQ-NFR-0005", title: "Backup and DR restore drill", type: "Non-Functional", severity: "High",
+      status: "Not Implemented", proof_tier: "L0", owner: "owner-hash-e55", estimate: 18,
+      ac: "RPO ≤ 24h; RTO ≤ 4h; quarterly restore drill logged",
+      links: { code: "scripts/dr/", test: "", ci: "" },
+      comments: "L2 + residual_gaps → Partial after import.",
+      evidence: [], residual_gaps: ["RTO drill not evidenced", "No L3/L4 on audited commit"], manual_override: null, stale: false
+    },
+    {
+      id: "REQ-INFRA-0006", title: "Kubernetes manifest validation in CI", type: "Infra", severity: "Medium",
+      status: "Not Implemented", proof_tier: "L0", owner: "owner-hash-f66", estimate: 8,
+      ac: "kubeconform -strict on all deploy/k8s manifests in PR CI",
+      links: { code: "deploy/k8s/", test: "", ci: "" },
+      comments: "",
+      evidence: [], residual_gaps: ["Validation unknown"], manual_override: null, stale: false
+    },
+    {
+      id: "REQ-FUNC-0007", title: "UI keyboard navigation for queue board", type: "Functional", severity: "Low",
+      status: "Implemented", proof_tier: "L3", owner: "owner-hash-a11", estimate: 6,
+      ac: "All primary actions reachable by keyboard; focus visible",
+      links: { code: "src/ui/", test: "tests/a11y/", ci: "a11y#44001" },
+      comments: "Baseline closed L2+L3 under prior audit; re-verify on delta.",
+      evidence: [{
+        evidence_id: "EVI-BASE-0099", proof_tier: "L3", type: "ci_run",
+        summary: "Baseline a11y CI green", confidence: 0.94, redaction_status: "clean",
+        git_commit: "1111222233334444555566667777888899990000",
+        links: [{ kind: "ci", url: "ci://a11y/44001", label: "a11y" }]
+      }, {
+        evidence_id: "EVI-BASE-0098", proof_tier: "L2", type: "test_run",
+        summary: "axe keyboard tests", confidence: 0.9, redaction_status: "clean",
+        git_commit: "1111222233334444555566667777888899990000",
+        links: [{ kind: "test", url: "tests/a11y/keyboard.test.js", label: "keyboard" }]
+      }],
+      residual_gaps: [], manual_override: null, stale: false
+    },
+    {
+      id: "REQ-SEC-0008", title: "Secrets not committed; rotation documented", type: "Security", severity: "Critical",
+      status: "Not Implemented", proof_tier: "L0", owner: "owner-hash-b22", estimate: 10,
+      ac: "gitleaks clean; vault refs only; rotation runbook + last rotation date",
+      links: { code: "", test: "", ci: "" },
+      comments: "Seed open Critical.",
+      evidence: [], residual_gaps: ["No rotation evidence"], manual_override: null, stale: false
+    }
+  ];
+
+  let state = {
+    requirements: structuredClone(SEED),
+    trail: [],
+    lastEvidenceCommit: null,
+    lastMemoryBaseline: null,
+    auditedCommit: null,
+    proofPolicyVersion: PROOF_POLICY_VERSION,
+    producerAgentId: null,
+    sortKey: "id",
+    sortDir: 1
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const banner = $("banner");
+
+  function showBanner(msg, kind) {
+    banner.className = "banner show " + (kind || "");
+    banner.textContent = msg;
+  }
+
+  function persist() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        requirements: state.requirements,
+        trail: state.trail,
+        lastEvidenceCommit: state.lastEvidenceCommit,
+        lastMemoryBaseline: state.lastMemoryBaseline,
+        auditedCommit: state.auditedCommit,
+        producerAgentId: state.producerAgentId,
+        proofPolicyVersion: state.proofPolicyVersion
+      }));
+    } catch (e) { /* ignore quota */ }
+  }
+
+  function loadPersisted() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (data && Array.isArray(data.requirements)) {
+        state.requirements = data.requirements;
+        state.trail = data.trail || [];
+        state.lastEvidenceCommit = data.lastEvidenceCommit || null;
+        state.lastMemoryBaseline = data.lastMemoryBaseline || null;
+        state.auditedCommit = data.auditedCommit || null;
+        state.producerAgentId = data.producerAgentId || null;
+        state.proofPolicyVersion = data.proofPolicyVersion || PROOF_POLICY_VERSION;
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  const SECRET_HEURISTICS = [
+    /-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/,
+    /AKIA[0-9A-Z]{16}/,
+    /ghp_[A-Za-z0-9]{36,}/,
+    /xox[baprs]-[A-Za-z0-9-]{10,}/,
+    /eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}/,
+    /(api[_-]?key|secret|password|passwd|token)\s*[:=]\s*['\"][^'\"]{8,}/i,
+    /\b\d{3}-\d{2}-\d{4}\b/,
+    /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/
+  ];
+
+  function looksLikeSecrets(text) {
+    if (!text || typeof text !== "string") return false;
+    // Allow hashed owner ids and example.com emails in samples are still flagged —
+    // for owner fields we skip; for full JSON stringify we check carefully.
+    return SECRET_HEURISTICS.some((re) => re.test(text));
+  }
+
+  function scanObjectForSecrets(obj, path) {
+    const hits = [];
+    const walk = (v, p) => {
+      if (v == null) return;
+      if (typeof v === "string") {
+        // Skip known-safe opaque owner / agent ids
+        if (/^(owner|agent|rev|operator|lock)-hash-/i.test(v) || /^sha256:/i.test(v)) return;
+        if (/^owner-hash-|^agent-|^rev-hash-|^operator-hash-/.test(v)) return;
+        // Skip requirement ids and evidence ids
+        if (/^REQ-|^EVI-/.test(v)) return;
+        // Skip short labels / statuses
+        if (v.length < 12) return;
+        if (looksLikeSecrets(v)) hits.push(p || "(root)");
+      } else if (Array.isArray(v)) {
+        v.forEach((x, i) => walk(x, p + "[" + i + "]"));
+      } else if (typeof v === "object") {
+        Object.keys(v).forEach((k) => {
+          // Do not flag emails inside 'notes' that are clearly redacted markers
+          walk(v[k], p ? p + "." + k : k);
+        });
+      }
+    };
+    walk(obj, path || "");
+    return hits;
+  }
+
+  function maxTier(evidence) {
+    let m = "L0";
+    (evidence || []).forEach((e) => {
+      if (TIER_RANK[e.proof_tier] > TIER_RANK[m]) m = e.proof_tier;
+    });
+    return m;
+  }
+
+  function hasTier(evidence, tier) {
+    return (evidence || []).some((e) => e.proof_tier === tier);
+  }
+
+  function hasAnyTier(evidence, tiers) {
+    return tiers.some((t) => hasTier(evidence, t));
+  }
+
+  /** Proof policy 1.1.0 closure rules. */
+  function computeStatusFromEvidence(req, evidence) {
+    const warnings = [];
+    const audited = state.auditedCommit || state.lastEvidenceCommit;
+    const bundleCommit = state.lastEvidenceCommit;
+    const producer = state.producerAgentId;
+    const gaps = (req.residual_gaps || []).slice();
+
+    if (req.manual_override && req.manual_override.status) {
+      return {
+        status: req.manual_override.status,
+        proof_tier: maxTier(evidence || []),
+        warnings: ["Manual override active: " + (req.manual_override.reason || "")],
+        stale: false
+      };
+    }
+
+    const active = [];
+    const stale = [];
+    (evidence || []).forEach((e) => {
+      const c = (e.git_commit || bundleCommit || "").toLowerCase();
+      if (audited && c && c !== audited.toLowerCase()) {
+        stale.push(e);
+        warnings.push((e.evidence_id || "?") + ": STALE (commit mismatch)");
+      } else {
+        active.push(e);
+      }
+    });
+    req.stale = stale.length > 0;
+
+    if (!active.length) {
+      return {
+        status: "Not Implemented",
+        proof_tier: "L0",
+        warnings: warnings.concat(stale.length ? ["All evidence stale"] : ["No active evidence"]),
+        stale: stale.length > 0
+      };
+    }
+
+    const hasTier = (tier) => active.some((e) => e.proof_tier === tier);
+    const hasNeg = active.some((e) => e.type === "negative_proof");
+    const hasL2 = hasTier("L2");
+    const hasL3 = active.some((e) => {
+      if (e.proof_tier !== "L3") return false;
+      const c = (e.git_commit || bundleCommit || "").toLowerCase();
+      if (audited && c && c !== audited.toLowerCase()) return false;
+      return true;
+    });
+    const hasL4 = hasTier("L4");
+    const hasL5 = active.some((e) => {
+      if (e.proof_tier !== "L5") return false;
+      const rev = (e.reviewer_id || "").trim();
+      if (!rev) return false;
+      if (producer && rev === producer) return false;
+      return true;
+    });
+
+    // Conflicts
+    const hasPos = active.some((e) => ["L2","L3","L4","L5"].includes(e.proof_tier) && e.type !== "negative_proof");
+    if (hasNeg && hasPos) {
+      return { status: "Ambiguous", proof_tier: maxTier(active), warnings: warnings.concat(["Conflicting evidence"]), stale: req.stale };
+    }
+    let sawPass = false, sawFail = false;
+    active.forEach((e) => {
+      if (e.proof_tier !== "L2" && e.proof_tier !== "L3") return;
+      const ar = (e.actual_result || "").toLowerCase();
+      if (/fail|error|conclusion=failure/.test(ar)) sawFail = true;
+      if (/pass|success|ok|green/.test(ar)) sawPass = true;
+    });
+    if (sawPass && sawFail) {
+      return { status: "Ambiguous", proof_tier: maxTier(active), warnings: warnings.concat(["Pass/fail conflict"]), stale: req.stale };
+    }
+
+    const higher = hasL2 || hasL3 || hasL4 || hasL5;
+    const onlyL1 = !higher && hasTier("L1");
+
+    if (onlyL1 || (!higher && !hasNeg)) {
+      warnings.push("L1 does not count toward Partial/Implemented under proof policy 1.1");
+      return { status: "Not Implemented", proof_tier: maxTier(active), warnings, stale: req.stale };
+    }
+
+    if (hasNeg && !hasL2 && !hasL3 && !hasL4 && !hasL5) {
+      return { status: "Not Implemented", proof_tier: maxTier(active), warnings, stale: req.stale };
+    }
+
+    let canImplement = hasL2 && (hasL3 || hasL4);
+    if (hasL2 && hasL4 && !hasL3) warnings.push(req.id + ": L2+L4 (document CI absence)");
+
+    const isCritical = req.severity === "Critical";
+    if (canImplement) {
+      if (isCritical) {
+        if (hasL3 && hasL5) {
+          return { status: "Implemented", proof_tier: maxTier(active), warnings, stale: req.stale };
+        }
+        warnings.push(req.id + ": Critical needs L3+L5 dual-control; holding at Partial");
+        if (!gaps.length) gaps.push("Critical L5 dual-control and/or L3 incomplete");
+        req.residual_gaps = gaps;
+        return { status: "Partially Implemented", proof_tier: maxTier(active), warnings, stale: req.stale };
+      }
+      return { status: "Implemented", proof_tier: maxTier(active), warnings, stale: req.stale };
+    }
+
+    if (hasL2) {
+      if (!gaps.length) {
+        warnings.push(req.id + ": Partial requires explicit residual_gaps");
+        return { status: "Not Implemented", proof_tier: maxTier(active), warnings, stale: req.stale };
+      }
+      return { status: "Partially Implemented", proof_tier: maxTier(active), warnings, stale: req.stale };
+    }
+
+    warnings.push("L2 required for Partial or Implemented");
+    return { status: "Not Implemented", proof_tier: maxTier(active), warnings, stale: req.stale };
+  }
+
+  function ensureReq(id) {
+    let r = state.requirements.find((x) => x.id === id);
+    if (!r) {
+      r = {
+        id, title: "(imported — title unknown)", type: "Functional", severity: "Medium",
+        status: "Not Implemented", proof_tier: "L0", owner: "", estimate: 0, ac: "",
+        links: { code: "", test: "", ci: "" }, comments: "Created via evidence import",
+        evidence: [], residual_gaps: [], manual_override: null
+      };
+      state.requirements.push(r);
+    }
+    return r;
+  }
+
+  function mergeEvidenceItem(req, item) {
+    const idx = req.evidence.findIndex((e) => e.evidence_id === item.evidence_id);
+    const normalized = {
+      evidence_id: item.evidence_id,
+      proof_tier: item.proof_tier,
+      type: item.type,
+      summary: item.summary,
+      links: item.links || [],
+      repro_command: item.repro_command || "",
+      expected_result: item.expected_result || "",
+      actual_result: item.actual_result || "",
+      confidence: item.confidence,
+      redaction_status: item.redaction_status,
+      notes: item.notes || "",
+      ci_job: item.ci_job || "",
+      ci_run_id: item.ci_run_id || "",
+      reviewer_id: item.reviewer_id || "",
+      git_commit: item.git_commit || ""
+    };
+    if (idx >= 0) req.evidence[idx] = normalized;
+    else req.evidence.push(normalized);
+
+    // Update link shortcuts
+    (item.links || []).forEach((l) => {
+      if (l.kind === "code" && !req.links.code) req.links.code = l.url;
+      if (l.kind === "test" && !req.links.test) req.links.test = l.url;
+      if (l.kind === "ci" && !req.links.ci) req.links.ci = l.url;
+    });
+  }
+
+  function importEvidence(bundle) {
+    if (!bundle || (bundle.schema_version !== "1.1.0" && bundle.schema_version !== "1.0.0")) {
+      throw new Error("Unsupported or missing schema_version (expect 1.1.0)");
+    }
+    if (bundle.proof_policy_version && bundle.proof_policy_version !== PROOF_POLICY_VERSION) {
+      throw new Error("proof_policy_version must be " + PROOF_POLICY_VERSION + ", got " + bundle.proof_policy_version);
+    }
+    if (!bundle.proof_policy_version) {
+      // allow legacy 1.0.0 schema only with warning via banner later
+    }
+    if (!Array.isArray(bundle.evidence_items) || !bundle.evidence_items.length) {
+      throw new Error("evidence_items must be a non-empty array");
+    }
+    const secretHits = scanObjectForSecrets(bundle);
+    // Soft-filter: reject if private keys / cloud keys / slack tokens found
+    const hard = secretHits.filter((p) => !/\.notes$|\.summary$|\.actual_result$/.test(p));
+    // Re-scan raw string for hard patterns
+    const raw = JSON.stringify(bundle);
+    if (/-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(raw) ||
+        /AKIA[0-9A-Z]{16}/.test(raw) ||
+        /ghp_[A-Za-z0-9]{36,}/.test(raw) ||
+        /xox[baprs]-[A-Za-z0-9-]{10,}/.test(raw)) {
+      throw new Error("Import rejected: payload appears to contain secrets/credentials. Redact and retry.");
+    }
+
+    const warnings = [];
+    let applied = 0;
+    const byReq = {};
+    bundle.evidence_items.forEach((item) => {
+      if (!item.requirement_id || !item.evidence_id || !item.proof_tier) {
+        warnings.push("Skipped malformed item");
+        return;
+      }
+      if (item.proof_tier === "L0") {
+        warnings.push(item.evidence_id + ": L0 not allowed in evidence.json");
+        return;
+      }
+      const req = ensureReq(item.requirement_id);
+      mergeEvidenceItem(req, item);
+      byReq[req.id] = req;
+      applied++;
+    });
+
+    state.lastEvidenceCommit = bundle.git_commit || null;
+    state.auditedCommit = bundle.git_commit || state.auditedCommit;
+    state.producerAgentId = (bundle.generated_by && bundle.generated_by.agent_id) || null;
+    state.proofPolicyVersion = bundle.proof_policy_version || PROOF_POLICY_VERSION;
+    if (!bundle.proof_policy_version) {
+      warnings.push("Bundle missing proof_policy_version — applying 1.1.0 rules anyway");
+    }
+
+    Object.keys(byReq).forEach((id) => {
+      const req = byReq[id];
+      const prev = req.status;
+      const result = computeStatusFromEvidence(req, req.evidence);
+      if (req.manual_override) {
+        warnings.push(id + ": kept manual override (" + req.manual_override.status + ")");
+      } else {
+        req.status = result.status;
+        if (prev !== result.status) {
+          warnings.push(id + ": " + prev + " → " + result.status);
+        }
+      }
+      req.proof_tier = result.proof_tier;
+      result.warnings.forEach((w) => warnings.push(w));
+    });
+    state.trail.unshift({
+      ts: new Date().toISOString(),
+      type: "evidence_import",
+      file: "evidence.json",
+      git_commit: bundle.git_commit,
+      proof_policy_version: state.proofPolicyVersion,
+      generated_by: bundle.generated_by,
+      items_applied: applied,
+      warnings
+    });
+    persist();
+    return { applied, warnings };
+  }
+
+  function importMemory(mem) {
+    if (!mem || (mem.schema_version !== "1.1.0" && mem.schema_version !== "1.0.0")) {
+      throw new Error("Unsupported or missing audit-memory schema_version (expect 1.1.0)");
+    }
+    if (mem.proof_policy_version && mem.proof_policy_version !== PROOF_POLICY_VERSION) {
+      throw new Error("audit-memory proof_policy_version must be " + PROOF_POLICY_VERSION);
+    }
+    if (mem.audited_commit) state.auditedCommit = mem.audited_commit;
+    else if (mem.baseline_commit && !state.auditedCommit) state.auditedCommit = mem.baseline_commit;
+    const raw = JSON.stringify(mem);
+    if (/-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(raw) ||
+        /AKIA[0-9A-Z]{16}/.test(raw) ||
+        /ghp_[A-Za-z0-9]{36,}/.test(raw)) {
+      throw new Error("Import rejected: audit-memory appears to contain secrets.");
+    }
+    const reqs = mem.requirements || {};
+    let applied = 0;
+    const warnings = [];
+    Object.keys(reqs).forEach((id) => {
+      const m = reqs[id];
+      const req = ensureReq(id);
+      // Memory restores context; do not wipe richer evidence already imported
+      if (m.type) req.type = m.type;
+      if (m.severity) req.severity = m.severity;
+      if (m.owners && m.owners[0]) req.owner = m.owners[0];
+      if (typeof m.estimate_hours === "number") req.estimate = m.estimate_hours;
+      if (Array.isArray(m.residual_gaps)) req.residual_gaps = m.residual_gaps.slice();
+      if (m.notes) req.comments = (req.comments ? req.comments + " | " : "") + m.notes;
+      // Status from memory only if no evidence yet and no override
+      if ((!req.evidence || !req.evidence.length) && !req.manual_override) {
+        if (m.status) req.status = m.status;
+        if (m.proof_tier_achieved) req.proof_tier = m.proof_tier_achieved;
+      } else if (req.evidence && req.evidence.length) {
+        // Recompute from evidence (authoritative over stale memory status)
+        const result = computeStatusFromEvidence(req, req.evidence);
+        if (!req.manual_override) req.status = result.status;
+        req.proof_tier = result.proof_tier;
+        warnings.push(id + ": evidence present — status recomputed from proof tiers");
+      }
+      applied++;
+    });
+    state.lastMemoryBaseline = mem.baseline_commit || null;
+    state.trail.unshift({
+      ts: new Date().toISOString(),
+      type: "memory_import",
+      file: "audit-memory.json",
+      baseline_commit: mem.baseline_commit,
+      health_score: mem.health_score,
+      items_applied: applied,
+      warnings
+    });
+    persist();
+    return { applied, warnings };
+  }
+
+  function kpi() {
+    const reqs = state.requirements;
+    const total = reqs.length;
+    const impl = reqs.filter((r) => r.status === "Implemented").length;
+    const critOpen = reqs.filter((r) => r.severity === "Critical" && r.status !== "Implemented").length;
+    const tierSum = reqs.reduce((s, r) => s + (TIER_RANK[r.proof_tier] || 0), 0);
+    const avg = total ? (tierSum / total) : 0;
+    const pct = total ? Math.round((impl / total) * 1000) / 10 : 0;
+    const health = Math.max(0, Math.min(100,
+      pct * 0.5 + (5 - Math.min(critOpen, 5)) * 10 + (avg / 5) * 30
+    ));
+    $("kpiImpl").textContent = pct + "%";
+    $("kpiImplHint").textContent = impl + " of " + total;
+    $("kpiCrit").textContent = String(critOpen);
+    $("kpiCrit").style.color = critOpen ? "var(--crit)" : "var(--ok)";
+    $("kpiTier").textContent = "L" + (Math.round(avg * 10) / 10);
+    $("kpiTotal").textContent = String(total);
+    $("kpiHealth").textContent = "Health ≈ " + Math.round(health);
+  }
+
+  function fillFilters() {
+    const statuses = [...new Set(state.requirements.map((r) => r.status))].sort();
+    const sevs = [...new Set(state.requirements.map((r) => r.severity))].sort();
+    const types = [...new Set(state.requirements.map((r) => r.type))].sort();
+    const setOpts = (sel, values) => {
+      const cur = sel.value;
+      sel.innerHTML = sel.options[0].outerHTML;
+      values.forEach((v) => {
+        const o = document.createElement("option");
+        o.value = v; o.textContent = v; sel.appendChild(o);
+      });
+      sel.value = cur;
+    };
+    setOpts($("filterStatus"), statuses);
+    setOpts($("filterSeverity"), sevs);
+    setOpts($("filterType"), types);
+  }
+
+  function filteredSorted() {
+    const q = ($("search").value || "").toLowerCase().trim();
+    const fs = $("filterStatus").value;
+    const fv = $("filterSeverity").value;
+    const ft = $("filterType").value;
+    const fr = $("filterTier").value;
+    let rows = state.requirements.filter((r) => {
+      if (fs && r.status !== fs) return false;
+      if (fv && r.severity !== fv) return false;
+      if (ft && r.type !== ft) return false;
+      if (fr && r.proof_tier !== fr) return false;
+      if (!q) return true;
+      const blob = [r.id, r.title, r.owner, r.comments, r.ac, (r.residual_gaps || []).join(" ")].join(" ").toLowerCase();
+      return blob.includes(q);
+    });
+    const key = state.sortKey;
+    const dir = state.sortDir;
+    rows.sort((a, b) => {
+      let va = a[key], vb = b[key];
+      if (key === "estimate") { va = +va || 0; vb = +vb || 0; }
+      else if (key === "ev_count") { va = (a.evidence || []).length; vb = (b.evidence || []).length; }
+      else if (key === "proof_tier") { va = TIER_RANK[a.proof_tier] || 0; vb = TIER_RANK[b.proof_tier] || 0; }
+      else { va = (va == null ? "" : String(va)).toLowerCase(); vb = (vb == null ? "" : String(vb)).toLowerCase(); }
+      if (va < vb) return -1 * dir;
+      if (va > vb) return 1 * dir;
+      return 0;
+    });
+    return rows;
+  }
+
+  let expandedId = null;
+  let pendingOverrideId = null;
+
+  function statusClass(st) {
+    return "badge st-" + st.replace(/\s+/g, "\\ ");
+  }
+
+  function render() {
+    kpi();
+    fillFilters();
+    const tbody = $("tbody");
+    tbody.innerHTML = "";
+    const rows = filteredSorted();
+    rows.forEach((r) => {
+      const tr = document.createElement("tr");
+      if (expandedId === r.id) tr.classList.add("expanded");
+      const evCount = (r.evidence || []).length;
+      const linkBits = [];
+      if (r.links && r.links.code) linkBits.push('<a href="#" data-nolink="1">' + escapeHtml(short(r.links.code)) + "</a>");
+      if (r.links && r.links.test) linkBits.push("test");
+      if (r.links && r.links.ci) linkBits.push("ci");
+      tr.innerHTML =
+        '<td class="mono">' + escapeHtml(r.id) + "</td>" +
+        "<td>" + escapeHtml(r.title) + "</td>" +
+        "<td>" + escapeHtml(r.type) + "</td>" +
+        '<td class="sev-' + escapeHtml(r.severity) + '">' + escapeHtml(r.severity) + "</td>" +
+        "<td><span class=\"badge " + statusBadgeClass(r.status) + "\">" + escapeHtml(r.status) + "</span>" +
+          (r.manual_override ? ' <span class="meta" title="manual">✎</span>' : "") +
+          ' <button type="button" data-override="' + escapeHtml(r.id) + '" style="margin-left:4px;padding:2px 6px;font-size:0.7rem">Override</button></td>' +
+        '<td class="tier">' + escapeHtml(r.proof_tier || "L0") + (r.stale ? ' <span class="sev-Critical" title="stale evidence">⚠</span>' : '') + "</td>" +
+        "<td class=\"mono\">" + escapeHtml(r.owner || "—") + "</td>" +
+        "<td>" + escapeHtml(String(r.estimate ?? "—")) + "h</td>" +
+        "<td>" + escapeHtml(truncate(r.ac, 80)) + "</td>" +
+        '<td><button type="button" data-expand="' + escapeHtml(r.id) + '">' + evCount + " ▾</button></td>" +
+        "<td class=\"meta\">" + (linkBits.join(" · ") || "—") + "</td>" +
+        "<td>" + escapeHtml(truncate(r.comments || "", 60)) + "</td>";
+      tbody.appendChild(tr);
+
+      const panelTr = document.createElement("tr");
+      const panelTd = document.createElement("td");
+      panelTd.colSpan = 12;
+      panelTd.innerHTML = '<div class="evidence-panel' + (expandedId === r.id ? " open" : "") + '" id="panel-' + escapeHtml(r.id) + '">' +
+        renderEvidencePanel(r) + "</div>";
+      panelTr.appendChild(panelTd);
+      tbody.appendChild(panelTr);
+    });
+
+    $("trailPre").textContent = state.trail.length
+      ? JSON.stringify(state.trail.slice(0, 20), null, 2)
+      : "No imports yet.";
+  }
+
+  function statusBadgeClass(st) {
+    const map = {
+      "Implemented": "st-Implemented",
+      "Partially Implemented": "st-Partial",
+      "Not Implemented": "st-NotImplemented",
+      "Ambiguous": "st-Ambiguous",
+      "Not Applicable": "st-NotApplicable"
+    };
+    return map[st] || "st-Ambiguous";
+  }
+
+  function renderEvidencePanel(r) {
+    let html = "<div class=\"meta\">Residual gaps: " + escapeHtml((r.residual_gaps || []).join("; ") || "—") + "</div>";
+    if (r.manual_override) {
+      html += '<div class="meta">Override: ' + escapeHtml(r.manual_override.status) +
+        " — " + escapeHtml(r.manual_override.reason || "") +
+        " (" + escapeHtml(r.manual_override.at || "") + ")</div>";
+    }
+    if (!(r.evidence || []).length) {
+      html += "<p class=\"meta\">No evidence items. Import evidence.json to populate.</p>";
+      return html;
+    }
+    (r.evidence || []).forEach((e) => {
+      html += '<div class="evidence-item">';
+      html += "<h4>" + escapeHtml(e.evidence_id) + " · " + escapeHtml(e.proof_tier) + " · " + escapeHtml(e.type) + "</h4>";
+      html += "<div>" + escapeHtml(e.summary || "") + "</div>";
+      if (e.repro_command) html += '<div class="mono meta">$ ' + escapeHtml(e.repro_command) + "</div>";
+      if (e.expected_result || e.actual_result) {
+        html += '<div class="meta">expected: ' + escapeHtml(e.expected_result || "—") +
+          " | actual: " + escapeHtml(e.actual_result || "—") + "</div>";
+      }
+      html += '<div class="meta">confidence: ' + escapeHtml(String(e.confidence ?? "—")) +
+        " · redaction: " + escapeHtml(e.redaction_status || "—") + "</div>";
+      if (e.links && e.links.length) {
+        html += "<div class=\"meta\">" + e.links.map((l) => escapeHtml(l.kind) + ": " + escapeHtml(l.url)).join(" · ") + "</div>";
+      }
+      if (e.notes) html += '<div class="meta">' + escapeHtml(e.notes) + "</div>";
+      html += "</div>";
+    });
+    return html;
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+  function truncate(s, n) {
+    s = String(s || "");
+    return s.length > n ? s.slice(0, n - 1) + "…" : s;
+  }
+  function short(s) {
+    s = String(s || "");
+    return s.length > 28 ? s.slice(0, 25) + "…" : s;
+  }
+
+  // Events
+  $("tbody").addEventListener("click", (ev) => {
+    const t = ev.target;
+    if (t.dataset && t.dataset.expand) {
+      expandedId = expandedId === t.dataset.expand ? null : t.dataset.expand;
+      render();
+    }
+    if (t.dataset && t.dataset.override) {
+      pendingOverrideId = t.dataset.override;
+      const req = state.requirements.find((r) => r.id === pendingOverrideId);
+      $("overrideReq").textContent = pendingOverrideId + " — " + (req && req.title);
+      $("overrideStatus").value = req ? req.status : "Partially Implemented";
+      $("overrideWhy").value = "";
+      $("overrideDialog").showModal();
+    }
+  });
+
+  $("overrideForm").addEventListener("submit", (ev) => {
+    const val = ev.submitter ? ev.submitter.value : "cancel";
+    if (val === "ok" && pendingOverrideId) {
+      const why = $("overrideWhy").value.trim();
+      if (!why) {
+        ev.preventDefault();
+        showBanner("Justification required for manual override.", "err");
+        return;
+      }
+      const req = state.requirements.find((r) => r.id === pendingOverrideId);
+      if (req) {
+        req.manual_override = {
+          status: $("overrideStatus").value,
+          reason: why,
+          at: new Date().toISOString()
+        };
+        req.status = req.manual_override.status;
+        state.trail.unshift({
+          ts: new Date().toISOString(),
+          type: "manual_override",
+          requirement_id: req.id,
+          status: req.status,
+          reason: why
+        });
+        persist();
+        showBanner("Override saved for " + req.id, "warn");
+        render();
+      }
+    }
+    pendingOverrideId = null;
+  });
+
+  document.querySelectorAll("th[data-key]").forEach((th) => {
+    th.addEventListener("click", () => {
+      const k = th.getAttribute("data-key");
+      if (state.sortKey === k) state.sortDir *= -1;
+      else { state.sortKey = k; state.sortDir = 1; }
+      render();
+    });
+  });
+
+  ["search", "filterStatus", "filterSeverity", "filterType", "filterTier"].forEach((id) => {
+    $(id).addEventListener("input", render);
+    $(id).addEventListener("change", render);
+  });
+
+  $("btnImportEvidence").addEventListener("click", () => $("fileEvidence").click());
+  $("btnImportMemory").addEventListener("click", () => $("fileMemory").click());
+
+  $("fileEvidence").addEventListener("change", async (ev) => {
+    const file = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const json = JSON.parse(text);
+      const result = importEvidence(json);
+      showBanner("Evidence imported: " + result.applied + " item(s). " +
+        (result.warnings.length ? "Warnings: " + result.warnings.slice(0, 5).join(" | ") : "Statuses updated per proof rules."),
+        result.warnings.length ? "warn" : "ok");
+      render();
+    } catch (e) {
+      showBanner("Evidence import failed: " + e.message, "err");
+    }
+  });
+
+  $("fileMemory").addEventListener("change", async (ev) => {
+    const file = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const json = JSON.parse(text);
+      const result = importMemory(json);
+      showBanner("Audit memory imported: " + result.applied + " requirement(s). Baseline " +
+        (state.lastMemoryBaseline || "—"),
+        result.warnings.length ? "warn" : "ok");
+      render();
+    } catch (e) {
+      showBanner("Memory import failed: " + e.message, "err");
+    }
+  });
+
+  $("btnExportCsv").addEventListener("click", () => {
+    const headers = ["ID","Title","Type","Severity","Status","ProofTier","Owner","EstimateHours","AcceptanceCriteria","EvidenceCount","CodeLink","TestLink","CILink","Comments","ResidualGaps"];
+    const lines = [headers.join(",")];
+    state.requirements.forEach((r) => {
+      const cells = [
+        r.id, r.title, r.type, r.severity, r.status, r.proof_tier, r.owner, r.estimate, r.ac,
+        (r.evidence || []).length,
+        (r.links && r.links.code) || "", (r.links && r.links.test) || "", (r.links && r.links.ci) || "",
+        r.comments || "", (r.residual_gaps || []).join("; ")
+      ].map(csvEscape);
+      lines.push(cells.join(","));
+    });
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "eoip-audit-tracker.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  function csvEscape(v) {
+    const s = String(v == null ? "" : v);
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  $("btnReset").addEventListener("click", () => {
+    if (!confirm("Reset tracker to seed data and clear localStorage?")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    state = {
+      requirements: structuredClone(SEED),
+      trail: [],
+      lastEvidenceCommit: null,
+      lastMemoryBaseline: null,
+      auditedCommit: null,
+      producerAgentId: null,
+      proofPolicyVersion: PROOF_POLICY_VERSION,
+      sortKey: "id",
+      sortDir: 1
+    };
+    showBanner("Reset to embedded seed data.", "ok");
+    render();
+  });
+
+
+  // Optional embedded data from generate_tracker.py
+  if (typeof window.EOIP_TRACKER_DATA === "object" && window.EOIP_TRACKER_DATA) {
+    try {
+      const d = window.EOIP_TRACKER_DATA;
+      if (d.requirements && Array.isArray(d.requirements)) {
+        state.requirements = d.requirements;
+      }
+      if (d.audited_commit) state.auditedCommit = d.audited_commit;
+      if (d.evidence_bundle) {
+        importEvidence(d.evidence_bundle);
+      }
+      if (d.audit_memory) {
+        importMemory(d.audit_memory);
+      }
+    } catch (e) {
+      console.warn("EOIP_TRACKER_DATA load failed", e);
+    }
+  }
+
+  loadPersisted();
+  render();
+})();
+</script>
+</body>
+</html>

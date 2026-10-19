@@ -1,0 +1,229 @@
+{
+  "schema_version": "1.1.0",
+  "repo": "https://github.com/example-org/eoip-kgf.git",
+  "project": "EOIP (kgf)",
+  "baseline_commit": "1111222233334444555566667777888899990000",
+  "last_audit_date": "2026-10-12T18:00:00Z",
+  "health_score": 62.5,
+  "environment_matrix": {
+    "local": {
+      "audited": true,
+      "commit": "1111222233334444555566667777888899990000",
+      "notes": "Unit/integration"
+    },
+    "staging": {
+      "audited": true,
+      "commit": "1111222233334444555566667777888899990000",
+      "notes": "Runtime L4 samples"
+    },
+    "production": {
+      "audited": false,
+      "notes": "Out of scope \u2014 no prod access"
+    }
+  },
+  "requirements": {
+    "REQ-FUNC-0001": {
+      "status": "Partially Implemented",
+      "proof_tier_achieved": "L1",
+      "severity": "High",
+      "type": "Functional",
+      "owners": [
+        "owner-hash-a11"
+      ],
+      "evidence_ids": [],
+      "residual_gaps": [],
+      "last_verified_commit": "1111222233334444555566667777888899990000",
+      "files_touched": [
+        "src/ingest/",
+        "tests/unit/test_ingest.py"
+      ],
+      "estimate_hours": 16,
+      "notes": "Baseline: code present, proof incomplete."
+    },
+    "REQ-SEC-0002": {
+      "status": "Partially Implemented",
+      "proof_tier_achieved": "L1",
+      "severity": "Critical",
+      "type": "Security",
+      "owners": [
+        "owner-hash-b22"
+      ],
+      "evidence_ids": [],
+      "residual_gaps": [],
+      "last_verified_commit": "1111222233334444555566667777888899990000",
+      "files_touched": [
+        "src/auth/"
+      ],
+      "estimate_hours": 24,
+      "notes": "Critical \u2014 dual-control required before Implemented."
+    },
+    "REQ-AI-0003": {
+      "status": "Partially Implemented",
+      "proof_tier_achieved": "L1",
+      "severity": "High",
+      "type": "AI",
+      "owners": [
+        "owner-hash-c33"
+      ],
+      "evidence_ids": [],
+      "residual_gaps": [
+        "Prompt versioning CI gate missing",
+        "Human-in-the-loop policy not signed"
+      ],
+      "last_verified_commit": "1111222233334444555566667777888899990000",
+      "files_touched": [
+        "src/ai/",
+        "src/redact/"
+      ],
+      "estimate_hours": 20,
+      "notes": "Prompt store present; governance incomplete."
+    },
+    "REQ-COMP-0004": {
+      "status": "Not Implemented",
+      "proof_tier_achieved": "L0",
+      "severity": "Medium",
+      "type": "Compliance",
+      "owners": [
+        "owner-hash-d44"
+      ],
+      "evidence_ids": [],
+      "residual_gaps": [
+        "No SBOM",
+        "No license CI gate"
+      ],
+      "last_verified_commit": "1111222233334444555566667777888899990000",
+      "files_touched": [],
+      "estimate_hours": 12,
+      "notes": "Negative evidence expected."
+    },
+    "REQ-NFR-0005": {
+      "status": "Not Implemented",
+      "proof_tier_achieved": "L0",
+      "severity": "High",
+      "type": "Non-Functional",
+      "owners": [
+        "owner-hash-e55"
+      ],
+      "evidence_ids": [],
+      "residual_gaps": [
+        "RTO drill not evidenced",
+        "No L3/L4 on audited commit"
+      ],
+      "last_verified_commit": "1111222233334444555566667777888899990000",
+      "files_touched": [
+        "scripts/dr/"
+      ],
+      "estimate_hours": 18,
+      "notes": ""
+    },
+    "REQ-INFRA-0006": {
+      "status": "Ambiguous",
+      "proof_tier_achieved": "L0",
+      "severity": "Medium",
+      "type": "Infra",
+      "owners": [
+        "owner-hash-f66"
+      ],
+      "evidence_ids": [],
+      "residual_gaps": [
+        "Manifests exist but validation unknown"
+      ],
+      "last_verified_commit": "1111222233334444555566667777888899990000",
+      "files_touched": [
+        "deploy/k8s/"
+      ],
+      "estimate_hours": 8,
+      "notes": "Clarify acceptance criteria in next delta."
+    },
+    "REQ-FUNC-0007": {
+      "status": "Implemented",
+      "proof_tier_achieved": "L3",
+      "severity": "Low",
+      "type": "Functional",
+      "owners": [
+        "owner-hash-a11"
+      ],
+      "evidence_ids": [
+        "EVI-BASE-0099"
+      ],
+      "residual_gaps": [],
+      "last_verified_commit": "1111222233334444555566667777888899990000",
+      "files_touched": [
+        "src/ui/accessibility.css"
+      ],
+      "estimate_hours": 6,
+      "notes": "Baseline closed with L2+L3. Delta-audit: skip deep unless files change."
+    }
+  },
+  "agents": [
+    {
+      "agent_id": "agent-audit-01",
+      "role": "audit-lead",
+      "prompt_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "redacted_input_ref": "redaction-0001",
+      "output_ref": "audit-output/audit_gaps_requirements.md",
+      "action": "full_audit",
+      "scope": [
+        "*"
+      ],
+      "timestamp": "2026-10-12T16:00:00Z",
+      "notes": "Initial baseline audit."
+    },
+    {
+      "agent_id": "agent-remediation-07",
+      "role": "remediation-agent",
+      "prompt_hash": "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "action": "claimed",
+      "scope": [
+        "REQ-FUNC-0001",
+        "REQ-SEC-0002",
+        "REQ-AI-0003"
+      ],
+      "timestamp": "2026-10-19T12:00:00Z",
+      "notes": "Claimed for remediation ahead of evidence import."
+    }
+  ],
+  "import_history": [
+    {
+      "file": "evidence.json",
+      "imported_by": "operator-hash-01",
+      "timestamp": "2026-10-12T18:05:00Z",
+      "git_commit": "1111222233334444555566667777888899990000",
+      "items_applied": 1,
+      "conflicts": 0,
+      "notes": "Baseline seed evidence for REQ-FUNC-0007."
+    }
+  ],
+  "changelog": [
+    {
+      "timestamp": "2026-10-12T18:00:00Z",
+      "actor": "agent-audit-01",
+      "change": "Baseline audit completed; health_score=62.5",
+      "requirement_ids": [
+        "REQ-FUNC-0001",
+        "REQ-SEC-0002",
+        "REQ-AI-0003",
+        "REQ-COMP-0004",
+        "REQ-NFR-0005",
+        "REQ-INFRA-0006",
+        "REQ-FUNC-0007"
+      ]
+    }
+  ],
+  "open_locks": [
+    {
+      "lock_id": "lock-20261019-01",
+      "agent_id": "agent-remediation-07",
+      "scope": [
+        "REQ-FUNC-0001",
+        "REQ-SEC-0002",
+        "REQ-AI-0003"
+      ],
+      "claimed_at": "2026-10-19T12:00:00Z",
+      "expires_at": "2026-10-20T12:00:00Z",
+      "notes": "Active remediation claim."
+    }
+  ],
+  "proof_policy_version": "1.1.0",
+  "audited_commit": "a1b2c3d4e5f6789012345678901234567890abcd"
+}
