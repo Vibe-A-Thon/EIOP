@@ -3,49 +3,34 @@
 **Baseline:** 0.1.0-architecture-baseline  
 **Generated:** 2026-10-01
 
-**Current master backlog:** [../KGF-MASTER-BACKLOG.md](../KGF-MASTER-BACKLOG.md) is the active master completion backlog synthesizing [Audit-GAPS-CG-dev.md](Audit-GAPS-CG-dev.md) and the KnowGridFlow Conquest Plan. Current implementation status and phase tasks are governed by this backlog.
+**Status caution:** this package contains specifications, plans, audits, and historical research. A backlog checkbox or generated task count is not runtime acceptance evidence. Use the owning requirement/implementation plans and their current evidence procedures to determine what is implemented, blocked, or verified.
 
 This package converts the governing master prompt into an implementation-ready, local-first architecture and phased engineering plan. It preserves the prompt's mandatory output set and adds an audit, research/verification basis, traceability matrix, architecture diagram catalog, versioned data contracts, machine-readable schemas and domain implementation plans.
 
-## Current implemented product scope
+## How to use this package
 
-The codebase now implements much of the architecture described here: FastAPI
-API/runtime modules, a React graph/admin UI, MCP server, worker, VS Code
-extension, graph stores/adapters, connector SDK, Jira/Git/GitHub/GitLab/
-Confluence/ServiceNow and other acquisition modules, raw SourceEvent capture,
-DLQ/replay/checkpointing, source deletion tombstones, GraphRAG/query engines
-with evidence manifests and citation chains, dual JSON-LD/RDF/OWL/SHACL
-interoperability, semantic federation over local graph/file/REST/JDBC-style
-sources, bounded agents, governance/security/privacy modules, deployment
-assets, Hubble walkthroughs, and executable demo scenarios.
+This package contains normative specifications, architecture proposals,
+implementation plans, historical audits, reference material, schemas, and
+traceability artifacts. Some chapters describe target behavior that is not
+implemented or not yet independently qualified. A source path, test name,
+generated audit, backlog count, or successful demo is not a completion receipt.
 
-As of the current documentation sweep, [../KGF-MASTER-BACKLOG.md](../KGF-MASTER-BACKLOG.md)
-shows 516/516 tasks ticked in the working tree. The active evidence trail is
-maintained in `../requirements-registry.json` and
-`../requirements-test-map.json`; generated audit artifacts may lag until their
-scanner is rerun.
+Use the repository root [README](../README.md) and [Getting Started
+guide](../docs/getting-started.md) for current operator/developer entrypoints.
+Use [Architecture](../docs/architecture-guide.md) for the source-described runtime
+topology and storage boundaries. Use each programme's current requirements,
+implementation plan, and evidence ledger for its own status. If a required
+ledger or evidence bundle is absent, report that work as open or blocked.
 
-Use this documentation package for normative requirements and design intent.
-Use the repository root README for an operator-oriented overview, and use
-`../KGF-MASTER-BACKLOG.md`, `../requirements-registry.json`, and
-`../requirements-test-map.json` for current closure/evidence tracking.
-
-## Recently implemented slices
-
-- Evidence-addressable GraphRAG answers now include graph node/path/source-record
-  addressing, evidence manifests, and citation chains.
-- The dual semantic model now supports bounded JSON-LD export, JSON-LD import,
-  manifest-derived SHACL shapes, SHACL validation, and round-trip checks for
-  supported ontology constructs.
-- The semantic federation layer now supports local graph, file, REST JSON, and
-  SQLite-backed JDBC-style sources; source/entity modes (`VIRTUAL`, `CACHE`,
-  `MATERIALIZE`, `HYBRID`); cache freshness; offline degradation; source policy
-  enforcement; and explainable per-row provenance.
-- The admin web UI includes an ontology/federation inspection surface backed by
-  live API calls. Demo fixtures remain isolated demo inputs and are not wired as
-  production federation rows.
+The codebase contains a FastAPI API, web UI, worker, MCP server, VS Code
+extension, graph adapters, connector and query modules, and optional numerical
+experiments. Their presence does not imply that every documented endpoint,
+adapter, profile, benchmark, persistence guarantee, or end-to-end scenario has
+passed its owning acceptance gate.
 
 ## Start here
+
+For maintenance, begin with the current [documentation index](../docs/README.md), [component map](../apps/README.md), [migration guide](../docs/migration-refactoring-guide.md) and [review scope](../docs/documentation-review-2026-10-18.md). This package's dated baseline remains historical; newer root-level ASPEII, Community/IP, IP, Graph Neurons and Wisdom requirements have their own decisions and evidence gates. Resolve conflicts explicitly rather than selecting whichever document claims the highest completion.
 
 1. `00-specification-audit-and-enhancements.md` — ambiguity/gap resolutions.
 2. `01-project-vision.md` and `02-scope-and-objectives.md` — product boundary.
@@ -58,9 +43,14 @@ Use the repository root README for an operator-oriented overview, and use
 9. `73-architecture-diagrams.md` — all 17 requested Mermaid diagrams.
 10. `74-data-contracts.md` + `schemas/*.schema.json` — versioned interface contracts.
 
-## MVP architecture in one sentence
+## Documented MVP deployment shape
 
-One local Docker Compose deployment uses Apache HugeGraph/RocksDB as the authoritative graph, a modular FastAPI application/worker, one React SPA with `/app` and `/admin` modes, a read-only MCP façade, a read-only VS Code context extension and an optional local model adapter; source events/checkpoints/DLQ/backups use mounted local volumes, and all business answers come from persisted graph evidence.
+The default local Compose profile is documented around HugeGraph, a FastAPI API,
+a filesystem-backed worker, a React SPA with `/app` and `/admin` paths, a
+read-oriented MCP facade, a VS Code context extension, and mounted volumes. This
+is a deployment profile, not a claim of multi-worker durability, fully
+evidence-grounded answers, or release qualification. See the Docker runbook and
+current architecture guide for actual defaults and limits.
 
 ## Important scope truth
 

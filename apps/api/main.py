@@ -269,6 +269,13 @@ def create_app():
     from apps.api.extended import ensure_extended
 
     ensure_extended(app, store)
+    try:
+        from reva.config import get_settings as _get_reva_settings
+        if _get_reva_settings().enabled:
+            from reva.api import reva_router
+            app.include_router(reva_router, prefix="/api/reva/v1")
+    except Exception:
+        pass
     registry = CollectorRegistry()
     requests = Counter(
         "eoip_http_requests_total", "Completed HTTP requests", ["method", "status"], registry=registry
@@ -444,6 +451,7 @@ def create_app():
             "/api/v1/ontology/docs",
             "/openapi.json",
             "/docs/oauth2-redirect",
+            "/api/reva/v1/health",
         } and webhook_request is None:
             if principal is None:
                 record(401)

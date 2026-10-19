@@ -15,7 +15,7 @@ source pack before writing, and remains idempotent.
 
 ## What is included
 
-- `scenario-pack.json` version 1.1.0 is the canonical graph seed: 11 stories, 70 entities, and 114 relationships across BUSINESS, DECISION, PROCESS, WORK, CODE, CICD, TEST, DESIGN, OPS, KNOWLEDGE, IDENTITY, and META.
+- `scenario-pack.json` version 1.2.0 is the canonical graph seed: 13 stories, 80 entities, and 134 relationships across BUSINESS, DECISION, PROCESS, WORK, CODE, CICD, TEST, DESIGN, OPS, KNOWLEDGE, IDENTITY, and META (file inventory checked 2026-10-18; not live graph totals).
 - `source-fixtures/` contains representative Jira, GitLab, Confluence, ServiceNow, observability, qTest, Figma, and API-portal exports for connector demonstrations.
 - `project-code/` provides a small risk-aware checkout implementation and tests.
 - `api/checkout-openapi.json` provides the API contract linked from the graph.
@@ -37,7 +37,7 @@ as provenance, not overwritten or deleted.
 
 Run `scripts\docker.ps1 demo-data`, then open
 **http://localhost:8088/enterprise.html**, or double-click
-`demo\autodemo\run-demo-hubble.bat` for the automatic 11-scenario walkthrough.
+`demo\autodemo\run-demo-hubble.bat` for the catalog-driven walkthrough.
 The guided page is served by Hubble and queries its existing graph connection.
 Its catalog selects query anchors; all rendered nodes and edges come from live
 Gremlin responses. Missing data and query failures are displayed explicitly.
@@ -73,3 +73,7 @@ Invoke-RestMethod http://localhost:8000/api/v1/demo/scenarios -Headers $headers
 ```
 
 Every scenario reports `ready: true` only when each expected graph entity is actually present.
+
+## Updating This Pack
+
+Preserve canonical IDs and stable relationship keys unless a deliberate fixture migration changes them. Validate the schema and expected paths, run the focused scenario tests, and exercise the affected live journey before changing status. Recount the actual JSON arrays when changing the version; source counts are not the number of persisted runtime/provenance records. See the [demo maintenance guide](../../README.md) and [testing guide](../../../docs/testing-guide.md).

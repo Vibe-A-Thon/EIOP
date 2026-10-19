@@ -1,6 +1,6 @@
 # Pipeline Demo Data — MFS Fraud Detection Platform
 
-Automated pipeline ingestion demo data for the **Meridian Financial Services (MFS)** Fraud Detection & AML Platform (FRD project).
+Batch/pipeline-fixture ingestion demo data for the **Meridian Financial Services (MFS)** Fraud Detection & AML Platform (FRD project). The business systems described below are synthetic scenario content, not claims that EOIP itself performs those financial operations or model functions.
 
 ## How EOIP uses it
 
@@ -91,3 +91,9 @@ Incidents:
   INC0080201 → mfs-fraud-engine (false positive spike after model update)
   INC0080202 → mfs-txn-monitor (Kafka consumer lag)
 ```
+
+## Running and Maintaining
+
+Use the pipeline dataset mode in [autodemo](../../autodemo/README.md), with the declared prerequisites and a dedicated test deployment. `pipeline-config.json` describes the fixture scenario; it is not proof that a production scheduler executed upstream services.
+
+Keep FRD identities and cross-references separate from PAY while preserving intentionally shared infrastructure. Validate the actual JSON, ingestion results, checkpoints and read-back before updating any acceptance status. Follow [demo maintenance](../../README.md) and [testing](../../../docs/testing-guide.md).

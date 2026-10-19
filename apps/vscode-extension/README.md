@@ -62,7 +62,7 @@ change your regular settings, token or installed extensions. A JSON receipt is
 saved under the repository's ignored `test-results/` directory. A nonzero host
 exit or missing/incomplete receipt fails the gate.
 
-Five multi-step journeys exercise all ten commands: NLQ/MCP protocol and refusals; context/path/source
+The extension-host fixture journeys exercise selected commands: NLQ/MCP protocol and refusals; context/path/source
 navigation and offline handling; search/impact/lineage/retrieval; nested and flat
 document-symbol providers with the cursor inside a function body; authentication
 and unsafe-path refusals. Source text remains unchanged. The tests use real
@@ -107,3 +107,11 @@ disables the hold and final confirmation for unattended runs. Use `--dry-run`
 to inspect coverage, pacing, and prerequisites without starting services.
 This demonstrates the workspace source extension in an isolated
 visible VS Code development host; it does not install or certify a VSIX.
+
+## Maintenance and Packaging
+
+`package.json` is authoritative for the current contributed commands/settings; the command catalog has grown beyond the original ten-command fixture suite. `extension.js` registers behavior, `mcp-client.js` implements the client protocol, `test/` holds Node/extension-host tests and `demo/` supports isolated presentations. A command declaration does not prove its backend is available.
+
+Keep API/MCP URLs and SecretStorage behavior compatible when changing authentication. Test unsafe paths, missing symbols, expired tokens, unavailable services and the supported MCP allowlist. The package script's `/output` destination is container-oriented; use the documented Compose build or an explicit host-safe VSIX destination rather than assuming it works unchanged on Windows.
+
+For cross-client contracts and suite migration, see [API reference](../../docs/api-reference.md), [testing](../../docs/testing-guide.md) and [suite plan](../../docs/EOIP-suite-architecture-plan.md). Rebuild and test the distributed VSIX separately from a development-host run.

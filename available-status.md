@@ -1,15 +1,17 @@
 # EOIP / KnowGridFlow Current Available Status
 
 **Document ID:** EOIP-STATUS-CURRENT-2026-10-11
-**Status:** Current evidence-bound status, superseding older production-complete claims
-**Master Backlog:** [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md)
+**Status:** Historical 2026-10-11 snapshot; not current release certification.
+**Master Backlog:** [KGF-MASTER-BACKLOG.md](EOIP-engg-doc-pkg/KGF-MASTER-BACKLOG.md)
 **Source Audits:** [EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md](EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md)
 
-## Current Evidence
+This snapshot is retained for history. Its task/test/route totals and recorded results have not been rerun as part of the 2026-10-18 documentation refresh. Use the [current documentation index](docs/README.md), owning programme ledgers and fresh evidence for present status.
+
+## Recorded Evidence
 
 | Evidence | Result |
 |---|---|
-| Master Backlog | 167/516 tasks ticked in the current working tree: Phase 0 13/13, Phase 1 65/65, Phase 2 88/130, Phase 8 1/17; remaining phases have no ticked rows yet. Source: [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md), which is not edited by this status overlay. |
+| Master Backlog | 167/516 tasks ticked in the current working tree: Phase 0 13/13, Phase 1 65/65, Phase 2 88/130, Phase 8 1/17; remaining phases have no ticked rows yet. Source: [KGF-MASTER-BACKLOG.md](EOIP-engg-doc-pkg/KGF-MASTER-BACKLOG.md), which is not edited by this status overlay. |
 | Requirement Registry | 893 items mapped with code/test paths in `requirements-registry.json` (BASE-01) |
 | Requirement Test Map | 539 requirements mapped to automated tests in `requirements-test-map.json` (BASE-02) |
 | Markdown documentation sweep | 231 first-party Markdown files / 47,000 lines read mechanically, excluding `KGF-MASTER-BACKLOG.md`, `.git`, `.venv`, `.pytest_cache`, and `node_modules` |
@@ -34,5 +36,5 @@
 
 ## Active Closure Roadmap
 
-All remaining items and live acceptance tests are tracked in [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md).
+This snapshot's backlog is [KGF-MASTER-BACKLOG.md](EOIP-engg-doc-pkg/KGF-MASTER-BACKLOG.md). Newer ASPEII, Community/IP, IP, Graph Neurons, Wisdom and GUI programmes also have their own requirements and evidence gates; this table is not their complete status.
 

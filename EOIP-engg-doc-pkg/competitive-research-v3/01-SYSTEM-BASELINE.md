@@ -34,7 +34,17 @@
 
 ### 2.1 Test run result
 
-RESULT-PLACEHOLDER
+Run on 2026-10-18 with `pytest tests -v --ignore=tests/runtime_hubble --ignore=tests/runtime_dlq --ignore=tests/fuzz --ignore=tests/neural` (3,929 tests collected):
+
+| Observation | Detail |
+|---|---|
+| Completed before the hang | **696 passed, 2 failed** across the first 81 test files (≈18% of collected tests) |
+| Failure 1 | `tests/semantic/test_shacl_differential.py::test_pyshacl_adapter_and_differential_oracle` — `ModuleNotFoundError: No module named 'pyshacl'`. The optional pySHACL adapter exists in code (`ontology/shacl_validator.py:788`) but pySHACL is not in the locked environment. |
+| Failure 2 | One test in `tests/unit/test_authn.py` failed in the full run but **passed** when re-run in isolation — flaky (likely order- or time-dependent). Not investigated further. |
+| Hang | `tests/unit/test_brain_and_living_system.py::test_brain_os_kernel` (7th test in that file) never returns; reproduced in isolation (killed after 240 s). The full suite therefore cannot complete in this environment. |
+| Previous claim | `available-status.md` (2026-10-11) reports "2843 passed, 34 skipped, 0 failures". That result is **not reproduced** here: the current suite is larger (3,929 collected), needs `numpy`, `hypothesis` and `pyshacl` that are not installed, and hangs. |
+
+Consequence for status labels: "Implemented" in §5 means code present and on the runtime path, with tests that either passed in this run or were not reached because of the hang. Rows whose tests sit after the hang carry the qualifier *tests not reached*.
 
 ## 3. Verified architecture (as found in code)
 
@@ -84,7 +94,7 @@ RESULT-PLACEHOLDER
 | Vector store(s) | Multiple vector DBs required | **No external vector database is integrated.** In-process BM25 index, deterministic hashing embedder, a pure-Python HNSW index, optional Ollama and sentence-transformers embedding providers. ADR-005 says "no mandatory vector database in P1". | Partial | `retrieval/vectors.py:29,87`, `graph/vector_graph.py:78`, `models/embeddings.py:44,115` |
 | Data model | LPG + ontology, meta-graph, higher layers | LPG with a fixed label manifest (`ontology/manifest.py` `VERTEX_LABELS`), canonical IDs, revision vertices (`EntityRevision`, `RelationshipRevision`), named-graph config, meta-graph modules (`graph/meta.py`, `graph_graph/`). | Implemented (LPG) / Partial (meta layers) | `ontology/manifest.py`, `contracts/revision.py:10`, `graph/named_graph.py` |
 | Knowledge layers | Instance → meta → ontology → living brain → wisdom | Instance graph and revision history: code. Meta-graph and "brain": code exists (`graph/meta.py`, `brain/`), largely in-memory. Wisdom graph: requirements and plan only (`EOIP-engg-doc-pkg/wisdom-graph-requirements.md`, `…-implementation-plan.md`). | Partial / Planned (wisdom) | listed files |
-| Reasoning | Unknown | A small in-house `OWLReasoner` (subclass, disjointness, property chains) and an in-house SHACL-subset validator over `MemoryGraphStore`. No OWL 2 profile engine, no Datalog engine, no `rdflib`/`pyshacl`. Rule catalog and "knowledge reasoning" modules are heuristic. | Partial | `ontology/rdf.py:598`, `ontology/shacl_validator.py:77`, `reasoning/knowledge_reasoning.py` |
+| Reasoning | Unknown | A small in-house `OWLReasoner` (subclass, disjointness, property chains) and an in-house SHACL-subset validator over `MemoryGraphStore`, plus an optional pySHACL adapter whose dependency is not installed. No OWL 2 profile engine, no Datalog engine; `rdflib`/`pyshacl` absent from the lock. Rule catalog and "knowledge reasoning" modules are heuristic. | Partial | `ontology/rdf.py:598`, `ontology/shacl_validator.py:77`, `reasoning/knowledge_reasoning.py` |
 | Query languages | Gremlin REST; Cypher, GQL, SPARQL, SQL, GraphQL required | Backend adapters speak Gremlin (HugeGraph, JanusGraph, Neptune), Cypher (Neo4j, Neptune openCypher) and SPARQL (Fuseki, GraphDB, Neptune). The **user-facing** query path is `QueryPlan` → named bounded templates executed through the `GraphStore` protocol — not a compiler to backend languages. A regex-based "universal transpiler" (GQL/Cypher/Gremlin/SPARQL subset) exists under `moonshot/`. App DSLs: EQL, EOQL, OSQL, SemanticQL, JSONPath subset, jq-lite, Lucene subset. No GraphQL, no SQL/PGQ execution. | Partial | `query/executor.py:259`, `contracts/query_plan.py:17`, `moonshot/universal_transpiler.py:26`, `qlang/plans.py:37` |
 | Natural-language query | Deterministic + non-deterministic NL, suggestions before execution | Deterministic template/semantic parser tier and a ranked suggestion engine with an optional LLM-assist hook; NLQ response contract. | Implemented (deterministic tier) / Partial (LLM tier) | `suggest/parser.py`, `suggest/engine.py:36`, `query/nlq.py:32` |
 | Backend stack | Python / FastAPI | Python 3.11.9, FastAPI 0.142.2, Pydantic 2, httpx. | Implemented | `requirements.lock`, `apps/api/*.py` |
@@ -126,7 +136,7 @@ RESULT-PLACEHOLDER
 | BL-26 | Schema profiling, key detection, relationship discovery from arbitrary JSON | Implemented | `ingest/profile.py` (1,023 lines) | |
 | BL-27 | Ontology proposal from JSON with review and promotion | Partial | `schemas/ontology_induction_result.schema.json`, `moonshot/ontology_induction.py` | governance flow not end-to-end |
 | BL-28 | Validation gate on the mutation path | Implemented | `validation/gate.py:28,50`, `ingestion/pipeline.py:153` | label/required-property checks; not SHACL |
-| BL-29 | SHACL validation | Partial | `ontology/shacl_validator.py:77`, `ontology/rdf.py` `validate_shacl` | in-house subset over the in-memory store; W3C SHACL Core conformance not tested |
+| BL-29 | SHACL validation | Partial | `ontology/shacl_validator.py:77` (in-house subset), `ontology/shacl_validator.py:788` (optional pySHACL adapter), `ontology/rdf.py` `validate_shacl` | in-house subset over the in-memory store; pySHACL adapter present but pySHACL not installed, so its differential test fails; W3C SHACL Core conformance not tested |
 | BL-30 | OWL reasoning | Partial | `ontology/rdf.py:598` | subclass/disjoint/property-chain only |
 | BL-31 | JSON-LD export/import with loss accounting | Implemented | `ontology/rdf.py:77,254,337,529` | round-trip validator exists |
 | BL-32 | Ontology-as-code, semantic change records, stewardship | Partial | `ontology/gitops.py:31`, `ontology/stewardship.py`, `scripts/ontology_diff.py` | no CI SHACL suite against W3C tests |

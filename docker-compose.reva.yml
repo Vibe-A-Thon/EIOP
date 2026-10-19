@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  # reva-worker:
+  #   image: eoip-reva:latest
+  #   command: python -m reva.worker
+  #   volumes:
+  #     - reva_data:/data/reva
+  #     - reva_fixture_cache:/data/reva-fixtures
+
+volumes:
+  reva_data:
+  reva_fixture_cache:

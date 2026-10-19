@@ -49,9 +49,9 @@ production source registrations.
 
 ## JSON Format
 
-Each file follows the format expected by the EOIP code graph ingestion:
+The following is a schematic field inventory, not a valid JSON payload. Use an actual adjacent JSON fixture and the consuming loader for exact values and required fields:
 
-```json
+```text
 {
   "description": "...",
   "repository": { "repo_id", "name", "source_uri", "default_branch" },
@@ -62,3 +62,9 @@ Each file follows the format expected by the EOIP code graph ingestion:
   "edges": [ { "type": "CONTAINS|DECLARES|CALLS|IMPORTS|DEPENDS_ON|CONNECTS_TO|DEPLOYED_ON", "from", "to" } ]
 }
 ```
+
+## Maintenance and Validation
+
+Keep repository/file/symbol identifiers and relationship endpoints consistent across fixtures. Changes to symbol locations must match the corresponding navigation expectations. Confirm fixture counts from the actual JSON after edits; the table is not a live graph count. Validate through the real ingestion handler and independent read-back, not just JSON parsing.
+
+See [demo overview](../../README.md), [source acquisition](../../../packages/eoip/connectors/README.md) and [testing](../../../docs/testing-guide.md). Loading these fixtures is a write operation and requires an explicitly selected demo environment.

@@ -1,103 +1,69 @@
-# Production Release Checklist and External Receipts Gate
+# Release Checklist and Evidence Gate
 
-**Document Version:** 1.0.0  
-**Target Release:** EOIP Production Release Candidate (RC-1)  
-**Requirement Mapping:** `REL-01`, `CG-GAP-008`, `REL-02..REL-15`, `MVP-FR-028`
+Last documentation review: 2026-10-18. **No release is certified by this file.** Previous unbound `PASSED` entries have been removed. The gates below are requirements to verify against the exact release artifact/profile, not execution results from this documentation refresh.
 
----
+## Release Identity and Evidence
 
-## 1. Executive Summary & Policy
+Record immutable commit/artifact digests, dirty-source fingerprint when applicable, operating system/hardware, dependency/configuration profile, dataset/source identity, UTC time, exact command, process exit, logs and structured results. Keep credentials and private source data out of public evidence. Reference durable controlled artifacts and independent verification; `HEAD` and a local filename alone are insufficient.
 
-In accordance with `CG-GAP-008` and `REL-01`, no production release claim can be certified without fresh, verifiable receipts collected directly from live infrastructure, real profiles, and automated acceptance gates executed against the exact final working tree.
+Use the owning programme's exact status vocabulary. For this checklist, each gate remains **UNVERIFIED** until evidence is reviewed. An unavailable required environment is blocked, a failing execution is failed, and a skipped test is not a pass. Preserve earlier failures and historical receipts without rewriting them.
 
-Each receipt entry must record:
-1. **Gate Identifier:** Specific requirement code (`REL-01` through `REL-15`, `MVP-FR-028`).
-2. **Command:** Exact CLI command or test entrypoint executed.
-3. **Environment:** Hardware, operating system, container runtime, or external tenant configuration.
-4. **Execution Timestamp:** UTC timestamp conforming to ISO 8601.
-5. **Commit SHA:** Immutable Git commit hash of the audited working tree.
-6. **Result Location:** Path to the structured JSON/JUnit/SARIF artifact proving compliance.
-7. **Verdict:** `PASSED` or `BLOCKED`.
+## Required Gate Matrix
 
----
+| Gate | Scope | Required verification | Current certification |
+|---|---|---|---|
+| REL-01 | Checklist completeness | Required IDs and evidence procedure present; this is only a document-structure check | UNVERIFIED |
+| REL-02 | Regression and builds | Applicable Python suite, default web type/unit/build, affected alternate frontend and distribution builds | UNVERIFIED |
+| REL-03 | Requirement coverage | Registry/coverage reconciliation plus actual acceptance evidence, not literal-ID counts | UNVERIFIED |
+| REL-04 | Product capability | Real registered behavior and unavailable-capability refusal; scanner output alone is insufficient | UNVERIFIED |
+| REL-05 | Documentation | Fresh inventory, reviewed current guides, explicit exclusions and correct commands | UNVERIFIED |
+| REL-06 | Live connectors | Authorized vendor sandbox credentials, pagination/cursors, retries, ingestion and independent reconciliation | UNVERIFIED |
+| REL-07 | Graph/Hubble | Actual selected backend, authenticated graph/schema/visualization and source-bound results | UNVERIFIED |
+| REL-08 | Browser workflows | Built app with real backend, authorization, errors, accessibility and visual inspection | UNVERIFIED |
+| REL-09 | VS Code | Extension-host checks plus supported live profile and separately tested packaged VSIX | UNVERIFIED |
+| REL-10 | HA/recovery | Profile-specific failover, interrupted writes, replay safety and isolated restore with measured recovery | UNVERIFIED |
+| REL-11 | Security | Applicable authentication/tenant/egress/injection tests, dependency and secret review, deployment hardening | UNVERIFIED |
+| REL-12 | Performance | Owning workload/budget on declared hardware, datasets, concurrency and raw percentile evidence | UNVERIFIED |
+| REL-13 | Documentation links | Scoped local path checks with exclusions and remaining failures explicitly reported | UNVERIFIED |
+| REL-14 | End-to-end demo | Live source-to-graph-to-client journey with bounded coverage and independent results | UNVERIFIED |
+| REL-15 | Closeout | Reconcile current scoped requirements and evidence; release approval/tag is a separate authorized action | UNVERIFIED |
+| MVP-FR-028 | Cross-domain traceability | Actual evidence-backed source/work/code/CI/document path for the declared profile | UNVERIFIED |
+| CG-GAP-008 | External receipts | Verify all required live/external receipts and reject missing, stale or tampered evidence | UNVERIFIED |
 
-## 2. Release Gate Verification Matrix
+## Commands and Their Limits
 
-| Gate ID | Capability / Scope | Command / Entrypoint | Target Environment | Commit SHA | Result Artifact Location | Status |
-|:---|:---|:---|:---|:---|:---|:---:|
-| `REL-01` | Release Checklist Authorization | `python -m eoip.verification.release_gate --checklist` | Release Gate Host | `HEAD` | `docs/release-checklist.md` | `PASSED` |
-| `REL-02` | Full Regression & Build Integrity | `python -m pytest tests/` & `npm run build` | Python 3.12 / Node 20 LTS | `HEAD` | `test-results/regression-summary.json` | `PASSED` |
-| `REL-03` | GAP & G2 P0 Coverage Gates | `python -m scripts.gap_coverage --fail-on-gate --gate-priority P0` | Python 3.12 CI Host | `HEAD` | `test-results/gap-coverage-p0.json` | `PASSED` |
-| `REL-04` | Product Capability Scanner Gate | `python scripts/check_product_gate.py` | Standalone API Harness | `HEAD` | `test-results/capability-scanner.json` | `PASSED` |
-| `REL-05` | Documentation Audit & Triage | `python -m scripts.documentation_audit --project-root .` | Audit Runner Host | `HEAD` | `EOIP-engg-doc-pkg/audits/generated/` | `PASSED` |
-| `REL-06` | Live Connector Real-Tenant Acceptance | `python -m eoip.verification.release_gate --verify-connectors` | Multi-Tenant Live VPC | `HEAD` | `test-results/receipts/live-connectors.json` | `PASSED` |
-| `REL-07` | Live Hubble & Code Graph Validation | `python -m eoip.verification.release_gate --verify-hubble` | HugeGraph/Hubble Sandbox | `HEAD` | `test-results/receipts/hubble-runtime.json` | `PASSED` |
-| `REL-08` | Browser-Level Web E2E (Vite Bundle) | `npx playwright test --config e2e/playwright.config.js` | Chromium/WebKit Headless | `HEAD` | `test-results/receipts/browser-e2e.json` | `PASSED` |
-| `REL-09` | VS Code Extension-Host Acceptance | `npm --prefix apps/vscode-extension run test` | VS Code Extension Host | `HEAD` | `test-results/receipts/vscode-extension.json` | `PASSED` |
-| `REL-10` | Production HA & Disaster Recovery | `python -m eoip.ha --validate-failover-drill` | Multi-Node Failover Sim | `HEAD` | `test-results/receipts/ha-disaster-recovery.json` | `PASSED` |
-| `REL-11` | Security & Vulnerability Certification | `python -m eoip.security.hardening --audit-all` | Secure Sandbox CI | `HEAD` | `test-results/receipts/security-certification.json` | `PASSED` |
-| `REL-12` | Scale Benchmark (50K Nodes / p95 < 200ms) | `python -m eoip.graph.benchmark --nodes 50000 --slo 200` | High-Memory Benchmark Host | `HEAD` | `test-results/receipts/performance-benchmarks.json` | `PASSED` |
-| `REL-13` | Markdown Link Integrity (Non-Historical) | `python scripts/check_markdown_links.py` | Docs Linter Runner | `HEAD` | `test-results/receipts/link-check.json` | `PASSED` |
-| `REL-14` | End-to-End Demo Flow Acceptance | `python -m pytest tests/e2e/test_demo_flow.py` | Staging Integration Host | `HEAD` | `test-results/receipts/demo-flow.json` | `PASSED` |
-| `REL-15` | Registry Reconciliation & RC Tag | `python -m eoip.verification.release_gate --reconcile` | Release Management Host | `HEAD` | `test-results/receipts/closeout-reconciliation.json` | `PASSED` |
-| `MVP-FR-028` | Cross-Domain Evidence Traceability | `python -m pytest tests/e2e/test_demo_flow.py` | Staging Integration Host | `HEAD` | `test-results/receipts/mvp-evidence-path.json` | `PASSED` |
+These are starting points, not a pre-certified release pipeline. Run from repository root with the required dependencies/services.
 
----
+```powershell
+python -m eoip.verification.release_gate --checklist
+python -m scripts.build_requirements_registry --check
+python -m pytest tests/unit/test_qa_gate_integrity.py -q
+npm --prefix apps/web run typecheck
+npm --prefix apps/web run test:unit
+npm --prefix apps/web run build
+python -m scripts.repository_inventory
+python scripts/check_markdown_links.py
+```
 
-## 3. Receipt Verification Protocols
+Use [Testing Guide](testing-guide.md), [Deployment](../deploy/README.md) and [Operations](operations-runbook.md) to select actual integration, browser, connector, recovery and offline commands. Some checks mutate demo/test state or require downloads. Use isolated profiles. Main CI and local component tests are not a substitute for every supported release profile.
 
-### 3.1 Live Connector Acceptance (`REL-06`)
-- **Connectors Evaluated:** Jira, GitLab, GitHub, Confluence, ServiceNow.
-- **Protocol:**
-  - Verify TLS handshake, OAuth2/token authentication, incremental cursor tracking, and DLQ diversion on rate limits.
-  - Assert non-zero vertex creation in canonical partition (`urn:eoip:work:item:*`, `urn:eoip:repo:*`).
+## Known Verifier Limitations
 
-### 3.2 Live Hubble & Code Graph (`REL-07`)
-- **Protocol:**
-  - Establish live connection to graph backend (`http://hugegraph-server:8080`).
-  - Verify schema metadata synchronization and query execution of source-bound code graph vertices (`CodeSymbol`, `Module`).
+Source inspection of `packages/eoip/verification/release_gate.py` shows that its CLI currently wires `--checklist` to a document/ID-presence check. Although `--evaluate` and `--output` are parsed, the current `main()` does not execute a full gate evaluation or write that requested output. Do not interpret a zero exit from those paths as full release verification.
 
-### 3.3 Browser-Level Web E2E (`REL-08`)
-- **Surfaces Covered:**
-  - Graph Explorer Cytoscape canvas with 10K+ element WebGL renderer.
-  - Admin & Health telemetry panels (`UI-01`, `UI-02`).
-  - KGR Polyglot Query & NLQ visual builder (`UI-03`).
-  - Executive report export engine (`UI-04`).
+Previously documented `--verify-connectors`, `--verify-hubble`, `--reconcile` and `--aggregate` are not registered CLI options. Some Python receipt helpers accept supplied measurements/booleans and defaults rather than independently collecting live evidence. Those helpers and their unit tests do not certify a vendor deployment or completed backlog.
 
-### 3.4 VS Code Extension Host (`REL-09`)
-- **Protocol:**
-  - Execute extension host headless harness against the live API backend and MCP daemon.
-  - Validate editor actions: `eoip.nlq`, `WHY`, `WHAT CHANGED`, `IMPACT`, `WHERE USED`.
+Full independent release verification remains implementation/qualification work. Do not restore unsupported pass claims to make this document agree with a permissive helper.
 
-### 3.5 Production HA & Disaster Recovery (`REL-10`)
-- **Protocol:**
-  - Multi-process advisory lock race with simulated SIGKILL and TTL expiration.
-  - Full backup snapshot followed by complete restore to cold replica; verify zero checksum divergence.
+## Release Approval Checklist
 
-### 3.6 Security Certification (`REL-11`)
-- **Protocol:**
-  - OWASP Top 10 automated test suites.
-  - Dependency vulnerability scan (0 critical CVEs).
-  - High-entropy secret scanning across commits.
-  - Prompt injection and tool-poisoning defensive barriers.
+1. Select the supported app/API/MCP/extension, database, dependency and deployment versions.
+2. Verify installation, configuration, secrets, identity and exact tenant/data boundaries.
+3. Run relevant component checks, then real integration and independent-effect checks.
+4. Exercise fresh install, upgrade, interrupted work, rollback/recovery and optional-module absence.
+5. Reconcile every scoped requirement with current evidence; retain unknown/blocked items visibly.
+6. Review first-party terms, third-party notices, bundled native/model assets and unresolved distribution issues.
+7. Retain the reviewed evidence manifest and approval in durable controlled storage.
+8. Create/sign/publish the release only through the owner's approved release process.
 
-### 3.7 Scale & Performance Baselines (`REL-12`)
-- **Protocol:**
-  - 50,000 vertex graph loaded with 150,000 relations.
-  - 10,000 query benchmark loop verifying p95 latency < 200 ms and concurrency resilience.
-
-### 3.8 Link Integrity (`REL-13`)
-- **Protocol:**
-  - Comprehensive link validation across all non-historical markdown documents.
-  - Requirement: Exactly 0 broken relative or local references.
-
-### 3.9 End-to-End Demo Flow (`REL-14`, `MVP-FR-028`)
-- **Protocol:**
-  - Execute full ingestion cycle: Jira -> Merge Request -> Commit -> Code Symbol -> Pipeline -> Documentation.
-  - Verify path length, multi-hop evidence resolution, and lineage verification.
-
-### 3.10 Final Reconciliation & Tag (`REL-15`)
-- **Protocol:**
-  - Verify 516/516 master backlog tasks closed.
-  - Verify 100% requirements registry synchronization.
-  - Tag release candidate `v1.0.0-rc1`.
+A successful demo, a populated ledger or a stated count such as 516 closed tasks is not a substitute for this process. Do not tag or publish a release merely because this documentation has been updated.

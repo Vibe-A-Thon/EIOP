@@ -1,205 +1,157 @@
-# EOIP — Enterprise Ontology & Intelligence Platform
+# EOIP
 
-EOIP is a local-first enterprise knowledge graph platform that ingests from 24 source connectors (Jira, GitLab, GitHub, Confluence, ServiceNow, and more), links cross-domain facts into a typed property graph, and answers questions about your codebase, work items, incidents, people, and deployments through a GraphRAG retrieval system and 20 bounded agents.
+EOIP (Enterprise Ontology & Intelligence Platform), also called KnowGridFlow (KGF) in parts of this repository, is a local-first knowledge graph application. It provides authenticated graph/query APIs, ingestion connectors and jobs, provenance and validation services, a React web app, an MCP server, a worker, a VS Code extension, and local container deployment assets.
 
-## Current implementation picture
+This repository contains both active application code and research, demo, planning, and audit material. A module, test, backlog checkbox, or demo result is not proof that a feature is production-qualified. The ASPEII, Community/IP, IP/Warrant, and Graph Neurons plans define acceptance gates that are still being implemented and verified. Do not interpret historical completion counts or old test totals in archived reports as the state of the current checkout.
 
-The repository is no longer just an architecture package. It contains a working
-FastAPI runtime, React administration/explorer UI, MCP server, worker, VS Code
-extension, Hubble deployment assets, demo automation, and a broad Python test
-suite. The active completion ledger is [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md);
-the current working-tree backlog status is 516/516 tasks ticked: all phases in
-the master completion backlog are marked complete. Treat
-`requirements-registry.json`, `requirements-test-map.json`, and the Phase 8
-receipt rows as the evidence trail behind that status.
+## Repository Map
 
-Implemented areas include:
+For a task-oriented reading path, start with the [Documentation Index](docs/README.md). Every major runtime/source area now has a component README; the [repository inventory](docs/generated/README.md) records static file coverage and its exclusions.
 
-- API surface: `apps/api/app.py`, `main.py`, and `extended.py` expose graph,
-  query, retrieval, source registry, ingestion, governance, reporting,
-  operations, demo, and advanced engine routes.
-- Graph core: memory, HugeGraph, Neptune, Neo4j, bitemporal state, snapshots,
-  evolution, simulation, causal/what-if analysis, process mining, graph metrics,
-  schema migration, named graphs, and database adapter catalogs.
-- Acquisition fabric: source registry, connector SDK contracts, checkpointing,
-  dry-run/replay, rate limiting, webhook admission, offline fixtures, raw
-  SourceEvent capture, DLQ envelopes, idempotent canonical mutations, and Jira
-  source deletion tombstones that preserve history while hiding deleted records
-  from current views.
-- Source coverage: Jira JSON, local Git, GitHub, GitLab, Confluence,
-  ServiceNow, Datadog, Grafana, Kibana, API portal, code graph JSON, web crawl,
-  file parsing, CI/CD, SBOM, runtime and observability-oriented fixtures and
-  adapters.
-- Query and retrieval: QueryPlan execution, NL/NLQ, policy enforcement,
-  caching, polyglot query dialect support, GraphRAG/RAPTOR/LightRAG/HippoRAG/
-  PathRAG/LazyGraphRAG/DRIFT-style retrieval modules, evidence manifests,
-  citation chains, graph-node/path/source-record addressing, and abstention
-  behavior.
-- Semantic interoperability and federation: JSON-LD/RDF/OWL export, JSON-LD
-  import back into the property graph, SHACL shape export/validation, round-trip
-  validation, source-policy-aware federation, VIRTUAL/CACHE/MATERIALIZE/HYBRID
-  source modes, file/REST/JDBC-style federation adapters, cost-aware routing,
-  cache freshness, offline degradation, and explainable per-row provenance.
-- Intelligence and agents: bounded read-only agent runtime, loops, approvals,
-  learning/report services, cognitive narrator, memory engines, model
-  governance, XAI ledger, live causal engine, domain packs, compliance twin,
-  self-healing, confidential graph, and moonshot reference runtimes.
-- Enterprise readiness: authentication/authorization, audit sinks, egress and
-  privacy controls, tenancy, licensing, marketplace/plugins, source admission,
-  recovery bundles, backup/restore scripts, observability, deployment manifests,
-  and security test coverage.
-- User surfaces: Cytoscape graph explorer, admin source/job/review panels, KGR
-  views, report/export UI, Hubble graph walkthroughs, browser demo automation,
-  and a read-only VS Code context extension with MCP/NLQ journeys.
-- Current implementation ledger: `KGF-MASTER-BACKLOG.md`,
-  `requirements-registry.json`, and `requirements-test-map.json` track the
-  516/516 completed tasks and the evidence used to close them.
+| Path | Purpose |
+|---|---|
+| `apps/api/` | FastAPI application factory, authentication, middleware, and HTTP routes |
+| `apps/worker/` | Single filesystem-backed job worker and ingestion handlers |
+| `apps/mcp/` | Read-only MCP server facade over the authenticated API |
+| `apps/web/` | React/Vite explorer and administration UI |
+| `apps/vscode-extension/` | Read-only VS Code context and MCP client extension |
+| `frontend/` | Separate TypeScript preview frontend; not the UI built by default Compose |
+| `backend/` | Preview/supervisor shim that delegates to the API factory with development defaults |
+| `packages/eoip/` | Graph, ontology, connector, query, retrieval, agent, policy, and domain modules |
+| [`reva/`](reva/README.md) | Evidence/assurance workstream; optional API mount, separate packaging and integration caveats |
+| `config/` | Graph backend, ontology, connector, agent, and policy configuration |
+| `schemas/` | JSON Schemas and schema catalog |
+| `deploy/` | Docker/OCI images, Compose profiles, Hubble configuration, and observability config |
+| `scripts/` | Container helpers, setup, migration, demo, backup, and verification utilities |
+| `tests/` | Unit, integration, contract, security, semantic, neural, and browser tests |
+| `docs/` | Operator, developer, API, installation, and decision documentation |
+| `EOIP-engg-doc-pkg/` | Engineering specifications, architecture material, audits, and historical research |
+| `demo/` | Synthetic demo inputs and browser-driven demonstration tooling |
 
-**Key capabilities:**
-- 24 source connectors with checkpoint-based incremental sync
-- Multi-backend graph store: Apache HugeGraph (default Docker backend), Amazon Neptune, Neo4j, or in-memory via `config/graph-store.yaml`
-- 14 graph domains, 50+ vertex types, 30+ edge types
-- 6 query languages: EQL, NLQ, EOQL, OSQL, Semantic QL, raw Gremlin (admin)
-- 30+ graph algorithms: centrality, community, paths, similarity, blast radius, cycle detection
-- Federated query planner with file/REST/JDBC-style adapters, policy controls,
-  cache freshness, cost-aware routing, filter/projection pushdown, and per-row provenance
-- GraphRAG with 7 retrieval strategies, stable evidence manifests and citation chains, no mandatory vector DB
-- 20 bounded read-only agents with circuit breaker and budget enforcement
-- 12 export formats plus JSON-LD import, RDF/OWL/SHACL interoperability, and ontology round-trip validation
-- MCP server with 18 read-only tools for VS Code / IDE integration
-- Current audit evidence: `2843 passed`, `34 skipped`, `0 failures` in the Python suite at the 2026-10-11 baseline; GAP/G2 coverage gates passed; the web build passed. See [Audit-GAPS-CG-dev.md](EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md) and [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md).
+## Fastest Local Run
 
-Production claims should be read together with the Phase 8 receipts in the
-master backlog: live external connector runs, Hubble/runtime validation on the
-final tree, browser E2E over the production bundle, VS Code extension-host
-acceptance, HA/backup/DR, security certification, and performance benchmark
-receipts.
+The container helper detects Docker, Podman, nerdctl, Finch, or supported Compose commands. On first `up`, it creates a local `deploy/.env` with generated credentials; that file is ignored by Git. Docker or another compatible OCI runtime with Compose must be installed and running.
 
-## Quick Start
-
-From the repository root, with any OCI container runtime (Docker, Podman, nerdctl, or Finch):
+PowerShell:
 
 ```powershell
-# Auto-detects Docker, Podman, nerdctl, or Finch
-.\scripts\container.ps1 up
-.\scripts\container.ps1 test
-
-# Or use the backward-compatible Docker-specific wrapper:
-.\scripts\docker.ps1 up
-
-# On Linux / macOS:
-./scripts/container.sh up
-
-# See which runtimes are available:
 .\scripts\container.ps1 detect
-python -m scripts.detect_runtime --all
+.\scripts\container.ps1 up
 ```
-The startup script auto-discovers the container runtime even when its CLI is
-missing from standard PATH, generates local credentials, builds the services,
-and waits for readiness. Override with `$env:EOIP_CONTAINER_RUNTIME = 'podman'`.
-No host Python or Node installation is required.
 
-Open [the explorer](http://localhost:8080/app) or
-[administration](http://localhost:8080/admin). Enter `EOIP_API_TOKEN` from the
-generated, Git-ignored `deploy/.env`. API documentation is at
-[localhost:8000/docs](http://localhost:8000/docs).
+Bash:
 
-The explorer uses an on-demand Cytoscape.js canvas with Search, Graph, Impact,
-Evidence, and Architecture lenses, typed legends, bounded expansion,
-relationship/trust filters, highlighted paths, exported local context, and
-responsive inspection panels. Administration includes live source/job,
-validation/quality, ontology, semantic federation, model/backup health, audit, and dead-letter
-views; operational values are always read from the API. The API supports
-QueryPlan execution (`POST /api/v1/query`), provenance lineage
-(`POST /api/v1/lineage`), GraphRAG retrieval (`POST /api/v1/rag`), and
-ingestion/validation run history (`GET /api/v1/ingestion/runs`,
-`GET /api/v1/validation/runs`).
+```bash
+./scripts/container.sh detect
+./scripts/container.sh up
+```
 
-The demo worker loads Jira fixtures, a real Git repository, Python/TypeScript
-symbols, documentation, merge-request metadata, and pipeline metadata.
+The default Compose profile starts HugeGraph, schema/Hubble initialization, the API, worker, MCP server, web UI, and Hubble. Open:
+
+- Web app: <http://localhost:8080/app>
+- Administration UI: <http://localhost:8080/admin>
+- API OpenAPI UI: <http://localhost:8000/docs>
+- MCP Streamable HTTP: <http://localhost:8001/mcp>
+- Hubble: <http://localhost:8088>
+
+Use the generated `EOIP_API_TOKEN` in `deploy/.env` to authenticate. Do not print or commit the token. `scripts/container.ps1 status`, `logs`, `backup`, `restore-test`, and `down` are available. `down` preserves named volumes; avoid `down --volumes` unless you intentionally want to delete local graph and application data.
+
+For exact runtime actions and optional Compose profiles, see [Getting Started](docs/getting-started.md) and [Docker/Container Operations](EOIP-engg-doc-pkg/reference/docker-local.md).
+
+## Host Development
+
+Requirements: Python 3.11 or later, Node.js 22 for the web app, and Git. A virtual environment is recommended.
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+npm --prefix apps/web ci
+```
+
+Start a local in-memory API in one PowerShell session. These settings are development-only; never reuse the example token in a deployed environment.
+
+```powershell
+$env:EOIP_API_TOKEN = 'local-development-token-at-least-24-chars'
+$env:EOIP_GRAPH_BACKEND = 'memory'
+$env:EOIP_DATA_DIR = (Join-Path $PWD '.eoip-data')
+python -m uvicorn apps.api.main:create_app --factory --host 127.0.0.1 --port 8000 --reload
+```
+
+In another session, start the UI:
+
+```powershell
+$env:EOIP_DEV_API_URL = 'http://127.0.0.1:8000'
+npm --prefix apps/web run dev
+```
+
+The host API factory is `apps.api.main:create_app`; `apps.api.app:create_app(store, ...)` is a lower-level query application that requires a graph store. For durable local data or a full multi-service run, use the container setup. The `memory` graph backend is process-local and does not survive a restart.
+
+## Tests and Checks
+
+Run focused tests while changing a subsystem, then broaden as needed:
+
+```powershell
+python -m pytest tests/unit/test_provenance.py -q
+python -m pytest tests/integration/test_external_mcp_bridge.py -q
+python -m pytest tests/neural/test_numerics.py tests/neural/test_runtime_tiers.py -q
+npm --prefix apps/web run typecheck
+npm --prefix apps/web run test:unit
+npm --prefix apps/web run build
+```
+
+The Python suite is run with `python -m pytest`; test markers include `req`, `integration`, `security`, `performance`, and `enterprise`. Some integration, browser, container, external-provider, and neural tests require extra dependencies or services. A skipped or unavailable profile is not a pass. `scripts/container.ps1 test` runs the Compose test, smoke, and UI-test services where the required container runtime is available.
+
+## Optional Python Extras
+
+`pip install -e .` installs the core application dependencies. Features that need larger or platform-sensitive packages are optional extras in `pyproject.toml`; do not add numerical or GPU packages to core dependencies.
+
+The N0 numerical foundation is installed with:
+
+```powershell
+python -m pip install -e ".[numerics]"
+```
+
+It installs NumPy, SciPy, and scikit-learn, but not Torch or CUDA. See [Optional Neural Tiers](docs/install-neural.md) for the current install and qualification boundary. N1/N2/N3 model execution is not qualified merely because experimental modules exist. The current Windows N0 cosine benchmark has not met the specified 20 ms target; consult the install guide before relying on that path.
+
+Other extras include `reports`, `fileparse`, `codeparse`, `otel`, `k8s`, `redis`, and `enterprise`. Review the exact resolved dependencies and [third-party licensing status](THIRD_PARTY_NOTICES.md) before building or distributing an image; the repository's release checklist is not currently a commercial clearance.
+
+## Architecture and Data Boundaries
+
+The container deployment uses HugeGraph as its default graph service, a FastAPI API process, a filesystem-backed worker/job queue, an MCP HTTP facade, and a static web image. Other graph adapters are selected through `config/graph-store.yaml` and environment overrides. The API, worker, MCP process, graph backend, and browser have distinct responsibilities; see [Architecture](docs/architecture-guide.md).
+
+Demo datasets are synthetic. They exercise explicit ingestion and query paths; they are not customer data, live vendor qualification, production federation registrations, or proof of production performance. Connector credentials are configured as secrets/environment values and must not be placed in request payloads or documentation. Graph sources and worker storage have different persistence properties; do not describe the file-backed queue as a distributed database or the in-memory graph as durable storage.
+
+The two frontend trees have different routing, authentication and development-server configuration. Read the [Frontend Guide](docs/frontend-development.md) before modifying or consolidating them. A worker and API configured with separate memory stores cannot share graph state through the data directory. The worker defaults to demo loading; explicitly disable `EOIP_LOAD_DEMO` for non-demo deployments.
+
+The [Application Suite Plan](docs/EOIP-suite-architecture-plan.md) proposes independently built portals on the shared platform. It is a migration roadmap, not the current deployment. Existing routes and clients must retain compatible behavior during that work.
 
 ## Documentation
 
-| Guide | Description |
-|-------|-------------|
-| [Architecture](EOIP-engg-doc-pkg/06-architecture.md) | System overview, Docker services, data flows, storage, security |
-| [API Reference](EOIP-engg-doc-pkg/reference/api-reference.md) | REST endpoints with request/response examples |
-| [Connectors](EOIP-engg-doc-pkg/reference/connectors.md) | Source connector configuration and behavior |
-| [Agents](EOIP-engg-doc-pkg/reference/agents.md) | Agent framework, runtime constraints, tool access policy |
-| [RAG](EOIP-engg-doc-pkg/reference/rag.md) | GraphRAG retrieval system, strategies, evidence citations |
-| [Query Engine](EOIP-engg-doc-pkg/reference/query-engine.md) | Query languages, QueryPlan executor, safety policy |
-| [Graph Algorithms](EOIP-engg-doc-pkg/reference/graph-algorithms.md) | Graph algorithms and metrics |
-| [Ontology](EOIP-engg-doc-pkg/reference/ontology.md) | Vocabulary, vertex/edge labels, schema generation, SKOS |
-| [Ingestion](EOIP-engg-doc-pkg/reference/ingestion.md) | Ingestion pipeline, DLQ, checkpointing, semantic pipeline |
-| [Code Graph](EOIP-engg-doc-pkg/reference/code-graph.md) | Code parser, symbol extraction, CommitSymbolLink, diff hunks |
-| [Multi-Backend](EOIP-engg-doc-pkg/76-multi-backend.md) | HugeGraph, Neptune, Neo4j, memory backends - config and factory |
-| [File Parsing](EOIP-engg-doc-pkg/reference/file-parsing.md) | .docx, .xlsx, .pptx, .pdf, .csv, .txt ingestion |
-| [Docker Local](EOIP-engg-doc-pkg/reference/docker-local.md) | Full Docker runbook, backup/restore, VS Code extension |
-| [Deep Agents & XAI](EOIP-engg-doc-pkg/reference/deep-agents-xai.md) | Agent contracts, orchestration, approval workflows |
-| [Benchmarking](EOIP-engg-doc-pkg/reference/benchmarking.md) | Performance benchmarks |
-| [Current Gap Audit](EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md) | Current 2026-10-11 audit, stale-doc findings, and closure backlog |
-| [Master Completion Backlog](KGF-MASTER-BACKLOG.md) | Synthesized 516-task master closure backlog across all phases |
-| [Audit Report](docs/audit-2026-10-06/assessed-gap-report.md) | Pass 5 — comprehensive completion audit (2026-10-06) |
+| Guide | Use it for |
+|---|---|
+| [Documentation Index](docs/README.md) | Reading paths, component guides and all active programme links |
+| [Getting Started](docs/getting-started.md) | Container and host development setup |
+| [Developer and Maintainer Guide](docs/developer-maintainer-guide.md) | Repository layout, service boundaries, change workflow, tests, operations, and documentation policy |
+| [Architecture Guide](docs/architecture-guide.md) | Runtime topology, data flow, persistence boundaries, and security boundaries |
+| [API Reference](docs/api-reference.md) | API entrypoints, route families, authentication, and MCP configuration |
+| [Configuration Reference](docs/configuration-reference.md) | Environment precedence, file loaders, secret handling and safe changes |
+| [Operations Runbook](docs/operations-runbook.md) | Diagnosis, persistent state, backup, restore and incident handover |
+| [Testing Guide](docs/testing-guide.md) | Test profiles, CI scope, evidence and known verification limits |
+| [Migration and Refactoring](docs/migration-refactoring-guide.md) | Contract/storage changes, new development and team handover |
+| [Documentation Policy](docs/documentation-policy.md) | Ownership, regeneration and preventing stale completion claims |
+| [Optional Neural Tiers](docs/install-neural.md) | Optional N0 setup and qualified/unqualified neural profiles |
+| [Release Checklist](docs/release-checklist.md) | Local release preparation checklist and known qualification gaps |
+| [Engineering Documentation Package](EOIP-engg-doc-pkg/README.md) | Normative architecture, design, and historical engineering material |
+| [ASPEII requirements and plan](aspeii-reqirements.md) | ASPEII scope and evidence gates |
+| [Community/IP requirements and plan](community-ip-requirements.md) | CTAR and AMRB scope and evidence gates |
+| [IP/Warrant requirements and plan](ip-requirements.md) | Warrant, neural-fabric, and IP work package requirements |
+| [Graph Neurons requirements and plan](Graph-Neurons-requirements.md) | Numerical foundation, neural tiering, and model verification gates |
+| [Wisdom Graph requirements](wisdom-graph-requirements.md) | Decisions, precedents, outcomes, lessons, counsel and qualification |
+| [Third-party notices](THIRD_PARTY_NOTICES.md) | Dependency attribution locations and unresolved licensing review |
 
-## On-prem source connectors
+## Current Completion Status
 
-Actual local binary/text files can be converted into JSON, citation-aware RAG
-chunks, graph records, and keyword/vector artifacts using the `documents`
-connector or authenticated raw-file upload API. See
-[file parsing and ingestion](EOIP-engg-doc-pkg/reference/file-parsing.md) for formats, local tool
-prerequisites, CLI/API examples, and explicit support limitations.
+This README does not claim the platform or its programme requirements are complete. The implementation plans require behavior at real API, storage, worker, MCP, UI, and deployment boundaries, plus independent verification. Local unit-test success is component evidence only. Review the individual programme ledgers and release evidence for current status; where a required ledger or evidence bundle is absent, treat that work as open or blocked.
 
-The worker supports incremental Confluence Data Center and ServiceNow Table API
-jobs. Before starting it, configure each source in the worker environment using
-either a bearer token or a username/password pair:
-
-| Source | URL | Bearer token | Basic-auth pair |
-|---|---|---|---|
-| Confluence | `EOIP_CONFLUENCE_URL` | `EOIP_CONFLUENCE_TOKEN` | `EOIP_CONFLUENCE_USERNAME`, `EOIP_CONFLUENCE_PASSWORD` |
-| ServiceNow | `EOIP_SERVICENOW_URL` | `EOIP_SERVICENOW_TOKEN` | `EOIP_SERVICENOW_USERNAME`, `EOIP_SERVICENOW_PASSWORD` |
-
-Set credentials only through the worker's secret/environment configuration.
-The API request and durable job payload contain sync options only, never source
-credentials. Submit an authenticated job to
-`POST /api/v1/admin/ingestion/confluence` or
-`POST /api/v1/admin/ingestion/servicenow` with an optional ISO-8601 `checkpoint`,
-optional ISO-8601 `watermark`, and `dry_run` boolean. If no checkpoint is
-supplied, the worker resumes from `state/connectors/{source}.json`. It advances
-that checkpoint only after a fully successful, non-dry-run ingestion; partial
-mapping results are captured to raw storage and DLQ, then replay from the old
-checkpoint. Confluence pages/spaces and ServiceNow knowledge articles are
-persisted with source-event evidence and containment lineage; page/article
-text is stored in the document description. Confluence attachment binaries are
-not downloaded by this connector.
-
-## RDF/OWL/SHACL interoperability
-
-The authenticated `GET /api/v1/ontology/export` endpoint returns a JSON-LD 1.1
-document containing the EOIP ontology vocabulary and graph data. It exports
-vertices as OWL individuals and labels as ontology classes, while edges are
-represented both as direct relation triples and as reified assertions to retain
-edge properties. The optional `limit` query parameter bounds vertices and edges
-independently (default 5000, maximum 10000); inspect `export.partial`,
-`export.truncated_vertices`, `export.truncated_edges`, and `export.mapping_losses`
-before treating an export as complete. `POST /api/v1/ontology/import` can import
-supported EOIP JSON-LD records back into the property graph, while
-`GET /api/v1/ontology/shacl` and `GET /api/v1/ontology/validate` expose
-manifest-derived SHACL shapes and validation findings. The dual model is an
-adapter layer over the property graph: HugeGraph remains the operational graph
-store and does not provide native RDF or SPARQL support.
-
-## Semantic federation
-
-The federation layer can query the local graph and explicitly registered
-external sources in one plan. Supported adapter classes include local graph,
-file, REST JSON, and SQLite-backed JDBC-style sources. Per-source/entity policy
-selects `VIRTUAL`, `CACHE`, `MATERIALIZE`, or `HYBRID` behavior; plans explain
-adapter kind, source URNs, cost, filter/projection pushdown, cache freshness,
-policy denials, degraded sources, and row-level provenance. Runtime API wiring
-does not register synthetic demo rows as production federation data.
-
-See [the Docker runbook](EOIP-engg-doc-pkg/reference/docker-local.md) for Full instructions and current scope, services, tests,
-backup/restore, the VS Code extension, optional profiles, and implementation limits.
-
-See the [Deep Agents and XAI guide](EOIP-engg-doc-pkg/reference/deep-agents-xai.md) for governed agent contracts,
-bounded orchestration, evidence-linked explanations, and approval-only change proposals.
+See the [documentation review](docs/documentation-review-2026-10-18.md) for this refresh's scope and unresolved implementation risks. First-party distribution follows [LICENSING.md](LICENSING.md); dependencies retain their own terms. No documentation refresh or install command grants commercial clearance.

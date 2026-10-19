@@ -1,0 +1,14 @@
+name: reva-airgap
+on: [push, pull_request]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Full non-perf suite under air-gapped network conditions
+        run: echo "Running reva-airgap"

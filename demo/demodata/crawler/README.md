@@ -53,8 +53,14 @@ Each page follows the `ControlledWebCrawler` output format:
   "content_type": "text/html",
   "status_code": 200,
   "title": "Page Title",
-  "headings": ["H1 text", "H2 text", ...],
+  "headings": ["H1 text", "H2 text"],
   "text": "Full page text content...",
   "links": ["https://linked-page/..."]
 }
 ```
+
+## Maintenance and Safety
+
+Preserve stable source URLs and cross-referenced IDs when updating fixtures. Validate the page shape and the actual loader path before assuming every field becomes a graph fact. Live crawling additionally needs reviewed host/scope/redirect, credential, rate-limit, content-size and privacy controls; a local fixture does not verify those controls.
+
+Use a dedicated synthetic deployment and follow [demo maintenance](../../README.md) and [connector qualification](../../../docs/connectors/qualification.md). Do not replace internal example URLs with private customer endpoints or real credentials.

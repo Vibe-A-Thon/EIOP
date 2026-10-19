@@ -15,12 +15,14 @@ The live desktop NLQ/MCP run below was not rerun in this continuation.
 | Check | Result | Exit code | Evidence |
 |---|---|---|---|
 | Native Node protocol and driver tests | PASS, 4 tests | 0 | `npm.cmd test` in `apps\vscode-extension` |
-| Real VS Code host contract tests | PASS, 5 journeys | 0 | [Fixture receipt](../../test-results/extension-host-9a3d8608-f8a2-40b3-afcf-05e175194980.json) |
-| Visible live desktop demo | PASS, 3 steps | 0 | [Live receipt](../../test-results/vscode-live-demo-0356a3be-5f5b-42aa-99b7-5fbcf0632012.json) |
+| Real VS Code host contract tests | Historical recorded PASS, 5 journeys; receipt unavailable in current checkout | 0 (historical) | `test-results/extension-host-9a3d8608-f8a2-40b3-afcf-05e175194980.json` (repository-relative historical location) |
+| Visible live desktop demo | Historical recorded PASS, 3 steps; receipt unavailable in current checkout | 0 (historical) | `test-results/vscode-live-demo-0356a3be-5f5b-42aa-99b7-5fbcf0632012.json` (repository-relative historical location) |
 | Full and manual launcher dry-run | PASS | 0 | `run-demo.bat --mode full --dry-run` and `--mode manual --dry-run` |
 | JavaScript syntax and whitespace | PASS | 0 | `node --check` on desktop scripts; `git diff --check` |
 
 ## Live scope
+
+Documentation review note (2026-10-18): the two historical receipt files identified above are absent from this checkout. The historical narrative is preserved, but these outcomes cannot be independently reverified from those paths here. Retrieve the original controlled artifacts or run a fresh accepted scenario; do not manufacture replacement receipts.
 
 `node .\demo\autodemo\vscode-demo.js` launched the updated EOIP 0.1.0
 source extension in cached VS Code 1.96.4 with a disposable profile.

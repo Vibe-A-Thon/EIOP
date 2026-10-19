@@ -1,37 +1,40 @@
-# Secrets Directory
+# Secret Examples
 
-Copy this directory to `secrets/` and replace placeholder values with actual credentials.
+This directory contains placeholders and examples only. The default container
+launcher creates the local ignored file `deploy/.env` and generates
+`EOIP_API_TOKEN` and `HUGEGRAPH_PASSWORD` on first startup. The current Compose
+configuration passes configured values through service environments; the
+`secrets.example/` directory is **not automatically mounted as Docker Compose
+secrets**.
 
-## Files
+## Configuration
 
-- `api-token.txt` — Bearer token for API/MCP authentication
-- Add connector-specific credentials as needed, for example `jira-token.txt`,
-  `gitlab-token.txt`, `github-token.txt`, `confluence-token.txt`, or
-  `servicenow-token.txt`.
+For disposable local development, use the container helper:
 
-EOIP's implemented connector paths also support environment/secret references
-for live Confluence and ServiceNow workers. Source registry entries and durable
-job payloads should contain options and opaque secret references only, never raw
-passwords or API tokens.
-
-The current platform also includes semantic federation adapters for local graph,
-file, REST JSON and SQLite-backed JDBC-style sources. Register only opaque
-secret references or environment-derived headers/connection strings for live
-REST/JDBC-style sources. Demo fixtures do not require secrets and must not be
-promoted into production source definitions.
-
-## Usage
-
-Mount via Docker Compose:
-```yaml
-secrets:
-  api_token:
-    file: ./secrets/api-token.txt
+```powershell
+.\scripts\container.ps1 up
 ```
 
-Or set environment variables:
-```
-EOIP_API_TOKEN=your-token-here
+For host-only development, set a local token and select the in-memory backend:
+
+```powershell
+$env:EOIP_API_TOKEN = 'local-development-token-at-least-24-chars'
+$env:EOIP_GRAPH_BACKEND = 'memory'
 ```
 
-**Never commit actual secrets to version control.**
+The API requires `EOIP_API_TOKEN` to be at least 24 characters. Live connector
+credentials are read from their configured environment/secret source by the
+worker; do not put raw credentials in source registry payloads, job payloads,
+URLs, fixtures, or logs. A `secret_refs` field is a reference contract, not a
+secret store by itself. Before adding a production credential path, verify the
+provider adapter, access policy, secret injection, redaction, rotation, and
+deployment configuration.
+
+The `api-token.txt` file is a placeholder, not a usable credential. Never copy
+real credentials into this directory or commit them to version control.
+
+## Maintenance and Rotation
+
+Changing a local environment file does not automatically rotate database accounts, existing principal credentials or every consumer process. Coordinate rotation with the owning provider/database and verify old-credential refusal as well as new-credential success. Do not use the demo `hubble-local-admin` action as a secure rotation procedure.
+
+For injection precedence, startup behavior and incident-safe handling, see [Configuration Reference](../docs/configuration-reference.md) and [Operations](../docs/operations-runbook.md). Browser/Vite environment variables are public bundle inputs and must never receive server secrets. The documentation inventory intentionally excludes potential secret files rather than copying their values.

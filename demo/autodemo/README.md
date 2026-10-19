@@ -176,3 +176,9 @@ readable, each story appears in order, administration is visibly separate,
 the console remains open, and full mode transitions to isolated VS Code with
 NLQ/MCP results. Check the final receipts' uncovered-operation lists rather
 than inferring complete coverage from a successful console exit.
+
+## Maintenance Ownership
+
+Run launchers from the repository root and inspect `--dry-run`/`--help` before a presentation. After changing routes, source fixtures, scenario IDs or tool schemas, update the browser/IDE orchestration and its tests together. The live catalog and generated receipts are authoritative for the run's selected scenarios and uncovered operations; historical counts in prose are not a coverage guarantee.
+
+See [Operations](../../docs/operations-runbook.md) for target safety, [Testing](../../docs/testing-guide.md) for evidence interpretation and [Frontend Development](../../docs/frontend-development.md) before changing which UI the demos exercise. The alternate `frontend/` app is not automatically the app served by these default-container demonstrations.

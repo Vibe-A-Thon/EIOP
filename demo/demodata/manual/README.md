@@ -65,3 +65,9 @@ This data is for the MANUAL ingestion folder. The Pipeline folder contains
 separate data about the **Fraud Detection (FRD)** project from the same
 organization. The two datasets share infrastructure and team members but
 use completely different work item keys and project domains.
+
+## Running and Maintaining
+
+Use the [manual/admin demo launchers](../../autodemo/README.md) against a dedicated local deployment. Select the manual dataset explicitly; it is not interchangeable with the FRD pipeline corpus. Keep cross-source IDs, canonical mapping and expected relationship paths synchronized when changing records.
+
+Inspect actual ingestion job results, validation findings and graph read-back before claiming a scenario passed. A file count or successful upload is not completion of normalization/reconciliation. See [testing](../../../docs/testing-guide.md) and [operations](../../../docs/operations-runbook.md) for evidence and replay safety.

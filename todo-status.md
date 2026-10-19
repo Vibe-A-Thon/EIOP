@@ -1,8 +1,8 @@
 # EOIP Ticket Queue
 
-**Snapshot:** 2026-10-11 current documentation sweep. Individual [tickets](EOIP-engg-doc-pkg/tickets) own their state; this table is their ordered rollup under [instruction](EOIP-engg-doc-pkg/instruction.md).
+**Snapshot:** Historical 2026-10-11 documentation sweep. Individual [tickets](EOIP-engg-doc-pkg/tickets) own their recorded state; this table is their dated rollup under [instruction](EOIP-engg-doc-pkg/instruction.md). Counts and outcomes below are not a current release claim. See the [documentation index](docs/README.md) and current source-bound programme evidence.
 
-**Current audit note:** [KGF-MASTER-BACKLOG.md](KGF-MASTER-BACKLOG.md) is the master completion backlog synthesizing [EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md](EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md) and the KnowGridFlow Conquest Plan.
+**Current audit note:** [KGF-MASTER-BACKLOG.md](EOIP-engg-doc-pkg/KGF-MASTER-BACKLOG.md) is the master completion backlog synthesizing [EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md](EOIP-engg-doc-pkg/Audit-GAPS-CG-dev.md) and the KnowGridFlow Conquest Plan.
 
 **Current backlog status:** 167/516 tasks ticked in the working tree: Phase 0
 13/13, Phase 1 65/65, Phase 2 88/130, Phase 8 1/17. Phase 2 has advanced
