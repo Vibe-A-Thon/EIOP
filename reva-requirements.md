@@ -38,7 +38,7 @@ An autonomous AI coding agent (or a human engineer) who implements REVA inside t
 | `E-NN` | Empirical research result | `E-03` |
 | `RC-NN` | REA capability family (research inventory) | `RC-14` |
 
-Module codes: `WK` Warrant Kernel · `TL` Transparency Log · `CV` Coverage · `KG` Knowledge-Gap Registry · `CX` Contradictions · `PD` Proof-of-Done · `VS` Verifier Sandbox · `AI` Artifact Inventory · `SP` Shipped-Artifact Provenance & SBOM · `AB` Application Boundary Extractor · `AS` API Surface Miner · `DB` Database Schema Introspector · `RR` Static↔Runtime Reconciler · `FT` Feature & Impact Trace · `GD` Graph Version Diff · `DV` Source↔Deployed Drift Verifier · `VW` Views, Paging & Budgets · `MC` MCP/REST/CLI surface · `GA` Grounded Answers & Evaluation · `DR` Doctor/Readiness · `UI` User Interface · `OB` Observability/Operations · `XP` Optional Forensics Extension Pack.
+Module codes: `WK` Warrant Kernel · `TL` Transparency Log · `CV` Coverage · `KG` Knowledge-Gap Registry · `CX` Contradictions · `PD` Proof-of-Done · `VS` Verifier Sandbox · `AI` Artifact Inventory · `SP` Shipped-Artifact Provenance & SBOM · `AB` Application Boundary Extractor · `AS` API Surface Miner · `DB` Database Schema Introspector · `RR` Static↔Runtime Reconciler · `FT` Feature & Impact Trace · `GD` Graph Version Diff · `DV` Source↔Deployed Drift Verifier · `VW` Views, Paging & Budgets · `MC` MCP/REST/CLI surface · `GA` Grounded Answers & Evaluation · `DR` Doctor/Readiness · `UI` User Interface · `OB` Observability/Operations · `NB` Native Binary Disassembly & Decompilation · `MB` Mobile Application Package Triage · `FM` Firmware & Embedded Container Carver · `DI` Safe Dynamic Instrumentation & Controlled Tracing · `RO` Runtime Observation & Headless Browser CDP · `BD` Cross-Version Binary & Logic Diffing · `XP` External Plugins & Legacy Adapters.
 
 ### 0.4 The completion rule (read this before writing any code)
 **A file path, a function name, a test file name, a green test count, or a coverage percentage is never, on its own, proof that a requirement is implemented.** Completion of every requirement is decided by REVA's own Proof-of-Done engine (module `PD`, §7.6) using the policy in §14. In short, a requirement is complete only when:
@@ -64,9 +64,9 @@ REVA is also the natural **runtime substrate for Warrant Engineering**, Vikram's
 KGF answers questions such as "what is impacted if service account `abc` changes?", "what must be retested when rule R changes?" and "which build is running and what commit is it from?". Today those answers can mix static guesses, runtime facts and LLM inference without saying which is which, can present "no result" as "no impact", and cannot prove that an AI developer agent's work is really finished. REVA closes those gaps.
 
 ### 1.3 Scope summary
-**In scope (built):** Warrant Kernel; signed transparency log; coverage semantics; knowledge-gap registry; contradiction ledger; Proof-of-Done engine with sandboxed verifier runs and attestation; safe artifact inventory; shipped-artifact provenance and SBOM (Go, Rust, .NET, JVM, Python, npm, OCI images); application boundary extraction (JS/TS/Electron, Java/Spring, Python/FastAPI) with client↔server endpoint linking; API-surface mining from HAR, OpenTelemetry and access logs; database schema introspection; static↔runtime reconciliation; feature and impact tracing; graph version diff; source↔deployed drift verification; evidence views, paging and response budgets; MCP, REST and CLI interfaces; grounded-answer contract and known-answer evaluation; doctor/readiness; UI; observability.
+**In scope (built natively with enterprise safety and warrant provenance):** Warrant Kernel; signed transparency log; coverage semantics; knowledge-gap registry; contradiction ledger; Proof-of-Done engine with sandboxed verifier runs and attestation; safe artifact inventory; shipped-artifact provenance and SBOM (Go, Rust, .NET, JVM, Python, npm, OCI images); application boundary extraction (JS/TS/Electron, Java/Spring, Python/FastAPI) with client↔server endpoint linking; API-surface mining from HAR, OpenTelemetry and access logs; database schema introspection; static↔runtime reconciliation; feature and impact tracing; graph version diff; source↔deployed drift verification; evidence views, paging and response budgets; MCP, REST and CLI interfaces; grounded-answer contract and known-answer evaluation; doctor/readiness; UI; observability; **Native Binary Disassembly & Decompilation (`REVA-NB`)** with headless Capstone/Rizin/Ghidra batch execution, basic-block control-flow graphs, cyclomatic complexity, and graph projection; **Mobile Application Package Triage (`REVA-MB`)** for Android APK/AAB/DEX and iOS IPA with JNI `.so` native bridge mapping; **Firmware & Embedded Container Carver (`REVA-FM`)** with recursion-safe partition extraction, WASM/EVM decoding, and credential harvesting; **Safe Dynamic Instrumentation & Controlled Tracing (`REVA-DI`)** with dual-key cryptographic authorization, ephemeral container namespaces, and bounded GDB/LLDB tracing; **Runtime Observation & Headless Browser CDP (`REVA-RO`)** with real-time RFC 6901 redaction and DOM/API interaction capture; and **Cross-Version Binary & Logic Diffing (`REVA-BD`)** with CFG isomorphism and Graph Edit Distance scoring.
 
-**Out of scope (rejected, with reasons in §16):** native decompilation and disassembly, debuggers and dynamic instrumentation, Android/ADB/JADX/JEB/Flutter/Harmony device analysis, firmware extraction, packet-capture and logic-signal decoding, EVM/WASM interface recovery, legacy DOS/console profiles, native UI automation. These appear in the optional **Forensics Extension Pack** (§7.24), which stays disabled unless a tenant licenses it.
+**Out of scope (unsupported/rejected):** Uncontrolled host execution of commercial GUI decompiler suites (Hopper GUI, IDA Pro interactive GUI), arbitrary unmonitored host debuggers without cryptographic authorization, physical hardware JTAG/SWD probing, and raw physical signal decoding (sigrok/pcap wire sniffing). External commercial tools and legacy standalone engines are isolated behind the optional **Plugin Extension Pack** (`Module XP`, §7.30), leaving REVA's core fully autonomous, local-first, and zero-license.
 
 ---
 
@@ -224,11 +224,11 @@ Decision values: **ADOPT+** (adopt the idea, substantially enhanced) · **ADAPT*
 | RC-27 | Yes | ADOPT+ | VS | Sandboxing for extractors, connectors and verifiers |
 | RC-28 | Partly | ADAPT | DR | KGF installation readiness; minimal client registration |
 | RC-29 | Yes | ADOPT+ | PD, TST | Verification depth ladder used for closure |
-| RC-30 | No | DEFER | XP | Binary decompilation is not KGF's job; commercial tool licensing |
-| RC-31 | No | REJECT | — | Debuggers/instrumentation conflict with enterprise safety posture |
-| RC-32 | No | DEFER | XP | Mobile device forensics only on explicit tenant demand |
-| RC-33 | No | REJECT (firmware/pcap/signals/EVM/DOS) · DEFER (WASM, PE resources) | XP | No KGF use case; high maintenance |
-| RC-34 | Partly | ADAPT (HAR/OTel import only) · DEFER (live browser/process capture) | AS, RR, XP | KGF consumes recorded telemetry; it does not drive applications |
+| RC-30 | Yes | ADOPT+ | NB, BD | Headless, containerized native binary analysis (ELF/PE/Mach-O) via Capstone/Rizin/Ghidra headless batch with CFG projection and warrant provenance; zero commercial GUI tool lock-in |
+| RC-31 | Yes | ADOPT+ | DI | Safe dynamic instrumentation & controlled tracing in isolated ephemeral containers under dual-key cryptographic authorization (`Authority.CONTROLLED_EXECUTION`) |
+| RC-32 | Yes | ADOPT+ | MB | Safe headless triage of Android APK/AAB/DEX and iOS IPA; component topology, deep links, permissions, and JNI `.so` native bridge mapping; non-invasive read-only ADB |
+| RC-33 | Yes | ADOPT+ | FM | Safe firmware and embedded container carver (SquashFS, Ext4, U-Boot, DTB, WASM/EVM) with strict recursion ($\le 6$) and decompression quotas (200:1) |
+| RC-34 | Yes | ADOPT+ | RO | Supervised headless browser (Playwright/CDP) on isolated loopback network with automated RFC 6901 PII/credential redaction and deterministic DOM/API interaction capture |
 
 ### 2.9 Clean-room and licensing statement
 1. REVA MUST NOT include REA source files, generated schemas, test fixtures, documentation text, identifier prefixes (`ev_`, `unk_`, `jag_`, `ecl_`, `javc_`, …) or tool names.
@@ -612,7 +612,7 @@ REVA writes through `GraphPort` only. Element names are prefixed `reva_` to avoi
 | `reva_Component` (SBOM package) | `purl`, `name`, `version`, `ecosystem`, `licenses` |
 | `reva_Service` | `entity_id`, `logical_key`, `language`, `framework` |
 | `reva_Boundary` | `entity_id`, `boundary_kind` (`http_route, http_call, message_publish, message_consume, ipc_channel, rpc_operation, graphql_operation, scheduled_job, cli_command`), `logical_key`, `method`, `path_template`, `topic` |
-| `reva_Resource` | `entity_id`, `resource_kind` (`file, db_table, db_view, cache_key, queue, topic, secret, env_var, service_account, config_key, bucket`), `logical_key` |
+| `reva_Resource` | `entity_id`, `resource_kind` (`file, db_table, db_view, cache_key, queue, topic, secret, env_var, service_account, config_key, bucket, mobile_permission`), `logical_key` |
 | `reva_ApiOperation` | `entity_id`, `origin`, `method`, `path_template`, `statuses`, `content_types` |
 | `reva_DbObject` | `entity_id`, `db_instance`, `schema`, `name`, `object_kind` |
 | `reva_Gap` | `gap_id`, `status`, `severity`, `impact_score_bp` |
@@ -620,6 +620,14 @@ REVA writes through `GraphPort` only. Element names are prefixed `reva_` to avoi
 | `reva_Obligation` | `obligation_key`, `version`, `closure_status`, `required_depth` |
 | `reva_VerifierRun` | `run_id`, `commit`, `exit_code`, `depth` |
 | `reva_Build` | `entity_id`, `artifact_id`, `vcs_revision`, `vcs_time`, `builder` |
+| `reva_BinaryFunction` | `entity_id`, `logical_key`, `name`, `address_offset`, `size_bytes`, `arch`, `cyclomatic_complexity`, `is_exported` |
+| `reva_BasicBlock` | `entity_id`, `function_id`, `start_offset`, `end_offset`, `instruction_count`, `has_call` |
+| `reva_NativeExport` | `entity_id`, `symbol_name`, `ordinal`, `address_offset`, `library_name` |
+| `reva_MobilePackage` | `entity_id`, `package_name`, `version_name`, `version_code`, `target_sdk`, `min_sdk`, `is_debuggable` |
+| `reva_MobileComponent` | `entity_id`, `package_id`, `component_type` (`activity, service, receiver, provider`), `name`, `is_exported`, `permission` |
+| `reva_FirmwarePartition` | `entity_id`, `partition_name`, `filesystem_type`, `offset`, `size_bytes`, `compression` |
+| `reva_RuntimeTrace` | `trace_id`, `session_id`, `target_binary`, `exit_code`, `executed_instructions`, `duration_ms` |
+| `reva_BrowserInteraction` | `interaction_id`, `scenario_id`, `url`, `action_type`, `target_selector`, `timestamp` |
 
 **Edge labels**
 | Label | From → To | Meaning |
@@ -636,6 +644,13 @@ REVA writes through `GraphPort` only. Element names are prefixed `reva_` to avoi
 | `reva_OWNS` | Obligation → (KGF code symbol vertex) | Owner binding |
 | `reva_BLOCKS` | Gap/Contradiction → Obligation/Entity | Blocking relation |
 | `reva_ABOUT` | Gap/Contradiction → any entity | Scope |
+| `reva_CALLS_NATIVE` | Service / Boundary → reva_NativeExport or reva_BinaryFunction | High-level code (JNI/ctypes/cgo) calling native compiled code |
+| `reva_CONTAINS_BLOCK` | reva_BinaryFunction → reva_BasicBlock | Function control-flow basic block membership |
+| `reva_BRANCHES_TO` | reva_BasicBlock → reva_BasicBlock | Control flow edge (`condition`: true/false/unconditional/switch) |
+| `reva_HAS_COMPONENT` | reva_MobilePackage → reva_MobileComponent | Mobile app component structure |
+| `reva_DECLARES_PERMISSION` | reva_MobilePackage → reva_Resource(mobile_permission) | Declared mobile permission in manifest |
+| `reva_EXTRACTED_FROM` | reva_FirmwarePartition → reva_Artifact | Carved partition archive lineage |
+| `reva_OBSERVED_DURING` | reva_BrowserInteraction → reva_Boundary | Dynamic runtime interaction linking UI event to API route |
 
 **Warrant summary properties (MUST) on every REVA-created element and, when `REVA_INGEST_WARRANTS=true`, on KGF elements produced through the mutation gateway:**
 `reva_warrant_ids` (list, capped at `REVA_GRAPH_WARRANT_REF_CAP` = 32 most recent; full list via REST), `reva_epistemic` (strongest state across warrants under `observed > derived > inferred > unknown`), `reva_authority_best`, `reva_confidence_bp` (max), `reva_has_contradiction` (bool), `reva_valid_from`, `reva_valid_to`.
@@ -870,6 +885,8 @@ A DSSE envelope (`payloadType = "application/vnd.in-toto+json"`) containing an i
 | REVA-AB-011 | **Coverage and limitations**: per repo and per file: files examined/skipped (by language, size limit `REVA_AB_MAX_FILE_BYTES` default 2 MiB, generated-code patterns, vendored dirs), parse errors, unresolved dynamic dispatch, reflection, runtime registration. Statements never claim runtime reachability. | Coverage counts equal the fixture's file counts; limitation codes match §10.3. | integration |
 | REVA-AB-012 | **Incremental extraction**: given the previous run's per-file digests, re-extract only changed files plus files whose resolved constants depend on changed files (dependency index); results equal a full re-extraction. | Property test on random edit sequences: incremental result == full result. | integration |
 | REVA-AB-013 | **Projection**: `reva_Service`, `reva_Boundary`, `reva_Resource` vertices; `reva_EXPOSES`, `reva_CALLS`, `reva_ACCESSES` edges; links to KGF's code-graph symbol vertices (by repo/path/symbol) when they exist (`reva_DEFINED_IN` property `symbol_ref`). | Graph queries on each backend return the expected subgraph for the fixture (conformance suite across HugeGraph, Neo4j, Neptune-compatible Gremlin). | integration |
+| REVA-AB-014 | **Repository URL Ingestion Pipeline**: Ingest source code and binaries directly from GitHub, GitLab, Bitbucket, Azure Repos, raw Git HTTPS/SSH URLs, or uploaded archives (zip/tar). Sandboxed clone/fetch under strict shallow depth (`--depth 1` default), timeout ($\le 300\text{s}$), and size quotas ($\le 5\text{ GiB}$); verifies commit hash, branch/tag signatures; automatically triggers pure-Python Tree-sitter boundary parsing, native binary scanning (`REVA-NB`), and Wisdom Graph extraction. | Clones fixture Git repositories from local bare git daemon; correctly extracts service boundaries and commits; detects invalid URLs and auth errors safely with `REVA_ERR_GIT_REMOTE_FAILED`. | integration |
+| REVA-AB-015 | **Wisdom Graph Precedent & Decision Extractor**: Ingest and extract Architectural Decision Records (ADRs from `docs/adr/`, `doc/decisions/`, `RFC/`), Conventional Commit semantics (`feat`, `fix`, `refactor`, `breaking`, `Fixes #`, `Ref:`), and PR discussion notes into Wisdom Graph entities (`wg_Decision`, `wg_Precedent`, `wg_Lesson`). Links architectural rationale to corresponding `reva_Service` and `reva_Boundary` vertices via `reva_JUSTIFIED_BY` edges. | ADR fixtures in markdown format are parsed into structured decision nodes with context, decision, and consequence; links to affected code routes verified in graph. | integration |
 
 ### 7.11 Module AS — API Surface Miner
 **Purpose:** discover the APIs systems actually call, from recorded traffic and telemetry, and turn them into runtime-observed service dependencies.
@@ -1014,6 +1031,7 @@ A DSSE envelope (`payloadType = "application/vnd.in-toto+json"`) containing an i
 | REVA-SEC-010 | Export control: bundles and ledger exports exclude warrants the exporting principal cannot see, and `restricted` warrants unless the policy allows; exports are logged as warrants. | Export by a limited user omits restricted items. | integration |
 | REVA-SEC-011 | Sandbox hardening: verifier containers run as non-root, read-only root filesystem except the work dir, no Docker socket, `no-new-privileges`, dropped capabilities, seccomp default profile. | Container inspect test asserts each setting. | integration |
 | REVA-SEC-012 | Retention: per-tenant policies (by predicate/classification) expire warrant envelopes and blobs while keeping the log leaf and a tombstone (`retracted_by_retention`); legal hold prevents expiry. Log proofs still verify after expiry. | Retention job fixture; proofs verify; expired content is unreadable. | integration |
+| REVA-SEC-013 | **Zero-Data-Leak LLM Egress Gate & Deterministic Python-First Policy**: 95%+ of AST/CFG parsing, symbol extraction, boundary matching, binary disassembly, and graph projection MUST be performed by deterministic, pure-Python logic without invoking an LLM. When an LLM is required for natural language summarization or query synthesis, the request MUST pass through the LLM Egress Security Gate: (a) automated RFC 6901 pointer redaction strips all secrets, passwords, credentials, tokens, and PII; (b) proprietary source code is abstracted into structure/pseudonym tokens (`[ENTITY_1]`); (c) local offline LLMs (via Ollama/vLLM) are prioritized by default; (d) external LLM calls are blocked unless explicit tenant egress policy is configured; (e) prompt injection fencing wraps untrusted code in defensive isolation markers (`_meta.provenance.untrusted_content`). | Byte-scan of LLM egress payload asserts zero secrets, zero raw source files, and strict tokenization; offline fallback test verifies core workflows operate with LLM disabled. | acceptance |
 
 ### 7.22 Module UI — User Interface (React, inside KGF)
 All screens use KGF's design system and tenant branding (C-08), WCAG 2.2 AA, keyboard navigable, localizable strings, and light/dark themes.
@@ -1048,18 +1066,120 @@ All screens use KGF's design system and tenant branding (C-08), WCAG 2.2 AA, key
 | REVA-OB-005 | Backup/restore: relational store dump + blob store + keys (encrypted) + logs; restore verifies every warrant ID and log consistency before serving. | Restore drill in RJ-12. | acceptance |
 | REVA-OB-006 | Re-projection: `kgf reva reproject [--backend X]` rebuilds all REVA graph elements from warrants (idempotent), enabling backend migration without data loss. | Reprojection into an empty backend yields the same element counts and properties. | integration |
 
-### 7.24 Module XP — Optional Forensics Extension Pack (DEFER; disabled by default)
-These capture the remaining REA families for completeness. They are **not** part of the REVA 1.0 completion scope. Each is enabled per tenant with `REVA_XP_<NAME>=true` and requires a reviewed, approved obligation set before implementation starts.
+### 7.24 Module NB — Native Binary Disassembly & Decompilation
+**Purpose:** Disassemble, decompile, and reconstruct control-flow topology and symbols from compiled native binaries (ELF, PE32/PE32+, Mach-O, Fat Mach-O, COFF) without requiring commercial desktop GUI disassemblers (Hopper, IDA Pro). Project structured functions, basic blocks, cyclomatic complexity, string cross-references, and native call boundaries into the KGF Knowledge Graph (GL0/GL1) with signed cryptographic warrants.
 
-| ID | Capability (enhanced design) | Notes |
-|---|---|---|
-| REVA-XP-001 | Native binary inventory without decompilation: headers, sections, imports/exports, symbols, linked libraries, signatures (ELF/PE/Mach-O via pyelftools/pefile/macholib), producing warrants and SBOM hints. | Useful for licence/SBOM completeness of closed-source vendor binaries. |
-| REVA-XP-002 | Decompiler adapter port (Ghidra headless only, open-source), sandboxed, outputs function inventories as `shipped_artifact` warrants. | Requires a separate security review; Ghidra installed by the tenant. |
-| REVA-XP-003 | WASM module interface inventory (imports/exports/sections) via a pure-Python parser. | |
-| REVA-XP-004 | Android APK manifest/permissions/components inventory (zip + binary XML parser), no device interaction. | |
-| REVA-XP-005 | PE resource inventory (version info, manifests) for Windows software catalogues. | |
-| REVA-XP-006 | Live browser capture producing HAR for AS (Playwright, sandboxed, explicit origin allowlist). | Live interaction requires a tenant opt-in. |
-| — | Debuggers, dynamic instrumentation, firmware, pcap, logic signals, EVM, DOS/console profiles | **Rejected**; see §16. |
+**What REVA does better than REA:**
+1. **Containerized sandbox with hard rlimits:** REA launches external commercial desktop GUI/CLI tools with full host privileges and no resource isolation. REVA runs headless Capstone, Rizin, and Ghidra batch workers inside isolated container sandboxes with strict CPU ($\le 600\text{s}$) and memory ($\le 4\text{ GiB}$) rlimits, drop-all capabilities, and `network: "none"`.
+2. **Structured AST & CFG vs raw text dumps:** REA returns large unparsed pseudocode and assembly text blobs (up to tens of megabytes), exhausting LLM context windows. REVA outputs structured JSON ASTs, Basic Block graphs, and branch condition tables.
+3. **Graph projection into enterprise knowledge graph:** REA leaves reverse engineering as isolated local files. REVA projects binary functions as first-class `reva_BinaryFunction` and `reva_BasicBlock` vertices linked to high-level services via `reva_CALLS_NATIVE` edges.
+4. **Content-addressed deterministic function identities:** Assigns stable logical IDs (`nb:<sha256>:func:<offset>`) unaffected by compilation date stamps.
+5. **Warrant Kernel provenance:** Every instruction stream, decompiler AST, and symbol extraction produces a signed Ed25519 warrant (`wr1_...`) with explicit authority (`Authority.STATIC_CODE` or `Authority.SHIPPED_ARTIFACT`) and calibrated confidence.
+
+| ID | Requirement | Acceptance criteria | Depth |
+|---|---|---|---|
+| REVA-NB-001 | Multi-format binary loader (ELF, PE32/PE32+, Mach-O, Fat Mach-O, COFF) with architecture detection (x86_64, aarch64, armv7, riscv64). Parse file headers, section tables, segment permissions (`R`, `W`, `X`), entry points, and image base addresses. | Fixtures for ELF (Linux), PE (Windows), and Mach-O (macOS x86_64 and arm64 universal) are parsed correctly; executable segments and section headers match ground truth without executing untrusted code on the host. | unit |
+| REVA-NB-002 | Sandboxed headless disassembler engine using Capstone/Keystone and Radare2/Rizin worker under strict rlimits (CPU $\le 600\text{s}$, RAM $\le 4\text{ GiB}$, `network: "none"`). Disassembles target functions into instruction streams (mnemonic, operands, instruction size, prefix, jump target). | Disassembly of standard test functions produces instruction streams matching reference objdump; timeout and memory limit violations terminate worker safely with `REVA_ERR_SANDBOX_TIMEOUT` and issue a warrant limitation. | integration |
+| REVA-NB-003 | Headless Ghidra decompilation batch worker with Python bridge generating structured C pseudocode AST without GUI dependency. Worker executes inside an ephemeral container, reads binary bytes, and emits JSON AST containing AST function nodes, expressions, control flow statements, and variable scopes. | Decompiles stripped C binaries into structured C AST; recovers function argument count, return type, and local stack variable allocations; runs headless with zero GUI or display server. | integration |
+| REVA-NB-004 | Control Flow Graph (CFG) and Basic Block extraction. Identifies leaders, basic block boundaries, branch conditions, fallthrough targets, jump tables, and cyclomatic complexity ($M = E - N + 2P$). | Basic blocks and branch edges extracted for complex functions (if/else, loops, switch statements); cyclomatic complexity calculation verified against ground truth; graph matches golden CFG representation. | component |
+| REVA-NB-005 | Function boundary detection and symbol resolution. Combines export tables, symbol tables (`.symtab`, `.dynsym`), exception handling unwind info (`.eh_frame`), and recursive descent disassembly heuristics to detect non-exported internal functions. | Recovers all internal non-exported function offsets in stripped and non-stripped test binaries; emits `reva_BinaryFunction` entities with unique logical keys `nb:<sha256>:func:<offset>`. | component |
+| REVA-NB-006 | String literal and cross-reference (xref) extractor. Scans `.rodata`, `.rdata`, and text segments for ASCII/UTF-8/UTF-16 strings; traces data references from instructions to string offsets; identifies URLs, IP addresses, format strings, and cryptographic constants. | Emits string xref warrants linking referencing basic blocks to string resources; extracts all embedded URLs and SQL queries with offset locations. | unit |
+| REVA-NB-007 | Native import/export and dynamic symbol table parser (PLT/GOT, IAT/EAT). Resolves dynamic library dependencies, imported APIs, and exported symbols; matches calls to known standard library and system runtime APIs. | Identifies all imported DLL/SO functions with calling conventions; maps unresolved externals to library dependencies in SBOM. | unit |
+| REVA-NB-008 | Native binary warrant projection into KGF Knowledge Graph (GL0/GL1). Projects `reva_BinaryFunction`, `reva_BasicBlock`, and `reva_NativeExport` nodes and `reva_CALLS_NATIVE`, `reva_CONTAINS_BLOCK`, and `reva_BRANCHES_TO` edges with signed warrants, epistemic state `derived`, and content-addressed IDs. | Graph projection test confirms all functions, basic blocks, and native calls are queryable via `GraphPort`; idempotency test confirms re-projection yields identical nodes without duplication. | integration |
+
+### 7.25 Module MB — Mobile Application Package Triage
+**Purpose:** Provide headless, pure-Python and sandboxed inspection of mobile application packages (Android APK, Android App Bundle AAB, Dalvik DEX, and Apple iOS IPA). Reconstruct application architecture, exported attack surfaces, declared permissions, deep link routing, and native JNI `.so` bridge boundaries without running physical or untrusted emulated environments.
+
+**What REVA does better than REA:**
+1. **Pure-Python & memory-safe decompression:** REA shells out to `apktool` and `jadx` without streaming guards, making it vulnerable to decompression bombs. REVA implements streaming ZIP parsing with strict compression ratios ($\le 200:1$) and pure-Python binary XML / DEX decoding.
+2. **JNI cross-layer bridge mapping:** REA inspects APKs in isolation from native code. REVA automatically maps Java/Kotlin `native` method signatures to disassembled C/C++ exports in embedded `.so` binaries, establishing an unbroken cross-layer call path (`reva_CALLS_NATIVE`).
+3. **Structured security topology:** Models Activities, Services, Receivers, and ContentProviders as graph nodes with exported flags, intent-filter schemas, and required permissions.
+4. **Safe read-only ADB adapter:** Operates strictly in read-only mode over loopback interfaces, rejecting any device state mutation.
+
+| ID | Requirement | Acceptance criteria | Depth |
+|---|---|---|---|
+| REVA-MB-001 | APK & AAB container unbundler with ZIP bomb protection and binary XML decoder. Safely extracts and parses `AndroidManifest.xml` (decoding binary AXML into standard XML DOM), app package name, version code, version name, min/target SDK, and debuggable status. | Parses standard and obfuscated AXML manifests; enforces 200:1 maximum decompression ratio; correctly detects debuggable flag and exported components. | unit |
+| REVA-MB-002 | DEX / Multi-DEX bytecode parser. Parses DEX headers, class definitions, method prototypes, annotations, and string tables across `classes.dex`, `classes2.dex`, etc., without running Dalvik VM. | Ingests multi-DEX APKs; indexes all class names, method names, and method signatures; extracts hardcoded string literals and backend API URLs. | component |
+| REVA-MB-003 | Android component topology and intent filter miner. Identifies all Activities, Services, BroadcastReceivers, and ContentProviders; extracts intent filters (actions, categories, data schemes, mime types), deep links, and permission requirements (`android:permission`, `android:exported`). | Builds complete component topology graph; marks all exported components; identifies attack surface and deep-link routing schemes into `reva_MobileComponent` vertices. | unit |
+| REVA-MB-004 | iOS IPA bundle analyzer. Unpacks `.ipa` archive, parses `Info.plist`, embedded mobile provisioning profiles (`embedded.mobileprovision`), app entitlements, URL schemes (`CFBundleURLTypes`), and Fat Mach-O binary architecture slices. | Extracts bundle ID, version, minimum iOS version, registered custom URL schemes, and declared app entitlements; verifies code sign metadata without macOS host dependency. | unit |
+| REVA-MB-005 | JNI & Native Bridge cross-layer mapper. Identifies Java/Kotlin `native` method declarations, loads associated `.so` shared objects from `lib/<abi>/`, and links Java native methods to C/C++ exported symbols (`Java_com_example_...`) via `reva_CALLS_NATIVE` edges. | Successfully links Java native method call in DEX to disassembled C function in embedded ARM64 `.so`; emits cross-layer warrant binding Java boundary to native binary function. | integration |
+| REVA-MB-006 | Safe read-only ADB triage adapter. Connects over loopback interface to local Android emulators or tethered devices; executes non-invasive read-only commands (`pm list packages`, `pm dump`, `dumpsys package`); rejects any write or modification commands. | Queries package state on emulator; rejects any `install`, `uninstall`, `shell rm`, or state-modifying ADB command with `REVA_ERR_SECURITY_VIOLATION`. | integration |
+
+### 7.26 Module FM — Firmware & Embedded Container Carver
+**Purpose:** Recursively carve, unpack, and inventory firmware images, container base layers, and embedded filesystem partitions (SquashFS, Ext4, CramFS, U-Boot, Device Tree Blobs, WASM, EVM). Harvest embedded cryptographic keys, default credentials, network configurations, and microservices into KGF Knowledge Graph resources.
+
+**What REVA does better than REA:**
+1. **Deterministic recursion bounds & bomb protection:** REA runs recursive `binwalk` without strict depth or memory limits, causing host lockups on nested archives. REVA enforces recursion depth $\le 6$, maximum decompression ratio $200:1$, and per-job disk quotas ($10\text{ GiB}$).
+2. **Merkle partition tree provenance:** Computes a cryptographic Merkle tree across all carved partitions and embedded binaries, issuing parent-child warrant bundles.
+3. **Automated credential & key harvesting:** Discovers embedded RSA/ECC private keys, X.509 certificates, and hardcoded credentials, generating redacted `reva_Resource(secret)` nodes with SHA-256 fingerprint warrants.
+4. **WebAssembly & EVM bytecode decoding:** Decodes WASM sections, memory maps, and imports/exports, as well as EVM contract method dispatchers without executing bytecode.
+
+| ID | Requirement | Acceptance criteria | Depth |
+|---|---|---|---|
+| REVA-FM-001 | Multi-format firmware header parser and signature carver. Detects and parses headers for SquashFS, CramFS, JFFS2, YAFFS2, Ext2/3/4, U-Boot images, Device Tree Blobs (DTB), and UEFI capsule containers. | Detects and extracts file systems from raw flash dump fixtures; accurately calculates partition offsets, lengths, and magic bytes. | component |
+| REVA-FM-002 | Sandboxed carving pipeline with recursion and decompression limits. Enforces strict maximum recursion depth ($\le 6$), maximum decompression ratio ($200:1$), and overall size budget ($10\text{ GiB}$) to prevent decompression bombs. | Recursively unpacks nested firmware images up to depth 6; halts safely when recursion depth or quota exceeded with `REVA_ERR_CARVE_LIMIT_EXCEEDED` and issues limitation warrant. | integration |
+| REVA-FM-003 | Embedded configuration, key, and credential harvester. Scans carved filesystems for private keys (RSA, ECC, OpenSSH), X.509 certificates, hardcoded passwords, default credentials, API tokens, and `/etc/shadow` entries. | Discovers embedded certificates and keys; redacts sensitive secrets in public output; projects `reva_Resource(secret)` with SHA-256 fingerprint warrants. | unit |
+| REVA-FM-004 | WASM & EVM bytecode decoder. Parses WebAssembly module sections (type, import, function, table, memory, export, code, custom), validates section offsets, and decodes instruction opcodes; parses EVM bytecode contract selectors and function dispatchers. | Emits structured WASM and EVM interface inventories with function signatures and exported methods; verifies pure-Python decoding without running VM. | unit |
+| REVA-FM-005 | Firmware artifact warrant bundle generation. Computes Merkle tree of all carved partitions, filesystems, and embedded binaries; issues signed warrant bundle binding master firmware image digest to all child artifact warrants. | Generates valid warrant bundle with inclusion proofs; proves full provenance from root firmware image to individual configuration files. | integration |
+
+### 7.27 Module DI — Safe Dynamic Instrumentation & Controlled Tracing
+**Purpose:** Provide safe, ephemeral, containerized dynamic execution, instruction tracing, breakpoint inspection, and crash dump analysis under enterprise cryptographic governance. Allow controlled execution verification without risking host compromise, data exfiltration, or uncontrolled process loops.
+
+**What REVA does better than REA:**
+1. **Dual-Key Cryptographic Authorization:** REA allows arbitrary debugging commands on the host without governance. REVA requires a valid, signed authorization warrant (`Authority.CONTROLLED_EXECUTION`) with dual cryptographic signatures (analyst + tenant security officer) before any binary can be instrumented.
+2. **Ephemeral container namespaces:** Debuggers (GDB/MI2, LLDB) run exclusively inside ephemeral containers with `network: "none"`, drop-all capabilities (`--cap-drop=ALL`), and read-only host mounts.
+3. **Bounded inspection ring-buffers:** Limits instruction and call tracing to bounded ring-buffers (max 100,000 events) and restricts memory dumps to $\le 64\text{ KiB}$ slices, preventing denial-of-service and log explosion.
+4. **Crash artifact triage:** Dissects Linux ELF core dumps and Windows minidumps into stack traces, register states, and faulting instruction references linked to `reva_BinaryFunction`.
+
+| ID | Requirement | Acceptance criteria | Depth |
+|---|---|---|---|
+| REVA-DI-001 | Enterprise dual-key cryptographic authorization protocol. Dynamic execution of any target binary or debugger requires an authorization token signed by both an authenticated analyst and an authorized tenant security administrator (`Authority.CONTROLLED_EXECUTION`). | Controlled execution rejects single-signature or unsigned requests with `REVA_ERR_UNAUTHORIZED_EXECUTION`; validates dual Ed25519 signatures before spawning any process. | component |
+| REVA-DI-002 | Containerized ephemeral debugger bridge. Spawns GDB/MI2 or LLDB in an ephemeral Linux container with drop-all Linux capabilities (`--cap-drop=ALL`, `--security-opt=no-new-privileges:true`), private PID namespace, `network: "none"`, and strict CPU/memory rlimits. | Controller establishes MI2 protocol communication with debugger; enforces automatic container termination upon session completion or timeout. | integration |
+| REVA-DI-003 | Breakpoint, watchpoint, and bounded memory inspection controller. Sets software and hardware breakpoints on virtual addresses and exported symbols; reads memory slices with strict size bounds ($\le 64\text{ KiB}$) and register values. | Hits breakpoint in fixture binary; inspects registers and stack memory; rejects memory reads exceeding limit with `REVA_ERR_INSPECTION_LIMIT`. | integration |
+| REVA-DI-004 | Instruction and call-path execution tracer. Records executed basic blocks, function calls, and branch decisions into a bounded ring-buffer (max 100,000 events); prevents log exhaustion. | Captures exact execution trace of target function; produces `reva_RuntimeTrace` entity with instruction count and branch decisions; ring-buffer overflow handled gracefully with truncation limitation. | integration |
+| REVA-DI-005 | Core dump & crash artifact analyzer. Parses ELF core dumps and Windows minidumps; reconstructs crashed thread registers, faulting instruction address, stack backtrace, and loaded shared library maps. | Analyzes Linux ELF core dump fixture; identifies faulting signal (e.g. SIGSEGV), faulting address, and backtrace; links crash address to corresponding `reva_BinaryFunction`. | unit |
+
+### 7.28 Module RO — Runtime Observation & Headless Browser CDP
+**Purpose:** Provide headless, automated browser observation and Chrome DevTools Protocol (CDP) telemetry harvesting for client-side Single Page Applications (SPAs) and Electron apps. Capture real-time network traffic, console events, DOM trees, and UI interaction journeys with automated PII/credential redaction and cryptographic attestation.
+
+**What REVA does better than REA:**
+1. **Loopback isolation & automated teardown:** REA connects to unconstrained browser processes. REVA executes headless Chromium/Playwright inside controlled network namespaces restricted to loopback or approved test domains, with guaranteed process termination.
+2. **Automated real-time RFC 6901 redaction:** Real-time filter strips authentication headers, session cookies, OAuth bearer tokens, and configured PII patterns before any CDP event enters the warrant pipeline.
+3. **Deterministic DOM & accessibility locators:** Synthesizes resilient semantic selectors for interactive elements and links UI action events directly to backend API boundaries (`reva_BrowserInteraction` -> `reva_Boundary`).
+4. **Attestation-backed scenario recordings:** Captures timestamped interaction traces, video recordings, and screenshots, producing signed Proof-of-Done attestations for user-visible acceptance journeys.
+
+| ID | Requirement | Acceptance criteria | Depth |
+|---|---|---|---|
+| REVA-RO-001 | Supervised headless browser controller. Manages headless Chrome or Chromium instances via Playwright/CDP; restricts network connections to isolated loopback network or explicit tenant allowlists; enforces session cleanup. | Spawns headless browser; navigates to target local test app; terminates cleanly without orphaned processes on host. | integration |
+| REVA-RO-002 | CDP network capture with real-time RFC 6901 PII & credential redaction. Hooks `Network.requestWillBeSent` and `Network.responseReceived`; streams HTTP requests/responses into structured HAR; automatically redacts cookies, Authorization headers, tokens, and PII. | Captures network exchanges; verifies all Authorization headers and session cookies are replaced with `[REDACTED]`; no plaintext credentials stored in warrants. | component |
+| REVA-RO-003 | DOM and accessibility tree state snapshot engine. Captures DOM snapshots and accessibility trees at key interaction milestones; synthesizes deterministic, resilient CSS and XPath selectors for interactive elements. | Emits DOM snapshots with sanitized text; generates stable element selectors; links UI elements to observed API network calls (`reva_BrowserInteraction` -> `reva_Boundary`). | unit |
+| REVA-RO-004 | Web console log and runtime exception harvester. Subscribes to `Log.entryAdded`, `Runtime.consoleAPICalled`, and `Runtime.exceptionThrown`; structures console errors, warnings, unhandled promise rejections, and V8 stack traces. | Captures thrown JavaScript exceptions and console errors from test page; associates stack frames with extracted JavaScript source maps. | unit |
+| REVA-RO-005 | Deterministic scenario driver and journey attestation. Executes scripted UI interaction journeys (click, fill, navigate); captures timestamped screenshots and video recordings; packages execution logs and video into signed attestation warrant. | Drives multi-step UI login and form submission scenario; records video and screenshots; generates cryptographic attestation proving journey completion. | acceptance |
+
+### 7.29 Module BD — Cross-Version Binary & Logic Diffing
+**Purpose:** Compare two versions of compiled native binaries, libraries, or firmware modules. Identify exact syntactic, structural, and semantic changes in functions and control flow graphs; categorize API additions, removals, and mutations; and propagate binary change impact through the KGF Knowledge Graph to user-facing features and Jira stories.
+
+**What REVA does better than REA:**
+1. **Dual-identity separation:** Solves REA's false-positive churn (E-06). Separates logical function identity (`service:binary:symbol_name`) from version digest, correctly recognizing relocated or reordered functions as modified or unchanged rather than removed and re-added.
+2. **CFG Isomorphism & Graph Edit Distance (GED):** Computes structural similarity between basic block graphs across versions, tolerating register reassignments and minor instruction reordering.
+3. **Normalized instruction fuzzy hashing:** Uses TLSH and SSDEEP on normalized mnemonic streams (abstracting register names and immediate constants) to detect logic updates across different compiler optimization levels (`-O2` vs `-O3`).
+4. **End-to-end impact propagation:** Links changed binary functions to affected high-level API routes, background jobs, and user-facing features via `reva_CHANGED_FROM` edges.
+
+| ID | Requirement | Acceptance criteria | Depth |
+|---|---|---|---|
+| REVA-BD-001 | Dual-identity binary comparison engine. Separates logical function identity (`service:binary:symbol_name`) from version identity (content hash and offset); prevents false-positive churn caused by code relocation. | Compares two versions of a binary where code was reordered or recompiled with different base address; correctly matches unchanged functions despite address changes. | unit |
+| REVA-BD-002 | Control Flow Graph (CFG) isomorphism & Graph Edit Distance (GED) scoring. Computes CFG structural similarity between candidate function pairs across versions; scores similarity in $[0, 1]$ based on basic-block topology and control flow transitions. | Correctly matches modified functions with 90%+ GED similarity when minor instruction tweaks occur; distinguishes true changes from completely rewritten functions. | component |
+| REVA-BD-003 | Instruction-level normalized fuzzy hashing. Generates normalized instruction hashes (SSDEEP, TLSH) by abstracting immediate constants, register reassignments, and jump offsets; detects refactored functions across compiler optimization flags (`-O2` vs `-O3`). | Normalized fuzzy hash matches functions compiled across optimization flags; flags only genuine logic mutations. | unit |
+| REVA-BD-004 | Binary symbol and export delta engine. Detects added, removed, and modified functions, exported APIs, and symbol table entries; classifies breaking changes (removed exports, signature alterations). | Outputs structured delta containing `added`, `removed`, `modified`, and `renamed` functions; verifies breaking API removals are flagged with high severity. | unit |
+| REVA-BD-005 | Binary change impact propagation warrant. Traverses KGF knowledge graph from mutated binary functions to higher-level API routes, background jobs, and user-facing features; emits signed impact warrant citing changed function digests. | Trace from changed native function resolves impacted HTTP boundaries and Jira stories; generates comprehensive binary impact diff report. | integration |
+
+### 7.30 Module XP — Optional External Tool Bridges & Legacy Adapters (Third-Party Plugins)
+**Purpose:** Provide optional adapter interfaces for legacy, proprietary, or tenant-managed third-party reverse engineering suites (e.g. licensed IDA Pro installations, Hopper instances, hardware JTAG bridges). These adapters remain unbundled from REVA core and are disabled by default.
+
+| ID | Capability | Notes | Depth |
+|---|---|---|---|
+| REVA-XP-001 | External commercial decompiler RPC bridge (IDA Pro / Hopper daemon). Connects over authenticated TLS socket to a tenant-hosted commercial decompiler daemon. | Enabled with `REVA_XP_COMMERCIAL_DECOMPILER=true`; requires tenant-provided license; strictly optional. | integration |
+| REVA-XP-002 | Legacy hardware probe and signal decoder bridge (TShark, Sigrok). Connects to pre-recorded hardware signal logic captures. | Disabled by default (`REVA_XP_SIGNAL_DECODE=false`); consumes pre-recorded offline captures only. | component |
 
 ---
 
@@ -1124,9 +1244,15 @@ All endpoints: tenant from auth context; JSON; errors per §10.1; list endpoints
 | REVA-IF-043 | `POST /apisurface/ingest` (HAR/OTLP/log upload or connector source), `GET /apisurface/operations` | API surface | analyst |
 | REVA-IF-044 | `POST /dbschema/introspect` (connection id), `GET /dbschema/{db_instance}` | DB schema | analyst |
 | REVA-IF-045 | `POST /reconcile` (service scope, window) | Reconciliation | analyst |
+| REVA-IF-046 | `POST /binaries/analyze` (upload/digest), `GET /binaries/{digest}/functions`, `GET /binaries/{digest}/functions/{offset}/cfg`, `GET /binaries/{digest}/functions/{offset}/decompiled` | Binary disassembly, CFG & decompiler AST | analyst |
+| REVA-IF-047 | `POST /mobile/analyze` (APK/IPA upload/digest), `GET /mobile/{digest}/manifest`, `GET /mobile/{digest}/components`, `GET /mobile/{digest}/jni-bridges` | Mobile triage & JNI mapping | analyst |
+| REVA-IF-048 | `POST /firmware/carve` (image upload), `GET /firmware/{digest}/partitions`, `GET /firmware/{digest}/secrets` | Firmware partition carving & secrets | analyst |
+| REVA-IF-049 | `POST /tracing/sessions` (start trace session with dual-key token), `GET /tracing/sessions/{id}`, `POST /tracing/sessions/{id}/stop`, `POST /tracing/crash-dump` | Controlled dynamic tracing & crash triage | security_analyst |
 | REVA-IF-050 | `POST /trace` (seed, template, bounds, as-of), `GET /trace/templates`, `GET /trace/{trace_id}` | Feature/impact trace | viewer (results ACL-filtered) |
 | REVA-IF-051 | `POST /diff` (two selectors), `GET /diff/{diff_id}` | Graph diff | viewer |
 | REVA-IF-052 | `POST /drift/verify` (artifact, expected commit) | Drift verification | analyst |
+| REVA-IF-053 | `POST /browser/observe` (scenario definition), `GET /browser/sessions/{id}`, `GET /browser/sessions/{id}/attestation` | Supervised CDP observation & UI attestation | analyst |
+| REVA-IF-054 | `POST /diff/binaries` (base digest vs target digest, options), `GET /diff/binaries/{id}` | Binary CFG isomorphism & logic diff | viewer |
 | REVA-IF-060 | `POST /answers/ground` (question + optional template) → answer contract | Grounded answers | viewer |
 | REVA-IF-061 | `POST /eval/runs` (suite), `GET /eval/runs/{id}` | Evaluation | analyst |
 | REVA-IF-070 | `GET /views/{parent_id}` (view request params) | Views/paging | viewer |
@@ -1150,6 +1276,15 @@ All endpoints: tenant from auth context; JSON; errors per §10.1; list endpoints
 | `reva_inspect_api_surface` | inspect | read_only | IF-043 |
 | `reva_reconcile_runtime` | workflow | records_warrants | IF-045 |
 | `reva_inspect_db_schema` | inspect | read_only | IF-044 |
+| `reva_analyze_binary` | workflow | records_warrants, runs_sandbox | IF-046 |
+| `reva_decompile_function` | inspect | records_warrants, runs_sandbox | IF-046 |
+| `reva_get_binary_cfg` | inspect | read_only | IF-046 |
+| `reva_triage_mobile_package` | workflow | records_warrants | IF-047 |
+| `reva_carve_firmware` | workflow | records_warrants, runs_sandbox | IF-048 |
+| `reva_trace_execution` | workflow | records_warrants, runs_sandbox | IF-049 |
+| `reva_analyze_crash_dump` | inspect | records_warrants | IF-049 |
+| `reva_observe_runtime` | workflow | records_warrants, runs_sandbox | IF-053 |
+| `reva_diff_binaries` | compare | records_warrants | IF-054 |
 | `reva_list_gaps` / `reva_record_gap` / `reva_update_gap` | search / record / record | read_only / records_warrants | IF-010 |
 | `reva_list_contradictions` | search | read_only | IF-015 |
 | `reva_get_closure_status` | inspect | read_only | IF-023 |
@@ -1159,10 +1294,10 @@ All endpoints: tenant from auth context; JSON; errors per §10.1; list endpoints
 | `reva_inspect_view` | inspect | read_only | IF-070 |
 | `reva_verify_proof` | verify | read_only | IF-026/031 |
 
-MCP prompts (optional starting points, never mandatory sequences): `reva_investigate_impact`, `reva_verify_completion`, `reva_audit_gaps`, `reva_compare_releases`. Each embeds the evidence discipline: report observations only from cited warrants; label inference with confidence and alternatives; keep incomplete coverage explicit as Unknown; never turn absence under incomplete coverage into "none".
+MCP prompts (optional starting points, never mandatory sequences): `reva_investigate_impact`, `reva_verify_completion`, `reva_audit_gaps`, `reva_compare_releases`, `reva_triage_binary_crash`, `reva_diff_binary_releases`. Each embeds the evidence discipline: report observations only from cited warrants; label inference with confidence and alternatives; keep incomplete coverage explicit as Unknown; never turn absence under incomplete coverage into "none".
 
 ### 9.3 CLI (`kgf reva …`)
-`doctor`, `warrant get|search|export|import`, `log sth|verify|prove`, `gap list|record|update`, `contradiction list|resolve`, `obligation sync|list|review|propose-jira`, `binding set|show`, `run start|show|cancel`, `closure evaluate`, `ledger export --format json|md|html`, `gate evaluate`, `artifact add|inventory|sbom`, `provenance analyze`, `boundaries extract`, `apisurface ingest`, `dbschema introspect`, `reconcile`, `trace`, `diff`, `drift verify`, `answer`, `eval run`, `reproject`, `keys rotate|revoke|export`, `docs generate`, `verify-attestation`. Every command supports `--json`, `--tenant`, `--quiet`; exit codes per §10.2.
+`doctor`, `warrant get|search|export|import`, `log sth|verify|prove`, `gap list|record|update`, `contradiction list|resolve`, `obligation sync|list|review|propose-jira`, `binding set|show`, `run start|show|cancel`, `closure evaluate`, `ledger export --format json|md|html`, `gate evaluate`, `artifact add|inventory|sbom`, `provenance analyze`, `boundaries extract`, `apisurface ingest`, `dbschema introspect`, `reconcile`, `binary analyze|decompile|cfg`, `mobile triage|components|jni`, `firmware carve|secrets`, `trace start|stop|crash`, `browser observe`, `bindiff compare`, `trace`, `diff`, `drift verify`, `answer`, `eval run`, `reproject`, `keys rotate|revoke|export`, `docs generate`, `verify-attestation`. Every command supports `--json`, `--tenant`, `--quiet`; exit codes per §10.2.
 
 ### 9.4 Events
 `reva.warrant.issued|superseded|retracted|integrity_violation`, `reva.gap.changed`, `reva.contradiction.opened|resolved`, `reva.obligation.stale|closed|reopened`, `reva.run.started|finished|cancelled`, `reva.ledger.published`, `reva.sth.issued`. Payload: `{event_id, tenant_id, type, occurred_at, subject_id, summary}` (no content bodies).
@@ -1284,6 +1419,9 @@ Minimum codes: `REVA_E_SCHEMA_UNKNOWN_FIELD`, `REVA_E_VALIDATION`, `REVA_E_CANON
 | RJ-10 | **API surface and reconciliation.** Ingest HAR + OTel + NGINX logs for the fixture estate; reconcile with static boundaries. | Templating collapses slug IDs (E-07 regression); secrets never stored (byte scan); OpenAPI alignment categories correct; matched/static-only/runtime-only/ambiguous counts equal golden; no "dead" claim under sampled coverage. |
 | RJ-11 | **Graph diff without churn.** Extract boundaries at commits A and B of the Electron fixture (E-06 changes) and of the Spring fixture (controller moved to a new package + one route added). | E-06 regression passes; moved controller shows `moved` with routes `unchanged`; added route `added`; the diff warrant cites both snapshots. |
 | RJ-12 | **Operations.** Run doctor (all pass); rotate a producer key; back up; destroy the volume; restore; verify the log; reproject into an empty Neo4j; disable REVA and confirm KGF core still works. | Every step passes; post-restore verification checks all IDs and log consistency; reprojection counts match; KGF core journeys pass with REVA disabled. |
+| RJ-13 | **Native Binary Decompilation, CFG Reconstruction, and Graph Projection.** Upload a stripped Linux ELF x86_64 binary and Windows PE32+ executable; trigger analysis via `POST /api/reva/v1/binaries/analyze`; verify extracted `reva_BinaryFunction` and `reva_BasicBlock` vertices; check cyclomatic complexity; inspect decompiled C AST via `GET /api/reva/v1/binaries/{digest}/functions/{offset}/decompiled`; verify string cross-reference warrants (`reva_Resource`) and `reva_CALLS_NATIVE` edges; verify Ed25519 signatures and Merkle inclusion proofs. | All functions and basic blocks match golden CFG; decompiled C pseudocode reproduces control flow structures (if/else, while, switch); signed warrants appear in transparency log; re-projection test preserves exact identities. |
+| RJ-14 | **Mobile Package (APK/IPA) Component Triage and JNI Bridge Mapping.** Upload an Android APK (`.apk`) and iOS IPA (`.ipa`) containing both compiled UI components and native `.so` / Mach-O libraries; run `kgf reva mobile triage`; inspect discovered `reva_MobileComponent` entities (Activities, Services, Receivers), deep links, and declared permissions. Verify cross-layer mapping: Java native method in Dalvik DEX correctly resolves to C function in embedded ARM64 `.so` via `reva_CALLS_NATIVE` edge. | Manifest binary XML and `Info.plist` parsed with zero decompression bomb vulnerability; all exported activities flagged; JNI bridge edge links Android Activity to native decompiler function; signed warrants issued for mobile package topology. |
+| RJ-15 | **Controlled Dynamic Tracing, Headless Browser CDP Observation, and Cross-Version Binary Diff.** Issue a dual-key signed authorization token; trigger ephemeral containerized GDB tracing for a test binary; observe instruction stream into bounded ring-buffer; trigger supervised headless browser scenario against fixture SPA web app; verify real-time RFC 6901 redaction on Authorization headers and cookies; upload binary v1 and v2 with reordered functions and reallocated addresses; run binary diff (`POST /api/reva/v1/diff/binaries`). | Dynamic tracer halts at designated breakpoint and enforces 64 KiB read bound; headless browser records video and screenshot attestation with 100% credential redaction; binary diff correctly identifies unchanged, modified, and added functions using CFG isomorphism and GED $\ge 0.90$ without false-positive AST churn. |
 
 ---
 
@@ -1307,6 +1445,7 @@ Phases P0–P1 of the implementation plan run before the PD engine exists. Their
 | G1 Kernel integrity | All WK, TL, CV obligations closed; determinism suite (NFR-012) passes |
 | G2 Proof engine | All PD, VS obligations closed; RJ-06 passes |
 | G3 Extractors | All AI, SP, AB, AS, DB, RR obligations closed; RJ-09, RJ-10 pass |
+| G3b Enhanced RE Extractors | All NB, MB, FM, DI, RO, BD obligations closed; RJ-13, RJ-14, RJ-15 pass |
 | G4 Workflows | All FT, GD, DV, VW, GA obligations closed; RJ-03, RJ-04, RJ-08, RJ-11 pass |
 | G5 Surface & security | All MC, SEC, UI, DR, OB obligations closed; RJ-01, RJ-02, RJ-05, RJ-07, RJ-12 pass; cross-tenant and secret-scan suites pass |
 | G6 Non-functional | NFR-001…NFR-020 and NFR-030 measured and passing on reference hardware (or documented CI-equivalent scaling) |
@@ -1344,21 +1483,23 @@ Phases P0–P1 of the implementation plan run before the PD engine exists. Their
 | RC-27 | REVA-VS-003/004/010, REVA-SEC-011 | RJ-06 |
 | RC-28 | REVA-DR-001…003 | RJ-12 |
 | RC-29 | §6.7, REVA-TST-001/002 | RJ-06 |
-| RC-30…34 | REVA-XP-001…006 (deferred) or rejected | — |
+| RC-30 | REVA-NB-001…008, REVA-BD-001…005 | RJ-13, RJ-15 |
+| RC-31 | REVA-DI-001…005 | RJ-15 |
+| RC-32 | REVA-MB-001…006 | RJ-14 |
+| RC-33 | REVA-FM-001…005 | RJ-13, RJ-14 |
+| RC-34 | REVA-RO-001…005, REVA-AS-001…008 | RJ-15 |
 
-Weakness inversions: W-01 → WK-010, TL-* · W-02 → WK-007/009 · W-03 → SEC-001…004 · W-04 → AB-008, GD-002/003 · W-05 → AB-006 · W-06 → AS-004 · W-07 → VW-* · W-08 → AB-002…004/009 · W-09 → WK-006, FT-007 · W-10 → PD-003…005, VS-* · W-11 → NFR-030 · W-12 → MC-009, UI-* · W-13 → §6.10, OB-006 · W-14 → DR-*.
+Weakness inversions: W-01 → WK-010, TL-* · W-02 → WK-007/009 · W-03 → SEC-001…004 · W-04 → AB-008, GD-002/003, BD-001 · W-05 → AB-006, FM-003 · W-06 → AS-004 · W-07 → VW-* · W-08 → AB-002…004/009, NB-*, MB-* · W-09 → WK-006, FT-007 · W-10 → PD-003…005, VS-* · W-11 → NFR-030 · W-12 → MC-009, UI-* · W-13 → §6.10, OB-006 · W-14 → DR-*.
 
 ---
 
 ## 16. Out of scope (rejected) — with reasons
 | Item | Reason |
 |---|---|
-| Native decompilation/disassembly as a core feature (Hopper, IDA, Ghidra, Kuna, Rizin, objdump) | KGF analyses enterprise systems with source access; decompilation adds heavy commercial-licence and legal exposure (vendor EULAs restrict automation and output sharing) and large maintenance cost. Only an optional, sandboxed Ghidra adapter is deferred (XP-002). |
-| Debuggers and dynamic instrumentation (GDB, pwndbg, Frida, LLDB) | Executing and instrumenting third-party code conflicts with KGF's enterprise safety posture and air-gapped deployments; no KGF journey needs it. |
-| Android device control (ADB), JADX/JEB/Apktool decompilation, Flutter/Harmony | Not part of KGF's sources; static manifest inventory deferred (XP-004). |
-| Firmware extraction, pcap/TShark decoding, sigrok signals, EVM, DOS/console profiles, recorded core dumps | No KGF use case. |
-| Live browser/Electron/process automation | KGF consumes recorded telemetry; live capture deferred (XP-006). |
-| Agent-client registration for ~20 clients | KGF exposes a standards-based MCP server; doctor covers KGF's own runtime. |
+| Commercial desktop GUI decompiler suites (Hopper GUI, IDA Pro interactive GUI) | Heavy proprietary license fees, restrictive vendor EULAs prohibiting automation/distribution, and lack of headless scriptability. Replaced by REVA's native headless Capstone/Rizin/Ghidra containerized workers (REVA-NB). |
+| Unmonitored / unauthenticated host debugging (Frida hooks on host, GDB without authorization) | Conflicts with enterprise safety posture; risk of arbitrary host code execution. Replaced by REVA's dual-key authorized ephemeral containerized tracing (REVA-DI). |
+| Physical hardware JTAG/SWD probing & wire signal decoding (Sigrok logic sniffers) | Out of scope for software/firmware knowledge graphs; physical hardware probing requires lab equipment and is non-reproducible in CI. Firmware filesystems are analyzed natively in software (REVA-FM). |
+| Agent-client registration sprawl (~20 clients) | KGF exposes an open, standards-based MCP server; doctor covers KGF's own runtime. |
 | Using REA as a dependency | Churn, single-maintainer risk, clean-room requirement (§2.3, §2.9). |
 
 ---
@@ -1386,7 +1527,7 @@ Weakness inversions: W-01 → WK-010, TL-* · W-02 → WK-007/009 · W-03 → SE
 | D-18 | Jira write-back | Off | — |
 | D-19 | Vulnerability matching | Off (offline mirror only when enabled) | — |
 | D-20 | Row sampling | Off | — |
-| D-21 | Forensics pack | Off, not implemented in 1.0 | — |
+| D-21 | Enhanced Reverse Engineering & Forensics | Native in 1.0 (Modules NB, MB, FM, DI, RO, BD); external commercial tools isolated in Module XP | If Ghidra headless is unavailable, Capstone + Rizin disassembler remains active; decompiler AST falls back to disassembly CFG with an explicit capability limitation warrant |
 | D-22 | Obligation storage | YAML in repo (`docs/reva/obligations/`) + DB mirror after sync | — |
 | D-23 | Coverage tool for Python | `coverage.py` via pytest-cov with `--cov-context=test` | — |
 | D-24 | Path/endpoint canonical form | `{}` per parameter segment; lowercase method; no trailing slash except root | — |

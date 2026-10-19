@@ -10,7 +10,7 @@
   const RANK = { OPEN: 0, IN_PROGRESS: 1, CODE_COMPLETE: 2, EVIDENCED: 3, VERIFIED: 4 };
   const DSTATES = ["OPEN", "BLOCKED", "DECIDED"];
   const HEX40 = /^[0-9a-f]{40}$/i, HEX64 = /^[0-9a-f]{64}$/i, DATE = /^\d{4}-\d{2}-\d{2}$/;
-  const DECISION_REF = /^(CONFLICT-IP-\d{3}|DR-IP-\d{3}|CONFLICT-WG-\d{3}|DR-WG-\d{3}|Q-\d{3}|ADR-[A-Za-z0-9._-]+|ASPEII-DEC-\d{3}|CIP-DEC-\d{3}|LEGAL-[A-Za-z0-9._-]+|OWNER-[A-Za-z0-9._-]+)$/;
+  const DECISION_REF = /^(CONFLICT-IP-\d{3}|DR-IP-\d{3}|CONFLICT-WG-\d{3}|DR-WG-\d{3}|Q-\d{3}|ADR-[A-Za-z0-9._-]+|ASPEII-DEC-\d{3}|CIP-DEC-\d{3}|LEGAL-[A-Za-z0-9._-]+|OWNER-[A-Za-z0-9._-]+|REVA-DEC-\d{3}|GRF-DEC-\d{3}|NS-DEC-\d{3}|D-\d{2}|D-\d{2}-[A-Za-z0-9._-]+)$/;
   const ASPEII_PROFILES = ["local-sqlite-windows", "local-sqlite-linux", "postgres-saas-linux", "mcp-stdio", "mcp-http", "local-model", "hosted-model", "sandbox-write-connector", "production-config"];
   const ASPEII_LEVELS = ["L2", "L3", "L4", "L5", "L6"];
 
@@ -21,6 +21,9 @@
     IP: { OPEN: "NOT-STARTED", IN_PROGRESS: "IN-PROGRESS", CODE_COMPLETE: "CODE-COMPLETE", EVIDENCED: "EVIDENCED", VERIFIED: "VERIFIED", BLOCKED: "BLOCKED", FAILED: "IN-PROGRESS", STALE: "IN-PROGRESS" },
     WG: { OPEN: "NOT-STARTED", IN_PROGRESS: "IN-PROGRESS", CODE_COMPLETE: "CODE-COMPLETE", EVIDENCED: "EVIDENCED", VERIFIED: "VERIFIED", BLOCKED: "BLOCKED", FAILED: "IN-PROGRESS", STALE: "IN-PROGRESS" },
     GN: { OPEN: "NOT FILED", IN_PROGRESS: "NOT FILED", CODE_COMPLETE: "NOT FILED", EVIDENCED: "DRAFT LEDGER", VERIFIED: "COMPLETE", BLOCKED: "BLOCKED", FAILED: "FAILED", FAILED_ACCEPTED: "FAILED (accepted outcome)", STALE: "NOT FILED" },
+    REVA: { OPEN: "TODO", IN_PROGRESS: "IN_PROGRESS", CODE_COMPLETE: "PROVISIONAL", EVIDENCED: "EVIDENCED", VERIFIED: "CLOSED", BLOCKED: "BLOCKED", FAILED: "FAILED", STALE: "STALE" },
+    GRF: { OPEN: "STANDBY", IN_PROGRESS: "ACTIVE", CODE_COMPLETE: "EVALUATING", EVIDENCED: "EVIDENCED", VERIFIED: "VERIFIED", BLOCKED: "BLOCKED", FAILED: "FAILED", STALE: "STALE" },
+    NS: { OPEN: "DRAFT", IN_PROGRESS: "INDUCING", CODE_COMPLETE: "CANDIDATE", EVIDENCED: "EVIDENCED", VERIFIED: "PROMOTED", BLOCKED: "BLOCKED", FAILED: "FAILED", STALE: "STALE" },
   };
 
   function build(D) {
@@ -66,6 +69,30 @@
         const k = gnOrder.indexOf(p);
         return k > 0 ? [`GN-PH${gnOrder[k - 1]}.GATE`] : [];
       }
+      if (it.prog === "REVA") {
+        if (it.kind === "gate") return it.deps || [];
+        if (it.group && it.group.startsWith("P-ENH-")) {
+          const n = +it.group.slice(6);
+          return n > 0 ? [`REVA-P-ENH-${n - 1}.GATE`] : [];
+        }
+        return [];
+      }
+      if (it.prog === "GRF") {
+        if (it.kind === "gate") return it.deps || [];
+        if (it.group && it.group.startsWith("GRF-P")) {
+          const n = +it.group.slice(5);
+          return n > 0 ? [`GRF-P${n - 1}.GATE`] : [];
+        }
+        return [];
+      }
+      if (it.prog === "NS") {
+        if (it.kind === "gate") return it.deps || [];
+        if (it.group && it.group.startsWith("NS-P")) {
+          const n = +it.group.slice(4);
+          return n > 0 ? [`NS-P${n - 1}.GATE`] : [];
+        }
+        return [];
+      }
       return [];
     }
     function closePrereqs(it) {
@@ -74,6 +101,18 @@
       if (it.prog === "CIP") {
         const ph = it.kind === "clause" ? it.group : (it.kind === "task" ? it.group : null);
         if (ph) { const n = +ph.slice(5); return n > 0 ? [`CIP-P${n - 1}.GATE`] : []; }
+      }
+      if (it.prog === "REVA" && it.group && it.group.startsWith("P-ENH-")) {
+        const n = +it.group.slice(6);
+        return n > 0 ? [`REVA-P-ENH-${n - 1}.GATE`] : [];
+      }
+      if (it.prog === "GRF" && it.group && it.group.startsWith("GRF-P")) {
+        const n = +it.group.slice(5);
+        return n > 0 ? [`GRF-P${n - 1}.GATE`] : [];
+      }
+      if (it.prog === "NS" && it.group && it.group.startsWith("NS-P")) {
+        const n = +it.group.slice(4);
+        return n > 0 ? [`NS-P${n - 1}.GATE`] : [];
       }
       return [];
     }
@@ -96,6 +135,21 @@
         const led = it.kind === "ledger" ? it.id : it.parent;
         if (p !== `EOIP-engg-doc-pkg/evidence/${led}.md`) return `Graph Neurons evidence is the ledger file EOIP-engg-doc-pkg/evidence/${led}.md (plan §0.3).`;
       }
+      if (it.prog === "REVA") {
+        if (!/^(evidence\/reva\/.+|evidence\/REVA-[A-Za-z0-9_-]+\/?|\.audit-scratch\/reva\/.+|docs\/reva\/verification\/.+|reva-ledger\.json|\.data\/reva\/.+|evidence\/T-ENH-[A-Za-z0-9_-]+\/?)/.test(p)) {
+          return "REVA evidence must be inside evidence/reva/, evidence/REVA-<id>/, .audit-scratch/reva/, or docs/reva/verification/.";
+        }
+      }
+      if (it.prog === "GRF") {
+        if (!/^(evidence\/graffin\/.+|evidence\/GRF-[A-Za-z0-9_-]+\/?|\.data\/graffin_blackbox\/.+|docs\/graffin\/verification\/.+|evidence\/T-GRF-[A-Za-z0-9_-]+\/?)/.test(p)) {
+          return "Graffin evidence must be inside evidence/graffin/, evidence/GRF-<id>/, or docs/graffin/verification/.";
+        }
+      }
+      if (it.prog === "NS") {
+        if (!/^(evidence\/neural_schemas\/.+|evidence\/NS-[A-Za-z0-9_-]+\/?|schemas\/.+|docs\/schemas\/verification\/.+|evidence\/T-NS-[A-Za-z0-9_-]+\/?)/.test(p)) {
+          return "Neural Schema evidence must be inside evidence/neural_schemas/, schemas/, or docs/schemas/verification/.";
+        }
+      }
       return null;
     }
     function verificationRefError(it, v) {
@@ -105,6 +159,15 @@
       if (it.prog === "IP" && it.kind !== "req" && !/^docs\/ip\/verification\/.+\.md$/.test(v)) return "IP verification reference must be a report under docs/ip/verification/.";
       if (it.prog === "WG" && it.kind === "req" && !new RegExp(`^docs/wisdom/verification/${it.group}-report\\.md$`).test(v)) return `Wisdom verification reference must be docs/wisdom/verification/${it.group}-report.md for this requirement's work package (plan §6.7).`;
       if (it.prog === "WG" && it.kind !== "req" && !/^docs\/wisdom\/verification\/.+\.md$/.test(v)) return "Wisdom verification reference must be a report under docs/wisdom/verification/.";
+      if (it.prog === "REVA" && !/^docs\/reva\/verification\/.+\.md$|^reva-ledger\.json$|^\.audit-scratch\/reva\/.+\.json$/.test(v)) {
+        return "REVA verification reference must be docs/reva/verification/<report>.md, reva-ledger.json, or an audit verifier result.";
+      }
+      if (it.prog === "GRF" && !/^docs\/graffin\/verification\/.+\.md$|^\.data\/graffin_blackbox\/.+\.json$/.test(v)) {
+        return "Graffin verification reference must be docs/graffin/verification/<report>.md or blackbox audit output.";
+      }
+      if (it.prog === "NS" && !/^docs\/schemas\/verification\/.+\.md$|^schemas\/.+\.json$/.test(v)) {
+        return "Neural Schema verification reference must be docs/schemas/verification/<report>.md or schema evaluation benchmark receipt.";
+      }
       return null;
     }
 
@@ -220,6 +283,15 @@
         if (it.prog === "ASPEII" && it.group === "WP18") {
           chk(of(i => i.prog === "ASPEII" && ["clause", "acceptance", "scenario", "profile"].includes(i.kind)), "ASPEII clause / acceptance / scenario / profile item(s)");
         }
+        if (it.prog === "REVA") {
+          chk(it.members || [], `task(s) of ${it.group}`);
+        }
+        if (it.prog === "GRF") {
+          chk(it.members || [], `task(s) of ${it.group}`);
+        }
+        if (it.prog === "NS") {
+          chk(it.members || [], `task(s) of ${it.group}`);
+        }
       }
       if (it.id === "IP-DOD-1") chk(of(i => i.prog === "IP" && i.kind === "req"), "IP requirement(s)");
       if (it.id === "WG-DOD-1") chk(of(i => i.prog === "WG" && i.kind === "req"), "Wisdom requirement(s)");
@@ -274,6 +346,12 @@
       const G0 = of(i => i.prog === "GN" && i.kind === "ledger" && i.priority === "P0");
       const GL = of(i => i.prog === "GN" && i.kind === "ledger");
       const gAll = of(i => i.prog === "GN");
+      const RV = of(i => i.prog === "REVA" && i.kind === "req");
+      const rvAll = of(i => i.prog === "REVA");
+      const GR = of(i => i.prog === "GRF" && i.kind === "req");
+      const grAll = of(i => i.prog === "GRF");
+      const NS = of(i => i.prog === "NS" && i.kind === "req");
+      const nsAll = of(i => i.prog === "NS");
       const openDec = (D.xp || []).filter(x => ctx.dec(x.id) !== "DECIDED").length + (ctx.log() || []).filter(e => e.state !== "DECIDED").length;
       return {
         ASPEII: { primary: [cnt(A), A.length, "clauses VERIFIED"], all: [cnt(aAll), aAll.length], full: cnt(aAll) === aAll.length },
@@ -281,6 +359,9 @@
         IP: { primary: [cnt(I), I.length, "requirements VERIFIED"], all: [cnt(iAll), iAll.length], full: cnt(iAll) === iAll.length },
         WG: { primary: [cnt(W), W.length, "requirements VERIFIED"], all: [cnt(wAll), wAll.length], full: wAll.length > 0 && cnt(wAll) === wAll.length },
         GN: { primary: [cnt(G0), G0.length, "P0 ledgers COMPLETE"], resolved: [cnt(GL, ["VERIFIED", "FAILED_ACCEPTED"]), GL.length], all: [cnt(gAll, ["VERIFIED", "FAILED_ACCEPTED"]), gAll.length], full: cnt(gAll, ["VERIFIED", "FAILED_ACCEPTED"]) === gAll.length },
+        REVA: { primary: [cnt(RV), RV.length, "requirements CLOSED"], all: [cnt(rvAll), rvAll.length], full: rvAll.length > 0 && cnt(rvAll) === rvAll.length },
+        GRF: { primary: [cnt(GR), GR.length, "requirements VERIFIED"], all: [cnt(grAll), grAll.length], full: grAll.length > 0 && cnt(grAll) === grAll.length },
+        NS: { primary: [cnt(NS), NS.length, "schemas PROMOTED"], all: [cnt(nsAll), nsAll.length], full: nsAll.length > 0 && cnt(nsAll) === nsAll.length },
         openDecisions: openDec,
       };
     }

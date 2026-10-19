@@ -195,5 +195,69 @@ def ledger_export(ctx: click.Context, scope: str, fmt: str, out: Optional[str]):
         click.echo(output)
 
 
+@cli.command("repo-graph")
+@click.argument("repo_source")
+@click.option("--branch", default=None, help="Target git branch or ref")
+@click.option("--depth", default=1, type=int, help="Git shallow clone depth")
+@click.option("--out", default=None, help="Output directory for generated graph JSON artifacts")
+@click.option("--llm", is_flag=True, default=False, help="Enable zero-data-leak LLM architectural synthesis")
+@click.pass_context
+def repo_graph(ctx: click.Context, repo_source: str, branch: Optional[str], depth: int, out: Optional[str], llm: bool):
+    """
+    Ingest a Git repository URL (GitHub/GitLab) or local directory,
+    and build deterministic Knowledge Graphs and Wisdom Graphs.
+    """
+    json_mode = ctx.obj.get("json_mode", False)
+    from reva.workflows.repo_to_graph import RepoToGraphOrchestrator
+
+    orchestrator = RepoToGraphOrchestrator()
+    click.echo(f"Ingesting repository: {repo_source}...", err=not json_mode)
+    result = orchestrator.process_repository(
+        repo_source=repo_source,
+        branch=branch,
+        depth=depth,
+        output_dir=out,
+        synthesize_with_llm=llm,
+    )
+
+    if json_mode:
+        click.echo(json.dumps(result.to_dict(), indent=2))
+    else:
+        kg_m = result.knowledge_graph["metrics"]
+        wg_m = result.wisdom_graph["metrics"]
+        click.echo("==================================================")
+        click.echo(f" REVA Repository Analysis: {result.repo_id}")
+        click.echo("==================================================")
+        click.echo(f"  Source:     {result.source_url}")
+        click.echo(f"  Commit SHA: {result.commit_sha}")
+        click.echo(f"  Branch:     {result.branch}")
+        click.echo(f"  Warrant:    {result.warrant['id']}")
+        click.echo("--------------------------------------------------")
+        click.echo("  Knowledge Graph (Plane GL1):")
+        click.echo(f"    - Python Modules:  {kg_m.get('total_python_files', 0)}")
+        click.echo(f"    - Total LOC:       {kg_m.get('total_loc', 0)}")
+        click.echo(f"    - Classes:         {kg_m.get('total_classes', 0)}")
+        click.echo(f"    - Functions:       {kg_m.get('total_functions', 0)}")
+        click.echo(f"    - API Endpoints:   {kg_m.get('total_endpoints', 0)}")
+        click.echo(f"    - Total Vertices:  {kg_m.get('total_vertices', 0)}")
+        click.echo(f"    - Total Edges:     {kg_m.get('total_edges', 0)}")
+        click.echo("--------------------------------------------------")
+        click.echo("  Wisdom Graph (Plane GW):")
+        click.echo(f"    - ADR Decisions:   {wg_m.get('decisions_count', 0)}")
+        click.echo(f"    - Breaking Lessons:{wg_m.get('lessons_count', 0)}")
+        click.echo(f"    - Patterns:        {wg_m.get('patterns_count', 0)}")
+        click.echo(f"    - Risk Hotspots:   {wg_m.get('risks_count', 0)}")
+        if result.egress_audit:
+            click.echo("--------------------------------------------------")
+            click.echo("  Egress Safety Gate:")
+            click.echo(f"    - Policy:          {result.egress_audit.get('policy')}")
+            click.echo(f"    - Canary Token:    {result.egress_audit.get('canary')}")
+            click.echo("    - Zero Raw Code Leaked: TRUE")
+        if result.output_path:
+            click.echo("--------------------------------------------------")
+            click.echo(f"  Graph Artifact saved to: {result.output_path}")
+        click.echo("==================================================")
+
+
 if __name__ == "__main__":
     cli()

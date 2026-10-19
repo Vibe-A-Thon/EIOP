@@ -179,4 +179,5 @@ RevaSignatureError = SignatureError
 RevaDirtyTreeError = DirtyTreeError
 RevaArtifactMalformedError = MalformedInputError
 RevaResourceLimitError = ResourceLimitError
+RevaSecurityError = ForbiddenError
 

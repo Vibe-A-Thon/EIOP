@@ -40,7 +40,7 @@ try { L = JSON.parse(readFileSync(arg("--ledger") || "docs/programme/programme-l
 if (L.schema !== "eoip-programme-ledger-v1") fail2(`unsupported ledger schema '${L.schema}'`);
 if (!L.items || typeof L.items !== "object" || Array.isArray(L.items)) fail2("ledger.items must be an object keyed by item id");
 const scope = (arg("--programme", "ALL") || "ALL").toUpperCase();
-if (!["ALL", "ASPEII", "CIP", "IP", "GN", "WG"].includes(scope)) fail2("--programme must be ASPEII, CIP, IP, GN, WG or ALL");
+if (!["ALL", "ASPEII", "CIP", "IP", "GN", "WG", "REVA", "GRF", "NS"].includes(scope)) fail2("--programme must be ASPEII, CIP, IP, GN, WG, REVA, GRF, NS or ALL");
 
 const problems = []; const add = (id, msg) => problems.push({ id, problem: msg });
 if (L.registry_sha256 && L.registry_sha256 !== D.registry_sha256) add("(ledger)", `ledger was produced against registry ${L.registry_sha256.slice(0, 12)}…, current registry is ${D.registry_sha256.slice(0, 12)}…; requirement text may have changed — items bound to old text are STALE`);
@@ -86,11 +86,14 @@ const report = { verdict: complete ? "PASS" : "INCOMPLETE", scope, done, total, 
 if (flag("--json")) process.stdout.write(JSON.stringify(report, null, 2) + "\n");
 else {
   console.log(`EOIP programme ledger verification — scope ${scope}`);
-  console.log(`  ASPEII ${S.ASPEII.primary[0]}/${S.ASPEII.primary[1]} clauses VERIFIED · all items ${S.ASPEII.all[0]}/${S.ASPEII.all[1]}`);
-  console.log(`  CIP    ${S.CIP.primary[0]}/${S.CIP.primary[1]} AC PASS_WITH_EVIDENCE · engineering ${S.CIP.engineering[0]}/${S.CIP.engineering[1]} · release ${S.CIP.release[0]}/${S.CIP.release[1]}`);
-  console.log(`  IP     ${S.IP.primary[0]}/${S.IP.primary[1]} REQ VERIFIED · all items ${S.IP.all[0]}/${S.IP.all[1]}`);
-  console.log(`  WG     ${S.WG.primary[0]}/${S.WG.primary[1]} REQ VERIFIED · all items ${S.WG.all[0]}/${S.WG.all[1]}`);
-  console.log(`  GN     ${S.GN.primary[0]}/${S.GN.primary[1]} P0 ledgers COMPLETE · ledgers resolved ${S.GN.resolved[0]}/${S.GN.resolved[1]}`);
+  if (S.ASPEII) console.log(`  ASPEII ${S.ASPEII.primary[0]}/${S.ASPEII.primary[1]} clauses VERIFIED · all items ${S.ASPEII.all[0]}/${S.ASPEII.all[1]}`);
+  if (S.CIP)    console.log(`  CIP    ${S.CIP.primary[0]}/${S.CIP.primary[1]} AC PASS_WITH_EVIDENCE · engineering ${S.CIP.engineering[0]}/${S.CIP.engineering[1]} · release ${S.CIP.release[0]}/${S.CIP.release[1]}`);
+  if (S.IP)     console.log(`  IP     ${S.IP.primary[0]}/${S.IP.primary[1]} REQ VERIFIED · all items ${S.IP.all[0]}/${S.IP.all[1]}`);
+  if (S.WG)     console.log(`  WG     ${S.WG.primary[0]}/${S.WG.primary[1]} REQ VERIFIED · all items ${S.WG.all[0]}/${S.WG.all[1]}`);
+  if (S.GN)     console.log(`  GN     ${S.GN.primary[0]}/${S.GN.primary[1]} P0 ledgers COMPLETE · ledgers resolved ${S.GN.resolved[0]}/${S.GN.resolved[1]}`);
+  if (S.REVA)   console.log(`  REVA   ${S.REVA.primary[0]}/${S.REVA.primary[1]} REQ CLOSED · all items ${S.REVA.all[0]}/${S.REVA.all[1]}`);
+  if (S.GRF)    console.log(`  GRF    ${S.GRF.primary[0]}/${S.GRF.primary[1]} REQ VERIFIED · all items ${S.GRF.all[0]}/${S.GRF.all[1]}`);
+  if (S.NS)     console.log(`  NS     ${S.NS.primary[0]}/${S.NS.primary[1]} SCHEMAS PROMOTED · all items ${S.NS.all[0]}/${S.NS.all[1]}`);
   console.log(`  In scope: ${done}/${total} items done; open blocking decisions: ${blockingDecisions.length}; problems: ${problems.length}`);
   problems.slice(0, 200).forEach(p => console.log(`  ✗ ${p.id}: ${p.problem}`));
   if (problems.length > 200) console.log(`  … ${problems.length - 200} more (use --json)`);

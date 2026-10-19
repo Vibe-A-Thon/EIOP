@@ -166,3 +166,18 @@ def producer_id(tenant_id: str, producer_type: str, name: str, version: str) -> 
 
 def key_id(raw_ed25519_public_key_bytes: bytes) -> str:
     return "key1_" + sha256_hex(raw_ed25519_public_key_bytes)
+
+
+def schema_id(body: Dict[str, Any]) -> str:
+    """Derive deterministic Neural Schema identifier sch1_[0-9a-f]{64}."""
+    return "sch1_" + sha256_canonical(body)
+
+
+def constitution_id(body: Dict[str, Any]) -> str:
+    """Derive deterministic Living AI Agent Constitution identifier con1_[0-9a-f]{64}."""
+    return "con1_" + sha256_canonical(body)
+
+
+def budget_id(body: Dict[str, Any]) -> str:
+    """Derive deterministic Autonomy Budget identifier bdg1_[0-9a-f]{64}."""
+    return "bdg1_" + sha256_canonical(body)

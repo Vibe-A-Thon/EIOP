@@ -60,6 +60,38 @@ PROFILES: Dict[str, ProfileSpec] = {
         limits=SandboxLimits(cpu_seconds=1800, wall_timeout_s=3600),
         container_image="reva-verifier-e2e:latest",
     ),
+    "re_disasm": ProfileSpec(
+        name="re_disasm",
+        depth=Depth.COMPONENT,
+        engine="container",
+        network="none",
+        limits=SandboxLimits(cpu_seconds=600, wall_timeout_s=900, address_space_bytes=4 * 1024 * 1024 * 1024),
+        container_image="reva-re-disasm:latest",
+    ),
+    "re_ghidra": ProfileSpec(
+        name="re_ghidra",
+        depth=Depth.INTEGRATION,
+        engine="container",
+        network="none",
+        limits=SandboxLimits(cpu_seconds=900, wall_timeout_s=1200, address_space_bytes=8 * 1024 * 1024 * 1024),
+        container_image="reva-re-ghidra:latest",
+    ),
+    "re_dynamic_tracing": ProfileSpec(
+        name="re_dynamic_tracing",
+        depth=Depth.COMPONENT,
+        engine="container",
+        network="none",
+        limits=SandboxLimits(cpu_seconds=300, wall_timeout_s=600, address_space_bytes=2 * 1024 * 1024 * 1024),
+        container_image="reva-re-trace:latest",
+    ),
+    "re_browser_cdp": ProfileSpec(
+        name="re_browser_cdp",
+        depth=Depth.ACCEPTANCE,
+        engine="container",
+        network="loopback",
+        limits=SandboxLimits(cpu_seconds=180, wall_timeout_s=300, address_space_bytes=2 * 1024 * 1024 * 1024),
+        container_image="reva-re-browser:latest",
+    ),
 }
 
 

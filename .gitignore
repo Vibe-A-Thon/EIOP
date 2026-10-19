@@ -33,6 +33,9 @@ junit.xml
 /EOIP-engg-doc-pkg/evidence/
 /EOIP-engg-doc-pkg/verification/
 /evidence/
+/docs/graffin/
+/docs/reva/
+/docs/schemas/
 # React/TypeScript and VS Code extension dependencies and generated output
 # Keep dependency manifests and lockfiles in version control.
 node_modules/
