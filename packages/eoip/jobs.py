@@ -177,11 +177,10 @@ class DurableJobStore:
             # Select candidate: either PENDING or RUNNING with expired lease
             query = """
                 SELECT * FROM jobs
-                WHERE (status = 'PENDING')
-                   OR (status = 'RUNNING' AND lease_expires_at < ?)
+                WHERE ((status = 'PENDING') OR (status = 'RUNNING' AND lease_expires_at < ?))
             """
             params: list[Any] = [now]
-            if tenant_id:
+            if tenant_id is not None:
                 query += " AND tenant_id = ?"
                 params.append(tenant_id)
 

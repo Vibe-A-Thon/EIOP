@@ -280,6 +280,10 @@ PROPERTY_KEYS: dict[str, str] = {
     "fact_class": "TEXT",
     "coverage_score": "DOUBLE",
     "thread_depth": "INT",
+    # Tenancy and access control properties (WP-KG3-01, WP-KG3-02, GAP-01, GAP-07)
+    "tenant_id": "TEXT",
+    "classification": "TEXT",
+    "acl_vector": "TEXT",
 }
 
 # Vertex labels -> (graph_domain, required properties, optional properties)

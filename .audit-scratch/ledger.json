@@ -507,10 +507,14 @@
         {
           "path": ".audit-scratch/receipts/CRA-003.6/run-20261018T001137Z-ee740f96.json",
           "sha256": "efd2988488dcd0fb25d1ca719dbeafd85ce3a9eec16f9f20b7ef7778df15e7d4"
+        },
+        {
+          "path": ".audit-scratch/receipts/CRA-003.6/run-20261019T134502Z-42910d69.json",
+          "sha256": "bf0f131cb3a9a1af49bcba7dc2f4c9816a33e5f3de4bd55f4d0cdba812d4e5a0"
         }
       ],
       "notes": "",
-      "updated_at": "2026-10-18T00:11:47.291385+00:00"
+      "updated_at": "2026-10-19T13:45:21.647956+00:00"
     },
     {
       "id": "CRA-003.7",
@@ -541,10 +545,14 @@
         {
           "path": ".audit-scratch/receipts/CRA-003.8/run-20261018T001151Z-db112c69.json",
           "sha256": "aa03f89a9b8581f029f695fb9c9e6de1d8583270e94760e9f21853422cef54e5"
+        },
+        {
+          "path": ".audit-scratch/receipts/CRA-003.8/run-20261019T134244Z-f36830f3.json",
+          "sha256": "1351a55c2c37efa5433845305eeb43abd2dadbd441f74592c5a201735b6d3c48"
         }
       ],
       "notes": "",
-      "updated_at": "2026-10-18T00:12:01.943931+00:00"
+      "updated_at": "2026-10-19T13:43:11.730996+00:00"
     },
     {
       "id": "CRA-003.9",
@@ -1425,10 +1433,14 @@
         {
           "path": ".audit-scratch/receipts/CRA-009.1/run-20261018T125533Z-c1ed7a5e.json",
           "sha256": "e93695464d2d8dfb678040b0742b8e9e09c007a7b3833656dc3ba280e82250cf"
+        },
+        {
+          "path": ".audit-scratch/receipts/CRA-009.1/run-20261019T134641Z-b4bbdffa.json",
+          "sha256": "d1a67379a178e62218a80dca870612a8572b86dd5d2061ace6dc32ba7ec5adb5"
         }
       ],
       "notes": "",
-      "updated_at": "2026-10-18T12:55:44.167231+00:00"
+      "updated_at": "2026-10-19T13:46:59.575088+00:00"
     },
     {
       "id": "CRA-009.2",
@@ -3618,10 +3630,14 @@
         {
           "path": ".audit-scratch/receipts/CRA-023.2/run-20261018T055131Z-29ce530c.json",
           "sha256": "41c8fdd936621da93f3473de359308dc874ea598537c967605cb2df9851909da"
+        },
+        {
+          "path": ".audit-scratch/receipts/CRA-023.2/run-20261019T134926Z-28d13272.json",
+          "sha256": "46436d4509291f05c538b52df17ace0d9603a762087757bcd924ae573486affe"
         }
       ],
       "notes": "",
-      "updated_at": "2026-10-18T05:51:41.784354+00:00"
+      "updated_at": "2026-10-19T13:49:41.949869+00:00"
     },
     {
       "id": "CRA-023.3",
@@ -4094,10 +4110,14 @@
         {
           "path": ".audit-scratch/receipts/CRA-026.1/run-20261018T070357Z-3b180ad0.json",
           "sha256": "98cdedc6b2782c7dd36ffb8046cdfd146e1ad63067031e0401f07d4ffe3c61e3"
+        },
+        {
+          "path": ".audit-scratch/receipts/CRA-026.1/run-20261019T135215Z-c13a593c.json",
+          "sha256": "657bec459a6cea0850f17847125b82c496e5ade02b250c37606f1a2fbdd6df08"
         }
       ],
       "notes": "",
-      "updated_at": "2026-10-18T07:05:34.511186+00:00"
+      "updated_at": "2026-10-19T13:52:35.246201+00:00"
     },
     {
       "id": "CRA-026.2",
@@ -4910,10 +4930,14 @@
         {
           "path": ".audit-scratch/receipts/CRA-031.1/run-20261018T034452Z-769ec746.json",
           "sha256": "bd5896083e39b78e247d0d2418b689d91bba61e120e5481f79911cbde04d2a8b"
+        },
+        {
+          "path": ".audit-scratch/receipts/CRA-031.1/run-20261019T150921Z-493d2ed3.json",
+          "sha256": "a37ed0b6010b2b620cae436e89c0cfc1417e6d5a2ff51bcaedc8238c9a145d42"
         }
       ],
       "notes": "",
-      "updated_at": "2026-10-18T03:47:34.553041+00:00"
+      "updated_at": "2026-10-19T15:09:54.423743+00:00"
     },
     {
       "id": "CRA-031.2",
@@ -4927,10 +4951,14 @@
         {
           "path": ".audit-scratch/receipts/CRA-031.2/run-20261018T034524Z-af947e3f.json",
           "sha256": "ad72d28052d767672ab7c8973f4f62f0b2c2c17480ca2b868d1cbbaf2a3f216c"
+        },
+        {
+          "path": ".audit-scratch/receipts/CRA-031.2/run-20261019T151017Z-67bc55fc.json",
+          "sha256": "3684de7802ebf431f73ba25132c7725f93754b6ffc899791f5e9e4e8968327c5"
         }
       ],
       "notes": "",
-      "updated_at": "2026-10-18T03:47:34.872899+00:00"
+      "updated_at": "2026-10-19T15:10:38.987359+00:00"
     },
     {
       "id": "CRA-031.3",
@@ -4944,10 +4972,14 @@
         {
           "path": ".audit-scratch/receipts/CRA-031.3/run-20261018T034557Z-3fb8c015.json",
           "sha256": "94e056e21124a6819594ba053f2131432157f78a53d2dcfebc9dfd448ac88e4b"
+        },
+        {
+          "path": ".audit-scratch/receipts/CRA-031.3/run-20261019T151049Z-86fe7297.json",
+          "sha256": "ff7f4bfffad1cb160efa07b978d8dd503999c6dc6881823b5e00f919aa03f02c"
         }
       ],
       "notes": "",
-      "updated_at": "2026-10-18T03:47:35.655834+00:00"
+      "updated_at": "2026-10-19T15:11:12.804815+00:00"
     },
     {
       "id": "CRA-031.4",
@@ -4961,10 +4993,14 @@
         {
           "path": ".audit-scratch/receipts/CRA-031.4/run-20261018T034616Z-ccf686ee.json",
           "sha256": "6ec3467ef5818be45fe4cf23d6293c9177842f2bf30b6cd9e9181f3dffe9c571"
+        },
+        {
+          "path": ".audit-scratch/receipts/CRA-031.4/run-20261019T151119Z-90b1d0ef.json",
+          "sha256": "7895c4d559c0f9c0f4490adb208b4ac94668a067edae7df9bff51805af57b217"
         }
       ],
       "notes": "",
-      "updated_at": "2026-10-18T03:47:36.937360+00:00"
+      "updated_at": "2026-10-19T15:11:54.367731+00:00"
     },
     {
       "id": "CRA-031.5",

@@ -21,6 +21,9 @@ def main(argv: list[str] | None = None) -> int:
     incremental = subcommands.add_parser("incremental-index", help="Run KGR-G-012 diff-only AST indexing")
     incremental.add_argument("args", nargs=argparse.REMAINDER)
 
+    processing_parser = subcommands.add_parser("processing", help="EOIP Processing Runtime commands")
+    processing_parser.add_argument("args", nargs=argparse.REMAINDER)
+
     args = parser.parse_args(argv)
     if args.command == "install-hooks":
         if args.uninstall:
@@ -32,5 +35,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "incremental-index":
         return incremental_index_main(args.args)
+    if args.command == "processing":
+        from eoip.processing.cli import processing_cli_main
+        return processing_cli_main(args.args)
     parser.error("unknown command")
     return 2
+

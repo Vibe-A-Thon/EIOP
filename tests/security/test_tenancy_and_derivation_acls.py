@@ -16,6 +16,14 @@ from eoip.authz.pdp import (
 )
 
 
+@pytest.fixture(autouse=True)
+def clean_policy_epoch_registry():
+    registry = get_policy_epoch_registry()
+    registry.reset()
+    yield
+    registry.reset()
+
+
 @pytest.fixture
 def tenant_alpha_scope():
     return TrustedScope(

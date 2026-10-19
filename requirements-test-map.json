@@ -46,6 +46,74 @@
     "tests/unit/test_phase4_phase3_engines.py::TestAI007ProbabilisticReasoning::test_bayesian_graph_reasoning_and_strategy",
     "tests/unit/test_phase4_phase3_engines.py::TestAI007ProbabilisticReasoning::test_uncertainty_propagation"
   ],
+  "ASPEII-RQ-018.C01": [
+    "tests/unit/test_aspeii_action.py::test_action_digest_is_independent_of_object_key_order"
+  ],
+  "ASPEII-RQ-018.C02": [
+    "tests/unit/test_aspeii_action.py::test_action_digest_is_independent_of_object_key_order",
+    "tests/unit/test_aspeii_action.py::test_action_scope_set_order_is_normalized_but_argument_array_order_is_significant",
+    "tests/unit/test_aspeii_action.py::test_action_security_projection_is_deeply_immutable",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[account_id-account-b]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[arguments-value4]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[deadline-value5]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[destination-https://other.example.invalid/write]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[policy_ref-value6]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[revision-2]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[tenant_id-tenant-b]"
+  ],
+  "ASPEII-RQ-018.C03": [
+    "tests/unit/test_aspeii_action.py::test_action_rejects_naive_timestamps",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments0]",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments1]",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments2]",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments3]",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments4]",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments5]",
+    "tests/unit/test_aspeii_action.py::test_action_timestamps_are_normalized_to_utc_before_digest",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[account_id-account-b]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[arguments-value4]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[deadline-value5]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[destination-https://other.example.invalid/write]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[policy_ref-value6]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[revision-2]",
+    "tests/unit/test_aspeii_action.py::test_security_bearing_action_changes_change_digest[tenant_id-tenant-b]"
+  ],
+  "ASPEII-RQ-018.C06": [
+    "tests/unit/test_aspeii_action.py::test_action_rejects_naive_timestamps",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments0]",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments1]",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments2]",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments3]",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments4]",
+    "tests/unit/test_aspeii_action.py::test_action_rejects_values_outside_json_canonicalization_domain[arguments5]"
+  ],
+  "ASPEII-RQ-019.C03": [
+    "tests/unit/test_aspeii_action.py::test_action_certificate_requires_allow_and_all_obligations_pass"
+  ],
+  "ASPEII-RQ-020.C01": [
+    "tests/unit/test_aspeii_action.py::test_approval_decision_requires_distinct_reviewer_and_consistent_state"
+  ],
+  "ASPEII-RQ-020.C02": [
+    "tests/unit/test_aspeii_action.py::test_approval_decision_requires_distinct_reviewer_and_consistent_state"
+  ],
+  "ASPEII-RQ-022.C01": [
+    "tests/unit/test_aspeii_action.py::test_action_certificate_requires_allow_and_all_obligations_pass",
+    "tests/unit/test_aspeii_receipts.py::test_ed25519_receipt_rejects_tampered_signature_unknown_key_and_changed_action",
+    "tests/unit/test_aspeii_receipts.py::test_ed25519_receipt_verifies_with_explicit_trusted_public_key",
+    "tests/unit/test_aspeii_receipts.py::test_receipt_binds_noninitial_action_revision_and_rejects_mismatched_reference",
+    "tests/unit/test_aspeii_receipts.py::test_receipt_signer_requires_explicit_valid_private_key_and_key_id",
+    "tests/unit/test_aspeii_receipts.py::test_receipt_verification_rejects_expired_and_not_yet_valid_certificates"
+  ],
+  "ASPEII-RQ-022.C02": [
+    "tests/unit/test_aspeii_receipts.py::test_receipt_signer_requires_explicit_valid_private_key_and_key_id"
+  ],
+  "ASPEII-RQ-022.C03": [
+    "tests/unit/test_aspeii_receipts.py::test_ed25519_receipt_verifies_with_explicit_trusted_public_key"
+  ],
+  "ASPEII-RQ-022.C04": [
+    "tests/unit/test_aspeii_receipts.py::test_ed25519_receipt_rejects_tampered_signature_unknown_key_and_changed_action",
+    "tests/unit/test_aspeii_receipts.py::test_receipt_binds_noninitial_action_revision_and_rejects_mismatched_reference"
+  ],
   "BASE-01": [
     "tests/unit/test_cp_registry.py::test_alias_cycles_and_duplicate_clauses_are_rejected",
     "tests/unit/test_cp_registry.py::test_audit_rejects_ambiguous_or_unsafe_input[column]",
@@ -158,6 +226,9 @@
     "tests/unit/test_phase4_core_engines.py::TestCore006TokenBudget::test_context_compression_on_budget_exceed",
     "tests/unit/test_phase4_core_engines.py::TestCore006TokenBudget::test_token_budget_allocation_and_reallocation"
   ],
+  "CP-10": [
+    "tests/unit/test_job_queue_tenancy.py::test_job_queue_tenant_isolation"
+  ],
   "FR-ADMIN-001": [
     "tests/unit/test_web_ux_and_admin_wp53.py::test_fr_admin_001_ingestion_ui"
   ],
@@ -192,9 +263,6 @@
     "tests/unit/test_code_parser.py::test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls"
   ],
   "FR-CONF-001": [
-    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
-    "tests/runtime_dlq/test_confluence_failures.py::test_confluence_upstream_failures_are_persistent_and_nonmutating",
-    "tests/runtime_dlq/test_confluence_rejection.py::test_confluence_fetched_rejection_preserves_capture_and_checkpoint",
     "tests/unit/test_confluence_body.py::test_invalid_body_is_captured_and_dlq_before_business_writes",
     "tests/unit/test_confluence_body.py::test_structure_is_persisted_versioned_and_replayable",
     "tests/unit/test_confluence_metadata.py::test_acquisition_completes_truncated_labels_without_following_remote_links",
@@ -351,9 +419,6 @@
     "tests/unit/test_retrieval.py::test_model_unavailable_retains_independent_graph_evidence"
   ],
   "FR-SNOW-001": [
-    "tests/runtime_dlq/test_servicenow_acquisition.py::test_servicenow_http_baseline_incremental_and_replay",
-    "tests/runtime_dlq/test_servicenow_authentication.py::test_servicenow_upstream_authentication_failure_is_persistent",
-    "tests/runtime_dlq/test_servicenow_rejection.py::test_servicenow_fetched_rejection_and_admission_controls",
     "tests/unit/test_phase2_connectors.py::test_servicenow_rejects_schema_drift_without_dropping_raw_record",
     "tests/unit/test_phase2_connectors.py::test_servicenow_sync_paginates_supported_tables_and_maps_records",
     "tests/unit/test_phase2_ingestion.py::test_rest_refetch_preserves_capture_provenance_and_replay_freshness[confluence]",
@@ -1029,7 +1094,6 @@
     "tests/unit/test_code_parser.py::test_python_parser_returns_stable_symbols_ranges_imports_and_static_calls"
   ],
   "G2-SRC-CONF-001": [
-    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
     "tests/unit/test_confluence_metadata.py::test_acquisition_completes_truncated_labels_without_following_remote_links",
     "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[history-value6]",
     "tests/unit/test_confluence_metadata.py::test_invalid_page_metadata_is_captured_and_rejected_before_document_writes[history-value7]",
@@ -1046,7 +1110,6 @@
     "tests/unit/test_confluence_metadata.py::test_page_metadata_normalizes_labels_actors_and_source_timestamps"
   ],
   "G2-SRC-CONF-002": [
-    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
     "tests/unit/test_confluence_history.py::test_complete_history_must_agree_with_current_version_metadata",
     "tests/unit/test_confluence_history.py::test_history_limit_refuses_before_historical_requests",
     "tests/unit/test_confluence_history.py::test_incomplete_or_mismatched_history_fails_acquisition[<lambda>-authentication_failed]",
@@ -1060,7 +1123,6 @@
     "tests/unit/test_confluence_history.py::test_public_historical_content_is_captured_projected_and_replayed_offline"
   ],
   "G2-SRC-CONF-003": [
-    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
     "tests/unit/test_confluence_body.py::test_body_removal_clears_current_structure_without_destroying_history",
     "tests/unit/test_confluence_body.py::test_invalid_body_is_captured_and_dlq_before_business_writes",
     "tests/unit/test_confluence_body.py::test_invalid_storage_body_is_explicitly_rejected[<!DOCTYPE x><p>x</p>]",
@@ -1076,7 +1138,6 @@
     "tests/unit/test_confluence_body.py::test_xhtml_namespace_empty_body_and_nested_tables"
   ],
   "G2-SRC-CONF-004": [
-    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
     "tests/unit/test_document_references.py::test_deleted_document_expires_links_and_old_replay_cannot_restore_it",
     "tests/unit/test_document_references.py::test_exact_url_resolution_refuses_ambiguous_titles_and_unknown_references",
     "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[APIEndpoint-properties2]",
@@ -1090,7 +1151,6 @@
     "tests/unit/test_phase2_hugegraph_schema.py::test_document_reference_lookups_have_single_property_secondary_indexes"
   ],
   "G2-SRC-CONF-005": [
-    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
     "tests/unit/test_document_references.py::test_deleted_document_expires_links_and_old_replay_cannot_restore_it",
     "tests/unit/test_document_references.py::test_fact_changes_not_observations_trigger_staleness_and_replay_cannot_rebase",
     "tests/unit/test_document_references.py::test_tombstone_staleness_is_exposed_by_existing_api_and_agent"
@@ -1282,7 +1342,6 @@
     "tests/unit/test_source_registry.py::test_registry_crud_is_durable_and_never_stores_inline_secrets"
   ],
   "G2-T0110": [
-    "tests/runtime_dlq/test_servicenow_acquisition.py::test_servicenow_http_baseline_incremental_and_replay",
     "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls",
     "tests/unit/test_acquisition_fabric.py::test_source_operation_api_queues_registry_scoped_job"
   ],
@@ -1290,8 +1349,6 @@
     "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
   ],
   "G2-T0112": [
-    "tests/runtime_dlq/test_confluence_rejection.py::test_confluence_fetched_rejection_preserves_capture_and_checkpoint",
-    "tests/runtime_dlq/test_servicenow_rejection.py::test_servicenow_fetched_rejection_and_admission_controls",
     "tests/unit/test_acquisition_fabric.py::test_scheduler_admits_all_operation_types_and_enforces_controls"
   ],
   "G2-T0120": [
@@ -1335,7 +1392,6 @@
     "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
   ],
   "G2-T0203": [
-    "tests/runtime_dlq/test_servicenow_acquisition.py::test_servicenow_http_baseline_incremental_and_replay",
     "tests/unit/test_acquisition_fabric.py::test_baseline_controller_persists_ordered_restart_manifest"
   ],
   "G2-T0210": [
@@ -1349,7 +1405,6 @@
     "tests/unit/test_graph_evolution.py::test_returning_to_prior_content_retains_all_revision_intervals"
   ],
   "G2-T0220": [
-    "tests/e2e/test_clean_recovery.py::test_disposable_temporal_upgrade_acceptance",
     "tests/unit/test_graph_evolution.py::test_relationship_recreation_after_delete_does_not_materialize_tombstone_edge",
     "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
     "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
@@ -1360,7 +1415,6 @@
     "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[True-revert]"
   ],
   "G2-T0221": [
-    "tests/e2e/test_clean_recovery.py::test_disposable_temporal_upgrade_acceptance",
     "tests/unit/test_graph_evolution.py::test_relationship_recreation_after_delete_does_not_materialize_tombstone_edge",
     "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
     "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
@@ -1374,7 +1428,6 @@
     "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe"
   ],
   "G2-T0223": [
-    "tests/e2e/test_clean_recovery.py::test_disposable_temporal_upgrade_acceptance",
     "tests/unit/test_graph_evolution.py::test_relationship_replacement_expires_old_edge_and_preserves_history",
     "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-delete]",
     "tests/unit/test_graph_evolution.py::test_restored_legacy_relationship_expires_without_creating_duplicate_history[False-replace]",
@@ -1392,7 +1445,6 @@
     "tests/unit/test_snapshots.py::test_snapshot_preserves_tombstones_and_expired_relationships"
   ],
   "G2-T0225": [
-    "tests/e2e/test_clean_recovery.py::test_disposable_temporal_upgrade_acceptance",
     "tests/unit/test_document_references.py::test_deleted_document_expires_links_and_old_replay_cannot_restore_it",
     "tests/unit/test_graph_evolution.py::test_deletion_is_a_temporal_barrier_for_entity_and_relationship_replay",
     "tests/unit/test_graph_evolution.py::test_entity_evolution_is_idempotent_temporal_and_late_event_safe",
@@ -1441,21 +1493,8 @@
   "G2-T0341": [
     "tests/unit/test_acquisition_fabric.py::test_generic_web_and_file_connectors_share_source_connector_semantics"
   ],
-  "G2-T0401": [
-    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
-    "tests/runtime_dlq/test_confluence_failures.py::test_confluence_upstream_failures_are_persistent_and_nonmutating"
-  ],
-  "G2-T0402": [
-    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
-    "tests/runtime_dlq/test_confluence_failures.py::test_confluence_upstream_failures_are_persistent_and_nonmutating",
-    "tests/runtime_dlq/test_confluence_rejection.py::test_confluence_fetched_rejection_preserves_capture_and_checkpoint"
-  ],
   "G2-T0403": [
-    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay",
     "tests/unit/test_confluence_history.py::test_public_historical_content_is_captured_projected_and_replayed_offline"
-  ],
-  "G2-T0404": [
-    "tests/runtime_dlq/test_confluence_acquisition.py::test_confluence_http_baseline_hierarchy_incremental_and_replay"
   ],
   "G2-T0405": [
     "tests/unit/test_document_references.py::test_explicit_canonical_links_are_evidence_backed_and_temporal[APIEndpoint-properties2]",
@@ -1773,6 +1812,9 @@
   "GAP-IDE": [
     "tests/unit/test_enterprise_readiness_wp51.py::test_gap_ide_extension_manifest_and_mcp_bridge"
   ],
+  "GAP-JOB-001": [
+    "tests/unit/test_job_queue_tenancy.py::test_job_queue_tenant_isolation"
+  ],
   "GAP-KFW-001": [
     "tests/unit/test_gap_governance_controls.py::test_api_exposes_firewall_trust_states_and_evidence_manifest_controls",
     "tests/unit/test_gap_governance_controls.py::test_knowledge_firewall_redacts_blocks_and_explains_boundary_decisions"
@@ -1911,7 +1953,9 @@
     "tests/unit/test_gap_governance_controls.py::test_trust_zones_quarantine_promote_filter_and_disclose_non_certified_facts"
   ],
   "GAP-SEC-004": [
+    "tests/security/test_http_and_realtime_contract.py::test_admin_jobs_and_runs_cross_tenant_isolation",
     "tests/security/test_http_and_realtime_contract.py::test_brain_llm_stream_incremental_sse",
+    "tests/security/test_http_and_realtime_contract.py::test_cross_tenant_isolation_on_entity_and_ontology_routes",
     "tests/security/test_http_and_realtime_contract.py::test_enterprise_middleware_tenant_isolation_cross_tenant_denial",
     "tests/security/test_http_and_realtime_contract.py::test_http_boundary_accepts_signed_token_and_emits_dynamic_audit_actor",
     "tests/security/test_http_and_realtime_contract.py::test_http_boundary_rejects_tampered_or_expired_token",
@@ -1943,7 +1987,7 @@
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-nan]",
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[iss-another-issuer]",
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]",
-    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-1791987038.0709026]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-1792424221.4864457]",
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-nan]",
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[roles-admin]",
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[roles-value14]",
@@ -2043,7 +2087,7 @@
     "tests/unit/test_phase4_phase2_engines.py::TestGraph003Distillation::test_distillation_package_and_deploy"
   ],
   "GRAPH-004": [
-    "tests/unit/test_phase4_phase2_engines.py::TestGraph004GNNIntegration::test_embeddings_and_link_prediction"
+    "tests/unit/test_phase4_phase2_engines.py::TestGraph004GNNIntegration::test_unqualified_neural_inference_fails_closed"
   ],
   "GRAPH-005": [
     "tests/unit/test_phase4_phase2_engines.py::TestGraph005TemporalRetrieval::test_temporal_index_as_of_and_range"
@@ -2094,7 +2138,7 @@
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[exp-nan]",
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[iss-another-issuer]",
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]",
-    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-1791987038.0709026]",
+    "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-1792424221.4864457]",
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[nbf-nan]",
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[roles-admin]",
     "tests/security/test_token_validation_contract.py::test_even_correctly_signed_invalid_claims_are_rejected[roles-value14]",
@@ -2142,6 +2186,11 @@
     "tests/unit/test_incremental_indexer.py::test_run_incremental_index_writes_report_for_git_diff"
   ],
   "KGR-G-013": [
+    "tests/unit/test_named_graph.py::test_cross_tenant_access_raises_violation",
+    "tests/unit/test_named_graph.py::test_named_graph_edge_isolation_and_find_edges",
+    "tests/unit/test_named_graph.py::test_named_graph_find_vertex_by_property_and_count",
+    "tests/unit/test_named_graph.py::test_named_graph_manager",
+    "tests/unit/test_named_graph.py::test_named_graph_vertex_isolation",
     "tests/unit/test_named_graph_isolation.py::test_named_graph_blocks_adversarial_cross_namespace_edges",
     "tests/unit/test_named_graph_isolation.py::test_named_graph_creation_deletion_latency_and_thousand_tenant_support",
     "tests/unit/test_named_graph_isolation.py::test_named_graph_edges_and_counts_are_tenant_scoped",
@@ -2282,8 +2331,6 @@
     "tests/unit/test_validation_source_binding.py::test_executes_command_and_persists_source_bound_fresh_artifact"
   ],
   "MVP-FR-028": [
-    "tests/e2e/test_demo_flow.py::test_cross_domain_evidence_path",
-    "tests/e2e/test_demo_flow.py::test_full_demo_ingestion",
     "tests/unit/test_production_release_gate_wp8.py::test_mvp_fr_028_cross_domain_traceability_evidence"
   ],
   "NFR-OPS-001": [
@@ -2352,6 +2399,423 @@
   ],
   "PRE-002": [
     "tests/unit/test_phase4_preflight.py::test_preflight_requirements_registry_registered"
+  ],
+  "PUR-APU-001": [
+    "tests/processing/test_backends.py::test_apu_heterogeneous_workflow"
+  ],
+  "PUR-APU-002": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-APU-003": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-APU-004": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-APU-005": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-CON-001": [
+    "tests/processing/test_contracts.py::test_all_ten_logical_units_defined",
+    "tests/processing/test_contracts.py::test_pydantic_extra_forbidden",
+    "tests/processing/test_router.py::test_router_get_capabilities",
+    "tests/processing/test_router.py::test_router_get_devices"
+  ],
+  "PUR-CON-002": [
+    "tests/processing/test_contracts.py::test_processing_request_validation"
+  ],
+  "PUR-CON-003": [
+    "tests/processing/test_contracts.py::test_artifact_ref_validation"
+  ],
+  "PUR-CON-004": [
+    "tests/processing/test_contracts.py::test_canonical_json_hashing_invariance"
+  ],
+  "PUR-CON-005": [
+    "tests/processing/test_contracts.py::test_execution_preference_matrix"
+  ],
+  "PUR-CON-006": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-CON-007": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-CON-008": [
+    "tests/processing/test_contracts.py::test_execution_receipt_digest_integrity"
+  ],
+  "PUR-CON-009": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-CON-010": [
+    "tests/processing/test_contracts.py::test_job_record_lifecycle_states"
+  ],
+  "PUR-CPU-001": [
+    "tests/processing/test_backends.py::test_cpu_records_validate"
+  ],
+  "PUR-CPU-002": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-CPU-003": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-CPU-004": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-CPU-005": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-DAT-001": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-DAT-002": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-DAT-003": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-DAT-004": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-DAT-005": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-DAT-006": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-DAT-007": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-DAT-008": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-DPU-001": [
+    "tests/processing/test_backends.py::test_dpu_checksum_and_compression"
+  ],
+  "PUR-DPU-002": [
+    "tests/processing/test_backends.py::test_dpu_checksum_and_compression"
+  ],
+  "PUR-DPU-003": [
+    "tests/processing/test_backends.py::test_dpu_classify_and_redact"
+  ],
+  "PUR-DPU-004": [
+    "tests/processing/test_backends.py::test_dpu_deduplicate_records"
+  ],
+  "PUR-DPU-005": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-FND-001": [
+    "tests/processing/test_contracts.py::test_all_ten_logical_units_defined"
+  ],
+  "PUR-FND-002": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-FND-003": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-FND-004": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-FND-005": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-FND-006": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-FND-007": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-FND-008": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-GPU-001": [
+    "tests/processing/test_backends.py::test_gpu_cosine_top_k"
+  ],
+  "PUR-GPU-002": [
+    "tests/processing/test_backends.py::test_gpu_matmul"
+  ],
+  "PUR-GPU-003": [
+    "tests/processing/test_backends.py::test_gpu_vector_reduce"
+  ],
+  "PUR-GPU-004": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-GPU-005": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-INT-001": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-INT-002": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-INT-003": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-INT-004": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-INT-005": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-INT-006": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-INT-007": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-INT-008": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-INT-009": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-INT-010": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-IPU-001": [
+    "tests/processing/test_backends.py::test_ipu_graph_csr_and_components"
+  ],
+  "PUR-IPU-002": [
+    "tests/processing/test_backends.py::test_ipu_graph_shortest_paths"
+  ],
+  "PUR-IPU-003": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-IPU-004": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-IPU-005": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-LPU-001": [
+    "tests/processing/test_backends.py::test_lpu_chunking_with_offsets"
+  ],
+  "PUR-LPU-002": [
+    "tests/processing/test_backends.py::test_lpu_structured_extraction_with_abstention"
+  ],
+  "PUR-LPU-003": [
+    "tests/processing/test_backends.py::test_lpu_grounded_summarization"
+  ],
+  "PUR-LPU-004": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-LPU-005": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-LPU-006": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-NPU-001": [
+    "tests/processing/test_backends.py::test_npu_text_embedding_offline"
+  ],
+  "PUR-NPU-002": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-NPU-003": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-NPU-004": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-NPU-005": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-OPS-001": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-OPS-002": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-OPS-003": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-OPS-004": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-OPS-005": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-OPS-006": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-OPS-007": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-OPS-008": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-QPU-001": [
+    "tests/processing/test_quantum.py::test_bell_state_simulation_statevector",
+    "tests/processing/test_quantum.py::test_qpu_receipt_simulation_flags"
+  ],
+  "PUR-QPU-002": [
+    "tests/processing/test_quantum.py::test_density_matrix_with_depolarizing_noise"
+  ],
+  "PUR-QPU-003": [
+    "tests/processing/test_quantum.py::test_qpu_bounds_and_limits"
+  ],
+  "PUR-QPU-004": [
+    "tests/processing/test_quantum.py::test_pauli_expectation"
+  ],
+  "PUR-QPU-005": [
+    "tests/processing/test_quantum.py::test_maxcut_qaoa_vs_classical"
+  ],
+  "PUR-QPU-006": [
+    "tests/processing/test_quantum.py"
+  ],
+  "PUR-RUN-001": [
+    "tests/processing/test_router.py::test_router_submit_job_lifecycle",
+    "tests/processing/test_router.py::test_router_idempotency_keys"
+  ],
+  "PUR-RUN-002": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-RUN-003": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-RUN-004": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-RUN-005": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-RUN-006": [
+    "tests/processing/test_router.py::test_router_compile_plan_valid",
+    "tests/processing/test_router.py::test_router_compile_plan_cyclic_fails"
+  ],
+  "PUR-RUN-007": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-RUN-008": [
+    "tests/processing/test_router.py::test_router_submit_job_lifecycle"
+  ],
+  "PUR-RUN-009": [
+    "tests/processing/test_router.py::test_router_job_cancellation"
+  ],
+  "PUR-RUN-010": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-RUN-011": [
+    "tests/processing/test_router.py::test_router_profile_probing"
+  ],
+  "PUR-RUN-012": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-001": [
+    "tests/processing/test_router.py::test_router_tenant_isolation"
+  ],
+  "PUR-SEC-002": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-003": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-004": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-005": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-006": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-007": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-008": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-009": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-010": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-011": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-012": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-013": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-014": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-015": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-SEC-016": [
+    "tests/processing/test_router.py"
+  ],
+  "PUR-TPU-001": [
+    "tests/processing/test_backends.py::test_tpu_elementwise_and_softmax"
+  ],
+  "PUR-TPU-002": [
+    "tests/processing/test_backends.py::test_tpu_elementwise_and_softmax"
+  ],
+  "PUR-TPU-003": [
+    "tests/processing/test_backends.py::test_tpu_conv2d_nchw"
+  ],
+  "PUR-TPU-004": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-TPU-005": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-VER-001": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-002": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-003": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-004": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-005": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-006": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-007": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-008": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-009": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-010": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-011": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VER-012": [
+    "tests/processing/test_contracts.py"
+  ],
+  "PUR-VPU-001": [
+    "tests/processing/test_backends.py::test_vpu_image_preprocess_and_duplicate"
+  ],
+  "PUR-VPU-002": [
+    "tests/processing/test_backends.py::test_vpu_image_preprocess_and_duplicate"
+  ],
+  "PUR-VPU-003": [
+    "tests/processing/test_backends.py::test_vpu_layout_evidence"
+  ],
+  "PUR-VPU-004": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-VPU-005": [
+    "tests/processing/test_backends.py"
+  ],
+  "PUR-VPU-006": [
+    "tests/processing/test_backends.py"
   ],
   "REL-01": [
     "tests/unit/test_production_release_gate_wp8.py::test_rel_01_release_checklist"
@@ -2424,6 +2888,47 @@
   ],
   "REQ-005": [
     "tests/unit/test_documentation_audit.py::test_ci_installs_native_parser_extra"
+  ],
+  "REQ-BRB-001": [
+    "tests/unit/test_warrant_composition.py::test_action_warrant_requires_trusted_action_class_and_kappa"
+  ],
+  "REQ-OPR-004": [
+    "tests/unit/test_warrant_composition.py::test_observer_requires_qualification_and_human_requires_subject_authority"
+  ],
+  "REQ-PLT-001": [
+    "tests/unit/test_warrant_composition.py::test_composition_rejects_cross_tenant_inputs"
+  ],
+  "REQ-WAR-001": [
+    "tests/unit/test_warrant_composition.py::test_model_requires_calibrated_confidence_and_uses_status_order"
+  ],
+  "REQ-WAR-002": [
+    "tests/unit/test_warrant_composition.py::test_model_requires_calibrated_confidence_and_uses_status_order"
+  ],
+  "REQ-WAR-011": [
+    "tests/unit/test_warrant_composition.py::test_generator_requires_matching_sasi_result_and_operator_must_be_approved"
+  ],
+  "REQ-WCA-001": [
+    "tests/unit/test_warrant_composition.py::test_action_warrant_requires_trusted_action_class_and_kappa",
+    "tests/unit/test_warrant_composition.py::test_composition_rejects_cross_tenant_inputs",
+    "tests/unit/test_warrant_composition.py::test_computation_takes_weakest_status_and_never_widens_scope_or_validity",
+    "tests/unit/test_warrant_composition.py::test_empty_computation_is_unknown_and_scope_intersection_cannot_widen",
+    "tests/unit/test_warrant_composition.py::test_generator_requires_matching_sasi_result_and_operator_must_be_approved",
+    "tests/unit/test_warrant_composition.py::test_model_requires_calibrated_confidence_and_uses_status_order",
+    "tests/unit/test_warrant_composition.py::test_observer_requires_qualification_and_human_requires_subject_authority"
+  ],
+  "REQ-WCA-002": [
+    "tests/unit/test_warrant_composition.py::test_a1_status_authority_and_validity_properties",
+    "tests/unit/test_warrant_composition.py::test_computation_takes_weakest_status_and_never_widens_scope_or_validity",
+    "tests/unit/test_warrant_composition.py::test_empty_computation_is_unknown_and_scope_intersection_cannot_widen"
+  ],
+  "REQ-WCA-003": [
+    "tests/unit/test_warrant_composition.py::test_a1_status_authority_and_validity_properties",
+    "tests/unit/test_warrant_composition.py::test_computation_takes_weakest_status_and_never_widens_scope_or_validity",
+    "tests/unit/test_warrant_composition.py::test_empty_computation_is_unknown_and_scope_intersection_cannot_widen"
+  ],
+  "REQ-WCA-004": [
+    "tests/unit/test_warrant_composition.py::test_a1_status_authority_and_validity_properties",
+    "tests/unit/test_warrant_composition.py::test_computation_takes_weakest_status_and_never_widens_scope_or_validity"
   ],
   "S-01": [
     "tests/unit/test_scale_and_polish_wp71.py::test_s_01_frontend_kgr_completion"
@@ -2556,7 +3061,9 @@
     "tests/unit/test_qa_gate_integrity.py::TestStatusDashboard::test_three_numbers_reported_separately"
   ],
   "SR-TEN-001": [
+    "tests/security/test_http_and_realtime_contract.py::test_admin_jobs_and_runs_cross_tenant_isolation",
     "tests/security/test_http_and_realtime_contract.py::test_brain_llm_stream_incremental_sse",
+    "tests/security/test_http_and_realtime_contract.py::test_cross_tenant_isolation_on_entity_and_ontology_routes",
     "tests/security/test_http_and_realtime_contract.py::test_enterprise_middleware_tenant_isolation_cross_tenant_denial",
     "tests/security/test_http_and_realtime_contract.py::test_http_boundary_accepts_signed_token_and_emits_dynamic_audit_actor",
     "tests/security/test_http_and_realtime_contract.py::test_http_boundary_rejects_tampered_or_expired_token",
@@ -2572,19 +3079,19 @@
     "tests/security/test_http_and_realtime_contract.py::test_viewer_cannot_mutate_administrative_surfaces[/api/v1/sources]",
     "tests/security/test_http_and_realtime_contract.py::test_websocket_authenticated_and_tenant_isolated",
     "tests/security/test_http_and_realtime_contract.py::test_websocket_closes_when_authenticated_token_expires",
-    "tests/security/test_http_and_realtime_contract.py::test_websocket_unauthenticated_handshake_rejects_without_500"
+    "tests/security/test_http_and_realtime_contract.py::test_websocket_unauthenticated_handshake_rejects_without_500",
+    "tests/unit/test_job_queue_tenancy.py::test_job_queue_tenant_isolation",
+    "tests/unit/test_named_graph.py::test_cross_tenant_access_raises_violation",
+    "tests/unit/test_named_graph.py::test_named_graph_edge_isolation_and_find_edges",
+    "tests/unit/test_named_graph.py::test_named_graph_find_vertex_by_property_and_count",
+    "tests/unit/test_named_graph.py::test_named_graph_manager",
+    "tests/unit/test_named_graph.py::test_named_graph_vertex_isolation"
   ],
   "TEST-001": [
     "tests/unit/test_phase4_phase6_7_engines.py::TestChaos001FaultInjection::test_chaos_fault_injection_and_recovery"
   ],
   "TEST-002": [
     "tests/unit/test_phase4_load.py::test_load_test_runner_concurrent_queries"
-  ],
-  "TEST-003": [
-    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_all_formats_token_compression_ratio",
-    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_lean_serialization_round_trip",
-    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_toon_serialization_round_trip",
-    "tests/fuzz/test_property_fuzz.py::TestPropertyTokenFormatSerialization::test_tron_serialization_round_trip"
   ],
   "TEST-004": [
     "tests/unit/test_phase4_perf_regression.py::TestPerfRegressionDetector::test_baseline_save_and_load",
@@ -2671,7 +3178,7 @@
   "UI-04": [
     "tests/unit/test_web_ux_and_admin_wp53.py::test_ui_04_xai_factor_verification_dashboard"
   ],
-  "§47": [
+  "\u00a747": [
     "tests/unit/test_ops.py::test_preflight_all_pass",
     "tests/unit/test_ops.py::test_preflight_dead_graph_store_fails",
     "tests/unit/test_ops.py::test_preflight_low_disk_warns",
@@ -2688,5 +3195,1496 @@
     "tests/unit/test_ops.py::test_upgrade_plan_rejects_downgrade",
     "tests/unit/test_ops.py::test_upgrade_plan_rejects_unparseable_version",
     "tests/unit/test_ops.py::test_upgrade_plan_with_graph_store_precheck"
+  ],
+  "G2-ADMIN-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-ARCHC-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-CAP-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-CAUSE-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-EKAF-027": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-EVENT-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-EVOL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-GRAPH-API-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-GRAPH-BIZ-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-GRAPH-DEC-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-GRAPH-OBS-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-GRAPH-PROC-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-GRAPH-RUNTIME-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-GRAPH-SEC-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-GRAPH-TEST-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-I2R-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-IMMUNE-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-JOURNAL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-KD-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-OBS-003": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-OBS-005": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-OEVO-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P0": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P0-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P1": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P10": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P10-040": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P2": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P3": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P4": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P5": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P6": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P7": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P8": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-P9": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-PERF-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-PM-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-QOP-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-REL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SIM-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SLO-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-API-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-CICD-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-CODE-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-DD-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-GRAF-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-JIRA-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-KIB-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-OTEL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-RUNTIME-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-SBOM-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-SNKB-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-SNOW-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SRC-WEB-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-SYNC-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0006": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0103": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0104": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0140": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0141": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0142": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0150": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0151": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0152": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0153": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0212": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0240": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0301": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0302": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0303": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0304": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0310": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0311": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0312": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0313": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0320": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0321": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0322": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0323": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0330": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0331": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0332": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0333": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0342": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0401": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0402": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0404": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0410": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0411": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0412": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0413": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0414": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0415": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0416": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0420": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0421": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0422": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0423": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0424": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0425": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0426": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0501": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0502": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0503": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0504": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0510": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0511": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0512": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0513": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0520": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0521": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0522": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0523": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0530": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0531": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0532": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0540": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0541": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0542": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0543": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0550": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0551": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0560": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0561": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0562": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0563": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0601": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0602": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0603": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0610": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0611": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0612": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0620": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0621": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0622": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0630": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0631": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0632": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0701": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0702": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0703": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0704": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0705": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0710": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0711": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0712": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0713": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0714": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0715": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0720": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0721": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0722": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0723": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0730": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0731": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0732": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0733": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0740": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0741": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0742": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0743": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0750": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0751": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0752": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0753": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0801": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0802": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0803": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0804": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0805": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0810": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0811": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0812": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0813": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0814": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0820": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0821": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0822": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0823": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0824": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0901": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0902": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0903": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0904": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0905": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0906": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0910": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0911": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0912": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0920": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0921": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0922": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0923": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T0924": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1030": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1031": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1032": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1033": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1040": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1041": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1042": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1043": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1044": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1045": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-T1046": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-TEL-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-TIME-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-TWIN-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-UX-GRAPH-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-UX-LENS-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-UX-PLAY-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "G2-VSC-001": [
+    "tests/unit/test_g2_readiness.py"
+  ],
+  "SR-AGT-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-020": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-021": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-022": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-023": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-024": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-025": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-026": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-027": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-028": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-AGT-029": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ARC-012": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CFG-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CFG-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CFG-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CFG-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CFG-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CFG-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-020": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-COM-021": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-012": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-013": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-CON-014": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-DEP-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-DEP-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-DEP-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-DEP-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-DEP-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-DEP-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-DEP-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-DEP-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-DEP-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-012": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-013": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-014": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-EXT-015": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-012": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-013": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-014": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-015": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GDB-016": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GOV-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GOV-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GOV-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GOV-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-GOV-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-012": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-013": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-014": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-015": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-016": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-017": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-018": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-019": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-020": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-030": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-031": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-032": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-033": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-040": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-041": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-042": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-043": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-050": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-051": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-052": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-053": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-060": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-061": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-070": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ING-071": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-012": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-013": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-014": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-015": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-016": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-017": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-018": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-019": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-LLM-020": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NFR-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NFR-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NFR-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NFR-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NFR-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NFR-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NFR-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NFR-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-012": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-013": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-014": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-NLQ-015": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-020": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-021": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-ONT-022": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-OPS-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-OPS-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-OPS-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-OPS-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-OPS-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-OPS-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-PRV-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-PRV-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-PRV-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-PRV-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-PRV-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-PRV-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-PRV-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QA-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QA-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-QRY-012": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-RAG-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-RAG-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-RAG-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-RAG-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-RAG-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-RAG-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-RAG-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-RAG-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-RAG-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-RAG-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-012": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-013": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-014": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-015": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-016": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-SEC-017": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-TEN-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-TEN-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-TEN-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-TEN-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-TEN-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-TEN-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-TEN-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-TEN-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-TEN-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-010": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-011": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-UX-012": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-VDB-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-VDB-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-VDB-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-VDB-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-VDB-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-VDB-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-VDB-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-WL-001": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-WL-002": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-WL-003": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-WL-004": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-WL-005": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-WL-006": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-WL-007": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-WL-008": [
+    "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "SR-WL-009": [
+    "tests/unit/test_sr_wave_api_routes.py"
   ]
 }

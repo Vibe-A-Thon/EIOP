@@ -1,0 +1,790 @@
+
+intelligently enhance and set the proper structure for the below prompt by adding any missing details or parameters or anything that i couldn't have thought about or couldn't have mentioned here or couldn't have discussed with you but needed as a part of the deep through audit of an application to be audited from many roles and from many aspects....
+ and do merge the below prompts... also for the tracker html... there should be an provision to import evidence.json file that need to be produced by the AI Coding agent upon completion of the work... and I'll import that json file into the tracker html file then the status of the work need to be automatically updated into the tracker html along with the proper details of the evidence against each and every requirement that is developed...the tacker html will be like dashboard which can be used for executive status reporting, as  the code and test-file references alone are not considered as proof of completion the proof of completion need to be very strict and stringent so that the next audit will be very slim and minimal..
+and i want an Audit-memory file so that this file will serve the purpose of audit continuation and for the next audit there will be minimal audit on the previous work done and a deep on the new work done and this file can also be used as a context so that multiple LLMs and Multiple agents can work from where the previous agent/LLM left the work.
+
+"
+
+---
+
+### Prompt to Run a Full Deep Audit of EOIP aka kgf Application
+
+**Context**
+You are an external multi-disciplinary audit team acting as: **Technical Lead, Developer, Code Reviewer, Senior Enterprise Architect, AI Architect, AI Developer, AI Tech Lead, Gen AI Architect, Agentic AI Architect, Agentic AI Engineer, Digital Product Owner, AI First Product Owner, CTO, Auditor, Controller, Compliance Reviewer, Cybersecurity Specialist, and Security Reviewer**. Your goal is to perform a **comprehensive, evidence-backed, unbiased audit** of the EOIP (kgf) application by comparing the implemented system against all `.md` requirement files in the repository.
+
+**Primary Objective**
+Produce a single authoritative deliverable `audit_gaps_requirements.md` that documents:
+- **Core objective** of the application.
+- **What is implemented** vs **what is required** (per each `.md`).
+- **All gaps, deviations, missing details, and risks** with evidence links to code, tests, logs, or runtime artifacts.
+- **Prioritized remediation plan** with tasks, owners, estimates, and acceptance criteria.
+Also produce a **tracker HTML** file to manage remediation progress and a set of machine-readable artifacts to enable automated follow-up.
+
+---
+
+### Scope and Inputs
+**Repository Inputs**
+- All `.md` files in the project root and subfolders (requirements, architecture, design, feature specs, non-functional requirements).
+- Source code tree (all branches specified).
+- CI/CD pipeline definitions (e.g., GitHub Actions, Azure Pipelines).
+- Test suites and test results (unit, integration, e2e).
+- Runtime configuration files and environment manifests (Dockerfiles, k8s manifests, terraform, helm).
+- Build artifacts and deployment logs (if available).
+- Any available design diagrams, ADRs, and API contracts (OpenAPI/Swagger).
+
+**Assumptions**
+- You have read access to the repository and CI logs.
+- You can run static analysis and tests locally or in CI.
+- Secrets and production data are not required; use sanitized test data.
+- If any input is missing, document the missing input as an evidence item and treat it as a gap.
+
+**Constraints**
+- **No sensitive data** should be sent to external LLMs. If LLMs are used, only non-sensitive, redacted, or synthetic data may be provided.
+- Prefer **Python scripts** for automation and reproducibility.
+- Evidence must be reproducible by running commands or scripts included in the deliverables.
+
+---
+
+### Roles Responsibilities and Access
+- **Audit Lead**: coordinates audit, finalizes `audit_gaps_requirements.md`.
+- **Security Specialist**: performs SAST, secrets scanning, threat modeling, DAST where possible.
+- **Architect**: validates architecture, scalability, and non-functional requirements.
+- **Developer Reviewer**: maps code to requirements and verifies implementation.
+- **AI Architect**: validates AI/LLM usage, data flows, model governance, and privacy.
+- **Compliance Reviewer**: checks regulatory and licensing compliance.
+
+**Access Requirements**
+- Read access to repo and CI logs.
+- Ability to run local builds and tests.
+- Access to design docs and environment manifests.
+
+---
+
+### Audit Methodology and Stepwise Tasks
+Follow these steps and produce evidence for each step. Use Python automation where possible and include scripts in `audit-scripts/`.
+
+1. **Inventory and Mapping**
+   - Parse all `.md` files and extract structured requirements: **id**, **title**, **type** (functional, non-functional, security, compliance), **priority**, **owner**, **acceptance criteria**, **related files**.
+   - Produce a `requirements_index.json` mapping requirement IDs to file paths and line ranges.
+   - Evidence: `requirements_index.json`, parsing script, and a sample mapping CSV.
+
+2. **Implementation Traceability**
+   - For each requirement, locate corresponding code, tests, infra, and docs.
+   - Use static code search (grep/rg) and AST parsing to find function/class/API references.
+   - Produce a `traceability_matrix.csv` with columns: **requirement_id**, **code_paths**, **test_paths**, **infra_paths**, **evidence_type**, **confidence_score**.
+   - Evidence: search commands, scripts, and the CSV.
+
+3. **Behavioral Verification**
+   - Run unit, integration, and e2e tests. Capture results and map passing/failing tests to requirements.
+   - Where tests are missing, create **minimal reproducible test stubs** or test plans that an AI agent can implement.
+   - Evidence: test run logs, failing test list, and test stubs.
+
+4. **Static and Dynamic Analysis**
+   - Run linters, SAST tools, dependency vulnerability scanners, license scanners, and secrets scanners.
+   - Run DAST against deployed test environment if available.
+   - Evidence: tool outputs, CVE lists, and remediation suggestions.
+
+5. **Architecture and Non Functional Review**
+   - Validate architecture diagrams vs code and infra.
+   - Check scalability, resilience, observability, backup, and recovery plans.
+   - Validate performance budgets and run basic load tests if safe.
+   - Evidence: architecture checklist, load test scripts, results.
+
+6. **Security and Privacy Audit**
+   - Threat model the application (data flows, trust boundaries).
+   - Verify authentication, authorization, session management, encryption in transit and at rest.
+   - Verify secrets management and key rotation.
+   - Evidence: threat model diagram, security checklist, SAST/DAST outputs.
+
+7. **AI and LLM Governance Review**
+   - Identify all places where LLMs or models are used.
+   - Verify data flows to LLMs, redaction, and privacy controls.
+   - Ensure model versioning, prompt management, and output validation are in place.
+   - Evidence: model inventory, data flow diagrams, governance checklist.
+
+8. **Compliance and Licensing**
+   - Verify third-party licenses, export controls, and regulatory requirements relevant to the app.
+   - Evidence: license report and compliance gaps.
+
+9. **Risk Assessment and Prioritization**
+   - For each gap, assign **severity**, **impact**, **likelihood**, and **priority**.
+   - Provide remediation complexity and estimated effort.
+
+10. **Remediation Plan and Tracker**
+    - Create prioritized tasks with owners, estimates, acceptance criteria, and CI checks.
+    - Produce `tracker.html` with filters, statuses, and links to code and issues.
+
+---
+
+### Deliverables and File Templates
+Provide these artifacts in the repository under `audit-output/`.
+
+1. **audit_gaps_requirements.md**  
+   - **Header**: project name, repo commit hash, audit date, auditor names.  
+   - **Executive Summary**: 3–5 bullet summary of core objective, overall health, top 5 risks, and remediation summary.  
+   - **Core Objective**: one-paragraph statement derived from `.md` files.  
+   - **Traceability Summary**: counts of requirements implemented, partially implemented, missing, and ambiguous.  
+   - **Detailed Findings**: for each requirement include:
+     - **Requirement ID**  
+     - **Requirement Text** (verbatim)  
+     - **Type** (functional/non-functional/security/AI/compliance)  
+     - **Implementation Status**: Implemented / Partially Implemented / Not Implemented / Ambiguous  
+     - **Evidence**: code path(s); test path(s); CI job name and run id; log snippet; screenshot; command to reproduce evidence.  
+     - **Gap Description**: clear, factual statement of deviation.  
+     - **Severity**: Critical / High / Medium / Low.  
+     - **Remediation Recommendation**: step-by-step actions, code references, and tests to add.  
+     - **Estimated Effort**: hours and complexity.  
+     - **Acceptance Criteria**: explicit pass/fail checks and test names.  
+   - **Appendices**: traceability matrix, tool outputs, scripts, and raw evidence links.
+
+2. **tracker.html**  
+   - Columns: **ID**, **Title**, **Type**, **Severity**, **Status**, **Owner**, **Estimate Hours**, **Acceptance Criteria**, **Code Link**, **Test Link**, **CI Link**, **Comments**.  
+   - Features: sorting, filtering by severity/type/status, search, CSV export, and direct links to code lines (GitHub/Bitbucket anchors).  
+   - Provide a small Python script `generate_tracker.py` that consumes `traceability_matrix.csv` and `audit_tasks.json` to produce `tracker.html`.
+
+3. **Machine Readable Artifacts**
+   - `requirements_index.json`  
+   - `traceability_matrix.csv`  
+   - `audit_tasks.json` (task list for remediation with owners and estimates)  
+   - `scripts/` containing all Python scripts used for parsing, mapping, and report generation.
+
+4. **Automation Scripts**
+   - `scripts/parse_md_requirements.py` — extracts structured requirements.
+   - `scripts/generate_traceability.py` — maps requirements to code and tests.
+   - `scripts/run_static_analysis.sh` — runs linters and SAST tools and stores outputs.
+   - `scripts/generate_audit_report.py` — compiles `audit_gaps_requirements.md` from inputs.
+   - Each script must accept CLI args and produce deterministic outputs.
+
+---
+
+### Requirement Format for AI Coding Agents
+When generating new or corrected `.md` files for missing requirements, use this strict template so an AI coding agent can implement without assumptions:
+
+- **ID**: `REQ-<TYPE>-<NNNN>`  
+- **Title**: one-line descriptive title.  
+- **Type**: Functional | Non-Functional | Security | Compliance | AI | Infra.  
+- **Priority**: P0 | P1 | P2 | P3.  
+- **Description**: detailed narrative with examples and edge cases.  
+- **Preconditions**: environment, data, and config required.  
+- **API Contracts**: request/response JSON schema, HTTP status codes, headers.  
+- **Data Model**: fields, types, validation rules, and DB schema changes.  
+- **Acceptance Criteria**: numbered, testable statements.  
+- **Automated Tests**: list of unit/integration/e2e tests to add with sample inputs and expected outputs.  
+- **Security Controls**: authz/authn, encryption, rate limits, input validation.  
+- **Performance Targets**: latency, throughput, resource budgets.  
+- **Observability**: logs, metrics, traces to add and alert thresholds.  
+- **Backward Compatibility**: migration steps and compatibility guarantees.  
+- **Implementation Notes**: file paths, function/class names, environment variables, infra changes.  
+- **Estimated Effort**: hours and complexity.  
+
+All fields must be filled; if unknown, explicitly mark as **UNKNOWN** and provide a recommended discovery step.
+
+---
+
+### Severity Matrix
+| **Severity** | **Impact** | **Likelihood** | **Action** |
+|---|---:|---:|---|
+| **Critical** | Data loss, breach, or system down | High | Fix immediately; block release |
+| **High** | Major feature broken or security risk | Medium | High priority sprint |
+| **Medium** | Degraded UX or missing non-critical feature | Medium | Plan in next sprint |
+| **Low** | Cosmetic or documentation | Low | Backlog |
+
+---
+
+### Evidence Rules and Reproducibility
+- Every claim must include **one reproducible evidence item**: code link with line numbers, test run command and output, CI job link and run id, or a script that reproduces the behavior.
+- Evidence must include the **exact git commit hash** used for the audit.
+- If evidence requires credentials or production data, mark as **Not Reproducible** and provide steps to reproduce with sanitized data.
+- Maintain an `evidence/` folder with raw outputs and a `README.md` describing how to reproduce each evidence item.
+
+---
+
+### LLM Usage and Data Leakage Controls
+- **Allowed LLM use cases**: generating boilerplate code, drafting remediation tasks, summarizing non-sensitive logs, and producing human-readable reports.
+- **Prohibited**: sending secrets, PII, or production data to external LLMs.
+- **Redaction policy**: before any data is sent to an LLM, run `scripts/redact_sensitive.py` to remove secrets, tokens, and PII. Store redaction logs.
+- **Model governance**: record model name, version, prompt, and redacted input for every LLM call. Store outputs and a human verification step.
+- **Fallback**: if LLM is unavailable, provide deterministic Python templates that produce the same outputs.
+
+---
+
+### Acceptance Criteria and Sign-off
+- **Completeness**: 100% of requirements have a status (Implemented/Partial/Not Implemented/Ambiguous).
+- **Traceability**: Each requirement has at least one code or test reference or a documented reason for absence.
+- **Security**: No Critical severity gaps remain open at sign-off.
+- **Reproducibility**: All evidence can be reproduced using scripts and documented commands.
+- **Sign-off**: Audit Lead, Security Specialist, and Product Owner must sign the `audit_gaps_requirements.md` with date and commit hash.
+
+---
+
+### Quick Checklist for Running the Audit
+- [ ] Clone repo and checkout commit hash to audit.
+- [ ] Run `scripts/parse_md_requirements.py` to generate `requirements_index.json`.
+- [ ] Run `scripts/generate_traceability.py` to create `traceability_matrix.csv`.
+- [ ] Run tests and collect results.
+- [ ] Run static analysis and security scans.
+- [ ] Populate `audit_gaps_requirements.md` using `scripts/generate_audit_report.py`.
+- [ ] Generate `tracker.html` with `generate_tracker.py`.
+- [ ] Review LLM usage logs and redaction logs.
+- [ ] Produce final sign-off.
+
+---
+
+### Example Minimal Command Sequence
+```
+git clone <repo>
+git checkout <commit-hash>
+python3 scripts/parse_md_requirements.py --root .
+python3 scripts/generate_traceability.py --repo-root . --requirements requirements_index.json
+./scripts/run_static_analysis.sh > evidence/static_analysis.txt
+pytest --junitxml=evidence/tests.xml
+python3 scripts/generate_audit_report.py --requirements requirements_index.json --traceability traceability_matrix.csv --evidence evidence/ --out audit-output/audit_gaps_requirements.md
+python3 scripts/generate_tracker.py --tasks audit-output/audit_tasks.json --out audit-output/tracker.html
+```
+
+---
+
+"
+
+"
+
+---
+
+### 1. Overview and Primary Objective
+**Context:** You are an external multidisciplinary audit team acting as **Technical Lead, Developer, Code Reviewer, Senior Enterprise Architect, AI Architect, AI Developer, AI Tech Lead, Gen AI Architect, Agentic AI Architect, Agentic AI Engineer, Digital Product Owner, AI First Product Owner, CTO, Auditor, Controller, Compliance Reviewer, Cybersecurity Specialist**, and other relevant roles.
+
+**Primary Objective:**  
+Read and analyze **every `.md` file** in the repository (requirements, architecture, design, standards, policies) and compare them to the **actual implementation** (code, infra, CI/CD, tests, runtime). Produce a **complete, reproducible, evidence-backed** audit that includes:
+- **`audit_gaps_requirements.md`** — authoritative audit with traceability, gaps, severity, remediation, and acceptance criteria.
+- **`tracker.html`** — interactive tracker to manage remediation to 100% closure.
+- Machine-readable artifacts and automation scripts so AI coding agents or engineers can implement fixes without assumptions.
+
+---
+
+### 2. Scope, Inputs, and Access Requirements
+
+**Repository Inputs (required):**
+- All `.md` files (requirements, architecture, design, standards, ADRs).
+- Full source code tree (all branches specified).
+- CI/CD definitions and recent run logs.
+- Test suites and test results (unit, integration, e2e).
+- Runtime manifests and infra (Dockerfiles, k8s, terraform, helm).
+- API contracts (OpenAPI/Swagger), DB schemas, and any design diagrams.
+
+**Optional but recommended inputs:**
+- Deployment artifacts and logs.
+- Monitoring/observability dashboards or metrics exports.
+- Security scan outputs (SAST/DAST) if already run.
+
+**Access & Environment:**
+- Read access to repo and CI logs; ability to run builds/tests in a sandbox.
+- No production secrets or PII; use sanitized test data.
+- If any input is unavailable, record it as a documented gap with reproduction steps.
+
+**Assumptions to record automatically if not provided:**
+- Default runtime environment (OS, Python version, container runtime).
+- Default branch and commit hash used for audit.
+
+---
+
+### 3. Roles, Responsibilities, and Evidence Rules
+
+**Roles & Responsibilities**
+- **Audit Lead:** coordinates, finalizes `audit_gaps_requirements.md`, signs off.
+- **Security Specialist:** SAST, secrets scanning, threat modeling, DAST.
+- **Architect:** validates architecture, scalability, resilience.
+- **Developer Reviewer:** maps code to requirements and verifies implementation.
+- **AI Architect:** validates LLM/AI usage, data flows, governance.
+- **Compliance Reviewer:** checks licenses, regulatory requirements.
+
+**Evidence Rules (mandatory)**
+- Every claim must include **one reproducible evidence item**: code link with line numbers, test command + output, CI job + run id, or a script that reproduces the behavior.
+- Include **exact git commit hash** for the audited state.
+- Store raw evidence under `audit-output/evidence/` and include reproduction commands.
+- If evidence requires credentials or production data, mark as **Not Reproducible** and provide sanitized reproduction steps.
+
+---
+
+### 4. Audit Methodology (stepwise, automatable)
+
+**Automation first:** Prefer Python scripts for parsing, mapping, and report generation. Place scripts under `audit-scripts/`.
+
+**High-level steps (each step must produce artifacts):**
+
+1. **Inventory & Parse Requirements**
+   - Parse all `.md` files into structured records: **id, title, type, priority, owner, acceptance criteria, related files**.
+   - Output: `requirements_index.json`, `requirements_index.csv`.
+
+2. **Traceability Mapping**
+   - Map each requirement to code, tests, infra, and docs using static search and AST parsing.
+   - Output: `traceability_matrix.csv` with confidence scores.
+
+3. **Test & Behavioral Verification**
+   - Run unit/integration/e2e tests; map results to requirements.
+   - For missing tests, generate **test stubs** or test plans.
+   - Output: `test_results/`, `missing_tests.json`.
+
+4. **Static & Dynamic Analysis**
+   - Run linters, SAST, dependency vulnerability and license scanners, secrets scanners.
+   - If a test environment is available, run DAST and basic load tests.
+   - Output: `security_scan/`, `vuln_report.json`.
+
+5. **Architecture & Non-functional Review**
+   - Validate diagrams vs code/infra; check scalability, resilience, observability, backup/recovery.
+   - Run smoke/load tests where safe.
+   - Output: `architecture_review.md`, `load_test_results/`.
+
+6. **AI/LLM Governance Review**
+   - Inventory all AI/LLM usage, data flows, prompt storage, model versions, and redaction controls.
+   - Output: `ai_inventory.json`, `ai_governance.md`.
+
+7. **Compliance & Licensing**
+   - Produce license report and regulatory gap list.
+   - Output: `license_report.csv`, `compliance_gaps.md`.
+
+8. **Risk Assessment & Prioritization**
+   - For each gap assign **severity, impact, likelihood, remediation complexity, estimate**.
+   - Output: `audit_tasks.json`.
+
+9. **Remediation Plan & Tracker**
+   - Create prioritized tasks with owners, estimates, acceptance criteria, and CI checks.
+   - Generate `tracker.html` from `audit_tasks.json` and `traceability_matrix.csv`.
+
+---
+
+### 5. Deliverables, Templates, and Automation
+
+**Deliverables (placed under `audit-output/`):**
+- `audit_gaps_requirements.md` (human readable, structured).
+- `tracker.html` (interactive tracker).
+- `requirements_index.json`, `traceability_matrix.csv`, `audit_tasks.json`.
+- `audit-scripts/` (parsers, traceability generator, report generator, tracker generator).
+- `evidence/` (raw outputs, logs, screenshots).
+- `README.md` with reproduction steps.
+
+**`audit_gaps_requirements.md` structure (required):**
+- **Header:** project name, repo URL, commit hash, audit date, auditors.
+- **Executive Summary:** core objective, health score, top 5 risks, remediation summary.
+- **Core Objective:** derived from `.md` files.
+- **Traceability Summary:** counts (implemented/partial/missing/ambiguous).
+- **Detailed Findings:** for each requirement:
+  - **Requirement ID**  
+  - **Requirement Text** (verbatim)  
+  - **Type**  
+  - **Implementation Status**  
+  - **Evidence** (link + reproduction command)  
+  - **Gap Description**  
+  - **Severity**  
+  - **Remediation Recommendation** (step-by-step)  
+  - **Estimated Effort**  
+  - **Acceptance Criteria**  
+- **Appendices:** traceability matrix, scripts, raw evidence links.
+
+**Requirement Template (use for generating or correcting `.md` files):**
+```text
+ID: REQ-<TYPE>-<NNNN>
+Title: <one-line title>
+Type: Functional | Non-Functional | Security | Compliance | AI | Infra
+Priority: P0 | P1 | P2 | P3
+Description: <detailed narrative, examples, edge cases>
+Preconditions: <env, data, config>
+API Contracts: <request/response JSON schema; status codes>
+Data Model: <fields, types, DB schema changes>
+Acceptance Criteria: <numbered, testable statements>
+Automated Tests: <unit/integration/e2e tests with sample inputs/outputs>
+Security Controls: <authn/authz, encryption, rate limits, validation>
+Performance Targets: <latency, throughput>
+Observability: <logs, metrics, traces, alert thresholds>
+Backward Compatibility: <migration steps>
+Implementation Notes: <file paths, function/class names, env vars>
+Estimated Effort: <hours; complexity>
+```
+
+**Automation scripts (required CLI behavior):**
+- `audit-scripts/parse_md_requirements.py --root . --out requirements_index.json`
+- `audit-scripts/generate_traceability.py --repo-root . --requirements requirements_index.json --out traceability_matrix.csv`
+- `audit-scripts/generate_audit_report.py --requirements requirements_index.json --traceability traceability_matrix.csv --evidence evidence/ --out audit-output/audit_gaps_requirements.md`
+- `audit-scripts/generate_tracker.py --tasks audit-output/audit_tasks.json --trace tracker.html`
+
+---
+
+### 6. Security, LLM Usage, Evidence & Acceptance Criteria
+
+**Security & Data Leakage Controls**
+- **Never** send secrets, PII, or production data to external LLMs.
+- All data sent to any LLM must be redacted by `audit-scripts/redact_sensitive.py` and accompanied by a redaction log.
+- Record **model name, version, prompt, redacted input, and output** for every LLM call; require human verification before using outputs.
+- Prefer local deterministic Python templates when LLM is unavailable.
+
+**LLM Allowed Use Cases**
+- Generating boilerplate code, test templates, remediation task descriptions, and human-readable summaries — only with redacted inputs.
+- **Prohibited:** sending raw logs with secrets, PII, or production DB dumps.
+
+**Severity Matrix**
+| Severity | Impact | Action |
+|---|---:|---|
+| **Critical** | Data loss, breach, or system down | Block release; immediate fix |
+| **High** | Major feature broken or security risk | High priority sprint |
+| **Medium** | Degraded UX or missing non-critical feature | Next sprint |
+| **Low** | Cosmetic or documentation | Backlog |
+
+**Acceptance Criteria (must be met for sign-off)**
+- **Completeness:** every requirement has a status (Implemented/Partial/Not Implemented/Ambiguous).
+- **Traceability:** each requirement has at least one code/test/infra reference or documented reason for absence.
+- **Security:** no Critical severity gaps remain open.
+- **Reproducibility:** all evidence reproducible via scripts and commands.
+- **Sign-off:** Audit Lead, Security Specialist, and Product Owner sign `audit_gaps_requirements.md` with date and commit hash.
+
+---
+
+### Quick Checklist & Example Commands
+
+**Quick checklist**
+- [ ] Clone repo and checkout commit hash.
+- [ ] Run `parse_md_requirements.py` → `requirements_index.json`.
+- [ ] Run `generate_traceability.py` → `traceability_matrix.csv`.
+- [ ] Run tests and collect results.
+- [ ] Run static analysis and security scans.
+- [ ] Generate `audit_gaps_requirements.md`.
+- [ ] Generate `tracker.html`.
+- [ ] Review LLM redaction logs and sign off.
+
+**Example minimal command sequence**
+```bash
+git clone <repo-url>
+cd repo
+git checkout <commit-hash>
+python3 audit-scripts/parse_md_requirements.py --root . --out audit-output/requirements_index.json
+python3 audit-scripts/generate_traceability.py --repo-root . --requirements audit-output/requirements_index.json --out audit-output/traceability_matrix.csv
+./audit-scripts/run_static_analysis.sh > audit-output/evidence/static_analysis.txt
+pytest --junitxml=audit-output/evidence/tests.xml || true
+python3 audit-scripts/generate_audit_report.py --requirements audit-output/requirements_index.json --traceability audit-output/traceability_matrix.csv --evidence audit-output/evidence/ --out audit-output/audit_gaps_requirements.md
+python3 audit-scripts/generate_tracker.py --tasks audit-output/audit_tasks.json --out audit-output/tracker.html
+```
+
+---
+
+### Final: Paste‑ready Prompt (single block)
+Use the following block as the actual instruction to the auditor or AI agent. It is self-contained and prescriptive.
+
+```text
+You are an external multidisciplinary audit team (Technical Lead, Developer, Code Reviewer, Senior Enterprise Architect, AI Architect, AI Developer, AI Tech Lead, Gen AI Architect, Agentic AI Architect, Agentic AI Engineer, Digital Product Owner, AI First Product Owner, CTO, Auditor, Controller, Compliance Reviewer, Cybersecurity Specialist). Perform a deep, evidence-backed audit of the EOIP (kgf) application by comparing every .md requirement file to the actual implementation (code, infra, CI/CD, tests, runtime). Produce the following artifacts under audit-output/: audit_gaps_requirements.md, tracker.html, requirements_index.json, traceability_matrix.csv, audit_tasks.json, evidence/, and audit-scripts/ (parsing, traceability, report and tracker generators). Follow the methodology, evidence rules, templates, and security/LLM controls described in the "Enhanced Audit Prompt" document provided above. Use Python scripts for automation; redact any sensitive data before using LLMs. Ensure every finding includes reproducible evidence and acceptance criteria. Sign off requires Audit Lead, Security Specialist, and Product Owner with commit hash and date.
+```
+
+---
+
+"
+
+"
+### Enhanced, Merged Audit Prompt for EOIP (kgf) — Ready to Run
+
+> **Included excerpt from the provided document:**  
+> "You are an external multidisciplinary audit team (Technical Lead, Developer, Code Reviewer, Senior Enterprise Architect, AI Architect, AI Developer, AI Tech Lead, Gen AI Architect, Agentic AI Architect, Agentic AI Engineer, Digital Product Owner, AI First Product Owner, CTO, Auditor, Controller, Compliance Reviewer, Cybersecurity Specialist). Perform a deep, evidence-backed audit of the EOIP (kgf) application by comparing every .md requirement file to the actual implementation (code, infra, CI/CD, tests, runtime)."  
+
+---
+
+### 1. Purpose and High‑Level Summary
+**Purpose:** Provide a single, prescriptive, machine‑actionable prompt that instructs a multidisciplinary audit team (human and/or agentic LLMs/agents) to perform a **complete, reproducible, evidence-backed** audit of the EOIP (kgf) application. The prompt below merges and enhances the two supplied prompts, fills missing details, and adds required artifacts and automation hooks (including `evidence.json` import into `tracker.html` and an `audit-memory` file for audit continuity).
+
+**Primary outputs (placed under `audit-output/`):**
+- `audit_gaps_requirements.md` — authoritative audit report.
+- `tracker.html` — interactive remediation tracker with **importable `evidence.json`** and automatic status updates.
+- `requirements_index.json`, `traceability_matrix.csv`, `audit_tasks.json`.
+- `audit-memory.json` — audit continuity/context file for future audits and multi-agent handoffs.
+- `audit-scripts/` — deterministic Python scripts for parsing, mapping, scanning, and report generation.
+- `evidence/` — reproducible raw evidence artifacts and README.
+
+---
+
+### 2. Roles, Access, and Constraints (explicit)
+**Roles to simulate or include in the audit team:**  
+Technical Lead; Developer; Code Reviewer; Senior Enterprise Architect; AI Architect; AI Developer; AI Tech Lead; Gen AI Architect; Agentic AI Architect; Agentic AI Engineer; Digital Product Owner; AI First Product Owner; CTO; Auditor; Controller; Compliance Reviewer; Cybersecurity Specialist; Security Reviewer.
+
+**Access required (minimum):**
+- Read access to repository and CI logs; ability to checkout a commit hash.
+- Ability to run builds and tests in an isolated sandbox (container or VM).
+- Access to infra manifests (Dockerfiles, k8s, terraform, helm) and OpenAPI/Swagger if present.
+- No production secrets or PII; if needed, use sanitized test data.
+
+**Hard constraints:**
+- **Never** send secrets, PII, or production data to external LLMs.
+- All LLM inputs must be redacted via `audit-scripts/redact_sensitive.py` and logged.
+- Evidence must be reproducible using included scripts and exact git commit hash.
+- Prefer Python for automation; scripts must be deterministic and accept CLI args.
+
+---
+
+### 3. Enhanced Scope, Inputs, and Assumptions
+**Repository inputs to consume:**
+- All `.md` files (requirements, ADRs, architecture, design, policies).
+- Full source tree (branches specified by the auditor).
+- CI/CD definitions and recent run logs.
+- Test suites and test results (unit, integration, e2e).
+- Runtime manifests and infra (Dockerfiles, k8s, terraform, helm).
+- Build artifacts, deployment logs, monitoring exports (if available).
+- API contracts (OpenAPI/Swagger), DB schemas, diagrams.
+
+**Assumptions to auto-record if missing:**
+- Default runtime environment (OS, Python version, container runtime).
+- Default branch and commit hash used for audit.
+- Any missing input must be recorded as a gap with reproduction steps.
+
+---
+
+### 4. Methodology — Stepwise, Automatable, Evidence‑First
+Each step must produce artifacts under `audit-output/` and raw evidence under `audit-output/evidence/`. Scripts go under `audit-scripts/`. All scripts must accept CLI args and return deterministic outputs.
+
+#### 4.1 Inventory & Requirements Parsing
+- **Task:** Parse every `.md` into structured records with fields: `id`, `title`, `type`, `priority`, `owner`, `acceptance_criteria`, `related_files`, `line_range`, `raw_text`.
+- **Outputs:** `requirements_index.json`, `requirements_index.csv`.
+- **Script:** `audit-scripts/parse_md_requirements.py --root . --out audit-output/requirements_index.json`
+- **Evidence:** parsing logs, sample mapping CSV.
+
+#### 4.2 Traceability Mapping
+- **Task:** For each requirement, locate code, tests, infra, and docs using static search, AST parsing, and heuristics (function/class names, API paths, OpenAPI refs).
+- **Outputs:** `traceability_matrix.csv` with columns: `requirement_id`, `code_paths`, `test_paths`, `infra_paths`, `evidence_type`, `confidence_score`, `git_commit`.
+- **Script:** `audit-scripts/generate_traceability.py --repo-root . --requirements audit-output/requirements_index.json --out audit-output/traceability_matrix.csv`
+- **Evidence:** search commands, scripts, and CSV.
+
+#### 4.3 Behavioral Verification (Tests)
+- **Task:** Run unit/integration/e2e tests; map passing/failing tests to requirements. For missing tests, generate **test stubs** and test plans (machine‑readable).
+- **Outputs:** `test_results/`, `missing_tests.json`, `test_stubs/`.
+- **Script:** `audit-scripts/run_tests_and_map.py --repo-root . --requirements audit-output/requirements_index.json --out audit-output/test_results/`
+- **Evidence:** test logs, junit xml, mapping to requirements.
+
+#### 4.4 Static & Dynamic Analysis
+- **Task:** Run linters, SAST, dependency vulnerability scanners, license scanners, and secrets scanners. If a test deployment is available, run DAST and safe load tests.
+- **Outputs:** `security_scan/`, `vuln_report.json`, `license_report.csv`.
+- **Script:** `audit-scripts/run_static_analysis.sh` (idempotent).
+- **Evidence:** tool outputs, CVE lists, remediation suggestions.
+
+#### 4.5 Architecture & Non‑Functional Review
+- **Task:** Validate architecture diagrams vs code/infra; check scalability, resilience, observability, backup/recovery, performance budgets.
+- **Outputs:** `architecture_review.md`, `load_test_results/`.
+- **Evidence:** diagrams, smoke/load test scripts and results.
+
+#### 4.6 Security, Privacy & Threat Modeling
+- **Task:** Threat model data flows, trust boundaries; verify authn/authz, session management, encryption, secrets management, key rotation.
+- **Outputs:** `threat_model.drawio` or `threat_model.json`, `security_checklist.md`.
+- **Evidence:** SAST/DAST outputs, threat model artifacts.
+
+#### 4.7 AI / LLM Governance Review
+- **Task:** Inventory all LLM/model usage; verify data flows, redaction, model versioning, prompt management, output validation, and human-in-the-loop controls.
+- **Outputs:** `ai_inventory.json`, `ai_governance.md`.
+- **Evidence:** code references, config files, redaction logs.
+
+#### 4.8 Compliance & Licensing
+- **Task:** Verify third-party licenses, export controls, and regulatory requirements.
+- **Outputs:** `license_report.csv`, `compliance_gaps.md`.
+
+#### 4.9 Risk Assessment & Prioritization
+- **Task:** For each gap assign `severity`, `impact`, `likelihood`, `priority`, `remediation_complexity`, `estimate_hours`.
+- **Outputs:** `audit_tasks.json` (task list with owners, estimates, acceptance criteria).
+- **Evidence:** risk scoring rationale.
+
+#### 4.10 Remediation Plan & Tracker
+- **Task:** Create prioritized remediation tasks with owners, estimates, acceptance criteria, and CI checks. Generate `tracker.html` with importable `evidence.json` and `audit-memory.json` integration.
+- **Outputs:** `audit-output/tracker.html`, `audit-output/audit_tasks.json`.
+- **Script:** `audit-scripts/generate_tracker.py --tasks audit-output/audit_tasks.json --traceability audit-output/traceability_matrix.csv --evidence-json audit-output/evidence/evidence.json --audit-memory audit-output/audit-memory.json --out audit-output/tracker.html`
+
+---
+
+### 5. Tracker HTML — Requirements and Behavior (enhanced)
+**Core features:**
+- Columns: **ID**, **Title**, **Type**, **Severity**, **Status**, **Owner**, **Estimate Hours**, **Acceptance Criteria**, **Code Link**, **Test Link**, **CI Link**, **Evidence Summary**, **Comments**.
+- **Evidence Import:** UI control to upload/import `evidence.json`. When imported:
+  - The tracker must match `evidence.json` entries to `requirement_id` and update `Status` automatically (Implemented / Partially Implemented / Not Implemented / Ambiguous).
+  - For each requirement, show a list of evidence items (type, link, git commit, reproduction command).
+  - If multiple evidence items exist, compute and display an aggregated **confidence score**.
+- **Audit‑memory integration:** Option to load `audit-memory.json` to pre-populate owner assignments, previous statuses, and context notes.
+- **Filters & Exports:** sorting, filtering by severity/type/status, search, CSV export, and PDF snapshot export (client-side).
+- **Deep links:** direct links to code lines (GitHub/Bitbucket anchors) and CI run IDs.
+- **Security:** tracker runs client-side only; no secrets uploaded. Evidence import must validate and reject entries that contain PII or secrets (use `redact_sensitive.py` server-side or client-side check).
+- **Accessibility:** keyboard navigation, ARIA labels, responsive layout.
+
+**`evidence.json` schema (recommended):**
+```json
+{
+  "git_commit": "abcdef1234567890",
+  "generated_at": "2026-10-19T21:00:00Z",
+  "evidence_items": [
+    {
+      "requirement_id": "REQ-FUNC-0001",
+      "evidence_id": "evi-0001",
+      "type": "code_link|test_run|ci_log|screenshot|artifact",
+      "summary": "Unit test passing for endpoint X",
+      "link": "https://github.com/org/repo/blob/commit/path#L10-L50",
+      "repro_command": "pytest tests/test_x.py::test_endpoint_x -q",
+      "confidence": 0.95,
+      "notes": "Sanitized logs; no PII"
+    }
+  ]
+}
+```
+
+**Tracker import behavior:**
+- On import, the tracker validates schema, checks `git_commit` matches the repo state (or flags mismatch), and updates rows.
+- Provide an **audit trail** of imports (who imported, when, and what changed).
+- Provide a **manual override** for status with required justification and evidence link.
+
+---
+
+### 6. Audit‑Memory File (audit-memory.json) — Purpose & Schema
+**Purpose:** Persist audit context to enable minimal re-audit of prior work and to allow multiple LLMs/agents to continue work where previous agents left off.
+
+**Key uses:**
+- Store requirement statuses, owners, evidence pointers, previous remediation attempts, and agent/LLM prompts used (redacted).
+- Provide a changelog of audit actions and sign-offs.
+
+**Recommended schema:**
+```json
+{
+  "repo": "git@github.com:org/repo.git",
+  "commit": "abcdef1234567890",
+  "last_audit_date": "2026-10-19T21:00:00Z",
+  "requirements": {
+    "REQ-FUNC-0001": {
+      "status": "Partially Implemented",
+      "owners": ["alice@example.com"],
+      "evidence_ids": ["evi-0001","evi-0002"],
+      "notes": "Unit tests added; integration test failing on CI",
+      "last_updated": "2026-10-19T20:30:00Z"
+    }
+  },
+  "agents": [
+    {
+      "agent_id": "agent-llm-01",
+      "role": "traceability",
+      "prompt_hash": "sha256:...",
+      "redacted_input_ref": "redaction-0001",
+      "output_ref": "artifact-0001",
+      "timestamp": "2026-10-19T20:00:00Z"
+    }
+  ],
+  "import_history": [
+    {
+      "file": "evidence.json",
+      "imported_by": "alice",
+      "timestamp": "2026-10-19T21:05:00Z",
+      "git_commit": "abcdef1234567890"
+    }
+  ]
+}
+```
+
+**Rules:**
+- `audit-memory.json` must never contain secrets or PII. If any PII is needed for owner contact, store only hashed identifiers and a separate secure contact mapping outside the audit repo.
+- Agents reading `audit-memory.json` must validate schema and record their actions back into the file.
+
+---
+
+### 7. Deliverables, Templates, and Scripts (concrete)
+**Deliverable layout (under repo root):**
+```
+audit-output/
+  audit_gaps_requirements.md
+  tracker.html
+  requirements_index.json
+  traceability_matrix.csv
+  audit_tasks.json
+  audit-memory.json
+  evidence/
+    evidence.json
+    static_analysis.txt
+    tests.xml
+  audit-scripts/
+    parse_md_requirements.py
+    generate_traceability.py
+    run_tests_and_map.py
+    run_static_analysis.sh
+    generate_audit_report.py
+    generate_tracker.py
+    redact_sensitive.py
+  README.md
+```
+
+**Key script behaviors (must be implemented):**
+- All scripts accept `--repo-root`, `--out`, and `--commit` where applicable.
+- Scripts must log actions and produce deterministic outputs.
+- `generate_audit_report.py` must assemble `audit_gaps_requirements.md` using templates and include exact git commit hash and sign-off placeholders.
+- `generate_tracker.py` must accept `--evidence-json` to pre-populate tracker and `--audit-memory` to restore prior context.
+
+---
+
+### 8. `audit_gaps_requirements.md` — Required Structure (strict)
+- **Header:** project name, repo URL, commit hash, audit date, auditors (roles + names).
+- **Executive Summary:** 3–5 bullets: core objective, health score, top 5 risks, remediation summary.
+- **Core Objective:** one-paragraph derived from `.md` files.
+- **Traceability Summary:** counts of implemented/partial/missing/ambiguous.
+- **Detailed Findings:** for each requirement:
+  - **Requirement ID**  
+  - **Requirement Text** (verbatim)  
+  - **Type**  
+  - **Implementation Status**  
+  - **Evidence**: code path(s); test path(s); CI job name and run id; log snippet; reproduction command; exact git commit.  
+  - **Gap Description**  
+  - **Severity**  
+  - **Remediation Recommendation** (step-by-step)  
+  - **Estimated Effort** (hours)  
+  - **Acceptance Criteria** (explicit tests/commands)
+- **Appendices:** traceability matrix, scripts, raw evidence links, redaction logs, LLM usage logs (model name, version, prompt hash, redacted input ref, output ref).
+
+---
+
+### 9. Evidence Rules, LLM Controls, and Acceptance Criteria (explicit)
+**Evidence rules:**
+- Every factual claim must include **one reproducible evidence item** (code link + line numbers, test run command + output, CI job + run id, or script).
+- Include exact git commit hash for audited state.
+- If evidence requires credentials or production data, mark as **Not Reproducible** and provide sanitized reproduction steps.
+
+**LLM usage & governance:**
+- Allowed: boilerplate code, remediation tasks, summaries — only with redacted inputs.
+- Prohibited: sending secrets, PII, or raw production data to external LLMs.
+- For every LLM call record: model name, version, prompt (redacted), redacted input ref, output ref, and human verifier identity.
+
+**Acceptance criteria for sign-off:**
+- **Completeness:** every requirement has a status.
+- **Traceability:** each requirement has at least one code/test/infra reference or documented reason for absence.
+- **Security:** no Critical severity gaps remain open.
+- **Reproducibility:** all evidence reproducible via scripts and commands.
+- **Sign-off:** Audit Lead, Security Specialist, and Product Owner sign `audit_gaps_requirements.md` with date and commit hash.
+
+---
+
+### 10. Quick Checklist and Example Commands (ready to run)
+**Checklist**
+- [ ] Clone repo and checkout commit hash.
+- [ ] Run `audit-scripts/parse_md_requirements.py`.
+- [ ] Run `audit-scripts/generate_traceability.py`.
+- [ ] Run tests and collect results.
+- [ ] Run static analysis and security scans.
+- [ ] Generate `audit_gaps_requirements.md`.
+- [ ] Generate `tracker.html` and import `evidence.json`.
+- [ ] Review redaction and LLM logs.
+- [ ] Sign off.
+
+**Example minimal command sequence**
+```bash
+git clone <repo-url>
+cd repo
+git checkout <commit-hash>
+python3 audit-scripts/parse_md_requirements.py --root . --out audit-output/requirements_index.json
+python3 audit-scripts/generate_traceability.py --repo-root . --requirements audit-output/requirements_index.json --out audit-output/traceability_matrix.csv
+./audit-scripts/run_static_analysis.sh > audit-output/evidence/static_analysis.txt
+pytest --junitxml=audit-output/evidence/tests.xml || true
+python3 audit-scripts/generate_audit_report.py --requirements audit-output/requirements_index.json --traceability audit-output/traceability_matrix.csv --evidence audit-output/evidence/ --out audit-output/audit_gaps_requirements.md --commit <commit-hash>
+python3 audit-scripts/generate_tracker.py --tasks audit-output/audit_tasks.json --traceability audit-output/traceability_matrix.csv --evidence-json audit-output/evidence/evidence.json --audit-memory audit-output/audit-memory.json --out audit-output/tracker.html
+```
+
+---
+
+### Paste‑ready Final Prompt (single block)
+Use this block to instruct an auditor or an AI/agent to run the full audit. It is self-contained and prescriptive.
+
+```text
+You are an external multidisciplinary audit team (Technical Lead, Developer, Code Reviewer, Senior Enterprise Architect, AI Architect, AI Developer, AI Tech Lead, Gen AI Architect, Agentic AI Architect, Agentic AI Engineer, Digital Product Owner, AI First Product Owner, CTO, Auditor, Controller, Compliance Reviewer, Cybersecurity Specialist). Perform a deep, evidence-backed audit of the EOIP (kgf) application by comparing every .md requirement file to the actual implementation (code, infra, CI/CD, tests, runtime). Produce the following artifacts under audit-output/: audit_gaps_requirements.md, tracker.html, requirements_index.json, traceability_matrix.csv, audit_tasks.json, audit-memory.json, evidence/, and audit-scripts/ (parsing, traceability, report and tracker generators). The tracker.html must support importing an evidence.json file produced by the AI coding agent; on import it must automatically update requirement statuses and attach evidence items to each requirement. Maintain an audit-memory.json to persist prior audit context and enable multi-agent continuation. Follow the methodology, evidence rules, templates, and security/LLM controls described in the Enhanced Audit Prompt. Use Python scripts for automation; redact any sensitive data before using LLMs. Ensure every finding includes reproducible evidence (with exact git commit hash) and explicit acceptance criteria. Sign-off requires Audit Lead, Security Specialist, and Product Owner with commit hash and date.
+```
+
+---
+
+"

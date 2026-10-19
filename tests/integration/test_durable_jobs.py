@@ -227,3 +227,36 @@ def test_dlq_replay_with_audit_authority(tmp_path: Path):
     assert reclaimed["job_id"] == job["job_id"]
     assert reclaimed["attempts"] == 1
     assert reclaimed["lease_holder"] == "w-new"
+
+
+def test_cross_tenant_claim_isolation_pending_and_expired(tmp_path: Path):
+    """PU-W03, PUR-RUN-001: Cross-tenant workers must never claim pending or expired jobs of another tenant."""
+    store = DurableJobStore(tmp_path / "jobs.sqlite")
+
+    # Tenant Alpha submits a PENDING job
+    store.submit("PROCESS_TENSORS", {"batch": 1}, tenant_id="tenant-alpha")
+
+    # Worker for Tenant Beta MUST NOT claim Tenant Alpha's pending job
+    claimed_beta = store.claim_job(worker_id="worker-beta", tenant_id="tenant-beta")
+    assert claimed_beta is None
+
+    # Worker for Tenant Alpha DOES claim the pending job
+    claimed_alpha = store.claim_job(worker_id="worker-alpha", lease_ttl_s=0.1, tenant_id="tenant-alpha")
+    assert claimed_alpha is not None
+    assert claimed_alpha["tenant_id"] == "tenant-alpha"
+
+    # Wait for lease to expire
+    import time
+    time.sleep(0.15)
+
+    # Worker for Tenant Beta MUST NOT reclaim Tenant Alpha's expired job
+    reclaimed_beta = store.claim_job(worker_id="worker-beta-2", tenant_id="tenant-beta")
+    assert reclaimed_beta is None
+
+    # Worker for Tenant Alpha CAN reclaim its own expired job
+    reclaimed_alpha = store.claim_job(worker_id="worker-alpha-2", lease_ttl_s=30.0, tenant_id="tenant-alpha")
+    assert reclaimed_alpha is not None
+    assert reclaimed_alpha["job_id"] == claimed_alpha["job_id"]
+    assert reclaimed_alpha["tenant_id"] == "tenant-alpha"
+    assert reclaimed_alpha["fencing_token"] == claimed_alpha["fencing_token"] + 1
+

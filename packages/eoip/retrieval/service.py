@@ -11,6 +11,8 @@ import json
 from enum import Enum
 from uuid import uuid4
 
+from eoip.contracts.canonical import TrustedScope
+from eoip.authz.derivation_acl import get_derivation_evaluator
 from eoip.contracts.retrieval import RetrievalContext, RetrievalResult
 from eoip.graph.traversal import GraphTraversal
 from eoip.models.provider import LocalModelProvider, ModelUnavailable
@@ -471,6 +473,7 @@ def retrieve(
     canonical_id,
     question,
     *,
+    scope: TrustedScope | None = None,
     synthesize=False,
     model_timeout: float = 90.0,
     max_model_tokens: int = 512,
@@ -517,6 +520,31 @@ def retrieve(
         raise ValueError("Entity not found")
     nodes = [result["source"], *[item["vertex"] for item in result["impacted"]]]
     edges = [e for item in result["impacted"] for e in item["path"]["edges"]]
+    if scope is not None:
+        nodes, edges = get_derivation_evaluator().filter_graph_contexts(scope, nodes, edges)
+        allowed_cids = {n.get("canonical_id") for n in nodes}
+        if canonical_id not in allowed_cids:
+            nodes = []
+            edges = []
+    if not nodes:
+        empty_acl = RetrievalResult(
+            retrieval_id=str(uuid4()),
+            strategy=strategy.value,
+            contexts=[],
+            evidence_refs=[],
+            metrics={"reason": "acl_denied", "hidden_by_policy": True},
+            answer="Access denied by derivation-aware policy or no accessible facts found.",
+            warnings=["Derivation-aware ACL filtered all candidate paths."],
+            generation="deterministic",
+            partial=False,
+            facts=[],
+            graph={"source": None, "impacted": [], "truncated": False},
+        )
+        return _attach_evidence_addressing(
+            store,
+            empty_acl,
+            query_plan={"strategy": strategy.value, "question": question, "reason": "acl_denied"},
+        )
     contexts = _build_contexts(nodes, edges, strategy)
     refs = sorted({e["properties"]["source_ref"] for e in edges if e["properties"].get("source_ref")})
     facts = [

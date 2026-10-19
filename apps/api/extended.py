@@ -1483,7 +1483,12 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     from eoip.authz.security_router import build_security_router
     router.include_router(build_security_router(role_registry=state.role_registry))
 
+    # Processing Units routes (PU-W15, PUR-CON-001..010, /api/processing/v1)
+    from eoip.processing.router import build_processing_router
+    router.include_router(build_processing_router())
+
     return router, state
+
 
 
 def add_metrics_middleware(app: Any, state: ExtendedState) -> None:

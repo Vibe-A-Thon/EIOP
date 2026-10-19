@@ -82,6 +82,16 @@ class PolicyEpochRegistry:
             current = self.get_epoch(scope.tenant_id)
             return scope.policy_epoch < current
 
+    def reset(self, tenant_id: str | None = None) -> None:
+        """Reset epochs and history for a tenant or globally."""
+        with self._lock:
+            if tenant_id is not None:
+                self._epochs.pop(tenant_id, None)
+                self._history.pop(tenant_id, None)
+            else:
+                self._epochs.clear()
+                self._history.clear()
+
 
 _EPOCH_REGISTRY = PolicyEpochRegistry()
 

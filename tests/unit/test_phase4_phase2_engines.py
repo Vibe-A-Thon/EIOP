@@ -407,6 +407,10 @@ class TestGraph006OWLAndSHACLValidation:
 
     def test_owl_reasoner(self):
         reasoner = OWLReasoner()
+        reasoner.add_subclass("DatabaseService", "Service")
+        reasoner.add_subclass("RelationalDatabase", "DatabaseService")
+        reasoner.add_disjoint("Service", "Person")
+        reasoner.add_disjoint("RelationalDatabase", "GraphDatabase")
         # Subsumption: RelationalDatabase -> DatabaseService -> Service
         assert reasoner.is_subclass_of("RelationalDatabase", "Service")
         assert reasoner.is_subclass_of("RelationalDatabase", "DatabaseService")
