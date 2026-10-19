@@ -203,10 +203,10 @@ class SimpleLearnedGNN:
             nn_module: Any = nn
 
             class TorchSimpleLearnedGNN(nn_module.Module):
-                def __init__(self) -> None:
+                def __init__(self, in_feat: int, hidden: int, out: int) -> None:
                     super().__init__()
-                    self.fc1 = nn_module.Linear(in_features, hidden_dim, bias=True)
-                    self.fc2 = nn_module.Linear(hidden_dim, out_dim, bias=True)
+                    self.fc1 = nn_module.Linear(in_feat, hidden, bias=True)
+                    self.fc2 = nn_module.Linear(hidden, out, bias=True)
                     self.relu = nn_module.ReLU()
 
                 def forward(self, adj_norm: Any, x: Any) -> Any:
@@ -214,4 +214,4 @@ class SimpleLearnedGNN:
                     return torch_module.matmul(adj_norm, self.fc2(h1))
 
             _TORCH_MODEL_CLASS = TorchSimpleLearnedGNN
-        return _TORCH_MODEL_CLASS()
+        return _TORCH_MODEL_CLASS(in_features, hidden_dim, out_dim)
