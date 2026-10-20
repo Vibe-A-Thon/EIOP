@@ -88,12 +88,17 @@ def test_metrics_include_operation_counts_failures_and_latency(monkeypatch, tmp_
     metrics = api.get("/metrics").text
     assert metrics.count("# HELP eoip_operations_total ") == 1
     assert "# HELP http_requests_total" in metrics
-    assert 'eoip_operations_total{operation="query",status="200"} 1.0' in metrics
-    assert 'eoip_operations_total{operation="ingestion",status="202"} 1.0' in metrics
-    assert 'eoip_operations_total{operation="model",status="404"} 1.0' in metrics
-    assert 'eoip_operations_total{operation="agent",status="404"} 1.0' in metrics
-    assert 'eoip_failures_total{operation="model",status="404"} 1.0' in metrics
-    assert 'eoip_operation_duration_seconds_count{operation="query"} 1.0' in metrics
+    assert 'eoip_operations_total{operation="query",status="200",tenant="_platform"} 1.0' in metrics
+    assert 'eoip_operations_total{operation="ingestion",status="202",tenant="_platform"} 1.0' in metrics
+    assert 'eoip_operations_total{operation="model",status="404",tenant="_platform"} 1.0' in metrics
+    assert 'eoip_operations_total{operation="agent",status="404",tenant="_platform"} 1.0' in metrics
+    assert 'eoip_failures_total{operation="model",status="404",tenant="_platform"} 1.0' in metrics
+    assert 'eoip_operation_duration_seconds_count{operation="query",tenant="_platform"} 1.0' in metrics
+    # SR-TEN-001: no request metric sample is emitted without a tenant label
+    import re as _re
+    for line in metrics.splitlines():
+        if _re.match(r"eoip_(operations|failures|http_requests)_total\{", line):
+            assert 'tenant="' in line, line
 
 
 def test_metrics_include_ingestion_job_status_and_runtime(monkeypatch, tmp_path):

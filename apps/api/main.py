@@ -45,7 +45,7 @@ from eoip.observability import configure_json_logging
 from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.ontology.rdf import export_jsonld, export_shacl_shapes, import_jsonld, validate_shacl
 from eoip.runtime import create_store, data_root
-from eoip.tenancy.context import TenantContextRequired, authorized_tenant
+from eoip.tenancy.context import TenantContextRequired, authorized_tenant, tenant_label
 from eoip.validation.engine import ValidationEngine
 from fastapi import Depends, HTTPException, Query, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, Response
@@ -323,24 +323,24 @@ def create_app():
         pass
     registry = CollectorRegistry()
     requests = Counter(
-        "eoip_http_requests_total", "Completed HTTP requests", ["method", "status"], registry=registry
+        "eoip_http_requests_total", "Completed HTTP requests", ["method", "status", "tenant"], registry=registry
     )
     operations = Counter(
         "eoip_operations",
         "Completed EOIP operations",
-        ["operation", "status"],
+        ["operation", "status", "tenant"],
         registry=registry,
     )
     failures = Counter(
         "eoip_failures",
         "Failed EOIP operations",
-        ["operation", "status"],
+        ["operation", "status", "tenant"],
         registry=registry,
     )
     operation_duration = Histogram(
         "eoip_operation_duration_seconds",
         "EOIP operation latency in seconds",
-        ["operation"],
+        ["operation", "tenant"],
         registry=registry,
     )
     job_status_transitions = Counter(
@@ -442,11 +442,12 @@ def create_app():
                     reason_code=f"http_{status_code}" if status_code >= 400 else None,
                     safe_summary=f"{operation} operation completed with status {status_code}",
                 )
-            requests.labels(request.method, status).inc()
-            operations.labels(operation, status).inc()
-            operation_duration.labels(operation).observe(duration)
+            tenant = tenant_label(getattr(request.state, "principal", None))
+            requests.labels(request.method, status, tenant).inc()
+            operations.labels(operation, status, tenant).inc()
+            operation_duration.labels(operation, tenant).observe(duration)
             if status_code >= 400:
-                failures.labels(operation, status).inc()
+                failures.labels(operation, status, tenant).inc()
             if audit is not None:
                 audit_sink.emit(audit, operation=operation, path=request.url.path)
             if response is not None:
@@ -455,6 +456,7 @@ def create_app():
                     response.headers["X-Audit-ID"] = request.state.audit_id
             fields = {
                 "event": "http.request.completed",
+                "tenant_id": tenant,
                 "operation": operation,
                 "correlation_id": correlation_id,
                 "audit_id": request.state.audit_id if operation != "other" else None,
@@ -554,10 +556,11 @@ def create_app():
                 )
             except Exception as exc:  # noqa: BLE001 - audit availability is a policy boundary
                 status = "503"
-                requests.labels(request.method, status).inc()
-                operations.labels(operation, status).inc()
-                failures.labels(operation, status).inc()
-                operation_duration.labels(operation).observe(perf_counter() - started)
+                tenant = tenant_label(principal)
+                requests.labels(request.method, status, tenant).inc()
+                operations.labels(operation, status, tenant).inc()
+                failures.labels(operation, status, tenant).inc()
+                operation_duration.labels(operation, tenant).observe(perf_counter() - started)
                 log.error(
                     "audit.preflight_failed",
                     extra={

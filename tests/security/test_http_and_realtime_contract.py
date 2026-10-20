@@ -456,3 +456,38 @@ def test_event_stream_close_under_cpu_contention(composed_app):
         for b in burners:
             b.join()
     assert app.state.event_emitter.subscriber_count == 0
+
+
+@pytest.mark.req("SR-TEN-001")
+def test_request_log_lines_and_metric_samples_carry_the_signed_tenant(composed_app):
+    import logging
+
+    from eoip.observability import JsonLogFormatter
+    from eoip.tenancy.context import tenant_label
+
+    app, client, service = composed_app
+    captured: list[logging.LogRecord] = []
+
+    class _Capture(logging.Handler):
+        def emit(self, record):
+            captured.append(record)
+
+    handler = _Capture()
+    api_logger = logging.getLogger("eoip.api")
+    api_logger.addHandler(handler)
+    try:
+        token = service.issue(Principal("alice", "alice", ("viewer",), tenant_id="tenant-alpha"))
+        assert client.get("/api/v1/graph/events", headers={"Authorization": f"Bearer {token}"}).status_code == 200
+        assert client.get("/api/v1/graph/events").status_code == 401
+    finally:
+        api_logger.removeHandler(handler)
+    lines = [json.loads(JsonLogFormatter().format(r)) for r in captured if getattr(r, "event", "") == "http.request.completed"]
+    assert {line["tenant_id"] for line in lines} >= {"tenant-alpha", "_anonymous"}
+    assert all(line.get("tenant_id") for line in lines)
+    metrics = client.get("/metrics").text
+    assert 'tenant="tenant-alpha"' in metrics and 'tenant="_anonymous"' in metrics
+    # process-level lines without a request are explicitly platform scope, never blank
+    bare = logging.LogRecord("eoip.worker", logging.INFO, __file__, 1, "tick", None, None)
+    assert json.loads(JsonLogFormatter().format(bare))["tenant_id"] == "_platform"
+    assert tenant_label(None) == "_anonymous"
+    assert tenant_label(Principal("root", "root", ("admin",))) == "_platform"
