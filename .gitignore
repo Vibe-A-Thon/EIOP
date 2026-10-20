@@ -114,3 +114,6 @@ Logins_credentials.keys
 /memory/test_credentials.md
 /.eoip-data/dev-token
 frontend/.env.local
+
+# REVA generated fixture cache (scripts/reva/build_fixtures.py)
+.reva-fixtures/
