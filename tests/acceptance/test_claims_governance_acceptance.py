@@ -29,6 +29,9 @@ from eoip.claims.registry import (
 from eoip.claims.positioning_pack import generate_ontology_as_code_pack
 from eoip.claims.scanner import ClaimsScanner
 
+# Explicit binding: IDs mentioned in docstrings/comments below are context, not coverage.
+pytestmark = pytest.mark.req("CRA-041")
+
 
 @pytest.fixture
 def test_claims_register_path() -> Path:

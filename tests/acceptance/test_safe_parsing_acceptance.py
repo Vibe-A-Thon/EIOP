@@ -28,6 +28,9 @@ from eoip.fileparse.engine import (
 )
 from eoip.ingestion.multimodal_audio import _chunk_text
 
+# Explicit binding: IDs mentioned in docstrings/comments below are context, not coverage.
+pytestmark = pytest.mark.req("CRA-012")
+
 
 def parse(content: bytes, name: str, **options) -> any:
     opts = ParseOptions(**options)
