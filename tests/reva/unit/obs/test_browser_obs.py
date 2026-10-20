@@ -9,6 +9,8 @@ from reva.obs.dom_harvester import DOMHarvester
 from reva.obs.interaction_recorder import InteractionRecorder
 from reva.core.errors import RevaSecurityError
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 def test_cdp_controller_domain_fencing():
     controller = CDPController(allowed_domains=["127.0.0.1", "localhost", "app.local"])

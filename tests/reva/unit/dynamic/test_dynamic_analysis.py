@@ -9,6 +9,8 @@ from reva.dynamic.mem_redactor import MemorySliceRedactor
 from reva.dynamic.crash_triage import CrashTriageEngine
 from reva.core.errors import RevaSecurityError, RevaResourceLimitError
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 def test_dual_key_authorization_gate():
     gate = DualKeyTraceAuthorizationGate(default_ttl_s=3600.0)

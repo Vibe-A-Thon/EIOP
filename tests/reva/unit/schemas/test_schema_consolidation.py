@@ -8,6 +8,8 @@ from packages.eoip.neural.schemas.models import NeuralSchema
 from packages.eoip.neural.schemas.consolidation import SchemaInductionEngine
 from packages.eoip.neural.schemas.planes_integration import GraphPlanesProjector
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 def test_schema_induction_and_shacl():
     engine = SchemaInductionEngine(min_support_ratio=0.70)

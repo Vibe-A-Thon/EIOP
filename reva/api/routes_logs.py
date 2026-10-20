@@ -6,21 +6,46 @@ from typing import Optional
 from fastapi import APIRouter, Header, HTTPException, Query
 
 from reva.api.routes_warrants import get_kernel
-from reva.core.errors import RevaNotFoundError
+from reva.kernel.signing import b64url_encode
+from reva.core.time import format_ts, utc_now_ms
 
 router = APIRouter(prefix="/logs", tags=["Transparency Log"])
 
 
+def _log_for(log_id: str):
+    """Return the kernel's transparency log when log_id names it; 404 otherwise."""
+    kernel = get_kernel()
+    log = kernel.translog
+    if log.log_id != log_id:
+        raise HTTPException(status_code=404, detail=f"Transparency log '{log_id}' not found")
+    return kernel, log
+
+
 @router.get("/{log_id}/sth")
 async def get_sth(log_id: str, x_tenant_id: str = Header(default="default")):
-    """Get latest Signed Tree Head (STH) for transparency log."""
-    kernel = get_kernel()
-    size = kernel.translog.size(log_id)
-    root = kernel.translog.root(log_id, size)
+    """Latest Signed Tree Head for the log, or the unsigned current head when none is stored yet."""
+    kernel, log = _log_for(log_id)
+    row = kernel.store.conn.execute(
+        "SELECT * FROM reva_sths WHERE log_id = ? ORDER BY tree_size DESC LIMIT 1", (log_id,)
+    ).fetchone()
+    size = log.size()
+    if row is not None:
+        root_hash = row["root_hash"]
+        signature = row["signature"]
+        return {
+            "issued_at": row["issued_at"],
+            "key_id": row["key_id"],
+            "log_id": log_id,
+            "root_hash": root_hash.hex() if isinstance(root_hash, bytes) else root_hash,
+            "signature": b64url_encode(signature) if isinstance(signature, bytes) else signature,
+            "signed": True,
+            "tree_size": row["tree_size"],
+        }
     return {
-        "issued_at": "2026-10-18T00:00:00.000Z",
+        "issued_at": format_ts(utc_now_ms()),
         "log_id": log_id,
-        "root_hash": root.hex(),
+        "root_hash": log.root(size).hex(),
+        "signed": False,
         "tree_size": size,
     }
 
@@ -33,12 +58,13 @@ async def get_inclusion_proof(
     x_tenant_id: str = Header(default="default"),
 ):
     """Serve RFC 6962 inclusion proof for leaf at leaf_index against tree_size."""
-    kernel = get_kernel()
-    proof = kernel.translog.inclusion_proof(log_id, leaf_index, tree_size)
+    _, log = _log_for(log_id)
+    if tree_size > log.size() or leaf_index >= tree_size:
+        raise HTTPException(status_code=400, detail="leaf_index/tree_size out of range")
     return {
         "leaf_index": leaf_index,
         "log_id": log_id,
-        "proof": [p.hex() for p in proof],
+        "proof": log.inclusion_proof(leaf_index, tree_size),
         "tree_size": tree_size,
     }
 
@@ -51,11 +77,12 @@ async def get_consistency_proof(
     x_tenant_id: str = Header(default="default"),
 ):
     """Serve RFC 6962 / RFC 9162 consistency proof between two log tree sizes."""
-    kernel = get_kernel()
-    proof = kernel.translog.consistency_proof(log_id, first_size, second_size)
+    _, log = _log_for(log_id)
+    if second_size > log.size() or first_size > second_size:
+        raise HTTPException(status_code=400, detail="first_size/second_size out of range")
     return {
         "first_size": first_size,
         "log_id": log_id,
-        "proof": [p.hex() for p in proof],
+        "proof": log.consistency_proof(first_size, second_size),
         "second_size": second_size,
     }

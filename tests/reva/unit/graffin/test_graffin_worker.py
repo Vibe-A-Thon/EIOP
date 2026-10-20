@@ -8,6 +8,8 @@ from reva.agents.graffin.doctor import GraffinDoctorDaemon
 from reva.agents.graffin.curator import GraffinCurator
 from reva.agents.graffin.worker import GraffinLifecycleWorker
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 @pytest.fixture
 def mock_graph_with_issues():
