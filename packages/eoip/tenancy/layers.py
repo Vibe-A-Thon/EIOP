@@ -187,8 +187,8 @@ class TenantHandle:
         base = (self.layers.root / "objects" / self._p("object_prefix")).resolve()
         if not base.exists():
             return []
-        return sorted(str(p.relative_to(base)) for p in base.rglob("*") if p.is_file()
-                      and str(p.relative_to(base)).startswith(prefix))
+        keys = (p.relative_to(base).as_posix() for p in base.rglob("*") if p.is_file())
+        return sorted(k for k in keys if k.startswith(prefix))  # POSIX keys on every OS
 
     def delete_object(self, key: str) -> bool:
         path = self._object_path(key)
