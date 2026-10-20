@@ -72,7 +72,7 @@ npm --prefix apps/web ci
 Start a local in-memory API in one PowerShell session. These settings are development-only; never reuse the example token in a deployed environment.
 
 ```powershell
-$env:EOIP_API_TOKEN = 'local-development-token-at-least-24-chars'
+$env:EOIP_API_TOKEN = 'local-development-token-at-least-32-characters'
 $env:EOIP_GRAPH_BACKEND = 'memory'
 $env:EOIP_DATA_DIR = (Join-Path $PWD '.eoip-data')
 python -m uvicorn apps.api.main:create_app --factory --host 127.0.0.1 --port 8000 --reload

@@ -60,7 +60,7 @@ python -m pip install -e ".[dev]"
 Start the API with an explicit in-memory backend and a local-only token:
 
 ```powershell
-$env:EOIP_API_TOKEN = 'local-development-token-at-least-24-chars'
+$env:EOIP_API_TOKEN = 'local-development-token-at-least-32-characters'
 $env:EOIP_GRAPH_BACKEND = 'memory'
 $env:EOIP_DATA_DIR = (Join-Path $PWD '.eoip-data')
 python -m uvicorn apps.api.main:create_app --factory --host 127.0.0.1 --port 8000 --reload

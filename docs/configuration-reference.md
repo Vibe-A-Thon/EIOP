@@ -6,7 +6,10 @@ Run commands from the repository root unless a component README says otherwise. 
 
 | Variable | Consumer | Behavior and caution |
 |---|---|---|
-| `EOIP_API_TOKEN` | API and MCP via `eoip.runtime.api_token` | Required, at least 24 characters; keep real values private; minimum length is not a security assessment |
+| `EOIP_API_TOKEN` | API and MCP via `eoip.runtime.api_token` | Required, at least 32 characters; inject from the secret store, never commit it; startup refuses a missing, short or revoked value. Registered as the bootstrap superadmin unless `EOIP_BOOTSTRAP_SUPERADMIN=false` (then `admin`+`system`) |
+| `EOIP_ASG_FILE` | API ASG/RBAC loader (`apps/api/asg.py`) | Optional path to the principal file (`sha256:<hex> \| roles \| tenant \| user`, see `Logins_credentials.keys.example`). No repository default. Startup fails if the file is missing, group/world accessible, malformed, or holds plaintext tokens |
+| `EOIP_REVOKED_TOKEN_SHA256_FILE` | API ASG loader and `api_token` | Optional newline list of sha256 digests of revoked tokens; any match refuses startup |
+| `EOIP_ASG_ALLOW_PLAINTEXT` | API ASG loader | `true` accepts plaintext ASG entries **only** together with `EOIP_ENV=dev`; never in shared environments |
 | `EOIP_DATA_DIR` | API/worker/runtime services | File-backed state root; defaults to `/data`; set an explicit writable path on a host |
 | `EOIP_CONFIG_DIR` | Graph loader and selected services | Graph loader defaults to `config`; not every module necessarily honors this override |
 | `EOIP_GRAPH_CONFIG` | Graph backend loader | Overrides graph configuration file path |
@@ -18,7 +21,7 @@ Run commands from the repository root unless a component README says otherwise. 
 | `EOIP_LOAD_DEMO` | Worker startup | Defaults to `true` in worker code; local launchers also set it; set `false` for a non-demo deployment |
 | `EOIP_API_URL` | MCP and some scripts | API URL; MCP default uses container DNS `http://eoip-api:8000`; use a reachable URL outside Compose |
 | `EOIP_CORS_ORIGINS` | API query-app composition | Comma-separated explicit HTTP(S) origins without paths, credentials or wildcards |
-| `EOIP_ENV`, `APP_ENV` | API CORS configuration | `production` disables the development origin fallback; `EOIP_ENV` is considered first |
+| `EOIP_ENV`, `APP_ENV` | API CORS configuration; `backend/server.py` | `production` disables the development origin fallback; `EOIP_ENV` is considered first. `dev` lets `backend/server.py` generate an ephemeral token (`<data dir>/dev-token`, mode 0600) and enables plaintext ASG entries when `EOIP_ASG_ALLOW_PLAINTEXT=true` |
 | `EOIP_DEV_API_URL` | `apps/web/vite.config.js` | Enables development proxies for `/api`, `/health`, `/metrics`; not the other frontend's setting |
 | `REACT_APP_BACKEND_URL` | `frontend/src/lib/api.ts` | Alternate frontend API origin; build-time public value, never a secret; see frontend guide |
 | `EOIP_LEASE_PATH`, `EOIP_LEASE_TTL_SECONDS` | Worker | Optional filesystem advisory leader lease; not proof of distributed failover safety |
