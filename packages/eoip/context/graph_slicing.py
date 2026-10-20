@@ -153,7 +153,11 @@ class BitemporalContextSlate:
         present_timestamp: float | None = None,
     ) -> dict[str, Any]:
         state_engine = get_state_engine()
-        now = present_timestamp or time.time()
+        # As-of semantics: each side includes events recorded at or before its
+        # timestamp. 0.0 is a valid timestamp, so only None means "now".
+        now = time.time() if present_timestamp is None else present_timestamp
+        if now < past_timestamp:
+            raise ValueError("present_timestamp must not be earlier than past_timestamp")
 
         past_state = state_engine.time_travel_state(stream, past_timestamp)
         present_state = state_engine.time_travel_state(stream, now)
