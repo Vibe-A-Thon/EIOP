@@ -2,14 +2,14 @@
 
 This guide covers the repository's integrated local container run and a separate host-only development run. For ownership and service boundaries, see the [Developer and Maintainer Guide](developer-maintainer-guide.md).
 
-## Requirements
+## Prerequisites
 
 - Python 3.11 or later for host development and Python tests.
 - Node.js 22 for the `apps/web` build and local Vite development server.
 - Docker with Compose, Podman with Compose, nerdctl with Compose, or Finch for the integrated container deployment.
 - Git for source checkout and code-ingestion demonstrations.
 
-Some optional demos/tests need Chrome, an installed VS Code host, browser dependencies, or extra Python packages. They are not prerequisites for a basic API or container start.
+Some optional demos/tests need Chrome, an installed VS Code host, browser dependencies, or extra Python packages. They are not required for a basic API or container start.
 
 ## Integrated Container Run (Recommended)
 
