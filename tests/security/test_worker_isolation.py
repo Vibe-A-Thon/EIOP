@@ -236,3 +236,24 @@ def test_kill_process_tree_refuses_to_signal_own_process_group():
         if child.poll() is None:
             child.kill()
     os.kill(os.getpid(), 0)  # we are still alive
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="RLIMIT_AS is POSIX-only")
+def test_memory_limit_is_enforced_not_advisory(supervisor):
+    """CRA-002.8: allocating past max_memory_mb fails even when the host has the RAM."""
+    script = (
+        "import os, sys\n"
+        "limit = int(os.environ['EOIP_MAX_MEMORY_MB'])\n"
+        "try:\n"
+        "    data = bytearray((limit + 256) * 1024 * 1024)\n"
+        "except MemoryError:\n"
+        "    sys.exit(3)\n"
+        "print('allocated')\n"
+    )
+    resp = supervisor.execute_task(WorkerExecutionRequest(
+        task_id="test_mem_limit",
+        resource_class=ResourceClass.STANDARD.value,
+        sandbox_script=script,
+        timeout_seconds=10.0,
+    ))
+    assert resp.outcome != WorkerOutcome.COMPLETED.value
