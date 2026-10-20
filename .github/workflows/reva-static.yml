@@ -24,6 +24,10 @@ jobs:
         run: python -m pip install -c requirements.lock -e ".[test]"
       - name: Ruff correctness rules (blocking)
         run: python -m ruff check --select E9,F63,F7,F82 reva scripts/reva tests/reva
+      - name: Every REVA lane is real, on push/PR (blocking)
+        run: python scripts/reva/check_ci_lanes.py
+      - name: Depth markers match test directories (blocking)
+        run: python scripts/reva/check_depth_markers.py
       - name: Sources compile (blocking)
         run: python -m compileall -q reva scripts/reva
       - name: Full ruff ruleset (REPORT-ONLY, pre-existing backlog)
