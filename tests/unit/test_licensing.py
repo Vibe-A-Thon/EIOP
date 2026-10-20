@@ -334,3 +334,58 @@ def test_router_routes(tmp_path: Path):
         "POST /api/v1/licensing/meter/record",
         "POST /api/v1/licensing/verify",
     ]
+
+
+# --- SR-COM-001: every licensing model the entitlement system supports ------
+
+
+@pytest.mark.req("SR-COM-001")
+def test_perpetual_plus_annual_support_tracks_support_separately_from_the_license():
+    now = datetime.now(timezone.utc)
+    active = _checker(model="perpetual", expiry=None, support_expiry=now + timedelta(days=200))
+    lapsed = _checker(model="perpetual", expiry=None, support_expiry=now - timedelta(days=1))
+    assert active.license_state == lapsed.license_state == "perpetual"
+    assert active.support_state() == "active" and lapsed.support_state() == "lapsed"
+    assert lapsed.check_module("graph").allowed  # lapsed support never removes the license
+    assert lapsed.summary()["support"] == "lapsed"
+    with pytest.raises(ValueError, match="support_expiry"):
+        _payload(model="subscription", support_expiry=now + timedelta(days=1))
+
+
+@pytest.mark.req("SR-COM-001")
+def test_annual_subscription_size_tier_usage_per_tenant_and_seat_addon_models_are_enforced():
+    sub = _checker(model="subscription", expiry=datetime.now(timezone.utc) + timedelta(days=365))
+    assert sub.license_state == "active" and sub.support_state() == "not_included"
+    tier = _checker(model="size_tier", size_tier="medium", max_records=1000)
+    assert tier.check_size_tier("small").allowed and not tier.check_size_tier("large").allowed
+    usage = _checker(model="usage", max_records=1000)
+    assert usage.check_records(1000).allowed and not usage.check_records(1001).allowed
+    oem_tenants = _checker(model="per_tenant", edition="oem", max_tenants=5)
+    assert oem_tenants.check_tenants(5).allowed and not oem_tenants.check_tenants(6).allowed
+    seats = _checker(max_seats=10 + 5)  # base seats plus a 5-seat add-on
+    assert seats.check_seats(15).allowed and not seats.check_seats(16).allowed
+
+
+@pytest.mark.req("SR-COM-001")
+def test_oem_revenue_share_royalty_terms_are_signed_and_computed_per_period():
+    from eoip.licensing.license_file import RoyaltyTerms, compute_royalty
+
+    terms = RoyaltyTerms(basis="revenue", rate_bps=1500, minimum_per_period=50_000, period="quarterly")
+    checker = _checker(model="oem_revenue_share", edition="oem", royalty=terms)
+    assert checker.payload.royalty == terms and checker.summary()["model"] == "oem_revenue_share"
+    # royalty terms are inside the signature: tampering with the rate breaks verification
+    doc = sign_license(_payload(model="oem_revenue_share", edition="oem", royalty=terms), VENDOR_KEY)
+    doc["payload"]["royalty"]["rate_bps"] = 1
+    assert not verify_license(doc, VENDOR_KEY).ok
+    st = compute_royalty(terms, period_label="2026-Q3", gross_revenue_minor=1_000_000)
+    assert st["computed"] == 150_000 and st["amount_due_minor"] == 150_000 and not st["minimum_applied"]
+    low = compute_royalty(terms, period_label="2026-Q4", gross_revenue_minor=100_000)
+    assert low["computed"] == 15_000 and low["amount_due_minor"] == 50_000 and low["minimum_applied"]
+    units = RoyaltyTerms(basis="usage_units", rate_bps=25, period="monthly")
+    assert compute_royalty(units, period_label="2026-10", usage_units=40_000)["amount_due_minor"] == 1_000
+    with pytest.raises(ValueError):
+        compute_royalty(terms, period_label="x", usage_units=10)
+    with pytest.raises(ValueError, match="royalty terms"):
+        _payload(model="oem_revenue_share", edition="oem")
+    with pytest.raises(ValueError, match="only valid"):
+        _payload(royalty=terms)
