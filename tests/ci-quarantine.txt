@@ -3,15 +3,4 @@
 # Format: <pytest node id>  # <tracking id> <reason>
 # Listed tests are deselected in CI and printed in the run summary. Only tests whose
 # fix needs an owner decision belong here; remove an entry when its decision lands.
-tests/unit/test_cp_registry.py::test_real_registry_roundtrip_is_bounded_and_independent_of_git_history  # FT-D07 gaps-audit-cp.md digest changed vs pinned baseline; reconcile needs owner decision
-tests/unit/test_gap_coverage.py::test_gap_coverage_report_distinguishes_code_and_test_evidence  # FT-D06 GAP-STUDIO-005 lacks implementation trace (X-10 decision)
-tests/unit/test_gap_coverage.py::test_gap_completion_gate_reports_blocking_acceptance_issues  # FT-D06 GAP-STUDIO-005 lacks implementation trace (X-10 decision)
-tests/unit/test_gap_coverage.py::test_gap_coverage_cli_writes_json_and_can_fail_planned_p0  # FT-D06 GAP-STUDIO-005 lacks implementation trace (X-10 decision)
-tests/unit/test_gap_coverage.py::test_gap_coverage_api_exposes_filtered_report  # FT-D06 GAP-STUDIO-005 lacks implementation trace (X-10 decision)
-tests/unit/test_product_intelligence.py::test_deployed_route_surface_contains_product_gate_routes  # FT-D04 /api/v1/loops/catalog advertised but not mounted (X-10 decision)
-tests/unit/test_license_documents.py::test_python_license_metadata_includes_every_policy_document  # FT-D09 pyproject license table vs SPDX string (X-10 decision)
-tests/unit/test_kgr_export.py::test_export_menu_has_7_formats  # FT-D11 ExportMenu no longer offers pdf (X-10 decision)
-tests/unit/test_enterprise_security_wp55.py::test_gap_sec_012_security_rest_api_and_dashboard  # FT-D11 security dashboard title changed (X-10 decision)
-tests/unit/test_scale_and_polish_wp71.py::test_s_04_developer_documentation  # FT-D11 'Prerequisites' heading removed from getting-started (X-10 decision)
-tests/unit/test_suggested_advanced_capabilities.py::test_feature_4_bitemporal_context_slate  # FT-D12 bitemporal modified_keys empty; root cause unknown (X-10 decision)
-tests/acceptance/test_cra_001_acceptance.py::test_cra_001_9_ledger_and_receipts_storage_contract  # FT-D08 ledger references untracked receipts under .audit-scratch (owner decision)
+# Empty: every entry was fixed (FT-D04/D06/D07/D08/D09/D11/D12). Keep it that way.
