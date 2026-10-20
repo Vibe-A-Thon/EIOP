@@ -206,7 +206,7 @@ class KGCIPipeline:
     def run(self) -> KGCIReport:
         """Execute all stages in order and return the aggregate report."""
         stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-        digest = hashlib.sha1(f"{stamp}:{self.version}".encode()).hexdigest()[:8]
+        digest = hashlib.sha1(f"{stamp}:{self.version}".encode(), usedforsecurity=False).hexdigest()[:8]
         report = KGCIReport(
             id=f"urn:eoip:cicd:report:{digest}",
             ontology_version=self.version,

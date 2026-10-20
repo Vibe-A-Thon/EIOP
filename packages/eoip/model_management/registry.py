@@ -456,7 +456,7 @@ class ABExperiment:
     def route_request(self, request_id: str) -> str:
         """Deterministically route request based on hash of request_id."""
         import hashlib
-        h = int(hashlib.md5(request_id.encode()).hexdigest(), 16) % 10000
+        h = int(hashlib.md5(request_id.encode(), usedforsecurity=False).hexdigest(), 16) % 10000
         threshold = int(self.traffic_split * 10000)
         return self.candidate_model_id if h < threshold else self.control_model_id
 

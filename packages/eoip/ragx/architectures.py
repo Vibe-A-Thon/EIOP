@@ -278,8 +278,9 @@ class LightRAG(RagxArchitecture):
                         ))
         if mode in ("high", "global", "hybrid"):
             for a, b, score in kg.top_relations(query, limit=int(context.get("top_k", 10))):
+                rel_digest = hashlib.sha1(f"{a}|{b}".encode(), usedforsecurity=False).hexdigest()[:12]
                 out.append(Candidate(
-                    source_id=f"urn:eoip:ragx:rel:{hashlib.sha1(f'{a}|{b}'.encode()).hexdigest()[:12]}",
+                    source_id=f"urn:eoip:ragx:rel:{rel_digest}",
                     text=f"{a} -[related]-> {b}",
                     score=score,
                     kind="relation",

@@ -37,6 +37,8 @@ jobs:
           python -m pip install -c requirements.lock -e ".[test]"
       - name: Undefined names gate (FT-F07)
         run: python -m ruff check --select F821 packages apps reva scripts backend tests
+      - name: Weak-hash / extractall gate (FT-F11)
+        run: python -m ruff check --select S324,S202 packages apps reva backend scripts
       - name: Python sources compile (PLAN-N01)
         run: python -m compileall -q packages apps reva scripts backend
       - name: KG CI pipeline (GAP-KGCI-001..004)

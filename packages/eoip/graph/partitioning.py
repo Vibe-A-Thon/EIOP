@@ -250,7 +250,7 @@ class GraphPartitionManager:
         return self._hash_to_shard(entity_id)
 
     def _hash_to_shard(self, key: str) -> int:
-        h = int(hashlib.md5(key.encode()).hexdigest(), 16)
+        h = int(hashlib.md5(key.encode(), usedforsecurity=False).hexdigest(), 16)
         return h % self._config.num_partitions
 
     def _temporal_shard(self, timestamp: str) -> int:
