@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.084434Z",
+  "event_id": "cd5ff77c1d2ce2633b69400856735847da0981853fa0c87bddad249fb7d85eeb",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "00f18804ca2c7a5d12855c4763973fdfe892deac",
+    "message": "server changes for eoip"
+  },
+  "payload_hash": "25b2ce76291e28eb55cc7424c67fdfa11fd45f0d533d8243c686b45cd19fba66",
+  "schema_version": "1.0",
+  "source_record_id": "demo:00f18804ca2c7a5d12855c4763973fdfe892deac",
+  "source_system": "git",
+  "source_version": "25b2ce76291e28eb55cc7424c67fdfa11fd45f0d533d8243c686b45cd19fba66"
+}

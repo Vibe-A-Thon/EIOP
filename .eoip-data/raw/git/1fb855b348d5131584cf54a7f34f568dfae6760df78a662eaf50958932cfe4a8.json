@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.098733Z",
+  "event_id": "1fb855b348d5131584cf54a7f34f568dfae6760df78a662eaf50958932cfe4a8",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "b8d7c870256957a183b71804d95a30013ba01dcc",
+    "message": "CR&A docs"
+  },
+  "payload_hash": "7240fd8e5a5ff2d6b95fe79eaa09ee9fcd718e89fc1de01ac41bbc7eb0bdbbe5",
+  "schema_version": "1.0",
+  "source_record_id": "demo:b8d7c870256957a183b71804d95a30013ba01dcc",
+  "source_system": "git",
+  "source_version": "7240fd8e5a5ff2d6b95fe79eaa09ee9fcd718e89fc1de01ac41bbc7eb0bdbbe5"
+}

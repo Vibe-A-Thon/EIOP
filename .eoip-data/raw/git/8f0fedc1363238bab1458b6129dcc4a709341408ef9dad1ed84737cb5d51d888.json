@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.057865Z",
+  "event_id": "8f0fedc1363238bab1458b6129dcc4a709341408ef9dad1ed84737cb5d51d888",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "cc03ea9436df67a900280d9dfbb69036cc3c3242",
+    "message": "md files for new functionalities and crar"
+  },
+  "payload_hash": "19d523b48a1e8813af75de6bd82d44766f9a42dc49ebf88848e1648744e3c2cb",
+  "schema_version": "1.0",
+  "source_record_id": "demo:cc03ea9436df67a900280d9dfbb69036cc3c3242",
+  "source_system": "git",
+  "source_version": "19d523b48a1e8813af75de6bd82d44766f9a42dc49ebf88848e1648744e3c2cb"
+}

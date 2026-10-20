@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.054835Z",
+  "event_id": "b96247de876ba3be4c394ea6b90ba0d6ef82207adf31ca7a41446a2f8949946d",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "3ed3acd50e47ab8867aa6885d202f9956358dc3a",
+    "message": "changes for processing units and other gaps"
+  },
+  "payload_hash": "11538e27972a9c1771e146f75ea6af35a133ad3e0293b8f40ce2aaf3eebe6e60",
+  "schema_version": "1.0",
+  "source_record_id": "demo:3ed3acd50e47ab8867aa6885d202f9956358dc3a",
+  "source_system": "git",
+  "source_version": "11538e27972a9c1771e146f75ea6af35a133ad3e0293b8f40ce2aaf3eebe6e60"
+}

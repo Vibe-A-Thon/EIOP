@@ -27,7 +27,20 @@ Perform a **comprehensive, evidence-backed, unbiased** audit of EOIP (kgf) by co
 | `evidence/` | Raw reproducible artifacts |
 | `audit-scripts/` | Deterministic automation |
 
-**This kit does not claim a live EOIP repo was audited.** It is the instruction + tooling shell.
+**This kit does not claim a live EOIP repo was audited.** It is the instruction + tooling shell. (A first-pass run against the target below lives in `audit-output/`; it states its own limits.)
+
+### Audit target (from `audit-config.json`)
+
+| Placeholder | Value |
+|---|---|
+| `{{REPO_URL}}` | `https://github.com/Vibe-A-Thon/EIOP` |
+| `{{BRANCH}}` | `dev_local` |
+| `{{BASELINE_COMMIT}}` | see `audit-config.json → repo.baseline_commit` (first pass: `3ed3acd50e47ab8867aa6885d202f9956358dc3a`) |
+| `{{CODE_LINE_LINK}}` | `https://github.com/Vibe-A-Thon/EIOP/blob/<commit>/<path>#L<a>-L<b>` |
+| `{{CI_RUN_LINK}}` | `https://github.com/Vibe-A-Thon/EIOP/actions/runs/<run_id>` |
+| `{{CI_JOB_LINK}}` | `https://github.com/Vibe-A-Thon/EIOP/actions/runs/<run_id>/job/<job_id>` |
+
+Every L1 evidence item MUST carry a `{{CODE_LINE_LINK}}` pinned to the audited commit (never a branch name). L3 is only allowed from workflows listed in `ci.l3_eligible_workflows`; placeholder workflows (`reva-*.yml`, which only `echo`) never count.
 
 ---
 
@@ -186,7 +199,8 @@ Code paths and test *file names alone are not proof*. Status updates follow thes
 3. **Implemented** requires **L2 AND (L3 on the same `git_commit` OR L4 non-prod runtime)**. Both sides must be present and passing.
 4. **Critical** severity **Implemented** additionally requires **L5 dual-control** (distinct `reviewer_id`). Without L5, max status is **Partially Implemented** (and still needs L2 + gaps if not fully closed).
 5. **Ambiguous** if conflicting evidence on the same commit (e.g. negative_proof + positive L2+, or pass vs fail in L2/L3 `actual_result`).
-6. **Not Implemented** requires `type: negative_proof` **OR** a documented absence search with `repro_command` (and actual showing absence).
+6. **Not Verified** is the default: L1-only, failing-only, or no evidence. Failing L2/L3 items are never proof. Passing and failing items on the same commit → **Ambiguous**.
+7. **Not Implemented** requires `type: negative_proof` **OR** a documented absence search with `repro_command` (and actual showing absence).
 7. Evidence items are **STALE** (ignored for closure, flagged in tracker) when `item.git_commit` or bundle commit **≠** audited commit.
 8. Manual overrides require justification; they do not erase stale flags.
 
@@ -268,7 +282,7 @@ audit-scripts/
 - **Header:** project, repo URL (no creds), commit, date, auditors (roles + opaque names)
 - **Executive Summary:** core objective, health score, top 5 risks, remediation summary (KPIs: % Implemented, Critical open, avg proof tier, evidence coverage)
 - **Core Objective:** one paragraph from requirements
-- **Traceability Summary:** counts Implemented / Partial / Not Implemented / Ambiguous / N/A
+- **Traceability Summary:** counts Implemented / Partial / Ambiguous / Not Verified / Not Implemented / N/A
 - **Detailed Findings** per requirement:
   - ID, verbatim text, Type, Status, Proof tier achieved
   - Evidence (paths, tests, CI run ids, repro commands, commit)
@@ -379,8 +393,8 @@ Auditors and agents **must** also consider:
 ## 18. Quick Checklist & Commands
 
 ```bash
-git clone <repo-url> && cd <repo>
-git checkout <commit-hash>
+git clone --branch dev_local https://github.com/Vibe-A-Thon/EIOP repos/EIOP && cd repos/EIOP   # {{REPO_URL}} / {{BRANCH}}
+git rev-parse HEAD   # record as {{BASELINE_COMMIT}}; never commit/push from the audit
 # If prior memory exists:
 #   cp path/to/audit-memory.json audit-output/
 #   python3 audit-scripts/update_audit_memory.py --mode delta --memory audit-output/audit-memory.json

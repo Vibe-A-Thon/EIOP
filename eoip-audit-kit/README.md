@@ -2,6 +2,21 @@
 
 Instruction set + offline executive tracker + JSON schemas for **strict, evidence-backed** audits of the EOIP (kgf) application. This kit does **not** include a live audit of a real EOIP repository — it is the prompt and tooling shell.
 
+## Audit target & config
+
+`audit-config.json` holds the target and link templates; scripts read it by default (`--config`).
+
+- Repo: https://github.com/Vibe-A-Thon/EIOP (branch `dev_local`), baseline commit `3ed3acd50e47ab8867aa6885d202f9956358dc3a`
+- Code link: `https://github.com/Vibe-A-Thon/EIOP/blob/{commit}/{path}#L{start}-L{end}`
+- CI run link: `https://github.com/Vibe-A-Thon/EIOP/actions/runs/{run_id}` (job: `/job/{job_id}`)
+- L3-eligible workflows: `validation-evidence.yml`, `ci.yml`. `reva-*.yml` are placeholders and are never L3.
+
+The first real run is in `audit-output/`, starting with `audit_gaps_requirements.md`.
+
+## Remediation
+
+`remediation/` holds the fix plan for the first real run: the secret rotation and purge runbook, 25 finding/defect tasks, 3383 requirement tasks in 92 epics, and 629 duplicate-ID tasks. Start with `remediation/README.md`. The tracker's **Tasks** tab shows the merged `audit-output/audit_tasks.json`.
+
 ## Contents
 
 | Path | Purpose |
@@ -61,7 +76,8 @@ On **Import Evidence JSON**, the tracker:
    - **Implemented** = L2 + (L3 same commit | L4)
    - **Critical Implemented** = L3 + L5 (distinct reviewer)
    - **Stale** evidence (commit mismatch) flagged and ignored
-   - **negative_proof** / absence → Not Implemented; conflicts → Ambiguous
+   - **negative_proof** / absence → Not Implemented; conflicts (incl. pass+fail on the same commit) → Ambiguous
+   - L1-only, failing-only or no evidence → **Not Verified** (the default; never "Not Implemented")
 5. Records an import trail in **localStorage**.
 6. Manual status change requires a **justification** (override badge).
 
@@ -78,6 +94,7 @@ Field `proof_policy_version` must be **`1.1.0`** on both `evidence.json` and `au
 | Implemented | Requires **L2 AND (L3 on same git_commit OR L4 non-prod)** |
 | Critical Implemented | Additionally **L5** with `reviewer_id` ≠ `generated_by.agent_id` |
 | Ambiguous | Conflicting evidence on same commit |
+| Not Verified | default: L1 only / failing only / no evidence |
 | Not Implemented | `negative_proof` **or** absence search with `repro_command` |
 | Stale | Evidence `git_commit` ≠ audited commit → ignored for closure, flagged in tracker |
 
@@ -112,42 +129,38 @@ No secrets/PII in memory. Owners are hashed ids. Prompt hashes only.
 
 See the parent report: repo URL placement, CI provider link templates, whether production is ever in-scope for L4, and who holds Audit Lead / Security dual-control identities.
 
-## Script pipeline
+## Script pipeline (as run for the first pass)
 
 ```bash
-cd /path/to/eoip-repo   # or use kit fixtures
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r /path/to/eoip-audit-kit/requirements.txt
-
-SCRIPTS=/path/to/eoip-audit-kit/audit-scripts
-KIT=/path/to/eoip-audit-kit
-mkdir -p audit-output/evidence
-
-python3 $SCRIPTS/parse_md_requirements.py --root . --out audit-output/requirements_index.json --commit "$(git rev-parse HEAD)" \
-  --csv audit-output/requirements_index.csv
-python3 $SCRIPTS/generate_traceability.py --repo-root . \
-  --requirements audit-output/requirements_index.json \
-  --out audit-output/traceability_matrix.csv --commit "$(git rev-parse HEAD)"
-python3 $SCRIPTS/run_tests_and_map.py --repo-root . \
-  --requirements audit-output/requirements_index.json --out audit-output/test_results/
-$SCRIPTS/run_static_analysis.sh --repo-root . > audit-output/evidence/static_analysis.txt
-# ... produce audit-output/evidence/evidence.json via remediation agents ...
-python3 $SCRIPTS/validate_evidence.py --schema $KIT/schemas/evidence.schema.json \
-  --in audit-output/evidence/evidence.json --memory audit-output/audit-memory.json
-python3 $SCRIPTS/update_audit_memory.py --mode full --memory audit-output/audit-memory.json \
-  --evidence audit-output/evidence/evidence.json --commit "$(git rev-parse HEAD)"
-python3 $SCRIPTS/generate_audit_report.py --requirements audit-output/requirements_index.json \
-  --traceability audit-output/traceability_matrix.csv --evidence audit-output/evidence/ \
-  --memory audit-output/audit-memory.json --out audit-output/audit_gaps_requirements.md \
-  --commit "$(git rev-parse HEAD)"
-python3 $SCRIPTS/generate_tracker.py --evidence-json audit-output/evidence/evidence.json \
-  --audit-memory audit-output/audit-memory.json --out audit-output/tracker.html \
-  --data-out audit-output/tracker_data.json
+KIT=/workspace/eoip-audit-kit; S=$KIT/audit-scripts; O=$KIT/audit-output; R=/workspace/repos/EIOP
+C=$(git -C $R rev-parse HEAD)
+python3 $S/parse_md_requirements.py --root $R --out $O/requirements_index.json --csv $O/requirements_index.csv --commit $C
+python3 $S/generate_traceability.py --repo-root $R --requirements $O/requirements_index.json \
+  --out $O/traceability_matrix.csv --json-out $O/traceability_detail.json --commit $C \
+  --test-map $R/requirements-test-map.json --claims $R/requirements-registry.json
+python3 $S/run_tests_and_map.py --repo-root $R --python /path/venv/bin/python --isolate \
+  --requirements $O/requirements_index.json --test-map $R/requirements-test-map.json --out $O/test_results
+#   (or run pytest yourself and pass --reuse-junit <xml>)
+$S/run_static_analysis.sh --repo-root $R --tools-bin /path/tools-venv/bin --out-dir $O/evidence/static > $O/evidence/static_analysis.txt
+# CI runs for the commit (public API, no auth): save to $O/evidence/ci_runs.json
+python3 $S/build_evidence.py --requirements $O/requirements_index.json --traceability-detail $O/traceability_detail.json \
+  --test-results $O/test_results --ci-runs $O/evidence/ci_runs.json --commit $C --out $O/evidence/evidence.json --gaps-out $O/residual_gaps.json
+python3 $S/validate_evidence.py --schema $KIT/schemas/evidence.schema.json --in $O/evidence/evidence.json
+python3 $S/update_audit_memory.py --mode full --memory $O/audit-memory.json --evidence $O/evidence/evidence.json \
+  --requirements $O/requirements_index.json --gaps $O/residual_gaps.json --commit $C --repo https://github.com/Vibe-A-Thon/EIOP
+python3 $S/generate_audit_report.py --out-dir $O          # reads findings.json, stack.json, skipped.json if present
+python3 $S/generate_tracker.py --audit-memory $O/audit-memory.json --evidence-json $O/evidence/evidence.json \
+  --requirements $O/requirements_index.json --out $O/tracker.html
 ```
 
-Redaction example:
+`build_evidence.py` only writes facts (L1 code links, L2 test results, L3 from eligible green CI). It never fabricates L4 or L5.
 
-```bash
-echo 'password="SuperSecret123" email=user@example.com' | \
-  python3 $SCRIPTS/redact_sensitive.py --in - --out /tmp/redacted.txt --log /tmp/redaction.json
-```
+## Extended run merge (2026-10-19)
+
+Heavy suites ran in a second pass (`audit-output/test_results_extended/`). To merge without double-counting a re-run test:
+
+1. `merge_junit.py --base $O/test_results/tests.xml --override $O/test_results_extended/tests.xml --out $O/test_results_merged/tests.xml` builds the main junit, where an extended result replaces the same `classname::name` case, plus extended-only cases.
+2. `run_tests_and_map.py --reuse-junit --out $O/test_results_merged`, then `build_evidence.py --test-results $O/test_results_merged`.
+3. Union with `evidence_extended.json` (de-dup by `evidence_id`, same commit) into `evidence.json` and validate it.
+4. `update_audit_memory.py --mode full`. With `--requirements`, evidence for IDs no requirement doc defines goes to `orphan_evidence`, not to requirements.
+5. `generate_fix_tasks.py` (prefers `test_results_merged/`), `generate_audit_report.py` (adds §5a from `test_results_extended/`), `generate_tracker.py`.

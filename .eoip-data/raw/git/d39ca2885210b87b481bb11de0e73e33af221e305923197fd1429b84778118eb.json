@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.095423Z",
+  "event_id": "d39ca2885210b87b481bb11de0e73e33af221e305923197fd1429b84778118eb",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "a9d1c0fade041deeabb9c818245bed5c249d1a2d",
+    "message": "changes for caar cc analysis"
+  },
+  "payload_hash": "68e51c2b319ca411b5e760821b33adcf70c86e7bebba0f9253df82eaa98be3b0",
+  "schema_version": "1.0",
+  "source_record_id": "demo:a9d1c0fade041deeabb9c818245bed5c249d1a2d",
+  "source_system": "git",
+  "source_version": "68e51c2b319ca411b5e760821b33adcf70c86e7bebba0f9253df82eaa98be3b0"
+}

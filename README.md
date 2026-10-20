@@ -8,6 +8,8 @@ This repository contains both active application code and research, demo, planni
 
 For a task-oriented reading path, start with the [Documentation Index](docs/README.md). Every major runtime/source area now has a component README; the [repository inventory](docs/generated/README.md) records static file coverage and its exclusions.
 
+For step-by-step product use, open the offline [EOIP Help Center](self-help-manual/site/index.html) or the [printable PDF and DOCX manuals](self-help-manual/docs/README.md). The [project status dashboard](EOIP-master-dashboard.html), [master requirements](EOIP-master-requirements.md), and [master implementation plan](EOIP-master-implementation-plan.md) are generated audit views. Rebuild them with `python scripts/build_unified_audit.py`; source paths and reported ledger states are leads, not proof of accepted functionality.
+
 | Path | Purpose |
 |---|---|
 | `apps/api/` | FastAPI application factory, authentication, middleware, and HTTP routes |

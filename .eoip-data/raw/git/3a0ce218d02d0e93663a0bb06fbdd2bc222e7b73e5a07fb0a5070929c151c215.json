@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.088074Z",
+  "event_id": "3a0ce218d02d0e93663a0bb06fbdd2bc222e7b73e5a07fb0a5070929c151c215",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "3e424260538910da4d041b4c0a9f0ae25c8d2e0e",
+    "message": "gui changes and demo data for gui test"
+  },
+  "payload_hash": "b8926c708f5e5bb5e6ec6c09a2e10a5f2b46ea76ad0a32d4cba6a04507568fea",
+  "schema_version": "1.0",
+  "source_record_id": "demo:3e424260538910da4d041b4c0a9f0ae25c8d2e0e",
+  "source_system": "git",
+  "source_version": "b8926c708f5e5bb5e6ec6c09a2e10a5f2b46ea76ad0a32d4cba6a04507568fea"
+}

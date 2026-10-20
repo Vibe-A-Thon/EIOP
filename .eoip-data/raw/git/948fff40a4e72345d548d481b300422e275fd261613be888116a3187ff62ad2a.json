@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.060861Z",
+  "event_id": "948fff40a4e72345d548d481b300422e275fd261613be888116a3187ff62ad2a",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "d802c5e4c2fb8b360b0f13a9eda4bbcf2e9d95d1",
+    "message": "Neural schema and graffin and other reva changes"
+  },
+  "payload_hash": "8479eea3d78127486ec6303b8c94db4ccce33b778aa16a0a07bbb443620a3b5d",
+  "schema_version": "1.0",
+  "source_record_id": "demo:d802c5e4c2fb8b360b0f13a9eda4bbcf2e9d95d1",
+  "source_system": "git",
+  "source_version": "8479eea3d78127486ec6303b8c94db4ccce33b778aa16a0a07bbb443620a3b5d"
+}
