@@ -21,6 +21,7 @@ def api(tmp_path, monkeypatch):
     provision_login_user(None, tmp_path, "contract-admin", roles=("superadmin",))
     svc = ProvisioningTokenService(TokenService(secret, issuer="eoip-authn", audience="eoip-api"), tmp_path)
     monkeypatch.setenv("EOIP_SESSION_SECRET", secret.decode())
+    monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path / "data"))  # tenant layers isolated per test
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     app = api_main.create_app()

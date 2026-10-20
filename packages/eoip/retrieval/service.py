@@ -214,6 +214,11 @@ def _rank_fused(
     return ranked
 
 
+def _scoped(hits: list[tuple[str, float]], allow) -> list[tuple[str, float]]:
+    """Permission filtering at candidate generation (CRA-025.3)."""
+    return hits if allow is None else [h for h in hits if allow(h[0])]
+
+
 def _normalize(scores: list[tuple[str, float]]) -> dict[str, float]:
     if not scores:
         return {}
@@ -387,11 +392,12 @@ def search_keyword(
     *,
     search_index: InMemorySearchIndex | None = None,
     top_k: int = 10,
+    allow=None,
 ) -> RetrievalResult:
     """GAP-RET-002 keyword/full-text retrieval via the SearchIndex port."""
     index = search_index or build_search_index(store)
     trace = RetrievalTrace()
-    hits = index.keyword_search(question, top_k)
+    hits = _scoped(index.keyword_search(question, top_k), allow)
     trace.record("keyword", hits, index=type(index).__name__)
     ranked = _rank_fused(store, dict(hits), graph_scores={cid: s for cid, s in hits})
     trace.record("ranked", ranked)
@@ -404,11 +410,12 @@ def search_vector(
     *,
     search_index: InMemorySearchIndex | None = None,
     top_k: int = 10,
+    allow=None,
 ) -> RetrievalResult:
     """GAP-RET-002 vector retrieval via deterministic hashing embeddings."""
     index = search_index or build_search_index(store)
     trace = RetrievalTrace()
-    hits = index.vector_search(question, top_k)
+    hits = _scoped(index.vector_search(question, top_k), allow)
     trace.record("vector", hits, index=type(index).__name__)
     ranked = _rank_fused(store, dict(hits), graph_scores={cid: s for cid, s in hits})
     trace.record("ranked", ranked)
@@ -422,6 +429,7 @@ def search_hybrid(
     canonical_id: str | None = None,
     search_index: InMemorySearchIndex | None = None,
     top_k: int = 10,
+    allow=None,
 ) -> RetrievalResult:
     """GAP-SEARCH-001 hybrid fusion of graph, keyword and vector candidates.
 
@@ -433,13 +441,15 @@ def search_hybrid(
     """
     index = search_index or build_search_index(store)
     trace = RetrievalTrace()
-    keyword_hits = index.keyword_search(question, top_k)
-    vector_hits = index.vector_search(question, top_k)
+    keyword_hits = _scoped(index.keyword_search(question, top_k), allow)
+    vector_hits = _scoped(index.vector_search(question, top_k), allow)
     trace.record("keyword", keyword_hits, index=type(index).__name__)
     trace.record("vector", vector_hits)
 
     seed = canonical_id or (keyword_hits[0][0] if keyword_hits else None)
     graph_scores: dict[str, float] = {}
+    if seed and allow is not None and not allow(seed):
+        seed = None  # a seed outside the caller's scope is treated as absent (no existence oracle)
     if seed and store.get_vertex_by_canonical_id(seed):
         result = GraphTraversal(store, max_depth=2, max_results=top_k).impact(seed)
         graph_scores = {
@@ -448,6 +458,8 @@ def search_hybrid(
         }
         if canonical_id and result["source"]:
             graph_scores[result["source"]["canonical_id"]] = 1.0
+    if allow is not None:
+        graph_scores = {c: v for c, v in graph_scores.items() if allow(c)}
     trace.record("graph", sorted(graph_scores.items(), key=lambda kv: (-kv[1], kv[0])))
 
     fused: dict[str, float] = {}
@@ -481,13 +493,16 @@ def retrieve(
     strategy: str | RetrievalStrategy | None = None,
     search_index=None,
     top_k: int = 10,
+    allow=None,
 ) -> RetrievalResult:
+    if allow is not None and canonical_id and not allow(canonical_id):
+        raise ValueError("Entity not found")  # out-of-tenant seeds look absent (no existence oracle)
     if strategy is not None:
         requested = RetrievalStrategy(strategy)
         if requested == RetrievalStrategy.KEYWORD:
-            return search_keyword(store, question, search_index=search_index, top_k=top_k)
+            return search_keyword(store, question, search_index=search_index, top_k=top_k, allow=allow)
         if requested == RetrievalStrategy.VECTOR:
-            return search_vector(store, question, search_index=search_index, top_k=top_k)
+            return search_vector(store, question, search_index=search_index, top_k=top_k, allow=allow)
         if requested == RetrievalStrategy.HYBRID:
             return search_hybrid(
                 store,
@@ -495,6 +510,7 @@ def retrieve(
                 canonical_id=canonical_id or None,
                 search_index=search_index,
                 top_k=top_k,
+                allow=allow,
             )
     strategy = select_strategy(canonical_id, question, store)
     if strategy == RetrievalStrategy.NONE:
@@ -519,6 +535,8 @@ def retrieve(
     result = GraphTraversal(store, max_depth=4, max_results=30).impact(canonical_id)
     if not result["source"]:
         raise ValueError("Entity not found")
+    if allow is not None:
+        result = {**result, "impacted": [i for i in result["impacted"] if allow(i["vertex"]["canonical_id"])]}
     nodes = [result["source"], *[item["vertex"] for item in result["impacted"]]]
     edges = [e for item in result["impacted"] for e in item["path"]["edges"]]
     if scope is not None:

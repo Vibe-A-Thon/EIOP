@@ -114,7 +114,7 @@ from eoip.systems.router import build_systems_router
 from eoip.tenancy.router import build_router as build_tenancy_router
 from eoip.tenancy.service import TenancyService
 from eoip.truth import Claim, TruthStore
-from fastapi import APIRouter, Body, HTTPException, Query, Response
+from fastapi import APIRouter, Body, HTTPException, Query, Request, Response
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field, ValidationError
 
@@ -862,14 +862,34 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     # -- Retrieval strategies (GAP-RET-002/003/006) ----------------------------
 
     @router.post("/api/v1/retrieval/search")
-    def retrieval_search(payload: RetrievalSearchRequest) -> dict[str, Any]:
+    def retrieval_search(payload: RetrievalSearchRequest, request: Request) -> dict[str, Any]:
         """GAP-RET-002/003/006: keyword / vector / hybrid retrieval with
-        evidence-quality re-ranking and a deterministic trace."""
-        index = (
-            build_search_index(store)
-            if payload.strategy in ("keyword", "vector", "hybrid")
-            else None
-        )
+        evidence-quality re-ranking and a deterministic trace.
+
+        Tenant-bound callers (or a platform admin naming X-Tenant-Id) search the tenant's own index
+        layers (SR-TEN-003): candidates, graph expansion and seeds are limited to the tenant's entities,
+        and the indexed documents are the ones the DSAR workflow locates and erases (SR-PRV-002)."""
+        from eoip.retrieval.tenant_index import TenantRetrievalIndex, owned_by
+        from eoip.tenancy.context import TenantContextRequired, authorized_tenant
+
+        principal = getattr(request.state, "principal", None)
+        tenant_id = None
+        if principal is not None:
+            try:
+                tenant_id = authorized_tenant(principal, request.headers.get("x-tenant-id"))
+            except TenantContextRequired as exc:
+                raise HTTPException(status_code=403, detail=str(exc)) from exc
+        allow = None
+        if tenant_id:
+            index = TenantRetrievalIndex(state.tenant_layers.ensure_tenant(tenant_id))
+            index.sync_from_store(store)
+            allow = owned_by(store, tenant_id)
+        else:  # unbound platform admin, global scope
+            index = (
+                build_search_index(store)
+                if payload.strategy in ("keyword", "vector", "hybrid")
+                else None
+            )
         try:
             result = retrieve(
                 store,
@@ -878,6 +898,7 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
                 strategy=payload.strategy,
                 search_index=index,
                 top_k=payload.top_k,
+                allow=allow,
             )
         except ValueError as exc:
             raise HTTPException(status_code=422, detail=str(exc))

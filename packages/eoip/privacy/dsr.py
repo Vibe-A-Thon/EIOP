@@ -102,17 +102,19 @@ class SubjectRequestWorkflow:
         def hit(surface: str, ref: str, kind: str = "") -> None:
             rep.hits.append(SubjectHit(surface=surface, ref=ref, kind=kind or surface, tenant_id=h.tenant_id))
 
+        derived_from: set[str] = set()
         for surface, v in self._graph_hits(sid):
             hit(surface, v["canonical_id"], v["label"])
+            derived_from.add(v["canonical_id"])
         for key in [*h.list_objects("raw/"), *h.list_objects("rectifications/")]:
             if _mentions(h.get_object(key).decode("utf-8", "replace"), sid):
                 hit("raw_capture", key)
         for doc_id, (_, payload) in h.vector_items().items():
-            if _tagged(payload, sid) or _mentions(payload, sid):
+            if _tagged(payload, sid) or _mentions(payload, sid) or payload.get("source_ref") in derived_from:
                 hit("vector", doc_id, "embedding")
         for doc_id, (text, meta) in h.search_docs().items():
-            if _tagged(meta, sid) or sid in text:
-                hit("search", doc_id, "search_doc")
+            if _tagged(meta, sid) or sid in text or meta.get("source_ref") in derived_from:
+                hit("search", doc_id, "search_doc")  # index entries derived from the subject's records
         for key, value in h.cache_items().items():
             if _mentions(value, sid):
                 hit("cache", key)
