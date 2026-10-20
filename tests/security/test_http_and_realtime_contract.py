@@ -380,3 +380,79 @@ def test_admin_jobs_and_runs_cross_tenant_isolation(composed_app):
     assert cancel_alpha.json()["status"] == "CANCELLED"
 
 
+
+
+@pytest.mark.parametrize("yields_before_cancel", [None, *range(12)])
+def test_event_stream_handler_absorbs_server_cancellation(composed_app, yields_before_cancel):
+    """FT-F01 / SEC-WS: the server may cancel a live /ws/graph/events handler (shutdown, or the
+    TestClient tearing down right after a client close). The cancellation must stay inside the
+    server's cancel scope and the subscription must be released; a leaked CancelledError made the
+    Windows regression job flaky."""
+    import anyio
+    import anyio.lowlevel
+
+    app, _client, service = composed_app
+    token = service.issue(Principal("alice", "alice", ("viewer",), tenant_id="tenant-alpha"))
+    scope = {"type": "websocket", "path": "/ws/graph/events", "raw_path": b"/ws/graph/events",
+             "query_string": b"", "headers": [(b"authorization", f"Bearer {token}".encode())],
+             "scheme": "ws", "server": ("testserver", 80), "client": ("testclient", 50000),
+             "root_path": "", "subprotocols": [], "app": app}
+    emitter = app.state.event_emitter
+
+    async def scenario() -> None:
+        to_app_tx, to_app_rx = anyio.create_memory_object_stream(16)
+        from_app_tx, from_app_rx = anyio.create_memory_object_stream(16)
+        async with anyio.create_task_group() as tg:
+            async def run_app() -> None:
+                with anyio.CancelScope() as cs:
+                    tg_scope.append(cs)
+                    await app(scope, to_app_rx.receive, from_app_tx.send)
+            tg_scope: list = []
+            tg.start_soon(run_app)
+            await to_app_tx.send({"type": "websocket.connect"})
+            assert (await from_app_rx.receive())["type"] == "websocket.accept"
+            assert emitter.subscriber_count == 1
+            if yields_before_cancel is not None:  # client close, then cancel at every interleaving
+                await to_app_tx.send({"type": "websocket.disconnect", "code": 1000})
+                for _ in range(yields_before_cancel):
+                    await anyio.lowlevel.checkpoint()
+            tg_scope[0].cancel()  # server-side cancellation with no grace period
+        assert emitter.subscriber_count == 0
+
+    anyio.run(scenario)
+
+
+
+def _burn_cpu(seconds: float) -> None:
+    import time as _t
+    end = _t.monotonic() + seconds
+    while _t.monotonic() < end:
+        pass
+
+
+def test_event_stream_close_under_cpu_contention(composed_app):
+    """Regression for the Windows-only flake (Validation evidence run 39402641552): on a CPU-starved
+    runner the TestClient cancels the handler while it is still unwinding after the client close.
+    Before the fix a CancelledError escaped the server's cancel scope in most cycles."""
+    import multiprocessing
+    import os
+
+    app, client, service = composed_app
+    token = service.issue(Principal("alice", "alice", ("viewer",), tenant_id="tenant-alpha"))
+    headers = {"Authorization": f"Bearer {token}"}
+    ctx = multiprocessing.get_context("spawn")
+    burners = [ctx.Process(target=_burn_cpu, args=(60.0,), daemon=True) for _ in range(2 * (os.cpu_count() or 2))]
+    for b in burners:
+        b.start()
+    try:
+        for _ in range(12):
+            emitter = app.state.event_emitter
+            with client.websocket_connect("/ws/graph/events", headers=headers) as ws:
+                emitter.emit_sync(GraphEvent("vertex_upserted", {"tenant_id": "tenant-alpha", "value": "x"}))
+                assert ws.receive_json()["data"]["value"] == "x"
+    finally:
+        for b in burners:
+            b.terminate()
+        for b in burners:
+            b.join()
+    assert app.state.event_emitter.subscriber_count == 0

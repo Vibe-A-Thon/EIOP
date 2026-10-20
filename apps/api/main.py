@@ -1,6 +1,6 @@
 """Uvicorn factory for the persistent deployment."""
 
-import asyncio
+import anyio
 import hashlib
 import hmac
 import json
@@ -1874,38 +1874,42 @@ def create_app():
             return
 
         queue_ws = event_emitter.subscribe()
-        pending = set()
+        expired = False
 
-        async def wait_for_disconnect():
+        # Structured concurrency (anyio task group): the event pump, the disconnect watcher and the
+        # token-expiry timer are children of one cancel scope, so a client disconnect or a server-side
+        # cancellation tears all of them down without stray asyncio tasks racing the shutdown.
+        async def wait_for_disconnect(scope: anyio.CancelScope) -> None:
             while (await websocket.receive())["type"] != "websocket.disconnect":
                 pass
+            scope.cancel()
+
+        async def pump_events() -> None:
+            while True:
+                event = await queue_ws.get()
+                if event.visible_to_tenant(tenant_id):
+                    await websocket.send_json(event.to_dict())
+
+        async def expire_session(scope: anyio.CancelScope, seconds: float) -> None:
+            nonlocal expired
+            await anyio.sleep(seconds)
+            expired = True
+            scope.cancel()
 
         try:
             await websocket.accept()
-            disconnected = asyncio.create_task(wait_for_disconnect())
-            pending.add(disconnected)
-            while True:
-                next_event = asyncio.create_task(queue_ws.get())
-                pending.add(next_event)
+            async with anyio.create_task_group() as tg:
+                tg.start_soon(wait_for_disconnect, tg.cancel_scope)
+                tg.start_soon(pump_events)
                 expiry = principal.claims.get("exp")
-                timeout = max(0, expiry - time()) if expiry is not None else None
-                done, _ = await asyncio.wait(pending, timeout=timeout, return_when=asyncio.FIRST_COMPLETED)
-                if not done:
-                    await websocket.close(code=1008, reason="Authentication expired")
-                    break
-                if disconnected in done:
-                    break
-                event = next_event.result()
-                pending.remove(next_event)
-                if event.visible_to_tenant(tenant_id):
-                    await websocket.send_json(event.to_dict())
+                if expiry is not None:
+                    tg.start_soon(expire_session, tg.cancel_scope, max(0.0, expiry - time()))
+            if expired:
+                await websocket.close(code=1008, reason="Authentication expired")
         except WebSocketDisconnect:
             pass
         finally:
             event_emitter.unsubscribe(queue_ws)
-            for task in pending:
-                task.cancel()
-            await asyncio.gather(*pending, return_exceptions=True)
 
     @app.get("/api/v1/graph/events")
     def poll_events(
