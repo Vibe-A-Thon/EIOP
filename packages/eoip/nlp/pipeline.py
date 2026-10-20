@@ -9,7 +9,7 @@ import itertools
 import math
 import re
 from collections import Counter, defaultdict
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import Any, Iterable
 
 from eoip.graph.store import GraphStore
