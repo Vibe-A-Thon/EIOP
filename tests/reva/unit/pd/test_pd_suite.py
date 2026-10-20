@@ -266,11 +266,25 @@ def test_closure_evaluation_and_precedence():
         commit="commit1",
         current_owner_digests={"src/test.py::test_sym": "dig1"},
         runs=[run_rec],
+        mutation_scores={"dig1": 0.9},
     )
     dec = evaluate_closure(ctx)
     assert dec.outcome == "closed"
     assert dec.closure_id.startswith("cls1_")
     assert not dec.reasons
+
+    # AG-04: a missing mutation result is not a pass (no auto-close).
+    ctx.mutation_scores = {}
+    missing = evaluate_closure(ctx)
+    assert missing.outcome == "open"
+    assert "AG04_MUTATION_SCORE_MISSING" in missing.reasons
+
+    # AG-03: a passing test without owner coverage data does not count.
+    ctx.mutation_scores = {"dig1": 0.9}
+    test_item.owner_lines_hit = {}
+    uncovered = evaluate_closure(ctx)
+    assert uncovered.outcome == "open"
+    assert {"AG03_OWNER_NOT_EXECUTED", "AG13_NO_COUNTED_TESTS"} <= set(uncovered.reasons)
 
 
 def test_ledger_construction_and_export():
@@ -315,6 +329,7 @@ def test_ledger_construction_and_export():
         commit="sha1",
         current_owner_digests={"src/1.py::sym": "d1"},
         runs=[run],
+        mutation_scores={"d1": 0.8},
     )
     dec = evaluate_closure(ctx)
     ledger = build_ledger("tenant_t", "all", "sha1", [dec])
