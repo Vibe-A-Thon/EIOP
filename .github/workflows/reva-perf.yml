@@ -1,12 +1,13 @@
-name: reva-perf (NOT IMPLEMENTED)
+name: reva-perf
 
-# FT-F04: PLACEHOLDER. This lane used to run `echo "Running reva-perf"` on every push,
-# which reported green without testing anything. Reason it cannot run yet:
-# no reva performance/NFR benchmark suite exists.
-# It now runs only on manual dispatch and FAILS, so it can never be read as evidence.
-# Owner decision: implement this lane or delete it (scripts/reva/check_ci_lanes.py
-# currently requires the file to exist).
+# FT-F04: real lane (was a NOT IMPLEMENTED placeholder). Measures the REVA NFR budgets on a
+# file-backed SQLite store: NFR-001 issue throughput >= 300/s (median of 5 runs), NFR-002
+# issue p95 <= 25 ms, NFR-003 verified read p95 <= 10 ms, NFR-008 log append p95 <= 5 ms and
+# inclusion proof <= 20 ms (20k simulated leaves). Results are uploaded as reva-perf.json.
 on:
+  push:
+    branches: [main, develop, dev_local, eoip-remediation-geeky]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,8 +16,25 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - name: Performance and NFR benchmarks
-        run: |
-          echo "::error::reva-perf is not implemented: no reva performance/NFR benchmark suite exists."
-          exit 1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Performance budgets
+        env:
+          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data
+          REVA_PERF_RESULTS: test-results/reva-perf.json
+        run: python scripts/reva/run_lane.py perf --min-passed 5 -- tests/reva/perf --timeout=300 -s
+      - name: Results
+        if: always()
+        run: cat test-results/reva-perf.json >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reva-perf-results
+          path: test-results/
