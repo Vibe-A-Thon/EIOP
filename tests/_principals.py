@@ -76,3 +76,26 @@ class ProvisioningTokenService:
 
     def __getattr__(self, name):
         return getattr(self._service, name)
+
+
+TEST_SESSION_SECRET = "test-session-secret-" + secrets.token_hex(16)
+
+
+def use_test_session_secret(monkeypatch) -> str:
+    """Pin EOIP_SESSION_SECRET so tests can mint session tokens the app will accept."""
+    _set(monkeypatch, "EOIP_SESSION_SECRET", TEST_SESSION_SECRET)
+    return TEST_SESSION_SECRET
+
+
+def session_token(principal, data_dir: Path | str | None = None) -> str:
+    """Provision ``principal`` as a login user and sign a session token for it.
+
+    Requires ``use_test_session_secret`` (or EOIP_SESSION_SECRET) to be set before the app is
+    created; the API reads roles from the credential store, not from the token.
+    """
+    from eoip.authn import TokenService
+
+    secret = os.environ.get("EOIP_SESSION_SECRET") or TEST_SESSION_SECRET
+    base = Path(data_dir or os.environ["EOIP_DATA_DIR"])
+    service = TokenService(secret.encode("utf-8"), issuer="eoip-authn", audience="eoip-api")
+    return ProvisioningTokenService(service, base).issue(principal)
