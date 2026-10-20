@@ -303,3 +303,21 @@ def test_validation_refusal_is_persisted_as_policy_denial(monkeypatch, tmp_path)
     ]
     assert records[-1]["event_type"] == "policy_denial"
     assert records[-1]["reason_code"] == "http_422"
+
+
+@pytest.mark.req("SR-CON-011", "CRA-003")
+def test_policy_classified_admin_mutation_also_fails_closed_without_audit(monkeypatch, tmp_path):
+    """Routes made admin-only by the central route policy get the same audit preflight."""
+
+    def fail_audit(*_args, **_kwargs):
+        raise OSError("audit volume unavailable")
+
+    monkeypatch.setattr(main.AuditSink, "emit", fail_audit)
+    api = client(monkeypatch, tmp_path)
+    response = api.post(
+        "/api/v1/privacy/dsar/erase",
+        headers={"Authorization": "Bearer test-token-with-at-least-24-characters"},
+        json={"subject_id": "s", "tenant_id": "t"},
+    )
+    assert response.status_code == 503
+    assert response.json()["detail"] == "Audit service unavailable; admin mutation was not executed"

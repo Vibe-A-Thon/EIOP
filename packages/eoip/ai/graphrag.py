@@ -54,9 +54,14 @@ class ModelManifest:
     is_cpu_capable: bool = True
     is_gpu_only: bool = False
     airgap_status: str = "QUALIFIED"  # "QUALIFIED" for CPU, "UNQUALIFIED" for GPU-only servers per H-17
+    #: The model's own tokenizer (text -> token list). When absent the regex approximation is used and
+    #: ``tokenizer_id`` says so, so a manifest never claims a model-exact budget it did not measure.
+    tokenizer: Optional[Callable[[str], list]] = None
+    tokenizer_id: str = "regex-approx"
 
     def count_tokens(self, text: str) -> int:
-        """Token count using model's tokenizer approximation (whitespace/subword approximation)."""
+        if self.tokenizer is not None:
+            return len(self.tokenizer(text))
         tokens = re.findall(r"\w+|[^\w\s]", text)
         return len(tokens)
 
@@ -70,6 +75,11 @@ class ContextManifest:
     evidence_items: list[dict[str, Any]]
     omitted_items_count: int
     reduction_applied: bool
+    tokenizer_id: str = "regex-approx"
+    requested_input_tokens: int = 0  # authorized evidence before reduction, same tokenizer
+    max_input_tokens: int = 0
+    omitted_assertion_ids: list[str] = field(default_factory=list)
+    conflicts: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -80,6 +90,10 @@ class ContextManifest:
             "evidence_count": len(self.evidence_items),
             "omitted_items_count": self.omitted_items_count,
             "reduction_applied": self.reduction_applied,
+            "tokenizer_id": self.tokenizer_id,
+            "requested_input_tokens": self.requested_input_tokens,
+            "max_input_tokens": self.max_input_tokens,
+            "conflicts": len(self.conflicts),
         }
 
 
@@ -96,6 +110,9 @@ class GroundedAnswer:
     omission_disclosed: bool = False
     omitted_count: int = 0
     latency_ms: float = 0.0
+    uncertain: bool = False
+    conflicts: list[dict[str, Any]] = field(default_factory=list)
+    degraded_reason: Optional[str] = None
 
 
 class EgressDLPFilter:
@@ -178,16 +195,33 @@ class GraphRAGPipeline:
         max_tokens = self.model_manifest.max_input_tokens
         accepted_items = []
         omitted_count = 0
+        omitted_ids: list[str] = []
         current_tokens = 0
+        requested_tokens = 0
 
         for item in deduped:
             text = item.get("snippet", item.get("text", ""))
             item_tokens = self.model_manifest.count_tokens(text)
+            requested_tokens += item_tokens
             if current_tokens + item_tokens <= max_tokens:
                 accepted_items.append(item)
                 current_tokens += item_tokens
             else:
                 omitted_count += 1  # drop whole item, never cut mid-assertion
+                omitted_ids.append(str(item.get("assertion_id", item.get("doc_id", "unknown"))))
+
+        # Contradictions between accepted sources: same subject+predicate, different value (CRA-026.2)
+        claims: dict[tuple, dict[str, Any]] = {}
+        conflicts: list[dict[str, Any]] = []
+        for item in accepted_items:
+            if item.get("subject") is None or item.get("predicate") is None or "value" not in item:
+                continue
+            key = (item["subject"], item["predicate"])
+            first = claims.setdefault(key, item)
+            if first is not item and first["value"] != item["value"]:
+                conflicts.append({"subject": key[0], "predicate": key[1],
+                                  "assertions": [first.get("assertion_id"), item.get("assertion_id")],
+                                  "values": [first["value"], item["value"]]})
 
         # Step 5: Sanitize accepted texts
         context_parts = []
@@ -213,6 +247,11 @@ class GraphRAGPipeline:
             evidence_items=evidence_manifest_items,
             omitted_items_count=omitted_count,
             reduction_applied=omitted_count > 0,
+            tokenizer_id=self.model_manifest.tokenizer_id,
+            requested_input_tokens=requested_tokens,
+            max_input_tokens=max_tokens,
+            omitted_assertion_ids=omitted_ids,
+            conflicts=conflicts,
         )
 
         return full_context_text, context_manifest, accepted_items
@@ -226,7 +265,14 @@ class GraphRAGPipeline:
         calibrated_confidence: Optional[float] = None,
         cancel_token: Optional[Callable[[], bool]] = None,
         runtime_endpoint: str = "http://localhost:11434",
+        generator: Optional[Callable[[str, str], str]] = None,
     ) -> GroundedAnswer:
+        """``generator(question, fenced_context) -> text`` is the model call (e.g. ``generate_via_port``).
+
+        Without one the answer is assembled extractively from the cited evidence. When the generator
+        raises (model unavailable, guardrail block, outage) the answer is returned *incomplete* with
+        ``degraded_reason`` set; it is never labelled complete.
+        """
         t0 = time.perf_counter()
 
         # CRA-026.13: Verify air-gap runtime qualification
@@ -273,7 +319,7 @@ class GraphRAGPipeline:
         # Check for cancellation before calling model
         if cancel_token and cancel_token():
             dur = (time.perf_counter() - t0) * 1000.0
-            lineage = ModelLineage(model_id=self.model_manifest.model_id, producer_class=ProducerClass.PROBABILISTIC)
+            lineage = ModelLineage(model_id=self.model_manifest.model_id, model_version="1.0", producer_class=ProducerClass.PROBABILISTIC)
             return GroundedAnswer(
                 answer_id="ans_cancelled",
                 text="",
@@ -286,7 +332,21 @@ class GraphRAGPipeline:
                 latency_ms=dur,
             )
 
-        # Grounded generation simulation with sentence-level citations (CRA-026.7)
+        degraded_reason: Optional[str] = None
+        generated: Optional[str] = None
+        if generator is not None:
+            try:
+                generated = generator(question, context_text)
+            except Exception as exc:  # unavailable provider / outage / guardrail block
+                degraded_reason = f"model unavailable: {type(exc).__name__}"
+            if cancel_token and cancel_token():
+                lineage = ModelLineage(model_id=self.model_manifest.model_id, model_version="1.0", producer_class=ProducerClass.PROBABILISTIC)
+                return GroundedAnswer(
+                    answer_id="ans_cancelled", text="", is_complete=False, is_abstained=False,
+                    context_manifest_digest=context_manifest.manifest_digest, context_manifest=context_manifest,
+                    citations=[], model_lineage=lineage, latency_ms=(time.perf_counter() - t0) * 1000.0)
+
+        # Sentence-level citations to the accepted evidence (CRA-026.7)
         citations = []
         answer_sentences = []
         for idx, item in enumerate(accepted_items, start=1):
@@ -301,6 +361,15 @@ class GraphRAGPipeline:
             })
 
         answer_text = " ".join(answer_sentences)
+        if generated:
+            answer_text = f"{generated.strip()} {answer_text}"
+        if degraded_reason:
+            answer_text = (f"Generation unavailable ({degraded_reason}); returning the cited evidence only. "
+                           + answer_text)
+        conflicts = context_manifest.conflicts
+        if conflicts:
+            answer_text += " Uncertain: authorized sources conflict on " + "; ".join(
+                f"{c['subject']}.{c['predicate']} ({' vs '.join(map(str, c['values']))})" for c in conflicts) + "."
 
         # CRA-026.11: Disclose omission if reduction was applied
         omission_disclosed = False
@@ -319,7 +388,7 @@ class GraphRAGPipeline:
         return GroundedAnswer(
             answer_id=f"ans_{int(time.time())}",
             text=answer_text,
-            is_complete=True,
+            is_complete=degraded_reason is None and not context_manifest.reduction_applied,
             is_abstained=False,
             context_manifest_digest=context_manifest.manifest_digest,
             context_manifest=context_manifest,
@@ -328,6 +397,9 @@ class GraphRAGPipeline:
             omission_disclosed=omission_disclosed,
             omitted_count=context_manifest.omitted_items_count,
             latency_ms=dur,
+            uncertain=bool(conflicts),
+            conflicts=conflicts,
+            degraded_reason=degraded_reason,
         )
 
     def stream_answer(

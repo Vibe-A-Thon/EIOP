@@ -53,6 +53,7 @@ from fastapi.security import HTTPBearer
 from prometheus_client import CollectorRegistry, Counter, Histogram, generate_latest
 from pydantic import BaseModel, Field
 
+from apps.api import route_policy
 from apps.api.app import create_app as query_app
 
 log = logging.getLogger("eoip.api")
@@ -506,6 +507,17 @@ def create_app():
             if principal is None:
                 record(401)
                 return JSONResponse({"detail": "A valid Bearer token is required"}, status_code=401)
+        if (request.url.path.startswith("/api/reva/v1/") and principal is not None
+                and getattr(principal, "tenant_id", None) and "x-tenant-id" not in request.headers):
+            # REVA routes default a missing X-Tenant-Id to "default"; bind it to the caller's tenant
+            # instead so a tenant-scoped principal can never read or write another tenant's warrants.
+            request.scope["headers"] = [*request.scope["headers"],
+                                        (b"x-tenant-id", principal.tenant_id.encode())]
+        if request.url.path.startswith("/api/reva/v1/") and principal is not None:
+            # X-Principal-Id is the REVA actor recorded on warrants/gaps; it comes from the verified
+            # session, never from the caller (a supplied value would let anyone act as anyone).
+            request.scope["headers"] = [(k, v) for k, v in request.scope["headers"] if k != b"x-principal-id"]
+            request.scope["headers"].append((b"x-principal-id", str(principal.id).encode()))
         body = bytearray()
         async for chunk in request.stream():
             body.extend(chunk)
@@ -541,9 +553,11 @@ def create_app():
                 "/api/v1/egress/endpoints", "/api/v1/egress/plugins", "/api/v1/egress/policy",
                 "/api/v1/egress/kill",
             ))
+            # central deny-by-default classification of every mutating route (D-roles)
+            or route_policy.classify(request.method, _p) == "admin"
         )
         if high_risk_admin:
-            if principal is None or not {"admin", "system"}.intersection(principal.roles):
+            if principal is None or not route_policy.ADMIN_ROLES.intersection(principal.roles):
                 record(403)
                 return JSONResponse({"detail": "Administrative role required"}, status_code=403)
             try:
@@ -588,6 +602,12 @@ def create_app():
                 response.headers["X-Correlation-ID"] = correlation_id
                 response.headers["X-Audit-ID"] = request.state.audit_id
                 return response
+        elif _mutating and principal is not None and not route_policy.allowed(
+                request.method, _p, principal.roles):
+            record(403)
+            return JSONResponse(
+                {"detail": f"Role not permitted: {route_policy.classify(request.method, _p)} access required"},
+                status_code=403)
         try:
             response = await call_next(request)
         except Exception as exc:

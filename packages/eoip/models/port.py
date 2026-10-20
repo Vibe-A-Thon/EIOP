@@ -288,6 +288,7 @@ class TaskRouter:
 
     def route(self, request: ModelRequest) -> ModelResult:
         from eoip.egress.gateway import EgressDenied, EgressOutage
+        from eoip.models.guardrails import GuardrailBlocked
 
         tried: list[tuple[str, str]] = []
         egress_problem: str | None = None
@@ -299,8 +300,8 @@ class TaskRouter:
                 continue
             try:
                 result = self.port.invoke(name, request)
-            except (CapabilityMismatch, StructuredOutputInvalid, AdapterInactive):
-                raise
+            except (CapabilityMismatch, StructuredOutputInvalid, AdapterInactive, GuardrailBlocked):
+                raise  # request problems, not model faults: no fallback, no breaker penalty
             except EgressOutage as exc:
                 self.breaker.record_failure(request.tenant_id, name)
                 tried.append((name, "egress_outage"))
@@ -391,3 +392,56 @@ def in_process_adapter(name: str, runtime: str, fn: Callable[[ModelRequest], Any
         return out if isinstance(out, ModelResult) else ModelResult(output=out, adapter=name)
 
     return ModelAdapter(name=name, runtime=runtime, caps=caps, invoke=invoke)
+
+
+# ---------------------------------------------------------------------------
+# Existing callers (NLQ planning, GraphRAG synthesis) go through the port
+# ---------------------------------------------------------------------------
+
+#: Process-wide telemetry for every model call made through ``generate_via_port`` (SR-LLM-008).
+DEFAULT_TELEMETRY = LLMTelemetry()
+
+
+def _default_guardrails() -> Any:
+    from eoip.models.guardrails import Guardrails
+
+    # Default deployment is local-only: PII never leaves the tenant, so it is not redacted;
+    # injection/jailbreak input and secrets are still blocked and active output neutralised.
+    return Guardrails(redact_pii=False)
+
+
+def provider_adapter(provider: Any, *, name: str = "local-model", context_length: int = 32768) -> ModelAdapter:
+    """Wrap a ``LocalModelProvider``-style object (``generate(system, user, max_tokens=)``)."""
+
+    def invoke(request: ModelRequest) -> ModelResult:
+        resp = provider.generate(request.input["system"], request.input["user"], max_tokens=request.max_tokens)
+        return ModelResult(output=resp.content, adapter=name, tokens_out=getattr(resp, "tokens_used", None) or 0)
+
+    caps = ModelCapabilities(capabilities=frozenset({Capability.CHAT}), context_length=context_length,
+                             deterministic=True, size_class="small")
+    return ModelAdapter(name=name, runtime="ollama", caps=caps, invoke=invoke)
+
+
+def generate_via_port(provider: Any, *, task: str, system_prompt: str, user_content: str,
+                      max_tokens: int = 512, tenant_id: str = "_platform") -> ModelResult:
+    """Run one generation through ModelPort + TaskRouter: guardrails, telemetry, fallback handling.
+
+    Raises ``ModelUnavailable`` when the model is not configured, every route failed, or a guardrail
+    blocked the input - callers keep their deterministic path in all three cases.
+    """
+    from eoip.models.guardrails import GuardrailBlocked
+    from eoip.models.provider import ModelUnavailable
+
+    if not getattr(provider, "available", False):
+        raise ModelUnavailable("No local model is configured")
+    port = ModelPort(telemetry=DEFAULT_TELEMETRY, guardrails=_default_guardrails())
+    port.register(provider_adapter(provider))
+    request = ModelRequest(task=task, capability=Capability.CHAT, tenant_id=tenant_id,
+                           input={"system": system_prompt, "user": user_content},
+                           input_tokens=(len(system_prompt) + len(user_content)) // 4, max_tokens=max_tokens)
+    try:
+        return TaskRouter(port).route(request)
+    except GuardrailBlocked as exc:
+        raise ModelUnavailable(f"guardrail blocked the model input: {exc}") from exc
+    except NoModelAvailable as exc:
+        raise ModelUnavailable(str(exc)) from exc

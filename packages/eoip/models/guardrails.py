@@ -42,8 +42,11 @@ class GuardrailBlocked(PermissionError):
 
 
 class Guardrails:
-    def __init__(self, *, scanner: DlpScanner | None = None, allow_raw_pii: set[str] | None = None) -> None:
+    def __init__(self, *, scanner: DlpScanner | None = None, allow_raw_pii: set[str] | None = None,
+                 redact_pii: bool = True) -> None:
         self.scanner = scanner or DlpScanner()
+        # False for local-only deployments: PII stays inside the tenant, secrets/injection still blocked
+        self.redact_pii = redact_pii
         self.tool_allowlists: dict[str, set[str]] = {}
         self.allow_raw_pii = allow_raw_pii or set()  # tenants whose policy allows raw PII in prompts
 
@@ -67,7 +70,7 @@ class Guardrails:
         if secrets:
             raise GuardrailBlocked("secret material in model input", [f"input:secret:{d}" for d in secrets])
         pii = sorted({f.detector for f in findings} - SECRET_DETECTORS)
-        if pii and request.tenant_id not in self.allow_raw_pii:
+        if pii and self.redact_pii and request.tenant_id not in self.allow_raw_pii:
             request.input = self._redact(request.input)
             triggers += [f"input:pii_redacted:{d}" for d in pii]
         allowed = self.tool_allowlists.get(request.tenant_id, set())
@@ -78,7 +81,8 @@ class Guardrails:
 
     def check_output(self, output: Any) -> tuple[Any, list[str]]:
         triggers: list[str] = []
-        detectors = sorted({f.detector for f in self.scanner.scan_text(self._text(output))})
+        detectors = sorted({f.detector for f in self.scanner.scan_text(self._text(output))
+                            if self.redact_pii or f.detector in SECRET_DETECTORS})
         if detectors:
             output = self._redact(output)
             triggers += [f"output:redacted:{d}" for d in detectors]
@@ -98,7 +102,8 @@ class Guardrails:
 
     def _redact(self, value: Any) -> Any:
         def red(s: str) -> str:
-            for f in sorted(self.scanner.scan_text(s), key=lambda f: -len(f.matched)):
+            found = [f for f in self.scanner.scan_text(s) if self.redact_pii or f.detector in SECRET_DETECTORS]
+            for f in sorted(found, key=lambda f: -len(f.matched)):
                 s = s.replace(f.matched, f"[REDACTED:{f.detector}]")
             return s
         return self._map(value, red)
