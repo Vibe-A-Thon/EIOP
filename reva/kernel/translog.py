@@ -179,6 +179,48 @@ class TransparencyLog:
     def __init__(self, store: RevaStore, log_id: str) -> None:
         self.store = store
         self.log_id = log_id
+        # Append-only, so leaf hashes and perfect (power-of-two) subtree hashes never change once
+        # complete: cache them so proofs cost O(log^2 n) after the first pass (NFR-008).
+        self._leaf_cache: List[bytes] = []
+        self._node_cache: dict = {}
+
+    def _leaf_hashes(self, size: int) -> List[bytes]:
+        """Leaf hashes 0..size-1, loading only rows not cached yet."""
+        if size > len(self._leaf_cache):
+            rows = self.store.conn.execute(
+                "SELECT leaf_index, leaf_hash FROM reva_log_leaves WHERE log_id = ? AND leaf_index >= ? "
+                "ORDER BY leaf_index ASC",
+                (self.log_id, len(self._leaf_cache)),
+            ).fetchall()
+            for row in rows:
+                if row["leaf_index"] != len(self._leaf_cache):
+                    # A gap or rewrite: drop the caches and fall back to the store (auditor territory).
+                    self._leaf_cache, self._node_cache = [], {}
+                    return self.get_leaves(limit=size)
+                self._leaf_cache.append(bytes(row["leaf_hash"]))
+        return self._leaf_cache
+
+    def _range_hash(self, leaves: List[bytes], start: int, n: int) -> bytes:
+        if n == 0:
+            return empty_tree_root()
+        if n == 1:
+            return leaves[start]
+        perfect = n & (n - 1) == 0
+        if perfect and (start, n) in self._node_cache:
+            return self._node_cache[(start, n)]
+        k = largest_power_of_two_less_than(n)
+        value = node_hash(self._range_hash(leaves, start, k), self._range_hash(leaves, start + k, n - k))
+        if perfect:
+            self._node_cache[(start, n)] = value
+        return value
+
+    def _path(self, leaves: List[bytes], m: int, start: int, n: int) -> List[bytes]:
+        if n <= 1:
+            return []
+        k = largest_power_of_two_less_than(n)
+        if m < k:
+            return self._path(leaves, m, start, k) + [self._range_hash(leaves, start + k, n - k)]
+        return self._path(leaves, m - k, start + k, n - k) + [self._range_hash(leaves, start, k)]
 
     def append(self, leaf_data: str) -> int:
         """Append leaf data into log and return zero-based leaf index."""
@@ -220,17 +262,21 @@ class TransparencyLog:
 
     def root(self, size: Optional[int] = None) -> bytes:
         """Compute MTH over leaves up to size."""
-        leaves = self.get_leaves(limit=size)
-        return mth(leaves)
+        sz = self.size() if size is None else size
+        leaves = self._leaf_hashes(sz)
+        if len(leaves) < sz:
+            raise ValueError(f"Tree size {sz} exceeds log size {len(leaves)}")
+        return self._range_hash(leaves, 0, sz)
 
     def inclusion_proof(self, leaf_index: int, tree_size: Optional[int] = None) -> List[str]:
         """Return inclusion proof as list of hex strings."""
         sz = self.size() if tree_size is None else tree_size
         if leaf_index < 0 or leaf_index >= sz:
             raise ValueError(f"Leaf index {leaf_index} out of range for tree size {sz}")
-        leaves = self.get_leaves(limit=sz)
-        proof_bytes = compute_path(leaf_index, leaves)
-        return [b.hex() for b in proof_bytes]
+        leaves = self._leaf_hashes(sz)
+        if len(leaves) < sz:
+            raise ValueError(f"Tree size {sz} exceeds log size {len(leaves)}")
+        return [b.hex() for b in self._path(leaves, leaf_index, 0, sz)]
 
     def consistency_proof(self, size_m: int, size_n: Optional[int] = None) -> List[str]:
         """Return consistency proof between size m and n as list of hex strings."""

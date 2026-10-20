@@ -128,3 +128,19 @@ def test_gap_created_and_read_back_over_rest(stack):
     assert got.status_code == 200 and got.json()["gap_id"] == gap_id
     listed = client.get("/api/reva/v1/gaps", headers={"x-tenant-id": "t1"}).json()
     assert gap_id in json.dumps(listed)
+
+
+@pytest.mark.reva_case("negative")
+def test_auditor_sees_a_tampered_leaf_even_when_the_log_cached_its_tree(stack):
+    for i in range(4):
+        stack["kernel"].issue("t1", stack["draft"](f"svc-leaf-{i}", i))
+    log, store = stack["log"], stack["store"]
+    key = generate_key(store, "t1", "log", log.log_id)
+    issue_sth_now(store, log, key.key_id, decrypt_private_key(key.private_key_enc))
+    log.root(log.size())  # warm the node cache
+    store.conn.execute("UPDATE reva_log_leaves SET leaf_hash = ? WHERE log_id = ? AND leaf_index = 2",
+                       (b"\x00" * 32, log.log_id))
+    store.conn.commit()
+    report = audit_transparency_log(store, log)
+    assert not report.clean
+    assert any("does not match computed root" in issue for issue in report.issues)
