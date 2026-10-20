@@ -110,26 +110,42 @@ def test_cra_026_2_and_7_bounded_context_and_citations(cpu_model_manifest, scope
 
 @pytest.mark.req("CRA-026")
 def test_cra_026_3_streaming_and_cancellation(cpu_model_manifest, scope):
+    from eoip.ai.graphrag import AnswerStore
+
     pipeline = GraphRAGPipeline(model_manifest=cpu_model_manifest)
     evidence = [{"assertion_id": "ast_1", "snippet": "all systems operational"}]
 
-    # Complete stream
-    tokens = list(pipeline.stream_answer("status?", evidence, scope))
-    assert len(tokens) > 3
-    assert "".join(tokens).startswith("The service topology")
+    class _Runtime:  # streams like the Ollama runtime: a generator whose close() ends the HTTP stream
+        closed = False
 
-    # Cancelled stream terminates immediately
-    cancelled = False
+        def stream_raw(self, prompt, max_tokens=256):
+            try:
+                for tok in ["All ", "systems ", "are ", "operational ", "[ast_1]."]:
+                    yield tok
+            finally:
+                _Runtime.closed = True
 
-    def cancel_check():
-        return cancelled
+    store = AnswerStore()
+    done = pipeline.stream_answer("status?", evidence, scope, runtime=_Runtime(), answer_store=store)
+    assert list(done) == ["All ", "systems ", "are ", "operational ", "[ast_1]."]
+    assert done.state == "completed" and done.answer.text == "All systems are operational [ast_1]."
+    assert [r["answer_id"] for r in store.all()] == [done.answer.answer_id]
 
-    stream_tokens = []
-    for tok in pipeline.stream_answer("status?", evidence, scope, cancel_token=cancel_check):
-        stream_tokens.append(tok)
-        cancelled = True  # cancel after first token
+    flag = {"cancel": False}
+    _Runtime.closed = False
+    session = pipeline.stream_answer("status?", evidence, scope, cancel_token=lambda: flag["cancel"],
+                                     runtime=_Runtime(), answer_store=store)
+    got = []
+    for tok in session:
+        got.append(tok)
+        flag["cancel"] = True
+    assert got == ["All "] and session.state == "cancelled" and session.answer is None
+    assert _Runtime.closed and session.upstream_closed  # model stream closed: generation stopped
+    assert len(store.all()) == 1  # the cancelled partial answer was never saved
 
-    assert len(stream_tokens) == 1  # stopped after 1 token, never completed
+    # without a runtime the extractive cited answer is streamed (no canned text)
+    extractive = list(pipeline.stream_answer("status?", evidence, scope))
+    assert extractive == ["Finding 1 based on verified records [ast_1]. "]
 
 
 # ===========================================================================
