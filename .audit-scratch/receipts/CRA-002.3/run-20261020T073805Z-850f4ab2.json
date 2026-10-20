@@ -1,0 +1,64 @@
+{
+  "$schema": "https://eoip.enterprise.internal/schemas/verification-receipt-v3.json",
+  "receipt_id": "rcpt-2ecf5855-be72-4420-8b1b-f1f65aacafdd",
+  "requirement_clause": "CRA-002.3",
+  "state_claimed": "VERIFIED",
+  "profile": "P0",
+  "source_commit": "75bb57d16685c30576b4abe42e75df5d5c9a9898",
+  "source_tree_dirty": false,
+  "source_fingerprint": "f6455c0385bda66815dccd6d3c6c4700e8864007457ba9bf99319833bb2f7bb4",
+  "source_unchanged_during_run": true,
+  "artifact_digest": "c0dc68fe08adc165f1198875e028f57bdd75edb22a2e9f31080c321ee8659a21",
+  "artifact_path": "dist/eoip-1.0.0rc1-py3-none-any.whl",
+  "artifact_mtime": "2026-10-20T07:37:58.966120+00:00",
+  "runtime": {
+    "os": "Linux-6.12.94+-x86_64-with-glibc2.41",
+    "python_version": "3.11.17",
+    "backend": "memory-harness",
+    "engine": "",
+    "engine_version": ""
+  },
+  "fixture": {
+    "id": ""
+  },
+  "execution": {
+    "command": [
+      "pytest",
+      "tests/unit/test_plugin_manifest.py",
+      "--junitxml",
+      ".audit-scratch/evidence/CRA-002.3/run-20261020T073805Z-850f4ab2/junit.xml"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-20T07:38:05.082055+00:00",
+    "completed_at": "2026-10-20T07:38:06.004332+00:00"
+  },
+  "results": {
+    "tests_total": 7,
+    "tests_failed": 0,
+    "tests_errors": 0,
+    "tests_skipped": 0,
+    "tests_xfailed": 0,
+    "tests_passed": 7
+  },
+  "evidence_files": [
+    {
+      "path": ".audit-scratch/evidence/CRA-002.3/run-20261020T073805Z-850f4ab2/junit.xml",
+      "sha256": "eaa94d623c9e6070a72f3c7eea58b3fa14ecd7a28089e8d11f706d6a121ccbe2"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-002.3/run-20261020T073805Z-850f4ab2/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-002.3/run-20261020T073805Z-850f4ab2/stdout.txt",
+      "sha256": "423e67c8b9004e8a4d906d012675d9f0c6819a0d44d70583563bad12ec689a10"
+    }
+  ],
+  "verified_invariants": [],
+  "negative_cases": [],
+  "evidence_categories": {},
+  "limitations": [],
+  "producer": "antigravity-agent",
+  "reviewer": null,
+  "review_signature": null
+}

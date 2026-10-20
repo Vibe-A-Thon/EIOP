@@ -1,0 +1,2 @@
+ERROR: -o/--override-ini expects option=value style (got: 'utputFormat').
+

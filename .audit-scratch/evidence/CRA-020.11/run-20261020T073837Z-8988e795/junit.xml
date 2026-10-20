@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.088" timestamp="2026-10-20T07:38:37.933766+00:00" hostname="grok-bot-vm-501513166"><testcase classname="tests.semantic.test_shacl_benchmark" name="test_shacl_throughput_qualification" time="0.065" /></testsuite></testsuites>

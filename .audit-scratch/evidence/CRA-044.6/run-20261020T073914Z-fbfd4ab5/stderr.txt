@@ -1,0 +1,2 @@
+ERROR: found no collectors for /workspace/work/EIOP/tests/neural/test_learned_graph_intelligence.py::test_cra_044_6_core_encoders_rgcn_and_inductive_graphsage
+
