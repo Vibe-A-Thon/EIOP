@@ -13,7 +13,11 @@ from pydantic import BaseModel, ConfigDict, Field
 
 AUDIT_FILE = "gaps-audit-cp.md"
 PLAN_FILE = "gaps-audit-cp-implementation-plan.md"
-AUDIT_SHA256 = "affc9247d2383b02a4e9257e9bb85b9d20e81593f28c3e4d40d29323f17ed602"
+# FT-D07 reconcile (2026-10-20): a52d962 changed one line of gaps-audit-cp.md, the
+# REQ-CON-091 ticket link (ticket-20261004-001.md -> EOIP-engg-doc-pkg/tickets/...).
+# No requirement ID, status, priority or count changed (still 2603), so the new digest is
+# accepted. Previous digest: affc9247d2383b02a4e9257e9bb85b9d20e81593f28c3e4d40d29323f17ed602.
+AUDIT_SHA256 = "30db2d6ebd88c315777d5dc4b61f81b2481b98bebe2dc54d0e07219436ccf141"
 AUDIT_COUNT = 2603
 REGISTRY_BASELINE_FILE = "config/verification/cp-registry-baseline.json"
 REGISTRY_BASELINE_SHA256 = "55917afdef287ee9c167c4f164b90b7ff74217423e89ef378f6783c5bb58df94"
@@ -25,10 +29,21 @@ def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+# FT-D07: d771fd6 moved these specs into EOIP-engg-doc-pkg/ (git rename, 100% similar).
+# The audit and registry keep their original root-relative references; resolve them to
+# the new location instead of rewriting 2,000+ pinned references.
+RELOCATED_FILES = {
+    "KGF-MASTER-BACKLOG.md": "EOIP-engg-doc-pkg/KGF-MASTER-BACKLOG.md",
+    "eoip-phase4-2-requirements.md": "EOIP-engg-doc-pkg/eoip-phase4-2-requirements.md",
+}
+
+
 def local_file(root: Path, relative: str) -> Path:
     path = root / relative
     if Path(relative).is_absolute() or not path.resolve().is_relative_to(root.resolve()):
         raise ValueError(f"Reference must remain inside the project: {relative}")
+    if not path.is_file() and relative in RELOCATED_FILES:
+        path = root / RELOCATED_FILES[relative]
     if not path.is_file():
         raise ValueError(f"Missing referenced file: {relative}")
     return path

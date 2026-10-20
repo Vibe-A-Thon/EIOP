@@ -49,11 +49,7 @@ jobs:
           --graphtest-dir tests/graphtest
           --output-dir test-results/kgci
           --report test-results/kgci/kgci-report.json
-      # Pre-existing red: the CP audit digest no longer matches the pinned baseline
-      # ("explicitly reconcile the baseline before importing"). Reconciling is an
-      # owner decision, so this step reports but does not block (see PR notes).
-      - name: Validate CP audit registry (NON-BLOCKING until the audit baseline is reconciled)
-        continue-on-error: true
+      - name: Validate CP audit registry (FT-D07)
         run: python -m scripts.build_requirements_registry --check
       - name: Retain KGCI report
         if: always()
