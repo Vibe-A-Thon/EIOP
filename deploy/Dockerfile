@@ -2,8 +2,10 @@ FROM python:3.11.14-slim-bookworm AS runtime
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/opt/eoip:/opt/eoip/packages
 RUN apt-get update && apt-get install -y --no-install-recommends git curl && rm -rf /var/lib/apt/lists/*
 WORKDIR /opt/eoip
-COPY requirements.lock requirements-fileparse.lock ./
+COPY requirements.lock requirements-fileparse.lock requirements-numerics.lock ./
 RUN pip install --no-cache-dir -r requirements.lock -r requirements-fileparse.lock
+# FT-X03: numpy/scipy/scikit-learn are imported at API startup (processing router).
+RUN pip install --no-cache-dir --require-hashes --no-deps -r requirements-numerics.lock
 COPY pyproject.toml ./
 COPY LICENSE NOTICE LICENSING.md THIRD_PARTY_NOTICES.md ./
 COPY licenses ./licenses
@@ -25,7 +27,7 @@ CMD ["python", "-m", "uvicorn", "apps.api.main:create_app", "--factory", "--host
 
 FROM runtime AS test
 USER root
-RUN pip install --no-cache-dir '.[dev]'
+RUN pip install --no-cache-dir -c requirements.lock '.[test]'
 COPY tests ./tests
 USER eoip
 CMD ["python", "-m", "pytest", "-q"]

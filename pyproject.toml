@@ -70,6 +70,14 @@ enterprise = [
   "kubernetes>=29.0,<32.0",
   "redis>=5.0,<7.0",
 ]
+semantic = [
+  "pyshacl>=0.30,<1.0",
+]
+# FT-F06: one extra that installs everything the default test selection needs.
+# Documented install: python -m pip install -c requirements.lock -e ".[test]"
+test = [
+  "eoip[dev,numerics,fileparse,codeparse,reports,semantic]",
+]
 dev = [
   "hypothesis>=6.100,<7.0",
   "pytest>=8.0,<9.0",

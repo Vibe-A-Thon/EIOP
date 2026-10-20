@@ -54,7 +54,7 @@ Create the Python environment and install the development extra:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
+python -m pip install -c requirements.lock -e ".[test]"   # FT-F06: everything the default test selection needs, pinned by the lock
 ```
 
 Start the API with an explicit in-memory backend and a local-only token:

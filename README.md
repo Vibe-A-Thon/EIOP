@@ -65,7 +65,7 @@ Requirements: Python 3.11 or later, Node.js 22 for the web app, and Git. A virtu
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
+python -m pip install -c requirements.lock -e ".[test]"   # FT-F06: everything the default test selection needs, pinned by the lock
 npm --prefix apps/web ci
 ```
 
