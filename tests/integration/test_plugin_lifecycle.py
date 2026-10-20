@@ -96,15 +96,10 @@ def test_engine_replacement_without_altering_domain_contract(monkeypatch):
     assert "SPARQL" in caps["fuseki"]["query_languages"]
     assert "rdf" in caps["fuseki"]["models"]
 
-    # GraphStore domain protocol operations work on Fuseki adapter without altering API
-    fuseki_store = FusekiGraphStore()
-    v = fuseki_store.upsert_vertex("Entity", {"canonical_id": "ent:123", "name": "TestEntity"})
-    assert v["canonical_id"] == "ent:123"
+    # GraphStore domain operations on the Fuseki adapter execute on the server (round trips are covered live
+    # in tests/query/test_rdf_store_backends.py); with no server they fail loudly instead of faking success.
+    from eoip.graph.rdf_backend import RDFStoreError
 
-    v_retrieved = fuseki_store.get_vertex("ent:123")
-    assert v_retrieved is not None
-    assert v_retrieved["properties"]["name"] == "TestEntity"
-
-    e = fuseki_store.upsert_edge("connectsTo", "ent:123", "ent:456", {"weight": 1.0})
-    assert e["label"] == "connectsTo"
-    assert fuseki_store.count_edges() == 1
+    fuseki_store = FusekiGraphStore(endpoint_url="http://127.0.0.1:9/ds", timeout=2)
+    with pytest.raises(RDFStoreError):
+        fuseki_store.upsert_vertex("Entity", {"canonical_id": "ent:123", "name": "TestEntity"})

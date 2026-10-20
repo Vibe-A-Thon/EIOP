@@ -532,10 +532,8 @@ def test_cra_024_11_rdf_backend_ports():
     assert graphdb_store.dataset == "enterprise_repo"
     assert "enterprise_repo" in graphdb_store.query_url
 
-    # Local store CRUD contract operations
-    v = graphdb_store.upsert_vertex("Person", {"canonical_id": "urn:eoip:person:1", "name": "Alice"})
-    assert graphdb_store.get_vertex("urn:eoip:person:1") is not None
-    assert graphdb_store.count_vertices("Person") == 1
+    assert graphdb_store.update_url.endswith("/repositories/enterprise_repo/statements")
+    # CRUD round trips on live Fuseki and GraphDB Free: tests/query/test_rdf_store_backends.py (CI job rdf-stores)
 
 
 # ===========================================================================
