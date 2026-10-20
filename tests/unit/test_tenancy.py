@@ -38,6 +38,7 @@ def _layers(tag: str) -> dict[str, str]:
 # SR-TEN-001 context
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-TEN-001")
 class TestTenantContext:
     def test_resolve_ok(self):
         ctx = resolve_context(TENANT, PRINCIPAL)
@@ -68,6 +69,7 @@ class TestTenantContext:
 # SR-TEN-002/003 isolation
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-TEN-002", "SR-TEN-003")
 class TestIsolation:
     def test_catalog_covers_three_models(self):
         models = {m["model"] for m in model_catalog()}
@@ -115,6 +117,7 @@ class TestIsolation:
 # SR-TEN-006 quotas
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-TEN-006")
 class TestQuotas:
     def test_counter_consume_refund(self):
         qm = QuotaManager()
@@ -181,6 +184,7 @@ class TestQuotas:
 # SR-TEN-007 lifecycle
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-TEN-007")
 class TestLifecycle:
     def _lifecycle(self):
         return TenantLifecycle()
@@ -262,6 +266,7 @@ class TestLifecycle:
 # SR-TEN-009 metering
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-TEN-009")
 class TestMetering:
     def test_append_chain(self):
         log = MeteringLog()

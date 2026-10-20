@@ -90,6 +90,7 @@ def test_cra_032_3_and_8_decoupled_audit_and_resilience(scope):
 # CRA-032.4: Sensitive telemetry redaction
 # ===========================================================================
 
+@pytest.mark.req("CRA-032")
 def test_cra_032_4_sensitive_telemetry_redaction():
     raw_payload = {
         "auth_header": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.secret",
@@ -113,6 +114,7 @@ def test_cra_032_4_sensitive_telemetry_redaction():
 # CRA-032.5: Operational truth: UNKNOWN rendering
 # ===========================================================================
 
+@pytest.mark.req("CRA-032")
 def test_cra_032_5_operational_truth_unknown():
     now = time.time()
 
@@ -133,6 +135,7 @@ def test_cra_032_5_operational_truth_unknown():
 # CRA-032.6: Prometheus metrics suite with bounded labels
 # ===========================================================================
 
+@pytest.mark.req("CRA-032")
 def test_cra_032_6_prometheus_metrics_suite():
     counter = Counter("eoip_http_requests_total", "Total incoming HTTP requests", label_names=("method", "status"))
     counter.inc(1.0, method="GET", status="200")
@@ -148,6 +151,7 @@ def test_cra_032_6_prometheus_metrics_suite():
 # CRA-032.7: Alert rules linked to runbooks
 # ===========================================================================
 
+@pytest.mark.req("CRA-032")
 def test_cra_032_7_alert_rules_linked_to_runbooks():
     rule = AlertRule(
         alert_name="GraphIngestionLagHigh",
@@ -170,6 +174,7 @@ def test_cra_032_7_alert_rules_linked_to_runbooks():
 # CRA-032.A: Acceptance Gate
 # ===========================================================================
 
+@pytest.mark.req("CRA-032")
 def test_cra_032_a_acceptance_gate(scope):
     sink = ObservabilitySink()
     ctx = TraceContext.from_headers(

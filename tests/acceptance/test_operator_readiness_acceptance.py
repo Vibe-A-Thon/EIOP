@@ -20,6 +20,7 @@ from eoip.ops.readiness import (
 # CRA-038.1: Service responsibility matrix and severity definitions
 # ===========================================================================
 
+@pytest.mark.req("CRA-038")
 def test_cra_038_1_service_responsibility_matrix():
     boundaries = ResponsibilityRegistry.get_boundaries()
     owners = {b["owner"] for b in boundaries}
@@ -44,6 +45,7 @@ def test_cra_038_1_service_responsibility_matrix():
 # CRA-038.2: Documented incident, scaling, upgrade, and recovery playbooks
 # ===========================================================================
 
+@pytest.mark.req("CRA-038")
 def test_cra_038_2_documented_incident_playbooks():
     # Verify presence of diagnostic prerequisites, stop conditions, rollback procedures
     rb = OperationalPlaybookRegistry.get_runbook("ingestion_backlog")
@@ -58,6 +60,7 @@ def test_cra_038_2_documented_incident_playbooks():
 # CRA-038.3: 99.9% availability and initial response as proposals
 # ===========================================================================
 
+@pytest.mark.req("CRA-038")
 def test_cra_038_3_availability_and_response_proposals():
     proposal = SLAPerformanceProposal.CRAR_PROPOSAL
     assert proposal["status"] == "PROPOSED_PENDING_H08"
@@ -70,6 +73,7 @@ def test_cra_038_3_availability_and_response_proposals():
 # CRA-038.4: Redacted support bundles with consent and retention
 # ===========================================================================
 
+@pytest.mark.req("CRA-038")
 def test_cra_038_4_redacted_support_bundles_with_consent():
     engine = SupportBundleEngine()
 
@@ -97,6 +101,7 @@ def test_cra_038_4_redacted_support_bundles_with_consent():
 # CRA-038.5: Rehearsal with external operator recording observations
 # ===========================================================================
 
+@pytest.mark.req("CRA-038")
 def test_cra_038_5_incident_rehearsal_with_external_operator():
     res = IncidentRehearsalRunner.rehearse_credential_compromise("token-compromised-404")
     assert res["status"] == "RECOVERED"
@@ -109,6 +114,7 @@ def test_cra_038_5_incident_rehearsal_with_external_operator():
 # CRA-038.6: All 7 required runbooks
 # ===========================================================================
 
+@pytest.mark.req("CRA-038")
 def test_cra_038_6_all_seven_mandatory_runbooks_registered():
     required_runbooks = {
         "ingestion_backlog",
@@ -132,6 +138,7 @@ def test_cra_038_6_all_seven_mandatory_runbooks_registered():
 # CRA-038.7: eoip-admin support-bundle tool producing encrypted bundle
 # ===========================================================================
 
+@pytest.mark.req("CRA-038")
 def test_cra_038_7_support_bundle_cli_engine():
     engine = SupportBundleEngine(signing_secret=b"TEST-SIGNING-SECRET-32-BYTES-MIN")
     res = engine.create_support_bundle(operator_consent=True, operator_id="operator-dev")
@@ -146,6 +153,7 @@ def test_cra_038_7_support_bundle_cli_engine():
 # CRA-038.8: Severity response proposals side-by-side (CRAr vs AGG for H-08)
 # ===========================================================================
 
+@pytest.mark.req("CRA-038")
 def test_cra_038_8_severity_response_side_by_side_proposals():
     comparison = SLAPerformanceProposal.get_side_by_side_comparison()
     assert comparison["decision_record"] == "Decision H-08 / Conflict X-08"
@@ -168,6 +176,7 @@ def test_cra_038_8_severity_response_side_by_side_proposals():
 # CRA-038.A: Integrated Operator Readiness Acceptance
 # ===========================================================================
 
+@pytest.mark.req("CRA-038")
 def test_cra_038_a_operator_readiness_acceptance_integrated():
     # 1. Real drill of credential compromise
     comp_drill = IncidentRehearsalRunner.rehearse_credential_compromise("token-leak-001")

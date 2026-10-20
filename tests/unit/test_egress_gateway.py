@@ -67,6 +67,7 @@ def enable(gw, admin="admin@tenant.example"):
 # SR-LLM-010/017 — disabled by default, admin enable with consent + audit
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-010", "SR-LLM-017")
 class TestEnablement:
     def test_disabled_by_default_denies(self):
         gw = make_gateway()
@@ -120,6 +121,7 @@ class TestEnablement:
 # SR-LLM-011 — policy matrix: most-restrictive-wins, default deny
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-011")
 class TestPolicy:
     def test_default_deny_s0(self):
         gw = make_gateway()
@@ -179,6 +181,7 @@ class TestPolicy:
 # SR-LLM-011/015 — transforms
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-011", "SR-LLM-015")
 class TestTransforms:
     payload = {"name": "Alice", "age": 34,
                "notes": ["call Alice", "review"], "meta": {"dept": "eng"}}
@@ -229,6 +232,7 @@ class TestTransforms:
 # SR-LLM-012 — dry-run preview
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-012")
 class TestDryRun:
     def test_dry_run_returns_exact_payload_no_transport(self):
         sent = []
@@ -268,6 +272,7 @@ class TestDryRun:
 # SR-LLM-013 — immutable manifests + report
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-013")
 class TestManifest:
     @pytest.mark.req("SR-LLM-013")
     def test_manifest_records_endpoint_fields_and_vault_tokens_at_s4(self):
@@ -336,6 +341,7 @@ class TestManifest:
 # SR-LLM-014 — DLP + canaries
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-014")
 class TestDlpCanaries:
     def test_dlp_scan_detects_pii_and_secrets(self):
         scanner = DlpScanner(dictionary_terms=["ACME-INTERNAL"])
@@ -387,6 +393,7 @@ class TestDlpCanaries:
 # SR-LLM-016 — kill switch + budgets + anomaly
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-016")
 class TestKillSwitchBudgets:
     @pytest.mark.req("SR-LLM-016")
     def test_platform_kill_switch_stops_every_tenant_gateway(self):
@@ -472,6 +479,7 @@ class TestKillSwitchBudgets:
 # SR-LLM-015 — response re-identification
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-015")
 class TestVault:
     def test_response_tokens_reidentified(self):
         gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S4)])
@@ -492,6 +500,7 @@ class TestVault:
 # ---------------------------------------------------------------------------
 
 class TestGatewayBehavior:
+    @pytest.mark.req("SR-LLM-019")
     def test_fallback_notice_on_denial(self):
         gw = make_gateway()
         enable(gw)
@@ -500,6 +509,7 @@ class TestGatewayBehavior:
                     user_id="u1", role="analyst", data_classes=["D2"])
         assert "local model" in exc_info.value.fallback_notice
 
+    @pytest.mark.req("SR-LLM-020")
     def test_region_pin_violation_denied(self):
         gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S7)])
         enable(gw)
@@ -511,6 +521,7 @@ class TestGatewayBehavior:
                      dry_run=True)
         assert ok["manifest"].level == 7
 
+    @pytest.mark.req("SR-LLM-018")
     def test_endpoint_kinds_cover_all_egress(self):
         # SR-LLM-018: embeddings/OCR/speech/rerank/telemetry ride the same path
         rules = [PolicyRule(rule_id="r1", max_level=SharingLevel.S1)]
@@ -525,6 +536,7 @@ class TestGatewayBehavior:
                              role="analyst", data_classes=["D1"], dry_run=True)
             assert result["manifest"].level == 1
 
+    @pytest.mark.req("SR-LLM-010")
     def test_unknown_endpoint_raises(self):
         gw = make_gateway()
         with pytest.raises(KeyError):
@@ -536,6 +548,7 @@ class TestGatewayBehavior:
 # SR-CON-010/011 — Service Provider plugins + Data-Flow manifest
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-CON-010", "SR-CON-011")
 class TestProviderPlugins:
     def _manifest(self, crosses=True):
         return ServiceProviderManifest(
@@ -588,6 +601,7 @@ class TestProviderPlugins:
 # Router smoke test (lazy FastAPI import)
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-010")
 class TestRouter:
     def test_build_router_routes(self):
         fastapi = pytest.importorskip("fastapi")

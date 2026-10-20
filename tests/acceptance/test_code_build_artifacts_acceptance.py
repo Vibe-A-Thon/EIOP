@@ -25,6 +25,7 @@ from eoip.mapping.cml import parse_and_compile_cml
 # ---------------------------------------------------------------------------
 # CRA-007.1: Qualify GitHub/GitLab; preserve immutable commits vs moving branches
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-007")
 def test_cra_007_1_git_identity_immutable_commits_vs_moving_branches():
     # 1. GitHub connector instance
     gh = GitHubConnector(
@@ -71,6 +72,7 @@ def test_cra_007_1_git_identity_immutable_commits_vs_moving_branches():
 # ---------------------------------------------------------------------------
 # CRA-007.2: Signed webhook verification, replay protection, and rate limits
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-007")
 def test_cra_007_2_signed_webhooks_and_replay_protection():
     secret = "webhook-hmac-secret-key-2026"
     payload = b'{"action":"opened","repository":{"full_name":"acme/core-platform"}}'
@@ -105,6 +107,7 @@ def test_cra_007_2_signed_webhooks_and_replay_protection():
 # ---------------------------------------------------------------------------
 # CRA-007.3: Artifactory qualification, SHA-256 identity, and credential hygiene
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-007")
 def test_cra_007_3_artifactory_qualification_and_credential_scrubbing():
     conn = ArtifactoryConnector(
         source_id="art-01",
@@ -148,6 +151,7 @@ def test_cra_007_3_artifactory_qualification_and_credential_scrubbing():
 # ---------------------------------------------------------------------------
 # CRA-007.4: API Portal as a configurable provider family
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-007")
 def test_cra_007_4_api_portal_family_and_openapi_ingestion():
     # 1. Candidate profiles verified
     assert "kong" in CANDIDATE_PROFILES
@@ -171,6 +175,7 @@ def test_cra_007_4_api_portal_family_and_openapi_ingestion():
 # ---------------------------------------------------------------------------
 # CRA-007.5: Reject unsupported binaries and untrusted executable content
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-007")
 def test_cra_007_5_provenance_and_executable_binary_rejection():
     # DOS/Windows executable rejected
     with pytest.raises(ValueError, match="unsupported executable binary content rejected"):
@@ -188,6 +193,7 @@ def test_cra_007_5_provenance_and_executable_binary_rejection():
 # ---------------------------------------------------------------------------
 # CRA-007.6: GitHub & GitLab relations and repository visibility in acl_vector
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-007")
 def test_cra_007_6_github_gitlab_relations_and_acl_vector():
     # 1. Compile CML mapping
     cml_path = Path("packages/eoip/mapping/cml/github.cml")
@@ -223,6 +229,7 @@ def test_cra_007_6_github_gitlab_relations_and_acl_vector():
 # ---------------------------------------------------------------------------
 # CRA-007.7: Cross-system issue references extraction and proposal linking
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-007")
 def test_cra_007_7_cross_system_issue_reference_proposals():
     commit_msg = "PROJ-101: Fix memory leak in buffer pool; also relates to UNKNOWN-404 and SEC_OPS-99."
 
@@ -253,6 +260,7 @@ def test_cra_007_7_cross_system_issue_reference_proposals():
 # ---------------------------------------------------------------------------
 # CRA-007.8: Artifactory AQL and builtFromCommit link
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-007")
 def test_cra_007_8_artifactory_aql_and_built_from_commit():
     # 1. Compile CML mapping
     cml_path = Path("packages/eoip/mapping/cml/artifactory.cml")
@@ -290,6 +298,7 @@ def test_cra_007_8_artifactory_aql_and_built_from_commit():
 # ---------------------------------------------------------------------------
 # CRA-007.9: API Portal unqualified state and proposed vocabulary
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-007")
 def test_cra_007_9_api_portal_unqualified_status_and_vocabulary():
     # 1. Compile CML mapping
     cml_path = Path("packages/eoip/mapping/cml/api_portal.cml")
@@ -310,6 +319,7 @@ def test_cra_007_9_api_portal_unqualified_status_and_vocabulary():
 # ---------------------------------------------------------------------------
 # CRA-007.A: Acceptance Gate: Multi-hop Artifactory -> Commit -> Jira ticket
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-007")
 def test_cra_007_a_acceptance_gate():
     # Clause verification:
     # 1. Multi-hop query: Artifactory binary -> Git commit -> Jira ticket with exact revision evidence

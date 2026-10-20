@@ -30,6 +30,7 @@ from eoip.capabilities.model import CapabilityUnavailableError
 # CRA-043.10: Platform matrix qualification (CPU execution, no GPU required)
 # ===========================================================================
 
+@pytest.mark.req("CRA-043")
 def test_cra_043_10_platform_matrix():
     system = platform.system().lower()
     machine = platform.machine().lower()
@@ -49,6 +50,7 @@ def test_cra_043_10_platform_matrix():
 # CRA-043.A: Full Acceptance Gate
 # ===========================================================================
 
+@pytest.mark.req("CRA-043")
 def test_cra_043_a_acceptance_gate():
     # 1. Determinism reproducibility: two runs with same seed reproduce within 1e-4
     seed_everything(12345)

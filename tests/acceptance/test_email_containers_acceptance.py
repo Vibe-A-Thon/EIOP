@@ -27,6 +27,7 @@ def parse_doc(content: bytes, name: str, **options):
 # ---------------------------------------------------------------------------
 # CRA-013.1: EML/MIME parsing, stable identity, MSG licensing gate (X-16)
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-013")
 def test_cra_013_1_eml_identity_and_msg_licensing_gate():
     msg = EmailMessage()
     msg["Message-ID"] = "<unique-msg-12345@domain.example>"
@@ -54,6 +55,7 @@ def test_cra_013_1_eml_identity_and_msg_licensing_gate():
 # ---------------------------------------------------------------------------
 # CRA-013.2: Parent-child relationships, hashes, locators, inherited ACL/retention
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-013")
 def test_cra_013_2_parent_child_provenance_and_inherited_governance():
     parent_msg = EmailMessage()
     parent_msg["Subject"] = "Confidential Litigation Hold"
@@ -94,6 +96,7 @@ def test_cra_013_2_parent_child_provenance_and_inherited_governance():
 # ---------------------------------------------------------------------------
 # CRA-013.3: Container limits, traversal rejection, and path safety
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-013")
 def test_cra_013_3_archive_limits_and_path_safety():
     # 1. Path traversal rejected: ..
     traversal_zip = io.BytesIO()
@@ -132,6 +135,7 @@ def test_cra_013_3_archive_limits_and_path_safety():
 # ---------------------------------------------------------------------------
 # CRA-013.4: Encrypted attachments and malformed MIME diagnostics
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-013")
 def test_cra_013_4_encrypted_and_malformed_diagnostics():
     # 1. Encrypted zip rejection
     encrypted_zip = io.BytesIO()
@@ -161,6 +165,7 @@ def test_cra_013_4_encrypted_and_malformed_diagnostics():
 # ---------------------------------------------------------------------------
 # CRA-013.5: Remote images and active HTML execution disabled
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-013")
 def test_cra_013_5_sanitized_email_html_no_active_script():
     msg = EmailMessage()
     msg["Subject"] = "Newsletter"
@@ -194,6 +199,7 @@ def test_cra_013_5_sanitized_email_html_no_active_script():
 # ---------------------------------------------------------------------------
 # CRA-013.6: EML/MIME and MBOX native parsing
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-013")
 def test_cra_013_6_mbox_native_mailbox_parsing(tmp_path):
     mbox_path = tmp_path / "inbox.mbox"
     mbox = mailbox.mbox(str(mbox_path))
@@ -227,6 +233,7 @@ def test_cra_013_6_mbox_native_mailbox_parsing(tmp_path):
 # ---------------------------------------------------------------------------
 # CRA-013.7: Header extraction completeness
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-013")
 def test_cra_013_7_header_extraction_completeness():
     msg = EmailMessage()
     msg["From"] = "alice@corp.example"
@@ -256,6 +263,7 @@ def test_cra_013_7_header_extraction_completeness():
 # ---------------------------------------------------------------------------
 # CRA-013.8: Combined archive limits (ZIP, TAR, GZ, BZ2) and 100:1 ratio limit
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-013")
 def test_cra_013_8_archive_formats_and_compression_ratio_limit():
     # 1. BZ2 archive support
     raw_text = b"Actual compressed BZ2 content with data lines.\n" * 10
@@ -290,6 +298,7 @@ def test_cra_013_8_archive_formats_and_compression_ratio_limit():
 # ---------------------------------------------------------------------------
 # CRA-013.A: Full 3-level hierarchy: EML -> ZIP -> (PDF, XLSX) with inherited ACL
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-013")
 def test_cra_013_a_three_level_provenance_and_deletion_hold_cascade():
     openpyxl = pytest.importorskip("openpyxl")
     

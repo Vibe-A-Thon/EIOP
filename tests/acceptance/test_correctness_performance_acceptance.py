@@ -38,6 +38,7 @@ def populated_graph():
 # CRA-036.1: Workload harness, manifests, and artifact pinning
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_1_workload_harness_and_manifest():
     manifest = WorkloadManifest.create_default(tier=ScaleTier.P0, seed=1337)
 
@@ -60,6 +61,7 @@ def test_cra_036_1_workload_harness_and_manifest():
 # CRA-036.2: Multi-tier scale qualification & storage accounting (P0, P1, P2)
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_2_multi_tier_scale_and_storage_accounting():
     # Verify P0, P1, P2 separate accounting
     tiers = [ScaleTier.P0, ScaleTier.P1, ScaleTier.P2]
@@ -89,6 +91,7 @@ def test_cra_036_2_multi_tier_scale_and_storage_accounting():
 # CRA-036.3: Statistical latency percentiles (p50/p95/p99), throughput & variance
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_3_statistical_latency_percentiles_and_throughput():
     timings = [2.0, 3.5, 4.1, 5.0, 5.2, 5.8, 6.1, 7.0, 8.5, 12.0]
     stats = compute_latencies(timings)
@@ -106,6 +109,7 @@ def test_cra_036_3_statistical_latency_percentiles_and_throughput():
 # CRA-036.4: Enforce binding profile targets without error suppression
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_4_binding_profile_targets_enforcement():
     manifest_p0 = WorkloadManifest.create_default(tier=ScaleTier.P0)
     engine_p0 = QualificationEngine(manifest_p0)
@@ -125,6 +129,7 @@ def test_cra_036_4_binding_profile_targets_enforcement():
 # CRA-036.5: Independent oracle verification and multi-trial repeatability
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_5_independent_oracle_verification(populated_graph):
     manifest = WorkloadManifest.create_default(tier=ScaleTier.P0)
     engine = QualificationEngine(manifest)
@@ -163,6 +168,7 @@ def test_cra_036_5_independent_oracle_verification(populated_graph):
 # CRA-036.6: Parser/OCR/linking/RAG quality evaluation with declared thresholds
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_6_quality_benchmarks_and_thresholds():
     # Declarative quality thresholds per task
     thresholds = {
@@ -188,6 +194,7 @@ def test_cra_036_6_quality_benchmarks_and_thresholds():
 # CRA-036.7: Benchmark suites under tests/benchmarks/ontology/ (ONT-020)
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_7_ontology_benchmark_suites_structure():
     # Standard benchmark suites defined under ONT-020
     suites = {
@@ -209,6 +216,7 @@ def test_cra_036_7_ontology_benchmark_suites_structure():
 # CRA-036.8: Stretch objectives separation per Decision H-01
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_8_stretch_objectives_separated_from_binding():
     manifest = WorkloadManifest.create_default(tier=ScaleTier.P2)
     engine = QualificationEngine(manifest)
@@ -229,6 +237,7 @@ def test_cra_036_8_stretch_objectives_separated_from_binding():
 # CRA-036.9: Sustained load stability & CI latency regression gate (> 10%)
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_9_regression_gate_and_stability():
     manifest = WorkloadManifest.create_default(tier=ScaleTier.P0)
     engine = QualificationEngine(manifest)
@@ -248,6 +257,7 @@ def test_cra_036_9_regression_gate_and_stability():
 # CRA-036.10: Learned model qualification with 5 baselines and calibration error
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_10_learned_model_baselines_and_ece():
     manifest = WorkloadManifest.create_default(tier=ScaleTier.P0)
     engine = QualificationEngine(manifest)
@@ -294,6 +304,7 @@ def test_cra_036_10_learned_model_baselines_and_ece():
 # CRA-036.A: Integrated Performance & Scale Qualification Acceptance
 # ===========================================================================
 
+@pytest.mark.req("CRA-036")
 def test_cra_036_a_performance_qualification_integrated(populated_graph):
     # 1. Initialize workload manifest and qualification engine
     manifest = WorkloadManifest.create_default(tier=ScaleTier.P0, seed=2026)

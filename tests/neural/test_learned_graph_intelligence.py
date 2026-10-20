@@ -75,6 +75,7 @@ def scope():
 # CRA-044.2: Graph planes mapping and policy-epoch bound snapshots
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_2_graph_planes_and_levels(scope):
     coord = GraphPlaneCoordinator()
 
@@ -115,6 +116,7 @@ def test_cra_044_2_graph_planes_and_levels(scope):
 # CRA-044.4: Snapshot and split discipline
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_4_snapshots_and_temporal_splits():
     nodes = [{"id": "svc_auth", "type": "Service"}, {"id": "db_users", "type": "Database"}]
     edges = [
@@ -153,6 +155,7 @@ def test_cra_044_4_snapshots_and_temporal_splits():
 # CRA-044.5: Evaluation discipline and 5 baselines
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_5_evaluation_discipline_and_baselines():
     harness = ModelEvaluationHarness()
     y_true = [1, 1, 1, 0, 0, 0, 1, 0, 1, 0]
@@ -191,6 +194,7 @@ def test_cra_044_5_evaluation_discipline_and_baselines():
 # CRA-044.6: Core encoders: R-GCN and inductive GraphSAGE
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_6_core_encoders_rgcn_and_inductive_graphsage():
     # 1. R-GCN with basis decomposition
     rgcn = RGCNModel(in_features=8, hidden_dim=32, out_dim=16, num_relations=4, num_bases=4)
@@ -218,6 +222,7 @@ def test_cra_044_6_core_encoders_rgcn_and_inductive_graphsage():
 # CRA-044.7: Bake-off architectures
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_7_bakeoff_architectures():
     # 1. RGAT with retrievable edge attention weights
     rgat = RGATModel(in_features=4, hidden_dim=8, num_relations=3)
@@ -252,6 +257,7 @@ def test_cra_044_7_bakeoff_architectures():
 # CRA-044.8: Adversarial discriminator and research sandbox
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_8_discriminator_and_sandbox():
     disc = AdversarialPlausibilityDiscriminator(threshold=0.50)
 
@@ -303,6 +309,7 @@ def test_cra_044_8_discriminator_and_sandbox():
 # CRA-044.9: Model lifecycle, lineage, and rollback (< 60s)
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_9_lifecycle_lineage_and_rollback():
     mgr = NeuralModelLifecycleManager()
 
@@ -348,6 +355,7 @@ def test_cra_044_9_lifecycle_lineage_and_rollback():
 # CRA-044.10: Explainability and faithfulness probe (score drops >= 50%)
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_10_explainability_faithfulness():
     explainer = NeuralExplainer()
 
@@ -383,6 +391,7 @@ def test_cra_044_10_explainability_faithfulness():
 # CRA-044.11: Incremental k-hop invalidation & failure mode guards
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_11_failure_mode_guards():
     # 1. k-hop invalidation
     adj = {
@@ -412,6 +421,7 @@ def test_cra_044_11_failure_mode_guards():
 # CRA-044.12: Knowledge model entry as proposed with ModelLineage
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_12_knowledge_model_entry():
     lineage = ModelLineage(
         model_id="rgcn-link-predictor",
@@ -445,6 +455,7 @@ def test_cra_044_12_knowledge_model_entry():
 # CRA-044.A: Full Acceptance Gate
 # ===========================================================================
 
+@pytest.mark.req("CRA-044")
 def test_cra_044_a_acceptance_gate(scope):
     # 1. Graph planes coordinated
     coord = GraphPlaneCoordinator()

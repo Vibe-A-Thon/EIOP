@@ -27,6 +27,7 @@ from eoip.intelligence_eng.engine import AutonomyLevel
 # ---------------------------------------------------------------------------
 # CRA-027.1: Declarative action types and argument schemas
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-027")
 def test_cra_027_1_declarative_action_types():
     engine = ActionEngine(write_back_enabled=True)
     custom_type = ActionType(
@@ -51,6 +52,7 @@ def test_cra_027_1_declarative_action_types():
 # ---------------------------------------------------------------------------
 # CRA-027.2: Default read-only and write-back disablement (Decision H-03)
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-027")
 def test_cra_027_2_read_only_default_and_write_back_disablement():
     # By default, write_back_enabled is False (CRA-027.2 / Decision H-03)
     engine = ActionEngine(write_back_enabled=False)
@@ -83,6 +85,7 @@ def test_cra_027_2_read_only_default_and_write_back_disablement():
 # ---------------------------------------------------------------------------
 # CRA-027.3: Digest-bound approvals and re-authorization before execution
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-027")
 def test_cra_027_3_digest_bound_approval_and_reauthorization():
     engine = ActionEngine(write_back_enabled=True)
     intent = ActionIntent(
@@ -117,6 +120,7 @@ def test_cra_027_3_digest_bound_approval_and_reauthorization():
 # ---------------------------------------------------------------------------
 # CRA-027.4: Journals, idempotency, and unknown outcome on remote timeout
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-027")
 def test_cra_027_4_journals_idempotency_and_unknown_outcome_on_remote_timeout():
     engine = ActionEngine(write_back_enabled=True)
     intent = ActionIntent(
@@ -150,6 +154,7 @@ def test_cra_027_4_journals_idempotency_and_unknown_outcome_on_remote_timeout():
 # ---------------------------------------------------------------------------
 # CRA-027.5: Dry-run impact preview and cancellation before commit
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-027")
 def test_cra_027_5_dry_run_preview_and_cancellation_before_commit():
     engine = ActionEngine(write_back_enabled=True)
 
@@ -186,6 +191,7 @@ def test_cra_027_5_dry_run_preview_and_cancellation_before_commit():
 # ---------------------------------------------------------------------------
 # CRA-027.6: Complete ActionIntent lifecycle
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-027")
 def test_cra_027_6_action_intent_lifecycle():
     engine = ActionEngine(write_back_enabled=True)
     intent = ActionIntent(
@@ -218,6 +224,7 @@ def test_cra_027_6_action_intent_lifecycle():
 # ---------------------------------------------------------------------------
 # CRA-027.7: SHACL action shapes and AutonomyLevel HCTL requirement
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-027")
 def test_cra_027_7_shacl_action_shapes_and_autonomy_level_hctl():
     engine = ActionEngine(write_back_enabled=True)
     intent = ActionIntent(
@@ -244,6 +251,7 @@ def test_cra_027_7_shacl_action_shapes_and_autonomy_level_hctl():
 # ---------------------------------------------------------------------------
 # CRA-027.8: Mandatory Idempotency-Key (16-128 chars) and 5-min expiry
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-027")
 def test_cra_027_8_mandatory_idempotency_key_and_expiry():
     engine = ActionEngine(write_back_enabled=True)
 
@@ -282,6 +290,7 @@ def test_cra_027_8_mandatory_idempotency_key_and_expiry():
 # ---------------------------------------------------------------------------
 # CRA-027.9: Canonical routes and OCA aliases
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-027")
 def test_cra_027_9_canonical_routes_and_oca_aliases():
     # FT-D15: mount the router on an app; current FastAPI needs the app middleware stack.
     app = FastAPI()
@@ -316,6 +325,7 @@ def test_cra_027_9_canonical_routes_and_oca_aliases():
 # ---------------------------------------------------------------------------
 # CRA-027.A: Acceptance Gate: Vendor read-back verification and timeout recovery
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-027")
 def test_cra_027_a_vendor_read_back_verification_and_timeout_recovery():
     """Demonstrates exactly one intended effect through vendor read-back, idempotency, and audit."""
     engine = ActionEngine(write_back_enabled=True)

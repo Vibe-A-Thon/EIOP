@@ -34,6 +34,7 @@ def populated_store():
 # CRA-033.1: Authoritative state inventory
 # ===========================================================================
 
+@pytest.mark.req("CRA-033")
 def test_cra_033_1_authoritative_state_inventory(populated_store):
     inv = AuthoritativeStateInventory.capture(
         populated_store,
@@ -66,6 +67,7 @@ def test_cra_033_1_authoritative_state_inventory(populated_store):
 # CRA-033.2: Consistent encrypted backups & immutability
 # ===========================================================================
 
+@pytest.mark.req("CRA-033")
 def test_cra_033_2_consistent_encrypted_backups_and_immutability(populated_store):
     engine = EnterpriseBackupEngine(kms_key="test-key-2026")
     snap = engine.create_snapshot(populated_store, encrypt=True, immutable=True, retention_days=45)
@@ -83,6 +85,7 @@ def test_cra_033_2_consistent_encrypted_backups_and_immutability(populated_store
 # CRA-033.3: Clean environment restore & projection rebuild
 # ===========================================================================
 
+@pytest.mark.req("CRA-033")
 def test_cra_033_3_clean_environment_restore_and_projection_rebuild(populated_store):
     backup_engine = EnterpriseBackupEngine(kms_key="test-key-2026")
     snap = backup_engine.create_snapshot(populated_store, encrypt=True)
@@ -112,6 +115,7 @@ def test_cra_033_3_clean_environment_restore_and_projection_rebuild(populated_st
 # CRA-033.4: Measured P1 RPO & RTO bounds
 # ===========================================================================
 
+@pytest.mark.req("CRA-033")
 def test_cra_033_4_measured_rpo_and_rto_bounds():
     now = time.time()
     # 15 seconds transaction lag before simulated crash
@@ -140,6 +144,7 @@ def test_cra_033_4_measured_rpo_and_rto_bounds():
 # CRA-033.5: Failure rehearsals: corrupt snapshot, lost key, writer fencing, tombstones
 # ===========================================================================
 
+@pytest.mark.req("CRA-033")
 def test_cra_033_5_failure_rehearsals_corrupt_key_fencing_tombstones(populated_store):
     backup_engine = EnterpriseBackupEngine(kms_key="correct-key")
     snap = backup_engine.create_snapshot(populated_store, encrypt=True)
@@ -181,6 +186,7 @@ def test_cra_033_5_failure_rehearsals_corrupt_key_fencing_tombstones(populated_s
 # CRA-033.6: Point-in-time recovery (PITR) with WAL journal replay
 # ===========================================================================
 
+@pytest.mark.req("CRA-033")
 def test_cra_033_6_point_in_time_recovery_with_wal_replay(populated_store):
     now = time.time()
     backup_engine = EnterpriseBackupEngine(kms_key="pitr-key")
@@ -208,6 +214,7 @@ def test_cra_033_6_point_in_time_recovery_with_wal_replay(populated_store):
 # CRA-033.7: P1 RPO/RTO vs P2 500M-triple qualification target (Decision X-09)
 # ===========================================================================
 
+@pytest.mark.req("CRA-033")
 def test_cra_033_7_p1_rpo_rto_vs_p2_500m_triple_qualification():
     report = DisasterRecoveryEvaluator.evaluate(
         last_durable_tx_time=100.0,
@@ -229,6 +236,7 @@ def test_cra_033_7_p1_rpo_rto_vs_p2_500m_triple_qualification():
 # CRA-033.A: Timed independent restore and adversarial authorization check
 # ===========================================================================
 
+@pytest.mark.req("CRA-033")
 def test_cra_033_a_timed_independent_restore_and_adversarial_auth_check(populated_store):
     start_time = time.perf_counter()
 

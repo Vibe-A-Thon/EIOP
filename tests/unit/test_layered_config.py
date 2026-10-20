@@ -50,6 +50,7 @@ def _ttl_def(**kwargs) -> SettingDef:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.req("SR-CFG-001")
 @pytest.mark.req("H-05")
 def test_layers_precedence_higher_wins() -> None:
     store = _store()
@@ -60,6 +61,7 @@ def test_layers_precedence_higher_wins() -> None:
     assert eff.layer and eff.layer.kind == "tenant"
 
 
+@pytest.mark.req("SR-CFG-001")
 def test_user_layer_overrides_tenant() -> None:
     store = _store()
     store.register(_ttl_def())
@@ -70,6 +72,7 @@ def test_user_layer_overrides_tenant() -> None:
     assert eff.layer and eff.layer.kind == "user"
 
 
+@pytest.mark.req("SR-CFG-001")
 def test_schema_validation_rejects_bad_value() -> None:
     store = _store()
     store.register(_ttl_def())
@@ -79,6 +82,7 @@ def test_schema_validation_rejects_bad_value() -> None:
         store.set("security.session.ttl_seconds", LayerRef(kind="tenant", instance="acme"), 10)
 
 
+@pytest.mark.req("SR-CFG-001")
 def test_versioning_and_audit_trail() -> None:
     store = _store()
     store.register(_ttl_def())
@@ -94,6 +98,7 @@ def test_versioning_and_audit_trail() -> None:
     assert prev is not None and prev.value == 7200
 
 
+@pytest.mark.req("SR-CFG-001")
 def test_persistence_roundtrip() -> None:
     from eoip.config.layered import MemoryPersistence
 
@@ -111,6 +116,7 @@ def test_persistence_roundtrip() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.req("SR-CFG-002")
 def test_ceiling_at_partner_blocks_looser_tenant_value() -> None:
     store = _store()
     store.register(_ttl_def())
@@ -125,6 +131,7 @@ def test_ceiling_at_partner_blocks_looser_tenant_value() -> None:
     assert store.get("security.session.ttl_seconds", TENANT).value == 3600
 
 
+@pytest.mark.req("SR-CFG-002")
 def test_floor_at_tenant_blocks_looser_workspace_value() -> None:
     store = _store()
     store.register(_ttl_def())
@@ -140,6 +147,7 @@ def test_floor_at_tenant_blocks_looser_workspace_value() -> None:
     assert store.get("security.session.ttl_seconds", scope).value == 2400
 
 
+@pytest.mark.req("SR-CFG-002")
 def test_most_restrictive_wins_across_layers() -> None:
     store = _store()
     store.register(
@@ -157,6 +165,7 @@ def test_most_restrictive_wins_across_layers() -> None:
         store.set("security.egress.allowed_levels", LayerRef(kind="tenant", instance="acme"), 1)
 
 
+@pytest.mark.req("SR-CFG-002")
 def test_low_direction_most_restrictive_is_largest() -> None:
     store = _store()
     store.register(
@@ -179,6 +188,7 @@ def test_low_direction_most_restrictive_is_largest() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.req("SR-CFG-003")
 def test_explain_shows_layer_chain_and_last_change() -> None:
     store = _store()
     store.register(_ttl_def())
@@ -194,6 +204,7 @@ def test_explain_shows_layer_chain_and_last_change() -> None:
     assert result.last_change is not None and result.last_change.change_id == change.change_id
 
 
+@pytest.mark.req("SR-CFG-003")
 def test_explain_reports_default_when_unset() -> None:
     store = _store()
     store.register(_ttl_def())
@@ -215,6 +226,7 @@ def _seeded_store() -> ConfigStore:
     return store
 
 
+@pytest.mark.req("SR-CFG-004")
 def test_export_import_roundtrip_json_and_yaml() -> None:
     store = _seeded_store()
     layer = LayerRef(kind="tenant", instance="acme")
@@ -234,6 +246,7 @@ def test_export_import_roundtrip_json_and_yaml() -> None:
     assert target2.get("security.session.ttl_seconds", TENANT).value == 7200
 
 
+@pytest.mark.req("SR-CFG-004")
 def test_import_dry_run_writes_nothing() -> None:
     store = _seeded_store()
     layer = LayerRef(kind="tenant", instance="acme")
@@ -250,6 +263,7 @@ def test_import_dry_run_writes_nothing() -> None:
     assert target.get("security.session.ttl_seconds", TENANT).value == 3600
 
 
+@pytest.mark.req("SR-CFG-004")
 def test_import_validates_schema() -> None:
     store = _seeded_store()
     archive = export_config(store, LayerRef(kind="tenant", instance="acme"))
@@ -261,6 +275,7 @@ def test_import_validates_schema() -> None:
     assert result["errors"] and "not-an-int" in json.dumps(result["errors"])
 
 
+@pytest.mark.req("SR-CFG-004")
 def test_diff_detects_added_removed_changed() -> None:
     store = _store()
     store.register(_ttl_def())
@@ -301,6 +316,7 @@ def test_diff_detects_added_removed_changed() -> None:
     assert diff3.changed_count == 0
 
 
+@pytest.mark.req("SR-CFG-004")
 def test_rollback_restores_previous_version_audited() -> None:
     store = _seeded_store()
     layer = LayerRef(kind="tenant", instance="acme")
@@ -316,6 +332,7 @@ def test_rollback_restores_previous_version_audited() -> None:
     assert store.get("security.session.ttl_seconds", TENANT).value == 7200
 
 
+@pytest.mark.req("SR-CFG-004")
 def test_import_respects_upper_layer_bounds() -> None:
     source = _seeded_store()
     archive = export_config(source, LayerRef(kind="tenant", instance="acme"))
@@ -335,6 +352,7 @@ def test_import_respects_upper_layer_bounds() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.req("SR-CFG-005")
 def test_feature_flags_are_separate_and_audited() -> None:
     store = _store()
     flags = FeatureFlagStore(store)
@@ -354,6 +372,7 @@ def test_feature_flags_are_separate_and_audited() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.req("SR-CFG-006")
 def test_hot_reload_notifies_subscribers() -> None:
     store = _store()
     store.register(_ttl_def())
@@ -367,6 +386,7 @@ def test_hot_reload_notifies_subscribers() -> None:
     assert seen == [7200]
 
 
+@pytest.mark.req("SR-CFG-006")
 def test_structural_settings_reject_hot_reload() -> None:
     store = _store()
     store.register(
@@ -395,6 +415,7 @@ def _client() -> TestClient:
     return TestClient(app)
 
 
+@pytest.mark.req("SR-CFG-001", "SR-CFG-003", "SR-CFG-004")
 def test_router_end_to_end() -> None:
     client = _client()
     assert client.get("/api/v1/config/definitions").status_code == 200

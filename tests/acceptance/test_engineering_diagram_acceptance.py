@@ -28,6 +28,7 @@ EX = Namespace("http://example.org/diagram/")
 # ---------------------------------------------------------------------------
 # CRA-015.1: Notation-specific structured diagrams, source and parser coverage
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-015")
 def test_cra_015_1_notation_specific_drawio_chowlk_mermaid_plantuml():
     # 1. Draw.io / Chowlk XML
     drawio_xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -91,6 +92,7 @@ def test_cra_015_1_notation_specific_drawio_chowlk_mermaid_plantuml():
 # ---------------------------------------------------------------------------
 # CRA-015.2: Components, containment, directions, cardinalities, no coercion
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-015")
 def test_cra_015_2_components_ports_containment_directions_no_silent_coercion():
     puml_src = """
     @startuml
@@ -135,6 +137,7 @@ def test_cra_015_2_components_ports_containment_directions_no_silent_coercion():
 # ---------------------------------------------------------------------------
 # CRA-015.3: Visual extraction candidate generation with uncertainty
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-015")
 def test_cra_015_3_visual_extraction_candidate_generation_with_bounding_regions():
     raw_detections = [
         {"confidence": 0.88, "bounding_box": (0.1, 0.2, 0.4, 0.5), "label": "AuthService", "shape": "rectangle"},
@@ -160,6 +163,7 @@ def test_cra_015_3_visual_extraction_candidate_generation_with_bounding_regions(
 # ---------------------------------------------------------------------------
 # CRA-015.4: Source-versus-graph diff and loss ledger
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-015")
 def test_cra_015_4_source_versus_graph_diff_and_loss_ledger():
     mermaid_src = """
     flowchart TD
@@ -188,6 +192,7 @@ def test_cra_015_4_source_versus_graph_diff_and_loss_ledger():
 # ---------------------------------------------------------------------------
 # CRA-015.5: Round-trip rendering and label sanitization
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-015")
 def test_cra_015_5_round_trip_rendering_and_label_sanitization():
     # Test sanitization against XSS and control sequences
     hostile_label = 'CustomerPortal <script>alert("xss")</script> & "Admin"'
@@ -225,6 +230,7 @@ def test_cra_015_5_round_trip_rendering_and_label_sanitization():
 # ---------------------------------------------------------------------------
 # CRA-015.6: Structured formats (DrawIO XML, Chowlk, PlantUML, Mermaid AST)
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-015")
 def test_cra_015_6_structured_formats_shapes_connectors_ast():
     drawio_xml = """<mxGraphModel>
       <root>
@@ -246,6 +252,7 @@ def test_cra_015_6_structured_formats_shapes_connectors_ast():
 # ---------------------------------------------------------------------------
 # CRA-015.7: Configurable versioned shape and connector mapping table
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-015")
 def test_cra_015_7_configurable_versioned_ontology_mapping():
     custom_mapper = DiagramOntologyMapper(
         shape_mappings={"microservice": "http://example.org/ns#Microservice"},
@@ -279,6 +286,7 @@ def test_cra_015_7_configurable_versioned_ontology_mapping():
 # ---------------------------------------------------------------------------
 # CRA-015.8: Unrecognized connectors preserved as generic eoip:connectsTo (G10 fix)
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-015")
 def test_cra_015_8_unrecognized_connectors_preserved_as_generic_connectsTo():
     ast = DiagramAST(diagram_format="mermaid")
     ast.add_shape(DiagramShape(id="srv_x", name="ServiceX", shape_type="rectangle"))
@@ -308,6 +316,7 @@ def test_cra_015_8_unrecognized_connectors_preserved_as_generic_connectsTo():
 # ---------------------------------------------------------------------------
 # CRA-015.A: Acceptance Gate: Microservice diagram vs Gold Semantic Model
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-015")
 def test_cra_015_a_microservice_diagram_gold_model_owl2_fidelity():
     """Compiles a microservice diagram into OWL 2 assertions and verifies 100% fidelity against gold model."""
     drawio_xml = """<mxGraphModel>
