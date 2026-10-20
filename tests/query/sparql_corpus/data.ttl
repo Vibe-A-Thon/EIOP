@@ -1,0 +1,7 @@
+@prefix ex: <http://ex.org/> .
+ex:alice ex:name "Alice" ; ex:age 30 ; ex:worksFor ex:acme ; ex:knows ex:bob ; ex:skill "sql", "python" .
+ex:bob   ex:name "Bob"   ; ex:age 25 ; ex:worksFor ex:acme ; ex:knows ex:carol ; ex:skill "sql" .
+ex:carol ex:name "Carol" ; ex:worksFor ex:beta .
+ex:dave  ex:name "Dave"  ; ex:age 40 .
+ex:acme  ex:label "Acme" .
+ex:beta  ex:label "Beta" .

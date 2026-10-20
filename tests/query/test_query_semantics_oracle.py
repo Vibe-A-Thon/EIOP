@@ -349,7 +349,13 @@ def test_cra_024_6_warmed_benchmarks_and_equivalence():
 
 @pytest.mark.req("CRA-024")
 def test_cra_024_7_sparql_protocol():
-    handler = SparqlProtocolHandler(enable_updates=False)
+    from eoip.query.sparql_backend import RdflibSparqlBackend
+
+    rdf = RdflibSparqlBackend()
+    rdf.load_turtle("<urn:i1> a <http://example.org/Item> ; <urn:p> <urn:o> .")
+    handler = SparqlProtocolHandler(rdf_backend=rdf, enable_updates=False)
+    # without a backend there is no fabricated result
+    assert SparqlProtocolHandler().handle_request(method="GET", query_params={"query": "ASK { ?s ?p ?o }"})[0] == 503
 
     # 1. GET /sparql query with application/sparql-results+json
     status, headers, body = handler.handle_request(
@@ -554,11 +560,18 @@ def test_cra_024_a_acceptance_oracle():
 
     # 2. SP2Bench in-scope query simulation under 30s
     sp2bench_q = "SELECT ?article ?title WHERE { ?article a <http://localhost/vocabulary/bench/Article> . ?article <http://purl.org/dc/elements/1.1/title> ?title } LIMIT 100"
-    handler = SparqlProtocolHandler()
+    # (single SP2Bench-shaped query on a real engine; the in-scope SP2Bench set remains open, CRA-024.A.2)
+    from eoip.query.sparql_backend import RdflibSparqlBackend
+
+    rdf = RdflibSparqlBackend()
+    rdf.load_turtle("\n".join(
+        f"<urn:a{i}> a <http://localhost/vocabulary/bench/Article> ; <http://purl.org/dc/elements/1.1/title> \"T{i}\" ."
+        for i in range(200)))
+    handler = SparqlProtocolHandler(rdf_backend=rdf)
     t0 = time.perf_counter()
-    status, _, _ = handler.handle_request("GET", query_params={"query": sp2bench_q})
+    status, _, body = handler.handle_request("GET", query_params={"query": sp2bench_q})
     elapsed = time.perf_counter() - t0
-    assert status == 200
+    assert status == 200 and len(json.loads(body)["results"]["bindings"]) == 100
     assert elapsed < 30.0
 
     # 3. Federated Jira x Snowflake join execution

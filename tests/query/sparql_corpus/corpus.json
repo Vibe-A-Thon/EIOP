@@ -1,0 +1,42 @@
+{
+ "about": "Independent SPARQL result corpus (CRA-024.A.1). Expected rows were derived by hand from data.ttl, not by running an engine. Rows compare as bags unless ordered=true; an absent key means the variable is unbound.",
+ "prefix": "PREFIX ex: <http://ex.org/>\n",
+ "cases": [
+  {"id": "optional", "query": "SELECT ?n ?a WHERE { ?p ex:name ?n OPTIONAL { ?p ex:age ?a } }",
+   "rows": [{"n": "Alice", "a": "30"}, {"n": "Bob", "a": "25"}, {"n": "Carol"}, {"n": "Dave", "a": "40"}]},
+  {"id": "join", "query": "SELECT ?n ?l WHERE { ?p ex:name ?n ; ex:worksFor ?c . ?c ex:label ?l }",
+   "rows": [{"n": "Alice", "l": "Acme"}, {"n": "Bob", "l": "Acme"}, {"n": "Carol", "l": "Beta"}]},
+  {"id": "null_unbound", "query": "SELECT ?n WHERE { ?p ex:name ?n OPTIONAL { ?p ex:age ?a } FILTER(!BOUND(?a)) }",
+   "rows": [{"n": "Carol"}]},
+  {"id": "cardinality_bag", "query": "SELECT ?s WHERE { ?p ex:skill ?s }",
+   "rows": [{"s": "sql"}, {"s": "python"}, {"s": "sql"}]},
+  {"id": "cardinality_set", "query": "SELECT DISTINCT ?s WHERE { ?p ex:skill ?s }",
+   "rows": [{"s": "sql"}, {"s": "python"}]},
+  {"id": "path_sequence", "query": "SELECT ?n WHERE { ex:alice ex:knows/ex:knows ?x . ?x ex:name ?n }",
+   "rows": [{"n": "Carol"}]},
+  {"id": "path_zero_or_one", "query": "SELECT ?x WHERE { ex:alice ex:knows? ?x }",
+   "rows": [{"x": "http://ex.org/alice"}, {"x": "http://ex.org/bob"}]},
+  {"id": "aggregate_group", "query": "SELECT ?c (COUNT(?p) AS ?k) WHERE { ?p ex:worksFor ?c } GROUP BY ?c",
+   "rows": [{"c": "http://ex.org/acme", "k": "2"}, {"c": "http://ex.org/beta", "k": "1"}]},
+  {"id": "aggregate_sum", "query": "SELECT (SUM(?a) AS ?t) WHERE { ?p ex:age ?a }",
+   "rows": [{"t": "95"}]},
+  {"id": "order_limit", "query": "SELECT ?n WHERE { ?p ex:name ?n ; ex:age ?a } ORDER BY DESC(?a) LIMIT 2",
+   "ordered": true, "rows": [{"n": "Dave"}, {"n": "Alice"}]},
+  {"id": "typed_filter", "query": "SELECT ?n WHERE { ?p ex:name ?n ; ex:age ?a FILTER(?a > 26) }",
+   "rows": [{"n": "Alice"}, {"n": "Dave"}]},
+  {"id": "ask_false", "query": "ASK { ex:dave ex:worksFor ?c }", "boolean": false},
+  {"id": "ask_true", "query": "ASK { ex:carol ex:worksFor ex:beta }", "boolean": true},
+  {"id": "injection_param", "query": "SELECT ?p WHERE { ?p ex:name $n }",
+   "params": {"n": "Alice\" } UNION { ?p ?q ?r"}, "rows": []},
+  {"id": "param_ok", "query": "SELECT ?a WHERE { ?p ex:name $n ; ex:age ?a }", "params": {"n": "Bob"},
+   "rows": [{"a": "25"}]}
+ ],
+ "rejected": [
+  {"id": "unbounded_star", "query": "SELECT ?x WHERE { ex:alice ex:knows* ?x }", "code": "UNBOUNDED_PROPERTY_PATH"},
+  {"id": "unbounded_plus", "query": "SELECT ?x WHERE { ex:alice (ex:knows/ex:knows)+ ?x }", "code": "UNBOUNDED_PROPERTY_PATH"},
+  {"id": "update", "query": "INSERT DATA { ex:a ex:b ex:c }", "code": "UPDATE_NOT_PERMITTED"},
+  {"id": "construct", "query": "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }", "code": "UNSUPPORTED_QUERY_FORM"},
+  {"id": "service", "query": "SELECT * WHERE { SERVICE <http://evil.example/sparql> { ?s ?p ?o } }", "code": "SERVICE_NOT_APPROVED"},
+  {"id": "syntax", "query": "SELECT ?x WHERE { ?x ex:name }", "code": "PARSE_ERROR"}
+ ]
+}
