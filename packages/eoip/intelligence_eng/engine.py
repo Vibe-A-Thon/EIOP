@@ -625,10 +625,14 @@ class ExecutionTracker:
 
     def success_rate(self) -> float:
         with self._lock:
-            completed = [r for r in self._records if r.status in ("completed", "failed")]
-            if not completed:
-                return 0.0
-            return sum(1 for r in completed if r.status == "completed") / len(completed)
+            return self._success_rate_unlocked()
+
+    def _success_rate_unlocked(self) -> float:
+        # Caller must hold self._lock (a non-reentrant Lock): FT-D01.
+        completed = [r for r in self._records if r.status in ("completed", "failed")]
+        if not completed:
+            return 0.0
+        return sum(1 for r in completed if r.status == "completed") / len(completed)
 
     def avg_latency_by_complexity(self) -> dict[str, float]:
         result: dict[str, float] = {}
@@ -649,7 +653,7 @@ class ExecutionTracker:
                 "completed": sum(1 for r in self._records if r.status == "completed"),
                 "failed": sum(1 for r in self._records if r.status == "failed"),
                 "running": sum(1 for r in self._records if r.status == "running"),
-                "success_rate": self.success_rate(),
+                "success_rate": self._success_rate_unlocked(),
             }
 
 

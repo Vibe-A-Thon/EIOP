@@ -194,15 +194,21 @@ class ExperimentTracker:
 
     def create_experiment(self, name: str, description: str = "", tags: dict[str, str] | None = None) -> Experiment:
         with self._lock:
-            eid = f"exp_{uuid.uuid4().hex[:8]}"
-            exp = Experiment(
-                experiment_id=eid,
-                name=name,
-                description=description,
-                tags=tags or {},
-            )
-            self.experiments[eid] = exp
-            return exp
+            return self._create_experiment_unlocked(name, description, tags)
+
+    def _create_experiment_unlocked(
+        self, name: str, description: str = "", tags: dict[str, str] | None = None
+    ) -> Experiment:
+        # Caller must hold self._lock (a non-reentrant Lock): FT-D01 pattern.
+        eid = f"exp_{uuid.uuid4().hex[:8]}"
+        exp = Experiment(
+            experiment_id=eid,
+            name=name,
+            description=description,
+            tags=tags or {},
+        )
+        self.experiments[eid] = exp
+        return exp
 
     def get_experiment(self, experiment_id: str) -> Experiment | None:
         with self._lock:
@@ -217,7 +223,7 @@ class ExperimentTracker:
         with self._lock:
             exp = self.experiments.get(experiment_id)
             if not exp:
-                exp = self.create_experiment(f"Exp_{experiment_id}")
+                exp = self._create_experiment_unlocked(f"Exp_{experiment_id}")
 
             rid = f"run_{uuid.uuid4().hex[:8]}"
             r_name = run_name or f"run-{len(exp.runs) + 1}"
