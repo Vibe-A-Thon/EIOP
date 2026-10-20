@@ -1,5 +1,6 @@
 """Identity candidate review queue (GAP-ER-005/007/010, FR-ID-002)."""
 
+from _principals import provision_api_token
 import pytest
 from eoip.graph.memory import MemoryGraphStore
 from eoip.identity.candidates import IdentityCandidateStore, suggest_candidate
@@ -12,6 +13,7 @@ TOKEN = "test-token-with-at-least-24-characters"
 def client(monkeypatch, tmp_path):
     store = MemoryGraphStore()
     monkeypatch.setenv("EOIP_API_TOKEN", TOKEN)
+    provision_api_token(monkeypatch, TOKEN)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     from fastapi.testclient import TestClient

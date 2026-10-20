@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from _principals import provision_api_token
 import ast
 import secrets
 from pathlib import Path
@@ -39,7 +40,7 @@ def api(monkeypatch, tmp_path):
     token = secrets.token_urlsafe(32)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setenv("EOIP_GRAPH_BACKEND", "memory")
-    monkeypatch.setattr(api_main, "api_token", lambda: token)
+    provision_api_token(monkeypatch, token)
     return TestClient(api_main.create_app()), token
 
 

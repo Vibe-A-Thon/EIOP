@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from _principals import provision_api_token
 import hashlib
 import hmac
 import json
@@ -330,7 +331,7 @@ def test_source_operation_api_queues_registry_scoped_job(monkeypatch, tmp_path) 
 
     from apps.api import main as api_main
 
-    monkeypatch.setattr(api_main, "api_token", lambda: "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     client = TestClient(api_main.create_app())
@@ -382,7 +383,7 @@ def test_webhook_api_uses_source_hmac_and_queues_only_new_delivery(monkeypatch, 
 
     from apps.api import main as api_main
 
-    monkeypatch.setattr(api_main, "api_token", lambda: "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     monkeypatch.setenv("EOIP_JIRA_WEBHOOK_SECRET", "webhook-test-secret")
@@ -428,7 +429,7 @@ def test_webhook_api_accepts_native_github_signature_delivery_and_event_headers(
 
     from apps.api import main as api_main
 
-    monkeypatch.setattr(api_main, "api_token", lambda: "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     monkeypatch.setenv("EOIP_GITHUB_WEBHOOK_SECRET", "github-secret")
@@ -480,7 +481,7 @@ def test_webhook_api_accepts_gitlab_standard_signature_and_rejects_stale_deliver
 
     from apps.api import main as api_main
 
-    monkeypatch.setattr(api_main, "api_token", lambda: "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     raw_key = b"gitlab-signing-key"

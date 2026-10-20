@@ -1,5 +1,6 @@
 """Ontology drift detection and evolution-proposal review (G2-OEVO-001..006)."""
 
+from _principals import provision_api_token
 from eoip.graph.memory import MemoryGraphStore
 
 from apps.api import main
@@ -10,6 +11,7 @@ TOKEN = "test-token-with-at-least-24-characters"
 def client(monkeypatch, tmp_path):
     store = MemoryGraphStore()
     monkeypatch.setenv("EOIP_API_TOKEN", TOKEN)
+    provision_api_token(monkeypatch, TOKEN)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     from fastapi.testclient import TestClient

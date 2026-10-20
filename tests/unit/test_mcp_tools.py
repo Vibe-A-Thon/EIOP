@@ -1,3 +1,4 @@
+from _principals import provision_api_token
 import asyncio
 
 from starlette.applications import Starlette
@@ -52,6 +53,7 @@ def test_mcp_exposes_read_only_lineage_using_the_shared_api(monkeypatch):
             return Response()
 
     monkeypatch.setenv("EOIP_API_TOKEN", "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(mcp_main, "FastMCP", RecordingMCP)
     monkeypatch.setattr(mcp_main.httpx, "AsyncClient", Client)
     mcp_main.create_app()

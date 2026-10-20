@@ -1,6 +1,7 @@
 """Contract tests for ontology validate and SHACL routes (CRA-020.9, CRA-020.10, CRA-020.A)."""
 
 from __future__ import annotations
+from _principals import provision_api_token
 import json
 import os
 import pytest
@@ -14,6 +15,7 @@ from apps.api import main as api_main
 def _make_client(tmp_path, monkeypatch):
     # monkeypatch restores env and create_store, so later tests do not inherit them.
     monkeypatch.setenv("EOIP_API_TOKEN", "test-token-minimum-24-characters!!")
+    provision_api_token(monkeypatch, "test-token-minimum-24-characters!!")
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setenv("EOIP_GRAPH_BACKEND", "memory")
     store = MemoryGraphStore()

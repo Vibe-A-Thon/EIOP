@@ -1,5 +1,6 @@
 """FR-MEM-001 / NFR-PRIV-001: bounded, scoped, minimized task memory."""
 
+from _principals import provision_api_token
 import json
 import multiprocessing
 from datetime import UTC, datetime, timedelta
@@ -261,6 +262,7 @@ def test_memory_api_requires_auth_and_returns_classified_record(tmp_path, monkey
     graph.upsert_vertex("WorkItem", {"canonical_id": "urn:test:item:1"})
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setenv("EOIP_API_TOKEN", "test-token-with-at-least-24-characters")
+    provision_api_token(monkeypatch, "test-token-with-at-least-24-characters")
     monkeypatch.setattr(main, "create_store", lambda: graph)
     with TestClient(main.create_app()) as api:
         headers = {"Authorization": "Bearer test-token-with-at-least-24-characters"}
@@ -299,7 +301,7 @@ def test_agent_api_binds_run_owner_to_authenticated_principal(tmp_path, monkeypa
     token = TokenService(secret.encode("utf-8"), issuer="eoip-authn", audience="eoip-api").issue(
         principal
     )
-    monkeypatch.setattr(main, "api_token", lambda: secret)
+    provision_api_token(monkeypatch, secret)
     monkeypatch.setattr(main, "create_store", lambda: graph)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
 
@@ -432,6 +434,7 @@ def test_memory_api_refuses_invalid_ttl_and_corruption(tmp_path, monkeypatch):
     graph = MemoryGraphStore()
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setenv("EOIP_API_TOKEN", "test-token-with-at-least-24-characters")
+    provision_api_token(monkeypatch, "test-token-with-at-least-24-characters")
     monkeypatch.setattr(main, "create_store", lambda: graph)
     api = TestClient(main.create_app())
     headers = {"Authorization": "Bearer test-token-with-at-least-24-characters"}

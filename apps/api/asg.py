@@ -11,11 +11,10 @@ Maps API tokens to roles + tenant and plugs into ``authenticated_principal`` in
 * A configured file that is missing, unreadable, malformed, group/world
   accessible (POSIX), or that contains a revoked digest is FATAL at startup.
 * ``EOIP_REVOKED_TOKEN_SHA256_FILE`` (newline-separated sha256 hex) is a
-  revocation denylist checked for every entry and for the bootstrap token.
-* The ``EOIP_API_TOKEN`` bootstrap credential (injected from the secret store)
-  is registered as a cross-tenant superadmin unless
-  ``EOIP_BOOTSTRAP_SUPERADMIN=false``, in which case it keeps the pre-ASG
-  ``admin`` + ``system`` roles.
+  revocation denylist checked for every entry.
+* There is no bootstrap or default principal (FT-AUTH): ``EOIP_API_TOKEN`` is not
+  registered here. Every token maps to the explicit roles written on its line;
+  login users and their API tokens live in :mod:`eoip.authn.credentials`.
 * Comparison is constant time over every entry (no early exit); token values are
   never logged or echoed — ``summary()`` exposes usernames and roles only.
 
@@ -38,7 +37,7 @@ import stat
 from dataclasses import dataclass, field
 from pathlib import Path
 
-VALID_ROLES = {"superadmin", "admin", "system", "steward", "analyst", "viewer"}
+from eoip.authn.credentials import VALID_ROLES, expand_roles  # noqa: E402,F401
 ASG_FILE_ENV = "EOIP_ASG_FILE"
 REVOKED_SHA256_FILE_ENV = "EOIP_REVOKED_TOKEN_SHA256_FILE"
 MIN_TOKEN_LENGTH = 32
@@ -47,14 +46,6 @@ _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 
 class ASGConfigurationError(RuntimeError):
     """Raised when the ASG configuration is insecure or invalid (fail closed)."""
-
-
-def expand_roles(roles) -> tuple[str, ...]:
-    """superadmin implies admin + system so existing role gates keep working."""
-    out = {r.strip() for r in roles if r and r.strip()}
-    if "superadmin" in out:
-        out.update(("admin", "system"))
-    return tuple(sorted(out))
 
 
 def token_digest(token: str) -> str:
@@ -168,19 +159,12 @@ def _parse_line(line: str, where: str) -> ASGEntry:
     )
 
 
-def _bootstrap_entry(token: str) -> ASGEntry:
-    superadmin = os.environ.get("EOIP_BOOTSTRAP_SUPERADMIN", "true").strip().lower() != "false"
-    return ASGEntry(
-        token_sha256=token_digest(token),
-        roles=expand_roles(("superadmin",)) if superadmin else ("admin", "system"),
-        tenant_id=None,
-        username="bootstrap-superadmin" if superadmin else "bootstrap-admin",
-        principal_id="urn:eoip:authn:principal:bootstrap",
-    )
+def load_asg(path: str | None, *, revoked: set[str] | None = None, allow_empty: bool = False) -> ASG:
+    """Build the ASG registry. Fail closed: any configuration problem raises.
 
-
-def load_asg(path: str | None, bootstrap_token: str | None, *, revoked: set[str] | None = None) -> ASG:
-    """Build the ASG registry. Fail closed: any configuration problem raises."""
+    ``allow_empty`` lets the API start with principals from the credential store only;
+    the caller must still refuse to start when no principal exists anywhere.
+    """
     revoked = load_revoked_digests() if revoked is None else revoked
     entries: list[ASGEntry] = []
     seen: set[str] = set()
@@ -205,14 +189,7 @@ def load_asg(path: str | None, bootstrap_token: str | None, *, revoked: set[str]
             entries.append(entry)
             seen.add(entry.token_sha256)
 
-    if bootstrap_token:
-        # Length/strength is enforced where the token is read (eoip.runtime.api_token).
-        if token_digest(bootstrap_token) in revoked:
-            raise ASGConfigurationError("EOIP_API_TOKEN is revoked; inject a new value from the secret store")
-        if token_digest(bootstrap_token) not in seen:
-            entries.append(_bootstrap_entry(bootstrap_token))
-
-    if not entries:
+    if not entries and not allow_empty:
         raise ASGConfigurationError("no principals configured; refusing to start")
     return ASG(entries=entries)
 

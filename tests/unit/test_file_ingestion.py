@@ -1,5 +1,6 @@
 """Binary acquisition, capture-first graph ingestion, replay and authenticated APIs."""
 
+from _principals import provision_api_token
 import base64
 import json
 
@@ -110,6 +111,7 @@ def client(tmp_path, monkeypatch):
     from apps.api import main
 
     monkeypatch.setenv("EOIP_API_TOKEN", "file-parser-test-token-24-characters")
+    provision_api_token(monkeypatch, "file-parser-test-token-24-characters")
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     store = MemoryGraphStore()
     monkeypatch.setattr(store, "close", lambda: None, raising=False)

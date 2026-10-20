@@ -1,5 +1,6 @@
 """Tests for new API endpoints: neighborhood, traceability, DLQ, GitLab ingestion."""
 
+from _principals import provision_api_token
 import json
 
 from eoip.connectors.jira_json import JiraJsonConnector
@@ -15,6 +16,7 @@ from fastapi.testclient import TestClient
 def _make_api_app(store, tmp_path):
     import os
     os.environ["EOIP_API_TOKEN"] = "test-token-minimum-24-characters!!"
+    provision_api_token(None, "test-token-minimum-24-characters!!")
     os.environ["EOIP_DATA_DIR"] = str(tmp_path)
 
     from apps.api import main as api_main

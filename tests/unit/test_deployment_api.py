@@ -1,3 +1,4 @@
+from _principals import provision_api_token
 import json
 import os
 
@@ -13,6 +14,7 @@ def client(monkeypatch, tmp_path):
     store = MemoryGraphStore()
     store.close = lambda: None
     monkeypatch.setenv("EOIP_API_TOKEN", "test-token-with-at-least-24-characters")
+    provision_api_token(monkeypatch, "test-token-with-at-least-24-characters")
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     return TestClient(main.create_app())
@@ -209,6 +211,7 @@ def test_entity_tombstone_is_hidden_searchable_on_request_and_reactivated(
         },
     )
     monkeypatch.setenv("EOIP_API_TOKEN", "test-token-with-at-least-24-characters")
+    provision_api_token(monkeypatch, "test-token-with-at-least-24-characters")
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     api = TestClient(main.create_app())

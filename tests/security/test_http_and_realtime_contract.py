@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 
 import apps.api.main as api_main
+from _principals import ProvisioningTokenService, provision_login_user
 
 pytestmark = [pytest.mark.security, pytest.mark.req("GAP-SEC-004", "SR-TEN-001")]
 
@@ -20,13 +21,15 @@ pytestmark = [pytest.mark.security, pytest.mark.req("GAP-SEC-004", "SR-TEN-001")
 def auth_setup(tmp_path):
     secret = b"k" * 32
     secret_str = secret.decode("ascii")
-    token_service = TokenService(secret, issuer="eoip-authn", audience="eoip-api")
+    provision_login_user(None, tmp_path, "contract-admin", roles=("superadmin",))  # the API needs >= 1 principal
+    token_service = ProvisioningTokenService(
+        TokenService(secret, issuer="eoip-authn", audience="eoip-api"), tmp_path)
     return secret_str, token_service, tmp_path
 
 
 def test_http_boundary_accepts_signed_token_and_emits_dynamic_audit_actor(auth_setup, monkeypatch):
     secret_str, token_service, tmp_path = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret_str)
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret_str)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 
@@ -61,7 +64,7 @@ def test_http_boundary_accepts_signed_token_and_emits_dynamic_audit_actor(auth_s
 
 def test_http_boundary_rejects_tampered_or_expired_token(auth_setup, monkeypatch):
     secret_str, token_service, tmp_path = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret_str)
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret_str)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 
@@ -83,7 +86,7 @@ def test_http_boundary_rejects_tampered_or_expired_token(auth_setup, monkeypatch
 
 def test_websocket_unauthenticated_handshake_rejects_without_500(auth_setup, monkeypatch):
     secret_str, _, tmp_path = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret_str)
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret_str)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 
@@ -97,7 +100,7 @@ def test_websocket_unauthenticated_handshake_rejects_without_500(auth_setup, mon
 
 def test_websocket_authenticated_and_tenant_isolated(auth_setup, monkeypatch):
     secret_str, token_service, tmp_path = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret_str)
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret_str)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 
@@ -135,14 +138,15 @@ def test_websocket_authenticated_and_tenant_isolated(auth_setup, monkeypatch):
 
 
 def test_brain_llm_stream_incremental_sse(auth_setup, monkeypatch):
-    secret_str, _, tmp_path = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret_str)
+    secret_str, token_service, tmp_path = auth_setup
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret_str)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 
     client = TestClient(api_main.create_app())
     headers = {
-        "Authorization": f"Bearer {secret_str}",
+        "Authorization": "Bearer " + token_service.issue(
+            Principal("urn:eoip:authn:principal:sse", "sse-user", ("analyst",), tenant_id="default")),
         "Accept": "text/event-stream",
     }
     resp = client.post(
@@ -195,7 +199,7 @@ def test_enterprise_middleware_tenant_isolation_cross_tenant_denial():
 @pytest.fixture
 def composed_app(auth_setup, monkeypatch):
     secret, service, root = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret)
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: root)
     app = api_main.create_app()

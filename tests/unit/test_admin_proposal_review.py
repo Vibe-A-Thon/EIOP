@@ -1,5 +1,6 @@
 """Governed proposal review flow (human control over agent-authored changes)."""
 
+from _principals import provision_api_token
 from uuid import uuid4
 
 from eoip.authn import Principal, TokenService
@@ -15,6 +16,7 @@ TOKEN = "test-token-with-at-least-24-characters"
 def client(monkeypatch, tmp_path):
     store = MemoryGraphStore()
     monkeypatch.setenv("EOIP_API_TOKEN", TOKEN)
+    provision_api_token(monkeypatch, TOKEN)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     from fastapi.testclient import TestClient
@@ -63,6 +65,7 @@ def _seed_drift(monkeypatch, tmp_path):
     """Create an app instance whose store carries one unmapped label."""
     store = MemoryGraphStore()
     monkeypatch.setenv("EOIP_API_TOKEN", TOKEN)
+    provision_api_token(monkeypatch, TOKEN)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     store._vertices["v:drift"] = {

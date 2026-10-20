@@ -1,5 +1,6 @@
 """Integration tests for dormant and active REVA mounting (T-004 / OBL-REVA-IP-01)."""
 
+from _principals import provision_api_token
 import pytest
 from fastapi.testclient import TestClient
 from eoip.graph.memory import MemoryGraphStore
@@ -11,7 +12,7 @@ pytestmark = pytest.mark.reva_depth("integration")
 
 @pytest.fixture(autouse=True)
 def setup_api_env(monkeypatch, tmp_path):
-    monkeypatch.setattr(api_main, "api_token", lambda: "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 

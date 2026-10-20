@@ -1,5 +1,6 @@
 """CORS configuration and preflights at the composed application boundary."""
 
+from _principals import provision_api_token
 import pytest
 from eoip.graph.memory import MemoryGraphStore
 from fastapi.testclient import TestClient
@@ -31,7 +32,7 @@ def test_production_has_no_implicit_localhost_origin(monkeypatch):
 
 def test_composed_api_allows_only_configured_preflight_without_bearer(monkeypatch, tmp_path):
     monkeypatch.setenv("EOIP_CORS_ORIGINS", "https://web.example.test")
-    monkeypatch.setattr(api_main, "api_token", lambda: "test-bootstrap-key")
+    provision_api_token(monkeypatch, "test-bootstrap-key")
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     client = TestClient(api_main.create_app())

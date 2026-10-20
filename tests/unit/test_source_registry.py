@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from _principals import provision_api_token
 import json
 
 import pytest
@@ -81,7 +82,7 @@ def test_registry_entry_carries_g2_operational_metadata_without_secrets() -> Non
 def test_source_registry_api_crud_and_auth(monkeypatch, tmp_path) -> None:
     from apps.api import main as api_main
 
-    monkeypatch.setattr(api_main, "api_token", lambda: "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     client = TestClient(api_main.create_app())

@@ -20,7 +20,8 @@ from eoip.agents.runtime import AgentRuntime
 from eoip.audit.sink import AuditSink
 from eoip.authz import User as AuthzUser
 from eoip.authn import Principal
-from eoip.authn.oauth_sso import TokenValidator
+from eoip.authn.credentials import CredentialStore, LoginThrottle, SessionManager, session_secret
+from eoip.authn.sso import check_sso_configuration
 from eoip.config import load_agent_config, load_memory_policy
 from eoip.connectors.acquisition import AcquisitionOperation, AcquisitionPolicy, AcquisitionScheduler
 from eoip.connectors.base import DiscoveryScope
@@ -43,7 +44,7 @@ from eoip.models.provider import LocalModelProvider
 from eoip.observability import configure_json_logging
 from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.ontology.rdf import export_jsonld, export_shacl_shapes, import_jsonld, validate_shacl
-from eoip.runtime import api_token, create_store, data_root
+from eoip.runtime import create_store, data_root
 from eoip.tenancy.context import TenantContextRequired, authorized_tenant
 from eoip.validation.engine import ValidationEngine
 from fastapi import Depends, HTTPException, Query, Request, WebSocket, WebSocketDisconnect
@@ -218,31 +219,64 @@ class CapsuleRequest(BaseModel):
     result_limit: int = Field(default=200, ge=1, le=1000)
 
 
+class _CredentialLogin:
+    """Adapter: the extended router's identity provider backed by the credential store."""
+
+    name = "local"
+
+    def __init__(self, credentials: CredentialStore, throttle: LoginThrottle) -> None:
+        self._credentials, self._throttle = credentials, throttle
+
+    def authenticate(self, payload: dict) -> Principal:
+        from eoip.authn import AuthenticationError
+
+        username = str(payload.get("username") or "")
+        if self._throttle.blocked(username):
+            raise AuthenticationError("too many failed attempts")
+        principal = self._credentials.verify_password(username, payload.get("password"))
+        if principal is None:
+            self._throttle.failed(username)
+            raise AuthenticationError("invalid credentials")
+        self._throttle.succeeded(username)
+        return principal
+
+    def health(self) -> dict:
+        return {"status": "ok", "provider": self.name}
+
+
 def create_app():
     configure_json_logging()
-    token = api_token()
-    token_validator = TokenValidator(token)
-    from apps.api.asg import load_asg, default_keys_path
-    asg = load_asg(default_keys_path(), token)  # fail closed: raises on insecure/invalid config
+    # FT-AUTH: no default/bootstrap principal. Roles come from the authenticated identity:
+    # login credentials (session tokens), per-principal API tokens, or ASG file entries.
+    check_sso_configuration()  # SSO is a disabled placeholder; enabling it fails closed
+    from apps.api.asg import ASGConfigurationError, load_asg, default_keys_path
+    asg = load_asg(default_keys_path(), allow_empty=True)  # fail closed on insecure/invalid config
+    credentials = CredentialStore(
+        os.environ.get("EOIP_CREDENTIALS_FILE") or data_root() / "state" / "credentials.json")
+    if not asg.entries and credentials.is_empty():
+        raise ASGConfigurationError(
+            "no principals configured; refusing to start. There is no default account: provision the "
+            "first administrator explicitly (eoip-admin create-admin --username <name>, password from "
+            "EOIP_ADMIN_PASSWORD or --password-file; containers: EOIP_ADMIN_USERNAME + "
+            "EOIP_ADMIN_PASSWORD(_FILE) with 'eoip-admin from-env'), or configure EOIP_ASG_FILE")
+    sessions = SessionManager(credentials, session_secret(data_root()))
+    login_throttle = LoginThrottle()
     logging.getLogger("eoip.asg").info(
-        "asg loaded", extra={"asg_principals": asg.summary()}  # usernames/roles only, never tokens
+        "principals loaded",  # usernames/roles only, never tokens or hashes
+        extra={"asg_principals": asg.summary(), "credential_principals": credentials.summary()},
     )
 
     def authenticated_principal(supplied: str) -> Principal | None:
         if not supplied or len(supplied) > 16_384:
             return None
-        # ASG registry first (file-backed RBAC; includes the fail-safe bootstrap superadmin).
-        entry = asg.authenticate(supplied)
+        entry = asg.authenticate(supplied)  # file-backed token RBAC
         if entry is not None:
             return Principal(id=entry.principal_id, username=entry.username,
                              roles=entry.roles, provider="asg", tenant_id=entry.tenant_id)
-        try:
-            payload = token_validator.validate_token(supplied)
-        except ValueError:
-            return None
-        return Principal(id=payload["sub"], username=payload.get("username") or payload["sub"],
-                         roles=tuple(payload.get("roles", [])), provider="token",
-                         tenant_id=payload.get("tenant_id") or payload.get("tenant"), claims=payload)
+        principal = credentials.authenticate_api_token(supplied)  # per-principal API tokens
+        if principal is not None:
+            return principal
+        return sessions.principal(supplied)  # login sessions; roles re-read from the store
 
     store = create_store()
     queue = JobQueue(data_root())
@@ -274,6 +308,11 @@ def create_app():
     from apps.api.extended import ensure_extended
 
     ensure_extended(app, store)
+    # FT-AUTH: the extended /api/v1/auth/login route verifies against the credential store
+    # (argon2id) and issues session tokens this app accepts.
+    app.state.extended_state.identity_provider = _CredentialLogin(credentials, login_throttle)
+    app.state.extended_state.token_service = sessions
+    app.state.credentials = credentials
     try:
         from reva.config import get_settings as _get_reva_settings
         if _get_reva_settings().enabled:
@@ -457,7 +496,10 @@ def create_app():
             "/openapi.json",
             "/docs/oauth2-redirect",
             "/api/reva/v1/health",
-        } and webhook_request is None:
+            "/api/v1/auth/login",
+            "/api/v1/auth/health",
+            "/api/v1/auth/providers",
+        } and not request.url.path.startswith("/api/v1/auth/sso/") and webhook_request is None:
             if principal is None:
                 record(401)
                 return JSONResponse({"detail": "A valid Bearer token is required"}, status_code=401)
@@ -496,7 +538,7 @@ def create_app():
                 return JSONResponse({"detail": "Administrative role required"}, status_code=403)
             try:
                 current_principal = getattr(request.state, "principal", None)
-                actor = current_principal.username if current_principal else "bootstrap-admin"
+                actor = current_principal.username if current_principal else "anonymous"
                 audit_sink.emit(
                     AuditEvent(
                         audit_id=str(uuid4()),
@@ -630,6 +672,26 @@ def create_app():
             "status": "DELETED",
             "deleted_at": deleted_at,
         }
+
+    @app.post("/api/v1/auth/logout", status_code=204)
+    def auth_logout(request: Request):
+        supplied = request.headers.get("authorization", "")
+        if supplied.startswith("Bearer "):
+            sessions.revoke(supplied[len("Bearer "):].strip())
+        return Response(status_code=204)
+
+    @app.get("/api/v1/auth/providers")
+    def auth_providers():
+        from eoip.authn.sso import describe_providers
+        return {"local": {"enabled": True, "method": "password"}, "api_tokens": {"enabled": True},
+                "sso": describe_providers()}
+
+    @app.get("/api/v1/auth/sso/{provider}/login")
+    def auth_sso_login(provider: str):
+        from eoip.authn.sso import PROVIDERS
+        if provider not in PROVIDERS:
+            raise HTTPException(404, "Unknown SSO provider")
+        raise HTTPException(501, f"{PROVIDERS[provider].protocol} SSO is a placeholder and not implemented")
 
     @app.get("/api/v1/auth/whoami")
     def auth_whoami(request: Request):

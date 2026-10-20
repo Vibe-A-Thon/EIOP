@@ -6,6 +6,7 @@ over-depth and oversized requests, and the read-only MCP tool surface.
 All tests are local: no network, no Docker.
 """
 
+from _principals import provision_api_token
 import ast
 import json
 from pathlib import Path
@@ -153,6 +154,7 @@ def test_oversized_body_is_rejected_with_413(monkeypatch, tmp_path):
     store = MemoryGraphStore()
     store.close = lambda: None
     monkeypatch.setenv("EOIP_API_TOKEN", "test-token-with-at-least-24-characters")
+    provision_api_token(monkeypatch, "test-token-with-at-least-24-characters")
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     client = TestClient(main.create_app())

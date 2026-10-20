@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from _principals import provision_api_token
 import json
 from pathlib import Path
 import pytest
@@ -386,6 +387,7 @@ def test_cra_039_8_widoco_html_ontology_docs_and_route_serving(monkeypatch, tmp_
 
     # 2. HTTP route serving at GET /ontology/docs
     monkeypatch.setenv("EOIP_API_TOKEN", "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setenv("EOIP_ENV", "test")
     monkeypatch.setenv("EOIP_DATA_ROOT", str(tmp_path))
     monkeypatch.setenv("EOIP_GRAPH_BACKEND", "memory")

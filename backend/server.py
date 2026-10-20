@@ -14,36 +14,25 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-# Runtime configuration (FT-F02). There is NO committed default token: the
-# supervisor/preview must inject EOIP_API_TOKEN from its secret settings. Only an
-# explicit development profile (EOIP_ENV=dev) gets an ephemeral per-process token,
-# written to <data dir>/dev-token with mode 0600 and never printed.
+# Runtime configuration (FT-F02 / FT-AUTH). There is NO committed default token and NO
+# default account. Principals are provisioned explicitly: EOIP_ADMIN_USERNAME +
+# EOIP_ADMIN_PASSWORD(_FILE) create the first administrator (idempotent), and
+# EOIP_API_TOKEN is honoured only when EOIP_API_TOKEN_ROLES maps it to a principal.
+# Without any principal the app refuses to start (fail closed).
 _DATA_DIR = Path(os.environ.get("EOIP_DATA_DIR") or (REPO_ROOT / ".eoip-data"))
 _DATA_DIR.mkdir(parents=True, exist_ok=True)
 _DEV = os.environ.get("EOIP_ENV", "").strip().lower() == "dev"
 
 
-def _ensure_api_token() -> None:
-    if os.environ.get("EOIP_API_TOKEN"):
-        return
-    if not _DEV:
-        raise SystemExit(
-            "EOIP_API_TOKEN is required (inject it from the secret store); "
-            "set EOIP_ENV=dev for an ephemeral local development token"
-        )
-    import secrets
+def _provision_from_env() -> None:
+    from eoip.authn.credentials import CredentialStore
+    from eoip.authn.provision import provision_from_env
 
-    token = secrets.token_urlsafe(32)
-    token_file = _DATA_DIR / "dev-token"
-    fd = os.open(token_file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
-    with os.fdopen(fd, "w", encoding="utf-8") as handle:
-        handle.write(token)
-    os.chmod(token_file, 0o600)
-    os.environ["EOIP_API_TOKEN"] = token
-    print(f"[server] EOIP_ENV=dev: ephemeral API token written to {token_file} (mode 0600)", file=sys.stderr)
+    store_path = os.environ.get("EOIP_CREDENTIALS_FILE") or _DATA_DIR / "state" / "credentials.json"
+    provision_from_env(CredentialStore(store_path), log=lambda msg: print(msg, file=sys.stderr))
 
 
-_ensure_api_token()
+_provision_from_env()
 os.environ.setdefault("EOIP_DATA_DIR", str(_DATA_DIR))
 os.environ.setdefault("EOIP_GRAPH_BACKEND", "memory")
 os.environ.setdefault("EOIP_LOAD_DEMO", "true" if _DEV else "false")
