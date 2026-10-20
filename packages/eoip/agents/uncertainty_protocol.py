@@ -86,6 +86,9 @@ class UncertaintyEnvelope:
             "confidence_score": round(self.confidence_score, 4),
             "confidence_tier": self.confidence_tier.value,
             "uncertainty_reasons": [r.value for r in self.uncertainty_reasons],
+            # Primary reason (KGR-G-019 field name); the full list is in uncertainty_reasons.
+            "uncertainty_reason": (self.uncertainty_reasons[0].value if self.uncertainty_reasons
+                                   else UncertaintyReason.HIGH_CONFIDENCE.value),
             "abstain": self.abstain,
             "evidence_chain": {
                 "total_sources": self.evidence_chain.total_sources,
@@ -340,3 +343,65 @@ class UncertaintySchemaEnforcer:
                 return f"Moderate confidence. Caveats: {', '.join(reason_strs[:3])}."
             return "Moderate confidence answer."
         return "Low confidence answer. Verify independently before acting."
+
+
+
+# ---------------------------------------------------------------------------
+# MCP wiring (KGR-G-019): every MCP tool response carries the envelope
+# ---------------------------------------------------------------------------
+
+_EVIDENCE_KEYS = {
+    "evidence": "document", "evidence_refs": "document", "nodes": "graph_vertex", "items": "graph_vertex",
+    "results": "graph_vertex", "entities": "graph_vertex", "edges": "graph_edge", "paths": "graph_edge",
+    "impacted": "graph_vertex", "neighbors": "graph_vertex",
+}
+UNCERTAINTY_KEY = "uncertainty"
+
+
+def _source_id(item: Any) -> str | None:
+    if isinstance(item, str):
+        return item
+    if isinstance(item, dict):
+        for key in ("canonical_id", "evidence_id", "source_id", "id", "vid", "ref", "edge_id"):
+            if item.get(key):
+                return str(item[key])
+    return None
+
+
+def evidence_from_payload(payload: Any) -> list[EvidenceLink]:
+    """Derive evidence links from a tool payload's evidence/result collections (deterministic)."""
+    links: list[EvidenceLink] = []
+    if not isinstance(payload, dict):
+        return links
+    inferred = bool(payload.get("inferred"))
+    for key in sorted(_EVIDENCE_KEYS):
+        value = payload.get(key)
+        if not isinstance(value, list):
+            continue
+        for item in value:
+            sid = _source_id(item)
+            if sid:
+                stype = "inference" if inferred else _EVIDENCE_KEYS[key]
+                links.append(EvidenceLink(source_id=sid, source_type=stype, relevance_score=1.0))
+    return links
+
+
+def annotate_mcp_payload(payload: Any, enforcer: UncertaintySchemaEnforcer | None = None) -> dict[str, Any]:
+    """Return the tool payload with the KGR-G-019 envelope under ``uncertainty``.
+
+    Backward compatible: every existing key of a dict payload is kept unchanged, so clients that
+    ignore ``uncertainty`` see the same response as before. Non-dict payloads are wrapped as
+    ``{"result": payload, "uncertainty": ...}``.
+    """
+    enforcer = enforcer or UncertaintySchemaEnforcer()
+    links = evidence_from_payload(payload)
+    envelope = enforcer.evaluate(links, query_scope_size=max(1, len(links)))
+    if isinstance(payload, dict) and payload.get("partial") is True:
+        if UncertaintyReason.PARTIAL_EVIDENCE not in envelope.uncertainty_reasons:
+            envelope.uncertainty_reasons.append(UncertaintyReason.PARTIAL_EVIDENCE)
+    doc = envelope.to_dict()
+    if isinstance(payload, dict):
+        out = dict(payload)
+        out.setdefault(UNCERTAINTY_KEY, doc)
+        return out
+    return {"result": payload, UNCERTAINTY_KEY: doc}

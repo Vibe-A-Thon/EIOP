@@ -52,7 +52,10 @@ def create_app():
                 raise McpError(
                     ErrorData(code=503, message=f"EOIP API unavailable: {type(exc).__name__}")
                 ) from exc
-            return response.json()
+            # KGR-G-019: every tool response carries the calibrated uncertainty envelope.
+            from eoip.agents.uncertainty_protocol import annotate_mcp_payload
+
+            return annotate_mcp_payload(response.json())
 
     @mcp.tool()
     async def search(q: str, limit: int = 25) -> dict:
