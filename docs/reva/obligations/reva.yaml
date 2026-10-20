@@ -1,3 +1,7 @@
+# REVA obligations. reviewed_warrant_id is null for every entry: the previous values were
+# fabricated by scripts/reva/build_reva_ledger.py (no human review happened). A human review is
+# recorded in docs/reva/obligations/reviews.yaml (obligation_key, reviewer, reviewed_at,
+# statement) and is the only thing scripts/reva/run_reva_ledger.py accepts as review.
 - key: OBL-T-001
   version: 1
   requirement_id: T-001
@@ -12,7 +16,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d3ee97a68793545fbc8d77383d750b1ca800ff0d8cb471afd5b220e2beef749a
+  reviewed_warrant_id: null
 - key: OBL-T-002
   version: 1
   requirement_id: T-002
@@ -27,7 +31,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5c41fa7e94d40dc4feea40e5e73692d93de34ee00fe68296899263c7bfe49224
+  reviewed_warrant_id: null
 - key: OBL-T-003
   version: 1
   requirement_id: T-003
@@ -42,7 +46,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d906bfb01e8afc91b612dd8b794673c7a1d764a67843f6eff4084d2c1613a2ab
+  reviewed_warrant_id: null
 - key: OBL-T-004
   version: 1
   requirement_id: T-004
@@ -57,7 +61,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a8e5cfe133c2bede102a372efa4edd3b7ab71b35219dd4f6342b2008ac733d3b
+  reviewed_warrant_id: null
 - key: OBL-T-005
   version: 1
   requirement_id: T-005
@@ -72,7 +76,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4e5ccbcce9d7737d7a2a8102824bc61b86fe8f25cf40353a04fea318d69bd684
+  reviewed_warrant_id: null
 - key: OBL-T-099
   version: 1
   requirement_id: T-099
@@ -87,7 +91,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_12db7e34a5dab2951a2c9f8dd2e35f73380b03a5f54229c4d42681d4104c57eb
+  reviewed_warrant_id: null
 - key: OBL-T-101
   version: 1
   requirement_id: T-101
@@ -102,7 +106,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_71e5bd3eb16f5398103b4e94b4c3acdc552d6c45f4823492890c815790c3127f
+  reviewed_warrant_id: null
 - key: OBL-T-102
   version: 1
   requirement_id: T-102
@@ -118,7 +122,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9ad6cba6d7ac16528a8e93238a2ec58094342796767f3447bea3dabf59f8391b
+  reviewed_warrant_id: null
 - key: OBL-T-103
   version: 1
   requirement_id: T-103
@@ -134,7 +138,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_29449a1e91173bf4646dff4120a26168c7972b82eda3821a43b476f7f1486168
+  reviewed_warrant_id: null
 - key: OBL-T-104
   version: 1
   requirement_id: T-104
@@ -150,7 +154,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6fc0754830a075a299a9004db119c43a9ee22568263d8fda608d475e94f70962
+  reviewed_warrant_id: null
 - key: OBL-T-105
   version: 1
   requirement_id: T-105
@@ -165,7 +169,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e0e809ff67452c27425928f51216028483edfdc6ea8d97ad7906a62dd8f417b3
+  reviewed_warrant_id: null
 - key: OBL-T-106
   version: 1
   requirement_id: T-106
@@ -181,7 +185,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_26724e66f1d6b4a48d9cdd4eecf5d793e4855a807474521fb743532c0a6ce653
+  reviewed_warrant_id: null
 - key: OBL-T-107
   version: 1
   requirement_id: T-107
@@ -197,7 +201,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3dd7a5195f81c3cff9e5ce025d7977c453a592626be6acf7b433a366a77d8c47
+  reviewed_warrant_id: null
 - key: OBL-T-108
   version: 1
   requirement_id: T-108
@@ -213,7 +217,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1c7437ecc35681237d652fbf33046d0382648fb240776f46452edf8f4fbe30da
+  reviewed_warrant_id: null
 - key: OBL-T-109
   version: 1
   requirement_id: T-109
@@ -228,7 +232,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_29c178eea73def63ec35476c827db4a5bd861dd4f15188153ea940db048e77da
+  reviewed_warrant_id: null
 - key: OBL-T-110
   version: 1
   requirement_id: T-110
@@ -243,7 +247,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8cd1b6e9e88f966fc69baae088913308d60bc1954e104d659a1e7ac13be9e8b5
+  reviewed_warrant_id: null
 - key: OBL-T-111
   version: 1
   requirement_id: T-111
@@ -258,7 +262,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e2e7e6b4db438ebb9316403ab6159fc2035805e00e893813f74b7aeda4dace28
+  reviewed_warrant_id: null
 - key: OBL-T-112
   version: 1
   requirement_id: T-112
@@ -273,7 +277,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8ae882d4d76cac9ddb4a6808dd804e8624c735aa70bbbb8e2f08d76b13e54315
+  reviewed_warrant_id: null
 - key: OBL-T-113
   version: 1
   requirement_id: T-113
@@ -289,7 +293,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e69c125666b89e2d50c195d908bc21fc4aecf561c5b1417ffc06e39eff28ce88
+  reviewed_warrant_id: null
 - key: OBL-T-114
   version: 1
   requirement_id: T-114
@@ -304,7 +308,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0ddc523706b7cd87d172a0107c2aa0d88e9af2ef35b759e6c178a2c95e6128be
+  reviewed_warrant_id: null
 - key: OBL-T-115
   version: 1
   requirement_id: T-115
@@ -320,7 +324,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_bb35e46d9ae4ab913f4090099d11a8f389f37d19b57260028b65c94a414fc8ea
+  reviewed_warrant_id: null
 - key: OBL-T-116
   version: 1
   requirement_id: T-116
@@ -335,7 +339,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c1484f6f1064a93bdb4b18344a0dcb20c8e94447d0d7e7e7fc31c6c6d46a3ef8
+  reviewed_warrant_id: null
 - key: OBL-T-117
   version: 1
   requirement_id: T-117
@@ -350,7 +354,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5f62f7d7712613b7c7d92bee4506f05c7c20cd0977ca0a573289ae3ff2827a39
+  reviewed_warrant_id: null
 - key: OBL-T-118
   version: 1
   requirement_id: T-118
@@ -366,7 +370,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_01348b71c461980459054405ebed033e5413a27b4c375bf21c7f8f9c5e606f8b
+  reviewed_warrant_id: null
 - key: OBL-T-119
   version: 1
   requirement_id: T-119
@@ -382,7 +386,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7648091a9d1bb03dcf9877a16699d322c9daf66e90f32a219c5756f1d2dc2d5f
+  reviewed_warrant_id: null
 - key: OBL-T-120
   version: 1
   requirement_id: T-120
@@ -398,7 +402,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5dfc9a4450ad40d087e979778b58bfe211c659b418585cf4ad6bae77c7e61626
+  reviewed_warrant_id: null
 - key: OBL-T-121
   version: 1
   requirement_id: T-121
@@ -413,7 +417,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4a12c3cf2015ddb699a0ad78ea1ecb5bc0439e3964d38475ecbd14124dc59cbb
+  reviewed_warrant_id: null
 - key: OBL-T-199
   version: 1
   requirement_id: T-199
@@ -428,7 +432,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_611493adb55d73534dbe5edf263e396feeb2b993aea4703c4fe6cfff3e48994b
+  reviewed_warrant_id: null
 - key: OBL-T-201
   version: 1
   requirement_id: T-201
@@ -444,7 +448,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d2c0cad195961534aba30b7aaf5dbecfe939a549955109d1080e9ecd2d59a0db
+  reviewed_warrant_id: null
 - key: OBL-T-202
   version: 1
   requirement_id: T-202
@@ -459,7 +463,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e176e04ff48eccf14b6d225154a240734a43a29bdb232430578f3da988cbdef4
+  reviewed_warrant_id: null
 - key: OBL-T-203
   version: 1
   requirement_id: T-203
@@ -475,7 +479,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_bacbfd318b304092c98cc25b0a782cd865746d7b3a4aefd010f4bb51cafa6661
+  reviewed_warrant_id: null
 - key: OBL-T-204
   version: 1
   requirement_id: T-204
@@ -491,7 +495,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6e2b6c89ac63bbf6522886f3431a33d4a393f0addafac0b22c328c4a433b7920
+  reviewed_warrant_id: null
 - key: OBL-T-205
   version: 1
   requirement_id: T-205
@@ -506,7 +510,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_64eb76321aaee8b808f4e1c089ba9dbdc830a616b454d0ada3ef2f1f431ac0f9
+  reviewed_warrant_id: null
 - key: OBL-T-206
   version: 1
   requirement_id: T-206
@@ -523,7 +527,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4385561a81a277b101b70bbb52c1a7f2687c1cde8aa665d514bf68f06a0e6e22
+  reviewed_warrant_id: null
 - key: OBL-T-207
   version: 1
   requirement_id: T-207
@@ -538,7 +542,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d2246e32cf8b13350a9c05ab7fe8acd35621b396f9fa18f7a115e2171d4c8ecf
+  reviewed_warrant_id: null
 - key: OBL-T-208
   version: 1
   requirement_id: T-208
@@ -553,7 +557,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_84312cd2102ccaacd368dcb283a3f9a8b0b432021646e1ca672296528abf2dc0
+  reviewed_warrant_id: null
 - key: OBL-T-209
   version: 1
   requirement_id: T-209
@@ -568,7 +572,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6b3b1e2e3ddd2d4216b67d2e0405bd06ddd829d796dde21e3b25be08b2d43609
+  reviewed_warrant_id: null
 - key: OBL-T-210
   version: 1
   requirement_id: T-210
@@ -583,7 +587,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ac43e9a8e47e937a415886a1f25c955acf3a144f7b2ca5a103344969e4bd6c20
+  reviewed_warrant_id: null
 - key: OBL-T-211
   version: 1
   requirement_id: T-211
@@ -598,7 +602,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ef7c9e5f49e940da34c2ca13b86206e52d556eedf5a471e2393383eef94f3b1f
+  reviewed_warrant_id: null
 - key: OBL-T-212
   version: 1
   requirement_id: T-212
@@ -614,7 +618,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_f1848dedf957651289bc4143b3f236c703f0b3803521cdc532f2f5d4cca014e0
+  reviewed_warrant_id: null
 - key: OBL-T-213
   version: 1
   requirement_id: T-213
@@ -629,7 +633,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_43d7493c3a5b3cd255c87e193b8f9a259b09deb9256554be520572980aa30e83
+  reviewed_warrant_id: null
 - key: OBL-T-214
   version: 1
   requirement_id: T-214
@@ -644,7 +648,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9b4e86c89bd0ddade655a4b9bc21a75d66836ff60db36452cf58f0d3eac7b5e0
+  reviewed_warrant_id: null
 - key: OBL-T-215
   version: 1
   requirement_id: T-215
@@ -659,7 +663,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_454837850443388931aadf7717438bc9bf7dfe3fa061c9e159d0aafbee595c20
+  reviewed_warrant_id: null
 - key: OBL-T-216
   version: 1
   requirement_id: T-216
@@ -674,7 +678,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ee57355809dab330fcb4f5da8ed9d7bf52f86e5f2a1cabcd7c31de2298dc655b
+  reviewed_warrant_id: null
 - key: OBL-T-217
   version: 1
   requirement_id: T-217
@@ -690,7 +694,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0df5aeebb5ac51b7d13626181c86f3c7034f2fd01fb02c31109011665ad6135e
+  reviewed_warrant_id: null
 - key: OBL-T-299
   version: 1
   requirement_id: T-299
@@ -705,7 +709,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_905ff7f90817d967bf3d873f81836ca65106aaecc02a9d302298f1cafa03b59d
+  reviewed_warrant_id: null
 - key: OBL-T-301
   version: 1
   requirement_id: T-301
@@ -720,7 +724,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7762abd14efc2efd39008f3da54d9fc919db4653e8573f9cae24f566a0b4b577
+  reviewed_warrant_id: null
 - key: OBL-T-302
   version: 1
   requirement_id: T-302
@@ -735,7 +739,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_dd764eb3b78a22649097196faf7d3927ca5c0592f03af198c3b4178fda8fa1a6
+  reviewed_warrant_id: null
 - key: OBL-T-303
   version: 1
   requirement_id: T-303
@@ -750,7 +754,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_628ab6dc7380a7dcfa228b1b33d853304a1a5d3cba13554454bd46d9f3802ab3
+  reviewed_warrant_id: null
 - key: OBL-T-304
   version: 1
   requirement_id: T-304
@@ -765,7 +769,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ad1fa2ddbc619f98808439b7993b97ae3f346b4356d048498171a43ca3197acd
+  reviewed_warrant_id: null
 - key: OBL-T-305
   version: 1
   requirement_id: T-305
@@ -780,7 +784,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e284f496b5e48406e332b5e9e9a4fa44e7a9055020f331785f5dbf343c5fa433
+  reviewed_warrant_id: null
 - key: OBL-T-306
   version: 1
   requirement_id: T-306
@@ -795,7 +799,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_cb421be8f802457472632a119d1e0901f39e77daf282a475532224741de0f6a7
+  reviewed_warrant_id: null
 - key: OBL-T-307
   version: 1
   requirement_id: T-307
@@ -810,7 +814,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_cc62cbe55104aacc4ce54ac5d89c3bdc06a3f1d036995fb6af2cf16ecb0c8a62
+  reviewed_warrant_id: null
 - key: OBL-T-308
   version: 1
   requirement_id: T-308
@@ -825,7 +829,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0dc3a6517e6cdbc6a4bcfe3c9c229a4aad371f0e3dbf6d88f68c1458fe1a2bf2
+  reviewed_warrant_id: null
 - key: OBL-T-309
   version: 1
   requirement_id: T-309
@@ -840,7 +844,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8445ac252ee4bbb179e01b319006ca6e635d5f2f499fc20ad812c784e666e513
+  reviewed_warrant_id: null
 - key: OBL-T-401
   version: 1
   requirement_id: T-401
@@ -855,7 +859,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_24b3b8c6e67bd29c0c0c448e5060da9990717d31f5e0f3af0bd95f1115f87be0
+  reviewed_warrant_id: null
 - key: OBL-T-402
   version: 1
   requirement_id: T-402
@@ -871,7 +875,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e26bccfbc304652542e565d3784d986be2937f25c50506b74fc1ab795e4f88c5
+  reviewed_warrant_id: null
 - key: OBL-T-403
   version: 1
   requirement_id: T-403
@@ -886,7 +890,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5702c8794c10f5ec376dd164f938a7f0ac83814764218e115f7869b90e542e12
+  reviewed_warrant_id: null
 - key: OBL-T-404
   version: 1
   requirement_id: T-404
@@ -901,7 +905,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_793ae1acd9d8033982ea2ea571ac00d9e5881002cda3545bf1426bffc43eeb68
+  reviewed_warrant_id: null
 - key: OBL-T-405
   version: 1
   requirement_id: T-405
@@ -916,7 +920,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_35dd6908bca25026234d34bbeb3eccf23c71042d0031e115757738f9d2cfab03
+  reviewed_warrant_id: null
 - key: OBL-T-406
   version: 1
   requirement_id: T-406
@@ -931,7 +935,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_54e025f1f691b1ce7137c511ac9fa7ca5ab941742adcc784c2b7d6386d6ad8df
+  reviewed_warrant_id: null
 - key: OBL-T-407
   version: 1
   requirement_id: T-407
@@ -946,7 +950,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d24262ca29a3b1ff1a44e6b41699d32efae46557ce6e36f1499d6ab5a6c7c609
+  reviewed_warrant_id: null
 - key: OBL-T-408
   version: 1
   requirement_id: T-408
@@ -961,7 +965,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_78a27b8f68f85c8eccfaf1e2a5c6432cc47d896069e7b39e3f64691c7487f889
+  reviewed_warrant_id: null
 - key: OBL-T-409
   version: 1
   requirement_id: T-409
@@ -976,7 +980,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b8b6e4a525a5f87d4d8e891b2b67a3cf0ed1f4dbf1c07cf0d38a880a18f8b08c
+  reviewed_warrant_id: null
 - key: OBL-T-410
   version: 1
   requirement_id: T-410
@@ -991,7 +995,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5b75b4ea9b35d363d2011458753163042e64071ab805e9d496c6fd0eccb621d7
+  reviewed_warrant_id: null
 - key: OBL-T-411
   version: 1
   requirement_id: T-411
@@ -1006,7 +1010,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ac9abe7bf8fdb04a83b343f4f94c6304e60f48b95c940ae82f9e99491a169920
+  reviewed_warrant_id: null
 - key: OBL-T-412
   version: 1
   requirement_id: T-412
@@ -1022,7 +1026,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a8d34377add3a0ba0cf05bbcbc081be842db7608131f5f2359310ef9ed674f0c
+  reviewed_warrant_id: null
 - key: OBL-T-413
   version: 1
   requirement_id: T-413
@@ -1037,7 +1041,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b9c4b507b2983cb92e98737f789a25af1cb932b5809455a0cbcb3ed7cc8299c9
+  reviewed_warrant_id: null
 - key: OBL-T-501
   version: 1
   requirement_id: T-501
@@ -1052,7 +1056,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_fb29f1cfe93721823de58117aedf7692def6aa74742c7c5e0f0918a0ff089ab7
+  reviewed_warrant_id: null
 - key: OBL-T-502
   version: 1
   requirement_id: T-502
@@ -1070,7 +1074,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c953a6d5fd793816b71be65f16412dea3a349f46b414efe298ab83455e1e3aaf
+  reviewed_warrant_id: null
 - key: OBL-T-503
   version: 1
   requirement_id: T-503
@@ -1085,7 +1089,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_183382edc1fd4385de87b0c5e3d993680920e1ed44c5df6564c261ed332381e0
+  reviewed_warrant_id: null
 - key: OBL-T-504
   version: 1
   requirement_id: T-504
@@ -1100,7 +1104,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7e86e721a0fb1b484460da9f6eca146dd34c29d9e057b26de015f0eebd7b038c
+  reviewed_warrant_id: null
 - key: OBL-T-505
   version: 1
   requirement_id: T-505
@@ -1115,7 +1119,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7a973c6fddf371ed52e95ec91d8dbcd737ff133c8379f3a0efa29a8a36d92c1d
+  reviewed_warrant_id: null
 - key: OBL-T-506
   version: 1
   requirement_id: T-506
@@ -1131,7 +1135,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e421b1e2576576ca6c41e7928dd98de9388cd2afc6b23a9ff8460d76435c1469
+  reviewed_warrant_id: null
 - key: OBL-T-507
   version: 1
   requirement_id: T-507
@@ -1146,7 +1150,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c176113bfbf33c4d0c67f643ecd9b240fc78662061ee47c80a8859b9f9b165ff
+  reviewed_warrant_id: null
 - key: OBL-T-508
   version: 1
   requirement_id: T-508
@@ -1162,7 +1166,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_32c6f19a905af990f430a6caf3ec8ea5b6a3045c68fb24fef98f3b2c4d692db4
+  reviewed_warrant_id: null
 - key: OBL-T-601
   version: 1
   requirement_id: T-601
@@ -1178,7 +1182,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_2edc37694a70be3a607def09d65d396e1d43fd3949c6437cc4d815acd68bad31
+  reviewed_warrant_id: null
 - key: OBL-T-602
   version: 1
   requirement_id: T-602
@@ -1195,7 +1199,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6d3d9c43b0df454c6a2dbde5619e19e588145204af2b682c9e06f133c3fb2ffd
+  reviewed_warrant_id: null
 - key: OBL-T-603
   version: 1
   requirement_id: T-603
@@ -1210,7 +1214,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e8e33ee0e8a79254c9c8b3d6001715ea7ef740de76db10836c09b42991238198
+  reviewed_warrant_id: null
 - key: OBL-T-604
   version: 1
   requirement_id: T-604
@@ -1227,7 +1231,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_76476a545008778caf47c09798e9493db59ca391474b678ec2299be2a7bc1272
+  reviewed_warrant_id: null
 - key: OBL-T-605
   version: 1
   requirement_id: T-605
@@ -1242,7 +1246,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_eaf509bace31cc2a7f063ec6074bbbda46b41fc1b94a4d195ebfd4745d23bb2d
+  reviewed_warrant_id: null
 - key: OBL-T-606
   version: 1
   requirement_id: T-606
@@ -1257,7 +1261,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ede109697ae9be127445113ff15e736d5e17d2b3cf0516c8774a484fef9ac148
+  reviewed_warrant_id: null
 - key: OBL-T-701
   version: 1
   requirement_id: T-701
@@ -1272,7 +1276,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_792a9b4527520429dabf29fefd3b8ca0293c22c21acfb61b888ac7daa6ca1a3d
+  reviewed_warrant_id: null
 - key: OBL-T-702
   version: 1
   requirement_id: T-702
@@ -1287,7 +1291,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_2f2025e796fd160db6792fc25411726a93dc19870ae7fcf5845e0c63f7be60ed
+  reviewed_warrant_id: null
 - key: OBL-T-703
   version: 1
   requirement_id: T-703
@@ -1302,7 +1306,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8c1c7c98f213c2f9cd8dbe51b06e3aa8d502057dabde0a16888c53489d9db8bc
+  reviewed_warrant_id: null
 - key: OBL-T-704
   version: 1
   requirement_id: T-704
@@ -1317,7 +1321,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ee11583b6421e96bc58f2130c03155d00e4b0cefb6c6bfe6f655916940ac8a1f
+  reviewed_warrant_id: null
 - key: OBL-T-705
   version: 1
   requirement_id: T-705
@@ -1332,7 +1336,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_991e3114d268c65373f352081bc4b21ea51cf935bb9ceb426d4a001e0611f1b1
+  reviewed_warrant_id: null
 - key: OBL-T-706
   version: 1
   requirement_id: T-706
@@ -1347,7 +1351,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4f285103b0bea8996b7571ef4d6fbc0c7ed548a9c87c220eb916961f08f2eff9
+  reviewed_warrant_id: null
 - key: OBL-T-801
   version: 1
   requirement_id: T-801
@@ -1363,7 +1367,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a45858a9cdfbcb6813fd55a2b6f60e10ab1b93e1f7b50eb56a0742fad2c1b602
+  reviewed_warrant_id: null
 - key: OBL-T-802
   version: 1
   requirement_id: T-802
@@ -1379,7 +1383,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7477520a7f758338a6b8ee249756404242e30354e1e9e7f9dca739220365b896
+  reviewed_warrant_id: null
 - key: OBL-T-803
   version: 1
   requirement_id: T-803
@@ -1395,7 +1399,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a0bcc5a77ed6d495c439c992bf1546ca81a02ef9500badad787efccc3e2d5a63
+  reviewed_warrant_id: null
 - key: OBL-T-804
   version: 1
   requirement_id: T-804
@@ -1410,7 +1414,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c95a27dcdec5b8fccc2f798bac81289ba1eb0058b767ee3697fcfb319f7e5ff9
+  reviewed_warrant_id: null
 - key: OBL-T-805
   version: 1
   requirement_id: T-805
@@ -1425,7 +1429,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c824553be11090bfe3f33a3d4c36553f6d30d8785a40f4c670ed4309cc4c6ba4
+  reviewed_warrant_id: null
 - key: OBL-T-806
   version: 1
   requirement_id: T-806
@@ -1440,7 +1444,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_787c31cfa22c7bc624f06d552f05765ca1a3a59a8413b77687fe72492ea2c8b7
+  reviewed_warrant_id: null
 - key: OBL-T-901
   version: 1
   requirement_id: T-901
@@ -1455,7 +1459,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0a7dec190e5e5dcb21c1113fbc33df1b518d603225738aa01f841643f471de20
+  reviewed_warrant_id: null
 - key: OBL-T-902
   version: 1
   requirement_id: T-902
@@ -1470,7 +1474,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6187ca41797f972ef5df26ad3dc57571dfb091fa4612bdbcef084b98e0e349eb
+  reviewed_warrant_id: null
 - key: OBL-T-903
   version: 1
   requirement_id: T-903
@@ -1485,7 +1489,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3f9587b43b35ffd6949de367c2ee3a737c21de89c658d8bea9314dcc597c71eb
+  reviewed_warrant_id: null
 - key: OBL-T-904
   version: 1
   requirement_id: T-904
@@ -1500,7 +1504,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_02a50a01bcbecb2a264b6e8eca2ecf674b2872c6419bdbb4aa2296347cc3a469
+  reviewed_warrant_id: null
 - key: OBL-T-905
   version: 1
   requirement_id: T-905
@@ -1515,7 +1519,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_20ca513e4ea001bc24c9eb72bd0724283d6fdc5b5bd61b495c2943831001573c
+  reviewed_warrant_id: null
 - key: OBL-T-906
   version: 1
   requirement_id: T-906
@@ -1530,7 +1534,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e6f7b147d6417f563e90c9197b6e0816a87cc9b5e138b232914401d8e5b15800
+  reviewed_warrant_id: null
 - key: OBL-T-907
   version: 1
   requirement_id: T-907
@@ -1545,7 +1549,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_f32e35bfcf40def30740a311345f02e0aefe40b2d627f7054a927d51ff16a48a
+  reviewed_warrant_id: null
 - key: OBL-T-908
   version: 1
   requirement_id: T-908
@@ -1560,7 +1564,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6de119a512a94b476b93e8540dfb174225c54507882aebd4ee568c985ad9b5a1
+  reviewed_warrant_id: null
 - key: OBL-T-909
   version: 1
   requirement_id: T-909
@@ -1575,7 +1579,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_fb1da6470f9594cd6ef6713441609cb65c8556795f89802d1ef92f512d8e3e66
+  reviewed_warrant_id: null
 - key: OBL-T-910
   version: 1
   requirement_id: T-910
@@ -1590,7 +1594,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_cbfcb73586aa4660621292d968eb40be413f967cde8a6296c89542e17c77b545
+  reviewed_warrant_id: null
 - key: OBL-T-911
   version: 1
   requirement_id: T-911
@@ -1605,7 +1609,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9ab9baced436ff0cf047f3a898a11e4f3c97d25cd162daa6e9b79b424244abf1
+  reviewed_warrant_id: null
 - key: OBL-T-912
   version: 1
   requirement_id: T-912
@@ -1620,7 +1624,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_2ffa0cc12d670f6700a1f42f1ec1445530352fc972d1c18711f4ddeb2e92814c
+  reviewed_warrant_id: null
 - key: OBL-T-913
   version: 1
   requirement_id: T-913
@@ -1635,7 +1639,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3014be0635043234cd52571d401c14ffddc8816a33dd65bf4e14332dacedc64e
+  reviewed_warrant_id: null
 - key: OBL-T-914
   version: 1
   requirement_id: T-914
@@ -1650,7 +1654,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_30736fe9059a246bd2f0e66ee13808515f0fa4abce10a873a29c69fe202ee863
+  reviewed_warrant_id: null
 - key: OBL-T-915
   version: 1
   requirement_id: T-915
@@ -1665,7 +1669,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e8abd9eb0d9fd3255a3d87af93792769e5dc50e80868d9ef37436e0b1bfc979a
+  reviewed_warrant_id: null
 - key: OBL-T-916
   version: 1
   requirement_id: T-916
@@ -1680,7 +1684,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4c16318b4f0a4cbc2094c681a643eee3f1bcf4a4298db98a239842cabe242647
+  reviewed_warrant_id: null
 - key: OBL-T-917
   version: 1
   requirement_id: T-917
@@ -1695,7 +1699,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b6d719c5ec9343627f9fb78ea8a801dc972c606a843a081f477933591487eb8c
+  reviewed_warrant_id: null
 - key: OBL-T-1001
   version: 1
   requirement_id: T-1001
@@ -1710,7 +1714,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9ea19c135eaaff29fa2be10ae366d22f17504862b06d639c6b22174597999db5
+  reviewed_warrant_id: null
 - key: OBL-T-1002
   version: 1
   requirement_id: T-1002
@@ -1725,7 +1729,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d5e7e666c73b9aa13dc9c4b24d67701662cff8a388eda1abf0e7989b8ac4e36f
+  reviewed_warrant_id: null
 - key: OBL-T-1003
   version: 1
   requirement_id: T-1003
@@ -1740,7 +1744,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5ad6a0ce26613448549270f72f9a8979362c971691f5202e3c4687921214880e
+  reviewed_warrant_id: null
 - key: OBL-T-1004
   version: 1
   requirement_id: T-1004
@@ -1755,7 +1759,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1c48f237977735a9e86cbaf504d8a902ea2cd10d07d77954b67b005ee082dc37
+  reviewed_warrant_id: null
 - key: OBL-T-1005
   version: 1
   requirement_id: T-1005
@@ -1770,7 +1774,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0fc6e40a19931436bae0e64fadb5316aa55eab57f1419d144546e315bc4b43b0
+  reviewed_warrant_id: null
 - key: OBL-T-1006
   version: 1
   requirement_id: T-1006
@@ -1785,7 +1789,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a864806ace356c77e40d82b8329ae56f8dea7539f992c46e4d73149ffc5acb0d
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-001
   version: 1
   requirement_id: REVA-WK-001
@@ -1803,7 +1807,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6654ade6b044d32aa88c0a698705e731fd8abe31f97da7747a3a02d93d98f1e2
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-002
   version: 1
   requirement_id: REVA-WK-002
@@ -1820,7 +1824,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e4ae0e00466ce5b74d6c6863371f1e6bdac34a31e255722876aee70ce3fb07bf
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-003
   version: 1
   requirement_id: REVA-WK-003
@@ -1838,7 +1842,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5a048dd587cc09e194c9d8ed10d3020413a0e1d717acdffbd27105726bc7b7a3
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-004
   version: 1
   requirement_id: REVA-WK-004
@@ -1855,7 +1859,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9eb9e82faa156724ca8d3a43bd9a6996e42e35a5fff09ff30dfe9f7d60a1978d
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-005
   version: 1
   requirement_id: REVA-WK-005
@@ -1873,7 +1877,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_47f2294f1552caa51b9941723a9f7a7cd7640519decd6beed941d4906d02671e
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-006
   version: 1
   requirement_id: REVA-WK-006
@@ -1891,7 +1895,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_43d02ce106a7ef3995cf258ed88ba44f86ad7a72151a6fdbf588ae11ce80b905
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-007
   version: 1
   requirement_id: REVA-WK-007
@@ -1910,7 +1914,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8983e8a82d57e607060fe169cad399d98c83503e80934cc238b9fc2e867a8e0e
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-008
   version: 1
   requirement_id: REVA-WK-008
@@ -1927,7 +1931,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_420094c1a71942d9c4a45054b076c3c7b482b994d67ec47a94d0d458443a5a84
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-009
   version: 1
   requirement_id: REVA-WK-009
@@ -1945,7 +1949,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0cd2dfc7d0777d111e9180ff08ce6977869feae01d00c08f02faccd341a3641d
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-010
   version: 1
   requirement_id: REVA-WK-010
@@ -1964,7 +1968,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a37254573ef8eeefe770fd72e5b90a9675c2ea4fd3a5ae50446bb3d6fae1b3a0
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-011
   version: 1
   requirement_id: REVA-WK-011
@@ -1983,7 +1987,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_44b443c22f921253800db5cec6de597ddc3bf153c80bcb8a0a4337c64a09a9a9
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-012
   version: 1
   requirement_id: REVA-WK-012
@@ -2001,7 +2005,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ebcaa80377f21ac2f8e0f53439ae9005079bc3f06c500479b08e480430e40d32
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-013
   version: 1
   requirement_id: REVA-WK-013
@@ -2019,7 +2023,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_971e272ef0797c8a50c20f26fdc2be4a64c01b8df8e4fa41916229d7e8eea8e0
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-014
   version: 1
   requirement_id: REVA-WK-014
@@ -2037,7 +2041,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_61a3a997b31196a58fc6c13eba259d079a1278b926c0803133a58e1a9ab7d3e3
+  reviewed_warrant_id: null
 - key: OBL-REVA-WK-015
   version: 1
   requirement_id: REVA-WK-015
@@ -2055,7 +2059,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_65be89235ca19c4712e7bac9aec33205c34b1d3e00a4b2a7348d9d911d4ee976
+  reviewed_warrant_id: null
 - key: OBL-REVA-TL-001
   version: 1
   requirement_id: REVA-TL-001
@@ -2072,7 +2076,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1eeb5d3d11a18f6d0df5687f1db1080d18fc048f6559fd3b590dc65f5733cb84
+  reviewed_warrant_id: null
 - key: OBL-REVA-TL-002
   version: 1
   requirement_id: REVA-TL-002
@@ -2089,7 +2093,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_66642275de5bdf5cda283a01244d94e05666440258be93541399245b7bbe9360
+  reviewed_warrant_id: null
 - key: OBL-REVA-TL-003
   version: 1
   requirement_id: REVA-TL-003
@@ -2107,7 +2111,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6f7482281874d102279b94a20ec42dad43b24fafce5826b77d707ccde58f5c67
+  reviewed_warrant_id: null
 - key: OBL-REVA-TL-004
   version: 1
   requirement_id: REVA-TL-004
@@ -2125,7 +2129,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1bb11be419173b2f0e627ca0b770c6bc6aa15e0a8fde6ff94c7c0531633b5f4d
+  reviewed_warrant_id: null
 - key: OBL-REVA-TL-005
   version: 1
   requirement_id: REVA-TL-005
@@ -2142,7 +2146,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8e363b66551072332ef15b3f901f4d25f2a84dd7478cc35c75e7795d8ef9d2e6
+  reviewed_warrant_id: null
 - key: OBL-REVA-CV-001
   version: 1
   requirement_id: REVA-CV-001
@@ -2160,7 +2164,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_bacc5d3773ba7b6787b0c617977447abbc7dbcfd35786bdeff2cd4c2933d4356
+  reviewed_warrant_id: null
 - key: OBL-REVA-CV-002
   version: 1
   requirement_id: REVA-CV-002
@@ -2178,7 +2182,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e364dea82dd74d6bf7bdcc0537209929ca707553172dd4a490107810afb52a70
+  reviewed_warrant_id: null
 - key: OBL-REVA-CV-003
   version: 1
   requirement_id: REVA-CV-003
@@ -2195,7 +2199,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_de2c1532cbc571e42bda5d5f625ac7fd5a0db615e82e273c0267592e666f56ad
+  reviewed_warrant_id: null
 - key: OBL-REVA-CV-004
   version: 1
   requirement_id: REVA-CV-004
@@ -2213,7 +2217,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4622536471d4ddab20a9aaf12f638022cfa6f411da46349ef5bbb9f488bb219d
+  reviewed_warrant_id: null
 - key: OBL-REVA-CV-005
   version: 1
   requirement_id: REVA-CV-005
@@ -2231,7 +2235,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7abb8653677828bee31d3ee8a4e7c39e83b8881404693fa50f412edd2dee987b
+  reviewed_warrant_id: null
 - key: OBL-REVA-KG-001
   version: 1
   requirement_id: REVA-KG-001
@@ -2249,7 +2253,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_44eb21fd4d01c4d61d99cc53c260bac7951b9ec1af8412023e562a3b7ca653ed
+  reviewed_warrant_id: null
 - key: OBL-REVA-KG-002
   version: 1
   requirement_id: REVA-KG-002
@@ -2266,7 +2270,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_dff51e9a7bb503075a05aba9c80cdd2308a017a85182c613c54f19dc863dcb6c
+  reviewed_warrant_id: null
 - key: OBL-REVA-KG-003
   version: 1
   requirement_id: REVA-KG-003
@@ -2285,7 +2289,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0c3733d03d5294928dca1ffc04b909ac78697e2c9c8cbb7eca3edb3ed9c02013
+  reviewed_warrant_id: null
 - key: OBL-REVA-KG-004
   version: 1
   requirement_id: REVA-KG-004
@@ -2303,7 +2307,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_fa750b5be936210e591a1f07dab42eb522c464a38430edd72e3df01f2d596d16
+  reviewed_warrant_id: null
 - key: OBL-REVA-KG-005
   version: 1
   requirement_id: REVA-KG-005
@@ -2322,7 +2326,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e6f8c41d7c551b019d3e2cd9456687fab2cdb28372f9adf2c8b793e980ffea43
+  reviewed_warrant_id: null
 - key: OBL-REVA-KG-006
   version: 1
   requirement_id: REVA-KG-006
@@ -2340,7 +2344,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9a81b9ebc00d42b7bd7aa46786168dec155e8f4254748a7859a87ef56231f701
+  reviewed_warrant_id: null
 - key: OBL-REVA-KG-007
   version: 1
   requirement_id: REVA-KG-007
@@ -2358,7 +2362,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1859e3e702a217018651afc022f4318192fe2ebc70cfa2d006a4386aa6f6b022
+  reviewed_warrant_id: null
 - key: OBL-REVA-KG-008
   version: 1
   requirement_id: REVA-KG-008
@@ -2375,7 +2379,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_65f654961e4964758611e831ae2ab64595f6ead8232311fe8ab1c1f6d12dae9c
+  reviewed_warrant_id: null
 - key: OBL-REVA-CX-001
   version: 1
   requirement_id: REVA-CX-001
@@ -2393,7 +2397,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1a60508dccef28b3e4de286ced2853f28d77d2fee3df3e6d902267e0e275e318
+  reviewed_warrant_id: null
 - key: OBL-REVA-CX-002
   version: 1
   requirement_id: REVA-CX-002
@@ -2410,7 +2414,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_bf6378e1ee7ba431ae8d6b14805feff936e0822dc92259afec72bf60b83d2751
+  reviewed_warrant_id: null
 - key: OBL-REVA-CX-003
   version: 1
   requirement_id: REVA-CX-003
@@ -2428,7 +2432,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_dc7f273c0f2b0669c466012ae98d2654b9b94bbf5cf90536e01dbb2f3be2cb01
+  reviewed_warrant_id: null
 - key: OBL-REVA-CX-004
   version: 1
   requirement_id: REVA-CX-004
@@ -2446,7 +2450,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ccc32e1432de57ce3fd18389bc06472dbd86e3876f3f18f70e10e190a842ff89
+  reviewed_warrant_id: null
 - key: OBL-REVA-CX-005
   version: 1
   requirement_id: REVA-CX-005
@@ -2464,7 +2468,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_2296d002f7b45c52eb71d55d67288385b71ec662dd21febc55014a4292d0ea5c
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-001
   version: 1
   requirement_id: REVA-PD-001
@@ -2482,7 +2486,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5e231386bfe40954eb4906c12cedcb2bce23442458b7976843d6d9db4d038573
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-002
   version: 1
   requirement_id: REVA-PD-002
@@ -2499,7 +2503,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ba14b44f331fed534572f58b5acfffbcd199aaf0a31152b251a2e3e108e66b9c
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-003
   version: 1
   requirement_id: REVA-PD-003
@@ -2517,7 +2521,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1d5eb307772545ac0d93886d07f9e8f9f51582e56c6fc77398278d7ac3dfd106
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-004
   version: 1
   requirement_id: REVA-PD-004
@@ -2535,7 +2539,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_93ba46d8d6d46ed4ea5e27817e6e846802e1869c56f903be4db4d1008fa4950b
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-005
   version: 1
   requirement_id: REVA-PD-005
@@ -2553,7 +2557,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_cca790f7a82650e29da53a44a526c1ef6018bc0492b390835b177682a7fbf2cc
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-006
   version: 1
   requirement_id: REVA-PD-006
@@ -2571,7 +2575,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_12be2b704d5abd8855ea409a881ec79b79c05a076d9e4bbb27adb6645a1f5b4e
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-007
   version: 1
   requirement_id: REVA-PD-007
@@ -2589,7 +2593,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_fc6060716e327cb8bea8650b7ac910f3fb43585aadb86f56896c3b69c644aee4
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-008
   version: 1
   requirement_id: REVA-PD-008
@@ -2607,7 +2611,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a7daf338e732439f11f18d5b0cc6336cb76434b722a65577b129fe49d0dd8338
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-009
   version: 1
   requirement_id: REVA-PD-009
@@ -2625,7 +2629,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_bb856acaac2fd8a102a452b3e77d4d9308e14cf22f56d1cd5bce534c1d4e3e69
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-010
   version: 1
   requirement_id: REVA-PD-010
@@ -2643,7 +2647,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_cfafe65b0b7548223ee55e59f064177ef1f4668e22517f1eebc0a1ece99d794b
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-011
   version: 1
   requirement_id: REVA-PD-011
@@ -2661,7 +2665,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1807a5fba7c2945cac10d0b030359fb0a8248036c5eb74cdfa92294da1a54456
+  reviewed_warrant_id: null
 - key: OBL-REVA-PD-012
   version: 1
   requirement_id: REVA-PD-012
@@ -2679,7 +2683,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_df6da90bd34e93fdcd97463926c04899ac4a90abd136d620daa7da2741630af9
+  reviewed_warrant_id: null
 - key: OBL-REVA-VS-001
   version: 1
   requirement_id: REVA-VS-001
@@ -2697,7 +2701,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a86a423aa7cea31f48bf6e2687b149296514ff446aeb83ca2eeca43f1ed7e7e7
+  reviewed_warrant_id: null
 - key: OBL-REVA-VS-002
   version: 1
   requirement_id: REVA-VS-002
@@ -2715,7 +2719,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_86b15e4ef9168ca865351a61081a72c7dbc3f3036add5ac24a864999a93dcb94
+  reviewed_warrant_id: null
 - key: OBL-REVA-VS-003
   version: 1
   requirement_id: REVA-VS-003
@@ -2733,7 +2737,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_40ba365624ed6a054d137b200bba9e0cba719470427504988c20a4c662541169
+  reviewed_warrant_id: null
 - key: OBL-REVA-VS-004
   version: 1
   requirement_id: REVA-VS-004
@@ -2751,7 +2755,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_23b92c0641187235e96d6646b911681688d439aede03a7ab59dd3fc26d6ad342
+  reviewed_warrant_id: null
 - key: OBL-REVA-VS-005
   version: 1
   requirement_id: REVA-VS-005
@@ -2769,7 +2773,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5313df68eafa5b80a538fedfe3cccceeba02326e42e3f1a202cc28c09b6d986b
+  reviewed_warrant_id: null
 - key: OBL-REVA-VS-006
   version: 1
   requirement_id: REVA-VS-006
@@ -2787,7 +2791,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_47fe9a39aacfc66f59e72c352262fe96e9cc64be408df7bac700cafc4a7968fc
+  reviewed_warrant_id: null
 - key: OBL-REVA-VS-007
   version: 1
   requirement_id: REVA-VS-007
@@ -2804,7 +2808,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ae8a13f44c8dfb41a86804b4b54645d724ac9526aa300e2721ede07a6a355475
+  reviewed_warrant_id: null
 - key: OBL-REVA-VS-008
   version: 1
   requirement_id: REVA-VS-008
@@ -2821,7 +2825,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_16d14dd420f07978d567e4ede0cb2efab161f25b13e0a84fb1f3586c03e50969
+  reviewed_warrant_id: null
 - key: OBL-REVA-VS-009
   version: 1
   requirement_id: REVA-VS-009
@@ -2839,7 +2843,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1e2dd5f32ac533e2f62480281f499e1c026bf27bc035d0c22f4b10b57b447ed8
+  reviewed_warrant_id: null
 - key: OBL-REVA-VS-010
   version: 1
   requirement_id: REVA-VS-010
@@ -2857,7 +2861,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d020664bc7aea1907173489b818b6c7100aca391433575d4fbb57b80745329b1
+  reviewed_warrant_id: null
 - key: OBL-REVA-AI-001
   version: 1
   requirement_id: REVA-AI-001
@@ -2875,7 +2879,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e672726fda93f7998f93d913b4b30dca7df3f5d8bf9453c0dd2c78fb37f2c465
+  reviewed_warrant_id: null
 - key: OBL-REVA-AI-002
   version: 1
   requirement_id: REVA-AI-002
@@ -2893,7 +2897,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6fc6bc4a5b8162d1f580e809a506d29cc9b8a749b0ddf970ff4c13e874577610
+  reviewed_warrant_id: null
 - key: OBL-REVA-AI-003
   version: 1
   requirement_id: REVA-AI-003
@@ -2911,7 +2915,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3246631e061cd77480992f5d7280ef2ff296ed605b84049f42ce1d7f0a48537e
+  reviewed_warrant_id: null
 - key: OBL-REVA-AI-004
   version: 1
   requirement_id: REVA-AI-004
@@ -2929,7 +2933,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e36822548ccc8814f0c635decd1a8bbc2b00ef8d59b93d72758c437e8e7b0304
+  reviewed_warrant_id: null
 - key: OBL-REVA-AI-005
   version: 1
   requirement_id: REVA-AI-005
@@ -2947,7 +2951,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_91788fc93b9916b60a4e6e8c61c7766839775d54e775d89738d10dd1aeb74a7a
+  reviewed_warrant_id: null
 - key: OBL-REVA-AI-006
   version: 1
   requirement_id: REVA-AI-006
@@ -2965,7 +2969,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1812313ce08d7415fca8415145987671a6ce1f5caa5328c0619469631cabb8a6
+  reviewed_warrant_id: null
 - key: OBL-REVA-AI-007
   version: 1
   requirement_id: REVA-AI-007
@@ -2983,7 +2987,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1f32c275358d175ede2de00eeb7e52aeae5355e979d8a6cba7924bad1e68ace8
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-001
   version: 1
   requirement_id: REVA-SP-001
@@ -3001,7 +3005,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a5fb0b33090cf3acecd3418043d7e5637e6ff1f90350d597e7bebfc9db96e456
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-002
   version: 1
   requirement_id: REVA-SP-002
@@ -3019,7 +3023,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b1f52660075f0abd0a8a18ef6f186d44ffce0bfa1f98c8510309039422cc3f94
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-003
   version: 1
   requirement_id: REVA-SP-003
@@ -3037,7 +3041,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_67e6483d72b1959e983912240e29cc01fd85b6bed203254d19ea9eb98e2a62c3
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-004
   version: 1
   requirement_id: REVA-SP-004
@@ -3055,7 +3059,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3f6bc824b73befe9c8c43cc16831b5d658d63ff3950be2f7f63455fadd9e653b
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-005
   version: 1
   requirement_id: REVA-SP-005
@@ -3073,7 +3077,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e0eaf275ed076a7ce2a0265c0345d269749818b28ca7c6b0fcbacd0b2bbfda7f
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-006
   version: 1
   requirement_id: REVA-SP-006
@@ -3091,7 +3095,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_19278b553328aec6557b20275843f771a2ceacd8593f84702f203977a99b9cb1
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-007
   version: 1
   requirement_id: REVA-SP-007
@@ -3108,7 +3112,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_78e62976c4fd154cfc35e83bd3193f926ba4ad7c3fa9c3c0017f15096730a6f4
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-008
   version: 1
   requirement_id: REVA-SP-008
@@ -3125,7 +3129,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a61293fcc9d044820466ac9700a64fe65dc828cfdd20ad62827dfd95b629ff18
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-009
   version: 1
   requirement_id: REVA-SP-009
@@ -3143,7 +3147,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a0a7dab59f300abebe988c78cfc2b1173ef4bb1590edb75e998bf889a1fded1c
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-010
   version: 1
   requirement_id: REVA-SP-010
@@ -3161,7 +3165,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_47c51849bbedb1b50c71f348f476e230604589f9223bcff2c2b6749839708875
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-011
   version: 1
   requirement_id: REVA-SP-011
@@ -3179,7 +3183,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e0c3c5e0d7a3b210a124bc7b5e0a80a3294066147c406b3fa511cfe563a99dfb
+  reviewed_warrant_id: null
 - key: OBL-REVA-SP-012
   version: 1
   requirement_id: REVA-SP-012
@@ -3197,7 +3201,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_16714a23e3f1b6f571a3c827e67a7f730db486f4f6e66dbf8f72e45857e112e3
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-001
   version: 1
   requirement_id: REVA-AB-001
@@ -3215,7 +3219,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d8b62ace7bd27cae93c3a672a1626c6642fa0d8f673459300476835ae9118f30
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-002
   version: 1
   requirement_id: REVA-AB-002
@@ -3233,7 +3237,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9eee5c2c04ebf0e034c68c5e1efbbb24443b6929face725f8df12dab94281d7c
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-003
   version: 1
   requirement_id: REVA-AB-003
@@ -3252,7 +3256,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_57b8f517fa5ce2e18d2b139cc86a2c15dcbec9295508d7988d943d6c21f98e3f
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-004
   version: 1
   requirement_id: REVA-AB-004
@@ -3270,7 +3274,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_55f58623dca8b1a3488d10ae3d3b9583862f344d7d0018b3c693b2a2a155c5f5
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-005
   version: 1
   requirement_id: REVA-AB-005
@@ -3288,7 +3292,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c2b28c30131b0de8614ae36c9bf79d83d95b17e7596146df80b8cd22682ddef5
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-006
   version: 1
   requirement_id: REVA-AB-006
@@ -3306,7 +3310,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7a007a7e3c8b3ff0107b644fd918fbd2b82706683b6eae2a9fd58109552d4311
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-007
   version: 1
   requirement_id: REVA-AB-007
@@ -3324,7 +3328,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_dc8c053e04bd4f29f0abb25c395f0ac2a737c19905070593cfe97901c65be2f5
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-008
   version: 1
   requirement_id: REVA-AB-008
@@ -3342,7 +3346,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_244f517c8916d2e32f7a0d38563989a355fc4fd9ebf883f35081d74ca31aaff8
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-009
   version: 1
   requirement_id: REVA-AB-009
@@ -3360,7 +3364,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e6565b020ff3441196f188343b17d7599c349c4fc9cb23d64676a8f50c92dbc3
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-010
   version: 1
   requirement_id: REVA-AB-010
@@ -3378,7 +3382,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c8e62011b217e7d3bfb1f5c76f98632a21ac957bf79f2052184b8cae2bf07040
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-011
   version: 1
   requirement_id: REVA-AB-011
@@ -3396,7 +3400,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0467eb2484aee1cb8aef561db333036dcdcdb0a0c7a550288f943877663eb277
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-012
   version: 1
   requirement_id: REVA-AB-012
@@ -3414,7 +3418,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_582807e9f49e22a9bac54f6b651bb7fde8aae2c68dee68e640f4be2f33d5e2a9
+  reviewed_warrant_id: null
 - key: OBL-REVA-AB-013
   version: 1
   requirement_id: REVA-AB-013
@@ -3432,7 +3436,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6a4d9ccae54020094c02eecbfa2dc4d186415b481ffb5de67e5fd252be915e1a
+  reviewed_warrant_id: null
 - key: OBL-REVA-AS-001
   version: 1
   requirement_id: REVA-AS-001
@@ -3450,7 +3454,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5ac9fc9aadcde62504782afdd150129f167e52323dd76eb2c11f8fe93b19e416
+  reviewed_warrant_id: null
 - key: OBL-REVA-AS-002
   version: 1
   requirement_id: REVA-AS-002
@@ -3467,7 +3471,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1b7d6cc92bcfd4d07d9abafa635085c827b350f9dbe2caa3711eae107ea0c6ce
+  reviewed_warrant_id: null
 - key: OBL-REVA-AS-003
   version: 1
   requirement_id: REVA-AS-003
@@ -3485,7 +3489,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_2f020664a5a17d7e602aedad1f5f3180989dbf6c5a43ab3e0d75159047cc3f95
+  reviewed_warrant_id: null
 - key: OBL-REVA-AS-004
   version: 1
   requirement_id: REVA-AS-004
@@ -3503,7 +3507,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9d3d947d784e7e209c86f312dbe89db792f1acddc90a3a3e6832583d1e6c794e
+  reviewed_warrant_id: null
 - key: OBL-REVA-AS-005
   version: 1
   requirement_id: REVA-AS-005
@@ -3521,7 +3525,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a5f2dc74a6ff0e63447b1c8c7b335861073cba09ef1661f23abf863d9f7d9f23
+  reviewed_warrant_id: null
 - key: OBL-REVA-AS-006
   version: 1
   requirement_id: REVA-AS-006
@@ -3539,7 +3543,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_cc79aef4ef76ead279e8c5ed4a9cdfb0a1639dfd50814a67f13987e6e56060f2
+  reviewed_warrant_id: null
 - key: OBL-REVA-AS-007
   version: 1
   requirement_id: REVA-AS-007
@@ -3557,7 +3561,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0a9e7650d7393f38993fe7820fb71caca787dd30d612e57f74607ec58cbb2b47
+  reviewed_warrant_id: null
 - key: OBL-REVA-AS-008
   version: 1
   requirement_id: REVA-AS-008
@@ -3575,7 +3579,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d51b43984df3749b3d2e88f8cbf105e89c2e289338e2fd7ea42158111d3182ac
+  reviewed_warrant_id: null
 - key: OBL-REVA-DB-001
   version: 1
   requirement_id: REVA-DB-001
@@ -3593,7 +3597,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0e0fd776404005c28506e74759ff49f46097965281a254093bc74a9d500f39e6
+  reviewed_warrant_id: null
 - key: OBL-REVA-DB-002
   version: 1
   requirement_id: REVA-DB-002
@@ -3611,7 +3615,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b25b5362850336707c21370fe4f08cb4d39b8d4e51d0c5e32089c08fbe4b8937
+  reviewed_warrant_id: null
 - key: OBL-REVA-DB-003
   version: 1
   requirement_id: REVA-DB-003
@@ -3630,7 +3634,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_cbf47699e5227aa23b139818c8075a174e438a096f4668153e123c12c1ebb4f5
+  reviewed_warrant_id: null
 - key: OBL-REVA-DB-004
   version: 1
   requirement_id: REVA-DB-004
@@ -3648,7 +3652,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c55f5d0a62c30bcafbaca236e42d9ff3f003681b48d94845289328cf0a2b073a
+  reviewed_warrant_id: null
 - key: OBL-REVA-DB-005
   version: 1
   requirement_id: REVA-DB-005
@@ -3665,7 +3669,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0804fd2f00ae0bd4de1d051a647abfc205540525b8a5ffbf4760c2ea973c62c5
+  reviewed_warrant_id: null
 - key: OBL-REVA-RR-001
   version: 1
   requirement_id: REVA-RR-001
@@ -3684,7 +3688,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_2bf627714c52d3ac9609f7b07b74d0e0f7134c30f2a00381687ff768a2c6aa03
+  reviewed_warrant_id: null
 - key: OBL-REVA-RR-002
   version: 1
   requirement_id: REVA-RR-002
@@ -3702,7 +3706,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_689e866afe52b3e89a3cf849751f568ae0e146b6543884311b97cb514a73a77f
+  reviewed_warrant_id: null
 - key: OBL-REVA-RR-003
   version: 1
   requirement_id: REVA-RR-003
@@ -3720,7 +3724,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c4f3bcf7ba8f0966016127ed6f849ab2f4737cfaec84137acd27591eda7634d1
+  reviewed_warrant_id: null
 - key: OBL-REVA-RR-004
   version: 1
   requirement_id: REVA-RR-004
@@ -3737,7 +3741,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4e6ca00f5d4b5e616a30ec1df81b107b4db07a55a66183714b5c08190a88ad54
+  reviewed_warrant_id: null
 - key: OBL-REVA-FT-001
   version: 1
   requirement_id: REVA-FT-001
@@ -3755,7 +3759,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e46b77354704b5560526eb5385f1d699f0e60254092769371154120bf83b17fe
+  reviewed_warrant_id: null
 - key: OBL-REVA-FT-002
   version: 1
   requirement_id: REVA-FT-002
@@ -3773,7 +3777,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a6b1c2ca537e595e07a9e8bc9e47a0ce1add4d28c330392e3368c0408f4d87f9
+  reviewed_warrant_id: null
 - key: OBL-REVA-FT-003
   version: 1
   requirement_id: REVA-FT-003
@@ -3791,7 +3795,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a82ad256165c3658769e7f62929f56fa1c06767e0eaf9dff7ac8e85c4e76cbdd
+  reviewed_warrant_id: null
 - key: OBL-REVA-FT-004
   version: 1
   requirement_id: REVA-FT-004
@@ -3809,7 +3813,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0d49daaa841c8b310c5f27570999e98721c5587e4c14a9afeae4641cb9f0bf6b
+  reviewed_warrant_id: null
 - key: OBL-REVA-FT-005
   version: 1
   requirement_id: REVA-FT-005
@@ -3827,7 +3831,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_357f12993dbe42f104410e6a3050025ff9e4903d42048bb59349f7c45d9ea1dd
+  reviewed_warrant_id: null
 - key: OBL-REVA-FT-006
   version: 1
   requirement_id: REVA-FT-006
@@ -3845,7 +3849,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8615f45b8d0068836e0dfbb3552ac870f305f8ba5e9696d91600d8fa705b910f
+  reviewed_warrant_id: null
 - key: OBL-REVA-FT-007
   version: 1
   requirement_id: REVA-FT-007
@@ -3862,7 +3866,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c66ab08b976b6ffd6d684f7de023111e8ca60be8be7aa6af59a1ebe3dffd46e3
+  reviewed_warrant_id: null
 - key: OBL-REVA-FT-008
   version: 1
   requirement_id: REVA-FT-008
@@ -3880,7 +3884,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_77935789b4a1b76154f2b948e95fb98d05d72604eb67e6687bd460b06e942498
+  reviewed_warrant_id: null
 - key: OBL-REVA-FT-009
   version: 1
   requirement_id: REVA-FT-009
@@ -3898,7 +3902,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c2eb12fa83bd7da3fb1402ccf1156d50cbcb42fa016e3ecff95e8cf9f4c012ce
+  reviewed_warrant_id: null
 - key: OBL-REVA-GD-001
   version: 1
   requirement_id: REVA-GD-001
@@ -3915,7 +3919,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4c858e9ada7b88b68a932b6b49a2ecee3afa2bbeb95d2a07a6e8706b6c0d933e
+  reviewed_warrant_id: null
 - key: OBL-REVA-GD-002
   version: 1
   requirement_id: REVA-GD-002
@@ -3933,7 +3937,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_156ef26e7ddab83cda78aac4feca40e6cecd64a117e7b7a95de0bdf0e7f2fc24
+  reviewed_warrant_id: null
 - key: OBL-REVA-GD-003
   version: 1
   requirement_id: REVA-GD-003
@@ -3951,7 +3955,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_06000301aa321d68582dab1159618b7a217c057f5ac60f596bdbcf98ed3809e0
+  reviewed_warrant_id: null
 - key: OBL-REVA-GD-004
   version: 1
   requirement_id: REVA-GD-004
@@ -3969,7 +3973,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5f8f3a12f17627f7b2a6dc50ec068084db7aecde4966a7b37228d41707e82c19
+  reviewed_warrant_id: null
 - key: OBL-REVA-GD-005
   version: 1
   requirement_id: REVA-GD-005
@@ -3986,7 +3990,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_cb8316a2fce573879bee688b864236757afdf193cb27ddbe71219f10f1956645
+  reviewed_warrant_id: null
 - key: OBL-REVA-DV-001
   version: 1
   requirement_id: REVA-DV-001
@@ -4003,7 +4007,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_fabdb0d0a0b62ff410953b35b434b19080fcc4d30e797a9d78b715e3fef32b1f
+  reviewed_warrant_id: null
 - key: OBL-REVA-DV-002
   version: 1
   requirement_id: REVA-DV-002
@@ -4021,7 +4025,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a655ec2969442244ca1547c02ff52815ad18e5b55d03857dd1ccde1b57d77994
+  reviewed_warrant_id: null
 - key: OBL-REVA-DV-003
   version: 1
   requirement_id: REVA-DV-003
@@ -4039,7 +4043,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3b8f2c8d2253681f041371916e2ef442d1878f1ce2e26060e4344a3635dd908e
+  reviewed_warrant_id: null
 - key: OBL-REVA-DV-004
   version: 1
   requirement_id: REVA-DV-004
@@ -4057,7 +4061,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_95c44a628b71fefc30f0701087c7afdc264c9ffe292fd3a690fdbaae975e6711
+  reviewed_warrant_id: null
 - key: OBL-REVA-VW-001
   version: 1
   requirement_id: REVA-VW-001
@@ -4075,7 +4079,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e0efe147ce5281b4b21bbe2fd18024597039b16aa74049986f938e5a8891cc24
+  reviewed_warrant_id: null
 - key: OBL-REVA-VW-002
   version: 1
   requirement_id: REVA-VW-002
@@ -4093,7 +4097,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_176036f9b16f89264d8d7d7634ec45c6bd985cf54567485a07097d01c129e754
+  reviewed_warrant_id: null
 - key: OBL-REVA-VW-003
   version: 1
   requirement_id: REVA-VW-003
@@ -4111,7 +4115,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3df909f65709a641a07a36be606946e9d91492b5a892f1c07060651a66fb9787
+  reviewed_warrant_id: null
 - key: OBL-REVA-VW-004
   version: 1
   requirement_id: REVA-VW-004
@@ -4128,7 +4132,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c29d38bae32ee19735af9b3398462271ec4c272af7de1a260b5254592901f660
+  reviewed_warrant_id: null
 - key: OBL-REVA-MC-001
   version: 1
   requirement_id: REVA-MC-001
@@ -4146,7 +4150,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3f18ca181dc0c0caefdd48c50d27a1770f20732824097db2307d42e90ca860b6
+  reviewed_warrant_id: null
 - key: OBL-REVA-MC-002
   version: 1
   requirement_id: REVA-MC-002
@@ -4164,7 +4168,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_442d2c399bc4bc9f334b5228c497b5df6b5242d0444d48995d7b7edb3f539a80
+  reviewed_warrant_id: null
 - key: OBL-REVA-MC-003
   version: 1
   requirement_id: REVA-MC-003
@@ -4181,7 +4185,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_82d96f5227e1ed6f3245f7043d27455e14afa850037e302aa9a6ac6796081c23
+  reviewed_warrant_id: null
 - key: OBL-REVA-MC-004
   version: 1
   requirement_id: REVA-MC-004
@@ -4199,7 +4203,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b6ccc103654525b7dfc38fc16902f2d044b0cfe3975fcdc06133986fd30e0d50
+  reviewed_warrant_id: null
 - key: OBL-REVA-MC-005
   version: 1
   requirement_id: REVA-MC-005
@@ -4217,7 +4221,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b7910be2878a116b39ddebd97be174676851f239f636f6081d2f36a77ef34087
+  reviewed_warrant_id: null
 - key: OBL-REVA-MC-006
   version: 1
   requirement_id: REVA-MC-006
@@ -4235,7 +4239,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_02c78c8a6148f083ebe4ba4a69942c6a8020b720c06ba0c08432bbf7851693cd
+  reviewed_warrant_id: null
 - key: OBL-REVA-MC-007
   version: 1
   requirement_id: REVA-MC-007
@@ -4253,7 +4257,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8046353079a5a435c798e5166d95e0683dee0ec23c35a6ebb787fab94699ac04
+  reviewed_warrant_id: null
 - key: OBL-REVA-MC-008
   version: 1
   requirement_id: REVA-MC-008
@@ -4270,7 +4274,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_249906dbb30f1b275fa7703d11a52bd373df1e8397c8b3e15e093bde20597e02
+  reviewed_warrant_id: null
 - key: OBL-REVA-MC-009
   version: 1
   requirement_id: REVA-MC-009
@@ -4288,7 +4292,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d678b9b6dd6ed2b44106179cb227bc4fba85a3a87b088f97d920de0733772d23
+  reviewed_warrant_id: null
 - key: OBL-REVA-GA-001
   version: 1
   requirement_id: REVA-GA-001
@@ -4306,7 +4310,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5a5a7608d4dff2b0d83c6b6f8b31403ec8d5140a9d1be48bb9e33fba17921d01
+  reviewed_warrant_id: null
 - key: OBL-REVA-GA-002
   version: 1
   requirement_id: REVA-GA-002
@@ -4324,7 +4328,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5d845b6db07bc10b00b5b08bd44eb251fcbc73effe734c6898eeeec6042f1503
+  reviewed_warrant_id: null
 - key: OBL-REVA-GA-003
   version: 1
   requirement_id: REVA-GA-003
@@ -4342,7 +4346,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3ef57414757b3b54450d7491d2c353ec03feeed5e216c81befbb96037f29be7e
+  reviewed_warrant_id: null
 - key: OBL-REVA-GA-004
   version: 1
   requirement_id: REVA-GA-004
@@ -4360,7 +4364,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9883cd891d8732156b82ea84598a5fb0dc4097c38b240011a5dab05dd7c281f7
+  reviewed_warrant_id: null
 - key: OBL-REVA-GA-005
   version: 1
   requirement_id: REVA-GA-005
@@ -4378,7 +4382,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6fba737d8b37444ef7344d0ea8da4bd59a15da5ae3c3d1f857619475fb8bbd74
+  reviewed_warrant_id: null
 - key: OBL-REVA-GA-006
   version: 1
   requirement_id: REVA-GA-006
@@ -4396,7 +4400,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0072a270097129ad7d93fa117f8303cdf67453843bf250ecb2b8af58f47adf8b
+  reviewed_warrant_id: null
 - key: OBL-REVA-GA-007
   version: 1
   requirement_id: REVA-GA-007
@@ -4414,7 +4418,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_f15de639220a4a297d6eec979e01dffa8f5e3f288b9d24f18bd397c2cb530214
+  reviewed_warrant_id: null
 - key: OBL-REVA-DR-001
   version: 1
   requirement_id: REVA-DR-001
@@ -4433,7 +4437,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_89c9c379cffd4b8162c4930b300634368430545f0475a856df587f2619b8f9f6
+  reviewed_warrant_id: null
 - key: OBL-REVA-DR-002
   version: 1
   requirement_id: REVA-DR-002
@@ -4450,7 +4454,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0f777b1a2041a5630bc33094260d66734eec10ca126c801b3a21afd08c1b7ddc
+  reviewed_warrant_id: null
 - key: OBL-REVA-DR-003
   version: 1
   requirement_id: REVA-DR-003
@@ -4467,7 +4471,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_397b1f6dd4c1330b2a14cd7eafe357b529739dc1bcde9be44f0fddb9b0a07f1f
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-001
   version: 1
   requirement_id: REVA-SEC-001
@@ -4485,7 +4489,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5d63934d7b0bd5ab51bf6427bb22d692fa60eb7490ce052ea7ce70906faf80ec
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-002
   version: 1
   requirement_id: REVA-SEC-002
@@ -4504,7 +4508,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7f61e997884abae7214f0f7767a5b2cd162c8dc8482d68078a5b40d868dec9bc
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-003
   version: 1
   requirement_id: REVA-SEC-003
@@ -4522,7 +4526,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4a37889709c08a0a842ce1133f074f6455e8c2fae230e351ff2c1d2c2b6e4fb9
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-004
   version: 1
   requirement_id: REVA-SEC-004
@@ -4540,7 +4544,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5618ef9dc3b537924b38e2beee9e8d6d12a426c5354891a2ba47eaa5223e73ec
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-005
   version: 1
   requirement_id: REVA-SEC-005
@@ -4557,7 +4561,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_deb2bd2d23b83eb45d82f0b56368245467c02ee15845a29d41f7386a25ba054a
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-006
   version: 1
   requirement_id: REVA-SEC-006
@@ -4574,7 +4578,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8bd7d7e22181d7eefd4d39dc6037dc69fbe58d802d40c349a7e4c7adeaca8f01
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-007
   version: 1
   requirement_id: REVA-SEC-007
@@ -4591,7 +4595,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_170dadb10f81dcd30d54e288f187ed7c991d4d37714383a85eb7574170920816
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-008
   version: 1
   requirement_id: REVA-SEC-008
@@ -4609,7 +4613,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d6bb928664432b88732744c745221b03b9429af648a8f3b54cdf89cebde1378b
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-009
   version: 1
   requirement_id: REVA-SEC-009
@@ -4627,7 +4631,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_42741896aac8ca5ad7c2ffa52bde58395e0f098deef1dfe65faa372fe3b6cd71
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-010
   version: 1
   requirement_id: REVA-SEC-010
@@ -4645,7 +4649,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_57ec06d5b8b17d51088e36b3cd33457d18ba2d6272b0ed1cd559b3952e28003c
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-011
   version: 1
   requirement_id: REVA-SEC-011
@@ -4663,7 +4667,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_f3cf47106a73c5cd80ed381481a8d34aaffa21cf366b61ada9fbda9ab6103068
+  reviewed_warrant_id: null
 - key: OBL-REVA-SEC-012
   version: 1
   requirement_id: REVA-SEC-012
@@ -4681,7 +4685,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b5fafba20a1615307209250ef16d854ea4589485e1f1e9eac777e37a067a6228
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-001
   version: 1
   requirement_id: REVA-UI-001
@@ -4699,7 +4703,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_efeac7815d132a5c65189da6620e201343e32a3776bcf03a76bbf501895d9e3c
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-002
   version: 1
   requirement_id: REVA-UI-002
@@ -4717,7 +4721,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a19ff99c851654901bac75535ed2119f4fa168c2f68889122edc78b7cfbbd336
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-003
   version: 1
   requirement_id: REVA-UI-003
@@ -4734,7 +4738,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0a47b046c78fbd5efd4a770f8f9cecf39407629df3bd081d1c80f185506ca06e
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-004
   version: 1
   requirement_id: REVA-UI-004
@@ -4752,7 +4756,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_bd12a98a89e0ebd7a6bacb6b45cdc59b10180a5d46ecb3993283c4fde8e0fc0c
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-005
   version: 1
   requirement_id: REVA-UI-005
@@ -4770,7 +4774,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_953761f0fef8d6c1206ff07212a017a5b59c3c79d96754e5577cd96b034c2058
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-006
   version: 1
   requirement_id: REVA-UI-006
@@ -4787,7 +4791,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7c9542da3e6465cff59d681181a994f5b5f8fc57af6f2b33dc1acb6dcb647803
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-007
   version: 1
   requirement_id: REVA-UI-007
@@ -4805,7 +4809,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_07e2c24614e041008e0bb3849ec6ffd161839f0f0283ccffdbf1d988d6ed931a
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-008
   version: 1
   requirement_id: REVA-UI-008
@@ -4823,7 +4827,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9aefe7658b4c7c48528335b3fc0d364263f9902aa605803b4ed477b807a425a5
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-009
   version: 1
   requirement_id: REVA-UI-009
@@ -4841,7 +4845,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ba0184d2c9522bbe3cd26be182c4fed0347cf5b3964bf7384d1afac0ea4aaa9b
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-010
   version: 1
   requirement_id: REVA-UI-010
@@ -4858,7 +4862,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b17437eb7262ca0ab4a41ad1b4f2e62ec465a8918963faae7210226f6fdb0850
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-011
   version: 1
   requirement_id: REVA-UI-011
@@ -4875,7 +4879,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_56b524449482d4bc1c03a543f919be651328070a08c60fee2c1b24fe3938494d
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-012
   version: 1
   requirement_id: REVA-UI-012
@@ -4893,7 +4897,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7b4efecc9181b364d4288d84bc263b85701215379428d43a395cb94805aa2888
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-013
   version: 1
   requirement_id: REVA-UI-013
@@ -4910,7 +4914,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6ab129b5f5c569533d536d478b98a6cc8a1ef1e5473c79f67d97cfe8d61cbbfa
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-014
   version: 1
   requirement_id: REVA-UI-014
@@ -4927,7 +4931,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4352a39d071fe7b018f5ae4da29abb688366460492e5038375fdbf6fa64ddecd
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-015
   version: 1
   requirement_id: REVA-UI-015
@@ -4945,7 +4949,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_491f4e43caf76bf2d2efeddbb9b9b03970aabb686c9d82cb2ea9b37bb15e291d
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-016
   version: 1
   requirement_id: REVA-UI-016
@@ -4962,7 +4966,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3fc68b02af2848522dd37607b118786a0a790a28680a06e542c51e525c797569
+  reviewed_warrant_id: null
 - key: OBL-REVA-UI-017
   version: 1
   requirement_id: REVA-UI-017
@@ -4980,7 +4984,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9c66514a77a9e546a15130127ed5445d2775dc930808175f65457a72e31a102b
+  reviewed_warrant_id: null
 - key: OBL-REVA-OB-001
   version: 1
   requirement_id: REVA-OB-001
@@ -4998,7 +5002,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6c6dc7c84547d8dca12e33bb976039cde6f92de3ee817d7f0e957ada27863994
+  reviewed_warrant_id: null
 - key: OBL-REVA-OB-002
   version: 1
   requirement_id: REVA-OB-002
@@ -5015,7 +5019,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_9ffd28d205559ed35362bd81496363c647f5c9cccd4ad3c16452d65ac32c25d4
+  reviewed_warrant_id: null
 - key: OBL-REVA-OB-003
   version: 1
   requirement_id: REVA-OB-003
@@ -5032,7 +5036,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d493524fb2088a9ea0a63488217a754dae07cc75d91163483c1429d3463b6864
+  reviewed_warrant_id: null
 - key: OBL-REVA-OB-004
   version: 1
   requirement_id: REVA-OB-004
@@ -5050,7 +5054,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b9d831aa51019c50851c6404a3b96016f6168cdf5e5565e20eea903e111c2500
+  reviewed_warrant_id: null
 - key: OBL-REVA-OB-005
   version: 1
   requirement_id: REVA-OB-005
@@ -5067,7 +5071,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_46aaef9d73a2d61a53a89e3fc5b1f19b3e2ed4670561e9035b4689f0049d7882
+  reviewed_warrant_id: null
 - key: OBL-REVA-OB-006
   version: 1
   requirement_id: REVA-OB-006
@@ -5085,7 +5089,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_143ddb2b5652b28ffa670b94f02cf0d274317dc7ed8cac9e8ab627562437f72b
+  reviewed_warrant_id: null
 - key: OBL-REVA-XP-001
   version: 1
   requirement_id: REVA-XP-001
@@ -5103,7 +5107,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_89a6cbccd63d77b3887311f43df55690738d7d87976e43800c52c49c63c2fe51
+  reviewed_warrant_id: null
 - key: OBL-REVA-XP-002
   version: 1
   requirement_id: REVA-XP-002
@@ -5120,7 +5124,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b8014cf3b9fd4e88cb9b2605cad84d93e624d05541c37eb1b3090389d86c4fa0
+  reviewed_warrant_id: null
 - key: OBL-REVA-XP-003
   version: 1
   requirement_id: REVA-XP-003
@@ -5137,7 +5141,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_fec645a3b3e9c423a476da80ea6cb1aade93a550f154f7e2dd521da40d2d6144
+  reviewed_warrant_id: null
 - key: OBL-REVA-XP-004
   version: 1
   requirement_id: REVA-XP-004
@@ -5154,7 +5158,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_db67978cb049c23d5cb7cbdf92a3596b50aae18d2a02c0e664fb7208e4e6e4e2
+  reviewed_warrant_id: null
 - key: OBL-REVA-XP-005
   version: 1
   requirement_id: REVA-XP-005
@@ -5170,7 +5174,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a456c834529e59b4284179902f7e9431c0ebecca020dc8d707edebd0e6f09e80
+  reviewed_warrant_id: null
 - key: OBL-REVA-XP-006
   version: 1
   requirement_id: REVA-XP-006
@@ -5187,7 +5191,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a002e2f1cf6eab54334cf292f21abe16d1e4ea43f67a32c7e92e7b56cf8aa03c
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-001
   version: 1
   requirement_id: REVA-NFR-001
@@ -5204,7 +5208,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5c1eee74c72643741defd4cfa272cd009fc3d3dce4ce05443b484dcbb67c4195
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-002
   version: 1
   requirement_id: REVA-NFR-002
@@ -5219,7 +5223,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_5593f6f51f8cd93908c81687ec4fa7eb51e622ae0e5eaebfdd940fc04d44d6b7
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-003
   version: 1
   requirement_id: REVA-NFR-003
@@ -5235,7 +5239,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_602bdd1d4264778e1afb31c38e88b1ff640cbb41b16ead092ea50e0910676bea
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-004
   version: 1
   requirement_id: REVA-NFR-004
@@ -5252,7 +5256,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d513c8fc8b6bb101dfa171f5e44732c881add41ca9a8396f1a3e261e8dbf08a3
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-005
   version: 1
   requirement_id: REVA-NFR-005
@@ -5269,7 +5273,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4b20631d6781b30b9473d7847c3fcc067cbe95dc3a85d55466b96b07dfa117d3
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-006
   version: 1
   requirement_id: REVA-NFR-006
@@ -5286,7 +5290,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7231b32fb1a34004493588a92352f65f10520a35cfbada8c71d2eda7a5756f0e
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-007
   version: 1
   requirement_id: REVA-NFR-007
@@ -5303,7 +5307,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1335c05e71ee06936534b8bd047e191603f1530307053cb06c82a573dcaf7bfb
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-008
   version: 1
   requirement_id: REVA-NFR-008
@@ -5320,7 +5324,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_68c66df713341600663a487ac9132fe64b4d3375d010f778ae12d4c463e283ac
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-009
   version: 1
   requirement_id: REVA-NFR-009
@@ -5337,7 +5341,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1ac0e043b3690cde1c6de7a7714890a2ebe7b0443feb09969039984f5db51513
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-010
   version: 1
   requirement_id: REVA-NFR-010
@@ -5354,7 +5358,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3466eb4c0ee9437d13d40b11bf9b191ff6dc166b6cf508b10cb258ba379b6e9c
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-011
   version: 1
   requirement_id: REVA-NFR-011
@@ -5371,7 +5375,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_507d183c98f592f96b519b990b1a95ab6b94d42f798ea81a57ab6b81fb396546
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-012
   version: 1
   requirement_id: REVA-NFR-012
@@ -5388,7 +5392,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e4f4351142a02a1a25086af2edb89e31bbddd1cc5fd9012429bc277053c9ed27
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-013
   version: 1
   requirement_id: REVA-NFR-013
@@ -5406,7 +5410,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4726fd85ec14b605b1d8087a1f106afe8937324206a432548883c58f3932f7a0
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-014
   version: 1
   requirement_id: REVA-NFR-014
@@ -5423,7 +5427,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_710ca2e1a4da0ae9143993da8a44fb097d373503f08a8c4a14e3414f7832809c
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-015
   version: 1
   requirement_id: REVA-NFR-015
@@ -5441,7 +5445,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_2b0bff7cd7fcd86a72431970f11f0203375eba090d4162e6163f0d9ad7654971
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-016
   version: 1
   requirement_id: REVA-NFR-016
@@ -5458,7 +5462,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_86c8f6fa35450d67106af82590bfd1bb28faaf7a918fe1fad4b4216091fc429c
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-017
   version: 1
   requirement_id: REVA-NFR-017
@@ -5476,7 +5480,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8dfbfcdfb8909fe4766eb777c14a74885d3ba831fc3d570d38102f8cc538ed95
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-018
   version: 1
   requirement_id: REVA-NFR-018
@@ -5494,7 +5498,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_b13df57fbf6e2d5bc2ff255a386890e92dbe87b962f9fcf108054bf24efef0f8
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-019
   version: 1
   requirement_id: REVA-NFR-019
@@ -5511,7 +5515,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4506fa28ec6ae8de5229d2a4e4f41a247daa87200ac7bf3109d0e73a99a3e465
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-020
   version: 1
   requirement_id: REVA-NFR-020
@@ -5529,7 +5533,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_24bc95e867b5f950d0d50826ea74dd22959bd7f078f92cbb0cb954a5e4ff99af
+  reviewed_warrant_id: null
 - key: OBL-REVA-NFR-030
   version: 1
   requirement_id: REVA-NFR-030
@@ -5547,7 +5551,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ab33ec2c758f565ef62445ee402f35e7167fb68f63c18e3ab7307845fd5d10a7
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-001
   version: 1
   requirement_id: REVA-IF-001
@@ -5562,7 +5566,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a44edf43de02f267530095e4e0d11d236aa631135f625afe9081cb4e1af9044c
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-002
   version: 1
   requirement_id: REVA-IF-002
@@ -5577,7 +5581,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4465816c75229e6e43c55f67791ead0ea9260bf868a6849c640c233c976f8917
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-003
   version: 1
   requirement_id: REVA-IF-003
@@ -5592,7 +5596,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3141920ee33bf72e596080a0eb9ebedcaa9d6cf944f6881dd3220f9f8c1a91cd
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-004
   version: 1
   requirement_id: REVA-IF-004
@@ -5607,7 +5611,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1d3dd9234bb34440be6dacbdfecdad656f6a2cd35f25d509aee989d1b015448c
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-005
   version: 1
   requirement_id: REVA-IF-005
@@ -5622,7 +5626,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a201bfe53868208c029d9a3e76649fd2690eb001e57798e57f4eb832bc5245a4
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-006
   version: 1
   requirement_id: REVA-IF-006
@@ -5637,7 +5641,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_35a2deef85edd5c72cf0396a9c22a61618b3402f36661b77610247990dd964a3
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-007
   version: 1
   requirement_id: REVA-IF-007
@@ -5652,7 +5656,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a15a8a37e2beaadbaa0320e3a907cedeff889162bbce33deca45ccff4050f8ab
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-008
   version: 1
   requirement_id: REVA-IF-008
@@ -5669,7 +5673,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d52919425c1368b886a45acce494abd828e917f6adac755afef20259fbf832be
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-010
   version: 1
   requirement_id: REVA-IF-010
@@ -5686,7 +5690,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_15535ed06c0976ef4e34d983d0577ef6b7e5e0804bcd0f1c40efa6d1e6b8c715
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-015
   version: 1
   requirement_id: REVA-IF-015
@@ -5701,7 +5705,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4d3dfc37104753a8012a44b67c6c8399347eb85b2e6ee1c54c2863a7581d5ba2
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-020
   version: 1
   requirement_id: REVA-IF-020
@@ -5717,7 +5721,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3d2938df40422f04cf0211eaa3448a9e0f917149fe7fd8ffe7501c3fcd1a4b14
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-021
   version: 1
   requirement_id: REVA-IF-021
@@ -5732,7 +5736,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_68a0450477e54880b8a2015d714219fb42e27c4da0e90a9bb898b9d03ffd4376
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-022
   version: 1
   requirement_id: REVA-IF-022
@@ -5749,7 +5753,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_0f032c343145c5ccd983ae0bdb207db01f2335ae1af822aef1d417bd9310071a
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-023
   version: 1
   requirement_id: REVA-IF-023
@@ -5764,7 +5768,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ec321297f6dc81da9f2afb949d4797b914dd3478a01613b905bd82410f602799
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-024
   version: 1
   requirement_id: REVA-IF-024
@@ -5779,7 +5783,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_455e44105f0788c103483bd335a9a7adb7bcd4c39187125d78809afde0250d2b
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-025
   version: 1
   requirement_id: REVA-IF-025
@@ -5794,7 +5798,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_e348ed54ca8c6ef4192c7e5e0af332833dd34029351a68481ee810106e9f8e32
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-026
   version: 1
   requirement_id: REVA-IF-026
@@ -5809,7 +5813,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_2aea450b6e9fd91e9eba832efd620f430ce34a802d92b4df3f0b1f7ced3625cc
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-030
   version: 1
   requirement_id: REVA-IF-030
@@ -5824,7 +5828,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_75ea63ff5596d637768c313a8758b481ce9993611ff321fa3ed3f6fe0cbec26a
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-031
   version: 1
   requirement_id: REVA-IF-031
@@ -5839,7 +5843,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_3c79015c8126235266b24db403feefadbb946437fa0e89de8ab60e2bed60f383
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-040
   version: 1
   requirement_id: REVA-IF-040
@@ -5856,7 +5860,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_f201e798e882e145bb5869cdb01c88cc4971184a375c529e3793541e333b4a17
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-041
   version: 1
   requirement_id: REVA-IF-041
@@ -5871,7 +5875,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_30589c05de7711a7011b4407151c357f3bb0a525e636191a1263d6d8fa8b4105
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-042
   version: 1
   requirement_id: REVA-IF-042
@@ -5888,7 +5892,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_c8bba184ab152d1e2c3c152102f1cfc196b17c36340824d88f11bba52934aa05
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-043
   version: 1
   requirement_id: REVA-IF-043
@@ -5904,7 +5908,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_47edd969404d49402976907974df555de84d935742f481a2e64286f187eeb9c7
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-044
   version: 1
   requirement_id: REVA-IF-044
@@ -5919,7 +5923,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_f4d6989b27e010edb308762dc834f86fc3ec3669f4a0842ddd4905732ddc3614
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-045
   version: 1
   requirement_id: REVA-IF-045
@@ -5934,7 +5938,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_54164fa406b53127df1d429f1d1f27b3ee7b202863c8e9775d3a62c565a206a3
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-050
   version: 1
   requirement_id: REVA-IF-050
@@ -5950,7 +5954,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_63bbb9ceeb38d025420b2e43383939011b640f7b46cbc5218a6d06a53d79af80
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-051
   version: 1
   requirement_id: REVA-IF-051
@@ -5965,7 +5969,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_01359bf087a491f40b0fead9040bd3c983dce2b4751f68e312185e1c21fe5991
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-052
   version: 1
   requirement_id: REVA-IF-052
@@ -5980,7 +5984,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d9d4d4417a026359a3c545a2242580c01a128cb570da595ec560cf32fca4fe82
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-060
   version: 1
   requirement_id: REVA-IF-060
@@ -5996,7 +6000,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_6ee50581080461c021784998d4882233c29fd84213b8b93381134ab82c92a559
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-061
   version: 1
   requirement_id: REVA-IF-061
@@ -6011,7 +6015,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_f69b87406edba7cd6ac8dfd384b53e2c62e5a6b6ad2c3fc7d17bcbca78ac0523
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-070
   version: 1
   requirement_id: REVA-IF-070
@@ -6026,7 +6030,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1aabef09f7ed3580fbe7c48c42250416457224a495bc9b6ce84c516652ea1e48
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-071
   version: 1
   requirement_id: REVA-IF-071
@@ -6041,7 +6045,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_21df271047f23a46c544cf4b0d24ecae85ede721c23b13c8209a6e0ac2ace0af
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-080
   version: 1
   requirement_id: REVA-IF-080
@@ -6056,7 +6060,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_422d4d1cc326c4beed86314903158add7b5c661c2adf927391a3eb6debd79067
+  reviewed_warrant_id: null
 - key: OBL-REVA-IF-081
   version: 1
   requirement_id: REVA-IF-081
@@ -6071,7 +6075,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_1e7e160eb39afcae902498df9955bc44e881ed0c2e56db6982485293ab3c0043
+  reviewed_warrant_id: null
 - key: OBL-REVA-TST-001
   version: 1
   requirement_id: REVA-TST-001
@@ -6089,7 +6093,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8e423731a122e3cef7fbbafb9f477a8aa6692088516a4ab6fa1874c4f7d842ce
+  reviewed_warrant_id: null
 - key: OBL-REVA-TST-002
   version: 1
   requirement_id: REVA-TST-002
@@ -6107,7 +6111,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4fd42fce9714145622574146032ec93ff701557edc066800f4094a1d1a1fc36d
+  reviewed_warrant_id: null
 - key: OBL-REVA-TST-003
   version: 1
   requirement_id: REVA-TST-003
@@ -6125,7 +6129,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7f5fc33839aa47c3fd609ec679911021aa4cd2095ce95077f699dc4b113a9251
+  reviewed_warrant_id: null
 - key: OBL-REVA-TST-004
   version: 1
   requirement_id: REVA-TST-004
@@ -6143,7 +6147,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_35921197572b0e9137f313a6e166973c25bd8ce6bebc2fbacfd0e7afc9798b97
+  reviewed_warrant_id: null
 - key: OBL-REVA-TST-005
   version: 1
   requirement_id: REVA-TST-005
@@ -6161,7 +6165,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_f38c6e86b462e6528a5e461d184a6036a75fb7be2d20a09139c060e51f759d73
+  reviewed_warrant_id: null
 - key: OBL-REVA-TST-006
   version: 1
   requirement_id: REVA-TST-006
@@ -6179,7 +6183,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_7f15cd8a73bbc43297b3460705fa966dc546620a26bf03024c2e0709d6e6e870
+  reviewed_warrant_id: null
 - key: OBL-REVA-TST-007
   version: 1
   requirement_id: REVA-TST-007
@@ -6197,7 +6201,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8bd9508d39dd85997c7719d5c1b3a5eab170285c15c256a3de73b0862bf4e200
+  reviewed_warrant_id: null
 - key: OBL-REVA-TST-008
   version: 1
   requirement_id: REVA-TST-008
@@ -6214,7 +6218,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_2b70e3abb250c724492b9e34b4103acf2a68ba8a2b10abc8ec34fc9a19b27ce1
+  reviewed_warrant_id: null
 - key: OBL-REVA-TST-009
   version: 1
   requirement_id: REVA-TST-009
@@ -6231,7 +6235,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8bdeda386214703acb7ec79702a1a3e0c79b7c4e18bea95261664b5c8c2f2df8
+  reviewed_warrant_id: null
 - key: OBL-REVA-TST-010
   version: 1
   requirement_id: REVA-TST-010
@@ -6249,7 +6253,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_55328a25f24a3a2dbc4e079ee097eb11050abf9f477e6a41fe01e131e3b231ef
+  reviewed_warrant_id: null
 - key: OBL-RJ-01
   version: 1
   requirement_id: RJ-01
@@ -6264,7 +6268,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_f0713b30923bcbf24f69d5ff985268a63fe7ed03e826e56c7dc69d297eb67cec
+  reviewed_warrant_id: null
 - key: OBL-RJ-02
   version: 1
   requirement_id: RJ-02
@@ -6279,7 +6283,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4bcea1881b26834627948bd4cf1d04136f4816b605d315968ef189401ca0722b
+  reviewed_warrant_id: null
 - key: OBL-RJ-03
   version: 1
   requirement_id: RJ-03
@@ -6294,7 +6298,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_41fdde3c4140b4cbeada74994f0690f38275451ff4f611027f041d06444716f3
+  reviewed_warrant_id: null
 - key: OBL-RJ-04
   version: 1
   requirement_id: RJ-04
@@ -6309,7 +6313,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_ba4f418f09bf1adb058e8543e7ac7061a780ae4a8e59f1ee929f64826e54b6eb
+  reviewed_warrant_id: null
 - key: OBL-RJ-05
   version: 1
   requirement_id: RJ-05
@@ -6324,7 +6328,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_994ffa107173da66f586871fa46a857b02c8adab10119ea1264df414fe1e5b4e
+  reviewed_warrant_id: null
 - key: OBL-RJ-06
   version: 1
   requirement_id: RJ-06
@@ -6339,7 +6343,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_83abf4ec82212e2904082b1c934b8e4399ae770538c4bddf251fca559865a460
+  reviewed_warrant_id: null
 - key: OBL-RJ-07
   version: 1
   requirement_id: RJ-07
@@ -6354,7 +6358,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_4be6c122c9d6eb1394034b1de4a9b540d9f1f6c6892573a82d5cdf292557590b
+  reviewed_warrant_id: null
 - key: OBL-RJ-08
   version: 1
   requirement_id: RJ-08
@@ -6369,7 +6373,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_30c45d992f1ba4ca2da896ec71e990b61de03ae61f8769c9e280fb0e2aa9282a
+  reviewed_warrant_id: null
 - key: OBL-RJ-09
   version: 1
   requirement_id: RJ-09
@@ -6384,7 +6388,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_33a823db152880b1fbe966397f264d8732fc67be271889de2556772393804420
+  reviewed_warrant_id: null
 - key: OBL-RJ-10
   version: 1
   requirement_id: RJ-10
@@ -6399,7 +6403,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_a3303913957fdc7c1d6511bf3a108bba138f4aaf24800e01966baeeb6dde120a
+  reviewed_warrant_id: null
 - key: OBL-RJ-11
   version: 1
   requirement_id: RJ-11
@@ -6414,7 +6418,7 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_8cd2771a9f1ba5531c846cfe4283d8978cab53aba6a98ad0d3e41c7e83304d72
+  reviewed_warrant_id: null
 - key: OBL-RJ-12
   version: 1
   requirement_id: RJ-12
@@ -6429,4 +6433,4 @@
   dependencies: []
   requires_contract_type: null
   disposition: active
-  reviewed_warrant_id: wr1_d7b51cbf7b92b4e23c5b9cd882e517eaa076382c54c7669bb4614f72bae3d9e9
+  reviewed_warrant_id: null
