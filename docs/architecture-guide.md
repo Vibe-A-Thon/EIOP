@@ -2,7 +2,7 @@
 
 This guide describes the current EOIP application topology, not every target architecture in the engineering specifications. Current production/runtime behavior is owned by the application factories, graph adapters, worker, MCP server, and deployment files linked below.
 
-## System Context
+## Architecture Overview (System Context)
 
 ```mermaid
 flowchart LR
