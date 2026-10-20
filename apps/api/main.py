@@ -223,7 +223,10 @@ def create_app():
     token = api_token()
     token_validator = TokenValidator(token)
     from apps.api.asg import load_asg, default_keys_path
-    asg = load_asg(default_keys_path(), token)
+    asg = load_asg(default_keys_path(), token)  # fail closed: raises on insecure/invalid config
+    logging.getLogger("eoip.asg").info(
+        "asg loaded", extra={"asg_principals": asg.summary()}  # usernames/roles only, never tokens
+    )
 
     def authenticated_principal(supplied: str) -> Principal | None:
         if not supplied or len(supplied) > 16_384:
