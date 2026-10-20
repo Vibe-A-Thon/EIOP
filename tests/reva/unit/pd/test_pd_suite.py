@@ -1,5 +1,6 @@
 """Unit tests for Phase P2 Proof-of-Done and Verifier Sandbox modules."""
 
+import sys
 import ast
 import tempfile
 from pathlib import Path
@@ -130,7 +131,8 @@ def sample_func(x):
 
 def test_sandbox_runner_process():
     spec = RunSpec(
-        argv=["python", "-c", "import sys; sys.stdout.write('hello stdout'); sys.stderr.write('hello stderr')"],
+        # FT-D13: absolute interpreter path; CI images often ship only python3.
+        argv=[sys.executable, "-c", "import sys; sys.stdout.write('hello stdout'); sys.stderr.write('hello stderr')"],
         timeout_s=10,
     )
     outcome = ProcessSandbox.run(spec)
