@@ -11,9 +11,21 @@ from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
 
 
+def _auth_headers(base):
+    """FT-AUTH: log in as the provisioned admin when its credentials are available,
+    otherwise use EOIP_API_TOKEN (which carries only the roles it was mapped to)."""
+    username, password = os.getenv("EOIP_ADMIN_USERNAME"), os.getenv("EOIP_ADMIN_PASSWORD")
+    if username and password:
+        response = httpx.post(base + "/api/v1/auth/login", json={"username": username, "password": password},
+                              timeout=60, trust_env=False)
+        response.raise_for_status()
+        return {"Authorization": f"Bearer {response.json()['token']}"}
+    return {"Authorization": f"Bearer {api_token()}"}
+
+
 def main():
-    headers = {"Authorization": f"Bearer {api_token()}"}
     base = os.getenv("EOIP_API_URL", "http://eoip-api:8000")
+    headers = _auth_headers(base)
     with httpx.Client(base_url=base, headers=headers, timeout=120, trust_env=False) as client:
 
         def get(path, **kwargs):

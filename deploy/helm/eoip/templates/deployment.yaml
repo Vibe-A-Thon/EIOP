@@ -91,12 +91,24 @@ spec:
                 secretKeyRef:
                   name: {{ $.Values.config.existingSecret | quote }}
                   key: EOIP_HUGEGRAPH_PASSWORD
+            # FT-AUTH: first admin + session secret, provisioned explicitly from the Secret.
+            {{- range $key := list "EOIP_ADMIN_USERNAME" "EOIP_ADMIN_PASSWORD" "EOIP_SESSION_SECRET" }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.config.existingSecret | quote }}
+                  key: {{ $key }}
+                  optional: true
+            {{- end }}
             {{- else }}
             - name: EOIP_API_TOKEN
               value: {{ required "config.apiToken (or config.existingSecret) is required" $.Values.config.apiToken | quote }}
             - name: EOIP_HUGEGRAPH_PASSWORD
               value: {{ $.Values.hugegraph.password | quote }}
             {{- end }}
+            # FT-AUTH: EOIP_API_TOKEN grants only these roles (empty = not mapped, grants nothing).
+            - name: EOIP_API_TOKEN_ROLES
+              value: {{ $.Values.config.apiTokenRoles | default "" | quote }}
             {{- with $.Values.config.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

@@ -24,6 +24,12 @@ x-application: &application
     EOIP_HUGEGRAPH_URL: http://hugegraph-lb:8080
     EOIP_HUGEGRAPH_PASSWORD: ${HUGEGRAPH_PASSWORD:?Run scripts/container.ps1 to create deploy/.env}
     EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/container.ps1 to create deploy/.env}
+    EOIP_API_TOKEN_ROLES: ${EOIP_API_TOKEN_ROLES:-}
+    EOIP_API_TOKEN_PRINCIPAL: ${EOIP_API_TOKEN_PRINCIPAL:-svc-mcp}
+    EOIP_ADMIN_USERNAME: ${EOIP_ADMIN_USERNAME:-}
+    EOIP_ADMIN_PASSWORD: ${EOIP_ADMIN_PASSWORD:-}
+    # Replicas must share one session-signing secret.
+    EOIP_SESSION_SECRET: ${EOIP_SESSION_SECRET:?Set EOIP_SESSION_SECRET (>= 32 chars) for multi-replica sessions}
     EOIP_DATA_DIR: /data
     EOIP_LOAD_DEMO: ${EOIP_LOAD_DEMO:-true}
     EOIP_OLLAMA_MODEL: ${EOIP_OLLAMA_MODEL:-}

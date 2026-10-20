@@ -113,8 +113,13 @@ if [ ! -f "$ENV_FILE" ]; then
     fi
     TOKEN=$(openssl rand -hex 32)
     PASSWORD=$(openssl rand -hex 24)  # FT-X04: Hubble VARCHAR(48) -> 48 hex chars, 192-bit
-    printf "EOIP_API_TOKEN=%s\nHUGEGRAPH_PASSWORD=%s\nEOIP_LOAD_DEMO=true\n" "$TOKEN" "$PASSWORD" > "$ENV_FILE"
-    echo "Created deploy/.env with local credentials. Paste EOIP_API_TOKEN into the web login field."
+    # FT-AUTH: the first admin is explicit: EOIP_ADMIN_USERNAME (or your login name) with a
+    # generated password, provisioned by the API container at start. No default account.
+    ADMIN_USER="${EOIP_ADMIN_USERNAME:-$(id -un)}"
+    ADMIN_PASSWORD=$(openssl rand -base64 24 | tr -d '\n')
+    (umask 077; printf "EOIP_ADMIN_USERNAME=%s\nEOIP_ADMIN_PASSWORD=%s\nEOIP_API_TOKEN=%s\nEOIP_API_TOKEN_ROLES=analyst\nEOIP_API_TOKEN_PRINCIPAL=svc-mcp\nHUGEGRAPH_PASSWORD=%s\nEOIP_LOAD_DEMO=true\n" \
+        "$ADMIN_USER" "$ADMIN_PASSWORD" "$TOKEN" "$PASSWORD" > "$ENV_FILE")
+    echo "Created deploy/.env (mode 600). Sign in as '$ADMIN_USER' with EOIP_ADMIN_PASSWORD from deploy/.env."
 fi
 
 # ─── Compose wiring ─────────────────────────────────────────────────────

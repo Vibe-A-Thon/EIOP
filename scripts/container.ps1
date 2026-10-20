@@ -195,9 +195,13 @@ if (-not (Test-Path -LiteralPath $envFile)) {
     $token = New-RandomHex -ByteCount 32     # 64 hex chars (256-bit API token)
     # FT-X04: Hubble stores the graph password in VARCHAR(48) -> 24 bytes = 48 hex chars (192-bit).
     $password = New-RandomHex -ByteCount 24
-    $config = "EOIP_API_TOKEN=$token`nHUGEGRAPH_PASSWORD=$password`nEOIP_LOAD_DEMO=true`n"
+    # FT-AUTH: the first admin is explicit (EOIP_ADMIN_USERNAME or your Windows user name) with a
+    # generated password, provisioned by the API container at start. There is no default account.
+    $adminUser = if ($env:EOIP_ADMIN_USERNAME) { $env:EOIP_ADMIN_USERNAME } else { $env:USERNAME.ToLowerInvariant() }
+    $adminPassword = New-RandomHex -ByteCount 24
+    $config = "EOIP_ADMIN_USERNAME=$adminUser`nEOIP_ADMIN_PASSWORD=$adminPassword`nEOIP_API_TOKEN=$token`nEOIP_API_TOKEN_ROLES=analyst`nEOIP_API_TOKEN_PRINCIPAL=svc-mcp`nHUGEGRAPH_PASSWORD=$password`nEOIP_LOAD_DEMO=true`n"
     [System.IO.File]::WriteAllText($envFile, $config, (New-Object System.Text.UTF8Encoding($false)))
-    Write-Host 'Created deploy/.env with local credentials. Paste EOIP_API_TOKEN into the web login field.'
+    Write-Host "Created deploy/.env. Sign in as '$adminUser' with EOIP_ADMIN_PASSWORD from deploy/.env."
 }
 
 # ─── Compose wiring ─────────────────────────────────────────────────────
