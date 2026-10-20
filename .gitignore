@@ -117,3 +117,7 @@ frontend/.env.local
 
 # REVA generated fixture cache (scripts/reva/build_fixtures.py)
 .reva-fixtures/
+
+# runtime state (learning engine, agent memory); never committed
+.data/
+data/learning/

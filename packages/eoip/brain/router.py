@@ -204,18 +204,43 @@ def get_learning_status() -> dict[str, Any]:
     return _kernel.learning_engine.get_learning_telemetry()
 
 
+_SLOT_RE = __import__("re").compile(r"^[A-Za-z0-9_-]{1,64}$")
+
+
+def learning_state_dir(slot: str = "default"):
+    """Learning state lives only under ``<EOIP_DATA_DIR>/learning/<slot>``; callers never pass a path."""
+    import os
+    from pathlib import Path
+
+    if not _SLOT_RE.match(slot or ""):
+        raise HTTPException(400, "slot must match [A-Za-z0-9_-]{1,64}")
+    root = (Path(os.getenv("EOIP_DATA_DIR", ".data")) / "learning").resolve()
+    target = (root / slot).resolve()
+    if target.parent != root:
+        raise HTTPException(400, "slot escapes the learning state directory")
+    return target
+
+
+def _no_directory(directory: str | None) -> None:
+    if directory is not None:
+        raise HTTPException(400, "directory is not accepted; state is stored under the server's data directory (use slot)")
+
+
 @router.post("/learning/save")
-def save_learning_state(directory: str = "data/learning") -> dict[str, str]:
+def save_learning_state(slot: str = "default", directory: str | None = None) -> dict[str, str]:
     """Persist all learning engine state to disk for durability across restarts."""
-    _kernel.learning_engine.save_state(directory)
-    return {"status": "SAVED", "directory": directory}
+    _no_directory(directory)
+    target = learning_state_dir(slot)
+    _kernel.learning_engine.save_state(str(target))
+    return {"status": "SAVED", "slot": slot}
 
 
 @router.post("/learning/load")
-def load_learning_state(directory: str = "data/learning") -> dict[str, Any]:
+def load_learning_state(slot: str = "default", directory: str | None = None) -> dict[str, Any]:
     """Restore learning engine state from a previous save."""
-    loaded = _kernel.learning_engine.load_state(directory)
-    return {"status": "LOADED" if loaded else "NOT_FOUND", "directory": directory}
+    _no_directory(directory)
+    loaded = _kernel.learning_engine.load_state(str(learning_state_dir(slot)))
+    return {"status": "LOADED" if loaded else "NOT_FOUND", "slot": slot}
 
 
 @router.get("/learning/policy")
