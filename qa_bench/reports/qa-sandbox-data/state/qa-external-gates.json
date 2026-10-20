@@ -1,0 +1,20 @@
+{
+  "gates": [
+    {
+      "evidence_ref": "",
+      "gate_id": "qa-probe",
+      "gate_kind": "external",
+      "recorded_at": "2026-10-20T10:36:02.956692+00:00",
+      "requirement_id": "qa-probe",
+      "status": "passed"
+    }
+  ],
+  "test_runs": [
+    {
+      "recorded_at": "2026-10-20T10:36:02.973825+00:00",
+      "run_id": "qa-probe",
+      "tests_passed": 1,
+      "tests_total": 1
+    }
+  ]
+}

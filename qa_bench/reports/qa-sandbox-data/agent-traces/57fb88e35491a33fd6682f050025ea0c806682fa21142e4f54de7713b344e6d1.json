@@ -1,0 +1,127 @@
+{
+  "schema_version": "2.0",
+  "run_id": "47fedeab-5de6-419f-b259-bc3e22cf51a0",
+  "request_id": "47fedeab-5de6-419f-b259-bc3e22cf51a0",
+  "agent_id": "TraceImpact",
+  "actor_id": "anonymous",
+  "correlation_id": "47fedeab-5de6-419f-b259-bc3e22cf51a0",
+  "contract_version": "1.0.0",
+  "events": [
+    {
+      "sequence": 0,
+      "phase": "RECEIVE",
+      "occurred_at": "2026-10-20T10:21:44.771307Z",
+      "status": "SUCCEEDED",
+      "summary": "Request accepted by governed runtime",
+      "evidence_refs": [],
+      "metadata": {}
+    },
+    {
+      "sequence": 1,
+      "phase": "CONTEXT",
+      "occurred_at": "2026-10-20T10:21:44.771307Z",
+      "status": "SUCCEEDED",
+      "summary": "Context passed through knowledge firewall",
+      "evidence_refs": [],
+      "metadata": {
+        "rule_decisions": [
+          {
+            "rule_id": "KFW-UNTRUSTED-DATA",
+            "outcome": "ALLOW",
+            "summary": "Source content was admitted as untrusted evidence, not instructions."
+          }
+        ]
+      }
+    },
+    {
+      "sequence": 2,
+      "phase": "PLAN",
+      "occurred_at": "2026-10-20T10:21:44.771307Z",
+      "status": "SUCCEEDED",
+      "summary": "Bounded execution plan selected",
+      "evidence_refs": [],
+      "metadata": {
+        "max_steps": 10,
+        "max_tool_calls": 8,
+        "max_seconds": 30.0
+      }
+    },
+    {
+      "sequence": 3,
+      "phase": "VALIDATE",
+      "occurred_at": "2026-10-20T10:21:44.771307Z",
+      "status": "SUCCEEDED",
+      "summary": "Contract, capabilities, and budgets validated",
+      "evidence_refs": [],
+      "metadata": {}
+    },
+    {
+      "sequence": 4,
+      "phase": "EXECUTE",
+      "occurred_at": "2026-10-20T10:21:44.771307Z",
+      "status": "STARTED",
+      "summary": "Executing TraceImpact",
+      "evidence_refs": [],
+      "metadata": {}
+    },
+    {
+      "sequence": 5,
+      "phase": "EVALUATE",
+      "occurred_at": "2026-10-20T10:21:44.776114Z",
+      "status": "FAILED",
+      "summary": "Execution outcome evaluated",
+      "evidence_refs": [],
+      "metadata": {}
+    },
+    {
+      "sequence": 6,
+      "phase": "EXPLAIN",
+      "occurred_at": "2026-10-20T10:21:44.776114Z",
+      "status": "SUCCEEDED",
+      "summary": "Evidence-linked explanation produced",
+      "evidence_refs": [],
+      "metadata": {
+        "explanation": {
+          "decision_summary": "Entity not found: qa-probe",
+          "observed_facts": [],
+          "inferred_findings": [],
+          "evidence_refs": [],
+          "graph_paths": [],
+          "rule_decisions": [
+            {
+              "rule_id": "KFW-UNTRUSTED-DATA",
+              "outcome": "ALLOW",
+              "summary": "Source content was admitted as untrusted evidence, not instructions."
+            }
+          ],
+          "confidence": null,
+          "confidence_inputs": [],
+          "uncertainty": [
+            "The specified canonical_id does not exist in the graph"
+          ],
+          "rejected_alternatives": [],
+          "chain_of_thought_disclosed": false
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "phase": "AUDIT",
+      "occurred_at": "2026-10-20T10:21:44.776114Z",
+      "status": "SUCCEEDED",
+      "summary": "Run prepared for durable audit",
+      "evidence_refs": [],
+      "metadata": {}
+    },
+    {
+      "sequence": 8,
+      "phase": "FINISH",
+      "occurred_at": "2026-10-20T10:21:44.776114Z",
+      "status": "FAILED",
+      "summary": "Entity not found: qa-probe",
+      "evidence_refs": [],
+      "metadata": {}
+    }
+  ],
+  "final_status": "FAILED"
+}

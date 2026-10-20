@@ -1,0 +1,1684 @@
+{
+  "schema_version": 1,
+  "interpretation": "Static OpenAPI documentation audit; passing drift check is not runtime schema validation",
+  "operation_count": 751,
+  "finding_count": 239,
+  "counts_by_reason": {
+    "empty_response_schema": 237,
+    "no_response_content": 2
+  },
+  "duplicate_operation_ids": [],
+  "findings": [
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/audit",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/demo",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/dlq",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/dlq/{event_id}/replay",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/entities/{canonical_id}/delete",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/event-consumers",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/event-consumers/run",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/gremlin",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/confluence",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/files",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ingestion/files/bundles/{bundle_id}/{artifact}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/files/parse",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/gitlab",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/jira",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/json",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/json/batch",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/process-and-convert",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/replay",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/servicenow",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/jobs",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/jobs/{job_id}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/jobs/{job_id}/cancel",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/jobs/{job_id}/readmit",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/schema",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/semantic-pipeline",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/semantic-pipeline/stages",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/stats",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/system",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/timeline",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/validation",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/worker",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/analytics",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/mesh/recover/{recovery_id}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/mesh/recoveries",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/proposals",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/proposals/{proposal_id}/approve",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/proposals/{proposal_id}/reject",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/query",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/runs/{run_id}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/runs/{run_id}/explanation",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/runs/{run_id}/memory",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/semantic-index",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/trace-impact",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/types",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/{agent_id}/runs",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/algorithms",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/algorithms/run",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/whoami",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/authz/roles/export",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/authz/users/export",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/llm/stream",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/branding/legal",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/branding/locales/{locale}/message",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/branding/terminology/canonicalize",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/branding/terminology/rename",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/branding/theme",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/capsules",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/capsules",
+      "status": "201",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/capsules/{name}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/catalog/products/{product_id}/export",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/causal/correlations/{entity_cid}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/causal/counterfactual-intervention",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/causal/hypotheses/{incident_cid}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/causal/live-blast-radius",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/causal/prerequisites",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/change-journal",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/conformance/check",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/conformance/rules",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/conformance/rules/{name}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/connectors/catalog",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/connectors/files/formats",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/demo/scenarios",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/domain-packs",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/domain-packs/{pack_name}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/domain-packs/{pack_name}/activate",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/engineering/{discipline}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{canonical_id}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/evidence/manifest",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/experts/{canonical_id}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/export/formats",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/files/{path}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/completion-gate",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/coverage",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/g2/architecture-guardrails",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/gaps/g2/architecture-guardrails",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/g2/observability-contract",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/gaps/g2/observability-contract",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/g2/readiness",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/requirements/{requirement_id}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/anomalies",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/as-of",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/blast-radius",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/centrality/full",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/cluster",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/components",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/convert",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/degree-distribution",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/diff",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/diff",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/events",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/formats",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/k-core",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/link-prediction",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/merge",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/metrics",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/orphaned",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/pr-impact",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/reverse-impact",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/schema",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/shortest-paths",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/similarity",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/stale",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/statistics",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/surprises",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/versions",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/what-if",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/health/graph",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/identity/candidates",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/identity/candidates/{candidate_id}/decide",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/identity/candidates/{candidate_id}/reject",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ingestion/dlq",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ingestion/jira-json",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ingestion/replay",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ingestion/runs",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/knowledge-debt",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/knowledge-slos",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/knowledge/debt",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/knowledge/firewall/inspect",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/knowledge/freshness",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/knowledge/slo",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/knowledge/trust/states",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/lens/catalog",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/lens/{lens_id}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/build/agent-workflow",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/build/dashboard",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/build/mapping",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/build/query-template",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/build/validator",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/marketplace/packages",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/packages/install",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/marketplace/packages/{name}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/diff",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/docs",
+      "status": "200",
+      "reason": "no_response_content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/drift",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/export",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/gitops/branches",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/branches",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/branches/commit",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/diff",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/impact",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/migration",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/package-release",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/gitops/prs",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/prs",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/prs/{pr_id}/merge",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/prs/{pr_id}/review",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/rollback",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/validate",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/import",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/proposals",
+      "status": "201",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/shacl",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/validate",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/validate/shacl",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pipeline/status",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/playback/evidence",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/playback/export",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/playback/stream",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/classify",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/consents",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/privacy/consents/allowed",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/dsar/erase",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/dsar/locate",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/residency/validate",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/retention/evaluate",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/process/cases",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/process/deviations",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/process/paths",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/product/capabilities",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/product/capabilities/materialize",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/product/first-choice-gate",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/cache/stats",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/context/{entity_cid}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/eql",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/language",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/multi-paradigm",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/nl",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/what-changed",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/what-changed/{entity_cid}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/what-if",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/why",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/why-not",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/why/{entity_cid}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rag",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rag/patterns",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rag/query",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/export/{report_id}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/semantic/validations",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/simulation/create",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/simulation/list",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/simulation/{sim_id}/analyze",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/simulation/{sim_id}/compare",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/simulation/{sim_id}/manifest",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/simulation/{sim_id}/mutate",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/simulations",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/simulations/{sim_id}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/baseline",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sources/{source_id}/checkpoint",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/discover",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/dry-run",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/reconcile",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sources/{source_id}/reconciliations",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/replay",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/sync",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/webhooks",
+      "status": "202",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/taxonomy/export.rdf",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/truth/export",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/business/capabilities",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/business/chain/{objective_cid}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/business/link",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/business/objectives",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/business/reverse-impact/{service_cid}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/classify",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/coverage",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/decisions/extract",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/decisions/ingest",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/decisions/{entity_cid}",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/missing-links",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/test-intelligence/mappings",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/test-intelligence/runs",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/test-intelligence/select",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/validation/runs",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/whatif/execute",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/whatif/plan",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/xai/certify-decision",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/xai/verify-certificate",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/llm/stream",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    },
+    {
+      "method": "GET",
+      "path": "/ontology/docs",
+      "status": "200",
+      "reason": "no_response_content"
+    },
+    {
+      "method": "POST",
+      "path": "/ontology/validate/shacl",
+      "status": "200",
+      "media": "application/json",
+      "reason": "empty_response_schema"
+    }
+  ]
+}

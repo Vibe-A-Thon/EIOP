@@ -595,7 +595,8 @@ class ExecutionTracker:
     """Tracks cognitive plan executions for self-assessment and adaptation."""
 
     def __init__(self) -> None:
-        self._lock = threading.Lock()
+        # RLock: stats() calls success_rate() while holding the lock.
+        self._lock = threading.RLock()
         self._records: list[ExecutionRecord] = []
         self._by_complexity: dict[str, list[ExecutionRecord]] = defaultdict(list)
 

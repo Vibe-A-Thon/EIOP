@@ -1,0 +1,381 @@
+{
+  "info": {
+    "_postman_id": "33f56958-8313-549c-a39d-b261ea28346c",
+    "name": "EOIP Disposable Source Workflow QA",
+    "description": "Mutating functional QA. Execute only through python -m qa.bench workflow against its bench-owned disposable API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const base = pm.variables.get('baseUrl') || '';",
+          "const local = /^http:\\/\\/(127\\.0\\.0\\.1|localhost)(:\\d+)?\\/?$/.test(base);",
+          "if (!local || pm.variables.get('qaDisposableTarget') !== 'true') throw new Error('Disposable workflow requires loopback and qaDisposableTarget=true');",
+          "if (!pm.variables.get('qaToken')) throw new Error('QA token is required');",
+          "if (!pm.collectionVariables.get('qaSourceId')) { const id = 'qa-' + pm.variables.replaceIn('{{$guid}}').replace(/-/g, '').slice(0, 20); pm.collectionVariables.set('qaSourceId', id); }"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Create source",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{qaToken}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/sources",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "sources"
+          ]
+        },
+        "description": "Mutates only a unique qa-* source in the bench-owned disposable in-memory API.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"source_id\": \"{{qaSourceId}}\", \"source_type\": \"local_files\", \"name\": \"QA disposable source\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('Bounded response', function () { pm.expect(pm.response.text().length).to.be.below(1000000); });",
+              "pm.test('Token not echoed', function () { pm.expect(pm.response.text()).not.to.include(pm.variables.get('qaToken')); });",
+              "pm.test('Created ID', function () { pm.expect(pm.response.json().source_id).to.equal(pm.collectionVariables.get('qaSourceId')); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Read source",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{qaToken}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/sources/{{qaSourceId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "sources",
+            "{{qaSourceId}}"
+          ]
+        },
+        "description": "Mutates only a unique qa-* source in the bench-owned disposable in-memory API."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Bounded response', function () { pm.expect(pm.response.text().length).to.be.below(1000000); });",
+              "pm.test('Token not echoed', function () { pm.expect(pm.response.text()).not.to.include(pm.variables.get('qaToken')); });",
+              "pm.test('Read ID', function () { pm.expect(pm.response.json().source_id).to.equal(pm.collectionVariables.get('qaSourceId')); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject duplicate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{qaToken}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/sources",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "sources"
+          ]
+        },
+        "description": "Mutates only a unique qa-* source in the bench-owned disposable in-memory API.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"source_id\": \"{{qaSourceId}}\", \"source_type\": \"local_files\", \"name\": \"QA disposable source\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });",
+              "pm.test('Bounded response', function () { pm.expect(pm.response.text().length).to.be.below(1000000); });",
+              "pm.test('Token not echoed', function () { pm.expect(pm.response.text()).not.to.include(pm.variables.get('qaToken')); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rename source",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{qaToken}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/sources/{{qaSourceId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "sources",
+            "{{qaSourceId}}"
+          ]
+        },
+        "description": "Mutates only a unique qa-* source in the bench-owned disposable in-memory API.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"QA renamed source\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Bounded response', function () { pm.expect(pm.response.text().length).to.be.below(1000000); });",
+              "pm.test('Token not echoed', function () { pm.expect(pm.response.text()).not.to.include(pm.variables.get('qaToken')); });",
+              "pm.test('Updated name', function () { pm.expect(pm.response.json().name).to.equal('QA renamed source'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List source",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{qaToken}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/sources",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "sources"
+          ]
+        },
+        "description": "Mutates only a unique qa-* source in the bench-owned disposable in-memory API."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Bounded response', function () { pm.expect(pm.response.text().length).to.be.below(1000000); });",
+              "pm.test('Token not echoed', function () { pm.expect(pm.response.text()).not.to.include(pm.variables.get('qaToken')); });",
+              "pm.test('Listed ID', function () { pm.expect(pm.response.json().some(item => item.source_id === pm.collectionVariables.get('qaSourceId'))).to.equal(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete source",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{qaToken}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/sources/{{qaSourceId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "sources",
+            "{{qaSourceId}}"
+          ]
+        },
+        "description": "Mutates only a unique qa-* source in the bench-owned disposable in-memory API."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 204', function () { pm.response.to.have.status(204); });",
+              "pm.test('Bounded response', function () { pm.expect(pm.response.text().length).to.be.below(1000000); });",
+              "pm.test('Token not echoed', function () { pm.expect(pm.response.text()).not.to.include(pm.variables.get('qaToken')); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Deleted source is absent",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{qaToken}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/sources/{{qaSourceId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "sources",
+            "{{qaSourceId}}"
+          ]
+        },
+        "description": "Mutates only a unique qa-* source in the bench-owned disposable in-memory API."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });",
+              "pm.test('Bounded response', function () { pm.expect(pm.response.text().length).to.be.below(1000000); });",
+              "pm.test('Token not echoed', function () { pm.expect(pm.response.text()).not.to.include(pm.variables.get('qaToken')); });"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "qaToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "qaDisposableTarget",
+      "value": "false",
+      "type": "string"
+    },
+    {
+      "key": "qaSourceId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"job_id": "f1d06f5a-2789-471f-aaf7-f1875f690fcf", "kind": "SERVICENOW", "status": "PENDING", "created_at": "2026-10-20T10:28:35.901216Z", "correlation_id": "437fcc92330f4bfe9b6f26808f969e47", "tenant_id": "*", "created_by": "root-superadmin", "payload": {"checkpoint": "qa-probe", "watermark": "qa-probe", "dry_run": false}}

@@ -42,9 +42,18 @@ jobs:
       - name: Run Unit Tests
         run: python -m pytest tests/unit/ -v --junitxml=test-results/unit.xml --run-evidence=test-results/unit-receipt.json
       - name: Verify Security Boundaries
-        run: python -m pytest tests/security/test_token_validation_contract.py tests/security/test_http_and_realtime_contract.py tests/security/test_cors_contract.py tests/integration/test_mcp_transport.py --timeout=60 --junitxml=test-results/security.xml --run-evidence=test-results/security-receipt.json
+        run: python -m pytest tests/security/test_token_validation_contract.py tests/security/test_http_and_realtime_contract.py tests/security/test_cors_contract.py tests/security/test_full_api_auth_surface.py tests/integration/test_mcp_transport.py tests/integration/test_mcp_tool_contracts.py --timeout=60 --junitxml=test-results/security.xml --run-evidence=test-results/security-receipt.json
       - name: Verify QA Gate Integrity
         run: pytest tests/unit/test_qa_gate_integrity.py
+      - name: Verify Non-functional QA Bench and API Surface
+        run: |
+          python -m pytest tests/qa -q
+          python -m qa.bench offline
+          python -m qa.probe_coverage
+          python -m qa.schema_quality
+          python -m qa.portfolio catalog
+          python -m qa.completeness report
+          python -m qa.portfolio run --suite source-workflow
       - name: Retain Test Evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -74,7 +83,7 @@ jobs:
         working-directory: apps/web
         run: |
           npx --no-install playwright install --with-deps chromium
-          npx --no-install playwright test tests/interactive-export-security.spec.js tests/gui-foundations.spec.js tests/gui-graph-contracts.spec.js tests/gui-accessibility.spec.js --reporter=list,json
+          npx --no-install playwright test tests/interactive-export-security.spec.js tests/gui-foundations.spec.js tests/gui-graph-contracts.spec.js tests/gui-accessibility.spec.js tests/qa-nonfunctional.spec.js --reporter=list,json
         env:
           EOIP_GUI_WEB_SERVER: '1'
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:5173

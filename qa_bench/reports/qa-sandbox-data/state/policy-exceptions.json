@@ -1,0 +1,24 @@
+{
+  "exceptions": [
+    {
+      "approved_at": "2026-10-20T10:34:03.458576+00:00",
+      "approved_by": "qa-probe",
+      "exception_id": "urn:eoip:compliance:policy-exception:fd1282a4fa2e",
+      "expires_at": "qa-probe",
+      "justification": "qa-probe",
+      "policy_ref": "qa-probe",
+      "revoked": false,
+      "subject": "qa-probe"
+    },
+    {
+      "approved_at": "2026-10-20T10:35:14.460252+00:00",
+      "approved_by": "qa-probe",
+      "exception_id": "urn:eoip:compliance:policy-exception:d720e6c7e24b",
+      "expires_at": "qa-probe",
+      "justification": "qa-probe",
+      "policy_ref": "qa-probe",
+      "revoked": false,
+      "subject": "qa-probe"
+    }
+  ]
+}

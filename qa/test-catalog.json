@@ -1,0 +1,2285 @@
+{
+  "schema_version": 1,
+  "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
+  "totals": {
+    "files": 433,
+    "test_definitions": 4063
+  },
+  "categories": {
+    "acceptance": {
+      "files": 20,
+      "test_definitions": 185
+    },
+    "ai": {
+      "files": 3,
+      "test_definitions": 17
+    },
+    "aspeii": {
+      "files": 1,
+      "test_definitions": 4
+    },
+    "compliance": {
+      "files": 2,
+      "test_definitions": 13
+    },
+    "connectors": {
+      "files": 2,
+      "test_definitions": 21
+    },
+    "contract": {
+      "files": 5,
+      "test_definitions": 23
+    },
+    "e2e": {
+      "files": 5,
+      "test_definitions": 35
+    },
+    "fuzz": {
+      "files": 1,
+      "test_definitions": 7
+    },
+    "gui": {
+      "files": 1,
+      "test_definitions": 10
+    },
+    "integration": {
+      "files": 11,
+      "test_definitions": 55
+    },
+    "mapping": {
+      "files": 2,
+      "test_definitions": 11
+    },
+    "neural": {
+      "files": 6,
+      "test_definitions": 33
+    },
+    "performance": {
+      "files": 2,
+      "test_definitions": 12
+    },
+    "processing": {
+      "files": 4,
+      "test_definitions": 41
+    },
+    "qa": {
+      "files": 4,
+      "test_definitions": 17
+    },
+    "query": {
+      "files": 2,
+      "test_definitions": 16
+    },
+    "research": {
+      "files": 2,
+      "test_definitions": 13
+    },
+    "retrieval": {
+      "files": 1,
+      "test_definitions": 10
+    },
+    "reva": {
+      "files": 24,
+      "test_definitions": 91
+    },
+    "runtime_dlq": {
+      "files": 15,
+      "test_definitions": 15
+    },
+    "runtime_hubble": {
+      "files": 6,
+      "test_definitions": 7
+    },
+    "security": {
+      "files": 13,
+      "test_definitions": 86
+    },
+    "semantic": {
+      "files": 11,
+      "test_definitions": 76
+    },
+    "unit": {
+      "files": 270,
+      "test_definitions": 3201
+    },
+    "web-browser": {
+      "files": 15,
+      "test_definitions": 42
+    },
+    "web-unit": {
+      "files": 4,
+      "test_definitions": 18
+    },
+    "wisdom": {
+      "files": 1,
+      "test_definitions": 4
+    }
+  },
+  "files": [
+    {
+      "path": "apps/web/tests/admin-review.spec.js",
+      "category": "web-browser",
+      "test_definitions": 0
+    },
+    {
+      "path": "apps/web/tests/admin-source-registry.spec.js",
+      "category": "web-browser",
+      "test_definitions": 1
+    },
+    {
+      "path": "apps/web/tests/application.spec.js",
+      "category": "web-browser",
+      "test_definitions": 2
+    },
+    {
+      "path": "apps/web/tests/cognitive-engineering.spec.js",
+      "category": "web-browser",
+      "test_definitions": 1
+    },
+    {
+      "path": "apps/web/tests/enterprise-capabilities.spec.js",
+      "category": "web-browser",
+      "test_definitions": 2
+    },
+    {
+      "path": "apps/web/tests/error-recovery.spec.js",
+      "category": "web-browser",
+      "test_definitions": 2
+    },
+    {
+      "path": "apps/web/tests/gui-accessibility.spec.js",
+      "category": "web-browser",
+      "test_definitions": 2
+    },
+    {
+      "path": "apps/web/tests/gui-foundations.spec.js",
+      "category": "web-browser",
+      "test_definitions": 6
+    },
+    {
+      "path": "apps/web/tests/gui-graph-contracts.spec.js",
+      "category": "web-browser",
+      "test_definitions": 3
+    },
+    {
+      "path": "apps/web/tests/gui-real-api.spec.js",
+      "category": "web-browser",
+      "test_definitions": 3
+    },
+    {
+      "path": "apps/web/tests/guided-demo.spec.js",
+      "category": "web-browser",
+      "test_definitions": 5
+    },
+    {
+      "path": "apps/web/tests/hubble.spec.js",
+      "category": "web-browser",
+      "test_definitions": 11
+    },
+    {
+      "path": "apps/web/tests/interactive-export-security.spec.js",
+      "category": "web-browser",
+      "test_definitions": 2
+    },
+    {
+      "path": "apps/web/tests/qa-nonfunctional.spec.js",
+      "category": "web-browser",
+      "test_definitions": 1
+    },
+    {
+      "path": "apps/web/tests/recovery-jobs.spec.js",
+      "category": "web-browser",
+      "test_definitions": 1
+    },
+    {
+      "path": "apps/web/tests/unit/api-client.test.mjs",
+      "category": "web-unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "apps/web/tests/unit/events.test.mjs",
+      "category": "web-unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "apps/web/tests/unit/gui-intake.test.mjs",
+      "category": "web-unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "apps/web/tests/unit/i18n.test.mjs",
+      "category": "web-unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/acceptance/test_backup_restore_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/acceptance/test_baseline_facts.py",
+      "category": "acceptance",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/acceptance/test_claims_governance_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/acceptance/test_code_build_artifacts_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/acceptance/test_content_chat_documents_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/acceptance/test_correctness_performance_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/acceptance/test_cra_001_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/acceptance/test_developer_ecosystem_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/acceptance/test_email_containers_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/acceptance/test_engineering_diagram_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/acceptance/test_governed_actions_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/acceptance/test_independent_qa_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/acceptance/test_migration_portability_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/acceptance/test_multimodal_media_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/acceptance/test_observability_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/acceptance/test_operator_readiness_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/acceptance/test_safe_parsing_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/acceptance/test_verify_ledger.py",
+      "category": "acceptance",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/acceptance/test_warehouses_catalogs_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/acceptance/test_work_tracking_acceptance.py",
+      "category": "acceptance",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/ai/test_dual_level_hipporag.py",
+      "category": "ai",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/ai/test_dual_path.py",
+      "category": "ai",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/ai/test_graphrag_grounding.py",
+      "category": "ai",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/aspeii/test_aspeii_action_flow.py",
+      "category": "aspeii",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/compliance/test_no_cuda_packages.py",
+      "category": "compliance",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/compliance/test_supply_chain_compliance.py",
+      "category": "compliance",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/connectors/test_connector_factory_acceptance.py",
+      "category": "connectors",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/connectors/test_safe_push_crawl_acceptance.py",
+      "category": "connectors",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/contract/test_asserted_only_queries.py",
+      "category": "contract",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/contract/test_g2_contracts.py",
+      "category": "contract",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/contract/test_graph_store_contract.py",
+      "category": "contract",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/contract/test_ontology_validate_contract.py",
+      "category": "contract",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/contract/test_query_plan_contract.py",
+      "category": "contract",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/e2e/test_clean_recovery.py",
+      "category": "e2e",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/e2e/test_demo_corpus.py",
+      "category": "e2e",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/e2e/test_demo_flow.py",
+      "category": "e2e",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/e2e/test_enterprise_demo_scenarios.py",
+      "category": "e2e",
+      "test_definitions": 13
+    },
+    {
+      "path": "tests/e2e/test_restart_safe.py",
+      "category": "e2e",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/fuzz/test_property_fuzz.py",
+      "category": "fuzz",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/gui/test_gui_workbench_acceptance.py",
+      "category": "gui",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/integration/test_capabilities_route.py",
+      "category": "integration",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/integration/test_durable_jobs.py",
+      "category": "integration",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/integration/test_event_journal_resilience.py",
+      "category": "integration",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/integration/test_external_mcp_bridge.py",
+      "category": "integration",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/integration/test_gitops_pr_gate.py",
+      "category": "integration",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/integration/test_mcp_tool_contracts.py",
+      "category": "integration",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/integration/test_mcp_transport.py",
+      "category": "integration",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/integration/test_observability_truth.py",
+      "category": "integration",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/integration/test_plugin_lifecycle.py",
+      "category": "integration",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/integration/test_privacy_governance_and_no_egress.py",
+      "category": "integration",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/integration/test_shacl_transactional.py",
+      "category": "integration",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/mapping/test_cml_language.py",
+      "category": "mapping",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/mapping/test_mapping_advanced.py",
+      "category": "mapping",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/neural/test_antistub.py",
+      "category": "neural",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/neural/test_determinism.py",
+      "category": "neural",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/neural/test_learned_graph_intelligence.py",
+      "category": "neural",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/neural/test_numerical_stack_acceptance.py",
+      "category": "neural",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/neural/test_numerics.py",
+      "category": "neural",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/neural/test_runtime_tiers.py",
+      "category": "neural",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/performance/test_benchmark_publication.py",
+      "category": "performance",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/performance/test_benchmarks.py",
+      "category": "performance",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/processing/test_backends.py",
+      "category": "processing",
+      "test_definitions": 18
+    },
+    {
+      "path": "tests/processing/test_contracts.py",
+      "category": "processing",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/processing/test_quantum.py",
+      "category": "processing",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/processing/test_router.py",
+      "category": "processing",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/qa/test_bench.py",
+      "category": "qa",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/qa/test_completeness.py",
+      "category": "qa",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/qa/test_portfolio.py",
+      "category": "qa",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/qa/test_probe_coverage.py",
+      "category": "qa",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/query/test_ast_compiler.py",
+      "category": "query",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/query/test_query_semantics_oracle.py",
+      "category": "query",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/research/test_competitive_research_acceptance.py",
+      "category": "research",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/research/test_validate_research.py",
+      "category": "research",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/retrieval/test_hybrid_vector_search.py",
+      "category": "retrieval",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/reva/integration/test_mount.py",
+      "category": "reva",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/reva/unit/api/test_api_suite.py",
+      "category": "reva",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/reva/unit/core/test_egress_gate.py",
+      "category": "reva",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/reva/unit/core/test_errors_time.py",
+      "category": "reva",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/reva/unit/core/test_ids.py",
+      "category": "reva",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/reva/unit/core/test_jcs.py",
+      "category": "reva",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/reva/unit/diff/test_binary_diff.py",
+      "category": "reva",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/reva/unit/dynamic/test_dynamic_analysis.py",
+      "category": "reva",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/reva/unit/extract/test_extract_suite.py",
+      "category": "reva",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/reva/unit/firmware/test_firmware_analysis.py",
+      "category": "reva",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/reva/unit/graffin/test_graffin_core.py",
+      "category": "reva",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/reva/unit/graffin/test_graffin_worker.py",
+      "category": "reva",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/reva/unit/kernel/test_blobs_translog.py",
+      "category": "reva",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/reva/unit/kernel/test_kernel_lifecycle.py",
+      "category": "reva",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/reva/unit/kernel/test_p1_full_suite.py",
+      "category": "reva",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/reva/unit/kernel/test_validation.py",
+      "category": "reva",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/reva/unit/mobile/test_mobile_analysis.py",
+      "category": "reva",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/reva/unit/native/test_native_analysis.py",
+      "category": "reva",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/reva/unit/obs/test_browser_obs.py",
+      "category": "reva",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/reva/unit/pd/test_pd_suite.py",
+      "category": "reva",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/reva/unit/schemas/test_neural_schemas.py",
+      "category": "reva",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/reva/unit/schemas/test_schema_consolidation.py",
+      "category": "reva",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/reva/unit/test_config.py",
+      "category": "reva",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/reva/unit/workflows/test_repo_to_graph.py",
+      "category": "reva",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_confluence_acquisition.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_confluence_failures.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_confluence_rejection.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_memory_lifecycle.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_memory_policy.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_memory_privacy.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_recovered_replay.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_registered_recovery.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_registered_refusals.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_registered_rejection.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_rejected_replay.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_replay_refusals.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_servicenow_acquisition.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_servicenow_authentication.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_dlq/test_servicenow_rejection.py",
+      "category": "runtime_dlq",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_hubble/test_01_manual.py",
+      "category": "runtime_hubble",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_hubble/test_02_pipeline.py",
+      "category": "runtime_hubble",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_hubble/test_03_persistence.py",
+      "category": "runtime_hubble",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_hubble/test_04_corpus.py",
+      "category": "runtime_hubble",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/runtime_hubble/test_05_enterprise.py",
+      "category": "runtime_hubble",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/runtime_hubble/test_07_code_graph.py",
+      "category": "runtime_hubble",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/security/test_container_hardening.py",
+      "category": "security",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/security/test_cors_contract.py",
+      "category": "security",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/security/test_crawler_security.py",
+      "category": "security",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/security/test_derivation_acl_pipeline.py",
+      "category": "security",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/security/test_full_api_auth_surface.py",
+      "category": "security",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/security/test_http_and_realtime_contract.py",
+      "category": "security",
+      "test_definitions": 14
+    },
+    {
+      "path": "tests/security/test_multi_tenant_isolation_hardened.py",
+      "category": "security",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/security/test_no_egress.py",
+      "category": "security",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/security/test_security_baseline.py",
+      "category": "security",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/security/test_tenancy_and_derivation_acls.py",
+      "category": "security",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/security/test_token_validation_contract.py",
+      "category": "security",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/security/test_verification_suite.py",
+      "category": "security",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/security/test_worker_isolation.py",
+      "category": "security",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/semantic/test_catalog_lineage_context.py",
+      "category": "semantic",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/semantic/test_identity_resolution.py",
+      "category": "semantic",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/semantic/test_lint_rules.py",
+      "category": "semantic",
+      "test_definitions": 22
+    },
+    {
+      "path": "tests/semantic/test_proposal_promotion.py",
+      "category": "semantic",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/semantic/test_rdf_fidelity.py",
+      "category": "semantic",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/semantic/test_reasoning_gold.py",
+      "category": "semantic",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/semantic/test_shacl_benchmark.py",
+      "category": "semantic",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/semantic/test_shacl_differential.py",
+      "category": "semantic",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/semantic/test_shacl_strict.py",
+      "category": "semantic",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/semantic/test_skos_governance.py",
+      "category": "semantic",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/semantic/test_temporal_simulation.py",
+      "category": "semantic",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_acquisition_fabric.py",
+      "category": "unit",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/unit/test_acquisition_sync_semantics.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_admin_gremlin.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_admin_proposal_review.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_advanced_enterprise_capabilities.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_agent_analytics.py",
+      "category": "unit",
+      "test_definitions": 14
+    },
+    {
+      "path": "tests/unit/test_agent_memory.py",
+      "category": "unit",
+      "test_definitions": 21
+    },
+    {
+      "path": "tests/unit/test_agent_runtime.py",
+      "category": "unit",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/unit/test_agents_new.py",
+      "category": "unit",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/unit/test_aiml_ops.py",
+      "category": "unit",
+      "test_definitions": 28
+    },
+    {
+      "path": "tests/unit/test_all_15_engineering_disciplines.py",
+      "category": "unit",
+      "test_definitions": 15
+    },
+    {
+      "path": "tests/unit/test_api_portal_connector.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_api_queries.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_application_state_recovery.py",
+      "category": "unit",
+      "test_definitions": 0
+    },
+    {
+      "path": "tests/unit/test_aspeii_action.py",
+      "category": "unit",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/unit/test_aspeii_receipts.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_audit.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_authn.py",
+      "category": "unit",
+      "test_definitions": 40
+    },
+    {
+      "path": "tests/unit/test_authz.py",
+      "category": "unit",
+      "test_definitions": 26
+    },
+    {
+      "path": "tests/unit/test_autodemo_runner.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_behavioral_gate.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_bitemporal.py",
+      "category": "unit",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/unit/test_brain_and_living_system.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_branding.py",
+      "category": "unit",
+      "test_definitions": 15
+    },
+    {
+      "path": "tests/unit/test_bulk_load.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_cache_freshness_cdc.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_canonical_ingestion_boundary.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_capability_registry.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_capsules.py",
+      "category": "unit",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/unit/test_causal_reasoning.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_change_journal_family.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_cicd_connector.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_code_graph_json_ingestion.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_code_ingestion.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_code_parser.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_cognitive_narrator.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_collaboration.py",
+      "category": "unit",
+      "test_definitions": 42
+    },
+    {
+      "path": "tests/unit/test_community_labels.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_compliance_packs.py",
+      "category": "unit",
+      "test_definitions": 30
+    },
+    {
+      "path": "tests/unit/test_confluence_body.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_confluence_history.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_confluence_metadata.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_confluence_upstream_fixture.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_conformance.py",
+      "category": "unit",
+      "test_definitions": 15
+    },
+    {
+      "path": "tests/unit/test_connection_factory.py",
+      "category": "unit",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/unit/test_connectors_new.py",
+      "category": "unit",
+      "test_definitions": 17
+    },
+    {
+      "path": "tests/unit/test_container_runtime.py",
+      "category": "unit",
+      "test_definitions": 16
+    },
+    {
+      "path": "tests/unit/test_container_smoke_manifest.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_contracts.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_cp_registry.py",
+      "category": "unit",
+      "test_definitions": 13
+    },
+    {
+      "path": "tests/unit/test_deep_agents.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_demo_reset.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_deployment_api.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_deployment_artifacts.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_deterministic_rule_engine.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_diff_hunk.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_dlq_source_admission.py",
+      "category": "unit",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/unit/test_document_references.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_documentation_audit.py",
+      "category": "unit",
+      "test_definitions": 14
+    },
+    {
+      "path": "tests/unit/test_domain_packs.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_domain_packs_wave2.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_dual_semantic_model.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_durable_state_persistence.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_edge_dedup.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_egress_gateway.py",
+      "category": "unit",
+      "test_definitions": 41
+    },
+    {
+      "path": "tests/unit/test_ekaf_conflicts.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_ekaf_drift.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_embeddings.py",
+      "category": "unit",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/unit/test_engineering_disciplines.py",
+      "category": "unit",
+      "test_definitions": 67
+    },
+    {
+      "path": "tests/unit/test_engineering_platform_router.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_enterprise_advanced.py",
+      "category": "unit",
+      "test_definitions": 28
+    },
+    {
+      "path": "tests/unit/test_enterprise_features.py",
+      "category": "unit",
+      "test_definitions": 69
+    },
+    {
+      "path": "tests/unit/test_enterprise_gap_completion.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_enterprise_infrastructure.py",
+      "category": "unit",
+      "test_definitions": 41
+    },
+    {
+      "path": "tests/unit/test_enterprise_readiness_wp51.py",
+      "category": "unit",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/unit/test_enterprise_resilience.py",
+      "category": "unit",
+      "test_definitions": 29
+    },
+    {
+      "path": "tests/unit/test_enterprise_security_wp55.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_eql.py",
+      "category": "unit",
+      "test_definitions": 31
+    },
+    {
+      "path": "tests/unit/test_evidence_addressable_rag.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_expertise_freshness.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_extended_api_routes.py",
+      "category": "unit",
+      "test_definitions": 13
+    },
+    {
+      "path": "tests/unit/test_extended_api_routes_pass2.py",
+      "category": "unit",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/unit/test_federation_planner.py",
+      "category": "unit",
+      "test_definitions": 16
+    },
+    {
+      "path": "tests/unit/test_file_archives.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_file_ingestion.py",
+      "category": "unit",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/unit/test_file_parsers.py",
+      "category": "unit",
+      "test_definitions": 21
+    },
+    {
+      "path": "tests/unit/test_format_converter.py",
+      "category": "unit",
+      "test_definitions": 13
+    },
+    {
+      "path": "tests/unit/test_freshness_drift_audit.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_future_scope.py",
+      "category": "unit",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/unit/test_g2_domain_graphs.py",
+      "category": "unit",
+      "test_definitions": 16
+    },
+    {
+      "path": "tests/unit/test_g2_readiness.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_gap_coverage.py",
+      "category": "unit",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/unit/test_gap_governance_controls.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_gaps_implementations.py",
+      "category": "unit",
+      "test_definitions": 18
+    },
+    {
+      "path": "tests/unit/test_github_connector.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_github_ingestion.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_gitlab_connector.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_gitlab_ingestion.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_gitlab_rest_ingestion.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_gitops_and_marketplace_wp52.py",
+      "category": "unit",
+      "test_definitions": 15
+    },
+    {
+      "path": "tests/unit/test_governed_agents.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_graph_algorithms.py",
+      "category": "unit",
+      "test_definitions": 34
+    },
+    {
+      "path": "tests/unit/test_graph_analytics_service.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_graph_backends.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_graph_evolution.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_graph_evolution_family.py",
+      "category": "unit",
+      "test_definitions": 15
+    },
+    {
+      "path": "tests/unit/test_graph_intelligence.py",
+      "category": "unit",
+      "test_definitions": 18
+    },
+    {
+      "path": "tests/unit/test_graph_recommender.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_graph_traversal.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_graphtest_framework.py",
+      "category": "unit",
+      "test_definitions": 26
+    },
+    {
+      "path": "tests/unit/test_gui_policy_replacement.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_ha_lease.py",
+      "category": "unit",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/unit/test_hubble_setup.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_hybrid_search_engine.py",
+      "category": "unit",
+      "test_definitions": 36
+    },
+    {
+      "path": "tests/unit/test_i2r_intelligence.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_identity_candidates.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_identity_ingestion.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_identity_resolver.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_incremental_indexer.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_ingestion_api.py",
+      "category": "unit",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/unit/test_jira_connector.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_jira_ingestion.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_job_queue_tenancy.py",
+      "category": "unit",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/unit/test_json_processor.py",
+      "category": "unit",
+      "test_definitions": 19
+    },
+    {
+      "path": "tests/unit/test_kgci_pipeline.py",
+      "category": "unit",
+      "test_definitions": 17
+    },
+    {
+      "path": "tests/unit/test_kgr_ai_intelligence.py",
+      "category": "unit",
+      "test_definitions": 37
+    },
+    {
+      "path": "tests/unit/test_kgr_anomaly.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_kgr_centrality.py",
+      "category": "unit",
+      "test_definitions": 22
+    },
+    {
+      "path": "tests/unit/test_kgr_combo.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_kgr_community.py",
+      "category": "unit",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/unit/test_kgr_community_labels.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_kgr_competitive_parity.py",
+      "category": "unit",
+      "test_definitions": 16
+    },
+    {
+      "path": "tests/unit/test_kgr_diff.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_kgr_endpoints.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_kgr_events.py",
+      "category": "unit",
+      "test_definitions": 13
+    },
+    {
+      "path": "tests/unit/test_kgr_export.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_kgr_filters.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_kgr_metrics.py",
+      "category": "unit",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/unit/test_kgr_orphaned.py",
+      "category": "unit",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/unit/test_kgr_paths.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_kgr_phase2.py",
+      "category": "unit",
+      "test_definitions": 14
+    },
+    {
+      "path": "tests/unit/test_kgr_pr_impact.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_kgr_similarity.py",
+      "category": "unit",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/unit/test_kgr_structure.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_kgr_surprise.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_kgr_visual_intelligence.py",
+      "category": "unit",
+      "test_definitions": 15
+    },
+    {
+      "path": "tests/unit/test_kgr_whatif.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_knowledge_debt.py",
+      "category": "unit",
+      "test_definitions": 21
+    },
+    {
+      "path": "tests/unit/test_knowledge_products.py",
+      "category": "unit",
+      "test_definitions": 21
+    },
+    {
+      "path": "tests/unit/test_layered_config.py",
+      "category": "unit",
+      "test_definitions": 21
+    },
+    {
+      "path": "tests/unit/test_learning_and_reports.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_lens_playback.py",
+      "category": "unit",
+      "test_definitions": 41
+    },
+    {
+      "path": "tests/unit/test_license_documents.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_licensing.py",
+      "category": "unit",
+      "test_definitions": 26
+    },
+    {
+      "path": "tests/unit/test_live_dlq_report.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_local_nlp_pipeline.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_loops_library.py",
+      "category": "unit",
+      "test_definitions": 27
+    },
+    {
+      "path": "tests/unit/test_manifest_integrity.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_marketplace.py",
+      "category": "unit",
+      "test_definitions": 23
+    },
+    {
+      "path": "tests/unit/test_mcp_pr_tools.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_mcp_tools.py",
+      "category": "unit",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/unit/test_meta_graph.py",
+      "category": "unit",
+      "test_definitions": 16
+    },
+    {
+      "path": "tests/unit/test_metrics.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_missing_tiers.py",
+      "category": "unit",
+      "test_definitions": 64
+    },
+    {
+      "path": "tests/unit/test_model_governance.py",
+      "category": "unit",
+      "test_definitions": 23
+    },
+    {
+      "path": "tests/unit/test_model_runtime_truthfulness.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_moonshots.py",
+      "category": "unit",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/unit/test_mutation_stream.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_named_graph.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_named_graph_isolation.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_new_endpoints.py",
+      "category": "unit",
+      "test_definitions": 15
+    },
+    {
+      "path": "tests/unit/test_observability.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_observability_import_order.py",
+      "category": "unit",
+      "test_definitions": 1
+    },
+    {
+      "path": "tests/unit/test_ontology_drift_review.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_ontology_evolution_family.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_ontology_gitops.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_ontology_induction.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_ontology_packages.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_operational_recovery.py",
+      "category": "unit",
+      "test_definitions": 11
+    },
+    {
+      "path": "tests/unit/test_ops.py",
+      "category": "unit",
+      "test_definitions": 16
+    },
+    {
+      "path": "tests/unit/test_optional_integrations.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_otel_connector.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_parallel_multihop.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_performance_reliability_and_operations_wp72.py",
+      "category": "unit",
+      "test_definitions": 35
+    },
+    {
+      "path": "tests/unit/test_phase2_api.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_phase2_connectors.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_phase2_hugegraph_schema.py",
+      "category": "unit",
+      "test_definitions": 13
+    },
+    {
+      "path": "tests/unit/test_phase2_ingestion.py",
+      "category": "unit",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/unit/test_phase2_rdf_export.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_phase4_accessibility.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_phase4_compliance_and_search.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_phase4_core_engines.py",
+      "category": "unit",
+      "test_definitions": 16
+    },
+    {
+      "path": "tests/unit/test_phase4_load.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_phase4_perf_regression.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_phase4_phase2_engines.py",
+      "category": "unit",
+      "test_definitions": 15
+    },
+    {
+      "path": "tests/unit/test_phase4_phase3_engines.py",
+      "category": "unit",
+      "test_definitions": 14
+    },
+    {
+      "path": "tests/unit/test_phase4_phase4_engines.py",
+      "category": "unit",
+      "test_definitions": 13
+    },
+    {
+      "path": "tests/unit/test_phase4_phase6_7_engines.py",
+      "category": "unit",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/unit/test_phase4_preflight.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_pipeline.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_platform_and_ecosystem_moonshots_wp61.py",
+      "category": "unit",
+      "test_definitions": 14
+    },
+    {
+      "path": "tests/unit/test_platform_modules.py",
+      "category": "unit",
+      "test_definitions": 77
+    },
+    {
+      "path": "tests/unit/test_plugin_manifest.py",
+      "category": "unit",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/unit/test_privacy.py",
+      "category": "unit",
+      "test_definitions": 22
+    },
+    {
+      "path": "tests/unit/test_process_mining.py",
+      "category": "unit",
+      "test_definitions": 13
+    },
+    {
+      "path": "tests/unit/test_product_intelligence.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_production_release_gate_wp8.py",
+      "category": "unit",
+      "test_definitions": 17
+    },
+    {
+      "path": "tests/unit/test_production_topology.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_provenance.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_pytest_execution_evidence.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_qa_gate_integrity.py",
+      "category": "unit",
+      "test_definitions": 21
+    },
+    {
+      "path": "tests/unit/test_quality.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_query_budget.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_query_cache.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_query_executor.py",
+      "category": "unit",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/unit/test_query_intelligence.py",
+      "category": "unit",
+      "test_definitions": 16
+    },
+    {
+      "path": "tests/unit/test_query_intelligence_risks.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_query_languages.py",
+      "category": "unit",
+      "test_definitions": 29
+    },
+    {
+      "path": "tests/unit/test_query_nl.py",
+      "category": "unit",
+      "test_definitions": 17
+    },
+    {
+      "path": "tests/unit/test_query_operators.py",
+      "category": "unit",
+      "test_definitions": 19
+    },
+    {
+      "path": "tests/unit/test_query_policy.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_question_operators_g2.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_rag_abstention.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_recovery_bundle.py",
+      "category": "unit",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/unit/test_replay.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_reports.py",
+      "category": "unit",
+      "test_definitions": 34
+    },
+    {
+      "path": "tests/unit/test_repository_ingestion.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_repository_inventory.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_requirement_evidence.py",
+      "category": "unit",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/unit/test_retrieval.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_retrieval_eval.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_retrieval_vector.py",
+      "category": "unit",
+      "test_definitions": 13
+    },
+    {
+      "path": "tests/unit/test_runtime_connector.py",
+      "category": "unit",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/unit/test_sbom_connector.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_scale_and_polish_wp71.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_schema_profiler.py",
+      "category": "unit",
+      "test_definitions": 21
+    },
+    {
+      "path": "tests/unit/test_search_facets.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_self_llm_frontier.py",
+      "category": "unit",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/unit/test_semantic_consumers_reconciliation.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_semantic_pipeline.py",
+      "category": "unit",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/unit/test_servicenow_connector.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_servicenow_upstream_fixture.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_simulation.py",
+      "category": "unit",
+      "test_definitions": 51
+    },
+    {
+      "path": "tests/unit/test_skos_taxonomy.py",
+      "category": "unit",
+      "test_definitions": 18
+    },
+    {
+      "path": "tests/unit/test_snapshots.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_source_registry.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_splink_er_engine.py",
+      "category": "unit",
+      "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_sr_wave_api_routes.py",
+      "category": "unit",
+      "test_definitions": 12
+    },
+    {
+      "path": "tests/unit/test_strategy_registry.py",
+      "category": "unit",
+      "test_definitions": 16
+    },
+    {
+      "path": "tests/unit/test_streaming_agent_memory.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_suggested_advanced_capabilities.py",
+      "category": "unit",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/unit/test_suggestion_engine.py",
+      "category": "unit",
+      "test_definitions": 13
+    },
+    {
+      "path": "tests/unit/test_systems_registry.py",
+      "category": "unit",
+      "test_definitions": 49
+    },
+    {
+      "path": "tests/unit/test_temporal_model_family.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_tenancy.py",
+      "category": "unit",
+      "test_definitions": 45
+    },
+    {
+      "path": "tests/unit/test_trust_health_and_frontier_moonshots_wp62.py",
+      "category": "unit",
+      "test_definitions": 31
+    },
+    {
+      "path": "tests/unit/test_truth_claims.py",
+      "category": "unit",
+      "test_definitions": 17
+    },
+    {
+      "path": "tests/unit/test_truth_resolution.py",
+      "category": "unit",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/unit/test_twin_domains.py",
+      "category": "unit",
+      "test_definitions": 41
+    },
+    {
+      "path": "tests/unit/test_uncertainty_protocol.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_unified_query_api.py",
+      "category": "unit",
+      "test_definitions": 7
+    },
+    {
+      "path": "tests/unit/test_validation_engine.py",
+      "category": "unit",
+      "test_definitions": 14
+    },
+    {
+      "path": "tests/unit/test_validation_source_binding.py",
+      "category": "unit",
+      "test_definitions": 21
+    },
+    {
+      "path": "tests/unit/test_vector_graph.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_vscode_extension_wp54.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_warrant_composition.py",
+      "category": "unit",
+      "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_warrant_contract.py",
+      "category": "unit",
+      "test_definitions": 6
+    },
+    {
+      "path": "tests/unit/test_web_crawler_connector.py",
+      "category": "unit",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/unit/test_web_ux_and_admin_wp53.py",
+      "category": "unit",
+      "test_definitions": 45
+    },
+    {
+      "path": "tests/unit/test_webhook_recovery.py",
+      "category": "unit",
+      "test_definitions": 0
+    },
+    {
+      "path": "tests/wisdom/test_wisdom_lifecycle.py",
+      "category": "wisdom",
+      "test_definitions": 4
+    }
+  ]
+}

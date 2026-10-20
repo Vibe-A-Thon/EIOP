@@ -102,6 +102,10 @@ markers = [
   "performance: latency and throughput benchmarks",
   "enterprise: enterprise feature tests (resilience, ingestion, intelligence)",
   "eoip_requirement: tag a test with an EOIP requirement reference",
+  "api: API contract and functional tests",
+  "selenium: Selenium browser automation tests",
+  "e2e: end-to-end workflow scenario tests",
+  "chaos: chaos and fault injection tests",
 ]
 filterwarnings = [
   "ignore::pytest.PytestUnraisableExceptionWarning",

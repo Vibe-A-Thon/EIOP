@@ -1,0 +1,46 @@
+{
+  "evaluations": [
+    {
+      "benchmark": "qa-probe",
+      "evaluated_at": "qa-probe",
+      "evaluation_id": "qa-probe",
+      "model_card_id": "qa-probe",
+      "notes": "",
+      "passed": true,
+      "score": 1.0,
+      "threshold": 1.0
+    }
+  ],
+  "model_cards": [
+    {
+      "created_at": "",
+      "human_oversight_id": "qa-probe",
+      "intended_use": [
+        "qa-probe"
+      ],
+      "labeling_required": true,
+      "limitations": "",
+      "model_card_id": "qa-probe",
+      "name": "qa-probe",
+      "prohibited_use": [
+        "qa-probe"
+      ],
+      "provider": "",
+      "risk_classification": "limited",
+      "training_data_summary": "",
+      "version": "qa-probe"
+    }
+  ],
+  "oversight": [
+    {
+      "enabled": true,
+      "name": "qa-probe",
+      "oversight_id": "qa-probe",
+      "require_approval_for": [
+        "qa-probe"
+      ],
+      "reviewer_role": "steward",
+      "sampling_rate": 1.0
+    }
+  ]
+}

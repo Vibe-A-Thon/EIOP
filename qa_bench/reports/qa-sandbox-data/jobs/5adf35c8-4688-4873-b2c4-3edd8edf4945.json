@@ -1,0 +1,1 @@
+{"job_id": "5adf35c8-4688-4873-b2c4-3edd8edf4945", "kind": "GITLAB_JSON", "status": "PENDING", "created_at": "2026-10-20T10:34:00.572826Z", "correlation_id": "f034645d43a54a41a59b6e41d7139d98", "tenant_id": "*", "created_by": "root-superadmin", "payload": {"document": {}, "dry_run": false, "repository_id": "demo"}}

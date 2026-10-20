@@ -1,0 +1,48 @@
+{
+  "runs": [
+    {
+      "available": true,
+      "checked_at": "2026-10-20T10:35:06.616242+00:00",
+      "command": [
+        "C:\\Program Files\\Python311\\Scripts\\ruff.EXE",
+        "check",
+        "--output-format",
+        "json",
+        "packages",
+        "apps/api",
+        "apps/mcp",
+        "tests"
+      ],
+      "error_count": 3282,
+      "exit_code": 1,
+      "report_only": true,
+      "run_id": "policy-2026-10-20T10:35:06.616242+00:00",
+      "skipped": false,
+      "summary": "ruff: 3282 error(s), exit 1",
+      "tool": "ruff",
+      "zero_error_policy_met": false
+    },
+    {
+      "available": true,
+      "checked_at": "2026-10-20T10:36:04.046803+00:00",
+      "command": [
+        "C:\\Program Files\\Python311\\Scripts\\ruff.EXE",
+        "check",
+        "--output-format",
+        "json",
+        "packages",
+        "apps/api",
+        "apps/mcp",
+        "tests"
+      ],
+      "error_count": 3282,
+      "exit_code": 1,
+      "report_only": true,
+      "run_id": "policy-2026-10-20T10:36:04.046803+00:00",
+      "skipped": false,
+      "summary": "ruff: 3282 error(s), exit 1",
+      "tool": "ruff",
+      "zero_error_policy_met": false
+    }
+  ]
+}

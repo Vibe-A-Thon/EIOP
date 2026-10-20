@@ -1,0 +1,626 @@
+[
+  {
+    "trajectory_id": "601bf08e",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492431.9617574
+  },
+  {
+    "trajectory_id": "1d3f9455",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492431.9633996
+  },
+  {
+    "trajectory_id": "78bde7b3",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492107.408574
+  },
+  {
+    "trajectory_id": "a3891e73",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492107.4105828
+  },
+  {
+    "trajectory_id": "9c78330b",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792491694.7357583
+  },
+  {
+    "trajectory_id": "0ac69aa7",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792491694.7475505
+  },
+  {
+    "trajectory_id": "601bf08e",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492431.9617574
+  },
+  {
+    "trajectory_id": "1d3f9455",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492431.9633996
+  },
+  {
+    "trajectory_id": "78bde7b3",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492107.408574
+  },
+  {
+    "trajectory_id": "a3891e73",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492107.4105828
+  },
+  {
+    "trajectory_id": "9c78330b",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792491694.7357583
+  },
+  {
+    "trajectory_id": "0ac69aa7",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792491694.7475505
+  },
+  {
+    "trajectory_id": "601bf08e",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492431.9617574
+  },
+  {
+    "trajectory_id": "1d3f9455",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492431.9633996
+  },
+  {
+    "trajectory_id": "78bde7b3",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492107.408574
+  },
+  {
+    "trajectory_id": "a3891e73",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492107.4105828
+  },
+  {
+    "trajectory_id": "9c78330b",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792491694.7357583
+  },
+  {
+    "trajectory_id": "0ac69aa7",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792491694.7475505
+  },
+  {
+    "trajectory_id": "601bf08e",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492431.9617574
+  },
+  {
+    "trajectory_id": "1d3f9455",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492431.9633996
+  },
+  {
+    "trajectory_id": "78bde7b3",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492107.408574
+  },
+  {
+    "trajectory_id": "a3891e73",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492107.4105828
+  },
+  {
+    "trajectory_id": "9c78330b",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792491694.7357583
+  },
+  {
+    "trajectory_id": "0ac69aa7",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792491694.7475505
+  },
+  {
+    "trajectory_id": "601bf08e",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492431.9617574
+  },
+  {
+    "trajectory_id": "1d3f9455",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492431.9633996
+  },
+  {
+    "trajectory_id": "78bde7b3",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492107.408574
+  },
+  {
+    "trajectory_id": "a3891e73",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492107.4105828
+  },
+  {
+    "trajectory_id": "9c78330b",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792491694.7357583
+  },
+  {
+    "trajectory_id": "0ac69aa7",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792491694.7475505
+  },
+  {
+    "trajectory_id": "601bf08e",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492431.9617574
+  },
+  {
+    "trajectory_id": "1d3f9455",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492431.9633996
+  },
+  {
+    "trajectory_id": "78bde7b3",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492107.408574
+  },
+  {
+    "trajectory_id": "a3891e73",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492107.4105828
+  },
+  {
+    "trajectory_id": "9c78330b",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792491694.7357583
+  },
+  {
+    "trajectory_id": "0ac69aa7",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792491694.7475505
+  },
+  {
+    "trajectory_id": "601bf08e",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492431.9617574
+  },
+  {
+    "trajectory_id": "1d3f9455",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492431.9633996
+  },
+  {
+    "trajectory_id": "78bde7b3",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492107.408574
+  },
+  {
+    "trajectory_id": "a3891e73",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492107.4105828
+  },
+  {
+    "trajectory_id": "9c78330b",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792491694.7357583
+  },
+  {
+    "trajectory_id": "0ac69aa7",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792491694.7475505
+  },
+  {
+    "trajectory_id": "601bf08e",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492431.9617574
+  },
+  {
+    "trajectory_id": "1d3f9455",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492431.9633996
+  },
+  {
+    "trajectory_id": "78bde7b3",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792492107.408574
+  },
+  {
+    "trajectory_id": "a3891e73",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792492107.4105828
+  },
+  {
+    "trajectory_id": "9c78330b",
+    "query": "Analyze microservice dependencies and failure blast radius",
+    "approach": "HYBRID",
+    "steps": [
+      "1. Query graph for upstream/downstream dependency subgraphs",
+      "2. Calculate betweenness centrality on bottleneck nodes",
+      "3. Apply Monte Carlo failure cascades to measure blast radius",
+      "4. Synthesize executive resilience playbook"
+    ],
+    "outcome_rating": 0.98,
+    "timestamp": 1792491694.7357583
+  },
+  {
+    "trajectory_id": "0ac69aa7",
+    "query": "Find all active payment services with database dependencies",
+    "approach": "DETERMINISTIC",
+    "steps": [
+      "1. Transpile natural language into openCypher query",
+      "2. Validate against ontology schema constraints",
+      "3. Execute on native graph database adapter",
+      "4. Return structured record set with cryptographic hash"
+    ],
+    "outcome_rating": 1.0,
+    "timestamp": 1792491694.7475505
+  }
+]
