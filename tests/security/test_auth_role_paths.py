@@ -228,7 +228,7 @@ def _cli(tmp_path, *args, **env):
     clean = {k: v for k, v in os.environ.items() if not k.startswith(("EOIP_ADMIN", "EOIP_USER_PASSWORD"))}
     clean.update(env)
     return subprocess.run([sys.executable, "-m", "eoip.authn.provision", "--store", str(tmp_path / "c.json"), *args],
-                          env=clean, capture_output=True, text=True, stdin=subprocess.DEVNULL, timeout=120)
+                          env=clean, capture_output=True, text=True, input="", timeout=120)  # a pipe: NUL isatty() on Windows
 
 
 def test_first_admin_requires_explicitly_supplied_credentials(tmp_path):
