@@ -426,3 +426,44 @@ class TestRouter:
         client.post("/api/v1/tenancy/lifecycle/configure", headers=headers)
         resp = client.post("/api/v1/tenancy/lifecycle/resume", headers=headers)  # not suspended
         assert resp.status_code == 400
+
+
+class TestCircuitBreakers:
+    @pytest.mark.req("SR-TEN-006")
+    def test_per_tenant_breaker_opens_isolates_and_recovers_via_single_probe(self):
+        from eoip.tenancy import CircuitOpen, TenantCircuitBreaker
+
+        now = [0.0]
+        cb = TenantCircuitBreaker(failure_threshold=3, cooldown_s=10, clock=lambda: now[0])
+
+        def boom():
+            raise RuntimeError("backend down")
+
+        for _ in range(3):
+            with pytest.raises(RuntimeError):
+                cb.call("noisy", "graph-db", boom)
+        assert cb.state("noisy", "graph-db") == "open"
+        with pytest.raises(CircuitOpen) as exc:
+            cb.call("noisy", "graph-db", lambda: "x")
+        assert exc.value.retry_after == pytest.approx(10)
+        # another tenant on the same dependency is unaffected
+        assert cb.call("quiet", "graph-db", lambda: "ok") == "ok"
+        assert cb.state("quiet", "graph-db") == "closed"
+        # after cooldown: exactly one probe; a failed probe re-opens
+        now[0] = 10.0
+        assert cb.state("noisy", "graph-db") == "half_open"
+        with pytest.raises(RuntimeError):
+            cb.call("noisy", "graph-db", boom)
+        assert cb.state("noisy", "graph-db") == "open"
+        now[0] = 20.0
+        cb.before_call("noisy", "graph-db")  # the single probe slot
+        with pytest.raises(CircuitOpen):
+            cb.before_call("noisy", "graph-db")
+        cb.record_success("noisy", "graph-db")
+        assert cb.state("noisy", "graph-db") == "closed"
+        with pytest.raises(ValueError):
+            cb.call("", "graph-db", lambda: 1)  # no tenant context: fail closed
+
+    def test_quota_manager_exposes_tenant_breakers(self):
+        from eoip.tenancy import QuotaManager, TenantCircuitBreaker
+        assert isinstance(QuotaManager().breakers, TenantCircuitBreaker)
