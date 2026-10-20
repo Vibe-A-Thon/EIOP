@@ -12,7 +12,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from threading import RLock
-from typing import Literal, Protocol
+from typing import Any, Literal, Protocol
 
 from eoip.contracts.agent import AgentResult
 from eoip.contracts.memory import MemoryRecord

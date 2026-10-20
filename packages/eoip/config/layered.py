@@ -283,7 +283,7 @@ class FeatureFlag(BaseModel):
     variants: dict[str, Any] = Field(default_factory=dict)
     owner: str = ""
     description: str = ""
-    never_bypasses_policy: bool = True
+    never_bypasses_policy: Literal[True] = True
 
 
 # ---------------------------------------------------------------------------
@@ -733,6 +733,18 @@ class FeatureFlagStore:
 
     def get(self, key: str) -> FeatureFlag:
         return self._flags[key]
+
+    def is_active(self, key: str, *, policy_allows: bool) -> bool:
+        """A flag can only narrow what policy already allows (SR-CFG-005).
+
+        Callers must pass the policy decision for the action the flag gates; the result is
+        ``policy_allows and flag.enabled``. An unknown flag is inactive. There is no code path where
+        an enabled flag turns a policy denial into an allow.
+        """
+        if not isinstance(policy_allows, bool):
+            raise TypeError("policy_allows must be the boolean policy decision")
+        flag = self._flags.get(key)
+        return bool(policy_allows and flag is not None and flag.enabled)
 
     def list(self) -> list[FeatureFlag]:
         return list(self._flags.values())

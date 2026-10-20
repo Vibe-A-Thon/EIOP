@@ -58,6 +58,30 @@ class SuggestionEngine:
         self._enforcer = enforcer
         self._llm_hook = llm_hook
         self._domains = list(domains or [])
+        # (session_id, casefolded mention) -> pinned alternative (SR-NLQ-003)
+        self._pins: dict[tuple[str, str], EntityAlternative] = {}
+
+    # -- session pins (SR-NLQ-003) -------------------------------------------
+
+    def pin(self, session_id: str, mention: str, entity_id: str) -> EntityAlternative:
+        """Pin one of the mention's current candidates for this session only."""
+        if not session_id:
+            raise ValueError("a session_id is required to pin an entity")
+        binding = self.resolve_mention(mention)
+        for alt in binding.alternatives:
+            if alt.entity_id == entity_id:
+                self._pins[(session_id, mention.casefold())] = alt
+                return alt
+        raise ValueError(f"{entity_id!r} is not a candidate for {mention!r}")
+
+    def unpin(self, session_id: str, mention: str) -> bool:
+        return self._pins.pop((session_id, mention.casefold()), None) is not None
+
+    def _apply_pin(self, binding: EntityBinding, session_id: str | None) -> EntityBinding:
+        pinned = self._pins.get((session_id, binding.mention.casefold())) if session_id else None
+        if pinned is None:
+            return binding
+        return binding.model_copy(update={"resolved": pinned, "ambiguous": False, "pinned": True})
 
     # -- entity resolution (SR-NLQ-003) ------------------------------------
 
@@ -185,7 +209,7 @@ class SuggestionEngine:
 
     def suggest(self, request: SuggestionRequest) -> SuggestionResponse:
         parsed = parser.parse_question(request.question)
-        bindings = [self.resolve_mention(m) for m in parsed.mentions]
+        bindings = [self._apply_pin(self.resolve_mention(m), request.session_id) for m in parsed.mentions]
 
         candidates: list[CandidateInterpretation] = []
         intents = sorted(parsed.intent_scores, key=parsed.intent_scores.get, reverse=True) or [None]

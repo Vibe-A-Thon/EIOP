@@ -1,14 +1,45 @@
 name: reva-ledger
-on: [push, pull_request]
+
+# FT-F04: real lane (was a NOT IMPLEMENTED placeholder). Runs `pytest tests/reva` with the
+# REVA pytest plugin and builds the Proof-of-Done ledger ONLY from that run
+# (scripts/reva/run_reva_ledger.py). Nothing is synthesized: an obligation closes only with a
+# human review (docs/reva/obligations/reviews.yaml), a binding, passing marked tests from this
+# run and the anti-gaming checks; everything else stays open. The lane fails if the test run
+# fails, is empty, or if any obligation would close without a passing marked test.
+# The retired scripts/reva/build_reva_ledger.py (self-certifying) refuses to run.
+on:
+  push:
+    branches: [main, develop, dev_local, eoip-remediation-geeky]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Proof-of-Done ledger generation and verification
-        run: echo "Running reva-ledger"
+          cache: pip
+      - name: Install
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Real test run + ledger
+        env:
+          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data
+        run: python scripts/reva/run_reva_ledger.py --out test-results/reva-ledger -- --timeout=300 -q
+      - name: Ledger summary
+        if: always()
+        run: |
+          if [ -f test-results/reva-ledger/ledger.md ]; then
+            sed -n '1,40p' test-results/reva-ledger/ledger.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reva-ledger
+          path: test-results/reva-ledger/

@@ -1,0 +1,6 @@
+# FT-F04 CI quarantine. Read by eoip.verification.pytest_quarantine when
+# EOIP_TEST_QUARANTINE_FILE points here (set in ci.yml and validation-evidence.yml).
+# Format: <pytest node id>  # <tracking id> <reason>
+# Listed tests are deselected in CI and printed in the run summary. Only tests whose
+# fix needs an owner decision belong here; remove an entry when its decision lands.
+# Empty: every entry was fixed (FT-D04/D06/D07/D08/D09/D11/D12). Keep it that way.

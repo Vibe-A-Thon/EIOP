@@ -1,0 +1,32 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________ test_cra_001_9_ledger_and_receipts_storage_contract ______________
+
+    def test_cra_001_9_ledger_and_receipts_storage_contract():
+        """CRA-001.9: Ledger at .audit-scratch/ledger.json; receipts under .audit-scratch/receipts/<clause-id>/."""
+        ledger_path = Path(".audit-scratch/ledger.json")
+        assert ledger_path.exists(), "Ledger must exist at .audit-scratch/ledger.json"
+    
+        receipts_dir = Path(".audit-scratch/receipts")
+        assert receipts_dir.exists(), "Receipts directory must exist"
+    
+        with ledger_path.open("r", encoding="utf-8") as f:
+            ledger = json.load(f)
+    
+        # Check receipt references in accepted items have sha256 and point to valid files
+        for item in ledger["items"]:
+            if item["state"] == "ACCEPTED" and item.get("receipts"):
+                for rcpt in item["receipts"]:
+                    assert "sha256" in rcpt
+                    rcpt_path = Path(rcpt["path"])
+>                   assert rcpt_path.exists(), f"Referenced receipt {rcpt_path} does not exist"
+E                   AssertionError: Referenced receipt .audit-scratch/receipts/CRA-001.1/run-20261018T080214Z-86eedb6d.json does not exist
+E                   assert False
+E                    +  where False = exists()
+E                    +    where exists = PosixPath('.audit-scratch/receipts/CRA-001.1/run-20261018T080214Z-86eedb6d.json').exists
+
+tests/acceptance/test_cra_001_acceptance.py:122: AssertionError
+- generated xml file: /workspace/work/EIOP/.audit-scratch/evidence/CRA-001.9/run-20261020T073804Z-8e352bdb/junit.xml -
+=========================== short test summary info ============================
+FAILED tests/acceptance/test_cra_001_acceptance.py::test_cra_001_9_ledger_and_receipts_storage_contract
+1 failed in 0.17s

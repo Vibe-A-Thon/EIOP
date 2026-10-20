@@ -39,6 +39,33 @@ logger = logging.getLogger(__name__)
 # Pydantic Module-Level Models (CRA-002.11)
 # ---------------------------------------------------------------------------
 
+
+# CRA-002.8: EOIP_MAX_MEMORY_MB used to be advisory only. On POSIX the worker now
+# starts through a tiny bootstrap that applies RLIMIT_AS before running the task
+# script, so an oversized allocation raises MemoryError in the worker instead of
+# depending on how much RAM the host happens to have.
+_RLIMIT_BOOTSTRAP = (
+    "import runpy, sys\n"
+    "try:\n"
+    "    import resource\n"
+    "    limit = int(sys.argv[1]) * 1024 * 1024\n"
+    "    soft, hard = resource.getrlimit(resource.RLIMIT_AS)\n"
+    "    if hard != resource.RLIM_INFINITY:\n"
+    "        limit = min(limit, hard)\n"
+    "    resource.setrlimit(resource.RLIMIT_AS, (limit, hard))\n"
+    "except (ImportError, ValueError, OSError):\n"
+    "    pass\n"
+    "script = sys.argv[2]\n"
+    "sys.argv = [script]\n"
+    "runpy.run_path(script, run_name='__main__')\n"
+)
+
+
+def _worker_argv(script_path: Path, max_memory_mb: int) -> list[str]:
+    if sys.platform == "win32" or max_memory_mb <= 0:
+        return [sys.executable, str(script_path)]
+    return [sys.executable, "-c", _RLIMIT_BOOTSTRAP, str(int(max_memory_mb)), str(script_path)]
+
 class WorkerExecutionRequest(BaseModel):
     task_id: str = Field(default_factory=lambda: uuid.uuid4().hex)
     resource_class: str = "standard"
@@ -87,7 +114,14 @@ def kill_process_tree(pid: int) -> None:
         else:
             try:
                 pgid = os.getpgid(pid)
-                os.killpg(pgid, signal.SIGKILL)
+                if pgid == os.getpgrp():
+                    # FT-F03: the worker shares OUR process group (it was not started in its
+                    # own session); killpg would SIGKILL the host API/worker and its siblings.
+                    logger.warning("worker pid %s shares the host process group %s; killing pid only", pid, pgid)
+                    os.kill(pid, signal.SIGKILL)
+                else:
+                    logger.info("killing worker process group pgid=%s (pid=%s)", pgid, pid)
+                    os.killpg(pgid, signal.SIGKILL)
             except (ProcessLookupError, PermissionError):
                 os.kill(pid, signal.SIGKILL)
     except Exception as e:
@@ -187,7 +221,7 @@ class WorkerSupervisor:
                 creationflags = subprocess.CREATE_NEW_PROCESS_GROUP
 
             proc = subprocess.Popen(
-                [sys.executable, str(script_path)],
+                _worker_argv(script_path, limits.max_memory_mb),
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -195,6 +229,9 @@ class WorkerSupervisor:
                 env=env,
                 text=True,
                 creationflags=creationflags,
+                # FT-F03: own session/process group on POSIX so kill_process_tree can
+                # killpg the whole worker tree without touching the host.
+                start_new_session=(sys.platform != "win32"),
             )
 
             # Watchdog timer to kill process tree within <= 1s of limit breach

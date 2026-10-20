@@ -1,0 +1,67 @@
+{
+  "$schema": "https://eoip.enterprise.internal/schemas/verification-receipt-v3.json",
+  "receipt_id": "rcpt-811495c7-b85f-478b-8154-9243c34ca9b8",
+  "requirement_clause": "CRA-043.1",
+  "state_claimed": "VERIFIED",
+  "profile": "P0",
+  "source_commit": "75bb57d16685c30576b4abe42e75df5d5c9a9898",
+  "source_tree_dirty": false,
+  "source_fingerprint": "f6455c0385bda66815dccd6d3c6c4700e8864007457ba9bf99319833bb2f7bb4",
+  "source_unchanged_during_run": true,
+  "artifact_digest": "c0dc68fe08adc165f1198875e028f57bdd75edb22a2e9f31080c321ee8659a21",
+  "artifact_path": "dist/eoip-1.0.0rc1-py3-none-any.whl",
+  "artifact_mtime": "2026-10-20T07:37:58.966120+00:00",
+  "runtime": {
+    "os": "Linux-6.12.94+-x86_64-with-glibc2.41",
+    "python_version": "3.11.17",
+    "backend": "memory-harness",
+    "engine": "",
+    "engine_version": ""
+  },
+  "fixture": {
+    "id": ""
+  },
+  "execution": {
+    "command": [
+      "/workspace/.venvs/eiop-work/bin/python",
+      "-m",
+      "pytest",
+      "tests/neural/test_runtime_tiers.py",
+      "tests/compliance/test_no_cuda_packages.py",
+      "--junitxml",
+      ".audit-scratch/evidence/CRA-043.1/run-20261020T073912Z-4ac4edfc/junit.xml"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-20T07:39:12.157083+00:00",
+    "completed_at": "2026-10-20T07:39:14.390259+00:00"
+  },
+  "results": {
+    "tests_total": 11,
+    "tests_failed": 0,
+    "tests_errors": 0,
+    "tests_skipped": 0,
+    "tests_xfailed": 0,
+    "tests_passed": 11
+  },
+  "evidence_files": [
+    {
+      "path": ".audit-scratch/evidence/CRA-043.1/run-20261020T073912Z-4ac4edfc/junit.xml",
+      "sha256": "034cfdbe04fbfac120d0342fdde4609e6158229c98483a85a4d489a08b73b91a"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-043.1/run-20261020T073912Z-4ac4edfc/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-043.1/run-20261020T073912Z-4ac4edfc/stdout.txt",
+      "sha256": "8f1200ac3c0527a275a073b597dbddfa96ef54fc7fde3db177c705db023a03f0"
+    }
+  ],
+  "verified_invariants": [],
+  "negative_cases": [],
+  "evidence_categories": {},
+  "limitations": [],
+  "producer": "antigravity-agent",
+  "reviewer": null,
+  "review_signature": null
+}

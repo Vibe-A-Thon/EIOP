@@ -4686,5 +4686,29 @@
   ],
   "SR-WL-009": [
     "tests/unit/test_sr_wave_api_routes.py"
+  ],
+  "CRA-041": [
+    "tests/acceptance/test_claims_governance_acceptance.py::test_cra_041_1_claims_register_schema_and_versioning",
+    "tests/acceptance/test_claims_governance_acceptance.py::test_cra_041_2_standards_conformance_claim_gating",
+    "tests/acceptance/test_claims_governance_acceptance.py::test_cra_041_3_inversions_hypothesis_and_competitive_claims",
+    "tests/acceptance/test_claims_governance_acceptance.py::test_cra_041_4_ontology_as_code_positioning_pack",
+    "tests/acceptance/test_claims_governance_acceptance.py::test_cra_041_5_competitor_performance_and_tco_gating",
+    "tests/acceptance/test_claims_governance_acceptance.py::test_cra_041_6_patent_candidate_disclosure_control",
+    "tests/acceptance/test_claims_governance_acceptance.py::test_cra_041_7_indicative_scorecards_planning_aids_only",
+    "tests/acceptance/test_claims_governance_acceptance.py::test_cra_041_a_claims_scanner_ci_gate_blocks_four_cases",
+    "tests/acceptance/test_claims_governance_acceptance.py::test_cra_041_unreviewed_ledger_keeps_standards_claims_and_pack_blocked"
+  ],
+  "CRA-012": [
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_1_multi_format_and_magic_byte_detection",
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_2_locators_and_formulas_macros_prohibited",
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_3_budgets_safe_xml_html",
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_4_chunking_progress_and_g11_termination",
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_5_partial_extraction_and_raw_bytes_preservation",
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_6_core_and_extended_formats_catalog",
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_7_pinned_safe_candidate_libraries",
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_8_evidence_locator_on_every_chunk",
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_9_performance_qualification_target",
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_a_g11_isolated_process_termination",
+    "tests/acceptance/test_safe_parsing_acceptance.py::test_cra_012_a_hypothesis_chunker_properties"
   ]
 }

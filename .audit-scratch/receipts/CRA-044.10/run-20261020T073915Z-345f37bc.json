@@ -1,0 +1,72 @@
+{
+  "$schema": "https://eoip.enterprise.internal/schemas/verification-receipt-v3.json",
+  "receipt_id": "rcpt-718b3423-41d4-4b5a-be45-0c064d420215",
+  "requirement_clause": "CRA-044.10",
+  "state_claimed": "VERIFIED",
+  "profile": "P0",
+  "source_commit": "75bb57d16685c30576b4abe42e75df5d5c9a9898",
+  "source_tree_dirty": false,
+  "source_fingerprint": "f6455c0385bda66815dccd6d3c6c4700e8864007457ba9bf99319833bb2f7bb4",
+  "source_unchanged_during_run": true,
+  "artifact_digest": "c0dc68fe08adc165f1198875e028f57bdd75edb22a2e9f31080c321ee8659a21",
+  "artifact_path": "dist/eoip-1.0.0rc1-py3-none-any.whl",
+  "artifact_mtime": "2026-10-20T07:37:58.966120+00:00",
+  "runtime": {
+    "os": "Linux-6.12.94+-x86_64-with-glibc2.41",
+    "python_version": "3.11.17",
+    "backend": "memory-harness",
+    "engine": "",
+    "engine_version": ""
+  },
+  "fixture": {
+    "id": ""
+  },
+  "execution": {
+    "command": [
+      "/workspace/.venvs/eiop-work/bin/python",
+      "-m",
+      "pytest",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "-o",
+      "addopts=",
+      "--timeout=300",
+      "tests/neural/test_learned_graph_intelligence.py::test_cra_044_10_explainability_faithfulness",
+      "--junitxml",
+      ".audit-scratch/evidence/CRA-044.10/run-20261020T073915Z-345f37bc/junit.xml"
+    ],
+    "exit_code": 4,
+    "started_at": "2026-10-20T07:39:15.775645+00:00",
+    "completed_at": "2026-10-20T07:39:17.046119+00:00"
+  },
+  "results": {
+    "tests_total": 1,
+    "tests_failed": 0,
+    "tests_errors": 0,
+    "tests_skipped": 1,
+    "tests_xfailed": 0,
+    "tests_passed": 0
+  },
+  "evidence_files": [
+    {
+      "path": ".audit-scratch/evidence/CRA-044.10/run-20261020T073915Z-345f37bc/junit.xml",
+      "sha256": "8fdddb22712be390f9bec4baadce244abada4bd9f0cc741fb4ff2c215d1ce6b8"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-044.10/run-20261020T073915Z-345f37bc/stderr.txt",
+      "sha256": "423db728ec57747e6caab681e233632653f33cbbdabd2cf4a729c2e6a2cfd692"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-044.10/run-20261020T073915Z-345f37bc/stdout.txt",
+      "sha256": "895063f51313756d5e5f647d8aa7c84a44641c0e2530b6ceae283530aa45f4b7"
+    }
+  ],
+  "verified_invariants": [],
+  "negative_cases": [],
+  "evidence_categories": {},
+  "limitations": [],
+  "producer": "antigravity-agent",
+  "reviewer": null,
+  "review_signature": null
+}

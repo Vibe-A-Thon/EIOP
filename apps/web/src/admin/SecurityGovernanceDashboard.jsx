@@ -46,8 +46,9 @@ export default function SecurityGovernanceDashboard({api}) {
   }
 
   return <section className="security-workspace" aria-labelledby="security-title">
-    <div className="panel-heading"><h2 id="security-title"><Icon name="shield"/> Enterprise Security &amp; Token Governance</h2>
+    <div className="panel-heading"><h2 id="security-title"><Icon name="shield"/> {'Enterprise Security & Token Governance'}</h2>
       <button className="secondary-button" onClick={load} disabled={loading || pending}><Icon name="refresh"/>Refresh status</button></div>
+    <p className="subtle">GAP-SEC-008..012 · Fail-closed token signing, key rotation, scoped ABAC, and CRL revocation</p>
     {loading && <p role="status">Loading security status...</p>}
     {error && <p className="resource-error" role="alert">{error}</p>}
     {status && <dl className="security-posture">

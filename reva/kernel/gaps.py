@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 from reva.core.ids import gap_id as compute_gap_id, normalize_question
 from reva.core.time import format_ts, utc_now_ms
+from reva.core.errors import ConflictError, NotFoundError, ValidationError
 from reva.kernel.store import RevaStore
 
 GapStatus = Literal["open", "assigned", "addressed", "closed", "waived"]
@@ -35,6 +36,19 @@ class GapRecord(BaseModel):
     question: str
     scope: str
     history: List[GapTransition] = Field(default_factory=list)
+    supporting_warrant_ids: List[str] = Field(default_factory=list)
+    contradicting_warrant_ids: List[str] = Field(default_factory=list)
+    resolution: Optional[Dict[str, Any]] = None
+
+
+# Normative gap state machine (REVA-KG-003). Same-status updates only change fields.
+ALLOWED_TRANSITIONS: Dict[str, set] = {
+    "open": {"assigned", "addressed", "waived"},
+    "assigned": {"open", "addressed", "waived"},
+    "addressed": {"assigned", "closed"},
+    "closed": set(),
+    "waived": {"open"},
+}
 
 
 def open_gap(
@@ -108,6 +122,43 @@ def open_gap(
     return initial_record
 
 
+def _load_gap(store: RevaStore, tenant_id: str, gap_id: str) -> GapRecord:
+    row = store.conn.execute(
+        "SELECT record FROM reva_gap_heads WHERE tenant_id = ? AND gap_id = ?",
+        (tenant_id, gap_id),
+    ).fetchone()
+    if not row:
+        raise NotFoundError(f"Gap {gap_id} not found in tenant {tenant_id}")
+    return GapRecord.model_validate_json(row["record"])
+
+
+def _save_gap(store: RevaStore, gap: GapRecord) -> None:
+    store.conn.execute(
+        """
+        UPDATE reva_gap_heads
+        SET revision = ?, status = ?, severity = ?, impact_score_bp = ?, owner = ?, due_at = ?, record = ?
+        WHERE tenant_id = ? AND gap_id = ?
+        """,
+        (gap.revision, gap.status, gap.severity, gap.impact_score_bp, gap.owner, gap.due_at,
+         gap.model_dump_json(), gap.tenant_id, gap.gap_id),
+    )
+    store.conn.commit()
+
+
+def _apply_transition(gap: GapRecord, to_status: str, rationale: str, actor: str) -> None:
+    if to_status == gap.status:
+        return
+    if to_status not in ALLOWED_TRANSITIONS.get(gap.status, set()):
+        raise ValidationError(f"Gap transition {gap.status} -> {to_status} is not allowed")
+    if to_status == "closed" and not gap.supporting_warrant_ids:
+        raise ValidationError("A gap closes only with at least one supporting warrant (resolution evidence)")
+    gap.history.append(
+        GapTransition(from_status=gap.status, to_status=to_status, rationale=rationale, actor=actor,
+                      timestamp=format_ts(utc_now_ms()))
+    )
+    gap.status = to_status  # type: ignore[assignment]
+
+
 def transition_gap(
     store: RevaStore,
     tenant_id: str,
@@ -116,40 +167,11 @@ def transition_gap(
     rationale: str,
     actor: str,
 ) -> GapRecord:
-    """Transition gap state per normative FSM (open -> assigned -> addressed -> closed / waived)."""
-    cur = store.conn.cursor()
-    row = cur.execute(
-        "SELECT * FROM reva_gap_heads WHERE tenant_id = ? AND gap_id = ?",
-        (tenant_id, gap_id),
-    ).fetchone()
-
-    if not row:
-        raise ValueError(f"Gap {gap_id} not found in tenant {tenant_id}")
-
-    gap = GapRecord.model_validate_json(row["record"])
-    now = format_ts(utc_now_ms())
-
-    transition = GapTransition(
-        from_status=gap.status,
-        to_status=to_status,
-        rationale=rationale,
-        actor=actor,
-        timestamp=now,
-    )
-
-    gap.history.append(transition)
-    gap.status = to_status
+    """Transition gap state per the normative FSM (open -> assigned -> addressed -> closed / waived)."""
+    gap = _load_gap(store, tenant_id, gap_id)
+    _apply_transition(gap, to_status, rationale, actor)
     gap.revision += 1
-
-    cur.execute(
-        """
-        UPDATE reva_gap_heads
-        SET revision = ?, status = ?, record = ?
-        WHERE tenant_id = ? AND gap_id = ?
-        """,
-        (gap.revision, to_status, gap.model_dump_json(), tenant_id, gap_id),
-    )
-    store.conn.commit()
+    _save_gap(store, gap)
     return gap
 
 
@@ -207,16 +229,23 @@ def update_gap(
     patch: Dict[str, Any],
     actor: str = "system",
 ) -> Dict[str, Any]:
-    """Update gap with expected_revision verification and patch application."""
-    to_status = patch.get("status", "open")
-    rationale = patch.get("rationale", "Updated revision")
-    rec = transition_gap(
-        store=store,
-        tenant_id=tenant_id,
-        gap_id=gap_id,
-        to_status=to_status,  # type: ignore
-        rationale=rationale,
-        actor=actor,
-    )
-    return rec.model_dump()
-
+    """Apply a patch to the gap head with optimistic concurrency (expected_revision) and FSM checks."""
+    gap = _load_gap(store, tenant_id, gap_id)
+    if gap.revision != expected_revision:
+        raise ConflictError(
+            f"Gap {gap_id} is at revision {gap.revision}, not {expected_revision}",
+            details={"current_revision": gap.revision},
+        )
+    for field_name in ("severity", "owner", "due_at", "resolution"):
+        if field_name in patch:
+            setattr(gap, field_name, patch[field_name])
+    for field_name in ("supporting_warrant_ids", "contradicting_warrant_ids"):
+        if patch.get(field_name):
+            merged = list(getattr(gap, field_name))
+            merged.extend(w for w in patch[field_name] if w not in merged)
+            setattr(gap, field_name, merged)
+    if "status" in patch and patch["status"] is not None:
+        _apply_transition(gap, patch["status"], patch.get("rationale") or "Updated revision", actor)
+    gap.revision += 1
+    _save_gap(store, gap)
+    return gap.model_dump()

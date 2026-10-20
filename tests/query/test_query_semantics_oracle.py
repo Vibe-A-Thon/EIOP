@@ -48,6 +48,7 @@ from eoip.query.sparql_protocol import SparqlProtocolHandler
 # CRA-024.1: Grammar / capability manifests per dialect & backend
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_1_grammar_capability_manifests():
     registry = ManifestRegistry.get_instance()
     # Check registered manifests
@@ -81,6 +82,7 @@ def test_cra_024_1_grammar_capability_manifests():
 # CRA-024.2: Typed parsed plans, parameterization & scope injection
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_2_typed_plan_and_scope_injection():
     engine = TypedPlanEngine()
     scope = TrustedScope(
@@ -131,6 +133,7 @@ def test_cra_024_2_typed_plan_and_scope_injection():
 # CRA-024.3: Operations validate, explain, cost, profile, execute, cancel
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_3_operations_and_cancellation():
     service = QueryService()
     scope = TrustedScope(tenant_id="tenant_alpha", principal_id="user_123")
@@ -180,6 +183,7 @@ def test_cra_024_3_operations_and_cancellation():
 # CRA-024.4: Qualified OBDA / Federation with pushdown, null & degradation
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_4_obda_federation():
     engine = OBDAFederationEngine()
 
@@ -260,6 +264,7 @@ def test_cra_024_4_obda_federation():
 # CRA-024.5: Scoped templates, history, cache & sensitive literal redaction
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_5_sensitive_redaction_and_scoped_cache():
     # Sensitive redaction
     raw_query = "SELECT * FROM Users WHERE token = 'super_secret_token_12345' AND password = 'my_password'"
@@ -299,6 +304,7 @@ def test_cra_024_5_sensitive_redaction_and_scoped_cache():
 # CRA-024.6: Warmed endpoint benchmarks & semantic equivalence
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_6_warmed_benchmarks_and_equivalence():
     bench = WarmedEndpointBenchmark(warmup_runs=3, measured_runs=10)
 
@@ -341,6 +347,7 @@ def test_cra_024_6_warmed_benchmarks_and_equivalence():
 # CRA-024.7: SPARQL 1.1 Protocol endpoint GET/POST & unbounded path rejection
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_7_sparql_protocol():
     handler = SparqlProtocolHandler(enable_updates=False)
 
@@ -395,6 +402,7 @@ def test_cra_024_7_sparql_protocol():
 # CRA-024.8: Optional adapters: ANSI SQL views, openCypher, GraphQL
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_8_optional_adapters():
     # 1. ANSI SQL adapter
     sql_adapter = SQLOntologyAdapter()
@@ -431,6 +439,7 @@ def test_cra_024_8_optional_adapters():
 # CRA-024.9: Default budgets & tenant quotas
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_9_default_budgets():
     default_budget = QueryBudget()
     assert default_budget.deadline_seconds == 30.0
@@ -468,6 +477,7 @@ def test_cra_024_9_default_budgets():
 # CRA-024.10: BI Connectivity (Tableau & Power BI recorded session)
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_10_bi_connectivity():
     emulator = BISessionEmulator()
     # Tableau session
@@ -490,6 +500,7 @@ def test_cra_024_10_bi_connectivity():
 # CRA-024.11: RDF backend port (Fuseki reference & GraphDB certified)
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_11_rdf_backend_ports():
     # 1. Fuseki config targeting
     fuseki_config = {
@@ -525,6 +536,7 @@ def test_cra_024_11_rdf_backend_ports():
 # CRA-024.A: Full Acceptance: Independent Result Corpus, SP2Bench, Federated Join
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_a_acceptance_oracle():
     service = QueryService()
     scope = TrustedScope(tenant_id="tenant_prod", principal_id="auditor_lead")

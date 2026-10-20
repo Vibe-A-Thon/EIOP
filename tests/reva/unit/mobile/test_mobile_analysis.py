@@ -12,6 +12,8 @@ from reva.extract.mobile.dex_parser import DEXParser
 from reva.extract.mobile.jni_mapper import JNIBoundaryMapper
 from reva.core.errors import RevaResourceLimitError
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 @pytest.fixture
 def mock_apk_bytes():

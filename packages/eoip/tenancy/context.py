@@ -37,6 +37,22 @@ class TenantContextRequired(RuntimeError):
     """Fail-closed error raised when tenant context is missing (SR-TEN-001)."""
 
 
+PLATFORM_SCOPE = "_platform"
+ANONYMOUS_SCOPE = "_anonymous"
+
+
+def tenant_label(principal: Principal | None) -> str:
+    """Tenant scope label for log lines and metric labels (SR-TEN-001).
+
+    Tenant-bound principals report their signed tenant; unbound platform administrators and
+    process-level events report ``_platform``; unauthenticated requests report ``_anonymous``.
+    Never empty, so no log line or metric sample is emitted without tenant context.
+    """
+    if principal is None:
+        return ANONYMOUS_SCOPE
+    return principal.tenant_id or PLATFORM_SCOPE
+
+
 def authorized_tenant(principal: Principal, requested: str | None = None) -> str | None:
     """A tenant role never grants access outside the signed tenant binding.
 

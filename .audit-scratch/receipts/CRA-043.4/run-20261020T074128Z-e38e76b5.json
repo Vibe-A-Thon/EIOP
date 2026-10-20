@@ -1,0 +1,72 @@
+{
+  "$schema": "https://eoip.enterprise.internal/schemas/verification-receipt-v3.json",
+  "receipt_id": "rcpt-2648650d-8c0d-451d-b38d-6163a635b1f1",
+  "requirement_clause": "CRA-043.4",
+  "state_claimed": "VERIFIED",
+  "profile": "P0",
+  "source_commit": "77f3985a7f7407be0509ec04ea4cceaa0313ee6e",
+  "source_tree_dirty": false,
+  "source_fingerprint": "8acc4c5d95fcd6a484540b576f5f237880389d183af0efb2f906ab0cbd8f28ff",
+  "source_unchanged_during_run": true,
+  "artifact_digest": "c0dc68fe08adc165f1198875e028f57bdd75edb22a2e9f31080c321ee8659a21",
+  "artifact_path": "dist/eoip-1.0.0rc1-py3-none-any.whl",
+  "artifact_mtime": "2026-10-20T07:37:58.966120+00:00",
+  "runtime": {
+    "os": "Linux-6.12.94+-x86_64-with-glibc2.41",
+    "python_version": "3.11.17",
+    "backend": "memory-harness",
+    "engine": "",
+    "engine_version": ""
+  },
+  "fixture": {
+    "id": ""
+  },
+  "execution": {
+    "command": [
+      "/workspace/.venvs/eiop-work/bin/python",
+      "-m",
+      "pytest",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "-o",
+      "addopts=",
+      "--timeout=300",
+      "tests/neural/test_runtime_tiers.py",
+      "--junitxml",
+      ".audit-scratch/evidence/CRA-043.4/run-20261020T074128Z-e38e76b5/junit.xml"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-20T07:41:28.983008+00:00",
+    "completed_at": "2026-10-20T07:41:32.829514+00:00"
+  },
+  "results": {
+    "tests_total": 8,
+    "tests_failed": 0,
+    "tests_errors": 0,
+    "tests_skipped": 0,
+    "tests_xfailed": 0,
+    "tests_passed": 8
+  },
+  "evidence_files": [
+    {
+      "path": ".audit-scratch/evidence/CRA-043.4/run-20261020T074128Z-e38e76b5/junit.xml",
+      "sha256": "56759dc2176e5006a8e8aba3c9de64e74e8b3f68f8db0a34d38cb3837cebbd4e"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-043.4/run-20261020T074128Z-e38e76b5/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-043.4/run-20261020T074128Z-e38e76b5/stdout.txt",
+      "sha256": "9d350b3c009f86d360492d201987ebf7906bde42e8189be9ff2a4fe40288fa8c"
+    }
+  ],
+  "verified_invariants": [],
+  "negative_cases": [],
+  "evidence_categories": {},
+  "limitations": [],
+  "producer": "antigravity-agent",
+  "reviewer": null,
+  "review_signature": null
+}

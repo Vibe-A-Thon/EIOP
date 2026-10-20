@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+import uuid
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -109,17 +110,24 @@ def test_feature_3_attention_weighted_graph_slicing() -> None:
 # ── Feature 4: Bitemporal Context Slate ───────────────────────────
 
 def test_feature_4_bitemporal_context_slate() -> None:
+    # FT-D12 root cause: the test read the clock *before* each write, so "as of t_past"
+    # contained no event at all (tax_rate looked added, not modified) and "as of t_now"
+    # excluded the second write. As-of semantics are inclusive of events recorded at or
+    # before the timestamp, so the boundaries are taken from the recorded events. A
+    # unique stream keeps the process-wide StateEngine singleton from leaking state
+    # between tests.
+    stream = f"billing-schema-{uuid.uuid4().hex}"
     state_engine = get_state_engine()
-    t_past = time.time()
-    state_engine.record("billing-schema", "upsert", {"tax_rate": 0.08, "currency": "USD"})
+    first = state_engine.record(stream, "upsert", {"tax_rate": 0.08, "currency": "USD"})
+    t_past = first.timestamp
 
     time.sleep(0.01)
-    t_now = time.time()
-    state_engine.record("billing-schema", "upsert", {"tax_rate": 0.09, "discount_enabled": True})
+    second = state_engine.record(stream, "upsert", {"tax_rate": 0.09, "discount_enabled": True})
+    t_now = second.timestamp
 
     slate_builder = get_bitemporal_context_slate()
-    slate = slate_builder.build_slate("billing-schema", t_past, t_now)
-    assert slate["stream"] == "billing-schema"
+    slate = slate_builder.build_slate(stream, t_past, t_now)
+    assert slate["stream"] == stream
     assert "tax_rate" in slate["delta_summary"]["modified_keys"]
     assert "discount_enabled" in slate["delta_summary"]["added_keys"]
     assert "Bitemporal Delta Slate" in slate["rendered_slate"]
@@ -266,3 +274,11 @@ def test_feature_9_advanced_capabilities_api_endpoints() -> None:
         },
     )
     assert attest_resp.status_code == 401
+
+
+def test_feature_4_slate_rejects_inverted_window_and_honours_explicit_zero() -> None:
+    slate_builder = get_bitemporal_context_slate()
+    with pytest.raises(ValueError):
+        slate_builder.build_slate("any-stream", 10.0, 5.0)
+    # 0.0 is a valid timestamp, not "use now".
+    assert slate_builder.build_slate("any-stream", 0.0, 0.0)["present_timestamp"] == 0.0

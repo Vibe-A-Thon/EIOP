@@ -39,6 +39,7 @@ RECORDS = [
 # --------------------------------------------------------------------------
 # SR-ING-010: profiling
 
+@pytest.mark.req("SR-ING-010")
 def test_profile_reports_types_nullability_cardinality():
     report = profile_records(RECORDS, dataset="incidents")
     assert report.record_count == 3
@@ -55,6 +56,7 @@ def test_profile_reports_types_nullability_cardinality():
     assert amount.observed_types == ["float"]
 
 
+@pytest.mark.req("SR-ING-010")
 def test_enum_candidate_detection():
     report = profile_records(RECORDS, dataset="incidents")
     fields = {f.path: f for f in report.fields}
@@ -66,6 +68,7 @@ def test_enum_candidate_detection():
     assert counts == {"open": 2, "closed": 1}
 
 
+@pytest.mark.req("SR-ING-010")
 def test_format_detection():
     report = profile_records(RECORDS, dataset="incidents")
     fields = {f.path: f for f in report.fields}
@@ -80,6 +83,7 @@ def test_format_detection():
     assert "file_path" in fields["path"].formats
 
 
+@pytest.mark.req("SR-ING-010")
 def test_nesting_shape_and_arrays():
     report = profile_records(RECORDS, dataset="incidents")
     fields = {f.path: f for f in report.fields}
@@ -95,6 +99,7 @@ def test_nesting_shape_and_arrays():
     assert inner.cardinality == 2
 
 
+@pytest.mark.req("SR-ING-010")
 def test_streaming_updates_match_batch_profile():
     profiler = SchemaProfiler(dataset="incidents")
     for rec in RECORDS:
@@ -104,12 +109,14 @@ def test_streaming_updates_match_batch_profile():
     assert streamed == batched
 
 
+@pytest.mark.req("SR-ING-010")
 def test_profile_is_deterministic_regardless_of_record_order():
     a = profile_records(list(reversed(RECORDS)), dataset="incidents")
     b = profile_records(RECORDS, dataset="incidents")
     assert a == b
 
 
+@pytest.mark.req("SR-ING-010")
 def test_cardinality_cap_reports_lower_bound():
     records = [{"v": f"value-{i}"} for i in range(CARDINALITY_CAP + 5)]
     report = profile_records(records, dataset="big")
@@ -119,6 +126,7 @@ def test_cardinality_cap_reports_lower_bound():
     assert field.unique_ratio == 0.0
 
 
+@pytest.mark.req("SR-ING-010")
 def test_drift_diff_detects_changes():
     before = profile_records(RECORDS, dataset="incidents")
     changed = [dict(r, status=r["status"], priority="high") for r in RECORDS]
@@ -135,6 +143,7 @@ def test_drift_diff_detects_changes():
                and c.detail == "pending" for c in drift.changes)
 
 
+@pytest.mark.req("SR-ING-010")
 def test_drift_empty_for_identical_payloads():
     report = profile_records(RECORDS, dataset="incidents")
     assert diff_profiles(report, report).changes == []
@@ -143,6 +152,7 @@ def test_drift_empty_for_identical_payloads():
 # --------------------------------------------------------------------------
 # SR-ING-012: key detection
 
+@pytest.mark.req("SR-ING-012")
 def test_single_field_key_candidates():
     report = profile_records(RECORDS, dataset="incidents")
     keys = detect_key_candidates(report, records=RECORDS)
@@ -155,12 +165,14 @@ def test_single_field_key_candidates():
     assert id_key.stability == 1.0
 
 
+@pytest.mark.req("SR-ING-012")
 def test_enum_field_is_not_a_key_candidate():
     report = profile_records(RECORDS, dataset="incidents")
     keys = detect_key_candidates(report, records=RECORDS)
     assert all(k.fields != ["status"] for k in keys)
 
 
+@pytest.mark.req("SR-ING-012")
 def test_composite_key_candidate():
     records = [
         {"first": "a", "last": "x", "v": 1},
@@ -173,6 +185,7 @@ def test_composite_key_candidate():
     assert any(k.fields == ["first", "last"] for k in composite)
 
 
+@pytest.mark.req("SR-ING-012")
 def test_stability_scoring_against_baseline():
     baseline_records = [dict(r, id=f"OLD-{i}") for i, r in enumerate(RECORDS)]
     baseline = profile_records(baseline_records, dataset="incidents")
@@ -205,6 +218,7 @@ def _orders_and_customers():
     return customers, orders
 
 
+@pytest.mark.req("SR-ING-013")
 def test_foreign_key_like_discovery():
     customers, orders = _orders_and_customers()
     datasets = [
@@ -225,6 +239,7 @@ def test_foreign_key_like_discovery():
     assert fk[0].evidence  # sample values present
 
 
+@pytest.mark.req("SR-ING-013")
 def test_array_of_ids_discovery():
     customers, orders = _orders_and_customers()
     datasets = [
@@ -242,6 +257,7 @@ def test_array_of_ids_discovery():
     assert arr[0].to_dataset == "customers"
 
 
+@pytest.mark.req("SR-ING-013")
 def test_parent_pointer_discovery():
     nodes = [
         {"node_id": "N-1", "parent_id": None},
@@ -260,6 +276,7 @@ def test_parent_pointer_discovery():
     assert parents[0].to_field == "node_id"
 
 
+@pytest.mark.req("SR-ING-013")
 def test_type_id_pair_discovery():
     events = [
         {"event_id": "E-1", "target_type": "customers", "target_id": "C-1"},
@@ -283,6 +300,7 @@ def test_type_id_pair_discovery():
     assert pairs[0].to_dataset == "customers"
 
 
+@pytest.mark.req("SR-ING-013")
 def test_relationship_discovery_is_deterministic():
     customers, orders = _orders_and_customers()
     def run():
@@ -300,6 +318,7 @@ def test_relationship_discovery_is_deterministic():
 # --------------------------------------------------------------------------
 # SR-ING-016: edge class tagging
 
+@pytest.mark.req("SR-ING-016")
 def test_explicit_methods_are_asserted():
     for method in ("foreign_key_like", "parent_pointer", "url_reference",
                    "array_of_ids", "type_id_pair"):
@@ -307,6 +326,7 @@ def test_explicit_methods_are_asserted():
         assert edge_class_for_method(method).edge_class == "ASSERTED"
 
 
+@pytest.mark.req("SR-ING-016")
 def test_curated_overrides_and_unknown_degrades():
     assert tag_edge("foreign_key_like", curated=True) == "CURATED"
     assert tag_edge("some_future_ml_method") == "INFERRED"
@@ -315,6 +335,7 @@ def test_curated_overrides_and_unknown_degrades():
 # --------------------------------------------------------------------------
 # Router surface
 
+@pytest.mark.req("SR-ING-010", "SR-ING-012", "SR-ING-013")
 def test_build_router_exposes_expected_routes():
     pytest.importorskip("fastapi")
     from eoip.ingest.profile import build_router

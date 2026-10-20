@@ -12,6 +12,7 @@
     "context_refs": { "type": ["array", "null"], "items": { "type": "string" } },
     "budgets": { "type": ["object", "null"] },
     "actor_id": { "type": "string", "default": "anonymous" },
+    "tenant_id": { "type": "string", "minLength": 1, "default": "_platform" },
     "correlation_id": { "type": ["string", "null"] },
     "parent_run_id": { "type": ["string", "null"] },
     "recursion_depth": { "type": "integer", "minimum": 0, "default": 0 },

@@ -1,0 +1,26 @@
+..                                                                       [100%]
+=============================== warnings summary ===============================
+tests/semantic/test_rdf_fidelity.py::test_trig_named_graphs_preservation
+tests/semantic/test_rdf_fidelity.py::test_trig_named_graphs_preservation
+  /workspace/.venvs/eiop-work/lib/python3.11/site-packages/rdflib/graph.py:2508: DeprecationWarning: Dataset.default_context is deprecated, use Dataset.default_graph instead.
+    context = self.default_context
+
+tests/semantic/test_rdf_fidelity.py::test_trig_named_graphs_preservation
+  /workspace/.venvs/eiop-work/lib/python3.11/site-packages/rdflib/plugins/parsers/trig.py:155: DeprecationWarning: ConjunctiveGraph is deprecated, use Dataset instead.
+    conj_graph = ConjunctiveGraph(store=graph.store, identifier=graph.identifier)
+
+tests/semantic/test_rdf_fidelity.py::test_trig_named_graphs_preservation
+  /workspace/.venvs/eiop-work/lib/python3.11/site-packages/rdflib/plugins/serializers/nquads.py:41: DeprecationWarning: Dataset.contexts is deprecated, use Dataset.graphs instead.
+    for context in self.store.contexts():
+
+tests/semantic/test_rdf_fidelity.py::test_trig_named_graphs_preservation
+  /workspace/.venvs/eiop-work/lib/python3.11/site-packages/rdflib/plugins/parsers/nquads.py:80: DeprecationWarning: Dataset.default_context is deprecated, use Dataset.default_graph instead.
+    ds_default = ds.default_context  # the DEFAULT_DATASET_GRAPH_ID
+
+tests/semantic/test_rdf_fidelity.py::test_trig_named_graphs_preservation
+  /workspace/.venvs/eiop-work/lib/python3.11/site-packages/rdflib/plugins/parsers/nquads.py:91: DeprecationWarning: Dataset.default_context is deprecated, use Dataset.default_graph instead.
+    ds.default_context = new_default_context
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/work/EIOP/.audit-scratch/evidence/CRA-016.2/run-20261020T073830Z-f76382b8/junit.xml -
+2 passed, 6 warnings in 0.12s

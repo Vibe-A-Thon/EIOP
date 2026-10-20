@@ -54,7 +54,9 @@ services:
       HG_SERVER_MIN_FREE_MEMORY: "0"
     networks: [acceptance]
     healthcheck:
-      test: [CMD-SHELL, "curl -fsS http://localhost:8080/versions >/dev/null"]
+      # FT-X12: /versions answers before the graph backend is ready; probe the
+      # graph schema endpoint so schema-init starts only when it can succeed.
+      test: [CMD-SHELL, "curl -fsS -u admin:$${PASSWORD} http://localhost:8080/graphspaces/DEFAULT/graphs/hugegraph/schema/vertexlabels >/dev/null"]
       interval: 5s
       timeout: 5s
       retries: 60
@@ -97,7 +99,9 @@ services:
       EOIP_ACCEPTANCE_SOURCE_URL: http://dlq-upstream:8090
       EOIP_ACCEPTANCE_CONFLUENCE_URL: http://dlq-confluence:8091
       EOIP_ACCEPTANCE_REPORT: /results/${EOIP_ACCEPTANCE_RUN:?Set unique acceptance ID}.json
-    volumes: ["dlq-data:/data", "../test-results:/results"]
+    # FT-X11: results go to a named volume (writable by uid 10001) and are copied out
+    # with `<runtime> cp`, so no host bind mount needs chmod 777 on Linux.
+    volumes: ["dlq-data:/data", "dlq-results:/results"]
     command: [python, -m, scripts.verify_live_dlq]
     depends_on:
       dlq-api: {condition: service_healthy}
@@ -110,3 +114,4 @@ networks:
     internal: true
 volumes:
   dlq-data:
+  dlq-results:

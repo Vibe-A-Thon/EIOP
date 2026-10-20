@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from _principals import provision_api_token
 import hashlib
 import json
 
@@ -262,7 +263,7 @@ def test_temporal_api_exposes_versions_as_of_diff_and_journal(monkeypatch, tmp_p
     engine.evolve_entity(
         "WorkItem", "urn:api:1", {"issue_key": "API-1", "summary": "API history"}, event
     )
-    monkeypatch.setattr(api_main, "api_token", lambda: "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(api_main, "create_store", lambda: store)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     client = TestClient(api_main.create_app())

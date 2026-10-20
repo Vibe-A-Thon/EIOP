@@ -28,6 +28,9 @@ from eoip.fileparse.engine import (
 )
 from eoip.ingestion.multimodal_audio import _chunk_text
 
+# Explicit binding: IDs mentioned in docstrings/comments below are context, not coverage.
+pytestmark = pytest.mark.req("CRA-012")
+
 
 def parse(content: bytes, name: str, **options) -> any:
     opts = ParseOptions(**options)
@@ -37,6 +40,7 @@ def parse(content: bytes, name: str, **options) -> any:
 # ---------------------------------------------------------------------------
 # CRA-012.1: Multi-format parsing, format detection by magic bytes, readiness
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-012")
 def test_cra_012_1_multi_format_and_magic_byte_detection():
     # 1. Content-based magic byte detection
     pdf_bytes = b"%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF"
@@ -99,6 +103,7 @@ def test_cra_012_1_multi_format_and_magic_byte_detection():
 # ---------------------------------------------------------------------------
 # CRA-012.2: Locators, spreadsheet formulas, and macro prohibition
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-012")
 def test_cra_012_2_locators_and_formulas_macros_prohibited():
     openpyxl = pytest.importorskip("openpyxl")
     wb = openpyxl.Workbook()
@@ -154,6 +159,7 @@ def test_cra_012_2_locators_and_formulas_macros_prohibited():
 # ---------------------------------------------------------------------------
 # CRA-012.3: Budgets and safe XML/HTML without external entities
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-012")
 def test_cra_012_3_budgets_safe_xml_html():
     # 1. Budget limits: max_file_bytes
     with pytest.raises(ParseError) as exc_bytes:
@@ -205,6 +211,7 @@ def test_cra_012_3_budgets_safe_xml_html():
 # ---------------------------------------------------------------------------
 # CRA-012.4: Chunker progress, termination, and G11 fix validation
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-012")
 def test_cra_012_4_chunking_progress_and_g11_termination():
     # 1. Invariant: 0 <= overlap < chunk_size enforced
     with pytest.raises(ValueError, match="chunk_overlap must be smaller than chunk_chars"):
@@ -252,6 +259,7 @@ def test_cra_012_4_chunking_progress_and_g11_termination():
 # ---------------------------------------------------------------------------
 # CRA-012.5: Model partial extraction and raw bytes preservation
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-012")
 def test_cra_012_5_partial_extraction_and_raw_bytes_preservation():
     # 1. Raw bytes preserved so parser upgrade can rebuild
     content = b"Original raw bytes for archival and provenance verification."
@@ -276,6 +284,7 @@ def test_cra_012_5_partial_extraction_and_raw_bytes_preservation():
 # ---------------------------------------------------------------------------
 # CRA-012.6: Core and extended formats completeness and capability catalog
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-012")
 def test_cra_012_6_core_and_extended_formats_catalog():
     catalog = format_catalog()
     catalog_extensions = {entry["extension"] for entry in catalog}
@@ -346,6 +355,7 @@ def test_cra_012_6_core_and_extended_formats_catalog():
 # ---------------------------------------------------------------------------
 # CRA-012.7: Candidate libraries pinned and safe
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-012")
 def test_cra_012_7_pinned_safe_candidate_libraries():
     # Verify candidate libraries from CRA-012.7 subject to CRA-035 review
     import yaml
@@ -373,6 +383,7 @@ def test_cra_012_7_pinned_safe_candidate_libraries():
 # ---------------------------------------------------------------------------
 # CRA-012.8: EvidenceLocator on every chunk
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-012")
 def test_cra_012_8_evidence_locator_on_every_chunk():
     # Test on a document with sections and locators
     text_content = b"Paragraph One.\n\nParagraph Two.\n\nParagraph Three."
@@ -398,6 +409,7 @@ def test_cra_012_8_evidence_locator_on_every_chunk():
 # ---------------------------------------------------------------------------
 # CRA-012.9: Performance qualification target (DOCX & 50-sheet XLSX <= 5s)
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-012")
 def test_cra_012_9_performance_qualification_target():
     docx = pytest.importorskip("docx")
     openpyxl = pytest.importorskip("openpyxl")
@@ -444,6 +456,7 @@ def test_cra_012_9_performance_qualification_target():
     chunk_chars=st.integers(min_value=32, max_value=200),
     overlap=st.integers(min_value=0, max_value=31),
 )
+@pytest.mark.req("CRA-012")
 def test_cra_012_a_hypothesis_chunker_properties(text, chunk_chars, overlap):
     # Overlap is strictly less than chunk_chars
     chunks = _chunk_text(text, max_chunk_chars=chunk_chars, overlap=overlap)
@@ -464,6 +477,7 @@ def test_cra_012_a_hypothesis_chunker_properties(text, chunk_chars, overlap):
         assert "".join(chunks) == text
 
 
+@pytest.mark.req("CRA-012")
 def test_cra_012_a_g11_isolated_process_termination():
     # Run the G11 long-input reproduction in a timeout-isolated process
     code = """

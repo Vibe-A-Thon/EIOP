@@ -1,5 +1,6 @@
 """Tests for JSON ingestion, format conversion, and graph health API endpoints."""
 
+from _principals import provision_api_token
 import os
 
 from eoip.graph.memory import MemoryGraphStore
@@ -11,6 +12,7 @@ HEADERS = {"Authorization": f"Bearer {TOKEN}"}
 
 def _make_app(store, tmp_path):
     os.environ["EOIP_API_TOKEN"] = TOKEN
+    provision_api_token(None, TOKEN)
     os.environ["EOIP_DATA_DIR"] = str(tmp_path)
     from apps.api import main as api_main
     api_main.create_store = lambda: store

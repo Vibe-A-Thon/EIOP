@@ -226,7 +226,7 @@ class DimensionReducer:
             val = 0.0
             for i in range(input_dim):
                 # Rademacher distribution (+1 or -1)
-                h = int(hashlib.md5(f"proj_{i}_{j}".encode()).hexdigest()[:8], 16)
+                h = int(hashlib.md5(f"proj_{i}_{j}".encode(), usedforsecurity=False).hexdigest()[:8], 16)
                 coeff = 1.0 if (h % 2 == 0) else -1.0
                 val += vector[i] * coeff
             reduced[j] = val * scale

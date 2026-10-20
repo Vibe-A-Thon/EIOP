@@ -11,6 +11,7 @@
     "arguments": { "type": "object" },
     "risk_level": { "type": ["string", "null"] },
     "actor_id": { "type": ["string", "null"] },
+    "tenant_id": { "type": "string", "minLength": 1, "default": "_platform" },
     "run_id": { "type": ["string", "null"] },
     "approval_id": { "type": ["string", "null"] },
     "dry_run": { "type": "boolean", "default": false }

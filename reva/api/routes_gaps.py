@@ -51,6 +51,7 @@ async def list_gaps(
         query += " AND domain = ?"
         params.append(domain)
 
+    query += " ORDER BY impact_score_bp DESC, gap_id ASC"  # board order: highest impact first
     rows = cur.execute(query, params).fetchall()
     items = []
     for r in rows:

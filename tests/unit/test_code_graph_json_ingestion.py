@@ -1,5 +1,6 @@
 """Code exports must ingest connected, typed facts rather than a generic wrapper."""
 
+from _principals import provision_api_token
 import json
 from pathlib import Path
 
@@ -108,6 +109,7 @@ def test_authenticated_code_export_api_persists_and_replays(mode, tmp_path, monk
 
     token = "code-export-test-token-at-least-24-characters"
     monkeypatch.setenv("EOIP_API_TOKEN", token)
+    provision_api_token(monkeypatch, token)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     store = MemoryGraphStore()
     # The API lifespan closes real backends; this in-memory fixture owns no resources.

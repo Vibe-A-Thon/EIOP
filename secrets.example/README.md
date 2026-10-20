@@ -18,11 +18,11 @@ For disposable local development, use the container helper:
 For host-only development, set a local token and select the in-memory backend:
 
 ```powershell
-$env:EOIP_API_TOKEN = 'local-development-token-at-least-24-chars'
+$env:EOIP_API_TOKEN = 'local-development-token-at-least-32-characters'
 $env:EOIP_GRAPH_BACKEND = 'memory'
 ```
 
-The API requires `EOIP_API_TOKEN` to be at least 24 characters. Live connector
+The API requires `EOIP_API_TOKEN` to be at least 32 characters (FT-F02). Live connector
 credentials are read from their configured environment/secret source by the
 worker; do not put raw credentials in source registry payloads, job payloads,
 URLs, fixtures, or logs. A `secret_refs` field is a reference contract, not a

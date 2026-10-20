@@ -1,5 +1,7 @@
 """SKOS-compatible taxonomy and multilingual thesaurus stewardship (CRA-021).
 
+Implements GAP-STUDIO-005 (SKOS taxonomy support); verified by tests/unit/test_skos_taxonomy.py.
+
 Covers:
 - CRA-021.1: SKOS concepts/schemes, broader/narrower/related, polyhierarchy, preferred/alternative/hidden
   labels with BCP-47 language tags, mappings, deprecation/replacement, and explicit concept-vs-label identity.

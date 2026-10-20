@@ -183,8 +183,15 @@ def test_symlink_inputs_and_outputs_are_refused(repository, monkeypatch):
 def test_ci_installs_native_parser_extra():
     root = Path(__file__).resolve().parents[2]
     workflow = (root / ".github" / "workflows" / "validation-evidence.yml").read_text(encoding="utf-8")
-    assert 'pip install -e ".[dev,codeparse,fileparse]"' in workflow
+    # FT-F04/FT-F06: CI uses the documented install; the 'test' extra must keep
+    # pulling in the native parser extras.
+    assert 'pip install -c requirements.lock -e ".[test]"' in workflow
     assert "python -X utf8 -m pytest -q" in workflow
+    import tomllib
+    extras = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]["optional-dependencies"]
+    bundled = extras["test"][0]
+    for name in ("dev", "codeparse", "fileparse"):
+        assert name in bundled.split("[", 1)[1], bundled
 
 
 @pytest.mark.req("REQ-004")

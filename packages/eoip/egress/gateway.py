@@ -103,6 +103,31 @@ class EgressDenied(Exception):
         )
 
 
+class PlatformKillSwitch:
+    """Platform-wide egress kill switch shared by every tenant's gateway (SR-LLM-016).
+
+    ``EgressGateway.kill()`` stops one tenant's gateway; this switch stops all of them at once.
+    """
+
+    def __init__(self) -> None:
+        self.engaged = False
+        self.reason = ""
+        self.engaged_by = ""
+
+    def engage(self, *, admin: str, reason: str = "") -> None:
+        if not admin:
+            raise ValueError("platform kill switch requires an accountable admin")
+        self.engaged, self.reason, self.engaged_by = True, reason, admin
+
+    def release(self, *, admin: str) -> None:
+        if not admin:
+            raise ValueError("platform kill switch requires an accountable admin")
+        self.engaged, self.reason, self.engaged_by = False, "", ""
+
+
+PLATFORM_KILL_SWITCH = PlatformKillSwitch()
+
+
 class EgressGateway:
     """Policy-gated single egress path for external model calls."""
 
@@ -111,8 +136,10 @@ class EgressGateway:
                  scanner: DlpScanner | None = None,
                  canaries: CanaryRegistry | None = None,
                  transport: Transport | None = None,
-                 audit: AuditFn | None = None) -> None:
+                 audit: AuditFn | None = None,
+                 platform_kill_switch: PlatformKillSwitch | None = None) -> None:
         self.tenant_id = tenant_id
+        self.platform_kill_switch = platform_kill_switch or PLATFORM_KILL_SWITCH
         self.policy = policy or PolicyEngine()
         self.vault = vault or TokenVault(tenant_id, secret=b"eoip-local-vault")
         self.scanner = scanner or DlpScanner()
@@ -121,6 +148,9 @@ class EgressGateway:
         self.audit = audit or (lambda event: None)
         self.endpoints: dict[str, EndpointConfig] = {}
         self.consents: dict[str, ConsentRecord] = {}
+        # Every consent ever given per endpoint, oldest first (SR-LLM-017).
+        self.consent_history: dict[str, list[ConsentRecord]] = {}
+        self.reapproval_required: set[str] = set()
         self.plugin_registry = PluginRegistry()
         self.manifests: list[EgressManifest] = []  # append-only (SR-LLM-013)
         self.kill_switch_global = False
@@ -150,6 +180,8 @@ class EgressGateway:
             raise ValueError("consent DPA reference does not match the endpoint contract")
         endpoint.enabled = True
         self.consents[endpoint_id] = consent
+        self.consent_history.setdefault(endpoint_id, []).append(consent)
+        self.reapproval_required.discard(endpoint_id)
         self.audit({
             "event": "egress.endpoint_enabled",
             "endpoint_id": endpoint_id,
@@ -160,6 +192,30 @@ class EgressGateway:
             "region": consent.residency_region,
             "scope": consent.scope,
         })
+
+    def amend_consent(self, endpoint_id: str, *, admin: str, dpa_ref: str | None = None,
+                      residency_region: str | None = None, scope: str | None = None) -> bool:
+        """Change the contract terms of an enabled endpoint (SR-LLM-017).
+
+        Any change of DPA reference, residency region or scope invalidates the current consent:
+        the endpoint is disabled until an administrator re-approves it with a new consent record
+        (``enable_endpoint``). Returns True when re-approval is now required.
+        """
+        endpoint = self._endpoint(endpoint_id)
+        current = self.consents.get(endpoint_id)
+        if current is None:
+            raise ValueError(f"endpoint {endpoint_id} has no consent record to amend")
+        changes = {k: v for k, v in (("dpa_ref", dpa_ref), ("residency_region", residency_region), ("scope", scope))
+                   if v is not None and v != getattr(current, k)}
+        if not changes:
+            return False
+        if "dpa_ref" in changes:
+            endpoint.dpa_ref = changes["dpa_ref"]
+        endpoint.enabled = False
+        self.reapproval_required.add(endpoint_id)
+        self.audit({"event": "egress.consent_changed_reapproval_required", "endpoint_id": endpoint_id,
+                    "admin": admin, "previous_consent_id": current.consent_id, "changes": sorted(changes)})
+        return True
 
     def disable_endpoint(self, endpoint_id: str, *, admin: str,
                          reason: str = "") -> None:
@@ -200,7 +256,9 @@ class EgressGateway:
         now = time.time()
         tags = tags or []
 
-        manifest = new_manifest(
+        # The manifest is assembled as a draft and sealed into an immutable record exactly once,
+        # at the point the outcome is known (SR-LLM-013).
+        draft: dict[str, Any] = dict(
             tenant_id=self.tenant_id, user_id=user_id, role=role, task=task,
             endpoint_id=endpoint_id, endpoint_region=endpoint.region,
             data_classes=list(data_classes), tags=list(tags),
@@ -209,15 +267,22 @@ class EgressGateway:
             fields=list(payload.keys()),
         )
 
+        def seal() -> EgressManifest:
+            sealed = new_manifest(**draft)
+            self.manifests.append(sealed)
+            return sealed
+
         def deny(reason: str) -> dict:
-            manifest.denied = True
-            manifest.denial_reason = reason
-            self.manifests.append(manifest)
+            draft["denied"] = True
+            draft["denial_reason"] = reason
+            seal()
             self.audit({"event": "egress.denied", "endpoint_id": endpoint_id,
                         "user_id": user_id, "reason": reason})
             raise EgressDenied(reason)
 
-        # 1. enablement + kill switch (SR-LLM-010/016)
+        # 1. enablement + kill switches: platform, tenant, endpoint (SR-LLM-010/016)
+        if self.platform_kill_switch.engaged:
+            deny(f"platform kill switch engaged by {self.platform_kill_switch.engaged_by}")
         if self.kill_switch_global:
             deny("global kill switch engaged")
         if endpoint_id in self.killed_endpoints:
@@ -238,55 +303,59 @@ class EgressGateway:
             classes=data_classes, tags=tags, task=task,
             endpoint=endpoint_id, role=role, region=region,
         )
-        manifest.matched_rule_ids = decision.matched_rule_ids
+        draft["matched_rule_ids"] = list(decision.matched_rule_ids)
         if not decision.allowed:
             deny("policy default deny (S0): " + "; ".join(decision.reasons))
         if decision.approval_required and not approval_id:
             deny("per-request human approval required (S6) — supply approval_id")
-        manifest.approval_id = approval_id
+        draft["approval_id"] = approval_id
 
         # 5. transform to permitted level (SR-LLM-011/015)
         outbound = transform(
             payload, decision.allowed_level, vault=self.vault,
         )
-        manifest.level = int(decision.allowed_level)
+        draft["level"] = int(decision.allowed_level)
         if decision.allowed_level == SharingLevel.S4:
-            manifest.tokens = [
+            draft["tokens"] = [
                 e.token for e in self.vault._entries.values()
                 if e.field.split(".")[0] in payload
             ]
 
         # 6. DLP + canary scan of the exact outbound payload (SR-LLM-014)
         findings = self.scanner.scan(outbound)
-        manifest.dlp_findings = [f.detector for f in findings.findings]
-        canary_hits = self.canaries.check(outbound, manifest.level)
+        draft["dlp_findings"] = [f.detector for f in findings.findings]
+        canary_hits = self.canaries.check(outbound, draft["level"])
         if canary_hits:
-            manifest.canary_blocked = True
+            draft["canary_blocked"] = True
             deny(f"canary values would egress below allowed level: "
                  f"{[c.canary_id for c in canary_hits]}")
 
         serialized = json.dumps(outbound, sort_keys=True, default=str)
-        manifest.bytes_out = len(serialized.encode("utf-8"))
+        draft["bytes_out"] = len(serialized.encode("utf-8"))
 
         if dry_run:
             # SR-LLM-012: exact preview payload, no transport call.
-            self.manifests.append(manifest)
-            return {"manifest": manifest, "dry_run": True, "payload": outbound}
+            return {"manifest": seal(), "dry_run": True, "payload": outbound}
 
         # 7. dispatch through the injectable transport
         response = self.transport(outbound, endpoint)
         raw = json.dumps(response, sort_keys=True, default=str).encode("utf-8")
-        manifest.bytes_in = len(raw)
-        manifest.response_hash = hash_bytes(raw)
-        self._record_budget(now, manifest.bytes_out, estimated_cost)
+        draft["bytes_in"] = len(raw)
+        draft["response_hash"] = hash_bytes(raw)
+        self._record_budget(now, draft["bytes_out"], estimated_cost)
 
-        # 8. local re-identification + outbound-style scan before display (SR-LLM-015)
-        display = self._reidentify(response)
-        self.manifests.append(manifest)
+        # 8. scan the model response before display (SR-LLM-015): sensitive values the model
+        # introduced are redacted, then vault tokens are re-identified locally.
+        findings_in: list[str] = []
+        display = self._reidentify(self._scan_response(response, findings_in))
+        if findings_in:
+            self.audit({"event": "egress.response_redacted", "endpoint_id": endpoint_id,
+                        "user_id": user_id, "findings": sorted(set(findings_in))})
+        manifest = seal()
         self.audit({"event": "egress.executed", "endpoint_id": endpoint_id,
                     "user_id": user_id, "manifest_id": manifest.manifest_id,
                     "level": manifest.level, "bytes_out": manifest.bytes_out})
-        return {"manifest": manifest, "response": display}
+        return {"manifest": manifest, "response": display, "response_findings": sorted(set(findings_in))}
 
     def report(self, since: float | None = None) -> dict:
         """Exportable 'what left the building' report (SR-LLM-013)."""
@@ -304,6 +373,28 @@ class EgressGateway:
         if endpoint is None:
             raise KeyError(f"unknown endpoint {endpoint_id}")
         return endpoint
+
+    def _scan_response(self, response: Any, found: list[str]) -> Any:
+        if isinstance(response, str):
+            hits = [f for f in self.scanner.scan_text(response)
+                    if not (f.matched.startswith("tok_") and f.matched in self.vault._entries)]
+            if not hits:
+                return response
+            out, last = [], 0
+            for f in sorted(hits, key=lambda f: f.start):
+                if f.start < last:
+                    continue
+                out.append(response[last:f.start])
+                out.append(f"[REDACTED:{f.detector}]")
+                last = f.end
+                found.append(f.detector)
+            out.append(response[last:])
+            return "".join(out)
+        if isinstance(response, list):
+            return [self._scan_response(item, found) for item in response]
+        if isinstance(response, dict):
+            return {k: self._scan_response(v, found) for k, v in response.items()}
+        return response
 
     def _reidentify(self, response: Any) -> Any:
         if isinstance(response, str):

@@ -19,7 +19,7 @@ SUPPORTED_POLICIES = ("highest-authority", "highest-confidence", "newest", "manu
 
 
 def _urn(prefix: str, *parts: str) -> str:
-    digest = hashlib.sha1("|".join(parts).encode("utf-8")).hexdigest()[:12]
+    digest = hashlib.sha1("|".join(parts).encode("utf-8"), usedforsecurity=False).hexdigest()[:12]
     return f"urn:eoip:truth:{prefix}:{digest}-{uuid.uuid4().hex[:8]}"
 
 

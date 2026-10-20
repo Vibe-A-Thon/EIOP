@@ -1,14 +1,35 @@
 name: reva-static
-on: [push, pull_request]
+
+# FT-F04: real static checks (was an echo placeholder). Correctness rules block; the full ruff ruleset is report-only until the existing backlog is cleared.
+on:
+  push:
+    branches: [main, develop, dev_local, eoip-remediation-geeky]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Static checks, ruff, mypy, forbid placeholders, depth markers
-        run: echo "Running reva-static"
+          cache: pip
+      - name: Install
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Ruff correctness rules (blocking)
+        run: python -m ruff check --select E9,F63,F7,F82 reva scripts/reva tests/reva
+      - name: Every REVA lane is real, on push/PR (blocking)
+        run: python scripts/reva/check_ci_lanes.py
+      - name: Depth markers match test directories (blocking)
+        run: python scripts/reva/check_depth_markers.py
+      - name: Sources compile (blocking)
+        run: python -m compileall -q reva scripts/reva
+      - name: Full ruff ruleset (REPORT-ONLY, pre-existing backlog)
+        continue-on-error: true
+        run: python -m ruff check reva --statistics

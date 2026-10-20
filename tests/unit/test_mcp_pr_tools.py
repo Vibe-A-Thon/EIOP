@@ -122,3 +122,59 @@ def test_triage_prs_ranking():
     result, evidence = handler.triage_prs({"prs": prs})
     assert result["triage_count"] == 2
     assert result["ranked_prs"][0]["pr_id"] == "pr-large"  # Higher risk ranked first
+
+
+def _cross_repo_store():
+    store = MemoryGraphStore()
+    core = store.upsert_vertex("CodeSymbol", {"canonical_id": "sym:repo-core:api", "name": "CoreAPI",
+                                              "path": "src/api.py", "repo_id": "repo-core"})
+    client = store.upsert_vertex("CodeSymbol", {"canonical_id": "sym:repo-client:sdk", "name": "ClientSDK",
+                                                "path": "sdk/client.py", "repo_id": "repo-client"})
+    app = store.upsert_vertex("CodeSymbol", {"canonical_id": "sym:repo-app:checkout", "name": "Checkout",
+                                             "path": "app/checkout.py", "repo_id": "repo-app"})
+    # same path, unrelated repository: must not be treated as the changed file
+    store.upsert_vertex("CodeSymbol", {"canonical_id": "sym:repo-other:api", "name": "OtherAPI",
+                                       "path": "src/api.py", "repo_id": "repo-other"})
+    store.upsert_edge("DEPENDS_ON", client["vid"], core["vid"], {})
+    store.upsert_edge("DEPENDS_ON", app["vid"], client["vid"], {})
+    return store
+
+
+def _core_pr():
+    return PullRequest(pr_id="pr-7", title="Change core API", author="alice", base_branch="main",
+                       head_branch="feat", repo_id="repo-core",
+                       files=[PRFile(path="src/api.py", change_type="modified", additions=40, deletions=10)])
+
+
+@pytest.mark.req("KGR-G-017")
+def test_blast_radius_spans_three_connected_repositories_and_ignores_same_path_elsewhere():
+    report = PRImpactCalculator(_cross_repo_store()).calculate(_core_pr())
+    ids = [e.canonical_id for e in report.impacted_entities]
+    assert ids == ["sym:repo-core:api", "sym:repo-client:sdk", "sym:repo-app:checkout"]
+    assert report.repos_affected == ["repo-app", "repo-client", "repo-core"]
+    assert "sym:repo-other:api" not in ids
+
+
+@pytest.mark.req("KGR-G-017")
+def test_risk_score_and_report_are_deterministic_for_identical_diffs():
+    store = _cross_repo_store()
+    first = PRImpactCalculator(store).calculate(_core_pr())
+    second = PRImpactCalculator(store).calculate(_core_pr())
+    assert first.risk_score == second.risk_score and first.risk_level == second.risk_level
+    assert [e.canonical_id for e in first.impacted_entities] == [e.canonical_id for e in second.impacted_entities]
+    assert first.summary == second.summary
+
+
+@pytest.mark.req("KGR-G-017")
+def test_pr_tool_definitions_are_mcp_tools_with_valid_json_schema_input():
+    import jsonschema
+
+    registry = build_graph_tool_registry(MemoryGraphStore())
+    for name in ("list_prs", "get_pr_impact", "triage_prs"):
+        tool = registry.get(name)
+        schema = tool.input_schema
+        jsonschema.Draft202012Validator.check_schema(schema)  # MCP inputSchema is JSON Schema
+        assert schema["type"] == "object" and tool.name == name and tool.description
+    bad = registry.invoke(ToolRequest(tool_call_id="c", tool_name="get_pr_impact", arguments={"pr": {"title": "x"}}),
+                          allowed_tools={"get_pr_impact"}, remaining_seconds=5)
+    assert bad.status == "FAILED" and bad.error["code"] == "INVALID_ARGUMENTS"

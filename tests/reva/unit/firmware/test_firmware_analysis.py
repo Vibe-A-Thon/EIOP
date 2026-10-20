@@ -8,6 +8,8 @@ from reva.extract.firmware.carver import FirmwareCarver
 from reva.extract.firmware.secret_harvester import SecretHarvester
 from reva.extract.firmware.wasm_decoder import WASMDecoder
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 @pytest.fixture
 def mock_firmware_blob():

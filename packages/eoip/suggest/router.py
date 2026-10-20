@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Any
 
 from eoip.suggest.engine import SuggestionEngine
-from eoip.suggest.models import SuggestionRequest, SuggestionResponse
+from eoip.suggest.models import PinRequest, SuggestionRequest, SuggestionResponse
 
 
 def build_router(store: Any = None, enforcer: Any = None, *, llm_hook: Any = None):
@@ -20,7 +20,7 @@ def build_router(store: Any = None, enforcer: Any = None, *, llm_hook: Any = Non
     permission pre-check note; ``llm_hook`` is the optional External-gate
     LLM-assist callable.
     """
-    from fastapi import APIRouter
+    from fastapi import APIRouter, HTTPException
 
     engine = SuggestionEngine(store, enforcer=enforcer, llm_hook=llm_hook)
     router = APIRouter(prefix="/api/v1/suggest", tags=["suggest"])
@@ -33,6 +33,18 @@ def build_router(store: Any = None, enforcer: Any = None, *, llm_hook: Any = Non
     @router.post("/interpret", response_model=SuggestionResponse)
     def interpret(request: SuggestionRequest) -> SuggestionResponse:
         return engine.suggest(request)
+
+    @router.post("/pin")
+    def pin(request: PinRequest) -> dict[str, Any]:
+        try:
+            alt = engine.pin(request.session_id, request.mention, request.entity_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        return {"session_id": request.session_id, "mention": request.mention, "pinned": alt.model_dump()}
+
+    @router.delete("/pin")
+    def unpin(session_id: str, mention: str) -> dict[str, Any]:
+        return {"session_id": session_id, "mention": mention, "removed": engine.unpin(session_id, mention)}
 
     @router.get("/intents")
     def intents() -> dict[str, Any]:

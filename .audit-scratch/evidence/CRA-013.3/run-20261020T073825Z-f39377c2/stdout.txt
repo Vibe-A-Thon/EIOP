@@ -1,0 +1,9 @@
+.                                                                        [100%]
+=============================== warnings summary ===============================
+tests/acceptance/test_email_containers_acceptance.py::test_cra_013_3_archive_limits_and_path_safety
+  /home/box/.local/share/uv/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/zipfile.py:1606: UserWarning: Duplicate name: 'report.txt'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/work/EIOP/.audit-scratch/evidence/CRA-013.3/run-20261020T073825Z-f39377c2/junit.xml -
+1 passed, 1 warning in 0.13s

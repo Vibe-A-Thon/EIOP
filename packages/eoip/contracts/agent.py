@@ -76,6 +76,7 @@ class AgentRequest(BaseModel):
     context_refs: list[str] | None = None
     budgets: dict[str, Any] | None = None
     actor_id: str = "anonymous"
+    tenant_id: str = Field(default="_platform", min_length=1)  # never blank (SR-TEN-001)
     correlation_id: str | None = None
     parent_run_id: str | None = None
     recursion_depth: int = Field(default=0, ge=0)

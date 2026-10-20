@@ -48,6 +48,8 @@ from eoip.tenancy.metering import (
     MeteringLog,
 )
 from eoip.tenancy.quotas import (
+    CircuitOpen,
+    TenantCircuitBreaker,
     QUOTA_DIMENSIONS,
     Lane,
     QuotaDecision,
@@ -58,6 +60,7 @@ from eoip.tenancy.quotas import (
 from eoip.tenancy.service import TenancyService
 
 __all__ = [
+    "CircuitOpen", "TenantCircuitBreaker",
     "PRINCIPAL_HEADER",
     "TENANT_HEADER",
     "TenantContext",

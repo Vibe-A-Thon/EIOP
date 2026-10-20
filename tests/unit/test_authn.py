@@ -291,7 +291,11 @@ class TestOidcJwtValidator:
 
     def test_cryptography_verifier_not_available_path(self, monkeypatch):
         # A None entry in sys.modules forces ImportError on any
-        # `from cryptography... import` inside CryptographyVerifier.
+        # `from cryptography... import` inside CryptographyVerifier. Block every
+        # cached cryptography.* submodule too, otherwise the test is order-dependent
+        # (FT-D10): earlier tests leave cryptography.hazmat... importable.
+        for name in [m for m in sys.modules if m == "cryptography" or m.startswith("cryptography.")]:
+            monkeypatch.setitem(sys.modules, name, None)
         monkeypatch.setitem(sys.modules, "cryptography", None)
         with pytest.raises(AuthenticationUnavailable, match="not deployed"):
             CryptographyVerifier({"keys": []})

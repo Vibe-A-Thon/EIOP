@@ -63,7 +63,7 @@ function StepChip({ label, state }: { label: string; state: "done" | "active" | 
 export function OntologyDesigner({ schema, onRefetchSchema }: { schema: any; onRefetchSchema: () => void }) {
   const { session } = useAuth();
   const qc = useQueryClient();
-  const author = session?.principal.id || "bootstrap-admin";
+  const author = session?.principal.id || "anonymous";
   const isAdmin = (session?.principal.roles || []).some((r) => r === "admin" || r === "system");
 
   const [branch, setBranch] = useState<string | null>(null);

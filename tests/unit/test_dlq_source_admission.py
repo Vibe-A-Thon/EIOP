@@ -1,5 +1,6 @@
 """Registered DLQ replay must obey the same admission policy as source replay."""
 
+from _principals import provision_api_token
 import json
 
 import pytest
@@ -19,7 +20,7 @@ def test_registered_replay_admission_parity(monkeypatch, tmp_path, control, rout
 
     store = MemoryGraphStore()
     monkeypatch.setattr(api_main, "create_store", lambda: store)
-    monkeypatch.setattr(api_main, "api_token", lambda: "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     registry = SourceRegistry(tmp_path / "state" / "source-registry.json")
     registry.create(SourceRegistryEntry(

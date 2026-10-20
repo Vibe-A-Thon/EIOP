@@ -1,8 +1,14 @@
 import os, sys
 sys.path.insert(0, "packages")
 sys.path.insert(0, ".")
-token = "test-token-1234567890-secure-deployment"
-os.environ["EOIP_API_TOKEN"] = token
+# FT-AUTH: no default principal; provision a throwaway superadmin token for this local run.
+import hashlib, secrets, tempfile  # noqa: E401
+token = secrets.token_urlsafe(32)
+_asg = os.path.join(tempfile.mkdtemp(prefix="eoip-gate-"), "asg")
+with open(_asg, "w", encoding="utf-8") as _fh:
+    _fh.write(f"sha256:{hashlib.sha256(token.encode()).hexdigest()} | superadmin | * | gate-check\n")
+os.chmod(_asg, 0o400)
+os.environ["EOIP_ASG_FILE"] = _asg
 os.environ["EOIP_GRAPH_BACKEND"] = "memory"
 
 from apps.api.main import create_app as main_create_app

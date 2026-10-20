@@ -1,5 +1,6 @@
 """Tests for the admin Gremlin endpoint (FR-QUERY-008)."""
 
+from _principals import provision_api_token
 import os
 
 import pytest
@@ -16,6 +17,7 @@ def client(monkeypatch, tmp_path):
     store = MemoryGraphStore()
     store.close = lambda: None
     monkeypatch.setenv("EOIP_API_TOKEN", _TOKEN)
+    provision_api_token(monkeypatch, _TOKEN)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     return TestClient(main.create_app())

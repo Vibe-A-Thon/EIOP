@@ -7,7 +7,7 @@ shape/dtype bounds, and deterministic tie-breaking.
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 import scipy.sparse as sp

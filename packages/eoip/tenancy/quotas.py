@@ -110,10 +110,84 @@ class _Usage:
     events: deque[tuple[float, int]] = field(default_factory=deque)
 
 
+class CircuitOpen(RuntimeError):
+    """Raised when a tenant's circuit for a dependency is open (SR-TEN-006)."""
+
+    def __init__(self, tenant_id: str, dependency: str, retry_after: float) -> None:
+        super().__init__(f"circuit open for tenant {tenant_id} on {dependency}; retry after {retry_after:.1f}s")
+        self.tenant_id, self.dependency, self.retry_after = tenant_id, dependency, retry_after
+
+
+class TenantCircuitBreaker:
+    """Per-tenant, per-dependency circuit breakers (SR-TEN-006 noisy-neighbor control).
+
+    closed -> open after ``failure_threshold`` consecutive failures; open rejects immediately
+    for ``cooldown_s``; then half_open admits exactly one probe: success closes, failure re-opens.
+    One tenant tripping a breaker never affects another tenant's circuit for the same dependency.
+    """
+
+    def __init__(self, *, failure_threshold: int = 5, cooldown_s: float = 30.0,
+                 clock: Any = time.monotonic) -> None:
+        if failure_threshold < 1 or cooldown_s <= 0:
+            raise ValueError("failure_threshold >= 1 and cooldown_s > 0 required")
+        self.failure_threshold, self.cooldown_s, self._clock = failure_threshold, cooldown_s, clock
+        self._state: dict[tuple[str, str], dict[str, Any]] = {}
+        self._lock = threading.Lock()
+
+    def _get(self, tenant_id: str, dependency: str) -> dict[str, Any]:
+        if not tenant_id:
+            raise ValueError("tenant context is required (fail closed)")
+        return self._state.setdefault((tenant_id, dependency),
+                                      {"state": "closed", "failures": 0, "opened_at": 0.0, "probe": False})
+
+    def state(self, tenant_id: str, dependency: str) -> str:
+        with self._lock:
+            st = self._get(tenant_id, dependency)
+            if st["state"] == "open" and self._clock() - st["opened_at"] >= self.cooldown_s:
+                return "half_open"
+            return st["state"]
+
+    def before_call(self, tenant_id: str, dependency: str) -> None:
+        with self._lock:
+            st = self._get(tenant_id, dependency)
+            if st["state"] == "open":
+                elapsed = self._clock() - st["opened_at"]
+                if elapsed < self.cooldown_s:
+                    raise CircuitOpen(tenant_id, dependency, self.cooldown_s - elapsed)
+                st["state"] = "half_open"
+            if st["state"] == "half_open":
+                if st["probe"]:
+                    raise CircuitOpen(tenant_id, dependency, 0.0)
+                st["probe"] = True
+
+    def record_success(self, tenant_id: str, dependency: str) -> None:
+        with self._lock:
+            st = self._get(tenant_id, dependency)
+            st.update(state="closed", failures=0, probe=False)
+
+    def record_failure(self, tenant_id: str, dependency: str) -> None:
+        with self._lock:
+            st = self._get(tenant_id, dependency)
+            st["failures"] += 1
+            if st["state"] == "half_open" or st["failures"] >= self.failure_threshold:
+                st.update(state="open", opened_at=self._clock(), probe=False)
+
+    def call(self, tenant_id: str, dependency: str, fn: Any, *args: Any, **kwargs: Any) -> Any:
+        self.before_call(tenant_id, dependency)
+        try:
+            result = fn(*args, **kwargs)
+        except Exception:
+            self.record_failure(tenant_id, dependency)
+            raise
+        self.record_success(tenant_id, dependency)
+        return result
+
+
 class QuotaManager:
     """Thread-safe per-tenant quota checks/consumption (SR-TEN-006)."""
 
     def __init__(self) -> None:
+        self.breakers = TenantCircuitBreaker()
         self._specs: dict[str, QuotaSpec] = {}
         self._lanes: dict[str, Lane] = {}
         self._usage: dict[tuple[str, str], _Usage] = {}

@@ -15,6 +15,8 @@ import pytest
 
 from reva.workflows.repo_to_graph import RepoToGraphOrchestrator
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 @pytest.fixture
 def sample_repo_dir():

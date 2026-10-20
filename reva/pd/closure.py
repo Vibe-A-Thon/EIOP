@@ -164,6 +164,7 @@ def evaluate_closure(ctx: ClosureContext) -> ClosureDecision:
     counted_tests = []
     has_flaky = False
     has_failed = False
+    owner_not_executed = False
 
     for r in matching_runs:
         for t in r.tests:
@@ -178,10 +179,13 @@ def evaluate_closure(ctx: ClosureContext) -> ClosureDecision:
             elif t.outcome == "passed":
                 # AG-03: check owner lines hit if owners defined
                 if b and b.owners and any(o.owner_digest for o in b.owners):
-                    # Must hit at least one line across owner spans
+                    # Must hit at least one line across owner spans; a test without coverage
+                    # data is not evidence that the owner executed.
                     hits = sum(t.owner_lines_hit.values())
-                    if hits > 0 or not t.owner_lines_hit:
+                    if hits > 0:
                         counted_tests.append(t)
+                    else:
+                        owner_not_executed = True
                 else:
                     counted_tests.append(t)
 
@@ -191,6 +195,8 @@ def evaluate_closure(ctx: ClosureContext) -> ClosureDecision:
         reasons.append("TEST_FAILED")
 
     if matching_runs and not counted_tests:
+        if owner_not_executed:
+            reasons.append("AG03_OWNER_NOT_EXECUTED")
         reasons.append("AG13_NO_COUNTED_TESTS")
         checks.append(CheckResult(check="8_anti_gaming", status="fail", details="Zero qualifying tests found"))
     elif matching_runs:
@@ -200,7 +206,12 @@ def evaluate_closure(ctx: ClosureContext) -> ClosureDecision:
     if ob.depth in (Depth.UNIT, Depth.COMPONENT):
         for owner in (b.owners if b else []):
             if owner.language == "python" and owner.owner_digest:
-                score = ctx.mutation_scores.get(owner.owner_digest, 1.0)
+                score = ctx.mutation_scores.get(owner.owner_digest)
+                if score is None:
+                    # No mutation result is not a passing mutation result (never auto-pass).
+                    reasons.append("AG04_MUTATION_SCORE_MISSING")
+                    checks.append(CheckResult(check="8_mutation_score", status="fail", details="no mutation result"))
+                    break
                 if score < ctx.min_mutation_score:
                     reasons.append("AG04_MUTATION_SCORE_LOW")
                     checks.append(CheckResult(check="8_mutation_score", status="fail", details=f"{score:.2f} < {ctx.min_mutation_score}"))

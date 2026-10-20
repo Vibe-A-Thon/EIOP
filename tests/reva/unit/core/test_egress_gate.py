@@ -2,6 +2,8 @@ import pytest
 from reva.core.egress_gate import EgressSecurityGate, RevaEgressViolationError
 from reva.core.pseudonymizer import CodePseudonymizer
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 def test_code_pseudonymizer():
     pseudonymizer = CodePseudonymizer()
     code = """

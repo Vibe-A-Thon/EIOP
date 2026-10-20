@@ -17,6 +17,8 @@ from reva.agents.graffin.autonomy import (
 )
 from reva.agents.graffin.evaluators import CalibrationJudge, RegressionSentinel
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 def test_constitution_verifier():
     verifier = ConstitutionVerifier()

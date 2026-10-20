@@ -14,6 +14,8 @@ from eoip.ontology.shacl_validator import (
 
 
 def test_pyshacl_adapter_and_differential_oracle():
+    # FT-D14: pyshacl is the optional 'semantic' extra (included in '.[test]').
+    pytest.importorskip("pyshacl", reason="pyshacl not installed: pip install -e '.[semantic]'")
     """CRA-020.7: pySHACL adapter inside isolated worker and differential comparison."""
     # Data Turtle
     data_turtle = """

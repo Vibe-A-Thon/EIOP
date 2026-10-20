@@ -34,6 +34,7 @@ def populated_source():
 # CRA-034.1: CLI conventions, dry-run, and scope
 # ===========================================================================
 
+@pytest.mark.req("CRA-034")
 def test_cra_034_1_cli_conventions_and_dry_run(tmp_path):
     # 1. Discover dry-run
     res_disc = main(["discover", "--source", "eoip://prod-graph", "--dry-run"])
@@ -62,6 +63,7 @@ def test_cra_034_1_cli_conventions_and_dry_run(tmp_path):
 # CRA-034.6: eoip-migrate CLI structure and subcommands
 # ===========================================================================
 
+@pytest.mark.req("CRA-034")
 def test_cra_034_6_eoip_migrate_cli_interface():
     parser = create_parser()
 
@@ -80,6 +82,7 @@ def test_cra_034_6_eoip_migrate_cli_interface():
 # CRA-034.2: Fidelity preservation semantics (IRIs, blank nodes, datatypes, ACLs)
 # ===========================================================================
 
+@pytest.mark.req("CRA-034")
 def test_cra_034_2_fidelity_preservation_semantics(populated_source):
     engine = MigrationProtocolEngine()
     target_store = MemoryGraphStore()
@@ -105,6 +108,7 @@ def test_cra_034_2_fidelity_preservation_semantics(populated_source):
 # CRA-034.3: Feature/loss/unsupported ledger & non-lossless refusal
 # ===========================================================================
 
+@pytest.mark.req("CRA-034")
 def test_cra_034_3_feature_loss_unsupported_ledger():
     ledger = LossLedger(is_lossless=True)
 
@@ -130,6 +134,7 @@ def test_cra_034_3_feature_loss_unsupported_ledger():
 # CRA-034.4: Staged loading, shadow-read, and bound cutover
 # ===========================================================================
 
+@pytest.mark.req("CRA-034")
 def test_cra_034_4_staged_shadow_read_and_bound_cutover(populated_source):
     engine = MigrationProtocolEngine()
     target_store = MemoryGraphStore()
@@ -182,6 +187,7 @@ def test_cra_034_4_staged_shadow_read_and_bound_cutover(populated_source):
 # CRA-034.5: Rollback of routing and data with 14-day window
 # ===========================================================================
 
+@pytest.mark.req("CRA-034")
 def test_cra_034_5_rollback_routing_and_retention(populated_source):
     engine = MigrationProtocolEngine(rollback_window_days=14)
     target_store = MemoryGraphStore()
@@ -214,6 +220,7 @@ def test_cra_034_5_rollback_routing_and_retention(populated_source):
 # CRA-034.7: Full eight-stage migration protocol execution
 # ===========================================================================
 
+@pytest.mark.req("CRA-034")
 def test_cra_034_7_eight_stage_protocol_execution(populated_source):
     engine = MigrationProtocolEngine()
     target = MemoryGraphStore()
@@ -262,6 +269,7 @@ def test_cra_034_7_eight_stage_protocol_execution(populated_source):
 # CRA-034.8: Third-party R2RML / RML translation (Ontop, Morph-KGC, RMLStreamer)
 # ===========================================================================
 
+@pytest.mark.req("CRA-034")
 def test_cra_034_8_r2rml_rml_third_party_translation():
     # 1. Ontop translation with vendor SQL coercion
     ontop_importer = ThirdPartyRMLImporter(engine_origin="ontop")
@@ -305,6 +313,7 @@ def test_cra_034_8_r2rml_rml_third_party_translation():
 # CRA-034.A: Standards ontology and corpus migration acceptance
 # ===========================================================================
 
+@pytest.mark.req("CRA-034")
 def test_cra_034_a_standards_ontology_and_corpus_migration_acceptance(populated_source):
     # 1. Migrate through two qualified stores and verify equivalence
     engine = MigrationProtocolEngine()

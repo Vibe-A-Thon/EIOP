@@ -335,7 +335,7 @@ class SelfLLMEngine:
                 tokens.append(self._vocab[w])
             else:
                 # Dynamic hash-based deterministic token allocation
-                tok_id = (int(hashlib.md5(w.encode()).hexdigest(), 16) % 32000) + 100
+                tok_id = (int(hashlib.md5(w.encode(), usedforsecurity=False).hexdigest(), 16) % 32000) + 100
                 tokens.append(tok_id)
         return tokens
 

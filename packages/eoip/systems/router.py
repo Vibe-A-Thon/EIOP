@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from eoip.systems.registry import (
-    SystemsRegistry, SystemStatus, KNOWN_SYSTEM_TYPES,
+    SystemsRegistry, SystemEntry, SystemStatus, KNOWN_SYSTEM_TYPES,
 )
 from eoip.systems.schema_generator import AutoSchemaGenerator
 from eoip.systems.pipeline_factory import PipelineFactory

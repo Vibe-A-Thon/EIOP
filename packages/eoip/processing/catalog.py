@@ -7,7 +7,7 @@ and validation schemas.
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from eoip.processing.contracts import LogicalUnit, OperatorBudget, OperatorSpec
 

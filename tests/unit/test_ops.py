@@ -1,5 +1,6 @@
 """Tests for eoip.ops: preflight, upgrade planner, support bundle (§47)."""
 
+from _principals import provision_api_token
 import pytest
 
 pytestmark = pytest.mark.req("§47")
@@ -41,6 +42,7 @@ def test_preflight_all_pass(tmp_path, monkeypatch, ontology_file):
 
     monkeypatch.setenv("EOIP_GRAPH_URL", "http://graph:8080")
     monkeypatch.setenv("EOIP_API_TOKEN", "secret-token")
+    provision_api_token(monkeypatch, "secret-token")
     report = run_preflight(
         required_env=["EOIP_GRAPH_URL"],
         ontology_paths=[ontology_file],
@@ -204,6 +206,7 @@ def test_support_bundle_structure(monkeypatch, tmp_path):
 
     monkeypatch.setenv("EOIP_GRAPH_URL", "http://graph:8080")
     monkeypatch.setenv("EOIP_API_TOKEN", "super-secret-token")
+    provision_api_token(monkeypatch, "super-secret-token")
     bundle = collect_support_bundle(
         audit_sink=_FakeSink([{"event": "login", "actor": "alice"}]),
         graph_store=_HealthyStore(),

@@ -29,7 +29,7 @@ value later is not a graph password-rotation procedure.
 
 | Interface | Address | Access |
 |---|---|---|
-| Knowledge explorer | http://localhost:8080/app | Paste EOIP_API_TOKEN into the login form |
+| Knowledge explorer | http://localhost:8080/app | Sign in with EOIP_ADMIN_USERNAME / EOIP_ADMIN_PASSWORD from deploy/.env (or an API token from `eoip-admin issue-token`) |
 | Administration | http://localhost:8080/admin | Same local token |
 | Swagger API | http://localhost:8000/docs | Click Authorize and paste EOIP_API_TOKEN |
 | Read-only MCP | http://localhost:8001/mcp | Authorization: Bearer EOIP_API_TOKEN |

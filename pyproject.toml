@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=65.0"]
+requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,9 @@ name = "eoip"
 version = "1.0.0rc1"
 description = "Enterprise Ontology & Intelligence Platform (EOIP) — Phase 1 MVP vertical slice"
 requires-python = ">=3.11"
-license = { text = "LicenseRef-EOIP-Proprietary" }
+# FT-D09: PEP 639 SPDX expression (setuptools >= 77); the table form is deprecated.
+license = "LicenseRef-EOIP-Proprietary"
+license-files = ["LICENSE", "NOTICE", "LICENSING.md", "THIRD_PARTY_NOTICES.md", "licenses/*.md"]
 dependencies = [
   "fastapi>=0.110,<1.0",
   "uvicorn[standard]>=0.29,<1.0",
@@ -19,11 +21,13 @@ dependencies = [
   "jsonschema>=4.21,<5.0",
   "prometheus-client>=0.20,<1.0",
   "mcp>=1.2,<2.0",
+  "argon2-cffi>=23.1,<26.0",
   "tree-sitter>=0.24,<1.0; platform_python_implementation == 'CPython'",
 ]
 
 [project.scripts]
 eoip = "eoip.cli:main"
+eoip-admin = "eoip.authn.provision:main"
 
 [project.optional-dependencies]
 numerics = [
@@ -70,6 +74,14 @@ enterprise = [
   "kubernetes>=29.0,<32.0",
   "redis>=5.0,<7.0",
 ]
+semantic = [
+  "pyshacl>=0.30,<1.0",
+]
+# FT-F06: one extra that installs everything the default test selection needs.
+# Documented install: python -m pip install -c requirements.lock -e ".[test]"
+test = [
+  "eoip[dev,numerics,fileparse,codeparse,reports,semantic]",
+]
 dev = [
   "hypothesis>=6.100,<7.0",
   "pytest>=8.0,<9.0",
@@ -82,7 +94,6 @@ dev = [
 
 [tool.setuptools]
 package-dir = { "" = "packages" }
-license-files = ["LICENSE", "NOTICE", "LICENSING.md", "THIRD_PARTY_NOTICES.md", "licenses/*.md"]
 
 [tool.setuptools.packages.find]
 where = ["packages"]

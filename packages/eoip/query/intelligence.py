@@ -14,6 +14,8 @@ All estimates are deterministic heuristics over graph size statistics — no LLM
 
 from __future__ import annotations
 
+from typing import Any
+
 import time
 from collections import deque
 from uuid import uuid4
