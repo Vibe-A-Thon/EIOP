@@ -38,3 +38,18 @@ def test_mount_enabled():
         data = res.json()
         assert data["status"] == "ok"
         assert data["version"] == "1.0.0"
+
+
+@pytest.mark.reva_obligation("OBL-REVA-IP-01")
+@pytest.mark.reva_case("negative")
+def test_mounted_router_maps_reva_errors_to_http_status(tmp_path):
+    """A REVA domain error (here: unknown warrant) is a 404 problem, not an unhandled 500."""
+    from reva.api import set_api_kernel
+    from reva.kernel.kernel import WarrantKernel
+    from reva.kernel.store import RevaStore
+
+    set_api_kernel(WarrantKernel(store=RevaStore(str(tmp_path / "reva.db"))))
+    with override_settings(enabled=True):
+        client = TestClient(api_main.create_app(), raise_server_exceptions=False)
+        res = client.get("/api/reva/v1/warrants/wr1_" + "0" * 64, headers={"Authorization": "Bearer " + "x" * 32})
+        assert res.status_code == 404, res.text

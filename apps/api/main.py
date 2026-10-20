@@ -316,8 +316,9 @@ def create_app():
     try:
         from reva.config import get_settings as _get_reva_settings
         if _get_reva_settings().enabled:
-            from reva.api import reva_router
+            from reva.api import register_reva_error_handlers, reva_router
             app.include_router(reva_router, prefix="/api/reva/v1")
+            register_reva_error_handlers(app)
     except Exception:
         pass
     registry = CollectorRegistry()
