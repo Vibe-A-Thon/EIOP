@@ -28,3 +28,4 @@ class RetrievalResult(BaseModel):
     trace: dict | None = None  # GAP-RET-006 retrieval trace
     evidence_manifest: dict | None = None  # GAP-AI: nodes, paths, source records
     citation_chains: list[dict] = []
+    answer_citations: list[dict] = []  # CRA-026.7: sentence -> evidence span

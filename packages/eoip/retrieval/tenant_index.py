@@ -8,7 +8,8 @@ the tenant's own entities; graph expansion is filtered through the same ownershi
 from __future__ import annotations
 
 import math
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 from eoip.retrieval.vectors import HashingEmbedder, entity_text
 

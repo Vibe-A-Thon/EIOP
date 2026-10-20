@@ -128,7 +128,7 @@ jobs:
         run: |
           export EOIP_RELEASE_ID="$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")+${GITHUB_SHA::12}"
           python -m pytest -q -o addopts="" -p no:cacheprovider --timeout=600 \
-            tests/ai/test_graphrag_live_model.py tests/unit/test_llm_cpu_reference_live.py \
+            tests/ai/test_graphrag_live_model.py tests/ai/test_retrieval_grounded_synthesis.py tests/unit/test_llm_cpu_reference_live.py \
             --junitxml=test-results/llm-cpu-reference.xml
       - name: Retain LLM evidence
         if: always()

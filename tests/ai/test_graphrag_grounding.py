@@ -145,7 +145,7 @@ def test_cra_026_3_streaming_and_cancellation(cpu_model_manifest, scope):
 
     # without a runtime the extractive cited answer is streamed (no canned text)
     extractive = list(pipeline.stream_answer("status?", evidence, scope))
-    assert extractive == ["Finding 1 based on verified records [ast_1]. "]
+    assert extractive == ["all systems operational. [ast_1] "]  # the cited evidence span itself
 
 
 # ===========================================================================
@@ -356,7 +356,16 @@ def test_cra_026_a1_contradictions_unavailable_provider_cancellation_and_injecti
     sent = live.prompts[0]
     assert "Ignore all previous instructions" not in sent and "[INJECTION_ATTEMPT_DEFUSED]" in sent
     assert "<<<UNTRUSTED_DOCUMENT_CONTENT>>>" in sent
-    assert ok.is_complete is True and ok.text.startswith("Billing is owned by team red.")
+    # ...but that generated claim is not supported by the evidence it saw: it is removed, never "complete"
+    assert ok.is_complete is False and "Billing is owned by team red" not in ok.text
+    assert ok.unsupported_claims[0]["sentence"] == "Billing is owned by team red." and ok.uncertain
+
+    # a supported generated claim leads the answer and is cited to the exact evidence span
+    good = pipeline.answer_question("Who owns billing?", contradictory[:1], scope,
+                                    generator=gen_for(_Provider(content="Billing is owned by team red [a_jira].")))
+    assert good.is_complete is True and good.text.startswith("Billing is owned by team red [a_jira].")
+    assert good.citations[0]["span"] == {"text": "billing owned by team red", "start": 0, "end": 25}
+    assert good.unsupported_claims == []
 
     # cancellation while the model was generating: no complete answer is produced or saved
     flag = {"cancel": False}

@@ -153,6 +153,7 @@ class GroundedAnswer:
     uncertain: bool = False
     conflicts: list[dict[str, Any]] = field(default_factory=list)
     degraded_reason: Optional[str] = None
+    unsupported_claims: list[dict[str, Any]] = field(default_factory=list)
 
 
 class EgressDLPFilter:
@@ -412,26 +413,35 @@ class GraphRAGPipeline:
                     context_manifest_digest=context_manifest.manifest_digest, context_manifest=context_manifest,
                     citations=[], model_lineage=lineage, latency_ms=(time.perf_counter() - t0) * 1000.0)
 
-        # Sentence-level citations to the accepted evidence (CRA-026.7)
-        citations = []
-        answer_sentences = []
-        for idx, item in enumerate(accepted_items, start=1):
-            aid = item.get("assertion_id", f"ast_{idx}")
-            loc = item.get("locator", {"source_uri": "urn:eoip:doc:1", "snippet": item.get("text", "")})
-            sentence = f"Finding {idx} based on verified records [{aid}]."
-            answer_sentences.append(sentence)
-            citations.append({
-                "sentence": sentence,
-                "assertion_id": aid,
-                "evidence_locator": loc,
-            })
+        # Sentence-level citations to evidence spans, with a claim-support check (CRA-026.7/.8)
+        from eoip.ai.claim_support import check_claim, extractive_sentences, sentences as _split
 
-        answer_text = " ".join(answer_sentences)
+        extractive = extractive_sentences(question, accepted_items)
+        unsupported: list[dict[str, Any]] = []
+        kept = []
         if generated:
-            answer_text = f"{generated.strip()} {answer_text}"
+            for sent, _, _ in _split(generated.strip()):
+                verdict = check_claim(sent, accepted_items)
+                (kept if verdict.supported else unsupported).append(verdict)
+            if not kept and degraded_reason is None:
+                degraded_reason = "generated answer not supported by the cited evidence"
+        for c in kept:  # an uncited but supported sentence is cited to the span that supports it
+            if not c.cited:
+                c.sentence = f"{c.sentence.rstrip()} [{c.assertion_id}]"
+        chosen = kept or extractive
+        citations = [{"sentence": c.sentence, "assertion_id": c.assertion_id,
+                      "evidence_locator": next((it.get("locator", {}) for it in accepted_items
+                                                if str(it.get("assertion_id")) == c.assertion_id), {}),
+                      "span": c.span, "support_score": c.score,
+                      "evidence_text": next((str(it.get("snippet", it.get("text", ""))) for it in accepted_items
+                                             if str(it.get("assertion_id")) == c.assertion_id), "")}
+                     for c in chosen]
+        answer_text = " ".join(c.sentence for c in chosen)
         if degraded_reason:
             answer_text = (f"Generation unavailable ({degraded_reason}); returning the cited evidence only. "
                            + answer_text)
+        if unsupported and kept:
+            answer_text += f" ({len(unsupported)} statement(s) removed: not supported by the cited evidence.)"
         conflicts = context_manifest.conflicts
         if conflicts:
             answer_text += " Uncertain: authorized sources conflict on " + "; ".join(
@@ -463,9 +473,10 @@ class GraphRAGPipeline:
             omission_disclosed=omission_disclosed,
             omitted_count=context_manifest.omitted_items_count,
             latency_ms=dur,
-            uncertain=bool(conflicts),
+            uncertain=bool(conflicts) or bool(unsupported),
             conflicts=conflicts,
             degraded_reason=degraded_reason,
+            unsupported_claims=[u.to_dict() for u in unsupported],
         )
         if answer_store is not None:
             answer_store.save(answer, question=question, principal_id=scope.principal_id)
@@ -515,8 +526,9 @@ class StreamSession:
             p.egress_filter.validate_outbound_call("http://localhost:11434", prompt)
             upstream = self.runtime.stream_raw(prompt, max_tokens=p.model_manifest.max_output_tokens)
         else:
-            upstream = iter([f"Finding {i} based on verified records [{it.get('assertion_id', f'ast_{i}')}]. "
-                             for i, it in enumerate(accepted, start=1)])
+            from eoip.ai.claim_support import extractive_sentences
+
+            upstream = iter([c.sentence + " " for c in extractive_sentences(self.question, accepted)])
         self.state = "streaming"
         try:
             for chunk in upstream:
@@ -538,8 +550,15 @@ class StreamSession:
                 close()
                 self.upstream_closed = True
         self.state = "completed"
-        citations = [{"assertion_id": it.get("assertion_id"), "evidence_locator": it.get("locator", {})}
-                     for it in accepted]
+        from eoip.ai.claim_support import check_claim, sentences as _split
+
+        verdicts = [check_claim(sent, accepted) for sent, _, _ in _split("".join(self.chunks))]
+        unsupported = [v.to_dict() for v in verdicts if not v.supported]  # already streamed: flagged, not hidden
+        citations = [{"sentence": v.sentence, "assertion_id": v.assertion_id, "span": v.span,
+                      "support_score": v.score,
+                      "evidence_locator": next((it.get("locator", {}) for it in accepted
+                                                if str(it.get("assertion_id")) == v.assertion_id), {})}
+                     for v in verdicts if v.supported]
         self.answer = GroundedAnswer(
             answer_id=f"ans_{hashlib.sha256(f'{time.time_ns()}:{self.question}'.encode()).hexdigest()[:16]}",
             text="".join(self.chunks), is_complete=not manifest.reduction_applied, is_abstained=False,
@@ -547,7 +566,8 @@ class StreamSession:
             model_lineage=ModelLineage(model_id=p.model_manifest.model_id, model_version="1.0",
                                        producer_class=ProducerClass.PROBABILISTIC,
                                        context_manifest_digest=manifest.manifest_digest),
-            omission_disclosed=manifest.reduction_applied, omitted_count=manifest.omitted_items_count)
+            omission_disclosed=manifest.reduction_applied, omitted_count=manifest.omitted_items_count,
+            uncertain=bool(unsupported), unsupported_claims=unsupported)
         if self.store is not None:
             self.store.save(self.answer, question=self.question, principal_id=self.scope.principal_id)
 
