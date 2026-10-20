@@ -16,7 +16,9 @@ from eoip.egress.gateway import (
     BudgetExhausted,
     ConsentRecord,
     EgressDenied,
+    PLATFORM_KILL_SWITCH,
     EgressGateway,
+    PlatformKillSwitch,
     EndpointConfig,
     Transport,
 )
@@ -62,7 +64,7 @@ from eoip.egress.vault import TokenVault, VaultEntry
 __all__ = [
     "ApprovalRequirement", "BudgetExhausted", "CanaryRecord", "CanaryRegistry",
     "ConsentRecord", "DataClass", "DataFlowManifest", "DlpFinding",
-    "DlpReport", "DlpScanner", "EgressDenied", "EgressGateway",
+    "DlpReport", "DlpScanner", "EgressDenied", "EgressGateway", "PLATFORM_KILL_SWITCH", "PlatformKillSwitch",
     "EgressManifest", "EgressTask", "EndpointConfig", "KNOWN_PLUGIN_CAPABILITIES",
     "KNOWN_TAGS", "K_ANONYMITY_DEFAULT", "PluginCapability",
     "PluginInstallRecord", "PluginRegistry", "PolicyDecision", "PolicyEngine",

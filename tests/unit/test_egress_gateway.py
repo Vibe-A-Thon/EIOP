@@ -249,6 +249,31 @@ class TestDryRun:
 # ---------------------------------------------------------------------------
 
 class TestManifest:
+    @pytest.mark.req("SR-LLM-013")
+    def test_recorded_manifest_is_immutable(self):
+        gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S7)])
+        enable(gw)
+        result = gw.call(endpoint_id="ext-eu", task="summarize", payload={"doc": "public"},
+                         user_id="u1", role="analyst", data_classes=["D0"])
+        m = result["manifest"]
+        assert m is gw.manifests[-1]
+        with pytest.raises(Exception):
+            m.bytes_out = 0
+        with pytest.raises(Exception):
+            m.denied = True
+        with pytest.raises(TypeError):
+            m.fields.append("smuggled")
+        with pytest.raises(TypeError):
+            m.data_classes[0] = "D9"
+        assert m.fields == ["doc"] and m.data_classes == ["D0"]
+        with pytest.raises(EgressDenied):
+            gw.call(endpoint_id="ext-eu", task="summarize", payload={"doc": "x"}, user_id="u1",
+                    role="analyst", data_classes=["D0"], region="US")
+        denied = gw.manifests[-1]
+        assert denied.denied and "region" in denied.denial_reason
+        with pytest.raises(Exception):
+            denied.denied = False
+
     def test_manifest_fields_and_report(self):
         gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S7)])
         enable(gw)
@@ -332,6 +357,35 @@ class TestDlpCanaries:
 # ---------------------------------------------------------------------------
 
 class TestKillSwitchBudgets:
+    @pytest.mark.req("SR-LLM-016")
+    def test_platform_kill_switch_stops_every_tenant_gateway(self):
+        from eoip.egress import PlatformKillSwitch
+        switch = PlatformKillSwitch()
+        gws = []
+        for tenant in ("t1", "t2"):
+            gw = EgressGateway(tenant_id=tenant, policy=PolicyEngine(rules=[
+                PolicyRule(rule_id="r1", max_level=SharingLevel.S7)]),
+                transport=lambda payload, endpoint: {"echo": payload}, platform_kill_switch=switch)
+            gw.register_endpoint(EndpointConfig(id="ext-eu", kind="chat", url_allowlist=["https://llm.example.eu"],
+                                                region="EU", dpa_ref="DPA-2026-17"))
+            enable(gw)
+            gws.append(gw)
+        switch.engage(admin="secops", reason="vendor incident")
+        for gw in gws:
+            with pytest.raises(EgressDenied, match="platform kill switch"):
+                gw.call(endpoint_id="ext-eu", task="summarize", payload={"a": "x"},
+                        user_id="u1", role="analyst", data_classes=["D0"])
+            assert gw.manifests[-1].denied
+        with pytest.raises(ValueError):
+            switch.release(admin="")
+        switch.release(admin="secops")
+        assert gws[0].call(endpoint_id="ext-eu", task="summarize", payload={"a": "x"},
+                           user_id="u1", role="analyst", data_classes=["D0"])["response"]
+
+    def test_default_gateways_share_the_platform_switch(self):
+        from eoip.egress import PLATFORM_KILL_SWITCH
+        assert make_gateway().platform_kill_switch is PLATFORM_KILL_SWITCH
+
     def test_global_kill_switch(self):
         gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S7)])
         enable(gw)
