@@ -7,7 +7,7 @@ export interface Principal {
   roles: string[];
   tenant_id?: string | null;
   label: string;
-  bootstrap: boolean;
+  provider: string;
 }
 
 export interface Session {
@@ -19,7 +19,7 @@ export interface Session {
 
 interface AuthCtx {
   session: Session | null;
-  signIn: (token: string, tenant: string) => Promise<void>;
+  signIn: (username: string, password: string, tenant: string) => Promise<void>;
   signOut: () => void;
   setScope: (tenant: string, workspace: string) => void;
 }
@@ -29,10 +29,17 @@ const Ctx = createContext<AuthCtx | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
 
-  const signIn = async (token: string, tenant: string) => {
+  // FT-AUTH: login credentials only. The role shown here is whatever the server derives
+  // from the authenticated user record; there is no client-side fallback principal.
+  const signIn = async (username: string, password: string, tenant: string) => {
+    setAuthToken(null);
+    const { token } = await apiFetch<{ token: string }>("/auth/login", {
+      method: "POST",
+      body: { username, password },
+      tenant: null,
+    });
     setAuthToken(token);
     setActiveTenant(tenant);
-    let principal: Principal;
     try {
       const me = await apiFetch<any>("/auth/whoami");
       const roles: string[] = me.roles || [];
@@ -43,28 +50,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           : roles[0]
             ? roles[0][0].toUpperCase() + roles[0].slice(1)
             : "Member";
-      principal = {
-        id: me.id || "principal",
-        username: me.username || "user",
+      const principal: Principal = {
+        id: me.id,
+        username: me.username,
         roles,
         tenant_id: me.tenant_id ?? null,
         label: `${topRole}${me.tenant_id ? ` · ${me.tenant_id}` : " · all tenants"}`,
-        bootstrap: me.provider === "asg" && me.username?.startsWith("bootstrap"),
+        provider: me.provider,
       };
-    } catch {
-      principal = {
-        id: "urn:eoip:authn:principal:bootstrap",
-        username: "bootstrap-admin",
-        roles: ["admin", "system"],
-        tenant_id: null,
-        label: "Deployment access (bootstrap token)",
-        bootstrap: true,
-      };
+      setSession({ token, principal, tenant, workspace: "default" });
+    } catch (err) {
+      setAuthToken(null);
+      setActiveTenant(null);
+      throw err;
     }
-    setSession({ token, principal, tenant, workspace: "default" });
   };
 
   const signOut = () => {
+    apiFetch("/auth/logout", { method: "POST" }).catch(() => {});
     setAuthToken(null);
     setActiveTenant(null);
     setSession(null);
