@@ -1,0 +1,119 @@
+{
+  "schema": "eoip.llm-reference-configs/v1",
+  "note": "Planning reference configurations (SR-LLM-005). Sizing figures are estimates; measured numbers come from scripts/llm_benchmark.py per release.",
+  "quantization": {
+    "fp16": {
+      "bytes_per_param": 2.0,
+      "quality": "reference",
+      "runtimes": [
+        "vllm",
+        "tgi",
+        "ollama"
+      ]
+    },
+    "int8": {
+      "bytes_per_param": 1.0,
+      "quality": "near-reference",
+      "runtimes": [
+        "vllm",
+        "tgi",
+        "llama_cpp"
+      ]
+    },
+    "q5_k_m": {
+      "bytes_per_param": 0.69,
+      "quality": "small loss",
+      "runtimes": [
+        "llama_cpp",
+        "ollama"
+      ]
+    },
+    "q4_k_m": {
+      "bytes_per_param": 0.56,
+      "quality": "moderate loss; default for CPU",
+      "runtimes": [
+        "llama_cpp",
+        "ollama"
+      ]
+    }
+  },
+  "sizing": {
+    "kv_gb_per_1k_tokens_per_b_params": 0.016,
+    "runtime_overhead": 1.1,
+    "runtime_fixed_gb": 0.5
+  },
+  "configs": [
+    {
+      "id": "cpu-small",
+      "title": "CPU-only small model",
+      "cpu_cores": 16,
+      "ram_gb": 64,
+      "gpus": 0,
+      "gpu_vram_gb": 0,
+      "quantizations": [
+        "q4_k_m",
+        "q5_k_m",
+        "int8"
+      ],
+      "max_model_b": 8,
+      "default_quantization": "q4_k_m",
+      "runtime": "ollama",
+      "air_gapped": false,
+      "notes": "3-8B instruct models; interactive NLQ planning and short synthesis"
+    },
+    {
+      "id": "single-gpu",
+      "title": "Single GPU",
+      "cpu_cores": 16,
+      "ram_gb": 128,
+      "gpus": 1,
+      "gpu_vram_gb": 48,
+      "quantizations": [
+        "fp16",
+        "int8",
+        "q5_k_m",
+        "q4_k_m"
+      ],
+      "max_model_b": 34,
+      "default_quantization": "int8",
+      "runtime": "vllm",
+      "air_gapped": false,
+      "notes": "up to ~34B at int8 or 70B at q4 with reduced context"
+    },
+    {
+      "id": "multi-gpu",
+      "title": "Multi GPU (tensor parallel)",
+      "cpu_cores": 64,
+      "ram_gb": 512,
+      "gpus": 4,
+      "gpu_vram_gb": 80,
+      "quantizations": [
+        "fp16",
+        "int8"
+      ],
+      "max_model_b": 120,
+      "default_quantization": "fp16",
+      "runtime": "vllm",
+      "air_gapped": false,
+      "notes": "70B-class fp16 with long context and high concurrency"
+    },
+    {
+      "id": "airgap-appliance",
+      "title": "Air-gapped appliance",
+      "cpu_cores": 32,
+      "ram_gb": 256,
+      "gpus": 1,
+      "gpu_vram_gb": 24,
+      "quantizations": [
+        "q4_k_m",
+        "q5_k_m",
+        "int8"
+      ],
+      "max_model_b": 14,
+      "default_quantization": "q5_k_m",
+      "runtime": "ollama",
+      "air_gapped": true,
+      "notes": "no egress; models installed from signed bundles (eoip.models.catalog)"
+    }
+  ]
+}

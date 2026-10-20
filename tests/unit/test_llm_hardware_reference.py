@@ -66,3 +66,19 @@ def test_benchmark_harness_through_model_port_and_release_gate(tmp_path):
     assert not release_benchmark_gate(out, "10.0.0")["passed"]
     with pytest.raises(ValueError):
         run_benchmark(invoke, ["a"], release="x", config_id="laptop", model="m", quantization="q4_k_m")
+
+
+def test_reference_config_file_schema():
+    import json
+
+    from eoip.models.hardware import CONFIG_PATH
+
+    data = json.loads(CONFIG_PATH.read_text())
+    assert data["schema"] == "eoip.llm-reference-configs/v1"
+    required = {"id", "title", "cpu_cores", "ram_gb", "gpus", "gpu_vram_gb", "quantizations", "max_model_b",
+                "default_quantization", "runtime", "air_gapped", "notes"}
+    for cfg in data["configs"]:
+        assert set(cfg) == required, cfg["id"]
+        assert cfg["runtime"] in {"ollama", "vllm", "tgi", "llama_cpp"}
+    for q in data["quantization"].values():
+        assert q["bytes_per_param"] > 0 and q["runtimes"]

@@ -21,17 +21,15 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Callable
 
-#: bytes per parameter for each supported weight format
-QUANTIZATION: dict[str, dict[str, Any]] = {
-    "fp16": {"bytes_per_param": 2.0, "quality": "reference", "runtimes": ["vllm", "tgi", "ollama"]},
-    "int8": {"bytes_per_param": 1.0, "quality": "near-reference", "runtimes": ["vllm", "tgi", "llama_cpp"]},
-    "q5_k_m": {"bytes_per_param": 0.69, "quality": "small loss", "runtimes": ["llama_cpp", "ollama"]},
-    "q4_k_m": {"bytes_per_param": 0.56, "quality": "moderate loss; default for CPU", "runtimes": ["llama_cpp", "ollama"]},
-}
+#: Reference configurations are deployment data (D-SR-LLM-005-01): deploy/hardware/llm-reference-configs.json
+CONFIG_PATH = Path(__file__).resolve().parents[3] / "deploy" / "hardware" / "llm-reference-configs.json"
+_DATA = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
 
-KV_GB_PER_1K_TOKENS_PER_B_PARAMS = 0.016  # grouped-query attention, fp16 KV cache
-RUNTIME_OVERHEAD = 1.10
-RUNTIME_FIXED_GB = 0.5
+#: bytes per parameter for each supported weight format
+QUANTIZATION: dict[str, dict[str, Any]] = _DATA["quantization"]
+KV_GB_PER_1K_TOKENS_PER_B_PARAMS = float(_DATA["sizing"]["kv_gb_per_1k_tokens_per_b_params"])
+RUNTIME_OVERHEAD = float(_DATA["sizing"]["runtime_overhead"])
+RUNTIME_FIXED_GB = float(_DATA["sizing"]["runtime_fixed_gb"])
 
 
 @dataclass(frozen=True)
@@ -54,21 +52,8 @@ class ReferenceConfig:
         return self.gpus * self.gpu_vram_gb if self.gpus else self.ram_gb * 0.75  # leave RAM for the platform
 
 
-REFERENCE_CONFIGS: dict[str, ReferenceConfig] = {c.id: c for c in (
-    ReferenceConfig("cpu-small", "CPU-only small model", cpu_cores=16, ram_gb=64, gpus=0, gpu_vram_gb=0,
-                    quantizations=("q4_k_m", "q5_k_m", "int8"), max_model_b=8, default_quantization="q4_k_m",
-                    runtime="ollama", notes="3-8B instruct models; interactive NLQ planning and short synthesis"),
-    ReferenceConfig("single-gpu", "Single GPU", cpu_cores=16, ram_gb=128, gpus=1, gpu_vram_gb=48,
-                    quantizations=("fp16", "int8", "q5_k_m", "q4_k_m"), max_model_b=34, default_quantization="int8",
-                    runtime="vllm", notes="up to ~34B at int8 or 70B at q4 with reduced context"),
-    ReferenceConfig("multi-gpu", "Multi GPU (tensor parallel)", cpu_cores=64, ram_gb=512, gpus=4, gpu_vram_gb=80,
-                    quantizations=("fp16", "int8"), max_model_b=120, default_quantization="fp16",
-                    runtime="vllm", notes="70B-class fp16 with long context and high concurrency"),
-    ReferenceConfig("airgap-appliance", "Air-gapped appliance", cpu_cores=32, ram_gb=256, gpus=1, gpu_vram_gb=24,
-                    quantizations=("q4_k_m", "q5_k_m", "int8"), max_model_b=14, default_quantization="q5_k_m",
-                    runtime="ollama", air_gapped=True,
-                    notes="no egress; models installed from signed bundles (eoip.models.catalog)"),
-)}
+REFERENCE_CONFIGS: dict[str, ReferenceConfig] = {
+    c["id"]: ReferenceConfig(**{**c, "quantizations": tuple(c["quantizations"])}) for c in _DATA["configs"]}
 
 
 def estimate_memory_gb(params_b: float, quantization: str, *, context_tokens: int = 8192,
