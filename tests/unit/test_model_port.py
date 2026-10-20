@@ -329,3 +329,65 @@ class TestGuardrails:
         r = req(tenant_id="t-ok", inp="mail jane@corp.example")
         port.invoke("m", r)
         assert r.input == "mail jane@corp.example"
+
+
+# ---------------------------------------------------------------------------
+# SR-LLM-019 - denial or outage falls back to a local model / deterministic mode with a notice
+# ---------------------------------------------------------------------------
+
+@pytest.mark.req("SR-LLM-019")
+class TestLocalFallback:
+    def _setup(self, transport):
+        sent = []
+        gw = EgressGateway(tenant_id="t1", policy=PolicyEngine(rules=[PolicyRule(rule_id="r1",
+                                                                              max_level=SharingLevel.S1)]),
+                           transport=transport, audit=lambda e: sent.append(e), canaries=CanaryRegistry())
+        gw.register_endpoint(EndpointConfig(id="ext-eu", kind="chat", url_allowlist=["https://llm.example.eu"],
+                                            region="EU", dpa_ref="DPA-1"))
+        gw.enable_endpoint("ext-eu", admin="alice", consent=ConsentRecord(
+            consent_id="c1", endpoint_id="ext-eu", signer="alice", signed_at=0.0, dpa_ref="DPA-1",
+            residency_region="EU", scope="D0"))
+        port = ModelPort(egress_gateway=gw)
+        port.register(ModelAdapter(name="cloud-large", runtime="external", caps=caps(size="large"),
+                                   invoke=lambda r: None, egress_endpoint_id="ext-eu"))
+        port.enable_external("cloud-large", admin="alice", admin_roles={"tenant_admin"})
+        port.register(adapter("local-small", size="small", out="local answer"))
+        return gw, port, sent
+
+    def _down(self, payload, endpoint):
+        raise ConnectionError("provider 503")
+
+    def test_outage_falls_back_to_a_local_model_with_a_visible_notice(self):
+        gw, port, events = self._setup(self._down)
+        router = TaskRouter(port)
+        result = router.route(req(task="synthesis", tenant_id="t1"))
+        assert result.adapter == "local-small" and result.output == "local answer"
+        assert "external model unavailable" in result.notice and "local-small" in result.notice
+        assert router.decisions[-1]["fallbacks"] == [("cloud-large", "egress_outage")]
+        assert any(e["event"] == "egress.outage" for e in events)
+        assert gw.manifests[-1].denied and "outage" in gw.manifests[-1].denial_reason
+
+    def test_denial_falls_back_without_penalising_the_breaker(self):
+        gw, port, _ = self._setup(lambda p, e: {"text": "x"})
+        gw.kill(admin="alice")
+        router = TaskRouter(port)
+        result = router.route(req(task="synthesis", tenant_id="t1"))
+        assert result.adapter == "local-small" and "egress denied" in result.notice
+        assert router.breaker.state("t1", "cloud-large") == "closed"
+
+    def test_deterministic_mode_when_no_local_model_can_answer(self):
+        gw, port, _ = self._setup(self._down)
+        port.active.discard("local-small")
+        router = TaskRouter(port)
+        router.deterministic["synthesis"] = lambda r: "template answer from graph facts"
+        result = router.route(req(task="synthesis", tenant_id="t1"))
+        assert result.adapter == "deterministic" and result.output == "template answer from graph facts"
+        assert "deterministic mode" in result.notice and "unavailable" in result.notice
+        router.deterministic.clear()
+        with pytest.raises(NoModelAvailable):
+            router.route(req(task="synthesis", tenant_id="t1"))
+
+    def test_local_models_are_preferred_over_external_within_a_size_class(self):
+        _, port, _ = self._setup(lambda p, e: {"text": "x"})
+        port.register(adapter("local-large", size="large", out="local big"))
+        assert TaskRouter(port).route(req(task="synthesis")).adapter == "local-large"

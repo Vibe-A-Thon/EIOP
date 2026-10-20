@@ -72,6 +72,8 @@ class EndpointConfig(BaseModel):
     zero_retention: bool = False
     no_training: bool = False
     dpa_ref: str = ""
+    plugin_id: str | None = Field(default=None, description="Service Provider plugin whose Data-Flow Manifest "
+                                  "governs this endpoint (SR-CON-011)")
 
 
 class ConsentRecord(BaseModel):
@@ -101,6 +103,14 @@ class EgressDenied(Exception):
         self.fallback_notice = (
             "egress denied; falling back to local model / deterministic mode"
         )
+
+
+class EgressOutage(EgressDenied):
+    """The external endpoint failed (outage/transport error); callers fall back locally (SR-LLM-019)."""
+
+    def __init__(self, reason: str) -> None:
+        super().__init__(reason)
+        self.fallback_notice = "external model unavailable; falling back to local model / deterministic mode"
 
 
 class PlatformKillSwitch:
@@ -290,6 +300,15 @@ class EgressGateway:
         if not endpoint.enabled:
             deny(f"endpoint {endpoint_id} is disabled (default S0)")
 
+        # 1b. plugin Data-Flow Manifest enforced at runtime (SR-CON-011)
+        if endpoint.plugin_id:
+            violations = self.plugin_registry.flow_violations(
+                endpoint.plugin_id, data_classes=list(data_classes), tags=list(tags),
+                endpoint_urls=list(endpoint.url_allowlist), endpoint_region=endpoint.region,
+                zero_retention=endpoint.zero_retention)
+            if violations:
+                deny("data-flow manifest violation: " + "; ".join(violations))
+
         # 2. region / sovereignty pinning (SR-LLM-020)
         if region is not None and region != endpoint.region:
             deny(f"endpoint region {endpoint.region} violates jurisdiction pin {region}")
@@ -338,7 +357,16 @@ class EgressGateway:
             return {"manifest": seal(), "dry_run": True, "payload": outbound}
 
         # 7. dispatch through the injectable transport
-        response = self.transport(outbound, endpoint)
+        try:
+            response = self.transport(outbound, endpoint)
+        except Exception as exc:  # noqa: BLE001 - any transport failure is an outage for the caller
+            reason = f"transport outage: {type(exc).__name__}"
+            draft["denied"] = True
+            draft["denial_reason"] = reason
+            seal()
+            self.audit({"event": "egress.outage", "endpoint_id": endpoint_id, "user_id": user_id,
+                        "reason": reason})
+            raise EgressOutage(reason) from exc
         raw = json.dumps(response, sort_keys=True, default=str).encode("utf-8")
         draft["bytes_in"] = len(raw)
         draft["response_hash"] = hash_bytes(raw)

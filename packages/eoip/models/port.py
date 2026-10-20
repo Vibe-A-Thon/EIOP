@@ -96,6 +96,7 @@ class ModelResult:
     cache_hit: bool = False
     quality_score: float | None = None
     guardrail_triggers: list[str] = field(default_factory=list)
+    notice: str | None = None  # visible to the user, e.g. local fallback after an egress outage (SR-LLM-019)
 
 
 @dataclass
@@ -263,6 +264,8 @@ class TaskRouter:
         self.breaker = breaker or TenantCircuitBreaker(failure_threshold=2, cooldown_s=30.0)
         self.allowlists: dict[str, set[str]] = {}
         self.decisions: list[dict[str, Any]] = []
+        #: task -> deterministic fallback used when no model can answer (SR-LLM-019)
+        self.deterministic: dict[str, Callable[[ModelRequest], Any]] = {}
 
     def set_allowlist(self, tenant_id: str, adapters: set[str]) -> None:
         self.allowlists[tenant_id] = set(adapters)
@@ -278,11 +281,16 @@ class TaskRouter:
             except CapabilityMismatch:
                 continue
             usable.append(name)
-        # preferred size class first, then the other class as fallback; stable by name
-        return sorted(usable, key=lambda n: (self.port.adapters[n].caps.size_class != wanted, n))
+        # preferred size class first; within a class local models before external ones (local by
+        # default, SR-LLM-002); the rest are fallbacks in that order (SR-LLM-019)
+        return sorted(usable, key=lambda n: (self.port.adapters[n].caps.size_class != wanted,
+                                             not self.port.adapters[n].local, n))
 
     def route(self, request: ModelRequest) -> ModelResult:
-        tried = []
+        from eoip.egress.gateway import EgressDenied, EgressOutage
+
+        tried: list[tuple[str, str]] = []
+        egress_problem: str | None = None
         for name in self.candidates(request):
             try:
                 self.breaker.before_call(request.tenant_id, name)
@@ -293,13 +301,30 @@ class TaskRouter:
                 result = self.port.invoke(name, request)
             except (CapabilityMismatch, StructuredOutputInvalid, AdapterInactive):
                 raise
+            except EgressOutage as exc:
+                self.breaker.record_failure(request.tenant_id, name)
+                tried.append((name, "egress_outage"))
+                egress_problem = egress_problem or exc.fallback_notice
+                continue
+            except EgressDenied as exc:  # policy denial is not a runtime fault: no breaker penalty
+                tried.append((name, "egress_denied"))
+                egress_problem = egress_problem or exc.fallback_notice
+                continue
             except Exception as exc:  # noqa: BLE001 - adapter failure -> breaker + next fallback
                 self.breaker.record_failure(request.tenant_id, name)
                 tried.append((name, type(exc).__name__))
                 continue
             self.breaker.record_success(request.tenant_id, name)
+            if egress_problem:
+                result.notice = f"{egress_problem}; answered by local model {name}"
             self.decisions.append({"tenant_id": request.tenant_id, "task": request.task, "adapter": name,
-                                   "fallbacks": tried})
+                                   "fallbacks": tried, "notice": result.notice})
+            return result
+        if request.task in self.deterministic:
+            result = ModelResult(output=self.deterministic[request.task](request), adapter="deterministic",
+                                 notice=f"{egress_problem or 'no model available'}; answered in deterministic mode")
+            self.decisions.append({"tenant_id": request.tenant_id, "task": request.task, "adapter": "deterministic",
+                                   "fallbacks": tried, "notice": result.notice})
             return result
         raise NoModelAvailable(f"no model available for task {request.task!r} (tried {tried})")
 

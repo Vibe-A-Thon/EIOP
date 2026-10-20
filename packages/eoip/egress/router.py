@@ -67,6 +67,7 @@ class InstallPluginRequest(BaseModel):
 
     manifest_id: str
     approved_by: str
+    acknowledged_fingerprint: str
     consent_ref: str = ""
 
 
@@ -224,11 +225,19 @@ def build_router(gateway: EgressGateway):
         gateway.plugin_registry.submit(body.manifest)
         return {"submitted": body.manifest.id}
 
+    @router.get("/plugins/{manifest_id:path}/install-preview")
+    def plugin_install_preview(manifest_id: str) -> dict:
+        try:
+            return gateway.plugin_registry.install_preview(manifest_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
     @router.post("/plugins/install")
     def install_plugin(body: InstallPluginRequest) -> dict:
         try:
             record = gateway.plugin_registry.install(
                 body.manifest_id, approved_by=body.approved_by,
+                acknowledged_fingerprint=body.acknowledged_fingerprint,
                 consent_ref=body.consent_ref,
             )
         except (KeyError, ValueError) as exc:

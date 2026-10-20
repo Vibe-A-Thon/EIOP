@@ -600,24 +600,94 @@ class TestProviderPlugins:
         with pytest.raises(ValueError, match="data classes"):
             DataFlowManifest(data_classes_sent=["D9"])
 
+    PID = "urn:eoip:egress:provider:acme-llm"
+
+    def _installed_gateway(self, crosses=True, **endpoint):
+        gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S1)])
+        gw.plugin_registry.submit(self._manifest(crosses=crosses))
+        fp = gw.plugin_registry.install_preview(self.PID)["fingerprint"]
+        gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint=fp,
+                                   consent_ref="DPA-2026-17 / admin@tenant.example / 2026-10-08")
+        gw.register_endpoint(EndpointConfig(**{
+            "id": "acme", "kind": "chat", "url_allowlist": ["https://llm.acme.example"], "region": "EU",
+            "dpa_ref": "DPA-2026-17", "zero_retention": True, "plugin_id": self.PID, **endpoint}))
+        gw.enable_endpoint("acme", admin="admin@tenant.example", consent=ConsentRecord(
+            **dict(CONSENT, consent_id="c-acme", endpoint_id="acme")))
+        return gw
+
     def test_install_requires_consent_for_boundary_crossing(self):
         gw = make_gateway()
         gw.plugin_registry.submit(self._manifest(crosses=True))
+        fp = gw.plugin_registry.install_preview(self.PID)["fingerprint"]
         with pytest.raises(ValueError, match="consent"):
-            gw.plugin_registry.install(
-                "urn:eoip:egress:provider:acme-llm", approved_by="admin")
+            gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint=fp)
         record = gw.plugin_registry.install(
-            "urn:eoip:egress:provider:acme-llm", approved_by="admin",
+            self.PID, approved_by="admin", acknowledged_fingerprint=fp,
             consent_ref="DPA-2026-17 / admin@tenant.example / 2026-10-08")
-        assert record.acknowledged_data_flow
-        assert gw.plugin_registry.is_installed("urn:eoip:egress:provider:acme-llm")
+        assert record.acknowledged_data_flow and record.manifest_fingerprint == fp
+        assert gw.plugin_registry.is_installed(self.PID)
 
     def test_non_crossing_plugin_installs_without_consent(self):
         gw = make_gateway()
         gw.plugin_registry.submit(self._manifest(crosses=False))
-        record = gw.plugin_registry.install(
-            "urn:eoip:egress:provider:acme-llm", approved_by="admin")
+        fp = gw.plugin_registry.install_preview(self.PID)["fingerprint"]
+        record = gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint=fp)
         assert record.approved_by == "admin"
+
+    @pytest.mark.req("SR-CON-011")
+    def test_installation_displays_the_manifest_and_requires_that_exact_version_acknowledged(self):
+        gw = make_gateway()
+        gw.plugin_registry.submit(self._manifest())
+        with pytest.raises(ValueError, match="install-preview"):  # never shown
+            gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint="x", consent_ref="c")
+        preview = gw.plugin_registry.install_preview(self.PID)
+        assert preview["data_flow"]["destinations"] == ["https://llm.acme.example"]
+        assert "Sends data classes: D1, D2" in preview["disclosure"]
+        assert "Data LEAVES the tenant boundary" in preview["disclosure"]
+        assert "Retention: zero_retention" in preview["disclosure"]
+        with pytest.raises(ValueError, match="fingerprint"):
+            gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint="stale", consent_ref="c")
+        with pytest.raises(ValueError, match="administrator"):
+            gw.plugin_registry.install(self.PID, approved_by="", acknowledged_fingerprint=preview["fingerprint"])
+        gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint=preview["fingerprint"],
+                                   consent_ref="c")
+        changed = self._manifest().model_copy(update={"version": "1.1.0"})
+        gw.plugin_registry.submit(changed)  # new declaration -> approval revoked
+        assert not gw.plugin_registry.is_installed(self.PID)
+        assert gw.plugin_registry.events[-1]["event"] == "plugin.install_revoked_manifest_changed"
+
+    @pytest.mark.req("SR-CON-011")
+    def test_egress_gateway_enforces_the_data_flow_manifest_at_runtime(self):
+        gw = self._installed_gateway()
+        call = dict(endpoint_id="acme", task="summarize", payload={"a": "x"}, user_id="u1", role="analyst",
+                    dry_run=True)
+        gw.call(**call, data_classes=["D1"])  # declared class -> allowed
+        with pytest.raises(EgressDenied, match=r"not declared as sent: \['D3'\]"):
+            gw.call(**call, data_classes=["D3"])
+        with pytest.raises(EgressDenied, match="tags not declared"):
+            gw.call(**call, data_classes=["D1"], tags=["PHI"])
+        assert gw.manifests[-1].denied and "data-flow manifest" in gw.manifests[-1].denial_reason
+
+    @pytest.mark.req("SR-CON-011")
+    @pytest.mark.parametrize("endpoint, crosses, reason", [
+        ({"url_allowlist": ["https://other.example"]}, True, "destinations not declared"),
+        ({"region": "US"}, True, "region US not declared"),
+        ({"zero_retention": False}, True, "zero retention"),
+        ({}, False, "never leaves the tenant boundary"),
+    ])
+    def test_endpoint_outside_the_declared_flow_is_denied(self, endpoint, crosses, reason):
+        gw = self._installed_gateway(crosses=crosses, **endpoint)
+        with pytest.raises(EgressDenied, match=reason):
+            gw.call(endpoint_id="acme", task="summarize", payload={"a": "x"}, user_id="u1", role="analyst",
+                    data_classes=["D1"], dry_run=True, region=endpoint.get("region"))
+
+    @pytest.mark.req("SR-CON-011")
+    def test_uninstalled_plugin_endpoint_is_denied(self):
+        gw = self._installed_gateway()
+        gw.plugin_registry.submit(self._manifest().model_copy(update={"version": "2.0.0"}))
+        with pytest.raises(EgressDenied, match="not installed"):
+            gw.call(endpoint_id="acme", task="summarize", payload={"a": "x"}, user_id="u1", role="analyst",
+                    data_classes=["D1"], dry_run=True)
 
     def test_data_flow_declaration_fields(self):
         m = self._manifest()
@@ -653,9 +723,32 @@ class TestRouter:
             "/api/v1/egress/plugins",
             "/api/v1/egress/plugins/install",
             "/api/v1/egress/plugins/submit",
+            "/api/v1/egress/plugins/{manifest_id:path}/install-preview",
             "/api/v1/egress/policy/rules",
             "/api/v1/egress/report",
         ]
+
+    @pytest.mark.req("SR-CON-011")
+    def test_install_preview_then_install_via_routes(self):
+        pytest.importorskip("fastapi")
+        from fastapi import FastAPI
+        from fastapi.testclient import TestClient
+        from eoip.egress.router import build_router
+
+        gw = make_gateway()
+        gw.plugin_registry.submit(TestProviderPlugins()._manifest(crosses=False))
+        app = FastAPI()
+        app.include_router(build_router(gw))
+        client = TestClient(app)
+        pid = TestProviderPlugins.PID
+        body = {"manifest_id": pid, "approved_by": "admin", "acknowledged_fingerprint": "guess"}
+        assert client.post("/api/v1/egress/plugins/install", json=body).status_code == 400
+        preview = client.get(f"/api/v1/egress/plugins/{pid}/install-preview").json()
+        assert "Data stays inside the tenant boundary" in preview["disclosure"]
+        body["acknowledged_fingerprint"] = preview["fingerprint"]
+        installed = client.post("/api/v1/egress/plugins/install", json=body)
+        assert installed.status_code == 200 and installed.json()["manifest_fingerprint"] == preview["fingerprint"]
+        assert client.get("/api/v1/egress/plugins/urn:nope/install-preview").status_code == 404
 
     def test_end_to_end_via_testclient(self):
         pytest.importorskip("fastapi")
