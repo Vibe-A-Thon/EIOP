@@ -11,19 +11,20 @@ from eoip.ontology.rdf import export_shacl_shapes, validate_shacl
 from apps.api import main as api_main
 
 
-def _make_client(tmp_path):
-    os.environ["EOIP_API_TOKEN"] = "test-token-minimum-24-characters!!"
-    os.environ["EOIP_DATA_DIR"] = str(tmp_path)
-    os.environ["EOIP_GRAPH_BACKEND"] = "memory"
+def _make_client(tmp_path, monkeypatch):
+    # monkeypatch restores env and create_store, so later tests do not inherit them.
+    monkeypatch.setenv("EOIP_API_TOKEN", "test-token-minimum-24-characters!!")
+    monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("EOIP_GRAPH_BACKEND", "memory")
     store = MemoryGraphStore()
-    api_main.create_store = lambda: store
+    monkeypatch.setattr(api_main, "create_store", lambda: store)
     app = api_main.create_app()
     return TestClient(app), store
 
 
-def test_ontology_validate_contract_unchanged(tmp_path):
+def test_ontology_validate_contract_unchanged(tmp_path, monkeypatch):
     """CRA-020.9: Keep existing /ontology/validate contract unchanged."""
-    client, store = _make_client(tmp_path)
+    client, store = _make_client(tmp_path, monkeypatch)
     store.upsert_vertex("Service", {"canonical_id": "srv-1", "name": "PaymentService", "service_id": "srv-1"})
     headers = {"Authorization": "Bearer test-token-minimum-24-characters!!"}
 
@@ -48,9 +49,9 @@ def test_export_shacl_shapes_contract():
     assert "eoip:relationshipExtensions" in ext_entry
 
 
-def test_post_ontology_validate_shacl_endpoint(tmp_path):
+def test_post_ontology_validate_shacl_endpoint(tmp_path, monkeypatch):
     """CRA-020.9 & CRA-020.10: POST /ontology/validate/shacl semantics."""
-    client, store = _make_client(tmp_path)
+    client, store = _make_client(tmp_path, monkeypatch)
     headers = {"Authorization": "Bearer test-token-minimum-24-characters!!"}
 
     # 1. Valid payload -> 200 OK
@@ -99,9 +100,9 @@ def test_post_ontology_validate_shacl_endpoint(tmp_path):
     assert resp_down.status_code == 503
 
 
-def test_async_semantic_validations_endpoint(tmp_path):
+def test_async_semantic_validations_endpoint(tmp_path, monkeypatch):
     """CRA-020.9: POST /api/v1/semantic/validations requires Idempotency-Key."""
-    client, _ = _make_client(tmp_path)
+    client, _ = _make_client(tmp_path, monkeypatch)
     headers = {"Authorization": "Bearer test-token-minimum-24-characters!!"}
 
     # Missing Idempotency-Key -> 400 Bad Request
