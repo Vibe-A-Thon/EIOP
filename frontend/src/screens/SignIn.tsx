@@ -14,15 +14,24 @@ import { apiFetch } from "../lib/api";
 import { Button } from "../components/ui/Button";
 import { StatusDot } from "../components/ui/Badge";
 
-const DEV_TOKEN = "eoip_sa_f86468fed910d947e69eba4c";
+// FT-F01: no tokens are committed to the source tree or embedded in the bundle.
+// For local development only, quick-login tokens may be provided through an
+// UNTRACKED frontend/.env.local (VITE_DEV_TOKEN, VITE_DEMO_TOKEN_<ROLE>). They are
+// read only when import.meta.env.DEV is true, so production builds never contain them.
+// Static property access only (Vite inlines these and drops them when DEV is false).
+const DEV = import.meta.env.DEV;
+const DEV_TOKEN = DEV ? (import.meta.env.VITE_DEV_TOKEN ?? "") : "";
 
-const DEMO_ROLES: { label: string; role: string; token: string }[] = [
-  { label: "Super admin", role: "superadmin · all tenants", token: "eoip_sa_f86468fed910d947e69eba4c" },
-  { label: "Admin", role: "admin · default", token: "eoip_admin_75293814c25a2d4c1e57994c" },
-  { label: "Steward", role: "steward · default", token: "eoip_steward_449c1099ee3071aa8ce7fbed" },
-  { label: "Analyst", role: "analyst · default", token: "eoip_analyst_1d0019f09d075ddf8ad141dc" },
-  { label: "Viewer", role: "viewer · default", token: "eoip_viewer_9072655bae91c450d24fe204" },
-];
+const DEMO_ROLES: { label: string; role: string; token: string }[] = (DEV
+  ? [
+      { label: "Super admin", role: "superadmin · all tenants", token: import.meta.env.VITE_DEMO_TOKEN_SUPERADMIN ?? "" },
+      { label: "Admin", role: "admin · default", token: import.meta.env.VITE_DEMO_TOKEN_ADMIN ?? "" },
+      { label: "Steward", role: "steward · default", token: import.meta.env.VITE_DEMO_TOKEN_STEWARD ?? "" },
+      { label: "Analyst", role: "analyst · default", token: import.meta.env.VITE_DEMO_TOKEN_ANALYST ?? "" },
+      { label: "Viewer", role: "viewer · default", token: import.meta.env.VITE_DEMO_TOKEN_VIEWER ?? "" },
+    ]
+  : []
+).filter((r) => r.token !== "");
 
 export function SignIn() {
   const { signIn } = useAuth();
@@ -186,6 +195,7 @@ export function SignIn() {
             Tokens are held in memory only and never persisted to storage.
           </p>
 
+          {DEMO_ROLES.length > 0 && (
           <div className="mt-5 rounded-md border border-[var(--border-subtle)] bg-[var(--bg-panel)]/60 p-3" data-testid="signin-demo-roles">
             <p className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
               <ShieldCheck size={12} /> Demo access · pick a role
@@ -205,9 +215,10 @@ export function SignIn() {
               ))}
             </div>
             <p className="mt-2 font-mono text-[9px] leading-relaxed text-[var(--text-muted)]">
-              Roles &amp; tenants are defined in <span className="text-[var(--text-secondary)]">Logins_credentials.keys</span> and enforced server-side.
+              Roles &amp; tenants are defined in the ASG file (<span className="text-[var(--text-secondary)]">EOIP_ASG_FILE</span>) and enforced server-side.
             </p>
           </div>
+          )}
         </form>
       </div>
     </div>

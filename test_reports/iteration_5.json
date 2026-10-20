@@ -20,7 +20,7 @@
   ],
   "updated_files": [],
   "success_rate": {"backend": "n/a (frontend-only per request)", "frontend": "7/7 flows pass — MetaGraph, Ontology Designer, Impact (3 modes), Reports+Schedules, Collaboration, Brand, Time Travel"},
-  "test_credentials": "Bearer: eoip-local-dev-token-0123456789abcdef (pre-filled), tenant: default (pre-filled), submit testid: signin-submit-button.",
+  "test_credentials": "Bearer: [REDACTED-F01] (pre-filled), tenant: default (pre-filled), submit testid: signin-submit-button.",
   "seed_data_creation": "In demo memory store: one ontology draft branch 'feature/draft-mvay0pc7' with a PUBLISH_OK validated change + an open PR (not merged); one schedule 'TEST_sched_iter5' (then deleted); two snapshots 'TEST_snap_iter5' + 'TEST_snap_iter5_v2' (not restored); no destructive publish or restore was actually executed.",
   "retest_needed": false,
   "main_agent_can_self_test": true,
