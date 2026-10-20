@@ -266,7 +266,9 @@ def create_app():
 
     journal_path = data_root() / "state" / "events.jsonl"
     event_emitter = GraphEventEmitter(buffer_size=1000, journal_path=journal_path)
-    app = query_app(store, dependencies=[Depends(SafeHTTPBearer(auto_error=False))])
+    # FT-D05: FastAPI uses the class name as the OpenAPI scheme key; keep the
+    # stable public name 'HTTPBearer' for generated clients.
+    app = query_app(store, dependencies=[Depends(SafeHTTPBearer(auto_error=False, scheme_name="HTTPBearer"))])
     app.state.event_emitter = event_emitter
     app.state.store = store
     from apps.api.extended import ensure_extended
