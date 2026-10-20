@@ -19,6 +19,7 @@ def _tok() -> str:
 def _write(tmp_path, text: str, mode: int = 0o400):
     p = tmp_path / "asg"
     if p.exists():
+        os.chmod(p, 0o600)  # Windows refuses to unlink read-only files
         p.unlink()
     p.write_text(text, encoding="utf-8")
     os.chmod(p, mode)
