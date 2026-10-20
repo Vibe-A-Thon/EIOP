@@ -1,0 +1,3 @@
+# False positive: the dlq-graph healthcheck references the container's own
+# $PASSWORD env var (curl -u admin:$${PASSWORD}); no credential value is committed.
+a907de13740618445e27af913f9434902868ccb6:deploy/docker-compose.dlq-acceptance.yml:curl-auth-user:59
