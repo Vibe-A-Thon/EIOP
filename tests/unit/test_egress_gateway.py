@@ -89,6 +89,26 @@ class TestEnablement:
         assert events[0]["dpa_ref"] == "DPA-2026-17"
         assert events[0]["region"] == "EU"
 
+    @pytest.mark.req("SR-LLM-017")
+    def test_changed_contract_terms_require_reapproval_before_any_call(self):
+        events = []
+        gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S1)], audit=events.append)
+        enable(gw)
+        call = dict(endpoint_id="ext-eu", task="summarize", payload={"a": "x"},
+                    user_id="u1", role="analyst", data_classes=["D0"], dry_run=True)
+        gw.call(**call)
+        assert gw.amend_consent("ext-eu", admin="a", residency_region="US") is True
+        assert events[-1]["event"] == "egress.consent_changed_reapproval_required"
+        assert events[-1]["changes"] == ["residency_region"]
+        with pytest.raises(EgressDenied, match="disabled"):
+            gw.call(**call)
+        assert gw.amend_consent("ext-eu", admin="a", scope=CONSENT["scope"]) is False  # no change
+        renewed = dict(CONSENT, consent_id="urn:eoip:egress:consent:test2", residency_region="US", signed_at=1.0)
+        gw.enable_endpoint("ext-eu", admin="a", consent=ConsentRecord(**renewed))
+        gw.call(**call)
+        assert [c.consent_id for c in gw.consent_history["ext-eu"]] == [CONSENT["consent_id"], renewed["consent_id"]]
+        assert "ext-eu" not in gw.reapproval_required
+
     def test_consent_dpa_mismatch_rejected(self):
         gw = make_gateway()
         bad = dict(CONSENT, dpa_ref="DPA-WRONG")
@@ -579,6 +599,8 @@ class TestRouter:
         assert paths == [
             "/api/v1/egress/call",
             "/api/v1/egress/endpoints",
+            "/api/v1/egress/endpoints/{endpoint_id}/consent",
+            "/api/v1/egress/endpoints/{endpoint_id}/consent/amend",
             "/api/v1/egress/endpoints/{endpoint_id}/disable",
             "/api/v1/egress/endpoints/{endpoint_id}/enable",
             "/api/v1/egress/kill",
@@ -623,3 +645,31 @@ class TestRouter:
         })
         assert ok.status_code == 200
         assert ok.json()["payload"] == {"a": {"type": "string"}}
+
+    @pytest.mark.req("SR-LLM-017")
+    def test_consent_record_routes_show_signer_terms_history_and_reapproval(self):
+        pytest.importorskip("fastapi")
+        from fastapi import FastAPI
+        from fastapi.testclient import TestClient
+        from eoip.egress.router import build_router
+
+        gw = make_gateway()
+        app = FastAPI()
+        app.include_router(build_router(gw))
+        client = TestClient(app)
+        assert client.get("/api/v1/egress/endpoints/nope/consent").status_code == 404
+        assert client.get("/api/v1/egress/endpoints/ext-eu/consent").json()["current"] is None
+        assert client.post("/api/v1/egress/endpoints/ext-eu/consent/amend",
+                           json={"admin": "a", "scope": "y"}).status_code == 409
+        client.post("/api/v1/egress/endpoints/ext-eu/enable", json={
+            "endpoint_id": "ext-eu", "admin": "a", "signer": "dpo@tenant.example",
+            "dpa_ref": "DPA-2026-17", "residency_region": "EU", "scope": "x",
+        })
+        rec = client.get("/api/v1/egress/endpoints/ext-eu/consent").json()
+        assert rec["current"]["signer"] == "dpo@tenant.example" and rec["current"]["signed_at"] > 0
+        assert (rec["current"]["dpa_ref"], rec["current"]["residency_region"], rec["current"]["scope"]) == (
+            "DPA-2026-17", "EU", "x")
+        amended = client.post("/api/v1/egress/endpoints/ext-eu/consent/amend", json={"admin": "a", "scope": "y"})
+        assert amended.json() == {"endpoint_id": "ext-eu", "reapproval_required": True}
+        rec = client.get("/api/v1/egress/endpoints/ext-eu/consent").json()
+        assert rec["reapproval_required"] is True and len(rec["history"]) == 1

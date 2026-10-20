@@ -70,6 +70,17 @@ class InstallPluginRequest(BaseModel):
     consent_ref: str = ""
 
 
+class AmendConsentRequest(BaseModel):
+    """Change of contract terms; any change requires re-approval (SR-LLM-017)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    admin: str = Field(min_length=1)
+    dpa_ref: str | None = None
+    residency_region: str | None = None
+    scope: str | None = None
+
+
 def build_router(gateway: EgressGateway):
     """Construct the FastAPI router bound to an ``EgressGateway``.
 
@@ -114,6 +125,29 @@ def build_router(gateway: EgressGateway):
         except (KeyError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return {"enabled": endpoint_id}
+
+    @router.get("/endpoints/{endpoint_id}/consent")
+    def get_consent(endpoint_id: str) -> dict:
+        if endpoint_id not in gateway.endpoints:
+            raise HTTPException(status_code=404, detail=f"unknown endpoint {endpoint_id}")
+        current = gateway.consents.get(endpoint_id)
+        return {
+            "endpoint_id": endpoint_id,
+            "current": current.model_dump() if current else None,
+            "history": [c.model_dump() for c in gateway.consent_history.get(endpoint_id, [])],
+            "reapproval_required": endpoint_id in gateway.reapproval_required,
+        }
+
+    @router.post("/endpoints/{endpoint_id}/consent/amend")
+    def amend_consent(endpoint_id: str, body: AmendConsentRequest) -> dict:
+        if endpoint_id not in gateway.endpoints:
+            raise HTTPException(status_code=404, detail=f"unknown endpoint {endpoint_id}")
+        try:
+            required = gateway.amend_consent(endpoint_id, admin=body.admin, dpa_ref=body.dpa_ref,
+                                             residency_region=body.residency_region, scope=body.scope)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        return {"endpoint_id": endpoint_id, "reapproval_required": required}
 
     @router.post("/endpoints/{endpoint_id}/disable")
     def disable_endpoint(endpoint_id: str, body: KillRequest) -> dict:

@@ -148,6 +148,9 @@ class EgressGateway:
         self.audit = audit or (lambda event: None)
         self.endpoints: dict[str, EndpointConfig] = {}
         self.consents: dict[str, ConsentRecord] = {}
+        # Every consent ever given per endpoint, oldest first (SR-LLM-017).
+        self.consent_history: dict[str, list[ConsentRecord]] = {}
+        self.reapproval_required: set[str] = set()
         self.plugin_registry = PluginRegistry()
         self.manifests: list[EgressManifest] = []  # append-only (SR-LLM-013)
         self.kill_switch_global = False
@@ -177,6 +180,8 @@ class EgressGateway:
             raise ValueError("consent DPA reference does not match the endpoint contract")
         endpoint.enabled = True
         self.consents[endpoint_id] = consent
+        self.consent_history.setdefault(endpoint_id, []).append(consent)
+        self.reapproval_required.discard(endpoint_id)
         self.audit({
             "event": "egress.endpoint_enabled",
             "endpoint_id": endpoint_id,
@@ -187,6 +192,30 @@ class EgressGateway:
             "region": consent.residency_region,
             "scope": consent.scope,
         })
+
+    def amend_consent(self, endpoint_id: str, *, admin: str, dpa_ref: str | None = None,
+                      residency_region: str | None = None, scope: str | None = None) -> bool:
+        """Change the contract terms of an enabled endpoint (SR-LLM-017).
+
+        Any change of DPA reference, residency region or scope invalidates the current consent:
+        the endpoint is disabled until an administrator re-approves it with a new consent record
+        (``enable_endpoint``). Returns True when re-approval is now required.
+        """
+        endpoint = self._endpoint(endpoint_id)
+        current = self.consents.get(endpoint_id)
+        if current is None:
+            raise ValueError(f"endpoint {endpoint_id} has no consent record to amend")
+        changes = {k: v for k, v in (("dpa_ref", dpa_ref), ("residency_region", residency_region), ("scope", scope))
+                   if v is not None and v != getattr(current, k)}
+        if not changes:
+            return False
+        if "dpa_ref" in changes:
+            endpoint.dpa_ref = changes["dpa_ref"]
+        endpoint.enabled = False
+        self.reapproval_required.add(endpoint_id)
+        self.audit({"event": "egress.consent_changed_reapproval_required", "endpoint_id": endpoint_id,
+                    "admin": admin, "previous_consent_id": current.consent_id, "changes": sorted(changes)})
+        return True
 
     def disable_endpoint(self, endpoint_id: str, *, admin: str,
                          reason: str = "") -> None:
