@@ -92,17 +92,17 @@
       "kind": "clause",
       "parent": "CRA-001",
       "origin": "AGG",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-001.6/run-20261020T073802Z-7f6a45bf.json",
-          "sha256": "30a76cc0b3ab3023f3180dea03a197534b2c4c867d53ad36df51f92de3cfdcac"
+          "path": ".audit-scratch/receipts/CRA-001.6/run-20261020T074126Z-056fa189.json",
+          "sha256": "7a71fb36095f77ceb3c081280ff89a0bddccf363bc3431b02999b52952899e36"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (5 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-001.7",
@@ -143,17 +143,17 @@
       "kind": "clause",
       "parent": "CRA-001",
       "origin": "RES",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-001.9/run-20261020T073804Z-8e352bdb.json",
-          "sha256": "e91473627f65fd4bf8df81149c32b42b755ae189bdfd8ba6737d66bf7690b5d8"
+          "path": ".audit-scratch/receipts/CRA-001.9/run-20261020T074126Z-d804c969.json",
+          "sha256": "27c17bda3e9d6c73543104a90147c643707b2ac01c7a2c5c705552cfaae870f6"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 1 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-001.10",
@@ -2459,20 +2459,25 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-016.5",
       "kind": "clause",
       "parent": "CRA-016",
       "origin": "CRAr",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-016.5/run-20261020T074126Z-7680c1b2.json",
+          "sha256": "6b126e40bee4e35c610031669a2e49d7c8b43a43480b9c7a3dc4c282fb93a4ac"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (6 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-016.6",
@@ -2534,8 +2539,8 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-016.10",
@@ -2797,12 +2802,17 @@
       "kind": "clause",
       "parent": "CRA-018",
       "origin": "CRAr",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-018.4/run-20261020T074126Z-474d228c.json",
+          "sha256": "f95d56fee26a7f1efbb501bf6a2c7b0d0666354983b9be4ac19d3ecd0cc09651"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (8 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-018.5",
@@ -2860,12 +2870,17 @@
       "kind": "clause",
       "parent": "CRA-018",
       "origin": "OCA",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-018.8/run-20261020T074126Z-c1f9158d.json",
+          "sha256": "3e86ea07d722e0d8225bd87b5b13109d8d18cec2a2c175bd350e2b85a04e9869"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (8 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-019.1",
@@ -2944,8 +2959,8 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-019.6",
@@ -2990,8 +3005,8 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-019.9",
@@ -3172,20 +3187,25 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-020.7",
       "kind": "clause",
       "parent": "CRA-020",
       "origin": "OCA",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-020.7/run-20261020T074126Z-d4b3c4a1.json",
+          "sha256": "88877f3764723bd7f9d4c3ddcf450fe8b2b5486a67c5caf2557da782941673a9"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-020.8",
@@ -3498,12 +3518,17 @@
       "kind": "clause",
       "parent": "CRA-022",
       "origin": "OCA",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-022.7/run-20261020T074127Z-deacc90b.json",
+          "sha256": "831a3260abaeaad26bc4f6d056333e595850e7e4392c13fb086dbd69cc5a448d"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (22 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-022.8",
@@ -4122,24 +4147,34 @@
       "kind": "clause",
       "parent": "CRA-026",
       "origin": "CRAr",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-026.6/run-20261020T074127Z-72a054ec.json",
+          "sha256": "1a89c784d04f1ce4068298cb767fce38480d37a7ffb372d6718c6e353fa90709"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (9 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-026.7",
       "kind": "clause",
       "parent": "CRA-026",
       "origin": "AGG",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-026.7/run-20261020T074127Z-efedde26.json",
+          "sha256": "14216cc5f32d060232889755fc7a029787df97898a13562336e822f16a323df8"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (9 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-026.8",
@@ -4197,36 +4232,51 @@
       "kind": "clause",
       "parent": "CRA-026",
       "origin": "PRM",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-026.11/run-20261020T074127Z-8ddca955.json",
+          "sha256": "62282604258240f64c75e40b8279fccb3cffa56c56790f2a204faef9259a3c73"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (9 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-026.12",
       "kind": "clause",
       "parent": "CRA-026",
       "origin": "PRM",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-026.12/run-20261020T074127Z-c44f10ed.json",
+          "sha256": "9972db0446efe93328fdcbeb8e1280b236b21f7ba64a96987a31bacb47376fd5"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (9 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-026.13",
       "kind": "clause",
       "parent": "CRA-026",
       "origin": "RES",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-026.13/run-20261020T074127Z-e52f6340.json",
+          "sha256": "73156f64cfdf35815c2c27ffeb8720cfe613114c30f6056c6bdf48cc35822cfd"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (9 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-027.1",
@@ -4539,12 +4589,17 @@
       "kind": "clause",
       "parent": "CRA-029",
       "origin": "CRAr",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-029.1/run-20261020T074128Z-c37e3d1a.json",
+          "sha256": "90e0c4838f7dfcda43bd890c3f79e4bdc4041c5982886b2ed8488c823762f588"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (5 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-029.2",
@@ -4823,12 +4878,17 @@
       "kind": "clause",
       "parent": "CRA-031",
       "origin": "CRAr",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-031.1/run-20261020T074128Z-2713a323.json",
+          "sha256": "2b9f955415b096c51d34d8539b4ac5eb33550d3525f9ce3f04e359dd16fb5f92"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (10 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-031.2",
@@ -4856,8 +4916,8 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-031.4",
@@ -4949,12 +5009,17 @@
       "kind": "clause",
       "parent": "CRA-032",
       "origin": "CRAr",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-032.2/run-20261020T074128Z-4f720498.json",
+          "sha256": "aa52a63d5d03304369ae69051a7cdff62bcf417778390cc924fdb9e83bd8ef7a"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (7 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-032.3",
@@ -5046,12 +5111,17 @@
       "kind": "clause",
       "parent": "CRA-032",
       "origin": "OCA",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-032.8/run-20261020T074128Z-51bc708f.json",
+          "sha256": "9f7283dfd49975be4067ec6f688c3aa00df3daecdb4448c974e19c281ddd9225"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (7 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-033.1",
@@ -6473,8 +6543,8 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-043.3",
@@ -6485,20 +6555,25 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-043.4",
       "kind": "clause",
       "parent": "CRA-043",
       "origin": "GN",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-043.4/run-20261020T074128Z-e38e76b5.json",
+          "sha256": "e58c4b3b7c42c7fd00a29db7522ed624a6bdab311d74cb7f041275b5d79f5074"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (8 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-043.5",
@@ -6522,12 +6597,17 @@
       "kind": "clause",
       "parent": "CRA-043",
       "origin": "GN",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-043.6/run-20261020T074128Z-9df4d199.json",
+          "sha256": "8e7ed576eb38ea9906a6f3a770476c8699a2d0f7cb0abd99d9a5e26264719be5"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (4 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-043.7",
@@ -6538,8 +6618,8 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-043.8",
@@ -6550,8 +6630,8 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-043.9",
@@ -6562,8 +6642,8 @@
       "owner": null,
       "blocked_by": [],
       "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED but its receipt was missing/altered and no runnable test maps to this clause (by test name, docstring or file citation); needs a test and a new run.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-043.10",
@@ -6587,17 +6667,17 @@
       "kind": "clause",
       "parent": "CRA-043",
       "origin": "RES",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-043.11/run-20261020T073912Z-47a5cfe3.json",
-          "sha256": "f8f3690e8ec78c889f721ba884e34c85473c36528da2e748293c3db0a23533aa"
+          "path": ".audit-scratch/receipts/CRA-043.11/run-20261020T074129Z-583af5b8.json",
+          "sha256": "21cc20dae7dbd8d8587bf17331989449e549b0d7877c8cab4f24307330d1de3a"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.1",
@@ -6621,17 +6701,17 @@
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "GN",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.2/run-20261020T073912Z-0a480be5.json",
-          "sha256": "bbbea0457c0dd87c908883efbee5eb8e73eb3b42b453dda0a950c5d1b9111d69"
+          "path": ".audit-scratch/receipts/CRA-044.2/run-20261020T074129Z-4165ea2c.json",
+          "sha256": "a0670984ca9c5dc3939ced7598ed6fd1b64cf2bb05f3048483761c58c105503f"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.3",
@@ -6655,170 +6735,170 @@
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "GN",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.4/run-20261020T073914Z-c7dda75f.json",
-          "sha256": "e7cb90e68a7ac6fc3218e9610f7bfa5d4ec6dfada8ed48ae8ec9a7d0d6ddd49b"
+          "path": ".audit-scratch/receipts/CRA-044.4/run-20261020T074129Z-121b2b03.json",
+          "sha256": "03a03628908aebf87bfea5405c3c02487b524b3b822c34db649534d0c6c657a7"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.5",
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "GN",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.5/run-20261020T073914Z-91774d06.json",
-          "sha256": "93c13e260c6294d7d05fb7bf52aa12f584b174be9d1417a28d808299c347d1b7"
+          "path": ".audit-scratch/receipts/CRA-044.5/run-20261020T074130Z-0ed2997c.json",
+          "sha256": "b3bc29152c580b9b8d123f3d70c7bd8c2abe3a8298219b5a63a21bfd8d248740"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.6",
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "GN",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.6/run-20261020T073914Z-fbfd4ab5.json",
-          "sha256": "fedfb167eff68497a137528c878256893d9c0a9f672529f9c655be641d48a978"
+          "path": ".audit-scratch/receipts/CRA-044.6/run-20261020T074132Z-296d7ee9.json",
+          "sha256": "1873eab7131a365221c458b1bb9569c4a1a50c9dcfcaff04fe0304201d07f7da"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.7",
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "GN",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.7/run-20261020T073914Z-916af6d0.json",
-          "sha256": "76f5abd2101b17377df60648cfbb774e2c51c5fd92ceaebde89adb8f87c2cb38"
+          "path": ".audit-scratch/receipts/CRA-044.7/run-20261020T074132Z-0651a45a.json",
+          "sha256": "a6ef956a67a1b2166b0e9e3529d8d289592046ab596af2f447406040b40e8175"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.8",
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "GN",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.8/run-20261020T073915Z-3308b0d8.json",
-          "sha256": "240368fea3013f6cb50df0a45703685558d4d27f475026d972dded3b5938c9c4"
+          "path": ".audit-scratch/receipts/CRA-044.8/run-20261020T074132Z-f8bb93d8.json",
+          "sha256": "9cac5ffe3c8f08987a81996f4c392180c3bdcf56ab556416f64fc1fd1e921035"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.9",
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "GN",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.9/run-20261020T073915Z-95cba213.json",
-          "sha256": "1e8ba48a63f8925c99b9117b97583325e463b6f5a5a3761e3327ac121145a564"
+          "path": ".audit-scratch/receipts/CRA-044.9/run-20261020T074132Z-dbb11a37.json",
+          "sha256": "dcd5c43a6bddbae9e82ea84ca97a1987d4f134f01dce75392baa81dd7c8a7d1c"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.10",
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "GN",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.10/run-20261020T073915Z-345f37bc.json",
-          "sha256": "bcb308d66fb20e9f99016d201761cc19faa7d622109f9bfb445c9e57dcc024f0"
+          "path": ".audit-scratch/receipts/CRA-044.10/run-20261020T074132Z-d59bf22d.json",
+          "sha256": "4416523e5094e52935de1c37b0d8a3652748496ce1d89ee88800e5d82261358d"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.11",
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "GN",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.11/run-20261020T073915Z-67d4a6c8.json",
-          "sha256": "c6cab0f128cea3a88262bb8ca2003be8581efcefe5b3dc5f5cffafffc8ef518f"
+          "path": ".audit-scratch/receipts/CRA-044.11/run-20261020T074135Z-9856f400.json",
+          "sha256": "99e51c0d56e46af2cf71c224dd474a08e21f6dfd9f569789e63188fab4c856e2"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.12",
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "RES",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.12/run-20261020T073916Z-09fc4889.json",
-          "sha256": "ee1d23da350f570d8c8fe8bcf601c203f786e391db186b3c24aa04c8abac670c"
+          "path": ".audit-scratch/receipts/CRA-044.12/run-20261020T074135Z-4c082792.json",
+          "sha256": "d912ade1c2d657672751e2950b89df22886a9aac19d2895825c088c46fc9d39a"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-044.13",
       "kind": "clause",
       "parent": "CRA-044",
       "origin": "RES",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.13/run-20261020T073916Z-e031ee26.json",
-          "sha256": "bd9c267decf66bffb5ba6efc7c3fa79425772ffb78b4302f6f3e14b58ceb1631"
+          "path": ".audit-scratch/receipts/CRA-044.13/run-20261020T074135Z-c8a83307.json",
+          "sha256": "ec720ddb3c254bfaeba85fd193d42e862116dcfcacae7b3904a49e0f448499c8"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-045.1",
@@ -7248,23 +7328,33 @@
       "id": "CRA-019.A",
       "kind": "acceptance",
       "parent": "CRA-019",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-019.A/run-20261020T074135Z-b3962d19.json",
+          "sha256": "08910d095d2c4f1f0333b90621709af8594c52a646a4c526630ec19dfdc5df77"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (9 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-020.A",
       "kind": "acceptance",
       "parent": "CRA-020",
-      "state": "IMPLEMENTED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
-      "receipts": [],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED but its receipt was missing/altered and no runnable test maps to this clause; needs a test and a new run.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "receipts": [
+        {
+          "path": ".audit-scratch/receipts/CRA-020.A/run-20261020T074135Z-e05ff585.json",
+          "sha256": "90de7313c1f3732584b7b663c86061f1f2193b9898baf46ea49d79bce4216e56"
+        }
+      ],
+      "notes": "FT-D08 2026-10-20: was IMPLEMENTED with a missing/altered receipt; re-run produced this receipt (8 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-021.A",
@@ -7638,17 +7728,17 @@
       "id": "CRA-044.A",
       "kind": "acceptance",
       "parent": "CRA-044",
-      "state": "FAILED",
+      "state": "VERIFIED",
       "owner": null,
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.A/run-20261020T073928Z-5f388b75.json",
-          "sha256": "7e5d52d3095191c17d71637d3b0c63bfef9cec8648ece4f97c494ca3da918213"
+          "path": ".audit-scratch/receipts/CRA-044.A/run-20261020T074136Z-8602a6b4.json",
+          "sha256": "3ab143a8d087856af435ed6a1531c0897e103757ba7d354ebb9f91846a34e1fe"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (0 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was FAILED with a missing/altered receipt; re-run produced this receipt (3 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:41:26.308176+00:00"
     },
     {
       "id": "CRA-045.A",

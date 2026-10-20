@@ -40,9 +40,25 @@ def test_patent_register_path() -> Path:
     return Path("docs/restricted/patent-candidates.yaml")
 
 
+REAL_LEDGER = Path(".audit-scratch/ledger.json")
+
+
 @pytest.fixture
-def real_ledger_path() -> Path:
-    return Path(".audit-scratch/ledger.json")
+def reviewed_ledger_path(tmp_path) -> Path:
+    """The real ledger as it looks once CRA-020/CRA-022 receipts pass independent review.
+
+    FT-D08: the committed ledger only holds machine-VERIFIED receipts (no reviewer signature),
+    so the gating paths that need ACCEPTED clauses are exercised on this reviewed copy.
+    """
+    import json
+
+    ledger = json.loads(REAL_LEDGER.read_text(encoding="utf-8"))
+    for item in ledger["items"]:
+        if item["id"].startswith(("CRA-020.", "CRA-022.")) and item.get("receipts"):
+            item["state"] = "ACCEPTED"
+    path = tmp_path / "ledger.json"
+    path.write_text(json.dumps(ledger), encoding="utf-8")
+    return path
 
 
 def test_cra_041_1_claims_register_schema_and_versioning(test_claims_register_path, test_patent_register_path):
@@ -81,7 +97,7 @@ def test_cra_041_1_claims_register_schema_and_versioning(test_claims_register_pa
     assert new_claim.has_approval("Marketing")
 
 
-def test_cra_041_2_standards_conformance_claim_gating(real_ledger_path):
+def test_cra_041_2_standards_conformance_claim_gating(reviewed_ledger_path):
     """CRA-041.2: Standards-conformance claims (RDF 1.1, JSON-LD 1.1, OWL 2, SHACL Core, SPARQL 1.1, WCAG 2.2 AA)
     blocked until prerequisite requirement clauses are ACCEPTED (closes risk OR6 / Decision H-05).
     """
@@ -116,17 +132,17 @@ def test_cra_041_2_standards_conformance_claim_gating(real_ledger_path):
     # 2. Blocked if missing Legal or Marketing approval
     claim_no_legal = claim_shacl.model_copy(update={"approvals": [ClaimApproval(role="Marketing", reviewer="M", status="APPROVED")]})
     registry.add_claim(claim_no_legal)
-    publishable, reasons = registry.evaluate_claim(claim_no_legal.id, ledger_path=real_ledger_path)
+    publishable, reasons = registry.evaluate_claim(claim_no_legal.id, ledger_path=reviewed_ledger_path)
     assert not publishable, "Must be blocked when missing Legal approval"
     assert any("Legal" in r for r in reasons)
 
     # 3. Authorized when prerequisite is ACCEPTED in real ledger and approvals exist
     registry.add_claim(claim_shacl)
-    publishable, reasons = registry.evaluate_claim("CLM-SHACL-TEST", ledger_path=real_ledger_path)
+    publishable, reasons = registry.evaluate_claim("CLM-SHACL-TEST", ledger_path=reviewed_ledger_path)
     assert publishable, f"SHACL claim must pass when CRA-020.1 is ACCEPTED: {reasons}"
 
 
-def test_cra_041_3_inversions_hypothesis_and_competitive_claims(real_ledger_path):
+def test_cra_041_3_inversions_hypothesis_and_competitive_claims(reviewed_ledger_path):
     """CRA-041.3: Inversions labelled 'already won' (I1, I3, I6, I13, I15, I16, I17) are hypotheses
     until re-verified on the pinned baseline commit with receipts; 'no competitor' requires dated review and Legal approval.
     """
@@ -143,7 +159,7 @@ def test_cra_041_3_inversions_hypothesis_and_competitive_claims(real_ledger_path
         status=ClaimStatus.APPROVED,
     )
     registry = ClaimsRegistry(claims=[inv_claim_no_receipt])
-    pub, reasons = registry.evaluate_claim(inv_claim_no_receipt.id, ledger_path=real_ledger_path)
+    pub, reasons = registry.evaluate_claim(inv_claim_no_receipt.id, ledger_path=reviewed_ledger_path)
     assert not pub, "Inversion claim without evidence must be blocked as a hypothesis"
     assert any("hypothesis" in r for r in reasons)
 
@@ -160,7 +176,7 @@ def test_cra_041_3_inversions_hypothesis_and_competitive_claims(real_ledger_path
         status=ClaimStatus.APPROVED,
     )
     registry.add_claim(inv_superiority_no_review)
-    pub, reasons = registry.evaluate_claim(inv_superiority_no_review.id, ledger_path=real_ledger_path)
+    pub, reasons = registry.evaluate_claim(inv_superiority_no_review.id, ledger_path=reviewed_ledger_path)
     assert not pub, "Superiority claim without competitor review and Legal approval must be blocked"
     assert any("competitor review" in r for r in reasons)
     assert any("Legal" in r for r in reasons)
@@ -179,11 +195,11 @@ def test_cra_041_3_inversions_hypothesis_and_competitive_claims(real_ledger_path
         }
     )
     registry.add_claim(inv_superiority_valid)
-    pub, reasons = registry.evaluate_claim(inv_superiority_valid.id, ledger_path=real_ledger_path)
+    pub, reasons = registry.evaluate_claim(inv_superiority_valid.id, ledger_path=reviewed_ledger_path)
     assert pub, f"Valid superiority claim should be publishable: {reasons}"
 
 
-def test_cra_041_4_ontology_as_code_positioning_pack(real_ledger_path):
+def test_cra_041_4_ontology_as_code_positioning_pack(reviewed_ledger_path):
     """CRA-041.4: Ontology-as-Code positioning package (ONT-012) comparison against
     TopBraid EDG, Protégé/WebProtégé, Chowlk/OnToology, published only after CRA-022 acceptance.
     """
@@ -195,7 +211,7 @@ def test_cra_041_4_ontology_as_code_positioning_pack(real_ledger_path):
     assert blocked_pack["content"] is None
 
     # 2. Authorized against real ledger where CRA-022 clauses are ACCEPTED
-    valid_pack = generate_ontology_as_code_pack(ledger_path=real_ledger_path)
+    valid_pack = generate_ontology_as_code_pack(ledger_path=reviewed_ledger_path)
     assert valid_pack["authorized"], f"ONT-012 pack must be authorized: {valid_pack['reasons']}"
     content = valid_pack["content"]
     assert "Ontology-as-Code Positioning Package (ONT-012)" in content
@@ -352,3 +368,26 @@ def test_cra_041_a_claims_scanner_ci_gate_blocks_four_cases(test_claims_register
     doc_passing = "We support standard RDF 1.1 graph data ingestion [claim: CLM-RDF-001]."
     violations_clean = scanner_clean.scan_text(doc_passing, "clean.md")
     assert len(violations_clean) == 0, f"Evidenced approved claim must produce 0 violations: {violations_clean}"
+
+
+def test_cra_041_unreviewed_ledger_keeps_standards_claims_and_pack_blocked():
+    """FT-D08: machine-VERIFIED receipts alone never authorise a standards claim or ONT-012 pack."""
+    registry = ClaimsRegistry(claims=[ClaimRecord(
+        id="CLM-SHACL-UNREVIEWED",
+        wording="EOIP conforms to SHACL Core validation semantics.",
+        category="standards",
+        metadata={"standards": ["SHACL Core"]},
+        evidence_refs=[EvidenceReference(kind="ledger_clause", ref_id="CRA-020.1")],
+        owner="Ontology Lead",
+        approvals=[ClaimApproval(role="Legal", reviewer="Legal", status="APPROVED"),
+                   ClaimApproval(role="Marketing", reviewer="Marketing", status="APPROVED")],
+        expiry=datetime.now(timezone.utc) + timedelta(days=100),
+        status=ClaimStatus.APPROVED,
+    )])
+    import json
+
+    items = {i["id"]: i for i in json.loads(REAL_LEDGER.read_text(encoding="utf-8"))["items"]}
+    assert items["CRA-020.1"]["state"] != "ACCEPTED"
+    publishable, reasons = registry.evaluate_claim("CLM-SHACL-UNREVIEWED", ledger_path=REAL_LEDGER)
+    assert not publishable and any("CRA-020.1" in r for r in reasons)
+    assert not generate_ontology_as_code_pack(ledger_path=REAL_LEDGER)["authorized"]

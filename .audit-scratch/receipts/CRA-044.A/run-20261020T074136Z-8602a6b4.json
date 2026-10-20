@@ -1,0 +1,74 @@
+{
+  "$schema": "https://eoip.enterprise.internal/schemas/verification-receipt-v3.json",
+  "receipt_id": "rcpt-9b433f4c-d301-428e-8981-15613e6cf8cd",
+  "requirement_clause": "CRA-044.A",
+  "state_claimed": "VERIFIED",
+  "profile": "P0",
+  "source_commit": "77f3985a7f7407be0509ec04ea4cceaa0313ee6e",
+  "source_tree_dirty": false,
+  "source_fingerprint": "8acc4c5d95fcd6a484540b576f5f237880389d183af0efb2f906ab0cbd8f28ff",
+  "source_unchanged_during_run": true,
+  "artifact_digest": "c0dc68fe08adc165f1198875e028f57bdd75edb22a2e9f31080c321ee8659a21",
+  "artifact_path": "dist/eoip-1.0.0rc1-py3-none-any.whl",
+  "artifact_mtime": "2026-10-20T07:37:58.966120+00:00",
+  "runtime": {
+    "os": "Linux-6.12.94+-x86_64-with-glibc2.41",
+    "python_version": "3.11.17",
+    "backend": "memory-harness",
+    "engine": "",
+    "engine_version": ""
+  },
+  "fixture": {
+    "id": ""
+  },
+  "execution": {
+    "command": [
+      "/workspace/.venvs/eiop-work/bin/python",
+      "-m",
+      "pytest",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "-o",
+      "addopts=",
+      "--timeout=300",
+      "tests/neural/test_antistub.py::test_hash_stub_fails_all_four_anti_stub_probes",
+      "tests/neural/test_antistub.py::test_real_gnn_passes_all_four_anti_stub_probes",
+      "tests/neural/test_learned_graph_intelligence.py::test_cra_044_a_acceptance_gate",
+      "--junitxml",
+      ".audit-scratch/evidence/CRA-044.A/run-20261020T074136Z-8602a6b4/junit.xml"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-20T07:41:36.698962+00:00",
+    "completed_at": "2026-10-20T07:41:41.491473+00:00"
+  },
+  "results": {
+    "tests_total": 3,
+    "tests_failed": 0,
+    "tests_errors": 0,
+    "tests_skipped": 0,
+    "tests_xfailed": 0,
+    "tests_passed": 3
+  },
+  "evidence_files": [
+    {
+      "path": ".audit-scratch/evidence/CRA-044.A/run-20261020T074136Z-8602a6b4/junit.xml",
+      "sha256": "221a15ac1129ca151a4f0f1edbae8c5e49436f536e4cbb7fc1adee19a0836bf6"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-044.A/run-20261020T074136Z-8602a6b4/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-044.A/run-20261020T074136Z-8602a6b4/stdout.txt",
+      "sha256": "fc066dce65036837fa62283b168481735c1b9d00127f1902402e54cf3ef2ab17"
+    }
+  ],
+  "verified_invariants": [],
+  "negative_cases": [],
+  "evidence_categories": {},
+  "limitations": [],
+  "producer": "antigravity-agent",
+  "reviewer": null,
+  "review_signature": null
+}

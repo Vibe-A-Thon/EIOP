@@ -86,7 +86,7 @@ def main() -> int:
     tests = clause_test_map(Path("."))
     files = clause_file_map(Path("."))
     todo = [item for item in ledger["items"]
-            if (args.only and item["id"] in args.only and item.get("state") in ("FAILED", "BLOCKED", "IMPLEMENTED"))
+            if (args.only and item["id"] in args.only and item.get("state") in ("FAILED", "BLOCKED", "IMPLEMENTED", "VERIFIED"))
             or (item.get("state") in ("VERIFIED", "ACCEPTED") and item.get("receipts")
                 and not all(_valid(ref) for ref in item["receipts"])
                 and (not args.only or item["id"] in args.only))]
