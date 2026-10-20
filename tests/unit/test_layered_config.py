@@ -490,3 +490,20 @@ def test_router_end_to_end() -> None:
         },
     )
     assert r.status_code == 422
+
+
+@pytest.mark.req("SR-CFG-005")
+def test_feature_flags_never_bypass_policy() -> None:
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        FeatureFlag(key="bypass", enabled=True, never_bypasses_policy=False)
+    flags = FeatureFlagStore(_store())
+    flags.register(FeatureFlag(key="bulk-export", enabled=True, owner="team-a"))
+    assert flags.is_active("bulk-export", policy_allows=True) is True
+    assert flags.is_active("bulk-export", policy_allows=False) is False  # enabled flag cannot widen a deny
+    flags.set("bulk-export", False, actor="ops")
+    assert flags.is_active("bulk-export", policy_allows=True) is False  # but can narrow an allow
+    assert flags.is_active("unknown-flag", policy_allows=True) is False
+    with pytest.raises(TypeError):
+        flags.is_active("bulk-export", policy_allows="yes")  # type: ignore[arg-type]
