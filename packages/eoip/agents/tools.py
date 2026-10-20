@@ -7,6 +7,7 @@ from hashlib import sha256
 from time import monotonic
 from typing import Any
 
+from eoip.contracts.tenant_scope import tenant_scope
 from eoip.contracts.tool import ToolContract, ToolRequest, ToolResult
 from eoip.graph.store import GraphStore
 from eoip.graph.traversal import GraphTraversal
@@ -63,7 +64,8 @@ class ToolRegistry:
                     duration_ms=int((monotonic() - started) * 1000),
                 )
         try:
-            result, evidence = self._handlers[request.tool_name](request.arguments)
+            with tenant_scope(request.tenant_id):
+                result, evidence = self._handlers[request.tool_name](request.arguments)
             return ToolResult(
                 tool_call_id=request.tool_call_id,
                 status="SUCCEEDED",

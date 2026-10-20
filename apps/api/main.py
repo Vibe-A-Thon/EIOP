@@ -1487,6 +1487,7 @@ def create_app():
             context_refs=payload.context_refs,
             budgets=payload.budgets,
             actor_id=principal.id,
+            tenant_id=tenant_label(principal),
             correlation_id=request.state.correlation_id,
             dry_run=payload.dry_run,
             metadata={
