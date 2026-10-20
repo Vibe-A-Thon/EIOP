@@ -244,7 +244,7 @@ class ExtendedState:
 
         self.tenant_layers = TenantLayers(
             self.tenancy_service.isolation, root=data_dir / "tenants",
-            master_key=load_or_create_master_key(data_dir / "state" / "tenant-master.key"))
+            master_key=lambda: load_or_create_master_key(data_dir / "state" / "tenant-master.key"))
 
         # Licensing (SR-DEP-007, SR-COM-001, SR-TEN-009): checker from a signed
         # license at EOIP_LICENSE_PATH when present; otherwise a permissive

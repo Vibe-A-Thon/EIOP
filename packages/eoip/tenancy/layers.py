@@ -52,12 +52,14 @@ class IsolationViolation(PermissionError):
 
 
 class TenantLayers:
-    def __init__(self, registry: IsolationRegistry, *, root: Path, master_key: bytes) -> None:
-        if len(master_key) < 32:
+    def __init__(self, registry: IsolationRegistry, *, root: Path, master_key: bytes | Callable[[], bytes]) -> None:
+        if isinstance(master_key, bytes) and len(master_key) < 32:
             raise ValueError("master key must be at least 32 bytes")
         self.registry = registry
         self.root = Path(root)
-        self._master = master_key
+        # bytes, or a zero-argument callable resolved on first KMS use (no key file at app start-up)
+        self._master_src = master_key
+        self._master_cached: bytes | None = master_key if isinstance(master_key, bytes) else None
         self.vectors: dict[str, dict[str, tuple[list[float], dict]]] = defaultdict(dict)
         self.search_indexes: dict[str, Any] = {}
         self.search_docs: dict[str, dict[str, tuple[str, dict]]] = {}
@@ -67,6 +69,15 @@ class TenantLayers:
         self.cache: MutableMapping[str, Any] = {}
         self.log_streams: dict[str, deque] = defaultdict(lambda: deque(maxlen=10_000))
         self.schemas: dict[str, sqlite3.Connection] = {}
+
+    @property
+    def _master(self) -> bytes:
+        if self._master_cached is None:
+            key = self._master_src()
+            if len(key) < 32:
+                raise ValueError("tenant master key must be at least 32 bytes")
+            self._master_cached = key
+        return self._master_cached
 
     def for_tenant(self, tenant_id: str) -> TenantHandle:
         return TenantHandle(self, tenant_id, self.registry.get(tenant_id))

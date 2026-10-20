@@ -172,3 +172,23 @@ def test_semantic_query_cache_is_namespaced_per_tenant():
     assert cache.get(plan, store) == {"rows": ["acme-secret"]}
     assert cache.get({**plan, "tenant_id": "bolt"}, store) is None
     assert cache.get({k: v for k, v in plan.items() if k != "tenant_id"}, store) is None
+
+
+def test_master_key_is_resolved_lazily_and_validated(tmp_path):
+    from eoip.tenancy.layers import load_or_create_master_key
+
+    reg = IsolationRegistry()
+    reg.register(placement("acme", IsolationModel.SILO))
+    calls = []
+    key_file = tmp_path / "state" / "tenant-master.key"
+
+    def source():
+        calls.append(1)
+        return load_or_create_master_key(key_file)
+
+    tl = TenantLayers(reg, root=tmp_path / "t", master_key=source)
+    assert calls == [] and not key_file.exists()  # app start-up writes nothing (restore needs empty data)
+    h = tl.for_tenant("acme")
+    assert h.decrypt(h.encrypt(b"x")) == b"x" and calls == [1] and key_file.stat().st_size == 32
+    with pytest.raises(ValueError):
+        TenantLayers(reg, root=tmp_path, master_key=lambda: b"short").for_tenant("acme").encrypt(b"x")
