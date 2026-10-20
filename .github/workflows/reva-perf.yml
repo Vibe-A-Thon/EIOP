@@ -29,6 +29,7 @@ jobs:
         env:
           EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data
           REVA_PERF_RESULTS: test-results/reva-perf.json
+          REVA_PERF_ENFORCE: "1"
         run: python scripts/reva/run_lane.py perf --min-passed 5 -- tests/reva/perf --timeout=300 -s
       - name: Results
         if: always()

@@ -41,6 +41,9 @@ def record(name: str, value: float, budget: float, unit: str) -> None:
 
 @pytest.fixture
 def perf_kernel(tmp_path):
+    if os.environ.get("REVA_PERF_ENFORCE") != "1":
+        pytest.skip("NFR budgets are enforced only in the reva-perf lane (REVA_PERF_ENFORCE=1) on its "
+                    "reference runner; shared Windows/regression runners are not reference hardware")
     if not has_predicate("reva.pred.perf_metric"):
         register_predicate(name="reva.pred.perf_metric", statement_model=PerfMetric, description="perf metric")
     store = RevaStore(str(tmp_path / "perf.db"))

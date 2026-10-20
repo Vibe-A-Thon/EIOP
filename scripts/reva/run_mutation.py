@@ -61,7 +61,7 @@ def make_scratch() -> Path:
 
 def run_tests(scratch: Path, tests: list[str], timeout: int) -> str:
     env = dict(os.environ, PYTHONPATH=f"{scratch}{os.pathsep}{scratch / 'packages'}{os.pathsep}{scratch / 'tests'}",
-               PYTHONDONTWRITEBYTECODE="1", REVA_PERF_RESULTS=str(scratch / "perf.json"))
+               PYTHONDONTWRITEBYTECODE="1", REVA_PERF_RESULTS=str(scratch / "perf.json"), REVA_PERF_ENFORCE="1")
     cmd = [sys.executable, "-m", "pytest", "-x", "-q", "-p", "no:cacheprovider", "-o", "addopts=",
            "--rootdir", str(scratch), *tests]
     try:
