@@ -196,7 +196,11 @@ case "$ACTION" in
         COMPOSE_BASE_ARGS="--env-file $ENV_FILE -p $RUN_ID -f $PROJECT_ROOT/deploy/docker-compose.dlq-acceptance.yml"
         run_compose build dlq-api acceptance
         run_compose up -d --wait --wait-timeout 420 dlq-api dlq-worker dlq-upstream dlq-confluence
-        run_compose run --rm --no-deps acceptance || true
+        mkdir -p "$PROJECT_ROOT/test-results"
+        run_compose run --name "$RUN_ID-acceptance" --no-deps acceptance || true
+        # FT-X11: copy the report out of the named results volume (no host bind mount / chmod 777).
+        $CLI_CMD cp "$RUN_ID-acceptance:/results/." "$PROJECT_ROOT/test-results/" || true
+        $CLI_CMD rm -f "$RUN_ID-acceptance" >/dev/null 2>&1 || true
         echo "DLQ acceptance evidence: test-results/$RUN_ID.json"
         run_compose logs --tail 80 schema-init dlq-api dlq-worker dlq-upstream dlq-confluence
         run_compose down --volumes

@@ -31,5 +31,8 @@ FROM runtime AS test
 USER root
 RUN pip install --no-cache-dir -c requirements.lock '.[test]'
 COPY tests ./tests
+# FT-X11: acceptance reports go to a named volume at /results; a fresh named volume
+# inherits this owner, so uid 10001 can write without a world-writable bind mount.
+RUN mkdir -p /results && chown eoip:eoip /results
 USER eoip
 CMD ["python", "-m", "pytest", "-q"]

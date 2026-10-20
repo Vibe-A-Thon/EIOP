@@ -333,7 +333,14 @@ switch ($Action) {
             Invoke-Compose -CommandArguments @('build', 'dlq-api', 'acceptance')
             Invoke-Compose -CommandArguments @('up', '-d', '--wait', '--wait-timeout', '420',
                 'dlq-api', 'dlq-worker', 'dlq-upstream', 'dlq-confluence')
-            Invoke-Compose -CommandArguments @('run', '--rm', '--no-deps', 'acceptance')
+            $resultsDir = Join-Path $projectRoot 'test-results'
+            New-Item -ItemType Directory -Force -Path $resultsDir | Out-Null
+            try { Invoke-Compose -CommandArguments @('run', '--name', "$runId-acceptance", '--no-deps', 'acceptance') }
+            finally {
+                # FT-X11: copy the report out of the named results volume (no host bind mount).
+                Invoke-Runtime -CommandArguments @('cp', "$runId-acceptance:/results/.", $resultsDir)
+                Invoke-Runtime -CommandArguments @('rm', '-f', "$runId-acceptance")
+            }
             Write-Host "DLQ acceptance evidence: test-results\$runId.json"
         }
         finally {
