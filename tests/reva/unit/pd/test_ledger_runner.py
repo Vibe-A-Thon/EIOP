@@ -7,12 +7,15 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 from reva.kernel.authority import Depth
 from reva.pd.bindings import Binding, OwnerRef, VerifierSpec
 from reva.pd.obligations import Obligation
 from reva.pd.runs import ParsedTest, RunRecord
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[4]
+pytestmark = pytest.mark.reva_depth("unit")
 
 
 def _load(name: str):
