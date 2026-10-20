@@ -112,7 +112,7 @@ if [ ! -f "$ENV_FILE" ]; then
         exit 1
     fi
     TOKEN=$(openssl rand -hex 32)
-    PASSWORD=$(openssl rand -hex 32)
+    PASSWORD=$(openssl rand -hex 24)  # FT-X04: Hubble VARCHAR(48) -> 48 hex chars, 192-bit
     printf "EOIP_API_TOKEN=%s\nHUGEGRAPH_PASSWORD=%s\nEOIP_LOAD_DEMO=true\n" "$TOKEN" "$PASSWORD" > "$ENV_FILE"
     echo "Created deploy/.env with local credentials. Paste EOIP_API_TOKEN into the web login field."
 fi

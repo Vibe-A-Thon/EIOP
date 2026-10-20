@@ -178,19 +178,23 @@ if (-not $composeCmd) {
     throw "Compose tool not found for runtime '$rt'. Install ${rt} compose plugin or a standalone compose tool."
 }
 
+function New-RandomHex {
+    param([int]$ByteCount)
+    $bytes = New-Object byte[] $ByteCount
+    $random = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    try { $random.GetBytes($bytes) } finally { $random.Dispose() }
+    return [BitConverter]::ToString($bytes).Replace('-', '').ToLowerInvariant()
+}
+
 # ─── Environment / .env ─────────────────────────────────────────────────
 $envFile = Join-Path $projectRoot 'deploy\.env'
 if (-not (Test-Path -LiteralPath $envFile)) {
     if ($Action -ne 'up') {
         throw "Run scripts/container.ps1 up once to initialize the local configuration."
     }
-    $bytes = New-Object byte[] 32
-    $random = [System.Security.Cryptography.RandomNumberGenerator]::Create()
-    $random.GetBytes($bytes)
-    $token = [BitConverter]::ToString($bytes).Replace('-', '').ToLowerInvariant()
-    $random.GetBytes($bytes)
-    $password = [BitConverter]::ToString($bytes).Replace('-', '').ToLowerInvariant()
-    $random.Dispose()
+    $token = New-RandomHex -ByteCount 32     # 64 hex chars (256-bit API token)
+    # FT-X04: Hubble stores the graph password in VARCHAR(48) -> 24 bytes = 48 hex chars (192-bit).
+    $password = New-RandomHex -ByteCount 24
     $config = "EOIP_API_TOKEN=$token`nHUGEGRAPH_PASSWORD=$password`nEOIP_LOAD_DEMO=true`n"
     [System.IO.File]::WriteAllText($envFile, $config, (New-Object System.Text.UTF8Encoding($false)))
     Write-Host 'Created deploy/.env with local credentials. Paste EOIP_API_TOKEN into the web login field.'
@@ -257,13 +261,20 @@ switch ($Action) {
         if ([regex]::Matches($config, '(?m)^HUGEGRAPH_PASSWORD=[^\r\n]*').Count -ne 1) {
             throw 'deploy/.env must contain exactly one HUGEGRAPH_PASSWORD entry.'
         }
+        # FT-SEC-HUBBLE: rotate to a fresh random password (never admin/admin). The value is
+        # passed by environment-variable NAME only (not on the command line) and never printed.
+        $newPassword = New-RandomHex -ByteCount 24
         Invoke-Compose -CommandArguments @('build', 'schema-init', 'hubble')
-        Invoke-Compose -CommandArguments @('run', '--rm', '--no-deps', 'schema-init',
-            'python', '-m', 'scripts.setup_hubble', '--rotate-local-admin')
-        $config = [regex]::Replace($config, '(?m)^HUGEGRAPH_PASSWORD=[^\r\n]*', 'HUGEGRAPH_PASSWORD=admin')
+        $env:EOIP_HUGEGRAPH_NEW_PASSWORD = $newPassword
+        try {
+            Invoke-Compose -CommandArguments @('run', '--rm', '--no-deps', '-e', 'EOIP_HUGEGRAPH_NEW_PASSWORD', 'schema-init',
+                'python', '-m', 'scripts.setup_hubble', '--rotate-local-admin')
+        }
+        finally { Remove-Item Env:EOIP_HUGEGRAPH_NEW_PASSWORD -ErrorAction SilentlyContinue }
+        $config = [regex]::Replace($config, '(?m)^HUGEGRAPH_PASSWORD=[^\r\n]*', "HUGEGRAPH_PASSWORD=$newPassword")
         [System.IO.File]::WriteAllText($envFile, $config, (New-Object System.Text.UTF8Encoding($false)))
         Invoke-Compose -CommandArguments @('up', '-d', '--force-recreate', '--wait', '--wait-timeout', '420')
-        Write-Host 'Local graph connection: admin/admin. Hubble: http://localhost:8088. Never expose this demo account to a public network.'
+        Write-Host 'Graph admin password rotated to a new random value and saved in deploy/.env (HUGEGRAPH_PASSWORD; not printed). Hubble: http://localhost:8088.'
     }
     'demo-data' {
         Invoke-Compose -CommandArguments @('up', '--build', '-d', '--wait', '--wait-timeout', '420')
