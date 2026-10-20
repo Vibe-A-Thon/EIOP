@@ -344,13 +344,18 @@ class EgressGateway:
         draft["response_hash"] = hash_bytes(raw)
         self._record_budget(now, draft["bytes_out"], estimated_cost)
 
-        # 8. local re-identification + outbound-style scan before display (SR-LLM-015)
-        display = self._reidentify(response)
+        # 8. scan the model response before display (SR-LLM-015): sensitive values the model
+        # introduced are redacted, then vault tokens are re-identified locally.
+        findings_in: list[str] = []
+        display = self._reidentify(self._scan_response(response, findings_in))
+        if findings_in:
+            self.audit({"event": "egress.response_redacted", "endpoint_id": endpoint_id,
+                        "user_id": user_id, "findings": sorted(set(findings_in))})
         manifest = seal()
         self.audit({"event": "egress.executed", "endpoint_id": endpoint_id,
                     "user_id": user_id, "manifest_id": manifest.manifest_id,
                     "level": manifest.level, "bytes_out": manifest.bytes_out})
-        return {"manifest": manifest, "response": display}
+        return {"manifest": manifest, "response": display, "response_findings": sorted(set(findings_in))}
 
     def report(self, since: float | None = None) -> dict:
         """Exportable 'what left the building' report (SR-LLM-013)."""
@@ -368,6 +373,28 @@ class EgressGateway:
         if endpoint is None:
             raise KeyError(f"unknown endpoint {endpoint_id}")
         return endpoint
+
+    def _scan_response(self, response: Any, found: list[str]) -> Any:
+        if isinstance(response, str):
+            hits = [f for f in self.scanner.scan_text(response)
+                    if not (f.matched.startswith("tok_") and f.matched in self.vault._entries)]
+            if not hits:
+                return response
+            out, last = [], 0
+            for f in sorted(hits, key=lambda f: f.start):
+                if f.start < last:
+                    continue
+                out.append(response[last:f.start])
+                out.append(f"[REDACTED:{f.detector}]")
+                last = f.end
+                found.append(f.detector)
+            out.append(response[last:])
+            return "".join(out)
+        if isinstance(response, list):
+            return [self._scan_response(item, found) for item in response]
+        if isinstance(response, dict):
+            return {k: self._scan_response(v, found) for k, v in response.items()}
+        return response
 
     def _reidentify(self, response: Any) -> Any:
         if isinstance(response, str):

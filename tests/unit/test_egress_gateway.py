@@ -494,6 +494,37 @@ class TestVault:
         assert result["response"]["echo"]["name"] == "Alice"
         assert token not in str(result["response"])
 
+    @pytest.mark.req("SR-LLM-015")
+    def test_model_response_is_scanned_and_redacted_before_display(self):
+        events = []
+        leaked = "contact leak@other.example, ssn 123-45-6789"
+
+        def transport(payload, endpoint):
+            return {"echo": payload, "text": leaked}
+
+        gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S4)], transport=transport,
+                          audit=events.append)
+        enable(gw)
+        result = gw.call(endpoint_id="ext-eu", task="summarize", payload={"name": "Alice"},
+                         user_id="u1", role="analyst", data_classes=["D2"])
+        assert result["response"]["echo"]["name"] == "Alice"  # vault tokens are not treated as leaks
+        assert "leak@other.example" not in str(result["response"])
+        assert "123-45-6789" not in str(result["response"])
+        assert "[REDACTED:EMAIL]" in result["response"]["text"]
+        assert result["response_findings"] == ["EMAIL", "SSN"]
+        assert any(e["event"] == "egress.response_redacted" for e in events)
+
+    @pytest.mark.req("SR-LLM-015")
+    def test_vault_keys_and_tokens_are_per_tenant(self):
+        from eoip.egress.vault import TokenVault
+
+        a, b = TokenVault("tenant-a", secret=b"same-local-secret"), TokenVault("tenant-b", secret=b"same-local-secret")
+        assert a._key != b._key  # PBKDF2 salted with the tenant id
+        token = a.tokenize("Alice", field="name")
+        assert a.detokenize(token) == "Alice"
+        assert b.reidentify_text(f"hello {token}") == f"hello {token}"  # other tenant cannot re-identify
+        assert "Alice" not in str(a.export_index())  # plaintext never leaves the vault
+
 
 # ---------------------------------------------------------------------------
 # SR-LLM-018/019/020 — kinds, fallback notice, region pinning
