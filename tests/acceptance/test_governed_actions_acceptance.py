@@ -2,6 +2,7 @@
 
 import time
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from eoip.actions.contracts import (
@@ -282,7 +283,10 @@ def test_cra_027_8_mandatory_idempotency_key_and_expiry():
 # CRA-027.9: Canonical routes and OCA aliases
 # ---------------------------------------------------------------------------
 def test_cra_027_9_canonical_routes_and_oca_aliases():
-    client = TestClient(router)
+    # FT-D15: mount the router on an app; current FastAPI needs the app middleware stack.
+    app = FastAPI()
+    app.include_router(router)
+    client = TestClient(app)
 
     # Propose via canonical route
     res_prop = client.post(
