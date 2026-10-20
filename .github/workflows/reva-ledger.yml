@@ -1,14 +1,22 @@
-name: reva-ledger
-on: [push, pull_request]
+name: reva-ledger (NOT IMPLEMENTED)
+
+# FT-F04: PLACEHOLDER. This lane used to run `echo "Running reva-ledger"` on every push,
+# which reported green without testing anything. Reason it cannot run yet:
+# scripts/reva/build_reva_ledger.py synthesizes passing pytest run records (exit_code=0) without executing tests and marks all obligations closed, so running it would be self-certification, not verification.
+# It now runs only on manual dispatch and FAILS, so it can never be read as evidence.
+# Owner decision: implement this lane or delete it (scripts/reva/check_ci_lanes.py
+# currently requires the file to exist).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
       - name: Proof-of-Done ledger generation and verification
-        run: echo "Running reva-ledger"
+        run: |
+          echo "::error::reva-ledger is not implemented: scripts/reva/build_reva_ledger.py synthesizes passing pytest run records (exit_code=0) without executing tests and marks all obligations closed, so running it would be self-certification, not verification."
+          exit 1

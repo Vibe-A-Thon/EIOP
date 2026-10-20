@@ -3,7 +3,7 @@ name: Validation evidence
 on:
   pull_request:
   push:
-    branches: [main, dev_local, "feature/audit-*"]
+    branches: [main, dev_local, eoip-remediation-geeky, "feature/audit-*"]
   workflow_dispatch:
 
 permissions:
@@ -12,7 +12,8 @@ permissions:
 jobs:
   regression:
     runs-on: windows-latest
-    timeout-minutes: 30
+    # FT-F04: the full suite needs more than 30 minutes on windows-latest.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,8 +26,10 @@ jobs:
           node-version: "22"
       - name: Check client demo orchestration
         run: node --test demo\autodemo\tests\*.test.js apps\vscode-extension\test\demo-driver.test.js
-      - name: Install existing development dependencies
-        run: python -m pip install -e ".[dev,codeparse,fileparse]"
+      # FT-F04 / FT-F06: the documented install. The old extras set lacked numerics
+      # (numpy/scipy/scikit-learn), reports and semantic, so collection failed.
+      - name: Install test dependencies
+        run: python -m pip install -c requirements.lock -e ".[test]"
       - name: Run behavioral verification merge gate (KGR-G-011)
         shell: pwsh
         run: |
@@ -40,12 +43,15 @@ jobs:
           scripts\documentation_audit.py tests\unit\test_validation_source_binding.py
           tests\unit\test_documentation_audit.py
       - name: Run source-bound regression
+        env:
+          # Tests needing an owner decision (FT-X10) are deselected and listed.
+          EOIP_TEST_QUARANTINE_FILE: tests/ci-quarantine.txt
         run: >-
           python -X utf8 -m scripts.validate_with_evidence
           --project-root .
           --output test-results\ci-source-bound-validation.json
           --artifact test-results\ci-regression.xml
-          -- python -X utf8 -m pytest -q
+          -- python -X utf8 -m pytest -q --timeout=300
           --junitxml=test-results\ci-regression.xml
       - name: Retain validation receipts
         if: always()
@@ -63,8 +69,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install existing development dependencies
-        run: python -m pip install -e ".[dev,codeparse,fileparse]"
+      # FT-F04 / FT-F06: the documented install. The old extras set lacked numerics
+      # (numpy/scipy/scikit-learn), reports and semantic, so collection failed.
+      - name: Install test dependencies
+        run: python -m pip install -c requirements.lock -e ".[test]"
       - name: Run KG CI/CD pipeline (GAP-KGCI-001..004, release gates §16)
         run: >-
           python -X utf8 -m packages.eoip.ci

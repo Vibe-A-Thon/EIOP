@@ -1,14 +1,22 @@
-name: reva-perf
-on: [push, pull_request]
+name: reva-perf (NOT IMPLEMENTED)
+
+# FT-F04: PLACEHOLDER. This lane used to run `echo "Running reva-perf"` on every push,
+# which reported green without testing anything. Reason it cannot run yet:
+# no reva performance/NFR benchmark suite exists.
+# It now runs only on manual dispatch and FAILS, so it can never be read as evidence.
+# Owner decision: implement this lane or delete it (scripts/reva/check_ci_lanes.py
+# currently requires the file to exist).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
       - name: Performance and NFR benchmarks
-        run: echo "Running reva-perf"
+        run: |
+          echo "::error::reva-perf is not implemented: no reva performance/NFR benchmark suite exists."
+          exit 1

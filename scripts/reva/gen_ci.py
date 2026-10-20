@@ -1,3 +1,17 @@
+"""Historical generator for the reva-* CI lane workflows.
+
+FT-F04: this generator wrote echo-only placeholder workflows that reported green
+without running anything. The lane files under .github/workflows are now
+maintained by hand (real suites, or clearly marked NOT IMPLEMENTED placeholders),
+so the generator refuses to overwrite them unless --force is given.
+"""
+import sys
+
+if "--force" not in sys.argv[1:]:
+    print("refusing to regenerate echo-only reva-* workflows (FT-F04); pass --force to override",
+          file=sys.stderr)
+    raise SystemExit(2)
+
 from pathlib import Path
 
 lanes = [

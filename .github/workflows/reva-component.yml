@@ -1,14 +1,22 @@
-name: reva-component
-on: [push, pull_request]
+name: reva-component (NOT IMPLEMENTED)
+
+# FT-F04: PLACEHOLDER. This lane used to run `echo "Running reva-component"` on every push,
+# which reported green without testing anything. Reason it cannot run yet:
+# tests/reva/component does not exist.
+# It now runs only on manual dispatch and FAILS, so it can never be read as evidence.
+# Owner decision: implement this lane or delete it (scripts/reva/check_ci_lanes.py
+# currently requires the file to exist).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
       - name: Component test suite under tests/reva/component
-        run: echo "Running reva-component"
+        run: |
+          echo "::error::reva-component is not implemented: tests/reva/component does not exist."
+          exit 1

@@ -1,14 +1,22 @@
-name: reva-mutation
-on: [push, pull_request]
+name: reva-mutation (NOT IMPLEMENTED)
+
+# FT-F04: PLACEHOLDER. This lane used to run `echo "Running reva-mutation"` on every push,
+# which reported green without testing anything. Reason it cannot run yet:
+# no mutation-testing tooling is configured.
+# It now runs only on manual dispatch and FAILS, so it can never be read as evidence.
+# Owner decision: implement this lane or delete it (scripts/reva/check_ci_lanes.py
+# currently requires the file to exist).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
       - name: Mutation testing probe over reva modules
-        run: echo "Running reva-mutation"
+        run: |
+          echo "::error::reva-mutation is not implemented: no mutation-testing tooling is configured."
+          exit 1
