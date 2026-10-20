@@ -250,6 +250,17 @@ class TestDryRun:
 
 class TestManifest:
     @pytest.mark.req("SR-LLM-013")
+    def test_manifest_records_endpoint_fields_and_vault_tokens_at_s4(self):
+        gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S4)])
+        enable(gw)
+        m = gw.call(endpoint_id="ext-eu", task="summarize", payload={"customer": "Jane Doe", "note": "hi"},
+                    user_id="u1", role="analyst", data_classes=["D2"])["manifest"]
+        assert m.level == 4 and m.endpoint_id == "ext-eu" and m.endpoint_region == "EU"
+        assert m.fields == ["customer", "note"]
+        assert len(m.tokens) == 2 and all(t.startswith("tok_") for t in m.tokens)
+        assert "Jane Doe" not in str(m.tokens)
+
+    @pytest.mark.req("SR-LLM-013")
     def test_recorded_manifest_is_immutable(self):
         gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S7)])
         enable(gw)
