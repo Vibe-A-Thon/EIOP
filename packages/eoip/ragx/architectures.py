@@ -688,7 +688,7 @@ class TemporalRAG(RagxArchitecture):
 
     @staticmethod
     def _prop_valid(props: dict[str, Any], valid_at: str | None, known_at: str | None) -> bool:
-        if known_at is not None and props.get("observed_at", " ") > known_at:
+        if known_at is not None and props.get("observed_at", "\x00") > known_at:
             return False
         if valid_at is not None:
             vf = props.get("valid_from")
