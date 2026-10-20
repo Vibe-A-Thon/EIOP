@@ -19,7 +19,6 @@ jobs:
     timeout-minutes: 20
     env:
       REVA_FIXTURE_CACHE: ${{ github.workspace }}/.reva-fixtures
-      EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -33,6 +32,8 @@ jobs:
       - name: Build fixtures again and require byte-identical output
         run: python scripts/reva/build_fixtures.py --out "$REVA_FIXTURE_CACHE" --check-against "${{ runner.temp }}/fixtures-a"
       - name: Extractor checks against the fixtures
+        env:
+          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data
         run: python scripts/reva/run_lane.py fixtures --min-passed 18 -- tests/reva -m reva_fixtures --timeout=120
       - uses: actions/upload-artifact@v4
         if: always()
