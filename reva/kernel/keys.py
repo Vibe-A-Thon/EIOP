@@ -6,7 +6,7 @@ import base64
 import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Optional, Tuple
+from typing import Any, Optional, Tuple
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519

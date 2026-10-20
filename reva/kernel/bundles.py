@@ -6,7 +6,7 @@ import io
 import json
 import zipfile
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 from pydantic import BaseModel, Field
 
 from reva.core.digest import sha256_canonical, sha256_hex
