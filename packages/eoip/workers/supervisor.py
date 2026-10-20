@@ -87,7 +87,14 @@ def kill_process_tree(pid: int) -> None:
         else:
             try:
                 pgid = os.getpgid(pid)
-                os.killpg(pgid, signal.SIGKILL)
+                if pgid == os.getpgrp():
+                    # FT-F03: the worker shares OUR process group (it was not started in its
+                    # own session); killpg would SIGKILL the host API/worker and its siblings.
+                    logger.warning("worker pid %s shares the host process group %s; killing pid only", pid, pgid)
+                    os.kill(pid, signal.SIGKILL)
+                else:
+                    logger.info("killing worker process group pgid=%s (pid=%s)", pgid, pid)
+                    os.killpg(pgid, signal.SIGKILL)
             except (ProcessLookupError, PermissionError):
                 os.kill(pid, signal.SIGKILL)
     except Exception as e:
@@ -195,6 +202,9 @@ class WorkerSupervisor:
                 env=env,
                 text=True,
                 creationflags=creationflags,
+                # FT-F03: own session/process group on POSIX so kill_process_tree can
+                # killpg the whole worker tree without touching the host.
+                start_new_session=(sys.platform != "win32"),
             )
 
             # Watchdog timer to kill process tree within <= 1s of limit breach

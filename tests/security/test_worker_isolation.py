@@ -188,3 +188,51 @@ def test_temp_directory_cleaned_after_execution(supervisor):
     temp_root = Path(os.environ.get("TEMP", "/tmp"))
     matching = list(temp_root.glob(f"eoip_worker_{req.task_id}_*"))
     assert len(matching) == 0, f"Found orphan temp dirs: {matching}"
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="POSIX process groups")
+def test_watchdog_does_not_kill_parent(supervisor, monkeypatch):
+    """FT-F03: workers run in their own session, so the watchdog's killpg spares the host."""
+    import subprocess
+
+    from eoip.workers import supervisor as sup_mod
+
+    seen = {}
+    real_popen = subprocess.Popen
+
+    def recording_popen(*args, **kwargs):
+        proc = real_popen(*args, **kwargs)
+        seen["pgid"] = os.getpgid(proc.pid)
+        seen["start_new_session"] = kwargs.get("start_new_session")
+        return proc
+
+    monkeypatch.setattr(sup_mod.subprocess, "Popen", recording_popen)
+    req = WorkerExecutionRequest(
+        task_id="test_parent_survives",
+        resource_class=ResourceClass.STANDARD.value,
+        sandbox_script="import time\nwhile True:\n    time.sleep(0.05)\n",
+        timeout_seconds=0.5,
+    )
+    resp = supervisor.execute_task(req)
+    assert resp.outcome == WorkerOutcome.TIMEOUT.value
+    assert seen["start_new_session"] is True
+    assert seen["pgid"] != os.getpgrp()
+    os.kill(os.getpid(), 0)  # we are still alive
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="POSIX process groups")
+def test_kill_process_tree_refuses_to_signal_own_process_group():
+    """FT-F03 guard: a child sharing our process group is killed by pid, never by killpg."""
+    import subprocess
+
+    from eoip.workers.supervisor import kill_process_tree
+
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+    try:
+        assert os.getpgid(child.pid) == os.getpgrp()
+        kill_process_tree(child.pid)
+        assert child.wait(timeout=5) != 0
+    finally:
+        if child.poll() is None:
+            child.kill()
+    os.kill(os.getpid(), 0)  # we are still alive
