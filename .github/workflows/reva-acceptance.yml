@@ -1,12 +1,13 @@
-name: reva-acceptance (NOT IMPLEMENTED)
+name: reva-acceptance
 
-# FT-F04: PLACEHOLDER. This lane used to run `echo "Running reva-acceptance"` on every push,
-# which reported green without testing anything. Reason it cannot run yet:
-# no RJ-01..RJ-12 acceptance suite exists.
-# It now runs only on manual dispatch and FAILS, so it can never be read as evidence.
-# Owner decision: implement this lane or delete it (scripts/reva/check_ci_lanes.py
-# currently requires the file to exist).
+# FT-F04: real lane (was a NOT IMPLEMENTED placeholder). Runs the REVA acceptance journeys
+# that are runnable at API level today (RJ-01 tamper evidence, RJ-02 contradiction governance,
+# RJ-05 gap workflow, RJ-06 proof-of-done). Journeys whose prerequisites do not exist yet are
+# reported as named skips; the lane fails if any journey fails or fewer than 4 pass.
 on:
+  push:
+    branches: [main, develop, dev_local, eoip-remediation-geeky]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,8 +16,21 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - name: Acceptance journeys RJ-01..RJ-12
-        run: |
-          echo "::error::reva-acceptance is not implemented: no RJ-01..RJ-12 acceptance suite exists."
-          exit 1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Acceptance journeys under tests/reva/acceptance
+        env:
+          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data
+        run: python scripts/reva/run_lane.py acceptance --min-passed 4 -- tests/reva/acceptance --timeout=120 -rs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reva-acceptance-results
+          path: test-results/
