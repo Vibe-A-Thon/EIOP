@@ -27,3 +27,17 @@ def test_repository_clause_tests_cover_the_ledger_clauses():
     mapping = clause_test_map(Path(__file__).resolve().parents[2])
     assert "CRA-001.9" in mapping
     assert all(ids for ids in mapping.values())
+
+
+def test_file_fallback_uses_exact_citations_only(tmp_path):
+    from clause_tests import clause_file_map
+
+    tests = tmp_path / "tests"
+    tests.mkdir()
+    (tests / "test_m.py").write_text('"""Covers (CRA-018.4, CRA-018.8) and CRA-031.1 - CRA-031.7."""\n')
+    assert clause_file_map(tmp_path) == {
+        "CRA-018.4": ["tests/test_m.py"],
+        "CRA-018.8": ["tests/test_m.py"],
+        "CRA-031.1": ["tests/test_m.py"],
+        "CRA-031.7": ["tests/test_m.py"],
+    }

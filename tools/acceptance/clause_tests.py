@@ -45,3 +45,19 @@ def clause_test_map(root: Path, tests_dir: str = "tests") -> dict[str, list[str]
                     for clause in clauses:
                         mapping[clause].add(node_id)
     return {clause: sorted(ids) for clause, ids in mapping.items()}
+
+
+_ANY = re.compile(r"\bCRA-(\d{3})\.([0-9]+|A)\b")
+
+
+def clause_file_map(root: Path, tests_dir: str = "tests") -> dict[str, list[str]]:
+    """Fallback: test files that cite a clause ID anywhere (module docstring or section comment)."""
+    mapping: dict[str, set[str]] = defaultdict(set)
+    for path in sorted((root / tests_dir).rglob("test_*.py")):
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        for match in _ANY.findall(text):
+            mapping[_clause(*match)].add(path.relative_to(root).as_posix())
+    return {clause: sorted(files) for clause, files in mapping.items()}
