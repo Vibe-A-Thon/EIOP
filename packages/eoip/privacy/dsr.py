@@ -87,6 +87,9 @@ class SubjectRequestWorkflow:
         for label in (*self.graph_labels, *self.derived_labels):
             surface = "derived_graph" if label in self.derived_labels else "graph"
             for v in self.graph.find_vertices(label=label, limit=10_000, include_deleted=True):
+                owner = v["properties"].get("tenant_id")
+                if owner is not None and owner != self.h.tenant_id:
+                    continue  # another tenant's vertex in a shared graph
                 props = {k: val for k, val in v["properties"].items() if k != "canonical_id"}
                 if _mentions(props, sid):
                     out.append((surface, v))

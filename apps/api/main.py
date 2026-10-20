@@ -309,6 +309,24 @@ def create_app():
     from apps.api.extended import ensure_extended
 
     ensure_extended(app, store)
+    # SR-TEN-003: events that declare a tenant are also delivered on that tenant's own event topic,
+    # and log records carrying tenant_id go to that tenant's log stream (runtime tenant layers).
+    _tenant_layers = app.state.extended_state.tenant_layers
+
+    def _to_tenant_topic(event) -> None:
+        tenant = event.data.get("tenant_id") if isinstance(event.data, dict) else None
+        if tenant:
+            _tenant_layers.ensure_tenant(str(tenant)).publish(event.to_dict())
+
+    event_emitter.add_listener(_to_tenant_topic)
+    _tenant_log_handler = _tenant_layers.log_handler()
+    _tenant_log_handler.addFilter(lambda record: getattr(record, "tenant_id", None) is not None)
+    app.state.tenant_log_handler = _tenant_log_handler
+    _eoip_logger = logging.getLogger("eoip")
+    for _old in [h for h in _eoip_logger.handlers if getattr(h, "eoip_tenant_router", False)]:
+        _eoip_logger.removeHandler(_old)  # one tenant log router per process (latest app wins)
+    _tenant_log_handler.eoip_tenant_router = True
+    _eoip_logger.addHandler(_tenant_log_handler)
     # FT-AUTH: the extended /api/v1/auth/login route verifies against the credential store
     # (argon2id) and issues session tokens this app accepts.
     app.state.extended_state.identity_provider = _CredentialLogin(credentials, login_throttle)

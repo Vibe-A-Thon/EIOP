@@ -238,6 +238,13 @@ class ExtendedState:
         # Tenancy (SR-TEN-001/002/003/006/007/009): fail-closed tenant context,
         # isolation models/placement, quotas, lifecycle, hash-chained metering.
         self.tenancy_service = TenancyService(graph_store=store)
+        # Runtime per-layer tenant stores (SR-TEN-003) on the same isolation registry; the KMS master
+        # key comes from EOIP_TENANT_MASTER_KEY or a 0600 key file created once under the data dir.
+        from eoip.tenancy.layers import TenantLayers, load_or_create_master_key
+
+        self.tenant_layers = TenantLayers(
+            self.tenancy_service.isolation, root=data_dir / "tenants",
+            master_key=load_or_create_master_key(data_dir / "state" / "tenant-master.key"))
 
         # Licensing (SR-DEP-007, SR-COM-001, SR-TEN-009): checker from a signed
         # license at EOIP_LICENSE_PATH when present; otherwise a permissive
@@ -1427,7 +1434,7 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     # the default label list would only scan "Entity".
     router.include_router(
         build_privacy_router(
-            graph_store=store, graph_labels=["Person", "WorkItem"]
+            graph_store=store, graph_labels=["Person", "WorkItem"], tenant_layers=state.tenant_layers
         )
     )
 

@@ -34,7 +34,7 @@ import json
 import logging
 import os
 import sqlite3
-from collections import defaultdict
+from collections import defaultdict, deque
 from collections.abc import Callable, MutableMapping
 from pathlib import Path
 from typing import Any
@@ -61,15 +61,25 @@ class TenantLayers:
         self.vectors: dict[str, dict[str, tuple[list[float], dict]]] = defaultdict(dict)
         self.search_indexes: dict[str, Any] = {}
         self.search_docs: dict[str, dict[str, tuple[str, dict]]] = {}
-        self.topics: dict[str, list[dict]] = defaultdict(list)
+        self.topics: dict[str, deque] = defaultdict(lambda: deque(maxlen=10_000))
         self.subscribers: dict[str, list[Callable[[dict], None]]] = defaultdict(list)
         self.secrets: dict[str, str] = {}
         self.cache: MutableMapping[str, Any] = {}
-        self.log_streams: dict[str, list[dict]] = defaultdict(list)
+        self.log_streams: dict[str, deque] = defaultdict(lambda: deque(maxlen=10_000))
         self.schemas: dict[str, sqlite3.Connection] = {}
 
     def for_tenant(self, tenant_id: str) -> TenantHandle:
         return TenantHandle(self, tenant_id, self.registry.get(tenant_id))
+
+    def ensure_tenant(self, tenant_id: str) -> TenantHandle:
+        """Handle for a tenant; a tenant without a recorded placement gets the shared POOL placement
+        (logically isolated: every layer is namespaced by tenant inside the pool resources)."""
+        from eoip.tenancy.isolation import REQUIRED_LAYERS, IsolationModel, IsolationPlacement
+
+        if tenant_id not in self.registry.placements:
+            self.registry.register(IsolationPlacement(model=IsolationModel.POOL, tenant_id=tenant_id,
+                                                      layers={l: f"{l}-pool" for l in REQUIRED_LAYERS}))
+        return self.for_tenant(tenant_id)
 
     def log_handler(self) -> logging.Handler:
         layers = self
@@ -322,3 +332,22 @@ class TenantHandle:
         if "/" in name or ".." in name:
             raise IsolationViolation("export names are relative to the tenant prefix")
         return (self._export_dir() / name).read_bytes()
+
+
+def load_or_create_master_key(path: Path) -> bytes:
+    """Tenant KMS master key: ``EOIP_TENANT_MASTER_KEY`` (64 hex chars) or a 0600 key file created once."""
+    env = os.getenv("EOIP_TENANT_MASTER_KEY", "").strip()
+    if env:
+        key = bytes.fromhex(env)
+        if len(key) != 32:
+            raise ValueError("EOIP_TENANT_MASTER_KEY must be 32 bytes (64 hex characters)")
+        return key
+    path = Path(path)
+    if path.exists():
+        return path.read_bytes()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    key = os.urandom(32)
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "wb") as fh:
+        fh.write(key)
+    return key
