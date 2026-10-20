@@ -9,11 +9,12 @@ import pytest
 from reva.core.ids import warrant_id as compute_warrant_id
 from reva.kernel.auditor import audit_transparency_log
 from reva.kernel.contradictions import detect_contradictions
-from reva.kernel.signing import verify_warrant_signature
-from reva.kernel.store import RevaStore
 from reva.kernel.keys import decrypt_private_key, generate_key
+from reva.kernel.signing import verify_warrant_signature
 from reva.kernel.sth import issue_sth_now, verify_sth
-from reva.kernel.translog import leaf_hash as rfc6962_leaf_hash, verify_consistency, verify_inclusion
+from reva.kernel.store import RevaStore
+from reva.kernel.translog import leaf_hash as rfc6962_leaf_hash
+from reva.kernel.translog import verify_consistency, verify_inclusion
 
 pytestmark = pytest.mark.reva_depth("component")
 

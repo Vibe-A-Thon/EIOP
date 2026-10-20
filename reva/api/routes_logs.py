@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Optional
 from fastapi import APIRouter, Header, HTTPException, Query
 
 from reva.api.routes_warrants import get_kernel
-from reva.kernel.signing import b64url_encode
 from reva.core.time import format_ts, utc_now_ms
+from reva.kernel.signing import b64url_encode
 
 router = APIRouter(prefix="/logs", tags=["Transparency Log"])
 

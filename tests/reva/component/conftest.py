@@ -12,7 +12,7 @@ from reva.kernel.authority import Authority, ConfidenceBand
 from reva.kernel.blobs import BlobStore
 from reva.kernel.builder import WarrantDraftBuilder
 from reva.kernel.kernel import WarrantKernel
-from reva.kernel.predicates import register_predicate
+from reva.kernel.predicates import has_predicate, register_predicate
 from reva.kernel.producers import register_producer
 from reva.kernel.store import RevaStore
 from reva.kernel.translog import TransparencyLog
@@ -24,11 +24,9 @@ class ComponentMetric(BaseModel):
 
 @pytest.fixture(autouse=True, scope="session")
 def _component_predicate():
-    try:
+    if not has_predicate("reva.pred.component_metric"):
         register_predicate(name="reva.pred.component_metric", statement_model=ComponentMetric,
                            description="component-test metric")
-    except Exception:  # already registered in this process
-        pass
 
 
 @pytest.fixture
