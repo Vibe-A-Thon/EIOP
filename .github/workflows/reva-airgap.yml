@@ -1,12 +1,13 @@
-name: reva-airgap (NOT IMPLEMENTED)
+name: reva-airgap
 
-# FT-F04: PLACEHOLDER. This lane used to run `echo "Running reva-airgap"` on every push,
-# which reported green without testing anything. Reason it cannot run yet:
-# no air-gapped runner/network policy is configured.
-# It now runs only on manual dispatch and FAILS, so it can never be read as evidence.
-# Owner decision: implement this lane or delete it (scripts/reva/check_ci_lanes.py
-# currently requires the file to exist).
+# FT-F04: real lane (was a NOT IMPLEMENTED placeholder). REVA-NFR-014: the full REVA suite
+# passes with the network disabled. Dependencies are installed first; then the suite runs in
+# a fresh network namespace (only loopback), after a preflight that FAILS the lane if outbound
+# TCP or DNS still work, so the lane can never pass with the network on.
 on:
+  push:
+    branches: [main, develop, dev_local, eoip-remediation-geeky]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,8 +16,27 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
-      - name: Full non-perf suite under air-gapped network conditions
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install (online, before the air gap)
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Full REVA suite with the network disabled
         run: |
-          echo "::error::reva-airgap is not implemented: no air-gapped runner/network policy is configured."
-          exit 1
+          PY="$(command -v python)"
+          ME="$(id -un)"
+          mkdir -p "$RUNNER_TEMP/eoip-data"
+          sudo unshare --net -- sh -c "
+            ip link set lo up &&
+            sudo -u '$ME' env PATH='$PATH' HOME='$HOME' EOIP_DATA_DIR='$RUNNER_TEMP/eoip-data' '$PY' scripts/reva/airgap_preflight.py &&
+            sudo -u '$ME' env PATH='$PATH' HOME='$HOME' EOIP_DATA_DIR='$RUNNER_TEMP/eoip-data' '$PY' scripts/reva/run_lane.py airgap --min-passed 100 -- tests/reva --timeout=300 -q
+          "
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reva-airgap-results
+          path: test-results/
