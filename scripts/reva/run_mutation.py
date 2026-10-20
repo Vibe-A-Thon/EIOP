@@ -33,7 +33,8 @@ from reva.pd.owner_digest import compute_owner_digest  # noqa: E402
 # (path, symbol, tests that own it). Kept small and strong: these are the guards the
 # remediation relies on (closure never auto-closes, gap FSM, valid-time split, proofs, inventory).
 TARGETS = [
-    ("reva/pd/closure.py", "evaluate_closure", ["tests/reva/unit/pd", "tests/reva/acceptance"]),
+    ("reva/pd/closure.py", "evaluate_closure", ["tests/reva/unit/pd/test_pd_suite.py",
+                                               "tests/reva/unit/pd/test_closure_guards.py", "tests/reva/acceptance"]),
     ("reva/kernel/gaps.py", "_apply_transition", ["tests/reva/acceptance"]),
     ("reva/kernel/gaps.py", "update_gap", ["tests/reva/acceptance", "tests/reva/unit/kernel/test_guard_boundaries.py"]),
     ("reva/kernel/contradictions.py", "_valid_times_overlap", ["tests/reva/acceptance", "tests/reva/unit/kernel"]),
