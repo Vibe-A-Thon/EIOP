@@ -1,12 +1,15 @@
-name: reva-mutation (NOT IMPLEMENTED)
+name: reva-mutation
 
-# FT-F04: PLACEHOLDER. This lane used to run `echo "Running reva-mutation"` on every push,
-# which reported green without testing anything. Reason it cannot run yet:
-# no mutation-testing tooling is configured.
-# It now runs only on manual dispatch and FAILS, so it can never be read as evidence.
-# Owner decision: implement this lane or delete it (scripts/reva/check_ci_lanes.py
-# currently requires the file to exist).
+# FT-F04: real lane (was a NOT IMPLEMENTED placeholder). REVA's own AST mutation probe
+# (REVA-PD-005) mutates the guard symbols the remediation relies on (closure evaluation, gap
+# FSM, valid-time split, inclusion verification, member-path validation) in a scratch copy and
+# runs their tests against every mutant. Fails below the NFR-019 score of 0.75 per target, on
+# a red baseline, or when a target yields no mutants. Report: reva-mutation.json (survivors
+# listed; owner_scores feed run_reva_ledger.py --mutation-report).
 on:
+  push:
+    branches: [main, develop, dev_local, eoip-remediation-geeky]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,8 +18,21 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - name: Mutation testing probe over reva modules
-        run: |
-          echo "::error::reva-mutation is not implemented: no mutation-testing tooling is configured."
-          exit 1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Mutation probe
+        env:
+          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data
+        run: python scripts/reva/run_mutation.py --threshold 0.75
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reva-mutation-report
+          path: test-results/reva-mutation.json
