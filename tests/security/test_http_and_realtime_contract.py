@@ -250,6 +250,21 @@ def test_viewer_cannot_mutate_administrative_surfaces(composed_app, path):
     assert response.json()["detail"] == "Administrative role required"
 
 
+@pytest.mark.req("SR-CON-011")
+@pytest.mark.parametrize("path", ["/api/v1/egress/plugins/install", "/api/v1/egress/plugins/submit",
+                                  "/api/v1/egress/endpoints/ext/enable", "/api/v1/egress/policy/rules",
+                                  "/api/v1/egress/kill"])
+def test_egress_administration_requires_an_administrator(composed_app, path):
+    _, client, service = composed_app
+    viewer = service.issue(Principal("alice", "alice", ("viewer",), tenant_id="alpha"))
+    denied = client.post(path, json={}, headers={"Authorization": f"Bearer {viewer}"})
+    assert denied.status_code == 403
+    assert denied.json()["detail"] == "Administrative role required"
+    admin = service.issue(Principal("root", "root", ("admin",), tenant_id="alpha"))
+    passed = client.post(path, json={}, headers={"Authorization": f"Bearer {admin}"})
+    assert passed.status_code != 403  # past the guard (body validation may still reject it)
+
+
 def test_idle_websocket_disconnect_releases_subscription(composed_app):
     import time
     app, client, service = composed_app

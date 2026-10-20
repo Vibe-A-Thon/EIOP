@@ -15,6 +15,11 @@ from eoip.egress.policy import PolicyRule
 from eoip.egress.provider import ServiceProviderManifest
 
 
+try:  # FastAPI stays an optional import for the package; Request must be resolvable at module level
+    from fastapi import Request
+except ImportError:  # pragma: no cover
+    Request = Any  # type: ignore[assignment,misc]
+
 class EnableEndpointRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -233,10 +238,14 @@ def build_router(gateway: EgressGateway):
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
     @router.post("/plugins/install")
-    def install_plugin(body: InstallPluginRequest) -> dict:
+    def install_plugin(body: InstallPluginRequest, request: Request) -> dict:
+        # The approver is the authenticated administrator when the API carries a principal
+        # (the admin-prefix middleware has already required the admin role, SR-CON-011).
+        principal = getattr(request.state, "principal", None)
+        approver = getattr(principal, "username", None) or body.approved_by
         try:
             record = gateway.plugin_registry.install(
-                body.manifest_id, approved_by=body.approved_by,
+                body.manifest_id, approved_by=approver,
                 acknowledged_fingerprint=body.acknowledged_fingerprint,
                 consent_ref=body.consent_ref,
             )

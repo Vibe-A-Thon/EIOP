@@ -534,6 +534,13 @@ def create_app():
             or _p.startswith("/api/v1/enterprise/snapshots")
             # Destructive ontology import (can clear the graph) — SEC-002
             or _p.startswith("/api/v1/ontology/import")
+            # Egress administration: endpoint enable/disable/consent, plugin install, policy rules and
+            # kill switch need an administrator (SR-CON-011, SR-LLM-010/017). /egress/call stays open
+            # to authenticated users; the gateway's own policy governs it.
+            or _p.startswith((
+                "/api/v1/egress/endpoints", "/api/v1/egress/plugins", "/api/v1/egress/policy",
+                "/api/v1/egress/kill",
+            ))
         )
         if high_risk_admin:
             if principal is None or not {"admin", "system"}.intersection(principal.roles):
