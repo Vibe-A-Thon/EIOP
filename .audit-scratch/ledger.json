@@ -6723,12 +6723,12 @@
       "blocked_by": [],
       "receipts": [
         {
-          "path": ".audit-scratch/receipts/CRA-044.3/run-20261020T073913Z-2f2ee60d.json",
-          "sha256": "40f157d23db0fafd68aa30bf772fe0375785b77bc7eb2c349ebe6025652dd639"
+          "path": ".audit-scratch/receipts/CRA-044.3/run-20261020T074242Z-e0006a27.json",
+          "sha256": "28d95e952bc33044dad87acebcdd12807994dbf73c93c9e75a747240ef193db6"
         }
       ],
-      "notes": "FT-D08 2026-10-20: was ACCEPTED with a missing/altered receipt; re-run produced this receipt (1 passed, 0 failed). Independent review needed for ACCEPTED.",
-      "updated_at": "2026-10-20T07:38:02.804436+00:00"
+      "notes": "FT-D08 2026-10-20: was VERIFIED with a missing/altered receipt; re-run produced this receipt (2 passed, 0 failed, 0 skipped). Independent review needed for ACCEPTED.",
+      "updated_at": "2026-10-20T07:42:42.099951+00:00"
     },
     {
       "id": "CRA-044.4",
