@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, Field
 
 from reva.core.ids import contradiction_id as compute_contradiction_id
-from reva.core.time import format_ts, utc_now_ms
+from reva.core.time import format_ts, parse_ts, utc_now_ms
 from reva.kernel.store import RevaStore
 from reva.kernel.warrant import SealedWarrant, WarrantBody, WarrantEnvelope
 
@@ -27,6 +27,16 @@ class ContradictionRecord(BaseModel):
     resolved_at: Optional[str] = None
     resolution_warrant_id: Optional[str] = None
     rationale: Optional[str] = None
+
+
+def _valid_times_overlap(a: Optional[Dict[str, Any]], b: Optional[Dict[str, Any]]) -> bool:
+    """True when two [from, to) validity intervals overlap; a missing interval overlaps everything."""
+    if not a or not b or not a.get("from") or not b.get("from"):
+        return True
+    a_from, b_from = parse_ts(a["from"]), parse_ts(b["from"])
+    a_to = parse_ts(a["to"]) if a.get("to") else None
+    b_to = parse_ts(b["to"]) if b.get("to") else None
+    return (b_to is None or a_from < b_to) and (a_to is None or b_from < a_to)
 
 
 def detect_contradictions(
@@ -55,10 +65,15 @@ def detect_contradictions(
     rows = cur.fetchall()
     now = format_ts(utc_now_ms())
     contradictions: List[ContradictionRecord] = []
+    new_body = new_warrant.body.canonical_dict()
 
     for r in rows:
         existing_wid = r["warrant_id"]
         existing_body = json.loads(r["body"])
+
+        # Disjoint validity is a valid-time split (REVA-CX-003), not a contradiction.
+        if not _valid_times_overlap(existing_body.get("valid_time"), new_body.get("valid_time")):
+            continue
 
         # Check for direct conflicting statement payload
         if existing_body.get("statement") != new_warrant.body.statement:
