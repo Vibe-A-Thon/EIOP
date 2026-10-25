@@ -63,6 +63,7 @@ class GraphEventEmitter:
         self._loops: dict[asyncio.Queue, asyncio.AbstractEventLoop | None] = {}
         self._lock = threading.RLock()
         self._ring_buffer: deque[GraphEvent] = deque(maxlen=buffer_size)
+        self._listeners: list[Any] = []  # synchronous fan-out (e.g. per-tenant event topics, SR-TEN-003)
         self._journal_path = Path(journal_path) if journal_path else None
         if self._journal_path is not None:
             self._journal_path.parent.mkdir(parents=True, exist_ok=True)
@@ -91,6 +92,9 @@ class GraphEventEmitter:
             GraphEvent._counter = highest_id
         except Exception:
             pass
+
+    def add_listener(self, fn) -> None:
+        self._listeners.append(fn)
 
     def subscribe(self) -> asyncio.Queue:
         q: asyncio.Queue = asyncio.Queue(maxsize=1000)
@@ -132,6 +136,14 @@ class GraphEventEmitter:
                         f.write(json.dumps(event.to_dict()) + "\n")
                 except Exception:
                     pass
+            subscribers = list(self._loops.items())
+            listeners = list(self._listeners)
+        for fn in listeners:
+            try:
+                fn(event)
+            except Exception:  # noqa: BLE001 - a listener failure never blocks the graph event stream
+                pass
+        with self._lock:
             subscribers = list(self._loops.items())
         try:
             current_loop = asyncio.get_running_loop()

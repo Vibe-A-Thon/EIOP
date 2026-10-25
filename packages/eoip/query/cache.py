@@ -54,6 +54,8 @@ class SemanticQueryCache:
     @staticmethod
     def plan_key(plan: dict) -> str:
         normalized = {
+            # SR-TEN-003 cache layer: entries are namespaced per tenant, never shared across tenants
+            "tenant_id": plan.get("tenant_id") or "_platform",
             "intent": plan.get("intent"),
             "anchors": sorted(str(a) for a in plan.get("anchors", [])),
             "max_depth": plan.get("max_depth"),

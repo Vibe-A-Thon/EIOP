@@ -97,6 +97,12 @@ class EntitlementChecker:
             return "grace"
         return "expired"
 
+    def support_state(self) -> str:
+        """Perpetual + annual support: ``active`` | ``lapsed`` (license still valid) | ``not_included``."""
+        if self.payload.support_expiry is None:
+            return "not_included"
+        return "active" if self._now() <= self.payload.support_expiry else "lapsed"
+
     @property
     def expired(self) -> bool:
         """True only after the grace period has lapsed (read-only degrade)."""
@@ -246,6 +252,7 @@ class EntitlementChecker:
             "max_seats": self.payload.max_seats,
             "max_records": self.payload.max_records,
             "state": self.license_state,
+            "support": self.support_state(),
             "expiry": self.payload.expiry,
             "grace_until": self.payload.grace_until,
             "notice": self.notice,

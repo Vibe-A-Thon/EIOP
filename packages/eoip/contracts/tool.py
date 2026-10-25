@@ -36,6 +36,7 @@ class ToolRequest(BaseModel):
     arguments: dict[str, Any]
     risk_level: RiskLevel | None = None
     actor_id: str | None = None
+    tenant_id: str = Field(default="_platform", min_length=1)  # never blank (SR-TEN-001)
     run_id: str | None = None
     approval_id: str | None = None
     dry_run: bool = False

@@ -3,10 +3,12 @@ import {Icon} from '../../icons.jsx';
 import {generateInteractiveHTML} from '../export/InteractiveExport.js';
 import {generateGraphReport} from '../export/GraphReport.js';
 import {graphToGraphML, graphToGEXF, graphToCsv, graphPrintDocument} from '../export/GraphFormats.ts';
+import {graphToPdf} from '../export/GraphPdf.ts';
 
 const FORMATS = [
   {id: 'png', label: 'PNG Image', icon: 'focus', desc: 'Rasterized graph image at 2x resolution'},
   {id: 'svg', label: 'SVG Vector', icon: 'graph', desc: 'Scalable vector graphic'},
+  {id: 'pdf', label: 'PDF Report', icon: 'document', desc: 'Entity and relationship tables as a PDF file'},
   {id: 'print', label: 'Print / Save as PDF', icon: 'document', desc: 'Browser print view of the loaded graph'},
   {id: 'json-ld', label: 'JSON-LD', icon: 'database', desc: 'Linked Data with EOIP ontology @context'},
   {id: 'graphml', label: 'GraphML', icon: 'layers', desc: 'Standard graph interchange XML'},
@@ -129,6 +131,8 @@ export default function ExportMenu({graph, cyRef, onClose}) {
       } else if (format === 'svg') {
         if (!cyRef?.current?.svg) throw new Error('SVG export is unavailable for this renderer.');
         download(cyRef.current.svg({full: true}), 'kgr-graph.svg', 'image/svg+xml');
+      } else if (format === 'pdf') {
+        download(graphToPdf(graph), 'kgr-graph.pdf', 'application/pdf');
       } else if (format === 'print') {
         const preview = window.open('', '_blank');
         if (!preview) throw new Error('Allow the print preview window, then try again.');

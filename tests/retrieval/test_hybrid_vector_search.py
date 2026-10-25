@@ -29,6 +29,7 @@ HashBaseline: Any = import_module("tests.neural.baselines").HashBaseline
 # CRA-025.1: Index versioning by scope, revisions, provider, model, dimension
 # ===========================================================================
 
+@pytest.mark.req("CRA-025")
 def test_cra_025_1_index_metadata_versioning():
     meta = IndexMetadata(
         index_id="idx_tenant_alpha_text_v1",
@@ -59,6 +60,7 @@ def test_cra_025_1_index_metadata_versioning():
 # CRA-025.2: Real semantic providers vs fixtures, dimension mismatch errors
 # ===========================================================================
 
+@pytest.mark.req("CRA-025")
 def test_cra_025_2_provider_unavailable_and_dimension_mismatch():
     # Unavailable provider raises hard error
     unavail_provider = RealSemanticProvider(is_available=False)
@@ -98,6 +100,7 @@ def test_cra_025_2_provider_unavailable_and_dimension_mismatch():
 # CRA-025.3: ACL permission filtering and policy-epoch cache revocation
 # ===========================================================================
 
+@pytest.mark.req("CRA-025")
 def test_cra_025_3_acl_filtering_and_policy_epoch():
     meta = IndexMetadata(
         index_id="idx_sec",
@@ -165,6 +168,7 @@ def test_cra_025_3_acl_filtering_and_policy_epoch():
 # CRA-025.4: Resumable indexing, deletion, shadow index evaluation & cutover
 # ===========================================================================
 
+@pytest.mark.req("CRA-025")
 def test_cra_025_4_resumable_indexing_shadow_cutover_and_rollback():
     manager = HybridVectorIndexManager(tenant_id="tenant_cloud")
 
@@ -217,6 +221,7 @@ def test_cra_025_4_resumable_indexing_shadow_cutover_and_rollback():
 # CRA-025.5: Evaluation harness: recall@k, nDCG, latency across domains
 # ===========================================================================
 
+@pytest.mark.req("CRA-025")
 def test_cra_025_5_search_evaluation_harness():
     provider = RealSemanticProvider(dimension=16)
     meta = IndexMetadata(
@@ -256,6 +261,7 @@ def test_cra_025_5_search_evaluation_harness():
 # CRA-025.6: Dense + BM25 fusion via RRF (k=60) with graph centrality boost
 # ===========================================================================
 
+@pytest.mark.req("CRA-025")
 def test_cra_025_6_rrf_hybrid_fusion():
     provider = RealSemanticProvider(dimension=8)
     meta = IndexMetadata(
@@ -313,6 +319,7 @@ def test_cra_025_6_rrf_hybrid_fusion():
 # CRA-025.7: Test-hashing embedder refused in production profile
 # ===========================================================================
 
+@pytest.mark.req("CRA-025")
 def test_cra_025_7_test_hashing_refused_in_production():
     # In development/test profile, TestHashingEmbedder is allowed
     dev_embedder = TestHashingEmbedder(dimensions=32, profile="development")
@@ -328,6 +335,7 @@ def test_cra_025_7_test_hashing_refused_in_production():
 # CRA-025.8: Graph-structure and text embeddings are distinct families
 # ===========================================================================
 
+@pytest.mark.req("CRA-025")
 def test_cra_025_8_distinct_embedding_families():
     meta_text = IndexMetadata(
         index_id="idx_text",
@@ -367,6 +375,7 @@ def test_cra_025_8_distinct_embedding_families():
 # CRA-025.9: GNN hash-based vectors refused in production profile
 # ===========================================================================
 
+@pytest.mark.req("CRA-025")
 def test_cra_025_9_gnn_hash_vectors_refused_in_production():
     # In production profile, GraphEmbedder hash vectors are refused
     with pytest.raises(ProductionConfigurationError, match="Hash-based graph vectors are refused in production"):
@@ -381,6 +390,7 @@ def test_cra_025_9_gnn_hash_vectors_refused_in_production():
 # CRA-025.A: Full Acceptance: Isolation, Recovery, and Startup Protection
 # ===========================================================================
 
+@pytest.mark.req("CRA-025")
 def test_cra_025_a_search_acceptance_gate():
     provider = RealSemanticProvider(dimension=8)
 

@@ -2,14 +2,14 @@
 
 This guide covers the repository's integrated local container run and a separate host-only development run. For ownership and service boundaries, see the [Developer and Maintainer Guide](developer-maintainer-guide.md).
 
-## Requirements
+## Prerequisites
 
 - Python 3.11 or later for host development and Python tests.
 - Node.js 22 for the `apps/web` build and local Vite development server.
 - Docker with Compose, Podman with Compose, nerdctl with Compose, or Finch for the integrated container deployment.
 - Git for source checkout and code-ingestion demonstrations.
 
-Some optional demos/tests need Chrome, an installed VS Code host, browser dependencies, or extra Python packages. They are not prerequisites for a basic API or container start.
+Some optional demos/tests need Chrome, an installed VS Code host, browser dependencies, or extra Python packages. They are not required for a basic API or container start.
 
 ## Integrated Container Run (Recommended)
 
@@ -54,13 +54,13 @@ Create the Python environment and install the development extra:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
+python -m pip install -c requirements.lock -e ".[test]"   # FT-F06: everything the default test selection needs, pinned by the lock
 ```
 
 Start the API with an explicit in-memory backend and a local-only token:
 
 ```powershell
-$env:EOIP_API_TOKEN = 'local-development-token-at-least-24-chars'
+$env:EOIP_API_TOKEN = 'local-development-token-at-least-32-characters'
 $env:EOIP_GRAPH_BACKEND = 'memory'
 $env:EOIP_DATA_DIR = (Join-Path $PWD '.eoip-data')
 python -m uvicorn apps.api.main:create_app --factory --host 127.0.0.1 --port 8000 --reload

@@ -8,6 +8,8 @@ from reva.diff.fuzzy_hash import NormalizedInstructionFuzzyHasher
 from reva.diff.binary_identity import BinarySymbolMatcher
 from reva.diff.impact_classifier import BinaryDiffImpactClassifier
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 def test_normalized_instruction_fuzzy_hasher():
     hasher = NormalizedInstructionFuzzyHasher()

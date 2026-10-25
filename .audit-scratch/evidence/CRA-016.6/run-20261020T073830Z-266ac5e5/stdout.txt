@@ -1,0 +1,9 @@
+..                                                                       [100%]
+=============================== warnings summary ===============================
+tests/semantic/test_rdf_fidelity.py::test_jsonld_standards_fidelity
+  /workspace/.venvs/eiop-work/lib/python3.11/site-packages/rdflib/plugins/parsers/jsonld.py:159: DeprecationWarning: ConjunctiveGraph is deprecated, use Dataset instead.
+    conj_sink = ConjunctiveGraph(store=sink.store, identifier=sink.identifier)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/work/EIOP/.audit-scratch/evidence/CRA-016.6/run-20261020T073830Z-266ac5e5/junit.xml -
+2 passed, 1 warning in 0.13s

@@ -12,6 +12,7 @@ from eoip.product.intelligence import (
 from fastapi.testclient import TestClient
 
 from apps.api.app import create_app
+from eoip.api_routes import route_paths
 
 
 def _seed_runtime_facts(store: MemoryGraphStore) -> None:
@@ -128,7 +129,17 @@ def test_product_capability_api_and_materialization() -> None:
 def test_deployed_route_surface_contains_product_gate_routes() -> None:
     store = MemoryGraphStore()
     client = TestClient(create_app(store))
-    routes = {str(getattr(route, "path", "")) for route in client.app.routes}
+    # FastAPI >= 0.142 no longer flattens nested include_router() into app.routes.
+    routes = route_paths(client.app)
 
     assert "/api/v1/loops/catalog" in routes
+    assert client.get("/api/v1/loops/catalog").status_code == 200
     assert "/api/v1/reports" in routes
+
+
+def test_capability_report_sees_routes_mounted_through_nested_routers() -> None:
+    client = TestClient(create_app(MemoryGraphStore()))
+    body = client.get("/api/v1/product/capabilities").json()
+    route_checks = [check for capability in body["capabilities"] for check in capability["checks"]
+                    if check["kind"] == "route" and check["target"] == "/api/v1/loops/catalog"]
+    assert route_checks and all(check["present"] is True for check in route_checks)

@@ -81,7 +81,7 @@ class PerformanceBudget(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=False)
 
     metric: str = "p95_ms"
-    threshold: float = 0.0
+    threshold: Union[int, float] = 0  # int stays int: floats are forbidden in hash-bearing JCS
     dataset: Optional[str] = None
 
 

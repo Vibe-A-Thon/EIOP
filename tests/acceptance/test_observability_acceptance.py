@@ -31,6 +31,7 @@ GRAFANA_FIXTURE = FIXTURES_DIR / "grafana" / "dashboards.json"
 # CRA-008.1: ServiceNow qualification and domain separation
 # ===========================================================================
 
+@pytest.mark.req("CRA-008")
 def test_cra_008_1_servicenow_qualification_and_domain_separation():
     snow = ServiceNowConnector("https://instance.service-now.com", token="sn-token")
     data = json.loads(SNOW_FIXTURE.read_text(encoding="utf-8"))
@@ -54,6 +55,7 @@ def test_cra_008_1_servicenow_qualification_and_domain_separation():
 # CRA-008.2: Splunk search budgets and sensitive log authorization
 # ===========================================================================
 
+@pytest.mark.req("CRA-008")
 def test_cra_008_2_splunk_budget_and_sensitive_log_auth():
     budget = SearchBudget(max_results=50, timeout_seconds=5.0, max_search_span_hours=24)
     splunk = SplunkConnector("splunk-inst-1", "https://splunk.corp.internal:8089", budget=budget)
@@ -87,6 +89,7 @@ def test_cra_008_2_splunk_budget_and_sensitive_log_auth():
 # CRA-008.3: Kibana spaces vs index authority separation
 # ===========================================================================
 
+@pytest.mark.req("CRA-008")
 def test_cra_008_3_kibana_spaces_vs_index_authority():
     kibana = KibanaConnector("https://kibana.corp.internal:5601", token="kb-token", space_id="payments_space")
     data = json.loads(KIBANA_FIXTURE.read_text(encoding="utf-8"))
@@ -104,6 +107,7 @@ def test_cra_008_3_kibana_spaces_vs_index_authority():
 # CRA-008.4: Grafana data-source secrets protection
 # ===========================================================================
 
+@pytest.mark.req("CRA-008")
 def test_cra_008_4_grafana_datasource_secrets_protection():
     grafana = GrafanaConnector("https://grafana.corp.internal:3000", token="gf-token", org_id=12)
     data = json.loads(GRAFANA_FIXTURE.read_text(encoding="utf-8"))
@@ -127,6 +131,7 @@ def test_cra_008_4_grafana_datasource_secrets_protection():
 # CRA-008.5: Observed telemetry separate from inferred causality
 # ===========================================================================
 
+@pytest.mark.req("CRA-008")
 def test_cra_008_5_telemetry_separate_from_inferred_causality():
     telemetry = ObservedTelemetry(
         telemetry_id="telem-001",
@@ -185,6 +190,7 @@ def test_cra_008_5_telemetry_separate_from_inferred_causality():
 # CRA-008.6: ServiceNow table profiles, roles, and write-back lock
 # ===========================================================================
 
+@pytest.mark.req("CRA-008")
 def test_cra_008_6_servicenow_table_profiles_and_roles():
     snow = ServiceNowConnector("https://instance.service-now.com", token="sn-token")
     assert "cmdb_ci" in snow.tables
@@ -206,6 +212,7 @@ def test_cra_008_6_servicenow_table_profiles_and_roles():
 # CRA-008.7: Dashboard panels linking to CMDB services as proposals
 # ===========================================================================
 
+@pytest.mark.req("CRA-008")
 def test_cra_008_7_dashboards_linking_to_cmdb_proposals():
     # Kibana proposal extraction
     kibana_data = json.loads(KIBANA_FIXTURE.read_text(encoding="utf-8"))
@@ -226,6 +233,7 @@ def test_cra_008_7_dashboards_linking_to_cmdb_proposals():
 # CRA-008.8: Secret and PII redaction receipts
 # ===========================================================================
 
+@pytest.mark.req("CRA-008")
 def test_cra_008_8_secret_and_pii_redaction_receipts():
     raw_query = (
         "search index=logs "
@@ -264,6 +272,7 @@ def test_cra_008_8_secret_and_pii_redaction_receipts():
 # CRA-008.9: CMDB dependency structure as directed graph with cycle detection
 # ===========================================================================
 
+@pytest.mark.req("CRA-008")
 def test_cra_008_9_cmdb_dependency_cycle_detection():
     data = json.loads(SNOW_FIXTURE.read_text(encoding="utf-8"))
     relationships = data["ci_relationships"]
@@ -285,6 +294,7 @@ def test_cra_008_9_cmdb_dependency_cycle_detection():
 # CRA-008.A: Evidence journey and secrets fixture sweep
 # ===========================================================================
 
+@pytest.mark.req("CRA-008")
 def test_cra_008_a_evidence_journey_and_secrets_fixture_sweep():
     # 1. Evidence journey: Incident -> Service -> Deployment -> Dashboard / Log
     snow_data = json.loads(SNOW_FIXTURE.read_text(encoding="utf-8"))

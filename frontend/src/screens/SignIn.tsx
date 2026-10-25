@@ -7,6 +7,7 @@ import {
   KeyRound,
   Loader2,
   ShieldCheck,
+  UserRound,
   Waypoints,
 } from "lucide-react";
 import { useAuth } from "../lib/auth";
@@ -14,21 +15,16 @@ import { apiFetch } from "../lib/api";
 import { Button } from "../components/ui/Button";
 import { StatusDot } from "../components/ui/Badge";
 
-const DEV_TOKEN = "eoip_sa_f86468fed910d947e69eba4c";
-
-const DEMO_ROLES: { label: string; role: string; token: string }[] = [
-  { label: "Super admin", role: "superadmin · all tenants", token: "eoip_sa_f86468fed910d947e69eba4c" },
-  { label: "Admin", role: "admin · default", token: "eoip_admin_75293814c25a2d4c1e57994c" },
-  { label: "Steward", role: "steward · default", token: "eoip_steward_449c1099ee3071aa8ce7fbed" },
-  { label: "Analyst", role: "analyst · default", token: "eoip_analyst_1d0019f09d075ddf8ad141dc" },
-  { label: "Viewer", role: "viewer · default", token: "eoip_viewer_9072655bae91c450d24fe204" },
-];
+// FT-AUTH: sign in with login credentials (username + password). Nothing is prefilled
+// and no tokens or demo identities are embedded in the bundle; roles come from the
+// server-side user record. SSO providers are listed by the API but are placeholders.
 
 export function SignIn() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
-  const [token, setToken] = useState(DEV_TOKEN);
-  const [tenant, setTenant] = useState("default");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [tenant, setTenant] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [provider, setProvider] = useState<{ ok: boolean; label: string }>({
@@ -37,7 +33,7 @@ export function SignIn() {
   });
 
   useEffect(() => {
-    apiFetch<any>("/auth/health")
+    apiFetch<any>("/auth/health", { tenant: null })
       .then((r) =>
         setProvider({
           ok: true,
@@ -52,10 +48,11 @@ export function SignIn() {
     setSubmitting(true);
     setError(null);
     try {
-      await signIn(token.trim(), tenant.trim() || "default");
+      await signIn(username.trim(), password, tenant.trim() || "default");
       navigate("/overview", { replace: true });
     } catch (err: any) {
-      setError(err?.problem?.detail || err?.message || "Sign-in failed");
+      setError(err?.problem?.status === 401 ? "Invalid username or password" : err?.problem?.detail || err?.message || "Sign-in failed");
+      setPassword("");
       setSubmitting(false);
     }
   };
@@ -126,23 +123,42 @@ export function SignIn() {
 
           <h2 className="font-heading text-xl font-semibold tracking-tight">Sign in</h2>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
-            Authenticate with your deployment token or issued access token.
+            Sign in with the username and password provisioned for you by an administrator.
           </p>
 
           <label className="mt-7 block">
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
-              Access token
+              Username
+            </span>
+            <div className="mt-1.5 flex items-center gap-2 rounded-sm border border-[var(--border-strong)] bg-[var(--bg-surface)] px-3 focus-within:border-[var(--accent)]">
+              <UserRound size={15} className="text-[var(--text-muted)]" />
+              <input
+                data-testid="signin-username-input"
+                name="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="h-10 w-full bg-transparent font-mono text-sm outline-none placeholder:text-[var(--text-muted)]"
+                autoComplete="username"
+                required
+              />
+            </div>
+          </label>
+
+          <label className="mt-4 block">
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+              Password
             </span>
             <div className="mt-1.5 flex items-center gap-2 rounded-sm border border-[var(--border-strong)] bg-[var(--bg-surface)] px-3 focus-within:border-[var(--accent)]">
               <KeyRound size={15} className="text-[var(--text-muted)]" />
               <input
-                data-testid="signin-token-input"
+                data-testid="signin-password-input"
+                name="password"
                 type="password"
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="h-10 w-full bg-transparent font-mono text-sm outline-none placeholder:text-[var(--text-muted)]"
-                placeholder="Bearer token"
-                autoComplete="off"
+                autoComplete="current-password"
+                required
               />
             </div>
           </label>
@@ -159,6 +175,7 @@ export function SignIn() {
                 onChange={(e) => setTenant(e.target.value)}
                 className="h-10 w-full bg-transparent font-mono text-sm outline-none"
                 placeholder="default"
+                autoComplete="off"
               />
             </div>
           </label>
@@ -176,38 +193,17 @@ export function SignIn() {
             type="submit"
             variant="primary"
             data-testid="signin-submit-button"
-            disabled={submitting || !token.trim()}
+            disabled={submitting || !username.trim() || !password}
             className="mt-6 w-full justify-center"
           >
             {submitting ? <Loader2 size={16} className="animate-spin" /> : <>Continue <ArrowRight size={16} /></>}
           </Button>
 
           <p className="mt-5 text-center font-mono text-[10px] leading-relaxed text-[var(--text-muted)]">
-            Tokens are held in memory only and never persisted to storage.
+            Your session token is held in memory only and never persisted to storage.
+            Single sign-on (OIDC/SAML) is not available yet.
           </p>
 
-          <div className="mt-5 rounded-md border border-[var(--border-subtle)] bg-[var(--bg-panel)]/60 p-3" data-testid="signin-demo-roles">
-            <p className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
-              <ShieldCheck size={12} /> Demo access · pick a role
-            </p>
-            <div className="grid grid-cols-1 gap-1">
-              {DEMO_ROLES.map((r) => (
-                <button
-                  key={r.role}
-                  type="button"
-                  data-testid={`signin-role-${r.label.toLowerCase().replace(" ", "-")}`}
-                  onClick={() => setToken(r.token)}
-                  className="flex items-center justify-between gap-2 rounded-sm border border-transparent px-2 py-1.5 text-left text-xs transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--bg-hover)]"
-                >
-                  <span className="font-medium text-[var(--text-primary)]">{r.label}</span>
-                  <span className="font-mono text-[10px] text-[var(--text-muted)]">{r.role}</span>
-                </button>
-              ))}
-            </div>
-            <p className="mt-2 font-mono text-[9px] leading-relaxed text-[var(--text-muted)]">
-              Roles &amp; tenants are defined in <span className="text-[var(--text-secondary)]">Logins_credentials.keys</span> and enforced server-side.
-            </p>
-          </div>
         </form>
       </div>
     </div>

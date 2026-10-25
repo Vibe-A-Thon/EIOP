@@ -13,6 +13,8 @@ from packages.eoip.neural.schemas import (
     AttentionSchemaEngine,
 )
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 def test_neural_schema_model_and_id():
     slots = {

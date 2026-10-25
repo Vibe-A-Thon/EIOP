@@ -81,6 +81,7 @@ class MockOCREngine:
 # ---------------------------------------------------------------------------
 # CRA-014.1: Report configured capabilities per task
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-014")
 def test_cra_014_1_task_specific_capabilities_reporting():
     store = MemoryGraphStore()
     svc = MultimodalIngestionService(store, active_tier="numerics")
@@ -101,6 +102,7 @@ def test_cra_014_1_task_specific_capabilities_reporting():
 # ---------------------------------------------------------------------------
 # CRA-014.2: Evidence locators, confidence, and proposed knowledge state
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-014")
 def test_cra_014_2_evidence_locators_and_proposed_state(tmp_path: Path):
     store = MemoryGraphStore()
     stt = MockSTTEngine()
@@ -126,6 +128,7 @@ def test_cra_014_2_evidence_locators_and_proposed_state(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # CRA-014.3: Media budgets and offline isolation
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-014")
 def test_cra_014_3_media_budgets_enforcement(tmp_path: Path):
     store = MemoryGraphStore()
     stt = MockSTTEngine(duration=500.0)
@@ -145,6 +148,7 @@ def test_cra_014_3_media_budgets_enforcement(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # CRA-014.4: Cancellation and progress reporting based on actual work
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-014")
 def test_cra_014_4_cancellation_and_progress_reporting(tmp_path: Path):
     store = MemoryGraphStore()
     stt = MockSTTEngine()
@@ -188,6 +192,7 @@ def test_cra_014_4_cancellation_and_progress_reporting(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # CRA-014.5: WER and CER evaluation metrics
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-014")
 def test_cra_014_5_wer_and_cer_metrics():
     gold = "the enterprise ontology platform provides knowledge graphs"
     hyp = "the enterprise ontology system provides knowledge graphs"
@@ -206,6 +211,7 @@ def test_cra_014_5_wer_and_cer_metrics():
 # ---------------------------------------------------------------------------
 # CRA-014.6: OCR with normalized bounding boxes [ymin, xmin, ymax, xmax]
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-014")
 def test_cra_014_6_ocr_normalized_bounding_boxes(tmp_path: Path):
     store = MemoryGraphStore()
     ocr = MockOCREngine()
@@ -234,6 +240,7 @@ def test_cra_014_6_ocr_normalized_bounding_boxes(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # CRA-014.7: Audio and video millisecond timestamps
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-014")
 def test_cra_014_7_audio_video_millisecond_timestamps(tmp_path: Path):
     store = MemoryGraphStore()
     stt = MockSTTEngine()
@@ -254,6 +261,7 @@ def test_cra_014_7_audio_video_millisecond_timestamps(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # CRA-014.8: Air-gap / no-egress mode with hash-pinned bundles
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-014")
 def test_cra_014_8_airgap_no_egress_hash_pinned():
     expected_hash = hashlib.sha256(b"whisper-base-pinned-v1").hexdigest()
     budget = MediaBudget(no_egress=True, offline_bundle_hash=expected_hash)
@@ -265,6 +273,7 @@ def test_cra_014_8_airgap_no_egress_hash_pinned():
 # ---------------------------------------------------------------------------
 # CRA-014.9: Compute tier readiness and 503 unavailable error
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-014")
 def test_cra_014_9_tier_readiness_and_503_unavailable(tmp_path: Path):
     store = MemoryGraphStore()
     # Missing tier: active_tier is "none"
@@ -285,6 +294,7 @@ def test_cra_014_9_tier_readiness_and_503_unavailable(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # CRA-014.A: Acceptance Gate: Search Spoken Phrase, Locators, ACLs, and Tiers
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-014")
 def test_cra_014_a_acceptance_gate(tmp_path: Path):
     store = MemoryGraphStore()
     stt = MockSTTEngine(

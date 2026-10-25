@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.022" timestamp="2026-10-20T07:38:36.408117+00:00" hostname="grok-bot-vm-501513166"><testcase classname="tests.semantic.test_reasoning_gold" name="test_inconsistency_detection_and_exception" time="0.000" /></testsuite></testsuites>

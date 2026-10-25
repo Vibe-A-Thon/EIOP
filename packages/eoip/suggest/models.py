@@ -63,6 +63,7 @@ class EntityBinding(BaseModel):
     resolved: EntityAlternative | None = None
     alternatives: list[EntityAlternative] = Field(default_factory=list)
     ambiguous: bool = False
+    pinned: bool = False  # resolved from the user's session pin (SR-NLQ-003)
 
 
 class PermissionNote(BaseModel):
@@ -104,6 +105,16 @@ class SuggestionRequest(BaseModel):
     user_id: str | None = None
     roles: list[str] = Field(default_factory=list)
     limit: int = Field(default=5, ge=1, le=20)
+
+
+class PinRequest(BaseModel):
+    """Pin one candidate entity for a mention for the rest of the session (SR-NLQ-003)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    session_id: str = Field(min_length=1)
+    mention: str = Field(min_length=1)
+    entity_id: str = Field(min_length=1)
 
 
 class SuggestionResponse(BaseModel):

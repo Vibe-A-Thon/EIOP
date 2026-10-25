@@ -17,13 +17,23 @@ import json
 import time
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+
+class _FrozenList(list):
+    """List that compares like a list but refuses in-place mutation (deep immutability)."""
+
+    def _blocked(self, *args, **kwargs):
+        raise TypeError("EgressManifest is immutable (SR-LLM-013)")
+
+    append = extend = insert = remove = pop = clear = sort = reverse = _blocked
+    __setitem__ = __delitem__ = __iadd__ = __imul__ = _blocked
 
 
 class EgressManifest(BaseModel):
     """Immutable record of one egress call attempt (SR-LLM-013)."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", frozen=True)
 
     manifest_id: str
     call_id: str
@@ -50,6 +60,12 @@ class EgressManifest(BaseModel):
     request_hash: str = ""
     response_hash: str = ""
     created_at: float = Field(default_factory=time.time)
+
+    @field_validator("data_classes", "tags", "fields", "tokens", "matched_rule_ids", "dlp_findings",
+                     mode="after")
+    @classmethod
+    def _freeze_lists(cls, value: list[str]) -> list[str]:
+        return _FrozenList(value)
 
 
 def hash_bytes(data: bytes) -> str:

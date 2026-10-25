@@ -18,7 +18,7 @@
   ],
   "updated_files": [],
   "success_rate": {"backend": "n/a (frontend-only per request)", "frontend": "4/4 enhancements + 14/14 new screens + regression — all pass"},
-  "test_credentials": "Bearer: eoip-local-dev-token-0123456789abcdef (pre-filled), tenant: default (pre-filled), submit testid: signin-submit-button (button text 'Continue').",
+  "test_credentials": "Bearer: [REDACTED-F01] (pre-filled), tenant: default (pre-filled), submit testid: signin-submit-button (button text 'Continue').",
   "seed_data_creation": "Created in demo state (acceptable per spec, mutates demo state): one incident 'TEST_incident_abc', one snapshot 'TEST_snap_xyz', one saved view 'TEST_thumb_abc' (localStorage), one baseline/sync job on source demo-web-1. No cleanup performed.",
   "retest_needed": false,
   "main_agent_can_self_test": true,

@@ -34,6 +34,11 @@
       "type": ["object", "null"],
       "description": "GAP-AI evidence-addressable answer manifest linking graph nodes, path edges, source records, trust and freshness."
     },
+    "answer_citations": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "CRA-026.7 answer sentence -> cited evidence span (assertion_id, span {text,start,end}, support_score)."
+    },
     "citation_chains": {
       "type": "array",
       "items": { "type": "object" },

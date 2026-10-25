@@ -10,7 +10,7 @@ from reva.core.ids import warrant_id as compute_warrant_id
 from reva.kernel.signing import b64url_encode, verify_warrant_signature
 from reva.kernel.sth import SignedTreeHead, verify_sth
 from reva.kernel.store import RevaStore
-from reva.kernel.translog import TransparencyLog, verify_consistency
+from reva.kernel.translog import TransparencyLog, verify_consistency, mth
 
 
 class AuditReport(BaseModel):
@@ -76,7 +76,7 @@ def audit_transparency_log(
 
         # Verify root hash against leaves
         if sth.tree_size <= len(leaves):
-            expected_root = log.root(sth.tree_size).hex()
+            expected_root = mth(leaves[: sth.tree_size]).hex()  # from the store, never the cache
             if expected_root.lower() != sth.root_hash.lower():
                 issues.append(f"STH {sth.sth_id} root {sth.root_hash} does not match computed root {expected_root}")
 

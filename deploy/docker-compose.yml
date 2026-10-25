@@ -15,6 +15,13 @@ x-application: &application
     EOIP_GRAPH_USER: ${EOIP_GRAPH_USER:-}
     EOIP_GRAPH_PASSWORD: ${EOIP_GRAPH_PASSWORD:-}
     EOIP_API_TOKEN: ${EOIP_API_TOKEN:?Run scripts/container.ps1 (or scripts/docker.ps1) to create deploy/.env}
+    # FT-AUTH: the service token gets only the roles named here (no default role).
+    EOIP_API_TOKEN_ROLES: ${EOIP_API_TOKEN_ROLES:-}
+    EOIP_API_TOKEN_PRINCIPAL: ${EOIP_API_TOKEN_PRINCIPAL:-svc-mcp}
+    # First administrator, provisioned explicitly by 'eoip-admin from-env' at API start.
+    EOIP_ADMIN_USERNAME: ${EOIP_ADMIN_USERNAME:-}
+    EOIP_ADMIN_PASSWORD: ${EOIP_ADMIN_PASSWORD:-}
+    EOIP_SESSION_SECRET: ${EOIP_SESSION_SECRET:-}
     EOIP_DATA_DIR: /data
     EOIP_LOAD_DEMO: ${EOIP_LOAD_DEMO:-true}
     EOIP_OLLAMA_MODEL: ${EOIP_OLLAMA_MODEL:-}

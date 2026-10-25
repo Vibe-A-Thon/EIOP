@@ -19,6 +19,7 @@ from eoip.connectors.base import (
     DiscoveryResult,
     DiscoveryScope,
 )
+from eoip.connectors.errors import ConnectorError
 from eoip.contracts.source_event import PermissionMetadata, SourceEventV2, utc_now_iso
 from eoip.contracts.source_registry import SourceCapabilities
 import hmac

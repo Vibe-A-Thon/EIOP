@@ -316,3 +316,24 @@ def test_source_recovery_endpoint_refuses_without_mutation(monkeypatch, tmp_path
                       headers={"Authorization": f"Bearer {os.environ['EOIP_API_TOKEN']}"})
     assert result.status_code == (503 if control == "audit" else 422 if control == "capability" else 409)
     assert (queue.root / f"{job['job_id']}.json").read_bytes() == before
+
+
+def test_backup_never_exports_login_credentials_and_they_do_not_block_restore(tmp_path):
+    """FT-AUTH: credentials.json / session.key are identity config, never snapshot payload."""
+    from eoip.authn.credentials import CredentialStore, session_secret
+
+    source, target = tmp_path / "source", tmp_path / "target"
+    seed(source)
+    CredentialStore(source / "state" / "credentials.json").create_user(
+        "root-admin", "correct horse battery staple", ["superadmin"])
+    session_secret(source)
+    archive = tmp_path / "backup.json"
+    backup(MemoryGraphStore(), source, archive)
+    text = archive.read_text(encoding="utf-8")
+    assert "credentials.json" not in text and "session.key" not in text
+    assert "argon2" not in text and "root-admin" not in text
+    CredentialStore(target / "state" / "credentials.json").create_user(
+        "target-admin", "another long password", ["superadmin"])
+    session_secret(target)
+    restore(MemoryGraphStore(), target, archive)
+    assert CredentialStore(target / "state" / "credentials.json").get("target-admin") is not None

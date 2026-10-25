@@ -168,7 +168,9 @@ class CodeIntrospector:
                 break
         if app is None or not hasattr(app, "routes"):
             raise RuntimeError("apps.api exposes no FastAPI app")
-        for route in app.routes:
+        from eoip.api_routes import iter_effective_routes
+
+        for route in iter_effective_routes(app.routes):
             methods = getattr(route, "methods", None)
             path = getattr(route, "path", None)
             if not methods or not path:

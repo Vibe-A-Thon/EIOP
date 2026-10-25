@@ -1,0 +1,72 @@
+{
+  "$schema": "https://eoip.enterprise.internal/schemas/verification-receipt-v3.json",
+  "receipt_id": "rcpt-5cc6ae48-8f6c-4569-9a77-ce1b8d78f249",
+  "requirement_clause": "CRA-029.1",
+  "state_claimed": "VERIFIED",
+  "profile": "P0",
+  "source_commit": "77f3985a7f7407be0509ec04ea4cceaa0313ee6e",
+  "source_tree_dirty": false,
+  "source_fingerprint": "8acc4c5d95fcd6a484540b576f5f237880389d183af0efb2f906ab0cbd8f28ff",
+  "source_unchanged_during_run": true,
+  "artifact_digest": "c0dc68fe08adc165f1198875e028f57bdd75edb22a2e9f31080c321ee8659a21",
+  "artifact_path": "dist/eoip-1.0.0rc1-py3-none-any.whl",
+  "artifact_mtime": "2026-10-20T07:37:58.966120+00:00",
+  "runtime": {
+    "os": "Linux-6.12.94+-x86_64-with-glibc2.41",
+    "python_version": "3.11.17",
+    "backend": "memory-harness",
+    "engine": "",
+    "engine_version": ""
+  },
+  "fixture": {
+    "id": ""
+  },
+  "execution": {
+    "command": [
+      "/workspace/.venvs/eiop-work/bin/python",
+      "-m",
+      "pytest",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "-o",
+      "addopts=",
+      "--timeout=300",
+      "tests/semantic/test_catalog_lineage_context.py",
+      "--junitxml",
+      ".audit-scratch/evidence/CRA-029.1/run-20261020T074128Z-c37e3d1a/junit.xml"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-20T07:41:28.378474+00:00",
+    "completed_at": "2026-10-20T07:41:29.254936+00:00"
+  },
+  "results": {
+    "tests_total": 5,
+    "tests_failed": 0,
+    "tests_errors": 0,
+    "tests_skipped": 0,
+    "tests_xfailed": 0,
+    "tests_passed": 5
+  },
+  "evidence_files": [
+    {
+      "path": ".audit-scratch/evidence/CRA-029.1/run-20261020T074128Z-c37e3d1a/junit.xml",
+      "sha256": "0c9ca667d48a3660f58f44589a918c427570cd2981a1ded4b39ec5426940b389"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-029.1/run-20261020T074128Z-c37e3d1a/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".audit-scratch/evidence/CRA-029.1/run-20261020T074128Z-c37e3d1a/stdout.txt",
+      "sha256": "0f1c9cb7419830bc2e2e3babb6f970471d2fe9a6691b60b2b013584c29ac7ed6"
+    }
+  ],
+  "verified_invariants": [],
+  "negative_cases": [],
+  "evidence_categories": {},
+  "limitations": [],
+  "producer": "antigravity-agent",
+  "reviewer": null,
+  "review_signature": null
+}

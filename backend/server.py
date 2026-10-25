@@ -14,15 +14,28 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-# Local-first runtime configuration. These are safe development defaults for the
-# preview environment; production deployments inject their own values.
-_DATA_DIR = REPO_ROOT / ".eoip-data"
+# Runtime configuration (FT-F02 / FT-AUTH). There is NO committed default token and NO
+# default account. Principals are provisioned explicitly: EOIP_ADMIN_USERNAME +
+# EOIP_ADMIN_PASSWORD(_FILE) create the first administrator (idempotent), and
+# EOIP_API_TOKEN is honoured only when EOIP_API_TOKEN_ROLES maps it to a principal.
+# Without any principal the app refuses to start (fail closed).
+_DATA_DIR = Path(os.environ.get("EOIP_DATA_DIR") or (REPO_ROOT / ".eoip-data"))
 _DATA_DIR.mkdir(parents=True, exist_ok=True)
+_DEV = os.environ.get("EOIP_ENV", "").strip().lower() == "dev"
 
-os.environ.setdefault("EOIP_API_TOKEN", "eoip-local-dev-token-0123456789abcdef")
+
+def _provision_from_env() -> None:
+    from eoip.authn.credentials import CredentialStore
+    from eoip.authn.provision import provision_from_env
+
+    store_path = os.environ.get("EOIP_CREDENTIALS_FILE") or _DATA_DIR / "state" / "credentials.json"
+    provision_from_env(CredentialStore(store_path), log=lambda msg: print(msg, file=sys.stderr))
+
+
+_provision_from_env()
 os.environ.setdefault("EOIP_DATA_DIR", str(_DATA_DIR))
 os.environ.setdefault("EOIP_GRAPH_BACKEND", "memory")
-os.environ.setdefault("EOIP_LOAD_DEMO", "true")
+os.environ.setdefault("EOIP_LOAD_DEMO", "true" if _DEV else "false")
 
 from apps.api.main import create_app  # noqa: E402
 

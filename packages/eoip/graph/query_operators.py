@@ -6,6 +6,8 @@ that compose graph traversals into interpretable answers.
 
 from __future__ import annotations
 
+from typing import Any
+
 from eoip.graph.store import GraphStore
 from eoip.ontology.manifest import VERTEX_LABELS
 

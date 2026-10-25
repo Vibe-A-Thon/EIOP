@@ -74,7 +74,8 @@ config:
   dataDir: /data
   loadDemo: "true"
   apiToken: ""            # required; prefer existingSecret
-  existingSecret: ""      # name of a Secret with EOIP_API_TOKEN / EOIP_HUGEGRAPH_PASSWORD keys
+  existingSecret: ""      # Secret with EOIP_API_TOKEN / EOIP_HUGEGRAPH_PASSWORD (+ optional EOIP_ADMIN_USERNAME / EOIP_ADMIN_PASSWORD / EOIP_SESSION_SECRET) keys
+  apiTokenRoles: ""       # roles for EOIP_API_TOKEN, e.g. "analyst"; empty = token grants nothing (no default role)
   extraEnv: []
 
 # ---------------------------------------------------------------------------

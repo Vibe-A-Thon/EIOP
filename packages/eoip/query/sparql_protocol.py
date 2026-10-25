@@ -18,6 +18,10 @@ from eoip.graph.rdf_backend import FusekiGraphStore, GraphDBGraphStore
 from eoip.qlang.manifest_registry import ManifestRegistry
 
 
+class _NoBackend(RuntimeError):
+    pass
+
+
 class SparqlProtocolHandler:
     """SPARQL 1.1 Protocol handler for GET and POST /sparql endpoints."""
 
@@ -107,10 +111,18 @@ class SparqlProtocolHandler:
         # 4. Determine response format
         accept = headers.get("accept", "application/sparql-results+json")
 
-        # 5. Execute query
+        # 5. Execute query on a real engine
+        from eoip.query.sparql_backend import SparqlBackendError, SparqlCancelled, SparqlRejected
+
         try:
             bindings, vars_list, is_ask, ask_result = self._execute_sparql(query_str)
-        except Exception as exc:
+        except SparqlRejected as exc:
+            return 422, {"Content-Type": "application/json"}, json.dumps(exc.to_dict())
+        except SparqlCancelled as exc:
+            return 504, {"Content-Type": "text/plain"}, f"Query cancelled: {exc}"
+        except (_NoBackend, SparqlBackendError) as exc:
+            return 503, {"Content-Type": "text/plain"}, f"RDF backend unavailable: {exc}"
+        except Exception as exc:  # noqa: BLE001
             return 400, {"Content-Type": "text/plain"}, f"SPARQL Execution Error: {exc}"
 
         # 6. Format response
@@ -121,37 +133,28 @@ class SparqlProtocolHandler:
 
         return 200, {"Content-Type": ct}, resp_body
 
+    def _backend(self):
+        from eoip.query.sparql_backend import FusekiSparqlBackend
+
+        b = self.rdf_backend
+        if b is None:
+            return None
+        if hasattr(b, "query"):
+            return b
+        # legacy FusekiGraphStore / GraphDBGraphStore descriptors: dispatch over the SPARQL protocol
+        return FusekiSparqlBackend(b.endpoint_url, username=getattr(b, "username", ""),
+                                   password=getattr(b, "password", ""))
+
     def _execute_sparql(self, query: str) -> tuple[list[dict[str, Any]], list[str], bool, bool]:
-        """Executes query either via RDF backend or internal LPG translator."""
-        is_ask = query.strip().upper().startswith("ASK")
-
-        # If RDF backend is configured, we can query it
-        if self.rdf_backend is not None:
-            # Backend query simulation or real protocol dispatch
-            pass
-
-        # Internal fallback execution using RDF triples over graph store or fixture
-        vars_list = ["s", "p", "o"]
-        bindings: list[dict[str, Any]] = []
-
-        # Simple BGP extraction
-        m_sel = re.search(r"SELECT\s+(.+?)\s+WHERE", query, re.IGNORECASE | re.DOTALL)
-        if m_sel:
-            proj = m_sel.group(1).strip()
-            if proj == "*":
-                vars_list = ["s", "p", "o"]
-            else:
-                vars_list = [v.lstrip("?") for v in proj.split()]
-
-        # Generate sample bindings adhering to variables
-        if not is_ask:
-            bindings = [
-                {v: {"type": "uri", "value": f"urn:eoip:entity:{v}_{i}"} for v in vars_list}
-                for i in range(1, 4)
-            ]
-            return bindings, vars_list, False, False
-        else:
-            return [], [], True, True
+        """Execute on the configured RDF backend (Fuseki/GraphDB over the protocol, or rdflib). There is
+        no fabricated fallback: without a backend the endpoint answers 503."""
+        backend = self._backend()
+        if backend is None:
+            raise _NoBackend("no RDF backend is configured for /sparql")
+        res = backend.query(query)
+        if res.kind == "ASK":
+            return [], [], True, bool(res.boolean)
+        return res.bindings, res.vars, False, False
 
     def _format_results(self, vars_list: list[str], bindings: list[dict[str, Any]], accept: str) -> tuple[str, str]:
         if "json" in accept or "*/*" in accept:

@@ -8,7 +8,7 @@ Protected routes use a Bearer token configured through `EOIP_API_TOKEN`; the app
 
 Unauthenticated liveness/readiness probes are available at `/health/live` and `/health/ready`; Prometheus metrics are available at `/metrics`. Most functional APIs are under `/api/v1`. Use the generated OpenAPI schema for exact request/response models, parameters, and status codes.
 
-## Route Families
+## Core REST API Endpoints (Route Families)
 
 | Family | Representative active paths | Purpose |
 |---|---|---|

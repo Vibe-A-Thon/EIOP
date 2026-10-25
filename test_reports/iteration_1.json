@@ -20,7 +20,7 @@
   ],
   "updated_files": [],
   "success_rate": {"backend": "n/a (frontend-only test)", "frontend": "100%"},
-  "test_credentials": "Bearer token: eoip-local-dev-token-0123456789abcdef, tenant: default (pre-filled in sign-in)",
+  "test_credentials": "Bearer token: [REDACTED-F01], tenant: default (pre-filled in sign-in)",
   "seed_data_creation": "None - backend seeds ~226 vertices/721 edges automatically",
   "retest_needed": false,
   "main_agent_can_self_test": true,

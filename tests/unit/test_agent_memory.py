@@ -1,5 +1,6 @@
 """FR-MEM-001 / NFR-PRIV-001: bounded, scoped, minimized task memory."""
 
+from _principals import provision_api_token, session_token, use_test_session_secret
 import json
 import multiprocessing
 from datetime import UTC, datetime, timedelta
@@ -261,6 +262,7 @@ def test_memory_api_requires_auth_and_returns_classified_record(tmp_path, monkey
     graph.upsert_vertex("WorkItem", {"canonical_id": "urn:test:item:1"})
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setenv("EOIP_API_TOKEN", "test-token-with-at-least-24-characters")
+    provision_api_token(monkeypatch, "test-token-with-at-least-24-characters")
     monkeypatch.setattr(main, "create_store", lambda: graph)
     with TestClient(main.create_app()) as api:
         headers = {"Authorization": "Bearer test-token-with-at-least-24-characters"}
@@ -284,24 +286,21 @@ def test_agent_api_binds_run_owner_to_authenticated_principal(tmp_path, monkeypa
     from fastapi.testclient import TestClient
 
     from apps.api import main
-    from eoip.authn import Principal, TokenService
+    from eoip.authn import Principal
     from eoip.graph.memory import MemoryGraphStore
 
     graph = MemoryGraphStore()
     graph.upsert_vertex("WorkItem", {"canonical_id": "urn:test:item:principal"})
-    secret = "test-token-with-at-least-24-characters"
     principal = Principal(
         id="urn:eoip:authn:principal:alice",
         username="alice",
         roles=("admin",),
         tenant_id="tenant-a",
     )
-    token = TokenService(secret.encode("utf-8"), issuer="eoip-authn", audience="eoip-api").issue(
-        principal
-    )
-    monkeypatch.setattr(main, "api_token", lambda: secret)
+    use_test_session_secret(monkeypatch)
     monkeypatch.setattr(main, "create_store", lambda: graph)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
+    token = session_token(principal, tmp_path)
 
     with TestClient(main.create_app()) as api:
         headers = {"Authorization": f"Bearer {token}"}
@@ -432,6 +431,7 @@ def test_memory_api_refuses_invalid_ttl_and_corruption(tmp_path, monkeypatch):
     graph = MemoryGraphStore()
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setenv("EOIP_API_TOKEN", "test-token-with-at-least-24-characters")
+    provision_api_token(monkeypatch, "test-token-with-at-least-24-characters")
     monkeypatch.setattr(main, "create_store", lambda: graph)
     api = TestClient(main.create_app())
     headers = {"Authorization": "Bearer test-token-with-at-least-24-characters"}

@@ -1,3 +1,4 @@
+from _principals import provision_api_token
 import json
 
 import httpx
@@ -19,6 +20,7 @@ async def test_mcp_streamable_http_searches_the_authenticated_api(monkeypatch, t
         {"canonical_id": "issue:EOIP-1", "name": "EOIP-1", "summary": "Demo issue"},
     )
     monkeypatch.setenv("EOIP_API_TOKEN", token)
+    provision_api_token(monkeypatch, token)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setenv("EOIP_API_URL", "http://eoip-api.test")
     monkeypatch.setattr(api_main, "create_store", lambda: store)
@@ -68,6 +70,7 @@ async def test_mcp_streamable_http_searches_the_authenticated_api(monkeypatch, t
 @pytest.mark.asyncio
 async def test_mcp_streamable_http_rejects_unauthenticated_requests(monkeypatch):
     monkeypatch.setenv("EOIP_API_TOKEN", "integration-test-token-with-at-least-24-characters")
+    provision_api_token(monkeypatch, "integration-test-token-with-at-least-24-characters")
     mcp = mcp_main.create_app()
 
     async with (

@@ -1,8 +1,9 @@
 """Governed proposal review flow (human control over agent-authored changes)."""
 
+from _principals import provision_api_token, session_token, use_test_session_secret
 from uuid import uuid4
 
-from eoip.authn import Principal, TokenService
+from eoip.authn import Principal
 from eoip.contracts.agent import ChangeProposal
 from eoip.contracts.source_event import utc_now_iso
 from eoip.graph.memory import MemoryGraphStore
@@ -15,6 +16,8 @@ TOKEN = "test-token-with-at-least-24-characters"
 def client(monkeypatch, tmp_path):
     store = MemoryGraphStore()
     monkeypatch.setenv("EOIP_API_TOKEN", TOKEN)
+    provision_api_token(monkeypatch, TOKEN)
+    use_test_session_secret(monkeypatch)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     from fastapi.testclient import TestClient
@@ -27,14 +30,13 @@ def _headers():
 
 
 def _signed_headers(username, roles):
-    service = TokenService(TOKEN.encode("utf-8"), issuer="eoip-authn", audience="eoip-api")
     principal = Principal(
         id=f"urn:eoip:authn:principal:{username}",
         username=username,
         roles=roles,
         provider="local",
     )
-    return {"Authorization": f"Bearer {service.issue(principal)}"}
+    return {"Authorization": f"Bearer {session_token(principal)}"}
 
 
 def _proposal(proposal_id="p-1"):
@@ -63,6 +65,8 @@ def _seed_drift(monkeypatch, tmp_path):
     """Create an app instance whose store carries one unmapped label."""
     store = MemoryGraphStore()
     monkeypatch.setenv("EOIP_API_TOKEN", TOKEN)
+    provision_api_token(monkeypatch, TOKEN)
+    use_test_session_secret(monkeypatch)
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     store._vertices["v:drift"] = {

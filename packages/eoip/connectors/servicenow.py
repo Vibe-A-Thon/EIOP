@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import re
 from datetime import UTC, datetime
 from typing import Any
@@ -11,14 +12,24 @@ from eoip.connectors.rest import RestConnector, parse_utc, utc_timestamp
 from eoip.connectors.sync import SyncBatch
 from eoip.contracts.source_event import PermissionMetadata, SourceEventV2, utc_now_iso
 
-DEFAULT_TABLES = {
+logger = logging.getLogger(__name__)
+
+# FR-SNOW-001 sync scope: these record kinds are fetched by default.
+CORE_TABLES = {
     "incident": "incident",
     "problem": "problem",
     "change": "change_request",
     "knowledge": "kb_knowledge",
+}
+# CRA-008.6 CMDB table profiles. Known (mapping + ACL), but synced only when
+# opted in (include_cmdb=True or an explicit tables= entry): least privilege,
+# no cmdb_read scope required by default, and instances without CMDB still
+# sync (FT-D03).
+OPTIONAL_TABLES = {
     "cmdb_ci": "cmdb_ci",
     "cmdb_rel_ci": "cmdb_rel_ci",
 }
+DEFAULT_TABLES = {**CORE_TABLES, **OPTIONAL_TABLES}
 
 DEFAULT_FIELDS = {
     "record_id": "sys_id",
@@ -42,11 +53,18 @@ class ServiceNowConnector(RestConnector):
         tables: dict[str, str] | None = None,
         field_mapping: dict[str, str] | None = None,
         page_size: int = 500,
+        include_cmdb: bool = False,
         **kwargs,
     ) -> None:
         if not 1 <= page_size <= 10000:
             raise ValueError("page_size must be between 1 and 10000")
         self.tables = {**DEFAULT_TABLES, **(tables or {})}
+        explicit = set(tables or {})
+        self.sync_kinds = [
+            kind for kind in self.tables
+            if kind in CORE_TABLES or kind in explicit or (include_cmdb and kind in OPTIONAL_TABLES)
+        ]
+        self.skipped_tables: list[dict[str, str]] = []
         if not self.tables or any(not TABLE_NAME.fullmatch(table) for table in self.tables.values()):
             raise ValueError("ServiceNow table names must be simple identifiers")
         self.field_mapping = {**DEFAULT_FIELDS, **(field_mapping or {})}
@@ -78,20 +96,34 @@ class ServiceNowConnector(RestConnector):
         )
         query = "^".join(query_parts)
         events = []
-        for record_kind, table in self.tables.items():
+        self.skipped_tables = []
+        for record_kind in self.sync_kinds:
+            table = self.tables[record_kind]
             offset = 0
             while True:
-                response = self.get_json(
-                    f"/api/now/table/{table}",
-                    params={
-                        "sysparm_query": query,
-                        "sysparm_limit": self.page_size,
-                        "sysparm_offset": offset,
-                        "sysparm_display_value": "false",
-                        "sysparm_exclude_reference_link": "true",
-                    },
-                    correlation_id=correlation_id,
-                )
+                try:
+                    response = self.get_json(
+                        f"/api/now/table/{table}",
+                        params={
+                            "sysparm_query": query,
+                            "sysparm_limit": self.page_size,
+                            "sysparm_offset": offset,
+                            "sysparm_display_value": "false",
+                            "sysparm_exclude_reference_link": "true",
+                        },
+                        correlation_id=correlation_id,
+                    )
+                except ConnectorError as exc:
+                    # An optional (CMDB) table that is missing or forbidden on this instance
+                    # yields a per-table warning instead of failing the whole sync (FT-D03).
+                    if record_kind in OPTIONAL_TABLES and exc.category in ("authentication_failed", "remote_error"):
+                        logger.warning(
+                            "servicenow optional table skipped",
+                            extra={"table": table, "error_category": exc.category, "correlation_id": correlation_id},
+                        )
+                        self.skipped_tables.append({"table": table, "category": exc.category})
+                        break
+                    raise
                 records = response.get("result")
                 if not isinstance(records, list) or any(not isinstance(record, dict) for record in records):
                     self._log_failure("invalid_response", correlation_id)

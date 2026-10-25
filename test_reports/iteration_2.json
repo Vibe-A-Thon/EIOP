@@ -20,7 +20,7 @@
   ],
   "updated_files": [],
   "success_rate": {"backend": "n/a (frontend-only)", "frontend": "100% of required flows verified"},
-  "test_credentials": "Bearer: eoip-local-dev-token-0123456789abcdef, tenant: default (pre-filled)",
+  "test_credentials": "Bearer: [REDACTED-F01], tenant: default (pre-filled)",
   "seed_data_creation": "Created and later cleaned up one saved view named 'TEST_regression_view' in localStorage during the saved-views test.",
   "retest_needed": false,
   "main_agent_can_self_test": true,

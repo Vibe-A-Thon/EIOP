@@ -174,7 +174,9 @@ def seven_zip_members(content: bytes, options: ParseOptions) -> Iterator[tuple[s
                 if entry.is_symlink or entry.is_junction or entry.is_socket:
                     raise ParseError("unsafe_member", "7z links/devices are not supported")
             factory = Factory()
-            archive.extractall(factory=factory)
+            # Members were name-checked and link/device-checked above, and the factory
+            # writes to memory only, so no filesystem path traversal is possible.
+            archive.extractall(factory=factory)  # noqa: S202  # nosec B202
             for name, sink in factory.outputs.items():
                 yield name, sink.stream.getvalue()
     except (py7zr.exceptions.ArchiveError, lzma.LZMAError) as exc:

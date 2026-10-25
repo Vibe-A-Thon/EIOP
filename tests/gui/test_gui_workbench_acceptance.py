@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import json
+import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -13,6 +15,38 @@ from eoip.contracts.canonical import PrincipalType, TrustedScope
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 APPS_WEB = REPO_ROOT / "apps" / "web"
+
+
+def _require_web_toolchain(*, need_dist: bool = False) -> str:
+    """FT-H01: resolve npm portably and skip (not fail) when the web toolchain is absent.
+
+    Set EOIP_REQUIRE_GUI_TESTS=1 (CI build job) to turn these skips into failures.
+    """
+    problems = []
+    npm = shutil.which("npm")
+    node = shutil.which("node")
+    if not npm or not node:
+        problems.append("npm/node not on PATH")
+    else:
+        version = subprocess.run([node, "--version"], capture_output=True, text=True).stdout.strip()
+        major = int(re.match(r"v(\d+)", version).group(1)) if re.match(r"v(\d+)", version) else 0
+        if major < 22:
+            problems.append(f"node {version or '?'} < 22 (apps/web test:unit needs --experimental-strip-types)")
+    if not (APPS_WEB / "node_modules").is_dir():
+        problems.append("apps/web/node_modules missing (run `npm ci` in apps/web)")
+    if need_dist and not (APPS_WEB / "dist" / "index.html").exists():
+        problems.append("apps/web/dist missing (run `npm run build` in apps/web)")
+    if problems:
+        message = "web toolchain unavailable: " + "; ".join(problems)
+        if os.environ.get("EOIP_REQUIRE_GUI_TESTS") == "1":
+            pytest.fail(message)
+        pytest.skip(message)
+    return npm
+
+
+def _npm(npm: str, *args: str) -> subprocess.CompletedProcess:
+    # List argv without a shell: with shell=True on POSIX only argv[0] ('npm') ran (FT-H01).
+    return subprocess.run([npm, *args], cwd=str(APPS_WEB), capture_output=True, text=True)
 
 
 @pytest.fixture
@@ -30,6 +64,7 @@ def scope():
 # CRA-030.1: Task routes reconciliation (all 27 screens, no marketing shell)
 # ===========================================================================
 
+@pytest.mark.req("CRA-030")
 def test_cra_030_1_task_routes_reconciliation():
     # Run audit_gui.mjs to verify intake and all 27 task screens
     res = subprocess.run(
@@ -61,19 +96,14 @@ def test_cra_030_1_task_routes_reconciliation():
 # CRA-030.2: Shared typed contracts, truthful states, zero fake records
 # ===========================================================================
 
+@pytest.mark.req("CRA-030")
 def test_cra_030_2_typed_contracts_and_truthful_states():
     # Verify truthfulness and loading/empty/partial/stale/denied/error/success states
     ui_states = {"LOADING", "EMPTY", "PARTIAL", "STALE", "DENIED", "ERROR", "SUCCESS"}
     assert len(ui_states) == 7
 
     # Ensure apps/web unit tests pass: no fabrication of administrative posture or mock fallbacks
-    res = subprocess.run(
-        ["npm", "run", "test:unit"],
-        cwd=str(APPS_WEB),
-        capture_output=True,
-        text=True,
-        shell=True,
-    )
+    res = _npm(_require_web_toolchain(), "run", "test:unit")
     assert res.returncode == 0, f"Unit test failed: {res.stderr}\n{res.stdout}"
     assert "fail 0" in res.stdout
     assert "never retries a failed mutation" in res.stdout
@@ -84,6 +114,7 @@ def test_cra_030_2_typed_contracts_and_truthful_states():
 # CRA-030.3: Simple task forms plus expert views (Manchester / SPARQL)
 # ===========================================================================
 
+@pytest.mark.req("CRA-030")
 def test_cra_030_3_simple_forms_and_expert_views():
     # Validates that simple form state and expert query/manchester view share identical server state
     shared_server_state = {
@@ -114,6 +145,7 @@ def test_cra_030_3_simple_forms_and_expert_views():
 # CRA-030.4: Graph/table/tree equivalence and bounded scenes
 # ===========================================================================
 
+@pytest.mark.req("CRA-030")
 def test_cra_030_4_graph_table_tree_equivalence_and_focus():
     canonical_items = [
         {"id": "node_1", "label": "AuthenticationService", "type": "Service", "status": "ACTIVE"},
@@ -148,6 +180,7 @@ def test_cra_030_4_graph_table_tree_equivalence_and_focus():
 # CRA-030.5: WCAG 2.2 AA target, i18n framework, pseudo-locale, RTL
 # ===========================================================================
 
+@pytest.mark.req("CRA-030")
 def test_cra_030_5_accessibility_i18n_and_reduced_motion():
     # Verify i18n framework in apps/web/src/i18n.js
     i18n_path = APPS_WEB / "src" / "i18n.js"
@@ -169,6 +202,7 @@ def test_cra_030_5_accessibility_i18n_and_reduced_motion():
 # CRA-030.6: Scoped preferences and theme contrast checks
 # ===========================================================================
 
+@pytest.mark.req("CRA-030")
 def test_cra_030_6_versioned_preferences_and_contrast():
     # 4 supported themes: Light, Dark, High contrast light, High contrast dark
     themes = ["Light", "Dark", "High contrast light", "High contrast dark"]
@@ -201,6 +235,7 @@ def test_cra_030_6_versioned_preferences_and_contrast():
 # CRA-030.7: Five Workbenches specification
 # ===========================================================================
 
+@pytest.mark.req("CRA-030")
 def test_cra_030_7_workbenches_specification():
     workbenches = {
         "Source Management": {"discovery", "configuration", "runs", "lineage"},
@@ -219,6 +254,7 @@ def test_cra_030_7_workbenches_specification():
 # CRA-030.8: Component and ARIA attribute baseline audit with RTL
 # ===========================================================================
 
+@pytest.mark.req("CRA-030")
 def test_cra_030_8_component_aria_baseline_and_rtl():
     # Audit component inventory
     inventory_file = REPO_ROOT / "test-results" / "gui-source-inventory.json"
@@ -234,6 +270,7 @@ def test_cra_030_8_component_aria_baseline_and_rtl():
 # CRA-030.9: Automated test suites exposed (test:e2e, test:a11y)
 # ===========================================================================
 
+@pytest.mark.req("CRA-030")
 def test_cra_030_9_automated_test_suites_exposed():
     pkg_file = APPS_WEB / "package.json"
     assert pkg_file.exists()
@@ -251,7 +288,9 @@ def test_cra_030_9_automated_test_suites_exposed():
 # CRA-030.A: Acceptance Gate
 # ===========================================================================
 
+@pytest.mark.req("CRA-030")
 def test_cra_030_a_acceptance_gate(scope):
+    npm = _require_web_toolchain(need_dist=True)
     # 1. 27 task routes reconciled
     res_audit = subprocess.run(
         ["node", "scripts/audit_gui.mjs", "--check"],
@@ -262,13 +301,7 @@ def test_cra_030_a_acceptance_gate(scope):
     assert res_audit.returncode == 0
 
     # 2. Unit test suites pass completely with 0 errors
-    res_unit = subprocess.run(
-        ["npm", "run", "test:unit"],
-        cwd=str(APPS_WEB),
-        capture_output=True,
-        text=True,
-        shell=True,
-    )
+    res_unit = _npm(npm, "run", "test:unit")
     assert res_unit.returncode == 0
     assert "fail 0" in res_unit.stdout
 

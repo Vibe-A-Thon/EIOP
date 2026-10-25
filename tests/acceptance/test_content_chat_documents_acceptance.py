@@ -20,6 +20,7 @@ from eoip.query.sensitive_redactor import redact_sensitive_literals
 # CRA-006.1: Provide generic wiki acquisition plus Confluence-specific spaces,
 # pages, versions, links, comments and attachments with permissions & diagnostics
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-006")
 def test_cra_006_1_confluence_spaces_pages_diagnostics():
     conn = ConfluenceConnector(
         base_url="https://confluence.example.org",
@@ -100,6 +101,7 @@ def test_cra_006_1_confluence_spaces_pages_diagnostics():
 # ---------------------------------------------------------------------------
 # CRA-006.2: Qualify Slack through approved scopes/events/history APIs and DM boundary
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-006")
 def test_cra_006_2_slack_qualification_and_dm_boundary():
     # 1. Deny-by-default boundary enforcement: enabling private/DM without approval ref fails (Decision H-13)
     with pytest.raises(ValueError, match="Enabling Slack private-channel or direct-message ingestion without an approval reference is refused"):
@@ -140,6 +142,7 @@ def test_cra_006_2_slack_qualification_and_dm_boundary():
 # ---------------------------------------------------------------------------
 # CRA-006.3: Qualify Documentum API for object IDs, versions, and legal holds
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-006")
 def test_cra_006_3_documentum_qualification_and_object_identity():
     conn = DocumentumConnector(
         source_id="dctm-prod-01",
@@ -182,6 +185,7 @@ def test_cra_006_3_documentum_qualification_and_object_identity():
 # ---------------------------------------------------------------------------
 # CRA-006.4: Preserve nested part & attachment provenance; independent ACL sync; redaction
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-006")
 def test_cra_006_4_nested_part_provenance_and_independent_acl_sync():
     conn = ConfluenceConnector(base_url="https://confluence.example.org", token="tok")
 
@@ -215,6 +219,7 @@ def test_cra_006_4_nested_part_provenance_and_independent_acl_sync():
 # ---------------------------------------------------------------------------
 # CRA-006.5: Honest macro and rendition fidelity diagnostics
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-006")
 def test_cra_006_5_honest_macro_fidelity_diagnostics():
     body_xhtml = (
         "<p>Standard text</p>"
@@ -242,6 +247,7 @@ def test_cra_006_5_honest_macro_fidelity_diagnostics():
 # ---------------------------------------------------------------------------
 # CRA-006.6: Confluence CQL page tree, mentions, and ACL vector populating
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-006")
 def test_cra_006_6_confluence_cql_page_tree_and_acl_vector():
     # 1. Parse and compile CML mapping
     cml_path = Path("packages/eoip/mapping/cml/confluence.cml")
@@ -272,6 +278,7 @@ def test_cra_006_6_confluence_cql_page_tree_and_acl_vector():
 # ---------------------------------------------------------------------------
 # CRA-006.7: Documentum Cabinets, Folders, Renditions, and Legal Hold
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-006")
 def test_cra_006_7_documentum_cabinets_folders_and_legal_hold():
     # 1. Parse and compile CML mapping
     cml_path = Path("packages/eoip/mapping/cml/documentum.cml")
@@ -303,6 +310,7 @@ def test_cra_006_7_documentum_cabinets_folders_and_legal_hold():
 # ---------------------------------------------------------------------------
 # CRA-006.8: Slack Events API, Thread Replies, and Entity Mention Proposals
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-006")
 def test_cra_006_8_slack_events_and_mention_proposals():
     # 1. Parse and compile CML mapping
     cml_path = Path("packages/eoip/mapping/cml/slack.cml")
@@ -346,6 +354,7 @@ def test_cra_006_8_slack_events_and_mention_proposals():
 # ---------------------------------------------------------------------------
 # CRA-006.A: Acceptance Gate for Wiki, Content, Chat, and Document Repositories
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-006")
 def test_cra_006_a_acceptance_gate():
     # Clause verification:
     # 1. Restricted Confluence page / Slack channel / Documentum document cannot appear to unauthorized principals

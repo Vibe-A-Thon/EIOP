@@ -15,6 +15,11 @@ from eoip.egress.policy import PolicyRule
 from eoip.egress.provider import ServiceProviderManifest
 
 
+try:  # FastAPI stays an optional import for the package; Request must be resolvable at module level
+    from fastapi import Request
+except ImportError:  # pragma: no cover
+    Request = Any  # type: ignore[assignment,misc]
+
 class EnableEndpointRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -67,7 +72,19 @@ class InstallPluginRequest(BaseModel):
 
     manifest_id: str
     approved_by: str
+    acknowledged_fingerprint: str
     consent_ref: str = ""
+
+
+class AmendConsentRequest(BaseModel):
+    """Change of contract terms; any change requires re-approval (SR-LLM-017)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    admin: str = Field(min_length=1)
+    dpa_ref: str | None = None
+    residency_region: str | None = None
+    scope: str | None = None
 
 
 def build_router(gateway: EgressGateway):
@@ -114,6 +131,29 @@ def build_router(gateway: EgressGateway):
         except (KeyError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return {"enabled": endpoint_id}
+
+    @router.get("/endpoints/{endpoint_id}/consent")
+    def get_consent(endpoint_id: str) -> dict:
+        if endpoint_id not in gateway.endpoints:
+            raise HTTPException(status_code=404, detail=f"unknown endpoint {endpoint_id}")
+        current = gateway.consents.get(endpoint_id)
+        return {
+            "endpoint_id": endpoint_id,
+            "current": current.model_dump() if current else None,
+            "history": [c.model_dump() for c in gateway.consent_history.get(endpoint_id, [])],
+            "reapproval_required": endpoint_id in gateway.reapproval_required,
+        }
+
+    @router.post("/endpoints/{endpoint_id}/consent/amend")
+    def amend_consent(endpoint_id: str, body: AmendConsentRequest) -> dict:
+        if endpoint_id not in gateway.endpoints:
+            raise HTTPException(status_code=404, detail=f"unknown endpoint {endpoint_id}")
+        try:
+            required = gateway.amend_consent(endpoint_id, admin=body.admin, dpa_ref=body.dpa_ref,
+                                             residency_region=body.residency_region, scope=body.scope)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        return {"endpoint_id": endpoint_id, "reapproval_required": required}
 
     @router.post("/endpoints/{endpoint_id}/disable")
     def disable_endpoint(endpoint_id: str, body: KillRequest) -> dict:
@@ -190,11 +230,23 @@ def build_router(gateway: EgressGateway):
         gateway.plugin_registry.submit(body.manifest)
         return {"submitted": body.manifest.id}
 
+    @router.get("/plugins/{manifest_id:path}/install-preview")
+    def plugin_install_preview(manifest_id: str) -> dict:
+        try:
+            return gateway.plugin_registry.install_preview(manifest_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
     @router.post("/plugins/install")
-    def install_plugin(body: InstallPluginRequest) -> dict:
+    def install_plugin(body: InstallPluginRequest, request: Request) -> dict:
+        # The approver is the authenticated administrator when the API carries a principal
+        # (the admin-prefix middleware has already required the admin role, SR-CON-011).
+        principal = getattr(request.state, "principal", None)
+        approver = getattr(principal, "username", None) or body.approved_by
         try:
             record = gateway.plugin_registry.install(
-                body.manifest_id, approved_by=body.approved_by,
+                body.manifest_id, approved_by=approver,
+                acknowledged_fingerprint=body.acknowledged_fingerprint,
                 consent_ref=body.consent_ref,
             )
         except (KeyError, ValueError) as exc:

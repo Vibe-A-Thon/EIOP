@@ -3,7 +3,7 @@ name: Validation evidence
 on:
   pull_request:
   push:
-    branches: [main, dev_local, "feature/audit-*"]
+    branches: [main, dev_local, eoip-remediation-geeky, "feature/audit-*"]
   workflow_dispatch:
 
 permissions:
@@ -12,7 +12,8 @@ permissions:
 jobs:
   regression:
     runs-on: windows-latest
-    timeout-minutes: 30
+    # FT-F04: the full suite needs more than 30 minutes on windows-latest.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,8 +26,10 @@ jobs:
           node-version: "22"
       - name: Check client demo orchestration
         run: node --test demo\autodemo\tests\*.test.js apps\vscode-extension\test\demo-driver.test.js
-      - name: Install existing development dependencies
-        run: python -m pip install -e ".[dev,codeparse,fileparse]"
+      # FT-F04 / FT-F06: the documented install. The old extras set lacked numerics
+      # (numpy/scipy/scikit-learn), reports and semantic, so collection failed.
+      - name: Install test dependencies
+        run: python -m pip install -c requirements.lock -e ".[test]"
       - name: Run behavioral verification merge gate (KGR-G-011)
         shell: pwsh
         run: |
@@ -40,12 +43,15 @@ jobs:
           scripts\documentation_audit.py tests\unit\test_validation_source_binding.py
           tests\unit\test_documentation_audit.py
       - name: Run source-bound regression
+        env:
+          # Tests needing an owner decision (FT-X10) are deselected and listed.
+          EOIP_TEST_QUARANTINE_FILE: tests/ci-quarantine.txt
         run: >-
           python -X utf8 -m scripts.validate_with_evidence
           --project-root .
           --output test-results\ci-source-bound-validation.json
           --artifact test-results\ci-regression.xml
-          -- python -X utf8 -m pytest -q
+          -- python -X utf8 -m pytest -q --timeout=300
           --junitxml=test-results\ci-regression.xml
       - name: Retain validation receipts
         if: always()
@@ -63,8 +69,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install existing development dependencies
-        run: python -m pip install -e ".[dev,codeparse,fileparse]"
+      # FT-F04 / FT-F06: the documented install. The old extras set lacked numerics
+      # (numpy/scipy/scikit-learn), reports and semantic, so collection failed.
+      - name: Install test dependencies
+        run: python -m pip install -c requirements.lock -e ".[test]"
       - name: Run KG CI/CD pipeline (GAP-KGCI-001..004, release gates §16)
         run: >-
           python -X utf8 -m packages.eoip.ci
@@ -79,4 +87,96 @@ jobs:
         with:
           name: kgci-report
           path: test-results/kgci/
+          if-no-files-found: warn
+
+  # CRA-026.A / SR-LLM-005: real CPU-only local model (no GPU). The GGUF is pinned by SHA-256 and served
+  # by Ollama in a container; tests that need it are skipped everywhere else.
+  llm-cpu-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MODEL_URL: https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf
+      MODEL_SHA256: 74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db
+      EOIP_LIVE_OLLAMA_MODEL: qwen2.5-0.5b-q4
+      EOIP_LIVE_OLLAMA_URL: http://localhost:11434
+      EOIP_BENCH_OUT: test-results
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Cache model
+        uses: actions/cache@v4
+        with:
+          path: models
+          key: gguf-${{ env.MODEL_SHA256 }}
+      - name: Fetch and verify model
+        run: |
+          mkdir -p models
+          f=models/qwen2.5-0.5b-instruct-q4_k_m.gguf
+          [ -f "$f" ] || curl -fsSL -o "$f" "$MODEL_URL"
+          echo "$MODEL_SHA256  $f" | sha256sum -c -
+      - name: Start Ollama (CPU only)
+        run: |
+          docker run -d --name ollama -p 127.0.0.1:11434:11434 -v "$PWD/models:/models:ro" \
+            -v "$PWD/deploy/hardware/models:/modelfiles:ro" ollama/ollama:0.40.6
+          for i in $(seq 1 60); do curl -sf localhost:11434/api/version && break; sleep 2; done
+          docker exec ollama ollama create "$EOIP_LIVE_OLLAMA_MODEL" -f /modelfiles/qwen2.5-0.5b-q4.Modelfile
+      - name: Install test dependencies
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Run live-model acceptance and CPU reference benchmark
+        run: |
+          export EOIP_RELEASE_ID="$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")+${GITHUB_SHA::12}"
+          python -m pytest -q -o addopts="" -p no:cacheprovider --timeout=600 \
+            tests/ai/test_graphrag_live_model.py tests/ai/test_retrieval_grounded_synthesis.py tests/unit/test_llm_cpu_reference_live.py \
+            --junitxml=test-results/llm-cpu-reference.xml
+      - name: Retain LLM evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-evidence-llm
+          path: test-results/
+          if-no-files-found: warn
+
+  # CRA-024.A.1 / CRA-024.11 / ONT-003: the independent SPARQL result corpus on Apache Jena Fuseki (qualified
+  # reference backend) and the GraphStore port round-tripping on Fuseki and Ontotext GraphDB Free.
+  sparql-fuseki:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      EOIP_LIVE_FUSEKI_URL: http://localhost:3030/ds
+      EOIP_LIVE_FUSEKI_USER: admin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start Fuseki (per-run admin password)
+        run: |
+          pw="$(openssl rand -hex 16)"
+          echo "::add-mask::$pw"
+          echo "EOIP_LIVE_FUSEKI_PASSWORD=$pw" >> "$GITHUB_ENV"
+          docker run -d --name fuseki -p 127.0.0.1:3030:3030 -e ADMIN_PASSWORD="$pw" -e FUSEKI_DATASET_1=ds \
+            stain/jena-fuseki:5.1.0
+          for i in $(seq 1 60); do curl -sf "localhost:3030/ds/sparql?query=ASK%7B%7D" >/dev/null && break; sleep 2; done
+      - name: Start GraphDB Free and create the eoip repository
+        run: |
+          docker run -d --name graphdb -p 127.0.0.1:7200:7200 -e GDB_JAVA_OPTS="-Xmx1g -Xms512m" ontotext/graphdb:10.7.6
+          for i in $(seq 1 90); do curl -sf localhost:7200/rest/repositories >/dev/null && break; sleep 2; done
+          curl -sf localhost:7200/rest/info/version
+          curl -sf -X POST localhost:7200/rest/repositories -F "config=@deploy/graphdb/eoip-repo.ttl"
+          echo "EOIP_LIVE_GRAPHDB_URL=http://localhost:7200" >> "$GITHUB_ENV"
+      - name: Install test dependencies
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Run SPARQL corpus and RDF store round trips on Fuseki and GraphDB Free
+        run: >-
+          python -m pytest -q -o addopts="" -p no:cacheprovider --timeout=600
+          tests/query/test_sparql_result_corpus.py tests/query/test_rdf_store_backends.py
+          --junitxml=test-results/sparql-fuseki.xml
+      - name: Retain SPARQL evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-evidence-sparql
+          path: test-results/
           if-no-files-found: warn

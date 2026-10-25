@@ -33,8 +33,10 @@ License models (SR-COM-001) are expressed through the payload fields:
   ``size_tier`` plus the :class:`eoip.licensing.meter.UsageMeter` export.
 * ``model="per_tenant"`` — OEM/managed via ``max_tenants``.
 * Seat-based add-ons via ``max_seats``.
-* Revenue-share / royalty for OEM is a commercial settlement tracked via
-  meter export; no code path enforces it (External gate — billing integration).
+* ``model="oem_revenue_share"`` — OEM revenue-share/royalty: signed ``royalty`` terms
+  (basis, rate, minimum per period, reporting period); :func:`compute_royalty` produces the
+  per-period statement from reported revenue or metered usage units. Payment collection
+  itself stays an external billing integration.
 
 All timestamps are ISO-8601 UTC strings.
 """
@@ -55,13 +57,26 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 SIGNATURE_ALGORITHM = "hmac-sha256"
 LICENSE_ID_PREFIX = "urn:eoip:licensing:license:"
 
-LicenseModel = Literal["perpetual", "subscription", "size_tier", "usage", "per_tenant", "evaluation"]
+LicenseModel = Literal["perpetual", "subscription", "size_tier", "usage", "per_tenant", "evaluation",
+                       "oem_revenue_share"]
 Edition = Literal["community", "professional", "enterprise", "oem", "evaluation"]
 
 
 def generate_license_id() -> str:
     """Mint a fresh license URN id."""
     return f"{LICENSE_ID_PREFIX}{uuid.uuid4()}"
+
+
+class RoyaltyTerms(BaseModel):
+    """Signed OEM revenue-share / royalty terms (SR-COM-001)."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    basis: Literal["revenue", "usage_units"] = "revenue"
+    rate_bps: int = Field(ge=1, le=10_000, description="Share in basis points of revenue, or price per 1,000 units in minor currency units")
+    minimum_per_period: int = Field(default=0, ge=0, description="Minimum due per period, minor currency units")
+    currency: str = Field(default="USD", pattern=r"^[A-Z]{3}$")
+    period: Literal["monthly", "quarterly"] = "quarterly"
 
 
 class LicensePayload(BaseModel):
@@ -87,12 +102,22 @@ class LicensePayload(BaseModel):
     expiry: datetime | None = Field(default=None, description="None = perpetual (model=perpetual)")
     support_expiry: datetime | None = Field(default=None, description="Support entitlement end (perpetual + annual support)")
     grace_days: int = Field(default=14, ge=0, description="Read-only-degrade grace period after expiry (SR-DEP-007)")
+    royalty: RoyaltyTerms | None = Field(default=None, description="Required for model=oem_revenue_share only")
     signature_algorithm: str = Field(default=SIGNATURE_ALGORITHM, description="Wire-compatible hook for the asymmetric upgrade")
 
     @model_validator(mode="after")
     def _defaults(self) -> "LicensePayload":
         if self.model == "perpetual" and self.expiry is not None:
             raise ValueError("perpetual licenses must not carry an expiry")
+        if self.model == "oem_revenue_share":
+            if self.royalty is None:
+                raise ValueError("oem_revenue_share licenses must carry signed royalty terms")
+            if self.edition != "oem":
+                raise ValueError("oem_revenue_share requires edition 'oem'")
+        elif self.royalty is not None:
+            raise ValueError("royalty terms are only valid for model 'oem_revenue_share'")
+        if self.support_expiry is not None and self.model != "perpetual":
+            raise ValueError("support_expiry applies to perpetual licenses (perpetual + annual support)")
         return self
 
     @property
@@ -178,3 +203,30 @@ def load_license_file(path: str | Path, vendor_key: str | bytes) -> LicenseVerif
 def generate_vendor_key() -> str:
     """Generate a random vendor signing key (hex). Deliver out-of-band for air-gapped installs."""
     return secrets.token_hex(32)
+
+
+def compute_royalty(terms: RoyaltyTerms, *, period_label: str, gross_revenue_minor: int | None = None,
+                    usage_units: int | None = None) -> dict[str, Any]:
+    """Per-period OEM royalty statement (SR-COM-001). Integer minor currency units; rounds half up.
+
+    ``basis="revenue"`` takes reported gross revenue; ``basis="usage_units"`` takes the metered
+    unit count from the tamper-evident usage meter export. The other input must be absent.
+    """
+    if terms.basis == "revenue":
+        if gross_revenue_minor is None or usage_units is not None:
+            raise ValueError("revenue-based royalty needs gross_revenue_minor only")
+        if gross_revenue_minor < 0:
+            raise ValueError("gross revenue cannot be negative")
+        computed = (gross_revenue_minor * terms.rate_bps + 5_000) // 10_000
+        base = gross_revenue_minor
+    else:
+        if usage_units is None or gross_revenue_minor is not None:
+            raise ValueError("usage-based royalty needs usage_units only")
+        if usage_units < 0:
+            raise ValueError("usage units cannot be negative")
+        computed = (usage_units * terms.rate_bps + 500) // 1_000
+        base = usage_units
+    due = max(computed, terms.minimum_per_period)
+    return {"period": period_label, "period_kind": terms.period, "basis": terms.basis, "base": base,
+            "rate_bps": terms.rate_bps, "computed": computed, "minimum_applied": due > computed,
+            "amount_due_minor": due, "currency": terms.currency}

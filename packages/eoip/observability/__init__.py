@@ -10,6 +10,7 @@ from eoip.contracts.audit import AuditEvent
 class JsonLogFormatter(stdlib_logging.Formatter):
     _fields = (
         "event",
+        "tenant_id",
         "correlation_id",
         "audit_id",
         "event_type",
@@ -42,6 +43,8 @@ class JsonLogFormatter(stdlib_logging.Formatter):
             value = getattr(record, field, None)
             if value is not None:
                 payload[field] = value
+        # SR-TEN-001: every line carries tenant scope; process-level lines are platform scope.
+        payload.setdefault("tenant_id", "_platform")
         if record.exc_info:
             payload["exception"] = self.formatException(record.exc_info)
         return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))

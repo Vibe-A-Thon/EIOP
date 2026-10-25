@@ -67,6 +67,7 @@ def enable(gw, admin="admin@tenant.example"):
 # SR-LLM-010/017 — disabled by default, admin enable with consent + audit
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-010", "SR-LLM-017")
 class TestEnablement:
     def test_disabled_by_default_denies(self):
         gw = make_gateway()
@@ -89,6 +90,26 @@ class TestEnablement:
         assert events[0]["dpa_ref"] == "DPA-2026-17"
         assert events[0]["region"] == "EU"
 
+    @pytest.mark.req("SR-LLM-017")
+    def test_changed_contract_terms_require_reapproval_before_any_call(self):
+        events = []
+        gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S1)], audit=events.append)
+        enable(gw)
+        call = dict(endpoint_id="ext-eu", task="summarize", payload={"a": "x"},
+                    user_id="u1", role="analyst", data_classes=["D0"], dry_run=True)
+        gw.call(**call)
+        assert gw.amend_consent("ext-eu", admin="a", residency_region="US") is True
+        assert events[-1]["event"] == "egress.consent_changed_reapproval_required"
+        assert events[-1]["changes"] == ["residency_region"]
+        with pytest.raises(EgressDenied, match="disabled"):
+            gw.call(**call)
+        assert gw.amend_consent("ext-eu", admin="a", scope=CONSENT["scope"]) is False  # no change
+        renewed = dict(CONSENT, consent_id="urn:eoip:egress:consent:test2", residency_region="US", signed_at=1.0)
+        gw.enable_endpoint("ext-eu", admin="a", consent=ConsentRecord(**renewed))
+        gw.call(**call)
+        assert [c.consent_id for c in gw.consent_history["ext-eu"]] == [CONSENT["consent_id"], renewed["consent_id"]]
+        assert "ext-eu" not in gw.reapproval_required
+
     def test_consent_dpa_mismatch_rejected(self):
         gw = make_gateway()
         bad = dict(CONSENT, dpa_ref="DPA-WRONG")
@@ -100,6 +121,7 @@ class TestEnablement:
 # SR-LLM-011 — policy matrix: most-restrictive-wins, default deny
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-011")
 class TestPolicy:
     def test_default_deny_s0(self):
         gw = make_gateway()
@@ -159,6 +181,7 @@ class TestPolicy:
 # SR-LLM-011/015 — transforms
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-011", "SR-LLM-015")
 class TestTransforms:
     payload = {"name": "Alice", "age": 34,
                "notes": ["call Alice", "review"], "meta": {"dept": "eng"}}
@@ -209,6 +232,7 @@ class TestTransforms:
 # SR-LLM-012 — dry-run preview
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-012")
 class TestDryRun:
     def test_dry_run_returns_exact_payload_no_transport(self):
         sent = []
@@ -248,7 +272,44 @@ class TestDryRun:
 # SR-LLM-013 — immutable manifests + report
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-013")
 class TestManifest:
+    @pytest.mark.req("SR-LLM-013")
+    def test_manifest_records_endpoint_fields_and_vault_tokens_at_s4(self):
+        gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S4)])
+        enable(gw)
+        m = gw.call(endpoint_id="ext-eu", task="summarize", payload={"customer": "Jane Doe", "note": "hi"},
+                    user_id="u1", role="analyst", data_classes=["D2"])["manifest"]
+        assert m.level == 4 and m.endpoint_id == "ext-eu" and m.endpoint_region == "EU"
+        assert m.fields == ["customer", "note"]
+        assert len(m.tokens) == 2 and all(t.startswith("tok_") for t in m.tokens)
+        assert "Jane Doe" not in str(m.tokens)
+
+    @pytest.mark.req("SR-LLM-013")
+    def test_recorded_manifest_is_immutable(self):
+        gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S7)])
+        enable(gw)
+        result = gw.call(endpoint_id="ext-eu", task="summarize", payload={"doc": "public"},
+                         user_id="u1", role="analyst", data_classes=["D0"])
+        m = result["manifest"]
+        assert m is gw.manifests[-1]
+        with pytest.raises(Exception):
+            m.bytes_out = 0
+        with pytest.raises(Exception):
+            m.denied = True
+        with pytest.raises(TypeError):
+            m.fields.append("smuggled")
+        with pytest.raises(TypeError):
+            m.data_classes[0] = "D9"
+        assert m.fields == ["doc"] and m.data_classes == ["D0"]
+        with pytest.raises(EgressDenied):
+            gw.call(endpoint_id="ext-eu", task="summarize", payload={"doc": "x"}, user_id="u1",
+                    role="analyst", data_classes=["D0"], region="US")
+        denied = gw.manifests[-1]
+        assert denied.denied and "region" in denied.denial_reason
+        with pytest.raises(Exception):
+            denied.denied = False
+
     def test_manifest_fields_and_report(self):
         gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S7)])
         enable(gw)
@@ -280,6 +341,7 @@ class TestManifest:
 # SR-LLM-014 — DLP + canaries
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-014")
 class TestDlpCanaries:
     def test_dlp_scan_detects_pii_and_secrets(self):
         scanner = DlpScanner(dictionary_terms=["ACME-INTERNAL"])
@@ -331,7 +393,37 @@ class TestDlpCanaries:
 # SR-LLM-016 — kill switch + budgets + anomaly
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-016")
 class TestKillSwitchBudgets:
+    @pytest.mark.req("SR-LLM-016")
+    def test_platform_kill_switch_stops_every_tenant_gateway(self):
+        from eoip.egress import PlatformKillSwitch
+        switch = PlatformKillSwitch()
+        gws = []
+        for tenant in ("t1", "t2"):
+            gw = EgressGateway(tenant_id=tenant, policy=PolicyEngine(rules=[
+                PolicyRule(rule_id="r1", max_level=SharingLevel.S7)]),
+                transport=lambda payload, endpoint: {"echo": payload}, platform_kill_switch=switch)
+            gw.register_endpoint(EndpointConfig(id="ext-eu", kind="chat", url_allowlist=["https://llm.example.eu"],
+                                                region="EU", dpa_ref="DPA-2026-17"))
+            enable(gw)
+            gws.append(gw)
+        switch.engage(admin="secops", reason="vendor incident")
+        for gw in gws:
+            with pytest.raises(EgressDenied, match="platform kill switch"):
+                gw.call(endpoint_id="ext-eu", task="summarize", payload={"a": "x"},
+                        user_id="u1", role="analyst", data_classes=["D0"])
+            assert gw.manifests[-1].denied
+        with pytest.raises(ValueError):
+            switch.release(admin="")
+        switch.release(admin="secops")
+        assert gws[0].call(endpoint_id="ext-eu", task="summarize", payload={"a": "x"},
+                           user_id="u1", role="analyst", data_classes=["D0"])["response"]
+
+    def test_default_gateways_share_the_platform_switch(self):
+        from eoip.egress import PLATFORM_KILL_SWITCH
+        assert make_gateway().platform_kill_switch is PLATFORM_KILL_SWITCH
+
     def test_global_kill_switch(self):
         gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S7)])
         enable(gw)
@@ -387,6 +479,7 @@ class TestKillSwitchBudgets:
 # SR-LLM-015 — response re-identification
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-015")
 class TestVault:
     def test_response_tokens_reidentified(self):
         gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S4)])
@@ -401,12 +494,44 @@ class TestVault:
         assert result["response"]["echo"]["name"] == "Alice"
         assert token not in str(result["response"])
 
+    @pytest.mark.req("SR-LLM-015")
+    def test_model_response_is_scanned_and_redacted_before_display(self):
+        events = []
+        leaked = "contact leak@other.example, ssn 123-45-6789"
+
+        def transport(payload, endpoint):
+            return {"echo": payload, "text": leaked}
+
+        gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S4)], transport=transport,
+                          audit=events.append)
+        enable(gw)
+        result = gw.call(endpoint_id="ext-eu", task="summarize", payload={"name": "Alice"},
+                         user_id="u1", role="analyst", data_classes=["D2"])
+        assert result["response"]["echo"]["name"] == "Alice"  # vault tokens are not treated as leaks
+        assert "leak@other.example" not in str(result["response"])
+        assert "123-45-6789" not in str(result["response"])
+        assert "[REDACTED:EMAIL]" in result["response"]["text"]
+        assert result["response_findings"] == ["EMAIL", "SSN"]
+        assert any(e["event"] == "egress.response_redacted" for e in events)
+
+    @pytest.mark.req("SR-LLM-015")
+    def test_vault_keys_and_tokens_are_per_tenant(self):
+        from eoip.egress.vault import TokenVault
+
+        a, b = TokenVault("tenant-a", secret=b"same-local-secret"), TokenVault("tenant-b", secret=b"same-local-secret")
+        assert a._key != b._key  # PBKDF2 salted with the tenant id
+        token = a.tokenize("Alice", field="name")
+        assert a.detokenize(token) == "Alice"
+        assert b.reidentify_text(f"hello {token}") == f"hello {token}"  # other tenant cannot re-identify
+        assert "Alice" not in str(a.export_index())  # plaintext never leaves the vault
+
 
 # ---------------------------------------------------------------------------
 # SR-LLM-018/019/020 — kinds, fallback notice, region pinning
 # ---------------------------------------------------------------------------
 
 class TestGatewayBehavior:
+    @pytest.mark.req("SR-LLM-019")
     def test_fallback_notice_on_denial(self):
         gw = make_gateway()
         enable(gw)
@@ -415,6 +540,7 @@ class TestGatewayBehavior:
                     user_id="u1", role="analyst", data_classes=["D2"])
         assert "local model" in exc_info.value.fallback_notice
 
+    @pytest.mark.req("SR-LLM-020")
     def test_region_pin_violation_denied(self):
         gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S7)])
         enable(gw)
@@ -426,6 +552,7 @@ class TestGatewayBehavior:
                      dry_run=True)
         assert ok["manifest"].level == 7
 
+    @pytest.mark.req("SR-LLM-018")
     def test_endpoint_kinds_cover_all_egress(self):
         # SR-LLM-018: embeddings/OCR/speech/rerank/telemetry ride the same path
         rules = [PolicyRule(rule_id="r1", max_level=SharingLevel.S1)]
@@ -440,6 +567,7 @@ class TestGatewayBehavior:
                              role="analyst", data_classes=["D1"], dry_run=True)
             assert result["manifest"].level == 1
 
+    @pytest.mark.req("SR-LLM-010")
     def test_unknown_endpoint_raises(self):
         gw = make_gateway()
         with pytest.raises(KeyError):
@@ -451,6 +579,7 @@ class TestGatewayBehavior:
 # SR-CON-010/011 — Service Provider plugins + Data-Flow manifest
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-CON-010", "SR-CON-011")
 class TestProviderPlugins:
     def _manifest(self, crosses=True):
         return ServiceProviderManifest(
@@ -471,24 +600,94 @@ class TestProviderPlugins:
         with pytest.raises(ValueError, match="data classes"):
             DataFlowManifest(data_classes_sent=["D9"])
 
+    PID = "urn:eoip:egress:provider:acme-llm"
+
+    def _installed_gateway(self, crosses=True, **endpoint):
+        gw = make_gateway(rules=[PolicyRule(rule_id="r1", max_level=SharingLevel.S1)])
+        gw.plugin_registry.submit(self._manifest(crosses=crosses))
+        fp = gw.plugin_registry.install_preview(self.PID)["fingerprint"]
+        gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint=fp,
+                                   consent_ref="DPA-2026-17 / admin@tenant.example / 2026-10-08")
+        gw.register_endpoint(EndpointConfig(**{
+            "id": "acme", "kind": "chat", "url_allowlist": ["https://llm.acme.example"], "region": "EU",
+            "dpa_ref": "DPA-2026-17", "zero_retention": True, "plugin_id": self.PID, **endpoint}))
+        gw.enable_endpoint("acme", admin="admin@tenant.example", consent=ConsentRecord(
+            **dict(CONSENT, consent_id="c-acme", endpoint_id="acme")))
+        return gw
+
     def test_install_requires_consent_for_boundary_crossing(self):
         gw = make_gateway()
         gw.plugin_registry.submit(self._manifest(crosses=True))
+        fp = gw.plugin_registry.install_preview(self.PID)["fingerprint"]
         with pytest.raises(ValueError, match="consent"):
-            gw.plugin_registry.install(
-                "urn:eoip:egress:provider:acme-llm", approved_by="admin")
+            gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint=fp)
         record = gw.plugin_registry.install(
-            "urn:eoip:egress:provider:acme-llm", approved_by="admin",
+            self.PID, approved_by="admin", acknowledged_fingerprint=fp,
             consent_ref="DPA-2026-17 / admin@tenant.example / 2026-10-08")
-        assert record.acknowledged_data_flow
-        assert gw.plugin_registry.is_installed("urn:eoip:egress:provider:acme-llm")
+        assert record.acknowledged_data_flow and record.manifest_fingerprint == fp
+        assert gw.plugin_registry.is_installed(self.PID)
 
     def test_non_crossing_plugin_installs_without_consent(self):
         gw = make_gateway()
         gw.plugin_registry.submit(self._manifest(crosses=False))
-        record = gw.plugin_registry.install(
-            "urn:eoip:egress:provider:acme-llm", approved_by="admin")
+        fp = gw.plugin_registry.install_preview(self.PID)["fingerprint"]
+        record = gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint=fp)
         assert record.approved_by == "admin"
+
+    @pytest.mark.req("SR-CON-011")
+    def test_installation_displays_the_manifest_and_requires_that_exact_version_acknowledged(self):
+        gw = make_gateway()
+        gw.plugin_registry.submit(self._manifest())
+        with pytest.raises(ValueError, match="install-preview"):  # never shown
+            gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint="x", consent_ref="c")
+        preview = gw.plugin_registry.install_preview(self.PID)
+        assert preview["data_flow"]["destinations"] == ["https://llm.acme.example"]
+        assert "Sends data classes: D1, D2" in preview["disclosure"]
+        assert "Data LEAVES the tenant boundary" in preview["disclosure"]
+        assert "Retention: zero_retention" in preview["disclosure"]
+        with pytest.raises(ValueError, match="fingerprint"):
+            gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint="stale", consent_ref="c")
+        with pytest.raises(ValueError, match="administrator"):
+            gw.plugin_registry.install(self.PID, approved_by="", acknowledged_fingerprint=preview["fingerprint"])
+        gw.plugin_registry.install(self.PID, approved_by="admin", acknowledged_fingerprint=preview["fingerprint"],
+                                   consent_ref="c")
+        changed = self._manifest().model_copy(update={"version": "1.1.0"})
+        gw.plugin_registry.submit(changed)  # new declaration -> approval revoked
+        assert not gw.plugin_registry.is_installed(self.PID)
+        assert gw.plugin_registry.events[-1]["event"] == "plugin.install_revoked_manifest_changed"
+
+    @pytest.mark.req("SR-CON-011")
+    def test_egress_gateway_enforces_the_data_flow_manifest_at_runtime(self):
+        gw = self._installed_gateway()
+        call = dict(endpoint_id="acme", task="summarize", payload={"a": "x"}, user_id="u1", role="analyst",
+                    dry_run=True)
+        gw.call(**call, data_classes=["D1"])  # declared class -> allowed
+        with pytest.raises(EgressDenied, match=r"not declared as sent: \['D3'\]"):
+            gw.call(**call, data_classes=["D3"])
+        with pytest.raises(EgressDenied, match="tags not declared"):
+            gw.call(**call, data_classes=["D1"], tags=["PHI"])
+        assert gw.manifests[-1].denied and "data-flow manifest" in gw.manifests[-1].denial_reason
+
+    @pytest.mark.req("SR-CON-011")
+    @pytest.mark.parametrize("endpoint, crosses, reason", [
+        ({"url_allowlist": ["https://other.example"]}, True, "destinations not declared"),
+        ({"region": "US"}, True, "region US not declared"),
+        ({"zero_retention": False}, True, "zero retention"),
+        ({}, False, "never leaves the tenant boundary"),
+    ])
+    def test_endpoint_outside_the_declared_flow_is_denied(self, endpoint, crosses, reason):
+        gw = self._installed_gateway(crosses=crosses, **endpoint)
+        with pytest.raises(EgressDenied, match=reason):
+            gw.call(endpoint_id="acme", task="summarize", payload={"a": "x"}, user_id="u1", role="analyst",
+                    data_classes=["D1"], dry_run=True, region=endpoint.get("region"))
+
+    @pytest.mark.req("SR-CON-011")
+    def test_uninstalled_plugin_endpoint_is_denied(self):
+        gw = self._installed_gateway()
+        gw.plugin_registry.submit(self._manifest().model_copy(update={"version": "2.0.0"}))
+        with pytest.raises(EgressDenied, match="not installed"):
+            gw.call(endpoint_id="acme", task="summarize", payload={"a": "x"}, user_id="u1", role="analyst",
+                    data_classes=["D1"], dry_run=True)
 
     def test_data_flow_declaration_fields(self):
         m = self._manifest()
@@ -503,6 +702,7 @@ class TestProviderPlugins:
 # Router smoke test (lazy FastAPI import)
 # ---------------------------------------------------------------------------
 
+@pytest.mark.req("SR-LLM-010")
 class TestRouter:
     def test_build_router_routes(self):
         fastapi = pytest.importorskip("fastapi")
@@ -514,6 +714,8 @@ class TestRouter:
         assert paths == [
             "/api/v1/egress/call",
             "/api/v1/egress/endpoints",
+            "/api/v1/egress/endpoints/{endpoint_id}/consent",
+            "/api/v1/egress/endpoints/{endpoint_id}/consent/amend",
             "/api/v1/egress/endpoints/{endpoint_id}/disable",
             "/api/v1/egress/endpoints/{endpoint_id}/enable",
             "/api/v1/egress/kill",
@@ -521,9 +723,32 @@ class TestRouter:
             "/api/v1/egress/plugins",
             "/api/v1/egress/plugins/install",
             "/api/v1/egress/plugins/submit",
+            "/api/v1/egress/plugins/{manifest_id:path}/install-preview",
             "/api/v1/egress/policy/rules",
             "/api/v1/egress/report",
         ]
+
+    @pytest.mark.req("SR-CON-011")
+    def test_install_preview_then_install_via_routes(self):
+        pytest.importorskip("fastapi")
+        from fastapi import FastAPI
+        from fastapi.testclient import TestClient
+        from eoip.egress.router import build_router
+
+        gw = make_gateway()
+        gw.plugin_registry.submit(TestProviderPlugins()._manifest(crosses=False))
+        app = FastAPI()
+        app.include_router(build_router(gw))
+        client = TestClient(app)
+        pid = TestProviderPlugins.PID
+        body = {"manifest_id": pid, "approved_by": "admin", "acknowledged_fingerprint": "guess"}
+        assert client.post("/api/v1/egress/plugins/install", json=body).status_code == 400
+        preview = client.get(f"/api/v1/egress/plugins/{pid}/install-preview").json()
+        assert "Data stays inside the tenant boundary" in preview["disclosure"]
+        body["acknowledged_fingerprint"] = preview["fingerprint"]
+        installed = client.post("/api/v1/egress/plugins/install", json=body)
+        assert installed.status_code == 200 and installed.json()["manifest_fingerprint"] == preview["fingerprint"]
+        assert client.get("/api/v1/egress/plugins/urn:nope/install-preview").status_code == 404
 
     def test_end_to_end_via_testclient(self):
         pytest.importorskip("fastapi")
@@ -558,3 +783,31 @@ class TestRouter:
         })
         assert ok.status_code == 200
         assert ok.json()["payload"] == {"a": {"type": "string"}}
+
+    @pytest.mark.req("SR-LLM-017")
+    def test_consent_record_routes_show_signer_terms_history_and_reapproval(self):
+        pytest.importorskip("fastapi")
+        from fastapi import FastAPI
+        from fastapi.testclient import TestClient
+        from eoip.egress.router import build_router
+
+        gw = make_gateway()
+        app = FastAPI()
+        app.include_router(build_router(gw))
+        client = TestClient(app)
+        assert client.get("/api/v1/egress/endpoints/nope/consent").status_code == 404
+        assert client.get("/api/v1/egress/endpoints/ext-eu/consent").json()["current"] is None
+        assert client.post("/api/v1/egress/endpoints/ext-eu/consent/amend",
+                           json={"admin": "a", "scope": "y"}).status_code == 409
+        client.post("/api/v1/egress/endpoints/ext-eu/enable", json={
+            "endpoint_id": "ext-eu", "admin": "a", "signer": "dpo@tenant.example",
+            "dpa_ref": "DPA-2026-17", "residency_region": "EU", "scope": "x",
+        })
+        rec = client.get("/api/v1/egress/endpoints/ext-eu/consent").json()
+        assert rec["current"]["signer"] == "dpo@tenant.example" and rec["current"]["signed_at"] > 0
+        assert (rec["current"]["dpa_ref"], rec["current"]["residency_region"], rec["current"]["scope"]) == (
+            "DPA-2026-17", "EU", "x")
+        amended = client.post("/api/v1/egress/endpoints/ext-eu/consent/amend", json={"admin": "a", "scope": "y"})
+        assert amended.json() == {"endpoint_id": "ext-eu", "reapproval_required": True}
+        rec = client.get("/api/v1/egress/endpoints/ext-eu/consent").json()
+        assert rec["reapproval_required"] is True and len(rec["history"]) == 1

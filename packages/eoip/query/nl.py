@@ -14,6 +14,7 @@ from typing import Literal
 
 from eoip.contracts.query_plan import QueryPlan
 from eoip.graph.store import GraphStore
+from eoip.models.port import generate_via_port
 from eoip.models.provider import LocalModelProvider, ModelUnavailable
 from pydantic import BaseModel, model_validator
 
@@ -267,10 +268,11 @@ def _model_plan(text: str) -> QueryPlan | None:
     if not provider.available:
         return None
     try:
-        response = provider.generate(_SYSTEM_PROMPT, f"Question: {text}")
+        result = generate_via_port(provider, task="extraction", system_prompt=_SYSTEM_PROMPT,
+                                   user_content=f"Question: {text}")
     except ModelUnavailable:
         return None
-    raw = response.content.strip()
+    raw = str(result.output).strip()
     if raw.startswith("```"):
         raw = raw.strip("`")
         if raw[:4].casefold() == "json":

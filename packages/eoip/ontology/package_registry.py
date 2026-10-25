@@ -31,7 +31,7 @@ class ReleaseState(str, Enum):
     ARCHIVED = "ARCHIVED"
 
 
-class PackageTamperedError(SecurityError if "SecurityError" in dir(__builtins__) else ValueError):
+class PackageTamperedError(ValueError):  # Python has no builtin SecurityError; the old guard always chose ValueError
     """Raised when an ontology package member file has been modified or signature mismatches."""
 
 

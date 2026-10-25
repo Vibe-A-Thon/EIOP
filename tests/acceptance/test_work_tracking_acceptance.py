@@ -17,6 +17,7 @@ from eoip.mapping.cml import parse_and_compile_cml
 # ---------------------------------------------------------------------------
 # CRA-005.1: Qualify Jira Cloud v3 and Data Center v2
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-005")
 def test_cra_005_1_jira_cloud_and_dc_qualification():
     # 1. Jira Cloud REST API v3 with Bearer token
     cloud_conn = JiraConnector(
@@ -66,6 +67,7 @@ def test_cra_005_1_jira_cloud_and_dc_qualification():
 # ---------------------------------------------------------------------------
 # CRA-005.2: Qualify Rally workspace/project resource types and hierarchy
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-005")
 def test_cra_005_2_rally_qualification():
     conn = RallyConnector(
         base_url="https://rally1.rallydev.com",
@@ -102,6 +104,7 @@ def test_cra_005_2_rally_qualification():
 # ---------------------------------------------------------------------------
 # CRA-005.3: Qualify qTest projects, tests, runs, and defect associations
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-005")
 def test_cra_005_3_qtest_qualification():
     conn = QTestConnector(
         base_url="https://qtest.example.org",
@@ -135,6 +138,7 @@ def test_cra_005_3_qtest_qualification():
 # ---------------------------------------------------------------------------
 # CRA-005.4: Official API research and sanitized vendor fixtures
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-005")
 def test_cra_005_4_api_research_and_fixtures():
     # 1. API research specs exist
     assert Path("docs/connectors/jira/api.md").exists()
@@ -156,6 +160,7 @@ def test_cra_005_4_api_research_and_fixtures():
 # ---------------------------------------------------------------------------
 # CRA-005.5: Incremental acquisition, overlap window, and deduplication
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-005")
 def test_cra_005_5_incremental_overlap_pagination_acl():
     # Mock Jira responses
     with respx.mock(base_url="https://jira.example.org") as respx_mock:
@@ -192,6 +197,7 @@ def test_cra_005_5_incremental_overlap_pagination_acl():
 # ---------------------------------------------------------------------------
 # CRA-005.6: Jira vocabulary mapping, security levels, and attachments
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-005")
 def test_cra_005_6_jira_mapping_and_vocab():
     conn = JiraConnector(
         source_id="jira_vocab_test",
@@ -218,6 +224,7 @@ def test_cra_005_6_jira_mapping_and_vocab():
 # ---------------------------------------------------------------------------
 # CRA-005.7: Rally hierarchies, defect associations, and WSAPI types
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-005")
 def test_cra_005_7_rally_hierarchies_and_wsapi():
     conn = RallyConnector(
         base_url="https://rally1.rallydev.com",
@@ -244,6 +251,7 @@ def test_cra_005_7_rally_hierarchies_and_wsapi():
 # ---------------------------------------------------------------------------
 # CRA-005.8: qTest requirement linking to ingested Jira issues
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-005")
 def test_cra_005_8_qtest_requirement_linking_and_distinction():
     conn = QTestConnector(
         base_url="https://qtest.example.org",
@@ -275,6 +283,7 @@ def test_cra_005_8_qtest_requirement_linking_and_distinction():
 # ---------------------------------------------------------------------------
 # CRA-005.9: CML parity test for Jira, Rally, and qTest
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-005")
 def test_cra_005_9_cml_parity_test():
     # 1. Jira CML
     jira_cml = Path("packages/eoip/mapping/cml/jira.cml").read_text(encoding="utf-8")
@@ -301,6 +310,7 @@ def test_cra_005_9_cml_parity_test():
 # ---------------------------------------------------------------------------
 # CRA-005.A: Acceptance Gate: Baseline, Incremental, Overlap, Replay, Revocation
 # ---------------------------------------------------------------------------
+@pytest.mark.req("CRA-005")
 def test_cra_005_a_acceptance_gate():
     with respx.mock(base_url="https://jira.example.org") as respx_mock:
         # Mock endpoints

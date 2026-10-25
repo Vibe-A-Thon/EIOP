@@ -43,6 +43,7 @@ PROTOCOLS_FIXTURE = FIXTURES_DIR / "custom" / "protocols.json"
 # CRA-009.1: Snowflake metadata and policy scoping
 # ===========================================================================
 
+@pytest.mark.req("CRA-009")
 def test_cra_009_1_snowflake_metadata_and_policy_scoping():
     data = json.loads(SNOWFLAKE_FIXTURE.read_text(encoding="utf-8"))
     table_def = data["tables"][0]
@@ -87,6 +88,7 @@ def test_cra_009_1_snowflake_metadata_and_policy_scoping():
 # CRA-009.2: Snowflake modes and opt-in redaction
 # ===========================================================================
 
+@pytest.mark.req("CRA-009")
 def test_cra_009_2_snowflake_modes_and_opt_in_redaction():
     data = json.loads(SNOWFLAKE_FIXTURE.read_text(encoding="utf-8"))
     raw_rows = data["sample_rows"]
@@ -147,6 +149,7 @@ def test_cra_009_2_snowflake_modes_and_opt_in_redaction():
 # CRA-009.3: Fortuna missing input reason and contract requirement
 # ===========================================================================
 
+@pytest.mark.req("CRA-009")
 def test_cra_009_3_fortuna_missing_input_reason_and_contract_requirement():
     # Attempting to instantiate Fortuna raises FortunaConnectorBlockedError
     with pytest.raises(FortunaConnectorBlockedError) as exc_info:
@@ -164,6 +167,7 @@ def test_cra_009_3_fortuna_missing_input_reason_and_contract_requirement():
 # CRA-009.4: External catalog federation and precedence
 # ===========================================================================
 
+@pytest.mark.req("CRA-009")
 def test_cra_009_4_external_catalog_federation_and_precedence():
     data = json.loads(CATALOGS_FIXTURE.read_text(encoding="utf-8"))
     raw_entities = data["entities"]
@@ -215,6 +219,7 @@ def test_cra_009_4_external_catalog_federation_and_precedence():
 # CRA-009.5: Custom provider certification and scope awareness
 # ===========================================================================
 
+@pytest.mark.req("CRA-009")
 def test_cra_009_5_custom_provider_certification_and_scope_awareness():
     cml_content = Path("packages/eoip/mapping/cml/snowflake.cml").read_text(encoding="utf-8")
     mapping = parse_and_compile_cml(cml_content)
@@ -257,6 +262,7 @@ def test_cra_009_5_custom_provider_certification_and_scope_awareness():
 # CRA-009.6: Snowflake lineage parsing and cost guard
 # ===========================================================================
 
+@pytest.mark.req("CRA-009")
 def test_cra_009_6_snowflake_lineage_virtualization_and_cost_guard():
     cost_guard = SnowflakeCostGuard(max_credits=2.0, statement_timeout_seconds=30.0, max_result_rows=100)
     sf = SnowflakeConnector(
@@ -300,6 +306,7 @@ def test_cra_009_6_snowflake_lineage_virtualization_and_cost_guard():
 # CRA-009.7: Generic protocol adapters with Mapping IR
 # ===========================================================================
 
+@pytest.mark.req("CRA-009")
 def test_cra_009_7_generic_protocol_adapters_with_mapping_ir():
     data = json.loads(PROTOCOLS_FIXTURE.read_text(encoding="utf-8"))
 
@@ -326,6 +333,7 @@ def test_cra_009_7_generic_protocol_adapters_with_mapping_ir():
 # CRA-009.8: Fortuna blocked status and alternative offering
 # ===========================================================================
 
+@pytest.mark.req("CRA-009")
 def test_cra_009_8_fortuna_blocked_status_and_alternative_offering():
     status = FortunaConnector.get_adapter_status()
     assert status["source_system"] == "fortuna"
@@ -339,6 +347,7 @@ def test_cra_009_8_fortuna_blocked_status_and_alternative_offering():
 # CRA-009.A: Virtual vs Materialized query equivalence & secrets sweep
 # ===========================================================================
 
+@pytest.mark.req("CRA-009")
 def test_cra_009_a_virtual_vs_materialized_query_equivalence_and_secrets_sweep():
     # 1. Equivalence of virtual vs materialized declared results under masking
     data = json.loads(SNOWFLAKE_FIXTURE.read_text(encoding="utf-8"))

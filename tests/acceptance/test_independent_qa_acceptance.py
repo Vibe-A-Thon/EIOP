@@ -52,6 +52,7 @@ def sample_receipt():
 # CRA-037.1: Test scope taxonomy and suite labels
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_1_test_scope_taxonomy_labels():
     scopes = {label.value for label in TestScopeLabel}
     expected_scopes = {
@@ -66,6 +67,7 @@ def test_cra_037_1_test_scope_taxonomy_labels():
 # CRA-037.2: Independent test oracles with zero production imports
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_2_independent_test_oracle():
     # 1. Populate reference oracle (pure Python graph)
     oracle = ReferenceGraphOracle()
@@ -96,6 +98,7 @@ def test_cra_037_2_independent_test_oracle():
 # CRA-037.3: Build-once, promote-digest verification
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_3_build_once_promoted_artifact_verification(sample_receipt):
     gate = EvidenceVerificationGate()
 
@@ -112,6 +115,7 @@ def test_cra_037_3_build_once_promoted_artifact_verification(sample_receipt):
 # CRA-037.4: Evidence validator: exit code, 0 failures, 0 errors, freshness
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_4_evidence_validator_freshness_and_exit_code(sample_receipt):
     gate = EvidenceVerificationGate()
 
@@ -134,6 +138,7 @@ def test_cra_037_4_evidence_validator_freshness_and_exit_code(sample_receipt):
 # CRA-037.5: Structured manual domain, security, accessibility reviews
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_5_structured_manual_review_records():
     review_record = {
         "review_id": "REV-SEC-2026-10",
@@ -163,6 +168,7 @@ def test_cra_037_5_structured_manual_review_records():
 # CRA-037.6: Concurrent source change detection mid-run
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_6_concurrent_source_change_detection(sample_receipt):
     gate = EvidenceVerificationGate()
 
@@ -176,6 +182,7 @@ def test_cra_037_6_concurrent_source_change_detection(sample_receipt):
 # CRA-037.7: Property-based fuzzing and mutation testing checks
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_7_property_fuzzing_and_mutation_checks():
     check = MutationCheck(
         check_id="mut-check-001",
@@ -201,6 +208,7 @@ def test_cra_037_7_property_fuzzing_and_mutation_checks():
 # CRA-037.8: CI hygiene thresholds (coverage >= 85%, mutation >= 80%)
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_8_hygiene_thresholds_separate_from_acceptance():
     gate = EvidenceVerificationGate()
 
@@ -219,6 +227,7 @@ def test_cra_037_8_hygiene_thresholds_separate_from_acceptance():
 # CRA-037.9: Zero-skip policy enforcement
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_9_zero_skip_policy_enforcement():
     quarantine = QuarantineManager()
     enforcer = ZeroSkipEnforcer(quarantine)
@@ -252,6 +261,7 @@ def test_cra_037_9_zero_skip_policy_enforcement():
 # CRA-037.10: Quarantine manager and collection time tracking
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_10_quarantine_manager_and_tracking():
     qm = QuarantineManager()
     entry = qm.quarantine_test(
@@ -271,6 +281,7 @@ def test_cra_037_10_quarantine_manager_and_tracking():
 # CRA-037.11: Anti-stub probes failing hash stubs (CRA-044.3)
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_11_anti_stub_probes_reject_hash_stub():
     # 1. Genuine semantic embedder (toy simulation with vocabulary overlap / semantic projection)
     def genuine_semantic_embedder(text: str) -> list[float]:
@@ -306,6 +317,7 @@ def test_cra_037_11_anti_stub_probes_reject_hash_stub():
 # CRA-037.A: Integrated Independent QA Acceptance Obligation
 # ===========================================================================
 
+@pytest.mark.req("CRA-037")
 def test_cra_037_a_independent_qa_acceptance_integrated(sample_receipt):
     gate = EvidenceVerificationGate()
 

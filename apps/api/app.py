@@ -7,6 +7,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import uuid4
 
+from eoip.api_routes import route_paths
 from eoip.config import load_query_policy
 from eoip.contracts.graph_result import GraphResult, TraversalGraphResult
 from eoip.contracts.query_plan import QueryPlan
@@ -1533,7 +1534,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         from eoip.gaps.g2_readiness import g2_readiness_report
 
         repo_root = Path(__file__).resolve().parents[2]
-        routes = {str(getattr(route, "path", "")) for route in app.routes if getattr(route, "path", None)}
+        routes = route_paths(app)
         return g2_readiness_report(repo_root=repo_root, available_routes=routes)
 
     @app.get("/api/v1/product/capabilities")
@@ -1542,7 +1543,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         from eoip.product.intelligence import build_product_capability_report
 
         repo_root = Path(__file__).resolve().parents[2]
-        routes = {str(getattr(route, "path", "")) for route in app.routes if getattr(route, "path", None)}
+        routes = route_paths(app)
         return build_product_capability_report(
             repo_root=repo_root,
             store=store,
@@ -1555,7 +1556,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         from eoip.product.intelligence import build_product_capability_report
 
         repo_root = Path(__file__).resolve().parents[2]
-        routes = {str(getattr(route, "path", "")) for route in app.routes if getattr(route, "path", None)}
+        routes = route_paths(app)
         report = build_product_capability_report(
             repo_root=repo_root,
             store=store,
@@ -1578,7 +1579,7 @@ def create_app(store: GraphStore, *, max_depth: int = 8, dependencies=None) -> F
         )
 
         repo_root = Path(__file__).resolve().parents[2]
-        routes = {str(getattr(route, "path", "")) for route in app.routes if getattr(route, "path", None)}
+        routes = route_paths(app)
         report = build_product_capability_report(
             repo_root=repo_root,
             store=store,

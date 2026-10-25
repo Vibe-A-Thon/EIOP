@@ -7,6 +7,10 @@ SR-TEN-009), layered config (SR-CFG-001..006), egress gateway
 privacy (SR-PRV-*), compliance packs (SR-GOV-001..005), report generator
 (SR-NLQ-008), QA gate integrity (SR-QA-010..014), NL suggestion engine
 (SR-NLQ-002/003/004), and the schema profiler (SR-ING-010/012/013).
+
+These are route smoke tests: each test carries an explicit ``pytest.mark.req`` naming only the
+requirement(s) its assertions actually exercise, so the section headers' ID ranges do not credit
+every listed requirement.
 """
 
 from pathlib import Path
@@ -32,6 +36,7 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> TestClient:
 # --- tenancy (SR-TEN-001/002/003/006/007/009) -------------------------------
 
 
+@pytest.mark.req("SR-TEN-001")
 def test_tenancy_context_fail_closed_and_resolve(client: TestClient) -> None:
     missing = client.get("/api/v1/tenancy/context")
     assert missing.status_code == 403
@@ -43,6 +48,7 @@ def test_tenancy_context_fail_closed_and_resolve(client: TestClient) -> None:
     assert body["principal"] == "alice"
 
 
+@pytest.mark.req("SR-TEN-002", "SR-TEN-006")
 def test_tenancy_isolation_and_quota_routes(client: TestClient) -> None:
     models = client.get("/api/v1/tenancy/isolation/models", headers=TENANT_HEADERS)
     assert models.status_code == 200
@@ -64,6 +70,7 @@ def test_tenancy_isolation_and_quota_routes(client: TestClient) -> None:
 # --- licensing (SR-DEP-007, SR-COM-001, SR-TEN-009) -------------------------
 
 
+@pytest.mark.req("SR-DEP-007", "SR-TEN-009")
 def test_licensing_status_and_check_module(client: TestClient) -> None:
     status = client.get("/api/v1/licensing/status")
     assert status.status_code == 200
@@ -77,6 +84,7 @@ def test_licensing_status_and_check_module(client: TestClient) -> None:
 # --- layered config (SR-CFG-001..006) ----------------------------------------
 
 
+@pytest.mark.req("SR-CFG-001", "SR-CFG-003")
 def test_config_set_and_explain(client: TestClient) -> None:
     store = client.app.state.extended_state.config_store
     store.register(
@@ -113,6 +121,7 @@ def test_config_set_and_explain(client: TestClient) -> None:
 # --- egress gateway (SR-LLM-010..020, SR-CON-010/011) ------------------------
 
 
+@pytest.mark.req("SR-LLM-011")
 def test_egress_policy_rule_and_dry_run_call(client: TestClient) -> None:
     rule = client.post(
         "/api/v1/egress/policy/rules",
@@ -150,6 +159,7 @@ def test_egress_policy_rule_and_dry_run_call(client: TestClient) -> None:
 # --- branding (SR-WL-001/003/004-partial/006/007, SR-ONT-007) -----------------
 
 
+@pytest.mark.req("SR-ONT-007", "SR-WL-001")
 def test_branding_theme_and_terminology_rename(client: TestClient) -> None:
     theme = client.get("/api/v1/branding/theme")
     assert theme.status_code == 200
@@ -167,6 +177,7 @@ def test_branding_theme_and_terminology_rename(client: TestClient) -> None:
 # --- privacy (SR-PRV-001..004, 006 partials) ----------------------------------
 
 
+@pytest.mark.req("SR-PRV-001", "SR-PRV-002")
 def test_privacy_classify_and_dsar_locate(client: TestClient) -> None:
     classify = client.post(
         "/api/v1/privacy/classify",
@@ -195,6 +206,7 @@ def test_privacy_classify_and_dsar_locate(client: TestClient) -> None:
 # --- compliance packs (SR-GOV-001..005) ---------------------------------------
 
 
+@pytest.mark.req("SR-GOV-001")
 def test_compliance_packs_list_and_gap_analysis(client: TestClient) -> None:
     packs = client.get("/api/v1/compliance/packs")
     assert packs.status_code == 200
@@ -209,6 +221,7 @@ def test_compliance_packs_list_and_gap_analysis(client: TestClient) -> None:
 # --- report generator (SR-NLQ-008) --------------------------------------------
 
 
+@pytest.mark.req("SR-NLQ-008")
 def test_reports_render_markdown(client: TestClient) -> None:
     response = client.post(
         "/api/v1/reports/render",
@@ -224,6 +237,7 @@ def test_reports_render_markdown(client: TestClient) -> None:
 # --- QA gate integrity (SR-QA-010..014) ----------------------------------------
 
 
+@pytest.mark.req("SR-QA-012", "SR-QA-013")
 def test_qa_dashboard_three_numbers_and_inventory(client: TestClient) -> None:
     dashboard = client.get("/api/v1/qa/dashboard")
     assert dashboard.status_code == 200
@@ -241,6 +255,7 @@ def test_qa_dashboard_three_numbers_and_inventory(client: TestClient) -> None:
 # --- NL suggestion engine (SR-NLQ-002/003/004-partial) --------------------------
 
 
+@pytest.mark.req("SR-NLQ-002")
 def test_suggest_interpret(client: TestClient) -> None:
     response = client.post(
         "/api/v1/suggest/interpret",
@@ -254,6 +269,7 @@ def test_suggest_interpret(client: TestClient) -> None:
 # --- schema profiler (SR-ING-010/012/013/016-hook) -------------------------------
 
 
+@pytest.mark.req("SR-ING-010")
 def test_ingest_profile(client: TestClient) -> None:
     response = client.post(
         "/api/v1/ingest/profile",

@@ -10,6 +10,8 @@ from reva.extract.native.disasm import PurePythonDisassembler
 from reva.extract.native.cfg import CFGBuilder
 from reva.extract.native.vuln_scanner import NativeVulnScanner
 
+pytestmark = pytest.mark.reva_depth("unit")
+
 
 @pytest.fixture
 def mock_elf64_bytes():

@@ -1,3 +1,4 @@
+from _principals import provision_api_token
 import pytest
 from eoip.graph.memory import MemoryGraphStore
 from fastapi.testclient import TestClient
@@ -7,7 +8,7 @@ import apps.api.main as api_main
 
 @pytest.mark.req("G2-SYNC-009")
 def test_source_sync_admin_routes_enqueue_only_safe_sync_options(monkeypatch, tmp_path):
-    monkeypatch.setattr(api_main, "api_token", lambda: "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     client = TestClient(api_main.create_app())
@@ -37,7 +38,7 @@ def test_source_sync_admin_routes_enqueue_only_safe_sync_options(monkeypatch, tm
 
 
 def test_ontology_export_requires_auth_and_returns_jsonld(monkeypatch, tmp_path):
-    monkeypatch.setattr(api_main, "api_token", lambda: "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
     client = TestClient(api_main.create_app())

@@ -112,9 +112,14 @@ if [ ! -f "$ENV_FILE" ]; then
         exit 1
     fi
     TOKEN=$(openssl rand -hex 32)
-    PASSWORD=$(openssl rand -hex 32)
-    printf "EOIP_API_TOKEN=%s\nHUGEGRAPH_PASSWORD=%s\nEOIP_LOAD_DEMO=true\n" "$TOKEN" "$PASSWORD" > "$ENV_FILE"
-    echo "Created deploy/.env with local credentials. Paste EOIP_API_TOKEN into the web login field."
+    PASSWORD=$(openssl rand -hex 24)  # FT-X04: Hubble VARCHAR(48) -> 48 hex chars, 192-bit
+    # FT-AUTH: the first admin is explicit: EOIP_ADMIN_USERNAME (or your login name) with a
+    # generated password, provisioned by the API container at start. No default account.
+    ADMIN_USER="${EOIP_ADMIN_USERNAME:-$(id -un)}"
+    ADMIN_PASSWORD=$(openssl rand -base64 24 | tr -d '\n')
+    (umask 077; printf "EOIP_ADMIN_USERNAME=%s\nEOIP_ADMIN_PASSWORD=%s\nEOIP_API_TOKEN=%s\nEOIP_API_TOKEN_ROLES=analyst\nEOIP_API_TOKEN_PRINCIPAL=svc-mcp\nHUGEGRAPH_PASSWORD=%s\nEOIP_LOAD_DEMO=true\n" \
+        "$ADMIN_USER" "$ADMIN_PASSWORD" "$TOKEN" "$PASSWORD" > "$ENV_FILE")
+    echo "Created deploy/.env (mode 600). Sign in as '$ADMIN_USER' with EOIP_ADMIN_PASSWORD from deploy/.env."
 fi
 
 # ─── Compose wiring ─────────────────────────────────────────────────────
@@ -196,7 +201,11 @@ case "$ACTION" in
         COMPOSE_BASE_ARGS="--env-file $ENV_FILE -p $RUN_ID -f $PROJECT_ROOT/deploy/docker-compose.dlq-acceptance.yml"
         run_compose build dlq-api acceptance
         run_compose up -d --wait --wait-timeout 420 dlq-api dlq-worker dlq-upstream dlq-confluence
-        run_compose run --rm --no-deps acceptance || true
+        mkdir -p "$PROJECT_ROOT/test-results"
+        run_compose run --name "$RUN_ID-acceptance" --no-deps acceptance || true
+        # FT-X11: copy the report out of the named results volume (no host bind mount / chmod 777).
+        $CLI_CMD cp "$RUN_ID-acceptance:/results/." "$PROJECT_ROOT/test-results/" || true
+        $CLI_CMD rm -f "$RUN_ID-acceptance" >/dev/null 2>&1 || true
         echo "DLQ acceptance evidence: test-results/$RUN_ID.json"
         run_compose logs --tail 80 schema-init dlq-api dlq-worker dlq-upstream dlq-confluence
         run_compose down --volumes

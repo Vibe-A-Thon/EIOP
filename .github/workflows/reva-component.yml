@@ -1,14 +1,37 @@
 name: reva-component
-on: [push, pull_request]
+
+# FT-F04: real lane (was a NOT IMPLEMENTED placeholder). Runs tests/reva/component: the kernel,
+# file-backed SQLite store, transparency log and REST router exercised together, and enforces
+# REVA-TST-001 (every test sits in the directory matching its reva_depth marker).
+on:
+  push:
+    branches: [main, develop, dev_local, eoip-remediation-geeky]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Component test suite under tests/reva/component
-        run: echo "Running reva-component"
+          cache: pip
+      - name: Install
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Depth markers match test directories (REVA-TST-001)
+        run: python scripts/reva/check_depth_markers.py
+      - name: Component suite under tests/reva/component
+        env:
+          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data
+        run: python scripts/reva/run_lane.py component -- tests/reva/component --timeout=120
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reva-component-results
+          path: test-results/

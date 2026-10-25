@@ -159,6 +159,7 @@ class AgentExecutionContext:
                 tool_name=name,
                 arguments=arguments,
                 actor_id=self.request.actor_id,
+                tenant_id=self.request.tenant_id,
                 run_id=self.run_id,
                 dry_run=self.request.dry_run,
             ),
@@ -168,6 +169,7 @@ class AgentExecutionContext:
         record = {
             "tool_call_id": call_id,
             "tool_name": name,
+            "tenant_id": self.request.tenant_id,
             "status": result.status,
             "risk_level": (self._tools.get(name).risk_level if self._tools.get(name) else "R0"),
             "duration_ms": result.duration_ms,

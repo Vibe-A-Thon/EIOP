@@ -60,6 +60,7 @@ class ImpactedEntity:
     risk_contribution: float = 0.0
     owner: str | None = None
     depth: int = 0
+    repo_id: str = ""
 
 
 @dataclass
@@ -74,6 +75,7 @@ class PRImpactReport:
     blast_radius: int
     summary: str = ""
     signals: dict[str, Any] = field(default_factory=dict)
+    repos_affected: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -106,6 +108,8 @@ class PRImpactCalculator:
                     name=str(entity.get("name", f.path)),
                     impact_type="direct_change",
                     depth=0,
+                    repo_id=str(entity.get("repo_id") or (entity.get("properties") or {}).get("repo_id")
+                                or pr.repo_id),
                 ))
 
             transitive = self._find_transitive_impact(file_entities, pr.repo_id)
@@ -120,6 +124,13 @@ class PRImpactCalculator:
             if service:
                 affected_services.add(service)
 
+        # Deterministic report for identical diffs (KGR-G-017): de-duplicate and order entities.
+        unique: dict[str, ImpactedEntity] = {}
+        for entity in impacted:
+            known = unique.get(entity.canonical_id)
+            if known is None or entity.depth < known.depth:
+                unique[entity.canonical_id] = entity
+        impacted = sorted(unique.values(), key=lambda e: (e.depth, e.repo_id, e.canonical_id))
         risk_score = RiskScorer.score(pr, impacted, affected_services)
         risk_level = RiskScorer.classify(risk_score)
         reviewers = ReviewerSuggester.suggest(owners, pr.author, impacted)
@@ -135,6 +146,7 @@ class PRImpactCalculator:
             blast_radius=len(impacted),
             summary=self._build_summary(pr, risk_level, impacted, affected_services),
             signals=self._compute_signals(pr, impacted),
+            repos_affected=sorted({e.repo_id for e in impacted if e.repo_id}),
         )
 
     def _resolve_vid(self, node_id: str) -> str:
@@ -146,7 +158,12 @@ class PRImpactCalculator:
 
     def _find_entities_for_file(self, path: str, repo_id: str) -> list[dict[str, Any]]:
         vertices = self.store.find_vertex_by_property("CodeSymbol", "path", path)
-        return [dict(v) for v in vertices]
+        # Same path in another repository is a different file: only symbols of the PR's repo
+        # (or legacy symbols without a repo binding) are direct changes.
+        def repo_of(v: dict[str, Any]) -> str:
+            return str(v.get("repo_id") or (v.get("properties") or {}).get("repo_id") or "")
+
+        return [dict(v) for v in vertices if not repo_of(v) or not repo_id or repo_of(v) == repo_id]
 
     def _find_transitive_impact(self, direct_entities: list[dict[str, Any]], repo_id: str) -> list[ImpactedEntity]:
         transitive: list[ImpactedEntity] = []
@@ -185,6 +202,7 @@ class PRImpactCalculator:
                             name=str(vertex.get("name", dep_id)),
                             impact_type="transitive_dependency",
                             depth=depth + 1,
+                            repo_id=str(vertex.get("repo_id") or (vertex.get("properties") or {}).get("repo_id") or ""),
                         ))
                         queue.append((dep_id, depth + 1))
 
@@ -358,6 +376,11 @@ class MCPPRToolHandler:
             "suggested_reviewers": report.suggested_reviewers,
             "summary": report.summary,
             "signals": report.signals,
+            "repos_affected": report.repos_affected,
+            "impacted_entities": [
+                {"canonical_id": e.canonical_id, "repo_id": e.repo_id, "impact_type": e.impact_type, "depth": e.depth}
+                for e in report.impacted_entities
+            ],
         }, [f"pr:{report.pr_id}"]
 
     def triage_prs(self, args: dict[str, Any]) -> tuple[dict[str, Any], list[str]]:
@@ -409,3 +432,40 @@ class MCPPRToolHandler:
                 for r in triage.prs
             ],
         }, [f"triage:{len(reports)}"]
+
+
+_PR_FILE_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "change_type": {"type": "string", "enum": ["added", "modified", "deleted", "renamed"]},
+        "additions": {"type": "integer", "minimum": 0},
+        "deletions": {"type": "integer", "minimum": 0},
+    },
+    "required": ["path"],
+    "additionalProperties": False,
+}
+_PR_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "pr_id": {"type": "string", "minLength": 1},
+        "title": {"type": "string"},
+        "author": {"type": "string"},
+        "base_branch": {"type": "string"},
+        "head_branch": {"type": "string"},
+        "repo_id": {"type": "string", "minLength": 1},
+        "files": {"type": "array", "items": _PR_FILE_SCHEMA},
+    },
+    "required": ["pr_id", "repo_id", "files"],
+    "additionalProperties": False,
+}
+#: MCP tool ``inputSchema`` documents (JSON Schema objects, KGR-G-017).
+PR_TOOL_INPUT_SCHEMAS: dict[str, dict[str, Any]] = {
+    "list_prs": {"type": "object", "properties": {"repo_id": {"type": "string"}, "state": {"type": "string"},
+                                                  "limit": {"type": "integer", "minimum": 1, "maximum": 500}},
+                 "additionalProperties": False},
+    "get_pr_impact": {"type": "object", "properties": {"pr": _PR_SCHEMA}, "required": ["pr"],
+                      "additionalProperties": False},
+    "triage_prs": {"type": "object", "properties": {"prs": {"type": "array", "items": _PR_SCHEMA, "minItems": 1}},
+                   "required": ["prs"], "additionalProperties": False},
+}

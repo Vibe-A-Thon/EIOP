@@ -57,9 +57,13 @@ class PluginSandbox:
         result_holder: list[Any] = []
         error_holder: list[Exception] = []
 
+        import contextvars
+
+        ctx = contextvars.copy_context()  # the worker thread keeps the caller's tenant scope
+
         def _run():
             try:
-                result_holder.append(func(*args, **kwargs))
+                result_holder.append(ctx.run(func, *args, **kwargs))
             except Exception as e:
                 error_holder.append(e)
 
@@ -89,6 +93,7 @@ class PluginRuntime:
 
     def __init__(self, sandbox: PluginSandbox | None = None) -> None:
         self._sandbox = sandbox or PluginSandbox()
+        self.invocations: list[dict[str, Any]] = []  # tenant-tagged invocation log (SR-TEN-001)
         self._plugins: dict[str, LoadedPlugin] = {}
         self._lock = threading.RLock()
         self._hooks: dict[str, list[str]] = {}  # capability -> [plugin_ids]
@@ -216,7 +221,24 @@ class PluginRuntime:
             ]
 
     def execute_plugin(self, plugin_id: str, method: str, *args,
-                       timeout: float | None = None, **kwargs) -> Any:
+                       timeout: float | None = None, invocation_tenant: str | None = None,
+                       **kwargs) -> Any:
+        """Run a plugin method inside the tenant scope (SR-TEN-001).
+
+        ``invocation_tenant`` defaults to the caller's ambient scope (``current_tenant()``); every
+        invocation is recorded in ``self.invocations`` with its tenant and the plugin can read
+        ``current_tenant()``.
+        """
+        from eoip.contracts.tenant_scope import current_tenant, tenant_scope
+
+        tenant = invocation_tenant if invocation_tenant is not None else current_tenant()
+        with tenant_scope(tenant):
+            self.invocations.append({"plugin_id": plugin_id, "method": method, "tenant_id": tenant,
+                                     "at": time.time()})
+            return self._execute_plugin(plugin_id, method, *args, timeout=timeout, **kwargs)
+
+    def _execute_plugin(self, plugin_id: str, method: str, *args,
+                        timeout: float | None = None, **kwargs) -> Any:
         loaded = self._plugins.get(plugin_id)
         if not loaded:
             raise ValueError(f"Plugin {plugin_id} not loaded")

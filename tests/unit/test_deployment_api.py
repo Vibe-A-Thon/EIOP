@@ -1,3 +1,4 @@
+from _principals import provision_api_token
 import json
 import os
 
@@ -13,6 +14,7 @@ def client(monkeypatch, tmp_path):
     store = MemoryGraphStore()
     store.close = lambda: None
     monkeypatch.setenv("EOIP_API_TOKEN", "test-token-with-at-least-24-characters")
+    provision_api_token(monkeypatch, "test-token-with-at-least-24-characters")
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     return TestClient(main.create_app())
@@ -86,12 +88,17 @@ def test_metrics_include_operation_counts_failures_and_latency(monkeypatch, tmp_
     metrics = api.get("/metrics").text
     assert metrics.count("# HELP eoip_operations_total ") == 1
     assert "# HELP http_requests_total" in metrics
-    assert 'eoip_operations_total{operation="query",status="200"} 1.0' in metrics
-    assert 'eoip_operations_total{operation="ingestion",status="202"} 1.0' in metrics
-    assert 'eoip_operations_total{operation="model",status="404"} 1.0' in metrics
-    assert 'eoip_operations_total{operation="agent",status="404"} 1.0' in metrics
-    assert 'eoip_failures_total{operation="model",status="404"} 1.0' in metrics
-    assert 'eoip_operation_duration_seconds_count{operation="query"} 1.0' in metrics
+    assert 'eoip_operations_total{operation="query",status="200",tenant="_platform"} 1.0' in metrics
+    assert 'eoip_operations_total{operation="ingestion",status="202",tenant="_platform"} 1.0' in metrics
+    assert 'eoip_operations_total{operation="model",status="404",tenant="_platform"} 1.0' in metrics
+    assert 'eoip_operations_total{operation="agent",status="404",tenant="_platform"} 1.0' in metrics
+    assert 'eoip_failures_total{operation="model",status="404",tenant="_platform"} 1.0' in metrics
+    assert 'eoip_operation_duration_seconds_count{operation="query",tenant="_platform"} 1.0' in metrics
+    # SR-TEN-001: no request metric sample is emitted without a tenant label
+    import re as _re
+    for line in metrics.splitlines():
+        if _re.match(r"eoip_(operations|failures|http_requests)_total\{", line):
+            assert 'tenant="' in line, line
 
 
 def test_metrics_include_ingestion_job_status_and_runtime(monkeypatch, tmp_path):
@@ -209,6 +216,7 @@ def test_entity_tombstone_is_hidden_searchable_on_request_and_reactivated(
         },
     )
     monkeypatch.setenv("EOIP_API_TOKEN", "test-token-with-at-least-24-characters")
+    provision_api_token(monkeypatch, "test-token-with-at-least-24-characters")
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(main, "create_store", lambda: store)
     api = TestClient(main.create_app())
@@ -295,3 +303,21 @@ def test_validation_refusal_is_persisted_as_policy_denial(monkeypatch, tmp_path)
     ]
     assert records[-1]["event_type"] == "policy_denial"
     assert records[-1]["reason_code"] == "http_422"
+
+
+@pytest.mark.req("SR-CON-011", "CRA-003")
+def test_policy_classified_admin_mutation_also_fails_closed_without_audit(monkeypatch, tmp_path):
+    """Routes made admin-only by the central route policy get the same audit preflight."""
+
+    def fail_audit(*_args, **_kwargs):
+        raise OSError("audit volume unavailable")
+
+    monkeypatch.setattr(main.AuditSink, "emit", fail_audit)
+    api = client(monkeypatch, tmp_path)
+    response = api.post(
+        "/api/v1/privacy/dsar/erase",
+        headers={"Authorization": "Bearer test-token-with-at-least-24-characters"},
+        json={"subject_id": "s", "tenant_id": "t"},
+    )
+    assert response.status_code == 503
+    assert response.json()["detail"] == "Audit service unavailable; admin mutation was not executed"

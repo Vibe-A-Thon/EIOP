@@ -7,6 +7,7 @@ from hashlib import sha256
 from time import monotonic
 from typing import Any
 
+from eoip.contracts.tenant_scope import tenant_scope
 from eoip.contracts.tool import ToolContract, ToolRequest, ToolResult
 from eoip.graph.store import GraphStore
 from eoip.graph.traversal import GraphTraversal
@@ -51,8 +52,20 @@ class ToolRegistry:
                 status="TIMEOUT",
                 error={"code": "RUN_DEADLINE_EXCEEDED"},
             )
+        if contract.input_schema:
+            import jsonschema
+
+            error = next(jsonschema.Draft202012Validator(contract.input_schema).iter_errors(request.arguments), None)
+            if error is not None:
+                return ToolResult(
+                    tool_call_id=request.tool_call_id,
+                    status="FAILED",
+                    error={"code": "INVALID_ARGUMENTS", "message": error.message[:300]},
+                    duration_ms=int((monotonic() - started) * 1000),
+                )
         try:
-            result, evidence = self._handlers[request.tool_name](request.arguments)
+            with tenant_scope(request.tenant_id):
+                result, evidence = self._handlers[request.tool_name](request.arguments)
             return ToolResult(
                 tool_call_id=request.tool_call_id,
                 status="SUCCEEDED",
@@ -87,8 +100,10 @@ def build_graph_tool_registry(store: GraphStore) -> ToolRegistry:
     """Create the default versioned read-tool registry over the graph port."""
     registry = ToolRegistry()
 
-    def register(name: str, description: str, handler: ToolHandler) -> None:
-        registry.register(ToolContract(name=name, description=description), handler)
+    def register(name: str, description: str, handler: ToolHandler,
+                 input_schema: dict | None = None) -> None:
+        contract = ToolContract(name=name, description=description, input_schema=input_schema or {})
+        registry.register(contract, handler)
 
     def entity(arguments: dict) -> tuple[object, list[str]]:
         canonical_id = str(arguments["canonical_id"])
@@ -142,11 +157,14 @@ def build_graph_tool_registry(store: GraphStore) -> ToolRegistry:
     register("test_coverage", "Read bounded facts for test coverage analysis", search)
     register("incident_correlation", "Read bounded facts for incident correlation", search)
 
-    from eoip.agents.mcp_pr_tools import MCPPRToolHandler
+    from eoip.agents.mcp_pr_tools import PR_TOOL_INPUT_SCHEMAS, MCPPRToolHandler
     pr_handler = MCPPRToolHandler(store)
-    register("list_prs", "List pull requests in repository", pr_handler.list_prs)
-    register("get_pr_impact", "Calculate cross-repo graph impact of a pull request", pr_handler.get_pr_impact)
-    register("triage_prs", "Triage and rank multiple pull requests by graph impact risk", pr_handler.triage_prs)
+    register("list_prs", "List pull requests in repository", pr_handler.list_prs,
+             PR_TOOL_INPUT_SCHEMAS["list_prs"])
+    register("get_pr_impact", "Calculate cross-repo graph impact of a pull request", pr_handler.get_pr_impact,
+             PR_TOOL_INPUT_SCHEMAS["get_pr_impact"])
+    register("triage_prs", "Triage and rank multiple pull requests by graph impact risk", pr_handler.triage_prs,
+             PR_TOOL_INPUT_SCHEMAS["triage_prs"])
 
     return registry
 

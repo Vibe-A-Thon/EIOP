@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from _principals import provision_api_token
 import json
 from pathlib import Path
 import pytest
@@ -50,6 +51,7 @@ def populated_store():
 # CRA-039.1: OpenAPI schema generation, route isolation & versioning
 # ===========================================================================
 
+@pytest.mark.req("CRA-039")
 def test_cra_039_1_openapi_schema_generation_and_route_isolation():
     generator = OpenAPIGenerator()
     public_spec = generator.generate_public_contract(public_version="v1")
@@ -87,6 +89,7 @@ def test_cra_039_1_openapi_schema_generation_and_route_isolation():
 # CRA-039.2: MCP typed contracts, budgets & identity defense
 # ===========================================================================
 
+@pytest.mark.req("CRA-039")
 def test_cra_039_2_mcp_typed_contracts_budgets_and_identity_defense(populated_store):
     server = EOIPMCPServer(graph_store=populated_store)
 
@@ -138,6 +141,7 @@ def test_cra_039_2_mcp_typed_contracts_budgets_and_identity_defense(populated_st
 # CRA-039.3: Plugin/connector templates, conformance runner & qualification
 # ===========================================================================
 
+@pytest.mark.req("CRA-039")
 def test_cra_039_3_plugin_conformance_runner_and_qualification_process():
     # 1. Scaffolding template
     scaffold = ConnectorPluginTemplate.generate_scaffold("custom_jira", "Custom Jira Connector")
@@ -214,6 +218,7 @@ def test_cra_039_3_plugin_conformance_runner_and_qualification_process():
 # CRA-039.4: Offline ontology doc generation & content sanitization
 # ===========================================================================
 
+@pytest.mark.req("CRA-039")
 def test_cra_039_4_offline_doc_generation_and_sanitization():
     generator = WidocoOntologyDocGenerator(
         title="EOIP Enterprise Ontology Specification",
@@ -249,6 +254,7 @@ def test_cra_039_4_offline_doc_generation_and_sanitization():
 # CRA-039.5: Contribution, vulnerability disclosure & anti-leak policy
 # ===========================================================================
 
+@pytest.mark.req("CRA-039")
 def test_cra_039_5_ecosystem_policies_and_customer_data_leak_guard():
     # 1. Policies inspection
     policies = EcosystemPolicyRegistry.get_all_policies()
@@ -278,6 +284,7 @@ def test_cra_039_5_ecosystem_policies_and_customer_data_leak_guard():
 # CRA-039.6: Python and TypeScript SDKs, and package naming
 # ===========================================================================
 
+@pytest.mark.req("CRA-039")
 def test_cra_039_6_python_and_typescript_sdks_and_package_naming(tmp_path):
     # 1. Package Name & Trademark Verification
     pypi_check = PackageNameVerifier.verify_pypi_name("eoip-python")
@@ -323,6 +330,7 @@ def test_cra_039_6_python_and_typescript_sdks_and_package_naming(tmp_path):
 # CRA-039.7: MCP server exposing ontology, graph & governed actions (ONT-011)
 # ===========================================================================
 
+@pytest.mark.req("CRA-039")
 def test_cra_039_7_mcp_server_ontology_graph_and_governed_actions(populated_store):
     action_engine = ActionEngine(write_back_enabled=True)
     server = EOIPMCPServer(graph_store=populated_store, action_engine=action_engine)
@@ -368,6 +376,7 @@ def test_cra_039_7_mcp_server_ontology_graph_and_governed_actions(populated_stor
 # CRA-039.8: Widoco-class HTML ontology documentation generator & route (ONT-014)
 # ===========================================================================
 
+@pytest.mark.req("CRA-039")
 def test_cra_039_8_widoco_html_ontology_docs_and_route_serving(monkeypatch, tmp_path):
     # 1. Generator validation
     generator = WidocoOntologyDocGenerator()
@@ -386,6 +395,7 @@ def test_cra_039_8_widoco_html_ontology_docs_and_route_serving(monkeypatch, tmp_
 
     # 2. HTTP route serving at GET /ontology/docs
     monkeypatch.setenv("EOIP_API_TOKEN", "x" * 32)
+    provision_api_token(monkeypatch, "x" * 32)
     monkeypatch.setenv("EOIP_ENV", "test")
     monkeypatch.setenv("EOIP_DATA_ROOT", str(tmp_path))
     monkeypatch.setenv("EOIP_GRAPH_BACKEND", "memory")
@@ -407,6 +417,7 @@ def test_cra_039_8_widoco_html_ontology_docs_and_route_serving(monkeypatch, tmp_
 # CRA-039.A: Integrated Developer Ecosystem Acceptance
 # ===========================================================================
 
+@pytest.mark.req("CRA-039")
 def test_cra_039_a_developer_ecosystem_acceptance_integrated(tmp_path, populated_store):
     # 1. Independently build client and sample plugin from released schemas/templates
     scaffold = ConnectorPluginTemplate.generate_scaffold("sample_cmdb", "Sample CMDB Connector")

@@ -6,7 +6,15 @@ Run commands from the repository root unless a component README says otherwise. 
 
 | Variable | Consumer | Behavior and caution |
 |---|---|---|
-| `EOIP_API_TOKEN` | API and MCP via `eoip.runtime.api_token` | Required, at least 24 characters; keep real values private; minimum length is not a security assessment |
+| `EOIP_ADMIN_USERNAME`, `EOIP_ADMIN_PASSWORD` / `EOIP_ADMIN_PASSWORD_FILE` | `eoip-admin from-env` (image entrypoint, `backend/server.py`) | Explicit first-administrator provisioning (superadmin, argon2id-hashed). Idempotent: an existing user is never changed. There is no default account; see [authentication](authentication.md) |
+| `EOIP_API_TOKEN` | MCP facade (outgoing calls, `eoip.runtime.api_token`); `eoip-admin from-env` | At least 32 characters, from the secret store. Grants **nothing** by itself: it is accepted by the API only when `EOIP_API_TOKEN_ROLES` maps it to principal `EOIP_API_TOKEN_PRINCIPAL` (default `svc-api-token`; Compose `svc-mcp`) |
+| `EOIP_API_TOKEN_ROLES`, `EOIP_API_TOKEN_PRINCIPAL`, `EOIP_API_TOKEN_TENANT` | `eoip-admin from-env` | Explicit roles (comma separated) and principal for `EOIP_API_TOKEN`; empty roles = token not mapped |
+| `EOIP_CREDENTIALS_FILE` | API credential store (`eoip.authn.credentials`) | Login users and their API tokens; defaults to `<EOIP_DATA_DIR>/state/credentials.json` (mode 0600) |
+| `EOIP_SESSION_SECRET`, `EOIP_SESSION_TTL_SECONDS` | API sessions | Session-signing secret (>= 32 chars). Optional for a single replica (a key is generated under `<EOIP_DATA_DIR>/state/session.key`), required and shared for several replicas. TTL defaults to 28800 s |
+| `EOIP_SSO_PROVIDER` | API startup | SSO (OIDC/SAML) is a disabled placeholder; setting this is a startup error |
+| `EOIP_ASG_FILE` | API ASG/RBAC loader (`apps/api/asg.py`) | Optional path to the principal file (`sha256:<hex> \| roles \| tenant \| user`, see `Logins_credentials.keys.example`). No repository default. Startup fails if the file is missing, group/world accessible, malformed, or holds plaintext tokens |
+| `EOIP_REVOKED_TOKEN_SHA256_FILE` | API ASG loader and `api_token` | Optional newline list of sha256 digests of revoked tokens; an ASG entry or `EOIP_API_TOKEN` that matches refuses startup |
+| `EOIP_ASG_ALLOW_PLAINTEXT` | API ASG loader | `true` accepts plaintext ASG entries **only** together with `EOIP_ENV=dev`; never in shared environments |
 | `EOIP_DATA_DIR` | API/worker/runtime services | File-backed state root; defaults to `/data`; set an explicit writable path on a host |
 | `EOIP_CONFIG_DIR` | Graph loader and selected services | Graph loader defaults to `config`; not every module necessarily honors this override |
 | `EOIP_GRAPH_CONFIG` | Graph backend loader | Overrides graph configuration file path |
@@ -18,7 +26,7 @@ Run commands from the repository root unless a component README says otherwise. 
 | `EOIP_LOAD_DEMO` | Worker startup | Defaults to `true` in worker code; local launchers also set it; set `false` for a non-demo deployment |
 | `EOIP_API_URL` | MCP and some scripts | API URL; MCP default uses container DNS `http://eoip-api:8000`; use a reachable URL outside Compose |
 | `EOIP_CORS_ORIGINS` | API query-app composition | Comma-separated explicit HTTP(S) origins without paths, credentials or wildcards |
-| `EOIP_ENV`, `APP_ENV` | API CORS configuration | `production` disables the development origin fallback; `EOIP_ENV` is considered first |
+| `EOIP_ENV`, `APP_ENV` | API CORS configuration; `backend/server.py` | `production` disables the development origin fallback; `EOIP_ENV` is considered first. `dev` lets `backend/server.py` generate an ephemeral token (`<data dir>/dev-token`, mode 0600) and enables plaintext ASG entries when `EOIP_ASG_ALLOW_PLAINTEXT=true` |
 | `EOIP_DEV_API_URL` | `apps/web/vite.config.js` | Enables development proxies for `/api`, `/health`, `/metrics`; not the other frontend's setting |
 | `REACT_APP_BACKEND_URL` | `frontend/src/lib/api.ts` | Alternate frontend API origin; build-time public value, never a secret; see frontend guide |
 | `EOIP_LEASE_PATH`, `EOIP_LEASE_TTL_SECONDS` | Worker | Optional filesystem advisory leader lease; not proof of distributed failover safety |

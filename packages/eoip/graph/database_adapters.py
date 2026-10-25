@@ -244,34 +244,79 @@ def _cypher_to_sparql(query: str) -> str:
     return sparql
 
 
-def _cypher_to_aql(query: str) -> str:
-    m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", query, re.I)
+# FT-F08: SQL/AQL translations never interpolate values. Identifiers must be plain
+# ASCII names (allow-list) and are quoted; values travel as bound parameters.
+_IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,62}")
+_WHERE = re.compile(r"WHERE\s+\w+\.(\w+)\s*=\s*(?:'([^']*)'|\"([^\"]*)\"|([^'\"}\s]+))", re.I)
+_MATCH = re.compile(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", re.I)
+_LIMIT = re.compile(r"LIMIT\s+(\d{1,9})\b", re.I)
+
+
+class UnsafeIdentifierError(ValueError):
+    """A label/property name in a translated query is not a plain identifier."""
+
+
+def _identifier(name: str) -> str:
+    if not _IDENTIFIER.fullmatch(name):
+        raise UnsafeIdentifierError(f"unsupported identifier: {name!r}")
+    return name
+
+
+def _where_clause(query: str) -> tuple[str, str] | None:
+    where = _WHERE.search(query)
+    if not where:
+        return None
+    value = next(group for group in where.groups()[1:] if group is not None)
+    return _identifier(where.group(1)), value
+
+
+def _cypher_to_aql_bound(query: str) -> tuple[str, dict[str, Any]]:
+    m = _MATCH.search(query)
     if not m:
-        return "FOR doc IN vertices LIMIT 100 RETURN doc"
-    var, label = m.group(1), m.group(2)
-    collection = label if label else "vertices"
-    aql = f"FOR {var} IN {collection}"
-    where = re.search(r"WHERE\s+\w+\.(\w+)\s*=\s*['\"]?([^'\"}\s]+)['\"]?", query, re.I)
+        return "FOR doc IN vertices LIMIT 100 RETURN doc", {}
+    var = _identifier(m.group(1))
+    params: dict[str, Any] = {"@collection": _identifier(m.group(2)) if m.group(2) else "vertices"}
+    parts = [f"FOR {var} IN @@collection"]
+    where = _where_clause(query)
     if where:
-        aql += f" FILTER {var}.{where.group(1)} == '{where.group(2)}'"
-    limit = re.search(r"LIMIT\s+(\d+)", query, re.I)
+        params["attr"], params["value"] = where
+        parts.append(f"FILTER {var}.@attr == @value")
+    limit = _LIMIT.search(query)
     if limit:
-        aql += f" LIMIT {limit.group(1)}"
-    aql += f" RETURN {var}"
-    return aql
+        params["limit"] = int(limit.group(1))
+        parts.append("LIMIT @limit")
+    parts.append(f"RETURN {var}")
+    return " ".join(parts), params
+
+
+def _cypher_to_sql_bound(query: str) -> tuple[str, dict[str, Any]]:
+    m = _MATCH.search(query)
+    table = _identifier(m.group(2)) if (m and m.group(2)) else "entities"
+    parts = ["SELECT * FROM", f'"{table}"']
+    params: dict[str, Any] = {}
+    where = _where_clause(query)
+    if where:
+        column, params["p0"] = where
+        parts.append(f'WHERE "{column}" = :p0')
+    limit = _LIMIT.search(query)
+    if limit:
+        params["limit"] = int(limit.group(1))
+        parts.append("LIMIT :limit")
+    return " ".join(parts), params
+
+
+def _cypher_to_aql(query: str) -> str:
+    return _cypher_to_aql_bound(query)[0]
 
 
 def _cypher_to_sql(query: str) -> str:
-    m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", query, re.I)
-    table = m.group(2) if (m and m.group(2)) else "entities"
-    sql = f"SELECT * FROM {table}"
-    where = re.search(r"WHERE\s+\w+\.(\w+)\s*=\s*['\"]?([^'\"}\s]+)['\"]?", query, re.I)
-    if where:
-        sql += f" WHERE {where.group(1)} = '{where.group(2)}'"
-    limit = re.search(r"LIMIT\s+(\d+)", query, re.I)
-    if limit:
-        sql += f" LIMIT {limit.group(1)}"
-    return sql
+    return _cypher_to_sql_bound(query)[0]
+
+
+_SQL_ENGINES = frozenset({
+    DatabaseType.POSTGRESQL, DatabaseType.PGVECTOR, DatabaseType.SQLITE,
+    DatabaseType.DUCKDB, DatabaseType.CLICKHOUSE, DatabaseType.TIMESCALEDB,
+})
 
 
 class UniversalDatabaseAdapter(BaseDatabaseAdapter):
@@ -315,8 +360,11 @@ class UniversalDatabaseAdapter(BaseDatabaseAdapter):
 
         # Apache AGE (Cypher wrapped in SQL cypher() function)
         if db == DatabaseType.APACHE_AGE:
-            escaped = cypher_query.replace("'", "''")
-            return f"SELECT * FROM cypher('graph_name', $$ {cypher_query} $$) as (v agtype);"
+            # AGE executes the Cypher itself; the only SQL-level risk is closing the
+            # $$ dollar-quote early, so such queries are refused.
+            if "$$" in cypher_query:
+                raise UnsafeIdentifierError("Cypher for Apache AGE must not contain '$$'")
+            return f"SELECT * FROM cypher('graph_name', $$ {cypher_query} $$) as (v agtype);"  # noqa: S608
 
         # Gremlin-based engines
         if db in (DatabaseType.AMAZON_NEPTUNE, DatabaseType.JANUSGRAPH,
@@ -334,27 +382,26 @@ class UniversalDatabaseAdapter(BaseDatabaseAdapter):
             return _cypher_to_aql(cypher_query)
 
         # Relational SQL & Vector SQL engines
-        if db in (DatabaseType.POSTGRESQL, DatabaseType.PGVECTOR, DatabaseType.SQLITE,
-                  DatabaseType.DUCKDB, DatabaseType.CLICKHOUSE, DatabaseType.TIMESCALEDB):
+        if db in _SQL_ENGINES:
             return _cypher_to_sql(cypher_query)
 
         # TypeDB TypeQL
         if db == DatabaseType.TYPEDB:
             m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", cypher_query, re.I)
-            t = m.group(2) if (m and m.group(2)) else "entity"
+            t = _identifier(m.group(2)) if (m and m.group(2)) else "entity"
             return f"match $x isa {t}; get $x;"
 
         # Dgraph GraphQL
         if db == DatabaseType.DGRAPH:
             m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", cypher_query, re.I)
-            lbl = m.group(2) if (m and m.group(2)) else "Node"
+            lbl = _identifier(m.group(2)) if (m and m.group(2)) else "Node"
             return f"{{ query{lbl}(first: 100) {{ id }} }}"
 
         # TigerGraph GSQL
         if db == DatabaseType.TIGERGRAPH:
             m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", cypher_query, re.I)
-            collection = m.group(2) if (m and m.group(2)) else "ANY"
-            return f"SELECT s FROM {collection}:s LIMIT 100"
+            collection = _identifier(m.group(2)) if (m and m.group(2)) else "ANY"
+            return f"SELECT s FROM {collection}:s LIMIT 100"  # noqa: S608 (allow-listed identifier)
 
         # CozoDB Datalog
         if db == DatabaseType.COZODB:
@@ -362,11 +409,25 @@ class UniversalDatabaseAdapter(BaseDatabaseAdapter):
 
         return cypher_query
 
+    def translate_query_bound(self, cypher_query: str) -> tuple[str, dict[str, Any]]:
+        """Translate and return (query text, bound parameters).
+
+        For SQL and AQL engines the text holds placeholders only (FT-F08); values
+        are in the returned parameters. Other engines return no extra parameters.
+        """
+        db = self.config.db_type
+        if db == DatabaseType.ARANGODB:
+            return _cypher_to_aql_bound(cypher_query)
+        if db in _SQL_ENGINES:
+            return _cypher_to_sql_bound(cypher_query)
+        return self.translate_query(cypher_query), {}
+
     def execute_query(self, query: str, parameters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         if not self.is_connected:
             self.connect()
 
-        translated = self.translate_query(query)
+        translated, bound = self.translate_query_bound(query)
+        parameters = {**(parameters or {}), **bound} if (parameters or bound) else parameters
         self._query_count += 1
 
         if self._native_client is not None:
@@ -386,6 +447,7 @@ class UniversalDatabaseAdapter(BaseDatabaseAdapter):
             "query": translated,
             "db_engine": self.config.db_type.value,
             "protocol": _PROTOCOL_MAP.get(self.config.db_type, "Standard Protocol"),
+            "parameters": parameters or {},
             "mode": "dry_run",
             "records": [],
         }]

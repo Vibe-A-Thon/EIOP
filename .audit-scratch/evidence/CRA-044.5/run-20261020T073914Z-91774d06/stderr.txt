@@ -1,0 +1,2 @@
+ERROR: found no collectors for /workspace/work/EIOP/tests/neural/test_learned_graph_intelligence.py::test_cra_044_5_evaluation_discipline_and_baselines
+

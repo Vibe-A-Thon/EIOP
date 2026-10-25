@@ -1,0 +1,3 @@
+.                                                                        [100%]
+- generated xml file: /workspace/work/EIOP/.audit-scratch/evidence/CRA-012.8/run-20261020T073825Z-04990232/junit.xml -
+1 passed in 0.14s

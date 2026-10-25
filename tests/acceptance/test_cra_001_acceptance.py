@@ -26,6 +26,9 @@ from eoip.capabilities.model import (
 from eoip.capabilities.registry import CapabilityRegistry
 from tools.acceptance.verify_ledger import verify_ledger, sha256_file
 
+# Explicit binding: the "Must cover CRA-001 to CRA-045" comment below is about ledger scope, not coverage.
+pytestmark = pytest.mark.req("CRA-001")
+
 
 def test_cra_001_1_runtime_inventory_and_feature_matrix():
     """CRA-001.1: Inventory of actual runtime composition and advertised features."""

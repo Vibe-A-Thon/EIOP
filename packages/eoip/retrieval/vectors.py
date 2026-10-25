@@ -96,7 +96,7 @@ class HashingEmbedder:
         self.dimensions = dimensions
 
     def _bucket(self, token: str) -> tuple[int, int]:
-        digest = hashlib.md5(token.encode("utf-8")).hexdigest()
+        digest = hashlib.md5(token.encode("utf-8"), usedforsecurity=False).hexdigest()
         index = int(digest[:8], 16) % self.dimensions
         sign = 1.0 if int(digest[8:16], 16) % 2 == 0 else -1.0
         return index, sign

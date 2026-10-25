@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 
 import apps.api.main as api_main
+from _principals import ProvisioningTokenService, provision_login_user
 
 pytestmark = [pytest.mark.security, pytest.mark.req("GAP-SEC-004", "SR-TEN-001")]
 
@@ -20,13 +21,15 @@ pytestmark = [pytest.mark.security, pytest.mark.req("GAP-SEC-004", "SR-TEN-001")
 def auth_setup(tmp_path):
     secret = b"k" * 32
     secret_str = secret.decode("ascii")
-    token_service = TokenService(secret, issuer="eoip-authn", audience="eoip-api")
+    provision_login_user(None, tmp_path, "contract-admin", roles=("superadmin",))  # the API needs >= 1 principal
+    token_service = ProvisioningTokenService(
+        TokenService(secret, issuer="eoip-authn", audience="eoip-api"), tmp_path)
     return secret_str, token_service, tmp_path
 
 
 def test_http_boundary_accepts_signed_token_and_emits_dynamic_audit_actor(auth_setup, monkeypatch):
     secret_str, token_service, tmp_path = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret_str)
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret_str)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 
@@ -61,7 +64,7 @@ def test_http_boundary_accepts_signed_token_and_emits_dynamic_audit_actor(auth_s
 
 def test_http_boundary_rejects_tampered_or_expired_token(auth_setup, monkeypatch):
     secret_str, token_service, tmp_path = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret_str)
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret_str)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 
@@ -83,7 +86,7 @@ def test_http_boundary_rejects_tampered_or_expired_token(auth_setup, monkeypatch
 
 def test_websocket_unauthenticated_handshake_rejects_without_500(auth_setup, monkeypatch):
     secret_str, _, tmp_path = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret_str)
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret_str)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 
@@ -97,7 +100,7 @@ def test_websocket_unauthenticated_handshake_rejects_without_500(auth_setup, mon
 
 def test_websocket_authenticated_and_tenant_isolated(auth_setup, monkeypatch):
     secret_str, token_service, tmp_path = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret_str)
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret_str)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 
@@ -135,14 +138,15 @@ def test_websocket_authenticated_and_tenant_isolated(auth_setup, monkeypatch):
 
 
 def test_brain_llm_stream_incremental_sse(auth_setup, monkeypatch):
-    secret_str, _, tmp_path = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret_str)
+    secret_str, token_service, tmp_path = auth_setup
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret_str)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: tmp_path)
 
     client = TestClient(api_main.create_app())
     headers = {
-        "Authorization": f"Bearer {secret_str}",
+        "Authorization": "Bearer " + token_service.issue(
+            Principal("urn:eoip:authn:principal:sse", "sse-user", ("analyst",), tenant_id="default")),
         "Accept": "text/event-stream",
     }
     resp = client.post(
@@ -195,7 +199,7 @@ def test_enterprise_middleware_tenant_isolation_cross_tenant_denial():
 @pytest.fixture
 def composed_app(auth_setup, monkeypatch):
     secret, service, root = auth_setup
-    monkeypatch.setattr(api_main, "api_token", lambda: secret)
+    monkeypatch.setenv("EOIP_SESSION_SECRET", secret)
     monkeypatch.setattr(api_main, "create_store", MemoryGraphStore)
     monkeypatch.setattr(api_main, "data_root", lambda: root)
     app = api_main.create_app()
@@ -244,6 +248,21 @@ def test_viewer_cannot_mutate_administrative_surfaces(composed_app, path):
     response = client.post(path, json={}, headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 403
     assert response.json()["detail"] == "Administrative role required"
+
+
+@pytest.mark.req("SR-CON-011")
+@pytest.mark.parametrize("path", ["/api/v1/egress/plugins/install", "/api/v1/egress/plugins/submit",
+                                  "/api/v1/egress/endpoints/ext/enable", "/api/v1/egress/policy/rules",
+                                  "/api/v1/egress/kill"])
+def test_egress_administration_requires_an_administrator(composed_app, path):
+    _, client, service = composed_app
+    viewer = service.issue(Principal("alice", "alice", ("viewer",), tenant_id="alpha"))
+    denied = client.post(path, json={}, headers={"Authorization": f"Bearer {viewer}"})
+    assert denied.status_code == 403
+    assert denied.json()["detail"] == "Administrative role required"
+    admin = service.issue(Principal("root", "root", ("admin",), tenant_id="alpha"))
+    passed = client.post(path, json={}, headers={"Authorization": f"Bearer {admin}"})
+    assert passed.status_code != 403  # past the guard (body validation may still reject it)
 
 
 def test_idle_websocket_disconnect_releases_subscription(composed_app):
@@ -376,3 +395,114 @@ def test_admin_jobs_and_runs_cross_tenant_isolation(composed_app):
     assert cancel_alpha.json()["status"] == "CANCELLED"
 
 
+
+
+@pytest.mark.parametrize("yields_before_cancel", [None, *range(12)])
+def test_event_stream_handler_absorbs_server_cancellation(composed_app, yields_before_cancel):
+    """FT-F01 / SEC-WS: the server may cancel a live /ws/graph/events handler (shutdown, or the
+    TestClient tearing down right after a client close). The cancellation must stay inside the
+    server's cancel scope and the subscription must be released; a leaked CancelledError made the
+    Windows regression job flaky."""
+    import anyio
+    import anyio.lowlevel
+
+    app, _client, service = composed_app
+    token = service.issue(Principal("alice", "alice", ("viewer",), tenant_id="tenant-alpha"))
+    scope = {"type": "websocket", "path": "/ws/graph/events", "raw_path": b"/ws/graph/events",
+             "query_string": b"", "headers": [(b"authorization", f"Bearer {token}".encode())],
+             "scheme": "ws", "server": ("testserver", 80), "client": ("testclient", 50000),
+             "root_path": "", "subprotocols": [], "app": app}
+    emitter = app.state.event_emitter
+
+    async def scenario() -> None:
+        to_app_tx, to_app_rx = anyio.create_memory_object_stream(16)
+        from_app_tx, from_app_rx = anyio.create_memory_object_stream(16)
+        async with anyio.create_task_group() as tg:
+            async def run_app() -> None:
+                with anyio.CancelScope() as cs:
+                    tg_scope.append(cs)
+                    await app(scope, to_app_rx.receive, from_app_tx.send)
+            tg_scope: list = []
+            tg.start_soon(run_app)
+            await to_app_tx.send({"type": "websocket.connect"})
+            assert (await from_app_rx.receive())["type"] == "websocket.accept"
+            assert emitter.subscriber_count == 1
+            if yields_before_cancel is not None:  # client close, then cancel at every interleaving
+                await to_app_tx.send({"type": "websocket.disconnect", "code": 1000})
+                for _ in range(yields_before_cancel):
+                    await anyio.lowlevel.checkpoint()
+            tg_scope[0].cancel()  # server-side cancellation with no grace period
+        assert emitter.subscriber_count == 0
+
+    anyio.run(scenario)
+
+
+
+def _burn_cpu(seconds: float) -> None:
+    import time as _t
+    end = _t.monotonic() + seconds
+    while _t.monotonic() < end:
+        pass
+
+
+def test_event_stream_close_under_cpu_contention(composed_app):
+    """Regression for the Windows-only flake (Validation evidence run 39402641552): on a CPU-starved
+    runner the TestClient cancels the handler while it is still unwinding after the client close.
+    Before the fix a CancelledError escaped the server's cancel scope in most cycles."""
+    import multiprocessing
+    import os
+
+    app, client, service = composed_app
+    token = service.issue(Principal("alice", "alice", ("viewer",), tenant_id="tenant-alpha"))
+    headers = {"Authorization": f"Bearer {token}"}
+    ctx = multiprocessing.get_context("spawn")
+    burners = [ctx.Process(target=_burn_cpu, args=(60.0,), daemon=True) for _ in range(2 * (os.cpu_count() or 2))]
+    for b in burners:
+        b.start()
+    try:
+        for _ in range(12):
+            emitter = app.state.event_emitter
+            with client.websocket_connect("/ws/graph/events", headers=headers) as ws:
+                emitter.emit_sync(GraphEvent("vertex_upserted", {"tenant_id": "tenant-alpha", "value": "x"}))
+                assert ws.receive_json()["data"]["value"] == "x"
+    finally:
+        for b in burners:
+            b.terminate()
+        for b in burners:
+            b.join()
+    assert app.state.event_emitter.subscriber_count == 0
+
+
+@pytest.mark.req("SR-TEN-001")
+def test_request_log_lines_and_metric_samples_carry_the_signed_tenant(composed_app):
+    import logging
+
+    from eoip.observability import JsonLogFormatter
+    from eoip.tenancy.context import tenant_label
+
+    app, client, service = composed_app
+    captured: list[logging.LogRecord] = []
+
+    class _Capture(logging.Handler):
+        def emit(self, record):
+            captured.append(record)
+
+    handler = _Capture()
+    api_logger = logging.getLogger("eoip.api")
+    api_logger.addHandler(handler)
+    try:
+        token = service.issue(Principal("alice", "alice", ("viewer",), tenant_id="tenant-alpha"))
+        assert client.get("/api/v1/graph/events", headers={"Authorization": f"Bearer {token}"}).status_code == 200
+        assert client.get("/api/v1/graph/events").status_code == 401
+    finally:
+        api_logger.removeHandler(handler)
+    lines = [json.loads(JsonLogFormatter().format(r)) for r in captured if getattr(r, "event", "") == "http.request.completed"]
+    assert {line["tenant_id"] for line in lines} >= {"tenant-alpha", "_anonymous"}
+    assert all(line.get("tenant_id") for line in lines)
+    metrics = client.get("/metrics").text
+    assert 'tenant="tenant-alpha"' in metrics and 'tenant="_anonymous"' in metrics
+    # process-level lines without a request are explicitly platform scope, never blank
+    bare = logging.LogRecord("eoip.worker", logging.INFO, __file__, 1, "tick", None, None)
+    assert json.loads(JsonLogFormatter().format(bare))["tenant_id"] == "_platform"
+    assert tenant_label(None) == "_anonymous"
+    assert tenant_label(Principal("root", "root", ("admin",))) == "_platform"

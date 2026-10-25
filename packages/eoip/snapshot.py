@@ -36,6 +36,7 @@ def operational_path(name):
         or any(part in {".", ".."} or ":" in part or "\\" in part for part in relative.parts)
         or relative.parts[0] not in {"state", "journal", "jobs", "receipts"}
         or name == "state/worker.json"
+        or name in AUTH_STATE_FILES
         or relative.suffix != (".ndjson" if relative.parts[0] == "journal" else ".json")
     ):
         raise ValueError("Invalid snapshot operational path")
@@ -98,6 +99,12 @@ def validate_operational_record(name, content):
     return record
 
 
+# Login credentials and the session signing key are identity configuration managed with
+# eoip-admin (FT-AUTH), not application data: they are never exported into a snapshot and a
+# provisioned administrator does not make a restore target "non-empty".
+AUTH_STATE_FILES = frozenset({"state/credentials.json", "state/session.key"})
+
+
 def operational_files(root):
     records = {}
     total_bytes = 0
@@ -105,7 +112,7 @@ def operational_files(root):
         suffix = "*.ndjson" if sub == "journal" else "*.json"
         for path in (root / sub).rglob(suffix):
             name = path.relative_to(root).as_posix()
-            if name == "state/worker.json":
+            if name == "state/worker.json" or name in AUTH_STATE_FILES:
                 continue
             if path.is_symlink() or not path.resolve().is_relative_to(root.resolve()):
                 raise ValueError("Invalid snapshot operational symlink")
@@ -232,6 +239,7 @@ def validate_restore(store, data_dir, source):
         for sub in ("raw", "dlq", "state", "journal", "jobs")
         for path in (root / sub).rglob("*")
         if path != root / "state" / "worker.json"
+        and path.relative_to(root).as_posix() not in AUTH_STATE_FILES
     ):
         raise ValueError("Restore requires empty application data; use a separate Compose project")
     return payload, vertices, root, operational

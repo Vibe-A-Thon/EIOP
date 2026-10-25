@@ -163,3 +163,44 @@ class TestRouter:
         resp = client.get("/api/v1/suggest/intents")
         assert resp.status_code == 200
         assert "impact" in resp.json()["intents"]
+
+
+@pytest.mark.req("SR-NLQ-003")
+def test_user_pins_one_candidate_for_the_session_only():
+    engine = SuggestionEngine(_store_with_ambiguous_service())
+    question = 'what is "payments"?'
+    binding = engine.suggest(SuggestionRequest(question=question, session_id="s1")).candidates[0].entity_bindings[0]
+    assert binding.ambiguous and not binding.pinned
+    prod = next(a for a in binding.alternatives if a.environment == "prod")
+    with pytest.raises(ValueError):
+        engine.pin("s1", "payments", "not-a-candidate")
+    engine.pin("s1", "payments", prod.entity_id)
+
+    pinned = engine.suggest(SuggestionRequest(question=question, session_id="s1")).candidates[0].entity_bindings[0]
+    assert pinned.pinned and not pinned.ambiguous
+    assert pinned.resolved.entity_id == prod.entity_id
+    assert len(pinned.alternatives) >= 2  # context stays visible
+    other = engine.suggest(SuggestionRequest(question=question, session_id="s2")).candidates[0].entity_bindings[0]
+    assert other.ambiguous and not other.pinned  # pins never leak across sessions
+    assert engine.unpin("s1", "payments") is True
+    assert engine.suggest(SuggestionRequest(question=question, session_id="s1")).candidates[0].entity_bindings[0].ambiguous
+
+
+@pytest.mark.req("SR-NLQ-003")
+def test_pin_route_pins_and_rejects_non_candidates():
+    pytest.importorskip("fastapi")
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    app = FastAPI()
+    app.include_router(build_router(_store_with_ambiguous_service()))
+    client = TestClient(app)
+    resp = client.post("/api/v1/suggest", json={"question": 'what is "payments"?', "session_id": "s9"}).json()
+    alt = resp["candidates"][0]["entity_bindings"][0]["alternatives"][0]
+    assert client.post("/api/v1/suggest/pin", json={"session_id": "s9", "mention": "payments",
+                                                    "entity_id": "nope"}).status_code == 422
+    ok = client.post("/api/v1/suggest/pin", json={"session_id": "s9", "mention": "payments",
+                                                  "entity_id": alt["entity_id"]})
+    assert ok.status_code == 200
+    after = client.post("/api/v1/suggest", json={"question": 'what is "payments"?', "session_id": "s9"}).json()
+    assert after["candidates"][0]["entity_bindings"][0]["pinned"] is True

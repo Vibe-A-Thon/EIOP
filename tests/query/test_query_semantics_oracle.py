@@ -48,6 +48,7 @@ from eoip.query.sparql_protocol import SparqlProtocolHandler
 # CRA-024.1: Grammar / capability manifests per dialect & backend
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_1_grammar_capability_manifests():
     registry = ManifestRegistry.get_instance()
     # Check registered manifests
@@ -81,6 +82,7 @@ def test_cra_024_1_grammar_capability_manifests():
 # CRA-024.2: Typed parsed plans, parameterization & scope injection
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_2_typed_plan_and_scope_injection():
     engine = TypedPlanEngine()
     scope = TrustedScope(
@@ -131,6 +133,7 @@ def test_cra_024_2_typed_plan_and_scope_injection():
 # CRA-024.3: Operations validate, explain, cost, profile, execute, cancel
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_3_operations_and_cancellation():
     service = QueryService()
     scope = TrustedScope(tenant_id="tenant_alpha", principal_id="user_123")
@@ -180,6 +183,7 @@ def test_cra_024_3_operations_and_cancellation():
 # CRA-024.4: Qualified OBDA / Federation with pushdown, null & degradation
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_4_obda_federation():
     engine = OBDAFederationEngine()
 
@@ -260,6 +264,7 @@ def test_cra_024_4_obda_federation():
 # CRA-024.5: Scoped templates, history, cache & sensitive literal redaction
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_5_sensitive_redaction_and_scoped_cache():
     # Sensitive redaction
     raw_query = "SELECT * FROM Users WHERE token = 'super_secret_token_12345' AND password = 'my_password'"
@@ -299,6 +304,7 @@ def test_cra_024_5_sensitive_redaction_and_scoped_cache():
 # CRA-024.6: Warmed endpoint benchmarks & semantic equivalence
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_6_warmed_benchmarks_and_equivalence():
     bench = WarmedEndpointBenchmark(warmup_runs=3, measured_runs=10)
 
@@ -341,8 +347,15 @@ def test_cra_024_6_warmed_benchmarks_and_equivalence():
 # CRA-024.7: SPARQL 1.1 Protocol endpoint GET/POST & unbounded path rejection
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_7_sparql_protocol():
-    handler = SparqlProtocolHandler(enable_updates=False)
+    from eoip.query.sparql_backend import RdflibSparqlBackend
+
+    rdf = RdflibSparqlBackend()
+    rdf.load_turtle("<urn:i1> a <http://example.org/Item> ; <urn:p> <urn:o> .")
+    handler = SparqlProtocolHandler(rdf_backend=rdf, enable_updates=False)
+    # without a backend there is no fabricated result
+    assert SparqlProtocolHandler().handle_request(method="GET", query_params={"query": "ASK { ?s ?p ?o }"})[0] == 503
 
     # 1. GET /sparql query with application/sparql-results+json
     status, headers, body = handler.handle_request(
@@ -395,6 +408,7 @@ def test_cra_024_7_sparql_protocol():
 # CRA-024.8: Optional adapters: ANSI SQL views, openCypher, GraphQL
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_8_optional_adapters():
     # 1. ANSI SQL adapter
     sql_adapter = SQLOntologyAdapter()
@@ -431,6 +445,7 @@ def test_cra_024_8_optional_adapters():
 # CRA-024.9: Default budgets & tenant quotas
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_9_default_budgets():
     default_budget = QueryBudget()
     assert default_budget.deadline_seconds == 30.0
@@ -468,6 +483,7 @@ def test_cra_024_9_default_budgets():
 # CRA-024.10: BI Connectivity (Tableau & Power BI recorded session)
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_10_bi_connectivity():
     emulator = BISessionEmulator()
     # Tableau session
@@ -490,6 +506,7 @@ def test_cra_024_10_bi_connectivity():
 # CRA-024.11: RDF backend port (Fuseki reference & GraphDB certified)
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_11_rdf_backend_ports():
     # 1. Fuseki config targeting
     fuseki_config = {
@@ -515,16 +532,15 @@ def test_cra_024_11_rdf_backend_ports():
     assert graphdb_store.dataset == "enterprise_repo"
     assert "enterprise_repo" in graphdb_store.query_url
 
-    # Local store CRUD contract operations
-    v = graphdb_store.upsert_vertex("Person", {"canonical_id": "urn:eoip:person:1", "name": "Alice"})
-    assert graphdb_store.get_vertex("urn:eoip:person:1") is not None
-    assert graphdb_store.count_vertices("Person") == 1
+    assert graphdb_store.update_url.endswith("/repositories/enterprise_repo/statements")
+    # CRUD round trips on live Fuseki and GraphDB Free: tests/query/test_rdf_store_backends.py (CI job rdf-stores)
 
 
 # ===========================================================================
 # CRA-024.A: Full Acceptance: Independent Result Corpus, SP2Bench, Federated Join
 # ===========================================================================
 
+@pytest.mark.req("CRA-024")
 def test_cra_024_a_acceptance_oracle():
     service = QueryService()
     scope = TrustedScope(tenant_id="tenant_prod", principal_id="auditor_lead")
@@ -542,11 +558,18 @@ def test_cra_024_a_acceptance_oracle():
 
     # 2. SP2Bench in-scope query simulation under 30s
     sp2bench_q = "SELECT ?article ?title WHERE { ?article a <http://localhost/vocabulary/bench/Article> . ?article <http://purl.org/dc/elements/1.1/title> ?title } LIMIT 100"
-    handler = SparqlProtocolHandler()
+    # (single SP2Bench-shaped query on a real engine; the in-scope SP2Bench set remains open, CRA-024.A.2)
+    from eoip.query.sparql_backend import RdflibSparqlBackend
+
+    rdf = RdflibSparqlBackend()
+    rdf.load_turtle("\n".join(
+        f"<urn:a{i}> a <http://localhost/vocabulary/bench/Article> ; <http://purl.org/dc/elements/1.1/title> \"T{i}\" ."
+        for i in range(200)))
+    handler = SparqlProtocolHandler(rdf_backend=rdf)
     t0 = time.perf_counter()
-    status, _, _ = handler.handle_request("GET", query_params={"query": sp2bench_q})
+    status, _, body = handler.handle_request("GET", query_params={"query": sp2bench_q})
     elapsed = time.perf_counter() - t0
-    assert status == 200
+    assert status == 200 and len(json.loads(body)["results"]["bindings"]) == 100
     assert elapsed < 30.0
 
     # 3. Federated Jira x Snowflake join execution
