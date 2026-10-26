@@ -7,6 +7,12 @@ context) and produces a :class:`ReasoningResult` trace. LLM hooks are
 deterministic heuristic (lexicographic scoring, string heuristics, or the
 caller-supplied scoring function), so every strategy runs offline in tests.
 
+Honesty contract: every result carries ``mode``. ``deterministic`` means no LLM hook was supplied.
+``llm`` means every LLM call answered. When an LLM hook *is* configured but a call raises or returns
+nothing, the heuristic text is used for that step and the result is marked ``mode="llm-degraded"``,
+``degraded=True`` with one ``degradation_reasons`` entry per failed call. A degraded result is never
+reported as a clean LLM answer.
+
 Strategies (§7 "Reasoning Architectures"):
 
 * ``react``            — ReAct thought/action/observation interleaving.
@@ -25,9 +31,11 @@ from __future__ import annotations
 import hashlib
 import heapq
 import itertools
+import functools
 import math
 from collections import defaultdict
 from collections.abc import Callable
+from contextvars import ContextVar
 from typing import Any, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -84,6 +92,10 @@ class ReasoningResult(BaseModel):
     answer: str = ""
     steps: list[ReasoningStep] = Field(default_factory=list)
     iterations: int = 0
+    mode: str = "deterministic"  # deterministic | llm | llm-degraded
+    degraded: bool = False
+    degradation_reasons: list[str] = Field(default_factory=list)
+    llm_calls: int = 0
 
 
 class ReasoningStrategy(Protocol):
@@ -104,16 +116,68 @@ def _default_score(hooks: ReasoningHooks | None, text: str) -> float:
     return round(min(len(text), 400) / 400.0 + hits * 0.25, 4)
 
 
+class _LLMTrace:
+    __slots__ = ("calls", "failures")
+
+    def __init__(self) -> None:
+        self.calls = 0
+        self.failures: list[str] = []
+
+
+_TRACE: ContextVar[_LLMTrace | None] = ContextVar("eoip_reasoning_llm_trace", default=None)
+_MAX_REASONS = 20
+
+
 def _llm_or(hooks: ReasoningHooks | None, prompt: str, fallback: str) -> str:
-    if hooks and hooks.llm:
-        out = None
-        try:
-            out = hooks.llm(prompt)
-        except Exception:  # noqa: BLE001 — graceful fallback to deterministic text
-            out = None
-        if out:
-            return str(out)
+    """Ask the LLM hook; on failure use ``fallback`` and record the degradation (never silent)."""
+    if not (hooks and hooks.llm):
+        return fallback
+    trace = _TRACE.get()
+    if trace is not None:
+        trace.calls += 1
+    reason: str | None = None
+    try:
+        out = hooks.llm(prompt)
+    except Exception as exc:  # noqa: BLE001 — recorded as degradation below
+        out, reason = None, f"{type(exc).__name__}: {str(exc)[:120]}"
+    if out:
+        return str(out)
+    if reason is None:
+        reason = "empty LLM response"
+    if trace is not None:
+        trace.failures.append(f"{reason} (prompt: {prompt[:60]!r}); heuristic text substituted")
     return fallback
+
+
+def _traced(run: Callable[..., ReasoningResult]) -> Callable[..., ReasoningResult]:
+    """Annotate a strategy result with LLM mode/degradation collected during the run (nesting-safe)."""
+
+    @functools.wraps(run)
+    def wrapper(self: Any, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
+        parent = _TRACE.get()
+        trace = _LLMTrace()
+        token = _TRACE.set(trace)
+        try:
+            result = run(self, problem, hooks)
+        finally:
+            _TRACE.reset(token)
+            if parent is not None:
+                parent.calls += trace.calls
+                parent.failures.extend(trace.failures)
+        has_llm = bool(hooks and hooks.llm)
+        calls = max(trace.calls, result.llm_calls)
+        failures = list(dict.fromkeys([*result.degradation_reasons, *trace.failures]))
+        result.llm_calls = calls
+        if failures:
+            result.mode, result.degraded = "llm-degraded", True
+            result.degradation_reasons = failures[:_MAX_REASONS]
+        elif has_llm and calls:
+            result.mode = "llm"
+        else:
+            result.mode = "deterministic"
+        return result
+
+    return wrapper
 
 
 # ---------------------------------------------------------------------------
@@ -125,6 +189,7 @@ class ReActStrategy:
 
     name = "react"
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         steps: list[ReasoningStep] = []
         context_note = ""
@@ -166,6 +231,7 @@ class TreeOfThoughtsStrategy:
         self.branching = max(1, branching)
         self.depth = max(1, depth)
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         steps: list[ReasoningStep] = []
         frontier: list[tuple[float, str]] = [(0.0, problem.prompt)]
@@ -203,6 +269,7 @@ class GraphOfThoughtsStrategy:
         self.branching = max(1, branching)
         self.depth = max(1, depth)
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         steps: list[ReasoningStep] = []
         current = [problem.prompt]
@@ -245,6 +312,7 @@ class BestFirstSearchStrategy(_SearchBase):
 
     name = "best-first"
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         steps: list[ReasoningStep] = []
         counter = itertools.count()
@@ -277,6 +345,7 @@ class BeamSearchStrategy(_SearchBase):
         self.beam_width = max(1, beam_width)
         self.depth = max(1, depth)
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         steps: list[ReasoningStep] = []
         beam = [problem.prompt]
@@ -338,6 +407,7 @@ class HTNPlanner:
             plan.extend(self.decompose(sub, _depth + 1))
         return plan
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         steps: list[ReasoningStep] = []
         root = problem.context.get("task") or problem.prompt
@@ -371,6 +441,7 @@ class WorldModelRolloutStrategy:
     def __init__(self, horizon: int = 3):
         self.horizon = max(1, horizon)
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         steps: list[ReasoningStep] = []
         actions = problem.candidate_actions or ["a", "b"]
@@ -412,6 +483,7 @@ class NeuroSymbolicStrategy:
         self.rules = rules or {}
         self.top_k = max(1, top_k)
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         steps: list[ReasoningStep] = []
         candidates = list(problem.candidate_actions) or [problem.prompt]
@@ -443,6 +515,7 @@ class CausalStrategy:
 
     name = "causal"
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         steps: list[ReasoningStep] = []
         model = problem.causal_model
@@ -497,6 +570,7 @@ class MetaReasoningStrategy:
             return "react"
         return "best-first"
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         chosen = self.select(problem)
         result = self.registry.run(chosen, problem, hooks)
@@ -676,6 +750,7 @@ class ProbabilisticStrategy:
     def __init__(self, engine: ProbabilisticQueryEngine | None = None) -> None:
         self.engine = engine or ProbabilisticQueryEngine()
 
+    @_traced
     def run(self, problem: ReasoningProblem, hooks: ReasoningHooks | None = None) -> ReasoningResult:
         steps: list[ReasoningStep] = []
         target = problem.context.get("target_variable") or problem.prompt.split()[-1]

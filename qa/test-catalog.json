@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 485,
-    "test_definitions": 4549
+    "files": 486,
+    "test_definitions": 4557
   },
   "categories": {
     "acceptance": {
@@ -11,8 +11,8 @@
       "test_definitions": 186
     },
     "ai": {
-      "files": 6,
-      "test_definitions": 29
+      "files": 7,
+      "test_definitions": 37
     },
     "aspeii": {
       "files": 1,
@@ -340,6 +340,11 @@
       "path": "tests/ai/test_graphrag_live_model.py",
       "category": "ai",
       "test_definitions": 5
+    },
+    {
+      "path": "tests/ai/test_reasoning_llm_degradation.py",
+      "category": "ai",
+      "test_definitions": 8
     },
     {
       "path": "tests/ai/test_retrieval_grounded_synthesis.py",

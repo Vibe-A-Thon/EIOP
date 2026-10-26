@@ -103,6 +103,29 @@ class WorkingMemory:
 # Episodic memory (§7)
 # ---------------------------------------------------------------------------
 
+def _summarize_or_truncate(
+    summarize: Callable[[list[str]], str] | None, texts: list[str], limit: int, degradations: list[str],
+) -> tuple[str, str]:
+    """Summarize with the configured summarizer; truncation is labelled, and a failure is recorded."""
+    if summarize is not None:
+        reason: str
+        try:
+            out = summarize(texts)
+        except Exception as exc:  # noqa: BLE001 — recorded below, truncation substituted
+            out, reason = None, f"{type(exc).__name__}: {str(exc)[:120]}"
+        else:
+            reason = "empty summary"
+        if out:
+            return str(out), "summarizer"
+        degradations.append(reason)
+        del degradations[:-50]
+        method = "truncation-degraded"
+    else:
+        method = "truncation"
+    joined = " | ".join(texts)
+    return joined[:limit] + ("…" if len(joined) > limit else ""), method
+
+
 class Episode(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -112,6 +135,8 @@ class Episode(BaseModel):
     recorded_at: str
     consolidated: bool = False
     summary: str | None = None
+    # "summarizer" | "truncation" (no summarizer configured) | "truncation-degraded" (summarizer failed)
+    summary_method: str | None = None
 
 
 class EpisodicMemory:
@@ -129,6 +154,7 @@ class EpisodicMemory:
         self._lock = threading.RLock()
         self._seq = 0
         self.consolidations = 0
+        self.degradations: list[str] = []  # summarizer failures (truncation substituted), never silent
 
     def record(self, kind: str, content: str) -> Episode:
         with self._lock:
@@ -151,19 +177,11 @@ class EpisodicMemory:
                 return 0
             batch = open_eps[: len(open_eps) - self.consolidate_after]
             texts = [f"[{e.kind}] {e.content}" for e in batch]
-            if self.summarize:
-                try:
-                    summary = self.summarize(texts)
-                except Exception:  # noqa: BLE001 — fall back to truncation
-                    summary = None
-            else:
-                summary = None
-            if not summary:
-                joined = " | ".join(texts)
-                summary = joined[:400] + ("…" if len(joined) > 400 else "")
+            summary, method = _summarize_or_truncate(self.summarize, texts, 400, self.degradations)
             for ep in batch:
                 ep.consolidated = True
                 ep.summary = summary
+                ep.summary_method = method
             self.consolidations += 1
             if self.root:
                 for ep in batch:
@@ -338,6 +356,8 @@ class HierarchicalMemory:
         self.l0_capacity = max(1, l0_capacity)
         self.summarize = summarize
         self._layers: dict[str, list[str]] = {layer: [] for layer in self.LAYERS}
+        self.degradations: list[str] = []  # summarizer failures (truncation substituted), never silent
+        self.last_summary_method: str | None = None
         self._lock = threading.RLock()
 
     def add_raw(self, item: str) -> None:
@@ -353,16 +373,7 @@ class HierarchicalMemory:
             if len(l0) < 2:
                 return ""
             batch, self._layers["L0"] = l0[: len(l0) // 2], l0[len(l0) // 2:]
-            if self.summarize:
-                try:
-                    summary = self.summarize(batch)
-                except Exception:  # noqa: BLE001 — fall back to truncation
-                    summary = None
-            else:
-                summary = None
-            if not summary:
-                joined = " | ".join(batch)
-                summary = joined[:300] + ("…" if len(joined) > 300 else "")
+            summary, self.last_summary_method = _summarize_or_truncate(self.summarize, batch, 300, self.degradations)
             self._layers["L1"].append(summary)
             return summary
 
