@@ -1,0 +1,1 @@
+{"job_id": "8baaf557-7e68-4ac1-ae05-360a64c9db4d", "kind": "CONFLUENCE", "status": "PENDING", "created_at": "2026-10-20T10:21:43.902164Z", "correlation_id": "b329aa177a7f4ed386a7a4a9dc331fda", "tenant_id": "*", "created_by": "root-superadmin", "payload": {"checkpoint": "qa-probe", "watermark": "qa-probe", "dry_run": false}}

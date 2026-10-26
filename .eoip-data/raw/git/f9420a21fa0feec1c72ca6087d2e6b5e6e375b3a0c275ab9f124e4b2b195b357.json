@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.091114Z",
+  "event_id": "f9420a21fa0feec1c72ca6087d2e6b5e6e375b3a0c275ab9f124e4b2b195b357",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "7d10d634da69144509d4c2cede46ce1a9d1f3293",
+    "message": "craragg changes"
+  },
+  "payload_hash": "2da17344c557d22e370e1bee84cffa510d7a6357cbaa8814a81c7458c9fedaef",
+  "schema_version": "1.0",
+  "source_record_id": "demo:7d10d634da69144509d4c2cede46ce1a9d1f3293",
+  "source_system": "git",
+  "source_version": "2da17344c557d22e370e1bee84cffa510d7a6357cbaa8814a81c7458c9fedaef"
+}

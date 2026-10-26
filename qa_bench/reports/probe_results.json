@@ -1,0 +1,9020 @@
+{
+ "anon": {
+  "GET /api/processing/v1/capabilities": [
+   401,
+   0.02
+  ],
+  "GET /api/processing/v1/devices": [
+   401,
+   0.0
+  ],
+  "GET /api/processing/v1/jobs": [
+   401,
+   0.01
+  ],
+  "POST /api/processing/v1/jobs": [
+   401,
+   0.01
+  ],
+  "GET /api/processing/v1/jobs/{job_id}": [
+   401,
+   0.01
+  ],
+  "POST /api/processing/v1/jobs/{job_id}/cancel": [
+   401,
+   0.01
+  ],
+  "GET /api/processing/v1/jobs/{job_id}/receipt": [
+   401,
+   0.01
+  ],
+  "GET /api/processing/v1/jobs/{job_id}/result": [
+   401,
+   0.0
+  ],
+  "POST /api/processing/v1/plans": [
+   401,
+   0.01
+  ],
+  "POST /api/processing/v1/profiles/{profile_id}/probes": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/audit": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/demo": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/dlq": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/dlq/{event_id}/replay": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/entities/{canonical_id}/delete": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/event-consumers": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/admin/event-consumers/run": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/gremlin": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/admin/ingestion/confluence": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/admin/ingestion/files": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/ingestion/files/bundles/{bundle_id}/{artifact}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/files/parse": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/gitlab": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/admin/ingestion/jira": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/json": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/json/batch": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/process-and-convert": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/replay": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/servicenow": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/jobs": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/admin/jobs/{job_id}": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/admin/jobs/{job_id}/cancel": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/jobs/{job_id}/readmit": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/schema": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/semantic-pipeline": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/semantic-pipeline/stages": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/system": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/timeline": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/admin/validation": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/admin/worker": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/agents": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/agents/analytics": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/agents/mesh/recover/{recovery_id}": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/agents/mesh/recoveries": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/agents/proposals": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/agents/proposals/{proposal_id}/approve": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/agents/proposals/{proposal_id}/reject": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/agents/query": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/agents/runs/{run_id}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/agents/runs/{run_id}/explanation": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/agents/runs/{run_id}/memory": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/agents/semantic-index": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/agents/trace-impact": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/agents/types": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/agents/{agent_id}/runs": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/algorithms": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/algorithms/run": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/auth/health": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/auth/login": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/auth/whoami": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/authz/decisions": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/authz/evaluate": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/authz/policies": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/authz/policies/reload": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/authz/roles": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/authz/roles": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/authz/roles/export": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/authz/users": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/authz/users": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/authz/users/export": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/brain/agents": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/brain/approaches": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/brain/ask": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/brain/databases": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/brain/dialects": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/brain/induce": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/brain/intelligent-query": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/brain/learning/load": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/brain/learning/policy": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/brain/learning/save": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/brain/learning/status": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/brain/learning/train": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/brain/llm/embed": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/brain/llm/explain": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/brain/llm/generate": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/brain/llm/models": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/brain/llm/stream": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/brain/llm/tokenize": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/brain/loops": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/brain/narrate": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/brain/query": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/brain/rag-modes": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/brain/snapshot": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/brain/telemetry": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/branding/legal": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/branding/locales/{locale}/message": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/branding/terminology/canonicalize": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/branding/terminology/rename": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/branding/theme": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/capsules": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/capsules": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/capsules/{name}": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/catalog/products": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/catalog/products": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/catalog/products/import": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/catalog/products/{product_id}": [
+   401,
+   0.01
+  ],
+  "PUT /api/v1/catalog/products/{product_id}": [
+   401,
+   0.0
+  ],
+  "DELETE /api/v1/catalog/products/{product_id}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/catalog/products/{product_id}/export": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/catalog/products/{product_id}/lineage": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/catalog/products/{product_id}/transition": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/causal/correlations/{entity_cid}": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/causal/counterfactual-intervention": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/causal/hypotheses/{incident_cid}": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/causal/live-blast-radius": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/causal/prerequisites": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/change-journal": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/compliance/ai/evaluations": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/compliance/ai/evaluations": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/compliance/ai/model-cards": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/compliance/ai/model-cards": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/compliance/ai/model-cards/{model_card_id}/label": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/compliance/ai/oversight": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/compliance/changes": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/compliance/changes": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/compliance/changes/{proposal_id}/transition": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/compliance/exceptions": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/compliance/exceptions": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/compliance/exceptions/{exception_id}/revoke": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/compliance/packs": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/compliance/packs/{framework}": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/compliance/packs/{framework}/gap-analysis": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/compliance/roles": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/compliance/roles/auditor-view": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/compliance/roles/{role}": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/config/audit": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/config/bounds": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/config/definitions": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/config/diff": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/config/effective": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/config/explain": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/config/export": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/config/flags": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/config/flags": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/config/import": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/config/reload-subscribe": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/config/rollback": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/config/set": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/conformance/check": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/conformance/rules": [
+   401,
+   0.0
+  ],
+  "PUT /api/v1/conformance/rules/{name}": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/connectors/catalog": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/connectors/files/formats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/demo/scenarios": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/domain-packs": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/domain-packs/{pack_name}": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/domain-packs/{pack_name}/activate": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/egress/call": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/egress/endpoints": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/egress/endpoints/{endpoint_id}/disable": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/egress/endpoints/{endpoint_id}/enable": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/egress/kill": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/egress/manifests": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/egress/plugins": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/egress/plugins/install": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/egress/plugins/submit": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/egress/policy/rules": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/egress/policy/rules": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/egress/report": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/engineering/{discipline}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/analytics/anomalies/{metric}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/analytics/forecast/{metric}": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/enterprise/analytics/growth/{metric}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/analytics/metrics": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/enterprise/analytics/record": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/analytics/trend/{metric}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/audit/events": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/audit/stats": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/enterprise/audit/verify": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/cache/clear": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/cache/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/chaos/experiments": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/chaos/experiments": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/chaos/experiments/{experiment_id}/run": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/enterprise/correlation/analyze/{event_id}": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/enterprise/correlation/events": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/enterprise/correlation/stats": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/enterprise/diff/changes": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/diff/stats": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/enterprise/diff/timeline/{entity_id}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/dlq/entries": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/dlq/replay": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/dlq/stats": [
+   401,
+   0.01
+  ],
+  "DELETE /api/v1/enterprise/dlq/{entry_id}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/feature-flags": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/feature-flags": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/feature-flags/evaluate": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/feature-flags/override": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/feature-flags/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/health/aggregate": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/enterprise/health/check-all": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/enterprise/health/live": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/health/ready": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/health/sla": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/health/startup": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/health/uptime": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/learning/feedback": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/learning/prune": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/learning/rules": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/learning/stats": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/enterprise/lifecycle/drain": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/lifecycle/status": [
+   401,
+   0.13
+  ],
+  "GET /api/v1/enterprise/migrations": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/migrations": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/migrations/apply-all": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/migrations/{migration_id}/apply": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/migrations/{migration_id}/rollback": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/nlconfig/execute": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/nlconfig/suggest": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/observability/metrics": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/plugins": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/plugins/stats": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/enterprise/resilience/circuit-breakers": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/resilience/circuit-breakers/reset": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/snapshots": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/snapshots": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/snapshots/compare": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/snapshots/restore": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/snapshots/{snapshot_id}": [
+   401,
+   0.01
+  ],
+  "DELETE /api/v1/enterprise/snapshots/{snapshot_id}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/webhooks": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/webhooks/dead-letters": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/enterprise/webhooks/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/enterprise/webhooks/subscribe": [
+   401,
+   0.01
+  ],
+  "DELETE /api/v1/enterprise/webhooks/{subscription_id}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/entities/{canonical_id}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/evidence/manifest": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/experts/{canonical_id}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/export/formats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/federation/query": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/federation/sources": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/files/{path}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/gaps/completion-gate": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/gaps/coverage": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/gaps/g2/architecture-guardrails": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/gaps/g2/architecture-guardrails": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/gaps/g2/observability-contract": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/gaps/g2/observability-contract": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/gaps/g2/readiness": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/gaps/requirements/{requirement_id}": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/governance/evaluate": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/governance/incidents": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/governance/kill-switch": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/governance/kill-switch": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/governance/kill-switch/features/{feature}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/governance/models": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/governance/models": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/governance/models/{model_id}/approval": [
+   401,
+   0.01
+  ],
+  "DELETE /api/v1/governance/models/{model_id}/approval": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/governance/templates": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/governance/templates": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph-tests/run": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/graph/anomalies": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/graph/as-of": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/graph/backend": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/graph/backends": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/bitemporal/diff": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/bitemporal/known-at": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/bitemporal/slice": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/bitemporal/topology": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/graph/bitemporal/valid-at": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/blast-radius": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/centrality/full": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/cluster": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/components": [
+   401,
+   0.03
+  ],
+  "POST /api/v1/graph/convert": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/degree-distribution": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/graph/diff": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/diff": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/graph/events": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/graph/formats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/k-core": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/link-prediction": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/merge": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/graph/metrics": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/graph/orphaned": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/graph/pr-impact": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/reverse-impact": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/graph/schema": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/shortest-paths": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/similarity": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/graph/stale": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/graph/statistics": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/graph/surprises": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/graph/versions": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/graph/what-if": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/health/embeddings": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/health/graph": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/identity/candidates": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/identity/candidates/{candidate_id}/decide": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/identity/candidates/{candidate_id}/reject": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/impact": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ingest/profile": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ingest/profile/drift": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ingest/profile/keys": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ingest/profile/relationships": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/ingestion/dlq": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ingestion/jira-json": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ingestion/replay": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/ingestion/runs": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/kgci/report": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/kgci/run": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/knowledge-debt": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/knowledge-slos": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/knowledge/debt": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/knowledge/firewall/inspect": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/knowledge/freshness": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/knowledge/slo": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/knowledge/trust/states": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/lens/catalog": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/lens/{lens_id}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/licensing/check-module": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/licensing/meter/export": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/licensing/meter/record": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/licensing/meter/verify": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/licensing/status": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/licensing/verify": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/lineage": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/loops/approvals/decide": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/loops/approvals/pending": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/loops/catalog": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/loops/run/{loop_name}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/marketplace/build/agent-workflow": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/marketplace/build/dashboard": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/marketplace/build/mapping": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/marketplace/build/query-template": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/marketplace/build/validator": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/marketplace/install": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/marketplace/installed": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/marketplace/installed/search": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/marketplace/packages": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/marketplace/packages/install": [
+   401,
+   0.01
+  ],
+  "DELETE /api/v1/marketplace/packages/{name}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/marketplace/uninstall/{name}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/moonshot/bitemporal/branch": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/moonshot/bitemporal/time-warp": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/moonshot/causal/simulate": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/moonshot/compliance/audit": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/moonshot/confidential/zk-proof": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/moonshot/memory/consolidate": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/moonshot/self-healing/scan": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/moonshot/studio/induce": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/moonshot/transpile": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/neighborhood": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/diff": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/ontology/docs": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ontology/drift": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/ontology/export": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/ontology/gitops/branches": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/branches": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/branches/commit": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/diff": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/ontology/gitops/impact": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/migration": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/package-release": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/ontology/gitops/prs": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/prs": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/prs/{pr_id}/merge": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/prs/{pr_id}/review": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/rollback": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/validate": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/import": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/ontology/packs": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/ontology/packs/{name}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ontology/proposals": [
+   401,
+   0.07
+  ],
+  "GET /api/v1/ontology/shacl": [
+   401,
+   0.03
+  ],
+  "GET /api/v1/ontology/validate": [
+   401,
+   0.03
+  ],
+  "POST /api/v1/ontology/validate/shacl": [
+   401,
+   0.03
+  ],
+  "GET /api/v1/ops/ha-topology": [
+   401,
+   0.03
+  ],
+  "POST /api/v1/ops/helm-summary": [
+   401,
+   0.04
+  ],
+  "GET /api/v1/ops/preflight": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/ops/shard-plan": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/ops/support-bundle": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/ops/upgrade-plan": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/path": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/pipeline/status": [
+   401,
+   0.04
+  ],
+  "POST /api/v1/platform/aiml/hallucination/check": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/aiml/hallucination/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/aiml/rlhf/preference": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/aiml/rlhf/reward": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/aiml/rlhf/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/aiml/stats": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/aiml/temperature/best": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/aiml/temperature/experiment": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/aiml/temperature/trial": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/aiml/tokens/budget": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/aiml/tokens/consume": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/compliance/frameworks": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/context/bitemporal-slate": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/context/build": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/context/item": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/context/items": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/platform/context/slice-graph": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/context/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/copilot/insights": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/copilot/insights": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/copilot/message": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/copilot/rules": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/copilot/rules": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/copilot/sessions": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/copilot/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/copilot/suggest/{session_id}": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/cost/recommendations": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/cost/record": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/cost/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/edge/nodes": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/edge/nodes": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/edge/nodes/{node_id}/query": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/edge/promote": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/edge/stats": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/edge/sync": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/platform/embeddings/drift": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/embeddings/versions": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/eval/distill-prompts": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/eval/graph-repair-sentinel": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/eval/run": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/eval/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/eval/suite/run": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/features/extract": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/features/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/gateway/introspect": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/gateway/openapi": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/gateway/playground": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/gateway/query": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/gateway/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/gateway/types": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/graph-graph/cross-layer-query": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/graph-graph/diff": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/graph-graph/layers": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/graph-loop/execute": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/graph-loop/plan": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/graph-loop/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/guardrails/inoculate": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/guardrails/reflection-sandbox": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/harness/pipelines": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/harness/run": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/harness/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/imports/csv": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/imports/jobs": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/imports/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/incidents": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/incidents": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/incidents/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/incidents/{incident_id}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/incidents/{incident_id}/transition": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/integrations": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/integrations/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/integrations/{connector_id}/health": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/integrations/{connector_id}/history": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/integrations/{connector_id}/sync": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/intelligence/analyze": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/intelligence/autonomy/{query}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/intelligence/capabilities": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/intelligence/pipeline": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/intelligence/plan": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/intelligence/stats": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/platform/intelligence/supervisory-loop": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/maintenance/enrichments": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/platform/maintenance/entity/{entity_id}": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/maintenance/scan": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/maintenance/stats": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/memory/recall": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/platform/memory/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/memory/store": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/mlops/experiments": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/mlops/runs/start": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/mlops/runs/{run_id}/metrics": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/models": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/platform/models/stats": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/notifications/inbox/{recipient}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/notifications/send": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/notifications/stats": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/notifications/{notification_id}/read": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/platform/prompts/list": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/prompts/register": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/prompts/render": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/prompts/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/reasoning/inferences": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/reasoning/rules": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/platform/reasoning/stats": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/recovery/checkpoint": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/recovery/checkpoints": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/recovery/peers": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/platform/recovery/peers": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/recovery/restore/{point_id}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/recovery/rpo": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/recovery/stats": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/recovery/wal/append": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/platform/recovery/wal/read": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/routing/classify-and-route": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/platform/routing/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/search/edge": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/search/index": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/search/metrics": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/search/plan": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/search/query": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/search/stats": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/search/user-context": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/security/red-team": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/security/scan": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/security/stats": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/semantic/drift": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/semantic/hybrid": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/semantic/index": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/semantic/search": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/semantic/similar/{entity_id}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/semantic/snapshot/{snapshot_id}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/semantic/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/specs/define": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/specs/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/state/record": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/state/restore": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/state/snapshot": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/state/snapshots": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/state/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/state/stream/{stream}": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/streaming/channels/{channel}/latest": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/streaming/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/streaming/subscriptions": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/tasks": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/platform/tasks/stats": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/tasks/{task_id}/execute": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/tasks/{task_id}/history": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/token-budget/allocate": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/token-budget/consume": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/token-budget/stats": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/platform/token-formats/benchmark": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/token-formats/deserialize": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/token-formats/serialize": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/tools/attest-execution": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/tools/list": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/tools/mcp/connect-external": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/tools/mcp/manifest": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/tools/register": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/platform/tools/stats": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/tools/validate-call": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/tools/verify-attestation": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/platform/verification/audit-trail": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/verification/check": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/platform/verification/guardrail-interception": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/xai/calibrate": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/platform/xai/explain": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/playback/evidence": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/playback/export": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/playback/stream": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/privacy/classify": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/privacy/consents": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/privacy/consents/allowed": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/privacy/dsar/erase": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/privacy/dsar/locate": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/privacy/residency/validate": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/privacy/retention/evaluate": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/process/cases": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/process/deviations": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/process/paths": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/product/capabilities": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/product/capabilities/materialize": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/product/first-choice-gate": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/qa/dashboard": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/qa/dashboard/external-gates": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/qa/dashboard/test-runs": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/qa/evidence/coverage": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/qa/evidence/coverage/{requirement_id}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/qa/evidence/register": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/qa/inventory": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/qa/inventory/validate": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/qa/mutation-checks": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/qa/mutation-checks": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/qa/mutation-checks/release/{release}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/qa/policy-gate/latest": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/qa/policy-gate/run": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query": [
+   401,
+   0.02
+  ],
+  "GET /api/v1/query/cache/stats": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/query/context/{entity_cid}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/cost": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/eql": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/explain": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/query/history": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/query/language": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/multi-paradigm": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/nl": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/query/slow": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/query/templates": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/templates": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/query/templates/{template_id}": [
+   401,
+   0.0
+  ],
+  "DELETE /api/v1/query/templates/{template_id}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/templates/{template_id}/bind": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/what-changed": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/query/what-changed/{entity_cid}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/what-if": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/why": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/query/why-not": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/query/why/{entity_cid}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/rag": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/rag/patterns": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/rag/query": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/reports": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/reports/export/{report_id}": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/reports/render": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/reports/schedules": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/reports/schedules": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/reports/schedules/due": [
+   401,
+   0.01
+  ],
+  "DELETE /api/v1/reports/schedules/{schedule_id}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/reports/schedules/{schedule_id}/mark-run": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/reports/schedules/{schedule_id}/run": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/reports/templates": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/retrieval/search": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/search": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/search/faceted": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/security/policy-matrix": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/security/status": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/security/tokens/issue": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/security/tokens/revoke": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/security/tokens/verify": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/semantic/validations": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/simulation/create": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/simulation/list": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/simulation/{sim_id}/analyze": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/simulation/{sim_id}/compare": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/simulation/{sim_id}/manifest": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/simulation/{sim_id}/mutate": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/simulations": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/simulations/{sim_id}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/sources": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/sources": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/sources/{source_id}": [
+   401,
+   0.01
+  ],
+  "PATCH /api/v1/sources/{source_id}": [
+   401,
+   0.01
+  ],
+  "DELETE /api/v1/sources/{source_id}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/baseline": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/sources/{source_id}/checkpoint": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/discover": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/dry-run": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/sources/{source_id}/pause": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/reconcile": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/sources/{source_id}/reconciliations": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/replay": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/resume": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/sources/{source_id}/schedule": [
+   401,
+   0.01
+  ],
+  "PUT /api/v1/sources/{source_id}/schedule": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/sync": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/webhooks": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/suggest": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/suggest/intents": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/suggest/interpret": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/systems/": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/systems/export/config": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/systems/import/config": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/systems/known-types": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/systems/register": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/systems/schema/from-data": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/systems/{system_id}": [
+   401,
+   0.01
+  ],
+  "PUT /api/v1/systems/{system_id}": [
+   401,
+   0.01
+  ],
+  "DELETE /api/v1/systems/{system_id}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/systems/{system_id}/create-pipeline": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/systems/{system_id}/generate-schema": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/systems/{system_id}/onboard": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/systems/{system_id}/onboarding-status": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/systems/{system_id}/set-status": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/systems/{system_id}/test-connection": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/taxonomy/concepts": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/taxonomy/concepts": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/taxonomy/export.rdf": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/taxonomy/mappings": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/taxonomy/mappings": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/taxonomy/schemes": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/taxonomy/schemes": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/taxonomy/validate": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/tenancy/context": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/tenancy/isolation/models": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/tenancy/isolation/placement": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/tenancy/isolation/placement": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/tenancy/lifecycle/clone": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/configure": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/delete": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/export": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/provision": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/tenancy/lifecycle/resume": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/suspend": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/tenancy/metering/export": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/tenancy/metering/record": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/tenancy/metering/verify": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/tenancy/quotas": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/tenancy/quotas/check": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/tenancy/quotas/consume": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/tenancy/quotas/refund": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/traceability": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/truth/assertions/{subject_id}/{predicate}": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/truth/claims": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/truth/contradictions": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/truth/explain/{subject_id}/{predicate}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/truth/export": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/truth/resolve": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/twin/business/capabilities": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/twin/business/chain/{objective_cid}": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/twin/business/link": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/twin/business/objectives": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/twin/business/reverse-impact/{service_cid}": [
+   401,
+   0.0
+  ],
+  "GET /api/v1/twin/classify": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/twin/coverage": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/twin/decisions/extract": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/twin/decisions/ingest": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/twin/decisions/{entity_cid}": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/twin/missing-links": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/twin/test-intelligence/mappings": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/twin/test-intelligence/runs": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/twin/test-intelligence/select": [
+   401,
+   0.01
+  ],
+  "GET /api/v1/validation/runs": [
+   401,
+   0.0
+  ],
+  "POST /api/v1/whatif/execute": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/whatif/plan": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/xai/certify-decision": [
+   401,
+   0.01
+  ],
+  "POST /api/v1/xai/verify-certificate": [
+   401,
+   0.01
+  ],
+  "GET /brain/agents": [
+   401,
+   0.01
+  ],
+  "GET /brain/approaches": [
+   401,
+   0.01
+  ],
+  "POST /brain/ask": [
+   401,
+   0.01
+  ],
+  "GET /brain/databases": [
+   401,
+   0.01
+  ],
+  "GET /brain/dialects": [
+   401,
+   0.01
+  ],
+  "POST /brain/induce": [
+   401,
+   0.01
+  ],
+  "POST /brain/intelligent-query": [
+   401,
+   0.01
+  ],
+  "POST /brain/learning/load": [
+   401,
+   0.01
+  ],
+  "GET /brain/learning/policy": [
+   401,
+   0.0
+  ],
+  "POST /brain/learning/save": [
+   401,
+   0.01
+  ],
+  "GET /brain/learning/status": [
+   401,
+   0.01
+  ],
+  "POST /brain/learning/train": [
+   401,
+   0.01
+  ],
+  "POST /brain/llm/embed": [
+   401,
+   0.01
+  ],
+  "POST /brain/llm/explain": [
+   401,
+   0.01
+  ],
+  "POST /brain/llm/generate": [
+   401,
+   0.01
+  ],
+  "GET /brain/llm/models": [
+   401,
+   0.01
+  ],
+  "POST /brain/llm/stream": [
+   401,
+   0.0
+  ],
+  "POST /brain/llm/tokenize": [
+   401,
+   0.0
+  ],
+  "GET /brain/loops": [
+   401,
+   0.02
+  ],
+  "POST /brain/narrate": [
+   401,
+   0.01
+  ],
+  "POST /brain/query": [
+   401,
+   0.01
+  ],
+  "GET /brain/rag-modes": [
+   401,
+   0.01
+  ],
+  "GET /brain/snapshot": [
+   401,
+   0.01
+  ],
+  "GET /brain/telemetry": [
+   401,
+   0.0
+  ],
+  "GET /health/live": [
+   200,
+   0.01
+  ],
+  "GET /health/ready": [
+   200,
+   0.01
+  ],
+  "GET /metrics": [
+   200,
+   0.02
+  ],
+  "GET /ontology/docs": [
+   200,
+   0.01
+  ],
+  "POST /ontology/validate/shacl": [
+   401,
+   0.01
+  ]
+ },
+ "superadmin": {
+  "GET /api/processing/v1/capabilities": [
+   200,
+   0.02
+  ],
+  "GET /api/processing/v1/devices": [
+   200,
+   0.22
+  ],
+  "GET /api/processing/v1/jobs": [
+   200,
+   0.02
+  ],
+  "POST /api/processing/v1/jobs": [
+   422,
+   0.04
+  ],
+  "GET /api/processing/v1/jobs/{job_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/processing/v1/jobs/{job_id}/cancel": [
+   404,
+   0.02
+  ],
+  "GET /api/processing/v1/jobs/{job_id}/receipt": [
+   404,
+   0.02
+  ],
+  "GET /api/processing/v1/jobs/{job_id}/result": [
+   404,
+   0.01
+  ],
+  "POST /api/processing/v1/plans": [
+   422,
+   0.02
+  ],
+  "POST /api/processing/v1/profiles/{profile_id}/probes": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/admin/audit": [
+   200,
+   0.06
+  ],
+  "POST /api/v1/admin/demo": [
+   202,
+   0.03
+  ],
+  "GET /api/v1/admin/dlq": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/admin/dlq/{event_id}/replay": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/admin/entities/{canonical_id}/delete": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/admin/event-consumers": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/admin/event-consumers/run": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/admin/gremlin": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/confluence": [
+   202,
+   0.03
+  ],
+  "POST /api/v1/admin/ingestion/files": [
+   415,
+   0.01
+  ],
+  "GET /api/v1/admin/ingestion/files/bundles/{bundle_id}/{artifact}": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/files/parse": [
+   415,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/gitlab": [
+   202,
+   0.04
+  ],
+  "POST /api/v1/admin/ingestion/jira": [
+   202,
+   0.03
+  ],
+  "POST /api/v1/admin/ingestion/json": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/admin/ingestion/json/batch": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/admin/ingestion/process-and-convert": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/admin/ingestion/replay": [
+   422,
+   0.03
+  ],
+  "POST /api/v1/admin/ingestion/servicenow": [
+   202,
+   0.03
+  ],
+  "GET /api/v1/admin/jobs": [
+   200,
+   0.11
+  ],
+  "GET /api/v1/admin/jobs/{job_id}": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/admin/jobs/{job_id}/cancel": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/admin/jobs/{job_id}/readmit": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/admin/schema": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/admin/semantic-pipeline": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/admin/semantic-pipeline/stages": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/admin/stats": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/admin/system": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/admin/timeline": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/admin/validation": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/admin/worker": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/agents": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/agents/analytics": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/agents/mesh/recover/{recovery_id}": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/agents/mesh/recoveries": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/agents/proposals": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/agents/proposals/{proposal_id}/approve": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/agents/proposals/{proposal_id}/reject": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/agents/query": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/agents/runs/{run_id}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/agents/runs/{run_id}/explanation": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/agents/runs/{run_id}/memory": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/agents/semantic-index": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/agents/trace-impact": [
+   404,
+   0.05
+  ],
+  "GET /api/v1/agents/types": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/agents/{agent_id}/runs": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/algorithms": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/algorithms/run": [
+   400,
+   0.03
+  ],
+  "GET /api/v1/auth/health": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/auth/login": [
+   401,
+   0.56
+  ],
+  "GET /api/v1/auth/whoami": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/authz/decisions": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/authz/evaluate": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/authz/policies": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/authz/policies/reload": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/authz/roles": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/authz/roles": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/authz/roles/export": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/authz/users": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/authz/users": [
+   409,
+   0.02
+  ],
+  "GET /api/v1/authz/users/export": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/brain/agents": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/approaches": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/brain/ask": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/brain/databases": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/brain/dialects": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/brain/induce": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/brain/intelligent-query": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/brain/learning/load": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/brain/learning/policy": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/brain/learning/save": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/learning/status": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/brain/learning/train": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/brain/llm/embed": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/brain/llm/explain": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/brain/llm/generate": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/brain/llm/models": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/brain/llm/stream": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/brain/llm/tokenize": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/loops": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/brain/narrate": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/brain/query": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/rag-modes": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/snapshot": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/telemetry": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/branding/legal": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/branding/locales/{locale}/message": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/branding/terminology/canonicalize": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/branding/terminology/rename": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/branding/theme": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/capsules": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/capsules": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/capsules/{name}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/catalog/products": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/catalog/products": [
+   201,
+   0.03
+  ],
+  "POST /api/v1/catalog/products/import": [
+   201,
+   0.03
+  ],
+  "GET /api/v1/catalog/products/{product_id}": [
+   404,
+   0.02
+  ],
+  "PUT /api/v1/catalog/products/{product_id}": [
+   404,
+   0.01
+  ],
+  "DELETE /api/v1/catalog/products/{product_id}": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/catalog/products/{product_id}/export": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/catalog/products/{product_id}/lineage": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/catalog/products/{product_id}/transition": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/causal/correlations/{entity_cid}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/causal/counterfactual-intervention": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/causal/hypotheses/{incident_cid}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/causal/live-blast-radius": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/causal/prerequisites": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/change-journal": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/compliance/ai/evaluations": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/compliance/ai/evaluations": [
+   201,
+   0.03
+  ],
+  "GET /api/v1/compliance/ai/model-cards": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/compliance/ai/model-cards": [
+   201,
+   0.03
+  ],
+  "GET /api/v1/compliance/ai/model-cards/{model_card_id}/label": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/compliance/ai/oversight": [
+   201,
+   0.03
+  ],
+  "GET /api/v1/compliance/changes": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/compliance/changes": [
+   201,
+   0.03
+  ],
+  "POST /api/v1/compliance/changes/{proposal_id}/transition": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/compliance/exceptions": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/compliance/exceptions": [
+   201,
+   0.02
+  ],
+  "POST /api/v1/compliance/exceptions/{exception_id}/revoke": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/compliance/packs": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/compliance/packs/{framework}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/compliance/packs/{framework}/gap-analysis": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/compliance/roles": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/compliance/roles/auditor-view": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/compliance/roles/{role}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/config/audit": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/config/bounds": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/config/definitions": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/config/diff": [
+   500,
+   0.02
+  ],
+  "GET /api/v1/config/effective": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/config/explain": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/config/export": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/config/flags": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/config/flags": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/config/import": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/config/reload-subscribe": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/config/rollback": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/config/set": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/conformance/check": [
+   400,
+   0.03
+  ],
+  "GET /api/v1/conformance/rules": [
+   200,
+   0.04
+  ],
+  "PUT /api/v1/conformance/rules/{name}": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/connectors/catalog": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/connectors/files/formats": [
+   200,
+   3.11
+  ],
+  "GET /api/v1/demo/scenarios": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/domain-packs": [
+   200,
+   0.48
+  ],
+  "GET /api/v1/domain-packs/{pack_name}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/domain-packs/{pack_name}/activate": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/egress/call": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/egress/endpoints": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/egress/endpoints/{endpoint_id}/disable": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/egress/endpoints/{endpoint_id}/enable": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/egress/kill": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/egress/manifests": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/egress/plugins": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/egress/plugins/install": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/egress/plugins/submit": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/egress/policy/rules": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/egress/policy/rules": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/egress/report": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/engineering/{discipline}": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/enterprise/analytics/anomalies/{metric}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/analytics/forecast/{metric}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/analytics/growth/{metric}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/analytics/metrics": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/analytics/record": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/analytics/trend/{metric}": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/enterprise/audit/events": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/audit/stats": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/enterprise/audit/verify": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/cache/clear": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/cache/stats": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/enterprise/chaos/experiments": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/enterprise/chaos/experiments": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/enterprise/chaos/experiments/{experiment_id}/run": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/enterprise/correlation/analyze/{event_id}": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/enterprise/correlation/events": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/correlation/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/diff/changes": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/diff/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/diff/timeline/{entity_id}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/dlq/entries": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/enterprise/dlq/replay": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/dlq/stats": [
+   200,
+   0.01
+  ],
+  "DELETE /api/v1/enterprise/dlq/{entry_id}": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/enterprise/feature-flags": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/feature-flags": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/enterprise/feature-flags/evaluate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/feature-flags/override": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/feature-flags/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/health/aggregate": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/enterprise/health/check-all": [
+   500,
+   0.02
+  ],
+  "GET /api/v1/enterprise/health/live": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/health/ready": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/health/sla": [
+   500,
+   0.02
+  ],
+  "GET /api/v1/enterprise/health/startup": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/health/uptime": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/enterprise/learning/feedback": [
+   422,
+   0.04
+  ],
+  "POST /api/v1/enterprise/learning/prune": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/learning/rules": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/learning/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/lifecycle/drain": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/lifecycle/status": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/migrations": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/enterprise/migrations": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/enterprise/migrations/apply-all": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/migrations/{migration_id}/apply": [
+   400,
+   0.01
+  ],
+  "POST /api/v1/enterprise/migrations/{migration_id}/rollback": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/enterprise/nlconfig/execute": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/enterprise/nlconfig/suggest": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/observability/metrics": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/plugins": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/plugins/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/resilience/circuit-breakers": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/resilience/circuit-breakers/reset": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/snapshots": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/enterprise/snapshots": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/snapshots/compare": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/snapshots/restore": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/enterprise/snapshots/{snapshot_id}": [
+   404,
+   0.01
+  ],
+  "DELETE /api/v1/enterprise/snapshots/{snapshot_id}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/enterprise/webhooks": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/enterprise/webhooks/dead-letters": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/webhooks/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/webhooks/subscribe": [
+   400,
+   0.02
+  ],
+  "DELETE /api/v1/enterprise/webhooks/{subscription_id}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/entities/{canonical_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/evidence/manifest": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/experts/{canonical_id}": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/export/formats": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/federation/query": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/federation/sources": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/files/{path}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/gaps/completion-gate": [
+   "HANG",
+   10.01
+  ],
+  "GET /api/v1/gaps/coverage": [
+   "HANG",
+   10.01
+  ],
+  "GET /api/v1/gaps/g2/architecture-guardrails": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/gaps/g2/architecture-guardrails": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/gaps/g2/observability-contract": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/gaps/g2/observability-contract": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/gaps/g2/readiness": [
+   200,
+   0.12
+  ],
+  "GET /api/v1/gaps/requirements/{requirement_id}": [
+   404,
+   4.93
+  ],
+  "POST /api/v1/governance/evaluate": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/governance/incidents": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/governance/kill-switch": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/governance/kill-switch": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/governance/kill-switch/features/{feature}": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/governance/models": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/governance/models": [
+   201,
+   0.03
+  ],
+  "POST /api/v1/governance/models/{model_id}/approval": [
+   200,
+   0.01
+  ],
+  "DELETE /api/v1/governance/models/{model_id}/approval": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/governance/templates": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/governance/templates": [
+   201,
+   0.02
+  ],
+  "POST /api/v1/graph-tests/run": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/graph/anomalies": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/as-of": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/graph/backend": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/graph/backends": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/bitemporal/diff": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/bitemporal/known-at": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/bitemporal/slice": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/bitemporal/topology": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/bitemporal/valid-at": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/blast-radius": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/graph/centrality/full": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/cluster": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/components": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/convert": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/graph/degree-distribution": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/diff": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/graph/diff": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/graph/events": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/formats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/k-core": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/link-prediction": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/merge": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/graph/metrics": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/orphaned": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/pr-impact": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/graph/reverse-impact": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/graph/schema": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/shortest-paths": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/similarity": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/graph/stale": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/statistics": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/surprises": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/graph/versions": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/what-if": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/health/embeddings": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/health/graph": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/identity/candidates": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/identity/candidates/{candidate_id}/decide": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/identity/candidates/{candidate_id}/reject": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/impact": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/ingest/profile": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ingest/profile/drift": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ingest/profile/keys": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ingest/profile/relationships": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ingestion/dlq": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/ingestion/jira-json": [
+   202,
+   0.03
+  ],
+  "POST /api/v1/ingestion/replay": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/ingestion/runs": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/kgci/report": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/kgci/run": [
+   200,
+   2.39
+  ],
+  "GET /api/v1/knowledge-debt": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/knowledge-slos": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/knowledge/debt": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/knowledge/firewall/inspect": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/knowledge/freshness": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/knowledge/slo": [
+   400,
+   0.01
+  ],
+  "GET /api/v1/knowledge/trust/states": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/lens/catalog": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/lens/{lens_id}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/licensing/check-module": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/licensing/meter/export": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/licensing/meter/record": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/licensing/meter/verify": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/licensing/status": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/licensing/verify": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/lineage": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/loops/approvals/decide": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/loops/approvals/pending": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/loops/catalog": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/loops/run/{loop_name}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/marketplace/build/agent-workflow": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/marketplace/build/dashboard": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/marketplace/build/mapping": [
+   422,
+   0.03
+  ],
+  "POST /api/v1/marketplace/build/query-template": [
+   422,
+   0.03
+  ],
+  "POST /api/v1/marketplace/build/validator": [
+   422,
+   0.03
+  ],
+  "POST /api/v1/marketplace/install": [
+   422,
+   0.01
+  ],
+  "GET /api/v1/marketplace/installed": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/marketplace/installed/search": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/marketplace/packages": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/marketplace/packages/install": [
+   500,
+   0.02
+  ],
+  "DELETE /api/v1/marketplace/packages/{name}": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/marketplace/uninstall/{name}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/moonshot/bitemporal/branch": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/moonshot/bitemporal/time-warp": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/moonshot/causal/simulate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/moonshot/compliance/audit": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/moonshot/confidential/zk-proof": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/moonshot/memory/consolidate": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/moonshot/self-healing/scan": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/moonshot/studio/induce": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/moonshot/transpile": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/neighborhood": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/ontology/diff": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/ontology/docs": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ontology/drift": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ontology/export": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/ontology/gitops/branches": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ontology/gitops/branches": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/ontology/gitops/branches/commit": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/ontology/gitops/diff": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/ontology/gitops/impact": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/ontology/gitops/migration": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ontology/gitops/package-release": [
+   200,
+   0.05
+  ],
+  "GET /api/v1/ontology/gitops/prs": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ontology/gitops/prs": [
+   200,
+   0.05
+  ],
+  "POST /api/v1/ontology/gitops/prs/{pr_id}/merge": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/ontology/gitops/prs/{pr_id}/review": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/ontology/gitops/rollback": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/ontology/gitops/validate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ontology/import": [
+   422,
+   0.03
+  ],
+  "GET /api/v1/ontology/packs": [
+   200,
+   0.05
+  ],
+  "GET /api/v1/ontology/packs/{name}": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/ontology/proposals": [
+   201,
+   0.02
+  ],
+  "GET /api/v1/ontology/shacl": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/ontology/validate": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/ontology/validate/shacl": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ops/ha-topology": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/ops/helm-summary": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/ops/preflight": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/ops/shard-plan": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ops/support-bundle": [
+   200,
+   0.07
+  ],
+  "POST /api/v1/ops/upgrade-plan": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/path": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/pipeline/status": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/aiml/hallucination/check": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/aiml/hallucination/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/aiml/rlhf/preference": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/platform/aiml/rlhf/reward": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/aiml/rlhf/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/aiml/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/aiml/temperature/best": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/aiml/temperature/experiment": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/aiml/temperature/trial": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/platform/aiml/tokens/budget": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/aiml/tokens/consume": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/compliance/frameworks": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/context/bitemporal-slate": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/context/build": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/context/item": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/context/items": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/context/slice-graph": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/context/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/copilot/insights": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/copilot/insights": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/copilot/message": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/copilot/rules": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/copilot/rules": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/copilot/sessions": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/copilot/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/copilot/suggest/{session_id}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/cost/recommendations": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/cost/record": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/cost/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/edge/nodes": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/edge/nodes": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/edge/nodes/{node_id}/query": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/edge/promote": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/edge/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/edge/sync": [
+   500,
+   0.03
+  ],
+  "POST /api/v1/platform/embeddings/drift": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/embeddings/versions": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/eval/distill-prompts": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/eval/graph-repair-sentinel": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/platform/eval/run": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/eval/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/eval/suite/run": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/features/extract": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/features/stats": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/platform/gateway/introspect": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/gateway/openapi": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/gateway/playground": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/gateway/query": [
+   200,
+   0.05
+  ],
+  "GET /api/v1/platform/gateway/stats": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/platform/gateway/types": [
+   500,
+   0.05
+  ],
+  "POST /api/v1/platform/graph-graph/cross-layer-query": [
+   422,
+   0.04
+  ],
+  "POST /api/v1/platform/graph-graph/diff": [
+   500,
+   0.08
+  ],
+  "POST /api/v1/platform/graph-graph/layers": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/platform/graph-loop/execute": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/graph-loop/plan": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/graph-loop/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/guardrails/inoculate": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/guardrails/reflection-sandbox": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/harness/pipelines": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/harness/run": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/harness/stats": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/imports/csv": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/imports/jobs": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/imports/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/incidents": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/incidents": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/incidents/stats": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/platform/incidents/{incident_id}": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/platform/incidents/{incident_id}/transition": [
+   422,
+   0.01
+  ],
+  "GET /api/v1/platform/integrations": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/integrations/stats": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/integrations/{connector_id}/health": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/integrations/{connector_id}/history": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/integrations/{connector_id}/sync": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/platform/intelligence/analyze": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/intelligence/autonomy/{query}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/intelligence/capabilities": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/intelligence/pipeline": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/intelligence/plan": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/intelligence/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/intelligence/supervisory-loop": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/maintenance/enrichments": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/maintenance/entity/{entity_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/platform/maintenance/scan": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/platform/maintenance/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/memory/recall": [
+   422,
+   0.03
+  ],
+  "GET /api/v1/platform/memory/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/memory/store": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/mlops/experiments": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/mlops/runs/start": [
+   "HANG",
+   10.02
+  ],
+  "POST /api/v1/platform/mlops/runs/{run_id}/metrics": [
+   "HANG",
+   10.01
+  ],
+  "GET /api/v1/platform/models": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/models/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/notifications/inbox/{recipient}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/notifications/send": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/notifications/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/notifications/{notification_id}/read": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/platform/prompts/list": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/prompts/register": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/prompts/render": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/prompts/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/reasoning/inferences": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/platform/reasoning/rules": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/platform/reasoning/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/recovery/checkpoint": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/recovery/checkpoints": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/recovery/peers": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/recovery/peers": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/platform/recovery/restore/{point_id}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/recovery/rpo": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/recovery/stats": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/recovery/wal/append": [
+   422,
+   0.03
+  ],
+  "GET /api/v1/platform/recovery/wal/read": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/routing/classify-and-route": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/routing/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/search/edge": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/search/index": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/search/metrics": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/platform/search/plan": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/search/query": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/platform/search/stats": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/search/user-context": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/security/red-team": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/security/scan": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/security/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/semantic/drift": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/semantic/hybrid": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/semantic/index": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/semantic/search": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/semantic/similar/{entity_id}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/semantic/snapshot/{snapshot_id}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/semantic/stats": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/specs/define": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/specs/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/state/record": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/state/restore": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/platform/state/snapshot": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/state/snapshots": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/platform/state/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/state/stream/{stream}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/streaming/channels/{channel}/latest": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/platform/streaming/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/streaming/subscriptions": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/tasks": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/tasks/stats": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/tasks/{task_id}/execute": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/platform/tasks/{task_id}/history": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/token-budget/allocate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/token-budget/consume": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/token-budget/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/token-formats/benchmark": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/token-formats/deserialize": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/platform/token-formats/serialize": [
+   422,
+   0.01
+  ],
+  "POST /api/v1/platform/tools/attest-execution": [
+   403,
+   1.02
+  ],
+  "GET /api/v1/platform/tools/list": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/tools/mcp/connect-external": [
+   503,
+   0.02
+  ],
+  "GET /api/v1/platform/tools/mcp/manifest": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/tools/register": [
+   200,
+   0.07
+  ],
+  "GET /api/v1/platform/tools/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/tools/validate-call": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/tools/verify-attestation": [
+   503,
+   0.02
+  ],
+  "GET /api/v1/platform/verification/audit-trail": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/verification/check": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/verification/guardrail-interception": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/xai/calibrate": [
+   200,
+   0.18
+  ],
+  "POST /api/v1/platform/xai/explain": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/playback/evidence": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/playback/export": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/playback/stream": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/privacy/classify": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/privacy/consents": [
+   422,
+   0.03
+  ],
+  "GET /api/v1/privacy/consents/allowed": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/privacy/dsar/erase": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/privacy/dsar/locate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/privacy/residency/validate": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/privacy/retention/evaluate": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/process/cases": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/process/deviations": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/process/paths": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/product/capabilities": [
+   200,
+   0.22
+  ],
+  "POST /api/v1/product/capabilities/materialize": [
+   200,
+   0.05
+  ],
+  "GET /api/v1/product/first-choice-gate": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/qa/dashboard": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/qa/dashboard/external-gates": [
+   201,
+   0.02
+  ],
+  "POST /api/v1/qa/dashboard/test-runs": [
+   201,
+   0.02
+  ],
+  "GET /api/v1/qa/evidence/coverage": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/qa/evidence/coverage/{requirement_id}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/qa/evidence/register": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/qa/inventory": [
+   200,
+   0.47
+  ],
+  "POST /api/v1/qa/inventory/validate": [
+   500,
+   0.52
+  ],
+  "GET /api/v1/qa/mutation-checks": [
+   200,
+   0.07
+  ],
+  "POST /api/v1/qa/mutation-checks": [
+   422,
+   0.19
+  ],
+  "GET /api/v1/qa/mutation-checks/release/{release}": [
+   200,
+   0.15
+  ],
+  "GET /api/v1/qa/policy-gate/latest": [
+   404,
+   0.12
+  ],
+  "POST /api/v1/qa/policy-gate/run": [
+   201,
+   1.03
+  ],
+  "POST /api/v1/query": [
+   422,
+   0.04
+  ],
+  "GET /api/v1/query/cache/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/query/context/{entity_cid}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/query/cost": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/query/eql": [
+   400,
+   0.01
+  ],
+  "POST /api/v1/query/explain": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/query/history": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/query/language": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/query/multi-paradigm": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/query/nl": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/query/slow": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/query/templates": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/query/templates": [
+   422,
+   0.03
+  ],
+  "GET /api/v1/query/templates/{template_id}": [
+   404,
+   0.02
+  ],
+  "DELETE /api/v1/query/templates/{template_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/query/templates/{template_id}/bind": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/query/what-changed": [
+   400,
+   0.03
+  ],
+  "GET /api/v1/query/what-changed/{entity_cid}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/query/what-if": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/query/why": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/query/why-not": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/query/why/{entity_cid}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/rag": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/rag/patterns": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/rag/query": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/reports": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/reports/export/{report_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/reports/render": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/reports/schedules": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/reports/schedules": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/reports/schedules/due": [
+   200,
+   0.02
+  ],
+  "DELETE /api/v1/reports/schedules/{schedule_id}": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/reports/schedules/{schedule_id}/mark-run": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/reports/schedules/{schedule_id}/run": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/reports/templates": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/retrieval/search": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/search": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/search/faceted": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/security/policy-matrix": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/security/status": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/security/tokens/issue": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/security/tokens/revoke": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/security/tokens/verify": [
+   401,
+   0.02
+  ],
+  "POST /api/v1/semantic/validations": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/simulation/create": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/simulation/list": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/simulation/{sim_id}/analyze": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/simulation/{sim_id}/compare": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/simulation/{sim_id}/manifest": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/simulation/{sim_id}/mutate": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/simulations": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/simulations/{sim_id}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/sources": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/sources": [
+   201,
+   0.06
+  ],
+  "GET /api/v1/sources/{source_id}": [
+   200,
+   0.05
+  ],
+  "PATCH /api/v1/sources/{source_id}": [
+   422,
+   0.05
+  ],
+  "DELETE /api/v1/sources/{source_id}": [
+   204,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/baseline": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/sources/{source_id}/checkpoint": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/discover": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/dry-run": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/sources/{source_id}/pause": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/reconcile": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/sources/{source_id}/reconciliations": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/replay": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/resume": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/sources/{source_id}/schedule": [
+   404,
+   0.02
+  ],
+  "PUT /api/v1/sources/{source_id}/schedule": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/sync": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/webhooks": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/suggest": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/suggest/intents": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/suggest/interpret": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/systems/": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/systems/export/config": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/systems/import/config": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/systems/known-types": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/systems/register": [
+   200,
+   0.06
+  ],
+  "POST /api/v1/systems/schema/from-data": [
+   200,
+   0.05
+  ],
+  "GET /api/v1/systems/{system_id}": [
+   404,
+   0.02
+  ],
+  "PUT /api/v1/systems/{system_id}": [
+   404,
+   0.03
+  ],
+  "DELETE /api/v1/systems/{system_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/systems/{system_id}/create-pipeline": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/systems/{system_id}/generate-schema": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/systems/{system_id}/onboard": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/systems/{system_id}/onboarding-status": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/systems/{system_id}/set-status": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/systems/{system_id}/test-connection": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/taxonomy/concepts": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/taxonomy/concepts": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/taxonomy/export.rdf": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/taxonomy/mappings": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/taxonomy/mappings": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/taxonomy/schemes": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/taxonomy/schemes": [
+   201,
+   0.01
+  ],
+  "GET /api/v1/taxonomy/validate": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/tenancy/context": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/tenancy/isolation/models": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/tenancy/isolation/placement": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/tenancy/isolation/placement": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/tenancy/lifecycle/clone": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/tenancy/lifecycle/configure": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/tenancy/lifecycle/delete": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/tenancy/lifecycle/export": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/tenancy/lifecycle/provision": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/tenancy/lifecycle/resume": [
+   400,
+   0.04
+  ],
+  "POST /api/v1/tenancy/lifecycle/suspend": [
+   400,
+   0.04
+  ],
+  "GET /api/v1/tenancy/metering/export": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/tenancy/metering/record": [
+   500,
+   0.07
+  ],
+  "GET /api/v1/tenancy/metering/verify": [
+   200,
+   0.23
+  ],
+  "GET /api/v1/tenancy/quotas": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/tenancy/quotas/check": [
+   500,
+   0.03
+  ],
+  "POST /api/v1/tenancy/quotas/consume": [
+   500,
+   0.04
+  ],
+  "POST /api/v1/tenancy/quotas/refund": [
+   500,
+   0.01
+  ],
+  "POST /api/v1/traceability": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/truth/assertions/{subject_id}/{predicate}": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/truth/claims": [
+   201,
+   0.02
+  ],
+  "GET /api/v1/truth/contradictions": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/truth/explain/{subject_id}/{predicate}": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/truth/export": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/truth/resolve": [
+   422,
+   0.01
+  ],
+  "POST /api/v1/twin/business/capabilities": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/twin/business/chain/{objective_cid}": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/twin/business/link": [
+   400,
+   0.01
+  ],
+  "POST /api/v1/twin/business/objectives": [
+   400,
+   0.01
+  ],
+  "GET /api/v1/twin/business/reverse-impact/{service_cid}": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/twin/classify": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/twin/coverage": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/twin/decisions/extract": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/twin/decisions/ingest": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/twin/decisions/{entity_cid}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/twin/missing-links": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/twin/test-intelligence/mappings": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/twin/test-intelligence/runs": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/twin/test-intelligence/select": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/validation/runs": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/whatif/execute": [
+   400,
+   0.01
+  ],
+  "POST /api/v1/whatif/plan": [
+   400,
+   0.03
+  ],
+  "POST /api/v1/xai/certify-decision": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/xai/verify-certificate": [
+   200,
+   0.02
+  ],
+  "GET /brain/agents": [
+   200,
+   0.02
+  ],
+  "GET /brain/approaches": [
+   200,
+   0.01
+  ],
+  "POST /brain/ask": [
+   200,
+   0.04
+  ],
+  "GET /brain/databases": [
+   200,
+   0.02
+  ],
+  "GET /brain/dialects": [
+   200,
+   0.02
+  ],
+  "POST /brain/induce": [
+   200,
+   0.02
+  ],
+  "POST /brain/intelligent-query": [
+   200,
+   0.03
+  ],
+  "POST /brain/learning/load": [
+   200,
+   0.02
+  ],
+  "GET /brain/learning/policy": [
+   200,
+   0.01
+  ],
+  "POST /brain/learning/save": [
+   200,
+   0.03
+  ],
+  "GET /brain/learning/status": [
+   200,
+   0.02
+  ],
+  "POST /brain/learning/train": [
+   200,
+   0.02
+  ],
+  "POST /brain/llm/embed": [
+   200,
+   0.04
+  ],
+  "POST /brain/llm/explain": [
+   200,
+   0.02
+  ],
+  "POST /brain/llm/generate": [
+   200,
+   0.01
+  ],
+  "GET /brain/llm/models": [
+   200,
+   0.02
+  ],
+  "POST /brain/llm/stream": [
+   200,
+   0.02
+  ],
+  "POST /brain/llm/tokenize": [
+   200,
+   0.02
+  ],
+  "GET /brain/loops": [
+   200,
+   0.03
+  ],
+  "POST /brain/narrate": [
+   200,
+   0.02
+  ],
+  "POST /brain/query": [
+   200,
+   0.03
+  ],
+  "GET /brain/rag-modes": [
+   200,
+   0.01
+  ],
+  "GET /brain/snapshot": [
+   200,
+   0.0
+  ],
+  "GET /brain/telemetry": [
+   200,
+   0.03
+  ],
+  "GET /health/live": [
+   200,
+   0.02
+  ],
+  "GET /health/ready": [
+   200,
+   0.02
+  ],
+  "GET /metrics": [
+   200,
+   0.11
+  ],
+  "GET /ontology/docs": [
+   200,
+   0.01
+  ],
+  "POST /ontology/validate/shacl": [
+   200,
+   0.01
+  ]
+ },
+ "viewer": {
+  "GET /api/processing/v1/capabilities": [
+   200,
+   0.01
+  ],
+  "GET /api/processing/v1/devices": [
+   200,
+   0.01
+  ],
+  "GET /api/processing/v1/jobs": [
+   200,
+   0.01
+  ],
+  "POST /api/processing/v1/jobs": [
+   422,
+   0.02
+  ],
+  "GET /api/processing/v1/jobs/{job_id}": [
+   404,
+   0.01
+  ],
+  "POST /api/processing/v1/jobs/{job_id}/cancel": [
+   404,
+   0.01
+  ],
+  "GET /api/processing/v1/jobs/{job_id}/receipt": [
+   404,
+   0.01
+  ],
+  "GET /api/processing/v1/jobs/{job_id}/result": [
+   404,
+   0.02
+  ],
+  "POST /api/processing/v1/plans": [
+   422,
+   0.02
+  ],
+  "POST /api/processing/v1/profiles/{profile_id}/probes": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/admin/audit": [
+   200,
+   0.06
+  ],
+  "POST /api/v1/admin/demo": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/admin/dlq": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/admin/dlq/{event_id}/replay": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/admin/entities/{canonical_id}/delete": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/admin/event-consumers": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/admin/event-consumers/run": [
+   403,
+   0.0
+  ],
+  "POST /api/v1/admin/gremlin": [
+   403,
+   0.02
+  ],
+  "POST /api/v1/admin/ingestion/confluence": [
+   403,
+   0.0
+  ],
+  "POST /api/v1/admin/ingestion/files": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/admin/ingestion/files/bundles/{bundle_id}/{artifact}": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/admin/ingestion/files/parse": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/gitlab": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/jira": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/json": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/json/batch": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/process-and-convert": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/replay": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/admin/ingestion/servicenow": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/admin/jobs": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/admin/jobs/{job_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/admin/jobs/{job_id}/cancel": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/admin/jobs/{job_id}/readmit": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/admin/schema": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/admin/semantic-pipeline": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/admin/semantic-pipeline/stages": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/admin/stats": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/admin/system": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/admin/timeline": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/admin/validation": [
+   403,
+   0.0
+  ],
+  "GET /api/v1/admin/worker": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/agents": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/agents/analytics": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/agents/mesh/recover/{recovery_id}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/agents/mesh/recoveries": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/agents/proposals": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/agents/proposals/{proposal_id}/approve": [
+   403,
+   0.02
+  ],
+  "POST /api/v1/agents/proposals/{proposal_id}/reject": [
+   403,
+   0.03
+  ],
+  "POST /api/v1/agents/query": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/agents/runs/{run_id}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/agents/runs/{run_id}/explanation": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/agents/runs/{run_id}/memory": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/agents/semantic-index": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/agents/trace-impact": [
+   404,
+   0.04
+  ],
+  "GET /api/v1/agents/types": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/agents/{agent_id}/runs": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/algorithms": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/algorithms/run": [
+   400,
+   0.03
+  ],
+  "GET /api/v1/auth/health": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/auth/login": [
+   401,
+   0.51
+  ],
+  "GET /api/v1/auth/whoami": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/authz/decisions": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/authz/evaluate": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/authz/policies": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/authz/policies/reload": [
+   403,
+   0.0
+  ],
+  "GET /api/v1/authz/roles": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/authz/roles": [
+   403,
+   0.0
+  ],
+  "GET /api/v1/authz/roles/export": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/authz/users": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/authz/users": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/authz/users/export": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/brain/agents": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/brain/approaches": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/brain/ask": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/databases": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/dialects": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/brain/induce": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/brain/intelligent-query": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/brain/learning/load": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/brain/learning/policy": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/brain/learning/save": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/learning/status": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/brain/learning/train": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/brain/llm/embed": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/brain/llm/explain": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/brain/llm/generate": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/llm/models": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/brain/llm/stream": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/brain/llm/tokenize": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/brain/loops": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/brain/narrate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/brain/query": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/rag-modes": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/snapshot": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/brain/telemetry": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/branding/legal": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/branding/locales/{locale}/message": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/branding/terminology/canonicalize": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/branding/terminology/rename": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/branding/theme": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/capsules": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/capsules": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/capsules/{name}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/catalog/products": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/catalog/products": [
+   422,
+   0.03
+  ],
+  "POST /api/v1/catalog/products/import": [
+   201,
+   0.02
+  ],
+  "GET /api/v1/catalog/products/{product_id}": [
+   404,
+   0.02
+  ],
+  "PUT /api/v1/catalog/products/{product_id}": [
+   404,
+   0.02
+  ],
+  "DELETE /api/v1/catalog/products/{product_id}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/catalog/products/{product_id}/export": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/catalog/products/{product_id}/lineage": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/catalog/products/{product_id}/transition": [
+   422,
+   0.01
+  ],
+  "POST /api/v1/causal/correlations/{entity_cid}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/causal/counterfactual-intervention": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/causal/hypotheses/{incident_cid}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/causal/live-blast-radius": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/causal/prerequisites": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/change-journal": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/compliance/ai/evaluations": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/compliance/ai/evaluations": [
+   422,
+   0.01
+  ],
+  "GET /api/v1/compliance/ai/model-cards": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/compliance/ai/model-cards": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/compliance/ai/model-cards/{model_card_id}/label": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/compliance/ai/oversight": [
+   201,
+   0.03
+  ],
+  "GET /api/v1/compliance/changes": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/compliance/changes": [
+   201,
+   0.02
+  ],
+  "POST /api/v1/compliance/changes/{proposal_id}/transition": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/compliance/exceptions": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/compliance/exceptions": [
+   201,
+   0.02
+  ],
+  "POST /api/v1/compliance/exceptions/{exception_id}/revoke": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/compliance/packs": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/compliance/packs/{framework}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/compliance/packs/{framework}/gap-analysis": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/compliance/roles": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/compliance/roles/auditor-view": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/compliance/roles/{role}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/config/audit": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/config/bounds": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/config/definitions": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/config/diff": [
+   500,
+   0.03
+  ],
+  "GET /api/v1/config/effective": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/config/explain": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/config/export": [
+   404,
+   0.06
+  ],
+  "GET /api/v1/config/flags": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/config/flags": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/config/import": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/config/reload-subscribe": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/config/rollback": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/config/set": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/conformance/check": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/conformance/rules": [
+   200,
+   0.02
+  ],
+  "PUT /api/v1/conformance/rules/{name}": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/connectors/catalog": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/connectors/files/formats": [
+   200,
+   0.25
+  ],
+  "GET /api/v1/demo/scenarios": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/domain-packs": [
+   200,
+   0.22
+  ],
+  "GET /api/v1/domain-packs/{pack_name}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/domain-packs/{pack_name}/activate": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/egress/call": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/egress/endpoints": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/egress/endpoints/{endpoint_id}/disable": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/egress/endpoints/{endpoint_id}/enable": [
+   400,
+   0.03
+  ],
+  "POST /api/v1/egress/kill": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/egress/manifests": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/egress/plugins": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/egress/plugins/install": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/egress/plugins/submit": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/egress/policy/rules": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/egress/policy/rules": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/egress/report": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/engineering/{discipline}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/analytics/anomalies/{metric}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/analytics/forecast/{metric}": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/enterprise/analytics/growth/{metric}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/analytics/metrics": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/enterprise/analytics/record": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/analytics/trend/{metric}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/audit/events": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/audit/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/audit/verify": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/cache/clear": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/cache/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/chaos/experiments": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/chaos/experiments": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/enterprise/chaos/experiments/{experiment_id}/run": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/enterprise/correlation/analyze/{event_id}": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/enterprise/correlation/events": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/enterprise/correlation/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/diff/changes": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/diff/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/diff/timeline/{entity_id}": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/enterprise/dlq/entries": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/dlq/replay": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/enterprise/dlq/stats": [
+   200,
+   0.02
+  ],
+  "DELETE /api/v1/enterprise/dlq/{entry_id}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/enterprise/feature-flags": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/enterprise/feature-flags": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/feature-flags/evaluate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/feature-flags/override": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/feature-flags/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/health/aggregate": [
+   500,
+   0.02
+  ],
+  "POST /api/v1/enterprise/health/check-all": [
+   500,
+   0.02
+  ],
+  "GET /api/v1/enterprise/health/live": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/enterprise/health/ready": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/health/sla": [
+   500,
+   0.01
+  ],
+  "GET /api/v1/enterprise/health/startup": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/enterprise/health/uptime": [
+   500,
+   0.01
+  ],
+  "POST /api/v1/enterprise/learning/feedback": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/enterprise/learning/prune": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/learning/rules": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/learning/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/lifecycle/drain": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/lifecycle/status": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/migrations": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/migrations": [
+   500,
+   0.03
+  ],
+  "POST /api/v1/enterprise/migrations/apply-all": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/migrations/{migration_id}/apply": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/enterprise/migrations/{migration_id}/rollback": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/enterprise/nlconfig/execute": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/nlconfig/suggest": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/observability/metrics": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/plugins": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/plugins/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/resilience/circuit-breakers": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/enterprise/resilience/circuit-breakers/reset": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/snapshots": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/snapshots": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/enterprise/snapshots/compare": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/enterprise/snapshots/restore": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/enterprise/snapshots/{snapshot_id}": [
+   404,
+   0.02
+  ],
+  "DELETE /api/v1/enterprise/snapshots/{snapshot_id}": [
+   403,
+   0.0
+  ],
+  "GET /api/v1/enterprise/webhooks": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/webhooks/dead-letters": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/enterprise/webhooks/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/enterprise/webhooks/subscribe": [
+   400,
+   0.02
+  ],
+  "DELETE /api/v1/enterprise/webhooks/{subscription_id}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/entities/{canonical_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/evidence/manifest": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/experts/{canonical_id}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/export/formats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/federation/query": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/federation/sources": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/files/{path}": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/gaps/completion-gate": [
+   200,
+   1.86
+  ],
+  "GET /api/v1/gaps/coverage": [
+   200,
+   2.06
+  ],
+  "GET /api/v1/gaps/g2/architecture-guardrails": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/gaps/g2/architecture-guardrails": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/gaps/g2/observability-contract": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/gaps/g2/observability-contract": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/gaps/g2/readiness": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/gaps/requirements/{requirement_id}": [
+   404,
+   2.62
+  ],
+  "POST /api/v1/governance/evaluate": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/governance/incidents": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/governance/kill-switch": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/governance/kill-switch": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/governance/kill-switch/features/{feature}": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/governance/models": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/governance/models": [
+   201,
+   0.02
+  ],
+  "POST /api/v1/governance/models/{model_id}/approval": [
+   200,
+   0.02
+  ],
+  "DELETE /api/v1/governance/models/{model_id}/approval": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/governance/templates": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/governance/templates": [
+   201,
+   0.02
+  ],
+  "POST /api/v1/graph-tests/run": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/graph/anomalies": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/as-of": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/graph/backend": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/graph/backends": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/bitemporal/diff": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/bitemporal/known-at": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/graph/bitemporal/slice": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/bitemporal/topology": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/bitemporal/valid-at": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/graph/blast-radius": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/graph/centrality/full": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/cluster": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/graph/components": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/convert": [
+   422,
+   0.03
+  ],
+  "POST /api/v1/graph/degree-distribution": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/diff": [
+   422,
+   0.01
+  ],
+  "POST /api/v1/graph/diff": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/events": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/graph/formats": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/graph/k-core": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/link-prediction": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/merge": [
+   403,
+   0.0
+  ],
+  "POST /api/v1/graph/metrics": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/graph/orphaned": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/pr-impact": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/reverse-impact": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/graph/schema": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/graph/shortest-paths": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/similarity": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/stale": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/graph/statistics": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/surprises": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/graph/versions": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/graph/what-if": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/health/embeddings": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/health/graph": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/identity/candidates": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/identity/candidates/{candidate_id}/decide": [
+   403,
+   0.03
+  ],
+  "POST /api/v1/identity/candidates/{candidate_id}/reject": [
+   403,
+   0.03
+  ],
+  "POST /api/v1/impact": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/ingest/profile": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/ingest/profile/drift": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ingest/profile/keys": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ingest/profile/relationships": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ingestion/dlq": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ingestion/jira-json": [
+   202,
+   0.03
+  ],
+  "POST /api/v1/ingestion/replay": [
+   422,
+   0.03
+  ],
+  "GET /api/v1/ingestion/runs": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/kgci/report": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/kgci/run": [
+   200,
+   2.44
+  ],
+  "GET /api/v1/knowledge-debt": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/knowledge-slos": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/knowledge/debt": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/knowledge/firewall/inspect": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/knowledge/freshness": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/knowledge/slo": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/knowledge/trust/states": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/lens/catalog": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/lens/{lens_id}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/licensing/check-module": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/licensing/meter/export": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/licensing/meter/record": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/licensing/meter/verify": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/licensing/status": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/licensing/verify": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/lineage": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/loops/approvals/decide": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/loops/approvals/pending": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/loops/catalog": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/loops/run/{loop_name}": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/marketplace/build/agent-workflow": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/marketplace/build/dashboard": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/marketplace/build/mapping": [
+   403,
+   0.0
+  ],
+  "POST /api/v1/marketplace/build/query-template": [
+   403,
+   0.02
+  ],
+  "POST /api/v1/marketplace/build/validator": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/marketplace/install": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/marketplace/installed": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/marketplace/installed/search": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/marketplace/packages": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/marketplace/packages/install": [
+   403,
+   0.01
+  ],
+  "DELETE /api/v1/marketplace/packages/{name}": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/marketplace/uninstall/{name}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/moonshot/bitemporal/branch": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/moonshot/bitemporal/time-warp": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/moonshot/causal/simulate": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/moonshot/compliance/audit": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/moonshot/confidential/zk-proof": [
+   400,
+   0.01
+  ],
+  "POST /api/v1/moonshot/memory/consolidate": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/moonshot/self-healing/scan": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/moonshot/studio/induce": [
+   400,
+   0.01
+  ],
+  "POST /api/v1/moonshot/transpile": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/neighborhood": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/ontology/diff": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/ontology/docs": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ontology/drift": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/ontology/export": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ontology/gitops/branches": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/branches": [
+   400,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/branches/commit": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/diff": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/impact": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/migration": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/package-release": [
+   403,
+   0.0
+  ],
+  "GET /api/v1/ontology/gitops/prs": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ontology/gitops/prs": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ontology/gitops/prs/{pr_id}/merge": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/prs/{pr_id}/review": [
+   422,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/rollback": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/ontology/gitops/validate": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/ontology/import": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/ontology/packs": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ontology/packs/{name}": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/ontology/proposals": [
+   201,
+   0.01
+  ],
+  "GET /api/v1/ontology/shacl": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/ontology/validate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ontology/validate/shacl": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ops/ha-topology": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/ops/helm-summary": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ops/preflight": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/ops/shard-plan": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/ops/support-bundle": [
+   200,
+   0.06
+  ],
+  "POST /api/v1/ops/upgrade-plan": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/path": [
+   422,
+   0.04
+  ],
+  "GET /api/v1/pipeline/status": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/aiml/hallucination/check": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/aiml/hallucination/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/aiml/rlhf/preference": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/platform/aiml/rlhf/reward": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/aiml/rlhf/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/aiml/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/aiml/temperature/best": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/aiml/temperature/experiment": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/aiml/temperature/trial": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/platform/aiml/tokens/budget": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/aiml/tokens/consume": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/compliance/frameworks": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/context/bitemporal-slate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/context/build": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/context/item": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/context/items": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/context/slice-graph": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/context/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/copilot/insights": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/copilot/insights": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/copilot/message": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/copilot/rules": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/copilot/rules": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/copilot/sessions": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/copilot/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/copilot/suggest/{session_id}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/cost/recommendations": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/cost/record": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/cost/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/edge/nodes": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/edge/nodes": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/edge/nodes/{node_id}/query": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/edge/promote": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/edge/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/edge/sync": [
+   500,
+   0.03
+  ],
+  "POST /api/v1/platform/embeddings/drift": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/embeddings/versions": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/eval/distill-prompts": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/eval/graph-repair-sentinel": [
+   500,
+   0.03
+  ],
+  "POST /api/v1/platform/eval/run": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/eval/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/eval/suite/run": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/features/extract": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/features/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/gateway/introspect": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/gateway/openapi": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/gateway/playground": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/gateway/query": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/gateway/stats": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/gateway/types": [
+   500,
+   0.03
+  ],
+  "POST /api/v1/platform/graph-graph/cross-layer-query": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/platform/graph-graph/diff": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/graph-graph/layers": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/graph-loop/execute": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/graph-loop/plan": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/platform/graph-loop/stats": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/guardrails/inoculate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/guardrails/reflection-sandbox": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/harness/pipelines": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/harness/run": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/harness/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/imports/csv": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/imports/jobs": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/imports/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/incidents": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/incidents": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/incidents/stats": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/platform/incidents/{incident_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/platform/incidents/{incident_id}/transition": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/platform/integrations": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/integrations/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/integrations/{connector_id}/health": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/integrations/{connector_id}/history": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/integrations/{connector_id}/sync": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/platform/intelligence/analyze": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/intelligence/autonomy/{query}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/intelligence/capabilities": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/intelligence/pipeline": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/intelligence/plan": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/intelligence/stats": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/intelligence/supervisory-loop": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/maintenance/enrichments": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/maintenance/entity/{entity_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/platform/maintenance/scan": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/maintenance/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/memory/recall": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/platform/memory/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/memory/store": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/mlops/experiments": [
+   "HANG",
+   10.0
+  ],
+  "POST /api/v1/platform/mlops/runs/start": [
+   "HANG",
+   10.01
+  ],
+  "POST /api/v1/platform/mlops/runs/{run_id}/metrics": [
+   "HANG",
+   10.02
+  ],
+  "GET /api/v1/platform/models": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/models/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/notifications/inbox/{recipient}": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/notifications/send": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/notifications/stats": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/platform/notifications/{notification_id}/read": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/platform/prompts/list": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/platform/prompts/register": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/platform/prompts/render": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/prompts/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/reasoning/inferences": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/reasoning/rules": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/platform/reasoning/stats": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/recovery/checkpoint": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/recovery/checkpoints": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/recovery/peers": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/recovery/peers": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/platform/recovery/restore/{point_id}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/recovery/rpo": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/recovery/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/recovery/wal/append": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/platform/recovery/wal/read": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/routing/classify-and-route": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/routing/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/search/edge": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/search/index": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/search/metrics": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/search/plan": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/search/query": [
+   422,
+   0.04
+  ],
+  "GET /api/v1/platform/search/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/search/user-context": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/security/red-team": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/security/scan": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/security/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/semantic/drift": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/semantic/hybrid": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/semantic/index": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/semantic/search": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/semantic/similar/{entity_id}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/semantic/snapshot/{snapshot_id}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/semantic/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/specs/define": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/specs/stats": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/state/record": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/platform/state/restore": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/platform/state/snapshot": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/state/snapshots": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/state/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/state/stream/{stream}": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/platform/streaming/channels/{channel}/latest": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/platform/streaming/stats": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/platform/streaming/subscriptions": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/platform/tasks": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/tasks/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/tasks/{task_id}/execute": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/platform/tasks/{task_id}/history": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/token-budget/allocate": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/platform/token-budget/consume": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/token-budget/stats": [
+   200,
+   0.0
+  ],
+  "POST /api/v1/platform/token-formats/benchmark": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/token-formats/deserialize": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/platform/token-formats/serialize": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/platform/tools/attest-execution": [
+   403,
+   0.02
+  ],
+  "GET /api/v1/platform/tools/list": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/tools/mcp/connect-external": [
+   403,
+   0.03
+  ],
+  "GET /api/v1/platform/tools/mcp/manifest": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/tools/register": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/platform/tools/stats": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/tools/validate-call": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/tools/verify-attestation": [
+   503,
+   0.03
+  ],
+  "GET /api/v1/platform/verification/audit-trail": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/verification/check": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/verification/guardrail-interception": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/xai/calibrate": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/platform/xai/explain": [
+   200,
+   0.04
+  ],
+  "POST /api/v1/playback/evidence": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/playback/export": [
+   400,
+   0.03
+  ],
+  "POST /api/v1/playback/stream": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/privacy/classify": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/privacy/consents": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/privacy/consents/allowed": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/privacy/dsar/erase": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/privacy/dsar/locate": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/privacy/residency/validate": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/privacy/retention/evaluate": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/process/cases": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/process/deviations": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/process/paths": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/product/capabilities": [
+   200,
+   0.08
+  ],
+  "POST /api/v1/product/capabilities/materialize": [
+   200,
+   0.05
+  ],
+  "GET /api/v1/product/first-choice-gate": [
+   200,
+   0.05
+  ],
+  "GET /api/v1/qa/dashboard": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/qa/dashboard/external-gates": [
+   201,
+   0.01
+  ],
+  "POST /api/v1/qa/dashboard/test-runs": [
+   201,
+   0.02
+  ],
+  "GET /api/v1/qa/evidence/coverage": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/qa/evidence/coverage/{requirement_id}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/qa/evidence/register": [
+   422,
+   0.01
+  ],
+  "GET /api/v1/qa/inventory": [
+   200,
+   0.54
+  ],
+  "POST /api/v1/qa/inventory/validate": [
+   500,
+   0.38
+  ],
+  "GET /api/v1/qa/mutation-checks": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/qa/mutation-checks": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/qa/mutation-checks/release/{release}": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/qa/policy-gate/latest": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/qa/policy-gate/run": [
+   201,
+   1.04
+  ],
+  "POST /api/v1/query": [
+   422,
+   0.04
+  ],
+  "GET /api/v1/query/cache/stats": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/query/context/{entity_cid}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/query/cost": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/query/eql": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/query/explain": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/query/history": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/query/language": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/query/multi-paradigm": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/query/nl": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/query/slow": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/query/templates": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/query/templates": [
+   422,
+   0.03
+  ],
+  "GET /api/v1/query/templates/{template_id}": [
+   404,
+   0.03
+  ],
+  "DELETE /api/v1/query/templates/{template_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/query/templates/{template_id}/bind": [
+   422,
+   0.02
+  ],
+  "POST /api/v1/query/what-changed": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/query/what-changed/{entity_cid}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/query/what-if": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/query/why": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/query/why-not": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/query/why/{entity_cid}": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/rag": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/rag/patterns": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/rag/query": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/reports": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/reports/export/{report_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/reports/render": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/reports/schedules": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/reports/schedules": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/reports/schedules/due": [
+   200,
+   0.01
+  ],
+  "DELETE /api/v1/reports/schedules/{schedule_id}": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/reports/schedules/{schedule_id}/mark-run": [
+   404,
+   0.01
+  ],
+  "POST /api/v1/reports/schedules/{schedule_id}/run": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/reports/templates": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/retrieval/search": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/search": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/search/faceted": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/security/policy-matrix": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/security/status": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/security/tokens/issue": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/security/tokens/revoke": [
+   403,
+   0.0
+  ],
+  "POST /api/v1/security/tokens/verify": [
+   403,
+   0.02
+  ],
+  "POST /api/v1/semantic/validations": [
+   400,
+   0.03
+  ],
+  "POST /api/v1/simulation/create": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/simulation/list": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/simulation/{sim_id}/analyze": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/simulation/{sim_id}/compare": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/simulation/{sim_id}/manifest": [
+   404,
+   0.03
+  ],
+  "POST /api/v1/simulation/{sim_id}/mutate": [
+   400,
+   0.05
+  ],
+  "POST /api/v1/simulations": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/simulations/{sim_id}": [
+   404,
+   0.02
+  ],
+  "GET /api/v1/sources": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/sources": [
+   403,
+   0.03
+  ],
+  "GET /api/v1/sources/{source_id}": [
+   404,
+   0.03
+  ],
+  "PATCH /api/v1/sources/{source_id}": [
+   403,
+   0.03
+  ],
+  "DELETE /api/v1/sources/{source_id}": [
+   403,
+   0.03
+  ],
+  "POST /api/v1/sources/{source_id}/baseline": [
+   403,
+   0.03
+  ],
+  "GET /api/v1/sources/{source_id}/checkpoint": [
+   404,
+   0.05
+  ],
+  "POST /api/v1/sources/{source_id}/discover": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/dry-run": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/pause": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/reconcile": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/sources/{source_id}/reconciliations": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/sources/{source_id}/replay": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/resume": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/sources/{source_id}/schedule": [
+   404,
+   0.03
+  ],
+  "PUT /api/v1/sources/{source_id}/schedule": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/sync": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/sources/{source_id}/webhooks": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/suggest": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/suggest/intents": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/suggest/interpret": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/systems/": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/systems/export/config": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/systems/import/config": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/systems/known-types": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/systems/register": [
+   200,
+   0.05
+  ],
+  "POST /api/v1/systems/schema/from-data": [
+   200,
+   0.04
+  ],
+  "GET /api/v1/systems/{system_id}": [
+   404,
+   0.02
+  ],
+  "PUT /api/v1/systems/{system_id}": [
+   404,
+   0.03
+  ],
+  "DELETE /api/v1/systems/{system_id}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/systems/{system_id}/create-pipeline": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/systems/{system_id}/generate-schema": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/systems/{system_id}/onboard": [
+   404,
+   0.01
+  ],
+  "GET /api/v1/systems/{system_id}/onboarding-status": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/systems/{system_id}/set-status": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/systems/{system_id}/test-connection": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/taxonomy/concepts": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/taxonomy/concepts": [
+   201,
+   0.03
+  ],
+  "GET /api/v1/taxonomy/export.rdf": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/taxonomy/mappings": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/taxonomy/mappings": [
+   422,
+   0.02
+  ],
+  "GET /api/v1/taxonomy/schemes": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/taxonomy/schemes": [
+   409,
+   0.02
+  ],
+  "GET /api/v1/taxonomy/validate": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/tenancy/context": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/tenancy/isolation/models": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/tenancy/isolation/placement": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/tenancy/isolation/placement": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/clone": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/configure": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/delete": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/export": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/provision": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/tenancy/lifecycle/resume": [
+   403,
+   0.02
+  ],
+  "POST /api/v1/tenancy/lifecycle/suspend": [
+   403,
+   0.01
+  ],
+  "GET /api/v1/tenancy/metering/export": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/tenancy/metering/record": [
+   403,
+   0.0
+  ],
+  "GET /api/v1/tenancy/metering/verify": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/tenancy/quotas": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/tenancy/quotas/check": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/tenancy/quotas/consume": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/tenancy/quotas/refund": [
+   403,
+   0.01
+  ],
+  "POST /api/v1/traceability": [
+   404,
+   0.03
+  ],
+  "GET /api/v1/truth/assertions/{subject_id}/{predicate}": [
+   404,
+   0.02
+  ],
+  "POST /api/v1/truth/claims": [
+   201,
+   0.03
+  ],
+  "GET /api/v1/truth/contradictions": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/truth/explain/{subject_id}/{predicate}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/truth/export": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/truth/resolve": [
+   422,
+   0.03
+  ],
+  "POST /api/v1/twin/business/capabilities": [
+   400,
+   0.03
+  ],
+  "GET /api/v1/twin/business/chain/{objective_cid}": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/twin/business/link": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/twin/business/objectives": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/twin/business/reverse-impact/{service_cid}": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/twin/classify": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/twin/coverage": [
+   200,
+   0.01
+  ],
+  "POST /api/v1/twin/decisions/extract": [
+   400,
+   0.03
+  ],
+  "POST /api/v1/twin/decisions/ingest": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/twin/decisions/{entity_cid}": [
+   200,
+   0.01
+  ],
+  "GET /api/v1/twin/missing-links": [
+   200,
+   0.03
+  ],
+  "GET /api/v1/twin/test-intelligence/mappings": [
+   200,
+   0.02
+  ],
+  "GET /api/v1/twin/test-intelligence/runs": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/twin/test-intelligence/select": [
+   400,
+   0.02
+  ],
+  "GET /api/v1/validation/runs": [
+   200,
+   0.03
+  ],
+  "POST /api/v1/whatif/execute": [
+   400,
+   0.02
+  ],
+  "POST /api/v1/whatif/plan": [
+   400,
+   0.03
+  ],
+  "POST /api/v1/xai/certify-decision": [
+   200,
+   0.02
+  ],
+  "POST /api/v1/xai/verify-certificate": [
+   200,
+   0.02
+  ],
+  "GET /brain/agents": [
+   200,
+   0.03
+  ],
+  "GET /brain/approaches": [
+   200,
+   0.02
+  ],
+  "POST /brain/ask": [
+   200,
+   0.03
+  ],
+  "GET /brain/databases": [
+   200,
+   0.02
+  ],
+  "GET /brain/dialects": [
+   200,
+   0.01
+  ],
+  "POST /brain/induce": [
+   200,
+   0.03
+  ],
+  "POST /brain/intelligent-query": [
+   200,
+   0.03
+  ],
+  "POST /brain/learning/load": [
+   200,
+   0.03
+  ],
+  "GET /brain/learning/policy": [
+   200,
+   0.02
+  ],
+  "POST /brain/learning/save": [
+   200,
+   0.03
+  ],
+  "GET /brain/learning/status": [
+   200,
+   0.01
+  ],
+  "POST /brain/learning/train": [
+   200,
+   0.03
+  ],
+  "POST /brain/llm/embed": [
+   200,
+   0.04
+  ],
+  "POST /brain/llm/explain": [
+   200,
+   0.03
+  ],
+  "POST /brain/llm/generate": [
+   200,
+   0.02
+  ],
+  "GET /brain/llm/models": [
+   200,
+   0.04
+  ],
+  "POST /brain/llm/stream": [
+   200,
+   0.07
+  ],
+  "POST /brain/llm/tokenize": [
+   200,
+   0.04
+  ],
+  "GET /brain/loops": [
+   200,
+   0.04
+  ],
+  "POST /brain/narrate": [
+   200,
+   0.09
+  ],
+  "POST /brain/query": [
+   200,
+   0.1
+  ],
+  "GET /brain/rag-modes": [
+   200,
+   0.07
+  ],
+  "GET /brain/snapshot": [
+   200,
+   0.02
+  ],
+  "GET /brain/telemetry": [
+   200,
+   0.02
+  ],
+  "GET /health/live": [
+   200,
+   0.01
+  ],
+  "GET /health/ready": [
+   200,
+   0.02
+  ],
+  "GET /metrics": [
+   200,
+   0.16
+  ],
+  "GET /ontology/docs": [
+   200,
+   0.03
+  ],
+  "POST /ontology/validate/shacl": [
+   200,
+   0.02
+  ]
+ }
+}

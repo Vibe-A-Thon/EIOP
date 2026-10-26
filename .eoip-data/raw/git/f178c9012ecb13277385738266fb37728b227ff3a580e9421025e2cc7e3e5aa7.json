@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.064681Z",
+  "event_id": "f178c9012ecb13277385738266fb37728b227ff3a580e9421025e2cc7e3e5aa7",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "a52d962e2506d48d6d0b36ed2ab28c89b7febdfb",
+    "message": "reva changes and documentation updated"
+  },
+  "payload_hash": "aa775b534458e9f77237bd13f64c03a2f6c3e8b58a990b03248bc544ed9326fb",
+  "schema_version": "1.0",
+  "source_record_id": "demo:a52d962e2506d48d6d0b36ed2ab28c89b7febdfb",
+  "source_system": "git",
+  "source_version": "aa775b534458e9f77237bd13f64c03a2f6c3e8b58a990b03248bc544ed9326fb"
+}

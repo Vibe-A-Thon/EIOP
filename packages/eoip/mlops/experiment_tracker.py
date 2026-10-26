@@ -184,7 +184,8 @@ class ExperimentTracker:
     def __init__(self) -> None:
         self.experiments: dict[str, Experiment] = {}
         self.artifact_store = ArtifactStore()
-        self._lock = threading.Lock()
+        # RLock: start_run() calls create_experiment() while holding the lock.
+        self._lock = threading.RLock()
 
     @classmethod
     def get_instance(cls) -> ExperimentTracker:

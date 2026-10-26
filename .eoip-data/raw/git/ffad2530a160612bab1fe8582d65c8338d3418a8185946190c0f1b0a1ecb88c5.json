@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:23.352557Z",
+  "event_id": "ffad2530a160612bab1fe8582d65c8338d3418a8185946190c0f1b0a1ecb88c5",
+  "metadata": null,
+  "payload": {
+    "commit_sha": "76f8e8bb93000e604f88aba1bf07a6ad594cf519",
+    "content": "from json import loads\n\n\ndef normalize(value: str) -> str:\n    return value.strip().lower()\n\n\ndef handle_request(payload: str) -> dict:\n    data = loads(payload)\n    return {\"name\": normalize(data[\"name\"])}",
+    "path": "src/service.py"
+  },
+  "payload_hash": "a38e7cacef1ee49b69e39f22de75e68c1d5650e74b5d8c66e748fbcfaadb4801",
+  "schema_version": "1.0",
+  "source_record_id": "demo:src/service.py",
+  "source_system": "git",
+  "source_version": "a38e7cacef1ee49b69e39f22de75e68c1d5650e74b5d8c66e748fbcfaadb4801"
+}

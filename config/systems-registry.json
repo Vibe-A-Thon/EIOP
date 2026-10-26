@@ -1,7 +1,7 @@
 {
   "$schema": "urn:eoip:systems-registry:v1",
   "version": "1.0.0",
-  "description": "EOIP Unified Systems Registry — single configuration point for all connected enterprise systems. Each entry defines a system's connection, authentication, schema mappings, ingestion pipeline, and automation policies.",
+  "description": "EOIP Unified Systems Registry \u2014 single configuration point for all connected enterprise systems. Each entry defines a system's connection, authentication, schema mappings, ingestion pipeline, and automation policies.",
   "global_defaults": {
     "poll_interval_minutes": 60,
     "retry_policy": {
@@ -27,5 +27,170 @@
       "audit_logging": true
     }
   },
-  "systems": []
+  "systems": [
+    {
+      "system_id": "sys-qa-probe-a58acf3a",
+      "name": "qa-probe",
+      "system_type": "qa-probe",
+      "category": "CUSTOM",
+      "status": "ERROR",
+      "connection": {
+        "base_url": "qa-probe",
+        "port": null,
+        "database_name": null,
+        "additional_params": {}
+      },
+      "auth": {
+        "auth_type": "token",
+        "credentials": {}
+      },
+      "ingestion": {
+        "mode": "auto",
+        "batch_size": 500,
+        "poll_interval_minutes": 60,
+        "cron_expression": null,
+        "dead_letter_queue_enabled": true,
+        "schema_drift_detection": true,
+        "auto_schema_induction": true,
+        "auto_relationship_discovery": true,
+        "incremental_sync": true,
+        "full_sync_interval_hours": 24,
+        "entity_types": [
+          "qa-probe"
+        ],
+        "custom_mappings": {}
+      },
+      "schema": {
+        "auto_generated": false,
+        "schema_version": "1.0.0",
+        "entity_labels": [],
+        "edge_labels": [],
+        "field_mappings": {},
+        "induced_at": null,
+        "graphql_sdl": null,
+        "json_schema": null
+      },
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_seconds": 30.0,
+        "backoff_multiplier": 2.0
+      },
+      "tags": [
+        "qa-probe"
+      ],
+      "metadata": {
+        "last_onboarding": {
+          "onboarding_id": "onboard-9cfd1fd2",
+          "system_id": "sys-qa-probe-a58acf3a",
+          "system_type": "qa-probe",
+          "success": false,
+          "phases": [
+            {
+              "phase": "VALIDATE",
+              "success": false,
+              "duration_ms": 0,
+              "message": "Validation failed: credentials required for auth_type != NONE",
+              "data": {
+                "errors": [
+                  "credentials required for auth_type != NONE"
+                ]
+              }
+            }
+          ],
+          "total_duration_ms": 5,
+          "started_at": "2026-10-20T10:35:09Z",
+          "completed_at": "2026-10-20T10:35:09Z",
+          "error": "Validation failed: credentials required for auth_type != NONE"
+        }
+      },
+      "created_at": "2026-10-20T10:35:09Z",
+      "updated_at": "2026-10-20T10:35:09Z",
+      "last_sync_at": null,
+      "last_health_check": null,
+      "error_message": null,
+      "version": 3
+    },
+    {
+      "system_id": "sys-qa-probe-59c15016",
+      "name": "qa-probe",
+      "system_type": "qa-probe",
+      "category": "CUSTOM",
+      "status": "ERROR",
+      "connection": {
+        "base_url": "qa-probe",
+        "port": null,
+        "database_name": null,
+        "additional_params": {}
+      },
+      "auth": {
+        "auth_type": "token",
+        "credentials": {}
+      },
+      "ingestion": {
+        "mode": "auto",
+        "batch_size": 500,
+        "poll_interval_minutes": 60,
+        "cron_expression": null,
+        "dead_letter_queue_enabled": true,
+        "schema_drift_detection": true,
+        "auto_schema_induction": true,
+        "auto_relationship_discovery": true,
+        "incremental_sync": true,
+        "full_sync_interval_hours": 24,
+        "entity_types": [
+          "qa-probe"
+        ],
+        "custom_mappings": {}
+      },
+      "schema": {
+        "auto_generated": false,
+        "schema_version": "1.0.0",
+        "entity_labels": [],
+        "edge_labels": [],
+        "field_mappings": {},
+        "induced_at": null,
+        "graphql_sdl": null,
+        "json_schema": null
+      },
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_seconds": 30.0,
+        "backoff_multiplier": 2.0
+      },
+      "tags": [
+        "qa-probe"
+      ],
+      "metadata": {
+        "last_onboarding": {
+          "onboarding_id": "onboard-cca09bb3",
+          "system_id": "sys-qa-probe-59c15016",
+          "system_type": "qa-probe",
+          "success": false,
+          "phases": [
+            {
+              "phase": "VALIDATE",
+              "success": false,
+              "duration_ms": 0,
+              "message": "Validation failed: credentials required for auth_type != NONE",
+              "data": {
+                "errors": [
+                  "credentials required for auth_type != NONE"
+                ]
+              }
+            }
+          ],
+          "total_duration_ms": 5,
+          "started_at": "2026-10-20T10:36:06Z",
+          "completed_at": "2026-10-20T10:36:06Z",
+          "error": "Validation failed: credentials required for auth_type != NONE"
+        }
+      },
+      "created_at": "2026-10-20T10:36:06Z",
+      "updated_at": "2026-10-20T10:36:06Z",
+      "last_sync_at": null,
+      "last_health_check": null,
+      "error_message": null,
+      "version": 3
+    }
+  ]
 }

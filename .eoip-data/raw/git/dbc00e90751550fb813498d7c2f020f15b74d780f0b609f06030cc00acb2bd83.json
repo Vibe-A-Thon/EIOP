@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.051371Z",
+  "event_id": "dbc00e90751550fb813498d7c2f020f15b74d780f0b609f06030cc00acb2bd83",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "76f8e8bb93000e604f88aba1bf07a6ad594cf519",
+    "message": "audit updates and enhancements"
+  },
+  "payload_hash": "4fec645e22766e51fe7fe12bff401ca675484b21c05c2c11670a307f0e979e7e",
+  "schema_version": "1.0",
+  "source_record_id": "demo:76f8e8bb93000e604f88aba1bf07a6ad594cf519",
+  "source_system": "git",
+  "source_version": "4fec645e22766e51fe7fe12bff401ca675484b21c05c2c11670a307f0e979e7e"
+}

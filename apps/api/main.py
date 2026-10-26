@@ -730,7 +730,7 @@ def create_app():
         return Response(status_code=204)
 
     @app.get("/api/v1/auth/providers")
-    def auth_providers():
+    def auth_providers() -> dict[str, object]:
         from eoip.authn.sso import describe_providers
         return {"local": {"enabled": True, "method": "password"}, "api_tokens": {"enabled": True},
                 "sso": describe_providers()}

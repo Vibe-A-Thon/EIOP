@@ -1,0 +1,26 @@
+{
+  "proposals": [
+    {
+      "applied_mutation_ref": null,
+      "audit_trail": [],
+      "created_at": "",
+      "description": "",
+      "kind": "ontology",
+      "proposal_id": "urn:eoip:compliance:change-proposal:722efcce38e4",
+      "requested_by": "",
+      "state": "proposed",
+      "title": "qa-probe"
+    },
+    {
+      "applied_mutation_ref": null,
+      "audit_trail": [],
+      "created_at": "",
+      "description": "",
+      "kind": "ontology",
+      "proposal_id": "urn:eoip:compliance:change-proposal:b16e7bce8b9d",
+      "requested_by": "",
+      "state": "proposed",
+      "title": "qa-probe"
+    }
+  ]
+}

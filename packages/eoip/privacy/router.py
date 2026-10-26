@@ -126,7 +126,7 @@ def build_router(
         return _workflow(_tenant(request, body.tenant_id)).locate(body.subject_id).model_dump()
 
     @router.post("/dsar/export")
-    def dsar_export(body: LocateRequest, request: Request):
+    def dsar_export(body: LocateRequest, request: Request) -> dict[str, Any]:
         if tenant_layers is None:
             raise HTTPException(501, "DSAR export needs tenant stores")
         tenant = _tenant(request, body.tenant_id)
@@ -135,7 +135,7 @@ def build_router(
         return {"export": name, "bundle": bundle, "proof": proof.model_dump()}
 
     @router.post("/dsar/rectify")
-    def dsar_rectify(body: RectifyRequest, request: Request):
+    def dsar_rectify(body: RectifyRequest, request: Request) -> dict[str, Any]:
         if tenant_layers is None:
             raise HTTPException(501, "DSAR rectification needs tenant stores")
         if not body.old_value or body.old_value == body.new_value:

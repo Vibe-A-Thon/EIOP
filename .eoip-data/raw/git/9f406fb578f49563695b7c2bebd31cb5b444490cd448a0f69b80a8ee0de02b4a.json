@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:23.135193Z",
+  "event_id": "9f406fb578f49563695b7c2bebd31cb5b444490cd448a0f69b80a8ee0de02b4a",
+  "metadata": null,
+  "payload": {
+    "commit_sha": "76f8e8bb93000e604f88aba1bf07a6ad594cf519",
+    "content": "# EOIP-1 requirement trace\n\n`service.py` implements EOIP-1. `compute_impact` calls `normalize`, which uses\nthe Python math module. EOIP-2 requires the path to retain source evidence.\n\nThis tiny repository is ingested by EOIP's local Git/code graph path to prove the\nend-to-end requirement-to-code story: work item -> commit/file/symbol -> impact\nand evidence. It is intentionally small so tests and the VS Code extension can\nexercise symbol ranges, provenance, and safe workspace-relative navigation\nwithout relying on external repositories.\n\nThe same ingested facts can now be cited by evidence-addressable GraphRAG,\nexported through the JSON-LD/RDF/SHACL adapter, and included in semantic\nfederation plans when the local graph source is queried. This repository remains\na local fixture and is never treated as production code unless a user explicitly\ningests it into a selected environment.\n",
+    "path": "README.md"
+  },
+  "payload_hash": "d54b1b0783e665b227fca8b7e1d3f7d8210fe5b4b592281cd47a7555a0165a34",
+  "schema_version": "1.0",
+  "source_record_id": "demo:README.md",
+  "source_system": "git",
+  "source_version": "d54b1b0783e665b227fca8b7e1d3f7d8210fe5b4b592281cd47a7555a0165a34"
+}

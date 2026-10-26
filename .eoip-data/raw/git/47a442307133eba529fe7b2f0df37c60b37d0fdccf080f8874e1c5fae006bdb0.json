@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-10-19T19:58:22.077850Z",
+  "event_id": "47a442307133eba529fe7b2f0df37c60b37d0fdccf080f8874e1c5fae006bdb0",
+  "metadata": null,
+  "payload": {
+    "branch": "dev_local",
+    "commit_sha": "d679799d5d9fac9820f36d357b6c2c3a4846ef21",
+    "message": "additional changes include new files for wisdom graph implementation and requirements, as well as several ADR documents."
+  },
+  "payload_hash": "b9565b6656f0e1e8011b331ed5c3787006addf5395f442ae873ff41a509f1347",
+  "schema_version": "1.0",
+  "source_record_id": "demo:d679799d5d9fac9820f36d357b6c2c3a4846ef21",
+  "source_system": "git",
+  "source_version": "b9565b6656f0e1e8011b331ed5c3787006addf5395f442ae873ff41a509f1347"
+}

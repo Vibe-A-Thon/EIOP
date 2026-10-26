@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0.0",
+  "proof_policy_version": "1.1.0",
+  "project": "EOIP (kgf) — GitHub repo EIOP",
+  "project_aliases": ["EOIP", "EIOP", "KGF", "KnowGridFlow"],
+  "repo": {
+    "url": "https://github.com/Vibe-A-Thon/EIOP",
+    "clone_url": "https://github.com/Vibe-A-Thon/EIOP.git",
+    "owner": "Vibe-A-Thon",
+    "name": "EIOP",
+    "branch": "dev_local",
+    "visibility_observed": "public (unauthenticated clone succeeded 2026-10-19)",
+    "local_clone_path": "/workspace/repos/EIOP",
+    "baseline_commit": "3ed3acd50e47ab8867aa6885d202f9956358dc3a"
+  },
+  "links": {
+    "code_line_template": "https://github.com/Vibe-A-Thon/EIOP/blob/{commit}/{path}#L{start}-L{end}",
+    "code_file_template": "https://github.com/Vibe-A-Thon/EIOP/blob/{commit}/{path}",
+    "commit_template": "https://github.com/Vibe-A-Thon/EIOP/commit/{commit}",
+    "compare_template": "https://github.com/Vibe-A-Thon/EIOP/compare/{base}...{head}"
+  },
+  "ci": {
+    "provider": "github_actions",
+    "run_template": "https://github.com/Vibe-A-Thon/EIOP/actions/runs/{run_id}",
+    "job_template": "https://github.com/Vibe-A-Thon/EIOP/actions/runs/{run_id}/job/{job_id}",
+    "runs_api_template": "https://api.github.com/repos/Vibe-A-Thon/EIOP/actions/runs?head_sha={commit}&per_page=50",
+    "workflows_dir": ".github/workflows",
+    "l3_eligible_workflows": ["validation-evidence.yml", "ci.yml"],
+    "l3_ineligible_workflows": {
+      "reva-*.yml": "Placeholder jobs (`run: echo ...`) at baseline commit — green status is not proof"
+    },
+    "notes": "ci.yml triggers only on main/develop; it does not run on dev_local."
+  },
+  "parser": {
+    "include": ["*requirement*.md", "*reqirement*.md", "*-requirements*.md", "REQUIREMENTS*.md"],
+    "exclude": ["*implementation*", "*/audits/*", "*/tickets/*", "*traceability*", "*tracker*"],
+    "exclude_prefixes": ["D", "DEC", "DEC-*", "ADR", "RK", "RISK", "WP", "XP", "ASM", "OQ", "Q"]
+  },
+  "traceability": {
+    "test_map": "requirements-test-map.json",
+    "claims_registry": "requirements-registry.json"
+  },
+  "tests": {
+    "python_extras": ["dev", "numerics", "fileparse", "codeparse", "reports"],
+    "pytest_markers": "not integration and not slow and not performance",
+    "per_test_timeout_s": 120,
+    "isolate": true
+  },
+  "static_analysis": {
+    "paths": ["apps", "packages", "backend", "reva", "scripts", "tools"]
+  },
+  "output_dir": "audit-output",
+  "never": [
+    "commit, push or open PRs in the audited repo",
+    "send repo contents to external LLM services",
+    "copy secret values into audit outputs"
+  ]
+}

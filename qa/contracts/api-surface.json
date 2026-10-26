@@ -1,0 +1,3050 @@
+{
+  "schema_version": 1,
+  "openapi": "3.1.0",
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/api/processing/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/api/processing/v1/devices"
+    },
+    {
+      "method": "GET",
+      "path": "/api/processing/v1/jobs"
+    },
+    {
+      "method": "POST",
+      "path": "/api/processing/v1/jobs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/processing/v1/jobs/{job_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/processing/v1/jobs/{job_id}/cancel"
+    },
+    {
+      "method": "GET",
+      "path": "/api/processing/v1/jobs/{job_id}/receipt"
+    },
+    {
+      "method": "GET",
+      "path": "/api/processing/v1/jobs/{job_id}/result"
+    },
+    {
+      "method": "POST",
+      "path": "/api/processing/v1/plans"
+    },
+    {
+      "method": "POST",
+      "path": "/api/processing/v1/profiles/{profile_id}/probes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/audit"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/demo"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/dlq"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/dlq/{event_id}/replay"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/entities/{canonical_id}/delete"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/event-consumers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/event-consumers/run"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/gremlin"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/confluence"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ingestion/files/bundles/{bundle_id}/{artifact}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/files/parse"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/gitlab"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/jira"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/json"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/json/batch"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/process-and-convert"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/replay"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ingestion/servicenow"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/jobs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/jobs/{job_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/jobs/{job_id}/cancel"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/jobs/{job_id}/readmit"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/semantic-pipeline"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/semantic-pipeline/stages"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/system"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/timeline"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/validation"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/worker"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/analytics"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/mesh/recover/{recovery_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/mesh/recoveries"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/proposals"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/proposals/{proposal_id}/approve"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/proposals/{proposal_id}/reject"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/query"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/runs/{run_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/runs/{run_id}/explanation"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/runs/{run_id}/memory"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/semantic-index"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/trace-impact"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/types"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/{agent_id}/runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/algorithms"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/algorithms/run"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/health"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/logout"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/providers"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/sso/{provider}/login"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/whoami"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/authz/decisions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/authz/evaluate"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/authz/policies"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/authz/policies/reload"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/authz/roles"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/authz/roles"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/authz/roles/export"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/authz/users"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/authz/users"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/authz/users/export"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/agents"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/approaches"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/ask"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/databases"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/dialects"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/induce"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/intelligent-query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/learning/load"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/learning/policy"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/learning/save"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/learning/status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/learning/train"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/llm/embed"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/llm/explain"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/llm/generate"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/llm/models"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/llm/stream"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/llm/tokenize"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/loops"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/narrate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/brain/query"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/rag-modes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/snapshot"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/brain/telemetry"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/branding/legal"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/branding/locales/{locale}/message"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/branding/terminology/canonicalize"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/branding/terminology/rename"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/branding/theme"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/capsules"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/capsules"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/capsules/{name}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/catalog/products"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/catalog/products"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/catalog/products/import"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/catalog/products/{product_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/catalog/products/{product_id}"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/catalog/products/{product_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/catalog/products/{product_id}/export"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/catalog/products/{product_id}/lineage"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/catalog/products/{product_id}/transition"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/causal/correlations/{entity_cid}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/causal/counterfactual-intervention"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/causal/hypotheses/{incident_cid}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/causal/live-blast-radius"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/causal/prerequisites"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/change-journal"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/compliance/ai/evaluations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/compliance/ai/evaluations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/compliance/ai/model-cards"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/compliance/ai/model-cards"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/compliance/ai/model-cards/{model_card_id}/label"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/compliance/ai/oversight"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/compliance/changes"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/compliance/changes"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/compliance/changes/{proposal_id}/transition"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/compliance/exceptions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/compliance/exceptions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/compliance/exceptions/{exception_id}/revoke"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/compliance/packs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/compliance/packs/{framework}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/compliance/packs/{framework}/gap-analysis"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/compliance/roles"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/compliance/roles/auditor-view"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/compliance/roles/{role}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/config/audit"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/config/bounds"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/config/definitions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/config/diff"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/config/effective"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/config/explain"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/config/export"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/config/flags"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/config/flags"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/config/import"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/config/reload-subscribe"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/config/rollback"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/config/set"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/conformance/check"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/conformance/rules"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/conformance/rules/{name}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/connectors/catalog"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/connectors/files/formats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/demo/scenarios"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/domain-packs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/domain-packs/{pack_name}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/domain-packs/{pack_name}/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/egress/call"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/egress/endpoints"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/egress/endpoints/{endpoint_id}/consent"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/egress/endpoints/{endpoint_id}/consent/amend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/egress/endpoints/{endpoint_id}/disable"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/egress/endpoints/{endpoint_id}/enable"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/egress/kill"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/egress/manifests"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/egress/plugins"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/egress/plugins/install"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/egress/plugins/submit"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/egress/plugins/{manifest_id}/install-preview"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/egress/policy/rules"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/egress/policy/rules"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/egress/report"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/engineering/{discipline}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/analytics/anomalies/{metric}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/analytics/forecast/{metric}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/analytics/growth/{metric}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/analytics/metrics"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/analytics/record"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/analytics/trend/{metric}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/audit/events"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/audit/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/audit/verify"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/cache/clear"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/cache/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/chaos/experiments"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/chaos/experiments"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/chaos/experiments/{experiment_id}/run"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/correlation/analyze/{event_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/correlation/events"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/correlation/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/diff/changes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/diff/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/diff/timeline/{entity_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/dlq/entries"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/dlq/replay"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/dlq/stats"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/enterprise/dlq/{entry_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/feature-flags"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/feature-flags"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/feature-flags/evaluate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/feature-flags/override"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/feature-flags/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/health/aggregate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/health/check-all"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/health/live"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/health/ready"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/health/sla"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/health/startup"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/health/uptime"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/learning/feedback"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/learning/prune"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/learning/rules"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/learning/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/lifecycle/drain"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/lifecycle/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/migrations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/migrations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/migrations/apply-all"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/migrations/{migration_id}/apply"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/migrations/{migration_id}/rollback"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/nlconfig/execute"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/nlconfig/suggest"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/observability/metrics"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/plugins"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/plugins/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/resilience/circuit-breakers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/resilience/circuit-breakers/reset"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/snapshots"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/snapshots"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/snapshots/compare"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/snapshots/restore"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/enterprise/snapshots/{snapshot_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/snapshots/{snapshot_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/webhooks"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/webhooks/dead-letters"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/enterprise/webhooks/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/enterprise/webhooks/subscribe"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/enterprise/webhooks/{subscription_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{canonical_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/evidence/manifest"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/experts/{canonical_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/export/formats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/federation/query"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/federation/sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/files/{path}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/completion-gate"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/coverage"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/g2/architecture-guardrails"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/gaps/g2/architecture-guardrails"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/g2/observability-contract"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/gaps/g2/observability-contract"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/g2/readiness"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gaps/requirements/{requirement_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/governance/evaluate"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/governance/incidents"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/governance/kill-switch"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/governance/kill-switch"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/governance/kill-switch/features/{feature}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/governance/models"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/governance/models"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/governance/models/{model_id}/approval"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/governance/models/{model_id}/approval"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/governance/templates"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/governance/templates"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph-tests/run"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/anomalies"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/as-of"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/backends"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/bitemporal/diff"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/bitemporal/known-at"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/bitemporal/slice"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/bitemporal/topology"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/bitemporal/valid-at"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/blast-radius"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/centrality/full"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/cluster"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/components"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/convert"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/degree-distribution"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/diff"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/diff"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/events"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/formats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/k-core"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/link-prediction"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/merge"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/metrics"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/orphaned"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/pr-impact"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/reverse-impact"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/shortest-paths"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/similarity"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/stale"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/statistics"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/surprises"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/graph/versions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graph/what-if"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/health/embeddings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/health/graph"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/identity/candidates"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/identity/candidates/{candidate_id}/decide"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/identity/candidates/{candidate_id}/reject"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/impact"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ingest/profile"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ingest/profile/drift"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ingest/profile/keys"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ingest/profile/relationships"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ingestion/dlq"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ingestion/jira-json"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ingestion/replay"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ingestion/runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/kgci/report"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/kgci/run"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/knowledge-debt"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/knowledge-slos"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/knowledge/debt"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/knowledge/firewall/inspect"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/knowledge/freshness"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/knowledge/slo"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/knowledge/trust/states"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/lens/catalog"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/lens/{lens_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/licensing/check-module"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/licensing/meter/export"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/licensing/meter/record"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/licensing/meter/verify"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/licensing/status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/licensing/verify"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/lineage"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/loops/approvals/decide"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/loops/approvals/pending"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/loops/catalog"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/loops/run/{loop_name}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/build/agent-workflow"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/build/dashboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/build/mapping"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/build/query-template"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/build/validator"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/install"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/marketplace/installed"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/marketplace/installed/search"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/marketplace/packages"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/packages/install"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/marketplace/packages/{name}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/marketplace/uninstall/{name}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/moonshot/bitemporal/branch"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/moonshot/bitemporal/time-warp"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/moonshot/causal/simulate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/moonshot/compliance/audit"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/moonshot/confidential/zk-proof"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/moonshot/memory/consolidate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/moonshot/self-healing/scan"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/moonshot/studio/induce"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/moonshot/transpile"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/neighborhood"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/diff"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/docs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/drift"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/export"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/gitops/branches"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/branches"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/branches/commit"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/diff"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/impact"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/migration"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/package-release"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/gitops/prs"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/prs"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/prs/{pr_id}/merge"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/prs/{pr_id}/review"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/rollback"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/gitops/validate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/import"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/packs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/packs/{name}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/proposals"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/shacl"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ontology/validate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ontology/validate/shacl"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ops/ha-topology"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ops/helm-summary"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ops/preflight"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ops/shard-plan"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ops/support-bundle"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ops/upgrade-plan"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/path"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pipeline/status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/aiml/hallucination/check"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/aiml/hallucination/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/aiml/rlhf/preference"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/aiml/rlhf/reward"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/aiml/rlhf/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/aiml/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/aiml/temperature/best"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/aiml/temperature/experiment"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/aiml/temperature/trial"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/aiml/tokens/budget"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/aiml/tokens/consume"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/compliance/frameworks"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/context/bitemporal-slate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/context/build"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/context/item"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/context/items"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/context/slice-graph"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/context/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/copilot/insights"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/copilot/insights"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/copilot/message"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/copilot/rules"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/copilot/rules"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/copilot/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/copilot/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/copilot/suggest/{session_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/cost/recommendations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/cost/record"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/cost/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/edge/nodes"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/edge/nodes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/edge/nodes/{node_id}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/edge/promote"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/edge/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/edge/sync"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/embeddings/drift"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/embeddings/versions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/eval/distill-prompts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/eval/graph-repair-sentinel"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/eval/run"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/eval/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/eval/suite/run"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/features/extract"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/features/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/gateway/introspect"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/gateway/openapi"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/gateway/playground"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/gateway/query"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/gateway/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/gateway/types"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/graph-graph/cross-layer-query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/graph-graph/diff"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/graph-graph/layers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/graph-loop/execute"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/graph-loop/plan"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/graph-loop/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/guardrails/inoculate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/guardrails/reflection-sandbox"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/harness/pipelines"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/harness/run"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/harness/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/imports/csv"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/imports/jobs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/imports/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/incidents"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/incidents"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/incidents/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/incidents/{incident_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/incidents/{incident_id}/transition"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/integrations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/integrations/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/integrations/{connector_id}/health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/integrations/{connector_id}/history"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/integrations/{connector_id}/sync"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/intelligence/analyze"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/intelligence/autonomy/{query}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/intelligence/capabilities"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/intelligence/pipeline"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/intelligence/plan"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/intelligence/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/intelligence/supervisory-loop"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/maintenance/enrichments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/maintenance/entity/{entity_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/maintenance/scan"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/maintenance/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/memory/recall"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/memory/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/memory/store"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/mlops/experiments"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/mlops/runs/start"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/mlops/runs/{run_id}/metrics"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/models"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/models/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/notifications/inbox/{recipient}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/notifications/send"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/notifications/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/notifications/{notification_id}/read"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/prompts/list"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/prompts/register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/prompts/render"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/prompts/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/reasoning/inferences"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/reasoning/rules"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/reasoning/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/recovery/checkpoint"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/recovery/checkpoints"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/recovery/peers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/recovery/peers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/recovery/restore/{point_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/recovery/rpo"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/recovery/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/recovery/wal/append"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/recovery/wal/read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/routing/classify-and-route"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/routing/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/search/edge"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/search/index"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/search/metrics"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/search/plan"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/search/query"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/search/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/search/user-context"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/security/red-team"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/security/scan"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/security/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/semantic/drift"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/semantic/hybrid"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/semantic/index"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/semantic/search"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/semantic/similar/{entity_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/semantic/snapshot/{snapshot_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/semantic/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/specs/define"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/specs/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/state/record"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/state/restore"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/state/snapshot"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/state/snapshots"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/state/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/state/stream/{stream}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/streaming/channels/{channel}/latest"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/streaming/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/streaming/subscriptions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/tasks"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/tasks/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/tasks/{task_id}/execute"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/tasks/{task_id}/history"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/token-budget/allocate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/token-budget/consume"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/token-budget/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/token-formats/benchmark"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/token-formats/deserialize"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/token-formats/serialize"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/tools/attest-execution"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/tools/list"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/tools/mcp/connect-external"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/tools/mcp/manifest"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/tools/register"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/tools/stats"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/tools/validate-call"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/tools/verify-attestation"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/platform/verification/audit-trail"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/verification/check"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/verification/guardrail-interception"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/xai/calibrate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/platform/xai/explain"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/playback/evidence"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/playback/export"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/playback/stream"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/classify"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/consents"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/privacy/consents/allowed"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/dsar/erase"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/dsar/export"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/dsar/locate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/dsar/rectify"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/residency/validate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/retention/evaluate"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/process/cases"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/process/deviations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/process/paths"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/product/capabilities"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/product/capabilities/materialize"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/product/first-choice-gate"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/qa/dashboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/qa/dashboard/external-gates"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/qa/dashboard/test-runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/qa/evidence/coverage"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/qa/evidence/coverage/{requirement_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/qa/evidence/register"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/qa/inventory"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/qa/inventory/validate"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/qa/mutation-checks"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/qa/mutation-checks"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/qa/mutation-checks/release/{release}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/qa/policy-gate/latest"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/qa/policy-gate/run"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/cache/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/context/{entity_cid}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/cost"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/eql"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/explain"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/history"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/language"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/multi-paradigm"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/nl"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/slow"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/templates"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/templates"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/query/templates/{template_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/templates/{template_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/templates/{template_id}/bind"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/what-changed"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/what-changed/{entity_cid}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/what-if"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/why"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query/why-not"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/query/why/{entity_cid}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rag"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rag/patterns"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rag/query"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/export/{report_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/render"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/schedules"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/schedules"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/schedules/due"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/reports/schedules/{schedule_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/schedules/{schedule_id}/mark-run"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/schedules/{schedule_id}/run"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/templates"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/retrieval/search"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/search"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/search/faceted"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/security/policy-matrix"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/security/status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/security/tokens/issue"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/security/tokens/revoke"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/security/tokens/verify"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/semantic/validations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/simulation/create"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/simulation/list"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/simulation/{sim_id}/analyze"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/simulation/{sim_id}/compare"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/simulation/{sim_id}/manifest"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/simulation/{sim_id}/mutate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/simulations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/simulations/{sim_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sources"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/sources/{source_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sources/{source_id}"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/sources/{source_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/baseline"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sources/{source_id}/checkpoint"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/discover"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/dry-run"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/pause"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/reconcile"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sources/{source_id}/reconciliations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/replay"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/resume"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sources/{source_id}/schedule"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/sources/{source_id}/schedule"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/sync"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sources/{source_id}/webhooks"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/suggest"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/suggest/intents"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/suggest/interpret"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/suggest/pin"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/suggest/pin"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/systems/"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/systems/export/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/systems/import/config"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/systems/known-types"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/systems/register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/systems/schema/from-data"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/systems/{system_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/systems/{system_id}"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/systems/{system_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/systems/{system_id}/create-pipeline"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/systems/{system_id}/generate-schema"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/systems/{system_id}/onboard"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/systems/{system_id}/onboarding-status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/systems/{system_id}/set-status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/systems/{system_id}/test-connection"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/taxonomy/concepts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/taxonomy/concepts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/taxonomy/export.rdf"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/taxonomy/mappings"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/taxonomy/mappings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/taxonomy/schemes"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/taxonomy/schemes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/taxonomy/validate"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tenancy/context"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tenancy/isolation/models"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tenancy/isolation/placement"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/isolation/placement"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/lifecycle/clone"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/lifecycle/configure"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/lifecycle/delete"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/lifecycle/export"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/lifecycle/provision"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/lifecycle/resume"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/lifecycle/suspend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tenancy/metering/export"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/metering/record"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tenancy/metering/verify"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tenancy/quotas"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/quotas/check"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/quotas/consume"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenancy/quotas/refund"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/traceability"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/truth/assertions/{subject_id}/{predicate}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/truth/claims"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/truth/contradictions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/truth/explain/{subject_id}/{predicate}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/truth/export"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/truth/resolve"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/business/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/business/chain/{objective_cid}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/business/link"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/business/objectives"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/business/reverse-impact/{service_cid}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/classify"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/coverage"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/decisions/extract"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/decisions/ingest"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/decisions/{entity_cid}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/missing-links"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/test-intelligence/mappings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/twin/test-intelligence/runs"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/twin/test-intelligence/select"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/validation/runs"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/whatif/execute"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/whatif/plan"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/xai/certify-decision"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/xai/verify-certificate"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/agents"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/approaches"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/ask"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/databases"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/dialects"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/induce"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/intelligent-query"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/learning/load"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/learning/policy"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/learning/save"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/learning/status"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/learning/train"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/llm/embed"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/llm/explain"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/llm/generate"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/llm/models"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/llm/stream"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/llm/tokenize"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/loops"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/narrate"
+    },
+    {
+      "method": "POST",
+      "path": "/brain/query"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/rag-modes"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/snapshot"
+    },
+    {
+      "method": "GET",
+      "path": "/brain/telemetry"
+    },
+    {
+      "method": "GET",
+      "path": "/health/live"
+    },
+    {
+      "method": "GET",
+      "path": "/health/ready"
+    },
+    {
+      "method": "GET",
+      "path": "/metrics"
+    },
+    {
+      "method": "GET",
+      "path": "/ontology/docs"
+    },
+    {
+      "method": "POST",
+      "path": "/ontology/validate/shacl"
+    }
+  ]
+}
