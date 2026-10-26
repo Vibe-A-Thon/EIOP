@@ -123,6 +123,16 @@ def _safe_path(path: str) -> str:
     return path
 
 
+class SSOSessionResponse(BaseModel):
+    """EOIP session issued after a validated OIDC/SAML sign-in (FT-AUTH)."""
+
+    token: str
+    token_type: str = "Bearer"
+    expires_in: int
+    username: str
+    roles: list[str]
+
+
 class IngestionRequest(BaseModel):
     document: dict | list
     dry_run: bool = False
@@ -763,11 +773,11 @@ def create_app():
                              "expires_in": sessions.ttl_seconds, "username": principal.username,
                              "roles": list(principal.roles)}, headers={"Cache-Control": "no-store"})
 
-    @app.get("/api/v1/auth/sso/oidc/callback")
+    @app.get("/api/v1/auth/sso/oidc/callback", response_model=SSOSessionResponse)
     def auth_sso_oidc_callback(request: Request):
         return _sso_finish("oidc", dict(request.query_params))
 
-    @app.post("/api/v1/auth/sso/saml/acs")
+    @app.post("/api/v1/auth/sso/saml/acs", response_model=SSOSessionResponse)
     async def auth_sso_saml_acs(request: Request):
         form = await request.form()
         return _sso_finish("saml", {k: str(v) for k, v in form.items() if k in ("SAMLResponse", "RelayState")})

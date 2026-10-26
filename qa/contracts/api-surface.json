@@ -284,6 +284,14 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/auth/sso/oidc/callback"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/sso/saml/acs"
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/auth/sso/{provider}/login"
     },
     {

@@ -511,9 +511,13 @@ class ZOONStrategy(FormatStrategy):
 
     def serialize(self, obj: Any) -> str:
         # Check if graph structure
-        if isinstance(obj, dict) and ("vertices" in obj or "nodes" in obj):
-            v_list = obj.get("vertices") or obj.get("nodes") or []
-            e_list = obj.get("edges") or []
+        is_dict = isinstance(obj, dict)
+        v_raw = (obj["vertices"] if "vertices" in obj else obj.get("nodes")) if is_dict else None
+        v_list = v_raw if isinstance(v_raw, list) else None
+        e_list = obj.get("edges", []) if is_dict else None
+        # Only a real graph shape (list-valued vertices/nodes and edges) uses the graph layout; any
+        # other dict that merely has a "nodes"/"vertices" key is serialized as a plain object.
+        if is_dict and ("vertices" in obj or "nodes" in obj) and isinstance(v_list, list) and isinstance(e_list, list):
             out = ["#ZOON:GRAPH"]
             out.append(f"#V:{len(v_list)}")
             for v in v_list:

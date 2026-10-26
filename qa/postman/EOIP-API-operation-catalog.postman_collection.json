@@ -9817,6 +9817,62 @@
           "response": []
         },
         {
+          "name": "GET /api/v1/auth/sso/oidc/callback",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/sso/oidc/callback",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "sso",
+                "oidc",
+                "callback"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: auth_sso_oidc_callback_api_v1_auth_sso_oidc_callback_get\nSummary: Auth Sso Oidc Callback\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/auth/sso/saml/acs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/sso/saml/acs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "sso",
+                "saml",
+                "acs"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: auth_sso_saml_acs_api_v1_auth_sso_saml_acs_post\nSummary: Auth Sso Saml Acs\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+          },
+          "response": []
+        },
+        {
           "name": "GET /api/v1/auth/sso/{provider}/login",
           "request": {
             "method": "GET",

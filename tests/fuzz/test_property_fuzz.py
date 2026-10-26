@@ -122,3 +122,15 @@ class TestPropertyOntologyGate:
     def test_random_unregistered_label_always_blocked(self, random_label: str):
         with pytest.raises(MutationBlocked):
             check_vertex(random_label, {"canonical_id": "cid_123"})
+
+
+def test_zoon_non_graph_dict_with_nodes_key_is_serialized_as_object():
+    """Regression (hypothesis, CI 40407083822): {"nodes": <int>} must not take the graph layout."""
+    from eoip.token_formats.engine import TokenFormat, TokenFormatEngine
+
+    strategy = TokenFormatEngine().get_strategy(TokenFormat.ZOON)
+    for payload in ({"nodes": 0}, {"vertices": 3, "edges": 1}, {"nodes": [1], "edges": 7}):
+        text = strategy.serialize(payload)
+        assert text.startswith("#ZOON:OBJ")
+        assert strategy.deserialize(text) == payload
+    assert strategy.serialize({"nodes": [{"id": 1}], "edges": []}).startswith("#ZOON:GRAPH")
