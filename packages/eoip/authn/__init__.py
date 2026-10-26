@@ -322,6 +322,8 @@ class TokenService:
         if principal.tenant_id:
             payload["tenant_id"] = principal.tenant_id
             payload["tenant"] = principal.tenant_id
+        if principal.provider in ("oidc", "saml"):
+            payload["provider"] = principal.provider  # SSO sessions keep their IdP-selected role subset
         header = {"alg": "HS256", "typ": "EOIP"}
         signing_input = (
             _b64u_encode(_canonical(header)) + "." +

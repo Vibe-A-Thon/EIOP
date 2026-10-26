@@ -136,13 +136,16 @@ class CredentialStore:
         self.path = Path(path) if path else default_credentials_path()
         self._lock = threading.RLock()
         self._users: dict[str, CredentialRecord] = {}
-        self._mtime: float | None = None
+        self._mtime: tuple[int, int, int] | None = None
         self._reload(force=True)
 
     # -- persistence -----------------------------------------------------
     def _reload(self, force: bool = False) -> None:
         try:
-            mtime = self.path.stat().st_mtime_ns
+            st = self.path.stat()
+            # Saves replace the file atomically, so the inode changes even when two writes land in
+            # the same coarse mtime tick (otherwise another process could keep stale roles).
+            mtime = (st.st_mtime_ns, st.st_ino, st.st_size)
         except FileNotFoundError:
             if force or self._mtime is not None:
                 self._users, self._mtime = {}, None
@@ -159,7 +162,8 @@ class CredentialStore:
     def _save(self) -> None:
         payload = {"schema": "eoip-credentials/1", "users": [asdict(u) for u in self._users.values()]}
         _write_private(self.path, json.dumps(payload, indent=2, sort_keys=True))
-        self._mtime = self.path.stat().st_mtime_ns
+        st = self.path.stat()
+        self._mtime = (st.st_mtime_ns, st.st_ino, st.st_size)
 
     # -- queries ---------------------------------------------------------
     def is_empty(self) -> bool:
@@ -323,6 +327,21 @@ class CredentialStore:
                     return user.principal("session") if user.enabled and user.password_hash else None
         return None
 
+    def principal_for_sso_session(self, principal_id: str, provider: str, selected_roles: Any) -> Principal | None:
+        """Principal for an SSO session: the user must still exist and be enabled (a password is
+        not required), and roles are the user's *current* stored roles intersected with the roles
+        the IdP groups selected at login -- revocations apply at once, nothing is ever added."""
+        selected = {str(r) for r in (selected_roles or [])}
+        with self._lock:
+            self._reload()
+            for user in self._users.values():
+                if user.principal_id == principal_id:
+                    if not user.enabled:
+                        return None
+                    roles = tuple(r for r in user.roles if r in selected)
+                    return user.principal(provider, roles) if roles else None
+        return None
+
 
 def session_secret(data_dir: Path | None = None) -> bytes:
     """``EOIP_SESSION_SECRET`` (>= 32 chars), else a random key persisted with mode 0600.
@@ -373,7 +392,11 @@ class SessionManager:
         with self._lock:
             if token_sha256(token) in self._revoked:
                 return None
-        principal = self._store.principal_for_id(payload["sub"])
+        if payload.get("provider") in ("oidc", "saml"):
+            principal = self._store.principal_for_sso_session(
+                payload["sub"], payload["provider"], payload.get("roles") or [])
+        else:
+            principal = self._store.principal_for_id(payload["sub"])
         if principal is None:
             return None
         return replace(principal, claims={k: payload[k] for k in ("sub", "iat", "exp", "aud", "iss") if k in payload})

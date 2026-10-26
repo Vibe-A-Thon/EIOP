@@ -225,3 +225,50 @@ jobs:
           name: validation-evidence-pgvector
           path: test-results/
           if-no-files-found: warn
+
+  sso-keycloak:
+    # FT-AUTH: OIDC (code + PKCE) and SAML 2.0 SSO against a real Keycloak (free, start-dev).
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start Keycloak (per-run admin password)
+        run: |
+          pw="$(openssl rand -hex 16)"
+          echo "::add-mask::$pw"
+          docker run -d --name keycloak -p 127.0.0.1:8180:8080 \
+            -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD="$pw" \
+            quay.io/keycloak/keycloak:26.0.7@sha256:4388e2379b7e870a447adbe7b80bd61f5fbf04e925832b19669fda4957f05a81 start-dev
+          for i in $(seq 1 90); do curl -fsS -o /dev/null http://localhost:8180/realms/master && break; sleep 2; done
+          curl -fsS -o /dev/null http://localhost:8180/realms/master
+          {
+            echo "EOIP_LIVE_KEYCLOAK_URL=http://localhost:8180"
+            echo "EOIP_LIVE_KEYCLOAK_ADMIN=admin"
+            echo "EOIP_LIVE_KEYCLOAK_ADMIN_PASSWORD=$pw"
+          } >> "$GITHUB_ENV"
+      - name: Install test dependencies
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Run SSO tests against Keycloak
+        run: >-
+          python -m pytest -q -o addopts="" -p no:cacheprovider --timeout=600
+          tests/security/test_sso_keycloak.py tests/security/test_auth_role_paths.py
+          --junitxml=test-results/sso-keycloak.xml
+      - name: Fail if the Keycloak tests were skipped
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          r = ET.parse("test-results/sso-keycloak.xml").getroot()
+          cases = [c for c in r.iter("testcase") if "test_sso_keycloak" in (c.get("classname") or "")]
+          skipped = [c.get("name") for c in cases if c.find("skipped") is not None]
+          assert cases and not skipped, f"Keycloak SSO tests did not run: {skipped or 'none collected'}"
+          PY
+      - name: Retain SSO evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-evidence-sso
+          path: test-results/
+          if-no-files-found: warn

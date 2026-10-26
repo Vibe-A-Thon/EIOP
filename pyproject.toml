@@ -94,10 +94,15 @@ bi = [
 pgvector = [
   "psycopg[binary]>=3.2,<4",
 ]
+# FT-AUTH: OIDC (httpx, PyJWT core dep) and SAML 2.0 (signxml XML-DSig) single sign-on.
+sso = [
+  "signxml>=4.0,<5",
+  "httpx>=0.27,<1",
+]
 # FT-F06: one extra that installs everything the default test selection needs.
 # Documented install: python -m pip install -c requirements.lock -e ".[test]"
 test = [
-  "eoip[dev,numerics,fileparse,codeparse,reports,semantic,snowflake,quantum,bi,pgvector]",
+  "eoip[dev,numerics,fileparse,codeparse,reports,semantic,snowflake,quantum,bi,pgvector,sso]",
 ]
 dev = [
   "fakesnow>=0.12,<0.13",

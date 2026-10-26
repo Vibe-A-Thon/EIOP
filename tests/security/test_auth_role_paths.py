@@ -188,16 +188,21 @@ def test_asg_file_token_role_comes_from_its_entry(env, store, monkeypatch):
     assert me["roles"] == ["steward"] and me["tenant_id"] == "acme" and me["provider"] == "asg"
 
 
-# -- SSO placeholder ------------------------------------------------------------------
+# -- SSO (disabled unless configured; see tests/security/test_sso_keycloak.py) --------
 
-def test_sso_is_a_disabled_placeholder(client, monkeypatch):
+def test_sso_is_disabled_by_default_and_fails_closed_when_misconfigured(client, monkeypatch):
     providers = client.get("/api/v1/auth/providers").json()
     assert providers["local"]["enabled"] is True
     assert {p["name"]: p["enabled"] for p in providers["sso"]} == {"oidc": False, "saml": False}
     assert client.get("/api/v1/auth/sso/oidc/login").status_code == 501
     assert client.get("/api/v1/auth/sso/nope/login").status_code == 404
+    assert client.get("/api/v1/auth/sso/oidc/callback", params={"state": "x" * 20, "code": "c"}).status_code == 404
+    assert client.post("/api/v1/auth/sso/saml/acs", data={"SAMLResponse": "eA=="}).status_code == 404
     monkeypatch.setenv("EOIP_SSO_PROVIDER", "oidc")
-    with pytest.raises(RuntimeError, match="placeholder"):
+    with pytest.raises(RuntimeError, match="EOIP_OIDC_ISSUER"):
+        api_main.create_app()
+    monkeypatch.setenv("EOIP_SSO_PROVIDER", "kerberos")
+    with pytest.raises(RuntimeError, match="unknown SSO provider"):
         api_main.create_app()
 
 

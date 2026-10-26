@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import re
+import secrets
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
@@ -249,7 +250,7 @@ def create_app():
     configure_json_logging()
     # FT-AUTH: no default/bootstrap principal. Roles come from the authenticated identity:
     # login credentials (session tokens), per-principal API tokens, or ASG file entries.
-    check_sso_configuration()  # SSO is a disabled placeholder; enabling it fails closed
+    check_sso_configuration()  # FT-AUTH: an unknown or incomplete EOIP_SSO_PROVIDER config fails closed
     from apps.api.asg import ASGConfigurationError, load_asg, default_keys_path
     asg = load_asg(default_keys_path(), allow_empty=True)  # fail closed on insecure/invalid config
     credentials = CredentialStore(
@@ -261,6 +262,8 @@ def create_app():
             "EOIP_ADMIN_PASSWORD or --password-file; containers: EOIP_ADMIN_USERNAME + "
             "EOIP_ADMIN_PASSWORD(_FILE) with 'eoip-admin from-env'), or configure EOIP_ASG_FILE")
     sessions = SessionManager(credentials, session_secret(data_root()))
+    from eoip.authn.sso import configure_sso
+    sso_enabled = configure_sso(credentials)  # OIDC / SAML providers from EOIP_SSO_PROVIDER (empty = disabled)
     login_throttle = LoginThrottle()
     logging.getLogger("eoip.asg").info(
         "principals loaded",  # usernames/roles only, never tokens or hashes
@@ -740,7 +743,34 @@ def create_app():
         from eoip.authn.sso import PROVIDERS
         if provider not in PROVIDERS:
             raise HTTPException(404, "Unknown SSO provider")
-        raise HTTPException(501, f"{PROVIDERS[provider].protocol} SSO is a placeholder and not implemented")
+        if provider not in sso_enabled:
+            raise HTTPException(501, f"{PROVIDERS[provider].protocol} SSO is not enabled on this deployment")
+        p = sso_enabled[provider]
+        url = p.begin_login(p.redirect_uri, secrets.token_urlsafe(32))
+        return Response(status_code=302, headers={"Location": url, "Cache-Control": "no-store"})
+
+    def _sso_finish(provider: str, params: dict[str, str]) -> JSONResponse:
+        from eoip.authn import AuthenticationError
+        if provider not in sso_enabled:
+            raise HTTPException(404, "SSO provider not enabled")
+        try:
+            principal = sso_enabled[provider].complete_login(params)
+        except AuthenticationError as exc:
+            log.warning("sso_login_refused", extra={"provider": provider, "reason": str(exc)[:200]})
+            raise HTTPException(401, "SSO sign-in refused") from None
+        log.info("sso_login", extra={"provider": provider, "principal_id": principal.id})
+        return JSONResponse({"token": sessions.issue(principal), "token_type": "Bearer",
+                             "expires_in": sessions.ttl_seconds, "username": principal.username,
+                             "roles": list(principal.roles)}, headers={"Cache-Control": "no-store"})
+
+    @app.get("/api/v1/auth/sso/oidc/callback")
+    def auth_sso_oidc_callback(request: Request):
+        return _sso_finish("oidc", dict(request.query_params))
+
+    @app.post("/api/v1/auth/sso/saml/acs")
+    async def auth_sso_saml_acs(request: Request):
+        form = await request.form()
+        return _sso_finish("saml", {k: str(v) for k, v in form.items() if k in ("SAMLResponse", "RelayState")})
 
     @app.get("/api/v1/auth/whoami")
     def auth_whoami(request: Request):

@@ -14,7 +14,7 @@ PUBLIC = {
     "/ontology/docs", "/api/v1/ontology/docs",
     # Pre-authentication endpoints (apps/api/main.py middleware, route_policy.OPEN).
     "/api/v1/auth/login", "/api/v1/auth/health", "/api/v1/auth/providers",
-    "/api/v1/auth/sso/{provider}/login",
+    "/api/v1/auth/sso/{provider}/login", "/api/v1/auth/sso/oidc/callback", "/api/v1/auth/sso/saml/acs",
 }
 METHODS = {"get", "post", "put", "patch", "delete", "head", "options", "trace"}
 
