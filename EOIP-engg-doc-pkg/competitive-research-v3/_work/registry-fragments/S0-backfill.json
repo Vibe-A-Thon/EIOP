@@ -1,0 +1,1249 @@
+[
+ {
+  "id": "T-C01-apache-hugegraph",
+  "slug": "apache-hugegraph",
+  "category": "C01",
+  "tier": "A",
+  "name": "Apache HugeGraph (Server, Hubble, Loader, Computer, Vermeer, HugeGraph-AI, HugeGraph-ML, storage adapters)",
+  "tier_reason": "EOIP's configured primary/reference backend; deep baseline study required by Master Prompt section 6",
+  "members": [
+   "Server (REST, Gremlin, Cypher)",
+   "PD (placement driver)",
+   "Store (HStore)",
+   "Toolchain (client, Loader, Hubble, Tools, Spark connector)",
+   "Computer",
+   "Vermeer",
+   "HugeGraph-AI (LLM, ML)"
+  ],
+  "official_url": "https://hugegraph.apache.org",
+  "owner": "Apache Software Foundation (top-level project; graduated 2026-01-21)",
+  "latest_version": "1.7.0 (all four component repos; master revision 1.8.0 unreleased)",
+  "version_date": "2025-11-16",
+  "release_cadence": "roughly one release every 9-12 months (1.0.0 2023-02, 1.2.0 2023-12, 1.3.0 2024-03, 1.5.0 2024-12, 1.7.0 2025-11)",
+  "status": "active",
+  "license": "Apache-2.0 in all repos; Docker Hub images are convenience releases, not official ASF distribution artifacts",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0 permits redistribution and OEM use; ASF trademark rules apply to white-labelling the 'Apache HugeGraph' name, and Docker images are convenience binaries.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Low trigger: transitive dependencies (RocksDB dual Apache-2.0/GPLv2, LiteLLM enterprise directory UNVERIFIED for pinned version, CJK analyzers, cypher-for-gremlin) and ASF trademark rules need checking",
+  "community_vs_enterprise": "Single Apache-2.0 distribution; no enterprise edition described in the deep dive",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "EOIP pin hugegraph/hugegraph:1.7.0 is the current release; HA compose wrongly pins PD/Store :latest and labels them enterprise images; no 1.8.0 tag yet",
+  "action_reason": "Assigned Tier A; current reference backend",
+  "decision_summary": "INTEGRATE as primary backend (keep behind GraphStore; move to bytecode/parameterised Gremlin, graph-per-tenant, snapshot backup); BUILD portable IR instead of the Cypher translator, EOIP ACL and vector sidecar; DEFER scale-out and MCP",
+  "sources": [
+   {
+    "title": "GitHub releases API apache/hugegraph",
+    "url": "https://api.github.com/repos/apache/hugegraph/releases",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "HugeGraph 1.7.0 release notes",
+    "url": "https://hugegraph.apache.org/docs/changelog/hugegraph-1.7.0-release-notes/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Apache Incubator status page",
+    "url": "https://incubator.apache.org/projects/hugegraph.html",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "ASF announcement of new top-level project",
+    "url": "https://news.apache.org/foundation/entry/the-apache-software-foundation-announces-new-top-level-project-3",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "apache/hugegraph source at tag 1.7.0",
+    "url": "https://github.com/apache/hugegraph/tree/1.7.0",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "cypher-for-gremlin README",
+    "url": "https://github.com/opencypher/cypher-for-gremlin",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.85,
+  "top_strengths": [
+   "STR-apache-hugegraph-01",
+   "STR-apache-hugegraph-02",
+   "STR-apache-hugegraph-03"
+  ],
+  "top_inversions": [
+   "INV-apache-hugegraph-01",
+   "INV-apache-hugegraph-02",
+   "INV-apache-hugegraph-03"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-apache-hugegraph.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C01-neo4j",
+  "slug": "neo4j",
+  "category": "C01",
+  "tier": "A",
+  "name": "Neo4j (Community, Enterprise, Infinigraph, GDS, Bloom, NeoDash, Aura, NVL)",
+  "tier_reason": "Required EOIP backend (adapter neo4j.py, BL-03) and the market-reference labelled property graph",
+  "members": [
+   "Community Edition",
+   "Enterprise Edition",
+   "Infinigraph",
+   "GDS",
+   "Bloom",
+   "NeoDash Labs",
+   "NeoDash commercial / Dashboards",
+   "Enterprise Studio",
+   "Aura",
+   "NVL",
+   "n10s",
+   "APOC Core"
+  ],
+  "official_url": "https://neo4j.com",
+  "owner": "Neo4j, Inc. (code owned by Neo4j Sweden AB)",
+  "latest_version": "Neo4j 2026.09.0 (current CalVer); 5.26.32 LTS (supported to 2028-06-06)",
+  "version_date": "2026-09-21",
+  "release_cadence": "monthly CalVer releases since 2025.01, each supported only until the next; 5.26 is LTS; next LTS 2026.LTS planned Nov 2026",
+  "status": "active",
+  "license": "Community GPLv3 (commercial agreement supersedes); Enterprise commercial; GDS OpenGDS GPLv3 plus closed code (EE needs licence file); Bloom activation key; NeoDash Labs Apache-2.0 unmaintained; n10s and APOC Core Apache-2.0; NVL licence UNVERIFIED (see LICENSE.txt)",
+  "license_class": "mixed",
+  "redistribution_notes": "CE is GPLv3, so bundling in a white-label appliance creates GPL distribution duties; EE needs a commercial agreement with OEM terms not public. EOIP ships only the client and no Neo4j binaries, Bloom or NVL.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "GPLv3 Community Edition bundling duties; EE/OEM terms not public; NVL licence needs review",
+  "community_vs_enterprise": "CE is single-instance only (GDS CE limited to 4 cores); EE adds RBAC, database-per-tenant, clustering and closed modules; Infinigraph sharding is a separate subscription not on Aura",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud",
+   "desktop"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "neo4j:5-community resolves to the 5.26 LTS line, not the current release; GDS moved from 2.x to CalVer at 2026.03; NeoDash Labs unmaintained",
+  "action_reason": "Assigned Tier A; required supported backend",
+  "decision_summary": "INTEGRATE as supported backend behind GraphStore (customer-supplied, no binaries shipped); BUILD Cypher/GQL compiler, portable schema contract, tenancy and ACL; optional GDS and vector; REJECT n10s, Bloom and NVL embedding",
+  "sources": [
+   {
+    "title": "Neo4j release notes",
+    "url": "https://neo4j.com/docs/release-notes/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "endoflife.date Neo4j",
+    "url": "https://endoflife.date/neo4j",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "neo4j/neo4j repository (LICENSE, README)",
+    "url": "https://github.com/neo4j/neo4j",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Neo4j Operations Manual",
+    "url": "https://neo4j.com/docs/operations-manual/current/introduction/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Neo4j Cypher Manual",
+    "url": "https://neo4j.com/docs/cypher-manual/current/queries/select-version/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Neo4j Query API",
+    "url": "https://neo4j.com/docs/query-api/current/",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.8,
+  "top_strengths": [
+   "STR-neo4j-01",
+   "STR-neo4j-02",
+   "STR-neo4j-03",
+   "STR-neo4j-04",
+   "STR-neo4j-05",
+   "STR-neo4j-06"
+  ],
+  "top_inversions": [
+   "INV-neo4j-01",
+   "INV-neo4j-02",
+   "INV-neo4j-03",
+   "INV-neo4j-04",
+   "INV-neo4j-05",
+   "INV-neo4j-06"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-neo4j.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C01-memgraph",
+  "slug": "memgraph",
+  "category": "C01",
+  "tier": "A",
+  "name": "Memgraph (with MAGE)",
+  "tier_reason": "Candidate extra backend (Bolt/Cypher compatible) and direct competitor in GraphRAG/agent-memory positioning",
+  "members": [
+   "Memgraph Community Edition (BSL)",
+   "Memgraph Enterprise (MEL)",
+   "MAGE query modules",
+   "Memgraph Lab",
+   "Memgraph Cloud",
+   "ai-toolkit (mcp-memgraph)"
+  ],
+  "official_url": "https://memgraph.com",
+  "owner": "Memgraph Ltd",
+  "latest_version": "v3.13.2",
+  "version_date": "2026-10-09",
+  "release_cadence": "roughly monthly minors with patch releases",
+  "status": "active",
+  "license": "Business Source License 1.1 (Additional Use Grant dated 2026-01-01 from v3.8.0) and Memgraph Enterprise License; Lab under proprietary Lab User Licence Agreement; MAGE Apache-2.0 up to v3.7.2 (archived repo), BSL since v3.8.0",
+  "license_class": "source-available",
+  "redistribution_notes": "BSL is not an open-source licence per its own text; bundling current Memgraph or MAGE is not assumed permitted. Treat as customer-licensed backend and never bundle.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "BSL 1.1 additional-use grant change at v3.8.0 and MAGE relicensing from Apache-2.0 to BSL on repo merge",
+  "community_vs_enterprise": "Database-per-tenant, RBAC/LBAC/PBAC and multiple non-default databases require Enterprise; Community gives one usable production database",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud",
+   "desktop"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Pricing page calls Community open source but licence text says BSL is not open source; MAGE merged into main repo at v3.8.0 and old repo archived; enterprise licence offline activation not verified",
+  "action_reason": "Assigned Tier A; credible additional backend and competitor",
+  "decision_summary": "INTEGRATE as optional customer-licensed Bolt backend (P2); BUILD deep-path pushdown IR, tenant placement, ACL-aware retrieval and OIDC MCP routing; EXPERIMENT in-engine vector/text; REJECT bundling current BSL MAGE",
+  "sources": [
+   {
+    "title": "Memgraph release notes",
+    "url": "https://memgraph.com/docs/release-notes",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "memgraph/memgraph LICENSE",
+    "url": "https://github.com/memgraph/memgraph/blob/master/LICENSE",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "BSL.txt at v3.13.2",
+    "url": "https://github.com/memgraph/memgraph/blob/v3.13.2/licenses/BSL.txt",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "memgraph/mage (archived)",
+    "url": "https://github.com/memgraph/mage",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Enabling Memgraph Enterprise",
+    "url": "https://memgraph.com/docs/database-management/enabling-memgraph-enterprise",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Memgraph Legal",
+    "url": "https://memgraph.com/legal",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.82,
+  "top_strengths": [
+   "STR-memgraph-01",
+   "STR-memgraph-02",
+   "STR-memgraph-03",
+   "STR-memgraph-04",
+   "STR-memgraph-05"
+  ],
+  "top_inversions": [
+   "INV-memgraph-01",
+   "INV-memgraph-02",
+   "INV-memgraph-03",
+   "INV-memgraph-04"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-memgraph.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C01-kuzu",
+  "slug": "kuzu",
+  "category": "C01",
+  "tier": "B",
+  "name": "Kùzu and successors/forks (LadybugDB, RyuGraph, Bighorn)",
+  "tier_reason": "Embedded columnar/CSR/worst-case-optimal-join architecture reference; upstream archived 2025 (Master Prompt section 5.1); not a supported EOIP backend",
+  "members": [
+   "Kùzu v0.11.3",
+   "LadybugDB",
+   "RyuGraph",
+   "Bighorn"
+  ],
+  "official_url": "https://github.com/kuzudb/kuzu",
+  "owner": "Kùzu Inc. (archived); LadybugDB Developers for the main fork",
+  "latest_version": "Kùzu v0.11.3 (final); LadybugDB v0.21.2",
+  "version_date": "2025-10-10",
+  "release_cadence": "none for Kùzu (archived); LadybugDB releases late Sep-Oct 2026",
+  "status": "archived",
+  "license": "MIT (Kùzu and the forks)",
+  "license_class": "permissive",
+  "redistribution_notes": "MIT allows OEM embedding and white-label redistribution with notice kept; the concern is operational, since embedding archived C++ means EOIP owns security patching.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "No licence trigger; trigger is operational (patch ownership of archived code)",
+  "community_vs_enterprise": "No enterprise edition; community fork governance is young",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "historical",
+  "resolution_note": "Kùzu repo archived 2025-10-10 (last release v0.11.3); LadybugDB is the only viable continuation; RyuGraph 2026 activity UNVERIFIED; Bighorn dormant",
+  "action_reason": "Assigned Tier B architecture reference; archived upstream recorded",
+  "decision_summary": "EXPERIMENT with LadybugDB as optional non-authoritative sidecar; BUILD CSR projection with WCO-style joins and algorithms in-house; REJECT Kùzu as backend adapter, DEFER LadybugDB adapter",
+  "sources": [
+   {
+    "title": "Kùzu GitHub releases API",
+    "url": "https://api.github.com/repos/kuzudb/kuzu/releases",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "kuzudb/kuzu repository",
+    "url": "https://github.com/kuzudb/kuzu",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "KÙZU Graph Database Management System (CIDR 2023)",
+    "url": "https://vldb.org/cidrdb/2023/kuzu-graph-database-management-system.html",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "LadybugDB repository",
+    "url": "https://github.com/LadybugDB/ladybug",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "gdotv: Kuzu legacy and the new wave of embedded graph databases",
+    "url": "https://gdotv.com/blog/kuzu-legacy-embedded-graph-database-landscape/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "RyuGraph repository",
+    "url": "https://github.com/predictable-labs/ryugraph",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.7,
+  "top_strengths": [
+   "STR-kuzu-01",
+   "STR-kuzu-02",
+   "STR-kuzu-03"
+  ],
+  "top_inversions": [
+   "INV-kuzu-01",
+   "INV-kuzu-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-kuzu.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C01-arangodb",
+  "slug": "arangodb",
+  "category": "C01",
+  "tier": "B",
+  "name": "ArangoDB",
+  "tier_reason": "Multi-model (document + graph + search + vector) reference; licence change from Apache 2.0 to BUSL-1.1 directly relevant to EOIP redistribution",
+  "members": [
+   "ArangoDB Community",
+   "ArangoDB Enterprise",
+   "ArangoSearch",
+   "vector index",
+   "managed cloud (Arango)"
+  ],
+  "official_url": "https://arango.ai",
+  "owner": "ArangoDB Inc. (brand 'Arango')",
+  "latest_version": "3.12.12 (latest patch in 3.12 series per release notes; 4.0 in development)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "3.12 patch series; 3.10 and 3.11 reached end of life 2025-05-30",
+  "status": "active",
+  "license": "Source: Business Source License 1.1 since 3.12 (previously Apache 2.0); prepackaged Community binaries: ArangoDB Community License (100 GiB dataset production limit, no commercial use or redistribution); Enterprise commercial",
+  "license_class": "source-available",
+  "redistribution_notes": "BUSL-1.1 forbids offering a commercial service giving third parties access to databases; Community License forbids commercial use and embedding. White-label bundling would need a negotiated Enterprise/OEM agreement.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "BUSL-1.1 and Community License restrictions on commercial service and redistribution",
+  "community_vs_enterprise": "Community License limits production to 100 GiB data and bars commercial use; Enterprise/OEM requires negotiated agreement",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "3.12.12 release date unverified (Wikipedia lists 3.12.11 with conflicting August 2026 dates); offline operator/image mirroring not verified",
+  "action_reason": "Assigned Tier B; licence change relevance",
+  "decision_summary": "REJECT as bundled engine, DEFER as customer-licensed adapter; BUILD hybrid retrieval+traversal QueryPlan template and supply-chain licence gate; EXPERIMENT tenant-affine partitioning",
+  "sources": [
+   {
+    "title": "ArangoDB LICENSE",
+    "url": "https://github.com/arangodb/arangodb/blob/devel/LICENSE",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Evolving ArangoDB's Licensing Model for a Sustainable Future",
+    "url": "https://arango.ai/?p=2755",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Download ArangoDB",
+    "url": "https://arango.ai/downloads/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "ArangoDB release notes",
+    "url": "https://docs.arango.ai/arangodb/4.0/release-notes/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "What's new in 3.12",
+    "url": "https://docs.arango.ai/arangodb/4.x/release-notes/version-3.12/whats-new-in-3-12/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Cluster deployment",
+    "url": "https://docs.arango.ai/arangodb/3.12/deploy/cluster/",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.7,
+  "top_strengths": [
+   "STR-arangodb-01",
+   "STR-arangodb-02"
+  ],
+  "top_inversions": [
+   "INV-arangodb-01",
+   "INV-arangodb-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-arangodb.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C02-stardog",
+  "slug": "stardog",
+  "category": "C02",
+  "tier": "A",
+  "name": "Stardog (incl. Voicebox)",
+  "tier_reason": "Leading commercial knowledge-graph platform; direct competitor on reasoning, virtualisation and LLM question answering",
+  "members": [
+   "Stardog Platform (server)",
+   "Studio",
+   "Designer",
+   "Explorer",
+   "Voicebox",
+   "Launchpad",
+   "Stardog Free"
+  ],
+  "official_url": "https://www.stardog.com",
+  "owner": "Stardog Union, Inc. (private, US)",
+  "latest_version": "Stardog Platform 12.2.0 (also 12.1.5; 11.2.5 maintenance line)",
+  "version_date": "2026-10-14",
+  "release_cadence": "minor release about every four months with patches; two maintained lines",
+  "status": "active",
+  "license": "Proprietary; Stardog Free is an evaluation-only EULA (revised 2022-12-13); Enterprise terms not examined",
+  "license_class": "proprietary",
+  "redistribution_notes": "Redistribution/OEM not permitted under published terms; Free EULA forbids sublicensing, derivative works and competitive evaluation; white-label embedding needs a negotiated OEM agreement.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Proprietary terms bar OEM/redistribution; Voicebox egress of query results to external LLMs",
+  "community_vs_enterprise": "Free is evaluation-only; Enterprise via sales contract (terms UNVERIFIED)",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "Voicebox is a feature of one vendor, not a separate company; Karaoke on-prem appliance is historical; offline licence activation UNVERIFIED; no acquisition found",
+  "action_reason": "Assigned Tier A",
+  "decision_summary": "INTEGRATE customer-supplied Stardog as one more SPARQL backend; BUILD bounded RL/Datalog reasoning subset, explanation traces, R2RML import and grounded NL-to-query/abstention; REUSE pySHACL; EXPERIMENT tiered reasoning planner",
+  "sources": [
+   {
+    "title": "Stardog docs home",
+    "url": "https://docs.stardog.com/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Inference Engine",
+    "url": "https://docs.stardog.com/inference-engine/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Virtual Graphs",
+    "url": "https://docs.stardog.com/virtual-graphs/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Data Quality Constraints",
+    "url": "https://docs.stardog.com/data-quality-constraints",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "High Availability Cluster",
+    "url": "https://docs.stardog.com/high-availability-cluster/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Mastiff Storage Engine",
+    "url": "https://www.stardog.com/blog/mastiff-storage-engine",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.77,
+  "top_strengths": [
+   "STR-stardog-01",
+   "STR-stardog-02",
+   "STR-stardog-03",
+   "STR-stardog-04",
+   "STR-stardog-05"
+  ],
+  "top_inversions": [
+   "INV-stardog-01",
+   "INV-stardog-02",
+   "INV-stardog-03",
+   "INV-stardog-04"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-stardog.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C04-splink",
+  "slug": "splink",
+  "category": "C04",
+  "tier": "A",
+  "name": "Splink (probabilistic record linkage, Ministry of Justice UK)",
+  "tier_reason": "OSS probabilistic record linkage; primary REUSE candidate for verified EOIP gap BL-36 (probabilistic ER absent)",
+  "members": [
+   "splink 5.x",
+   "splink 4.x maintenance line"
+  ],
+  "official_url": "https://github.com/moj-analytical-services/splink",
+  "owner": "UK Ministry of Justice Analytical Services",
+  "latest_version": "5.0.0 (4.x line: 4.0.17)",
+  "version_date": "2026-09-28",
+  "release_cadence": "active; 4.x maintenance releases continue alongside 5.0.0 (4.0.17 on 2026-09-03)",
+  "status": "active",
+  "license": "MIT (copyright 2020 Ministry of Justice)",
+  "license_class": "permissive",
+  "redistribution_notes": "MIT permits redistribution and white-labelling with notices kept; transitive dependencies (DuckDB, sqlglot, PyArrow) still go through the SBOM licence scan.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "No trigger; dependency SBOM licence scan only",
+  "community_vs_enterprise": "Single OSS distribution; no enterprise edition",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "GitHub release page shows 18 Sep (PyPI date of 5.0.0.dev5); PyPI 2026-09-28 taken as authoritative; telemetry not verified",
+  "action_reason": "Assigned Tier A; REUSE candidate for BL-36",
+  "decision_summary": "REUSE for probabilistic scoring after POC-ER-01 (optional ER extra on DuckDB); BUILD identity ledger, deterministic keys, match explanation, epistemic separation and ER evaluation harness; DEFER Spark scale-out; EXPERIMENT active learning",
+  "sources": [
+   {
+    "title": "Splink on PyPI",
+    "url": "https://pypi.org/project/splink/5.0.0/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Splink documentation",
+    "url": "https://moj-analytical-services.github.io/splink/index.html",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Fellegi-Sunter guide",
+    "url": "https://moj-analytical-services.github.io/splink/topic_guides/theory/fellegi_sunter.html",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Training rationale guide",
+    "url": "https://moj-analytical-services.github.io/splink/topic_guides/training/training_rationale.html",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Splink v5.0.0 release",
+    "url": "https://github.com/moj-analytical-services/splink/releases/tag/v5.0.0",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Term-frequency guide",
+    "url": "https://moj-analytical-services.github.io/splink/topic_guides/comparisons/term-frequency.html",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.76,
+  "top_strengths": [
+   "STR-splink-01",
+   "STR-splink-02",
+   "STR-splink-03",
+   "STR-splink-04",
+   "STR-splink-05"
+  ],
+  "top_inversions": [
+   "INV-splink-01",
+   "INV-splink-02",
+   "INV-splink-03"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-splink.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C04-senzing",
+  "slug": "senzing",
+  "category": "C04",
+  "tier": "A",
+  "name": "Senzing (embeddable real-time entity resolution SDK)",
+  "tier_reason": "Leading embeddable real-time principle-based ER engine; benchmark for EOIP identity layer (BL-34/35/36)",
+  "members": [
+   "Senzing SDK (C core with Python/Java bindings)",
+   "native CLI tools",
+   "MCP server (optional)"
+  ],
+  "official_url": "https://senzing.com",
+  "owner": "Senzing, Inc.",
+  "latest_version": "Senzing SDK 4.4.2",
+  "version_date": "2026-10-01",
+  "release_cadence": "frequent; 4.4.0 2026-08-31, 4.4.1 2026-09-17, 4.4.2 2026-10-01; each minor line supported two years",
+  "status": "active",
+  "license": "Proprietary EULA 'May 2026.v1' (non-exclusive, non-transferable, no sublicensing, no distribution right, audit rights, no publishing performance comparisons)",
+  "license_class": "proprietary",
+  "redistribution_notes": "Standard EULA bars distribution, sublicensing and third-party access, so EOIP cannot bundle it; use a customer-held licence or a negotiated OEM/partner agreement.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "EULA bars distribution and benchmark publication; hardware ownership and audit clauses",
+  "community_vs_enterprise": "Limited free use (source-record cap); production priced per Data Source Record (e.g. $58,560/yr for 10M DSRs); custom OEM terms by negotiation",
+  "deployment_modes": [
+   "self-hosted",
+   "embedded"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "Offline licence activation mechanics NOT PUBLICLY VERIFIED; SQLite limited to under 1M records, PostgreSQL for one-node",
+  "action_reason": "Assigned Tier A",
+  "decision_summary": "BUILD native real-time ER with merge/unmerge ledger and principle-based patterns; INTEGRATE Senzing as optional customer-licensed identity authority (legal review); REJECT white-label embedding under standard EULA",
+  "sources": [
+   {
+    "title": "Senzing releases",
+    "url": "https://www.senzing.com/releases",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Senzing End User Licensing Agreement",
+    "url": "https://senzing.com/?p=37133",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Senzing pricing",
+    "url": "https://senzing.com/pricing",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Senzing v4 System Requirements",
+    "url": "https://www.senzing.com/docs/release/4/4_0_hw_sw",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Principle-based entity resolution explained (whitepaper)",
+    "url": "https://senzing.com/wp-content/uploads/2026/07/Principle-Based-Entity-Resolution_062226.pdf",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "sz-sdk-python repository",
+    "url": "https://github.com/senzing-garage/sz-sdk-python",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.69,
+  "top_strengths": [
+   "STR-senzing-01",
+   "STR-senzing-02",
+   "STR-senzing-03",
+   "STR-senzing-04",
+   "STR-senzing-05",
+   "STR-senzing-06"
+  ],
+  "top_inversions": [
+   "INV-senzing-01",
+   "INV-senzing-02",
+   "INV-senzing-03"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-senzing.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C05-apache-tika",
+  "slug": "apache-tika",
+  "category": "C05",
+  "tier": "B",
+  "name": "Apache Tika",
+  "tier_reason": "Document-parsing reuse candidate; adjacent enabling technology, not a competitor",
+  "members": [
+   "Apache Tika 4.x",
+   "Tika 3.x maintenance line",
+   "tika-server",
+   "tika-python client (third-party)"
+  ],
+  "official_url": "https://tika.apache.org",
+  "owner": "Apache Software Foundation",
+  "latest_version": "4.1.0 (4.0.0 2026-08-21; 3.3.3 support release 2026-10-13)",
+  "version_date": "2026-09-29",
+  "release_cadence": "4.x minor roughly monthly; 3.x supported maintenance line",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Redistribution-safe with NOTICE handling; run an SBOM licence scan over bundled parser libraries.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "No trigger beyond dependency NOTICE aggregation",
+  "community_vs_enterprise": "Single ASF distribution; no enterprise edition",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "PyPI 'tika' (3.3.2) is a third-party Python client (tika-python), not an ASF release; air-gap requires baking the jar and disabling VLM parsers",
+  "action_reason": "Assigned Tier B",
+  "decision_summary": "INTEGRATE as optional tika-server sidecar for parsing breadth; BUILD EOIP evidence-span anchor layer, air-gap guardrails and SBOM/CVE watch; REJECT Tika for high-fidelity PDF layout",
+  "sources": [
+   {
+    "title": "Apache Tika website and news",
+    "url": "https://tika.apache.org/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Tika security page",
+    "url": "https://tika.apache.org/security.html",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Maven Central tika-core metadata",
+    "url": "https://repo1.maven.org/maven2/org/apache/tika/tika-core/maven-metadata.xml",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "tika-python README",
+    "url": "https://github.com/chrismattmann/tika-python",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.82,
+  "top_strengths": [
+   "STR-apache-tika-01"
+  ],
+  "top_inversions": [
+   "INV-apache-tika-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-apache-tika.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C06-datahub",
+  "slug": "datahub",
+  "category": "C06",
+  "tier": "B",
+  "name": "DataHub",
+  "tier_reason": "Main open-source metadata graph reference for EOIP catalog and lineage (CAP-40, CAP-42)",
+  "members": [
+   "DataHub core (OSS)",
+   "DataHub Cloud"
+  ],
+  "official_url": "https://datahub.com",
+  "owner": "DataHub (datahub-project; company formerly Acryl Data)",
+  "latest_version": "v1.7.0 stable (v1.8.0rc5 pre-release)",
+  "version_date": "2026-08-04",
+  "release_cadence": "stable minors plus patch and maintenance lines (v1.6.0.3 2026-09-25)",
+  "status": "active",
+  "license": "Apache-2.0 (core)",
+  "license_class": "permissive",
+  "redistribution_notes": "Redistribution, embedding and OEM use permitted subject to NOTICE and attribution; no copyleft trigger for the core. Optional Neo4j backend is GPLv3 and Elasticsearch terms differ from OpenSearch.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "False for the OSS core; check bundled dependencies (optional Neo4j GPLv3, Elasticsearch licence) before redistribution",
+  "community_vs_enterprise": "DataHub Cloud adds features such as search access controls",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Rebrand date from Acryl Data not verified; v1.7.0.1 patch date UNVERIFIED; air-gap viable once images are mirrored (reasoned, no mandatory cloud call found)",
+  "action_reason": "Assigned Tier B",
+  "decision_summary": "INTEGRATE DataHub as source/target and OpenLineage intake; BUILD aspect-precedence contract, event sourcing, source-ACL enforcement (P0) and lineage-style MCP tool; DEFER GraphQL",
+  "sources": [
+   {
+    "title": "DataHub LICENSE",
+    "url": "https://raw.githubusercontent.com/datahub-project/datahub/master/LICENSE",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "DataHub tags",
+    "url": "https://github.com/datahub-project/datahub/tags",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "DataHub releases",
+    "url": "https://docs.datahub.com/docs/releases",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Metadata model",
+    "url": "https://docs.datahub.com/docs/metadata-modeling/metadata-model",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "MCP/MCL",
+    "url": "https://docs.datahub.com/docs/advanced/mcp-mcl",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Policies",
+    "url": "https://docs.datahub.com/docs/authorization/policies",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.73,
+  "top_strengths": [
+   "STR-datahub-01",
+   "STR-datahub-02",
+   "STR-datahub-03"
+  ],
+  "top_inversions": [
+   "INV-datahub-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-datahub.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C07-palantir-foundry",
+  "slug": "palantir-foundry",
+  "category": "C07",
+  "tier": "A",
+  "name": "Palantir Foundry Ontology and AIP",
+  "tier_reason": "Closest operational-ontology competitor; reference buyers use for 'ontology + actions + AI'",
+  "members": [
+   "Foundry",
+   "AIP",
+   "Apollo",
+   "Rubix",
+   "Ontology (Object Storage v2)",
+   "OSDK",
+   "Palantir MCP / Ontology MCP"
+  ],
+  "official_url": "https://www.palantir.com",
+  "owner": "Palantir Technologies Inc. (NYSE: PLTR)",
+  "latest_version": "no public version numbers (continuous delivery); Ontology backend Object Storage v2",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "continuous delivery",
+  "status": "active",
+  "license": "Proprietary commercial software under enterprise contract; palantir/osdk-ts licence not visible (UNVERIFIED)",
+  "license_class": "proprietary",
+  "redistribution_notes": "No public white-label or OEM programme; nothing to redistribute.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "No redistribution path; not flagged as trigger in deep dive",
+  "community_vs_enterprise": "No community edition; enterprise contract only",
+  "deployment_modes": [
+   "self-hosted",
+   "kubernetes",
+   "saas"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "No name collision; Palantir MCP and Ontology as Code are beta; NVIDIA reference architecture is announced, not a SKU; Gotham out of scope",
+  "action_reason": "Assigned Tier A",
+  "decision_summary": "BUILD parity for typed ontology with interfaces, governed ontology change, label propagation along lineage, tenant isolation, scoped MCP actions, egress gating and air-gap install; no integration or reuse of Palantir components",
+  "sources": [
+   {
+    "title": "Ontology backend overview",
+    "url": "https://www.palantir.com/docs/foundry/object-backend/overview/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Ontology SDK overview",
+    "url": "https://www.palantir.com/docs/foundry/ontology-sdk/overview/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Rubix substrate",
+    "url": "https://palantir.com/docs/foundry/architecture-center/rubix/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "AIP overview",
+    "url": "https://www.palantir.com/docs/foundry/aip/overview/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Markings",
+    "url": "https://www.palantir.com/docs/foundry/security/markings/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Ontology MCP overview",
+    "url": "https://palantir.com/docs/foundry/ontology-mcp/overview/",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.78,
+  "top_strengths": [
+   "STR-palantir-foundry-01",
+   "STR-palantir-foundry-02",
+   "STR-palantir-foundry-03",
+   "STR-palantir-foundry-04",
+   "STR-palantir-foundry-05",
+   "STR-palantir-foundry-06"
+  ],
+  "top_inversions": [
+   "INV-palantir-foundry-01",
+   "INV-palantir-foundry-02",
+   "INV-palantir-foundry-03",
+   "INV-palantir-foundry-04",
+   "INV-palantir-foundry-05",
+   "INV-palantir-foundry-06"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-palantir-foundry.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C07-glean-enterprise",
+  "slug": "glean-enterprise",
+  "category": "C07",
+  "tier": "A",
+  "name": "Glean (enterprise search, Knowledge Graph and Enterprise Graph)",
+  "tier_reason": "Closest enterprise-knowledge competitor; reference for permission-aware enterprise search and assistants",
+  "members": [
+   "Enterprise search",
+   "Knowledge Graph",
+   "Personal Graph",
+   "Enterprise Graph",
+   "Glean Assistant",
+   "Glean Agents",
+   "MCP server and gateway",
+   "Indexing SDK"
+  ],
+  "official_url": "https://www.glean.com",
+  "owner": "Glean Technologies, Inc.",
+  "latest_version": "no public version numbers (SaaS); Enterprise Graph and third-generation Assistant GA at Glean:LIVE",
+  "version_date": "2025-09-25",
+  "release_cadence": "continuous delivery",
+  "status": "active",
+  "license": "Proprietary SaaS, per-seat contracts, no published price list; Indexing SDK licence not verified",
+  "license_class": "proprietary",
+  "redistribution_notes": "Single-tenant isolation available; no white-label or OEM; nothing to redistribute.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "No redistribution path; not flagged in deep dive",
+  "community_vs_enterprise": "SaaS only; Customer Hosted is operated by Glean, on-prem with Dell announced only",
+  "deployment_modes": [
+   "saas",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "production",
+  "resolution_note": "Name collision resolved: this is Glean Technologies' SaaS, not Meta's open-source Glean code indexer (C15)",
+  "action_reason": "Assigned Tier A",
+  "decision_summary": "BUILD source-ACL enforcement in retrieval (P0), ACL-synced connectors, hybrid retrieval, OAuth MCP server and air-gapped operation; REUSE vector index and Ollama/vLLM with own egress gateway; EXPERIMENT personalisation",
+  "sources": [
+   {
+    "title": "Glean docs: Knowledge Graph",
+    "url": "https://docs.glean.com/security/knowledge-graph",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Glean blog: knowledge graphs and context for enterprise AI",
+    "url": "https://www.glean.com/blog/knowledge-graph-agentic-engine",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Glean docs: About Glean MCP server",
+    "url": "https://docs.glean.com/administration/platform/mcp/about",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Glean developers: Indexing SDK permissions",
+    "url": "https://developers.glean.com/libraries/indexing-sdk/permissions",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Glean docs: About Connectors",
+    "url": "https://docs.glean.com/connectors/about",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Glean docs: Feature availability by LLM key",
+    "url": "https://docs.glean.com/administration/llm-key-feature-availability",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.72,
+  "top_strengths": [
+   "STR-glean-enterprise-01",
+   "STR-glean-enterprise-02",
+   "STR-glean-enterprise-03",
+   "STR-glean-enterprise-04",
+   "STR-glean-enterprise-05",
+   "STR-glean-enterprise-06"
+  ],
+  "top_inversions": [
+   "INV-glean-enterprise-01",
+   "INV-glean-enterprise-02",
+   "INV-glean-enterprise-03",
+   "INV-glean-enterprise-04",
+   "INV-glean-enterprise-05"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-glean-enterprise.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C07-microsoft-graph-copilot-fabric",
+  "slug": "microsoft-graph-copilot-fabric",
+  "category": "C07",
+  "tier": "A",
+  "name": "Microsoft Graph, M365 Copilot connectors, Fabric graph/ontology (Fabric IQ)",
+  "tier_reason": "Default buyer comparison; most prospects already pay for Microsoft 365 and many run Fabric",
+  "members": [
+   "Microsoft Graph",
+   "Graph Data Connect",
+   "Microsoft 365 Copilot connectors",
+   "Semantic indexing for Copilot",
+   "Work IQ API",
+   "Graph in Microsoft Fabric",
+   "Fabric IQ ontology (preview)"
+  ],
+  "official_url": "https://learn.microsoft.com/en-us/fabric/graph/overview",
+  "owner": "Microsoft Corporation",
+  "latest_version": "Graph in Fabric GA; Fabric IQ GA; Fabric IQ ontology item still preview; Microsoft Graph v1.0 REST",
+  "version_date": "2026-06-02",
+  "release_cadence": "continuous SaaS delivery",
+  "status": "active",
+  "license": "Proprietary SaaS under Microsoft product terms and Microsoft APIs Terms of Use; billed per user, Fabric capacity unit or Copilot Credit",
+  "license_class": "proprietary",
+  "redistribution_notes": "Nothing to redistribute and no white-label/OEM offering; integrate through Graph and connector APIs under their terms of use.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "API terms of use for any EOIP connector reading M365 content",
+  "community_vs_enterprise": "No community edition; licensed via M365/Copilot add-on/E7 or Fabric capacity",
+  "deployment_modes": [
+   "saas",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "production",
+  "resolution_note": "Entry spans several layers with different statuses; Fabric ontology item remains preview (old experience retires 2027-01-31); NL2GQL via Data Agent preview; Graph-in-Fabric in GCC High UNVERIFIED",
+  "action_reason": "Assigned Tier A",
+  "decision_summary": "BUILD M365 Graph connector, source-ACL enforcement beyond Microsoft's floor, synced vs federated source mode, air-gap acceptance kit, as-of graph and ontology governance; EXPERIMENT MCP endpoint for Copilot federated connectors and QueryPlan-to-GQL compiler; DEFER native GQL",
+  "sources": [
+   {
+    "title": "What Is Ontology (Preview)?",
+    "url": "https://learn.microsoft.com/en-us/fabric/iq/ontology/overview",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "What is graph in Microsoft Fabric?",
+    "url": "https://learn.microsoft.com/en-us/fabric/graph/overview",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "How graph in Microsoft Fabric works",
+    "url": "https://learn.microsoft.com/en-us/fabric/graph/how-graph-works",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Current limitations of graph in Microsoft Fabric",
+    "url": "https://learn.microsoft.com/en-us/fabric/graph/limitations",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.78,
+  "top_strengths": [
+   "STR-microsoft-graph-copilot-fabric-01",
+   "STR-microsoft-graph-copilot-fabric-02",
+   "STR-microsoft-graph-copilot-fabric-03",
+   "STR-microsoft-graph-copilot-fabric-04",
+   "STR-microsoft-graph-copilot-fabric-05"
+  ],
+  "top_inversions": [
+   "INV-microsoft-graph-copilot-fabric-01",
+   "INV-microsoft-graph-copilot-fabric-02",
+   "INV-microsoft-graph-copilot-fabric-03",
+   "INV-microsoft-graph-copilot-fabric-04"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-microsoft-graph-copilot-fabric.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C07-servicenow-kg",
+  "slug": "servicenow-kg",
+  "category": "C07",
+  "tier": "A",
+  "name": "ServiceNow Knowledge Graph, CMDB/CSDM, Workflow Data Fabric, RaptorDB, Now Assist / Otto",
+  "tier_reason": "ITSM knowledge-graph competitor and also an EOIP source system (incidents, changes, KB, CMDB)",
+  "members": [
+   "Knowledge Graph (sn_kg)",
+   "CMDB, CSDM, IRE and Service Graph Connectors",
+   "Workflow Data Fabric / Zero Copy Connectors",
+   "RaptorDB / RaptorDB Pro",
+   "Context Engine (announced)",
+   "Now Assist / Otto",
+   "data.world"
+  ],
+  "official_url": "https://www.servicenow.com",
+  "owner": "ServiceNow, Inc. (NYSE: NOW)",
+  "latest_version": "family releases Zurich, Australia, Brazil (Knowledge Graph release notes for Brazil updated 2026-09-10)",
+  "version_date": "2026-09-10",
+  "release_cadence": "two family releases a year plus Store app updates",
+  "status": "active",
+  "license": "Proprietary platform under customer subscription",
+  "license_class": "proprietary",
+  "redistribution_notes": "No white-label or OEM; EOIP integrates via REST/Table/IRE APIs and MCP under customer licences.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "API use terms and data-extraction clauses in customer subscriptions when bulk-ingesting CMDB",
+  "community_vs_enterprise": "Per-customer instance; self-hosted/air-gapped instances exist for restricted customers but Now Assist/Otto features are partly unavailable there",
+  "deployment_modes": [
+   "saas",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "'ServiceNow knowledge graph' covers five different things; Context Engine announced with no availability date; whether KG NLQ works air-gapped not verified",
+  "action_reason": "Assigned Tier A",
+  "decision_summary": "BUILD IRE-inspired source authority/merge, per-hop ACL, NL grounding metadata, ServiceNow connector and physical tenant isolation; EXPERIMENT consuming ServiceNow MCP tools read-only; DEFER zero-copy federation breadth",
+  "sources": [
+   {
+    "title": "Knowledge Graph release notes",
+    "url": "https://www.servicenow.com/docs/r/release-notes/knowledge-graph-rn.html",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "ServiceNow Otto",
+    "url": "https://www.servicenow.com/de/platform/otto.html",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "ServiceNow Form 10-K FY2025",
+    "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000007/now-20251231.htm",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Futurum: real-time data foundation",
+    "url": "https://futurumgroup.com/insights/can-servicenows-real-time-data-foundation-make-autonomous-ai-a-reality/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Techzine: RaptorDB",
+    "url": "https://techzine.eu/news/data-management/119846/servicenow-trades-mariadb-for-raptordb-postgresql",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Customizing Knowledge Graph Configurations",
+    "url": "https://www.servicenow.com/community/now-assist-blog/customizing-knowledge-graph-configurations/ba-p/3476626",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.63,
+  "top_strengths": [
+   "STR-servicenow-kg-01",
+   "STR-servicenow-kg-02",
+   "STR-servicenow-kg-03",
+   "STR-servicenow-kg-04"
+  ],
+  "top_inversions": [
+   "INV-servicenow-kg-01",
+   "INV-servicenow-kg-02",
+   "INV-servicenow-kg-03"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-servicenow-kg.md",
+  "registry_action": "KEEP"
+ },
+ {
+  "id": "T-C08-graphiti-zep",
+  "slug": "graphiti-zep",
+  "category": "C08",
+  "tier": "A",
+  "name": "Zep and Graphiti (temporal context graph for agent memory)",
+  "tier_reason": "Temporal agent-memory graph; direct competitor for CAP-57/CAP-34 and target of Master Prompt 10.5 seed hypothesis",
+  "members": [
+   "Graphiti (graphiti-core)",
+   "Graphiti MCP server",
+   "Zep Cloud",
+   "Zep Community Edition (deprecated)"
+  ],
+  "official_url": "https://github.com/getzep/graphiti",
+  "owner": "Zep Software Inc.",
+  "latest_version": "graphiti-core 0.31.1; zep-cloud 4.0.0",
+  "version_date": "2026-10-15",
+  "release_cadence": "frequent PyPI releases (graphiti-core 0.31.1 on 2026-10-15; zep-cloud 4.0.0 on 2026-10-14)",
+  "status": "active",
+  "license": "Graphiti Apache-2.0; Zep Cloud proprietary SaaS; Zep Community Edition Apache-2.0 but deprecated 2025-04-02",
+  "license_class": "mixed",
+  "redistribution_notes": "Graphiti Apache-2.0 permits redistribution/OEM with notices (posthog hard dependency, MIT); Zep Cloud is a proprietary managed service. FalkorDB backend is SSPL-licensed.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "FalkorDB backend SSPL if bundled; Zep Cloud proprietary if ever embedded",
+  "community_vs_enterprise": "Graphiti OSS framework vs Zep Cloud managed context infrastructure with proprietary graph engine; Zep CE deprecated",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "'Zep open source' today means Graphiti, not a self-hostable Zep server; unrelated GitHub 'zep' projects out of scope; Graphiti MCP server has no auth; Cypher-only driver set (no HugeGraph/JanusGraph)",
+  "action_reason": "Assigned Tier A",
+  "decision_summary": "BUILD EOIP-native agent memory with tenant, ACL and egress (Graphiti patterns), bitemporal facts on BL-37, deterministic-first contradiction handling and governed proposal-only MCP tools; EXPERIMENT Graphiti-as-library behind egress gateway; REJECT Zep Cloud and Graphiti MCP",
+  "sources": [
+   {
+    "title": "Graphiti repository and README",
+    "url": "https://github.com/getzep/graphiti",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Graphiti LICENSE",
+    "url": "https://raw.githubusercontent.com/getzep/graphiti/main/LICENSE",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Graphiti MCP server README",
+    "url": "https://github.com/getzep/graphiti/blob/main/mcp_server/README.md",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "graphiti-core on PyPI",
+    "url": "https://pypi.org/project/graphiti-core/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "zep-cloud on PyPI",
+    "url": "https://pypi.org/project/zep-cloud/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Zep paper arXiv:2501.13956",
+    "url": "https://arxiv.org/abs/2501.13956",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.76,
+  "top_strengths": [
+   "STR-graphiti-zep-01",
+   "STR-graphiti-zep-02",
+   "STR-graphiti-zep-03",
+   "STR-graphiti-zep-04",
+   "STR-graphiti-zep-05"
+  ],
+  "top_inversions": [
+   "INV-graphiti-zep-01",
+   "INV-graphiti-zep-02",
+   "INV-graphiti-zep-03",
+   "INV-graphiti-zep-04"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-graphiti-zep.md",
+  "registry_action": "KEEP"
+ }
+]

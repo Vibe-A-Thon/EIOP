@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 PROOF_POLICY_VERSION = "1.1.0"
@@ -11,10 +12,34 @@ TIER_RANK = {"L0": 0, "L1": 1, "L2": 2, "L3": 3, "L4": 4, "L5": 5}
 STATUSES = (
     "Implemented",
     "Partially Implemented",
+    "Not Verified",
     "Not Implemented",
     "Ambiguous",
     "Not Applicable",
 )
+
+FAIL_RE = re.compile(r"\b(fail(ed|ure|s)?|error(s)?|conclusion=failure|red)\b", re.I)
+PASS_RE = re.compile(r"\b(pass(ed)?|success|ok|green|exit 0|all valid)\b", re.I)
+
+
+def is_failing(item: dict[str, Any]) -> bool:
+    """An L2/L3 item whose actual_result reports failure (and not a 0-failure summary)."""
+    ar = item.get("actual_result") or ""
+    if re.search(r"\b0 (failed|errors?)\b", ar, re.I) and not re.search(r"\b[1-9]\d* (failed|errors?)\b", ar, re.I):
+        return False
+    return bool(FAIL_RE.search(ar))
+
+
+PLACEHOLDER_RE = re.compile(r"\bREPLACE\b|<[a-z][a-z0-9_ -]*>|<reviewer-id|<fix-commit>|<run_id>", re.I)
+
+
+def is_placeholder(item: dict[str, Any]) -> bool:
+    """Unfilled template items (all-zero commit, REPLACE markers, <placeholders>) are never proof."""
+    if set((item.get("git_commit") or "x").lower()) == {"0"}:
+        return True
+    fields = [item.get("actual_result"), item.get("reviewer_id"), item.get("ci_run_id")]
+    fields += [ln.get("url") for ln in item.get("links") or []]
+    return any(f and PLACEHOLDER_RE.search(str(f)) for f in fields)
 
 
 def tier_rank(tier: str | None) -> int:
@@ -39,9 +64,14 @@ def _active_items(
     warnings: list[str] = []
     active: list[dict[str, Any]] = []
     stale: list[dict[str, Any]] = []
+    ph = [it for it in items if is_placeholder(it)]
+    for it in ph:
+        warnings.append(f"{it.get('evidence_id', '?')}: TEMPLATE placeholder, ignored as proof")
+    items = [it for it in items if not is_placeholder(it)]
     if not audited_commit:
-        return list(items), [], warnings
+        return list(items), ph, warnings
     audited = audited_commit.lower()
+    stale.extend(ph)
     for it in items:
         item_commit = (it.get("git_commit") or bundle_commit or "").lower()
         if item_commit and item_commit != audited:
@@ -109,19 +139,9 @@ def _has_conflict(items: list[dict[str, Any]]) -> bool:
     )
     if has_neg and has_positive:
         return True
-    # Pass vs fail in actual_result among L2/L3
-    results = []
-    for it in items:
-        if it.get("proof_tier") not in ("L2", "L3"):
-            continue
-        ar = (it.get("actual_result") or "").lower()
-        if not ar:
-            continue
-        if any(x in ar for x in ("fail", "error", "conclusion=failure", "failed")):
-            results.append("fail")
-        elif any(x in ar for x in ("pass", "success", "ok", "green")):
-            results.append("pass")
-    if "pass" in results and "fail" in results:
+    # Pass vs fail among L2/L3
+    l23 = [it for it in items if it.get("proof_tier") in ("L2", "L3") and it.get("actual_result")]
+    if any(is_failing(it) for it in l23) and any(not is_failing(it) for it in l23):
         return True
     return False
 
@@ -186,13 +206,30 @@ def compute_status(
     active, stale, w = _active_items(evidence_items, audited_commit, bundle_commit)
     warnings.extend(w)
 
+    def out(status: str, extra_w: list[str] | None = None, **kw: Any) -> dict[str, Any]:
+        r = {
+            "status": status,
+            "proof_tier": max_tier(passing) if passing else max_tier([i for i in active if i.get("proof_tier") == "L1"]),
+            "warnings": warnings + (extra_w or []),
+            "stale_count": len(stale),
+            "active_count": len(active),
+            "proof_policy_version": PROOF_POLICY_VERSION,
+        }
+        r.update(kw)
+        return r
+
+    failing = [i for i in active if i.get("proof_tier") in ("L2", "L3") and is_failing(i)]
+    passing = [i for i in active if i not in failing]
+    if failing:
+        warnings.append(f"{len(failing)} failing L2/L3 item(s) do not count as proof")
+
     if not active:
-        status = current_status if current_status in STATUSES else "Not Implemented"
-        if status == "Implemented":
-            status = "Not Implemented"
-            warnings.append("No active (non-stale) evidence — demoted from Implemented")
+        status = current_status if current_status in STATUSES else "Not Verified"
+        if status in ("Implemented", "Partially Implemented"):
+            warnings.append(f"No active (non-stale) evidence — demoted from {status}")
+            status = "Not Verified"
         return {
-            "status": status if status != "Partially Implemented" else "Not Implemented",
+            "status": status,
             "proof_tier": "L0",
             "warnings": warnings
             + (["All evidence stale"] if stale else ["No evidence items"]),
@@ -201,7 +238,10 @@ def compute_status(
             "proof_policy_version": PROOF_POLICY_VERSION,
         }
 
-    if _has_conflict(active):
+    if failing and any(i.get("proof_tier") in ("L2", "L3") for i in passing):
+        return out("Ambiguous", ["Passing and failing L2/L3 evidence on the audited commit"])
+
+    if _has_conflict(passing):
         return {
             "status": "Ambiguous",
             "proof_tier": max_tier(active),
@@ -211,37 +251,21 @@ def compute_status(
             "proof_policy_version": PROOF_POLICY_VERSION,
         }
 
-    has_l2 = _has_tier(active, "L2")
-    has_l3 = _l3_on_commit(active, audited_commit, bundle_commit)
-    has_l4 = _has_tier(active, "L4")
-    has_l5 = _l5_dual_control(active, producer_agent_id)
-    has_neg = any(it.get("type") == "negative_proof" for it in active)
+    has_l2 = _has_tier(passing, "L2")
+    has_l3 = _l3_on_commit(passing, audited_commit, bundle_commit)
+    has_l4 = _has_tier(passing, "L4")
+    has_l5 = _l5_dual_control(passing, producer_agent_id)
+    has_neg = any(it.get("type") == "negative_proof" for it in passing)
     higher = has_l2 or has_l3 or has_l4 or has_l5
-    only_l1 = (not higher) and _has_tier(active, "L1")
+    only_l1 = (not higher) and _has_tier(passing, "L1")
 
-    # L1 alone → never Partial or Implemented
+    # L1 alone → never Partial or Implemented. Without negative proof it is Not Verified.
     if only_l1 or (not higher and not has_neg):
-        if has_neg or _ni_supported(active):
-            return {
-                "status": "Not Implemented",
-                "proof_tier": max_tier(active),
-                "warnings": warnings
-                + (["L1 does not count toward Partial/Implemented"] if only_l1 else []),
-                "stale_count": len(stale),
-                "active_count": len(active),
-                "proof_policy_version": PROOF_POLICY_VERSION,
-            }
-        return {
-            "status": "Not Implemented",
-            "proof_tier": max_tier(active),
-            "warnings": warnings
-            + [
-                "L1-only or insufficient evidence; cannot set Partial without L2 + residual_gaps"
-            ],
-            "stale_count": len(stale),
-            "active_count": len(active),
-            "proof_policy_version": PROOF_POLICY_VERSION,
-        }
+        if has_neg or _ni_supported(passing):
+            return out("Not Implemented",
+                       ["L1 does not count toward Partial/Implemented"] if only_l1 else [])
+        return out("Not Verified",
+                   ["L1-only / insufficient evidence: not verified (no L2, no negative proof)"])
 
     # Negative-only (no positive L2+) → NI if supported
     if has_neg and not has_l2 and not has_l3 and not has_l4 and not has_l5:
@@ -304,11 +328,11 @@ def compute_status(
     if has_l2:
         if not gaps:
             warnings.append(
-                "Partial requires explicit residual_gaps — status held at Not Implemented "
+                "Partial requires explicit residual_gaps — status held at Not Verified "
                 "until gaps are listed"
             )
             return {
-                "status": "Not Implemented",
+                "status": "Not Verified",
                 "proof_tier": max_tier(active),
                 "warnings": warnings,
                 "stale_count": len(stale),
@@ -328,7 +352,7 @@ def compute_status(
     # L3/L4/L5 without L2 cannot Implement; without L2 cannot Partial either under 1.1
     warnings.append("L2 automated test evidence required for Partial or Implemented")
     return {
-        "status": "Not Implemented",
+        "status": "Not Verified",
         "proof_tier": max_tier(active),
         "warnings": warnings,
         "stale_count": len(stale),

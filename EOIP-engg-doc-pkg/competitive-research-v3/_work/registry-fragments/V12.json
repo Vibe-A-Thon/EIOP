@@ -1,0 +1,720 @@
+[
+  {
+    "id": "T-C04-dedupe",
+    "slug": "dedupe",
+    "name": "Dedupe",
+    "category": "C04",
+    "tier": "B",
+    "tier_reason": "Python active-learning dedupe; pattern reference for BL-36/BL-35",
+    "members": [
+      "dedupe library",
+      "Dedupe.io (separate commercial service)"
+    ],
+    "official_url": "https://github.com/dedupeio/dedupe",
+    "owner": "DataMade (Forest Gregg, Derek Eder)",
+    "latest_version": "3.0.3",
+    "version_date": "2024-08-15",
+    "release_cadence": "slow: last release 2024-08, last commit 2025-07 (CI)",
+    "status": "maintenance",
+    "license": "MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "Library freely embeddable; hosted Dedupe.io is separate",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "OSS library vs separate paid service",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "REJECT as engine; BUILD active-learning label loop pattern; EXPERIMENT learned blocking",
+    "top_strengths": [
+      "STR-dedupe-01",
+      "STR-dedupe-02"
+    ],
+    "top_inversions": [
+      "INV-dedupe-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-dedupe.md",
+    "sources": [
+      {
+        "title": "dedupe repo",
+        "url": "https://github.com/dedupeio/dedupe",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "dedupe LICENSE",
+        "url": "https://github.com/dedupeio/dedupe/blob/master/LICENSE",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "dedupe releases feed",
+        "url": "https://github.com/dedupeio/dedupe/releases.atom",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "dedupe PyPI",
+        "url": "https://pypi.org/project/dedupe/",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C04-jedai",
+    "slug": "jedai",
+    "name": "JedAI (JedAI Toolkit and pyJedAI)",
+    "category": "C04",
+    "tier": "B",
+    "tier_reason": "ER toolkit, blocking research reference",
+    "members": [
+      "JedAIToolkit (Java, core + GUI)",
+      "pyJedAI (Python)"
+    ],
+    "official_url": "https://github.com/scify/JedAIToolkit",
+    "owner": "University of Athens / NCSR Demokritos / SciFY",
+    "latest_version": "Java 3.2.1; pyJedAI 0.3.6",
+    "version_date": "2021-08-27 (Java); 2025-11-03 (pyJedAI)",
+    "release_cadence": "Java maintenance-only; pyJedAI active",
+    "status": "active",
+    "license": "Apache-2.0 (both)",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive, embeddable",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "none",
+    "deployment_modes": [
+      "embedded",
+      "desktop"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "Name collision: scify/JedAI-core and ad-freiburg/jedai-core are 404; family = JedAIToolkit + pyJedAI (AI-team-UoA)",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "EXPERIMENT pyJedAI as blocking evaluator; BUILD blocking diagnostics; REUSE Splink/Zingg for matching",
+    "top_strengths": [
+      "STR-jedai-01",
+      "STR-jedai-02"
+    ],
+    "top_inversions": [
+      "INV-jedai-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-jedai.md",
+    "sources": [
+      {
+        "title": "JedAIToolkit",
+        "url": "https://github.com/scify/JedAIToolkit",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "pyJedAI",
+        "url": "https://github.com/AI-team-UoA/pyJedAI",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "pyJedAI PyPI",
+        "url": "https://pypi.org/project/pyjedai/",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "JedAI3 EDBT 2020",
+        "url": "https://helios2.mi.parisdescartes.fr/~themisp/publications/edbt20-jedai3.pdf",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.65
+  },
+  {
+    "id": "T-C04-ditto",
+    "slug": "ditto",
+    "name": "Ditto (deep entity matching)",
+    "category": "C04",
+    "tier": "B",
+    "tier_reason": "Transformer matching reference",
+    "members": [
+      "Ditto (megagonlabs/ditto)"
+    ],
+    "official_url": "https://github.com/megagonlabs/ditto",
+    "owner": "Megagon Labs",
+    "latest_version": "no releases (master)",
+    "version_date": "2021-09-24 (last commit)",
+    "release_cadence": "none since 2021",
+    "status": "maintenance",
+    "license": "Apache-2.0 (code); base-model weights have separate licences",
+    "license_class": "permissive",
+    "redistribution_notes": "Code permissive; model-weight licences must be checked per model",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Pre-trained model weight licences (record only)",
+    "community_vs_enterprise": "none",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "research",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "EXPERIMENT optional reranker re-implemented on CPU; REUSE ER-Magellan/WDC benchmarks; REJECT reference code (stale stack)",
+    "top_strengths": [
+      "STR-ditto-01",
+      "STR-ditto-03"
+    ],
+    "top_inversions": [
+      "INV-ditto-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-ditto.md",
+    "sources": [
+      {
+        "title": "Ditto repo",
+        "url": "https://github.com/megagonlabs/ditto",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "Ditto commits feed",
+        "url": "https://github.com/megagonlabs/ditto/commits.atom",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C04-llm-entity-matching",
+    "slug": "llm-entity-matching",
+    "name": "LLM-assisted entity matching (approach)",
+    "category": "C04",
+    "tier": "B",
+    "tier_reason": "Approach record",
+    "members": [
+      "zero-shot LLM matcher",
+      "grey-zone adjudicator",
+      "LLM rule generation",
+      "fine-tuned LLM matcher"
+    ],
+    "official_url": "https://arxiv.org/abs/2310.11244",
+    "owner": "Peeters, Steiner, Bizer (Univ. Mannheim); EDBT 2025",
+    "latest_version": "arXiv v4",
+    "version_date": "2024-10-18",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "n/a (approach); per-model licences vary",
+    "license_class": "n/a",
+    "redistribution_notes": "Depends on chosen model",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Local model licences (e.g., community licences) require review; record only",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "Approach, not a product",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "EXPERIMENT grey-zone adjudicator with local model; BUILD verdict cache and audit; REJECT as primary matcher",
+    "top_strengths": [
+      "STR-llmem-01",
+      "STR-llmem-03"
+    ],
+    "top_inversions": [
+      "INV-llmem-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-llm-entity-matching.md",
+    "sources": [
+      {
+        "title": "Entity Matching using LLMs (arXiv)",
+        "url": "https://arxiv.org/abs/2310.11244v4",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "Mannheim repository entry",
+        "url": "https://madoc.bib.uni-mannheim.de/68185",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C04-rml-tools",
+    "slug": "rml-tools",
+    "name": "RML ecosystem: RMLMapper, RML-Streamer, YARRRML, Morph-KGC, SDM-RDFizer",
+    "category": "C04",
+    "tier": "B",
+    "tier_reason": "Declarative mapping reference (BL-33)",
+    "members": [
+      "RMLMapper 8.1.0 (MIT, 2025-12-23)",
+      "RML-Streamer 2.5.0 (MIT, 2023-06-02, stale)",
+      "YARRRML parser 1.12.2 (MIT, 2025-10-22)",
+      "Morph-KGC 2.10.0 (Apache-2.0, 2026-01-20)",
+      "SDM-RDFizer 4.7.5.15.4.1 (Apache-2.0, 2026-09-25)"
+    ],
+    "official_url": "https://rml.io",
+    "owner": "RML.io (IDLab Ghent); UPM; TIB Hannover",
+    "latest_version": "RMLMapper 8.1.0; Morph-KGC 2.10.0; SDM-RDFizer 4.7.5.15.4.1",
+    "version_date": "2025-12-23; 2026-01-20; 2026-09-25",
+    "release_cadence": "active except RML-Streamer",
+    "status": "active",
+    "license": "MIT (RML.io tools); Apache-2.0 (Morph-KGC, SDM-RDFizer)",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive; embeddable",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "none",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "RML spec developed by W3C KG-Construction Community Group (kg-construct/rml-core v0.2.0, 2026-03-16); status as CG deliverable not confirmed on w3.org",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "BUILD RML/R2RML Turtle import into IR with conformance suite; INTEGRATE Morph-KGC and yarrrml-parser optionally; DEFER streaming; fix SQL interpolation in mapping/virtualization.py",
+    "top_strengths": [
+      "STR-rml-01",
+      "STR-rml-03"
+    ],
+    "top_inversions": [
+      "INV-rml-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-rml-tools.md",
+    "sources": [
+      {
+        "title": "RMLMapper",
+        "url": "https://github.com/RMLio/rmlmapper-java",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "RML-Streamer",
+        "url": "https://github.com/RMLio/RMLStreamer",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "YARRRML parser",
+        "url": "https://github.com/RMLio/yarrrml-parser",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "Morph-KGC",
+        "url": "https://github.com/morph-kgc/morph-kgc",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "SDM-RDFizer",
+        "url": "https://github.com/SDM-TIB/SDM-RDFizer",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "rml-core",
+        "url": "https://github.com/kg-construct/rml-core",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C04-openrefine",
+    "slug": "openrefine",
+    "name": "OpenRefine and Wikidata reconciliation",
+    "category": "C04",
+    "tier": "B",
+    "tier_reason": "Data cleaning/reconciliation reference",
+    "members": [
+      "OpenRefine",
+      "Reconciliation Service API v0.2",
+      "Wikidata reconciliation (built-in service)",
+      "reconcile-csv / csv-reconcile (third party)"
+    ],
+    "official_url": "https://openrefine.org",
+    "owner": "OpenRefine contributors (originally Google Refine)",
+    "latest_version": "3.10.1",
+    "version_date": "2026-03-04",
+    "release_cadence": "several releases per year; commits weekly",
+    "status": "active",
+    "license": "BSD 3-clause style",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "none",
+    "deployment_modes": [
+      "desktop",
+      "self-hosted"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "production",
+    "resolution_note": "Wikidata reconciliation needs internet; offline via local reconcile services",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "BUILD EOIP reconciliation API endpoint (ACL-aware); BUILD reviewer UX in identity queue; DEFER cleaning UI; REJECT embedding",
+    "top_strengths": [
+      "STR-or-01",
+      "STR-or-02"
+    ],
+    "top_inversions": [
+      "INV-or-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-openrefine.md",
+    "sources": [
+      {
+        "title": "OpenRefine repo",
+        "url": "https://github.com/OpenRefine/OpenRefine",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "Reconciling manual",
+        "url": "https://openrefine.org/docs/manual/reconciling",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "Reconciliation API v0.2",
+        "url": "https://w3c.github.io/cg-reports/reconciliation/CG-FINAL-specs-0.2-20230410/",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C04-ontology-alignment",
+    "slug": "ontology-alignment",
+    "name": "Ontology alignment: LogMap, AgreementMakerLight, OAEI systems",
+    "category": "C04",
+    "tier": "B",
+    "tier_reason": "Alignment reference",
+    "members": [
+      "LogMap",
+      "AgreementMakerLight (AML)",
+      "Matcha",
+      "OAEI campaign systems"
+    ],
+    "official_url": "https://github.com/ernestojimenezruiz/logmap-matcher",
+    "owner": "City, University of London (LogMap); Univ. of Lisbon (AML/Matcha); OAEI community",
+    "latest_version": "LogMap (tag July 2021, active commits 2026-10); AML 3.2",
+    "version_date": "2021-07-06; 2021-02-24",
+    "release_cadence": "LogMap active; AML stale; OAEI annual",
+    "status": "active",
+    "license": "Apache-2.0 (LogMap, AML repos); Matcha UNVERIFIED; transitive deps unchecked",
+    "license_class": "permissive",
+    "redistribution_notes": "Repo licences permissive; dependency licences must be reviewed",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Transitive reasoner/OWL API licences and Matcha licence unverified",
+    "community_vs_enterprise": "none",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "AML superseded by Matcha in OAEI; AML absent from 2025 results found",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "EXPERIMENT LogMap as sidecar proposal generator feeding gitops review; REUSE OAEI benchmarks; REJECT AML (stale)",
+    "top_strengths": [
+      "STR-oa-01",
+      "STR-oa-02"
+    ],
+    "top_inversions": [
+      "INV-oa-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-ontology-alignment.md",
+    "sources": [
+      {
+        "title": "LogMap repo",
+        "url": "https://github.com/ernestojimenezruiz/logmap-matcher",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "AML repo",
+        "url": "https://github.com/AgreementMakerLight/AML-Project",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "OAEI 2025",
+        "url": "https://oaei.ontologymatching.org/2025/results",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "OAEI 2025 overview paper",
+        "url": "https://ceur-ws.org/Vol-4144/om2025-oaei-paper0.pdf",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C04-schema-inference",
+    "slug": "schema-inference",
+    "name": "JSON/CSV schema inference and automatic entity-relationship detection tools",
+    "category": "C04",
+    "tier": "B",
+    "tier_reason": "Directly relevant to J12",
+    "members": [
+      "GenSON",
+      "quicktype",
+      "datamodel-code-generator",
+      "Frictionless",
+      "Pandera",
+      "ydata-profiling",
+      "DuckDB CSV sniffer",
+      "csvkit",
+      "Sherlock",
+      "Baazizi et al. JSON inference",
+      "Auto-BI",
+      "Metanome"
+    ],
+    "official_url": "https://github.com/wolverdude/GenSON",
+    "owner": "various",
+    "latest_version": "GenSON 1.4.0; quicktype 26.0.0",
+    "version_date": "2026-07-06; 2026-07-20",
+    "release_cadence": "active for libraries",
+    "status": "active",
+    "license": "MIT/Apache-2.0 for verified libraries; ydata-profiling, Sherlock repo, Metanome UNVERIFIED",
+    "license_class": "mixed",
+    "redistribution_notes": "Verified libraries permissive",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Licences of ydata-profiling, Sherlock repo and Metanome unverified",
+    "community_vs_enterprise": "none",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "mixed",
+    "resolution_note": "Category record; EOIP profile.py (BL-26) exceeds the open tools on deterministic key and relationship detection",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "BUILD JSON Schema emission and mergeable profiles; BUILD governance wiring of graphbuild.induce_schema; EXPERIMENT Auto-BI-style global join selection; INTEGRATE quicktype for SDK codegen",
+    "top_strengths": [
+      "STR-si-01",
+      "STR-si-02"
+    ],
+    "top_inversions": [
+      "INV-si-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-schema-inference.md",
+    "sources": [
+      {
+        "title": "GenSON PyPI",
+        "url": "https://pypi.org/project/genson/",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "quicktype",
+        "url": "https://github.com/quicktype/quicktype",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "Parametric schema inference (VLDB J.)",
+        "url": "https://researchportal.ip-paris.fr/en/publications/parametric-schema-inference-for-massive-json-datasets/",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "Auto-BI",
+        "url": "https://www.vldb.org/pvldb/vol16/p2578-he.pdf",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "Sherlock",
+        "url": "https://sherlock.media.mit.edu",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "Metanome",
+        "url": "https://github.com/HPI-Information-Systems/Metanome",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C04-sparql-generate",
+    "slug": "sparql-generate",
+    "name": "SPARQL-Generate",
+    "category": "C04",
+    "tier": "C",
+    "tier_reason": "Mapping language alternative to RML",
+    "members": [
+      "SPARQL-Generate"
+    ],
+    "official_url": "https://github.com/sparql-generate/sparql-generate",
+    "owner": "MINES Saint-Etienne",
+    "latest_version": "2.1.1",
+    "version_date": "2025-09-29",
+    "release_cadence": "low",
+    "status": "active",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "none",
+    "deployment_modes": [
+      "self-hosted",
+      "docker"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-tier-c-records-V12.md",
+    "sources": [
+      {
+        "title": "SPARQL-Generate repo",
+        "url": "https://github.com/sparql-generate/sparql-generate",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C04-karma",
+    "slug": "karma",
+    "name": "Karma",
+    "category": "C04",
+    "tier": "C",
+    "tier_reason": "Semi-automatic mapping (activity verified low)",
+    "members": [
+      "Karma"
+    ],
+    "official_url": "https://github.com/usc-isi-i2/Web-Karma",
+    "owner": "USC Information Sciences Institute",
+    "latest_version": "2.5.8",
+    "version_date": "2024-01-25",
+    "release_cadence": "none since 2024-01 release; README commit 2025-04",
+    "status": "maintenance",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "none",
+    "deployment_modes": [
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "REFERENCE-ONLY; take ranked candidate model plus user-correction pattern for J12 review UX",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-tier-c-records-V12.md",
+    "sources": [
+      {
+        "title": "Web-Karma repo",
+        "url": "https://github.com/usc-isi-i2/Web-Karma",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "ISI downloads",
+        "url": "https://www.isi.edu/centers-ckg/resources/downloads/",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C04-magellan",
+    "slug": "magellan",
+    "name": "py_entitymatching (Magellan)",
+    "category": "C04",
+    "tier": "C",
+    "tier_reason": "EM research toolkit",
+    "members": [
+      "py_entitymatching (Magellan)"
+    ],
+    "official_url": "https://github.com/anhaidgroup/py_entitymatching",
+    "owner": "UW-Madison AnHai Doan group",
+    "latest_version": "0.4.2",
+    "version_date": "2024-02-07",
+    "release_cadence": "dormant",
+    "status": "maintenance",
+    "license": "BSD (variant UNVERIFIED)",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "none",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "REFERENCE-ONLY; REUSE benchmark datasets",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-tier-c-records-V12.md",
+    "sources": [
+      {
+        "title": "py_entitymatching repo",
+        "url": "https://github.com/anhaidgroup/py_entitymatching",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "PyPI",
+        "url": "https://pypi.org/project/py-entitymatching/",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C04-recordlinkage",
+    "slug": "recordlinkage",
+    "name": "recordlinkage (Python)",
+    "category": "C04",
+    "tier": "C",
+    "tier_reason": "Small linkage library",
+    "members": [
+      "recordlinkage (Python)"
+    ],
+    "official_url": "https://github.com/J535D165/recordlinkage",
+    "owner": "Jonathan de Bruin and contributors",
+    "latest_version": "0.16",
+    "version_date": "2023-07-20",
+    "release_cadence": "dormant",
+    "status": "maintenance",
+    "license": "BSD-3-Clause",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "none",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "assigned entry verified",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C04-tier-c-records-V12.md",
+    "sources": [
+      {
+        "title": "recordlinkage repo",
+        "url": "https://github.com/J535D165/recordlinkage",
+        "accessed": "2026-10-18"
+      },
+      {
+        "title": "PyPI",
+        "url": "https://pypi.org/project/recordlinkage/",
+        "accessed": "2026-10-18"
+      }
+    ],
+    "verification_confidence": 0.8
+  }
+]

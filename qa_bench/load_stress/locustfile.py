@@ -8,7 +8,9 @@ Usage:
 from locust import HttpUser, task, between
 import os
 
-TOKEN = os.environ.get("EOIP_API_TOKEN", "")
+TOKEN = os.environ.get("QA_TOKEN_SUPERADMIN") or os.environ.get("EOIP_API_TOKEN")
+if not TOKEN:
+    raise RuntimeError("Set QA_TOKEN_SUPERADMIN (or EOIP_API_TOKEN) to a provisioned principal's token")
 TENANT = os.environ.get("EOIP_TENANT", "default")
 
 

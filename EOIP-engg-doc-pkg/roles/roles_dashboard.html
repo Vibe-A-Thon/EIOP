@@ -1,5 +1,10 @@
-<title>EOIP Roles Dashboard</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EOIP Roles Dashboard - Evidence Review</title>
+<link rel="icon" href="data:,">
 <style>
 :root {
   --bg:#f5f6f8;--bg2:#fff;--bg3:#f0f1f4;--fg:#111827;--fg2:#6b7280;--fg3:#9ca3af;
@@ -68,22 +73,48 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font);padding-inline
 .export-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .export-btn{padding:5px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--fg2);font-size:.72rem;cursor:pointer;font-family:var(--font)}
 .export-btn:hover{border-color:var(--accent);color:var(--accent)}
+.review{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-top:14px;font-size:.8rem;line-height:1.6}
+.review h2{font-size:1rem;margin:0 0 6px}.review p{margin:6px 0}
+a{color:var(--accent);overflow-wrap:anywhere}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:.75rem}
+select{background:var(--bg2);color:var(--fg);border:1px solid var(--border);border-radius:4px;padding:5px;font:inherit}
+.s-fail{background:#fee2e2;color:#991b1b}
+.card-toggle{display:flex;align-items:center;gap:6px;flex:1;min-width:0;text-align:left;border:0;background:transparent;color:inherit;cursor:pointer;padding:0;font:inherit}
+.sbtn{cursor:default}.ctitle{white-space:normal;overflow:visible}
+.review table{width:100%;border-collapse:collapse}.review th,.review td{text-align:left;border-bottom:1px solid var(--border);padding:6px;vertical-align:top}
+.table-scroll{overflow-x:auto}.notice{color:var(--fg2)}
+#notice:empty{display:none}#notice{padding:10px;border:1px solid var(--red);margin-top:10px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.dg{grid-template-columns:105px 1fr}.sbtn{white-space:normal}
+@media(max-width:600px){.hdr{position:static}.crow{flex-wrap:wrap}.card-toggle{flex-basis:100%}.dg{grid-template-columns:1fr}.dl{margin-top:6px}}
 @media(max-width:600px){.cid{min-width:70px;font-size:.65rem}.ctitle{font-size:.75rem}.kpi{padding:8px 10px;min-width:65px}.kpi-n{font-size:1.1rem}}
 </style>
-
-<div class="hdr">
+</head>
+<body>
+<header class="hdr">
   <h1>EOIP Roles & Responsibilities</h1>
-  <div class="hdr-sub">15 roles, 200+ tasks across SDLC & AIDLC lifecycle</div>
+  <div class="hdr-sub" id="subtitle"></div>
   <div class="kpi-row" id="kpis"></div>
   <div class="bar-w" id="masterBar"><div class="bar-f bar-g" id="masterFill" style="width:0"></div></div>
   <div class="tabs" id="roleTabs"></div>
-  <input class="search" placeholder="Search tasks, roles, deliverables..." id="searchBox">
+  <label for="searchBox">Search tasks, roles, evidence or remaining work</label>
+  <input class="search" placeholder="Task ID, deliverable, evidence or next action..." id="searchBox" type="search">
+  <div class="filters">
+    <label>Status <select id="statusFilter"><option value="ALL">All audited statuses</option><option value="REMAINING">All remaining work</option></select></label>
+    <label>Priority <select id="priorityFilter"><option value="ALL">All priorities</option><option>P0</option><option>P1</option><option>P2</option><option>P3</option></select></label>
+  </div>
   <div class="export-row">
     <button class="export-btn" onclick="exportJSON()">Export JSON</button>
     <button class="export-btn" onclick="exportReport()">Weekly Report</button>
   </div>
-</div>
-<div id="content"></div>
+</header>
+<div id="notice" role="alert"></div>
+<main>
+  <section class="review" id="reviewSummary" aria-label="Evidence review summary"></section>
+  <section class="review" aria-label="Role completion summary"><h2>Completed and remaining by role</h2><div class="table-scroll" id="roleSummary"></div></section>
+  <p id="visibleCount" role="status"></p>
+  <div id="content"></div>
+</main>
 
 <script>
 const ROLES=[
@@ -188,6 +219,7 @@ const ROLES=[
 {id:"TASK-DEV-010",title:"Fan-Out/Fan-In Stages",pri:"P1",del:"harness extend",risk:"",dep:""},
 {id:"TASK-DEV-011",title:"Federated Graph Engine",pri:"P1",del:"federation/engine.py",risk:"",dep:""},
 {id:"TASK-DEV-012",title:"Temporal Retrieval",pri:"P1",del:"retrieval/temporal.py",risk:"",dep:""},
+...Array.from({length:18},(_,i)=>({id:`TASK-DEV-${String(i+13).padStart(3,"0")}`,title:`Phase 3-7 engine task ${i+13}: scope not individually assigned`,pri:"P1",del:"Approved mapping from this task ID to Phase 4 requirement, engine, tests and acceptance criteria",risk:"Source defines only a range, not 18 individual specifications",dep:"Architect, Delivery Manager"})),
 {id:"TASK-DEV-031",title:"Fix test_deployed_route_surface (wire /api/v1/loops/catalog)",pri:"P1",del:"Test passing",risk:"",dep:""},
 {id:"TASK-DEV-032",title:"Fix test_intelligent_query latency assertion",pri:"P2",del:"Test passing",risk:"",dep:""},
 ]},
@@ -245,8 +277,10 @@ const ROLES=[
 {id:"TASK-QA-003",title:"Unit tests: Intent Router classification accuracy",pri:"P0",del:"Test results",risk:"",dep:"CORE-003"},
 {id:"TASK-QA-004",title:"Unit tests: Graph-over-Graph cross-layer queries",pri:"P0",del:"Test results",risk:"",dep:"CORE-004"},
 {id:"TASK-QA-005",title:"Regression test full suite after Phase 1",pri:"P0",del:"Zero new failures",risk:"",dep:"Phase 1"},
+...Array.from({length:10},(_,i)=>({id:`TASK-QA-${String(i+6).padStart(3,"0")}`,title:`Phase 2-7 test task ${i+6}: scope not individually assigned`,pri:"P1",del:"Approved phase test plan, named cases, environment and execution receipt for this task ID",risk:"Source defines a ten-task range without individual acceptance criteria",dep:"QA Lead"})),
 {id:"TASK-QA-016",title:"Integration: Brain OS telemetry for all engines",pri:"P1",del:"Telemetry verified",risk:"",dep:""},
 {id:"TASK-QA-017",title:"Integration: Platform Router API schema validation",pri:"P1",del:"All endpoints validated",risk:"",dep:""},
+{id:"TASK-QA-018",title:"Cross-engine orchestration: token formats, verification and intent routing",pri:"P1",del:"Intelligence Engine orchestration integration receipt",risk:"",dep:"CORE-001, CORE-002, CORE-003"},
 {id:"TASK-QA-019",title:"Hypothesis property tests for token formats",pri:"P2",del:"Property test suite",risk:"",dep:"CORE-001"},
 {id:"TASK-QA-020",title:"k6 load test scripts for critical endpoints",pri:"P1",del:"Load test scripts",risk:"",dep:""},
 {id:"TASK-QA-021",title:"Playwright e2e for new dashboard lenses",pri:"P2",del:"e2e tests",risk:"",dep:"UI-007"},
@@ -255,16 +289,20 @@ const ROLES=[
 {id:"TASK-SEC-001",title:"STRIDE threat model for 21+ engines, 133+ APIs",pri:"P0",del:"Threat model doc",risk:"",dep:""},
 {id:"TASK-SEC-002",title:"Agent tool execution security policy",pri:"P0",del:"Agent security policy",risk:"",dep:"CORE-002"},
 {id:"TASK-SEC-003",title:"Encryption standards (AES-256, TLS 1.3, key rotation)",pri:"P0",del:"Encryption standards doc",risk:"",dep:""},
+{id:"TASK-SEC-004",title:"Approve OAuth2/OIDC/SSO provider integration security",pri:"P1",del:"Security-approved identity provider assessment",risk:"",dep:"INFRA-002"},
 {id:"TASK-SEC-005",title:"API security controls (rate limit, CORS, validation)",pri:"P0",del:"API security checklist",risk:"",dep:""},
 {id:"TASK-SEC-006",title:"SOC 2 Type II readiness assessment",pri:"P0",del:"SOC 2 gap analysis",risk:"Blocks enterprise sales",dep:""},
 {id:"TASK-SEC-007",title:"GDPR compliance review",pri:"P0",del:"GDPR assessment",risk:"",dep:""},
 {id:"TASK-SEC-008",title:"HIPAA compliance assessment",pri:"P1",del:"HIPAA readiness",risk:"",dep:""},
 {id:"TASK-SEC-009",title:"Compliance-as-Code rule templates (GDPR, SOX, HIPAA)",pri:"P1",del:"Rule templates",risk:"",dep:"COMPLY-001"},
+{id:"TASK-SEC-010",title:"Continuous compliance monitoring and automated evidence collection",pri:"P2",del:"Compliance monitoring specification",risk:"",dep:"COMPLY-003"},
 {id:"TASK-SEC-011",title:"Vulnerability management program",pri:"P0",del:"Vuln mgmt policy",risk:"",dep:""},
 {id:"TASK-SEC-012",title:"Incident response plan",pri:"P0",del:"IR playbook",risk:"",dep:""},
 {id:"TASK-SEC-013",title:"Security review of token format deserialization",pri:"P0",del:"Security review report",risk:"Deserialization attacks",dep:"CORE-001"},
+{id:"TASK-SEC-014",title:"Review PII detection and anonymization correctness",pri:"P1",del:"Reviewed PII detection and anonymization assessment",risk:"",dep:"COMPLY-002"},
 {id:"TASK-SEC-015",title:"Data classification policy",pri:"P0",del:"Classification policy",risk:"",dep:""},
 {id:"TASK-SEC-016",title:"Multi-tenancy isolation review",pri:"P0",del:"Isolation assessment",risk:"",dep:""},
+{id:"TASK-SEC-017",title:"Data retention and destruction policies per compliance framework",pri:"P1",del:"Data lifecycle policy",risk:"",dep:"Legal Counsel"},
 ]},
 {id:"LEGAL",name:"Legal Counsel",group:"Security & Legal",tasks:[
 {id:"TASK-LEGAL-001",title:"Patent strategy — file provisionals for 5+ innovations",pri:"P0",del:"Patent applications",risk:"IP unprotected before market",dep:""},
@@ -274,10 +312,13 @@ const ROLES=[
 {id:"TASK-LEGAL-005",title:"Open-source contribution policy",pri:"P1",del:"OS policy doc",risk:"",dep:""},
 {id:"TASK-LEGAL-006",title:"Graph DB connector license review (Neo4j GPL)",pri:"P1",del:"License risk assessment",risk:"GPL isolation needed",dep:""},
 {id:"TASK-LEGAL-007",title:"Draft Enterprise License Agreement",pri:"P1",del:"ELA template",risk:"",dep:""},
+{id:"TASK-LEGAL-008",title:"Draft Community SaaS Terms of Service",pri:"P1",del:"ToS document",risk:"",dep:""},
 {id:"TASK-LEGAL-009",title:"Draft GDPR Data Processing Agreement",pri:"P0",del:"DPA template",risk:"",dep:""},
 {id:"TASK-LEGAL-010",title:"Draft HIPAA BAA template",pri:"P1",del:"BAA template",risk:"",dep:""},
 {id:"TASK-LEGAL-011",title:"EU AI Act compliance assessment",pri:"P1",del:"AI Act risk classification",risk:"High-risk classification",dep:""},
+{id:"TASK-LEGAL-012",title:"India DPDP Act compliance assessment",pri:"P2",del:"Reviewed DPDP compliance pack",risk:"",dep:"Security Officer"},
 {id:"TASK-LEGAL-013",title:"AI agent liability framework",pri:"P1",del:"Liability framework",risk:"Agent harmful decisions",dep:""},
+{id:"TASK-LEGAL-014",title:"Partnership agreement template for SIs and cloud providers",pri:"P2",del:"Partnership agreement template",risk:"",dep:"CEO partnership pipeline"},
 {id:"TASK-LEGAL-015",title:"IP assignment in employment/contractor agreements",pri:"P0",del:"IP assignment clauses",risk:"",dep:""},
 ]},
 {id:"LIC",name:"Licensing Manager",group:"Security & Legal",tasks:[
@@ -287,9 +328,13 @@ const ROLES=[
 {id:"TASK-LIC-004",title:"Trial/freemium conversion funnel design",pri:"P1",del:"Conversion funnel",risk:"",dep:""},
 {id:"TASK-LIC-005",title:"LLM provider evaluation (OpenAI, Anthropic, open-source)",pri:"P1",del:"Vendor comparison",risk:"Provider lock-in",dep:""},
 {id:"TASK-LIC-006",title:"Graph DB licensing cost analysis",pri:"P1",del:"DB cost analysis",risk:"",dep:""},
+{id:"TASK-LIC-007",title:"Evaluate vector database costs and licenses",pri:"P2",del:"Vector DB cost comparison",risk:"",dep:"CTO"},
+{id:"TASK-LIC-008",title:"Negotiate cloud provider deployment agreements",pri:"P2",del:"Reviewed cloud provider agreements",risk:"",dep:"Legal Counsel"},
 {id:"TASK-LIC-009",title:"TCO analysis: self-hosted vs cloud vs hybrid",pri:"P1",del:"TCO report",risk:"",dep:""},
 {id:"TASK-LIC-010",title:"Token cost model (savings per 1M API calls)",pri:"P1",del:"Cost savings projection",risk:"",dep:"CORE-001"},
+{id:"TASK-LIC-011",title:"Track and optimize third-party API costs",pri:"P1",del:"Quarterly cost-per-query trend and optimization actions",risk:"",dep:""},
 {id:"TASK-LIC-012",title:"Dependency license inventory and renewals",pri:"P1",del:"License inventory",risk:"",dep:""},
+{id:"TASK-LIC-013",title:"License compliance across single-tenant, multi-tenant and edge deployments",pri:"P1",del:"Deployment-specific compliance approval",risk:"",dep:"Legal Counsel"},
 ]},
 {id:"MKT",name:"Marketing Manager",group:"Marketing",tasks:[
 {id:"TASK-MKT-001",title:"GTM strategy — segments, personas, value props",pri:"P0",del:"GTM strategy doc",risk:"",dep:""},
@@ -298,10 +343,12 @@ const ROLES=[
 {id:"TASK-MKT-004",title:"PLG strategy for Community edition",pri:"P1",del:"PLG funnel design",risk:"",dep:""},
 {id:"TASK-MKT-005",title:"Thought leadership content plan (blogs, whitepapers)",pri:"P1",del:"Content calendar",risk:"",dep:""},
 {id:"TASK-MKT-006",title:"Product demo video (3-5 min)",pri:"P1",del:"Demo video",risk:"",dep:"Stable product"},
+{id:"TASK-MKT-007",title:"Customer success stories and design partner case studies",pri:"P2",del:"Customer-approved case studies",risk:"",dep:"TASK-CEO-010"},
 {id:"TASK-MKT-008",title:"Define MQL criteria and nurture workflow",pri:"P1",del:"Lead scoring model",risk:"",dep:""},
 {id:"TASK-MKT-009",title:"Launch developer community (Discord/Slack)",pri:"P1",del:"Community launch plan",risk:"",dep:""},
 {id:"TASK-MKT-010",title:"Conference strategy (KGC, AI Summit, GraphConnect)",pri:"P2",del:"Event calendar",risk:"",dep:""},
 {id:"TASK-MKT-011",title:"Analyst engagement (Gartner, Forrester)",pri:"P1",del:"Analyst briefing deck",risk:"",dep:""},
+{id:"TASK-MKT-012",title:"Product launch PR strategy and media outreach",pri:"P2",del:"PR plan and press kit",risk:"",dep:""},
 {id:"TASK-MKT-013",title:"Brand guidelines (logo, colors, voice)",pri:"P1",del:"Brand book",risk:"",dep:""},
 {id:"TASK-MKT-014",title:"Marketing website launch",pri:"P1",del:"Website launch plan",risk:"",dep:""},
 ]},
@@ -312,120 +359,404 @@ const ROLES=[
 {id:"TASK-MKE-004",title:"Sales presentation deck (15-20 slides)",pri:"P1",del:"Sales deck",risk:"",dep:"MKT-002"},
 {id:"TASK-MKE-005",title:"Product documentation site content",pri:"P1",del:"Docs site content",risk:"",dep:"Stable API"},
 {id:"TASK-MKE-006",title:"Execute launch campaign (email, social, PR)",pri:"P1",del:"Campaign live",risk:"",dep:"MKT-001"},
+{id:"TASK-MKE-007",title:"Marketing automation: nurture, lead scoring and CRM",pri:"P2",del:"Configured automation and CRM workflow",risk:"",dep:"Marketing Manager"},
+{id:"TASK-MKE-008",title:"Manage social media presence and engagement",pri:"P2",del:"Follower, engagement and inbound-lead reports",risk:"",dep:""},
 {id:"TASK-MKE-009",title:"Set up developer community (Discord/Slack)",pri:"P1",del:"Community live",risk:"",dep:"MKT-009"},
 {id:"TASK-MKE-010",title:"Tutorial video series (install, first graph, first agent)",pri:"P2",del:"Video series",risk:"",dep:"Stable product"},
+{id:"TASK-MKE-011",title:"Conference presentation materials",pri:"P2",del:"Event-specific presentation materials",risk:"",dep:"Marketing Manager event calendar"},
 {id:"TASK-MKE-012",title:"Marketing analytics (traffic, conversion, content perf)",pri:"P2",del:"Monthly report template",risk:"",dep:""},
 ]},
 ];
 
-const GROUPS=["Executive","Engineering","AI/ML","QA","Security & Legal","Marketing"];
-const STS=["Not Started","In Progress","Completed","Blocked"];
-const S_CLS={"Not Started":"s-ns","In Progress":"s-ip","Completed":"s-dn","Blocked":"s-bl"};
+const REVIEW={
+  date:"2026-10-21",
+  sourceCommit:"78ff6d914ea15fbd10a5ae905d4ebeb02f527601",
+  scope:"All 17 attached files read in full: 2,064 original lines, including 15 role task documents, the index and the original 432-line dashboard.",
+  limitations:"Repository evidence review, not independent acceptance or live production certification. Current checkout is dirty. Snapshot audit receipts refer to the source commit shown, not every current local change. No business, legal, regulatory or owner approval is inferred.",
+  unitSnapshot:{passed:3493,failed:17,skipped:11,collected:3521,shards:6,exitCodes:[1,1,1,1,1,1]},
+  integrationSnapshot:{passed:216,failed:0,exitCode:0},
+  currentBugChecks:{passed:1,failed:1,exitCode:1},
+};
+const SOURCES={
+  CEO:{file:"CEO_tasks.md",lines:[12,18,25,31,40,47,53,59,65,70,76,82,90]},
+  CTO:{file:"CTO_tasks.md",lines:[11,17,24,30,37,44,50,56,63,70,75,80,88,94,99,106,112,117]},
+  DM:{file:"DeliveryManager_tasks.md",lines:[11,18,23,28,36,41,46,52,57,63,68,73,79,86]},
+  ARCH:{file:"Architect_tasks.md",lines:[11,17,21,25,29,34,38,42,47,51,55,60,65,69,74,78,82]},
+  LD:{file:"LeadDeveloper_tasks.md",lines:[11,16,21,26,30,35,41,47,52,56,61,65,69,74,78,83]},
+  DEV:{file:"Developer_tasks.md",lines:[21,27,32,37,42,46,52,56,60,63,66,69,...Array(18).fill(73),76,80]},
+  LAI:{file:"LeadAIEngineer_tasks.md",lines:[11,16,22,26,32,37,41,46,51,56,61,65,69,74,79,83]},
+  AIE:{file:"AIEngineer_tasks.md",lines:[11,18,23,28,32,37,41,45,49,53,58,62,66]},
+  QAL:{file:"QALead_tasks.md",lines:[11,17,22,28,34,38,41,46,51,56,61,66,71]},
+  QAE:{file:"QAEngineer_tasks.md",lines:[11,15,19,23,27,...Array(10).fill(33),36,40,44,48,52,56]},
+  SEC:{file:"SecurityOfficer_tasks.md",lines:[11,16,22,26,30,35,41,46,50,54,59,64,68,73,77,81,85]},
+  LEGAL:{file:"LegalCounsel_tasks.md",lines:[11,22,26,31,38,42,48,53,57,61,66,71,75,82,86]},
+  LIC:{file:"LicensingManager_tasks.md",lines:[11,17,22,27,32,38,42,46,50,54,59,64,68]},
+  MKT:{file:"MarketingManager_tasks.md",lines:[11,17,22,26,32,40,45,50,54,58,63,68,73,78]},
+  MKE:{file:"MarketingExecutive_tasks.md",lines:[11,17,21,25,29,34,38,41,46,49,53,58]},
+};
+const EVIDENCE={
+  vision:{path:"EOIP-engg-doc-pkg/01-project-vision.md",line:1,label:"Product vision baseline"},
+  research:{path:"EOIP-engg-doc-pkg/competitive-research-v3/00-EXECUTIVE-SUMMARY.md",line:1,label:"Competitive research, not market validation"},
+  architecture:{path:"docs/architecture-guide.md",line:1,label:"Current runtime architecture"},
+  adrs:{path:"EOIP-engg-doc-pkg/64-decisions-and-adrs.md",line:1,label:"Architecture decision baseline"},
+  scale:{path:"docs/decisions/ADR-H01-target-scale-and-latency.md",line:1,label:"Profile-specific scale/latency decision"},
+  maintainer:{path:"docs/developer-maintainer-guide.md",line:70,label:"Maintainer workflow and quality checks"},
+  api:{path:"docs/api-reference.md",line:1,label:"Current API reference"},
+  roadmap:{path:"EOIP-engg-doc-pkg/eoip-phase4-requirements.md",line:1,label:"Phase 4 requirements; completion claims require reconciliation"},
+  plan:{path:"EOIP-engg-doc-pkg/67-implementation-plan.md",line:1,label:"Implementation plan baseline"},
+  release:{path:"docs/release-checklist.md",line:1,label:"Established release checklist; gates remain UNVERIFIED"},
+  testing:{path:"docs/testing-guide.md",line:1,label:"Testing and evidence procedure"},
+  testStrategy:{path:"EOIP-engg-doc-pkg/55-testing-strategy.md",line:14,label:"Test-layer strategy"},
+  risks:{path:"EOIP-engg-doc-pkg/62-risk-register.md",line:11,label:"Risk register with likelihood, impact and mitigations"},
+  token:{path:"packages/eoip/token_formats/engine.py",line:40,label:"Seven token strategies; estimator is heuristic"},
+  verification:{path:"packages/eoip/verification/engine.py",line:1,label:"Verification registry and rules"},
+  routing:{path:"packages/eoip/routing/engine.py",line:79,label:"Regex classifier, not trained TF-IDF"},
+  graph:{path:"packages/eoip/graph_graph/engine.py",line:38,label:"Layer abstraction with process-local memory store"},
+  loops:{path:"packages/eoip/intelligence_eng/engine.py",line:1,label:"Intelligence/supervisory loop implementation"},
+  budget:{path:"packages/eoip/token_budget/engine.py",line:1,label:"Token allocation and tracking"},
+  coreTests:{path:"tests/unit/test_phase4_core_engines.py",line:76,label:"Core tests; 15 cases passed in snapshot shard 6"},
+  routerTest:{path:"tests/unit/test_phase4_core_engines.py",line:179,label:"Named sub-10ms test only asserts <15ms and enum type"},
+  brain:{path:"packages/eoip/brain/brain_os.py",line:63,label:"Core engine imports and kernel wiring"},
+  platform:{path:"packages/eoip/platform_router.py",line:1855,label:"Core platform API handlers"},
+  boundary:{path:"packages/eoip/telemetry/adapter.py",line:190,label:"Boundary detector and handoff signals"},
+  extraction:{path:"packages/eoip/extraction/engine.py",line:93,label:"Heuristic entity extraction"},
+  relations:{path:"packages/eoip/extraction/relation_extractor.py",line:1,label:"Pattern-based relation extraction"},
+  bus:{path:"packages/eoip/agents/message_bus.py",line:1,label:"Agent message bus"},
+  fanout:{path:"packages/eoip/harness/engine.py",line:1,label:"Harness fan-out/fan-in stages"},
+  federation:{path:"packages/eoip/federation/engine.py",line:1,label:"Federation planning and merge"},
+  temporal:{path:"packages/eoip/retrieval/temporal.py",line:1,label:"Temporal index/retrieval"},
+  phase2:{path:"tests/unit/test_phase4_phase2_engines.py",line:1,label:"Phase 2 tests; 15 passed in snapshot shard 3"},
+  causal:{path:"packages/eoip/causal/engine.py",line:1,label:"Causal engine implementation"},
+  gnn:{path:"packages/eoip/gnn/engine.py",line:35,label:"GNN refuses unqualified models; not trained-model acceptance"},
+  xai:{path:"packages/eoip/xai/engine.py",line:1,label:"XAI implementation"},
+  nlp:{path:"packages/eoip/nlp/pipeline.py",line:1,label:"NLP pipeline"},
+  mlops:{path:"packages/eoip/mlops/experiment_tracker.py",line:1,label:"Experiment tracker"},
+  embeddings:{path:"packages/eoip/embeddings/engine.py",line:52,label:"Embedding version registry"},
+  models:{path:"packages/eoip/model_management/registry.py",line:1,label:"Model/experiment registry"},
+  phase3:{path:"tests/unit/test_phase4_phase3_engines.py",line:1,label:"Phase 3 tests; 14 passed in snapshot shard 4"},
+  search:{path:"packages/eoip/search/hybrid_engine.py",line:1,label:"Hybrid search implementation"},
+  prompts:{path:"packages/eoip/prompts/engine.py",line:1,label:"Prompt templates"},
+  evaluation:{path:"EOIP-engg-doc-pkg/56-rag-agent-evaluation.md",line:1,label:"RAG and agent evaluation requirements"},
+  aiReview:{path:"audit-output/ai_governance.md",line:1,label:"Current AI governance gaps; human verification pending"},
+  architectureReview:{path:"audit-output/architecture_review.md",line:1,label:"Current architecture and unqualified NFR gates"},
+  classify:{path:"audit-output/data_classification.md",line:1,label:"Proposed data classification; decisions still required"},
+  security:{path:"EOIP-engg-doc-pkg/46-security-architecture.md",line:1,label:"Security architecture baseline, not approval"},
+  threat:{path:"EOIP-engg-doc-pkg/47-threat-model.md",line:1,label:"Threat model baseline, not completed STRIDE review"},
+  ops:{path:"docs/operations-runbook.md",line:1,label:"Operations and recovery guidance"},
+  observability:{path:"deploy/docker-compose.observability.yml",line:1,label:"Optional observability deployment profile"},
+  flags:{path:"packages/eoip/enterprise/feature_flags.py",line:1,label:"Feature flag module"},
+  infraTests:{path:"tests/unit/test_phase4_phase4_engines.py",line:1,label:"Infrastructure unit tests"},
+  compliance:{path:"packages/eoip/compliance/constraints.py",line:1,label:"Compliance rule templates, not certification"},
+  complianceTests:{path:"tests/unit/test_phase4_phase6_7_engines.py",line:48,label:"Compliance/PII synthetic tests"},
+  privacy:{path:"packages/eoip/privacy/scanner.py",line:1,label:"PII scanner/anonymizer"},
+  complianceUI:{path:"tests/unit/test_phase4_compliance_and_search.py",line:1,label:"Compliance dashboard unit tests"},
+  licensing:{path:"LICENSING.md",line:1,label:"Licensing direction and unresolved release decisions"},
+  entitlements:{path:"packages/eoip/licensing/entitlements.py",line:28,label:"Edition module matrix, not all 47 feature gates"},
+  meter:{path:"packages/eoip/licensing/meter.py",line:1,label:"Usage metering primitives"},
+  legalDraft:{path:"licenses/COMMERCIAL-LICENSE-DRAFT.md",line:1,label:"Draft commercial terms, not executed agreement"},
+  notices:{path:"THIRD_PARTY_NOTICES.md",line:1,label:"Preliminary third-party inventory"},
+  rights:{path:"licenses/OWNERSHIP-REGISTER.md",line:1,label:"Ownership confirmation still required"},
+  ip:{path:"docs/decisions/ADR-H12-patent-disclosure-control.md",line:1,label:"Disclosure-control decision, not patent filings"},
+  legalReview:{path:"audit-output/compliance_gaps.md",line:1,label:"Seven distribution/legal gates remain pending"},
+  fixtures:{path:"demo/demodata/enterprise/README.md",line:1,label:"Synthetic enterprise data catalog"},
+  demo:{path:"demo/autodemo/browser-demo.js",line:1,label:"Executable demos, not approved marketing videos"},
+  browserTests:{path:"apps/web/tests/enterprise-capabilities.spec.js",line:1,label:"Browser capability scenarios"},
+  i18n:{path:"apps/web/src/i18n.js",line:1,label:"Frontend localization exists; completeness unverified"},
+  a11y:{path:"apps/web/tests/gui-accessibility.spec.js",line:1,label:"Accessibility browser tests exist"},
+  load:{path:"tests/load/k6_scenarios.js",line:1,label:"Load skeleton: up to 50 VUs, not required 100/500/1000"},
+  chaos:{path:"tests/chaos/fault_injector.py",line:1,label:"Fault-injection test helper"},
+  perf:{path:"tests/unit/test_phase4_perf_regression.py",line:1,label:"Performance detector unit tests"},
+  ci:{path:".github/workflows/ci.yml",line:1,label:"CI definition, not branch-green evidence"},
+  summary:{path:"audit-output/summary.json",line:1,label:"2026-10-21 audit snapshot"},
+  unitManifest:{path:"audit-output/evidence/unit-shards.json",line:1,label:"Six disjoint unit-file shards: 270 files"},
+  unitFailure:{path:"audit-output/test_failures.md",line:1,label:"Retained current snapshot failures"},
+  unit6:{path:"audit-output/evidence/unit-shard-6/receipt.json",line:1,label:"Core test shard: 628 pass, 1 fail, 4 skip; exit 1 overall"},
+  integration:{path:"audit-output/evidence/python-integration/receipt.json",line:1,label:"216 integration/security/QA tests passed, exit 0"},
+  remoteCI:{path:"audit-output/evidence/ci-public-query/output.txt",line:1,label:"Recorded validation-evidence workflow failed; REVA jobs are not product acceptance"},
+  bugChecks:{path:"test-results/roles-dashboard-bug-checks-receipt.json",line:1,label:"Current checkout: 1 pass / 1 fail, exit 1"},
+  routeBug:{path:"tests/unit/test_product_intelligence.py",line:128,label:"Missing /api/v1/loops/catalog reproduced"},
+  latencyBug:{path:"tests/unit/test_graph_intelligence.py",line:208,label:"Latency test passes once but still asserts >0"},
+  propertyTests:{path:"tests/fuzz/test_property_fuzz.py",line:46,label:"Hypothesis tests under tests/fuzz, not tests/property"},
+  dashboardTests:{path:"demo/autodemo/tests/roles-dashboard.test.js",line:1,label:"Runnable dashboard inventory, evidence, persistence and export tests"},
+  dashboardReceipt:{path:"test-results/roles-dashboard-tests.xml",line:1,label:"Dashboard/demo regression: 25 passed, exit 0"},
+};
+const ASSESSMENTS={};
+function assess(ids,status,observed,remaining,evidence){
+  for(const id of ids.split(" ")) ASSESSMENTS[id]={status,observed,remaining,evidence};
+}
+function taskIds(prefix,numbers){return numbers.map(n=>`TASK-${prefix}-${String(n).padStart(3,"0")}`).join(" ")}
+function partial(ids,observed,remaining,evidence){assess(ids,"Partial",observed,remaining,evidence)}
 
+partial("TASK-CEO-001","Product vision and positioning baseline exists.","Obtain board/investor alignment and record quarterly owner review.",["vision"]);
+partial("TASK-CEO-002 TASK-CEO-003 TASK-MKT-002 TASK-MKT-003","Competitive research exists; TAM and sales messaging are not independently validated.","Validate bottom-up TAM and approved competitor-specific battlecards; do not publish the $14.4B claim as established fact.",["research"]);
+partial("TASK-CEO-004","Commercial licensing direction and order-form structure exist.","Approve edition prices, customer value assumptions and margin analysis with Licensing Manager.",["licensing","legalDraft"]);
+partial("TASK-CEO-012 TASK-LEGAL-001 TASK-LEGAL-003","An IP disclosure-control decision exists; it is not a filing receipt or a verified restricted register.","Confirm controlled candidate inventory and access; obtain counsel filing decisions and official receipts before claiming IP protection.",["ip"]);
+partial("TASK-CEO-013 TASK-CTO-014 TASK-SEC-015 TASK-SEC-017","Proposed classification and residency controls are documented.","Approve data classes, regions, retention/destruction/legal-hold rules and responsible owners; prove enforcement across stores and exports.",["classify"]);
+partial(taskIds("CTO",[1,3,5,6,7]),"Architecture, maintainer/API guidance and an evidence-backed gap queue exist.","Reconcile subsystem ADRs, technology evaluations, engineering/API standards and debt ownership with the specific deliverable; obtain CTO approval and enforcement evidence.",["architecture","adrs","maintainer","api","summary"]);
+partial("TASK-CTO-002 TASK-CTO-017","A profile-specific point-read latency decision exists; it does not prove the role's 10K users/100M nodes target.","Resolve conflicting latency scopes, approve workload/concurrency/percentiles and measure the stated scale; publish endpoint SLAs and error budgets.",["scale","architectureReview"]);
+partial("TASK-CTO-004","Deployment topology and optional profiles exist.","Approve a multi-region data/residency/failover design and rehearse regional failure; local Compose is not a multi-region deployment.",["architecture","architectureReview"]);
+partial("TASK-CTO-009","Graph layer implementation and synthetic cross-layer tests exist.","Publish a feasibility/complexity report with realistic cross-layer workload and measured cost limits.",["graph","coreTests"]);
+partial("TASK-CTO-010","Seven format strategies and a token-estimation benchmark helper exist.","Benchmark approved production-shaped payloads with actual tokenizer(s); validate seven-format fidelity and measured savings rather than character heuristics.",["token","coreTests"]);
+partial("TASK-CTO-011 TASK-ARCH-004 TASK-LAI-009 TASK-AIE-001","Eight-category deterministic regex routing exists; it is not the specified trained TF-IDF classifier.","Reconcile the classifier design; build/label training and held-out examples, assert correct categories and enforce the actual <10ms budget (the current test uses <15ms).",["routing","routerTest"]);
+partial("TASK-CTO-012 TASK-LAI-002","GNN compatibility interfaces explicitly refuse unqualified models.","Approve feasibility/library and hardware plan, train and register approved models, and measure quality/inference latency; refusal tests do not prove trained GNN capability.",["gnn","phase2"]);
+assess("TASK-AIE-004","Blocked","The production GNN boundary explicitly refuses unqualified models; a trained/promoted node2vec or TransE model was not established.","Qualify the required neural tier and trained model, then implement/validate the promised embeddings and quality/latency gates. Do not substitute deterministic hash vectors.",["gnn","phase2"]);
+partial("TASK-CTO-013 TASK-SEC-001 TASK-SEC-002 TASK-SEC-003 TASK-SEC-005","Security/threat-model baselines and local governance findings exist; no signed approval is established.","Complete task-specific STRIDE/control review, encryption/key/transport and execution-isolation evidence; obtain Security/CTO approval for the release profile.",["security","threat","aiReview"]);
+partial("TASK-CTO-015","Operations/recovery guidance and backup unit tests exist.","Time an isolated full-stack restore including graph/files/keys/schema/jobs; demonstrate RPO <1h and RTO <4h under approved failures.",["ops","infraTests","architectureReview"]);
+partial("TASK-CTO-016 TASK-ARCH-017","Observability profile and integration test coverage exist.","Define each engine's trace/meter/log contract; qualify a live metrics/logs/traces deployment and alert firing, redaction and runbooks.",["observability","integration","architectureReview"]);
+partial("TASK-CTO-018","Feature-flag support is referenced by the infrastructure surface.","Approve rollout/experiment ownership, tenant scope, expiry and rollback policy; verify actual engine wiring.",["infraTests"]);
+partial("TASK-DM-001 TASK-DM-003 TASK-DM-013","Roadmap, dependency declarations and a sprint template exist.","Produce approved seven-phase backlog with points, explicit critical path and capacity/owner allocation; baseline velocity instead of inferring delivery from roadmap checkboxes.",["roadmap","plan"]);
+partial("TASK-DM-002 TASK-DM-004","Maintainer and testing guides define code/test/evidence workflow; audit tooling provides a task queue.","Publish requirement-type DoD including telemetry/router/OpenAPI checks; assign human review/admission owners and enforce evidence-bound completion.",["maintainer","testing","summary"]);
+assess("TASK-DM-006","Completed","The release gate checklist is established with explicit required gates, commands and honest UNVERIFIED certification fields.","Execute its release gates and obtain go/no-go approval separately; this completes checklist creation only, not release certification.",["release"]);
+partial("TASK-DM-008 TASK-DM-012 TASK-QAL-012","Current audit and test results can support status reporting.","Bind reports to approved sprint/milestone baselines; add burndown, escape/defect density and >80% coverage evidence. Counts alone are not quality certification.",["summary","unitManifest","unitFailure"]);
+assess("TASK-DM-010","Completed","A risk register records likelihood, impact, mitigations/triggers and phase ownership.","Keep it current and reconcile the role-index R1-R10 entries, named accountable owners and review dates; ongoing maintenance remains an obligation.",["risks"]);
+partial("TASK-DM-011 TASK-DM-014","The role index supplies escalation/handoff descriptions and a dependency map.","Approve operational 4h/1d/2d escalation ownership and a RACI covering all 47 requirements; retain actual handoff acknowledgements.",[]);
+
+const CORE_KEYS=["token","verification","routing","graph","loops","budget"];
+const CORE_GAPS=[
+  "Prove supported-type/property round trips, thread-safe singleton wiring and >=30% token savings on the approved tokenizer/workload; estimator output is not production measurement.",
+  "Qualify all rule failure/short-circuit paths, real loop-boundary admission and tamper-evident durable audit behavior; a synthetic guardrail call is not an execution sandbox.",
+  "Resolve regex-vs-TF-IDF design, verify all eight category labels, feedback/cost integration and strict <10ms performance on a held-out workload.",
+  "Qualify merge/diff/projection, constraint propagation and bounded query planning; memory-backed layers and one cross-layer fixture do not prove production behavior.",
+  "Verify monitor/convergence, strategy switching and failure budgets at real nested-loop boundaries, including cancellation/recovery and API/telemetry.",
+  "Qualify all allocation policies, concurrent accounting, reallocation and actual context-budget enforcement across integrated calls.",
+];
+CORE_KEYS.forEach((key,i)=>{
+  partial(taskIds("DEV",[i+1])+" "+taskIds("LD",[i+1]),
+    "Implementation plus Brain OS/platform wiring and passing synthetic core cases are present; full task acceptance is not established.",
+    CORE_GAPS[i],[key,"brain","platform","coreTests","unit6"]);
+});
+partial("TASK-LD-007 TASK-LD-008 TASK-LD-009","Maintainer guidance, engine examples and module-level API models exist.","Create the explicit AI-review/engine-archetype/Pydantic standards deliverable and check every engine for thread safety, exports, stats, telemetry, schema validation and human review.",["maintainer","brain","platform"]);
+partial("TASK-LD-010","A general change workflow and CI definitions exist.","Document the exact feature branch/PR/squash-to-dev_local strategy and approvals; verify it is enforced, not just described.",["maintainer","ci"]);
+partial("TASK-LD-011 TASK-LD-012","Phase 2/3 engine interfaces and synthetic tests exist.","Complete requirement-specific integration and accuracy/performance gates; retain lead review approvals for extraction/federation/temporal/causal and XAI/NLP/MLOps.",["phase2","phase3","aiReview"]);
+assess("TASK-LD-014 TASK-DEV-031","Failed","The current-checkout route test fails: /api/v1/loops/catalog is absent. The paired latency test passes in this run.","Fix the route at the intended API factory/mounting boundary and rerun both exact cases. Do not treat the isolated-commit snapshot pass as current checkout success.",["routeBug","latencyBug","bugChecks"]);
+partial("TASK-DEV-032","The exact latency case passes once in the current checkout; its assertion is still latency_ms > 0 and rounded timing remains.","Resolve the documented zero-duration edge case (nonnegative contract or justified producer precision); add deterministic coverage rather than claiming a flaky timing issue fixed from one pass.",["latencyBug","bugChecks"]);
+partial("TASK-LD-016","Existing APIs and domain boundaries have explicit error paths.","Publish and enforce an engine-wide exception/error-code contract, preserving typed failures and unavailability behavior; test consistency across engines.",["maintainer","api"]);
+
+[
+  ["TASK-DEV-007 TASK-AIE-002 TASK-LAI-008","boundary","Specify and qualify moving-average confidence, repetition/similarity, inconsistency and context-utilization signals with calibrated real-loop handoff tests."],
+  ["TASK-DEV-008 TASK-AIE-003 TASK-LAI-014","extraction","Reconcile NLP pipeline integration, train/evaluate on a labeled benchmark and meet F1 >0.75; heuristic fixtures alone do not establish extraction accuracy."],
+  ["TASK-DEV-009 TASK-ARCH-013","bus","Publish message schema/topology, delivery/ordering and retry semantics; qualify concurrent agents, isolation, backpressure and durable recovery as required."],
+  ["TASK-DEV-010 TASK-ARCH-014","fanout","Approve conflict/merge/idempotency semantics and test concurrent stages with cancellation, failed shards and bounded execution."],
+  ["TASK-DEV-011 TASK-ARCH-005","federation","Publish approved decomposition/dispatch/merge design and qualify multiple real backends, conflict behavior, pushdown and latency budgets."],
+  ["TASK-DEV-012 TASK-AIE-005 TASK-LAI-006 TASK-ARCH-009","temporal","Document validity/as-of semantics and prove temporal RAG integration, version/deletion boundaries and real-store correctness."],
+].forEach(([ids,key,gap])=>partial(ids,"Implementation interfaces and synthetic Phase 2 tests exist.",gap,[key,"phase2"]));
+partial("TASK-ARCH-001 TASK-ARCH-002 TASK-ARCH-003","Core engine implementation and tests provide design material.","Publish and approve the task-specific layer/strategy/verification architecture, required sequence diagrams, cost limits and pipeline boundary contracts; code is not an approved design document.",["graph","token","verification","coreTests"]);
+partial("TASK-ARCH-006 TASK-ARCH-007","Versioned API handlers, API reference and infrastructure versioning tests exist.","Approve a consistent Phase 4 API template plus v1/v2 coexistence, compatibility, pagination/filtering and deprecation policy; validate consumers.",["api","platform","infraTests"]);
+partial("TASK-ARCH-008 TASK-ARCH-012","Contract and integration documentation exists.","Approve the cross-engine integration catalog and versioned CloudEvents-compatible schemas; qualify producer/consumer compatibility, ordering and replay.",["architecture","integration"]);
+partial("TASK-ARCH-010","Infrastructure cache tests cover local behavior.","Publish L1/L2 Redis topology and invalidation/consistency design; qualify real multi-process cache failure and stale-read behavior.",["infraTests","architectureReview"]);
+partial("TASK-ARCH-011 TASK-LAI-003","An embedding version registry with lifecycle operations exists.","Approve version lineage, fusion/dimension and drift-trigger schema, migration and durable rollback behavior; verify against trained embeddings.",["embeddings","phase3"]);
+partial("TASK-ARCH-015 TASK-ARCH-016","Architecture and profile-specific latency objectives exist.","Publish per-engine CPU/memory/latency budgets and state-ownership/scaling assessment; measure multi-process behavior under the declared workload.",["architectureReview","scale"]);
+[
+  ["TASK-AIE-006 TASK-LAI-001","xai","Publish the approved attribution/trace/calibration design and qualify real decision explanations and self_llm integration without heavy dependencies."],
+  ["TASK-AIE-007","nlp","Validate NLP integration, language/sentiment/topic/coreference quality on labeled data and document supported boundaries."],
+  ["TASK-AIE-009 TASK-LAI-012","mlops","Approve experiment/artifact schema, durable runs, reproducibility and cross-process behavior; validate the lightweight no-external-dependency contract."],
+  ["TASK-AIE-010","embeddings","Qualify lineage, drift, fusion and migrations on real embeddings with durable version rollback and production lifecycle ownership."],
+  ["TASK-LAI-011","models","Publish an A/B/canary design with valid statistical decision rules, real traffic/tenant isolation and observed rollback."],
+].forEach(([ids,key,gap])=>partial(ids,"Implementation and synthetic Phase 3 tests exist.",gap,[key,"phase3"]));
+partial("TASK-AIE-008 TASK-LAI-015","Pattern-based relation extraction and synthetic tests exist.","Approve pattern/confidence design and benchmark precision/recall, deduplication and source provenance on labeled triples.",["relations","phase2"]);
+partial("TASK-LAI-016","Causal engine interfaces and synthetic cases exist.","Publish algorithm assumptions and intervention/counterfactual validation; distinguish structural simulation from identified real-world causal effects.",["causal","phase2"]);
+partial("TASK-LAI-004 TASK-LAI-005 TASK-AIE-013","Evaluation requirements and local test fixtures exist; the specified tests/golden directory is absent.","Build and review >=100 golden cases, baseline thresholds and mode-specific benchmarks; prove retrieval precision >85% and identify the actual top ten modes.",["evaluation","aiReview"]);
+partial("TASK-LAI-007 TASK-AIE-011","Hybrid search implementation and test coverage exist.","Benchmark all seven modalities against labeled relevance judgments; tune and report BM25/RRF/reranking parameters and held-out gains.",["search","evaluation"]);
+partial("TASK-AIE-012","Prompt templates exist.","Identify the measured top five operations and compare versioned prompts for token usage, groundedness and quality on controlled examples.",["prompts","aiReview"]);
+partial("TASK-LAI-013","Embedding drift primitives and governance review exist.","Approve drift metrics, thresholds, retraining/promotions and monitored response playbook; test real drift episodes.",["embeddings","aiReview"]);
+
+partial("TASK-QAL-001 TASK-QAL-005 TASK-QAL-006","Test-layer strategy and core/Phase 2 test suites exist.","Approve phase-specific test plans and reconcile the requested 70/20/10 pyramid with actual coverage, failure cases, contracts and acceptance thresholds.",["testStrategy","coreTests","phase2"]);
+partial("TASK-QAL-002 TASK-QAL-004","CI and evidence procedures exist, but current unit shards and a validation workflow failed.","Complete per-requirement quality gates, actual >80% coverage and performance/contract budgets; repair failures and retain a green exact-build CI run.",["ci","testing","unitFailure","remoteCI"]);
+partial("TASK-QAL-003","Synthetic fixtures, demo catalogs and integration receipts exist.","Approve test data ownership/versioning/isolation/cleanup strategy and real-store reconciliation; distinguish fixtures from customer data.",["fixtures","integration"]);
+partial("TASK-QAL-007 TASK-QAL-008 TASK-QA-020","Load scripts, chaos helpers, detector tests and browser accessibility specs exist; k6 is only a skeleton.","Reconcile authenticated current API URLs, execute 100/500/1000-user queries, 100K-entity ingestion, 50-agent and RAG load; retain percentile/memory/error-rate evidence.",["load","chaos","perf","a11y"]);
+partial("TASK-QAL-009","Fault injection helper and synthetic recovery tests exist.","Qualify real graph outage, RAG timeout, agent crash, memory exhaustion and network-partition recovery in disposable infrastructure.",["chaos","complianceTests"]);
+partial("TASK-QAL-010","A performance regression detector has unit tests; this is not a running CI benchmark job.","Wire an executed baseline-comparison job enforcing <10% p99 regression on declared hardware/data; do not substitute the detector's 15% unit threshold.",["perf","ci"]);
+partial("TASK-QAL-011 TASK-QA-017","API handlers, OpenAPI inventory and selected integration/contract tests exist.","Cover actual request/response semantics, auth/negative cases and all current operations; 751 inventoried operations is not 751 qualified contracts.",["platform","api","integration","architectureReview"]);
+partial("TASK-QA-001 TASK-QA-002 TASK-QA-003 TASK-QA-004","All 15 core-file cases passed inside snapshot shard 6, whose overall exit was 1 due to another failure.","Complete the role-specific matrix: seven formats x ten payloads/property tests and compression, every verifier/short-circuit, true category accuracy and <10ms, complete graph merge/projection/constraints. Existing passes do not cover every criterion.",["coreTests","routerTest","unit6"]);
+assess("TASK-QA-005","Failed","Six disjoint unit shards recorded 3,493 passed / 17 failed / 11 skipped; all six exited 1. Current paired bug check also exits 1.","Repair/reconcile named failures and rerun the applicable complete exact-build regression and CI; do not promote old 1,897-pass evidence to current acceptance.",["unitManifest","unitFailure","remoteCI","bugChecks"]);
+partial("TASK-QA-016 TASK-QA-018","Brain OS wires core engines and selected tests exercise platform handlers.","Assert telemetry for every registered engine and execute Intelligence Engine orchestration across format, verification and routing boundaries with failure/refusal cases.",["brain","coreTests","integration"]);
+partial("TASK-QA-021","Dashboard/capability and accessibility browser specifications exist under apps/web/tests, not apps/web/e2e.","Run every required UI-007 lens against a real backend; retain assertions, visual/a11y checks and error/recovery evidence, not only fixture-backed rendering.",["browserTests","a11y"]);
+partial("TASK-QA-019","Hypothesis round-trip tests exist for constrained TOON/TRON/LEAN payloads under tests/fuzz; the all-format check only checks ratio is non-null.","Add true round-trip properties for all seven formats with nested/adversarial supported payloads, escaping, malformed data and bounded input; retain execution evidence.",["propertyTests","token"]);
+partial("TASK-SEC-004","OAuth/SSO unit tests and security integration receipts exist.","Obtain provider-specific Security approval and qualify real issuer/audience/expiry/revocation/session/tenant boundaries.",["infraTests","integration"]);
+partial("TASK-SEC-006 TASK-SEC-007 TASK-SEC-008","Engineering compliance gaps and template controls are documented.","Obtain a qualified readiness assessment per named framework, mapped controls, evidence owners and remediation timeline; do not claim SOC2/GDPR/HIPAA certification from templates.",["legalReview","compliance"]);
+partial("TASK-SEC-009 TASK-SEC-010","GDPR/SOX/HIPAA rule templates, continuous-monitor and dashboard tests exist.","Review template semantics and rule coverage; approve monitoring specification, evidence collection/retention and real deployment scheduling with compliance owners.",["compliance","complianceTests","complianceUI"]);
+partial("TASK-SEC-011","Audit scanners and current test findings exist.","Approve scanning cadence, accountable owners, 24h/7d/30d/90d remediation SLAs and exception/expiry workflow; verify rescans of release artifacts.",["summary","unitFailure","legalReview"]);
+partial("TASK-SEC-012","Operational and synthetic incident guidance exists.","Publish/approve detection-to-lessons-learned incident response roles and escalation playbook; exercise a timed incident and retain actions.",["ops"]);
+partial("TASK-SEC-013","Serialization implementation and basic round-trip tests exist; no signed deserialization security review is established.","Commission the actual deserialization review and size/type/depth/adversarial fuzz gates; this dashboard review is not that security assessment.",["token","coreTests"]);
+partial("TASK-SEC-014","PII scanner/anonymizer and synthetic tests exist.","Independently review correctness, false-negative rates and dataset coverage; qualify reversibility, keys and actual k-anonymity guarantees.",["privacy","complianceTests"]);
+partial("TASK-SEC-016","Security integration cases and policy boundaries exist.","Complete independent SILO/BRIDGE/POOL isolation review across storage, caches, retrieval, events, exports and agent effects.",["integration","aiReview"]);
+
+partial("TASK-LEGAL-004 TASK-LEGAL-005 TASK-LEGAL-006 TASK-LIC-012","First/third-party policy, notices and preliminary license inventory exist; release clearance is pending.","Review exact distributions, GPL/parser/connector/model obligations and component notices; approve contribution policy, renewal inventory and release-specific disposition with counsel.",["licensing","notices","legalReview"]);
+partial("TASK-LEGAL-007 TASK-LEGAL-008 TASK-LEGAL-009 TASK-LEGAL-010","A common commercial agreement draft exists; it is not all requested ELA/Community ToS/DPA/BAA templates.","Complete the task-specific agreement (GDPR Article 28 or HIPAA terms where applicable), customer/deployment terms and counsel review; obtain execution separately.",["legalDraft","licensing","legalReview"]);
+partial("TASK-LEGAL-011 TASK-LEGAL-012 TASK-LEGAL-013","Governance/privacy engineering findings provide inputs, not a jurisdictional legal assessment.","Obtain counsel's task-specific AI Act/DPDP risk and liability review, applicable obligations, human-oversight requirements and approved framework.",["aiReview","classify","legalReview"]);
+partial("TASK-LEGAL-015","An ownership register exists with unresolved authority/assignment decisions.","Confirm legal entity/signatory and obtain signed IP assignments for every employee/contractor contribution.",["rights","licensing"]);
+partial("TASK-LIC-001 TASK-LIC-002","Edition-level module entitlements exist, not a reviewed mapping/enforcement proof for all 47 Phase 4 features.","Approve a feature-by-edition matrix and implement/verify allowed, denied, expired and offline checks for each newly gated engine.",["entitlements","licensing"]);
+partial("TASK-LIC-003 TASK-LIC-011","Usage metering code exists; financial model and actual quarter-over-quarter trend are not established.","Define Phase 4 billable meters, concurrency/retry rules and rates; reconcile actual provider invoices and cost-per-query trend.",["meter","licensing"]);
+partial("TASK-LIC-005","Model-provider architecture and evaluation constraints are documented.","Produce current approved provider cost/quality/license comparison on matched workloads; architecture abstraction alone is not a procurement evaluation.",["aiReview"]);
+partial("TASK-LIC-006 TASK-LIC-007 TASK-LIC-009","Architecture/licensing guidance identifies backend and distribution decisions.","Build quote-backed graph/vector DB and deployment TCO comparisons including infrastructure/support/egress; obtain Procurement/CTO review.",["licensing","architectureReview"]);
+partial("TASK-LIC-010","Format benchmarks estimate tokens; no validated commercial savings projection is established.","Calculate savings per 1M calls using measured tokenizer results, workload mix and approved provider rates; include confidence/overhead assumptions.",["token","licensing"]);
+partial("TASK-LIC-013","Deployment-specific licensing release gates are documented but remain pending.","Approve actual single-tenant, multi-tenant and edge artifacts, notices and obligations independently before distribution.",["licensing","legalReview"]);
+partial("TASK-MKT-001 TASK-MKT-005","Vision, competitive research and demo material provide planning inputs.","Approve segment/persona-specific GTM and thought-leadership calendar, differentiator evidence and launch budget; research is not an approved campaign.",["vision","research","demo"]);
+partial("TASK-MKT-006 TASK-MKE-010","Automated demo scripts and fixtures exist; these are not approved edited videos.","Record and review the requested 3-5-minute product video and installation/graph/query/agent tutorials, with qualified capability boundaries.",["demo","fixtures"]);
+partial("TASK-MKT-009 TASK-MKT-014 TASK-MKE-005","Getting-started/API/maintainer documentation exists, but a launched community/marketing documentation site is not established.","Publish reviewed onboarding/tutorial/API content and verify the deployed site; record community launch separately from internal app UI.",["maintainer","api","testing"]);
+
+const AUDIT_STATUSES=["Completed","Partial","Failed","Blocked","Not Verified"];
+const LOCAL_STATUSES=["Not Started","In Progress","Completed","Blocked"];
+const S_CLS={"Not Verified":"s-ns","Partial":"s-ip","Completed":"s-dn","Blocked":"s-bl","Failed":"s-fail"};
+const TASKS=ROLES.flatMap(r=>{
+  r.tasks.sort((a,b)=>a.id.localeCompare(b.id));
+  return r.tasks.map(t=>{
+    const number=Number(t.id.slice(-3));
+    const grouped=(r.id==="DEV"&&number>=13&&number<=30)||(r.id==="QAE"&&number>=6&&number<=15);
+    const source={path:SOURCES[r.id].file,line:SOURCES[r.id].lines[number-1]};
+    const fallback={
+      status:grouped?"Blocked":"Not Verified",
+      observed:grouped?"The source lists a task-ID range only; no unique requirement or acceptance mapping is specified.":"No task-specific completion artifact or approval was established in the reviewed repository evidence. This does not prove that external work has not started.",
+      remaining:grouped?"Have the role owner assign this ID to an explicit requirement, deliverable, dependency, priority and acceptance test before implementation/closure. Do not invent an ID-to-engine mapping.":`Provide the required ${t.del}, its task-specific acceptance evidence and accountable owner review. Preserve source risks, mitigations, KPIs and handoffs.`,
+      evidence:[],
+    };
+    return {...t,pri:grouped?"Unspecified":t.pri,role:r.id,roleName:r.name,group:r.group,source,grouped,
+      ...(ASSESSMENTS[t.id]||fallback)};
+  });
+});
+function gs(id){return TASKS.find(t=>t.id===id).status}
+function counts(tasks){return Object.fromEntries(AUDIT_STATUSES.map(s=>[s,tasks.filter(t=>t.status===s).length]))}
+function esc(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function evidenceLink(key){
+  const e=EVIDENCE[key];
+  return `<a href="../../${esc(e.path)}">${esc(e.label)} (line ${e.line})</a>`;
+}
+function sourceLink(t){return `<a href="${esc(t.source.path)}">${esc(t.source.path)} (line ${t.source.line})</a>`}
 let st={};
-function ld(){try{st=JSON.parse(localStorage.getItem("eoip-roles")||"{}")}catch(e){st={}}}
-function sv(){try{localStorage.setItem("eoip-roles",JSON.stringify(st))}catch(e){}}
-function gs(id){return st[id]||"Not Started"}
-function ss(id){const c=gs(id),n=STS[(STS.indexOf(c)+1)%STS.length];st[id]=n;sv();render()}
-
-let curRole="ALL",q="";
-
-function render(){
-  const allTasks=[];
-  ROLES.forEach(r=>r.tasks.forEach(t=>allTasks.push({...t,role:r.id,roleName:r.name,group:r.group})));
-  const filtered=allTasks.filter(t=>{
+function notify(message){document.getElementById("notice").textContent=message}
+function ld(){
+  try{
+    const saved=JSON.parse(localStorage.getItem("eoip-roles")||"{}");
+    if(!saved||typeof saved!=="object"||Array.isArray(saved))throw new Error("Expected a saved task object");
+    st=Object.fromEntries(Object.entries(saved).filter(([key,value])=>
+      TASKS.some(t=>t.id===key)&&LOCAL_STATUSES.includes(value)||
+      key.startsWith("o_")&&TASKS.some(t=>t.id===key.slice(2))&&typeof value==="boolean"));
+  }catch(e){notify(`Local tracking could not be loaded: ${e.message}. Audited results remain available; saved data was not overwritten.`)}
+}
+function sv(){
+  try{localStorage.setItem("eoip-roles",JSON.stringify(st))}
+  catch(e){notify(`Local tracking could not be saved: ${e.message}. Changes are available only in this page until storage works.`)}
+}
+function setLocal(id,value){
+  if(!TASKS.some(t=>t.id===id)||!LOCAL_STATUSES.includes(value))throw new Error("Unknown task or local status");
+  st[id]=value;sv();
+}
+let curRole="ALL",q="",statusFilter="ALL",priorityFilter="ALL";
+function selectRole(id){curRole=id;render()}
+function filteredTasks(){
+  return TASKS.filter(t=>{
     if(curRole!=="ALL"&&t.role!==curRole)return false;
-    if(q){const s=q.toLowerCase();if(!t.id.toLowerCase().includes(s)&&!t.title.toLowerCase().includes(s)&&!t.del.toLowerCase().includes(s)&&!t.roleName.toLowerCase().includes(s))return false;}
-    return true;
+    if(statusFilter==="REMAINING"&&t.status==="Completed")return false;
+    if(!["ALL","REMAINING"].includes(statusFilter)&&t.status!==statusFilter)return false;
+    if(priorityFilter!=="ALL"&&t.pri!==priorityFilter)return false;
+    return !q||[t.id,t.title,t.del,t.roleName,t.observed,t.remaining,...t.evidence.map(k=>EVIDENCE[k].label)].join(" ").toLowerCase().includes(q.toLowerCase());
   });
-
-  const total=allTasks.length;
-  const done=allTasks.filter(t=>gs(t.id)==="Completed").length;
-  const ip=allTasks.filter(t=>gs(t.id)==="In Progress").length;
-  const blocked=allTasks.filter(t=>gs(t.id)==="Blocked").length;
-  const p0=allTasks.filter(t=>t.pri==="P0").length;
-
-  document.getElementById("kpis").innerHTML=`
-    <div class="kpi"><div class="kpi-n">${total}</div><div class="kpi-l">Tasks</div></div>
-    <div class="kpi"><div class="kpi-n" style="color:var(--green)">${done}</div><div class="kpi-l">Done</div></div>
-    <div class="kpi"><div class="kpi-n" style="color:var(--yellow)">${ip}</div><div class="kpi-l">In Progress</div></div>
-    <div class="kpi"><div class="kpi-n" style="color:var(--red)">${blocked}</div><div class="kpi-l">Blocked</div></div>
-    <div class="kpi"><div class="kpi-n" style="color:var(--red)">${p0}</div><div class="kpi-l">P0 Critical</div></div>
-    <div class="kpi"><div class="kpi-n">${ROLES.length}</div><div class="kpi-l">Roles</div></div>`;
-
-  const pct=total?Math.round(done/total*100):0;
+}
+function renderSummary(){
+  document.getElementById("reviewSummary").innerHTML=`
+    <h2>Evidence review - ${REVIEW.date}</h2>
+    <p>${esc(REVIEW.scope)} The original dashboard held only <strong>199 of 244 task IDs</strong>; all 45 omissions are restored.
+    Of the 244 slots, <strong>216 are individually described and 28 are unresolved range placeholders</strong> (DEV-013-030 and QA-006-015), not 28 invented implementations.</p>
+    <p><strong>Status rules:</strong> Completed = the stated deliverable is evidenced in its explicit scope; Partial = useful implementation/documentation exists but acceptance remains;
+    Failed = a required check failed; Blocked = unresolved scope or required unavailable capability; Not Verified = no reviewed task-specific completion evidence, not proof of absence.
+    These are role task slots, not unique features or defect counts: multiple roles can own different acceptance work for the same engine or failure.</p>
+    <p><strong>Current evidence:</strong> six disjoint unit shards: <strong>3,493 passed / 17 failed / 11 skipped</strong> (3,521 cases, all six exit 1);
+    integration/security/QA: <strong>216 passed, exit 0</strong>.
+    Current-checkout paired bug checks: <strong>1 passed / 1 failed, exit 1</strong>; missing loops/catalog route reproduced.
+    Do not add overlapping reruns. ${evidenceLink("unitManifest")}; ${evidenceLink("unitFailure")}; ${evidenceLink("integration")}; ${evidenceLink("bugChecks")}.</p>
+    <p><strong>Conflicts resolved:</strong> role-document “Not Started” labels and the Phase 4 “100%” statement are historical claims, not acceptance proof.
+    Regex routing is not trained TF-IDF; a &lt;15ms test does not verify &lt;10ms; estimated tokens do not establish 30% production savings.
+    GNN refusal tests do not qualify a trained model. ${evidenceLink("roadmap")}; ${evidenceLink("routerTest")}; ${evidenceLink("gnn")}.</p>
+    <p><strong>Cross-role R1-R10 risks and handoffs:</strong> staffing/bus factor, certification/IP, capacity/revenue, serialization review, copyleft obligations, AI review and production scale remain open pending owner evidence.
+    The <a href="roles_index.md">index risk/handoff map</a> is preserved; this review does not invent hires, filings, customer contracts or compliance signoffs.</p>
+    <p><strong>Dashboard validation:</strong> 25 demo/dashboard tests passed (exit 0). Real Chromium checks passed at 1440px and 390px:
+    combined filters, keyboard expansion, saved local tracking, immutable audited counts and both downloads; zero browser errors on the final run.
+    ${evidenceLink("dashboardTests")}; ${evidenceLink("dashboardReceipt")}. Dashboard validation does not turn the failing application regression gate green.</p>
+    <details><summary>Index recommendations: completed foundations and remaining acceptance</summary><ul>
+      <li>Customer support/SLA: architecture proposals are not an operating ticket system or staffed service; assign owners, tooling and measured SLA acceptance.</li>
+      <li>Documentation: maintained guides/API reference exist; deployed dedicated documentation site remains unverified. ${evidenceLink("maintainer")}.</li>
+      <li>Training: demo/onboarding scripts exist, not a complete reviewed video/certification curriculum. ${evidenceLink("demo")}.</li>
+      <li>Disaster recovery: guidance and unit tests exist; actual full-stack timed restore/drills remain required. ${evidenceLink("ops")}.</li>
+      <li>Scalability: scripts exist, production-scale qualification remains open. ${evidenceLink("load")}.</li>
+      <li>Monitoring: optional profile and alert-related integration tests exist; real alert routing/firing/on-call acceptance remains open. ${evidenceLink("observability")}; ${evidenceLink("integration")}.</li>
+      <li>Internationalization: the index's “zero i18n” claim is stale; an i18n module exists, full locale/RTL coverage remains unverified. ${evidenceLink("i18n")}.</li>
+      <li>Accessibility: the index's “no automated testing” claim is stale; browser specs exist, full WCAG 2.1 AA qualification remains open. ${evidenceLink("a11y")}.</li>
+    </ul></details>
+    <p class="notice">Source commit: <code>${REVIEW.sourceCommit}</code>. ${esc(REVIEW.limitations)}
+    Evidence links are repository-relative and show inspected source lines; they require the repository and retained local receipts.
+    This page is a dated snapshot, not a live pipeline monitor. Local tracking is preserved separately and never changes audited counts.
+    No application fixes, commit, push or publication are part of this dashboard update.</p>`;
+  const c=counts(TASKS);
+  document.getElementById("roleSummary").innerHTML=`<table><caption>Audited task slots, including unresolved ranges</caption><thead><tr><th>Role</th><th>Total</th>${AUDIT_STATUSES.map(s=>`<th>${s}</th>`).join("")}<th>Remaining</th></tr></thead><tbody>${
+    ROLES.map(r=>{const tasks=TASKS.filter(t=>t.role===r.id),rc=counts(tasks);
+      return `<tr><th scope="row"><button class="export-btn" onclick="selectRole('${r.id}')">${r.name}</button></th><td>${tasks.length}</td>${AUDIT_STATUSES.map(s=>`<td>${rc[s]}</td>`).join("")}<td>${tasks.length-rc.Completed}</td></tr>`;
+    }).join("")}</tbody><tfoot><tr><th scope="row">All roles</th><td>${TASKS.length}</td>${AUDIT_STATUSES.map(s=>`<td>${c[s]}</td>`).join("")}<td>${TASKS.length-c.Completed}</td></tr></tfoot></table>`;
+}
+function render(){
+  const filtered=filteredTasks(),c=counts(TASKS);
+  document.getElementById("subtitle").textContent=`${ROLES.length} roles | ${TASKS.length} task slots | ${TASKS.filter(t=>!t.grouped).length} individually specified | reviewed ${REVIEW.date}`;
+  document.getElementById("kpis").innerHTML=[["Task slots",TASKS.length],...AUDIT_STATUSES.map(s=>[s,c[s]]),["Remaining",TASKS.length-c.Completed],["P0 remaining",TASKS.filter(t=>t.pri==="P0"&&t.status!=="Completed").length]].map(([label,n])=>`<div class="kpi"><div class="kpi-n">${n}</div><div class="kpi-l">${label}</div></div>`).join("");
+  const pct=TASKS.length?100*c.Completed/TASKS.length:0;
   document.getElementById("masterFill").style.width=pct+"%";
-
-  let tabsH=`<button class="tab ${curRole==="ALL"?"on":""}" onclick="curRole='ALL';render()">All Roles</button>`;
-  ROLES.forEach(r=>{
-    const rc=r.tasks.length,rd=r.tasks.filter(t=>gs(t.id)==="Completed").length;
-    tabsH+=`<button class="tab ${curRole===r.id?"on":""}" onclick="curRole='${r.id}';render()">${r.name} (${rd}/${rc})</button>`;
-  });
-  document.getElementById("roleTabs").innerHTML=tabsH;
-
-  const byGroup={};
-  filtered.forEach(t=>{
-    const k=t.group+"|"+t.roleName;
-    if(!byGroup[k])byGroup[k]={group:t.group,role:t.roleName,roleId:t.role,tasks:[]};
-    byGroup[k].tasks.push(t);
-  });
-
-  let html="";
-  if(!filtered.length){html='<div class="empty">No tasks match your filters.</div>';}
-  else Object.values(byGroup).forEach(g=>{
-    const gd=g.tasks.filter(t=>gs(t.id)==="Completed").length;
-    const gp=g.tasks.length?Math.round(gd/g.tasks.length*100):0;
-    html+=`<div class="sect"><div class="sect-h">${g.role} <span class="sect-badge">${g.group}</span>
-      <span style="font-size:.72rem;color:var(--fg2);margin-left:auto;font-variant-numeric:tabular-nums">${gd}/${g.tasks.length} (${gp}%)</span></div>`;
-    g.tasks.forEach(t=>{
-      const s=gs(t.id);
-      html+=`<div class="card" id="c-${t.id}"><div class="crow" onclick="toggle('${t.id}')">
-        <span class="cid">${t.id}</span><span class="ctitle">${t.title}</span>
-        <span class="pri pri-${t.pri}">${t.pri}</span>
-        <button class="sbtn ${S_CLS[s]}" onclick="event.stopPropagation();ss('${t.id}')">${s}</button>
-        <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
-      </div><div class="cdet">
-        <div class="dg">
-          <span class="dl">Role</span><span class="dv">${g.role}</span>
-          <span class="dl">Deliverable</span><span class="dv">${t.del}</span>
-          <span class="dl">Dependencies</span><span class="dv">${t.dep||"None"}</span>
-          ${t.risk?`<span class="dl">Risk</span><span class="dv"><span class="risk-tag risk-high">${t.risk}</span></span>`:""}
-        </div>
-      </div></div>`;
-    });
-    html+=`</div>`;
-  });
-  document.getElementById("content").innerHTML=html;
-  document.querySelectorAll(".card").forEach(c=>{if(st["o_"+c.id.slice(2)])c.classList.add("open")});
+  document.getElementById("masterBar").setAttribute("aria-label",`${c.Completed} of ${TASKS.length} task slots completed (${pct.toFixed(1)}%); not product readiness`);
+  document.getElementById("roleTabs").innerHTML=`<button class="tab ${curRole==="ALL"?"on":""}" aria-pressed="${curRole==="ALL"}" onclick="selectRole('ALL')">All Roles</button>`+
+    ROLES.map(r=>{const tasks=TASKS.filter(t=>t.role===r.id);return `<button class="tab ${curRole===r.id?"on":""}" aria-pressed="${curRole===r.id}" onclick="selectRole('${r.id}')">${r.name} (${counts(tasks).Completed}/${tasks.length})</button>`}).join("");
+  document.getElementById("visibleCount").textContent=`Showing ${filtered.length} of ${TASKS.length} task slots. KPIs and role table always show the full reviewed scope.`;
+  document.getElementById("content").innerHTML=filtered.length?ROLES.map(r=>{
+    const tasks=filtered.filter(t=>t.role===r.id);
+    if(!tasks.length)return "";
+    return `<section class="sect"><h2 class="sect-h">${r.name} <span class="sect-badge">${r.group}</span></h2>${tasks.map(t=>{
+      const open=st["o_"+t.id]===true;
+      return `<article class="card ${open?"open":""}" id="c-${t.id}">
+        <div class="crow"><button class="card-toggle" aria-expanded="${open}" aria-controls="d-${t.id}" onclick="toggle('${t.id}')"><span class="cid">${t.id}</span><span class="ctitle">${esc(t.title)}</span></button>
+        <span class="pri pri-${t.pri}">${t.pri}</span><span class="sbtn ${S_CLS[t.status]}">${t.status}</span></div>
+        <div class="cdet" id="d-${t.id}"><div class="dg">
+          <span class="dl">Role / source</span><span class="dv">${r.name} / ${sourceLink(t)}</span>
+          <span class="dl">Deliverable</span><span class="dv">${esc(t.del)}</span>
+          <span class="dl">Observed</span><span class="dv">${esc(t.observed)}</span>
+          <span class="dl">Still required</span><span class="dv">${esc(t.remaining)}</span>
+          <span class="dl">Evidence</span><span class="dv">${t.evidence.length?t.evidence.map(evidenceLink).join("<br>"):"Only the role specification was established for this task; no separate completion artifact verified."}</span>
+          <span class="dl">Dependencies</span><span class="dv">${esc(t.dep||"No task dependency specified")}</span>
+          ${t.risk?`<span class="dl">Risk</span><span class="dv">${esc(t.risk)}</span>`:""}
+          <span class="dl">Local tracking</span><span class="dv"><select aria-label="Unverified local tracking for ${t.id}" onchange="setLocal('${t.id}',this.value)">${LOCAL_STATUSES.map(s=>`<option ${s===(st[t.id]||"Not Started")?"selected":""}>${s}</option>`).join("")}</select> Planning only; not audited completion.</span>
+        </div></div></article>`;
+    }).join("")}</section>`;
+  }).join(""):'<div class="empty">No tasks match your filters.</div>';
 }
-function toggle(id){st["o_"+id]=!st["o_"+id];sv();const c=document.getElementById("c-"+id);if(c)c.classList.toggle("open")}
-
-function exportJSON(){
-  const data=ROLES.map(r=>({role:r.name,group:r.group,tasks:r.tasks.map(t=>({...t,status:gs(t.id)}))}));
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-  const url=URL.createObjectURL(blob);
-  const ta=document.createElement("textarea");
-  ta.value=JSON.stringify(data,null,2);document.body.appendChild(ta);ta.select();
-  try{document.execCommand("copy")}catch(e){}
-  document.body.removeChild(ta);
-  URL.revokeObjectURL(url);
+function toggle(id){
+  st["o_"+id]=!st["o_"+id];sv();
+  const card=document.getElementById("c-"+id);
+  if(card){card.classList.toggle("open",st["o_"+id]);card.querySelector("button").setAttribute("aria-expanded",String(st["o_"+id]))}
 }
-
-function exportReport(){
-  const allT=[];ROLES.forEach(r=>r.tasks.forEach(t=>allT.push({...t,role:r.name})));
-  const done=allT.filter(t=>gs(t.id)==="Completed");
-  const ip=allT.filter(t=>gs(t.id)==="In Progress");
-  const blocked=allT.filter(t=>gs(t.id)==="Blocked");
-  let rpt=`EOIP Weekly Report — ${new Date().toISOString().slice(0,10)}\n${"=".repeat(50)}\n\n`;
-  rpt+=`Total: ${allT.length} | Done: ${done.length} | In Progress: ${ip.length} | Blocked: ${blocked.length}\n\n`;
-  if(done.length){rpt+=`COMPLETED:\n`;done.forEach(t=>rpt+=`  [${t.id}] ${t.title} (${t.role})\n`);rpt+="\n";}
-  if(ip.length){rpt+=`IN PROGRESS:\n`;ip.forEach(t=>rpt+=`  [${t.id}] ${t.title} (${t.role})\n`);rpt+="\n";}
-  if(blocked.length){rpt+=`BLOCKED:\n`;blocked.forEach(t=>rpt+=`  [${t.id}] ${t.title} (${t.role}) — ${t.risk||t.dep}\n`);rpt+="\n";}
-  const ta=document.createElement("textarea");ta.value=rpt;document.body.appendChild(ta);ta.select();
-  try{document.execCommand("copy")}catch(e){}
-  document.body.removeChild(ta);
+function reportData(){
+  return {schemaVersion:1,review:REVIEW,counts:counts(TASKS),roleSources:SOURCES,
+    roles:ROLES.map(r=>({id:r.id,role:r.name,group:r.group,tasks:TASKS.filter(t=>t.role===r.id).map(t=>({...t,
+      evidence:t.evidence.map(key=>({...EVIDENCE[key]})),localTracking:st[t.id]||"Not Started"}))}))};
 }
-
+function weeklyReport(){
+  let rpt=`EOIP Roles Evidence Report - exported ${new Date().toISOString()}\nReview snapshot: ${REVIEW.date}; source ${REVIEW.sourceCommit}\n${REVIEW.scope}\n${REVIEW.limitations}\n\n`;
+  rpt+=`Total task slots: ${TASKS.length}; individually specified: ${TASKS.filter(t=>!t.grouped).length}\n${JSON.stringify(counts(TASKS))}\nLocal tracking never changes audited completion.\nSnapshot unit checks: 3493 pass / 17 fail / 11 skip; six exit codes 1. Integration: 216 pass, exit 0. Current bug checks: 1 pass / 1 fail, exit 1.\n\n`;
+  for(const status of AUDIT_STATUSES){
+    rpt+=`${status.toUpperCase()}\n`;
+    for(const t of TASKS.filter(t=>t.status===status)){
+      rpt+=`[${t.id}] ${t.title} (${t.roleName}, ${t.pri})\nSource: ${t.source.path}:${t.source.line}\nObserved: ${t.observed}\nStill required: ${t.remaining}\nEvidence: ${t.evidence.map(k=>`${EVIDENCE[k].path}:${EVIDENCE[k].line}`).join(", ")||"Role specification only"}\nLocal tracking (unverified): ${st[t.id]||"Not Started"}\n\n`;
+    }
+  }
+  return rpt;
+}
+function download(filename,content,type){
+  const url=URL.createObjectURL(new Blob([content],{type}));
+  const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function exportJSON(){download(`eoip-roles-${REVIEW.date}.json`,JSON.stringify(reportData(),null,2),"application/json")}
+function exportReport(){download(`eoip-roles-report-${REVIEW.date}.txt`,weeklyReport(),"text/plain;charset=utf-8")}
+document.getElementById("statusFilter").insertAdjacentHTML("beforeend",AUDIT_STATUSES.map(s=>`<option>${s}</option>`).join(""));
+document.getElementById("priorityFilter").insertAdjacentHTML("beforeend",'<option>Unspecified</option>');
 document.getElementById("searchBox").addEventListener("input",e=>{q=e.target.value;render()});
-ld();render();
+document.getElementById("statusFilter").addEventListener("change",e=>{statusFilter=e.target.value;render()});
+document.getElementById("priorityFilter").addEventListener("change",e=>{priorityFilter=e.target.value;render()});
+ld();renderSummary();render();
 </script>
+</body>
+</html>

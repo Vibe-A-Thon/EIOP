@@ -1,0 +1,792 @@
+[
+ {
+  "id": "T-C20-ldbc",
+  "slug": "ldbc",
+  "name": "LDBC (SNB Interactive/BI, FinBench, Graphalytics, SPB)",
+  "category": "C20",
+  "tier": "B",
+  "tier_reason": "Audited graph benchmark family",
+  "members": [
+   "SNB Interactive",
+   "SNB BI",
+   "FinBench",
+   "Graphalytics",
+   "Semantic Publishing Benchmark"
+  ],
+  "official_url": "https://ldbcouncil.org/benchmarks/",
+  "owner": "Linked Data Benchmark Council",
+  "latest_version": "SNB spec 2.2.4 stable / 2.2.5-SNAPSHOT; Interactive v2 WIP; FinBench v0.1 stable, v0.2 WIP; no tagged code releases",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Apache-2.0 (code and specs); LDBC BENCHMARK trademark and Fair Use Policy",
+  "license_class": "permissive",
+  "redistribution_notes": "Code freely usable; only audited results may be called LDBC Benchmark Results; trademark registered in several jurisdictions.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Trademark/fair-use rules on naming results; vendor DeWitt-style clauses (TigerGraph CE, RDFox evaluation) restrict publishing engine results.",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "INTEGRATE SNB Interactive/BI driver+datagen for BM-01/02/03 shape tests and J14 parity; DEFER FinBench/SPB; label results not-LDBC",
+  "top_strengths": [
+   "STR-ldbc-01"
+  ],
+  "top_inversions": [
+   "INV-ldbc-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-ldbc.md",
+  "sources": [
+   {
+    "title": "LDBC benchmarks",
+    "url": "https://ldbcouncil.org/benchmarks/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "LDBC fair use policies",
+    "url": "https://ldbcouncil.org/benchmarks/fair-use-policies",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "SNB Interactive v2 impls",
+    "url": "https://github.com/ldbc/ldbc_snb_interactive_v2_impls",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "SNB BI",
+    "url": "https://github.com/ldbc/ldbc_snb_bi",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "FinBench docs",
+    "url": "https://github.com/ldbc/ldbc_finbench_docs",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Graphalytics",
+    "url": "https://github.com/ldbc/ldbc_graphalytics",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C20-graphrag-bench",
+  "slug": "graphrag-bench",
+  "name": "GraphRAG-Bench",
+  "category": "C20",
+  "tier": "B",
+  "tier_reason": "GraphRAG evaluation (two distinct benchmarks)",
+  "members": [
+   "GraphRAG-Bench"
+  ],
+  "official_url": "https://github.com/GraphRAG-Bench/GraphRAG-Benchmark",
+  "owner": "Xiang et al. (arXiv:2506.05690); Xiao et al. (arXiv:2506.02404)",
+  "latest_version": "arXiv:2506.05690 v3 (2026-02-22); arXiv:2506.02404 v3 (2025-06-20)",
+  "version_date": "2026-02-22",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "MIT (repo for 2506.05690); other dataset licences not verified",
+  "license_class": "permissive",
+  "redistribution_notes": "Dataset text licences (textbook/novel-derived) unverified.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Possible copyrighted source text in corpora; unverified dataset cards.",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Name shared by two papers: 2506.02404 (domain-specific textbook reasoning) and 2506.05690 (when to use graphs, 4 task levels, Novel/Medical); both examined",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified; ambiguity recorded",
+  "decision_summary": "INTEGRATE GRB-B for J6 graph-vs-plain-RAG A/B; EXPERIMENT citation scoring",
+  "top_strengths": [
+   "STR-grb-01"
+  ],
+  "top_inversions": [
+   "INV-grb-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-graphrag-bench.md",
+  "sources": [
+   {
+    "title": "GraphRAG-Bench arXiv:2506.02404",
+    "url": "https://arxiv.org/abs/2506.02404",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "When to use Graphs in RAG arXiv:2506.05690",
+    "url": "https://arxiv.org/abs/2506.05690",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "GraphRAG-Benchmark repo",
+    "url": "https://github.com/GraphRAG-Bench/GraphRAG-Benchmark",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C20-ragas",
+  "slug": "ragas",
+  "name": "RAGAS",
+  "category": "C20",
+  "tier": "B",
+  "tier_reason": "RAG evaluation library",
+  "members": [
+   "RAGAS"
+  ],
+  "official_url": "https://github.com/explodinggradients/ragas",
+  "owner": "Vibrant Labs / Exploding Gradients (repo observed under vibrantlabsai/ragas)",
+  "latest_version": "0.4.3",
+  "version_date": "2026-01-13",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Embeddable dev dependency.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "Repo organisation name change observed (vibrantlabsai); reason unverified",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "INTEGRATE as optional evaluator with local judge; pair with deterministic claim-support",
+  "top_strengths": [
+   "STR-ragas-01"
+  ],
+  "top_inversions": [
+   "INV-ragas-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-ragas.md",
+  "sources": [
+   {
+    "title": "PyPI ragas",
+    "url": "https://pypi.org/project/ragas/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Ragas metrics",
+    "url": "https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Ragas paper",
+    "url": "https://arxiv.org/abs/2309.15217",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C20-beir",
+  "slug": "beir",
+  "name": "BEIR",
+  "category": "C20",
+  "tier": "B",
+  "tier_reason": "Retrieval benchmark",
+  "members": [
+   "BEIR"
+  ],
+  "official_url": "https://github.com/beir-cellar/beir",
+  "owner": "UKP Lab / beir-cellar",
+  "latest_version": "2.2.0",
+  "version_date": "2025-06-04",
+  "release_cadence": "see deep dive",
+  "status": "maintenance",
+  "license": "Apache-2.0 (code); datasets under original licences",
+  "license_class": "permissive",
+  "redistribution_notes": "Datasets not vouched for by maintainers; user must establish permission; four datasets non-public.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Per-dataset licences unverified; keep datasets out of product images.",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "INTEGRATE as BM25/dense/hybrid regression gate on small datasets",
+  "top_strengths": [
+   "STR-beir-01"
+  ],
+  "top_inversions": [
+   "INV-beir-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-beir.md",
+  "sources": [
+   {
+    "title": "BEIR repo",
+    "url": "https://github.com/beir-cellar/beir",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PyPI beir",
+    "url": "https://pypi.org/project/beir/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "BEIR paper",
+    "url": "https://arxiv.org/abs/2104.08663",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C20-text2cypher-bench",
+  "slug": "text2cypher-bench",
+  "name": "Text2Cypher / CypherBench-style sets",
+  "category": "C20",
+  "tier": "B",
+  "tier_reason": "NL-to-query evaluation (J11)",
+  "members": [
+   "Text2Cypher / CypherBench-style sets"
+  ],
+  "official_url": "https://github.com/megagonlabs/cypherbench",
+  "owner": "Megagon Labs (CypherBench); Neo4j Labs (Text2Cypher)",
+  "latest_version": "CypherBench ACL 2025 (arXiv:2412.18702); Text2Cypher arXiv:2412.10064",
+  "version_date": "2024-12-27",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "CypherBench repo Apache-2.0; text2cypher repo CC0-1.0; dataset-card/Wikidata licences unverified",
+  "license_class": "permissive",
+  "redistribution_notes": "Graphs/datasets on Hugging Face; licence per card unverified.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Dataset licence cards unverified; CypherBench needs 64-128 GB RAM.",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified; see C08-text-to-query.md",
+  "decision_summary": "INTEGRATE CypherBench metrics; BUILD EOIP-ontology set with mutation/tenant canaries",
+  "top_strengths": [
+   "STR-t2c-01"
+  ],
+  "top_inversions": [
+   "INV-t2c-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-text2cypher-bench.md",
+  "sources": [
+   {
+    "title": "CypherBench repo",
+    "url": "https://github.com/megagonlabs/cypherbench",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "neo4j-labs/text2cypher",
+    "url": "https://github.com/neo4j-labs/text2cypher",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C20-memory-benchmarks",
+  "slug": "memory-benchmarks",
+  "name": "LoCoMo and LongMemEval",
+  "category": "C20",
+  "tier": "C",
+  "tier_reason": "Tier C reference record",
+  "members": [
+   "LoCoMo and LongMemEval"
+  ],
+  "official_url": "https://github.com/xiaowu0162/LongMemEval",
+  "owner": "Snap Research (LoCoMo); Wu et al. (LongMemEval)",
+  "latest_version": "no tagged releases",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "LongMemEval MIT; LoCoMo licence type UNVERIFIED",
+  "license_class": "mixed",
+  "redistribution_notes": "Data/code terms per record; download-only recommended.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "LoCoMo licence unread; LoCoMo contested (vendor audits claim answer-key errors and lenient judge).",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "LoCoMo controversy recorded as contested; no independent audit found",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "EXPERIMENT LongMemEval for CAP-57; LoCoMo reference-only, contested",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-tier-c-records-V33.md",
+  "sources": [
+   {
+    "title": "LoCoMo",
+    "url": "https://github.com/snap-research/locomo",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "LongMemEval",
+    "url": "https://github.com/xiaowu0162/LongMemEval",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Penfield LoCoMo audit (vendor)",
+    "url": "https://dev.to/penfieldlabs/we-audited-locomo-64-of-the-answer-key-is-wrong-and-the-judge-accepts-up-to-63-of-intentionally-33lg",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C20-rdf-benchmarks",
+  "slug": "rdf-benchmarks",
+  "name": "LUBM, BSBM, WatDiv, gMark",
+  "category": "C20",
+  "tier": "C",
+  "tier_reason": "Tier C reference record",
+  "members": [
+   "LUBM, BSBM, WatDiv, gMark"
+  ],
+  "official_url": "http://swat.cse.lehigh.edu/projects/lubm/",
+  "owner": "Lehigh Univ.; Univ. Mannheim; Univ. Waterloo; gMark authors",
+  "latest_version": "LUBM UBA 1.7; WatDiv v0.6; gMark none; BSBM UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see deep dive",
+  "status": "maintenance",
+  "license": "LUBM none stated; WatDiv cite-to-use; gMark MIT; BSBM UNVERIFIED",
+  "license_class": "mixed",
+  "redistribution_notes": "Data/code terms per record; download-only recommended.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Unstated licences for LUBM/BSBM.",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "historical",
+  "resolution_note": "BSBM page unreachable (TLS error)",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY; LUBM reasoner smoke test; gMark EXPERIMENT",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-tier-c-records-V33.md",
+  "sources": [
+   {
+    "title": "LUBM",
+    "url": "http://swat.cse.lehigh.edu/projects/lubm/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "WatDiv",
+    "url": "https://dsg.uwaterloo.ca/watdiv/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "gMark",
+    "url": "https://github.com/gbagan/gmark",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C20-ogb",
+  "slug": "ogb",
+  "name": "Open Graph Benchmark",
+  "category": "C20",
+  "tier": "C",
+  "tier_reason": "Tier C reference record",
+  "members": [
+   "Open Graph Benchmark"
+  ],
+  "official_url": "https://ogb.stanford.edu/",
+  "owner": "Stanford SNAP",
+  "latest_version": "1.3.6",
+  "version_date": "2023-04-07",
+  "release_cadence": "see deep dive",
+  "status": "maintenance",
+  "license": "Package MIT; dataset licences UNVERIFIED",
+  "license_class": "permissive",
+  "redistribution_notes": "Data/code terms per record; download-only recommended.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Dataset licences not stated.",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY; EXPERIMENT if GNN link prediction ships",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-tier-c-records-V33.md",
+  "sources": [
+   {
+    "title": "OGB docs",
+    "url": "https://ogb.stanford.edu/docs/home/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PyPI ogb",
+    "url": "https://pypi.org/project/ogb/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C20-multihop-qa",
+  "slug": "multihop-qa",
+  "name": "HotpotQA, 2WikiMultiHopQA, MuSiQue, MultiHop-RAG, CRAG, STaRK, KILT",
+  "category": "C20",
+  "tier": "C",
+  "tier_reason": "Tier C reference record",
+  "members": [
+   "HotpotQA, 2WikiMultiHopQA, MuSiQue, MultiHop-RAG, CRAG, STaRK, KILT"
+  ],
+  "official_url": "https://hotpotqa.github.io/",
+  "owner": "Various",
+  "latest_version": "no versions",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "HotpotQA CC BY-SA 4.0; 2Wiki Apache-2.0; MuSiQue CC BY 4.0; MultiHop-RAG ODC-BY; CRAG CC BY-NC 4.0; STaRK MIT; KILT MIT (archived 2023-10-31)",
+  "license_class": "mixed",
+  "redistribution_notes": "Data/code terms per record; download-only recommended.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "CRAG non-commercial; BY-SA share-alike for HotpotQA; check redistribution.",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "INTEGRATE HotpotQA/2Wiki/MuSiQue/STaRK for BM-05; CRAG, KILT reference-only",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-tier-c-records-V33.md",
+  "sources": [
+   {
+    "title": "HotpotQA",
+    "url": "https://hotpotqa.github.io/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "MuSiQue",
+    "url": "https://github.com/StonyBrookNLP/musique",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "2WikiMultiHopQA",
+    "url": "https://github.com/Alab-NII/2wikimultihop",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "MultiHop-RAG",
+    "url": "https://github.com/yixuantt/MultiHop-RAG",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "CRAG",
+    "url": "https://github.com/facebookresearch/CRAG",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "STaRK",
+    "url": "https://github.com/snap-stanford/stark",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "KILT",
+    "url": "https://github.com/facebookresearch/KILT",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C20-mteb",
+  "slug": "mteb",
+  "name": "MTEB",
+  "category": "C20",
+  "tier": "C",
+  "tier_reason": "Tier C reference record",
+  "members": [
+   "MTEB"
+  ],
+  "official_url": "https://github.com/embeddings-benchmark/mteb",
+  "owner": "embeddings-benchmark community",
+  "latest_version": "no release shown",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Apache-2.0 (code); dataset licences unverified",
+  "license_class": "permissive",
+  "redistribution_notes": "Data/code terms per record; download-only recommended.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "INTEGRATE for local embedding model selection",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-tier-c-records-V33.md",
+  "sources": [
+   {
+    "title": "MTEB repo",
+    "url": "https://github.com/embeddings-benchmark/mteb",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C20-rag-evaluators",
+  "slug": "rag-evaluators",
+  "name": "ARES and TruLens",
+  "category": "C20",
+  "tier": "C",
+  "tier_reason": "Tier C reference record",
+  "members": [
+   "ARES and TruLens"
+  ],
+  "official_url": "https://github.com/stanford-futuredata/ARES",
+  "owner": "Stanford Future Data (ARES); truera org (TruLens)",
+  "latest_version": "ARES v0.5.7; TruLens no release listed",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see deep dive",
+  "status": "unknown",
+  "license": "ARES Apache-2.0; TruLens MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Data/code terms per record; download-only recommended.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "TruLens ownership beyond truera org not verified",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "EXPERIMENT ARES judge calibration; TruLens REFERENCE-ONLY for OTel conventions",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-tier-c-records-V33.md",
+  "sources": [
+   {
+    "title": "ARES",
+    "url": "https://github.com/stanford-futuredata/ARES",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "TruLens",
+    "url": "https://github.com/truera/trulens",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C20-code-benchmarks",
+  "slug": "code-benchmarks",
+  "name": "SWE-bench, RepoBench, CrossCodeEval, CodeSearchNet",
+  "category": "C20",
+  "tier": "C",
+  "tier_reason": "Tier C reference record",
+  "members": [
+   "SWE-bench, RepoBench, CrossCodeEval, CodeSearchNet"
+  ],
+  "official_url": "https://github.com/princeton-nlp/SWE-bench",
+  "owner": "Princeton NLP; Liu et al.; Amazon Science; GitHub",
+  "latest_version": "SWE-bench no tagged release; RepoBench v1.1 (2024-02-05); CodeSearchNet archived 2023-04-11",
+  "version_date": "2024-02-05",
+  "release_cadence": "see deep dive",
+  "status": "mixed",
+  "license": "SWE-bench MIT; RepoBench CC-BY-4.0; CrossCodeEval Apache-2.0; CodeSearchNet MIT with per-project data licences",
+  "license_class": "mixed",
+  "redistribution_notes": "Data/code terms per record; download-only recommended.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Embedded source-project licences in datasets.",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "EXPERIMENT RepoBench/CrossCodeEval as retrieval probes; SWE-bench, CodeSearchNet reference-only",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-tier-c-records-V33.md",
+  "sources": [
+   {
+    "title": "SWE-bench",
+    "url": "https://github.com/princeton-nlp/SWE-bench",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "RepoBench",
+    "url": "https://github.com/Leolty/repobench",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "CrossCodeEval",
+    "url": "https://github.com/amazon-science/cceval",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "CodeSearchNet",
+    "url": "https://github.com/github/CodeSearchNet",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C20-oaei-er-datasets",
+  "slug": "oaei-er-datasets",
+  "name": "OAEI and standard entity-resolution datasets",
+  "category": "C20",
+  "tier": "C",
+  "tier_reason": "Tier C reference record",
+  "members": [
+   "OAEI and standard entity-resolution datasets"
+  ],
+  "official_url": "https://oaei.ontologymatching.org/",
+  "owner": "OAEI organisers",
+  "latest_version": "OAEI-2026 campaign",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "UNVERIFIED (data-use document not read)",
+  "license_class": "n/a",
+  "redistribution_notes": "Data/code terms per record; download-only recommended.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Data-use terms unread; ER datasets not individually verified.",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "EXPERIMENT OAEI-style tracks for ontology matching; ER sets unendorsed",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-tier-c-records-V33.md",
+  "sources": [
+   {
+    "title": "OAEI",
+    "url": "https://oaei.ontologymatching.org/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.4
+ },
+ {
+  "id": "T-C20-shacl-test-suites",
+  "slug": "shacl-test-suites",
+  "name": "W3C SHACL, JSON-LD and OWL test suites",
+  "category": "C20",
+  "tier": "C",
+  "tier_reason": "Tier C reference record",
+  "members": [
+   "W3C SHACL, JSON-LD and OWL test suites"
+  ],
+  "official_url": "https://w3c.github.io/data-shapes/data-shapes-test-suite/",
+  "owner": "W3C",
+  "latest_version": "SHACL REC 2017-07-20; OWL 2 REC 2012-12-11",
+  "version_date": "2017-07-20",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "W3C documents; test-case licences UNVERIFIED",
+  "license_class": "n/a",
+  "redistribution_notes": "Data/code terms per record; download-only recommended.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Test licences not stated on pages.",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "ADD",
+  "action_reason": "fills BL-29/BL-32 gap: no W3C conformance suite in EOIP CI",
+  "decision_summary": "INTEGRATE SHACL suite in CI and publish EARL report; OWL/JSON-LD EXPERIMENT",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C20-tier-c-records-V33.md",
+  "sources": [
+   {
+    "title": "SHACL test suite",
+    "url": "https://w3c.github.io/data-shapes/data-shapes-test-suite/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "SHACL REC",
+    "url": "https://www.w3.org/TR/shacl/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OWL 2 conformance",
+    "url": "https://www.w3.org/TR/owl2-test/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "JSON-LD API repo",
+    "url": "https://github.com/w3c/json-ld-api",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ }
+]

@@ -16040,6 +16040,227 @@
       ]
     },
     {
+      "name": "adapters",
+      "item": [
+        {
+          "name": "GET /api/v1/adapters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/adapters",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "adapters"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: list_adapters_api_v1_adapters_get\nSummary: List Adapters\nPath variables: none\nRequest body declared: no\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/adapters/{backend}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/adapters/{{qa_backend}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "adapters",
+                "{{qa_backend}}"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: get_adapter_api_v1_adapters__backend__get\nSummary: Get Adapter\nPath variables: backend\nRequest body declared: no\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/adapters/{backend}/statements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/adapters/{{qa_backend}}/statements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "adapters",
+                "{{qa_backend}}",
+                "statements"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: statements_api_v1_adapters__backend__statements_get\nSummary: Statements\nPath variables: backend\nRequest body declared: no\nResponse statuses: 200, 422"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "agentarch",
+      "item": [
+        {
+          "name": "GET /api/v1/agentarch/a2a/capabilities/{agent_id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/agentarch/a2a/capabilities/{{qa_agent_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agentarch",
+                "a2a",
+                "capabilities",
+                "{{qa_agent_id}}"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: a2a_capabilities_api_v1_agentarch_a2a_capabilities__agent_id__get\nSummary: A2A Capabilities\nPath variables: agent_id\nRequest body declared: no\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/agentarch/a2a/send",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/agentarch/a2a/send",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agentarch",
+                "a2a",
+                "send"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: a2a_send_api_v1_agentarch_a2a_send_post\nSummary: A2A Send\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/agentarch/catalog",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/agentarch/catalog",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agentarch",
+                "catalog"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: catalog_api_v1_agentarch_catalog_get\nSummary: Catalog\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/agentarch/coordinate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/agentarch/coordinate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agentarch",
+                "coordinate"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: coordinate_api_v1_agentarch_coordinate_post\nSummary: Coordinate\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/agentarch/run",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/agentarch/run",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agentarch",
+                "run"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: run_arch_api_v1_agentarch_run_post\nSummary: Run Arch\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "bitemporal",
       "item": [
         {
@@ -17809,6 +18030,316 @@
       ]
     },
     {
+      "name": "execution",
+      "item": [
+        {
+          "name": "POST /api/v1/execution/queue/claim",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/queue/claim",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "queue",
+                "claim"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: claim_item_api_v1_execution_queue_claim_post\nSummary: Claim Item\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/execution/queue/items",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/queue/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "queue",
+                "items"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: enqueue_item_api_v1_execution_queue_items_post\nSummary: Enqueue Item\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/execution/queue/items/{item_id}/complete",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/queue/items/{{qa_item_id}}/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "queue",
+                "items",
+                "{{qa_item_id}}",
+                "complete"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: complete_item_api_v1_execution_queue_items__item_id__complete_post\nSummary: Complete Item\nPath variables: item_id\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/execution/streams/{stream_id}/reconcile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/streams/{{qa_stream_id}}/reconcile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "streams",
+                "{{qa_stream_id}}",
+                "reconcile"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: reconcile_stream_api_v1_execution_streams__stream_id__reconcile_get\nSummary: Reconcile Stream\nPath variables: stream_id\nRequest body declared: no\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/execution/workflows",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/workflows",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "workflows"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: register_workflow_api_v1_execution_workflows_post\nSummary: Register Workflow\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/execution/workflows/{workflow_id}/approve",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/workflows/{{qa_workflow_id}}/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "workflows",
+                "{{qa_workflow_id}}",
+                "approve"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: approve_step_api_v1_execution_workflows__workflow_id__approve_post\nSummary: Approve Step\nPath variables: workflow_id\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/execution/workflows/{workflow_id}/cancel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/workflows/{{qa_workflow_id}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "workflows",
+                "{{qa_workflow_id}}",
+                "cancel"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: cancel_workflow_api_v1_execution_workflows__workflow_id__cancel_post\nSummary: Cancel Workflow\nPath variables: workflow_id\nRequest body declared: no\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/execution/workflows/{workflow_id}/compensate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/workflows/{{qa_workflow_id}}/compensate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "workflows",
+                "{{qa_workflow_id}}",
+                "compensate"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: compensate_workflow_api_v1_execution_workflows__workflow_id__compensate_post\nSummary: Compensate Workflow\nPath variables: workflow_id\nRequest body declared: no\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/execution/workflows/{workflow_id}/run",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/workflows/{{qa_workflow_id}}/run",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "workflows",
+                "{{qa_workflow_id}}",
+                "run"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: run_workflow_api_v1_execution_workflows__workflow_id__run_post\nSummary: Run Workflow\nPath variables: workflow_id\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/execution/workflows/{workflow_id}/state",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/workflows/{{qa_workflow_id}}/state",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "workflows",
+                "{{qa_workflow_id}}",
+                "state"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: workflow_state_api_v1_execution_workflows__workflow_id__state_get\nSummary: Workflow State\nPath variables: workflow_id\nRequest body declared: no\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/execution/workflows/{workflow_id}/timers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/execution/workflows/{{qa_workflow_id}}/timers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "execution",
+                "workflows",
+                "{{qa_workflow_id}}",
+                "timers"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: due_timers_api_v1_execution_workflows__workflow_id__timers_get\nSummary: Due Timers\nPath variables: workflow_id\nRequest body declared: no\nResponse statuses: 200, 422"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "gitops_and_marketplace",
       "item": [
         {
@@ -18379,6 +18910,272 @@
               ]
             },
             "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: validate_ontology_api_v1_ontology_gitops_validate_post\nSummary: Validate Ontology\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "graphbuild",
+      "item": [
+        {
+          "name": "POST /api/v1/graphbuild/cochange",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/graphbuild/cochange",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "graphbuild",
+                "cochange"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: cochange_api_v1_graphbuild_cochange_post\nSummary: Cochange\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/graphbuild/hierarchy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/graphbuild/hierarchy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "graphbuild",
+                "hierarchy"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: hierarchy_api_v1_graphbuild_hierarchy_post\nSummary: Hierarchy\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/graphbuild/inclusion-dependencies",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/graphbuild/inclusion-dependencies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "graphbuild",
+                "inclusion-dependencies"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: inclusion_dependencies_api_v1_graphbuild_inclusion_dependencies_post\nSummary: Inclusion Dependencies\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/graphbuild/link-prediction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/graphbuild/link-prediction",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "graphbuild",
+                "link-prediction"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: link_prediction_api_v1_graphbuild_link_prediction_post\nSummary: Link Prediction\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/graphbuild/mentions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/graphbuild/mentions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "graphbuild",
+                "mentions"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: mentions_api_v1_graphbuild_mentions_post\nSummary: Mentions\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/graphbuild/plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/graphbuild/plan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "graphbuild",
+                "plan"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: plan_api_v1_graphbuild_plan_post\nSummary: Plan\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/graphbuild/repair",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/graphbuild/repair",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "graphbuild",
+                "repair"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: repair_api_v1_graphbuild_repair_post\nSummary: Repair\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/graphbuild/rollup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/graphbuild/rollup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "graphbuild",
+                "rollup"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: rollup_api_v1_graphbuild_rollup_post\nSummary: Rollup\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/graphbuild/schema/induce",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/graphbuild/schema/induce",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "graphbuild",
+                "schema",
+                "induce"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: schema_induce_api_v1_graphbuild_schema_induce_post\nSummary: Schema Induce\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/graphbuild/similarity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/graphbuild/similarity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "graphbuild",
+                "similarity"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: similarity_api_v1_graphbuild_similarity_post\nSummary: Similarity\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
           },
           "response": []
         }
@@ -19367,6 +20164,446 @@
               ]
             },
             "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: run_policy_gate_api_v1_qa_policy_gate_run_post\nSummary: Run Policy Gate\nPath variables: none\nRequest body declared: no\nResponse statuses: 201"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "qlang",
+      "item": [
+        {
+          "name": "POST /api/v1/qlang/execute",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/qlang/execute",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "qlang",
+                "execute"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: execute__api_v1_qlang_execute_post\nSummary: Execute \nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/qlang/languages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/qlang/languages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "qlang",
+                "languages"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: languages_api_v1_qlang_languages_get\nSummary: Languages\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/qlang/languages/{language_id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/qlang/languages/{{qa_language_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "qlang",
+                "languages",
+                "{{qa_language_id}}"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: language_detail_api_v1_qlang_languages__language_id__get\nSummary: Language Detail\nPath variables: language_id\nRequest body declared: no\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/qlang/parse",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/qlang/parse",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "qlang",
+                "parse"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: parse__api_v1_qlang_parse_post\nSummary: Parse \nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/qlang/taxonomy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/qlang/taxonomy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "qlang",
+                "taxonomy"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: taxonomy_api_v1_qlang_taxonomy_get\nSummary: Taxonomy\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ragx",
+      "item": [
+        {
+          "name": "GET /api/v1/ragx/architectures",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ragx/architectures",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ragx",
+                "architectures"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: list_architectures_api_v1_ragx_architectures_get\nSummary: List Architectures\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/ragx/metrics/compute",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ragx/metrics/compute",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ragx",
+                "metrics",
+                "compute"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: compute_metric_api_v1_ragx_metrics_compute_post\nSummary: Compute Metric\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/ragx/query",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ragx/query",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ragx",
+                "query"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: query__api_v1_ragx_query_post\nSummary: Query \nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/ragx/techniques/apply",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ragx/techniques/apply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ragx",
+                "techniques",
+                "apply"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: apply_technique_api_v1_ragx_techniques_apply_post\nSummary: Apply Technique\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "reasoning",
+      "item": [
+        {
+          "name": "GET /api/v1/reasoning/agentops/costs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reasoning/agentops/costs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reasoning",
+                "agentops",
+                "costs"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: cost_totals_api_v1_reasoning_agentops_costs_get\nSummary: Cost Totals\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/reasoning/evaluation/references",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reasoning/evaluation/references",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reasoning",
+                "evaluation",
+                "references"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: evaluation_references_api_v1_reasoning_evaluation_references_get\nSummary: Evaluation References\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/reasoning/memory/working",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reasoning/memory/working",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reasoning",
+                "memory",
+                "working"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: working_snapshot_api_v1_reasoning_memory_working_get\nSummary: Working Snapshot\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/reasoning/memory/working",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reasoning/memory/working",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reasoning",
+                "memory",
+                "working"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: working_add_api_v1_reasoning_memory_working_post\nSummary: Working Add\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/reasoning/select",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reasoning/select",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reasoning",
+                "select"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: select_and_run_api_v1_reasoning_select_post\nSummary: Select And Run\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/reasoning/strategies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reasoning/strategies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reasoning",
+                "strategies"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: list_strategies_api_v1_reasoning_strategies_get\nSummary: List Strategies\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/reasoning/strategies/{name}/run",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reasoning/strategies/{{qa_name}}/run",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reasoning",
+                "strategies",
+                "{{qa_name}}",
+                "run"
+              ]
+            },
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: run_strategy_api_v1_reasoning_strategies__name__run_post\nSummary: Run Strategy\nPath variables: name\nRequest body declared: yes\nResponse statuses: 200, 422"
           },
           "response": []
         }

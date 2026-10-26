@@ -341,7 +341,8 @@ class ModelSelectionAgent(EnterpriseAgent):
         selected = self.default_model
         if self.model_registry is not None:
             entries = call_optional(getattr(self.model_registry, "list_models", None), default=[]) or []
-            healthy = [e for e in entries if getattr(e, "health", "HEALTHY") == "HEALTHY"]
+            healthy = [e for e in entries
+                       if e is not None and "HEALTHY" in str(getattr(e, "health", "HEALTHY")).upper()]
             if healthy:
                 selected = getattr(healthy[0], "model_id", selected)
         return {"summary": f"Selected model '{selected}' for task.",
@@ -430,7 +431,7 @@ class RiskAssessmentAgent(EnterpriseAgent):
     def act(self, request: AgentRequest, store: TaskStore) -> dict[str, Any]:
         self.step()
         score = 0.0
-        score += 0.3 if not request.evidence_refs and not request.context_refs else 0.0
+        score += 0.3 if not request.context_refs else 0.0
         score += 0.2 * min(len(request.context_refs or []) , 5) / 5
         if request.dry_run:
             score *= 0.5
@@ -584,6 +585,8 @@ class TestingAgent(EnterpriseAgent):
     """
 
     capability = "testing"
+
+    __test__ = False  # not a pytest class; avoids collection warning
 
     def act(self, request: AgentRequest, store: TaskStore) -> dict[str, Any]:
         self.step()

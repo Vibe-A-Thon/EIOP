@@ -104,7 +104,7 @@ jobs:
           --ignore=tests/semantic --ignore=tests/integration --ignore=tests/performance
           --ignore=tests/reva --ignore=tests/gui
           --junitxml=test-results/rest.xml
-      - name: Verify non-functional QA bench and API surface
+      - name: Non-functional QA bench and API surface
         env:
           EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data-qa
         run: |

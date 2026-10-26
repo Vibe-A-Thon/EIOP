@@ -7,13 +7,14 @@ import httpx
 import pytest
 
 from apps.api.main import create_app
-from tests._principals import provision_api_token
+from _principals import provision_api_token
 
 PUBLIC = {
     "/health/live", "/health/ready", "/metrics", "/api/reva/v1/health",
     "/ontology/docs", "/api/v1/ontology/docs",
-    # Pre-authentication endpoints (sign-in, auth health, provider discovery, SSO start) are public by design.
-    "/api/v1/auth/login", "/api/v1/auth/health", "/api/v1/auth/providers", "/api/v1/auth/sso/{provider}/login",
+    # Pre-authentication endpoints (apps/api/main.py middleware, route_policy.OPEN).
+    "/api/v1/auth/login", "/api/v1/auth/health", "/api/v1/auth/providers",
+    "/api/v1/auth/sso/{provider}/login",
 }
 METHODS = {"get", "post", "put", "patch", "delete", "head", "options", "trace"}
 

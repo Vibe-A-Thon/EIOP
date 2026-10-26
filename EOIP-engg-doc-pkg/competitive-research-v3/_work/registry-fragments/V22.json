@@ -1,0 +1,523 @@
+[
+  {
+    "id": "T-C09-a2a",
+    "slug": "a2a",
+    "name": "Agent2Agent (A2A)",
+    "category": "C09",
+    "tier": "B",
+    "tier_reason": "Agent interop protocol",
+    "members": [
+      "A2A spec",
+      "a2a-sdk (Python)"
+    ],
+    "official_url": "https://github.com/a2aproject/A2A",
+    "owner": "Linux Foundation project contributed by Google; TSC of 9 companies",
+    "latest_version": "v1.0.1 (a2a-sdk 1.2.3)",
+    "version_date": "2026-05-28",
+    "release_cadence": "unknown",
+    "status": "active",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "Apache-2.0 spec and SDK; redistribution-safe.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single open spec; no enterprise split found",
+    "deployment_modes": [
+      "self-hosted",
+      "docker"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "Name collision with IBM ACP noted, not examined; LF project name not stated in GOVERNANCE.md",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "EXPERIMENT A2A facade over MCP/agent runtime after BL-18 closes; DEFER A2A client",
+    "top_strengths": [
+      "STR-a2a-01"
+    ],
+    "top_inversions": [
+      "INV-a2a-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C09-a2a.md",
+    "sources": [
+      {
+        "title": "A2A README",
+        "url": "https://github.com/a2aproject/A2A",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "A2A GOVERNANCE",
+        "url": "https://github.com/a2aproject/A2A/blob/main/GOVERNANCE.md",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "a2a-sdk PyPI",
+        "url": "https://pypi.org/project/a2a-sdk/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C09-agent-frameworks",
+    "slug": "agent-frameworks",
+    "name": "Agent frameworks (AutoGen/AG2, MAF/Semantic Kernel, CrewAI, OpenAI Agents SDK, Claude Agent SDK, Google ADK, PydanticAI)",
+    "category": "C09",
+    "tier": "B",
+    "tier_reason": "Orchestration references",
+    "members": [
+      "AutoGen (archived)",
+      "AG2",
+      "Microsoft Agent Framework",
+      "Semantic Kernel",
+      "CrewAI",
+      "OpenAI Agents SDK",
+      "Claude Agent SDK",
+      "Google ADK",
+      "PydanticAI"
+    ],
+    "official_url": "https://github.com/microsoft/agent-framework",
+    "owner": "multiple",
+    "latest_version": "MAF 1.23.0; AG2 1.2.1; SK 1.45.0; CrewAI 1.15.30; OpenAI SDK 0.24.0; Claude SDK 0.2.174; ADK 2.13.0; PydanticAI 2.61.0; AutoGen 0.7.5 archived",
+    "version_date": "2026-10-24 (latest)",
+    "release_cadence": "weekly to monthly",
+    "status": "mixed",
+    "license": "MIT (AutoGen, MAF, SK, CrewAI, OpenAI SDK, Claude SDK per PyPI, PydanticAI); Apache-2.0 (AG2, ADK)",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive per metadata; Claude Agent SDK repo LICENSE not read.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Claude Agent SDK licence vs Anthropic service terms; CrewAI commercial tier boundaries",
+    "community_vs_enterprise": "CrewAI has a commercial platform (UNVERIFIED)",
+    "deployment_modes": [
+      "self-hosted",
+      "docker"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "early-production",
+    "resolution_note": "AutoGen = archived Microsoft repo (successor MAF); AG2 = community fork lineage",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "REJECT as core dependency; REUSE patterns (typed outputs, checkpointed HITL); keep native governed runtime",
+    "top_strengths": [
+      "STR-agfw-01"
+    ],
+    "top_inversions": [
+      "INV-agfw-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C09-agent-frameworks.md",
+    "sources": [
+      {
+        "title": "AutoGen README (archived)",
+        "url": "https://github.com/microsoft/autogen",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "MAF README",
+        "url": "https://github.com/microsoft/agent-framework",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "PyPI metadata",
+        "url": "https://pypi.org/pypi/pydantic-ai/json",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C09-dspy",
+    "slug": "dspy",
+    "name": "DSPy",
+    "category": "C09",
+    "tier": "B",
+    "tier_reason": "Programmatic prompt optimisation",
+    "members": [
+      "DSPy"
+    ],
+    "official_url": "https://github.com/stanfordnlp/dspy",
+    "owner": "Stanford NLP",
+    "latest_version": "3.4.1",
+    "version_date": "2026-10-12",
+    "release_cadence": "monthly-ish",
+    "status": "active",
+    "license": "MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "MIT, redistributable.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single open project",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "EXPERIMENT offline prompt compilation for NL-to-query (BL-12); optional extra only",
+    "top_strengths": [
+      "STR-dspy-01"
+    ],
+    "top_inversions": [
+      "INV-dspy-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C09-dspy.md",
+    "sources": [
+      {
+        "title": "DSPy README",
+        "url": "https://github.com/stanfordnlp/dspy",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "dspy PyPI",
+        "url": "https://pypi.org/project/dspy/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C09-llama-cpp",
+    "slug": "llama-cpp",
+    "name": "llama.cpp",
+    "category": "C09",
+    "tier": "B",
+    "tier_reason": "CPU-first inference",
+    "members": [
+      "llama.cpp",
+      "llama-server",
+      "llama-cpp-python"
+    ],
+    "official_url": "https://github.com/ggml-org/llama.cpp",
+    "owner": "ggml-org",
+    "latest_version": "b11889 (llama-cpp-python 0.3.36)",
+    "version_date": "2026-10-25",
+    "release_cadence": "multiple builds per day",
+    "status": "active",
+    "license": "MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "MIT; model weights have their own licences.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single open project",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "embedded",
+      "desktop"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "/releases/latest redirect showed unrelated tag v0.7.0; tags page used",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "INTEGRATE llama-server as CPU reference embedding/rerank/LLM endpoint",
+    "top_strengths": [
+      "STR-llcpp-01"
+    ],
+    "top_inversions": [
+      "INV-llcpp-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C09-llama-cpp.md",
+    "sources": [
+      {
+        "title": "llama.cpp README",
+        "url": "https://github.com/ggml-org/llama.cpp",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "llama-server README",
+        "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C09-vllm-sglang",
+    "slug": "vllm-sglang",
+    "name": "vLLM and SGLang",
+    "category": "C09",
+    "tier": "B",
+    "tier_reason": "GPU serving references",
+    "members": [
+      "vLLM",
+      "SGLang"
+    ],
+    "official_url": "https://github.com/vllm-project/vllm",
+    "owner": "vLLM community (Berkeley origin); SGLang: LMSYS",
+    "latest_version": "vLLM 0.32.0; SGLang 0.5.22",
+    "version_date": "2026-10-18 / 2026-10-16",
+    "release_cadence": "weekly",
+    "status": "active",
+    "license": "Apache-2.0 (both)",
+    "license_class": "permissive",
+    "redistribution_notes": "Engines Apache-2.0; bundled CUDA components not verified and not redistributed per ADR-H16.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "CUDA/PyTorch components in upstream artefacts (unverified); model weight licences",
+    "community_vs_enterprise": "None found",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "kubernetes"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "INTEGRATE as optional customer-provisioned OpenAI-compatible endpoint; never bundled",
+    "top_strengths": [
+      "STR-vsg-01"
+    ],
+    "top_inversions": [
+      "INV-vsg-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C09-vllm-sglang.md",
+    "sources": [
+      {
+        "title": "vLLM docs",
+        "url": "https://docs.vllm.ai/en/latest/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "SGLang README",
+        "url": "https://github.com/sgl-project/sglang",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C09-hf-tei",
+    "slug": "hf-tei",
+    "name": "Hugging Face Text Embeddings Inference",
+    "category": "C09",
+    "tier": "B",
+    "tier_reason": "Local embedding serving",
+    "members": [
+      "TEI",
+      "CPU/ONNX images",
+      "GPU images"
+    ],
+    "official_url": "https://github.com/huggingface/text-embeddings-inference",
+    "owner": "Hugging Face",
+    "latest_version": "v1.9.4",
+    "version_date": "2026-09-15",
+    "release_cadence": "monthly",
+    "status": "active",
+    "license": "Apache-2.0 since 2024-04-08 (commit 3c385a4); HFOIL v1.0 at v0.1.0 (2023-10-13)",
+    "license_class": "permissive",
+    "redistribution_notes": "Apache-2.0 current; pin post-April-2024 tags.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "HFOIL history for old tags; HFOIL terms not read",
+    "community_vs_enterprise": "Single open project",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "kubernetes"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "Third-party sites still say HFOIL; Homebrew lists stale 1.7.2",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "INTEGRATE as optional embedding/rerank sidecar; Ollama stays default",
+    "top_strengths": [
+      "STR-tei-01"
+    ],
+    "top_inversions": [
+      "INV-tei-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C09-hf-tei.md",
+    "sources": [
+      {
+        "title": "TEI README",
+        "url": "https://github.com/huggingface/text-embeddings-inference",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "TEI LICENSE history",
+        "url": "https://github.com/huggingface/text-embeddings-inference/commits/main/LICENSE",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C09-onnx-runtime",
+    "slug": "onnx-runtime",
+    "name": "ONNX Runtime",
+    "category": "C09",
+    "tier": "B",
+    "tier_reason": "CPU inference runtime",
+    "members": [
+      "ONNX Runtime",
+      "GenAI extension"
+    ],
+    "official_url": "https://onnxruntime.ai/",
+    "owner": "Microsoft",
+    "latest_version": "1.31.0",
+    "version_date": "2026-10-09",
+    "release_cadence": "monthly",
+    "status": "active",
+    "license": "MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "MIT; use CPU wheel only (GPU wheels pull CUDA).",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single open project",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "INTEGRATE optional for CPU embeddings/classifiers; DEFER GenAI API",
+    "top_strengths": [
+      "STR-ort-01"
+    ],
+    "top_inversions": [
+      "INV-ort-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C09-onnx-runtime.md",
+    "sources": [
+      {
+        "title": "ONNX Runtime docs",
+        "url": "https://onnxruntime.ai/docs/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "onnxruntime PyPI",
+        "url": "https://pypi.org/project/onnxruntime/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C09-local-embeddings",
+    "slug": "local-embeddings",
+    "name": "Local embedding and reranker models",
+    "category": "C09",
+    "tier": "B",
+    "tier_reason": "Replaces hashing embedder (BL-14)",
+    "members": [
+      "BGE-M3",
+      "bge-reranker-v2-m3",
+      "E5",
+      "GTE",
+      "Nomic",
+      "Jina",
+      "ColBERT"
+    ],
+    "official_url": "https://huggingface.co/BAAI/bge-m3",
+    "owner": "BAAI; intfloat; Alibaba-NLP; Nomic; Jina AI; colbert-ir",
+    "latest_version": "per model",
+    "version_date": "per model",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "BGE-M3 MIT; bge-reranker Apache-2.0; E5-instruct MIT; gte-modernbert Apache-2.0; Nomic v2 Apache-2.0; jina-v2 Apache-2.0; jina v3/v5/colbert-v2 CC-BY-NC-4.0; jina-v4 Qwen Research License; ColBERTv2 MIT",
+    "license_class": "mixed",
+    "redistribution_notes": "Permissive models bundle-eligible; Jina v3/v4/v5/colbert-v2 not.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Jina non-commercial and Qwen Research licences; training-data provenance not assessed",
+    "community_vs_enterprise": "Jina API/commercial route not examined",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "Jina is not one licence; v4 card initially mis-tagged cc-by-nc",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "INTEGRATE BGE-M3 or gte-modernbert default via provider; REJECT Jina non-commercial for bundling; EXPERIMENT late-interaction rerank",
+    "top_strengths": [
+      "STR-emb-01"
+    ],
+    "top_inversions": [
+      "INV-emb-01",
+      "INV-emb-02"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C09-local-embeddings.md",
+    "sources": [
+      {
+        "title": "BGE-M3 card",
+        "url": "https://huggingface.co/BAAI/bge-m3",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "jina-embeddings-v4 card",
+        "url": "https://huggingface.co/jinaai/jina-embeddings-v4",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "jina-colbert-v2 card",
+        "url": "https://huggingface.co/jinaai/jina-colbert-v2",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C09-guardrails",
+    "slug": "guardrails",
+    "name": "Guardrails (NeMo Guardrails, Llama Guard, prompt-injection defences)",
+    "category": "C09",
+    "tier": "B",
+    "tier_reason": "Agent safety",
+    "members": [
+      "NeMo Guardrails",
+      "Llama Guard 4",
+      "Llama Prompt Guard 2"
+    ],
+    "official_url": "https://github.com/NVIDIA-NeMo/Guardrails",
+    "owner": "NVIDIA; Meta",
+    "latest_version": "NeMo Guardrails 0.24.1; Llama Guard 4 12B",
+    "version_date": "2026-09-16 (NeMo)",
+    "release_cadence": "monthly",
+    "status": "active",
+    "license": "NeMo Guardrails Apache-2.0; Llama Guard 4 and Prompt Guard 2 under Llama 4 Community License (gated)",
+    "license_class": "mixed",
+    "redistribution_notes": "Apache-2.0 NeMo; Llama weights customer-downloaded, not bundled.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Llama 4 Community License terms (branding, AUP, MAU threshold per secondary source)",
+    "community_vs_enterprise": "Single open project (NeMo); Meta licence for models",
+    "deployment_modes": [
+      "self-hosted",
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "BUILD deterministic firewall layer; EXPERIMENT NeMo adapter; INTEGRATE Prompt Guard 2 as customer-supplied plugin",
+    "top_strengths": [
+      "STR-grd-01",
+      "STR-grd-02"
+    ],
+    "top_inversions": [
+      "INV-grd-01",
+      "INV-grd-02"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C09-guardrails.md",
+    "sources": [
+      {
+        "title": "NeMo Guardrails README",
+        "url": "https://github.com/NVIDIA-NeMo/Guardrails",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Llama Guard 4 card",
+        "url": "https://huggingface.co/meta-llama/Llama-Guard-4-12B",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  }
+]

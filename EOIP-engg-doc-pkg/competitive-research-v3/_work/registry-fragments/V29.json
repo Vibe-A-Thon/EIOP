@@ -1,0 +1,765 @@
+[
+ {
+  "id": "T-C15-graphify",
+  "slug": "graphify",
+  "name": "Graphify (Graphify-Labs/graphify)",
+  "category": "C15",
+  "tier": "B",
+  "tier_reason": "Named code-graph tool",
+  "members": [
+   "Graphify (Graphify-Labs/graphify)"
+  ],
+  "official_url": "https://github.com/Graphify-Labs/graphify",
+  "owner": "Graphify Labs (formerly safishamsi/graphify)",
+  "latest_version": "v0.9.95",
+  "version_date": "2026-10-23",
+  "release_cadence": "releases every 1-3 days (v0.9.91-0.9.95, 14-23 Oct 2026)",
+  "status": "active",
+  "license": "Apache-2.0 (core); Graphify Enterprise terms unknown",
+  "license_class": "permissive",
+  "redistribution_notes": "Local CLI free; hosted tiers SaaS; Enterprise early access",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Free local core; hosted Free/Pro/Teams; Enterprise early access self-hosted in VPC (pricing unpublished)",
+  "deployment_modes": [
+   "self-hosted",
+   "desktop",
+   "saas"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "Pinned to Graphify-Labs/graphify (~135.5k stars, Apache-2.0); other repos named graphify are unrelated or ports. 'Graphify Enterprise' exists: early access at graphify.com/enterprise, not GA, features unverified; not the UK vendor Graphifi.",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE confidence-labelled edges (EXTRACTED/INFERRED/AMBIGUOUS) into BL-40; REJECT as dependency; DEFER Enterprise",
+  "top_strengths": [
+   "STR-graphify-01",
+   "STR-graphify-02",
+   "STR-graphify-03"
+  ],
+  "top_inversions": [
+   "INV-graphify-01",
+   "INV-graphify-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-graphify.md",
+  "sources": [
+   {
+    "title": "Graphify repo",
+    "url": "https://github.com/Graphify-Labs/graphify",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Graphify architecture",
+    "url": "https://raw.githubusercontent.com/Graphify-Labs/graphify/main/ARCHITECTURE.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Graphify Enterprise",
+    "url": "https://www.graphify.com/enterprise",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Third-party research note",
+    "url": "https://rywalker.com/research/graphify",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C15-codegraph",
+  "slug": "codegraph",
+  "name": "CodeGraph (colbymchenry/codegraph)",
+  "category": "C15",
+  "tier": "B",
+  "tier_reason": "Named code-graph tool",
+  "members": [
+   "CodeGraph (colbymchenry/codegraph)"
+  ],
+  "official_url": "https://github.com/colbymchenry/codegraph",
+  "owner": "Colby McHenry",
+  "latest_version": "v1.6.2",
+  "version_date": "2026-10-03",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Free, bundled runtime",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "desktop",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "Pinned to colbymchenry/codegraph (~75.4k stars). Alternatives: CodeGraphContext (4.4k, MIT, graph DB), codegraph-rust, optave/ops-codegraph-tool and others, all far smaller.",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE watcher+staleness banner, resolvedBy provenance; BUILD ACL-aware equivalent",
+  "top_strengths": [
+   "STR-codegraph-01",
+   "STR-codegraph-02",
+   "STR-codegraph-03"
+  ],
+  "top_inversions": [
+   "INV-codegraph-01",
+   "INV-codegraph-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-codegraph.md",
+  "sources": [
+   {
+    "title": "CodeGraph repo",
+    "url": "https://github.com/colbymchenry/codegraph",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "GitHub search API",
+    "url": "https://api.github.com/search/repositories?q=codegraph",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C15-openrewrite",
+  "slug": "openrewrite",
+  "name": "OpenRewrite / Moderne",
+  "category": "C15",
+  "tier": "B",
+  "tier_reason": "Lossless semantic trees",
+  "members": [
+   "OpenRewrite / Moderne"
+  ],
+  "official_url": "https://docs.openrewrite.org/",
+  "owner": "Moderne, Inc.",
+  "latest_version": "rewrite v8.93.11; rewrite-recipe-bom 3.41.0",
+  "version_date": "2026-10-18",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Apache-2.0 (core, Java/Groovy/Kotlin/XML/YAML/HCL, build plugins); Moderne Source Available License (newer language modules); Moderne Proprietary License (commercial recipes)",
+  "license_class": "mixed",
+  "redistribution_notes": "Source-available terms bar managed-service use and paid recipe consulting",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Source-available modules forbid providing recipes as a managed service or paid consulting; proprietary recipes",
+  "community_vs_enterprise": "Moderne platform and proprietary recipes commercial; CLI free for OSS repos",
+  "deployment_modes": [
+   "self-hosted",
+   "embedded",
+   "saas"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "Moderne CLI public-releases repo archived 2026-03-19, successor unverified; docs say recipes moving from Maven Central to a 'Code Genome Project'.",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "INTEGRATE Apache JVM modules as optional extractor; REFERENCE LST/mass-ingest design; REJECT mass-commit actions in core",
+  "top_strengths": [
+   "STR-openrewrite-01",
+   "STR-openrewrite-02",
+   "STR-openrewrite-03"
+  ],
+  "top_inversions": [
+   "INV-openrewrite-01",
+   "INV-openrewrite-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-openrewrite.md",
+  "sources": [
+   {
+    "title": "OpenRewrite docs",
+    "url": "https://docs.openrewrite.org/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OpenRewrite licensing",
+    "url": "https://docs.openrewrite.org/licensing/openrewrite-licensing",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "LST concept",
+    "url": "https://docs.openrewrite.org/concepts-and-explanations/lossless-semantic-trees",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "rewrite repo",
+    "url": "https://github.com/openrewrite/rewrite",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C15-cast-imaging",
+  "slug": "cast-imaging",
+  "name": "CAST Imaging",
+  "category": "C15",
+  "tier": "B",
+  "tier_reason": "Enterprise architecture code graph",
+  "members": [
+   "CAST Imaging"
+  ],
+  "official_url": "https://www.castsoftware.com/products/cast-imaging",
+  "owner": "CAST Software",
+  "latest_version": "V3 docs; exact release NOT PUBLICLY VERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Proprietary commercial (per application per year; third-party listing from USD 10,200)",
+  "license_class": "proprietary",
+  "redistribution_notes": "No OEM terms found",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Proprietary; OEM/redistribution not available publicly",
+  "community_vs_enterprise": "Imaging (on-prem/SaaS), Imaging Express (AWS SaaS), Highlight separate",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "saas"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Distinct from CAST Highlight; pricing from reseller listings only.",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE transaction-path model; EXPERIMENT optional connector for customer exports; REJECT as dependency",
+  "top_strengths": [
+   "STR-cast-01",
+   "STR-cast-04"
+  ],
+  "top_inversions": [
+   "INV-cast-01",
+   "INV-cast-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-cast-imaging.md",
+  "sources": [
+   {
+    "title": "CAST Imaging docs",
+    "url": "https://doc.castsoftware.com/imaging/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Docker multi-machine install",
+    "url": "https://doc.castsoftware.com/imaging/install/global/docker/multi-machine/all-multi/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "CAST site",
+    "url": "https://www.castsoftware.com/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.55
+ },
+ {
+  "id": "T-C15-backstage",
+  "slug": "backstage",
+  "name": "Backstage, Port, Cortex (software catalogs)",
+  "category": "C15",
+  "tier": "B",
+  "tier_reason": "Service/ownership graph",
+  "members": [
+   "Backstage, Port, Cortex (software catalogs)"
+  ],
+  "official_url": "https://backstage.io/",
+  "owner": "Spotify / CNCF (Backstage); Port; Cortex",
+  "latest_version": "Backstage v1.56.2",
+  "version_date": "2026-10-22",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Backstage Apache-2.0; Port proprietary SaaS (Ocean framework Apache-2.0); Cortex proprietary SaaS",
+  "license_class": "mixed",
+  "redistribution_notes": "Backstage OEM-friendly; Port/Cortex SaaS only (Port single-tenant by contract)",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Backstage OSS; Port/Cortex commercial",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "saas"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "Only Backstage reused; Port/Cortex reference-only. Cortex on-prem unconfirmed.",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "INTEGRATE Backstage catalog as a source; BUILD ownership join; REFERENCE Port/Cortex",
+  "top_strengths": [
+   "STR-backstage-01",
+   "STR-backstage-02",
+   "STR-port-01"
+  ],
+  "top_inversions": [
+   "INV-backstage-01",
+   "INV-backstage-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-backstage.md",
+  "sources": [
+   {
+    "title": "Backstage descriptor format",
+    "url": "https://backstage.io/docs/features/software-catalog/descriptor-format",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Backstage architecture",
+    "url": "https://backstage.io/docs/overview/architecture-overview",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Port docs",
+    "url": "https://docs.port.io/build-your-software-catalog/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Cortex comparison",
+    "url": "https://cortex.io/compare/cortex-vs-port",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C15-dependency-track",
+  "slug": "dependency-track",
+  "name": "Dependency-Track, SBOM graphs, deps.dev, OSV",
+  "category": "C15",
+  "tier": "B",
+  "tier_reason": "Dependency risk graph",
+  "members": [
+   "Dependency-Track, SBOM graphs, deps.dev, OSV"
+  ],
+  "official_url": "https://dependencytrack.org/",
+  "owner": "OWASP (Dependency-Track); Google (deps.dev, osv.dev); OpenSSF (OSV schema)",
+  "latest_version": "DT 5.2.1 / 4.14.6; OSV schema 1.9.2",
+  "version_date": "2026-10-25",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "DT Apache-2.0; OSV data per-source licences (CC-BY 4.0, CC0, CC-BY-NC-ND 4.0 etc.); deps.dev generated data CC-BY 4.0 under Google API ToS",
+  "license_class": "mixed",
+  "redistribution_notes": "DT self-hostable, redistributable; some OSV sources restrict redistribution; deps.dev online API",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Mixed feed licences incl. NC-ND (Chainguard); deps.dev ToS",
+  "community_vs_enterprise": "none for DT",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "DT v5 (Hyades) GA 2026-06-09, PostgreSQL only, no in-place upgrade from v4. deps.dev online only; OSV offline via dump.",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "BUILD native OSV purl matcher + INTEGRATE DT as optional connector; REUSE compliance/sbom.py; extend connector with dependency edges",
+  "top_strengths": [
+   "STR-dt-01",
+   "STR-osv-01",
+   "STR-depsdev-01"
+  ],
+  "top_inversions": [
+   "INV-dt-01",
+   "INV-dt-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-dependency-track.md",
+  "sources": [
+   {
+    "title": "Dependency-Track v5 GA",
+    "url": "https://owasp.github.io/blog/2026/06/09/dependency-track-v5",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "DT releases",
+    "url": "https://github.com/DependencyTrack/dependency-track/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OSV schema",
+    "url": "https://ossf.github.io/osv-schema/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OSV data",
+    "url": "https://google.github.io/osv.dev/data/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "deps.dev API",
+    "url": "https://docs.deps.dev/api/v3/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C15-code-review-graph",
+  "slug": "code-review-graph",
+  "name": "code-review-graph (tirth8205)",
+  "category": "C15",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "code-review-graph (tirth8205)"
+  ],
+  "official_url": "https://github.com/tirth8205/code-review-graph",
+  "owner": "tirth8205",
+  "latest_version": "v2.3.9",
+  "version_date": "2026-09-18",
+  "release_cadence": "see record",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "self-hosted",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Pinned to tirth8205 repo (~32.4k stars); other repos are forks (<10 stars).",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY; borrow blast-radius/risk ideas",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-tier-c-records-V29.md",
+  "sources": [
+   {
+    "title": "repo",
+    "url": "https://github.com/tirth8205/code-review-graph",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C15-repomix",
+  "slug": "repomix",
+  "name": "Repomix",
+  "category": "C15",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Repomix"
+  ],
+  "official_url": "https://repomix.com",
+  "owner": "yamadashy",
+  "latest_version": "v1.18.1",
+  "version_date": "2026-09-21",
+  "release_cadence": "see record",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY; token-budgeted secret-filtered bundle pattern",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-tier-c-records-V29.md",
+  "sources": [
+   {
+    "title": "repo",
+    "url": "https://github.com/yamadashy/repomix",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C15-grepai",
+  "slug": "grepai",
+  "name": "grepai (yoanbernabeu)",
+  "category": "C15",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "grepai (yoanbernabeu)"
+  ],
+  "official_url": "https://github.com/yoanbernabeu/grepai",
+  "owner": "Yoan Bernabeu",
+  "latest_version": "v1.0.0",
+  "version_date": "2026-10-25",
+  "release_cadence": "see record",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Pinned to yoanbernabeu/grepai (~1.9k stars); others are skills/forks.",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY; evaluate in CAP-78 harness",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-tier-c-records-V29.md",
+  "sources": [
+   {
+    "title": "repo",
+    "url": "https://github.com/yoanbernabeu/grepai",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C15-gitnexus",
+  "slug": "gitnexus",
+  "name": "GitNexus (abhigyanpatwari)",
+  "category": "C15",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "GitNexus (abhigyanpatwari)"
+  ],
+  "official_url": "https://github.com/abhigyanpatwari/GitNexus",
+  "owner": "Abhigyan Patwari",
+  "latest_version": "v1.6.12",
+  "version_date": "2026-09-12",
+  "release_cadence": "see record",
+  "status": "active",
+  "license": "PolyForm Noncommercial 1.0.0",
+  "license_class": "source-available",
+  "redistribution_notes": "",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Noncommercial licence incompatible with sold/white-label redistribution",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Canonical repo ~48k stars; forks/mirrors ignored. Storage LadybugDB; relation to Kuzu unverified.",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY; REJECT as dependency",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-tier-c-records-V29.md",
+  "sources": [
+   {
+    "title": "repo",
+    "url": "https://github.com/abhigyanpatwari/GitNexus",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "licence",
+    "url": "https://raw.githubusercontent.com/abhigyanpatwari/GitNexus/main/LICENSE",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C15-srcml",
+  "slug": "srcml",
+  "name": "srcML",
+  "category": "C15",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "srcML"
+  ],
+  "official_url": "https://www.srcml.org",
+  "owner": "srcML project",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see record",
+  "status": "active",
+  "license": "GPL-3.0",
+  "license_class": "strong-copyleft",
+  "redistribution_notes": "",
+  "legal_review_trigger": true,
+  "legal_review_reason": "GPL-3.0 hard constraint",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "SourceForge 'SrcML Framework' is a different older project.",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-tier-c-records-V29.md",
+  "sources": [
+   {
+    "title": "repo",
+    "url": "https://github.com/srcML/srcML",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C15-scitools-understand",
+  "slug": "scitools-understand",
+  "name": "SciTools Understand",
+  "category": "C15",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "SciTools Understand"
+  ],
+  "official_url": "https://scitools.com",
+  "owner": "SciTools",
+  "latest_version": "8.0 build 1258",
+  "version_date": "2026-07-27",
+  "release_cadence": "see record",
+  "status": "active",
+  "license": "Proprietary",
+  "license_class": "proprietary",
+  "redistribution_notes": "",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Proprietary; terms not public",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "desktop"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-tier-c-records-V29.md",
+  "sources": [
+   {
+    "title": "build notes",
+    "url": "https://docs.scitools.com/buildnotes/index.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.55
+ },
+ {
+  "id": "T-C15-sonarqube",
+  "slug": "sonarqube",
+  "name": "SonarQube",
+  "category": "C15",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "SonarQube"
+  ],
+  "official_url": "https://www.sonarsource.com/products/sonarqube/",
+  "owner": "Sonar (SonarSource)",
+  "latest_version": "Server 2026.x (docs 2026.5)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see record",
+  "status": "active",
+  "license": "Community Build LGPL-3.0 with analyzers under Sonar Source-Available License v1.0; Developer/Enterprise/Data Center commercial",
+  "license_class": "mixed",
+  "redistribution_notes": "",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Source-available analyzers and LOC-based commercial editions",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "INTEGRATE on demand as source; EXPERIMENT",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-tier-c-records-V29.md",
+  "sources": [
+   {
+    "title": "licence",
+    "url": "https://www.sonarsource.com/license/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "editions",
+    "url": "https://docs.sonarsource.com/sonarqube-server/2026.4/discovering/sonarqube-server-editions",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.55
+ },
+ {
+  "id": "T-C15-repo-maps",
+  "slug": "repo-maps",
+  "name": "Aider repo map; Cursor and Continue codebase indexes",
+  "category": "C15",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Aider repo map; Cursor and Continue codebase indexes"
+  ],
+  "official_url": "https://aider.chat/docs/repomap.html",
+  "owner": "Aider; Anysphere (Cursor); Continue",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "see record",
+  "status": "unknown",
+  "license": "Aider/Continue licences UNVERIFIED this run; Cursor proprietary",
+  "license_class": "mixed",
+  "redistribution_notes": "",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "desktop",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "Cursor docs now describe local Instant Grep and no stored embeddings; older embedding/Merkle descriptions unverified; Continue @Codebase marked Deprecated.",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY; BUILD ACL-filtered graph-ranked context packing",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-tier-c-records-V29.md",
+  "sources": [
+   {
+    "title": "Aider repo map",
+    "url": "https://aider.chat/docs/repomap.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Cursor indexing",
+    "url": "https://cursor.com/docs/context/codebase-indexing",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Continue deprecated @Codebase",
+    "url": "https://docs.continue.dev/reference/deprecated-codebase",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ }
+]

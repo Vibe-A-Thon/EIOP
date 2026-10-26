@@ -1,3 +1,11 @@
 # False positive: the dlq-graph healthcheck references the container's own
 # $PASSWORD env var (curl -u admin:$${PASSWORD}); no credential value is committed.
 a907de13740618445e27af913f9434902868ccb6:deploy/docker-compose.dlq-acceptance.yml:curl-auth-user:59
+
+# False positives in a74e82a (gitleaks 8.30.1 rules; reviewed with values masked): a commit SHA in an
+# epic doc, requirement IDs ('*-keycloak-01') in a registry fragment, and prose in two research docs.
+a74e82a0d09a07d17b899d242265f59c3a68ddd5:EOIP-engg-doc-pkg/competitive-research-v3/18-ADRS/ADR-KG3-02-tenant-isolation-protocol-level-guarantee.md:generic-api-key:32
+a74e82a0d09a07d17b899d242265f59c3a68ddd5:EOIP-engg-doc-pkg/competitive-research-v3/16-SECURITY-PRIVACY-THREAT-MODEL.md:generic-api-key:98
+a74e82a0d09a07d17b899d242265f59c3a68ddd5:EOIP-engg-doc-pkg/competitive-research-v3/_work/registry-fragments/V11.json:generic-api-key:38
+a74e82a0d09a07d17b899d242265f59c3a68ddd5:EOIP-engg-doc-pkg/competitive-research-v3/_work/registry-fragments/V11.json:generic-api-key:42
+a74e82a0d09a07d17b899d242265f59c3a68ddd5:eoip-audit-kit/remediation/epics/EPIC-KGR-UNTR-01.md:sourcegraph-access-token:3

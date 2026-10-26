@@ -98,12 +98,14 @@ def evaluate(plan: QLangPlan, payload: Any) -> list[Any]:
             for node in current:
                 nxt.extend(_children(node))
         elif kind == "descend":
-            stack = list(current)
-            while stack:
-                node = stack.pop()
+            def _walk(node: Any):
                 if isinstance(node, dict) and arg in node:
-                    nxt.append(node[arg])
-                stack.extend(_children(node))
+                    yield node[arg]
+                for child in _children(node):
+                    yield from _walk(child)
+
+            for node in current:
+                nxt.extend(_walk(node))
         current = nxt
     return current
 

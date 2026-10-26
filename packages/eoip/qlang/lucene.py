@@ -38,7 +38,7 @@ def _tokenize(query: str) -> list[tuple[str, str]]:
             continue
         # explicit operators take priority over term/field scanning
         op = re.match(r"(AND|OR|NOT)\b", query[pos:])
-        if op and (not tokens or tokens[-1][0] not in ("AND", "OR", "NOT", "LPAREN")):
+        if op:
             tokens.append((op.group(1), op.group(1)))
             pos += op.end()
             continue
@@ -184,8 +184,9 @@ def _term_match(
     default_fields: list[str] | None,
 ) -> bool:
     def _one(v: Any) -> bool:
-        s = str(v)
-        return s == value if exact_phrase else value.casefold() in s.casefold()
+        s = str(v).casefold()
+        needle = value.casefold()
+        return needle in s
 
     if field is not None:
         return field in doc and _one(doc[field])

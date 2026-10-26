@@ -9,6 +9,8 @@ import sys
 from pathlib import Path
 
 PATTERNS: list[tuple[str, re.Pattern[str]]] = [
+    ("bearer", re.compile(r"(?i)\bBearer\s+[A-Za-z0-9._~+/-]{16,}=*")),
+    ("eoip_credential", re.compile(r"\beoip_(?:sa|admin|steward|analyst|viewer)_[a-f0-9]{16,}\b")),
     ("private_key", re.compile(r"-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----.*?-----END [A-Z0-9 ]*PRIVATE KEY-----", re.S)),
     ("aws_key", re.compile(r"AKIA[0-9A-Z]{16}")),
     ("github_pat", re.compile(r"ghp_[A-Za-z0-9]{36,}")),

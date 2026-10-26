@@ -1,6 +1,12 @@
 # EOIP (kgf) Enhanced Audit Kit
 
-Instruction set + offline executive tracker + JSON schemas for **strict, evidence-backed** audits of the EOIP (kgf) application. This kit does **not** include a live audit of a real EOIP repository — it is the prompt and tooling shell.
+Instruction set, offline executive tracker, JSON schemas and audit tooling for **strict, evidence-backed** reviews of EOIP (kgf).
+
+## Current Snapshot Audit
+
+The current application audit is in the repository-root [audit-output/](../audit-output/README.md), pinned to `78ff6d914ea15fbd10a5ae905d4ebeb02f527601`. Start with its [report](../audit-output/audit_gaps_requirements.md) or [offline tracker](../audit-output/tracker.html). The kit-root `tracker.html` is a self-contained copy of that tracker. Its strict assessor preserves unknown/stale evidence and does not treat source paths, test files or placeholder workflows as acceptance.
+
+The first-pass artifacts and remediation plan under this kit's own `audit-output/` and `remediation/` directories are retained as history. Their older counts and verification results are not the current baseline. The legacy generator/importer path remains subject to the AUD-001 policy-consolidation finding; use `snapshot_audit.py` and the root bundle instructions for this run.
 
 ## Audit target & config
 
@@ -22,7 +28,10 @@ The first real run is in `audit-output/`, starting with `audit_gaps_requirements
 | Path | Purpose |
 |---|---|
 | `ENHANCED_AUDIT_PROMPT.md` | Authoritative merged audit prompt (paste-ready block at end) |
-| `tracker.html` | Offline executive dashboard with evidence/memory import |
+| `tracker.html` | Current snapshot dashboard; identical to repository-root `audit-output/tracker.html`, written by `snapshot_audit.py` |
+| `templates/tracker_template.html` | Blank tracker template (seed sample data, import buttons); the generator embeds data into it |
+| `audit-output/requirements.md` | Consolidated requirements catalogue (3383 IDs, verbatim text, ACs, sources, duplicates, orphans) |
+| `audit-output/implementation.md` | Implementation status per requirement, architecture, coverage per component, known defects |
 | `schemas/evidence.schema.json` | Strict schema for agent-produced evidence |
 | `schemas/audit-memory.schema.json` | Continuity / delta-audit / multi-agent handoff |
 | `examples/evidence.json` | Sample evidence bundle (fictional) |
@@ -39,7 +48,7 @@ The first real run is in `audit-output/`, starting with `audit_gaps_requirements
    - `requirements_index.json`, `traceability_matrix.csv`, `audit_tasks.json`
    - `evidence/evidence.json` (validate against `schemas/evidence.schema.json`)
    - Updated `audit-memory.json`
-5. Open **`tracker.html`** in a browser (file:// works; fully client-side).
+5. Open **`tracker.html`** in a browser (file:// works; fully client-side; data embedded, no tracker_data.json needed). Read `audit-output/requirements.md` and `audit-output/implementation.md` for the full catalogue and status.
 6. **Import Audit Memory** (optional baseline), then **Import Evidence JSON**.
 7. Review KPI cards, per-row evidence panels, and import trail.
 8. **Export CSV** for exec packs; keep overrides justified.
@@ -121,7 +130,7 @@ No secrets/PII in memory. Owners are hashed ids. Prompt hashes only.
 
 ## Suggested demo
 
-1. Open `tracker.html` — seed KPIs and 8 sample requirements.
+1. Open `templates/tracker_template.html` for seed KPIs and 8 sample requirements (the top-level `tracker.html` holds the real run).
 2. Import `examples/audit-memory.json`.
 3. Import `examples/evidence.json` — under 1.1: REQ-FUNC-0001 Implemented (L2+L3); REQ-SEC-0002 Implemented (L2+L3+L5); REQ-AI-0003 Implemented (L2+L4); REQ-NFR-0005 Partial (L2+gaps); REQ-COMP-0004 Not Implemented (negative_proof); REQ-INFRA-0006 Implemented (L2+L3).
 
@@ -150,7 +159,8 @@ python3 $S/update_audit_memory.py --mode full --memory $O/audit-memory.json --ev
   --requirements $O/requirements_index.json --gaps $O/residual_gaps.json --commit $C --repo https://github.com/Vibe-A-Thon/EIOP
 python3 $S/generate_audit_report.py --out-dir $O          # reads findings.json, stack.json, skipped.json if present
 python3 $S/generate_tracker.py --audit-memory $O/audit-memory.json --evidence-json $O/evidence/evidence.json \
-  --requirements $O/requirements_index.json --out $O/tracker.html
+  --requirements $O/requirements_index.json --tasks $O/audit_tasks.json --out $O/tracker.html   # also writes $KIT/tracker.html
+python3 $S/generate_requirements_and_implementation_md.py --repo-root $R   # audit-output/requirements.md + implementation.md (run before the tracker so its header links them)
 ```
 
 `build_evidence.py` only writes facts (L1 code links, L2 test results, L3 from eligible green CI). It never fabricates L4 or L5.

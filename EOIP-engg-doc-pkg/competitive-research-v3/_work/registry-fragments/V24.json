@@ -1,0 +1,686 @@
+[
+ {
+  "id": "T-C11-dgl",
+  "slug": "dgl",
+  "name": "DGL (Deep Graph Library)",
+  "category": "C11",
+  "tier": "B",
+  "tier_reason": "GNN framework competing with PyG; activity needed verification",
+  "members": [
+   "DGL (Deep Graph Library)"
+  ],
+  "official_url": "https://github.com/dmlc/dgl",
+  "owner": "dmlc (governance NOT PUBLICLY VERIFIED)",
+  "latest_version": "2.2.1 (PyPI); v2.4.0 (GitHub release)",
+  "version_date": "2024-05-13 (PyPI); 2024-08-29 (v2.4.0)",
+  "release_cadence": "No tagged release since 2024-08; commits seen to 2025-07-31",
+  "status": "maintenance",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0 library; redistributable.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Single open-source edition; AMD ROCm fork is separate.",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "Wheel index has torch 2.4-2.6 folders; torch-2.7+ returned 403; official status of 2.5.0 wheels unverified.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "REJECT as dependency, REUSE PyG; DEFER KGE; keep out of N1 tier (ADR-H15).",
+  "top_strengths": [
+   "STR-dgl-01"
+  ],
+  "top_inversions": [
+   "INV-dgl-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-dgl.md",
+  "sources": [
+   {
+    "title": "PyPI dgl JSON",
+    "url": "https://pypi.org/pypi/dgl/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "DGL repo",
+    "url": "https://github.com/dmlc/dgl",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "DGL wheel index",
+    "url": "https://data.dgl.ai/wheels/repo.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "DGL releases feed",
+    "url": "https://github.com/dmlc/dgl/releases.atom",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C11-pykeen",
+  "slug": "pykeen",
+  "name": "PyKEEN",
+  "category": "C11",
+  "tier": "B",
+  "tier_reason": "Reference KGE library and evaluation discipline",
+  "members": [
+   "PyKEEN"
+  ],
+  "official_url": "https://github.com/pykeen/pykeen",
+  "owner": "PyKEEN Project Team (academic)",
+  "latest_version": "1.11.1",
+  "version_date": "2025-04-24",
+  "release_cadence": "Slow releases (18 months); master active to 2026-10-23",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "MIT; OEM friendly.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Single edition.",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "README says Python 3.11+, PyPI says >=3.10.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "EXPERIMENT as offline KGE bake-off tool; REUSE evaluator and leakage-gate design; BUILD calibration.",
+  "top_strengths": [
+   "STR-pykeen-01"
+  ],
+  "top_inversions": [
+   "INV-pykeen-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-pykeen.md",
+  "sources": [
+   {
+    "title": "PyPI pykeen JSON",
+    "url": "https://pypi.org/pypi/pykeen/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PyKEEN repo",
+    "url": "https://github.com/pykeen/pykeen",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PyKEEN docs",
+    "url": "https://pykeen.readthedocs.io/en/stable/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C11-ultra",
+  "slug": "ultra",
+  "name": "ULTRA (KG foundation model)",
+  "category": "C11",
+  "tier": "B",
+  "tier_reason": "Zero-shot inductive link prediction research artefact",
+  "members": [
+   "ULTRA (KG foundation model)"
+  ],
+  "official_url": "https://github.com/DeepGraphLearning/ULTRA",
+  "owner": "DeepGraphLearning (Galkin, Zhu et al.)",
+  "latest_version": "no release (main; ckpts 3g/4g)",
+  "version_date": "UNVERIFIED (last commit 2025-02-03)",
+  "release_cadence": "Quiescent",
+  "status": "maintenance",
+  "license": "MIT (code); checkpoint terms UNVERIFIED",
+  "license_class": "permissive",
+  "redistribution_notes": "Code MIT; weights trained on public KG benchmarks with their own terms.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Redistribution of weights derived from third-party benchmark data needs review.",
+  "community_vs_enterprise": "Single research repo.",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "research",
+  "resolution_note": "Registry means DeepGraphLearning/ULTRA.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "EXPERIMENT as optional cold-start scorer behind calibration; BUILD prediction plane.",
+  "top_strengths": [
+   "STR-ultra-01"
+  ],
+  "top_inversions": [
+   "INV-ultra-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-ultra.md",
+  "sources": [
+   {
+    "title": "ULTRA repo",
+    "url": "https://github.com/DeepGraphLearning/ULTRA",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "ULTRA paper",
+    "url": "https://arxiv.org/abs/2310.04562",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "SCR comparison paper",
+    "url": "https://arxiv.org/pdf/2410.12609",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C11-relbench",
+  "slug": "relbench",
+  "name": "Relational deep learning (RelBench)",
+  "category": "C11",
+  "tier": "B",
+  "tier_reason": "Benchmark with leakage-safe temporal protocol",
+  "members": [
+   "Relational deep learning (RelBench)"
+  ],
+  "official_url": "https://github.com/snap-stanford/relbench",
+  "owner": "Stanford (Leskovec group)",
+  "latest_version": "3.0.2",
+  "version_date": "2026-10-04",
+  "release_cadence": "v2 Jan 2026, v3 Aug 2026, patch 2026-10-04",
+  "status": "active",
+  "license": "Apache-2.0 (code); dataset terms UNVERIFIED",
+  "license_class": "permissive",
+  "redistribution_notes": "Code Apache-2.0; hosted datasets carry own terms.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Third-party dataset terms (CTU, 4DBInfer, TGB) not confirmed.",
+  "community_vs_enterprise": "Single open edition.",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "v3 moved data to Hugging Face and broke the v2 API.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "REUSE temporal split protocol; BUILD baseline-gated promotion; EXPERIMENT entity-level prediction.",
+  "top_strengths": [
+   "STR-relbench-01"
+  ],
+  "top_inversions": [
+   "INV-relbench-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-relbench.md",
+  "sources": [
+   {
+    "title": "PyPI relbench JSON",
+    "url": "https://pypi.org/pypi/relbench/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "RelBench repo",
+    "url": "https://github.com/snap-stanford/relbench",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "RelBench v3 MIGRATION",
+    "url": "https://github.com/snap-stanford/relbench/blob/main/MIGRATION.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "RelBench v2 paper",
+    "url": "https://arxiv.org/abs/2602.12606",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "RelArena-alpha paper",
+    "url": "https://arxiv.org/abs/2608.16319",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C11-graphstorm",
+  "slug": "graphstorm",
+  "name": "GraphStorm",
+  "category": "C11",
+  "tier": "C",
+  "tier_reason": "Tier C record (see C11-tier-c-records-V24.md)",
+  "members": [
+   "GraphStorm"
+  ],
+  "official_url": "https://github.com/awslabs/graphstorm",
+  "owner": "AWS Labs",
+  "latest_version": "0.5.1",
+  "version_date": "2025-12-31",
+  "release_cadence": "about yearly releases; commits to 2026-06-30",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "REFERENCE-ONLY; DGL-coupled.",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-tier-c-records-V24.md",
+  "sources": [
+   {
+    "title": "graphstorm PyPI",
+    "url": "https://pypi.org/pypi/graphstorm/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "graphstorm repo",
+    "url": "https://github.com/awslabs/graphstorm",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C11-ampligraph",
+  "slug": "ampligraph",
+  "name": "AmpliGraph",
+  "category": "C11",
+  "tier": "C",
+  "tier_reason": "Tier C record (see C11-tier-c-records-V24.md)",
+  "members": [
+   "AmpliGraph"
+  ],
+  "official_url": "https://github.com/Accenture/AmpliGraph",
+  "owner": "Accenture Labs",
+  "latest_version": "2.2.0",
+  "version_date": "2026-07-06",
+  "release_cadence": "irregular",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "TensorFlow <2.16, Python <3.12, numpy <2.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "REJECT as dependency; REFERENCE-ONLY discovery API.",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-tier-c-records-V24.md",
+  "sources": [
+   {
+    "title": "ampligraph PyPI",
+    "url": "https://pypi.org/pypi/ampligraph/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "AmpliGraph docs",
+    "url": "https://docs.ampligraph.org/en/latest/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C11-dgl-ke",
+  "slug": "dgl-ke",
+  "name": "DGL-KE",
+  "category": "C11",
+  "tier": "C",
+  "tier_reason": "Tier C record (see C11-tier-c-records-V24.md)",
+  "members": [
+   "DGL-KE"
+  ],
+  "official_url": "https://github.com/awslabs/dgl-ke",
+  "owner": "AWS Labs",
+  "latest_version": "0.1.2 (PyPI dglke)",
+  "version_date": "2021-01-25",
+  "release_cadence": "no release since 2021; README redirects to GraphStorm",
+  "status": "maintenance",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "historical",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "REJECT; superseded by GraphStorm/PyKEEN.",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-tier-c-records-V24.md",
+  "sources": [
+   {
+    "title": "dgl-ke repo",
+    "url": "https://github.com/awslabs/dgl-ke",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "dglke PyPI",
+    "url": "https://pypi.org/pypi/dglke/json",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C11-pyg-temporal",
+  "slug": "pyg-temporal",
+  "name": "PyTorch Geometric Temporal",
+  "category": "C11",
+  "tier": "C",
+  "tier_reason": "Tier C record (see C11-tier-c-records-V24.md)",
+  "members": [
+   "PyTorch Geometric Temporal"
+  ],
+  "official_url": "https://github.com/benedekrozemberczki/pytorch_geometric_temporal",
+  "owner": "B. Rozemberczki and contributors",
+  "latest_version": "0.56.2",
+  "version_date": "2025-07-16",
+  "release_cadence": "few releases per year; commits to 2026-05-30",
+  "status": "maintenance",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "Third-party add-on, distinct from PyG TemporalData.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "DEFER; snapshot models.",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-tier-c-records-V24.md",
+  "sources": [
+   {
+    "title": "PyPI",
+    "url": "https://pypi.org/pypi/torch-geometric-temporal/json",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C11-graphgym",
+  "slug": "graphgym",
+  "name": "GraphGym",
+  "category": "C11",
+  "tier": "C",
+  "tier_reason": "Tier C record (see C11-tier-c-records-V24.md)",
+  "members": [
+   "GraphGym"
+  ],
+  "official_url": "https://github.com/snap-stanford/GraphGym",
+  "owner": "Stanford SNAP",
+  "latest_version": "0.4.0",
+  "version_date": "2022-03-24",
+  "release_cadence": "dormant; last commit 2023-03-14",
+  "status": "maintenance",
+  "license": "MIT (full licence text not re-read)",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "PyG also embeds a graphgym module (not re-verified).",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "REFERENCE-ONLY.",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-tier-c-records-V24.md",
+  "sources": [
+   {
+    "title": "PyPI",
+    "url": "https://pypi.org/pypi/graphgym/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "repo",
+    "url": "https://github.com/snap-stanford/GraphGym",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C11-graph-transformers",
+  "slug": "graph-transformers",
+  "name": "Graph transformers (Graphormer, GraphGPS)",
+  "category": "C11",
+  "tier": "C",
+  "tier_reason": "Tier C record (see C11-tier-c-records-V24.md)",
+  "members": [
+   "Graph transformers (Graphormer, GraphGPS)"
+  ],
+  "official_url": "https://github.com/microsoft/Graphormer",
+  "owner": "Microsoft; Rampasek et al.",
+  "latest_version": "Graphormer v2.0 (README); GraphGPS release",
+  "version_date": "2021-12-22 (Graphormer v2.0); 2023-01-17 (GraphGPS)",
+  "release_cadence": "Graphormer commits to 2026-09-24 (README); GraphGPS dormant since 2023-02",
+  "status": "maintenance",
+  "license": "MIT (both)",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Graphormer pins fairseq and torch 1.9.1; README disclaims compatibility with current stacks.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "REFERENCE-ONLY; likely DEFERRED (H-17).",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-tier-c-records-V24.md",
+  "sources": [
+   {
+    "title": "Graphormer repo",
+    "url": "https://github.com/microsoft/Graphormer",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "GraphGPS repo",
+    "url": "https://github.com/rampasek/GraphGPS",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C11-tgn",
+  "slug": "tgn",
+  "name": "Temporal GNNs (TGN and frameworks)",
+  "category": "C11",
+  "tier": "C",
+  "tier_reason": "Tier C record (see C11-tier-c-records-V24.md)",
+  "members": [
+   "Temporal GNNs (TGN and frameworks)"
+  ],
+  "official_url": "https://github.com/twitter-research/tgn",
+  "owner": "Twitter Research",
+  "latest_version": "no release",
+  "version_date": "UNVERIFIED (last commit 2023-06-21)",
+  "release_cadence": "dormant",
+  "status": "maintenance",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Maintained path is PyG TGNMemory.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "EXPERIMENT via PyG TGN, not this repo.",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-tier-c-records-V24.md",
+  "sources": [
+   {
+    "title": "tgn repo",
+    "url": "https://github.com/twitter-research/tgn",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C11-torchkge-libkge",
+  "slug": "torchkge-libkge",
+  "name": "TorchKGE and LibKGE",
+  "category": "C11",
+  "tier": "C",
+  "tier_reason": "Tier C record (see C11-tier-c-records-V24.md)",
+  "members": [
+   "TorchKGE and LibKGE"
+  ],
+  "official_url": "https://github.com/torchkge-team/torchkge",
+  "owner": "TorchKGE team; University of Mannheim",
+  "latest_version": "TorchKGE 0.17.7; LibKGE no release",
+  "version_date": "2023-04-05 (TorchKGE)",
+  "release_cadence": "TorchKGE dormant; LibKGE commits to 2026-04-01",
+  "status": "maintenance",
+  "license": "BSD (TorchKGE); MIT (LibKGE)",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "Two projects; LibKGE at github.com/uma-pi1/kge.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "REFERENCE-ONLY; REJECT TorchKGE.",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-tier-c-records-V24.md",
+  "sources": [
+   {
+    "title": "torchkge PyPI",
+    "url": "https://pypi.org/pypi/torchkge/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "LibKGE repo",
+    "url": "https://github.com/uma-pi1/kge",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C11-neuro-symbolic",
+  "slug": "neuro-symbolic",
+  "name": "Neuro-symbolic frameworks (Scallop, DeepProbLog, Logic Tensor Networks)",
+  "category": "C11",
+  "tier": "C",
+  "tier_reason": "Tier C record (see C11-tier-c-records-V24.md)",
+  "members": [
+   "Neuro-symbolic frameworks (Scallop, DeepProbLog, Logic Tensor Networks)"
+  ],
+  "official_url": "https://github.com/scallop-lang/scallop",
+  "owner": "UPenn; KU Leuven; LTN community",
+  "latest_version": "Scallop 0.2.4; DeepProbLog 2.1.0; LTN 2.1 / LTNtorch 1.0.2",
+  "version_date": "2024-08-30; 2026-09-07; 2023-03-31",
+  "release_cadence": "varies",
+  "status": "active",
+  "license": "Scallop MIT; DeepProbLog Apache; LTN MIT text unconfirmed",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "LTN licence unconfirmed; Scallop needs a Rust toolchain.",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Three separate projects; scallopy 0.1.0 on PyPI (2021) is not the current distribution.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry, verified.",
+  "decision_summary": "REFERENCE-ONLY; EXPERIMENT Scallop-style provenance later.",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C11-tier-c-records-V24.md",
+  "sources": [
+   {
+    "title": "DeepProbLog PyPI",
+    "url": "https://pypi.org/pypi/deepproblog/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Scallop repo",
+    "url": "https://github.com/scallop-lang/scallop",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "LTN repo",
+    "url": "https://github.com/logictensornetworks/logictensornetworks",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ }
+]

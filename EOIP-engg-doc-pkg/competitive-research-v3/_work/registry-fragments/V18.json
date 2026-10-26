@@ -1,0 +1,768 @@
+[
+ {
+  "id": "T-C06-atlan",
+  "slug": "atlan",
+  "name": "Atlan",
+  "category": "C06",
+  "tier": "B",
+  "tier_reason": "Active metadata/context-graph competitor",
+  "members": [
+   "Atlan platform",
+   "Context Lakehouse",
+   "pyatlan SDK"
+  ],
+  "official_url": "https://atlan.com",
+  "owner": "Atlan",
+  "latest_version": "SaaS; no public version",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "continuous SaaS",
+  "status": "active",
+  "license": "Proprietary platform; Apache-2.0 SDKs",
+  "license_class": "proprietary",
+  "redistribution_notes": "No redistribution of platform; SDK Apache-2.0.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Proprietary SaaS; context-layer claims are vendor claims",
+  "community_vs_enterprise": "SDK open, platform closed",
+  "deployment_modes": [
+   "saas"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "production",
+  "resolution_note": "Vendor 'context graph' reads as catalog + lineage + retrieval; internals not public",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier B",
+  "decision_summary": "REJECT as dependency; EXPERIMENT tag propagation and Process lineage model; INTEGRATE as source",
+  "top_strengths": [
+   "STR-atlan-01"
+  ],
+  "top_inversions": [
+   "INV-atlan-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-atlan.md",
+  "sources": [
+   {
+    "title": "Atlan context lakehouse",
+    "url": "https://atlan.com/context-lakehouse/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Atlan SDK concepts",
+    "url": "https://docs.atlan.com/product/capabilities/build-apps/sdks/python/concepts",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "atlan-python",
+    "url": "https://github.com/atlanhq/atlan-python",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C06-collibra",
+  "slug": "collibra",
+  "name": "Collibra",
+  "category": "C06",
+  "tier": "B",
+  "tier_reason": "Governance leader",
+  "members": [
+   "Collibra Data Intelligence Platform",
+   "Edge",
+   "Raito"
+  ],
+  "official_url": "https://www.collibra.com",
+  "owner": "Collibra",
+  "latest_version": "SaaS; docs 2026.02",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "continuous SaaS",
+  "status": "active",
+  "license": "Proprietary subscription",
+  "license_class": "proprietary",
+  "redistribution_notes": "Not embeddable.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Proprietary; cloud control plane",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "saas",
+   "kubernetes"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier B",
+  "decision_summary": "BUILD governance workflow natively; INTEGRATE as upstream source; REJECT as dependency",
+  "top_strengths": [
+   "STR-collibra-01"
+  ],
+  "top_inversions": [
+   "INV-collibra-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-collibra.md",
+  "sources": [
+   {
+    "title": "Collibra infrastructure",
+    "url": "https://docs.collibra.com/Content/Cloud/Intro/co_cloud-introduction.htm",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Collibra Raito release",
+    "url": "https://www.collibra.com/company/newsroom/press-releases/collibra-announces-acquisition-of-raito-and-advancements-in-unified-governance-for-data-and-ai",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "CFTC PIA",
+    "url": "https://www.cftc.gov/media/12636/piacollibra122024/download",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.55
+ },
+ {
+  "id": "T-C06-data-world",
+  "slug": "data-world",
+  "name": "data.world",
+  "category": "C06",
+  "tier": "B",
+  "tier_reason": "KG-based catalog (ownership to verify)",
+  "members": [
+   "data.world catalog",
+   "Eureka",
+   "AI Context Engine"
+  ],
+  "official_url": "https://data.world",
+  "owner": "ServiceNow (acquisition completed July 2025 per FY2025 10-K)",
+  "latest_version": "SaaS; no public version",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "continuous SaaS",
+  "status": "acquired",
+  "license": "Proprietary",
+  "license_class": "proprietary",
+  "redistribution_notes": "No OSS; not embeddable.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "saas"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "production",
+  "resolution_note": "Ownership resolved: ServiceNow, announced 2025-05-07, completed July 2025. 'Declan' rename is single-source, UNVERIFIED",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier B; status acquired",
+  "decision_summary": "REFERENCE-ONLY; EXPERIMENT SPARQL-template enrichment idea; REJECT as dependency",
+  "top_strengths": [
+   "STR-dw-01"
+  ],
+  "top_inversions": [
+   "INV-dw-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-data-world.md",
+  "sources": [
+   {
+    "title": "TechCrunch",
+    "url": "https://techcrunch.com/2025/05/07/servicenow-acquires-data-world-two-months-after-acquiring-moveworks",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "ServiceNow FY2025 10-K",
+    "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000007/now-20251231.htm",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "data.world AI Context Engine FAQ",
+    "url": "https://data.world/ai/ai-context-engine-faq",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C06-openmetadata",
+  "slug": "openmetadata",
+  "name": "OpenMetadata",
+  "category": "C06",
+  "tier": "B",
+  "tier_reason": "OSS catalog",
+  "members": [
+   "OpenMetadata core",
+   "Ingestion Framework",
+   "Collate (commercial)"
+  ],
+  "official_url": "https://github.com/open-metadata/OpenMetadata",
+  "owner": "OpenMetadata community / Collate",
+  "latest_version": "2.0.6",
+  "version_date": "2026-10-21 (year inferred)",
+  "release_cadence": "patch releases every 1-3 weeks",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0 incl. patent grant; Collate features are separate commercial.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Community vs Collate enterprise feature split",
+  "community_vs_enterprise": "AI Studio, agents, managed ops are enterprise-only",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "saas"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier B",
+  "decision_summary": "INTEGRATE OpenLineage/OM as source; BUILD thin native catalog; REUSE schema-first and change-event patterns",
+  "top_strengths": [
+   "STR-om-01"
+  ],
+  "top_inversions": [
+   "INV-om-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-openmetadata.md",
+  "sources": [
+   {
+    "title": "OpenMetadata repo",
+    "url": "https://github.com/open-metadata/OpenMetadata",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "High-level design",
+    "url": "https://docs.open-metadata.org/latest/main-concepts/high-level-design",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Production requirements",
+    "url": "https://docs.open-metadata.org/latest/deployment/production-ready-requirements",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C06-apache-atlas",
+  "slug": "apache-atlas",
+  "name": "Apache Atlas",
+  "category": "C06",
+  "tier": "B",
+  "tier_reason": "OSS lineage catalog (name collision resolved)",
+  "members": [
+   "Atlas server",
+   "hooks"
+  ],
+  "official_url": "https://atlas.apache.org",
+  "owner": "Apache Software Foundation",
+  "latest_version": "2.5.0",
+  "version_date": "2026-04-30",
+  "release_cadence": "about 15 months between minors",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0 incl. patent grant.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "None at ASF; vendor distributions differ",
+  "deployment_modes": [
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Apache Atlas (ASF), not Atlan or other Atlas products",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier B",
+  "decision_summary": "REUSE Process/propagation design; INTEGRATE Atlas REST as source; REJECT runtime",
+  "top_strengths": [
+   "STR-atlas-01"
+  ],
+  "top_inversions": [
+   "INV-atlas-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-apache-atlas.md",
+  "sources": [
+   {
+    "title": "Atlas repo",
+    "url": "https://github.com/apache/atlas",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "ASF release catalog 2.5.0",
+    "url": "https://release-catalog.apache.org/atlas/2.5.0/index.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Atlas site",
+    "url": "https://atlas.apache.org",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C06-microsoft-purview",
+  "slug": "microsoft-purview",
+  "name": "Microsoft Purview",
+  "category": "C06",
+  "tier": "B",
+  "tier_reason": "Enterprise governance",
+  "members": [
+   "Data Map",
+   "Unified Catalog",
+   "classic Data Catalog"
+  ],
+  "official_url": "https://learn.microsoft.com/purview/",
+  "owner": "Microsoft",
+  "latest_version": "Azure service; no version",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "continuous",
+  "status": "active",
+  "license": "Proprietary pay-as-you-go",
+  "license_class": "proprietary",
+  "redistribution_notes": "Not embeddable.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Proprietary Azure service",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "managed-cloud",
+   "saas"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier B",
+  "decision_summary": "INTEGRATE as source via Atlas API/OpenLineage; REJECT runtime",
+  "top_strengths": [
+   "STR-pv-01"
+  ],
+  "top_inversions": [
+   "INV-pv-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-microsoft-purview.md",
+  "sources": [
+   {
+    "title": "Classic lineage",
+    "url": "https://learn.microsoft.com/en-us/purview/data-gov-classic-lineage",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Data Map pricing",
+    "url": "https://docs.azure.cn/en-us/purview/data-gov-classic-pricing-data-map",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C06-ovaledge",
+  "slug": "ovaledge",
+  "name": "OvalEdge",
+  "category": "C06",
+  "tier": "C",
+  "tier_reason": "Tier C inventory",
+  "members": [
+   "OvalEdge"
+  ],
+  "official_url": "https://www.ovaledge.com",
+  "owner": "OvalEdge",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Proprietary",
+  "license_class": "proprietary",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "saas",
+   "self-hosted"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier C",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-tier-c-records-V18.md",
+  "sources": [
+   {
+    "title": "OvalEdge catalog",
+    "url": "https://www.ovaledge.com/data-catalog",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Capterra",
+    "url": "https://www.capterra.com/p/219905/OvalEdge",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.4
+ },
+ {
+  "id": "T-C06-actian-dip",
+  "slug": "actian-dip",
+  "name": "Actian Data Intelligence Platform",
+  "category": "C06",
+  "tier": "C",
+  "tier_reason": "Tier C inventory",
+  "members": [
+   "Actian Data Intelligence Platform"
+  ],
+  "official_url": "https://www.actian.com/data-intelligence-platform/",
+  "owner": "Actian (HCLSoftware)",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "renamed",
+  "license": "Proprietary",
+  "license_class": "proprietary",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "saas"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "production",
+  "resolution_note": "Former Zeenea; HCLSoftware completed acquisition 2024-09-12; no evidence of relation to data.world",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier C",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-tier-c-records-V18.md",
+  "sources": [
+   {
+    "title": "Actian DIP",
+    "url": "https://www.actian.com/data-intelligence-platform/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "DBTA HCLSoftware Zeenea",
+    "url": "https://www.dbta.com/Editorial/News-Flashes/HCLSoftware-Acquires-Zeenea-Forwarding-a-Unified-Data-Intelligence-and-Governance-Solution-165904.aspx",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C06-egeria",
+  "slug": "egeria",
+  "name": "Egeria",
+  "category": "C06",
+  "tier": "C",
+  "tier_reason": "Tier C inventory",
+  "members": [
+   "Egeria"
+  ],
+  "official_url": "https://github.com/odpi/egeria",
+  "owner": "LF AI & Data Foundation",
+  "latest_version": "V6.2",
+  "version_date": "2026-10-06 (year inferred)",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier C",
+  "decision_summary": "EXPERIMENT open types as interchange vocabulary",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-tier-c-records-V18.md",
+  "sources": [
+   {
+    "title": "Egeria releases",
+    "url": "https://github.com/odpi/egeria/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OpenLineage-Egeria",
+    "url": "https://openlineage.io/blog/openlineage-egeria",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C06-amundsen",
+  "slug": "amundsen",
+  "name": "Amundsen",
+  "category": "C06",
+  "tier": "C",
+  "tier_reason": "Tier C inventory",
+  "members": [
+   "Amundsen"
+  ],
+  "official_url": "https://github.com/amundsen-io/amundsen",
+  "owner": "Amundsen community / LF AI & Data",
+  "latest_version": "none shown",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "archived",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "historical",
+  "resolution_note": "Archived read-only 2026-09-29 'due to inactivity'",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier C",
+  "decision_summary": "REFERENCE-ONLY; do not adopt",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-tier-c-records-V18.md",
+  "sources": [
+   {
+    "title": "Amundsen repo",
+    "url": "https://github.com/amundsen-io/amundsen",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.9
+ },
+ {
+  "id": "T-C06-unity-catalog",
+  "slug": "unity-catalog",
+  "name": "Unity Catalog (OSS)",
+  "category": "C06",
+  "tier": "C",
+  "tier_reason": "Tier C inventory",
+  "members": [
+   "Unity Catalog (OSS)"
+  ],
+  "official_url": "https://github.com/unitycatalog/unitycatalog",
+  "owner": "LF AI & Data (Databricks-originated)",
+  "latest_version": "v0.7.0",
+  "version_date": "2026-10-13 (year inferred)",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier C",
+  "decision_summary": "INTEGRATE as table-metadata source",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-tier-c-records-V18.md",
+  "sources": [
+   {
+    "title": "UC releases",
+    "url": "https://github.com/unitycatalog/unitycatalog/releases",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C06-apache-polaris",
+  "slug": "apache-polaris",
+  "name": "Apache Polaris",
+  "category": "C06",
+  "tier": "C",
+  "tier_reason": "Tier C inventory",
+  "members": [
+   "Apache Polaris"
+  ],
+  "official_url": "https://github.com/apache/polaris",
+  "owner": "Apache Software Foundation",
+  "latest_version": "1.8.0",
+  "version_date": "2026-09-28 (year inferred)",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Top-level project since Feb 2026",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier C",
+  "decision_summary": "INTEGRATE as Iceberg catalog source",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-tier-c-records-V18.md",
+  "sources": [
+   {
+    "title": "Polaris releases",
+    "url": "https://github.com/apache/polaris/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Polaris 1.4 blog",
+    "url": "https://www.snowflake.com/en/engineering-blog/apache-polaris-1-4-release/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C06-alation",
+  "slug": "alation",
+  "name": "Alation",
+  "category": "C06",
+  "tier": "C",
+  "tier_reason": "Tier C inventory",
+  "members": [
+   "Alation"
+  ],
+  "official_url": "https://www.alation.com",
+  "owner": "Alation, Inc.",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Proprietary",
+  "license_class": "proprietary",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "saas"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier C",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-tier-c-records-V18.md",
+  "sources": [
+   {
+    "title": "Alation",
+    "url": "https://www.alation.com/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.4
+ },
+ {
+  "id": "T-C06-informatica-claire",
+  "slug": "informatica-claire",
+  "name": "Informatica (CLAIRE/IDMC)",
+  "category": "C06",
+  "tier": "C",
+  "tier_reason": "Tier C inventory",
+  "members": [
+   "Informatica (CLAIRE/IDMC)"
+  ],
+  "official_url": "https://www.informatica.com",
+  "owner": "Informatica / Salesforce (acquisition announced 2025-05)",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "acquired",
+  "license": "Proprietary",
+  "license_class": "proprietary",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "saas"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "production",
+  "resolution_note": "Salesforce deal about $8B announced May 2025; close date not confirmed from a primary source",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier C",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-tier-c-records-V18.md",
+  "sources": [
+   {
+    "title": "HPCwire",
+    "url": "https://www.hpcwire.com/bigdatawire/2025/05/27/its-official-informatica-agrees-to-be-bought-by-salesforce-for-8-billion/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C06-google-dataplex",
+  "slug": "google-dataplex",
+  "name": "Google Dataplex",
+  "category": "C06",
+  "tier": "C",
+  "tier_reason": "Tier C inventory",
+  "members": [
+   "Google Dataplex"
+  ],
+  "official_url": "https://cloud.google.com/dataplex",
+  "owner": "Google Cloud",
+  "latest_version": "managed service",
+  "version_date": "2026-05 notes seen",
+  "release_cadence": "UNVERIFIED",
+  "status": "renamed",
+  "license": "Proprietary",
+  "license_class": "proprietary",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "N/A",
+  "deployment_modes": [
+   "managed-cloud"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "production",
+  "resolution_note": "Dataplex Universal Catalog now called Knowledge Catalog",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier C",
+  "decision_summary": "REFERENCE-ONLY; copy lineage-over-MCP pattern",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C06-tier-c-records-V18.md",
+  "sources": [
+   {
+    "title": "Dataplex release notes",
+    "url": "https://docs.cloud.google.com/dataplex/docs/release-notes",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ }
+]

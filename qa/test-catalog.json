@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 477,
-    "test_definitions": 4351
+    "files": 485,
+    "test_definitions": 4549
   },
   "categories": {
     "acceptance": {
@@ -63,8 +63,8 @@
       "test_definitions": 42
     },
     "qa": {
-      "files": 4,
-      "test_definitions": 17
+      "files": 5,
+      "test_definitions": 21
     },
     "query": {
       "files": 5,
@@ -99,8 +99,8 @@
       "test_definitions": 76
     },
     "unit": {
-      "files": 292,
-      "test_definitions": 3346
+      "files": 299,
+      "test_definitions": 3540
     },
     "web-browser": {
       "files": 15,
@@ -563,6 +563,11 @@
     },
     {
       "path": "tests/qa/test_completeness.py",
+      "category": "qa",
+      "test_definitions": 4
+    },
+    {
+      "path": "tests/qa/test_disposable_runtime.py",
       "category": "qa",
       "test_definitions": 4
     },
@@ -1067,6 +1072,11 @@
       "test_definitions": 14
     },
     {
+      "path": "tests/unit/test_agent_architectures.py",
+      "category": "unit",
+      "test_definitions": 26
+    },
+    {
       "path": "tests/unit/test_agent_memory.py",
       "category": "unit",
       "test_definitions": 21
@@ -1140,6 +1150,11 @@
       "path": "tests/unit/test_autodemo_runner.py",
       "category": "unit",
       "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_backend_catalog.py",
+      "category": "unit",
+      "test_definitions": 13
     },
     {
       "path": "tests/unit/test_backend_shim_fail_closed.py",
@@ -1462,6 +1477,11 @@
       "test_definitions": 3
     },
     {
+      "path": "tests/unit/test_execution_infra.py",
+      "category": "unit",
+      "test_definitions": 26
+    },
+    {
       "path": "tests/unit/test_expertise_freshness.py",
       "category": "unit",
       "test_definitions": 4
@@ -1585,6 +1605,11 @@
       "path": "tests/unit/test_graph_backends.py",
       "category": "unit",
       "test_definitions": 8
+    },
+    {
+      "path": "tests/unit/test_graph_builders.py",
+      "category": "unit",
+      "test_definitions": 24
     },
     {
       "path": "tests/unit/test_graph_evolution.py",
@@ -2212,6 +2237,11 @@
       "test_definitions": 29
     },
     {
+      "path": "tests/unit/test_query_languages_ext.py",
+      "category": "unit",
+      "test_definitions": 18
+    },
+    {
       "path": "tests/unit/test_query_nl.py",
       "category": "unit",
       "test_definitions": 17
@@ -2235,6 +2265,16 @@
       "path": "tests/unit/test_rag_abstention.py",
       "category": "unit",
       "test_definitions": 10
+    },
+    {
+      "path": "tests/unit/test_rag_extensions.py",
+      "category": "unit",
+      "test_definitions": 41
+    },
+    {
+      "path": "tests/unit/test_reasoning.py",
+      "category": "unit",
+      "test_definitions": 39
     },
     {
       "path": "tests/unit/test_recovery_bundle.py",
@@ -2374,7 +2414,7 @@
     {
       "path": "tests/unit/test_sr_wave_api_routes.py",
       "category": "unit",
-      "test_definitions": 12
+      "test_definitions": 19
     },
     {
       "path": "tests/unit/test_strategy_registry.py",

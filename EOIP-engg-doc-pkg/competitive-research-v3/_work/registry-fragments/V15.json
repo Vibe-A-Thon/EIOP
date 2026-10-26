@@ -1,0 +1,778 @@
+[
+  {
+    "id": "T-C01-dgraph",
+    "slug": "dgraph",
+    "name": "Dgraph",
+    "category": "C01",
+    "tier": "B",
+    "tier_reason": "Distributed GraphQL-native graph; ownership changes",
+    "members": [
+      "Dgraph core (Alpha/Zero)",
+      "Ratel",
+      "DQL",
+      "GraphQL API"
+    ],
+    "official_url": "https://github.com/dgraph-io/dgraph",
+    "owner": "Istari Digital (acquired from Hypermode, announced 2025-10-23); earlier Dgraph Labs",
+    "latest_version": "v25.5.1",
+    "version_date": "2026-10-22",
+    "release_cadence": "Roughly every 2-8 weeks in 2026",
+    "status": "active",
+    "license": "Repo: Apache-2.0 (GitHub SPDX); v25 preview says whole codebase Apache-2.0; licence docs still describe enterprise features under Dgraph Community License",
+    "license_class": "mixed",
+    "redistribution_notes": "Apache-2.0 per repo permits redistribution; conflicting docs on proprietary enterprise code need confirmation",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Conflicting Apache-2.0 vs Dgraph Community License statements; two ownership changes",
+    "community_vs_enterprise": "Enterprise features (ACL, backups etc.) historically proprietary; v25 moves some into free build, extent unverified",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "kubernetes"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "Owners: Dgraph Labs -> Hypermode (2024) -> Istari Digital (2025-10-23).",
+    "registry_action": "KEEP",
+    "action_reason": "User-named; ownership/licence risk",
+    "decision_summary": "DEFER as backend; EXPERIMENT GraphQL facade pattern over own ontology",
+    "top_strengths": [
+      "STR-dgraph-01"
+    ],
+    "top_inversions": [
+      "INV-dgraph-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-dgraph.md",
+    "sources": [
+      {
+        "title": "Dgraph GitHub",
+        "url": "https://github.com/dgraph-io/dgraph",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Istari acquires Dgraph",
+        "url": "https://www.istaridigital.com/resources/istari-acquires-dgraph",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Dgraph licence docs",
+        "url": "https://docs.dgraph.io/installation/configuration/license",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Dgraph releases",
+        "url": "https://github.com/dgraph-io/dgraph/releases",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C01-graphscope",
+    "slug": "graphscope",
+    "name": "GraphScope / GraphScope Flex",
+    "category": "C01",
+    "tier": "B",
+    "tier_reason": "Modular graph computing stack (cross-ref C12)",
+    "members": [
+      "GRAPE",
+      "GIE (GOpt)",
+      "Graph-Learn",
+      "Vineyard",
+      "Flex Interactive",
+      "Groot",
+      "Portal",
+      "gsctl",
+      "NeuG (related, embedded)"
+    ],
+    "official_url": "https://github.com/alibaba/GraphScope",
+    "owner": "Alibaba (open source)",
+    "latest_version": "v0.31.0 (latest GitHub release); Flex 0.31.3 used in LDBC FDR",
+    "version_date": "2025-01-27",
+    "release_cadence": "No tagged release since 2025-01; repo push 2026-09-23",
+    "status": "maintenance",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "Apache-2.0; third-party dependencies carry other licences per README",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single open-source edition found",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "kubernetes"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "NeuG (embedded graph DB, open-sourced 2026-02-11) is promoted on the GraphScope blog; relation to Flex not stated.",
+    "registry_action": "KEEP",
+    "action_reason": "User-named; LDBC-audited engine, GOpt reference",
+    "decision_summary": "REUSE GOpt ideas; DEFER backend; EXPERIMENT GRAPE algorithms",
+    "top_strengths": [
+      "STR-graphscope-01",
+      "STR-graphscope-02"
+    ],
+    "top_inversions": [
+      "INV-graphscope-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-graphscope.md",
+    "sources": [
+      {
+        "title": "GraphScope GitHub",
+        "url": "https://github.com/alibaba/GraphScope",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "GraphScope releases",
+        "url": "https://github.com/alibaba/GraphScope/releases",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "LDBC SNB Interactive FDR 2025-04-21",
+        "url": "https://ldbcouncil.org/benchmarks/snb/LDBC_SNB_I_20250421_SF30-100-300_graphscope.pdf",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "GraphScope blog",
+        "url": "https://graphscope.io/blog",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C01-oracle-graph",
+    "slug": "oracle-graph",
+    "name": "Oracle Graph (PGX / Property Graph, SQL/PGQ)",
+    "category": "C01",
+    "tier": "B",
+    "tier_reason": "Enterprise RDBMS graph incl. SQL/PGQ",
+    "members": [
+      "SQL property graphs (GRAPH_TABLE)",
+      "Graph Server (PGX)",
+      "PGQL",
+      "DBMS_OGA",
+      "DBMS_AI_GRAPHRAG",
+      "RDF Graph",
+      "Graph Studio/APEX plug-in"
+    ],
+    "official_url": "https://docs.oracle.com/en/database/oracle/property-graph/",
+    "owner": "Oracle Corporation",
+    "latest_version": "Graph Server and Client 25.4; Oracle AI Database 26ai",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "Graph Server releases 22.4, 24.1, 25.x seen; cadence not verified",
+    "status": "active",
+    "license": "Proprietary; whether graph features are included in Database licence rests on one unread Oracle blog",
+    "license_class": "proprietary",
+    "redistribution_notes": "Customer-installed proprietary DB; no OEM/embedding rights found",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Proprietary DB and Graph Server licence terms unverified",
+    "community_vs_enterprise": "Graph Server separate download; Free edition scope unverified",
+    "deployment_modes": [
+      "self-hosted",
+      "managed-cloud"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "23ai renamed 26ai; SQL/PGQ in database vs PGQL/PGX in Graph Server are distinct.",
+    "registry_action": "KEEP",
+    "action_reason": "User-named; SQL/PGQ reference implementation",
+    "decision_summary": "INTEGRATE as SQL/PGQ target dialect (experiment); REJECT as bundled backend",
+    "top_strengths": [
+      "STR-oracle-graph-01",
+      "STR-oracle-graph-02"
+    ],
+    "top_inversions": [
+      "INV-oracle-graph-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-oracle-graph.md",
+    "sources": [
+      {
+        "title": "Graph features in Oracle AI Database 26ai",
+        "url": "https://docs.oracle.com/en/database/oracle/oracle-database/26/nfcoa/graph.html",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Changes in this release (Graph Server 25.4)",
+        "url": "https://docs.oracle.com/en/database/oracle/property-graph/25.4/spgdg/changes-in-this-release.html",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "SQL Property Graphs",
+        "url": "https://docs.oracle.com/en/database/oracle/property-graph/25.4/spgdg/sql-property-graphs.html",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.65
+  },
+  {
+    "id": "T-C01-spanner-graph",
+    "slug": "spanner-graph",
+    "name": "Google Spanner Graph",
+    "category": "C01",
+    "tier": "B",
+    "tier_reason": "GQL in a distributed RDBMS; cloud reference",
+    "members": [
+      "Spanner Graph",
+      "GQL",
+      "graph algorithms (Preview)",
+      "Spanner Studio graph"
+    ],
+    "official_url": "https://docs.cloud.google.com/spanner/docs/graph/overview",
+    "owner": "Google LLC",
+    "latest_version": "Managed service (unversioned)",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "Continuous; release-note entries through 2026-09",
+    "status": "active",
+    "license": "Proprietary managed service; Spanner Enterprise/Enterprise Plus edition required",
+    "license_class": "proprietary",
+    "redistribution_notes": "No self-hosted or OEM path",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Cloud-only proprietary service",
+    "community_vs_enterprise": "Edition-gated (Enterprise, Enterprise Plus)",
+    "deployment_modes": [
+      "managed-cloud"
+    ],
+    "air_gap_viable": "no",
+    "maturity": "production",
+    "resolution_note": "GQL documented as ISO GQL-compatible and adopting SQL/PGQ; no conformance certificate found.",
+    "registry_action": "KEEP",
+    "action_reason": "User-named; GQL reference",
+    "decision_summary": "EXPERIMENT GQL subset emission; BUILD path-mode semantics; REJECT as backend",
+    "top_strengths": [
+      "STR-spanner-graph-01",
+      "STR-spanner-graph-02"
+    ],
+    "top_inversions": [
+      "INV-spanner-graph-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-spanner-graph.md",
+    "sources": [
+      {
+        "title": "Spanner Graph overview",
+        "url": "https://docs.cloud.google.com/spanner/docs/graph/overview",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Spanner release notes",
+        "url": "https://docs.cloud.google.com/spanner/docs/release-notes",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Spanner Graph vs openCypher",
+        "url": "https://docs.cloud.google.com/spanner/docs/graph/opencypher-reference",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C01-puppygraph",
+    "slug": "puppygraph",
+    "name": "PuppyGraph",
+    "category": "C01",
+    "tier": "B",
+    "tier_reason": "Graph query over SQL/lake without ETL; OBDA-like competitor",
+    "members": [
+      "PuppyGraph Developer Edition",
+      "PuppyGraph Enterprise Edition",
+      "puppygraph-mcp-server",
+      "puppygraph-python"
+    ],
+    "official_url": "https://www.puppygraph.com",
+    "owner": "PuppyGraph Inc.",
+    "latest_version": "UNVERIFIED (no engine version found)",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "Client repos updated 2026-08 to 2026-10",
+    "status": "active",
+    "license": "Engine proprietary; client/MCP repos Apache-2.0",
+    "license_class": "mixed",
+    "redistribution_notes": "Engine redistribution/OEM terms NOT PUBLICLY VERIFIED",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Closed engine; edition gating (SSO, clustering paid); OEM terms unknown",
+    "community_vs_enterprise": "Developer free: single node, 2 sources; Enterprise: clustering, SSO, unlimited sources",
+    "deployment_modes": [
+      "docker",
+      "self-hosted",
+      "managed-cloud"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "User-named; OBDA-like counterpart to Ontop",
+    "decision_summary": "EXPERIMENT; BUILD CML SQL-pushdown virtual graph; BUILD ACL pushdown",
+    "top_strengths": [
+      "STR-puppygraph-01",
+      "STR-puppygraph-02"
+    ],
+    "top_inversions": [
+      "INV-puppygraph-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-puppygraph.md",
+    "sources": [
+      {
+        "title": "PuppyGraph pricing",
+        "url": "https://puppygraph.com/pricing",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "PuppyGraph docs",
+        "url": "https://docs.puppygraph.com/getting-started/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "PuppyGraph GitHub",
+        "url": "https://github.com/puppygraph",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "MotherDuck blog",
+        "url": "https://motherduck.com/blog/duckdb-puppygraph-graph-model-on-motherduck/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.65
+  },
+  {
+    "id": "T-C01-tugraph",
+    "slug": "tugraph",
+    "name": "TuGraph",
+    "category": "C01",
+    "tier": "C",
+    "tier_reason": "Narrow relevance outside CN market",
+    "members": [
+      "TuGraph"
+    ],
+    "official_url": "https://github.com/TuGraph-family/tugraph-db",
+    "owner": "TuGraph-family (Ant Group affiliation unverified)",
+    "latest_version": "v4.5.2",
+    "version_date": "2025-03-13",
+    "release_cadence": "",
+    "status": "maintenance",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "See licence column",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Narrow relevance outside CN market",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-tier-c-records-V15.md",
+    "sources": [
+      {
+        "title": "TuGraph GitHub",
+        "url": "https://github.com/TuGraph-family/tugraph-db",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C01-ultipa",
+    "slug": "ultipa",
+    "name": "Ultipa",
+    "category": "C01",
+    "tier": "C",
+    "tier_reason": "Commercial HTAP graph; narrow relevance",
+    "members": [
+      "Ultipa"
+    ],
+    "official_url": "https://www.ultipa.com",
+    "owner": "Ultipa",
+    "latest_version": "UNVERIFIED",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "",
+    "status": "active",
+    "license": "Proprietary; noncommercial Community edition (third-party report)",
+    "license_class": "proprietary",
+    "redistribution_notes": "See licence column",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Community edition noncommercial only",
+    "community_vs_enterprise": "",
+    "deployment_modes": [
+      "self-hosted",
+      "managed-cloud"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Commercial HTAP graph; narrow relevance",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-tier-c-records-V15.md",
+    "sources": [
+      {
+        "title": "Ultipa llms.txt",
+        "url": "https://www.ultipa.com/llms.txt",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.3
+  },
+  {
+    "id": "T-C01-surrealdb",
+    "slug": "surrealdb",
+    "name": "SurrealDB",
+    "category": "C01",
+    "tier": "C",
+    "tier_reason": "Multi-model DB with graph relations; adjacent",
+    "members": [
+      "SurrealDB"
+    ],
+    "official_url": "https://github.com/surrealdb/surrealdb",
+    "owner": "SurrealDB Ltd",
+    "latest_version": "v3.3.4",
+    "version_date": "2026-10-19",
+    "release_cadence": "",
+    "status": "active",
+    "license": "Business Source License 1.1 (core); SDKs Apache-2.0/MIT",
+    "license_class": "source-available",
+    "redistribution_notes": "See licence column",
+    "legal_review_trigger": true,
+    "legal_review_reason": "BSL 1.1 vs white-label hosting",
+    "community_vs_enterprise": "",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted",
+      "kubernetes",
+      "managed-cloud"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "BSL change date and use grant not read",
+    "registry_action": "KEEP",
+    "action_reason": "Multi-model DB with graph relations; adjacent",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-tier-c-records-V15.md",
+    "sources": [
+      {
+        "title": "SurrealDB GitHub",
+        "url": "https://github.com/surrealdb/surrealdb",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C01-sap-hana-graph",
+    "slug": "sap-hana-graph",
+    "name": "SAP HANA Graph",
+    "category": "C01",
+    "tier": "C",
+    "tier_reason": "ERP-embedded graph; adjacent",
+    "members": [
+      "SAP HANA Graph"
+    ],
+    "official_url": "https://help.sap.com",
+    "owner": "SAP SE",
+    "latest_version": "UNVERIFIED",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "",
+    "status": "active",
+    "license": "Proprietary",
+    "license_class": "proprietary",
+    "redistribution_notes": "See licence column",
+    "legal_review_trigger": true,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "",
+    "deployment_modes": [
+      "self-hosted",
+      "managed-cloud"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "ERP-embedded graph; adjacent",
+    "decision_summary": "REFERENCE-ONLY; HANA as customer SQL source",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-tier-c-records-V15.md",
+    "sources": [
+      {
+        "title": "SAP HANA Graph tutorial",
+        "url": "https://developers.sap.com/tutorials/hana-graph-overview-pattern-matching-sql.html",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.5
+  },
+  {
+    "id": "T-C01-aerospike-graph",
+    "slug": "aerospike-graph",
+    "name": "Aerospike Graph",
+    "category": "C01",
+    "tier": "C",
+    "tier_reason": "Gremlin over Aerospike; adjacent",
+    "members": [
+      "Aerospike Graph"
+    ],
+    "official_url": "https://github.com/aerospike/aerospike-graph-service",
+    "owner": "Aerospike, Inc.",
+    "latest_version": "v3.3.3",
+    "version_date": "2026-10-21",
+    "release_cadence": "",
+    "status": "active",
+    "license": "Graph service Apache-2.0; Aerospike DB edition terms separate",
+    "license_class": "mixed",
+    "redistribution_notes": "See licence column",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Underlying Aerospike database licence not read",
+    "community_vs_enterprise": "",
+    "deployment_modes": [
+      "docker",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "TinkerPop 3.7.x only",
+    "registry_action": "KEEP",
+    "action_reason": "Gremlin over Aerospike; adjacent",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-tier-c-records-V15.md",
+    "sources": [
+      {
+        "title": "Aerospike Graph Service",
+        "url": "https://github.com/aerospike/aerospike-graph-service",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C01-duckpgq",
+    "slug": "duckpgq",
+    "name": "DuckPGQ",
+    "category": "C01",
+    "tier": "C",
+    "tier_reason": "SQL/PGQ research extension for DuckDB",
+    "members": [
+      "DuckPGQ"
+    ],
+    "official_url": "https://github.com/cwida/duckpgq-extension",
+    "owner": "cwida org (CWI)",
+    "latest_version": "no tagged release (community extension)",
+    "version_date": "2026-10-23 (last push)",
+    "release_cadence": "",
+    "status": "active",
+    "license": "MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "See licence column",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "SQL/PGQ research extension for DuckDB",
+    "decision_summary": "EXPERIMENT as SQL/PGQ conformance target",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-tier-c-records-V15.md",
+    "sources": [
+      {
+        "title": "DuckPGQ GitHub",
+        "url": "https://github.com/cwida/duckpgq-extension",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C01-cozodb",
+    "slug": "cozodb",
+    "name": "CozoDB",
+    "category": "C01",
+    "tier": "C",
+    "tier_reason": "Embedded Datalog+graph+vector; activity to verify",
+    "members": [
+      "CozoDB"
+    ],
+    "official_url": "https://github.com/cozodb/cozo",
+    "owner": "cozodb (individual maintainer)",
+    "latest_version": "v0.7.6",
+    "version_date": "2023-12-11",
+    "release_cadence": "",
+    "status": "maintenance",
+    "license": "MPL-2.0",
+    "license_class": "weak-copyleft",
+    "redistribution_notes": "See licence column",
+    "legal_review_trigger": true,
+    "legal_review_reason": "MPL-2.0 file-level copyleft",
+    "community_vs_enterprise": "",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "Verified dormant: last release 2023-12-11, last push 2024-12-04",
+    "registry_action": "KEEP",
+    "action_reason": "Embedded Datalog+graph+vector; activity to verify",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-tier-c-records-V15.md",
+    "sources": [
+      {
+        "title": "CozoDB GitHub",
+        "url": "https://github.com/cozodb/cozo",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.85
+  },
+  {
+    "id": "T-C01-helixdb",
+    "slug": "helixdb",
+    "name": "HelixDB",
+    "category": "C01",
+    "tier": "C",
+    "tier_reason": "Young graph-vector DB",
+    "members": [
+      "HelixDB"
+    ],
+    "official_url": "https://github.com/HelixDB/helix-db",
+    "owner": "HelixDB",
+    "latest_version": "v3.5.1",
+    "version_date": "2026-10-08",
+    "release_cadence": "",
+    "status": "active",
+    "license": "Apache-2.0 (current README/API); licence history not checked",
+    "license_class": "permissive",
+    "redistribution_notes": "See licence column",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "",
+    "deployment_modes": [
+      "embedded",
+      "docker",
+      "managed-cloud"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Young graph-vector DB",
+    "decision_summary": "EXPERIMENT as optional embedded backend",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-tier-c-records-V15.md",
+    "sources": [
+      {
+        "title": "HelixDB GitHub",
+        "url": "https://github.com/HelixDB/helix-db",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.65
+  },
+  {
+    "id": "T-C01-galaxybase",
+    "slug": "galaxybase",
+    "name": "Galaxybase",
+    "category": "C01",
+    "tier": "C",
+    "tier_reason": "Commercial CN graph DB",
+    "members": [
+      "Galaxybase"
+    ],
+    "official_url": "UNVERIFIED",
+    "owner": "CreateLink (Zhejiang) Technology",
+    "latest_version": "UNVERIFIED",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "",
+    "status": "active",
+    "license": "Proprietary",
+    "license_class": "proprietary",
+    "redistribution_notes": "See licence column",
+    "legal_review_trigger": true,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "",
+    "deployment_modes": [
+      "self-hosted"
+    ],
+    "air_gap_viable": "unknown",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Commercial CN graph DB",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-tier-c-records-V15.md",
+    "sources": [
+      {
+        "title": "LDBC SNB Interactive FDR 2022",
+        "url": "https://ldbcouncil.org/docs/audits/snb/LDBC_SNB_I_20220516_SF30-100-300_galaxybase.pdf",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.5
+  },
+  {
+    "id": "T-C01-orientdb",
+    "slug": "orientdb",
+    "name": "OrientDB (historical)",
+    "category": "C01",
+    "tier": "C",
+    "tier_reason": "Historical lessons",
+    "members": [
+      "OrientDB (historical)"
+    ],
+    "official_url": "https://github.com/orientechnologies/orientdb",
+    "owner": "OrientDB LTD",
+    "latest_version": "3.2.57",
+    "version_date": "2026-10-05",
+    "release_cadence": "",
+    "status": "active",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "See licence column",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "Not archived: releases continue in 2026",
+    "registry_action": "KEEP",
+    "action_reason": "Historical lessons",
+    "decision_summary": "REFERENCE-ONLY; relabel from historical to maintained-low-momentum",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-tier-c-records-V15.md",
+    "sources": [
+      {
+        "title": "OrientDB GitHub",
+        "url": "https://github.com/orientechnologies/orientdb",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  }
+]

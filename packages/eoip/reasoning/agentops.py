@@ -226,8 +226,8 @@ class IncidentRecord(BaseModel):
             return None
         from datetime import datetime
         try:
-            start = datetime.fromisoformat(self.opened_at.replace("Z", "+00:00"))
-            end = datetime.fromisoformat(self.resolved_at.replace("Z", "+00:00"))
+            start = datetime.fromisoformat(self.opened_at)
+            end = datetime.fromisoformat(self.resolved_at)
             return (end - start).total_seconds()
         except ValueError:
             return None

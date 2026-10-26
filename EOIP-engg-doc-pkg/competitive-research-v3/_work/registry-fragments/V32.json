@@ -1,0 +1,973 @@
+[
+  {
+    "id": "T-C18-rdf",
+    "slug": "rdf",
+    "name": "RDF 1.1/1.2, RDF-star, serialisations",
+    "category": "C18",
+    "tier": "B",
+    "tier_reason": "Interchange (BL-06, BL-31)",
+    "members": [
+      "RDF 1.1 Concepts (Rec)",
+      "RDF 1.2 Concepts (CR)",
+      "RDF 1.2 Semantics (CR)",
+      "Turtle/TriG/N-Triples/N-Quads 1.1 Rec and 1.2 WD",
+      "JSON-LD 1.1 Rec",
+      "RDF-star CG report"
+    ],
+    "official_url": "https://www.w3.org/TR/rdf12-concepts/",
+    "owner": "W3C RDF & SPARQL WG; JSON-LD WG",
+    "latest_version": "RDF 1.2 Concepts CR Snapshot; RDF 1.1 Rec",
+    "version_date": "2026-04-07",
+    "release_cadence": "working-group drafts; 1.2 syntaxes WD 2026-10-23",
+    "status": "active",
+    "license": "W3C document/software licences (text not re-read); royalty-free per W3C Patent Policy (unverified for drafts)",
+    "license_class": "permissive",
+    "redistribution_notes": "Specification; implementations separate.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "RDF 1.2 is CR (Concepts, Semantics) and WD (syntaxes), confirmed 2026-10-26; RDF-star is a 2021 CG report superseded by triple terms.",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "INTEGRATE via rdflib/Jena; EXPERIMENT 1.2 triple terms behind flag",
+    "top_strengths": [
+      "STR-rdf-01"
+    ],
+    "top_inversions": [
+      "INV-rdf-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-rdf.md",
+    "sources": [
+      {
+        "title": "RDF 1.2 Concepts",
+        "url": "https://www.w3.org/TR/rdf12-concepts/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "RDF&SPARQL WG publications",
+        "url": "https://www.w3.org/groups/wg/rdf-star/publications/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "JSON-LD WG publications",
+        "url": "https://www.w3.org/groups/wg/json-ld/publications/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.85
+  },
+  {
+    "id": "T-C18-owl2",
+    "slug": "owl2",
+    "name": "RDFS and OWL 2 profiles",
+    "category": "C18",
+    "tier": "B",
+    "tier_reason": "Semantics (BL-30)",
+    "members": [
+      "RDFS",
+      "OWL 2 DL",
+      "OWL 2 EL",
+      "OWL 2 QL",
+      "OWL 2 RL"
+    ],
+    "official_url": "https://www.w3.org/TR/owl2-profiles/",
+    "owner": "W3C",
+    "latest_version": "OWL 2 Second Edition",
+    "version_date": "2012-12-11",
+    "release_cadence": "frozen since 2012",
+    "status": "maintenance",
+    "license": "W3C document/software licences (text not re-read); royalty-free per W3C Patent Policy (unverified for drafts)",
+    "license_class": "permissive",
+    "redistribution_notes": "Specification; reasoners carry own licences (HermiT LGPL, Openllet AGPL - prior knowledge, verify).",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Reasoner implementations may be LGPL/AGPL",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "RDF 1.2 Schema is WD (2026-10-23).",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "BUILD RL-style materialisation; INTEGRATE reasoners optionally",
+    "top_strengths": [
+      "STR-owl2-01"
+    ],
+    "top_inversions": [
+      "INV-owl2-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-owl2.md",
+    "sources": [
+      {
+        "title": "OWL 2 Profiles",
+        "url": "https://www.w3.org/TR/owl2-profiles/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "RDF&SPARQL WG publications",
+        "url": "https://www.w3.org/groups/wg/rdf-star/publications/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C18-shacl",
+    "slug": "shacl",
+    "name": "SHACL Core / SHACL-SPARQL / SHACL 1.2",
+    "category": "C18",
+    "tier": "B",
+    "tier_reason": "Validation (BL-29)",
+    "members": [
+      "SHACL 1.0 Rec",
+      "SHACL 1.2 Core WD",
+      "Node Expressions WD",
+      "SPARQL-Related Features WD",
+      "Inference Rules FPWD",
+      "Profiling FPWD",
+      "User Interfaces FPWD"
+    ],
+    "official_url": "https://www.w3.org/TR/shacl12-core/",
+    "owner": "W3C Data Shapes WG",
+    "latest_version": "SHACL 1.0 Rec (2017); SHACL 1.2 Core WD",
+    "version_date": "2026-10-25",
+    "release_cadence": "WG drafts",
+    "status": "active",
+    "license": "W3C document/software licences (text not re-read); royalty-free per W3C Patent Policy (unverified for drafts)",
+    "license_class": "permissive",
+    "redistribution_notes": "Specification.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "SHACL 1.2 is WD/FPWD, not a Recommendation.",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "INTEGRATE pySHACL/Jena as oracle; BUILD tenant-safe core",
+    "top_strengths": [
+      "STR-shacl-01"
+    ],
+    "top_inversions": [
+      "INV-shacl-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-shacl.md",
+    "sources": [
+      {
+        "title": "SHACL 1.2 Core",
+        "url": "https://www.w3.org/TR/shacl12-core/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Data Shapes WG publications",
+        "url": "https://www.w3.org/groups/wg/data-shapes/publications/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.85
+  },
+  {
+    "id": "T-C18-sparql",
+    "slug": "sparql",
+    "name": "SPARQL 1.1/1.2",
+    "category": "C18",
+    "tier": "B",
+    "tier_reason": "Query (BL-06, BL-06a)",
+    "members": [
+      "SPARQL 1.1 Rec family",
+      "SPARQL 1.2 Query WD",
+      "Update WD",
+      "Protocol WD",
+      "Graph Store Protocol WD",
+      "Results formats WD",
+      "Federated Query WD",
+      "Entailment WD"
+    ],
+    "official_url": "https://www.w3.org/TR/sparql12-query/",
+    "owner": "W3C RDF & SPARQL WG",
+    "latest_version": "SPARQL 1.2 Query WD; SPARQL 1.1 Rec",
+    "version_date": "2026-10-25",
+    "release_cadence": "WG drafts",
+    "status": "active",
+    "license": "W3C document/software licences (text not re-read); royalty-free per W3C Patent Policy (unverified for drafts)",
+    "license_class": "permissive",
+    "redistribution_notes": "Specification.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "1.2 is WD in all parts; confirms other batch.",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "REUSE rdflib/Fuseki; BUILD typed IR with documented loss",
+    "top_strengths": [
+      "STR-sparql-01"
+    ],
+    "top_inversions": [
+      "INV-sparql-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-sparql.md",
+    "sources": [
+      {
+        "title": "SPARQL 1.2 Query",
+        "url": "https://www.w3.org/TR/sparql12-query/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "RDF&SPARQL WG publications",
+        "url": "https://www.w3.org/groups/wg/rdf-star/publications/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.85
+  },
+  {
+    "id": "T-C18-opencypher",
+    "slug": "opencypher",
+    "name": "Cypher / openCypher",
+    "category": "C18",
+    "tier": "B",
+    "tier_reason": "De-facto LPG query language (BL-03/04/09)",
+    "members": [
+      "openCypher spec/grammar",
+      "openCypher TCK",
+      "Neo4j Cypher 5/25 (vendor)",
+      "Neptune openCypher (vendor)"
+    ],
+    "official_url": "https://github.com/opencypher/openCypher",
+    "owner": "Neo4j, Inc. copyright; community project (unsupported per README)",
+    "latest_version": "TCK 2024.2 (Maven listing)",
+    "version_date": "2025-07",
+    "release_cadence": "unclear",
+    "status": "active",
+    "license": "Apache-2.0 (openCypher repo)",
+    "license_class": "permissive",
+    "redistribution_notes": "Spec/TCK permissive; engines separate.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Neo4j server licensing (belongs to Neo4j dive)",
+    "community_vs_enterprise": "Neo4j Community vs Enterprise split (prior knowledge)",
+    "deployment_modes": [
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "Three meanings: openCypher spec, Neo4j Cypher dialects, vendor subsets. Mission is now to converge toward GQL.",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "INTEGRATE as emitted dialect via IR",
+    "top_strengths": [
+      "STR-ocy-01"
+    ],
+    "top_inversions": [
+      "INV-ocy-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-opencypher.md",
+    "sources": [
+      {
+        "title": "openCypher repo",
+        "url": "https://github.com/opencypher/openCypher",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "openCypher site",
+        "url": "https://opencypher.org/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.65
+  },
+  {
+    "id": "T-C18-gql",
+    "slug": "gql",
+    "name": "ISO/IEC 39075 GQL",
+    "category": "C18",
+    "tier": "B",
+    "tier_reason": "ISO LPG query standard (BL-59)",
+    "members": [
+      "ISO/IEC 39075:2024",
+      "Cor 1:2026"
+    ],
+    "official_url": "https://www.iso.org/standard/76120.html",
+    "owner": "ISO/IEC JTC 1/SC 32",
+    "latest_version": "ISO/IEC 39075:2024 (1st ed.)",
+    "version_date": "2024-04-11",
+    "release_cadence": "edition cycle; Cor 1:2026 listed by UNE",
+    "status": "active",
+    "license": "ISO copyright, paid; no royalty-free text",
+    "license_class": "proprietary",
+    "redistribution_notes": "Standard text paywalled; patent declarations unchecked.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Paid standard; ISO/IEC patent declarations not checked",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "Published April 2024 (11 or 12 Apr per catalogue); ISO page returned 403.",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "INTEGRATE as emitter target later; BUILD IR",
+    "top_strengths": [
+      "STR-gql-01"
+    ],
+    "top_inversions": [
+      "INV-gql-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-gql.md",
+    "sources": [
+      {
+        "title": "IEC webstore",
+        "url": "https://webstore.iec.ch/publication/94107",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "SCC",
+        "url": "https://scc-ccn.ca/standardsdb/standards/8186711",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "UNE",
+        "url": "https://www.en.une.org/encuentra-tu-norma/busca-tu-norma/iso?c=076120",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C18-sql-pgq",
+    "slug": "sql-pgq",
+    "name": "SQL/PGQ (ISO/IEC 9075-16)",
+    "category": "C18",
+    "tier": "B",
+    "tier_reason": "ISO SQL graph extension (BL-59)",
+    "members": [
+      "ISO/IEC 9075-16:2023",
+      "PostgreSQL 19 GRAPH_TABLE"
+    ],
+    "official_url": "https://www.dinmedia.de/en/standard/iso-iec-9075-16/369273602",
+    "owner": "ISO/IEC JTC 1/SC 32",
+    "latest_version": "ISO/IEC 9075-16:2023 (1st ed.)",
+    "version_date": "2023-06",
+    "release_cadence": "edition cycle; Cor 1:2026 and CD next ed. listed",
+    "status": "active",
+    "license": "ISO copyright, paid",
+    "license_class": "proprietary",
+    "redistribution_notes": "Paywalled; PG19 implementation under PostgreSQL licence (prior knowledge).",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Paid standard; patents unchecked",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "PostgreSQL 19 not GA at 2026-10-26 (RC1; GA planned 2026-11-19).",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "EXPERIMENT after PG19 GA",
+    "top_strengths": [
+      "STR-pgq-01"
+    ],
+    "top_inversions": [
+      "INV-pgq-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-sql-pgq.md",
+    "sources": [
+      {
+        "title": "DIN",
+        "url": "https://www.dinmedia.de/en/standard/iso-iec-9075-16/369273602",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "PostgreSQL 19 RC1",
+        "url": "https://www.postgresql.org/about/news/postgresql-19-rc-1-released-3409/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C18-pg-schema",
+    "slug": "pg-schema",
+    "name": "PG-Schema and LPG schema proposals",
+    "category": "C18",
+    "tier": "B",
+    "tier_reason": "Schema layer for LPG (BL-28)",
+    "members": [
+      "PG-Schema (SIGMOD 2023)",
+      "PG-Keys",
+      "GQL graph types",
+      "vendor constraint models"
+    ],
+    "official_url": "https://arxiv.org/abs/2211.10962",
+    "owner": "Academic/LDBC-affiliated authors",
+    "latest_version": "PG-Schema paper v4",
+    "version_date": "2023-07-08",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "Paper; no software licence",
+    "license_class": "n/a",
+    "redistribution_notes": "No code to license.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Patent position of industry authors not checked",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "Not a standard; no working group or implementation verified.",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "BUILD native graph-type IR aligned with GQL",
+    "top_strengths": [
+      "STR-pgs-01"
+    ],
+    "top_inversions": [
+      "INV-pgs-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-pg-schema.md",
+    "sources": [
+      {
+        "title": "PG-Schema arXiv",
+        "url": "https://arxiv.org/abs/2211.10962",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Edinburgh record",
+        "url": "https://www.research.ed.ac.uk/en/publications/pg-schemas-schemas-for-property-graphs/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C18-odrl-dpv",
+    "slug": "odrl-dpv",
+    "name": "ODRL and DPV",
+    "category": "C18",
+    "tier": "B",
+    "tier_reason": "Usage/privacy policy vocabularies",
+    "members": [
+      "ODRL 2.2 Rec",
+      "ODRL future workshop 2026",
+      "DPV 2.3",
+      "DPV-ODRL guide"
+    ],
+    "official_url": "https://www.w3.org/TR/odrl-model/",
+    "owner": "W3C (ODRL Rec/CG); W3C DPVCG",
+    "latest_version": "ODRL 2.2; DPV 2.3",
+    "version_date": "2018-02-15; DPV 28 Feb (2026 per secondary)",
+    "release_cadence": "ODRL dormant, successor WG draft charter; DPV several releases a year",
+    "status": "maintenance",
+    "license": "W3C document/software licences (text not re-read); royalty-free per W3C Patent Policy (unverified for drafts); DPV licence not read",
+    "license_class": "permissive",
+    "redistribution_notes": "Vocabularies; DPV CC-BY believed (unverified).",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "DPV is a Community Group output, not a standard; ODRL successor only a draft charter.",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "EXPERIMENT import to ABAC IR; INTEGRATE DPV tags",
+    "top_strengths": [
+      "STR-odrl-01"
+    ],
+    "top_inversions": [
+      "INV-odrl-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-odrl-dpv.md",
+    "sources": [
+      {
+        "title": "ODRL model",
+        "url": "https://www.w3.org/TR/odrl-model/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "DPV releases",
+        "url": "https://github.com/w3c/dpv/releases",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "ODRL draft charter",
+        "url": "https://w3c.github.io/odrl/w3c-wg-draft-charter-2026/dpwg-draft-charter.html",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C18-skos-std",
+    "slug": "skos-std",
+    "name": "SKOS",
+    "category": "C18",
+    "tier": "C",
+    "tier_reason": "Tier C inventory",
+    "members": [
+      "SKOS"
+    ],
+    "official_url": "https://www.w3.org/TR/skos-reference/",
+    "owner": "W3C",
+    "latest_version": "SKOS Reference Rec",
+    "version_date": "2009-08-18",
+    "release_cadence": "n/a",
+    "status": "maintenance",
+    "license": "W3C document licence",
+    "license_class": "permissive",
+    "redistribution_notes": "See record.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "REUSE for taxonomy import/export",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-tier-c-records-V32.md",
+    "sources": [
+      {
+        "title": "SKOS",
+        "url": "https://www.w3.org/TR/skos-reference/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.85
+  },
+  {
+    "id": "T-C18-dcat-schemaorg",
+    "slug": "dcat-schemaorg",
+    "name": "DCAT and schema.org",
+    "category": "C18",
+    "tier": "C",
+    "tier_reason": "Tier C inventory",
+    "members": [
+      "DCAT",
+      "schema.org"
+    ],
+    "official_url": "https://www.w3.org/TR/vocab-dcat-3/",
+    "owner": "W3C; schema.org community",
+    "latest_version": "DCAT 3 Rec; schema.org 30.1",
+    "version_date": "2024-08-22; 2026-09-16",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "W3C doc licence; schema.org CC BY-SA 3.0 (unverified)",
+    "license_class": "mixed",
+    "redistribution_notes": "See record.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Mixed or unverified licences across members",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "REUSE DCAT 3; schema.org REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-tier-c-records-V32.md",
+    "sources": [
+      {
+        "title": "DCAT 3",
+        "url": "https://www.w3.org/TR/vocab-dcat-3/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "schema.org releases",
+        "url": "https://schema.org/docs/releases.html",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C18-graphql",
+    "slug": "graphql",
+    "name": "GraphQL",
+    "category": "C18",
+    "tier": "C",
+    "tier_reason": "Tier C inventory",
+    "members": [
+      "GraphQL"
+    ],
+    "official_url": "https://spec.graphql.org/",
+    "owner": "GraphQL Foundation",
+    "latest_version": "September 2025 edition",
+    "version_date": "2025-09-03",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "UNVERIFIED (OWFa believed)",
+    "license_class": "n/a",
+    "redistribution_notes": "See record.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "EXPERIMENT behind policy with depth/cost limits",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-tier-c-records-V32.md",
+    "sources": [
+      {
+        "title": "GraphQL spec",
+        "url": "https://spec.graphql.org/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C18-graph-formats",
+    "slug": "graph-formats",
+    "name": "GraphAr, GraphML, GEXF",
+    "category": "C18",
+    "tier": "C",
+    "tier_reason": "Tier C inventory",
+    "members": [
+      "GraphAr",
+      "GraphML",
+      "GEXF"
+    ],
+    "official_url": "https://github.com/apache/incubator-graphar",
+    "owner": "Apache (incubating); GraphML community; GEXF WG",
+    "latest_version": "GraphAr 0.13.0-incubating; GEXF 1.2",
+    "version_date": "2025-08-19; GEXF date UNVERIFIED",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "Apache-2.0 (GraphAr); CC BY-SA 3.0 (GEXF text); GraphML UNVERIFIED",
+    "license_class": "mixed",
+    "redistribution_notes": "See record.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Mixed or unverified licences across members",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "REFERENCE-ONLY GraphAr; REUSE GraphML/GEXF export",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-tier-c-records-V32.md",
+    "sources": [
+      {
+        "title": "GraphAr release",
+        "url": "https://release-test.apache.org/api/cle/release/graphar/0.13.0-incubating",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "GEXF",
+        "url": "https://gexf.net/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C18-tabular-formats",
+    "slug": "tabular-formats",
+    "name": "CSV, Parquet, Apache Arrow",
+    "category": "C18",
+    "tier": "C",
+    "tier_reason": "Tier C inventory",
+    "members": [
+      "CSV",
+      "Parquet",
+      "Apache Arrow"
+    ],
+    "official_url": "https://arrow.apache.org/",
+    "owner": "Apache Software Foundation; IETF",
+    "latest_version": "Parquet-java 1.17.0; Arrow 24.0.0",
+    "version_date": "2026-01-13; 2026-04-21",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "See record.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "REUSE for bulk and analytics paths",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-tier-c-records-V32.md",
+    "sources": [
+      {
+        "title": "Arrow 24.0.0",
+        "url": "https://blogs.apievangelist.com/blogs/apache-arrow-2026-04-21-apache-arrow-24-0-0-release/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C18-api-specs",
+    "slug": "api-specs",
+    "name": "OpenAPI and AsyncAPI",
+    "category": "C18",
+    "tier": "C",
+    "tier_reason": "Tier C inventory",
+    "members": [
+      "OpenAPI",
+      "AsyncAPI"
+    ],
+    "official_url": "https://spec.openapis.org/",
+    "owner": "OpenAPI Initiative; AsyncAPI Initiative",
+    "latest_version": "OpenAPI 3.2.0; AsyncAPI 3.1.0",
+    "version_date": "2025-09-19; 2026-01-31",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "Apache-2.0 (OAI site content); AsyncAPI UNVERIFIED",
+    "license_class": "permissive",
+    "redistribution_notes": "See record.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "REUSE",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-tier-c-records-V32.md",
+    "sources": [
+      {
+        "title": "AsyncAPI releases",
+        "url": "https://github.com/asyncapi/spec/releases",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C18-ngsi-ld",
+    "slug": "ngsi-ld",
+    "name": "NGSI-LD",
+    "category": "C18",
+    "tier": "C",
+    "tier_reason": "Tier C inventory",
+    "members": [
+      "NGSI-LD"
+    ],
+    "official_url": "https://uri.etsi.org/ngsi-ld/v1",
+    "owner": "ETSI ISG CIM",
+    "latest_version": "GS CIM 009 V1.8.1 (v1.9 draft only)",
+    "version_date": "2024-03",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "ETSI terms UNVERIFIED",
+    "license_class": "n/a",
+    "redistribution_notes": "See record.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-tier-c-records-V32.md",
+    "sources": [
+      {
+        "title": "ETSI CIM 009 v1.8.1",
+        "url": "https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.08.01_60/gs_CIM009v010801p.pdf",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.55
+  },
+  {
+    "id": "T-C18-geosparql-owltime",
+    "slug": "geosparql-owltime",
+    "name": "GeoSPARQL and OWL-Time",
+    "category": "C18",
+    "tier": "C",
+    "tier_reason": "Tier C inventory",
+    "members": [
+      "GeoSPARQL",
+      "OWL-Time"
+    ],
+    "official_url": "https://www.ogc.org/standards/geosparql/",
+    "owner": "OGC; W3C/OGC SDW WG",
+    "latest_version": "GeoSPARQL 1.1; OWL-Time CR Draft",
+    "version_date": "2024-01; 2022-11-15",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "OGC/W3C doc licences UNVERIFIED",
+    "license_class": "n/a",
+    "redistribution_notes": "See record.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-tier-c-records-V32.md",
+    "sources": [
+      {
+        "title": "GeoSPARQL",
+        "url": "https://www.ogc.org/standards/geosparql/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "OWL-Time",
+        "url": "https://www.w3.org/TR/owl-time/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C18-cloudevents",
+    "slug": "cloudevents",
+    "name": "CloudEvents",
+    "category": "C18",
+    "tier": "C",
+    "tier_reason": "Tier C inventory",
+    "members": [
+      "CloudEvents"
+    ],
+    "official_url": "https://github.com/cloudevents/spec",
+    "owner": "CNCF",
+    "latest_version": "v1.0.2",
+    "version_date": "UNVERIFIED (2022 per prior knowledge)",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "Apache-2.0 (prior knowledge)",
+    "license_class": "permissive",
+    "redistribution_notes": "See record.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "REUSE as outbound envelope",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-tier-c-records-V32.md",
+    "sources": [
+      {
+        "title": "CloudEvents releases",
+        "url": "https://github.com/cloudevents/spec/releases",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C18-verifiable-credentials",
+    "slug": "verifiable-credentials",
+    "name": "W3C Verifiable Credentials",
+    "category": "C18",
+    "tier": "C",
+    "tier_reason": "Tier C inventory",
+    "members": [
+      "W3C Verifiable Credentials"
+    ],
+    "official_url": "https://www.w3.org/TR/vc-data-model-2.0/",
+    "owner": "W3C VC WG",
+    "latest_version": "VC Data Model 2.0 Rec",
+    "version_date": "2025-05-15",
+    "release_cadence": "n/a",
+    "status": "active",
+    "license": "W3C document licence",
+    "license_class": "permissive",
+    "redistribution_notes": "See record.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "n/a"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned standard; status verified",
+    "decision_summary": "EXPERIMENT for signed evidence export",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C18-tier-c-records-V32.md",
+    "sources": [
+      {
+        "title": "VC DM 2.0",
+        "url": "https://www.w3.org/TR/vc-data-model-2.0/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.85
+  }
+]

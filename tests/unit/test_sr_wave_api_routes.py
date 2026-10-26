@@ -285,3 +285,68 @@ def test_ingest_profile(client: TestClient) -> None:
     body = response.json()
     assert body["record_count"] == 2
     assert body["fields"]
+
+
+# --- gap-analysis wave (pass 9b) ---------------------------------------------
+
+
+def test_loops_catalog(client: TestClient) -> None:
+    response = client.get("/api/v1/loops/catalog")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["loops"]
+    assert body["human_patterns"]
+
+
+def test_agentarch_catalog(client: TestClient) -> None:
+    response = client.get("/api/v1/agentarch/catalog")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["classical"]
+    assert body["reasoning"]
+    assert body["enterprise"]
+
+
+def test_ragx_architectures(client: TestClient) -> None:
+    response = client.get("/api/v1/ragx/architectures")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["architectures"]
+    assert body["techniques"]
+
+
+def test_qlang_languages(client: TestClient) -> None:
+    response = client.get("/api/v1/qlang/languages")
+    assert response.status_code == 200
+    languages = response.json()
+    assert any(lang["id"] == "opencypher" for lang in languages)
+    tiers = {lang["tier"] for lang in languages}
+    assert "real" in tiers
+
+
+def test_adapters_manifests(client: TestClient) -> None:
+    response = client.get("/api/v1/adapters")
+    assert response.status_code == 200
+    backends = {a["backend"] for a in response.json()}
+    assert "janusgraph" in backends
+
+
+def test_reasoning_strategies(client: TestClient) -> None:
+    response = client.get("/api/v1/reasoning/strategies")
+    assert response.status_code == 200
+    assert response.json()["strategies"]
+
+
+def test_execution_workflow_register_and_state(client: TestClient) -> None:
+    register = client.post(
+        "/api/v1/execution/workflows",
+        json={
+            "workflow_id": "urn:wf:api-demo",
+            "name": "api-demo",
+            "steps": [{"name": "extract", "action": "extract"}],
+        },
+    )
+    assert register.status_code == 200
+
+    state = client.get("/api/v1/execution/workflows/urn:wf:api-demo/state")
+    assert state.status_code == 200

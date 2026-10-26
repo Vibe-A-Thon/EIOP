@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "interpretation": "Dedicated bench request breadth only; not functional correctness or app-wide test coverage",
-  "openapi_operations": 761,
+  "openapi_operations": 806,
   "qa_probed_operations": 14,
-  "unprobed_operations": 747,
+  "unprobed_operations": 792,
   "negative_or_undocumented_probes": [
     {
       "method": "GET",
@@ -139,6 +139,18 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/adapters"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/adapters/{backend}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/adapters/{backend}/statements"
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/admin/audit"
     },
     {
@@ -176,6 +188,14 @@
     {
       "method": "GET",
       "path": "/api/v1/admin/worker"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agentarch/a2a/capabilities/{agent_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agentarch/catalog"
     },
     {
       "method": "GET",
@@ -596,6 +616,18 @@
     {
       "method": "GET",
       "path": "/api/v1/entities/{canonical_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/execution/streams/{stream_id}/reconcile"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/execution/workflows/{workflow_id}/state"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/execution/workflows/{workflow_id}/timers"
     },
     {
       "method": "GET",
@@ -1187,6 +1219,18 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/qlang/languages"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/qlang/languages/{language_id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/qlang/taxonomy"
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/query/cache/stats"
     },
     {
@@ -1216,6 +1260,26 @@
     {
       "method": "GET",
       "path": "/api/v1/rag/patterns"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ragx/architectures"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reasoning/agentops/costs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reasoning/evaluation/references"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reasoning/memory/working"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reasoning/strategies"
     },
     {
       "method": "GET",
@@ -1540,6 +1604,18 @@
     {
       "method": "POST",
       "path": "/api/v1/admin/validation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agentarch/a2a/send"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agentarch/coordinate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agentarch/run"
     },
     {
       "method": "POST",
@@ -1907,6 +1983,38 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/execution/queue/claim"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/execution/queue/items"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/execution/queue/items/{item_id}/complete"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/execution/workflows"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/execution/workflows/{workflow_id}/approve"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/execution/workflows/{workflow_id}/cancel"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/execution/workflows/{workflow_id}/compensate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/execution/workflows/{workflow_id}/run"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/federation/query"
     },
     {
@@ -2032,6 +2140,46 @@
     {
       "method": "POST",
       "path": "/api/v1/graph/what-if"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graphbuild/cochange"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graphbuild/hierarchy"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graphbuild/inclusion-dependencies"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graphbuild/link-prediction"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graphbuild/mentions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graphbuild/plan"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graphbuild/repair"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graphbuild/rollup"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graphbuild/schema/induce"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/graphbuild/similarity"
     },
     {
       "method": "POST",
@@ -2687,6 +2835,14 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/qlang/execute"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/qlang/parse"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/query"
     },
     {
@@ -2744,6 +2900,30 @@
     {
       "method": "POST",
       "path": "/api/v1/rag/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ragx/metrics/compute"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ragx/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ragx/techniques/apply"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reasoning/memory/working"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reasoning/select"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reasoning/strategies/{name}/run"
     },
     {
       "method": "POST",

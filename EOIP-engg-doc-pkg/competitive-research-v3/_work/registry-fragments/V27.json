@@ -1,0 +1,656 @@
+[
+ {
+  "id": "T-C14-debezium",
+  "slug": "debezium",
+  "name": "Debezium",
+  "category": "C14",
+  "tier": "B",
+  "tier_reason": "CDC reference",
+  "members": [
+   "Debezium Connectors",
+   "Debezium Server",
+   "Debezium Engine",
+   "Debezium Platform"
+  ],
+  "official_url": "https://debezium.io",
+  "owner": "Debezium community (Red Hat sponsored)",
+  "latest_version": "3.7.0.Final",
+  "version_date": "2026-09-29",
+  "release_cadence": "monthly patch, roughly quarterly minor",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; redistributable. Some source JDBC drivers carry their own licences.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "INTEGRATE optional Debezium Server to EOIP webhook/NATS; BUILD watermark incremental backfill",
+  "top_strengths": [
+   "STR-debezium-01",
+   "STR-debezium-02"
+  ],
+  "top_inversions": [
+   "INV-debezium-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-debezium.md",
+  "sources": [
+   {
+    "title": "Debezium releases",
+    "url": "https://debezium.io/releases/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Debezium tags",
+    "url": "https://github.com/debezium/debezium/tags",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Debezium LICENSE",
+    "url": "https://raw.githubusercontent.com/debezium/debezium/main/LICENSE.txt",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PostgreSQL connector",
+    "url": "https://debezium.io/documentation/reference/stable/connectors/postgresql.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Debezium Server",
+    "url": "https://debezium.io/documentation/reference/stable/operations/debezium-server.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.85
+ },
+ {
+  "id": "T-C14-kafka",
+  "slug": "kafka",
+  "name": "Apache Kafka and Kafka Connect",
+  "category": "C14",
+  "tier": "B",
+  "tier_reason": "Event bus option (BL-60)",
+  "members": [
+   "Apache Kafka",
+   "Kafka Connect"
+  ],
+  "official_url": "https://kafka.apache.org",
+  "owner": "Apache Software Foundation",
+  "latest_version": "4.3.2 (4.4.0 tagged 2026-10-13)",
+  "version_date": "2026-10-20",
+  "release_cadence": "minor roughly every 3-4 months, frequent patches",
+  "status": "active",
+  "license": "Apache-2.0 (ASF standard; licence file not fetched)",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; Confluent-licensed add-ons must be excluded (UNVERIFIED).",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Kafka 4.x is KRaft-only (ZooKeeper removed in 4.0); docs show 4.3 current while a 4.4.0 tag exists",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "DEFER external bus; define bus port; REUSE replay concepts; REJECT Connect as graph writer",
+  "top_strengths": [
+   "STR-kafka-01"
+  ],
+  "top_inversions": [
+   "INV-kafka-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-kafka.md",
+  "sources": [
+   {
+    "title": "Kafka tags",
+    "url": "https://github.com/apache/kafka/tags",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Kafka upgrade notes 4.3",
+    "url": "https://kafka.apache.org/43/getting-started/upgrade/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Kafka Connect user guide",
+    "url": "https://kafka.apache.org/43/kafka-connect/user-guide/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C14-nats",
+  "slug": "nats",
+  "name": "NATS",
+  "category": "C14",
+  "tier": "B",
+  "tier_reason": "Lightweight bus option",
+  "members": [
+   "nats-server",
+   "JetStream",
+   "NATS KV",
+   "NATS Object Store"
+  ],
+  "official_url": "https://nats.io",
+  "owner": "NATS maintainers (Synadia-sponsored; governance UNVERIFIED)",
+  "latest_version": "2.15.1",
+  "version_date": "2026-10-09",
+  "release_cadence": "frequent minor/patch",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; redistributable as sidecar binary.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "INTEGRATE optional JetStream adapter behind a bus port; keep SQLite default",
+  "top_strengths": [
+   "STR-nats-01"
+  ],
+  "top_inversions": [
+   "INV-nats-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-nats.md",
+  "sources": [
+   {
+    "title": "nats-server releases",
+    "url": "https://github.com/nats-io/nats-server/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "nats-server LICENSE",
+    "url": "https://raw.githubusercontent.com/nats-io/nats-server/main/LICENSE",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "JetStream concepts",
+    "url": "https://docs.nats.io/nats-concepts/jetstream",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "JetStream consumers",
+    "url": "https://docs.nats.io/nats-concepts/jetstream/consumers",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C14-airbyte",
+  "slug": "airbyte",
+  "name": "Airbyte",
+  "category": "C14",
+  "tier": "B",
+  "tier_reason": "Connector ecosystem (licence to verify)",
+  "members": [
+   "Airbyte Core",
+   "Airbyte connectors",
+   "Airbyte Protocol",
+   "Airbyte Cloud",
+   "Airbyte Enterprise"
+  ],
+  "official_url": "https://airbyte.com",
+  "owner": "Airbyte, Inc.",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Mixed: repo LICENSE text is Elastic License 2.0; docs: connectors and public repos ELv2 except airbyte-protocol (MIT); Cloud/Enterprise/Agents commercial; community connectors mostly MIT; FAQ text conflicts",
+  "license_class": "mixed",
+  "redistribution_notes": "ELv2 bars offering the software as a hosted/managed service; bundling in a white-label product needs review.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "ELv2 hosted-service restriction, per-connector licence variance, contradictory official wording",
+  "community_vs_enterprise": "Enterprise adds security features; Cloud and Enterprise commercial",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "Licence statements inconsistent across docs and FAQ; check each connector metadata.yaml",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "INTEGRATE as customer-run source via API (never bundled); REUSE MIT protocol; BUILD licence gate",
+  "top_strengths": [
+   "STR-airbyte-01"
+  ],
+  "top_inversions": [
+   "INV-airbyte-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-airbyte.md",
+  "sources": [
+   {
+    "title": "Airbyte repo",
+    "url": "https://github.com/airbytehq/airbyte",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Airbyte LICENSE",
+    "url": "https://raw.githubusercontent.com/airbytehq/airbyte/master/LICENSE",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Airbyte licences docs",
+    "url": "https://docs.airbyte.com/community/licenses/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Update on Airbyte's license",
+    "url": "https://airbyte.com/blog/update-on-airbytes-license",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C14-temporal",
+  "slug": "temporal",
+  "name": "Temporal (durable workflows)",
+  "category": "C14",
+  "tier": "B",
+  "tier_reason": "Durable workflow reference",
+  "members": [
+   "Temporal Server",
+   "Temporal SDKs",
+   "Temporal Cloud"
+  ],
+  "official_url": "https://temporal.io",
+  "owner": "Temporal Technologies Inc.",
+  "latest_version": "1.32.1",
+  "version_date": "2026-10-08 (year inferred; page shows 08 Oct)",
+  "release_cadence": "frequent patch/minor",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; SDK licences not examined.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Server MIT; Temporal Cloud commercial",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "REUSE own DurableJobStore; EXPERIMENT step journal; DEFER external Temporal",
+  "top_strengths": [
+   "STR-temporal-01"
+  ],
+  "top_inversions": [
+   "INV-temporal-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-temporal.md",
+  "sources": [
+   {
+    "title": "Temporal releases",
+    "url": "https://github.com/temporalio/temporal/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Temporal LICENSE",
+    "url": "https://raw.githubusercontent.com/temporalio/temporal/main/LICENSE",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Temporal workflows",
+    "url": "https://docs.temporal.io/workflows",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Self-hosted guide",
+    "url": "https://docs.temporal.io/self-hosted-guide",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C14-redpanda",
+  "slug": "redpanda",
+  "name": "Redpanda and Redpanda Connect (Benthos)",
+  "category": "C14",
+  "tier": "C",
+  "tier_reason": "Kafka-compatible",
+  "members": [
+   "Redpanda broker",
+   "Redpanda Connect (Benthos)"
+  ],
+  "official_url": "https://github.com/redpanda-data/redpanda",
+  "owner": "Redpanda Data, Inc.",
+  "latest_version": "Redpanda v26.2.2; Connect v4.115.1",
+  "version_date": "2026-08-19; 2026-10-23",
+  "release_cadence": "frequent",
+  "status": "active",
+  "license": "Core: Business Source License 1.1 (no Streaming or Queueing Service; 4-year change to Apache-2.0); Enterprise: Redpanda Community License; Connect: free bundle Apache V2 + Enterprise bundle",
+  "license_class": "source-available",
+  "redistribution_notes": "BSL/RCL bar offering as a streaming service; Connect enterprise bundle fee-based.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "BSL and RCL restrictions; community-vs-enterprise split",
+  "community_vs_enterprise": "Enterprise features need a licence key",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "Benthos is now Redpanda Connect",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "EXPERIMENT Connect free bundle; REJECT embedding core",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-tier-c-records-V27.md",
+  "sources": [
+   {
+    "title": "Redpanda BSL",
+    "url": "https://raw.githubusercontent.com/redpanda-data/redpanda/dev/licenses/bsl.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Redpanda Connect RCL",
+    "url": "https://raw.githubusercontent.com/redpanda-data/connect/main/licenses/rcl.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Connect tags",
+    "url": "https://github.com/redpanda-data/connect/tags",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C14-flink",
+  "slug": "flink",
+  "name": "Apache Flink",
+  "category": "C14",
+  "tier": "C",
+  "tier_reason": "Stream processing",
+  "members": [
+   "Apache Flink",
+   "Flink CDC"
+  ],
+  "official_url": "https://flink.apache.org",
+  "owner": "Apache Software Foundation",
+  "latest_version": "2.3.0 (CDC 3.7.0)",
+  "version_date": "2026-06-25",
+  "release_cadence": "about 2 minors per year",
+  "status": "active",
+  "license": "Apache-2.0 (ASF standard, not file-verified)",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "self-hosted",
+   "kubernetes",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "DEFER; REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-tier-c-records-V27.md",
+  "sources": [
+   {
+    "title": "Flink downloads",
+    "url": "https://flink.apache.org/downloads/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C14-nifi",
+  "slug": "nifi",
+  "name": "Apache NiFi",
+  "category": "C14",
+  "tier": "C",
+  "tier_reason": "Flow-based ingestion",
+  "members": [
+   "Apache NiFi"
+  ],
+  "official_url": "https://nifi.apache.org",
+  "owner": "Apache Software Foundation",
+  "latest_version": "2.12.0",
+  "version_date": "2026-09-13",
+  "release_cadence": "frequent minor",
+  "status": "active",
+  "license": "Apache-2.0 (ASF standard, not file-verified)",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "INTEGRATE optional customer-side collector; REFERENCE-ONLY provenance",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-tier-c-records-V27.md",
+  "sources": [
+   {
+    "title": "NiFi download",
+    "url": "https://nifi.apache.org/download/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C14-seatunnel",
+  "slug": "seatunnel",
+  "name": "Apache SeaTunnel",
+  "category": "C14",
+  "tier": "C",
+  "tier_reason": "Data integration",
+  "members": [
+   "Apache SeaTunnel",
+   "Zeta engine"
+  ],
+  "official_url": "https://seatunnel.apache.org",
+  "owner": "Apache Software Foundation",
+  "latest_version": "v3.0.0",
+  "version_date": "2026-09-23 (tags) / 2026-09-29 (download page)",
+  "release_cadence": "irregular",
+  "status": "active",
+  "license": "Apache-2.0 (ASF standard, not file-verified)",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "Tag and download-page dates differ by 6 days; a web search found no 3.0.0 announcement",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "EXPERIMENT as permissive connector source",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-tier-c-records-V27.md",
+  "sources": [
+   {
+    "title": "SeaTunnel tags",
+    "url": "https://github.com/apache/seatunnel/tags",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "SeaTunnel download",
+    "url": "https://seatunnel.apache.org/download",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C14-orchestrators",
+  "slug": "orchestrators",
+  "name": "Dagster, Airflow, Prefect",
+  "category": "C14",
+  "tier": "C",
+  "tier_reason": "Batch orchestration",
+  "members": [
+   "Dagster",
+   "Apache Airflow",
+   "Prefect"
+  ],
+  "official_url": "https://dagster.io",
+  "owner": "Dagster Labs; ASF; Prefect Technologies",
+  "latest_version": "Dagster 1.13.26; Airflow 3.3.2; Prefect 3.9.0",
+  "version_date": "2026-10-09; 2026-09-17; 2026-10-21",
+  "release_cadence": "weekly to monthly",
+  "status": "active",
+  "license": "Apache-2.0 (Dagster and Prefect LICENSE fetched; Airflow ASF standard)",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; managed cloud offerings commercial.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Managed offerings commercial, not examined",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY; INTEGRATE as customer-side callers",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-tier-c-records-V27.md",
+  "sources": [
+   {
+    "title": "Dagster tags",
+    "url": "https://github.com/dagster-io/dagster/tags",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Airflow release notes",
+    "url": "https://airflow.apache.org/docs/apache-airflow/stable/release_notes.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Prefect tags",
+    "url": "https://github.com/PrefectHQ/prefect/tags",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C14-dlt-meltano",
+  "slug": "dlt-meltano",
+  "name": "dlt, Meltano/Singer, Apache Hop",
+  "category": "C14",
+  "tier": "C",
+  "tier_reason": "ELT tooling",
+  "members": [
+   "dlt",
+   "Meltano",
+   "Singer taps/targets",
+   "Apache Hop"
+  ],
+  "official_url": "https://github.com/dlt-hub/dlt",
+  "owner": "dltHub; Arch Data, Inc.; ASF",
+  "latest_version": "dlt 1.31.0; Meltano v4.4.1; Hop 2.19.0-rc1 (rc only seen)",
+  "version_date": "2026-10-07; 2026-10-07; 2026-08-12",
+  "release_cadence": "frequent",
+  "status": "active",
+  "license": "dlt Apache-2.0; Meltano MIT; Hop Apache-2.0 (ASF standard); Singer taps vary (UNVERIFIED)",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive for the three tools; per-tap licences must be checked.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted",
+   "desktop"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry verified",
+  "decision_summary": "EXPERIMENT dlt; REUSE Singer shape after licence check; REFERENCE-ONLY Hop",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C14-tier-c-records-V27.md",
+  "sources": [
+   {
+    "title": "dlt tags",
+    "url": "https://github.com/dlt-hub/dlt/tags",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Meltano tags",
+    "url": "https://github.com/meltano/meltano/tags",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Hop tags",
+    "url": "https://github.com/apache/hop/tags",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ }
+]

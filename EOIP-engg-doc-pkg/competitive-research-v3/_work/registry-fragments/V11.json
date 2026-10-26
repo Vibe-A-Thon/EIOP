@@ -1,0 +1,602 @@
+[
+ {
+  "id": "T-C19-keycloak",
+  "slug": "keycloak",
+  "name": "Keycloak / OIDC / SAML",
+  "category": "C19",
+  "tier": "B",
+  "tier_reason": "Self-hosted IdP",
+  "members": [
+   "Keycloak",
+   "OIDC",
+   "SAML 2.0"
+  ],
+  "official_url": "https://www.keycloak.org",
+  "owner": "CNCF incubating project (Red Hat-led)",
+  "latest_version": "26.8.1",
+  "version_date": "2026-10-13 (year inferred)",
+  "release_cadence": "frequent minor and security releases",
+  "status": "active",
+  "license": "Apache-2.0 (not re-fetched from LICENSE)",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0; Red Hat build is a separate commercial product.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Single OSS project; RHBK commercial variant",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "OIDC/SAML are protocols; entry covers Keycloak as reference IdP",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE as optional reference IdP; REUSE own authz; REJECT its Authorization Services for per-document ACL",
+  "top_strengths": [
+   "STR-keycloak-01",
+   "STR-keycloak-02"
+  ],
+  "top_inversions": [
+   "INV-keycloak-01",
+   "INV-keycloak-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C19-keycloak.md",
+  "sources": [
+   {
+    "title": "Keycloak documentation",
+    "url": "https://www.keycloak.org/documentation",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Keycloak HA introduction",
+    "url": "https://www.keycloak.org/high-availability/single-cluster/introduction",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Keycloak releases",
+    "url": "https://github.com/keycloak/keycloak/releases/latest",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "CNCF projects",
+    "url": "https://www.cncf.io/projects/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C19-opa",
+  "slug": "opa",
+  "name": "Open Policy Agent / Rego",
+  "category": "C19",
+  "tier": "B",
+  "tier_reason": "Policy-as-code",
+  "members": [
+   "OPA",
+   "Rego",
+   "Regal",
+   "Gatekeeper (reference)"
+  ],
+  "official_url": "https://www.openpolicyagent.org",
+  "owner": "CNCF graduated project; key maintainers moved Styra to Apple in 2025",
+  "latest_version": "v1.21.4",
+  "version_date": "2026-10-23 (year inferred)",
+  "release_cadence": "frequent",
+  "status": "active",
+  "license": "Apache-2.0 (not re-fetched from LICENSE)",
+  "license_class": "permissive",
+  "redistribution_notes": "Open project; Styra commercial products future uncertain (single unofficial source).",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Styra commercial layer (DAS/EOPA) status UNVERIFIED",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Maintainer organisation change (Apple) documented by official blog; no governance or licence change",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "EXPERIMENT Rego for ABAC/egress and partial-evaluation filters; keep native YAML default; REJECT as grant store",
+  "top_strengths": [
+   "STR-opa-01",
+   "STR-opa-02"
+  ],
+  "top_inversions": [
+   "INV-opa-01",
+   "INV-opa-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C19-opa.md",
+  "sources": [
+   {
+    "title": "OPA policy performance",
+    "url": "https://www.openpolicyagent.org/docs/policy-performance",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OPA partial evaluation filtering",
+    "url": "https://www.openpolicyagent.org/docs/filtering/partial-evaluation",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Note to the OPA community",
+    "url": "https://openpolicyagent.org/blog/note-from-teemu-tim-and-torin-to-the-open-policy-agent-community-2dbbfe494371",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OPA releases",
+    "url": "https://github.com/open-policy-agent/opa/releases/latest",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C19-rebac",
+  "slug": "rebac",
+  "name": "ReBAC engines: OpenFGA, SpiceDB, Permify",
+  "category": "C19",
+  "tier": "B",
+  "tier_reason": "Permission-aware retrieval (BL-18)",
+  "members": [
+   "OpenFGA",
+   "SpiceDB",
+   "Permify"
+  ],
+  "official_url": "https://openfga.dev ; https://authzed.com ; https://github.com/Permify/permify",
+  "owner": "OpenFGA: CNCF incubating; SpiceDB: AuthZed; Permify: FusionAuth (acquired Nov 2025)",
+  "latest_version": "OpenFGA v1.22.0; SpiceDB v1.57.0; Permify v1.7.5",
+  "version_date": "2026-10-06 / 2026-10-20 / 2026-10-09 (years inferred)",
+  "release_cadence": "frequent",
+  "status": "active",
+  "license": "OpenFGA Apache-2.0; SpiceDB Apache-2.0; Permify AGPL-3.0",
+  "license_class": "mixed",
+  "redistribution_notes": "Permify AGPL-3.0 conflicts with embedding/redistribution; OpenFGA and SpiceDB permissive.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Permify AGPL-3.0 (network copyleft); SpiceDB enterprise/managed splits unverified",
+  "community_vs_enterprise": "SpiceDB: AuthZed Cloud and Materialize managed; others UNVERIFIED",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Zanzibar-family; Zanzibar paper is the reference",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE OpenFGA or SpiceDB behind an AuthzPort; BUILD consistency token natively; REJECT Permify embedding",
+  "top_strengths": [
+   "STR-rebac-01",
+   "STR-rebac-02",
+   "STR-rebac-03"
+  ],
+  "top_inversions": [
+   "INV-rebac-01",
+   "INV-rebac-02",
+   "INV-rebac-03"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C19-rebac.md",
+  "sources": [
+   {
+    "title": "Zanzibar (USENIX ATC 2019)",
+    "url": "https://www.usenix.org/system/files/atc19-pang.pdf",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "SpiceDB consistency",
+    "url": "https://authzed.com/docs/spicedb/concepts/consistency",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OpenFGA relationship queries",
+    "url": "https://openfga.dev/docs/interacting/relationship-queries",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Permify repository",
+    "url": "https://github.com/Permify/permify",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "SpiceDB repository",
+    "url": "https://github.com/authzed/spicedb",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C19-cedar-cerbos",
+  "slug": "cedar-cerbos",
+  "name": "Cedar and Cerbos",
+  "category": "C19",
+  "tier": "B",
+  "tier_reason": "Policy languages/engines",
+  "members": [
+   "Cedar",
+   "Cerbos"
+  ],
+  "official_url": "https://www.cedarpolicy.com ; https://cerbos.dev",
+  "owner": "Cedar: AWS-originated, CNCF sandbox; Cerbos: Cerbos Ltd",
+  "latest_version": "Cedar CLI v4.14.0; Cerbos v0.57.0",
+  "version_date": "2026-10-17 / 2026-10-23 (years inferred)",
+  "release_cadence": "frequent",
+  "status": "active",
+  "license": "Cedar Apache-2.0 (not confirmed on docs read); Cerbos Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Cerbos is open-core (Hub/Synapse separate); Cedar permissive.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Cerbos open-core boundary unverified",
+  "community_vs_enterprise": "Cerbos Hub and Synapse commercial",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "REUSE native authz; BUILD query-plan output (Cerbos pattern); DEFER Cedar library; EXPERIMENT Cerbos adapter",
+  "top_strengths": [
+   "STR-cc-01",
+   "STR-cc-02"
+  ],
+  "top_inversions": [
+   "INV-cc-01",
+   "INV-cc-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C19-cedar-cerbos.md",
+  "sources": [
+   {
+    "title": "Cedar docs",
+    "url": "https://docs.cedarpolicy.com/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Cedar CNCF",
+    "url": "https://www.cncf.io/projects/cedar/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Cerbos repository",
+    "url": "https://github.com/cerbos/cerbos",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Cerbos API",
+    "url": "https://docs.cerbos.dev/cerbos/latest/api/index.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C19-vault-openbao",
+  "slug": "vault-openbao",
+  "name": "HashiCorp Vault and OpenBao",
+  "category": "C19",
+  "tier": "B",
+  "tier_reason": "Secrets (licence to verify)",
+  "members": [
+   "Vault Community",
+   "Vault Enterprise",
+   "OpenBao"
+  ],
+  "official_url": "https://www.vaultproject.io ; https://openbao.org",
+  "owner": "Vault: HashiCorp/IBM; OpenBao: Linux Foundation / OpenSSF",
+  "latest_version": "Vault v2.2.1; OpenBao v2.7.1",
+  "version_date": "2026-10-22 / 2026-10-01 (OpenBao year inferred)",
+  "release_cadence": "frequent",
+  "status": "active",
+  "license": "Vault BUSL 1.1 (licensor reportedly IBM since 2026-03-26); OpenBao MPL-2.0",
+  "license_class": "mixed",
+  "redistribution_notes": "BUSL 1.1 bars hosted/embedded competing offerings; OpenBao MPL-2.0 file-level copyleft; deploy OpenBao as customer-side optional integration.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Vault BUSL 1.1 source-available; OpenBao MPL-2.0 file-level copyleft",
+  "community_vs_enterprise": "Vault Enterprise: replication, Sentinel, FIPS (comparison blog, low confidence)",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "OpenBao forked from Vault 1.14.0 (last MPL); Vault 2.0 GA Apr 2026 (secondary)",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE OpenBao via SecretsPort (optional); REJECT bundling Vault; BUILD AES-GCM replacement for XOR keystream cipher",
+  "top_strengths": [
+   "STR-vo-01",
+   "STR-vo-02"
+  ],
+  "top_inversions": [
+   "INV-vo-01",
+   "INV-vo-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C19-vault-openbao.md",
+  "sources": [
+   {
+    "title": "HashiCorp BSL",
+    "url": "https://www.hashicorp.com/en/bsl",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OpenBao repository",
+    "url": "https://github.com/openbao/openbao",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Vault releases",
+    "url": "https://github.com/hashicorp/vault/releases/latest",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Vault 2.0 IBM (InfoQ)",
+    "url": "https://infoq.com/news/2026/04/vault-2-0-ibm-identity/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C19-supply-chain",
+  "slug": "supply-chain",
+  "name": "Supply chain: Sigstore/cosign, Syft, Grype, Trivy, SLSA, in-toto",
+  "category": "C19",
+  "tier": "B",
+  "tier_reason": "SBOM and signing",
+  "members": [
+   "Sigstore/cosign",
+   "Syft",
+   "Grype",
+   "Trivy",
+   "SLSA",
+   "in-toto"
+  ],
+  "official_url": "https://sigstore.dev ; https://slsa.dev ; https://in-toto.io",
+  "owner": "OpenSSF (Sigstore, SLSA); Anchore (Syft, Grype); Aqua Security (Trivy); CNCF (in-toto)",
+  "latest_version": "cosign v3.1.4; Syft v1.55.0; Grype v0.121.0; Trivy v0.76.1; SLSA v1.2; in-toto v3.1.0-rc listed",
+  "version_date": "2026-10-20 / 10-19 / 10-19 / 10-21 (years inferred)",
+  "release_cadence": "frequent",
+  "status": "active",
+  "license": "Apache-2.0 (Grype and Trivy verified; others assumed)",
+  "license_class": "permissive",
+  "redistribution_notes": "All Apache-2.0 to current knowledge; no copyleft identified.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Anchore and Aqua offer commercial products",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "Trivy March 2026 supply-chain compromise (v0.69.4); pin and verify",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE Syft+Grype+cosign; EXPERIMENT SLSA/in-toto; pin Trivy",
+  "top_strengths": [
+   "STR-sc-01",
+   "STR-sc-02"
+  ],
+  "top_inversions": [
+   "INV-sc-01",
+   "INV-sc-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C19-supply-chain.md",
+  "sources": [
+   {
+    "title": "Sigstore docs",
+    "url": "https://docs.sigstore.dev/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "SLSA v1.2",
+    "url": "https://slsa.dev/spec/v1.2/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Grype",
+    "url": "https://github.com/anchore/grype",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Trivy",
+    "url": "https://github.com/aquasecurity/trivy",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Trivy compromise (Snyk)",
+    "url": "https://snyk.io/articles/trivy-github-actions-supply-chain-compromise/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C19-opentelemetry",
+  "slug": "opentelemetry",
+  "name": "OpenTelemetry, Prometheus, Grafana",
+  "category": "C19",
+  "tier": "B",
+  "tier_reason": "Observability stack",
+  "members": [
+   "OpenTelemetry",
+   "Prometheus",
+   "Grafana"
+  ],
+  "official_url": "https://opentelemetry.io ; https://prometheus.io ; https://grafana.com",
+  "owner": "CNCF (OTel, Prometheus); Grafana Labs",
+  "latest_version": "Collector v0.163.0; Prometheus v3.15.1; Grafana v13.2.4",
+  "version_date": "2026-10-14 / 2026-10-21 / 2026-10-13 (years partly inferred)",
+  "release_cadence": "frequent",
+  "status": "active",
+  "license": "OTel and Prometheus Apache-2.0 (assumed); Grafana AGPL-3.0-only",
+  "license_class": "mixed",
+  "redistribution_notes": "Grafana AGPL-3.0 network copyleft; ship customer-installed, do not bundle pending review.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Grafana AGPL-3.0 (and Loki/Tempo AGPL) since 2021-04-20",
+  "community_vs_enterprise": "Grafana Enterprise separate commercial edition",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "OTel CNCF level shown Graduated on fetched list, conflicts with prior knowledge (low confidence)",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "REUSE in-house metrics + Prometheus; INTEGRATE OTel with Collector redaction; REFERENCE Grafana only",
+  "top_strengths": [
+   "STR-ot-01",
+   "STR-ot-02"
+  ],
+  "top_inversions": [
+   "INV-ot-01",
+   "INV-ot-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C19-opentelemetry.md",
+  "sources": [
+   {
+    "title": "CNCF projects",
+    "url": "https://www.cncf.io/projects/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Grafana repository",
+    "url": "https://github.com/grafana/grafana",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Grafana licensing",
+    "url": "https://grafana.com/licensing/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Prometheus releases",
+    "url": "https://github.com/prometheus/prometheus/releases/latest",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C19-llm-threat-guidance",
+  "slug": "llm-threat-guidance",
+  "name": "OWASP Top 10 for LLM Apps, agentic-AI guidance, MITRE ATLAS",
+  "category": "C19",
+  "tier": "B",
+  "tier_reason": "Threat model references",
+  "members": [
+   "OWASP LLM Top 10 2025",
+   "OWASP Agentic Top 10",
+   "MITRE ATLAS"
+  ],
+  "official_url": "https://genai.owasp.org ; https://atlas.mitre.org",
+  "owner": "OWASP GenAI Security Project; MITRE",
+  "latest_version": "LLM Top 10 2025; Agentic Top 10 (2025-12-09); ATLAS version UNVERIFIED",
+  "version_date": "2025-12-09 (agentic)",
+  "release_cadence": "annual lists; ATLAS several updates per year",
+  "status": "active",
+  "license": "UNVERIFIED (OWASP typically CC BY-SA)",
+  "license_class": "n/a",
+  "redistribution_notes": "Documentation; verify licence before copying text.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Licences unverified",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Secondary sources claim LLM Top 10 2026 edition (Aug 2026) not on official page; ATLAS versions inconsistent",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "REFERENCE lists; BUILD red-team harness and threat traceability",
+  "top_strengths": [
+   "STR-lt-01",
+   "STR-lt-02"
+  ],
+  "top_inversions": [
+   "INV-lt-01",
+   "INV-lt-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C19-llm-threat-guidance.md",
+  "sources": [
+   {
+    "title": "OWASP LLM Top 10",
+    "url": "https://genai.owasp.org/llm-top-10/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OWASP Agentic Top 10 2026",
+    "url": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "MITRE ATLAS",
+    "url": "https://atlas.mitre.org/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C19-auth-aware-search",
+  "slug": "auth-aware-search",
+  "name": "Authorization-aware search (pattern)",
+  "category": "C19",
+  "tier": "C",
+  "tier_reason": "Pattern record; design basis for BL-18",
+  "members": [
+   "post-filter",
+   "pre-filter",
+   "ACL-embedded index"
+  ],
+  "official_url": "n/a",
+  "owner": "n/a",
+  "latest_version": "n/a",
+  "version_date": "n/a",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "n/a",
+  "license_class": "n/a",
+  "redistribution_notes": "n/a",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned Tier C",
+  "decision_summary": "BUILD ACL-embedded filter plus native recheck; INTEGRATE ReBAC; EXPERIMENT policy-compiled pre-filters",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C19-tier-c-records-V11.md",
+  "sources": [
+   {
+    "title": "Zanzibar",
+    "url": "https://www.usenix.org/system/files/atc19-pang.pdf",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ }
+]

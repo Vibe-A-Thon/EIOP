@@ -77,6 +77,11 @@ def main() -> int:
     ap.add_argument("--baseline", default="")
     ap.add_argument("--repo", default="local")
     ap.add_argument("--agent-id", default="agent-update-memory")
+    ap.add_argument("--requirements", type=Path, default=None,
+                    help="requirements_index.json: seed every requirement (default status Not Verified)")
+    ap.add_argument("--gaps", type=Path, default=None,
+                    help="residual_gaps.json from build_evidence.py (gaps + derived severity)")
+    ap.add_argument("--config", type=Path, default=None, help="audit-config.json (recorded as config_ref)")
     args = ap.parse_args()
 
     evidence = json.loads(args.evidence.read_text(encoding="utf-8"))
@@ -94,17 +99,55 @@ def main() -> int:
         memory["baseline_commit"] = args.baseline or args.commit
     memory["last_audit_date"] = now()
 
+    gaps_doc = json.loads(args.gaps.read_text(encoding="utf-8")) if args.gaps and args.gaps.is_file() else {}
+    gap_map = gaps_doc.get("residual_gaps", {})
+    sev_map = gaps_doc.get("derived_severity", {})
+    if args.config:
+        memory["config_ref"] = str(args.config)
+    if args.requirements and args.requirements.is_file():
+        idx = json.loads(args.requirements.read_text(encoding="utf-8"))
+        for r in idx.get("requirements", []):
+            rec = memory["requirements"].setdefault(r["id"], {
+                "status": "Not Verified", "proof_tier_achieved": "L0",
+                "owners": [], "evidence_ids": [], "residual_gaps": [],
+                "last_verified_commit": args.commit, "files_touched": [], "notes": "",
+            })
+            rec["title"] = (r.get("title") or "")[:300]
+            rec["source"] = f"{r.get('source_file')}:{r.get('line_range', [0])[0]}"
+            rec["priority"] = r.get("priority") or "UNKNOWN"
+            rec["type"] = r.get("type") if r.get("type") in (
+                "Functional", "Non-Functional", "Security", "Compliance", "AI", "Infra") else "Functional"
+            rec["severity"] = sev_map.get(r["id"], rec.get("severity") or "Medium")
+            rec["last_verified_commit"] = args.commit
+            if r["id"] in gap_map:
+                rec["residual_gaps"] = list(gap_map[r["id"]])
+
     producer = (evidence.get("generated_by") or {}).get("agent_id")
     by_req: dict[str, list] = {}
     for it in evidence.get("evidence_items") or []:
         by_req.setdefault(it["requirement_id"], []).append(it)
+
+    # Orphan guard: with a requirements index, evidence for IDs that no requirement
+    # doc defines (test-map-only tags) is recorded separately, not as requirements.
+    orphans: dict[str, list] = {}
+    if args.requirements and args.requirements.is_file():
+        known = {r["id"] for r in idx.get("requirements", [])}
+        for rid in [k for k in by_req if k not in known and k not in memory["requirements"]]:
+            orphans[rid] = by_req.pop(rid)
+    if orphans:
+        memory["orphan_evidence"] = {
+            rid: {"evidence_ids": sorted(i["evidence_id"] for i in items),
+                  "note": "ID used by tests/test map but not defined in any requirement doc; "
+                          "not counted as a requirement (see remediation/orphan_test_ids.json)"}
+            for rid, items in sorted(orphans.items())
+        }
 
     changed = []
     for rid, items in by_req.items():
         rec = memory["requirements"].setdefault(
             rid,
             {
-                "status": "Not Implemented",
+                "status": "Not Verified",
                 "proof_tier_achieved": "L0",
                 "severity": "Medium",
                 "type": "Functional",
@@ -132,6 +175,13 @@ def main() -> int:
             set(rec.get("evidence_ids") or []) | {i["evidence_id"] for i in items}
         )
         rec["last_verified_commit"] = args.commit
+        ft = set(rec.get("files_touched") or [])
+        for it in items:
+            for ln in it.get("links") or []:
+                lab = ln.get("label") or ""
+                if ln.get("kind") in ("code", "test") and "/" in lab:
+                    ft.add(lab.split(":")[0].split("::")[0])
+        rec["files_touched"] = sorted(ft)[:30]
         if result.get("residual_gaps"):
             rec["residual_gaps"] = result["residual_gaps"]
         # Clear gaps on full Implemented
@@ -140,6 +190,12 @@ def main() -> int:
         if prev != rec["status"]:
             changed.append(rid)
 
+    summ_status: dict[str, int] = {}
+    summ_tier: dict[str, int] = {}
+    for r in memory["requirements"].values():
+        summ_status[r["status"]] = summ_status.get(r["status"], 0) + 1
+        summ_tier[r.get("proof_tier_achieved", "L0")] = summ_tier.get(r.get("proof_tier_achieved", "L0"), 0) + 1
+    memory["summary"] = {"total": len(memory["requirements"]), "by_status": summ_status, "by_tier": summ_tier}
     memory["health_score"] = health_score(memory["requirements"])
     memory["import_history"] = memory.get("import_history") or []
     memory["import_history"].insert(

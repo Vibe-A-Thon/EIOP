@@ -1071,12 +1071,13 @@ class VersionAwareRAG(RagxArchitecture):
 
     def retrieve(self, query: str, context: dict[str, Any]) -> list[Candidate]:
         pool = self.search(query, top_k=int(context.get("pool_size", 30)))
-        pinned = context.get("version") or context.get("doc_version")
+        pinned = context.get("version") or context.get("doc_version") or context.get("version_id")
         if pinned is None:
             return pool[: int(context.get("top_k", 10))]
         out = [
             c for c in pool
-            if str(c.properties.get("doc_version") or c.properties.get("version")) == str(pinned)
+            if str(c.properties.get("doc_version") or c.properties.get("version")
+                   or c.properties.get("version_id")) == str(pinned)
         ]
         return out[: int(context.get("top_k", 10))]
 

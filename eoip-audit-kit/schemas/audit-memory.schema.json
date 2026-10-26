@@ -70,7 +70,10 @@
       "additionalProperties": {
         "$ref": "#/definitions/RequirementMemory"
       },
-      "description": "Keyed by requirement_id (REQ-TYPE-NNNN)."
+      "description": "Keyed by requirement_id (REQ-TYPE-NNNN).",
+      "propertyNames": {
+        "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{1,5}[a-z]?(?:\\.(?:[0-9]+|[A-Z]))*$"
+      }
     },
     "agents": {
       "type": "array",
@@ -106,6 +109,40 @@
       "type": "string",
       "pattern": "^[0-9a-fA-F]{7,40}$",
       "description": "Commit currently under audit; evidence with other commits is stale."
+    },
+    "config_ref": {
+      "type": "string",
+      "description": "Path to audit-config.json used for this audit."
+    },
+    "notes": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "object",
+      "description": "Status/tier counts at last update.",
+      "additionalProperties": true
+    },
+    "orphan_evidence": {
+      "type": "object",
+      "description": "Evidence for IDs referenced by tests but not defined in any requirement doc; not counted as requirements.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence_ids"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "definitions": {
@@ -123,6 +160,7 @@
           "enum": [
             "Implemented",
             "Partially Implemented",
+            "Not Verified",
             "Not Implemented",
             "Ambiguous",
             "Not Applicable"
@@ -212,6 +250,16 @@
               "format": "date-time"
             }
           }
+        },
+        "source": {
+          "type": "string",
+          "description": "Requirement source file:line (relative path)."
+        },
+        "title": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string"
         }
       }
     },
@@ -367,5 +415,8 @@
         }
       }
     }
+  },
+  "propertyNames": {
+    "type": "string"
   }
 }
