@@ -24,7 +24,7 @@ from eoip.query.adapters.cypher_adapter import OpenCypherAdapter
 from eoip.query.adapters.graphql_adapter import GraphQLShapeAdapter
 from eoip.query.adapters.sql_adapter import SQLOntologyAdapter
 from eoip.query.benchmarks import SemanticEquivalenceComparator, WarmedEndpointBenchmark
-from eoip.query.bi_connectivity import BISessionEmulator
+from eoip.query.bi_connectivity import BISessionDriver
 from eoip.query.plan_engine import (
     ParameterizedQuery,
     PlanNodeType,
@@ -485,22 +485,42 @@ def test_cra_024_9_default_budgets():
 # ===========================================================================
 
 @pytest.mark.req("CRA-024")
-def test_cra_024_10_bi_connectivity():
-    emulator = BISessionEmulator()
-    # Tableau session
-    tableau_session = emulator.run_bi_session(tool_name="Tableau")
+def test_cra_024_10_bi_connectivity(tmp_path):
+    """Drive Tableau-like and Power BI-like sessions against the real PostgreSQL-wire BI endpoint."""
+    pytest.importorskip("duckdb")
+    pytest.importorskip("pg8000.native")
+    import secrets
+
+    from eoip.authn.credentials import CredentialStore
+    from eoip.graph.memory import MemoryGraphStore
+    from eoip.query.pg_wire import PgWireServer, credential_store_authenticator
+
+    g = MemoryGraphStore()
+    a = g.upsert_vertex("Service", {"canonical_id": "svc:a", "name": "a", "status": "live"})
+    b = g.upsert_vertex("Service", {"canonical_id": "svc:b", "name": "b", "status": "beta"})
+    g.upsert_edge("DEPENDS_ON", a["vid"], b["vid"], {})
+    creds = CredentialStore(tmp_path / "creds.json")
+    pw = secrets.token_urlsafe(18)
+    creds.create_user("bi", pw, ["analyst"], tenant_id="t1")
+    with PgWireServer({"t1": g}.__getitem__, credential_store_authenticator(creds),
+                      allow_insecure_loopback=True) as srv:
+        driver = BISessionDriver("127.0.0.1", srv.port, "bi", pw, "t1")
+        tableau_session = driver.run_bi_session(tool_name="Tableau")
+        pbi_session = driver.run_bi_session(tool_name="Power BI")
+        refused = BISessionDriver("127.0.0.1", srv.port, "bi", "wrong-" + pw, "t1")
+        with pytest.raises(Exception, match="28P01|password"):
+            refused.run_bi_session(tool_name="Tableau")
     assert tableau_session.connected is True
     assert len(tableau_session.queries) == 5
-    # Verify queries include handshake (SELECT 1), catalog introspection, and aggregation
+    assert tableau_session.metadata["server_version"].startswith("14.0")
     query_texts = [q.query_text for q in tableau_session.queries]
     assert "SELECT 1" in query_texts[0]
-    assert "INFORMATION_SCHEMA.TABLES" in query_texts[1]
-    assert any("GROUP BY" in q for q in query_texts)
-
-    # Power BI session
-    pbi_session = emulator.run_bi_session(tool_name="Power BI")
-    assert pbi_session.connected is True
-    assert all(q.status_code == 200 for q in pbi_session.queries)
+    assert "information_schema.tables" in query_texts[2]
+    assert all(q.status_code == 200 for q in tableau_session.queries), tableau_session.queries
+    # Row counts come from the server: one label (Service, 2 rows) in the aggregate.
+    assert tableau_session.queries[-1].response_rows_count == 1
+    assert all(q.status_code == 200 for q in pbi_session.queries), pbi_session.queries
+    assert pbi_session.queries[-1].response_rows_count == 1  # one relation type: DEPENDS_ON
 
 
 # ===========================================================================

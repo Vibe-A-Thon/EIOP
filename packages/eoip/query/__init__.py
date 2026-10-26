@@ -7,7 +7,7 @@ from eoip.query.policy import QueryPolicy
 from eoip.query.service import QueryBudget, QueryService, ValidationResult, CostEstimate, ExplainResult, ExecutionProfile
 from eoip.query.plan_engine import TypedPlanEngine, TrustedScope, ScopeViolationError
 from eoip.query.sparql_protocol import SparqlProtocolHandler
-from eoip.query.bi_connectivity import BISessionEmulator
+from eoip.query.bi_connectivity import BISessionDriver
 
 __all__ = [
     "NLInterpretation",
@@ -25,7 +25,7 @@ __all__ = [
     "TrustedScope",
     "ScopeViolationError",
     "SparqlProtocolHandler",
-    "BISessionEmulator",
+    "BISessionDriver",
     "interpret",
     "process",
 ]

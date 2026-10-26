@@ -1,124 +1,95 @@
-"""Tableau and Power BI connectivity protocol emulator and session recorder (CRA-024.10).
+"""BI client session driver for the PostgreSQL-wire BI endpoint (CRA-024.10).
 
-Simulates standard BI client connection lifecycles:
-1. Ping / handshake (SELECT 1)
-2. Schema & table catalog introspection (INFORMATION_SCHEMA.TABLES, COLUMNS)
-3. Analytical and aggregation queries
-Records verified session logs and interaction receipts for auditor verification.
+This replaces an earlier emulator that returned hard-coded rows without contacting any server.
+``BISessionDriver`` now connects to a running :class:`eoip.query.pg_wire.PgWireServer` (or any
+PostgreSQL-wire endpoint) with the pure-Python ``pg8000`` driver, runs a representative BI script
+(handshake, catalog introspection, column discovery, an aggregate), and records what the server
+actually returned. The scripts are representative of Tableau/Power BI connect sequences; they are
+not captured recordings of those desktop clients.
 """
 from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Any
+
+# Representative connect sequences. Tableau (libpq) issues session SETs and a version probe first;
+# Power BI (Npgsql) loads types from pg_catalog before discovering tables.
+BI_SCRIPTS: dict[str, list[str]] = {
+    "tableau": [
+        "SELECT 1",
+        "SELECT version()",
+        "SELECT table_schema, table_name FROM information_schema.tables "
+        "WHERE table_schema NOT IN ('pg_catalog', 'information_schema') ORDER BY 1, 2",
+        "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'entities' "
+        "ORDER BY ordinal_position",
+        "SELECT label, COUNT(*) AS n FROM entities GROUP BY label ORDER BY label",
+    ],
+    "power bi": [
+        "SELECT 1",
+        "SELECT t.oid, t.typname FROM pg_catalog.pg_type AS t ORDER BY t.oid LIMIT 20",
+        "SELECT table_name FROM information_schema.tables WHERE table_schema = 'main' ORDER BY 1",
+        "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'relationships' "
+        "ORDER BY ordinal_position",
+        "SELECT relation, COUNT(*) AS n FROM relationships GROUP BY relation ORDER BY relation",
+    ],
+}
 
 
 @dataclass
 class BISessionQueryRecord:
     step: int
-    query_type: str  # "SQL" or "SPARQL"
+    query_type: str  # "SQL"
     query_text: str
-    status_code: int
+    status_code: int  # 200 when the server answered, 500 when it returned an error
     response_rows_count: int
     duration_ms: float
+    error: str | None = None
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
 @dataclass
 class BISessionLog:
     session_id: str
-    tool_name: str  # "Tableau" or "Power BI"
+    tool_name: str
     connected: bool
     queries: list[BISessionQueryRecord]
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
-class BISessionEmulator:
-    """Emulates BI client sessions (Tableau & Power BI) over SQL/SPARQL interfaces."""
+class BISessionDriver:
+    """Drive a representative BI session against a real PostgreSQL-wire endpoint."""
 
-    def __init__(self, sql_adapter: Optional[Any] = None, sparql_handler: Optional[Any] = None) -> None:
-        self.sql_adapter = sql_adapter
-        self.sparql_handler = sparql_handler
+    def __init__(self, host: str, port: int, user: str, password: str, database: str,
+                 ssl_context: Any = None, timeout: float = 30.0) -> None:
+        self.host, self.port, self.user, self.password = host, port, user, password
+        self.database, self.ssl_context, self.timeout = database, ssl_context, timeout
 
-    def run_bi_session(self, tool_name: str = "Tableau") -> BISessionLog:
+    def run_bi_session(self, tool_name: str = "Tableau", script: list[str] | None = None) -> BISessionLog:
+        import pg8000.native  # client driver; installed by the dev/test extras
+
+        queries = list(script or BI_SCRIPTS.get(tool_name.lower(), BI_SCRIPTS["tableau"]))
         session_id = f"bi_session_{tool_name.lower().replace(' ', '_')}_{int(time.time())}"
-        queries: list[BISessionQueryRecord] = []
-
-        # Step 1: Connectivity probe / handshake
-        t0 = time.perf_counter()
-        probe_query = "SELECT 1"
-        dur1 = (time.perf_counter() - t0) * 1000.0
-        queries.append(BISessionQueryRecord(
-            step=1,
-            query_type="SQL",
-            query_text=probe_query,
-            status_code=200,
-            response_rows_count=1,
-            duration_ms=dur1,
-        ))
-
-        # Step 2: Catalog schema discovery (INFORMATION_SCHEMA.TABLES)
-        t0 = time.perf_counter()
-        catalog_query = "SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES"
-        dur2 = (time.perf_counter() - t0) * 1000.0
-        catalog_rows = [
-            {"TABLE_SCHEMA": "public", "TABLE_NAME": "WorkItem"},
-            {"TABLE_SCHEMA": "public", "TABLE_NAME": "Service"},
-            {"TABLE_SCHEMA": "public", "TABLE_NAME": "Commit"},
-        ]
-        queries.append(BISessionQueryRecord(
-            step=2,
-            query_type="SQL",
-            query_text=catalog_query,
-            status_code=200,
-            response_rows_count=len(catalog_rows),
-            duration_ms=dur2,
-        ))
-
-        # Step 3: Column schema discovery
-        t0 = time.perf_counter()
-        columns_query = "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'WorkItem'"
-        dur3 = (time.perf_counter() - t0) * 1000.0
-        queries.append(BISessionQueryRecord(
-            step=3,
-            query_type="SQL",
-            query_text=columns_query,
-            status_code=200,
-            response_rows_count=3,
-            duration_ms=dur3,
-        ))
-
-        # Step 4: Analytical aggregation query
-        t0 = time.perf_counter()
-        agg_query = "SELECT label, COUNT(*) FROM Entity GROUP BY label"
-        dur4 = (time.perf_counter() - t0) * 1000.0
-        queries.append(BISessionQueryRecord(
-            step=4,
-            query_type="SQL",
-            query_text=agg_query,
-            status_code=200,
-            response_rows_count=5,
-            duration_ms=dur4,
-        ))
-
-        # Step 5: SPARQL BI report query
-        t0 = time.perf_counter()
-        sparql_query = "SELECT ?type (COUNT(?s) AS ?count) WHERE { ?s a ?type } GROUP BY ?type"
-        dur5 = (time.perf_counter() - t0) * 1000.0
-        queries.append(BISessionQueryRecord(
-            step=5,
-            query_type="SPARQL",
-            query_text=sparql_query,
-            status_code=200,
-            response_rows_count=3,
-            duration_ms=dur5,
-        ))
-
-        return BISessionLog(
-            session_id=session_id,
-            tool_name=tool_name,
-            connected=True,
-            queries=queries,
-            metadata={"auth_mode": "BEARER_TOKEN", "ssl_enabled": True},
-        )
+        con = pg8000.native.Connection(self.user, host=self.host, port=self.port, password=self.password,
+                                       database=self.database, ssl_context=self.ssl_context,
+                                       timeout=self.timeout, application_name=tool_name)
+        records: list[BISessionQueryRecord] = []
+        try:
+            server_version = con.parameter_statuses.get("server_version")
+            for step, sql in enumerate(queries, start=1):
+                t0 = time.perf_counter()
+                try:
+                    rows = con.run(sql)
+                    records.append(BISessionQueryRecord(step, "SQL", sql, 200, len(rows or []),
+                                                        (time.perf_counter() - t0) * 1000.0))
+                except pg8000.native.DatabaseError as exc:
+                    info = exc.args[0] if exc.args and isinstance(exc.args[0], dict) else {}
+                    records.append(BISessionQueryRecord(step, "SQL", sql, 500, 0,
+                                                        (time.perf_counter() - t0) * 1000.0,
+                                                        error=str(info.get("C", "")) or type(exc).__name__))
+        finally:
+            con.close()
+        return BISessionLog(session_id, tool_name, True, records,
+                            metadata={"auth_mode": "PASSWORD_OR_API_TOKEN", "ssl_enabled": self.ssl_context is not None,
+                                      "server_version": server_version, "endpoint": f"{self.host}:{self.port}"})
