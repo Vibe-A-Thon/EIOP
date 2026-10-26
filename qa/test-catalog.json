@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 487,
-    "test_definitions": 4571
+    "files": 488,
+    "test_definitions": 4587
   },
   "categories": {
     "acceptance": {
@@ -59,8 +59,8 @@
       "test_definitions": 12
     },
     "processing": {
-      "files": 4,
-      "test_definitions": 42
+      "files": 5,
+      "test_definitions": 58
     },
     "qa": {
       "files": 5,
@@ -555,6 +555,11 @@
       "path": "tests/processing/test_contracts.py",
       "category": "processing",
       "test_definitions": 8
+    },
+    {
+      "path": "tests/processing/test_qiskit_backend.py",
+      "category": "processing",
+      "test_definitions": 16
     },
     {
       "path": "tests/processing/test_quantum.py",

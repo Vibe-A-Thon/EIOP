@@ -81,10 +81,15 @@ semantic = [
 snowflake = [
   "snowflake-connector-python>=3.12,<5",
 ]
+# PUR-QPU-001/005: Qiskit compile + Aer Sampler/Estimator primitives (free, CPU-only).
+quantum = [
+  "qiskit>=1.2,<3",
+  "qiskit-aer>=0.15,<0.20",
+]
 # FT-F06: one extra that installs everything the default test selection needs.
 # Documented install: python -m pip install -c requirements.lock -e ".[test]"
 test = [
-  "eoip[dev,numerics,fileparse,codeparse,reports,semantic,snowflake]",
+  "eoip[dev,numerics,fileparse,codeparse,reports,semantic,snowflake,quantum]",
 ]
 dev = [
   "fakesnow>=0.12,<0.13",

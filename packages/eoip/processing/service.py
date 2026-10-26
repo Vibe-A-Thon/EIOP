@@ -28,6 +28,7 @@ from eoip.processing.backends import (
     cpu_numerical,
     data_prep,
     graph_intel,
+    qiskit_backend,
     quantum_sim,
     text_local,
     vision_proc,
@@ -210,15 +211,22 @@ class ProcessingService:
                 "details": "Local CPU reference backend active and qualified.",
             }
         elif profile_id in ("qiskit_aer", "qiskit_aer_simulation", "quantum_sim"):
+            qiskit_ok = qiskit_backend.available()
+            if profile_id == "quantum_sim":
+                status, ok, details = "QUALIFIED", True, "numpy reference statevector/density-matrix simulator active."
+            elif qiskit_ok:
+                status, ok, details = "QUALIFIED", True, "Qiskit Aer statevector/density-matrix simulation (CPU) active."
+            else:
+                status, ok, details = "UNAVAILABLE", False, "qiskit/qiskit-aer not installed (pip install '.[quantum]')."
             return {
                 "profile_id": profile_id,
-                "status": "QUALIFIED",
-                "available": True,
+                "status": status,
+                "available": ok,
                 "is_hardware_accelerator": False,
                 "simulation": True,
                 "physical_qpu": False,
                 "timestamp": now_iso,
-                "details": "Classical quantum statevector/density matrix simulation active.",
+                "details": details,
             }
         elif profile_id in ("gpu_directml", "directml"):
             available = False
@@ -399,36 +407,50 @@ class ProcessingService:
         # -------------------------------------------------------------------
         # 4. QPU Operators (Quantum Simulation)
         # -------------------------------------------------------------------
-        elif op_id == "quantum.simulate":
-            circuit = inputs.get("circuit", {"num_qubits": 2, "gates": [{"type": "H", "target": 0}, {"type": "CX", "control": 0, "target": 1}]})
-            method = params.get("method", "statevector")
-            shots = int(params.get("shots", 1024))
+        elif op_id in ("quantum.simulate", "quantum.sample", "quantum.expectation", "quantum.maxcut_experiment"):
+            # Qiskit + Qiskit Aer primitives when installed (extra "quantum"); otherwise the numpy
+            # reference simulator, labelled as such - never reported as a Qiskit result (PUR-QPU-001/005).
+            use_qiskit = qiskit_backend.available()
             seed = params.get("seed", 42)
-            noise = float(params.get("noise_prob", 0.0))
-            result = quantum_sim.run_circuit_simulation(circuit, method=method, shots=shots, seed=seed, noise_prob=noise)
             is_sim = True
             is_phys_qpu = False
-            provider = "qiskit_aer_simulation"
-
-        elif op_id == "quantum.sample":
-            circuit = inputs.get("circuit", {"num_qubits": 1, "gates": [{"type": "H", "target": 0}]})
-            shots = int(params.get("shots", 1024))
-            seed = params.get("seed", 42)
-            result = quantum_sim.run_circuit_simulation(circuit, method="statevector", shots=shots, seed=seed)
-            is_sim = True
-            provider = "qiskit_aer_simulation"
-
-        elif op_id == "quantum.maxcut_experiment":
-            edges = inputs.get("edges", [(0, 1), (1, 2), (2, 0)])
-            num_nodes = int(params.get("num_nodes", 3))
-            p = int(params.get("p", 1))
-            gamma = float(params.get("gamma", 0.5))
-            beta = float(params.get("beta", 0.5))
-            shots = int(params.get("shots", 1024))
-            seed = params.get("seed", 42)
-            result = quantum_sim.maxcut_experiment(edges, num_nodes, p=p, gamma=gamma, beta=beta, shots=shots, seed=seed)
-            is_sim = True
-            provider = "qiskit_aer_simulation"
+            if op_id in ("quantum.simulate", "quantum.sample"):
+                default = ({"num_qubits": 2, "gates": [{"type": "H", "target": 0}, {"type": "CX", "control": 0, "target": 1}]}
+                           if op_id == "quantum.simulate" else {"num_qubits": 1, "gates": [{"type": "H", "target": 0}]})
+                circuit = inputs.get("circuit", default)
+                method = params.get("method", "statevector") if op_id == "quantum.simulate" else "statevector"
+                shots = int(params.get("shots", 1024))
+                noise = float(params.get("noise_prob", 0.0)) if op_id == "quantum.simulate" else 0.0
+                if use_qiskit:
+                    result = qiskit_backend.sample(circuit, method=method, shots=shots, seed=seed, noise_prob=noise)
+                else:
+                    result = quantum_sim.run_circuit_simulation(circuit, method=method, shots=shots, seed=seed, noise_prob=noise)
+            elif op_id == "quantum.expectation":
+                circuit = inputs.get("circuit", {"num_qubits": 1, "gates": []})
+                observable = inputs.get("observable", "Z")
+                method = params.get("method", "statevector")
+                if use_qiskit:
+                    result = qiskit_backend.expectation(circuit, observable, method=method, seed=seed)
+                else:
+                    result = {"expectation": quantum_sim.calculate_pauli_expectation(circuit, observable, method=method),
+                              "simulation": True, "physical_qpu": False}
+            else:
+                edges = inputs.get("edges", [(0, 1), (1, 2), (2, 0)])
+                num_nodes = int(params.get("num_nodes", 3))
+                p = int(params.get("p", 1))
+                shots = int(params.get("shots", 1024))
+                if use_qiskit:
+                    result = qiskit_backend.qaoa_maxcut([tuple(e) for e in edges], num_nodes, p=p, shots=shots,
+                                                        seed=int(seed if seed is not None else 42),
+                                                        max_evaluations=int(params.get("max_evaluations", 50)))
+                else:
+                    result = quantum_sim.maxcut_experiment(edges, num_nodes, p=p, gamma=float(params.get("gamma", 0.5)),
+                                                           beta=float(params.get("beta", 0.5)), shots=shots, seed=seed)
+            if use_qiskit:
+                provider = "qiskit_aer_simulation"
+            else:
+                provider = "numpy_statevector_reference"
+                result = {**result, "backend": "numpy-reference", "qiskit_available": False}
 
         # -------------------------------------------------------------------
         # 5. DPU Operators (Data Preparation)
