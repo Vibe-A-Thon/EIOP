@@ -261,8 +261,10 @@ def test_vpu_layout_evidence():
 # 7. NPU & APU Operators (PUR-NPU-001..005, PUR-APU-001..005)
 # ===========================================================================
 @pytest.mark.req("PUR-NPU-001")
-def test_npu_text_embedding_offline(service: ProcessingService, context: ExecutionContext):
-    """PUR-NPU-001: Offline deterministic text embedding projection."""
+def test_npu_text_embedding_offline(service: ProcessingService, context: ExecutionContext, monkeypatch):
+    """PUR-NPU-001 / CRA-025.7: without a configured model, text.embed uses the shared embedder and labels it test-hashing."""
+    for name in ("EOIP_OLLAMA_EMBED_MODEL", "EOIP_EMBEDDING_PROVIDER", "EOIP_SENTENCE_TRANSFORMER_MODEL", "EOIP_ENV"):
+        monkeypatch.delenv(name, raising=False)
     req = ProcessingRequest(
         logical_unit=LogicalUnit.NPU,
         operator_id="text.embed",
@@ -273,7 +275,22 @@ def test_npu_text_embedding_offline(service: ProcessingService, context: Executi
     assert result["count"] == 2
     assert result["dimensions"] == 64
     assert len(result["embeddings"][0]) == 64
-    assert receipt.actual_provider == "cpu_neural_reference"
+    assert result["embedding_family"] == "test-hashing"
+    assert receipt.actual_provider == "test-hashing"
+
+
+@pytest.mark.req("CRA-025")
+def test_npu_text_embedding_refuses_test_hashing_in_production(service: ProcessingService, context: ExecutionContext,
+                                                              monkeypatch):
+    """CRA-025.7: production without a semantic model refuses rather than emitting hash vectors."""
+    from eoip.models.embeddings import TestHashingRefused
+
+    for name in ("EOIP_OLLAMA_EMBED_MODEL", "EOIP_EMBEDDING_PROVIDER", "EOIP_SENTENCE_TRANSFORMER_MODEL"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("EOIP_ENV", "production")
+    req = ProcessingRequest(logical_unit=LogicalUnit.NPU, operator_id="text.embed", inputs={"texts": ["x"]})
+    with pytest.raises(TestHashingRefused):
+        service.execute_direct(req, context)
 
 
 @pytest.mark.req("PUR-APU-001")

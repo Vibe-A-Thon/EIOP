@@ -67,10 +67,26 @@ def test_cra_025_2_provider_unavailable_and_dimension_mismatch():
     with pytest.raises(EmbeddingProviderUnavailableError, match="disabled or unavailable"):
         unavail_provider.embed("hello world")
 
-    # Real provider generates correct dimensions
-    real_provider = RealSemanticProvider(dimension=128)
-    vec = real_provider.embed("sample query")
-    assert len(vec) == 128
+    # A configured provider never substitutes hashing: wrong dimensions or an outage are hard errors
+    from eoip.models.provider import ModelUnavailable
+    from eoip.retrieval.hybrid_vector_service import DimensionMismatchError as _DM
+
+    class _Backend:
+        def __init__(self, out):
+            self.out, self.model_name = out, "m"
+
+        def embed_one(self, text):
+            if isinstance(self.out, Exception):
+                raise self.out
+            return self.out
+
+    with pytest.raises(_DM):
+        RealSemanticProvider(dimension=128, backend=_Backend([0.1] * 64)).embed("sample query")
+    with pytest.raises(EmbeddingProviderUnavailableError):
+        RealSemanticProvider(backend=_Backend(ModelUnavailable("down"))).embed("sample query")
+    with pytest.raises(EmbeddingProviderUnavailableError):
+        RealSemanticProvider(backend=_Backend([0.0] * 8)).embed("sample query")
+    assert len(RealSemanticProvider(dimension=3, backend=_Backend([0.1, 0.2, 0.3])).embed("q")) == 3
 
     # Dimension mismatch raises hard error (never silently zero-pads)
     meta = IndexMetadata(
@@ -223,7 +239,7 @@ def test_cra_025_4_resumable_indexing_shadow_cutover_and_rollback():
 
 @pytest.mark.req("CRA-025")
 def test_cra_025_5_search_evaluation_harness():
-    provider = RealSemanticProvider(dimension=16)
+    provider = TestHashingEmbedder(dimensions=16)  # index mechanics; real model: test_real_embedding_provider.py
     meta = IndexMetadata(
         index_id="eval_idx",
         scope="tenant_eval",
@@ -263,7 +279,7 @@ def test_cra_025_5_search_evaluation_harness():
 
 @pytest.mark.req("CRA-025")
 def test_cra_025_6_rrf_hybrid_fusion():
-    provider = RealSemanticProvider(dimension=8)
+    provider = TestHashingEmbedder(dimensions=8)  # index mechanics; real model: test_real_embedding_provider.py
     meta = IndexMetadata(
         index_id="idx_rrf",
         scope="tenant_fusion",
@@ -392,7 +408,7 @@ def test_cra_025_9_gnn_hash_vectors_refused_in_production():
 
 @pytest.mark.req("CRA-025")
 def test_cra_025_a_search_acceptance_gate():
-    provider = RealSemanticProvider(dimension=8)
+    provider = TestHashingEmbedder(dimensions=8)  # index mechanics; real model: test_real_embedding_provider.py
 
     # 1. Multi-tenant isolation demonstration (no cross-tenant leakage)
     meta_a = IndexMetadata(

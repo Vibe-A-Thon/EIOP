@@ -2,10 +2,11 @@
 
 Defines the ``EmbeddingProvider`` port used by the retrieval vector index
 together with an Ollama-backed implementation that calls Ollama's
-``/api/embed`` endpoint. Provider failures degrade gracefully: callers can
-fall back to the deterministic ``HashingEmbedder`` (see
-``eoip.retrieval.vectors``) when a provider is unavailable, keeping search
-functional without a running model.
+``/api/embed`` endpoint. Provider failures raise ``ModelUnavailable``; nothing
+substitutes another vector family silently. ``semantic_embedder`` is the shared
+factory: the lexical ``HashingEmbedder`` (family ``test-hashing``) is only
+used when no model is configured outside production, and is refused in
+production (CRA-025.7).
 """
 
 from __future__ import annotations
@@ -47,7 +48,7 @@ class OllamaEmbeddingProvider:
     Configuration: ``EOIP_OLLAMA_URL`` (default ``http://localhost:11434``)
     and ``EOIP_OLLAMA_EMBED_MODEL`` (default ``nomic-embed-text``). Uses
     stdlib ``urllib`` only. All transport/parsing failures raise
-    ``ModelUnavailable`` so callers can fall back to hashing embeddings.
+    ``ModelUnavailable``.
     """
 
     def __init__(
@@ -156,6 +157,42 @@ class SentenceTransformersEmbeddingProvider:
             return True
         except Exception:
             return False
+
+
+class TestHashingRefused(RuntimeError):
+    __test__ = False
+    """The test-hashing embedder was requested in the production profile (CRA-025.7)."""
+
+
+def is_production() -> bool:
+    return os.getenv("EOIP_ENV", os.getenv("APP_ENV", "")).strip().lower() == "production"
+
+
+def refuse_test_hashing_in_production() -> None:
+    if is_production():
+        raise TestHashingRefused(
+            "test-hashing embeddings are refused in production; configure a semantic embedding model "
+            "(EOIP_OLLAMA_EMBED_MODEL or EOIP_EMBEDDING_PROVIDER=sentence-transformers) (CRA-025.7)"
+        )
+
+
+def semantic_embedder(*, dimensions: int = 256):
+    """The one embedding backend shared by retrieval, the vector service and processing (CRA-025.2/.7).
+
+    Returns the configured semantic provider. Without one: production raises ``TestHashingRefused``; other
+    profiles get the lexical ``HashingEmbedder`` whose ``family`` is ``test-hashing`` so callers can label results.
+    """
+    provider = build_embedding_provider()
+    if provider is not None:
+        return provider
+    refuse_test_hashing_in_production()
+    from eoip.retrieval.vectors import HashingEmbedder
+
+    return HashingEmbedder(dimensions)
+
+
+def embedder_family(embedder) -> str:
+    return getattr(embedder, "family", None) or "semantic"
 
 
 def build_embedding_provider() -> EmbeddingProvider | None:

@@ -313,11 +313,12 @@ def test_embeddings_health_reports_provider(client: TestClient) -> None:
     response = client.get("/api/v1/health/embeddings")
     assert response.status_code == 200
     body = response.json()
-    assert body["provider"] in ("ollama", "hashing")
+    assert body["provider"] in ("ollama", "test-hashing")
     assert isinstance(body["healthy"], bool)
     assert isinstance(body["dim"], int)
     if os.getenv("EOIP_OLLAMA_EMBED_MODEL"):
         assert body["provider"] == "ollama"
     else:
-        assert body["provider"] == "hashing"
+        # CRA-025.7: without a configured model the lexical embedder is reported as test-hashing.
+        assert body["provider"] == "test-hashing" and body["family"] == "test-hashing"
         assert body["dim"] == 256

@@ -85,14 +85,22 @@ class KeywordIndex:
 
 
 class HashingEmbedder:
-    """Deterministic hashing-trick embedder (no external model).
+    """Deterministic hashing-trick embedder (no external model), family ``test-hashing`` (CRA-025.7).
 
     Each token maps to a fixed dimension via md5 and a sign via a second
     hash; token weights are log-scaled term frequencies. Output vectors are
-    L2-normalized so cosine similarity is a dot product.
+    L2-normalized so cosine similarity is a dot product. It is lexical, not
+    semantic: it exists for tests and offline development and is refused when
+    ``EOIP_ENV=production`` (use ``eoip.models.embeddings.semantic_embedder``).
     """
 
+    family = "test-hashing"
+    model_name = "test-hashing"
+
     def __init__(self, dimensions: int = 256):
+        from eoip.models.embeddings import refuse_test_hashing_in_production
+
+        refuse_test_hashing_in_production()
         self.dimensions = dimensions
 
     def _bucket(self, token: str) -> tuple[int, int]:
@@ -149,7 +157,10 @@ class VectorIndex:
         # backend (GAP-SEARCH-001/§7.3). Providers use a batch embed()
         # signature, so adapt them to single-text embedding.
         if embedder is None:
-            self.embedder: Any = HashingEmbedder()
+            from eoip.models.embeddings import semantic_embedder
+
+            # CRA-025.2/.7: the shared backend (configured model; labelled test-hashing only outside production).
+            self.embedder: Any = semantic_embedder()
         elif isinstance(embedder, HashingEmbedder) or callable(getattr(embedder, "embed_one", None)):
             self.embedder = embedder
         else:
@@ -292,8 +303,8 @@ def build_search_index(
 ) -> InMemorySearchIndex:
     """Build a SearchIndex from the graph store. IDs are canonical entity IDs,
     so hits always resolve back to authoritative graph entities (GAP-SEARCH-002).
-    Pass ``embedder`` to embed via a real embedding provider; the deterministic
-    hashing embedder is used by default (GAP-SEARCH-001/§7.3)."""
+    Pass ``embedder`` to embed via a specific provider; by default the shared
+    ``semantic_embedder`` is used (GAP-SEARCH-001/§7.3, CRA-025.7)."""
     index = index or InMemorySearchIndex(vector=VectorIndex(embedder))
     for vertex in store.find_vertices(limit=10_000, include_deleted=False):
         text = entity_text(vertex["label"], vertex.get("properties") or {})

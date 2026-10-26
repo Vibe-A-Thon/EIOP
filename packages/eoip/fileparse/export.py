@@ -9,7 +9,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from eoip.fileparse.contracts import ParseResult
-from eoip.retrieval.vectors import HashingEmbedder, tokenize
+from eoip.retrieval.vectors import tokenize
 
 
 def graph_data(result: ParseResult) -> dict:
@@ -74,11 +74,17 @@ def export_bundle(result: ParseResult, destination: str | Path, *, vectors: bool
              "citations": chunk.citations}
             for chunk in result.chunks
         ))
+        model = family = None
         if vectors:
-            embedder = HashingEmbedder()
+            from eoip.models.embeddings import embedder_family, semantic_embedder
+
+            embedder = semantic_embedder()
+            family = embedder_family(embedder)
+            model = "test-hashing-256" if family == "test-hashing" else getattr(embedder, "model_name", "")
+            embed = getattr(embedder, "embed_one", None) or embedder.embed
             write_jsonl(staging / "vectors.jsonl", (
-                {"id": chunk.chunk_id, "document_id": chunk.document_id, "vector": embedder.embed(chunk.text),
-                 "embedding_model": "eoip-local-hashing-256", "citations": chunk.citations}
+                {"id": chunk.chunk_id, "document_id": chunk.document_id, "vector": embed(chunk.text),
+                 "embedding_model": model, "embedding_family": family, "citations": chunk.citations}
                 for chunk in result.chunks
             ))
         files = {
@@ -89,8 +95,10 @@ def export_bundle(result: ParseResult, destination: str | Path, *, vectors: bool
             "schema_version": "1.0", "status": result.status, "parser_version": result.parser_version,
             "documents": len(result.documents), "chunks": len(result.chunks),
             "errors": [issue.model_dump() for issue in result.errors], "files": files,
-            "embedding_model": "eoip-local-hashing-256" if vectors else None,
-            "embedding_note": "Deterministic lexical hashing, not a trained semantic embedding model",
+            "embedding_model": model if vectors else None,
+            "embedding_family": family if vectors else None,
+            "embedding_note": ("Deterministic lexical hashing (test-hashing), not a trained semantic embedding model"
+                               if vectors and family == "test-hashing" else None),
         }
         write_json(staging / "manifest.json", manifest)
         os.rename(staging, destination)

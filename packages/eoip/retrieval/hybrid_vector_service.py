@@ -127,33 +127,65 @@ class TestHashingEmbedder:
 
 
 class RealSemanticProvider:
-    """Configurable semantic embedding provider."""
+    """Semantic embedding provider backed by a real model (CRA-025.2/.6).
+
+    Delegates to a configured backend: a local Ollama embedding model (``/api/embed``) or a local
+    sentence-transformers model. There is no hashing fallback: an unavailable or disabled backend raises
+    ``EmbeddingProviderUnavailableError`` and a vector whose dimension differs from the declared one raises
+    ``DimensionMismatchError`` - nothing is padded, zeroed or substituted (deterministic hashing lives only in
+    ``TestHashingEmbedder``, which production refuses).
+    """
 
     def __init__(
         self,
-        provider_name: str = "sentence-transformers",
-        model_name: str = "all-MiniLM-L6-v2",
-        dimension: int = 384,
+        provider_name: str = "ollama",
+        model_name: str | None = None,
+        dimension: int | None = None,
         is_available: bool = True,
+        backend: Any = None,
+        url: str | None = None,
     ) -> None:
         self.provider_name = provider_name
-        self.model_name = model_name
-        self.dimension = dimension
         self.is_available = is_available
+        self._backend = backend
+        if self._backend is None and is_available:
+            from eoip.models.embeddings import OllamaEmbeddingProvider, SentenceTransformersEmbeddingProvider
+
+            if provider_name == "ollama":
+                self._backend = OllamaEmbeddingProvider(model=model_name, url=url)
+            elif provider_name == "sentence-transformers":
+                self._backend = SentenceTransformersEmbeddingProvider(model_name=model_name)
+            else:
+                raise ValueError(f"unknown embedding provider {provider_name!r}")
+        self.model_name = model_name or getattr(self._backend, "model_name", "")
+        self.dimension = dimension
 
     def embed(self, text: str) -> list[float]:
-        if not self.is_available:
+        if not self.is_available or self._backend is None:
             raise EmbeddingProviderUnavailableError(
                 f"Embedding provider '{self.provider_name}' is disabled or unavailable (CRA-025.2)"
             )
-        # Deterministic simulation of a real semantic vector with exact dimensions
-        vec = []
-        for i in range(self.dimension):
-            h = hashlib.sha256(f"{self.model_name}:{text}:{i}".encode("utf-8")).hexdigest()
-            val = (int(h[:8], 16) / 0xFFFFFFFF) * 2.0 - 1.0
-            vec.append(val)
-        norm = math.sqrt(sum(x * x for x in vec)) or 1.0
-        return [round(x / norm, 4) for x in vec]
+        from eoip.models.provider import ModelUnavailable
+
+        try:
+            vec = [float(x) for x in self._backend.embed_one(text)]
+        except ModelUnavailable as exc:
+            raise EmbeddingProviderUnavailableError(
+                f"Embedding provider '{self.provider_name}/{self.model_name}' is unavailable: {exc} (CRA-025.2)"
+            ) from exc
+        if not vec or not any(vec):
+            raise EmbeddingProviderUnavailableError("Embedding provider returned an empty/zero vector (CRA-025.2)")
+        if self.dimension is None:
+            self.dimension = len(vec)
+        elif len(vec) != self.dimension:
+            raise DimensionMismatchError(
+                f"Provider '{self.model_name}' returned {len(vec)} dimensions, configured {self.dimension} (CRA-025.2)"
+            )
+        return vec
+
+    def describe(self) -> dict[str, Any]:
+        return {"provider": self.provider_name, "model": self.model_name, "dimension": self.dimension,
+                "family": "test-hashing" if isinstance(self._backend, TestHashingEmbedder) else "semantic"}
 
 
 def _cosine(v1: list[float], v2: list[float]) -> float:

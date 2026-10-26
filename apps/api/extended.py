@@ -107,7 +107,7 @@ from eoip.qa.router import build_router as build_qa_router
 from eoip.query.intelligence import QueryIntelligence, TemplateBindingError
 from eoip.reports.router import build_router as build_reports_router
 from eoip.retrieval.service import retrieve
-from eoip.retrieval.vectors import HashingEmbedder, build_search_index
+from eoip.retrieval.vectors import build_search_index
 from eoip.search import FacetedSearch, SearchRequest, SearchResponse
 from eoip.suggest.router import build_router as build_suggest_router
 from eoip.systems.router import build_systems_router
@@ -1405,10 +1405,14 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
         fallback when no Ollama model is configured."""
         provider = build_embedding_provider()
         if provider is None:
+            from eoip.models.embeddings import is_production
+
+            # CRA-025.7: no semantic model configured; test-hashing is refused in production.
             return {
-                "provider": "hashing",
-                "healthy": True,
-                "dim": HashingEmbedder().dimensions,
+                "provider": "test-hashing",
+                "family": "test-hashing",
+                "healthy": not is_production(),
+                "dim": 256,
             }
         try:
             healthy = bool(provider.health())

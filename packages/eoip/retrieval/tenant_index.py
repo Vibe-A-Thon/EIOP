@@ -11,7 +11,7 @@ import math
 from typing import Any
 from collections.abc import Callable
 
-from eoip.retrieval.vectors import HashingEmbedder, entity_text
+from eoip.retrieval.vectors import entity_text
 
 
 def vertex_tenant(vertex: dict) -> str | None:
@@ -47,8 +47,14 @@ class TenantRetrievalIndex:
 
     def __init__(self, handle: Any, embedder: Any | None = None) -> None:
         self.handle = handle
-        self.embedder = embedder or HashingEmbedder()
-        self.embedder_id = f"{type(self.embedder).__name__}:{getattr(self.embedder, 'dimensions', '')}"
+        if embedder is None:
+            from eoip.models.embeddings import semantic_embedder
+
+            embedder = semantic_embedder()
+        self.embedder = embedder
+        # Vectors from different models/families never mix: the id names the model, not just the class.
+        self.embedder_id = (f"{type(self.embedder).__name__}:{getattr(self.embedder, 'model_name', '')}:"
+                            f"{getattr(self.embedder, 'dimensions', '')}")
 
     @property
     def tenant_id(self) -> str:

@@ -97,7 +97,10 @@ jobs:
     env:
       MODEL_URL: https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf
       MODEL_SHA256: 74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db
+      EMBED_URL: https://huggingface.co/nomic-ai/nomic-embed-text-v1.5-GGUF/resolve/main/nomic-embed-text-v1.5.Q8_0.gguf
+      EMBED_SHA256: 3e24342164b3d94991ba9692fdc0dd08e3fd7362e0aacc396a9a5c54a544c3b7
       EOIP_LIVE_OLLAMA_MODEL: qwen2.5-0.5b-q4
+      EOIP_LIVE_OLLAMA_EMBED_MODEL: nomic-embed-text-v1.5-q8
       EOIP_LIVE_OLLAMA_URL: http://localhost:11434
       EOIP_BENCH_OUT: test-results
     steps:
@@ -109,19 +112,23 @@ jobs:
         uses: actions/cache@v4
         with:
           path: models
-          key: gguf-${{ env.MODEL_SHA256 }}
+          key: gguf-${{ env.MODEL_SHA256 }}-${{ env.EMBED_SHA256 }}
       - name: Fetch and verify model
         run: |
           mkdir -p models
           f=models/qwen2.5-0.5b-instruct-q4_k_m.gguf
           [ -f "$f" ] || curl -fsSL -o "$f" "$MODEL_URL"
           echo "$MODEL_SHA256  $f" | sha256sum -c -
+          e=models/nomic-embed-text-v1.5.Q8_0.gguf
+          [ -f "$e" ] || curl -fsSL -o "$e" "$EMBED_URL"
+          echo "$EMBED_SHA256  $e" | sha256sum -c -
       - name: Start Ollama (CPU only)
         run: |
           docker run -d --name ollama -p 127.0.0.1:11434:11434 -v "$PWD/models:/models:ro" \
             -v "$PWD/deploy/hardware/models:/modelfiles:ro" ollama/ollama:0.40.6
           for i in $(seq 1 60); do curl -sf localhost:11434/api/version && break; sleep 2; done
           docker exec ollama ollama create "$EOIP_LIVE_OLLAMA_MODEL" -f /modelfiles/qwen2.5-0.5b-q4.Modelfile
+          docker exec ollama ollama create "$EOIP_LIVE_OLLAMA_EMBED_MODEL" -f /modelfiles/nomic-embed-text-v1.5-q8.Modelfile
       - name: Install test dependencies
         run: python -m pip install -c requirements.lock -e ".[test]"
       - name: Run live-model acceptance and CPU reference benchmark
@@ -129,6 +136,7 @@ jobs:
           export EOIP_RELEASE_ID="$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")+${GITHUB_SHA::12}"
           python -m pytest -q -o addopts="" -p no:cacheprovider --timeout=600 \
             tests/ai/test_graphrag_live_model.py tests/ai/test_retrieval_grounded_synthesis.py tests/unit/test_llm_cpu_reference_live.py \
+            tests/retrieval/test_real_embedding_provider.py \
             --junitxml=test-results/llm-cpu-reference.xml
       - name: Retain LLM evidence
         if: always()

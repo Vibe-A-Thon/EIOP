@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "interpretation": "Dedicated bench request breadth only; not functional correctness or app-wide test coverage",
-  "openapi_operations": 751,
+  "openapi_operations": 761,
   "qa_probed_operations": 14,
-  "unprobed_operations": 737,
+  "unprobed_operations": 747,
   "negative_or_undocumented_probes": [
     {
       "method": "GET",
@@ -104,6 +104,10 @@
     {
       "method": "DELETE",
       "path": "/api/v1/reports/schedules/{schedule_id}"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/suggest/pin"
     },
     {
       "method": "DELETE",
@@ -208,6 +212,14 @@
     {
       "method": "GET",
       "path": "/api/v1/auth/health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/providers"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/sso/{provider}/login"
     },
     {
       "method": "GET",
@@ -407,11 +419,19 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/egress/endpoints/{endpoint_id}/consent"
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/egress/manifests"
     },
     {
       "method": "GET",
       "path": "/api/v1/egress/plugins"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/egress/plugins/{manifest_id}/install-preview"
     },
     {
       "method": "GET",
@@ -1563,6 +1583,10 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/auth/logout"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/authz/evaluate"
     },
     {
@@ -1748,6 +1772,10 @@
     {
       "method": "POST",
       "path": "/api/v1/egress/call"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/egress/endpoints/{endpoint_id}/consent/amend"
     },
     {
       "method": "POST",
@@ -2607,7 +2635,15 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/privacy/dsar/export"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/privacy/dsar/locate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/privacy/dsar/rectify"
     },
     {
       "method": "POST",
@@ -2804,6 +2840,10 @@
     {
       "method": "POST",
       "path": "/api/v1/suggest/interpret"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/suggest/pin"
     },
     {
       "method": "POST",

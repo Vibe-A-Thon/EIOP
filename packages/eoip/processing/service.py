@@ -566,23 +566,20 @@ class ProcessingService:
         # 9. NPU Operators (Neural & Model Inference)
         # -------------------------------------------------------------------
         elif op_id == "text.embed":
-            # Deterministic, local-only projection embedding (e.g. 128 dimensions)
-            texts = inputs.get("texts") or [inputs.get("text", "")]
-            dim = int(params.get("dimensions", 128))
-            embeddings = []
-            for t in texts:
-                import hashlib
-                h = hashlib.sha256(str(t).encode("utf-8")).digest()
-                # Use hash bytes as deterministic pseudo-random seed to generate float vector
-                seed_int = int.from_bytes(h[:4], "little")
-                rng = np.random.RandomState(seed_int)
-                vec = rng.randn(dim).astype(np.float32)
-                norm = np.linalg.norm(vec)
-                if norm > 0:
-                    vec = vec / norm
-                embeddings.append(vec.tolist())
-            result = {"embeddings": embeddings, "dimensions": dim, "count": len(embeddings)}
-            provider = "cpu_neural_reference"
+            # CRA-025.2/.7: the same embedding backend retrieval uses (a configured semantic model; the lexical
+            # test-hashing embedder only outside production, and labelled as such). No random projection.
+            from eoip.models.embeddings import embedder_family, semantic_embedder
+
+            texts = [str(t) for t in (inputs.get("texts") or [inputs.get("text", "")])]
+            embedder = semantic_embedder(dimensions=int(params.get("dimensions", 256)))
+            if hasattr(embedder, "embed_one"):
+                embeddings = embedder.embed(texts)
+            else:
+                embeddings = [embedder.embed(t) for t in texts]
+            dim = len(embeddings[0]) if embeddings else 0
+            result = {"embeddings": embeddings, "dimensions": dim, "count": len(embeddings),
+                      "model": getattr(embedder, "model_name", ""), "embedding_family": embedder_family(embedder)}
+            provider = "test-hashing" if embedder_family(embedder) == "test-hashing" else "embedding_model"
 
         elif op_id in ("model.infer", "model.classify"):
             features = inputs.get("features", [1.0, 0.0, 0.5])
