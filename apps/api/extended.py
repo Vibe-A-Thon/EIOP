@@ -293,7 +293,13 @@ class ExtendedState:
         # egress path. No transport is registered by default — external calls
         # are disabled by design until an admin enables an endpoint with
         # consent; dry-run calls still exercise policy + manifests + canaries.
-        self.egress_gateway = EgressGateway(tenant_id="platform-default")
+        # Opt-in production transport: EOIP_EGRESS_TRANSPORT=openai-compatible plus
+        # EOIP_EGRESS_MODELS='{"<endpoint-id>": "<model>"}'; keys come from
+        # EOIP_EGRESS_KEY_<ENDPOINT_ID> at call time. Endpoints stay disabled until enabled with consent.
+        from eoip.egress.http_transport import transport_from_env
+
+        egress_transport = transport_from_env()
+        self.egress_gateway = EgressGateway(tenant_id="platform-default", transport=egress_transport)
 
         # Branding (SR-WL-001/003/004-partial/006/007, SR-ONT-007, CP-03): default
         # theme, terminology, localization and legal-content registries.

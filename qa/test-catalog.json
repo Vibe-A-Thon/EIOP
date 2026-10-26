@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 486,
-    "test_definitions": 4557
+    "files": 487,
+    "test_definitions": 4571
   },
   "categories": {
     "acceptance": {
@@ -27,8 +27,8 @@
       "test_definitions": 21
     },
     "contract": {
-      "files": 5,
-      "test_definitions": 23
+      "files": 6,
+      "test_definitions": 37
     },
     "e2e": {
       "files": 5,
@@ -380,6 +380,11 @@
       "path": "tests/contract/test_asserted_only_queries.py",
       "category": "contract",
       "test_definitions": 2
+    },
+    {
+      "path": "tests/contract/test_egress_http_transport.py",
+      "category": "contract",
+      "test_definitions": 14
     },
     {
       "path": "tests/contract/test_g2_contracts.py",
