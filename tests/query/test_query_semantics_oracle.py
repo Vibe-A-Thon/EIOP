@@ -24,7 +24,7 @@ from eoip.query.adapters.cypher_adapter import OpenCypherAdapter
 from eoip.query.adapters.graphql_adapter import GraphQLShapeAdapter
 from eoip.query.adapters.sql_adapter import SQLOntologyAdapter
 from eoip.query.benchmarks import SemanticEquivalenceComparator, WarmedEndpointBenchmark
-from eoip.query.bi_connectivity import BISessionDriver
+from eoip.query.bi_connectivity import BISessionDriver, BISessionEmulator
 from eoip.query.plan_engine import (
     ParameterizedQuery,
     PlanNodeType,
@@ -507,6 +507,10 @@ def test_cra_024_10_bi_connectivity(tmp_path):
         driver = BISessionDriver("127.0.0.1", srv.port, "bi", pw, "t1")
         tableau_session = driver.run_bi_session(tool_name="Tableau")
         pbi_session = driver.run_bi_session(tool_name="Power BI")
+        legacy = BISessionEmulator(sql_adapter=driver).run_bi_session(tool_name="Tableau")
+        assert [q.query_text for q in legacy.queries] == [q.query_text for q in tableau_session.queries]
+        with pytest.raises(RuntimeError, match="no BI endpoint configured"):
+            BISessionEmulator().run_bi_session()  # never fabricates a session without a server
         refused = BISessionDriver("127.0.0.1", srv.port, "bi", "wrong-" + pw, "t1")
         with pytest.raises(Exception, match="28P01|password"):
             refused.run_bi_session(tool_name="Tableau")

@@ -12,7 +12,7 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
 
 # Representative connect sequences. Tableau (libpq) issues session SETs and a version probe first;
 # Power BI (Npgsql) loads types from pg_catalog before discovering tables.
@@ -93,3 +93,23 @@ class BISessionDriver:
         return BISessionLog(session_id, tool_name, True, records,
                             metadata={"auth_mode": "PASSWORD_OR_API_TOKEN", "ssl_enabled": self.ssl_context is not None,
                                       "server_version": server_version, "endpoint": f"{self.host}:{self.port}"})
+
+
+class BISessionEmulator:
+    """Compatibility wrapper kept for the public API; it no longer fabricates results.
+
+    The original class returned hard-coded rows without contacting any server. It now delegates to a
+    real endpoint: pass a :class:`BISessionDriver` (or any object with ``run_bi_session``) as
+    ``sql_adapter``. Without one it raises instead of inventing a session. ``sparql_handler`` is
+    accepted for signature compatibility and ignored: the SPARQL protocol has its own handler and tests.
+    """
+
+    def __init__(self, sql_adapter: Optional[Any] = None, sparql_handler: Optional[Any] = None) -> None:  # noqa: UP045
+        self.sql_adapter = sql_adapter
+        self.sparql_handler = sparql_handler
+
+    def run_bi_session(self, tool_name: str = "Tableau") -> BISessionLog:
+        if self.sql_adapter is None or not hasattr(self.sql_adapter, "run_bi_session"):
+            raise RuntimeError("no BI endpoint configured: pass a BISessionDriver connected to the "
+                               "PostgreSQL-wire BI endpoint (eoip.query.pg_wire.PgWireServer)")
+        return self.sql_adapter.run_bi_session(tool_name=tool_name)
