@@ -6,14 +6,51 @@ Provides:
 - Join pushdown (predicates and projections pushed down to remote sources)
 - Partial-source degradation (unreachable source emits partial results with diagnostic metadata)
 - Snapshot, watermark freshness, and schema-drift detection
+
+Remote sources are executed by real executors (``eoip.federation.executors``: Snowflake SQL via the Snowflake
+connector, Jira Cloud REST). A registered source without an executor is an error (``SourceExecutorMissing``),
+never an empty result. Pushed-down SQL is parameterised and identifiers are validated (no value interpolation).
 """
 from __future__ import annotations
 
+import base64
 import hashlib
+import re
 import time
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable, Optional
+
+
+class SourceExecutorMissing(RuntimeError):
+    """A federated source was queried but has no executor bound (CRA-024.4: never answer with empty rows)."""
+
+
+_IDENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_$]*$")
+
+
+def safe_identifier(name: str) -> str:
+    """Validate a SQL identifier (optionally dotted: db.schema.table). Raises ValueError on anything else."""
+    parts = str(name).split(".")
+    if not parts or not all(_IDENT.match(p) for p in parts):
+        raise ValueError(f"unsafe SQL identifier: {name!r}")
+    return ".".join(parts)
+
+
+def build_select(table: str, filters: dict[str, Any], projection: list[str]) -> tuple[str, dict[str, Any]]:
+    """Parameterised SELECT (pyformat) for pushdown. ``None`` filter values become IS NULL."""
+    cols = ", ".join(safe_identifier(c) for c in projection) if projection else "*"
+    clauses: list[str] = []
+    params: dict[str, Any] = {}
+    for i, (col, value) in enumerate(filters.items()):
+        ident = safe_identifier(col)
+        if value is None:
+            clauses.append(f"{ident} IS NULL")
+        else:
+            clauses.append(f"{ident} = %(p{i})s")
+            params[f"p{i}"] = value
+    where = (" WHERE " + " AND ".join(clauses)) if clauses else ""
+    return f"SELECT {cols} FROM {safe_identifier(table)}{where}", params
 
 
 class SemanticsMode(str, Enum):
@@ -29,11 +66,35 @@ class SourceAuthDelegation:
     credentials: dict[str, str] = field(default_factory=dict)
 
     def get_auth_headers(self) -> dict[str, str]:
+        """HTTP auth headers for REST sources. Missing credentials raise instead of sending an empty header."""
         if self.auth_type == "BEARER_TOKEN":
-            return {"Authorization": f"Bearer {self.credentials.get('token', '')}"}
+            return {"Authorization": f"Bearer {self._need('token')}"}
         if self.auth_type == "API_KEY":
-            return {"X-API-Key": self.credentials.get('api_key', '')}
-        return {}
+            return {"X-API-Key": self._need("api_key")}
+        if self.auth_type == "BASIC":
+            raw = f"{self._need('username')}:{self._need('password')}".encode("utf-8")
+            return {"Authorization": "Basic " + base64.b64encode(raw).decode("ascii")}
+        raise ValueError(f"auth type {self.auth_type!r} has no HTTP header form (use connector_kwargs)")
+
+    def connector_kwargs(self) -> dict[str, str]:
+        """Credential keyword arguments for database connectors (Snowflake: password, OAuth token or key pair)."""
+        if self.auth_type == "BASIC":
+            return {"user": self._need("username"), "password": self._need("password")}
+        if self.auth_type == "BEARER_TOKEN":
+            out = {"authenticator": "oauth", "token": self._need("token")}
+            if self.credentials.get("username"):
+                out["user"] = self.credentials["username"]
+            return out
+        if self.auth_type == "ROLE_ASSUME":
+            return {"user": self._need("username"), "role": self._need("role"),
+                    **({"password": self.credentials["password"]} if self.credentials.get("password") else {})}
+        raise ValueError(f"auth type {self.auth_type!r} is not supported for database connectors")
+
+    def _need(self, key: str) -> str:
+        value = self.credentials.get(key)
+        if not value:
+            raise ValueError(f"source {self.source_id!r}: credential {key!r} missing for {self.auth_type}")
+        return value
 
 
 @dataclass
@@ -54,6 +115,7 @@ class FederatedPushdownFragment:
     pushed_filters: dict[str, Any]
     pushed_projection: list[str]
     raw_query: str
+    parameters: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -66,6 +128,7 @@ class FederatedExecutionOutcome:
     degraded_sources: list[str] = field(default_factory=list)
     schema_drift_detected: list[str] = field(default_factory=list)
     freshness_watermarks: dict[str, float] = field(default_factory=dict)
+    errors: dict[str, str] = field(default_factory=dict)
 
 
 class OBDAFederationEngine:
@@ -112,11 +175,8 @@ class OBDAFederationEngine:
                 raw_query="SELECT *",
             )
 
-        # Build SQL/predicate pushdown
-        clauses = [f"{k} = '{v}'" if isinstance(v, str) else f"{k} = {v}" for k, v in filters.items()]
-        where_sql = (" WHERE " + " AND ".join(clauses)) if clauses else ""
-        proj_sql = ", ".join(projection) if projection else "*"
-        raw_sql = f"SELECT {proj_sql} FROM {source_id}{where_sql}"
+        # Parameterised SQL/predicate pushdown (values are bound, identifiers validated)
+        raw_sql, params = build_select(source_id, filters, projection)
 
         return FederatedPushdownFragment(
             fragment_id=f"frag_{source_id}",
@@ -124,6 +184,7 @@ class OBDAFederationEngine:
             pushed_filters=dict(filters),
             pushed_projection=list(projection),
             raw_query=raw_sql,
+            parameters=params,
         )
 
     def execute_federated_join(
@@ -165,12 +226,13 @@ class OBDAFederationEngine:
         )
 
         remote_executor = self._source_executors.get(remote_source_id)
+        if remote_executor is None:
+            raise SourceExecutorMissing(
+                f"source {remote_source_id!r} is registered without an executor; refusing to report empty remote rows"
+            )
         try:
-            if remote_executor:
-                remote_rows = remote_executor(fragment)
-            else:
-                remote_rows = []
-        except Exception:
+            remote_rows = list(remote_executor(fragment))
+        except Exception as exc:  # noqa: BLE001 - any source failure degrades to PARTIAL with a diagnostic
             # Handle source failure as partial degradation
             degraded.append(remote_source_id)
             return FederatedExecutionOutcome(
@@ -181,6 +243,7 @@ class OBDAFederationEngine:
                 total_rows=len(local_rows),
                 degraded_sources=degraded,
                 freshness_watermarks=freshness,
+                errors={remote_source_id: f"{type(exc).__name__}: {exc}"[:500]},
             )
 
         # Index remote rows by join key (handling SQL null semantics: NULL != NULL)

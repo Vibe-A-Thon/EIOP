@@ -217,8 +217,9 @@ def test_cra_024_4_obda_federation():
 
     # Pushdown plan check
     frag = engine.plan_pushdown("snowflake_source", {"arr": 50000}, ["customer_name", "arr"])
-    assert "WHERE arr = 50000" in frag.raw_query
-    assert "customer_name, arr" in frag.raw_query
+    # values are bound parameters, never interpolated into SQL text
+    assert frag.raw_query == "SELECT customer_name, arr FROM snowflake_source WHERE arr = %(p0)s"
+    assert frag.parameters == {"p0": 50000}
 
     # Schema drift check
     drifted = engine.check_schema_drift("snowflake_source", "CREATE TABLE modified (id INT);")

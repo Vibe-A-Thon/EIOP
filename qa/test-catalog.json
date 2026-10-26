@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 476,
-    "test_definitions": 4340
+    "files": 477,
+    "test_definitions": 4351
   },
   "categories": {
     "acceptance": {
@@ -67,8 +67,8 @@
       "test_definitions": 17
     },
     "query": {
-      "files": 4,
-      "test_definitions": 26
+      "files": 5,
+      "test_definitions": 37
     },
     "research": {
       "files": 2,
@@ -580,6 +580,11 @@
       "path": "tests/query/test_ast_compiler.py",
       "category": "query",
       "test_definitions": 4
+    },
+    {
+      "path": "tests/query/test_obda_real_executors.py",
+      "category": "query",
+      "test_definitions": 11
     },
     {
       "path": "tests/query/test_query_semantics_oracle.py",

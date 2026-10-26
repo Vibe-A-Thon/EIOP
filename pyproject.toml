@@ -77,12 +77,17 @@ enterprise = [
 semantic = [
   "pyshacl>=0.30,<1.0",
 ]
+# CRA-024.4 OBDA: Snowflake source executor (official connector). fakesnow emulates it in tests.
+snowflake = [
+  "snowflake-connector-python>=3.12,<5",
+]
 # FT-F06: one extra that installs everything the default test selection needs.
 # Documented install: python -m pip install -c requirements.lock -e ".[test]"
 test = [
-  "eoip[dev,numerics,fileparse,codeparse,reports,semantic]",
+  "eoip[dev,numerics,fileparse,codeparse,reports,semantic,snowflake]",
 ]
 dev = [
+  "fakesnow>=0.12,<0.13",
   "hypothesis>=6.100,<7.0",
   "pytest>=8.0,<9.0",
   "pytest-asyncio>=0.23,<1.0",
