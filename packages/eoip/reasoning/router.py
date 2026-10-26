@@ -11,7 +11,10 @@ Routes under ``/api/v1/reasoning/*``:
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from fastapi import APIRouter
 
 from eoip.reasoning.agentops import CostLedger
 from eoip.reasoning.evaluation import TrajectoryScorer
@@ -21,6 +24,8 @@ from eoip.reasoning.strategies import ReasoningProblem, default_registry
 
 def build_router() -> APIRouter:
     """Construct the reasoning router (see module docstring for routes)."""
+    from fastapi import APIRouter, HTTPException
+
     router = APIRouter(prefix="/api/v1/reasoning", tags=["reasoning"])
     registry = default_registry()
     working = WorkingMemory()

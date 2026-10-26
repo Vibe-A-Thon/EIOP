@@ -27,7 +27,8 @@ import heapq
 import itertools
 import math
 from collections import defaultdict
-from typing import Any, Callable, Iterable, Protocol
+from collections.abc import Callable
+from typing import Any, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -105,12 +106,13 @@ def _default_score(hooks: ReasoningHooks | None, text: str) -> float:
 
 def _llm_or(hooks: ReasoningHooks | None, prompt: str, fallback: str) -> str:
     if hooks and hooks.llm:
+        out = None
         try:
             out = hooks.llm(prompt)
-            if out:
-                return str(out)
-        except Exception:
-            pass  # graceful fallback to deterministic text
+        except Exception:  # noqa: BLE001 — graceful fallback to deterministic text
+            out = None
+        if out:
+            return str(out)
     return fallback
 
 

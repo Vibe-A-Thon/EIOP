@@ -4,13 +4,10 @@ from __future__ import annotations
 
 import os
 import sys
+from contextlib import ExitStack
 from pathlib import Path
 import pytest
 import httpx
-
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options as ChromeOptions
-from selenium.webdriver.edge.options import Options as EdgeOptions
 
 from qa_bench.config import (
     REPO_ROOT,
@@ -28,10 +25,7 @@ from qa_bench.config import (
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-# Safe development environment defaults for in-process test runs
-os.environ.setdefault("EOIP_API_TOKEN", "eoip-local-dev-token-0123456789abcdef")
-os.environ.setdefault("EOIP_GRAPH_BACKEND", "memory")
-os.environ.setdefault("EOIP_DATA_DIR", str(REPO_ROOT / ".eoip-data"))
+pytest_plugins = ["eoip.verification.pytest_evidence"]
 
 
 def pytest_configure(config):
@@ -48,12 +42,21 @@ def pytest_configure(config):
 # API Test Fixtures (httpx)
 # ============================================================================
 
-@pytest.fixture(scope="session")
-def inprocess_app():
+@pytest.fixture
+def inprocess_app(monkeypatch, tmp_path):
     """Create in-process FastAPI application instance for fast contract tests."""
     from apps.api.main import create_app
-    app = create_app()
-    return app
+    from qa.runtime import environment
+
+    for key, value in environment(tmp_path, {}).items():
+        monkeypatch.setenv(key, value)
+    keys = tmp_path / "qa-roles.keys"
+    keys.write_text("\n".join(
+        f"{entry.token} | {entry.role} | {entry.tenant} | {entry.username}"
+        for entry in TEST_ROLES.values()
+    ), encoding="utf-8")
+    monkeypatch.setenv("EOIP_ASG_FILE", str(keys))
+    return create_app()
 
 
 @pytest.fixture
@@ -61,25 +64,31 @@ def api_client(inprocess_app):
     """Factory fixture returning an authenticated httpx.Client for a given role."""
     from fastapi.testclient import TestClient
 
+    clients = ExitStack()
+
     def _make_client(role_name: str = "superadmin", use_remote: bool = False) -> httpx.Client | TestClient:
-        role = TEST_ROLES.get(role_name.lower(), TEST_ROLES["superadmin"])
+        role = TEST_ROLES[role_name.lower()]
         headers = {
             "Authorization": f"Bearer {role.token}",
             "X-Tenant-Id": role.tenant,
             "Accept": "application/json",
         }
         if use_remote:
-            return httpx.Client(
+            if os.environ.get("QA_ALLOW_REMOTE") != "true" or not os.environ.get(f"QA_TOKEN_{role_name.upper()}"):
+                raise RuntimeError("Remote QA requires QA_ALLOW_REMOTE=true and an explicit role token")
+            return clients.enter_context(httpx.Client(
                 base_url=f"{BACKEND_URL}{API_PREFIX}",
                 headers=headers,
                 timeout=DEFAULT_TIMEOUT_SECS,
-            )
+                trust_env=False,
+            ))
         # Use TestClient with /api/v1 base prefix
-        tc = TestClient(inprocess_app, base_url="http://testserver/api/v1")
+        tc = clients.enter_context(TestClient(inprocess_app, base_url="http://testserver/api/v1"))
         tc.headers.update(headers)
         return tc
 
-    return _make_client
+    yield _make_client
+    clients.close()
 
 
 @pytest.fixture
@@ -110,14 +119,17 @@ def viewer_client(api_client):
 @pytest.fixture
 def unauthenticated_client(inprocess_app):
     from fastapi.testclient import TestClient
-    return TestClient(inprocess_app, base_url="http://testserver/api/v1")
+    with TestClient(inprocess_app, base_url="http://testserver/api/v1") as client:
+        yield client
 
 
 # ============================================================================
 # Selenium WebDriver Fixtures
 # ============================================================================
 
-def _build_chrome_driver(headless: bool = True) -> webdriver.Chrome:
+def _build_chrome_driver(headless: bool = True):
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options as ChromeOptions
     options = ChromeOptions()
     if headless:
         options.add_argument("--headless=new")
@@ -132,7 +144,9 @@ def _build_chrome_driver(headless: bool = True) -> webdriver.Chrome:
     return webdriver.Chrome(options=options)
 
 
-def _build_edge_driver(headless: bool = True) -> webdriver.Edge:
+def _build_edge_driver(headless: bool = True):
+    from selenium import webdriver
+    from selenium.webdriver.edge.options import Options as EdgeOptions
     options = EdgeOptions()
     if headless:
         options.add_argument("--headless=new")
@@ -163,6 +177,7 @@ def driver(request):
     if hasattr(request.node, "rep_call") and request.node.rep_call.failed:
         test_name = request.node.name.replace("[", "_").replace("]", "_")
         screenshot_path = SCREENSHOTS_DIR / f"fail_{test_name}.png"
+        SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
         try:
             driver_instance.save_screenshot(str(screenshot_path))
             print(f"\n[Selenium QA] Screenshot saved to: {screenshot_path}")

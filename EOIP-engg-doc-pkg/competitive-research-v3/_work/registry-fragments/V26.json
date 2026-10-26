@@ -1,0 +1,573 @@
+[
+ {
+  "id": "T-C13-openlineage-marquez",
+  "slug": "openlineage-marquez",
+  "name": "OpenLineage and Marquez",
+  "category": "C13",
+  "tier": "B",
+  "tier_reason": "Lineage standard + reference server",
+  "members": [
+   "OpenLineage and Marquez"
+  ],
+  "official_url": "https://openlineage.io/",
+  "owner": "LF AI & Data (OpenLineage); Marquez project",
+  "latest_version": "OpenLineage 1.54.0; Marquez 0.50.0 (latest release page)",
+  "version_date": "2026-10-13 (OL, year inferred); 2024-10-24 (Marquez, inferred)",
+  "release_cadence": "see deep dive",
+  "status": "active (OpenLineage); maintenance (Marquez)",
+  "license": "Apache-2.0 (Marquez verified; OpenLineage believed)",
+  "license_class": "permissive",
+  "redistribution_notes": "Embeddable client libs; Marquez self-host.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Spec licence not re-fetched",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "INTEGRATE OpenLineage exporter (CAP-40); Marquez optional sink only",
+  "top_strengths": [
+   "STR-openlineage-01",
+   "STR-openlineage-02"
+  ],
+  "top_inversions": [
+   "INV-openlineage-01",
+   "INV-openlineage-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-openlineage-marquez.md",
+  "sources": [
+   {
+    "title": "OpenLineage object model",
+    "url": "https://openlineage.io/docs/spec/object-model",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OpenLineage facets",
+    "url": "https://openlineage.io/docs/spec/facets/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Marquez repo",
+    "url": "https://github.com/MarquezProject/marquez",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "OpenLineage releases",
+    "url": "https://github.com/OpenLineage/OpenLineage/releases",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C13-prov-o",
+  "slug": "prov-o",
+  "name": "W3C PROV / PROV-O",
+  "category": "C13",
+  "tier": "B",
+  "tier_reason": "Provenance model emitted by mapping/executor.py",
+  "members": [
+   "W3C PROV / PROV-O"
+  ],
+  "official_url": "https://www.w3.org/TR/prov-o/",
+  "owner": "W3C",
+  "latest_version": "PROV-O Recommendation",
+  "version_date": "2013-04-30",
+  "release_cadence": "see deep dive",
+  "status": "active (stable standard)",
+  "license": "W3C document licence",
+  "license_class": "n/a",
+  "redistribution_notes": "Free to implement; no legal view.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REUSE and extend PROV-O emission (CAP-38); keep native claim model",
+  "top_strengths": [
+   "STR-prov-o-01",
+   "STR-prov-o-02"
+  ],
+  "top_inversions": [
+   "INV-prov-o-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-prov-o.md",
+  "sources": [
+   {
+    "title": "PROV-O",
+    "url": "https://www.w3.org/TR/prov-o/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.85
+ },
+ {
+  "id": "T-C13-event-sourcing",
+  "slug": "event-sourcing",
+  "name": "Event sourcing, CQRS and bitemporal modelling (pattern)",
+  "category": "C13",
+  "tier": "B",
+  "tier_reason": "Living-graph mechanics reference",
+  "members": [
+   "Event sourcing, CQRS and bitemporal modelling (pattern)"
+  ],
+  "official_url": "https://martinfowler.com/articles/bitemporal-history.html",
+  "owner": "n/a (pattern)",
+  "latest_version": "n/a",
+  "version_date": "2021-04-07 (Fowler article)",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "none (pattern)",
+  "license_class": "n/a",
+  "redistribution_notes": "No licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Pattern record, no single product",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "BUILD consolidated event log + hardened bitemporal reads (CAP-34/36)",
+  "top_strengths": [
+   "STR-event-sourcing-01",
+   "STR-event-sourcing-02"
+  ],
+  "top_inversions": [
+   "INV-event-sourcing-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-event-sourcing.md",
+  "sources": [
+   {
+    "title": "Fowler Bitemporal History",
+    "url": "https://martinfowler.com/articles/bitemporal-history.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "XTDB docs",
+    "url": "https://docs.xtdb.com/intro/what-is-xtdb.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C13-xtdb",
+  "slug": "xtdb",
+  "name": "XTDB",
+  "category": "C13",
+  "tier": "B",
+  "tier_reason": "Bitemporal database reference",
+  "members": [
+   "XTDB"
+  ],
+  "official_url": "https://xtdb.com/",
+  "owner": "XTDB Ltd (JUXT)",
+  "latest_version": "2.2.0",
+  "version_date": "2026-10-21 (year inferred)",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "MPL-2.0 or later",
+  "license_class": "weak-copyleft",
+  "redistribution_notes": "File-level copyleft; embedding permitted with MPL obligations.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "MPL-2.0 file-level copyleft on redistribution",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "2.x is GA; 1.x on branch",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "EXPERIMENT as bitemporal oracle; optional history adapter",
+  "top_strengths": [
+   "STR-xtdb-01",
+   "STR-xtdb-02"
+  ],
+  "top_inversions": [
+   "INV-xtdb-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-xtdb.md",
+  "sources": [
+   {
+    "title": "XTDB repo",
+    "url": "https://github.com/xtdb/xtdb",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "v2.2.0 release",
+    "url": "https://github.com/xtdb/xtdb/releases/tag/v2.2.0",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "XTDB docs",
+    "url": "https://docs.xtdb.com/intro/what-is-xtdb.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C13-datomic",
+  "slug": "datomic",
+  "name": "Datomic",
+  "category": "C13",
+  "tier": "B",
+  "tier_reason": "Immutable fact store reference",
+  "members": [
+   "Datomic"
+  ],
+  "official_url": "https://www.datomic.com/",
+  "owner": "Nubank (Cognitect)",
+  "latest_version": "Pro 1.0.7745",
+  "version_date": "2026-10-16",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Apache-2.0 on binaries only; closed source; EULAs for Pro/Cloud",
+  "license_class": "proprietary",
+  "redistribution_notes": "Binaries free and Apache-2.0 per vendor; source closed.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Closed-source binary-only licence; OEM EULA scope unconfirmed",
+  "community_vs_enterprise": "Free binaries since 2023; paid support",
+  "deployment_modes": [
+   "self-hosted",
+   "managed-cloud",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Licence change 2023 verified via vendor blog/search summary",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE immutable-DB-value pattern; REJECT as dependency",
+  "top_strengths": [
+   "STR-datomic-01",
+   "STR-datomic-02"
+  ],
+  "top_inversions": [
+   "INV-datomic-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-datomic.md",
+  "sources": [
+   {
+    "title": "Datomic Pro releases",
+    "url": "https://docs.datomic.com/releases-pro.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Datomic is free",
+    "url": "https://blog.datomic.com/2023/04/datomic-is-free.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Data model",
+    "url": "https://docs.datomic.com/whatis/data-model.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C13-dolt",
+  "slug": "dolt",
+  "name": "Dolt",
+  "category": "C13",
+  "tier": "B",
+  "tier_reason": "Git-for-data reference",
+  "members": [
+   "Dolt"
+  ],
+  "official_url": "https://github.com/dolthub/dolt",
+  "owner": "DoltHub Inc.",
+  "latest_version": "2.6.0",
+  "version_date": "2026-10-23 (year inferred)",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; Doltgres separate Beta project.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE merge/conflict model; EXPERIMENT as snapshot sink",
+  "top_strengths": [
+   "STR-dolt-01",
+   "STR-dolt-02"
+  ],
+  "top_inversions": [
+   "INV-dolt-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-dolt.md",
+  "sources": [
+   {
+    "title": "Dolt repo",
+    "url": "https://github.com/dolthub/dolt",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "System tables",
+    "url": "https://www.dolthub.com/docs/sql-reference/version-control/dolt-system-tables",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C13-fluree",
+  "slug": "fluree",
+  "name": "Fluree",
+  "category": "C13",
+  "tier": "C",
+  "tier_reason": "Ledger graph DB",
+  "members": [
+   "Fluree"
+  ],
+  "official_url": "https://github.com/fluree/db",
+  "owner": "Fluree PBC",
+  "latest_version": "v4.2.4",
+  "version_date": "2026-10-14",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Business Source License 1.1 (Apache-2.0 at Change Date)",
+  "license_class": "source-available",
+  "redistribution_notes": "Hosted-offering restriction.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "BSL 1.1",
+  "community_vs_enterprise": "not assessed",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-tier-c-records-V26.md",
+  "sources": [
+   {
+    "title": "Fluree repo",
+    "url": "https://github.com/fluree/db",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C13-lakefs",
+  "slug": "lakefs",
+  "name": "lakeFS",
+  "category": "C13",
+  "tier": "C",
+  "tier_reason": "Data versioning",
+  "members": [
+   "lakeFS"
+  ],
+  "official_url": "https://github.com/treeverse/lakeFS",
+  "owner": "Treeverse",
+  "latest_version": "v1.88.0",
+  "version_date": "2026-10-01 (year inferred)",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "BUSL-1.1 (Apache-2.0 after 4 years)",
+  "license_class": "source-available",
+  "redistribution_notes": "Free unmodified internal production use.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "BUSL-1.1 production-use limits",
+  "community_vs_enterprise": "not assessed",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-tier-c-records-V26.md",
+  "sources": [
+   {
+    "title": "lakeFS repo",
+    "url": "https://github.com/treeverse/lakeFS",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C13-table-time-travel",
+  "slug": "table-time-travel",
+  "name": "Apache Iceberg / Delta Lake time travel",
+  "category": "C13",
+  "tier": "C",
+  "tier_reason": "Snapshot semantics",
+  "members": [
+   "Apache Iceberg / Delta Lake time travel"
+  ],
+  "official_url": "https://iceberg.apache.org/",
+  "owner": "ASF; Linux Foundation (Delta)",
+  "latest_version": "Iceberg 1.12.0; Delta 4.4.1",
+  "version_date": "UNVERIFIED; Delta 2026-10-05 (year inferred)",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Apache-2.0 (Iceberg); Delta believed Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-tier-c-records-V26.md",
+  "sources": [
+   {
+    "title": "Iceberg releases",
+    "url": "https://iceberg.apache.org/releases/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Delta releases",
+    "url": "https://github.com/delta-io/delta/releases",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C13-spline",
+  "slug": "spline",
+  "name": "Spline",
+  "category": "C13",
+  "tier": "C",
+  "tier_reason": "Spark lineage",
+  "members": [
+   "Spline"
+  ],
+  "official_url": "https://github.com/AbsaOSS/spline",
+  "owner": "ABSA OSS",
+  "latest_version": "release/1.0.0-RC3",
+  "version_date": "2026-06-02",
+  "release_cadence": "see deep dive",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-tier-c-records-V26.md",
+  "sources": [
+   {
+    "title": "Spline repo",
+    "url": "https://github.com/AbsaOSS/spline",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C13-aeong",
+  "slug": "aeong",
+  "name": "AeonG-style temporal graph research",
+  "category": "C13",
+  "tier": "C",
+  "tier_reason": "Research reference",
+  "members": [
+   "AeonG-style temporal graph research"
+  ],
+  "official_url": "https://arxiv.org/abs/2304.12212",
+  "owner": "Renmin University of China et al.",
+  "latest_version": "PVLDB 17(6)",
+  "version_date": "2024",
+  "release_cadence": "see deep dive",
+  "status": "unknown",
+  "license": "UNVERIFIED (repo licence not shown; extends Memgraph)",
+  "license_class": "n/a",
+  "redistribution_notes": "No redistribution assessed.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Licence unverified; Memgraph base",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "self-hosted"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "research",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY; EXPERIMENT current/historical split",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C13-tier-c-records-V26.md",
+  "sources": [
+   {
+    "title": "AeonG paper",
+    "url": "https://arxiv.org/pdf/2304.12212",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "AeonG repo",
+    "url": "https://github.com/hououou/AeonG",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ }
+]

@@ -1,0 +1,998 @@
+[
+ {
+  "id": "T-C16-cytoscape",
+  "slug": "cytoscape",
+  "name": "Cytoscape and Cytoscape.js",
+  "category": "C16",
+  "tier": "B",
+  "tier_reason": "Used in EOIP UI; ADR-KG3-10 proposes deprecation",
+  "members": [
+   "Cytoscape.js",
+   "Cytoscape desktop",
+   "Cytoscape Web"
+  ],
+  "official_url": "https://js.cytoscape.org",
+  "owner": "Cytoscape Consortium / U. Toronto (Max Franz)",
+  "latest_version": "Cytoscape.js 3.34.4; desktop 3.10.5",
+  "version_date": "2026-10-15 / 2026-09-29",
+  "release_cadence": "library monthly features, weekly patches; desktop ~yearly",
+  "status": "active",
+  "license": "Cytoscape.js MIT; Cytoscape desktop LGPL-2.1",
+  "license_class": "mixed",
+  "redistribution_notes": "Library MIT is redistribution-safe; desktop LGPL-2.1 not embeddable in a web UI",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Desktop LGPL-2.1 only if bundled; library MIT",
+  "community_vs_enterprise": "App store apps carry own licences",
+  "deployment_modes": [
+   "embedded",
+   "desktop",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Name collision: library vs Java desktop vs Cytoscape Web; registry means the library (desktop compared)",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "EXPERIMENT WebGL mode; REUSE selectors; keep until measured bake-off",
+  "top_strengths": [
+   "STR-cytoscape-01",
+   "STR-cytoscape-02"
+  ],
+  "top_inversions": [
+   "INV-cytoscape-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-cytoscape.md",
+  "sources": [
+   {
+    "title": "Cytoscape.js releases",
+    "url": "https://api.github.com/repos/cytoscape/cytoscape.js/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Cytoscape.js WebGL preview",
+    "url": "https://blog.js.cytoscape.org/2025/01/13/webgl-preview/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Cytoscape desktop releases",
+    "url": "https://api.github.com/repos/cytoscape/cytoscape/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Cytoscape download/licence",
+    "url": "https://cytoscape.org/download.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C16-sigma",
+  "slug": "sigma",
+  "name": "Sigma.js",
+  "category": "C16",
+  "tier": "B",
+  "tier_reason": "Used in EOIP UI (WebGL)",
+  "members": [
+   "Sigma.js",
+   "graphology"
+  ],
+  "official_url": "https://www.sigmajs.org",
+  "owner": "Alexis Jacomy, Benoit Simard (OuestWare), Guillaume Plique (medialab)",
+  "latest_version": "4.0.3 (EOIP pins ^2.4.0)",
+  "version_date": "2026-10-15",
+  "release_cadence": "3.0.0 2024-12-12; 4.0.0 2026-10-08; rapid patches",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "MIT; redistribution-safe",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "None; single OSS edition",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "Brief said Sigma 3.x; current is 4.0.x (WebGL2-only). ADR-KG3-10 performance claim unsupported by located evidence",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REUSE as leading GPU candidate after measured bake-off; migrate 2.4->3.0.1 first, defer 4.x",
+  "top_strengths": [
+   "STR-sigma-01",
+   "STR-sigma-02"
+  ],
+  "top_inversions": [
+   "INV-sigma-01",
+   "INV-sigma-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-sigma.md",
+  "sources": [
+   {
+    "title": "Sigma releases",
+    "url": "https://api.github.com/repos/jacomyal/sigma.js/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "sigma@4.0.0 release",
+    "url": "https://github.com/jacomyal/sigma.js/releases/tag/sigma@4.0.0",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "sigma npm",
+    "url": "https://registry.npmjs.org/sigma",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PMC12061801",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12061801/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.85
+ },
+ {
+  "id": "T-C16-yfiles",
+  "slug": "yfiles",
+  "name": "yFiles",
+  "category": "C16",
+  "tier": "B",
+  "tier_reason": "Commercial diagramming SDK",
+  "members": [
+   "yFiles for HTML",
+   "yEd (Tier C)"
+  ],
+  "official_url": "https://www.yfiles.com",
+  "owner": "yWorks GmbH",
+  "latest_version": "yFiles for HTML 3.1.0.4",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "3.0 then 3.1 series",
+  "status": "active",
+  "license": "Commercial term licence (annual); eval free",
+  "license_class": "proprietary",
+  "redistribution_notes": "No royalties (vendor); OEM/SaaS terms not public; domain keys; source licensable",
+  "legal_review_trigger": true,
+  "legal_review_reason": "OEM/SaaS/white-label terms unpublished; term-licence lapse",
+  "community_vs_enterprise": "Single, Project, Site tiers; USD 11k/22k/66k per year list",
+  "deployment_modes": [
+   "embedded",
+   "desktop"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "INTEGRATE as optional customer-licensed layout/diagram plugin; use ELK for core",
+  "top_strengths": [
+   "STR-yfiles-01"
+  ],
+  "top_inversions": [
+   "INV-yfiles-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-yfiles.md",
+  "sources": [
+   {
+    "title": "yFiles pricing",
+    "url": "https://www.yfiles.com/pricing",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "yFiles release notes",
+    "url": "https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html/release-notes",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C16-keylines-regraph",
+  "slug": "keylines-regraph",
+  "name": "KeyLines and ReGraph (Cambridge Intelligence)",
+  "category": "C16",
+  "tier": "B",
+  "tier_reason": "Commercial graph viz SDK",
+  "members": [
+   "KeyLines",
+   "ReGraph",
+   "KronoGraph",
+   "MapWeave"
+  ],
+  "official_url": "https://cambridge-intelligence.com",
+  "owner": "Cambridge Intelligence",
+  "latest_version": "KeyLines 8.13.0 / ReGraph 5.13.0",
+  "version_date": "2026-09-16",
+  "release_cadence": "quarterly minors, frequent patches",
+  "status": "active",
+  "license": "Commercial per-application licence; trial",
+  "license_class": "proprietary",
+  "redistribution_notes": "OEM terms NOT PUBLICLY VERIFIED",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Per-application licensing vs multi-tenant redistribution",
+  "community_vs_enterprise": "Single commercial edition",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "EXPERIMENT combos/time-bar UX natively; REJECT as dependency",
+  "top_strengths": [
+   "STR-kl-01",
+   "STR-kl-02"
+  ],
+  "top_inversions": [
+   "INV-kl-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-keylines-regraph.md",
+  "sources": [
+   {
+    "title": "KeyLines/ReGraph downloads",
+    "url": "https://developers.cambridge-intelligence.com/downloads",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "ReGraph",
+    "url": "https://cambridge-intelligence.com/regraph/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "KeyLines",
+    "url": "https://cambridge-intelligence.com/keylines/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C16-linkurious",
+  "slug": "linkurious",
+  "name": "Linkurious Enterprise and Ogma",
+  "category": "C16",
+  "tier": "B",
+  "tier_reason": "Investigation product",
+  "members": [
+   "Linkurious Enterprise",
+   "Ogma"
+  ],
+  "official_url": "https://linkurious.com",
+  "owner": "Linkurious SAS",
+  "latest_version": "Ogma 6.1.0; Linkurious Enterprise 4.3.14 manual",
+  "version_date": "2026-02-24 (Ogma 6.0); Enterprise date UNVERIFIED",
+  "release_cadence": "Ogma ~major yearly; Enterprise 4.1 Apr 2025",
+  "status": "active",
+  "license": "Commercial; terms not public",
+  "license_class": "proprietary",
+  "redistribution_notes": "Ogma OEM terms NOT PUBLICLY VERIFIED",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Unpublished OEM/air-gap terms",
+  "community_vs_enterprise": "Enterprise (server) vs Ogma (library)",
+  "deployment_modes": [
+   "self-hosted",
+   "embedded"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "production",
+  "resolution_note": "Ogma is a library; Enterprise is a product",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "BUILD investigation workspace; reference property-key ACL in logic layer; INTEGRATE only as external viewer",
+  "top_strengths": [
+   "STR-lk-01",
+   "STR-lk-02"
+  ],
+  "top_inversions": [
+   "INV-lk-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-linkurious.md",
+  "sources": [
+   {
+    "title": "Linkurious admin manual",
+    "url": "https://doc.linkurious.com/admin-manual/latest/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Ogma docs",
+    "url": "https://doc.linkurious.com/ogma/latest/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Ogma 6.0",
+    "url": "https://linkurious.com/blog/ogma-6-0",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C16-graphxr",
+  "slug": "graphxr",
+  "name": "Kineviz GraphXR",
+  "category": "C16",
+  "tier": "B",
+  "tier_reason": "Visual analytics",
+  "members": [
+   "GraphXR",
+   "SeekerXR"
+  ],
+  "official_url": "https://www.kineviz.com/graphxr",
+  "owner": "Kineviz",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Commercial; terms not public",
+  "license_class": "proprietary",
+  "redistribution_notes": "NOT PUBLICLY VERIFIED",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Unknown terms",
+  "community_vs_enterprise": "Unknown",
+  "deployment_modes": [
+   "saas",
+   "self-hosted"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "production",
+  "resolution_note": "Company site brands Kineviz",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "EXPERIMENT visual composer UX; BUILD time/geo views",
+  "top_strengths": [
+   "STR-gxr-01"
+  ],
+  "top_inversions": [
+   "INV-gxr-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-graphxr.md",
+  "sources": [
+   {
+    "title": "Kineviz GraphXR",
+    "url": "https://www.kineviz.com/graphxr",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.4
+ },
+ {
+  "id": "T-C16-gephi",
+  "slug": "gephi",
+  "name": "Gephi",
+  "category": "C16",
+  "tier": "B",
+  "tier_reason": "Seed inversion target",
+  "members": [
+   "Gephi",
+   "Gephi Toolkit",
+   "Gephi Lite"
+  ],
+  "official_url": "https://gephi.org",
+  "owner": "Gephi community",
+  "latest_version": "0.11.3",
+  "version_date": "2026-09-06",
+  "release_cadence": "0.11.1 2026-05-03; 0.11.2 2026-05-09; 0.11.3 2026-09-06",
+  "status": "active",
+  "license": "GPL-3.0 (GitHub); wiki: dual CDDL 1.0 + GPL v3",
+  "license_class": "strong-copyleft",
+  "redistribution_notes": "GPL: do not link or copy into proprietary distribution",
+  "legal_review_trigger": true,
+  "legal_review_reason": "GPL/CDDL",
+  "community_vs_enterprise": "Single OSS edition; Toolkit separate",
+  "deployment_modes": [
+   "desktop",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Website stale (still calls 0.11 beta); seed 10.5 PARTIALLY VALIDATED",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE for analytics UX; REUSE ForceAtlas2 via graphology; ADOPT ACL-filtered GEXF export",
+  "top_strengths": [
+   "STR-gephi-01",
+   "STR-gephi-02"
+  ],
+  "top_inversions": [
+   "INV-gephi-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-gephi.md",
+  "sources": [
+   {
+    "title": "Gephi releases",
+    "url": "https://api.github.com/repos/gephi/gephi/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Gephi LICENSE",
+    "url": "https://raw.githubusercontent.com/gephi/gephi/master/LICENSE.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Gephi site",
+    "url": "https://gephi.org/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C16-graphistry",
+  "slug": "graphistry",
+  "name": "Graphistry",
+  "category": "C16",
+  "tier": "B",
+  "tier_reason": "GPU visual analytics",
+  "members": [
+   "Graphistry server",
+   "PyGraphistry",
+   "Louie.ai"
+  ],
+  "official_url": "https://www.graphistry.com",
+  "owner": "Graphistry, Inc.",
+  "latest_version": "PyGraphistry 0.61.2; server UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "PyGraphistry BSD (PyPI metadata); server proprietary EULA",
+  "license_class": "mixed",
+  "redistribution_notes": "Server OEM terms NOT PUBLICLY VERIFIED",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Server EULA",
+  "community_vs_enterprise": "Hub SaaS vs self-hosted vs OSS client",
+  "deployment_modes": [
+   "saas",
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "EXPERIMENT server-side layout/aggregation tier; optional export integration",
+  "top_strengths": [
+   "STR-gph-01",
+   "STR-gph-02"
+  ],
+  "top_inversions": [
+   "INV-gph-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-graphistry.md",
+  "sources": [
+   {
+    "title": "Graphistry",
+    "url": "https://www.graphistry.com/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PyGraphistry README",
+    "url": "https://raw.githubusercontent.com/graphistry/pygraphistry/master/README.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PyPI graphistry",
+    "url": "https://pypi.org/pypi/graphistry/json",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.55
+ },
+ {
+  "id": "T-C16-graphviz",
+  "slug": "graphviz",
+  "name": "Graphviz",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Graphviz"
+  ],
+  "official_url": "https://graphviz.org",
+  "owner": "Graphviz community",
+  "latest_version": "16.1.0-1 (Debian experimental; upstream UNVERIFIED)",
+  "version_date": "2026-09-08",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "Eclipse Public License (not re-fetched)",
+  "license_class": "weak-copyleft",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": true,
+  "legal_review_reason": "licence class weak-copyleft",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "licence unverified this session",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REUSE optional static exporter",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "Graphviz (see Tier C record)",
+    "url": "https://graphviz.org",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C16-constellation",
+  "slug": "constellation",
+  "name": "Constellation",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Constellation"
+  ],
+  "official_url": "https://github.com/constellation-app/constellation",
+  "owner": "Australian Signals Directorate",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "n/a",
+  "status": "unknown",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": false,
+  "legal_review_reason": "licence class permissive",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "Constellation (see Tier C record)",
+    "url": "https://github.com/constellation-app/constellation",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C16-yed",
+  "slug": "yed",
+  "name": "yEd",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "yEd"
+  ],
+  "official_url": "https://www.yworks.com/products/yed",
+  "owner": "yWorks GmbH",
+  "latest_version": "3.25.1",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "Proprietary free-use SLA; no redistribution",
+  "license_class": "proprietary",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": true,
+  "legal_review_reason": "licence class proprietary",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "yEd (see Tier C record)",
+    "url": "https://www.yworks.com/products/yed",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C16-citespace-vosviewer",
+  "slug": "citespace-vosviewer",
+  "name": "CiteSpace and VOSviewer",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "CiteSpace and VOSviewer"
+  ],
+  "official_url": "https://www.vosviewer.com",
+  "owner": "CWTS Leiden; Chaomei Chen",
+  "latest_version": "VOSviewer 1.6.21; CiteSpace UNVERIFIED",
+  "version_date": "2026-06-12",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "VOSviewer free for any purpose; CiteSpace UNVERIFIED",
+  "license_class": "proprietary",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": true,
+  "legal_review_reason": "licence class proprietary",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "CiteSpace unverified",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "CiteSpace and VOSviewer (see Tier C record)",
+    "url": "https://www.vosviewer.com",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C16-cosmograph",
+  "slug": "cosmograph",
+  "name": "Cosmograph / cosmos.gl",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Cosmograph / cosmos.gl"
+  ],
+  "official_url": "https://github.com/cosmosgl/graph",
+  "owner": "cosmos.gl (OpenJS incubating)",
+  "latest_version": "@cosmos.gl/graph 3.5.1",
+  "version_date": "2026-10-08",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "cosmos.gl MIT; @cosmograph/* CC-BY-NC-4.0",
+  "license_class": "mixed",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": true,
+  "legal_review_reason": "licence class mixed",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Two licence regimes under one name",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "EXPERIMENT cosmos.gl; REJECT NC packages",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "Cosmograph / cosmos.gl (see Tier C record)",
+    "url": "https://github.com/cosmosgl/graph",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.85
+ },
+ {
+  "id": "T-C16-d3",
+  "slug": "d3",
+  "name": "D3.js",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "D3.js"
+  ],
+  "official_url": "https://d3js.org",
+  "owner": "Observable/community",
+  "latest_version": "7.9.0",
+  "version_date": "2024-03-12",
+  "release_cadence": "n/a",
+  "status": "maintenance",
+  "license": "ISC",
+  "license_class": "permissive",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": false,
+  "legal_review_reason": "licence class permissive",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REUSE utilities; REJECT as graph renderer",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "D3.js (see Tier C record)",
+    "url": "https://d3js.org",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.9
+ },
+ {
+  "id": "T-C16-vis-network",
+  "slug": "vis-network",
+  "name": "vis-network",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "vis-network"
+  ],
+  "official_url": "https://github.com/visjs/vis-network",
+  "owner": "visjs community",
+  "latest_version": "10.1.3",
+  "version_date": "2026-10-25",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "Apache-2.0 OR MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": false,
+  "legal_review_reason": "licence class permissive",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "vis-network (see Tier C record)",
+    "url": "https://github.com/visjs/vis-network",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.9
+ },
+ {
+  "id": "T-C16-antv-g6",
+  "slug": "antv-g6",
+  "name": "AntV G6",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "AntV G6"
+  ],
+  "official_url": "https://g6.antv.antgroup.com",
+  "owner": "AntV / Ant Group",
+  "latest_version": "5.1.1",
+  "version_date": "2026-05-08",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": false,
+  "legal_review_reason": "licence class permissive",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "AntV G6 (see Tier C record)",
+    "url": "https://g6.antv.antgroup.com",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.85
+ },
+ {
+  "id": "T-C16-neo4j-nvl",
+  "slug": "neo4j-nvl",
+  "name": "Neo4j NVL",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Neo4j NVL"
+  ],
+  "official_url": "https://neo4j.com/docs/nvl/current/",
+  "owner": "Neo4j, Inc.",
+  "latest_version": "2.0.0",
+  "version_date": "2026-09-15",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "Proprietary: usable only with Aura / Neo4j commercial products",
+  "license_class": "proprietary",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": true,
+  "legal_review_reason": "licence class proprietary",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REJECT as dependency",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "Neo4j NVL (see Tier C record)",
+    "url": "https://neo4j.com/docs/nvl/current/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.9
+ },
+ {
+  "id": "T-C16-react-force-graph-reagraph",
+  "slug": "react-force-graph-reagraph",
+  "name": "react-force-graph and Reagraph",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "react-force-graph and Reagraph"
+  ],
+  "official_url": "https://github.com/vasturiano/react-force-graph",
+  "owner": "V. Asturiano; Reaviz",
+  "latest_version": "1.48.3 / 4.32.0",
+  "version_date": "2026-09-29 / 2026-06-25",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "MIT / Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": false,
+  "legal_review_reason": "licence class permissive",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "react-force-graph and Reagraph (see Tier C record)",
+    "url": "https://github.com/vasturiano/react-force-graph",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.9
+ },
+ {
+  "id": "T-C16-layout-engines",
+  "slug": "layout-engines",
+  "name": "Layout engines (ELK/elkjs, Dagre, WebCola, ForceAtlas2)",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Layout engines (ELK/elkjs, Dagre, WebCola, ForceAtlas2)"
+  ],
+  "official_url": "https://github.com/kieler/elkjs",
+  "owner": "Kiel/Eclipse ELK; dagrejs; Dwyer; medialab",
+  "latest_version": "elkjs 0.12.0; @dagrejs/dagre 3.1.3; webcola 3.4.0; FA2 0.10.1",
+  "version_date": "2026-07-17 / 2026-10-24 / 2019-05-10 / 2022-10-17",
+  "release_cadence": "n/a",
+  "status": "mixed",
+  "license": "elkjs EPL-2.0 OR GPL-3.0-or-later; others MIT",
+  "license_class": "mixed",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": true,
+  "legal_review_reason": "licence class mixed",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "WebCola and old dagre stale",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REUSE ELK (layered) and FA2 (force); drop WebCola",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "Layout engines (ELK/elkjs, Dagre, WebCola, ForceAtlas2) (see Tier C record)",
+    "url": "https://github.com/kieler/elkjs",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.85
+ },
+ {
+  "id": "T-C16-kumu-thebrain",
+  "slug": "kumu-thebrain",
+  "name": "Kumu and TheBrain",
+  "category": "C16",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Kumu and TheBrain"
+  ],
+  "official_url": "https://kumu.io",
+  "owner": "Kumu Inc.; TheBrain Technologies",
+  "latest_version": "Kumu SaaS; TheBrain 14",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "Proprietary",
+  "license_class": "proprietary",
+  "redistribution_notes": "see Tier C record",
+  "legal_review_trigger": true,
+  "legal_review_reason": "licence class proprietary",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "assigned entry verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md",
+  "sources": [
+   {
+    "title": "Kumu and TheBrain (see Tier C record)",
+    "url": "https://kumu.io",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ }
+]

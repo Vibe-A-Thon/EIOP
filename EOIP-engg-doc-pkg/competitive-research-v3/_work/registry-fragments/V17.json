@@ -1,0 +1,605 @@
+[
+ {
+  "id": "T-C05-unstructured",
+  "slug": "unstructured",
+  "name": "Unstructured",
+  "category": "C05",
+  "tier": "B",
+  "tier_reason": "Document partitioning reuse candidate",
+  "members": [
+   "unstructured (OSS library)",
+   "Unstructured Platform/API (commercial)"
+  ],
+  "official_url": "https://github.com/Unstructured-IO/unstructured",
+  "owner": "Unstructured Technologies",
+  "latest_version": "0.27.34",
+  "version_date": "2026-10-22 (year inferred)",
+  "release_cadence": "releases every few days",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0 library; paid API holds the better models and enrichments.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "OSS library lacks VLMs, GPU, enrichments, compliance features that the paid API provides",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded",
+   "saas"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE as optional parser adapter; BUILD parser-neutral span anchors",
+  "top_strengths": [
+   "STR-unstr-01"
+  ],
+  "top_inversions": [
+   "INV-unstr-01",
+   "INV-unstr-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-unstructured.md",
+  "sources": [
+   {
+    "title": "unstructured on PyPI",
+    "url": "https://pypi.org/pypi/unstructured/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Open-source overview",
+    "url": "https://docs.unstructured.io/open-source/introduction/overview",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Document elements",
+    "url": "https://docs.unstructured.io/open-source/concepts/document-elements",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C05-docling",
+  "slug": "docling",
+  "name": "Docling",
+  "category": "C05",
+  "tier": "B",
+  "tier_reason": "Layout-aware parsing reuse candidate",
+  "members": [
+   "docling",
+   "docling-core",
+   "docling-serve",
+   "Heron layout model",
+   "TableFormer"
+  ],
+  "official_url": "https://github.com/docling-project/docling",
+  "owner": "LF AI & Data project (IBM Research Zurich origin)",
+  "latest_version": "2.142.1",
+  "version_date": "2026-10-23 (year inferred)",
+  "release_cadence": "releases every 1-2 days",
+  "status": "active",
+  "license": "MIT (code); Heron layout model Apache-2.0; other model weights UNVERIFIED",
+  "license_class": "mixed",
+  "redistribution_notes": "Code MIT; bundled weights need per-model licence check.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Heterogeneous model-weight licences not all verified",
+  "community_vs_enterprise": "Single OSS project",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE as default PDF/Office parser; REUSE bbox provenance format; BUILD span anchors",
+  "top_strengths": [
+   "STR-docl-01",
+   "STR-docl-02"
+  ],
+  "top_inversions": [
+   "INV-docl-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-docling.md",
+  "sources": [
+   {
+    "title": "Docling docs",
+    "url": "https://docling-project.github.io/docling/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Docling advanced options",
+    "url": "https://docling-project.github.io/docling/usage/advanced_options/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Docling technical report",
+    "url": "https://arxiv.org/html/2501.17887",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Docling releases",
+    "url": "https://github.com/docling-project/docling/releases",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C05-marker",
+  "slug": "marker",
+  "name": "Marker",
+  "category": "C05",
+  "tier": "C",
+  "tier_reason": "PDF-to-markdown (licence to verify)",
+  "members": [
+   "marker-pdf",
+   "Surya models"
+  ],
+  "official_url": "https://github.com/datalab-to/marker",
+  "owner": "Datalab",
+  "latest_version": "2.0.0",
+  "version_date": "2026-07-20 (year inferred)",
+  "release_cadence": "irregular; 2.0 rewrite",
+  "status": "active",
+  "license": "Code Apache-2.0; weights modified AI Pubs Open Rail-M (free research/personal/startups under $5M)",
+  "license_class": "mixed",
+  "redistribution_notes": "Weight licence restricts commercial use above a revenue/funding threshold.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Model-weight licence limits white-label redistribution",
+  "community_vs_enterprise": "Open code, commercial weight terms",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "Earlier versions reportedly GPL; not re-verified",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "REFERENCE-ONLY; EXPERIMENT only if weight licence clears legal review",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-tier-c-records-V17.md",
+  "sources": [
+   {
+    "title": "Marker README",
+    "url": "https://github.com/datalab-to/marker",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Marker releases",
+    "url": "https://github.com/datalab-to/marker/releases",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C05-spacy",
+  "slug": "spacy",
+  "name": "spaCy",
+  "category": "C05",
+  "tier": "B",
+  "tier_reason": "Local NLP pipeline reuse candidate",
+  "members": [
+   "spaCy",
+   "en_core_web_* pipelines"
+  ],
+  "official_url": "https://spacy.io",
+  "owner": "Explosion",
+  "latest_version": "3.8.16",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "regular minor/patch releases",
+  "status": "active",
+  "license": "MIT (library); pipeline packages vary (MIT seen; CC BY-SA 3.0 on xx_sent_ud_sm; English licence not confirmed)",
+  "license_class": "mixed",
+  "redistribution_notes": "MIT library; check each pipeline package licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Single OSS project",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE optional NER adapter; also Presidio NLP engine",
+  "top_strengths": [
+   "STR-spacy-01"
+  ],
+  "top_inversions": [
+   "INV-spacy-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-spacy.md",
+  "sources": [
+   {
+    "title": "spaCy on PyPI",
+    "url": "https://pypi.org/pypi/spacy/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "spaCy facts and figures",
+    "url": "https://spacy.io/usage/facts-figures",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "spaCy models releases",
+    "url": "https://github.com/explosion/spacy-models/releases",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C05-gliner",
+  "slug": "gliner",
+  "name": "GLiNER",
+  "category": "C05",
+  "tier": "B",
+  "tier_reason": "Zero-shot local NER",
+  "members": [
+   "gliner library",
+   "urchade checkpoints",
+   "knowledgator checkpoints",
+   "GLiNER2"
+  ],
+  "official_url": "https://github.com/urchade/GLiNER",
+  "owner": "urchade (community; Knowledgator and others publish checkpoints)",
+  "latest_version": "0.2.29",
+  "version_date": "2026-09-08",
+  "release_cadence": "periodic",
+  "status": "active",
+  "license": "Library Apache-2.0; checkpoints per model card (v2.1, multi_pii, bi-base, relex Apache-2.0; gliner_multi reported CC-BY-NC-4.0)",
+  "license_class": "mixed",
+  "redistribution_notes": "Checkpoint licences vary; maintain allowlist.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Some checkpoints reported non-commercial",
+  "community_vs_enterprise": "Community project",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "EXPERIMENT as ontology-labelled NER and PII recogniser; BUILD char-offset wrapper",
+  "top_strengths": [
+   "STR-gli-01"
+  ],
+  "top_inversions": [
+   "INV-gli-01",
+   "INV-gli-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-gliner.md",
+  "sources": [
+   {
+    "title": "GLiNER repo",
+    "url": "https://github.com/urchade/GLiNER",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "GLiNER paper",
+    "url": "https://arxiv.org/abs/2311.08526",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "gliner_large-v2.1",
+    "url": "https://huggingface.co/urchade/gliner_large-v2.1",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C05-rebel-relik",
+  "slug": "rebel-relik",
+  "name": "REBEL and ReLiK",
+  "category": "C05",
+  "tier": "C",
+  "tier_reason": "Relation extraction models",
+  "members": [
+   "REBEL (rebel-large, mREBEL)",
+   "ReLiK"
+  ],
+  "official_url": "https://github.com/SapienzaNLP/relik",
+  "owner": "Babelscape; Sapienza NLP",
+  "latest_version": "relik 1.0.7",
+  "version_date": "2024-09-12",
+  "release_cadence": "slow/none",
+  "status": "maintenance",
+  "license": "CC BY-NC-SA 4.0 (READMEs); ReLiK PyPI metadata says Apache: conflict",
+  "license_class": "mixed",
+  "redistribution_notes": "Non-commercial terms block bundling.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Non-commercial licence and metadata conflict",
+  "community_vs_enterprise": "Research releases",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Two projects under one entry",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "REJECT for bundling; REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-tier-c-records-V17.md",
+  "sources": [
+   {
+    "title": "REBEL repo",
+    "url": "https://github.com/Babelscape/rebel",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "ReLiK repo",
+    "url": "https://github.com/SapienzaNLP/relik",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C05-coref-event-table",
+  "slug": "coref-event-table",
+  "name": "Coreference, event and table extraction tooling",
+  "category": "C05",
+  "tier": "C",
+  "tier_reason": "Approach record",
+  "members": [
+   "fastcoref",
+   "coreferee",
+   "maverick-coref",
+   "Table Transformer",
+   "Camelot"
+  ],
+  "official_url": "https://pypi.org/project/coreferee/",
+  "owner": "various",
+  "latest_version": "various",
+  "version_date": "see record",
+  "release_cadence": "mixed",
+  "status": "mixed",
+  "license": "MIT (fastcoref, coreferee, Camelot, Table Transformer code); Maverick CC BY-NC-SA 4.0",
+  "license_class": "mixed",
+  "redistribution_notes": "Check per tool.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Maverick non-commercial",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Approach record; no event tool verified",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "REFERENCE-ONLY; EXPERIMENT fastcoref/coreferee; REUSE Docling for tables; DEFER events",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-tier-c-records-V17.md",
+  "sources": [
+   {
+    "title": "coreferee on PyPI",
+    "url": "https://pypi.org/pypi/coreferee/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Table Transformer",
+    "url": "https://github.com/microsoft/table-transformer",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C05-llm-schema-extraction",
+  "slug": "llm-schema-extraction",
+  "name": "LLM schema-guided extraction (Neo4j LLM Graph Builder, LlamaIndex extractors)",
+  "category": "C05",
+  "tier": "B",
+  "tier_reason": "Competitor extraction pattern",
+  "members": [
+   "Neo4j LLM Graph Builder",
+   "LlamaIndex property-graph extractors",
+   "LangChain LLMGraphTransformer"
+  ],
+  "official_url": "https://github.com/neo4j-labs/llm-graph-builder",
+  "owner": "Neo4j Labs; LlamaIndex; LangChain",
+  "latest_version": "llama-index-core 0.14.25; langchain-experimental 0.4.2; Graph Builder no tag shown",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "frequent (LlamaIndex)",
+  "status": "active",
+  "license": "Apache-2.0 (Graph Builder); MIT (LlamaIndex, langchain-experimental)",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; Graph Builder is Labs-supported only, langchain-experimental being sunset.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Graph Builder experimental Labs project",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "Three members grouped",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "EXPERIMENT schema-constrained extraction into PROPOSED state; REJECT Graph Builder as product",
+  "top_strengths": [
+   "STR-llmx-01",
+   "STR-llmx-02"
+  ],
+  "top_inversions": [
+   "INV-llmx-01",
+   "INV-llmx-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-llm-schema-extraction.md",
+  "sources": [
+   {
+    "title": "Neo4j LLM Graph Builder",
+    "url": "https://github.com/neo4j-labs/llm-graph-builder",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "LlamaIndex property graph guide",
+    "url": "https://developers.llamaindex.ai/python/framework/module_guides/indexing/lpg_index_guide/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Neo4j Labs page",
+    "url": "https://neo4j.com/labs/genai-ecosystem/llm-graph-builder/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C05-presidio",
+  "slug": "presidio",
+  "name": "Microsoft Presidio",
+  "category": "C05",
+  "tier": "B",
+  "tier_reason": "PII detection reuse candidate (BL-46)",
+  "members": [
+   "presidio-analyzer",
+   "presidio-anonymizer",
+   "presidio-image-redactor"
+  ],
+  "official_url": "https://presidio.dataprivacystack.org/",
+  "owner": "Data Privacy Stack community org (moved from Microsoft)",
+  "latest_version": "2.2.365",
+  "version_date": "2026-10-25 (year inferred)",
+  "release_cadence": "roughly monthly",
+  "status": "renamed",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "MIT; Docker images moved to ghcr.io/data-privacy-stack.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Single OSS project",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Repo moved from microsoft/presidio to data-privacy-stack/presidio; transition date not stated",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "REUSE as PII detector/anonymiser; keep in-house regex fallback and EOIP vault",
+  "top_strengths": [
+   "STR-pres-01"
+  ],
+  "top_inversions": [
+   "INV-pres-01",
+   "INV-pres-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-presidio.md",
+  "sources": [
+   {
+    "title": "Presidio transition",
+    "url": "https://github.com/data-privacy-stack/presidio/blob/main/docs/project_transition.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Presidio analyzer docs",
+    "url": "https://presidio.dataprivacystack.org/analyzer/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Presidio releases",
+    "url": "https://github.com/microsoft/presidio/releases",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C05-secret-scanners",
+  "slug": "secret-scanners",
+  "name": "Secret scanners (gitleaks, TruffleHog, detect-secrets)",
+  "category": "C05",
+  "tier": "B",
+  "tier_reason": "Secret detection at ingest",
+  "members": [
+   "gitleaks",
+   "TruffleHog",
+   "detect-secrets",
+   "Betterleaks (successor candidate)"
+  ],
+  "official_url": "https://github.com/gitleaks/gitleaks",
+  "owner": "gitleaks org; Truffle Security; Yelp; betterleaks org",
+  "latest_version": "gitleaks 8.30.1; TruffleHog 3.99.7; detect-secrets 1.5.0",
+  "version_date": "2026-03-21; 2026-10-24; 2024-05-06 (years inferred)",
+  "release_cadence": "varies: frozen / very active / stale",
+  "status": "mixed",
+  "license": "gitleaks MIT; TruffleHog AGPL-3.0 (since v3.0); detect-secrets Apache-2.0; Betterleaks MIT",
+  "license_class": "mixed",
+  "redistribution_notes": "AGPL-3.0 on TruffleHog; Enterprise product separate.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "TruffleHog AGPL-3.0 network copyleft; live verification sends credentials to third parties",
+  "community_vs_enterprise": "TruffleHog Enterprise vs OSS",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "gitleaks feature-frozen, successor Betterleaks (v2 unreleased)",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "REUSE gitleaks rules / BUILD ingest gate; REJECT TruffleHog bundling; EXPERIMENT Betterleaks",
+  "top_strengths": [
+   "STR-sec-01",
+   "STR-sec-02"
+  ],
+  "top_inversions": [
+   "INV-sec-01",
+   "INV-sec-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C05-secret-scanners.md",
+  "sources": [
+   {
+    "title": "gitleaks",
+    "url": "https://github.com/gitleaks/gitleaks",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "TruffleHog",
+    "url": "https://github.com/trufflesecurity/trufflehog",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "detect-secrets",
+    "url": "https://github.com/Yelp/detect-secrets",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Betterleaks",
+    "url": "https://github.com/betterleaks/betterleaks",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "SecretBench comparison",
+    "url": "https://arxiv.org/pdf/2307.00714",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ }
+]

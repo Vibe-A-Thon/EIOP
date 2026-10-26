@@ -3,156 +3,335 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KnowGridFlow Competitive Research & Architecture Tracker (Master Prompt v3.0)</title>
+<title>KnowGridFlow / EOIP Progress Tracker</title>
 <style>
 :root {
   --bg: #0f1117; --surface: #1a1d27; --surface-2: #242838; --border: #2e344a;
-  --text: #f0f2f8; --text-muted: #8b949e; --accent: #58a6ff; --good: #238636;
-  --warn: #d29922; --danger: #f85149; --p0: #ff7b72;
+  --text: #f0f2f8; --text-muted: #9aa3b8; --accent: #58a6ff; --good: #3fb950;
+  --warn: #d29922; --danger: #f85149; --p0: #ff7b72; --p1: #ffb86b; --p2: #7ee0c9; --p3: #a9b4d1;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f6fa; --surface: #ffffff; --surface-2: #eef0f6; --border: #d9dce6;
+    --text: #1b1f2a; --text-muted: #5b6372; --accent: #1f6feb; --good: #1a7f37;
+    --warn: #9a6700; --danger: #cf222e; --p0: #cf222e; --p1: #9a6700; --p2: #1a7f37; --p3: #5b6372;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f5f6fa; --surface: #ffffff; --surface-2: #eef0f6; --border: #d9dce6;
+  --text: #1b1f2a; --text-muted: #5b6372; --accent: #1f6feb; --good: #1a7f37;
+  --warn: #9a6700; --danger: #cf222e; --p0: #cf222e; --p1: #9a6700; --p2: #1a7f37; --p3: #5b6372;
+}
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--text); margin: 0; padding: 24px; font-size: 14px; line-height: 1.5; }
-.container { max-width: 1440px; margin: 0 auto; }
-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-h1 { font-size: 22px; margin: 0 0 8px; color: #fff; }
-.subtitle { color: var(--text-muted); font-size: 13px; }
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-.kpi-title { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
-.kpi-value { font-size: 24px; font-weight: 700; color: #fff; }
-.kpi-sub { font-size: 11px; color: var(--good); margin-top: 4px; }
-.tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-.tab-btn { background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 13px; }
-.tab-btn.active { background: var(--surface-2); color: #fff; border-color: var(--border); }
-.filters { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-.search-input { background: var(--surface); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 13px; min-width: 280px; }
-.filter-select { background: var(--surface); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
-th { background: var(--surface-2); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; }
-tr:hover { background: rgba(255,255,255,0.02); }
-.badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-.badge-p0 { background: rgba(248,81,73,0.15); color: var(--p0); border: 1px solid rgba(248,81,73,0.4); }
-.badge-p1 { background: rgba(210,153,34,0.15); color: var(--warn); border: 1px solid rgba(210,153,34,0.4); }
-.badge-p2 { background: rgba(88,166,255,0.15); color: var(--accent); border: 1px solid rgba(88,166,255,0.4); }
-.badge-active { background: rgba(35,134,54,0.15); color: var(--good); border: 1px solid rgba(35,134,54,0.4); }
-.badge-implemented { background: rgba(35,134,54,0.15); color: var(--good); }
-.badge-partial { background: rgba(210,153,34,0.15); color: var(--warn); }
-.badge-absent { background: rgba(248,81,73,0.15); color: var(--danger); }
+body { background: var(--bg); color: var(--text); margin: 0; padding: 16px; font-size: 14px; line-height: 1.5; }
+.container { max-width: 1320px; margin: 0 auto; }
+header { margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+h1 { font-size: 20px; margin: 0 0 6px; }
+.subtitle { color: var(--text-muted); font-size: 12.5px; max-width: 70ch; }
+.theme-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; white-space: nowrap; }
+.status-banner { background: var(--surface-2); border: 1px solid var(--border); border-left: 3px solid var(--warn); border-radius: 6px; padding: 10px 14px; margin-bottom: 18px; font-size: 12.5px; color: var(--text-muted); }
+.status-banner b { color: var(--text); }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+.kpi-title { font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-muted); margin-bottom: 6px; }
+.kpi-value { font-size: 22px; font-weight: 700; }
+.kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 8px; flex-wrap: wrap; }
+.tab-btn { background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12.5px; }
+.tab-btn.active { background: var(--surface-2); color: var(--text); border-color: var(--border); }
+.filters { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.search-input { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 7px 11px; border-radius: 6px; font-size: 12.5px; min-width: 220px; flex: 1 1 220px; }
+.filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 7px 11px; border-radius: 6px; font-size: 12.5px; }
+.count-pill { font-size: 11.5px; color: var(--text-muted); align-self: center; margin-left: auto; white-space: nowrap; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 560px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th { background: var(--surface-2); color: var(--text-muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: .02em; position: sticky; top: 0; cursor: pointer; user-select: none; }
+th:hover { color: var(--text); }
+td.wrap { white-space: normal; min-width: 220px; }
+tr:hover td { background: var(--surface-2); }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; }
+.badge-p0 { background: rgba(255,123,114,0.18); color: var(--p0); }
+.badge-p1 { background: rgba(255,184,107,0.18); color: var(--p1); }
+.badge-p2 { background: rgba(126,224,201,0.18); color: var(--p2); }
+.badge-p3 { background: rgba(169,180,209,0.18); color: var(--p3); }
+.badge-proposed { background: rgba(210,153,34,0.18); color: var(--warn); }
+.empty-msg { padding: 24px; text-align: center; color: var(--text-muted); font-size: 12.5px; }
+footer { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 11px; }
+@media (max-width: 480px) {
+  body { padding: 10px; }
+  .kpi-value { font-size: 18px; }
+  th, td { padding: 6px 8px; }
+}
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <h1>KnowGridFlow Competitive Research & Architecture Program (Master Prompt v3.0)</h1>
-    <div class="subtitle">Single-Pass Competitive Intelligence → Architecture → Engineering Specification | Status: COMPLETE & VERIFIED</div>
+    <div>
+      <h1>KnowGridFlow / EOIP &mdash; Competitive Research &amp; Roadmap Progress Tracker</h1>
+      <div class="subtitle">Registry entries from <code>02-technology-registry.json</code>, gaps from <code>07-GAP-REGISTER.md</code>, requirements from <code>11-REQUIREMENTS-FINAL.md</code>. Self-contained, offline, no external network calls.</div>
+    </div>
+    <button class="theme-btn" id="themeToggle" type="button">Toggle theme</button>
   </header>
 
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-title">Technologies Researched</div>
-      <div class="kpi-value">329</div>
-      <div class="kpi-sub">Across 20 Workload Categories (C01–C20)</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Capability Taxonomy</div>
-      <div class="kpi-value">80 / 80</div>
-      <div class="kpi-sub">CAP-01 to CAP-80 Mapped & Evaluated</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Strategic Inversions</div>
-      <div class="kpi-value">15 Cards</div>
-      <div class="kpi-sub">10 Competitor Inversions + 5 Self-Inversions</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Architecture Decisions</div>
-      <div class="kpi-value">12 ADRs</div>
-      <div class="kpi-sub">ADR-KG3-01 through ADR-KG3-12 Approved</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Implementation Roadmap</div>
-      <div class="kpi-value">12 WPs</div>
-      <div class="kpi-sub">P0 Hard Gates to P3 Scale-Out</div>
-    </div>
+  <div class="status-banner"><b>Status: nothing in this package is implemented.</b> Every requirement row below reads <b>PROPOSED</b> &mdash; this tracker starts at zero. Registry entries are research findings (what exists in the competitive landscape), not EOIP build status.</div>
+
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="registry" type="button">Technology Registry</button>
+    <button class="tab-btn" data-tab="gaps" type="button">Gap Register</button>
+    <button class="tab-btn" data-tab="requirements" type="button">Requirements</button>
   </div>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('caps')">Capability Matrix (80)</button>
-    <button class="tab-btn" onclick="showTab('gaps')">Strategic Gaps (10)</button>
-    <button class="tab-btn" onclick="showTab('inversions')">Con-to-Pro Inversions (15)</button>
-    <button class="tab-btn" onclick="showTab('adrs')">Architecture Decisions (12)</button>
-    <button class="tab-btn" onclick="showTab('roadmap')">Roadmap Packages (12)</button>
+  <div id="panel-registry" class="panel">
+    <div class="filters">
+      <input class="search-input" type="text" id="registrySearch" placeholder="Search id or name...">
+      <select class="filter-select" id="registryTier"><option value="">All tiers</option></select>
+      <select class="filter-select" id="registryCategory"><option value="">All categories</option></select>
+      <select class="filter-select" id="registryStatus"><option value="">All statuses</option></select>
+      <span class="count-pill" id="registryCount"></span>
+    </div>
+    <div class="table-wrap"><table id="registryTable">
+      <thead><tr>
+        <th data-key="id">ID</th><th data-key="name" class="wrap">Name</th><th data-key="tier">Tier</th>
+        <th data-key="category">Category</th><th data-key="status">Status</th><th data-key="research_state">Research state</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table></div>
   </div>
 
-  <div class="filters">
-    <input type="text" class="search-input" id="search" placeholder="Filter by ID, technology, keyword..." onkeyup="filterTable()">
+  <div id="panel-gaps" class="panel" style="display:none">
+    <div class="filters">
+      <input class="search-input" type="text" id="gapsSearch" placeholder="Search id or title...">
+      <select class="filter-select" id="gapsPriority"><option value="">All priorities</option></select>
+      <select class="filter-select" id="gapsSeverity"><option value="">All severities</option></select>
+      <span class="count-pill" id="gapsCount"></span>
+    </div>
+    <div class="table-wrap"><table id="gapsTable">
+      <thead><tr>
+        <th data-key="id">ID</th><th data-key="title" class="wrap">Title</th><th data-key="priority">Priority</th>
+        <th data-key="class" class="wrap">Class</th><th data-key="severity">Severity</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table></div>
   </div>
 
-  <div id="table-container">
-    <table id="main-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Capability / Subject</th>
-          <th>Competitor Evidence</th>
-          <th>KnowGridFlow Baseline</th>
-          <th>Priority</th>
-          <th>Architectural Decision</th>
-        </tr>
-      </thead>
-      <tbody id="table-body">
-        <!-- Rendered dynamically -->
-      </tbody>
-    </table>
+  <div id="panel-requirements" class="panel" style="display:none">
+    <div class="filters">
+      <input class="search-input" type="text" id="reqsSearch" placeholder="Search id or title...">
+      <select class="filter-select" id="reqsPriority"><option value="">All priorities</option></select>
+      <select class="filter-select" id="reqsPhase"><option value="">All phases</option></select>
+      <span class="count-pill" id="reqsCount"></span>
+    </div>
+    <div class="table-wrap"><table id="reqsTable">
+      <thead><tr>
+        <th data-key="id">REQ-ID</th><th data-key="title" class="wrap">Title</th><th data-key="priority">Priority</th>
+        <th data-key="phase">Phase</th><th data-key="wp">WP-ID</th><th data-key="status">Status</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table></div>
   </div>
+
+  <footer>KnowGridFlow / EOIP competitive-research-v3 &middot; generated from the package's own source documents, no fabricated status &middot; works fully offline</footer>
 </div>
 
+<script>const DATA = {"registry":[{"id":"T-C01-apache-hugegraph","name":"Apache HugeGraph (Server, Hubble, Loader, Computer, Vermeer,","tier":"A","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-neo4j","name":"Neo4j (Community, Enterprise, Infinigraph, GDS, Bloom, NeoDa","tier":"A","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-amazon-neptune","name":"Amazon Neptune (Database, Neptune Analytics, RDF/SPARQL mode","tier":"A","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-azure-cosmos-db-gremlin","name":"Azure Cosmos DB for Apache Gremlin","tier":"B","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-memgraph","name":"Memgraph (with MAGE)","tier":"A","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-falkordb","name":"FalkorDB","tier":"A","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-redisgraph","name":"RedisGraph (historical)","tier":"C","category":"C01","status":"end-of-life","research_state":"COMPLETE"},{"id":"T-C01-tigergraph","name":"TigerGraph","tier":"A","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-janusgraph","name":"JanusGraph","tier":"A","category":"C01","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C01-kuzu","name":"Kùzu and successors/forks (LadybugDB, RyuGraph, Bighorn)","tier":"B","category":"C01","status":"archived","research_state":"COMPLETE"},{"id":"T-C01-arangodb","name":"ArangoDB","tier":"B","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-nebulagraph","name":"NebulaGraph","tier":"B","category":"C01","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C01-arcadedb","name":"ArcadeDB","tier":"B","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-apache-age","name":"Apache AGE","tier":"B","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-typedb","name":"TypeDB (TypeQL)","tier":"B","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-terminusdb","name":"TerminusDB","tier":"B","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-dgraph","name":"Dgraph","tier":"B","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-graphscope","name":"GraphScope / GraphScope Flex","tier":"B","category":"C01","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C01-oracle-graph","name":"Oracle Graph (PGX / Property Graph, SQL/PGQ)","tier":"B","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-spanner-graph","name":"Google Spanner Graph","tier":"B","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-puppygraph","name":"PuppyGraph","tier":"B","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-tugraph","name":"TuGraph","tier":"C","category":"C01","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C01-ultipa","name":"Ultipa","tier":"C","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-surrealdb","name":"SurrealDB","tier":"C","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-sap-hana-graph","name":"SAP HANA Graph","tier":"C","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-aerospike-graph","name":"Aerospike Graph","tier":"C","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-duckpgq","name":"DuckPGQ","tier":"C","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-cozodb","name":"CozoDB","tier":"C","category":"C01","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C01-helixdb","name":"HelixDB","tier":"C","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-galaxybase","name":"Galaxybase","tier":"C","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C01-orientdb","name":"OrientDB (historical)","tier":"C","category":"C01","status":"active","research_state":"COMPLETE"},{"id":"T-C02-stardog","name":"Stardog (incl. Voicebox)","tier":"A","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-ontotext-graphdb","name":"Ontotext GraphDB (now Graphwise GraphDB)","tier":"A","category":"C02","status":"renamed","research_state":"COMPLETE"},{"id":"T-C02-apache-jena","name":"Apache Jena (TDB2, Fuseki, rules, SHACL)","tier":"A","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-allegrograph","name":"AllegroGraph","tier":"B","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-eclipse-rdf4j","name":"Eclipse RDF4J","tier":"B","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-openlink-virtuoso","name":"OpenLink Virtuoso","tier":"B","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-rdfox","name":"RDFox","tier":"B","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-oxigraph","name":"Oxigraph","tier":"B","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-qlever","name":"QLever","tier":"B","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-anzo","name":"Altair Graph Studio / Anzo / AnzoGraph (Siemens RapidMiner G","tier":"B","category":"C02","status":"renamed","research_state":"COMPLETE"},{"id":"T-C02-blazegraph","name":"Blazegraph","tier":"C","category":"C02","status":"archived","research_state":"COMPLETE"},{"id":"T-C02-millenniumdb","name":"MillenniumDB","tier":"C","category":"C02","status":"unknown","research_state":"COMPLETE"},{"id":"T-C02-corese","name":"Corese","tier":"C","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-hdt","name":"HDT (compressed RDF)","tier":"C","category":"C02","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C02-comunica","name":"Comunica","tier":"C","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-nemo","name":"Nemo (Datalog reasoner)","tier":"C","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C02-vlog","name":"VLog","tier":"C","category":"C02","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C02-souffle","name":"Souffle","tier":"C","category":"C02","status":"active","research_state":"COMPLETE"},{"id":"T-C03-protege","name":"Protégé and WebProtégé","tier":"A","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-topbraid-edg","name":"TopBraid EDG (TQ Data Foundation)","tier":"A","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-poolparty","name":"PoolParty (Graphwise Graph Modeling)","tier":"A","category":"C03","status":"renamed","research_state":"COMPLETE"},{"id":"T-C03-metaphactory","name":"metaphactory","tier":"A","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-vocbench","name":"VocBench 3","tier":"B","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-timbr","name":"Timbr.ai","tier":"B","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-linkml","name":"LinkML","tier":"B","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-robot-odk","name":"ROBOT and Ontology Development Kit (ODK)","tier":"B","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-pyshacl","name":"pySHACL","tier":"B","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-owl-reasoners","name":"OWL reasoners: ELK, HermiT, Openllet/Pellet, Konclude, FaCT+","tier":"B","category":"C03","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C03-wikibase","name":"Wikibase and Semantic MediaWiki","tier":"B","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-owl-api","name":"OWL API","tier":"C","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-owlready2","name":"Owlready2","tier":"C","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-oops","name":"OOPS! ontology pitfall scanner","tier":"C","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-skos-tooling","name":"SKOS tooling (Skosmos, skosify, qSKOS)","tier":"C","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-widoco","name":"Widoco","tier":"C","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-grafo","name":"Gra.fo","tier":"C","category":"C03","status":"end-of-life","research_state":"COMPLETE"},{"id":"T-C03-ontotext-refine","name":"Ontotext Refine","tier":"C","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-ontoportal","name":"OntoPortal / BioPortal","tier":"C","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-ontouml","name":"OntoUML ecosystem","tier":"C","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C03-kbpedia","name":"KBpedia","tier":"C","category":"C03","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C03-upper-ontologies","name":"Upper/domain ontologies (BFO, gist, DOLCE, schema.org, FIBO,","tier":"C","category":"C03","status":"active","research_state":"COMPLETE"},{"id":"T-C04-senzing","name":"Senzing (embeddable real-time entity resolution SDK)","tier":"A","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-splink","name":"Splink (probabilistic record linkage, Ministry of Justice UK","tier":"A","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-zingg","name":"Zingg","tier":"A","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-ontop","name":"Ontop (virtual knowledge graph / OBDA)","tier":"A","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-dedupe","name":"Dedupe","tier":"B","category":"C04","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C04-jedai","name":"JedAI (JedAI Toolkit and pyJedAI)","tier":"B","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-ditto","name":"Ditto (deep entity matching)","tier":"B","category":"C04","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C04-llm-entity-matching","name":"LLM-assisted entity matching (approach)","tier":"B","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-rml-tools","name":"RML ecosystem: RMLMapper, RML-Streamer, YARRRML, Morph-KGC, ","tier":"B","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-openrefine","name":"OpenRefine and Wikidata reconciliation","tier":"B","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-ontology-alignment","name":"Ontology alignment: LogMap, AgreementMakerLight, OAEI system","tier":"B","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-schema-inference","name":"JSON/CSV schema inference and automatic entity-relationship ","tier":"B","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-sparql-generate","name":"SPARQL-Generate","tier":"C","category":"C04","status":"active","research_state":"COMPLETE"},{"id":"T-C04-karma","name":"Karma","tier":"C","category":"C04","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C04-magellan","name":"py_entitymatching (Magellan)","tier":"C","category":"C04","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C04-recordlinkage","name":"recordlinkage (Python)","tier":"C","category":"C04","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C05-apache-tika","name":"Apache Tika","tier":"B","category":"C05","status":"active","research_state":"COMPLETE"},{"id":"T-C05-unstructured","name":"Unstructured","tier":"B","category":"C05","status":"active","research_state":"COMPLETE"},{"id":"T-C05-docling","name":"Docling","tier":"B","category":"C05","status":"active","research_state":"COMPLETE"},{"id":"T-C05-marker","name":"Marker","tier":"C","category":"C05","status":"active","research_state":"COMPLETE"},{"id":"T-C05-spacy","name":"spaCy","tier":"B","category":"C05","status":"active","research_state":"COMPLETE"},{"id":"T-C05-gliner","name":"GLiNER","tier":"B","category":"C05","status":"active","research_state":"COMPLETE"},{"id":"T-C05-rebel-relik","name":"REBEL and ReLiK","tier":"C","category":"C05","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C05-coref-event-table","name":"Coreference, event and table extraction tooling","tier":"C","category":"C05","status":"mixed","research_state":"COMPLETE"},{"id":"T-C05-llm-schema-extraction","name":"LLM schema-guided extraction (Neo4j LLM Graph Builder, Llama","tier":"B","category":"C05","status":"active","research_state":"COMPLETE"},{"id":"T-C05-presidio","name":"Microsoft Presidio","tier":"B","category":"C05","status":"renamed","research_state":"COMPLETE"},{"id":"T-C05-secret-scanners","name":"Secret scanners (gitleaks, TruffleHog, detect-secrets)","tier":"B","category":"C05","status":"mixed","research_state":"COMPLETE"},{"id":"T-C06-atlan","name":"Atlan","tier":"B","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-collibra","name":"Collibra","tier":"B","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-data-world","name":"data.world","tier":"B","category":"C06","status":"acquired","research_state":"COMPLETE"},{"id":"T-C06-datahub","name":"DataHub","tier":"B","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-openmetadata","name":"OpenMetadata","tier":"B","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-apache-atlas","name":"Apache Atlas","tier":"B","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-microsoft-purview","name":"Microsoft Purview","tier":"B","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-ovaledge","name":"OvalEdge","tier":"C","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-actian-dip","name":"Actian Data Intelligence Platform","tier":"C","category":"C06","status":"renamed","research_state":"COMPLETE"},{"id":"T-C06-egeria","name":"Egeria","tier":"C","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-amundsen","name":"Amundsen","tier":"C","category":"C06","status":"archived","research_state":"COMPLETE"},{"id":"T-C06-unity-catalog","name":"Unity Catalog (OSS)","tier":"C","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-apache-polaris","name":"Apache Polaris","tier":"C","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-alation","name":"Alation","tier":"C","category":"C06","status":"active","research_state":"COMPLETE"},{"id":"T-C06-informatica-claire","name":"Informatica (CLAIRE/IDMC)","tier":"C","category":"C06","status":"acquired","research_state":"COMPLETE"},{"id":"T-C06-google-dataplex","name":"Google Dataplex","tier":"C","category":"C06","status":"renamed","research_state":"COMPLETE"},{"id":"T-C07-palantir-foundry","name":"Palantir Foundry Ontology and AIP","tier":"A","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-glean-enterprise","name":"Glean (enterprise search, Knowledge Graph and Enterprise Gra","tier":"A","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-atlassian-rovo","name":"Atlassian Rovo and Teamwork Graph","tier":"A","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-microsoft-graph-copilot-fabric","name":"Microsoft Graph, M365 Copilot connectors, Fabric graph/ontol","tier":"A","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-servicenow-kg","name":"ServiceNow Knowledge Graph, CMDB/CSDM, Workflow Data Fabric,","tier":"A","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-onyx","name":"Onyx (formerly Danswer)","tier":"A","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-sap-knowledge-graph","name":"SAP knowledge graph","tier":"B","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-salesforce-data-cloud","name":"Salesforce Data Cloud (now Data 360)","tier":"B","category":"C07","status":"renamed","research_state":"COMPLETE"},{"id":"T-C07-diffbot","name":"Diffbot Knowledge Graph","tier":"B","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-writer-kg","name":"Writer Knowledge Graph","tier":"B","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-azure-digital-twins","name":"Azure Digital Twins and DTDL","tier":"B","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-eclipse-ditto","name":"Eclipse Ditto","tier":"C","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-process-mining","name":"Object-centric process mining: Celonis, PM4Py, OCEL 2.0","tier":"B","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C07-ona","name":"Organisational network analysis (pattern)","tier":"C","category":"C07","status":"active","research_state":"COMPLETE"},{"id":"T-C08-microsoft-graphrag","name":"Microsoft GraphRAG and LazyGraphRAG","tier":"A","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-lightrag","name":"LightRAG","tier":"A","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-hipporag","name":"HippoRAG and HippoRAG 2","tier":"A","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-neo4j-graphrag","name":"Neo4j GraphRAG package","tier":"A","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-graphiti-zep","name":"Zep and Graphiti (temporal context graph for agent memory)","tier":"A","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-cognee","name":"Cognee","tier":"A","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-mem0","name":"Mem0","tier":"A","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-letta","name":"Letta (MemGPT)","tier":"A","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-llamaindex-pgi","name":"LlamaIndex PropertyGraphIndex","tier":"A","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-openspg-kag","name":"OpenSPG / KAG","tier":"A","category":"C08","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C08-fast-graphrag","name":"fast-graphrag","tier":"B","category":"C08","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C08-whyhow","name":"WhyHow.AI","tier":"B","category":"C08","status":"unknown","research_state":"COMPLETE"},{"id":"T-C08-raptor","name":"RAPTOR","tier":"B","category":"C08","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C08-think-on-graph","name":"Think-on-Graph","tier":"B","category":"C08","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C08-ragflow","name":"RAGFlow","tier":"B","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-haystack","name":"Haystack","tier":"B","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-text-to-query","name":"Text-to-query systems (Text2Cypher, text-to-Gremlin, text-to","tier":"B","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-langchain-langgraph","name":"LangChain and LangGraph","tier":"B","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-nano-graphrag","name":"nano-graphrag","tier":"C","category":"C08","status":"unknown","research_state":"COMPLETE"},{"id":"T-C08-infranodus","name":"InfraNodus","tier":"C","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-contextclue","name":"ContextClue Graph Builder","tier":"C","category":"C08","status":"unknown","research_state":"COMPLETE"},{"id":"T-C08-harmony-mcp","name":"Harmony MCP","tier":"C","category":"C08","status":"unknown","research_state":"COMPLETE"},{"id":"T-C08-mempalace","name":"MemPalace","tier":"C","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-mythos","name":"MythOS","tier":"C","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-claude-mem","name":"claude-mem","tier":"C","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-g-retriever","name":"G-Retriever","tier":"C","category":"C08","status":"unknown","research_state":"COMPLETE"},{"id":"T-C08-pathrag","name":"PathRAG","tier":"C","category":"C08","status":"unknown","research_state":"COMPLETE"},{"id":"T-C08-minirag","name":"MiniRAG","tier":"C","category":"C08","status":"unknown","research_state":"COMPLETE"},{"id":"T-C08-structrag","name":"StructRAG","tier":"C","category":"C08","status":"unknown","research_state":"COMPLETE"},{"id":"T-C08-r2r","name":"R2R","tier":"C","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-kotaemon","name":"Kotaemon","tier":"C","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-txtai","name":"txtai","tier":"C","category":"C08","status":"active","research_state":"COMPLETE"},{"id":"T-C08-langmem","name":"LangMem","tier":"C","category":"C08","status":"unknown","research_state":"COMPLETE"},{"id":"T-C08-a-mem","name":"A-MEM","tier":"C","category":"C08","status":"unknown","research_state":"COMPLETE"},{"id":"T-C09-mcp","name":"Model Context Protocol (incl. graph-database MCP servers)","tier":"A","category":"C09","status":"active","research_state":"COMPLETE"},{"id":"T-C09-a2a","name":"Agent2Agent (A2A)","tier":"B","category":"C09","status":"active","research_state":"COMPLETE"},{"id":"T-C09-agent-frameworks","name":"Agent frameworks (AutoGen/AG2, MAF/Semantic Kernel, CrewAI, ","tier":"B","category":"C09","status":"mixed","research_state":"COMPLETE"},{"id":"T-C09-dspy","name":"DSPy","tier":"B","category":"C09","status":"active","research_state":"COMPLETE"},{"id":"T-C09-ollama","name":"Ollama","tier":"A","category":"C09","status":"active","research_state":"COMPLETE"},{"id":"T-C09-llama-cpp","name":"llama.cpp","tier":"B","category":"C09","status":"active","research_state":"COMPLETE"},{"id":"T-C09-vllm-sglang","name":"vLLM and SGLang","tier":"B","category":"C09","status":"active","research_state":"COMPLETE"},{"id":"T-C09-hf-tei","name":"Hugging Face Text Embeddings Inference","tier":"B","category":"C09","status":"active","research_state":"COMPLETE"},{"id":"T-C09-onnx-runtime","name":"ONNX Runtime","tier":"B","category":"C09","status":"active","research_state":"COMPLETE"},{"id":"T-C09-local-embeddings","name":"Local embedding and reranker models","tier":"B","category":"C09","status":"active","research_state":"COMPLETE"},{"id":"T-C09-guardrails","name":"Guardrails (NeMo Guardrails, Llama Guard, prompt-injection d","tier":"B","category":"C09","status":"active","research_state":"COMPLETE"},{"id":"T-C10-qdrant","name":"Qdrant","tier":"A","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C10-pgvector","name":"pgvector","tier":"A","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C10-opensearch","name":"OpenSearch (k-NN, full-text)","tier":"A","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C10-milvus","name":"Milvus","tier":"B","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C10-weaviate","name":"Weaviate","tier":"B","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C10-lancedb","name":"LanceDB","tier":"B","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C10-elasticsearch","name":"Elasticsearch","tier":"B","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C10-vespa","name":"Vespa","tier":"B","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C10-chroma","name":"Chroma","tier":"C","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C10-tantivy-lucene","name":"Tantivy and Lucene","tier":"C","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C10-native-graph-vector","name":"Native vector indexes inside graph engines","tier":"C","category":"C10","status":"active","research_state":"COMPLETE"},{"id":"T-C11-pyg","name":"PyTorch Geometric","tier":"A","category":"C11","status":"active","research_state":"COMPLETE"},{"id":"T-C11-dgl","name":"DGL (Deep Graph Library)","tier":"B","category":"C11","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C11-pykeen","name":"PyKEEN","tier":"B","category":"C11","status":"active","research_state":"COMPLETE"},{"id":"T-C11-ultra","name":"ULTRA (KG foundation model)","tier":"B","category":"C11","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C11-relbench","name":"Relational deep learning (RelBench)","tier":"B","category":"C11","status":"active","research_state":"COMPLETE"},{"id":"T-C11-graphstorm","name":"GraphStorm","tier":"C","category":"C11","status":"active","research_state":"COMPLETE"},{"id":"T-C11-ampligraph","name":"AmpliGraph","tier":"C","category":"C11","status":"active","research_state":"COMPLETE"},{"id":"T-C11-dgl-ke","name":"DGL-KE","tier":"C","category":"C11","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C11-pyg-temporal","name":"PyTorch Geometric Temporal","tier":"C","category":"C11","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C11-graphgym","name":"GraphGym","tier":"C","category":"C11","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C11-graph-transformers","name":"Graph transformers (Graphormer, GraphGPS)","tier":"C","category":"C11","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C11-tgn","name":"Temporal GNNs (TGN and frameworks)","tier":"C","category":"C11","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C11-torchkge-libkge","name":"TorchKGE and LibKGE","tier":"C","category":"C11","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C11-neuro-symbolic","name":"Neuro-symbolic frameworks (Scallop, DeepProbLog, Logic Tenso","tier":"C","category":"C11","status":"active","research_state":"COMPLETE"},{"id":"T-C12-tinkerpop","name":"Apache TinkerPop / Gremlin","tier":"A","category":"C12","status":"active","research_state":"COMPLETE"},{"id":"T-C12-networkx","name":"NetworkX","tier":"B","category":"C12","status":"active","research_state":"COMPLETE"},{"id":"T-C12-igraph","name":"igraph","tier":"B","category":"C12","status":"active","research_state":"COMPLETE"},{"id":"T-C12-rustworkx","name":"Rustworkx","tier":"B","category":"C12","status":"active","research_state":"COMPLETE"},{"id":"T-C12-graphblas","name":"GraphBLAS (SuiteSparse)","tier":"B","category":"C12","status":"active","research_state":"COMPLETE"},{"id":"T-C12-raphtory","name":"Raphtory","tier":"B","category":"C12","status":"active","research_state":"COMPLETE"},{"id":"T-C12-graphx-graphframes","name":"GraphX and GraphFrames (Spark)","tier":"C","category":"C12","status":"active","research_state":"COMPLETE"},{"id":"T-C12-cugraph","name":"RAPIDS cuGraph","tier":"C","category":"C12","status":"active","research_state":"COMPLETE"},{"id":"T-C12-graphology","name":"Graphology","tier":"C","category":"C12","status":"active","research_state":"COMPLETE"},{"id":"T-C12-ligra-gap","name":"Ligra and GAP benchmark suite","tier":"C","category":"C12","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C13-openlineage-marquez","name":"OpenLineage and Marquez","tier":"B","category":"C13","status":"active (OpenLineage); maintenance (Marquez)","research_state":"COMPLETE"},{"id":"T-C13-prov-o","name":"W3C PROV / PROV-O","tier":"B","category":"C13","status":"active (stable standard)","research_state":"COMPLETE"},{"id":"T-C13-event-sourcing","name":"Event sourcing, CQRS and bitemporal modelling (pattern)","tier":"B","category":"C13","status":"active","research_state":"COMPLETE"},{"id":"T-C13-xtdb","name":"XTDB","tier":"B","category":"C13","status":"active","research_state":"COMPLETE"},{"id":"T-C13-datomic","name":"Datomic","tier":"B","category":"C13","status":"active","research_state":"COMPLETE"},{"id":"T-C13-dolt","name":"Dolt","tier":"B","category":"C13","status":"active","research_state":"COMPLETE"},{"id":"T-C13-fluree","name":"Fluree","tier":"C","category":"C13","status":"active","research_state":"COMPLETE"},{"id":"T-C13-lakefs","name":"lakeFS","tier":"C","category":"C13","status":"active","research_state":"COMPLETE"},{"id":"T-C13-table-time-travel","name":"Apache Iceberg / Delta Lake time travel","tier":"C","category":"C13","status":"active","research_state":"COMPLETE"},{"id":"T-C13-spline","name":"Spline","tier":"C","category":"C13","status":"active","research_state":"COMPLETE"},{"id":"T-C13-aeong","name":"AeonG-style temporal graph research","tier":"C","category":"C13","status":"unknown","research_state":"COMPLETE"},{"id":"T-C14-debezium","name":"Debezium","tier":"B","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C14-kafka","name":"Apache Kafka and Kafka Connect","tier":"B","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C14-nats","name":"NATS","tier":"B","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C14-airbyte","name":"Airbyte","tier":"B","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C14-temporal","name":"Temporal (durable workflows)","tier":"B","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C14-redpanda","name":"Redpanda and Redpanda Connect (Benthos)","tier":"C","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C14-flink","name":"Apache Flink","tier":"C","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C14-nifi","name":"Apache NiFi","tier":"C","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C14-seatunnel","name":"Apache SeaTunnel","tier":"C","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C14-orchestrators","name":"Dagster, Airflow, Prefect","tier":"C","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C14-dlt-meltano","name":"dlt, Meltano/Singer, Apache Hop","tier":"C","category":"C14","status":"active","research_state":"COMPLETE"},{"id":"T-C19-keycloak","name":"Keycloak / OIDC / SAML","tier":"B","category":"C19","status":"active","research_state":"COMPLETE"},{"id":"T-C19-opa","name":"Open Policy Agent / Rego","tier":"B","category":"C19","status":"active","research_state":"COMPLETE"},{"id":"T-C19-rebac","name":"ReBAC engines: OpenFGA, SpiceDB, Permify","tier":"B","category":"C19","status":"active","research_state":"COMPLETE"},{"id":"T-C19-cedar-cerbos","name":"Cedar and Cerbos","tier":"B","category":"C19","status":"active","research_state":"COMPLETE"},{"id":"T-C19-vault-openbao","name":"HashiCorp Vault and OpenBao","tier":"B","category":"C19","status":"active","research_state":"COMPLETE"},{"id":"T-C19-supply-chain","name":"Supply chain: Sigstore/cosign, Syft, Grype, Trivy, SLSA, in-","tier":"B","category":"C19","status":"active","research_state":"COMPLETE"},{"id":"T-C19-opentelemetry","name":"OpenTelemetry, Prometheus, Grafana","tier":"B","category":"C19","status":"active","research_state":"COMPLETE"},{"id":"T-C19-llm-threat-guidance","name":"OWASP Top 10 for LLM Apps, agentic-AI guidance, MITRE ATLAS","tier":"B","category":"C19","status":"active","research_state":"COMPLETE"},{"id":"T-C19-auth-aware-search","name":"Authorization-aware search (pattern)","tier":"C","category":"C19","status":"active","research_state":"COMPLETE"},{"id":"T-C15-sourcegraph","name":"Sourcegraph / Cody","tier":"A","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-tree-sitter","name":"Tree-sitter","tier":"A","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-scip-lsif","name":"SCIP and LSIF","tier":"A","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-glean-meta","name":"Glean (Meta code indexing)","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-codeql","name":"CodeQL","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-joern","name":"Joern","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-semgrep","name":"Semgrep","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-greptile","name":"Greptile","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-augment-context","name":"Augment Context Engine","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-stack-graphs","name":"GitHub stack-graphs","tier":"B","category":"C15","status":"archived","research_state":"COMPLETE"},{"id":"T-C15-kythe","name":"Kythe","tier":"C","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-lsp","name":"Language Server Protocol ecosystems","tier":"C","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-graphify","name":"Graphify (Graphify-Labs/graphify)","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-codegraph","name":"CodeGraph (colbymchenry/codegraph)","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-code-review-graph","name":"code-review-graph (tirth8205)","tier":"C","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-repomix","name":"Repomix","tier":"C","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-grepai","name":"grepai (yoanbernabeu)","tier":"C","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-gitnexus","name":"GitNexus (abhigyanpatwari)","tier":"C","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-openrewrite","name":"OpenRewrite / Moderne","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-cast-imaging","name":"CAST Imaging","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-backstage","name":"Backstage, Port, Cortex (software catalogs)","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-dependency-track","name":"Dependency-Track, SBOM graphs, deps.dev, OSV","tier":"B","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-srcml","name":"srcML","tier":"C","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-scitools-understand","name":"SciTools Understand","tier":"C","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-sonarqube","name":"SonarQube","tier":"C","category":"C15","status":"active","research_state":"COMPLETE"},{"id":"T-C15-repo-maps","name":"Aider repo map; Cursor and Continue codebase indexes","tier":"C","category":"C15","status":"unknown","research_state":"COMPLETE"},{"id":"T-C16-cytoscape","name":"Cytoscape and Cytoscape.js","tier":"B","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-sigma","name":"Sigma.js","tier":"B","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-yfiles","name":"yFiles","tier":"B","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-keylines-regraph","name":"KeyLines and ReGraph (Cambridge Intelligence)","tier":"B","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-linkurious","name":"Linkurious Enterprise and Ogma","tier":"B","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-graphxr","name":"Kineviz GraphXR","tier":"B","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-gephi","name":"Gephi","tier":"B","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-graphistry","name":"Graphistry","tier":"B","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-graphviz","name":"Graphviz","tier":"C","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-constellation","name":"Constellation","tier":"C","category":"C16","status":"unknown","research_state":"COMPLETE"},{"id":"T-C16-yed","name":"yEd","tier":"C","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-citespace-vosviewer","name":"CiteSpace and VOSviewer","tier":"C","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-cosmograph","name":"Cosmograph / cosmos.gl","tier":"C","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-d3","name":"D3.js","tier":"C","category":"C16","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C16-vis-network","name":"vis-network","tier":"C","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-antv-g6","name":"AntV G6","tier":"C","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-neo4j-nvl","name":"Neo4j NVL","tier":"C","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-react-force-graph-reagraph","name":"react-force-graph and Reagraph","tier":"C","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C16-layout-engines","name":"Layout engines (ELK/elkjs, Dagre, WebCola, ForceAtlas2)","tier":"C","category":"C16","status":"mixed","research_state":"COMPLETE"},{"id":"T-C16-kumu-thebrain","name":"Kumu and TheBrain","tier":"C","category":"C16","status":"active","research_state":"COMPLETE"},{"id":"T-C17-atlas-research","name":"\"Atlas\" research-mapping product","tier":"C","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C17-researchrabbit","name":"ResearchRabbit","tier":"C","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C17-connected-papers","name":"Connected Papers","tier":"C","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C17-openalex","name":"OpenAlex","tier":"B","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C17-wikidata","name":"Wikidata","tier":"B","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C17-semantic-scholar","name":"Semantic Scholar","tier":"C","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C17-litmaps-inciteful","name":"Litmaps and Inciteful","tier":"C","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C17-scite","name":"scite","tier":"B","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C17-elicit-consensus","name":"Elicit and Consensus","tier":"C","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C17-obsidian","name":"Obsidian","tier":"B","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C17-pkm-tools","name":"Logseq, Tana, Roam Research, Heptabase","tier":"C","category":"C17","status":"active","research_state":"COMPLETE"},{"id":"T-C18-rdf","name":"RDF 1.1/1.2, RDF-star, serialisations","tier":"B","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-owl2","name":"RDFS and OWL 2 profiles","tier":"B","category":"C18","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C18-shacl","name":"SHACL Core / SHACL-SPARQL / SHACL 1.2","tier":"B","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-sparql","name":"SPARQL 1.1/1.2","tier":"B","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-opencypher","name":"Cypher / openCypher","tier":"B","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-gql","name":"ISO/IEC 39075 GQL","tier":"B","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-sql-pgq","name":"SQL/PGQ (ISO/IEC 9075-16)","tier":"B","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-pg-schema","name":"PG-Schema and LPG schema proposals","tier":"B","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-odrl-dpv","name":"ODRL and DPV","tier":"B","category":"C18","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C18-skos-std","name":"SKOS","tier":"C","category":"C18","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C18-dcat-schemaorg","name":"DCAT and schema.org","tier":"C","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-graphql","name":"GraphQL","tier":"C","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-graph-formats","name":"GraphAr, GraphML, GEXF","tier":"C","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-tabular-formats","name":"CSV, Parquet, Apache Arrow","tier":"C","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-api-specs","name":"OpenAPI and AsyncAPI","tier":"C","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-ngsi-ld","name":"NGSI-LD","tier":"C","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-geosparql-owltime","name":"GeoSPARQL and OWL-Time","tier":"C","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-cloudevents","name":"CloudEvents","tier":"C","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C18-verifiable-credentials","name":"W3C Verifiable Credentials","tier":"C","category":"C18","status":"active","research_state":"COMPLETE"},{"id":"T-C20-ldbc","name":"LDBC (SNB Interactive/BI, FinBench, Graphalytics, SPB)","tier":"B","category":"C20","status":"active","research_state":"COMPLETE"},{"id":"T-C20-graphrag-bench","name":"GraphRAG-Bench","tier":"B","category":"C20","status":"active","research_state":"COMPLETE"},{"id":"T-C20-ragas","name":"RAGAS","tier":"B","category":"C20","status":"active","research_state":"COMPLETE"},{"id":"T-C20-beir","name":"BEIR","tier":"B","category":"C20","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C20-text2cypher-bench","name":"Text2Cypher / CypherBench-style sets","tier":"B","category":"C20","status":"active","research_state":"COMPLETE"},{"id":"T-C20-memory-benchmarks","name":"LoCoMo and LongMemEval","tier":"C","category":"C20","status":"active","research_state":"COMPLETE"},{"id":"T-C20-rdf-benchmarks","name":"LUBM, BSBM, WatDiv, gMark","tier":"C","category":"C20","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C20-ogb","name":"Open Graph Benchmark","tier":"C","category":"C20","status":"maintenance","research_state":"COMPLETE"},{"id":"T-C20-multihop-qa","name":"HotpotQA, 2WikiMultiHopQA, MuSiQue, MultiHop-RAG, CRAG, STaR","tier":"C","category":"C20","status":"active","research_state":"COMPLETE"},{"id":"T-C20-mteb","name":"MTEB","tier":"C","category":"C20","status":"active","research_state":"COMPLETE"},{"id":"T-C20-rag-evaluators","name":"ARES and TruLens","tier":"C","category":"C20","status":"unknown","research_state":"COMPLETE"},{"id":"T-C20-code-benchmarks","name":"SWE-bench, RepoBench, CrossCodeEval, CodeSearchNet","tier":"C","category":"C20","status":"mixed","research_state":"COMPLETE"},{"id":"T-C20-oaei-er-datasets","name":"OAEI and standard entity-resolution datasets","tier":"C","category":"C20","status":"active","research_state":"COMPLETE"},{"id":"T-C20-shacl-test-suites","name":"W3C SHACL, JSON-LD and OWL test suites","tier":"C","category":"C20","status":"active","research_state":"COMPLETE"}],"gaps":[{"id":"GAP-19","title":"No licence allow-list in CI; several attractive components block OEM","priority":"P0","class":"Differentiator; Operability","severity":"High"},{"id":"GAP-08","title":"Egress vault uses an unauthenticated XOR keystream cipher","priority":"P0","class":"Security","severity":"High"},{"id":"GAP-36","title":"Local model runtime pinned to an old, root, unauthenticated Ollama","priority":"P0","class":"Security + Operability","severity":"High"},{"id":"GAP-09","title":"MCP surface authenticates one shared bearer token; tools unannotated","priority":"P0","class":"Security","severity":"Critical"},{"id":"GAP-01","title":"Backend adapters unproven live; known adapter defects","priority":"P0","class":"Quality (live parity unproven)","severity":"High"},{"id":"GAP-07","title":"Epistemic planes not enforced store-wide","priority":"P0","class":"Differentiator","severity":"High"},{"id":"GAP-43","title":"No unified evaluation harness with regression gates","priority":"P0","class":"Quality","severity":"High"},{"id":"GAP-02","title":"Source-ACL enforcement not applied on deployed retrieval, answer, memory, export and MCP paths","priority":"P0","class":"Security","severity":"Critical"},{"id":"GAP-03","title":"Tenant isolation not enforced in graph adapters, caches, logs or memory","priority":"P0","class":"Security","severity":"Critical"},{"id":"GAP-34","title":"Agent memory lacks ACL, tenant, evidence and validity fields","priority":"P0","class":"Security + Partial","severity":"High"},{"id":"GAP-05","title":"String-built Gremlin and regex-only injection defences","priority":"P0","class":"Security; Security + Interoperability","severity":"High"},{"id":"GAP-42","title":"Restore drills not run","priority":"P1","class":"Operability","severity":"High"},{"id":"GAP-44","title":"No SBOM/signing pipeline; scanners unpinned","priority":"P1","class":"Security","severity":"High"},{"id":"GAP-11","title":"SHACL conformance unproven","priority":"P1","class":"Quality","severity":"High"},{"id":"GAP-21","title":"Air-gapped install unverified; Neptune cannot be air-gapped","priority":"P1","class":"Operability","severity":"High"},{"id":"GAP-46","title":"No persistent vector/full-text engine; hashing embedder default","priority":"P1","class":"Partial; Performance","severity":"High"},{"id":"GAP-10","title":"PII detection narrow; no secret scanning at ingest; raw values retained","priority":"P1","class":"Security","severity":"High"},{"id":"GAP-30","title":"One-node sizing profiles unmeasured","priority":"P1","class":"Operability","severity":"Medium"},{"id":"GAP-40","title":"Digital-thread journeys J1/J9/J10 untested end to end","priority":"P1","class":"Differentiator","severity":"High"},{"id":"GAP-15","title":"Claims and contradictions held in memory only","priority":"P1","class":"Partial","severity":"High"},{"id":"GAP-14","title":"Ontology proposal from arbitrary JSON not wired into governance","priority":"P1","class":"Partial -> differentiator","severity":"High"},{"id":"GAP-17","title":"Ontology/data branches not persisted on Git; governance mostly unmounted","priority":"P1","class":"Partial; Partial -> differentiator","severity":"High"},{"id":"GAP-20","title":"Audit trail not tamper-evident","priority":"P1","class":"Security","severity":"Medium"},{"id":"GAP-28","title":"No parser-neutral evidence-span anchors for documents","priority":"P1","class":"Partial","severity":"Medium"},{"id":"GAP-39","title":"Code graph is syntactic (2 languages); no compiler-grade symbols","priority":"P1","class":"Partial","severity":"High"},{"id":"GAP-35","title":"LLM NL-query tier emits raw queries rather than typed plan candidates","priority":"P1","class":"Partial -> differentiator","severity":"Medium"},{"id":"GAP-13","title":"Identity limited to persons; probabilistic ER is an unintegrated reimplementation","priority":"P1","class":"Partial","severity":"High"},{"id":"GAP-04","title":"Portable query IR not on the production path","priority":"P1","class":"Competitive deficit -> differentiator","severity":"High"},{"id":"GAP-26","title":"General-enterprise connector breadth and permission sync","priority":"P1","class":"Partial (breadth)","severity":"Medium"},{"id":"GAP-18","title":"No dry-run migration with impacted-query analysis and rollback (J4)","priority":"P2","class":"Partial","severity":"High"},{"id":"GAP-25","title":"Virtualisation builds SQL by string interpolation (latent)","priority":"P2","class":"Security + Partial","severity":"Medium"},{"id":"GAP-41","title":"Large-graph rendering unmeasured","priority":"P2","class":"UX","severity":"Medium"},{"id":"GAP-23","title":"OWL reasoning adapters return canned results","priority":"P2","class":"Partial; Quality","severity":"Medium"},{"id":"GAP-06","title":"Multi-hop queries lack path modes and push-down","priority":"P2","class":"Performance","severity":"High"},{"id":"GAP-12","title":"No typed constraint layer (cardinality/roles/value ranges) at the mutation gateway","priority":"P2","class":"Partial","severity":"High"},{"id":"GAP-16","title":"Bitemporal reads unindexed and untested against an oracle","priority":"P2","class":"Differentiator (verify)","severity":"Medium"},{"id":"GAP-29","title":"No OpenLineage interoperability","priority":"P2","class":"Interoperability","severity":"Low"},{"id":"GAP-33","title":"GraphRAG layers not benchmarked against strong RAG; summaries not ACL-scoped","priority":"P2","class":"Research gap","severity":"Medium"},{"id":"GAP-37","title":"Algorithms pure Python; no fast engine port","priority":"P2","class":"Performance","severity":"Medium"},{"id":"GAP-31","title":"Bulk-load path bypass risk and unmeasured throughput","priority":"P2","class":"Performance","severity":"Medium"},{"id":"GAP-32","title":"No supernode controls","priority":"P3","class":"Performance","severity":"Medium"},{"id":"GAP-24","title":"SPARQL endpoint not mounted; LPG<->RDF loss unmeasured","priority":"P3","class":"Interoperability; Partial","severity":"Medium"},{"id":"GAP-27","title":"Mapping not RML-conformant","priority":"P3","class":"Interoperability","severity":"Low"},{"id":"GAP-45","title":"Wisdom/decision layer library-only; no process-event import","priority":"P3","class":"Research gap -> differentiator","severity":"Medium"},{"id":"GAP-38","title":"Neural tier not executable (torch absent); no calibration","priority":"P3","class":"Research gap","severity":"Medium"},{"id":"GAP-22","title":"No incremental rule materialisation","priority":"P3","class":"Missing","severity":"Medium"}],"requirements":[{"id":"REQ-OPS-01","title":"CI licence allow-list gate","priority":"P0","wp":["WP-KG3-02"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-SEC-01","title":"AEAD egress vault","priority":"P0","wp":["WP-KG3-03"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-OPS-02","title":"Harden local model runtime","priority":"P0","wp":["WP-KG3-04"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-SEC-02","title":"MCP OAuth 2.1 resource-server auth","priority":"P0","wp":["WP-KG3-05"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-SEC-03","title":"MCP tool ACL annotations and signed manifests","priority":"P0","wp":["WP-KG3-05"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-GOV-01","title":"Storage-level epistemic-state enforcement","priority":"P0","wp":["WP-KG3-11"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-OPS-03","title":"Unified evaluation harness with regression gates","priority":"P0","wp":["WP-KG3-01"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-SEC-04","title":"Write-path ACL-principal tagging","priority":"P0","wp":["WP-KG3-07"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-SEC-05","title":"Read-path mandatory ACL enforcement","priority":"P0","wp":["WP-KG3-07"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-TEN-01","title":"Mandatory tenant context in GraphStore protocol","priority":"P0","wp":["WP-KG3-06"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-MEM-01","title":"Governed agent-memory records","priority":"P0","wp":["WP-KG3-12"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-SEC-06","title":"Parameterised queries and classifier-layer defence","priority":"P0","wp":["WP-KG3-10"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-STOR-01","title":"Fix named adapter defects and gate with live conformance","priority":"P0","wp":["WP-KG3-09"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-SEC-07","title":"Policy-epoch consistency tokens","priority":"P0","wp":["WP-KG3-07"],"phase":"Phase 0","status":"PROPOSED"},{"id":"REQ-OPS-04","title":"Backend restore drills","priority":"P1","wp":["WP-KG3-13"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-OPS-05","title":"SBOM and signing pipeline","priority":"P1","wp":["WP-KG3-02"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-GOV-02","title":"SHACL conformance oracle","priority":"P1","wp":["WP-KG3-14"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-OPS-06","title":"Verified air-gap install bundle","priority":"P1","wp":["WP-KG3-15"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-QRY-01","title":"Persistent VectorPort with local embeddings","priority":"P1","wp":["WP-KG3-16"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-SEC-08","title":"PII recognisers at ingest","priority":"P1","wp":["WP-KG3-17"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-SEC-09","title":"Secret scanning at ingest","priority":"P1","wp":["WP-KG3-17"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-OPS-07","title":"Measured one-node sizing profiles","priority":"P1","wp":["WP-KG3-18"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-ING-01","title":"Digital-thread acceptance journeys (J1/J9/J10)","priority":"P1","wp":["WP-KG3-19"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-GOV-03","title":"Persistent claims and contradictions","priority":"P1","wp":["WP-KG3-20"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-ING-02","title":"Ontology proposal wired into governance","priority":"P1","wp":["WP-KG3-22"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-GOV-04","title":"Git-persisted ontology/data branches","priority":"P1","wp":["WP-KG3-23"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-GOV-05","title":"Mount ontology-governance PR flow","priority":"P1","wp":["WP-KG3-24"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-SEC-10","title":"Tamper-evident audit log","priority":"P1","wp":["WP-KG3-25"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-ING-03","title":"Parser-neutral evidence-span anchors","priority":"P1","wp":["WP-KG3-26"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-ING-04","title":"SCIP-based compiler-grade code symbols","priority":"P1","wp":["WP-KG3-21"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-QRY-02","title":"Typed NL-query plan candidates","priority":"P1","wp":["WP-KG3-27"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-ING-05","title":"Deterministic identity keys for all entity types","priority":"P1","wp":["WP-KG3-28"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-ING-06","title":"Integrated probabilistic entity resolution","priority":"P1","wp":["WP-KG3-29"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-QRY-03","title":"Portable query-IR compiler on the production path","priority":"P1","wp":["WP-KG3-08"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-ING-07","title":"General-enterprise connector breadth","priority":"P1","wp":["WP-KG3-30"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-SEC-11","title":"Per-connector permission-sync verification","priority":"P1","wp":["WP-KG3-31"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-ML-01","title":"ModelPort with CPU-only llama.cpp alternative","priority":"P1","wp":["WP-KG3-32"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-ING-08","title":"Neptune Streams-based index freshness","priority":"P1","wp":["WP-KG3-33"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-OPS-08","title":"LDBC SNB backend-parity workload","priority":"P1","wp":["WP-KG3-34"],"phase":"Phase 1","status":"PROPOSED"},{"id":"REQ-GOV-06","title":"Dry-run ontology migration with rollback","priority":"P2","wp":["WP-KG3-35"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-QRY-04","title":"Parameterised virtualisation queries","priority":"P2","wp":["WP-KG3-36"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-VIZ-01","title":"Measured large-graph rendering","priority":"P2","wp":["WP-KG3-37"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-GOV-07","title":"ELK sidecar for OWL EL reasoning","priority":"P2","wp":["WP-KG3-38"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-QRY-05","title":"Explicit path modes with push-down","priority":"P2","wp":["WP-KG3-39"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-GOV-08","title":"Typed mutation-gateway constraint layer","priority":"P2","wp":["WP-KG3-40"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-GOV-09","title":"Indexed, oracle-tested bitemporal reads","priority":"P2","wp":["WP-KG3-41"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-GOV-10","title":"Opt-in OpenLineage interoperability","priority":"P2","wp":["WP-KG3-42"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-QRY-06","title":"Benchmark HippoRAG-style PPR retrieval","priority":"P2","wp":["WP-KG3-43"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-QRY-07","title":"ACL-scoped GraphRAG community summaries","priority":"P2","wp":["WP-KG3-44"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-ML-02","title":"AlgoPort on tenant-filtered snapshots","priority":"P2","wp":["WP-KG3-45"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-STOR-02","title":"Backend-native bulk loaders with provenance","priority":"P2","wp":["WP-KG3-46"],"phase":"Phase 2","status":"PROPOSED"},{"id":"REQ-QRY-08","title":"Degree-aware supernode traversal budgets","priority":"P3","wp":["WP-KG3-47"],"phase":"Research track","status":"PROPOSED"},{"id":"REQ-STD-01","title":"Mounted read-only SPARQL endpoint","priority":"P3","wp":["WP-KG3-48"],"phase":"Research track","status":"PROPOSED"},{"id":"REQ-STD-02","title":"RML-conformant mapping import","priority":"P3","wp":["WP-KG3-49"],"phase":"Research track","status":"PROPOSED"},{"id":"REQ-GOV-11","title":"Clean-room OCEL 2.0 process import","priority":"P3","wp":["WP-KG3-50"],"phase":"Research track","status":"PROPOSED"},{"id":"REQ-ML-03","title":"Calibrated CPU-only link prediction","priority":"P3","wp":["WP-KG3-51"],"phase":"Research track","status":"PROPOSED"},{"id":"REQ-GOV-12","title":"Native Datalog subset with derivation ledger","priority":"P3","wp":["WP-KG3-52"],"phase":"Research track","status":"PROPOSED"}]};</script>
 <script>
-const CAP_DATA = [
-  {id: "CAP-01", name: "Property-Graph Storage & Indexing", comp: "Neo4j, HugeGraph, Memgraph", base: "Implemented (BL-01, BL-02)", prio: "P0", dec: "BUILD Native HugeGraph/Neo4j pushdown"},
-  {id: "CAP-08", name: "Schema & Constraint Enforcement", comp: "TypeDB, TopBraid, Neo4j", base: "Implemented (BL-28)", prio: "P0", dec: "BUILD Validation gate label contracts"},
-  {id: "CAP-10", name: "W3C SHACL Core Conformance", comp: "pySHACL, TopBraid, Jena", base: "Partial (BL-29)", prio: "P0", dec: "REUSE pySHACL in validation gate"},
-  {id: "CAP-20", name: "Portable QueryPlan AST Compiler", comp: "Universal Transpiler regex", base: "Partial (BL-08, BL-09)", prio: "P0", dec: "BUILD Query AST Compiler (Gremlin/Cypher/SPARQL)"},
-  {id: "CAP-31", name: "Probabilistic Entity Resolution", comp: "Senzing, Splink, Zingg", base: "Absent (BL-36)", prio: "P0", dec: "REUSE Splink Fellegi-Sunter DuckDB engine"},
-  {id: "CAP-46", name: "Derivation-Aware Source-ACL Enforcement", comp: "GraphDB, Stardog, Palantir", base: "Absent (BL-18)", prio: "P0", dec: "BUILD Derivation ACL Composition (INV-01)"},
-  {id: "CAP-47", name: "Multi-Tenant Isolation Hardening", comp: "AWS Neptune, Neo4j Aura", base: "Partial (BL-20)", prio: "P0", dec: "BUILD Tenant key prefixing across backends"},
-  {id: "CAP-50", name: "100% Local-First Air-Gap Operation", comp: "Palantir Foundry, Glean, Neptune", base: "Implemented (BL-102)", prio: "P0", dec: "BUILD Zero external cloud dependency"},
-  {id: "CAP-51", name: "Zero-Data-Leak LLM Egress Fencing", comp: "EgressSecurityGate", base: "Implemented (BL-45)", prio: "P0", dec: "BUILD Tripwire canaries & code pseudonymization"},
-  {id: "CAP-56", name: "Dual-Level GraphRAG & HippoRAG Diffusion", comp: "Microsoft GraphRAG, LightRAG, HippoRAG", base: "Implemented (BL-16)", prio: "P0", dec: "BUILD LightRAG routing + HippoRAG PPR diffusion"},
-  {id: "CAP-70", name: "Large-Graph WebGL Rendering (Sigma.js)", comp: "Cytoscape, Gephi, Neo4j Bloom", base: "Implemented (BL-54)", prio: "P0", dec: "BUILD Consolidate on Sigma WebGL (Rule R13)"},
-  {id: "CAP-80", name: "Wisdom Graph Decision Lineage (Plane GW)", comp: "ADR Miner, Living AI Graffin", base: "Implemented (BL-56)", prio: "P0", dec: "BUILD Wisdom Graph & Living AI Agent Graffin"}
-];
-
-function renderTable(data) {
-  const tbody = document.getElementById('table-body');
-  tbody.innerHTML = '';
-  data.forEach(row => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><code>${row.id}</code></td>
-      <td><strong>${row.name}</strong></td>
-      <td>${row.comp}</td>
-      <td><span class="badge ${row.base.startsWith('Implemented') ? 'badge-implemented' : row.base.startsWith('Partial') ? 'badge-partial' : 'badge-absent'}">${row.base}</span></td>
-      <td><span class="badge badge-${row.prio.toLowerCase()}">${row.prio}</span></td>
-      <td>${row.dec}</td>
-    `;
-    tbody.appendChild(tr);
+(function () {
+  "use strict";
+  function safeLS(fn, fallback) { try { return fn(); } catch (e) { return fallback; } }
+  var root = document.documentElement;
+  var savedTheme = safeLS(function () { return localStorage.getItem("kgf-theme"); }, null);
+  if (savedTheme) root.setAttribute("data-theme", savedTheme);
+  document.getElementById("themeToggle").addEventListener("click", function () {
+    var cur = root.getAttribute("data-theme");
+    var next = cur === "dark" ? "light" : (cur === "light" ? "dark" : (matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark"));
+    root.setAttribute("data-theme", next);
+    safeLS(function () { localStorage.setItem("kgf-theme", next); }, null);
   });
-}
 
-function filterTable() {
-  const q = document.getElementById('search').value.toLowerCase();
-  const filtered = CAP_DATA.filter(r => 
-    r.id.toLowerCase().includes(q) || 
-    r.name.toLowerCase().includes(q) || 
-    r.comp.toLowerCase().includes(q) ||
-    r.dec.toLowerCase().includes(q)
-  );
-  renderTable(filtered);
-}
+  var registry = DATA.registry, gaps = DATA.gaps, requirements = DATA.requirements;
 
-renderTable(CAP_DATA);
+  function uniq(arr, key) {
+    var s = {};
+    arr.forEach(function (x) { if (x[key]) s[x[key]] = true; });
+    return Object.keys(s).sort();
+  }
+  function fillSelect(sel, values) {
+    values.forEach(function (v) {
+      var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o);
+    });
+  }
+  function priorityBadge(p) {
+    var cls = { P0: "badge-p0", P1: "badge-p1", P2: "badge-p2", P3: "badge-p3" }[p] || "";
+    return '<span class="badge ' + cls + '">' + p + "</span>";
+  }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // ---- KPI tiles ----
+  var gapCounts = { P0: 0, P1: 0, P2: 0, P3: 0 };
+  gaps.forEach(function (g) { if (gapCounts[g.priority] !== undefined) gapCounts[g.priority]++; });
+  var reqPhaseCounts = {};
+  requirements.forEach(function (r) { reqPhaseCounts[r.phase] = (reqPhaseCounts[r.phase] || 0) + 1; });
+  var kpiGrid = document.getElementById("kpiGrid");
+  var tiles = [
+    ["Registry entries", registry.length, "across 20 categories"],
+    ["Gaps — P0", gapCounts.P0, "forced priority"],
+    ["Gaps — P1", gapCounts.P1, ""],
+    ["Gaps — P2", gapCounts.P2, ""],
+    ["Gaps — P3", gapCounts.P3, "research track"],
+    ["Requirements total", requirements.length, "0 implemented"],
+  ];
+  tiles.forEach(function (t) {
+    var div = document.createElement("div"); div.className = "kpi-card";
+    div.innerHTML = '<div class="kpi-title">' + esc(t[0]) + '</div><div class="kpi-value">' + esc(t[1]) + '</div><div class="kpi-sub">' + esc(t[2]) + '</div>';
+    kpiGrid.appendChild(div);
+  });
+  Object.keys(reqPhaseCounts).sort().forEach(function (phase) {
+    var div = document.createElement("div"); div.className = "kpi-card";
+    div.innerHTML = '<div class="kpi-title">' + esc(phase) + '</div><div class="kpi-value">' + reqPhaseCounts[phase] + '</div><div class="kpi-sub">requirements, all PROPOSED</div>';
+    kpiGrid.appendChild(div);
+  });
+
+  // ---- Tabs ----
+  var tabBtns = document.querySelectorAll(".tab-btn");
+  tabBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      tabBtns.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      ["registry", "gaps", "requirements"].forEach(function (name) {
+        document.getElementById("panel-" + name).style.display = (name === btn.dataset.tab) ? "" : "none";
+      });
+    });
+  });
+
+  // ---- Generic table renderer with sort/filter ----
+  function makeTable(opts) {
+    var state = { sortKey: opts.defaultSort || "id", sortDir: 1 };
+    function apply() {
+      var q = (opts.searchEl.value || "").toLowerCase().trim();
+      var rows = opts.data.filter(function (row) {
+        if (q) {
+          var hay = opts.searchFields.map(function (f) { return String(row[f] || "").toLowerCase(); }).join(" ");
+          if (hay.indexOf(q) === -1) return false;
+        }
+        for (var i = 0; i < opts.filterEls.length; i++) {
+          var fe = opts.filterEls[i];
+          if (fe.el.value && row[fe.key] !== fe.el.value) return false;
+        }
+        return true;
+      });
+      rows = rows.slice().sort(function (a, b) {
+        var av = a[state.sortKey], bv = b[state.sortKey];
+        av = Array.isArray(av) ? av.join(",") : av; bv = Array.isArray(bv) ? bv.join(",") : bv;
+        av = (av == null ? "" : String(av)); bv = (bv == null ? "" : String(bv));
+        if (av < bv) return -1 * state.sortDir;
+        if (av > bv) return 1 * state.sortDir;
+        return 0;
+      });
+      var tbody = opts.table.querySelector("tbody");
+      tbody.innerHTML = "";
+      if (rows.length === 0) {
+        var tr = document.createElement("tr");
+        var td = document.createElement("td");
+        td.colSpan = opts.table.querySelectorAll("th").length;
+        td.className = "empty-msg"; td.textContent = "No matching rows.";
+        tr.appendChild(td); tbody.appendChild(tr);
+      } else {
+        rows.forEach(function (row) {
+          var tr = document.createElement("tr");
+          tr.innerHTML = opts.rowHtml(row);
+          tbody.appendChild(tr);
+        });
+      }
+      opts.countEl.textContent = rows.length + " / " + opts.data.length + " rows";
+    }
+    opts.searchEl.addEventListener("input", apply);
+    opts.filterEls.forEach(function (fe) { fe.el.addEventListener("change", apply); });
+    opts.table.querySelectorAll("th[data-key]").forEach(function (th) {
+      th.addEventListener("click", function () {
+        var key = th.dataset.key;
+        if (state.sortKey === key) state.sortDir *= -1; else { state.sortKey = key; state.sortDir = 1; }
+        apply();
+      });
+    });
+    apply();
+  }
+
+  // ---- Registry tab ----
+  var registryTierSel = document.getElementById("registryTier");
+  var registryCatSel = document.getElementById("registryCategory");
+  var registryStatusSel = document.getElementById("registryStatus");
+  fillSelect(registryTierSel, uniq(registry, "tier"));
+  fillSelect(registryCatSel, uniq(registry, "category"));
+  fillSelect(registryStatusSel, uniq(registry, "status"));
+  makeTable({
+    data: registry,
+    table: document.getElementById("registryTable"),
+    searchEl: document.getElementById("registrySearch"),
+    countEl: document.getElementById("registryCount"),
+    searchFields: ["id", "name"],
+    filterEls: [
+      { el: registryTierSel, key: "tier" },
+      { el: registryCatSel, key: "category" },
+      { el: registryStatusSel, key: "status" }
+    ],
+    defaultSort: "id",
+    rowHtml: function (r) {
+      return "<td>" + esc(r.id) + "</td><td class='wrap'>" + esc(r.name) + "</td><td>" + esc(r.tier) + "</td>" +
+        "<td>" + esc(r.category) + "</td><td>" + esc(r.status) + "</td><td>" + esc(r.research_state) + "</td>";
+    }
+  });
+
+  // ---- Gaps tab ----
+  var gapsPrioritySel = document.getElementById("gapsPriority");
+  var gapsSeveritySel = document.getElementById("gapsSeverity");
+  fillSelect(gapsPrioritySel, ["P0", "P1", "P2", "P3"]);
+  fillSelect(gapsSeveritySel, uniq(gaps, "severity"));
+  makeTable({
+    data: gaps,
+    table: document.getElementById("gapsTable"),
+    searchEl: document.getElementById("gapsSearch"),
+    countEl: document.getElementById("gapsCount"),
+    searchFields: ["id", "title"],
+    filterEls: [
+      { el: gapsPrioritySel, key: "priority" },
+      { el: gapsSeveritySel, key: "severity" }
+    ],
+    defaultSort: "id",
+    rowHtml: function (g) {
+      return "<td>" + esc(g.id) + "</td><td class='wrap'>" + esc(g.title) + "</td><td>" + priorityBadge(g.priority) + "</td>" +
+        "<td class='wrap'>" + esc(g["class"]) + "</td><td>" + esc(g.severity) + "</td>";
+    }
+  });
+
+  // ---- Requirements tab ----
+  var reqsPrioritySel = document.getElementById("reqsPriority");
+  var reqsPhaseSel = document.getElementById("reqsPhase");
+  fillSelect(reqsPrioritySel, ["P0", "P1", "P2", "P3"]);
+  fillSelect(reqsPhaseSel, uniq(requirements, "phase"));
+  makeTable({
+    data: requirements,
+    table: document.getElementById("reqsTable"),
+    searchEl: document.getElementById("reqsSearch"),
+    countEl: document.getElementById("reqsCount"),
+    searchFields: ["id", "title"],
+    filterEls: [
+      { el: reqsPrioritySel, key: "priority" },
+      { el: reqsPhaseSel, key: "phase" }
+    ],
+    defaultSort: "id",
+    rowHtml: function (r) {
+      return "<td>" + esc(r.id) + "</td><td class='wrap'>" + esc(r.title) + "</td><td>" + priorityBadge(r.priority) + "</td>" +
+        "<td>" + esc(r.phase) + "</td><td>" + esc((r.wp || []).join(", ")) + "</td><td><span class='badge badge-proposed'>" + esc(r.status) + "</span></td>";
+    }
+  });
+})();
 </script>
 </body>
 </html>

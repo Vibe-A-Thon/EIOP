@@ -35,4 +35,37 @@ See `01-SYSTEM-BASELINE.md` § BASELINE_UNCERTAINTIES (U-01..U-12). Every later 
 
 ## 4. Worker-level assumptions lifted to programme level
 
-WORKER-ASSUMPTIONS-PLACEHOLDER
+Every worker recorded its access date as 2026-10-26 (the actual session date) rather than the programme's nominal baseline date of 2026-10-18, and noted this in its own evidence appendix. This affects no conclusion; it is recorded once here rather than in all ~200 deep dives.
+
+A prior, non-evidence-based process wrote placeholder content into this package on 2026-10-19 (39 deep-dive files with no CLAIM records, plus draft versions of `00`, `02`, `05`–`23`, the ADRs and one POC). Every one of these was identified and overwritten with evidence-based content during this run, with one exception caught and corrected in place: the CAP-12 (SKOS) row in `05-COMPARISON-COHORTS/03-ONTOLOGY-GOVERNANCE-COHORT.md` originally read "absent"; it is corrected to "Implemented" (see `01a-BASELINE-DELTA-HEAD.md` and §5 below). A fabricated "POC-01 PASS" claim in `20-POC-EXPERIMENTS/poc-01-multi-backend-compilation/run_poc.py` (output hardcoded independent of input) was replaced with an honest specification stub.
+
+## 5. Evidence conflicts found between independent deep dives (not resolved further; flagged for re-verification)
+
+These did not change any decision in the gap register or matrix, but a reader comparing two deep dives will see them and should know they are tracked, not missed.
+
+| Conflict | Sources | Status |
+|---|---|---|
+| EOIP's own SKOS capability (CAP-12) | Baseline delta (`01a-BASELINE-DELTA-HEAD.md`) says Implemented, 1,417 lines, tests passing; an early draft of the ontology-governance cohort said absent | **Resolved in this run** — cohort file corrected; see §4 above |
+| GraphScope throughput | Vendor blog claims >80,000 QPS; vendor's own docs cite 33,180.87 ops/s for the same benchmark | Unreconciled — neither figure adopted anywhere in this package |
+| Dgraph licence | v25 release notes say the whole codebase is Apache-2.0; the official licensing page still describes a Community License split for enterprise features | Unreconciled — registry records both statements |
+| QLever licence | The project's own documentation says Apache-2.0; a third-party catalogue (DBDB) says MIT | Resolved by preference — the project's own LICENSE file is authoritative; treat as Apache-2.0 |
+| Senzing PostgreSQL version requirement | Differs across Senzing's own documentation pages | Unreconciled |
+| Splink 5.0.0 release date | PyPI and GitHub release pages disagree | Unreconciled |
+| Onyx connector count | Stated as 56, "40+" and "50+" across different pages | Unreconciled |
+| DataHub backend support | Docs disagree on MySQL/Postgres and Elasticsearch/OpenSearch support | Unreconciled |
+| TerminusDB current maintainer | Named three different ways across sources (team/individual naming varies) | Unreconciled |
+| Gephi licence | Stated as GPL-3.0 (GitHub), dual CDDL 1.0/GPL v3 (project wiki), and GPL only (gephi.org) in three different official sources | Unreconciled — legal review should read the actual LICENSE file before any bundling decision |
+| Neo4j Cypher-25-default rollout date | One deep dive gives 2026.02 (confidence 0.6); another gives a related but different GA date of 2026.06 for GRAPH TYPE | Unreconciled, low-stakes |
+| Mem0 LoCoMo scores | Mem0's own pages report 92.5 and 91.6 in different places; Zep/Mem0/Letta each report incompatible numbers for one another's systems; one independent audit found the LLM judge accepted 62.81% of deliberately wrong answers | **Treated as contested evidence throughout this package** — the entire LoCoMo memory-benchmark literature is excluded from ranking claims in `15-VALIDATION-BENCHMARK-PLAN.md`; task-completion and citation-accuracy measures are used instead |
+| Cognee `forget` failure behaviour | Docs say best-effort cleanup on failure; the v1.6.6rc1 release notes say `forget` now fails if history-purge fails | Unreconciled — treat the release notes (more recent) as the likely current behaviour, unverified |
+
+## 6. Corrections made to EOIP's own capability status during this run
+
+| Item | Before | After | Why |
+|---|---|---|---|
+| CAP-12 SKOS/taxonomy management | Partial / absent (in an early cohort draft) | **Implemented** | `packages/eoip/ontology/skos.py` (1,417 lines @HEAD) with two passing test files (BL-32 @HEAD); verified by direct code and test inspection, not inferred |
+| Egress "embedding" path (`RealSemanticProvider`) | Assumed to be a real (if weak) embedding model | **Confirmed to be a SHA-256 hash simulation**, not a model at all | Found during the GraphRAG/vector-search cohort review; sharpens GAP-46 and the baseline's hashing-embedder-default finding rather than contradicting it |
+| `packages/eoip/jobs.py` (DurableJobStore) | Not in the original baseline or its HEAD delta | **Added as a relevant capability**: SQLite-WAL job store with leases, fencing tokens, heartbeats, checkpoints, a transactional outbox and a governed DLQ with `replay_dlq` | Found during the CDC/streaming research batch (V27); the baseline re-audit (B0) had not covered this file |
+| `packages/eoip/connectors/sbom.py` + `compliance/sbom.py` | Assumed SBOM support was comparably shallow everywhere | **Clarified**: the connector parses CycloneDX/SPDX components into SourceEvents but never reads dependency/relationship edges, and no OSV/deps.dev/NVD vulnerability matching exists anywhere in the tree | Found during the code-intelligence research batch (V29), cross-checked against Dependency-Track |
+
+

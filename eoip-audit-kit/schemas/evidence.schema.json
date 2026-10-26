@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://eoip-audit-kit.local/schemas/evidence.schema.json",
   "title": "EOIP Audit Evidence Bundle",
-  "description": "Proof policy 1.1.0: L1 never closes Partial/Implemented. Partial needs L2+residual_gaps. Implemented needs L2+(L3 same commit|L4). Critical needs L5 dual-control. Stale if commit mismatch.",
+  "description": "Proof policy 1.1.0: L1 never closes Partial/Implemented. Partial needs L2+residual_gaps. Implemented needs L2+(L3 same commit|L4). Critical needs L5 dual-control. Stale if commit mismatch. Status 'Not Verified' = no qualifying proof and no negative proof.",
   "type": "object",
   "required": [
     "schema_version",
@@ -89,7 +89,8 @@
       "properties": {
         "requirement_id": {
           "type": "string",
-          "pattern": "^REQ-[A-Z]+-[0-9]{4}$"
+          "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{1,5}[a-z]?(?:\\.(?:[0-9]+|[A-Z]))*$",
+          "description": "Native requirement id (e.g. CRA-001, PUR-SEC-01, DOC-ABC-0001) or REQ-TYPE-NNNN for new requirements."
         },
         "evidence_id": {
           "type": "string",
@@ -187,6 +188,11 @@
         },
         "ci_job": {
           "type": "string"
+        },
+        "environment": {
+          "type": "string",
+          "enum": ["local-nonprod", "staging", "test", "production"],
+          "description": "L4 closure accepts only explicitly identified non-production environments."
         },
         "ci_run_id": {
           "type": "string"

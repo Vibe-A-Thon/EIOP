@@ -19,9 +19,11 @@ from __future__ import annotations
 
 import hashlib
 import json
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import httpx
+
 from eoip.graph.memory import edge_key
 from eoip.graph.store import BulkLoadError, GraphQueryTimeout, remaining_query_seconds
 
@@ -171,9 +173,9 @@ class JanusGraphStore:
     # -- health -------------------------------------------------------------------
     def health(self) -> bool:
         try:
-            data = self._submit(f"{self.traversal_source}.V().limit(1).count()")
+            self._submit(f"{self.traversal_source}.V().limit(1).count()")
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 - any Gremlin/transport failure means unavailable
             return False
 
     def ping(self) -> dict:

@@ -34,8 +34,16 @@ junit.xml
 /EOIP-engg-doc-pkg/verification/
 /evidence/
 /docs/graffin/
-/docs/reva/
+/docs/reva/verification/
 /docs/schemas/
+/audit-output/
+/eoip-audit-kit/audit-output/
+/.tmp/
+
+# Hypothesis example database and merge leftovers
+.hypothesis/
+*.orig
+*.rej
 # React/TypeScript and VS Code extension dependencies and generated output
 # Keep dependency manifests and lockfiles in version control.
 node_modules/
@@ -66,7 +74,8 @@ blob-report/
 
 # Local runtime storage: graph volumes, raw capture, checkpoints, DLQ,
 # backups, exports, and downloaded models. Keep config and fixtures trackable.
-/.data/
+# .eoip-data/ is the documented local EOIP_DATA_DIR (README quick start).
+/.eoip-data/
 /.cache/
 /runtime/
 /volumes/
@@ -81,6 +90,10 @@ blob-report/
 *.gguf
 *.safetensors
 # packages/eoip/models/ is source code and must remain trackable.
+
+# QA bench run artifacts (sandbox data, probe results, failure screenshots);
+# current runs write under test-results/qa-bench/.
+/qa_bench/reports/
 
 # Logs and local workbench/IDE state
 *.log
@@ -101,6 +114,7 @@ Desktop.ini
 *.swp
 *.swo
 *~
+~$*
 *.env
 credentials.json
 *.pem
@@ -118,6 +132,7 @@ frontend/.env.local
 # REVA generated fixture cache (scripts/reva/build_fixtures.py)
 .reva-fixtures/
 
-# runtime state (learning engine, agent memory); never committed
+# runtime state (learning engine, agent memory); never committed.
+# .data/ is unanchored: tests and the brain router default EOIP_DATA_DIR to a relative .data
 .data/
 data/learning/

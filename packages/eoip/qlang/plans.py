@@ -63,12 +63,16 @@ class QLangPlan(BaseModel):
             raise QLangNotMappableError(
                 f"intent {self.intent!r} is payload-shaped and has no QueryPlan mapping"
             )
-        if self.intent in ("PATH", "NEIGHBORHOOD", "IMPACT") and not self.anchors:
-            raise QLangNotMappableError(f"intent {self.intent!r} requires at least one anchor")
         if self.intent == "PATH" and len(self.anchors) < 2:
             raise QLangNotMappableError("PATH intent requires exactly 2 anchors")
+        intent = _INTENT_TO_QUERY_PLAN[self.intent]
+        # An anchor-less traversal (e.g. g.V().hasLabel(...).out(...)) is a
+        # label-scoped vertex search, not a seeded traversal — lower it
+        # honestly to SEARCH rather than emitting an unexecutable plan.
+        if intent in ("NEIGHBORHOOD", "IMPACT", "PATH") and not self.anchors:
+            intent = "SEARCH"
         return EOIPQueryPlan(
-            intent=_INTENT_TO_QUERY_PLAN[self.intent],  # type: ignore[arg-type]
+            intent=intent,  # type: ignore[arg-type]
             anchors=list(self.anchors),
             relationship_allowlist=list(self.edge_labels) or None,
             max_depth=max(1, min(self.max_hops, 8)),

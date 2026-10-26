@@ -113,6 +113,14 @@ from eoip.suggest.router import build_router as build_suggest_router
 from eoip.systems.router import build_systems_router
 from eoip.tenancy.router import build_router as build_tenancy_router
 from eoip.tenancy.service import TenancyService
+from eoip.agentarch.router import build_router as build_agentarch_router
+from eoip.execution.router import build_router as build_execution_router
+from eoip.graphbuild.router import build_adapters_router, build_graphbuild_router
+from eoip.loops.core import JsonCheckpointStore
+from eoip.loops.router import build_router as build_loops_router
+from eoip.qlang.router import build_router as build_qlang_router
+from eoip.ragx.router import build_router as build_ragx_router
+from eoip.reasoning.router import build_router as build_reasoning_router
 from eoip.truth import Claim, TruthStore
 from fastapi import APIRouter, Body, HTTPException, Query, Request, Response
 from fastapi.responses import PlainTextResponse
@@ -300,6 +308,10 @@ class ExtendedState:
         self.branding_terminology = TerminologyRegistry()
         self.branding_locales = LocalizationRegistry()
         self.branding_legal = LegalContentRegistry()
+
+        # -- Gap-analysis wave (pass 9b): competitive-differentiation -------
+        # libraries, wired behind their lazy build_router factories.
+        self.loops_checkpoint_store = JsonCheckpointStore(data_dir / "loops")
 
 
 def _store_labels(store: GraphStore) -> list[str]:
@@ -1478,6 +1490,21 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     # NL suggestion engine (SR-NLQ-002/003/004-partial): deterministic
     # intent interpretations over the graph store with authz pre-check note.
     router.include_router(build_suggest_router(store, state.policy_enforcer))
+
+    # Gap-analysis wave (pass 9b): loops library (23 loops + 15 human
+    # collaboration patterns), agent architectures (classical/reasoning/
+    # enterprise/org patterns + A2A bus), extended RAG architectures,
+    # polyglot query-language registry, graph builders + backend adapters,
+    # reasoning strategies + memory architectures, and the event-sourced
+    # execution engine (workflows, queue, scheduling).
+    router.include_router(build_loops_router(store=state.loops_checkpoint_store))
+    router.include_router(build_agentarch_router(store))
+    router.include_router(build_ragx_router(store))
+    router.include_router(build_qlang_router(store))
+    router.include_router(build_graphbuild_router())
+    router.include_router(build_adapters_router())
+    router.include_router(build_reasoning_router())
+    router.include_router(build_execution_router())
 
     # Schema profiler (SR-ING-010/012/013/016-hook): dataset profile, drift,
     # key candidates, relationship discovery.

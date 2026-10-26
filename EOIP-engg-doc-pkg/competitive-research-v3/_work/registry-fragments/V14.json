@@ -1,0 +1,761 @@
+[
+ {
+  "id": "T-C01-nebulagraph",
+  "slug": "nebulagraph",
+  "name": "NebulaGraph",
+  "category": "C01",
+  "tier": "B",
+  "tier_reason": "Distributed LPG reference",
+  "members": [
+   "NebulaGraph core",
+   "Nebula Operator",
+   "Studio",
+   "Explorer"
+  ],
+  "official_url": "https://github.com/vesoft-inc/nebula",
+  "owner": "Vesoft Inc.",
+  "latest_version": "v3.8.0",
+  "version_date": "2024-05-17",
+  "release_cadence": "slow; no release since 2024-05 though default branch pushed 2026-09-08",
+  "status": "maintenance",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0 incl. patent grant; free as SaaS backend per README.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Enterprise edition / proprietary modules NOT PUBLICLY VERIFIED",
+  "community_vs_enterprise": "UNVERIFIED",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as Tier B",
+  "decision_summary": "INTEGRATE as optional scale-out adapter; DEFER",
+  "top_strengths": [
+   "STR-nebula-01"
+  ],
+  "top_inversions": [
+   "INV-nebula-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-nebulagraph.md",
+  "sources": [
+   {
+    "title": "NebulaGraph repo",
+    "url": "https://github.com/vesoft-inc/nebula",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "3.8.0 architecture",
+    "url": "https://docs.nebula-graph.io/3.8.0/1.introduction/3.nebula-graph-architecture/1.architecture-overview",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C01-arcadedb",
+  "slug": "arcadedb",
+  "name": "ArcadeDB",
+  "category": "C01",
+  "tier": "B",
+  "tier_reason": "Apache-2.0 multi-model, Gremlin/Cypher/SQL; reuse candidate",
+  "members": [
+   "ArcadeDB"
+  ],
+  "official_url": "https://github.com/ArcadeData/arcadedb",
+  "owner": "Arcade Data / ArcadeDB",
+  "latest_version": "26.10.2",
+  "version_date": "2026-10-15",
+  "release_cadence": "frequent calendar-versioned releases",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0, embeddable, no split stated.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "None stated in README (UNVERIFIED)",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "REUSE as candidate one-node backend; INTEGRATE via Bolt/Gremlin; EXPERIMENT vectors",
+  "top_strengths": [
+   "STR-arcade-01",
+   "STR-arcade-02"
+  ],
+  "top_inversions": [
+   "INV-arcade-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-arcadedb.md",
+  "sources": [
+   {
+    "title": "ArcadeDB repo",
+    "url": "https://github.com/ArcadeData/arcadedb",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C01-apache-age",
+  "slug": "apache-age",
+  "name": "Apache AGE",
+  "category": "C01",
+  "tier": "B",
+  "tier_reason": "Graph on PostgreSQL; backend for Postgres shops",
+  "members": [
+   "Apache AGE"
+  ],
+  "official_url": "https://age.apache.org/",
+  "owner": "Apache Software Foundation (TLP since 2022-05-17)",
+  "latest_version": "v1.8.0-rc0 (PG15/PG18 tags)",
+  "version_date": "2026-09-19",
+  "release_cadence": "per-PG-major tags several per year",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0 extension; requires customer DB to allow extension install.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "ASF project; Bitnine support commercial (UNVERIFIED)",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "Latest tags carry -rc0 suffix; GA status of 1.8.0 UNVERIFIED",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "EXPERIMENT Postgres adapter and RLS-backed tenant isolation",
+  "top_strengths": [
+   "STR-age-01",
+   "STR-age-02"
+  ],
+  "top_inversions": [
+   "INV-age-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-apache-age.md",
+  "sources": [
+   {
+    "title": "Apache AGE repo",
+    "url": "https://github.com/apache/age",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "ASF TLP announcement",
+    "url": "https://blogsarchive.apache.org/foundation/entry/the-apache-software-foundation-announces83",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "AGE release notes",
+    "url": "https://age.apache.org/release-notes",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C01-typedb",
+  "slug": "typedb",
+  "name": "TypeDB (TypeQL)",
+  "category": "C01",
+  "tier": "B",
+  "tier_reason": "Strong typing/inference reference for mutation-gateway inversion",
+  "members": [
+   "TypeDB (TypeQL)"
+  ],
+  "official_url": "https://github.com/typedb/typedb",
+  "owner": "TypeDB Ltd (formerly Vaticle)",
+  "latest_version": "3.14.1",
+  "version_date": "2026-10-22",
+  "release_cadence": "frequent minor releases",
+  "status": "active",
+  "license": "MPL-2.0 (Community Edition); TypeDB Cloud/Enterprise proprietary",
+  "license_class": "weak-copyleft",
+  "redistribution_notes": "MPL-2.0 file-level copyleft; Enterprise terms not reviewed.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "MPL-2.0 for modified files; community-vs-enterprise split",
+  "community_vs_enterprise": "CE open; Cloud and Enterprise commercial; HA likely Enterprise (UNVERIFIED)",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "3.x is Rust rewrite of 2.x; 3.0 GA dated 2025-02-11 (vendor) vs 2024-12-20 (Wikipedia)",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "BUILD gateway constraint layer inspired by TypeQL; REJECT as backend",
+  "top_strengths": [
+   "STR-typedb-01",
+   "STR-typedb-02"
+  ],
+  "top_inversions": [
+   "INV-typedb-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-typedb.md",
+  "sources": [
+   {
+    "title": "TypeDB repo",
+    "url": "https://github.com/typedb/typedb",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "TypeDB 3.0 launch",
+    "url": "https://typedb.com/blog/typedb-3-0-is-now-live",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C01-terminusdb",
+  "slug": "terminusdb",
+  "name": "TerminusDB",
+  "category": "C01",
+  "tier": "B",
+  "tier_reason": "Git-like versioned graph reference (cross-ref C13)",
+  "members": [
+   "TerminusDB"
+  ],
+  "official_url": "https://github.com/terminusdb/terminusdb",
+  "owner": "Gettier (formerly DFRNT) maintains v12 since 2025",
+  "latest_version": "v12.0.8",
+  "version_date": "2026-10-12",
+  "release_cadence": "regular patch releases",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "None verified",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "No acquisition found; maintainer change DFRNT -> Gettier per Wikipedia/README",
+  "registry_action": "KEEP",
+  "action_reason": "Keep; C13 placeholder untouched",
+  "decision_summary": "BUILD branch/diff/merge overlay informed by Terminus; REJECT as backend",
+  "top_strengths": [
+   "STR-terminus-01",
+   "STR-terminus-02"
+  ],
+  "top_inversions": [
+   "INV-terminus-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C01-terminusdb.md",
+  "sources": [
+   {
+    "title": "TerminusDB repo",
+    "url": "https://github.com/terminusdb/terminusdb",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "TerminusDB Wikipedia",
+    "url": "https://en.wikipedia.org/wiki/TerminusDB",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C03-owl-api",
+  "slug": "owl-api",
+  "name": "OWL API",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "OWL API"
+  ],
+  "official_url": "https://github.com/owlcs/owlapi",
+  "owner": "OWL API community",
+  "latest_version": "5.5.1",
+  "version_date": "2024-09-08",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "LGPL-3.0 or Apache-2.0 (dual)",
+  "license_class": "weak-copyleft",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "INTEGRATE optional JVM sidecar",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "OWL API",
+    "url": "https://github.com/owlcs/owlapi",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.85
+ },
+ {
+  "id": "T-C03-owlready2",
+  "slug": "owlready2",
+  "name": "Owlready2",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Owlready2"
+  ],
+  "official_url": "https://pypi.org/project/owlready2/",
+  "owner": "Jean-Baptiste Lamy",
+  "latest_version": "0.51",
+  "version_date": "2026-06-22",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "LGPL-3.0-or-later",
+  "license_class": "weak-copyleft",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "LGPL redistribution obligations; bundled HermiT/Pellet licences",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "GitHub pwin/owlready2 is a stale mirror; canonical dev on Bitbucket",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "EXPERIMENT offline classification in CI",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "Owlready2",
+    "url": "https://pypi.org/project/owlready2/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.85
+ },
+ {
+  "id": "T-C03-oops",
+  "slug": "oops",
+  "name": "OOPS! ontology pitfall scanner",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "OOPS! ontology pitfall scanner"
+  ],
+  "official_url": "http://oops.linkeddata.es/",
+  "owner": "OEG, UPM",
+  "latest_version": "OOPS! 4",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "NOT PUBLICLY VERIFIED (client DrOntoAPI Apache-2.0)",
+  "license_class": "n/a",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Service terms unknown; hosted service means ontology egress",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "saas"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "REFERENCE-ONLY; reimplement as local lint",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "OOPS! ontology pitfall scanner",
+    "url": "http://oops.linkeddata.es/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C03-skos-tooling",
+  "slug": "skos-tooling",
+  "name": "SKOS tooling (Skosmos, skosify, qSKOS)",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Skosmos",
+   "Skosify",
+   "qSKOS"
+  ],
+  "official_url": "https://github.com/NatLibFi/Skosmos",
+  "owner": "National Library of Finland; C. Mader (qSKOS)",
+  "latest_version": "Skosmos v3.5; Skosify 2.3.0; qSKOS v2.0.4",
+  "version_date": "2026-10-22",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Skosmos MIT; Skosify MIT; qSKOS GPL-3.0",
+  "license_class": "mixed",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "qSKOS GPL-3.0",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "INTEGRATE Skosmos; REUSE Skosify; REFERENCE-ONLY qSKOS",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "SKOS tooling (Skosmos, skosify, qSKOS)",
+    "url": "https://github.com/NatLibFi/Skosmos",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.85
+ },
+ {
+  "id": "T-C03-widoco",
+  "slug": "widoco",
+  "name": "Widoco",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Widoco"
+  ],
+  "official_url": "https://github.com/dgarijo/Widoco",
+  "owner": "Daniel Garijo",
+  "latest_version": "v1.4.26",
+  "version_date": "2026-10-23",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "REUSE in ontology release CI",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "Widoco",
+    "url": "https://github.com/dgarijo/Widoco",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.9
+ },
+ {
+  "id": "T-C03-grafo",
+  "slug": "grafo",
+  "name": "Gra.fo",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Gra.fo"
+  ],
+  "official_url": "https://gra.fo",
+  "owner": "data.world",
+  "latest_version": "n/a",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "end-of-life",
+  "license": "proprietary SaaS",
+  "license_class": "proprietary",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "saas"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "historical",
+  "resolution_note": "data.world docs: shutdown planned 2026-03-13; not independently confirmed",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "REJECT (EOL); UX reference only",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "Gra.fo",
+    "url": "https://gra.fo",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C03-ontotext-refine",
+  "slug": "ontotext-refine",
+  "name": "Ontotext Refine",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "Ontotext Refine"
+  ],
+  "official_url": "https://graphwise.ai/",
+  "owner": "Graphwise (formerly Ontotext)",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "NOT PUBLICLY VERIFIED",
+  "license_class": "n/a",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Licence unknown; upstream OpenRefine is BSD",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "desktop",
+   "self-hosted"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "production",
+  "resolution_note": "Ontotext rebranded to Graphwise (vendor listings); OntoRefine renamed Refine",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "Ontotext Refine",
+    "url": "https://graphwise.ai/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.35
+ },
+ {
+  "id": "T-C03-ontoportal",
+  "slug": "ontoportal",
+  "name": "OntoPortal / BioPortal",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "OntoPortal / BioPortal"
+  ],
+  "official_url": "https://github.com/ontoportal",
+  "owner": "OntoPortal Alliance",
+  "latest_version": "web_ui v3.6.0",
+  "version_date": "2026-09-16",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "per-component UNVERIFIED (GitHub: NOASSERTION); appliance 3.0 licensing for commercial use",
+  "license_class": "mixed",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Commercial-use licensing wording",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "OntoPortal / BioPortal",
+    "url": "https://github.com/ontoportal",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.55
+ },
+ {
+  "id": "T-C03-ontouml",
+  "slug": "ontouml",
+  "name": "OntoUML ecosystem",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "OntoUML ecosystem"
+  ],
+  "official_url": "https://github.com/OntoUML/ontouml-js",
+  "owner": "OntoUML community",
+  "latest_version": "ontouml-js v1.0.0",
+  "version_date": "2026-07-26",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "OntoUML ecosystem",
+    "url": "https://github.com/OntoUML/ontouml-js",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C03-kbpedia",
+  "slug": "kbpedia",
+  "name": "KBpedia",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "KBpedia"
+  ],
+  "official_url": "https://kbpedia.org",
+  "owner": "Mike Bergman / Cognonto",
+  "latest_version": "2.50",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "maintenance",
+  "license": "CC BY 4.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "Attribution required",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "KBpedia",
+    "url": "https://kbpedia.org",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C03-upper-ontologies",
+  "slug": "upper-ontologies",
+  "name": "Upper/domain ontologies (BFO, gist, DOLCE, schema.org, FIBO, W3C ORG)",
+  "category": "C03",
+  "tier": "C",
+  "tier_reason": "Tier C record",
+  "members": [
+   "BFO",
+   "gist",
+   "DOLCE",
+   "schema.org",
+   "FIBO",
+   "W3C ORG"
+  ],
+  "official_url": "https://github.com/semanticarts/gist",
+  "owner": "various",
+  "latest_version": "gist v14.1.0; BFO 2019-08-26; FIBO quarterly; ORG Rec 2014",
+  "version_date": "2026-04-17",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "gist CC BY 4.0; BFO CC BY 4.0; FIBO MIT; schema.org CC BY-SA 3.0; DOLCE UNVERIFIED; ORG W3C terms",
+  "license_class": "mixed",
+  "redistribution_notes": "See Tier C record.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "schema.org ShareAlike; DOLCE licence unknown",
+  "community_vs_enterprise": "",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep",
+  "decision_summary": "REUSE gist/ORG as alignment refs; REFERENCE-ONLY others",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C03-tier-c-records-V14.md",
+  "sources": [
+   {
+    "title": "Upper/domain ontologies (BFO, gist, DOLCE, schema.org, FIBO, W3C ORG)",
+    "url": "https://github.com/semanticarts/gist",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ }
+]

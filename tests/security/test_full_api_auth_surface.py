@@ -7,10 +7,14 @@ import httpx
 import pytest
 
 from apps.api.main import create_app
+from _principals import provision_api_token
 
 PUBLIC = {
     "/health/live", "/health/ready", "/metrics", "/api/reva/v1/health",
     "/ontology/docs", "/api/v1/ontology/docs",
+    # Pre-authentication endpoints (apps/api/main.py middleware, route_policy.OPEN).
+    "/api/v1/auth/login", "/api/v1/auth/health", "/api/v1/auth/providers",
+    "/api/v1/auth/sso/{provider}/login",
 }
 METHODS = {"get", "post", "put", "patch", "delete", "head", "options", "trace"}
 
@@ -19,7 +23,7 @@ METHODS = {"get", "post", "put", "patch", "delete", "head", "options", "trace"}
 async def test_every_protected_api_operation_rejects_missing_and_invalid_bearer(monkeypatch, tmp_path, caplog):
     monkeypatch.setenv("EOIP_GRAPH_BACKEND", "memory")
     monkeypatch.setenv("EOIP_DATA_DIR", str(tmp_path))
-    monkeypatch.setenv("EOIP_API_TOKEN", "api-auth-surface-test-token-with-at-least-24-chars")
+    provision_api_token(monkeypatch, "api-auth-surface-test-token-with-at-least-24-chars")
     monkeypatch.setenv("REVA_ENABLED", "false")
     app = create_app()
     document = app.openapi()

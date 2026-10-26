@@ -1014,6 +1014,378 @@ Produces publication-grade, flowing prose matching frontier LLM outputs (Claude 
 - `tests/unit/test_cognitive_narrator.py`: **5 passed in 4.63s**.
 - Full cognitive suite (`test_cognitive_narrator.py`, `test_learning_and_reports.py`, `test_self_llm_frontier.py`, `test_brain_and_living_system.py`): **35/35 passed in 7.28s**.
 
+
+## Pass 9 — Super-Requirements (SR-*) Commercial Baseline Implementation
+
+**Date**: 2026-10-08
+
+### (a) What was implemented in this pass
+
+Eleven `eoip` packages were wired into the API (`apps/api/extended.py`, `ExtendedState._init_sr_wave` + `build_extended_router`) behind their lazy `build_router(...)` factories, and exercised end-to-end through FastAPI routes with a new test module (`tests/unit/test_sr_wave_api_routes.py`, 12 tests). All routes are live under `/api/v1`.
+
+| Area (SR IDs) | Package(s) | API prefix | Tests (package file) |
+|---|---|---|---|
+| Tenancy SR-TEN-001/002/003/006/007/009 | `packages/eoip/tenancy/` | `/api/v1/tenancy` | 49 (`test_tenancy.py`) |
+| Licensing SR-DEP-007, SR-COM-001, SR-TEN-009 | `packages/eoip/licensing/` | `/api/v1/licensing` | 26 (`test_licensing.py`) |
+| Layered config SR-CFG-001..006 | `packages/eoip/config/` | `/api/v1/config` | 21 (`test_layered_config.py`) |
+| Egress gateway SR-LLM-010..020 + SR-CON-010/011 (S0-S7 transforms, manifests, canaries, kill switch; no transport by default) | `packages/eoip/egress/` | `/api/v1/egress` | 41 (`test_egress_gateway.py`) |
+| Branding SR-WL-001/003/004-partial/006/007 + SR-ONT-007 | `packages/eoip/branding/` | `/api/v1/branding` | 15 (`test_branding.py`) |
+| Privacy SR-PRV-001..004, 006 partials | `packages/eoip/privacy/` | `/api/v1/privacy` | 22 (`test_privacy.py`) |
+| Compliance packs SR-GOV-001..005 | `packages/eoip/compliance/` | `/api/v1/compliance` | 30 (`test_compliance_packs.py`) |
+| Report generator SR-NLQ-008 (HTML/MD/JSON in-product; PDF/DOCX/PPTX External) | `packages/eoip/reports/` | `/api/v1/reports` | 37 (`test_reports.py`) |
+| QA gate integrity SR-QA-010..014 (behavioral evidence registry replacing the string-match gate, mutation checks, three-number dashboard, code introspection, policy gate) | `packages/eoip/qa/` | `/api/v1/qa` | 21 (`test_qa_gate_integrity.py`) |
+| NL suggestion engine SR-NLQ-002/003/004-partial | `packages/eoip/suggest/` | `/api/v1/suggest` | 13 (`test_suggestion_engine.py`) |
+| Schema profiler SR-ING-010/012/013/016-hook | `packages/eoip/ingest/profile.py` | `/api/v1/ingest/profile` | 21 (`test_schema_profiler.py`) |
+| Domain packs (healthcare + manufacturing) SR-COM-020/021 | `packages/eoip/marketplace/` + `config/domain-packs/` | (pack metadata APIs) | 52 (`test_marketplace.py`, `test_domain_packs*.py`) |
+
+Routes added this pass: **151** across 19 routers (tenancy 12, licensing 6, config 13, egress 12, branding 5, privacy 7, compliance 18, reports 8, qa 13, suggest 4, ingest profile 4, loops 4, agentarch 5, ragx 4, qlang 5, graphbuild 10, adapters 3, reasoning 7, execution 11).
+
+#### Gap-analysis wave (same pass): loops, agent architectures, ragx, qlang, adapters, graphbuild, reasoning, execution
+
+Eight further packages from the gap-analysis wave were wired into the same `_init_sr_wave` section and are live under `/api/v1`. All are verified by the route tests above plus their package suites (counts below).
+
+| Area | Package(s) | API prefix | Verified surface | Tests |
+|---|---|---|---|---|
+| Loops library: 23 loops + 15 human collaboration patterns | `packages/eoip/loops/` | `/api/v1/loops` | catalog, run, approvals | 49 (`test_loops_library.py`) |
+| Agent architectures: 18 classical + 15 reasoning + 27 enterprise + 16 org patterns + A2A bus | `packages/eoip/agentarch/` | `/api/v1/agentarch` | catalog, run, coordinate, a2a | 114 (`test_agent_architectures.py`) |
+| Extended RAG: 22 architectures + 25 techniques + metrics | `packages/eoip/ragx/` | `/api/v1/ragx` | architectures, query, techniques, metrics | 62 (`test_rag_extensions.py`) |
+| Polyglot query languages: 12 real-tier parsers + 31 declared-tier entries (incl. 10 NL2*) + taxonomy | `packages/eoip/qlang/` | `/api/v1/qlang` | languages, taxonomy, parse, execute | 18 (`test_query_languages_ext.py`) |
+| Backend adapters: 54 manifests with honesty validation (JanusGraph/AGE real) | `packages/eoip/graphbuild/router.py` (adapters) | `/api/v1/adapters` | list, detail, statements | 17 (`test_backend_catalog.py`) |
+| Graph builders (12 builders: schema induce, plan, co-change, IDs, mentions, hierarchy, rollup, similarity, link-prediction, repair) | `packages/eoip/graphbuild/` | `/api/v1/graphbuild` | delta builders | 24 (`test_graph_builders.py`) |
+| Reasoning: strategies + memory architectures + evaluation + agentops | `packages/eoip/reasoning/` | `/api/v1/reasoning` | strategies, memory, agentops costs, evaluation refs | 44 (`test_reasoning.py`, `test_causal_reasoning.py`) |
+| Execution: event-sourcing + workflows + queue + scheduling | `packages/eoip/execution/` | `/api/v1/execution` | workflow register/state/run, queue, reconcile | 42 (`test_execution_infra.py`, `test_pytest_execution_evidence.py`) |
+
+Note: an invalid regex in `packages/eoip/qlang/opencypher.py` reported by an earlier pass was verified fixed (`import eoip.qlang.opencypher` succeeds; the opencypher parser is covered by the real-tier route tests).
+
+### (b) SR status table (all 290 SR IDs from `super-requirements.md`)
+
+Statuses: **Done-behavioral** = implemented this pass with executable behavioral evidence; **Exists** = implemented before this pass per prior audit policy; **Exists-partial** = implementation exists but acceptance is not complete; **External gate** = genuinely deferred pending external systems/certifications; **ADR-gated** = deferred pending an architecture/business decision.
+
+| SR ID | Priority | Status | Evidence |
+|---|---|---|---|
+| SR-AGT-001 | P0 | Exists | packages/eoip/contracts/agent.py |
+| SR-AGT-002 | P0 | Exists | packages/eoip/agents/runtime.py |
+| SR-AGT-003 | P0 | Exists-partial | packages/eoip/agents/governed.py - HITL approval flow exists; HOTL/HIC monitoring modes partial |
+| SR-AGT-004 | P0 | Exists | packages/eoip/agents/runtime.py (READ_TOOLS enforcement) |
+| SR-AGT-005 | P0 | Exists | apps/mcp/ (read-only MCP server) |
+| SR-AGT-006 | P0 | Exists | packages/eoip/agents/memory.py |
+| SR-AGT-007 | P1 | Exists-partial | packages/eoip/marketplace/ - signed packages + installer exist; agent certification workflow partial |
+| SR-AGT-008 | P1 | Exists | packages/eoip/agents/orchestration.py |
+| SR-AGT-009 | P0 | Exists | packages/eoip/agents/proposals.py (PROPOSE_ONLY) |
+| SR-AGT-010 | P1 | Exists | packages/eoip/agents/ catalog (20+ agents) |
+| SR-AGT-011 | P1 | External gate | RPA/workflow outbound hooks (tickets, PR comments) deferred - needs target-system contracts |
+| SR-AGT-020 | P1 | Exists-partial | packages/eoip/connectors/ (poll/webhook) - watch-an-entity push UX partial |
+| SR-AGT-021 | P1 | Exists | packages/eoip/graph/conformance.py + knowledge_debt.py |
+| SR-AGT-022 | P0 | Exists | packages/eoip/graph/expertise.py freshness_report |
+| SR-AGT-023 | P1 | Exists | packages/eoip/graph/knowledge_debt.py |
+| SR-AGT-024 | P1 | Exists | packages/eoip/graph/expertise.py find_experts |
+| SR-AGT-025 | P1 | Exists-partial | blast radius + incident correlation - fragility x coverage composite risk score partial |
+| SR-AGT-026 | P2 | Exists | packages/eoip/graph/anomaly.py |
+| SR-AGT-027 | P1 | ADR-gated | scheduled personalized digest generation needs a scheduler + template decision |
+| SR-AGT-028 | P2 | ADR-gated | auto-generated onboarding tours need UX/ADR decision |
+| SR-AGT-029 | P3 | Exists-partial | packages/eoip/graph/simulation.py - simulation workspace exists; full digital-twin scenario planning partial |
+| SR-ARC-001 | P0 | Exists | packages/eoip/* modular monolith |
+| SR-ARC-002 | P0 | Exists | packages/eoip/graph/backends.py + adapters |
+| SR-ARC-003 | P0 | Exists-partial | packages/eoip/events/ - embedded append-only log exists; NATS/Kafka adapters ADR-gated |
+| SR-ARC-004 | P0 | Exists | schemas/ (versioned contract registry) |
+| SR-ARC-005 | P0 | Exists-partial | deploy/helm + apps/worker - stateless tiers deployable; horizontal-scale validation is External (cluster) |
+| SR-ARC-006 | P0 | ADR-gated | consistency-model conformance needs clustered-backend certification |
+| SR-ARC-007 | P0 | Exists-partial | idempotent upserts + deterministic IDs - replay-safe mutation proofs partial |
+| SR-ARC-008 | P1 | Exists | packages/eoip/graph/bitemporal.py |
+| SR-ARC-009 | P2 | Exists | packages/eoip/federation/ |
+| SR-ARC-010 | P0 | ADR-gated | WASM/container sandboxed extension runtime not selected yet |
+| SR-ARC-011 | P0 | Exists | packages/eoip/gaps/g2_architecture.py (CI guardrails) |
+| SR-ARC-012 | P0 | Exists | docs/adr-001-*.md + ADR process |
+| SR-CFG-001 | P0 | Done-behavioral | packages/eoip/config/; tests/unit/test_layered_config.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-CFG-002 | P0 | Done-behavioral | packages/eoip/config/; tests/unit/test_layered_config.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-CFG-003 | P0 | Done-behavioral | packages/eoip/config/; tests/unit/test_layered_config.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-CFG-004 | P0 | Done-behavioral | packages/eoip/config/; tests/unit/test_layered_config.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-CFG-005 | P0 | Done-behavioral | packages/eoip/config/; tests/unit/test_layered_config.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-CFG-006 | P1 | Done-behavioral | packages/eoip/config/; tests/unit/test_layered_config.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-COM-001 | P0 | Done-behavioral | packages/eoip/licensing/; tests/unit/test_licensing.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-COM-002 | P0 | Exists-partial | demo/ + examples/eval + licensing evaluation model - demo datasets + eval license exist; ROI calculator/sizing tool are sales tooling (External) |
+| SR-COM-003 | P0 | Exists-partial | packages/eoip/branding/content.py (legal registry) - legal content hosting exists; full procurement kit (MSA/DPA/BAA templates) is commercial tooling |
+| SR-COM-004 | P0 | External gate | support tiers with SLAs require a support organization, not product code |
+| SR-COM-005 | P0 | External gate | professional services are an offering, not product behavior |
+| SR-COM-006 | P1 | External gate | partner program is a business function |
+| SR-COM-007 | P0 | Exists | docs/ (api-reference, agents, runbooks, 60+ docs) |
+| SR-COM-008 | P1 | External gate | sales artifacts (battlecards, datasheets) are marketing deliverables |
+| SR-COM-009 | P0 | Exists | docs/adr-001-g2-contract-and-revision-model.md (LTS/revision policy) |
+| SR-COM-010 | P0 | ADR-gated | open-core/licensing strategy recorded via ADR process; final business decision pending |
+| SR-COM-020 | P0 | Done-behavioral | packages/eoip/marketplace/ + config/domain-packs/; tests/unit/test_marketplace.py + test_domain_packs*.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-COM-021 | P0 | Done-behavioral | packages/eoip/marketplace/ + config/domain-packs/; tests/unit/test_marketplace.py + test_domain_packs*.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-CON-001 | P0 | Exists | deploy/docker-compose.yml (self-contained DP-0) |
+| SR-CON-002 | P0 | Exists | local hashing embedder + local model provider |
+| SR-CON-003 | P0 | Exists | no default transports; egress kill switch (reinforced this pass by packages/eoip/egress) |
+| SR-CON-004 | P0 | Done-behavioral | packages/eoip/config/; tests/unit/test_layered_config.py; tests/unit/test_sr_wave_api_routes.py - typed layered config shipped this pass (SR-CFG-001..006) |
+| SR-CON-005 | P0 | Exists | deterministic query/impact/lineage paths run without LLM |
+| SR-CON-006 | P0 | Exists | evidence manifests + provenance trust states |
+| SR-CON-007 | P0 | Exists | clean-room policy documented in docs/ |
+| SR-CON-008 | P0 | Exists | adapter-based backends (graph, embeddings, models) |
+| SR-CON-009 | P0 | Exists | export formats (RDF, GraphML, JSON, openCypher, ...) |
+| SR-CON-010 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-CON-011 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-CON-012 | P1 | External gate | hyperscaler reference adapters need cloud accounts for certification |
+| SR-CON-013 | P1 | Exists-partial | deploy/helm/ - Helm modules exist; Terraform/OpenTofu modules partial |
+| SR-CON-014 | P2 | ADR-gated | local<->cloud capability migration tooling needs provider-selection ADR |
+| SR-DEP-001 | P0 | Exists | deploy/docker-compose.yml + scripts/demo_reset.py |
+| SR-DEP-002 | P1 | Exists | deploy/helm/ (HA topology, PDBs) |
+| SR-DEP-003 | P0 | Exists-partial | scripts/backup.py + offline license/pack files - signed OCI archive pipeline partial |
+| SR-DEP-004 | P2 | External gate | appliance images (hardware+software) require a hardware build pipeline |
+| SR-DEP-005 | P2 | External gate | RPM/DEB native packages require packaging infra |
+| SR-DEP-006 | P0 | Exists-partial | docs/ + deploy/ - platform matrix documented; continuous certification External |
+| SR-DEP-007 | P0 | Done-behavioral | packages/eoip/licensing/; tests/unit/test_licensing.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-DEP-008 | P2 | ADR-gated | DP-6 edge package needs sync/conflict-policy ADR |
+| SR-DEP-009 | P0 | Exists | docs/ (hardening guides, reference architectures) |
+| SR-EXT-001 | P0 | Exists | apps/api (REST/OpenAPI) |
+| SR-EXT-002 | P0 | Exists-partial | apps/api + schemas/ - idempotency + pagination on select routes; 12-month deprecation program partial |
+| SR-EXT-003 | P0 | Exists | admin APIs across apps/api/extended.py (extended this pass: tenancy/config/branding/licensing admin) |
+| SR-EXT-004 | P0/P1 | Exists-partial | packages/eoip (Python SDK) - Python SDK is the product package; TS/Java/Go/.NET SDKs External |
+| SR-EXT-005 | P1 | Exists-partial | examples/ (jira, gitlab, servicenow, confluence) - reference integrations exist; Slack/Teams bots External |
+| SR-EXT-010 | P0 (core 8) / P1 | Exists | connector/parser extension points + marketplace |
+| SR-EXT-011 | P0 | ADR-gated | plugin process isolation (container vs WASM) not decided |
+| SR-EXT-012 | P0 | Exists | packages/eoip/marketplace (signed, manifest, SBOM fields) |
+| SR-EXT-013 | P1 | Exists-partial | packages/eoip/graphtest + marketplace - contract-test scaffolding exists; full plugin test kit partial |
+| SR-EXT-014 | P1 | Exists-partial | packages/eoip/marketplace/ (registry, search) - online catalog exists; ratings/review workflow partial |
+| SR-EXT-015 | P1 | ADR-gated | low-code Studio builders need a UI/ADR decision |
+| SR-GDB-001 | P0 | Exists | packages/eoip/graph/store.py (GraphStore port) |
+| SR-GDB-002 | P0 | Exists-partial | packages/eoip/graph/backends.py capability flags - capability manifest publishing partial |
+| SR-GDB-003 | P0 | Exists-partial | tests/integration + contract tests - conformance suite exists for memory backend; per-backend certification External |
+| SR-GDB-004 | P0 | External gate | Tier A/B/C certification requires vendor collaboration and HA clusters |
+| SR-GDB-005 | P1 | ADR-gated | polyglot per-domain backend split needs deployment ADR |
+| SR-GDB-006 | P1 | ADR-gated | online migration (dual-write) not implemented |
+| SR-GDB-007 | P2 | ADR-gated | virtual/zero-ETL graph views not implemented |
+| SR-GDB-008 | P1 | Exists-partial | RDF/OWL export; LPG primary - RDF-star/reification partial |
+| SR-GDB-009 | P1 | Exists-partial | packages/eoip/graph/bitemporal.py - EntityRevision on mutations; full as-of query surface partial |
+| SR-GDB-010 | P0 | Exists | packages/eoip/graph/memory.py (embedded + in-memory) |
+| SR-GDB-011 | P0 | Exists-partial | config/graph-store.yaml (SQLite single-node) - PostgreSQL clustered metadata path partial |
+| SR-GDB-012 | P0 | Exists | packages/eoip/fileparse + raw capture storage |
+| SR-GDB-013 | P0/P1 | Exists-partial | packages/eoip/events/ (embedded log) - NATS/Kafka/RabbitMQ adapters External |
+| SR-GDB-014 | P0 | Exists | packages/eoip/query/cache.py + in-process cache; tenant-scoped keys |
+| SR-GDB-015 | P1 | Exists-partial | packages/eoip/jobs.py (retry, timers) - saga/human-approval workflow engine partial |
+| SR-GDB-016 | P0 | Exists | docs/ (component license matrix) |
+| SR-GOV-001 | P1 | Done-behavioral | packages/eoip/compliance/; tests/unit/test_compliance_packs.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-GOV-002 | P0 | Done-behavioral | packages/eoip/compliance/; tests/unit/test_compliance_packs.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-GOV-003 | P0 | Done-behavioral | packages/eoip/compliance/; tests/unit/test_compliance_packs.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-GOV-004 | P0 | Done-behavioral | packages/eoip/compliance/; tests/unit/test_compliance_packs.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-GOV-005 | P1 | Done-behavioral | packages/eoip/compliance/; tests/unit/test_compliance_packs.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-ING-001 | P0 | Exists | packages/eoip/connectors/ (connector SDK) |
+| SR-ING-002 | P0 | Exists | connectors: pagination, retry+jitter, circuit breaker, checkpoints |
+| SR-ING-003 | P0 | Exists | poll + webhook change capture in connectors |
+| SR-ING-004 | P0 | Exists | credential isolation via secret store/vault |
+| SR-ING-005 | P1 | Exists-partial | marketplace packaging for connectors - data-flow manifest now wired via SR-CON-011 |
+| SR-ING-006 | P0 | Exists | shared pipeline stages for streaming and batch |
+| SR-ING-007 | P0 | Exists-partial | streaming JSON parse + archive support - gz/zstd coverage partial |
+| SR-ING-010 | P0 | Done-behavioral | packages/eoip/ingest/profile.py; tests/unit/test_schema_profiler.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-ING-011 | P0 | Exists | packages/eoip/ingestion/ entity detection |
+| SR-ING-012 | P0 | Done-behavioral | packages/eoip/ingest/profile.py; tests/unit/test_schema_profiler.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-ING-013 | P0 | Done-behavioral | packages/eoip/ingest/profile.py; tests/unit/test_schema_profiler.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-ING-014 | P0 (value overlap) / P1 | Exists-partial | packages/eoip/ingest/profile.py value-overlap - inclusion-dependency discovery partial |
+| SR-ING-015 | P0 (engineering set) / P1 | Exists-partial | config-reference edge extraction - trace/log-derived edges need observability sources |
+| SR-ING-016 | P0 | Done-behavioral | packages/eoip/ingest/profile.py; tests/unit/test_schema_profiler.py; tests/unit/test_sr_wave_api_routes.py - edge-class honesty hook in profiler; ASSERTED/DERIVED classes predate this pass |
+| SR-ING-017 | P1 | ADR-gated | ontology induction (proposed classes from data) not implemented |
+| SR-ING-018 | P2 | Exists | packages/eoip/graph/similarity.py link_prediction |
+| SR-ING-019 | P0 | Exists | config/mappings/ (declarative mapping DSL) |
+| SR-ING-020 | P0 | Exists-partial | packages/eoip/ingest/profile.py drift endpoint - auto-compatible mapping updates partial |
+| SR-ING-030 | P0 | Exists | identity resolution: deterministic then probabilistic |
+| SR-ING-031 | P1 | Exists-partial | collective resolution via graph context - graph-neighbor evidence partial |
+| SR-ING-032 | P0 | Exists | explainable, reversible merges with audit bands |
+| SR-ING-033 | P0 | Exists | SAME_AS crosswalk with confidence |
+| SR-ING-040 | P0 | Exists-partial | derived graphs from mutation events - incremental maintenance partial; full rebuild exists |
+| SR-ING-041 | P1 | Exists-partial | graph.json / HTML export artifacts - interactive HTML artifact partial |
+| SR-ING-042 | P0 | Exists | traversal-first retrieval baseline (no embeddings required) |
+| SR-ING-043 | P1 | Exists-partial | pre-aggregation of degree/centrality - per-domain reachability buckets partial |
+| SR-ING-050 | P0 | Exists | validation engine severities + quarantine |
+| SR-ING-051 | P0 | Exists | freshness SLOs + knowledge-age surfacing |
+| SR-ING-052 | P0 | Exists | ingestion idempotency tests |
+| SR-ING-053 | P0 | Exists-partial | reconciliation reports - scheduled report automation partial |
+| SR-ING-060 | P0 | Exists | hostile-input defenses (zip-bomb, traversal, XXE tests) |
+| SR-ING-061 | P0 | Exists-partial | prompt-injection posture: ingestion firewall - indirect-injection test corpus partial |
+| SR-ING-070 | P0 | Exists | export formats (JSON/CSV/GraphML/GEXF/RDF/...) |
+| SR-ING-071 | P1 | External gate | JDBC/ODBC/OData/Arrow Flight endpoints need driver certification |
+| SR-LLM-001 | P0 | Exists-partial | packages/eoip/models/ (Model Provider Port) - chat/completion + structured-output port exists; tool-calling surface partial |
+| SR-LLM-002 | P0 | Exists | local Ollama adapter (eoip.models providers) |
+| SR-LLM-003 | P0 | Exists | packages/eoip/models/governance.py ModelRegistry |
+| SR-LLM-004 | P0 | Exists-partial | task-based routing between local models - model routing table exists; multi-model deployment partial |
+| SR-LLM-005 | P0 | Exists | docs/ (hardware reference configurations) |
+| SR-LLM-006 | P0 | Exists | PromptTemplateRegistry (versioned prompts, A/B hooks) |
+| SR-LLM-007 | P0 | Exists | embedding service with model versioning + re-embedding |
+| SR-LLM-008 | P0 | Exists-partial | LLM observability metrics - per-call cost/quality telemetry partial |
+| SR-LLM-009 | P0 | Exists | guardrails: KnowledgeFirewall + output schema validation |
+| SR-LLM-010 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-LLM-011 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-LLM-012 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-LLM-013 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-LLM-014 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-LLM-015 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-LLM-016 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-LLM-017 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-LLM-018 | P0 | Exists-partial | packages/eoip/egress/ - gateway covers model egress; embedding/OCR/speech routing is per-endpoint, not enforced for all pipeline stages |
+| SR-LLM-019 | P0 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-LLM-020 | P1 | Done-behavioral | packages/eoip/egress/; tests/unit/test_egress_gateway.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-NFR-001 | P0 | Exists-partial | apps/worker + stateless API tiers - horizontal scale deployable; multi-node validation External |
+| SR-NFR-002 | P1 | Exists | shard-plan + read-replica topology docs |
+| SR-NFR-003 | P0 | Exists | query policy: admission control, concurrency, kill-runaway |
+| SR-NFR-004 | P0 | Exists-partial | degradation fallbacks (hashing embedder, no-model mode) - full degradation matrix testing partial |
+| SR-NFR-005 | P0 | Exists | scripts/backup.py checksummed archives |
+| SR-NFR-006 | P0 | Exists | ops upgrade-plan + signed bundle path |
+| SR-NFR-007 | P1 | External gate | chaos/soak testing needs a live cluster |
+| SR-NFR-008 | P1 | Exists-partial | sizing guidance in docs - in-product capacity forecasting partial |
+| SR-NLQ-001 | P0 | Exists | packages/eoip/query/nlq.py deterministic template tier |
+| SR-NLQ-002 | P0 | Done-behavioral | packages/eoip/suggest/; tests/unit/test_suggestion_engine.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-NLQ-003 | P0 | Done-behavioral | packages/eoip/suggest/; tests/unit/test_suggestion_engine.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-NLQ-004 | P0 | Exists-partial | packages/eoip/suggest/ - deterministic mode is behavioral; narrated/exploratory LLM modes are External-gate (local LLM adapter) |
+| SR-NLQ-005 | P0 | Exists | explanation envelope + evidence panel depth |
+| SR-NLQ-006 | P0 | Exists | why/why-not/what-changed operators + what-if |
+| SR-NLQ-007 | P0 | Exists-partial | conversation follow-ups in NLQProcessor - session memory across turns partial |
+| SR-NLQ-008 | P0 (HTML/MD/PDF) / P1 | Done-behavioral | packages/eoip/reports/; tests/unit/test_reports.py; tests/unit/test_sr_wave_api_routes.py - HTML/MD/JSON in-product; PDF/DOCX/PPTX export is an External gate |
+| SR-NLQ-009 | P1 | External gate | multilingual NL needs local multilingual models (External model dependency) |
+| SR-NLQ-010 | P0 | Exists | examples/eval golden sets + evaluation agent |
+| SR-NLQ-011 | P0 | Exists | authz-constrained NLQ (hidden entities never revealed) |
+| SR-NLQ-012 | P1 | Exists-partial | feedback/curation queue - thumbs-to-curation loop partial |
+| SR-NLQ-013 | P2 | External gate | voice and chat-app surfaces (Teams/Slack/IDE) deferred |
+| SR-NLQ-014 | P1 | Exists | simulation overlay copy-on-write what-if |
+| SR-NLQ-015 | P1 | Exists-partial | follow-up suggestions in NL responses - usage-graph proactive suggestions partial |
+| SR-ONT-001 | P0 | Exists | ontology packs as versioned artifacts |
+| SR-ONT-002 | P0 | Exists | SKOS/RDF/OWL/JSON-LD import-export |
+| SR-ONT-003 | P0 | Exists-partial | apps/web ontology views - full visual ontology studio partial |
+| SR-ONT-004 | P0 | Exists | SHACL-class validation + severity gates |
+| SR-ONT-005 | P0 | Exists | SKOS glossary/taxonomy (schemes, synonyms) |
+| SR-ONT-006 | P1 | Exists-partial | lexical/structural alignment - embedding-assisted matching needs vector backends |
+| SR-ONT-007 | P0 | Done-behavioral | packages/eoip/branding/; tests/unit/test_branding.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-ONT-008 | P1 | ADR-gated | ontology-driven code generation not implemented |
+| SR-ONT-009 | P0 | Exists | governed evolution via change governance (SR-GOV-003) |
+| SR-ONT-010 | P1 | External gate | DataHub/OpenMetadata/Atlas sync needs those systems for certification |
+| SR-ONT-020 | P1 | Exists-partial | graph-native derivations (transitive closure, paths) - Datalog/SWRL-class rule tier partial |
+| SR-ONT-021 | P1 | Exists | truth store retraction surfaces contradictions |
+| SR-ONT-022 | P1 | Exists-partial | bitemporal edges - defeasible role semantics partial |
+| SR-OPS-001 | P0 | Exists | metrics registry + /metrics exposition |
+| SR-OPS-002 | P0 | Exists | health/readiness endpoints + dependency roll-up |
+| SR-OPS-003 | P0 | Exists | ops support-bundle (redacted) |
+| SR-OPS-004 | P0 | Exists | telemetry off by default |
+| SR-OPS-005 | P0 | Exists | docs/agent_runbook.md + runbooks |
+| SR-OPS-006 | P2 | Exists-partial | usage meter export supports cost views - cloud FinOps dashboards partial |
+| SR-PRV-001 | P0 | Done-behavioral | packages/eoip/privacy/; tests/unit/test_privacy.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-PRV-002 | P0 | Done-behavioral | packages/eoip/privacy/; tests/unit/test_privacy.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-PRV-003 | P0 | Done-behavioral | packages/eoip/privacy/; tests/unit/test_privacy.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-PRV-004 | P1 | Done-behavioral | packages/eoip/privacy/; tests/unit/test_privacy.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-PRV-005 | P1 | Exists-partial | compliance packs auto-generate records of processing - data-flow diagram generation partial |
+| SR-PRV-006 | P0 | Exists-partial | packages/eoip/privacy/ - residency validator + egress region pinning exist; storage-region pinning is policy-checked, not backend-enforced |
+| SR-PRV-007 | P1 | ADR-gated | pseudonymization/tokenization services beyond the egress vault not implemented |
+| SR-QA-001 | P0 | External gate | synthetic dataset generation per industry pack deferred (generator tooling) |
+| SR-QA-002 | P0 | External gate | synthetic scale knobs depend on SR-QA-001 generators |
+| SR-QA-010 | P0 | Done-behavioral | packages/eoip/qa/; tests/unit/test_qa_gate_integrity.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-QA-011 | P0 | Done-behavioral | packages/eoip/qa/; tests/unit/test_qa_gate_integrity.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-QA-012 | P0 | Done-behavioral | packages/eoip/qa/; tests/unit/test_qa_gate_integrity.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-QA-013 | P0 | Done-behavioral | packages/eoip/qa/; tests/unit/test_qa_gate_integrity.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-QA-014 | P0 | Done-behavioral | packages/eoip/qa/; tests/unit/test_qa_gate_integrity.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-QRY-001 | P0 | Exists | 6 query languages (EOQL, Gremlin, openCypher, GQL, SPARQL, SQL) |
+| SR-QRY-002 | P0 | Exists | schema-aware validation + policy before execution |
+| SR-QRY-003 | P0 | Exists | query explain (plan, backends, pushdowns, cost) |
+| SR-QRY-004 | P0 | Exists-partial | dialect round-trip golden corpus - corpus growing; 500-per-backend target partial |
+| SR-QRY-005 | P0 | Exists | parameterized plans only (no string-built queries) |
+| SR-QRY-006 | P0 | Exists | saved templates + question catalog (query intelligence) |
+| SR-QRY-007 | P0 | Exists | result envelope with evidence IDs + freshness |
+| SR-QRY-008 | P0 (core 30) / P1 | Exists | 30+ graph algorithms callable from plans |
+| SR-QRY-009 | P1 | Exists-partial | reachability accelerators - transitive-closure indexes partial |
+| SR-QRY-010 | P2 | Exists | federated query with per-source policy |
+| SR-QRY-011 | P1 | Exists | AS OF / bitemporal reads |
+| SR-QRY-012 | P1 | ADR-gated | multilingual query front-ends deferred with SR-NLQ-009 |
+| SR-RAG-001 | P0 | Exists | retrieval router with logged rationale |
+| SR-RAG-002 | P0 (local) / P1 | Exists-partial | local/global GraphRAG patterns - community-summary mode needs embedding backend |
+| SR-RAG-003 | P0 | Exists | hybrid BM25+dense with RRF |
+| SR-RAG-004 | P1 | Exists-partial | plugin strategy slots exist - HyDE/step-back/RAG-Fusion implementations partial |
+| SR-RAG-005 | P0 | Exists-partial | graph-aware chunking in fileparse - chunk-entity linking partial |
+| SR-RAG-006 | P0 | Exists-partial | corrective verification - entity verification before LLM assertions partial |
+| SR-RAG-007 | P0 | Exists-partial | token-aware context assembly - per-model budget tables partial |
+| SR-RAG-008 | P0 | Exists | model-down deterministic fallback |
+| SR-RAG-009 | P1 | Exists | semantic + exact cache keyed by tenant/policy/revision |
+| SR-RAG-010 | P0 | Exists | RAG evaluation harness (precision/recall, groundedness) |
+| SR-SEC-001 | P0 | Exists-partial | local identity provider + tokens - OIDC/SAML/LDAP/SCIM need external identity infrastructure |
+| SR-SEC-002 | P0 | Exists | RBAC + ABAC policy enforcer |
+| SR-SEC-003 | P0 | Exists-partial | element-level policies on labels/classes - property-level and derived-structure policies partial |
+| SR-SEC-004 | P0 | Exists-partial | source-ACL capture in connectors (select sources) - universal permission mirroring partial |
+| SR-SEC-005 | P1 | External gate | access-review certification campaigns are an enterprise process |
+| SR-SEC-006 | P0 | Exists-partial | agent identities with budgets - least-privilege agent roles partial |
+| SR-SEC-010 | P0 | Exists-partial | TLS in deploy configs - internal mTLS needs clustered deployment |
+| SR-SEC-011 | P0 | Exists | secrets via files/vault; no secrets in graph or logs |
+| SR-SEC-012 | P0 | Exists | hash-chained audit sink, exportable |
+| SR-SEC-013 | P0 | Exists | non-root, read-only root FS, dropped capabilities in deploy/ |
+| SR-SEC-014 | P0 | Exists-partial | SBOM generation in CI - VEX + Sigstore signing partial |
+| SR-SEC-015 | P0 | External gate | SAST/DAST/fuzzing + penetration tests are External certification gates |
+| SR-SEC-016 | P0 | Exists-partial | CSP/CSRF/XSS/SSRF guards - full web-hardening audit partial |
+| SR-SEC-017 | P0 | Exists | knowledge firewall + prompt-injection corpus |
+| SR-TEN-001 | P0 | Done-behavioral | packages/eoip/tenancy/; tests/unit/test_tenancy.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-TEN-002 | P0 (Silo, Bridge) / P1 (Pool) | Done-behavioral | packages/eoip/tenancy/; tests/unit/test_tenancy.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-TEN-003 | P0 | Done-behavioral | packages/eoip/tenancy/; tests/unit/test_tenancy.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-TEN-004 | P0 | External gate | automated cross-tenant penetration suite requires an independent security environment |
+| SR-TEN-005 | P0 | External gate | BYOK/HYOK key management requires customer KMS integrations |
+| SR-TEN-006 | P0 | Done-behavioral | packages/eoip/tenancy/; tests/unit/test_tenancy.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-TEN-007 | P0 | Done-behavioral | packages/eoip/tenancy/; tests/unit/test_tenancy.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-TEN-008 | P0 | Exists-partial | tenant-scoped settings/config exist (this pass) - per-tenant connectors/model allowlists partial |
+| SR-TEN-009 | P0 | Done-behavioral | packages/eoip/tenancy/; tests/unit/test_tenancy.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-TEN-010 | P2 | ADR-gated | cross-tenant sharing needs an explicit sharing-policy design decision |
+| SR-UX-001 | P0 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-002 | P0 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-003 | P1 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-004 | P0 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-005 | P0 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-006 | P1 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-007 | P1 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-008 | P0 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-009 | P1 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-010 | P0 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-011 | P0 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-UX-012 | P1 | Exists-partial | apps/web (live-API screens) - web UI exists; full UX acceptance (scale rendering, WCAG audit) partial |
+| SR-VDB-001 | P0 | Exists | packages/eoip/retrieval/vectors.py vector port |
+| SR-VDB-002 | P0 (embedded, pgvector) / P1 (rest) | Exists-partial | hashing embedder (embedded) - FAISS/pgvector/Qdrant adapters need those backends deployed |
+| SR-VDB-003 | P1 | ADR-gated | index-strategy configurability awaits adapter selection (SR-VDB-002) |
+| SR-VDB-004 | P2 | ADR-gated | multimodal embeddings need model selection ADR |
+| SR-VDB-005 | P0 | Exists | embeddings inherit classification/access policy (privacy + firewall) |
+| SR-VDB-006 | P0 | Exists | faceted BM25 search with highlighting |
+| SR-VDB-007 | P0 | Exists | no-vector-store deterministic NL acceptance path |
+| SR-WL-001 | P0 | Done-behavioral | packages/eoip/branding/; tests/unit/test_branding.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-WL-002 | P0 | Exists-partial | packages/eoip/branding/ (identity) + deploy/nginx - branded login/identity content exists; custom CNAME/TLS automation needs ingress infra |
+| SR-WL-003 | P0 | Done-behavioral | packages/eoip/branding/; tests/unit/test_branding.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-WL-004 | P0 | Exists-partial | packages/eoip/branding/; packages/eoip/branding/devendoring.py - devendoring helpers exist; full vendor-identifier sweep (image/binary names) remains |
+| SR-WL-005 | P1 | External gate | OEM re-signed appliance images deferred (build pipeline) |
+| SR-WL-006 | P0 | Done-behavioral | packages/eoip/branding/; tests/unit/test_branding.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-WL-007 | P0 | Done-behavioral | packages/eoip/branding/; tests/unit/test_branding.py; tests/unit/test_sr_wave_api_routes.py |
+| SR-WL-008 | P1 | ADR-gated | partner console needs fleet-management design decision |
+| SR-WL-009 | P1 | ADR-gated | embeddable iframe/web-component widgets need an embedding-auth design decision |
+
+Status counts: Done-behavioral 55, Exists 109, Exists-partial 84, External gate 21, ADR-gated 21.
+
+### (c) Test totals for this pass
+
+| Package tests | File | Tests |
+|---|---|---|
+| tenancy | `tests/unit/test_tenancy.py` | 49 |
+| licensing | `tests/unit/test_licensing.py` | 26 |
+| config (layered) | `tests/unit/test_layered_config.py` | 21 |
+| egress gateway | `tests/unit/test_egress_gateway.py` | 41 |
+| branding | `tests/unit/test_branding.py` | 15 |
+| privacy | `tests/unit/test_privacy.py` | 22 |
+| compliance packs | `tests/unit/test_compliance_packs.py` | 30 |
+| report generator | `tests/unit/test_reports.py` | 37 |
+| QA gate integrity | `tests/unit/test_qa_gate_integrity.py` | 21 |
+| NL suggestion engine | `tests/unit/test_suggestion_engine.py` | 13 |
+| schema profiler | `tests/unit/test_schema_profiler.py` | 21 |
+| pack SDK + domain packs | `tests/unit/test_marketplace.py + test_domain_packs*.py` | 52 |
+| SR-wave API routes (new) | `tests/unit/test_sr_wave_api_routes.py` | 19 |
+| loops library | `tests/unit/test_loops_library.py` | 49 |
+| agent architectures | `tests/unit/test_agent_architectures.py` | 114 |
+| ragx extensions | `tests/unit/test_rag_extensions.py` | 62 |
+| polyglot qlang | `tests/unit/test_query_languages_ext.py` | 18 |
+| backend adapters catalog | `tests/unit/test_backend_catalog.py` | 17 |
+| graph builders | `tests/unit/test_graph_builders.py` | 24 |
+| reasoning | `tests/unit/test_reasoning.py + test_causal_reasoning.py` | 44 |
+| execution infra | `tests/unit/test_execution_infra.py + test_pytest_execution_evidence.py` | 42 |
+| **Total pass-9 package tests** | | **737** |
+
+Full unit suite (2026-10-08 final full unit suite (tests/unit, 4020 collected)): **4016 passed, 4 skipped, 0 failed (exit 0) in ~13.5 min**.
+
+
 ---
 
 *Pass 15 final — 2026-10-10. Cognitive question understanding, multi-approach question enhancement, supplementation, and master LLM narration fully implemented, verified, and integrated into the Enterprise Living Brain OS. 100% complete across all audited scopes.*

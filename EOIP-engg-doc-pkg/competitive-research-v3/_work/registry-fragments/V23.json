@@ -1,0 +1,549 @@
+[
+ {
+  "id": "T-C10-milvus",
+  "slug": "milvus",
+  "name": "Milvus",
+  "category": "C10",
+  "tier": "B",
+  "tier_reason": "Distributed vector DB; scale-out reference",
+  "members": [
+   "Milvus Lite",
+   "Standalone",
+   "Distributed",
+   "Milvus Backup",
+   "Zilliz Cloud"
+  ],
+  "official_url": "https://milvus.io",
+  "owner": "Zilliz / LF AI & Data",
+  "latest_version": "3.0.3 (2.6.25 maintenance line)",
+  "version_date": "2026-10-14",
+  "release_cadence": "3.0.x patch every 1-3 weeks; 2.6.x in parallel",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0 core redistributable; Zilliz Cloud is a separate commercial service.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Enterprise-only features in OSS repo NOT PUBLICLY VERIFIED; managed Zilliz Cloud",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "embedded",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Milvus Lite is a pip-installed local-file mode; 3.0 storage format changes are one-way.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE optional adapter (scale tier); REUSE partition-key tenancy pattern; BUILD ACL filter in EOIP; DEFER for one-node P1",
+  "top_strengths": [
+   "STR-milvus-01",
+   "STR-milvus-02"
+  ],
+  "top_inversions": [
+   "INV-milvus-01",
+   "INV-milvus-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C10-milvus.md",
+  "sources": [
+   {
+    "title": "Milvus releases",
+    "url": "https://github.com/milvus-io/milvus/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Milvus release notes",
+    "url": "https://milvus.io/docs/release_notes.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Milvus partition key",
+    "url": "https://milvus.io/docs/use-partition-key.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Milvus RBAC",
+    "url": "https://milvus.io/docs/rbac.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Milvus install overview",
+    "url": "https://milvus.io/docs/install-overview.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Milvus backup",
+    "url": "https://milvus.io/docs/milvus_backup_overview.md",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C10-weaviate",
+  "slug": "weaviate",
+  "name": "Weaviate",
+  "category": "C10",
+  "tier": "B",
+  "tier_reason": "Vector DB with hybrid search and shard-per-tenant tenancy",
+  "members": [
+   "Weaviate core",
+   "wl enterprise directory",
+   "Weaviate Cloud"
+  ],
+  "official_url": "https://weaviate.io",
+  "owner": "Weaviate B.V.",
+  "latest_version": "1.40.2 (patch lines 1.36-1.39 also released)",
+  "version_date": "2026-10-22",
+  "release_cadence": "multiple patch releases per week across several minor lines",
+  "status": "active",
+  "license": "BSD-3-Clause except wl/ directory under the Weaviate (enterprise) licence",
+  "license_class": "mixed",
+  "redistribution_notes": "BSD-3 core redistributable; files under wl/ need a separate licence.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Community/enterprise split inside one repository (wl directory); contents not mapped",
+  "community_vs_enterprise": "wl directory features NOT PUBLICLY VERIFIED",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE optional adapter; REUSE tenant-lifecycle and filter-strategy ideas; BUILD ACL; DEFER until wl contents mapped",
+  "top_strengths": [
+   "STR-weaviate-01",
+   "STR-weaviate-02"
+  ],
+  "top_inversions": [
+   "INV-weaviate-01",
+   "INV-weaviate-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C10-weaviate.md",
+  "sources": [
+   {
+    "title": "Weaviate releases",
+    "url": "https://github.com/weaviate/weaviate/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Weaviate LICENSE",
+    "url": "https://raw.githubusercontent.com/weaviate/weaviate/main/LICENSE",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Weaviate filtering",
+    "url": "https://docs.weaviate.io/weaviate/concepts/filtering",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Weaviate multi-tenancy",
+    "url": "https://docs.weaviate.io/weaviate/concepts/data",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Weaviate backups",
+    "url": "https://docs.weaviate.io/deploy/configuration/backups",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Weaviate RBAC",
+    "url": "https://docs.weaviate.io/weaviate/configuration/rbac",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C10-lancedb",
+  "slug": "lancedb",
+  "name": "LanceDB",
+  "category": "C10",
+  "tier": "B",
+  "tier_reason": "Embedded vector DB; closest fit to the one-node in-process model",
+  "members": [
+   "LanceDB OSS",
+   "Lance format",
+   "LanceDB Enterprise"
+  ],
+  "official_url": "https://lancedb.com",
+  "owner": "LanceDB Inc.",
+  "latest_version": "0.40.0 on PyPI; 0.41.0-beta.14 on GitHub",
+  "version_date": "2026-10-25 (beta); 0.40.0 date UNVERIFIED",
+  "release_cadence": "frequent betas, several per week",
+  "status": "active",
+  "license": "Apache-2.0 (OSS); Enterprise terms not evaluated",
+  "license_class": "permissive",
+  "redistribution_notes": "OSS Apache-2.0 redistributable; Enterprise is sales-led.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Enterprise distributed platform shares the format; Enterprise-only feature list NOT PUBLICLY VERIFIED",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "EXPERIMENT as first persistent embedded backend; REUSE dataset-per-tenant and versioning ideas; BUILD ACL",
+  "top_strengths": [
+   "STR-lancedb-01",
+   "STR-lancedb-02"
+  ],
+  "top_inversions": [
+   "INV-lancedb-01",
+   "INV-lancedb-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C10-lancedb.md",
+  "sources": [
+   {
+    "title": "LanceDB releases",
+    "url": "https://github.com/lancedb/lancedb/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "LanceDB docs",
+    "url": "https://docs.lancedb.com/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "LanceDB hybrid search",
+    "url": "https://docs.lancedb.com/search/hybrid-search",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "LanceDB filtering",
+    "url": "https://docs.lancedb.com/search/filtering",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "LanceDB PyPI",
+    "url": "https://pypi.org/pypi/lancedb/json",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C10-elasticsearch",
+  "slug": "elasticsearch",
+  "name": "Elasticsearch",
+  "category": "C10",
+  "tier": "B",
+  "tier_reason": "Search reference; licence verified; DLS and rrf on paid tiers",
+  "members": [
+   "Elasticsearch",
+   "x-pack",
+   "Kibana (not examined)",
+   "Elastic Cloud"
+  ],
+  "official_url": "https://www.elastic.co/elasticsearch",
+  "owner": "Elastic N.V.",
+  "latest_version": "9.5.5 / 9.4.8 / 8.19.23",
+  "version_date": "2026-10-06",
+  "release_cadence": "patch releases every 1-3 weeks across lines",
+  "status": "active",
+  "license": "Source offered by choice of AGPL-3.0-only, SSPL v1 or Elastic License 2.0; x-pack ELv2-only; Apache-compatible headers on some files; clients Apache-2.0",
+  "license_class": "mixed",
+  "redistribution_notes": "Do not bundle; support as customer-operated adapter. OpenSearch (Apache-2.0) is the redistributable alternative.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "AGPL network copyleft, SSPL and ELv2 restrictions; x-pack ELv2-only; DLS and rrf retriever on paid tiers (tier mapping partly third-party)",
+  "community_vs_enterprise": "Free/Basic vs Platinum/Enterprise; DLS/FLS and rrf paid per third-party sources",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Triple licence confirmed from LICENSE.txt; AGPL option added in 2024 before 8.16.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE customer-supplied adapter only; REFERENCE DLS and retriever design; REJECT bundling; BUILD ACL",
+  "top_strengths": [
+   "STR-elasticsearch-01",
+   "STR-elasticsearch-02"
+  ],
+  "top_inversions": [
+   "INV-elasticsearch-01",
+   "INV-elasticsearch-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C10-elasticsearch.md",
+  "sources": [
+   {
+    "title": "Elasticsearch releases",
+    "url": "https://github.com/elastic/elasticsearch/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Elasticsearch LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/elastic/elasticsearch/main/LICENSE.txt",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Elastic subscriptions",
+    "url": "https://www.elastic.co/subscriptions",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Elastic DLS docs",
+    "url": "https://www.elastic.co/docs/deploy-manage/users-roles/cluster-or-deployment-auth/controlling-access-at-document-field-level",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Elastic retrievers",
+    "url": "https://www.elastic.co/docs/reference/elasticsearch/rest-apis/retrievers",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Elastic snapshots",
+    "url": "https://www.elastic.co/docs/deploy-manage/tools/snapshot-and-restore",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C10-vespa",
+  "slug": "vespa",
+  "name": "Vespa",
+  "category": "C10",
+  "tier": "B",
+  "tier_reason": "Hybrid ranking engine; phased ranking and streaming-search tenancy",
+  "members": [
+   "Vespa OSS",
+   "Vespa Cloud",
+   "Vespa CLI"
+  ],
+  "official_url": "https://vespa.ai",
+  "owner": "Vespa.ai",
+  "latest_version": "8.763.13 (no 9.x tag found)",
+  "version_date": "2026-10-05",
+  "release_cadence": "several system releases per month",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Apache-2.0 redistributable.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "No core gating found; Cloud-only security features are managed-service items",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "REFERENCE phased ranking (BUILD pipeline stages); EXPERIMENT as optional ranker backend; REUSE streaming-group tenancy idea; REJECT for P1 one-node",
+  "top_strengths": [
+   "STR-vespa-01",
+   "STR-vespa-02"
+  ],
+  "top_inversions": [
+   "INV-vespa-01",
+   "INV-vespa-02"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C10-vespa.md",
+  "sources": [
+   {
+    "title": "Vespa tags",
+    "url": "https://github.com/vespa-engine/vespa/tags",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Vespa phased ranking",
+    "url": "https://docs.vespa.ai/en/ranking/phased-ranking.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Vespa HNSW",
+    "url": "https://docs.vespa.ai/en/querying/approximate-nn-hnsw.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Vespa streaming search",
+    "url": "https://docs.vespa.ai/en/performance/streaming-search.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Vespa multinode",
+    "url": "https://docs.vespa.ai/en/operations/self-managed/multinode-systems.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C10-chroma",
+  "slug": "chroma",
+  "name": "Chroma",
+  "category": "C10",
+  "tier": "C",
+  "tier_reason": "Embedded vector store",
+  "members": [
+   "chromadb",
+   "Chroma Cloud"
+  ],
+  "official_url": "https://github.com/chroma-core/chroma",
+  "owner": "Chroma",
+  "latest_version": "1.5.9",
+  "version_date": "2026-05-05 (year inferred)",
+  "release_cadence": "irregular",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Redistributable.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Cloud is hosted; OSS auth/tenancy UNVERIFIED",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted",
+   "docker",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C10-tier-c-records-V23.md",
+  "sources": [
+   {
+    "title": "Chroma releases",
+    "url": "https://github.com/chroma-core/chroma/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Chroma docs",
+    "url": "https://docs.trychroma.com/docs/overview/getting-started",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C10-tantivy-lucene",
+  "slug": "tantivy-lucene",
+  "name": "Tantivy and Lucene",
+  "category": "C10",
+  "tier": "C",
+  "tier_reason": "Full-text libraries",
+  "members": [
+   "Tantivy",
+   "Apache Lucene"
+  ],
+  "official_url": "https://lucene.apache.org",
+  "owner": "Quickwit/community (Tantivy); Apache Software Foundation (Lucene)",
+  "latest_version": "Tantivy 0.26.1; Lucene 10.5.2",
+  "version_date": "Tantivy 2026-05-10 (year inferred); Lucene UNVERIFIED",
+  "release_cadence": "irregular (Tantivy); regular (Lucene)",
+  "status": "active",
+  "license": "Tantivy MIT; Lucene Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Both redistributable.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "none",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "Two projects in one registry row; both recorded.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "EXPERIMENT Tantivy as optional persistent BM25; REFERENCE Lucene",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C10-tier-c-records-V23.md",
+  "sources": [
+   {
+    "title": "Tantivy releases",
+    "url": "https://github.com/quickwit-oss/tantivy/releases",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Lucene",
+    "url": "https://lucene.apache.org/core/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C10-native-graph-vector",
+  "slug": "native-graph-vector",
+  "name": "Native vector indexes inside graph engines",
+  "category": "C10",
+  "tier": "C",
+  "tier_reason": "Cross-reference to C01 dives",
+  "members": [
+   "Neo4j",
+   "Memgraph",
+   "FalkorDB",
+   "Neptune Analytics",
+   "Apache HugeGraph"
+  ],
+  "official_url": "https://neo4j.com",
+  "owner": "various (see C01 dives)",
+  "latest_version": "per engine",
+  "version_date": "see C01 dives",
+  "release_cadence": "per engine",
+  "status": "active",
+  "license": "per engine (see C01 dives)",
+  "license_class": "mixed",
+  "redistribution_notes": "Per-engine terms; see C01.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Engine licences differ (see C01 dives)",
+  "community_vs_enterprise": "per engine",
+  "deployment_modes": [
+   "self-hosted",
+   "managed-cloud"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "HugeGraph server has no vector index (verified in C01 dive); Neptune Analytics is managed-only.",
+  "registry_action": "KEEP",
+  "action_reason": "Assigned entry",
+  "decision_summary": "INTEGRATE capability flags per adapter; do not rely on engine vectors for ACL",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C10-tier-c-records-V23.md",
+  "sources": [
+   {
+    "title": "C01 Neo4j dive",
+    "url": "04-COMPETITOR-DEEP-DIVES/C01-neo4j.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "C01 Memgraph dive",
+    "url": "04-COMPETITOR-DEEP-DIVES/C01-memgraph.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "C01 FalkorDB dive",
+    "url": "04-COMPETITOR-DEEP-DIVES/C01-falkordb.md",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ }
+]

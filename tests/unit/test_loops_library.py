@@ -70,7 +70,7 @@ def test_phase_specific_step_mapping():
         state["decided"] = True
         return StepOutcome(signal=StepSignal.COMPLETE)
 
-    result = LOOP_RUNNERS["ooda"]({"observe": _scripted_completion("act")["observe"] if False else None} if False else {
+    result = LOOP_RUNNERS["ooda"]({
         "observe": lambda s, c: (s.update(o=True), StepOutcome())[1],
         "orient": lambda s, c: (s.update(oriented=True), StepOutcome())[1],
         "decide": decide,

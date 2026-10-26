@@ -1,0 +1,493 @@
+[
+  {
+    "id": "T-C08-fast-graphrag",
+    "slug": "fast-graphrag",
+    "name": "fast-graphrag",
+    "category": "C08",
+    "tier": "B",
+    "tier_reason": "PPR GraphRAG variant; dormant library, reference design",
+    "members": [
+      "fast-graphrag OSS library",
+      "Circlemind managed service"
+    ],
+    "official_url": "https://github.com/circlemind-ai/fast-graphrag",
+    "owner": "Circlemind",
+    "latest_version": "0.0.5 (PyPI)",
+    "version_date": "2025-04-04",
+    "release_cadence": "no GitHub releases; last commit 2025-11-01",
+    "status": "maintenance",
+    "license": "MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "MIT permits embedding; managed service is separate commercial.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "OSS library vs Circlemind managed service",
+    "deployment_modes": [
+      "self-hosted",
+      "embedded",
+      "saas"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "EXPERIMENT native PPR retriever; do not depend on library",
+    "top_strengths": [
+      "STR-fast-graphrag-01"
+    ],
+    "top_inversions": [
+      "INV-fast-graphrag-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-fast-graphrag.md",
+    "sources": [
+      {
+        "title": "fast-graphrag repo",
+        "url": "https://github.com/circlemind-ai/fast-graphrag",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "PyPI fast-graphrag",
+        "url": "https://pypi.org/project/fast-graphrag/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C08-whyhow",
+    "slug": "whyhow",
+    "name": "WhyHow.AI",
+    "category": "C08",
+    "tier": "B",
+    "tier_reason": "Schema-guided KG for RAG; status unverified, OSS repos not retrievable",
+    "members": [
+      "Knowledge Graph Studio (OSS backend)",
+      "whyhow Python SDK",
+      "WhyHow enterprise cloud"
+    ],
+    "official_url": "https://github.com/whyhow-ai (404 on check)",
+    "owner": "WhyHow.AI",
+    "latest_version": "UNVERIFIED",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "UNKNOWN",
+    "status": "unknown",
+    "license": "UNVERIFIED (not stated by sources reached)",
+    "license_class": "n/a",
+    "redistribution_notes": "Unknown; hosted product proprietary.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Licence unverified; documented setup depends on MongoDB Atlas (server SSPL) - review if ever bundled",
+    "community_vs_enterprise": "OSS backend plus enterprise cloud (per Dealroom listing)",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "saas"
+    ],
+    "air_gap_viable": "unknown",
+    "maturity": "early-production",
+    "resolution_note": "On 2026-10-26 github.com/whyhow-ai and knowledge-graph-studio/whyhow-ai-sdk/rule-based-retrieval returned not found; whyhow.ai hostname did not resolve from this host; a third-party index recorded the repo on 2026-08-03; PyPI page carried an old-SDK warning. Wound down or withdrawn is likely but unproven; no announcement found.",
+    "registry_action": "KEEP",
+    "action_reason": "Retain as REFERENCE-ONLY with status unknown; never silently drop a named technology",
+    "decision_summary": "REJECT as dependency; BUILD schema-guided extraction pattern",
+    "top_strengths": [
+      "STR-whyhow-01"
+    ],
+    "top_inversions": [
+      "INV-whyhow-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-whyhow.md",
+    "sources": [
+      {
+        "title": "Knowledge Graph Studio index",
+        "url": "https://docsearch.algolia.com/mcp/docs/repo/whyhow-ai/knowledge-graph-studio",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "PyPI whyhow",
+        "url": "https://pypi.org/project/whyhow",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Dealroom whyhow ai",
+        "url": "https://app.dealroom.co/companies/whyhow_ai",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.4
+  },
+  {
+    "id": "T-C08-raptor",
+    "slug": "raptor",
+    "name": "RAPTOR",
+    "category": "C08",
+    "tier": "B",
+    "tier_reason": "Tree-summarisation retrieval method; dormant reference code",
+    "members": [
+      "RAPTOR paper (arXiv:2401.18059)",
+      "parthsarthi03/raptor reference implementation"
+    ],
+    "official_url": "https://github.com/parthsarthi03/raptor",
+    "owner": "Parth Sarthi et al. (Stanford)",
+    "latest_version": "paper v1; repo HEAD",
+    "version_date": "2024-09-03",
+    "release_cadence": "none",
+    "status": "maintenance",
+    "license": "MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "MIT; no restrictions found.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "EXPERIMENT ACL-grouped derived summary layer; REJECT repo as dependency",
+    "top_strengths": [
+      "STR-raptor-01"
+    ],
+    "top_inversions": [
+      "INV-raptor-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-raptor.md",
+    "sources": [
+      {
+        "title": "RAPTOR arXiv",
+        "url": "https://arxiv.org/abs/2401.18059",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "raptor repo",
+        "url": "https://github.com/parthsarthi03/raptor",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "GraphRAG-Bench",
+        "url": "https://arxiv.org/abs/2506.05690",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C08-think-on-graph",
+    "slug": "think-on-graph",
+    "name": "Think-on-Graph",
+    "category": "C08",
+    "tier": "B",
+    "tier_reason": "LLM-guided KG exploration; research method, unlicensed code",
+    "members": [
+      "ToG paper (ICLR 2024)",
+      "IDEA-FinAI/ToG code",
+      "ToG-2 (repo not found)"
+    ],
+    "official_url": "https://github.com/IDEA-FinAI/ToG",
+    "owner": "IDEA Research / Sun et al.",
+    "latest_version": "paper v6; repo HEAD",
+    "version_date": "2024-03-24",
+    "release_cadence": "none",
+    "status": "maintenance",
+    "license": "No LICENSE file found at repo root (UNVERIFIED)",
+    "license_class": "n/a",
+    "redistribution_notes": "No grant found; do not reuse code.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "No licence found for reference code",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "ToG-2 repo GasolSun36/ToG-2 returned not found 2026-10-26; original GasolSun36/ToG not checked",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "EXPERIMENT bounded LLM-guided traversal reimplemented from paper; REJECT code",
+    "top_strengths": [
+      "STR-tog-01"
+    ],
+    "top_inversions": [
+      "INV-tog-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-think-on-graph.md",
+    "sources": [
+      {
+        "title": "ToG arXiv",
+        "url": "https://arxiv.org/abs/2307.07697",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "ToG repo",
+        "url": "https://github.com/IDEA-FinAI/ToG",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C08-ragflow",
+    "slug": "ragflow",
+    "name": "RAGFlow",
+    "category": "C08",
+    "tier": "B",
+    "tier_reason": "OSS RAG engine with graph mode; very large adoption",
+    "members": [
+      "RAGFlow core",
+      "DeepDoc",
+      "Infinity doc engine",
+      "ragflow-sdk"
+    ],
+    "official_url": "https://github.com/infiniflow/ragflow",
+    "owner": "InfiniFlow",
+    "latest_version": "v1.0.0-rc2 (pre-release); ragflow-sdk 0.27.3",
+    "version_date": "2026-10-23",
+    "release_cadence": "frequent; 1.0 RCs since 2026-09-29",
+    "status": "active",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "Apache-2.0 allows embedding; bundled infra (Elasticsearch, MinIO, MySQL) carries separate licences.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Default stack includes components with SSPL/ELv2/AGPL options (Elasticsearch, MinIO); not verified this session",
+    "community_vs_enterprise": "single OSS edition; no enterprise split found",
+    "deployment_modes": [
+      "self-hosted",
+      "docker"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "INTEGRATE DeepDoc-style parsing as optional worker; REJECT graph mode as retrieval layer",
+    "top_strengths": [
+      "STR-ragflow-01",
+      "STR-ragflow-02"
+    ],
+    "top_inversions": [
+      "INV-ragflow-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-ragflow.md",
+    "sources": [
+      {
+        "title": "RAGFlow repo",
+        "url": "https://github.com/infiniflow/ragflow",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "RAGFlow KG docs (via search)",
+        "url": "https://ragflow.io/docs/dev/construct_knowledge_graph",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "PyPI ragflow-sdk",
+        "url": "https://pypi.org/project/ragflow-sdk/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C08-haystack",
+    "slug": "haystack",
+    "name": "Haystack",
+    "category": "C08",
+    "tier": "B",
+    "tier_reason": "OSS RAG/agent pipeline framework",
+    "members": [
+      "haystack-ai",
+      "integrations (Neo4j, FalkorDB, Cognee, ES, OpenSearch, Qdrant, pgvector, Weaviate)"
+    ],
+    "official_url": "https://haystack.deepset.ai",
+    "owner": "deepset",
+    "latest_version": "3.4.1 (3.5.0-rc0 tagged)",
+    "version_date": "2026-10-21",
+    "release_cadence": "frequent",
+    "status": "active",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "Apache-2.0; store integrations carry store licences.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "OSS library vs deepset commercial platform (not examined)",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "REFERENCE pipeline pattern; EXPERIMENT as evaluation harness; DEFER adoption",
+    "top_strengths": [
+      "STR-haystack-01"
+    ],
+    "top_inversions": [
+      "INV-haystack-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-haystack.md",
+    "sources": [
+      {
+        "title": "PyPI haystack-ai",
+        "url": "https://pypi.org/project/haystack-ai/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Haystack integrations",
+        "url": "https://haystack.deepset.ai/integrations",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "haystack repo",
+        "url": "https://github.com/deepset-ai/haystack",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C08-text-to-query",
+    "slug": "text-to-query",
+    "name": "Text-to-query systems (Text2Cypher, text-to-Gremlin, text-to-SPARQL)",
+    "category": "C08",
+    "tier": "B",
+    "tier_reason": "Directly relevant to J11/CAP-58; family of systems and benchmarks",
+    "members": [
+      "Neo4j Labs text2cypher",
+      "CypherBench",
+      "neo4j-graphrag Text2CypherRetriever",
+      "langchain-neo4j GraphCypherQAChain",
+      "SPARQL-LLM",
+      "TEXT2SPARQL challenge",
+      "EICopilot (Gremlin)",
+      "LDBC Text2Graph charter"
+    ],
+    "official_url": "https://github.com/neo4j-labs/text2cypher",
+    "owner": "Multiple (Neo4j Labs, Megagon Labs, SIB, others)",
+    "latest_version": "varies; CypherBench ACL 2025; SPARQL-LLM v2",
+    "version_date": "2026-09-23",
+    "release_cadence": "varies",
+    "status": "active",
+    "license": "Mixed: CC0-1.0 (text2cypher repo), CC BY-SA 4.0 (dataset paper), Apache-2.0 (CypherBench), MIT (langchain-neo4j), SPARQL-LLM software licence UNVERIFIED",
+    "license_class": "mixed",
+    "redistribution_notes": "Share-alike dataset licence may constrain bundling of data; code permissive.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "CC BY-SA 4.0 dataset share-alike; SPARQL-LLM code licence unverified",
+    "community_vs_enterprise": "Neo4j Labs project explicitly unsupported",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "Neo4j datasets: repo CC0-1.0 vs paper CC BY-SA 4.0 (inconsistent). No public Gremlin accuracy benchmark found.",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "EXPERIMENT LLM->typed QueryPlan candidates; BUILD dialect validators and per-dialect eval harness; keep deterministic fallback",
+    "top_strengths": [
+      "STR-t2q-01",
+      "STR-t2q-02"
+    ],
+    "top_inversions": [
+      "INV-t2q-01",
+      "INV-t2q-02"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-text-to-query.md",
+    "sources": [
+      {
+        "title": "Text2Cypher dataset paper",
+        "url": "https://arxiv.org/abs/2412.10064",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "CypherBench",
+        "url": "https://arxiv.org/abs/2412.18702",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "SPARQL-LLM",
+        "url": "https://arxiv.org/abs/2512.14277",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "langchain-neo4j Cypher chain source",
+        "url": "https://github.com/langchain-ai/langchain-neo4j",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "EICopilot",
+        "url": "https://arxiv.org/abs/2501.13746",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.65
+  },
+  {
+    "id": "T-C08-langchain-langgraph",
+    "slug": "langchain-langgraph",
+    "name": "LangChain and LangGraph",
+    "category": "C08",
+    "tier": "B",
+    "tier_reason": "Ubiquitous orchestration; RAG/graph usage only (C09 covers agents)",
+    "members": [
+      "langchain",
+      "langgraph",
+      "langchain-core",
+      "langchain-community",
+      "langchain-neo4j",
+      "LangSmith (proprietary)"
+    ],
+    "official_url": "https://docs.langchain.com",
+    "owner": "LangChain Inc.",
+    "latest_version": "langchain 1.4.7; langgraph 1.2.17",
+    "version_date": "2026-10-24",
+    "release_cadence": "weekly patch releases (community package slower: 0.4.2 on 2026-05-22)",
+    "status": "active",
+    "license": "MIT (OSS packages); LangSmith/platform proprietary",
+    "license_class": "mixed",
+    "redistribution_notes": "MIT for OSS packages; LangSmith and platform commercial.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Commercial LangSmith/Platform split if white-labelled; terms not examined",
+    "community_vs_enterprise": "OSS libraries vs proprietary LangSmith/LangGraph platform",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted",
+      "saas"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "EXPERIMENT LangGraph as optional executor behind EOIP tool gateway; REJECT GraphCypherQAChain; REFERENCE state-machine pattern",
+    "top_strengths": [
+      "STR-langgraph-01",
+      "STR-langchain-01"
+    ],
+    "top_inversions": [
+      "INV-langchain-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-langchain-langgraph.md",
+    "sources": [
+      {
+        "title": "PyPI langgraph",
+        "url": "https://pypi.org/project/langgraph/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "PyPI langchain",
+        "url": "https://pypi.org/project/langchain/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "langchain-neo4j Cypher chain",
+        "url": "https://github.com/langchain-ai/langchain-neo4j",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  }
+]

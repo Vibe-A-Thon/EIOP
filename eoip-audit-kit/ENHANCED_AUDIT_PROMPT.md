@@ -18,7 +18,9 @@ Perform a **comprehensive, evidence-backed, unbiased** audit of EOIP (kgf) by co
 | Artifact | Role |
 |---|---|
 | `audit_gaps_requirements.md` | Authoritative human report |
-| `tracker.html` | Executive remediation dashboard (or use this kit’s `tracker.html`) |
+| `requirements.md` | Consolidated requirements catalogue: every requirement ID with verbatim text, source doc:line link, type, priority, acceptance criteria (verbatim, or derived and marked as derived), dependencies, duplicate definition sites, plus orphan test-only IDs |
+| `implementation.md` | Implementation status against requirements: executive summary (status, tiers, tests), architecture/stack from repo reading, coverage per component, and per ID the status, tier, code links, mapped tests with pass/fail, residual gaps, fix-task IDs and what is needed to reach Implemented; known defects |
+| `tracker.html` | Executive remediation dashboard with the run's data embedded (works from file://; the kit root `tracker.html` is a copy of `audit-output/tracker.html`) |
 | `evidence/evidence.json` | Machine evidence for tracker import |
 | `audit-memory.json` | Continuity across agents/LLMs and delta audits |
 | `requirements_index.json` | Parsed requirements |
@@ -173,6 +175,7 @@ Each step produces artifacts under `audit-output/` and raw evidence under `audit
 
 - Produce `evidence/evidence.json` conforming to `schemas/evidence.schema.json`.
 - Update `audit-memory.json` per `schemas/audit-memory.schema.json`.
+- Generate `requirements.md` and `implementation.md` (`audit-scripts/generate_requirements_and_implementation_md.py`) from the index, traceability, merged evidence, memory and tasks. Both are deterministic, and verbatim text is read from the audited commit.
 - Generate or refresh `tracker.html`; operators import evidence for executive status.
 
 ---
@@ -249,7 +252,10 @@ When status is Not Implemented (or claiming a control is absent):
 ```text
 audit-output/
   audit_gaps_requirements.md
-  tracker.html                 # or link to kit tracker
+  requirements.md              # consolidated requirements catalogue (generate_requirements_and_implementation_md.py)
+  implementation.md            # implementation status per requirement (same script)
+  requirements/ implementation/  # per-source-doc split + index.md, only when a single file would exceed ~15 MB
+  tracker.html                 # embedded data; generate_tracker.py also copies it to the kit root
   requirements_index.json
   traceability_matrix.csv
   audit_tasks.json
@@ -412,7 +418,7 @@ python3 audit-scripts/generate_audit_report.py \
   --out audit-output/audit_gaps_requirements.md --commit <commit-hash>
 python3 audit-scripts/validate_evidence.py --schema schemas/evidence.schema.json \
   --in audit-output/evidence/evidence.json
-# Open eoip-audit-kit/tracker.html → Import Evidence JSON → Import Audit Memory
+# Open eoip-audit-kit/tracker.html (embedded run data) or templates/tracker_template.html (blank) → Import Evidence JSON → Import Audit Memory
 ```
 
 ---

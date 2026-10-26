@@ -1,0 +1,86 @@
+[
+  {
+    "id": "AUD-001", "severity": "High", "title": "Historical audit evidence can overstate acceptance",
+    "observation": "The legacy status policy accepts unspecified outcomes as passing, accepts bare L3 items, and permits unqualified manual overrides. The old test mapper also uses file-level ID associations. This run uses a separate fail-closed assessor and exact executed markers; legacy results are not inherited.",
+    "evidence": ["eoip-audit-kit/audit-scripts/proof_policy.py", "eoip-audit-kit/audit-scripts/run_tests_and_map.py", "eoip-audit-kit/audit-scripts/strict_audit_policy.py"],
+    "remediation": "Consolidate all legacy importers, memory updaters and generators onto the reviewed strict policy. Keep historical output immutable and regression-test stale bundles, unknown outcomes, missing artifacts and override conflicts.",
+    "acceptance": "Python and browser policy tests agree; no L1-only, stale, unknown-result or incomplete CI item closes a requirement. An independent reviewer approves the policy migration."
+  },
+  {
+    "id": "AUD-002", "severity": "High", "title": "Requirement extraction previously lost subclauses and text",
+    "observation": "The original parser truncated bodies at 3,000 characters, acceptance lists at 12 entries and duplicate sites at 20. Independently tracked dotted IDs such as CRA-021.7 were not retained as distinct clauses. Local audit-tool changes remove these limits and preserve full clauses. Ten normative lines remain outside recognized definitions in the new inventory.",
+    "evidence": ["eoip-audit-kit/audit-scripts/parse_md_requirements.py", "evidence/inventory/markdown.json", "evidence/inventory/unparsed-normative-lines.json"],
+    "remediation": "Review the unmatched lines and every conflicting duplicate definition; approve canonical scope, parent/child acceptance dependencies and stable ownership. Do not accept all research/plan text as product scope by automation alone.",
+    "acceptance": "Full verbatim definitions and all sites are reproducible; subclauses retain IDs; product owner resolves candidate versus approved scope; parser regression tests pass."
+  },
+  {
+    "id": "AUD-003", "severity": "High", "title": "Broad Python verification did not complete",
+    "observation": "The coverage-enabled tests/ run stopped at the 60-second per-test timeout during the 10,000-concept SKOS round trip. It produced no complete source-bound receipt or trustworthy full branch-coverage result. Focused runs are separate evidence and do not convert the interrupted run into a pass.",
+    "evidence": ["evidence/python-baseline/execution.json", "evidence/python-baseline/output.txt", "evidence/test_results/summary.json"],
+    "remediation": "Triage exact failures in the completed focused runs, isolate expensive profiles, retain progress on timeout, and run complete branch coverage with an approved performance budget. Compare the isolated SKOS run without instrumentation before attributing timeout to a product defect.",
+    "acceptance": "All required suites finish with per-case outcomes, no unreviewed skips/collection failures, complete source hashes and required line/branch measurements. Timeouts remain explicit failures."
+  },
+  {
+    "id": "AUD-004", "severity": "High", "title": "RAG architecture module contains invalid Python bytes",
+    "observation": "packages/eoip/ragx/architectures.py cannot be compiled because it contains null bytes. The inventory also found a malformed audit fixture; that fixture is not an application module. The local safety probe reproduced the RAG syntax failure without importing external services.",
+    "evidence": ["packages/eoip/ragx/architectures.py", "evidence/inventory/python-syntax-errors.json", "evidence/safety-probes/output.txt"],
+    "remediation": "Recover intended source from version history, review encoding and content rather than blindly deleting bytes, add import and behavior regressions for the exposed architectures, and run affected RAG integrations.",
+    "acceptance": "The module compiles and imports on supported Python versions; every supported architecture runs against synthetic fixtures; broken or unsupported paths fail explicitly."
+  },
+  {
+    "id": "AUD-005", "severity": "High", "title": "Local model label does not enforce a local destination",
+    "observation": "LocalModelProvider accepts an arbitrary configured URL and posts prompt content directly with httpx. A local mock captured a remote-host URL and the synthetic content without an EgressGateway decision. This is a configuration-dependent control gap, not evidence that production data was leaked. Deployment-level blocking was not established.",
+    "evidence": ["packages/eoip/models/provider.py:33", "packages/eoip/models/provider.py:62", "packages/eoip/egress/gateway.py", "evidence/safety-probes/output.txt"],
+    "remediation": "Define trusted local endpoints including permitted private service names, reject remote endpoints or route them through a tenant-bound policy gateway, test redirects/DNS/metadata addresses and enforce outbound network controls. Review persistence, keys and approval authority in gateway wiring.",
+    "acceptance": "Synthetic canaries cannot leave through any model/embedding/OCR/telemetry path without explicit consent, classification and residency policy; deny tests exercise real transport boundaries; security reviewer signs the egress design."
+  },
+  {
+    "id": "AUD-006", "severity": "High", "title": "Successful placeholder CI jobs hide a failed validation gate",
+    "observation": "The GitHub API reports 11 workflow runs for the audited SHA: ten REVA workflows succeeded and Validation evidence failed. Within Validation evidence, regression job 118617951615 failed at Run source-bound regression, while kgci job 118617952056 succeeded. REVA workflow definitions include echo-only steps rather than the named verification. The successful KGCI job was not promoted to requirement-level L3 because its acceptance mapping and artifacts were not obtained.",
+    "evidence": ["evidence/ci-public-query/output.txt", "evidence/ci-jobs/output.txt", ".github/workflows/reva-unit.yml", ".github/workflows/validation-evidence.yml"],
+    "remediation": "Replace placeholder jobs with real commands or clearly disable their acceptance role; retrieve failed validation job logs, repair failures and publish sealed requirement-to-case receipts with commit and job/run IDs.",
+    "acceptance": "Required branch protections target meaningful jobs; every closure includes a green eligible same-SHA job and its exact requirement coverage artifact, not only a workflow badge."
+  },
+  {
+    "id": "AUD-007", "severity": "High", "title": "API inventory is much broader than dedicated functional probes",
+    "observation": "The generated surface contains 751 HTTP operations and 18 MCP tools. The dedicated QA probe registry covers 14 HTTP operations; 737 lack those dedicated probes. This is not a claim that all 737 have no tests: broader auth and module tests exist. Static inventory and the skipped Postman operation catalogue do not establish per-operation functional behavior.",
+    "evidence": ["evidence/api-inventory/coverage-inventory.json", "qa/postman/EOIP-API-operation-catalog.postman_collection.json", "tests/integration/test_mcp_tool_contracts.py", "tests/security/test_full_api_auth_surface.py"],
+    "remediation": "Build a case matrix per method/path and MCP tool covering happy path, authorization, tenant isolation, malformed inputs, persistence and recovery. Run real MCP-to-API paths separately from mocked upstream protocol tests.",
+    "acceptance": "Every supported operation has retained executed behavior and contract evidence. Unsupported operations are explicitly rejected or removed. No catalogue request or 401-only check is counted as successful functional acceptance."
+  },
+  {
+    "id": "AUD-008", "severity": "High", "title": "Success-response contracts remain incomplete",
+    "observation": "The schema-quality baseline identifies 239 response-contract findings, including empty success schemas and missing response content. A passing drift check means no new findings compared with the pin, not that existing API contracts are complete.",
+    "evidence": ["qa/contracts/schema-quality.json", "qa/schema_quality.py", "evidence/schema-quality/output.txt"],
+    "remediation": "Add typed response models and documented errors for each affected operation; validate representative success and failure payloads at runtime; review compatibility and regenerate clients only after contract approval.",
+    "acceptance": "No undocumented supported success payloads remain, duplicate operation IDs are absent, and live schema tests fail on deliberately malformed server responses."
+  },
+  {
+    "id": "AUD-009", "severity": "High", "title": "Dependency scans require release-specific remediation",
+    "observation": "pip-audit reported 341 advisory matches across 46 packages in the installed audit environment. These are not all proven EOIP release dependencies. The locked web tree reports one high-severity vulnerable package, Vite 7.3.6, with multiple advisory entries; Vite is development/build tooling. Reachability and runtime image impact require separate review.",
+    "evidence": ["vuln_report.json", "evidence/dependency-advisories/output.txt", "evidence/web-advisories/output.txt", "apps/web/package-lock.json"],
+    "remediation": "Resolve isolated release environments from approved locks; generate Python, Node and container SBOMs per distribution; triage advisory applicability and update affected constraints/locks with regression tests. Do not run blanket audit --fix or treat metadata as legal clearance.",
+    "acceptance": "Every release component is inventoried; policy-blocking reachable vulnerabilities are fixed or independently risk-accepted with expiry; advisory and license scans rerun on final artifacts."
+  },
+  {
+    "id": "AUD-010", "severity": "High", "title": "Static findings need source-level security triage",
+    "observation": "Bandit reported 324 candidates (9 high, 23 medium, 292 low) and an AST error. Ruff reported 4,111 diagnostics across 579 files, including undefined-name candidates. Scanner severity is not exploit confirmation: the flagged archive extractall uses py7zr, validated names and a memory-only factory, so it must not be reported as confirmed tar path traversal.",
+    "evidence": ["vuln_report.json", "evidence/security-sast/output.txt", "evidence/lint/output.txt", "packages/eoip/fileparse/archives.py:165"],
+    "remediation": "Prioritize import/undefined-name and reachable security defects, distinguish non-security hashes from cryptographic uses, review shell invocation, and attach reasoned suppressions only after regression evidence. Avoid unrelated repository-wide formatting churn.",
+    "acceptance": "Every high candidate and runtime-error diagnostic is dispositioned with source context, reproducer or reviewed false-positive rationale; meaningful lint/SAST gates run in CI."
+  },
+  {
+    "id": "AUD-011", "severity": "High", "title": "Durable job primitives are not proof of deployed recovery semantics",
+    "observation": "jobs.py contains a SQLite DurableJobStore and a separate legacy file-backed JobQueue. The default API and worker use JobQueue; the existence of leases/outbox/DLQ code does not qualify the default topology for multi-worker recovery or exactly-once external effects. Memory graph state is process-local.",
+    "evidence": ["packages/eoip/jobs.py:53", "packages/eoip/jobs.py:536", "apps/api/main.py", "apps/worker/main.py", "docs/architecture-guide.md"],
+    "remediation": "Choose the authoritative persistence/dispatch path, design migration and rollback, test crash/restart/fencing/idempotency at actual process boundaries, and establish real backend restore drills before multi-worker claims.",
+    "acceptance": "The deployed path survives crash/restart and duplicate delivery without unauthorized or duplicate effects; tenant isolation, outbox delivery and rollback are evidenced on supported storage backends."
+  },
+  {
+    "id": "AUD-012", "severity": "High", "title": "Release, compliance and non-functional qualification remain unsigned",
+    "observation": "No qualified staging/production deployment, independent L5 review, complete release SBOM, signed data-residency decision, or production-scale restore/load evidence was supplied. Fifteen local browser checks include automated accessibility but do not constitute full WCAG conformance or usability approval. Research and generated documentation are not release approval.",
+    "evidence": ["a11y_checklist.md", "architecture_review.md", "data_classification.md", "compliance_gaps.md", "evidence/web-browser/playwright.json"],
+    "remediation": "Assign accountable product, operations and security owners; confirm supported platforms, volumes, latency/SLO budgets, RPO/RTO, jurisdiction and distribution models; execute the environment matrix and independent signoff gates.",
+    "acceptance": "Approved measurable targets, reproducible deployment evidence and named independent signoffs exist for each release profile. Unknown requirements remain open, not guessed or silently skipped."
+  }
+]

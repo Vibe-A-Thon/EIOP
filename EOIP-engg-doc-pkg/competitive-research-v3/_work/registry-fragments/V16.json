@@ -1,0 +1,887 @@
+[
+  {
+    "id": "T-C02-allegrograph",
+    "slug": "allegrograph",
+    "name": "AllegroGraph",
+    "category": "C02",
+    "tier": "B",
+    "tier_reason": "Commercial RDF + neuro-symbolic positioning",
+    "members": [
+      "AllegroGraph Server",
+      "AllegroGraph Cloud",
+      "FedShard",
+      "Gruff",
+      "GraphTalker"
+    ],
+    "official_url": "https://allegrograph.com/",
+    "owner": "Franz Inc.",
+    "latest_version": "9.0",
+    "version_date": "2026-05-05",
+    "release_cadence": "1-2 releases per year (8.3 Nov 2024, 8.4 May 2025, 9.0 May 2026)",
+    "status": "active",
+    "license": "Proprietary; free edition capped at 5M triples per v5-v7 docs (current cap and Developer tier UNVERIFIED)",
+    "license_class": "proprietary",
+    "redistribution_notes": "Commercial licence; OEM/white-label terms NOT PUBLICLY VERIFIED.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Proprietary, edition limits unclear, OEM terms unverified",
+    "community_vs_enterprise": "Free capped vs Enterprise; clustering/edition gating UNKNOWN",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "kubernetes",
+      "managed-cloud"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "Reference for per-repository reasoning mode, ACL parity for vector+graph, agentic NL-to-SPARQL; no adapter now; EXPERIMENT NL-to-SPARQL loop, BUILD ACL parity, DEFER backend adapter",
+    "top_strengths": [
+      "STR-allegrograph-01",
+      "STR-allegrograph-02"
+    ],
+    "top_inversions": [
+      "INV-allegrograph-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-allegrograph.md",
+    "sources": [
+      {
+        "title": "AllegroGraph 9.0 press release",
+        "url": "https://allegrograph.com/press_room/franz-inc-launches-allegrograph-9-0-with-graphtalker-the-ai-agent-for-enterprise-knowledge-graphs/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "DBTA AllegroGraph 8.4",
+        "url": "https://www.dbta.com/Editorial/News-Flashes/Franz-Inc-Launches-AllegroGraph-84-Supporting-Agentic-AI-Solutions-169344.aspx",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "AllegroGraph product page",
+        "url": "https://allegrograph.com/products/allegrograph/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "AllegroGraph editions",
+        "url": "https://allegrograph.com/allegrograph-editions/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C02-eclipse-rdf4j",
+    "slug": "eclipse-rdf4j",
+    "name": "Eclipse RDF4J",
+    "category": "C02",
+    "tier": "B",
+    "tier_reason": "Java RDF framework; reuse reference",
+    "members": [
+      "rdf4j-model",
+      "Rio",
+      "Sail (Memory, Native, LMDB)",
+      "SHACL Sail",
+      "FedX",
+      "Server/Workbench"
+    ],
+    "official_url": "https://rdf4j.org/",
+    "owner": "Eclipse Foundation",
+    "latest_version": "6.0.0",
+    "version_date": "2026-07-02",
+    "release_cadence": "several minor releases per year; major 6.0 in July 2026",
+    "status": "active",
+    "license": "Eclipse Distribution License 1.0 (BSD-3-Clause)",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive; keep notices; optional Elasticsearch components carry separate licensing.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single open-source project; commercial stores built on its API",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted",
+      "docker"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "INTEGRATE as SPARQL/HTTP store; EXPERIMENT SHACL and RDF 1.2 as oracle; not embedded in Python core",
+    "top_strengths": [
+      "STR-eclipse-rdf4j-01",
+      "STR-eclipse-rdf4j-02"
+    ],
+    "top_inversions": [
+      "INV-eclipse-rdf4j-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-eclipse-rdf4j.md",
+    "sources": [
+      {
+        "title": "RDF4J about",
+        "url": "https://rdf4j.org/about/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "RDF4J 6.0.0 release notes",
+        "url": "https://rdf4j.org/release-notes/6.0.0/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Eclipse RDF4J project page",
+        "url": "https://projects.eclipse.org/node/8588",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C02-openlink-virtuoso",
+    "slug": "openlink-virtuoso",
+    "name": "OpenLink Virtuoso",
+    "category": "C02",
+    "tier": "B",
+    "tier_reason": "Long-lived RDF/SQL hybrid; scale reference",
+    "members": [
+      "Virtuoso Open Source (VOS)",
+      "Virtuoso Commercial Edition",
+      "Elastic Cluster Edition"
+    ],
+    "official_url": "https://virtuoso.openlinksw.com/",
+    "owner": "OpenLink Software",
+    "latest_version": "VOS 7.2.17 (commercial 8.x number UNVERIFIED)",
+    "version_date": "2026-05-07",
+    "release_cadence": "about 1-3 maintenance releases per year",
+    "status": "active",
+    "license": "GPLv2 (open source); commercial licence",
+    "license_class": "mixed",
+    "redistribution_notes": "GPL open source; commercial licence lifts GPL restrictions including OEM.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "GPLv2 plus commercial-only HA, inference rules, ABAC, encryption",
+    "community_vs_enterprise": "Open source lacks cluster HA, custom inference, ABAC, encryption at rest, external RDF Views",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "INTEGRATE optionally as customer-installed backend (no bundling); EXPERIMENT virtual-tier ideas; BUILD ABAC natively",
+    "top_strengths": [
+      "STR-openlink-virtuoso-01"
+    ],
+    "top_inversions": [
+      "INV-openlink-virtuoso-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-openlink-virtuoso.md",
+    "sources": [
+      {
+        "title": "Virtuoso 7.2.17 release notes",
+        "url": "https://community.openlinksw.com/t/virtuoso-open-source-7-2-17-release-notes/6248",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Virtuoso site",
+        "url": "https://virtuoso.openlinksw.com/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "virtuoso-opensource",
+        "url": "https://github.com/openlink/virtuoso-opensource",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C02-rdfox",
+    "slug": "rdfox",
+    "name": "RDFox",
+    "category": "C02",
+    "tier": "B",
+    "tier_reason": "Incremental Datalog materialisation reference for the tiered-reasoning inversion",
+    "members": [
+      "RDFox server",
+      "RDFox Console",
+      "RDFox C/C++/Java APIs"
+    ],
+    "official_url": "https://www.oxfordsemantic.tech/",
+    "owner": "Oxford Semantic Technologies (Samsung Electronics agreed to acquire, reported 2024-07-18; closing not verified)",
+    "latest_version": "7.7",
+    "version_date": "2026-09-29",
+    "release_cadence": "about one release per quarter",
+    "status": "active",
+    "license": "Proprietary; evaluation licence (evaluation only, no commercial use); production terms NOT PUBLICLY VERIFIED",
+    "license_class": "proprietary",
+    "redistribution_notes": "Evaluation licence forbids distribution, reverse engineering, commercial use; benchmark publication requires approval.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Proprietary, Samsung ownership, benchmark-publication clause",
+    "community_vs_enterprise": "Single commercial product; free start/evaluation",
+    "deployment_modes": [
+      "self-hosted",
+      "embedded",
+      "managed-cloud"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "production",
+    "resolution_note": "Samsung acquisition reported 2024-07-18; continuity of third-party sales not stated. Incremental algorithm (B/F vs DRed) not named in docs; BwdChain phase suggests B/F (hypothesis).",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "Key reference for tiered reasoning: incremental maintenance of data and rules, parallel materialisation, shortest-proof explanation; EXPERIMENT incremental Datalog (BUILD subset, Nemo candidate), BUILD proof traces, REJECT bundling",
+    "top_strengths": [
+      "STR-rdfox-01",
+      "STR-rdfox-02"
+    ],
+    "top_inversions": [
+      "INV-rdfox-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-rdfox.md",
+    "sources": [
+      {
+        "title": "RDFox reasoning docs",
+        "url": "https://docs.oxfordsemantic.tech/reasoning.html",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "RDFox release notes",
+        "url": "https://docs.oxfordsemantic.tech/release-notes.html",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "RDFox evaluation licence",
+        "url": "https://oxfordsemantic.tech/rdfox-evaluation-license",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Backward/Forward algorithm (AAAI 2015)",
+        "url": "https://ojs.aaai.org/index.php/AAAI/article/view/9409",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "RDFox: A Highly-Scalable RDF Store (ISWC 2015)",
+        "url": "https://www.cs.ox.ac.uk/people/boris.motik/pubs/npmhwb15RDFox-scalable.pdf",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Samsung acquires Oxford Semantics",
+        "url": "https://www.thestack.technology/samsung-acquires-oxford-semantics/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C02-oxigraph",
+    "slug": "oxigraph",
+    "name": "Oxigraph",
+    "category": "C02",
+    "tier": "B",
+    "tier_reason": "Embeddable Rust SPARQL store; reuse candidate for optional RDF sidecar",
+    "members": [
+      "oxigraph server",
+      "pyoxigraph",
+      "oxigraph JS",
+      "oxrdf",
+      "spargebra",
+      "spareval"
+    ],
+    "official_url": "https://github.com/oxigraph/oxigraph",
+    "owner": "Oxigraph open-source project (maintainer not verified)",
+    "latest_version": "0.5.13",
+    "version_date": "2026-10-22",
+    "release_cadence": "frequent patch releases (4 between 2026-08-30 and 2026-10-22)",
+    "status": "active",
+    "license": "Apache-2.0 OR MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive dual licence; default RocksDB dependency licence not re-verified.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single open-source project",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted",
+      "docker"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "INTEGRATE as optional light RDF sidecar (EXPERIMENT); REUSE spargebra for query validation; RDF 1.2 behind feature flag; no reasoning/ACL/tenancy",
+    "top_strengths": [
+      "STR-oxigraph-01"
+    ],
+    "top_inversions": [
+      "INV-oxigraph-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-oxigraph.md",
+    "sources": [
+      {
+        "title": "Oxigraph README",
+        "url": "https://github.com/oxigraph/oxigraph",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Oxigraph releases",
+        "url": "https://github.com/oxigraph/oxigraph/releases",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "docs.rs oxigraph",
+        "url": "https://docs.rs/crate/oxigraph/latest",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Oxigraph Architecture wiki",
+        "url": "https://github.com/oxigraph/oxigraph/wiki/Architecture",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Oxigraph Store docs",
+        "url": "https://docs.rs/oxigraph/latest/oxigraph/store/struct.Store.html",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C02-qlever",
+    "slug": "qlever",
+    "name": "QLever",
+    "category": "C02",
+    "tier": "B",
+    "tier_reason": "High-performance SPARQL engine for very large KGs",
+    "members": [
+      "QLever engine",
+      "qlever-control CLI",
+      "QLever UI",
+      "QLever.js"
+    ],
+    "official_url": "https://github.com/ad-freiburg/qlever",
+    "owner": "University of Freiburg (Chair for Algorithms and Data Structures) and contributors",
+    "latest_version": "0.6.0",
+    "version_date": "2026 (GitHub shows 13 Aug; year not shown)",
+    "release_cadence": "roughly monthly",
+    "status": "active",
+    "license": "Apache-2.0 (README); one catalogue lists MIT, treated as incorrect pending LICENSE check",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive with patent grant.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single open-source project",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "Chosen by Wikimedia in 2026 to replace Blazegraph for WDQS; endpoints targeted 2026-11-01; Blazegraph shutdown targeted 2027-06-30",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "EXPERIMENT as optional read replica behind EOIP policy rewriter; REFERENCE text/spatial/path search; lacks reasoning, RDF 1.2, read ACLs",
+    "top_strengths": [
+      "STR-qlever-01",
+      "STR-qlever-02"
+    ],
+    "top_inversions": [
+      "INV-qlever-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-qlever.md",
+    "sources": [
+      {
+        "title": "QLever repository",
+        "url": "https://github.com/ad-freiburg/qlever",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "QLever Update docs",
+        "url": "https://docs.qlever.dev/update/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "QLever (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/QLever",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Wikidata Platform newsletter June 2026",
+        "url": "https://www.wikidata.org/wiki/Wikidata:Wikidata_Platform_team/Newsletter_June_2026",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "WDQS backend replacement",
+        "url": "https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/WDQS_backend_update/Backend_Replacement",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.65
+  },
+  {
+    "id": "T-C02-anzo",
+    "slug": "anzo",
+    "name": "Altair Graph Studio / Anzo / AnzoGraph (Siemens RapidMiner Graph Studio, Graph Lakehouse)",
+    "category": "C02",
+    "tier": "B",
+    "tier_reason": "Enterprise knowledge graph; ownership change verified",
+    "members": [
+      "Anzo",
+      "AnzoGraph DB",
+      "Altair Graph Studio",
+      "Altair Graph Lakehouse",
+      "Siemens RapidMiner Graph Studio"
+    ],
+    "official_url": "https://www.siemens.com/en-us/products/rapidminer/graph-studio/",
+    "owner": "Siemens Digital Industries Software (via Altair, which acquired Cambridge Semantics 2024-04-12; Siemens completed Altair acquisition 2025-03-26)",
+    "latest_version": "Graph Studio 2026.0.1 (engine 6.2); Graph Lakehouse 2026.0 (database version 3.3)",
+    "version_date": "UNVERIFIED (docs show no dates)",
+    "release_cadence": "annual major plus patches",
+    "status": "renamed",
+    "license": "Proprietary; legacy free AnzoGraph edition up to 16 GB reported",
+    "license_class": "proprietary",
+    "redistribution_notes": "OEM terms NOT PUBLICLY VERIFIED; vendor says single package with no tiers.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Proprietary, new owner, OEM/air-gap terms unverified",
+    "community_vs_enterprise": "No community edition; Graph Lakehouse sold standalone",
+    "deployment_modes": [
+      "self-hosted",
+      "kubernetes",
+      "managed-cloud"
+    ],
+    "air_gap_viable": "unknown",
+    "maturity": "production",
+    "resolution_note": "Cambridge Semantics -> Altair (Apr 2024) -> Siemens (Altair acquired Mar 2025); Anzo = Graph Studio, AnzoGraph DB = Graph Lakehouse; Siemens page now says RapidMiner Graph Studio",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "BUILD ABAC and model-connection ACLs; EXPERIMENT virtualise/materialise; DEFER as backend (MPP in-memory engine)",
+    "top_strengths": [
+      "STR-anzo-01",
+      "STR-anzo-02"
+    ],
+    "top_inversions": [
+      "INV-anzo-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-anzo.md",
+    "sources": [
+      {
+        "title": "Altair acquires Cambridge Semantics",
+        "url": "https://news.siemens.com/en-us/altair-acquires-cambridge-semantics/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Siemens completes Altair acquisition",
+        "url": "https://www.nafems.org/about-us/media/news/industrynews1003/siemens-completes-10-billion-acquisition-of-altair-engineering/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Graph Studio 2026.0 docs",
+        "url": "https://help.altair.com/graphstudio/userdoc/Home.htm",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Graph Studio 2026 release notes",
+        "url": "https://2025.help.altair.com/2025.1/graphstudio/userdoc/relnotes/graph-studio-2026-releases.htm",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Siemens RapidMiner Graph Studio",
+        "url": "https://www.siemens.com/en-us/products/rapidminer/graph-studio/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C02-blazegraph",
+    "slug": "blazegraph",
+    "name": "Blazegraph",
+    "category": "C02",
+    "tier": "C",
+    "tier_reason": "Maintenance and Wikidata migration history to verify",
+    "members": [
+      "Blazegraph database"
+    ],
+    "official_url": "https://github.com/blazegraph/database",
+    "owner": "Blazegraph project (archived)",
+    "latest_version": "UNVERIFIED (README cites 2.0.0 on Maven Central)",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "none (archived)",
+    "status": "archived",
+    "license": "GPL-2.0",
+    "license_class": "strong-copyleft",
+    "redistribution_notes": "GPL; unmaintained.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "GPL-2.0 and abandonment",
+    "community_vs_enterprise": "Single OSS project",
+    "deployment_modes": [
+      "self-hosted",
+      "embedded"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "historical",
+    "resolution_note": "Repo archived 2026-03-23; Wikidata Query Service backend being replaced by QLever (2026-27); Wikimedia pages disagree on when maintenance ceased (2016 vs 2018)",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "REJECT as backend; REFERENCE-ONLY for migration lessons",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-tier-c-records-V16.md",
+    "sources": [
+      {
+        "title": "Blazegraph repo",
+        "url": "https://github.com/blazegraph/database",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "WDQS backend replacement",
+        "url": "https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/WDQS_backend_update/Backend_Replacement",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C02-millenniumdb",
+    "slug": "millenniumdb",
+    "name": "MillenniumDB",
+    "category": "C02",
+    "tier": "C",
+    "tier_reason": "Research engine",
+    "members": [
+      "MillenniumDB"
+    ],
+    "official_url": "https://github.com/MillenniumDB/MillenniumDB",
+    "owner": "academic group (not re-verified)",
+    "latest_version": "UNVERIFIED",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "unknown",
+    "status": "unknown",
+    "license": "GPL-2.0",
+    "license_class": "strong-copyleft",
+    "redistribution_notes": "GPL; research status.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "GPL-2.0",
+    "community_vs_enterprise": "Single OSS project",
+    "deployment_modes": [
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-tier-c-records-V16.md",
+    "sources": [
+      {
+        "title": "MillenniumDB repo",
+        "url": "https://github.com/MillenniumDB/MillenniumDB",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.55
+  },
+  {
+    "id": "T-C02-corese",
+    "slug": "corese",
+    "name": "Corese",
+    "category": "C02",
+    "tier": "C",
+    "tier_reason": "Inria semantic engine",
+    "members": [
+      "corese-core",
+      "corese-command",
+      "corese-server",
+      "corese-gui",
+      "corese-python"
+    ],
+    "official_url": "https://github.com/Corese-stack",
+    "owner": "Inria Wimmics team and contributors",
+    "latest_version": "corese-core 4.6.5 (snippet, unconfirmed)",
+    "version_date": "UNVERIFIED (4.5.0 on 2023-12-14)",
+    "release_cadence": "irregular",
+    "status": "active",
+    "license": "CeCILL-C",
+    "license_class": "weak-copyleft",
+    "redistribution_notes": "CeCILL-C is LGPL-like; legal review before bundling.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "CeCILL-C copyleft",
+    "community_vs_enterprise": "Single OSS project",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted",
+      "desktop"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "Original Wimmics/corese repo archived Jan 2025; development moved to Corese-stack org",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "REFERENCE-ONLY; EXPERIMENT SHACL oracle",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-tier-c-records-V16.md",
+    "sources": [
+      {
+        "title": "Corese-stack org",
+        "url": "https://github.com/Corese-stack",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "corese-core",
+        "url": "https://github.com/Corese-stack/corese-core",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C02-hdt",
+    "slug": "hdt",
+    "name": "HDT (compressed RDF)",
+    "category": "C02",
+    "tier": "C",
+    "tier_reason": "Compressed RDF format",
+    "members": [
+      "hdt-cpp",
+      "hdt-java"
+    ],
+    "official_url": "https://github.com/rdfhdt/hdt-cpp",
+    "owner": "rdfhdt community",
+    "latest_version": "hdt-java 3.0.7 (hdt-cpp UNVERIFIED)",
+    "version_date": "2022-12-12 (hdt-java)",
+    "release_cadence": "irregular",
+    "status": "maintenance",
+    "license": "LGPL (hdt-cpp, hdt-java core, hdt-jena); Apache (hdt-java api/cli)",
+    "license_class": "weak-copyleft",
+    "redistribution_notes": "Mixed LGPL/Apache modules.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "LGPL linking",
+    "community_vs_enterprise": "Single OSS project",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "rdfhdt.org certificate expired at fetch time",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "EXPERIMENT as snapshot export format",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-tier-c-records-V16.md",
+    "sources": [
+      {
+        "title": "hdt-cpp",
+        "url": "https://github.com/rdfhdt/hdt-cpp",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "hdt-java",
+        "url": "https://github.com/rdfhdt/hdt-java",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "hdt-java 3.0.7 Zenodo",
+        "url": "https://zenodo.org/records/7428791",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.55
+  },
+  {
+    "id": "T-C02-comunica",
+    "slug": "comunica",
+    "name": "Comunica",
+    "category": "C02",
+    "tier": "C",
+    "tier_reason": "Federated SPARQL client framework",
+    "members": [
+      "@comunica/query-sparql",
+      "@comunica/query-sparql-rdfjs"
+    ],
+    "official_url": "https://comunica.dev/",
+    "owner": "Comunica Association / community (not re-verified)",
+    "latest_version": "5.4",
+    "version_date": "2026-09-14",
+    "release_cadence": "about 2-3 releases per year (5.0 Jan, 5.2 Apr, 5.4 Sep 2026)",
+    "status": "active",
+    "license": "MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single OSS project",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "REFERENCE-ONLY; EXPERIMENT federation tests",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-tier-c-records-V16.md",
+    "sources": [
+      {
+        "title": "Comunica blog",
+        "url": "https://comunica.dev/blog/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C02-nemo",
+    "slug": "nemo",
+    "name": "Nemo (Datalog reasoner)",
+    "category": "C02",
+    "tier": "C",
+    "tier_reason": "Rust Datalog reasoner",
+    "members": [
+      "nmo CLI",
+      "nemo-web",
+      "language bindings"
+    ],
+    "official_url": "https://github.com/knowsys/nemo",
+    "owner": "Knowledge-Based Systems Group, TU Dresden",
+    "latest_version": "0.10.1",
+    "version_date": "UNVERIFIED (GitHub shows 01 Aug; 2026 inferred)",
+    "release_cadence": "several releases per year",
+    "status": "active",
+    "license": "Apache-2.0 OR MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive dual licence.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single OSS project",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "EXPERIMENT as tier-1 Datalog worker",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-tier-c-records-V16.md",
+    "sources": [
+      {
+        "title": "Nemo repo",
+        "url": "https://github.com/knowsys/nemo",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Nemo releases",
+        "url": "https://github.com/knowsys/nemo/releases",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C02-vlog",
+    "slug": "vlog",
+    "name": "VLog",
+    "category": "C02",
+    "tier": "C",
+    "tier_reason": "Datalog reasoner; activity to verify",
+    "members": [
+      "VLog C++ reasoner",
+      "VLog Java API"
+    ],
+    "official_url": "https://github.com/karmaresearch/vlog",
+    "owner": "karmaresearch GitHub org; TU Dresden/VU Amsterdam",
+    "latest_version": "1.3.7 (per 2023 review)",
+    "version_date": "2022-12",
+    "release_cadence": "unknown",
+    "status": "maintenance",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single OSS project",
+    "deployment_modes": [
+      "self-hosted",
+      "docker"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "research",
+    "resolution_note": "TU Dresden page names Nemo as successor",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "REFERENCE-ONLY; prefer Nemo",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-tier-c-records-V16.md",
+    "sources": [
+      {
+        "title": "VLog repo",
+        "url": "https://github.com/karmaresearch/vlog",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "VLog (TU Dresden)",
+        "url": "https://iccl.inf.tu-dresden.de/web/VLog",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.5
+  },
+  {
+    "id": "T-C02-souffle",
+    "slug": "souffle",
+    "name": "Souffle",
+    "category": "C02",
+    "tier": "C",
+    "tier_reason": "Datalog compiler; reference for rule compilation",
+    "members": [
+      "souffle compiler",
+      "souffle interpreter"
+    ],
+    "official_url": "https://github.com/souffle-lang/souffle",
+    "owner": "Souffle community (originated at Oracle Labs)",
+    "latest_version": "2.5",
+    "version_date": "UNVERIFIED (GitHub shows 24 Mar; year not shown)",
+    "release_cadence": "about 1-2 releases per year",
+    "status": "active",
+    "license": "UPL-1.0 (per distribution packages; LICENSE not opened)",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive per packages; verify LICENSE.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single OSS project",
+    "deployment_modes": [
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "oracle/souffle repo deprecated; active repo is souffle-lang/souffle",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified; kept",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C02-tier-c-records-V16.md",
+    "sources": [
+      {
+        "title": "Souffle releases",
+        "url": "https://github.com/souffle-lang/souffle/releases",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  }
+]

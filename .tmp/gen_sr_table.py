@@ -416,7 +416,7 @@ for rid in ids:
     status, ev, note = C.get(rid, DEFAULT)
     counts[status] += 1
     pri = texts[rid]['priority'].replace('|', '/')
-    evnote = (ev + (' - ' + note if note else '')).replace('|', '/')
+    evnote = ((ev + ' - ' + note) if ev and note else (ev or note)).replace('|', '/')
     rows.append((rid, pri, status, evnote))
 
 print(counts)

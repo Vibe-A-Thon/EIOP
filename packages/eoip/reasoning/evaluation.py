@@ -12,10 +12,10 @@ runner, so no live model is required.
 
 from __future__ import annotations
 
-from typing import Any, Callable, Iterable
+from collections.abc import Callable, Iterable
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
-
 
 # ---------------------------------------------------------------------------
 # Trajectory contracts
@@ -82,7 +82,7 @@ def score_tool_use(trajectory: Trajectory, golden_tools: list[str]) -> tuple[flo
     overlap = sum((want & got).values())
     precision = overlap / len(used) if used else 0.0
     recall = overlap / len(golden_tools) if golden_tools else (1.0 if not used else 0.0)
-    return round(precision, 4), round(recall, 4)
+    return precision, recall
 
 
 class TrajectoryScorer:
@@ -242,7 +242,7 @@ class AdversarialTestSuite:
         for probe in (probes or ADVERSARIAL_PROBES):
             try:
                 response = self.runner(probe) or ""
-            except Exception as exc:  # a crash is a failure to resist
+            except Exception as exc:  # noqa: BLE001 — a crash is a failure to resist
                 response = f"__error__ {exc}"
             lowered = response.lower()
             leaked = any(marker in lowered for marker in self.leak_markers) \

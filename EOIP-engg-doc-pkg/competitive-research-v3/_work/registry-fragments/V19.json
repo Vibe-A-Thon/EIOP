@@ -1,0 +1,437 @@
+[
+ {
+  "id": "T-C07-sap-knowledge-graph",
+  "slug": "sap-knowledge-graph",
+  "name": "SAP knowledge graph",
+  "category": "C07",
+  "tier": "B",
+  "tier_reason": "Shipped-vs-announced to verify",
+  "members": [
+   "SAP HANA Cloud Knowledge Graph Engine",
+   "SAP Business Data Cloud",
+   "Joule agents"
+  ],
+  "official_url": "https://learning.sap.com/courses/data-engineer-sap-hana/sap-hana-cloud-knowledge-graph-engine-1",
+  "owner": "SAP SE",
+  "latest_version": "HANA Cloud Q2 2026 (secondary source)",
+  "version_date": "2026-07-03",
+  "release_cadence": "quarterly HANA Cloud releases",
+  "status": "active",
+  "license": "Proprietary SaaS (SAP terms)",
+  "license_class": "proprietary",
+  "redistribution_notes": "No OEM/redistribution; managed service only.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Proprietary SaaS terms",
+  "community_vs_enterprise": "UNVERIFIED",
+  "deployment_modes": [
+   "managed-cloud",
+   "saas"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "early-production",
+  "resolution_note": "Engine documented; GA of KG engine and Joule integration NOT PUBLICLY VERIFIED (early adopter programme advertised).",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "INTEGRATE SAP metadata via connector; REUSE RDF adapters; REJECT as dependency",
+  "top_strengths": [
+   "STR-sap-01"
+  ],
+  "top_inversions": [
+   "INV-sap-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-sap-knowledge-graph.md",
+  "sources": [
+   {
+    "title": "SAP Learning KG engine",
+    "url": "https://learning.sap.com/courses/data-engineer-sap-hana/sap-hana-cloud-knowledge-graph-engine-1",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "BARC SAP Data & Analytics 2026",
+    "url": "https://barc.com/sap-data-analytics-2026/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "SAP Developer News 3 Jul 2026",
+    "url": "https://community.sap.com/t5/developer-news/sap-developer-new-july-3rd-2026/ba-p/14432288",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C07-salesforce-data-cloud",
+  "slug": "salesforce-data-cloud",
+  "name": "Salesforce Data Cloud (now Data 360)",
+  "category": "C07",
+  "tier": "B",
+  "tier_reason": "Customer data graph",
+  "members": [
+   "Salesforce Data 360",
+   "Agentforce 360 grounding",
+   "Data graphs"
+  ],
+  "official_url": "https://www.salesforce.com/ap/products/data/",
+  "owner": "Salesforce, Inc.",
+  "latest_version": "UNVERIFIED (SaaS, unversioned)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "continuous SaaS",
+  "status": "renamed",
+  "license": "Proprietary SaaS",
+  "license_class": "proprietary",
+  "redistribution_notes": "No OEM; SaaS only.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Proprietary SaaS terms",
+  "community_vs_enterprise": "UNVERIFIED",
+  "deployment_modes": [
+   "saas"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "production",
+  "resolution_note": "Renamed Data Cloud -> Data 360 at Dreamforce 2025; earlier Genie/CDP names.",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "REFERENCE identity-resolution pattern; INTEGRATE Splink/Zingg; REJECT as dependency",
+  "top_strengths": [
+   "STR-sf-01"
+  ],
+  "top_inversions": [
+   "INV-sf-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-salesforce-data-cloud.md",
+  "sources": [
+   {
+    "title": "Salesforce Data 360 product page",
+    "url": "https://www.salesforce.com/ap/products/data/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Salesforce Ben rename",
+    "url": "https://www.salesforceben.com/salesforce-data-cloud-renamed-to-data-360-as-part-of-agentforce-360/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.45
+ },
+ {
+  "id": "T-C07-diffbot",
+  "slug": "diffbot",
+  "name": "Diffbot Knowledge Graph",
+  "category": "C07",
+  "tier": "B",
+  "tier_reason": "Web-scale KG",
+  "members": [
+   "Diffbot KG/DQL",
+   "Enhance",
+   "GraphRAG LLM (Llama 3.3 70B fine-tune)"
+  ],
+  "official_url": "https://www.diffbot.com/products/knowledge-graph/",
+  "owner": "Diffbot Inc.",
+  "latest_version": "GraphRAG LLM announced 2025-01-07",
+  "version_date": "2025-01-07",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Proprietary SaaS; repo licence UNVERIFIED",
+  "license_class": "mixed",
+  "redistribution_notes": "Data rights/ToS not retrieved.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Data-reuse ToS; Llama community licence on weights",
+  "community_vs_enterprise": "UNVERIFIED",
+  "deployment_modes": [
+   "saas",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "Product page fetched contained injected instruction text; ignored.",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "INTEGRATE optional enrichment connector behind egress policy; REFERENCE GraphRAG tool-use",
+  "top_strengths": [
+   "STR-dif-01"
+  ],
+  "top_inversions": [
+   "INV-dif-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-diffbot.md",
+  "sources": [
+   {
+    "title": "Diffbot KG",
+    "url": "https://www.diffbot.com/products/knowledge-graph/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Diffbot GraphRAG LLM changelog",
+    "url": "https://www.diffbot.com/changelog/2025-01-07-diffbot-graphrag-llm",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.5
+ },
+ {
+  "id": "T-C07-writer-kg",
+  "slug": "writer-kg",
+  "name": "Writer Knowledge Graph",
+  "category": "C07",
+  "tier": "B",
+  "tier_reason": "Graph-based RAG product",
+  "members": [
+   "Writer KG",
+   "Graph question API",
+   "Palmyra"
+  ],
+  "official_url": "https://dev.writer.com/home/knowledge-graph-concepts",
+  "owner": "Writer, Inc.",
+  "latest_version": "UNVERIFIED (SaaS)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "continuous SaaS",
+  "status": "active",
+  "license": "Proprietary SaaS",
+  "license_class": "proprietary",
+  "redistribution_notes": "No OEM known; self-host NOT PUBLICLY VERIFIED.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Proprietary SaaS terms",
+  "community_vs_enterprise": "UNVERIFIED",
+  "deployment_modes": [
+   "saas"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "production",
+  "resolution_note": "RobustQA 86.31% is a vendor claim.",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "EXPERIMENT graph RAG with own benchmark; BUILD grounding knobs; REJECT as dependency",
+  "top_strengths": [
+   "STR-wri-01"
+  ],
+  "top_inversions": [
+   "INV-wri-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-writer-kg.md",
+  "sources": [
+   {
+    "title": "Writer KG concepts",
+    "url": "https://dev.writer.com/home/knowledge-graph-concepts",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Writer KG query",
+    "url": "https://dev.writer.com/home/kg-query.md",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Writer RobustQA",
+    "url": "https://writer.com/blog/rag-benchmark/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.55
+ },
+ {
+  "id": "T-C07-azure-digital-twins",
+  "slug": "azure-digital-twins",
+  "name": "Azure Digital Twins and DTDL",
+  "category": "C07",
+  "tier": "B",
+  "tier_reason": "Twin graph and modelling language",
+  "members": [
+   "Azure Digital Twins service",
+   "DTDL v2/v3/v4",
+   "3D Scenes Studio (preview)"
+  ],
+  "official_url": "https://learn.microsoft.com/en-us/azure/digital-twins/overview",
+  "owner": "Microsoft",
+  "latest_version": "DTDL v3 (ADT); v4 listed for IoT Operations",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Service proprietary; DTDL repo CC-BY-4.0 and MIT",
+  "license_class": "mixed",
+  "redistribution_notes": "DTDL spec reusable under repo licences; service Azure-only.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "Service closed; DTDL open",
+  "deployment_modes": [
+   "managed-cloud"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "production",
+  "resolution_note": "No retirement announcement found; Fabric digital twin builder (preview) is a separate product.",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "REUSE DTDL as import schema; REJECT service as dependency",
+  "top_strengths": [
+   "STR-adt-01"
+  ],
+  "top_inversions": [
+   "INV-adt-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-azure-digital-twins.md",
+  "sources": [
+   {
+    "title": "ADT overview",
+    "url": "https://learn.microsoft.com/en-us/azure/digital-twins/overview",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "DTDL repo",
+    "url": "https://github.com/Azure/opendigitaltwins-dtdl",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C07-process-mining",
+  "slug": "process-mining",
+  "name": "Object-centric process mining: Celonis, PM4Py, OCEL 2.0",
+  "category": "C07",
+  "tier": "B",
+  "tier_reason": "Event-graph patterns for org intelligence",
+  "members": [
+   "Celonis",
+   "PM4Py",
+   "OCEL 2.0"
+  ],
+  "official_url": "https://www.ocel-standard.org/",
+  "owner": "RWTH Aachen (OCEL); PIS (PM4Py); Celonis SE",
+  "latest_version": "OCEL 2.0 spec; PM4Py 2.7.23.11 (PyPI)",
+  "version_date": "2023-10-16 (OCEL spec); PM4Py date UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "PM4Py AGPL-3.0 (+commercial); Celonis proprietary; OCEL spec licence not stated",
+  "license_class": "mixed",
+  "redistribution_notes": "PM4Py network-copyleft; Celonis SaaS only; OCEL open format.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "PM4Py AGPL-3.0 with dual commercial licence",
+  "community_vs_enterprise": "PM4Py community AGPL vs commercial licence",
+  "deployment_modes": [
+   "self-hosted",
+   "saas"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "PM4Py GitHub org is process-intelligence-solutions.",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "EXPERIMENT OCEL importer + event-graph; PM4Py REFERENCE/external-process only; REJECT Celonis dependency",
+  "top_strengths": [
+   "STR-pm-01",
+   "STR-pm-02"
+  ],
+  "top_inversions": [
+   "INV-pm-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-process-mining.md",
+  "sources": [
+   {
+    "title": "OCEL 2.0 spec",
+    "url": "https://arxiv.org/pdf/2403.01975",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PM4Py repo",
+    "url": "https://github.com/process-intelligence-solutions/pm4py",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PM4Py PyPI",
+    "url": "https://pypi.org/pypi/pm4py/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Celonis OCPM docs",
+    "url": "https://docs.celonis.com/en/object-centric-process-mining.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C07-eclipse-ditto",
+  "slug": "eclipse-ditto",
+  "name": "Eclipse Ditto",
+  "category": "C07",
+  "tier": "C",
+  "tier_reason": "Digital twin framework",
+  "members": [
+   "Eclipse Ditto"
+  ],
+  "official_url": "https://eclipse.dev/ditto/",
+  "owner": "Eclipse Foundation",
+  "latest_version": "3.9.8",
+  "version_date": "2026-10-08 (year inferred)",
+  "release_cadence": "frequent",
+  "status": "active",
+  "license": "Eclipse Public License 2.0 (footer link)",
+  "license_class": "weak-copyleft",
+  "redistribution_notes": "EPL-2.0 file-level copyleft; review for embedding.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "EPL-2.0 weak copyleft",
+  "community_vs_enterprise": "UNVERIFIED",
+  "deployment_modes": [
+   "self-hosted",
+   "docker",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "REFERENCE-ONLY; optional device-edge source later",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-tier-c-records-V19.md",
+  "sources": [
+   {
+    "title": "Eclipse Ditto",
+    "url": "https://eclipse.dev/ditto/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Ditto releases",
+    "url": "https://github.com/eclipse-ditto/ditto/releases",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C07-ona",
+  "slug": "ona",
+  "name": "Organisational network analysis (pattern)",
+  "category": "C07",
+  "tier": "C",
+  "tier_reason": "Graph pattern record",
+  "members": [
+   "ONA pattern"
+  ],
+  "official_url": "",
+  "owner": "n/a",
+  "latest_version": "n/a",
+  "version_date": "n/a",
+  "release_cadence": "n/a",
+  "status": "active",
+  "license": "n/a",
+  "license_class": "n/a",
+  "redistribution_notes": "Pattern; no licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Pattern, not a product.",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "EXPERIMENT pseudonymised ONA template on event graph",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C07-tier-c-records-V19.md",
+  "sources": [],
+  "verification_confidence": 0.4
+ }
+]

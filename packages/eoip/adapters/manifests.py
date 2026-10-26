@@ -128,10 +128,10 @@ MANIFESTS: list[CapabilityManifest] = [
         role="graph_store",
         adapter_status="real",
         notes=[
-            "Gremlin dialect adapter reusing the HugeGraph Gremlin client "
-            "shape with JanusGraph connection config (eoip.adapters.janusgraph).",
-            "Schema management is declarative/transactional; adapter relies on "
-            "schema-flexible vertices with deterministic eoip vid properties.",
+            ("Gremlin dialect adapter reusing the HugeGraph Gremlin client "
+            "shape with JanusGraph connection config (eoip.adapters.janusgraph)."),
+            ("Schema management is declarative/transactional; adapter relies on "
+            "schema-flexible vertices with deterministic eoip vid properties."),
         ],
     ),
     CapabilityManifest(
@@ -145,8 +145,8 @@ MANIFESTS: list[CapabilityManifest] = [
         adapter_status="manifest-only",
         external_gate=True,
         notes=[
-            "Bolt transport is an External gate: eoip.adapters.cypher_bolt "
-            "defines the BoltLikeTransport protocol interface; no in-repo client.",
+            ("Bolt transport is an External gate: eoip.adapters.cypher_bolt "
+            "defines the BoltLikeTransport protocol interface; no in-repo client."),
             "Memgraph 3.8+; BSL 1.1 license note from §6 source research.",
         ],
         connection_config={"protocol": "bolt", "host": "localhost", "port": 7687, "database": ""},
@@ -162,12 +162,12 @@ MANIFESTS: list[CapabilityManifest] = [
         adapter_status="manifest-only",
         external_gate=True,
         notes=[
-            "§6.5 correction: RedisGraph successor (GraphBLAS sparse-matrix "
-            "engine), SSPL license; not Redis 'Graph' any more.",
-            "RESP transport is an External gate: eoip.adapters.cypher_bolt "
-            "defines the RespLikeTransport protocol interface; no in-repo client.",
-            "HNSW vector co-location and per-tenant named graphs are roadmap "
-            "gaps (KGR-G-013/016), not adapter claims.",
+            ("§6.5 correction: RedisGraph successor (GraphBLAS sparse-matrix "
+            "engine), SSPL license; not Redis 'Graph' any more."),
+            ("RESP transport is an External gate: eoip.adapters.cypher_bolt "
+            "defines the RespLikeTransport protocol interface; no in-repo client."),
+            ("HNSW vector co-location and per-tenant named graphs are roadmap "
+            "gaps (KGR-G-013/016), not adapter claims."),
         ],
         connection_config={"protocol": "resp", "host": "localhost", "port": 6379},
     ),
@@ -272,9 +272,9 @@ MANIFESTS: list[CapabilityManifest] = [
         role="graph_store",
         adapter_status="manifest-only",
         notes=[
-            "§6.5 archived-warning: upstream repository shows archived/"
+            ("§6.5 archived-warning: upstream repository shows archived/"
             "maintenance-risk status; candidate for embedded DP-0/edge use "
-            "only after maintenance verification (SR-GDB-004).",
+            "only after maintenance verification (SR-GDB-004)."),
         ],
     ),
     CapabilityManifest(
@@ -299,9 +299,9 @@ MANIFESTS: list[CapabilityManifest] = [
         role="query_builder",
         adapter_status="real",
         notes=[
-            "SQL-wrapped openCypher query builder in eoip.adapters.apache_age "
+            ("SQL-wrapped openCypher query builder in eoip.adapters.apache_age "
             "builds deterministic AGE SQL over any existing PostgreSQL port; "
-            "no new dependency.",
+            "no new dependency."),
         ],
         connection_config={"host": "localhost", "port": 5432, "database": "postgres", "graph": "eoip"},
     ),
@@ -316,8 +316,8 @@ MANIFESTS: list[CapabilityManifest] = [
         adapter_status="manifest-only",
         external_gate=True,
         notes=[
-            "§6.5 correction (dedup): OrientDB is a multimodel (document+graph) "
-            "database listed once here; it is not an operational-store entry.",
+            ("§6.5 correction (dedup): OrientDB is a multimodel (document+graph) "
+            "database listed once here; it is not an operational-store entry."),
             "HTTP Gremlin-ish transport is an External gate: manifest-only.",
         ],
     ),

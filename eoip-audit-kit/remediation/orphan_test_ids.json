@@ -1,0 +1,736 @@
+{
+ "count": 146,
+ "note": "IDs referenced by tests (marks/test map) that no requirement document defines; many are sub-clauses (X.C01). Either add them to a requirement doc / registry or fix the test reference (parent task FT-F09).",
+ "ids": [
+  {
+   "id": "ASPEII-RQ-018.C01",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "ASPEII-RQ-018.C02",
+   "passed": 10,
+   "failed": 0
+  },
+  {
+   "id": "ASPEII-RQ-018.C03",
+   "passed": 15,
+   "failed": 0
+  },
+  {
+   "id": "ASPEII-RQ-018.C06",
+   "passed": 7,
+   "failed": 0
+  },
+  {
+   "id": "ASPEII-RQ-019.C03",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "ASPEII-RQ-020.C01",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "ASPEII-RQ-020.C02",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "ASPEII-RQ-022.C01",
+   "passed": 6,
+   "failed": 0
+  },
+  {
+   "id": "ASPEII-RQ-022.C02",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "ASPEII-RQ-022.C03",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "ASPEII-RQ-022.C04",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "BASE-01",
+   "passed": 19,
+   "failed": 1
+  },
+  {
+   "id": "BASE-02",
+   "passed": 9,
+   "failed": 0
+  },
+  {
+   "id": "BASE-03",
+   "passed": 9,
+   "failed": 0
+  },
+  {
+   "id": "BASE-04",
+   "passed": 19,
+   "failed": 1
+  },
+  {
+   "id": "CG-GAP-008",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "CONN-01",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "CONN-02",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "CONN-03",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "CP-10",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-REQ-34",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0002",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0003",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0004",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0005",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0101",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0102",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0110",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0111",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0112",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0120",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0121",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0122",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0123",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0130",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0131",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0132",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0133",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0134",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0135",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0201",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0202",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0203",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0210",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0211",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0213",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0220",
+   "passed": 8,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0221",
+   "passed": 8,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0222",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0223",
+   "passed": 8,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0224",
+   "passed": 5,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0225",
+   "passed": 11,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0230",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0231",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0232",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0241",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0242",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0243",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0250",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0251",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0252",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0253",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0340",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0341",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0403",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "G2-T0405",
+   "passed": 7,
+   "failed": 0
+  },
+  {
+   "id": "GAP-AI",
+   "passed": 3,
+   "failed": 0
+  },
+  {
+   "id": "GAP-APP",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-CATALOG",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-DUAL",
+   "passed": 4,
+   "failed": 0
+  },
+  {
+   "id": "GAP-FED",
+   "passed": 4,
+   "failed": 0
+  },
+  {
+   "id": "GAP-GDS",
+   "passed": 6,
+   "failed": 0
+  },
+  {
+   "id": "GAP-GOV",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-HA",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-IDE",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-JOB-001",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-NLP",
+   "passed": 6,
+   "failed": 0
+  },
+  {
+   "id": "GAP-NOCODE",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-QUERY",
+   "passed": 7,
+   "failed": 0
+  },
+  {
+   "id": "GAP-REC",
+   "passed": 4,
+   "failed": 0
+  },
+  {
+   "id": "GAP-RULE",
+   "passed": 3,
+   "failed": 0
+  },
+  {
+   "id": "GAP-SEC-004",
+   "passed": 46,
+   "failed": 0
+  },
+  {
+   "id": "GAP-SEC-008",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-SEC-009",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-SEC-010",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-SEC-011",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "GAP-SEC-012",
+   "passed": 0,
+   "failed": 1
+  },
+  {
+   "id": "GAP-TEMPLATE",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "H-01",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "H-03",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "H-04",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "H-05",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "H-06",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "H-07",
+   "passed": 0,
+   "failed": 1
+  },
+  {
+   "id": "H-08",
+   "passed": 0,
+   "failed": 1
+  },
+  {
+   "id": "MS-11",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-12",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-13",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-15",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-16",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-17",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-18",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-19",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-21",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-22",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-23",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-24",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-25",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-26",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-27",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-29",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-30",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-6",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "MS-7",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "NFR-REL-003",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "PERF-01",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-01",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-02",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-03",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-04",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-05",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-06",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-07",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-08",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-09",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-10",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-11",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-12",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-13",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-14",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REL-15",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REQ-001",
+   "passed": 7,
+   "failed": 0
+  },
+  {
+   "id": "REQ-002",
+   "passed": 2,
+   "failed": 0
+  },
+  {
+   "id": "REQ-003",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "REQ-004",
+   "passed": 6,
+   "failed": 0
+  },
+  {
+   "id": "REQ-005",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "S-01",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "S-02",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "S-03",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "S-04",
+   "passed": 0,
+   "failed": 1
+  },
+  {
+   "id": "S-05",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "UI-01",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "UI-02",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "UI-03",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "UI-04",
+   "passed": 1,
+   "failed": 0
+  },
+  {
+   "id": "\u00a747",
+   "passed": 16,
+   "failed": 0
+  }
+ ]
+}

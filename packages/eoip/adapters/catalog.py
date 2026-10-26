@@ -83,7 +83,7 @@ class BackendCatalog:
         if backend in {"neo4j", "neptune", "hugegraph", "memory"}:
             # Owned by eoip.graph.backends; resolve through the existing registry.
             def _from_graph_registry(config: dict[str, Any]):
-                from eoip.graph.backends import ensure_default_backends, _REGISTRY
+                from eoip.graph.backends import _REGISTRY, ensure_default_backends
 
                 ensure_default_backends()
                 definition = _REGISTRY[backend]

@@ -9,13 +9,30 @@ Submodules:
 * :mod:`eoip.reasoning.router`      — ``build_router()`` HTTP surface.
 """
 
-from eoip.reasoning.strategies import (
-    ReasoningHooks,
-    ReasoningProblem,
-    ReasoningResult,
-    ReasoningStep,
-    StrategyRegistry,
-    default_registry,
+from eoip.reasoning.agentops import (
+    CostLedger,
+    DeploymentDescriptor,
+    IncidentRecord,
+    IncidentStore,
+    RunTrace,
+    RunTracer,
+    SLAPolicy,
+    SLATracker,
+    validate_deployment,
+)
+from eoip.reasoning.evaluation import (
+    AdversarialSuiteReport,
+    AdversarialTestSuite,
+    BenchmarkReport,
+    BenchmarkRunner,
+    BusinessOutcomeMetrics,
+    BusinessOutcomeTracker,
+    GoldenTask,
+    Trajectory,
+    TrajectoryScorer,
+    TrajectoryScores,
+    score_step_efficiency,
+    score_tool_use,
 )
 from eoip.reasoning.memory import (
     EpisodicMemory,
@@ -25,22 +42,51 @@ from eoip.reasoning.memory import (
     SharedMemory,
     TemporalMemory,
     WorkingMemory,
+    estimate_tokens,
 )
-from eoip.reasoning.evaluation import (
-    AdversarialTestSuite,
-    BenchmarkRunner,
-    BusinessOutcomeTracker,
-    GoldenTask,
-    Trajectory,
-    TrajectoryScorer,
-)
-from eoip.reasoning.agentops import (
-    CostLedger,
-    DeploymentDescriptor,
-    IncidentStore,
-    RunTracer,
-    SLAPolicy,
-    SLATracker,
+from eoip.reasoning.strategies import (
+    ReasoningHooks,
+    ReasoningProblem,
+    ReasoningResult,
+    ReasoningStep,
+    StrategyRegistry,
+    default_registry,
 )
 
-__all__ = [name for name in dir() if not name.startswith("_")]
+__all__ = [
+    "AdversarialSuiteReport",
+    "AdversarialTestSuite",
+    "BenchmarkReport",
+    "BenchmarkRunner",
+    "BusinessOutcomeMetrics",
+    "BusinessOutcomeTracker",
+    "CostLedger",
+    "DeploymentDescriptor",
+    "EpisodicMemory",
+    "GoldenTask",
+    "HierarchicalMemory",
+    "IncidentRecord",
+    "IncidentStore",
+    "ProceduralMemory",
+    "ReasoningHooks",
+    "ReasoningProblem",
+    "ReasoningResult",
+    "ReasoningStep",
+    "RunTrace",
+    "RunTracer",
+    "SLAPolicy",
+    "SLATracker",
+    "SemanticMemory",
+    "SharedMemory",
+    "StrategyRegistry",
+    "TemporalMemory",
+    "Trajectory",
+    "TrajectoryScorer",
+    "TrajectoryScores",
+    "WorkingMemory",
+    "default_registry",
+    "estimate_tokens",
+    "score_step_efficiency",
+    "score_tool_use",
+    "validate_deployment",
+]

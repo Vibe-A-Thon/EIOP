@@ -15,18 +15,20 @@ from typing import Any
 from eoip.qlang.plans import QLangParseError, QLangPlan
 
 _STAGE = re.compile(
-    r"^(?:\.?(?P<field>[A-Za-z_][A-Za-z0-9_-]*)(?P<iterate>\[\])?(?P<index>\[-?\d+\])?|select\((?P<select>.+)\))$"
+    r"^(?:\.?(?P<field>[A-Za-z_][A-Za-z0-9_-]*(?:\.[A-Za-z_][A-Za-z0-9_-]*)*)(?P<iterate>\[\])?(?P<index>\[-?\d+\])?|select\((?P<select>.+)\))$"
 )
 
 
 def _parse_stage(raw: str) -> dict[str, Any]:
     raw = raw.strip()
+    if raw in (".[]", "[]"):
+        return {"kind": "identity", "field": None, "iterate": True, "index": None}
     m = _STAGE.match(raw)
     if not m:
         raise QLangParseError(f"Unsupported jq-lite stage: {raw!r}")
     if m.group("select") is not None:
         cond = m.group("select").strip()
-        cm = re.match(r"^\.([A-Za-z_][A-Za-z0-9_-]*)\s*(==|!=)\s*(.+?)$", cond)
+        cm = re.match(r"^\.([A-Za-z_][A-Za-z0-9_-]*)\s*(==|!=|>=|<=|>|<)\s*(.+?)$", cond)
         if not cm:
             raise QLangParseError(f"Unsupported jq-lite select condition: {cond!r}")
         field, op, raw_val = cm.groups()
@@ -34,7 +36,7 @@ def _parse_stage(raw: str) -> dict[str, Any]:
     kind = "identity"
     if m.group("field"):
         kind = "field"
-    elif raw.startswith(".") and raw != "." and raw != ".[]":
+    elif raw not in (".", ".[]"):
         raise QLangParseError(f"Unsupported jq-lite stage: {raw!r}")
     return {
         "kind": kind,
@@ -88,10 +90,9 @@ def evaluate(plan: QLangPlan, payload: Any) -> list[Any]:
         if kind == "identity":
             out = [node]
         elif kind == "field":
-            if isinstance(node, dict) and stage["field"] in node:
-                out = [node[stage["field"]]]
-            else:
-                out = []
+            out = [node]
+            for part in stage["field"].split("."):
+                out = [item[part] for item in out if isinstance(item, dict) and part in item]
         else:
             out = []
         if stage.get("iterate") and out:
@@ -115,12 +116,20 @@ def evaluate(plan: QLangPlan, payload: Any) -> list[Any]:
     for stage in plan.extra["stages"]:
         if stage["kind"] == "select":
             field, op, val = stage["field"], stage["op"], stage["value"]
-            current = [
-                node
-                for node in current
-                if isinstance(node, dict)
-                and ((node.get(field) == val) if op == "==" else (node.get(field) != val))
-            ]
+
+            def _sel(node: Any) -> bool:
+                if not isinstance(node, dict):
+                    return False
+                actual = node.get(field)
+                if op in (">", "<", ">=", "<="):
+                    try:
+                        a, b = float(actual), float(val)
+                    except (TypeError, ValueError):
+                        return False
+                    return {">": a > b, "<": a < b, ">=": a >= b, "<=": a <= b}[op]
+                return (actual == val) if op == "==" else (actual != val)
+
+            current = [node for node in current if _sel(node)]
         else:
             nxt: list[Any] = []
             for node in current:

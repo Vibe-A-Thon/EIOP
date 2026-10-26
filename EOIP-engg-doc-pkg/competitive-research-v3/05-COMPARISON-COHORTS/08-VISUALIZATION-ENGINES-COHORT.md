@@ -1,31 +1,130 @@
-# Cohort 08 — Graph Visualization, UI Toolkits & Visual Analytics
+# Cohort 08 — Visualization Engines
 
 | Field | Value |
 |---|---|
-| Document | 08-VISUALIZATION-ENGINES-COHORT.md |
-| Workload Focus | Comparison of browser-based graph rendering pipelines, WebGL hardware acceleration, large-graph progressive disclosure, and accessible alternatives. |
-| Technologies Evaluated | **Sigma.js + Graphology**, **Cytoscape.js**, **Neo4j Bloom**, **Linkurious (Ogma)**, **Cosmograph (cosmos.gl)**, **Apache HugeGraph Hubble**, **KnowGridFlow Target** |
-| Verification Cutoff | 2026-10-18 UTC |
-| Status | Comprehensive Workload Cohort Comparison |
+| Cohort ID | 08-VISUALIZATION-ENGINES |
+| Workload class | Interactive graph rendering for investigation UX, ontology/lineage visual editing, large-graph exploration, permission-filtered views (CAP-45, CAP-52, CAP-62, CAP-70, CAP-71, CAP-72, CAP-73) |
+| Members (deep dives) | [Cytoscape.js / Cytoscape desktop](../04-COMPETITOR-DEEP-DIVES/C16-cytoscape.md), [Sigma.js](../04-COMPETITOR-DEEP-DIVES/C16-sigma.md), [yFiles](../04-COMPETITOR-DEEP-DIVES/C16-yfiles.md), [KeyLines / ReGraph](../04-COMPETITOR-DEEP-DIVES/C16-keylines-regraph.md), [Linkurious (Ogma)](../04-COMPETITOR-DEEP-DIVES/C16-linkurious.md), [GraphXR](../04-COMPETITOR-DEEP-DIVES/C16-graphxr.md), [Gephi](../04-COMPETITOR-DEEP-DIVES/C16-gephi.md), [Graphistry](../04-COMPETITOR-DEEP-DIVES/C16-graphistry.md) (8 of 8) |
+| Members (Tier C) | [C16-tier-c-records-V30](../04-COMPETITOR-DEEP-DIVES/C16-tier-c-records-V30.md): Graphviz, Constellation, yEd, CiteSpace/VOSviewer, Cosmograph/cosmos.gl, React-force-graph family, layout engines (ELK/elkjs, Dagre, WebCola, ForceAtlas2), Kumu/TheBrain |
+| Reference columns | HugeGraph, Neo4j, Neptune: **not applicable** — none of their deep dives describes a bundled rendering engine; Neptune ships only an open-source Jupyter client (graph-notebook), not scored here |
+| EOIP baseline | BL-54 ([01-SYSTEM-BASELINE](../01-SYSTEM-BASELINE.md): web UI, React, graph canvas, admin, studio); HEAD status per [01a](../01a-BASELINE-DELTA-HEAD.md) row "BL-54 Implemented (+ i18n, PDF export); `apps/web/package.json` still lists `cytoscape ^3.30.0`" |
+| Placeholder ADR under review | [ADR-KG3-10](../18-ADRS/ADR-KG3-10-sigma.js-webgl-visualization-consolidation-and-cytoscape-deprecation.md) (status APPROVED, dated 2026-10-18, unimplemented per 01a: "not implemented: `apps/web/package.json` still has `cytoscape ^3.30.0`; no removal in diff") |
+| Pending research | none |
+| Date | 2026-10-26 |
 
----
+## 1. Workload class and comparison basis
 
-## 1. Executive Summary & Workload Scope
-Comparison of browser-based graph rendering pipelines, WebGL hardware acceleration, large-graph progressive disclosure, and accessible alternatives.
+**Workloads.** Analysts and engineers need to see a subgraph interactively (pan/zoom/select), lay out ontology and lineage diagrams, explore graphs too large for a naive render, and see only the elements their permissions allow. EOIP currently ships two renderers side by side in `apps/web/src/kgr/renderers/` (BL-54, confirmed by both the Cytoscape and Sigma deep dives reading that path).
 
-## 2. Deep Comparative Matrix
-| Dimension | Sigma.js + Graphology | Cytoscape.js | Neo4j Bloom | Linkurious (Ogma) | Cosmograph (cosmos.gl) | Apache HugeGraph Hubble | KnowGridFlow Target |
-|---| --- | --- | --- | --- | --- | --- | --- |
-| **Rendering Tech** | WebGL (GPU Hardware accelerated) | HTML5 Canvas / SVG (CPU bound) | `WebGL / Proprietary` | `WebGL (Commercial)` | `WebGL / WebGPU (High-density)` | `HTML5 Canvas / Cytoscape` | **Sigma.js WebGL (Sole Primary) + Accessible Table/Tree Fallback** |
-| **Node Capacity @ 60FPS** | `> 100,000 nodes` | < 5,000 nodes (stalls on large) | `> 50,000 nodes` | `> 100,000 nodes` | `> 500,000 nodes` | `< 2,000 nodes` | **> 100,000 nodes on standard laptop GPU** |
-| **Accessibility (a11y)** | `None (Canvas/WebGL opaque)` | `Basic DOM wrappers` | `Poor (Visual only)` | `Poor` | `None` | `Poor` | **WCAG 2.2 AA Conformance + Synchronized Screen-Reader Tables** |
-| **Licensing** | `MIT (Permissive)` | `LGPL-2.1 / MIT` | `Commercial Neo4j EE only` | `Commercial Proprietary` | `Apache-2.0 / Commercial` | `Apache-2.0` | **MIT Core / 100% Permissive** |
+**Why comparable.** Every member renders and lets a user interact with a node/edge graph in a browser or desktop app. The cohort separates two different kinds of thing, as the brief requires:
 
-## 3. Verified Strategic Trade-Offs
-- **Performance vs. Complexity:** Commercial single-paradigm engines achieve high raw speed at the cost of proprietary lock-in and operational rigidity.
-- **Standards vs. Ergonomics:** Academic W3C tooling enforces strict mathematical semantics but fails on enterprise operational usability and multimodal ingestion.
-- **Cloud vs. Local-First:** SaaS offerings (Palantir, Glean, Neptune) compromise customer data sovereignty and cannot run air-gapped.
+| Class | Members | What it is |
+|---|---|---|
+| **Rendering/layout libraries** (you embed them in your own product) | Cytoscape.js, Sigma.js, yFiles, KeyLines/ReGraph, Ogma (inside Linkurious), PyGraphistry/graphistry-js | A component, not an investigation workflow |
+| **Complete investigation/analysis products** (ship their own workflow, server, or desktop shell) | Cytoscape desktop, Linkurious Enterprise, GraphXR, Gephi (desktop), Graphistry (server + Hub) | A product EOIP would integrate with or compete against, not embed |
 
-## 4. Architectural Verdict for KnowGridFlow
-> [!IMPORTANT]
-> **Strategic Direction:** Consolidate strictly on Sigma.js + Graphology as the single primary WebGL graph renderer (Rule R13), retiring legacy Cytoscape runtimes while providing synchronized WCAG 2.2 AA accessible tables and keyboard navigation.
+Each deep dive makes this split explicit in its own section 1 (see table in §2). Comparisons below keep the two classes separate; comparing Sigma.js (a library) to Linkurious Enterprise (a product) on "features" would be a category error.
+
+**Excluded.** Static/offline-only tools used purely for reference diagrams (Graphviz, yEd) are Tier C REFERENCE-ONLY and listed but not scored in the main tables. Layout-only engines (ELK, Dagre, WebCola, ForceAtlas2) are Tier C and are a different capability (layout algorithm, not rendering) — noted once, not scored per CAP.
+
+## 2. Capability comparison
+
+Legend: native / partial / plugin / enterprise-only / absent / unknown, each cited. "Library" rows score the rendering engine; "Product" rows score the complete application.
+
+### 2.1 Rendering/layout libraries
+
+| CAP | Cytoscape.js | Sigma.js | yFiles | KeyLines/ReGraph | Ogma (Linkurious) | PyGraphistry/graphistry-js | EOIP @HEAD |
+|---|---|---|---|---|---|---|---|
+| CAP-70 large-graph rendering | partial: Canvas default, WebGL preview; project figures show frame-rate collapse beyond a few thousand elements on Canvas [CLAIM-cytoscape-04, INV-cytoscape-01](../04-COMPETITOR-DEEP-DIVES/C16-cytoscape.md) | native WebGL on graphology; vendor README says only "thousands of nodes and edges," no numeric ceiling [CLAIM-sigma-05](../04-COMPETITOR-DEEP-DIVES/C16-sigma.md) | partial: SVG mode DOM-bound (low thousands, hypothesis), WebGL2 recommended for larger graphs, no vendor figures [CLAIM-yfiles-03](../04-COMPETITOR-DEEP-DIVES/C16-yfiles.md) | native (GPU rendering claimed); "no limits or benchmarks published" [CLAIM-kl-02](../04-COMPETITOR-DEEP-DIVES/C16-keylines-regraph.md) | native (Ogma); vendor claims "25,000 nodes in <1s," "tens of thousands... on a 5-year-old GPU," no benchmark detail, hardware or dataset given [CLAIM-lk-02](../04-COMPETITOR-DEEP-DIVES/C16-linkurious.md) | native server-side GPU; vendor: "millions of edges" interactive, "100X+ speedups" with RAPIDS, no hardware/dataset stated [CLAIM-gph-02](../04-COMPETITOR-DEEP-DIVES/C16-graphistry.md) | BL-54 Implemented, large-graph performance **unmeasured** (both baseline docs) |
+| CAP-71 investigation UX / visual query building | partial [CLAIM-cytoscape-01](../04-COMPETITOR-DEEP-DIVES/C16-cytoscape.md) | partial [CLAIM-sigma-03](../04-COMPETITOR-DEEP-DIVES/C16-sigma.md) | native (diagramming-grade) [CLAIM-yfiles-03](../04-COMPETITOR-DEEP-DIVES/C16-yfiles.md) | native: combos, time filter, map, annotations [CLAIM-kl-01](../04-COMPETITOR-DEEP-DIVES/C16-keylines-regraph.md) | native, workflow-grade (scored at the Enterprise product level below) | partial | BL-54 (REUSE per every deep dive's Appendix B) |
+| CAP-72 ontology visual editing / real-time co-editing | absent | absent | native (layered/orthogonal diagram editor) [Appendix B](../04-COMPETITOR-DEEP-DIVES/C16-yfiles.md) | absent (not evidenced) | absent (not evidenced) | absent | absent: "EOIP has no layered/orthogonal diagram editor; ontology studio views rely on general force layouts (hypothesis, not audited)" (C16-yfiles.md §11) |
+| CAP-73 time-machine / graph-diff UX | absent, application concern [CLAIM-cytoscape row](../04-COMPETITOR-DEEP-DIVES/C16-cytoscape.md) | absent, application concern [CLAIM-sigma row](../04-COMPETITOR-DEEP-DIVES/C16-sigma.md) | absent, application concern [CLAIM-yfiles row](../04-COMPETITOR-DEEP-DIVES/C16-yfiles.md) | native: Time Bar, via sibling SDK KronoGraph [CLAIM-kl-01](../04-COMPETITOR-DEEP-DIVES/C16-keylines-regraph.md) | absent (not evidenced) | partial | absent (BUILD per every deep dive's Appendix B) |
+| CAP-45/46 permission-filtered view at render time | absent (application concern) | absent — **and INV-sigma-02: any node loaded into graphology is inspectable client-side; permission leakage risk** [CLAIM-sigma row](../04-COMPETITOR-DEEP-DIVES/C16-sigma.md) | absent, application concern | native concept: "props-driven state suits server-side permission filtering (data never enters the chart unless allowed)" [C16-keylines-regraph.md §9](../04-COMPETITOR-DEEP-DIVES/C16-keylines-regraph.md) | enterprise-only (scored at product level) | unknown, UNVERIFIED [C16-graphistry.md row](../04-COMPETITOR-DEEP-DIVES/C16-graphistry.md) | BL-18 Partial (cohort 15/16 cross-reference): no deployed retrieval caller passes `scope`; the same gap applies to what the UI renders |
+| CAP-52 white-label/OEM packaging | native, MIT, redistribution-safe [C16-cytoscape.md §10](../04-COMPETITOR-DEEP-DIVES/C16-cytoscape.md) | native, MIT, redistribution-safe [C16-sigma.md §10](../04-COMPETITOR-DEEP-DIVES/C16-sigma.md) | enterprise licence terms not on public pricing page; domain-key restrictions matter for multi-tenant white-label; legal-review trigger [CLAIM-yfiles-04](../04-COMPETITOR-DEEP-DIVES/C16-yfiles.md) | per-application, quote-based; OEM/redistribution terms **NOT PUBLICLY VERIFIED**; legal-review trigger [C16-keylines-regraph.md §10](../04-COMPETITOR-DEEP-DIVES/C16-keylines-regraph.md) | OEM/redistribution terms **NOT PUBLICLY VERIFIED**; legal-review trigger [C16-linkurious.md §10](../04-COMPETITOR-DEEP-DIVES/C16-linkurious.md) | PyGraphistry "BSD" per PyPI metadata, exact variant UNVERIFIED; server EULA is a legal-review trigger; "embedding in a white-label product: not a documented option" [C16-graphistry.md §10](../04-COMPETITOR-DEEP-DIVES/C16-graphistry.md) | n/a (EOIP is the product) |
+
+### 2.2 Complete investigation/analysis products
+
+| CAP | Cytoscape desktop | Linkurious Enterprise | GraphXR | Gephi (desktop) | Graphistry (server/Hub) | EOIP @HEAD |
+|---|---|---|---|---|---|---|
+| CAP-70 | native, Java/JVM, bioinformatics-tuned; no node-count figures located | native (built on Ogma) | unknown: "no scale claims published... Unknown" [C16-graphxr.md §7](../04-COMPETITOR-DEEP-DIVES/C16-graphxr.md) | native, desktop; contradictory vendor claims: site says "ten to ten million nodes," wiki says "up to a million elements" (does not specify nodes vs edges), confidence 0.4 [CLAIM-gephi-02](../04-COMPETITOR-DEEP-DIVES/C16-gephi.md) | native (GPU server) | BL-54, unmeasured |
+| CAP-71 | native (bioinformatics workflow, app-store extensible) [CLAIM-cytoscape-03](../04-COMPETITOR-DEEP-DIVES/C16-cytoscape.md) | native (full investigation workflow; vendor-specific alert model) [C16-linkurious.md §12](../04-COMPETITOR-DEEP-DIVES/C16-linkurious.md) | native (coordinated geo/time/3D views, visual graph-composer) [C16-graphxr.md §11](../04-COMPETITOR-DEEP-DIVES/C16-graphxr.md) | native (desktop statistics/partition styling) [C16-gephi.md §11](../04-COMPETITOR-DEEP-DIVES/C16-gephi.md) | partial | BL-54 |
+| CAP-45/46 | absent: no tenancy/permissions, single-process desktop data model | enterprise-only, property-key rights model [CLAIM-lk row](../04-COMPETITOR-DEEP-DIVES/C16-linkurious.md) | unknown | **absent (proven): "no live permission-filtered views; cause: single-process desktop data model"** [INV-gephi-01](../04-COMPETITOR-DEEP-DIVES/C16-gephi.md) | UNVERIFIED [C16-graphistry.md row](../04-COMPETITOR-DEEP-DIVES/C16-graphistry.md) | BL-18 Partial |
+| CAP-77 licence | LGPL-2.1 for desktop; not embeddable as a white-label web component [C16-cytoscape.md §10](../04-COMPETITOR-DEEP-DIVES/C16-cytoscape.md) | closed, proprietary; vendor-specific alert model is a governance lock-in [INV-lk-01](../04-COMPETITOR-DEEP-DIVES/C16-linkurious.md) | closed product, no OEM terms found | GitHub shows GPL-3.0; Gephi's own wiki states dual CDDL 1.0 + GPL v3; gephi.org states GPL only — **three sources disagree** [CLAIM-gephi-02](../04-COMPETITOR-DEEP-DIVES/C16-gephi.md) | server EULA, legal-review trigger | n/a |
+
+## 3. Operational and licensing comparison
+
+| Member | Deployment | One-node / air-gap | Licence class | Redistribution/OEM trigger | Maintenance |
+|---|---|---|---|---|---|
+| Cytoscape.js | browser library | fully air-gap viable | MIT, redistribution-safe | none | active: 3.34.0 (2026-06-02) through 3.34.4 (2026-10-15) [CLAIM-cytoscape-01] |
+| Cytoscape desktop | JVM app | offline viable | **LGPL-2.1**, not embeddable as white-label web component [CLAIM-cytoscape-02] | legal review if embedded | active, federally funded (NRNB/NHGRI), 3.10.5 (2026-09-29) [CLAIM-cytoscape-03] |
+| Sigma.js | browser library | fully air-gap viable, no cloud | MIT, redistribution-safe | none | active, repo pushed 2026-10-16; **latest is 4.0.3, not the "3.x" the registry brief assumed** [CLAIM-sigma-01,-02] |
+| yFiles | browser/desktop SDK | air-gap viable, vendor states "data never leaves your environment" [CLAIM-yfiles-04] | commercial; OEM/SaaS terms not public, sales-negotiated; **legal-review trigger** | yes | active, yFiles for HTML 3.1.0.4 [CLAIM-yfiles-02] |
+| KeyLines/ReGraph | browser libraries | air-gap viable once bundled; licence-key check mechanism UNVERIFIED | commercial, per-application quote-based; OEM terms **NOT PUBLICLY VERIFIED** | yes | active, ISO 27001-certified vendor [CLAIM-kl-01] |
+| Linkurious / Ogma | Enterprise on-prem; Ogma embedded | air-gap **not stated** (NOT PUBLICLY VERIFIED) | commercial; Ogma OEM terms NOT PUBLICLY VERIFIED | yes | active |
+| GraphXR | SaaS/on-prem (vendor claims) | vendor claims on-prem/private cloud/air-gapped | closed, no OEM terms found | yes if bundled | status "apparently active," no public version/date located, confidence 0.3 |
+| Gephi (desktop + Toolkit) | Java desktop | air-gap viable | **GPL-3.0** (GitHub) vs dual CDDL 1.0+GPLv3 (wiki) vs GPL only (gephi.org) — unresolved, **legal-review trigger**; hard-constraint conflict given the project's GPL/AGPL exclusion policy | Toolkit licensing not independently checked | active, pushed 2026-10-25, 6.7k stars; website describes 0.11 as beta while GitHub shows 0.11.1-0.11.3 released — **website is stale** [CLAIM-gephi-03] |
+| Graphistry (server) | Docker/Kubernetes self-hosted or Hub SaaS | air-gap claimed on homepage, not confirmed in docs | server EULA (proprietary); PyGraphistry client "BSD," exact variant unverified | yes for server; embedding as white-label "not a documented option" | active |
+
+Tier C note (V30): the layout-engine family includes **elkjs under a dual EPL-2.0 OR GPL-3.0-or-later licence** (npm field) — a weak-copyleft dual license requiring the same legal review as Gephi's GPL exposure; `cosmos.gl` is MIT but its predecessor packages `@cosmograph/cosmos` and `@cosmograph/react` are **CC-BY-NC-4.0 (non-commercial)** — a separate legal-review trigger if those older packages are ever pulled in by mistake.
+
+## 4. Performance evidence
+
+No member in this cohort has an independently reproduced, hardware-stated benchmark comparable across products:
+
+- **Cytoscape.js**: the only numbers with any detail are the project's own preliminary figures (Chrome, M1 MacBook Pro): ~1,200 nodes/16,000 edges ≈ 20 FPS Canvas / >100 FPS WebGL; ~3,200 nodes/68,000 edges ≈ 3 FPS Canvas / ~10 FPS WebGL [CLAIM-cytoscape-04]. These are vendor/project claims on a small sample with no independent reproduction; "no independent 100k-node Cytoscape.js benchmark was found" [CLAIM-cytoscape-06].
+- **Sigma.js**: vendor README gives no numeric ceiling [CLAIM-sigma-05]; an independent third-party source (a Memgraph blog) found Sigma "notably faster than D3/vis up to 10k nodes" (tested range only, not 100k); a separate paper (NetV.js) compared Sigma to others around a ~50k-node axis; a 2025 PMC benchmark of D3/ECharts/G6/NetV **did not include Sigma or Cytoscape at all** [CLAIM-sigma-06].
+- **yFiles, KeyLines/ReGraph, Ogma/Linkurious, GraphXR, Graphistry**: every deep dive records vendor claims with no hardware, dataset, or methodology stated, and explicitly states no independent benchmark was located (sections 7 of each).
+- **Gephi**: two internally contradictory vendor/project claims ("ten to ten million nodes" on the main site vs. "up to a million elements" on the wiki, units unspecified), confidence rated 0.4 by the deep dive itself.
+
+**No winner can be declared on rendering performance from this cohort's evidence.** The only locally measured fact is a build artifact size, not a runtime number: EOIP's bundled `cytoscape.esm-*.js` is 443,042 bytes unminified-gzip (built) [CLAIM-cytoscape-07].
+
+### 4.1 ADR-KG3-10 evaluated against this evidence
+
+ADR-KG3-10 (status APPROVED, dated 2026-10-18) proposes to "consolidate strictly on Sigma.js + Graphology as the sole primary WebGL graph renderer," citing as a positive consequence "achieves smooth 60 FPS rendering on 100,000+ nodes while meeting enterprise accessibility standards."
+
+**This specific figure is unsupported by any source found in the Sigma.js deep dive**, which states explicitly: *"Therefore '60 FPS on 100,000+ nodes' (ADR-KG3-10) is unsupported by any source located"* [C16-sigma.md §7](../04-COMPETITOR-DEEP-DIVES/C16-sigma.md). The closest located evidence is a third-party comparison tested only up to 10k nodes, and a separate benchmark paper that excluded Sigma entirely. No evidence in this cohort — vendor or independent — measures Sigma.js at 100,000 nodes under any frame-rate target.
+
+Evaluated neutrally: the ADR's direction (reduce two renderers to one, prefer WebGL) is a reasonable engineering simplification in principle, and Sigma.js's licence (MIT) and Cytoscape.js's licence (MIT) are equally redistribution-safe (§3), so licence is not a deciding factor either way. What the ADR currently lacks, and what would be needed before treating it as evidence-based rather than aspirational:
+1. **A reproducible benchmark**, same hardware, same dataset, same metric (minimum frames-per-second at a stated percentile) for both Cytoscape.js (WebGL mode, not just Canvas) and Sigma.js, at 10k, 50k, and 100k+ nodes/edges, run against EOIP's actual graph-element styling (labels, colors, selection), since the Cytoscape deep dive notes label-heavy Canvas redraw and WebGL sprite warm-up as real failure modes that change results.
+2. **An accessibility conformance test** for the "synchronized WCAG 2.2 AA accessible table and tree views upon WebGL context loss" consequence claimed by the ADR; no deep dive in this cohort evidences this feature existing in Sigma.js, graphology, or any plugin.
+3. **A migration-cost accounting** that uses the Sigma deep dive's own finding that Sigma 2.4 (EOIP's current version) to 4.x is a breaking-change jump — `hidden`/`forceLabel` replaced by `visibility`/`labelVisibility`, `itemSizesReference` default changed, WebGL1 dropped, reducers superseded by styles — and that deep dive's own recommendation is a staged 2.4→3.0.1 migration first, deferring 4.x [CLAIM-sigma-03, C16-sigma.md §11]. The ADR, approved before this migration detail was gathered, does not account for it.
+4. **A permission-model answer to INV-sigma-02**: Sigma.js holds the full loaded graph client-side in graphology, so "any node loaded to graphology is inspectable" by the browser; consolidating onto Sigma alone does not reduce this exposure and should be paired with server-side ACL-filtered tile loading regardless of which renderer is chosen.
+5. **A decision on Cytoscape.js's own competitive position**: both the Cytoscape and Sigma deep dives independently reach near-identical Appendix B rows (CAP-70 EXPERIMENT/REUSE, CAP-71 REUSE/EXPERIMENT, CAP-73 BUILD on both), suggesting the two libraries are evaluated as peers in the primary research, not as a clear winner and a clear deprecation candidate.
+
+Until 1-3 are produced, "60 FPS on 100,000+ nodes" should not appear in any EOIP customer-facing or planning document as an established fact; it should be labelled a target, not a result.
+
+## 5. Findings
+
+1. **No member of this cohort has published a scale benchmark that meets this package's evidentiary bar** (hardware, dataset, methodology, independent reproduction). Every deep dive's own section 7 says so in nearly identical language. This is cohort-wide, not EOIP-specific.
+2. **ADR-KG3-10's headline performance claim is directly contradicted by its own supporting research**: the Sigma.js deep dive produced for this package states the 100,000-node 60 FPS figure is "unsupported by any source located" (§4.1). This is a falsifiable finding: a future benchmark could vindicate or refute it, but none exists today.
+3. **Permission-filtered rendering is weak across the entire cohort, not just in EOIP.** Gephi proves it structurally absent on a single-process desktop model (INV-gephi-01); Sigma.js has an identified client-side leakage risk (INV-sigma-02); Graphistry and GraphXR are UNVERIFIED; only KeyLines/ReGraph's props-driven architecture is described as naturally suited to server-side filtering, and even that is a design affordance, not a shipped guarantee.
+4. **Licence status is more contested in this cohort than feature coverage.** Three primary sources disagree on Gephi's exact licence (GPL-3.0 only, vs. dual CDDL+GPLv3, vs. GPL only); Sigma.js's own historical version number was stale in prior registry material (3.x vs. actual 4.0.3); elkjs (Tier C) carries a dual EPL/GPL licence that is a legal-review trigger symmetric to Gephi's.
+5. **No commercial product in this cohort publishes OEM/redistribution terms openly.** yFiles, KeyLines/ReGraph, Ogma/Linkurious, and Graphistry's server EULA are all marked "NOT PUBLICLY VERIFIED" or "not a documented option" for white-label embedding. This closes off every commercial library as a bundle-in candidate without a signed agreement, independent of feature merit.
+6. **EOIP's current dual-renderer approach (Cytoscape.js + Sigma.js) matches the industry pattern of treating rendering as a swappable layer.** Tier C's layout-engine record explicitly ties this to ADR-KG3-10: "keep layouts separate from renderers so Cytoscape/Sigma/Cosmos are swappable," which argues for a renderer-agnostic architecture over a single-renderer consolidation.
+7. **No member offers native ontology visual co-editing (CAP-72) except yFiles**, and only as a licensed diagramming SDK, not an investigation product; this is a genuine capability gap for EOIP's ontology studio, independent of the Cytoscape/Sigma question.
+8. **Time-machine / graph-diff UX (CAP-73) is native in exactly one member (KeyLines, via the sibling KronoGraph SDK) and absent from every other library and product**, including both of EOIP's current renderers. This is a clean, evidenced gap, not a renderer-choice question.
+9. **EOIP is multiple versions behind its own dependencies on both renderers**: Cytoscape.js trails by four patch minors (3.30 vs 3.34.4, low risk, MIT) while Sigma.js trails by two majors (2.4.0 vs 4.0.3, high migration risk per the breaking-change list above).
+
+## 6. Implications for EOIP
+
+| CAP | Parity needed (STR) | Exploitable weakness (INV) | Decision | Candidate gap statement |
+|---|---|---|---|---|
+| CAP-70 large-graph rendering | Run a same-hardware, same-dataset benchmark of Cytoscape.js WebGL vs. Sigma.js at 10k/50k/100k+ before any consolidation decision | INV-cytoscape-01 (Canvas frame-rate collapse); unsupported Sigma 100k/60fps claim | **EXPERIMENT** (benchmark first); do not execute ADR-KG3-10's removal until §4.1 items 1-3 are satisfied | No reproducible evidence exists for either renderer at EOIP's own target scale |
+| CAP-71 investigation UX | REUSE existing dual-renderer investigation views; borrow KeyLines' combos/time-filter/annotation idiom and Gephi's statistics/partition-styling idiom as design references (REFERENCE-ONLY, no dependency) | none proprietary worth copying verbatim given licence terms | **REUSE** current approach | partial coverage only (both baseline docs) |
+| CAP-72 ontology visual editing | BUILD or license a layered/orthogonal diagram capability; INTEGRATE yFiles only after an OEM-term legal review | yFiles OEM terms not public; legal-review trigger | **EXPERIMENT** licence negotiation; **BUILD** own layered layout using Tier C's dual-licence-reviewed elkjs or MIT dagre instead if OEM terms prove unfavorable | "EOIP has no layered/orthogonal diagram editor" (C16-yfiles.md §11) |
+| CAP-73 time-machine / graph-diff | BUILD, following the Time Bar / KronoGraph concept but implemented natively (KeyLines itself is REJECT as a dependency on licence grounds) | KeyLines/ReGraph per-application licence incompatible with a free redistributable platform (INV-kl-01) | **BUILD** | Absent everywhere in EOIP's current UI |
+| CAP-45/46 permission-filtered rendering | BUILD server-side ACL-filtered tile/subgraph delivery so the client never receives data it cannot show, closing INV-sigma-02 regardless of renderer choice | Sigma.js and most peers hold the full graph client-side once loaded | **BUILD**, P0 (ties directly to BL-18/cohort 15-16 findings) | No renderer in this cohort, including EOIP's own, evidences enforced client-side permission filtering |
+| CAP-52 OEM/white-label | Keep rendering layer MIT-licensed (Cytoscape.js and/or Sigma.js); avoid yFiles/KeyLines/Ogma/Graphistry as embedded dependencies unless a signed OEM agreement resolves the "NOT PUBLICLY VERIFIED" terms | every commercial competitor in this cohort has the same unresolved-terms weakness | **REJECT** commercial embedding without legal sign-off; **REUSE** MIT libraries | n/a — this is already EOIP's de facto position (BL-54 uses MIT renderers) |
+| Gephi GPL exposure | n/a (Gephi is REFERENCE-ONLY, not a dependency) | three-way licence disagreement (GPL-3.0 / dual CDDL+GPLv3 / GPL only) is itself a finding worth flagging if anyone proposes importing Gephi Toolkit code | **REJECT** as a dependency given the project's hard GPL/AGPL exclusion | Applies equally to Tier C's dual-licensed elkjs if adopted without checking the GPL branch |
+
+Backend neutrality: visualization choices are store-agnostic — none of HugeGraph, Neo4j, or Neptune bundles a bidirectional-coupled renderer in the evidence reviewed, so no cell above is marked "missing" where a renderer is simply "available upstream, not integrated"; this cohort found no such case to apply the label to.
+
+## 7. Open questions
+
+1. What dataset, hardware, and metric would make a Cytoscape.js-vs-Sigma.js benchmark decisive enough to execute ADR-KG3-10, and who owns running it?
+2. Does EOIP's WebGL mode for Cytoscape.js (not just Canvas) avoid the frame-rate collapse the project's own Canvas figures show? The deep dive's numbers are Canvas-first; WebGL numbers in the same project table are higher but still untested at 100k+.
+3. Which of Gephi's three conflicting licence statements (GitHub GPL-3.0, wiki dual CDDL+GPLv3, gephi.org GPL-only) is authoritative, and does it matter if Gephi is REFERENCE-ONLY and never a dependency?
+4. Are yFiles', KeyLines/ReGraph's, Ogma's, or Graphistry's OEM/redistribution terms obtainable through a sales conversation, and would any of them actually permit EOIP's multi-tenant white-label model?
+5. Does the Sigma.js 2.4→4.x breaking-change list (visibility/labelVisibility rename, itemSizesReference default change, WebGL1 drop, reducer removal) block or merely complicate a future upgrade, and should EOIP stage through 3.0.1 first as the deep dive recommends?
+6. Is there an existing or planned WCAG 2.2 AA accessible fallback (table/tree view) for either renderer today, as ADR-KG3-10 claims as a consequence, or does this need to be built from zero?
+7. Should EOIP's ontology studio diagram needs be met by licensing yFiles, or by composing Tier C's elkjs/dagre layout engines (checking the elkjs GPL branch) with the existing MIT renderers?

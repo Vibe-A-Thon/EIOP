@@ -3,15 +3,13 @@
 from __future__ import annotations
 
 import os
+import secrets
 from pathlib import Path
 from dataclasses import dataclass
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 # Safe runtime defaults for tests and standalone benchmarking
-os.environ.setdefault("EOIP_API_TOKEN", "eoip-local-dev-token-0123456789abcdef")
-os.environ.setdefault("EOIP_GRAPH_BACKEND", "memory")
-os.environ.setdefault("EOIP_DATA_DIR", str(REPO_ROOT / ".eoip-data"))
 
 @dataclass(frozen=True)
 class RoleCredential:
@@ -21,55 +19,55 @@ class RoleCredential:
     token: str
     tenant: str
 
-# Standard ASG Token Matrix from Logins_credentials.keys
+# Disposable local roles; remote runs require explicitly supplied QA_TOKEN_* values.
 TEST_ROLES: dict[str, RoleCredential] = {
     "superadmin": RoleCredential(
         label="Super admin",
         username="root-superadmin",
         role="superadmin",
-        token="eoip_sa_f86468fed910d947e69eba4c",
+        token=os.getenv("QA_TOKEN_SUPERADMIN") or secrets.token_urlsafe(32),
         tenant="*",
     ),
     "admin": RoleCredential(
         label="Admin",
         username="default-admin",
         role="admin",
-        token="eoip_admin_75293814c25a2d4c1e57994c",
+        token=os.getenv("QA_TOKEN_ADMIN") or secrets.token_urlsafe(32),
         tenant="default",
     ),
     "steward": RoleCredential(
         label="Steward",
         username="data-steward",
         role="steward",
-        token="eoip_steward_449c1099ee3071aa8ce7fbed",
+        token=os.getenv("QA_TOKEN_STEWARD") or secrets.token_urlsafe(32),
         tenant="default",
     ),
     "analyst": RoleCredential(
         label="Analyst",
         username="analyst",
         role="analyst",
-        token="eoip_analyst_1d0019f09d075ddf8ad141dc",
+        token=os.getenv("QA_TOKEN_ANALYST") or secrets.token_urlsafe(32),
         tenant="default",
     ),
     "viewer": RoleCredential(
         label="Viewer",
         username="viewer",
         role="viewer",
-        token="eoip_viewer_9072655bae91c450d24fe204",
+        token=os.getenv("QA_TOKEN_VIEWER") or secrets.token_urlsafe(32),
         tenant="default",
     ),
     "bootstrap": RoleCredential(
         label="Bootstrap Root",
         username="bootstrap-root",
         role="admin",
-        token="eoip-local-dev-token-0123456789abcdef",
+        token=secrets.token_urlsafe(32),
         tenant="default",
     ),
 }
 
 # Network URLs and Ports
-BACKEND_URL: str = os.environ.get("EOIP_BACKEND_URL", "http://localhost:8001").rstrip("/")
-FRONTEND_URL: str = os.environ.get("EOIP_FRONTEND_URL", "http://localhost:3000").rstrip("/")
+BACKEND_URL: str = os.environ.get("EOIP_BACKEND_URL", "http://127.0.0.1:8000").rstrip("/")
+FRONTEND_URL: str = os.environ.get("EOIP_FRONTEND_URL", "http://127.0.0.1:8080").rstrip("/")
 API_PREFIX: str = "/api/v1"
 
 # Driver & Browser Configuration
@@ -78,6 +76,5 @@ HEADLESS_MODE: bool = os.environ.get("QA_HEADLESS", "true").lower() in ("true", 
 DEFAULT_TIMEOUT_SECS: float = float(os.environ.get("QA_TIMEOUT", "12.0"))
 
 # Output Reports & Screenshots
-REPORTS_DIR: Path = REPO_ROOT / "qa_bench" / "reports"
+REPORTS_DIR = Path(os.getenv("QA_REPORTS_DIR", str(REPO_ROOT / "test-results" / "qa-bench" / "legacy")))
 SCREENSHOTS_DIR: Path = REPORTS_DIR / "screenshots"
-SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)

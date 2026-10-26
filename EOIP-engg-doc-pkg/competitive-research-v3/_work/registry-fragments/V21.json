@@ -1,0 +1,730 @@
+[
+ {
+  "id": "T-C08-nano-graphrag",
+  "slug": "nano-graphrag",
+  "name": "nano-graphrag",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Minimal GraphRAG",
+  "members": [
+   "nano-graphrag"
+  ],
+  "official_url": "https://github.com/gusye1234/nano-graphrag",
+  "owner": "gusye1234",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "unknown",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; embeddable.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Real, adopted minimal GraphRAG",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "nano-graphrag repo",
+    "url": "https://github.com/gusye1234/nano-graphrag",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C08-infranodus",
+  "slug": "infranodus",
+  "name": "InfraNodus",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Text network analysis SaaS",
+  "members": [
+   "InfraNodus SaaS",
+   "mcp-server-infranodus"
+  ],
+  "official_url": "https://infranodus.com",
+  "owner": "InfraNodus (Nodus Labs)",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "MCP server MIT; vendor states underlying open-source tools AGPL; SaaS proprietary",
+  "license_class": "mixed",
+  "redistribution_notes": "SaaS; MCP client self-hostable but needs InfraNodus API key.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Vendor states AGPL for underlying open-source tools; scope vs MCP server unclear",
+  "community_vs_enterprise": "MCP client MIT; vendor says underlying tools AGPL; SaaS proprietary",
+  "deployment_modes": [
+   "saas",
+   "self-hosted"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "production",
+  "resolution_note": "Product (SaaS) with an MIT MCP wrapper; not a library",
+  "registry_action": "KEEP",
+  "action_reason": "Real product; cloud-dependent",
+  "decision_summary": "REFERENCE-ONLY; UX idea of structural-gap analysis",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "InfraNodus MCP repo",
+    "url": "https://github.com/infranodus/mcp-server-infranodus",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "InfraNodus MCP deployment",
+    "url": "https://infranodus.com/mcp/deployment",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C08-contextclue",
+  "slug": "contextclue",
+  "name": "ContextClue Graph Builder",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Vendor/scope to verify",
+  "members": [
+   "ContextClue Graph Builder"
+  ],
+  "official_url": "https://github.com/addepto/graph_builder",
+  "owner": "Addepto (ContextClue product line)",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "unknown",
+  "license": "MIT (open-source toolkit); commercial ContextClue platform proprietary, terms UNVERIFIED",
+  "license_class": "mixed",
+  "redistribution_notes": "Toolkit permissive; platform terms not verified.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "MCP client MIT; vendor says underlying tools AGPL; SaaS proprietary",
+  "deployment_modes": [
+   "embedded",
+   "docker"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "Registry means Addepto graph_builder, not Neo4j LLM Knowledge Graph Builder (name-alike); vendor-owned open-source toolkit, 113 stars",
+  "registry_action": "KEEP",
+  "action_reason": "Verified; early toolkit, graphs in-memory",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "graph_builder repo",
+    "url": "https://github.com/addepto/graph_builder",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "ContextClue open source page",
+    "url": "https://context-clue.com/contextclue-graph-builder-open-source/",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C08-harmony-mcp",
+  "slug": "harmony-mcp",
+  "name": "Harmony MCP",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Existence/owner to verify",
+  "members": [
+   "Harmony MCP"
+  ],
+  "official_url": "https://codeconductor.ai/harmony/",
+  "owner": "CodeConductor (per vendor blog)",
+  "latest_version": "NOT PUBLICLY VERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "unknown",
+  "license": "NOT PUBLICLY VERIFIED",
+  "license_class": "proprietary",
+  "redistribution_notes": "Unknown; no public repo found.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "Licence and source availability unverified",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "self-hosted"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "beta",
+  "resolution_note": "Candidates: CodeConductor Harmony MCP (likely meant; vendor-only evidence), Amdocs-Studio/harmony2-gemini-mcp, JorgeHI/mcp-harmony-context (Toon Boom, MIT), mcp-harmonyos. No stars/last commit obtainable.",
+  "registry_action": "DEFER",
+  "action_reason": "No independently verifiable repo or licence; keep until owner supplies URL",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "CodeConductor article",
+    "url": "https://codeconductor.ai/blog/codebase-memory-alternative/",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "Harmony 2.0 Gemini MCP (Amdocs-Studio)",
+    "url": "https://glama.ai/mcp/servers/@Amdocs-Studio/harmony2-gemini-mcp",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "MCP Harmony Context",
+    "url": "https://glama.ai/mcp/servers/JorgeHI/mcp-harmony-context",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.3
+ },
+ {
+  "id": "T-C08-mempalace",
+  "slug": "mempalace",
+  "name": "MemPalace",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Existence/owner to verify",
+  "members": [
+   "MemPalace"
+  ],
+  "official_url": "https://github.com/MemPalace/mempalace",
+  "owner": "MemPalace org (press: Milla Jovovich concept, Ben Sigman engineering)",
+  "latest_version": "3.12.0 (README badge)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; local.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "Real project; open-source library from a personal/celebrity-fronted origin; repo URL varies in secondary sources, MemPalace/mempalace used (~59.7k stars at 2026-10-18)",
+  "registry_action": "KEEP",
+  "action_reason": "Verified; benchmark claims contested",
+  "decision_summary": "REFERENCE-ONLY; EXPERIMENT as memory-eval baseline",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "MemPalace repo",
+    "url": "https://github.com/MemPalace/mempalace",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "What is MemPalace (Vectorize)",
+    "url": "https://vectorize.io/articles/what-is-mempalace",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C08-mythos",
+  "slug": "mythos",
+  "name": "MythOS",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Existence/owner to verify; not Claude Mythos",
+  "members": [
+   "MythOS"
+  ],
+  "official_url": "https://mythos.one",
+  "owner": "Brian Swichkow (builder); legal owner UNVERIFIED",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Proprietary platform; npm mythos-mcp licence not stated",
+  "license_class": "proprietary",
+  "redistribution_notes": "Hosted; no self-host stated.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "saas"
+  ],
+  "air_gap_viable": "no",
+  "maturity": "early-production",
+  "resolution_note": "MythOS (mythos.one) is a hosted AI-native personal knowledge platform; unrelated to the Anthropic Claude Mythos model family. No credible alternative candidate with the same name found.",
+  "registry_action": "KEEP",
+  "action_reason": "Verified as distinct from Claude Mythos; low relevance",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "MythOS memo",
+    "url": "https://mythos.one/me/mythos/ce6e4c",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.55
+ },
+ {
+  "id": "T-C08-claude-mem",
+  "slug": "claude-mem",
+  "name": "claude-mem",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Personal/community project to verify",
+  "members": [
+   "claude-mem"
+  ],
+  "official_url": "https://github.com/thedotmack/claude-mem",
+  "owner": "thedotmack (Alex Newman)",
+  "latest_version": "15.2.1 (README badge)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; README references an open/commercial boundary doc (unread).",
+  "legal_review_trigger": true,
+  "legal_review_reason": "README links docs/ip-boundary.md open/commercial boundary; contents not reviewed",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "Community project, not Anthropic; ~103k stars reported at 2026-10-18",
+  "registry_action": "KEEP",
+  "action_reason": "Verified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "claude-mem repo",
+    "url": "https://github.com/thedotmack/claude-mem",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C08-g-retriever",
+  "slug": "g-retriever",
+  "name": "G-Retriever",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Research",
+  "members": [
+   "G-Retriever"
+  ],
+  "official_url": "https://github.com/XiaoxinHe/G-Retriever",
+  "owner": "Xiaoxin He et al.",
+  "latest_version": "none (arXiv 2402.07630, NeurIPS 2024)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "unknown",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Research code.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Paper NeurIPS 2024; independent replication not publicly verified",
+  "registry_action": "KEEP",
+  "action_reason": "Verified research artefact",
+  "decision_summary": "EXPERIMENT PCST subgraph selection",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "G-Retriever repo",
+    "url": "https://github.com/XiaoxinHe/G-Retriever",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C08-pathrag",
+  "slug": "pathrag",
+  "name": "PathRAG",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Research",
+  "members": [
+   "PathRAG"
+  ],
+  "official_url": "https://github.com/BUPT-GAMMA/PathRAG",
+  "owner": "BUPT-GAMMA",
+  "latest_version": "none (arXiv 2502.14902)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "unknown",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Research code.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Paper arXiv 2502.14902 preprint, no peer-reviewed venue verified; independent replication not publicly verified",
+  "registry_action": "KEEP",
+  "action_reason": "Verified research artefact",
+  "decision_summary": "EXPERIMENT path pruning",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "PathRAG repo",
+    "url": "https://github.com/BUPT-GAMMA/PathRAG",
+    "accessed": "2026-10-18"
+   },
+   {
+    "title": "PathRAG paper",
+    "url": "https://arxiv.org/abs/2502.14902",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C08-minirag",
+  "slug": "minirag",
+  "name": "MiniRAG",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Research",
+  "members": [
+   "MiniRAG"
+  ],
+  "official_url": "https://github.com/HKUDS/MiniRAG",
+  "owner": "HKUDS (HKU)",
+  "latest_version": "PyPI minirag-hku (version UNVERIFIED)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "unknown",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Research code.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Paper arXiv 2501.06713; repo labels it ACL 2026 (not independently confirmed); replication not publicly verified",
+  "registry_action": "KEEP",
+  "action_reason": "Verified research artefact",
+  "decision_summary": "EXPERIMENT small-model GraphRAG",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "MiniRAG repo",
+    "url": "https://github.com/HKUDS/MiniRAG",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C08-structrag",
+  "slug": "structrag",
+  "name": "StructRAG",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Research",
+  "members": [
+   "StructRAG"
+  ],
+  "official_url": "https://github.com/Li-Z-Q/StructRAG",
+  "owner": "Li-Z-Q et al.",
+  "latest_version": "none (ICLR 2025, OpenReview GhexuBLxbO)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "unknown",
+  "license": "No LICENSE file seen",
+  "license_class": "proprietary",
+  "redistribution_notes": "Research code.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "No licence file: code not reusable without permission",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "unknown",
+  "maturity": "research",
+  "resolution_note": "Paper ICLR 2025 per README; replication not publicly verified",
+  "registry_action": "KEEP",
+  "action_reason": "Verified research artefact",
+  "decision_summary": "REFERENCE-ONLY idea only",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "StructRAG repo",
+    "url": "https://github.com/Li-Z-Q/StructRAG",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.6
+ },
+ {
+  "id": "T-C08-r2r",
+  "slug": "r2r",
+  "name": "R2R",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "RAG system",
+  "members": [
+   "R2R"
+  ],
+  "official_url": "https://github.com/SciPhi-AI/R2R",
+  "owner": "SciPhi-AI",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "docker",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Real RAG service; tenancy/ACL not EOIP-grade",
+  "decision_summary": "REFERENCE-ONLY; benchmark in CAP-78 harness",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "R2R repo",
+    "url": "https://github.com/SciPhi-AI/R2R",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C08-kotaemon",
+  "slug": "kotaemon",
+  "name": "Kotaemon",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "RAG UI",
+  "members": [
+   "Kotaemon"
+  ],
+  "official_url": "https://github.com/Cinnamon/kotaemon",
+  "owner": "Cinnamon",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "docker",
+   "self-hosted",
+   "desktop"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Verified",
+  "decision_summary": "REFERENCE-ONLY UX",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "Kotaemon repo",
+    "url": "https://github.com/Cinnamon/kotaemon",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C08-txtai",
+  "slug": "txtai",
+  "name": "txtai",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Embeddings DB/RAG",
+  "members": [
+   "txtai"
+  ],
+  "official_url": "https://github.com/neuml/txtai",
+  "owner": "NeuML",
+  "latest_version": "9.x (exact UNVERIFIED)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded",
+   "docker",
+   "self-hosted"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Verified",
+  "decision_summary": "EXPERIMENT as embedded hybrid-search backend",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "txtai repo",
+    "url": "https://github.com/neuml/txtai",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C08-langmem",
+  "slug": "langmem",
+  "name": "LangMem",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Memory library",
+  "members": [
+   "LangMem"
+  ],
+  "official_url": "https://github.com/langchain-ai/langmem",
+  "owner": "LangChain (langchain-ai)",
+  "latest_version": "UNVERIFIED",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "unknown",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; coupled to LangGraph store.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Verified; maintenance recency unverified",
+  "decision_summary": "REFERENCE-ONLY",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "LangMem repo",
+    "url": "https://github.com/langchain-ai/langmem",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.65
+ },
+ {
+  "id": "T-C08-a-mem",
+  "slug": "a-mem",
+  "name": "A-MEM",
+  "category": "C08",
+  "tier": "C",
+  "tier_reason": "Agentic memory research",
+  "members": [
+   "A-MEM"
+  ],
+  "official_url": "https://github.com/WujiangXu/A-mem",
+  "owner": "Wujiang Xu et al.",
+  "latest_version": "none (arXiv 2502.12110, NeurIPS 2025)",
+  "version_date": "UNVERIFIED",
+  "release_cadence": "UNVERIFIED",
+  "status": "unknown",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "Research code.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "n/a",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "Paper NeurIPS 2025 per repo; repo reproduces paper, separate A-mem-sys is the implementation; replication not publicly verified",
+  "registry_action": "KEEP",
+  "action_reason": "Verified research artefact",
+  "decision_summary": "EXPERIMENT note-linking consolidation",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C08-tier-c-records-V21.md",
+  "sources": [
+   {
+    "title": "A-mem repo",
+    "url": "https://github.com/WujiangXu/A-mem",
+    "accessed": "2026-10-18"
+   }
+  ],
+  "verification_confidence": 0.7
+ }
+]

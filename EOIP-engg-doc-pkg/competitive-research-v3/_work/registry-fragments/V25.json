@@ -1,0 +1,514 @@
+[
+ {
+  "id": "T-C12-networkx",
+  "slug": "networkx",
+  "name": "NetworkX",
+  "category": "C12",
+  "tier": "B",
+  "tier_reason": "Algorithm reference/reuse",
+  "members": [
+   "NetworkX",
+   "graphblas-algorithms backend",
+   "nx-parallel",
+   "nx-cugraph backend"
+  ],
+  "official_url": "https://networkx.org",
+  "owner": "NetworkX community (maintainer org not verified)",
+  "latest_version": "3.7",
+  "version_date": "2026-09-21",
+  "release_cadence": "several releases per year",
+  "status": "active",
+  "license": "BSD-3-Clause",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; pure-Python wheel redistributable.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "single community edition",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "REUSE as test oracle only; REJECT as runtime dependency; BUILD Leiden/VF2 natively",
+  "top_strengths": [
+   "STR-networkx-01",
+   "STR-networkx-02"
+  ],
+  "top_inversions": [
+   "INV-networkx-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C12-networkx.md",
+  "sources": [
+   {
+    "title": "PyPI networkx",
+    "url": "https://pypi.org/pypi/networkx/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "NetworkX community algorithms",
+    "url": "https://networkx.org/documentation/stable/reference/algorithms/community.html",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "graph-tool performance",
+    "url": "https://graph-tool.skewed.de/performance.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C12-igraph",
+  "slug": "igraph",
+  "name": "igraph",
+  "category": "C12",
+  "tier": "B",
+  "tier_reason": "Fast algorithm library (GPL to verify)",
+  "members": [
+   "igraph C core",
+   "python-igraph",
+   "R igraph"
+  ],
+  "official_url": "https://igraph.org",
+  "owner": "igraph project (maintainers not verified)",
+  "latest_version": "python-igraph 1.0.0 (C docs 1.0.1)",
+  "version_date": "2025-10-23",
+  "release_cadence": "irregular",
+  "status": "active",
+  "license": "GPL-2.0 (python-igraph repo; PyPI GPL classifier); C core licence UNVERIFIED",
+  "license_class": "strong-copyleft",
+  "redistribution_notes": "GPL: redistribution/embedding requires legal review.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "GPL-2.0 copyleft on bindings; C core licence unverified; bundled libs not checked",
+  "community_vs_enterprise": "single GPL edition",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "GPL confirmed for python-igraph; C core GPL-2.0-or-later NOT verified",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "REJECT as dependency; REUSE off-product as benchmark; BUILD Leiden/Infomap natively",
+  "top_strengths": [
+   "STR-igraph-01"
+  ],
+  "top_inversions": [
+   "INV-igraph-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C12-igraph.md",
+  "sources": [
+   {
+    "title": "PyPI igraph",
+    "url": "https://pypi.org/pypi/igraph/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "python-igraph repo",
+    "url": "https://github.com/igraph/python-igraph",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "igraph C community docs",
+    "url": "https://igraph.org/c/doc/igraph-Community.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C12-rustworkx",
+  "slug": "rustworkx",
+  "name": "Rustworkx",
+  "category": "C12",
+  "tier": "B",
+  "tier_reason": "Apache-2.0 fast algorithms",
+  "members": [
+   "rustworkx"
+  ],
+  "official_url": "https://www.rustworkx.org",
+  "owner": "Qiskit-associated (UNVERIFIED)",
+  "latest_version": "0.18.1",
+  "version_date": "2026-07-30",
+  "release_cadence": "a few releases per year",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive with patent grant; 2.4 MB abi3 wheels.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "single edition",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "early-production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "EXPERIMENT as optional engine for paths/centrality/VF2; BUILD community and k-hop",
+  "top_strengths": [
+   "STR-rustworkx-01"
+  ],
+  "top_inversions": [
+   "INV-rustworkx-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C12-rustworkx.md",
+  "sources": [
+   {
+    "title": "PyPI rustworkx",
+    "url": "https://pypi.org/pypi/rustworkx/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "rustworkx paper",
+    "url": "https://arxiv.org/abs/2110.15221",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "rustworkx API",
+    "url": "https://www.rustworkx.org/api/index.html",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C12-graphblas",
+  "slug": "graphblas",
+  "name": "GraphBLAS (SuiteSparse)",
+  "category": "C12",
+  "tier": "B",
+  "tier_reason": "Linear-algebra graph engine",
+  "members": [
+   "SuiteSparse:GraphBLAS",
+   "suitesparse-graphblas",
+   "python-graphblas",
+   "graphblas-algorithms",
+   "LAGraph"
+  ],
+  "official_url": "https://github.com/DrTimothyAldenDavis/GraphBLAS",
+  "owner": "Timothy A. Davis (SuiteSparse); python-graphblas community",
+  "latest_version": "SuiteSparse:GraphBLAS 10.5.2; suitesparse-graphblas 10.5.1.1; python-graphblas 2025.2.0",
+  "version_date": "2026-10-20",
+  "release_cadence": "frequent C releases; slower Python wrapper",
+  "status": "active",
+  "license": "Apache-2.0 (library, wrappers, graphblas-algorithms); bundled BSD components",
+  "license_class": "permissive",
+  "redistribution_notes": "Permissive; do not ship CC BY logo; JIT needs C compiler at runtime or PreJIT.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "single edition; GPU path draft",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "EXPERIMENT as optional CPU engine for whole-graph kernels; REJECT GPU path (ADR-H16)",
+  "top_strengths": [
+   "STR-graphblas-01",
+   "STR-graphblas-02"
+  ],
+  "top_inversions": [
+   "INV-graphblas-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C12-graphblas.md",
+  "sources": [
+   {
+    "title": "SuiteSparse:GraphBLAS repo",
+    "url": "https://github.com/DrTimothyAldenDavis/GraphBLAS",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PyPI suitesparse-graphblas",
+    "url": "https://pypi.org/pypi/suitesparse-graphblas/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PyPI python-graphblas",
+    "url": "https://pypi.org/pypi/python-graphblas/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "graphblas-algorithms",
+    "url": "https://github.com/python-graphblas/graphblas-algorithms",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C12-raphtory",
+  "slug": "raphtory",
+  "name": "Raphtory",
+  "category": "C12",
+  "tier": "B",
+  "tier_reason": "Temporal graph analytics",
+  "members": [
+   "Raphtory core",
+   "Python API",
+   "GraphQL server",
+   "Pometry commercial tier"
+  ],
+  "official_url": "https://github.com/Raphtory/Raphtory",
+  "owner": "Raphtory / Pometry (association per README)",
+  "latest_version": "0.18.5",
+  "version_date": "2026-06-23",
+  "release_cadence": "several releases per year",
+  "status": "active",
+  "license": "GPL-3.0 (repo); commercial subscription for out-of-memory scale (terms not public)",
+  "license_class": "strong-copyleft",
+  "redistribution_notes": "GPL-3.0 copyleft; embedding/redistribution requires legal review.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "GPL-3.0 and commercial subscription split",
+  "community_vs_enterprise": "community GPL-3.0 in-memory vs paid out-of-memory",
+  "deployment_modes": [
+   "embedded",
+   "self-hosted"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "early-production",
+  "resolution_note": "Linux wheels missing from PyPI file list for 0.18.5 (macOS only); 0.17.0 has Linux ~93 MB",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "BUILD temporal windowed analytics natively; REJECT as dependency; REFERENCE-ONLY benchmark",
+  "top_strengths": [
+   "STR-raphtory-01"
+  ],
+  "top_inversions": [
+   "INV-raphtory-01"
+  ],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C12-raphtory.md",
+  "sources": [
+   {
+    "title": "Raphtory repo",
+    "url": "https://github.com/Raphtory/Raphtory",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "PyPI raphtory",
+    "url": "https://pypi.org/pypi/raphtory/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Raphtory paper",
+    "url": "https://arxiv.org/abs/2306.16309",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C12-graphx-graphframes",
+  "slug": "graphx-graphframes",
+  "name": "GraphX and GraphFrames (Spark)",
+  "category": "C12",
+  "tier": "C",
+  "tier_reason": "Distributed analytics",
+  "members": [
+   "GraphX",
+   "GraphFrames",
+   "graphframes-py"
+  ],
+  "official_url": "https://github.com/graphframes/graphframes",
+  "owner": "Apache Spark / GraphFrames contributors",
+  "latest_version": "graphframes-py 0.12.3",
+  "version_date": "2026-10-05",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Apache-2.0",
+  "license_class": "permissive",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "single edition",
+  "deployment_modes": [
+   "self-hosted",
+   "kubernetes"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "REFERENCE-ONLY; export path for Spark customers",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C12-tier-c-records-V25.md",
+  "sources": [
+   {
+    "title": "GraphX",
+    "url": "https://spark.apache.org/graphx/",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "GraphFrames",
+    "url": "https://github.com/graphframes/graphframes",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ },
+ {
+  "id": "T-C12-cugraph",
+  "slug": "cugraph",
+  "name": "RAPIDS cuGraph",
+  "category": "C12",
+  "tier": "C",
+  "tier_reason": "GPU analytics (CPU-only policy)",
+  "members": [
+   "cuGraph",
+   "nx-cugraph",
+   "pylibcugraph"
+  ],
+  "official_url": "https://docs.nvidia.com/cugraph/latest/",
+  "owner": "NVIDIA / RAPIDS",
+  "latest_version": "26.10.0",
+  "version_date": "2026-10-08",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "Apache-2.0 (cuGraph); CUDA stack under NVIDIA terms",
+  "license_class": "mixed",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": true,
+  "legal_review_reason": "CUDA stack redistribution barred by ADR-H16",
+  "community_vs_enterprise": "single edition",
+  "deployment_modes": [
+   "self-hosted",
+   "docker"
+  ],
+  "air_gap_viable": "partial",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "REJECT as bundled dependency (ADR-H16); reference only",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C12-tier-c-records-V25.md",
+  "sources": [
+   {
+    "title": "PyPI cugraph-cu12",
+    "url": "https://pypi.org/pypi/cugraph-cu12/json",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "cuGraph docs",
+    "url": "https://docs.nvidia.com/cugraph/latest/",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.75
+ },
+ {
+  "id": "T-C12-graphology",
+  "slug": "graphology",
+  "name": "Graphology",
+  "category": "C12",
+  "tier": "C",
+  "tier_reason": "JS graph library in our UI",
+  "members": [
+   "graphology",
+   "graphology standard library"
+  ],
+  "official_url": "https://github.com/graphology/graphology",
+  "owner": "graphology community (not verified)",
+  "latest_version": "0.26.0",
+  "version_date": "2025-01-26",
+  "release_cadence": "UNVERIFIED",
+  "status": "active",
+  "license": "MIT",
+  "license_class": "permissive",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "single edition",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "production",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "REUSE in web UI; algorithms reference-only",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C12-tier-c-records-V25.md",
+  "sources": [
+   {
+    "title": "graphology repo",
+    "url": "https://github.com/graphology/graphology",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "npm graphology",
+    "url": "https://registry.npmjs.org/graphology",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.8
+ },
+ {
+  "id": "T-C12-ligra-gap",
+  "slug": "ligra-gap",
+  "name": "Ligra and GAP benchmark suite",
+  "category": "C12",
+  "tier": "C",
+  "tier_reason": "Algorithmic references",
+  "members": [
+   "Ligra",
+   "Ligra+",
+   "Hygra",
+   "GAP Benchmark Suite (gapbs)"
+  ],
+  "official_url": "https://github.com/sbeamer/gapbs",
+  "owner": "Shun/Blelloch (Ligra); Beamer/Asanovic/Patterson (GAP)",
+  "latest_version": "GAP paper v4",
+  "version_date": "2017-05-16",
+  "release_cadence": "UNVERIFIED",
+  "status": "maintenance",
+  "license": "MIT (Ligra); UC Regents BSD-style (gapbs, variant UNVERIFIED)",
+  "license_class": "permissive",
+  "redistribution_notes": "See licence.",
+  "legal_review_trigger": false,
+  "legal_review_reason": "",
+  "community_vs_enterprise": "single edition",
+  "deployment_modes": [
+   "embedded"
+  ],
+  "air_gap_viable": "yes",
+  "maturity": "research",
+  "resolution_note": "",
+  "registry_action": "KEEP",
+  "action_reason": "Keep as assigned",
+  "decision_summary": "REFERENCE-ONLY; adopt GAP kernels in benchmark harness",
+  "top_strengths": [],
+  "top_inversions": [],
+  "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C12-tier-c-records-V25.md",
+  "sources": [
+   {
+    "title": "GAP paper",
+    "url": "https://arxiv.org/abs/1508.03619",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "gapbs",
+    "url": "https://github.com/sbeamer/gapbs",
+    "accessed": "2026-10-26"
+   },
+   {
+    "title": "Ligra",
+    "url": "https://github.com/jshun/ligra",
+    "accessed": "2026-10-26"
+   }
+  ],
+  "verification_confidence": 0.7
+ }
+]

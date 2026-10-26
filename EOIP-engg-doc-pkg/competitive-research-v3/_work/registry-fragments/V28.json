@@ -1,0 +1,527 @@
+[
+  {
+    "id": "T-C15-glean-meta",
+    "slug": "glean-meta",
+    "name": "Glean (Meta code indexing)",
+    "category": "C15",
+    "tier": "B",
+    "tier_reason": "OSS code fact store; name collision resolved",
+    "members": [
+      "Glean server",
+      "Angle",
+      "Glass symbol server",
+      "indexers"
+    ],
+    "official_url": "https://github.com/facebookincubator/Glean",
+    "owner": "Meta (facebookincubator)",
+    "latest_version": "no tagged release; CHANGELOG 0.2.0.0 undated",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "continuous commits (last push 2026-10-25); no releases",
+    "status": "active",
+    "license": "BSD (LICENSE headed 'BSD License'; clause variant unread; GitHub reports NOASSERTION)",
+    "license_class": "permissive",
+    "redistribution_notes": "BSD permits redistribution subject to notices; exact clauses to confirm.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Licence text variant not confirmed; GitHub licence detection NOASSERTION.",
+    "community_vs_enterprise": "Single OSS repo; best indexers (Java, Kotlin, Swift, Bazel) internal and unreleased",
+    "deployment_modes": [
+      "self-hosted",
+      "docker"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "early-production",
+    "resolution_note": "Distinct from Glean enterprise search (C07-glean-enterprise); placeholder C15-glean-code-intelligence.md left untouched.",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "EXPERIMENT ownership-unit incrementality pattern; do not adopt Glean store; ingest via SCIP",
+    "top_strengths": [
+      "STR-glean-meta-01"
+    ],
+    "top_inversions": [
+      "INV-glean-meta-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-glean-meta.md",
+    "sources": [
+      {
+        "title": "Glean repo",
+        "url": "https://github.com/facebookincubator/Glean",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Glean intro",
+        "url": "https://glean.software/docs/introduction",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Glean incrementality",
+        "url": "https://glean.software/docs/implementation/incrementality",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.75
+  },
+  {
+    "id": "T-C15-codeql",
+    "slug": "codeql",
+    "name": "CodeQL",
+    "category": "C15",
+    "tier": "B",
+    "tier_reason": "Code-as-data query engine; licence restricts commercial use",
+    "members": [
+      "CodeQL CLI",
+      "github/codeql queries (MIT)",
+      "VS Code extension",
+      "GitHub code scanning"
+    ],
+    "official_url": "https://codeql.github.com",
+    "owner": "GitHub (Microsoft)",
+    "latest_version": "CLI v2.27.3",
+    "version_date": "2026-10-20",
+    "release_cadence": "roughly every 2 weeks",
+    "status": "active",
+    "license": "CLI/engine: GitHub CodeQL Terms and Conditions (proprietary); queries and libraries repo: MIT",
+    "license_class": "mixed",
+    "redistribution_notes": "CLI may be used for academic research, demos, testing OSI-licensed queries; analysis and CI/CD DB creation only for OSI-licensed codebases; no use on private/non-open-source code, no sharing, hosting or distribution, unless paid GitHub Advanced Security licence. Cannot be bundled or white-labelled.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Proprietary terms forbid product embedding, hosted use and private-code analysis without GHAS.",
+    "community_vs_enterprise": "MIT queries vs proprietary engine; GHAS lifts restrictions",
+    "deployment_modes": [
+      "self-hosted",
+      "desktop",
+      "saas"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "INTEGRATE only customer-run SARIF import; REJECT bundling CLI; REFERENCE query ideas",
+    "top_strengths": [
+      "STR-codeql-01"
+    ],
+    "top_inversions": [
+      "INV-codeql-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-codeql.md",
+    "sources": [
+      {
+        "title": "CodeQL terms",
+        "url": "https://github.com/github/codeql-cli-binaries/blob/main/LICENSE.md",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "CLI releases",
+        "url": "https://github.com/github/codeql-cli-binaries/releases",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "About CodeQL",
+        "url": "https://codeql.github.com/docs/codeql-overview/about-codeql/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Setup CLI",
+        "url": "https://docs.github.com/en/code-security/codeql-cli/getting-started-with-the-codeql-cli/setting-up-the-codeql-cli",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.85
+  },
+  {
+    "id": "T-C15-joern",
+    "slug": "joern",
+    "name": "Joern",
+    "category": "C15",
+    "tier": "B",
+    "tier_reason": "Code property graph",
+    "members": [
+      "Joern CLI/shell",
+      "frontends",
+      "joern-scan",
+      "joern-export"
+    ],
+    "official_url": "https://joern.io",
+    "owner": "Whirly Labs and sponsors (Qwiet AI, Privado, universities)",
+    "latest_version": "v4.0.665",
+    "version_date": "2026-10-23",
+    "release_cadence": "automatic daily release",
+    "status": "active",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "Apache-2.0; bundled frontend dependency licences (Ghidra, Soot, CDT) UNVERIFIED.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Dependency licences of bundled frontends unverified.",
+    "community_vs_enterprise": "Single OSS edition",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "desktop"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "INTEGRATE as optional data-flow analyser sidecar; EXPERIMENT module-scoped incremental CPG",
+    "top_strengths": [
+      "STR-joern-01"
+    ],
+    "top_inversions": [
+      "INV-joern-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-joern.md",
+    "sources": [
+      {
+        "title": "Joern repo",
+        "url": "https://github.com/joernio/joern",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Joern docs",
+        "url": "https://docs.joern.io/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "joern.io",
+        "url": "https://joern.io",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C15-semgrep",
+    "slug": "semgrep",
+    "name": "Semgrep",
+    "category": "C15",
+    "tier": "B",
+    "tier_reason": "Pattern code analysis; engine vs rules licence split",
+    "members": [
+      "Semgrep CE",
+      "Semgrep Code / Pro engine",
+      "Semgrep Supply Chain",
+      "semgrep-rules"
+    ],
+    "official_url": "https://semgrep.dev",
+    "owner": "Semgrep, Inc.",
+    "latest_version": "CE v1.182.0",
+    "version_date": "2026-10-20",
+    "release_cadence": "frequent releases (cadence not computed)",
+    "status": "active",
+    "license": "Engine LGPL-2.1; semgrep-rules under Semgrep Rules License v1.0; Pro engine/Platform proprietary",
+    "license_class": "mixed",
+    "redistribution_notes": "Rules licence: internal business use only; no distribution; not as a service; modifications with notice. Engine LGPL-2.1 obligations apply on distribution.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Rules licence forbids redistribution/service use; LGPL distribution form; Pro proprietary.",
+    "community_vs_enterprise": "CE single-function taint, single file; Pro cross-file/cross-function, free up to 10 contributors",
+    "deployment_modes": [
+      "self-hosted",
+      "docker",
+      "saas"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "INTEGRATE CE as external process with in-house rules; REJECT bundling registry rules",
+    "top_strengths": [
+      "STR-semgrep-01"
+    ],
+    "top_inversions": [
+      "INV-semgrep-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-semgrep.md",
+    "sources": [
+      {
+        "title": "Semgrep repo",
+        "url": "https://github.com/semgrep/semgrep",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Rules License",
+        "url": "https://semgrep.dev/legal/rules-license",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "CE vs Code",
+        "url": "https://docs.semgrep.dev/semgrep-pro-vs-oss",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "semgrep-rules",
+        "url": "https://github.com/semgrep/semgrep-rules",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C15-greptile",
+    "slug": "greptile",
+    "name": "Greptile",
+    "category": "C15",
+    "tier": "B",
+    "tier_reason": "Code-review AI over code graph",
+    "members": [
+      "Greptile cloud",
+      "Greptile self-hosted",
+      "TREX test agent",
+      "MCP"
+    ],
+    "official_url": "https://www.greptile.com",
+    "owner": "Greptile",
+    "latest_version": "UNVERIFIED (no public version)",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "UNKNOWN",
+    "status": "active",
+    "license": "Proprietary commercial; per-credit pricing",
+    "license_class": "proprietary",
+    "redistribution_notes": "No OEM/embedding terms found; proprietary.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Proprietary; OEM terms unknown; LLM egress contents unspecified.",
+    "community_vs_enterprise": "Hosted vs self-hosted (Compose up to 100 devs; Kubernetes beyond)",
+    "deployment_modes": [
+      "saas",
+      "self-hosted",
+      "docker",
+      "kubernetes"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "EXPERIMENT native evidence-bound PR impact review; REJECT as component",
+    "top_strengths": [
+      "STR-greptile-01"
+    ],
+    "top_inversions": [
+      "INV-greptile-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-greptile.md",
+    "sources": [
+      {
+        "title": "Greptile",
+        "url": "https://www.greptile.com",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "System architecture",
+        "url": "https://www.greptile.com/docs/system-architecture.md",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C15-augment-context",
+    "slug": "augment-context",
+    "name": "Augment Context Engine",
+    "category": "C15",
+    "tier": "B",
+    "tier_reason": "Commercial code context",
+    "members": [
+      "Context Engine MCP (local via Auggie CLI)",
+      "Remote MCP endpoint"
+    ],
+    "official_url": "https://docs.augmentcode.com/context-services/mcp/overview",
+    "owner": "Augment Code",
+    "latest_version": "UNVERIFIED (no public version)",
+    "version_date": "2026-02-06 (MCP GA, per changelog via search summary)",
+    "release_cadence": "UNKNOWN",
+    "status": "active",
+    "license": "Proprietary SaaS; token billing with 40% service fee",
+    "license_class": "proprietary",
+    "redistribution_notes": "No redistribution terms found.",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Proprietary; remote index in vendor cloud; self-host claims conflict between vendor and third party.",
+    "community_vs_enterprise": "Single commercial product",
+    "deployment_modes": [
+      "saas",
+      "desktop"
+    ],
+    "air_gap_viable": "unknown",
+    "maturity": "early-production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "BUILD native code-context MCP tool; REJECT dependency",
+    "top_strengths": [
+      "STR-augment-context-01"
+    ],
+    "top_inversions": [
+      "INV-augment-context-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-augment-context.md",
+    "sources": [
+      {
+        "title": "Context Engine MCP docs",
+        "url": "https://docs.augmentcode.com/context-services/mcp/overview.md",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Launch post",
+        "url": "https://www.augmentcode.com/blog/context-engine-mcp-now-live",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C15-stack-graphs",
+    "slug": "stack-graphs",
+    "name": "GitHub stack-graphs",
+    "category": "C15",
+    "tier": "B",
+    "tier_reason": "Incremental name resolution; archived",
+    "members": [
+      "stack-graphs crate",
+      "tree-sitter-stack-graphs",
+      "Java/JS/Python/TS rules"
+    ],
+    "official_url": "https://github.com/github/stack-graphs",
+    "owner": "GitHub (archived)",
+    "latest_version": "tree-sitter-stack-graphs v0.10.0",
+    "version_date": "2024-12-13",
+    "release_cadence": "none since archival",
+    "status": "archived",
+    "license": "Apache-2.0 OR MIT",
+    "license_class": "permissive",
+    "redistribution_notes": "Dual permissive; fork required to maintain.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single OSS edition",
+    "deployment_modes": [
+      "embedded",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "historical",
+    "resolution_note": "Repo archived by owner 2025-09-09; no successor or maintained fork identified (UNVERIFIED).",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "EXPERIMENT native per-blob cross-file resolver pattern; REJECT library dependency",
+    "top_strengths": [
+      "STR-stack-graphs-01"
+    ],
+    "top_inversions": [
+      "INV-stack-graphs-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-stack-graphs.md",
+    "sources": [
+      {
+        "title": "stack-graphs repo",
+        "url": "https://github.com/github/stack-graphs",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Introducing stack graphs",
+        "url": "https://github.blog/open-source/introducing-stack-graphs/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C15-kythe",
+    "slug": "kythe",
+    "name": "Kythe",
+    "category": "C15",
+    "tier": "C",
+    "tier_reason": "Cross-reference indexing",
+    "members": [
+      "Kythe schema",
+      "indexers",
+      "xref server"
+    ],
+    "official_url": "https://kythe.io",
+    "owner": "Kythe team (originated at Google)",
+    "latest_version": "v0.0.76",
+    "version_date": "2026-07-16",
+    "release_cadence": "irregular",
+    "status": "active",
+    "license": "Apache-2.0",
+    "license_class": "permissive",
+    "redistribution_notes": "Permissive.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Single OSS edition",
+    "deployment_modes": [
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "Repo moved google/kythe to kythe/kythe.",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "REFERENCE-ONLY schema ideas; ingest via SCIP",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-tier-c-records-V28.md",
+    "sources": [
+      {
+        "title": "Kythe overview",
+        "url": "https://kythe.io/docs/kythe-overview.html",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Kythe repo",
+        "url": "https://github.com/kythe/kythe",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C15-lsp",
+    "slug": "lsp",
+    "name": "Language Server Protocol ecosystems",
+    "category": "C15",
+    "tier": "C",
+    "tier_reason": "Protocol",
+    "members": [
+      "LSP spec",
+      "vscode-languageserver libraries",
+      "language servers"
+    ],
+    "official_url": "https://microsoft.github.io/language-server-protocol/",
+    "owner": "Microsoft (spec)",
+    "latest_version": "spec 3.18 (3.19 upcoming)",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "irregular",
+    "status": "active",
+    "license": "Spec repo CC-BY-4.0; servers vary",
+    "license_class": "mixed",
+    "redistribution_notes": "Per-server licences to be checked individually.",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Many independent servers",
+    "deployment_modes": [
+      "self-hosted",
+      "desktop"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned registry entry confirmed",
+    "decision_summary": "INTEGRATE optional read-only on-demand enrichment; batch index from SCIP/tree-sitter",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C15-tier-c-records-V28.md",
+    "sources": [
+      {
+        "title": "LSP 3.17 spec",
+        "url": "https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "LSP repo",
+        "url": "https://github.com/microsoft/language-server-protocol",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  }
+]

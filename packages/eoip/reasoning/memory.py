@@ -24,8 +24,8 @@ from __future__ import annotations
 
 import hashlib
 import threading
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -154,7 +154,7 @@ class EpisodicMemory:
             if self.summarize:
                 try:
                     summary = self.summarize(texts)
-                except Exception:
+                except Exception:  # noqa: BLE001 — fall back to truncation
                     summary = None
             else:
                 summary = None
@@ -313,6 +313,10 @@ class SharedMemory:
             self._board[key] = new_value
             return new_value
 
+    def __contains__(self, key: object) -> bool:
+        with self._board_lock:
+            return isinstance(key, str) and key in self._board
+
     def keys(self) -> list[str]:
         with self._board_lock:
             return sorted(self._board)
@@ -352,7 +356,7 @@ class HierarchicalMemory:
             if self.summarize:
                 try:
                     summary = self.summarize(batch)
-                except Exception:
+                except Exception:  # noqa: BLE001 — fall back to truncation
                     summary = None
             else:
                 summary = None

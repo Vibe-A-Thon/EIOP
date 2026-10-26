@@ -127,14 +127,18 @@ python qa_bench/run_qa_bench.py --suite all --headless --report-html
 
 ## 4. Test Personas & Role Matrix
 
-| Persona | Role | Default Tenant | Token |
+| Persona | Role | Default Tenant | Token source |
 |---|---|---|---|
-| **Super Admin** | `superadmin` / `admin` | `*` (All tenants) | `eoip_sa_f86468fed910d947e69eba4c` |
-| **Admin** | `admin` | `default` | `eoip_admin_75293814c25a2d4c1e57994c` |
-| **Steward** | `steward` | `default` | `eoip_steward_449c1099ee3071aa8ce7fbed` |
-| **Analyst** | `analyst` | `default` | `eoip_analyst_1d0019f09d075ddf8ad141dc` |
-| **Viewer** | `viewer` | `default` | `eoip_viewer_9072655bae91c450d24fe204` |
-| **Bootstrap Root** | `admin` | `default` | `eoip-local-dev-token-0123456789abcdef` |
+| **Super Admin** | `superadmin` / `admin` | `*` (All tenants) | `QA_TOKEN_SUPERADMIN` |
+| **Admin** | `admin` | `default` | `QA_TOKEN_ADMIN` |
+| **Steward** | `steward` | `default` | `QA_TOKEN_STEWARD` |
+| **Analyst** | `analyst` | `default` | `QA_TOKEN_ANALYST` |
+| **Viewer** | `viewer` | `default` | `QA_TOKEN_VIEWER` |
+
+No tokens are committed. When a variable is unset, `qa_bench/config.py` generates a random
+per-run token and the disposable runtime provisions the matching principal. Against a remote
+server, provision principals explicitly (`eoip-admin`, see `docs/authentication.md`) and
+export the `QA_TOKEN_*` values yourself.
 
 ---
 

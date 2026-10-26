@@ -1,0 +1,576 @@
+[
+  {
+    "id": "T-C17-atlas-research",
+    "slug": "atlas-research",
+    "name": "\"Atlas\" research-mapping product",
+    "category": "C17",
+    "tier": "C",
+    "tier_reason": "Ambiguous name",
+    "members": [
+      "Atlas Workspace (AgentScale AI)",
+      "Atlas of Human-AI Interaction (MIT Media Lab)",
+      "Atlas of Progress",
+      "Nomic Atlas"
+    ],
+    "official_url": "https://www.atlasworkspace.ai/",
+    "owner": "AgentScale AI Pte. Ltd. (leading candidate)",
+    "latest_version": "UNVERIFIED",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "rolling SaaS",
+    "status": "active",
+    "license": "Proprietary SaaS (leading candidate); others UNVERIFIED",
+    "license_class": "proprietary",
+    "redistribution_notes": "Not redistributable",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Candidate-dependent",
+    "deployment_modes": [
+      "saas"
+    ],
+    "air_gap_viable": "no",
+    "maturity": "early-production",
+    "resolution_note": "Four unrelated 'Atlas' research products found; registry text most likely means Atlas Workspace (assumption). Apache Atlas is C06.",
+    "registry_action": "KEEP",
+    "action_reason": "Identity resolved to a leading candidate; all candidates recorded",
+    "decision_summary": "REFERENCE-ONLY (claim-to-source research maps UX)",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-tier-c-records-V31.md",
+    "sources": [
+      {
+        "title": "Atlas about",
+        "url": "https://www.atlasworkspace.ai/about",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Atlas of Human-AI Interaction",
+        "url": "https://www.media.mit.edu/projects/atlas-of-human-ai-interaction/overview/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.45
+  },
+  {
+    "id": "T-C17-researchrabbit",
+    "slug": "researchrabbit",
+    "name": "ResearchRabbit",
+    "category": "C17",
+    "tier": "C",
+    "tier_reason": "Literature mapping",
+    "members": [
+      "ResearchRabbit",
+      "RR+"
+    ],
+    "official_url": "https://www.researchrabbit.ai/",
+    "owner": "Litmap Limited (acquired May 2025 per secondary sources)",
+    "latest_version": "UNVERIFIED (rolling SaaS)",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "rolling",
+    "status": "active",
+    "license": "Proprietary SaaS; free and paid tiers",
+    "license_class": "proprietary",
+    "redistribution_notes": "Not redistributable",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Free vs RR+ (price sources conflict)",
+    "deployment_modes": [
+      "saas"
+    ],
+    "air_gap_viable": "no",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Owner verified via footer",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-tier-c-records-V31.md",
+    "sources": [
+      {
+        "title": "ResearchRabbit",
+        "url": "https://www.researchrabbit.ai/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C17-connected-papers",
+    "slug": "connected-papers",
+    "name": "Connected Papers",
+    "category": "C17",
+    "tier": "C",
+    "tier_reason": "Literature mapping",
+    "members": [
+      "Connected Papers"
+    ],
+    "official_url": "https://www.connectedpapers.com/",
+    "owner": "NOT PUBLICLY VERIFIED",
+    "latest_version": "UNVERIFIED (rolling SaaS)",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "rolling",
+    "status": "active",
+    "license": "Proprietary; free limited graphs, paid (aggregator prices, low confidence)",
+    "license_class": "proprietary",
+    "redistribution_notes": "Not redistributable",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Free vs paid",
+    "deployment_modes": [
+      "saas"
+    ],
+    "air_gap_viable": "no",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Owner and data licence unverified",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-tier-c-records-V31.md",
+    "sources": [
+      {
+        "title": "Connected Papers",
+        "url": "https://www.connectedpapers.com/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.3
+  },
+  {
+    "id": "T-C17-openalex",
+    "slug": "openalex",
+    "name": "OpenAlex",
+    "category": "C17",
+    "tier": "B",
+    "tier_reason": "Open scholarly graph (import source)",
+    "members": [
+      "OpenAlex API",
+      "OpenAlex snapshot",
+      "Member/Member+/Partner plans"
+    ],
+    "official_url": "https://help.openalex.org/",
+    "owner": "OurResearch (nonprofit)",
+    "latest_version": "rolling (no semver)",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "quarterly free snapshot; daily sync paid",
+    "status": "active",
+    "license": "Data CC0; API terms UNVERIFIED",
+    "license_class": "permissive",
+    "redistribution_notes": "CC0 data free to redistribute; API ToS separate and unread",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Free $1/day API and quarterly snapshot; Member $5k, Member+ $10k (daily sync), Partner $20k+/yr",
+    "deployment_modes": [
+      "saas",
+      "self-hosted"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "INTEGRATE as snapshot/API import source via SourceEvent connector; BUILD field-level claim provenance",
+    "top_strengths": [
+      "STR-openalex-01"
+    ],
+    "top_inversions": [
+      "INV-openalex-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-openalex.md",
+    "sources": [
+      {
+        "title": "OpenAlex help",
+        "url": "https://help.openalex.org/",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "OpenAlex pricing",
+        "url": "https://help.openalex.org/access/pricing",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "OpenAlex data",
+        "url": "https://help.openalex.org/data/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C17-wikidata",
+    "slug": "wikidata",
+    "name": "Wikidata",
+    "category": "C17",
+    "tier": "B",
+    "tier_reason": "Open KG reference",
+    "members": [
+      "Wikidata",
+      "Wikibase",
+      "WDQS"
+    ],
+    "official_url": "https://www.wikidata.org/",
+    "owner": "Wikimedia Foundation",
+    "latest_version": "rolling",
+    "version_date": "2026-10-17",
+    "release_cadence": "continuous",
+    "status": "active",
+    "license": "Structured data CC0; text namespaces CC BY-SA 4.0; Wikibase software licence UNVERIFIED",
+    "license_class": "permissive",
+    "redistribution_notes": "CC0 structured data free to reuse",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Wikibase software licence unverified; embedding would need review",
+    "community_vs_enterprise": "Community-edited, no enterprise tier",
+    "deployment_modes": [
+      "saas",
+      "self-hosted"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "production",
+    "resolution_note": "WDQS backend moving Blazegraph to QLever (see C02-tier-c-records-V16.md); community endpoints expected by 2026-11-01",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "BUILD claim model with qualifiers, references, rank; INTEGRATE QIDs as external IDs; REJECT running Wikibase/WDQS",
+    "top_strengths": [
+      "STR-wikidata-01"
+    ],
+    "top_inversions": [
+      "INV-wikidata-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-wikidata.md",
+    "sources": [
+      {
+        "title": "Wikidata data model",
+        "url": "https://www.wikidata.org/wiki/Wikidata:Data_model",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Wikidata licensing",
+        "url": "https://www.wikidata.org/wiki/Wikidata:Licensing",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "WDQS backend update",
+        "url": "https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/WDQS_backend_update",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.8
+  },
+  {
+    "id": "T-C17-semantic-scholar",
+    "slug": "semantic-scholar",
+    "name": "Semantic Scholar",
+    "category": "C17",
+    "tier": "C",
+    "tier_reason": "Scholarly graph",
+    "members": [
+      "Academic Graph API",
+      "Recommendations API",
+      "Datasets (S2AG, S2ORC)"
+    ],
+    "official_url": "https://www.semanticscholar.org/product/api",
+    "owner": "Ai2 (Allen Institute for AI)",
+    "latest_version": "rolling API",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "rolling",
+    "status": "active",
+    "license": "Free API under API License Agreement (terms not read)",
+    "license_class": "source-available",
+    "redistribution_notes": "Redistribution terms unread",
+    "legal_review_trigger": true,
+    "legal_review_reason": "API License Agreement unread",
+    "community_vs_enterprise": "n/a",
+    "deployment_modes": [
+      "saas"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Verified via API page",
+    "decision_summary": "INTEGRATE on demand after licence review; OpenAlex preferred",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-tier-c-records-V31.md",
+    "sources": [
+      {
+        "title": "Semantic Scholar API",
+        "url": "https://www.semanticscholar.org/product/api",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C17-litmaps-inciteful",
+    "slug": "litmaps-inciteful",
+    "name": "Litmaps and Inciteful",
+    "category": "C17",
+    "tier": "C",
+    "tier_reason": "Citation mapping",
+    "members": [
+      "Litmaps",
+      "Inciteful"
+    ],
+    "official_url": "https://www.litmaps.com/",
+    "owner": "Litmap Limited (Litmaps); Inciteful independent (UNVERIFIED)",
+    "latest_version": "UNVERIFIED",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "rolling",
+    "status": "active",
+    "license": "Litmaps proprietary freemium; Inciteful free web tool, code licence UNVERIFIED",
+    "license_class": "proprietary",
+    "redistribution_notes": "Not redistributable",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Litmaps Free vs Pro",
+    "deployment_modes": [
+      "saas"
+    ],
+    "air_gap_viable": "no",
+    "maturity": "production",
+    "resolution_note": "inciteful.xyz redirects to incitefulmed.com/academic/",
+    "registry_action": "KEEP",
+    "action_reason": "Both identified; secondary sources",
+    "decision_summary": "REFERENCE-ONLY",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-tier-c-records-V31.md",
+    "sources": [
+      {
+        "title": "Litmaps guide",
+        "url": "https://www.casrai.org/guides/litmaps",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Inciteful",
+        "url": "https://library.hkust.edu.hk/sc/inciteful/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.4
+  },
+  {
+    "id": "T-C17-scite",
+    "slug": "scite",
+    "name": "scite",
+    "category": "C17",
+    "tier": "B",
+    "tier_reason": "Supporting vs contrasting citations (contradiction tracking)",
+    "members": [
+      "Smart Citation Reports",
+      "scite Assistant",
+      "scite API",
+      "scite MCP"
+    ],
+    "official_url": "https://scite.ai/",
+    "owner": "UNVERIFIED",
+    "latest_version": "rolling SaaS",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "rolling",
+    "status": "active",
+    "license": "Proprietary SaaS; Basic $20, Pro $50/mo, Team, Enterprise",
+    "license_class": "proprietary",
+    "redistribution_notes": "Data reuse terms NOT PUBLICLY VERIFIED",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Proprietary data; terms on caching citation statements unverified",
+    "community_vs_enterprise": "Basic no API; Pro API; Enterprise SAML",
+    "deployment_modes": [
+      "saas"
+    ],
+    "air_gap_viable": "no",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "BUILD stance-labelled evidence on TruthStore; EXPERIMENT local NLI stance classifier; optional INTEGRATE of scite API if tenant opts in",
+    "top_strengths": [
+      "STR-scite-01"
+    ],
+    "top_inversions": [
+      "INV-scite-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-scite.md",
+    "sources": [
+      {
+        "title": "scite pricing",
+        "url": "https://scite.ai/pricing.md",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Nicholson et al. 2021",
+        "url": "https://doi.org/10.1162/qss_a_00146",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.6
+  },
+  {
+    "id": "T-C17-elicit-consensus",
+    "slug": "elicit-consensus",
+    "name": "Elicit and Consensus",
+    "category": "C17",
+    "tier": "C",
+    "tier_reason": "AI research assistants",
+    "members": [
+      "Elicit",
+      "Consensus"
+    ],
+    "official_url": "https://elicit.com/",
+    "owner": "UNVERIFIED",
+    "latest_version": "rolling",
+    "version_date": "UNVERIFIED",
+    "release_cadence": "rolling",
+    "status": "active",
+    "license": "Proprietary SaaS (Elicit Basic free, Pro $49, Scale $229)",
+    "license_class": "proprietary",
+    "redistribution_notes": "Not redistributable",
+    "legal_review_trigger": false,
+    "legal_review_reason": "",
+    "community_vs_enterprise": "Free vs paid vs Enterprise",
+    "deployment_modes": [
+      "saas"
+    ],
+    "air_gap_viable": "no",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Pricing verified for Elicit; Consensus partial",
+    "decision_summary": "REFERENCE-ONLY (grounded-answer UX)",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-tier-c-records-V31.md",
+    "sources": [
+      {
+        "title": "Elicit pricing",
+        "url": "https://elicit.com/pricing",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Consensus pricing",
+        "url": "https://consensus.app/pricing/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.5
+  },
+  {
+    "id": "T-C17-obsidian",
+    "slug": "obsidian",
+    "name": "Obsidian",
+    "category": "C17",
+    "tier": "B",
+    "tier_reason": "PKM; EOIP exports to Obsidian (exporters/obsidian_vault.py)",
+    "members": [
+      "Obsidian desktop",
+      "Obsidian Sync",
+      "Obsidian Publish",
+      "Bases",
+      "Obsidian CLI"
+    ],
+    "official_url": "https://obsidian.md/",
+    "owner": "Obsidian (Dynalist Inc., UNVERIFIED)",
+    "latest_version": "1.15.0 (summarised fetch, recheck)",
+    "version_date": "2026-10-22",
+    "release_cadence": "frequent minor releases",
+    "status": "active",
+    "license": "Proprietary app, free for all uses incl. commercial; Commercial and Catalyst licences optional",
+    "license_class": "proprietary",
+    "redistribution_notes": "No embedding or redistribution right for the app; Markdown output is open",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Closed-source; plugin licences vary",
+    "community_vs_enterprise": "Free vs paid Sync/Publish",
+    "deployment_modes": [
+      "desktop"
+    ],
+    "air_gap_viable": "yes",
+    "maturity": "production",
+    "resolution_note": "",
+    "registry_action": "KEEP",
+    "action_reason": "Assigned entry verified",
+    "decision_summary": "REUSE and harden existing vault exporter; BUILD ACL-filtered export; REJECT bundling",
+    "top_strengths": [
+      "STR-obsidian-01"
+    ],
+    "top_inversions": [
+      "INV-obsidian-01"
+    ],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-obsidian.md",
+    "sources": [
+      {
+        "title": "Obsidian license",
+        "url": "https://obsidian.md/license",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "How Obsidian stores data",
+        "url": "https://obsidian.md/help/Files+and+folders/How+Obsidian+stores+data",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Obsidian changelog",
+        "url": "https://obsidian.md/changelog/",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.7
+  },
+  {
+    "id": "T-C17-pkm-tools",
+    "slug": "pkm-tools",
+    "name": "Logseq, Tana, Roam Research, Heptabase",
+    "category": "C17",
+    "tier": "C",
+    "tier_reason": "PKM references",
+    "members": [
+      "Logseq",
+      "Tana",
+      "Roam Research",
+      "Heptabase"
+    ],
+    "official_url": "https://github.com/logseq/logseq",
+    "owner": "Logseq/Tana/Roam UNVERIFIED; Hepta Platforms, Inc.",
+    "latest_version": "Logseq 2.0.1 beta (secondary)",
+    "version_date": "2026-07-13",
+    "release_cadence": "rolling",
+    "status": "active",
+    "license": "Logseq AGPL-3.0; Tana, Roam, Heptabase proprietary SaaS",
+    "license_class": "mixed",
+    "redistribution_notes": "Logseq network-copyleft: do not embed",
+    "legal_review_trigger": true,
+    "legal_review_reason": "Logseq AGPL-3.0",
+    "community_vs_enterprise": "Logseq open source vs SaaS others",
+    "deployment_modes": [
+      "desktop",
+      "saas"
+    ],
+    "air_gap_viable": "partial",
+    "maturity": "early-production",
+    "resolution_note": "Logseq DB version beta with data-loss warning",
+    "registry_action": "KEEP",
+    "action_reason": "All four identified",
+    "decision_summary": "REFERENCE-ONLY; possible EXPERIMENT exporting typed nodes",
+    "top_strengths": [],
+    "top_inversions": [],
+    "deep_dive_path": "04-COMPETITOR-DEEP-DIVES/C17-tier-c-records-V31.md",
+    "sources": [
+      {
+        "title": "Logseq",
+        "url": "https://github.com/logseq/logseq",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Tana pricing",
+        "url": "https://tana.inc/pricing",
+        "accessed": "2026-10-26"
+      },
+      {
+        "title": "Heptabase pricing",
+        "url": "https://heptabase.com/pricing",
+        "accessed": "2026-10-26"
+      }
+    ],
+    "verification_confidence": 0.55
+  }
+]
