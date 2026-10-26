@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 488,
-    "test_definitions": 4587
+    "files": 489,
+    "test_definitions": 4596
   },
   "categories": {
     "acceptance": {
@@ -75,8 +75,8 @@
       "test_definitions": 13
     },
     "retrieval": {
-      "files": 2,
-      "test_definitions": 19
+      "files": 3,
+      "test_definitions": 28
     },
     "reva": {
       "files": 32,
@@ -638,6 +638,11 @@
     },
     {
       "path": "tests/retrieval/test_real_embedding_provider.py",
+      "category": "retrieval",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/retrieval/test_search_eval_and_fusion.py",
       "category": "retrieval",
       "test_definitions": 9
     },

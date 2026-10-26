@@ -139,6 +139,7 @@ jobs:
             tests/retrieval/test_real_embedding_provider.py \
             tests/ai/test_reasoning_llm_degradation.py \
             tests/contract/test_egress_http_transport.py \
+            tests/retrieval/test_search_eval_and_fusion.py \
             --junitxml=test-results/llm-cpu-reference.xml
       - name: Retain LLM evidence
         if: always()

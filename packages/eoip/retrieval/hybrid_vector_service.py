@@ -12,6 +12,7 @@ Provides:
 from __future__ import annotations
 
 import hashlib
+import json
 import math
 import re
 import time
@@ -282,7 +283,9 @@ class TenantVectorIndex:
             )
 
         # 2. Check scoped cache with policy epoch
-        cache_key = (hashlib.sha256(f"{query_text}:{caller_roles}".encode("utf-8")).hexdigest(), self.metadata.policy_epoch)
+        cache_key = (hashlib.sha256(json.dumps([query_text, sorted(caller_roles), list(query_vector), top_k, rrf_k,
+                                                bool(use_graph_centrality)]).encode("utf-8")).hexdigest(),
+                     self.metadata.policy_epoch)
         if cache_key in self._cache:
             return self._cache[cache_key]
 
@@ -405,7 +408,41 @@ class HybridVectorIndexManager:
 
 
 class SearchEvaluationHarness:
-    """Evaluates search quality (recall@k, nDCG, latency) on labelled corpora (CRA-025.5)."""
+    """Evaluates search quality (recall@k, nDCG, latency) on labelled corpora (CRA-025.5).
+
+    Corpus items: ``query``, gold ``relevant_doc_id`` or ``relevant_doc_ids`` (list, or dict
+    doc_id -> graded gain), optional ``domain``, ``language``, ``split`` and ``roles``. The report has
+    overall metrics plus breakdowns ``by_domain``, ``by_language`` and ``by_acl_selectivity`` (share
+    of the index the caller's roles may see: low <1/3, medium <2/3, high), and a ``provenance`` block
+    recording corpus splits, corpus digest, index model/provider/tokenizer/dimension/metric and the
+    caller-supplied ``config``. Gold labels derived from graph proximity are refused
+    (``gold_source == "graph_proximity"``): relevance gold must be human/curated labels.
+    """
+
+    GRAPH_GOLD = {"graph_proximity", "graph-proximity", "graph_neighbourhood", "graph_neighborhood"}
+
+    @staticmethod
+    def _gains(item: dict[str, Any]) -> dict[str, float]:
+        rel = item.get("relevant_doc_ids", item.get("relevant_doc_id"))
+        if isinstance(rel, str):
+            return {rel: 1.0}
+        if isinstance(rel, dict):
+            return {str(k): float(v) for k, v in rel.items() if float(v) > 0}
+        if isinstance(rel, (list, tuple)):
+            return {str(k): 1.0 for k in rel}
+        raise ValueError("corpus item needs relevant_doc_id(s)")
+
+    @staticmethod
+    def _metrics(rows: list[dict[str, Any]]) -> dict[str, float]:
+        n = len(rows) or 1
+        lat = sorted(r["latency_ms"] for r in rows) or [0.0]
+        return {
+            "recall@k": round(sum(r["recall"] for r in rows) / n, 4),
+            "ndcg@k": round(sum(r["ndcg"] for r in rows) / n, 4),
+            "latency_p50_ms": round(lat[int(len(lat) * 0.5)], 2),
+            "latency_p95_ms": round(lat[min(int(len(lat) * 0.95), len(lat) - 1)], 2),
+            "queries_evaluated": len(rows),
+        }
 
     def evaluate(
         self,
@@ -413,46 +450,78 @@ class SearchEvaluationHarness:
         eval_corpus: list[dict[str, Any]],
         provider: Any,
         top_k: int = 10,
-    ) -> dict[str, float]:
-        hits = 0
-        dcg = 0.0
-        idcg = 0.0
-        latencies: list[float] = []
-
+        config: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        if not eval_corpus:
+            raise ValueError("evaluation corpus is empty")
+        total_docs = max(len(getattr(index, "documents", {}) or {}), 1)
+        rows: list[dict[str, Any]] = []
         for item in eval_corpus:
-            query = item["query"]
-            gold_id = item["relevant_doc_id"]
+            if str(item.get("gold_source", "")).lower() in self.GRAPH_GOLD:
+                raise ValueError("graph proximity is not accepted as relevance gold (CRA-025.5); use labelled judgements")
+            gains = self._gains(item)
             roles = item.get("roles", ["public"])
-
             t0 = time.perf_counter()
-            q_vec = provider.embed(query)
-            res = index.hybrid_search(
-                query_text=query,
-                query_vector=q_vec,
-                query_family=index.metadata.family,
-                caller_roles=roles,
-                top_k=top_k,
-            )
-            latencies.append((time.perf_counter() - t0) * 1000.0)
+            q_vec = provider.embed(item["query"])
+            res = index.hybrid_search(query_text=item["query"], query_vector=q_vec,
+                                      query_family=index.metadata.family, caller_roles=roles, top_k=top_k)
+            latency = (time.perf_counter() - t0) * 1000.0
+            ids = [r["doc_id"] for r in res]
+            dcg = sum(gains.get(d, 0.0) / math.log2(rank + 2) for rank, d in enumerate(ids))
+            ideal = sorted(gains.values(), reverse=True)[:top_k]
+            idcg = sum(g / math.log2(rank + 2) for rank, g in enumerate(ideal))
+            visible = self._visible_share(index, roles, total_docs)
+            rows.append({
+                "recall": len(set(ids) & set(gains)) / len(gains),
+                "ndcg": dcg / idcg if idcg else 0.0,
+                "latency_ms": latency,
+                "domain": item.get("domain", "unspecified"),
+                "language": item.get("language", "unspecified"),
+                "acl": "low" if visible < 1 / 3 else "medium" if visible < 2 / 3 else "high",
+                "split": item.get("split", "unspecified"),
+            })
 
-            retrieved_ids = [r["doc_id"] for r in res]
-            if gold_id in retrieved_ids:
-                hits += 1
-                rank = retrieved_ids.index(gold_id) + 1
-                dcg += 1.0 / math.log2(rank + 1)
-            idcg += 1.0  # single gold item
+        def group(key: str) -> dict[str, dict[str, float]]:
+            out: dict[str, list[dict[str, Any]]] = {}
+            for r in rows:
+                out.setdefault(r[key], []).append(r)
+            return {k: self._metrics(v) for k, v in sorted(out.items())}
 
-        n = len(eval_corpus) or 1
-        recall = hits / n
-        ndcg = (dcg / idcg) if idcg > 0 else 0.0
-        latencies.sort()
-        p50 = latencies[int(len(latencies) * 0.5)]
-        p95 = latencies[min(int(len(latencies) * 0.95), len(latencies) - 1)]
+        meta = index.metadata
+        digest = hashlib.sha256(json.dumps(
+            [{k: v for k, v in it.items() if k != "roles"} for it in eval_corpus], sort_keys=True, default=str
+        ).encode()).hexdigest()
+        splits: dict[str, int] = {}
+        for r in rows:
+            splits[r["split"]] = splits.get(r["split"], 0) + 1
+        report: dict[str, Any] = self._metrics(rows)
+        report.update({
+            "by_domain": group("domain"),
+            "by_language": group("language"),
+            "by_acl_selectivity": group("acl"),
+            "provenance": {
+                "corpus_sha256": digest,
+                "splits": dict(sorted(splits.items())),
+                "index_id": meta.index_id,
+                "provider": meta.provider,
+                "model": meta.model,
+                "tokenizer": meta.tokenizer,
+                "dimension": meta.dimension,
+                "distance_metric": meta.metric,
+                "normalization": meta.normalization,
+                "top_k": top_k,
+                "config": dict(config or {}),
+                "gold": "labelled judgements (graph proximity refused)",
+            },
+        })
+        return report
 
-        return {
-            "recall@k": round(recall, 4),
-            "ndcg@k": round(ndcg, 4),
-            "latency_p50_ms": round(p50, 2),
-            "latency_p95_ms": round(p95, 2),
-            "queries_evaluated": n,
-        }
+    @staticmethod
+    def _visible_share(index: TenantVectorIndex, roles: list[str], total: int) -> float:
+        docs = getattr(index, "documents", {}) or {}
+        vals = docs.values() if isinstance(docs, dict) else docs
+        allowed = 0
+        for d in vals:
+            if not d.acl_allow_roles or set(d.acl_allow_roles) & set(roles):
+                allowed += 1
+        return allowed / total
