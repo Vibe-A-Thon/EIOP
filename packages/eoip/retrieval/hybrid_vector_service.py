@@ -200,6 +200,46 @@ def _cosine(v1: list[float], v2: list[float]) -> float:
     return dot / (n1 * n2)
 
 
+def rrf_fuse(
+    dense: list[tuple[str, float]],
+    sparse: list[tuple[str, float]],
+    documents: Any,
+    caller_roles: list[str],
+    family: IndexFamily,
+    *,
+    top_k: int = 10,
+    rrf_k: int = 60,
+    use_graph_centrality: bool = True,
+) -> list[dict[str, Any]]:
+    """Reciprocal Rank Fusion (k = 60 default) of ranked dense and sparse candidates (CRA-025.6).
+
+    ``documents`` maps doc_id -> ``VectorDocument`` for every candidate. Each list contributes
+    1 / (rrf_k + rank) for its first ``2 * top_k`` entries; an optional ``0.05 * graph_centrality``
+    boost is added; documents the caller may not see are dropped at delivery (CRA-025.3 post-filter).
+    Shared by the in-process index and the pgvector store so both fuse identically.
+    """
+    rrf_scores: dict[str, float] = {}
+    for ranked in (dense, sparse):
+        for rank, (doc_id, _) in enumerate(ranked[:top_k * 2], start=1):
+            rrf_scores[doc_id] = rrf_scores.get(doc_id, 0.0) + (1.0 / (rrf_k + rank))
+    if use_graph_centrality:
+        for doc_id in rrf_scores:
+            rrf_scores[doc_id] += 0.05 * documents[doc_id].graph_centrality
+    results = []
+    for doc_id, final_score in sorted(rrf_scores.items(), key=lambda kv: -kv[1])[:top_k]:
+        doc = documents[doc_id]
+        if doc.acl_allow_roles and not any(r in caller_roles for r in doc.acl_allow_roles):
+            continue
+        results.append({
+            "doc_id": doc.doc_id,
+            "text": doc.text,
+            "final_score": round(final_score, 6),
+            "metadata": doc.metadata,
+            "index_family": family.value,
+        })
+    return results
+
+
 class TenantVectorIndex:
     """Tenant-partitioned vector index supporting BM25 + dense RRF, ACLs, and shadow cutover."""
 
@@ -223,16 +263,25 @@ class TenantVectorIndex:
                 f"Cannot add document family {doc.family} into {self.metadata.family} index (CRA-025.8)"
             )
 
+        self.remove_document(doc.doc_id)  # re-adding a doc must not double-count document frequencies
         self.documents[doc.doc_id] = doc
         tokens = re.findall(r"\w+", doc.text.lower())
         self.bm25_doc_len[doc.doc_id] = len(tokens)
         for term in set(tokens):
             self.bm25_df[term] = self.bm25_df.get(term, 0) + 1
+        self._cache.clear()  # a new document can change any cached ranking
 
     def remove_document(self, doc_id: str) -> bool:
         if doc_id in self.documents:
-            del self.documents[doc_id]
+            doc = self.documents.pop(doc_id)
             self.bm25_doc_len.pop(doc_id, None)
+            for term in set(re.findall(r"\w+", doc.text.lower())):
+                left = self.bm25_df.get(term, 0) - 1
+                if left > 0:
+                    self.bm25_df[term] = left
+                else:
+                    self.bm25_df.pop(term, None)
+            self._cache.clear()
             return True
         return False
 
@@ -306,36 +355,9 @@ class TenantVectorIndex:
             if not self.documents[doc_id].acl_allow_roles or any(r in caller_roles for r in self.documents[doc_id].acl_allow_roles)
         ]
 
-        # 5. Reciprocal Rank Fusion (RRF)
-        rrf_scores: dict[str, float] = {}
-
-        for rank, (doc_id, _) in enumerate(dense_candidates[:top_k * 2], start=1):
-            rrf_scores[doc_id] = rrf_scores.get(doc_id, 0.0) + (1.0 / (rrf_k + rank))
-
-        for rank, (doc_id, _) in enumerate(bm25_candidates[:top_k * 2], start=1):
-            rrf_scores[doc_id] = rrf_scores.get(doc_id, 0.0) + (1.0 / (rrf_k + rank))
-
-        # Add optional graph centrality signal
-        if use_graph_centrality:
-            for doc_id in rrf_scores:
-                cent = self.documents[doc_id].graph_centrality
-                rrf_scores[doc_id] += 0.05 * cent
-
-        # Final delivery post-filter
-        final_ranked = sorted(rrf_scores.items(), key=lambda kv: -kv[1])
-        results = []
-        for doc_id, final_score in final_ranked[:top_k]:
-            doc = self.documents[doc_id]
-            # Final delivery ACL verification
-            if doc.acl_allow_roles and not any(r in caller_roles for r in doc.acl_allow_roles):
-                continue
-            results.append({
-                "doc_id": doc.doc_id,
-                "text": doc.text,
-                "final_score": round(final_score, 6),
-                "metadata": doc.metadata,
-                "index_family": self.metadata.family.value,
-            })
+        # 5. Reciprocal Rank Fusion (RRF), optional graph-centrality signal, final delivery ACL post-filter
+        results = rrf_fuse(dense_candidates, bm25_candidates, self.documents, caller_roles, self.metadata.family,
+                           top_k=top_k, rrf_k=rrf_k, use_graph_centrality=use_graph_centrality)
 
         # Cache result under current policy epoch
         self._cache[cache_key] = results

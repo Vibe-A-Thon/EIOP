@@ -90,10 +90,14 @@ quantum = [
 bi = [
   "duckdb>=1.1,<3",
 ]
+# CRA-025.6: durable tenant-partitioned vector store on PostgreSQL + pgvector.
+pgvector = [
+  "psycopg[binary]>=3.2,<4",
+]
 # FT-F06: one extra that installs everything the default test selection needs.
 # Documented install: python -m pip install -c requirements.lock -e ".[test]"
 test = [
-  "eoip[dev,numerics,fileparse,codeparse,reports,semantic,snowflake,quantum,bi]",
+  "eoip[dev,numerics,fileparse,codeparse,reports,semantic,snowflake,quantum,bi,pgvector]",
 ]
 dev = [
   "fakesnow>=0.12,<0.13",

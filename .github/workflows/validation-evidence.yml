@@ -191,3 +191,37 @@ jobs:
           name: validation-evidence-sparql
           path: test-results/
           if-no-files-found: warn
+
+  # CRA-025.6 / X-41: tenant-partitioned durable vector store on PostgreSQL + pgvector (free, CPU-only).
+  # The image is pinned by digest; the superuser password is generated per run and masked.
+  vector-pgvector:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start pgvector (per-run password)
+        run: |
+          pw="$(openssl rand -hex 16)"
+          echo "::add-mask::$pw"
+          docker run -d --name pgvector -p 127.0.0.1:5432:5432 -e POSTGRES_PASSWORD="$pw" -e POSTGRES_DB=eoip \
+            pgvector/pgvector:pg16@sha256:7b822b0aac60967beb1ea5e576b8602c94c300a157d187f385ae3e0da199b90a
+          for i in $(seq 1 60); do docker exec pgvector pg_isready -U postgres -q && break; sleep 2; done
+          docker exec pgvector psql -U postgres -d eoip -tAc "select version()"
+          echo "EOIP_LIVE_PGVECTOR_DSN=postgresql://postgres:$pw@127.0.0.1:5432/eoip" >> "$GITHUB_ENV"
+      - name: Install test dependencies
+        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Run tenant-partitioned vector store tests on pgvector
+        run: >-
+          python -m pytest -q -o addopts="" -p no:cacheprovider --timeout=600
+          tests/retrieval/test_pgvector_tenant_store.py tests/retrieval/test_hybrid_vector_search.py
+          --junitxml=test-results/vector-pgvector.xml
+      - name: Retain vector store evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-evidence-pgvector
+          path: test-results/
+          if-no-files-found: warn
