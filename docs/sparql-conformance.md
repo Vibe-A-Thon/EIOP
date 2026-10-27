@@ -56,3 +56,31 @@ The first run found these defects in the EOIP layer, all fixed and covered offli
 * The XML results writer dropped datatypes and language tags.
 * The CSV writer did not quote fields and wrote blank nodes without `_:`.
 * The TSV writer emitted bare values instead of RDF terms.
+
+## SP2Bench (CRA-024 A.2)
+
+`tests/query/test_sp2bench_live.py` runs SP2Bench Q1–Q12c (Schmidt et al., ICDE 2009). The queries and documents come from the official SP2Bench generator, as published in RDFLib/rdflib-benchmark at commit `456f7b1c`. `scripts/fetch_sp2bench.sh` fetches them, verifying the git objects and the sha256 values in `scripts/sp2bench.sha256`. The benchmark runs through `SparqlProtocolHandler` on live Fuseki and GraphDB Free in the `sparql-fuseki` CI job.
+
+* **Correctness** (16,040 triples): every query is answered through the endpoint and compared, as a multiset of rows, with rdflib's independent evaluation of the same query over the same document. Blank nodes match any blank node. A page truncated at 10,000 rows must be a sub-multiset of the reference. Result: 17/17 queries match on both engines.
+* **Latency** (1,024,112 triples): each query runs through the endpoint under the 30 s deadline and the 10,000-row page. The engine's full evaluation, `COUNT(*)` over the query sent straight to the engine, is timed separately. Where both engines finish, they must agree on the full result size.
+* **Never hang**: an over-budget query must be cancelled by the engine at the deadline and answered with a 504. The test also runs a probe at a 5 s deadline.
+
+Local results, using the same images as CI. Endpoint time is to the first page; full time is the complete evaluation.
+
+| Query | Fuseki 5.1.0 endpoint / full | GraphDB 10.7.6 endpoint / full |
+|---|---|---|
+| Q1, Q3a–c, Q8–Q11, Q12a–c | < 1 s / < 1 s | < 1 s / < 1 s |
+| Q2 | 2.7 s / 1.6 s | 0.6 s / 0.3 s |
+| Q4 | **> 30 s (504)** / > 30 s | 0.1 s / 14.1 s |
+| Q5a | **> 30 s (504)** / > 30 s | **> 30 s (504)** / > 30 s |
+| Q5b | 0.3 s / 0.6 s | 0.3 s / 0.5 s |
+| Q6 | 0.9 s / 4.2 s | **> 30 s (504)** / > 30 s |
+| Q7 | **> 30 s (504)** / > 30 s | 1.0 s / 1.1 s |
+
+CRA-024 A.2 ("none exceeding 30 s") is **not met**: 3 queries on Fuseki and 2 on GraphDB exceed the budget. They are recorded as known gaps in `tests/query/sp2bench_known_gaps.json` under decision D-CRA-024-SP2B-01 and are never counted as passing. A gap that starts passing fails the test until the entry is removed. The federated Jira + Snowflake clause has not been run yet: Snowflake is a paid system, so it needs a mock and remains pending live validation.
+
+SP2Bench found three defects in the EOIP layer, all fixed and covered offline by `tests/query/test_sparql_deadline_fixes.py`:
+
+* EOIP sent Fuseki's `timeout` in milliseconds, but Fuseki reads it as seconds. Over-budget queries kept running on the server for hours after the client gave up; they are now cancelled at the deadline.
+* GraphDB answers an expired query with HTTP 200 and partial rows, flagged only in `X-GraphDB-Warning`. EOIP returned those partial rows as the answer. They are now reported as a 504.
+* GraphDB 10.7 sometimes fails an interrupted query with a 500 (NullPointerException) at the deadline. EOIP now treats a 500 at the deadline as a cancellation and keeps it a backend error otherwise.

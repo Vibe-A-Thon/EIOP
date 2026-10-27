@@ -153,7 +153,7 @@ jobs:
   # reference backend) and the GraphStore port round-tripping on Fuseki and Ontotext GraphDB Free.
   sparql-fuseki:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     env:
       EOIP_LIVE_FUSEKI_URL: http://localhost:3030/ds
       EOIP_LIVE_FUSEKI_USER: admin
@@ -197,6 +197,23 @@ jobs:
                    if "w3c_sparql11" in (c.get("classname") or "")]
           skipped = [c.get("name") for c in cases if c.find("skipped") is not None]
           assert len(cases) == 2 and not skipped, f"W3C suite did not run on both engines: {skipped or len(cases)}"
+          PY
+      - name: Fetch SP2Bench queries and generator documents (RDFLib/rdflib-benchmark, pinned commit + sha256)
+        run: |
+          bash scripts/fetch_sp2bench.sh .cache/sp2bench
+          echo "EOIP_SP2B_ROOT=.cache/sp2bench/sp2b" >> "$GITHUB_ENV"
+      - name: Run SP2Bench Q1-Q12c through the EOIP endpoint on Fuseki and GraphDB Free (CRA-024 A.2)
+        run: >-
+          python -m pytest -q -o addopts="" -p no:cacheprovider --timeout=1500
+          tests/query/test_sp2bench_live.py
+          --junitxml=test-results/sp2bench.xml
+      - name: Fail if SP2Bench was skipped
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          cases = list(ET.parse("test-results/sp2bench.xml").iter("testcase"))
+          skipped = [c.get("name") for c in cases if c.find("skipped") is not None]
+          assert len(cases) == 3 and not skipped, f"SP2Bench did not run on both engines: {skipped or len(cases)}"
           PY
       - name: Retain SPARQL evidence
         if: always()

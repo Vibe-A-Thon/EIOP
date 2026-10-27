@@ -1,0 +1,17 @@
+{
+  "sp2b_commit": "456f7b1c3e9dbcf099b8267155970b5156c4e253",
+  "document": "1024000.n3.bz2 (1,024,112 triples, official SP2Bench generator output)",
+  "decision": "D-CRA-024-SP2B-01",
+  "note": "Queries whose first 10,000-row page is not produced by the engine within the 30 s deadline on a GitHub-hosted runner. Each is cancelled server-side at the deadline (HTTP 504, never a hang, never partial results). CRA-024 A.2 ('none exceeding 30 s') is therefore NOT met for these on that engine; they stay open until the engine/plan is improved.",
+  "latency_gaps": {
+    "fuseki": {
+      "q04": {"note": "Jena Fuseki 5.1.0 (in-memory dataset): DISTINCT author-pair join over all articles in the same journal (2.66M rows); GraphDB evaluates it in ~14 s."},
+      "q05a": {"note": "Fuseki 5.1.0: implicit join via FILTER(?name=?name2) over all article/inproceedings author names; not rewritten to an equi-join. Same on GraphDB."},
+      "q07": {"note": "Fuseki 5.1.0: double negation via nested OPTIONAL/!bound; GraphDB evaluates it in ~1 s."}
+    },
+    "graphdb": {
+      "q05a": {"note": "GraphDB Free 10.7.6: FILTER-based join, as on Fuseki."},
+      "q06": {"note": "GraphDB Free 10.7.6: OPTIONAL with a correlated FILTER (closed-world negation); Fuseki evaluates it in ~4 s."}
+    }
+  }
+}

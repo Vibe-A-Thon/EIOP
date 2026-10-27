@@ -217,7 +217,9 @@ class FusekiSparqlBackend:
         body = _limited(text, rows) if kind == "SELECT" else text
         t0 = time.perf_counter()
         try:
-            r = httpx.post(f"{self.endpoint}/sparql", data={"query": body, "timeout": str(deadline)},
+            # Fuseki's ``timeout`` parameter is in (fractional) seconds; sending milliseconds would let a runaway
+            # query keep running server-side for hours after the client gave up (found by SP2Bench Q7).
+            r = httpx.post(f"{self.endpoint}/sparql", data={"query": body, "timeout": f"{deadline / 1000:g}"},
                            headers={"Accept": "application/sparql-results+json"},
                            timeout=deadline / 1000 + 5)
         except httpx.TimeoutException as exc:
@@ -280,7 +282,16 @@ class GraphDBSparqlBackend(FusekiSparqlBackend):
         if r.status_code == 400:
             raise SparqlRejected("BACKEND_REJECTED_QUERY", r.text.strip().splitlines()[0][:200] if r.text.strip() else "")
         if r.status_code >= 400:
+            if r.status_code >= 500 and elapsed >= deadline * 0.95:
+                # GraphDB 10.7 sometimes fails an interrupted query with a 500 (NullPointerException) instead
+                # of its 503; at the deadline that is the server-side cancellation, not a backend outage.
+                raise SparqlCancelled(f"deadline {deadline} ms exceeded; GraphDB aborted the query "
+                                      f"({r.status_code})")
             raise SparqlBackendError(f"graphdb error {r.status_code}: {r.text[:200]}")
+        if "timed out" in r.headers.get("X-GraphDB-Warning", "").lower():
+            # GraphDB answers an expired query with 200 and whatever it had found so far, flagged only in this
+            # header; passing that off as the answer would be a silently wrong result (found by SP2Bench Q5a).
+            raise SparqlCancelled(f"deadline {deadline} ms exceeded; GraphDB returned incomplete results")
         try:
             data = r.json()
         except json.JSONDecodeError as exc:

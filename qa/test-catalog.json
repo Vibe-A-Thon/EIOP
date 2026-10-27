@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 494,
-    "test_definitions": 4636
+    "files": 496,
+    "test_definitions": 4645
   },
   "categories": {
     "acceptance": {
@@ -67,8 +67,8 @@
       "test_definitions": 21
     },
     "query": {
-      "files": 8,
-      "test_definitions": 64
+      "files": 10,
+      "test_definitions": 73
     },
     "research": {
       "files": 2,
@@ -620,6 +620,16 @@
       "path": "tests/query/test_rdf_store_backends.py",
       "category": "query",
       "test_definitions": 5
+    },
+    {
+      "path": "tests/query/test_sp2bench_live.py",
+      "category": "query",
+      "test_definitions": 2
+    },
+    {
+      "path": "tests/query/test_sparql_deadline_fixes.py",
+      "category": "query",
+      "test_definitions": 7
     },
     {
       "path": "tests/query/test_sparql_endpoint_fixes.py",
