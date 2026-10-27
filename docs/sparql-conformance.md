@@ -122,3 +122,12 @@ five stay open gaps (details in `tests/query/sp2bench_known_gaps.json`, `investi
 Fuseki TDB2 with the fixed optimizer, and TDB2 with `tdb2.tdbstats` statistics (Q4/Q5a/Q7 still cancelled at
 30.0 s); a Q5a FILTER-to-join rewrite was rejected as not semantics-preserving (value equality vs term
 identity); the endpoint already streams only the first 10,000-row page. The 30 s target is unchanged.
+
+## Federated Jira x Snowflake query (CRA-024 A.2) - pending live validation
+
+`packages/eoip/federation/jira_snowflake.py`: Jira issues ingested via `JiraConnector` become `WorkItem`
+nodes; `query_work_items_with_snowflake` filters them in the graph and joins them with a Snowflake table
+through the OBDA engine (filter and projection pushed down as bound SQL), under the 30 s deadline (TIMEOUT,
+no partial rows, past it). `tests/query/test_federated_jira_snowflake.py` checks it against an independent
+oracle with 3,000 paged Jira issues (REST contract mock) and ~4,500 invoices (fakesnow). No customer Jira
+site or Snowflake account has been used: the result is **pending live validation**.

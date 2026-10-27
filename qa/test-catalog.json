@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 498,
-    "test_definitions": 4662
+    "files": 499,
+    "test_definitions": 4667
   },
   "categories": {
     "acceptance": {
@@ -67,8 +67,8 @@
       "test_definitions": 21
     },
     "query": {
-      "files": 11,
-      "test_definitions": 75
+      "files": 12,
+      "test_definitions": 80
     },
     "research": {
       "files": 2,
@@ -605,6 +605,11 @@
       "path": "tests/query/test_bi_pg_wire.py",
       "category": "query",
       "test_definitions": 17
+    },
+    {
+      "path": "tests/query/test_federated_jira_snowflake.py",
+      "category": "query",
+      "test_definitions": 5
     },
     {
       "path": "tests/query/test_obda_real_executors.py",
