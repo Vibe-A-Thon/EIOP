@@ -77,7 +77,7 @@ Local results, using the same images as CI. Endpoint time is to the first page; 
 | Q6 | 0.9 s / 4.2 s | **> 30 s (504)** / > 30 s |
 | Q7 | **> 30 s (504)** / > 30 s | 1.0 s / 1.1 s |
 
-CRA-024 A.2 ("none exceeding 30 s") is **not met**: 3 queries on Fuseki and 2 on GraphDB exceed the budget. They are recorded as known gaps in `tests/query/sp2bench_known_gaps.json` under decision D-CRA-024-07 and are never counted as passing. A gap that starts passing fails the test until the entry is removed. The federated Jira + Snowflake clause has not been run yet: Snowflake is a paid system, so it needs a mock and remains pending live validation.
+CRA-024 A.2 ("none exceeding 30 s") is **not met**: 3 queries on Fuseki and 2 on GraphDB exceed the budget. They are recorded as known gaps in `tests/query/sp2bench_known_gaps.json` under decision D-CRA-024-07, labelled **pending reference hardware validation** (30 s target unchanged, no engine change now), and are never counted as passing. A gap that starts passing fails the test until the entry is removed. The federated Jira + Snowflake clause runs in CI against mocks (Jira REST contract mock, fakesnow) and is **pending live validation with a customer account** (D-CRA-024-08).
 
 SP2Bench found three defects in the EOIP layer, all fixed and covered offline by `tests/query/test_sparql_deadline_fixes.py`:
 
@@ -130,4 +130,4 @@ nodes; `query_work_items_with_snowflake` filters them in the graph and joins the
 through the OBDA engine (filter and projection pushed down as bound SQL), under the 30 s deadline (TIMEOUT,
 no partial rows, past it). `tests/query/test_federated_jira_snowflake.py` checks it against an independent
 oracle with 3,000 paged Jira issues (REST contract mock) and ~4,500 invoices (fakesnow). No customer Jira
-site or Snowflake account has been used: the result is **pending live validation**.
+site or Snowflake account has been used: the result is **pending live validation with a customer account** (D-CRA-024-08). Remaining effort for CRA-024 is estimated at 20 h (D-CRA-024-05).

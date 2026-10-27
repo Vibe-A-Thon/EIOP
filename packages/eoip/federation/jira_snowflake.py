@@ -24,7 +24,7 @@ from typing import Any
 
 from eoip.federation.obda import OBDAFederationEngine, SemanticsMode
 
-VALIDATION_STATUS = "pending live validation (Jira REST contract mock + fakesnow Snowflake emulator)"
+VALIDATION_STATUS = "pending live validation with a customer account (Jira REST contract mock + fakesnow Snowflake emulator; D-CRA-024-08)"
 DEADLINE_S = 30.0
 LOCAL_LIMIT = 1_000_000
 
