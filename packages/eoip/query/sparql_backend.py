@@ -121,11 +121,73 @@ def bind_parameters(template: str, params: dict[str, Any] | None) -> str:
     return _PARAM.sub(term, template)
 
 
+def _tail_start(text: str) -> int:
+    """Index just past the ``}`` that closes the outermost WHERE group (strings, IRIs and comments are
+    skipped), i.e. where the solution modifiers and an optional trailing VALUES block begin."""
+    depth, i, n = 0, 0, len(text)
+    while i < n:
+        c = text[i]
+        if c == "#":
+            j = text.find("\n", i)
+            i = n if j < 0 else j
+            continue
+        if c in "\"'":
+            q = c * 3 if text.startswith(c * 3, i) else c
+            j = i + len(q)
+            while j < n and not text.startswith(q, j):
+                j += 2 if text[j] == "\\" else 1
+            i = j + len(q)
+            continue
+        if c == "<" and depth == 0:
+            m = re.match(r"<[^\s<>\"{}|^`]*>", text[i:])
+            if m:
+                i += m.end()
+                continue
+        if c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+            if depth == 0:
+                return i + 1  # the prologue has no braces, so the first top-level group is the WHERE
+        i += 1
+    return n
+
+
 def _limited(text: str, max_rows: int) -> str:
-    """Ask the backend for one row past the page so truncation is detected, without unbounded scans."""
-    if re.search(r"\bLIMIT\s+\d+\s*(OFFSET\s+\d+\s*)?$", text.strip(), re.I):
+    """Ask the backend for one row past the page so truncation is detected, without unbounded scans.
+    The LIMIT goes into the solution modifiers, before a trailing ``VALUES`` block if there is one."""
+    start = _tail_start(text)
+    tail = text[start:]
+    values = re.search(r"\bVALUES\b", tail, re.I)
+    modifiers = tail[:values.start()] if values else tail
+    if re.search(r"\bLIMIT\s+\d+", re.sub(r"#[^\n]*", "", modifiers), re.I):
         return text
+    if values:
+        cut = start + values.start()
+        return f"{text[:cut].rstrip()}\nLIMIT {max_rows + 1}\n{text[cut:]}"
     return f"{text.rstrip()}\nLIMIT {max_rows + 1}"
+
+
+def has_unbounded_path(text: str) -> bool:
+    """True when the parsed query or update uses a ``*`` or ``+`` property path. Decided on the algebra,
+    not the text, so ``SELECT *``, ``COUNT(*)`` and arithmetic are never mistaken for paths; text that
+    does not parse returns False and is refused by :func:`validate_query` as ``PARSE_ERROR``."""
+    from rdflib.plugins.sparql import prepareUpdate
+
+    # An undeclared prefix is still a path: declare the missing ones so ``?s :knows* ?o`` is reported as
+    # an unbounded path (the clearer error) rather than only as a parse error.
+    declared = {m.lower() for m in re.findall(r"(?im)^\s*PREFIX\s+([A-Za-z0-9_.-]*):", text)}
+    used = set(re.findall(r"(?<![\w<?$])([A-Za-z][\w.-]*|):(?=[A-Za-z_*+?/(]|\s)", re.sub(r"<[^>\s]*>|\"[^\"]*\"", "", text)))
+    shim = "".join(f"PREFIX {p}: <urn:undeclared:{p}#>\n" for p in sorted(used) if p.lower() not in declared)
+    for candidate in (text, shim + text) if shim else (text,):
+        for parse in (prepareQuery, prepareUpdate):
+            try:
+                tree = parse(candidate)
+            except Exception:  # noqa: BLE001 - not this form
+                continue
+            tree = getattr(tree, "algebra", tree)
+            return any(isinstance(node, MulPath) and node.mod in ("*", "+") for node in _walk(tree))
+    return False
 
 
 class FusekiSparqlBackend:
@@ -165,11 +227,63 @@ class FusekiSparqlBackend:
         elapsed = (time.perf_counter() - t0) * 1000
         if r.status_code == 503 or (r.status_code >= 400 and "timeout" in r.text.lower()):
             raise SparqlCancelled(f"deadline {deadline} ms exceeded; query aborted by the backend")
+        if r.status_code == 400:  # the engine's own parser/static checks refused the text: a client error
+            raise SparqlRejected("BACKEND_REJECTED_QUERY", r.text.strip().splitlines()[0][:200] if r.text.strip() else "")
         if r.status_code >= 400:
             raise SparqlBackendError(f"fuseki error {r.status_code}: {r.text[:200]}")
         try:
             data = r.json()
         except json.JSONDecodeError as exc:  # Fuseki streams results: a timeout mid-stream truncates the JSON
+            raise SparqlCancelled(f"deadline {deadline} ms exceeded while streaming results") from exc
+        if kind == "ASK":
+            return SparqlResult("ASK", boolean=bool(data["boolean"]), elapsed_ms=elapsed, backend=self.name)
+        b = data["results"]["bindings"]
+        return SparqlResult("SELECT", vars=data["head"]["vars"], bindings=b[:rows], truncated=len(b) > rows,
+                            elapsed_ms=elapsed, backend=self.name)
+
+
+class GraphDBSparqlBackend(FusekiSparqlBackend):
+    """Ontotext GraphDB (Free) over the RDF4J REST protocol: ``endpoint`` is the repository URL
+    (``http://host:7200/repositories/<id>``). Same validation, budgets and paging as Fuseki."""
+
+    name = "graphdb"
+
+    def load_turtle(self, turtle: str, *, graph: str | None = None) -> None:
+        url = f"{self.endpoint}/statements" + (f"?context={urllib.parse.quote('<' + graph + '>', safe='')}"
+                                               if graph else "")
+        try:
+            r = httpx.post(url, content=turtle.encode(), headers={"Content-Type": "text/turtle"}, auth=self.auth,
+                           timeout=60)
+            r.raise_for_status()
+        except httpx.HTTPError as exc:
+            raise SparqlBackendError(f"graphdb load failed: {type(exc).__name__}") from exc
+
+    def query(self, text: str, params: dict[str, Any] | None = None, *, deadline_ms: int | None = None,
+              max_rows: int | None = None) -> SparqlResult:
+        text = bind_parameters(text, params)
+        kind = validate_query(text)
+        deadline = min(deadline_ms or self.deadline_ms, self.deadline_ms)
+        rows = min(max_rows or self.max_rows, self.max_rows)
+        body = _limited(text, rows) if kind == "SELECT" else text
+        t0 = time.perf_counter()
+        try:  # RDF4J ``timeout`` is in whole seconds; GraphDB aborts the query server-side when it expires
+            r = httpx.post(self.endpoint, data={"query": body, "timeout": str(max(1, deadline // 1000))},
+                           headers={"Accept": "application/sparql-results+json"}, auth=self.auth,
+                           timeout=deadline / 1000 + 5)
+        except httpx.TimeoutException as exc:
+            raise SparqlCancelled(f"deadline {deadline} ms exceeded (client)") from exc
+        except httpx.HTTPError as exc:
+            raise SparqlBackendError(f"graphdb unreachable: {type(exc).__name__}") from exc
+        elapsed = (time.perf_counter() - t0) * 1000
+        if r.status_code == 503 or (r.status_code >= 400 and "timeout" in r.text.lower()):
+            raise SparqlCancelled(f"deadline {deadline} ms exceeded; query aborted by the backend")
+        if r.status_code == 400:
+            raise SparqlRejected("BACKEND_REJECTED_QUERY", r.text.strip().splitlines()[0][:200] if r.text.strip() else "")
+        if r.status_code >= 400:
+            raise SparqlBackendError(f"graphdb error {r.status_code}: {r.text[:200]}")
+        try:
+            data = r.json()
+        except json.JSONDecodeError as exc:
             raise SparqlCancelled(f"deadline {deadline} ms exceeded while streaming results") from exc
         if kind == "ASK":
             return SparqlResult("ASK", boolean=bool(data["boolean"]), elapsed_ms=elapsed, backend=self.name)

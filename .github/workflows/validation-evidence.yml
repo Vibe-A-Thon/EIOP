@@ -172,18 +172,32 @@ jobs:
           for i in $(seq 1 60); do curl -sf "localhost:3030/ds/sparql?query=ASK%7B%7D" >/dev/null && break; sleep 2; done
       - name: Start GraphDB Free and create the eoip repository
         run: |
-          docker run -d --name graphdb -p 127.0.0.1:7200:7200 -e GDB_JAVA_OPTS="-Xmx1g -Xms512m" ontotext/graphdb:10.7.6
+          docker run -d --name graphdb -p 127.0.0.1:7200:7200 -e GDB_JAVA_OPTS="-Xmx3g -Xms1g" ontotext/graphdb:10.7.6
           for i in $(seq 1 90); do curl -sf localhost:7200/rest/repositories >/dev/null && break; sleep 2; done
           curl -sf localhost:7200/rest/info/version
           curl -sf -X POST localhost:7200/rest/repositories -F "config=@deploy/graphdb/eoip-repo.ttl"
           echo "EOIP_LIVE_GRAPHDB_URL=http://localhost:7200" >> "$GITHUB_ENV"
       - name: Install test dependencies
         run: python -m pip install -c requirements.lock -e ".[test]"
-      - name: Run SPARQL corpus and RDF store round trips on Fuseki and GraphDB Free
+      - name: Fetch the W3C SPARQL 1.1 test suite (w3c/rdf-tests, pinned commit)
+        run: |
+          bash scripts/fetch_w3c_sparql_tests.sh .cache/rdf-tests
+          echo "EOIP_W3C_SUITE=.cache/rdf-tests/sparql/sparql11" >> "$GITHUB_ENV"
+      - name: Run SPARQL corpus, RDF store round trips and the W3C SPARQL 1.1 suite on Fuseki and GraphDB Free
         run: >-
-          python -m pytest -q -o addopts="" -p no:cacheprovider --timeout=600
+          python -m pytest -q -o addopts="" -p no:cacheprovider --timeout=900
           tests/query/test_sparql_result_corpus.py tests/query/test_rdf_store_backends.py
+          tests/query/test_w3c_sparql11_suite.py
           --junitxml=test-results/sparql-fuseki.xml
+      - name: Fail if the W3C suite was skipped
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          cases = [c for c in ET.parse("test-results/sparql-fuseki.xml").iter("testcase")
+                   if "w3c_sparql11" in (c.get("classname") or "")]
+          skipped = [c.get("name") for c in cases if c.find("skipped") is not None]
+          assert len(cases) == 2 and not skipped, f"W3C suite did not run on both engines: {skipped or len(cases)}"
+          PY
       - name: Retain SPARQL evidence
         if: always()
         uses: actions/upload-artifact@v4

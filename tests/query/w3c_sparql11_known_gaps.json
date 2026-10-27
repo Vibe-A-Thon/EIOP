@@ -1,0 +1,189 @@
+{
+  "_comment": "W3C SPARQL 1.1 tests that do NOT pass on a qualified backend (CRA-024.7). Every entry is a failure, not a pass: the conformance test requires each one to still fail exactly as recorded AND to fail the same way when replayed straight against the engine (engine_direct), i.e. an engine deviation, not an EOIP defect. An entry that starts passing makes the test fail until it is removed. Decision: D-CRA-024-W3C-01.",
+  "rdf_tests_commit": "bfefa770267ec0e5b6e45764bbca4ee43789ba72",
+  "engines": {
+    "fuseki": "stain/jena-fuseki:5.1.0 (Apache Jena 5.1.0)",
+    "graphdb": "ontotext/graphdb:10.7.6 (Free)"
+  },
+  "known_gaps": {
+    "fuseki": {
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#values-group-by-projection": {
+        "outcome": "error",
+        "engine_direct": "error",
+        "note": "VALUES after GROUP BY binding a projected variable (2023 rdf-tests addition); the engine refuses it as a non-group-key projection"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#values-group-by-select-expression": {
+        "outcome": "error",
+        "engine_direct": "error",
+        "note": "same as values-group-by-projection, inside a SELECT expression"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/functions/manifest#bnode01": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "BNODE(str) must return the same blank node for the same string within one solution; the engine mints a new one per call"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/property-path/manifest#values_and_path": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "zero-length path joined with VALUES returns a row where the expected answer is empty"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_43": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "syn-bad-01 (`?x +?y` parsed as unary plus) is accepted by the engine parser"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_group_by_values_scope_01": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "same VALUES/GROUP BY scope rule, syntax form"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_group_by_values_scope_02": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "same VALUES/GROUP BY scope rule, syntax form"
+      }
+    },
+    "graphdb": {
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/aggregates/manifest#agg-avg-03": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "AVG over an empty group returns 0.0^^xsd:double instead of 0^^xsd:integer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/aggregates/manifest#agg-empty-group-count-graph": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "default graph = union of named graphs (RDF4J semantics)"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/aggregates/manifest#agg-multiple-having": {
+        "outcome": "error",
+        "engine_direct": "error",
+        "note": "multiple HAVING conditions are a parse error in the engine"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bind/manifest#bind07": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "engine deviation: the identical request sent straight to the engine gives the same non-conforming answer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bind/manifest#bind10": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "engine deviation: the identical request sent straight to the engine gives the same non-conforming answer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#values7": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "engine deviation: the identical request sent straight to the engine gives the same non-conforming answer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#graph": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "GraphDB evaluates the default graph as the union of all named graphs (RDF4J semantics), so GRAPH/default-graph tests see extra or missing rows"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#graph-no-var": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "default graph = union of named graphs (RDF4J semantics)"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#graph-from-named-1": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "default graph = union of named graphs (RDF4J semantics)"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#graph-from-named-2": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "default graph = union of named graphs (RDF4J semantics)"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#graph-from-named-3": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "default graph = union of named graphs (RDF4J semantics)"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#values-group-order-by": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "engine deviation: the identical request sent straight to the engine gives the same non-conforming answer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#values-select-star": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "engine deviation: the identical request sent straight to the engine gives the same non-conforming answer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#values-group-by-projection": {
+        "outcome": "error",
+        "engine_direct": "error",
+        "note": "VALUES after GROUP BY binding a projected variable (2023 rdf-tests addition); the engine refuses it as a non-group-key projection"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/bindings/manifest#values-group-by-select-expression": {
+        "outcome": "error",
+        "engine_direct": "error",
+        "note": "same as values-group-by-projection, inside a SELECT expression"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/functions/manifest#concat-empty": {
+        "outcome": "error",
+        "engine_direct": "error",
+        "note": "CONCAT() with zero arguments is refused by the engine"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/functions/manifest#bnode01": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "BNODE(str) must return the same blank node for the same string within one solution; the engine mints a new one per call"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/functions/manifest#coalesce-empty": {
+        "outcome": "error",
+        "engine_direct": "error",
+        "note": "COALESCE() with zero arguments is refused by the engine"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/negation/manifest#full-minuend": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "engine deviation: the identical request sent straight to the engine gives the same non-conforming answer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/negation/manifest#partial-minuend": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "engine deviation: the identical request sent straight to the engine gives the same non-conforming answer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/negation/manifest#graph-minus": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "default graph = union of named graphs (RDF4J semantics)"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/property-path/manifest#values_and_path": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "zero-length path joined with VALUES returns a row where the expected answer is empty"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/subquery/manifest#subquery03": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "engine deviation: the identical request sent straight to the engine gives the same non-conforming answer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/subquery/manifest#subquery15": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "engine deviation: the identical request sent straight to the engine gives the same non-conforming answer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/subquery/manifest#subquery16": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "engine deviation: the identical request sent straight to the engine gives the same non-conforming answer"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_4": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "unknown extension function is a 500 evaluation error in the engine instead of an unbound result"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_group_by_values_scope_01": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "same VALUES/GROUP BY scope rule, syntax form"
+      },
+      "http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_group_by_values_scope_02": {
+        "outcome": "fail",
+        "engine_direct": "fail",
+        "note": "same VALUES/GROUP BY scope rule, syntax form"
+      }
+    }
+  }
+}

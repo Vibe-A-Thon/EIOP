@@ -87,7 +87,9 @@ class ManifestRegistry:
         # Special check for unbounded property paths in SPARQL
         if manifest.dialect == "SPARQL":
             # Match unbounded paths like :prop* or :prop+ or (/)+ without limits
-            if re.search(r"[a-zA-Z0-9_:<>/](\*|\+)[^a-zA-Z0-9_]", query_text):
+            from eoip.query.sparql_backend import has_unbounded_path  # algebra, not text (CRA-024.7)
+
+            if has_unbounded_path(query_text):
                 raise UnsupportedCapabilityError(
                     capability_id=dialect,
                     construct="UNBOUNDED_PROPERTY_PATH"

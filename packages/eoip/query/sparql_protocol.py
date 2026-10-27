@@ -7,6 +7,8 @@ Unbounded property paths are strictly rejected with UNBOUNDED_PROPERTY_PATH erro
 """
 from __future__ import annotations
 
+import csv
+import io
 import json
 import re
 import urllib.parse
@@ -20,6 +22,36 @@ from eoip.qlang.manifest_registry import ManifestRegistry
 
 class _NoBackend(RuntimeError):
     pass
+
+
+_TSV_BARE = {"http://www.w3.org/2001/XMLSchema#integer", "http://www.w3.org/2001/XMLSchema#decimal",
+             "http://www.w3.org/2001/XMLSchema#double", "http://www.w3.org/2001/XMLSchema#boolean"}
+
+
+def _csv_value(val: Optional[dict[str, Any]]) -> str:
+    if not val:
+        return ""
+    return f"_:{val['value']}" if val.get("type") == "bnode" else val.get("value", "")
+
+
+def _tsv_term(val: Optional[dict[str, Any]]) -> str:
+    if not val:
+        return ""
+    kind, value = val.get("type"), val.get("value", "")
+    if kind == "uri":
+        return f"<{value}>"
+    if kind == "bnode":
+        return f"_:{value}"
+    dt = val.get("datatype")
+    if dt in _TSV_BARE and re.fullmatch(r"[+-]?[0-9.eE+-]+|true|false", value):
+        return value
+    esc = (value.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n").replace("\r", "\\r")
+           .replace("\t", "\\t"))
+    if val.get("xml:lang"):
+        return f'"{esc}"@{val["xml:lang"]}'
+    if dt and dt != "http://www.w3.org/2001/XMLSchema#string":
+        return f'"{esc}"^^<{dt}>'
+    return f'"{esc}"'
 
 
 class SparqlProtocolHandler:
@@ -39,16 +71,11 @@ class SparqlProtocolHandler:
 
     def check_unbounded_paths(self, query: str) -> None:
         """Reject unbounded property paths like + or * without explicit bounds."""
-        # Detect patterns like :rel* or :rel+ or /+ or /*
-        # Note: * in SELECT * is allowed! We look for property path operators
-        path_pattern = re.compile(r"(\w+:\w+|\<[^\>]+\>)([\*\+])(?!\s*FROM|\s*WHERE)")
-        if path_pattern.search(query):
-            raise UnsupportedCapabilityError(
-                capability_id="SPARQL",
-                construct="UNBOUNDED_PROPERTY_PATH"
-            )
-        # Also check for regex repetitions in paths like ( :foo / :bar )*
-        if re.search(r"\)\s*[\*\+]", query):
+        # Decided on the parsed algebra (CRA-024.7): ``SELECT *``, ``COUNT(*)`` and arithmetic such as
+        # ``(?a) + ?b`` are not paths. Text that does not parse is refused later as PARSE_ERROR (400).
+        from eoip.query.sparql_backend import has_unbounded_path
+
+        if has_unbounded_path(query):
             raise UnsupportedCapabilityError(
                 capability_id="SPARQL",
                 construct="UNBOUNDED_PROPERTY_PATH"
@@ -117,7 +144,9 @@ class SparqlProtocolHandler:
         try:
             bindings, vars_list, is_ask, ask_result = self._execute_sparql(query_str)
         except SparqlRejected as exc:
-            return 422, {"Content-Type": "application/json"}, json.dumps(exc.to_dict())
+            # Malformed queries are a 400 per the SPARQL 1.1 Protocol; supported-subset refusals are 422.
+            status = 400 if exc.code in ("PARSE_ERROR", "BACKEND_REJECTED_QUERY") else 422
+            return status, {"Content-Type": "application/json"}, json.dumps(exc.to_dict())
         except SparqlCancelled as exc:
             return 504, {"Content-Type": "text/plain"}, f"Query cancelled: {exc}"
         except (_NoBackend, SparqlBackendError) as exc:
@@ -164,7 +193,7 @@ class SparqlProtocolHandler:
             }
             return json.dumps(payload, indent=2), "application/sparql-results+json"
 
-        if "xml" in accept:
+        if "xml" in accept:  # SPARQL 1.1 Query Results XML Format
             root = ET.Element("sparql", xmlns="http://www.w3.org/2005/sparql-results#")
             head = ET.SubElement(root, "head")
             for v in vars_list:
@@ -174,19 +203,32 @@ class SparqlProtocolHandler:
                 result = ET.SubElement(res, "result")
                 for var, val in b.items():
                     binding = ET.SubElement(result, "binding", name=var)
-                    uri = ET.SubElement(binding, val.get("type", "uri"))
-                    uri.text = val.get("value", "")
-            return ET.tostring(root, encoding="utf-8").decode("utf-8"), "application/sparql-results+xml"
+                    kind = val.get("type", "uri")
+                    if kind == "uri":
+                        el = ET.SubElement(binding, "uri")
+                    elif kind == "bnode":
+                        el = ET.SubElement(binding, "bnode")
+                    else:
+                        el = ET.SubElement(binding, "literal")
+                        if val.get("xml:lang"):
+                            el.set("{http://www.w3.org/XML/1998/namespace}lang", val["xml:lang"])
+                        elif val.get("datatype"):
+                            el.set("datatype", val["datatype"])
+                    el.text = val.get("value", "")
+            return ET.tostring(root, encoding="unicode"), "application/sparql-results+xml"
 
-        if "csv" in accept:
-            header = ",".join(vars_list)
-            rows = [",".join(b.get(v, {}).get("value", "") for v in vars_list) for b in bindings]
-            return "\n".join([header] + rows), "text/csv"
+        if "csv" in accept:  # SPARQL 1.1 Query Results CSV: plain values, RFC 4180 quoting, _: bnodes
+            buf = io.StringIO()
+            w = csv.writer(buf, lineterminator="\r\n")
+            w.writerow(vars_list)
+            for b in bindings:
+                w.writerow([_csv_value(b.get(v)) for v in vars_list])
+            return buf.getvalue(), "text/csv"
 
-        if "tab-separated-values" in accept or "tsv" in accept:
+        if "tab-separated-values" in accept or "tsv" in accept:  # TSV: terms in SPARQL/Turtle syntax
             header = "\t".join(f"?{v}" for v in vars_list)
-            rows = ["\t".join(b.get(v, {}).get("value", "") for v in vars_list) for b in bindings]
-            return "\n".join([header] + rows), "text/tab-separated-values"
+            rows = ["\t".join(_tsv_term(b.get(v)) for v in vars_list) for b in bindings]
+            return "\n".join([header] + rows) + "\n", "text/tab-separated-values"
 
         # Default fallback JSON
         payload = {
