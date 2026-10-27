@@ -200,7 +200,7 @@ jobs:
           proto = [c for c in ET.parse("test-results/sparql-fuseki.xml").iter("testcase")
                    if "w3c_sparql11_protocol" in (c.get("classname") or "")]
           skipped = [c.get("name") for c in proto if c.find("skipped") is not None]
-          assert len(proto) == 3 and not skipped, f"W3C protocol suite did not run on both engines: {skipped or len(proto)}"
+          assert len(proto) == 4 and not skipped, f"W3C protocol suite did not run on both engines: {skipped or len(proto)}"
           PY
       - name: Fetch SP2Bench queries and generator documents (RDFLib/rdflib-benchmark, pinned commit + sha256)
         run: |
