@@ -3,7 +3,7 @@
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
     "files": 499,
-    "test_definitions": 4667
+    "test_definitions": 4668
   },
   "categories": {
     "acceptance": {
@@ -68,7 +68,7 @@
     },
     "query": {
       "files": 12,
-      "test_definitions": 80
+      "test_definitions": 81
     },
     "research": {
       "files": 2,
@@ -649,7 +649,7 @@
     {
       "path": "tests/query/test_w3c_sparql11_protocol.py",
       "category": "query",
-      "test_definitions": 2
+      "test_definitions": 3
     },
     {
       "path": "tests/query/test_w3c_sparql11_suite.py",

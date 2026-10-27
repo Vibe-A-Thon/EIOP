@@ -2831,6 +2831,14 @@
       "path": "/api/v1/sources/{source_id}/webhooks"
     },
     {
+      "method": "GET",
+      "path": "/api/v1/sparql"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sparql"
+    },
+    {
       "method": "POST",
       "path": "/api/v1/suggest"
     },

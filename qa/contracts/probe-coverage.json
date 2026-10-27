@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "interpretation": "Dedicated bench request breadth only; not functional correctness or app-wide test coverage",
-  "openapi_operations": 808,
+  "openapi_operations": 810,
   "qa_probed_operations": 14,
-  "unprobed_operations": 794,
+  "unprobed_operations": 796,
   "negative_or_undocumented_probes": [
     {
       "method": "GET",
@@ -1344,6 +1344,10 @@
     {
       "method": "GET",
       "path": "/api/v1/sources/{source_id}/schedule"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sparql"
     },
     {
       "method": "GET",
@@ -3020,6 +3024,10 @@
     {
       "method": "POST",
       "path": "/api/v1/sources/{source_id}/webhooks"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sparql"
     },
     {
       "method": "POST",
