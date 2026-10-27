@@ -2,13 +2,13 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 499,
-    "test_definitions": 4668
+    "files": 501,
+    "test_definitions": 4687
   },
   "categories": {
     "acceptance": {
-      "files": 20,
-      "test_definitions": 186
+      "files": 22,
+      "test_definitions": 205
     },
     "ai": {
       "files": 7,
@@ -250,6 +250,16 @@
       "path": "tests/acceptance/test_cra_001_acceptance.py",
       "category": "acceptance",
       "test_definitions": 7
+    },
+    {
+      "path": "tests/acceptance/test_cra_036_a_negative_gates.py",
+      "category": "acceptance",
+      "test_definitions": 9
+    },
+    {
+      "path": "tests/acceptance/test_cra_037_a_gate_refusals.py",
+      "category": "acceptance",
+      "test_definitions": 10
     },
     {
       "path": "tests/acceptance/test_developer_ecosystem_acceptance.py",
