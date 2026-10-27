@@ -1,6 +1,12 @@
 name: EOIP CI
 
 # FT-F04: run on the integration branches (not only main/develop) and on PRs into them.
+#
+# Layout (CI-PERF): every expensive job starts at once instead of waiting for lint. The python
+# suite is split into parallel jobs (test-shard); tests/unit is sharded by file with
+# eoip.verification.pytest_shard and scripts/ci/check_test_shards.py proves the shards together ran
+# every collected test exactly once. The job names lint-and-validate / test / container /
+# build-and-package are kept as the gating jobs, so required status checks keep working.
 on:
   push:
     branches: [main, develop, dev_local, eoip-remediation-geeky]
@@ -12,14 +18,17 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Superseded runs of a branch/PR are cancelled; main keeps every commit's evidence.
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
   PYTHONUTF8: "1"
   # Tests that need an owner decision (FT-X10) are deselected and listed in the
   # job summary; see tests/ci-quarantine.txt. Everything else is blocking.
   EOIP_TEST_QUARANTINE_FILE: tests/ci-quarantine.txt
+  # Balance only: a stale file never changes WHICH tests run (see check_test_shards.py).
+  EOIP_TEST_SHARD_WEIGHTS: tests/ci-shard-weights.json
 
 jobs:
   lint-and-validate:
@@ -27,20 +36,16 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: pip
-      - name: Install (documented install, FT-F06)
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -c requirements.lock -e ".[test]"
+      - name: Python 3.11 + documented install (uv, cached; FT-F06)
+        uses: ./.github/actions/setup-eoip-python
       - name: Undefined names gate (FT-F07)
         run: python -m ruff check --select F821 packages apps reva scripts backend tests
       - name: Weak-hash / extractall gate (FT-F11)
         run: python -m ruff check --select S324,S202 packages apps reva backend scripts
       - name: Python sources compile (PLAN-N01)
         run: python -m compileall -q packages apps reva scripts backend
+      - name: Collect the whole suite (FT-F06)
+        run: python -m pytest --collect-only -q -o addopts="" > test-results-collect.txt && tail -n 3 test-results-collect.txt
       - name: KG CI pipeline (GAP-KGCI-001..004)
         run: >-
           python -X utf8 -m packages.eoip.ci
@@ -59,95 +64,154 @@ jobs:
           path: test-results/kgci/
           if-no-files-found: warn
 
-  test:
-    needs: lint-and-validate
+  test-shard:
+    name: test-shard (${{ matrix.id }})
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Shard counts sized from measured file times (tests/ci-shard-weights.json): ~5 min per job.
+          - { id: unit-1, lane: unit, shard: "1/5" }
+          - { id: unit-2, lane: unit, shard: "2/5" }
+          - { id: unit-3, lane: unit, shard: "3/5" }
+          - { id: unit-4, lane: unit, shard: "4/5" }
+          - { id: unit-5, lane: unit, shard: "5/5" }
+          - { id: security-1, lane: security, shard: "1/2" }
+          - { id: security-2, lane: security, shard: "2/2" }
+          - { id: other, lane: other }
+          - { id: rest, lane: rest }
+          - { id: qa, lane: qa }
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: pip
-      - name: Install (documented install, FT-F06)
+      - name: Python 3.11 + documented install (uv, cached; FT-F06)
+        uses: ./.github/actions/setup-eoip-python
+      - name: Run ${{ matrix.id }}
+        env:
+          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data-${{ matrix.id }}
+          LANE: ${{ matrix.lane }}
+          SHARD: ${{ matrix.shard }}
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -c requirements.lock -e ".[test]"
-      - name: Install optional report renderers
-        run: python -m pip install -c requirements.lock -e ".[reports]"
-      - name: Collect the whole suite (FT-F06)
-        run: python -m pytest --collect-only -q -o addopts="" > test-results-collect.txt && tail -n 3 test-results-collect.txt
-      - name: Unit tests
-        env:
-          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data-unit
-        run: >-
-          python -m pytest tests/unit --timeout=300
-          --junitxml=test-results/unit.xml --run-evidence=test-results/unit-receipt.json
-      - name: Security tests incl. worker isolation (FT-F01, FT-F02, FT-F03)
-        env:
-          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data-security
-        run: >-
-          python -m pytest tests/security tests/integration/test_mcp_transport.py --timeout=120
-          --junitxml=test-results/security.xml --run-evidence=test-results/security-receipt.json
-      - name: Acceptance, contract, semantic, integration and performance tests
-        env:
-          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data-other
-        run: >-
-          python -m pytest tests/acceptance tests/contract tests/semantic tests/integration tests/performance
-          --timeout=300 --junitxml=test-results/other.xml
-      - name: Remaining test packages
-        env:
-          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data-rest
-        run: >-
-          python -m pytest tests --timeout=300
-          --ignore=tests/unit --ignore=tests/security --ignore=tests/acceptance --ignore=tests/contract
-          --ignore=tests/semantic --ignore=tests/integration --ignore=tests/performance
-          --ignore=tests/reva --ignore=tests/gui
-          --junitxml=test-results/rest.xml
-      - name: Non-functional QA bench and API surface
-        env:
-          EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data-qa
-        run: |
-          python -m qa.bench offline
-          python -m qa.probe_coverage
-          python -m qa.schema_quality
-          python -m qa.portfolio catalog
-          python -m qa.completeness report
-          python -m qa.portfolio run --suite source-workflow
+          mkdir -p test-results
+          case "$LANE" in
+            unit)  # sharded by file; one coordinator per shard keeps --run-evidence valid
+              k="${SHARD%%/*}"
+              EOIP_TEST_SHARD="$SHARD" EOIP_TEST_SHARD_MANIFEST="test-results/shards/unit-$k.json" \
+                python -m pytest tests/unit --timeout=300 \
+                --junitxml="test-results/unit-$k.xml" --run-evidence="test-results/unit-receipt-$k.json" ;;
+            security)  # incl. worker isolation (FT-F01, FT-F02, FT-F03); sharded by file
+              k="${SHARD%%/*}"
+              EOIP_TEST_SHARD="$SHARD" EOIP_TEST_SHARD_MANIFEST="test-results/shards/security-$k.json" \
+                python -m pytest tests/security tests/integration/test_mcp_transport.py --timeout=120 \
+                --junitxml="test-results/security-$k.xml" --run-evidence="test-results/security-receipt-$k.json" ;;
+            other)  # acceptance, contract, semantic, integration and performance
+              python -m pytest tests/acceptance tests/contract tests/semantic tests/integration tests/performance \
+                --timeout=300 --junitxml=test-results/other.xml ;;
+            rest)  # remaining test packages (reva and gui run in their own workflows/jobs)
+              python -m pytest tests --timeout=300 \
+                --ignore=tests/unit --ignore=tests/security --ignore=tests/acceptance --ignore=tests/contract \
+                --ignore=tests/semantic --ignore=tests/integration --ignore=tests/performance \
+                --ignore=tests/reva --ignore=tests/gui \
+                --junitxml=test-results/rest.xml ;;
+            qa)  # non-functional QA bench and API surface
+              python -m qa.bench offline
+              python -m qa.probe_coverage
+              python -m qa.schema_quality
+              python -m qa.portfolio catalog
+              python -m qa.completeness report
+              python -m qa.portfolio run --suite source-workflow ;;
+            *) echo "unknown lane $LANE" >&2; exit 2 ;;
+          esac
       - name: Retain test evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: python-test-evidence
+          name: python-test-evidence-${{ matrix.id }}
           path: test-results/
+          if-no-files-found: warn
+
+  # Gate kept under its historical name (required checks, test_scale_and_polish_wp71).
+  test:
+    needs: [lint-and-validate, test-shard]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/ci
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: python-test-evidence-*
+          path: evidence
+      - name: Sharded lanes partitioned their suites (nothing lost, nothing twice)
+        id: partition
+        run: |
+          rc=0
+          for lane in unit security; do
+            echo "### $lane" >> "$GITHUB_STEP_SUMMARY"
+            python3 scripts/ci/check_test_shards.py evidence/*/shards/"$lane"-*.json --summary "$GITHUB_STEP_SUMMARY" || rc=1
+          done
+          exit $rc
+      - name: Combine shard evidence into python-test-evidence
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: python-test-evidence
+          pattern: python-test-evidence-*
+          separate-directories: true
+          delete-merged: true
+      - name: Verdict
+        if: always()
+        env:
+          LINT: ${{ needs.lint-and-validate.result }}
+          SHARDS: ${{ needs.test-shard.result }}
+          PARTITION: ${{ steps.partition.outcome }}
+        run: |
+          echo "lint-and-validate=$LINT test-shard=$SHARDS partition=$PARTITION"
+          [ "$LINT" = success ] && [ "$SHARDS" = success ] && [ "$PARTITION" = success ]
 
   container:
-    needs: lint-and-validate
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Build runtime image and probe /health/ready (FT-X03)
+      - uses: docker/setup-buildx-action@v3
+      - name: Build runtime image (layer cache in GitHub Actions cache)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/Dockerfile
+          target: runtime
+          tags: eoip-ci:runtime
+          load: true
+          cache-from: type=gha,scope=eoip-runtime
+          # ignore-error: a read-only token (fork PR) must not fail the build over cache export.
+          cache-to: type=gha,mode=max,scope=eoip-runtime,ignore-error=true
+      - name: Probe /health/ready on the built image (FT-X03)
+        env:
+          EOIP_SMOKE_PREBUILT: "1"
         run: bash scripts/ci/container_smoke.sh docker
 
-  build-and-package:
-    needs: lint-and-validate
+  web-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.18.0'
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: pip
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Python 3.11 + documented install (uv, cached; FT-F06)
+        uses: ./.github/actions/setup-eoip-python
       - name: Build Web Application
         working-directory: apps/web
         run: |
-          npm ci
+          npm ci --no-audit --no-fund
           npm run typecheck
           npm run test:unit
           npm run build
@@ -157,14 +221,50 @@ jobs:
         env:
           EOIP_REQUIRE_GUI_TESTS: '1'
           EOIP_DATA_DIR: ${{ runner.temp }}/eoip-data-gui
+        run: python -m pytest tests/gui --timeout=600 --junitxml=test-results/gui.xml
+      - name: Retain GUI Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gui-test-evidence-build
+          path: test-results/gui.xml
+          if-no-files-found: warn
+
+  web-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.18.0'
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install web dependencies
+        working-directory: apps/web
+        run: npm ci --no-audit --no-fund
+      - name: Restore Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('apps/web/package-lock.json') }}
+      - name: Install Chromium (system deps always; browser only on a cache miss)
+        working-directory: apps/web
+        env:
+          HIT: ${{ steps.pw-cache.outputs.cache-hit }}
         run: |
-          python -m pip install -c requirements.lock -e ".[test]"
-          python -m pytest tests/gui --timeout=600 --junitxml=test-results/gui.xml
+          if [ "$HIT" = "true" ]; then
+            npx --no-install playwright install-deps chromium
+          else
+            npx --no-install playwright install --with-deps chromium
+          fi
       - name: Verify Interactive Export Security
         working-directory: apps/web
-        run: |
-          npx --no-install playwright install --with-deps chromium
-          npx --no-install playwright test tests/interactive-export-security.spec.js tests/gui-foundations.spec.js tests/gui-graph-contracts.spec.js tests/gui-accessibility.spec.js tests/qa-nonfunctional.spec.js --reporter=list,json
+        run: >-
+          npx --no-install playwright test tests/interactive-export-security.spec.js tests/gui-foundations.spec.js
+          tests/gui-graph-contracts.spec.js tests/gui-accessibility.spec.js tests/qa-nonfunctional.spec.js --reporter=list,json
         env:
           EOIP_GUI_WEB_SERVER: '1'
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:5173
@@ -173,8 +273,32 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gui-test-evidence
+          name: gui-test-evidence-browser
           path: |
             test-results/gui*.json
-            test-results/gui.xml
             apps/web/test-results/
+          if-no-files-found: warn
+
+  # Gate kept under its historical name (required checks, test_scale_and_polish_wp71).
+  build-and-package:
+    needs: [web-build, web-browser]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Combine GUI evidence into gui-test-evidence
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: gui-test-evidence
+          pattern: gui-test-evidence-*
+          separate-directories: true
+          delete-merged: true
+      - name: Verdict
+        env:
+          BUILD: ${{ needs.web-build.result }}
+          BROWSER: ${{ needs.web-browser.result }}
+        run: |
+          echo "web-build=$BUILD web-browser=$BROWSER"
+          [ "$BUILD" = success ] && [ "$BROWSER" = success ]

@@ -15,7 +15,10 @@ import argparse
 import json
 import subprocess
 import sys
-import xml.etree.ElementTree as ET
+try:
+    import defusedxml.ElementTree as ET
+except ImportError:
+    import xml.etree.ElementTree as ET
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]

@@ -42,11 +42,4 @@ for d in dirs:
         if not init_file.exists():
             init_file.write_text('"""REVA package module."""\n', encoding="utf-8")
 
-# Also ensure packages/reva points or exists so both `packages` and root import work
-pkg_reva = Path("packages/reva")
-pkg_reva.mkdir(parents=True, exist_ok=True)
-pkg_init = pkg_reva / "__init__.py"
-if not pkg_init.exists():
-    pkg_init.write_text('"""Proxy to reva."""\nimport sys\nfrom pathlib import Path\nroot = Path(__file__).resolve().parent.parent\nif str(root) not in sys.path:\n    sys.path.insert(0, str(root))\nfrom reva import *  # noqa\n', encoding="utf-8")
-
 print("Tree initialized.")

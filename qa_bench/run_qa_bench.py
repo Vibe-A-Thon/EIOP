@@ -12,9 +12,10 @@ from __future__ import annotations
 
 import argparse
 import os
+import shutil
+import subprocess
 import sys
 import time
-import subprocess
 from pathlib import Path
 
 # Add project root to path
@@ -34,12 +35,17 @@ from qa_bench.config import (
 
 def check_server_reachable(url: str, timeout: float = 1.5) -> bool:
     """Check if a HTTP server responds at the given URL."""
+    import urllib.parse
     import urllib.request
+
+    parsed = urllib.parse.urlsplit(url)
+    if parsed.scheme not in ("http", "https"):
+        return False
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "QA-Bench-Probe"})
         with urllib.request.urlopen(req, timeout=timeout) as res:
             return res.status < 500
-    except Exception:
+    except (urllib.error.URLError, OSError, TimeoutError):
         return False
 
 
@@ -110,7 +116,7 @@ def main() -> int:
     backend_live = check_server_reachable(f"{BACKEND_URL}/health")
     frontend_live = check_server_reachable(FRONTEND_URL)
 
-    print(f"[*] Pre-flight Server Diagnostics:")
+    print("[*] Pre-flight Server Diagnostics:")
     print(f"    Backend  ({BACKEND_URL}): {'[ONLINE]' if backend_live else '[OFFLINE - In-process TestClient fallback]'}")
     print(f"    Frontend ({FRONTEND_URL}): {'[ONLINE]' if frontend_live else '[OFFLINE]'}")
 
@@ -139,16 +145,15 @@ def main() -> int:
 
     # Suite mapping
     if args.suite == "playwright":
-        playwright_cmd = ["npx", "playwright", "test", "--config", "qa_bench/playwright/playwright.config.ts"]
-        if args.headless:
-            pass
-        else:
+        npx_bin = shutil.which("npx") or "npx"
+        playwright_cmd = [npx_bin, "playwright", "test", "--config", "qa_bench/playwright/playwright.config.ts"]
+        if not args.headless:
             playwright_cmd.append("--headed")
         if args.filter:
             playwright_cmd.extend(["-g", args.filter])
         print(f"[*] Executing Playwright Command: {' '.join(playwright_cmd)}\n")
         t0 = time.perf_counter()
-        res = subprocess.run(playwright_cmd, cwd=str(REPO_ROOT), shell=True)
+        res = subprocess.run(playwright_cmd, cwd=str(REPO_ROOT), shell=False, check=False)
         elapsed = time.perf_counter() - t0
         status_str = "SUCCESS (PASSED)" if res.returncode == 0 else f"FAILED (exit code {res.returncode})"
         print(f"\n  PLAYWRIGHT EXECUTION FINISHED: {status_str} in {elapsed:.2f}s\n")
@@ -176,7 +181,7 @@ def main() -> int:
 
     print(f"[*] Executing Test Command: {' '.join(pytest_args)}\n")
     t0 = time.perf_counter()
-    res = subprocess.run(pytest_args, cwd=str(REPO_ROOT))
+    res = subprocess.run(pytest_args, cwd=str(REPO_ROOT), check=False)
     elapsed = time.perf_counter() - t0
 
     print("\n" + "=" * 76)

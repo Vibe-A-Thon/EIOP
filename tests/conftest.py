@@ -18,5 +18,9 @@ existing = [part for part in os.environ.get("PYTHONPATH", "").split(os.pathsep) 
 desired = [str(REPO_ROOT), str(PACKAGE_ROOT)]
 os.environ["PYTHONPATH"] = os.pathsep.join(desired + [part for part in existing if part not in desired])
 
-pytest_plugins = ["eoip.verification.pytest_evidence", "eoip.verification.pytest_quarantine"]
+pytest_plugins = [
+    "eoip.verification.pytest_evidence",
+    "eoip.verification.pytest_quarantine",
+    "eoip.verification.pytest_shard",
+]
 

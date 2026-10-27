@@ -13,7 +13,10 @@ import csv
 import hashlib
 import json
 import re
-import xml.etree.ElementTree as ET
+try:
+    import defusedxml.ElementTree as ET
+except ImportError:
+    import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from eoip.jobs import write_json

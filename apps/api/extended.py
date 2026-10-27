@@ -117,7 +117,6 @@ from eoip.agentarch.router import build_router as build_agentarch_router
 from eoip.execution.router import build_router as build_execution_router
 from eoip.graphbuild.router import build_adapters_router, build_graphbuild_router
 from eoip.loops.core import JsonCheckpointStore
-from eoip.loops.router import build_router as build_loops_router
 from eoip.qlang.router import build_router as build_qlang_router
 from eoip.ragx.router import build_router as build_ragx_router
 from eoip.reasoning.router import build_router as build_reasoning_router
@@ -1483,9 +1482,6 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     # PDF/DOCX/PPTX are External gates), schedules, live graph stats.
     router.include_router(build_reports_router(graph_store=store))
 
-    # Loop engineering catalog/runtime (GAP-LOOP-001..047): route-level
-    # product evidence for bounded agent loops and approval patterns.
-    router.include_router(build_loops_router())
 
     # QA gate integrity (SR-QA-010..014): behavioral evidence registry,
     # mutation checks, three-number dashboard, code introspection, policy gate.

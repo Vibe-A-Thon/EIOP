@@ -13,6 +13,7 @@ import logging
 import queue
 import threading
 import time
+import urllib.parse
 import urllib.request
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -235,6 +236,10 @@ class MutationEventBus:
                 attempt=attempt,
             )
             try:
+                parsed = urllib.parse.urlsplit(config.url)
+                if parsed.scheme not in ("http", "https"):
+                    record.error = f"Unsupported webhook URL scheme: {parsed.scheme}"
+                    return record
                 req = urllib.request.Request(
                     config.url,
                     data=payload,

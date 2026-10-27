@@ -98,8 +98,8 @@ def verify_restored_bundle(store, data, source, *, config_dir, model_dir):
 def main():
     parser = argparse.ArgumentParser(description="Verify an isolated HugeGraph logical restore")
     parser.add_argument("--source", type=Path)
-    parser.add_argument("--config-dir", type=Path, default=Path("/tmp/restore-config"))
-    parser.add_argument("--model-dir", type=Path, default=Path("/tmp/restore-models"))
+    parser.add_argument("--config-dir", type=Path, default=Path(tempfile.gettempdir()) / "restore-config")
+    parser.add_argument("--model-dir", type=Path, default=Path(tempfile.gettempdir()) / "restore-models")
     args = parser.parse_args()
     source = select_snapshot(args.source, Path("/source/backups"))
     store = create_store()

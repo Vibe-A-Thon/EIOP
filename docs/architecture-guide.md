@@ -25,7 +25,7 @@ flowchart LR
 
 ### API
 
-`apps/api/main.py:create_app` is the persistent FastAPI application factory and the supported Uvicorn entrypoint. It constructs the graph store from `EOIP_GRAPH_BACKEND` and `config/graph-store.yaml`, reads `EOIP_API_TOKEN`, creates application services, and mounts authenticated graph, query, ingestion, agent, governance, and operations routes. API request identity is derived from the authenticated token/identity provider; write handlers must not trust caller-supplied actor or tenant values.
+`apps/api/main.py:create_app` is the persistent FastAPI application factory and the supported Uvicorn entrypoint. It constructs the graph store from `EOIP_GRAPH_BACKEND` and `config/graph-store.yaml`, loads principals from the credential store (`<EOIP_DATA_DIR>/state/credentials.json`) or `EOIP_ASG_FILE` (fails closed if no principals exist — see `docs/authentication.md` for `eoip-admin` provisioning), creates application services, and mounts authenticated graph, query, ingestion, agent, governance, and operations routes. API request identity is derived from the authenticated token/identity provider; write handlers must not trust caller-supplied actor or tenant values.
 
 `apps/api/app.py:create_app(store, ...)` constructs the lower-level graph/query application around an injected `GraphStore`. The main factory uses it and adds persistent-runtime services/routes. It is not a standalone app factory with implicit default storage.
 
@@ -37,7 +37,7 @@ The in-memory store is process-local and loses graph state on restart. The conta
 
 ### Worker and application files
 
-`apps/worker/main.py` polls the `JobQueue` under `EOIP_DATA_DIR` and runs ingestion, replay, registered source operations, and graph consumers. The queue is filesystem-backed and intended for a single worker in the current default topology; it is not a distributed broker or transactional authority database. Worker heartbeat is written to the data directory. Connector state, raw source events, dead-letter records, receipts, audit files, and other file state are also stored beneath this configured root.
+`apps/worker/main.py` polls the `JobQueue` under `EOIP_DATA_DIR` and runs ingestion, replay, registered source operations, and graph consumers. The queue is filesystem-backed and intended for a single worker in the current default topology; it provides snapshotting and recovery admission. For distributed multi-worker topologies requiring WAL, heartbeats, fencing leases, outbox events, and governed DLQ, `DurableJobStore` in `packages/eoip/jobs.py` provides the transactional SQLite-backed store. Worker heartbeat is written to the data directory. Connector state, raw source events, dead-letter records, receipts, audit files, and other file state are also stored beneath this configured root.
 
 ### MCP
 

@@ -6,12 +6,62 @@ The system remains useful when the model is stopped.
 
 from __future__ import annotations
 
+import ipaddress
 import json
 import os
+import urllib.parse
 from collections.abc import Iterator
 from dataclasses import dataclass
 
 import httpx
+
+ALLOWED_DEFAULT_HOSTS = frozenset({"localhost", "127.0.0.1", "::1", "local-model"})
+METADATA_IPS = frozenset({"169.254.169.254", "169.254.170.2", "fd00:ec2::254"})
+METADATA_HOSTNAMES = frozenset({"metadata.google.internal", "metadata", "instance-data"})
+
+
+def validate_model_endpoint_url(url: str) -> None:
+    """Validate model endpoint URL to enforce strict local egress policy (CC3-001 / SR-LLM-002).
+
+    Rejects non-HTTP(S) schemes, cloud metadata endpoints, unapproved remote destinations,
+    and link-local/private network hops outside the allowed localhost/local-model allowlist.
+    """
+    if not url:
+        raise ModelUnavailable("Model URL cannot be empty")
+
+    parsed = urllib.parse.urlsplit(url)
+    if parsed.scheme not in ("http", "https"):
+        raise ModelUnavailable(f"Egress policy violation: unsupported scheme '{parsed.scheme}'. Only http/https permitted.")
+
+    hostname = (parsed.hostname or "").lower().strip("[]")
+    if not hostname:
+        raise ModelUnavailable("Egress policy violation: missing host in model URL")
+
+    # Reject cloud metadata endpoints
+    if hostname in METADATA_HOSTNAMES or hostname in METADATA_IPS:
+        raise ModelUnavailable(f"Egress policy violation: access to cloud metadata endpoint '{hostname}' is denied")
+
+    # Reject link-local and multicast IPs
+    try:
+        ip = ipaddress.ip_address(hostname)
+        if ip.is_link_local:
+            raise ModelUnavailable(f"Egress policy violation: link-local IP '{hostname}' is denied")
+        if ip.is_multicast:
+            raise ModelUnavailable(f"Egress policy violation: multicast IP '{hostname}' is denied")
+    except ValueError:
+        pass  # Hostname string
+
+    extra_allowed = {
+        h.strip().lower()
+        for h in os.getenv("EOIP_ALLOWED_MODEL_HOSTS", "").split(",")
+        if h.strip()
+    }
+    allowed = ALLOWED_DEFAULT_HOSTS | extra_allowed
+
+    if hostname not in allowed:
+        raise ModelUnavailable(
+            f"Egress policy violation: host '{hostname}' is not in the approved local-model allowlist ({sorted(allowed)})"
+        )
 
 
 @dataclass(frozen=True)
@@ -32,6 +82,7 @@ class LocalModelProvider:
         self._model = model or os.getenv("EOIP_OLLAMA_MODEL", "")
         self._url = url or os.getenv("EOIP_OLLAMA_URL", "http://local-model:11434")
         self._timeout = timeout
+        validate_model_endpoint_url(self._url)
 
     @property
     def available(self) -> bool:
@@ -54,7 +105,7 @@ class LocalModelProvider:
             raise ModelUnavailable("No local model is configured")
 
         try:
-            with httpx.Client(timeout=self._timeout, trust_env=False) as client:
+            with httpx.Client(timeout=self._timeout, trust_env=False, follow_redirects=False) as client:
                 response = client.post(
                     f"{self._url}/api/chat",
                     json={
@@ -85,7 +136,7 @@ class LocalModelProvider:
         if not self._model:
             raise ModelUnavailable("No local model is configured")
         try:
-            with httpx.Client(timeout=self._timeout, trust_env=False) as client:
+            with httpx.Client(timeout=self._timeout, trust_env=False, follow_redirects=False) as client:
                 r = client.post(f"{self._url}/api/generate", json={
                     "model": self._model, "raw": True, "stream": False, "prompt": prompt,
                     "options": {"temperature": temperature, "num_predict": max_tokens, "seed": 7}})
@@ -102,7 +153,7 @@ class LocalModelProvider:
         if not self._model:
             raise ModelUnavailable("No local model is configured")
         try:
-            with httpx.Client(timeout=self._timeout, trust_env=False) as client:
+            with httpx.Client(timeout=self._timeout, trust_env=False, follow_redirects=False) as client:
                 with client.stream("POST", f"{self._url}/api/generate", json={
                         "model": self._model, "raw": True, "stream": True, "prompt": prompt,
                         "options": {"temperature": temperature, "num_predict": max_tokens, "seed": 7}}) as r:
@@ -127,7 +178,7 @@ class LocalModelProvider:
         if not self._model:
             raise ModelUnavailable("No local model is configured")
         try:
-            with httpx.Client(timeout=self._timeout, trust_env=False) as client:
+            with httpx.Client(timeout=self._timeout, trust_env=False, follow_redirects=False) as client:
                 r = client.post(f"{self._url}/api/show", json={"model": self._model})
                 r.raise_for_status()
                 d = r.json()
@@ -144,7 +195,7 @@ class LocalModelProvider:
         if not self._model:
             return False
         try:
-            with httpx.Client(timeout=min(self._timeout, 5), trust_env=False) as client:
+            with httpx.Client(timeout=min(self._timeout, 5), trust_env=False, follow_redirects=False) as client:
                 response = client.get(f"{self._url}/api/tags")
                 return response.status_code == 200
         except httpx.HTTPError:

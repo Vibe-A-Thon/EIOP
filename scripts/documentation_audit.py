@@ -14,7 +14,10 @@ import subprocess
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
-from xml.etree import ElementTree
+try:
+    from defusedxml import ElementTree
+except ImportError:
+    from xml.etree import ElementTree
 
 from eoip.jobs import write_json
 
