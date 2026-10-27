@@ -1,7 +1,7 @@
 {
   "sp2b_commit": "456f7b1c3e9dbcf099b8267155970b5156c4e253",
   "document": "1024000.n3.bz2 (1,024,112 triples, official SP2Bench generator output)",
-  "decision": "D-CRA-024-SP2B-01",
+  "decision": "D-CRA-024-07",
   "note": "Queries whose first 10,000-row page is not produced by the engine within the 30 s deadline on a GitHub-hosted runner. Each is cancelled server-side at the deadline (HTTP 504, never a hang, never partial results). CRA-024 A.2 ('none exceeding 30 s') is therefore NOT met for these on that engine; they stay open until the engine/plan is improved.",
   "latency_gaps": {
     "fuseki": {

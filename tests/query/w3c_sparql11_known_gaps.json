@@ -1,5 +1,5 @@
 {
-  "_comment": "W3C SPARQL 1.1 tests that do NOT pass on a qualified backend (CRA-024.7). Every entry is a failure, not a pass: the conformance test requires each one to still fail exactly as recorded AND to fail the same way when replayed straight against the engine (engine_direct), i.e. an engine deviation, not an EOIP defect. An entry that starts passing makes the test fail until it is removed. Decision: D-CRA-024-W3C-01.",
+  "_comment": "W3C SPARQL 1.1 tests that do NOT pass on a qualified backend (CRA-024.7). Every entry is a failure, not a pass: the conformance test requires each one to still fail exactly as recorded AND to fail the same way when replayed straight against the engine (engine_direct), i.e. an engine deviation, not an EOIP defect. An entry that starts passing makes the test fail until it is removed. Decision: D-CRA-024-06.",
   "rdf_tests_commit": "bfefa770267ec0e5b6e45764bbca4ee43789ba72",
   "engines": {
     "fuseki": "stain/jena-fuseki:5.1.0 (Apache Jena 5.1.0)",
