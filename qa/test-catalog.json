@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 496,
-    "test_definitions": 4645
+    "files": 498,
+    "test_definitions": 4662
   },
   "categories": {
     "acceptance": {
@@ -67,8 +67,8 @@
       "test_definitions": 21
     },
     "query": {
-      "files": 10,
-      "test_definitions": 73
+      "files": 11,
+      "test_definitions": 75
     },
     "research": {
       "files": 2,
@@ -91,8 +91,8 @@
       "test_definitions": 7
     },
     "security": {
-      "files": 20,
-      "test_definitions": 142
+      "files": 21,
+      "test_definitions": 157
     },
     "semantic": {
       "files": 11,
@@ -642,6 +642,11 @@
       "test_definitions": 5
     },
     {
+      "path": "tests/query/test_w3c_sparql11_protocol.py",
+      "category": "query",
+      "test_definitions": 2
+    },
+    {
       "path": "tests/query/test_w3c_sparql11_suite.py",
       "category": "query",
       "test_definitions": 1
@@ -1015,6 +1020,11 @@
       "path": "tests/security/test_security_baseline.py",
       "category": "security",
       "test_definitions": 7
+    },
+    {
+      "path": "tests/security/test_sparql_endpoint_protocol.py",
+      "category": "security",
+      "test_definitions": 15
     },
     {
       "path": "tests/security/test_sso_keycloak.py",

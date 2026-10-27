@@ -1511,6 +1511,11 @@ def build_extended_router(store: GraphStore) -> tuple[APIRouter, ExtendedState]:
     router.include_router(build_agentarch_router(store))
     router.include_router(build_ragx_router(store))
     router.include_router(build_qlang_router(store))
+    # SPARQL 1.1 Protocol endpoint (CRA-024.7, D-CRA-024-02/-04): read-only, viewer+, tenant from identity.
+    from apps.api import route_policy as _route_policy
+    from eoip.query.sparql_router import build_sparql_router
+
+    router.include_router(build_sparql_router(_route_policy.allowed))
     router.include_router(build_graphbuild_router())
     router.include_router(build_adapters_router())
     router.include_router(build_reasoning_router())

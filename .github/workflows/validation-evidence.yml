@@ -187,16 +187,20 @@ jobs:
         run: >-
           python -m pytest -q -o addopts="" -p no:cacheprovider --timeout=900
           tests/query/test_sparql_result_corpus.py tests/query/test_rdf_store_backends.py
-          tests/query/test_w3c_sparql11_suite.py
+          tests/query/test_w3c_sparql11_suite.py tests/query/test_w3c_sparql11_protocol.py
           --junitxml=test-results/sparql-fuseki.xml
-      - name: Fail if the W3C suite was skipped
+      - name: Fail if the W3C query or protocol suite was skipped
         run: |
           python - <<'PY'
           import xml.etree.ElementTree as ET
           cases = [c for c in ET.parse("test-results/sparql-fuseki.xml").iter("testcase")
-                   if "w3c_sparql11" in (c.get("classname") or "")]
+                   if "w3c_sparql11_suite" in (c.get("classname") or "")]
           skipped = [c.get("name") for c in cases if c.find("skipped") is not None]
           assert len(cases) == 2 and not skipped, f"W3C suite did not run on both engines: {skipped or len(cases)}"
+          proto = [c for c in ET.parse("test-results/sparql-fuseki.xml").iter("testcase")
+                   if "w3c_sparql11_protocol" in (c.get("classname") or "")]
+          skipped = [c.get("name") for c in proto if c.find("skipped") is not None]
+          assert len(proto) == 3 and not skipped, f"W3C protocol suite did not run on both engines: {skipped or len(proto)}"
           PY
       - name: Fetch SP2Bench queries and generator documents (RDFLib/rdflib-benchmark, pinned commit + sha256)
         run: |

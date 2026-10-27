@@ -1,0 +1,5 @@
+{
+  "suite": "w3c/rdf-tests sparql/sparql11/protocol/manifest.ttl (pinned commit as in w3c_sparql11_known_gaps.json)",
+  "decision": "D-CRA-024-02",
+  "known_gaps": {"fuseki": {}, "graphdb": {}}
+}

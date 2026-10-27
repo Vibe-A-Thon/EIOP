@@ -190,6 +190,20 @@ def has_unbounded_path(text: str) -> bool:
     return False
 
 
+def _dataset(dataset: dict[str, list[str]] | None) -> dict[str, list[str]]:
+    """SPARQL 1.1 Protocol RDF dataset parameters, forwarded to the engine (they override FROM/FROM NAMED).
+    Only absolute IRIs are accepted; the engine resolves them inside the tenant's own dataset."""
+    out: dict[str, list[str]] = {}
+    for key in ("default-graph-uri", "named-graph-uri"):
+        vals = list((dataset or {}).get(key) or [])
+        bad = [v for v in vals if not re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:[^\s<>\"{}|^`\\]*$", v)]
+        if bad:
+            raise SparqlRejected("PARSE_ERROR", f"{key} must be an absolute IRI")
+        if vals:
+            out[key] = vals
+    return out
+
+
 class FusekiSparqlBackend:
     name = "fuseki"
 
@@ -209,7 +223,7 @@ class FusekiSparqlBackend:
             raise SparqlBackendError(f"fuseki load failed: {type(exc).__name__}") from exc
 
     def query(self, text: str, params: dict[str, Any] | None = None, *, deadline_ms: int | None = None,
-              max_rows: int | None = None) -> SparqlResult:
+              max_rows: int | None = None, dataset: dict[str, list[str]] | None = None) -> SparqlResult:
         text = bind_parameters(text, params)
         kind = validate_query(text)
         deadline = min(deadline_ms or self.deadline_ms, self.deadline_ms)
@@ -219,7 +233,7 @@ class FusekiSparqlBackend:
         try:
             # Fuseki's ``timeout`` parameter is in (fractional) seconds; sending milliseconds would let a runaway
             # query keep running server-side for hours after the client gave up (found by SP2Bench Q7).
-            r = httpx.post(f"{self.endpoint}/sparql", data={"query": body, "timeout": f"{deadline / 1000:g}"},
+            r = httpx.post(f"{self.endpoint}/sparql", data={"query": body, "timeout": f"{deadline / 1000:g}", **_dataset(dataset)},
                            headers={"Accept": "application/sparql-results+json"},
                            timeout=deadline / 1000 + 5)
         except httpx.TimeoutException as exc:
@@ -261,7 +275,7 @@ class GraphDBSparqlBackend(FusekiSparqlBackend):
             raise SparqlBackendError(f"graphdb load failed: {type(exc).__name__}") from exc
 
     def query(self, text: str, params: dict[str, Any] | None = None, *, deadline_ms: int | None = None,
-              max_rows: int | None = None) -> SparqlResult:
+              max_rows: int | None = None, dataset: dict[str, list[str]] | None = None) -> SparqlResult:
         text = bind_parameters(text, params)
         kind = validate_query(text)
         deadline = min(deadline_ms or self.deadline_ms, self.deadline_ms)
@@ -269,7 +283,7 @@ class GraphDBSparqlBackend(FusekiSparqlBackend):
         body = _limited(text, rows) if kind == "SELECT" else text
         t0 = time.perf_counter()
         try:  # RDF4J ``timeout`` is in whole seconds; GraphDB aborts the query server-side when it expires
-            r = httpx.post(self.endpoint, data={"query": body, "timeout": str(max(1, deadline // 1000))},
+            r = httpx.post(self.endpoint, data={"query": body, "timeout": str(max(1, deadline // 1000)), **_dataset(dataset)},
                            headers={"Accept": "application/sparql-results+json"}, auth=self.auth,
                            timeout=deadline / 1000 + 5)
         except httpx.TimeoutException as exc:
@@ -327,7 +341,9 @@ class RdflibSparqlBackend:
         self.graph.parse(data=turtle, format="turtle")
 
     def query(self, text: str, params: dict[str, Any] | None = None, *, deadline_ms: int | None = None,
-              max_rows: int | None = None) -> SparqlResult:
+              max_rows: int | None = None, dataset: dict[str, list[str]] | None = None) -> SparqlResult:
+        if dataset:  # the embedded engine has a single graph: no protocol dataset selection
+            raise SparqlRejected("DATASET_NOT_SUPPORTED", "default-graph-uri/named-graph-uri need an RDF server backend")
         text = bind_parameters(text, params)
         kind = validate_query(text)
         rows = min(max_rows or self.max_rows, self.max_rows)

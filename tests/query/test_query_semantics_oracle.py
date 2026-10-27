@@ -388,13 +388,13 @@ def test_cra_024_7_sparql_protocol():
     assert status_ask == 200
     assert json.loads(body_ask).get("boolean") is True
 
-    # 4. Ungoverned update rejected
+    # 4. Updates rejected: the endpoint is read-only (D-CRA-024-02: 400 per the SPARQL 1.1 Protocol)
     status_upd, _, _ = handler.handle_request(
         method="POST",
         headers={"Content-Type": "application/sparql-update"},
         body="INSERT DATA { <urn:s> <urn:p> <urn:o> }",
     )
-    assert status_upd == 403
+    assert status_upd == 400
 
     # 5. Unbounded property path strictly rejected with 422 UNSUPPORTED_CAPABILITY
     status_path, _, body_path = handler.handle_request(

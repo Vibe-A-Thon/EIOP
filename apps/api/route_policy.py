@@ -62,7 +62,7 @@ READ = (
     r"surprises|what-if)",
     r"/api/v1/(impact|lineage|path|neighborhood|traceability|lens/[^/]+)",
     r"/api/v1/(rag|rag/query)", r"/api/v1/retrieval/search", r"/api/v1/search/faceted",
-    r"/api/v1/federation/query", r"/api/v1/suggest/?", r"/api/v1/suggest/interpret",
+    r"/api/v1/federation/query", r"/api/v1/sparql", r"/api/v1/suggest/?", r"/api/v1/suggest/interpret",
     r"/(api/v1/)?brain/(ask|query|intelligent-query|narrate|llm/(explain|tokenize|embed|generate|stream))",
     r"/api/v1/causal/.*", r"/api/v1/playback/(evidence|stream)", r"/api/v1/process/deviations",
     r"/api/v1/(ontology/diff|ontology/validate/shacl|ontology/gitops/(diff|impact|validate))",

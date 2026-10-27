@@ -84,3 +84,33 @@ SP2Bench found three defects in the EOIP layer, all fixed and covered offline by
 * EOIP sent Fuseki's `timeout` in milliseconds, but Fuseki reads it as seconds. Over-budget queries kept running on the server for hours after the client gave up; they are now cancelled at the deadline.
 * GraphDB answers an expired query with HTTP 200 and partial rows, flagged only in `X-GraphDB-Warning`. EOIP returned those partial rows as the answer. They are now reported as a 504.
 * GraphDB 10.7 sometimes fails an interrupted query with a 500 (NullPointerException) at the deadline. EOIP now treats a 500 at the deadline as a cancellation and keeps it a backend error otherwise.
+
+## SPARQL 1.1 Protocol endpoint (CRA-024.7; D-CRA-024-02, D-CRA-024-04)
+
+`GET|POST /api/v1/sparql` (`packages/eoip/query/sparql_router.py`) is a read-only SPARQL 1.1 Protocol
+query service:
+
+* `GET ?query=`, `POST application/x-www-form-urlencoded`, `POST application/sparql-query`; protocol
+  dataset parameters `default-graph-uri` / `named-graph-uri` are forwarded to the engine.
+* Results: SPARQL JSON, XML, CSV, TSV by `Accept` (q-values honoured; none / `*/*` gives JSON; 406 when
+  nothing acceptable; CSV/TSV are not offered for ASK).
+* Read-only: updates (GET `update=`, form `update=`, `application/sparql-update`) are 400; methods other than
+  GET/POST are 405 (`Allow: GET, POST`); other media types 415; two `query` parameters or non-UTF-8 input 400.
+* Auth: no anonymous access (the API middleware answers 401 without a login session or API token); the
+  route checks the `route_policy` read tier for GET and POST (viewer and above; deny by default).
+* Tenancy: the engine dataset is `EOIP_SPARQL_ENDPOINT` with `{tenant}` replaced by the verified principal's
+  tenant (platform superadmins without a tenant get `default`); request headers/parameters never choose it.
+  `EOIP_SPARQL_BACKEND` = `fuseki` | `graphdb`; `EOIP_SPARQL_USER` / `EOIP_SPARQL_PASSWORD`. Unconfigured: 503.
+
+W3C protocol suite (`sparql11/protocol/manifest.ttl`, 34 tests, `tests/query/test_w3c_sparql11_protocol.py`,
+run through the real app with a viewer session token):
+
+| Engine | Pass | Rejected by design | Fail |
+|---|---|---|---|
+| Fuseki 5.1.0 | 25 | 9 | 0 |
+| GraphDB Free 10.7.6 | 25 | 9 | 0 |
+
+Rejected by design (verified on the response): 7 update tests (endpoint is read-only, 400) and the
+CONSTRUCT / DESCRIBE content-type tests (graph results are outside the supported subset, 422). Note that the
+`bad_update_*` tests pass because every update is refused before parsing; they are not evidence of update
+handling.

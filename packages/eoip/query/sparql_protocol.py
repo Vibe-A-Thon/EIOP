@@ -54,6 +54,44 @@ def _tsv_term(val: Optional[dict[str, Any]]) -> str:
     return f'"{esc}"'
 
 
+_FORMATS = {
+    "application/sparql-results+json": "json", "application/json": "json",
+    "application/sparql-results+xml": "xml", "application/xml": "xml", "text/xml": "xml",
+    "text/csv": "csv", "text/tab-separated-values": "tsv",
+}
+
+
+def negotiate(accept: str, *, ask: bool = False) -> Optional[str]:
+    """HTTP content negotiation over the SPARQL results formats (q-values honoured; ties keep the
+    client's order). No Accept header, or ``*/*``, gives JSON. ``None`` means 406. CSV/TSV are not
+    defined for ASK results."""
+    if not accept.strip():
+        return "json"
+    offered = [f for f in ("json", "xml", "csv", "tsv") if not (ask and f in ("csv", "tsv"))]
+    best: tuple[float, int, str] | None = None
+    for i, part in enumerate(accept.split(",")):
+        bits = [b.strip() for b in part.split(";")]
+        mime, q = bits[0].lower(), 1.0
+        for b in bits[1:]:
+            if b.startswith("q="):
+                try:
+                    q = float(b[2:])
+                except ValueError:
+                    q = 0.0
+        if q <= 0:
+            continue
+        if mime in ("*/*", "application/*"):
+            cands = ["json"]
+        elif mime == "text/*":
+            cands = [f for f in ("csv", "tsv", "xml") if f in offered][:1]
+        else:
+            cands = [_FORMATS[mime]] if _FORMATS.get(mime) in offered else []
+        for c in cands:
+            if best is None or q > best[0]:
+                best = (q, i, c)
+    return best[2] if best else None
+
+
 class SparqlProtocolHandler:
     """SPARQL 1.1 Protocol handler for GET and POST /sparql endpoints."""
 
@@ -86,80 +124,91 @@ class SparqlProtocolHandler:
         method: str,
         path: str = "/sparql",
         headers: Optional[dict[str, str]] = None,
-        query_params: Optional[dict[str, str]] = None,
+        query_params: Optional[dict[str, Any]] = None,
         body: Optional[str | bytes] = None,
     ) -> tuple[int, dict[str, str], str]:
-        """Processes GET or POST /sparql request and returns (status_code, headers, body)."""
+        """One SPARQL 1.1 Protocol query operation; returns (status_code, headers, body).
+
+        ``query_params`` maps a URL parameter to a value or a list of values (repeated parameters matter:
+        two ``query`` values are a 400). The endpoint is read-only: an update by GET or POST is a 400.
+        """
         headers = {k.lower(): v for k, v in (headers or {}).items()}
-        query_params = query_params or {}
+        params = {k: (list(v) if isinstance(v, (list, tuple)) else [v]) for k, v in (query_params or {}).items()}
+        text = {"Content-Type": "text/plain; charset=utf-8"}
+        verb = method.upper()
+        if verb not in ("GET", "POST"):
+            return 405, {**text, "Allow": "GET, POST"}, "Method Not Allowed: the SPARQL query operation is GET or POST"
 
-        # 1. Extract query string
-        query_str = ""
-        is_update = False
-
-        if method.upper() == "GET":
-            query_str = query_params.get("query", "")
-            if not query_str and "update" in query_params:
-                return 400, {"Content-Type": "text/plain"}, "SPARQL UPDATE is not permitted via HTTP GET"
-        elif method.upper() == "POST":
-            content_type = headers.get("content-type", "").split(";")[0].strip().lower()
-            if content_type == "application/sparql-query":
-                query_str = body.decode("utf-8") if isinstance(body, bytes) else (body or "")
-            elif content_type == "application/sparql-update":
-                query_str = body.decode("utf-8") if isinstance(body, bytes) else (body or "")
-                is_update = True
-            elif content_type == "application/x-www-form-urlencoded":
-                decoded_body = body.decode("utf-8") if isinstance(body, bytes) else (body or "")
-                parsed = urllib.parse.parse_qs(decoded_body)
-                if "query" in parsed:
-                    query_str = parsed["query"][0]
-                elif "update" in parsed:
-                    query_str = parsed["update"][0]
-                    is_update = True
-            else:
-                return 415, {"Content-Type": "text/plain"}, f"Unsupported Media Type: {content_type}"
+        if verb == "GET":
+            fields = params
         else:
-            return 405, {"Content-Type": "text/plain"}, "Method Not Allowed"
-
+            content_type = headers.get("content-type", "").split(";")[0].strip().lower()
+            try:
+                raw = body.decode("utf-8") if isinstance(body, bytes) else (body or "")
+            except UnicodeDecodeError:
+                return 400, text, "Request body is not UTF-8"
+            if content_type == "application/x-www-form-urlencoded":
+                try:
+                    fields = urllib.parse.parse_qs(raw, keep_blank_values=True, strict_parsing=False,
+                                                   encoding="utf-8", errors="strict")
+                except UnicodeDecodeError:
+                    return 400, text, "Form fields are not UTF-8"
+            elif content_type == "application/sparql-query":
+                fields = {**params, "query": [raw]}
+            elif content_type == "application/sparql-update":
+                fields = {**params, "update": [raw]}
+            else:
+                return 415, text, (f"Unsupported Media Type: {content_type or '(none)'}; use "
+                                   "application/x-www-form-urlencoded or application/sparql-query")
+        if fields.get("update") or fields.get("using-graph-uri") or fields.get("using-named-graph-uri"):
+            return 400, text, "This SPARQL endpoint is read-only: update operations are not accepted (CRA-024.7)"
+        queries = fields.get("query") or []
+        if len(queries) > 1:
+            return 400, text, "Exactly one 'query' parameter is allowed"
+        query_str = queries[0] if queries else ""
         if not query_str.strip():
-            return 400, {"Content-Type": "text/plain"}, "Missing SPARQL query parameter"
+            return 400, text, "Missing SPARQL query parameter"
+        dataset = {k: fields[k] for k in ("default-graph-uri", "named-graph-uri") if fields.get(k)}
 
-        # 2. Check update governance
-        if is_update and not self.enable_updates:
-            return 403, {"Content-Type": "text/plain"}, "SPARQL Update is disabled or ungoverned (CRA-024.7)"
-
-        # 3. Validate query against manifest and unbounded property path check
+        # Validate query against manifest and unbounded property path check
         try:
             self.manifest_registry.check_query_constructs("SPARQL", query_str)
             self.check_unbounded_paths(query_str)
         except UnsupportedCapabilityError as exc:
             return 422, {"Content-Type": "application/json"}, json.dumps(exc.to_dict())
 
-        # 4. Determine response format
-        accept = headers.get("accept", "application/sparql-results+json")
-
-        # 5. Execute query on a real engine
-        from eoip.query.sparql_backend import SparqlBackendError, SparqlCancelled, SparqlRejected
+        from eoip.query.sparql_backend import SparqlBackendError, SparqlCancelled, SparqlRejected, validate_query
 
         try:
-            bindings, vars_list, is_ask, ask_result = self._execute_sparql(query_str)
+            kind = validate_query(query_str)
+        except SparqlRejected as exc:
+            status = 400 if exc.code in ("PARSE_ERROR", "BACKEND_REJECTED_QUERY") else 422
+            if exc.code == "UPDATE_NOT_PERMITTED":
+                status = 400
+            return status, {"Content-Type": "application/json"}, json.dumps(exc.to_dict())
+        fmt = negotiate(headers.get("accept", ""), ask=kind == "ASK")
+        if fmt is None:
+            return 406, text, ("Not Acceptable: results are available as application/sparql-results+json, "
+                               "application/sparql-results+xml" + ("" if kind == "ASK" else
+                                                                   ", text/csv, text/tab-separated-values"))
+
+        try:
+            bindings, vars_list, is_ask, ask_result = self._execute_sparql(query_str, dataset)
         except SparqlRejected as exc:
             # Malformed queries are a 400 per the SPARQL 1.1 Protocol; supported-subset refusals are 422.
-            status = 400 if exc.code in ("PARSE_ERROR", "BACKEND_REJECTED_QUERY") else 422
+            status = 400 if exc.code in ("PARSE_ERROR", "BACKEND_REJECTED_QUERY", "DATASET_NOT_SUPPORTED") else 422
             return status, {"Content-Type": "application/json"}, json.dumps(exc.to_dict())
         except SparqlCancelled as exc:
-            return 504, {"Content-Type": "text/plain"}, f"Query cancelled: {exc}"
+            return 504, text, f"Query cancelled: {exc}"
         except (_NoBackend, SparqlBackendError) as exc:
-            return 503, {"Content-Type": "text/plain"}, f"RDF backend unavailable: {exc}"
+            return 503, text, f"RDF backend unavailable: {exc}"
         except Exception as exc:  # noqa: BLE001
-            return 400, {"Content-Type": "text/plain"}, f"SPARQL Execution Error: {exc}"
+            return 400, text, f"SPARQL Execution Error: {exc}"
 
-        # 6. Format response
         if is_ask:
-            resp_body, ct = self._format_ask(ask_result, accept)
+            resp_body, ct = self._format_ask(ask_result, fmt)
         else:
-            resp_body, ct = self._format_results(vars_list, bindings, accept)
-
+            resp_body, ct = self._format_results(vars_list, bindings, fmt)
         return 200, {"Content-Type": ct}, resp_body
 
     def _backend(self):
@@ -174,26 +223,27 @@ class SparqlProtocolHandler:
         return FusekiSparqlBackend(b.endpoint_url, username=getattr(b, "username", ""),
                                    password=getattr(b, "password", ""))
 
-    def _execute_sparql(self, query: str) -> tuple[list[dict[str, Any]], list[str], bool, bool]:
+    def _execute_sparql(self, query: str, dataset: Optional[dict[str, list[str]]] = None
+                        ) -> tuple[list[dict[str, Any]], list[str], bool, bool]:
         """Execute on the configured RDF backend (Fuseki/GraphDB over the protocol, or rdflib). There is
         no fabricated fallback: without a backend the endpoint answers 503."""
         backend = self._backend()
         if backend is None:
             raise _NoBackend("no RDF backend is configured for /sparql")
-        res = backend.query(query)
+        res = backend.query(query, dataset=dataset) if dataset else backend.query(query)
         if res.kind == "ASK":
             return [], [], True, bool(res.boolean)
         return res.bindings, res.vars, False, False
 
     def _format_results(self, vars_list: list[str], bindings: list[dict[str, Any]], accept: str) -> tuple[str, str]:
-        if "json" in accept or "*/*" in accept:
+        if accept == "json":
             payload = {
                 "head": {"vars": vars_list},
                 "results": {"bindings": bindings},
             }
             return json.dumps(payload, indent=2), "application/sparql-results+json"
 
-        if "xml" in accept:  # SPARQL 1.1 Query Results XML Format
+        if accept == "xml":  # SPARQL 1.1 Query Results XML Format
             root = ET.Element("sparql", xmlns="http://www.w3.org/2005/sparql-results#")
             head = ET.SubElement(root, "head")
             for v in vars_list:
@@ -217,7 +267,7 @@ class SparqlProtocolHandler:
                     el.text = val.get("value", "")
             return ET.tostring(root, encoding="unicode"), "application/sparql-results+xml"
 
-        if "csv" in accept:  # SPARQL 1.1 Query Results CSV: plain values, RFC 4180 quoting, _: bnodes
+        if accept == "csv":  # SPARQL 1.1 Query Results CSV: plain values, RFC 4180 quoting, _: bnodes
             buf = io.StringIO()
             w = csv.writer(buf, lineterminator="\r\n")
             w.writerow(vars_list)
@@ -225,7 +275,7 @@ class SparqlProtocolHandler:
                 w.writerow([_csv_value(b.get(v)) for v in vars_list])
             return buf.getvalue(), "text/csv"
 
-        if "tab-separated-values" in accept or "tsv" in accept:  # TSV: terms in SPARQL/Turtle syntax
+        if accept == "tsv":  # TSV: terms in SPARQL/Turtle syntax
             header = "\t".join(f"?{v}" for v in vars_list)
             rows = ["\t".join(_tsv_term(b.get(v)) for v in vars_list) for b in bindings]
             return "\n".join([header] + rows) + "\n", "text/tab-separated-values"
@@ -238,7 +288,7 @@ class SparqlProtocolHandler:
         return json.dumps(payload, indent=2), "application/sparql-results+json"
 
     def _format_ask(self, result: bool, accept: str) -> tuple[str, str]:
-        if "xml" in accept:
+        if accept == "xml":
             root = ET.Element("sparql", xmlns="http://www.w3.org/2005/sparql-results#")
             b = ET.SubElement(root, "boolean")
             b.text = "true" if result else "false"
