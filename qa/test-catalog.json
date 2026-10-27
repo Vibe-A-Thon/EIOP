@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 492,
-    "test_definitions": 4626
+    "files": 494,
+    "test_definitions": 4636
   },
   "categories": {
     "acceptance": {
@@ -67,8 +67,8 @@
       "test_definitions": 21
     },
     "query": {
-      "files": 6,
-      "test_definitions": 54
+      "files": 8,
+      "test_definitions": 64
     },
     "research": {
       "files": 2,
@@ -622,9 +622,19 @@
       "test_definitions": 5
     },
     {
+      "path": "tests/query/test_sparql_endpoint_fixes.py",
+      "category": "query",
+      "test_definitions": 9
+    },
+    {
       "path": "tests/query/test_sparql_result_corpus.py",
       "category": "query",
       "test_definitions": 5
+    },
+    {
+      "path": "tests/query/test_w3c_sparql11_suite.py",
+      "category": "query",
+      "test_definitions": 1
     },
     {
       "path": "tests/research/test_competitive_research_acceptance.py",
