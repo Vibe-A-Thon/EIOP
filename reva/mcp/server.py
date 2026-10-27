@@ -264,7 +264,7 @@ def reva_verify_proof(warrant_id: str, tenant_id: str = "default") -> Dict[str, 
     w = kernel.get(tenant_id, "mcp", warrant_id)
     idx = w.envelope.log.leaf_index
     size = kernel.translog.size(log_id)
-    proof = kernel.translog.inclusion_proof(log_id, idx, size)
+    kernel.translog.inclusion_proof(log_id, idx, size)
     return {
         "leaf_index": idx,
         "log_id": log_id,

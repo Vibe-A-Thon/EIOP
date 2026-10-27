@@ -7,7 +7,8 @@ from __future__ import annotations
 
 import hashlib
 import re
-from typing import List, Sequence
+from typing import List
+from collections.abc import Sequence
 
 
 class NormalizedInstructionFuzzyHasher:

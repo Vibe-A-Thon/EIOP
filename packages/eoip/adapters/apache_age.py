@@ -39,6 +39,8 @@ class CypherToAgeSqlBuilder:
     def __init__(self, graph: str = "eoip", schema: str = "ag_catalog"):
         if not _IDENTIFIER_RE.fullmatch(graph):
             raise ValueError(f"Unsafe AGE graph name: {graph!r}")
+        if not _IDENTIFIER_RE.fullmatch(schema):
+            raise ValueError(f"Unsafe AGE schema name: {schema!r}")
         self.graph = graph
         self.schema = schema
 
@@ -50,7 +52,7 @@ class CypherToAgeSqlBuilder:
                 "or control characters present)"
             )
         columns = ", ".join(f"{name} agtype" for name, _ in returns) or "a agtype"
-        return (
+        return (  # nosec B608 - graph/schema are _IDENTIFIER_RE-validated, cypher body validated by _SAFE_CYPHER, values escaped
             f"SELECT * FROM {self.schema}.cypher({self.graph!r}, $${body}$$) "
             f"AS ({columns});"
         )
@@ -104,7 +106,7 @@ class CypherToAgeSqlBuilder:
     def count(self, kind: str = "V") -> str:
         if kind not in {"V", "E"}:
             raise ValueError("kind must be 'V' or 'E'")
-        return f"SELECT count(*) AS n FROM {self.schema}.{kind}_graph_view WHERE graph_name = '{self.graph}';"
+        return f"SELECT count(*) AS n FROM {self.schema}.{kind}_graph_view WHERE graph_name = '{self.graph}';"  # nosec B608 - schema/graph _IDENTIFIER_RE-validated, kind restricted to V/E
 
 
 _SAFE_CYPHER = re.compile(r"(?s)(?!.*\$\$)[^\x00-]+")

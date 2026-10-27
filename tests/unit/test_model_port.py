@@ -437,7 +437,7 @@ class TestCallersUseThePort:
         from eoip.models.port import DEFAULT_TELEMETRY
         from eoip.query import nl
 
-        monkeypatch.setattr(nl, "LocalModelProvider", lambda timeout=10: _Provider('{"bogus": 1}'))
+        monkeypatch.setattr(nl, "create_model_provider", lambda timeout=10: _Provider('{"bogus": 1}'))
         before = len(DEFAULT_TELEMETRY.calls)
         nl._model_plan("show services owned by team billing")
         assert DEFAULT_TELEMETRY.calls[before]["task"] == "extraction"

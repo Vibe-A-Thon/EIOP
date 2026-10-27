@@ -12,7 +12,8 @@ import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 from eoip.plugins.manifest import PluginUninstallPolicy
 
@@ -114,7 +115,6 @@ class PluginStateRepository:
             entry.enabled = False
             entry.permissions_revoked = True
 
-            action_taken = policy.retention
             if policy.retention == "delete":
                 # Clean up stored data
                 entry.state_data.clear()

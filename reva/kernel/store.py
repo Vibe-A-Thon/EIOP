@@ -529,7 +529,7 @@ class RevaStore:
             clauses.append("recorded_at <= ?")
             params.append(as_of_recorded)
 
-        sql = f"SELECT body, envelope FROM reva_warrants WHERE {' AND '.join(clauses)} ORDER BY recorded_at DESC LIMIT ? OFFSET ?"
+        sql = f"SELECT body, envelope FROM reva_warrants WHERE {' AND '.join(clauses)} ORDER BY recorded_at DESC LIMIT ? OFFSET ?"  # nosec B608 - clauses are static literals, every value bound via ? params
         params.extend([limit, offset])
 
         cur = self.conn.cursor()

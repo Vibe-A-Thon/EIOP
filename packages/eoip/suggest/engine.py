@@ -11,7 +11,8 @@ candidates for open-ended phrasing; results sourced from it are labeled
 from __future__ import annotations
 
 import itertools
-from typing import Any, Callable, Protocol
+from typing import Any, Protocol
+from collections.abc import Callable
 
 from eoip.contracts.query_plan import QueryPlan
 from eoip.suggest import parser

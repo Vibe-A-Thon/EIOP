@@ -180,7 +180,8 @@ def load_policy_yaml(text: str) -> list[PolicyStatement]:
     elif isinstance(data, dict):
         raw = data.get("policies", [])
     else:
-        raise ValueError("Policy document must be an object or list")
+        # Public contract (tests/unit/test_gui_policy_replacement.py): malformed documents raise ValueError.
+        raise ValueError("Policy document must be an object or list")  # noqa: TRY004
     if not isinstance(raw, list) or any(not isinstance(entry, dict) for entry in raw):
         raise ValueError("Policies must be a list of objects")
     statements = []

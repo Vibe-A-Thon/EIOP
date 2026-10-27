@@ -1,7 +1,8 @@
 """Settings override context manager for REVA tests."""
 
 from contextlib import contextmanager
-from typing import Any, Generator
+from typing import Any
+from collections.abc import Generator
 
 from reva.config import RevaSettings, clear_settings_cache, get_settings, set_settings
 

@@ -15,7 +15,8 @@ import re
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Protocol
+from typing import Any, Protocol
+from collections.abc import Callable
 
 log = logging.getLogger("eoip.moonshot.ontology_induction")
 
@@ -73,13 +74,13 @@ class SHACLShape:
     def to_turtle(self) -> str:
         lines = [
             f"eoip:{self.target_class}Shape",
-            f"    a sh:NodeShape ;",
+            "    a sh:NodeShape ;",
             f"    sh:targetClass eoip:{self.target_class} ;",
         ]
         if self.closed:
             lines.append("    sh:closed true ;")
         for prop in self.properties:
-            lines.append(f"    sh:property [")
+            lines.append("    sh:property [")
             lines.append(f"        sh:path eoip:{prop.path} ;")
             if prop.datatype:
                 lines.append(f"        sh:datatype xsd:{prop.datatype} ;")
@@ -87,7 +88,7 @@ class SHACLShape:
                 lines.append(f"        sh:minCount {prop.min_count} ;")
             if prop.max_count is not None:
                 lines.append(f"        sh:maxCount {prop.max_count} ;")
-            lines.append(f"    ] ;")
+            lines.append("    ] ;")
         if lines[-1].endswith(";"):
             lines[-1] = lines[-1][:-1] + "."
         return "\n".join(lines)
@@ -121,6 +122,9 @@ class LocalOllamaProvider:
     """Ollama-based local LLM provider."""
 
     def __init__(self, model: str = "llama3.1:8b", base_url: str = "http://localhost:11434") -> None:
+        from urllib.parse import urlsplit
+        if urlsplit(base_url).scheme not in ("http", "https"):
+            raise ValueError(f"LLM provider URL scheme must be http or https: {base_url!r}")
         self.model = model
         self.base_url = base_url
 
@@ -137,7 +141,7 @@ class LocalOllamaProvider:
             data=payload,
             headers={"Content-Type": "application/json"},
         )
-        with urllib.request.urlopen(req, timeout=120) as resp:
+        with urllib.request.urlopen(req, timeout=120) as resp:  # nosec B310 - scheme restricted to http/https in __init__
             result = json.loads(resp.read())
         return result.get("response", "")
 

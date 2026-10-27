@@ -41,7 +41,7 @@ class Version:
             return NotImplemented
         return self._key() == other._key()
 
-    def __lt__(self, other: "Version") -> bool:
+    def __lt__(self, other: Version) -> bool:
         base = (self.major, self.minor, self.patch)
         other_base = (other.major, other.minor, other.patch)
         if base != other_base:

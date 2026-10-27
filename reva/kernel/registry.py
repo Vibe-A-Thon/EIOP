@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Set, Type
+from typing import Any, Dict, List, Optional, Set, Type
+from collections.abc import Callable
 
 from pydantic import BaseModel
 from reva.core.errors import PredicateUnknownError

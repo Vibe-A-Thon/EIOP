@@ -28,7 +28,8 @@ where ``step`` is either a ``StepFn`` reused for every phase or a mapping
 
 from __future__ import annotations
 
-from typing import Any, Callable, Mapping
+from typing import Any
+from collections.abc import Callable, Mapping
 
 from eoip.loops.core import (
     GateVerdict,

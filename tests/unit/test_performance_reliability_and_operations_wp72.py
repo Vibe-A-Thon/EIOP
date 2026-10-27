@@ -254,7 +254,7 @@ def test_g2_rel_004_reconciliation_safe_to_rerun():
 def test_g2_rel_005_event_journal_corruption_detection():
     detector = JournalCorruptionDetector()
     h1 = detector.append_journal_entry("entry-1", {"action": "create_node"})
-    h2 = detector.append_journal_entry("entry-2", {"action": "update_node"}, prev_hash=h1)
+    detector.append_journal_entry("entry-2", {"action": "update_node"}, prev_hash=h1)
 
     ver = detector.verify_journal_integrity()
     assert ver["valid"] is True
@@ -284,10 +284,10 @@ def test_g2_rel_007_restore_preserves_checkpoints():
     store.upsert_vertex("Service", {"canonical_id": "svc:checkpoint", "name": "Checkpoint Svc"})
     with tempfile.TemporaryDirectory() as tmp_dir:
         backup_path = Path(tmp_dir) / "snapshot.json"
-        b_res = backup(store, tmp_dir, str(backup_path))
+        backup(store, tmp_dir, str(backup_path))
         
         target_store = MemoryGraphStore()
-        r_res = restore(target_store, tmp_dir, str(backup_path))
+        restore(target_store, tmp_dir, str(backup_path))
         assert target_store.count_vertices() == store.count_vertices()
         assert target_store.get_vertex_by_canonical_id("svc:checkpoint") is not None
 
@@ -321,7 +321,7 @@ def test_nfr_rel_002_backup_and_restore_procedure():
     store.upsert_vertex("Service", {"canonical_id": "svc:nfr-b", "name": "NFR Backup"})
     with tempfile.TemporaryDirectory() as tmp_dir:
         archive = Path(tmp_dir) / "nfr_backup.json"
-        b = backup(store, tmp_dir, str(archive))
+        backup(store, tmp_dir, str(archive))
         assert archive.exists()
         target_store = MemoryGraphStore()
         restore(target_store, tmp_dir, str(archive))
@@ -511,8 +511,8 @@ def test_mvp_fr_026_restore():
     store.upsert_vertex("Service", {"canonical_id": "svc:mvp-r", "name": "MVP Restore"})
     with tempfile.TemporaryDirectory() as tmp_dir:
         archive = Path(tmp_dir) / "mvp_restore.json"
-        b = backup(store, tmp_dir, str(archive))
+        backup(store, tmp_dir, str(archive))
         target_store = MemoryGraphStore()
-        r = restore(target_store, tmp_dir, str(archive))
+        restore(target_store, tmp_dir, str(archive))
         assert target_store.count_vertices() == store.count_vertices()
 

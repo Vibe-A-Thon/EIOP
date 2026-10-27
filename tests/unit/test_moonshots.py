@@ -251,7 +251,7 @@ def test_moonshot5_universal_transpiler_and_virtual_views():
 def test_moonshot8_neuro_symbolic_memory():
     agam = AdaptiveGraphAttentionMemory()
     mem1 = agam.record_interaction("Incident INC-123 was caused by Redis connection exhaustion", connected_entities=["Incident", "Redis"])
-    mem2 = agam.record_interaction("Deployment of auth service requires rolling update", connected_entities=["AuthService"])
+    agam.record_interaction("Deployment of auth service requires rolling update", connected_entities=["AuthService"])
 
     # Attention retrieval
     results = agam.retrieve_relevant("Redis incident connection")

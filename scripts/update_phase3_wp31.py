@@ -135,7 +135,7 @@ with open("KGF-MASTER-BACKLOG.md", "r", encoding="utf-8") as f:
 
 for req_id in mapping.keys():
     pattern = rf"- \[ \] (\*\*`?{req_id}`?\*\*|`{req_id}`)"
-    backlog = re.sub(pattern, rf"- [x] \1", backlog)
+    backlog = re.sub(pattern, r"- [x] \1", backlog)
 
 with open("KGF-MASTER-BACKLOG.md", "w", encoding="utf-8") as f:
     f.write(backlog)

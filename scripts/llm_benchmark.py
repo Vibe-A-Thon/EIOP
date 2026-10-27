@@ -45,7 +45,7 @@ def main() -> int:
         body = json.dumps({"model": a.model, "prompt": prompt, "stream": False,
                            "options": {"temperature": 0, "num_predict": 128}}).encode()
         req = urllib.request.Request(f"{a.url}/api/generate", data=body, headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=120) as resp:
+        with urllib.request.urlopen(req, timeout=120) as resp:  # nosec B310 - scheme validated against http/https allowlist above
             data = json.loads(resp.read())
         return data.get("response", ""), int(data.get("eval_count", 0))
 

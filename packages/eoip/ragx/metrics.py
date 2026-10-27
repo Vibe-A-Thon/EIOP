@@ -8,7 +8,8 @@ and benchmarks need no model.
 
 from __future__ import annotations
 
-from typing import Any, Iterable
+from typing import Any
+from collections.abc import Iterable
 
 
 def _as_ids(ranking: Iterable[Any]) -> list[str]:

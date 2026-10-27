@@ -3,7 +3,8 @@ from __future__ import annotations
 import json, os, threading
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Optional
+from collections.abc import Callable
 
 from eoip.capabilities.model import (
     CapabilityEntry,

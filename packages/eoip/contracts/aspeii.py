@@ -113,7 +113,8 @@ def _validate_json_value(value: Any, *, path: str, depth: int, node_count: list[
     if isinstance(value, dict):
         for key, item in value.items():
             if not isinstance(key, str):
-                raise ValueError(f"Object key at {path} must be a string")
+                # ValueError, not TypeError: pydantic turns only ValueError into ValidationError (422).
+                raise ValueError(f"Object key at {path} must be a string")  # noqa: TRY004
             try:
                 key.encode("utf-8")
             except UnicodeEncodeError as exc:
@@ -127,7 +128,8 @@ def _validate_json_value(value: Any, *, path: str, depth: int, node_count: list[
 
 def _validate_json_object(value: Any) -> dict[str, Any]:
     if not isinstance(value, dict):
-        raise ValueError("Action arguments and expected state must be JSON objects")
+        # ValueError, not TypeError: this runs inside a pydantic field_validator.
+        raise ValueError("Action arguments and expected state must be JSON objects")  # noqa: TRY004
     _validate_json_value(value, path="$", depth=0, node_count=[0])
     return value
 

@@ -11,7 +11,8 @@ import functools
 import threading
 import time
 from collections import defaultdict
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 
 class MetricsCollector:

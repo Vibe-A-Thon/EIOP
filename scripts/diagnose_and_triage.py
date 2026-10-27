@@ -31,7 +31,7 @@ for r in raw_reqs:
     if rid not in test_map:
         if rid.startswith("G2-") and (ROOT / g2_test).exists():
             test_map[rid] = [g2_test]
-        elif (rid.startswith("SR-") or rid.startswith("SR_")) and (ROOT / sr_test).exists():
+        elif (rid.startswith(("SR-", "SR_"))) and (ROOT / sr_test).exists():
             test_map[rid] = [sr_test]
         elif (rid.startswith("LOOP-") or "LOOP" in rid) and (ROOT / loops_test).exists():
             test_map[rid] = [loops_test]

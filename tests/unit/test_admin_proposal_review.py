@@ -154,5 +154,5 @@ def test_non_admin_cannot_decide_proposal(monkeypatch, tmp_path):
 
     assert response.status_code == 403
     assert api.get(
-        f"/api/v1/agents/proposals?status=PENDING", headers=_headers()
+        "/api/v1/agents/proposals?status=PENDING", headers=_headers()
     ).json()["proposals"]

@@ -22,7 +22,8 @@ from enum import Enum
 import json
 import math
 import random
-from typing import Any, Callable, Optional
+from typing import Any, Optional
+from collections.abc import Callable
 from uuid import uuid4
 
 from eoip.graph.store import GraphStore

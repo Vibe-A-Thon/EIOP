@@ -38,7 +38,7 @@ def test_cra_042_2_dataset_separation_and_no_merging():
     # Verify ND values exist and are preserved in competitive-research-matrix.csv
     with matrix_file.open("r", encoding="utf-8", errors="ignore") as f:
         reader = csv.reader(f)
-        header = next(reader)
+        next(reader)
         nd_found = False
         for row in reader:
             if "ND" in row or "nd" in row or any(c.strip() == "ND" for c in row):

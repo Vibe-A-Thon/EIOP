@@ -15,7 +15,8 @@ import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Iterable, Sequence
+from typing import Any
+from collections.abc import Iterable, Sequence
 
 from eoip.contracts.canonical import PrincipalType, TrustedScope
 from eoip.authz.pdp import (
@@ -114,7 +115,6 @@ class DerivationACLEvaluator:
                 return self._eval_cache[cache_key]
 
         # 3. Evaluate each hop along the path
-        effective_acls_set = set(scope.effective_acls)
         is_permitted = True
 
         for hop in path.hops:

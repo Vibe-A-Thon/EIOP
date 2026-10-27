@@ -26,7 +26,8 @@ import time
 import uuid
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 from eoip.tenancy.isolation import IsolationPlacement, IsolationRegistry
 

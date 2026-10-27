@@ -4,7 +4,7 @@
 
 The active application is created by `apps.api.main:create_app` and exposes OpenAPI at `/openapi.json`; the interactive schema browser is `/docs` when enabled. `apps/api/app.py` contains the injected-store graph/query app used by the main factory. Route declarations may be added by the factory and mounted routers, so runtime OpenAPI—not a static list in this guide—is authoritative for the deployed build. Route count changes with modules and configuration.
 
-Protected routes use a Bearer token configured through `EOIP_API_TOKEN`; the application rejects a missing/invalid token. The persistent API resolves an authenticated principal and uses it for user/tenant policy decisions. The API token must be at least 24 characters. Local container credentials are generated into ignored `deploy/.env`; host-only development must set a disposable token explicitly. Never put real tokens into URLs, example request bodies, logs, or committed files.
+Protected routes require an authenticated principal; the application rejects missing/invalid credentials with 401 (and insufficient roles with 403). There is no default account: principals are provisioned explicitly with `eoip-admin` (argon2id password login via `POST /api/v1/auth/login`, per-user `eoip_pat_...` API tokens) or through an `EOIP_ASG_FILE` token file, and the API refuses to start when no principal exists. `EOIP_API_TOKEN` is **not** a login credential: it is the outgoing service token used by the MCP facade, accepted by the API only when `eoip-admin from-env` maps it to a principal with `EOIP_API_TOKEN_ROLES` — without roles it grants nothing. See [Authentication and roles](authentication.md) for the full precedence. Local container credentials (admin password and the mapped service token) are generated into ignored `deploy/.env`; host-only development must provision a principal explicitly. Never put real tokens into URLs, example request bodies, logs, or committed files.
 
 Unauthenticated liveness/readiness probes are available at `/health/live` and `/health/ready`; Prometheus metrics are available at `/metrics`. Most functional APIs are under `/api/v1`. Use the generated OpenAPI schema for exact request/response models, parameters, and status codes.
 
@@ -30,14 +30,14 @@ The newly added REVA router uses `/api/reva/v1` when `REVA_ENABLED=true`, outsid
 
 ## Representative Calls
 
-Search and query examples use authenticated requests. The precise schemas are in `/openapi.json`.
+Search and query examples use authenticated requests. `TOKEN` below is any provisioned credential — a session token from `POST /api/v1/auth/login`, a per-user `eoip-admin issue-token` API token, or an `EOIP_ASG_FILE` entry. The precise schemas are in `/openapi.json`.
 
 ```bash
-curl -H "Authorization: Bearer $EOIP_API_TOKEN" \
+curl -H "Authorization: Bearer $TOKEN" \
 	"http://localhost:8000/api/v1/search?q=checkout&limit=10"
 
 curl -X POST http://localhost:8000/api/v1/query \
-	-H "Authorization: Bearer $EOIP_API_TOKEN" \
+	-H "Authorization: Bearer $TOKEN" \
 	-H "Content-Type: application/json" \
 	-d '{"intent":"SEARCH","anchors":["urn:eoip:service:checkout"],"max_depth":2,"result_limit":10,"evidence_mode":"FULL"}'
 ```

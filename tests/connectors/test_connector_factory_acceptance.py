@@ -18,7 +18,8 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Dict, List, Optional
+from collections.abc import Iterator
 import pytest
 
 from eoip.connectors.descriptor import (
@@ -175,7 +176,7 @@ def test_cra_004_5_provider_version_and_qualification_receipts():
 
 def test_cra_004_6_authoring_template_and_unknown_products_not_advertised():
     """CRA-004.6: Provide authoring templates and contract validation; unknown products not advertised."""
-    factory = ConnectionFactory.get_instance()
+    ConnectionFactory.get_instance()
     
     # Template descriptor
     template_desc = ConnectorDescriptor(

@@ -88,7 +88,7 @@ def test_cra_034_2_fidelity_preservation_semantics(populated_source):
     target_store = MemoryGraphStore()
 
     # Stage baseline
-    manifest = engine.stage_1_discover_and_pin(populated_source, "source://store-a", "target://store-b")
+    engine.stage_1_discover_and_pin(populated_source, "source://store-a", "target://store-b")
     engine.stage_4_staged_loading(populated_source, target_store)
     report = engine.stage_5_verify_equivalence(populated_source, target_store)
 
@@ -260,7 +260,7 @@ def test_cra_034_7_eight_stage_protocol_execution(populated_source):
     assert engine.current_stage == MigrationStage.STAGE_7_ATOMIC_CUTOVER
 
     # Stage 8: Rollback window
-    roll = engine.stage_8_rollback("Simulation test")
+    engine.stage_8_rollback("Simulation test")
     assert engine.active_routing == "source"
     assert engine.current_stage == MigrationStage.STAGE_8_ROLLBACK_WINDOW
 

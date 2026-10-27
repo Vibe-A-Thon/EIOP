@@ -59,7 +59,7 @@ class PackClass(BaseModel):
     description: str = ""
     extends_core: bool = False
     properties: dict[str, str] = Field(default_factory=dict)
-    relationships: dict[str, "PackRelationship"] = Field(default_factory=dict)
+    relationships: dict[str, PackRelationship] = Field(default_factory=dict)
 
 
 class PackRelationship(BaseModel):
@@ -113,7 +113,8 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8") as fh:
         data = yaml.safe_load(fh)
     if not isinstance(data, dict):
-        raise ValueError(f"{path}: expected a mapping at the document root")
+        # Documented contract (load_all_packs): invalid packs raise ValueError.
+        raise ValueError(f"{path}: expected a mapping at the document root")  # noqa: TRY004
     return data
 
 

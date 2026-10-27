@@ -11,7 +11,8 @@ import logging
 import random
 import time
 from dataclasses import dataclass, field
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
+from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
 

@@ -25,7 +25,8 @@ import logging
 import re
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 import defusedxml.ElementTree as ET
 import xml.etree.ElementTree as std_ET
@@ -455,7 +456,7 @@ class PlantUMLParser:
         )
 
         for idx, line in enumerate(lines):
-            if line.startswith("@startuml") or line.startswith("@enduml"):
+            if line.startswith(("@startuml", "@enduml")):
                 continue
 
             # Package / Container

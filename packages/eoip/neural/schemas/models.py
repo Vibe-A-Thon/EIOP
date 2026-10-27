@@ -58,7 +58,7 @@ class NeuralSchema(BaseModel):
         slots: Dict[str, SlotConstraint],
         planes: Optional[List[str]] = None,
         warrant_ref: Optional[str] = None,
-    ) -> "NeuralSchema":
+    ) -> NeuralSchema:
         """Factory method that computes canonical sch1_... ID deterministically."""
         body = {
             "name": name,

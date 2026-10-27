@@ -19,7 +19,8 @@ import re
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Optional
+from typing import Any, Optional
+from collections.abc import Callable
 
 
 class SourceExecutorMissing(RuntimeError):
@@ -50,7 +51,7 @@ def build_select(table: str, filters: dict[str, Any], projection: list[str]) -> 
             clauses.append(f"{ident} = %(p{i})s")
             params[f"p{i}"] = value
     where = (" WHERE " + " AND ".join(clauses)) if clauses else ""
-    return f"SELECT {cols} FROM {safe_identifier(table)}{where}", params
+    return f"SELECT {cols} FROM {safe_identifier(table)}{where}", params  # nosec B608 - all identifiers pass safe_identifier, values bound via pyformat params
 
 
 class SemanticsMode(str, Enum):
@@ -200,7 +201,6 @@ class OBDAFederationEngine:
         """Executes a federated join across local rows and remote source with null and partial degradation handling."""
         source = self.sources.get(remote_source_id)
         degraded: list[str] = []
-        drifted: list[str] = []
         freshness: dict[str, float] = {}
 
         if not source or not source.is_available:

@@ -163,7 +163,7 @@ class QueryIntelligence:
         }
 
     def _build_steps(self, plan: QueryPlan, stats: dict) -> list[PlanStep]:
-        v, avg_degree = stats["vertices"], stats["avg_degree"]
+        _v, avg_degree = stats["vertices"], stats["avg_degree"]
         if plan.intent == "SEARCH":
             return self._search_steps(plan, stats)
         depth = plan.max_depth
@@ -211,7 +211,7 @@ class QueryIntelligence:
         return steps
 
     def _search_steps(self, plan: QueryPlan, stats: dict) -> list[PlanStep]:
-        query = plan.anchors[0] if plan.anchors else ""
+        plan.anchors[0] if plan.anchors else ""
         filters = dict(plan.filters or {})
         label = filters.get("label")
         steps: list[PlanStep] = []

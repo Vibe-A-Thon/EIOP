@@ -14,7 +14,8 @@ import sys
 import time
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 logger = logging.getLogger("eoip.qualification.harness")
 
@@ -184,7 +185,7 @@ class QualificationEngine:
 
         # Aggregate across trials
         p95_values = [s.p95_ms for s in trial_stats]
-        p50_values = [s.p50_ms for s in trial_stats]
+        [s.p50_ms for s in trial_stats]
         mean_p95 = statistics.mean(p95_values)
         std_dev_p95 = statistics.stdev(p95_values) if len(p95_values) > 1 else 0.0
 

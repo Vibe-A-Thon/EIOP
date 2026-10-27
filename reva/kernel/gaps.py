@@ -192,7 +192,7 @@ def list_gaps(
         clauses.append("domain = ?")
         params.append(domain)
 
-    sql = f"SELECT record FROM reva_gap_heads WHERE {' AND '.join(clauses)} ORDER BY impact_score_bp DESC"
+    sql = f"SELECT record FROM reva_gap_heads WHERE {' AND '.join(clauses)} ORDER BY impact_score_bp DESC"  # nosec B608 - clauses are static literals, every value bound via ? params
     cur = store.conn.cursor()
     rows = cur.execute(sql, params).fetchall()
 

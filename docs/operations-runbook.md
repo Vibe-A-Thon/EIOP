@@ -39,7 +39,7 @@ Some domain modules use process-local state. Inventory the exact service before 
 
 | Symptom | Likely boundary to inspect | Safe next action |
 |---|---|---|
-| Token startup error | `EOIP_API_TOKEN` missing/too short in this process | Set a private valid token in the actual process/container environment; do not print it |
+| Token startup error | MCP facade's outgoing `EOIP_API_TOKEN` missing/too short in that process, or an unmapped token used against the API | Set a private valid token in the actual process/container environment and map it with `EOIP_API_TOKEN_ROLES` via `eoip-admin from-env` (see [Authentication](authentication.md)); do not print it |
 | Host cannot resolve `hugegraph-server` | Container DNS URL used outside Compose | Select disposable memory mode or configure a reachable persistent backend |
 | Web `/api` returns HTML/404 | Wrong frontend/proxy configuration | Check `EOIP_DEV_API_URL` for `apps/web`; alternate frontend has different wiring |
 | UI works until reload then needs token | Current in-memory browser credential handling | Reconnect; persistent suite SSO is a proposal, not current default behavior |

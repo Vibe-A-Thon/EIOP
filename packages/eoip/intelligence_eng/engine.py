@@ -21,7 +21,8 @@ import time
 from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 
 # ── Autonomy Levels (maps to the 14 control loops) ──────────────────
@@ -278,7 +279,6 @@ class TaskAnalyzer:
         }
 
     def analyze(self, query: str, context: dict[str, Any] | None = None) -> TaskAnalysis:
-        ctx = context or {}
         query_lower = query.lower()
         tokens = set(query_lower.split())
 
@@ -1029,7 +1029,6 @@ class SupervisoryLoop:
             metrics = self.monitor.start_loop(loop_id, current_strategy)
 
             t0 = time.time()
-            success = False
             output = None
             error_msg = None
 
@@ -1069,7 +1068,6 @@ class SupervisoryLoop:
                         raise ValueError(f"Verification gate rejected output from {current_strategy}")
 
                 self.monitor.finalize_loop(loop_id, "completed", duration_ms)
-                success = True
                 with self._lock:
                     self._consecutive_failures = 0
 

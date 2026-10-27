@@ -417,7 +417,7 @@ def main() -> None:
             L += [f"## {t['task_id']} [{t['priority']}] {t['title']}", "",
                   f"- **Source:** `{t['source']}` ({t['definition_site']}) · **Type:** {t['type']} · **Severity:** {t['derived_severity']}",
                   f"- **Now:** {t['current']['status']} / {t['current']['proof_tier']} (tests passed {t['current']['tests_passed']}, failed {t['current']['tests_failed']})",
-                  f"- **Gaps:** " + "; ".join(t["gaps"]),
+                  "- **Gaps:** " + "; ".join(t["gaps"]),
                   f"- **Depends on:** {', '.join(t['depends_on'])} · **Effort:** {t['estimated_effort']['hours']} h ({t['estimated_effort']['band']}, {t['estimated_effort']['confidence']} confidence)",
                   "", "<details><summary>Requirement text (verbatim)</summary>", "", "```text",
                   t["statement_verbatim"][:2500] + ("\n[… truncated, see requirement_tasks.json]" if len(t["statement_verbatim"]) > 2500 else ""),
@@ -456,7 +456,7 @@ def main() -> None:
          f"{len(ft.get('env_only_failures', []))} environment-only failure(s) remain.", ""]
     for t in ft.get("tasks", []):
         F += [f"## {t['id']} [{t['priority']}] {t['title']}", "",
-              f"| Field | Value |", "|---|---|",
+              "| Field | Value |", "|---|---|",
               f"| ID | {t['id']} (finding {t.get('finding') or 'n/a'}, epic {t.get('epic')}) |",
               f"| Type | {t['type']} |", f"| Priority | {t['priority']} |"]
         for key, label in [("description", "Description"), ("api_contracts", "API contracts"), ("data_model", "Data model"),

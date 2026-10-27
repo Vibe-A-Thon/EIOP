@@ -20,7 +20,8 @@ import re
 from collections import Counter
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 import time
 import uuid
 
@@ -711,7 +712,7 @@ class EnterpriseRAGSuite:
         chunks = self._retrieve_from_corpus(query, top_k=5)
         top_score = chunks[0].score if chunks else 0.5
         community_summary = EvidenceChunk(
-            chunk_id=f"community_c0",
+            chunk_id="community_c0",
             content=f"[Global Community Synthesis] High-level corpus rollup for '{query}'",
             source_type="community_summary",
             score=round(top_score * 0.95, 3),
@@ -803,7 +804,7 @@ class EnterpriseRAGSuite:
         table_score = round(chunks[0].score, 3) if chunks else 0.5
         tabular_chunk = EvidenceChunk(
             chunk_id=f"table_rec_{uuid.uuid4().hex[:6]}",
-            content=f"[SQL Record] {{'entity_id': 'ENT-101', 'status': 'ACTIVE', 'cost': 120.5}}",
+            content="[SQL Record] {'entity_id': 'ENT-101', 'status': 'ACTIVE', 'cost': 120.5}",
             source_type="structured_table",
             score=table_score,
         )
@@ -933,8 +934,8 @@ class EnterpriseRAGSuite:
         """Interleaving Retrieval with Chain-of-Thought (IRCoT)."""
         cot_steps = [
             f"Step 1: Understand primary entities in '{query}'",
-            f"Step 2: Retrieve relational links for identified entities",
-            f"Step 3: Synthesize final deductive conclusion",
+            "Step 2: Retrieve relational links for identified entities",
+            "Step 3: Synthesize final deductive conclusion",
         ]
         chunks = self._retrieve_from_corpus(query, top_k=3) + self._retrieve_from_graph(query, hops=1, limit=3)
         return RAGResult(

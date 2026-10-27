@@ -212,8 +212,8 @@ class TestCore004GraphOverGraph:
 
     def test_cross_layer_and_diff(self):
         engine = GraphOverGraphEngine()
-        ont_layer = engine.get_or_create_layer("core_ontology", LayerType.ONTOLOGY, priority=1)
-        inst_layer = engine.get_or_create_layer("live_instances", LayerType.INSTANCE, priority=2)
+        engine.get_or_create_layer("core_ontology", LayerType.ONTOLOGY, priority=1)
+        engine.get_or_create_layer("live_instances", LayerType.INSTANCE, priority=2)
 
         # Add cross layer edge
         engine.add_cross_layer_edge(

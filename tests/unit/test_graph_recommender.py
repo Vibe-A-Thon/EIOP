@@ -13,9 +13,9 @@ def graph():
     d1 = store.upsert_vertex("Document", {"canonical_id": "doc:orders-runbook", "name": "Orders Runbook", "path": "/docs/orders.md"})
     d2 = store.upsert_vertex("Document", {"canonical_id": "doc:payments-spec", "name": "Payments Architecture", "path": "/docs/payments.md"})
     p1 = store.upsert_vertex("Person", {"canonical_id": "usr:alice", "display_name": "Alice Smith"})
-    p2 = store.upsert_vertex("Person", {"canonical_id": "usr:bob", "display_name": "Bob Jones"})
+    store.upsert_vertex("Person", {"canonical_id": "usr:bob", "display_name": "Bob Jones"})
     w1 = store.upsert_vertex("WorkItem", {"canonical_id": "task:101", "issue_key": "ORD-101", "summary": "Fix checkout bug"})
-    t1 = store.upsert_vertex("Tag", {"canonical_id": "tag:checkout", "repo_id": "repo-1", "tag_name": "checkout"})
+    store.upsert_vertex("Tag", {"canonical_id": "tag:checkout", "repo_id": "repo-1", "tag_name": "checkout"})
 
     # Edges
     store.upsert_edge("DOCUMENTS", d1["vid"], s1["vid"], {})

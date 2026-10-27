@@ -342,8 +342,7 @@ def test_cra_013_a_three_level_provenance_and_deletion_hold_cascade():
     )
 
     assert result.status == "SUCCEEDED"
-    docs_by_name = {d.source_name: d for d in result.documents}
-    
+
     # Verify Level 1 EML
     root_eml = next(d for d in result.documents if d.format == "eml")
     assert root_eml.metadata["legal_hold"] is True

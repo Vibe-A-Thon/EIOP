@@ -17,7 +17,8 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
+from collections.abc import Iterator
 
 from eoip.contracts.source_event import PermissionMetadata, SourceEventV2, utc_now_iso
 

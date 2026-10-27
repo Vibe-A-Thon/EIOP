@@ -15,7 +15,8 @@ import hashlib
 import io
 import json
 import re
-from typing import Any, Dict, Generator, Iterable, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+from collections.abc import Generator, Iterable
 
 
 def calculate_checksum(data: bytes) -> str:

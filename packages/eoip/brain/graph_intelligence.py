@@ -15,7 +15,8 @@ import re
 import time
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Protocol, Sequence
+from typing import Any, Protocol
+from collections.abc import Sequence
 
 
 class _GraphStoreLike(Protocol):

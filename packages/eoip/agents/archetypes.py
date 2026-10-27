@@ -42,7 +42,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 import time
 import uuid
 
@@ -242,7 +243,7 @@ class ToolCallingAgent(BaseAgent):
 # 8. Function-Calling Agent: Schema-validated function execution
 class FunctionCallingAgent(BaseAgent):
     def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
-        schema = (context or {}).get("schema", {"type": "object", "properties": {"query": {"type": "string"}}})
+        (context or {}).get("schema", {"type": "object", "properties": {"query": {"type": "string"}}})
         return AgentResponse(
             agent_id=self.agent_id,
             agent_type="FunctionCallingAgent",
@@ -551,7 +552,7 @@ class SelfEvolvingAgent(BaseAgent):
 # 28. Self-Writing Agent: Synthesizes and tests executable code fixes
 class SelfWritingAgent(BaseAgent):
     def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
-        code_diff = f"--- a/config.py\n+++ b/config.py\n@@ -1 +1 @@\n-TIMEOUT = 5\n+TIMEOUT = 30"
+        code_diff = "--- a/config.py\n+++ b/config.py\n@@ -1 +1 @@\n-TIMEOUT = 5\n+TIMEOUT = 30"
         return AgentResponse(
             agent_id=self.agent_id,
             agent_type="SelfWritingAgent",
@@ -584,7 +585,7 @@ class MultiAgentSystem(BaseAgent):
 # 30. Swarm Agent: Atom in an emergent swarm
 class SwarmAgent(BaseAgent):
     def run(self, input_data: Any, context: dict[str, Any] | None = None) -> AgentResponse:
-        position = (context or {}).get("position", [0.0, 0.0])
+        (context or {}).get("position", [0.0, 0.0])
         # Flocking behavior step
         return AgentResponse(
             agent_id=self.agent_id,

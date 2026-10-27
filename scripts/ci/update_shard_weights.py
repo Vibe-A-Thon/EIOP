@@ -11,9 +11,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import xml.etree.ElementTree as ET
 from collections import defaultdict
 from pathlib import Path
+
+import defusedxml.ElementTree as ET
 
 
 def file_seconds(paths: list[Path]) -> dict[str, float]:

@@ -64,7 +64,7 @@ class ClaimsRegistry:
         cls,
         claims_yaml_path: Path | str,
         patent_yaml_path: Optional[Path | str] = None,
-    ) -> "ClaimsRegistry":
+    ) -> ClaimsRegistry:
         claims_p = Path(claims_yaml_path)
         if not claims_p.exists():
             return cls()

@@ -6,7 +6,8 @@ Hunts for structural knowledge gaps, quarantines conflicting claims, and synthes
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional
+from collections.abc import Sequence
 
 from reva.core.ids import contradiction_id, gap_id
 

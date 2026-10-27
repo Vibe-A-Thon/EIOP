@@ -5,10 +5,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-try:
-    from defusedxml import ElementTree
-except ImportError:
-    from xml.etree import ElementTree
+from defusedxml import ElementTree
 
 from eoip.jobs import write_json
 

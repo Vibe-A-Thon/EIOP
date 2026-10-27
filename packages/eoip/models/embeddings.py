@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import os
 import urllib.error
+import urllib.parse
 import urllib.request
 from typing import Protocol, runtime_checkable
 
@@ -59,6 +60,8 @@ class OllamaEmbeddingProvider:
     ) -> None:
         self._model = model or os.getenv("EOIP_OLLAMA_EMBED_MODEL", _DEFAULT_EMBED_MODEL)
         self._url = (url or os.getenv("EOIP_OLLAMA_URL", _DEFAULT_OLLAMA_URL)).rstrip("/")
+        if urllib.parse.urlsplit(self._url).scheme not in ("http", "https"):
+            raise ValueError(f"Embedding endpoint URL scheme must be http or https: {self._url!r}")
         self._timeout = timeout
         self._dim: int | None = None
 
@@ -82,7 +85,7 @@ class OllamaEmbeddingProvider:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(request, timeout=self._timeout) as response:
+            with urllib.request.urlopen(request, timeout=self._timeout) as response:  # nosec B310 - scheme restricted to http/https in __init__
                 data = json.loads(response.read().decode("utf-8"))
         except (urllib.error.URLError, TimeoutError, OSError, ValueError) as exc:
             raise ModelUnavailable(
@@ -107,7 +110,7 @@ class OllamaEmbeddingProvider:
 
     def health(self) -> bool:
         try:
-            with urllib.request.urlopen(f"{self._url}/api/tags", timeout=min(self._timeout, 5)):
+            with urllib.request.urlopen(f"{self._url}/api/tags", timeout=min(self._timeout, 5)):  # nosec B310 - scheme restricted to http/https in __init__
                 return True
         except (urllib.error.URLError, TimeoutError, OSError):
             return False

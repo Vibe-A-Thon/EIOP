@@ -131,7 +131,7 @@ def test_ms_12_collaborative_crdt_graph_studio():
     bob = CollaborativeGraphCRDT(peer_id="bob")
 
     # Alice adds a vertex and an edge
-    op_v1 = alice.add_vertex("srv-order", "Service", {"tier": "gold", "owner": "alice"})
+    alice.add_vertex("srv-order", "Service", {"tier": "gold", "owner": "alice"})
     bob.add_vertex("srv-pay", "Service", {"tier": "silver", "owner": "bob"})
 
     # Concurrent edits: Alice updates srv-order, Bob deletes srv-pay
@@ -287,7 +287,7 @@ def test_ms_27_usage_intelligence_metering():
         tenant_quotas={"tenant-alpha": {"QUERY_TOKENS": 10000.0, "API_CALLS": 500.0}}
     )
     rec1 = meter.record_usage("tenant-alpha", "QUERY_TOKENS", 1200.0, {"query_id": "q-1"})
-    rec2 = meter.record_usage("tenant-alpha", "API_CALLS", 10.0, {"route": "/api/v1/search"})
+    meter.record_usage("tenant-alpha", "API_CALLS", 10.0, {"route": "/api/v1/search"})
 
     assert rec1.receipt_hash
     assert meter.verify_receipt(rec1) is True

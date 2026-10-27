@@ -29,7 +29,7 @@ class InstalledRecord:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "InstalledRecord":
+    def from_dict(cls, data: dict) -> InstalledRecord:
         return cls(
             manifest=PackageManifest.model_validate(data["manifest"]),
             installed_at=data.get("installed_at"),

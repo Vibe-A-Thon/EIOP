@@ -14,7 +14,8 @@ import hashlib
 import importlib
 import math
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 import numpy as np
 
@@ -69,7 +70,7 @@ class HashBaseline:
 
     def get_training_loss(self) -> None:
         """The hash baseline has no training objective or observed loss."""
-        return None
+        return
 
 
 class AntiStubHarness:

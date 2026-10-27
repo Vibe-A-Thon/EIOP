@@ -12,7 +12,8 @@ import time
 import uuid
 from collections import deque
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 
 class StreamChannel(str, enum.Enum):

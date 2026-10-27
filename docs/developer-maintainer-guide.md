@@ -40,12 +40,14 @@ python -m pip install -e ".[dev]"
 npm --prefix apps/web ci
 ```
 
-For a disposable in-memory API, provide a token meeting the runtime's minimum length and select the memory graph backend:
+For a disposable in-memory API, provision a local principal first (the API fails closed with no principals; `EOIP_API_TOKEN` grants nothing unless mapped to roles via `eoip-admin from-env` — see [Authentication and roles](authentication.md)):
 
 ```powershell
-$env:EOIP_API_TOKEN = 'local-development-token-at-least-24-chars'
+$env:EOIP_API_TOKEN = 'local-development-token-at-least-32-chars'
+$env:EOIP_API_TOKEN_ROLES = 'analyst'
 $env:EOIP_GRAPH_BACKEND = 'memory'
 $env:EOIP_DATA_DIR = (Join-Path $PWD '.eoip-data')
+eoip-admin from-env
 python -m uvicorn apps.api.main:create_app --factory --host 127.0.0.1 --port 8000 --reload
 ```
 

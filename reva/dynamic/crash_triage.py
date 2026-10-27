@@ -33,7 +33,6 @@ class CrashTriageEngine:
         instruction_pointer: int,
         registers: Optional[Dict[str, int]] = None,
     ) -> CrashDiagnosticReport:
-        regs = registers or {}
 
         # 1. Stack Smash / Return address corruption: instruction pointer outside mapped code or non-canonical
         if signal in ("SIGSEGV", "SIGBUS") and (instruction_pointer == 0x41414141 or fault_address >= 0x7FFFFFFFFFFF):

@@ -345,9 +345,16 @@ RUNTIME_CHAT_PATHS = {
 
 def http_chat_adapter(name: str, runtime: str, *, url: str, model: str, caps: ModelCapabilities,
                       client_factory: Callable[[], Any] | None = None, timeout: float = 60.0) -> ModelAdapter:
-    """Adapter for an HTTP-served local runtime. ``client_factory`` lets tests inject a transport."""
+    """Adapter for an HTTP-served local runtime. ``client_factory`` lets tests inject a transport.
+
+    The endpoint URL is validated against the same local egress policy as
+    ``LocalModelProvider`` (CC3-001): http/https only, no redirects, allowlisted hosts only.
+    """
     if runtime not in RUNTIME_CHAT_PATHS:
         raise ValueError(f"no HTTP chat route for runtime {runtime!r}")
+    from eoip.models.provider import validate_model_endpoint_url
+
+    validate_model_endpoint_url(url)
     import httpx
 
     path = RUNTIME_CHAT_PATHS[runtime]

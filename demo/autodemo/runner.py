@@ -372,7 +372,7 @@ def _verify_rag(
         scenario_id = q.get("id", f"rag-{index}") if isinstance(q, dict) else f"rag-{index}"
         try:
             if not isinstance(q, dict) or not isinstance(q.get("question"), str):
-                raise ValueError("Scenario must be an object with a question")
+                raise TypeError("Scenario must be an object with a question")
             res = router.route(q["question"], pattern=q.get("pattern"))
             routed += 1
             result.record(
@@ -419,7 +419,7 @@ def _verify_agents(
         scenario_id = sc.get("id", f"agent-{index}") if isinstance(sc, dict) else f"agent-{index}"
         try:
             if not isinstance(sc, dict) or not isinstance(sc.get("question"), str):
-                raise ValueError("Scenario must be an object with a question")
+                raise TypeError("Scenario must be an object with a question")
             res = router.route(sc["question"], agent_type=sc.get("agent_type"))
             dispatched += 1
             result.record(
@@ -469,7 +469,7 @@ def _verify_laya(
         scenario_id = sc.get("id", f"laya-{index}") if isinstance(sc, dict) else f"laya-{index}"
         try:
             if not isinstance(sc, dict) or not isinstance(sc.get("question"), str):
-                raise ValueError("Scenario must be an object with a question")
+                raise TypeError("Scenario must be an object with a question")
             res = engine.analyze(
                 sc["question"],
                 capability=sc.get("capability", "entity_explanation"),
@@ -818,7 +818,7 @@ def main(argv: list[str] | None = None):
     duration = summary["duration_s"]
 
     print(f"\n{'=' * 60}")
-    print(f"  EOIP Demo - Meridian Financial Services")
+    print("  EOIP Demo - Meridian Financial Services")
     print(f"  {passed}/{total} passed, {failed} failed, {skipped} skipped in {duration}s")
     print(f"{'=' * 60}")
 

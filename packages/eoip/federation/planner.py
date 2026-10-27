@@ -26,7 +26,7 @@ from enum import Enum
 from pathlib import Path
 from threading import RLock
 from typing import Any, Protocol
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit
 from urllib.request import Request, urlopen
 
 from pydantic import BaseModel, Field
@@ -341,6 +341,9 @@ class RestSourceAdapter:
         health_url: str | None = None,
     ) -> None:
         self._capability = capability.model_copy(update={"adapter_kind": "rest"})
+        for endpoint in (url, health_url):
+            if endpoint is not None and urlsplit(endpoint).scheme not in ("http", "https"):
+                raise ValueError(f"REST source URL scheme must be http or https: {endpoint!r}")
         self._url = url
         self._method = method.upper()
         self._headers = dict(headers or {})
@@ -355,7 +358,7 @@ class RestSourceAdapter:
         if self._health_url is None:
             return True
         try:
-            with urlopen(Request(self._health_url, method="GET"), timeout=self._timeout_seconds) as response:
+            with urlopen(Request(self._health_url, method="GET"), timeout=self._timeout_seconds) as response:  # nosec B310 - scheme restricted to http/https in __init__
                 return 200 <= response.status < 500
         except (OSError, ValueError):
             return False
@@ -376,7 +379,7 @@ class RestSourceAdapter:
         else:
             data = json.dumps(payload).encode("utf-8")
             headers["Content-Type"] = "application/json"
-        with urlopen(Request(url, data=data, headers=headers, method=self._method), timeout=self._timeout_seconds) as response:
+        with urlopen(Request(url, data=data, headers=headers, method=self._method), timeout=self._timeout_seconds) as response:  # nosec B310 - scheme restricted to http/https in __init__
             body = response.read().decode("utf-8")
         parsed = json.loads(body) if body else []
         for part in self._rows_path:
@@ -432,7 +435,7 @@ class JdbcSourceAdapter:
         where = f" WHERE {' AND '.join(clauses)}" if clauses else ""
         with sqlite3.connect(self._database_path) as conn:
             conn.row_factory = sqlite3.Row
-            rows = conn.execute(f"SELECT {select} FROM {self._table}{where}", values).fetchall()
+            rows = conn.execute(f"SELECT {select} FROM {self._table}{where}", values).fetchall()  # nosec B608 - table/column/key identifiers _IDENT-validated, values bound via ? params
         return [dict(row) for row in rows]
 
 

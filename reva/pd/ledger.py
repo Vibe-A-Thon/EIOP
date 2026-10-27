@@ -46,30 +46,30 @@ class LedgerRecord:
     def to_markdown(self) -> str:
         """Render human-readable Markdown summary report."""
         lines = [
-            f"# REVA Proof-of-Done Ledger",
-            f"",
-            f"| Field | Value |",
-            f"|---|---|",
+            "# REVA Proof-of-Done Ledger",
+            "",
+            "| Field | Value |",
+            "|---|---|",
             f"| **Ledger ID** | `{self.ledger_id}` |",
             f"| **Commit** | `{self.commit}` |",
             f"| **Scope** | `{self.scope}` |",
             f"| **Complete** | `{'Yes (100%)' if self.complete else 'No'}` |",
             f"| **Evaluated At** | `{self.created_at}` |",
-            f"",
-            f"## Outcome Summary",
-            f"",
-            f"| Outcome | Count |",
-            f"|---|---|",
+            "",
+            "## Outcome Summary",
+            "",
+            "| Outcome | Count |",
+            "|---|---|",
         ]
         for k, v in self.summary.items():
             lines.append(f"| **{k.capitalize()}** | {v} |")
 
         lines.extend([
-            f"",
+            "",
             f"## Closure Decisions ({len(self.closures)})",
-            f"",
-            f"| Obligation Key | Outcome | Reasons |",
-            f"|---|---|---|",
+            "",
+            "| Obligation Key | Outcome | Reasons |",
+            "|---|---|---|",
         ])
 
         for c in sorted(self.closures, key=lambda x: x.obligation_key):

@@ -19,7 +19,8 @@ import re
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Generator, Optional
+from typing import Any, Optional
+from collections.abc import Callable, Generator
 
 from eoip.contracts.canonical import (
     CanonicalAssertion,
@@ -71,7 +72,7 @@ class ModelManifest:
 
     @classmethod
     def from_provider(cls, provider: Any, *, max_input_tokens: int | None = None,
-                      max_output_tokens: int = 256) -> "ModelManifest":
+                      max_output_tokens: int = 256) -> ModelManifest:
         """Manifest of a served local model: limits and revision from the runtime, budgets counted with
         the model's own tokenizer (CRA-026.10)."""
         info = provider.model_info()
@@ -319,7 +320,7 @@ class GraphRAGPipeline:
         runtime_endpoint: str = "http://localhost:11434",
         generator: Optional[Callable[[str, str], str]] = None,
         runtime: Any = None,
-        answer_store: Optional["AnswerStore"] = None,
+        answer_store: Optional[AnswerStore] = None,
     ) -> GroundedAnswer:
         """``generator(question, fenced_context) -> text`` is the model call (e.g. ``generate_via_port``).
 
@@ -489,8 +490,8 @@ class GraphRAGPipeline:
         scope: TrustedScope,
         cancel_token: Optional[Callable[[], bool]] = None,
         runtime: Any = None,
-        answer_store: Optional["AnswerStore"] = None,
-    ) -> "StreamSession":
+        answer_store: Optional[AnswerStore] = None,
+    ) -> StreamSession:
         """Answer streaming (CRA-026.3). With a runtime the chunks are the model's own streamed tokens;
         without one the extractive cited answer is streamed sentence by sentence. Nothing is simulated."""
         return StreamSession(self, question, raw_evidence, scope, cancel_token, runtime, answer_store)
@@ -505,7 +506,7 @@ class StreamSession:
 
     def __init__(self, pipeline: GraphRAGPipeline, question: str, raw_evidence: list[dict[str, Any]],
                  scope: TrustedScope, cancel_token: Optional[Callable[[], bool]], runtime: Any,
-                 answer_store: Optional["AnswerStore"]) -> None:
+                 answer_store: Optional[AnswerStore]) -> None:
         self.pipeline, self.question, self.scope = pipeline, question, scope
         self.raw_evidence, self.cancel_token, self.runtime, self.store = raw_evidence, cancel_token, runtime, answer_store
         self.state = "pending"

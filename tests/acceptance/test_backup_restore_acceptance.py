@@ -238,7 +238,6 @@ def test_cra_033_7_p1_rpo_rto_vs_p2_500m_triple_qualification():
 
 @pytest.mark.req("CRA-033")
 def test_cra_033_a_timed_independent_restore_and_adversarial_auth_check(populated_store):
-    start_time = time.perf_counter()
 
     # 1. Independent snapshot with full inventory
     backup_engine = EnterpriseBackupEngine(kms_key="master-prod-key")

@@ -14,7 +14,8 @@ import uuid
 from collections import defaultdict
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 from eoip.systems.pipeline_factory import PipelineSpec, PipelineStage
 

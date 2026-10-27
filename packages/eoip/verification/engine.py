@@ -14,7 +14,8 @@ import logging
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 logger = logging.getLogger("eoip.verification.engine")
 
@@ -199,8 +200,8 @@ class CognitiveDriftRule(VerificationRule):
 
     def check(self, output: Any, context: dict[str, Any] | None = None) -> VerificationResult:
         ctx = context or {}
-        initial_goal = ctx.get("initial_goal", "")
-        current_step = ctx.get("current_step", "")
+        ctx.get("initial_goal", "")
+        ctx.get("current_step", "")
         iteration = ctx.get("iteration", 0)
 
         if iteration > 15:

@@ -69,7 +69,7 @@ def parse(query: str) -> QLangPlan:
         steps.append({"name": m.group(1), "args": _args(m.group(2))})
     if not steps or steps[0]["name"] != "V":
         raise QLangParseError("Gremlin traversal must start with g.V()")
-    labels = [s["args"][0] for s in steps if s["name"] == "hasLabel" and s["args"]]
+    [s["args"][0] for s in steps if s["name"] == "hasLabel" and s["args"]]
     edge_labels = [a for s in steps if s["name"] in ("out", "in") for a in s["args"]]
     anchors = list(steps[0]["args"])
     limit = next(

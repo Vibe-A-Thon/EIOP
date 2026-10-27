@@ -132,7 +132,7 @@ def test_skos_xl_and_ontolex_lemon_profiles_and_unsupported_profile_rejection():
     tax.add_concept(scheme_id="lex-s", pref_label="Software", concept_id="concept-sw")
 
     # SKOS-XL label creation and binding
-    xl_label = tax.add_xl_label(
+    tax.add_xl_label(
         scheme_id="lex-s",
         literal_form="Software Application",
         language="en",
@@ -142,7 +142,7 @@ def test_skos_xl_and_ontolex_lemon_profiles_and_unsupported_profile_rejection():
     assert tax.concepts["concept-sw"].xl_labels["prefLabel"] == "xl-sw-pref"
 
     # Export under SKOS_XL profile
-    graph_xl = tax.to_rdflib_graph(profile=SKOSProfile.SKOS_XL)
+    tax.to_rdflib_graph(profile=SKOSProfile.SKOS_XL)
     turtle_xl = tax.export_serialization(format_name="turtle", profile=SKOSProfile.SKOS_XL)
     assert "skosxl:Label" in turtle_xl or "http://www.w3.org/2008/05/skos-xl#Label" in turtle_xl
     assert "skosxl:literalForm" in turtle_xl or "literalForm" in turtle_xl
@@ -329,7 +329,7 @@ def test_language_aware_search_unicode_normalization_rtl_safety_and_stable_ids()
 def test_serializer_integration_and_10k_concept_lossless_round_trip():
     """CRA-021.6, CRA-021.A: Lossless RDF serializer integration with 10k-concept benchmark."""
     tax = SkosTaxonomy()
-    scheme = tax.create_scheme("Scale Benchmark Scheme", scheme_id="scale-scheme")
+    tax.create_scheme("Scale Benchmark Scheme", scheme_id="scale-scheme")
 
     total_concepts = 10_000
     root_id = "concept-root"

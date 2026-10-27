@@ -43,7 +43,7 @@ def check_server_reachable(url: str, timeout: float = 1.5) -> bool:
         return False
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "QA-Bench-Probe"})
-        with urllib.request.urlopen(req, timeout=timeout) as res:
+        with urllib.request.urlopen(req, timeout=timeout) as res:  # nosec B310 - scheme validated against http/https allowlist above
             return res.status < 500
     except (urllib.error.URLError, OSError, TimeoutError):
         return False

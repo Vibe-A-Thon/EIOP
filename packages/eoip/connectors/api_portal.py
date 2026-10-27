@@ -55,7 +55,7 @@ class APIPortalConnector(RestConnector):
         """Reject unsupported binaries and untrusted executable content (CRA-007.5)."""
         if mime_type in EXECUTABLE_MIME_TYPES:
             raise ValueError(f"unsupported executable binary content rejected: {mime_type}")
-        if content.startswith(b"MZ") or content.startswith(b"\x7fELF"):
+        if content.startswith((b"MZ", b"\x7fELF")):
             raise ValueError("unsupported executable binary content rejected (magic bytes)")
 
     def sync(

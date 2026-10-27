@@ -16,7 +16,8 @@ import random
 import threading
 from collections import defaultdict
 from dataclasses import asdict, dataclass, field
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 logger = logging.getLogger("eoip.xai.engine")
 

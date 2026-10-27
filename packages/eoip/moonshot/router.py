@@ -37,7 +37,7 @@ def build_moonshot_router() -> APIRouter:
 
     # Singleton state holders for live API interactions
     state_machine = BitemporalStateMachine()
-    causal_sim = CausalGraphSimulator()
+    CausalGraphSimulator()
     drift_detector = GraphDriftDetector()
     remediation_engine = AutonomousRemediationEngine()
     transpiler = UniversalTranspiler()

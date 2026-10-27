@@ -69,7 +69,7 @@ def get_runtime() -> NeuralRuntime:
     device = "cpu"
     if has_torch:
         try:
-            torch = importlib.import_module("torch")
+            importlib.import_module("torch")
             # H-16: EOIP distributes CPU-only builds
             device = "cpu"
         except Exception:
@@ -114,7 +114,7 @@ def require_tier(required: NeuralTier) -> NeuralRuntime:
 def register_neural_capabilities() -> None:
     """Register numerical tiers into CapabilityRegistry."""
     reg = get_capability_registry()
-    rt = get_runtime()
+    get_runtime()
     
     tiers = [
         (NeuralTier.NUMERICS, "CRA-043.1", lambda: get_runtime().has_numpy),

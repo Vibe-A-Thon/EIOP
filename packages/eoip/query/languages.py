@@ -36,7 +36,7 @@ def parse_eoql(store: GraphStore, query: str) -> dict[str, Any]:
     if upper.startswith("AGGREGATE "):
         return _eoql_aggregate(store, q)
 
-    return {"error": f"Unknown EOQL statement. Supported: SELECT, TRAVERSE, AGGREGATE", "query": q}
+    return {"error": "Unknown EOQL statement. Supported: SELECT, TRAVERSE, AGGREGATE", "query": q}
 
 
 def _eoql_select(store: GraphStore, query: str) -> dict[str, Any]:
@@ -138,7 +138,7 @@ def parse_osql(store: GraphStore, query: str) -> dict[str, Any]:
     if upper.startswith("LIST DOMAINS"):
         return {"language": "OSQL", "operation": "LIST_DOMAINS",
                 "domains": DOMAINS, "count": len(DOMAINS)}
-    if upper.startswith("LIST RELATIONSHIPS") or upper.startswith("LIST EDGES"):
+    if upper.startswith(("LIST RELATIONSHIPS", "LIST EDGES")):
         return {"language": "OSQL", "operation": "LIST_RELATIONSHIPS",
                 "relationships": sorted(EDGE_LABELS.keys()),
                 "count": len(EDGE_LABELS)}

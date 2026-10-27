@@ -61,7 +61,7 @@ MCP flow: authenticated client -> MCP initialize/list/call -> local server/tool 
 
 ## Configuration and Deployment
 
-Graph configuration is in `config/graph-store.yaml` with environment overrides such as `EOIP_GRAPH_BACKEND`, graph URL/database/user/password variables. `EOIP_API_TOKEN` is required and must be at least 24 characters. `EOIP_DATA_DIR` selects file-backed state. Container launchers create `deploy/.env` on the first `up` and mount named data volumes.
+Graph configuration is in `config/graph-store.yaml` with environment overrides such as `EOIP_GRAPH_BACKEND`, graph URL/database/user/password variables. Authentication follows [Authentication and roles](authentication.md): there is no default account, principals come from the credential store (provisioned via `eoip-admin`) or `EOIP_ASG_FILE`, and the API refuses to start with no principals. `EOIP_API_TOKEN` is only the MCP facade's outgoing service token; it is accepted by the API solely when `eoip-admin from-env` maps it to a principal via `EOIP_API_TOKEN_ROLES` (unset/empty roles = grants nothing). `EOIP_DATA_DIR` selects file-backed state. Container launchers create `deploy/.env` on the first `up` and mount named data volumes.
 
 The default Compose stack is defined in `deploy/docker-compose.yml`; optional profiles include tests, local model, tools, restore testing, Neo4j, and observability. The network and storage model differs by profile. A local HugeGraph/worker/web run is not equivalent to a multi-worker PostgreSQL SaaS deployment.
 

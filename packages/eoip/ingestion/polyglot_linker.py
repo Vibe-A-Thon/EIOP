@@ -370,7 +370,7 @@ class PolyglotCrossRepoLinker:
         repo_aliases: dict[str, str] | None = None,
     ) -> dict[str, Any]:
         """Resolve and persist all cross-repository dependency edges."""
-        resolver = CrossRepoSymbolResolver(self.registry, repo_aliases)
+        CrossRepoSymbolResolver(self.registry, repo_aliases)
         edge_count = 0
         unresolved: list[str] = []
 

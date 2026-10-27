@@ -29,8 +29,8 @@ def test_durable_store_two_worker_claim_race(tmp_path: Path):
     store = DurableJobStore(db_file)
 
     # Submit 2 jobs
-    j1 = store.submit("SYNC_JIRA", {"project": "ALPHA"}, tenant_id="t1")
-    j2 = store.submit("SYNC_CONFLUENCE", {"space": "DOCS"}, tenant_id="t1")
+    store.submit("SYNC_JIRA", {"project": "ALPHA"}, tenant_id="t1")
+    store.submit("SYNC_CONFLUENCE", {"space": "DOCS"}, tenant_id="t1")
 
     # Worker 1 and Worker 2 claim
     claim1 = store.claim_job(worker_id="worker-1", lease_ttl_s=30.0)

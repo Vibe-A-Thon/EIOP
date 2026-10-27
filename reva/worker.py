@@ -8,7 +8,8 @@ import time
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Dict, List, Optional
+from collections.abc import Callable
 from pydantic import BaseModel, Field
 
 from reva.core.time import format_ts, parse_ts, utc_now_ms

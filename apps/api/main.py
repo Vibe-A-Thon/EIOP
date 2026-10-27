@@ -40,7 +40,7 @@ from eoip.contracts.source_registry import SourceCapabilities, SourceRegistryEnt
 from eoip.events.emitter import GraphEventEmitter
 from eoip.graph.evolution import ChangeJournal, GraphEvolutionEngine
 from eoip.jobs import JobQueue, write_json
-from eoip.models.provider import LocalModelProvider
+from eoip.models.provider import create_model_provider
 from eoip.observability import configure_json_logging
 from eoip.ontology.manifest import VERTEX_LABELS
 from eoip.ontology.rdf import export_jsonld, export_shacl_shapes, import_jsonld, validate_shacl
@@ -553,9 +553,11 @@ def create_app():
             ))
             # Destructive ontology gitops operations (shared global state) — SEC-002
             or _p.endswith("/merge")
-            or _p.startswith("/api/v1/ontology/gitops/rollback")
-            or _p.startswith("/api/v1/ontology/gitops/package-release")
-            or _p.startswith("/api/v1/ontology/gitops/migration")
+            or _p.startswith((
+                "/api/v1/ontology/gitops/rollback",
+                "/api/v1/ontology/gitops/package-release",
+                "/api/v1/ontology/gitops/migration",
+            ))
             # Marketplace install / build / uninstall — SEC-002
             or _p.startswith("/api/v1/marketplace/packages/install")
             or _p.startswith("/api/v1/marketplace/build/")
@@ -975,7 +977,7 @@ def create_app():
             except (OSError, ValueError, TypeError):
                 continue
 
-        model = LocalModelProvider(timeout=2)
+        model = create_model_provider(timeout=2)
         model_status = "disabled"
         if model.available:
             model_status = "ready" if model.health() else "unavailable"

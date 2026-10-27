@@ -202,8 +202,8 @@ def test_gap_nocode_visual_ontology_studio():
     assert project.mode == StudioMode.ANALYST
 
     # Add class nodes
-    order_node = project.add_class("Order", domain="SALES", description="Customer orders", x=100, y=200)
-    customer_node = project.add_class("Customer", domain="CRM", description="Client profiles", x=400, y=200)
+    project.add_class("Order", domain="SALES", description="Customer orders", x=100, y=200)
+    project.add_class("Customer", domain="CRM", description="Client profiles", x=400, y=200)
 
     # Add properties
     project.add_property_to_class("Order", "total_amount", property_type="DOUBLE", required=True)

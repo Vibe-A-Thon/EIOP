@@ -67,7 +67,6 @@ class PackageNameVerifier:
                 )
 
         # In pure offline / CI verification, verified against known internal naming list
-        is_canonical = name in {"eoip-python", "eoip"}
         return NameVerificationResult(
             package_name=name,
             target_registry="pypi",

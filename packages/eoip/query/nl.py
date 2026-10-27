@@ -15,7 +15,7 @@ from typing import Literal
 from eoip.contracts.query_plan import QueryPlan
 from eoip.graph.store import GraphStore
 from eoip.models.port import generate_via_port
-from eoip.models.provider import LocalModelProvider, ModelUnavailable
+from eoip.models.provider import ModelUnavailable, create_model_provider
 from pydantic import BaseModel, model_validator
 
 
@@ -264,7 +264,7 @@ def _plan(intent: str, anchors: list[str]) -> QueryPlan:
 
 
 def _model_plan(text: str) -> QueryPlan | None:
-    provider = LocalModelProvider(timeout=10)
+    provider = create_model_provider(timeout=10)
     if not provider.available:
         return None
     try:

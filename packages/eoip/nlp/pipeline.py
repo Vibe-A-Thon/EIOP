@@ -10,7 +10,8 @@ import math
 import re
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass, field
-from typing import Any, Iterable
+from typing import Any
+from collections.abc import Iterable
 
 from eoip.graph.store import GraphStore
 
@@ -78,7 +79,7 @@ class Gazetteer:
         return len(self._phrases)
 
     @classmethod
-    def from_store(cls, store: GraphStore, *, limit: int = 50_000) -> "Gazetteer":
+    def from_store(cls, store: GraphStore, *, limit: int = 50_000) -> Gazetteer:
         gz = cls()
         for v in store.find_vertices(limit=limit):
             props = v.get("properties", {})
@@ -131,7 +132,7 @@ class TfidfModel:
         self.df: Counter[str] = Counter()
         self.n_docs = 0
 
-    def fit(self, docs: Iterable[str]) -> "TfidfModel":
+    def fit(self, docs: Iterable[str]) -> TfidfModel:
         for d in docs:
             self.n_docs += 1
             self.df.update(set(tokenize(d)))
@@ -194,7 +195,7 @@ class NaiveBayesClassifier:
     def labels(self) -> list[str]:
         return sorted(self.class_docs)
 
-    def fit(self, samples: Iterable[tuple[str, str]]) -> "NaiveBayesClassifier":
+    def fit(self, samples: Iterable[tuple[str, str]]) -> NaiveBayesClassifier:
         for text, label in samples:
             self.class_docs[label] += 1
             toks = tokenize(text)
@@ -243,7 +244,7 @@ class ConceptRecommender:
         self.model = TfidfModel()
         self._vecs: dict[str, dict[str, float]] = {}
 
-    def fit(self, concepts: Iterable[dict[str, Any]]) -> "ConceptRecommender":
+    def fit(self, concepts: Iterable[dict[str, Any]]) -> ConceptRecommender:
         """concepts: {id, label, alt_labels?: [..], definition?: str}"""
         docs = {}
         for c in concepts:
@@ -256,7 +257,7 @@ class ConceptRecommender:
         return self
 
     @classmethod
-    def from_store(cls, store: GraphStore, *, limit: int = 50_000) -> "ConceptRecommender":
+    def from_store(cls, store: GraphStore, *, limit: int = 50_000) -> ConceptRecommender:
         seen: dict[str, dict[str, Any]] = {}
         for v in store.find_vertices(limit=limit):
             p = v.get("properties", {})
@@ -316,7 +317,7 @@ class LocalNLPPipeline:
         self.recommender = recommender
 
     @classmethod
-    def from_store(cls, store: GraphStore, **kwargs: Any) -> "LocalNLPPipeline":
+    def from_store(cls, store: GraphStore, **kwargs: Any) -> LocalNLPPipeline:
         docs = []
         for v in store.find_vertices(limit=50_000):
             p = v.get("properties", {})
@@ -478,7 +479,7 @@ class TopicModeler:
         self.num_topics = num_topics
         self.topics: list[Topic] = []
 
-    def fit(self, documents: list[str]) -> "TopicModeler":
+    def fit(self, documents: list[str]) -> TopicModeler:
         doc_tokens = [tokenize(d) for d in documents]
         vocab_counts = Counter(itertools.chain.from_iterable(doc_tokens))
         top_vocab = [w for w, _ in vocab_counts.most_common(50)]
@@ -560,7 +561,6 @@ class CoreferenceResolver:
 
     def resolve(self, text: str) -> list[CoreferenceCluster]:
         sentences = re.split(r"(?<=[.!?])\s+", text)
-        entities_found: list[str] = []
         clusters: dict[str, list[str]] = defaultdict(list)
         spans: dict[str, list[tuple[int, int]]] = defaultdict(list)
 

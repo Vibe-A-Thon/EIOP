@@ -160,7 +160,7 @@ class PolyglotQueryEngine:
         low = q.lower()
 
         # 1. Prometheus / LogQL
-        if low.startswith("sum(rate(") or low.startswith("histogram_quantile(") or "by (instance)" in low:
+        if low.startswith(("sum(rate(", "histogram_quantile(")) or "by (instance)" in low:
             return QueryDialect.PROMQL
         if low.startswith("{app=") or "|=" in low or "| json" in low:
             return QueryDialect.LOGQL
@@ -170,7 +170,7 @@ class PolyglotQueryEngine:
             return QueryDialect.KQL_AZURE
 
         # 3. SPARQL variants & RDF
-        if low.startswith("insert data") or low.startswith("delete data") or "delete {" in low:
+        if low.startswith(("insert data", "delete data")) or "delete {" in low:
             return QueryDialect.SPARQL_UPDATE
         if "service <" in low or "service silent" in low:
             return QueryDialect.SPARQL_FEDERATED
@@ -188,11 +188,11 @@ class PolyglotQueryEngine:
             return QueryDialect.NL2QUERY
 
         # 4. Graph languages
-        if low.startswith("match") or low.startswith("merge") or low.startswith("create"):
+        if low.startswith(("match", "merge", "create")):
             if "graph_table" in low or "any shortest" in low:
                 return QueryDialect.GQL
             return QueryDialect.CYPHER
-        if low.startswith("g.v") or low.startswith("g.e"):
+        if low.startswith(("g.v", "g.e")):
             return QueryDialect.GREMLIN
         if low.startswith("for doc in") or "for v, e, p in" in low:
             return QueryDialect.AQL
@@ -200,9 +200,9 @@ class PolyglotQueryEngine:
             return QueryDialect.NGQL
         if low.startswith("interpret") or "select s from" in low:
             return QueryDialect.GSQL
-        if low.startswith("match $") or low.startswith("define") or "isa " in low:
+        if low.startswith(("match $", "define")) or "isa " in low:
             return QueryDialect.TYPEQL
-        if low.startswith("query {") or low.startswith("mutation {") or (low.startswith("{") and "query" in low):
+        if low.startswith(("query {", "mutation {")) or (low.startswith("{") and "query" in low):
             return QueryDialect.GRAPHQL
         if "{" in low and "dgraph" in low:
             return QueryDialect.DQL
@@ -250,15 +250,15 @@ class PolyglotQueryEngine:
             return QueryDialect.MONGO_MQL
         if "select" in low and "from type::table" in low:
             return QueryDialect.SURREALQL
-        if low.startswith("$.") or low.startswith("$["):
+        if low.startswith(("$.", "$[")):
             return QueryDialect.JSONPATH
-        if low.startswith(".[]") or low.startswith("."):
+        if low.startswith((".[]", ".")):
             return QueryDialect.JQ
 
         # 6. Enterprise internal
-        if low.startswith("find object") or low.startswith("eoql"):
+        if low.startswith(("find object", "eoql")):
             return QueryDialect.EOQL
-        if low.startswith("on event") or low.startswith("from stream"):
+        if low.startswith(("on event", "from stream")):
             return QueryDialect.EQL
         if "@prefix" in low or "owl:" in low:
             return QueryDialect.OWL

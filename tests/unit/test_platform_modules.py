@@ -294,7 +294,7 @@ class TestImportEngine:
     def test_transform_lowercase(self):
         csv_data = "name\nALICE"
         mappings = [ColumnMapping("name", "name", transform="lowercase")]
-        result = self.engine.import_csv(csv_data, "entity", mappings)
+        self.engine.import_csv(csv_data, "entity", mappings)
         records = self.engine.get_imported_records("entity")
         assert records[0]["name"] == "alice"
 

@@ -8,6 +8,7 @@ from __future__ import annotations
 import time
 
 import pytest
+from pydantic import ValidationError
 
 from eoip.egress import (
     ApprovalRequirement,
@@ -293,9 +294,9 @@ class TestManifest:
                          user_id="u1", role="analyst", data_classes=["D0"])
         m = result["manifest"]
         assert m is gw.manifests[-1]
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             m.bytes_out = 0
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             m.denied = True
         with pytest.raises(TypeError):
             m.fields.append("smuggled")
@@ -307,7 +308,7 @@ class TestManifest:
                     role="analyst", data_classes=["D0"], region="US")
         denied = gw.manifests[-1]
         assert denied.denied and "region" in denied.denial_reason
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             denied.denied = False
 
     def test_manifest_fields_and_report(self):
@@ -357,7 +358,7 @@ class TestDlpCanaries:
 
     def test_canary_blocks_egress_below_level(self):
         canaries = CanaryRegistry()
-        canary = canaries.plant("CANARY-TOKEN-XYZ-12345")
+        canaries.plant("CANARY-TOKEN-XYZ-12345")
         rules = [PolicyRule(rule_id="r1", max_level=SharingLevel.S7)]
         gw = make_gateway(rules=rules, canaries=canaries)
         enable(gw)
@@ -705,7 +706,7 @@ class TestProviderPlugins:
 @pytest.mark.req("SR-LLM-010")
 class TestRouter:
     def test_build_router_routes(self):
-        fastapi = pytest.importorskip("fastapi")
+        pytest.importorskip("fastapi")
         from eoip.egress.router import build_router
 
         gw = make_gateway()

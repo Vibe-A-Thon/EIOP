@@ -15,7 +15,8 @@ import threading
 import time
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
-from typing import Any, Callable, Protocol
+from typing import Any, Protocol
+from collections.abc import Callable
 
 from eoip.analytics.algorithms import (
     AdjacencyBuilder,

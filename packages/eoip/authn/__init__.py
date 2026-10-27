@@ -681,7 +681,7 @@ class SocketLdapProtocolFacade(LdapProtocolFacade):
 
         msg_id, off = _ber_decode_integer(payload, 0)
 
-        app_tag = payload[off]
+        payload[off]
         _, off2 = _ber_decode_length(payload, off + 1)
 
         result_code = 0

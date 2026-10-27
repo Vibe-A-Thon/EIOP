@@ -199,12 +199,11 @@ class HybridReasoningEngine:
         """Benchmark pure forward chaining, pure query-time, and hybrid chaining (CRA-019.10)."""
         # 1. Pure forward simulation
         start_fwd = time.perf_counter()
-        fwd_inferred = num_assertions * 2
+        num_assertions * 2
         fwd_time = time.perf_counter() - start_fwd
 
         # 2. Pure query-time simulation
         start_qt = time.perf_counter()
-        qt_queries = 500
         qt_time = time.perf_counter() - start_qt
 
         # 3. Hybrid simulation

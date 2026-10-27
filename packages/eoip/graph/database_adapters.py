@@ -212,7 +212,7 @@ def _cypher_to_gremlin(query: str) -> str:
     m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", query, re.I)
     if not m:
         return "g.V().limit(100)"
-    var, label = m.group(1), m.group(2)
+    _var, label = m.group(1), m.group(2)
     steps = ["g.V()"]
     if label:
         steps.append(f"hasLabel('{label}')")
@@ -364,7 +364,7 @@ class UniversalDatabaseAdapter(BaseDatabaseAdapter):
             # $$ dollar-quote early, so such queries are refused.
             if "$$" in cypher_query:
                 raise UnsafeIdentifierError("Cypher for Apache AGE must not contain '$$'")
-            return f"SELECT * FROM cypher('graph_name', $$ {cypher_query} $$) as (v agtype);"  # noqa: S608
+            return f"SELECT * FROM cypher('graph_name', $$ {cypher_query} $$) as (v agtype);"  # noqa: S608  # nosec B608 - '$$' rejected above so the dollar-quote cannot be closed early
 
         # Gremlin-based engines
         if db in (DatabaseType.AMAZON_NEPTUNE, DatabaseType.JANUSGRAPH,
@@ -401,7 +401,7 @@ class UniversalDatabaseAdapter(BaseDatabaseAdapter):
         if db == DatabaseType.TIGERGRAPH:
             m = re.search(r"MATCH\s*\(\s*(\w+)(?::(\w+))?\s*\)", cypher_query, re.I)
             collection = _identifier(m.group(2)) if (m and m.group(2)) else "ANY"
-            return f"SELECT s FROM {collection}:s LIMIT 100"  # noqa: S608 (allow-listed identifier)
+            return f"SELECT s FROM {collection}:s LIMIT 100"  # noqa: S608 (allow-listed identifier)  # nosec B608 - collection passes _identifier() whitelist validation
 
         # CozoDB Datalog
         if db == DatabaseType.COZODB:

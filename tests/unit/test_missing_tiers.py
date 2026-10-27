@@ -119,7 +119,7 @@ class TestEdgeSyncProtocol(unittest.TestCase):
         self.assertEqual(len(history), 2)
 
     def test_nodes_needing_sync(self):
-        node = self.runtime.register_node("e1", "NYC", "us-east",
+        self.runtime.register_node("e1", "NYC", "us-east",
                                           sync_interval=0)
         needing = self.runtime.nodes_needing_sync()
         self.assertIn("e1", needing)
@@ -341,7 +341,6 @@ class TestWriteAheadLog(unittest.TestCase):
         self.assertFalse(result["success"])
 
     def test_recover_to_timestamp(self):
-        ts = time.time()
         self.wal.append(self.WALOperationType.INSERT, "Service", "svc-1", {})
         result = self.wal.recover_to_timestamp(time.time() + 1)
         self.assertTrue(result["success"])
@@ -516,7 +515,7 @@ class TestCopilotEngine(unittest.TestCase):
         self.assertGreater(len(result["triggered_rules"]), 0)
 
     def test_automation_rule_cooldown(self):
-        rule = self.copilot.add_rule(
+        self.copilot.add_rule(
             name="test", trigger_pattern=r"fire",
             action_template="action", cooldown_seconds=3600,
         )

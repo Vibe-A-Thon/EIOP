@@ -26,7 +26,7 @@ from eoip.qlang import (
     sql,
     xpath,
 )
-from eoip.qlang.plans import QLangPlan
+from eoip.qlang.plans import QLangParseError, QLangPlan
 from eoip.qlang.router import build_router
 from eoip.qlang.taxonomy import (
     Classification,
@@ -113,7 +113,7 @@ def test_jsonpath_golden():
     assert jsonpath.parse_and_evaluate("$..price", PAYLOAD) == [5, 12, 20, 19]
     assert jsonpath.parse_and_evaluate("$.store.book[1].title", PAYLOAD) == ["B"]
     assert jsonpath.parse_and_evaluate("$.store.book[0:2].price", PAYLOAD) == [5, 12]
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         jsonpath.parse("store.book")
 
 
@@ -121,7 +121,7 @@ def test_jqlite_golden():
     assert jqlite.parse_and_evaluate(".store.book[] | select(.price > 10) | .title", PAYLOAD) == ["B", "C"]
     assert jqlite.parse_and_evaluate(".store.bicycle.color", PAYLOAD) == ["red"]
     assert jqlite.parse_and_evaluate(".", PAYLOAD) == [PAYLOAD]
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         jqlite.parse("map(.title)")
 
 
@@ -129,7 +129,7 @@ def test_xpath_golden():
     assert xpath.parse_and_evaluate("/store/book/title", PAYLOAD) == ["A", "B", "C"]
     assert xpath.parse_and_evaluate("/store/bicycle/color", PAYLOAD) == ["red"]
     assert xpath.parse_and_evaluate("//color", PAYLOAD) == ["red"]
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         xpath.parse("store/book")
 
 
@@ -141,7 +141,7 @@ def test_lucene_golden():
     assert len(lucene.parse_and_evaluate("NOT year:2023", DOCS)) == 2
     assert len(lucene.parse_and_evaluate("year:2020 AND body:edges", DOCS)) == 1
     assert len(lucene.parse_and_evaluate("(year:2015 OR year:2020) AND NOT body:index", DOCS)) == 1
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         lucene.parse("(year:2015 OR year:2020")  # unbalanced group
 
 
@@ -152,7 +152,7 @@ def test_kql_golden():
     assert {r["service"]: r["count"] for r in result} == {"api": 2, "web": 1}
     assert len(kql.parse_and_evaluate('search "api"', TABLES)) == 2
     assert len(kql.parse_and_evaluate("deployments | take 1", TABLES)) == 1
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         kql.parse("incidents | sort by id")
 
 
@@ -173,7 +173,7 @@ def test_promql_golden():
 
     rng = promql.evaluate_range(promql.parse("http_requests_total"), SERIES, 100, 220, 60)
     assert [r["t"] for r in rng] == [100, 160, 220]
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         promql.parse("histogram_quantile(0.9, x)")
 
 
@@ -203,7 +203,7 @@ def test_sql_golden():
     assert [r["title"] for r in result] == ["Search Engines", "Query Languages"]
     result = sql.parse_and_evaluate("SELECT title FROM docs WHERE title LIKE '%Engines%'", {"docs": DOCS})
     assert len(result) == 1
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         sql.parse("DELETE FROM docs")
 
 
@@ -216,7 +216,7 @@ def test_graphql_golden(store):
     assert {p["name"] for p in people} == {"Alice", "Bob", "Carol"}
     alice = next(p for p in people if p["name"] == "Alice")
     assert alice["depends_on"][0]["name"] == "Bob"
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         graphql.parse("query { UnknownType { name } }")
 
 
@@ -229,7 +229,7 @@ def test_gremlin_golden(store):
 
     count = gremlin.execute(gremlin.parse("g.V().hasLabel('Service').count()"), store)
     assert count["result"] == 3
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         gremlin.parse("g.V().map{it.get()}")
 
 
@@ -244,9 +244,9 @@ def test_opencypher_golden(store):
     fixed = opencypher.parse("MATCH (a:Service)-[r:DEPENDS_ON]->(b:Service) RETURN b.name")
     result = opencypher.execute(fixed, store)
     assert len(result["rows"]) == 2
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         opencypher.parse("MATCH (a) RETURN a")  # no bounds
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         opencypher.parse("MATCH (a:Service)-[r:DEPENDS_ON*1..99]->(b:Service) RETURN b")
 
 
@@ -261,7 +261,7 @@ def test_sparql_golden(store):
     plan = sparql.parse(query)
     result = sparql.execute(plan, store)
     assert result["rows"] == [{"s": "urn:eoip:s:alice", "o": "urn:eoip:s:bob"}]
-    with pytest.raises(Exception):
+    with pytest.raises(QLangParseError):
         sparql.parse("SELECT * WHERE {}")
 
 

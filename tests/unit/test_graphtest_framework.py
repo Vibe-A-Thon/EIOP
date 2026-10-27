@@ -155,7 +155,7 @@ def test_ownership(store):
 
 def test_ownership_missing(store):
     s2 = MemoryGraphStore()
-    f = s2.upsert_vertex("File", {"canonical_id": "urn:f:loose", "repo_id": "r1",
+    s2.upsert_vertex("File", {"canonical_id": "urn:f:loose", "repo_id": "r1",
                                   "path": "loose.py"})
     s2.upsert_vertex("Person", {"canonical_id": "urn:p:1", "display_name": "p"})
     r = _run(s2, {"id": "a", "type": "ownership", "label": "File",

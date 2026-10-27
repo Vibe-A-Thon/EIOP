@@ -33,7 +33,6 @@ from eoip.capabilities.model import CapabilityUnavailableError
 @pytest.mark.req("CRA-043")
 def test_cra_043_10_platform_matrix():
     system = platform.system().lower()
-    machine = platform.machine().lower()
 
     # Qualifies the platform on CPU without GPU dependency
     assert system in ["windows", "linux", "darwin"], f"Unqualified OS platform: {system}"

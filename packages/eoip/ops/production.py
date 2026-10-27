@@ -19,7 +19,7 @@ class CacheTopology:
     max_entries: int = 10_000
 
     @classmethod
-    def from_env(cls) -> "CacheTopology":
+    def from_env(cls) -> CacheTopology:
         return cls(
             backend=os.getenv("EOIP_CACHE_BACKEND", "local"),
             url=os.getenv("EOIP_REDIS_URL", ""),
