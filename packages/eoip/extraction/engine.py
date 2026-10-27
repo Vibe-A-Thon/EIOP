@@ -15,7 +15,8 @@ import time
 from collections import defaultdict
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 from eoip.extraction.relation_extractor import ExtractedTriple, RelationExtractor
 from eoip.graph.memory import MemoryGraphStore

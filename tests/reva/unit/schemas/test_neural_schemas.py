@@ -104,7 +104,7 @@ def test_attention_schema_engine_and_thrashing():
     ast_engine = AttentionSchemaEngine(thrashing_window_s=5.0, thrashing_switch_threshold=3)
 
     # Set focus
-    f1 = ast_engine.set_focus("mod:auth", "module", intensity=0.8)
+    ast_engine.set_focus("mod:auth", "module", intensity=0.8)
     assert ast_engine.current_focus.target_id == "mod:auth"
 
     # Handoff packet

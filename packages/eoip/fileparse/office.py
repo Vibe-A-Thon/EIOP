@@ -211,7 +211,7 @@ def parse_database(content: bytes, out: Extraction) -> None:
                 if sql and "VIRTUAL TABLE" in sql.upper():
                     raise ParseError("unsupported_database", "SQLite virtual tables require a separate trusted export")
                 quoted = '"' + name.replace('"', '""') + '"'
-                cursor = connection.execute(f"SELECT * FROM {quoted} LIMIT ?", (out.options.max_rows + 1,))
+                cursor = connection.execute(f"SELECT * FROM {quoted} LIMIT ?", (out.options.max_rows + 1,))  # nosec B608 - table name double-quote-escaped identifier, row limit bound via ? param
                 rows = cursor.fetchall()
                 if len(rows) > out.options.max_rows:
                     raise ParseError("row_limit", "Database exceeds max_rows")

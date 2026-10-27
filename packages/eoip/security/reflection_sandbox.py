@@ -10,7 +10,8 @@ import hashlib
 import threading
 import time
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 from eoip.prompts.engine import get_prompt_engine
 from eoip.security.engine import ThreatLevel, get_security_engine
@@ -205,7 +206,7 @@ class JailbreakInoculator:
     def inoculate(self, target_prompt_name: str = "agent_system_directive") -> dict[str, Any]:
         """Test against attack patterns and synthesize fortified defensive instructions."""
         start_time = time.time()
-        security = get_security_engine()
+        get_security_engine()
         prompt_engine = get_prompt_engine()
 
         defenses: list[str] = [

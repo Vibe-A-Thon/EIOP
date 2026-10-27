@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import re
+import defusedxml.ElementTree as ET
 from html.entities import name2codepoint
 from typing import Any
 from urllib.parse import urljoin, urlsplit
-from xml.etree import ElementTree as ET
 
 PARSER_VERSION = "confluence-storage/1.1"
 _AC = "{http://atlassian.com/content}"

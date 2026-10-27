@@ -229,7 +229,6 @@ def test_cra_012_4_chunking_progress_and_g11_termination():
     assert len(chunks) > 1
     # Check that each chunk advances monotonically
     assert sum(len(c) for c in chunks) >= len(unbroken_text)
-    reconstructed = ""
     # Verify no infinite loop and final chunk exits
     assert chunks[-1] == unbroken_text[len(unbroken_text) - len(chunks[-1]):]
 

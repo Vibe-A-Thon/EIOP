@@ -112,7 +112,7 @@ def main():
     ev_types = collections.Counter((tr_by.get(r) or {}).get("evidence_type", "none") for r in reqs)
 
     L = []
-    L.append(f"# EOIP audit: requirements gaps and risks (first pass)\n")
+    L.append("# EOIP audit: requirements gaps and risks (first pass)\n")
     L.append(f"- **Repository:** {repo.get('url','?')} (branch `{repo.get('branch','?')}`)")
     L.append(f"- **Audited commit:** `{commit}`" + (f" ([tree]({repo.get('url')}/tree/{commit}))" if repo.get("url") else ""))
     L.append(f"- **Generated:** {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')} by `generate_audit_report.py`")

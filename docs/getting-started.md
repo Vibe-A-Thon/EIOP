@@ -39,7 +39,7 @@ Local endpoints:
 | MCP Streamable HTTP | <http://localhost:8001/mcp> |
 | Hubble | <http://localhost:8088> |
 
-The browser UI uses the token generated in `deploy/.env`. Do not paste that value into logs or commit it. The container scripts also support `status`, `logs`, `down`, `backup`, `backup-bundle`, `restore-test`, `acceptance`, `recovery-acceptance`, `dlq-acceptance`, `extension`, `demo-data`, and `rebuild`; some actions require optional Compose profiles and platform tools. See the [container runbook](../EOIP-engg-doc-pkg/reference/docker-local.md).
+Sign in to the browser UI as `EOIP_ADMIN_USERNAME` (your login name by default) with `EOIP_ADMIN_PASSWORD` from `deploy/.env`; the generated `EOIP_API_TOKEN` in that file is the MCP facade's service token, mapped to the analyst-only `svc-mcp` principal. Do not paste either value into logs or commit them. The container scripts also support `status`, `logs`, `down`, `backup`, `backup-bundle`, `restore-test`, `acceptance`, `recovery-acceptance`, `dlq-acceptance`, `extension`, `demo-data`, and `rebuild`; some actions require optional Compose profiles and platform tools. See the [container runbook](../EOIP-engg-doc-pkg/reference/docker-local.md).
 
 The default graph backend is HugeGraph. Container graph/application state is stored in named volumes; `down` does not remove them. Do not run volume deletion/reset commands against data you need.
 
@@ -57,12 +57,14 @@ python -m venv .venv
 python -m pip install -c requirements.lock -e ".[test]"   # FT-F06: everything the default test selection needs, pinned by the lock
 ```
 
-Start the API with an explicit in-memory backend and a local-only token:
+Provision a local principal first — the API fails closed and refuses to start when no principal exists (`EOIP_API_TOKEN` alone grants nothing; see [Authentication and roles](authentication.md)). Then start the API with an explicit in-memory backend and the mapped local-only token:
 
 ```powershell
 $env:EOIP_API_TOKEN = 'local-development-token-at-least-32-characters'
+$env:EOIP_API_TOKEN_ROLES = 'analyst'   # maps the token to principal svc-api-token; without roles it grants nothing
 $env:EOIP_GRAPH_BACKEND = 'memory'
 $env:EOIP_DATA_DIR = (Join-Path $PWD '.eoip-data')
+eoip-admin from-env                     # writes the credential store under EOIP_DATA_DIR
 python -m uvicorn apps.api.main:create_app --factory --host 127.0.0.1 --port 8000 --reload
 ```
 
@@ -80,7 +82,7 @@ npm --prefix apps/web run dev
 
 There is also a separate `frontend/` TypeScript app and `backend/server.py` preview shim. They have different environment and hosting assumptions; see [Frontend Development](frontend-development.md) instead of mixing their commands with this profile.
 
-For Bash host development, activate `.venv/bin/activate`, use `export EOIP_API_TOKEN=...`, `export EOIP_GRAPH_BACKEND=memory`, and `export EOIP_DATA_DIR="$PWD/.eoip-data"`, then run the same Uvicorn command. Set `EOIP_DEV_API_URL` in the web-server shell. Use a disposable token of at least 24 characters and keep real values out of shell history/logs.
+For Bash host development, activate `.venv/bin/activate`, use `export EOIP_API_TOKEN=... EOIP_API_TOKEN_ROLES=analyst EOIP_GRAPH_BACKEND=memory EOIP_DATA_DIR="$PWD/.eoip-data"`, run `eoip-admin from-env` to provision the mapped principal, then run the same Uvicorn command. Set `EOIP_DEV_API_URL` in the web-server shell. Use a disposable token of at least 32 characters and keep real values out of shell history/logs.
 
 ## First Checks
 

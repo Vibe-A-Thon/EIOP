@@ -233,7 +233,7 @@ class TruthStore:
         )
 
     @classmethod
-    def load(cls, payload: str) -> "TruthStore":
+    def load(cls, payload: str) -> TruthStore:
         """Rebuild a TruthStore from export() output."""
         data = json.loads(payload)
         store = cls(policies=data.get("policies"))

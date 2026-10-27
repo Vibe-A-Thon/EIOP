@@ -264,7 +264,7 @@ def test_cra_037_9_zero_skip_policy_enforcement():
 @pytest.mark.req("CRA-037")
 def test_cra_037_10_quarantine_manager_and_tracking():
     qm = QuarantineManager()
-    entry = qm.quarantine_test(
+    qm.quarantine_test(
         test_id="test_neptune_cluster_split",
         defect_id="DEF-NEP-901",
         quarantined_by="infra-team",

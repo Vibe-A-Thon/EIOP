@@ -108,13 +108,13 @@ def test_streaming_agent_memory_integration():
     t0 = time.time()
 
     # Record observations
-    e1 = memory.record_memory(
+    memory.record_memory(
         "agent-1",
         {"target": "db-primary", "metric": "cpu", "value": 85},
         event_time=t0,
         salience=0.8,
     )
-    e2 = memory.record_memory(
+    memory.record_memory(
         "agent-1",
         {"target": "db-primary", "metric": "memory", "value": 70},
         event_time=t0 + 10,

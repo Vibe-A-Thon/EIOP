@@ -25,7 +25,8 @@ from __future__ import annotations
 import time
 import uuid
 from enum import Enum
-from typing import Any, Callable, Iterable, Protocol
+from typing import Any, Protocol
+from collections.abc import Callable, Iterable
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -142,7 +143,7 @@ class PolicyGate(ApprovalGateProtocol):
     def __init__(
         self,
         policy: ApprovalPolicy,
-        queue: "ApprovalQueue | None" = None,
+        queue: ApprovalQueue | None = None,
         roles_of: Callable[[str], Iterable[str]] | None = None,
     ) -> None:
         self._policy = policy

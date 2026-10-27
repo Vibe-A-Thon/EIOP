@@ -245,7 +245,7 @@ def test_version_store_atomic_publication_consumer_acknowledgement_and_rollback(
     store.acknowledge_consumer("1.0.0", "query-svc", status="ACKNOWLEDGED")
 
     # Publish v2.0.0
-    r2 = store.publish_version("2.0.0", manifest_v2, publisher="steward-2", expected_consumers=["search-idx", "query-svc"])
+    store.publish_version("2.0.0", manifest_v2, publisher="steward-2", expected_consumers=["search-idx", "query-svc"])
     assert store.active_version == "2.0.0"
 
     # Simulated consumer failure on query-svc for v2.0.0

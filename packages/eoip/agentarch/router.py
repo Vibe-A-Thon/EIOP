@@ -137,7 +137,7 @@ def build_router(store, runtime: AgentRuntime | None = None):
         result = rt.run(AgentRequest(
             request_id=f"api:agentarch:{body.agent_id}",
             agent_id=body.agent_id, goal=body.goal, actor_id=body.actor_id,
-            correlation_id=f"api:agentarch", metadata=body.metadata,
+            correlation_id="api:agentarch", metadata=body.metadata,
         ))
         return result.model_dump()
 

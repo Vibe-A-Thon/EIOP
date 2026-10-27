@@ -19539,7 +19539,7 @@
                 "decide"
               ]
             },
-            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: decide_api_v1_loops_approvals_decide_post\nSummary: Decide\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: loops_decide\nSummary: Decide\nPath variables: none\nRequest body declared: yes\nResponse statuses: 200, 422"
           },
           "response": []
         },
@@ -19566,7 +19566,7 @@
                 "pending"
               ]
             },
-            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: pending_approvals_api_v1_loops_approvals_pending_get\nSummary: Pending Approvals\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: loops_pending_approvals\nSummary: Pending Approvals\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
           },
           "response": []
         },
@@ -19592,7 +19592,7 @@
                 "catalog"
               ]
             },
-            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: catalog_api_v1_loops_catalog_get\nSummary: Catalog\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: loops_catalog\nSummary: Catalog\nPath variables: none\nRequest body declared: no\nResponse statuses: 200"
           },
           "response": []
         },
@@ -19619,7 +19619,7 @@
                 "{{qa_loop_name}}"
               ]
             },
-            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: run_loop_http_api_v1_loops_run__loop_name__post\nSummary: Run Loop Http\nPath variables: loop_name\nRequest body declared: yes\nResponse statuses: 200, 422"
+            "description": "REQUEST BLUEPRINT ONLY. This collection unconditionally skips every request. Copy this item into a reviewed, fixture-backed collection and add response, authorization, side-effect and cleanup assertions before executing.\n\nOperation ID: loops_run\nSummary: Run Loop Http\nPath variables: loop_name\nRequest body declared: yes\nResponse statuses: 200, 422"
           },
           "response": []
         }

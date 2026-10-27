@@ -2,8 +2,8 @@
   "schema_version": 1,
   "interpretation": "Static test definitions, not collected/parametrized test cases or product coverage",
   "totals": {
-    "files": 501,
-    "test_definitions": 4687
+    "files": 507,
+    "test_definitions": 4729
   },
   "categories": {
     "acceptance": {
@@ -43,8 +43,8 @@
       "test_definitions": 10
     },
     "integration": {
-      "files": 11,
-      "test_definitions": 55
+      "files": 12,
+      "test_definitions": 66
     },
     "mapping": {
       "files": 2,
@@ -99,8 +99,8 @@
       "test_definitions": 76
     },
     "unit": {
-      "files": 299,
-      "test_definitions": 3540
+      "files": 304,
+      "test_definitions": 3571
     },
     "web-browser": {
       "files": 15,
@@ -505,6 +505,11 @@
       "path": "tests/integration/test_shacl_transactional.py",
       "category": "integration",
       "test_definitions": 4
+    },
+    {
+      "path": "tests/integration/test_tenant_dsar_e2e.py",
+      "category": "integration",
+      "test_definitions": 11
     },
     {
       "path": "tests/mapping/test_cml_language.py",
@@ -2012,6 +2017,11 @@
       "test_definitions": 6
     },
     {
+      "path": "tests/unit/test_model_egress_policy.py",
+      "category": "unit",
+      "test_definitions": 13
+    },
+    {
       "path": "tests/unit/test_model_governance.py",
       "category": "unit",
       "test_definitions": 23
@@ -2105,6 +2115,11 @@
       "path": "tests/unit/test_ontology_packages.py",
       "category": "unit",
       "test_definitions": 5
+    },
+    {
+      "path": "tests/unit/test_openapi_operation_ids.py",
+      "category": "unit",
+      "test_definitions": 1
     },
     {
       "path": "tests/unit/test_operational_recovery.py",
@@ -2272,6 +2287,11 @@
       "test_definitions": 3
     },
     {
+      "path": "tests/unit/test_pytest_shard.py",
+      "category": "unit",
+      "test_definitions": 10
+    },
+    {
       "path": "tests/unit/test_python_sources_compile.py",
       "category": "unit",
       "test_definitions": 2
@@ -2403,6 +2423,11 @@
     },
     {
       "path": "tests/unit/test_reva_ci_lanes.py",
+      "category": "unit",
+      "test_definitions": 3
+    },
+    {
+      "path": "tests/unit/test_reva_import_resolution.py",
       "category": "unit",
       "test_definitions": 3
     },
@@ -2615,6 +2640,11 @@
       "path": "tests/unit/test_webhook_recovery.py",
       "category": "unit",
       "test_definitions": 0
+    },
+    {
+      "path": "tests/unit/test_worker_crash_duplicate_recovery.py",
+      "category": "unit",
+      "test_definitions": 4
     },
     {
       "path": "tests/wisdom/test_wisdom_lifecycle.py",

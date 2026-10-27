@@ -183,9 +183,17 @@ def test_symlink_inputs_and_outputs_are_refused(repository, monkeypatch):
 def test_ci_installs_native_parser_extra():
     root = Path(__file__).resolve().parents[2]
     workflow = (root / ".github" / "workflows" / "validation-evidence.yml").read_text(encoding="utf-8")
+    action = (root / ".github" / "actions" / "setup-eoip-python" / "action.yml").read_text(encoding="utf-8")
     # FT-F04/FT-F06: CI uses the documented install; the 'test' extra must keep
-    # pulling in the native parser extras.
-    assert 'pip install -c requirements.lock -e ".[test]"' in workflow
+    # pulling in the native parser extras. CI-PERF moved the install into the shared setup
+    # action (uv, pip fallback): both commands keep the lock constraints, and the extras
+    # default to 'test' and are never narrowed by the workflow.
+    import yaml
+    assert "uses: ./.github/actions/setup-eoip-python" in workflow
+    assert "extras:" not in workflow
+    assert yaml.safe_load(action)["inputs"]["extras"]["default"] == "test"
+    assert 'uv pip install --system --python "$py" -c requirements.lock -e "$spec"' in action
+    assert 'python -m pip install -c requirements.lock -e "$spec"' in action
     assert "python -X utf8 -m pytest -q" in workflow
     import tomllib
     extras = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]["optional-dependencies"]

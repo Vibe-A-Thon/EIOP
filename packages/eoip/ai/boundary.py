@@ -19,7 +19,8 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 from pydantic import BaseModel, Field
 
@@ -97,7 +98,7 @@ def create_probabilistic_proposal(
     pred_term = RDFTerm(kind=TermKind.IRI, value=predicate)
     obj_term = (
         RDFTerm(kind=TermKind.IRI, value=object_value)
-        if object_value.startswith("http://") or object_value.startswith("urn:")
+        if object_value.startswith(("http://", "urn:"))
         else RDFTerm(kind=TermKind.LITERAL, value=object_value)
     )
 
@@ -213,7 +214,7 @@ class DualPathOrchestrator:
                 )
         else:
             agreement = AgreementState.UNCORROBORATED
-            explanation = f"[EMPTY] No answers produced by either path."
+            explanation = "[EMPTY] No answers produced by either path."
 
         q_digest = hashlib.sha256(question_text.encode("utf-8")).hexdigest()
 

@@ -13,7 +13,8 @@ import hashlib
 import json
 import random
 from dataclasses import dataclass, field
-from typing import Any, Sequence
+from typing import Any
+from collections.abc import Sequence
 
 from eoip.ontology.manifest import edge_endpoints_valid
 

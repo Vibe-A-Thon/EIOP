@@ -10,12 +10,13 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "packages"))
 
-from eoip.models.hardware import append_release_benchmark, run_benchmark  # noqa: E402
+from eoip.models.hardware import append_release_benchmark, run_benchmark
 
 PROMPTS = [
     "List the owners of the billing service as JSON.",
@@ -36,11 +37,15 @@ def main() -> int:
     ap.add_argument("--out", default="benchmarks/llm/releases.jsonl")
     a = ap.parse_args()
 
+    parsed = urllib.parse.urlsplit(a.url)
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError(f"Invalid URL scheme: {parsed.scheme}")
+
     def invoke(prompt: str):
         body = json.dumps({"model": a.model, "prompt": prompt, "stream": False,
                            "options": {"temperature": 0, "num_predict": 128}}).encode()
         req = urllib.request.Request(f"{a.url}/api/generate", data=body, headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=120) as resp:
+        with urllib.request.urlopen(req, timeout=120) as resp:  # nosec B310 - scheme validated against http/https allowlist above
             data = json.loads(resp.read())
         return data.get("response", ""), int(data.get("eval_count", 0))
 

@@ -82,7 +82,7 @@ class TestBuild:
         assert PackageReader(build_package(SAMPLE_MANIFEST, payload)).payload_files() == payload
 
     def test_reject_non_archive(self):
-        with pytest.raises(Exception):
+        with pytest.raises(PackageBuildError):
             PackageReader(b"not a zip")
 
 
@@ -184,7 +184,7 @@ class TestDependencies:
         dep = [PackageDependency(name="base-pack", range=">=1.0.0,<2.0.0")]
         dependent = make_manifest("dependent-pack", "2.0.0", deps=dep)
         installer = PackageInstaller(registry, key=KEY)
-        manifest = installer.install(build_package(dependent, {"a.txt": b"a"}))
+        installer.install(build_package(dependent, {"a.txt": b"a"}))
         assert registry.is_installed("dependent-pack")
 
     def test_unsatisfied_dependency_rejected(self):

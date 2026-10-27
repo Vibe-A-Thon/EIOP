@@ -90,7 +90,7 @@ def test_verify_rejects_future_algorithm():
 
 
 def test_perpetual_license_must_not_carry_expiry():
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         _payload(model="perpetual", expiry=datetime.now(timezone.utc))
 
 

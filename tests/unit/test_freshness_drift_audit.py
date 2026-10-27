@@ -16,8 +16,8 @@ def graph():
     store.ensure_schema({})
 
     # Persons
-    p_alice = store.upsert_vertex("Person", {"canonical_id": "urn:person:alice", "display_name": "Alice Developer"})
-    p_bob = store.upsert_vertex("Person", {"canonical_id": "urn:person:bob", "display_name": "Bob Architect"})
+    store.upsert_vertex("Person", {"canonical_id": "urn:person:alice", "display_name": "Alice Developer"})
+    store.upsert_vertex("Person", {"canonical_id": "urn:person:bob", "display_name": "Bob Architect"})
 
     # Services
     s_orders = store.upsert_vertex("Service", {

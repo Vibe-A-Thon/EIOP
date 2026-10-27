@@ -16,7 +16,8 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Optional
+from typing import Any, Optional
+from collections.abc import Callable
 
 
 class LawfulBasis(str, Enum):
@@ -77,8 +78,7 @@ class NetworkSocketMonitor:
             dest_host in self.allowed_hosts
             or dest_host.endswith(".internal")
             or dest_host.endswith(".local")
-            or dest_host.startswith("10.")
-            or dest_host.startswith("192.168.")
+            or dest_host.startswith(("10.", "192.168."))
         )
 
         record = {

@@ -279,7 +279,7 @@ def test_cra_025_5_search_evaluation_harness():
 
 @pytest.mark.req("CRA-025")
 def test_cra_025_6_rrf_hybrid_fusion():
-    provider = TestHashingEmbedder(dimensions=8)  # index mechanics; real model: test_real_embedding_provider.py
+    TestHashingEmbedder(dimensions=8)  # index mechanics; real model: test_real_embedding_provider.py
     meta = IndexMetadata(
         index_id="idx_rrf",
         scope="tenant_fusion",

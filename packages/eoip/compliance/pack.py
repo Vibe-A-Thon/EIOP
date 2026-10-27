@@ -18,7 +18,8 @@ platform supports *customer* compliance (§14.4 note).
 from __future__ import annotations
 
 import uuid
-from typing import Any, Callable, Literal
+from typing import Any, Literal
+from collections.abc import Callable
 
 from pydantic import BaseModel, ConfigDict, Field
 

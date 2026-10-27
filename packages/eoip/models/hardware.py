@@ -19,7 +19,8 @@ import statistics
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 #: Reference configurations are deployment data (D-SR-LLM-005-01): deploy/hardware/llm-reference-configs.json
 CONFIG_PATH = Path(__file__).resolve().parents[3] / "deploy" / "hardware" / "llm-reference-configs.json"

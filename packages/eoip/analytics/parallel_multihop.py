@@ -95,7 +95,6 @@ class SparseGraphBuilder:
     def build(self) -> SparseGraphMatrix:
         node_ids = sorted(self._nodes)
         node_index = {nid: idx for idx, nid in enumerate(node_ids)}
-        n = len(node_ids)
 
         row_ptr = [0]
         col_idx: list[int] = []

@@ -259,7 +259,6 @@ class IncidentRehearsalRunner:
         """Rehearses credential compromise drill."""
         t0 = time.perf_counter()
         # Revoke token
-        revocation_status = {"token_id": token_id, "revoked": True, "revoked_at": time.time()}
         elapsed_sec = time.perf_counter() - t0
         return {
             "drill": "compromised_credentials",

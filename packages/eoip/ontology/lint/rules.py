@@ -301,8 +301,6 @@ class RuleP09InversePropertyConflict(LintRule):
         findings = []
         for p1, _, p2 in graph.triples((None, OWL.inverseOf, None)):
             p1_dom = set(graph.objects(p1, RDFS.domain))
-            p1_rng = set(graph.objects(p1, RDFS.range))
-            p2_dom = set(graph.objects(p2, RDFS.domain))
             p2_rng = set(graph.objects(p2, RDFS.range))
             if p1_dom and p2_rng and not p1_dom.intersection(p2_rng):
                 findings.append(LintFinding(

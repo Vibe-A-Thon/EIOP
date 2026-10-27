@@ -122,8 +122,8 @@ def extract_npm_provenance(package_json_bytes: bytes, lockfile_bytes: Optional[b
     except Exception:
         pkg = {}
 
-    name = pkg.get("name", "unknown")
-    version = pkg.get("version", "0.0.0")
+    pkg.get("name", "unknown")
+    pkg.get("version", "0.0.0")
     commit_sha = pkg.get("gitHead")
 
     components: List[ComponentInfo] = []

@@ -46,7 +46,7 @@ class _FakeRuntime:
 
 def test_supported_sentence_kept_unsupported_removed(monkeypatch):
     runtime = _FakeRuntime("The outage was caused by an expired TLS certificate. It cost 4 million dollars.")
-    monkeypatch.setattr(svc, "LocalModelProvider", lambda timeout=90.0: runtime)
+    monkeypatch.setattr(svc, "create_model_provider", lambda timeout=90.0: runtime)
     res = retrieve(_store(), "issue:1", "Why was there a payments outage?", synthesize=True)
     assert res.generation == "local_model"
     assert "expired TLS certificate" in res.answer and "4 million" not in res.answer
@@ -60,7 +60,7 @@ def test_supported_sentence_kept_unsupported_removed(monkeypatch):
 
 
 def test_entirely_unsupported_generation_falls_back_to_cited_evidence(monkeypatch):
-    monkeypatch.setattr(svc, "LocalModelProvider", lambda timeout=90.0: _FakeRuntime("Revenue grew in Europe."))
+    monkeypatch.setattr(svc, "create_model_provider", lambda timeout=90.0: _FakeRuntime("Revenue grew in Europe."))
     res = retrieve(_store(), "issue:1", "Why was there a payments outage?", synthesize=True)
     assert res.generation == "extractive" and "Revenue" not in res.answer
     assert any("not supported" in w for w in res.warnings) and res.answer_citations

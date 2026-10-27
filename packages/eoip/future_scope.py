@@ -166,7 +166,7 @@ class DualSemanticRecord:
         }
 
     @classmethod
-    def from_jsonld(cls, payload: dict[str, Any]) -> "DualSemanticRecord":
+    def from_jsonld(cls, payload: dict[str, Any]) -> DualSemanticRecord:
         return cls(
             canonical_id=str(payload["@id"]),
             label=str(payload["eoip:label"]),
@@ -213,7 +213,7 @@ class Fact:
     rule_id: str | None = None
     fact_id: str = ""
 
-    def with_id(self) -> "Fact":
+    def with_id(self) -> Fact:
         if self.fact_id:
             return self
         return Fact(
@@ -830,7 +830,7 @@ class ObservabilityTracePlan:
     steps: tuple[TraceStep, ...]
 
     @classmethod
-    def request_path(cls, correlation_id: str) -> "ObservabilityTracePlan":
+    def request_path(cls, correlation_id: str) -> ObservabilityTracePlan:
         components = ("ui", "api", "planner", "hugegraph", "retriever", "model", "response")
         return cls(
             correlation_id=correlation_id,
@@ -838,7 +838,7 @@ class ObservabilityTracePlan:
         )
 
     @classmethod
-    def ingestion_path(cls, correlation_id: str) -> "ObservabilityTracePlan":
+    def ingestion_path(cls, correlation_id: str) -> ObservabilityTracePlan:
         components = ("source_record", "canonical_entity", "graph_edge", "search_index", "vector_index")
         return cls(
             correlation_id=correlation_id,

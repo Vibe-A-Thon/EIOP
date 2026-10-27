@@ -46,7 +46,7 @@ class ContinuousGraphHealthDashboard:
 
     def compute_health_metrics(self) -> dict[str, Any]:
         vertices = self.store.find_vertices(limit=5000)
-        edges = self.store.find_edges(limit=10000)
+        self.store.find_edges(limit=10000)
         total_v = max(len(vertices), 1)
 
         # 1. Freshness (entities updated within 90 days)

@@ -253,7 +253,6 @@ class EdgeSyncProtocol:
                     success=False, error="Node decommissioned",
                 )
 
-            prev_status = node.status
             node.status = EdgeNodeStatus.SYNCING
             sync_id = uuid.uuid4().hex[:12]
 

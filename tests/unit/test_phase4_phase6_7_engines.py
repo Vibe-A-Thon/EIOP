@@ -202,9 +202,9 @@ class TestMulti002MemoryGraph:
     def test_episodic_graph_and_consolidation(self):
         episodic = EpisodicMemoryGraph()
         # Record sequence of steps
-        s1 = episodic.record_episode_step("User asks for DB latency report", {"query": "SELECT ..."})
-        s2 = episodic.record_episode_step("Agent retrieves Prometheus metrics", {"metric": "query_duration"})
-        s3 = episodic.record_episode_step("User asks for DB latency report", {"query": "SELECT ..."})
+        episodic.record_episode_step("User asks for DB latency report", {"query": "SELECT ..."})
+        episodic.record_episode_step("Agent retrieves Prometheus metrics", {"metric": "query_duration"})
+        episodic.record_episode_step("User asks for DB latency report", {"query": "SELECT ..."})
 
         assert len(episodic.nodes) == 3
         assert len(episodic.edges) == 2

@@ -58,10 +58,6 @@ class AttentionGraphSlicer:
             {"id": "metrics-agent", "label": "Service", "degree": 1, "causal_weight": 0.1, "desc": "Telemetry scraper for monitoring"},
             {"id": "doc-server", "label": "Service", "degree": 1, "causal_weight": 0.05, "desc": "Static documentation renderer"},
         ]
-        raw_edges = edges or [
-            {"from": "auth-gateway", "to": "billing-core", "coupling": 0.8},
-            {"from": "billing-core", "to": "user-db", "coupling": 0.9},
-        ]
 
         query_terms = set(query.lower().split())
         seeds = set(seed_ids or ["auth-gateway", "billing-core"])

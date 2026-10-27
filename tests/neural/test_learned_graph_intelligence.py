@@ -330,7 +330,7 @@ def test_cra_044_9_lifecycle_lineage_and_rollback():
 
     # Register version 2
     m2 = RGCNModel(in_features=4, hidden_dim=8, out_dim=4, num_relations=2, num_bases=2)
-    rec2 = mgr.register_and_promote_model(
+    mgr.register_and_promote_model(
         model_id="rgcn_prod",
         version="v2.0.0",
         snapshot_id="snap_20261019",

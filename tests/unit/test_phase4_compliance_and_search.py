@@ -73,8 +73,8 @@ class TestSearchAnalyticsEngine:
     def test_search_event_logging_and_summary(self):
         engine = SearchAnalyticsEngine()
         ev1 = engine.log_search(query="PaymentGateway latency", dialect="TEXT", latency_ms=12.5, result_count=4)
-        ev2 = engine.log_search(query="UnknownServiceX", dialect="CYPHER", latency_ms=8.0, result_count=0)
-        ev3 = engine.log_search(query="PaymentGateway latency", dialect="TEXT", latency_ms=15.0, result_count=6)
+        engine.log_search(query="UnknownServiceX", dialect="CYPHER", latency_ms=8.0, result_count=0)
+        engine.log_search(query="PaymentGateway latency", dialect="TEXT", latency_ms=15.0, result_count=6)
 
         # Record click
         engine.record_click(ev1.event_id, "srv_payment")

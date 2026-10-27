@@ -167,7 +167,7 @@ class BrainOSKernel:
         Supports both deterministic structured query execution and non-deterministic
         LLM-augmented reasoning with strict SHACL/graph guardrails.
         """
-        start = time.time()
+        start = time.perf_counter()  # monotonic, high resolution (Windows time.time() ticks ~15 ms)
         ctx = context or {}
 
         # 1. Governance Loop Verification
@@ -184,7 +184,7 @@ class BrainOSKernel:
                 mode="BLOCKED",
                 confidence=0.0,
                 governance_decision=decision,
-                latency_ms=(time.time() - start) * 1000.0,
+                latency_ms=(time.perf_counter() - start) * 1000.0,
             )
 
         # 2. Query Dialect Analysis
@@ -213,7 +213,7 @@ class BrainOSKernel:
                 query_result=q_res,
                 cognitive_tier=tier.value,
                 agent_trace=[f"Detected dialect: {detected_dialect.value}", f"Executed on {target_db.value}"],
-                latency_ms=(time.time() - start) * 1000.0,
+                latency_ms=(time.perf_counter() - start) * 1000.0,
                 metadata={"db_response": db_res},
             )
 
@@ -279,7 +279,7 @@ class BrainOSKernel:
             rag_result=rag_res,
             cognitive_tier=tier.value,
             xai_explanation=xai_payload,
-            latency_ms=(time.time() - start) * 1000.0,
+            latency_ms=(time.perf_counter() - start) * 1000.0,
             metadata={
                 "agent_response": agent_res.output,
                 "model_name": llm_gen.model_name,
@@ -333,7 +333,7 @@ class BrainOSKernel:
         - Q-Learning policy updates
         - Publication-grade markdown narration
         """
-        start = time.time()
+        start = time.perf_counter()
         ctx = context or {}
 
         cache = get_cache()
@@ -399,7 +399,7 @@ class BrainOSKernel:
         narration = self.cognitive_narrator.narrate(query=query, tier=tier, context=ctx)
 
         # 7. Build the unified response
-        latency_ms = (time.time() - start) * 1000.0
+        latency_ms = (time.perf_counter() - start) * 1000.0
 
         get_audit_log().record(
             category=AuditCategory.QUERY_EXECUTION,

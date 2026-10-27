@@ -25,7 +25,7 @@ flowchart LR
 
 ### API
 
-`apps/api/main.py:create_app` is the persistent FastAPI application factory and the supported Uvicorn entrypoint. It constructs the graph store from `EOIP_GRAPH_BACKEND` and `config/graph-store.yaml`, reads `EOIP_API_TOKEN`, creates application services, and mounts authenticated graph, query, ingestion, agent, governance, and operations routes. API request identity is derived from the authenticated token/identity provider; write handlers must not trust caller-supplied actor or tenant values.
+`apps/api/main.py:create_app` is the persistent FastAPI application factory and the supported Uvicorn entrypoint. It constructs the graph store from `EOIP_GRAPH_BACKEND` and `config/graph-store.yaml`, loads principals from the credential store (`<EOIP_DATA_DIR>/state/credentials.json`) or `EOIP_ASG_FILE` (fails closed if no principals exist — see `docs/authentication.md` for `eoip-admin` provisioning), creates application services, and mounts authenticated graph, query, ingestion, agent, governance, and operations routes. API request identity is derived from the authenticated token/identity provider; write handlers must not trust caller-supplied actor or tenant values.
 
 `apps/api/app.py:create_app(store, ...)` constructs the lower-level graph/query application around an injected `GraphStore`. The main factory uses it and adds persistent-runtime services/routes. It is not a standalone app factory with implicit default storage.
 
@@ -37,7 +37,7 @@ The in-memory store is process-local and loses graph state on restart. The conta
 
 ### Worker and application files
 
-`apps/worker/main.py` polls the `JobQueue` under `EOIP_DATA_DIR` and runs ingestion, replay, registered source operations, and graph consumers. The queue is filesystem-backed and intended for a single worker in the current default topology; it is not a distributed broker or transactional authority database. Worker heartbeat is written to the data directory. Connector state, raw source events, dead-letter records, receipts, audit files, and other file state are also stored beneath this configured root.
+`apps/worker/main.py` polls the `JobQueue` under `EOIP_DATA_DIR` and runs ingestion, replay, registered source operations, and graph consumers. The queue is filesystem-backed and intended for a single worker in the current default topology; it provides snapshotting and recovery admission. For distributed multi-worker topologies requiring WAL, heartbeats, fencing leases, outbox events, and governed DLQ, `DurableJobStore` in `packages/eoip/jobs.py` provides the transactional SQLite-backed store. Worker heartbeat is written to the data directory. Connector state, raw source events, dead-letter records, receipts, audit files, and other file state are also stored beneath this configured root.
 
 ### MCP
 
@@ -61,7 +61,7 @@ MCP flow: authenticated client -> MCP initialize/list/call -> local server/tool 
 
 ## Configuration and Deployment
 
-Graph configuration is in `config/graph-store.yaml` with environment overrides such as `EOIP_GRAPH_BACKEND`, graph URL/database/user/password variables. `EOIP_API_TOKEN` is required and must be at least 24 characters. `EOIP_DATA_DIR` selects file-backed state. Container launchers create `deploy/.env` on the first `up` and mount named data volumes.
+Graph configuration is in `config/graph-store.yaml` with environment overrides such as `EOIP_GRAPH_BACKEND`, graph URL/database/user/password variables. Authentication follows [Authentication and roles](authentication.md): there is no default account, principals come from the credential store (provisioned via `eoip-admin`) or `EOIP_ASG_FILE`, and the API refuses to start with no principals. `EOIP_API_TOKEN` is only the MCP facade's outgoing service token; it is accepted by the API solely when `eoip-admin from-env` maps it to a principal via `EOIP_API_TOKEN_ROLES` (unset/empty roles = grants nothing). `EOIP_DATA_DIR` selects file-backed state. Container launchers create `deploy/.env` on the first `up` and mount named data volumes.
 
 The default Compose stack is defined in `deploy/docker-compose.yml`; optional profiles include tests, local model, tools, restore testing, Neo4j, and observability. The network and storage model differs by profile. A local HugeGraph/worker/web run is not equivalent to a multi-worker PostgreSQL SaaS deployment.
 

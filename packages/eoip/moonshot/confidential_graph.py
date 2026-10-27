@@ -100,7 +100,7 @@ class HomomorphicPropertyEncryptor:
         nonce = os.urandom(12)
         key = self._aes_key
         plaintext_bytes = plaintext.encode("utf-8")
-        counter = int.from_bytes(nonce, "big")
+        int.from_bytes(nonce, "big")
         keystream = b""
         blocks_needed = (len(plaintext_bytes) + 15) // 16 + 1
         for i in range(blocks_needed):

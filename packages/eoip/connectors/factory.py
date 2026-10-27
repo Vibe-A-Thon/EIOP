@@ -939,7 +939,7 @@ class ConnectionFactory:
                 )
             except Exception as exc:
                 if type(exc).__name__ == "FortunaConnectorBlockedError":
-                    raise exc
+                    raise
                 if cfg.get("fallback_policy") != "explicit":
                     logger.error(
                         "Specialization failed for %s without explicit fallback policy: %s (G07 closure)",

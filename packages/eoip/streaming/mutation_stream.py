@@ -13,11 +13,13 @@ import logging
 import queue
 import threading
 import time
+import urllib.parse
 import urllib.request
 from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 log = logging.getLogger("eoip.streaming.mutation_stream")
 
@@ -235,13 +237,17 @@ class MutationEventBus:
                 attempt=attempt,
             )
             try:
+                parsed = urllib.parse.urlsplit(config.url)
+                if parsed.scheme not in ("http", "https"):
+                    record.error = f"Unsupported webhook URL scheme: {parsed.scheme}"
+                    return record
                 req = urllib.request.Request(
                     config.url,
                     data=payload,
                     headers=headers,
                     method="POST",
                 )
-                with urllib.request.urlopen(req, timeout=config.timeout_seconds) as resp:
+                with urllib.request.urlopen(req, timeout=config.timeout_seconds) as resp:  # nosec B310 - scheme validated against http/https allowlist above
                     record.status_code = resp.status
                     record.success = 200 <= resp.status < 300
                     record.duration_ms = (time.monotonic() - started) * 1000

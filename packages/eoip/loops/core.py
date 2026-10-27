@@ -34,7 +34,8 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Any
+from collections.abc import Callable, Iterable
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -280,7 +281,7 @@ class ApprovalGateProtocol:
 class StepContext:
     """Read-only-ish view of the run handed to the step function."""
 
-    def __init__(self, driver: "LoopDriver", phase: str | None) -> None:
+    def __init__(self, driver: LoopDriver, phase: str | None) -> None:
         self._driver = driver
         self.phase = phase
 

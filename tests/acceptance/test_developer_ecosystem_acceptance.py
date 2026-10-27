@@ -383,7 +383,7 @@ def test_cra_039_8_widoco_html_ontology_docs_and_route_serving(monkeypatch, tmp_
     html = generator.generate_html()
 
     assert "Enterprise Ontology &amp; Intelligence Platform Specification" in html
-    assert f"Ontology Version:" in html
+    assert "Ontology Version:" in html
     assert "#classes" in html
     assert "#properties" in html
     assert "#overview" in html

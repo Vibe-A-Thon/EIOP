@@ -214,8 +214,8 @@ class CognitiveNarrator:
 
     def _formulate_scope_boundary(self, query: str, domain: QuestionDomain) -> str:
         return (
-            f"Analysis spans the complete enterprise knowledge boundary: from localized schema constraints and runtime telemetry "
-            f"to multi-region deployment topologies and governance audit trails, strictly enforcing sovereign execution."
+            "Analysis spans the complete enterprise knowledge boundary: from localized schema constraints and runtime telemetry "
+            "to multi-region deployment topologies and governance audit trails, strictly enforcing sovereign execution."
         )
 
     # ------------------------------------------------------------------------
@@ -229,7 +229,6 @@ class CognitiveNarrator:
         entities: list[str],
     ) -> list[ComplementaryQuestion]:
         e_primary = entities[0] if entities else "TargetSystem"
-        e_secondary = entities[1] if len(entities) > 1 else "DependencyGraph"
 
         gi = self.graph_intelligence
         has_data = gi._has_store()
@@ -341,7 +340,6 @@ class CognitiveNarrator:
         """
         start_time = time.perf_counter()
         narration_id = str(uuid.uuid4())
-        ctx = context or {}
 
         # 1. Understand & Enhance Query
         enhanced = self.analyze_and_enhance(query)
@@ -505,9 +503,9 @@ class CognitiveNarrator:
         e_name = enhanced.extracted_entities[0] if enhanced.extracted_entities else "CoreArchitecture"
         return [
             f"**Phase 1 (Structural Invariance)**: Enforce formal SHACL shape validations across {e_name} schemas prior to deployment.",
-            f"**Phase 2 (Resilience & Chaos Defense)**: Implement automated exponential backoff with jitter and circuit-breaker thresholds derived from stochastic Monte Carlo simulations.",
-            f"**Phase 3 (Bayesian Observability)**: Configure real-time telemetry dashboards tracking posterior failure probabilities under egress saturation.",
-            f"**Phase 4 (Hyperautomated Governance)**: Route all operational mutations through Human-in-the-Loop Frontend (HITL-FE) approval gates with cryptographically sealed Merkle audit logs.",
+            "**Phase 2 (Resilience & Chaos Defense)**: Implement automated exponential backoff with jitter and circuit-breaker thresholds derived from stochastic Monte Carlo simulations.",
+            "**Phase 3 (Bayesian Observability)**: Configure real-time telemetry dashboards tracking posterior failure probabilities under egress saturation.",
+            "**Phase 4 (Hyperautomated Governance)**: Route all operational mutations through Human-in-the-Loop Frontend (HITL-FE) approval gates with cryptographically sealed Merkle audit logs.",
         ]
 
     def _build_suggested_followups(self, enhanced: EnhancedQuery) -> list[str]:
@@ -515,8 +513,8 @@ class CognitiveNarrator:
         return [
             f"\"Can you run a live Monte Carlo failure cascade simulation specifically on {e_name}?\"",
             f"\"What does the exact SHACL shape definition and RDF graph for {e_name} look like?\"",
-            f"\"How do our Bayesian risk distributions shift if downstream latency increases by 50ms?\"",
-            f"\"Generate an automated Terraform and OpenAPI contract playbook to implement these recommendations.\"",
+            "\"How do our Bayesian risk distributions shift if downstream latency increases by 50ms?\"",
+            "\"Generate an automated Terraform and OpenAPI contract playbook to implement these recommendations.\"",
         ]
 
     def _format_master_markdown(

@@ -118,7 +118,7 @@ def execute_verifier_run(
 
     # AG-11 verification: command line must match binding verifier specification
     argv = list(binding.verifier.argv)
-    profile_spec = get_profile(binding.verifier.profile)
+    get_profile(binding.verifier.profile)
 
     # Compute owner spans and digests for coverage attribution
     owner_spans: List[OwnerSpan] = []

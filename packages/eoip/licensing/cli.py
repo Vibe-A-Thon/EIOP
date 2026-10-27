@@ -15,7 +15,8 @@ import argparse
 import json
 import os
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
+from collections.abc import Sequence
 
 from eoip.licensing.license_file import load_license_file
 

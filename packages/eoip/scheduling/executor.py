@@ -12,7 +12,8 @@ import time
 import traceback
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 
 class TaskStatus(str, enum.Enum):
@@ -162,7 +163,7 @@ class TaskExecutor:
                         task.history = task.history[-task.max_history:]
                 return result
 
-            except Exception as exc:
+            except Exception:
                 last_error = traceback.format_exc()
                 if attempt <= task.max_retries:
                     time.sleep(task.retry_delay_seconds)

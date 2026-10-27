@@ -106,7 +106,7 @@ class LicensePayload(BaseModel):
     signature_algorithm: str = Field(default=SIGNATURE_ALGORITHM, description="Wire-compatible hook for the asymmetric upgrade")
 
     @model_validator(mode="after")
-    def _defaults(self) -> "LicensePayload":
+    def _defaults(self) -> LicensePayload:
         if self.model == "perpetual" and self.expiry is not None:
             raise ValueError("perpetual licenses must not carry an expiry")
         if self.model == "oem_revenue_share":

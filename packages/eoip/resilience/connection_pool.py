@@ -7,7 +7,8 @@ import threading
 import time
 import uuid
 from dataclasses import asdict, dataclass, field
-from typing import Any, Callable, Protocol
+from typing import Any, Protocol
+from collections.abc import Callable
 
 from eoip.enterprise.logging import get_logger
 

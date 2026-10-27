@@ -214,7 +214,7 @@ class timed_request:
         self.status = status
         self._start = 0.0
 
-    def __enter__(self) -> "timed_request":
+    def __enter__(self) -> timed_request:
         self._start = time.perf_counter()
         return self
 

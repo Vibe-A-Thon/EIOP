@@ -67,7 +67,7 @@ def test_translog_rfc6962_proofs():
     assert len(root10) == 32
 
     # Check inclusion proof for each leaf
-    leaves = log.get_leaves()
+    log.get_leaves()
     for idx, item in enumerate(leaf_ids):
         proof_hex = log.inclusion_proof(idx)
         proof_bytes = [bytes.fromhex(p) for p in proof_hex]

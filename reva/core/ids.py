@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from typing import Any, Dict, List, Sequence, Tuple
+from typing import Any, Dict, List, Tuple
+from collections.abc import Sequence
 
 from reva.core.digest import sha256_canonical, sha256_hex
 from reva.core.jcs import canonicalize

@@ -12,7 +12,8 @@ import enum
 import threading
 import time
 from dataclasses import dataclass, field
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
+from collections.abc import Callable
 
 from eoip.enterprise.config import get_enterprise_config
 
@@ -91,7 +92,7 @@ class CircuitBreaker:
             result = fn(*args, **kwargs)
             self._on_success()
             return result
-        except Exception as exc:
+        except Exception:
             self._on_failure()
             raise
 

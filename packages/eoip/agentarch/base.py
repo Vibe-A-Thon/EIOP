@@ -15,7 +15,8 @@ never faked.
 from __future__ import annotations
 
 import random
-from typing import Any, Callable, Protocol
+from typing import Any, Protocol
+from collections.abc import Callable
 
 from eoip.contracts.agent import AgentRequest, AgentResult
 

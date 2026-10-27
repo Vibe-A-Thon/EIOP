@@ -45,10 +45,10 @@ def validate_record(data: dict, ref_date: date | None = None) -> list[str]:
         for dim, sinfo in scores.items():
             if isinstance(sinfo, dict):
                 score_val = sinfo.get("score")
-                rationale = sinfo.get("rationale")
+                sinfo.get("rationale")
             else:
                 score_val = sinfo
-                rationale = data.get("rationale_reference", "")
+                data.get("rationale_reference", "")
 
             if score_val is None or str(score_val).strip() == "":
                 errors.append(f"[{cid}] blank score for dimension {dim}")

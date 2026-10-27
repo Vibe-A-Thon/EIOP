@@ -561,7 +561,7 @@ class SHACLValidator:
                 for prop_name, expected_kind in shape.node_kinds.items():
                     val = props.get(prop_name)
                     if val is not None:
-                        is_iri = isinstance(val, str) and (val.startswith("http://") or val.startswith("https://") or val.startswith("urn:"))
+                        is_iri = isinstance(val, str) and (val.startswith(("http://", "https://", "urn:")))
                         is_lit = isinstance(val, (str, int, float, bool)) and not is_iri
                         if expected_kind == SHACLNodeKind.IRI and not is_iri:
                             violations.append(SHACLViolation(
@@ -703,7 +703,7 @@ class SHACLValidator:
             label = edge.get("label", "")
             out_v = vertex_map.get(str(edge.get("out_v")))
             in_v = vertex_map.get(str(edge.get("in_v")))
-            edge_key = edge.get("properties", {}).get("edge_key") or edge.get("eid", "unknown_edge")
+            edge.get("properties", {}).get("edge_key") or edge.get("eid", "unknown_edge")
 
             for shape in self.shapes.values():
                 if shape.target_subjects_of and shape.target_subjects_of == label:

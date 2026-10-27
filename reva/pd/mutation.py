@@ -7,7 +7,8 @@ import copy
 import hashlib
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
+from collections.abc import Callable
 
 COMPARE_SWAPS = {
     ast.Lt: ast.LtE,

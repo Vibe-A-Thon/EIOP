@@ -105,7 +105,7 @@ def build_router(store: JsonCheckpointStore | None = None, queue: InMemoryApprov
     checkpoint_store = store or JsonCheckpointStore(".data/loops")
     approval_queue = queue or InMemoryApprovalQueue()
 
-    @router.get("/catalog", response_model=LoopCatalog)
+    @router.get("/catalog", response_model=LoopCatalog, operation_id="loops_catalog")
     def catalog() -> LoopCatalog:
         return LoopCatalog(
             loops=[
@@ -115,7 +115,7 @@ def build_router(store: JsonCheckpointStore | None = None, queue: InMemoryApprov
             human_patterns=[p.value for p in HumanPattern],
         )
 
-    @router.post("/run/{loop_name}", response_model=LoopResult)
+    @router.post("/run/{loop_name}", response_model=LoopResult, operation_id="loops_run")
     def run_loop_http(loop_name: str, body: RunLoopRequest) -> LoopResult:
         if loop_name not in LOOP_RUNNERS:
             return JSONResponse({"detail": f"unknown loop: {loop_name}"}, status_code=404)
@@ -171,11 +171,11 @@ def build_router(store: JsonCheckpointStore | None = None, queue: InMemoryApprov
             raise HTTPException(status_code=409, detail=result.metrics.error_category or "loop failed")
         return result
 
-    @router.get("/approvals/pending", response_model=list[ApprovalRequest])
+    @router.get("/approvals/pending", response_model=list[ApprovalRequest], operation_id="loops_pending_approvals")
     def pending_approvals() -> list[ApprovalRequest]:
         return approval_queue.pending()
 
-    @router.post("/approvals/decide")
+    @router.post("/approvals/decide", operation_id="loops_decide")
     def decide(body: DecideRequest) -> dict[str, Any]:
         record = make_decision(
             ApprovalRequest(

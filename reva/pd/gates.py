@@ -5,7 +5,8 @@ from __future__ import annotations
 import fnmatch
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
+from collections.abc import Callable
 import yaml
 
 from reva.core.errors import RevaValidationError

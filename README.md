@@ -56,7 +56,7 @@ The default Compose profile starts HugeGraph, schema/Hubble initialization, the 
 - MCP Streamable HTTP: <http://localhost:8001/mcp>
 - Hubble: <http://localhost:8088>
 
-Use the generated `EOIP_API_TOKEN` in `deploy/.env` to authenticate. Do not print or commit the token. `scripts/container.ps1 status`, `logs`, `backup`, `restore-test`, and `down` are available. `down` preserves named volumes; avoid `down --volumes` unless you intentionally want to delete local graph and application data.
+Sign in as `EOIP_ADMIN_USERNAME` (your login name by default) with `EOIP_ADMIN_PASSWORD` from `deploy/.env`; the generated `EOIP_API_TOKEN` there is the MCP facade's service token, mapped to the analyst-only `svc-mcp` principal (see [Authentication](docs/authentication.md)). Do not print or commit these values. `scripts/container.ps1 status`, `logs`, `backup`, `restore-test`, and `down` are available. `down` preserves named volumes; avoid `down --volumes` unless you intentionally want to delete local graph and application data.
 
 For exact runtime actions and optional Compose profiles, see [Getting Started](docs/getting-started.md) and [Docker/Container Operations](EOIP-engg-doc-pkg/reference/docker-local.md).
 
@@ -71,12 +71,14 @@ python -m pip install -c requirements.lock -e ".[test]"   # FT-F06: everything t
 npm --prefix apps/web ci
 ```
 
-Start a local in-memory API in one PowerShell session. These settings are development-only; never reuse the example token in a deployed environment.
+Start a local in-memory API in one PowerShell session. The API fails closed with no provisioned principal, so map the development token to a role set first (`eoip-admin from-env`). These settings are development-only; never reuse the example token in a deployed environment.
 
 ```powershell
 $env:EOIP_API_TOKEN = 'local-development-token-at-least-32-characters'
+$env:EOIP_API_TOKEN_ROLES = 'analyst'
 $env:EOIP_GRAPH_BACKEND = 'memory'
 $env:EOIP_DATA_DIR = (Join-Path $PWD '.eoip-data')
+eoip-admin from-env
 python -m uvicorn apps.api.main:create_app --factory --host 127.0.0.1 --port 8000 --reload
 ```
 

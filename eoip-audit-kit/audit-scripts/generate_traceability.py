@@ -31,7 +31,7 @@ def classify(rel: str) -> str | None:
     low = rel.lower()
     name = os.path.basename(low)
     ext = os.path.splitext(name)[1]
-    if name.startswith("dockerfile") or name.startswith("containerfile"):
+    if name.startswith(("dockerfile", "containerfile")):
         return "infra"
     parts = low.split("/")
     if ext in CODE_EXT:

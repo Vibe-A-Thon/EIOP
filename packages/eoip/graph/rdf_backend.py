@@ -18,7 +18,7 @@ import logging
 from collections.abc import Callable
 from typing import Any
 from urllib.error import HTTPError, URLError
-from urllib.parse import quote, urlencode
+from urllib.parse import quote, urlencode, urlsplit
 from urllib.request import Request, urlopen
 
 from rdflib import Literal, URIRef
@@ -65,11 +65,13 @@ def _urllib_transport(timeout: float, username: str, password: str) -> Transport
         auth = "Basic " + base64.b64encode(f"{username}:{password}".encode()).decode()
 
     def send(method: str, url: str, body: bytes | None, headers: dict[str, str]) -> tuple[int, bytes]:
+        if urlsplit(url).scheme not in ("http", "https"):
+            raise RDFStoreError(f"RDF store endpoint scheme must be http or https: {url}")
         req = Request(url, data=body, method=method, headers=dict(headers))
         if auth:
             req.add_header("Authorization", auth)
         try:
-            with urlopen(req, timeout=timeout) as resp:  # noqa: S310 - configured store endpoint
+            with urlopen(req, timeout=timeout) as resp:  # noqa: S310 - configured store endpoint  # nosec B310 - scheme restricted to http/https above
                 return resp.status, resp.read()
         except HTTPError as exc:
             return exc.code, exc.read()

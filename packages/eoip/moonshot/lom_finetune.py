@@ -140,7 +140,7 @@ class LargeOntologyModelFineTuningRuntime:
 
     def evaluate_structural_reasoning(self, test_set: list[OntologyInstructionExample]) -> dict[str, Any]:
         """Evaluates complex graph reasoning accuracy against benchmark test triples."""
-        total = max(len(test_set), 1)
+        max(len(test_set), 1)
         # Structural accuracy on trained ontology
         return {
             "total_evaluations": len(test_set),

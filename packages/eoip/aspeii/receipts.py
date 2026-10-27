@@ -6,7 +6,7 @@ import base64
 import binascii
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Mapping
+from collections.abc import Mapping
 
 import rfc8785
 from cryptography.exceptions import InvalidSignature

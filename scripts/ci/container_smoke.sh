@@ -11,7 +11,12 @@ IMAGE="${EOIP_SMOKE_IMAGE:-eoip-ci:runtime}"
 NAME="eoip-ci-smoke-$$"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-"$CLI" build -f "$ROOT/deploy/Dockerfile" --target runtime -t "$IMAGE" "$ROOT"
+# CI may build the image first with a layer cache (EOIP_SMOKE_PREBUILT=1); it must then exist locally.
+if [[ "${EOIP_SMOKE_PREBUILT:-0}" == "1" ]]; then
+  "$CLI" image inspect "$IMAGE" >/dev/null || { echo "EOIP_SMOKE_PREBUILT=1 but image $IMAGE is missing" >&2; exit 1; }
+else
+  "$CLI" build -f "$ROOT/deploy/Dockerfile" --target runtime -t "$IMAGE" "$ROOT"
+fi
 
 ADMIN_PASSWORD="$(python3 -c 'import secrets; print(secrets.token_urlsafe(24))')"
 cleanup() { "$CLI" rm -f "$NAME" >/dev/null 2>&1 || true; }

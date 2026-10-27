@@ -6,7 +6,8 @@ import re
 import threading
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 from eoip.enterprise.logging import get_logger
 
@@ -124,7 +125,6 @@ class NLConfigEngine:
         text_lower = text.strip().lower()
         best_intent = IntentType.UNKNOWN
         best_confidence = 0.0
-        best_match = None
         best_groups: tuple = ()
 
         for intent, patterns in self._INTENT_PATTERNS:
@@ -135,7 +135,6 @@ class NLConfigEngine:
                     if confidence > best_confidence:
                         best_intent = intent
                         best_confidence = confidence
-                        best_match = match
                         best_groups = match.groups()
 
         entities = self._extract_entities(text_lower, best_groups)
@@ -254,7 +253,7 @@ class NLConfigEngine:
             return ConfigAction(
                 action_type="set_schedule", target=target,
                 params=command.parameters,
-                description=f"Update sync schedule",
+                description="Update sync schedule",
             )
         elif intent == IntentType.ENABLE_FEATURE:
             feature = command.parameters.get("feature", "")

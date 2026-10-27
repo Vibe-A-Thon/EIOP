@@ -60,7 +60,7 @@ class CSCGGraph:
     def set_transition(self, from_clone_id: str, to_clone_id: str, probability: float) -> None:
         self.transitions[(from_clone_id, to_clone_id)] = max(0.0, min(1.0, probability))
 
-    def rebind_schema(self, source_context: str, target_context: str, symbol_mapping: Dict[str, str]) -> "CSCGGraph":
+    def rebind_schema(self, source_context: str, target_context: str, symbol_mapping: Dict[str, str]) -> CSCGGraph:
         """
         Executes zero-shot relational schema rebinding:
         Maps structural transition topology from source_context to target_context.

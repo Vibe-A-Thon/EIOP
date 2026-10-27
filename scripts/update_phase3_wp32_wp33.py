@@ -317,7 +317,7 @@ for req_id in mapping.keys():
     # Replace - [ ] **`req_id`** or - [ ] `req_id` or | [ ] | `req_id`
     backlog = re.sub(rf"\|\s*\[ \]\s*\|\s*`{req_id}`", rf"| [x] | `{req_id}`", backlog)
     pattern = rf"- \[ \] (\*\*`?{req_id}`?\*\*|`{req_id}`)"
-    backlog = re.sub(pattern, rf"- [x] \1", backlog)
+    backlog = re.sub(pattern, r"- [x] \1", backlog)
 
 with open("KGF-MASTER-BACKLOG.md", "w", encoding="utf-8") as f:
     f.write(backlog)

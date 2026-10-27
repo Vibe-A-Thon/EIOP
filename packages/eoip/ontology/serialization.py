@@ -87,7 +87,7 @@ class RDFDeserializer:
             # Scan for unapproved external HTTP context URLs (SSRF defense CRA-016.3)
             matches = re.findall(r'"@context"\s*:\s*"([^"]+)"', data)
             for url in matches:
-                if url.startswith("http://") or url.startswith("https://"):
+                if url.startswith(("http://", "https://")):
                     if not any(url.startswith(approved) for approved in self.allowed_remote_contexts):
                         raise SSRFPolicyViolationError(
                             f"Remote JSON-LD context '{url}' blocked by approved resolver policy (CRA-016.3)"

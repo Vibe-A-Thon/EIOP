@@ -310,7 +310,7 @@ class ProcessingService:
 
         elif op_id == "records.aggregate":
             recs = inputs.get("records", [])
-            group_by = params.get("group_by", [])
+            params.get("group_by", [])
             count = len(recs)
             result = {"total_records": count, "group_counts": {}}
 

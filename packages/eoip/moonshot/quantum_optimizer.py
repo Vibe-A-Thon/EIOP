@@ -161,7 +161,6 @@ class QuantumInspiredGraphOptimizer:
     ) -> dict[str, Any]:
         """Finds minimum-risk sequencing for dependent architectural refactoring steps."""
         # Topologically sort with heuristic penalty
-        seq = list(tasks)
         # Sort by dependencies first, then by ascending risk cost
         indegree = {t: 0 for t in tasks}
         for u, v in precedence_constraints:

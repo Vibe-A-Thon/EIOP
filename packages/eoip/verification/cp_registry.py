@@ -42,7 +42,9 @@ def local_file(root: Path, relative: str) -> Path:
     path = root / relative
     if Path(relative).is_absolute() or not path.resolve().is_relative_to(root.resolve()):
         raise ValueError(f"Reference must remain inside the project: {relative}")
-    if not path.is_file() and relative in RELOCATED_FILES:
+    # The relocated document is authoritative whenever it exists; a file left at the old path is
+    # only a redirect stub for readers and would shift every pinned line reference.
+    if relative in RELOCATED_FILES and (root / RELOCATED_FILES[relative]).is_file():
         path = root / RELOCATED_FILES[relative]
     if not path.is_file():
         raise ValueError(f"Missing referenced file: {relative}")

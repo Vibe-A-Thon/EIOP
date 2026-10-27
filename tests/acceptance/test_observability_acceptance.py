@@ -345,7 +345,7 @@ def test_cra_008_a_evidence_journey_and_secrets_fixture_sweep():
 
     # 4. Secrets fixture sweep: confirm connector outputs never leak plaintext passwords/tokens
     raw_grafana_ds = grafana_data["datasources"][0]
-    clean_ds = grafana_conn.scrub_datasource_secrets(raw_ds := raw_grafana_ds)
+    clean_ds = grafana_conn.scrub_datasource_secrets(_raw_ds := raw_grafana_ds)
     clean_json_str = json.dumps(clean_ds)
     assert "super_secret_auth_password_do_not_leak" not in clean_json_str
     assert "another_db_secret_password" not in clean_json_str

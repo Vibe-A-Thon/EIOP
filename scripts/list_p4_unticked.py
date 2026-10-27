@@ -11,7 +11,7 @@ curr_wp = ""
 for line in lines:
     if '## Phase 4' in line or '### Phase 4' in line:
         in_p4 = True
-    elif in_p4 and (line.startswith('## Phase 5') or line.startswith('### Phase 5')):
+    elif in_p4 and (line.startswith(("## Phase 5", "### Phase 5"))):
         break
     if in_p4:
         if line.startswith('#### '):

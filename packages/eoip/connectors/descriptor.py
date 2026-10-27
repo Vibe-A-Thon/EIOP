@@ -13,7 +13,8 @@ import random
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, Iterator, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
+from collections.abc import Iterator
 from pydantic import BaseModel, Field
 
 from eoip.connectors.errors import (

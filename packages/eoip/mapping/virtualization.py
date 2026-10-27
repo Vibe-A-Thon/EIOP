@@ -9,12 +9,23 @@ Separates virtual query rewriting from materialized ingestion:
 
 from __future__ import annotations
 
+import re
 import time
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Optional
 
 from eoip.mapping.ir import MappingIR
+
+_SQL_IDENT_PART = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _sql_identifier(name: str) -> str:
+    """Validate a (optionally dotted) SQL identifier; raises ValueError on anything else."""
+    parts = str(name).split(".")
+    if not parts or not all(_SQL_IDENT_PART.fullmatch(part) for part in parts):
+        raise ValueError(f"unsafe SQL identifier: {name!r}")
+    return ".".join(parts)
 
 
 class FreshnessModel(str, Enum):
@@ -62,15 +73,16 @@ class OBDAPushdownEngine:
         cols = []
         for pm in self.mapping_ir.property_maps:
             if pm.predicate_iri in requested_predicates or not requested_predicates:
-                cols.append(pm.source_path)
+                cols.append(_sql_identifier(pm.source_path))
 
         col_clause = ", ".join(cols) if cols else "*"
         # Primary key column derived from subject template or default 'id'
         pk_col = "id"
-        table_name = self.context.source_table
+        table_name = _sql_identifier(self.context.source_table)
+        entity_literal = "'" + str(entity_id).replace("'", "''") + "'"
 
         # Generated pushdown SQL with indexed primary key lookup
-        sql = f"SELECT {col_clause} FROM {table_name} WHERE {pk_col} = '{entity_id}' LIMIT 1;"
+        sql = f"SELECT {col_clause} FROM {table_name} WHERE {pk_col} = {entity_literal} LIMIT 1;"  # nosec B608 - identifiers whitelist-validated, entity_id single-quote-escaped
         return sql
 
     def execute_point_query_mock(self, entity_id: str, mock_db: dict[str, dict[str, Any]]) -> dict[str, Any]:

@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EOIP Intent Alignment</title>
+<meta name="description" content="How closely the EOIP / KnowGridFlow codebase matches the owner's intention, where it has drifted, and the corrective plan. Source: EOIP-intent-alignment-analysis-2026-10-27.md">
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --surface-2: #f2f1ed;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #6e6c66;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.10);
+  --accent: #2a78d6;
+  --accent-ink: #1c5cab;
+  --accent-soft: #cde2fb;
+  --bar: #2a78d6;
+  --bar-track: #ecebe6;
+  --good: #0ca30c;
+  --warning: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+  --good-ink: #006300;
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.06), 0 4px 16px rgba(11, 11, 11, 0.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #232321;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --muted: #a3a197;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --accent: #3987e5;
+    --accent-ink: #86b6ef;
+    --accent-soft: #184f95;
+    --bar: #3987e5;
+    --bar-track: #2a2a28;
+    --good-ink: #0ca30c;
+    --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --surface-2: #232321;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --muted: #a3a197;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --border: rgba(255, 255, 255, 0.10);
+  --accent: #3987e5;
+  --accent-ink: #86b6ef;
+  --accent-soft: #184f95;
+  --bar: #3987e5;
+  --bar-track: #2a2a28;
+  --good-ink: #0ca30c;
+  --shadow: none;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent-ink); }
+code, .mono { font-family: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace; font-size: 0.86em; }
+code { background: var(--surface-2); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.2; margin: 0; }
+h2 { font-size: 1.45rem; letter-spacing: -0.01em; }
+h3 { font-size: 1.02rem; }
+p { margin: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; }
+
+/* top bar */
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--page) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar .wrap { display: flex; align-items: center; gap: 16px; padding-block: 10px; }
+.brand { font-weight: 700; letter-spacing: 0.02em; white-space: nowrap; font-size: 0.95rem; }
+.brand span { color: var(--muted); font-weight: 500; }
+.toc { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; flex: 1; min-width: 0; }
+.toc::-webkit-scrollbar { display: none; }
+.toc a {
+  text-decoration: none; color: var(--ink-2); font-size: 0.84rem; white-space: nowrap;
+  padding: 6px 10px; border-radius: 999px;
+}
+.toc a:hover, .toc a.active { background: var(--surface-2); color: var(--ink); }
+.theme-btn {
+  border: 1px solid var(--border); background: var(--surface); color: var(--ink);
+  border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 0.8rem; cursor: pointer; white-space: nowrap;
+}
+
+/* hero */
+header.hero { padding-block: 48px 28px; }
+.eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.74rem; color: var(--muted); font-weight: 600; }
+.hero h1 { font-size: clamp(1.9rem, 4vw, 2.8rem); letter-spacing: -0.02em; margin-top: 8px; max-width: 22ch; }
+.hero .lede { margin-top: 14px; color: var(--ink-2); font-size: 1.06rem; max-width: 68ch; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 18px; color: var(--muted); font-size: 0.84rem; }
+
+section { padding-block: 34px; border-top: 1px solid var(--border); }
+.sec-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.sec-head p { color: var(--ink-2); max-width: 70ch; margin-top: 6px; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px; box-shadow: var(--shadow); min-width: 0;
+}
+.grid { display: grid; gap: 16px; }
+.g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.g3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.g4 { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+
+/* verdict */
+.verdict { display: grid; grid-template-columns: minmax(240px, 320px) 1fr; gap: 16px; }
+@media (max-width: 760px) { .verdict { grid-template-columns: 1fr; } }
+.hero-num { font-size: 4rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+.hero-num small { font-size: 1.4rem; color: var(--muted); font-weight: 500; }
+.meter { position: relative; height: 12px; border-radius: 6px; background: var(--bar-track); margin-top: 18px; overflow: hidden; }
+.meter > i { position: absolute; inset: 0 auto 0 0; background: var(--bar); border-radius: 6px; }
+.meter-scale { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.75rem; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.verdict-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.verdict-cols h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+ul.clean { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+ul.clean li { padding-left: 18px; position: relative; color: var(--ink-2); font-size: 0.93rem; }
+ul.clean li::before { content: ""; position: absolute; left: 2px; top: 0.62em; width: 6px; height: 6px; border-radius: 50%; background: var(--axis); }
+
+/* status chips */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; font-weight: 600;
+  padding: 3px 9px; border-radius: 999px; white-space: nowrap; color: var(--ink);
+  border: 1px solid transparent;
+}
+.chip .ico { font-size: 0.72rem; line-height: 1; }
+.chip.good { background: color-mix(in srgb, var(--good) 14%, transparent); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+.chip.good .ico { color: var(--good); }
+.chip.warning { background: color-mix(in srgb, var(--warning) 18%, transparent); border-color: color-mix(in srgb, var(--warning) 60%, transparent); }
+.chip.warning .ico { color: #b47c00; }
+.chip.serious { background: color-mix(in srgb, var(--serious) 16%, transparent); border-color: color-mix(in srgb, var(--serious) 55%, transparent); }
+.chip.serious .ico { color: var(--serious); }
+.chip.critical { background: color-mix(in srgb, var(--critical) 14%, transparent); border-color: color-mix(in srgb, var(--critical) 50%, transparent); }
+.chip.critical .ico { color: var(--critical); }
+.chip.neutral { background: var(--surface-2); border-color: var(--border); color: var(--ink-2); }
+
+/* intent plain cards */
+.intent-plain { counter-reset: n; }
+.intent-plain .card { display: flex; gap: 12px; align-items: flex-start; }
+.intent-plain .num {
+  flex: none; width: 30px; height: 30px; border-radius: 8px; background: var(--accent-soft); color: var(--ink);
+  display: grid; place-items: center; font-weight: 700; font-size: 0.86rem;
+}
+.intent-plain p { color: var(--ink-2); font-size: 0.92rem; margin-top: 3px; }
+
+/* findings */
+.finding { display: grid; grid-template-columns: auto 1fr; gap: 14px; }
+.finding .fid { font-weight: 700; color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; padding-top: 2px; }
+.finding h3 { margin-bottom: 6px; }
+.finding p { color: var(--ink-2); font-size: 0.92rem; }
+.finding .ev { margin-top: 8px; font-size: 0.8rem; color: var(--muted); }
+.finding .top { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
+
+/* controls */
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 10px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+.seg button {
+  border: 0; background: transparent; color: var(--ink-2); font: inherit; font-size: 0.82rem;
+  padding: 6px 12px; border-radius: 8px; cursor: pointer;
+}
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); font-weight: 600; }
+
+/* bar chart */
+.bars { display: grid; gap: 2px; }
+.bar-row {
+  display: grid; grid-template-columns: minmax(150px, 290px) 1fr 132px; align-items: center; gap: 12px;
+  padding: 7px 8px; border-radius: 8px; cursor: default;
+}
+.bar-row:hover, .bar-row:focus-visible { background: var(--surface-2); outline: none; }
+.bar-label { font-size: 0.88rem; min-width: 0; }
+.bar-label b { font-family: ui-monospace, Consolas, monospace; font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-right: 6px; }
+.bar-track { position: relative; height: 22px; }
+.bar-track .gl { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--grid); }
+.bar-fill {
+  position: absolute; left: 0; top: 4px; height: 14px; background: var(--bar);
+  border-radius: 0 4px 4px 0; min-width: 3px;
+}
+.bar-val { position: absolute; top: 1px; font-size: 0.8rem; font-weight: 600; font-variant-numeric: tabular-nums; padding-left: 6px; color: var(--ink); }
+.bar-axis { display: grid; grid-template-columns: minmax(150px, 290px) 1fr 132px; gap: 12px; padding: 4px 8px 0; }
+.bar-axis .ticks { position: relative; height: 16px; font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar-axis .ticks span { position: absolute; transform: translateX(-50%); }
+@media (max-width: 680px) {
+  .bar-row, .bar-axis { grid-template-columns: 1fr; gap: 4px; }
+  .bar-axis .spacer { display: none; }
+}
+
+/* stacked distribution */
+.stack { display: flex; height: 34px; border-radius: 8px; overflow: hidden; gap: 2px; background: var(--surface); }
+.stack > div { display: flex; align-items: center; justify-content: center; gap: 2px; font-size: 0.8rem; font-weight: 700; min-width: 28px; white-space: nowrap; overflow: hidden; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; font-size: 0.82rem; color: var(--ink-2); }
+
+/* table */
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; background: var(--surface-2); position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+
+/* drift */
+.drift .card h3 { display: flex; gap: 10px; align-items: baseline; margin-bottom: 8px; }
+.drift .card h3 b { color: var(--muted); font-family: ui-monospace, Consolas, monospace; font-size: 0.82rem; }
+.drift .what { color: var(--ink-2); font-size: 0.92rem; }
+.drift .why { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--grid); font-size: 0.86rem; color: var(--ink-2); }
+.drift .why strong { color: var(--ink); }
+
+/* roles */
+.role-picker { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.role-picker button {
+  border: 1px solid var(--border); background: var(--surface); color: var(--ink-2); font: inherit; font-size: 0.82rem;
+  padding: 6px 12px; border-radius: 999px; cursor: pointer;
+}
+.role-picker button[aria-pressed="true"] { background: var(--ink); color: var(--page); border-color: var(--ink); }
+.role-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.role-panel h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.role-panel p { color: var(--ink-2); font-size: 0.92rem; }
+.role-panel .must { border-color: color-mix(in srgb, var(--accent) 45%, transparent); background: color-mix(in srgb, var(--accent) 6%, var(--surface)); }
+
+/* roadmap */
+.phases { display: grid; gap: 14px; }
+.phase { display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start; }
+@media (max-width: 760px) { .phase { grid-template-columns: 1fr; } }
+.phase-head { position: relative; padding-left: 16px; }
+.phase-head::before { content: ""; position: absolute; left: 0; top: 4px; bottom: 4px; width: 4px; border-radius: 2px; background: var(--bar); opacity: var(--op, 1); }
+.phase-head .pn { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
+.phase-head h3 { margin-top: 2px; }
+.phase-head p { font-size: 0.82rem; color: var(--ink-2); margin-top: 4px; }
+.wps { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; align-items: start; }
+.wp {
+  text-align: left; border: 1px solid var(--border); background: var(--surface); border-radius: 10px; padding: 10px 12px;
+  font: inherit; color: var(--ink); cursor: pointer; display: grid; gap: 4px; min-width: 0;
+}
+.wp:hover, .wp[aria-expanded="true"] { border-color: var(--accent); }
+.wp .wp-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.wp .wid { font-family: ui-monospace, Consolas, monospace; font-size: 0.76rem; color: var(--muted); font-weight: 700; }
+.wp .size { font-size: 0.7rem; font-weight: 700; border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; color: var(--ink-2); }
+.wp .wt { font-size: 0.88rem; font-weight: 600; }
+.wp .wd { display: none; font-size: 0.82rem; color: var(--ink-2); border-top: 1px dashed var(--grid); padding-top: 6px; margin-top: 4px; }
+.wp[aria-expanded="true"] .wd { display: grid; gap: 4px; }
+.wp .wd b { color: var(--ink); font-weight: 600; }
+.size-key { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.8rem; color: var(--ink-2); }
+
+/* decisions */
+ol.decisions { margin: 0; padding: 0; list-style: none; counter-reset: d; display: grid; gap: 10px; }
+ol.decisions li { counter-increment: d; display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; }
+ol.decisions li::before {
+  content: counter(d); width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--accent);
+  display: grid; place-items: center; font-weight: 700; color: var(--accent-ink); font-size: 0.86rem;
+}
+ol.decisions b { display: block; }
+ol.decisions span { color: var(--ink-2); font-size: 0.9rem; }
+
+dl.gloss { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 10px 20px; margin: 0; }
+dl.gloss dt { font-weight: 600; }
+dl.gloss dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 600px) { dl.gloss { grid-template-columns: 1fr; gap: 2px; } dl.gloss dd { margin-bottom: 10px; } }
+
+footer { padding-block: 32px 48px; color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--border); }
+
+/* tooltip */
+#tip {
+  position: fixed; z-index: 50; pointer-events: none; max-width: 340px;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; font-size: 0.82rem; box-shadow: 0 6px 24px rgba(0,0,0,0.18); opacity: 0; transition: opacity .08s;
+}
+#tip.on { opacity: 1; }
+#tip .t-h { font-weight: 700; margin-bottom: 4px; }
+#tip .t-r { color: var(--ink-2); margin-top: 4px; }
+#tip .t-r b { color: var(--ink); }
+.hidden { display: none !important; }
+.note { font-size: 0.82rem; color: var(--muted); margin-top: 10px; }
+.callout {
+  border-left: 4px solid var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+  padding: 14px 16px; border-radius: 0 10px 10px 0; color: var(--ink-2); font-size: 0.93rem;
+}
+.callout strong { color: var(--ink); }
+@media (forced-colors: active) { .bar-fill, .meter > i { background: CanvasText; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand">EOIP <span>Intent Alignment</span></div>
+    <nav class="toc" id="toc" aria-label="Sections">
+      <a href="#verdict">Verdict</a>
+      <a href="#intent">The intention</a>
+      <a href="#findings">Key findings</a>
+      <a href="#scorecard">Scorecard</a>
+      <a href="#drift">Why it drifted</a>
+      <a href="#roles">By role</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#roadmap">Fix plan</a>
+      <a href="#consolidate">Clean-up</a>
+      <a href="#decisions">Owner decisions</a>
+      <a href="#glossary">Glossary</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Change colour theme">Theme: system</button>
+  </div>
+</div>
+
+<main class="wrap">
+  <header class="hero">
+    <div class="eyebrow">EOIP / KnowGridFlow · Analysis 27 Oct 2026</div>
+    <h1>Is EOIP being built into what it was meant to be?</h1>
+    <p class="lede">EOIP is meant to become an organization's <strong>living brain</strong>: it connects to every work system, keeps one constantly updated knowledge graph, and lets anyone ask any question and get an answer backed by evidence. This report compares that intention with what the code does today, explains where and why it has drifted, and sets out the plan to bring it back on track.</p>
+    <div class="meta-row">
+      <span>Baseline: branch <code>dev_local</code> @ <code>73a3ae2</code> plus working tree</span>
+      <span>Method: source inspection plus the last full test run</span>
+      <span>Source: <a href="EOIP-intent-alignment-analysis-2026-10-27.md">EOIP-intent-alignment-analysis-2026-10-27.md</a></span>
+    </div>
+  </header>
+
+  <!-- VERDICT -->
+  <section id="verdict">
+    <div class="sec-head">
+      <div>
+        <h2>The short answer</h2>
+        <p>The foundation is right; the headline promise is not delivered yet. About half of the intention is in place.</p>
+      </div>
+    </div>
+    <div class="verdict">
+      <div class="card">
+        <div class="eyebrow">Overall alignment score</div>
+        <div class="hero-num" style="margin-top:10px">2.6<small> / 5</small></div>
+        <p style="color:var(--ink-2);margin-top:8px">About <strong style="color:var(--ink)">52%</strong> of the intention is realised. The core intents, weighted double, average <strong style="color:var(--ink)">2.3</strong>.</p>
+        <div class="meter" role="img" aria-label="Alignment 2.6 out of 5"><i style="width:52%"></i></div>
+        <div class="meter-scale"><span>0 absent</span><span>2.5</span><span>5 verified</span></div>
+      </div>
+      <div class="card verdict-cols">
+        <div>
+          <h3><span class="chip good"><span class="ico">✓</span>On track</span></h3>
+          <ul class="clean">
+            <li>Storage is pluggable behind one interface (HugeGraph, Neo4j, Neptune, in-memory, RDF stores)</li>
+            <li>Links record their evidence; history is kept as revisions over time</li>
+            <li>Questions are turned into checked plans, never raw database code</li>
+            <li>The local AI connection is locked down</li>
+            <li>The "three questions" work today</li>
+            <li>About 5,200 automated tests; CI checks pass</li>
+          </ul>
+        </div>
+        <div>
+          <h3><span class="chip critical"><span class="ico">✕</span>Drifted</span></h3>
+          <ul class="clean">
+            <li>The main "ask the brain" endpoint can return <strong>simulated</strong> answers with a fake confidence</li>
+            <li>The brain is <strong>not living</strong>: nothing syncs the connected systems automatically</li>
+            <li>Answers ignore source permissions, so anyone could see restricted content</li>
+            <li>Five separate query languages and no formal grammar</li>
+            <li>2,603 requirements, every one untriaged</li>
+          </ul>
+        </div>
+        <div>
+          <h3><span class="chip neutral"><span class="ico">→</span>Do first</span></h3>
+          <ul class="clean">
+            <li>Stop simulated output from reaching users</li>
+            <li>Require evidence on every inferred link</li>
+            <li>Rewrite the vision document to match the real intention</li>
+            <li>Triage the requirement backlog against that intention</li>
+            <li>Then: automatic syncing, permission-aware answers, one "ask" experience</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTENT -->
+  <section id="intent">
+    <div class="sec-head">
+      <div>
+        <h2>What EOIP is meant to be</h2>
+        <p>The owner's intention in plain language. The full analysis breaks it into 26 testable statements; these are the eight ideas behind them.</p>
+      </div>
+    </div>
+    <div class="grid g4 intent-plain">
+      <div class="card"><div class="num">1</div><div><h3>Runs at the client</h3><p>Self-hosted, central or distributed, as one app or (preferred) a suite of apps that can also be used individually.</p></div></div>
+      <div class="card"><div class="num">2</div><div><h3>Local-first, not local-only</h3><p>Works without the cloud; the client decides whether to connect cloud services, and EOIP provides the connections.</p></div></div>
+      <div class="card"><div class="num">3</div><div><h3>Any proven database</h3><p>HugeGraph, Neo4j, Neptune, other graph databases or NoSQL, queried through EOIP's <em>own</em> query language.</p></div></div>
+      <div class="card"><div class="num">4</div><div><h3>Connects to everything</h3><p>An adapter framework for Jira, Confluence, ServiceNow, GitHub/GitLab and more, pulling data in many ways.</p></div></div>
+      <div class="card"><div class="num">5</div><div><h3>A living brain</h3><p>Knowledge, code and meta graphs combined into one organizational brain, updated continuously, with history never destroyed.</p></div></div>
+      <div class="card"><div class="num">6</div><div><h3>Anyone asks anything</h3><p>Every role can ask factual, reasoning or "meaning" questions, and gets evidence, a confidence score and related answers.</p></div></div>
+      <div class="card"><div class="num">7</div><div><h3>Secure AI from day 0</h3><p>A local model is the default and improves over time, but the core still works with the model off or no vector database.</p></div></div>
+      <div class="card"><div class="num">8</div><div><h3>Best in its category</h3><p>Features come from ongoing research of competitors; their weaknesses become EOIP strengths, built in-house.</p></div></div>
+    </div>
+  </section>
+
+  <!-- FINDINGS -->
+  <section id="findings">
+    <div class="sec-head">
+      <div>
+        <h2>Ten findings that matter most</h2>
+        <p>Ordered by severity. Each one has a file reference in the full analysis.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Filter findings by severity" id="findFilter">
+        <button type="button" aria-pressed="true" data-f="all">All</button>
+        <button type="button" aria-pressed="false" data-f="critical">Critical</button>
+        <button type="button" aria-pressed="false" data-f="serious">High</button>
+        <button type="button" aria-pressed="false" data-f="warning">Medium</button>
+      </div>
+    </div>
+    <div class="grid g2" id="findingsGrid"></div>
+  </section>
+
+  <!-- SCORECARD -->
+  <section id="scorecard">
+    <div class="sec-head">
+      <div>
+        <h2>Scorecard: 26 intent statements</h2>
+        <p>Each statement is scored from 0 (absent) to 5 (verified end to end). Hover over or focus a row to see its main gap. I-21 to I-26 were added by the analysis because the product fails without them.</p>
+      </div>
+      <div class="controls">
+        <div class="seg" role="group" aria-label="Which intents" id="scGroup">
+          <button type="button" aria-pressed="true" data-g="all">All 26</button>
+          <button type="button" aria-pressed="false" data-g="core">Core</button>
+          <button type="button" aria-pressed="false" data-g="added">Added</button>
+        </div>
+        <div class="seg" role="group" aria-label="Sort order" id="scSort">
+          <button type="button" aria-pressed="true" data-s="id">By ID</button>
+          <button type="button" aria-pressed="false" data-s="score">Lowest first</button>
+        </div>
+        <div class="seg" role="group" aria-label="View" id="scView">
+          <button type="button" aria-pressed="true" data-v="chart">Chart</button>
+          <button type="button" aria-pressed="false" data-v="table">Table</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h3 style="margin-bottom:10px">How the 26 statements are distributed</h3>
+      <div class="stack" id="distStack" role="img" aria-label="Distribution of verdicts"></div>
+      <div class="legend" id="distLegend"></div>
+    </div>
+
+    <div class="card" id="scChart">
+      <div class="bars" id="scBars"></div>
+      <div class="bar-axis" aria-hidden="true"><div class="spacer"></div><div class="ticks" id="scTicks"></div><div class="spacer"></div></div>
+      <p class="note">Bar length is the score. The chip on the right is the verdict band: ✓ Aligned ≥ 3.75 · ▲ Partly aligned 2.5–3.7 · ◆ Drifted 1–2.4 · ✕ Absent below 1.</p>
+    </div>
+    <div class="table-wrap hidden" id="scTable"></div>
+  </section>
+
+  <!-- DRIFT -->
+  <section id="drift">
+    <div class="sec-head">
+      <div>
+        <h2>Why it drifted: nine patterns</h2>
+        <p>The individual gaps come from a few repeating patterns. Fixing a pattern fixes many gaps at once.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <h3>The two-speed codebase, by lines of Python</h3>
+      <p style="color:var(--ink-2);font-size:0.9rem;margin-top:4px">Most of the code is the careful, tested "governed core". About 15,800 lines (9%) form an "aspirational layer" that advertises frontier capabilities but simulates them, and that layer is wired into the public API.</p>
+      <div class="stack" style="margin-top:14px" role="img" aria-label="Governed and other code 163,700 lines, aspirational layer 15,800 lines">
+        <div style="flex:163.7;background:var(--bar);color:#fff">Core and other code · ~163.7k lines (91%)</div>
+        <div style="flex:15.8;background:var(--serious);color:#0b0b0b" title="Aspirational layer">◆ 15.8k</div>
+      </div>
+      <div class="legend"><span>■ Core and other modules</span><span><span style="color:var(--serious)">◆</span> Aspirational layer: <code>brain/</code>, <code>moonshot/</code>, <code>enterprise/</code>, the polyglot engine, the "39-database" adapter, <code>self_llm</code>, graph-of-graphs, vector graph</span></div>
+    </div>
+    <div class="grid g3 drift" id="driftGrid"></div>
+  </section>
+
+  <!-- ROLES -->
+  <section id="roles">
+    <div class="sec-head">
+      <div>
+        <h2>The same project through 14 roles</h2>
+        <p>Pick a role to see what it would keep, what it would fix, and its single most important action.</p>
+      </div>
+    </div>
+    <div class="role-picker" id="rolePicker" role="group" aria-label="Choose a role"></div>
+    <div class="role-panel" id="rolePanel" aria-live="polite"></div>
+  </section>
+
+  <!-- CAPABILITIES -->
+  <section id="capabilities">
+    <div class="sec-head">
+      <div>
+        <h2>Capability areas</h2>
+        <p>Today's score for each functional area, what "best in category" requires, and the work package that closes the gap.</p>
+      </div>
+      <div class="seg" role="group" aria-label="View" id="capView">
+        <button type="button" aria-pressed="true" data-v="chart">Chart</button>
+        <button type="button" aria-pressed="false" data-v="table">Table</button>
+      </div>
+    </div>
+    <div class="card" id="capChart">
+      <div class="bars" id="capBars"></div>
+      <div class="bar-axis" aria-hidden="true"><div class="spacer"></div><div class="ticks" id="capTicks"></div><div class="spacer"></div></div>
+    </div>
+    <div class="table-wrap hidden" id="capTable"></div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section id="roadmap">
+    <div class="sec-head">
+      <div>
+        <h2>The fix plan: seven phases</h2>
+        <p>Work in phase order. Phase 0 blocks everything else, because every later phase needs answers that users can trust. Click a work package to see its goal and how acceptance is proven.</p>
+      </div>
+      <div class="size-key"><span><b>S</b> ≤ 2 days</span><span><b>M</b> ≤ 1 week</span><span><b>L</b> ≤ 3 weeks</span><span>(one agent with human review)</span></div>
+    </div>
+    <div class="callout" style="margin-bottom:18px"><strong>The acceptance rule.</strong> A work package is done only when a test or user journey has <em>run</em> against the real API, storage, worker and UI, and its output is recorded. Code, a test file or a ticked checkbox is not proof.</div>
+    <div class="phases" id="phases"></div>
+  </section>
+
+  <!-- CONSOLIDATE -->
+  <section id="consolidate">
+    <div class="sec-head">
+      <div>
+        <h2>Consolidate, freeze or remove</h2>
+        <p>What should shrink so that the product gets deeper instead of wider. Nothing is deleted while a route, test or registry entry still refers to it.</p>
+      </div>
+    </div>
+    <div class="table-wrap" id="consTable"></div>
+  </section>
+
+  <!-- DECISIONS -->
+  <section id="decisions">
+    <div class="sec-head">
+      <div>
+        <h2>Seven decisions only the owner can make</h2>
+        <p>The coding agent must ask about these, not assume an answer.</p>
+      </div>
+    </div>
+    <div class="card">
+      <ol class="decisions">
+        <li><div><b>Which NoSQL database comes first</b><span>MongoDB (its SSPL licence may conflict with redistribution), Apache Cassandra, ScyllaDB, or another Apache-2.0 store. AGPL is ruled out.</span></div></li>
+        <li><div><b>The default local AI model and acceptable licences</b><span>Which model to use for each hardware tier, and whether only Apache-2.0/MIT licences are allowed or community licences with usage clauses too.</span></div></li>
+        <li><div><b>External AI model policy</b><span>Which kinds of data may ever leave the organization, to which providers, and whether the external option ships at all.</span></div></li>
+        <li><div><b>Who triages the requirements</b><span>Who signs off keep or drop for the 2,603 records, and whether whole programmes (for example Moonshots, or the advanced Graph Neurons tiers) are deferred.</span></div></li>
+        <li><div><b>Suite release order</b><span>Keep the suite plan's first wave, or put the Ask-first home and role workspaces first (as this analysis recommends).</span></div></li>
+        <li><div><b>Permissions when a source's access rules are unknown</b><span>Deny by default (recommended) or allow within the tenant.</span></div></li>
+        <li><div><b>Distributed topology priority</b><span>One central brain first, or a hub-and-spoke federation of departmental brains early.</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="sec-head"><div><h2>Glossary</h2><p>Terms used in this report.</p></div></div>
+    <div class="card">
+      <dl class="gloss">
+        <dt>Knowledge graph</dt><dd>Things (requirements, code, people, services) stored as points, with the relationships between them stored as links.</dd>
+        <dt>Evidence / provenance</dt><dd>The record of where a link came from: which system, which document or commit, when, and how sure we are.</dd>
+        <dt>Living brain</dt><dd>A knowledge graph kept current automatically as the connected systems change.</dd>
+        <dt>Connector / adapter</dt><dd>The code that reads data from another system, such as Jira or GitHub.</dd>
+        <dt>Incremental sync</dt><dd>Fetching only what changed since the last sync, instead of re-reading everything.</dd>
+        <dt>Query language</dt><dd>A precise way to ask the graph a question. EOIP should have one of its own that works on any supported database.</dd>
+        <dt>Pushdown</dt><dd>Translating a query into the database's native language so the database does the work, instead of EOIP fetching item by item.</dd>
+        <dt>Simulation</dt><dd>Output generated to look like a real result when the real capability (for example a model) is not available.</dd>
+        <dt>Confidence (calibrated)</dt><dd>A score that matches reality: answers marked 80% confident should be right about 80% of the time.</dd>
+        <dt>ACL</dt><dd>Access control list: who is allowed to see an item in its source system.</dd>
+        <dt>Crypto-shredding</dt><dd>Erasing personal data by destroying its encryption key, so history and structure survive but the data can no longer be read.</dd>
+        <dt>Work package (WP)</dt><dd>A unit of corrective work with a goal, scope and executed acceptance test.</dd>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    Generated from <code>EOIP-intent-alignment-analysis-2026-10-27.md</code>. Scores are judgments from source inspection; executed evidence is limited to the last full test run (5,221 tests) and the local CI gates. No live connectors, databases, model or UI journeys were run for this analysis.
+  </div>
+</footer>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- data ---------------- */
+  var INTENTS = [
+    ["I-01","Self-hosted, central or distributed",3,"Partly aligned","Single filesystem-backed job worker, so not distributed; no multi-site topology proven.","base"],
+    ["I-02","Suite of applications",1.5,"Drifted","Suite plan is only a proposal; one deployed web app plus a second unreconciled frontend; no suite home or shared session.","base"],
+    ["I-03","Local-first, client-controlled cloud connections",3,"Partly aligned","Egress gateway and data-flow manifests exist, but cloud adapters are deferred and AI calls don't go through egress.","base"],
+    ["I-04","Any proven graph or NoSQL database",2.5,"Partly aligned; overstated","Four real backends plus RDF, AGE and Janus; no NoSQL; the '39+ databases' registry is a regex dry-run.","core"],
+    ["I-05","Owned query language for any database",2,"Drifted (fragmented)","Five overlapping languages, no grammar or spec, no pushdown; remote databases get one call per hop.","core"],
+    ["I-06","Evidence on every link",3,"Partly aligned","Evidence is not required at the write port; edges can be stored with an empty evidence list.","core"],
+    ["I-07","Three questions answered with proof",4,"Aligned","WHY / IMPACT / PATH / WHAT CHANGED exist; not yet exercised against a live backend; no proof-bundle export.","core"],
+    ["I-08","Any question: factual, reasoning, semantic",2,"Partly aligned; risky","No router that picks the right execution per question type; the 'brain' path simulates.","core"],
+    ["I-09","Evidence, confidence and related answers",2,"Drifted","Citations exist, but no calibrated confidence and no related answers; brain confidence is hard-coded to 1.0.","core"],
+    ["I-10","Anyone in any role can ask",1.5,"Drifted","Only coarse roles (admin, analyst, viewer, steward); no role experiences; source permissions not mirrored.","core"],
+    ["I-11","Adapter SDK and framework",3,"Partly aligned","Good protocol and 34 connectors, but only 6 support incremental sync; no packaged SDK; no live qualification.","core"],
+    ["I-12","Living brain, continuous updates",1.5,"Drifted (core)","Nothing schedules connector syncs; no freshness SLOs or lag tracking per source.","core"],
+    ["I-13","Many graph types forming one brain",2.5,"Partly aligned","14 domains and a meta graph exist, but graph-of-graphs views are built in memory and thrown away.","core"],
+    ["I-14","Own graph-building algorithms",3,"Partly aligned","Linking, co-change, link prediction and entity resolution exist, but none is benchmarked for precision or recall.","base"],
+    ["I-15","Own agents",3,"Partly aligned","Governed agents exist; the brain path's agents run on simulated generation; no evaluation on golden tasks.","base"],
+    ["I-16","Secure AI",4,"Aligned","Strong endpoint hardening; data-loss prevention is not yet on the model path (needed once cloud models are allowed).","base"],
+    ["I-17","Local model from day 0 that improves",1.5,"Drifted","No default model shipped; no feedback capture; no evaluation-gated improvement loop.","core"],
+    ["I-18","Works without the model or a vector database",4,"Aligned","Core degrades honestly; only the brain layer substitutes simulation instead.","base"],
+    ["I-19","History never destroyed",3.5,"Mostly aligned","clear() is on the public storage interface; lawful erasure vs. immutable history is unresolved.","base"],
+    ["I-20","Research-driven, best in category",2.5,"Strong research, weak conversion","Research spawns new programmes instead of improving existing capabilities; backlog untriaged.","base"],
+    ["I-21","No fabricated output",1.5,"Drifted","Brain, self_llm, the database adapter and the polyglot engine present simulated output as real.","added"],
+    ["I-22","Permission-aware answers",0.5,"Absent","The source permissions field is declared but never filled in or checked.","added"],
+    ["I-23","Lawful erasure that keeps history",2,"Partial","Data-subject requests exist; crypto-shredding is deferred.","added"],
+    ["I-24","Measured answer quality",1.5,"Weak","No golden question sets per role with tracked accuracy, citation precision or calibration.","added"],
+    ["I-25","Operable at enterprise scale",2,"Partial","File-backed queue; three API files of 1,700–2,050 lines each are hard to own.","added"],
+    ["I-26","Answers show how fresh they are",0.5,"Absent","No per-source freshness is attached to answers.","added"]
+  ];
+
+  var FINDINGS = [
+    ["F1","critical","Critical · trust","The 'ask the brain' endpoint can return fake answers","When no model is configured, /api/v1/ask produces templated text, invented explanation numbers and a fixed confidence of 1.0, and by default targets a Neo4j adapter that only pretends to connect.","brain/brain_os.py · models/self_llm.py · brain/router.py"],
+    ["F2","critical","Critical · core promise","The brain is not living","Nothing syncs the connected systems on a schedule; the worker only runs jobs someone submits. Only 6 connector modules can fetch changes incrementally.","apps/worker/main.py · connectors/*"],
+    ["F3","critical","Critical · security","Anyone could see restricted content","Source-system permissions are never copied or enforced, so a user can get facts from Jira or Confluence items they cannot open in the source.","contracts/canonical.py:76 (field never used)"],
+    ["F4","serious","High","Evidence isn't required on links","The write path accepts links with an empty evidence list, so 'every link carries its evidence' isn't guaranteed.","ingestion/pipeline.py:121-137"],
+    ["F5","serious","High","The query language is fragmented","At least five home-grown dialects plus a '71-dialect' regex engine; no grammar or spec; queries on remote databases cost one call per hop.","query/eql.py · query/languages.py · qlang/"],
+    ["F6","serious","High","'39+ databases' is overstated","Beyond the real backends, the list is regex translation that reports 'connected' with no client. No NoSQL database is supported.","graph/database_adapters.py"],
+    ["F7","serious","High","AI is required from day 0, but no model ships","The model name is empty by default and the local model sits behind an opt-in profile. Nothing captures feedback, so the model can't improve.","deploy/docker-compose.yml"],
+    ["F8","warning","Medium","Clients can't choose a governed cloud model","The model connection is local-only by design; the egress gateway that could govern cloud calls exists but isn't wired to AI.","models/provider.py · egress/provider.py"],
+    ["F9","warning","Medium","The suite is still a proposal","Two competing frontends: the deployed apps/web, and the preview frontend/ that has the only dedicated Ask screen.","docs/EOIP-suite-architecture-plan.md"],
+    ["F10","serious","High · delivery","Breadth has outrun depth","About 140 packages, 806 API operations, 13+ overlapping programmes and 2,603 requirements, all marked UNTRIAGED.","requirements-registry.json"]
+  ];
+
+  var DRIFT = [
+    ["D1","Two-speed codebase","A careful, tested core sits beside an aspirational layer whose docstrings promise frontier features while the code simulates them, and that layer is mounted in the public API.","One simulated answer with confidence 1.0 discredits every evidenced answer next to it."],
+    ["D2","Breadth over depth","15 requirement programmes, 2,740 registry entries (every one with a status is untriaged) and about 806 API operations, many with no UI or journey.","Nobody can say what is done, partial, duplicated or obsolete, so the work can't be planned."],
+    ["D3","Fragmented query language","EQL, EOQL, OSQL, a 'semantic QL', QueryPlan and a 71-dialect regex engine overlap. The typed compiler that could unify them is not used anywhere.","The owner wants one owned language that works on any database; today there is no single language."],
+    ["D4","The brain isn't alive","Good sync contracts (baseline, incremental, cursors, replay) but nothing drives them on a schedule; most connectors are batch or demo only.","A 'living brain' that only updates when someone presses a button gives stale answers."],
+    ["D5","Split 'ask' experience","Three ask paths and two frontends; no single answer format with confidence, related answers, freshness or feedback.","Users don't have one obvious place to ask, and answers look different on each path."],
+    ["D6","Security vs 'anyone can ask'","Login, route policy, tenancy and egress are strong, but source permissions aren't mirrored.","The product can't be opened to the whole organization until this is fixed."],
+    ["D7","AI: secure but static","No model ships by default, nothing learns from feedback, and the governed cloud option isn't available.","On day 0 the AI features are off or simulated, and they never get better."],
+    ["D8","Docs lag the intention","The vision document still describes the narrow 'three questions on HugeGraph' product.","Agents that read it build towards the old vision while research adds programmes on top."],
+    ["D9","Evidence exists but isn't required","The evidence model is excellent, but the write path doesn't enforce it and no coverage metric exists.","'Every link carries its evidence' can't be proven, only hoped for."]
+  ];
+
+  var ROLES = [
+    ["CTO","Local-first architecture, portable storage, security hardening and a culture of evidence.","Money goes to breadth (moonshots, '71 dialects', '39 databases') instead of what sells: a living brain, trusted answers and permission safety.","Freeze new programmes; fund Phases 0–2; rule that no simulated output reaches a user."],
+    ["Enterprise architect","Ports and adapters, a multi-domain ontology, ontology GitOps, history over time, egress manifests.","No reference architecture for distributed deployment; graph-of-graphs views aren't persisted; no NoSQL profiles.","Define the brain topology: a persisted index of graphs, sources, keys and identities, plus federation between brains."],
+    ["Solution architect","API / worker / MCP / web separation; Compose and Helm; a backend capability registry.","A single file-based worker blocks distribution; API code sits in three oversized files; two frontends.","Queue abstraction (file locally, Redis/NATS/Postgres distributed); split the API by area; reconcile frontends."],
+    ["AI architect","Questions become checked plans, never code; local-only endpoint hardening; guardrails; honest fallbacks.","self_llm invents capability and explanations; no routing by question type; no calibration.","One answer orchestrator with explicit routing, declared degradation and calibrated confidence; quarantine self_llm."],
+    ["GenAI architect","GraphRAG with citation chains and per-sentence citations.","No grounding check, no abstention policy, no evaluation harness for retrieval or generation.","Grounded generation that says 'I don't have evidence' plus golden question sets per role."],
+    ["Lead QA","Large automated suite, sharding, evidence receipts, mutation testing, 'skipped is not passed'.","Tests prove that stubs behave like stubs; no journey tests for the intention.","An intent acceptance suite (one real journey per intent) plus backend conformance and an anti-simulation test."],
+    ["Lead developer","Typed contracts, clear ports, consistent lint and CI.","Many modules for one concern: 5 query languages, 3 ask paths, 2 frontends, several 'router' packages.","Publish a consolidation map; enforce one concern per module; block core imports of experimental code."],
+    ["UI/UX engineer","Design-system start, admin console, graph canvas, lenses, i18n.","Navigation is organized by engine ('Cognitive Engineering'), not by user goal; no Ask-first home.","An Ask-first suite home with one answer card: answer, confidence, evidence, freshness, related answers, experts."],
+    ["AI engineer","Model catalog, hardware profiles, embedding versioning and re-embedding jobs.","No default model pinned, no feedback dataset, no evaluation-gated promotion.","Pin and ship a default local model and embedding model; build the feedback → evaluation → promotion loop."],
+    ["Software engineer","A clear process for adding a connector.","The connector SDK isn't packaged or versioned; no scaffold or certification command.","An eoip-connector-sdk package with 'connector new' and 'connector certify' commands."],
+    ["Digital product owner","A strong story: every link carries its evidence; local-first; works offline.","No product KPIs: time-to-answer, acceptance rate, freshness, evidence coverage, active sources.","Define and publish a product scorecard and gate releases on it."],
+    ["Product owner","A deep backlog fed by research.","2,603 untriaged requirements across overlapping programmes make planning impossible.","Triage: map every requirement to an intent and mark it keep, merge, defer or drop; one roadmap."],
+    ["Business analyst","Engineering, delivery, operations, compliance and documentation domains.","The ontology is engineering-centric; business domains are thin, so non-engineers have little to ask about.","Business domain packs (org structure, processes, decisions) fed first by a directory connector."],
+    ["Systems analyst","Source registry, drift detection, reconciliation, dead-letter queue.","No data-flow map per source; cross-system identity resolution isn't shown end to end.","A qualification sheet per connector plus the identity-resolution journey."]
+  ];
+
+  var CAPS = [
+    ["Source acquisition",3,"Every Tier-1 source incremental and scheduled, with permissions, deletes and freshness SLOs","WP-B01, B02"],
+    ["Connector SDK",3,"Versioned SDK package, scaffold, certification kit, replay fixtures","WP-B03"],
+    ["Graph storage",3,"Certified backend matrix plus at least one NoSQL profile","WP-D01, D02"],
+    ["Owned query language",2,"One grammar, a spec, a plan, pushdown, conformance","WP-D05, D06"],
+    ["Natural-language Q&A",2,"One orchestrator: route, retrieve, ground, calibrate, relate, explain","WP-C01–C03"],
+    ["Semantic / vector search",2.5,"Pluggable vector index with an honest fallback when there is none","WP-C05"],
+    ["Provenance and evidence",3,"Evidence required on inferred links, coverage metric, proof bundle","WP-A03, C06"],
+    ["Temporal and history",3.5,"clear() off the production interface, crypto-shredding","WP-B05"],
+    ["Ontology",3.5,"Business packs, W3C bridge, ontology induction with human approval","WP-D07"],
+    ["Graph-building algorithms",3,"Benchmarked precision/recall feeding link confidence","WP-D08"],
+    ["Meta graph / graph of graphs",2.5,"A persisted brain index of graphs, sources, keys, identities, freshness","WP-D03"],
+    ["Agents",3,"Agents run only on the real orchestrator, evaluated on golden tasks","WP-C07"],
+    ["Local AI",1.5,"Pinned default model, evaluation-gated improvement, governed cloud option","WP-G01–G03"],
+    ["Security and authorization",2.5,"Source permissions enforced on every retrieval and answer","WP-A02"],
+    ["Privacy",2.5,"Crypto-shredding, PII classification at ingestion, redaction at egress","WP-B05, G03"],
+    ["UI and suite",1.5,"Ask-first suite home, role workspaces, separately built apps","WP-F01–F04"],
+    ["Operations and scale",2,"Distributed queue, freshness and lag monitoring, backpressure","WP-E01–E03"],
+    ["Quality and evidence",3,"Intent acceptance suite, backend conformance, answer-quality evaluation","WP-H01–H03"],
+    ["Research intake",2.5,"Each finding becomes a scored improvement to an existing capability","WP-00c"]
+  ];
+
+  var PHASES = [
+    ["Phase 0","North star and honesty","Blocks everything else",[
+      ["WP-00","S","Rewrite the vision","Make the 26 intent statements the normative vision; owner signs off."],
+      ["WP-00b","M","Triage the requirement registry","Every one of 2,603 records gets an intent ID and keep/merge/defer/drop; registry check passes."],
+      ["WP-00c","S","Research-to-improvement rule","Research produces scored improvements to existing capabilities, never new programmes."],
+      ["WP-A01","M","Quarantine the simulation layer","A test calls every answer route with the model off: it must get an honest degraded answer or 503, never a fixed confidence."],
+      ["WP-A02","L","Permission-aware answers","Two users with different source permissions ask the same question and get different evidence; nothing restricted leaks, not even counts."],
+      ["WP-A03","S","Require evidence on links","Inferred links without evidence, confidence and method are rejected; coverage shown in the admin UI."]
+    ]],
+    ["Phase 1","Make the brain alive","Syncing, freshness, erasure",[
+      ["WP-B01","L","Incremental sync for Tier-1 sources","Per source: baseline → change → delete → replay gives an idempotent graph; live sandbox recorded."],
+      ["WP-B02","M","Source scheduler","With a fake clock, three sources sync on their own cadences, failures back off, SLO breaches alert."],
+      ["WP-B03","M","Connector SDK package","A new connector is scaffolded, certified and synced end to end."],
+      ["WP-B04","S","Source qualification sheets","One generated sheet per connector: auth, cadence, volume, mapping, permissions, deletes."],
+      ["WP-B05","M","Erasure that keeps history","After an erasure request, personal data is unreadable everywhere while history and audit still verify."],
+      ["WP-E01","S","Freshness on every answer","Each answer lists its sources with last-synced time and lag."]
+    ]],
+    ["Phase 2","Ask anything","One answer experience",[
+      ["WP-C01","L","Answer orchestrator","One /answer endpoint and one answer format; journeys pass with the model on, off and without a vector index."],
+      ["WP-C02","M","Calibrated confidence","Reliability diagram and calibration error ≤ 0.1 on the golden set."],
+      ["WP-C03","M","Related answers, follow-ups, experts","For a requirement question, related answers include its code, tests and latest change."],
+      ["WP-C04","M","Golden question sets per role","At least 30 questions for each of 7 roles, run in CI with accuracy and citation metrics."],
+      ["WP-C05","M","Pluggable vector index","none / local / pgvector / qdrant behind one interface; unproven speed claims removed."],
+      ["WP-C06","S","Proof bundle export","A signed bundle of evidence, paths and plan for any answer."],
+      ["WP-C07","M","Agents on the orchestrator","Agents use only governed tools; writes need human approval; evaluated on golden tasks."]
+    ]],
+    ["Phase 3","Portability","Own language, any database",[
+      ["WP-D05","L","EOIP-QL v1","A formal grammar and spec; 300+ query test corpus; all existing EQL tests pass through it."],
+      ["WP-D06","L","Pushdown and conformance","The same queries return identical results on memory, HugeGraph, Neo4j and an RDF store in CI."],
+      ["WP-D01","M","Honest backend matrix plus one NoSQL profile","A generated matrix of certified capabilities; one NoSQL backend passes conformance."],
+      ["WP-D02","S","Backend conformance in CI","Container jobs run the storage protocol suite on real backends."],
+      ["WP-D03","M","Persisted brain index","'Which systems hold data about X, and how are they linked?' is answered after a restart."],
+      ["WP-D04","M","Cross-system identity resolution","One person resolved across Jira, Git, Slack and the directory, with reversible merges."],
+      ["WP-D07","M","Business domain packs","Org structure, processes and decisions; directory connector first."],
+      ["WP-D08","M","Algorithm benchmarks","Published precision/recall; unbenchmarked algorithms can't write inferred links."]
+    ]],
+    ["Phase 4","AI that ships and improves","Day-0 model and learning loop",[
+      ["WP-G01","M","Day-0 model","A fresh install on a reference machine answers the golden set with grounded generation."],
+      ["WP-G02","L","Improvement loop","Feedback → nightly evaluation → promotion only if metrics improve; regressions roll back."],
+      ["WP-G03","M","Governed cloud model option","Off by default; consent, redaction and audit proven by security tests."]
+    ]],
+    ["Phase 5","The suite","Separate apps, shared foundation",[
+      ["WP-F01","L","Reconcile the two frontends","One shell, design system, API client and login; unsafe admin fallback removed."],
+      ["WP-F02","M","Ask-first suite home","One ask bar and answer card with role starter questions and source health."],
+      ["WP-F03","L","Separately built apps","Explorer, Query Workbench, Studio, Admin, Reports: suite or standalone."],
+      ["WP-F04","M","Role workspaces","Developer, QA, PO, SRE, executive and compliance journeys pass in the browser."]
+    ]],
+    ["Phase 6","Scale and maintainability","Distributed and maintainable",[
+      ["WP-E02","M","Queue abstraction","File locally, Redis Streams or NATS distributed, with exactly-once effects."],
+      ["WP-E03","L","Split the API by area","Large route files split by bounded context; API catalog keeps operation IDs."],
+      ["WP-E04","M","Distributed topology reference","Hub-and-spoke brains with a tested data-residency mode."]
+    ]],
+    ["Ongoing","Verification","Runs alongside every phase",[
+      ["WP-H01","M","Intent acceptance suite","One real journey per intent; this scorecard is regenerated from those receipts."],
+      ["WP-H02","S","Product scorecard","Time-to-answer, acceptance rate, evidence coverage, calibration, freshness."],
+      ["WP-H03","S","Anti-regression rules in CI","Import boundaries, no fixed confidences, no capability claim without a manifest."]
+    ]]
+  ];
+
+  var CONS = [
+    ["brain/ (BrainOS, router, narrator)","Move to experimental/; keep only what is rebuilt on the orchestrator","Simulated answers (F1)"],
+    ["models/self_llm.py","Remove the simulation, or keep it only as an explicit demo provider","Invented generation and explanations"],
+    ["graph/database_adapters.py ('39+ databases')","Reduce to real adapters; move the list to the roadmap","Overstated capability (F6)"],
+    ["Polyglot engine, multi-paradigm dispatcher, dialect stubs","Fold useful parts into EOIP-QL translation tools; delete the rest","Fragmentation (F5)"],
+    ["EOQL, OSQL, Semantic QL","Turn into shorthand for EOIP-QL; deprecate","Overlap"],
+    ["moonshot/ (22 modules)","Freeze; each becomes a research improvement or is deleted","Breadth runaway"],
+    ["enterprise/ (duplicate rate limiting, retry, circuit breaker…)","Merge into the existing resilience, ops and config modules","Duplication"],
+    ["graph/vector_graph.py '< 5ms' claim","Benchmark it or remove the claim","Unverified claim"],
+    ["frontend/ vs apps/web/","Reconcile (WP-F01)","Two foundations"],
+    ["45 markdown files at the repository root","Move programme files under EOIP-engg-doc-pkg/programmes/","Hard to navigate"],
+    ["GraphStore.clear() in production","Move to a test-only interface","History must never be destroyed"]
+  ];
+
+  /* ---------------- helpers ---------------- */
+  function el(tag, attrs, html) {
+    var e = document.createElement(tag);
+    if (attrs) for (var k in attrs) { if (k === "class") e.className = attrs[k]; else e.setAttribute(k, attrs[k]); }
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  var BANDS = [
+    { key: "good", label: "Aligned", ico: "✓", test: function (s) { return s >= 3.75; } },
+    { key: "warning", label: "Partly aligned", ico: "▲", test: function (s) { return s >= 2.5 && s < 3.75; } },
+    { key: "serious", label: "Drifted", ico: "◆", test: function (s) { return s >= 1 && s < 2.5; } },
+    { key: "critical", label: "Absent", ico: "✕", test: function (s) { return s < 1; } }
+  ];
+  function band(s) { for (var i = 0; i < BANDS.length; i++) if (BANDS[i].test(s)) return BANDS[i]; return BANDS[3]; }
+  function chip(b, text) { return '<span class="chip ' + b.key + '"><span class="ico" aria-hidden="true">' + b.ico + '</span>' + esc(text || b.label) + '</span>'; }
+  var SEV = { critical: { key: "critical", ico: "✕" }, serious: { key: "serious", ico: "◆" }, warning: { key: "warning", ico: "▲" } };
+
+  /* tooltip */
+  var tip = document.getElementById("tip");
+  function showTip(html, x, y) {
+    tip.innerHTML = html; tip.classList.add("on");
+    var r = tip.getBoundingClientRect();
+    var left = Math.min(window.innerWidth - r.width - 12, x + 14);
+    var top = y + 16; if (top + r.height > window.innerHeight - 8) top = y - r.height - 12;
+    tip.style.left = Math.max(8, left) + "px"; tip.style.top = Math.max(8, top) + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); }
+  function bindTip(node, html) {
+    node.addEventListener("mousemove", function (e) { showTip(html, e.clientX, e.clientY); });
+    node.addEventListener("mouseleave", hideTip);
+    node.addEventListener("focus", function () { var r = node.getBoundingClientRect(); showTip(html, r.left + r.width / 2, r.bottom - 8); });
+    node.addEventListener("blur", hideTip);
+  }
+
+  function ticks(id) {
+    var t = document.getElementById(id); t.innerHTML = "";
+    for (var i = 0; i <= 5; i++) { var s = el("span", null, String(i)); s.style.left = (i * 20) + "%"; t.appendChild(s); }
+  }
+  function barRow(labelHtml, score, chipHtml, tipHtml, aria) {
+    var row = el("div", { "class": "bar-row", tabindex: "0", role: "listitem", "aria-label": aria });
+    var lab = el("div", { "class": "bar-label" }, labelHtml);
+    var track = el("div", { "class": "bar-track" });
+    for (var i = 1; i <= 5; i++) { var g = el("i", { "class": "gl" }); g.style.left = (i * 20) + "%"; track.appendChild(g); }
+    var f = el("div", { "class": "bar-fill" }); f.style.width = (score / 5 * 100) + "%"; track.appendChild(f);
+    var v = el("span", { "class": "bar-val" }, score.toFixed(1)); v.style.left = (score / 5 * 100) + "%"; track.appendChild(v);
+    var c = el("div", null, chipHtml);
+    row.appendChild(lab); row.appendChild(track); row.appendChild(c);
+    bindTip(row, tipHtml);
+    return row;
+  }
+  function segBind(id, attr, fn) {
+    var g = document.getElementById(id);
+    g.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      g.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      fn(b.getAttribute(attr));
+    });
+  }
+
+  /* ---------------- findings ---------------- */
+  var fGrid = document.getElementById("findingsGrid");
+  function renderFindings(filter) {
+    fGrid.innerHTML = "";
+    FINDINGS.forEach(function (f) {
+      if (filter !== "all" && f[1] !== filter) return;
+      var s = SEV[f[1]];
+      var c = el("article", { "class": "card finding" });
+      c.innerHTML = '<div class="fid">' + f[0] + '</div><div><div class="top">' +
+        '<span class="chip ' + s.key + '"><span class="ico" aria-hidden="true">' + s.ico + '</span>' + esc(f[2]) + '</span></div>' +
+        '<h3>' + esc(f[3]) + '</h3><p>' + esc(f[4]) + '</p><div class="ev mono">' + esc(f[5]) + '</div></div>';
+      fGrid.appendChild(c);
+    });
+  }
+  renderFindings("all");
+  segBind("findFilter", "data-f", renderFindings);
+
+  /* ---------------- scorecard ---------------- */
+  var scState = { g: "all", s: "id", v: "chart" };
+  function scData() {
+    var d = INTENTS.filter(function (r) {
+      if (scState.g === "core") return r[5] === "core";
+      if (scState.g === "added") return r[5] === "added";
+      return true;
+    });
+    if (scState.s === "score") d = d.slice().sort(function (a, b) { return a[2] - b[2] || a[0].localeCompare(b[0]); });
+    return d;
+  }
+  function renderScore() {
+    var d = scData();
+    var bars = document.getElementById("scBars"); bars.innerHTML = ""; bars.setAttribute("role", "list");
+    d.forEach(function (r) {
+      var b = band(r[2]);
+      var tipH = '<div class="t-h">' + r[0] + ' · ' + esc(r[1]) + '</div><div><b>' + r[2].toFixed(1) + ' / 5</b> · ' + esc(r[3]) + '</div><div class="t-r"><b>Main gap:</b> ' + esc(r[4]) + '</div>';
+      bars.appendChild(barRow('<b>' + r[0] + '</b>' + esc(r[1]), r[2], chip(b), tipH, r[0] + " " + r[1] + ", score " + r[2] + " of 5, " + b.label));
+    });
+    var t = '<table><thead><tr><th>ID</th><th>Intent</th><th>Score</th><th>Band</th><th>Analysis verdict</th><th>Main gap</th></tr></thead><tbody>';
+    d.forEach(function (r) { t += '<tr><td class="mono">' + r[0] + '</td><td>' + esc(r[1]) + (r[5] === "added" ? ' <span class="chip neutral">added</span>' : '') + '</td><td class="num">' + r[2].toFixed(1) + '</td><td>' + chip(band(r[2])) + '</td><td>' + esc(r[3]) + '</td><td>' + esc(r[4]) + '</td></tr>'; });
+    document.getElementById("scTable").innerHTML = t + '</tbody></table>';
+    document.getElementById("scChart").classList.toggle("hidden", scState.v !== "chart");
+    document.getElementById("scTable").classList.toggle("hidden", scState.v !== "table");
+  }
+  ticks("scTicks");
+  segBind("scGroup", "data-g", function (v) { scState.g = v; renderScore(); });
+  segBind("scSort", "data-s", function (v) { scState.s = v; renderScore(); });
+  segBind("scView", "data-v", function (v) { scState.v = v; renderScore(); });
+  renderScore();
+
+  /* distribution */
+  (function () {
+    var counts = BANDS.map(function (b) { return INTENTS.filter(function (r) { return band(r[2]) === b; }).length; });
+    var st = document.getElementById("distStack"), lg = document.getElementById("distLegend");
+    BANDS.forEach(function (b, i) {
+      if (!counts[i]) return;
+      var d = el("div", null, '<span aria-hidden="true">' + b.ico + '</span>&nbsp;' + counts[i]);
+      d.style.flex = counts[i]; d.style.background = "var(--" + b.key + ")";
+      d.style.color = (b.key === "warning" || b.key === "serious") ? "#0b0b0b" : "#ffffff";
+      bindTip(d, '<div class="t-h">' + b.label + '</div><div>' + counts[i] + ' of 26 intent statements</div>');
+      st.appendChild(d);
+      lg.insertAdjacentHTML("beforeend", chip(b, b.label + " · " + counts[i]));
+    });
+    st.setAttribute("aria-label", BANDS.map(function (b, i) { return b.label + " " + counts[i]; }).join(", "));
+  })();
+
+  /* ---------------- drift ---------------- */
+  var dg = document.getElementById("driftGrid");
+  DRIFT.forEach(function (d) {
+    dg.insertAdjacentHTML("beforeend", '<article class="card"><h3><b>' + d[0] + '</b>' + esc(d[1]) + '</h3><p class="what">' + esc(d[2]) + '</p><p class="why"><strong>Why it matters:</strong> ' + esc(d[3]) + '</p></article>');
+  });
+
+  /* ---------------- roles ---------------- */
+  var picker = document.getElementById("rolePicker"), panel = document.getElementById("rolePanel");
+  function showRole(i) {
+    var r = ROLES[i];
+    picker.querySelectorAll("button").forEach(function (b, j) { b.setAttribute("aria-pressed", j === i ? "true" : "false"); });
+    panel.innerHTML =
+      '<div class="card"><h3>' + chip(BANDS[0], "Keep") + '</h3><p>' + esc(r[1]) + '</p></div>' +
+      '<div class="card"><h3>' + chip(BANDS[2], "Fix") + '</h3><p>' + esc(r[2]) + '</p></div>' +
+      '<div class="card must"><h3><span class="chip neutral"><span class="ico">→</span>Must do</span></h3><p style="color:var(--ink)">' + esc(r[3]) + '</p></div>';
+  }
+  ROLES.forEach(function (r, i) {
+    var b = el("button", { type: "button", "aria-pressed": "false" }, esc(r[0]));
+    b.addEventListener("click", function () { showRole(i); });
+    picker.appendChild(b);
+  });
+  showRole(0);
+
+  /* ---------------- capabilities ---------------- */
+  var capBars = document.getElementById("capBars"); capBars.setAttribute("role", "list");
+  CAPS.forEach(function (c) {
+    var b = band(c[1]);
+    capBars.appendChild(barRow(esc(c[0]), c[1], chip(b),
+      '<div class="t-h">' + esc(c[0]) + '</div><div><b>' + c[1].toFixed(1) + ' / 5</b> · ' + b.label + '</div><div class="t-r"><b>Best in category needs:</b> ' + esc(c[2]) + '</div><div class="t-r"><b>Closed by:</b> ' + esc(c[3]) + '</div>',
+      c[0] + ", score " + c[1] + " of 5"));
+  });
+  ticks("capTicks");
+  (function () {
+    var t = '<table><thead><tr><th>Capability</th><th>Score</th><th>Band</th><th>What best in category needs</th><th>Work package</th></tr></thead><tbody>';
+    CAPS.forEach(function (c) { t += '<tr><td>' + esc(c[0]) + '</td><td class="num">' + c[1].toFixed(1) + '</td><td>' + chip(band(c[1])) + '</td><td>' + esc(c[2]) + '</td><td class="mono">' + esc(c[3]) + '</td></tr>'; });
+    document.getElementById("capTable").innerHTML = t + '</tbody></table>';
+  })();
+  segBind("capView", "data-v", function (v) {
+    document.getElementById("capChart").classList.toggle("hidden", v !== "chart");
+    document.getElementById("capTable").classList.toggle("hidden", v !== "table");
+  });
+
+  /* ---------------- roadmap ---------------- */
+  var ph = document.getElementById("phases");
+  PHASES.forEach(function (p, i) {
+    var wrap = el("div", { "class": "phase" });
+    var head = el("div", { "class": "phase-head" }, '<div class="pn">' + esc(p[0]) + '</div><h3>' + esc(p[1]) + '</h3><p>' + esc(p[2]) + ' · ' + p[3].length + ' packages</p>');
+    head.style.setProperty("--op", String(1 - i * 0.09));
+    var wps = el("div", { "class": "wps" });
+    p[3].forEach(function (w) {
+      var b = el("button", { "class": "wp", type: "button", "aria-expanded": "false" },
+        '<span class="wp-top"><span class="wid">' + w[0] + '</span><span class="size" title="Size">' + w[1] + '</span></span>' +
+        '<span class="wt">' + esc(w[2]) + '</span><span class="wd"><span><b>Accepted when:</b> ' + esc(w[3]) + '</span></span>');
+      b.addEventListener("click", function () { b.setAttribute("aria-expanded", b.getAttribute("aria-expanded") === "true" ? "false" : "true"); });
+      wps.appendChild(b);
+    });
+    wrap.appendChild(head); wrap.appendChild(wps); ph.appendChild(wrap);
+  });
+
+  /* ---------------- consolidation ---------------- */
+  (function () {
+    var t = '<table><thead><tr><th>Item</th><th>Action</th><th>Reason</th></tr></thead><tbody>';
+    CONS.forEach(function (c) { t += '<tr><td class="mono">' + esc(c[0]) + '</td><td>' + esc(c[1]) + '</td><td>' + esc(c[2]) + '</td></tr>'; });
+    document.getElementById("consTable").innerHTML = t + '</tbody></table>';
+  })();
+
+  /* ---------------- theme + toc ---------------- */
+  var modes = ["system", "light", "dark"], btn = document.getElementById("themeBtn");
+  function applyTheme(m) {
+    if (m === "system") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", m);
+    btn.textContent = "Theme: " + m;
+  }
+  var saved = "system"; try { saved = localStorage.getItem("eoip-theme") || "system"; } catch (e) {}
+  applyTheme(saved);
+  btn.addEventListener("click", function () {
+    var m = modes[(modes.indexOf(btn.textContent.replace("Theme: ", "")) + 1) % 3];
+    applyTheme(m); try { localStorage.setItem("eoip-theme", m); } catch (e) {}
+  });
+  var links = Array.prototype.slice.call(document.querySelectorAll("#toc a"));
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) links.forEach(function (a) { a.classList.toggle("active", a.getAttribute("href") === "#" + en.target.id); });
+      });
+    }, { rootMargin: "-40% 0px -55% 0px" });
+    document.querySelectorAll("main section[id]").forEach(function (s) { io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>

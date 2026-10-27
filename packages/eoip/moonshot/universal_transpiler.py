@@ -11,6 +11,9 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
+_PGQ_IDENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_PGQ_OPS = {"=", "<", ">", "<=", ">=", "<>", "!="}
+
 
 @dataclass
 class UniversalAST:
@@ -125,11 +128,22 @@ class UniversalTranspiler:
 
     def to_sql_pgq(self, ast: UniversalAST) -> str:
         """Lower UniversalAST to SQL/PGQ (ISO/IEC 9075-16:2023)."""
-        lbl = f" IS {ast.anchor_label}" if ast.anchor_label else ""
-        sql = f"SELECT * FROM GRAPH_TABLE (enterprise_graph MATCH ({ast.variable}{lbl})"
+        if not _PGQ_IDENT.fullmatch(ast.variable):
+            raise ValueError(f"unsafe SQL/PGQ variable: {ast.variable!r}")
+        lbl = ""
+        if ast.anchor_label:
+            if not _PGQ_IDENT.fullmatch(ast.anchor_label):
+                raise ValueError(f"unsafe SQL/PGQ label: {ast.anchor_label!r}")
+            lbl = f" IS {ast.anchor_label}"
+        sql = f"SELECT * FROM GRAPH_TABLE (enterprise_graph MATCH ({ast.variable}{lbl})"  # nosec B608 - identifiers whitelist-validated, filter op/field validated, value escaped
         if ast.filters:
             f = ast.filters[0]
-            sql += f" WHERE {ast.variable}.{f['field']} {f['op']} '{f['value']}'"
+            if f["op"] not in _PGQ_OPS:
+                raise ValueError(f"unsupported SQL/PGQ operator: {f['op']!r}")
+            if not _PGQ_IDENT.fullmatch(str(f["field"])):
+                raise ValueError(f"unsafe SQL/PGQ filter field: {f['field']!r}")
+            value = str(f["value"]).replace("'", "''")
+            sql += f" WHERE {ast.variable}.{f['field']} {f['op']} '{value}'"
         sql += f" COLUMNS ({ast.variable}.id))"
         return sql
 

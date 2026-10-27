@@ -125,10 +125,10 @@ class CatalogProjectionEngine:
         authoritative: bool = False,
     ) -> dict[str, Any]:
         """Ingest external catalog asset with deduplication and ownership enforcement (CRA-029.5)."""
-        source = self._federated_sources.get(source_id)
+        self._federated_sources.get(source_id)
         cid = external_asset.get("canonical_id") or external_asset.get("id")
-        label = external_asset.get("entity_type") or "Service"
-        props = external_asset.get("properties", {})
+        external_asset.get("entity_type") or "Service"
+        external_asset.get("properties", {})
 
         existing = self._store.get_vertex_by_canonical_id(cid)
         if existing and not authoritative:

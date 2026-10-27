@@ -14,8 +14,8 @@ import subprocess
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
-from xml.etree import ElementTree
 
+from defusedxml import ElementTree
 from eoip.jobs import write_json
 
 ID_RE = re.compile(r"\b(?:MVP-FR|FR|NFR|GAP|G2|REQ)(?:-[A-Z0-9]+)*-\d{3}\b")

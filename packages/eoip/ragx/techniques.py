@@ -12,7 +12,8 @@ import hashlib
 import math
 import re
 from collections import defaultdict
-from typing import Any, Callable, Iterable
+from typing import Any
+from collections.abc import Callable, Iterable
 
 from eoip.ragx.core import Candidate, overlap_score
 from eoip.retrieval.vectors import HashingEmbedder, tokenize

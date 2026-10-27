@@ -1,0 +1,1438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EOIP Project Status</title>
+<meta name="description" content="Multi-tab project status report for EOIP / KnowGridFlow: executive dashboard, intent alignment, product, architecture, data sources, storage and query, AI, quality, security, delivery, risks, roadmap and decisions. Status as of 27 Oct 2026.">
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --surface-2: #f2f1ed;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #6e6c66;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.10);
+  --accent: #2a78d6;
+  --accent-ink: #1c5cab;
+  --accent-soft: #cde2fb;
+  --bar: #2a78d6;
+  --bar-2: #eb6834;
+  --bar-track: #ecebe6;
+  --good: #0ca30c;
+  --warning: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+  --good-ink: #006300;
+  --header-bg: #10233d;
+  --header-ink: #f3f6fb;
+  --header-ink-2: #b9c7da;
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.06), 0 4px 16px rgba(11, 11, 11, 0.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #232321;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --muted: #a3a197;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --accent: #3987e5;
+    --accent-ink: #86b6ef;
+    --accent-soft: #184f95;
+    --bar: #3987e5;
+    --bar-2: #d95926;
+    --bar-track: #2a2a28;
+    --good-ink: #0ca30c;
+    --header-bg: #111a26;
+    --header-ink: #f0efec;
+    --header-ink-2: #a9b4c3;
+    --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --surface-2: #232321;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --muted: #a3a197;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --border: rgba(255, 255, 255, 0.10);
+  --accent: #3987e5;
+  --accent-ink: #86b6ef;
+  --accent-soft: #184f95;
+  --bar: #3987e5;
+  --bar-2: #d95926;
+  --bar-track: #2a2a28;
+  --good-ink: #0ca30c;
+  --header-bg: #111a26;
+  --header-ink: #f0efec;
+  --header-ink-2: #a9b4c3;
+  --shadow: none;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--page); color: var(--ink);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent-ink); }
+code, .mono { font-family: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace; font-size: 0.85em; }
+code { background: var(--surface-2); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+h1, h2, h3 { margin: 0; line-height: 1.2; text-wrap: balance; }
+h2 { font-size: 1.35rem; letter-spacing: -0.01em; }
+h3 { font-size: 1rem; }
+p { margin: 0; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; }
+
+/* header */
+.report-head { background: var(--header-bg); color: var(--header-ink); }
+.report-head .wrap { padding-block: 26px 22px; display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; align-items: flex-end; }
+.report-head .eyebrow { color: var(--header-ink-2); }
+.report-head h1 { font-size: clamp(1.6rem, 3.4vw, 2.3rem); letter-spacing: -0.02em; margin-top: 6px; }
+.report-head .sub { color: var(--header-ink-2); margin-top: 6px; font-size: 0.93rem; max-width: 70ch; }
+.head-meta { display: grid; grid-template-columns: repeat(2, auto); gap: 4px 18px; font-size: 0.82rem; color: var(--header-ink-2); }
+.head-meta b { color: var(--header-ink); font-weight: 600; }
+.theme-btn {
+  border: 1px solid rgba(255,255,255,0.25); background: transparent; color: var(--header-ink);
+  border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 0.8rem; cursor: pointer;
+}
+.eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.72rem; color: var(--muted); font-weight: 700; }
+
+/* tabs */
+.tabbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--page) 92%, transparent); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: thin; padding-block: 6px; }
+.tabs button {
+  border: 0; background: transparent; color: var(--ink-2); font: inherit; font-size: 0.86rem;
+  padding: 8px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; display: inline-flex; gap: 6px; align-items: center;
+}
+.tabs button:hover { background: var(--surface-2); color: var(--ink); }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--page); font-weight: 600; }
+.tabs button .n { font-size: 0.7rem; opacity: 0.7; font-variant-numeric: tabular-nums; }
+
+main { padding-block: 26px 60px; }
+.panel { display: grid; gap: 18px; }
+.panel[hidden] { display: none !important; }
+.panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.panel-head p { color: var(--ink-2); max-width: 78ch; margin-top: 6px; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px;
+  box-shadow: var(--shadow); min-width: 0;
+}
+.card > h3 { margin-bottom: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.card .card-sub { color: var(--ink-2); font-size: 0.86rem; margin: -6px 0 12px; }
+.grid { display: grid; gap: 16px; }
+.g2 { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+.g3 { grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+.g4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+@media (max-width: 420px) { .g2 { grid-template-columns: 1fr; } }
+.span-all { grid-column: 1 / -1; }
+
+/* overall status banner */
+.status-banner { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; }
+@media (max-width: 720px) { .status-banner { grid-template-columns: 1fr; } }
+.status-lamp {
+  width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 1.6rem; font-weight: 800; color: #0b0b0b;
+  background: var(--warning); box-shadow: 0 0 0 6px color-mix(in srgb, var(--warning) 25%, transparent);
+}
+.status-banner h2 { font-size: 1.25rem; }
+.status-banner p { color: var(--ink-2); margin-top: 4px; }
+.trend { text-align: right; font-size: 0.84rem; color: var(--ink-2); }
+.trend b { display: block; color: var(--ink); font-size: 1rem; }
+
+/* KPI tiles */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.kpis.k6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .kpis.k6 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .kpis, .kpis.k6 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: grid; gap: 4px; box-shadow: var(--shadow); }
+.kpi .k-label { font-size: 0.76rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.kpi .k-val { font-size: 1.85rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+.kpi .k-val small { font-size: 0.95rem; color: var(--muted); font-weight: 500; }
+.kpi .k-note { font-size: 0.8rem; color: var(--ink-2); }
+.kpi .k-meter { height: 6px; border-radius: 3px; background: var(--bar-track); overflow: hidden; margin-top: 4px; }
+.kpi .k-meter i { display: block; height: 100%; background: var(--bar); border-radius: 3px; }
+
+/* chips */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600;
+  padding: 3px 9px; border-radius: 999px; white-space: nowrap; color: var(--ink); border: 1px solid transparent;
+}
+.chip .ico { font-size: 0.7rem; line-height: 1; }
+.chip.good { background: color-mix(in srgb, var(--good) 14%, transparent); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+.chip.good .ico { color: var(--good); }
+.chip.warning { background: color-mix(in srgb, var(--warning) 18%, transparent); border-color: color-mix(in srgb, var(--warning) 60%, transparent); }
+.chip.warning .ico { color: #b47c00; }
+.chip.serious { background: color-mix(in srgb, var(--serious) 16%, transparent); border-color: color-mix(in srgb, var(--serious) 55%, transparent); }
+.chip.serious .ico { color: var(--serious); }
+.chip.critical { background: color-mix(in srgb, var(--critical) 14%, transparent); border-color: color-mix(in srgb, var(--critical) 50%, transparent); }
+.chip.critical .ico { color: var(--critical); }
+.chip.neutral { background: var(--surface-2); border-color: var(--border); color: var(--ink-2); }
+
+/* lists */
+ul.clean { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+ul.clean li { padding-left: 18px; position: relative; color: var(--ink-2); font-size: 0.92rem; }
+ul.clean li::before { content: ""; position: absolute; left: 2px; top: 0.62em; width: 6px; height: 6px; border-radius: 50%; background: var(--axis); }
+ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 10px; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 10px; font-size: 0.92rem; color: var(--ink-2); }
+ol.steps li::before { content: counter(s); width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 0.78rem; display: grid; place-items: center; }
+ol.steps li b { color: var(--ink); }
+
+/* tables */
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.card .table-wrap { border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.87rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; background: var(--surface-2); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+td.num { font-weight: 600; }
+
+/* horizontal bars */
+.bars { display: grid; gap: 2px; }
+.bar-row { display: grid; grid-template-columns: minmax(130px, 260px) 1fr 120px; align-items: center; gap: 12px; padding: 6px 8px; border-radius: 8px; }
+.bars.compact .bar-row { grid-template-columns: minmax(110px, 190px) 1fr; }
+.bar-row:hover, .bar-row:focus-visible { background: var(--surface-2); outline: none; }
+.bar-label { font-size: 0.86rem; min-width: 0; }
+.bar-label b { font-family: ui-monospace, Consolas, monospace; font-size: 0.76rem; color: var(--muted); margin-right: 6px; }
+.bar-track { position: relative; height: 22px; }
+.bar-track .gl { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--grid); }
+.bar-fill { position: absolute; left: 0; top: 4px; height: 14px; background: var(--bar); border-radius: 0 4px 4px 0; min-width: 3px; }
+.bar-fill.alt { background: var(--bar-2); }
+.bar-val { position: absolute; top: 1px; font-size: 0.79rem; font-weight: 600; font-variant-numeric: tabular-nums; padding-left: 6px; white-space: nowrap; }
+.bar-axis { display: grid; grid-template-columns: minmax(130px, 260px) 1fr 120px; gap: 12px; padding: 4px 8px 0; }
+.bar-axis .ticks { position: relative; height: 16px; font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar-axis .ticks span { position: absolute; transform: translateX(-50%); }
+@media (max-width: 680px) {
+  .bar-row, .bar-axis, .bars.compact .bar-row { grid-template-columns: 1fr; gap: 4px; }
+  .bar-axis .spacer { display: none; }
+}
+
+/* stacked bar */
+.stack { display: flex; height: 32px; border-radius: 8px; overflow: hidden; gap: 2px; }
+.stack > div { display: flex; align-items: center; justify-content: center; gap: 2px; font-size: 0.78rem; font-weight: 700; min-width: 26px; white-space: nowrap; overflow: hidden; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 12px; font-size: 0.8rem; color: var(--ink-2); align-items: center; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+/* column chart */
+.cols { display: grid; grid-template-columns: 40px 1fr; gap: 6px; }
+.cols .yaxis { position: relative; height: 200px; font-size: 0.7rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.cols .yaxis span { position: absolute; right: 4px; transform: translateY(50%); }
+.cols .plot { position: relative; height: 200px; display: flex; align-items: flex-end; gap: 2px; border-bottom: 1px solid var(--axis); }
+.cols .plot .gl { position: absolute; left: 0; right: 0; height: 1px; background: var(--grid); }
+.cols .plot .col { flex: 1; position: relative; height: 100%; display: flex; align-items: flex-end; cursor: default; }
+.cols .plot .col:hover, .cols .plot .col:focus-visible { background: var(--surface-2); outline: none; }
+.cols .plot .col i { display: block; width: 100%; background: var(--bar); border-radius: 3px 3px 0 0; min-height: 0; position: relative; z-index: 1; }
+.cols .xaxis { grid-column: 2; display: flex; gap: 2px; font-size: 0.66rem; color: var(--muted); }
+.cols .xaxis span { flex: 1; text-align: center; overflow: hidden; white-space: nowrap; }
+.annot { position: absolute; font-size: 0.74rem; color: var(--ink-2); white-space: nowrap; z-index: 2; }
+
+/* dimension status */
+.dims { display: grid; gap: 0; }
+.dim { display: grid; grid-template-columns: 1fr auto; gap: 2px 14px; align-items: center; padding: 10px 4px; border-bottom: 1px solid var(--grid); }
+.dim:last-child { border-bottom: 0; }
+.dim .dn { font-weight: 600; font-size: 0.92rem; }
+.dim .dd { color: var(--ink-2); font-size: 0.86rem; grid-column: 1 / -1; }
+
+/* architecture diagram */
+.arch { display: grid; gap: 10px; }
+.arch-row { display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: stretch; }
+@media (max-width: 640px) { .arch-row { grid-template-columns: 1fr; } }
+.arch-row .lane { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; display: flex; align-items: center; }
+.arch-row .boxes { display: flex; flex-wrap: wrap; gap: 8px; }
+.abox { border: 1px solid var(--border); background: var(--surface-2); border-radius: 10px; padding: 8px 12px; font-size: 0.84rem; min-width: 120px; flex: 1 1 140px; }
+.abox b { display: block; font-size: 0.88rem; }
+.abox span { color: var(--ink-2); font-size: 0.78rem; }
+.abox.opt { border-style: dashed; background: transparent; }
+.abox.warn { border-color: color-mix(in srgb, var(--serious) 60%, transparent); }
+.arch-arrow { text-align: center; color: var(--muted); font-size: 0.8rem; padding-left: 142px; }
+@media (max-width: 640px) { .arch-arrow { padding-left: 0; } }
+
+/* domain chips */
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; font-size: 0.78rem; font-family: ui-monospace, Consolas, monospace; background: var(--surface-2); }
+
+/* risk matrix */
+.rm { display: grid; grid-template-columns: 26px 1fr; gap: 6px; }
+.rm .ylab { writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; font-size: 0.74rem; color: var(--muted); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.rm .gridm { display: grid; grid-template-columns: 22px repeat(5, 1fr); grid-template-rows: repeat(5, minmax(64px, auto)) 22px; gap: 3px; }
+.rm .cell { border-radius: 6px; display: flex; flex-wrap: wrap; gap: 4px; align-content: center; justify-content: center; padding: 4px; }
+.rm .cell.z-good { background: color-mix(in srgb, var(--good) 13%, var(--surface)); }
+.rm .cell.z-warning { background: color-mix(in srgb, var(--warning) 20%, var(--surface)); }
+.rm .cell.z-serious { background: color-mix(in srgb, var(--serious) 24%, var(--surface)); }
+.rm .cell.z-critical { background: color-mix(in srgb, var(--critical) 22%, var(--surface)); }
+.rm .ax { font-size: 0.72rem; color: var(--muted); display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.rm .xlab { grid-column: 2; text-align: center; font-size: 0.74rem; color: var(--muted); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.dot {
+  width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--page); font-size: 0.72rem; font-weight: 700;
+  display: grid; place-items: center; cursor: default; border: 2px solid var(--surface);
+}
+.dot:focus-visible { outline: 2px solid var(--accent); }
+
+/* checklist */
+.check { display: grid; grid-template-columns: auto 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--grid); align-items: start; }
+.check:last-child { border-bottom: 0; }
+.check .ct { font-weight: 600; font-size: 0.92rem; }
+.check .cd { color: var(--ink-2); font-size: 0.86rem; margin-top: 2px; }
+
+/* timeline */
+.tl { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.tl .card { border-top: 4px solid var(--bar); }
+.tl .when { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
+
+.callout {
+  border-left: 4px solid var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+  padding: 13px 16px; border-radius: 0 10px 10px 0; color: var(--ink-2); font-size: 0.92rem;
+}
+.callout strong { color: var(--ink); }
+.callout.warn { border-left-color: var(--serious); background: color-mix(in srgb, var(--serious) 8%, var(--surface)); }
+.note { font-size: 0.8rem; color: var(--muted); margin-top: 10px; }
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 10px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; color: var(--ink-2); font: inherit; font-size: 0.8rem; padding: 6px 11px; border-radius: 8px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); font-weight: 600; }
+.hidden { display: none !important; }
+
+#tip {
+  position: fixed; z-index: 50; pointer-events: none; max-width: 340px; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 0.82rem;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.18); opacity: 0; transition: opacity .08s;
+}
+#tip.on { opacity: 1; }
+#tip .t-h { font-weight: 700; margin-bottom: 4px; }
+#tip .t-r { color: var(--ink-2); margin-top: 4px; }
+#tip .t-r b { color: var(--ink); }
+footer { border-top: 1px solid var(--border); padding-block: 24px 40px; color: var(--muted); font-size: 0.82rem; }
+@media (forced-colors: active) { .bar-fill, .cols .plot .col i, .kpi .k-meter i { background: CanvasText; } }
+</style>
+</head>
+<body>
+
+<header class="report-head">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Project status report · Executive edition</div>
+      <h1>EOIP / KnowGridFlow</h1>
+      <p class="sub">Enterprise Ontology &amp; Intelligence Platform: a self-hosted, local-first platform that turns an organization's scattered work, code and delivery artifacts into an evidenced, living knowledge graph that anyone can question.</p>
+    </div>
+    <div style="display:grid;gap:12px;justify-items:end">
+      <div class="head-meta">
+        <span>Status date</span><b>27 Oct 2026</b>
+        <span>Reporting period</span><b>2 – 27 Oct 2026</b>
+        <span>Baseline</span><b class="mono">dev_local @ 73a3ae2</b>
+        <span>Overall</span><b>▲ Amber</b>
+      </div>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Change colour theme">Theme: system</button>
+    </div>
+  </div>
+</header>
+
+<div class="tabbar">
+  <div class="wrap">
+    <div class="tabs" role="tablist" aria-label="Report sections" id="tabs"></div>
+  </div>
+</div>
+
+<main class="wrap" id="panels">
+
+  <!-- 1 EXECUTIVE DASHBOARD -->
+  <section class="panel" role="tabpanel" id="p-dashboard" aria-labelledby="t-dashboard" data-tab="dashboard" data-label="Executive dashboard">
+    <div class="card status-banner">
+      <div class="status-lamp" aria-hidden="true">▲</div>
+      <div>
+        <div class="eyebrow">Overall status: Amber (at risk)</div>
+        <h2 style="margin-top:4px">Strong engineering foundation; the core product promise is not yet delivered</h2>
+        <p>The platform core (storage, evidence, history, governed queries, security, CI) is real and well tested. The "living organizational brain" that anyone can ask is mostly unbuilt or simulated, the backlog is untriaged, and answers are not yet permission-safe.</p>
+      </div>
+      <div class="trend"><b>Intent alignment 2.6 / 5</b>≈ 52% of the intention realised</div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h3>Status by dimension</h3>
+        <div class="dims" id="dims"></div>
+        <p class="note">✓ On track · ▲ At risk · ✕ Off track. Status reflects source inspection plus the last full test run.</p>
+      </div>
+      <div class="grid" style="align-content:start">
+        <div class="card">
+          <h3>Intent alignment at a glance</h3>
+          <div class="stack" id="dashStack" role="img"></div>
+          <div class="legend" id="dashLegend"></div>
+          <p class="note">26 intent statements in total. See the <a href="#alignment" data-goto="alignment">Intent alignment</a> tab.</p>
+        </div>
+        <div class="card">
+          <h3>Top 5 risks</h3>
+          <div id="dashRisks"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h3>Achievements this period</h3>
+        <ul class="clean">
+          <li>CI pipeline made much faster: sharded tests, cached installs, aggregator gates across all 13 workflows</li>
+          <li>Two failed CI runs (40442183484, 40442183524) diagnosed and fixed</li>
+          <li>Full working tree (271 files) prepared to pass every local CI gate; 5 regressions in the uncommitted work fixed</li>
+          <li>Real semantic embedding provider added (nomic-embed-text v1.5 on CPU Ollama), replacing a hashing simulation (CRA-025)</li>
+          <li>OBDA federation over real Snowflake SQL and Jira Cloud executors (CRA-024)</li>
+          <li>Hardened model provider applied to every live AI call site (CC3-001)</li>
+          <li>SBOM generation added (CycloneDX)</li>
+          <li>Intent alignment analysis completed, with a phased fix plan</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Next 5 actions</h3>
+        <ol class="steps">
+          <li><span><b>Quarantine the simulation layer</b>: no simulated answer or fixed confidence reaches a user (WP-A01)</span></li>
+          <li><span><b>Require evidence on every inferred link</b> at the write path (WP-A03)</span></li>
+          <li><span><b>Rewrite the vision</b> around the 26 intent statements; owner sign-off (WP-00)</span></li>
+          <li><span><b>Triage the 2,603 requirements</b>: keep, merge, defer or drop, mapped to intents (WP-00b)</span></li>
+          <li><span><b>Start permission-aware answers and the source scheduler</b> (WP-A02, WP-B02)</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 INTENT ALIGNMENT -->
+  <section class="panel" role="tabpanel" id="p-alignment" aria-labelledby="t-alignment" data-tab="alignment" data-label="Intent alignment" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Intent alignment</h2>
+        <p>How closely the codebase matches the owner's intention. 20 statements come from the owner's description; 6 (I-21 to I-26) were added because the product fails without them. Scores: 0 absent · 1 docs or stubs · 2 partial or simulated · 3 real with gaps · 4 real and tested · 5 verified end to end.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Sort" id="alSort">
+        <button type="button" aria-pressed="true" data-s="id">By ID</button>
+        <button type="button" aria-pressed="false" data-s="score">Lowest first</button>
+      </div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><span class="k-label">Overall score</span><span class="k-val">2.6<small> / 5</small></span><div class="k-meter"><i style="width:52%"></i></div><span class="k-note">≈ 52% realised</span></div>
+      <div class="kpi"><span class="k-label">Core intents (weighted ×2)</span><span class="k-val">2.3<small> / 5</small></span><div class="k-meter"><i style="width:46%"></i></div><span class="k-note">I-04 to I-13 and I-17</span></div>
+      <div class="kpi"><span class="k-label">Aligned</span><span class="k-val" id="kAligned">–</span><span class="k-note">score ≥ 3.75</span></div>
+      <div class="kpi"><span class="k-label">Drifted or absent</span><span class="k-val" id="kDrift">–</span><span class="k-note">score below 2.5</span></div>
+    </div>
+    <div class="grid g2">
+      <div class="card span-all">
+        <h3>Scorecard: 26 intent statements</h3>
+        <p class="card-sub">Hover over or focus a row to see its main gap.</p>
+        <div class="bars" id="alBars" role="list"></div>
+        <div class="bar-axis" aria-hidden="true"><div class="spacer"></div><div class="ticks" id="alTicks"></div><div class="spacer"></div></div>
+      </div>
+      <div class="card">
+        <h3>Average score by group</h3>
+        <div class="bars compact" id="alGroups" role="list"></div>
+        <div class="bar-axis" aria-hidden="true" style="grid-template-columns:minmax(110px,190px) 1fr"><div class="spacer"></div><div class="ticks" id="alGTicks"></div></div>
+      </div>
+      <div class="card">
+        <h3>Biggest gaps to close first</h3>
+        <ol class="steps">
+          <li><span><b>I-22 Permission-aware answers (0.5)</b>: source permissions are declared but never used</span></li>
+          <li><span><b>I-26 Freshness on answers (0.5)</b>: answers don't say how current they are</span></li>
+          <li><span><b>I-12 Living brain (1.5)</b>: nothing syncs sources automatically</span></li>
+          <li><span><b>I-21 No fabricated output (1.5)</b>: the brain path simulates answers</span></li>
+          <li><span><b>I-17 Day-0 improving model (1.5)</b>: no model ships; no learning loop</span></li>
+          <li><span><b>I-02 Suite of apps (1.5)</b>: still a proposal; two frontends</span></li>
+        </ol>
+      </div>
+    </div>
+    <p class="note">Full narrative: <a href="EOIP-intent-alignment-report.html">EOIP-intent-alignment-report.html</a> · Source analysis: <a href="EOIP-intent-alignment-analysis-2026-10-27.md">EOIP-intent-alignment-analysis-2026-10-27.md</a></p>
+  </section>
+
+  <!-- 3 PRODUCT & SCOPE -->
+  <section class="panel" role="tabpanel" id="p-product" aria-labelledby="t-product" data-tab="product" data-label="Product &amp; scope" hidden>
+    <div class="panel-head"><div><h2>Product and scope</h2><p>What EOIP is meant to be, what exists today, and how far the suite of applications has progressed.</p></div></div>
+    <div class="grid g3">
+      <div class="card"><h3>Vision</h3><p style="color:var(--ink-2)">A self-hosted <strong style="color:var(--ink)">living organizational brain</strong>. It connects to every work system, builds knowledge, code and meta graphs into one continuously updated brain, and lets anyone in any role ask any question and get an answer with evidence, confidence and related answers.</p></div>
+      <div class="card"><h3>First job</h3><ul class="clean"><li>What implements this requirement?</li><li>What changes if this code changes?</li><li>Why do we believe this link exists?</li></ul><p class="note">All three work today through the WHY / IMPACT / PATH / WHAT CHANGED operators.</p></div>
+      <div class="card"><h3>Non-negotiables</h3><ul class="clean"><li>Local-first; cloud only if the client chooses</li><li>Core works offline, with the model stopped, and without a vector database</li><li>History is never destroyed</li><li>Every link carries its evidence</li><li>No GPL/AGPL dependencies</li></ul></div>
+    </div>
+    <div class="card">
+      <h3>Components that exist today</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Component</th><th>Path</th><th>Role</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>API</td><td class="mono">apps/api/</td><td>FastAPI app: authentication, middleware, about 806 operations</td><td><span class="chip good"><span class="ico">✓</span>Deployed</span></td></tr>
+          <tr><td>Worker</td><td class="mono">apps/worker/</td><td>Single filesystem-backed job worker; ingestion handlers</td><td><span class="chip warning"><span class="ico">▲</span>Single node</span></td></tr>
+          <tr><td>MCP server</td><td class="mono">apps/mcp/</td><td>Read-only MCP facade over the authenticated API</td><td><span class="chip good"><span class="ico">✓</span>Deployed</span></td></tr>
+          <tr><td>Web app</td><td class="mono">apps/web/</td><td>React/Vite explorer and admin UI (default Compose)</td><td><span class="chip good"><span class="ico">✓</span>Deployed</span></td></tr>
+          <tr><td>VS Code extension</td><td class="mono">apps/vscode-extension/</td><td>Read-only context and MCP client</td><td><span class="chip good"><span class="ico">✓</span>Built in CI</span></td></tr>
+          <tr><td>Preview frontend</td><td class="mono">frontend/</td><td>Second TypeScript UI; has the only dedicated Ask screen</td><td><span class="chip serious"><span class="ico">◆</span>Unreconciled</span></td></tr>
+          <tr><td>Backend shim</td><td class="mono">backend/</td><td>Preview supervisor that delegates to the API with development defaults</td><td><span class="chip neutral">Dev only</span></td></tr>
+          <tr><td>REVA</td><td class="mono">reva/</td><td>Evidence and assurance workstream; optional API mount</td><td><span class="chip good"><span class="ico">✓</span>10 CI lanes</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Suite of applications: first wave <span class="chip neutral">Proposed, not started</span></h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Application</th><th>Today</th></tr></thead>
+          <tbody>
+            <tr><td>Suite Home (Ask-first)</td><td>Not built; Ask screen only in the preview frontend</td></tr>
+            <tr><td>Knowledge Explorer</td><td>Exists inside apps/web</td></tr>
+            <tr><td>Query Workbench</td><td>Exists inside apps/web Studio</td></tr>
+            <tr><td>Configuration Center</td><td>Split across Studio and Admin</td></tr>
+            <tr><td>Organization Administration</td><td>Exists inside apps/web Admin</td></tr>
+            <tr><td>Database Operations</td><td>Partial (Hubble, recovery panel)</td></tr>
+            <tr><td>Reports &amp; Analytics</td><td>Dashboards and lenses inside apps/web</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">Plan: <code>docs/EOIP-suite-architecture-plan.md</code> (18 browser apps, 4 developer channels long term).</p>
+      </div>
+      <div class="card">
+        <h3>Who can use it today</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Persona</th><th>Dedicated experience</th></tr></thead>
+          <tbody>
+            <tr><td>Developer</td><td><span class="chip warning"><span class="ico">▲</span>Partial</span> VS Code extension, impact queries</td></tr>
+            <tr><td>Architect / analyst</td><td><span class="chip warning"><span class="ico">▲</span>Partial</span> Explorer, Studio, lenses</td></tr>
+            <tr><td>Administrator</td><td><span class="chip good"><span class="ico">✓</span>Yes</span> Admin console</td></tr>
+            <tr><td>QA engineer</td><td><span class="chip serious"><span class="ico">◆</span>No</span></td></tr>
+            <tr><td>Product owner</td><td><span class="chip serious"><span class="ico">◆</span>No</span></td></tr>
+            <tr><td>SRE / support</td><td><span class="chip serious"><span class="ico">◆</span>No</span></td></tr>
+            <tr><td>Executive / manager</td><td><span class="chip serious"><span class="ico">◆</span>No</span></td></tr>
+            <tr><td>Business / non-technical</td><td><span class="chip critical"><span class="ico">✕</span>No</span> business domains are thin</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 ARCHITECTURE -->
+  <section class="panel" role="tabpanel" id="p-architecture" aria-labelledby="t-architecture" data-tab="architecture" data-label="Architecture" hidden>
+    <div class="panel-head"><div><h2>Architecture</h2><p>The current runtime topology, the size of each part of the codebase, and the "two-speed" split between the governed core and the aspirational layer.</p></div></div>
+    <div class="card">
+      <h3>Current runtime topology (default Compose)</h3>
+      <div class="arch">
+        <div class="arch-row"><div class="lane">Clients</div><div class="boxes">
+          <div class="abox"><b>Web app</b><span>/app · React/Vite</span></div>
+          <div class="abox"><b>Admin UI</b><span>/admin</span></div>
+          <div class="abox"><b>VS Code extension</b><span>read-only</span></div>
+          <div class="abox"><b>MCP clients</b><span>agents and IDEs</span></div>
+          <div class="abox opt"><b>Preview frontend</b><span>not in default Compose</span></div>
+        </div></div>
+        <div class="arch-arrow">▼ HTTPS, token or session</div>
+        <div class="arch-row"><div class="lane">Services</div><div class="boxes">
+          <div class="abox"><b>eoip-api</b><span>FastAPI · ~806 operations · route policy</span></div>
+          <div class="abox"><b>eoip-mcp</b><span>Streamable HTTP :8001</span></div>
+          <div class="abox warn"><b>eoip-worker</b><span>single filesystem job queue</span></div>
+          <div class="abox opt"><b>local-model</b><span>Ollama · opt-in "ai" profile</span></div>
+          <div class="abox"><b>Prometheus</b><span>metrics</span></div>
+        </div></div>
+        <div class="arch-arrow">▼ GraphStore port (one typed interface)</div>
+        <div class="arch-row"><div class="lane">Storage</div><div class="boxes">
+          <div class="abox"><b>HugeGraph</b><span>default · plus Hubble UI</span></div>
+          <div class="abox opt"><b>Neo4j</b><span>"neo4j" profile</span></div>
+          <div class="abox opt"><b>Amazon Neptune</b><span>HTTPS client</span></div>
+          <div class="abox opt"><b>RDF stores</b><span>Fuseki · GraphDB</span></div>
+          <div class="abox opt"><b>Memory</b><span>tests and dev; not durable</span></div>
+        </div></div>
+      </div>
+      <p class="note">Dashed boxes are optional or profile-gated. The amber outline marks the single-node worker that blocks distributed deployment.</p>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Largest packages (lines of Python)</h3>
+        <div class="bars compact" id="pkgBars" role="list"></div>
+        <div class="legend"><span><span class="sw" style="background:var(--bar)"></span>Governed core and supporting modules</span><span><span class="sw" style="background:var(--bar-2)"></span>◆ Aspirational layer</span></div>
+      </div>
+      <div class="card">
+        <h3>Two-speed codebase</h3>
+        <p class="card-sub">Python lines in <code>packages/</code>: about 179,500.</p>
+        <div class="stack" role="img" aria-label="Core 163,700 lines, aspirational 15,800 lines">
+          <div style="flex:163.7;background:var(--bar);color:#fff">Core and other · 91%</div>
+          <div style="flex:15.8;background:var(--bar-2);color:#fff">◆ 9%</div>
+        </div>
+        <div class="table-wrap" style="margin-top:14px"><table>
+          <thead><tr><th>Layer</th><th>What it contains</th><th>Behaviour</th></tr></thead>
+          <tbody>
+            <tr><td>Governed core</td><td class="mono">graph/store + backends, ingestion, query/executor, query/nl, retrieval, contracts, provenance, models/provider, egress, authn, authz</td><td><span class="chip good"><span class="ico">✓</span>Typed, bounded, honest, tested</span></td></tr>
+            <tr><td>Aspirational</td><td class="mono">brain/, moonshot/ (22 modules), enterprise/, polyglot engine, database_adapters, self_llm, graph_graph, vector_graph</td><td><span class="chip critical"><span class="ico">✕</span>Heuristic or simulated; mounted in the API</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Strengths and structural concerns</h3>
+      <div class="grid g2">
+        <ul class="clean">
+          <li><b style="color:var(--ink)">Ports and adapters:</b> GraphStore and SourceConnector interfaces</li>
+          <li><b style="color:var(--ink)">Bitemporal revision model:</b> "what was true at V" and "what did we know at S"</li>
+          <li><b style="color:var(--ink)">Governed query plans:</b> natural language never becomes executable Gremlin</li>
+          <li><b style="color:var(--ink)">Ontology GitOps</b> and 14 graph domains</li>
+          <li><b style="color:var(--ink)">Egress gateway</b> with data-flow manifests and DLP</li>
+        </ul>
+        <ul class="clean">
+          <li>API composition in three oversized files (1,703 · 1,982 · 1,579 lines) plus a 2,051-line platform router</li>
+          <li>Graph-of-graphs projections are built in memory and thrown away</li>
+          <li>Single-node file queue; no distributed job execution</li>
+          <li>Several "router" packages for overlapping concerns</li>
+          <li>No import boundary between the core and the experimental code</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 DATA SOURCES -->
+  <section class="panel" role="tabpanel" id="p-data" aria-labelledby="t-data" data-tab="data" data-label="Data sources" hidden>
+    <div class="panel-head"><div><h2>Data sources and connectors</h2><p>How EOIP gets data from the organization's systems, and how "alive" the brain is.</p></div></div>
+    <div class="kpis">
+      <div class="kpi"><span class="k-label">Connector modules</span><span class="k-val">31</span><span class="k-note">34 connector classes</span></div>
+      <div class="kpi"><span class="k-label">Incremental sync</span><span class="k-val">6<small> / 31</small></span><div class="k-meter"><i style="width:19%"></i></div><span class="k-note">implement poll_changes</span></div>
+      <div class="kpi"><span class="k-label">Scheduled syncing</span><span class="k-val">None</span><span class="k-note">worker runs submitted jobs only</span></div>
+      <div class="kpi"><span class="k-label">Live-qualified vendors</span><span class="k-val">0</span><span class="k-note">no authorized sandbox runs recorded</span></div>
+    </div>
+    <div class="callout warn"><strong>The brain is not yet living.</strong> The sync contracts are well designed (discover, baseline, poll changes, handle event, replay, with cursors and a dead-letter queue), but nothing triggers them on a schedule, and most connectors are batch or demo only. Fix: WP-B01 (incremental sync) and WP-B02 (source scheduler).</div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Connectors by system category</h3>
+        <div class="bars compact" id="connBars" role="list"></div>
+        <div class="legend"><span><span class="sw" style="background:var(--bar)"></span>Batch / on demand</span><span><span class="sw" style="background:var(--bar-2)"></span>Incremental capable</span></div>
+      </div>
+      <div class="card">
+        <h3>Acquisition methods</h3>
+        <div id="acqList"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Connector inventory</h3>
+      <div class="table-wrap"><table id="connTable"></table></div>
+      <p class="note">"Incremental" means the module implements poll_changes in the shared connector protocol. A connector module is not proof of live vendor qualification.</p>
+    </div>
+  </section>
+
+  <!-- 6 STORAGE & QUERY -->
+  <section class="panel" role="tabpanel" id="p-storage" aria-labelledby="t-storage" data-tab="storage" data-label="Storage &amp; query" hidden>
+    <div class="panel-head"><div><h2>Storage, query language and ontology</h2><p>Which databases really work, which query languages exist, and what the knowledge model covers.</p></div></div>
+    <div class="kpis">
+      <div class="kpi"><span class="k-label">Real storage backends</span><span class="k-val">6</span><span class="k-note">plus 2 adapters (AGE, JanusGraph)</span></div>
+      <div class="kpi"><span class="k-label">NoSQL backends</span><span class="k-val">0</span><span class="k-note">owner decision needed</span></div>
+      <div class="kpi"><span class="k-label">Home-grown query dialects</span><span class="k-val">5+</span><span class="k-note">no formal grammar</span></div>
+      <div class="kpi"><span class="k-label">Ontology</span><span class="k-val">14<small> domains</small></span><span class="k-note">75 vertex · 68 edge labels</span></div>
+    </div>
+    <div class="card">
+      <h3>Backend matrix</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Backend</th><th>Model</th><th>How it connects</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Apache HugeGraph</td><td>Property graph</td><td>REST / Gremlin · default in Compose</td><td><span class="chip good"><span class="ico">✓</span>Real, default</span></td></tr>
+          <tr><td>Neo4j</td><td>Property graph</td><td>Transactional Cypher over HTTP · Compose profile</td><td><span class="chip good"><span class="ico">✓</span>Real</span></td></tr>
+          <tr><td>Amazon Neptune</td><td>Property graph + RDF</td><td>HTTPS openCypher / SPARQL / Gremlin</td><td><span class="chip warning"><span class="ico">▲</span>Real client, not run live</span></td></tr>
+          <tr><td>Memory store</td><td>Property graph</td><td>In-process</td><td><span class="chip neutral">Tests and dev; not durable</span></td></tr>
+          <tr><td>Apache Jena Fuseki</td><td>RDF</td><td>SPARQL 1.1 HTTP</td><td><span class="chip warning"><span class="ico">▲</span>Registered; CI job needs service</span></td></tr>
+          <tr><td>Ontotext GraphDB</td><td>RDF</td><td>SPARQL 1.1 HTTP</td><td><span class="chip warning"><span class="ico">▲</span>Registered; CI job needs service</span></td></tr>
+          <tr><td>Apache AGE</td><td>Property graph on Postgres</td><td>Cypher inside SQL</td><td><span class="chip warning"><span class="ico">▲</span>Adapter</span></td></tr>
+          <tr><td>JanusGraph</td><td>Property graph</td><td>Gremlin</td><td><span class="chip warning"><span class="ico">▲</span>Adapter</span></td></tr>
+          <tr><td>"39+ other databases"</td><td>Mixed</td><td>Regex query rewriting; "connects" with no client</td><td><span class="chip critical"><span class="ico">✕</span>Stub, overstated</span></td></tr>
+          <tr><td>NoSQL (MongoDB, Cassandra…)</td><td>Document / wide-column</td><td>None</td><td><span class="chip critical"><span class="ico">✕</span>Absent</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Query languages inventory</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Artifact</th><th>Nature</th><th>Assessment</th></tr></thead>
+          <tbody>
+            <tr><td>EQL</td><td>Keyword commands (FIND, PATH, IMPACT, WHY…)</td><td><span class="chip good"><span class="ico">✓</span>Portable via the port</span></td></tr>
+            <tr><td>QueryPlan + executor</td><td>Typed plan, bounded templates</td><td><span class="chip good"><span class="ico">✓</span>Best foundation</span></td></tr>
+            <tr><td>Natural language → QueryPlan</td><td>Governed planning</td><td><span class="chip good"><span class="ico">✓</span>Real</span></td></tr>
+            <tr><td>EOQL, OSQL, Semantic QL</td><td>SQL-flavoured regex parsers</td><td><span class="chip serious"><span class="ico">◆</span>Overlap EQL</span></td></tr>
+            <tr><td>AST compiler</td><td>Typed AST → Cypher / Gremlin / SPARQL</td><td><span class="chip serious"><span class="ico">◆</span>Never used</span></td></tr>
+            <tr><td>Polyglot engine</td><td>Claims 71 dialects</td><td><span class="chip critical"><span class="ico">✕</span>Executes via regex</span></td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">Target: one owned language, EOIP-QL, with a formal grammar, pushdown to each database and a conformance suite (WP-D05, WP-D06).</p>
+      </div>
+      <div class="card">
+        <h3>Ontology domains</h3>
+        <div class="tags" id="domains"></div>
+        <div class="table-wrap" style="margin-top:14px"><table>
+          <tbody>
+            <tr><td>Vertex labels</td><td class="num">75</td></tr>
+            <tr><td>Edge labels</td><td class="num">68</td></tr>
+            <tr><td>Domain packs</td><td>config/domain-packs (versioned, validated against core)</td></tr>
+            <tr><td>History model</td><td>Entity and relationship revisions; bitemporal queries</td></tr>
+            <tr><td>W3C bridge</td><td>RDF backends, SPARQL; SHACL validation</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">Business domains (organization, process, decisions) are thin, which limits what non-engineers can ask.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 AI & MODELS -->
+  <section class="panel" role="tabpanel" id="p-ai" aria-labelledby="t-ai" data-tab="ai" data-label="AI &amp; models" hidden>
+    <div class="panel-head"><div><h2>AI and models</h2><p>EOIP's AI must be secure, local by default, available from day 0, and improve over time, while the core keeps working without it.</p></div></div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>AI posture checklist</h3>
+        <div id="aiChecks"></div>
+      </div>
+      <div class="grid" style="align-content:start">
+        <div class="card">
+          <h3>What happens when parts are missing</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Condition</th><th>Governed core</th><th>Brain layer</th></tr></thead>
+            <tbody>
+              <tr><td>Model stopped</td><td><span class="chip good"><span class="ico">✓</span>Graph answers continue</span></td><td><span class="chip critical"><span class="ico">✕</span>Simulated text</span></td></tr>
+              <tr><td>No vector database</td><td><span class="chip good"><span class="ico">✓</span>Lexical, labelled</span></td><td><span class="chip serious"><span class="ico">◆</span>Unclear</span></td></tr>
+              <tr><td>Offline</td><td><span class="chip good"><span class="ico">✓</span>Works</span></td><td><span class="chip good"><span class="ico">✓</span>Works</span></td></tr>
+              <tr><td>Backend client absent</td><td><span class="chip good"><span class="ico">✓</span>Fails clearly</span></td><td><span class="chip critical"><span class="ico">✕</span>Reports "connected"</span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div class="card">
+          <h3>Target AI loop</h3>
+          <ol class="steps">
+            <li><span><b>Day-0 model</b>: pinned local LLM and embedding model per hardware tier (WP-G01)</span></li>
+            <li><span><b>Feedback</b>: users rate and correct answers</span></li>
+            <li><span><b>Nightly evaluation</b>: golden question sets plus feedback</span></li>
+            <li><span><b>Promote only on improvement</b>, with automatic rollback (WP-G02)</span></li>
+            <li><span><b>Optional governed cloud model</b>: consent, redaction, audit (WP-G03)</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 QUALITY -->
+  <section class="panel" role="tabpanel" id="p-quality" aria-labelledby="t-quality" data-tab="quality" data-label="Quality &amp; CI" hidden>
+    <div class="panel-head"><div><h2>Quality, testing and CI</h2><p>Results of the last full local test run and CI gate check on the prepared working tree. Tests prove that components behave as specified; they do not prove end-to-end user journeys.</p></div></div>
+    <div class="kpis k6">
+      <div class="kpi"><span class="k-label">Tests run</span><span class="k-val">5,221</span><span class="k-note">full suite · 1,476 s locally</span></div>
+      <div class="kpi"><span class="k-label">Failed</span><span class="k-val">1</span><span class="k-note">Windows timing flake, since fixed (10/10)</span></div>
+      <div class="kpi"><span class="k-label">Skipped</span><span class="k-val">90</span><span class="k-note">need services; skipped is not passed</span></div>
+      <div class="kpi"><span class="k-label">Test files</span><span class="k-val">499</span><span class="k-note">across 25 categories</span></div>
+      <div class="kpi"><span class="k-label">CI workflows</span><span class="k-val">13</span><span class="k-note">main CI · evidence · secret scan · 10 REVA</span></div>
+      <div class="kpi"><span class="k-label">REVA mutation score</span><span class="k-val">0.83</span><div class="k-meter"><i style="width:83%"></i></div><span class="k-note">lowest module; threshold 0.75</span></div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Test result breakdown</h3>
+        <div class="stack" role="img" aria-label="5,130 passed, 90 skipped, 1 failed">
+          <div style="flex:5130;background:var(--good);color:#fff">✓ 5,130 passed</div>
+          <div style="flex:300;background:var(--warning);color:#0b0b0b" title="90 skipped">▲ 90</div>
+          <div style="flex:60;background:var(--critical);color:#fff" title="1 failed">✕ 1</div>
+        </div>
+        <p class="note">Skipped and failed segments are widened so they stay visible; the counts are exact.</p>
+        <h3 style="margin-top:18px;margin-bottom:10px">Test files by category</h3>
+        <div class="bars compact" id="testBars" role="list"></div>
+      </div>
+      <div class="grid" style="align-content:start">
+        <div class="card">
+          <h3>Gates verified locally on the prepared tree</h3>
+          <div id="gateList"></div>
+        </div>
+        <div class="card">
+          <h3>Not verified locally (watch on first CI run)</h3>
+          <ul class="clean">
+            <li>Container image build</li>
+            <li>Air-gapped REVA lane (needs a Linux network namespace)</li>
+            <li>Live-model and SPARQL jobs (need Ollama, Fuseki, GraphDB)</li>
+            <li>The real gitleaks secret scan (only a pattern search was done)</li>
+            <li>Linux-only behaviour differences</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>CI pipeline (GitHub Actions)</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Workflow</th><th>Purpose</th><th>Key jobs</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">ci.yml</td><td>Main pipeline</td><td>lint-and-validate · test-shard (matrix) · test gate · container · web-build · web-browser · build-and-package</td></tr>
+          <tr><td class="mono">validation-evidence.yml</td><td>Evidence receipts and behavioural gate</td><td>single-coordinator evidence run</td></tr>
+          <tr><td class="mono">secret-scan.yml</td><td>Secret detection</td><td>gitleaks</td></tr>
+          <tr><td class="mono">reva-*.yml (10)</td><td>Assurance workstream</td><td>static · unit · component · integration · fixtures · mutation · perf · ledger · acceptance · airgap</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Optimisations this period: file-level deterministic sharding by measured weights, uv install caching, aggregator gate jobs, concurrency cancellation (except on main), Docker layer cache, npm and Playwright caches.</p>
+    </div>
+    <div class="callout"><strong>Gap:</strong> there is no intent acceptance suite (one real journey per intent statement), no backend conformance run on live databases, and no answer-quality evaluation. See WP-H01, WP-D02 and WP-C04.</div>
+  </section>
+
+  <!-- 9 SECURITY -->
+  <section class="panel" role="tabpanel" id="p-security" aria-labelledby="t-security" data-tab="security" data-label="Security &amp; privacy" hidden>
+    <div class="panel-head"><div><h2>Security and privacy</h2><p>Strong platform security, with one critical gap that blocks opening the product to the whole organization.</p></div></div>
+    <div class="callout warn"><strong>Critical gap: answers are not permission-aware.</strong> Source-system access rules (Jira project roles, Confluence page restrictions, repository membership) are never captured or enforced. A viewer could receive facts from items they cannot open in the source. Fix: WP-A02.</div>
+    <div class="grid g2">
+      <div class="card"><h3>Controls in place</h3><div id="secIn"></div></div>
+      <div class="card"><h3>Gaps</h3><div id="secGap"></div></div>
+    </div>
+  </section>
+
+  <!-- 10 DELIVERY -->
+  <section class="panel" role="tabpanel" id="p-delivery" aria-labelledby="t-delivery" data-tab="delivery" data-label="Delivery &amp; backlog" hidden>
+    <div class="panel-head"><div><h2>Delivery, backlog and activity</h2><p>Development activity this period, the size of each programme, and the state of the requirement backlog.</p></div></div>
+    <div class="kpis k6">
+      <div class="kpi"><span class="k-label">Commits</span><span class="k-val">260</span><span class="k-note">2 – 27 Oct 2026 (26 days)</span></div>
+      <div class="kpi"><span class="k-label">Requirement records</span><span class="k-val">2,740</span><span class="k-note">requirements registry</span></div>
+      <div class="kpi"><span class="k-label">Untriaged</span><span class="k-val">100%</span><div class="k-meter"><i style="width:100%;background:var(--critical)"></i></div><span class="k-note">all 2,603 records with a status</span></div>
+      <div class="kpi"><span class="k-label">Programme items</span><span class="k-val">1,661</span><span class="k-note">8 tracked programmes</span></div>
+      <div class="kpi"><span class="k-label">Documentation</span><span class="k-val">753</span><span class="k-note">markdown files · 45 at the root</span></div>
+      <div class="kpi"><span class="k-label">Uncommitted</span><span class="k-val">271</span><span class="k-note">files ready for one check-in</span></div>
+    </div>
+    <div class="card">
+      <h3>Commits per day</h3>
+      <div class="cols" id="commitChart"></div>
+      <p class="note">20 Oct had 107 commits (a large remediation merge). No commits were made 21–25 Oct.</p>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Programme items by programme</h3>
+        <p class="card-sub">From EOIP-programme-registry.json (requirements, clauses, checks, tasks, gates…).</p>
+        <div class="bars compact" id="progBars" role="list"></div>
+      </div>
+      <div class="card">
+        <h3>Requirement registry by ID family (top 12)</h3>
+        <p class="card-sub">Every record's status is UNTRIAGED; nobody can yet say what is done, partial, duplicated or obsolete.</p>
+        <div class="bars compact" id="reqBars" role="list"></div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Programme item priorities</h3>
+        <div class="stack" id="prioStack" role="img"></div>
+        <div class="legend" id="prioLegend"></div>
+        <p class="note">P0 and MUST together are 86% of all items, so priority no longer separates work.</p>
+      </div>
+      <div class="card">
+        <h3>Contributors (commits, all branches)</h3>
+        <div class="bars compact" id="contribBars" role="list"></div>
+        <p class="note">Author names exactly as recorded by git; one person may appear under several names.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 RISKS -->
+  <section class="panel" role="tabpanel" id="p-risks" aria-labelledby="t-risks" data-tab="risks" data-label="Risks &amp; issues" hidden>
+    <div class="panel-head"><div><h2>Risks and issues</h2><p>Each risk is placed by likelihood and impact (1–5). The zone shows the combined level. Hover over or focus a number for details.</p></div></div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Risk matrix</h3>
+        <div class="rm">
+          <div class="ylab">Impact →</div>
+          <div class="gridm" id="riskGrid"></div>
+        </div>
+        <div class="legend">
+          <span class="chip critical"><span class="ico">✕</span>Critical ≥ 15</span>
+          <span class="chip serious"><span class="ico">◆</span>High 10–14</span>
+          <span class="chip warning"><span class="ico">▲</span>Medium 5–9</span>
+          <span class="chip good"><span class="ico">✓</span>Low &lt; 5</span>
+        </div>
+      </div>
+      <div class="grid" style="align-content:start">
+        <div class="card">
+          <h3>Risks by level</h3>
+          <div class="stack" id="riskStack" role="img"></div>
+          <div class="legend" id="riskLegend"></div>
+        </div>
+        <div class="card">
+          <h3>Mitigations with the most leverage</h3>
+          <div id="riskLever"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Risk register</h3>
+      <div class="table-wrap"><table id="riskTable"></table></div>
+    </div>
+  </section>
+
+  <!-- 12 ROADMAP -->
+  <section class="panel" role="tabpanel" id="p-roadmap" aria-labelledby="t-roadmap" data-tab="roadmap" data-label="Roadmap" hidden>
+    <div class="panel-head"><div><h2>Roadmap and next steps</h2><p>Seven phases in order, plus ongoing verification. Phase 0 blocks everything else. The 30/60/90-day view is indicative and assumes one agent with human review.</p></div></div>
+    <div class="tl">
+      <div class="card"><div class="when">Next 30 days</div><h3 style="margin:4px 0 10px">Honesty and north star</h3><ul class="clean"><li>Quarantine the simulation layer (WP-A01)</li><li>Require evidence on links (WP-A03)</li><li>Rewrite the vision; triage the backlog (WP-00, 00b, 00c)</li><li>Begin permission-aware answers (WP-A02)</li></ul></div>
+      <div class="card" style="border-top-color:color-mix(in srgb,var(--bar) 70%,var(--surface))"><div class="when">Days 31–60</div><h3 style="margin:4px 0 10px">Make the brain alive</h3><ul class="clean"><li>Incremental sync for Tier-1 sources (WP-B01)</li><li>Source scheduler and freshness (WP-B02, E01)</li><li>Connector SDK package (WP-B03)</li><li>Finish permission-aware answers (WP-A02)</li></ul></div>
+      <div class="card" style="border-top-color:color-mix(in srgb,var(--bar) 45%,var(--surface))"><div class="when">Days 61–90</div><h3 style="margin:4px 0 10px">Ask anything</h3><ul class="clean"><li>Answer orchestrator and contract (WP-C01)</li><li>Calibrated confidence, related answers (WP-C02, C03)</li><li>Golden question sets per role (WP-C04)</li><li>Day-0 model (WP-G01)</li></ul></div>
+    </div>
+    <div class="card">
+      <h3>All phases and work packages</h3>
+      <div class="table-wrap"><table id="roadTable"></table></div>
+      <p class="note">Sizes: S ≤ 2 days · M ≤ 1 week · L ≤ 3 weeks. A package is accepted only on executed evidence against real services.</p>
+    </div>
+    <div class="card">
+      <h3>Work packages per phase, by effort</h3>
+      <div class="bars compact" id="phaseBars" role="list"></div>
+      <p class="note">Effort points: S = 1, M = 3, L = 8 (relative, not calendar time).</p>
+    </div>
+  </section>
+
+  <!-- 13 DECISIONS -->
+  <section class="panel" role="tabpanel" id="p-decisions" aria-labelledby="t-decisions" data-tab="decisions" data-label="Decisions &amp; asks" hidden>
+    <div class="panel-head"><div><h2>Decisions and asks</h2><p>Decisions only the owner can make, and when each one is needed.</p></div></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>#</th><th>Decision</th><th>Options</th><th>Needed by</th><th>Recommendation</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>First NoSQL database</td><td>MongoDB (SSPL), Cassandra, ScyllaDB, other Apache-2.0 store</td><td>Phase 3 (WP-D01)</td><td>An Apache-2.0 option; check SSPL against the redistribution policy before MongoDB</td></tr>
+        <tr><td class="num">2</td><td>Default local model and licence policy</td><td>Apache-2.0/MIT only, or community licences too</td><td>Phase 4 (WP-G01)</td><td>Permissive only, pinned per hardware tier</td></tr>
+        <tr><td class="num">3</td><td>External AI model policy</td><td>Never · opt-in per data class · ship disabled</td><td>Phase 4 (WP-G03)</td><td>Ship disabled; opt-in per tenant and data class with consent and audit</td></tr>
+        <tr><td class="num">4</td><td>Requirement triage authority</td><td>Owner · delegate · committee</td><td>Phase 0 (WP-00b)</td><td>Owner signs off; agent drafts dispositions</td></tr>
+        <tr><td class="num">5</td><td>Suite release order</td><td>Suite plan first wave · Ask-first home first</td><td>Phase 5 (WP-F01)</td><td>Ask-first home and role workspaces first</td></tr>
+        <tr><td class="num">6</td><td>Unknown source permissions</td><td>Deny by default · allow within tenant</td><td>Phase 0 (WP-A02)</td><td>Deny by default</td></tr>
+        <tr><td class="num">7</td><td>Distributed topology priority</td><td>Central brain first · hub-and-spoke early</td><td>Phase 6 (WP-E04)</td><td>Central brain first; federation contract defined early</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid g2">
+      <div class="card"><h3>Asks of the owner</h3><ul class="clean"><li>Approve the rewritten vision (WP-00)</li><li>Freeze new programmes and moonshot modules until Phases 0–2 are accepted</li><li>Adopt the rule "no simulated output reaches a user"</li><li>Provide authorized sandbox accounts for Jira, Confluence, GitHub/GitLab, ServiceNow</li><li>Approve the one-commit check-in of the 271 prepared files</li></ul></div>
+      <div class="card"><h3>Standing constraints</h3><ul class="clean"><li>No GPL or AGPL dependencies</li><li>Use proven databases; never build a storage engine, triplestore or reasoner</li><li>Only executed results count as evidence of completion</li><li>Never commit secrets; never weaken model endpoint validation</li><li>No commit or push without explicit approval</li></ul></div>
+    </div>
+  </section>
+
+  <!-- 14 APPENDIX -->
+  <section class="panel" role="tabpanel" id="p-appendix" aria-labelledby="t-appendix" data-tab="appendix" data-label="Metrics &amp; sources" hidden>
+    <div class="panel-head"><div><h2>Metrics and sources</h2><p>All figures in this report and where they came from.</p></div></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Metric</th><th class="num">Value</th><th>Source</th></tr></thead>
+      <tbody id="metricsBody"></tbody>
+    </table></div>
+    <div class="card">
+      <h3>Method and limitations</h3>
+      <ul class="clean">
+        <li>Figures come from source inspection of the repository at <code>dev_local @ 73a3ae2</code> plus the uncommitted working tree, on 27 Oct 2026.</li>
+        <li>Executed evidence: one full local Python test run (5,221 tests) and the local CI static, QA and REVA gates.</li>
+        <li>Not executed: live vendor connectors, live HugeGraph, Neo4j or Neptune, a live Ollama run, and browser journeys.</li>
+        <li>Alignment scores are judgments, labelled as such; they will be regenerated from executed journey receipts once the intent acceptance suite (WP-H01) exists.</li>
+        <li>Line counts are raw lines of Python, including comments and blank lines.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">EOIP / KnowGridFlow project status report · 27 Oct 2026 · Companion documents: <a href="EOIP-intent-alignment-report.html">Intent alignment report</a> · <a href="EOIP-intent-alignment-analysis-2026-10-27.md">Analysis (markdown)</a> · <a href="README.md">README</a></div></footer>
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function () {
+  "use strict";
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function el(tag, attrs, html) {
+    var e = document.createElement(tag);
+    if (attrs) for (var k in attrs) { if (k === "class") e.className = attrs[k]; else e.setAttribute(k, attrs[k]); }
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+  function fmt(n) { return n.toLocaleString("en-US"); }
+  var ST = {
+    good: { ico: "✓", label: "On track" }, warning: { ico: "▲", label: "At risk" },
+    serious: { ico: "◆", label: "High" }, critical: { ico: "✕", label: "Off track" }
+  };
+  function chip(key, text) { return '<span class="chip ' + key + '"><span class="ico" aria-hidden="true">' + (ST[key] ? ST[key].ico : "•") + '</span>' + esc(text || ST[key].label) + '</span>'; }
+
+  /* tooltip */
+  var tip = document.getElementById("tip");
+  function showTip(html, x, y) {
+    tip.innerHTML = html; tip.classList.add("on");
+    var r = tip.getBoundingClientRect();
+    var left = Math.min(window.innerWidth - r.width - 12, x + 14), top = y + 16;
+    if (top + r.height > window.innerHeight - 8) top = y - r.height - 12;
+    tip.style.left = Math.max(8, left) + "px"; tip.style.top = Math.max(8, top) + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); }
+  function bindTip(node, html) {
+    node.addEventListener("mousemove", function (e) { showTip(html, e.clientX, e.clientY); });
+    node.addEventListener("mouseleave", hideTip);
+    node.addEventListener("focus", function () { var r = node.getBoundingClientRect(); showTip(html, r.left + r.width / 2, r.bottom - 8); });
+    node.addEventListener("blur", hideTip);
+  }
+
+  /* generic horizontal bars */
+  function hbars(id, rows, opts) {
+    opts = opts || {};
+    var host = document.getElementById(id); host.innerHTML = "";
+    // Headroom so the value label after the longest bar stays inside the track.
+    var max = opts.max || Math.max.apply(null, rows.map(function (r) { return r.v; })) * 1.18;
+    rows.forEach(function (r) {
+      var row = el("div", { "class": "bar-row", tabindex: "0", role: "listitem", "aria-label": r.label + ": " + (r.text || r.v) });
+      var track = el("div", { "class": "bar-track" });
+      if (opts.grid) for (var i = 1; i <= opts.grid; i++) { var g = el("i", { "class": "gl" }); g.style.left = (i / opts.grid * 100) + "%"; track.appendChild(g); }
+      var pct = r.v / max * 100;
+      var f = el("div", { "class": "bar-fill" + (r.alt ? " alt" : "") }); f.style.width = pct + "%"; track.appendChild(f);
+      var v = el("span", { "class": "bar-val" }, esc(r.text || fmt(r.v))); v.style.left = pct + "%"; track.appendChild(v);
+      row.appendChild(el("div", { "class": "bar-label" }, r.labelHtml || esc(r.label)));
+      row.appendChild(track);
+      if (r.chip) row.appendChild(el("div", null, r.chip));
+      bindTip(row, r.tip || ('<div class="t-h">' + esc(r.label) + '</div><div>' + esc(r.text || fmt(r.v)) + '</div>'));
+      host.appendChild(row);
+    });
+  }
+  function ticks(id, n) {
+    var t = document.getElementById(id); t.innerHTML = "";
+    for (var i = 0; i <= n; i++) { var s = el("span", null, String(i)); s.style.left = (i / n * 100) + "%"; t.appendChild(s); }
+  }
+
+  /* ---------------- data ---------------- */
+  var INTENTS = [
+    ["I-01","Self-hosted, central or distributed",3,"Single file-based worker, so not distributed; no multi-site topology proven.","base"],
+    ["I-02","Suite of applications",1.5,"Suite plan is a proposal; two frontends; no suite home or shared session.","base"],
+    ["I-03","Local-first, client-controlled cloud",3,"Egress gateway exists; cloud adapters deferred; AI not routed through egress.","base"],
+    ["I-04","Any proven graph or NoSQL database",2.5,"Four real backends plus RDF/AGE/Janus; no NoSQL; '39+' list is a stub.","core"],
+    ["I-05","Owned query language for any database",2,"Five overlapping dialects; no grammar, spec or pushdown.","core"],
+    ["I-06","Evidence on every link",3,"Evidence not required at the write port.","core"],
+    ["I-07","Three questions with proof",4,"Works; not exercised on a live backend; no proof-bundle export.","core"],
+    ["I-08","Any question type",2,"No routing by question type; brain path simulates.","core"],
+    ["I-09","Evidence, confidence, related answers",2,"No calibrated confidence or related answers; brain confidence hard-coded.","core"],
+    ["I-10","Anyone in any role",1.5,"Coarse roles; no role experiences; source permissions not mirrored.","core"],
+    ["I-11","Adapter SDK and framework",3,"Good protocol; only 6 incremental connectors; no packaged SDK.","core"],
+    ["I-12","Living brain, continuous updates",1.5,"Nothing schedules connector syncs; no freshness SLOs.","core"],
+    ["I-13","Many graph types, one brain",2.5,"Graph-of-graphs views built in memory and discarded.","core"],
+    ["I-14","Own graph-building algorithms",3,"Not benchmarked for precision or recall.","base"],
+    ["I-15","Own agents",3,"Brain-path agents run on simulated generation; no golden-task evaluation.","base"],
+    ["I-16","Secure AI",4,"DLP not yet on the model path.","base"],
+    ["I-17","Day-0 local model that improves",1.5,"No default model; no feedback; no improvement loop.","core"],
+    ["I-18","Works without model or vector database",4,"Only the brain layer substitutes simulation.","base"],
+    ["I-19","History never destroyed",3.5,"clear() on the public port; erasure unresolved.","base"],
+    ["I-20","Research-driven, best in category",2.5,"Research spawns programmes; backlog untriaged.","base"],
+    ["I-21","No fabricated output",1.5,"Brain, self_llm, database adapter and polyglot engine simulate.","added"],
+    ["I-22","Permission-aware answers",0.5,"Permissions field declared but never used.","added"],
+    ["I-23","Lawful erasure that keeps history",2,"Crypto-shredding deferred.","added"],
+    ["I-24","Measured answer quality",1.5,"No golden question sets or calibration tracking.","added"],
+    ["I-25","Operable at enterprise scale",2,"File queue; oversized API files.","added"],
+    ["I-26","Freshness shown on answers",0.5,"No per-source freshness on answers.","added"]
+  ];
+  function band(s) { return s >= 3.75 ? "good" : s >= 2.5 ? "warning" : s >= 1 ? "serious" : "critical"; }
+  var BAND_LABEL = { good: "Aligned", warning: "Partly aligned", serious: "Drifted", critical: "Absent" };
+
+  var DIMS = [
+    ["Architecture foundation","good","Typed ports, pluggable storage, bitemporal history, governed query plans."],
+    ["Code quality and CI","good","5,221 tests; all local CI gates pass; CI sharded and cached."],
+    ["Security platform","warning","Strong authentication, tenancy and egress, but answers are not permission-aware."],
+    ["Intent alignment","warning","2.6 / 5; core intents 2.3 / 5."],
+    ["Answer trust and integrity","critical","The brain endpoint can return simulated answers and fixed confidence."],
+    ["Living brain and data freshness","critical","No scheduled syncing; 6 of 31 connector modules incremental."],
+    ["AI readiness","warning","Secure and honest core, but no day-0 model and no learning loop."],
+    ["User experience and suite","warning","One deployed UI; suite only proposed; two frontends."],
+    ["Delivery and backlog","critical","2,603 requirements, all untriaged; 13+ overlapping programmes."],
+    ["Deployment and operations","warning","Compose, Helm and HA profiles exist; single-node job queue."]
+  ];
+  var DIM_LABEL = { good: "On track", warning: "At risk", critical: "Off track" };
+
+  var KPIS = [
+    ["Intent alignment","2.6","/ 5","≈ 52% of the intention",52],
+    ["Automated tests","5,221","","1 failure, since fixed · 90 skipped",null],
+    ["Python code","179.5k","lines","~140 subpackages",null],
+    ["API operations","806","","in the Postman catalog",null],
+    ["Connectors","34","","6 modules incremental",19],
+    ["Storage backends","6","+2","real; plus AGE and Janus adapters",null],
+    ["Requirements untriaged","2,603","","100% of records with a status",100],
+    ["Commits","260","","in 26 days",null]
+  ];
+
+  var RISKS = [
+    [1,"Simulated answers reach users",5,5,"Brain /ask returns simulated text and a fixed confidence; destroys trust in evidenced answers.","WP-A01"],
+    [2,"Restricted data leaks through answers",4,5,"Source permissions are not mirrored or enforced.","WP-A02"],
+    [3,"Stale answers from a brain that isn't living",5,4,"No scheduled syncing; most connectors batch only.","WP-B01, B02"],
+    [4,"Backlog can't be planned",5,4,"2,603 untriaged requirements across overlapping programmes.","WP-00b"],
+    [5,"Overstated capabilities damage credibility",4,4,"'39+ databases', '71 dialects', frontier model tiers in code and docs.","WP-A01, D01"],
+    [6,"Scope sprawl raises maintenance cost",4,4,"~140 packages; 806 operations; many without a user journey.","WP-00c, §10"],
+    [7,"Slow queries on remote databases",3,4,"Client-side traversal means one round-trip per hop.","WP-D06"],
+    [8,"AI features off on day 0",4,3,"No default model shipped; Ollama is opt-in.","WP-G01"],
+    [9,"Erasure conflicts with immutable history",3,4,"Crypto-shredding deferred; clear() on the public port.","WP-B05"],
+    [10,"Two frontends diverge further",4,3,"apps/web and frontend/ have separate shells, auth and API clients.","WP-F01"],
+    [11,"Live connectors fail in customer environments",4,3,"No authorized sandbox qualification recorded.","WP-B01, B04"],
+    [12,"Single-node queue limits scale",3,3,"Filesystem job queue; no distributed workers.","WP-E02"],
+    [13,"Licence conflict from a database or model choice",2,5,"SSPL/AGPL options would violate the licensing policy.","Decisions 1–2"]
+  ];
+  function riskZone(l, i) { var s = l * i; return s >= 15 ? "critical" : s >= 10 ? "serious" : s >= 5 ? "warning" : "good"; }
+
+  var CONNECTORS = [
+    ["jira","Work tracking",1],["rally","Work tracking",0],["qtest","Work tracking",0],
+    ["github","Code & CI",1],["gitlab","Code & CI",1],["local_code","Code & CI",0],["cicd","Code & CI",0],
+    ["confluence","Documents & knowledge",0],["documentum","Documents & knowledge",0],["files","Documents & knowledge",0],["crawler","Documents & knowledge",0],["api_portal","Documents & knowledge",0],["figma","Documents & knowledge",0],
+    ["servicenow","IT service management",0],
+    ["slack","Collaboration",0],
+    ["datadog","Observability",0],["grafana","Observability",0],["kibana","Observability",0],["splunk","Observability",0],["otel","Observability",0],
+    ["kubernetes","Infrastructure & runtime",1],["runtime_infra","Infrastructure & runtime",0],["artifactory","Infrastructure & runtime",0],["sbom","Infrastructure & runtime",0],
+    ["snowflake","Data platforms",0],
+    ["generic","Generic & custom",1],["factory","Generic & custom",1],["rest","Generic & custom",0],["webhook","Generic & custom",0],["custom_system","Generic & custom",0],["fortuna","Generic & custom",0]
+  ];
+
+  var ACQ = [
+    ["good","REST pull","Most connectors; cursors and pagination"],
+    ["good","Webhook push","POST /api/v1/sources/{id}/webhooks"],
+    ["good","Web crawl","crawler connector, with crawl-safety telemetry"],
+    ["good","Files and repositories","files, local_code, repository ingestion"],
+    ["warning","Streaming","OpenTelemetry and batch streaming; partial"],
+    ["warning","Federated query (OBDA)","Snowflake SQL and Jira Cloud executors; live validation pending"],
+    ["critical","Scheduled sync","Absent: nothing runs syncs on a cadence"]
+  ];
+
+  var AI_CHECKS = [
+    ["good","Hardened local model provider","Allowlist, DNS-rebinding defence, no redirects, no ambient proxies (CC3-001)."],
+    ["good","Plans, not generated code","Natural language becomes a validated QueryPlan, never executable Gremlin."],
+    ["good","Real semantic embeddings","nomic-embed-text v1.5 on CPU Ollama (CRA-025); hashing embedder refused in production."],
+    ["good","Per-sentence citations","GraphRAG answers carry citation chains (CRA-026.7)."],
+    ["critical","Simulation fallback in self_llm","Without a model, generates templated text and invented explanation numbers."],
+    ["critical","No day-0 model","EOIP_OLLAMA_MODEL is empty by default; Ollama behind the opt-in ai profile."],
+    ["critical","No improvement loop","No feedback capture, evaluation gate or promotion with rollback."],
+    ["serious","No calibrated confidence","Answer confidence isn't measured against reality."],
+    ["warning","No governed cloud model option","Egress gateway and manifests exist but aren't wired to AI calls."]
+  ];
+
+  var SEC_IN = [
+    ["good","Authentication fails closed","No provisioned principal, no access; token-to-role mapping."],
+    ["good","Route policy and tenancy isolation","Per-route policy; tenant scope injected into query plans."],
+    ["good","Egress gateway with DLP and vault","Data-flow manifests require admin consent."],
+    ["good","Model endpoint hardening","SSRF and DNS-rebinding defences on every AI call."],
+    ["good","Secret scanning in CI","gitleaks workflow; no credential files in the tree."],
+    ["good","Audit sink and evidence receipts","Audit events; signed evidence receipts in CI."],
+    ["good","SBOM","CycloneDX SBOM generation added this period."]
+  ];
+  var SEC_GAP = [
+    ["critical","Source permissions not enforced","source_acl_vector declared, never written or read."],
+    ["serious","Crypto-shredding deferred","Lawful erasure vs immutable history unresolved."],
+    ["serious","clear() on the production storage port","History could be wiped through a public method."],
+    ["warning","Preview frontend admin fallback","Synthesizes a bootstrap-admin UI principal when whoami fails."],
+    ["warning","MCP uses one service token","Per-principal delegation needed before wider exposure."],
+    ["warning","DLP not on the model path","Needed before any external model is allowed."]
+  ];
+
+  var GATES = [
+    "Undefined-name and security lint (ruff F821, S324, S202)",
+    "Bytecode compile of all sources",
+    "Test collection (collect-only)",
+    "Requirement registry check (2,603 records valid)",
+    "KGCI knowledge-graph CI check",
+    "Evidence lint",
+    "REVA static: ruff, lanes, depth markers, compile",
+    "REVA fixtures byte-identical; 18/18 extractor checks",
+    "REVA mutation probe (lowest 0.83 ≥ 0.75)",
+    "REVA performance budgets enforced",
+    "QA lane (all 6 commands)",
+    "Node demo-orchestration tests",
+    "No credential files or credential-like strings"
+  ];
+
+  var TESTS = [["unit",304],["reva",32],["acceptance",20],["security",19],["runtime_dlq",15],["integration",12],["semantic",11],["runtime_hubble",6],["neural",6],["ai",6],["query",5],["qa",5],["e2e",5],["contract",5],["other (11 categories)",48]];
+
+  var COMMITS = {"2026-10-02":13,"2026-10-03":13,"2026-10-04":14,"2026-10-05":10,"2026-10-06":10,"2026-10-07":3,"2026-10-08":3,"2026-10-09":12,"2026-10-10":11,"2026-10-11":15,"2026-10-12":12,"2026-10-13":4,"2026-10-14":2,"2026-10-15":1,"2026-10-16":10,"2026-10-17":1,"2026-10-18":4,"2026-10-19":5,"2026-10-20":107,"2026-10-26":5,"2026-10-27":5};
+
+  var PROGS = [["REVA (assurance)",332],["ASPEII",295],["IP / Warrant",294],["Graph Neurons",288],["Wisdom Graph",243],["Community / IP",143],["Neural Schema",38],["Living-AI Graffin",28]];
+  var REQS = [["G2",574],["GAP",325],["SR",290],["TASK",220],["SDLC",170],["FR",137],["PUR",137],["AC",129],["TEST",105],["WP",82],["AIDLC",80],["UI",51]];
+  var PRIO = [["P0",896],["MUST",536],["P1",198],["P2",20],["P3",10],["SHOULD",1]];
+  var CONTRIB = [["Ravaleedhar Reddy",176],["Ravaleedhar",96],["Grok Bot",13],["Ravaleedhar Murthy",2]];
+
+  var ROAD = [
+    ["Phase 0","North star and honesty",[["WP-00","S","Rewrite the vision"],["WP-00b","M","Triage the requirement registry"],["WP-00c","S","Research-to-improvement rule"],["WP-A01","M","Quarantine the simulation layer"],["WP-A02","L","Permission-aware answers"],["WP-A03","S","Require evidence on links"]]],
+    ["Phase 1","Make the brain alive",[["WP-B01","L","Incremental sync, Tier-1 sources"],["WP-B02","M","Source scheduler"],["WP-B03","M","Connector SDK package"],["WP-B04","S","Source qualification sheets"],["WP-B05","M","Erasure that keeps history"],["WP-E01","S","Freshness on every answer"]]],
+    ["Phase 2","Ask anything",[["WP-C01","L","Answer orchestrator"],["WP-C02","M","Calibrated confidence"],["WP-C03","M","Related answers, follow-ups, experts"],["WP-C04","M","Golden question sets per role"],["WP-C05","M","Pluggable vector index"],["WP-C06","S","Proof bundle export"],["WP-C07","M","Agents on the orchestrator"]]],
+    ["Phase 3","Portability",[["WP-D05","L","EOIP-QL v1"],["WP-D06","L","Pushdown and conformance"],["WP-D01","M","Backend matrix + NoSQL profile"],["WP-D02","S","Backend conformance in CI"],["WP-D03","M","Persisted brain index"],["WP-D04","M","Cross-system identity resolution"],["WP-D07","M","Business domain packs"],["WP-D08","M","Algorithm benchmarks"]]],
+    ["Phase 4","AI that ships and improves",[["WP-G01","M","Day-0 model"],["WP-G02","L","Improvement loop"],["WP-G03","M","Governed cloud model option"]]],
+    ["Phase 5","The suite",[["WP-F01","L","Reconcile the two frontends"],["WP-F02","M","Ask-first suite home"],["WP-F03","L","Separately built apps"],["WP-F04","M","Role workspaces"]]],
+    ["Phase 6","Scale and maintainability",[["WP-E02","M","Queue abstraction"],["WP-E03","L","Split the API by area"],["WP-E04","M","Distributed topology reference"]]],
+    ["Ongoing","Verification",[["WP-H01","M","Intent acceptance suite"],["WP-H02","S","Product scorecard"],["WP-H03","S","Anti-regression rules in CI"]]]
+  ];
+  var PTS = { S: 1, M: 3, L: 8 };
+
+  var METRICS = [
+    ["Python lines in packages/","179,500","find packages -name '*.py' | wc -l"],
+    ["Subpackages under packages/eoip","~140","directory listing"],
+    ["Aspirational-layer lines","15,800","brain, moonshot, enterprise, polyglot, adapters, self_llm, graph_graph, vector_graph"],
+    ["Test files","499","tests/**/test_*.py"],
+    ["Tests in last full run","5,221","local pytest run, 1,476 s"],
+    ["Skipped / failed","90 / 1","same run; failure fixed afterwards"],
+    ["CI workflows","13",".github/workflows"],
+    ["API operations","806","qa/postman catalog"],
+    ["Connector modules / classes","31 / 34","packages/eoip/connectors"],
+    ["Incremental connector modules","6","modules defining poll_changes"],
+    ["Real storage backends","6","graph/backends.py registrations"],
+    ["Ontology domains / vertex / edge labels","14 / 75 / 68","ontology/manifest.py"],
+    ["Requirement registry entries","2,740","requirements-registry.json"],
+    ["Untriaged requirement records","2,603","same, status = UNTRIAGED"],
+    ["Programme items / programmes","1,661 / 8","EOIP-programme-registry.json"],
+    ["Markdown files (tracked)","753","git ls-files '*.md'"],
+    ["Root-level markdown files","45","repository root"],
+    ["Commits in period","260","git log, 2–27 Oct 2026"],
+    ["Uncommitted files ready","271","git status"],
+    ["Intent alignment score","2.6 / 5","EOIP-intent-alignment-analysis-2026-10-27.md"]
+  ];
+
+  /* ---------------- tabs ---------------- */
+  var tabsHost = document.getElementById("tabs");
+  var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
+  panels.forEach(function (p, i) {
+    var key = p.getAttribute("data-tab");
+    var b = el("button", { role: "tab", id: "t-" + key, "aria-controls": p.id, "aria-selected": "false", tabindex: "-1", type: "button" },
+      '<span class="n">' + String(i + 1).padStart(2, "0") + '</span>' + p.getAttribute("data-label"));
+    b.addEventListener("click", function () { select(key, true); });
+    tabsHost.appendChild(b);
+  });
+  function select(key, push) {
+    var found = panels.some(function (p) { return p.getAttribute("data-tab") === key; });
+    if (!found) key = "dashboard";
+    panels.forEach(function (p) { p.hidden = p.getAttribute("data-tab") !== key; });
+    tabsHost.querySelectorAll("button").forEach(function (b) {
+      var on = b.id === "t-" + key;
+      b.setAttribute("aria-selected", on ? "true" : "false"); b.tabIndex = on ? 0 : -1;
+      if (on) b.scrollIntoView({ block: "nearest", inline: "nearest" });
+    });
+    if (push) { try { history.replaceState(null, "", "#" + key); } catch (e) { location.hash = key; } }
+    try { localStorage.setItem("eoip-status-tab", key); } catch (e) {}
+    hideTip();
+  }
+  tabsHost.addEventListener("keydown", function (e) {
+    var btns = Array.prototype.slice.call(tabsHost.querySelectorAll("button"));
+    var i = btns.indexOf(document.activeElement); if (i < 0) return;
+    var j = e.key === "ArrowRight" ? i + 1 : e.key === "ArrowLeft" ? i - 1 : e.key === "Home" ? 0 : e.key === "End" ? btns.length - 1 : null;
+    if (j === null) return;
+    e.preventDefault(); j = (j + btns.length) % btns.length; btns[j].focus(); btns[j].click();
+  });
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("[data-goto]"); if (!a) return;
+    e.preventDefault(); select(a.getAttribute("data-goto"), true); window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  window.addEventListener("hashchange", function () { select(location.hash.slice(1), false); });
+  var initial = location.hash.slice(1);
+  if (!initial) { try { initial = localStorage.getItem("eoip-status-tab") || ""; } catch (e) {} }
+  select(initial || "dashboard", false);
+
+  /* ---------------- dashboard ---------------- */
+  var kh = document.getElementById("kpis");
+  KPIS.forEach(function (k) {
+    kh.insertAdjacentHTML("beforeend", '<div class="kpi"><span class="k-label">' + esc(k[0]) + '</span><span class="k-val">' + esc(k[1]) + (k[2] ? '<small> ' + esc(k[2]) + '</small>' : '') + '</span>' +
+      (k[4] != null ? '<div class="k-meter"><i style="width:' + k[4] + '%' + (k[0].indexOf("untriaged") > -1 ? ';background:var(--critical)' : '') + '"></i></div>' : '') +
+      '<span class="k-note">' + esc(k[3]) + '</span></div>');
+  });
+  var dh = document.getElementById("dims");
+  DIMS.forEach(function (d) {
+    dh.insertAdjacentHTML("beforeend", '<div class="dim"><div class="dn">' + esc(d[0]) + '</div><div>' + chip(d[1], DIM_LABEL[d[1]]) + '</div><div class="dd">' + esc(d[2]) + '</div></div>');
+  });
+  function bandStack(stackId, legendId) {
+    var keys = ["good", "warning", "serious", "critical"], st = document.getElementById(stackId), lg = document.getElementById(legendId), parts = [];
+    keys.forEach(function (k) {
+      var n = INTENTS.filter(function (r) { return band(r[2]) === k; }).length; if (!n) return;
+      var d = el("div", null, ST[k].ico + "&nbsp;" + n);
+      d.style.flex = n; d.style.background = "var(--" + k + ")"; d.style.color = (k === "warning" || k === "serious") ? "#0b0b0b" : "#fff";
+      bindTip(d, '<div class="t-h">' + BAND_LABEL[k] + '</div><div>' + n + ' of 26 intent statements</div>');
+      st.appendChild(d); lg.insertAdjacentHTML("beforeend", chip(k, BAND_LABEL[k] + " · " + n)); parts.push(BAND_LABEL[k] + " " + n);
+    });
+    st.setAttribute("aria-label", parts.join(", "));
+  }
+  bandStack("dashStack", "dashLegend");
+  var dr = document.getElementById("dashRisks");
+  RISKS.slice().sort(function (a, b) { return b[2] * b[3] - a[2] * a[3] || a[0] - b[0]; }).slice(0, 5).forEach(function (r) {
+    var z = riskZone(r[2], r[3]);
+    dr.insertAdjacentHTML("beforeend", '<div class="check"><div>' + chip(z, "R" + r[0] + " · " + (r[2] * r[3])) + '</div><div><div class="ct">' + esc(r[1]) + '</div><div class="cd">' + esc(r[4]) + ' <span class="mono">→ ' + esc(r[5]) + '</span></div></div></div>');
+  });
+
+  /* ---------------- alignment ---------------- */
+  function renderAlign(sort) {
+    var d = INTENTS.slice(); if (sort === "score") d.sort(function (a, b) { return a[2] - b[2] || a[0].localeCompare(b[0]); });
+    hbars("alBars", d.map(function (r) {
+      var k = band(r[2]);
+      return { label: r[0] + " " + r[1], labelHtml: '<b>' + r[0] + '</b>' + esc(r[1]), v: r[2], text: r[2].toFixed(1), chip: chip(k, BAND_LABEL[k]),
+        tip: '<div class="t-h">' + r[0] + ' · ' + esc(r[1]) + '</div><div><b>' + r[2].toFixed(1) + ' / 5</b> · ' + BAND_LABEL[k] + '</div><div class="t-r"><b>Main gap:</b> ' + esc(r[3]) + '</div>' };
+    }), { max: 5, grid: 5 });
+  }
+  renderAlign("id"); ticks("alTicks", 5);
+  document.getElementById("alSort").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    this.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+    renderAlign(b.getAttribute("data-s"));
+  });
+  document.getElementById("kAligned").textContent = INTENTS.filter(function (r) { return r[2] >= 3.75; }).length;
+  document.getElementById("kDrift").textContent = INTENTS.filter(function (r) { return r[2] < 2.5; }).length;
+  function avg(g) { var a = INTENTS.filter(g); return a.reduce(function (s, r) { return s + r[2]; }, 0) / a.length; }
+  var groups = [
+    ["Core product intents (11)", avg(function (r) { return r[4] === "core"; })],
+    ["Platform intents (9)", avg(function (r) { return r[4] === "base"; })],
+    ["Added by analysis (6)", avg(function (r) { return r[4] === "added"; })],
+    ["All 26 (unweighted)", avg(function () { return true; })]
+  ];
+  hbars("alGroups", groups.map(function (g) { return { label: g[0], v: g[1], text: g[1].toFixed(2) }; }), { max: 5, grid: 5 });
+  ticks("alGTicks", 5);
+
+  /* ---------------- architecture ---------------- */
+  var PKG = [["graph",17038,0],["connectors",10457,0],["ontology",9231,0],["ingestion",7860,0],["query",6391,0],["agents",6175,0],["brain",4718,1],["moonshot",4179,1],["enterprise",4023,1],["retrieval",3453,0],["processing",3433,0],["models",2809,0]];
+  hbars("pkgBars", PKG.map(function (p) { return { label: p[0], labelHtml: (p[2] ? "◆ " : "") + '<span class="mono">' + p[0] + '/</span>', v: p[1], alt: !!p[2], text: fmt(p[1]),
+    tip: '<div class="t-h">packages/eoip/' + p[0] + '</div><div>' + fmt(p[1]) + ' lines</div><div class="t-r">' + (p[2] ? "Aspirational layer" : "Core or supporting module") + '</div>' }; }));
+
+  /* ---------------- data sources ---------------- */
+  var cats = {}; CONNECTORS.forEach(function (c) { cats[c[1]] = cats[c[1]] || { n: 0, inc: 0 }; cats[c[1]].n++; cats[c[1]].inc += c[2]; });
+  var catRows = Object.keys(cats).map(function (k) { return [k, cats[k].n, cats[k].inc]; }).sort(function (a, b) { return b[1] - a[1]; });
+  var connHost = document.getElementById("connBars");
+  var cmax = Math.max.apply(null, catRows.map(function (r) { return r[1]; })) * 1.4;
+  catRows.forEach(function (r) {
+    var row = el("div", { "class": "bar-row", tabindex: "0", role: "listitem", "aria-label": r[0] + ": " + r[1] + " modules, " + r[2] + " incremental" });
+    var track = el("div", { "class": "bar-track" });
+    var incW = r[2] / cmax * 100, batW = (r[1] - r[2]) / cmax * 100;
+    if (r[2]) { var fi = el("div", { "class": "bar-fill alt" }); fi.style.width = incW + "%"; fi.style.borderRadius = batW ? "0" : "0 4px 4px 0"; track.appendChild(fi); }
+    if (r[1] - r[2]) { var fb = el("div", { "class": "bar-fill" }); fb.style.left = r[2] ? "calc(" + incW + "% + 2px)" : "0"; fb.style.width = batW + "%"; track.appendChild(fb); }
+    var v = el("span", { "class": "bar-val" }, r[1] + (r[2] ? " (" + r[2] + " incr.)" : "")); v.style.left = "calc(" + (r[1] / cmax * 100) + "% + 2px)"; track.appendChild(v);
+    row.appendChild(el("div", { "class": "bar-label" }, esc(r[0]))); row.appendChild(track);
+    bindTip(row, '<div class="t-h">' + esc(r[0]) + '</div><div>' + r[1] + ' modules · ' + r[2] + ' incremental</div><div class="t-r">' + CONNECTORS.filter(function (c) { return c[1] === r[0]; }).map(function (c) { return c[0]; }).join(", ") + '</div>');
+    connHost.appendChild(row);
+  });
+  var acq = document.getElementById("acqList");
+  ACQ.forEach(function (a) {
+    var lab = a[0] === "good" ? "Available" : a[0] === "warning" ? "Partial" : "Missing";
+    acq.insertAdjacentHTML("beforeend", '<div class="check"><div>' + chip(a[0], lab) + '</div><div><div class="ct">' + esc(a[1]) + '</div><div class="cd">' + esc(a[2]) + '</div></div></div>');
+  });
+  (function () {
+    var t = '<thead><tr><th>Module</th><th>Category</th><th>Incremental sync</th></tr></thead><tbody>';
+    CONNECTORS.forEach(function (c) { t += '<tr><td class="mono">' + c[0] + '</td><td>' + esc(c[1]) + '</td><td>' + (c[2] ? chip("good", "Yes") : '<span class="chip neutral">Batch / on demand</span>') + '</td></tr>'; });
+    document.getElementById("connTable").innerHTML = t + '</tbody>';
+  })();
+
+  /* ---------------- storage ---------------- */
+  ["META","WORK","CODE","CICD","KNOWLEDGE","IDENTITY","AGENT","OPS","TEST","DESIGN","INTEGRATION","DECISION","PROCESS","BUSINESS"].forEach(function (d) {
+    document.getElementById("domains").insertAdjacentHTML("beforeend", '<span class="tag">' + d + '</span>');
+  });
+
+  /* ---------------- AI ---------------- */
+  function checks(id, rows, labels) {
+    var h = document.getElementById(id);
+    rows.forEach(function (r) { h.insertAdjacentHTML("beforeend", '<div class="check"><div>' + chip(r[0], labels[r[0]]) + '</div><div><div class="ct">' + esc(r[1]) + '</div><div class="cd">' + esc(r[2]) + '</div></div></div>'); });
+  }
+  checks("aiChecks", AI_CHECKS, { good: "In place", warning: "Gap", serious: "Gap", critical: "Missing" });
+  checks("secIn", SEC_IN, { good: "In place" });
+  checks("secGap", SEC_GAP, { critical: "Critical", serious: "High", warning: "Medium" });
+
+  /* ---------------- quality ---------------- */
+  hbars("testBars", TESTS.map(function (t) { return { label: t[0], labelHtml: '<span class="mono">' + esc(t[0]) + '</span>', v: t[1] }; }));
+  var gl = document.getElementById("gateList");
+  GATES.forEach(function (g) { gl.insertAdjacentHTML("beforeend", '<div class="check"><div>' + chip("good", "Pass") + '</div><div class="ct" style="font-weight:500">' + esc(g) + '</div></div>'); });
+
+  /* ---------------- delivery ---------------- */
+  (function () {
+    var host = document.getElementById("commitChart"), days = [], d = new Date(Date.UTC(2026, 9, 2));
+    while (d <= new Date(Date.UTC(2026, 9, 27))) { var k = d.toISOString().slice(0, 10); days.push([k, COMMITS[k] || 0]); d.setUTCDate(d.getUTCDate() + 1); }
+    var max = 120, y = el("div", { "class": "yaxis" }), plot = el("div", { "class": "plot", role: "list", "aria-label": "Commits per day" });
+    [0, 30, 60, 90, 120].forEach(function (v) {
+      var s = el("span", null, String(v)); s.style.bottom = (v / max * 100) + "%"; y.appendChild(s);
+      if (v) { var g = el("i", { "class": "gl" }); g.style.bottom = (v / max * 100) + "%"; plot.appendChild(g); }
+    });
+    var xa = el("div", { "class": "xaxis" });
+    days.forEach(function (p, i) {
+      var c = el("div", { "class": "col", tabindex: "0", role: "listitem", "aria-label": p[0] + ": " + p[1] + " commits" });
+      var bar = el("i"); bar.style.height = (p[1] / max * 100) + "%"; c.appendChild(bar);
+      var dt = new Date(p[0] + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+      bindTip(c, '<div class="t-h">' + dt + '</div><div><b>' + p[1] + '</b> commit' + (p[1] === 1 ? "" : "s") + '</div>');
+      if (p[1] === 107) { var a = el("span", { "class": "annot" }, "107 · remediation merge"); a.style.bottom = "calc(" + (107 / max * 100) + "% + 4px)"; a.style.left = "50%"; a.style.transform = "translateX(-50%)"; c.appendChild(a); }
+      plot.appendChild(c);
+      xa.appendChild(el("span", null, (i % 3 === 0 || i === days.length - 1) ? dt.replace(" Oct", "") : ""));
+    });
+    host.appendChild(y); host.appendChild(plot); host.appendChild(xa);
+    host.insertAdjacentHTML("beforeend", '<div></div><div style="font-size:0.7rem;color:var(--muted);text-align:center">October 2026</div>');
+  })();
+  hbars("progBars", PROGS.map(function (p) { return { label: p[0], v: p[1] }; }));
+  hbars("reqBars", REQS.map(function (p) { return { label: p[0], labelHtml: '<span class="mono">' + p[0] + '-…</span>', v: p[1], tip: '<div class="t-h">' + p[0] + ' family</div><div>' + fmt(p[1]) + ' records · all UNTRIAGED</div>' }; }));
+  hbars("contribBars", CONTRIB.map(function (p) { return { label: p[0], v: p[1] }; }));
+  (function () {
+    var st = document.getElementById("prioStack"), lg = document.getElementById("prioLegend"), total = PRIO.reduce(function (s, p) { return s + p[1]; }, 0);
+    var shades = ["#104281", "#256abf", "#5598e7", "#86b6ef", "#b7d3f6", "#cde2fb"], inks = ["#fff", "#fff", "#0b0b0b", "#0b0b0b", "#0b0b0b", "#0b0b0b"];
+    PRIO.forEach(function (p, i) {
+      var pct = p[1] / total * 100, d = el("div", null, pct >= 8 ? p[0] + " " + Math.round(pct) + "%" : "");
+      d.style.flex = Math.max(p[1], total * 0.015); d.style.background = shades[i]; d.style.color = inks[i];
+      bindTip(d, '<div class="t-h">' + p[0] + '</div><div>' + fmt(p[1]) + ' items · ' + pct.toFixed(1) + '%</div>');
+      st.appendChild(d);
+      lg.insertAdjacentHTML("beforeend", '<span><span class="sw" style="background:' + shades[i] + '"></span>' + p[0] + ' · ' + fmt(p[1]) + '</span>');
+    });
+    st.setAttribute("aria-label", PRIO.map(function (p) { return p[0] + " " + p[1]; }).join(", "));
+  })();
+
+  /* ---------------- risks ---------------- */
+  (function () {
+    var g = document.getElementById("riskGrid");
+    for (var imp = 5; imp >= 1; imp--) {
+      g.appendChild(el("div", { "class": "ax" }, String(imp)));
+      for (var lik = 1; lik <= 5; lik++) {
+        var c = el("div", { "class": "cell z-" + riskZone(lik, imp) });
+        RISKS.filter(function (r) { return r[2] === lik && r[3] === imp; }).forEach(function (r) {
+          var dot = el("span", { "class": "dot", tabindex: "0", role: "img", "aria-label": "Risk " + r[0] + ": " + r[1] }, String(r[0]));
+          bindTip(dot, '<div class="t-h">R' + r[0] + ' · ' + esc(r[1]) + '</div><div>Likelihood <b>' + r[2] + '</b> × impact <b>' + r[3] + '</b> = ' + (r[2] * r[3]) + '</div><div class="t-r">' + esc(r[4]) + '</div><div class="t-r"><b>Mitigation:</b> ' + esc(r[5]) + '</div>');
+          c.appendChild(dot);
+        });
+        g.appendChild(c);
+      }
+    }
+    g.appendChild(el("div"));
+    for (var x = 1; x <= 5; x++) g.appendChild(el("div", { "class": "ax" }, String(x)));
+    g.insertAdjacentHTML("beforeend", '<div class="xlab" style="grid-column:2 / span 5">Likelihood →</div>');
+    var t = '<thead><tr><th>#</th><th>Risk</th><th class="num">L×I</th><th>Level</th><th>Mitigation</th></tr></thead><tbody>';
+    RISKS.slice().sort(function (a, b) { return b[2] * b[3] - a[2] * a[3] || a[0] - b[0]; }).forEach(function (r) {
+      var z = riskZone(r[2], r[3]);
+      t += '<tr><td class="num">R' + r[0] + '</td><td><b>' + esc(r[1]) + '</b><br><span style="color:var(--ink-2);font-size:0.84rem">' + esc(r[4]) + '</span></td><td class="num">' + r[2] + '×' + r[3] + '=' + (r[2] * r[3]) + '</td><td>' + chip(z, { critical: "Critical", serious: "High", warning: "Medium", good: "Low" }[z]) + '</td><td class="mono">' + esc(r[5]) + '</td></tr>';
+    });
+    document.getElementById("riskTable").innerHTML = t + '</tbody>';
+
+    var LV = { critical: "Critical", serious: "High", warning: "Medium", good: "Low" }, st = document.getElementById("riskStack"), lg = document.getElementById("riskLegend"), parts = [];
+    ["critical", "serious", "warning", "good"].forEach(function (k) {
+      var n = RISKS.filter(function (r) { return riskZone(r[2], r[3]) === k; }).length; if (!n) return;
+      var d = el("div", null, ST[k].ico + "&nbsp;" + n);
+      d.style.flex = n; d.style.background = "var(--" + k + ")"; d.style.color = (k === "warning" || k === "serious") ? "#0b0b0b" : "#fff";
+      bindTip(d, '<div class="t-h">' + LV[k] + '</div><div>' + n + ' of ' + RISKS.length + ' risks</div>');
+      st.appendChild(d); lg.insertAdjacentHTML("beforeend", chip(k, LV[k] + " · " + n)); parts.push(LV[k] + " " + n);
+    });
+    st.setAttribute("aria-label", parts.join(", "));
+
+    var lever = [
+      ["WP-A01", "Quarantine the simulation layer", "R1, R5"],
+      ["WP-A02", "Permission-aware answers", "R2"],
+      ["WP-B01 + B02", "Incremental sync and scheduler", "R3, R11"],
+      ["WP-00b + 00c", "Backlog triage and intake rule", "R4, R6"],
+      ["WP-D06", "Pushdown and conformance", "R7"],
+      ["WP-G01", "Day-0 model", "R8"]
+    ], lh = document.getElementById("riskLever");
+    lever.forEach(function (l) {
+      lh.insertAdjacentHTML("beforeend", '<div class="check"><div><span class="chip neutral mono">' + l[0] + '</span></div><div><div class="ct">' + esc(l[1]) + '</div><div class="cd">Reduces ' + esc(l[2]) + '</div></div></div>');
+    });
+  })();
+
+  /* ---------------- roadmap ---------------- */
+  (function () {
+    var t = '<thead><tr><th>Phase</th><th>Theme</th><th>Work package</th><th>Size</th><th>Title</th></tr></thead><tbody>';
+    ROAD.forEach(function (p) {
+      p[2].forEach(function (w, i) {
+        t += '<tr>' + (i === 0 ? '<td rowspan="' + p[2].length + '"><b>' + esc(p[0]) + '</b></td><td rowspan="' + p[2].length + '">' + esc(p[1]) + '</td>' : '') +
+          '<td class="mono">' + w[0] + '</td><td><span class="chip neutral">' + w[1] + '</span></td><td>' + esc(w[2]) + '</td></tr>';
+      });
+    });
+    document.getElementById("roadTable").innerHTML = t + '</tbody>';
+    hbars("phaseBars", ROAD.map(function (p) {
+      var pts = p[2].reduce(function (s, w) { return s + PTS[w[1]]; }, 0);
+      return { label: p[0] + " · " + p[1], v: pts, text: pts + " pts · " + p[2].length + " WPs" };
+    }));
+  })();
+
+  /* ---------------- appendix ---------------- */
+  var mb = document.getElementById("metricsBody");
+  METRICS.forEach(function (m) { mb.insertAdjacentHTML("beforeend", '<tr><td>' + esc(m[0]) + '</td><td class="num">' + esc(m[1]) + '</td><td class="mono">' + esc(m[2]) + '</td></tr>'); });
+
+  /* ---------------- theme ---------------- */
+  var modes = ["system", "light", "dark"], btn = document.getElementById("themeBtn");
+  function applyTheme(m) {
+    if (m === "system") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", m);
+    btn.textContent = "Theme: " + m;
+  }
+  var saved = "system"; try { saved = localStorage.getItem("eoip-theme") || "system"; } catch (e) {}
+  applyTheme(saved);
+  btn.addEventListener("click", function () {
+    var m = modes[(modes.indexOf(btn.textContent.replace("Theme: ", "")) + 1) % 3];
+    applyTheme(m); try { localStorage.setItem("eoip-theme", m); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

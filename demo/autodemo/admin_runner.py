@@ -75,13 +75,21 @@ def _print(msg: str, verbose: bool):
         print(f"[admin-demo] {msg}")
 
 
+def _api_url(path: str) -> str:
+    import urllib.parse
+    url = f"{API_BASE}{path}"
+    if urllib.parse.urlsplit(url).scheme not in ("http", "https"):
+        raise ValueError(f"API base URL scheme must be http or https: {API_BASE!r}")
+    return url
+
+
 def _api_get(path: str, timeout: float = 30.0) -> dict:
     import urllib.request
     import urllib.error
-    url = f"{API_BASE}{path}"
+    url = _api_url(path)
     req = urllib.request.Request(url, headers={"Accept": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec B310 - scheme restricted to http/https by _api_url
             return json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
         return {"_error": True, "status": exc.code, "reason": exc.reason}
@@ -93,7 +101,7 @@ def _api_post(path: str, data: dict | list | None = None,
               file_path: Path | None = None, timeout: float = 60.0) -> dict:
     import urllib.request
     import urllib.error
-    url = f"{API_BASE}{path}"
+    url = _api_url(path)
     if file_path is not None:
         body = file_path.read_bytes()
         content_type = "application/json"
@@ -108,7 +116,7 @@ def _api_post(path: str, data: dict | list | None = None,
         headers={"Content-Type": content_type, "Accept": "application/json"},
     )
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec B310 - scheme restricted to http/https by _api_url
             return json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
         body_text = ""
@@ -390,7 +398,7 @@ def main(argv: list[str] | None = None):
     duration = summary["duration_s"]
 
     print(f"\n{'=' * 60}")
-    print(f"  EOIP Administration Demo - Meridian Financial Services")
+    print("  EOIP Administration Demo - Meridian Financial Services")
     print(f"  {passed}/{total} passed, {failed} failed, {skipped} skipped in {duration}s")
     print(f"{'=' * 60}")
 

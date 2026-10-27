@@ -36,7 +36,8 @@ def test_arbitrary_malformed_or_unbounded_tokens_are_rejected(token):
 @pytest.mark.parametrize("claim,value", [
     ("iss", "another-issuer"), ("aud", "another-api"), ("exp", None), ("exp", True),
     ("exp", float("nan")), ("exp", float("inf")), ("exp", 1),
-    ("nbf", float("nan")), ("nbf", time.time() + 3600), ("sub", ""), ("sub", []),
+    # Stable id: a time-derived node id differs per process (breaks quarantine, receipts, CI shards).
+    ("nbf", float("nan")), pytest.param("nbf", time.time() + 3600, id="nbf-future"), ("sub", ""), ("sub", []),
     ("exp", 10 ** 400), ("nbf", 10 ** 400), ("roles", "admin"), ("roles", [None]),
     ("tenant_id", []), ("tenant", ""), ("username", {}),
 ])

@@ -8,6 +8,7 @@ graph serialization formats for interoperability and export.
 from __future__ import annotations
 
 import json
+import re
 import xml.etree.ElementTree as ET
 
 from eoip.graph.store import GraphStore
@@ -26,6 +27,23 @@ def _escape_xml(s: str) -> str:
 
 def _escape_sparql(s: str) -> str:
     return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+
+
+_PGQL_IDENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _pgql_identifier(name: str) -> str:
+    if not _PGQL_IDENT.fullmatch(name):
+        raise ValueError(f"unsafe PGQL identifier: {name!r}")
+    return name
+
+
+def _pgql_literal(value: object) -> str:
+    if isinstance(value, bool):
+        return "TRUE" if value else "FALSE"
+    if isinstance(value, (int, float)):
+        return str(value)
+    return "'" + str(value).replace("'", "''") + "'"
 
 
 def _safe_uri(value: str) -> str:
@@ -363,21 +381,21 @@ class FormatConverter:
             cid = v["properties"].get("canonical_id", v["vid"])
             props = {**v.get("properties", {}), "canonical_id": cid}
             assignments = ", ".join(
-                f'n.{k} = {json.dumps(val)}' for k, val in props.items()
+                f'n.{_pgql_identifier(str(k))} = {_pgql_literal(val)}' for k, val in props.items()
                 if isinstance(val, (str, int, float, bool))
             )
             lines.append(
-                f"INSERT INTO graph VERTEX n LABELS ({v['label']}) "
+                f"INSERT INTO graph VERTEX n LABELS ({_pgql_identifier(str(v['label']))}) "
                 f"PROPERTIES ({assignments})"
             )
 
         lines.append("")
         for e in edges:
             lines.append(
-                f"INSERT INTO graph EDGE e BETWEEN "
-                f"(SELECT n FROM graph MATCH (n) WHERE n.canonical_id = {json.dumps(e['from_cid'])}) AND "
-                f"(SELECT n FROM graph MATCH (n) WHERE n.canonical_id = {json.dumps(e['to_cid'])}) "
-                f"LABELS ({e['label']})"
+                f"INSERT INTO graph EDGE e BETWEEN "  # nosec B608 - identifiers whitelist-validated, values escaped as SQL literals
+                f"(SELECT n FROM graph MATCH (n) WHERE n.canonical_id = {_pgql_literal(e['from_cid'])}) AND "
+                f"(SELECT n FROM graph MATCH (n) WHERE n.canonical_id = {_pgql_literal(e['to_cid'])}) "
+                f"LABELS ({_pgql_identifier(str(e['label']))})"
             )
 
         return "\n".join(lines)

@@ -130,7 +130,7 @@ def _resolve_python_ast(raw_bytes: bytes, symbol: str) -> DigestResult:
     except Exception:
         return DigestResult(status="not_found")
 
-    target_parts = symbol.split(".")
+    symbol.split(".")
     candidates: List[Tuple[str, ast.AST]] = []
 
     def walk(node: ast.AST, prefix: List[str]):
@@ -185,7 +185,6 @@ def _resolve_python_ts(raw_bytes: bytes, root: Any, symbol: str) -> DigestResult
 
     def walk(node: Any, prefix: List[str]):
         for child in node.children:
-            actual_node = child
             # Handle decorator wrapping
             if child.type == "decorated_definition":
                 definition = None

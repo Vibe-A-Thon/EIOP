@@ -84,7 +84,7 @@ class EnterpriseKnowledgeImmuneSystem:
                     severity="LOW",
                     entity_id=v.get("canonical_id", str(vid)),
                     entity_label=v.get("label", "Unknown"),
-                    summary=f"Orphan vertex has no inbound or outbound graph relationships",
+                    summary="Orphan vertex has no inbound or outbound graph relationships",
                     why_generated="Detected entity disconnected from all topology, dependencies, and ownership chains",
                     recommended_action="REPAIR_PROPOSAL",
                 ))
@@ -124,7 +124,7 @@ class EnterpriseKnowledgeImmuneSystem:
                     severity="HIGH",
                     entity_id=v.get("canonical_id", str(v["vid"])),
                     entity_label=v.get("label", "Unknown"),
-                    summary=f"Contradictory state: entity marked DEPRECATED but APPROVED",
+                    summary="Contradictory state: entity marked DEPRECATED but APPROVED",
                     why_generated="Detected mutually exclusive claim states in entity properties",
                     recommended_action="QUARANTINE",
                 ))

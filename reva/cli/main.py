@@ -72,7 +72,7 @@ def doctor(ctx: click.Context):
 @cli.group()
 def obligation():
     """Manage normative Proof-of-Done obligations."""
-    return None
+    return
 
 
 @obligation.command(name="sync")
@@ -96,7 +96,7 @@ def obligation_sync(ctx: click.Context, yaml_file: str):
 @cli.group()
 def closure():
     """Evaluate Proof-of-Done closure status."""
-    return None
+    return
 
 
 @closure.command(name="evaluate")
@@ -132,7 +132,7 @@ def closure_evaluate(ctx: click.Context, scope: str, commit: str):
 @cli.group()
 def ledger():
     """Export and verify Proof-of-Done ledgers."""
-    return None
+    return
 
 
 @ledger.command(name="export")

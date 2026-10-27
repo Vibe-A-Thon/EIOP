@@ -534,7 +534,13 @@ class DurableJobStore:
 
 
 class JobQueue:
-    """Original file-based job queue for backward compatibility."""
+    """Authoritative filesystem-backed job queue for single-node deployment topology (CC3-002).
+
+    Persists jobs as atomic JSON files under `<root>/jobs/<job_id>.json`. Supports tenant isolation,
+    cancellation, and operational recovery (unacknowledged/running jobs transition to HELD upon restore
+    and require operator readmission). For distributed multi-worker topologies requiring WAL, heartbeats,
+    fencing leases, outbox events, and governed DLQ, use `DurableJobStore`.
+    """
 
     def __init__(self, root):
         self.root = Path(root) / "jobs"

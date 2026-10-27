@@ -169,7 +169,7 @@ class CodeASTVisitor(ast.NodeVisitor):
         for dec in decorators:
             for http_method in ("get", "post", "put", "delete", "patch", "options", "head", "route"):
                 dec_low = dec.lower()
-                if f".{http_method}(" in dec_low or dec_low.startswith(f"{http_method}(") or dec_low.startswith(f"@{http_method}(") or f"api.{http_method}" in dec_low:
+                if f".{http_method}(" in dec_low or dec_low.startswith((f"{http_method}(", f"@{http_method}(")) or f"api.{http_method}" in dec_low:
                     # Extract path if quoted string in decorator
                     path = "/"
                     import re

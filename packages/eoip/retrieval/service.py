@@ -16,7 +16,7 @@ from eoip.authz.derivation_acl import get_derivation_evaluator
 from eoip.contracts.retrieval import RetrievalContext, RetrievalResult
 from eoip.graph.traversal import GraphTraversal
 from eoip.models.port import generate_via_port
-from eoip.models.provider import LocalModelProvider, ModelUnavailable
+from eoip.models.provider import ModelUnavailable, create_model_provider
 from eoip.provenance.evidence import EvidenceService
 from eoip.retrieval.vectors import (
     InMemorySearchIndex,
@@ -614,7 +614,7 @@ def retrieve(
     generation = "deterministic"
     answer_citations: list[dict] = []
     if synthesize:
-        provider = LocalModelProvider(timeout=model_timeout)
+        provider = create_model_provider(timeout=model_timeout)
         if not provider.available:
             warnings.append("No local model is configured; graph evidence remains available.")
         else:

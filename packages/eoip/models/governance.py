@@ -26,7 +26,8 @@ import hashlib
 import json
 from enum import StrEnum
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
+from collections.abc import Iterable
 
 from pydantic import BaseModel, Field
 
@@ -188,7 +189,7 @@ class EvaluationDataset(BaseModel):
         return f"urn:eoip:{MODELS_AREA}:dataset:{self.dataset_id}"
 
     @classmethod
-    def from_json(cls, path: str | Path) -> "EvaluationDataset":
+    def from_json(cls, path: str | Path) -> EvaluationDataset:
         return cls.model_validate(json.loads(Path(path).read_text("utf-8")))
 
     def to_json(self, path: str | Path) -> None:

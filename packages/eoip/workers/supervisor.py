@@ -249,7 +249,6 @@ class WorkerSupervisor:
             finally:
                 timer.cancel()
 
-            elapsed_s = time.perf_counter() - t0
 
             if watchdog_triggered.is_set():
                 with self._lock:

@@ -6,6 +6,7 @@ Run only in the disposable acceptance Compose project, never against the demo gr
 import hashlib
 import json
 import os
+import tempfile
 from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
@@ -275,9 +276,9 @@ def main():
     source = HugeGraphStore(source_url, password=password)
     target = HugeGraphStore(target_url, password=password)
     try:
-        result = verify_clean_demo(source, target, Path("/tmp/acceptance"))
+        result = verify_clean_demo(source, target, Path(tempfile.gettempdir()) / "acceptance")
         result["schema_preflight"] = verify_schema_preflight(source)
-        result["temporal_edge_upgrade"] = verify_temporal_edge_upgrade(source, Path("/tmp/temporal"))
+        result["temporal_edge_upgrade"] = verify_temporal_edge_upgrade(source, Path(tempfile.gettempdir()) / "temporal")
         write_json(report, result)
         print(json.dumps(result, indent=2))
     except Exception as exc:

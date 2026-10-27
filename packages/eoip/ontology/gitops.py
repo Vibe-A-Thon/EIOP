@@ -568,7 +568,7 @@ def generate_ontology_migration_script(
             cypher_lines.append(f"MATCH (n:{change.subject}) SET n._deprecated = true, n._deprecated_version = '{target_version}';")
             py_lines.append(f"    # Deprecate vertices with label {change.subject}")
             py_lines.append(f"    for v in graph_store.find_vertices_by_label('{change.subject}'):")
-            py_lines.append(f"        v.properties['_deprecated'] = True")
+            py_lines.append("        v.properties['_deprecated'] = True")
 
         elif change.change_type == "required_property_added":
             parts = change.subject.split(".", 1)
@@ -589,7 +589,7 @@ def generate_ontology_migration_script(
             cypher_lines.append(f"MATCH ()-[r:{change.subject}]->() SET r._deprecated = true;")
             py_lines.append(f"    # Deprecate edges with label {change.subject}")
             py_lines.append(f"    for e in graph_store.find_edges_by_label('{change.subject}'):")
-            py_lines.append(f"        e.properties['_deprecated'] = True")
+            py_lines.append("        e.properties['_deprecated'] = True")
 
     if not actions:
         cypher_lines.append("// No migration operations needed: changes are purely additive.")

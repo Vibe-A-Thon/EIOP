@@ -194,7 +194,7 @@ class BenchmarkHarness:
         """S-02 & NFR-PERF-001: Benchmark performance at 50K+ scale."""
         t0 = time.perf_counter()
         # Simulated high-throughput ingestion of target_nodes
-        simulated_time = target_nodes / 5000.0  # 5000 inserts/sec
+        target_nodes / 5000.0  # 5000 inserts/sec
         throughput = 5240.0
         p95_latency = 18.4  # ms
         p99_latency = 42.1  # ms
@@ -213,7 +213,7 @@ class BenchmarkHarness:
     def run_memory_profiling(self, store: GraphStore) -> dict[str, Any]:
         """S-02: Profiles memory usage per million graph elements."""
         import sys
-        base_size = sys.getsizeof(store)
+        sys.getsizeof(store)
         return {
             "store_type": store.__class__.__name__,
             "estimated_bytes_per_node": 240,

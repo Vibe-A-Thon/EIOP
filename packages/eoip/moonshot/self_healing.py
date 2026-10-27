@@ -143,7 +143,7 @@ resource "vault_generic_secret" "{violation.entities_involved[0]}_rotation" {{
             )
         elif violation.rule_id == "DRIFT-ARCH-001":
             # Generate Git Pull Request patch
-            diff_patch = f"""
+            diff_patch = """
 --- a/src/api/client.ts
 +++ b/src/api/client.ts
 @@ -10,3 +10,4 @@

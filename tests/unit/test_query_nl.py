@@ -41,7 +41,7 @@ def _no_model(monkeypatch) -> None:
         def available(self) -> bool:
             return False
 
-    monkeypatch.setattr("eoip.query.nl.LocalModelProvider", UnavailableProvider)
+    monkeypatch.setattr("eoip.query.nl.create_model_provider", UnavailableProvider)
 
 
 def test_issue_key_trace_question_uses_traceability_plan() -> None:
@@ -185,7 +185,7 @@ def test_model_draft_used_when_rules_find_nothing(monkeypatch) -> None:
                 generation="local_model",
             )
 
-    monkeypatch.setattr("eoip.query.nl.LocalModelProvider", FakeProvider)
+    monkeypatch.setattr("eoip.query.nl.create_model_provider", FakeProvider)
 
     result = interpret("which services does the billing subsystem touch?")
 
@@ -211,7 +211,7 @@ def test_invalid_model_draft_falls_back_to_clarification(monkeypatch) -> None:
                 generation="local_model",
             )
 
-    monkeypatch.setattr("eoip.query.nl.LocalModelProvider", BrokenProvider)
+    monkeypatch.setattr("eoip.query.nl.create_model_provider", BrokenProvider)
 
     result = interpret("which services does the billing subsystem touch?")
 
@@ -232,7 +232,7 @@ def test_unavailable_model_falls_back_to_clarification(monkeypatch) -> None:
         def generate(self, system_prompt, user_content, **kwargs) -> ModelResponse:
             raise ModelUnavailable("down")
 
-    monkeypatch.setattr("eoip.query.nl.LocalModelProvider", FailingProvider)
+    monkeypatch.setattr("eoip.query.nl.create_model_provider", FailingProvider)
 
     result = interpret("which services does the billing subsystem touch?")
 

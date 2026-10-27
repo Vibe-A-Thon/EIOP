@@ -343,7 +343,7 @@ def test_ledger_construction_and_export():
 
 
 def test_waivers_and_gates(temp_store):
-    waiver = create_waiver(
+    create_waiver(
         temp_store,
         "tenant_test",
         target="OBL-WAIVE",

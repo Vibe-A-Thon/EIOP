@@ -1,0 +1,69 @@
+name: Set up EOIP Python
+description: >-
+  Python 3.11 plus the documented install (FT-F06: -c requirements.lock -e ".[test]") using uv with a
+  cache keyed on pyproject.toml + requirements.lock. Same constraints and extras as pip; about 8x
+  faster on a warm cache. Falls back to pip (with a warning annotation) if uv itself fails.
+
+inputs:
+  python-version:
+    description: Python version for actions/setup-python
+    default: "3.11"
+  extras:
+    description: Optional-dependency extras to install with the project
+    default: test
+  install:
+    description: Set to "false" to only set up Python and uv (no project install)
+    default: "true"
+
+outputs:
+  cache-hit:
+    description: Whether the uv cache was restored from an exact key
+    value: ${{ steps.uv-cache.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Point uv at a cacheable directory
+      shell: bash
+      run: |
+        {
+          echo "UV_CACHE_DIR=${RUNNER_TEMP}/uv-cache"
+          echo "UV_LINK_MODE=copy"
+          echo "UV_HTTP_TIMEOUT=120"
+          echo "UV_NO_PROGRESS=1"
+          echo "PIP_DISABLE_PIP_VERSION_CHECK=1"
+        } >> "$GITHUB_ENV"
+
+    - name: Restore uv cache
+      id: uv-cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.temp }}/uv-cache
+        key: uv-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-${{ inputs.extras }}-${{ hashFiles('pyproject.toml', 'requirements.lock') }}
+        restore-keys: |
+          uv-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-${{ inputs.extras }}-
+          uv-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-
+
+    - name: Install uv (pinned)
+      shell: bash
+      run: python -m pip install -q "uv==0.13.1"
+
+    - name: Install project (documented install, FT-F06)
+      if: inputs.install == 'true'
+      shell: bash
+      env:
+        EXTRAS: ${{ inputs.extras }}
+      run: |
+        spec=".[${EXTRAS}]"
+        [ -n "$EXTRAS" ] || spec="."
+        # --python pins the interpreter setup-python put first on PATH (never an image python3).
+        py="$(python -c 'import sys; print(sys.executable)')"
+        if ! python -m uv pip install --system --python "$py" -c requirements.lock -e "$spec"; then
+          echo "::warning title=uv install failed::falling back to pip for -e ${spec}"
+          python -m pip install -c requirements.lock -e "$spec"
+        fi
+        python -m pip check || echo "::warning title=pip check::installed set reports conflicts (see log)"

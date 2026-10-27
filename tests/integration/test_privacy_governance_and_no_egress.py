@@ -224,7 +224,7 @@ def test_anti_resurrection_tombstone_blocks_replay():
     tenant_id = "tenant-gamma"
 
     # Register tombstone on purge
-    digest = registry.register_tombstone(subject_id, tenant_id, reason="GDPR_ARTICLE_17")
+    registry.register_tombstone(subject_id, tenant_id, reason="GDPR_ARTICLE_17")
     assert registry.is_tombstoned(subject_id) is True
 
     # Replay event containing deleted subject must be rejected at ingestion admission

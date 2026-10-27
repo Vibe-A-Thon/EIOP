@@ -29,7 +29,7 @@ for tf in all_tests:
                 if a not in req_to_files:
                     req_to_files[a] = set()
                 req_to_files[a].add(tf.replace('\\', '/'))
-    except Exception as e:
+    except Exception:
         pass
 
 import json

@@ -1158,7 +1158,7 @@ class SkosTaxonomy:
                 reps.append(str(rep).split(":")[-1])
 
             pref_str = pref_labels.get("en") or next(iter(pref_labels.values()), cid)
-            concept = tax.add_concept(
+            tax.add_concept(
                 scheme_id=c_scheme,
                 pref_label=pref_str,
                 pref_labels=pref_labels,
@@ -1198,7 +1198,7 @@ class SkosTaxonomy:
             title = ""
             for _, _, t in graph.triples((col_uri, DCTERMS.title, None)):
                 title = str(t)
-            col = tax.create_collection(scheme_id=default_scheme, title=title or col_id, collection_id=col_id)
+            tax.create_collection(scheme_id=default_scheme, title=title or col_id, collection_id=col_id)
             for _, _, m in graph.triples((col_uri, SKOS.member, None)):
                 m_id = str(m).split(":")[-1]
                 if m_id in tax.concepts:

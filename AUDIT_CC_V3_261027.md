@@ -1,19 +1,19 @@
-# AUDIT_CC_V3 — Independent Strict Audit of EOIP / KnowGridFlow at HEAD
+# AUDIT_CC_V3 — Strict Repository Audit of EOIP / KnowGridFlow at HEAD
 
 | Field | Value |
 |---|---|
 | Document | AUDIT_CC_V3_261027.md |
-| Auditor | Claude (acting as an independent, strict external code/technical/non-technical auditor) |
-| Audited commit | `896e06daa564b425a85a91244381d8eef9320047` (branch `dev_local`, merge of `origin/eoip-remediation-geeky`) |
+| Auditor | GitHub Copilot, repository-local independent-style review; not an independent human audit |
+| Audited commit | `a74e82a0d09a07d17b899d242265f59c3a68ddd5` (`dev_local`, same SHA as `origin/dev_local` at inspection) |
 | Audit date | 2026-10-27 |
-| Repo scope at this commit | ~1,697 first-party `.py` files (excluding `.venv`, `build/`, `.audit-scratch/`, `node_modules`), 463 `test_*.py` files under `tests/`, ~2,520 tracked Markdown files (including this programme's own large documentation packages and the newly added `EOIP-engg-doc-pkg/competitive-research-v3/` research package) |
-| Verdict in one line | **A genuinely rigorous prior audit already exists for this codebase (below). A large remediation effort then landed on top of it, fixing some of its findings and adding substantial new, as-yet-unaudited functionality. This document re-verifies the prior findings at current HEAD, audits what's new, and gives one consolidated build-to-100% plan. It does not re-run the full test/security/dependency tooling — see §0 for exactly what was and wasn't re-executed.** |
+| Repo scope at this commit | Audit-kit inventory: 5,852 tracked files; 751 tracked Markdown files / 293,464 lines; 5,641 requirement candidates; 19,028 Python symbols; 0 Python syntax errors and 0 UTF-8 decode errors. |
+| Verdict in one line | **Not complete and not release-qualified. The existing work queue has 3,383 open requirement tasks; current inventory detects candidates and references, not semantic implementation. Fresh tests/scans have concrete blockers, and exact-SHA CI/runtime/reviewer gates remain unverified. This is a remediation plan, not a 100%-completion certificate.** |
 
 ---
 
-## 0. Methodology, and what this document is and is not
+## Historical methodology from the initial draft (at `896e06d`; superseded below)
 
-**This is not a from-scratch audit.** An existing, evidence-disciplined audit kit (`eoip-audit-kit/`) already produced, on 2026-10-21 at commit `78ff6d9` (which precedes this HEAD by 116 changed files, +6,230/−682 lines):
+**This is a current-HEAD audit update using the repository's strict audit kit, not a certified external audit.** The prior audit artifacts at `audit-output/` and `eoip-audit-kit/audit-output/` identify older commits (`78ff6d9` and `3ed3acd`) and remain historical, not current status. The fresh inventory was generated at `a74e82a0d09a07d17b899d242265f59c3a68ddd5`.
 
 - `audit-output/audit_gaps_requirements.md` — a 184-line executive summary with 12 named findings (AUD-001 through AUD-012), an executed-checks table, and an explicit scope-limits section.
 - `audit-output/requirements.md` (95,912 lines) — 5,483 candidate requirements extracted verbatim from 470 tracked Markdown files, with dotted sub-clause IDs preserved.
@@ -22,9 +22,9 @@
 - `audit-output/audit-memory.json` — continuity state for delta audits.
 - A strict proof-tier policy (`eoip-audit-kit/audit-scripts/proof_policy.py`): L0 (no evidence) through L5 (independent dual-control review); **file existence, test-file presence, and source-path references are explicitly never accepted as proof** — L1 never contributes to "Implemented" alone, "Partial" requires ≥L2 with named residual gaps, "Implemented" requires L2 **and** (L3 on the same commit **or** L4).
 
-I read that audit's executive summary in full, spot-checked its evidence style against the actual code it cites, and found it **genuinely trustworthy**: it reports a 0.0% strict-accepted-completion rate, 5,461 of 5,483 requirements "Not Verified," 478 critical-open findings, and is self-critical about its own tooling's prior flaws (AUD-001, AUD-002). This is the opposite pattern from the fabricated placeholder content I separately found and removed from a different documentation package in this repository during an unrelated research task this week (see `EOIP-engg-doc-pkg/competitive-research-v3/00-EXECUTIVE-SUMMARY.md` §7 for that unrelated incident, noted here only so the two are not confused).
+The strict policy remains the required closure standard: L0 is unsupported claim; L1 is a source mention only; L2 is an executed named test; L3 is exact-SHA CI; L4 is reproducible non-production runtime; L5 is independent review. Critical completion requires L2, same-SHA L3 and independent L5. Inventory counts, tests collected, mapped IDs, and code existence do not prove behavioral completion.
 
-**What I did for this document:**
+**What the initial draft did (historical):**
 
 1. Read the prior audit's executive summary (`audit-output/audit_gaps_requirements.md`) in full.
 2. Enumerated the 116 files changed between the prior audit's commit (`78ff6d9`) and this HEAD (`896e06d`) via `git log`/`git diff --stat`, and read the commit messages, which turn out to name themselves after specific findings (e.g. `0b2aec1 PLAN-N01: replace literal NUL byte in ragx/architectures.py:691` directly answers AUD-004).
@@ -33,11 +33,150 @@ I read that audit's executive summary in full, spot-checked its evidence style a
 5. Did **not** re-run `pytest`, `bandit`, `ruff`, `pip-audit`, the web test suite, or any live-backend integration test in this pass. The prior audit already ran these at `78ff6d9` and recorded failures (AUD-003 Python baseline timeout, AUD-009 341 advisories, AUD-010 324 Bandit findings, 4,111 Ruff diagnostics). Re-running them at HEAD is the single highest-value next step and is listed first in §4.
 6. Did **not** re-derive the 5,483-requirement catalogue. `requirements.md` / `implementation.md` / `audit_tasks.json` remain the authoritative per-requirement ledger. This document is the **delta and synthesis layer** on top of it, per the kit's own "delta audit" design (`audit-memory.json`).
 
-**Proof-tier discipline used throughout this document:** every status below is annotated with how it was established. "Read at HEAD" means I opened the file and read the relevant code myself in this pass (equivalent to the kit's manual-review tier, not an executed test — so still short of L2). "Per prior audit, not re-verified" means I am repeating the 2026-10-21 finding unchanged because nothing in the 116-file delta touched it. I do not claim any test passed that I did not personally watch run.
+**Proof-tier discipline:** checks below are labeled as inventory, source review, executed test, static scan, static manifest validation, or unavailable external/runtime validation. A local source read is not L2; a green test is not L3; no L3 or L5 is claimed in this environment.
 
 ---
 
-## 1. The twelve prior critical findings (AUD-001 .. AUD-012), re-verified at HEAD
+## Current audit at `a74e82a` (2026-10-27)
+
+### Scope and method
+
+This is a repository-local audit update, not a certified external audit. The strict audit inventory ran at `a74e82a0d09a07d17b899d242265f59c3a68ddd5` and read the contents of all 5,852 tracked files, including 751 tracked Markdown files (293,464 lines). It extracted 5,641 candidate requirements, 33,157 definition sites, 12,829 context-only candidates, 10 unparsed normative lines, and 19,028 Python symbols; Python syntax errors: 0; decode errors: 0. The inventory is a deterministic discovery aid, **not a semantic read-and-approve of every clause**. This audit directly reviewed the principal acceptance/security/performance/testing/backup/SBOM/multi-backend specifications, current product/architecture/authentication docs, old audit summaries, and high-risk implementation paths. All 751 Markdown documents still require owner-level semantic adjudication against their complete text.
+
+The current index is retained locally under `.audit-scratch/cc-v3/inventory/`; it is ignored scratch evidence, not a committed audit artifact. Historical `audit-output/` and `eoip-audit-kit/audit-output/` reports were generated at `78ff6d9` and `3ed3acd`; their counts are not current. The checked-out tree was clean at the start of this audit and `HEAD` matched `origin/dev_local`.
+
+### Current evidence summary
+
+| Area | Result | Interpretation |
+|---|---|---|
+| Requirement candidates | 5,641 unique IDs; 320 tagged normative; 1,033 have extracted acceptance text; 10 unparsed normative lines | Extraction only. 5,321 candidates are classified non-normative; human review must find actual clauses, duplicates, superseded specs and missing requirements. |
+| Existing registry | 2,740 entries; 2,603 `UNTRIAGED`; baseline statuses: 1,567 `MISSED`, 966 `IMPLEMENTED-UNVERIFIED`, 60 `PARTIAL`, 7 `STUBBED`, 3 `BLOCKED`, 137 without this schema | Registry is not refreshed to the audited SHA and is not a completion certificate. |
+| Existing test map | 1,332 keys, 2,048 links; 1,440 registry IDs have no mapped test; 32 map keys are not in registry | Mapping presence is not a passing assertion. |
+| Generated traceability | 5,214 source-ID mentions; 1,508 test-path mentions; 427 with no code/test mention | Every match has evidence type `source-id-mention`, confidence 0.25. Do not report as functional coverage. |
+| Current remediation queue | 3,383 tasks, all Open: P0 552, P1 749, P2 2,076, P3 6. Categories: untraced 1,935; needs CI L3 923; tests not executed 361; code/no test 123; ambiguous tests 41. | Queue is generated from a `3ed3acd` audit baseline. Regenerate before assignment or status changes. |
+| Python syntax | 0 syntax errors among indexed Python symbols/files; no decode errors | Does not establish type correctness, importability of every optional extra, or behavior. |
+| Pytest collection | 5,154 collected | Collection is not execution. |
+| Python unit + security + QA | 4,264 passed, 8 skipped, 1 setup error, 19 warnings in 1,578.13 s (`pytest tests/unit tests/security tests/qa -q -o addopts="" -p no:cacheprovider --timeout=300`). | Error: `tests/security/test_route_role_policy.py::test_reva_writes_need_steward_and_bind_tenant_and_actor_to_the_session` cannot import `config` from `reva` resolved to `packages/reva/__init__.py`. The same test passes alone (1 passed in 7 s), establishing an order-dependent module/path collision, not a deterministic test failure. Warnings include duplicate operation IDs. |
+| Web unit | 23 passed, 0 failed | Command: `npm --prefix apps/web run test:unit`. |
+| Web TypeScript/build | `typecheck` passed; production `build` passed | No E2E/accessibility browser run in this audit. |
+| VS Code extension | Extension-host acceptance exited 0; reported graph context, Jira path/impact, exact range and source-path safety passed | Host emitted startup/auth-provider timeout warnings. Stability needs follow-up; this is one acceptance lane, not whole extension coverage. |
+| API/OpenAPI | App created with an ephemeral synthetic ASG principal; 758 paths | Four duplicate operation IDs in `packages/eoip/loops/router.py`; path count is not behavior coverage. No repository credential was used. |
+| Compose | Five manifests passed `docker compose config -q` when supplied temporary values for required variables | Static interpolation only; no images, services, readiness, migration, HA, or restore executed. |
+| Python dependencies | `pip-audit -r requirements.lock`: 3 advisory records across 2 packages | Certifi records duplicate the same GHSA/PYSEC family; review applicability before closure. See findings. |
+| JavaScript dependencies | `npm audit`: 1 high-severity package (`vite@7.3.6`, fixed by `7.3.7`) | Must be upgraded and revalidated. |
+| Bandit | 454 findings: 1 high, 34 medium, 419 low | Static candidates; triage by data flow and security boundary. |
+| Ruff | 5,504 diagnostics | Existing debt; set a baseline/ratchet and fix correctness/security issues first. |
+| GitHub CI | Not verified | `gh` is installed but unauthenticated here. No exact-SHA L3 claim. |
+| Runtime/release | Not verified | No actual graph service, connector, staging, restore, HA, air-gap or independent L5 run in this audit. |
+
+### Findings requiring action
+
+Severity is an audit priority, not a blanket assertion of exploitability. Confirm data flow and threat boundary; preserve evidence for accepted false positives.
+
+#### P0: release blockers
+
+| ID | Finding | Required closure |
+|---|---|---|
+| CC3-001 | **Model egress policy bypass:** `packages/eoip/models/provider.py` accepts constructor/`EOIP_OLLAMA_URL` URL and posts system/user prompts through `httpx`. Direct call sites remain in `apps/api/main.py:978`, `packages/eoip/query/nl.py:267`, `packages/eoip/retrieval/service.py:617`; these paths do not enforce the safer `ModelPort`/tenant allowlist. `trust_env=False` disables ambient proxies but does not authorize destinations. This conflicts with `46-security-architecture.md`'s default-deny egress. | Route all model traffic through one policy-enforcing port or add equivalent strict endpoint validation at the provider. Explicitly scope localhost only for a local-model profile; prevent cloud/metadata/link-local/private egress, redirects, DNS rebinding and scheme confusion. Add deny/allow tests and verify all live callsites. |
+| CC3-002 | **Durability/HA implementation mismatch:** API `apps/api/main.py:283` and worker `apps/worker/main.py:186` instantiate filesystem `JobQueue`; the more durable `DurableJobStore` is not on those live paths. The architecture guide says single-worker/filesystem-backed, so this is a blocking discrepancy only where docs/requirements promise durable/HA behavior. | Product owner must choose the supported topology. If durable/HA is in scope, wire durable storage, leases/outbox/DLQ to actual API/worker entrypoints and test crash/restart/duplicate delivery. Otherwise mark HA/durability as deferred, update product/ops claims and acceptance profile. |
+| CC3-003 | **Vite high advisory:** web manifest uses Vite 7.3.6. Current npm audit flags 7.0.0–7.3.6, including Windows `launch-editor` command handling, Vite middleware cross-origin execution and file-serving issues; fix available at 7.3.7. | Upgrade package/lockfile, review transitive changes, then run web unit, typecheck, build, E2E/a11y and fresh audit. |
+| CC3-004 | **Python dependency advisories:** `certifi 2026.7.22` has `PYSEC-2026-4320` / `GHSA-6q48-6c7w-9gw2` records (fix ≥2026.10.18/19); `opentelemetry-api 1.45.0` has `CVE-2026-114603` / `GHSA-xcq7-p3pf-p88h` (fix 1.45.1). | Confirm transitive/runtime exposure, update constraints and `requirements.lock`, run full required tests and pip-audit; document any time-limited exception with owner and compensating controls. |
+| CC3-005 | **Exact-SHA CI is unknown:** 12 workflow files exist (`ci.yml`, ten `reva-*.yml`, `secret-scan.yml`, `validation-evidence.yml`) but workflow presence is not execution. CLI could not authenticate. | Retrieve CI run IDs, exact head SHA, conclusion and logs from an authorized operator; fix failures and require branch protection. Until then L3 is unavailable, not passed. |
+
+#### P1: security, correctness, and operational risk
+
+| ID | Finding | Required closure |
+|---|---|---|
+| CC3-006 | **Bandit B602 high:** `qa_bench/run_qa_bench.py:151` invokes `subprocess.run(playwright_cmd, shell=True)`; the command includes caller-supplied `--filter` (`:74–80`). Severity depends on platform quoting and invocation trust, but shell interpretation is avoidable. | Set `shell=False`, pass literal argv and regression-test metacharacters stay data; justify any platform-specific launcher. |
+| CC3-007 | **Bandit medium/security sink backlog:** full scan over `packages apps scripts qa qa_bench demo reva`: 454 total; 34 medium. Medium includes B310 URL opener allowed-scheme checks (11), B608 dynamic SQL construction (12, including REVA), B314 XML parsing (8), B108 temp paths (6), plus B104 all-interface bind, B102 `exec`. | Triage all HIGH/MEDIUM and security-relevant lows with source-to-sink evidence; parameterize queries, use safe XML parser, constrain schemes/hosts, secure temp paths, and add malicious-input tests. No broad `nosec` suppression. |
+| CC3-008 | **Ruff debt:** 5,504 diagnostics. Largest classes: F401 1,179; UP006 930; UP045 713; I001 651; UP035 435; BLE001 251; F841 117. | Establish committed baseline, fix bug/security-bearing diagnostics first, then ratchet zero-new issues by changed files. Review autofixes; do not bulk-reformat unrelated code. |
+| CC3-009 | **OpenAPI operation IDs collide:** API generation reports four duplicates for `catalog`, `run_loop_http`, `pending_approvals`, `decide` in `packages/eoip/loops/router.py`. Generated client/schema tools may collapse operations. | Assign stable unique operation IDs; assert uniqueness in CI; regenerate and diff OpenAPI; run route auth/schema tests. |
+| CC3-010 | **Operator documentation drift:** `docs/authentication.md` correctly documents no default account and explicit `eoip-admin` provisioning; `docs/architecture-guide.md:28` still says API reads `EOIP_API_TOKEN`. | Reconcile all install, configuration, Docker, sample and troubleshooting docs with current auth precedence. Test clean startup fails closed, explicit admin provisioning, revocation, role changes and rotation. |
+| CC3-011 | **Tenant/DSAR end-to-end guarantee not established:** structural existence of tenant layers and DSAR routes does not show that every backend, derived index/cache, MCP/worker path, log, export and backup is tenant-isolated or erased. | Populate multiple tenants on each supported backend; test unauthorized read/write/export; erase one subject and verify all configured replicas, derived stores, caches, logs and export surfaces against retention/legal-hold rules. |
+| CC3-012 | **Traceability can be mistaken for completion:** 1,508 candidates have test-path mentions, but every generated match is `source-id-mention`, confidence 0.25. Existing registry has 2,603 `UNTRIAGED`; 1,440 IDs have no mapped tests; 32 map keys are not in registry. | Normalize canonical IDs and aliases; map criterion-specific assertions; execute tests; retain proof; separately report mapped, executed, failed, skipped and accepted states. |
+| CC3-013 | **Status documents conflict:** historical master backlog has 517 checked boxes while its exit-gate table still has unmeasured/failed gates; other status docs say 167/516; older reports claim 100% vs strict audit 0% evidence-qualified. README now cautions against relying on old counts, but legacy claims remain in circulation. | Publish a single dated status of record with denominator, profile, SHA and evidence links. Mark old documents historical/superseded through owner-approved metadata, not by deleting history. |
+
+| CC3-018 | **Runtime/connector data remains tracked at current HEAD despite ignore rules.** `git ls-tree HEAD` shows 360 `.eoip-data/` files (184 `raw/`: 104 Git, 54 Jira, 25 document captures, 1 demo-enterprise; 168 file-parse artifacts; 7 state/job/audit/agent-memory/DLQ artifacts), 109 `.tmp/`, 42 `qa_bench/reports/`, and 2 `data/learning/`. The files may be synthetic, but this audit did not classify their contents. Ignore rules do not untrack committed files; history includes these data since at least `78ff6d9`. | Data owner/security must classify captures and credentials/PII before release. If sensitive: contain access, rotate affected credentials, assess legal/privacy notification, and use an approved history-removal process only after preservation/owner approval; verify all remotes and clones. If synthetic: record provenance/generation, then remove generated runtime state from the index while preserving source fixtures. Add a guard against recommitting runtime state. |
+
+| CC3-019 | **Order-dependent REVA test import collision.** In the full unit/security/QA run, `test_route_role_policy.py` setup imported `reva` from `packages/reva/__init__.py` (a proxy package), which exposes no `config`; isolated, the same test resolved root `reva/__init__.py` and passed. Both top-level packages share the import name, so prior tests/path mutation can change resolution. | Remove the ambiguous proxy/package namespace or use explicit, non-colliding package names and import paths. Add a regression that runs this test alone and after the preceding suites in a fresh interpreter; assert `reva.__file__` is the expected package. Run the entire core suite and exact-SHA CI. |
+
+#### P2: production qualification
+
+| ID | Finding | Required closure |
+|---|---|---|
+| CC3-014 | No L3 exact-SHA CI, L4 staging/runtime, or independent L5 was established. | Named owners, clean staging install, representative data, independent security/release review and signed acceptance evidence. |
+| CC3-015 | Performance limits are normative targets, not current measured results: lookup p95 ≤500 ms; bounded path/impact p95 ≤2 s; standard API p95 ≤1 s excluding generation; Compose readiness ≤120 s (`51-performance.md`). Prior session's GN cosine 100k×128 p95 26–76 ms vs 20 ms is historical, not retested here. | Rerun pinned workload with dataset/hardware/backend/version/concurrency and p50/p95/p99/resources; optimize or obtain an approved target revision. |
+| CC3-016 | Backup specification requires checksum/version manifest and clean-target restore with known-count/path verification; no restore drill ran here. | Run per-backend backup/restore, include graph/config/checkpoint/job/raw data policy, verify checksums and known queries, measure RPO/RTO and document exclusions. |
+| CC3-017 | SBOM/license/offline release package not generated or verified in this pass, despite `69-dependency-license-sbom.md` requirements. | Produce SPDX/CycloneDX for Python/npm/container; reconcile `LICENSE`, `LICENSING.md`, notices and transitive licenses; pin image digests, scan images, validate offline/air-gap install. |
+
+### Normative document and domain crosswalk
+
+The inventory contains 751 Markdown files. The following is the mandatory work decomposition, not an exhaustive restatement of every clause. Agent must follow the source documents completely, preserve exact IDs and resolve contradictions by owner decision.
+
+| Domain / source documents | Minimum features and acceptance checks |
+|---|---|
+| Product/scope: `01-project-vision.md`, `02-scope-and-objectives.md`, `03-functional-requirements.md`, `04-non-functional-requirements.md`, `05-system-requirements.md`, `70-acceptance-criteria.md` | Freeze profile, owner, denominator and scope; link every FR/NFR/SR to criterion, code, test and evidence; preserve offline/model-down capability. |
+| Ingestion/connectors: `18-ingestion-architecture.md`, `19-connector-framework.md`, `20-jira-connector-requirements.md` through `24-file-web-connectors.md` | Pagination, rate limits, retries, checkpoints, idempotency, mapper versioning, event provenance, tombstones, malformed record quarantine/replay, credential isolation; exercise Jira, Confluence, GitLab, ServiceNow, files/web with contract/integration tests. |
+| Ontology/graph/provenance/identity/temporal: `10-enterprise-ontology.md` through `17-code-graph.md`, `27-ontology-validation.md`, `28-graph-quality.md` | Versioned ontology; valid domain/range; stable canonical identity; exact alias merge and fuzzy non-merge; bitemporal history; provenance on mutations/bridges; idempotent schema bootstrap; reject invalid edges. |
+| Graph backends: `06-architecture.md`, `09-data-architecture.md`, `53-backup-restore.md`, `76-multi-backend.md` | HugeGraph, Neptune, Neo4j and Memory capability profiles; CRUD/query parity where promised, parameterization, typed literals, index behavior, pagination, failures, restart, migrations, backup/restore. |
+| Query: `25-query-engine-requirements.md`, `26-query-engine-implementation.md`, `45-api-specification.md`, `packages/eoip/qlang/` | NL/structured input creates validated bounded QueryPlan; reject arbitrary Gremlin/mutations; parser golden/negative/property tests per supported language; lower only to backend-supported templates. |
+| RAG/model: `29-rag-architecture.md`, `49-local-ai-model-strategy.md`, `56-rag-agent-evaluation.md` | Search works with model/vector service stopped; citations resolve; generated claims supported by retrieved spans; budget/tokenizer and fail-closed behavior; all provider traffic obeys tenancy/egress. |
+| Agents/loops/memory: `30-agent-architecture.md` through `38-loop-over-graph.md` | Validated contract/budgets, hard stop/cancel, approval for writes, no unauthorized self-modification, tenant-scoped TTL/deletion, audit/provenance and retry semantics. |
+| MCP: `39-mcp-architecture.md` and MCP contracts | REST parity for evidence/auth/tenant; read-only MVP; transport/tool schemas; timeouts/lifecycle; malicious external descriptions treated as untrusted. |
+| Human control/XAI: `40-human-control-model.md`, `41-xai-explainability.md` | Proposals separated from actions; approval bound to actor/scope/expiry; evidence-linked explanation; audit denials without storing hidden chain-of-thought. |
+| Web/admin UI: `42-web-user-ui-ux.md`, `43-admin-ui-ux.md`, `GUI-UIX-requirements.md`, `GUI-cc-ghcp-requirements.md` | Persisted data; graph/path/evidence flow; server-authoritative admin state; no hardcoded KPIs; keyboard/accessibility/responsive loading-empty-error-auth states; Playwright and a11y acceptance. |
+| VS Code: `44-vscode-extension.md` | Authenticated API, correct code ranges, context/path/impact, safe workspace path handling, token protection, extension-host tests and packaging. |
+| API/contracts: `45-api-specification.md`, `docs/api-reference.md` | Stable `/api/v1`, typed bounded input, canonical evidence schema, unique operation IDs, auth/tenant policy, OpenAPI compatibility and protected-operation negative cases. |
+| Security/auth/tenancy: `46-security-architecture.md`, `47-threat-model.md`, `docs/authentication.md` | Fail-closed bootstrap, Argon2id/session/token lifecycle, authorization from principal, tenant isolation, secret redaction, query/path/prompt defenses, default-deny egress, internal-only service ports and threat-model tests. |
+| Privacy: `48-data-privacy.md` | Classification/minimization, retention, subject locate/export/rectify/erase across derived stores, legal hold, redacted logs and auditable deletion. |
+| Operations/performance/scaling: `50-observability.md`, `51-performance.md`, `52-scalability.md` | Correlation IDs, structured redacted logs, metrics, measured profile/capacity/latency, queue limits, supported HA semantics and failover drills. |
+| Recovery/DevSecOps/SBOM: `53-backup-restore.md`, `54-devsecops.md`, `58-end-to-end-test-plan.md`, `69-dependency-license-sbom.md` | Clean restore and RPO/RTO; reproducible locked/offline builds; protected CI, secret/SAST/dependency/image scans, complete SBOM/license policy and exact-SHA receipts. |
+| Graph Neurons/neural: `Graph-Neurons-requirements.md`, `neural-schema-agg-requirements.md`, `docs/install-neural.md` | Optional tiers; deterministic seed/environment capture; honest capability detection; no hash placeholder inference; N0–N3 test matrix and measured thresholds; fail closed if extras absent. |
+| ASPEII: `aspeii-reqirements.md`, `aspeii-implementation-plan.md`, phase 4 requirements/plans, `.audit-scratch/program/tracker/` | Revision-bound intents, scope/approval/receipts, replay resistance, durable evidence and clause-level tracker closure. Historical 2026-10-18 tracker delta had 7 in progress, 4 blocked, 0 evidentially complete among 11 IDs. |
+| Community/IP, CTAR, Warrant: `community-ip-requirements.md`, `community-ip-implementation-plan.md`, `ip-requirements.md`, `ip-requirements-implementation-plan.md`, `ip.md`, `gaps-audit-cp.md` | Warrant composition, licensing/legal basis, provenance, conflict resolution, approval/expiry/revocation and negative tests; use owner-approved acceptance rather than prose status. |
+| Wisdom/Graffin/phase programmes: `wisdom-graph-requirements.md`, `living-AI-agg-Graffin-requirements.md`, phase requirements, `super-requirements.md`, `diamond-moonshots-advanced.md`, `KGF-MASTER-BACKLOG.md` | Reconcile overlapping IDs; assign owner and profile; preserve evidence; record approved supersession/defer; no roadmap checkbox as proof. |
+| REVA: `reva-requirements.md`, `docs/reva/`, `tests/reva/`, `.github/workflows/reva-*.yml` | Ledger records actual runs only; execute real unit/static/component/integration/perf/mutation/air-gap lanes; same-SHA CI; independent review; no self-certifying unrun tests. |
+
+### AI coding-agent instructions to achieve evidence-qualified completion
+
+#### Baseline and requirement reconciliation
+
+1. Preserve user changes and work at an explicitly named branch/SHA. Record commit, clean/dirty state, OS, Python/Node versions, extras, services, data profile and commands. Do not silently update requirements or remove historical docs.
+2. Read `README.md`, `EOIP-engg-doc-pkg/DOCUMENTATION-INDEX.md`, master vision/scope, every normative document in the crosswalk, current architecture/API/auth docs, root registries/maps, both audit-kit READMEs and `strict_audit_policy.py`/`proof_policy.py`. Follow references to implementation plans, schemas, decisions, threat model, test plans, connector contracts and acceptance criteria. Preserve path, version and hash of each source.
+3. Regenerate current requirements index, traceability, remediation tasks, duplicate-ID report and orphan-test report at target SHA. The current 3,383-task file and 2,740-entry registry are older than this audit SHA. Reconcile all 5,641 candidate IDs: preserve dotted children, normalize aliases without deleting source IDs, manually review 47 synthetic IDs, 10 unparsed normative lines, context-only terms and duplicate definitions.
+4. Assign every accepted requirement exactly one state: in-scope/open, implemented-but-unverified, verified per policy, approved deferred (owner/date/risk/profile), superseded/duplicate (owner approval and replacement link), or not implemented (negative evidence). Resolve conflicting totals before use: 517 checked backlog boxes vs 167/516 status, old 100%/1,661-verified claims vs 0 strict completion, historical/current labels, capability scores and test-map counts. Publish one dated, SHA-bound status of record.
+5. Obtain product-owner approval of profile/denominator: local MVP, single-node, HA, each graph backend, offline/air-gap, optional neural, production. An unimplemented P3/cloud profile must not block a clearly bounded local profile, but cannot be claimed complete for it. Never silently shrink scope to make 100% possible.
+
+#### Ordered implementation batches
+
+1. **P0 trust/security:** upgrade Vite and vulnerable Python pins; resolve Bandit B602; centralize model egress; test credential bootstrap, RBAC, tenant-boundary, token revocation and secret redaction; run incident rotation/purge actions for any historical credentials with operator evidence.
+2. **P0 data integrity/topology:** decide/wire `JobQueue` vs `DurableJobStore`; prove idempotent connector replay, checkpoint and tombstone semantics through live API/worker path; verify typed graph writes and provenance; fix current query-language failures from current test run; resolve duplicate OpenAPI IDs.
+3. **P1 graph/ontology/backend:** run CRUD/query/error/index/schema conformance for every supported backend; verify ontology domain/range and identity collision behavior; temporal/provenance audit; DSAR propagation through each derived storage and tenant path.
+4. **P1 core journey:** clean persisted stack: Jira/file/Git ingestion → graph/canonical identities → bounded search/path/impact → evidence-grounded GraphRAG → same evidence through REST/MCP/UI/VS Code → admin status reconciles with durable backend/job state.
+5. **P1 operations:** crash/restart/replay, duplicate deliveries, queue pressure, dependency outage, credential rotation, backup/restore, HA failover, migration rollback, offline install and air-gap drills. Capture RPO/RTO, error rates, correlation IDs and diagnostics.
+6. **P1 benchmark/neural:** run the exact thresholds in each requirement with fixed data/hardware/version/warmup/concurrency. Run each neural tier separately. Never treat optional dependency installed, API returning `available`, or a hash baseline as inference evidence.
+7. **P2 release/supply chain:** reproducible clean build, Python/npm/container SBOM, license approval, pinned image digests, image scan, offline artifact manifest, staging qualification and independent L5 review.
+
+For each bounded batch, claim the task/epic with `claim_tasks.py`; inspect the owning abstraction and neighboring tests; state a falsifiable local hypothesis and cheapest disconfirming check; implement the smallest change; immediately run the focused check; then run affected regressions/security/contract tests. Update traceability and evidence on the same commit, release the claim, and leave unrelated failures untouched but reported. No global autofix, arbitrary `noqa`, skipped test or unrelated refactor to satisfy a gate.
+
+#### Proof, task closure and 100% definition
+
+- Evidence includes canonical requirement ID, verbatim source and lines, criterion, code/test paths, exact command, exit code, full output or redacted receipt hash, environment, commit SHA, residual gaps and reviewer identity where required.
+- L1 source mention is discovery only. L2 requires the assertion to exercise the criterion and pass at this SHA. L3 is required CI green on this SHA. L4 is captured reproducible non-production runtime. L5 is an independent reviewer distinct from implementer/evidence producer. Different-SHA proof is stale.
+- Collection, static grep, a schema path, a mocked test, Compose `config`, a skipped test, a green build, or a test file's presence is not acceptance proof. Report unavailable integrations as unverified, not passed.
+- Every in-scope canonical requirement maps to acceptance criteria and test nodes, with separate counts for unmapped, passed, failed, skipped, quarantined and deferred. Execute unit, contract, integration, security, semantic, acceptance, recovery, E2E, performance, browser/a11y, extension, backend parity, dependency, SAST, SBOM/license and deployment gates applicable to the approved profile.
+- “100% complete” means all approved in-scope criteria have verified implementation or signed deferral/retirement, criterion-specific passing evidence, required same-SHA CI/runtime/security gates, no unresolved critical/high blockers, and independent signoff where the proof policy requires it. Owner approves scope and risk; a coding agent cannot self-certify privacy/legal/licensing/production decisions.
+
+#### Immediate next actions
+
+1. Fix the order-dependent `reva` import collision, then rerun the focused security test and full unit/security/QA suite; retain the final receipt.
+2. Regenerate the strict inventory/task queue/duplicate/orphan reports on `a74e82a`; do not use stale 3,383-open task details as current after regeneration.
+3. Fix the Vite and Python advisories, then triage Bandit high/medium; institute Ruff no-new-findings ratchet.
+4. Resolve CC3-001 and CC3-002 with product/security owners and tests against live call paths.
+5. Obtain exact-SHA CI from an authenticated maintainer; run backend, DSAR, backup/restore, HA, performance and air-gap profiles; arrange L5 review.
+6. Execute remaining tasks in dependency order, by one bounded requirement batch at a time. Do not claim the project is 100% complete until the denominator and all gates are reconciled.
+
+## Historical finding review at `896e06d` (not current evidence)
 
 | ID | Finding (2026-10-21, at `78ff6d9`) | Status at HEAD (`896e06d`) | Evidence (read directly, this pass) |
 |---|---|---|---|
@@ -58,7 +197,7 @@ I read that audit's executive summary in full, spot-checked its evidence style a
 
 ---
 
-## 2. New feature surfaces since the prior audit — first audit pass
+## B. Feature surfaces as read at `896e06d` (historical)
 
 The 116-file, +6,230/−682-line delta is not only remediation; it adds several substantial, previously-unaudited feature areas. I read each directly (structure and a sample of logic), but **did not execute their test suites in this pass** — so every status below is a structural read, not a verified-by-execution claim.
 
@@ -71,14 +210,14 @@ The 116-file, +6,230/−682-line delta is not only remediation; it adds several 
 | **Real GraphRAG grounding (CRA-026)** | `GraphRAGPipeline` with a cited-span claim-support check; "templated 'Finding N' answers" replaced by verbatim evidence spans; fabricated/wrong-number/negated claims are detected and removed, not silently returned | Directly answers the "epistemic separation" and "grounded answers" concerns raised independently in this week's competitive-research package (GAP-07, CAP-43, CAP-60) | Needs the same treatment as above: a live CI job (`llm-cpu-reference`) is cited; not independently re-verified as currently passing |
 | **REVA sub-programme** | An entire parallel verification/ledger/acceptance-journey system (`tests/reva/`, 11 files found at HEAD; `reva-ledger.yml`, `reva-acceptance.yml`, etc.) with its own "closure never auto-passes without evidence," "ledger records only a real pytest run," "0/385 closed: no human reviews or bindings" commit messages | The commit messages are unusually self-disciplined about *not* claiming completion (`5f81fda ... 0/385 closed`) — a good sign for auditor trust, since a fabricating process would not write that | REVA is, by its own authors' commit messages, **explicitly 0/385 closed** as of the commit that regenerated its ledger. Treat REVA as **not complete by design admission**, not by my inference |
 
-## 3. Cross-cutting observations (non-technical and process findings)
+## C. Cross-cutting observations from the historical pass
 
 1. **Documentation hygiene:** `available-status.md` still links to `KGF-MASTER-BACKLOG.md`, which no longer exists in the repository root (confirmed absent via `find`). This is a broken internal reference in a file whose entire purpose is to be the current-status pointer — fix it or restore the file.
 2. **Build artifact contamination risk:** a `build/lib/eoip/` directory and a `.audit-scratch/audit-78ff6d9/` full-repo snapshot both exist at HEAD and both contain stale copies of `packages/eoip/*`. Any future automated audit or grep-based tool (including mine, earlier in this exercise) that does not explicitly exclude these paths will double-count or misattribute findings. Recommend adding both to the audit tooling's standard exclusion list if not already there (the kit's own README claims `.audit-scratch/` is "deleted before delivery" — it was not deleted in this working tree).
 3. **Two competing "real" implementations of the same capability now coexist** (the `LocalModelProvider`/`ModelPort` pair, the `JobQueue`/`DurableJobStore` pair). In both cases the newer, better-designed implementation was built but the live/default path still uses the older, weaker one. This is a specific, recurring pattern worth naming for the team: **when a remediation commit adds a correct replacement, the commit (or a fast follow-up) must also switch the production call sites, or the fix doesn't exist in the running system.** Both instances found in this pass should be treated as a release-blocking pattern, not two isolated bugs.
 4. **Evidence discipline is inconsistent across sub-teams.** The REVA ledger commits are unusually honest ("0/385 closed," "never auto-passes without evidence"). The CRA-024/026 commits read as genuine fixes of genuine fabrication (the old `/sparql` bindings, the old templated "Finding N" answers). This suggests the remediation effort was done by people/processes who understood and respected the audit's own evidence standard — which is a positive signal about the team's trajectory, separate from how much work remains.
 
-## 4. Build-to-100% instructions for an AI coding agent
+## D. Initial build-to-100% instructions (superseded by current instructions above)
 
 **Read first, in this order, before writing any code:** this document (full); `eoip-audit-kit/audit-scripts/proof_policy.py` (the proof-tier rules you must satisfy); `audit-output/audit_gaps_requirements.md` (original 12 findings in full prose); `audit-output/requirements.md` and `implementation.md` (the authoritative 5,483-requirement catalogue — do not re-derive requirement IDs, use these); `audit-output/audit_tasks.json` (per-requirement task/dependency/acceptance structure already defined).
 
@@ -114,7 +253,7 @@ The 116-file, +6,230/−682-line delta is not only remediation; it adds several 
 
 ---
 
-## 5. Scope limits and honesty statement
+## E. Initial-pass scope limits (historical)
 
 This document does not independently execute any test, scanner, or CI pipeline. Every "FIXED" verdict above rests on reading source code at HEAD and confirming the described defect is genuinely absent from the exact lines cited (not on a commit message's own claim about itself). Every "STILL OPEN" verdict rests on the same kind of direct read. Every item marked "not re-verified" or "not re-run this pass" is exactly that — carried forward from the 2026-10-21 audit's own findings, which remain the operative evidence until someone executes the Priority-0 steps above. No pass/fail count, coverage percentage, or vulnerability count in this document is invented; where I do not have fresh, executed evidence, I say so rather than estimate.
 

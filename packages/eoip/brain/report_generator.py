@@ -101,7 +101,6 @@ class DetailedReportGenerator:
         """Executes selected query approach and produces an exhaustive, structured deep report."""
         start_time = time.perf_counter()
         report_id = str(uuid.uuid4())
-        ctx = context or {}
 
         # 1. Approach-Specific Analytical Execution (uses live graph when available)
         gi = GraphIntelligenceEngine(graph_store=graph_store)

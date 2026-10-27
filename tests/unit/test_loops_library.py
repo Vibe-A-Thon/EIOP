@@ -232,7 +232,7 @@ def test_idempotency_key_replay(tmp_path):
     store = JsonCheckpointStore(tmp_path)
     config = LoopConfig(loop_name="react", checkpoint_dir=str(tmp_path), idempotency_key="job-42")
     driver = LoopDriver(config, phases=["reason", "act"], store=store)
-    first = driver.run(lambda s, c: StepOutcome(signal=StepSignal.COMPLETE, result={"v": 1}), {})
+    driver.run(lambda s, c: StepOutcome(signal=StepSignal.COMPLETE, result={"v": 1}), {})
     replay = LoopDriver(config, phases=["reason", "act"], store=store).run(
         lambda s, c: StepOutcome(signal=StepSignal.COMPLETE, result={"v": 2}), {}
     )
@@ -414,7 +414,7 @@ def test_router_park_resume_and_decide(client, tmp_path):
     parked = resp.json()
     assert parked["status"] == "awaiting_approval"
 
-    pending = client.get("/api/v1/loops/approvals/pending").json()
+    client.get("/api/v1/loops/approvals/pending").json()
     # (parked via StepOutcome.await_approval does not create queue entries; decide endpoint still works)
     req_id = "urn:eoip:loop:approval:test-1"
     decided = client.post("/api/v1/loops/approvals/decide", json={

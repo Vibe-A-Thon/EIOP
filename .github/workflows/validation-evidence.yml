@@ -9,27 +9,68 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  # Superseded runs of a branch/PR are cancelled; main keeps every commit's evidence.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  PYTHONUTF8: "1"
+
 jobs:
-  regression:
+  # CI-PERF: the source-bound Windows regression (the full suite, which needed ~90 min serially;
+  # FT-F04) runs as file-level shards. Each shard is one validate_with_evidence receipt around one
+  # single-coordinator pytest; the `regression` gate proves the shards partition the suite.
+  regression-shard:
+    name: regression-shard (${{ matrix.shard }}/5)
     runs-on: windows-latest
-    # FT-F04: the full suite needs more than 30 minutes on windows-latest.
-    timeout-minutes: 90
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        # Sized from measured file times (tests/ci-shard-weights.json): ~8 min per Windows job.
+        shard: [1, 2, 3, 4, 5]
+    env:
+      # Tests needing an owner decision (FT-X10) are deselected and listed.
+      EOIP_TEST_QUARANTINE_FILE: tests/ci-quarantine.txt
+      EOIP_TEST_SHARD: ${{ matrix.shard }}/5
+      EOIP_TEST_SHARD_WEIGHTS: tests/ci-shard-weights.json
+      EOIP_TEST_SHARD_MANIFEST: test-results/shards/regression-${{ matrix.shard }}.json
+    steps:
+      - uses: actions/checkout@v4
+      # FT-F04 / FT-F06: the documented install (numerics, reports, semantic included).
+      - name: Python 3.11 + documented install (uv, cached; FT-F06)
+        uses: ./.github/actions/setup-eoip-python
+      - name: Run source-bound regression (shard ${{ matrix.shard }}/5)
+        run: >-
+          python -X utf8 -m scripts.validate_with_evidence
+          --project-root .
+          --output test-results\ci-source-bound-validation-${{ matrix.shard }}.json
+          --artifact test-results\ci-regression-${{ matrix.shard }}.xml
+          -- python -X utf8 -m pytest -q --timeout=300
+          --junitxml=test-results\ci-regression-${{ matrix.shard }}.xml
+      - name: Retain validation receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-evidence-regression-${{ matrix.shard }}
+          path: test-results/
+          if-no-files-found: warn
+
+  regression-gates:
+    runs-on: windows-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
       - name: Check client demo orchestration
         run: node --test demo\autodemo\tests\*.test.js apps\vscode-extension\test\demo-driver.test.js
-      # FT-F04 / FT-F06: the documented install. The old extras set lacked numerics
-      # (numpy/scipy/scikit-learn), reports and semantic, so collection failed.
-      - name: Install test dependencies
-        run: python -m pip install -c requirements.lock -e ".[test]"
+      - name: Python 3.11 + documented install (uv, cached; FT-F06)
+        uses: ./.github/actions/setup-eoip-python
       - name: Run behavioral verification merge gate (KGR-G-011)
         shell: pwsh
         run: |
@@ -42,37 +83,58 @@ jobs:
           python -m ruff check scripts\validate_with_evidence.py
           scripts\documentation_audit.py tests\unit\test_validation_source_binding.py
           tests\unit\test_documentation_audit.py
-      - name: Run source-bound regression
-        env:
-          # Tests needing an owner decision (FT-X10) are deselected and listed.
-          EOIP_TEST_QUARANTINE_FILE: tests/ci-quarantine.txt
-        run: >-
-          python -X utf8 -m scripts.validate_with_evidence
-          --project-root .
-          --output test-results\ci-source-bound-validation.json
-          --artifact test-results\ci-regression.xml
-          -- python -X utf8 -m pytest -q --timeout=300
-          --junitxml=test-results\ci-regression.xml
-      - name: Retain validation receipts
+      - name: Retain gate evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: validation-evidence
+          name: validation-evidence-gates
           path: test-results/
           if-no-files-found: warn
+
+  # Gate kept under its historical name so required status checks keep working.
+  regression:
+    needs: [regression-shard, regression-gates]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/ci
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: validation-evidence-regression-*
+          path: evidence
+      - name: Regression shards partitioned the suite (nothing lost, nothing twice)
+        id: partition
+        run: python3 scripts/ci/check_test_shards.py evidence/*/shards/regression-*.json --summary "$GITHUB_STEP_SUMMARY"
+      - name: Combine receipts into validation-evidence
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: validation-evidence
+          pattern: validation-evidence-{regression-*,gates}
+          separate-directories: true
+          delete-merged: true
+      - name: Verdict
+        if: always()
+        env:
+          SHARDS: ${{ needs.regression-shard.result }}
+          GATES: ${{ needs.regression-gates.result }}
+          PARTITION: ${{ steps.partition.outcome }}
+        run: |
+          echo "regression-shard=$SHARDS regression-gates=$GATES partition=$PARTITION"
+          [ "$SHARDS" = success ] && [ "$GATES" = success ] && [ "$PARTITION" = success ]
 
   kgci:
     runs-on: windows-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      # FT-F04 / FT-F06: the documented install. The old extras set lacked numerics
-      # (numpy/scipy/scikit-learn), reports and semantic, so collection failed.
-      - name: Install test dependencies
-        run: python -m pip install -c requirements.lock -e ".[test]"
+      # FT-F04 / FT-F06: the documented install (numerics, reports, semantic included).
+      - name: Python 3.11 + documented install (uv, cached; FT-F06)
+        uses: ./.github/actions/setup-eoip-python
       - name: Run KG CI/CD pipeline (GAP-KGCI-001..004, release gates §16)
         run: >-
           python -X utf8 -m packages.eoip.ci
@@ -95,6 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
+      OLLAMA_IMAGE: ollama/ollama:0.40.6
       MODEL_URL: https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf
       MODEL_SHA256: 74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db
       EMBED_URL: https://huggingface.co/nomic-ai/nomic-embed-text-v1.5-GGUF/resolve/main/nomic-embed-text-v1.5.Q8_0.gguf
@@ -105,9 +168,10 @@ jobs:
       EOIP_BENCH_OUT: test-results
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      # CI-PERF: the image pull overlaps the model download and the Python install. If the background
+      # pull fails, `docker run` below pulls again (or fails visibly).
+      - name: Pull Ollama image in the background
+        run: nohup docker pull "$OLLAMA_IMAGE" > "$RUNNER_TEMP/docker-pull.log" 2>&1 &
       - name: Cache model
         uses: actions/cache@v4
         with:
@@ -117,20 +181,20 @@ jobs:
         run: |
           mkdir -p models
           f=models/qwen2.5-0.5b-instruct-q4_k_m.gguf
-          [ -f "$f" ] || curl -fsSL -o "$f" "$MODEL_URL"
+          [ -f "$f" ] || curl -fsSL --retry 3 -o "$f" "$MODEL_URL"
           echo "$MODEL_SHA256  $f" | sha256sum -c -
           e=models/nomic-embed-text-v1.5.Q8_0.gguf
-          [ -f "$e" ] || curl -fsSL -o "$e" "$EMBED_URL"
+          [ -f "$e" ] || curl -fsSL --retry 3 -o "$e" "$EMBED_URL"
           echo "$EMBED_SHA256  $e" | sha256sum -c -
+      - name: Python 3.11 + documented install (uv, cached; FT-F06)
+        uses: ./.github/actions/setup-eoip-python
       - name: Start Ollama (CPU only)
         run: |
           docker run -d --name ollama -p 127.0.0.1:11434:11434 -v "$PWD/models:/models:ro" \
-            -v "$PWD/deploy/hardware/models:/modelfiles:ro" ollama/ollama:0.40.6
+            -v "$PWD/deploy/hardware/models:/modelfiles:ro" "$OLLAMA_IMAGE"
           for i in $(seq 1 60); do curl -sf localhost:11434/api/version && break; sleep 2; done
           docker exec ollama ollama create "$EOIP_LIVE_OLLAMA_MODEL" -f /modelfiles/qwen2.5-0.5b-q4.Modelfile
           docker exec ollama ollama create "$EOIP_LIVE_OLLAMA_EMBED_MODEL" -f /modelfiles/nomic-embed-text-v1.5-q8.Modelfile
-      - name: Install test dependencies
-        run: python -m pip install -c requirements.lock -e ".[test]"
       - name: Run live-model acceptance and CPU reference benchmark
         run: |
           export EOIP_RELEASE_ID="$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")+${GITHUB_SHA::12}"
@@ -159,9 +223,8 @@ jobs:
       EOIP_LIVE_FUSEKI_USER: admin
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      # CI-PERF: start both services first so their JVM start-up overlaps the Python install;
+      # readiness is awaited afterwards, with the same limits as before.
       - name: Start Fuseki (per-run admin password)
         run: |
           pw="$(openssl rand -hex 16)"
@@ -169,16 +232,19 @@ jobs:
           echo "EOIP_LIVE_FUSEKI_PASSWORD=$pw" >> "$GITHUB_ENV"
           docker run -d --name fuseki -p 127.0.0.1:3030:3030 -e ADMIN_PASSWORD="$pw" -e FUSEKI_DATASET_1=ds \
             stain/jena-fuseki:5.1.0
-          for i in $(seq 1 60); do curl -sf "localhost:3030/ds/sparql?query=ASK%7B%7D" >/dev/null && break; sleep 2; done
-      - name: Start GraphDB Free and create the eoip repository
+      - name: Start GraphDB Free (3 GB heap for SP2Bench at 1.02M triples)
+        run: docker run -d --name graphdb -p 127.0.0.1:7200:7200 -e GDB_JAVA_OPTS="-Xmx3g -Xms1g" ontotext/graphdb:10.7.6
+      - name: Python 3.11 + documented install (uv, cached; FT-F06)
+        uses: ./.github/actions/setup-eoip-python
+      - name: Wait for Fuseki
         run: |
-          docker run -d --name graphdb -p 127.0.0.1:7200:7200 -e GDB_JAVA_OPTS="-Xmx3g -Xms1g" ontotext/graphdb:10.7.6
+          for i in $(seq 1 60); do curl -sf "localhost:3030/ds/sparql?query=ASK%7B%7D" >/dev/null && break; sleep 2; done
+      - name: Wait for GraphDB Free and create the eoip repository
+        run: |
           for i in $(seq 1 90); do curl -sf localhost:7200/rest/repositories >/dev/null && break; sleep 2; done
           curl -sf localhost:7200/rest/info/version
           curl -sf -X POST localhost:7200/rest/repositories -F "config=@deploy/graphdb/eoip-repo.ttl"
           echo "EOIP_LIVE_GRAPHDB_URL=http://localhost:7200" >> "$GITHUB_ENV"
-      - name: Install test dependencies
-        run: python -m pip install -c requirements.lock -e ".[test]"
       - name: Fetch the W3C SPARQL 1.1 test suite (w3c/rdf-tests, pinned commit)
         run: |
           bash scripts/fetch_w3c_sparql_tests.sh .cache/rdf-tests

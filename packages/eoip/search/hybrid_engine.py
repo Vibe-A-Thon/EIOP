@@ -736,7 +736,6 @@ class HybridSearchEngine:
         if not query.strip() and not graph_seeds and not structured_filters and not multimodal_input:
             return []
 
-        start = time.time()
         plan = self.plan_search(
             query, modalities=modalities, user_context=user_context,
             multimodal_input=multimodal_input,

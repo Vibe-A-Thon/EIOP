@@ -104,7 +104,7 @@ class KnowledgeGraphIntegritySentinel:
 
     def validate_mutation_and_protect(self, mutation: dict[str, Any], active_version: str = "v1") -> dict[str, Any]:
         """Oracle poisoning defense: intercepts mutations, validates against golden invariants, rolls back if malicious."""
-        kind = mutation.get("kind")
+        mutation.get("kind")
         props = mutation.get("properties", {})
         payload_text = json.dumps(props).upper()
 

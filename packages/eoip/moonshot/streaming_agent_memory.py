@@ -16,7 +16,8 @@ import time
 from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 log = logging.getLogger("eoip.moonshot.streaming_agent_memory")
 
