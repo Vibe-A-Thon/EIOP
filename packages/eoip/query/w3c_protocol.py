@@ -63,7 +63,7 @@ class Outcome:
 
 
 def load_protocol_tests(suite: Path) -> list[ProtocolTest]:
-    base = suite / "protocol"
+    base = Path(suite).resolve() / "protocol"
     g = Graph()
     g.parse(base / "manifest.ttl", format="turtle", publicID=(base / "manifest.ttl").as_uri())
     manifest = next(g.subjects(RDF.type, MF.Manifest))

@@ -47,6 +47,14 @@ def test_manifest_parses_offline():
     assert len(tests) == 34 and all(t.requests for t in tests)
 
 
+def test_manifest_parses_from_a_relative_suite_path(monkeypatch):
+    """CI passes EOIP_W3C_SUITE as a relative path; file URIs need an absolute one."""
+    if not (SUITE / "protocol" / "manifest.ttl").exists():
+        pytest.skip("W3C suite not fetched")
+    monkeypatch.chdir(SUITE.resolve().parent)
+    assert len(load_protocol_tests(Path(SUITE.resolve().name))) == 34
+
+
 @pytest.mark.skipif(not (SUITE / "protocol" / "manifest.ttl").exists(), reason="W3C suite not fetched")
 @pytest.mark.parametrize("backend", sorted(_backends()) or ["none"])
 def test_w3c_sparql11_protocol_suite(backend, tmp_path, monkeypatch):

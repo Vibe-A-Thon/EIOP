@@ -124,6 +124,21 @@ class SparqlProtocolHandler:
         method: str,
         path: str = "/sparql",
         headers: Optional[dict[str, str]] = None,
+        query_params: Optional[dict[str, str]] = None,
+        body: Optional[str | bytes] = None,
+    ) -> tuple[int, dict[str, str], str]:
+        """Processes GET or POST /sparql request and returns (status_code, headers, body).
+
+        Unchanged public signature (one value per URL parameter); see ``handle_protocol_request`` for
+        repeated parameters such as several ``named-graph-uri`` values.
+        """
+        return self.handle_protocol_request(method, path, headers, query_params, body)
+
+    def handle_protocol_request(
+        self,
+        method: str,
+        path: str = "/sparql",
+        headers: Optional[dict[str, str]] = None,
         query_params: Optional[dict[str, Any]] = None,
         body: Optional[str | bytes] = None,
     ) -> tuple[int, dict[str, str], str]:

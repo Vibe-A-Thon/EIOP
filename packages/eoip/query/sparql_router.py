@@ -93,7 +93,7 @@ def build_sparql_router(authorize: Callable[[str, str, Any], bool],
             return Response(f"SPARQL backend misconfigured: {exc}", status_code=503, media_type="text/plain")
         handler = SparqlProtocolHandler(rdf_backend=backend)
         body = await request.body() if request.method == "POST" else None
-        status, headers, payload = handler.handle_request(request.method, PATH, dict(request.headers), params, body)
+        status, headers, payload = handler.handle_protocol_request(request.method, PATH, dict(request.headers), params, body)
         media = headers.pop("Content-Type", "text/plain")
         return Response(payload, status_code=status, media_type=media, headers=headers)
 
