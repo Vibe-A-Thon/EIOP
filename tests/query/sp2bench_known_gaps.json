@@ -5,13 +5,31 @@
   "note": "Queries whose first 10,000-row page is not produced by the engine within the 30 s deadline on a GitHub-hosted runner. Each is cancelled server-side at the deadline (HTTP 504, never a hang, never partial results). CRA-024 A.2 ('none exceeding 30 s') is therefore NOT met for these on that engine; they stay open until the engine/plan is improved.",
   "latency_gaps": {
     "fuseki": {
-      "q04": {"note": "Jena Fuseki 5.1.0 (in-memory dataset): DISTINCT author-pair join over all articles in the same journal (2.66M rows); GraphDB evaluates it in ~14 s."},
-      "q05a": {"note": "Fuseki 5.1.0: implicit join via FILTER(?name=?name2) over all article/inproceedings author names; not rewritten to an equi-join. Same on GraphDB."},
-      "q07": {"note": "Fuseki 5.1.0: double negation via nested OPTIONAL/!bound; GraphDB evaluates it in ~1 s."}
+      "q04": {
+        "note": "Jena Fuseki 5.1.0 (in-memory dataset): DISTINCT author-pair join over all articles in the same journal (2.66M rows); GraphDB evaluates it in ~14 s."
+      },
+      "q05a": {
+        "note": "Fuseki 5.1.0: implicit join via FILTER(?name=?name2) over all article/inproceedings author names; not rewritten to an equi-join. Same on GraphDB."
+      },
+      "q07": {
+        "note": "Fuseki 5.1.0: double negation via nested OPTIONAL/!bound; GraphDB evaluates it in ~1 s."
+      }
     },
     "graphdb": {
-      "q05a": {"note": "GraphDB Free 10.7.6: FILTER-based join, as on Fuseki."},
-      "q06": {"note": "GraphDB Free 10.7.6: OPTIONAL with a correlated FILTER (closed-world negation); Fuseki evaluates it in ~4 s."}
+      "q05a": {
+        "note": "GraphDB Free 10.7.6: FILTER-based join, as on Fuseki."
+      },
+      "q06": {
+        "note": "GraphDB Free 10.7.6: OPTIONAL with a correlated FILTER (closed-world negation); Fuseki evaluates it in ~4 s."
+      }
     }
+  },
+  "investigation_2026_10_27": {
+    "fuseki_tdb2_fixed_optimizer": "Same 1.02M-triple document in a TDB2 dataset (Jena fixed.opt reordering): Q4, Q5a, Q7 still cancelled at 30.0 s (full evaluation and first 10,000-row page through the EOIP endpoint).",
+    "fuseki_tdb2_stats": "tdb2.tdbstats statistics (stats.opt, 1,024,112 triples) installed and the server restarted: Q4, Q5a, Q7 still cancelled at 30.0 s; Q6 5.4 s, Q5b 0.8 s unchanged in kind. No improvement, so CI keeps the in-memory dataset.",
+    "q5a_rewrite_rejected": "Rewriting FILTER(?name = ?name2) into a shared-variable join (Q5b's form, 0.8 s) is not semantics-preserving in general: '=' is value equality (e.g. \"1\"^^xsd:integer = \"01\"^^xsd:integer, typed vs. language literals raise errors), a join is term identity. EOIP does not apply unsound rewrites, so Q5a stays open.",
+    "first_page_streaming": "The endpoint already asks for only the first 10,000-row page (LIMIT) and streams it; the engines do not produce it within 30 s for these plans (cancelled 'while streaming results').",
+    "graphdb": "No GraphDB Free setting changes the plans for Q5a (FILTER join) or Q6 (OPTIONAL + correlated FILTER negation); not tuned further. Both stay open.",
+    "target": "The 30 s target is unchanged; every listed query remains an open CRA-024 A.2 gap."
   }
 }

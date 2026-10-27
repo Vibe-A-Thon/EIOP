@@ -114,3 +114,11 @@ Rejected by design (verified on the response): 7 update tests (endpoint is read-
 CONSTRUCT / DESCRIBE content-type tests (graph results are outside the supported subset, 422). Note that the
 `bad_update_*` tests pass because every update is refused before parsing; they are not evidence of update
 handling.
+
+### SP2Bench over-budget investigation (2026-10-27)
+
+Tried on the local engines with the 1.02M-triple document; none brought a listed query under 30 s, so all
+five stay open gaps (details in `tests/query/sp2bench_known_gaps.json`, `investigation_2026_10_27`):
+Fuseki TDB2 with the fixed optimizer, and TDB2 with `tdb2.tdbstats` statistics (Q4/Q5a/Q7 still cancelled at
+30.0 s); a Q5a FILTER-to-join rewrite was rejected as not semantics-preserving (value equality vs term
+identity); the endpoint already streams only the first 10,000-row page. The 30 s target is unchanged.
