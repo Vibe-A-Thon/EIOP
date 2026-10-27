@@ -153,6 +153,8 @@ class QualificationEngine:
         self.manifest = manifest
         self.storage = StorageAccounting()
         self.raw_trials: list[dict[str, Any]] = []
+        self.gate_failures: list[dict[str, Any]] = []
+        self.required_artifacts: dict[str, str | None] = {}
 
     def run_multi_trial(
         self,
@@ -255,13 +257,127 @@ class QualificationEngine:
             "qualified": beats_majority and beats_random and calibration_acceptable,
         }
 
+    # CRA-036.A: gates that must fail independently of how fast the median is.
+    GATES = ("correctness", "leakage", "timeout", "artifacts")
+    MIN_TRIALS = 3
+
+    def run_gated_trials(
+        self,
+        operation_name: str,
+        operation: Callable[[], Any],
+        oracle_expected: Any,
+        *,
+        trials_count: int = 3,
+        iterations_per_trial: int = 20,
+        required_timeout_ms: float | None = None,
+        leakage_probe: Callable[[Any], Any] | None = None,
+    ) -> dict[str, Any]:
+        """Measured trials that record gate failures instead of stopping at the first one (CRA-036.A).
+
+        Every call is checked against the independent oracle (wrong answer -> ``correctness``), against
+        ``leakage_probe`` (returns the leaked items, e.g. rows of another tenant -> ``leakage``) and against
+        ``required_timeout_ms`` (a call that exceeds it or raises ``TimeoutError`` -> ``timeout``). Any other
+        exception is a ``correctness`` failure: an error is never a pass. Latency is still measured so the
+        report shows that a fast median does not rescue a failed gate.
+        """
+        failures: list[dict[str, Any]] = []
+        trial_stats: list[TrialLatencyStats] = []
+        measured_trials = 0
+        for trial_idx in range(trials_count):
+            timings: list[float] = []
+            for it in range(iterations_per_trial):
+                where = {"operation": operation_name, "trial": trial_idx, "iteration": it}
+                t0 = time.perf_counter()
+                try:
+                    actual = operation()
+                except TimeoutError as exc:
+                    failures.append({**where, "gate": "timeout", "detail": f"operation timed out: {exc}"})
+                    continue
+                except Exception as exc:  # noqa: BLE001 - an erroring operation fails the correctness gate
+                    failures.append({**where, "gate": "correctness", "detail": f"operation raised {type(exc).__name__}: {exc}"})
+                    continue
+                elapsed_ms = (time.perf_counter() - t0) * 1000.0
+                timings.append(elapsed_ms)
+                if actual != oracle_expected:
+                    failures.append({**where, "gate": "correctness",
+                                     "detail": f"expected {oracle_expected!r}, got {actual!r}"[:500]})
+                if leakage_probe is not None:
+                    leaked = list(leakage_probe(actual) or [])
+                    if leaked:
+                        failures.append({**where, "gate": "leakage", "detail": f"{len(leaked)} leaked item(s)",
+                                         "items": [repr(x)[:200] for x in leaked[:10]]})
+                if required_timeout_ms is not None and elapsed_ms > required_timeout_ms:
+                    failures.append({**where, "gate": "timeout",
+                                     "detail": f"{elapsed_ms:.3f} ms exceeds required {required_timeout_ms} ms"})
+            trial_stats.append(compute_latencies(timings))
+            measured_trials += 1 if timings else 0
+        p95_values = [s.p95_ms for s in trial_stats]
+        result = {
+            "operation": operation_name,
+            "trials_count": trials_count,
+            "iterations_per_trial": iterations_per_trial,
+            "required_timeout_ms": required_timeout_ms,
+            "measured_trials": measured_trials,
+            "median_p50_ms": round(statistics.median([s.p50_ms for s in trial_stats]), 3) if trial_stats else None,
+            "mean_p95_ms": round(statistics.mean(p95_values), 3) if p95_values else None,
+            "std_dev_p95_ms": round(statistics.stdev(p95_values), 3) if len(p95_values) > 1 else 0.0,
+            "trials": [asdict(s) for s in trial_stats],
+            "oracle_verified": not any(f["gate"] == "correctness" for f in failures),
+            "failures": failures,
+        }
+        self.raw_trials.append(result)
+        self.gate_failures.extend(failures)
+        return result
+
+    def require_artifact(self, path: str, sha256: str | None = None) -> None:
+        """Declares an artifact (raw results, oracle file, receipt) the gate must find, optionally by digest."""
+        self.required_artifacts[str(path)] = sha256
+
+    def evaluate_gates(self) -> dict[str, Any]:
+        """Per-gate verdicts for CRA-036.A; the run qualifies only when every gate passes."""
+        failures: dict[str, list[dict[str, Any]]] = {g: [] for g in self.GATES}
+        for f in self.gate_failures:
+            failures.setdefault(f["gate"], []).append(f)
+        for trial in self.raw_trials:
+            if not trial.get("oracle_verified", False) and not failures["correctness"]:
+                failures["correctness"].append({"operation": trial.get("operation"), "gate": "correctness",
+                                                "detail": "trial not verified against the oracle"})
+        art = failures["artifacts"]
+        if not self.raw_trials:
+            art.append({"gate": "artifacts", "detail": "no raw trial results recorded"})
+        for trial in self.raw_trials:
+            measured = trial.get("measured_trials", len(trial.get("trials", [])))
+            if measured < self.MIN_TRIALS:
+                art.append({"gate": "artifacts", "operation": trial.get("operation"),
+                            "detail": f"{measured} measured trial(s); at least {self.MIN_TRIALS} required"})
+        manifest = self.manifest.to_dict()
+        for key in ("manifest_id", "dataset_name", "generator_command", "dataset_license", "artifact_digest"):
+            if not manifest.get(key):
+                art.append({"gate": "artifacts", "detail": f"manifest field '{key}' missing"})
+        for path, digest in sorted(self.required_artifacts.items()):
+            try:
+                data = open(path, "rb").read()  # noqa: SIM115 - small receipt files
+            except OSError:
+                art.append({"gate": "artifacts", "detail": f"required artifact missing: {path}"})
+                continue
+            if not data:
+                art.append({"gate": "artifacts", "detail": f"required artifact empty: {path}"})
+            elif digest is not None and hashlib.sha256(data).hexdigest() != digest:
+                art.append({"gate": "artifacts", "detail": f"required artifact digest mismatch: {path}"})
+        gates = {g: {"passed": not failures[g], "failures": failures[g][:50], "failure_count": len(failures[g])}
+                 for g in failures}
+        return {"status": "QUALIFIED" if all(v["passed"] for v in gates.values()) else "REJECTED",
+                "gates": gates}
+
     def generate_qualification_report(self) -> dict[str, Any]:
-        """Generates comprehensive machine-readable benchmark and qualification report."""
+        """Machine-readable benchmark and qualification report; status comes from the CRA-036.A gates."""
+        verdict = self.evaluate_gates()
         return {
             "manifest": self.manifest.to_dict(),
             "storage_accounting": self.storage.to_dict(),
             "raw_trials": self.raw_trials,
             "stretch_objectives": self.STRETCH_OBJECTIVES.get(self.manifest.tier, {}),
-            "status": "QUALIFIED",
+            "status": verdict["status"],
+            "gates": verdict["gates"],
             "timestamp": time.time(),
         }
