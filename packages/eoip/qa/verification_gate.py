@@ -146,6 +146,29 @@ class AntiStubProbeHarness:
         return True
 
 
+# CRA-037.A: backends that are never production evidence for an integration-or-wider scope.
+NON_PRODUCTION_BACKENDS = frozenset({"memory", "in-memory", "inmemory", "mock", "fake", "stub", "sqlite-memory"})
+# Scopes that may legitimately run on an in-process backend (CRA-037.2 keeps them separate from integration).
+IN_PROCESS_SCOPES = frozenset({TestScopeLabel.UNIT.value, TestScopeLabel.PROPERTY_FUZZ.value})
+ACCEPTED_STATE = "ACCEPTED"
+
+
+def receipt_digest(receipt: dict[str, Any]) -> str:
+    """SHA-256 over the canonical JSON of a receipt without its own ``receipt_digest`` field."""
+    body = {k: v for k, v in receipt.items() if k != "receipt_digest"}
+    return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"), default=str).encode()).hexdigest()
+
+
+def seal_receipt(receipt: dict[str, Any]) -> dict[str, Any]:
+    """Returns a copy of ``receipt`` with ``receipt_digest`` set, so later edits are detectable."""
+    sealed = copy.deepcopy(receipt)
+    sealed["receipt_digest"] = receipt_digest(sealed)
+    return sealed
+
+
+_digest_of_receipt = receipt_digest  # verify_receipt has a local named receipt_digest (artifact digest)
+
+
 class EvidenceVerificationGate:
     """Core acceptance gate evaluating test evidence, artifact freshness, source stability and manual reviews."""
 
@@ -183,6 +206,45 @@ class EvidenceVerificationGate:
 
         if results.get("tests_skipped", 0) > 0:
             raise GateRefusalError("Gate refused: tests were skipped in verified receipt")
+
+        accepted = receipt.get("state_claimed") == ACCEPTED_STATE
+
+        # 5. Tamper evidence (CRA-037.A): a sealed receipt must still match its digest; ACCEPTED must be sealed.
+        if "receipt_digest" in receipt:
+            if receipt["receipt_digest"] != _digest_of_receipt(receipt):
+                raise GateRefusalError("Gate refused: receipt content does not match its receipt_digest (tampered)")
+        elif accepted:
+            raise GateRefusalError("Gate refused: an ACCEPTED receipt must carry a receipt_digest")
+
+        # 6. Production backend (CRA-037.2/037.3/037.A): memory or mock runs are not integration evidence.
+        environment = receipt.get("environment") or {}
+        backend = str(environment.get("backend", "")).strip().lower()
+        scope = str(receipt.get("scope_label", "")).strip().lower()
+        if backend in NON_PRODUCTION_BACKENDS and scope not in IN_PROCESS_SCOPES:
+            raise GateRefusalError(
+                f"Gate refused: ran against non-production backend '{backend}' for scope '{scope or 'unlabelled'}'"
+            )
+        required_backend = str(environment.get("required_backend", "")).strip().lower()
+        if required_backend and backend != required_backend:
+            raise GateRefusalError(
+                f"Gate refused: ran against '{backend or 'unknown'}' but the clause requires '{required_backend}'"
+            )
+        if accepted and (not backend or backend in NON_PRODUCTION_BACKENDS):
+            raise GateRefusalError("Gate refused: ACCEPTED requires a declared production backend")
+
+        # 7. Negative cases (CRA-037.A): every declared negative case must have been refused as expected.
+        negatives = receipt.get("negative_cases")
+        if negatives is not None and not isinstance(negatives, list):
+            raise GateRefusalError("Gate refused: negative_cases must be a list")
+        for case in negatives or []:
+            expected = case.get("expected", "refused")
+            if case.get("observed") != expected:
+                raise GateRefusalError(
+                    f"Gate refused: negative case '{case.get('id', '?')}' observed "
+                    f"{case.get('observed')!r}, expected {expected!r}"
+                )
+        if accepted and not negatives:
+            raise GateRefusalError("Gate refused: ACCEPTED requires at least one executed negative case")
 
         return True
 
